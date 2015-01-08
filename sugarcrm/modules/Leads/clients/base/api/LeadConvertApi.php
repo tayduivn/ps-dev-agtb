@@ -14,8 +14,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('clients/base/api/ModuleApi.php');
 require_once('modules/Leads/LeadConvert.php');
 
-class LeadConvertApi extends ModuleApi {
-
+class LeadConvertApi extends ModuleApi
+{
     public function registerApiRest()
     {
         //Extend with test method
@@ -56,28 +56,42 @@ class LeadConvertApi extends ModuleApi {
      * This method loads a bean from posted data through api
      *
      * @param $api ServiceBase The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
-     * @param $module The module name to be loaded/created.
-     * @param $data The posted data
+     * @param $module string The module name to be loaded/created.
+     * @param $data array The posted data
      * @return SugarBean The loaded bean
-     * @throws SugarApiExceptionInvalidParameter
+     * @throws SugarApiExceptionRequestMethodFailure
      */
-    protected function loadModule($api, $module, $data) {
+    protected function loadModule($api, $module, $data)
+    {
+        $version = $api->getRequest()->getVersion();
+        $moduleDef = array (
+            'module' => $module,
+        );
+
         if (isset($data['id'])) {
-            $moduleDef = array (
-                'module' => $module,
-                'record' => $data['id']
-            );
-            $bean = $this->loadBean($api, $moduleDef);
+            $moduleDef['record'] = $data['id'];
         }
         else {
-            $bean = BeanFactory::newBean($module);
-            //populate bean
-            $result = $this->populateFromApi($api, $bean, $data);
-            if ($result !== true) {
-                $GLOBALS['log']->error("Failure attempting to load up {$module} bean from given data. Error: {$result}");
-                throw new SugarApiExceptionInvalidParameter("Unable to convert lead. There were validation errors on the submitted data.");
+            $request = array(
+                array(
+                    'url'    => "/{$version}/{$module}",
+                    'method' => 'POST',
+                    'data'   => json_encode($data),
+                )
+            );
+            $apiClass = new BulkApi();
+            $result = $apiClass->bulkCall($api, array('requests' => $request));
+
+            if (isset($result) && isset($result[0]) && isset($result[0]['contents'])) {
+                if ($result[0]['status'] != 200) {
+                    throw new SugarApiExceptionRequestMethodFailure($result[0]['contents']['error'], array(), null, 424, $result[0]['contents']['error_message']);
+                }
+
+                $moduleDef['record'] = $result[0]['contents']['id'];
             }
         }
+        $bean = $this->loadBean($api, $moduleDef);
+
         return $bean;
     }
 
@@ -89,30 +103,22 @@ class LeadConvertApi extends ModuleApi {
      * @param $data The posted data
      * @return Array SugarBean The loaded beans
      */
-    protected function loadModules($api, $modulesToConvert, $data) {
+    protected function loadModules($api, $modulesToConvert, $data)
+    {
         $beans = array();
 
         foreach ($modulesToConvert as $moduleName) {
             if (!isset($data[$moduleName])) {
                 continue;
             }
-            $beans[$moduleName] = $this->loadModule($api, $moduleName, $data[$moduleName]);
+
+            $beans[$moduleName] = $this->loadModule(
+                $api,
+                $moduleName,
+                $data[$moduleName]
+            );
         }
+
         return $beans;
     }
-
-    /**
-     * Populate the given bean from the args passed into the api
-     *
-     * @param $api
-     * @param $bean
-     * @param $args
-     * @param array $options
-     * @return mixed
-     */
-    protected function populateFromApi($api, $bean, $args, $options=array())
-    {
-        return ApiHelper::getHelper($api,$bean)->populateFromApi($bean,$args,$options);
-    }
-
 }

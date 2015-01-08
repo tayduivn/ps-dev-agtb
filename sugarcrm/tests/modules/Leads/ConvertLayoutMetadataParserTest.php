@@ -37,11 +37,11 @@ class ConvertLayoutMetadataParserTest extends Sugar_PHPUnit_Framework_TestCase
         parent::setUp();
         $this->parser = new TestConvertLayoutMetadataParser('Contacts');
         $this->parser->setConvertDefs(array(
-            'modules' => array(
-                $this->contactDef,
-                $this->accountDef,
-            )
-        ));
+                'modules' => array(
+                    $this->contactDef,
+                    $this->accountDef,
+                )
+            ));
     }
 
     public function tearDown()
@@ -55,13 +55,13 @@ class ConvertLayoutMetadataParserTest extends Sugar_PHPUnit_Framework_TestCase
     public function testUpdateConvertDef_WithExistingDef_UpdatesDef()
     {
         $this->parser->updateConvertDef(array(
-            $this->contactDef,
-            array(
-                'module' => 'Accounts',
-                'required' => false,
-                'copyData' => false,
-            ),
-        ));
+                $this->contactDef,
+                array(
+                    'module' => 'Accounts',
+                    'required' => false,
+                    'copyData' => false,
+                ),
+            ));
 
         $expectedAccountDef = $this->accountDef;
         $expectedAccountDef['required'] = false;
@@ -88,10 +88,10 @@ class ConvertLayoutMetadataParserTest extends Sugar_PHPUnit_Framework_TestCase
         );
 
         $this->parser->updateConvertDef(array(
-            $this->contactDef,
-            $this->accountDef,
-            $fooDef,
-        ));
+                $this->contactDef,
+                $this->accountDef,
+                $fooDef,
+            ));
 
         $expectedModules = array(
             'modules' => array(
@@ -184,6 +184,28 @@ class ConvertLayoutMetadataParserTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers ConvertLayoutMetadataParser::applyDependenciesAndHiddenFields
+     */
+    public function testApplyDependenciesAndHiddenFields_ExcludedFieldsApply_AddedToDef()
+    {
+        $hiddenFields = array('baz' => 'Bar');
+        $this->parser->setExcludedFields(array(
+            'Foo' => array(
+                'repeat_type' => 'Bar',
+            )
+        ));
+        $this->parser->mockOriginalDef['hiddenFields'] = $hiddenFields;
+        $def = array(
+            'module' => 'Foo',
+            'required' => true,
+        );
+        $includedModules = array('Foo', 'Bar');
+        $resultDef = $this->parser->applyDependenciesAndHiddenFields($def, $includedModules);
+        $this->assertArrayHasKey('baz', $resultDef['hiddenFields'], 'Hidden fields should be set');
+        $this->assertArrayHasKey('repeat_type', $resultDef['hiddenFields'], 'Hidden fields should be set');
+    }
+
+    /**
      * @covers ConvertLayoutMetadataParser::removeLayout
      */
     public function testRemoveLayout()
@@ -273,6 +295,8 @@ class TestConvertLayoutMetadataParser extends ConvertLayoutMetadataParser
     );
     public $mockDupeCheckEnabledFlag = false;
 
+    public $mockExcludedFields = array();
+
     protected function loadViewDefs()
     {
         //defer loading of the view defs for testing
@@ -324,5 +348,8 @@ class TestConvertLayoutMetadataParser extends ConvertLayoutMetadataParser
     {
         return $this->mockDupeCheckEnabledFlag;
     }
-}
 
+    public function setExcludedFields($excludedFields) {
+        $this->excludedFields = $excludedFields;
+    }
+}
