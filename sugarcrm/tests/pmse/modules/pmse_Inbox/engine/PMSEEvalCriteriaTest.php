@@ -25,6 +25,10 @@ class PMSEEvalCriteriaTest extends PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->object = new PMSEEvalCriteria;
+        // The default timezone is set to phoenix because the server could
+        // have a different timezone that triggers failures with the tests 
+        // already defined values.
+        date_default_timezone_set("America/Phoenix"); 
     }
 
     /**
@@ -33,7 +37,7 @@ class PMSEEvalCriteriaTest extends PHPUnit_Framework_TestCase
      */
     protected function tearDown()
     {
-        
+
     }
 
     /**
@@ -268,7 +272,7 @@ class PMSEEvalCriteriaTest extends PHPUnit_Framework_TestCase
     }
     
     public function testTypeData()
-    {
+    {        
         $this->assertEquals('Holas', $this->object->typeData('Holas','address'));
         $this->assertEquals(true, $this->object->typeData(true,'bool'));
         $this->assertEquals(1381388400, $this->object->typeData('10/10/2013','date'));
