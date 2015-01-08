@@ -262,16 +262,6 @@ class Meeting extends SugarBean {
             }
         }
 
-        if (!empty($this->contact_id)) {
-            if (is_array($this->contacts_arr) && !in_array($this->contact_id, $this->contacts_arr)) {
-                $this->contacts_arr[] = $this->contact_id;
-            }
-            $this->load_relationship('contacts');
-            if (!$this->contacts->relationship_exists('contacts', array('id' => $this->contact_id))) {
-                $this->contacts->add($this->contact_id);
-            }
-        }
-
         $this->setUserInvitees($this->users_arr);
 
         if ($this->update_vcal) {
