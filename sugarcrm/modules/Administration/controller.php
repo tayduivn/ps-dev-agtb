@@ -328,4 +328,12 @@ class AdministrationController extends SugarController
             $GLOBALS['log']->error($mod_strings['LBL_SPRITES_NOT_SUPPORTED']);
         }
     }
+
+    /**
+     * Map package ACL roles to the instance's ones
+     */
+    public function action_UpgradeWizard_map_roles()
+    {
+        $this->view = 'maproles';
+    }
 }
