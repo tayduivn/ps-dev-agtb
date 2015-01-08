@@ -107,17 +107,17 @@ $viewdefs[$module_name]['base']['view']['casesList-list'] = array(
                     'width' => '3%',
                 ),
                 array(
-                    'name' => 'cas_title',
-                    'label' => 'LBL_CASE_TITLE',
-                    'default' => true,
-                    'enabled' => true,
-                ),
-                array(
                     'name' => 'pro_title',
-                    'label' => 'LBL_PROCESS_NAME',
+                    'label' => 'LBL_PROCESS_DEFINITION_NAME',
                     'default' => true,
                     'enabled' => true,
                     'link' => true,
+                ),
+                array(
+                    'name' => 'cas_title',
+                    'label' => 'LBL_RECORD_NAME',
+                    'default' => true,
+                    'enabled' => true,
                 ),
                 array(
                     'name' => 'cas_status',

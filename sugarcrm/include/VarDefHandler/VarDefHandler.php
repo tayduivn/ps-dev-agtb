@@ -48,7 +48,7 @@ class VarDefHandler {
 	//end function setup
 	}
 
-	function get_vardef_array($use_singular=false, $remove_dups = false, $use_field_name = false, $use_field_label = false){
+	function get_vardef_array($use_singular=false, $remove_dups = false, $use_field_name = false, $use_field_label = false, $visible_only = false){
 		global $dictionary;
 		global $current_language;
 		global $app_strings;
@@ -80,6 +80,12 @@ class VarDefHandler {
 
 		foreach($base_array as $key => $value_array){
 			$compare_results = $this->compare_type($value_array);
+
+			// Strict false check for visibility of a field based on vardef. This
+			// is used for mapped fields like tag_lower
+			if ($visible_only && isset($value_array['visible']) && $value_array['visible'] === false) {
+				continue;
+			}
 
 			if($compare_results == true){
 				 $label_name = '';

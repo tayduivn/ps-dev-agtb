@@ -321,6 +321,20 @@ nv.utils.dropShadow = function (id, defs, options) {
 //   fill="yellow" filter="url(#f1)" />
 // </svg>
 
+nv.utils.stringSetLengths = function (_data, _container, _format) {
+  var lengths = [];
+  _container.append('g').attr('class', 'tmp-text-strings');
+  var calcContainers = _container.select('.tmp-text-strings').selectAll('text')
+      .data(_data).enter()
+        .append('text')
+        .text(_format);
+  calcContainers
+    .each(function (d,i) {
+      lengths.push(this.getBBox().width);
+    });
+  _container.select('.tmp-text-strings').remove();
+  return lengths;
+};
 
 nv.utils.maxStringSetLength = function (_data, _container, _format) {
   var maxLength = 0;
@@ -356,4 +370,11 @@ nv.utils.isRTLChar = function(c) {
   var rtlChars_ = '\u0591-\u07FF\uFB1D-\uFDFF\uFE70-\uFEFC',
       rtlCharReg_ = new RegExp('[' + rtlChars_ + ']');
   return rtlCharReg_.test(c);
+};
+
+nv.utils.polarToCartesian = function(centerX, centerY, radius, angleInDegrees) {
+  var angleInRadians = angleInDegrees * Math.PI / 180.0;
+  var x = centerX + radius * Math.cos(angleInRadians);
+  var y = centerY + radius * Math.sin(angleInRadians);
+  return [x, y];
 };

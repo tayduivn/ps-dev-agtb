@@ -41,6 +41,10 @@
 }
 /* /SC-3435 */
 
+.flex-list-view .flex-list-view-content {
+  overflow-y: hidden;
+}
+
 @media (max-width: 768px) {
   .row-fluid .span8.main-pane {
     width: 100%;

@@ -184,6 +184,7 @@
                                 group: self.name
                             };
                         }
+                        self.model.unset(self.name);
                         self.model.set(self.name + '_guid', fileId);
                     }
 

@@ -18,7 +18,7 @@ $viewdefs[$module_name]['base']['view']['record'] = array(
         array(
             'type' => 'button',
             'name' => 'cancel_button',
-            'label' => 'Cancel Edit llllll',
+            'label' => 'Cancel Edit',
             'css_class' => 'btn-invisible btn-link',
             'showOn' => 'edit',
         ),

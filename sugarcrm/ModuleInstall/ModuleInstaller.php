@@ -1543,15 +1543,16 @@ class ModuleInstaller{
 					}
 				}
                 // remove the subpanel layoutdefs for the relationship
-                $subpanelFileName = "{$rel_name}_{$mod}.php";
-                $overrideFileName = "_overridesubpanel-for-{$rel_name}.php";
+                $subpanelFileNames = array(
+                    "{$rel_name}_{$mod}.php",
+                    "_overridesubpanel-for-" . strtolower($mod) . "-{$rel_name}.php"
+                );
                 foreach (glob("{$basepath}/clients/*", GLOB_NOSORT | GLOB_ONLYDIR) AS $path) {
                     foreach (glob($path . "/layouts/subpanels/*.php", GLOB_NOSORT) AS $file) {
                         $baseFile = basename($file);
-                        if ($baseFile !== $subpanelFileName && $baseFile !== $overrideFileName) {
-                            continue;
+                        if (in_array($baseFile, $subpanelFileNames)) {
+                            unlink($file);
                         }
-                        unlink($file);
                     }
                 }
 

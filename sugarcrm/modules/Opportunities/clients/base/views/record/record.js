@@ -58,6 +58,12 @@
         }
         //END SUGARCRM flav=ent ONLY
         this._super('initialize', [options]);
+
+        // Unset vars if user is creating an Opp by copying another
+        this.model.on('duplicate:before', function(copyModel) {
+            copyModel.unset('date_closed');
+            copyModel.unset('date_closed_timestamp');
+        }, this);
     },
 
 //BEGIN SUGARCRM flav=ent ONLY
