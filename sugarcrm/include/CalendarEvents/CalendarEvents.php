@@ -16,6 +16,8 @@
 
 class CalendarEvents
 {
+    public static $old_assigned_user_id = '';
+
     /**
      * Schedulable calendar events (modules) supported
      * @var array
@@ -194,5 +196,19 @@ class CalendarEvents
             }
         }
         return $sugarDateTime;
+    }
+
+    /**
+     * Store Current Assignee Id or blank if New Bean (Create)
+     */
+    public function setOldAssignedUser($module, $id = null)
+    {
+        static::$old_assigned_user_id = '';
+        if (!empty($module) && !empty($id)) {
+            $old_record = BeanFactory::getBean($module, $id);
+            if (!empty($old_record->assigned_user_id)) {
+                static::$old_assigned_user_id = $old_record->assigned_user_id;
+            }
+        }
     }
 }

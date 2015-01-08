@@ -167,21 +167,22 @@ class Meeting extends SugarBean {
         }
 
         $check_notify = $this->send_invites;
-        if($this->send_invites == false) {
-        	$old_assigned_user_id = '';
-			if(!empty($this->id)) {
-				$old_record = BeanFactory::getBean('Meetings', $this->id);
-				$old_assigned_user_id = $old_record->assigned_user_id;
-			}
-
-			if((empty($GLOBALS['installing']) || $GLOBALS['installing'] != true) && ((empty($this->id) || $this->new_with_id == true || empty($this->fetched_row)) && isset($this->assigned_user_id) && !empty($this->assigned_user_id) && $GLOBALS['current_user']->id != $this->assigned_user_id) || (isset($old_assigned_user_id) && !empty($old_assigned_user_id) && isset($this->assigned_user_id) && !empty($this->assigned_user_id) && $old_assigned_user_id != $this->assigned_user_id) ){
-				$this->special_notification = true;
-				$check_notify = true;
-                if(isset($_REQUEST['assigned_user_name'])) {
+        if ($this->send_invites == false) {
+            $old_assigned_user_id = CalendarEvents::$old_assigned_user_id;
+            if ((empty($GLOBALS['installing']) || $GLOBALS['installing'] != true) &&
+                (!empty($this->assigned_user_id) &&
+                    $this->assigned_user_id != $GLOBALS['current_user']->id &&
+                    $this->assigned_user_id != $old_assigned_user_id)
+            ) {
+                $this->special_notification = true;
+                $check_notify = true;
+                CalendarEvents::$old_assigned_user_id = $this->assigned_user_id;
+                if (isset($_REQUEST['assigned_user_name'])) {
                     $this->new_assigned_user_name = $_REQUEST['assigned_user_name'];
                 }
-			}
-		}
+            }
+        }
+
 		/*nsingh 7/3/08  commenting out as bug #20814 is invalid
 		if($current_user->getPreference('reminder_time')!= -1 &&  isset($_POST['reminder_checked']) && isset($_POST['reminder_time']) && $_POST['reminder_checked']==0  && $_POST['reminder_time']==-1){
 			$this->reminder_checked = '1';
