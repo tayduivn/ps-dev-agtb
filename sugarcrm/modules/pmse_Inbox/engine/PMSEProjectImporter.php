@@ -160,6 +160,7 @@ class PMSEProjectImporter extends PMSEImporter
         unset($projectData[$this->id]);
         //Unset common fields
         $this->unsetCommonFields($projectData);
+        //unset($projectData['assigned_user_id']);
         if (!isset($projectData['assigned_user_id'])) {
             $projectData['assigned_user_id'] = $current_user->id;
         }
@@ -514,6 +515,18 @@ class PMSEProjectImporter extends PMSEImporter
                 $elementBean->$field_uid = PMSEEngineUtils::generateUniqueID(); //$elementBean->validateUniqueUid();
             }
             if ($generateBound) {
+                switch($beanType) {
+                    case 'pmse_BpmnArtifact':
+                        $element_type = 'bpmnArtifact';
+                        break;
+                    default:
+                        $element_type = '';
+                }
+                $boundBean->bou_uid = PMSEEngineUtils::generateUniqueID();
+                $boundBean->dia_id = $keysArray['dia_id'];
+                $boundBean->element_id = $keysArray['dia_id'];
+                $boundBean->bou_element_type = $element_type;
+                $boundBean->bou_element = $savedId;
                 $boundBean->save();
             }
         }
