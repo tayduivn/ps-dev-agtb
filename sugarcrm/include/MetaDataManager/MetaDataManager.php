@@ -325,7 +325,7 @@ class MetaDataManager
      * In most cases this will never be changed, but in the case of module builder
      * this will usually be turned off so that the postExecute method can force
      * it to run explicitly.
-     * 
+     *
      * @var boolean
      */
     protected static $runQueueOnCall = true;
@@ -1482,17 +1482,17 @@ class MetaDataManager
     {
         // If we are in queue state (like in RepairAndRebuild), hold on to this
         // request until we are told to run it
-        if (self::$isQueued) {
-            self::$queue['full'] = $platforms;
+        if (static::$isQueued) {
+            static::$queue['full'] = $platforms;
             return;
         }
 
         // Set our inProcess flag;
-        self::$inProcess = true;
+        static::$inProcess = true;
 
         // The basics are, for each platform, rewrite the cache for public and private
         if (empty($platforms)) {
-            $platforms = self::getPlatformList();
+            $platforms = static::getPlatformList();
         }
 
         // Make sure the LanguageManager created modules cache is clear
@@ -1500,8 +1500,8 @@ class MetaDataManager
 
         foreach ((array) $platforms as $platform) {
             foreach (array(true, false) as $public) {
-                $mm = self::getManager($platform, $public, true);
-                $contexts = self::getAllMetadataContexts($public);
+                $mm = static::getManager($platform, $public, true);
+                $contexts = static::getAllMetadataContexts($public);
                 foreach ($contexts as $context) {
                     $mm->rebuildCache($force, $context);
                 }
@@ -1509,7 +1509,7 @@ class MetaDataManager
         }
 
         // Reset the in process flag
-        self::$inProcess = false;
+        static::$inProcess = false;
     }
 
     /**
@@ -1709,7 +1709,7 @@ class MetaDataManager
 
     /**
      * Sets the queue runner flag to boolean true or false
-     * 
+     *
      * @param boolean $value Flag that tells the queue runner to run or not
      */
     public static function setRunQueueOnCall($value)
@@ -2933,7 +2933,7 @@ class MetaDataManager
 
     /**
      * Returns array of fields of static::$cacheTable
-     * 
+     *
      * @return array
      */
     protected function getFields()

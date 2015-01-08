@@ -426,7 +426,7 @@ class MetaDataFiles
     ) {
         $file = self::getFile($view, $module, array_merge($params, array(
             'client' => $client,
-            'type' => $type,
+            'location' => $type,
         )));
 
         return self::getFilePath($file);
@@ -448,7 +448,7 @@ class MetaDataFiles
     {
         $file = self::getFile($view, $module, array(
             'package' => $packageName,
-            'type' => $type,
+            'location' => $type,
             'client' => $client,
         ));
 
@@ -468,16 +468,18 @@ class MetaDataFiles
             $file = new MetaDataFileBwc($file);
         }
 
-        if (!empty($params['package'])) {
-            require_once 'modules/ModuleBuilder/parsers/MetaDataFile/MetaDataFileUndeployed.php';
-            $file = new MetaDataFileUndeployed($file, $params['package'], $params['location']);
-        } else {
-            require_once 'modules/ModuleBuilder/parsers/MetaDataFile/MetaDataFileDeployed.php';
-            $file = new MetaDataFileDeployed($file, $params['location']);
+        if (!empty($params['location'])) {
+            if (!empty($params['package'])) {
+                require_once 'modules/ModuleBuilder/parsers/MetaDataFile/MetaDataFileUndeployed.php';
+                $file = new MetaDataFileUndeployed($file, $params['package'], $params['location']);
+            } else {
+                require_once 'modules/ModuleBuilder/parsers/MetaDataFile/MetaDataFileDeployed.php';
+                $file = new MetaDataFileDeployed($file, $params['location']);
 
-            if (!empty($params['role'])) {
-                require_once 'modules/ModuleBuilder/parsers/MetaDataFile/MetaDataFileRoleDependent.php';
-                $file = new MetaDataFileRoleDependent($file, $params['role']);
+                if (!empty($params['role'])) {
+                    require_once 'modules/ModuleBuilder/parsers/MetaDataFile/MetaDataFileRoleDependent.php';
+                    $file = new MetaDataFileRoleDependent($file, $params['role']);
+                }
             }
         }
 
@@ -722,8 +724,8 @@ class MetaDataFiles
      * Removes module cache files. This can clear a single cache file by type or
      * all cache files for a module. Can also clear a single platform type cache
      * for a module.
-     * 
-     * @param array $modules The modules to clear the cache for. An empty array 
+     *
+     * @param array $modules The modules to clear the cache for. An empty array
      *                       clears caches for all modules
      * @param string $type   The cache file to clear. An empty string clears all
      *                       cache files for a module
@@ -740,17 +742,17 @@ class MetaDataFiles
             // They want all of the modules, so get them if they are already set
             $modules = empty($GLOBALS['app_list_strings']['moduleList']) ? array() : array_keys($GLOBALS['app_list_strings']['moduleList']);
         }
-        
+
         // Clean up the type
         if ( empty($type) ) {
             $type = '*';
         }
-        
+
         // Clean up the platforms
         if (empty($platforms)) {
             $platforms = array('*');
         }
-        
+
         // Handle it
         foreach ($modules as $module) {
             // Start at the client dir level
@@ -762,7 +764,7 @@ class MetaDataFiles
                     foreach ($platformDirs as $platformDir) {
                         // Get all of the files in question
                         $cacheFiles = glob($platformDir . $type . '.php');
-                        
+
                         // Handle nuking the files
                         foreach ($cacheFiles as $cacheFile) {
                             unlink($cacheFile);
@@ -776,7 +778,7 @@ class MetaDataFiles
     /**
      * Gets all module cache files for a module. Uses the first platform in the
      * platform list to get the cache files.
-     * 
+     *
      * @param array $platforms The list of platforms to get a module cache for.
      *                         Uses the first member of this list as the platform.
      * @param string $type     The type of cache file to get.
@@ -802,8 +804,8 @@ class MetaDataFiles
 
     /**
      * Builds up module client cache files
-     * 
-     * @param array $platforms A list of platforms to build for. Uses the first 
+     *
+     * @param array $platforms A list of platforms to build for. Uses the first
      *                         platform in the list as the platform.
      * @param string $type     The type of file to create the cache for.
      * @param array $modules   The module to create the cache for.

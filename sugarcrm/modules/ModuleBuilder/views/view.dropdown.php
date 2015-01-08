@@ -85,7 +85,7 @@ class ViewDropdown extends SugarView
         $smarty = new Sugar_Smarty();
 
         //if we are using ModuleBuilder then process the following
-        if ($params['view_package'] != 'studio') {
+        if (!empty($params['view_package']) && $params['view_package'] != 'studio') {
             $mb = new ModuleBuilder();
             $module = $mb->getPackageModule($params['view_package'], $params['view_module']);
             $package_name = $mb->packages[$params['view_package']]->name;
@@ -101,7 +101,7 @@ class ViewDropdown extends SugarView
         }
 
         $module_name = !empty($module->name) ? $module->name : '';
-        $module_name = (empty($module_name) && $params['view_module']) ? $params['view_module'] : $module_name;
+        $module_name = (empty($module_name) && !empty($params['view_module'])) ? $params['view_module'] : $module_name;
 
         foreach ($my_list_strings as $key => $value) {
             if (!is_array($value)) {
@@ -112,13 +112,13 @@ class ViewDropdown extends SugarView
         $json = getJSONobj();
 
         $required_items = array();
-        if ($params['dropdown_name'] && !$params['new']) {
+        if ($params['dropdown_name'] && empty($params['new'])) {
             $name = $params['dropdown_name'];
 
             // handle the case where we've saved a dropdown in one language, and
-            // now attempt to edit it for another language. The $name exists, 
-            // but $my_list_strings[$name] doesn't for now, we just treat it as 
-            // if it was new. A better approach might be to use the first language 
+            // now attempt to edit it for another language. The $name exists,
+            // but $my_list_strings[$name] doesn't for now, we just treat it as
+            // if it was new. A better approach might be to use the first language
             // version as a template for future languages
             if (!isset($my_list_strings[$name])) {
                 $my_list_strings[$name] = array();

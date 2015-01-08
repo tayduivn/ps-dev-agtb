@@ -276,15 +276,13 @@ describe("enum field", function() {
             function(values) {
 
                 it('should not sort the results', function() {
-                    _order = values;
-
+                    _order = false;
+                    field.items = values;
                     results = field._sortResults(results);
-                    _expectOrder(results, _order);
-                    expect(getAppListKeysStub).toHaveBeenCalledOnce();
+                    _expectOrder(results, values);
                     expect(_sortBySpy).not.toHaveBeenCalled();
 
                     results = field._sortResults(results);
-                    expect(getAppListKeysStub).not.toHaveBeenCalledTwice();
                     expect(_sortBySpy).not.toHaveBeenCalled();
                 });
             }
@@ -299,15 +297,14 @@ describe("enum field", function() {
 
                 it('should sort the results', function() {
                     _order = values;
+                    field.items = _order;
 
                     results = field._sortResults(results);
                     _expectOrder(results, _order);
-                    expect(getAppListKeysStub).toHaveBeenCalledOnce();
                     expect(_sortBySpy).toHaveBeenCalled();
 
                     results = field._sortResults(results);
                     _expectOrder(results, _order);
-                    expect(getAppListKeysStub).not.toHaveBeenCalledTwice();
                     expect(_sortBySpy).toHaveBeenCalled();
 
                     expect(field._keysOrder).not.toEqual({});

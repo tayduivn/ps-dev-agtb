@@ -73,12 +73,10 @@ class MetaDataFileUndeployed implements MetaDataFileInterface
 
         switch ($this->location) {
             case MB_HISTORYMETADATALOCATION:
-                array_unshift(
-                    $path,
-                    MetaDataFiles::$paths[MB_WORKINGMETADATALOCATION],
-                    'modulebuilder',
-                    'packages',
-                    $this->package
+                $path = array_merge(
+                    explode('/', trim(MetaDataFiles::$paths[MB_WORKINGMETADATALOCATION], '/')),
+                    array('modulebuilder','packages', $this->package),
+                    $path
                 );
                 break;
             default:
@@ -88,7 +86,10 @@ class MetaDataFileUndeployed implements MetaDataFileInterface
                 $mb = new ModuleBuilder();
                 array_shift($path);
                 $module = array_shift($path);
-                array_unshift($path, $mb->getPackageModule($this->package, $module)->getModuleDir());
+                $path = array_merge(
+                    explode('/', trim($mb->getPackageModule($this->package, $module)->getModuleDir(), '/')),
+                    $path
+                );
         }
 
         return $path;
