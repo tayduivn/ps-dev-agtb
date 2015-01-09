@@ -243,7 +243,7 @@ h4.merge-interface-header {
         height: 75px;
       }
       .controls label > span > div {
-        width: 90%;
+        width: 100%;
         margin-left: 0;
       }
     }
@@ -273,13 +273,24 @@ h4.merge-interface-header {
       }
     }
     &.merge-row-field-datetimecombo {
-      //height: 70px;
       .controls label {
         height: 75px;
         overflow: visible;
         .calcWidth(~"100% - 20px") !important;
-        .force-wrap {
-          display: none;
+        input.datepicker {
+          .calcWidth(~"55% - 21px");
+        }
+        input.ui-timepicker-input {
+          .calcWidth(~"45% - 21px");
+          margin-left: 12px;
+        }
+      }
+      .input-append {
+        white-space: normal;
+        padding-top: 4px;
+        .add-on {
+          left: 0;
+          margin-left: -24px;
         }
       }
     }
@@ -348,7 +359,7 @@ h4.merge-interface-header {
 .loopingClass (@iterations);
 
 @col-iterations: 4;
-@col-merge-threshold-step: 300;
+@col-merge-threshold-step: 200;
 .colLoopingClass (@col-index) when (@col-index > 0) {
   @col-media-query-threshold: e( %("%dpx", (900 + (@col-merge-threshold-step * (@col-index - 1)))) );
   @media screen and (max-width: @col-media-query-threshold) {
@@ -358,10 +369,8 @@ h4.merge-interface-header {
         .merge-row.merge-row-field-datetimecombo {
           height: 70px;
           .controls label {
-            .force-wrap {
-              display: block;
-            }
-            input {
+            input.datepicker,
+            input.ui-timepicker-input {
               .calcWidth(~"100% - 18px");
             }
             .ui-timepicker-input {
