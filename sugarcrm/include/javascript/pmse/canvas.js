@@ -1,13 +1,3 @@
-/*
- * Your installation or use of this SugarCRM file is subject to the applicable
- * terms available at
- * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
- * If you do not agree to all of the applicable terms or do not have the
- * authority to bind the entity as an authorized representative, then do not
- * install or use this SugarCRM file.
- *
- * Copyright (C) SugarCRM Inc. All rights reserved.
- */
 /*global jCore, $, HiddenField, TextareaField, TextField, ItemMatrixField,
  PROJECT_LOCKED_VARIABLES, SUGAR_URL, RestProxy, ComboboxField, adamUID,
  PROJECT_MODULE, project, MessagePanel, PROJECT_LOCKED_VARIABLES, Form, Window,
@@ -294,7 +284,7 @@ var AdamCanvas = function (options) {
                 }
             ]
 
-        },
+        }/*,
         AdamArtifact: {
             textannotation : [
                 {
@@ -315,7 +305,7 @@ var AdamCanvas = function (options) {
                     ]
                 }
             ]
-        }
+        }*/
     };
 
     AdamCanvas.prototype.initObject.call(this, options);
@@ -459,7 +449,7 @@ AdamCanvas.prototype.getContextMenu = function () {
         name: 'pro_terminate_variables',
         label: translate('LBL_PMSE_LABEL_TERMINATE_PROCESS'),
         required: false,
-        fieldWidth: 250,
+        fieldWidth: 414,
         fieldHeight: 80,
         decimalSeparator: SUGAR.App.config.defaultDecimalSeparator,
         numberGroupingSeparator: SUGAR.App.config.defaultNumberGroupingSeparator,
@@ -467,8 +457,8 @@ AdamCanvas.prototype.getContextMenu = function () {
             logic: true,
             group: true
         },
-        constant: false,
-        decimalSeparator: PMSE_DECIMAL_SEPARATOR
+        constant: false/*,
+        decimalSeparator: PMSE_DECIMAL_SEPARATOR*/
     });
 
     fieldsItems = function (value, initial) {
@@ -823,41 +813,49 @@ AdamCanvas.prototype.getContextMenu = function () {
         buttons: [
            // { jtype: 'submit', caption: 'Save' },
 
-            { jtype: 'normal', caption: translate('LBL_PMSE_BUTTON_SAVE'), handler: function () {
-                f.submit();
-            }},
-
-
-            { jtype: 'normal', caption: translate('LBL_PMSE_BUTTON_CANCEL'), handler: function () {
-                if (f.isDirty()) {
-                    cancelInformation =  new MessagePanel({
-                        title: "Confirm",
-                        wtype: 'Confirm',
-                        message: translate('LBL_PMSE_MESSAGE_CANCEL_CONFIRM'),
-                        buttons: [
-                            {
-                                jtype: 'normal',
-                                caption: translate('LBL_PMSE_BUTTON_YES'),
-                                handler: function () {
-                                    PROJECT_LOCKED_VARIABLES = project.process_definition.pro_locked_variables.slice();
-                                    cancelInformation.close();
-                                    w.close();
+            {
+                jtype: 'normal',
+                caption: translate('LBL_PMSE_BUTTON_SAVE'),
+                handler: function () {
+                    f.submit();
+                },
+                cssClasses: ['btn', 'btn-primary']
+            },
+            {
+                jtype: 'normal',
+                caption: translate('LBL_PMSE_BUTTON_CANCEL'),
+                handler: function () {
+                    if (f.isDirty()) {
+                        cancelInformation =  new MessagePanel({
+                            title: "Confirm",
+                            wtype: 'Confirm',
+                            message: translate('LBL_PMSE_MESSAGE_CANCEL_CONFIRM'),
+                            buttons: [
+                                {
+                                    jtype: 'normal',
+                                    caption: translate('LBL_PMSE_BUTTON_YES'),
+                                    handler: function () {
+                                        PROJECT_LOCKED_VARIABLES = project.process_definition.pro_locked_variables.slice();
+                                        cancelInformation.close();
+                                        w.close();
+                                    }
+                                },
+                                {
+                                    jtype: 'normal',
+                                    caption: translate('LBL_PMSE_BUTTON_NO'),
+                                    handler: function () {
+                                        cancelInformation.close();
+                                    }
                                 }
-                            },
-                            {
-                                jtype: 'normal',
-                                caption: translate('LBL_PMSE_BUTTON_NO'),
-                                handler: function () {
-                                    cancelInformation.close();
-                                }
-                            }
-                        ]
-                    });
-                    cancelInformation.show();
-                } else {
-                    w.close();
-                }
-            }}
+                            ]
+                        });
+                        cancelInformation.show();
+                    } else {
+                        w.close();
+                    }
+                },
+                cssClasses: ['btn btn-invisible btn-link']
+            }
         ],
         callback: callbackModule,
         proxy: null,
@@ -865,7 +863,7 @@ AdamCanvas.prototype.getContextMenu = function () {
     });
 
     w = new Window({
-        width: 580,
+        width: 690,
         height: 450,
         modal: true,
         title: translate('LBL_PMSE_CONTEXT_MENU_PROCESS_DEFINITION')
@@ -1062,12 +1060,12 @@ AdamCanvas.prototype.onRemoveElementHandler = function (element) {
         if (listPanelError.items.length){
             for ( i = 0 ; i < element.length ; i+=1 ) {
                 if (!(element[i].type === "Connection")){
-                    item = listPanelError.getItemById(element[i].getID()); 
+                    item = listPanelError.getItemById(element[i].getID());
                     if (item){
                         listPanelError.removeItemById(element[i].getID());
                     }
                 }
-            }   
+            }
         }
     }
     this.bpmnValidation();
