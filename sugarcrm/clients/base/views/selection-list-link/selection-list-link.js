@@ -9,6 +9,29 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
+ * The SelectionListLinkView is a custom SelectionListView used in subpanels to link existing records.
+ * As SelectionListView, it's designed to be opened in a drawer passing it the following data in the context:
+ *  `module` The module the list is related with.
+ *  `recParentModel` The parent model.
+ *  `recLink`
+ *  `recContext` The context of the element in which the drawer is called.
+ *  `recView` The view of the element in which the drawer is called.
+ *
+ *  Example of usage:
+ *
+ *         app.drawer.open({
+ *           layout: 'selection-list-link',
+ *           context: {
+ *               module: this.context.get('module'),
+ *               recParentModel: this.context.get('parentModel'),
+ *               recLink: this.context.get('link'),
+ *               recContext: this.context,
+ *               recView: this.view
+ *           }
+ *         }, function(model) {
+ *            ....
+ *         });
+ *
  * @class View.Views.Base.SelectionListLinkView
  * @alias SUGAR.App.view.views.BaseSelectionListLinkView
  * @extends View.Views.Base.SelectionListView
@@ -17,14 +40,19 @@
     extendsFrom: 'SelectionListView',
 
     initialize: function(options) {
-        this.multiSelect = options.context.get('recLink') ?
+        /**
+         * Boolean to know if we can link multiple items.
+         *
+         * @type {Boolean}
+         */
+        this.isMultiSelect = options.context.get('recLink') ?
                 app.data.canHaveMany(app.controller.context.get('module'), options.context.get('recLink')) :
                 false;
 
         this._super('initialize', [options]);
-        options.meta.selection = _.extend({}, options.meta.selection, {isLinkAction: true});
+        this.meta.selection = _.extend({}, options.meta.selection, {isLinkAction: true});
 
-        if (this.multiSelect) {
+        if (this.isMultiSelect) {
             //Set up mass linker component
             var pageComponent = this.layout.getComponent('mass-link');
             if (!pageComponent) {
@@ -45,7 +73,7 @@
      * Sets up events
      */
     initializeEvents: function() {
-        if (this.multiSelect) {
+        if (this.isMultiSelect) {
             this.context.on('selection-list:link:multi', this._selectMultipleAndClose, this);
             this.context.on('selection-list:select', this._refreshList, this);
         } else {

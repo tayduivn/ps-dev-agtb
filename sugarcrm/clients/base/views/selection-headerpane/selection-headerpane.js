@@ -19,7 +19,7 @@
     initialize: function(options) {
         var moduleMeta = app.metadata.getModule(options.module),
             isBwcEnabled = (moduleMeta && moduleMeta.isBwcEnabled),
-            multiSelectFilter = options.context.get('multiSelect'),
+            multiSelectFilter = options.context.get('isMultiSelect'),
             buttonsToRemove = [],
             additionalEvents = {};
 

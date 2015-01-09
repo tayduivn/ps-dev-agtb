@@ -765,7 +765,8 @@
                                 self._renderField(field, fieldContainer);
                             }
                         }
-                    }});
+                    }
+                });
             } else {
                 this._renderField(field, fieldContainer);
             }

@@ -9,6 +9,44 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
+ * The SelectionListView provides an easy way to select records from a list and
+ * get selected items as an output. It's designed to be used in a drawer.
+ *
+ * The SelectionListView has a generic implementation and can be overriden for
+ * particular uses.
+ *
+ * It has the following properties:
+ *
+ * - `isMultiSelect` A boolean that tells if the user can select multiple records.
+ * - `maxSelectedRecords` The max number of records the user can select in the
+ *    case of multiselect selecttion list.
+ *
+ * It has to be opened passing the following data in the drawer's context:
+ *
+ * - `module` {String} The module the list is related to.
+ * - `fields` {Array} The fields to be displayed.
+ * - `filterOptions` {Object} the filter options for the list view.
+ * - `preselectedModelIds` {Array} The array of ids of preselected records.
+ * - `isMultiSelect` {boolean} A boolean that tells if the user can select
+ *    multiple records.
+ * - `maxSelectedRecords` {number} The max number of records the user can select
+ *    in the case of multiselect selecttion list.
+ *
+ *  Example of usage:
+ *
+ *     app.drawer.open({
+ *              layout: 'selection-list',
+ *               context: {
+ *                   module: this.getSearchModule(),
+ *                   fields: this.getSearchFields(),
+ *                   filterOptions: this.getFilterOptions(),
+ *                   preselectedModelIds: _.clone(this.model.get(this.def.id_name)),
+ *                   isMultiSelect: this.def.isMultiSelect,
+ *                   maxSelectedRecords: this.maxSelectedRecords
+ *               }
+ *           }, _.bind(this.setValue, this));
+ *     },
+ *
  * @class View.Views.Base.SelectionListView
  * @alias SUGAR.App.view.views.BaseSelectionListView
  * @extends View.Views.Base.FlexListView
@@ -16,14 +54,18 @@
 ({
     extendsFrom: 'FlexListView',
 
-    /**
-     * Maximum number of records a user can select.
-     *
-     * @property {number}
-     */
-
     initialize: function(options) {
-        this.multiSelect = this.multiSelect || options.context.get('multiSelect');
+        /**
+         * Boolean to know if we can link multiple items.
+         *
+         * @property {boolean}
+         */
+        this.isMultiSelect = !_.isUndefined(this.isMultiSelect) ? this.isMultiSelect : options.context.get('isMultiSelect');
+        /**
+         * Maximum number of records a user can select.
+         *
+         * @property {number}
+         */
         this.maxSelectedRecords = options.context.get('maxSelectedRecords');
         this.plugins = _.union(this.plugins, ['ListColumnEllipsis', 'ListRemoveLinks']);
         //setting skipFetch to true so that loadData will not run on initial load and the filter load the view.
@@ -31,7 +73,7 @@
         options.meta = options.meta || {};
 
         //Allow multiselect if allowed.
-        if (this.multiSelect) {
+        if (this.isMultiSelect) {
             options.meta.selection = {
                 type: 'multi',
                 isSearchAndSelectAction: true
@@ -61,7 +103,7 @@
     triggerCheck: function(event) {
         //Ignore inputs and links/icons, because those already have defined effects
         if (!($(event.target).is('a,i,input'))) {
-            if (this.multiSelect) {
+            if (this.isMultiSelect) {
                 //simulate click on the input for this row
                 var checkbox = $(event.currentTarget).find('input[name="check"]');
                 checkbox[0].click();
@@ -77,7 +119,7 @@
      *
      */
     initializeEvents: function() {
-        if (this.multiSelect) {
+        if (this.isMultiSelect) {
             this.context.on('selection:select:fire', this._selectMultipleAndClose, this);
         } else {
             this.context.on('change:selection_model', this._selectAndClose, this);
@@ -85,8 +127,7 @@
     },
 
     /**
-     * Selects multiple records and closes the drawer.
-     *
+     * Closes the drawer passing the selected models attributes to the callback.
      *
      * @protected
      */
@@ -121,7 +162,7 @@
     },
 
     /**
-     * Closes the drawer passing the selected model attributes.
+     * Closes the drawer passing the selected model attributes to the callback.
      *
      * @param {object} context
      * @param {object} selectedModel The selected record.
@@ -169,11 +210,7 @@
      * @private
      */
     _getCollectionAttributes: function(collection) {
-        var attributes = [];
-        _.each(collection.models, _.bind(function(model) {
-            attributes.push(this._getModelAttributes(model));
-        }, this));
-
+        var attributes = _.map(collection.models, this._getModelAttributes, this);
         return attributes;
     },
 

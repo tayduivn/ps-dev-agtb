@@ -84,15 +84,16 @@
         var parentCtx = this.context && this.context.parent,
             setFromCtx;
 
-        setFromCtx = !value && parentCtx &&
+        if (value) {
+            this._valueSetOnce = true;
+        }
+
+        setFromCtx = !value && !this._valueSetOnce && parentCtx &&
             this.view instanceof app.view.views.BaseCreateView &&
             _.contains(_.keys(app.lang.getAppListStrings(this.def.parent_type)), parentCtx.get('module')) &&
             this.module !== this.def.module;
 
-        if (value) {
-            this._valueSetOnce = true;
-        }
-        if (!this._valueSetOnce && setFromCtx) {
+        if (setFromCtx) {
             this._valueSetOnce = true;
             var model = parentCtx.get('model');
             // FIXME we need a method to prevent us from doing this

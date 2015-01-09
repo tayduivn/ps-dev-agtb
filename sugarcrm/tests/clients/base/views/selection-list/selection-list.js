@@ -104,13 +104,6 @@ describe("Base.View.SelectionList", function () {
     describe('Multiselect', function() {
         beforeEach(function() {
             view.multiSelect = true;
-//            var initializeEventsStub = sinon.collection.stub(view, 'initializeEvents', function() {
-//               if (view.multiSelect) {
-//                   view.context.on('selection:select:fire', view._selectMultipleAndClose, view);
-//               } else {
-//                   view.context.on('change:selection_model', view._selectAndClose, view);
-//               }
-//           });
         });
 
         it('should display the select button', function() {
@@ -118,11 +111,7 @@ describe("Base.View.SelectionList", function () {
         });
 
         it('should call _showMaxSelectedRecordsAlert if the number of selected items exceeds the maximum', function() {
-
-            var model1 = new Backbone.Model({id: '1'}),
-                model2 = new Backbone.Model({id: '2'}),
-                model3 = new Backbone.Model({id: '3'}),
-                models = new Backbone.Collection([model1, model2, model3]),
+            var models = new Backbone.Collection([{id: '1'}, {id: '2'}, {id: '3'}]),
                 showMaxSelectedRecordsAlert = sinon.collection.stub(view, '_showMaxSelectedRecordsAlert');
             view.maxSelectedRecords = 2;
             view.context.set('mass_collection', models);
@@ -149,18 +138,15 @@ describe("Base.View.SelectionList", function () {
         });
 
         it('should get the attributes of every selected record', function() {
-            var model1 = new Backbone.Model({id: '1'}),
-                model2 = new Backbone.Model({id: '2'}),
-                model3 = new Backbone.Model({id: '3'}),
-                models = new Backbone.Collection([model1, model2, model3]);
+            var models = new Backbone.Collection([{id: '1'}, {id: '2'}, {id: '3'}]);
             view.maxSelectedRecords = 20;
             view.context.set('mass_collection', models);
             var selections = view.context.get('mass_collection'),
                 attributes = view._getCollectionAttributes(selections);
 
-            expect(selections.models[0].attributes).toEqual(attributes[0]);
-            expect(selections.models[1].attributes).toEqual(attributes[1]);
-            expect(selections.models[2].attributes).toEqual(attributes[2]);
+            expect(selections.at(0).attributes).toEqual(attributes[0]);
+            expect(selections.at(1).attributes).toEqual(attributes[1]);
+            expect(selections.at(2).attributes).toEqual(attributes[2]);
         });
     });
 });

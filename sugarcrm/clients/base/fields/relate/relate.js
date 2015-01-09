@@ -103,13 +103,17 @@
          */
         this.maxSelectedRecords = 20;
         /**
-         * Maximum number of items we display in the field. If the user selects
-         * more records, we display a 'xx more...' pill.
+         * Maximum number of items we display in the field.
          *
          * @property {number}
          */
         app.view.Field.prototype.initialize.call(this, options);
-
+        /**
+         * The template used for a pill in case of multiselect field.
+         *
+         * @property {Function}
+         * @private
+         */
         this._select2formatSelectionTemplate = app.template.get("f.relate.pill");
 
         var populateMetadata = app.metadata.getModule(this.getSearchModule());
@@ -225,15 +229,16 @@
         if (this.def.isMultiSelect) {
             cssClasses.push('select2-choices-pills-close');
         }
-        return !_.isEmpty(cssClasses) ? cssClasses.join(' ') : '';
+        return cssClasses.join(' ');
     },
 
     /**
      * Renders relate field
      */
     _render: function() {
-        var self = this,
-            searchModule = this.getSearchModule();
+        var self = this;
+        var searchModule = this.getSearchModule();
+        var loadingLabel = app.lang.get('LBL_LOADING', self.module);
 
         //Do not render if the related module is invalid
         if (searchModule && !_.contains(app.metadata.getModuleNames(), searchModule)) {
@@ -245,7 +250,7 @@
         //FIXME remove check for tplName SC-2608
         if (this.tplName === 'edit' || this.tplName === 'massupdate') {
 
-            var inList = _.contains(this.view.name === 'recordlist');
+            var inList = this.view.name === 'recordlist';
             this.$(this.fieldTag).select2({
                 width: inList ? 'off' : '100%',
                 dropdownCssClass: _.bind(this._buildCssClasses, this),
@@ -260,7 +265,7 @@
                     if (!self.def.isMultiSelect) {
                         return callback({id: id, text: text});
                     }
-                    ids = id.split(self.separator);
+                    var ids = id.split(self.separator);
                     text = text.split(self.separator);
                     callback(_.map(ids, function(value, index) {
                         return {id: value, text: text[index]};
@@ -269,14 +274,14 @@
                 formatInputTooShort: function() {
                     return '';
                 },
-                formatSelection: function(obj){
+                formatSelection: function(obj) {
                     var ctx = {};
+                    //TODO We should investigate why it's sometimes `text` and
+                    //sometimes `id` and make it always same if possible.
                     ctx.text = obj.text || obj.id;
                     return self._select2formatSelectionTemplate(ctx);
                 },
-                formatSearching: function() {
-                    return app.lang.get('LBL_LOADING', self.module);
-                },
+                formatSearching: loadingLabel,
                 placeholder: this.getPlaceHolder(),
                 allowClear: self.allow_single_deselect,
                 minimumInputLength: self.minChars,
@@ -309,11 +314,11 @@
                 // For multiselect fields, we update the data-rname attributes
                 // so it stays in sync with the id list, and allows us to use
                 // 'setValue' method. The use of 'setValue' method is required
-                // to re-render the field and update the 'xx more...' pill.
+                // to re-render the field.
                 if (self.def.isMultiSelect) {
-                    var dataRname = plugin.opts.element.data('rname').split(self.separator),
-                        dataRname = dataRname[0] !== '' ? dataRname : [];
-                        ids = $(this).select2('val');
+                    var dataRname = plugin.opts.element.data('rname');
+                    dataRname = dataRname ? dataRname.split(self.separator) : [];
+                    var ids = $(this).select2('val');
 
                     if (e.added) {
                         dataRname.push(e.added.text);
@@ -441,10 +446,6 @@
         var parentCtx = this.context && this.context.parent,
             setFromCtx;
 
-        setFromCtx = value === null && parentCtx &&
-            this.view instanceof app.view.views.BaseCreateView &&
-            parentCtx.get('module') === this.def.module &&
-            this.module !== this.def.module;
         if (value) {
             /**
              * Flag to indicate that the value has been set from the context
@@ -456,8 +457,12 @@
              */
             this._valueSetOnce = true;
         }
+        setFromCtx = value === null && !this._valueSetOnce && parentCtx &&
+            this.view instanceof app.view.views.BaseCreateView &&
+            parentCtx.get('module') === this.def.module &&
+            this.module !== this.def.module;
 
-        if (!this._valueSetOnce && setFromCtx) {
+        if (setFromCtx) {
             this._valueSetOnce = true;
             var model = parentCtx.get('model');
             // FIXME we need a method to prevent us from doing this
@@ -481,6 +486,11 @@
         return value;
     },
 
+    /**
+     * Sets the value in the field.
+     *
+     * @param {Array} models The source models attributes.
+     */
     setValue: function(models) {
 
         if (!models) {
@@ -532,7 +542,8 @@
 
     /**
      * Handles update of related fields.
-     * @param {Object} model
+     *
+     * @param {Object} model The source model attributes.
      */
     updateRelatedFields: function(model) {
         var newData = {},
@@ -635,7 +646,7 @@
                 fields: this.getSearchFields(),
                 filterOptions: this.getFilterOptions(),
                 preselectedModelIds: _.clone(this.model.get(this.def.id_name)),
-                multiSelect: this.def.isMultiSelect,
+                isMultiSelect: this.def.isMultiSelect,
                 maxSelectedRecords: this.maxSelectedRecords
             }
         }, _.bind(this.setValue, this));
@@ -762,12 +773,6 @@
      * @param event
      */
     search: _.debounce(function(query) {
-        var plugin = this.$(this.fieldTag).data('select2'),
-            ids = this.$(this.fieldTag).select2('val');
-        if (_.isArray(ids) && ids.length >= this.maxSelectedRecords) {
-            this._showMaxSelectedRecordsAlert();
-            plugin.close();
-        }
         var term = query.term || '',
             self = this,
             searchModule = this.getSearchModule(),
@@ -821,25 +826,6 @@
             }
         });
     }, app.config.requiredElapsed || 500),
-
-    /**
-     * Displays error message since the number of selected records exceeds the
-     * maximum allowed.
-     *
-     * @private
-     */
-    _showMaxSelectedRecordsAlert: function() {
-        var msg = app.lang.get('TPL_FILTER_MAX_NUMBER_RECORDS', this.module,
-            {
-                maxRecords: this.maxSelectedRecords
-            }
-        );
-        app.alert.show('too-many-selected-records', {
-            level: 'warning',
-            messages: msg,
-            autoClose: true
-        });
-    },
 
     /**
      * {@inheritDoc}
