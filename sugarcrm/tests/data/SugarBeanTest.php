@@ -702,6 +702,20 @@ class SugarBeanTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertNotContains("opportunity_role_fields", $query["secondary_select"], "secondary_select should not contain fields with relationship_fields defined (e.g. opportunity_role_fields).");
         $this->assertContains("opportunity_role_id", $query["secondary_select"], "secondary_select should contain the fields that's defined in relationship_fields (e.g. opportunity_role_id).");
 
+        $bean = BeanFactory::getBean("Contacts");
+        $filter = array(
+            "account_name",
+            "account_id"
+        );
+        $params = array(
+            "join_type" => "LEFT JOIN",
+            "join_table_alias" => "accounts",
+            "join_table_link_alias" => "jtl0"
+        );
+        $query = $bean->create_new_list_query("", "", $filter, $params, 0, "", true);
+
+        $this->assertEquals(1, substr_count($query["secondary_select"], " account_id"), "secondary_select should not contain duplicate alias names.");
+
         $bean = BeanFactory::getBean('Calls');
         $query = $bean->create_new_list_query('', '', array('contact_name', 'contact_id'), array(), 0, '', true);
 
