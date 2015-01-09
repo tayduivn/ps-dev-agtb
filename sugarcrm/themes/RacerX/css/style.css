@@ -3103,6 +3103,16 @@ embed
 
     }
 
+    .dashletPanelMenu.wizard .bd .screen .preset-settings {
+        width: auto;
+    }
+    .dashletPanelMenu.wizard .bd .screen .preset-settings .preset-row .preset-label {
+        padding: 10px 10px 10px 0px;
+    }
+    .dashletPanelMenu.wizard .bd .screen .preset-settings *[id^="custom_import_"] td[class^="preset-"] {
+        white-space: nowrap;
+    }
+
     .dashletPanelMenu.wizard.import .bd {
         padding: 0px;
     }
