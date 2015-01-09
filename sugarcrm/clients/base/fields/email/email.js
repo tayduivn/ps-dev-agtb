@@ -49,6 +49,10 @@
             options.def.required = options.model.fields.email1.required;
         }
 
+        if (options.view.action === 'filter-rows') {
+            options.viewName = 'filter-rows-edit';
+        }
+
         this._super('initialize', [options]);
 
         //set model as the related record when composing an email (copy is made by plugin)
@@ -498,6 +502,10 @@
             }
 
             return emails;
+        }
+
+        if (this.view.action === 'filter-rows') {
+            return value;
         }
     },
 
