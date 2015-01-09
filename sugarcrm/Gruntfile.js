@@ -109,7 +109,6 @@ module.exports = function(grunt) {
                 'tests',
                 // sugarcharts should be ignored
                 'SugarCharts'
-
             ],
             licenseFile: 'LICENSE',
             // Add paths you want to exclude in the whiteList file.

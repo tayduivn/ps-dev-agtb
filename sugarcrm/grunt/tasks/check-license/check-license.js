@@ -10,7 +10,7 @@
  */
 
 module.exports = function(grunt) {
-    grunt.registerTask('check-license', 'Returns files that do not have the sugar license header', function() {
+    grunt.registerTask('check-license', 'Outputs files that do not have the exact sugar license specified in `sugarcrm/LICENSE`', function() {
         this.async();
         var exec = require('child_process').exec;
         var options = grunt.config.get([this.name]);
@@ -64,7 +64,7 @@ module.exports = function(grunt) {
         exec(command, {maxBuffer: 2000 * 1024}, function(error, stdout, stderr) {
 
             if (error && error.code === 1) {
-                grunt.log.ok('No files without license header found.');
+                grunt.log.ok('All files have the exact license specified in `sugarcrm/LICENSE`');
             } else {
                 grunt.log.subhead('Invalid license headers found in:');
                 grunt.log.error(stdout);
