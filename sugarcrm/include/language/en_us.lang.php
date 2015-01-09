@@ -109,6 +109,8 @@ $app_list_strings = array (
     'UserSignatures' => 'User Signatures',
     'Shippers' => 'Shipping Providers',
     'Styleguide' => 'Styleguide',
+    'Tags' => 'Tags',
+    'Feedbacks' => 'Feedbacks',
   ),
 
     'moduleIconList' =>
@@ -220,7 +222,9 @@ $app_list_strings = array (
     'Shippers' => 'Shipping Provider',
     'Subscriptions' => 'Subscription',
     'UserSignatures' => 'User Signature',
-  ),
+    'Tags' => 'Tag',
+    'Feedbacks' => 'Feedback',
+),
 
 /*
  * @deprecated as of 7.2.0 since it is only used on massupdate in BWC mode.
@@ -1876,6 +1880,21 @@ $app_list_strings = array (
         'after_logout' => 'After Logout',
         'after_login_failed' => 'After Login Failed',
     ),
+
+    'feedback_nps_dom' => array(
+        'NOTLIKELY11' => '11',
+        'NOTLIKELY10' => '10',
+        'NOTLIKELY9' => '9',
+        'NOTLIKELY8' => '8',
+        'NOTLIKELY7' => '7',
+        'NOTLIKELY6' => '6',
+        'NOTLIKELY5' => '5',
+        'NOTLIKELY4' => '4',
+        'NOTLIKELY3' => '3',
+        'NOTLIKELY2' => '2',
+        'NOTLIKELY1' => '1',
+    ),
+
 );
 
 $app_strings = array (

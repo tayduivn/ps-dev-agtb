@@ -17,7 +17,7 @@
     events: {
         'click [data-action=shortcuts]': 'shortcuts',
         'click [data-action=tour]': 'showTutorialClick',
-        'click [data-action=feedback]': 'feedback',
+        'click [data-action=feedback]': 'toggleFeedbackPopover',
         'click [data-action=support]': 'support',
         'click [data-action=help]': 'help'
     },
@@ -32,6 +32,12 @@
         'about',
         'first-login-wizard'
     ],
+
+    /**
+     * Internal flag that knows if the feedback module is open or closed.
+     * @private
+     */
+    _feedbackIsOpen: false,
 
     handleViewChange: function(layout, params) {
         var module = params && params.module ? params.module : null;
@@ -155,9 +161,61 @@
         this.isShortcutsEnabled = (this.isAuthenticated && app.shortcuts.isEnabled());
         app.view.View.prototype._renderHtml.call(this);
     },
-    feedback: function() {
-        window.open('http://www.sugarcrm.com/sugar7survey', '_blank');
+
+    /**
+     * Toggles feedback popup on click (open or close).
+     * TODO move this to a feedback field
+     *
+     * This currently sets and uses the internal `_feedbackIsOpen` flag to
+     * create and dispose the layout.
+     * FIXME this shouldn't work that way and should trigger an event that the
+     * additionalComponent (the feedback layout) is listening to and the toggle
+     * will simply trigger the event for the layout to show and hide.
+     * This will improve performance (no more layout being disposed and created
+     * on click).
+     *
+     * @param {Event} evt the `click` event.
+     */
+    toggleFeedbackPopover: function(evt) {
+        this.$('[data-action="feedback"]').addClass('active');
+        if (this._feedbackIsOpen) {
+            this._disposeFeedbackLayout();
+            return;
+        }
+        var layout = this._feedbackLayout = app.view.createLayout({
+            module: 'Feedbacks',
+            name: 'feedback'
+        });
+        this._feedbackLayout.on('feedback:close', this._disposeFeedbackLayout, this);
+
+        layout.render();
+        layout.$popover = this.$('[data-action="feedback"]');
+        layout.$popover.popover({
+            trigger: 'manual',
+            title: 'Feedback',
+            content: layout.$el,
+            html: true,
+            placement: 'top',
+            template: '<div class="popover feedback""><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>'
+        });
+        layout.$popover.popover('show');
+        this._feedbackIsOpen = true;
     },
+
+    /**
+     * Dispose the Feedback layout.
+     *
+     * This will prevent memory leaks when closing the feedback pop up.
+     *
+     * @private
+     */
+    _disposeFeedbackLayout: function() {
+        this._feedbackLayout.dispose();
+        this.$('[data-action="feedback"]').popover('destroy');
+        this.$('[data-action="feedback"]').removeClass('active');
+        this._feedbackIsOpen = false;
+    },
+
     support: function() {
         window.open('http://support.sugarcrm.com', '_blank');
     },
