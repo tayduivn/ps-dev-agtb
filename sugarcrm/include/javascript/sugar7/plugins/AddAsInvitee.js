@@ -36,7 +36,11 @@
                     }
 
                     if (this.isFieldPrepopulatedOnCreate('assigned_user_name')) {
-                        this.handleParentChange(this.model);
+                        this.handleAssignedUserChange(this.model);
+                    }
+
+                    if (this.isFieldPrepopulatedOnCreate('contact_id')) {
+                        this.addContactFromContactIdField(this.model);
                     }
 
                     if (this.model.isNew()) {
@@ -76,7 +80,11 @@
             },
 
             /**
-             * If parent field changes, check if it is a possible invitee add as an invitee
+             * If parent field changes, check if it is a possible invitee add as
+             * an invitee
+             *
+             * Prevent invitee from being deleted in case where we are linking
+             * the bean automatically.
              *
              * @param {Object} model
              */
@@ -85,8 +93,12 @@
                     id: model.get('parent_id'),
                     name: model.get('parent_name')
                 });
+
                 if (this.isPossibleInvitee(parent)) {
                     this.turnOffAutoInviteParent();
+                    if (this._isCreateAndLinkAction(parent, model)) {
+                        parent.deletable = false;
+                    }
                     this.addAsInvitee(parent);
                 }
             },
@@ -108,6 +120,43 @@
                 if (this.isPossibleInvitee(user)) {
                     this.addAsInvitee(user);
                 }
+            },
+
+            /**
+             * Adds the contact defined in the contact field as an invitee
+             *
+             * Prevent invitee from being deleted in case where we are linking
+             * the bean automatically.
+             *
+             * @param {Data.Bean} model
+             */
+            addContactFromContactIdField: function(model) {
+                var contact = app.data.createBean('Contacts', {
+                    id: model.get('contact_id'),
+                    name: model.get('contact_name')
+                });
+
+                if (this.isPossibleInvitee(contact)) {
+                    if (this._isCreateAndLinkAction(contact, model)) {
+                        contact.deletable = false;
+                    }
+                    this.addAsInvitee(contact);
+                }
+            },
+
+            /**
+             * Will the bean be linked automatically?
+             * (for example, create & relate action from subpanel)
+             *
+             * @param {Data.Bean} invitee
+             * @param {Data.Bean} model
+             * @private
+             */
+            _isCreateAndLinkAction: function(invitee, model) {
+                return (!_.isUndefined(model.link) &&
+                    !_.isUndefined(model.link.bean) &&
+                    model.link.bean.module === invitee.module &&
+                    model.link.bean.id === invitee.id);
             },
 
             /**

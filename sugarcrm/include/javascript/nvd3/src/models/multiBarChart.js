@@ -45,7 +45,7 @@ nv.models.multiBarChart = function() {
         .tickFormat(function(d) { return d; }),
       yAxis = nv.models.axis()
         .tickPadding(4)
-        .tickFormat(d3.format(',.1f')),
+        .tickFormat(d3.format('s')),
       legend = nv.models.legend(),
       controls = nv.models.legend()
         .color(['#444']),

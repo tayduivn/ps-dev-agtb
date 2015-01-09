@@ -15,6 +15,7 @@
 <html class="no-js">
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+        <meta charset="UTF-8">
         <title>SugarCRM</title>
         <link rel="shortcut icon" href="{sugar_getjspath file='themes/default/images/sugar_icon.ico'}">
         <!-- CSS -->

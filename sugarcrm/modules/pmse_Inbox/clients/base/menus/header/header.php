@@ -33,14 +33,14 @@ $viewdefs[$moduleName]['base']['menu']['header'] = array(
     array(
         'route'=>'#'.$moduleName.'/layout/casesList',
         'label' =>'LBL_PMSE_TITLE_PROCESSESS_LIST',
-        'acl_action'=>'list',
+        'acl_action'=>'developer',
         'acl_module'=>$moduleName,
         'icon' => 'fa-bars',
     ),
     array(
         'route'=>'#'.$moduleName.'/layout/unattendedCases',
         'label' =>'LBL_PMSE_TITLE_UNATTENDED_CASES',
-        'acl_action'=>'list',
+        'acl_action'=>'developer',
         'acl_module'=>$moduleName,
         'icon' => 'fa-bars',
     ),

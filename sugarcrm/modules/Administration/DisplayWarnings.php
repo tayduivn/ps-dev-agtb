@@ -65,19 +65,18 @@ if (empty($license)){
 // to as Critical Control Software under the End User
 // License Agreement.  Neither the Company nor the Users
 // may modify any portion of the Critical Control Software.
- if( !isset($_SESSION['LICENSE_EXPIRES_IN']) ){
-        	checkSystemLicenseStatus();
+if (!isset($_SESSION['LICENSE_EXPIRES_IN'])) {
+    checkSystemLicenseStatus();
 }
 
-if(!ocLicense() && isset($_SESSION['LICENSE_EXPIRES_IN']) && $_SESSION['LICENSE_EXPIRES_IN'] != 'valid'){
-
-    if( (!is_admin($current_user) && $_SESSION['LICENSE_EXPIRES_IN'] < -1) || ( $_SESSION['LICENSE_EXPIRES_IN'] < -7) ){
+if (!ocLicense() && isset($_SESSION['LICENSE_EXPIRES_IN']) && $_SESSION['LICENSE_EXPIRES_IN'] != 'valid') {
+    if ($_SESSION['LICENSE_EXPIRES_IN'] < -1) {
         setSystemState('LICENSE_KEY');
     }
 }
 
-if(!ocLicense() && isset($_SESSION['VALIDATION_EXPIRES_IN']) && $_SESSION['VALIDATION_EXPIRES_IN'] != 'valid'){
-    if( (!is_admin($current_user) && $_SESSION['VALIDATION_EXPIRES_IN'] < -1) || ( $_SESSION['VALIDATION_EXPIRES_IN'] < -7) ){
+if (!ocLicense() && isset($_SESSION['VALIDATION_EXPIRES_IN']) && $_SESSION['VALIDATION_EXPIRES_IN'] != 'valid') {
+    if ($_SESSION['VALIDATION_EXPIRES_IN'] < -1) {
         setSystemState('LICENSE_KEY');
     }
 }

@@ -19,7 +19,7 @@ $dictionary['pmse_Emails_Templates'] = array(
 	'activity_enabled'=>true,
 		'duplicate_merge'=>true,
 		'fields'=>array (
-  'name' => 
+  'name' =>
   array (
     'name' => 'name',
     'vname' => 'LBL_NAME',
@@ -28,7 +28,7 @@ $dictionary['pmse_Emails_Templates'] = array(
     'dbType' => 'varchar',
     'len' => '255',
     'unified_search' => false,
-    'full_text_search' => 
+    'full_text_search' =>
     array (
       'boost' => '3',
     ),
@@ -47,7 +47,7 @@ $dictionary['pmse_Emails_Templates'] = array(
     'calculated' => false,
     'size' => '20',
   ),
-  'from_name' => 
+  'from_name' =>
   array (
     'required' => false,
     'name' => 'from_name',
@@ -64,7 +64,7 @@ $dictionary['pmse_Emails_Templates'] = array(
     'reportable' => true,
     'unified_search' => false,
     'merge_filter' => 'disabled',
-    'full_text_search' => 
+    'full_text_search' =>
     array (
       'boost' => '0',
     ),
@@ -72,7 +72,7 @@ $dictionary['pmse_Emails_Templates'] = array(
     'len' => '255',
     'size' => '20',
   ),
-  'from_address' => 
+  'from_address' =>
   array (
     'required' => false,
     'name' => 'from_address',
@@ -89,7 +89,7 @@ $dictionary['pmse_Emails_Templates'] = array(
     'reportable' => true,
     'unified_search' => false,
     'merge_filter' => 'disabled',
-    'full_text_search' => 
+    'full_text_search' =>
     array (
       'boost' => '0',
     ),
@@ -97,7 +97,7 @@ $dictionary['pmse_Emails_Templates'] = array(
     'len' => '255',
     'size' => '20',
   ),
-  'subject' => 
+  'subject' =>
   array (
     'required' => false,
     'name' => 'subject',
@@ -114,7 +114,7 @@ $dictionary['pmse_Emails_Templates'] = array(
     'reportable' => true,
     'unified_search' => false,
     'merge_filter' => 'disabled',
-    'full_text_search' => 
+    'full_text_search' =>
     array (
       'boost' => '0',
     ),
@@ -122,7 +122,7 @@ $dictionary['pmse_Emails_Templates'] = array(
     'len' => '255',
     'size' => '20',
   ),
-  'body' => 
+  'body' =>
   array (
     'required' => false,
     'name' => 'body',
@@ -139,7 +139,7 @@ $dictionary['pmse_Emails_Templates'] = array(
     'reportable' => true,
     'unified_search' => false,
     'merge_filter' => 'disabled',
-    'full_text_search' => 
+    'full_text_search' =>
     array (
       'boost' => '0',
     ),
@@ -149,7 +149,7 @@ $dictionary['pmse_Emails_Templates'] = array(
     'rows' => '4',
     'cols' => '20',
   ),
-  'body_html' => 
+  'body_html' =>
   array (
     'required' => false,
     'name' => 'body_html',
@@ -166,7 +166,7 @@ $dictionary['pmse_Emails_Templates'] = array(
     'reportable' => true,
     'unified_search' => false,
     'merge_filter' => 'disabled',
-    'full_text_search' => 
+    'full_text_search' =>
     array (
       'boost' => '0',
     ),
@@ -176,7 +176,7 @@ $dictionary['pmse_Emails_Templates'] = array(
     'rows' => '4',
     'cols' => '20',
   ),
-  'type' => 
+  'type' =>
   array (
     'required' => false,
     'name' => 'type',
@@ -193,7 +193,7 @@ $dictionary['pmse_Emails_Templates'] = array(
     'reportable' => true,
     'unified_search' => false,
     'merge_filter' => 'disabled',
-    'full_text_search' => 
+    'full_text_search' =>
     array (
       'boost' => '0',
     ),
@@ -201,7 +201,7 @@ $dictionary['pmse_Emails_Templates'] = array(
     'len' => '255',
     'size' => '20',
   ),
-  'base_module' => 
+  'base_module' =>
   array (
     'required' => true,
     'name' => 'base_module',
@@ -226,7 +226,7 @@ $dictionary['pmse_Emails_Templates'] = array(
     'studio' => 'visible',
     'dependency' => false,
   ),
-  'text_only' => 
+  'text_only' =>
   array (
     'required' => false,
     'name' => 'text_only',
@@ -243,7 +243,7 @@ $dictionary['pmse_Emails_Templates'] = array(
     'reportable' => true,
     'unified_search' => false,
     'merge_filter' => 'disabled',
-    'full_text_search' => 
+    'full_text_search' =>
     array (
       'boost' => '0',
     ),
@@ -255,7 +255,7 @@ $dictionary['pmse_Emails_Templates'] = array(
     'min' => false,
     'max' => false,
   ),
-  'published' => 
+  'published' =>
   array (
     'required' => false,
     'name' => 'published',
@@ -272,7 +272,7 @@ $dictionary['pmse_Emails_Templates'] = array(
     'reportable' => true,
     'unified_search' => false,
     'merge_filter' => 'disabled',
-    'full_text_search' => 
+    'full_text_search' =>
     array (
       'boost' => '0',
     ),
@@ -283,9 +283,14 @@ $dictionary['pmse_Emails_Templates'] = array(
 ),
 	'relationships'=>array (
 ),
-	'optimistic_locking'=>true,
-		'unified_search'=>true,
-	);
+    'optimistic_locking' => true,
+    'unified_search' => true,
+    'acls' => array(
+        'SugarACLDeveloperOrAdmin' => array(
+            'aclModule' => 'pmse_Emails_Templates', 'allowUserRead' => false
+        )
+    ),
+);
 if (!class_exists('VardefManager')){
         require_once('include/SugarObjects/VardefManager.php');
 }

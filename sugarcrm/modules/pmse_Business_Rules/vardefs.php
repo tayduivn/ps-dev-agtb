@@ -305,6 +305,7 @@ $dictionary['pmse_Business_Rules'] = array(
     ),
     'optimistic_locking'=>true,
     'unified_search'=>true,
+    'acls' => array('SugarACLDeveloperOrAdmin' => array('aclModule' => 'pmse_Business_Rules', 'allowUserRead' => false)),
 );
 
 if (!class_exists('VardefManager')) {

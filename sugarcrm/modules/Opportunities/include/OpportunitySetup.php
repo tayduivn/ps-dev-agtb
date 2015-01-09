@@ -431,10 +431,30 @@ abstract class OpportunitySetup
      */
     protected function setRevenueLineItemModuleTab($show = true)
     {
-        $this->setConfigSetting('Tab', 'RevenueLineItems', $show);
+        $this->setRevenueLineItemTab($show);
         // for ths one, we have to reverse show, since if we want to show it, it needs not be in the list
         // and if we want to hide it, it needs to not be in the list
         $this->setConfigSetting('hide_subpanels', 'revenuelineitems', !$show);
+
+        sugar_cache_clear('admin_settings_cache');
+    }
+
+    protected function setRevenueLineItemTab($show)
+    {
+        SugarAutoLoader::load('modules/MySettings/TabController.php');
+        $newTB = new TabController();
+
+        //grab the existing system tabs
+        $tabs = $newTB->get_system_tabs();
+
+        if ($show) {
+            $tabs['RevenueLineItems'] = 'RevenueLineItems';
+        } else {
+            unset($tabs['RevenueLineItems']);
+        }
+
+        //now assign the modules to system tabs
+        $newTB->set_system_tabs($tabs);
     }
 
     /**
@@ -467,6 +487,7 @@ abstract class OpportunitySetup
                 AND name = '" . $setting . "'
                 AND (platform = 'base' OR platform IS NULL OR platform = '')";
             $db->query($sql);
+            $db->commit();
         }
     }
 
@@ -503,7 +524,9 @@ abstract class OpportunitySetup
             if ($add && !$hasRLI) {
             // get the translated value
                 $list[$rli->module_name] = $module_lang['LBL_MODULE_NAME'];
+                $GLOBALS['app_list_strings'][$list_key][$rli->module_name] = $module_lang['LBL_MODULE_NAME'];
             } elseif (!$add && $hasRLI) {
+                unset($GLOBALS['app_list_strings'][$list_key][$rli->module_name]);
                 unset($list[$rli->module_name]);
             }
 

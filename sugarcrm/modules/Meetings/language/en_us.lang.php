@@ -47,6 +47,7 @@ $mod_strings = array (
 	'LBL_LIST_DUE_DATE'=>'Due Date',
 	'LBL_LIST_FORM_TITLE' => 'Meeting List',
 	'LBL_LIST_MY_MEETINGS' => 'My Meetings',
+    'LBL_MY_SCHEDULED_MEETINGS' => 'My Scheduled Meetings',
 	'LBL_LIST_RELATED_TO' => 'Related to',
 	'LBL_LIST_STATUS'=>'Status',
 	'LBL_LIST_SUBJECT' => 'Subject',

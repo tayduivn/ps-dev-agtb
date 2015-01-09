@@ -645,7 +645,7 @@ $renamedefs = array(
             array('name' => 'LBL_CONFIG_TITLE_OPPS_SETTINGS', 'type' => 'plural', 'source' => 'Opportunities'),
             array('name' => 'LBL_OPPS_CONFIG_VIEW_BY_LABEL', 'type' => 'singular', 'source' => 'Opportunities'),
             array('name' => 'LBL_OPPS_CONFIG_VIEW_BY_DATE_ROLLUP', 'type' => 'plural', 'source' => 'RevenueLineItems'),
-            array('name' => 'LBL_OPPS_CONFIG_VIEW_BY_DATE_ROLLUP', 'type' => 'plural', 'source' => 'Opportunities'),
+            array('name' => 'LBL_OPPS_CONFIG_VIEW_BY_DATE_ROLLUP', 'type' => 'singular', 'source' => 'Opportunities'),
             array('name' => 'LBL_OPPS_CONFIG_ALERT', 'type' => 'plural', 'source' => 'Opportunities'),
             array('name' => 'LBL_OPPS_CONFIG_ALERT', 'type' => 'plural', 'source' => 'Forecasts'),
             array('name' => 'LBL_OPPS_CONFIG_SALES_STAGE_1a', 'type' => 'plural', 'source' => 'RevenueLineItems'),

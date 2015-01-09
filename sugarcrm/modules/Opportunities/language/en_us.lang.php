@@ -156,7 +156,7 @@ $mod_strings = array(
 
     // Config
     'LBL_OPPS_CONFIG_VIEW_BY_LABEL' => 'Opportunity Hierarchy',
-    'LBL_OPPS_CONFIG_VIEW_BY_DATE_ROLLUP' => 'Values calculated from Revenue Line Items to Opportunities',
+    'LBL_OPPS_CONFIG_VIEW_BY_DATE_ROLLUP' => 'Set the Expected Close Date field on the resulting Opportunity records to be the earliest or latest close dates of the existing Revenue Line Items',
 
     //Dashlet
     'LBL_PIPELINE_TOTAL_IS' => 'Pipeline Total is ',
@@ -198,7 +198,7 @@ Changing the setting from "{{plural_module_name}} and {{revenuelineitems_module}
 ',
 
     // Opps Config - View By Opportunities And RLIs
-    'LBL_HELP_CONFIG_RLIS' => 'Sales will be tracked as {{plural_module_name}} with {{revenuelineitems_module}}. An {{module_name}} consist of one or more {{revenuelineitems_module}}. This affords sales to be detailed in separate line items, and summarized in an {{module_name}}. {{forecasts_module}} will be created using {{revenuelineitems_module}}.
+    'LBL_HELP_CONFIG_RLIS' => 'Sales will be tracked as {{plural_module_name}} with {{revenuelineitems_module}}. An {{module_name}} consists of one or more {{revenuelineitems_module}}. This affords sales to be detailed in separate line items, and summarized in an {{module_name}}. {{forecasts_module}} will be created using {{revenuelineitems_module}}.
 
 Changing the setting from "{{plural_module_name}}" to "{{plural_module_name}} and {{revenuelineitems_module}}" will result in existing data being changed, added, and removed as follows:
 
