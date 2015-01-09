@@ -490,17 +490,6 @@ $dictionary['Opportunity'] = array(
             'vname' => 'LBL_CAMPAIGNS',
             'reportable' => false
         ),
-        'campaign_link' => array(
-            'name' => 'campaign_link',
-            'type' => 'link',
-            'relationship' => 'campaign_opportunities',
-            'vname' => 'LBL_CAMPAIGN_LINK',
-            'link_type' => 'one',
-            'module' => 'Campaigns',
-            'bean_name' => 'Campaign',
-            'source' => 'non-db',
-            'reportable' => false
-        ),
         'currencies' => array(
             'name' => 'currencies',
             'type' => 'link',
