@@ -1,3 +1,13 @@
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
 /*global jCore, $, HiddenField, TextareaField, TextField, ItemMatrixField,
  PROJECT_LOCKED_VARIABLES, SUGAR_URL, RestProxy, ComboboxField, adamUID,
  PROJECT_MODULE, project, MessagePanel, PROJECT_LOCKED_VARIABLES, Form, Window,
@@ -530,8 +540,6 @@ AdamCanvas.prototype.getContextMenu = function () {
 
             //modulesList = App.metadata.getModules();
             //for( var property in modulesList ){
-            //    //console.log( property );
-            //    //console.log( modulesList[property] );
             //    if (modulesList[property].favoritesEnabled) {
             //        options.push({'value': property, 'text': property});
             //    }
@@ -545,7 +553,6 @@ AdamCanvas.prototype.getContextMenu = function () {
             //    return 0 //default return value (no sorting)
             //});
             //comboModules.setOptions(options);
-            //console.log(PROJECT_MODULE);
             //comboModules.setValue(PROJECT_MODULE || options[0].value);
 
             comboModules.proxy.getData(null, {
@@ -627,7 +634,6 @@ AdamCanvas.prototype.getContextMenu = function () {
                 //        }
                 //    },
                 //    failure: function (xhr, response) {
-                //        //console.log(response);
                 //        //TODO Process HERE error at loading project
                 //    }
                 //});
@@ -765,7 +771,6 @@ AdamCanvas.prototype.getContextMenu = function () {
 
                         },
                         failure: function (xhr, response) {
-                            //console.log(response);
                             //TODO FAILURE ALERT
                         }
                     });
@@ -1055,7 +1060,6 @@ AdamCanvas.prototype.onRemoveElementHandler = function (element) {
         Tree.treeReload('tree', items2);
         this.project.updatePropertiesGrid();
     }
-    //console.log('Remove Element');
     if (listPanelError){
         if (listPanelError.items.length){
             for ( i = 0 ; i < element.length ; i+=1 ) {

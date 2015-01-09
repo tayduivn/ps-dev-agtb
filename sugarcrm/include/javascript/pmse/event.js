@@ -1,3 +1,13 @@
+/*
+* Your installation or use of this SugarCRM file is subject to the applicable
+* terms available at
+* http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+* If you do not agree to all of the applicable terms or do not have the
+* authority to bind the entity as an authorized representative, then do not
+* install or use this SugarCRM file.
+*
+* Copyright (C) SugarCRM Inc. All rights reserved.
+*/
 /*global AdamShape, $, Action, translate, AdamShapeLayerCommand, RestProxy,
  SUGAR_URL, CriteriaField, PMSE_DECIMAL_SEPARATOR, ComboboxField, HiddenField,
  TextField, PROJECT_MODULE, CheckboxField, DateField, RadiobuttonField, Form,
@@ -937,18 +947,11 @@ AdamEvent.prototype.createConfigureAction = function () {
         wWidth = 690;
         callback = {
             loaded: function (data) {
-                //console.log('Event "loaded" for ' + this.id + " triggered", data);
                 root.canvas.emptyCurrentSelection();
                 ddlModules.proxy.getData(null,{
                     success: function(modules) {
-                        //console.log(modules.result);
-                        //console.log(data);
-                        //ddlModules.setOptions(modules.result);
-                        //ddlModules.setValue(data.evn_module || (modules.result[0].value || null));
                         ddlModules.setValue(root.evn_message || (modules.result[0].value || null));
                         oldModule = data.evn_module;
-                        //console.log(oldModule, ddlModules.value);
-                        //criteriaField.setRelatedModulesDataURL("pmse_Project/CrmData/related/" + ddlModules.value); //criteriaField.setBaseModule(ddlModules.value);
                         criteriaField.setModuleEvaluation({
                             dataURL: "pmse_Project/CrmData/related/" + ddlModules.value,
                             dataRoot: 'result',
@@ -1201,7 +1204,6 @@ AdamEvent.prototype.createConfigureAction = function () {
                         ddlModules.proxy.getData(null, {
                             success: function(params) {
                                 if (params && params.result) {
-                                    //console.log(params.result);
                                     ddlModules.setOptions(params.result);
                                     ddlModules.setValue(data.evn_module || ((params.result[0] && params.result[0].value) || null));
                                 }
@@ -1251,7 +1253,7 @@ AdamEvent.prototype.createConfigureAction = function () {
                         });
                     },
                     submit: function (data) {
-                        //console.log(data);
+
                     }
                 };
             } else {
