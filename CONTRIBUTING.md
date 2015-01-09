@@ -293,7 +293,7 @@ For each report, we first try to confirm the vulnerability. When it is confirmed
 
 ## Running SugarCRM Tests
 
-Before submitting a [patch](#submitting-a-patch) for inclusion, you need to run the SugarCRM test suite to check that you didn't broke anything.
+Before submitting a [patch](#submitting-a-patch) for inclusion, you need to run the SugarCRM test suite to check that you didn't break anything.
 
 ### PHPUnit
 
