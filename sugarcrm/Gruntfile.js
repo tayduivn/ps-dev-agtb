@@ -94,7 +94,12 @@ module.exports = function(grunt) {
                 'svgz',
                 // font files
                 'eot',
-                'ttf'
+                'ttf',
+                'woff',
+                'otf',
+                // stylesheets
+                'less',
+                'css'
             ],
             // Array of directory patterns (PCRE regex).
             // Only works with the name, not its path.
