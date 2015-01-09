@@ -1,13 +1,3 @@
-/*
- * Your installation or use of this SugarCRM file is subject to the applicable
- * terms available at
- * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
- * If you do not agree to all of the applicable terms or do not have the
- * authority to bind the entity as an authorized representative, then do not
- * install or use this SugarCRM file.
- *
- * Copyright (C) SugarCRM Inc. All rights reserved.
- */
 /*global AdamShape, $, CommandDefaultFlow, Action, translate, Window, PMSE_DECIMAL_SEPARATOR,
  PROJECT_MODULE, Form, MessagePanel, CommandSingleProperty, PMSE_DESIGNER_FORM_TRANSLATIONS,AdamShapeLayerCommand
 */
@@ -547,36 +537,45 @@ AdamGateway.prototype.createConfigureAction = function () {
         //items: criteriaItems,
         proxy: proxy,
         buttons: [
-            { jtype: 'submit', caption: translate('LBL_PMSE_BUTTON_SAVE') },
-            { jtype: 'normal', caption: translate('LBL_PMSE_BUTTON_CANCEL'), handler: function () {
-                if (f.isDirty()) {
-                    cancelInformation =  new MessagePanel({
-                        title: "Confirm",
-                        wtype: 'Confirm',
-                        message: translate('LBL_PMSE_MESSAGE_CANCEL_CONFIRM'),
-                        buttons: [
-                            {
-                                jtype: 'normal',
-                                caption: translate('LBL_PMSE_BUTTON_YES'),
-                                handler: function () {
-                                    cancelInformation.close();
-                                    w.close();
+            {
+                jtype: 'submit',
+                caption: translate('LBL_PMSE_BUTTON_SAVE'),
+                cssClasses: ['btn', 'btn-primary']
+            },
+            {
+                jtype: 'normal',
+                caption: translate('LBL_PMSE_BUTTON_CANCEL'),
+                handler: function () {
+                    if (f.isDirty()) {
+                        cancelInformation =  new MessagePanel({
+                            title: "Confirm",
+                            wtype: 'Confirm',
+                            message: translate('LBL_PMSE_MESSAGE_CANCEL_CONFIRM'),
+                            buttons: [
+                                {
+                                    jtype: 'normal',
+                                    caption: translate('LBL_PMSE_BUTTON_YES'),
+                                    handler: function () {
+                                        cancelInformation.close();
+                                        w.close();
+                                    }
+                                },
+                                {
+                                    jtype: 'normal',
+                                    caption: translate('LBL_PMSE_BUTTON_NO'),
+                                    handler: function () {
+                                        cancelInformation.close();
+                                    }
                                 }
-                            },
-                            {
-                                jtype: 'normal',
-                                caption: translate('LBL_PMSE_BUTTON_NO'),
-                                handler: function () {
-                                    cancelInformation.close();
-                                }
-                            }
-                        ]
-                    });
-                    cancelInformation.show();
-                } else {
-                    w.close();
-                }
-            }}
+                            ]
+                        });
+                        cancelInformation.show();
+                    } else {
+                        w.close();
+                    }
+                },
+                cssClasses: ['btn btn-invisible btn-link']
+            }
         ],
         callback: {
             submit: function (data, other) {
@@ -642,7 +641,7 @@ AdamGateway.prototype.createConfigureAction = function () {
                         && connection.getName() !== '')
                         ? connection.getName() : connection.getDestPort().parent.getName();
                     criteriaLabel = translate('LBL_PMSE_FORM_LABEL_CRITERIA') + ' (' + criteriaName + ')';
-//                    console.log(connection.getFlowCondition());
+                    //console.log(connection.getFlowCondition());
                     criteriaItems.push(
                         {
                             jtype: 'criteria',
@@ -650,15 +649,15 @@ AdamGateway.prototype.createConfigureAction = function () {
                             label: criteriaLabel,
                             required: false,
                             value: connection.getFlowCondition(),
-                            fieldWidth: 288,
+                            fieldWidth: 420,
                             fieldHeight: 128,
                             decimalSeparator: SUGAR.App.config.defaultDecimalSeparator,
                             numberGroupingSeparator: SUGAR.App.config.defaultNumberGroupingSeparator,
                             operators: {
-                                logic: true, 
+                                logic: true,
                                 group: true,
                                 aritmetic: false,
-                                comparison: false   
+                                comparison: false
                             },
                             evaluation: {
                                 module: {

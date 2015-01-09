@@ -1,13 +1,3 @@
-/*
- * Your installation or use of this SugarCRM file is subject to the applicable
- * terms available at
- * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
- * If you do not agree to all of the applicable terms or do not have the
- * authority to bind the entity as an authorized representative, then do not
- * install or use this SugarCRM file.
- *
- * Copyright (C) SugarCRM Inc. All rights reserved.
- */
 /*global AdamShape, $, Action, translate, AdamShapeLayerCommand, RestProxy,
  SUGAR_URL, CriteriaField, PMSE_DECIMAL_SEPARATOR, ComboboxField, HiddenField,
  TextField, PROJECT_MODULE, CheckboxField, DateField, RadiobuttonField, Form,
@@ -868,7 +858,7 @@ AdamEvent.prototype.createConfigureAction = function () {
             name: 'evn_criteria',
             label: translate('LBL_PMSE_FORM_LABEL_CRITERIA'),
             required: false,
-            fieldWidth: 250,
+            fieldWidth: 414,
             fieldHeight: 80,
             decimalSeparator: SUGAR.App.config.defaultDecimalSeparator,
             numberGroupingSeparator: SUGAR.App.config.defaultNumberGroupingSeparator,
@@ -944,7 +934,7 @@ AdamEvent.prototype.createConfigureAction = function () {
             criteriaField
         ];
         wHeight = 280;
-        wWidth = 500;
+        wWidth = 690;
         callback = {
             loaded: function (data) {
                 //console.log('Event "loaded" for ' + this.id + " triggered", data);
@@ -1235,15 +1225,15 @@ AdamEvent.prototype.createConfigureAction = function () {
 
                         //We load the teams
                         project.addMetadata("teams", {
-                            dataURL: project.getMetadata("teamsDataSource").url, 
-                            dataRoot: project.getMetadata("teamsDataSource").root,  
-                            success: function(data) { 
+                            dataURL: project.getMetadata("teamsDataSource").url,
+                            dataRoot: project.getMetadata("teamsDataSource").root,
+                            success: function(data) {
                                 var i;
                                 if(emailPickerFields.length) {
                                     for (i = 0; i < emailPickerFields.length; i += 1) {
                                         f.items[emailPickerFields[i]].setTeamNameField("text");
                                         f.items[emailPickerFields[i]].setTeams(data);
-                                    }    
+                                    }
                                 } else {
                                     for (i = 0; i < f.items.length; i += 1) {
                                         switch (f.items[i].name) {
@@ -1256,7 +1246,7 @@ AdamEvent.prototype.createConfigureAction = function () {
                                         }
                                     }
                                 }
-                                
+
                             }
                         });
                     },
@@ -1271,6 +1261,7 @@ AdamEvent.prototype.createConfigureAction = function () {
                         name: 'evn_criteria',
                         label: translate('LBL_PMSE_FORM_LABEL_CRITERIA'),
                         required: false,
+                        fieldWidth: 414,
                         operators: {
                           logic: true,
                           group: true
@@ -1297,7 +1288,7 @@ AdamEvent.prototype.createConfigureAction = function () {
                     }
                 ];
                 wHeight = 185;
-                wWidth = 500;
+                wWidth = 690;
                 callback = {
                     loaded: function (data) {
                         root.canvas.emptyCurrentSelection();
@@ -1503,7 +1494,7 @@ AdamEvent.prototype.createConfigureAction = function () {
                 name: 'evn_criteria',
                 label: translate('LBL_PMSE_FORM_LABEL_CRITERIA'),
                 required: false,
-                fieldWidth: 300,
+                fieldWidth: 414,
                 fieldHeight: 80,
                 decimalSeparator: SUGAR.App.config.defaultDecimalSeparator,
                 numberGroupingSeparator: SUGAR.App.config.defaultNumberGroupingSeparator,
@@ -1574,8 +1565,8 @@ AdamEvent.prototype.createConfigureAction = function () {
                 //                repeatEveryNumberCombo,
                 //                cyclicDate
             ];
-            wHeight = 420;
-            wWidth = 500;
+            wHeight = 450;
+            wWidth = 690;
             callback = {
                 loaded: function (data) {
 
@@ -1807,39 +1798,47 @@ AdamEvent.prototype.createConfigureAction = function () {
         closeContainerOnSubmit: true,
         items: items,
         buttons: [
-            { jtype: 'submit', caption: translate('LBL_PMSE_BUTTON_SAVE') },
-            { jtype: 'normal', caption: translate('LBL_PMSE_BUTTON_CANCEL'), handler: function () {
-                $('.hasDatepicker').datepicker('hide');
-                if (f.isDirty()) {
-                    cancelInformation =  new MessagePanel({
-                        title: "Confirm",
-                        wtype: 'Confirm',
-                        message: translate('LBL_PMSE_MESSAGE_CANCEL_CONFIRM'),
-                        buttons: [
-                            {
-                                jtype: 'normal',
-                                caption: translate('LBL_PMSE_BUTTON_YES'),
-                                handler: function () {
-                                    cancelInformation.close();
-                                    w.close();
+            {
+                jtype: 'submit',
+                caption: translate('LBL_PMSE_BUTTON_SAVE'),
+                cssClasses: ['btn', 'btn-primary']
+            },
+            {
+                jtype: 'normal',
+                caption: translate('LBL_PMSE_BUTTON_CANCEL'),
+                handler: function () {
+                    $('.hasDatepicker').datepicker('hide');
+                    if (f.isDirty()) {
+                        cancelInformation =  new MessagePanel({
+                            title: "Confirm",
+                            wtype: 'Confirm',
+                            message: translate('LBL_PMSE_MESSAGE_CANCEL_CONFIRM'),
+                            buttons: [
+                                {
+                                    jtype: 'normal',
+                                    caption: translate('LBL_PMSE_BUTTON_YES'),
+                                    handler: function () {
+                                        cancelInformation.close();
+                                        w.close();
+                                    }
+                                },
+                                {
+                                    jtype: 'normal',
+                                    caption: translate('LBL_PMSE_BUTTON_NO'),
+                                    handler: function () {
+                                        cancelInformation.close();
+                                    }
                                 }
-                            },
-                            {
-                                jtype: 'normal',
-                                caption: translate('LBL_PMSE_BUTTON_NO'),
-                                handler: function () {
-                                    cancelInformation.close();
-                                }
-                            }
 
-                        ]
-                    });
-                    cancelInformation.show();
-                } else {
-
-                    w.close();
-                }
-            }}
+                            ]
+                        });
+                        cancelInformation.show();
+                    } else {
+                        w.close();
+                    }
+                },
+                cssClasses: ['btn btn-invisible btn-link']
+            }
         ],
         callback: callback,
         language: PMSE_DESIGNER_FORM_TRANSLATIONS
