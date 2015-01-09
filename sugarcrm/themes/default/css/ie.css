@@ -45,6 +45,10 @@
   overflow-y: hidden;
 }
 
+table.reorderable-columns th[data-fieldname] > div > div[data-draggable="true"] {
+  padding-right: 0;
+}
+
 @media (max-width: 768px) {
   .row-fluid .span8.main-pane {
     width: 100%;
