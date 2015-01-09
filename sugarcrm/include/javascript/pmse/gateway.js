@@ -1,3 +1,13 @@
+/*
+* Your installation or use of this SugarCRM file is subject to the applicable
+* terms available at
+* http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+* If you do not agree to all of the applicable terms or do not have the
+* authority to bind the entity as an authorized representative, then do not
+* install or use this SugarCRM file.
+*
+* Copyright (C) SugarCRM Inc. All rights reserved.
+*/
 /*global AdamShape, $, CommandDefaultFlow, Action, translate, Window, PMSE_DECIMAL_SEPARATOR,
  PROJECT_MODULE, Form, MessagePanel, CommandSingleProperty, PMSE_DESIGNER_FORM_TRANSLATIONS,AdamShapeLayerCommand
 */
@@ -396,7 +406,6 @@ AdamGateway.prototype.getContextMenu = function () {
         cssStyle : 'adam-menu-icon-gateway-converging',
         handler: function () {
             self.updateDirection('CONVERGING');
-           // console.log(self);
             self.cleanFlowConditions();
 
         },
@@ -612,7 +621,6 @@ AdamGateway.prototype.createConfigureAction = function () {
                     },
                     start: function (event, ui) {
                         var fields, i;
-                        //console.log('was changed');
                         fields = f.items;
                         for (i = 0; i < fields.length; i += 1) {
                             fields[i].closePanel();
@@ -632,7 +640,6 @@ AdamGateway.prototype.createConfigureAction = function () {
                     e.stopPropagation();
                 });
 
-                //console.log(data);
                 flows = data.data;
                 if (data && data.data) {
                 for (i = 0; i < flows.length; i += 1) {
@@ -641,7 +648,6 @@ AdamGateway.prototype.createConfigureAction = function () {
                         && connection.getName() !== '')
                         ? connection.getName() : connection.getDestPort().parent.getName();
                     criteriaLabel = translate('LBL_PMSE_FORM_LABEL_CRITERIA') + ' (' + criteriaName + ')';
-                    //console.log(connection.getFlowCondition());
                     criteriaItems.push(
                         {
                             jtype: 'criteria',
@@ -759,7 +765,6 @@ AdamGateway.prototype.cleanFlowConditions = function () {
         port = this.getPorts().get(i);
         connection = port.connection;
         if (connection.srcPort.parent.getID() === this.getID()) {
-            //console.log(connection);
             oldValues = {
                 condition: connection.getFlowCondition(),
                 type: connection.getFlowType()
