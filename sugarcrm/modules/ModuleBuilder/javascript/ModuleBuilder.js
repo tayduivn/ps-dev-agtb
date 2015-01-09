@@ -559,9 +559,11 @@ if (typeof(ModuleBuilder) == 'undefined') {
 				successCall = ModuleBuilder.updateContent;
 			}
 
-            var requestUrl = url;
-            var role = $("input[name=role]").val();
-            if (role) {
+            var requestUrl = url,
+                currModule = ModuleBuilder.urlToParams(ModuleBuilder.centerContentURL).view_module,
+                toModule = ModuleBuilder.urlToParams(url).view_module,
+                role = $("input[name=role]").val();
+            if (role && (!currModule || !toModule || currModule == toModule)) {
                 requestUrl += "&role=" + encodeURIComponent(role);
             }
 
