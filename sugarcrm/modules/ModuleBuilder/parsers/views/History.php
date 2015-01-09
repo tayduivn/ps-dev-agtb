@@ -158,7 +158,7 @@ class History implements HistoryInterface
         if (file_exists($this->_previewFilename))
         {
             $GLOBALS [ 'log' ]->debug( get_class($this)."->append(): removing old history file at {$this->_previewFilename}");
-            unlink ( $this->_previewFilename);
+            SugarAutoLoader::unlink ( $this->_previewFilename);
         }
 
         return $time ;
@@ -199,7 +199,7 @@ class History implements HistoryInterface
     {
         if (file_exists ( $this->_previewFilename ))
         {
-            unlink ( $this->_previewFilename ) ;
+            SugarAutoLoader::unlink ( $this->_previewFilename ) ;
         }
     }
 

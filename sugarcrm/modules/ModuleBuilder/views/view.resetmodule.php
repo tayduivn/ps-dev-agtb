@@ -226,9 +226,8 @@ class ViewResetmodule extends SugarView
             foreach ($files as $langFile) {
                 if (substr($langFile, 0 ,1) == '.') continue;
 				$language = substr($langFile, 0, strlen($langFile) - 9);
-				unlink($languageDir . "/" . $langFile);
+                SugarAutoLoader::unlink($languageDir . "/" . $langFile, true);
 
-				SugarAutoLoader::delFromMap($languageDir . "/" . $langFile);
 				LanguageManager::clearLanguageCache ( $this->module, $language ) ;
 				$out .= "Removed language file $langFile<br/>";
             }

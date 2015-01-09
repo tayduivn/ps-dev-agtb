@@ -767,7 +767,7 @@ class MetaDataFiles
 
                         // Handle nuking the files
                         foreach ($cacheFiles as $cacheFile) {
-                            unlink($cacheFile);
+                            SugarAutoLoader::unlink($cacheFile);
                         }
                     }
                 }
