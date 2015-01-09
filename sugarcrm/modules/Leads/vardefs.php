@@ -383,6 +383,7 @@ $dictionary['Lead'] = array(
             'type' => 'date',
             'comment' => 'The birthdate of the contact'
         ),
+        //BEGIN SUGARCRM flav=ent ONLY
         'portal_name' => array(
             'name' => 'portal_name',
             'vname' => 'LBL_PORTAL_NAME',
@@ -390,9 +391,7 @@ $dictionary['Lead'] = array(
             'len' => '255',
             'group' => 'portal',
             'comment' => 'Portal user name when lead created via lead portal',
-            //BEGIN SUGARCRM flav!=ent
-            'studio' => 'false',
-            //END SUGARCRM
+            'studio' => true,
         ),
         'portal_app' => array(
             'name' => 'portal_app',
@@ -401,9 +400,9 @@ $dictionary['Lead'] = array(
             'group' => 'portal',
             'len' => '255',
             'comment' => 'Portal application that resulted in created of lead',
-            //BEGIN SUGARCRM flav!=ent
-            'studio' => 'false',
+            'studio' => true,
         ),
+        //END SUGARCRM flav=ent ONLY
         'website' => array(
             'name' => 'website',
             'vname' => 'LBL_WEBSITE',
