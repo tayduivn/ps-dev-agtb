@@ -410,7 +410,7 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
             if (!empty($viewdefs[$this->loadedModule][$client]['layout']['subpanels']['components'][0]['override_subpanel_list_view']['link'])
                 && $viewdefs[$this->loadedModule][$client]['layout']['subpanels']['components'][0]['override_subpanel_list_view']['link'] == $this->linkName
             ) {
-                unlink($override);
+                SugarAutoLoader::unlink($override);
             }
         }
     }
