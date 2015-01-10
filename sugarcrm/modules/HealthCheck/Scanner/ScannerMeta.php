@@ -530,15 +530,13 @@ class HealthCheckScannerMeta
         // add scan id
         $meta['id'] = $id;
 
-        $strings = array_map(
-            function ($item) {
-                if (is_array($item)) {
-                    return implode("\r\n", $item);
-                }
-                return $item;
-            },
-            $params
-        );
+        $strings = array();
+        foreach ($params as $key => $item) {
+            if (is_array($item)) {
+                $item =  implode("\r\n", $item);
+            }
+            $strings[$key] = $item;
+        }
 
         // add labels from modStrings
         $meta['log'] = $this->getModString("LBL_SCAN_{$id}_LOG", $strings);
@@ -636,7 +634,7 @@ class HealthCheckScannerMeta
             $this->modStrings = return_module_language($this->locale, 'HealthCheck');
         } else {
             $mod_strings = array();
-            include __DIR__ . '/../language/' . self::DEFAULT_LOCALE . '.lang.php';
+            include dirname(__FILE__) . '/../language/' . self::DEFAULT_LOCALE . '.lang.php';
             $this->modStrings = $mod_strings;
         }
     }

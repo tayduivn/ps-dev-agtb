@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once __DIR__ . '/Scanner.php';
+require_once dirname(__FILE__) . '/Scanner.php';
 
 /**
  *
@@ -140,7 +140,7 @@ class HealthCheckScannerCli extends HealthCheckScanner
     public static function start($argv)
     {
 
-        $scanner = new static();
+        $scanner = new self();
 
         if(!$scanner->parseCliArgs($argv)) {
             $scanner->usageAndDie($argv[0]);
