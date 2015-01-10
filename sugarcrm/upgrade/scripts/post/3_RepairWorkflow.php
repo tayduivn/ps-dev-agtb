@@ -28,7 +28,7 @@ class SugarUpgradeRepairWorkflow extends UpgradeScript
         require_once('include/workflow/glue.php');
 
         // Disable time-elapsed workflows that don't have a proper Primary trigger
-        $query = "SELECT DISTINCT w.id as workflow_id, w.description as description
+        $query = "SELECT DISTINCT w.id as workflow_id
                     FROM workflow w, workflow_triggershells wt
                     WHERE w.id = wt.parent_id
                     AND w.deleted = 0
@@ -42,9 +42,9 @@ class SugarUpgradeRepairWorkflow extends UpgradeScript
         while ($row = $this->db->fetchByAssoc($brokenWorkflows)) {
             $workflow = BeanFactory::getBean('WorkFlow', $row['workflow_id']);
             $workflow->status = 0;
-            if (strpos($row['description'], $descriptionFix) === false) {
+            if (strpos($workflow->description, $descriptionFix) === false) {
                 $workflow->description = "$descriptionFix\n"
-                    . $row['description'];
+                    . $workflow->description;
             }
             $workflow->save();
         }
