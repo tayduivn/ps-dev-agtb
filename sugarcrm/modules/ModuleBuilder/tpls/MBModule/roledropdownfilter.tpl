@@ -33,7 +33,7 @@
         <table>
             <tr>
                 <td colspan='2'>
-                    <input id="saveBtn" type='button' class='button' onclick='SimpleList.handleSave()'
+                    <input id="saveBtn" type='button' class='button'
                            value='{sugar_translate label='LBL_SAVE_BUTTON_LABEL'}'>
                     <input type='button' class='button' onclick='SimpleList.undo()'
                            value='{sugar_translate label='LBL_BTN_UNDO'}'>
@@ -129,6 +129,23 @@
     </form>
     {literal}
     <script>
+(function(){
+        $("#saveBtn").on("click", function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            if ($("#ul1").children().not(".deleted").length == 0) {
+                YAHOO.SUGAR.MessageBox.show({
+                    msg: SUGAR.language.get('ModuleBuilder', 'LBL_DROPDOWN_LIST_EMPTY'),
+                    width: 300,
+                    type: "alert"
+                });
+                return false;
+            } else {
+                SimpleList.handleSave();
+            }
+        });
+
         addForm('dropdown_form');
         addToValidate('dropdown_form', 'dropdown_name', 'DBName', false, SUGAR.language.get("ModuleBuilder", "LBL_JS_VALIDATE_NAME"));
         addToValidate('dropdown_form', 'drop_value', 'varchar', false, SUGAR.language.get("ModuleBuilder", "LBL_JS_VALIDATE_LABEL"));
@@ -167,7 +184,7 @@
             }
             ModuleBuilder.handleSave("dropdown_form");
         });
-
+})();
     </script>
     <script>// Bug in FF4 where it doesn't run the last script. Remove when the bug is fixed.</script>
     {/literal}

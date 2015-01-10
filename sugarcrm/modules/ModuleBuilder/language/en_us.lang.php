@@ -443,6 +443,7 @@ $mod_strings = array(
 'LBL_COPY_FROM_EDITVIEW' => 'Copy from EditView',
 'LBL_DROPDOWN_BLANK_WARNING' => 'Values are required for both the Item Name and the Display Label. To add a blank item, click Add without entering any values for the Item Name and the Display Label.',
 'LBL_DROPDOWN_KEY_EXISTS' => 'Key already exists in list',
+'LBL_DROPDOWN_LIST_EMPTY' => 'The list must contain at least one enabled item',
 'LBL_NO_SAVE_ACTION' => 'Could not find the save action for this view.',
 'LBL_BADLY_FORMED_DOCUMENT' => 'Studio2:establishLocation: badly formed document',
 // @TODO: Remove this lang string and uncomment out the string below once studio
