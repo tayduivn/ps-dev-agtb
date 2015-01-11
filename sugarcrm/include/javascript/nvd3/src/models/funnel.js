@@ -32,8 +32,7 @@ nv.models.funnel = function() {
   //------------------------------------------------------------
 
   // These values are preserved between renderings
-  var funnelOffset = 0,
-      calculatedWidth = 0,
+  var calculatedWidth = 0,
       calculatedHeight = 0,
       calculatedCenter = 0;
 
@@ -46,12 +45,11 @@ nv.models.funnel = function() {
           availableHeight = height - margin.top - margin.bottom,
           container = d3.select(this),
 
-          labelGap = 25,
+          labelGap = 5,
           labelSpace = 5,
           labelOffset = 0,
-
           funnelTotal = 0,
-          d0 = null;
+          funnelOffset = 0;
 
       // Add series index to each data point for reference
       data.map(function(series, i) {
@@ -340,9 +338,7 @@ nv.models.funnel = function() {
         sideLabels.select('.nv-label')
           .call(
             wrapLabel,
-            function(dy, dy0) {
-              return calcSideWidth(dy, dy0, 0) - labelGap;
-            },
+            calcSideWidth,
             function(txt, dy) {
               fmtLabel(txt, 'nv-label', dy, '11px', 'start', '#555');
             }
@@ -360,50 +356,50 @@ nv.models.funnel = function() {
         // Reflow side label vertical position to prevent overlap
         // Top to bottom
 
+        var d0 = 0;
+
         sideLabels.reverse().each(function(d, i) {
             if (!d0) {
               d.labelBottom = d.labelTop + d.labelHeight + labelSpace;
-              d0 = d;
+              d0 = d.labelBottom;
               return;
             }
 
-            d.labelTop = Math.max(d0.labelBottom, d.labelTop);
+            d.labelTop = Math.max(d0, d.labelTop);
             d.labelBottom = d.labelTop + d.labelHeight + labelSpace;
-
-            d0 = d;
+            d0 = d.labelBottom;
           });
 
         sideLabels.reverse();
 
         // And then...
         // Bottom to top
-        if (d0 && d0.labelBottom - labelSpace > d3.max(y.range())) {
+        if (d0 && d0 - labelSpace > d3.max(y.range())) {
 
-          d0 = null;
+          d0 = 0;
 
           sideLabels.each(function(d, i) {
               if (!d0) {
                 d.labelBottom = d3.max(y.range()) - 1;
                 d.labelTop = d.labelBottom - d.labelHeight;
-                d0 = d;
+                d0 = d.labelTop;
                 return;
               }
 
-              d.labelBottom = Math.min(d0.labelTop, d.labelBottom);
+              d.labelBottom = Math.min(d0, d.labelBottom);
               d.labelTop = d.labelBottom - d.labelHeight - labelSpace;
-
-              d0 = d;
+              d0 = d.labelTop;
             });
 
-          if (d0.labelTop) {
+          if (d0) {
             sideLabels.each(function(d, i) {
-                d.labelTop -= d0.labelTop;
-                d.labelBottom -= d0.labelTop;
+                d.labelTop -= d0;
+                d.labelBottom -= d0;
               });
           }
         }
 
-        d0 = null;
+        d0 = 0;
 
         //------------------------------------------------------------
         // Recalculate funnel offset based on side label dimensions
@@ -422,14 +418,17 @@ nv.models.funnel = function() {
       }
 
       renderLabels();
+      calcDimensions();
 
       // Calls twice since the first call may create a funnel offset
       // which decreases the funnel width which impacts label position
 
-      calcDimensions();
       calcScales();
       renderLabels();
+      calcDimensions();
 
+      calcScales();
+      renderLabels();
       calcDimensions();
 
       //------------------------------------------------------------
@@ -453,25 +452,14 @@ nv.models.funnel = function() {
           return 'translate(' + labelOffset + ',' + d.labelTop + ')';
         });
 
-      sideLabels.reverse()
+      sideLabels
         .append('polyline')
           .attr('class', 'nv-label-leader')
-          .attr('points', function(d, i) {
-            var h = Math.round(d.labelHeight) + 0.5,
-                t = Math.round(y(d.y0) - d.labelTop) - 0.5,
-                s = !d0 ? 0 : (d.labelBottom - d0.labelBottom) * r,
-                w = Math.round(Math.max(!d0 ? 0 : d0.labelWidth - s, d.labelWidth + 3)),
-                f = Math.round(calcSideWidth(0, d.y0, funnelOffset)) - labelOffset - 3;
+          .style({'fill-opacity': 0, 'stroke': '#999', 'stroke-width': 1, 'stroke-opacity': 0.5});
 
-            d.labelWidth = w;
-            d0 = d;
-
-            return 0 + ',' + h + ' ' +
-                   w + ',' + h + ' ' +
-                   (w + Math.abs(h - t) / 2) + ',' + t + ' ' +
-                   f + ',' + t;
-          })
-          .style({'fill-opacity': 0, 'stroke': '#999', 'stroke-width': 1});
+      sideLabels.reverse();
+      sideLabels.selectAll('polyline')
+        .call(pointsLeader);
       sideLabels.reverse();
 
       //------------------------------------------------------------
@@ -480,12 +468,12 @@ nv.models.funnel = function() {
       // TODO: use scales instead of ratio algebra
       // var funnelScale = d3.scale.linear()
       //       .domain([w / 2, minimum])
-      //       .range([0, maxy1*thenscalethistopreventminimumfrompassing ]);
+      //       .range([0, maxy1*thenscalethistopreventminimumfrompassing]);
 
       function wrapLabel(lbl, calcAvailableWidth, fmtLabel) {
         lbl.each(function(d) {
           var text = d3.select(this),
-              maxWidth = calcAvailableWidth(d.y, d.y0),
+              maxWidth = calcAvailableWidth(d.y, d.y0, 0),
               parent = d3.select(text.node().parentNode),
               words = text.text().split(/\s+/).reverse(),
               word,
@@ -606,44 +594,79 @@ nv.models.funnel = function() {
         });
       }
 
+      function pointsLeader(polylines, i) {
+        var c = polylines.length;
+        polylines.each(function(d, i, j) {
+          var // previous label
+              p = j ? d3.select(polylines[j - 1][i]).data()[0] : null,
+              // next label
+              n = j < c - 1 ? d3.select(polylines[j + 1][i]).data()[0] : null,
+              // label height
+              h = Math.round(d.labelHeight) + 0.5,
+              // slice bottom
+              t = Math.round(y(d.y0) - d.labelTop) - 0.5,
+              // previous width
+              wp = p ? p.labelWidth - (d.labelBottom - p.labelBottom) * r : 0,
+              // current width
+              wc = d.labelWidth,
+              // next width
+              wn = n && h < t ? n.labelWidth : 0,
+              // final width
+              w = Math.round(Math.max(wp, wc, wn)) + labelGap,
+              // funnel edge
+              f = Math.round(calcSideWidth(0, d.y0, funnelOffset)) - labelOffset - labelGap,
+              // polyline points
+              p = 0 + ',' + h + ' ' +
+                 w + ',' + h + ' ' +
+                 (w + Math.abs(h - t) * r) + ',' + t + ' ' +
+                 f + ',' + t;
+          d.labelWidth = w;
+          d3.select(this).attr('points', p);
+        });
+      }
+
       function calcOffsets(lbl) {
         var sideWidth = (availableWidth - calculatedWidth) / 2, // natural width of side
-            iOffset = 0;
+            offset = 0;
 
         lbl.each(function(d) {
-          var bbox = calcLabelBBox(this),
-              // this is the x component of slope R at y
-              base = y(y.invert(d.labelTop)) * r,
-              // this is the distance from end of label to R
-              offset = bbox.width + labelGap - base;
 
-          offset += 20;
-          //TODO: missing the additional width of polyline slope
+          var // bottom of slice
+              sliceBottom = y(d.y0),
+              // is slice below or above label bottom
+              scalar = d.labelBottom >= sliceBottom ? 1 : 0,
+              // the width of the angled leader
+              // from bottom right of label to bottom of slice
+              slope = Math.abs(d.labelBottom + labelGap - sliceBottom) * r,
+              // this is the x component of slope R at y
+              base = sliceBottom * r,
+              // this is the distance from end of label plus spacing to R
+              iOffset = d.labelWidth + slope + labelGap * 3 - base;
 
           // if this label sticks out past R
-          if (offset >= iOffset) {
+          if (iOffset >= offset) {
             // this is the minimum distance for R
             // has to be away from the left edge of labels
-            iOffset = offset;
+            offset = iOffset;
           }
         });
 
         // how var from chart edge is label left edge
-        iOffset = Math.round(iOffset * 10) / 10;
+        offset = Math.round(offset * 10) / 10;
 
         // there are three states:
-        if (iOffset <= 0) {
+        if (offset <= 0) {
         // 1. no label sticks out past R
           labelOffset = sideWidth;
           funnelOffset = sideWidth;
-        } else if (iOffset > 0 && iOffset < sideWidth) {
+        } else if (offset > 0 && offset < sideWidth) {
         // 2. iOffset is > 0 but < sideWidth
-          labelOffset = sideWidth - iOffset;
+          labelOffset = sideWidth - offset;
           funnelOffset = sideWidth;
         } else {
         // 3. iOffset is >= sideWidth
           labelOffset = 0;
-          funnelOffset = iOffset;
+          funnelOffset = offset;
         }
       }
 
