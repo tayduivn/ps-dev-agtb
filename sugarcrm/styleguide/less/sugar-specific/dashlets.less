@@ -125,29 +125,19 @@
   }
 
   .dashlet-options {
-    .border-radius(0);
-    padding: 6px 8px;
-    .select2-container,
-    .btn-group {
-      padding: 0;
-      margin: 0;
-    }
-    .btn:first-child {
-      margin: 0;
-    }
-    .btn-slider,
-    .dropdown {
-      font-size: @baseFontSize;
-    }
-    .btn {
-      font-size: @fontSizeSmall;
-    }
-    .dropdown-toggle {
-      margin-left: 0;
-      white-space: nowrap;
-    }
-    .dashlet-group .btn-toolbar .btn.toggle-control {
-      margin-left: 4px;
+    padding: 5px 8px;
+    &.control-group {
+      .row-fluid {
+        [class*="span"] {
+          max-width: 280px;
+        }
+      }
+      [class*="span"]:first-of-type:last-of-type {
+        min-width: 108px;
+      }
+      .span6.hide + .span6 {
+        min-width: 108px;
+      }
     }
   }
 
