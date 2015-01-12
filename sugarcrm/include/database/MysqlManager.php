@@ -1475,6 +1475,26 @@ class MysqlManager extends DBManager
 	    return $this->query('ALTER TABLE '.$tableName.' ENABLE KEYS');
 	}
 
+    /**
+     * Updates all tables to match the specified collation
+     * @abstract
+     * @param string $collation Collation to set
+     */
+    public function setCollation($collation)
+    {
+        $charset = explode("_", $collation);
+        $charset = $charset[0];
+
+        $this->query("ALTER DATABASE {$this->connectOptions['db_name']} DEFAULT COLLATE {$collation}");
+        $res = $this->query("SHOW TABLES");
+
+        while ($row = $this->fetchRow($res)) {
+            foreach ($row as $key => $table) {
+                $this->query("ALTER TABLE {$table} COLLATE {$collation}");
+                $this->query("ALTER TABLE {$table} CONVERT TO CHARACTER SET {$charset} COLLATE {$collation}");
+            }
+        }
+    }
 
     /**
      * Returns a DB specific FROM clause which can be used to select against functions.

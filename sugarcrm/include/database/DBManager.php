@@ -4249,6 +4249,15 @@ protected function checkQuery($sql, $object_name = false)
 	{
 	}
 
+    /**
+    * Updates all tables to match the specified collation
+    * @abstract
+    * @param string $collation Collation to set
+    */
+    public function setCollation($collation)
+    {
+    }
+
 	/**
 	 * Quote string in DB-specific manner
 	 * @param string $string
