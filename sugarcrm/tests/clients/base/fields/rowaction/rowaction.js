@@ -12,7 +12,7 @@ describe('Base.Field.Rowaction', function() {
             'css_class':'btn',
             'tooltip':'LBL_PREVIEW',
             'event':'list:preview:fire',
-            'icon':'icon-eye-open',
+            'icon':'fa fa-eye',
             'acl_action':'view'
         }, moduleName);
         field.view = {trigger: function(){}};
@@ -26,20 +26,6 @@ describe('Base.Field.Rowaction', function() {
         app.view.reset();
         Handlebars.templates = {};
         field = null;
-    });
-
-    //Disabling this test as its testing if a function called by calling that function directly
-    //Essentially a no-op test
-    xit('should render action if the user has acls', function() {
-        var aclStub = sinon.stub(app.acl, "hasAccessToModel", function() {
-            return true;
-        });
-        var stub_render = sinon.stub(app.view.fields.BaseButtonField.prototype, "_render");
-        field.module = moduleName;
-        field._render();
-        expect(stub_render).toHaveBeenCalled();
-        stub_render.restore();
-        aclStub.restore();
     });
 
     it('should hide action if the user doesn\'t have acls', function() {
@@ -67,18 +53,25 @@ describe('Base.Field.Rowaction', function() {
             sandbox.restore();
         });
 
-        it('should trigger the default event', function() {
+        it('should trigger the event defined in metadata', function() {
             var spy = sandbox.spy(field.view.context, 'trigger');
-            field.name = 'foo';
-            field.def.event = undefined;
-            field.propagateEvent(e);
-            expect(spy).toHaveBeenCalledWith('button:foo:click');
+            field.rowActionSelect(e);
+            expect(spy).toHaveBeenCalledWith(field.def.event);
         });
 
-        it('should trigger a custom event', function() {
+        it('should trigger the event defined in the data-event attribute', function() {
             var spy = sandbox.spy(field.view.context, 'trigger');
-            field.propagateEvent(e);
-            expect(spy).toHaveBeenCalledWith(field.def.event);
+            field.def.event = undefined;
+            $(e.currentTarget).data('event', 'foo');
+            field.rowActionSelect(e);
+            expect(spy).toHaveBeenCalledWith('foo');
+        });
+
+        it('should not trigger an event', function() {
+            var spy = sandbox.spy(field.view.context, 'trigger');
+            field.def.event = undefined;
+            field.rowActionSelect(e);
+            expect(spy).not.toHaveBeenCalled();
         });
 
         using('event names', [undefined, 'context', 'foo'], function(eventName) {
@@ -101,46 +94,4 @@ describe('Base.Field.Rowaction', function() {
             expect(field.getTarget().name).toEqual(field.view.layout.name);
         });
     });
-
-    describe('rowActionSelect', function(){
-        var e, triggerStub;
-
-        beforeEach(function(){
-            //Wire up event
-            e = jQuery.Event("click");
-            e.currentTarget = field.$el.get(0);
-            field.$el.data('event', field.def.event);
-        });
-
-        afterEach(function(){
-            triggerStub.restore();
-        });
-
-        it('should trigger event on view\'s context by default', function() {
-            field.model = app.data.createBean(moduleName);
-            field.view.context = {trigger: function(){}};
-            triggerStub = sinon.spy(field.view.context, 'trigger');
-            field.rowActionSelect(e);
-            expect(triggerStub.calledOnce).toBe(true);
-        });
-
-        it('should trigger event on view\'s layout when "layout" is set as target', function() {
-            field.def.target = 'layout';
-            field.model = app.data.createBean(moduleName);
-            field.view.layout = {trigger: function(){}};
-            triggerStub = sinon.spy(field.view.layout, 'trigger');
-            field.rowActionSelect(e);
-            expect(triggerStub.calledOnce).toBe(true);
-        });
-
-        it('should trigger event on view when "view" is set as target', function() {
-            field.def.target = 'view';
-            field.model = app.data.createBean(moduleName);
-            field.view.trigger =  function(){};
-            triggerStub = sinon.spy(field.view, 'trigger');
-            field.rowActionSelect(e);
-            expect(triggerStub.calledOnce).toBe(true);
-        });
-    });
-
 });

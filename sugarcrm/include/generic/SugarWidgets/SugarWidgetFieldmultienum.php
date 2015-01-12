@@ -106,5 +106,14 @@ class SugarWidgetFieldMultiEnum extends SugarWidgetFieldEnum {
 		}
 		return $value;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function _get_column_select($layout_def)
+    {
+        $column = parent::_get_column_select($layout_def);
+        return $this->reporter->db->convert($column, 'text2char');
+    }
 }
 ?>

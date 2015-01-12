@@ -34,5 +34,17 @@
         var context = this.context.parent || this.context;
         context.trigger('panel-top:refresh', 'emails');
         context.trigger('panel-top:refresh', 'archived_emails');
+    },
+
+    /**
+     * No additional options are needed from the element in order to launch the
+     * email client.
+     *
+     * @param {jQuery} [$link] The element from which to get options.
+     * @return {Object}
+     * @private
+     */
+    _retrieveEmailOptionsFromLink: function($link) {
+        return {};
     }
 })

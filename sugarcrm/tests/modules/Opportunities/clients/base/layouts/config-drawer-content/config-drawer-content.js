@@ -8,6 +8,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+//FILE SUGARCRM flav=ent ONLY
 describe('Opportunities.Layout.ConfigDrawerContent', function() {
     var app,
         layout;
@@ -20,7 +21,13 @@ describe('Opportunities.Layout.ConfigDrawerContent', function() {
             return {
                 forecast_by: 'RevenueLineItems'
             }
-        })
+        });
+
+        sinon.collection.stub(app.template, 'getView', function(view) {
+            return function() {
+                return view;
+            };
+        });
     });
 
     afterEach(function() {
@@ -32,7 +39,8 @@ describe('Opportunities.Layout.ConfigDrawerContent', function() {
         it('should set all Opportunities howto text properly', function() {
             layout._initHowTo();
             expect(layout.viewOppsByTitle).toEqual('LBL_OPPS_CONFIG_VIEW_BY_LABEL');
-            expect(layout.viewOppsByText).toEqual('LBL_OPPS_CONFIG_HELP_VIEW_BY_TEXT');
+            expect(layout.viewOppsByOppsTpl).toEqual('help-dashlet');
+            expect(layout.viewOppsByRLIsTpl).toEqual('help-dashlet');
         });
     });
 
@@ -43,8 +51,23 @@ describe('Opportunities.Layout.ConfigDrawerContent', function() {
         });
         it('should set currentHowToData properly for OppsViewBy', function() {
             layout._switchHowToData('config-opps-view-by');
-            expect(layout.currentHowToData.title).toEqual('LBL_OPPS_CONFIG_VIEW_BY_LABEL');
-            expect(layout.currentHowToData.text).toEqual('LBL_OPPS_CONFIG_HELP_VIEW_BY_TEXT');
+            expect(layout.viewOppsByOppsTpl).toEqual('help-dashlet');
+            expect(layout.viewOppsByRLIsTpl).toEqual('help-dashlet');
+        });
+    });
+
+    describe('_getText()', function() {
+        beforeEach(function() {
+            layout.viewOppsByOppsTpl = 'oppsTpl'
+            layout.viewOppsByRLIsTpl = 'rlisTpl';
+        });
+
+        it('should get OppsTpl when OppsViewBy == Opportunities', function() {
+            expect(layout._getText('Opportunities')).toEqual('oppsTpl');
+        });
+
+        it('should get RLIsTpl when OppsViewBy == RevenueLineItems', function() {
+            expect(layout._getText('RevenueLineItems')).toEqual('rlisTpl');
         });
     });
 });

@@ -1,5 +1,5 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
+
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -42,62 +42,45 @@ class Bug21934Test extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Testing correct time offset in month queries
-    * @group 21934
-    */
-    public function testQueryMonth()
+     * Testing correct time offset in month queries
+     *
+     * @group 21934
+     * @dataProvider queryMonthProvider
+     */
+    public function testQueryMonth($timezone)
     {
         global $current_user;
-        $rep_defs =array (
-            'assigned_user_id' => $current_user->id,
-            'filters_def' =>
-            array (
-            ),
-        );
-        $_layoutDef = array(
-            'name'          => 'custom_date_c',
-            'table_key'     => 'self',
-            'qualifier_name'=> 'tp_this_month',
-            'input_name0'   => 'tp_this_month',
-            'input_name1'   => 'on',
-            'table_alias'   => 'accounts_cstm',
-            'column_key'    => 'self:custom_date_c',
-            'type'          => 'date',
-        );
-        $json = getJSONobj();
-        $tmp = $json->encode($rep_defs);
-        $report = new Report($tmp);
 
-        $lm = new LayoutManager();
-        $lm->setAttribute('reporter', $report);
+        $now = new SugarDateTime();
+        $now->setTimezone(new DateTimeZone('UTC'));
 
-        $widget  = $this->getMock('SugarWidgetFieldDate', array('get_start_end_date_filter'), array($lm));
+        $start = clone($now);
+        $start->modify('first day of last month');
+
+        $end = clone($now);
+        $end->modify('last day of last month');
+
+        /** @var SugarWidgetFieldDate|PHPUnit_Framework_MockObject_MockObject $widget */
+        $widget = $this->getMockBuilder('SugarWidgetFieldDate')
+            ->setMethods(array('now', 'get_start_end_date_filter'))
+            ->disableOriginalConstructor()
+            ->getMock();
         $widget->expects($this->any())
+            ->method('now')
+            ->will($this->returnValue($now));
+        $widget->expects($this->once())
             ->method('get_start_end_date_filter')
-            ->will($this->returnCallback(array($this, '_mockCallBack')));
+            ->with($this->anything(), $start, $end);
 
-        $current_user->setPreference('timezone', 'Pacific/Tongatapu');
-
-        $start = new SugarDateTime();
-        $start->setTimezone(new DateTimeZone('UTC'));
-        $start->setDate($start->year, $start->month-1, 1);
-
-        $expect = array();
-        array_push($expect, clone($start));
-        $start->setDate($start->year, $start->month, $start->days_in_month);
-        array_push($expect, clone($start));
-
-        $result = $widget->queryFilterTP_last_month($_layoutDef);
-        $this->assertEquals($expect, $result);
-
-        $current_user->setPreference('timezone', 'Pacific/Midway');
-        $result = $widget->queryFilterTP_last_month($_layoutDef);
-        $this->assertEquals($expect, $result);
+        $current_user->setPreference('timezone', $timezone);
+        $widget->queryFilterTP_last_month(array());
     }
 
-    public function _mockCallBack()
+    public static function queryMonthProvider()
     {
-        $argv = func_get_args();
-        return array($argv[1], $argv[2]);
+        return array(
+            array('Pacific/Tongatapu'),
+            array('Pacific/Midway'),
+        );
     }
 }

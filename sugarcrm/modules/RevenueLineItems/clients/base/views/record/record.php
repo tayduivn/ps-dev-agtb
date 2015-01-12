@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
 
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
@@ -428,7 +427,7 @@ $viewdefs['RevenueLineItems']['base']['view']['record'] = array(
                 ),
                 //BEGIN SUGARCRM flav=ent ONLY
                 array(
-                    'type' => 'rowaction',
+                    'type' => 'convert-to-quote',
                     'event' => 'button:convert_to_quote:click',
                     'name' => 'convert_to_quote_button',
                     'label' => 'LBL_CONVERT_TO_QUOTE',

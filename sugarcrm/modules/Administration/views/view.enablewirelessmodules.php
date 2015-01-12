@@ -1,5 +1,5 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
+
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 /*
@@ -64,7 +64,11 @@ class AdministrationViewEnablewirelessmodules extends SugarView
             'Contracts',
             'KBDocuments', // Knowledge base
             'Prospects', // this is Targets
-            'Users'
+            'Users',
+            'pmse_Business_Rules',
+            'pmse_Emails_Templates',
+            'pmse_Inbox',
+            'pmse_Project',
         );
 
         // replicate the essential part of the behavior of the private loadMapping() method in SugarController

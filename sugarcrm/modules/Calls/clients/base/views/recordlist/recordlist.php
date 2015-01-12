@@ -61,7 +61,7 @@ $viewdefs['Calls']['base']['view']['recordlist'] = array(
                 'css_class' => 'btn',
                 'tooltip' => 'LBL_PREVIEW',
                 'event' => 'list:preview:fire',
-                'icon' => 'icon-eye-open',
+                'icon' => 'fa-eye',
                 'acl_action' => 'view',
             ),
             array(
@@ -75,6 +75,7 @@ $viewdefs['Calls']['base']['view']['recordlist'] = array(
                 'type' => 'closebutton',
                 'name' => 'record-close',
                 'label' => 'LBL_LIST_CLOSE',
+                'closed_status' => 'Held',
                 'acl_action' => 'edit',
             ),
             array(

@@ -244,6 +244,5 @@ $sapi_type = php_sapi_name();
 if (substr($sapi_type, 0, 3) != 'cli') {
     die("This is command-line only script");
 }
-ShadowUpgrader::start();
-
-
+$upgrader = new ShadowUpgrader();
+$upgrader->start();

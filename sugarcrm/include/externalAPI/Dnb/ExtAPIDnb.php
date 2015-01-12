@@ -12,7 +12,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-//FILE SUGARCRM flav=pro ONLY
+
 require_once('include/externalAPI/Base/OAuthPluginBase.php');
 require_once('include/externalAPI/Base/WebFeed.php');
 require_once 'include/SugarQuery/SugarQuery.php';
@@ -40,8 +40,8 @@ class ExtAPIDnb extends ExternalAPIBase
     private $dnbBALContactURL = "V6.0/organizations?SearchModeDescription=Advanced&findcontact=true&";
     private $dnbFindIndustryURL = "V4.0/industries?KeywordText=%s&findindustry=true";
     private $dnbFindContactsURL = "V4.0/organizations?findcontact=true&DUNSNumber-1=%s&SearchModeDescription=Advanced";
-    private $dnbContactDetPremURL = "V3.0/organizations/%s/products/CNTCT_PLUS?PrincipalIdentificationNumber=%s";
-    private $dnbContactDetStdURL = "V3.0/organizations/%s/products/CNTCT?PrincipalIdentificationNumber=%s";
+    private $dnbContactDetPremURL = "V3.0/organizations/%s/products/CNTCT_PLUS?PrincipalIdentificationNumber=%s&OrderReasonCode=6332";
+    private $dnbContactDetStdURL = "V3.0/organizations/%s/products/CNTCT?PrincipalIdentificationNumber=%s&OrderReasonCode=6332";
     private $dnbNewsURL = "V3.0/organizations/%s/products/NEWS_MDA";
     private $dnbIndustryConversionURL = "V4.0/industries?IndustryCode-1=%s&ReturnOnlyPremiumIndustryIndicator=true&IndustryCodeTypeCode-1=%s&findindustry=true";
     private $dnbRefreshCheckURL = "V4.0/organizations?refresh=refresh&DunsNumber-1=%s";

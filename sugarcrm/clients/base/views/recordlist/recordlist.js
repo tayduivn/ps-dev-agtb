@@ -18,6 +18,7 @@
     plugins: [
         'SugarLogic',
         'ReorderableColumns',
+        'ResizableColumns',
         'ListColumnEllipsis',
         'ErrorDecoration',
         'Editable',
@@ -59,7 +60,8 @@
 
         //Extend the prototype's events object to setup additional events for this controller
         this.events = _.extend({}, this.events, {
-            'click [name=inline-cancel]' : 'resize'
+            'click [name=inline-cancel]' : 'resize',
+            'keydown': '_setScrollPosition'
         });
 
         this.on('render', this._setRowFields, this);
@@ -256,78 +258,147 @@
     },
 
     /**
-     * Retrieve the location of the left edge of the list viewport.
-     * @return {Number} Position of the left edge.
+     * Stores the current scrolling position of the list content when tab key is
+     * pressed.
+     *
+     * @param {Event} event The keydown event.
      * @private
      */
-    _getLeftBorderPosition: function() {
-        if (!this._leftBorderPosition) {
-            var scrollPanel = this.$('.flex-list-view-content');
-            this._leftBorderPosition = scrollPanel.find('thead tr:first th:first').outerWidth();
+    _setScrollPosition: function(event) {
+        if (event.keyCode === 9) {
+            var $flexListContent = this.$('.flex-list-view-content');
+            $flexListContent.data('previousScrollLeftValue', $flexListContent.scrollLeft());
         }
-        return this._leftBorderPosition;
     },
 
     /**
-     * Retrieve the location of the right edge of the list viewport.
-     * @return {Number} Position of the right edge.
+     * Retrieves the location of the edges of the list viewport and caches it
+     * to `this._bordersPosition`.
+     *
+     * @return {Object} Object with properties:
+     * @return {number} return.left the position left edge.
+     * @return {number} return.right the position right edge.
      * @private
      */
-    _getRightBorderPosition: function() {
-        if (!this._rightBorderPosition) {
-            var scrollPanel = this.$('.flex-list-view-content');
-            this._rightBorderPosition = scrollPanel.find('thead tr:first th:last').position().left;
+    _getBordersPosition: function() {
+        if (!this._bordersPosition) {
+
+            /**
+             * Object containing the location of left and right edges of the
+             * list viewport.
+             *
+             * @property {Object} _bordersPosition
+             * @property {number} _bordersPosition.left The left offset of the
+             *   left edge of the viewport.
+             * @property {number} _bordersPosition.right The left offset of the
+             *   right edge of the viewport.
+             * @private
+             */
+            this._bordersPosition = {};
+            var thSelector = {};
+            var $scrollPanel = this.$('.flex-list-view-content');
+            var rtl = app.lang.direction === 'rtl';
+
+            thSelector.left = rtl ? 'last' : 'first';
+            thSelector.right = rtl ? 'first' : 'last';
+            this._bordersPosition.left = $scrollPanel.find('thead tr:first th:' + thSelector.left).outerWidth();
+            this._bordersPosition.right = $scrollPanel.find(
+                'thead tr:first th:' + thSelector.right).children().position().left;
         }
-        return this._rightBorderPosition;
+        return this._bordersPosition;
     },
 
     /**
-     * Set the position of the current list panel.
+     * Sets the position of the current list panel.
      *
-     * If focus item located within the viewport area,
-     * avoid adjusting panel location.
+     * Doesn't adjust panel position if the focused field is fully visible in
+     * the viewport.
      *
-     * @param {Object} location Location of the focused element.
+     * @param {Object} location Position of the focused element relative to its
+     *   viewport.
+     * @param {number} location.left The distance between the left
+     *   border of the focused field and the left border of the viewport.
+     * @param {number} location.right The distance between the right
+     *   side of the focused field and the left border of the viewport.
      */
     setPanelPosition: function(location) {
-        var leftBorderPosition = this._getLeftBorderPosition(),
-            rightBorderPosition = this._getRightBorderPosition(),
-            relativeLeft = location.left,
-            relativeRight = location.right;
-        if (relativeRight <= rightBorderPosition && relativeLeft >= leftBorderPosition) {
+        var bordersPosition = this._getBordersPosition();
+        var fieldLeft = location.left;
+        var fieldRight = location.right;
+        if (fieldRight <= bordersPosition.right && fieldLeft >= bordersPosition.left) {
             return;
         }
-        this.setScrollAtRightBorder(location.right);
+        this._scrollToMakeFieldVisible(bordersPosition.left, bordersPosition.right, location);
+    },
+
+    /**
+     * Scrolls the list horizontally to make the clicked field fully visible.
+     *
+     * @param {number} leftBorderPosition Position of the left edge of the
+     *   list viewport.
+     * @param {number} rightBorderPosition Position of the right edge of the
+     *   list viewport.
+     * @param {Object} location Position of the focused element relative to its
+     *   viewport.
+     * @param {number} location.left The distance between the left
+     *   border of the focused field and the left border of the viewport.
+     * @param {number} location.right The distance between the right
+     *   side of the focused field and the left border of the viewport.
+     * @private
+     */
+    _scrollToMakeFieldVisible: function(leftBorderPosition, rightBorderPosition, location) {
+        var $scrollPanel = this.$('.flex-list-view-content');
+        var scrollPosition = $scrollPanel.scrollLeft();
+        var fieldLeft = location.left;
+        var fieldRight = location.right;
+        var fieldPadding = location.fieldPadding;
+        var distanceToScroll;
+
+        if (fieldLeft < leftBorderPosition) {
+            distanceToScroll = fieldLeft - leftBorderPosition - fieldPadding;
+        } else if (rightBorderPosition < fieldRight) {
+            distanceToScroll = fieldRight - rightBorderPosition + fieldPadding;
+        } else {
+            return;
+        }
+        if (app.lang.direction === 'rtl' && $.support.rtlScrollType === 'reverse') {
+            distanceToScroll = - distanceToScroll;
+        }
+        $scrollPanel.scrollLeft(scrollPosition + distanceToScroll);
     },
 
     /**
      * Set the position of scrollable panel
      * at the left border of the focused element.
      *
-     * @param {Number} left Left position of the focused element.
+     * @param {number} left Left position of the focused element.
+     * @deprecated 7.7 and will be removed in 7.8.
      */
     setScrollAtLeftBorder: function(left) {
-        var scrollPanel = this.$('.flex-list-view-content'),
-            leftBorderPosition = this._getLeftBorderPosition(),
-            scrollLeft = scrollPanel.scrollLeft();
+        var $scrollPanel = this.$('.flex-list-view-content'),
+            leftBorderPosition = this._getBordersPosition().left,
+            scrollLeft = $scrollPanel.scrollLeft();
 
         left += scrollLeft - leftBorderPosition;
-        scrollPanel.scrollLeft(left);
+        $scrollPanel.scrollLeft(left);
+        app.logger.warn('"setScrollAtLeftBorder" method is deprecated and will be removed in 7.8');
     },
 
     /**
      * Set the position of scrollable panel
      * at the right border of the focused element.
      *
-     * @param {Number} right Right position of the focused element.
+     * @param {number} right Right position of the focused element.
+     * @deprecated 7.7 and will be removed in 7.8.
      */
     setScrollAtRightBorder: function(right) {
-        var scrollPanel = this.$('.flex-list-view-content'),
-            rightBorderPosition = this._getRightBorderPosition(),
-            scrollLeft = scrollPanel.scrollLeft();
+        var $scrollPanel = this.$('.flex-list-view-content'),
+            rightBorderPosition = this._getBordersPosition().right,
+            scrollLeft = $scrollPanel.scrollLeft();
 
         right += scrollLeft - rightBorderPosition;
-        scrollPanel.scrollLeft(right);
+        $scrollPanel.scrollLeft(right);
+        app.logger.warn('"setScrollAtRightBorder" method is deprecated and will be removed in 7.8');
     },
 
     /**
@@ -379,15 +450,17 @@
     },
 
     /**
-     * Format the message displayed in the alert
+     * Formats the messages to display in the alerts when deleting a record.
      *
-     * @param {Backbone.Model} model to delete
-     * @returns {Object} confirmation and success messages
+     * @param {Data.Bean} model The model concerned.
+     * @return {Object} The list of messages.
+     * @return {string} return.confirmation Confirmation message.
+     * @return {string} return.success Success message.
      */
     getDeleteMessages: function(model) {
-        var messages = {},
-            name = app.utils.getRecordName(model),
-            context = app.lang.getModuleName(model.module).toLowerCase() + ' ' + name.trim();
+        var messages = {};
+        var name = Handlebars.Utils.escapeExpression(app.utils.getRecordName(model)).trim();
+        var context = app.lang.getModuleName(model.module).toLowerCase() + ' ' + name;
 
         messages.confirmation = app.utils.formatString(app.lang.get('NTC_DELETE_CONFIRMATION_FORMATTED'), [context]);
         messages.success = app.utils.formatString(app.lang.get('NTC_DELETE_SUCCESS'), [context]);
@@ -505,22 +578,6 @@
     },
 
     /**
-     * Toggle editable entire row fields.
-     *
-     * @param {Boolean} isEdit True for edit mode, otherwise toggle back to list mode.
-     */
-    toggleEdit: function(isEdit) {
-        var self = this;
-        this.viewName = isEdit ? 'edit' : 'list';
-        _.each(this.rowFields, function(editableFields, modelId) {
-            //running the toggling jon in each thread to prevent blocking browser performance
-            _.defer(function(modelId) {
-                self.toggleRow(modelId, isEdit);
-            }, modelId);
-        }, this);
-    },
-
-    /**
      * Detach the event handlers for warning delete
      */
     unbindBeforeRouteDelete: function() {
@@ -607,7 +664,7 @@
         }, this, true);
 
         app.shortcuts.register('List:Favorite', 'f a', function() {
-            this.$('.selected .icon-favorite:visible').click();
+            this.$('.selected .fa-favorite:visible').click();
         }, this);
 
         app.shortcuts.register('List:Follow', 'f o', function() {
@@ -625,5 +682,16 @@
                 $checkbox.get(0).click();
             }
         }, this);
+    },
+
+    /**
+     * {@inheritDoc}
+     *
+     * Unsets `_bordersPosition` because the value changes on resize and will
+     * have to be recalculated if the user toggles inline edit mode.
+     */
+    resize: function() {
+        this._super('resize');
+        this._bordersPosition = null;
     }
 })

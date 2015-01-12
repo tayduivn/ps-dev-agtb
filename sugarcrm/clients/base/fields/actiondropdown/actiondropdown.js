@@ -30,7 +30,7 @@
  *          'primary' => true,
  *          'switch_on_click' => true,
  *          'no_default_action' => false,
- *          'icon' => 'icon-cog',
+ *          'icon' => 'fa-cog',
  *          'buttons' => array(
  *              ...
  *          )
@@ -103,7 +103,7 @@
          *
          * @property {string}
          */
-        this.caretIcon = this.def.icon || 'icon-caret-down';
+        this.caretIcon = this.def.icon || 'fa-caret-down';
 
         this.def.css_class = this.def.css_class ?
             this.def.css_class + ' actions' : 'actions';

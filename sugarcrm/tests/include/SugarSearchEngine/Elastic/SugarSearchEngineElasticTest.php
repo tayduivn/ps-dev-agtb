@@ -1,5 +1,5 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
+
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -275,6 +275,64 @@ class SugarSearchEngineElasticTest extends Sugar_PHPUnit_Framework_TestCase
             ->toArray();
 
         $this->assertEmpty($filter);
+    }
+
+    /**
+     * Test bulkInsert record count when flushing to Elasticsearch bulk API.
+     * @dataProvider dataProviderTestBulkInsert
+     */
+    public function testBulkInsert($recordCount, $threshold)
+    {
+        // Test records we wish to index
+        $records = array_fill(0, $recordCount, array('foo' => 'bar'));
+
+        // Prepare bulk object
+        $bulk = $this->getMockBuilder('\\Elastica\\Bulk')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $count = 0;
+        $bulk->expects($this->any())
+            ->method('addDocuments')
+            ->will($this->returnCallback(function (array $records) use (&$count) {
+                $count += count($records);
+                return true;
+            }));
+
+        // Prepare subject under test
+        $sut = $this->getMockBuilder('SugarSearchEngineElastic')
+            ->setMethods(array('newElasticaBulk', 'getWriteIndexName', 'useSingleIndex'))
+            ->getMock();
+
+        $sut->method('newElasticaBulk')
+            ->willReturn($bulk);
+
+        $sut->method('getWriteIndexName')
+            ->willReturn('mockindex');
+
+        $sut->method('useSingleIndex')
+            ->willReturn(true);
+
+        // Lower threshold for limited test data set
+        $ref = new ReflectionClass('SugarSearchEngineElastic');
+        $refProp = $ref->getProperty('max_bulk_doc_threshold');
+        $refProp->setAccessible(true);
+        $refProp->setValue($sut, $threshold);
+
+        $this->assertTrue($sut->bulkInsert($records), 'Bulk insert went wrong');
+        $this->assertEquals(count($records), $count, 'Document bulk count mismatch');
+    }
+
+    public function dataProviderTestBulkInsert()
+    {
+        return array(
+            array(51, 5),
+            array(50, 5),
+            array(49, 5),
+            array(51, 100),
+            array(50, 100),
+            array(49, 100),
+        );
     }
 }
 

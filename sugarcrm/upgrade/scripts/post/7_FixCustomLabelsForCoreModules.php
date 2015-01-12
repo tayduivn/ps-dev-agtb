@@ -16,7 +16,7 @@
  * Since some labels were renamed in 7.x, instance after upgrade should handle language customizations
  * for such labels.
  *
- * @see CRYS-198 for related issues
+ * @see CRYS-198 and CRYS-557 for related issues
  */
 class SugarUpgradeFixCustomLabelsForCoreModules extends UpgradeScript
 {
@@ -75,6 +75,12 @@ class SugarUpgradeFixCustomLabelsForCoreModules extends UpgradeScript
             // Fix subpanels
             if ($this->upgradeSubpanelModuleLabels($module)) {
                 $changedSubpanels[$key] = $key;
+            }
+
+            $changedListViews = array();
+            // Fix list views
+            if ($this->upgradeListViewModuleLabels($module)) {
+                $changedListViews[$key] = $key;
             }
         }
     }
@@ -173,6 +179,51 @@ class SugarUpgradeFixCustomLabelsForCoreModules extends UpgradeScript
             }
             unset($subpanel_layout);
         }
+        return $upgraded;
+    }
+
+    /**
+     * Change old labels to new ones in $module listviewdefs
+     * @param $module
+     * @return bool
+     */
+    public function upgradeListViewModuleLabels($module)
+    {
+        $upgradeLabels = $this->upgradeLabels[$module];
+        $upgradeDriver = $this->upgrader;
+        $upgraded = false;
+
+        // upgrade viewdefs
+        $scanFile = "custom/modules/{$module}/clients/base/views/list/list.php";
+        if (file_exists($scanFile)) {
+            $changed = false;
+            $viewdefs = array();
+
+            include $scanFile;
+
+            array_walk_recursive(
+                $viewdefs,
+                function (&$value, $key) use (&$changed, $upgradeLabels, $upgradeDriver, $scanFile) {
+                    if ('label' == $key && isset($upgradeLabels[$value])) {
+                        $upgradeDriver->log(sprintf(
+                            'FixCustomLabelsForCoreModules: Fix label name from "%s" to "%s" in file "%s"',
+                            $value,
+                            $upgradeLabels[$value],
+                            $scanFile
+                        ));
+                        $value = $upgradeLabels[$value];
+                        $changed = true;
+                    }
+                }
+            );
+
+            if ($changed) {
+                $upgraded = $upgraded || $changed;
+                $this->backupFile($scanFile);
+                write_array_to_file('viewdefs', $viewdefs, $scanFile, 'w');
+            }
+        }
+
         return $upgraded;
     }
 

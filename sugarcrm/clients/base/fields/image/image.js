@@ -53,9 +53,9 @@
         // error properties.
         app.error.errorName2Keys['tooBig'] = 'ERROR_MAX_FILESIZE_EXCEEDED';
         app.error.errorName2Keys['uploadFailed'] = 'ERROR_UPLOAD_FAILED';
-        
+
         // FIXME: we should have a {@link Da
-        if (_.isFunction(this.model.addValidationTask) && !this.model.hasImageRequiredValidator) {
+        if (_.isFunction(this.model.addValidationTask)) {
             this.model.hasImageRequiredValidator = true;
             this.model.addValidationTask('image_required', _.bind(this._doValidateImageField, this));
         }
@@ -184,6 +184,7 @@
                                 group: self.name
                             };
                         }
+                        self.model.unset(self.name);
                         self.model.set(self.name + '_guid', fileId);
                     }
 
@@ -305,8 +306,8 @@
 
         image.removeClass('hide');
         this.$('.delete').remove();
-        var icon = this.preview === true ? 'remove' : 'trash';
-        image.closest('label, a').after('<span class="image_btn delete icon-' + icon + ' " />');
+        var icon = this.preview === true ? 'times' : 'trash-o';
+        image.closest('label, a').after('<span class="image_btn delete fa fa-' + icon + ' " />');
     },
 
     /**
@@ -326,7 +327,7 @@
      */
     resizeHeight: function(height) {
         var $image_field = this.$('.image_field'),
-            isEditAndIcon = this.$('.icon-plus').length > 0;
+            isEditAndIcon = this.$('.fa-plus').length > 0;
 
         if (isEditAndIcon) {
             var $image_btn = $image_field.find('.image_btn');
@@ -337,7 +338,7 @@
             previewHeight -= edit_btn_height ? edit_btn_height : 0;
             previewHeight = this.formatPX(previewHeight);
 
-            $image_field.find('.icon-plus').css({lineHeight: previewHeight});
+            $image_field.find('.fa-plus').css({lineHeight: previewHeight});
         }
 
 
@@ -396,9 +397,9 @@
         }
 
         //Change the preview of the image widget
-        this.$('.image_preview').html('<i class="icon-remove"></i>');
+        this.$('.image_preview').html('<i class="fa fa-times"></i>');
         //Put the cancel icon
-        this.$('label').after('<span class="image_btn delete icon-remove" />');
+        this.$('label').after('<span class="image_btn delete fa fa-times" />');
 
         this.$el.closest('.record-cell').addClass("error");
         this.$el.addClass('input-append error');

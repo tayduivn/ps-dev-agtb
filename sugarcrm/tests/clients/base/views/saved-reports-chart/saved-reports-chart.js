@@ -86,4 +86,36 @@ describe('Base.View.Saved-Reports-Chart', function() {
             expect(view.reportOptions['a']).toEqual('A');
         });
     });
+
+    describe('setChartParams()', function() {
+        var field;
+        beforeEach(function() {
+            SugarTest.loadComponent('base', 'field', 'chart');
+            field = SugarTest.createField({
+                name: 'chart_field',
+                type: 'chart',
+                viewName: 'detail',
+                fieldDef: {
+                    'name': 'chart',
+                    'label': 'Chart',
+                    'type': 'chart',
+                    'view': 'detail'
+                }
+            });
+
+            sandbox.spy(field, 'displayNoData');
+
+            view.chartField = field;
+        });
+
+        afterEach(function() {
+            field.dispose();
+        });
+
+        it('will call displayNoData on chart field when no chart data is returned', function() {
+            view.setChartParams('');
+
+            expect(field.displayNoData).toHaveBeenCalled();
+        });
+    });
 });

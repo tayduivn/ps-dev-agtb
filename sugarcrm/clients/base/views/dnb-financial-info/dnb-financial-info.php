@@ -48,7 +48,7 @@ $viewdefs['base']['view']['dnb-financial-info'] = array(
             array(
                 "type" => "dashletaction",
                 "css_class" => "dashlet-toggle btn btn-invisible minify",
-                "icon" => "icon-chevron-down",
+                "icon" => "fa-chevron-down",
                 "action" => "toggleMinify",
                 "tooltip" => "LBL_DASHLET_MAXIMIZE",
             )

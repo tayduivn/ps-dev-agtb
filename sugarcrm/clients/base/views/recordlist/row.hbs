@@ -14,17 +14,17 @@
     <tr name="{{module}}_{{attributes.id}}" class="single">
         {{#each ../leftColumns}}
             <td>
-                {{field ../../this model=../this template=../../this.viewName}}
+                {{field ../../this model=../this template=../../viewName}}
             </td>
         {{/each}}
         {{#each ../_fields.visible}}
-            <td{{#if this.align}} class="{{this.align}}"{{/if}} {{#if this.maxWidth}}style="max-width:{{this.maxWidth}}" {{/if}}data-type="{{type}}">
-                {{field ../../this model=../this template=../../this.viewName}}
+            <td{{#if align}} class="{{align}}"{{/if}} data-type="{{type}}">
+                {{field ../../this model=../this template=../../viewName}}
             </td>
         {{/each}}
         {{#each ../rightColumns}}
             <td>
-                {{field ../../this model=../this template=../../this.viewName}}
+                {{field ../../this model=../this template=../../viewName}}
             </td>
         {{/each}}
     </tr>

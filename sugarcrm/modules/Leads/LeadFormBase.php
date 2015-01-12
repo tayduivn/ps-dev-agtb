@@ -275,24 +275,14 @@ return $the_form;
                 }
 
                 //add return_module, return_action, and return_id to redirect get string
-                $get .= "&return_module=";
-                if(!empty($_POST['return_module']))
-                {
-                    $get .= $_POST['return_module'];
-                } else {
-                    $get .= "Leads";
-                }
-
-                $get .= "&return_action=";
-                if(!empty($_POST['return_action'])) $get .= $_POST['return_action'];
-                if(!empty($_POST['return_id'])) $get .= "&return_id=".$_POST['return_id'];
-                if(!empty($_POST['popup'])) $get .= '&popup='.$_POST['popup'];
-                if(!empty($_POST['create'])) $get .= '&create='.$_POST['create'];
-
-                // for InboundEmail flow
-                if(!empty($_POST['start'])) $get .= '&start='.$_POST['start'];
-
-                $_SESSION['SHOW_DUPLICATES'] = $get;
+    			$urlData = array('return_module' => 'Leads', 'return_action' => '');
+    			foreach (array('return_module', 'return_action', 'return_id', 'popup', 'create', 'start') as $var) {
+    			    if (!empty($_POST[$var])) {
+    			        $urlData[$var] = $_POST[$var];
+    			    }
+    			}
+    			$get .= "&".http_build_query($urlData);
+    			$_SESSION['SHOW_DUPLICATES'] = $get;
 
                 if (!empty($_POST['is_ajax_call']) && $_POST['is_ajax_call'] == '1')
                 {
@@ -304,7 +294,7 @@ return $the_form;
                 } else {
                     if(!empty($_POST['to_pdf']))
                     {
-                        $location .= '&to_pdf='.$_POST['to_pdf'];
+                        $location .= '&to_pdf='.urlencode($_POST['to_pdf']);
                     }
                     header("Location: index.php?$location");
                 }
@@ -362,7 +352,7 @@ return $the_form;
             $email->load_relationship('leads');
             $email->leads->add($focus->id);
 
-            header("Location: index.php?&module=Emails&action=EditView&type=out&inbound_email_id=".$_REQUEST['inbound_email_id']."&parent_id=".$email->parent_id."&parent_type=".$email->parent_type.'&start='.$_REQUEST['start']);
+            header("Location: index.php?&module=Emails&action=EditView&type=out&inbound_email_id=".urlencode($_REQUEST['inbound_email_id'])."&parent_id=".$email->parent_id."&parent_type=".$email->parent_type.'&start='.urlencode($_REQUEST['start']));
             exit();
         }
         ////	END INBOUND EMAIL HANDLING

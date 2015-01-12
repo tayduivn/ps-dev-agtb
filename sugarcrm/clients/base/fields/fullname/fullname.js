@@ -49,8 +49,11 @@
             // only letters a-z may be significant in the format,
             // everything else is translated verbatim
             if (letter >= 'a' && letter <= 'z' && this.formatMap[letter]) {
-                // clone because we'd rewrite it later and we don't want to mess with actual metadata
-                fields.push(_.clone(meta.fields[this.formatMap[letter]] || this.formatMap[letter]));
+                var fieldMeta = meta.fields[this.formatMap[letter]];
+                if (fieldMeta) {
+                    // clone because we'd rewrite it later and we don't want to mess with actual metadata
+                    fields.push(_.clone(fieldMeta));
+                }
             }
             return fields;
         }, [], this);
@@ -141,17 +144,5 @@
         }
 
         return padding;
-    },
-
-    /**
-     * @inheritDoc
-     */
-    setMode: function(mode) {
-        this._super('setMode', [mode]);
-
-        //FIXME: components (like headerpane) should listen to setMode of the fields inside of it.
-        //Triggering window resize will allow components (like headerpane) to
-        //recalculate their inner elements placement.
-        $(window).trigger('resize');
     }
 })

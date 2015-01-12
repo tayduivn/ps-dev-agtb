@@ -17,14 +17,14 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' =>'LNK_NEW_BUG',
         'acl_action'=>'create',
         'acl_module'=>$module_name,
-        'icon' => 'icon-plus',
+        'icon' => 'fa-plus',
     ),
     array(
         'route'=>'#'.$module_name,
         'label' =>'LNK_BUG_LIST',
         'acl_action'=>'list',
         'acl_module'=>$module_name,
-        'icon' => 'icon-reorder',
+        'icon' => 'fa-bars',
     ),
     //BEGIN SUGARCRM flav=pro ONLY
     array(
@@ -32,7 +32,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' =>'LNK_BUG_REPORTS',
         'acl_action'=>'list',
         'acl_module'=>$module_name,
-        'icon' => 'icon-bar-chart',
+        'icon' => 'fa-bars',
     ),
     //END SUGARCRM flav=pro ONLY
     array(
@@ -40,6 +40,6 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' =>'LNK_IMPORT_BUGS',
         'acl_action'=>'import',
         'acl_module'=>$module_name,
-        'icon' => 'icon-upload',
+        'icon' => 'fa-arrow-circle-o-up',
     ),
 );

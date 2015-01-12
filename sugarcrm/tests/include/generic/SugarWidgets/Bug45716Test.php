@@ -1,5 +1,5 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
+
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -218,19 +218,6 @@ class Bug45716Helper {
             'reportable' => false,
             'massupdate' => false,
             'duplicate_merge' => 'disabled',
-            'real_table' => 'opportunities',
-            ),
-        'self:campaign_link' => 
-        array (
-            'name' => 'campaign_link',
-            'type' => 'link',
-            'relationship' => 'campaign_opportunities',
-            'vname' => 'LBL_CAMPAIGNS',
-            'link_type' => 'one',
-            'module' => 'Opportunities',
-            'bean_name' => 'Campaign',
-            'source' => 'non-db',
-            'reportable' => false,
             'real_table' => 'opportunities',
             ),
         'self:campaign_name' => 

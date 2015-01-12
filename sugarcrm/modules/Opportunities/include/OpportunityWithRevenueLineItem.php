@@ -72,6 +72,7 @@ class OpportunityWithRevenueLineItem extends OpportunitySetup
             'massupdate' => false,
             'reportable' => false,
             'workflow' => false,
+            'importable' => false,
         ),
         'probability' => array(
             'audited' => false,
@@ -84,6 +85,7 @@ class OpportunityWithRevenueLineItem extends OpportunitySetup
             'reportable' => true,
             'audited' => true,
             'massupdate' => true,
+            'importable' => true,
         ),
         'date_closed_timestamp' => array(
             'formula' => 'rollupMax($revenuelineitems, "date_closed_timestamp")'
@@ -179,6 +181,25 @@ EOL;
      */
     protected function fixRevenueLineItemModule()
     {
+        // lets make sure the dir is there
+        SugarAutoLoader::ensureDir($this->rliModuleExtFolder . '/Vardefs');
+
+        $file_contents = <<<EOL
+<?php
+\$dictionary['RevenueLineItem']['importable'] = true;
+\$dictionary['RevenueLineItem']['unified_search'] = true;
+EOL;
+
+        sugar_file_put_contents($this->rliModuleExtFolder . '/Vardefs/' . $this->rliModuleExtVardefFile, $file_contents);
+
+        // set the current loaded instance up
+        if (isset($GLOBALS['dictionary']['RevenueLineItem'])) {
+            $GLOBALS['dictionary']['RevenueLineItem']['importable'] = true;
+            $GLOBALS['dictionary']['RevenueLineItem']['unified_search'] = true;
+        }
+
+        $this->cleanupUnifiedSearchCache();
+
         SugarAutoLoader::ensureDir($this->appExtFolder . '/Include');
         
         // we need to run the code we are putting in the custom file
@@ -213,6 +234,12 @@ EOL;
 
         // show the rli module in the mega menu
         $this->setRevenueLineItemModuleTab(true);
+
+        // handle the parent_type_field
+        $this->setRevenueLineItemInParentRelateDropDown(true);
+
+        // enable the item in the quick create
+        $this->toggleRevenueLineItemQuickCreate(true);
 
         // place the studio file
         sugar_touch($this->rliStudioFile);

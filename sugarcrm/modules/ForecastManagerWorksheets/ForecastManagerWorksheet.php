@@ -80,18 +80,7 @@ class ForecastManagerWorksheet extends SugarBean
 
         $results = $db->query($sql);
 
-        if (empty($manager->reports_to_id)) {
-            $sqlQuota = 'SELECT sum(quota * base_rate) as quota
-                            FROM ' . $this->table_name . ' WHERE assigned_user_id = ' . $db->quoted($manager->id) . '
-                            AND timeperiod_id = ' . $db->quoted($timeperiod) . ' and draft = 1 and deleted = 0';
-            $quota = $db->fetchOne($sqlQuota);
-            $this->commitQuota(
-                $quota['quota'],
-                $manager->id,
-                $timeperiod,
-                'Rollup'
-            );
-        }
+        $this->fixTopLevelManagerQuotaRollup($manager->id, $timeperiod);
 
         while ($row = $db->fetchByAssoc($results)) {
             /* @var $worksheet ForecastManagerWorksheet */
@@ -116,17 +105,10 @@ class ForecastManagerWorksheet extends SugarBean
             $worksheet->draft = 0; // make sure this is always 0!
             $worksheet->save();
 
-            // commit the quota from the worksheet values
-            $this->commitQuota(
-                $worksheet->quota,
-                $worksheet->user_id,
-                $worksheet->timeperiod_id,
-                ($worksheet->user_id == $current_user->id) ? 'Direct' : 'Rollup'
-            );
+            $type = ($worksheet->user_id == $current_user->id) ? 'Direct' : 'Rollup';
+            $disableAS = ($worksheet->user_id == $current_user->id);
 
-            // recalculate the quotas now
-            $this->recalcQuotas($worksheet->user_id, $worksheet->timeperiod_id, true);
-
+            $this->_assignQuota($worksheet->quota, $type, $worksheet->user_id, $timeperiod, $disableAS);
         }
 
         return true;
@@ -138,9 +120,32 @@ class ForecastManagerWorksheet extends SugarBean
      * @param string $quota_amount
      * @param string $user_id
      * @param string $timeperiod_id
+     * @return Quota The Quota Bean
      */
     protected function commitQuota($quota_amount, $user_id, $timeperiod_id, $quota_type)
     {
+        $quota = $this->getQuota($user_id, $timeperiod_id, $quota_type);
+
+        // set all the values just to make sure
+        $quota->timeperiod_id = $timeperiod_id;
+        $quota->user_id = $user_id;
+        $quota->committed = 1;
+        $quota->quota_type = $quota_type;
+        $quota->amount = $quota_amount;
+        $quota->save();
+
+        return $quota;
+    }
+
+    /**
+     * Fetch the Quota from the DB.
+     *
+     * @param string $user_id
+     * @param string $timeperiod_id
+     * @param string $quota_type
+     * @return Quota
+     */
+    protected function getQuota($user_id, $timeperiod_id, $quota_type) {
         /* @var $quota Quota */
         $quota = BeanFactory::getBean('Quotas');
         $quota->retrieve_by_string_fields(
@@ -153,13 +158,7 @@ class ForecastManagerWorksheet extends SugarBean
             )
         );
 
-        // set all the values just to make sure
-        $quota->timeperiod_id = $timeperiod_id;
-        $quota->user_id = $user_id;
-        $quota->committed = 1;
-        $quota->quota_type = $quota_type;
-        $quota->amount = $quota_amount;
-        $quota->save();
+        return $quota;
     }
 
 
@@ -225,7 +224,7 @@ class ForecastManagerWorksheet extends SugarBean
             'pipeline_amount',
             'closed_amount'
         );
-        
+
         if ($data["forecast_type"] == "Direct") {
             $copyMap[] = "likely_case";
             $copyMap[] = "best_case";
@@ -365,24 +364,41 @@ class ForecastManagerWorksheet extends SugarBean
             return false;
         }
 
+        // get everyone but the current user
         $sq = new SugarQuery();
         $sq->select(array('id', 'quota', 'user_id'));
         $sq->from($this);
         $sq->where()
             ->equals('assigned_user_id', $user_id)
+            ->notEquals('user_id', $user_id)
             ->equals('timeperiod_id', $timeperiod_id)
             ->equals('draft', 1);
 
-        $worksheets = $sq->execute();
+        // now just get the current user
+        $sq2 = new SugarQuery();
+        $sq2->select(array('id', 'quota', 'user_id'));
+        $sq2->from($this);
+        $sq2->where()
+            ->equals('assigned_user_id', $user_id)
+            ->Equals('user_id', $user_id)
+            ->equals('timeperiod_id', $timeperiod_id)
+            ->equals('draft', 1);
+
+        // create the union query now
+        $sqU = new SugarQuery();
+        $sqU->union($sq)->addQuery($sq2);
+
+        // run the query
+        $worksheets = $sqU->execute();
+
+        $this->fixTopLevelManagerQuotaRollup($user_id, $timeperiod_id);
 
         foreach ($worksheets as $worksheet) {
-            $this->commitQuota(
-                $worksheet['quota'],
-                $worksheet['user_id'],
-                $timeperiod_id,
-                ($worksheet['user_id'] == $user_id) ? 'Direct' : 'Rollup'
-            );
-            $this->recalcQuotas($worksheet['user_id'], $timeperiod_id, true);
+            $type = ($worksheet['user_id'] == $user_id) ? 'Direct' : 'Rollup';
+            $disableAS = ($worksheet['user_id'] == $user_id);
+
+            // now lets actually assign the quota
+            $this->_assignQuota($worksheet['quota'], $type, $worksheet['user_id'], $timeperiod_id, $disableAS);
 
             /* @var $worksheet_obj ForecastManagerWorksheet */
             $worksheet_obj = BeanFactory::getBean($this->module_name, $worksheet['id']);
@@ -390,6 +406,89 @@ class ForecastManagerWorksheet extends SugarBean
         }
 
         return true;
+    }
+
+    /**
+     * Actually do the work of assigning a quota from the worksheets
+     *
+     * @param string $quota The amount of the quota
+     * @param string $type What type is the quota
+     * @param string $user_id Who is the quota for
+     * @param string $timeperiod_id What timeperiod is the quota for
+     * @param bool $disableActivityStream Should we disable activity streams and create our own entry
+     */
+    protected function _assignQuota($quota, $type, $user_id, $timeperiod_id, $disableActivityStream = false)
+    {
+        if ($disableActivityStream) {
+            Activity::disable();
+            $current_quota = $this->getQuota($user_id, $timeperiod_id, $type);
+        }
+
+        // get the updated quota back, this is needed because current_quota might be empty
+        // as it could very well not exist yet.
+        $quota = $this->commitQuota(
+            $quota,
+            $user_id,
+            $timeperiod_id,
+            $type
+        );
+
+        $new_quota = $this->recalcQuotas($user_id, $timeperiod_id, true);
+
+        if ($disableActivityStream) {
+            Activity::enable();
+
+            if ($new_quota !== $current_quota->amount) {
+                $args = array(
+                    'isUpdate' => !empty($current_quota->amount),
+                    'dataChanges' => array(
+                        'amount' => array(
+                            'field_name' => 'amount',
+                            'field_type' => 'currency',
+                            'before' => $current_quota->amount,
+                            'after' => $new_quota
+                        )
+                    )
+                );
+
+                // Manually Create the Activity Stream Entry!
+                SugarAutoLoader::load('modules/ActivityStream/Activities/ActivityQueueManager.php');
+                $aqm = new ActivityQueueManager();
+                $aqm->eventDispatcher($quota, 'after_save', $args);
+            }
+        }
+    }
+
+
+    /**
+     * If the user is the top level manager, set their rollup quota value correctly
+     *
+     * @param string $user_id
+     * @param string $timeperiod_id
+     * @throws SugarQueryException
+     */
+    protected function fixTopLevelManagerQuotaRollup($user_id, $timeperiod_id)
+    {
+        if (User::isTopLevelManager($user_id)) {
+
+            $sq = new SugarQuery();
+            $sq->select(array())
+                ->fieldRaw('sum(quota * base_rate)', 'quota');
+            $sq->from($this);
+            $sq->where()
+                ->equals('assigned_user_id', $user_id)
+                ->equals('timeperiod_id', $timeperiod_id)
+                ->equals('draft', 1);
+
+            $quota = $sq->getOne();
+
+            $this->commitQuota(
+                $quota,
+                $user_id,
+                $timeperiod_id,
+                'Rollup'
+            );
+        }
     }
 
     /**
@@ -589,6 +688,7 @@ class ForecastManagerWorksheet extends SugarBean
      * @param string $user_id
      * @param string $timeperiodId
      * @param bool $fromCommit
+     * @return string The new calculated quota for the users
      */
     protected function recalcQuotas($user_id, $timeperiodId, $fromCommit = false)
     {
@@ -612,6 +712,8 @@ class ForecastManagerWorksheet extends SugarBean
             // when it's from a commit, we need to update the committed record as well.
             $this->updateManagerWorksheetQuota($user_id, $timeperiodId, $rep_quota, false);
         }
+
+        return $rep_quota;
     }
 
     /**

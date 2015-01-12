@@ -23,8 +23,9 @@
         </th>
         {{/each}}
         {{#each ../_fields.visible}}
-            <th class="{{#isSortable ../../module this}}sorting{{#eq ../../../orderBy.field name}}_{{../../../../orderBy.direction}}{{/eq}} orderBy{{name}}{{/isSortable}}"
-            {{#if name}} data-fieldname="{{name}}"{{/if}} data-orderby="{{orderBy}}">
+            <th class="{{#isSortable ../../module this}}sorting{{#eq ../../../orderBy.field name}}_{{../../../../orderBy.direction}}{{/eq}} orderBy{{name}}{{/isSortable}}{{#if widthClass}} {{widthClass}}{{/if}}"
+                {{#if styles}} style="{{styles}}"{{/if}}
+                {{#if name}} data-fieldname="{{name}}"{{/if}} data-orderby="{{orderBy}}">
                 {{#has "ReorderableColumns" ../../plugins}}
                 {{! Insert a <div> around all the inner element of the column.
                     This is a fix for firefox because the <th> does not support
@@ -38,7 +39,7 @@
                     <div{{#has "ReorderableColumns" ../../../plugins}} data-draggable="true"{{/has}}>
                 {{/has}}
                         <span>
-                            {{str this.label ../../module}}
+                            {{str label ../../module}}
                         </span>
                 {{#has "ReorderableColumns" ../../plugins}}
                     </div>
@@ -53,15 +54,27 @@
             {{#if isColumnDropdown}}
             <th class="nosort morecol">
                 <div class="dropdown">
-                    <button class="btn btn-invisible" data-toggle="dropdown" rel="tooltip" title="{{str "LBL_COLUMNS"}}" data-placement="bottom" data-action="fields-toggle" track="click:morecol"><i class="icon-ellipsis-horizontal"></i></button>
+                    <button class="btn btn-invisible" data-toggle="dropdown" rel="tooltip" title="{{str 'LBL_COLUMNS'}}" data-placement="bottom" data-action="fields-toggle" track="click:morecol"><i class="fa fa-cog"></i></button>
                     <ul class="dropdown-menu left">
                     {{#each ../../../_fields.all}}
                         <li>
                             <button class="{{#if selected}}active{{/if}}" data-field-toggle="{{name}}" track="click:{{name}}">
-                                {{#if selected}}<i class="icon icon-ok"></i> {{/if}}{{str label ../../../../module}}
+                                {{#if selected}}<i class="fa fa-check"></i> {{/if}}{{str label ../../../../module}}
                             </button>
                         </li>
                     {{/each}}
+                        <li class="divider" data-settings-li="order"></li>
+                        <li data-settings-li="order">
+                            <button data-columns-order="reset">
+                                <i class="icon fa fa-exchange"></i> {{str 'LBL_RESET_DEFAULT_VIEW' ../../../../module}}
+                            </button>
+                        </li>
+                        <li class="divider" data-settings-li="widths"></li>
+                        <li data-settings-li="widths">
+                            <button data-widths="reset">
+                                <i class="icon fa fa-arrows-h"></i> {{str 'LBL_RESET_DEFAULT_WIDTHS' ../../../../module}}
+                            </button>
+                        </li>
                     </ul>
                 </div>
             </th>
@@ -75,7 +88,7 @@
         {{/each}}
     </tr>
     <tr>
-        <th data-target="alert-container" class="alert alert-warning hide"{{#if ../this.colSpan}} colspan="{{../../this.colSpan}}"{{/if}}>
+        <th data-target="alert-container" class="alert alert-warning hide"{{#if ../colSpan}} colspan="{{../../colSpan}}"{{/if}}>
             <div data-target="alert">
             </div>
         </th>
@@ -86,17 +99,17 @@
     <tr name="{{module}}_{{attributes.id}}" class="single">
         {{#each ../../leftColumns}}
         <td>
-             {{field ../../../this model=../this template=../../../this.viewName}}
+             {{field ../../../this model=../this template=../../../viewName}}
         </td>
         {{/each}}
         {{#each ../../_fields.visible}}
-            <td{{#if this.align}} class="{{this.align}}"{{/if}} {{#if this.maxWidth}}style="max-width:{{this.maxWidth}}" {{/if}}data-type="{{type}}">
-              {{field ../../../this model=../this template=../../../this.viewName}}
+            <td{{#if align}} class="{{align}}"{{/if}} data-type="{{type}}">
+              {{field ../../../this model=../this template=../../../viewName}}
             </td>
         {{/each}}
         {{#each ../../rightColumns}}
         <td>
-             {{field ../../../this model=../this template=../../../this.viewName}}
+             {{field ../../../this model=../this template=../../../viewName}}
         </td>
         {{/each}}
     </tr>

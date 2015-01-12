@@ -13,12 +13,14 @@
 {{#if isForecastSetup}}
     {{#if forecastsConfigOK}}
         {{#if showTimeperiod}}
-            <div class="dashlet-options">
-                <div class="row-fluid">
-                    <div class="span4">
-                        {{#each dashletConfig.timeperiod}}
-                            {{field ../this model=../this.settings template="edit"}}
-                        {{/each}}
+            <div class="control-group dashlet-options">
+                <div class="controls{{#if isManager}} controls-two btn-group-fit{{/if}}">
+                    <div class="row-fluid">
+                        <div class="span6">
+                            {{#each dashletConfig.timeperiod}}
+                                {{field ../this model=../this.settings template="edit"}}
+                            {{/each}}
+                        </div>
                     </div>
                 </div>
             </div>

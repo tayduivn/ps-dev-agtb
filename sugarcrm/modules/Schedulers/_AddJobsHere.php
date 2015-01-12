@@ -54,7 +54,7 @@ $job_strings = array (
     17 => 'class::SugarJobHeartbeat',
     //END SUGARCRM flav=pro ONLY
     20 => 'cleanOldRecordLists',
-	//BEGIN SUGARCRM flav=int ONLY
+    //BEGIN SUGARCRM flav=int ONLY
 	999 => 'testEmail',
     //END SUGARCRM flav=int ONLY
 
@@ -592,6 +592,11 @@ if (SugarAutoLoader::existing('custom/modules/Schedulers/_AddJobsHere.php')) {
 }
 
 $extfile = SugarAutoLoader::loadExtension('schedulers');
+if($extfile) {
+    require $extfile;
+}
+
+$extfile = SugarAutoLoader::loadExtension('app_schedulers');
 if($extfile) {
     require $extfile;
 }

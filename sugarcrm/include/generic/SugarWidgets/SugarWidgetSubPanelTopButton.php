@@ -110,6 +110,7 @@ class SugarWidgetSubPanelTopButton extends SugarWidget
             "SubPanelTopCreateLeadNameButton",
             "SubPanelTopCreateNoteButton",
             "SubPanelTopScheduleMeetingButton",
+            "SubPanelTopScheduleCallButton",
             "SubPanelTopCreateTaskButton"
         );
 
@@ -135,13 +136,16 @@ class SugarWidgetSubPanelTopButton extends SugarWidget
             $panelDefs = $defines['subpanel_definition'];
             $link = '';
 
-            //Normalize Activities which should result in Create Tasks
+            //Normalize Activities which should result in child module creates
             if ($module == "Activities" &&  $defines['child_module_name'] == 'Tasks') {
                 $module = "Tasks";
                 $label = $app_strings['LBL_CREATE_TASK'];
             } elseif ($module == "Activities" &&  $defines['child_module_name'] == 'Meetings') {
                 $module = "Meetings";
                 $label = $app_strings['LBL_SCHEDULE_MEETING_BUTTON_LABEL'];
+            } elseif ($module == "Activities" &&  $defines['child_module_name'] == 'Calls') {
+                $module = "Calls";
+                $label = $app_strings['LBL_SCHEDULE_CALL'];
             }
 
             if ($panelDefs->isCollection()) {

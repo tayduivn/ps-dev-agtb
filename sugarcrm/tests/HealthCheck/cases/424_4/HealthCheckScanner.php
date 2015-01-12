@@ -18,7 +18,7 @@ class S_424_4_HealthCheckScannerCasesTestMock extends HealthCheckScannerCasesTes
 
     public function isStockBWCModule()
     {
-        return true;
+        return false;
     }
 
     public function init()

@@ -168,6 +168,30 @@ $dictionary['Activity'] = array(
             'vname'        => 'LBL_NOTES',
         ),
 
+        //BEGIN SUGARCRM flav=ent ONLY
+        'pmse_Project' => array(
+            'name'         => 'pmse_Project',
+            'type'         => 'link',
+            'relationship' => 'pmse_project_activities',
+            'source'       => 'non-db',
+            'vname'        => 'LBL_PMSE_PROJECT_ACTIVITIES_TITLE',
+        ),
+        'pmse_Business_Rules' => array(
+            'name'         => 'pmse_Business_Rules',
+            'type'         => 'link',
+            'relationship' => 'pmse_business_rules_activities',
+            'source'       => 'non-db',
+            'vname'        => 'LBL_PMSE_BUSINESS_RULES_ACTIVITIES_TITLE',
+        ),
+        'pmse_Emails_Templates' => array(
+            'name'         => 'pmse_Emails_Templates',
+            'type'         => 'link',
+            'relationship' => 'pmse_emails_templates_activities',
+            'source'       => 'non-db',
+            'vname'        => 'LBL_PMSE_EMAILS_TEMPLATES_ACTIVITIES_TITLE',
+        ),
+        //END SUGARCRM flav=ent ONLY
+
         // Add table columns.
         'parent_id' => array(
             'name'     => 'parent_id',

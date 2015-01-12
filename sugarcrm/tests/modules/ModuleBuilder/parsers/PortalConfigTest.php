@@ -15,14 +15,14 @@
 require_once("modules/ModuleBuilder/parsers/parser.portalconfig.php");
 require_once("modules/ACLRoles/ACLRole.php");
 
+
 class PortalConfigParserTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    var $requestVars = array(
+    private $requestVars = array(
         'appName' => 'testApp',
         'serverUrl' => 'testURL',
         'maxQueryResult' => '5'
     );
-
 
     public function setUp()
     {
@@ -42,47 +42,65 @@ class PortalConfigParserTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::tearDown();
     }
 
-    public function test_PortalConfigParserHandleSaveConfig()
+    public function test_PortalConfigParserSetUpConfig()
     {
+        $admin = $this->getMockBuilder('Administration')
+                      ->disableOriginalConstructor()->getMock();
+        $admin->expects($this->atLeastOnce())
+            ->method('saveSetting')
+            ->with(
+                $this->equalTo('portal'),
+                $this->anything(),
+                $this->anything(),
+                $this->equalTo('support')
+            )
+            ->willReturn(true);
 
-        $retrievedSettings = array();
-        foreach ($this->requestVars as $varKey => $value) {
-            $_REQUEST[$varKey] = $value;
-        }
-        $parser = new ParserModifyPortalConfig();
-        $parser->handleSave();
-        $result = $GLOBALS['db']->query("SELECT * FROM config WHERE category = 'portal'");
+        $parser = $this->getMockBuilder('ParserModifyPortalConfig')
+            ->setMethods(array('getAdministrationBean', 'refreshCache'))
+            ->getMock();
 
-        while ($row = $GLOBALS['db']->fetchByAssoc($result)) {
-            $retrievedSettings[$row['name']] = $row['value'];
-        }
+        $parser->expects($this->once())
+               ->method('refreshCache');
 
-        // Add additional assertions for oddball failures on CI
-        foreach ($this->requestVars as $varKey => $value) {
-            // Grab our value
-            $test = $retrievedSettings[$varKey];
-            
-            // First assertion
-            $this->assertNotEmpty($test, "DB result for key $varKey should not be empty. Retrieved: ".print_r($retrievedSettings, true));
-            
-            //  Decode step one
-            $he = html_entity_decode($test);
-            $this->assertNotEmpty($he, "HTML Entity Decoded value for key $varKey should not be empty: start value - $test");
-            
-            // Decode step two
-            $jd = json_decode($he);
-            $this->assertNotEmpty($jd, "JSON Decoded value for $varKey should not be empty: start value - $test, html_entity_decode value - $he");
-            
-            // Actual assertion
-            $this->assertEquals($jd, $value, "JSON Decoded value for $varKey should be equal to $value, actual value is $jd: start value - $test, html_entity_decode value - $he");
-        }
+        $parser->expects($this->atLeastOnce())
+               ->method('getAdministrationBean')
+               ->willReturn($admin);
 
+        $parser->setUpPortal($this->requestVars);
+}
 
+    public function test_PortalConfigUnsetConfig()
+    {
+        $admin = $this->getMockBuilder('Administration')
+            ->disableOriginalConstructor()->getMock();
+
+        $admin->expects($this->atLeastOnce())
+            ->method('saveSetting')
+            ->with(
+                $this->equalTo('portal'),
+                $this->anything(),
+                $this->anything(),
+                $this->equalTo('support')
+            )
+            ->willReturn(true);
+
+        $parser = $this->getMockBuilder('ParserModifyPortalConfig')
+            ->setMethods(array('getAdministrationBean', 'removeOAuthForPortalUser'))
+            ->getMock();
+
+        $parser->expects($this->atLeastOnce())
+            ->method('getAdministrationBean')
+            ->willReturn($admin);
+
+        $parser->expects($this->Once())
+            ->method('removeOAuthForPortalUser');
+
+        $parser->unsetPortal();
     }
 
     public function test_PortalConfigCreateUser()
     {
-
         $parser = new ParserModifyPortalConfig();
         $this->user = $parser->getPortalUser();
         $this->assertNotEquals($this->user->id, '');

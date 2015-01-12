@@ -417,7 +417,7 @@ describe('Plugins.VirtualCollection', function() {
             it('should use the related modules for the links from the field definition', function() {
                 collection.fetch();
 
-                expect(app.api.call.lastCall.args[1]).toMatch(/.*&module_list=Contacts%2CAccounts&.*/);
+                expect(app.api.call.lastCall.args[1]).toMatch(/.*&module_list=Contacts%2CAccounts.*/);
             });
 
             it('should default to `name` for the fields', function() {
@@ -678,10 +678,6 @@ describe('Plugins.VirtualCollection', function() {
                 collection = target.get(attribute);
 
                 expect(collection.length).toBe(4);
-
-                _.each(collection.links, function(link) {
-                    expect(link.length).toBe(0);
-                });
             });
 
             it('should copy the exact state of the collection field to the new bean', function() {
@@ -690,11 +686,27 @@ describe('Plugins.VirtualCollection', function() {
 
                 expect(target.get(attribute).length).toBe(3);
             });
+
+            it('should not have any defaults set on the link', function() {
+                target.copy(model);
+                collection = target.get(attribute);
+
+                _.each(collection.links, function(link) {
+                    expect(link.defaults.length).toBe(0);
+                });
+            });
+
+            it('should have the correct number of links added', function() {
+                target.copy(model);
+                collection = target.get(attribute);
+
+                expect(collection.links.contacts.length).toBe(4);
+            });
         });
 
         describe('setting a collection field', function() {
             it('should set the collection as a default when created', function() {
-                expect(model.getDefaultAttribute(attribute)).toBe(collection);
+                expect(model.getDefault(attribute)).toBe(collection);
             });
 
             it('should still set any non-collection fields on the bean', function() {
@@ -706,6 +718,82 @@ describe('Plugins.VirtualCollection', function() {
 
                 expect(model.get(attribute).length).toBe(1);
                 expect(model.get('foo')).toEqual('bar');
+            });
+
+            describe('setting to undefined', function() {
+                beforeEach(function() {
+                    model.set(attribute, _.last(contacts));
+                });
+
+                it('should set the attribute to an empty collection when setting with undefined', function() {
+                    model.set(attribute, undefined);
+
+                    expect(model.get(attribute).length).toBe(0);
+                });
+
+                it('should set the attribute to an empty collection when unsetting', function() {
+                    model.unset(attribute);
+
+                    expect(model.get(attribute).length).toBe(0);
+                });
+            });
+
+            it('should accept the models from the server response', function() {
+                var response = {
+                    records: contacts,
+                    next_offset: {}
+                };
+
+                model.set(attribute, response);
+
+                expect(model.get(attribute).length).toBe(contacts.length);
+            });
+
+            it('should accept the models from another collection', function() {
+                var collection = app.data.createBeanCollection('Contacts', contacts);
+
+                model.set(attribute, collection);
+
+                expect(model.get(attribute) === collection).toBe(false);
+                expect(model.get(attribute).length).toBe(collection.length);
+            });
+
+            describe('setting the next offsets', function() {
+                it('should set the next offsets from the server response', function() {
+                    var response = {
+                        records: contacts,
+                        next_offset: {
+                            contacts: -1,
+                            accounts: 0
+                        }
+                    };
+
+                    model.set(attribute, response);
+
+                    expect(model.get(attribute).offsets.contacts).toBe(-1);
+                    expect(model.get(attribute).offsets.accounts).toBe(0);
+                });
+
+                it('should set the next offsets from the options', function() {
+                    var options = {
+                        offsets: {
+                            contacts: -1,
+                            accounts: 0
+                        }
+                    };
+
+                    model.set(attribute, contacts, options);
+
+                    expect(model.get(attribute).offsets.contacts).toBe(-1);
+                    expect(model.get(attribute).offsets.accounts).toBe(0);
+                });
+
+                it('should infer the next offsets when not provided', function() {
+                    model.set(attribute, contacts);
+
+                    expect(model.get(attribute).offsets.contacts).toBe(6);
+                    expect(model.get(attribute).offsets.accounts).toBe(0);
+                });
             });
         });
 

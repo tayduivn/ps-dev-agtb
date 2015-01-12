@@ -1,4 +1,5 @@
 <?php
+if(!defined('sugarEntry'))define('sugarEntry', true);
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -15,7 +16,7 @@ if(empty($_REQUEST['action']) || empty($_REQUEST['token'])) {
     $files_dir = 'modules/UpgradeWizard/';
 } else {
     session_start();
-    if(!empty($_SESSION['upgrade_dir'])) {
+    if (!empty($_SESSION['upgrade_dir']) && is_dir($_SESSION['upgrade_dir'])) {
         $files_dir = $_SESSION['upgrade_dir'];
     } else {
         $files_dir = 'modules/UpgradeWizard/';
@@ -26,6 +27,26 @@ if(empty($_REQUEST['action']) || empty($_REQUEST['token'])) {
 require_once "{$files_dir}WebUpgrader.php";
 $upg = new WebUpgrader(dirname(__FILE__));
 $upg->init();
+
+// handle log export
+if (!empty($_REQUEST['action']) && $_REQUEST['action'] == 'exportlog') {
+    if (!empty($_REQUEST['token']) && $upg->checkTokenAndAdmin($_REQUEST['token'])) {
+        $file = $upg->context['log'];
+        if (!file_exists($file)) {
+            die('Log file does not exist');
+        }
+        header('Content-Type: application/text');
+        header('Content-Disposition: attachment; filename=' . basename($file));
+        header('Content-Length: ' . filesize($file));
+        ob_clean();
+        flush();
+        readfile($file);
+    } else {
+        die('Bad token. You can not export log file');
+    }
+    exit;
+}
+
 if(empty($_REQUEST['action']) || empty($_REQUEST['token'])) {
     $token = $upg->startUpgrade();
     if(!$token) {

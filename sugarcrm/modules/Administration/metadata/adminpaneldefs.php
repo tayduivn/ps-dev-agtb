@@ -214,6 +214,37 @@ $admin_option_defs['Contracts']['contract_type_management']= array('Contracts','
 $admin_group_header[]= array($app_list_strings['moduleList']['Contracts'],'',false,$admin_option_defs, 'LBL_CONTRACT_DESC');
 
 
+//BEGIN SUGARCRM flav=ent ONLY
+$admin_option_defs = array(
+    'pmse_Inbox' => array(
+        'Settings' => array(
+            'Settings',
+            'LBL_PMSE_ADMIN_TITLE_SETTINGS',
+            'LBL_PMSE_ADMIN_DESC_SETTINGS',
+            'javascript:parent.SUGAR.App.router.navigate("pmse_Inbox/layout/config", {trigger: true});',
+        ),
+        'CasesList' => array(
+            'CasesList',
+            'LBL_PMSE_ADMIN_TITLE_CASESLIST',
+            'LBL_PMSE_ADMIN_DESC_CASESLIST',
+            'javascript:parent.SUGAR.App.router.navigate("pmse_Inbox/layout/casesList", {trigger: true});',
+        ),
+        'EngineLogs' => array(
+            'EngineLogs',
+            'LBL_PMSE_ADMIN_TITLE_ENGINELOGS',
+            'LBL_PMSE_ADMIN_DESC_ENGINELOGS',
+            'javascript:parent.SUGAR.App.router.navigate("pmse_Inbox/layout/logView", {trigger: true});',
+        ),
+    )
+);
+$admin_group_header []= array(
+    'LBL_PMSE_ADMIN_TITLE_MODULE',
+    '',
+    false,
+    $admin_option_defs,
+    'LBL_PMSE_ADMIN_DESC_MODULE'
+);
+//END SUGARCRM flav=ent ONLY
 
 
 

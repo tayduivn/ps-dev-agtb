@@ -18,7 +18,7 @@ $viewdefs[$moduleName]['base']['menu']['header'] = array(
         'label' => 'LNK_NEW_RECORD',
         'acl_action' => 'create',
         'acl_module' => $moduleName,
-        'icon' => 'icon-plus',
+        'icon' => 'fa-plus',
     ),
 {if $showVcard}
     array(
@@ -26,7 +26,7 @@ $viewdefs[$moduleName]['base']['menu']['header'] = array(
         'label' => 'LNK_IMPORT_VCARD',
         'acl_action' => 'create',
         'acl_module' => $moduleName,
-        'icon' => 'icon-plus',
+        'icon' => 'fa-plus',
     ),
 {/if}
     array(
@@ -34,7 +34,7 @@ $viewdefs[$moduleName]['base']['menu']['header'] = array(
         'label' => 'LNK_LIST',
         'acl_action' => 'list',
         'acl_module' => $moduleName,
-        'icon' => 'icon-reorder',
+        'icon' => 'fa-bars',
     ),
 {if $showImport}
     array(
@@ -42,7 +42,7 @@ $viewdefs[$moduleName]['base']['menu']['header'] = array(
         'label' => 'LBL_IMPORT',
         'acl_action' => 'import',
         'acl_module' => $moduleName,
-        'icon' => 'icon-upload',
+        'icon' => 'fa-arrow-circle-o-up',
     ),
 {/if}
 );

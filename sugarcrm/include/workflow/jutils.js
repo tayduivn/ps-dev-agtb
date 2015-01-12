@@ -9,7 +9,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 // $Id: jutils.js 51719 2009-10-22 17:18:00Z mitani $
-//FILE SUGARCRM flav=pro ONLY
 
 //Workflow Javascript utilities
 function get_value(id){

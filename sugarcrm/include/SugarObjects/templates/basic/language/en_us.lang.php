@@ -31,6 +31,8 @@ $mod_strings = array(
 'LBL_LIST_NAME'=>'Name',
 'LBL_EDIT_BUTTON' => 'Edit',
  'LBL_REMOVE' => 'Remove',
+    //define label(s) to be used for overriding local values during import/export
+    'LBL_EXPORT_MODIFIED_BY_NAME' => 'Modified By Name',
 
 
 );

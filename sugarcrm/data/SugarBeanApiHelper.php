@@ -260,9 +260,10 @@ class SugarBeanApiHelper
             }
             if ( !$bean->ACLFieldAccess($fieldName, $acl, $context) ) {
                 // No write access to this field, but they tried to edit it
-                throw new SugarApiExceptionNotAuthorized('Not allowed to edit field '.$fieldName.' in module: '.$submittedData['module']);
+                throw new SugarApiExceptionNotAuthorized(
+                    'Not allowed to edit field ' . $fieldName . ' in module: ' . $bean->module_name
+                );
             }
-
         }
         //END SUGARCRM flav=pro ONLY
 
@@ -286,6 +287,34 @@ class SugarBeanApiHelper
         }
 
         return true;
+    }
+
+    /**
+     * This code replicates the behavior in Sugar_Controller::pre_save()
+     * @param SugarBean $bean
+     * @return boolean
+     */
+    public function checkNotify($bean)
+    {
+        $check_notify = TRUE;
+        // check update
+        // if Notifications are disabled for this module set check notify to false
+        if (!empty($GLOBALS['sugar_config']['exclude_notifications'][$bean->module_dir]) && $GLOBALS['sugar_config']['exclude_notifications'][$bean->module_dir] == true) {
+            $check_notify = FALSE;
+        } else {
+            // some modules, like Users don't have an assigned_user_id
+            if (isset($bean->assigned_user_id)) {
+                // if the assigned user hasn't changed, set check notify to false
+                if (!empty($bean->fetched_row['assigned_user_id']) && $bean->fetched_row['assigned_user_id'] == $bean->assigned_user_id) {
+                    $check_notify = FALSE;
+                    // if its the same user, don't send
+                } elseif ($bean->assigned_user_id == $GLOBALS['current_user']->id) {
+                    $check_notify = FALSE;
+                }
+            }
+        }
+
+        return $check_notify;
     }
 
     /**

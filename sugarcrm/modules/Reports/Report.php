@@ -141,6 +141,13 @@ class Report
      */
     protected $group_order_by_arr = array();
 
+    /**
+     *
+     * SugarBeans in JOIN
+     * @var array
+     */
+    public $extModules = array();
+
     function Report($report_def_str = '', $filters_def_str = '', $panels_def_str = '')
     {
         global $current_user, $current_language, $app_list_strings;
@@ -1251,7 +1258,9 @@ class Report
                 $varDefLabel = $verdef_arr_for_filters[$columnKeyArray[sizeof($columnKeyArray) - 1]]['vname'];
                 $varDefLabel = translate($varDefLabel, $verdef_arr_for_filters[$columnKeyArray[sizeof($columnKeyArray) - 1]]['module']);
                 $finalDisplayName = $reportDisplayTableName . " > " . $varDefLabel;
-                $where_clause = str_replace($key, $finalDisplayName, $where_clause);
+                // Wrap the search and replace terms in spaces to ensure exact match
+                // and replace
+                $where_clause = str_replace(" $key ", " $finalDisplayName ", $where_clause);
             }
         } // foreach
         return $where_clause;
@@ -1449,7 +1458,8 @@ class Report
                         $do_id = 1;
                     }
                     // Bug 45019: don't add ID column if this column is the ID column
-                    if (($field_list_name != 'total_select_fields' && $field_list_name != 'summary_select_fields') && $do_id) {
+                    // PAT-1008: add id column to select for summation query to make name column linkable
+                    if ($field_list_name != 'total_select_fields' && ($field_list_name != 'summary_select_fields' || $display_column['type'] == 'name') && $do_id) {
                         $id_column['name'] = 'id';
                         $id_column['type'] = 'id';
                         $id_column['table_key'] = $display_column['table_key'];
@@ -1463,6 +1473,12 @@ class Report
                         $select_piece = $this->layout_manager->widgetQuery($id_column);
                         if (!$this->select_already_defined($select_piece, $field_list_name)) {
                             array_push($this->$field_list_name, $select_piece);
+                            // PAT-1008: add id column to group by since it's added to select for summation query. Required by non-mysql dbs
+                            if ($field_list_name == 'summary_select_fields') {
+                                $this->layout_manager->setAttribute('context', 'GroupBy');
+                                $this->group_by_arr[] = $this->layout_manager->widgetQuery($id_column);
+                                $this->layout_manager->setAttribute('context', 'Select');
+                            }
                         }
                     }
                 }
@@ -1858,6 +1874,13 @@ class Report
         $query .= $this->from . "\n";
 
         $where_auto = " " . $this->focus->table_name . ".deleted=0 \n";
+
+        foreach($this->extModules as $tableAlias => $extModule) {
+            if (isset($extModule->deleted)) {
+               $where_auto .= " AND " . $tableAlias . ".deleted=0 \n";             
+            }            
+        }
+        
         // Start ACL check
         global $current_user, $mod_strings;
         if (!is_admin($current_user)) {
@@ -2248,6 +2271,12 @@ class Report
                 $this->layout_manager->setAttribute('context', 'List');
             }
 
+            // Make sure 'AVG' aggregate is shown as float, regardless of the original field type
+            if (!empty($display_column['group_function']) && strtolower($display_column['group_function']) === 'avg'
+                && $display_column['type'] != 'currency') {
+                $display_column['type'] = 'float';
+            }
+
             if ($display_column['type'] != 'currency' || (substr_count($display_column['name'], '_usdoll') == 0 &&
                     (isset($display_column['group_function']) ?
                         ($display_column['group_function'] != 'weighted_amount' && $display_column['group_function'] != 'weighted_sum') :
@@ -2575,6 +2604,8 @@ class Report
         } else if (!empty($this->selected_loaded_custom_links) && !empty($this->selected_loaded_custom_links[$field_def['secondary_table']])) {
             $secondaryTableAlias = $this->selected_loaded_custom_links[$field_def['secondary_table']]['join_table_alias'];
         }
+
+        $this->extModules[$secondaryTableAlias] = $extModule;
 
         if (isset($extModule->field_defs['name']['db_concat_fields'])) {
             $select_piece = db_concat($secondaryTableAlias, $extModule->field_defs['name']['db_concat_fields']);

@@ -64,11 +64,17 @@ $xtpl->assign("MOD", $mod_strings);
 $xtpl->assign("APP", $app_strings);
 $xtpl->assign("RETURN_PREFIX", $exp_object->return_prefix);
 $xtpl->assign("PRINT_URL", "index.php?".$GLOBALS['request_string']);
-if(!is_file(sugar_cached('jsLanguage/') . $GLOBALS['current_language'] . '.js')) {
-    require_once('include/language/jsLanguage.php');
-    jsLanguage::createAppStringsCache($GLOBALS['current_language']);
+
+require_once('include/language/jsLanguage.php');
+if (!is_file(sugar_cached('jsLanguage/') . $GLOBALS['current_language'] . '.js')) {
+	jsLanguage::createAppStringsCache($GLOBALS['current_language']);
+}
+if (!is_file(sugar_cached('jsLanguage/') . $exp_object->module_dir . '/' . $GLOBALS['current_language'] . '.js')) {
+	jsLanguage::createModuleStringsCache($exp_object->module_dir, $GLOBALS['current_language']);
 }
 $javascript_language_files = getVersionedScript("cache/jsLanguage/{$GLOBALS['current_language']}.js",  $GLOBALS['sugar_config']['js_lang_version']);
+$javascript_language_files .= "\n";
+$javascript_language_files .= getVersionedScript("cache/jsLanguage/{$exp_object->module_dir}/{$GLOBALS['current_language']}.js",  $GLOBALS['sugar_config']['js_lang_version']);
 $xtpl->assign("JAVASCRIPT_LANGUAGE_FILES", $javascript_language_files);
 
 insert_popup_header($theme);

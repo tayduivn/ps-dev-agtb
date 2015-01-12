@@ -325,7 +325,7 @@ describe('Base.Field.Actiondropdown', function() {
             field = SugarTest.createField('base', 'main_dropdown', 'actiondropdown', 'detail', fieldDef, moduleName);
             field.render();
             f = _.first(field.fields);
-            f.def.icon = 'icon-edit';
+            f.def.icon = 'fa fa-pencil';
         });
 
         afterEach(function() {

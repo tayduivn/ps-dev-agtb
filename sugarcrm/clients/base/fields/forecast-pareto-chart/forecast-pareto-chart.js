@@ -229,6 +229,7 @@
             .margin({top: 0, right: 10, bottom: 0, left: 10})
             .showTitle(false)
             .tooltips(true)
+            .direction(app.lang.direction)
             .tooltipQuota(function(key, x, y, e, graph) {
                 // Format the value using currency class and user settings
                 var val = app.currency.formatAmountLocale(e.val, app.currency.getBaseCurrencyId());

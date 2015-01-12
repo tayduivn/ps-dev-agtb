@@ -13,7 +13,7 @@
 <div class="datapoint pull-left">
     {{this.label}}<br>
     {{#if this.hasDataAccess}}
-        <h2 id="{{this.name}}">{{formatCurrency this.total}}{{#if this.arrow}}<span class="icon-sm committed_arrow{{this.arrow}}"></span>{{/if}}</h2>
+        <h2 id="{{this.name}}">{{formatCurrency this.total}}{{#if this.arrow}}<span class="fa fa-sm committed_arrow{{this.arrow}}"></span>{{/if}}</h2>
     {{else}}
         {{{this.noDataAccessTemplate}}}
     {{/if}}

@@ -82,11 +82,11 @@ var DCMenu = YUI({debug:false,combine: true, timeout: 10000, base:"include/javas
 			//var dcmenuContainerHeight = dcmenuContainer.get('offsetHeight');
     		//overlays[depth].set('xy', [20,dcmenuContainerHeight]);
    	  	    overlays[depth].render();
-   	  	    
-   	  	    
+
+
    	  	    //overlays[depth].center();
    	  	    YAHOO.util.Event.onContentReady("dcboxbody", function() {
-   	  	    		
+
    	  	    	   	//console.log(Y.one('#dcboxbody').get('offsetWidth'));
 		   	  	    //overlays[depth].set("width", Y.one('#dcboxbody').get('offsetWidth')+"px");
 		   	  	    //overlays[depth].set("height", Y.one('#dcboxbody').get('offsetHeight')+"px");
@@ -98,12 +98,12 @@ var DCMenu = YUI({debug:false,combine: true, timeout: 10000, base:"include/javas
                 overlays[depth].toggleModal();
     		return overlays[depth]
     }
-    
+
     DCMenu.menu = function(module,title,modal){
         if ( typeof(lastLoadedMenu) != 'undefined' && lastLoadedMenu == module ) {
             return;
         }
-        
+
         lastLoadedMenu = module;
 
     	if(typeof menuFunctions[module] == 'undefined'){
@@ -112,19 +112,19 @@ var DCMenu = YUI({debug:false,combine: true, timeout: 10000, base:"include/javas
                 'index.php?source_module=' + this.module + '&record=' + this.record + '&action=Quickcreate&module=' + module,
                 null,null,title,{modal : modal ? true : false}
             );
-    	}	
+    	}
     }
-    
-    
+
+
     DCMenu.displayModuleMenu = function(obj, module){
-    	loadView(module, 'index.php?module=' + module + '&action=ajaxmenu', 0, 'moduleTabLI_' + module); 	
-    	
+    	loadView(module, 'index.php?module=' + module + '&action=ajaxmenu', 0, 'moduleTabLI_' + module);
+
     }
-    
+
     DCMenu.closeTopOverlay = function(){
         overlays[overlays.length - 1].hide();
     }
-    
+
     DCMenu.closeOverlay = function(depth,parentid){
         DCMenu.closeQView();
     	var i=0;
@@ -161,7 +161,7 @@ var DCMenu = YUI({debug:false,combine: true, timeout: 10000, base:"include/javas
     DCMenu.minimizeOverlay = function(){
  		//isIE7 = ua.indexOf('msie 7')!=-1;
 		//box_style = isIE7 ? 'position:fixed; width:750px;' : 'none';
-		
+
      	Y.one('#dcboxbody').setStyle('display','none');
      	Y.one('#dcboxbody').setStyle('width', '750px;');
     }
@@ -214,7 +214,7 @@ var DCMenu = YUI({debug:false,combine: true, timeout: 10000, base:"include/javas
             if ( typeof(extraButton) == "string" ) {
                 content += extraButton
             }
-            content += '<a id="dcmenu_close_link" href="#" onclick="lastLoadedMenu=undefined;DCMenu.closeOverlay(\'\',\''+parentid+'\'); return false;"><i class="icon-remove icon-sm"></i></a></div></div><div class="bd"><div class="dccontent">' + data.html + '</div></div></div>';
+            content += '<a id="dcmenu_close_link" href="#" onclick="lastLoadedMenu=undefined;DCMenu.closeOverlay(\'\',\''+parentid+'\'); return false;"><i class="fa fa-times fa-sm"></i></a></div></div><div class="bd"><div class="dccontent">' + data.html + '</div></div></div>';
 
 
             //"resetEvalBool" will only be set to true if an eval() has completed succesfully from a previous request.  It will not get reset again within a request.
@@ -237,7 +237,7 @@ var DCMenu = YUI({debug:false,combine: true, timeout: 10000, base:"include/javas
             if(typeof(data.eval) != 'undefined' && data.eval  && (typeof(evalHappened) =='undefined'|| evalHappened ==false)){
                 SUGAR.util.evalScript(content);
             }
-        
+
             //set back to false for reuse
             evalHappened = false;
 
@@ -339,7 +339,7 @@ var DCMenu = YUI({debug:false,combine: true, timeout: 10000, base:"include/javas
 	spotResults = function(id, data){
 		//var overlay = setBody(data.responseText, 0, 'sugar_spot_search');
         document.getElementById('sugar_spot_search').className = 'searching';
-                        
+
         var resultsDiv = document.getElementById('sugar_spot_search_results');
         resultsDiv.style.display = 'block';
         resultsDiv.innerHTML = data.responseText;
@@ -566,7 +566,7 @@ var DCMenu = YUI({debug:false,combine: true, timeout: 10000, base:"include/javas
 						if(SUGAR.isIE) {
 							var dchead = Y.one('#dchead');
 				    		var dcheadwidth = dchead.get('offsetWidth');
-				    		Y.one('#dctitle').setStyle("width",dcheadwidth+"px");	
+				    		Y.one('#dctitle').setStyle("width",dcheadwidth+"px");
 						}
 						if(isRTL) {
 							overlay.set('x',dcmenuSugarCubeX - dcboxbodyWidth);
@@ -610,8 +610,8 @@ var DCMenu = YUI({debug:false,combine: true, timeout: 10000, base:"include/javas
             overlay.set('x',(dcmenuSugarCubeX + dcmenuSugarCubeWidth) - dcboxbodyWidth);
         }
         $('#dcmenuSugarCube').addClass("focused");
-		
-		
+
+
 
 
 	}
@@ -620,7 +620,7 @@ var DCMenu = YUI({debug:false,combine: true, timeout: 10000, base:"include/javas
 	}
     notificationDisplay = function(id, data){
         var jData = Y.JSON.parse(data.responseText);
-		setBody(jData.contents, 0);	
+		setBody(jData.contents, 0);
 		decrementUnreadNotificationCount();
 	}
 	decrementUnreadNotificationCount = function() {
@@ -649,7 +649,7 @@ var DCMenu = YUI({debug:false,combine: true, timeout: 10000, base:"include/javas
         {
             return;
         }
-       
+
         var o = overlays['sqv'];
         o.visible = false;
         o.get('boundingBox').setStyle('visibility','hidden');
@@ -688,7 +688,7 @@ var DCMenu = YUI({debug:false,combine: true, timeout: 10000, base:"include/javas
         else
         {
             var dcgscontent = Y.one('#dcgscontent');
-            dcgscontent.set('innerHTML', '<div style="height:400px;width:300px;"><img src="themes/default/images/img_loading.gif"/></div>');
+            dcgscontent.set('innerHTML', '<div style="height:400px;width:300px;"><img src="themes/default/images/img_loading.gif?v='+SUGAR.VERSION_MARK+'"/></div>');
             if(! overlays[qvDepth].visible )
             {
                 overlays[qvDepth].show();
@@ -696,7 +696,7 @@ var DCMenu = YUI({debug:false,combine: true, timeout: 10000, base:"include/javas
             return;
         }
 
-        content = '<div id="dcboxbodyqv" class="sugar_spot_search" style="position: fixed;"><div class="dashletPanel dc"><div class="hd"><div><a id="dcmenu_close_link" href="javascript:DCMenu.closeQView()"><i class="icon-remove icon-sm"></i></a></div></div><div class="bd"><div class="bd-center"><div class="dccontent" id="dcgscontent"><br><div style="height:400px;width:300px;"><img src="themes/default/images/img_loading.gif"/><br></div></div></div></div><div class="ft"><div class="bl"></div><div class="ft-center"></div><div class="br"></div></div></div></div></div></div></div></div></div>';
+        content = '<div id="dcboxbodyqv" class="sugar_spot_search" style="position: fixed;"><div class="dashletPanel dc"><div class="hd"><div><a id="dcmenu_close_link" href="javascript:DCMenu.closeQView()"><i class="fa fa-times fa-sm"></i></a></div></div><div class="bd"><div class="bd-center"><div class="dccontent" id="dcgscontent"><br><div style="height:400px;width:300px;"><img src="themes/default/images/img_loading.gif?v='+SUGAR.VERSION_MARK+'"/><br></div></div></div></div><div class="ft"><div class="bl"></div><div class="ft-center"></div><div class="br"></div></div></div></div></div></div></div></div></div>';
 
         overlays[qvDepth].set("bodyContent", content);
         overlays[qvDepth].set("align", {node:"#dcboxbody",
@@ -749,17 +749,17 @@ var DCMenu = YUI({debug:false,combine: true, timeout: 10000, base:"include/javas
             if(SUGAR.themes.theme_name == 'RTL')
             {
                 content += '<div><div style="float:right"><a id="dcmenu_close_link" href="javascript:DCMenu.closeQView()">';
-                content += '<i class="icon-remove icon-sm"></i>';
+                content += '<i class="fa fa-times fa-sm"></i>';
                 content += '</a></div></div></div><div class="tr"></div><div class="bd">';
             } else {
                 content += '<div><a id="dcmenu_close_link" href="javascript:DCMenu.closeQView()">';
-                content += '<i class="icon-remove icon-sm"></i>';
+                content += '<i class="fa fa-times fa-sm"></i>';
                 content += '</a></div></div><div class="tr"></div><div class="bd">';
             }
             content += '<div><div class="dccontent" id="dcgscontent">' +  data.responseText;
             content += '</div></div></div>';
             content += '</div></div></div></div></div></div></div></div>';
-      
+
             overlays[qvDepth].set("bodyContent", content);
             overlays[qvDepth].set("align", {node:"#SpotResults", points:[Y.WidgetPositionAlign.TR, Y.WidgetPositionAlign.TR]});
             overlays[qvDepth].visible = true;
@@ -781,7 +781,7 @@ var DCMenu = YUI({debug:false,combine: true, timeout: 10000, base:"include/javas
 
             //var dcgscontent = Y.one('#dcgscontent');
             //dcgscontent.set('innerHTML', data.responseText);
-            
+
             overlays[qvDepth].after('render', function(e) { this.show(); });
             overlays[qvDepth].render();
 

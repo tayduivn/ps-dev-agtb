@@ -18,7 +18,7 @@
 
     events: {
         'click [name=name]': 'gotoDetail',
-        'click .icon-eye-open': 'loadPreview',
+        'click .fa-eye': 'loadPreview',
         'click [name=show_more_button]': 'showMoreResults'
     },
 
@@ -103,13 +103,22 @@
             }
         }, this);
     },
-    setHeaderpaneTitle: function(overrideMessage) {
-        // Once the sidebartoggle rendered we close the sidebar so the arrows are updated SP-719. Note we don't
-        // start listening for following event until we set title (since that will cause toggle render again!)
-        app.controller.context.on("sidebarRendered", this.closeSidebar, this);
-        // Actually sets the title on the headerpane
-        this.context.trigger("headerpane:title", overrideMessage ||
-            app.utils.formatString(app.lang.get('LBL_PORTAL_SEARCH_RESULTS_TITLE'),{'query' : this.lastQuery}));
+
+    /**
+     * Changes the {@link View.Views.Base.HeaderpaneView} title.
+     *
+     * @param {string} [title] The title to set in the headerpane view. If not
+     *   passed, will default to the label `LBL_PORTAL_SEARCH_RESULTS_TITLE`.
+     */
+    setHeaderpaneTitle: function(title) {
+        if (!title) {
+            var context = {
+                'query': Handlebars.Utils.escapeExpression(this.lastQuery)
+            };
+            title = app.utils.formatString(app.lang.get('LBL_PORTAL_SEARCH_RESULTS_TITLE'), context);
+        }
+
+        this.context.trigger('headerpane:title', title);
     },
     // Highlights current result row. Also, executed when preview view fires an
     // preview:decorate event (e.g. user clicks previous/next arrows on side preview)

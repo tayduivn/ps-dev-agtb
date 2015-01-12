@@ -14,6 +14,7 @@
 <html>
 <head>
   <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=320" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <title>Gauge Chart - Color Options</title>
@@ -100,8 +101,9 @@
 <script src="../../../include/javascript/nvd3/src/models/gaugeChart.js"></script>
 
 <script>
-  //default
   d3.json("data/gauge_data.json", function(chartData) {
+
+    // Default
     var chart1 = nv.models.gaugeChart()
           .tooltips(false)
           .maxValue(9)
@@ -129,6 +131,7 @@
       .transition().duration(500)
       .call(chart3);
 
+    // Graduated
     var chart7 = nv.models.gaugeChart()
           .tooltips(false)
           .maxValue(9)
@@ -149,10 +152,15 @@
   });
 
   d3.json("data/gauge_data_color.json", function(chartData) {
+    chartData.data.map(function(d) {
+      delete d.classes;
+    });
+
+    // Data-Defined Color
     var chart4 = nv.models.gaugeChart()
           .tooltips(false)
           .maxValue(9)
-          .colorData('default');
+          .colorData('data');
     d3.select('#chart4 svg')
         .datum(chartData)
       .transition().duration(500)
@@ -161,16 +169,23 @@
     var chart5 = nv.models.gaugeChart()
           .tooltips(false)
           .maxValue(9)
-          .colorData('default', {gradient: true});
+          .colorData('data', {gradient: true});
     d3.select('#chart5 svg')
         .datum(chartData)
       .transition().duration(500)
       .call(chart5);
+  });
 
+  d3.json("data/gauge_data_color.json", function(chartData) {
+    chartData.data.map(function(d) {
+      delete d.color;
+    });
+
+    // Data-Defined Classes
     var chart6 = nv.models.gaugeChart()
           .tooltips(false)
           .maxValue(9)
-          .colorData('class', {step: 2});
+          .colorData('data');
     d3.select('#chart6 svg')
         .datum(chartData)
       .transition().duration(500)

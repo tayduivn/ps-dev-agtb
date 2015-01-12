@@ -209,8 +209,8 @@
      */
     unlinkClicked: function(model) {
         var self = this;
-        var name = model.get('name') || '',
-            context = app.lang.getModuleName(model.module).toLowerCase() + ' ' + name.trim();
+        var name = Handlebars.Utils.escapeExpression(app.utils.getRecordName(model)).trim();
+        var context = app.lang.getModuleName(model.module).toLowerCase() + ' ' + name;
         app.alert.show(model.get('id') + ':unlink_confirmation', {
             level: 'confirmation',
             messages: app.utils.formatString(app.lang.get('NTC_UNLINK_CONFIRMATION_FORMATTED'), [context]),

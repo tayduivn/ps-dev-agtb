@@ -211,12 +211,12 @@ describe('Notifications', function() {
                 setTimeout = sinon.collection.stub(window, 'setTimeout', function() {
                     return intervalId;
                 }),
-                clearInterval = sinon.collection.stub(window, 'clearInterval', $.noop()),
+                clearTimeout = sinon.collection.stub(window, 'clearTimeout', $.noop()),
                 intervalId = 1;
 
             view.startPulling().stopPulling();
 
-            expect(clearInterval).toHaveBeenCalledTwice();
+            expect(clearTimeout).toHaveBeenCalledTwice();
             expect(view._intervalId).toBeNull();
             expect(view._remindersIntervalId).toBeNull();
         });
@@ -348,7 +348,7 @@ describe('Notifications', function() {
             it('Should show reminder if need', function() {
 
                 var now = new Date('2013-09-04T22:45:56+02:00'),
-                    dateStart = new Date('2013-09-04T23:16:16+02:00'),
+                    dateStart = new Date('2013-09-04T23:15:16+02:00'),
                     clock = sinon.useFakeTimers(now.getTime(), 'Date'),
                     setTimeout = sinon.collection.stub(window, 'setTimeout', $.noop()),
                     _showReminderAlert = sinon.collection.stub(view, '_showReminderAlert'),
@@ -367,6 +367,7 @@ describe('Notifications', function() {
                 view._initReminders();
                 view._alertsCollections[reminderModule].add(model);
                 view.dateStarted = now.getTime();
+                view._remindersIntervalStamp = view.dateStarted - 60000;
                 view.checkReminders();
 
                 expect(_showReminderAlert).toHaveBeenCalledWith(model);

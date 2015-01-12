@@ -107,7 +107,7 @@ class SugarFieldRelateLink extends SugarFieldBase
 
         $response = $this->getRelateApi()->filterRelated($service, $args);
 
-        return $response['records'];
+        return $response;
     }
 
     /**

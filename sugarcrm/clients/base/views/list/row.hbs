@@ -13,8 +13,8 @@
 {{#with rowModel}}
     <tr name="{{module}}_{{attributes.id}}" class="single">
         {{#each ../metaFields}}
-            <td{{#if this.align}} class="{{this.align}}"{{/if}}>
-                {{field ../../this model=../this template=../../this.viewName}}
+            <td{{#if align}} class="{{align}}"{{/if}}>
+                {{field ../../this model=../this template=../../viewName}}
             </td>
         {{/each}}
     </tr>

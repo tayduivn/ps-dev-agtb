@@ -111,7 +111,7 @@ class RevenueLineItem extends SugarBean
     public $object_name = "RevenueLineItem";
     public $module_dir = 'RevenueLineItems';
     public $new_schema = true;
-    public $importable = true;
+    public $importable = false;
 
     public $experts;
 

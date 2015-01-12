@@ -22,6 +22,7 @@ svg {
 svg text {
   font: normal @chartTextSize @sansFontFamily;
   fill: @textColor;
+  stroke: none;
 }
 
 svg .title {
@@ -117,53 +118,6 @@ svg .title {
   background: url(@textureTertiary);
 }
 
-/**********
-* Styleguide
-*/
-
-.nv-demo {
-  padding: 20px;
-  width: 100%;
-  height: 100%;
-  .box-sizing(border-box);
-  .page-header {
-    padding: 0;
-    margin: 0;
-    h2 {
-      margin-top: 0;
-    }
-  }
-}
-
-body.full-screen {
-  height: 100%;
-  .nv-chart {
-    min-width: 100px;
-    min-height: 100px;
-    max-height: none;
-    border: 1px solid black;
-    .calcHeight(~"100% - 94px");
-    width: 100%;
-  }
-  .nv-options {
-    margin-bottom: 10px;
-    span {
-      color: @grayLight;
-      font-size: 10px;
-    }
-    label {
-      margin-right: 8px;
-      display: inline-block;
-      height: 19px;
-    }
-    > div {
-      display: inline-block;
-      float: left;
-      padding-right: 8px;
-    }
-  }
-}
-
 
 /**********
 *  Brush
@@ -242,8 +196,7 @@ body.full-screen {
   fill: none;
   stroke: @chartTickColor;
   stroke-width: @chartTickWidth;
-  stroke-opacity: .25;
-  shape-rendering: crispEdges;
+  stroke-opacity: .3;
 }
 
 .nv-axis line.zero {
@@ -831,17 +784,17 @@ body.full-screen {
   .nv-fill13 { stroke:@fill13; }
 }
 
-.nv-stroke0 { stroke:@stroke0; background-color:@stroke0; }
-.nv-stroke1 { stroke:@stroke1; background-color:@stroke1; }
-.nv-stroke2 { stroke:@stroke2; background-color:@stroke2; }
-.nv-stroke3 { stroke:@stroke3; background-color:@stroke3; }
-.nv-stroke4 { stroke:@stroke4; background-color:@stroke4; }
-.nv-stroke5 { stroke:@stroke5; background-color:@stroke5; }
-.nv-stroke6 { stroke:@stroke6; background-color:@stroke6; }
-.nv-stroke7 { stroke:@stroke7; background-color:@stroke7; }
-.nv-stroke8 { stroke:@stroke8; background-color:@stroke8; }
-.nv-stroke9 { stroke:@stroke9; background-color:@stroke9; }
-.nv-stroke10 { stroke:@stroke10; background-color:@stroke10; }
-.nv-stroke11 { stroke:@stroke11; background-color:@stroke11; }
-.nv-stroke12 { stroke:@stroke12; background-color:@stroke12; }
-.nv-stroke13 { stroke:@stroke13; background-color:@stroke13; }
+.nv-stroke00 { stroke:@stroke00; color:@stroke00; }
+.nv-stroke01 { stroke:@stroke01; color:@stroke01; }
+.nv-stroke02 { stroke:@stroke02; color:@stroke02; }
+.nv-stroke03 { stroke:@stroke03; color:@stroke03; }
+.nv-stroke04 { stroke:@stroke04; color:@stroke04; }
+.nv-stroke05 { stroke:@stroke05; color:@stroke05; }
+.nv-stroke06 { stroke:@stroke06; color:@stroke06; }
+.nv-stroke07 { stroke:@stroke07; color:@stroke07; }
+.nv-stroke08 { stroke:@stroke08; color:@stroke08; }
+.nv-stroke09 { stroke:@stroke09; color:@stroke09; }
+.nv-stroke10 { stroke:@stroke10; color:@stroke10; }
+.nv-stroke11 { stroke:@stroke11; color:@stroke11; }
+.nv-stroke12 { stroke:@stroke12; color:@stroke12; }
+.nv-stroke13 { stroke:@stroke13; color:@stroke13; }

@@ -1,5 +1,5 @@
 <?php
-//FILE SUGARCRM flav=pro || flav=sales ONLY
+
 if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
@@ -27,36 +27,32 @@ $viewdefs['Accounts']['base']['view']['list'] = array(
             'fields' => array(
                 array(
                     'name' => 'name',
-                    'width' =>  49,
                     'link' => true,
                     'label' => 'LBL_LIST_ACCOUNT_NAME',
                     'enabled' => true,
                     'default' => true,
+                    'width' =>  'xlarge',
                 ),
                 array(
                     'name' => 'billing_address_city',
-                    'width' =>  13,
                     'label' => 'LBL_LIST_CITY',
                     'enabled' => true,
                     'default' => true,
                 ),
                 array(
                     'name' => 'billing_address_country',
-                    'width' =>  13,
                     'label' => 'LBL_BILLING_ADDRESS_COUNTRY',
                     'enabled' => true,
                     'default' => true,
                 ),
                 array (
                     'name' => 'phone_office',
-                    'width' => '10%',
                     'label' => 'LBL_LIST_PHONE',
                     'enabled' => true,
                     'default' => true,
                 ),
                 array (
                     'name' => 'assigned_user_name',
-                    'width' => '10%',
                     'label' => 'LBL_LIST_ASSIGNED_USER',
                     'id' => 'ASSIGNED_USER_ID',
                     'enabled' => true,
@@ -79,7 +75,6 @@ $viewdefs['Accounts']['base']['view']['list'] = array(
                     'type' => 'datetime',
                     'label' => 'LBL_DATE_ENTERED',
                     'enabled' => true,
-                    'width' => 13,
                     'default' => true,
                     'readonly' => true,
                 ),

@@ -18,7 +18,7 @@
 ({
     extendsFrom: 'RecordlistView',
     fallbackFieldTemplate: 'list',
-    plugins: ['ErrorDecoration', 'Editable', 'SugarLogic', 'Pagination', 'LinkedModel'],
+    plugins: ['ErrorDecoration', 'Editable', 'SugarLogic', 'Pagination', 'LinkedModel', 'ResizableColumns'],
 
     contextEvents: {
         "list:editall:fire": "toggleEdit",
@@ -35,15 +35,17 @@
         this.dataViewName = options.name || 'subpanel-list';
 
         this._super("initialize", [options]);
+
+        var limit = this.context.get('limit') || app.config.maxSubpanelResult;
         // Setup max limit on collection's fetch options for this subpanel's context
-        if (app.config.maxSubpanelResult) {
-            var options = {
-                limit: app.config.maxSubpanelResult
-            };
+
+        if (limit) {
+            this.context.set('limit', limit);
             //supanel-list extends indirectly ListView, and `limit` determines # records displayed
-            this.limit = options.limit;
+            this.limit = limit;
+            // FIXME SC-3670 needs to remove this `collectionOptions` mess.
             var collectionOptions = this.context.has('collectionOptions') ? this.context.get('collectionOptions') : {};
-            this.context.set('collectionOptions', _.extend(collectionOptions, options));
+            this.context.set('collectionOptions', _.extend(collectionOptions, {limit: limit}));
         }
 
         //Override the recordlist row template
@@ -137,15 +139,17 @@
     },
 
     /**
-     * Format the message displayed in the alert
+     * Formats the messages to display in the alerts when unlinking a record.
      *
-     * @param {Bean} model to unlink
-     * @returns {Object} formatted confirmation and success messages
+     * @param {Data.Bean} model The model concerned.
+     * @return {Object} The list of messages.
+     * @return {string} return.confirmation Confirmation message.
+     * @return {string} return.success Success message.
      */
     getUnlinkMessages: function(model) {
-        var messages = {},
-            name = app.utils.getRecordName(model),
-            context = app.lang.getModuleName(model.module).toLowerCase() + ' ' + name.trim();
+        var messages = {};
+        var name = Handlebars.Utils.escapeExpression(app.utils.getRecordName(model)).trim();
+        var context = app.lang.getModuleName(model.module).toLowerCase() + ' ' + name;
 
         messages.confirmation = app.utils.formatString(app.lang.get('NTC_UNLINK_CONFIRMATION_FORMATTED'), [context]);
         messages.success = app.utils.formatString(app.lang.get('NTC_UNLINK_SUCCESS'), [context]);

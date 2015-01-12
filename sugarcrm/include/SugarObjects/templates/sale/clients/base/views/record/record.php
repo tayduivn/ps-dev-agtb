@@ -62,10 +62,6 @@ $viewdefs[$module_name]['base']['view']['record'] = array(
                     ),
                 ),
                 'sales_stage',
-                // Placeholder to push tags onto its own row
-                array(
-                    'span' => 6,
-                ),
                 array(
                     'name' => 'tag',
                     'span' => 12,

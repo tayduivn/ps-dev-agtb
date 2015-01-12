@@ -37,15 +37,12 @@ include("metadata/user_feedsMetaData.php");
 include("metadata/users_passwordLinkMetaData.php");
 //BEGIN SUGARCRM flav=pro ONLY
 include("metadata/team_sets_teamsMetaData.php");
-include("metadata/tracker_perfMetaData.php");
-include("metadata/tracker_queriesMetaData.php");
-include("metadata/tracker_sessionsMetaData.php");
-include("metadata/tracker_tracker_queriesMetaData.php");
 //END SUGARCRM flav=pro ONLY
 include("metadata/prospect_list_campaignsMetaData.php");
 include("metadata/prospect_lists_prospectsMetaData.php");
 include("metadata/roles_modulesMetaData.php");
 include("metadata/roles_usersMetaData.php");
+include("metadata/acl_role_sets_acl_rolesMetaData.php");
 //include("metadata/project_relationMetaData.php");
 include("metadata/outboundEmailMetaData.php");
 include("metadata/addressBookMetaData.php");

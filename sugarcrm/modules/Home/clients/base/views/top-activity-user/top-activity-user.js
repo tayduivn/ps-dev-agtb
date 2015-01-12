@@ -18,27 +18,32 @@
     events: {
         'change select[name=filter_duration]': 'filterChanged'
     },
+    /**
+     * Track if current user is manager.
+     */
+    isManager: false,
     initDashlet: function(viewName) {
         this.collection = new app.BeanCollection();
+        this.isManager = app.user.get('is_manager');
         if(!this.meta.config) {
             this.collection.on("reset", this.render, this);
         }
     },
     _mapping: {
         meetings: {
-            icon: 'icon-comments',
+            icon: 'fa-comments',
             label: 'LBL_MOST_MEETING_HELD'
         },
         inbound_emails: {
-            icon: 'icon-envelope',
+            icon: 'fa-envelope',
             label: 'LBL_MOST_EMAILS_RECEIVED'
         },
         outbound_emails: {
-            icon: 'icon-envelope-alt',
+            icon: 'fa-envelope-o',
             label: 'LBL_MOST_EMAILS_SENT'
         },
         calls: {
-            icon: 'icon-phone',
+            icon: 'fa-phone',
             label: 'LBL_MOST_CALLS_MADE'
         }
     },

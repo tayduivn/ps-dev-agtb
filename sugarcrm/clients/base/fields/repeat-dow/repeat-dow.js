@@ -9,8 +9,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * Repeat Day of Week is a custom field for Meetings & Calls modules used to set
+ * Repeat Day of Week is a custom field for Meetings/Calls used to set
  * days of the week for a Weekly recurring record.
+ *
+ * FIXME: This component will be moved out of clients/base folder as part of MAR-2274 and SC-3593
  *
  * @class View.Fields.Base.RepeatDowField
  * @alias SUGAR.App.view.fields.BaseRepeatDowField
@@ -41,6 +43,8 @@
 
     /**
      * Get the default day of week (current day of the week)
+     *
+     * @return {String} Day of the week
      */
     getDefaultDayOfWeek: function() {
         var isoDayOfWeek = app.date().isoWeekday(),
@@ -70,7 +74,7 @@
      * Transform the list of items to conform to API spec
      *
      * @param {Object} items Days of the week list needing to be transformed
-     * @returns {Object}
+     * @return {Object}
      * @private
      */
     _transformDowItems: function(items) {

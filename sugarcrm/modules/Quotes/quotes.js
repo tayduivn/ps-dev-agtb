@@ -199,8 +199,7 @@ function QuotesEditManager() {
             if (insertTo >= to_body.rows.length)
                 insertTo = to_body.rows.length - 1;
             if (insertFrom >= from_body.rows.length) {
-                insertFrom = from_body.rows.length - 1;
-
+                insertFrom = 0;
             }
 
 

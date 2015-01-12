@@ -279,6 +279,8 @@ class RelateRecordApi extends SugarApi
         }
         //Clean up any hanging related records.
         SugarRelationship::resaveRelatedBeans();
+        //Update date_modified
+        $primaryBean->save();
 
         $result['record'] = $this->formatBean($api, $args, $primaryBean);
 

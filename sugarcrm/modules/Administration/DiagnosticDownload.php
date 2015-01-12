@@ -24,6 +24,9 @@ if(!isset($_REQUEST['guid']) || !isset($_REQUEST['time']))
 {
 	die('Did not receive a filename to download');
 }
+
+ini_set('zlib.output_compression','Off');
+
 $time = str_replace(array('.', '/', '\\'), '', $_REQUEST['time']);
 $guid = str_replace(array('.', '/', '\\'), '', $_REQUEST['guid']);
 $path = sugar_cached("diagnostic/{$guid}/diagnostic{$time}.zip");

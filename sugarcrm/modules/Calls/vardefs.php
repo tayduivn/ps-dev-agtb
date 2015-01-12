@@ -121,6 +121,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
 	'required' => true,
 	'importable' => 'required',
     'default' => 'Planned',
+    'duplicate_on_record_copy' => 'no',
 	'studio' => array('detailview'=>false)
   ),
   'direction' =>
@@ -148,7 +149,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'source' => 'non-db',
     'comment' => 'checkbox indicating whether or not the reminder value is set (Meta-data only)',
     'massupdate' => false,
-    'studio' => array('wirelesseditview'=>false),
+    'studio' => false,
   ),
   'reminder_time' =>
   array (
@@ -170,7 +171,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'source' => 'non-db',
     'comment' => 'checkbox indicating whether or not the email reminder value is set (Meta-data only)',
     'massupdate' => false,
-    'studio' => array('wirelesseditview'=>false),
+    'studio' => false,
    ),
   'email_reminder_time' =>
   array (
@@ -201,7 +202,8 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'type' => 'varchar',
     'len' => '255',
     'reportable' => false,
-    'comment' => 'When the Sugar Plug-in for Microsoft Outlook syncs an Outlook appointment, this is the Outlook appointment item ID'
+      'comment' => 'When the Sugar Plug-in for Microsoft Outlook syncs an Outlook appointment, this is the Outlook appointment item ID',
+      'studio' => false,
   ),
   'accept_status' => array (
     'name' => 'accept_status',
@@ -238,7 +240,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'source'=>'non-db',
     'len' => 36,
     'importable' => 'false',
-    'studio' => array('required' => false, 'listview'=>true, 'visible' => false),
+    'studio' => false,
   ),
   'opportunities' =>
   array (
@@ -464,8 +466,6 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'vname' => 'LBL_CALENDAR_REPEAT_COUNT',
     'type' => 'int',
     'len' => 7,
-    'default' => 10,
-    'validation' => array('type' => 'range', 'min' => 1),
     'comment' => 'Number of recurrence',
     'importable' => 'false',
     'massupdate' => false,
@@ -515,6 +515,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
                 'users',
             ),
             'order_by' => 'name:asc',
+            'studio' => false,
         ),
     'auto_invite_parent' => array(
         'name' => 'auto_invite_parent',
@@ -522,6 +523,13 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
         'source' => 'non-db',
         'comment' => 'Flag to allow for turning off auto invite of parent record -  (Meta-data only)',
         'massupdate' => false,
+    ),
+    'contact_parent' => array(
+        'name' => 'contact_parent',
+        'type' => 'link',
+        'relationship' => 'contact_calls_parent',
+        'source' => 'non-db',
+        'reportable' => false
     ),
 ),
 'indices' => array (

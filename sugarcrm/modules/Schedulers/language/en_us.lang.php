@@ -152,10 +152,13 @@ $mod_strings = array (
 'LBL_SUGARJOBHEARTBEAT' => 'Sugar Heartbeat',
 //END SUGARCRM flav=pro ONLY
 'LBL_SENDEMAILREMINDERS'=> 'Run Email Reminders Sending',
-//BEGIN SUGARCRM flav=int ONLY
-'LBL_TESTEMAIL' => 'testEmail',
-//END SUGARCRM flav=int ONLY
 'LBL_CLEANJOBQUEUE' => 'Cleanup Job Queue',
 'LBL_CLEANOLDRECORDLISTS' => 'Cleanup Old Record Lists',
+//BEGIN SUGARCRM flav=ent ONLY
+'LBL_PMSEENGINECRON' => 'Process Author Scheduler',
+//END SUGARCRM flav=ent ONLY
+//BEGIN SUGARCRM flav=int ONLY
+    'LBL_TESTEMAIL' => 'testEmail',
+//END SUGARCRM flav=int ONLY
 );
 

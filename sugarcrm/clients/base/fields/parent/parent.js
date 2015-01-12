@@ -37,7 +37,7 @@
                 containerCssClass: inList?'select2-narrow':'',
                 width: inList?'off':'100%',
                 minimumResultsForSearch: 5
-            }).on("change", function(e) {
+            }).on('change', function(e) {
                 var module = e.val;
                 self.checkAcl.call(self, 'edit', module);
                 self.setValue({
@@ -46,18 +46,13 @@
                     module: module
                 });
                 self.$(self.fieldTag).select2('val', '');
-            });
+            }).on('select2-focus', _.bind(_.debounce(this.handleFocus, 0), this));
 
-            var plugin = this.$(this.typeFieldTag).data('select2');
-            if (plugin && plugin.focusser) {
-                plugin.focusser.on('select2-focus', _.bind(_.debounce(this.handleFocus, 0), this));
-            }
             var domParentTypeVal = this.$(this.typeFieldTag).val();
             if(this.model.get(this.def.type_name) !== domParentTypeVal) {
-                //SP-1654: Prevents quickcreate from incorrectly considering model changed
-                this.model.set(this.def.type_name, domParentTypeVal, {silent: true});
-                this.model.setDefaultAttribute(this.def.type_name, domParentTypeVal);
+                this.model.setDefault(this.def.type_name, domParentTypeVal);
                 this._createFiltersCollection();
+                this._createSearchCollection();
             }
 
             if(app.acl.hasAccessToModel('edit', this.model, this.name) === false) {
@@ -130,7 +125,7 @@
         if (app.acl.hasAccessToModel(this.action, this.model, this.name)) {
             if (module) {
                 this.model.set('parent_type', module, {silent: silent});
-                this.model.removeDefaultAttribute('parent_type');
+                this._createSearchCollection();
             }
             // only set when we have an id on the model, as setting undefined
             // is causing issues with the warnUnsavedChanges() method

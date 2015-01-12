@@ -83,14 +83,14 @@ class MBModuleTest extends Sugar_PHPUnit_Framework_TestCase
                 'label' => 'LNK_NEW_RECORD',
                 'acl_action' => 'create',
                 'acl_module' => $this->mbModuleName,
-                'icon' => 'icon-plus',
+                'icon' => 'fa-plus',
             ),
             array(
                 'route' => "#{$this->mbModuleName}",
                 'label' => 'LNK_LIST',
                 'acl_action' => 'list',
                 'acl_module' => $this->mbModuleName,
-                'icon' => 'icon-reorder',
+                'icon' => 'fa-bars',
             ),
         );
 
@@ -110,7 +110,7 @@ class MBModuleTest extends Sugar_PHPUnit_Framework_TestCase
                 'label' => 'LBL_IMPORT',
                 'acl_action' => 'import',
                 'acl_module' => $this->mbModuleName,
-                'icon' => 'icon-upload',
+                'icon' => 'fa-arrow-circle-o-up',
             );
         }
 

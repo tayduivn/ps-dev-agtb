@@ -186,4 +186,9 @@ $dictionary['Tracker'] = array(
 		   		'relationship_type'=>'one-to-one'
 		   )
    	),
+    'acls' => array('SugarACLStatic' => true),
 );
+require "modules/Trackers/tracker_sessionsMetaData.php";
+require "modules/Trackers/tracker_perfMetaData.php";
+require "modules/Trackers/tracker_queriesMetaData.php";
+require "modules/Trackers/tracker_tracker_queriesMetaData.php";

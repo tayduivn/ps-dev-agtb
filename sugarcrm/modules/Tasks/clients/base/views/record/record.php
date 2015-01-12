@@ -1,5 +1,5 @@
 <?php
-//FILE SUGARCRM flav=pro || flav=sales ONLY
+
 
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
@@ -71,23 +71,18 @@ $viewdefs['Tasks']['base']['view']['record'] = array(
                     'type' => 'closebutton',
                     'name' => 'record-close-new',
                     'label' => 'LBL_CLOSE_AND_CREATE_BUTTON_TITLE',
+                    'closed_status' => 'Completed',
                     'acl_action' => 'edit',
                 ),
                 array(
                     'type' => 'closebutton',
                     'name' => 'record-close',
                     'label' => 'LBL_CLOSE_BUTTON_TITLE',
+                    'closed_status' => 'Completed',
                     'acl_action' => 'edit',
                 ),
                 array(
                     'type' => 'divider',
-                ),
-                array(
-                    'type' => 'rowaction',
-                    'event' => 'button:find_duplicates_button:click',
-                    'name' => 'find_duplicates_button',
-                    'label' => 'LBL_DUP_MERGE',
-                    'acl_action' => 'edit',
                 ),
                 array(
                     'type' => 'rowaction',

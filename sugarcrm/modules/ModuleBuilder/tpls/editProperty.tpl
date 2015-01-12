@@ -25,22 +25,30 @@
 
 {literal}
 <script>
-	function saveAction() {
-		for(var i=0;i<document.editProperty.elements.length;i++)
-		{
-			var field = document.editProperty.elements[i];
-			if (field.className.indexOf('save') != -1 )
-			{
-				if (field.value != 'no_change')
-				{
-					var property = field.name.substring('editProperty_'.length);
-					var id = field.id.substring('editProperty_'.length);
-					document.getElementById(id).innerHTML = YAHOO.lang.escapeHTML(field.value);
-				}
-			}
-		}
-	}
-	
+    function saveAction() {
+{/literal}
+        var widthUnit = '{$widthUnit}';
+{literal}
+        for(var i=0, l=document.editProperty.elements.length; i<l; i++) {
+            var field = document.editProperty.elements[i];
+            if (field.className.indexOf('save') != -1 )
+            {
+                if (field.value != 'no_change')
+                {
+                    var id = field.id.substring('editProperty_'.length);
+                    var fieldSpan = document.getElementById(id);
+                    var value = YAHOO.lang.escapeHTML(field.value);
+
+                    // If editing a width on list layouts, update the unit
+                    if (field.name.toLowerCase().indexOf('width') != -1) {
+                        value = value.replace('px', '').replace('%', '').trim();
+                        fieldSpan.nextElementSibling.innerHTML = field.value == '' || isNaN(+value) ? '' : widthUnit;
+                    }
+                    fieldSpan.innerHTML = value;
+                }
+            }
+        }
+    }
 
 	function switchLanguage( language )
 	{
@@ -56,29 +64,80 @@
 </script>
 {/literal}
 
-<table>
+<table style="width:100%">
 
 	{foreach from=$properties key='key' item='property'}
 	<tr>
-		<td width = "50%" align='right'>{if isset($property.title)}{$property.title}{else}{$property.name}{/if}:</td>
-		<td>
+		<td width="25%" align='right'>{if isset($property.title)}{$property.title}{else}{$property.name}{/if}:</td>
+		<td width="75%">
 			<input class='save' type='hidden' name='{$property.name}' id='editProperty_{$id}{$property.id}' value='no_change'>
 			{* //BEGIN SUGARCRM flav=een ONLY *}
 			{if isset($property.expression)}
                 <input id='display_{$id}{$property.id}'onchange='document.getElementById("editProperty_{$id}{$property.id}").value = this.value' value='{$property.value}'>
-                <input class="button" type=button name="edit{$property.id}Formula" value="{sugar_translate label="LBL_BTN_EDIT_FORMULA"}" 
+                <input class="button" type=button name="edit{$property.id}Formula" value="{sugar_translate label="LBL_BTN_EDIT_FORMULA"}"
                     onclick="ModuleBuilder.moduleLoadFormula(Ext.getDom('display_{$id}{$property.id}').value, ['display_{$id}{$property.id}', 'editProperty_{$id}{$property.id}'])"/>
             {else}
 			{* //END SUGARCRM flav=een ONLY *}
 			{if isset($property.hidden)}
 				{$property.value}
 			{else}
-				<input onchange='document.getElementById("editProperty_{$id}{$property.id}").value = this.value' value='{$property.value}'>
+				{if $key == 'width'}
+					<select id="selectWidthClass_{$id}{$property.id}" onchange="handleClassSelection(this)">
+						<option value="" selected="selected">default</option>
+                        {foreach from=$defaultWidths item='width'}
+                            <option value="{$width}">{$width}</option>
+                        {/foreach}
+						<option value="custom">custom</option>
+					</select>
+					<input id="widthValue_{$id}{$property.id}" onchange="handleWidthChange(this.value)" value="{$property.value}" style="display:none">
+                    {literal}
+                    <script>
+                    var propertyValue, widthValue, saveWidthProperty, selectWidthClass;
+                    {/literal}
+
+                    propertyValue = '{$property.value}';
+                    saveWidthProperty = document.getElementById('editProperty_{$id}{$property.id}');
+                    widthValue = document.getElementById('widthValue_{$id}{$property.id}');
+                    selectWidthClass = document.getElementById('selectWidthClass_{$id}{$property.id}');
+
+                    {literal}
+                    if (propertyValue != '') {
+                        if (isNaN(propertyValue)) {
+                            selectWidthClass.value = propertyValue;
+                            widthValue.style.display = 'none';
+                            widthValue.value = '';
+                        } else {
+                            selectWidthClass.value = 'custom';
+                            widthValue.style.display = 'inline';
+                            widthValue.value = isNaN(propertyValue) ? '' : propertyValue;
+                        }
+                    }
+                    function handleClassSelection(el) {
+                        var selected = el.options[el.selectedIndex].value;
+
+                        if (selected === 'custom') {
+                            widthValue.style.display = 'inline';
+                            widthValue.value = isNaN(propertyValue) ? '' : propertyValue;
+                        } else {
+                            widthValue.style.display = 'none';
+                            widthValue.value = '';
+                            saveWidthProperty.value = selected;
+                        }
+                    }
+
+                    function handleWidthChange(w) {
+                        saveWidthProperty.value = w;
+                    }
+                    </script>
+                    {/literal}
+				{else}
+                    <input onchange='document.getElementById("editProperty_{$id}{$property.id}").value = this.value' value='{$property.value}'>
+                {/if}
 			{/if}
 			{* //BEGIN SUGARCRM flav=een ONLY *}
 			{/if}
 			{* //END SUGARCRM flav=een ONLY *}
-		</td>	
+		</td>
 	</tr>
 	{/foreach}
 	<tr>

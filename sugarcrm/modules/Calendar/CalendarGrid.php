@@ -61,7 +61,7 @@ class CalendarGrid {
 
 		$this->scrollable = false;
         if (!($this->cal->isPrint() && $this->cal->view == 'day')) {
-            if(in_array($this->cal->view,array('day','week'))){
+            if (in_array($this->cal->view, array('day', 'week', 'shared'))) {
                $this->scrollable = true;
                if($this->cal->time_step < 30)
                     $this->scroll_height = 480;
@@ -382,6 +382,7 @@ class CalendarGrid {
 
 			$str .= $this->get_basic_row($week_start_ts,7,$user_number_str);
 			if(!$basic){
+                $str .= "<div id='cal-scrollable' style='height: ".$this->scroll_height."px;'>";
 				$str .= $this->get_time_column($week_start_ts);
 					$str .= "<div class='week'>";
 					for($d = 0; $d < 7; $d++){
@@ -389,9 +390,11 @@ class CalendarGrid {
 						$str .= $this->get_day_column($curr_time,$d,$user_number_str);
 					}
 					$str .= "</div>";
-				$str .= "</div>";
+                $str .= "<div style='clear: left;'></div>";
+                $str .= "</div>";
 			}
 			$user_number++;
+            $str .= "</div>";
 		}
 		$str .= "</div>";
 

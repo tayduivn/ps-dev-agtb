@@ -51,7 +51,7 @@ $viewdefs['Forecasts']['base']['view']['config-timeperiods'] = array(
                     'options' => 'forecast_fiscal_year_options',
                     'label' => 'LBL_FORECASTS_CONFIG_TIMEPERIOD_FISCAL_YEAR',
                     'default' => false,
-                    'enabled' => false,
+                    'enabled' => true,
                     'view' => 'edit',
                 ),
                 array(

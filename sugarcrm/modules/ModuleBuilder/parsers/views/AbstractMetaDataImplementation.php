@@ -46,6 +46,7 @@ abstract class AbstractMetaDataImplementation
     protected $baseViewdefs = array();
 
     protected $_fielddefs;
+    protected $_comboFieldDefs = array();
     protected $_paneldefs;
     protected $_paneldefsPath = array();
     protected $_useWorkingFile = false;
@@ -136,6 +137,16 @@ abstract class AbstractMetaDataImplementation
     public function getPanelDefsPath()
     {
         return $this->_paneldefsPath;
+    }
+
+    /**
+     * getter function for combo field definitions such as address_street
+     *
+     * @return array
+     */
+    public function getComboFieldDefs()
+    {
+        return $this->_comboFieldDefs;
     }
 
     /**

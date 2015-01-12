@@ -17,13 +17,13 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' =>'LIST_ROLES',
         'acl_module'=>$module_name,
         'acl_action'=>'list',
-        'icon' => 'icon-reorder',
+        'icon' => 'fa-bars',
     ),
     array(
         'route'=>'#bwc/index.php?module=ACLRoles&action=ListUsers',
         'label' =>'LIST_ROLES_BY_USER',
         'acl_module'=>$module_name,
         'acl_action'=>'list',
-        'icon' => 'icon-reorder',
+        'icon' => 'fa-bars',
     ),
 );

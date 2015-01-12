@@ -16,6 +16,9 @@
 
     function backToLogin(bDismiss) {
         if(bDismiss) app.alert.dismissAll();
+        if (app.api.isAuthenticated()) {
+            app.api.resetAuth();
+        }
         app.router.login();
     }
 
@@ -39,6 +42,14 @@
             title: app.lang.get(title)
         });
     }
+
+    //Return the user to the login page when the sync fails
+    app.events.on('app:sync:error', function(error) {
+        backToLogin(true);
+        // Sync can fail for many reasons such as server error, bad cache, auth, etc.
+        // Server message to provides details.
+        alertUser("sync_failure" , "ERR_SYNC_FAILED", (error && error.message) || "LBL_INVALID_412_RESPONSE");
+    });
     
     /**
      * This is caused by attempt to login with invalid creds. 
@@ -175,11 +186,15 @@
         if (!error || error.code !== 'metadata_out_of_date') {
             return;
         }
-        var responseText = JSON.parse(error.responseText),
-            newHash = responseText && responseText.metadata_hash,
-            userHash = responseText && responseText.user_hash;
+        var responseText = JSON.parse(error.responseText);
+        var newHash = responseText && responseText.metadata_hash;
+        var userHash = responseText && responseText.user_hash;
+        var afterSync = error.request.state && error.request.state.loadingAfterSync;
 
-        if ((!newHash || newHash === app.metadata.getHash()) && (!userHash || userHash === app.user.get("_hash"))) {
+        if (
+            ((!newHash && afterSync) || newHash === app.metadata.getHash()) &&
+            ((!userHash && afterSync) || userHash === app.user.get("_hash"))
+        ) {
             app.logger.fatal('A request returned the error code "metadata_out_of_date" for no reason.');
             app.alert.show('invalid_412', {
                 level: 'error',

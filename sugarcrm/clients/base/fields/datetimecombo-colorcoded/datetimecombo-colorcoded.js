@@ -9,6 +9,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
+ * DatetimecomboColorcodedField is a field for Meetings/Calls/Tasks that sets a background color for the field based on the value of the status field
+ *
+ * FIXME: This component will be moved out of clients/base folder as part of MAR-2274 and SC-3593
+ *
  * @class View.Fields.Base.DatetimecomboColorcodedField
  * @alias SUGAR.App.view.fields.BaseDatetimecomboColorcodedField
  * @extends View.Fields.Base.DatetimecomboField

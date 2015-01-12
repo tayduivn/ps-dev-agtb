@@ -76,7 +76,7 @@
         field.find('.help-block').html("");
         field.find('.help-block').append(errorMsg);
         field.find('.add-on').remove();
-        field.find('input:last').after('<span class="add-on"><i class="icon-exclamation-sign"></i></span>');
+        field.find('input:last').after('<span class="add-on"><i class="fa fa-exclamation-circle"></i></span>');
     },
     setLoading: function() {
         this.$('[name=save_button]').attr('data-loading-text', app.lang.get('LBL_LOADING'));

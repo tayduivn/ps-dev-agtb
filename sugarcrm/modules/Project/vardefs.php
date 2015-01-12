@@ -53,7 +53,7 @@ $dictionary['Project'] = array(
 			'vname' => 'LBL_ASSIGNED_USER_ID',
 			'required' => false,
 			'isnull' => false,
-			'reportable'=>true,
+			'reportable'=>false,
 			'comment' => 'User assigned to this record'
 		),
 		'modified_user_id' => array(
@@ -147,6 +147,7 @@ $dictionary['Project'] = array(
             'importable' => 'required',
             'required' => true,
             'enable_range_search' => true,
+            'options' => 'date_range_search_dom',
         ),
         'estimated_end_date' =>
         array(
@@ -157,6 +158,7 @@ $dictionary['Project'] = array(
             'importable' => 'required',
             'required' => true,
             'enable_range_search' => true,
+            'options' => 'date_range_search_dom',
         ),
         'status' =>
         array(

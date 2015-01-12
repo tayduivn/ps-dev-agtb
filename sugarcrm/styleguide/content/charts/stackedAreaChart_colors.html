@@ -14,6 +14,7 @@
 <html>
 <head>
   <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=320" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <title>Stacked Area Chart - Color Options</title>
@@ -51,19 +52,19 @@
 
       <div class="row-fluid">
         <div class="span4">
-          <h3>Data-Defined Colors <small>(expand)</small></h3>
+          <h3>Data-Defined Colors</h3>
           <div id="chart4" class="nv-chart nv-chart-line">
             <svg></svg>
           </div>
         </div>
         <div class="span4">
-          <h3>Data-Defined Gradient Fill <small>(stream)</small></h3>
+          <h3>Data-Defined Gradient Fill</h3>
           <div id="chart5" class="nv-chart nv-chart-line">
             <svg></svg>
           </div>
         </div>
         <div class="span4">
-          <h3>Data-Defined Class Names <small>(stacked)</small></h3>
+          <h3>Data-Defined Class Names</h3>
           <div id="chart6" class="nv-chart nv-chart-line">
             <svg></svg>
           </div>
@@ -72,13 +73,13 @@
 
       <div class="row-fluid">
         <div class="span4">
-          <h3>Graduated Palette Colors <small>(stacked)</small></h3>
+          <h3>Graduated Palette Colors</h3>
           <div id="chart7" class="nv-chart nv-chart-line">
             <svg></svg>
           </div>
         </div>
         <div class="span4">
-          <h3>Graduated Palette Gradient Fill <small>(stacked)</small></h3>
+          <h3>Graduated Palette Gradient Fill</h3>
           <div id="chart8" class="nv-chart nv-chart-line">
             <svg></svg>
           </div>
@@ -101,13 +102,18 @@
 <script src="../../../include/javascript/nvd3/src/models/stackedAreaChart.js"></script>
 
 <script>
-  d3.json("data/line_data.json", function(chartData) {
+  d3.json('data/line_data.json', function(chartData) {
+
+    // Default
     var chart1 = nv.models.stackedAreaChart()
           .x(function(d) { return d[0]; })
           .y(function(d) { return d[1]; })
           .style('stack')
           .tooltips(false)
-          .colorData('default' )
+          .useVoronoi(false)
+          .showControls(false)
+          .showLegend(true)
+          .colorData('default');
     chart1.xAxis
         .tickFormat(function(d) { return d3.time.format('%x')(new Date(d)); });
     chart1.yAxis
@@ -122,6 +128,9 @@
           .y(function(d) { return d[1]; })
           .style('stream')
           .tooltips(false)
+          .useVoronoi(false)
+          .showControls(false)
+          .showLegend(true)
           .colorData('default', {gradient: true});
     chart2.xAxis
         .tickFormat(function(d) { return d3.time.format('%x')(new Date(d)); });
@@ -137,7 +146,10 @@
           .y(function(d) { return d[1]; })
           .style('expand')
           .tooltips(false)
-          .colorData('class', {step: 2});
+          .useVoronoi(false)
+          .showControls(false)
+          .showLegend(true)
+          .colorData('class');
     chart3.xAxis
         .tickFormat(function(d) { return d3.time.format('%x')(new Date(d)); });
     chart3.yAxis
@@ -147,10 +159,14 @@
         .datum(chartData)
       .call(chart3);
 
+    // Graduated
     var chart7 = nv.models.stackedAreaChart()
           .x(function(d) { return d[0]; })
           .y(function(d) { return d[1]; })
           .tooltips(false)
+          .useVoronoi(false)
+          .showControls(false)
+          .showLegend(true)
           .colorData('graduated', {c1: '#12448f', c2: '#deeeff', l: chartData.data.length});
     chart7.xAxis
         .tickFormat(function(d) { return d3.time.format('%x')(new Date(d)); });
@@ -164,7 +180,11 @@
     var chart8 = nv.models.stackedAreaChart()
           .x(function(d) { return d[0]; })
           .y(function(d) { return d[1]; })
+          .style('stream')
           .tooltips(false)
+          .useVoronoi(false)
+          .showControls(false)
+          .showLegend(true)
           .colorData('graduated', {c1: '#12448f', c2: '#deeeff', l: chartData.data.length, gradient: true});
     chart8.xAxis
         .tickFormat(function(d) { return d3.time.format('%x')(new Date(d)); });
@@ -177,13 +197,21 @@
   });
 
 
-  d3.json("data/line_data_color.json", function(chartData) {
+  d3.json('data/line_data_color.json', function(chartData) {
+    chartData.data.map(function(d) {
+      delete d.classes;
+    });
+
+    // Data-Defined Color
     var chart4 = nv.models.stackedAreaChart()
           .x(function(d) { return d[0]; })
           .y(function(d) { return d[1]; })
-          .style('expand')
+          .style('stack')
           .tooltips(false)
-          .colorData('default');
+          .useVoronoi(false)
+          .showControls(false)
+          .showLegend(true)
+          .colorData('data');
     chart4.xAxis
         .tickFormat(function(d) { return d3.time.format('%x')(new Date(d)); });
     chart4.yAxis
@@ -198,7 +226,10 @@
           .y(function(d) { return d[1]; })
           .style('stream')
           .tooltips(false)
-          .colorData('default', {gradient: true});
+          .useVoronoi(false)
+          .showControls(false)
+          .showLegend(true)
+          .colorData('data', {gradient: true});
     chart5.xAxis
         .tickFormat(function(d) { return d3.time.format('%x')(new Date(d)); });
     chart5.yAxis
@@ -207,13 +238,23 @@
     d3.select('#chart5 svg')
         .datum(chartData)
       .call(chart5);
+  });
 
+  d3.json('data/line_data_color.json', function(chartData) {
+    chartData.data.map(function(d) {
+      delete d.color;
+    });
+
+    // Data-Defined Classes
     var chart6 = nv.models.stackedAreaChart()
           .x(function(d) { return d[0]; })
           .y(function(d) { return d[1]; })
-          .style('stack')
+          .style('expand')
           .tooltips(false)
-          .colorData('class', {step: 2});
+          .useVoronoi(false)
+          .showControls(false)
+          .showLegend(true)
+          .colorData('data', {step: 2});
     chart6.xAxis
         .tickFormat(function(d) { return d3.time.format('%x')(new Date(d)); });
     chart6.yAxis

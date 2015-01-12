@@ -72,6 +72,24 @@ class DeployedSidecarFilterImplementation extends AbstractMetaDataImplementation
         // Set the field defs
         $this->_fielddefs = $this->bean->field_defs;
 
+        // Some fields are defined in the original filter metadata file but not in _fielddefs.
+        // We want to add them to _fielddefs as well, so when they are moved from the default
+        // column to the hidden column in Studio's search layout, they won't disappear.
+        $types = array(MB_BASEMETADATALOCATION);
+        $marker = 'originalMetadataFile';
+        $originalMeta = $this->getMetadataFromFiles($types, $marker);
+        if (empty($originalMeta)) {
+            $originalMeta = $this->getFallbackMetadata($marker);
+        }
+        if ($originalMeta && !empty($originalMeta[$this->_moduleName]['base']['filter']['default']['fields']) && is_array($originalMeta[$this->_moduleName]['base']['filter']['default']['fields'])) {
+            foreach ($originalMeta[$this->_moduleName]['base']['filter']['default']['fields'] as $key => $val) {
+                if (!isset($this->_fielddefs[$key]) && isset($val['dbFields'])) {
+                    // if this field is not already in _fielddefs, add it
+                    $this->_comboFieldDefs[$key] = $val;
+                }
+            }
+        }
+
         // Make sure the paneldefs are proper if there are any
         $this->_paneldefs = isset($this->_viewdefs) ? $this->_viewdefs : array();
 
@@ -172,6 +190,13 @@ class DeployedSidecarFilterImplementation extends AbstractMetaDataImplementation
             $this->_viewdefs,
             $savefile
         );
+
+        // Delete the working file if exists as we do in DeployedMetaDataImplementation
+        $workingFilename = $this->getMetadataFilename(MB_WORKINGMETADATALOCATION);
+
+        if (file_exists($workingFilename)) {
+            unlink($workingFilename);
+        }
 
         // clear the cache for this module
         MetaDataManager::refreshModulesCache(array($this->_moduleName));

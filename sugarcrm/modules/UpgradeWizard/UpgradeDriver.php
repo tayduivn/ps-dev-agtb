@@ -304,7 +304,7 @@ abstract class UpgradeDriver
      * Execution will start here
      * This function must form context, create a class and run it
      */
-    static public function start()
+    public function start()
     {
         die("Must override this function in a driver");
     }
@@ -319,8 +319,6 @@ abstract class UpgradeDriver
      */
     public function init()
     {
-        list($version, $build) = static::getVersion();
-        $this->log("Upgrader v.$version (build $build) starting");
         chdir($this->context['source_dir']);
         $this->loadConfig();
         $this->context['temp_dir'] = $this->cacheDir("upgrades/temp");
@@ -883,10 +881,6 @@ abstract class UpgradeDriver
 
         // validate manifest
         list($this->from_version, $this->from_flavor) = $this->loadVersion();
-        $db = DBManagerFactory::getInstance();
-        if (version_compare($this->from_version, 7, '<') && !$db instanceof MysqlManager) {
-            return $this->error("Can't upgrade version 6.x on non-Mysql database", true);
-        }
         $res = $this->validateManifest();
         if ($res !== true) {
             if ($this->clean_on_fail) {
@@ -1567,12 +1561,54 @@ abstract class UpgradeDriver
     }
 
     /**
+     * Read the "config.php" and "config_override.php" files.
+     *
+     * @return array the content of both files.
+     */
+    public function readConfigFiles()
+    {
+        $sugar_config = array();
+        if (is_readable('config.php')) {
+            include 'config.php';
+        }
+        $oldConfig = $sugar_config;
+        if (is_readable('config_override.php')) {
+            include 'config_override.php';
+        }
+        return array($oldConfig, deepArrayDiff($sugar_config, $oldConfig));
+    }
+
+    /**
+     * Compare 3 configs and generate one to be saved to the config.php file.
+     *
+     * @param array $old  : the old configs from "config.php" before upgrade.
+     * @param array $over : the override configs from "config_override.php".
+     * @param array $new  : the new configs generated during the upgrade.
+     *
+     * @return array the array to be saved.
+     */
+    public function genConfigs($old, $over, $new)
+    {
+        //remove the override configs from the new configs
+        $diffArray = deepArrayDiff($new, $over);
+        $saveArray = sugarArrayMergeRecursive($old, $diffArray);
+        return $saveArray;
+    }
+    /**
      * Save config.php
+     * @return boolean
      */
     public function saveConfig()
     {
-        ksort($this->config);
-        write_array_to_file("sugar_config", $this->config, $this->context['source_dir'] . "/config.php");
+        //read the existing configs from the file config.php & config_override.php
+        list($oldConfig, $overrideConfig) = $this->readConfigFiles();
+
+        //compose the configs to be saved
+        $configs = $this->genConfigs($oldConfig, $overrideConfig, $this->config);
+
+        //write to the file "config.php"
+        ksort($configs);
+        return write_array_to_file("sugar_config", $configs, $this->context['source_dir'] . "/config.php");
     }
 
     protected $stages = array('healthcheck', 'unpack', 'pre', 'commit', 'post', 'cleanup');
@@ -1677,10 +1713,13 @@ abstract class UpgradeDriver
                     $this->cleanCaches();
                     list($this->from_version, $this->from_flavor) = $this->state['old_version'];
                     if (!$this->runScripts("post")) {
-                        $this->error("Post-upgrade stage failed!");
+                        $this->error("Post-upgrade stage failed! Error executing post scripts");
                         return false;
                     }
-                    $this->saveConfig();
+                    if (!$this->saveConfig()) {
+                        $this->error("Post-upgrade stage failed! Cannot write config.php at {$this->context['source_dir']}");
+                        return false;
+                    }
                     $this->cleanCaches();
                     break;
                 case "cleanup":

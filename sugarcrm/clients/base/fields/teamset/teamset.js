@@ -266,11 +266,7 @@
             //load the default team setting that is specified in the user profile settings
             if (_.isEmpty(value)) {
                 value = app.utils.deepCopy(app.user.getPreference("default_teams"));
-                this.model.set(this.name, value);
-                this.model.setDefaultAttribute(this.name, value);
-            } else {
-                this.model.set(this.name, value);
-                this.model.removeDefaultAttribute(this.name)
+                this.model.setDefault(this.name, value);
             }
         }
         value = app.utils.deepCopy(value);
@@ -281,7 +277,9 @@
                 }
             ];
         }
-        if (this.view.action === 'list' && this.view.name !== 'merge-duplicates') {
+        // FIXME: SC-3836 will replace special-casing view names/actions via
+        // action based templates.
+        if (this.view.action === 'list' && this.view.name !== 'merge-duplicates' && this.view.name !== 'audit') {
             //Display primary team in list view
             var primaryTeam = _.find(value, function (team) {
                 return team.primary;
@@ -404,6 +402,12 @@
      */
     _updateAndTriggerChange: function (value) {
         // SP-1437: No Warning message when update with Team field only
+
+        // The following is provided for your convenience should you wish to learn more about
+        // Backbone Model .changedAttributes() not showing all changes.
+        // For a list of the actual third party software used in this Sugar product,
+        // please visit http://support.sugarcrm.com/06_Customer_Center/11_Third_Party_Software/.
+        //
         // http://stackoverflow.com/questions/17221680/backbone-model-changedattributes-not-showing-all-changes
         _.each(value, function(team) {
             // "add_button" and "remove_button" are JS elements, don't track them.

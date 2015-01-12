@@ -115,6 +115,40 @@
          */
         clearModuleLabelMap: function() {
             this._moduleLabelMap = undefined;
+        },
+
+        /**
+         * Returns the URL for Sugar's Support documentation for this specific flavor/version/layout
+         *
+         * @param {string} [layoutName] optional The name of the layout being viewed. This defaults
+         *      to 'list' if not sent ex: records|list|record etc
+         * @param {string} [module] optional The name of the Module to use, defaults to getting
+         *      module name from the controller context
+         * @returns {string} The url to the Support docs
+         */
+        getMoreInfoHelpURL: function(layoutName, module) {
+            layoutName = layoutName || 'list';
+            module = module || app.controller.context.get('module');
+
+            var serverInfo = app.metadata.getServerInfo(),
+                lang = app.lang.getLanguage(),
+                url;
+
+            if (layoutName == 'records') {
+                layoutName = 'list';
+            }
+
+            url = 'http://www.sugarcrm.com/crm/product_doc.php?edition=' + serverInfo.flavor
+                + '&version=' + serverInfo.version + '&lang=' + lang + '&module=' + module + '&route=' + layoutName;
+
+            if (layoutName == 'bwc') {
+                var action = window.location.hash.match(/#bwc.*action=(\w*)/i);
+                if (action && !_.isUndefined(action[1])) {
+                    url += '&action=' + action[1];
+                }
+            }
+
+            return url;
         }
     });
 

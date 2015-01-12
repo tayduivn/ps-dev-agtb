@@ -910,7 +910,7 @@ EOHTML;
             $label = (isset($GLOBALS['app_list_strings']['moduleList'][$this->module]) ?
                         $GLOBALS['app_list_strings']['moduleList'][$this->module] : $this->module). ' '.$app_strings['LNK_HELP'];
             $ss->assign('HELP_LINK',SugarThemeRegistry::current()->getLink($url, $label, "id='help_link_two'",
-                '', '',null,null,'','',"<i class='icon-question-sign icon'></i>"));
+                '', '',null,null,'','',"<i class='icon-question-circle icon'></i>"));
         }
         // end
 
@@ -1227,7 +1227,7 @@ EOHTML;
     * Return the "breadcrumbs" to display at the top of the page
     *
     * @param  bool $show_help optional, true if we show the help links
-    * @return HTML string containing breadcrumb title
+    * @return string HTML string containing breadcrumb title
     */
     public function getModuleTitle(
         $show_help = true

@@ -81,7 +81,7 @@ studiotabs.reset();
                 {/if}
                 {* END SUGARCRM flav=pro ONLY *}
                 <img src="{sugar_getimagepath file='edit_inline.gif'}" style="cursor: pointer;"
-				onclick="var value_label = document.getElementById('subslot{$modCounter}label').innerHTML.replace(/^\s+|\s+$/g,''); 
+				onclick="var value_label = document.getElementById('subslot{$modCounter}label').innerHTML.replace(/^\s+|\s+$/g,'');
 				    {if !($view|substr:-6 == "search") }
 					var value_width = document.getElementById('subslot{$modCounter}width').innerHTML;
 					{/if}
@@ -100,16 +100,16 @@ studiotabs.reset();
 					);"
 				>
             </td>
-            </tr>
-            <tr class='fieldValue'>
-                {if empty($hideKeys)}<td>[{$key}]</td>{/if}
-                <td align="right" colspan="2" class="percentage">
-					{if $view|substr:-6 == "search" }
-					<span style="display:none" id='subslot{$modCounter}width'>{$value.width}</span>	<span style="display:none">%</span>
-					{else}
-					<span id='subslot{$modCounter}width'>{$value.width}</span> <span>%</span>
-					{/if}
-				</td>
+        </tr>
+        <tr class='fieldValue'>
+            {if empty($hideKeys)}<td>[{$key}]</td>{/if}
+            <td align="right" colspan="2" class="percentage">
+                {if $view|substr:-6 == "search"}
+                <span style="display:none" id='subslot{$modCounter}width'>{$value.width}</span> <span style="display:none">{$value.units}</span>
+                {else}
+                <span id='subslot{$modCounter}width'>{$value.width}</span> <span>{$value.units}</span>
+                {/if}
+            </td>
         </tr>
     </table>
 </li>
@@ -172,7 +172,7 @@ resizeDDLists = function() {
 
 function countListFields() {
 	var count = 0;
-	var divs = document.getElementById( 'ul0' ).getElementsByTagName( 'li' ) ;		
+    var divs = document.getElementById('ul0').getElementsByTagName('li');
 	for ( var j=0;j<divs.length;j++) {
 		if (divs[j].className == 'draggable') count++;
 	}

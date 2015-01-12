@@ -43,9 +43,9 @@
         </div>
         <div class="filter-actions btn-group">
             {{#notEq ../fieldValues.length 1}}
-            <button data-action="remove" class="btn btn-invisible btn-dark" data-index="{{@index}}" rel="tooltip" data-placement="bottom" title="{{str "LBL_MASS_UPDATE_REMOVE_FIELD"}}"><i class="icon-minus"></i></button>
+            <button data-action="remove" class="btn btn-invisible btn-dark" data-index="{{@index}}" rel="tooltip" data-placement="bottom" title="{{str "LBL_MASS_UPDATE_REMOVE_FIELD"}}"><i class="fa fa-minus"></i></button>
             {{/notEq}}
-            <button data-action="add" class="btn btn-invisible btn-dark {{#eq ../fieldOptions.length 0}}disabled{{/eq}}" rel="tooltip" data-placement="bottom" title="{{str "LBL_MASS_UPDATE_ADD_FIELD"}}"><i class="icon-plus"></i></button>
+            <button data-action="add" class="btn btn-invisible btn-dark {{#eq ../fieldOptions.length 0}}disabled{{/eq}}" rel="tooltip" data-placement="bottom" title="{{str "LBL_MASS_UPDATE_ADD_FIELD"}}"><i class="fa fa-plus"></i></button>
         </div>
     </div>
 </div>

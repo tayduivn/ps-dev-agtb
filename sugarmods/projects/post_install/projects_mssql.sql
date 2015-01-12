@@ -1,4 +1,4 @@
--- //FILE SUGARCRM flav=pro ONLY 
+-- 
 -- project
 ALTER TABLE [project] ADD [estimated_start_date] [datetime] CONSTRAINT [DF_estimated_start_date] DEFAULT getdate() NOT NULL;
 ALTER TABLE [project] ADD [status] [varchar] (255);

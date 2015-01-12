@@ -36,7 +36,7 @@ require_once('include/DetailView/DetailView.php');
 				&nbsp;<?php echo $current_module_strings['LBL_HOME_TITLE']; echo '('.count($items).') Items'; ?></h3>
 		</td>
 		<td width='100%'>
-			<IMG height='1' width='1' src='include/images/blank.gif' alt=''>
+			<IMG height='1' width='1' src='<?php echo getJSPath("include/images/blank.gif"); ?>' alt=''>
 		</td>
 	</tr>
 </table>

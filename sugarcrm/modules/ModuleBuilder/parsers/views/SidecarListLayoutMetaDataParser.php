@@ -1,5 +1,5 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
+
 if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
@@ -102,6 +102,25 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
     }
 
     /**
+     * Gets the list of predefined widths available for the list view columns.
+     *
+     * @return array The list of widths.
+     * @static
+     */
+    static public function getDefaultWidths() {
+        $widths = array(
+            'xxsmall',
+            'xsmall',
+            'small',
+            'medium',
+            'large',
+            'xlarge',
+            'xxlarge',
+        );
+        return $widths;
+    }
+
+    /**
      * Detects if the field should be displayed in "Default" list
      *
      * @param array $field Field view definition
@@ -196,7 +215,7 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
                             } else {
                                 $field['label'] = $this->_fielddefs[$field['name']]['vname'];
                             }
-                        }                        
+                        }
                         $availableFields[$field['name']] = $field;
                     }
                 }
@@ -389,20 +408,20 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
                 }
 
                 if (isset($_REQUEST[strtolower($fieldname) . 'width'])) {
-                    $width = substr($_REQUEST[$fieldname . 'width'], 6, 3);
-                    if (strpos($width, "%") != false) {
-                        $width = substr($width, 0, 2);
-                    }
+                    $width = substr($_REQUEST[$fieldname . 'width'], 6);
+                    $isPercentage = strrpos($width, '%') !== false;
+                    $intWidth = intval($width);
+                    $isDefaultWidth = in_array($width, self::getDefaultWidths());
 
-                    if (!($width < 101 && $width > 0)) {
-                        $width = 10;
+                    if (!$isPercentage && ($intWidth > 0 || $isDefaultWidth)) {
+                        $newPaneldefs[$newPaneldefIndex]['width'] = $width;
+                    } else {
+                        unset($newPaneldefs[$newPaneldefIndex]['width']);
                     }
-
-                    $newPaneldefs[$newPaneldefIndex]['width'] = $width."%";
                 } elseif (($def = $this->panelGetField($fieldname)) && isset($def['field']['width'])) {
                     $newPaneldefs[$newPaneldefIndex]['width'] = $def['field']['width'];
                 } else {
-                    $newPaneldefs[$newPaneldefIndex]['width'] = "10%";
+                    unset($newPaneldefs[$newPaneldefIndex]['width']);
                 }
 
                 // Set the default flag to make it a default field
@@ -637,7 +656,7 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
 
     /**
      * Sets the currency_format property of the fielddef
-     * 
+     *
      * @param string $fieldName  The name of the field being worked on
      * @param array $fieldDef The current fielddef collection for a field
      * @param bool $addDefault Flag that determines whether the default property is added
@@ -667,7 +686,7 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
 
     /**
      * Sets the id and link properties of the fielddef
-     * 
+     *
      * @param string $fieldName  The name of the field being worked on
      * @param array $fieldDef The current fielddef collection for a field
      * @return array The modified fielddef collection
@@ -691,7 +710,7 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
 
     /**
      * Sets the sortable property of the fielddef
-     * 
+     *
      * @param string $fieldName  The name of the field being worked on
      * @param array $fieldDef The current fielddef collection for a field
      * @return array The modified fielddef collection
@@ -701,8 +720,14 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
         // sorting fields of certain types will cause database engine problems
         $noSortByType = isset($this->_fielddefs[$fieldName]['type']) && isset($this->nonSortableTypes[$this->_fielddefs[$fieldName]['type']]);
         $noSortDBType = isset($this->_fielddefs[$fieldName]['dbType']) && $this->_fielddefs[$fieldName]['dbType'] == 'id';
-        if ($noSortByType || $noSortDBType) {
-            $fieldDef['sortable'] = false;
+        $sortable = (isset($this->_fielddefs[$fieldName]['sortable'])) ? isTruthy($this->_fielddefs[$fieldName]['sortable']) : false;
+        $relateSortable = false;
+        if (isset($this->_fielddefs[$fieldName]['type']) && $this->_fielddefs[$fieldName]['type'] === 'relate') {
+            $hasSortOn = isset($this->_fielddefs[$fieldName]['sort_on']) && is_array($this->_fielddefs[$fieldName]['sort_on']);
+            $relateSortable = !($hasSortOn);
+        }
+        if ($noSortByType || $noSortDBType || $relateSortable) {
+            $fieldDef['sortable'] = $sortable;
         }
 
         return $fieldDef;
@@ -710,7 +735,7 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
 
     /**
      * Sets the currency_format property of the fielddef
-     * 
+     *
      * @param string $fieldName  The name of the field being worked on
      * @param array $fieldDef The current fielddef collection for a field
      * @return array The modified fielddef collection
@@ -727,7 +752,7 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
 
     /**
      * Sets the align property of the fielddef
-     * 
+     *
      * @param string $fieldName  The name of the field being worked on
      * @param array $fieldDef The current fielddef collection for a field
      * @return array The modified fielddef collection
@@ -743,7 +768,7 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
 
     /**
      * Sets the readonly property of a fielddef
-     * 
+     *
      * @param array $rawDef   The raw field def from an initial def fetch
      * @param array $fieldDef The current fielddef collection for a field
      * @return array The modified fielddef collection
@@ -759,7 +784,7 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
 
     /**
      * Sets the relate_fields property of a fielddef
-     * 
+     *
      * @param array $rawDef   The raw field def from an initial def fetch
      * @param array $fieldDef The current fielddef collection for a field
      * @return array The modified fielddef collection
@@ -769,7 +794,7 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
         if (isset($rawDef['related_fields']) && !empty($rawDef['related_fields'])) {
             $fieldDef['related_fields'] = $rawDef['related_fields'];
         }
-        
+
         return $fieldDef;
     }
 }

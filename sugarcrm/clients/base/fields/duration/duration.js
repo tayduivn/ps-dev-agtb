@@ -9,8 +9,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
+ * DurationFieldView is a fieldset for Meetings/Calls for managing duration of an event
+ *
+ * FIXME: This component will be moved out of clients/base folder as part of MAR-2274 and SC-3593
+ *
  * @class View.Fields.Base.DurationField
  * @alias SUGAR.App.view.fields.BaseDurationField
+ * @extends View.Fields.Base.FieldsetField
  */
 ({
     extendsFrom: 'FieldsetField',
@@ -18,7 +23,8 @@
     plugins: ['EllipsisInline'],
 
     /**
-     * Set default start date time if date_start has not been set.
+     * Set default start date time if date_start has not been set. Add custom validation
+     * to make sure that the date range is valid before saving.
      * @inheritdoc
      */
     initialize: function(options) {
@@ -31,15 +37,23 @@
 
             // Values for date_start, date_end, duration_hours, and duration_minutes
             // should be set as the default on the model.
-            this.model.setDefaultAttribute('date_start', this.model.get('date_start'));
-            this.model.setDefaultAttribute('date_end', this.model.get('date_end'));
-            this.model.setDefaultAttribute('duration_hours', this.model.get('duration_hours'));
-            this.model.setDefaultAttribute('duration_minutes', this.model.get('duration_minutes'));
+            this.model.setDefault({
+                'date_start': this.model.get('date_start'),
+                'date_end': this.model.get('date_end'),
+                'duration_hours': this.model.get('duration_hours'),
+                'duration_minutes': this.model.get('duration_minutes')
+            });
         }
+
+        // Date range should be valid before saving the record.
+        this.model.addValidationTask('duration_date_range_' + this.cid, _.bind(function(fields, errors, callback) {
+            _.extend(errors, this.validate());
+            callback(null, fields, errors);
+        }, this));
     },
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     bindDataChange: function() {
         // Change the end date when start date changes.
@@ -49,7 +63,8 @@
         // In detail mode, re-render the field if either start or end date changes.
         this.model.on('change:date_start change:date_end', function(model) {
             var dateStartField,
-                dateEndField;
+                dateEndField,
+                errors;
 
             this.updateDurationHoursAndMinutes();
 
@@ -59,11 +74,12 @@
 
                 if (dateStartField && !dateStartField.disposed && dateEndField && !dateEndField.disposed) {
                     dateStartField.clearErrorDecoration();
+                    dateEndField.clearErrorDecoration();
+                    errors = this.validate();
 
-                    if (!this.isDateRangeValid()) {
-                        dateStartField.decorateError({
-                            isBefore: app.lang.get(dateEndField.label || dateEndField.vname || dateEndField.name, model.module)
-                        });
+                    if (errors) {
+                        dateStartField.decorateError(errors.date_start);
+                        dateEndField.decorateError(errors.date_end);
                     }
                 }
             } else {
@@ -75,8 +91,30 @@
     },
 
     /**
+     * Check to see if there are any errors on the field. Returns undefined if it is valid.
+     * @returns {Object} Errors
+     */
+    validate: function() {
+        var errors,
+            dateStartField = this.view.getField('date_start'),
+            dateEndField = this.view.getField('date_end');
+
+        if (!this.isDateRangeValid()) {
+            errors = {};
+            errors.date_start = {
+                isBefore: dateEndField.label
+            };
+            errors.date_end = {
+                isAfter: dateStartField.label
+            };
+        }
+
+        return errors;
+    },
+
+    /**
      * Return the display string for the start and date, along with the duration.
-     * @returns {string}
+     * @return {string} The duration string
      */
     getFormattedValue: function() {
         var displayString = '',
@@ -174,14 +212,14 @@
         } else {
             // Set the end date to be an hour from the start date if the end
             // date has not been set yet.
-            endDate = app.date(startDateString).add('h', 1).formatServer();
+            endDate = app.date(startDateString).add('m', 30).formatServer();
             this.model.set('date_end', endDate);
         }
     },
 
     /**
      * Is this date range valid? It returns true when start date is before end date.
-     * @returns {boolean}
+     * @return {boolean}
      */
     isDateRangeValid: function() {
         var start = this.model.get('date_start'),
@@ -204,11 +242,9 @@
      * @private
      */
     _loadTemplate: function() {
+        var originalType = this.type;
+        this.type = 'fieldset';
         this._super('_loadTemplate');
-
-        if ((this.view.name === 'record' || this.view.name === 'create' || this.view.name === 'create-actions')
-            && (this.action === 'edit')) {
-            this.template = app.template.getField('fieldset', 'record-detail', this.model.module);
-        }
+        this.type = originalType;
     }
 })

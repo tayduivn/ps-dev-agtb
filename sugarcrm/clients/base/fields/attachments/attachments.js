@@ -147,7 +147,7 @@
     formatSelection: function(attachment) {
         var item = '<span data-id="'+attachment.id+'">'+attachment.nameForDisplay+'</span>';
         if (attachment.showProgress) {
-            item += ' <i class="icon-refresh icon-spin"></i>';
+            item += ' <i class="fa fa-refresh fa-spin"></i>';
         }
         return item;
     },

@@ -24,7 +24,7 @@ class SugarQueryTest extends Sugar_PHPUnit_Framework_TestCase
      * as there are too many dependencies which cannot be properly injected
      * to mock and isolate the tests.
      *
-     * @covers SugarQuery::testJoinSubpanel
+     * @covers SugarQuery::joinSubPanel
      */
     public function testJoinSubpanel()
     {

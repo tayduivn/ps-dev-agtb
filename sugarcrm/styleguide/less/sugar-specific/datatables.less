@@ -23,7 +23,7 @@
   th {
     line-height: 26px;
     min-width: @cell-medium;
-    max-width: @cell-medium;
+    max-width: @cell-large;
     font-weight: normal;
     font-size: @fontSizeSmall;
     color: @tableHeader;
@@ -164,10 +164,13 @@
       input[type="text"].datepicker {
         width: 50%;
         .calcWidth(~"55% - 2px");
+        min-width: 0;
       }
       input[type="text"].ui-timepicker-input {
         width: 40%;
         .calcWidth(~"45% - 2px");
+        margin-left: -24px;
+        min-width: 0;
       }
     }
     &[data-type="avatar"] {
@@ -205,18 +208,18 @@
         }
       }
     }
-    .icon-favorite {
+    .fa-favorite {
       vertical-align: middle;
     }
-    .list + .list .icon-favorite {
+    .list + .list .fa-favorite {
       margin: 0 8px;
     }
     // email and merge (change)
-    .icon-star {
+    .fa-star {
       margin: 0 16px;
       color: @grayLight;
     }
-    .active .icon-star {
+    .active .fa-star {
       color: @orange;
     }
     .help-block {
@@ -288,7 +291,7 @@
           .rowaction.btn:not(.btn-invisible) {
             background: @gray;
           }
-          .icon-eye-open {
+          .fa-eye {
             color: @grayLighter !important;
           }
           background: @dropdownLinkBackgroundHover;
@@ -297,7 +300,7 @@
     }
     &.active {
       td {
-        .icon-eye-open {
+        .fa-eye-open {
           color:@grayLighter;
           background: @gray;
         }
@@ -332,6 +335,14 @@
             margin-left: 0;
             width: 100%;
             .box-sizing(border-box);
+          }
+        }
+        &[data-type="textarea"] {
+          textarea {
+            .calcWidth(~"100% - 12px");
+            max-width: calc(~"100% - 12px");
+            height: 18px;
+            margin: 0px;
           }
         }
         &[data-type="fullname"] {
@@ -428,7 +439,7 @@
         > *:not(.overflow-visible) {
           overflow: visible;
         }
-        .icon-favorite {
+        .fa-favorite {
           display: none;
         }
         .input-append.date {
@@ -497,9 +508,6 @@ FLEXLIST GENERIC */
   .dataTable {
     max-width: none;
     position: static;
-    td:last-child :not(.btn-group) > span > .rowaction.btn {
-      float: right;
-    }
   }
 
   /*LEFT ACTIONS ONLY*/
@@ -554,7 +562,7 @@ FLEXLIST GENERIC */
         input[type=radio] {
           margin: 8px;
         }
-        .icon-favorite {
+        .fa-favorite {
           display: inline-block;
           margin: 8px 6px;
         }
@@ -571,6 +579,7 @@ FLEXLIST GENERIC */
   &.left-actions.scroll-width .dataTable {
     th:first-child {
       > span {
+        z-index: 11;
         border-right: @tableBorder;
         &:after {
           .right-shadow(43px);
@@ -579,6 +588,7 @@ FLEXLIST GENERIC */
     }
     td:first-child {
       > span {
+        z-index: 10;
         border-right: @tableBorder;
           &:after {
           .right-shadow(37px);
@@ -608,8 +618,8 @@ FLEXLIST GENERIC */
         width: 55px;
         height: 28px;
         top: 0;
-        right: 1px;
-        padding: 7px 7px 7px 8px;
+        right: 0;
+        padding: 7px 8px;
         background-color: inherit;
         &.open {
           z-index: 999;
@@ -623,8 +633,8 @@ FLEXLIST GENERIC */
         width: 55px;
         height: 28px;
         margin-top: -18px;
-        right: 1px;
-        padding: 4px 7px 4px 8px;
+        right: 0;
+        padding: 4px 8px;
         border-bottom: @tableBorder;
         background-color: inherit;
         overflow: visible;
@@ -651,7 +661,7 @@ FLEXLIST GENERIC */
           color: @grayDark;
         }
         &.open {
-          .icon-eye-open {
+          .fa-eye {
             color: @gray;
           }
         }
@@ -672,6 +682,7 @@ FLEXLIST GENERIC */
     th:last-child {
       .dropdown,
       > span {
+        z-index: 10;
         border-left: @tableBorder;
         &:before {
           .left-shadow(43px);
@@ -865,10 +876,10 @@ FLEXLIST GENERIC */
       padding: 0;
       height: auto;
       background-color: darken(@grayLighter,5%);
-      .icon-arrow-down:before {
+      .fa-arrow-down:before {
         color: @red;
       }
-      .icon-arrow-up:before {
+      .fa-arrow-up:before {
         color: @green;
       }
       .list {
@@ -912,19 +923,15 @@ FLEXLIST GENERIC */
   }
 }
 
-.subpanel .flex-list-view .dataTable {
-  border-bottom: 0;
-}
-
 //from twitter-bootstrap/datatables.less
-.sorting_asc,
-.sorting_desc,
-.sorting {
+th.sorting_asc,
+th.sorting_desc,
+th.sorting {
   cursor: pointer;
-  padding-right: 18px;
+  padding-right: 12px;
   span {
+    padding-right: 12px;
     position: relative;
-    //margin-right: 16px;
   }
   span:after {
     color: @grayLight;
@@ -935,7 +942,7 @@ FLEXLIST GENERIC */
     white-space: pre;
     position: absolute;
     top: 7px;
-    right: 0px;
+    right: 2px;
     float: right;
     content: "\f0d8\A\f0d7";
     font-weight: normal;
@@ -953,15 +960,15 @@ th.sorting_desc {
     font-weight: normal;
   }
 }
-.sorting_asc span:after {
+th.sorting_asc span:after {
   content: "\f0d8";
 }
-.sorting_desc span:after {
+th.sorting_desc span:after {
   top: 13px;
   content: "\f0d7";
 }
-.sorting_desc_disabled,
-.sorting_asc_disabled {
+th.sorting_desc_disabled,
+th.sorting_asc_disabled {
   cursor: default;
   span:after {
     color: @grayLighter;
@@ -1019,7 +1026,7 @@ table th.nosort span:after {
       .btn {
         .box-shadow(none);
         background-color: @gray;
-        > [class^="icon-"] {
+        > .fa {
           color: @white;
         }
       }
@@ -1035,17 +1042,20 @@ table th.nosort span:after {
       padding-left: 30px;
       width: 100%;
       text-align: left;
+      margin-left: 0;
       &.active {
         font-weight: bold;
-        padding-left: 10px;
-        margin-left: 0;
-        .icon-ok {
-          margin-right: 5px;
-        }
+      }
+      .fa {
+        margin-right: 5px;
+        margin-left: -22px;
       }
     }
     li {
       border-bottom: 1px solid @grayLighter;
+    }
+    li.divider + li {
+      border-top: 1px solid #ddd;
     }
   }
 }

@@ -94,6 +94,7 @@ class LeadConvert
         $this->lead->status = LeadConvert::STATUS_CONVERTED;
         $this->lead->converted = 1;
         $this->lead->in_workflow = true;
+        $this->lead->get_Opportunity();
         $this->lead->save();
 
         return $this->modules;

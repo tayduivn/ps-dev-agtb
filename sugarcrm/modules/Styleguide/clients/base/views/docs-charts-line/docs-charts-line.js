@@ -12,25 +12,25 @@
   className: 'container-fluid',
 
   // charts line
-  _renderHtml: function () {
+  _renderHtml: function() {
     this._super('_renderHtml');
 
     // Line chart
-    d3.json("styleguide/content/charts/data/line_data.json", function(data) {
+    d3.json('styleguide/content/charts/data/line_data.json', function(data) {
       nv.addGraph(function() {
         var chart = nv.models.lineChart()
               .x(function(d) { return d[0]; })
               .y(function(d) { return d[1]; })
               .showTitle(false)
               .tooltips(true)
+              .useVoronoi(false)
               .showControls(false)
-              .tooltipContent( function(key, x, y, e, graph) {
+              .direction(app.lang.direction)
+              .tooltipContent(function(key, x, y, e, graph) {
                   return '<p>Category: <b>' + key + '</b></p>' +
-                         '<p>Amount: <b>$' +  parseInt(y, 10) + 'M</b></p>' +
-                         '<p>Date: <b>' +  x + '</b></p>';
-                })
-              //.forceY([0,400]).forceX([0,6]);
-            ;
+                         '<p>Amount: <b>$' + parseInt(y, 10) + 'M</b></p>' +
+                         '<p>Date: <b>' + x + '</b></p>';
+              });
 
         chart.xAxis
             .tickFormat(function(d) { return d3.time.format('%x')(new Date(d)); });
@@ -49,25 +49,26 @@
     });
 
     // Stacked area chart
-    d3.json("styleguide/content/charts/data/line_data.json", function(data) {
+    d3.json('styleguide/content/charts/data/line_data.json', function(data) {
       nv.addGraph(function() {
 
         var chart = nv.models.stackedAreaChart()
               .x(function(d) { return d[0]; })
               .y(function(d) { return d[1]; })
-              .tooltipContent( function(key, x, y, e, graph) {
+              .tooltipContent(function(key, x, y, e, graph) {
                   return '<p>Category: <b>' + key + '</b></p>' +
-                         '<p>Amount: <b>$' +  parseInt(y, 10) + 'M</b></p>' +
-                         '<p>Date: <b>' +  x + '</b></p>';
+                         '<p>Amount: <b>$' + parseInt(y, 10) + 'M</b></p>' +
+                         '<p>Date: <b>' + x + '</b></p>';
                 })
               .showTitle(false)
               .tooltips(true)
+              .useVoronoi(false)
               .showControls(false)
-              .colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: data.data.length} )
+              .direction(app.lang.direction)
+              .colorData('graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: data.data.length});
               //.colorData( 'class' )
               //.colorData( 'default' )
               //.clipEdge(true)
-            ;
 
         chart.xAxis
             .tickFormat(function(d) { return d3.time.format('%x')(new Date(d)); });

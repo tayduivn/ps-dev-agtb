@@ -246,8 +246,8 @@ describe("Drawer Layout", function() {
 
         it('Should remove scroll positions that has been closed', function() {
             sinonSandbox.stub(drawer, '_animateOpenDrawer', $.noop());
-            sinonSandbox.stub(drawer, '_animateCloseDrawer', function(callback){
-                callback();
+            sinonSandbox.stub(drawer, '_animateCloseDrawer', function(){
+                drawer._scrollBackToOriginal($());
             });
 
             drawer.open({
@@ -329,30 +329,6 @@ describe("Drawer Layout", function() {
 
             expect(spy.calledWith('foo')).toBe(true);
             expect(drawer.onCloseCallback.length).toBe(0);
-        });
-
-        it('Should still have transition class on the drawer afterwards', function() {
-            sinonSandbox.stub(drawer, '_animateOpenDrawer', function(){});
-            sinonSandbox.stub(drawer, '_removeTabAndBackdrop', function(){});
-
-            drawer.open({
-                layout: {
-                    "name": "foo",
-                    "components":[{"view":"record"}]
-                },
-                context: {create: true}
-            });
-            drawer.open({
-                layout: {
-                    "name": "bar",
-                    "components":[{"view":"record"}]
-                },
-                context: {create: true}
-            });
-
-            drawer.closeImmediately('foo');
-
-            expect(drawer._getDrawers(false).$top.hasClass('transition')).toBe(true);
         });
 
         it('Should remove scroll positions that has been closed', function() {

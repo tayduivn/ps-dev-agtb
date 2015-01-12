@@ -152,6 +152,9 @@ class HealthCheckScanner
         'Sugar-Sage Integration Modules' => array(
             array('version' => '2.7.0-8-g74f8c47'),
         ),
+        'inetMAPS' => array(
+            array('version' => '*', 'path' => 'modules/inetMAPS/classes/')
+        )
     );
 
     /**
@@ -233,6 +236,15 @@ class HealthCheckScanner
         'modules/Connectors/connectors/sources/ext/rest/insideview/InsideViewLogicHook.php',
         'modules/Connectors/connectors/sources/ext/rest/inbox25/InboxViewLogicHook.php',
     );
+
+    /**
+     * If Scanner founds some number of files and is going to report them, it's better to report them in bunches.
+     * This field defines an appropriate bunch size.
+     * @see CRYS-554
+     *
+     * @var int
+     */
+    protected $numberOfFilesToReport = 5;
 
     /**
      *
@@ -536,6 +548,17 @@ class HealthCheckScanner
             $this->updateStatus("vendorFilesInclusion", $files_to_fix);
         }
 
+        if (!empty($this->specificSugarFilesToFix)) {
+            $specificFiles = '';
+            foreach ($this->specificSugarFilesToFix as $fileToFix => $filesInfo) {
+                $specificFiles .= "'$fileToFix' in: " . PHP_EOL;
+                foreach ($filesInfo as $file => $info) {
+                    $specificFiles .= " '$file' file in line {$info['line']}" . PHP_EOL;
+                }
+            }
+            $this->updateStatus("sugarSpecificFilesInclusion", $specificFiles);
+        }
+
         if (!empty($this->deletedFilesReferenced)) {
             $this->updateStatus("deletedFilesReferenced", $this->deletedFilesReferenced);
         }
@@ -581,7 +604,7 @@ class HealthCheckScanner
         foreach ($hook_files as $hookname => $hooks) {
             foreach ($hooks as $hook_data) {
                 $this->log("Checking global hook $hookname:{$hook_data[1]}");
-                $this->checkFileForOutput($hook_data[2], HealthCheckScannerMeta::CUSTOM);
+                $this->checkFileForOutput($hook_data[2]);
             }
         }
         // TODO: custom dashlets
@@ -652,6 +675,13 @@ class HealthCheckScanner
                         $scp = strcasecmp($manifest['author'], $req['author']);
                         $incompatible = $incompatible && ($req['author'] == '*' || empty($scp));
                     }
+
+                    if (!empty($req['path']) && is_dir($req['path']) &&
+                        is_callable(array('SugarAutoLoader', 'addDirectory'))
+                    ) {
+                        SugarAutoLoader::addDirectory($req['path']);
+                    }
+
                     if ($incompatible) {
                         break;
                     }
@@ -748,6 +778,8 @@ class HealthCheckScanner
     );
     protected $filesToFix = array();
 
+    protected $specificSugarFilesToFix = array();
+
     /**
      * Dump Scanner issues to log and optional stdout
      */
@@ -764,6 +796,31 @@ class HealthCheckScanner
     }
 
     protected $deletedFilesReferenced = array();
+
+    /**
+     * Searching line number of value
+     * @param string $file File to search in
+     * @param string $pattern Value to search
+     * @param string optional $directory
+     * @return array
+     */
+    protected function getLineNumberOfPattern($file, $pattern, $directory = '')
+    {
+        $foundInfo = array();
+
+        $fileContentsLined = file($file);
+        $pattern = "#$pattern#";
+        $linesFound = preg_grep(preg_quote($pattern), $fileContentsLined);
+
+        if (count($linesFound) > 0) {
+
+            foreach ($linesFound as $linePosition => $lineContent) {
+                $foundInfo['line'] = ((int)$linePosition + 1);
+                $foundInfo['directory'] = $directory;
+            }
+        }
+        return $foundInfo;
+    }
 
     /**
      * This method checks for directories/files that have been moved/removed that are referenced
@@ -798,21 +855,18 @@ class HealthCheckScanner
                                         $value
                                     ) > 0
                                 ) {
+                                    if (empty($this->specificSugarFilesToFix[$specificSugarFile][$file])) {
+                                        $fileInfo = $this->getLineNumberOfPattern($file, $value, $directory);
+                                        if ($fileInfo) {
+                                            $this->specificSugarFilesToFix[$specificSugarFile][$file] = $fileInfo;
+                                        }
+                                    }
                                     break 2;
                                 }
                             }
 
-                            $fileContentsLined = file($file);
-                            $pattern = "#$value#";
-                            $linesFound = preg_grep(preg_quote($pattern), $fileContentsLined);
-                            if (count($linesFound) > 0) {
-                                $foundVendor = array();
-
-                                foreach ($linesFound as $linePosition => $lineContent) {
-                                    $foundVendor['line'] = ((int)$linePosition + 1);
-                                    $foundVendor['directory'] = $directory;
-                                }
-
+                            $foundVendor = $this->getLineNumberOfPattern($file, $value, $directory);
+                            if (!empty($foundVendor)) {
                                 $vendorFileFound = true;
                                 $includedVendors[] = $foundVendor;
                                 break;
@@ -902,7 +956,9 @@ class HealthCheckScanner
 
         // Check if ModuleBuilder module needs to be run as BWC
         // Checks from 6_ScanModules
+        $bwc = false;
         if (!$this->isMBModule($module)) {
+            $bwc = true;
             $this->updateStatus("toBeRunAsBWC", $module);
         } else {
             $this->log("$module is upgradeable MB module");
@@ -926,11 +982,10 @@ class HealthCheckScanner
             }
         }
 
-
         // check for output in logic hooks
         // if there is some, we'd need to put it to custom
         // since upgrader does not handle it, we have to manually BWC the module
-        $this->checkHooks($module, HealthCheckScannerMeta::CUSTOM);
+        $this->checkHooks($module, HealthCheckScannerMeta::CUSTOM, $bwc);
     }
 
     /**
@@ -983,8 +1038,11 @@ class HealthCheckScanner
         if (!empty($extfiles)) {
             $this->updateStatus("hasExtensions", $module, $extfiles);
         }
-        foreach ($extfiles as $phpfile) {
-            $this->checkFileForOutput($phpfile, $bwc ? HealthCheckScannerMeta::CUSTOM : HealthCheckScannerMeta::MANUAL);
+        // skip check for output for bwc module
+        if (!$bwc) {
+            foreach ($extfiles as $phpfile) {
+                $this->checkFileForOutput($phpfile, $bwc ? HealthCheckScannerMeta::CUSTOM : HealthCheckScannerMeta::MANUAL);
+            }
         }
 
         // Check custom vardefs
@@ -1113,7 +1171,7 @@ class HealthCheckScanner
         }
 
         // check logic hooks for module
-        $this->checkHooks($module, $bwc ? HealthCheckScannerMeta::CUSTOM : HealthCheckScannerMeta::MANUAL);
+        $this->checkHooks($module, $bwc ? HealthCheckScannerMeta::CUSTOM : HealthCheckScannerMeta::MANUAL, $bwc);
     }
 
     /**
@@ -1150,9 +1208,14 @@ class HealthCheckScanner
         global $dictionary;
         include "modules/$module/vardefs.php";
         // load only original vardefs
-        $original_vardefs = $GLOBALS['dictionary'][$object];
+        if (!empty($GLOBALS['dictionary'][$object])) {
+            $original_vardefs = $GLOBALS['dictionary'][$object];
+        } else {
+            return;
+        }
         // return vardefs back to old state
         $GLOBALS['dictionary'][$object] = $full_vardefs;
+        $original_vardefs['fields'] = (is_array($original_vardefs['fields'])) ? $original_vardefs['fields'] : array();
         foreach ($original_vardefs['fields'] as $name => $def) {
             if (empty($def['type']) || empty($def['name'])) {
                 continue;
@@ -1346,7 +1409,7 @@ class HealthCheckScanner
 
             // check subpanel module. This param should refer to existing module
             if (!empty($panel['module']) && empty($this->beanList[$panel['module']])) {
-                $this->updateStatus("subpanelLinkNonExistModule", $panel['module']);
+                $this->updateStatus("subpanelLinkNonExistModule", $panel['module'], $deffile);
             }
 
             if (!empty($panel['get_subpanel_data']) && strpos($panel['get_subpanel_data'], 'function:') !== false) {
@@ -1427,9 +1490,10 @@ class HealthCheckScanner
     /**
      * Check logic hooks for module
      * @param string $module
+     * @param string $status
      * @param bool $bwc
      */
-    protected function checkHooks($module, $status = HealthCheckScannerMeta::MANUAL)
+    protected function checkHooks($module, $status = HealthCheckScannerMeta::MANUAL, $bwc = false)
     {
         $this->log("Checking hooks for $module");
         $hook_files = array();
@@ -1438,8 +1502,13 @@ class HealthCheckScanner
 
         foreach ($hook_files as $hookname => $hooks) {
             foreach ($hooks as $hook_data) {
-                $this->log("Checking module hook $hookname:{$hook_data[1]}");
-                $this->checkFileForOutput($hook_data[2], $status);
+                $hookDescription = (!empty($hook_data[1])) ? $hook_data[1] : '';
+                $this->log("Checking module hook $hookname: $hookDescription");
+                if (empty($hook_data[2])) {
+                    $this->updateStatus("badHookFile", $hookname, '');
+                } elseif (!$bwc) {
+                    $this->checkFileForOutput($hook_data[2], $status);
+                }
             }
         }
     }
@@ -1601,9 +1670,10 @@ class HealthCheckScanner
         }
         foreach ($hook_array as $hooks) {
             foreach ($hooks as $hook) {
-                if (!file_exists($hook[2])) {
+                $hookFileLocation = (!empty($hook[2])) ? $hook[2] : '';
+                if (!file_exists($hookFileLocation)) {
                     // putting it as custom since LogicHook checks file_exists
-                    $this->updateStatus("badHookFile", $hookfile, $hook[2]);
+                    $this->updateStatus("badHookFile", $hookfile, $hookFileLocation);
                 }
             }
         }
@@ -1614,10 +1684,13 @@ class HealthCheckScanner
      * Check PHP file for output constructs.
      * Set $status if it happens.
      * @param string $phpfile
-     * @param string $status
      */
-    protected function checkFileForOutput($phpfile, $status)
+    protected function checkFileForOutput($phpfile)
     {
+        if (!file_exists($phpfile)) {
+            $this->updateStatus("missingCustomFile", $phpfile);
+            return;
+        }
         $contents = file_get_contents($phpfile);
         if (!empty($this->md5_files["./" . $phpfile]) && $this->md5_files["./" . $phpfile] === md5($contents)) {
             // this is our file, no need to check
@@ -1745,6 +1818,10 @@ ENDP;
      */
     public function scriptErrorHandler($errno, $errstr, $errfile, $errline, $errcontext)
     {
+        // error was suppressed with the @-operator
+        if (error_reporting() === 0) {
+            return false;
+        }
         switch ($errno) {
             case 1:     $e_type = 'E_ERROR'; break;
             case 2:     $e_type = 'E_WARNING'; break;
@@ -1812,11 +1889,16 @@ ENDP;
         $hook_files_list = array();
         foreach ($hook_files as $hookname => $hooks) {
             foreach ($hooks as $hook_data) {
-                $hook_files_list[] = $hook_data[2];
+                if (empty($hook_data[2])) {
+                    $this->updateStatus("badHookFile", $hookname, '');
+                } else {
+                    $hook_files_list[] = $hook_data[2];
+                }
             }
         }
         $hook_files = array_unique($hook_files_list);
 
+        $unknownMBModuleFiles = array();
         // For now, the check is just checking if we have any files
         // in the directory that we do not recognize. If we do, we
         // put the module in BC.
@@ -1843,8 +1925,10 @@ ENDP;
             }
             if (!isset($mbFiles[basename($file)])) {
                 // unknown file, not MB module
-                $this->updateStatus("isNotMBModule", $file, $module_name);
-                return false;
+                if (count($unknownMBModuleFiles) > $this->numberOfFilesToReport) {
+                    break;
+                }
+                $unknownMBModuleFiles[] = $file;
             }
         }
         // files that are OK for custom:
@@ -1859,10 +1943,20 @@ ENDP;
             }
             if (!isset($mbFiles[basename($file)])) {
                 // unknown file, not MB module
-                $this->updateStatus("isNotMBModule", $file, $module_name);
-                return false;
+                if (count($unknownMBModuleFiles) > $this->numberOfFilesToReport) {
+                    break;
+                }
+                $unknownMBModuleFiles[] = $file;
             }
         }
+
+        if (!empty($unknownMBModuleFiles)) {
+            $filesToReport = array_slice($unknownMBModuleFiles, 0, $this->numberOfFilesToReport);
+            $moreMessage = (count($unknownMBModuleFiles) > $this->numberOfFilesToReport) ? PHP_EOL . 'and there are more...' : '';
+            $this->updateStatus("isNotMBModule", $filesToReport, $moreMessage, $module_name);
+            return false;
+        }
+
         $badExts = array(
             "ActionViewMap",
             "ActionFileMap",
@@ -2000,18 +2094,25 @@ ENDP;
         $fieldDefs = $GLOBALS['dictionary'][$object]['fields'];
 
         // get names of 'stock' fields, that are defined in original vardefs.php
-        $stockFields = $this->loadFromFile("modules/$module/vardefs.php", 'dictionary');
-        $stockFields = array_keys($stockFields[$seed->object_name]['fields']);
+        $stockFieldsDef = $this->loadFromFile("modules/$module/vardefs.php", 'dictionary');
+        if (!empty($stockFieldsDef[$seed->object_name]['fields']) && is_array($stockFieldsDef[$seed->object_name]['fields'])) {
+            $stockFieldsDef = $stockFieldsDef[$seed->object_name]['fields'];
+        } else {
+            $stockFieldsDef = array();
+        }
+        $stockFields = array_keys($stockFieldsDef);
 
         foreach ($fieldDefs as $key => $value) {
             if (!empty($this->bad_vardefs[$module]) && in_array($key, $this->bad_vardefs[$module])) {
                 continue;
             }
             if (empty($value['name']) || $key != $value['name']) {
-                $this->updateStatus("badVardefsKey", $key, $value['name'], $module);
-                continue;
+                if (empty($stockFieldsDef[$key]) || $stockFieldsDef[$key] != $value) {
+                    $nameValue = (!empty($value['name'])) ? $value['name'] : '';
+                    $this->updateStatus("badVardefsKey", $key, $nameValue, $module);
+                    continue;
+                }
             }
-
 
             // Check "name" field type, @see CRYS-130
             if ($key == 'name' && $value['type'] != 'name') {
@@ -2162,7 +2263,6 @@ ENDP;
         'Administration',
         'Audit',
         'Calendar',
-        'Calls',
         'CampaignLog',
         'Campaigns',
         'CampaignTrackers',
@@ -2198,7 +2298,6 @@ ENDP;
         'KBDocumentKBTags',
         'KBContents',
         'Manufacturers',
-        'Meetings',
         'MergeRecords',
         'ModuleBuilder',
         'MySettings',

@@ -255,9 +255,9 @@ input[type=radio] {
   .uneditable-input:focus {
     z-index: inherit;
     &+ .add-on {
-      display: none;
+      visibility: hidden;
       &+ .add-on {
-        display: none;
+        visibility: hidden;
       }
     }
   }
@@ -276,7 +276,8 @@ input[type=radio] {
     .add-on {
       left: -26px;
       color: @errorText;
-      [class^="icon-"] {
+      z-index: 1;
+      .fa {
         color: @errorText;
       }
     }
@@ -380,7 +381,7 @@ input[type=radio] {
 
 //Generate fixed spanX modal widths
 .spanLabelX (@index) when (@index > 0) {
-  (~".form-horizontal .control-label.span@{index}") { .spanLabel(@index); }
+  .form-horizontal .control-label.span@{index} { .spanLabel(@index); }
   .spanLabelX(@index - 1);
 }
 .spanLabelX (0) {}
@@ -525,6 +526,7 @@ input[type=radio] {
 .mu.extend .fieldPlaceHolder {
   margin-left: 4px;
 }
+
 
 textarea,
 input[type="text"],

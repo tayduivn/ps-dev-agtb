@@ -84,14 +84,22 @@
             app.metadata.getView(options.module, options.name)
         );
 
-        options.collection = options.collection || app.data.createBeanCollection(options.module);
-
         this._super('initialize', [options]);
         this._initSettings();
 
         this.events = _.extend({}, this.events, {
             'shown.bs.dropdown': 'populateMenu'
         });
+
+        /**
+         * The internal array of collections for favorites and recent.
+         * The collections shouldn't be reused with different filters when
+         * fetching in parallel.
+         *
+         * @property {Object}
+         * @private
+         */
+        this._collections = {};
     },
 
 
@@ -197,15 +205,34 @@
             return;
         }
 
-        this.collection.fetch({
+        this.getCollection(tplName).fetch({
             'showAlerts': false,
             'fields': ['id', 'name'],
+            // TODO SC-3696 this filter can be initialized once in the
+            // getCollection() and be metadata driven.
             'filter': filter,
             'limit': limit,
             'success': _.bind(function() {
                 this._renderPartial(tplName);
             }, this)
         });
+    },
+
+    /**
+     * Get the collection for the partial (favorites or recently viewed).
+     *
+     * @param {string} tplName The name of the partial template that will use
+     *   this collection.
+     * @return {Data.BeanCollection} The collection of this module.
+     */
+    getCollection: function(tplName) {
+        if (!this._collections[tplName]) {
+            this._collections[tplName] = app.data.createBeanCollection(this.module);
+            // TODO SC-3696 create the initial filter based on metadata for the
+            // partials
+        }
+
+        return this._collections[tplName];
     },
 
     /**
@@ -236,7 +263,7 @@
         //replace the partial using newly updated collection
         $old.remove();
         $placeholder.after(tpl(_.extend({
-            'collection': this.collection
+            'collection': this.getCollection(tplName)
         }, options)));
 
         //if there was a focused element previously, restore its focus
@@ -285,7 +312,7 @@
             route = $currentTarget.data('route');
 
         event.preventDefault();
-        if ((!_.isUndefined(event.button) && event.button !== 0) || event.ctrlKey || event.metaKey) {
+        if ((!_.isUndefined(event.button) && event.button !== 0) || event.ctrlKey || event.metaKey || $currentTarget.data('openwindow') === true) {
             event.stopPropagation();
             window.open(route, '_blank');
             return false;

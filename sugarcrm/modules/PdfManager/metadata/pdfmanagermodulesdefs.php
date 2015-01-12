@@ -11,7 +11,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-//FILE SUGARCRM flav=pro ONLY
 
 // For $bannedPdfManagerFieldsAndLinks, list of banned Fields and Links by module for PdfManager
 /*
@@ -66,7 +65,6 @@ $bannedPdfManagerFieldsAndLinks['Leads'] = array (
 );
 $bannedPdfManagerFieldsAndLinks['Opportunities'] = array (
     'relationships' => array(
-        'campaign_link',
         'campaigns',
     ),
 );

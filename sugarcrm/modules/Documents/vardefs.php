@@ -219,6 +219,7 @@ $dictionary['Document'] = array('table' => 'documents',
             'type' => 'relate',
             'table' => 'document_revisions',
             'link' => 'latest_document_revision_link',
+            'id_name' => 'document_revision_id',
             'join_name' => 'document_revisions',
             'vname' => 'LBL_LAST_REV_CREATE_DATE',
             'rname' => 'date_entered',
@@ -238,14 +239,6 @@ $dictionary['Document'] = array('table' => 'documents',
             'relationship' => 'contracttype_documents',
             'source' => 'non-db',
             'vname' => 'LBL_CONTRACTTYPES',
-        ),
-        //todo remove
-        'leads' => array(
-            'name' => 'leads',
-            'type' => 'link',
-            'relationship' => 'leads_documents',
-            'source' => 'non-db',
-            'vname' => 'LBL_LEADS',
         ),
         // Links around the world
         'accounts' =>

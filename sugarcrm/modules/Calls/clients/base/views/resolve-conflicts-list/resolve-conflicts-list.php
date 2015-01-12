@@ -29,16 +29,6 @@ $viewdefs['Calls']['base']['view']['resolve-conflicts-list'] = array(
                     'name' => 'status',
                 ),
                 array(
-                    'target_record_key' => 'contact_id',
-                    'target_module' => 'Contacts',
-                    'label' => 'LBL_LIST_CONTACT',
-                    'link' => true,
-                    'enabled' => true,
-                    'default' => true,
-                    'name' => 'contact_name',
-                    'related_fields' => array('contact_id'),
-                ),
-                array(
                     'name' => 'parent_name',
                     'width' => '20%',
                     'label' => 'LBL_LIST_RELATED_TO',
@@ -58,7 +48,7 @@ $viewdefs['Calls']['base']['view']['resolve-conflicts-list'] = array(
                 array(
                     'label' => 'LBL_LIST_DATE',
                     'enabled' => true,
-                    'default' => false,
+                    'default' => true,
                     'name' => 'date_start',
                 ),
                 array(

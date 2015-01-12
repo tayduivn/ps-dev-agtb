@@ -15,7 +15,7 @@ $dictionary['RevenueLineItem'] = array(
     'audited' => true,
     'activity_enabled' => true,
     //BEGIN SUGARCRM flav=ent ONLY
-    'unified_search' => true,
+    'unified_search' => false,
     'full_text_search' => true,
     'unified_search_default_enabled' => true,
     //END SUGARCRM flav=ent ONLY
@@ -61,6 +61,8 @@ $dictionary['RevenueLineItem'] = array(
                 'weight' => 'weight',
                 'currency_id' => 'currency_id',
                 'base_rate' => 'base_rate',
+                'manufacturer_id' => 'manufacturer_id',
+                'manufacturer_name' => 'manufacturer_name',
             ),
         ),
         'account_id' => array(

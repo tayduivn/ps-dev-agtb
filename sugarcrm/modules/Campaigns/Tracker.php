@@ -53,7 +53,7 @@ if(preg_match('/^[0-9A-Za-z\-]*$/', $track))
 	$query = "SELECT tracker_url FROM campaign_trkrs WHERE id='$track'";
 	$res = $db->query($query);
 
-	$row = $db->fetchByAssoc($res);
+	$row = $db->fetchByAssoc($res,false);
 
 	$redirect_URL = $row['tracker_url'];
 	sugar_cleanup();

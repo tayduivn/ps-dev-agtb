@@ -82,5 +82,38 @@
             return;
         }
         this.collection.fetch();
+    },
+
+    /**
+     * @inheritdoc
+     *
+     * Patch audit models `before` and `after` fields with information of
+     * original field available within parent model, in order to render
+     * properly.
+     */
+    _renderData: function() {
+        var parentModel = this.context.parent.get('model');
+        var fields = parentModel.fields;
+
+        _.each(this.collection.models, function(model) {
+            model.fields = app.utils.deepCopy(this.metaFields);
+
+            var before = _.findWhere(model.fields, {name: 'before'});
+            _.extend(before, fields[model.get('field_name')], {name: 'before'});
+
+            var after = _.findWhere(model.fields, {name: 'after'});
+            _.extend(after, fields[model.get('field_name')], {name: 'after'});
+
+            // FIXME: This method should not be used as a public method (though
+            // it's being used everywhere in the app) this should be reviewed
+            // when SC-3607 gets in
+            model.fields = app.metadata._patchFields(
+                this.module,
+                app.metadata.getModule(this.module),
+                model.fields
+            );
+        }, this);
+
+        this._super('_renderData');
     }
 })

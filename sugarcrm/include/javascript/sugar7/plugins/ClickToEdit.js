@@ -27,17 +27,17 @@
          * Others may work work but have not been tested or inline validation written for them.
          */
         app.plugins.register('CteTabbing', ['view'], {
-            
+
             /**
              * current index in the CTE list
              */
             currentIndex: -1,
-            
+
             /**
              * current CTE list (dom elements)
              */
             currentCTEList: [],
-            
+
             /**
              * Attach code for when the plugin is registered on a view
              *
@@ -66,7 +66,7 @@
                 this.context.off('field:editable:click');
                 $(window).off('keydown.' + this.cid);
             },
-            
+
             /**
              * handles custom window keydown events
              * @param e Event object
@@ -91,26 +91,26 @@
                     $(this.currentCTEList[this.currentIndex]).find("div.clickToEdit").click();
                 }
             },
-            
+
             /**
              * resets the CTE list of dom elements
              */
             resetCTEList: function() {
                 var oldLength = this.currentCTEList.length
                 this.currentCTEList = this.$el.find('.isEditable');
-                
+
                 /*
                  * If the length of the CTE list changes (less rows), then most likely the cell we were on initiated
-                 * that change.  We need to reset the current tab index to trigger the same cell, becuase 
+                 * that change.  We need to reset the current tab index to trigger the same cell, becuase
                  * the original one is now gone.
-                 * 
+                 *
                  * Note: if business rules change, this will have to be revisited.
                  */
                 if (oldLength > this.currentCTEList.length) {
                     this.currentIndex--;
                 }
             },
-            
+
             /**
              * handle setting the current index from a click
              * @param field Field that is clicked
@@ -361,7 +361,7 @@
             showClickToEdit: function(event) {
                 if (this._canEdit && !this._isInEdit) {
                     var target = $(event.currentTarget);
-                    var icon = '<span class="edit-icon"><i class="icon-pencil icon-sm"></i></span>';
+                    var icon = '<span class="edit-icon"><i class="fa fa-pencil fa-sm"></i></span>';
 
                     // use case for currency field that show transactional value + the converted to base currency
                     if (target.has('label.original').length == 1) {
@@ -749,15 +749,6 @@
                     this.setMode('list');
                     return;
                 }
-
-                var hb = Handlebars.compile("{{str key module context}}"),
-                    args = {field_name: app.lang.get(this.def.label, this.module)};
-
-                // set the proper error message
-                this.errorMessage = hb({'key': 'LBL_EDITABLE_INVALID', 'module': this.module, 'context': args});
-
-                // display rad error tooltipz!
-                this.showErrors();
             }
         });
     });

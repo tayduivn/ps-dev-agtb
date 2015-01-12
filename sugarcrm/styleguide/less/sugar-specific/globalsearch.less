@@ -6,8 +6,6 @@
   position: relative;
   min-width: 28px;
 
-  .rtlFloat(@direction,left);
-
   label {
     display: inline-block;
     input {
@@ -85,7 +83,7 @@
     }
     .btn-group {
       margin: 0;
-      > .btn .icon-caret-down {
+      > .btn .fa-caret-down {
         display: inline-block;
         color: @grayLight;
         text-shadow: none;
@@ -101,12 +99,12 @@
           }
         }
       }
-      &:hover > .btn .icon-caret-down {
+      &:hover > .btn .fa-caret-down {
         color: @grayDark;
         text-decoration: none;
       }
-      &.open > .btn .icon-caret-down,
-      &.open:hover > .btn .icon-caret-down {
+      &.open > .btn .fa-caret-down,
+      &.open:hover > .btn .fa-caret-down {
         color: @white;
       }
     }

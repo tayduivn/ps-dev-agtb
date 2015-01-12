@@ -111,36 +111,60 @@
     },
 
     /**
-     * Parse the metadata to make sure that the follow attributes conform to specific standards
-     *  - Align: valid options are left, center and right
-     *  - Width: any percentage below 100 is valid
+     * Parses the field's metadata to make sure that the following attributes
+     * respect specific standards:
      *
-     * @param options
-     * @returns {*}
+     *  - `align`: accepted values are `left`, `center` and `right`.
+     *  - `width`: the value can be a default width (e.g. `small` or `large`) or
+     *  a number in pixels. Percentage widths are ignored.
+     *
+     * The method will add (or append to) two properties to each field's
+     * metadata:
+     *
+     * - `classes`: css classes that should be set on the column header.
+     * - `styles`: inline style that should be set on the column header.
+     *
+     * To render properly, make sure that the template sets them on the
+     * column headers.
+     *
+     * @param {Object} options The `options` object passed in
+     *   {@link #initialize}.
+     * @param {Object} options.meta The metadata that we want to parse.
+     * @return {Object} The `options` object with the metadata parsed and
+     *   patched.
      */
     parseFieldMetadata: function(options) {
         // standardize the align and width param in the defs if they exist
         _.each(options.meta.panels, function(panel, panelIdx) {
             _.each(panel.fields, function(field, fieldIdx) {
+                var fieldFromMeta = options.meta.panels[panelIdx].fields[fieldIdx];
+                // FIXME align should be handled by the field directly - SC-3588
                 if (!_.isUndefined(field.align)) {
-                    var alignClass = '';
                     if (_.contains(['left', 'center', 'right'], field.align)) {
-                        alignClass = 't' + field.align;
+                        fieldFromMeta.align = 't' + field.align;
+                    } else {
+                        delete fieldFromMeta.align;
                     }
-                    options.meta.panels[panelIdx].fields[fieldIdx].align = alignClass;
                 }
 
+                // The width field in Studio is defined as a percentage which is
+                // deprecated for Sugar7 modules. Check to see if module list
+                // view metadata has been defined as percentage and if so,
+                // ignore.
                 if (!_.isUndefined(field.width)) {
-                    // make sure it's a percentage
-                    var parts = field.width.toString().match(/^(\d{0,3})\%$/);
-                    var widthValue = '';
-                    if(parts) {
-                        if(parseInt(parts[1]) < 100) {
-                            widthValue = parts[0];
+                    // check to see if it's a percentage
+                    // match beginning, decimal of 0 to 3 places, percent sign, end
+                    var percent = field.width.toString().match(/^(\d{0,3})\%$/);
+                    // ignore if defined as percent
+                    if (!percent && !_.isEmpty(field.width)) {
+                        var width = parseInt(field.width, 10);
+                        if (!_.isNaN(width) && _.isNumber(width)) {
+                            var styles = 'width:' + width + 'px;max-width:' + width + 'px;min-width:' + width + 'px';
+                            fieldFromMeta.styles = styles;
+                        } else {
+                            fieldFromMeta.widthClass = 'cell-' + field.width;
                         }
                     }
-
-                    options.meta.panels[panelIdx].fields[fieldIdx].width = widthValue;
                 }
             }, this);
         }, this);

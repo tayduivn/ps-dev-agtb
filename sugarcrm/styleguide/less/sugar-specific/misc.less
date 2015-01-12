@@ -53,12 +53,12 @@ dl.list {
     color: @linkMore;
     text-decoration: none;
   }
-  [class^="icon-"] {
+  .fa {
     display: inline-block;
     width: 1.25em;
     text-align: center;
   }
-  &:hover [class^="icon-"] {
+  &:hover .fa {
     text-decoration: none;
   }
 }
@@ -280,7 +280,7 @@ hr.soften {
       color: white;
       font-size: 14px;
       padding: 8px;
-      .border-radius(5px);
+      .border-radius(3px);
       line-height: 1.25;
       background-color: rgba(0,0,0,.6);
     }
@@ -289,22 +289,36 @@ hr.soften {
     top: 15%;
     position:absolute;
     left: 50%;
-    width:186px;
+    width:316px;
     .text {
       position: relative;
       left: -50%;
-      font-size: 15px;
+      font-size: 14px;
       font-weight: normal;
       text-align: center;
       width: 100%;
       color: @white;
-      .border-radius(10px);
+      .border-radius(3px);
       border: 2px solid @black;
-      background-color: @grayDarker;
-      opacity: 0.8;
+      background-color: @navbarBackground;
       padding: 10px;
       margin-left: -12px;
       text-shadow: none;
+    }
+    .resource-list {
+        text-align: left;
+        .resource-info {
+          a {
+            color: @white;
+          }
+          .details {
+              color: darken(@grayLighter, 10%);
+          }
+        }
+
+        .resource:last-child {
+            padding-bottom: 0px;
+        }
     }
   }
 
@@ -322,8 +336,9 @@ hr.soften {
       min-height: 34px;
       line-height: 34px;
       .box-shadow(none);
-      .opacity(90);
       border-color: @black;
+      background-color: @navbarBackground;
+      background-image: none;
       & span {
         margin-top: 3px;
       }
@@ -331,6 +346,14 @@ hr.soften {
         min-width: 80px;
       }
 
+    }
+    .disabled {
+      .opacity(100);
+      background-color: darken(@navbarBackground, 20%);
+      color: @navbarBackground;
+      .fa {
+        .opacity(20);
+      }
     }
   }
 }
@@ -341,7 +364,7 @@ hr.soften {
   position: relative;
 }
 
-.icon-spin {
+.fa-spin {
   display: inline-block;
   -moz-animation: spin 2s infinite linear;
   -o-animation: spin 2s infinite linear;
@@ -370,7 +393,7 @@ hr.soften {
   100% { transform: rotate(359deg); }
 }
 @-moz-document url-prefix() {
-  .icon-spin { height: .9em; }
+  .fa-spin { height: .9em; }
 }
 
 .noaccess a {
@@ -413,9 +436,6 @@ hr.soften {
     right: 0;
     bottom: 34px;
     left: inherit;
-  }
-  ul li {
-    letter-spacing: normal;
   }
 }
 

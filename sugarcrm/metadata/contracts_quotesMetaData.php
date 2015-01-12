@@ -13,7 +13,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 // $Id: contracts_quotesMetaData.php 55782 2010-04-02 21:07:20Z clee $
 
-//FILE SUGARCRM flav=pro ONLY
 
 $dictionary['contracts_quotes'] = array (
 	'table' => 'contracts_quotes',

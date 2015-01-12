@@ -1,5 +1,5 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
+
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
@@ -61,12 +61,7 @@ class ViewFts extends SugarView
         }
         $filteredModules =  $this->getFilterModules($moduleFilter, $disabledModules);
         $append_wildcard = !empty($_REQUEST['append_wildcard']) ? $_REQUEST['append_wildcard'] : false;
-        $options = array(
-            'current_module' => $this->module,
-            'moduleFilter' => $moduleFilter,
-            'append_wildcard' => $append_wildcard,
-            'sort' => array(array('module' => array('order' => 'asc'))),
-        );
+        $options = array('current_module' => $this->module, 'moduleFilter' => $moduleFilter, 'append_wildcard' => $append_wildcard);
 
         if( $this->fullView || $refreshModuleFilter)
         {

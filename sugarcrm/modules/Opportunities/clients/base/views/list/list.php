@@ -37,6 +37,7 @@ $viewdefs['Opportunities']['base']['view']['list'] = array(
                     'label' => 'LBL_LIST_ACCOUNT_NAME',
                     'enabled' => true,
                     'default' => true,
+                    'sortable' => true,
                 ),
                 array(
                     'name' => 'sales_stage',
@@ -101,7 +102,8 @@ $viewdefs['Opportunities']['base']['view']['list'] = array(
                     'label' => 'LBL_CREATED',
                     'enabled' => true,
                     'default' => true,
-                    'readonly' => true
+                    'readonly' => true,
+                    'sortable' => true,
                 ),
                 array(
                     'name' => 'team_name',
@@ -118,6 +120,7 @@ $viewdefs['Opportunities']['base']['view']['list'] = array(
                     'id' => 'ASSIGNED_USER_ID',
                     'enabled' => true,
                     'default' => true,
+                    'sortable' => true,
                 ),
                 array(
                     'name' => 'modified_by_name',
@@ -126,6 +129,7 @@ $viewdefs['Opportunities']['base']['view']['list'] = array(
                     'enabled' => true,
                     'default' => true,
                     'readonly' => true,
+                    'sortable' => true,
                 ),
                 array(
                     'name' => 'date_entered',

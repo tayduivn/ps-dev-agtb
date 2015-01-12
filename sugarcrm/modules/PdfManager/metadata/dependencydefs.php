@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-//FILE SUGARCRM flav=pro ONLY
 
 $dependencies['PdfManager']['read_only_base_module_edition'] = array (
     'hooks' => array("edit", "view"),

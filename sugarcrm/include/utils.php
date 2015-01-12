@@ -1063,17 +1063,21 @@ function return_app_list_strings_language($language, $useCache = true)
             //(if there are key additions/deletions) but we want strings in our expected language (as much as possible).
             $app_list_strings = sugarArrayIntersectMerge($app_list_strings, $app_list_strings_array[$lang]);
         }
-        foreach(SugarAutoLoader::existing(
-            "custom/application/Ext/Language/$lang.lang.ext.php"
-        ) as $file) {
-            $app_list_strings = _mergeCustomAppListStrings($file , $app_list_strings);
-            $GLOBALS['log']->info("Found extended language file: $file");
-        }
+
+        // Custom language file overrides default
         foreach(SugarAutoLoader::existing(
             "custom/include/language/$lang.lang.php"
         ) as $file) {
             include($file);
             $GLOBALS['log']->info("Found custom language file: $file");
+        }
+
+        // Merge custom Extensions with loaded language file
+        foreach(SugarAutoLoader::existing(
+            "custom/application/Ext/Language/$lang.lang.ext.php"
+        ) as $file) {
+            $app_list_strings = _mergeCustomAppListStrings($file , $app_list_strings);
+            $GLOBALS['log']->info("Found extended language file: $file");
         }
     }
 
@@ -3409,10 +3413,8 @@ function sugar_cleanup($exit = false)
     }
     SugarAutoLoader::saveClassMap();
 
-//	pre_login_check();
-    if (class_exists('DBManagerFactory')) {
-        $db = DBManagerFactory::getInstance();
-        $db->disconnect();
+    if (class_exists('DBManagerFactory', false)) {
+        DBManagerFactory::disconnectAll();
     }
     if ($exit) {
         exit;

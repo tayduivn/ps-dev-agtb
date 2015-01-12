@@ -40,6 +40,12 @@ $moduleList[] = 'Forecasts';
 $moduleList[] = 'Contracts';
 $moduleList[] = 'KBDocuments';
 //END SUGARCRM flav=pro ONLY
+//BEGIN SUGARCRM flav=ent ONLY
+$moduleList[] = 'pmse_Project';
+$moduleList[] = 'pmse_Inbox';
+$moduleList[] = 'pmse_Business_Rules';
+$moduleList[] = 'pmse_Emails_Templates';
+//END SUGARCRM flav=ent ONLY
 
 $moduleList[] = 'Documents';
 $moduleList[] = 'Cases';
@@ -51,6 +57,7 @@ $moduleList[] = 'Bugs';
 $beanList = array();
 //ACL Objects
 $beanList['ACLRoles']       = 'ACLRole';
+$beanList['ACLRoleSets']    = 'ACLRoleSet';
 $beanList['ACLActions']     = 'ACLAction';
 //BEGIN SUGARCRM flav=pro ONLY
 $beanList['ACLFields']       = 'ACLField';
@@ -124,7 +131,6 @@ $beanList['Relationships'] = 'Relationship';
 $beanList['Employees']      = 'Employee';
 //BEGIN SUGARCRM flav=pro ONLY
 $beanList['Reports']        = 'SavedReport';
-$beanList['Reports_1']      = 'SavedReport';
 //END SUGARCRM flav=pro ONLY
 //BEGIN SUGARCRM flav=pro ONLY
 $beanList['Teams']          = 'Team';
@@ -180,6 +186,41 @@ $beanList['CustomQueries']  = 'CustomQuery';
 $beanList['DataSets']  = 'DataSet';
 $beanList['DataSet_Attribute']  = 'DataSet_Attribute';
 $beanList['ReportMaker']  = 'ReportMaker';
+$beanList['pmse_Project'] = 'pmse_Project';
+$beanList['pmse_Inbox'] = 'pmse_Inbox';
+$beanList['pmse_Business_Rules'] = 'pmse_Business_Rules';
+$beanList['pmse_Emails_Templates'] = 'pmse_Emails_Templates';
+$beanList['pmse_BpmnActivity'] = 'pmse_BpmnActivity';
+$beanList['pmse_BpmnArtifact'] = 'pmse_BpmnArtifact';
+$beanList['pmse_BpmnBound'] = 'pmse_BpmnBound';
+$beanList['pmse_BpmnData'] = 'pmse_BpmnData';
+$beanList['pmse_BpmnDiagram'] = 'pmse_BpmnDiagram';
+$beanList['pmse_BpmnDocumentation'] = 'pmse_BpmnDocumentation';
+$beanList['pmse_BpmnEvent'] = 'pmse_BpmnEvent';
+$beanList['pmse_BpmnExtension'] = 'pmse_BpmnExtension';
+$beanList['pmse_BpmnFlow'] = 'pmse_BpmnFlow';
+$beanList['pmse_BpmnGateway'] = 'pmse_BpmnGateway';
+$beanList['pmse_BpmnLane'] = 'pmse_BpmnLane';
+$beanList['pmse_BpmnLaneset'] = 'pmse_BpmnLaneset';
+$beanList['pmse_BpmnParticipant'] = 'pmse_BpmnParticipant';
+$beanList['pmse_BpmnProcess'] = 'pmse_BpmnProcess';
+$beanList['pmse_BpmFlow'] = 'pmse_BpmFlow';
+$beanList['pmse_BpmThread'] = 'pmse_BpmThread';
+$beanList['pmse_BpmNotes'] = 'pmse_BpmNotes';
+$beanList['pmse_BpmRelatedDependency'] = 'pmse_BpmRelatedDependency';
+$beanList['pmse_BpmCaseData'] = 'pmse_BpmCaseData';
+$beanList['pmse_BpmActivityUser'] = 'pmse_BpmActivityUser';
+$beanList['pmse_BpmEventDefinition'] = 'pmse_BpmEventDefinition';
+$beanList['pmse_BpmGatewayDefinition'] = 'pmse_BpmGatewayDefinition';
+$beanList['pmse_BpmActivityDefinition'] = 'pmse_BpmActivityDefinition';
+$beanList['pmse_BpmActivityStep'] = 'pmse_BpmActivityStep';
+$beanList['pmse_BpmFormAction'] = 'pmse_BpmFormAction';
+$beanList['pmse_BpmDynaForm'] = 'pmse_BpmDynaForm';
+$beanList['pmse_BpmProcessDefinition'] = 'pmse_BpmProcessDefinition';
+$beanList['pmse_BpmConfig'] = 'pmse_BpmConfig';
+$beanList['pmse_BpmGroup'] = 'pmse_BpmGroup';
+$beanList['pmse_BpmGroupUser'] = 'pmse_BpmGroupUser';
+$beanList['pmse_BpmAccessManagement'] = 'pmse_BpmAccessManagement';
 //END SUGARCRM flav=ent ONLY
 $beanList['Empty'] = 'EmptyBean';
 $beanList['TeamHierarchy'] = 'TeamHierarchy';
@@ -193,6 +234,8 @@ $beanFiles['ACLAction'] = 'modules/ACLActions/ACLAction.php';
 $beanFiles['ACLRole'] = 'modules/ACLRoles/ACLRole.php';
 $beanFiles['Relationship']  = 'modules/Relationships/Relationship.php';
 
+// do not add any bean files before this point, otherwise the application may fail to install
+$beanFiles['ACLRoleSet'] = 'modules/ACLRoles/ACLRoleSet.php';
 $beanFiles['Lead']          = 'modules/Leads/Lead.php';
 $beanFiles['aCase']         = 'modules/Cases/Case.php';
 $beanFiles['Bug']           = 'modules/Bugs/Bug.php';
@@ -318,6 +361,41 @@ $beanFiles['CustomQuery']= 'modules/CustomQueries/CustomQuery.php';
 $beanFiles['DataSet']= 'modules/DataSets/DataSet.php';
 $beanFiles['DataSet_Attribute']= 'modules/DataSets/DataSet_Attribute.php';
 $beanFiles['ReportMaker']= 'modules/ReportMaker/ReportMaker.php';
+$beanFiles['pmse_Project'] = 'modules/pmse_Project/pmse_Project.php';
+$beanFiles['pmse_Inbox'] = 'modules/pmse_Inbox/pmse_Inbox.php';
+$beanFiles['pmse_Business_Rules'] = 'modules/pmse_Business_Rules/pmse_Business_Rules.php';
+$beanFiles['pmse_Emails_Templates'] = 'modules/pmse_Emails_Templates/pmse_Emails_Templates.php';
+$beanFiles['pmse_BpmnActivity'] = 'modules/pmse_Project/pmse_BpmnActivity/pmse_BpmnActivity.php';
+$beanFiles['pmse_BpmnArtifact'] = 'modules/pmse_Project/pmse_BpmnArtifact/pmse_BpmnArtifact.php';
+$beanFiles['pmse_BpmnBound'] = 'modules/pmse_Project/pmse_BpmnBound/pmse_BpmnBound.php';
+$beanFiles['pmse_BpmnData'] = 'modules/pmse_Project/pmse_BpmnData/pmse_BpmnData.php';
+$beanFiles['pmse_BpmnDiagram'] = 'modules/pmse_Project/pmse_BpmnDiagram/pmse_BpmnDiagram.php';
+$beanFiles['pmse_BpmnDocumentation'] = 'modules/pmse_Project/pmse_BpmnDocumentation/pmse_BpmnDocumentation.php';
+$beanFiles['pmse_BpmnEvent'] = 'modules/pmse_Project/pmse_BpmnEvent/pmse_BpmnEvent.php';
+$beanFiles['pmse_BpmnExtension'] = 'modules/pmse_Project/pmse_BpmnExtension/pmse_BpmnExtension.php';
+$beanFiles['pmse_BpmnFlow'] = 'modules/pmse_Project/pmse_BpmnFlow/pmse_BpmnFlow.php';
+$beanFiles['pmse_BpmnGateway'] = 'modules/pmse_Project/pmse_BpmnGateway/pmse_BpmnGateway.php';
+$beanFiles['pmse_BpmnLane'] = 'modules/pmse_Project/pmse_BpmnLane/pmse_BpmnLane.php';
+$beanFiles['pmse_BpmnLaneset'] = 'modules/pmse_Project/pmse_BpmnLaneset/pmse_BpmnLaneset.php';
+$beanFiles['pmse_BpmnParticipant'] = 'modules/pmse_Project/pmse_BpmnParticipant/pmse_BpmnParticipant.php';
+$beanFiles['pmse_BpmnProcess'] = 'modules/pmse_Project/pmse_BpmnProcess/pmse_BpmnProcess.php';
+$beanFiles['pmse_BpmFlow'] = 'modules/pmse_Project/pmse_BpmFlow/pmse_BpmFlow.php';
+$beanFiles['pmse_BpmThread'] = 'modules/pmse_Project/pmse_BpmThread/pmse_BpmThread.php';
+$beanFiles['pmse_BpmNotes'] = 'modules/pmse_Project/pmse_BpmNotes/pmse_BpmNotes.php';
+$beanFiles['pmse_BpmRelatedDependency'] = 'modules/pmse_Project/pmse_BpmRelatedDependency/pmse_BpmRelatedDependency.php';
+$beanFiles['pmse_BpmCaseData'] = 'modules/pmse_Project/pmse_BpmCaseData/pmse_BpmCaseData.php';
+$beanFiles['pmse_BpmActivityUser'] = 'modules/pmse_Project/pmse_BpmActivityUser/pmse_BpmActivityUser.php';
+$beanFiles['pmse_BpmEventDefinition'] = 'modules/pmse_Project/pmse_BpmEventDefinition/pmse_BpmEventDefinition.php';
+$beanFiles['pmse_BpmGatewayDefinition'] = 'modules/pmse_Project/pmse_BpmGatewayDefinition/pmse_BpmGatewayDefinition.php';
+$beanFiles['pmse_BpmActivityDefinition'] = 'modules/pmse_Project/pmse_BpmActivityDefinition/pmse_BpmActivityDefinition.php';
+$beanFiles['pmse_BpmActivityStep'] = 'modules/pmse_Project/pmse_BpmActivityStep/pmse_BpmActivityStep.php';
+$beanFiles['pmse_BpmFormAction'] = 'modules/pmse_Project/pmse_BpmFormAction/pmse_BpmFormAction.php';
+$beanFiles['pmse_BpmDynaForm'] = 'modules/pmse_Project/pmse_BpmDynaForm/pmse_BpmDynaForm.php';
+$beanFiles['pmse_BpmProcessDefinition'] = 'modules/pmse_Project/pmse_BpmProcessDefinition/pmse_BpmProcessDefinition.php';
+$beanFiles['pmse_BpmConfig'] = 'modules/pmse_Project/pmse_BpmConfig/pmse_BpmConfig.php';
+$beanFiles['pmse_BpmGroup'] = 'modules/pmse_Project/pmse_BpmGroup/pmse_BpmGroup.php';
+$beanFiles['pmse_BpmGroupUser'] = 'modules/pmse_Project/pmse_BpmGroupUser/pmse_BpmGroupUser.php';
+$beanFiles['pmse_BpmAccessManagement'] = 'modules/pmse_Project/pmse_BpmAccessManagement/pmse_BpmAccessManagement.php';
 //END SUGARCRM flav=ent ONLY
 
 $beanFiles['Configurator']          = 'modules/Configurator/Configurator.php';
@@ -348,7 +426,41 @@ $modInvisList = array('Administration', 'Currencies', 'CustomFields', 'Connector
     'DocumentRevisions',
     'Empty',
     'ProjectTask',
-    'RevenueLineItems'
+    'RevenueLineItems',
+    'ModuleBuilder',
+    //BEGIN SUGARCRM flav=ent ONLY
+    'pmse_BpmnActivity',
+    'pmse_BpmnArtifact',
+    'pmse_BpmnBound',
+    'pmse_BpmnData',
+    'pmse_BpmnDiagram',
+    'pmse_BpmnDocumentation',
+    'pmse_BpmnEvent',
+    'pmse_BpmnExtension',
+    'pmse_BpmnFlow',
+    'pmse_BpmnGateway',
+    'pmse_BpmnLane',
+    'pmse_BpmnLaneset',
+    'pmse_BpmnParticipant',
+    'pmse_BpmnProcess',
+    'pmse_BpmFlow',
+    'pmse_BpmThread',
+    'pmse_BpmNotes',
+    'pmse_BpmRelatedDependency',
+    'pmse_BpmCaseData',
+    'pmse_BpmActivityUser',
+    'pmse_BpmEventDefinition',
+    'pmse_BpmGatewayDefinition',
+    'pmse_BpmActivityDefinition',
+    'pmse_BpmActivityStep',
+    'pmse_BpmFormAction',
+    'pmse_BpmDynaForm',
+    'pmse_BpmProcessDefinition',
+    'pmse_BpmConfig',
+    'pmse_BpmGroup',
+    'pmse_BpmGroupUser',
+    'pmse_BpmAccessManagement',
+    //END SUGARCRM flav=ent ONLY
     );
 $adminOnlyList = array(
                     //module => list of actions  (all says all actions are admin only)

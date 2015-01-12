@@ -16,20 +16,14 @@ $popupMeta = array('moduleMain' => 'CustomQuery',
 						'className' => 'CustomQuery',
 						'orderBy' => 'name',
 						'whereClauses' => 
-							array('name' => 'custom_queries.name', 
-								  'query_name' => 'custom_queries.query_type',
+							array('name' => 'custom_queries.name',
 								  'description' => 'custom_queries.description'),
 						'listviewdefs' => array(
 											'NAME' => array(
 												'width' => '20', 
 												'label' => 'LBL_LIST_NAME',
 												'link' => true,
-										        'default' => true), 
-											'QUERY_TYPE' => array(
-												'width' => '20', 
-												'label' => 'LBL_QUERY_TYPE', 
-												'link' => false,
-										        'default' => true), 
+										        'default' => true),
 											'DESCRIPTION' => array(
 												'width' => '20', 
 												'label' => 'LBL_LIST_DESCRIPTION', 
@@ -38,7 +32,6 @@ $popupMeta = array('moduleMain' => 'CustomQuery',
 											),
 						'searchdefs'   => array(
 										 	'name', 
-											'query_type', 
 											'description',
 										  )
 						);

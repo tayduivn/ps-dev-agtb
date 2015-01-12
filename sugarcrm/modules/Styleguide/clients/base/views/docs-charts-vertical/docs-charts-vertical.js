@@ -9,21 +9,18 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 ({
-  className: 'container-fluid',
+    className: 'container-fluid',
 
-  // charts vertical
-  _renderHtml: function() {
-    this._super('_renderHtml');
+    // charts vertical
+    _renderHtml: function() {
+        this._super('_renderHtml');
 
-    // Vertical Bar Chart without Line
-
-    d3.json('styleguide/content/charts/data/multibar_data.json', function(data) {
-
-      nv.addGraph(function() {
-        var chart = nv.models.multiBarChart()
+        // Vertical Bar Chart without Line
+        this.chart1 = nv.models.multiBarChart()
               .showTitle(false)
               .tooltips(true)
               .showControls(false)
+              .direction(app.lang.direction)
               .colorData('default')
               .tooltipContent(function(key, x, y, e, graph) {
                   return '<p>Stage: <b>' + key + '</b></p>' +
@@ -31,51 +28,49 @@
                          '<p>Percent: <b>' + x + '%</b></p>';
               });
 
-        d3.select('#vert1 svg')
-            .datum(data)
-          .transition().duration(500)
-            .call(chart);
+        nv.utils.windowResize(this.chart1.update);
 
-        nv.utils.windowResize(chart.update);
 
-        return chart;
-      });
-    });
+        //Vertical Bar Chart with Line
+        this.chart2 = nv.models.paretoChart()
+              .showTitle(false)
+              .showLegend(true)
+              .tooltips(true)
+              .showControls(false)
+              .direction(app.lang.direction)
+              .stacked(true)
+              .clipEdge(false)
+              .colorData('default')
+              .yAxisTickFormat(function(d) { return '$' + d3.format(',.2s')(d); })
+              .quotaTickFormat(function(d) { return '$' + d3.format(',.3s')(d); });
+              // override default barClick function
+              // .barClick( function(data,e,selection) {
+              //     //if only one bar series is disabled
+              //     d3.select('#vert2 svg')
+              //       .datum(forecast_data_Manager)
+              //       .call(chart);
+              //   })
 
-    //Vertical Bar Chart with Line
-    d3.json('styleguide/content/charts/data/pareto_data_salesrep.json', function(data) {
-      nv.addGraph({
-        generate: function() {
-            var chart = nv.models.paretoChart()
-                .showTitle(false)
-                .showLegend(true)
-                .tooltips(true)
-                .showControls(false)
-                .stacked(true)
-                .clipEdge(false)
-                .colorData('default')
-                .yAxisTickFormat(function(d) { return '$' + d3.format(',.2s')(d); })
-                .quotaTickFormat(function(d) { return '$' + d3.format(',.3s')(d); });
-                // override default barClick function
-                // .barClick( function(data,e,selection) {
-                //     //if only one bar series is disabled
-                //     d3.select('#vert2 svg')
-                //       .datum(forecast_data_Manager)
-                //       .call(chart);
-                //   })
+        nv.utils.windowResize(this.chart2.update);
 
-            d3.select('#vert2 svg')
+        this.loadData();
+    },
+
+    loadData: function(options) {
+
+      // Vertical Bar Chart without Line
+      d3.json('styleguide/content/charts/data/multibar_data.json', _.bind(function(data) {
+          d3.select('#vert1 svg')
               .datum(data)
-              .call(chart);
+            .transition().duration(500)
+              .call(this.chart1);
+      }, this));
 
-            nv.utils.windowResize(chart.update);
-
-            return chart;
-        },
-        callback: function(graph) {
-          $('#log').text('Chart is loaded');
-        }
-      });
-    });
-  }
+      //Vertical Bar Chart with Line
+      d3.json('styleguide/content/charts/data/pareto_data_salesrep.json', _.bind(function(data) {
+          d3.select('#vert2 svg')
+            .datum(data)
+            .call(this.chart2);
+      }, this));
+    }
 })

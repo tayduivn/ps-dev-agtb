@@ -11,5 +11,5 @@
  */
 --}}
 {{#each collection.models}}
-    <li{{#eq id ../active.id}} class="active"{{/eq}}><a class="ellipsis_inline" tabindex="-1" href="#{{buildRoute model=this}}" data-route="#{{buildRoute model=this}}"><i class="icon-dashboard"></i>{{fieldValue this 'name'}}</a></li>
+    <li{{#eq id ../active.id}} class="active"{{/eq}}><a class="ellipsis_inline" tabindex="-1" href="#{{buildRoute model=this}}" data-route="#{{buildRoute model=this}}"><i class="fa fa-dashboard"></i>{{fieldValue this 'name'}}</a></li>
 {{/each}}

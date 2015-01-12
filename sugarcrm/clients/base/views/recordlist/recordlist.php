@@ -13,6 +13,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $viewdefs['base']['view']['recordlist'] = array(
     'favorite' => true,
     'following' => true,
+    'sticky_resizable_columns' => true,
     'selection' => array(
         'type' => 'multi',
         'actions' => array(
@@ -74,7 +75,7 @@ $viewdefs['base']['view']['recordlist'] = array(
                 'css_class' => 'btn',
                 'tooltip' => 'LBL_PREVIEW',
                 'event' => 'list:preview:fire',
-                'icon' => 'icon-eye-open',
+                'icon' => 'fa-eye',
                 'acl_action' => 'view',
             ),
             array(

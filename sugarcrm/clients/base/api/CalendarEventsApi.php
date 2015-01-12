@@ -72,6 +72,9 @@ class CalendarEventsApi extends ModuleApi
      */
     public function createBean(ServiceBase $api, array $args, array $additionalProperties = array())
     {
+        $this->requireArgs($args, array('module'));
+        $this->getCalendarEvents()->setOldAssignedUser($args['module'], null);
+
         $bean = parent::createBean($api,$args, $additionalProperties);
         if (!empty($bean->id)) {
             if ($this->getCalendarEvents()->isEventRecurring($bean)) {
@@ -92,6 +95,9 @@ class CalendarEventsApi extends ModuleApi
      */
     public function updateCalendarEvent($api, $args)
     {
+        $this->requireArgs($args, array('module', 'record'));
+        $this->getCalendarEvents()->setOldAssignedUser($args['module'], $args['record']);
+
         $api->action = 'view';
         $bean = $this->loadBean($api, $args, 'view');
 
@@ -127,11 +133,11 @@ class CalendarEventsApi extends ModuleApi
     public function deleteCalendarEvent($api, $args)
     {
         if (isset($args['all_recurrences']) && $args['all_recurrences'] === 'true') {
-            $this->deleteRecordAndRecurrences($api, $args);
+            $result = $this->deleteRecordAndRecurrences($api, $args);
         } else {
-            $this->deleteRecord($api, $args);
+            $result = $this->deleteRecord($api, $args);
         }
-        $this->getCalendarEvents()->rebuildFreeBusyCache($GLOBALS['current_user']);
+        return $result;
     }
 
     /**
@@ -191,8 +197,16 @@ class CalendarEventsApi extends ModuleApi
             $bean = $this->loadBean($api, $parentArgs, 'delete');
         }
 
+        // Turn off The Cache Updates while deleting the multiple recurrences.
+        // The current Cache Enabled status is returned so it can be appropriately
+        // restored when all the recurrences have been deleted.
+        $cacheEnabled = vCal::setCacheUpdateEnabled(false);
         $this->deleteRecurrences($bean);
         $bean->mark_deleted($bean->id);
+        // Restore the Cache Enabled status to its previous state
+        vCal::setCacheUpdateEnabled($cacheEnabled);
+
+        $this->getCalendarEvents()->rebuildFreeBusyCache($GLOBALS['current_user']);
 
         return array('id' => $bean->id);
     }

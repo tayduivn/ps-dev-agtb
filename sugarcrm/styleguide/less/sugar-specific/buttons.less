@@ -1,16 +1,15 @@
 /* BUTTONS
   ----------------*/
 .btn {
+  font-weight: 500;
   font-size: @fontSizeSmall;
   font-weight: bold;
   .box-shadow(none);
   margin-left: 8px;
   border: 1px solid rgba(0,0,0,.1);
-  letter-spacing: normal;
   text-shadow: none;
   /* keeps button widths with icons the same regardless of icon width */
-  > [class^="icon-"],
-  > [class*=" icon-"] {
+  > .fa {
     width: 14px;
     height: 14px;
     display: inline-block;
@@ -31,12 +30,15 @@
     color: @white !important;
     text-shadow: none;
     background: @gray !important;
-    > [class^="icon-"] {
+    > .fa {
       color: @grayLighter !important;
+    }
+    &:focus {
+      background: @grayDark !important;
     }
   }
   &.active:hover {
-    > [class^="icon-"] {
+    > .fa {
       color: @white !important;
     }
   }
@@ -61,7 +63,7 @@
     .box-shadow(none);
     border-color: transparent;
     background-color: transparent;
-    > [class^="icon-"] {
+    > .fa {
       color: @grayDark;
       text-shadow: none;
     }
@@ -75,7 +77,7 @@
     text-decoration: none;
     color: @grayLight;
     .opacity(65);
-    [class^="icon-"] {
+    .fa {
       .opacity(65);
       color: @grayLight;
     }
@@ -83,8 +85,7 @@
   //a darker version of btn-invisible
   &.btn-dark {
     background-color: darken(@grayLighter, 5%);
-    > [class^="icon-"],
-    > [class*=" icon-"] {
+    > .fa {
       color: darken(@grayLight, 10%);
     }
   }
@@ -119,13 +120,13 @@
 }
 
 // Reposition the caret
-.btn:hover .icon-caret-down,
-.open.btn-group .icon-caret-down {
+.btn:hover .fa-caret-down,
+.open.btn-group .fa-caret-down {
   .opacity(100);
 }
 
 // Small dropdowns caret
-.btn-small .icon-caret-down {
+.btn-small .fa-caret-down {
   margin-top: 6px;
 }
 //
@@ -140,7 +141,7 @@
 .btn-info,
 .btn-success,
 .btn-inverse {
-  .icon-caret-down {
+  .fa-caret-down {
     .opacity(60);
   }
 }
@@ -157,13 +158,11 @@
 .btn-inverse,
 .btn-inverse:hover {
   color: @white;
-  [class^="icon-"],
-  [class*=" icon-"] {
+  .fa {
     color: @white;
   }
   &:not(.disabled):hover {
-    [class^="icon-"],
-    [class*=" icon-"] {
+    .fa {
       color: @white;
     }
   }
@@ -172,13 +171,11 @@
 .btn-warning,
 .btn-warning:hover {
   color: darken(@yellow, 70%);
-  [class^="icon-"],
-  [class*=" icon-"] {
+  .fa {
     color: darken(@yellow, 70%);
   }
   &:not(.disabled):hover {
-    [class^="icon-"],
-    [class*=" icon-"] {
+    .fa {
       color: darken(@yellow, 70%);
     }
   }

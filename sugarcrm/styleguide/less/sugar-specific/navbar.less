@@ -4,7 +4,7 @@
 .navbar {
   &.navbar-fixed-top {
     position: absolute;
-    z-index: (@zindexFixedNavbar + 1);
+    z-index: (@zindexFixedNavbar + 2);
   }
   .btn.btn-link {
     color: @grayLighter;
@@ -40,7 +40,7 @@
     }
   }
 
-  [class^="icon-"] {
+  .fa {
     color: @white;
     font-size: 14px;
   }
@@ -48,13 +48,13 @@
   .btn-group:hover > .routeLink {
     color: @navbarLinkColorActive !important;
   }
-  .btn-group:hover > .btn .icon-caret-down {
+  .btn-group:hover > .btn .fa-caret-down {
     color: @navbarLinkColorActive;
   }
-  .open.dropdown .icon-caret-down {
+  .open.dropdown .fa-caret-down {
     color: @navbarLinkColor;
   }
-  .dropdown .icon-caret-down {
+  .dropdown .fa-caret-down {
     color: fade(@navbarLinkColor, 35%);
   }
   .navbar-search .btn-group .btn:not(.advanced),
@@ -67,7 +67,7 @@
       > button.dropdown-toggle,
       > button.dropdown-toggle:hover {
         background: none;
-          .icon-caret-down {
+          .fa-caret-down {
             color: @black;
           }
       }
@@ -90,10 +90,10 @@
     &.active {
       .btn-group:not(.open) {
         background-color: darken(@navbarBackground, 10%);
-        .icon-caret-down {
+        .fa-caret-down {
           color: @white;
         }
-        .btn.btn-invisible.btn-link {
+        .btn.btn-invisible.btn-link:not(.cube) {
           text-decoration: none;
           color: @navbarLinkColorActive;
           .border-radius(~"0 !important");
@@ -200,20 +200,20 @@
       li a {
         display: block;
         padding: 8px 10px;
-        text-indent: 30px;
+        text-indent: 16px;
         position: relative;
         &:hover {
           color: @dropdownLinkColorHover;
           text-decoration: none;
           background: @dropdownLinkBackgroundHover;
-          i[class^="icon-"] {
+          i.fa {
             color: @dropdownLinkColorHover;
           }
         }
-        i[class^="icon-"] {
+        i.fa {
           position: relative;
           top: -1px;
-          text-indent: -26px;
+          text-indent: -12px;
           color: @grayLight;
           vertical-align: middle;
         }
@@ -232,7 +232,7 @@
         text-indent: 0;
         position: absolute;
         right: 0;
-        .icon-caret-down {
+        .fa-caret-down {
           color: @grayLight;
           text-indent: 0;
           top: 0;
@@ -240,7 +240,7 @@
         &:hover,
         &.open {
           background: none;
-          .icon-caret-down {
+          .fa-caret-down {
             color: @gray;
           }
         }
@@ -276,7 +276,7 @@
       .btn-group:not(.home) {
         padding: 8px 2px;
         &:hover {
-          [class^="icon-"] {
+          .fa {
             color: @white !important;
           }
         }
@@ -341,11 +341,22 @@
   .dropdown-toggle .avatar {
     min-width: 26px;
   }
-  .profileactions-profile .avatar {
-    position: absolute;
-    left: 11px;
+  .profileactions-profile {
+    > a {
+      //text-indent: 30px;
+      > span {
+          display: inline-block;
+          width: 14px;
+          height: 0;
+        .avatar {
+          position: absolute;
+          left: 11px;
+          top: 7px;
+        }
+      }
+    }
   }
-  .icon-user {
+  .dropdown-toggle .fa-user {
     width: 26px;
     height: 26px;
     line-height: 26px;
@@ -364,7 +375,7 @@
       }
     }
   }
-  .icon-plus.icon-md {
+  .fa-plus.fa-md {
     width: 28px;
     height: 28px;
     line-height: 24px;

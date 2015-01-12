@@ -130,7 +130,7 @@ class ViewBackups extends SugarView
             echo $mod_strings['LBL_BACKUP_INSTRUCTIONS_1']; ?>
             <br>
             <?php echo $mod_strings['LBL_BACKUP_INSTRUCTIONS_2']; ?><br>
-            <form action="<?php print( $form_action );?>" method="post">
+            <form name="Backups" action="<?php print( $form_action );?>" method="post" onSubmit="return (check_for_errors());">
             <table>
             <tr>
                 <td><?php echo $mod_strings['LBL_BACKUP_DIRECTORY']; ?><br><i><?php echo $mod_strings['LBL_BACKUP_DIRECTORY_WRITABLE']; ?></i></td>
@@ -160,6 +160,14 @@ class ViewBackups extends SugarView
         ?>
         
             </form>
+            <script type="text/javascript">
+                function check_for_errors(){
+                    addForm('Backups');
+                    addToValidate('Backups', 'backup_dir', 'varchar', 'true', '<?= $mod_strings['LBL_BACKUP_DIRECTORY'];?>');
+                    addToValidate('Backups', 'backup_zip', 'varchar', 'true', '<?= $mod_strings['LBL_BACKUP_FILENAME'];?>');
+                    return check_form('Backups');
+                }
+            </script>
         
         <?php
         }   // end if/else of $run options

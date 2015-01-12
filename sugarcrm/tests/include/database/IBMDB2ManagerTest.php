@@ -78,7 +78,8 @@ class IBMDB2ManagerTest extends Sugar_PHPUnit_Framework_TestCase
     public function testGetIndices()
     {
         $queries = array();
-        $db = $this->getMock(get_class($this->_db), array('query', 'fetchByAssoc'));
+        $db = $this->getMock(get_class($this->_db), array('query', 'fetchByAssoc', 'tableExistsExtended'));
+        $db->expects($this->any())->method('tableExistsExtended')->will($this->returnValue(true));
         $db->expects($this->any())->method('query')->will($this->returnCallback(function($query) use (&$queries) {
             $queries[] = $query;
         }));

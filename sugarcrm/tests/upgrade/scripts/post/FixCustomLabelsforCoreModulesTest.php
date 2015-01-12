@@ -110,6 +110,35 @@ END;
             SugarTestHelper::saveFile($subpanelPath);
             sugar_file_put_contents($subpanelPath, $subpanelContent);
         }
+
+        // Prepare ListView data
+        $fileListViewDefs = 'custom/modules/TestModule1/clients/base/views/list/list.php';
+        $dataListViewDefs = <<<END
+<?php
+\$viewdefs['TestModule1']['base']['view']['list'] = array (
+  'panels' =>
+  array (
+    0 =>
+    array (
+      'label' => 'LBL_PANEL_DEFAULT',
+      'fields' =>
+      array (
+        0 =>
+        array (
+          'name' => 'name',
+          'width' => '30%',
+          'link' => true,
+          'label' => 'LBL_OLD_1',
+          'enabled' => true,
+          'default' => true,
+        ),
+      ),
+    ),
+  ),
+);
+END;
+        SugarTestHelper::saveFile($fileListViewDefs);
+        sugar_file_put_contents($fileListViewDefs, $dataListViewDefs);
     }
 
     public function tearDown()
@@ -187,6 +216,27 @@ END;
             }
             $this->assertEquals($expected['value'], $subpanelLayoutSearch);
         }
+    }
+
+    /**
+     * Test upgrade of List Viewdefs
+     * @group CRYS557
+     */
+    public function testUpgradeListViewModuleLabels()
+    {
+        $this->script->upgradeLabels = array('TestModule1' => array('LBL_OLD_1' => 'LBL_NEW_1'));
+        $this->script->upgradeListViewModuleLabels('TestModule1');
+
+        $viewFile = 'custom/modules/TestModule1/clients/base/views/list/list.php';
+        $this->assertFileExists($viewFile);
+
+        $viewdefs = array();
+        include $viewFile;
+
+        $this->assertNotEmpty($viewdefs);
+        $expectedLabel = 'LBL_NEW_1';
+        $actualLabel = $viewdefs['TestModule1']['base']['view']['list']['panels'][0]['fields'][0]['label'];
+        $this->assertEquals($expectedLabel, $actualLabel);
     }
 
     /**

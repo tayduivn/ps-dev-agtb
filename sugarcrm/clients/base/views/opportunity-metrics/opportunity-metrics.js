@@ -32,7 +32,7 @@
                 .y(function(d) {
                     return d.value;
                 })
-                .margin({top: 5, right: 20, bottom: 20, left: 20})
+                .margin({top: 0, right: 0, bottom: 5, left: 0})
                 .donut(true)
                 .donutLabelsOutside(true)
                 .donutRatio(0.447)
@@ -40,7 +40,8 @@
                 .showTitle(false)
                 .tooltips(true)
                 .showLegend(false)
-                .colorData('class')
+                .colorData('data')
+                .direction(app.lang.direction)
                 .tooltipContent(function(key, x, y, e, graph) {
                     return '<p><b>' + key + ' ' + parseInt(y, 10) + '</b></p>';
                 })

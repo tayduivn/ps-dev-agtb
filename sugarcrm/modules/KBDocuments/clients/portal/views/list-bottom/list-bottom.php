@@ -18,7 +18,7 @@ $viewdefs['KBDocuments']['portal']['view']['list-bottom'] = array(
         array(
             'name' => 'create_new',
             'type' => 'navelement',
-            'icon' => 'icon-plus',
+            'icon' => 'fa-plus',
             'label' => ' ',
             'route' =>
             array(
@@ -30,14 +30,14 @@ $viewdefs['KBDocuments']['portal']['view']['list-bottom'] = array(
         array(
             'name' => 'show_more_button_back',
             'type' => 'navelement',
-            'icon' => 'icon-chevron-left',
+            'icon' => 'fa-chevron-left',
             'label' => ' '
         ),
         2 =>
         array(
             'name' => 'show_more_button_forward',
             'type' => 'navelement',
-            'icon' => 'icon-chevron-right',
+            'icon' => 'fa-chevron-right',
             'label' => ' '
         ),
     ),

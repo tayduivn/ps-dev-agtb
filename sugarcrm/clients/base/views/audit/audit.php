@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 $viewdefs['base']['view']['audit'] = array(
-    'template' => 'filtered-list',
+    'template' => 'audit',
     'panels' =>
     array(
         array(

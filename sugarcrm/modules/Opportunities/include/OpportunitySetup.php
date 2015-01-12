@@ -43,6 +43,13 @@ abstract class OpportunitySetup
     protected $moduleExtFolder = 'custom/Extension/modules/Opportunities/Ext';
 
     /**
+     * RevenueLineItem Extension Folder
+     *
+     * @var string
+     */
+    protected $rliModuleExtFolder = 'custom/Extension/modules/RevenueLineItems/Ext';
+
+    /**
      * Dupe Check Extension File Name
      *
      * @var string
@@ -55,6 +62,13 @@ abstract class OpportunitySetup
      * @var string
      */
     protected $rliModuleExtFile = 'rli_unhide.ext.php';
+
+    /**
+     * RevenueLineItem Module Extension vardef dictionary change
+     *
+     * @var string
+     */
+    protected $rliModuleExtVardefFile = 'rli_vardef.ext.php';
 
     /**
      * What is the file name for the extends to disable the stock Opportunity Dependencies
@@ -132,12 +146,15 @@ abstract class OpportunitySetup
         $this->bean = BeanFactory::getBean('Opportunities');
 
         $rnr_modules = $this->fixRevenueLineItemModule();
+        SugarBean::clearLoadedDef('RevenueLineItem');
 
         // lets fix the workflows module
         $this->processWorkFlows();
 
         // r&r the rli + related modules
         $this->runRepairAndRebuild($rnr_modules);
+
+        register_shutdown_function(array('SugarAutoLoader', 'buildCache'));
     }
 
     /**
@@ -415,10 +432,30 @@ abstract class OpportunitySetup
      */
     protected function setRevenueLineItemModuleTab($show = true)
     {
-        $this->setConfigSetting('Tab', 'RevenueLineItems', $show);
+        $this->setRevenueLineItemTab($show);
         // for ths one, we have to reverse show, since if we want to show it, it needs not be in the list
         // and if we want to hide it, it needs to not be in the list
         $this->setConfigSetting('hide_subpanels', 'revenuelineitems', !$show);
+
+        sugar_cache_clear('admin_settings_cache');
+    }
+
+    protected function setRevenueLineItemTab($show)
+    {
+        SugarAutoLoader::load('modules/MySettings/TabController.php');
+        $newTB = new TabController();
+
+        //grab the existing system tabs
+        $tabs = $newTB->get_system_tabs();
+
+        if ($show) {
+            $tabs['RevenueLineItems'] = 'RevenueLineItems';
+        } else {
+            unset($tabs['RevenueLineItems']);
+        }
+
+        //now assign the modules to system tabs
+        $newTB->set_system_tabs($tabs);
     }
 
     /**
@@ -437,21 +474,110 @@ abstract class OpportunitySetup
 
         while ($row = $db->fetchRow($results)) {
             $tabArray = unserialize(base64_decode($row['value']));
-            // find the key
-            $key = array_search($value, $tabArray);
-            if ($key === false && $show === true) {
-                $tabArray[] = $value;
-            } elseif ($key !== false & $show === false) {
-                unset($tabArray[$key]);
+
+            // in the setup, this might not be set yet.
+            if (is_array($tabArray)) {
+                // find the key
+                $key = array_search($value, $tabArray);
+                if ($key === false && $show === true) {
+                    $tabArray[] = $value;
+                } elseif ($key !== false & $show === false) {
+                    unset($tabArray[$key]);
+                }
+
+                $sql = "UPDATE config
+                    SET value = '" . base64_encode(serialize($tabArray)) . "'
+                    WHERE category = 'MySettings'
+                    AND name = '" . $setting . "'
+                    AND (platform = 'base' OR platform IS NULL OR platform = '')";
+                $db->query($sql);
+                $db->commit();
+            }
+        }
+    }
+
+    /**
+     * Add or Remove the RevenueLineItems Module to the Parent Type dropdown List
+     *
+     * @param bool $add Defaults to `true`
+     */
+    protected function setRevenueLineItemInParentRelateDropDown($add = true)
+    {
+        $rli = BeanFactory::getBean('RevenueLineItems');
+
+        // get the default system language
+        $default_lang = SugarConfig::getInstance()->get('default_language');
+
+        // get the default app_list_strings and the default language for Revenue Line Items
+        $app_list_stings = return_app_list_strings_language($default_lang);
+        $module_lang = return_module_language($default_lang, 'RevenueLineItems');
+
+        // What lists need updating
+        $listsToUpdate = array(
+            'moduleList',
+            'parent_type_display'
+        );
+
+        // load the Dropdown parser so it can easily be saved
+        SugarAutoLoader::load('modules/ModuleBuilder/parsers/parser.dropdown.php');
+        $dd_parser = new ParserDropDown();
+
+        foreach($listsToUpdate as $list_key) {
+            $list = $app_list_stings[$list_key];
+            $hasRLI = isset($list[$rli->module_name]);
+
+            if ($add && !$hasRLI) {
+            // get the translated value
+                $list[$rli->module_name] = $module_lang['LBL_MODULE_NAME'];
+                $GLOBALS['app_list_strings'][$list_key][$rli->module_name] = $module_lang['LBL_MODULE_NAME'];
+            } elseif (!$add && $hasRLI) {
+                unset($GLOBALS['app_list_strings'][$list_key][$rli->module_name]);
+                unset($list[$rli->module_name]);
             }
 
-            $sql = "UPDATE config
-                SET value = '" . base64_encode(serialize($tabArray)) . "'
-                WHERE category = 'MySettings'
-                AND name = '" . $setting . "'
-                AND (platform = 'base' OR platform IS NULL OR platform = '')";
-            $db->query($sql);
+            // the parser need all the values to be in their own array with the key first then the value
+            $new_list = array();
+            foreach($list as $k => $v) {
+                $new_list[] = array($k, $v);
+            }
+
+            $params = array(
+                'dropdown_name' => $list_key,
+                'dropdown_lang' => $default_lang,
+                'list_value' => json_encode($new_list),
+                'view_package' => 'studio',
+            );
+            // for some reason, the ParserDropDown class uses $_REQUEST vs getting it from what
+            // was passed in.
+            $_REQUEST['view_package'] = 'studio';
+
+            $dd_parser->saveDropDown($params);
+
+            // clean up the request object
+            unset($_REQUEST['view_package']);
         }
+    }
+
+    protected function toggleRevenueLineItemQuickCreate($enable = false)
+    {
+        SugarAutoLoader::load('modules/Administration/views/view.configureshortcutbar.php');
+        $cscb = new ViewConfigureshortcutbar();
+
+        $modules = $cscb->getQuickCreateModules();
+
+        $enModules = array();
+        foreach ($modules['enabled'] as $module => $def) {
+            $enModules[$module] = $def['order'];
+        }
+
+        $hasRLI = isset($enModules['RevenueLineItems']);
+        if ($enable === true && $hasRLI === false) {
+            $enModules['RevenueLineItems'] = count($enModules);
+        } elseif ($enable === false && $hasRLI === true) {
+            unset($enModules['RevenueLineItems']);
+        }
+
+        $cscb->saveChangesToQuickCreateMetadata($modules['enabled'], $modules['disabled'], $enModules);
     }
 
     /**
@@ -619,6 +745,23 @@ EOL;
         }
 
         return $rnr_modules;
+    }
+
+    /**
+     * Cleanup the Unified Search Files
+     */
+    protected function cleanupUnifiedSearchCache()
+    {
+        // since we changed the unified search setting remove the cache file
+        $file = sugar_cached('modules/unified_search_modules.php');
+        if (SugarAutoLoader::fileExists($file)) {
+            SugarAutoLoader::unlink($file);
+        }
+        // remove the unified search display settings
+        $file = 'custom/modules/unified_search_modules_display.php';
+        if (SugarAutoLoader::fileExists($file)) {
+            SugarAutoLoader::unlink($file);
+        }
     }
 
     abstract public function doDataConvert();

@@ -19,11 +19,12 @@ table.reorderable-columns {
       text-overflow: initial;
       padding: 0;
       .box-sizing(border-box);
-      width: 100%;
+      .calcWidth(~"100% - 16px");
+      margin-left: 8px;
 
       > div {
         &[data-draggable="true"] {
-          padding: 8px;
+          padding: 8px 8px 8px 0px;
           /* Column being dragged */
           &.ui-draggable-dragging {
             background-color: @white;
@@ -42,6 +43,7 @@ table.reorderable-columns {
           word-break: break-word;
           vertical-align: middle;
           text-overflow: ellipsis;
+          padding-right: 10px;
         }
       }
     }

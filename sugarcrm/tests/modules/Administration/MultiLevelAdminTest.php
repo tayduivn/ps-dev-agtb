@@ -1,5 +1,5 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
+
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -72,6 +72,8 @@ class MultiLevelAdminTest extends Sugar_PHPUnit_Framework_TestCase
         $user = SugarTestUserUtilities::createAnonymousUser();
         $user->is_admin = 1;
         $module = 'Accounts';
+
+        ACLAction::clearACLCache();
         
         $this->assertTrue($user->isDeveloperForModule($module));  
         $this->assertTrue($user->isAdminForModule($module));  
@@ -95,6 +97,8 @@ class MultiLevelAdminTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_role_id = $user->role_id;
         
         $module = 'Accounts';
+
+        ACLAction::clearACLCache();
         
         $this->assertTrue($user->isDeveloperForModule($module));
         $this->assertTrue($user->isAdminForModule($module));
@@ -121,6 +125,8 @@ class MultiLevelAdminTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_role_id = $user->role_id;
         
         $module = 'Accounts';
+
+        ACLAction::clearACLCache();
         
         $this->assertFalse($user->isDeveloperForModule($module));
         $this->assertTrue($user->isAdminForModule($module));
@@ -145,6 +151,8 @@ class MultiLevelAdminTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_role_id = $user->role_id;
         
         $module = 'Accounts';
+
+        ACLAction::clearACLCache();
 
         $this->assertTrue($user->isDeveloperForModule($module));
         $this->assertFalse($user->isAdminForModule($module));
@@ -176,6 +184,8 @@ class MultiLevelAdminTest extends Sugar_PHPUnit_Framework_TestCase
         $user->role_id = $GLOBALS['db']->getOne("SELECT id FROM acl_roles WHERE name='Sales Administrator'");
         $GLOBALS['db']->query("INSERT into acl_roles_users(id,user_id,role_id) values('".create_guid()."','".$user->id."','".$user->role_id."')");
         $this->_role_id = $user->role_id;
+
+        ACLAction::clearACLCache();
                 
         $this->assertTrue($user->isDeveloperForAnyModule());
     }
@@ -206,6 +216,8 @@ class MultiLevelAdminTest extends Sugar_PHPUnit_Framework_TestCase
         $user->role_id = $GLOBALS['db']->getOne("SELECT id FROM acl_roles WHERE name='test1'");
         $GLOBALS['db']->query("INSERT into acl_roles_users(id,user_id,role_id) values('".create_guid()."','".$user->id."','".$user->role_id."')");
         $this->_role_id = $user->role_id;
+
+        ACLAction::clearACLCache();
         
         $this->assertFalse($user->isDeveloperForAnyModule());
     }
@@ -236,6 +248,8 @@ class MultiLevelAdminTest extends Sugar_PHPUnit_Framework_TestCase
         $user->role_id = $GLOBALS['db']->getOne("SELECT id FROM acl_roles WHERE name='test4'");
         $GLOBALS['db']->query("INSERT into acl_roles_users(id,user_id,role_id) values('".create_guid()."','".$user->id."','".$user->role_id."')");
         $this->_role_id = $user->role_id;
+
+        ACLAction::clearACLCache();
         
         $this->assertEquals(count($user->getDeveloperModules()),1);
     }
@@ -265,6 +279,8 @@ class MultiLevelAdminTest extends Sugar_PHPUnit_Framework_TestCase
         $user->role_id = $GLOBALS['db']->getOne("SELECT id FROM acl_roles WHERE name='test5'");
         $GLOBALS['db']->query("INSERT into acl_roles_users(id,user_id,role_id) values('".create_guid()."','".$user->id."','".$user->role_id."')");
         $this->_role_id = $user->role_id;
+
+        ACLAction::clearACLCache();
         
         $this->assertEquals(count($user->getDeveloperModules()),0);
     }
@@ -296,6 +312,8 @@ class MultiLevelAdminTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['current_user']->role_id = $GLOBALS['db']->getOne("SELECT id FROM acl_roles WHERE name='test6'");
         $GLOBALS['db']->query("INSERT into acl_roles_users(id,user_id,role_id) values('".create_guid()."','".$GLOBALS['current_user']->id."','".$GLOBALS['current_user']->role_id."')");
         $this->_role_id = $GLOBALS['current_user']->role_id;
+
+        ACLAction::clearACLCache();
         
         $this->assertFalse(displayStudioForCurrentUser());
     }
@@ -327,6 +345,8 @@ class MultiLevelAdminTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['current_user']->role_id = $GLOBALS['db']->getOne("SELECT id FROM acl_roles WHERE name='test7'");
         $GLOBALS['db']->query("INSERT into acl_roles_users(id,user_id,role_id) values('".create_guid()."','".$GLOBALS['current_user']->id."','".$GLOBALS['current_user']->role_id."')");
         $this->_role_id = $GLOBALS['current_user']->role_id;
+
+        ACLAction::clearACLCache();
         
         $this->assertTrue(displayStudioForCurrentUser());
     }
@@ -337,6 +357,8 @@ class MultiLevelAdminTest extends Sugar_PHPUnit_Framework_TestCase
 
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['current_user']->is_admin = 1;
+
+        ACLAction::clearACLCache();
         
         $this->assertTrue(displayStudioForCurrentUser());
     }
@@ -353,6 +375,8 @@ class MultiLevelAdminTest extends Sugar_PHPUnit_Framework_TestCase
         $check = displayStudioForCurrentUser();
         
         unset($_SESSION['display_studio_for_user']);
+
+        ACLAction::clearACLCache();
         
         $this->assertTrue($check);
     }
@@ -385,6 +409,8 @@ class MultiLevelAdminTest extends Sugar_PHPUnit_Framework_TestCase
         $server_unique_key = 'test';
         $admin_group_header = array();
         require 'modules/Administration/metadata/adminpaneldefs.php';
+
+        ACLAction::clearACLCache();
 
         foreach($admin_group_header as $key => $val ) {
             if($val[0] == 'LBL_FORECAST_TITLE') {

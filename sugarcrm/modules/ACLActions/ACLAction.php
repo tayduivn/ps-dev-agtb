@@ -575,7 +575,7 @@ class ACLAction  extends SugarBean
     {
     	// reset caches
     	$this->clearACLCache();
-    	parent::save();
+        parent::mark_deleted($id);
     }
 
     /**

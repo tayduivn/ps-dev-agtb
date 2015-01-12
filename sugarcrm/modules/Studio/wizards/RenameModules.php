@@ -112,12 +112,21 @@ class RenameModules
 
 
         foreach ($selected_dropdown as $key=>$value) {
-           $singularValue = isset($selected_dropdown_singular[$key]) ? $selected_dropdown_singular[$key] : $value;
-           if ($selected_lang != $_SESSION['authenticated_user_language'] && !empty($app_list_strings['moduleList']) && isset($app_list_strings['moduleList'][$key])) {
-                $selected_dropdown[$key]=array('lang'=>$value, 'user_lang'=> '['.$app_list_strings['moduleList'][$key] . ']', 'singular' => $singularValue);
-           } else {
-               $selected_dropdown[$key]=array('lang'=>$value, 'singular' => $singularValue);
-           }
+            $singularValue = isset($selected_dropdown_singular[$key]) ? $selected_dropdown_singular[$key] : $value;
+            if ($selected_lang != $_SESSION['authenticated_user_language'] && !empty($app_list_strings['moduleList']) && isset($app_list_strings['moduleList'][$key])) {
+                $selected_dropdown[$key] = array(
+                    'lang' => $value,
+                    'user_lang' => '['.$app_list_strings['moduleList'][$key].']',
+                    'singular' => $singularValue,
+                    'module' => 'module-'.mb_strtolower($key),
+                );
+            } else {
+                $selected_dropdown[$key] = array(
+                    'lang' => $value,
+                    'singular' => $singularValue,
+                    'module' => 'module-'.mb_strtolower($key),
+                );
+            }
         }
 
 
@@ -896,11 +905,27 @@ class RenameModules
         $typeDisplayList = getTypeDisplayList();
 
         foreach (array_keys($this->changedModules) as $moduleName) {
+            //Save changes to the "*type_display*" app_list_strings entry.
             foreach ($typeDisplayList as $typeDisplay) {
                 if (isset($app_list_strings[$typeDisplay]) && isset($app_list_strings[$typeDisplay][$moduleName])) {
                     $newParams['dropdown_name'] = $typeDisplay;
                     DropDownHelper::saveDropDown($this->createModuleListSingularPackage($newParams, array($moduleName => $this->changedModules[$moduleName])));
                  }
+            }
+            //save changes to moduleIconList
+            if (isset($app_list_strings['moduleIconList']) && isset($app_list_strings['moduleIconList'][$moduleName])) {
+                $newParams['dropdown_name'] = 'moduleIconList';
+
+                //recreate the moduleIconList array to be passed in using the format defined in getAllModulesFromRequest()
+                $newIconList = $app_list_strings['moduleIconList'];
+                $modPackages = $this->getAllModulesFromRequest();
+                foreach ($newIconList as $modKey => $modVal){
+                    $newIconList[$modKey] = $modPackages[$modKey];
+                }
+
+                //save modified moduleIconList array
+                $newIconList[$moduleName] = $this->changedModules[$moduleName];
+                DropDownHelper::saveDropDown($this->createModuleListSingularPackage($newParams, $newIconList));
             }
         }
         return $this;

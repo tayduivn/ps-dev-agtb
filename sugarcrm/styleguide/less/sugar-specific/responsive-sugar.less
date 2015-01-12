@@ -183,7 +183,7 @@
         .btn {
           .border-radius(3px);
           .buttonBackground(@btnInverseBackground, @btnInverseBackgroundHighlight);
-          .icon-caret-down {
+          .fa-caret-down {
             color: #bbb;
           }
         }
@@ -201,7 +201,7 @@
       margin-left: 0;
     }
   }
-  .filter-value [rel=datepicker] .add-on .icon-calendar {
+  .filter-value [rel=datepicker] .add-on .fa-calendar {
     display: none;
   }
 
@@ -276,6 +276,7 @@
 
   #content {
     overflow-y: auto;
+    overflow-x: hidden;
   }
 
   .dashboard {
@@ -305,6 +306,12 @@
         padding-right: 0;
       }
     }
+  }
+
+  //for safari's totally busted fixed position modal on login
+  #header[style*="display: none;"] + #content {
+    top: 0;
+    margin-top: 0;
   }
 
   #portal #content > .row-fluid > .dashboard {
@@ -341,6 +348,7 @@
     .dashboard {
       top: auto;
       bottom: auto;
+      padding-top: 0;
       .headerpane {
         position: relative;
         width: 100%;
@@ -363,13 +371,12 @@
     padding-top: 0;
   }
 
-  .headerpane .sidebar-toggle {
-    display: none;
-  }
-
-  .drawer.inactive {
-    .preview-pane {
-      position: relative;
+  .headerpane {
+    .sidebar-toggle {
+      display: none;
+    }
+    .btn-toolbar {
+      padding-right: 16px;
     }
   }
 
@@ -422,6 +429,17 @@
   .uxs-scroll-bar {
     width: 98.6%;
   }
+
+  // Scheduler UI profile row
+  .record div[data-name="invitees"] {
+    .participants-schedule .row.participant .cell.profile .name span {
+      width: 72px;
+    }
+    .participants-form .cell.select .field {
+      margin-left: -181px;
+    }
+  }
+
 }
 
 @media (max-width: 700px) {

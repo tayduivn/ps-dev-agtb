@@ -509,9 +509,10 @@ class Email extends SugarBean {
 	        $this->name = EmailTemplate::parse_template($this->name, $object_arr);
 	        $this->description = EmailTemplate::parse_template($this->description, $object_arr);
 	        $this->description = html_entity_decode($this->description,ENT_COMPAT,'UTF-8');
-            
-            if (empty($this->id) && $this->type != 'draft' && $this->status != 'draft' &&
-                $this->type != 'archived' && $this->status != 'archived'
+
+            if ($this->type != 'draft' && $this->status != 'draft' &&
+                $this->type != 'archived' && $this->status != 'archived' &&
+                !($this->type == 'out' && $this->status == 'sent')
             ) {
                 $this->id = create_guid();
                 $this->date_entered = "";
@@ -3043,34 +3044,33 @@ eoq;
      */
     public function fillPrimaryParentFields($table)
     {
+        $addresses = $this->email2ParseAddressesForAddressesOnly($this->to_addrs);
+        $addresses[] = $this->from_addr;
 
-        $addrs = $this->email2ParseAddressesForAddressesOnly($this->to_addrs);
-        $addrs[] = $this->from_addr;
-
-        if (empty($addrs)) {
+        if (empty($addresses)) {
             return;
         }
 
         $table = strtolower($table);
-        $uctable = ucfirst($table);
+        $module = ucfirst($table);
 
-        $addrs = "'" . implode("','", $addrs) . "'";
-        $q = "SELECT a.name, a.id FROM {$table} a";
-        $q .= " INNER JOIN email_addresses ea";
-        $q .= " INNER JOIN email_addr_bean_rel eabr ON ea.id = eabr.email_address_id";
-        $q .= " WHERE eabr.bean_module = '{$uctable}' AND email_address IN ({$addrs})";
-        $q .= " AND eabr.bean_id = a.id AND a.deleted = 0";
+        $addresses = "'" . implode("','", $addresses) . "'";
+        $q = "SELECT DISTINCT a.id FROM {$table} a" .
+            " INNER JOIN email_addresses ea" .
+            " INNER JOIN email_addr_bean_rel eabr ON ea.id = eabr.email_address_id" .
+            " WHERE eabr.bean_module = '{$module}' AND email_address IN ({$addresses})" .
+            " AND eabr.bean_id = a.id AND a.deleted = 0 LIMIT 1";
 
-        $ret = array();
-        // loop through types to get hits
+        // Get the first bean and set parent id/name, makes little sense since it's a many-to-many relationship
         $r = $this->db->query($q);
-        while ($a = $this->db->fetchByAssoc($r)) {
-            if (!empty($a['name']) && !empty($a['id'])) {
-                $this->parent_type      = $uctable;
-                $this->parent_id        = $a['id'];
-                $this->parent_name      = $a['name'];
-                return;
+        if ($a = $this->db->fetchByAssoc($r)) {
+            $parent = BeanFactory::getBean($module, $a['id']);
+            $this->parent_type = $parent->module_dir;
+            $this->parent_id = $parent->id;
+            if (!empty($parent->name)) {
+                $this->parent_name = $parent->name;
             }
+            return;
         }
     }
 

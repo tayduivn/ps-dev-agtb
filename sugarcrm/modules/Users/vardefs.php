@@ -25,7 +25,7 @@ $dictionary['User'] = array(
         'user_name' => array(
             'name' => 'user_name',
             'vname' => 'LBL_USER_NAME',
-            'type' => 'user_name',
+            'type' => 'username',
             'dbType' => 'varchar',
             'len' => '60',
             'importable' => 'required',
@@ -913,7 +913,17 @@ $dictionary['User'] = array(
             'bean_name' => 'Activity',
             'source' => 'non-db',
         ),
-
+        'acl_role_set_id' => array (
+            'name' => 'acl_role_set_id',
+            'type' => 'id',
+            'link' => 'acl_role_sets',
+        ),
+        'acl_role_sets' => array (
+            'name' => 'acl_role_sets',
+            'type' => 'link',
+            'relationship' => 'users_acl_role_sets',
+            'source' => 'non-db',
+        ),
     ) ,
     'name_format_map' => array(
         'f' => 'first_name',
@@ -1058,6 +1068,15 @@ $dictionary['User'] = array(
             'relationship_type'=>'one-to-many'
         ),
 	   //END SUGARCRM flav=pro ONLY
+        'users_acl_role_sets' => array(
+            'lhs_module' => 'ACLRoleSets',
+            'lhs_table'=> 'acl_role_sets',
+            'lhs_key' => 'id',
+            'rhs_module'=> 'Users',
+            'rhs_table'=> 'users',
+            'rhs_key' => 'acl_role_set_id',
+            'relationship_type' => 'one-to-many'
+        ),
     ),
 
     'acls' => array('SugarACLUsers' => true, 'SugarACLStatic' => true),

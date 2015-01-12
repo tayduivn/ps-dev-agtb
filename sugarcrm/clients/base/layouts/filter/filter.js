@@ -23,7 +23,7 @@
     plugins: ['QuickSearchFilter'],
 
     events: {
-        'click .add-on.icon-remove': function() { this.trigger('filter:clear:quicksearch'); }
+        'click .add-on.fa-times': function() { this.trigger('filter:clear:quicksearch'); }
     },
 
     /**
@@ -437,26 +437,27 @@
         // reset the selected on filter apply
         var massCollection = this.context.get('mass_collection');
         if (massCollection && massCollection.models && massCollection.models.length > 0) {
-            massCollection.reset([],{silent: true});
+            massCollection.reset([], {silent: true});
         }
-        var self = this,
-            ctxList = this.getRelevantContextList(),
-            batchId = ctxList.length > 1 ? _.uniqueId() : false;
+        var self = this;
+        var ctxList = this.getRelevantContextList();
+        var batchId = ctxList.length > 1 ? _.uniqueId() : false;
         _.each(ctxList, function(ctx) {
-            var ctxCollection = ctx.get('collection'),
-                origFilterDef = dynamicFilterDef || ctxCollection.origFilterDef || [],
-                filterDef = self.buildFilterDef(origFilterDef, query, ctx),
-                options = {
-                    //Show alerts for this request
-                    showAlerts: true,
-                    apiOptions: {
-                        bulk: batchId
-                    },
-                    success: function(collection, response, options) {
-                        // Close the preview pane to ensure that the preview
-                        // collection is in sync with the list collection.
-                        app.events.trigger('preview:close');
-                    }};
+            var ctxCollection = ctx.get('collection');
+            var origFilterDef = dynamicFilterDef || ctxCollection.origFilterDef || [];
+            var filterDef = self.buildFilterDef(origFilterDef, query, ctx);
+            var options = {
+                //Show alerts for this request
+                showAlerts: true,
+                apiOptions: {
+                    bulk: batchId
+                },
+                success: function(collection, response, options) {
+                    // Close the preview pane to ensure that the preview
+                    // collection is in sync with the list collection.
+                    app.events.trigger('preview:close');
+                }
+            };
 
             ctxCollection.filterDef = filterDef;
             ctxCollection.origFilterDef = origFilterDef;
@@ -473,6 +474,15 @@
         });
         if (batchId) {
             app.api.triggerBulkCall(batchId);
+
+            // FIXME (SC-3670): This is introduced as a quick-fix for SC-3647
+            // This will not be necessary with the PR for SC-3670
+            _.each(ctxList, function(ctx) {
+                var collection = ctx.get('collection');
+                if (collection && collection.options && collection.options.apiOptions) {
+                    collection.options.apiOptions = undefined;
+                }
+            });
         }
     },
 
@@ -692,10 +702,10 @@
      * @param {Boolean} addIt TRUE if you want to add it, FALSO to remove
      */
     _toggleClearQuickSearchIcon: function(addIt) {
-        if (addIt && !this.$('.add-on.icon-remove')[0]) {
-            this.$el.append('<i class="add-on icon-remove"></i>');
+        if (addIt && !this.$('.fa-times.add-on')[0]) {
+            this.$el.append('<i class="fa fa-times add-on"></i>');
         } else if (!addIt) {
-            this.$('.add-on.icon-remove').remove();
+            this.$('.fa-times.add-on').remove();
         }
     },
 

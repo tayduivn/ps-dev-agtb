@@ -89,7 +89,7 @@ if (substr($_SERVER['REQUEST_URI'], -1) == '/') {
         </style>
 
         <?php foreach ($jsfiles as $file): ?>
-        <script type="text/javascript" src="<?php echo $base_path . $file ?>"></script> 
+        <script type="text/javascript" src="<?php echo $base_path . $file ?>"></script>
         <?php endforeach; ?>
     </head>
 
@@ -119,7 +119,7 @@ if (substr($_SERVER['REQUEST_URI'], -1) == '/') {
                 <div class="row-fluid">
 
                     <div class="span3">
-                        <?php echo htmlspecialchars($endpoint['reqType']) ?>  
+                        <?php echo htmlspecialchars($endpoint['reqType']) ?>
                         <span class="btn-link" type="button" data-toggle="collapse" data-target="#endpoint_<?php echo $i ?>_full">
                             <?php echo htmlspecialchars($endpoint['fullPath']) ?>
                         </span>
@@ -135,7 +135,7 @@ if (substr($_SERVER['REQUEST_URI'], -1) == '/') {
                     </div>
 
                     <div class="span2">
-                        <?php 
+                        <?php
                         if (empty($endpoint['exceptions'])) {
                             $exceptions = 'None';
                         } else {
@@ -161,7 +161,7 @@ if (substr($_SERVER['REQUEST_URI'], -1) == '/') {
 
                         <?php
 
-                            if ( file_exists($endpoint['longHelp']) )
+                            if (!empty($endpoint['longHelp']) && file_exists($endpoint['longHelp']) )
                             {
                                 echo file_get_contents($endpoint['longHelp']);
                             }
@@ -169,20 +169,22 @@ if (substr($_SERVER['REQUEST_URI'], -1) == '/') {
                             {
                                 echo '<span class="lead">No additional help.</span>';
                             }
+                        //Hide the file links if no long help exists
+                        if(!empty($endpoint['longHelp'])) { ?>
 
-                        ?>
+                            <div class="pull-right muted">
+                                <i class="fa fa-file"></i>
+                                <?php echo "./" . htmlspecialchars($endpoint['longHelp']); ?>
+                            </div>
 
-                        <div class="pull-right muted">
-                            <i class="icon-file"></i>
-                            <?php echo "./" . htmlspecialchars($endpoint['longHelp']); ?>
                         </div>
 
-                    </div>
+                        <div class="pull-right">
+                            <i class="fa fa-file"></i>
+                            <?php echo "./" . htmlspecialchars($endpoint['file']); ?>
+                        </div>
+                        <?php } ?>
 
-                    <div class="pull-right">
-                        <i class="icon-file"></i>
-                        <?php echo "./" . htmlspecialchars($endpoint['file']); ?>
-                    </div>
                 </div>
 
             </div>

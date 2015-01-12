@@ -9,9 +9,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
+ * SaveAndSendInvitesButtonField field is a field for Meetings/Calls that handles setting the flag for sending emails to guests
+ *
+ * FIXME: This component will be moved out of clients/base folder as part of MAR-2274 and SC-3593
+ *
  * @class View.Fields.Base.SaveAndSendInvitesButtonField
  * @alias SUGAR.App.view.fields.BaseSaveAndSendInvitesButtonField
- * @extends View.Fields.Base.Rowaction
+ * @extends View.Fields.Base.RowactionField
+ *
  */
 ({
     extendsFrom: 'RowactionField',
@@ -29,7 +34,7 @@
 
     /**
      * Setting model event to allow unsetting of send_invites after validation error or data sync completed.
-     * @inheritDoc
+     * @inheritdoc
      */
     bindDataChange: function() {
         if (!this.model) {
@@ -42,18 +47,12 @@
     },
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      *
-     * Triggers the save event on the record once button is clicked
-     *
-     * @see View.Fields.Base.RowactionField#getTarget
-     * @param {Object} [event] The click event.
+     * Silently sets `send_invites` to true on the model before saving.
      */
-    propagateEvent: function(event) {
-        var triggerName = this.view.save_button ? this.view.save_button : 'save_button',
-            trigger = 'button:' + triggerName + ':click';
-
+    rowActionSelect: function(event) {
         this.model.set('send_invites', true, {silent: true});
-        this.context.trigger(trigger);
+        this._super('rowActionSelect', [event]);
     }
 })

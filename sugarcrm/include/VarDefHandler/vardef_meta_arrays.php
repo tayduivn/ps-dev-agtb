@@ -306,6 +306,9 @@ $vardef_meta_array = array(
                 'team_name',
                 'shipper_name'
             ),
+            'type' => array(
+                'relate'
+            ),
             //end inc_override
         ),
         'ex_override' => array(

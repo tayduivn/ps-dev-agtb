@@ -268,10 +268,9 @@
                     var previousModule = app.controller.context.get("module"),
                         previousLayout = app.controller.context.get("layout");
                     if (!(previousModule === module && previousLayout === "records")) {
-                        var view = (module === 'Forecasts') ? 'records' : 'list';
                         app.controller.loadView({
                             module: module,
-                            layout: view
+                            layout: 'records'
                         });
                     }
 
@@ -333,6 +332,13 @@
                     }
                     app.router.record(module, id, action, layout);
                 }
+            },
+            {
+                name: "not_found",
+                route: /^.*$/,
+                callback: function() {
+                    app.error.handleHttpError({status: 404});
+                }
             }
         ];
 
@@ -370,7 +376,7 @@
         //pass current translated module name and current page's model data
         title = template(_.extend({
             module: moduleName,
-            appId: app.config.appId
+            appId: app.config.systemName || app.config.appId
         }, model ? model.attributes : {}));
         // title may contain XML entities because Handlebars escapes characters
         // by replacing them for use in HTML, so the true text needs to be
@@ -401,15 +407,17 @@
             //For BWC module, current document title will be replaced with BWC title
             title = $('#bwc-frame').get(0) ? $('#bwc-frame').get(0).contentWindow.document.title : getTitle();
         } else {
-            title = getTitle();
-            if (!_.isEmpty(context.get("model"))) {
+            var currModel = context.get('model');
+            if (!_.isEmpty(currModel)) {
+                title = getTitle(currModel);
                 //for record view, the title should be updated once model is fetched
-                var currModel = context.get("model");
                 currModel.on("change", setTitle, this);
                 app.controller.layout.once("dispose", function() {
                     currModel.off("change", setTitle);
                 });
                 prevModel = currModel;
+            } else {
+                title = getTitle();
             }
         }
         document.title = title || document.title;

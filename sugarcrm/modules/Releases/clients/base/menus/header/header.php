@@ -17,6 +17,6 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' =>'LNK_NEW_RELEASE',
         'acl_action'=>'',
         'acl_module'=>'',
-        'icon' => 'icon-list',
+        'icon' => 'fa-list',
     ),
 );

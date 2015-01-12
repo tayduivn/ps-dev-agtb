@@ -38,17 +38,17 @@ $viewdefs['ProductTemplates']['base']['layout']['record'] = array(
                                         'availableToggles' => array(
                                             array(
                                                 'name' => 'subpanels',
-                                                'icon' => 'icon-table',
+                                                'icon' => 'fa-table',
                                                 'label' => 'LBL_DATA_VIEW',
                                             ),
                                             array(
                                                 'name' => 'list',
-                                                'icon' => 'icon-table',
+                                                'icon' => 'fa-table',
                                                 'label' => 'LBL_LISTVIEW',
                                             ),
                                             array(
                                                 'name' => 'activitystream',
-                                                'icon' => 'icon-th-list',
+                                                'icon' => 'fa-clock-o',
                                                 'label' => 'LBL_ACTIVITY_STREAM',
                                             ),
                                         ),

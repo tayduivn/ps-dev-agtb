@@ -94,7 +94,7 @@ class SugarACLSupportPortal extends SugarACLStatic
         $accessGranted = null;
 
         if ($this->isPortalUser() ) {
-            $bean = isset($context['bean'])?$context['bean']:null;
+            $bean = isset($context['bean'])?$context['bean']:BeanFactory::newBean($module);
             if (!$bean) {
                 // There is no bean, without a bean portal ACL's wont work
                 // So for security we will deny the request

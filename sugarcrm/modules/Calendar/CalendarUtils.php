@@ -228,6 +228,7 @@ class CalendarUtils
 		 * @var SugarDateTime $start Recurrence start date.
 		 */
 		$start = SugarDateTime::createFromFormat($GLOBALS['timedate']->get_date_time_format(),$date_start);
+        $current = clone $start;
 
 		/** 
 		 * @var SugarDateTime $end Recurrence end date. Used if recurrence ends by date.
@@ -235,11 +236,10 @@ class CalendarUtils
 		 */
 		if (!empty($params['until'])) {
 			$end = SugarDateTime::createFromFormat($GLOBALS['timedate']->get_date_format(), $until);
-            $end->modify("+1 Day");
+            $end->setTime(23, 59, 59);   // inclusive
 		} else {
 			$end = $start;
 		}
-		$current = clone $start;
 
 		$i = 1; // skip the first iteration
 		$w = $interval; // for week iteration
@@ -247,7 +247,7 @@ class CalendarUtils
 
 		$limit = SugarConfig::getInstance()->get('calendar.max_repeat_count',1000);
 
-		while($i < $count || ($count == 0 && $current->format("U") < $end->format("U"))){
+		while($i < $count || ($count == 0 && $current->format("U") <= $end->format("U"))){
 			$skip = false;
 			switch($type){
 				case "Daily":
@@ -285,7 +285,7 @@ class CalendarUtils
 			if($skip)
 				continue;
 
-			if(($i < $count || $count == 0 && $current->format("U") < $end->format("U"))  ){
+			if ($i < $count || ($count == 0 && $current->format("U") <= $end->format("U"))) {
 				$arr[] = $current->format($GLOBALS['timedate']->get_date_time_format());
 			}
 			$i++;
@@ -350,6 +350,11 @@ class CalendarUtils
         Activity::disable();
 
 		$clone = clone $bean;
+
+        //this is a new bean being created - so throw away cloned fetched_row
+        //attribute that incorrectly makes it look like an existing bean
+        $clone->fetched_row = false;
+
 		foreach ($timeArray as $date_start) {
 			$clone->id = "";
 			$clone->date_start = $date_start;

@@ -71,6 +71,7 @@
             .showTitle(false)
             .tooltips(true)
             .margin({top: 0})
+            .direction(app.lang.direction)
             .tooltipContent(function(key, x, y, e, graph) {
                 var val = app.currency.formatAmountLocale(y, app.currency.getBaseCurrencyId());
                 var salesStageLabels = app.lang.getAppListStrings('sales_stage_dom');

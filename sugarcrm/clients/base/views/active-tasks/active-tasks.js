@@ -67,13 +67,16 @@
     },
 
     /**
-     * Complete the selected task
-     * @param model {app.Bean} Task model to be marked as completed
+     * Completes the selected task.
+     *
+     * Shows a confirmation alert and sets the task as `Completed` on confirm.
+     *
+     * @param {Data.Bean} model The task to be marked as completed.
      */
     closeTask: function(model){
         var self = this;
-        var name = model.get('name') || '',
-            context = app.lang.getModuleName(model.module).toLowerCase() + ' ' + name.trim();
+        var name = Handlebars.Utils.escapeExpression(app.utils.getRecordName(model)).trim();
+        var context = app.lang.getModuleName(model.module).toLowerCase() + ' ' + name;
         app.alert.show('complete_task_confirmation:' + model.get('id'), {
             level: 'confirmation',
             messages: app.utils.formatString(app.lang.get('LBL_ACTIVE_TASKS_DASHLET_CONFIRM_CLOSE'), [context]),
@@ -182,5 +185,18 @@
         }
 
         this._super('_renderHtml');
+
+        // Handle Avatar display, in case image doesn't exist
+        this.$('img.avatar').load(function() {
+            $(this).removeClass('hide');
+        })
+        .error(function() {
+            $(this).parent().removeClass('avatar avatar-md').addClass('label label-module label-module-md label-Users');
+            $(this).parent().find('span').removeClass('hide');
+        });
+        this.$('img.avatar').each(function() {
+            var img = $(this);
+            img.attr('src', img.data('src'));
+        });
     }
 })

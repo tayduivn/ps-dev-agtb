@@ -49,6 +49,7 @@
     'sidecar/tests/config.js',
 
     'include/javascript/jquery/jquery.dataTables.min.js',
+    'include/javascript/jquery/sugar.resizableColumns.js',
     'include/javascript/twitterbootstrap/bootstrap-collapse.js',
     'include/javascript/twitterbootstrap/bootstrap-tooltip.js',
     'include/javascript/twitterbootstrap/bootstrap-tab.js',

@@ -14,6 +14,7 @@
 <html>
 <head>
   <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=320" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <title>Funnel Chart - Color Options</title>
@@ -100,53 +101,61 @@
 <script src="../../../include/javascript/nvd3/src/models/funnelChart.js"></script>
 
 <script>
-  d3.json("data/funnel_data.json", function(chartData) {
+  d3.json('data/funnel_data.json', function(chartData) {
     var chart1 = nv.models.funnelChart().tooltips(false)
           .colorData('default');
+    chart1.legend.showAll(true);
     d3.select('#chart1 svg')
         .datum(chartData)
       .transition().duration(500).call(chart1);
 
     var chart2 = nv.models.funnelChart().tooltips(false)
           .colorData('default', {gradient: true});
+    chart2.legend.showAll(true);
     d3.select('#chart2 svg')
         .datum(chartData)
       .transition().duration(500).call(chart2);
 
     var chart3 = nv.models.funnelChart().tooltips(false)
-          .colorData('class', {step:2});
+          .colorData('class', {step: 2});
+    chart3.legend.showAll(true);
     d3.select('#chart3 svg')
         .datum(chartData)
       .transition().duration(500).call(chart3);
 
     var chart7 = nv.models.funnelChart().tooltips(false)
           .colorData('graduated', {c1: '#12448f', c2: '#deeeff', l: chartData.data.length});
+    chart7.legend.showAll(true);
     d3.select('#chart7 svg')
         .datum(chartData)
       .transition().duration(500).call(chart7);
 
     var chart8 = nv.models.funnelChart().tooltips(false)
           .colorData('graduated', {c1: '#12448f', c2: '#deeeff', l: chartData.data.length, gradient: true});
+    chart8.legend.showAll(true);
     d3.select('#chart8 svg')
         .datum(chartData)
       .transition().duration(500).call(chart8);
   });
 
-  d3.json("data/funnel_data_color.json", function(chartData) {
+  d3.json('data/funnel_data_color.json', function(chartData) {
     var chart4 = nv.models.funnelChart().tooltips(false)
           .colorData('default');
+    chart4.legend.showAll(true);
     d3.select('#chart4 svg')
         .datum(chartData)
       .transition().duration(500).call(chart4);
 
     var chart5 = nv.models.funnelChart().tooltips(false)
-          .colorData('default', {gradient: true} );
+          .colorData('default', {gradient: true});
+    chart5.legend.showAll(true);
     d3.select('#chart5 svg')
         .datum(chartData)
       .transition().duration(500).call(chart5);
 
     var chart6 = nv.models.funnelChart().tooltips(false)
-          .colorData('class', {step: 2} );
+          .colorData('class', {step: 2});
+    chart6.legend.showAll(true);
     d3.select('#chart6 svg')
         .datum(chartData)
       .transition().duration(500).call(chart6);

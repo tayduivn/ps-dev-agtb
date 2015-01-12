@@ -62,6 +62,7 @@ header( "Last-Modified: " . TimeDate::httpTime() );
 header( "Cache-Control: post-check=0, pre-check=0", false );
 header("Content-Length: ".mb_strlen($transContent, '8bit'));
 
-print $transContent;
+    $BOM = "\xEF\xBB\xBF";
+    print $BOM . $transContent;
 
 }

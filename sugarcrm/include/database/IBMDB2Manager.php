@@ -486,6 +486,19 @@ class IBMDB2Manager  extends DBManager
 		return (bool)$this->getTablesArrayByName($tableName);
 	}
 
+    /**
+     * @param string $table
+     * @param string $schema
+     * @param string $type
+     * @return bool
+     */
+    protected function tableExistsExtended($table, $schema = '%', $type = 'TABLE')
+    {
+        $table = db2_tables($this->database, null, $schema, $table, $type);
+        $table = $this->fetchByAssoc($table);
+        return !empty($table);
+    }
+
 	/**+
 	 * Get tables like expression
 	 * @param $like string
@@ -596,6 +609,12 @@ class IBMDB2Manager  extends DBManager
 	* @see DBManager::convert()
 	 *
 	 * TODO revisit this for other versions of DB2
+	 *
+	 * The following is provided for your convenience should you wish to learn more about
+	 * Converting a string to a date in DB2.
+	 * For a list of the actual third party software used in this Sugar product,
+	 * please visit http://support.sugarcrm.com/06_Customer_Center/11_Third_Party_Software/.
+	 *
 	 * http://stackoverflow.com/questions/4852139/converting-a-string-to-a-date-in-db2
 	*/
 public function convert($string, $type, array $additional_parameters = array())
@@ -1023,15 +1042,17 @@ EOQ;
 			$indices[$name]['fields'][]=strtolower($row['colname']);
 		}
 
-        $result = $this->query('SELECT indname, colname, language FROM SYSIBMTS.TSINDEXES WHERE TABSCHEMA = ' . $this->quoted($this->schema) . ' AND TABNAME=' . $this->quoted($tablename));
-        while ($row = $this->fetchByAssoc($result)) {
-            $index_type = 'fulltext';
-            $name = strtolower($row['indname']);
-            $indices[$name]['name'] = $name;
-            $indices[$name]['type'] = $index_type;
-            $indices[$name]['fields'] = explode(',', strtolower($row['colname']));
-            if (!empty($row['language'])) {
-                $indices[$name]['message_locale'] = $row['language'];
+        if ($this->tableExistsExtended('TSINDEXES', 'SYSIBMTS', 'VIEW')) {
+            $result = $this->query('SELECT indname, colname, language FROM SYSIBMTS.TSINDEXES WHERE TABSCHEMA = ' . $this->quoted($this->schema) . ' AND TABNAME=' . $this->quoted($tablename));
+            while ($row = $this->fetchByAssoc($result)) {
+                $index_type = 'fulltext';
+                $name = strtolower($row['indname']);
+                $indices[$name]['name'] = $name;
+                $indices[$name]['type'] = $index_type;
+                $indices[$name]['fields'] = explode(',', strtolower($row['colname']));
+                if (!empty($row['language'])) {
+                    $indices[$name]['message_locale'] = $row['language'];
+                }
             }
         }
 

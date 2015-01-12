@@ -69,7 +69,7 @@ class SugarUpgradeRevenueLineItemSyncToForecastWorksheet extends UpgradeScript
             'total_amount'
         );
 
-        $sqlSet = "%s=(SELECT %s from revenue_line_items r WHERE r.id = fw.parent_id and fw.parent_type = 'RevenueLineItems')";
+        $sqlSet = "%s=(SELECT %s from revenue_line_items r WHERE r.id = forecast_worksheets.parent_id and forecast_worksheets.parent_type = 'RevenueLineItems')";
 
         $sqlSetArray = array();
 
@@ -84,35 +84,35 @@ class SugarUpgradeRevenueLineItemSyncToForecastWorksheet extends UpgradeScript
                 case 'account_name':
                     $sqlSetArray[] = sprintf(
                         "%s = (SELECT DISTINCT a.name FROM accounts a INNER JOIN revenue_line_items r on
-                            r.account_id = a.id WHERE r.id = fw.parent_id and fw.parent_type = 'RevenueLineItems')",
+                            r.account_id = a.id WHERE r.id = forecast_worksheets.parent_id and forecast_worksheets.parent_type = 'RevenueLineItems')",
                         $field
                     );
                     break;
                 case 'opportunity_name':
                     $sqlSetArray[] = sprintf(
                         "%s = (SELECT DISTINCT o.name FROM opportunities o INNER JOIN revenue_line_items r on
-                            r.opportunity_id = o.id WHERE r.id = fw.parent_id and fw.parent_type = 'RevenueLineItems')",
+                            r.opportunity_id = o.id WHERE r.id = forecast_worksheets.parent_id and forecast_worksheets.parent_type = 'RevenueLineItems')",
                         $field
                     );
                     break;
                 case 'campaign_name':
                     $sqlSetArray[] = sprintf(
                         "%s = (SELECT DISTINCT c.name FROM campaigns c INNER JOIN revenue_line_items r on
-                            r.campaign_id = c.id WHERE r.id = fw.parent_id and fw.parent_type = 'RevenueLineItems')",
+                            r.campaign_id = c.id WHERE r.id = forecast_worksheets.parent_id and forecast_worksheets.parent_type = 'RevenueLineItems')",
                         $field
                     );
                     break;
                 case 'product_template_name':
                     $sqlSetArray[] = sprintf(
                         "%s = (SELECT DISTINCT p.name FROM product_templates p INNER JOIN revenue_line_items r on
-                            r.product_template_id = p.id WHERE r.id = fw.parent_id and fw.parent_type = 'RevenueLineItems')",
+                            r.product_template_id = p.id WHERE r.id = forecast_worksheets.parent_id and forecast_worksheets.parent_type = 'RevenueLineItems')",
                         $field
                     );
                     break;
                 case 'category_name':
                     $sqlSetArray[] = sprintf(
                         "%s = (SELECT DISTINCT c.name FROM product_categories c INNER JOIN revenue_line_items r on
-                            r.category_id = c.id WHERE r.id = fw.parent_id and fw.parent_type = 'RevenueLineItems')",
+                            r.category_id = c.id WHERE r.id = forecast_worksheets.parent_id and forecast_worksheets.parent_type = 'RevenueLineItems')",
                         $field
                     );
                     break;
@@ -122,8 +122,8 @@ class SugarUpgradeRevenueLineItemSyncToForecastWorksheet extends UpgradeScript
             }
         }
 
-        $sql = "update forecast_worksheets as fw SET " . join(",", $sqlSetArray) . "
-          where exists (SELECT * from revenue_line_items r WHERE r.id = fw.parent_id and fw.parent_type = 'RevenueLineItems')";
+        $sql = "update forecast_worksheets SET " . join(",", $sqlSetArray) . "
+          where exists (SELECT * from revenue_line_items r WHERE r.id = forecast_worksheets.parent_id and forecast_worksheets.parent_type = 'RevenueLineItems')";
 
         $r = $this->db->query($sql);
 

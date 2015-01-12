@@ -38,7 +38,10 @@
       display: table-cell;
       vertical-align: top;
       position: relative;
-      padding: 18px 18px 0 20px;
+      padding: 18px 0 0 20px;
+      & ~ .record-cell {
+        padding: 18px 18px 0 20px;
+      }
 
       &.hide {
         display: none;
@@ -56,6 +59,9 @@
         .record-label {
           left: 20px;
         }
+      }
+      &:last-of-type {
+        width: 100%;
       }
       .record-cell {
         white-space: nowrap;
@@ -76,6 +82,9 @@
         padding-top: 0;
         margin-top: -4px;
       }
+      &[data-type="label"] + [data-type="collection-count"] {
+        padding-left: 5px;
+      }
     }
   }
 
@@ -92,7 +101,7 @@
     height: 30px;
     .record-edit-link {
       margin-left: 0;
-      .icon-pencil {
+      .fa-pencil {
         left: -16px !important;
         top: 4px !important;
       }
@@ -221,6 +230,9 @@
       padding-left: 0;
       .box-shadow(none);
     }
+    .index .label {
+      font-weight: normal;
+    }
   }
   h1 > .record-cell.edit {
     &[data-type="badge-select"],
@@ -232,10 +244,10 @@
   span[data-type="favorite"] {
     font-size: @baseFontSize;
     padding: 19px 16px 0 0;
-    [class="icon-favorite"] {
+    .fa {
       color: @grayLight;
     }
-    &:hover [class="icon-favorite"] {
+    &:hover .fa {
       color: @gray;
     }
   }
@@ -266,7 +278,7 @@
     .btn-group-previous-next {
       padding-left: 0;
       .btn {
-        [class^="icon-"] {
+        .fa {
           font-size: @baseFontSize;
         }
       }
@@ -290,14 +302,14 @@
       left: 0;
       top: 0;
     }
-    [class^="icon-"]{
+    .fa {
       font-size: @fontSizeHeader;
       font-weight: 500;
     }
-    .icon-double-angle-right {
+    .fa-angle-double-right {
       margin: 0 -1px 0 1px;
     }
-    .icon-double-angle-left {
+    .fa-angle-double-left {
       margin: 0 1px 0 -1px;
     }
   }

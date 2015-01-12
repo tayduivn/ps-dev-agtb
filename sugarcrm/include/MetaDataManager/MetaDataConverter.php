@@ -635,11 +635,11 @@ class MetaDataConverter
             }
 
             if ($menuOptions['action'] == 'EditView' && empty($menuOptions['record'])) {
-                $data['icon'] = "icon-plus";
+                $data['icon'] = "fa fa-plus";
             } else if($menuOptions['module'] == 'Import') {
-                $data['icon'] = 'icon-upload-alternative';
+                $data['icon'] = 'fa fa-upload';
             } else if($menuOptions['module'] == 'Reports' && $moduleName != 'Reports') {
-                $data['icon'] = 'icon-bar-chart';
+                $data['icon'] = 'fa fa-bar-chart-o';
             }
 
             $data['route'] = $this->buildMenuRoute($menuOptions, $option[0]);

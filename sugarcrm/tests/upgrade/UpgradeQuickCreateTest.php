@@ -28,7 +28,7 @@ class UpgradeQuickCreateTest extends UpgradeTestCase
             'layout' => 'create',
             'label' => 'LNK_NEW_ACCOUNT',
             'visible' => true, // Only visible modules have order.
-            'icon' => 'icon-plus',
+            'icon' => 'fa-plus',
         );
 
         sugar_mkdir(dirname($this->quickCreateFile), null, true);
@@ -53,7 +53,7 @@ class UpgradeQuickCreateTest extends UpgradeTestCase
      */
     public function testModifyCustomQuickCreateFilesWithOrder()
     {
-        $script = $this->upgrader->getScript('post', '5_UpgradeCustomQuickCreate');
+        $script = $this->upgrader->getScript('post', '5_UpgradeCustomViews');
         $script->run();
 
         require $this->quickCreateFile;

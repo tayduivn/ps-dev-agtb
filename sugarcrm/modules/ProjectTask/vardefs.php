@@ -192,7 +192,7 @@ $dictionary['ProjectTask'] = array('audited'=>true,
 			'vname' => 'LBL_ASSIGNED_USER_ID',
 			'required' => false,
 			'isnull' => false,
-			'reportable'=>true,
+			'reportable'=>false,
 			'audited'=>true,
 		),
 		'modified_user_id' => array(

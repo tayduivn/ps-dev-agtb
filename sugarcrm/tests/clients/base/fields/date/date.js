@@ -110,7 +110,7 @@ describe('Base.Field.Date', function() {
 
             expect(field.value).toBe('15/01/1984');
             expect(field.model.get(field.name)).toBe('1984-01-15');
-            expect(field.model.getDefaultAttribute(field.name)).toBe('1984-01-15');
+            expect(field.model.getDefault(field.name)).toBe('1984-01-15');
 
             field.dispose();
         });

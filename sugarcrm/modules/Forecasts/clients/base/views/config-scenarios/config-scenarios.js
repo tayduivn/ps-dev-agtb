@@ -151,10 +151,15 @@
         this.defaultSelect2.select2('disable');
 
         // handle setting up select2 options
+        var isRTL = app.lang.direction === 'rtl';
         this.optionsSelect2 = this.$('#scenariosSelect').select2({
             data: this.scenarioOptions,
             multiple: true,
-            dropdownCss: {width:"auto"},
+            dropdownCss: {
+                width: 'auto',
+                left: isRTL ? '' : '71px', //prevent calculated value
+                right: isRTL ? '71px' : ''
+            },
             width: "90%",
             containerCss: "border: none",
             containerCssClass: "select2-choices-pills-close",

@@ -21,9 +21,16 @@ require_once 'modules/Reports/Report.php';
  */
 class BugPAT667Test extends Sugar_PHPUnit_Framework_TestCase
 {
+    /**
+     * @var Report
+     */
     private $report;
+
+    /**
+     * @var array
+     */
     private static $custom_field_def = array(
-        'name'        => 'test_bugPAT667',
+        'name'        => 'test_bugpat667',
         'type'        => 'multienum',
         'module'      => 'ModuleBuilder',
         'view_module' => 'Accounts',
@@ -31,55 +38,46 @@ class BugPAT667Test extends Sugar_PHPUnit_Framework_TestCase
         'default'     => '^Consultants^,^International Consultants^',
     );
 
-    public function setUp()
+    /**
+     * @inheritDoc
+     */
+    protected function setUp()
     {
-        if ($GLOBALS['db']->dbType == 'oci8')
-        {
-            $this->markTestSkipped('Oracle is skipped; need to revisit it later');
-        }
-
+        parent::setUp();
         SugarTestHelper::setUp('current_user', array(true, 1));
-
-        // Create the custom field
-        $mbc = new ModuleBuilderController();
-        $_REQUEST = self::$custom_field_def;
-        $mbc->action_saveField();
-        // Update field name, all custom field have _c appended
-        self::$custom_field_def['name'] .= '_c';
+        SugarTestHelper::setUp('custom_field', array('Accounts', static::$custom_field_def));
 
         $this->report = new Report();
         $this->report->layout_manager->setAttribute("context", "Filter");
     }
 
-    public function tearDown()
+    /**
+     * @inheritDoc
+     */
+    protected function tearDown()
     {
-        if ($GLOBALS['db']->dbType == 'oci8')
-        {
-            $this->markTestSkipped('Oracle is skipped; need to revisit it later');
-        }
-
-        $mbc = new ModuleBuilderController();
-
-        // Delete the custom field
-        $_REQUEST = self::$custom_field_def;
-        $mbc->action_DeleteField();
+        SugarTestHelper::tearDown();
+        parent::tearDown();
     }
 
-    public function testReportsRelatedField()
+    /**
+     * Test correct filter for Multienum field.
+     */
+    public function testReportsFilterMultienum()
     {
+        $res = '';
         $data = array(
             "operator" => "AND",
             0 => array(
-                "name" => "test_bugPAT667_c",
+                "name" => self::$custom_field_def['name'] . '_c',
                 "table_key" => "self",
                 "qualifier_name" => "one_of",
                 "input_name0" => array("Consultants")
             )
         );
 
-        $expected = "(((accounts_cstm.test_bugPAT667_c LIKE '%^Consultants^%')))";
-
+        $expected = "LIKE '%^Consultants^%'";
         $this->report->filtersIterate($data, $res);
-        $this->assertEquals($res, $expected);
+        $this->assertContains($expected, $res);
     }
 }

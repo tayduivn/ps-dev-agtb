@@ -9,86 +9,70 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 ({
-  className: 'container-fluid',
+    className: 'container-fluid',
 
-  // charts horizontal
-  _renderHtml: function() {
-    this._super('_renderHtml');
+    // charts horizontal
+    _renderHtml: function() {
+        this._super('_renderHtml');
 
-    // Multibar Horizontal Chart
-    d3.json('styleguide/content/charts/data/multibar_data_opportunities.json', function(data) {
-      nv.addGraph({
-        generate: function() {
-          nv.addGraph(function() {
-            var chart = nv.models.multiBarChart()
-                  .vertical(false)
-                  .margin({top: 10, right: 10, bottom: 10, left: 10})
-                  .showValues(true)
-                  .showTitle(false)
-                  .tooltips(true)
-                  .stacked(true)
-                  .showControls(false)
-                  .tooltipContent(function(key, x, y, e, graph) {
-                    return '<p>Outcome: <b>' + key + '</b></p>' +
-                           '<p>Lead Source: <b>' + x + '</b></p>' +
-                           '<p>Amount: <b>$' + parseInt(y) + 'K</b></p>';
-                    });
+        // Multibar Horizontal Chart
+        this.chart1 = nv.models.multiBarChart()
+              .vertical(false)
+              .margin({top: 10, right: 10, bottom: 10, left: 10})
+              .showValues(true)
+              .showTitle(false)
+              .tooltips(true)
+              .stacked(true)
+              .showControls(false)
+              .direction(app.lang.direction)
+              .tooltipContent(function(key, x, y, e, graph) {
+                return '<p>Outcome: <b>' + key + '</b></p>' +
+                       '<p>Lead Source: <b>' + x + '</b></p>' +
+                       '<p>Amount: <b>$' + parseInt(y) + 'K</b></p>';
+                });
+        this.chart1.yAxis
+            .tickFormat(d3.format(',.2f'));
+        nv.utils.windowResize(this.chart1.update);
 
-            chart.yAxis
-                .tickFormat(d3.format(',.2f'));
+        // Multibar Horizontal Chart with Baseline
+        this.chart2 = nv.models.multiBarChart()
+              .vertical(false)
+              .margin({top: 10, right: 10, bottom: 10, left: 10})
+              .showValues(true)
+              .showTitle(false)
+              .tooltips(true)
+              .showControls(false)
+              .stacked(false)
+              .direction(app.lang.direction)
+              .tooltipContent(function(key, x, y, e, graph) {
+                return '<p>Outcome: <b>' + key + '</b></p>' +
+                       '<p>Lead Source: <b>' + x + '</b></p>' +
+                       '<p>Amount: <b>$' + parseInt(y) + 'K</b></p>';
+              });
+        this.chart2.yAxis
+            .tickFormat(d3.format(',.2f'));
+        nv.utils.windowResize(this.chart2.update);
 
+        this.loadData();
+    },
+
+    loadData: function(options) {
+        // Multibar Horizontal Chart
+        d3.json('styleguide/content/charts/data/multibar_data_opportunities.json', _.bind(function(data) {
             d3.select('#horiz1 svg')
                 .datum(data)
               .transition().duration(500)
-                .call(chart);
+                .call(this.chart1);
+        }, this));
 
-            nv.utils.windowResize(chart.update);
-
-            return chart;
-          });
-        },
-        callback: function(graph) {
-          $('#log').text('Chart is loaded');
-        }
-      });
-    });
-
-    // Multibar Horizontal Chart with Baseline
-    d3.json('styleguide/content/charts/data/multibar_data_negative.json', function(data) {
-      nv.addGraph({
-        generate: function() {
-          nv.addGraph(function() {
-            var chart = nv.models.multiBarChart()
-                  .vertical(false)
-                  .margin({top: 10, right: 10, bottom: 10, left: 10})
-                  .showValues(true)
-                  .showTitle(false)
-                  .tooltips(true)
-                  .showControls(false)
-                  .stacked(false)
-                  .tooltipContent(function(key, x, y, e, graph) {
-                    return '<p>Outcome: <b>' + key + '</b></p>' +
-                           '<p>Lead Source: <b>' + x + '</b></p>' +
-                           '<p>Amount: <b>$' + parseInt(y) + 'K</b></p>';
-                  });
-
-            chart.yAxis
-                .tickFormat(d3.format(',.2f'));
-
+        // Multibar Horizontal Chart with Baseline
+        d3.json('styleguide/content/charts/data/multibar_data_negative.json', _.bind(function(data) {
             d3.select('#horiz2 svg')
                 .datum(data)
               .transition().duration(500)
-                .call(chart);
+                .call(this.chart2);
+        }, this));
 
-            nv.utils.windowResize(chart.update);
-
-            return chart;
-          });
-        },
-        callback: function(graph) {
-          $('#log').text('Chart is loaded');
-        }
-      });
-    });
-  }
+        //this._super('loadData', [options]);
+    }
 })

@@ -25,6 +25,7 @@ require_once 'data/BeanVisibility.php';
 require_once 'data/BeanDuplicateCheck.php';
 require_once 'data/SugarACL.php';
 require_once "modules/Mailer/MailerFactory.php"; // imports all of the Mailer classes that are needed
+require_once('include/utils.php');
 //BEGIN SUGARCRM flav=pro ONLY
 require_once('include/Expressions/Expression/Parser/Parser.php');
 //END SUGARCRM flav=pro ONLY
@@ -520,6 +521,10 @@ class SugarBean
                 if(!empty($dictionary[$this->object_name]['optimistic_locking']))
                 {
                     $this->optimistic_lock=true;
+                }
+
+                if (isset($dictionary[$this->object_name]['importable'])) {
+                    $this->importable = isTruthy($dictionary[$this->object_name]['importable']);
                 }
             }
             self::$loadedDefs[$this->object_name]['column_fields'] =& $this->column_fields;
@@ -1787,7 +1792,7 @@ class SugarBean
 
         // if this bean has a currency_id and base_rate, verify that base_rate is set to the correct amount
         if (isset($this->field_defs['currency_id']) && isset($this->field_defs['base_rate'])) {
-            SugarCurrency::verifyCurrencyBaseRateSet($this);
+            SugarCurrency::verifyCurrencyBaseRateSet($this, $isUpdate);
         }
 
         require_once("data/BeanFactory.php");
@@ -3203,7 +3208,7 @@ class SugarBean
 
             if (!isset($options['skipSecondaryQuery'])
                 || $options['skipSecondaryQuery'] == false) {
-                $type = !empty($def['custom_type']) ? $def['custom_type'] : $def['type'];
+                $type = !empty($def['custom_type']) ? $def['custom_type'] : $this->db->getFieldType($def);
                 $sugarField = $sfh->getSugarField($type);
 
                 if ($sugarField->fieldNeedsSecondaryQuery($field, $this)) {
@@ -3578,15 +3583,21 @@ class SugarBean
             $list_column = array_map('trim', $list_column);
 
             $list_column_name = $list_column[0];
+
+            // check if it contains table name, eg tasks.name
+            if (($pos = strpos($list_column_name, ".")) !== false) {
+                $list_column_name = substr($list_column_name, $pos + 1);
+            }
+
             if (isset($bean_queried->field_defs[$list_column_name])) {
                 $field_defs = $bean_queried->field_defs[$list_column_name];
                 $source = isset($field_defs['source']) ? $field_defs['source'] : 'db';
 
                 if (empty($field_defs['table']) && !$suppress_table_name) {
                     if ($source == 'db') {
-                        $list_column[0] = $bean_queried->table_name . '.' . $list_column[0] ;
+                        $list_column[0] = $bean_queried->table_name . '.' . $list_column_name ;
                     } elseif ($source == 'custom_fields') {
-                        $list_column[0] = $bean_queried->table_name . '_cstm.' . $list_column[0] ;
+                        $list_column[0] = $bean_queried->table_name . '_cstm.' . $list_column_name ;
                     }
                 }
 

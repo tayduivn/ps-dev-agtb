@@ -7,19 +7,17 @@ h4.merge-interface-header {
   .preview {
     padding-top: 0;
   }
-  i.icon-eye-open {
-    padding: 2px 4px;
-  }
   button {
-    width: 65px;
-    text-align: left;
+    margin-right: 12px;
     &.on {
-      #gradient > .horizontal(darken(@grayLighter, 4%), darken(@grayLighter, 4%));
-      .border-radius(4px 0 0 4px);
-      i.icon-eye-open {
-        color: @gray;
-        .opacity(100);
-        text-shadow: 0 1px @white;
+      color: @white !important;
+      text-shadow: none;
+      background: @gray !important;
+      > .fa {
+        color: @grayLighter !important;
+      }
+      &:focus {
+        background: @grayDark !important;
       }
     }
   }
@@ -76,34 +74,14 @@ h4.merge-interface-header {
     }
   }
 
-  .input-append.date {
-    top: 4px;
-  }
-  .datetime {
-    input[type="text"].datepicker,
-    input[type="text"].ui-timepicker-input {
-      width: 86px;
-    }
-    .add-on {
-      position: absolute;
-      right: 11px;
-      left: auto;
-      &.time {
-        top: 38px;
-      }
-    }
-    .ui-timepicker-input {
-      margin-left: 0;
-    }
-  }
-
   .col {
     min-width: 130px;
     width: 130px;
     height: 100%;
     display: inline-block;
     margin: 2px 0px 0px 10px;
-    float: left;
+    overflow: hidden;
+    padding: 0 1px 1px;
     .primary-lbl {
       cursor: move;
       height: 20px;
@@ -149,7 +127,8 @@ h4.merge-interface-header {
     }
     .box {
       border-radius: 3px;
-      .box-shadow(0 0 1px #aaaaaa);
+      border: 1px solid darken(@grayLighter, 10%);
+      .box-shadow(0 2px 4px darken(@grayLighter, 5%));
       overflow: hidden;
       .merge-edit {
         display: none;
@@ -158,7 +137,7 @@ h4.merge-interface-header {
         display: block;
       }
     }
-    button.icon-remove-sign {
+    button.fa-times-circle {
       margin-top: 1px;
       line-height: 8px;
     }
@@ -167,7 +146,6 @@ h4.merge-interface-header {
   .col.primary-edit-mode { /* PRIMARY */
     .box {
       background: #F7F7F7;
-      border:1px solid #CECECE;
       .merge-row {
         &.even,
         &.odd {
@@ -265,7 +243,7 @@ h4.merge-interface-header {
         height: 75px;
       }
       .controls label > span > div {
-        width: 90%;
+        width: 100%;
         margin-left: 0;
       }
     }
@@ -295,16 +273,24 @@ h4.merge-interface-header {
       }
     }
     &.merge-row-field-datetimecombo {
-      height: 70px;
       .controls label {
         height: 75px;
         overflow: visible;
+        .calcWidth(~"100% - 20px") !important;
+        input.datepicker {
+          .calcWidth(~"55% - 21px");
+        }
+        input.ui-timepicker-input {
+          .calcWidth(~"45% - 21px");
+          margin-left: 12px;
+        }
       }
-      .controls label > span > div {
-        width: 90%;
-        margin-left: 0;
-        &.input-append {
-          white-space: normal;
+      .input-append {
+        white-space: normal;
+        padding-top: 4px;
+        .add-on {
+          left: 0;
+          margin-left: -24px;
         }
       }
     }
@@ -343,6 +329,10 @@ h4.merge-interface-header {
         position: relative;
       }
     }
+    .flex-relate-module,
+    .flex-relate-record {
+      float: left;
+    }
   }
 }
 
@@ -358,12 +348,40 @@ h4.merge-interface-header {
   overflow: hidden;
 }
 
-@iterations: 50;
+@iterations: 10;
 .loopingClass (@index) when (@index > 0) {
-  (~".merge-row-field-height@{index}") {
+  .merge-row-field-height@{index} {
     height: (@index *(@mergeFieldHeight + 5)) !important;
   }
   .loopingClass(@index - 1);
 }
 .loopingClass (0) {}
 .loopingClass (@iterations);
+
+@col-iterations: 4;
+@col-merge-threshold-step: 200;
+.colLoopingClass (@col-index) when (@col-index > 0) {
+  @col-media-query-threshold: e( %("%dpx", (900 + (@col-merge-threshold-step * (@col-index - 1)))) );
+  @media screen and (max-width: @col-media-query-threshold) {
+    @col-class: @col-index + 1;
+    .merge-interface {
+      .num-cols-@{col-class} {
+        .merge-row.merge-row-field-datetimecombo {
+          height: 70px;
+          .controls label {
+            input.datepicker,
+            input.ui-timepicker-input {
+              .calcWidth(~"100% - 18px");
+            }
+            .ui-timepicker-input {
+              margin-left: 0;
+            }
+          }
+        }
+      }
+    }
+  }
+  .colLoopingClass(@col-index - 1);
+}
+.colLoopingClass (0) {}
+.colLoopingClass (@col-iterations);

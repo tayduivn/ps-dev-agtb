@@ -1,5 +1,5 @@
 <?php
-// FILE SUGARCRM flav=pro || flav=ent ONLY
+
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -905,7 +905,7 @@ class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase
         // create
         $this->assertEquals('edit', $defs[0]['acl_action']);
         $this->assertEquals($module, $defs[0]['acl_module']);
-        $this->assertEquals('icon-plus', $defs[0]['icon']);
+        $this->assertEquals('fa fa-plus', $defs[0]['icon']);
         $this->assertEquals("#$module/create", $defs[0]['route']);
         // list
         $this->assertEquals('list', $defs[1]['acl_action']);
@@ -914,12 +914,12 @@ class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase
         // reports
         $this->assertEquals('list', $defs[2]['acl_action']);
         $this->assertEquals($module, $defs[2]['acl_module']);
-        $this->assertEquals('icon-bar-chart', $defs[2]['icon']);
+        $this->assertEquals('fa fa-bar-chart-o', $defs[2]['icon']);
         $this->assertEquals("#bwc/index.php?module=Reports&action=index&view=$_module", $defs[2]['route']);
         // import
         $this->assertEquals('import', $defs[3]['acl_action']);
         $this->assertEquals($module, $defs[3]['acl_module']);
-        $this->assertEquals('icon-upload-alternative', $defs[3]['icon']);
+        $this->assertEquals('fa fa-upload', $defs[3]['icon']);
         $this->assertEquals("#bwc/index.php?module=Import&action=Step1&import_module=$module&return_module=$module&return_action=index", $defs[3]['route']);
     }
 

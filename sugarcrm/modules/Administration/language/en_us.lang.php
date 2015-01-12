@@ -502,6 +502,7 @@ $mod_strings = array (
     'LBL_ML_ACTION' => 'Action',
     'LBL_ML_CANCEL'             => 'Cancel',
     'LBL_ML_COMMIT'=>'Commit',
+    'LBL_ML_NEXT' => 'Next',
     'LBL_ML_DESCRIPTION' => 'Description',
     'LBL_ML_INSTALLED' => 'Date Installed',
     'LBL_ML_NAME' => 'Name',
@@ -908,6 +909,12 @@ $mod_strings = array (
     'LBL_UW_OP_MODE'                            => 'Mode of operation:',
     'LBL_UW_PACKAGE_REMOVED'                    => " has been removed.<br>\n",
     'LBL_UW_PATCH_READY'=> '<h2>Ready To Install</h2>',
+    'LBL_UW_MAP_ACL_ROLES' => '<h2>Map ACL Roles</h2>',
+    'LBL_UW_PACKAGE_ROLES' => 'Package Roles',
+    'LBL_UW_INSTANCE_ROLES' => 'Instance Roles',
+    'LBL_UW_ROLE_MATCHES_BY' => '(matches by {0})',
+    'LBL_UW_ROLE_MATCHES_BY_DELIMITER' => ' and ',
+    'LBL_UW_DO_NOT_MAP_ROLE' => '-- Do not map this role --',
     'LBL_UW_UNINSTALL_READY'=> '<h2>Ready To Uninstall</h2>',
     'LBL_UW_DISABLE_READY'=> '<h2>Ready To Disable</h2>',
     'LBL_UW_ENABLE_READY'=> '<h2>Ready To Enable</h2>',
@@ -1137,7 +1144,6 @@ $mod_strings = array (
 	'Relationships' => 'Relationship',
 	'Releases'       => 'Release',
 	'ReportMaker'  => 'Advanced Reports',
-	'Reports_1'      => 'SavedReport',
 	'Roles'  => 'Role',
 	'Schedulers'  => 'Scheduler',
 	'SchedulersJobs'  => 'SchedulersJob',
@@ -1280,4 +1286,18 @@ $mod_strings = array (
     'LBL_CONVERT_DISC_CLIENT_SYNC_SUBMIT' => 'Clicking Submit will synchronize you with the master server.',
     'LBL_OFFLINE_ENABLED' => 'Offline enabled',
     'LBL_OFFLINE_SETTINGS' => 'Offline Settings',
+    
+    //BEGIN SUGARCRM flav=ent ONLY
+    'LBL_PMSE_ADMIN_TITLE_SETTINGS' => 'Settings',
+    'LBL_PMSE_ADMIN_DESC_SETTINGS' => 'Process Author settings can be accessed here.',
+
+    'LBL_PMSE_ADMIN_TITLE_ENGINELOGS' => 'Log Viewer',
+    'LBL_PMSE_ADMIN_DESC_ENGINELOGS' => 'Process Author logs can be accessed here.',
+
+    'LBL_PMSE_ADMIN_TITLE_CASESLIST' => 'Processes List',
+    'LBL_PMSE_ADMIN_DESC_CASESLIST' => 'Processes List can be accessed here.',
+
+    'LBL_PMSE_ADMIN_TITLE_MODULE' => 'Process Author',
+    'LBL_PMSE_ADMIN_DESC_MODULE' => 'Process Author conforms a standard compliant BPM suite that can improve your SugarCRM work.',
+   //END SUGARCRM flav=ent ONLY
 );

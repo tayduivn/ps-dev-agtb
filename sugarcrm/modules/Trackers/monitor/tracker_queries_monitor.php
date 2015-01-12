@@ -11,7 +11,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-//FILE SUGARCRM flav=pro ONLY
+
 require_once('modules/Trackers/monitor/Monitor.php');
 require_once('modules/Trackers/Metric.php');
 require_once('modules/Trackers/Trackable.php');

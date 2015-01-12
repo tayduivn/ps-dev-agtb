@@ -6,6 +6,7 @@ describe('View.Fields.Base.Meetings.TypeField', function() {
         app = SugarTest.app;
         SugarTest.testMetadata.init();
         SugarTest.loadComponent('base', 'field', 'enum');
+        SugarTest.loadHandlebarsTemplate('enum', 'field', 'base', 'edit');
         SugarTest.testMetadata.set();
         sandbox = sinon.sandbox.create();
         createFieldProperties = {
@@ -31,6 +32,7 @@ describe('View.Fields.Base.Meetings.TypeField', function() {
             field.dispose();
         }
         SugarTest.testMetadata.dispose();
+        Handlebars.templates = {};
         app.cache.cutAll();
         app.view.reset();
     });

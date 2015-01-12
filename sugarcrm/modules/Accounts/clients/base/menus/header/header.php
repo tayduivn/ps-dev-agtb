@@ -17,14 +17,14 @@ $viewdefs[$moduleName]['base']['menu']['header'] = array(
         'label' =>'LNK_NEW_ACCOUNT',
         'acl_action'=>'create',
         'acl_module'=>$moduleName,
-        'icon' => 'icon-plus',
+        'icon' => 'fa-plus',
         'route'=>'#'.$moduleName.'/create',
     ),
     array(
         'label' => 'LBL_BAL',
         'acl_action' => 'create',
         'acl_module' => $moduleName,
-        'icon' => 'icon-plus',
+        'icon' => 'fa-plus',
         'route' => '#'.$moduleName.'/layout/dnb-bal',
     ),
     array(
@@ -32,7 +32,7 @@ $viewdefs[$moduleName]['base']['menu']['header'] = array(
         'label' =>'LNK_ACCOUNT_LIST',
         'acl_action'=>'list',
         'acl_module'=>$moduleName,
-        'icon' => 'icon-reorder',
+        'icon' => 'fa-bars',
     ),
     array(
         'route' => '#bwc/index.php?' . http_build_query(
@@ -47,7 +47,7 @@ $viewdefs[$moduleName]['base']['menu']['header'] = array(
         'label' =>'LNK_ACCOUNT_REPORTS',
         'acl_action'=>'list',
         'acl_module'=>$moduleName,
-        'icon' => 'icon-bar-chart',
+        'icon' => 'fa-bar-chart-o',
     ),
     array(
         'route' => '#bwc/index.php?' . http_build_query(
@@ -60,6 +60,6 @@ $viewdefs[$moduleName]['base']['menu']['header'] = array(
         'label' =>'LNK_IMPORT_ACCOUNTS',
         'acl_action'=>'import',
         'acl_module'=>$moduleName,
-        'icon' => 'icon-upload',
+        'icon' => 'fa-arrow-circle-o-up',
     ),
 );

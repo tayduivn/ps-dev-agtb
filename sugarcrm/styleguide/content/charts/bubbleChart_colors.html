@@ -14,6 +14,7 @@
 <html>
 <head>
   <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=320" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <title>Bubble Chart - Color Options</title>
@@ -51,19 +52,19 @@
 
       <div class="row-fluid">
         <div class="span4">
-          <h3>chartData-Defined Colors</h3>
+          <h3>Data-Defined Colors</h3>
           <div id="chart4" class="nv-chart nv-chart-bubble">
             <svg></svg>
           </div>
         </div>
         <div class="span4">
-          <h3>chartData-Defined Gradient Fill</h3>
+          <h3>Data-Defined Gradient Fill</h3>
           <div id="chart5" class="nv-chart nv-chart-bubble">
             <svg></svg>
           </div>
         </div>
         <div class="span4">
-          <h3>chartData-Defined Class Names</h3>
+          <h3>Data-Defined Class Names</h3>
           <div id="chart6" class="nv-chart nv-chart-bubble">
             <svg></svg>
           </div>
@@ -84,7 +85,7 @@
           </div>
         </div>
         <div class="span4">
-          <h3>chartData-Defined Classes</h3>
+          <h3>Data-Defined Classes</h3>
           <!-- <div id="chart9" class="nv-chart nv-chart-bubble">
             <svg></svg>
           </div> -->
@@ -105,6 +106,7 @@
                         .key(function(d){return d.probability;})
                         .entries(chartData.data).length;
 
+    // Default
     var chart1 = nv.models.bubbleChart()
           .tooltips(false)
           .x(function(d) { return d3.time.format("%Y-%m-%d").parse(d.x) })
@@ -141,6 +143,7 @@
       .transition().duration(500)
       .call(chart3);
 
+    // Graduated
     var chart7 = nv.models.bubbleChart()
           .tooltips(false)
           .x(function(d) { return d3.time.format("%Y-%m-%d").parse(d.x) })
@@ -170,14 +173,19 @@
     var seriesLength = d3.nest()
                         .key(function(d){return d.probability;})
                         .entries(chartData.data).length;
+    chartData.data.map(function(d) {
+      console.log(d)
+      delete d.classes;
+    });
 
+    // Data-Defined Color
     var chart4 = nv.models.bubbleChart()
           .tooltips(false)
           .x(function(d) { return d3.time.format("%Y-%m-%d").parse(d.x) })
           .y(function(d) { return d.y })
           .groupBy(function(d) { return d.assigned_user_name; })
           .filterBy(function(d) { return d.probability; })
-          .colorData('default');
+          .colorData('data');
     d3.select('#chart4 svg')
         .datum(chartData)
       .transition().duration(500)
@@ -189,19 +197,26 @@
           .y(function(d) { return d.y })
           .groupBy(function(d) { return d.assigned_user_name; })
           .filterBy(function(d) { return d.probability; })
-          .colorData('default', {gradient: true});
+          .colorData('data', {gradient: true});
     d3.select('#chart5 svg')
         .datum(chartData)
       .transition().duration(500)
       .call(chart5);
+  });
 
+  d3.json('data/bubble_data_color.json', function(chartData) {
+    chartData.data.map(function(d) {
+      delete d.color;
+    });
+
+    // Data-Defined Classes
     var chart6 = nv.models.bubbleChart()
           .tooltips(false)
           .x(function(d) { return d3.time.format("%Y-%m-%d").parse(d.x) })
           .y(function(d) { return d.y })
           .groupBy(function(d) { return d.assigned_user_name; })
           .filterBy(function(d) { return d.probability; })
-          .colorData('class', {step: 2});
+          .colorData('data', {step: 2});
     d3.select('#chart6 svg')
         .datum(chartData)
       .transition().duration(500)

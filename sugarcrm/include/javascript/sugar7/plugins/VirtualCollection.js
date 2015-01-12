@@ -227,20 +227,32 @@
              * construction to avoid marking the initial models to be linked or
              * unlinked. These defaults are stored for reference.
              *
-             * To force all models to be linked during synchronization, create the
-             * collection without models and subsequently add all models.
+             * To force all models to be linked during synchronization, create
+             * the collection without models (`[]`) and subsequently add all
+             * models.
+             *
+             * @param {Object} options
+             * @param {Object} [options.offsets] The initial offsets for any
+             * links in the collection. The keys are the link names and the
+             * values are the offsets. If the initial offset for any link is
+             * not provided, then it will be defaulted to the number of records
+             * in the collection related through that link.
              */
             constructor: function(models, options) {
+                options || (options = {});
+
                 app.MixedBeanCollection.prototype.constructor.call(this, models, options);
 
-                this.offsets = {};
+                this.offsets = options.offsets || {};
 
                 _.each(this.links, function(link) {
                     // don't want change actions for the initial set
                     link.setDefaults();
 
-                    // set the initial offset for this link for use during pagination
-                    this.offsets[link.link.name] = link.defaults.length;
+                    if (_.isUndefined(this.offsets[link.link.name])) {
+                        // set the default offset for this link for use during pagination
+                        this.offsets[link.link.name] = link.defaults.length;
+                    }
                 }, this);
             },
 
@@ -252,10 +264,13 @@
              * instance are cleared when the collection is synchronized (See
              * {@link Link#clearAndUpdateDefaults}).
              *
+             * @param {Object} options
              * @param {Data.Bean} options.parent The model to which this
              * collection is attached.
              * @param {String} options.fieldName The name of the attribute on
              * the parent model where this collection is stored.
+             * @param {Core.Context} options.context The context to which this
+             * collection is attached.
              * @param {Array} options.links The link field names included for
              * this collection.
              */
@@ -267,6 +282,9 @@
 
                 this.fieldName = options.fieldName;
                 delete options.fieldName;
+
+                this.context = options.context;
+                delete options.context;
 
                 this.relatedModules = {};
                 this.links = _.reduce(options.links, function(memo, link) {
@@ -580,7 +598,7 @@
                 params.module_list = _.keys(this.relatedModules).join(',');
                 params.fields = params.fields.join(',');
                 params.order_by = params.order_by.join(',');
-                params.max_num = options.limit || app.config.maxQueryResult;
+                params.max_num = options.limit || app.config.maxSubpanelResult;
 
                 if (options.offset) {
                     params.offset = options.offset;
@@ -651,6 +669,15 @@
                 options || (options = {});
                 options.offset = this.offsets;
 
+                /**
+                 * TODO: VirtualCollection#fetch should operate more like
+                 * Backbone.Collection#fetch, where it controls the state of
+                 * the models through options instead of pushing that
+                 * responsibility to a callback defined by the caller of
+                 * `fetch`. This requires using VirtualCollection#reset and
+                 * implementing VirtualCollection#update, which includes some
+                 * potentially difficult refactorings.
+                 */
                 success = options.success;
                 options.success = _.bind(function(data, request) {
                     var offsets, records;
@@ -760,7 +787,7 @@
         };
 
         /**
-         * @see Data.Bean#toJSON
+         * {@link Data.Bean#toJSON}
          *
          * {@link Data.Bean Beans} to be linked or unlinked via the link fields
          * will be reduced to a specific set of attributes.
@@ -803,7 +830,7 @@
         };
 
         /**
-         * @see Data.Bean#copy
+         * {@link Data.Bean#copy}
          *
          * Copies any collection fields on the model from the source
          * {@link Data.Bean}.
@@ -830,46 +857,98 @@
             };
 
             _.each(fields, function(name) {
-                var def = vardefs[name];
+                attrs[name] = [];
+            });
+
+            if (_.size(attrs) > 0) {
+                // create new virtual collection for each collection fields
+                this.model.set(attrs, options);
+            }
+
+            _.each(fields, function(name) {
+                var def = vardefs[name],
+                    collection;
 
                 if (def &&
                     def.duplicate_on_record_copy !== 'no' &&
                     (def.duplicate_on_record_copy === 'always' || !def.auto_increment) &&
                     source.has(name)
                 ) {
-                    attrs[name] = source.get(name).map(clone);
+                    // copy data from source to the new collection
+                    collection = this.get(name);
+                    collection.add(source.get(name).map(clone));
                 }
             }, this.model);
-
-            if (_.size(attrs) > 0) {
-                this.model.set(attrs, options);
-            }
         };
 
         /**
-         * @see Data.Bean#set
+         * {@link Data.Bean#set}
          *
          * Creates a new {@link VirtualCollection} at the attribute using the
          * existing value as the default set of models. The default value of
          * the attribute is set to the collection to avoid triggering any
          * warnings due to the attribute changing.
+         *
+         * If `models` is an array, then that array is assumed to contain
+         * the models to be inserted into the collection.
+         *
+         * If `models` is a {@link Backbone.Collection}, then the models
+         * from that collection are copied and used in the new collection.
+         *
+         * If `models` is an object that came directly from the server, then
+         * it should contain the keys `next_offset` and `records`, where
+         * `records` is an array of models. These models are inserted into
+         * the collection. `next_offset` is added to the `options` hash -- as
+         * `offsets` -- that is passed into the constructor for
+         * {@link VirtualCollection}.
+         *
+         * If `models` is not an array, is not a {@link VirtualCollection},
+         * is not null or undefined, and does not have a `records` key, then
+         * it is assumed that the object represents a single model to be
+         * inserted into the collection.
+         *
+         * Otherwise, `models` is nothing and the collection is initialized
+         * without any models.
          */
         BeanOverrides.prototype.set = function(attr, options) {
             _.each(attr, function(models, key) {
-                var collection = new VirtualCollection(models, _.extend({}, options, {
+                var collection;
+
+                options = _.extend({}, options, {
                     parent: this,
                     fieldName: key,
                     links: this.fields[key].links
-                }));
+                });
+
+                if (!_.isArray(models)) {
+                    if (models instanceof Backbone.Collection) {
+                        models = models.models;
+                    } else if (models) {
+                        if (models.next_offset) {
+                            options.offsets = models.next_offset;
+                        }
+
+                        if (models.records) {
+                            models = models.records;
+                        } else {
+                            models = [models];
+                        }
+                    } else {
+                        models = [];
+                    }
+                }
+
+                collection = new VirtualCollection(models, options);
+
                 this.attributes[key] = collection;
-                this.setDefaultAttribute(key, collection);
+                this.setDefault(key, collection);
             }, this.model);
 
             return this.model;
         };
 
         /**
-         * @see Data.Bean#hasChanged
+         * {@link Data.Bean#hasChanged}
          *
          * Tests the collection fields when determining whether or not the
          * {@link Data.Bean} has changed.
@@ -894,7 +973,7 @@
         };
 
         /**
-         * @see Data.Bean#changedAttributes
+         * {@link Data.Bean#changedAttributes}
          *
          * Includes in the return value any collection fields with collections
          * that have changed. When comparing objects, Backbone does not do a
@@ -915,7 +994,7 @@
         };
 
         /**
-         * @see Data.Bean#revertAttributes
+         * {@link Data.Bean#revertAttributes}
          *
          * Reverts all collections to their state when they were last
          * synchronized.
@@ -930,7 +1009,7 @@
         };
 
         /**
-         * @see Data.Bean#getSyncedAttributes
+         * {@link Data.Bean#getSyncedAttributes}
          *
          * Includes in the return value all collection fields and their
          * associated link attributes. When comparing objects, Backbone does

@@ -8,7 +8,7 @@
       .subpanel-list {
         display: none;
       }
-      i.icon-chevron-up::before {
+      i.fa-chevron-up::before {
         content: "\f078";
       }
     }
@@ -49,12 +49,13 @@
       line-height: 24px;
       font-weight: normal;
       white-space: nowrap;
-      width: 65%;
-      .calcWidth(~"100% - 180px");
-      padding-right: 10px;
       overflow: hidden;
       text-overflow: ellipsis;
       margin: 10px 0 8px;
+    }
+    .panel-field {
+      margin: 13px 0 11px;
+      padding-left: 5px;
     }
     .label-module {
       margin: 9px 10px;
@@ -94,4 +95,11 @@
 
 .main-content .filtered .results {
   margin-bottom: 0;
+}
+
+.subpanel .flex-list-view .dataTable {
+  border-bottom: 0;
+  td:last-child :not(.btn-group) > span > .rowaction.btn {
+    float: right;
+  }
 }

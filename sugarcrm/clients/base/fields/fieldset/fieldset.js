@@ -84,7 +84,10 @@
      * `detail` template if it's not found.
      * FIXME: SC-3363 This should be the default behavior in `field.js`.
      */
-    _getFallbackTemplate: function() {
+    _getFallbackTemplate: function(viewName) {
+        if (_.contains(this.fallbackActions, viewName)) {
+            return viewName;
+        }
         if (app.template.get('f.' + this.type + '.' + this.view.fallbackFieldTemplate)) {
             return this.view.fallbackFieldTemplate;
         }
@@ -100,8 +103,10 @@
     _loadTemplate: function() {
         this._super('_loadTemplate');
 
-        if ((this.view.name === 'record' || this.view.name === 'create' || this.view.name === 'create-actions')
-            && this.type === 'fieldset') {
+        if ((this.view.name === 'record' || this.view.name === 'create' || this.view.name === 'create-actions'
+            || this.view.name === 'create-nodupecheck')
+            && this.type === 'fieldset' && !_.contains(this.fallbackActions, this.action)) {
+
             this.template = app.template.getField('fieldset', 'record-detail', this.model.module);
         }
     },

@@ -50,6 +50,9 @@
         var options = {};
         options.success = _.bind(function() {
             this.layout.trigger('list:paginate:success');
+            // FIXME: This should trigger on `this.collection` instead of
+            // `this.context`. Will be fixed as part of SC-2605.
+            this.context.trigger('paginate');
             this.paginateFetched = true;
             this.render();
         }, this);

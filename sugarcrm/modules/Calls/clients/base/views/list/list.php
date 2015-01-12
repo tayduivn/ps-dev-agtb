@@ -47,6 +47,7 @@ $viewdefs['Calls']['base']['view']['list'] = array(
                     'enabled' => true,
                     'default' => true,
                     'readonly' => true,
+                    'related_fields' => array('status'),
                 ),
                 array(
                     'name' => 'date_end',
@@ -59,6 +60,7 @@ $viewdefs['Calls']['base']['view']['list'] = array(
                     'default' => true,
                     'name' => 'status',
                     'type' => 'event-status',
+                    'css_class' => 'full-width',
                 ),
                 array(
                     'enabled' => true,
@@ -75,20 +77,9 @@ $viewdefs['Calls']['base']['view']['list'] = array(
                     'sortable' => true,
                 ),
                 array(
-                    'target_record_key' => 'contact_id',
-                    'target_module' => 'Contacts',
-                    'label' => 'LBL_LIST_CONTACT',
-                    'link' => true,
-                    'enabled' => true,
-                    'default' => false,
-                    'readonly' => true,
-                    'name' => 'contact_name',
-                    'related_fields' => array('contact_id'),
-                ),
-                array(
                     'name' => 'date_entered',
                     'enabled' => true,
-                    'default' => false,
+                    'default' => true,
                     'readonly' => true,
                 ),
             ),

@@ -85,19 +85,19 @@
 {foreach from=$dropdown item="value" key="key"}
 <tr>
     <td>
-        <span id='slot{$rowCounter}b' >
-            <span onclick='prepChangeDropDownValue({$rowCounter}, document.getElementById("slot{$rowCounter}_value"));'>{$editImage}</span>
+        <span id='slot{$rowCounter}b' class="{$value.module}">
+            <span class="{$value.module}-edit rename-slot-button" onclick='prepChangeDropDownValue({$rowCounter}, document.getElementById("slot{$rowCounter}_value"));'>{$editImage}</span>
             &nbsp;
-            <span id ='slot{$rowCounter}_value' onclick='prepChangeDropDownValue({$rowCounter}, this);'>{$value.lang}</span>
+            <span class="{$value.module}-title rename-slot-title" id ='slot{$rowCounter}_value' onclick='prepChangeDropDownValue({$rowCounter}, this);'>{$value.lang}</span>
             <span id='slot{$rowCounter}_textspan' style='display:none;'>{$value.user_lang}
                 <table style="margin-left:15px;">
                     <tr>
                         <td align="right">{$MOD.LBL_SINGULAR}</td>
-                        <td align="left"><input id='slot{$rowCounter}_stext' value='{$value.singular}' onchange='setSingularDropDownValue({$rowCounter});' type='text'></td>
+                        <td align="left"><input class="{$value.module}-singular rename-label-singular" id='slot{$rowCounter}_stext' value='{$value.singular}' onchange='setSingularDropDownValue({$rowCounter});' type='text'></td>
                     </tr>
                     <tr>
                         <td align="right">{$MOD.LBL_PLURAL}</td>
-                        <td align="left"><input id='slot{$rowCounter}_text' value='{$value.lang}' type='text'  onchange='setDropDownValue({$rowCounter}, this.value, true)' ></td>
+                        <td align="left"><input class="{$value.module}-plural rename-label-plural" id='slot{$rowCounter}_text' value='{$value.lang}' type='text'  onchange='setDropDownValue({$rowCounter}, this.value, true)' ></td>
                     </tr>
                 </table>
                 <input name='slot_{$rowCounter}' id='slot_{$rowCounter}' value='{$rowCounter}' type = 'hidden'>

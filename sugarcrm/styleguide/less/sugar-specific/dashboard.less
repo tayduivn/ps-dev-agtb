@@ -22,19 +22,24 @@
   overflow-x: hidden;
 
   .headerpane {
-    .record-cell {
-      padding-top: 15px;
-      &:first-child {
-        width: 100%;
-        max-width: 100px; //temp until better fix for ellipsis
+    h1 {
+      > .record-cell {
+        padding-top: 15px;
+        &:first-child {
+          width: 100%;
+          max-width: 100px; //temp until better fix for ellipsis
+        }
+        &.edit {
+          padding: 15px 0 0 20px;
+        }
+        .detail {
+          display: inline-block;
+          padding-top: 4px;
+        }
       }
-      .detail {
-        display: inline-block;
-        padding-top: 4px;
+      input[type="text"] {
+        margin: 0 0 0 -7px;
       }
-    }
-    input[type="text"] {
-      margin: 0 0 0 -7px;
     }
   }
 
@@ -171,7 +176,7 @@
         padding-top: 20px;
       }
       .well {
-        border: 1px dashed darken(@grayLighter 10%);
+        border: 1px dashed darken(@grayLighter, 10%);
         background: none;
       }
     }
@@ -231,8 +236,9 @@
           &> a {
             font-size: @fontSizeHeader;
             color: inherit;
-            padding: 4px 20px 4px 2px;
+            padding: 4px 10px 4px 2px;
             margin-left: 0;
+            min-width: 100%;
             max-width: 100%;
             text-align: left;
             white-space: nowrap;
@@ -244,7 +250,7 @@
               color: inherit !important;
               text-decoration: none;
             }
-            .icon-caret-down {
+            .fa-caret-down {
               top: -2px;
               position: absolute;
               right: 0;
@@ -308,7 +314,7 @@
   }
 }
 
-.swappable-dashlet.icon-download-alt {
+.swappable-dashlet.fa-download {
   display: none;
 }
 

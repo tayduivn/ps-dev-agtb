@@ -105,10 +105,6 @@
      * for the current layout.
      */
     initialize: function (options) {
-        var createViewEvents = {};
-        createViewEvents['click a[name=' + this.cancelButtonName + ']'] = 'cancel';
-        createViewEvents['click a[name=' + this.restoreButtonName + ']:not(.disabled)'] = 'restoreModel';
-        this.events = _.extend({}, this.events, createViewEvents);
         this.plugins = _.union(this.plugins || [], [
             'FindDuplicates'
         ]);
@@ -156,10 +152,10 @@
             // set the default assigned user as current user, unless we are copying another record
             var isDuplicate = this.model.has('assigned_user_id') && this.model.has('assigned_user_name');
             if (!isDuplicate) {
-                this.model.set('assigned_user_id', app.user.id);
-                this.model.set('assigned_user_name', app.user.get('full_name'));
-                this.model.setDefaultAttribute('assigned_user_id', app.user.id);
-                this.model.setDefaultAttribute('assigned_user_name', app.user.get('full_name'));
+                this.model.setDefault({
+                    'assigned_user_id': app.user.id,
+                    'assigned_user_name': app.user.get('full_name')
+                });
             }
             this.model.relatedAttributes.assigned_user_id = app.user.id;
             this.model.relatedAttributes.assigned_user_name = app.user.get('full_name');
@@ -173,7 +169,7 @@
         // need to reset the default attributes because the plugin may have
         // calculated default values.
         this.on('sugarlogic:initialize', function() {
-            this.model.setDefaultAttributes(this.model.attributes);
+            this.model.setDefault(this.model.attributes);
         }, this);
     },
 
@@ -207,6 +203,8 @@
         this.context.on('button:' + this.saveButtonName + ':click', this.save, this);
         this.context.on('button:' + this.saveAndCreateButtonName + ':click', this.saveAndCreate, this);
         this.context.on('button:' + this.saveAndViewButtonName + ':click', this.saveAndView, this);
+        this.context.on('button:' + this.cancelButtonName + ':click', this.cancel, this);
+        this.context.on('button:' + this.restoreButtonName + ':click', this.restoreModel, this);
     },
 
     _render: function () {
@@ -277,7 +275,7 @@
                 this.clear();
                 // set the default attributes and the relatedAttributes back
                 // on the model since it's been cleared out
-                this.model.set(_.extend(this.model.getDefaultAttributes(), this.model.relatedAttributes));
+                this.model.set(_.extend(this.model.getDefault(), this.model.relatedAttributes));
                 this.resetDuplicateState();
 
                 if (this.hasSubpanelModels) {
@@ -412,6 +410,7 @@
                     callback(true);
                 }
             }, this);
+
         if (this.skipDupeCheck() || !this.enableDuplicateCheck) {
             callback(false);
         } else {
@@ -479,7 +478,6 @@
     handleDuplicateFound: function () {
         this.setButtonStates(this.STATE.DUPLICATE);
         this.dupecheckList.show();
-        this.skipDupeCheck(true);
     },
 
     /**
@@ -488,7 +486,6 @@
     resetDuplicateState: function () {
         this.setButtonStates(this.STATE.CREATE);
         this.hideDuplicates();
-        this.skipDupeCheck(false);
     },
 
     /**
@@ -595,38 +592,10 @@
 
     /**
      * Check to see if we should skip duplicate check.
-     * @param {Boolean} skip (optional) If specified, sets duplicate check to
-     *  either true or false.
-     * @return {*}
+     * @return {boolean}
      */
-    skipDupeCheck: function (skip) {
-        //FIXME: SC-3337 should investigate a better way to do this.
-        if (!this.buttons['duplicate_dropdown']) {
-            return;
-        }
-
-        var skipDupeCheck,
-            saveButton = _.find(this.buttons['duplicate_dropdown'].fields, function(field) {
-                return field.name === this.saveButtonName;
-            }, this);
-        if (!saveButton) {
-            return;
-        }
-        saveButton = saveButton.getFieldElement();
-
-        if (_.isUndefined(skip)) {
-            skipDupeCheck = saveButton.data('skipDupeCheck');
-            if (_.isUndefined(skipDupeCheck)) {
-                skipDupeCheck = false;
-            }
-            return skipDupeCheck;
-        } else {
-            if (skip) {
-                saveButton.data('skipDupeCheck', true);
-            } else {
-                saveButton.data('skipDupeCheck', false);
-            }
-        }
+    skipDupeCheck: function () {
+        return (this.getCurrentButtonState() === this.STATE.DUPLICATE);
     },
 
     /**
@@ -644,8 +613,7 @@
      * @param model
      */
     editExisting: function (model) {
-        var origAttributes = this.saveFormData(),
-            skipDupeCheck = this.skipDupeCheck();
+        var origAttributes = this.saveFormData();
 
         this.model.clear();
         this.model.set(this.extendModel(model, origAttributes));
@@ -657,7 +625,6 @@
         this.toggleEdit(true);
 
         this.hideDuplicates();
-        this.skipDupeCheck(skipDupeCheck);
         this.setButtonStates(this.STATE.SELECT);
     },
 

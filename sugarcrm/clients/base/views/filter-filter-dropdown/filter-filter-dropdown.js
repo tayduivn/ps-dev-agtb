@@ -264,9 +264,9 @@
      */
     formatResult: function(option) {
         if (option.id === this.layout.getLastFilter(this.layout.layout.currentModule, this.layout.layoutType)) {
-            option.icon = 'icon-ok';
+            option.icon = 'fa-check';
         } else if (option.id === 'create') {
-            option.icon = 'icon-plus';
+            option.icon = 'fa-plus';
         } else {
             option.icon = undefined;
         }

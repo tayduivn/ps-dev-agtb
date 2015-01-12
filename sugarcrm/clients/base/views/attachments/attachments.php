@@ -42,7 +42,7 @@ $viewdefs['base']['view']['attachments'] = array(
         'buttons' => array(
             array(
                 'type' => 'actiondropdown',
-                'icon' => 'icon-plus',
+                'icon' => 'fa-plus',
                 'no_default_action' => true,
                 'buttons' => array(
                     array(
@@ -89,7 +89,7 @@ $viewdefs['base']['view']['attachments'] = array(
     'rowactions' => array(
         array(
             'type' => 'rowaction',
-            'icon' => 'icon-unlink',
+            'icon' => 'fa-chain-broken',
             'css_class' => 'btn btn-mini',
             'event' => 'attachment:unlinkrow:fire',
             'target' => 'view',

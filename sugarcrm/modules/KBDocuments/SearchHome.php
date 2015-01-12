@@ -186,7 +186,7 @@ if(isset($_POST['clear_loaded'])){
                     $_REQUEST['sortOrder']='desc';
                     $search_str = perform_advanced_search($focus,true);
 
-                    $results = "<table class='h3Row'  width='100%' border='0' cellspacing='0' cellpadding='0'><tr><td nowrap ><h3>".$mod_strings['LBL_TOP_TEN_LIST_TITLE']."</h3></td></tr></table>";
+                    $results = "<table class='h3Row'  width='100%' border='0' cellspacing='0' cellpadding='0'><tr><td nowrap ><h3>".$mod_strings['LBL_LIST_MOST_VIEWED']."</h3></td></tr></table>";
                     $results .= get_fts_list($search_str);
                 }
             }
@@ -207,10 +207,10 @@ if(isset($_POST['clear_loaded'])){
 
     //print out the needed script tags for tree
 
-    echo"        <link rel='stylesheet' href='vendor/ytree/TreeView/css/folders/tree.css'>
-    <script language='JavaScript' src='vendor/ytree/TreeView/TreeView.js'></script>
-    <script language='JavaScript' src='vendor/ytree/TreeView/TaskNode.js'></script>
-    <script language='JavaScript' src='vendor/ytree/treeutil.js'></script>";
+    echo"        <link rel='stylesheet' href='".getVersionedPath('vendor/ytree/TreeView/css/folders/tree.css')."'>
+    <script language='JavaScript' src='".getVersionedPath('vendor/ytree/TreeView/TreeView.js')."'></script>
+    <script language='JavaScript' src='".getVersionedPath('vendor/ytree/TreeView/TaskNode.js')."'></script>
+    <script language='JavaScript' src='".getVersionedPath('vendor/ytree/treeutil.js')."'></script>";
 
     $ss->assign('BROWSETAB', return_browse_tab());
 

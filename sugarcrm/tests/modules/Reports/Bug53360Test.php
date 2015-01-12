@@ -1,5 +1,5 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
+
 /*********************************************************************************
  * By installing or using this file, you are confirming on behalf of the entity
  * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
@@ -83,7 +83,7 @@ class Bug53360Test extends Sugar_PHPUnit_Framework_TestCase
     private function _getDummyGroupDefsInfo()
     {
         return array(
-            'user_name#Opportunities:assigned_user_link' => array('name' => 'user_name', 'label' => 'User Name', 'table_key' => 'Opportunities:assigned_user_link', 'type' => 'user_name', 'index' => 0),
+            'user_name#Opportunities:assigned_user_link' => array('name' => 'user_name', 'label' => 'User Name', 'table_key' => 'Opportunities:assigned_user_link', 'type' => 'username', 'index' => 0),
             'sales_stage#self' => array('name' => 'sales_stage', 'label' => 'Sales Stage', 'table_key' => 'self', 'type' => 'enum', 'index' => 1),
         );
     }

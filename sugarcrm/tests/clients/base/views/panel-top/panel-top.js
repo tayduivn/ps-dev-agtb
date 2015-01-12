@@ -1,4 +1,4 @@
-describe("PanelTop View", function() {
+describe('Base.View.PanelTop', function() {
     var app, view, context, sinonSandbox;
 
     beforeEach(function() {
@@ -22,34 +22,6 @@ describe("PanelTop View", function() {
         view = null;
     });
 
-    describe('Toggle panel', function() {
-        var isADropdownElement, notADropdownElement, myTarget, parentsStub, _toggleSubpanelStub;
-
-        beforeEach(function() {
-            notADropdownElement = [];
-            isADropdownElement = ['has', 'span', 'actions'],
-            myTarget = {a:'b'};
-            parentsStub = sinonSandbox.stub();
-            _toggleSubpanelStub = sinonSandbox.stub(view, '_toggleSubpanel');
-        });
-        afterEach(function() {
-            notADropdownElement = null,
-            myTarget = null;
-        });
-
-        it('should toggle panel if clicking anywhere on panel top', function() {
-            parentsStub.withArgs('span.actions').returns(notADropdownElement);
-            sinonSandbox.stub(jQuery.prototype, "parents", parentsStub);
-            view.togglePanel({target: myTarget});
-            expect(_toggleSubpanelStub).toHaveBeenCalled();
-        });
-        it('should NOT toggle panel if clicking on dropdown actions', function() {
-            parentsStub.withArgs('span.actions').returns(isADropdownElement);
-            sinonSandbox.stub(jQuery.prototype, "parents", parentsStub);
-            view.togglePanel({target: myTarget});
-            expect(_toggleSubpanelStub).not.toHaveBeenCalled();
-        });
-    });
     describe('Create Link model', function() {
         var parentModel, createBeanStub, relateFieldStub;
 

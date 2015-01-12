@@ -80,13 +80,19 @@ describe('Base.View.Create', function() {
                     "name":"cancel_button",
                     "type":"button",
                     "label":"LBL_CANCEL_BUTTON_LABEL",
-                    "css_class":"btn-invisible btn-link"
+                    "css_class":"btn-invisible btn-link",
+                    events: {
+                        click: 'button:cancel_button:click'
+                    }
                 }, {
                     "name":"restore_button",
                     "type":"button",
                     "label":"LBL_RESTORE",
                     "css_class":"hide btn-invisible btn-link",
-                    "showOn" : "select"
+                    "showOn" : "select",
+                    events: {
+                        click: 'button:restore_button:click'
+                    }
                 }, {
                     "type":"actiondropdown",
                     "name":"main_dropdown",
@@ -96,15 +102,24 @@ describe('Base.View.Create', function() {
                         {
                             "type":"rowaction",
                             "name":"save_button",
-                            "label":"LBL_SAVE_BUTTON_LABEL"
+                            "label":"LBL_SAVE_BUTTON_LABEL",
+                            events: {
+                                click: 'button:save_button:click'
+                            }
                         }, {
                             "type":"rowaction",
                             "name":"save_view_button",
-                            "label":"LBL_SAVE_AND_VIEW"
+                            "label":"LBL_SAVE_AND_VIEW",
+                            events: {
+                                click: 'button:save_view_button:click'
+                            }
                         }, {
                             "type":"rowaction",
                             "name":"save_create_button",
-                            "label":"LBL_SAVE_AND_CREATE_ANOTHER"
+                            "label":"LBL_SAVE_AND_CREATE_ANOTHER",
+                            events: {
+                                click: 'button:save_create_button:click'
+                            }
                         }
                     ]
                 }, {
@@ -116,7 +131,10 @@ describe('Base.View.Create', function() {
                     'buttons': [{
                         'type': 'rowaction',
                         'name': 'save_button',
-                        'label': 'LBL_IGNORE_DUPLICATE_AND_SAVE'
+                        'label': 'LBL_IGNORE_DUPLICATE_AND_SAVE',
+                        events: {
+                            click: 'button:save_button:click'
+                        }
                     }]
                 }, {
                     'type': 'actiondropdown',
@@ -127,7 +145,10 @@ describe('Base.View.Create', function() {
                     'buttons': [{
                         'type': 'rowaction',
                         'name': 'save_button',
-                        'label': 'LBL_SAVE_BUTTON_LABEL'
+                        'label': 'LBL_SAVE_BUTTON_LABEL',
+                        events: {
+                            click: 'button:save_button:click'
+                        }
                     }]
                 }
             ]
@@ -906,7 +927,7 @@ describe('Base.View.Create', function() {
         });
         it('should save, and reset the defaults on the the model', function() {
             modelId = 123;
-            sinonSandbox.stub(view.model, 'getDefaultAttributes', function() {
+            sinonSandbox.stub(view.model, 'getDefault', function() {
                 return {
                     'quantity': 1
                 };
@@ -1048,7 +1069,7 @@ describe('Base.View.Create', function() {
             view.model.set('foo', true);
             expect(view.hasUnsavedChanges()).toBeTruthy();
 
-            view.model.setDefaultAttribute('foo', true);
+            view.model.setDefault('foo', true);
             expect(view.hasUnsavedChanges()).toBeFalsy();
         });
 
@@ -1072,9 +1093,9 @@ describe('Base.View.Create', function() {
     describe('SugarLogic integration', function() {
 
         it('should set the default attributes once plugin is initialized', function() {
-            var setDefaultAttributesStub = sinonSandbox.stub(view.model, 'setDefaultAttributes');
+            var setDefaultStub = sinonSandbox.stub(view.model, 'setDefault');
             view.trigger('sugarlogic:initialize');
-            expect(setDefaultAttributesStub).toHaveBeenCalled();
+            expect(setDefaultStub).toHaveBeenCalled();
         });
     });
 });

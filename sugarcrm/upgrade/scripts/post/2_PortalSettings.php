@@ -11,7 +11,7 @@
  */
 
 /**
- * Migrate portal settings
+ * Migrates portal settings.
  */
 class SugarUpgradePortalSettings extends UpgradeScript
 {
@@ -60,10 +60,16 @@ class SugarUpgradePortalSettings extends UpgradeScript
         // Enables portal if it is set to true.
         // TODO: category should be `support`, platform should be `portal`
         $admin->saveSetting('portal', 'on', $portalEnabled, 'support');
+
+        // Sets up portal.
+        if ($portalEnabled) {
+            $parser = new ParserModifyPortalConfig();
+            $parser->setUpPortal();
+        }
     }
 
     /**
-     * Migrate portal tab settings previously stored as:
+     * Migrates portal tab settings previously stored as:
      * `category` = 'portal', `platform` = 'support', `name` = 'displayModules'
      * to:
      * `category` = 'MySettings', `platform` = 'portal', `name` = 'tab'

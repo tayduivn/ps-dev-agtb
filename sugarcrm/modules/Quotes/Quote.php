@@ -24,6 +24,13 @@ require_once($beanFiles['ProductBundle']);
 // Quote is used to store customer quote information.
 class Quote extends SugarBean
 {
+    /**
+     * Standard Out Of The Box Quoted Closed Status
+     *
+     * @var array
+     */
+    public $closed_statuses = array('Closed Accepted', 'Closed Dead', 'Closed Lost');
+
     public $field_name_map;
     // Stored fields
     public $id;
@@ -661,5 +668,30 @@ class Quote extends SugarBean
     {
         $query = "select count(id) from quotes_opportunities where quote_id = '{$this->id}' and deleted = 0";
         return $this->db->getOne($query);
+    }
+
+    /**
+     * Is the current quote in a closed stage?
+     *
+     * @return bool
+     */
+    public function isClosed()
+    {
+        return in_array($this->quote_stage, $this->closed_statuses, true);
+    }
+
+    /**
+     * Bean specific logic for when SugarFieldCurrency_id::save() is called to make sure we can update the base_rate
+     *
+     * @return bool
+     */
+    public function updateCurrencyBaseRate()
+    {
+        // if the quote_stage changed, we should still update it, unless it's a change from closed to closed
+        if(isset($this->fetched_row['quote_stage']) && $this->fetched_row['quote_stage'] != $this->quote_stage) {
+            return !(in_array($this->fetched_row['quote_stage'], $this->closed_statuses, true) && $this->isClosed());
+        }
+
+        return !$this->isClosed();
     }
 }

@@ -283,6 +283,7 @@ $dictionary['Opportunity'] = array(
             'duplicate_merge' => 'disabled',
             'studio' => false,
             'reportable' => false,
+            'importable' => false
         ),
         'probability' => array(
             'name' => 'probability',
@@ -347,7 +348,8 @@ $dictionary['Opportunity'] = array(
             'enforced' => true,
             'studio' => false,
             'workflow' => false,
-            'reportable' => false
+            'reportable' => false,
+            'importable' => false
         ),
         'closed_revenue_line_items' => array(
             'name' => 'closed_revenue_line_items',
@@ -358,7 +360,8 @@ $dictionary['Opportunity'] = array(
             'enforced' => true,
             'studio' => false,
             'workflow' => false,
-            'reportable' => false
+            'reportable' => false,
+            'importable' => false
         ),
         //END SUGARCRM flav=ent ONLY
         'accounts' => array(
@@ -485,17 +488,6 @@ $dictionary['Opportunity'] = array(
             'bean_name' => 'CampaignLog',
             'source' => 'non-db',
             'vname' => 'LBL_CAMPAIGNS',
-            'reportable' => false
-        ),
-        'campaign_link' => array(
-            'name' => 'campaign_link',
-            'type' => 'link',
-            'relationship' => 'campaign_opportunities',
-            'vname' => 'LBL_CAMPAIGN_LINK',
-            'link_type' => 'one',
-            'module' => 'Campaigns',
-            'bean_name' => 'Campaign',
-            'source' => 'non-db',
             'reportable' => false
         ),
         'currencies' => array(

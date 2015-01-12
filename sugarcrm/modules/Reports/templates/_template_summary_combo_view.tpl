@@ -164,7 +164,7 @@ for ($forLoopIndexForGroupBy = $indexOfGroupByStart ; $forLoopIndexForGroupBy < 
 			<table width="100%" border="0" cellpadding="0" cellspacing="0" class="reportGroupByDataTableHeader">
 				<tr>
 					<td>
-						<table width="100%" border="0" cellpadding="0" cellspacing="1" class="reportDataChildtablelistView">
+						<table width="100%" border="0" cellpadding="0" cellspacing="0" class="reportDataChildtablelistView">
 						{if ($show_pagination neq "")}
 						{$pagination_data}
 						{/if}

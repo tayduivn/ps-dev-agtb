@@ -322,9 +322,9 @@ function smarty_function_sugar_button($params, $smarty)
 			case "CANCEL":
                 $cancelButton = '{capture name="cancelReturnUrl" assign="cancelReturnUrl"}';
                 $cancelButton .= '{if !empty($smarty.request.return_action) && $smarty.request.return_action == "DetailView" && !empty($fields.id.value) && empty($smarty.request.return_id)}';
-                $cancelButton .= 'parent.SUGAR.App.router.buildRoute(\'{$smarty.request.return_module}\', \'{$fields.id.value}\', \'{$smarty.request.return_action}\')';
+                $cancelButton .= 'parent.SUGAR.App.router.buildRoute(\'{$smarty.request.return_module|escape:"url"}\', \'{$fields.id.value|escape:"url"}\', \'{$smarty.request.return_action|escape:"url"}\')';
                 $cancelButton .= '{elseif !empty($smarty.request.return_module) || !empty($smarty.request.return_action) || !empty($smarty.request.return_id)}';
-                $cancelButton .= 'parent.SUGAR.App.router.buildRoute(\'{$smarty.request.return_module}\', \'{$smarty.request.return_id}\', \'{$smarty.request.return_action}\')';
+                $cancelButton .= 'parent.SUGAR.App.router.buildRoute(\'{$smarty.request.return_module|escape:"url"}\', \'{$smarty.request.return_id|escape:"url"}\', \'{$smarty.request.return_action|escape:"url"}\')';
                 $cancelButton .= '{else}';
                 $cancelButton .= "parent.SUGAR.App.router.buildRoute('$module')";
                 $cancelButton .= '{/if}';

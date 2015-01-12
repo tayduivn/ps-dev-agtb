@@ -17,20 +17,20 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' =>'LNK_NEW_PROJECT',
         'acl_action'=>'create',
         'acl_module'=>'Project',
-        'icon' => 'icon-plus',
+        'icon' => 'fa-plus',
     ),
     array(
         'route'=>'#bwc/index.php?module=Project&action=index',
         'label' =>'LNK_PROJECT_LIST',
         'acl_action'=>'list',
         'acl_module'=>'Project',
-        'icon' => 'icon-reorder',
+        'icon' => 'fa-bars',
     ),
     array(
         'route'=>'#bwc/index.php?module=ProjectTask&action=index',
         'label' =>'LNK_PROJECT_TASK_LIST',
         'acl_action'=>'list',
         'acl_module'=>'Project',
-        'icon' => 'icon-reorder',
+        'icon' => 'fa-bars',
     ),
 );

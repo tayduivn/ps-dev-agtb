@@ -1,0 +1,21 @@
+#map-roles {
+    width:60em;
+    margin:0 auto;
+}
+#map-roles table {
+    border-spacing:0;
+}
+#map-roles table th {
+    padding:.4em;
+    border-bottom-width:1px;
+}
+#map-roles .package-role-id {
+    font-size:.8em;
+    color:#888;
+}
+#map-roles .role-matches {
+    display:inline-block;
+    margin-left: .5em;
+    width:14em;
+    color:#479447;
+}

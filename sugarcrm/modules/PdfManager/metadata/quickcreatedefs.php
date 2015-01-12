@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-//FILE SUGARCRM flav=pro ONLY
 
 $viewdefs['PdfManager']['QuickCreate'] = array(
     'templateMeta' => array('maxColumns' => '2',

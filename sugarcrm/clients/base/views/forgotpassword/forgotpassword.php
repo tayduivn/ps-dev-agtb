@@ -13,7 +13,6 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 $viewdefs['base']['view']['forgotpassword'] = array(
-    'action' => 'list',
     'buttons' =>
     array(
         array(
@@ -37,7 +36,7 @@ $viewdefs['base']['view']['forgotpassword'] = array(
             array(
                 array(
                     'name' => 'username',
-                    'type' => 'varchar',
+                    'type' => 'username',
                     'placeholder' => "LBL_LIST_USER_NAME",
                     'required' => true,
                 ),

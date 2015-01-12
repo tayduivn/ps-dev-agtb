@@ -1112,7 +1112,7 @@ eoq;
 		global $app_strings;
 
 		$tree = new Tree("frameFolders");
-		$tree->tree_style= 'vendor/ytree/TreeView/css/check/tree.css';
+		$tree->tree_style= getVersionedPath('vendor/ytree/TreeView/css/check/tree.css');
 
 		$nodes = array();
 		$ie = BeanFactory::getBean('InboundEmail');
@@ -1453,6 +1453,8 @@ eoq;
 				}
 			}
 		} else {
+			// case & bug specific
+			$focus->source = 'InboundEmail';
 			// bugs, cases, tasks
 			$focus->name = trim($email->name);
 		}
@@ -2880,8 +2882,10 @@ eoq;
 			} // if
         } // foreach
 
-	    $oe = new OutboundEmail();
-        $system = $oe->getSystemMailerSettings();
+        $oe = new OutboundEmail();
+        if ($oe ->isAllowUserAccessToSystemDefaultOutbound()) {
+            $system = $oe->getSystemMailerSettings();
+        }
 
         $return = $current_user->getUsersNameAndEmail();
 		$return['name'] = from_html($return['name']);

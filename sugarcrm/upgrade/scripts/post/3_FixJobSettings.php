@@ -33,5 +33,9 @@ class SugarUpgradeFixJobSettings extends UpgradeScript
             $this->upgrader->config['cron']['max_cron_runtime'] = 1800;
         }
 
+        if (!isset($this->upgrader->config['cron']['enforce_runtime'])) {
+            $this->upgrader->config['cron']['enforce_runtime'] = false;
+        }
+
     }
 }

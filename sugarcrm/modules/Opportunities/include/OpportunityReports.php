@@ -53,15 +53,19 @@ class OpportunityReports
 
     public function migrateToRevenueLineItems()
     {
-        $sql = "SELECT id, content FROM saved_reports WHERE module = 'Opportunities' AND deleted = 0
-                AND content LIKE '%\"name\":\"sales_stage\"%';";
+        $sq = new SugarQuery();
+        $sq->select(array('id', 'content'));
+        $sq->from(BeanFactory::getBean('Reports'), array('team_security' => false));
+        $sq->where()
+            ->equals('module', 'Opportunities')
+            ->contains('content', '"name":"sales_stage"');
 
-        $results = $this->db->query($sql);
+        $results = $sq->execute('array', false);
 
         $fixedReports = array();
 
         // since we are dealing with json data, don't have fetchByAssoc encode the data
-        while ($row = $this->db->fetchByAssoc($results, false)) {
+        foreach($results as $row) {
             // reset the name, just in case.
             $this->rli_table_name = 'Opportunities:revenuelineitems';
             $report = json_decode($row['content'], true);
@@ -72,6 +76,11 @@ class OpportunityReports
                 // if we are setting the links_defs, the rli_table_name needs to be changed
                 $this->rli_table_name = 'revenuelineitems';
             } elseif (isset($report['full_table_list'])) {
+                if (isset($report['full_table_list']['self']['children']) &&
+                        is_array($report['full_table_list']['self']['children'])) {
+                    $this->rli_table_name = 'self_link_' . count($report['full_table_list']);
+                    $report['full_table_list']['self']['children'][$this->rli_table_name] = $this->rli_table_name;
+                }
                 $report['full_table_list'][$this->rli_table_name] = $this->rli_table_def;
             } else {
                 // if we don't have a links_def or the full_table_list, we should just bail out now.
@@ -110,7 +119,7 @@ class OpportunityReports
 
             $sql = 'UPDATE saved_reports
                     SET content = ' . $this->db->quoted($json_def) . '
-                    WHERE id = ' . $this->db->quoted($row['id']) . ';';
+                    WHERE id = ' . $this->db->quoted($row['id']);
 
             $this->db->query($sql);
 
@@ -122,14 +131,19 @@ class OpportunityReports
 
     public function migrateToOpportunities()
     {
-        $sql = "SELECT id, content FROM saved_reports WHERE module = 'Opportunities' AND deleted = 0
-                AND content LIKE '%\"name\":\"sales_stage\"%';";
+        $sq = new SugarQuery();
+        $sq->select(array('id', 'content'));
+        $sq->from(BeanFactory::getBean('Reports'), array('team_security' => false));
+        $sq->where()
+            ->equals('module', 'Opportunities')
+            ->contains('content', '"name":"sales_stage"');
 
-        $results = $this->db->query($sql);
+        $results = $sq->execute('array', false);
+
         $fixedReports = array();
 
         // since we are dealing with json data, don't have fetchByAssoc encode the data
-        while ($row = $this->db->fetchByAssoc($results, false)) {
+        foreach($results as $row) {
             // reset the name, just in case.
             $this->rli_table_name = 'Opportunities:revenuelineitems';
             $report = json_decode($row['content'], true);
@@ -142,6 +156,19 @@ class OpportunityReports
                 // if we are setting the links_defs, the rli_table_name needs to be changed
                 $this->rli_table_name = 'revenuelineitems';
             } elseif (isset($report['full_table_list'])) {
+                if (isset($report['full_table_list']['self']['children']) &&
+                        is_array($report['full_table_list']['self']['children'])) {
+
+                    // find the RLI module
+                    foreach($report['full_table_list']['self']['children'] as $child) {
+                        if (isset($report['full_table_list'][$child]['module']) &&
+                            $report['full_table_list'][$child]['module'] === 'RevenueLineItems') {
+                            $this->rli_table_name = $child;
+                            break;
+                        }
+                    }
+                    unset($report['full_table_list']['self']['children'][$this->rli_table_name]);
+                }
                 // if it's in the full_table_list, it should be removed from there.
                 if (isset($report['full_table_list'][$this->rli_table_name])) {
                     unset($report['full_table_list'][$this->rli_table_name]);
@@ -183,7 +210,7 @@ class OpportunityReports
 
             $sql = 'UPDATE saved_reports
                     SET content = ' . $this->db->quoted($json_def) . '
-                    WHERE id = ' . $this->db->quoted($row['id']) . ';';
+                    WHERE id = ' . $this->db->quoted($row['id']);
 
             $this->db->query($sql);
 

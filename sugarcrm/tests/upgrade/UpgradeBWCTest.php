@@ -20,7 +20,7 @@ class UpgradeBWCTest extends UpgradeTestCase
 \$moduleList[] = '$mod';
 END;
             sugar_mkdir("modules/$mod");
-            file_put_contents("modules/$mod/$mod.php", "<?php echo 'Hello world!'; ");
+            file_put_contents("modules/$mod/$mod.php", "<?php ");
             $GLOBALS['dictionary'][$mod] = $GLOBALS['dictionary']['Contact'];
         }
         mkdir_recursive('custom/Extension/application/Ext/Include/');

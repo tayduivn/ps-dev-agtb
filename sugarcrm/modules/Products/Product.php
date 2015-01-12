@@ -585,11 +585,15 @@ class Product extends SugarBean
         $template = BeanFactory::getBean('ProductTemplates', $this->product_template_id);
         
         foreach ($this->template_fields as $template_field) {
-            // Empty isn't good enough here, if they set a total to 0.00 we need to not
-            // copy that from the template
+            // do not copy from template if field is:  Not empty, or has an int value equal to zero, or a string value equal to '0' or '0.0'
             if (!empty($this->$template_field)
                 || (isset($this->$template_field)
-                    && ($this->$template_field === 0 || $this->$template_field === 0.0))) {
+                    && ($this->$template_field === 0
+                        || $this->$template_field === '0'
+                        || $this->$template_field === '0.0'
+                        )
+                    )
+            ) {
                 continue;
             }
             if (isset($template->$template_field)) {
@@ -620,6 +624,43 @@ class Product extends SugarBean
             }
         }
         
+
+    }
+
+    /**
+     * Bean specific logic for when SugarFieldCurrency_id::save() is called to make sure we can update the base_rate
+     *
+     * @return bool
+     */
+    public function updateCurrencyBaseRate()
+    {
+        // if we are in the quote save, ignore this as it's a new record
+        // and it's not linked yet, so we need to keep the base_rate set from the quote.
+        if ($this->ignoreQuoteSave) {
+            return false;
+        }
+        // need to go though product bundles
+        $this->load_relationship('product_bundles');
+        // grab the first and only one
+        $bundle = array_pop($this->product_bundles->getBeans());
+
+        // make sure we have a bundle
+        if (empty($bundle)) {
+            return true;
+        }
+
+        // load the bundle -> quotes relationship
+        $bundle->load_relationship('quotes');
+
+        // get the beans
+        $quote = array_pop($bundle->quotes->getBeans());
+
+        if (empty($quote)) {
+            return true;
+        }
+
+        // if the quote is not closed, we should update the base rate
+        return !$quote->isClosed();
 
     }
 }

@@ -511,7 +511,7 @@ qualifiers_name.unshift(not_one_of_def);
 qualifiers_name.unshift(one_of_def);
 qualifiers_name.unshift(is_not_def);
 qualifiers_name.unshift(is_def);
-filter_defs['user_name'] = qualifiers_name;
+filter_defs['username'] = qualifiers_name;
 
 var qualifiers =  new Array();
 qualifiers[qualifiers.length] = {name:'on',value:'<?php echo $mod_strings['LBL_ON']; ?>'};

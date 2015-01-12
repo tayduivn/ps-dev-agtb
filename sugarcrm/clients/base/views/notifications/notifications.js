@@ -46,14 +46,14 @@
     _alertsCollections: {},
 
     /**
-     * @property {Number} Timestamp when we started pooling.
-     */
-    dateStarted: null,
-
-    /**
      * @property {Number} Interval ID for checking reminders.
      */
     _remindersIntervalId: null,
+
+    /**
+     * @property {Number} Timestamp of last time when we checked reminders.
+     */
+    _remindersIntervalStamp: 0,
 
     /**
      * Interval ID defined when the pulling mechanism is running.
@@ -207,7 +207,7 @@
         if (!_.isNull(this._intervalId)) {
             return this;
         }
-        this.dateStarted = new Date().getTime();
+        this._remindersIntervalStamp = new Date().getTime();
 
         this.pull();
         this._pullReminders();
@@ -226,8 +226,8 @@
             this.stopPulling();
             return;
         }
-        var diff = this.delay - (new Date().getTime() - this.dateStarted) % this.delay;
-        this._intervalId = window.setTimeout(_.bind(this._pullAction, this), diff);
+
+        this._intervalId = window.setTimeout(_.bind(this._pullAction, this), this.delay);
 
         this.pull();
         this._pullReminders();
@@ -240,11 +240,11 @@
      */
     stopPulling: function() {
         if (!_.isNull(this._intervalId)) {
-            window.clearInterval(this._intervalId);
+            window.clearTimeout(this._intervalId);
             this._intervalId = null;
         }
         if (!_.isNull(this._remindersIntervalId)) {
-            window.clearInterval(this._remindersIntervalId);
+            window.clearTimeout(this._remindersIntervalId);
             this._remindersIntervalId = null;
         }
         return this;
@@ -327,17 +327,18 @@
             this.stopPulling();
             return this;
         }
-        var date = new Date(),
-            diff = this.reminderDelay - (date.getTime() - this.dateStarted) % this.reminderDelay;
+        var date = (new Date()).getTime(),
+            diff = this.reminderDelay - (date - this._remindersIntervalStamp) % this.reminderDelay;
         this._remindersIntervalId = window.setTimeout(_.bind(this.checkReminders, this), diff);
         _.each(this._alertsCollections, function(collection) {
             _.chain(collection.models)
                 .filter(function(model) {
-                    var needDate = new Date(model.get('date_start')) - parseInt(model.get('reminder_time'), 10) * 1000;
-                    return needDate > date && needDate - date <= diff;
+                    var needDate = (new Date(model.get('date_start'))).getTime() - parseInt(model.get('reminder_time'), 10) * 1000;
+                    return needDate > this._remindersIntervalStamp && needDate - this._remindersIntervalStamp <= diff;
                 }, this)
                 .each(this._showReminderAlert, this);
         }, this);
+        this._remindersIntervalStamp = date + diff;
         return this;
     },
 

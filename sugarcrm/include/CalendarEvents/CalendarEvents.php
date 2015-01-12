@@ -16,6 +16,8 @@
 
 class CalendarEvents
 {
+    public static $old_assigned_user_id = '';
+
     /**
      * Schedulable calendar events (modules) supported
      * @var array
@@ -100,7 +102,14 @@ class CalendarEvents
             $GLOBALS['log']->warning($logMessage);
         }
 
+        // Turn off The Cache Updates while deleting the multiple recurrences.
+        // The current Cache Enabled status is returned so it can be appropriately
+        // restored when all the recurrences have been deleted.
+        $cacheEnabled = vCal::setCacheUpdateEnabled(false);
         $this->markRepeatDeleted($parentBean);
+        // Restore the Cache Enabled status to its previous state
+        vCal::setCacheUpdateEnabled($cacheEnabled);
+
         return $this->saveRecurring($parentBean, $repeatDateTimeArray);
     }
 
@@ -131,6 +140,12 @@ class CalendarEvents
      */
     protected function saveRecurring(SugarBean $parentBean, array $repeatDateTimeArray)
     {
+        // Load the user relationship so the child events that are created will
+        // have the users added via bean->save (which has special auto-accept
+        // logic)
+        if ($parentBean->load_relationship('users')) {
+            $parentBean->users_arr = $parentBean->users->get();
+        }
         return CalendarUtils::saveRecurring($parentBean, $repeatDateTimeArray);
     }
 
@@ -181,5 +196,19 @@ class CalendarEvents
             }
         }
         return $sugarDateTime;
+    }
+
+    /**
+     * Store Current Assignee Id or blank if New Bean (Create)
+     */
+    public function setOldAssignedUser($module, $id = null)
+    {
+        static::$old_assigned_user_id = '';
+        if (!empty($module) && !empty($id)) {
+            $old_record = BeanFactory::getBean($module, $id);
+            if (!empty($old_record->assigned_user_id)) {
+                static::$old_assigned_user_id = $old_record->assigned_user_id;
+            }
+        }
     }
 }

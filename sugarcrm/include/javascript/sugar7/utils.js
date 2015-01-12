@@ -244,8 +244,8 @@
              * @return {String}
              */
             getArrowDirectionSpan: function(directionClass) {
-                return directionClass == "LBL_UP" ? '&nbsp;<i class="icon-arrow-up font-green"></i>' :
-                    directionClass == "LBL_DOWN" ? '&nbsp;<i class="icon-arrow-down font-red"></i>' : '';
+                return directionClass == "LBL_UP" ? '&nbsp;<i class="fa fa-arrow-up font-green"></i>' :
+                    directionClass == "LBL_DOWN" ? '&nbsp;<i class="fa fa-arrow-down font-red"></i>' : '';
             },
 
             /**
@@ -548,7 +548,7 @@
             /**
              * Returns if the current browser has touch events
              *
-             * @returns {Boolean}
+             * @return {boolean}
              */
             isTouchDevice: function() {
                 return Modernizr.touch;
@@ -653,8 +653,8 @@
             /**
              * Extracts the full record name from a model.
              *
-             * @param {Bean} the model concerned.
-             * @return {String} the record name.
+             * @param {Data.Bean} model The model concerned.
+             * @return {string} The record name.
              */
             getRecordName: function(model) {
                 // Special case for `Documents`

@@ -423,6 +423,16 @@
             'desc': 'LBL_DNB_NONMARK_REAS_TXT_DESC',
             'case_fmt': true
         },
+        'orgid': {
+            'json_path': 'RegisteredDetail.OrganizationIdentificationNumberDetail',
+            'label': 'LBL_DNB_ORG_ID',
+            'desc': 'LBL_DNB_ORG_ID_DESC',
+            'sub_array': {
+                'data_type': 'org_id',
+                'org_id': 'OrganizationIdentificationNumber',
+                'org_id_type': '@TypeText'
+            }
+        },
         'indcodes': {
             'json_path': 'IndustryCode.IndustryCode',
             'label': 'LBL_DNB_IND_CD',
@@ -661,7 +671,8 @@
             'ind_codes': this.formatIndCodes,
             'tpa': this.formatTPA,
             'sales_rev': this.formatAnnualSales,
-            'prim_sic': this.formatPrimSic
+            'prim_sic': this.formatPrimSic,
+            'org_id': this.formatOrgId
         };
         this.leadsAttr = this.contactAttr.slice();
         this.leadsAttr.push('account_name');
@@ -849,8 +860,15 @@
             _.each(dataElementsMap, function(value, key) {
                 //extract the informtaion
                 var dnbDataElement = null, dnbDataObj;
-                //if the data map is array then traverse the nested array
-                if (value.sub_array) {
+                if (key === 'orgid') {
+                    //if the key is orgId
+                    dnbDataElement = this.getJsonNode(productDetails, value.json_path);
+                    var formattedOrgIds = this.formatOrgId(dnbDataElement, value.sub_array);
+                    if (!_.isEmpty(formattedOrgIds)) {
+                        formattedDataElements = formattedDataElements.concat(formattedOrgIds);
+                    }
+                } else if (value.sub_array) {
+                    //if the data map is array then traverse the nested array
                     dnbDataElement = this.getJsonNode(productDetails, value.json_path);
                     _.each(dnbDataElement, function(dnbSubData) {
                         dnbDataObj = this.formatTypeMap[value.sub_array.data_type].call(this, dnbSubData, value.sub_array);
@@ -902,9 +920,9 @@
             dnbDataObj = {};
             dnbDataObj.dataElement = this.properCase(empName);
             if (jobTitle) {
-                jobTitle = '<i class="icon-user"></i>' + this.properCase(jobTitle);
+                jobTitle = '<i class="fa fa-user"></i>' + this.properCase(jobTitle);
             } else {
-                jobTitle = '<i class="icon-user"></i>' + app.lang.get('LBL_DNB_ASSOCIATE');
+                jobTitle = '<i class="fa fa-user"></i>' + app.lang.get('LBL_DNB_ASSOCIATE');
             }
             dnbDataObj.dnbLabel = jobTitle;
         }
@@ -973,6 +991,36 @@
             dnbDataObj.dnbLabel = ind_code_type + ':' + ind_code;
         }
         return dnbDataObj;
+    },
+
+    /**
+     * Preprocesses organization identification number
+     * @param {Array} orgIdArr
+     * @param {Object} orgIdDD Data Dictionary
+     * @return {Array}
+     */
+    formatOrgId: function(orgIdArr, orgIdDD) {
+        var uniqueOrgIds = _.uniq(_.pluck(orgIdArr,'OrganizationIdentificationNumber'));
+        var uniqueOrgIdObjects = [],
+            formattedObjects = [];
+        _.each(uniqueOrgIds, function(orgId) {
+            uniqueOrgIdObjects.push(_.find(orgIdArr, function(orgIdObj){
+                return orgIdObj.OrganizationIdentificationNumber === orgId;
+            }));
+        });
+        _.each(uniqueOrgIdObjects, function(orgIdObj){
+            var dnbDataObj = null;
+            var org_id_type = this.getJsonNode(orgIdObj, orgIdDD.org_id_type);
+            var org_id = this.getJsonNode(orgIdObj, orgIdDD.org_id);
+            if (!_.isUndefined(org_id_type) && org_id_type !== 'Unknown'
+                && !_.isUndefined(org_id) ) {
+                dnbDataObj = {};
+                dnbDataObj.dataElement = org_id;
+                dnbDataObj.dnbLabel = org_id_type;
+                formattedObjects.push(dnbDataObj);
+            }
+        }, this);
+        return formattedObjects;
     },
 
     /**
@@ -1213,7 +1261,12 @@
      * @return {String}  properCase String
      */
     properCase: function(strParam) {
-        //http://stackoverflow.com/a/196991/226906
+        // The following is provided for your convenience should you wish to learn more about
+        // Convert string to title case with javascript.
+        // For a list of the actual third party software used in this Sugar product,
+        // please visit http://support.sugarcrm.com/06_Customer_Center/11_Third_Party_Software/.
+        //
+        // http://stackoverflow.com/a/196991/226906
         return strParam.replace(/\w\S*/g, function(txt) {
             return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
         });
@@ -1341,13 +1394,13 @@
             var settingsFlag = this.settings.get(key);
             //if the settings flag is defined and is selected then
             //add that property to the filtered data dictionary
-            if (!_.isUndefined(settingsFlag) && settingsFlag === '1') {
+            if (!_.isUndefined(settingsFlag) && settingsFlag === true) {
                 this.filteredDD[key] = value;
             } else if (_.isUndefined(settingsFlag)) {
                 //if the settings flag is not defined
                 //select it by default
                 this.filteredDD[key] = value;
-                this.settings.set(key, '1');
+                this.settings.set(key, true);
             }
         }, this);
     },

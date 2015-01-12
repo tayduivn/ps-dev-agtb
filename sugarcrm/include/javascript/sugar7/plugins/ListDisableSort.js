@@ -13,13 +13,13 @@
     app.events.on("app:init", function () {
         app.plugins.register('ListDisableSort', ['view'], {
             onAttach: function (component, plugin) {
-                component.on('init', function () {
-                    _.each(component.meta.panels, function(panel) {
-                        _.each(panel.fields, function(field) {
-                            field.sortable = false;
-                        });
+                component._createCatalog = _.wrap(component._createCatalog, function (func, fields) {
+                    _.each(fields, function (field) {
+                        field.sortable = false;
                     });
-                }, null, component);
+
+                    return func.call(component, fields);
+                });
             }
         });
     });

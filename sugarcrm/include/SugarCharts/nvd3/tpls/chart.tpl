@@ -27,6 +27,7 @@
 				chartConfig["scroll"] = true;
 			{/if}
 			chartConfig["ReportModule"] = true;
+			chartConfig["direction"] = $('html', window.parent.document).hasClass('rtl') ? 'rtl' : 'ltr';
 			loadCustomChartForReports = function(){ldelim}
 				loadSugarChart('{$chartId}', '{$filename}', css, chartConfig);
 			{rdelim};

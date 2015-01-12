@@ -40,12 +40,12 @@
 
       <p>Alert messages are added to the <code>&lt;div id="alerts"&gt;</code> block at the top of a Sugar7 layout and are stacked in reverse order. The LESS file with default colors and styling can be found in <code>stylguide/less/sugar-specific/alerts.less</code> and <code>stylguide/less/sugar-specific/loader.less</code>.</p>
       <div class="alert alert-block">
-        <button class="close" data-action="close"><i class="icon-remove"></i></button>
+        <button class="close" data-action="close"><i class="fa fa-times"></i></button>
         <strong>Alert Level:</strong> This is the alert message!!
       </div>
 <pre class="prettyprint linenums">
 &lt;div class="alert alert-[level] alert-block"&gt;
-  &lt;button class="close" data-action="close"&gt;&lt;i class="icon-remove"&gt;&lt;/i&gt;&lt;/button&gt;
+  &lt;button class="close" data-action="close"&gt;&lt;i class="fa fa-times"&gt;&lt;/i&gt;&lt;/button&gt;
   &lt;strong&gt;Alert Level:&lt;/strong&gt; This is the alert message!!
 &lt;/div&gt;
 </pre>
@@ -53,20 +53,20 @@
       <h3>Content</h3>
       <p>Content of the alert can be any HTML however there is a special class called <code>.alert-heading</code> for a matching heading.</p>
       <div class="alert alert-block">
-        <button class="close" data-action="close"><i class="icon-remove"></i></button>
+        <button class="close" data-action="close"><i class="fa fa-times"></i></button>
         <h4 class="alert-heading">Alert!</h4>
         <p>Best check yo self, you're not looking too good. Nulla vitae elit libero, a pharetra augue. Praesent commodo cursus magna, vel scelerisque nisl consectetur et.</p>
       </div>
 <pre class="prettyprint linenums">
 &lt;div class="alert alert-block"&gt;
-  &lt;button class="close" data-action="close"&gt;&lt;i class="icon-remove"&gt;&lt;/i&gt;&lt;/button&gt;
+  &lt;button class="close" data-action="close"&gt;&lt;i class="fa fa-times"&gt;&lt;/i&gt;&lt;/button&gt;
   &lt;h4 class="alert-heading"&gt;Alert!&lt;/h4&gt;
   &lt;p&gt;Best check yo self, you're not...&lt;/p&gt;
 &lt;/div&gt;
 </pre>
 
       <h3>Sugar7 Alert Utility</h3>
-      <p>To make handling of alerts easier in Sugar7, there is now a utility function called <code>app.alert</code>. This function is based on Bootstrap's <code>bootstrap-alert.js</code> plugin. Although you should never need to access the Boostrap plugin directly, its documentation can be found here <a href=""><i class="icon-book"></i> boostrap-alert.js</a>.</p>
+      <p>To make handling of alerts easier in Sugar7, there is now a utility function called <code>app.alert</code>. This function is based on Bootstrap's <code>bootstrap-alert.js</code> plugin. Although you should never need to access the Boostrap plugin directly, its documentation can be found here <a href=""><i class="fa fa-book"></i> boostrap-alert.js</a>.</p>
 
       <h3>Parameters</h3>
       <table class="table table-bordered table-striped">
@@ -198,7 +198,7 @@
                 <div class="alert alert-process" style="margin:0;">
                   <strong>Loading</strong>
                   <div class="loading">
-                    <i class="l1 icon-circle"></i><i class="l2 icon-circle"></i><i class="l3 icon-circle"></i>
+                    <i class="l1">&period;</i><i class="l2">&period;</i><i class="l3">&period;</i>
                   </div>
                 </div>
               </div>

@@ -72,7 +72,7 @@ describe('Base.Field.DateTimeCombo', function() {
             var field = SugarTest.createField('base', 'datetimecombo', 'datetimecombo', 'edit');
             field.action = 'edit';
 
-            expect(field.format('1984-01-15 19:20')).toEqual({'date': '15/01/1984', 'time': '7:20pm'});
+            expect(field.format('1984-01-15 19:20')).toEqual({'date': '15/01/1984', 'time': '07:20pm'});
             expect(app.date).toHaveBeenCalled();
             expect(app.date.convertFormat.getCall(0)).toHaveBeenCalledWith('d/m/Y');
             expect(app.date.convertFormat.getCall(1)).toHaveBeenCalledWith('h:ia');
@@ -84,7 +84,7 @@ describe('Base.Field.DateTimeCombo', function() {
         it('should format according to user preferences for detail mode', function() {
             var field = SugarTest.createField('base', 'datetimecombo', 'datetimecombo', 'detail');
 
-            expect(field.format('1984-01-15 19:20:42')).toEqual('15/01/1984 7:20pm');
+            expect(field.format('1984-01-15 19:20:42')).toEqual('15/01/1984 07:20pm');
             expect(app.date).toHaveBeenCalled();
             expect(app.date.fn.formatUser).toHaveBeenCalled();
 
@@ -121,9 +121,9 @@ describe('Base.Field.DateTimeCombo', function() {
         });
 
         it('should unformat based on user preferences and according to server format', function() {
-            expect(field.unformat('15/01/1984 7:20pm')).toBe(app.date('1984-01-15 19:20').format());
+            expect(field.unformat('15/01/1984 07:20pm')).toBe(app.date('1984-01-15 19:20').format());
             expect(app.date.convertFormat).toHaveBeenCalledWith('d/m/Y h:ia');
-            expect(app.date.getCall(0).args[0]).toBe('15/01/1984 7:20pm');
+            expect(app.date.getCall(0).args[0]).toBe('15/01/1984 07:20pm');
             expect(app.date.getCall(0).args[2]).toBe(true);
             expect(app.date.fn.format).toHaveBeenCalled();
         });
@@ -154,9 +154,9 @@ describe('Base.Field.DateTimeCombo', function() {
 
             field.render();
 
-            expect(field.value).toEqual({'date': '15/01/1984', 'time': '7:20pm'});
+            expect(field.value).toEqual({'date': '15/01/1984', 'time': '07:20pm'});
             expect(field.model.get(field.name)).toBe(expectedDate);
-            expect(field.model.getDefaultAttribute(field.name)).toBe(expectedDate);
+            expect(field.model.getDefault(field.name)).toBe(expectedDate);
 
             field.dispose();
         });
@@ -237,7 +237,7 @@ describe('Base.Field.DateTimeCombo', function() {
                 expect($t.val()).toBe('');
                 expect(field.model.get(field.name)).toBeUndefined();
 
-                $t.val('7:20pm').trigger('change');
+                $t.val('07:20pm').trigger('change');
 
                 expect($d.val()).toBe('15/01/1984');
                 expect(field.model.get(field.name)).toBe(app.date('1984-01-15 19:20').format());
@@ -265,7 +265,7 @@ describe('Base.Field.DateTimeCombo', function() {
 
                 $d.val('15/01/1984').trigger('hide');
 
-                expect($t.val()).toBe('7:20pm');
+                expect($t.val()).toBe('07:20pm');
                 expect(field.model.get(field.name)).toBe(app.date('1984-01-15 19:20').format());
 
                 // FIXME: `hide` event is still triggered due to the way the

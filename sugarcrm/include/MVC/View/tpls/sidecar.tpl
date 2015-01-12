@@ -15,9 +15,11 @@
 <html class="no-js">
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+        <meta charset="UTF-8">
         <title>SugarCRM</title>
         <link rel="shortcut icon" href="{sugar_getjspath file='themes/default/images/sugar_icon.ico'}">
         <!-- CSS -->
+        <link rel="stylesheet" href="styleguide/assets/css/loading.css" type="text/css">
         {foreach from=$css_url item=url}
             <link rel="stylesheet" href="{sugar_getjspath file=$url}"/>
         {/foreach}
@@ -30,9 +32,13 @@
         <div id="sugarcrm">
             <div id="sidecar">
                 <div id="alerts" class="alert-top">
-                    <div class="loading gate">
-                        <strong>{$LBL_LOADING}</strong>
-                        <i class="l1 icon-circle"></i><i class="l2 icon-circle"></i><i class="l3 icon-circle"></i>
+                    <div class="alert-wrapper">
+                        <div class="alert alert-process">
+                            <strong>{$LBL_LOADING}</strong>
+                            <div class="loading">
+                                <i class="l1">&period;</i><i class="l2">&period;</i><i class="l3">&period;</i>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div id="header"></div>

@@ -17,7 +17,7 @@
  * a generic SQL statement that gets tracked and logged when slow queries are tracked.
  * 
  */
-//FILE SUGARCRM flav=pro ONLY
+
 require_once('modules/Trackers/TrackerUtility.php');
 
 class Bug33250_Test extends Sugar_PHPUnit_Framework_TestCase 

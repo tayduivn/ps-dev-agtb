@@ -286,123 +286,111 @@
 
 <section id="colors">
   <div class="page-header">
-    <h2>Color Styles <small>Standard D3 categorical color scales for charts.</small></h2>
-    <p>A description of the color scales is in <a href="https://github.com/mbostock/d3/wiki/Ordinal-Scales">D3 documentation</a>. New color scales can be generated using Cynthia Brewer's <a href="http://colorbrewer2.org/">ColorBrewer</a>.</p>
+    <h2>Sugar7 Accent Color Classes for Charts</h2>
+    <p>A description of the standard D3 categorical color scales is in <a href="https://github.com/mbostock/d3/wiki/Ordinal-Scales">D3 documentation</a>. New color scales can be generated using Cynthia Brewer's <a href="http://colorbrewer2.org/">ColorBrewer</a>.</p>
   </div>
   <div class="row-fluid">
-    <div class="span6">
-      <h3>Fill</h3>
-      <p>A series of alternating light and dark pastel colors.</p>
+    <div class="span12">
+      <h3>Fill and Stroke</h3>
+      <p>A progressive rainbow of colors.</p>
       <div>
 <table class="table table-bordered table-striped">
-  <tr>
-    <td><div class="nv-fill00 swatch"></div></td><td><code>.nv-fill00 { fill:#1f77b4; }</code></td>
-  </tr>
-  <tr>
-    <td><div class="nv-fill01 swatch"></div></td><td><code>.nv-fill01 { fill:#aec7e8; }</code></td>
-  </tr>
-  <tr>
-    <td><div class="nv-fill02 swatch"></div></td><td><code>.nv-fill02 { fill:#ff7f0e; }</code></td>
-  </tr>
-  <tr>
-    <td><div class="nv-fill03 swatch"></div></td><td><code>.nv-fill03 { fill:#ffbb78; }</code></td>
-  </tr>
-  <tr>
-    <td><div class="nv-fill04 swatch"></div></td><td><code>.nv-fill04 { fill:#2ca02c; }</code></td>
-  </tr>
-  <tr>
-    <td><div class="nv-fill05 swatch"></div></td><td><code>.nv-fill05 { fill:#98df8a; }</code></td>
-  </tr>
-  <tr>
-    <td><div class="nv-fill06 swatch"></div></td><td><code>.nv-fill06 { fill:#d62728; }</code></td>
-  </tr>
-  <tr>
-    <td><div class="nv-fill07 swatch"></div></td><td><code>.nv-fill07 { fill:#ff9896; }</code></td>
-  </tr>
-  <tr>
-    <td><div class="nv-fill08 swatch"></div></td><td><code>.nv-fill08 { fill:#9467bd; }</code></td>
-  </tr>
-  <tr>
-    <td><div class="nv-fill09 swatch"></div></td><td><code>.nv-fill09 { fill:#c5b0d5; }</code></td>
-  </tr>
-  <tr>
-    <td><div class="nv-fill10 swatch"></div></td><td><code>.nv-fill10 { fill:#8c564b; }</code></td>
-  </tr>
-  <tr>
-    <td><div class="nv-fill11 swatch"></div></td><td><code>.nv-fill11 { fill:#c49c94; }</code></td>
-  </tr>
-  <tr>
-    <td><div class="nv-fill12 swatch"></div></td><td><code>.nv-fill12 { fill:#e377c2; }</code></td>
-  </tr>
-  <tr>
-    <td><div class="nv-fill13 swatch"></div></td><td><code>.nv-fill13 { fill:#f7b6d2; }</code></td>
-  </tr>
-  <tr>
-    <td><div class="nv-fill14 swatch"></div></td><td><code>.nv-fill14 { fill:#7f7f7f; }</code></td>
-  </tr>
-  <tr>
-    <td><div class="nv-fill15 swatch"></div></td><td><code>.nv-fill15 { fill:#c7c7c7; }</code></td>
-  </tr>
-  <tr>
-    <td><div class="nv-fill16 swatch"></div></td><td><code>.nv-fill16 { fill:#bcbd22; }</code></td>
-  </tr>
-  <tr>
-    <td><div class="nv-fill17 swatch"></div></td><td><code>.nv-fill17 { fill:#dbdb8d; }</code></td>
-  </tr>
-  <tr>
-    <td><div class="nv-fill18 swatch"></div></td><td><code>.nv-fill18 { fill:#17becf; }</code></td>
-  </tr>
-  <tr>
-    <td><div class="nv-fill19 swatch"></div></td><td><code>.nv-fill19 { fill:#9edae5; }</code></td>
-  </tr>
+          <tr>
+            <td><code>@mint => @nv-fill00, @nv-stroke00</code></td>
+            <td><code>.nv-fill00, .nv-stroke00</code></td>
+            <td class="hex mono">#0d8046</td>
+            <td class="swatch-col"><span class="swatch mint"></span></td>
+          </tr>
+          <tr>
+            <td><code>@green => @nv-fill01, @nv-stroke01</code></td>
+            <td><code>.nv-fill01, .nv-stroke01</code></td>
+            <td class="hex mono">#33800d</td>
+            <td><span class="swatch green"></span></td>
+          </tr>
+          <tr>
+            <td><code>@army => @nv-fill02, @nv-stroke02</code></td>
+            <td><code>.nv-fill02, .nv-stroke02</code></td>
+            <td class="hex mono">#6a800d</td>
+            <td><span class="swatch army"></span></td>
+          </tr>
+          <tr>
+            <td><code>@yellow => @nv-fill03, @nv-stroke03</code></td>
+            <td><code>.nv-fill03, .nv-stroke03</code></td>
+            <td class="hex mono">#e5a117</td>
+            <td><span class="swatch yellow"></span></td>
+          </tr>
+          <tr>
+            <td><code>@orange => @nv-fill04, @nv-stroke04</code></td>
+            <td><code>.nv-fill04, .nv-stroke04</code></td>
+            <td class="hex mono">#cc3314</td>
+            <td><span class="swatch orange"></span></td>
+          </tr>
+          <tr>
+            <td><code>@red => @nv-fill05, @nv-stroke05</code></td>
+            <td><code>.nv-fill05, .nv-stroke05</code></td>
+            <td class="hex mono">#e61718</td>
+            <td><span class="swatch red"></span></td>
+          </tr>
+          <tr>
+            <td><code>@pink => @nv-fill06, @nv-stroke06</code></td>
+            <td><code>.nv-fill06, .nv-stroke06</code></td>
+            <td class="hex mono">#e5176d</td>
+            <td><span class="swatch pink"></span></td>
+          </tr>
+          <tr>
+            <td><code>@purple => @nv-fill07, @nv-stroke07</code></td>
+            <td><code>.nv-fill07, .nv-stroke07</code></td>
+            <td class="hex mono">#6d17e5</td>
+            <td><span class="swatch purple"></span></td>
+          </tr>
+          <tr>
+            <td><code>@night => @nv-fill08, @nv-stroke08</code></td>
+            <td><code>.nv-fill08, .nv-stroke08</code></td>
+            <td class="hex mono">#1f12b3</td>
+            <td><span class="swatch night"></span></td>
+          </tr>
+          <tr>
+            <td><code>@blue => @nv-fill09, @nv-stroke09</code></td>
+            <td><code>.nv-fill09, .nv-stroke09</code></td>
+            <td class="hex mono">#176de5</td>
+            <td><span class="swatch blue"></span></td>
+          </tr>
+          <tr>
+            <td><code>@ocean => @nv-fill10, @nv-stroke10</code></td>
+            <td><code>.nv-fill10, .nv-stroke10</code></td>
+            <td class="hex mono">#1378bf</td>
+            <td><span class="swatch ocean"></span></td>
+          </tr>
+          <tr>
+            <td><code>@pacific => @nv-fill11, @nv-stroke11</code></td>
+            <td><code>.nv-fill11, .nv-stroke11</code></td>
+            <td class="hex mono">#0f7799</td>
+            <td><span class="swatch pacific"></span></td>
+          </tr>
+          <tr>
+            <td><code>@teal => @nv-fill12, @nv-stroke12</code></td>
+            <td><code>.nv-fill12, .nv-stroke12</code></td>
+            <td class="hex mono">#0d806c</td>
+            <td><span class="swatch teal"></span></td>
+          </tr>
+          <tr>
+            <td><code>@coral => @nv-fill13, @nv-stroke13</code></td>
+            <td><code>.nv-fill13, .nv-stroke13</code></td>
+            <td class="hex mono">#ff6fcf</td>
+            <td><span class="swatch coral"></span></td>
+          </tr>
 </table>
       </div>
     </div>
 
-    <div class="span6">
-      <h3>Stroke</h3>
-      <p>Bolder colors used to color lines.</p>
-<table class="table table-bordered table-striped">
-  <tr>
-    <td><div class="nv-stroke0 swatch"></div></td><td><code>.nv-stroke0 { stroke:#1f77b4; }</code></td>
-  </tr>
-  <tr>
-    <td><div class="nv-stroke1 swatch"></div></td><td><code>.nv-stroke1 { stroke:#ff7f0e; }</code></td>
-  </tr>
-  <tr>
-    <td><div class="nv-stroke2 swatch"></div></td><td><code>.nv-stroke2 { stroke:#2ca02c; }</code></td>
-  </tr>
-  <tr>
-    <td><div class="nv-stroke3 swatch"></div></td><td><code>.nv-stroke3 { stroke:#d62728; }</code></td>
-  </tr>
-  <tr>
-    <td><div class="nv-stroke4 swatch"></div></td><td><code>.nv-stroke4 { stroke:#9467bd; }</code></td>
-  </tr>
-  <tr>
-    <td><div class="nv-stroke5 swatch"></div></td><td><code>.nv-stroke5 { stroke:#8c564b; }</code></td>
-  </tr>
-  <tr>
-    <td><div class="nv-stroke6 swatch"></div></td><td><code>.nv-stroke6 { stroke:#e377c2; }</code></td>
-  </tr>
-  <tr>
-    <td><div class="nv-stroke7 swatch"></div></td><td><code>.nv-stroke7 { stroke:#7f7f7f; }</code></td>
-  </tr>
-  <tr>
-    <td><div class="nv-stroke8 swatch"></div></td><td><code>.nv-stroke8 { stroke:#bcbd22; }</code></td>
-  </tr>
-  <tr>
-    <td><div class="nv-stroke9 swatch"></div></td><td><code>.nv-stroke9 { stroke:#17becf; }</code></td>
-  </tr>
-</table>
-    </div>
 
-    <div class="span6">
+    {{!-- <div class="span6">
       <h3>Creating New Chart Color Themes</h3>
 
       <div class="alert alert-info">
         <p>New chart color themes are created in the <code>/styleguide/themes/clients/base</code> directory. Copy the <code>/default</code> folder and rename. Inside this folder, edit the variables.less file. In the CHART section, edit the @fillXX and @strokeXX LESS variables as needed. Then go to the Bootstrap Builder at <a href="../build/">/styleguide/build/</a>, choose your new theme folder and click the "Compile" button. Your new chart color theme will be available.</p>
         <p>Your new chart color theme will be visible in the charts on this page. To enable the use of chart color CSS classes, set the <code>.colorData( 'class' )</code> property in your chart definition (see example above). Custom SVG gradient fills in CSS are not supported.</p>
       </div>
-    </div>
+    </div> --}}
   </div>
 </section>

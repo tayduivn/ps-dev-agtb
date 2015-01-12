@@ -72,19 +72,6 @@
     },
 
     /**
-     * @inheritdoc
-     */
-    initButtons: function() {
-        this._super('initButtons');
-
-        // if the model has a quote_id and it's not empty, disable the convert_to_quote_button
-        if (this.model.has('quote_id') && !_.isEmpty(this.model.get('quote_id'))
-            && !_.isUndefined(this.buttons['convert_to_quote_button'])) {
-            this.buttons['convert_to_quote_button'].setDisabled(true);
-        }
-    },
-
-    /**
      * Bind to model to make it so that it will re-render once it has loaded.
      */
     bindDataChange: function() {
@@ -126,57 +113,6 @@
     _handleDuplicateBefore: function(new_model) {
         new_model.unset('quote_id');
         new_model.unset('quote_name');
-    },
-
-    delegateButtonEvents: function() {
-        this.context.on('button:convert_to_quote:click', this.convertToQuote, this);
-        this._super('delegateButtonEvents');
-    },
-
-    /**
-     * convert RLI to quote
-     * @param {Object} e
-     */
-    convertToQuote: function(e) {
-        // if product template is empty, but category is not, this RLI can not be converted to a quote
-        if (_.isEmpty(this.model.get('product_template_id')) && !_.isEmpty(this.model.get('category_id'))) {
-            app.alert.show('invalid_items', {
-                level: 'error',
-                title: app.lang.get('LBL_ALERT_TITLE_ERROR', this.module) + ':',
-                messages: [app.lang.get('LBL_CONVERT_INVALID_RLI_PRODUCT', this.module)]
-            });
-            return;
-        }
-
-        var alert = app.alert.show('info_quote', {
-            level: 'info',
-            autoClose: false,
-            closeable: false,
-            title: app.lang.get('LBL_CONVERT_TO_QUOTE_INFO', this.module) + ':',
-            messages: [app.lang.get('LBL_CONVERT_TO_QUOTE_INFO_MESSAGE', this.module)]
-        });
-        // remove the close since we don't want this to be closable
-        alert.$('.close').remove();
-
-        var url = app.api.buildURL(this.model.module, 'quote', { id: this.model.id }),
-            callbacks = {
-                'success': _.bind(function(resp) {
-                    app.alert.dismiss('info_quote');
-                    app.router.navigate(app.bwc.buildRoute('Quotes', resp.id, 'EditView', {
-                        return_module: this.model.module,
-                        return_id: this.model.id
-                    }), {trigger: true});
-                }, this),
-                'error': _.bind(function() {
-                    app.alert.dismiss('info_quote');
-                    app.alert.show('error_xhr', {
-                        level: 'error',
-                        title: app.lang.get('LBL_CONVERT_TO_QUOTE_ERROR', this.module) + ':',
-                        messages: [app.lang.get('LBL_CONVERT_TO_QUOTE_ERROR_MESSAGE', this.module)]
-                    });
-                }, this)
-            };
-        app.api.call('create', url, null, callbacks);
     },
 
     /**

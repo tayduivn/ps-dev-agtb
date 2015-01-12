@@ -56,7 +56,9 @@ EOC;
         rmdir_recursive($this->testDir);
 
         rmdir_recursive($this->oldSmartyPluginsDir);
-        unlink($this->newSmartyPluginsDir . $this->smartyPluginPath);
+        if (file_exists($this->newSmartyPluginsDir . $this->smartyPluginPath)) {
+            unlink($this->newSmartyPluginsDir . $this->smartyPluginPath);
+        }
     }
 
     /**
@@ -90,6 +92,38 @@ EOC;
 
         $this->assertTrue(file_exists($this->newSmartyPluginsDir . $this->smartyPluginPath), 'File does not exist');
         $this->assertFalse(file_exists($this->oldSmartyPluginsDir . $this->smartyPluginPath), 'File exists');
+    }
+
+    /**
+     * @param string $source
+     * @param string $expected
+     * @group CRYS467
+     * @dataProvider specificFilesProvider
+     */
+    public function testRepairSugarSpecificFilesPath($source, $expected)
+    {
+        $file = $this->testDir . 'sugarSpecificInclusions.php';
+        SugarAutoLoader::ensureDir($this->testDir);
+        SugarTestHelper::saveFile($file);
+        sugar_file_put_contents($file, $source);
+
+        $mockObject = $this->getMock('SugarUpgradeRepairVendorsMock', array('backupFile'), array($this->upgradeDriver));
+        $mockObject->expects($this->atLeastOnce())->method('backupFile')->with($file);
+
+        $mockObject->repairSugarSpecificFilesPath($file);
+
+        $actual = sugar_file_get_contents($file);
+        $this->assertEquals($expected, $actual, 'File was replaced incorrectly');
+    }
+
+    public function specificFilesProvider()
+    {
+        return array(
+            array(
+                "<?php \n require_once('include/Smarty/plugins/function.sugar_action_menu.php');",
+                "<?php \n require_once('include/SugarSmarty/plugins/function.sugar_action_menu.php');"
+            )
+        );
     }
 
     /**

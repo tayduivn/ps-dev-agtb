@@ -17,19 +17,19 @@
                 {{#if pictureUrl}}
                     <img src="{{pictureUrl}}" alt="{{userName}}" class="avatar avatar-btn">
                 {{else}}
-                    <i class="icon-user icon-3X"></i>
+                    <i class="fa fa-user fa-3X"></i>
                 {{/if}}
-                <i class="icon-caret-down"></i>
+                <i class="fa fa-caret-down"></i>
             </button>
             <div class="dropdown-menu scroll pull-right">
                 <ul role="menu" id="fullmenu">
                     {{#each menulist}}
                         {{#if css_class}}<li class="{{css_class}}">{{else}}<li>{{/if}}
                             <a href="{{route}}" {{#unless submenu}}{{#if openwindow}}target="_blank"{{/if}}{{/unless}} track="click:userAction-{{label}}" tabindex="-1">
-                                {{#if img_url}}<img src="{{img_url}}" alt="{{../../userName}}" class="avatar avatar-sm">{{else}}{{#if icon}}<i class="{{icon}}"></i>{{/if}}{{/if}}{{str label}}
+                                {{#if img_url}}<span><img src="{{img_url}}" alt="{{../../userName}}" class="avatar avatar-sm"></span>{{else}}{{#if icon}}<i class="fa {{icon}}"></i>{{/if}}{{/if}}{{str label}}
                                 {{#if submenu}}
                                 <button href="javascript:void(0)" data-action="link" class="btn btn-invisible dropdown-submenu" tabindex="-1">
-                                    <i class="icon-caret-down"></i>
+                                    <i class="fa fa-caret-down"></i>
                                 </button>
                                 {{/if}}
                             </a>
@@ -38,7 +38,7 @@
                                     {{#each submenu}}
                                         <li {{#if css_class}}class="{{css_class}}"{{/if}}>
                                             <a href="{{route}}" {{#if openwindow}}target="_blank"{{/if}} tabindex="-1">
-                                                {{#if icon}}<i class="{{icon}}"></i>{{/if}}{{str label}}
+                                                {{#if icon}}<i class="fa {{icon}}"></i>{{/if}}{{str label}}
                                             </a>
                                         </li>
                                     {{/each}}

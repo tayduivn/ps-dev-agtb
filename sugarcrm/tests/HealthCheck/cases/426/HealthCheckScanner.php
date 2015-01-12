@@ -18,6 +18,6 @@ class S_426_HealthCheckScannerCasesTestMock extends HealthCheckScannerCasesTestM
 
     public function isStockBWCModule()
     {
-        return true;
+        return false;
     }
 }

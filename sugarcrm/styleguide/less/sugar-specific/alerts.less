@@ -11,7 +11,7 @@
   .border-radius(@baseBorderRadius);
   position: relative;
 }
-.alert [class^=icon-] {
+.alert .fa {
   color: inherit;
 }
 .alert,
@@ -140,6 +140,7 @@
   .alert {
     padding: 0;
     min-width: 280px;
+    max-width: 280px;
 
     .alert-messages {
       padding: 15px;
@@ -187,4 +188,9 @@
       }
     }
   }
+}
+
+.field-alert-warning {
+  padding: 5px 7px;
+  margin: 0 7px 14px -7px;
 }

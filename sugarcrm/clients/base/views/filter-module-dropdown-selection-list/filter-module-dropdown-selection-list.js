@@ -80,6 +80,6 @@
      * @return {string}
      */
     getSelectionLabel: function() {
-        return app.lang.get('LBL_MODULE') + '<i class="icon-caret-down"></i>';
+        return app.lang.get('LBL_MODULE') + '<i class="fa fa-caret-down"></i>';
     }
 })

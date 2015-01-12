@@ -461,7 +461,7 @@
       }
       .ui-timepicker-input,
       .ui-timepicker-list {
-        margin-left: -24px;
+        margin-left: -12px;
       }
       &.error {
         .ui-timepicker-input,
@@ -584,7 +584,7 @@
         min-height: 0;
       }
       .btn {
-        [class^="icon-"] {
+        .fa {
           margin-right: 6px;
         }
       }
@@ -593,7 +593,7 @@
         right: auto;
       }
       .btn.dropdown-toggle {
-        [class^="icon-"] {
+        .fa {
           margin-right: 0;
         }
       }
@@ -863,7 +863,7 @@
 .record-cell:not(.edit):hover {
   .record-edit-link {
     display: inline-block;
-    .icon-pencil {
+    .fa-pencil {
       left: 0;
       top: 2px;
       font-size: 10px;
@@ -925,7 +925,7 @@
     padding: 0 5px 0 15px;
     width: auto !important;
     border-top: 1px solid rgba(220,220,220,1);
-    box-shadow: inset 0px 1px 0px 0px white;
+    .box-shadow(~"inset 0px 1px 0px 0px white");
     border-bottom: 1px solid #cfcfcf;
     cursor: pointer;
     &:hover {
@@ -947,9 +947,15 @@
   }
 }
 
+/* Invitees/Participants Field Styling */
+
 .participants-schedule {
   display: table;
-  width: 100%;
+  width: 101.75%;
+  margin-left: -9px;
+  &.new {
+    width: 102.25%;
+  }
   .row {
     display: table-row;
     .cell {
@@ -1002,6 +1008,7 @@
           border-width: 1px 0 1px 1px;
           border-radius: 3px 0 0 3px;
           padding: 0 5px;
+          background-color: white;
           .avatar {
             min-width: 20px;
             display: table-cell;
@@ -1037,6 +1044,7 @@
           border-width: 1px 1px 1px 0;
           border-radius: 0 3px 3px 0;
           position: relative;
+          background-color: white;
           &.unavailable, &.loading {
             .overlay {
               position: absolute;
@@ -1068,7 +1076,7 @@
               }
               span {
                 width: 25%;
-                height: 26px;
+                height: inherit;
                 display: inline-block;
                 float: left;
                 border-left: 1px solid rgba(204,204,204,.5);
@@ -1076,33 +1084,32 @@
                 &:first-child {
                   border: none;
                 }
-                &.schedule {
-                  border-top: 2px solid #ccc;
-                  border-bottom: 2px solid #ccc;
-                  &.start {
-                    border-left: 2px solid rgb(55,136,14);
-                  }
-                  &.end {
-                    border-right: 2px solid rgb(190,0,20);
-                  }
-                }
-                &.start-end {
-                  border-left: 2px solid rgb(55,136,14);
-                }
                 &.busy {
-                  background-color: rgb(101,101,101);
-                  border-color: rgb(70,70,70);
+                  background-color: rgba(0,0,0,.2);
+                  border-left: 1px solid #bbb;
                 }
               }
+            }
+          }
+          .start_end_overlay {
+            position: absolute;
+            top: 4px;
+            height: 24px;
+            background-color: rgba(23, 109, 229, .65);
+            box-shadow: inset 1px 0 0 0 rgba(225, 225, 225, .5), inset -1px 0 0 0 rgba(225, 225, 225, .5);
+            border-left: 3px solid rgba(51, 128, 13, 1);
+            &.right_border {
+              border-right: 3px solid rgba(230, 23, 24, 1);
             }
           }
         }
         &.buttons {
           border: none;
-          width: 80px;
+          width: 1px;
           .btn-toolbar {
             margin: 0;
             padding-left: 10px;
+            white-space: nowrap;
           }
         }
       }
@@ -1115,24 +1122,29 @@
   }
 }
 .participants-form {
-  display: table;
+  display: table-row;
   width: 100%;
+  margin-left: -9px;
   .cell {
     display: table-cell;
     vertical-align: middle;
     &.select {
       .field {
-        margin-left: 2px;
+        margin-left: -197px;
         > .select2-container {
           margin: 0;
         }
       }
     }
     &.buttons {
-      width: 82px;
+      width: 1px;
       .btn-toolbar {
         margin: 0;
         padding: 0;
+        white-space: nowrap;
+        .btn-group + .btn-group {
+          margin-left: 9px;
+        }
       }
     }
   }
@@ -1163,5 +1175,18 @@
     font-weight: bold;
     width: 95px;
     max-width: 95px;
+  }
+}
+
+// for Product dropdowns in RLI subpanel in Opps Create view
+.create-subpanel {
+  .select2-container.select2-container-disabled {
+    .opacity(35);
+    .select2-choice {
+      cursor: not-allowed;
+      .select2-arrow {
+        display: none;
+      }
+    }
   }
 }

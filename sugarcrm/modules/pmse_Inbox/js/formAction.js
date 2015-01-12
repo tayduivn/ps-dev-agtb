@@ -1,0 +1,381 @@
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+var w, hp;
+var _App;
+if(App){
+    _App = App;
+}
+else{
+    _App = parent.SUGAR.App;
+}
+
+var confirmAdhocReassign = function()
+{
+    $.ajax({
+        url: './?module=ProcessMaker&action=routeCase&to_pdf=1&current_assigned_user_id=' + $("#cas_current_user_id").val() + '&reassigned_to_user_id=' + $("#cas_user_id").val() + "&Type=Adhoc",
+        async: false,
+        method: 'POST',
+        data: $('#showCaseForm').serialize()
+    }).done(function(ajaxResponse) {
+        window.location.href = "./index.php"
+    });
+};
+
+var confirmReassign = function()
+{
+    $.ajax({
+        url: './?module=ProcessMaker&action=reassignRecord&to_pdf=1&current_assigned_user_id=' + $("#cas_current_user_id").val() + '&reassigned_to_user_id=' + $("#cas_user_id").val() + '&Type=Reassign',
+        async: false,
+        method: 'POST',
+        data: $('#showCaseForm').serialize()
+    }).done(function(ajaxResponse) {
+        w.close();
+        //window.location.href = "./index.php"
+    });
+};
+var reassignFormBWC = function(casId, casIndex, flowId, pmseInboxId, taskName, valuesA,valuesB)
+{
+    var value=new Object();
+    value.moduleName = valuesA;
+    value.beanId = valuesB;
+    reassignForm(casId, casIndex, flowId, pmseInboxId, taskName, value);
+};
+var reassignForm = function(casId, casIndex, flowId, pmseInboxId, taskName, values)
+{
+    //showModalWindow("?module=ProcessMaker&action=reassignForm&to_pdf=1&cas_id=" + casId + "&cas_index=" + casIndex + "&team_id=" + teamId, '# ' + casId + ': Reassignment');
+    showModalWindow(casId, casIndex, 'reassign', flowId, pmseInboxId, taskName, values);
+};
+var adhocFormBWC = function(casId, casIndex, flowId, pmseInboxId, taskName, valuesA,valuesB){
+    var value=new Object();
+    value.moduleName = valuesA;
+    value.beanId = valuesB;
+    adhocForm(casId, casIndex, flowId, pmseInboxId, taskName, value);
+};
+var adhocForm = function(casId, casIndex, flowId, pmseInboxId, taskName, values){
+    showModalWindow(casId, casIndex, 'adhoc', flowId, pmseInboxId, taskName, values);
+};
+var claim_case = function(cas_id,cas_index){
+    var value = {};
+    value.cas_id = cas_id;
+    value.cas_index = cas_index;
+    var pmseInboxUrl = _App.api.buildURL('pmse_Inbox/engine_claim','',{},{});
+    _App.api.call('update', pmseInboxUrl, value,{
+        success: function (){
+            if(!_App.router.refresh()){
+                window.location.reload();
+            }
+        }
+    });
+};
+var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,taskName,values) {
+    var f,
+        w,
+        combo_users,
+        items,
+        proxy,
+        proxyUsers,
+        //textArea,
+        url,
+        wtitle,
+        wWidth,
+        wHeight,
+        casIdField,
+        casIndexField,
+        combo_type,
+        casFlowId,
+        casInboxId,
+        task_Name,
+        user_Name,
+        module_Name,
+        bean_Id,
+        full_Name,
+        valAux;
+
+    module_Name = new HiddenField({
+        name: 'moduleName',
+        value: values.moduleName
+    });
+    bean_Id = new HiddenField({
+        name: 'beanId',
+        value: values.beanId
+    });
+    if(values.name)
+    {
+        valAux=values.name;
+    }else{
+        valAux=values.full_name;
+    }
+    full_Name = new HiddenField({
+        name: 'full_name',
+        value: valAux
+    });
+    task_Name = new HiddenField({
+        name: 'taskName',
+        value: taskName
+    });
+
+    casIdField = new HiddenField({
+        name: 'cas_id',
+        value: casId
+    });
+
+    casIndexField = new HiddenField({
+        name: 'cas_index',
+        value: casIndex
+    });
+    casFlowId = new HiddenField({
+        name: 'flow_id',
+        value: flowId
+    });
+
+    casInboxId = new HiddenField({
+        name: 'inbox_id',
+        value: pmseInboxId
+    });
+    combo_users = new ComboboxField({
+        jtype: 'combobox',
+        label: translate('LBL_PMSE_FORM_LABEL_USER', 'pmse_Inbox'),
+        name: 'adhoc_user',
+        submit: true,
+        //change: hiddenUpdateFn,
+        proxy:null,
+        required: true,
+        helpTooltip: {
+            message: translate('LBL_PMSE_FORM_TOOLTIP_SELECT_USER', 'pmse_Inbox')
+        }
+
+    });
+    combo_type = new ComboboxField({
+        name: 'adhoc_type',
+        label: translate('LBL_PMSE_FORM_LABEL_TYPE', 'pmse_Inbox'),
+        options: [
+            {text: 'Round Trip', value: 'ROUND_TRIP'},
+            {text: 'One Way', value: 'ONE_WAY'}
+        ],
+        initialValue: 'ROUND_TRIP',
+        required: true
+    });
+
+    user_Name = new HiddenField({
+        name: 'user_name',
+        value: ''
+    });
+
+    if (wtype === 'reassign') {
+        url = 'pmse_Inbox/AdhocReassign';
+        wtitle = translate('LBL_PMSE_TITLE_AD_HOC', 'pmse_Inbox');
+        wWidth = 550;
+        wHeight = 300;
+        items = [
+            casIdField,
+            casIndexField,
+            casFlowId,
+            casInboxId,
+            combo_users,
+            combo_type,
+            task_Name,
+            user_Name,
+            module_Name,
+            bean_Id,
+            full_Name
+        ];
+        combo_users.setName('adhoc_user');
+    } else {
+        url = 'pmse_Inbox/ReassignForm';
+        wtitle = translate('LBL_PMSE_TITLE_REASSIGN', 'pmse_Inbox');
+        wWidth = 500;
+        wHeight = 250;
+        items = [
+            casIdField,
+            casIndexField,
+            casFlowId,
+            casInboxId,
+            combo_users,
+            textArea,
+            task_Name,
+            user_Name,
+            module_Name,
+            bean_Id,
+            full_Name
+        ];
+        combo_users.setName('reassign_user');
+        textArea.setName('reassign_comment');
+    }
+    flowId = (flowId) ? flowId : urlCase.id;
+    proxyUsers =  new SugarProxy({
+        url: url + '/users/' + flowId,
+        uid: null,
+        callback: null
+    });
+    combo_users.setProxy(proxyUsers);
+    proxy = new SugarProxy({
+        url: url,
+        uid : '',
+        callback: null
+    });
+    f = new Form({
+        //proxy: proxy,
+        items: items,
+        closeContainerOnSubmit: true,
+        buttons: [
+            {jtype: 'normal', caption: translate('LBL_PMSE_BUTTON_SAVE', 'pmse_Inbox') , handler: function () {
+                var cbDate=$("#reassign_user option:selected").html();
+                if(cbDate){
+                    items[6].setValue(cbDate);
+                }else{
+                    items[7].setValue($("#adhoc_user option:selected").html());
+                }
+                var urlIni = _App.api.buildURL(url, null, null);
+                attributes = {
+                    data: f.getData()
+                };
+                _App.api.call('update', urlIni, attributes, {
+                    success: function (response) {
+                        if (wtype == 'reassign')
+                        {
+                            w.close();
+                            _App.router.redirect('Home');
+                        }
+                        else if(wtype == 'adhoc')
+                        {
+                            if ($('#assigned_user_name').length)
+                            {
+                                $("#assigned_user_name").val(cbDate);
+                                w.close();
+                            }
+                            else
+                            {
+                                w.close();
+                                if(!_App.router.refresh()){
+                                    window.location.reload();
+                                }
+                            }
+                        }
+                    }
+                });
+                //--
+            }},
+            { jtype: 'normal', caption: translate('LBL_PMSE_BUTTON_CLOSE', 'pmse_Inbox'), handler: function () {
+                w.close();
+            }}
+        ],
+        labelWidth: 300,
+        callback : {
+            'loaded': function (data) {
+                casIdField.setValue(casId);
+                casIndexField.setValue(casIndex);
+
+                var users, aUsers = [{'text':translate('LBL_PMSE_FORM_OPTION_SELECT', 'pmse_Inbox'), 'value':''}];
+
+                //--
+                var urlGet = _App.api.buildURL(url+'/users/'+ flowId, null, null);
+                _App.api.call('read', urlGet, {}, {
+                    success: function (response) {
+                        aUsers = aUsers.concat(response.result);
+                        combo_users.setOptions(aUsers);
+                    }
+                });
+                //--
+                f.setProxy(proxy);
+            }
+        }
+    });
+    w = new Window({
+        width: wWidth,
+        height: wHeight,
+        modal: true,
+        title: wtitle
+    });
+    w.addPanel(f);
+    w.show();
+};
+
+
+function onSubmit(e) {
+    var result2 = true,
+        i,
+        ele,
+        msg = '<div>',
+        mp = new MessagePanel({
+            title: 'Warning',
+            wtype: 'Warning'
+        }),
+        restClient;
+    if (RECLAIMCASE){
+        //TODO RECLAIM CASE
+        restClient = new RestClient ();
+        restClient.setRestfulBehavior(SUGAR_REST);
+        if (!SUGAR_REST) {
+            restClient.setBackupAjaxUrl(SUGAR_AJAX_URL);
+        }
+        restClient.getCall({
+            url: SUGAR_URL + '/rest/v10/CrmData/validateReclaimCase',
+            id: '',
+            data: {cas_id: SBPM_CASE_ID, cas_index: SBPM_CASE_INDEX},
+            success: function (xhr, response) {
+                result = response.result;
+                if (!result) {
+                    mp.setTitle('Error');
+                    mp.setMessageType('Error');
+                    mp.setButtons([
+                        {
+                            jtype: 'normal',
+                            caption: translate('LBL_PMSE_BUTTON_OK'),
+                            handler: function () {
+                                location.href = SUGAR_URL;
+                            }
+                        }
+                    ]);
+                    if (response.message) {
+                        mp.setMessage(response.message);
+                    } else {
+                        mp.setMessage(translate('LBL_PMSE_LABEL_PLEASELOGINAGAIN'));
+                    }
+                    mp.show();
+                    result2 = false;
+
+                }
+            },
+            failure: function (xhr, response) {
+                mp.setTitle('Error');
+                mp.setMessageType('Error');
+                mp.setMessage(translate('LBL_PMSE_LABEL_ERROR_GENERIC'));
+                mp.show();
+                result2 = false;
+            }
+        });
+
+    } else {
+        if (PMVAL) {
+            for (i = 0; i < PMVAL.length; i += 1) {
+                ele = document.getElementById(PMVAL[i]);
+                if (ele && ele.value) {
+                    if (ele.value.trim && ele.value.trim() == '') {
+                        $(ele).addClass('required');
+                        msg += PMVAL[i] + '<br>';
+                        result2 = false;
+                    }
+                }
+            }
+        }
+        if (!result2) {
+            mp.setMessage('The following fields are required and must be properly filled:' + msg);
+            mp.show();
+        }
+    }
+
+    return result2;
+}
+
+$(function () {
+    $('#showCaseForm').attr("novalidate", "novalidate").on('submit', onSubmit);
+
+});

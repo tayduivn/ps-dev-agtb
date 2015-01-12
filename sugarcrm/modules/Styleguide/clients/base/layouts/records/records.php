@@ -34,12 +34,12 @@ $viewdefs['Styleguide']['base']['layout']['records'] = array(
                                         'availableToggles' => array(
                                             array(
                                                 'name' => 'list',
-                                                'icon' => 'icon-table',
+                                                'icon' => 'fa-table',
                                                 'label' => 'LBL_LISTVIEW',
                                             ),
                                             array(
                                                 'name' => 'activitystream',
-                                                'icon' => 'icon-time',
+                                                'icon' => 'fa-clock-o',
                                                 'label' => 'LBL_ACTIVITY_STREAM',
                                             ),
                                         ),

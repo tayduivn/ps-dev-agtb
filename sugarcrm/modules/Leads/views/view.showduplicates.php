@@ -35,12 +35,11 @@ class ViewShowDuplicates extends SugarView
         }
 
         parse_str($_SESSION['SHOW_DUPLICATES'],$_POST);
+        $post = array_map("securexss", $_POST);
+        foreach ($post as $k => $v) {
+            $_POST[$k] = $v;
+        }
         unset($_SESSION['SHOW_DUPLICATES']);
-
-        //BEGIN SUGARCRM flav=int ONLY
-        //C.L. - Comment this out here for now not sure if it's needed
-        //if((isset($_REQUEST['popup']) && $_REQUEST['popup'] == 'true') ||(isset($_POST['popup']) && $_POST['popup']==true)) insert_popup_header($theme);
-        //END SUGARCRM flav=int ONLY
 
         $lead = BeanFactory::getBean('Leads');
         require_once('modules/Leads/LeadFormBase.php');

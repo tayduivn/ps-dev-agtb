@@ -107,7 +107,6 @@ $mod_strings = array(
     'LBL_CREATED_USER' => 'Created User',
     'LBL_MODIFIED_USER' => 'Modified User',
     'LBL_CAMPAIGN_OPPORTUNITY' => 'Campaign Opportunity',
-    'LBL_CAMPAIGN_LINK' => 'Campaign Link',
     'LBL_PROJECT_SUBPANEL_TITLE' => 'Projects',
     'LABEL_PANEL_ASSIGNMENT' => 'Assignment',
     'LNK_IMPORT_OPPORTUNITIES' => 'Import Opportunities',
@@ -155,17 +154,8 @@ $mod_strings = array(
     'LBL_QUOTE_SUBPANEL_TITLE' => 'Quotes',
 
     // Config
-    'LBL_OPPS_CONFIG_VIEW_BY_LABEL' => 'View Opportunities By',
-    'LBL_OPPS_CONFIG_HELP_VIEW_BY_TEXT' => 'Opportunities can be viewed in two ways; as the Opportunity only, or as '
-        . 'the Opportunity with individual Revenue Line Items. Set the "View Opportunities By" setting to '
-        . '"Opportunities" if you want to ignore individual Revenue Line Items. Set the "View Opportunities By" '
-        . 'setting to "Revenue Line Items" if you want to view an Opportunity as a sum of the Revenue Line Items '
-        . 'linked to it.',
-    'LBL_OPPS_CONFIG_VIEW_BY_FIELD_TEXT' => 'Choose which way to view Opportunities',
-    'LBL_OPPS_CONFIG_VIEW_BY_WARNING_FIELD_TEXT' => 'Forecasts has already been configured. Changing this setting will ERASE all Forecast data!',
-    'LBL_OPPS_CONFIG_VIEW_BY_WARNING_ALERT_TEXT' => 'By clicking Confirm, you will be erasing ALL Forecast data. If you wish to erase all Forecast data and change your Opportunities View By settings, click Confirm. If not, click cancel to return to previous settings.',
-
-    'LBL_OPPS_CONFIG_VIEW_BY_DATE_ROLLUP' => 'How Should Date Closed Be Rolled Up?',
+    'LBL_OPPS_CONFIG_VIEW_BY_LABEL' => 'Opportunity Hierarchy',
+    'LBL_OPPS_CONFIG_VIEW_BY_DATE_ROLLUP' => 'Set the Expected Close Date field on the resulting Opportunity records to be the earliest or latest close dates of the existing Revenue Line Items',
 
     //Dashlet
     'LBL_PIPELINE_TOTAL_IS' => 'Pipeline Total is ',
@@ -174,8 +164,54 @@ $mod_strings = array(
     'LBL_NOTES_SUBPANEL_TITLE' => 'Notes',
 
     // Help Text
+    'LBL_OPPS_CONFIG_ALERT' => 'By clicking Confirm, you will be erasing ALL Forecasts data and changing your Opportunities View. If this is not what you intended, click cancel to return to previous settings.',
+    'LBL_OPPS_CONFIG_SALES_STAGE_1a' => 'If all Revenue Line Items are closed and at least one was won,',
+    'LBL_OPPS_CONFIG_SALES_STAGE_1b' => 'the Opportunity Sales Stage is set to "Closed Won".',
+    'LBL_OPPS_CONFIG_SALES_STAGE_2a' => 'If all Revenue Line Items are in the "Closed Lost" Sales Stage,',
+    'LBL_OPPS_CONFIG_SALES_STAGE_2b' => 'the Opportunity Sales Stage is set to "Closed Lost".',
+    'LBL_OPPS_CONFIG_SALES_STAGE_3a' => 'If any Revenue Line Items are still open,',
+    'LBL_OPPS_CONFIG_SALES_STAGE_3b' => 'the Opportunity will be marked with the least-advanced Sales Stage.',
+
 // BEGIN SUGARCRM flav=ent ONLY
 // BEGIN ENT/ULT
+
+    // Opps Config - View By Opportunities
+    'LBL_HELP_CONFIG_OPPS' => 'Sales and forecasting will be tracked as {{plural_module_name}}, and {{revenuelineitems_module}} will not be available.
+
+Changing the setting from "{{plural_module_name}} and {{revenuelineitems_module}}" to "{{plural_module_name}}" will result in existing data being changed, added, and removed as follows:
+
+- In addition to the information already summarized in each {{module_name}}, the following information from the {{revenuelineitems_module}} will be will be saved in the {{module_name}}:
+    - If all {{revenuelineitems_module}} are in the "Closed Lost" Sales Stage, the {{module_name}} will be marked as "Closed Lost"
+    - If all {{revenuelineitems_module}} are closed and at least one was won, the {{module_name}} will be marked as "Closed Won"
+    - If any of the {{revenuelineitems_module}} are still open, the {{module_name}} will be marked with the least-advanced sales stage.
+- A {{notes_singular_module}} record will be created and attached to the {{module_name}} to preserve the individual {{revenuelineitems_module}} values for the following fields:
+    - Likely Amount, Best Amount, Worst Amount
+    - Expected Close Date
+    - Next Step
+    - Sales Stage
+    - Probability
+    - Please Note: Custom fields in the {{revenuelineitems_module}} will not be preserved.
+- All {{revenuelineitems_module}} will be removed from the system.
+- All {{forecasts_singular_module}} data will be removed and forecasting starts anew.
+
+',
+
+    // Opps Config - View By Opportunities And RLIs
+    'LBL_HELP_CONFIG_RLIS' => 'Sales will be tracked as {{plural_module_name}} with {{revenuelineitems_module}}. An {{module_name}} consists of one or more {{revenuelineitems_module}}. This affords sales to be detailed in separate line items, and summarized in an {{module_name}}. {{forecasts_module}} will be created using {{revenuelineitems_module}}.
+
+Changing the setting from "{{plural_module_name}}" to "{{plural_module_name}} and {{revenuelineitems_module}}" will result in existing data being changed, added, and removed as follows:
+
+- Your existing {{plural_module_name}} will each have one {{revenuelineitems_singular_module}} created and attached to the {{module_name}}.
+- The following fields and values will be duplicated from the existing {{module_name}} records to the new {{revenuelineitems_singular_module}} records:
+    - Likely Amount, Best Amount, Worst Amount
+    - Expected Close Date
+    - Next Step
+- The following fields and values will be moved from the existing {{module_name}} records to the new {{revenuelineitems_singular_module}} records:
+    - Sales Stage
+    - Probability
+- All {{forecasts_singular_module}} data will be removed and forecasting starts anew.
+
+ ',
     // List View Help Text
     'LBL_HELP_RECORDS' => 'The {{plural_module_name}} module allows you to track individual sales and the line items belonging to those sales from start to finish. Each {{module_name}} record represents a header for a group of {{revenuelineitems_module}} as well as relating to other important records such as {{quotes_module}}, {{contacts_module}}, etc. Each {{revenuelineitems_singular_module}} is the prospective sale of a particular product and includes relevant sale data. Each {{revenuelineitems_singular_module}} will typically progress through several Sales Stages until it is marked either "Closed Won" or "Closed Lost". The {{module_name}} record reflects the amount and expected close date of its {{revenuelineitems_module}}. {{plural_module_name}} and {{revenuelineitems_module}} can be leveraged even further by using Sugar\'s {{forecasts_singular_module}}ing module to understand and predict sales trends as well as focus work to achieve sales quotas.',
 

@@ -8,11 +8,14 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+/**
+ * @class View.Views.Base.ForecastsListHeaderpaneView
+ * @alias SUGAR.App.view.layouts.BaseForecastsListHeaderpaneView
+ * @extends View.Views.Base.ListHeaderpaneView
+ */
 ({
-    /**
-     * Who is my parent
-     */
     extendsFrom: 'HeaderpaneView',
+
     plugins: ['FieldErrorCollection'],
 
     /**
@@ -56,8 +59,10 @@
         }, this);
 
         this.context.on('plugin:fieldErrorCollection:hasFieldErrors', function(collection, hasErrors) {
-            this.fieldHasErrorState = hasErrors;
-            this.setButtonStates();
+            if(this.fieldHasErrorState !== hasErrors) {
+                this.fieldHasErrorState = hasErrors;
+                this.setButtonStates();
+            }
         }, this)
 
         this.context.on('button:print_button:click', function() {
@@ -65,27 +70,34 @@
         }, this);
 
         this.context.on('forecasts:worksheet:is_dirty', function(worksheet_type, is_dirty) {
-            this.saveBtnDisabled = !is_dirty;
-            this.commitBtnDisabled = !is_dirty;
-            this.setButtonStates();
+            is_dirty = !is_dirty;
+            if (this.saveBtnDisabled !== is_dirty || this.commitBtnDisabled !== is_dirty) {
+                this.saveBtnDisabled = is_dirty;
+                this.commitBtnDisabled = is_dirty;
+                this.setButtonStates();
+            }
         }, this);
 
         this.context.on('button:commit_button:click button:save_draft_button:click', function() {
-            this.saveBtnDisabled = true;
-            this.commitBtnDisabled = true;
-            this.setButtonStates();
+            if (!this.saveBtnDisabled || !this.commitBtnDisabled) {
+                this.saveBtnDisabled = true;
+                this.commitBtnDisabled = true;
+                this.setButtonStates();
+            }
         }, this);
 
         this.context.on('forecasts:worksheet:saved', function(totalSaved, worksheet_type, wasDraft){
-            if(wasDraft === true) {
+            if(wasDraft === true && this.commitBtnDisabled) {
                 this.commitBtnDisabled = false;
                 this.setButtonStates();
             }
         }, this);
 
         this.context.on('forecasts:worksheet:needs_commit', function(worksheet_type) {
-            this.commitBtnDisabled = false;
-            this.setButtonStates();
+            if (this.commitBtnDisabled) {
+                this.commitBtnDisabled = false;
+                this.setButtonStates();
+            }
         }, this);
 
         this._super("bindDataChange");

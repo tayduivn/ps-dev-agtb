@@ -155,6 +155,10 @@ $config['blackList']['pro'] = array(
 'sugarcrm/modules/Connectors/connectors/sources/ext/rest/linkedin'=>1,
 'sugarcrm/modules/Connectors/connectors/sources/ext/rest/insideview'=>1,
 'sugarcrm/modules/Connectors/connectors/sources/ext/eapm/facebook'=>1,
-                            
+
+'sugarcrm/modules/pmse_Business_Rules'=>1,
+'sugarcrm/modules/pmse_Emails_Templates'=>1,
+'sugarcrm/modules/pmse_Inbox'=>1,
+'sugarcrm/modules/pmse_Project'=>1,
 );
 $build = 'pro';

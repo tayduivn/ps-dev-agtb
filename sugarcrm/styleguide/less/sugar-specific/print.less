@@ -129,7 +129,7 @@
     }
     .sidebar-content .dashboard .preview-headerbar h1 div.dropdown> a {
       display: block !important;
-      .icon-caret-down {
+      .fa-caret-down {
         display: none;
       }
     }
@@ -197,6 +197,10 @@
         overflow-x: visible;
         overflow-y: visible;
         position: static;
+
+        .headerpane span[data-type="image"], .headerpane span[data-type="avatar"] {
+          padding-left: 0;
+        }
       }
       #footer {
         display: none !important;

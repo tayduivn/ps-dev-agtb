@@ -63,6 +63,9 @@
       height: 20px;
     }
   }
+  .select2-choice-type {
+    margin: 0 2px 0 0;
+  }
 
   &.select2-choices-pills .select2-search-choice,
   &.select2-container-multi.select2-choices-pills-close .select2-search-choice {
@@ -72,18 +75,15 @@
     border: none;
     .box-shadow(none);
     line-height: 12px;
-    .border-radius(20px);
+    .border-radius(11px);
     background: @gray;
     color: @white;
     padding: 2px 4px 2px 6px;
     white-space: nowrap;
     &.select2-search-choice-focus {
-      border-color: @linkColor !important;
       outline: 0;
       outline: ~"thin dotted \9";
-      .border-radius(11px);
-      .box-shadow(none);
-      background-color: @dropdownLinkBackgroundHover;
+      background: @grayDark;
     }
   }
 
@@ -135,6 +135,7 @@
         display: inline;
         vertical-align: middle;
       }
+      a,
       a.select2-search-choice-close:hover {
         color: @white;
       }
@@ -270,7 +271,7 @@
     }
   }
   .select2-select-legend {
-    .icon-plus {
+    .fa-plus {
       margin-top: 3px;
       line-height: 4px;
     }
@@ -528,6 +529,9 @@
     right: 17px;
     left: auto;
     background: transparent;
+  }
+  .input-append .add-on.select2 {
+    left: -38px;
   }
 }
 

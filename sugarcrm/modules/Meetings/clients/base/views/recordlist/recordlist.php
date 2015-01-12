@@ -53,7 +53,7 @@ $viewdefs['Meetings']['base']['view']['recordlist'] = array(
                 'css_class' => 'btn',
                 'tooltip' => 'LBL_PREVIEW',
                 'event' => 'list:preview:fire',
-                'icon' => 'icon-eye-open',
+                'icon' => 'fa-eye',
                 'acl_action' => 'view',
             ),
             array(
@@ -70,7 +70,7 @@ $viewdefs['Meetings']['base']['view']['recordlist'] = array(
             array(
                 'type' => 'rowaction',
                 'name' => 'edit_button',
-                'icon' => 'icon-pencil',
+                'icon' => 'fa-pencil',
                 'label' => 'LBL_EDIT_BUTTON',
                 'event' => 'list:editrow:fire',
                 'acl_action' => 'edit',
@@ -79,6 +79,7 @@ $viewdefs['Meetings']['base']['view']['recordlist'] = array(
                 'type' => 'closebutton',
                 'name' => 'record-close',
                 'label' => 'LBL_LIST_CLOSE',
+                'closed_status' => 'Held',
                 'acl_action' => 'edit',
             ),
             array(
@@ -89,7 +90,7 @@ $viewdefs['Meetings']['base']['view']['recordlist'] = array(
             ),
             array(
                 'type' => 'rowaction',
-                'icon' => 'icon-trash',
+                'icon' => 'fa-trash-o',
                 'event' => 'list:deleterow:fire',
                 'label' => 'LBL_DELETE_BUTTON',
                 'acl_action' => 'delete',

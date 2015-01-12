@@ -16,7 +16,7 @@ $viewdefs['base']['view']['profileactions'] = array(
         'label' => 'LBL_PROFILE',
         'css_class' => 'profileactions-profile',
         'acl_action' => 'view',
-        'icon' => 'icon-user',
+        'icon' => 'fa-user',
         'submenu' => '',
     ),
     array(
@@ -24,7 +24,7 @@ $viewdefs['base']['view']['profileactions'] = array(
         'label' => 'LBL_EMPLOYEES',
         'css_class' => 'profileactions-employees',
         'acl_action' => 'list',
-        'icon' => 'icon-group',
+        'icon' => 'fa-users',
         'submenu' => '',
     ),
     array(
@@ -32,7 +32,7 @@ $viewdefs['base']['view']['profileactions'] = array(
         'label' => 'LBL_ADMIN',
         'css_class' => 'administration',
         'acl_action' => 'admin',
-        'icon' => 'icon-cogs',
+        'icon' => 'fa-cogs',
         'submenu' => '',
     ),
     array(
@@ -40,14 +40,14 @@ $viewdefs['base']['view']['profileactions'] = array(
         'label' => 'LNK_ABOUT',
         'css_class' => 'profileactions-about',
         'acl_action' => 'view',
-        'icon' => 'icon-info-sign',
+        'icon' => 'fa-info-circle',
         'submenu' => '',
     ),
     array(
         'route' => '#logout/?clear=1',
         'label' => 'LBL_LOGOUT',
         'css_class' => 'profileactions-logout',
-        'icon' => 'icon-signout',
+        'icon' => 'fa-sign-out',
         'submenu' => '',
     ),
 );

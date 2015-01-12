@@ -39,8 +39,8 @@ $(window).bind("load", function () {
             $('#' + uploader.stages[uploader.stage] + ' h1')
                 .addClass('color_red')
                 .find('i')
-                .removeClass('icon-cog color_yellow icon-spin')
-                .addClass('icon-exclamation-sign')
+                .removeClass('fa-cog color_yellow fa-spin')
+                .addClass('fa-exclamation-circle')
                 .addClass('color_red');
             $('#upload-indicator').hide();
             uploader.clearStatusUpdate();
@@ -56,13 +56,13 @@ $(window).bind("load", function () {
                 $('#' + bar + ' h1')
                     .addClass('color_green')
                     .find('i')
-                    .removeClass('icon-cog color_yellow')
-                    .removeClass('icon-spin')
-                    .addClass('icon-ok-sign')
+                    .removeClass('fa-cog color_yellow')
+                    .removeClass('fa-spin')
+                    .addClass('fa-check-circle')
                     .addClass('color_green');
             } else {
                 $bar.addClass('in-progress');
-                $('#' + bar + ' h1 i').addClass('icon-spin');
+                $('#' + bar + ' h1 i').addClass('fa-spin');
             }
             $bar.width(percent + '%');
         };
@@ -259,6 +259,10 @@ $(window).bind("load", function () {
            $('#uploadForm').submit();
         });
 
+        $('a[name="export_button"]').on('click', function() {
+            $('#exportForm').submit();
+        });
+
         $('input[type="file"]').on('change', function() {
             var $this = $(this),
                 text = ($this.val().split('\\').pop() || 'No file chosen...');
@@ -304,7 +308,7 @@ $(window).bind("load", function () {
         </div>
         <div class="modal-body record">
             <div id="unpack" class="row-fluid ">
-                <h1><i class="icon-cog color_yellow"></i>Upload the upgrade package</h1>
+                <h1><i class="fa fa-cog color_yellow"></i>Upload the upgrade package</h1>
 
                 <p>Please provide the upgrade package files. <a target="_blank" href="http://support.sugarcrm.com/03_Training/06_Upgrade_Training/" target="_blank">Learn more...</a></p>
                 <form id="uploadForm">
@@ -353,7 +357,7 @@ $(window).bind("load", function () {
         </div>
         <div class="modal-body record">
             <div id="unpack" class="row-fluid">
-                <h1 class="color_green"><i class="icon-ok-sign color_green"></i>Upload the upgrade package</h1>
+                <h1 class="color_green"><i class="fa fa-check-circle color_green"></i>Upload the upgrade package</h1>
 
                 <div class="upgrade-check">
                     <div class="progress progress-success ">
@@ -362,7 +366,7 @@ $(window).bind("load", function () {
                 </div>
             </div>
             <div id="pre" class="row-fluid">
-                <h1><i class="icon-cog color_yellow"></i>Pre-upgrade</h1>
+                <h1><i class="fa fa-cog color_yellow"></i>Pre-upgrade</h1>
 
                 <div class="upgrade-check">
                     <div class="progress progress-success ">
@@ -371,7 +375,7 @@ $(window).bind("load", function () {
                 </div>
             </div>
             <div id="commit" class="row-fluid ">
-                <h1><i class="icon-cog color_yellow"></i>Upgrade</h1>
+                <h1><i class="fa fa-cog color_yellow"></i>Upgrade</h1>
 
                 <div class="upgrade-check">
                     <div class="progress progress-success ">
@@ -380,7 +384,7 @@ $(window).bind("load", function () {
                 </div>
             </div>
             <div id="post" class="row-fluid ">
-                <h1><i class="icon-cog color_yellow"></i>Post-upgrade</h1>
+                <h1><i class="fa fa-cog color_yellow"></i>Post-upgrade</h1>
 
                 <div class="upgrade-check">
                     <div class="progress progress-success ">
@@ -389,7 +393,7 @@ $(window).bind("load", function () {
                 </div>
             </div>
             <div id="cleanup" class="row-fluid ">
-                <h1><i class="icon-cog color_yellow"></i>Cleanup</h1>
+                <h1><i class="fa fa-cog color_yellow"></i>Cleanup</h1>
 
                 <div class="upgrade-check">
                     <div class="progress progress-success ">
@@ -400,6 +404,11 @@ $(window).bind("load", function () {
         </div>
         <div class="modal-footer">
           <span sfuuid="25" class="detail">
+            <form id="exportForm" class="invisible">
+                <input type="hidden" name="action" value="exportlog">
+                <input type="hidden" name="token" value="<?php echo $token ?>">
+            </form>
+            <a class="btn btn-invisible" href="javascript:void(0);" name="export_button">Export Log</a>
             <a class="btn btn-primary disabled" href="index.php" data-action="gohome">Go to Home Page</a>
           </span>
         </div>

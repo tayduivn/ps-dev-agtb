@@ -43,7 +43,7 @@ $dictionary['Email'] = array(
             'vname' => 'LBL_ASSIGNED_TO',
             'type' => 'id',
             'isnull' => false,
-            'reportable' => true,
+            'reportable' => false,
             'comment' => 'User ID that last modified record',
         ),
         'assigned_user_name' => array(

@@ -899,26 +899,6 @@ describe("Record View", function () {
         });
     });
 
-    describe('_widenLastCell', function () {
-        it('should widen the last record cell', function() {
-            var fullname = $('<div></div>').addClass('record-cell'),
-                text = $('<div></div>').addClass('record-cell');
-
-            view._widenLastCell($([fullname, text]));
-
-            expect(text.prop('style').width).toBe('100%');
-        });
-
-        it('should widen the first record cell if the last record cell is hidden', function() {
-            var fullname = $('<div></div>').addClass('record-cell'),
-                text = $('<div></div>').addClass('record-cell hide');
-
-            view._widenLastCell($([fullname, text]));
-
-            expect(fullname.prop('style').width).toBe('100%');
-        });
-    });
-
     it('should not return my_favorite field when calling getFieldNames', function () {
         var fields = view.getFieldNames(null, true);
         expect(_.indexOf(fields, 'my_favorite')).toEqual(-1);

@@ -71,7 +71,8 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
   array (
     'name' => 'join_url',
     'vname' => 'LBL_URL',
-    'type' => 'text',
+    'type' => 'varchar',
+    'len' => '600',
     'comment' => 'Join URL',
     'studio' => 'false',
     'reportable' => false,
@@ -80,7 +81,8 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
   array (
     'name' => 'host_url',
     'vname' => 'LBL_HOST_URL',
-    'type' => 'text',
+    'type' => 'varchar',
+    'len' => '600',
     'comment' => 'Host URL',
     'studio' => 'false',
     'reportable' => false,
@@ -193,6 +195,7 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
     'options' => 'meeting_status_dom',
     'comment' => 'Meeting status (ex: Planned, Held, Not held)',
     'default' => 'Planned',
+    'duplicate_on_record_copy' => 'no',
   ),
   'type' =>
    array (
@@ -243,7 +246,7 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
     'source' => 'non-db',
     'comment' => 'checkbox indicating whether or not the reminder value is set (Meta-data only)',
     'massupdate' => false,
-    'studio' => array('wirelesseditview'=>false),
+    'studio' => false,
    ),
   'reminder_time' =>
   array (
@@ -265,7 +268,7 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
     'source' => 'non-db',
     'comment' => 'checkbox indicating whether or not the email reminder value is set (Meta-data only)',
     'massupdate' => false,
-    'studio' => array('wirelesseditview'=>false),
+    'studio' => false,
    ),  
   'email_reminder_time' =>
   array (
@@ -296,7 +299,8 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
     'type' => 'varchar',
     'len' => '255',
     'reportable' => false,
-    'comment' => 'When the Sugar Plug-in for Microsoft Outlook syncs an Outlook appointment, this is the Outlook appointment item ID'
+      'comment' => 'When the Sugar Plug-in for Microsoft Outlook syncs an Outlook appointment, this is the Outlook appointment item ID',
+      'studio' => false,
   ),
    'sequence' =>
   array (
@@ -307,15 +311,8 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
     'reportable' => false,
     'default'=>0,
     'comment' => 'Meeting update sequence for meetings as per iCalendar standards',
-      //BEGIN SUGARCRM flav=pro ONLY
-      'studio' => array(
-          'related' => false,
-          'formula' => false,
-          'rollup' => false,
-      ),
-      //END SUGARCRM flav=pro ONLY
+      'studio' => false,
   ),
-
   'contact_name' =>
   array (
     'name' => 'contact_name',
@@ -333,8 +330,9 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
     'dbType' => 'varchar',
     'source'=>'non-db',
     'len' => 36,
-    'studio' => array('required' => false, 'listview'=>true, 'visible' => false),
-	),
+    'importable' => 'false',
+    'studio' => false,
+    ),
 
   'contacts' =>
   array (
@@ -472,6 +470,7 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
         'link' => 'contacts',
         'rname' => 'id',
 		'source' => 'non-db',
+        'studio' => false,
 	),
 	'repeat_type' =>
 	array(
@@ -528,8 +527,6 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
 		'vname' => 'LBL_CALENDAR_REPEAT_COUNT',
 		'type' => 'int',
 		'len' => 7,
-        'default' => 10,
-        'validation' => array('type' => 'range', 'min' => 1),
 		'comment' => 'Number of recurrence',
 		'importable' => 'false',
 		'massupdate' => false,
@@ -579,6 +576,7 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
                 'users',
             ),
             'order_by' => 'name:asc',
+            'studio' => false,
         ),
     'auto_invite_parent' => array(
         'name' => 'auto_invite_parent',

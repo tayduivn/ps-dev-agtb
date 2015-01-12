@@ -1,5 +1,5 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
+
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -680,9 +680,9 @@ class SugarFieldTeamset extends SugarFieldBase {
 
         $bean->team_id = $primaryTeamId;
 
-        $bean->load_relationship('teams');
-        $method = 'replace';
-        $bean->teams->replace($teamIds, array(), false);
+        if ($bean->load_relationship('teams')) {
+            $bean->teams->replace($teamIds, array(), false);
+        };
     }
 
     public function apiMassUpdate(SugarBean $bean, array $params, $fieldName, $properties) {

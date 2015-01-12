@@ -30,13 +30,19 @@ describe('Module Menu', function() {
                 fields: { name: {} }
             };
         });
-        var fetchStub = sinon.collection.stub(view.collection, 'fetch', function(options) {
+
+        var favStub = sinon.collection.stub(view.getCollection('favorites'), 'fetch', function(options) {
+            options.success.call(this, []);
+        });
+
+        var recentStub = sinon.collection.stub(view.getCollection('recently-viewed'), 'fetch', function(options) {
             options.success.call(this, []);
         });
 
         view.$el.trigger('shown.bs.dropdown');
 
-        expect(fetchStub.calledTwice).toBeTruthy();
+        expect(favStub.calledOnce).toBeTruthy();
+        expect(recentStub.calledOnce).toBeTruthy();
     });
 
     it('should not populate favorites on modules that don\'t support it', function() {
@@ -166,5 +172,23 @@ describe('Module Menu', function() {
         expect(windowOpenStub).toHaveBeenCalledWith('#' + moduleName, '_blank');
         expect(refreshStub).not.toHaveBeenCalled();
         expect(navigateStub).not.toHaveBeenCalled();
+    });
+
+    it('should open new tab for external link', function() {
+        var windowOpenStub = sinon.collection.stub(window, 'open'),
+            testlink = 'http://testdomain.com';
+
+        sinon.collection.stub(app.metadata, 'getModule', function() {
+            return { menu: { header: {meta: [{
+                label: 'LBL_MENU_1',
+                route : testlink,
+                openwindow: true
+            }]}}};
+        });
+
+        view.render();
+        view.$('[data-route]').click();
+
+        expect(windowOpenStub).toHaveBeenCalledWith(testlink, '_blank');
     });
 });

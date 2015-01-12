@@ -9,16 +9,20 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
+ * DeleterecurrencesbuttonField is a field for Meetings/Calls for the ability to delete all recurring events for a parent record
+ *
+ * FIXME: This component will be moved out of clients/base folder as part of MAR-2274 and SC-3593
+ *
  * @class View.Fields.Base.DeleterecurrencesbuttonField
  * @alias SUGAR.App.view.fields.BaseDeleterecurrencesbuttonField
- * @extends View.Fields.Base.Rowaction
+ * @extends View.Fields.Base.RowactionField
  */
 ({
     extendsFrom: 'RowactionField',
 
     /**
      * @inheritdoc
-     * @param options
+     * @param {Object} options
      */
     initialize: function(options) {
         this._super('initialize', [options]);
@@ -28,7 +32,7 @@
     /**
      * @inheritdoc
      *
-     * Button should be hidden if meeting displayed is not recurring
+     *  The field is hidden if event is not a recurring calendar event
      */
     _render: function() {
         if (_.isEmpty(this.model.get('repeat_type'))) {
@@ -39,7 +43,7 @@
     },
 
     /**
-     * Re-render the field when the status on the record changes.
+     * Renders the field when the status on the record changes.
      */
     bindDataChange: function() {
         if (this.model) {
@@ -82,15 +86,17 @@
     },
 
     /**
-     * Format the message displayed in the alert.
+     * Formats the messages to display in the alerts when deleting recurrences.
      *
-     * @return {Object} Confirmation and success messages.
+     * @return {Object} The list of messages.
+     * @return {string} return.confirmation Confirmation message.
+     * @return {string} return.success Success message.
      */
     getDeleteMessages: function() {
-        var messages = {},
-            model = this.model,
-            name = app.utils.getRecordName(model),
-            context = app.lang.get('LBL_MODULE_NAME_SINGULAR', model.module).toLowerCase() + ' ' + name.trim();
+        var messages = {};
+        var model = this.model;
+        var name = app.utils.getRecordName(model);
+        var context = app.lang.getModuleName(model.module).toLowerCase() + ' ' + name.trim();
 
         messages.confirmation = app.lang.get('LBL_CONFIRM_REMOVE_ALL_RECURRENCES', this.module);
         messages.success = app.utils.formatString(app.lang.get('NTC_DELETE_SUCCESS'), [context]);

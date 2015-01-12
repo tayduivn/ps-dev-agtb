@@ -9,19 +9,25 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * @class View.Fields.Base.CloseButtonField
- * @alias SUGAR.App.view.fields.BaseCloseButtonField
- * @extends View.Fields.Base.Rowaction
+ * ClosebuttonField is a field for Meetings/Calls/Tasks that handles setting a value on a field in the model based on meta data with
+ * an option to create a new record
+ *
+ * FIXME: This component will be moved out of clients/base folder as part of MAR-2274 and SC-3593
+ *
+ * @class View.Fields.Base.ClosebuttonField
+ * @alias SUGAR.App.view.fields.BaseClosebuttonField
+ * @extends View.Fields.Base.RowactionField
  */
+
+
 ({
     extendsFrom: 'RowactionField',
 
-    closedStatus: 'Completed', //status indicating that the record is closed or complete
-
     /**
-     * Setup event handlers.
+     * Setup click event handlers.
      * @inheritdoc
-     * @param options
+     *
+     * @param {Object} options
      */
     initialize: function(options) {
         this.events = _.extend({}, this.events, options.def.events, {
@@ -29,13 +35,14 @@
             'click [name="record-close-new"]': 'closeNewClicked'
         });
 
-        this._super("initialize", [options]);
+        this._super('initialize', [options]);
         this.type = 'rowaction';
     },
 
     /**
      * Handle record close event.
-     * @param event
+     *
+     * @param {Event} event The click event for the close button
      */
     closeClicked: function(event) {
         this._close(false);
@@ -43,39 +50,68 @@
 
     /**
      * Handle record close and create new event.
-     * @param event
+     *
+     * @param {Event} event The click event for the close and create new button
      */
     closeNewClicked: function(event) {
         this._close(true);
     },
 
     /**
-     * Should not show button to close a record if the record is already closed.
      * @inheritdoc
-     * @returns {Boolean} true if it has aclAccess and status is not closed
+     *
+     * Button should be hidden if record displayed is already closed
      */
-    hasAccess: function() {
-        var acl = this._super("hasAccess");
-        return acl && this.model.get('status') !== this.closedStatus;
+    _render: function() {
+        if (this.model.get(this.getStatusFieldName()) === this.getClosedStatus()) {
+            this.hide();
+        } else {
+            this._super('_render');
+        }
+    },
+
+    /**
+     * Retrieve the closed status value from the fields meta definition
+     *
+     * @return {string}
+     */
+    getClosedStatus: function() {
+        return ((this.def && this.def.closed_status) ?
+            this.def.closed_status :
+            'Completed');
+    },
+
+    /**
+     * Retrieve the status field name from the field meta definition.
+     * Defaults to 'status'
+     *
+     * @return {string}
+     */
+    getStatusFieldName: function() {
+        return ((this.def && this.def.status_field_name) ?
+            this.def.status_field_name :
+            'status');
     },
 
     /**
      * Close the record by setting the appropriate status on the record.
-     * @param {boolean} createNew - Open a new drawer to create a record after close.
+     *
+     * @param {boolean} createNew Flag for whether to open a new drawer to create a
+     *   record after close.
      * @private
      */
-    _close: function (createNew) {
+    _close: function(createNew) {
         var self = this;
 
-        this.model.set('status', this.closedStatus);
+        this.model.set(this.getStatusFieldName(), this.getClosedStatus());
         this.model.save({}, {
-            success: function () {
+            success: function() {
                 self.showSuccessMessage();
                 if (createNew) {
                     self.openDrawerToCreateNewRecord();
                 }
             },
-            error: function (error) {
+            error: function(error) {
                 self.showErrorMessage();
                 app.logger.error('Record failed to close. ' + error);
 
@@ -90,15 +126,16 @@
      */
     openDrawerToCreateNewRecord: function() {
         var self = this,
+            statusField = this.getStatusFieldName(),
             module = app.metadata.getModule(this.model.module),
             prefill = app.data.createBean(this.model.module);
 
         prefill.copy(this.model);
 
-        if (module.fields.status && module.fields.status['default']) {
-            prefill.set('status', module.fields.status['default']);
+        if (module.fields[statusField] && module.fields[statusField]['default']) {
+            prefill.set(statusField, module.fields[statusField]['default']);
         } else {
-            prefill.unset('status');
+            prefill.unset(statusField);
         }
 
         app.drawer.open({
@@ -118,8 +155,37 @@
 
     /**
      * Display a success message.
+     *
+     * This message includes the value the status field was set to - so we need
+     * to retrieve the translated string (if there is one).
      */
-    showSuccessMessage: function() {},
+    showSuccessMessage: function() {
+        var statusField = this.getStatusFieldName(),
+            statusFieldMetadata = app.metadata.getModule(this.module).fields[statusField],
+            optionStrings,
+            statusValue;
+
+        // if this is an enum field, retrieve translated value
+        if (statusFieldMetadata && statusFieldMetadata.options) {
+            optionStrings = app.lang.getAppListStrings(statusFieldMetadata.options);
+            statusValue = optionStrings[this.getClosedStatus()].toLocaleLowerCase();
+        } else {
+            // not an enum field - just display lowercase version of the value
+            statusValue = this.getClosedStatus().toLocaleLowerCase();
+        }
+
+        app.alert.show('status_change_success', {
+            level: 'success',
+            autoClose: true,
+            messages: app.lang.get('TPL_STATUS_CHANGE_SUCCESS',
+                this.module,
+                {
+                    moduleSingular: app.lang.getModuleName(this.module),
+                    status: statusValue
+                }
+            )
+        });
+    },
 
     /**
      * Display an error message.
@@ -134,9 +200,9 @@
     /**
      * Re-render the field when the status on the record changes.
      */
-    bindDataChange: function () {
+    bindDataChange: function() {
         if (this.model) {
-            this.model.on("change:status", this.render, this);
+            this.model.on('change:status', this.render, this);
         }
     }
 })

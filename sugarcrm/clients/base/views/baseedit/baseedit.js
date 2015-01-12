@@ -69,7 +69,7 @@
                         controlGroup.find('.help-block').append(app.error.getErrorString(errorName, errorContext));
                     });
 
-                    $('<span class="add-on"><i class="icon-exclamation-sign"></i></span>').insertBefore(controlGroup.find('.help-block'));
+                    $('<span class="add-on"><i class="fa fa-exclamation-circle"></i></span>').insertBefore(controlGroup.find('.help-block'));
                 }
             }
         });

@@ -70,9 +70,12 @@
             baseRateFieldValue = app.metadata.getCurrency(currencyFieldValue).conversion_rate;
             this.model.set(baseRateField, baseRateFieldValue);
 
-            if (_.isFunction(this.model.setDefaultAttribute)) {
-                this.model.setDefaultAttribute(currencyField, currencyFieldValue);
-                this.model.setDefaultAttribute(baseRateField, baseRateFieldValue);
+            // Modules such as `Forecasts` uses models that aren't `Data.Bean`
+            if (_.isFunction(this.model.setDefault)) {
+                var defaults = {};
+                defaults[currencyField] = currencyFieldValue;
+                defaults[baseRateField] = baseRateFieldValue;
+                this.model.setDefault(defaults);
             }
         }
         // hide currency dropdown on list views

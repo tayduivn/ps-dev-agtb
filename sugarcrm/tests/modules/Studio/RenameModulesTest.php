@@ -15,8 +15,9 @@ require_once('modules/Studio/wizards/RenameModules.php');
 
 class RenameModulesTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    private $language;
+    private $language = 'en_us';
     private $language_contents;
+    private $global_language_contents;
 
     public function setup()
     {
@@ -33,7 +34,10 @@ class RenameModulesTest extends Sugar_PHPUnit_Framework_TestCase
             }
         }
 
-        $this->language = 'en_us';
+        // check the global lang file
+        if (file_exists("custom/include/language/" . $this->language . ".lang.php")) {
+            $this->global_language_contents = file_get_contents("custom/include/language/" . $this->language . ".lang.php");
+        }
     }
 
     public function tearDown()
@@ -50,6 +54,10 @@ class RenameModulesTest extends Sugar_PHPUnit_Framework_TestCase
             {
                 SugarAutoLoader::put("custom/modules/{$key}/language/en_us.lang.php", $contents, true);
             }
+        }
+
+        if(!empty($this->global_language_contents)) {
+            SugarAutoLoader::put("custom/include/language/" . $this->language . ".lang.php", $this->global_language_contents, true);
         }
         SugarTestHelper::tearDown();
     }

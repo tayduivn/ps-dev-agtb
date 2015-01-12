@@ -51,7 +51,7 @@ $viewdefs['Emails']['base']['view']['compose-addressbook-list'] = array(
                 'css_class'  => 'btn',
                 'tooltip'    => 'LBL_PREVIEW',
                 'event'      => 'list:preview:fire',
-                'icon'       => 'icon-eye-open',
+                'icon'       => 'fa-eye',
                 'acl_action' => 'view',
             ),
         ),

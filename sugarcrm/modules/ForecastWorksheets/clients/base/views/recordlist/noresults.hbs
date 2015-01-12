@@ -11,6 +11,17 @@
  */
 --}}
 <tr>
-    <td class="tcenter" colspan="{{this._fields.visible.length}}">{{str "LBL_LISTVIEW_NO_RECORDS"}}</td>
-    <td>&nbsp;</td>
+    {{#if collection.dataFetched}}
+        {{#eq filteredCollection.length 0}}
+            <td class="tcenter" colspan="{{this._fields.visible.length}}">{{str "LBL_LISTVIEW_NO_RECORDS"}}</td>
+            <td>&nbsp;</td>
+        {{/eq}}
+    {{else}}
+        <td class="tcenter" colspan="{{this._fields.visible.length}}">
+            <div class="loading">
+                {{str "LBL_ALERT_TITLE_LOADING"}}<i class="l1">&period;</i><i class="l2">&period;</i><i class="l3">&period;</i>
+            </div>
+        </td>
+        <td>&nbsp;</td>
+    {{/if}}
 </tr>

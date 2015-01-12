@@ -80,7 +80,7 @@
      * if possible to create a record with context.
      *
      * @param {String} module Module name.
-     * @return {Array/Undefined}
+     * @return {Array|undefined}
      */
     getRelatedContext: function(module) {
         var meta = app.metadata.getModule(module),

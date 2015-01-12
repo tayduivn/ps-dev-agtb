@@ -13,6 +13,7 @@ nv.models.paretoChart = function() {
       showLegend = true,
       tooltip = null,
       tooltips = true,
+      direction = 'ltr',
       tooltipBar = function(key, x, y, e, graph) {
         return '<p><b>' + key + '</b></p>' +
           '<p><b>' + y + '</b></p>' +
@@ -49,9 +50,11 @@ nv.models.paretoChart = function() {
         .clipEdge(false)
         .withLine(true),
       lines1 = nv.models.line()
+        .color(function(d, i) { return '#FFF'; })
+        .fill(function(d, i) { return '#FFF'; })
         .useVoronoi(false),
       lines2 = nv.models.line()
-        .useVoronoi(true),
+        .useVoronoi(false),
       xAxis = nv.models.axis()
         .orient('bottom')
         .tickSize(0)
@@ -306,7 +309,7 @@ nv.models.paretoChart = function() {
           .append('text')
             .text(properties.title)
             .attr('class', 'nv-title')
-            .attr('x', 0)
+            .attr('x', direction === 'rtl' ? availableWidth : 0)
             .attr('y', 0)
             .attr('dy', '.71em')
             .attr('text-anchor', 'start')
@@ -324,6 +327,8 @@ nv.models.paretoChart = function() {
         barLegend
           .id('barlegend_' + chart.id())
           .strings(chart.strings().barlegend)
+          .margin({top: 10, right: 10, bottom: 10, left: 10})
+          .align('left')
           .height(availableHeight - innerMargin.top);
         barLegendWrap
           .datum(
@@ -333,12 +338,14 @@ nv.models.paretoChart = function() {
           )
           .call(barLegend);
 
-        maxBarLegendWidth = barLegend.calculateWidth() + barLegend.margin().left;
+        maxBarLegendWidth = barLegend.calculateWidth();
 
         // line series legend
         lineLegend
           .id('linelegend_' + chart.id())
           .strings(chart.strings().linelegend)
+          .margin({top: 10, right: 10, bottom: 10, left: 10})
+          .align('right')
           .height(availableHeight - innerMargin.top);
         lineLegendWrap
           .datum(
@@ -348,20 +355,23 @@ nv.models.paretoChart = function() {
           )
           .call(lineLegend);
 
-        maxLineLegendWidth = lineLegend.calculateWidth() + lineLegend.margin().right;
+        maxLineLegendWidth = lineLegend.calculateWidth();
 
         // calculate proportional available space
         widthRatio = availableWidth / (maxBarLegendWidth + maxLineLegendWidth);
 
         barLegend
           .arrange(Math.floor(widthRatio * maxBarLegendWidth));
-        barLegendWrap
-          .attr('transform', 'translate(0,' + innerMargin.top + ')');
 
         lineLegend
-          .arrange(Math.floor(availableWidth - barLegend.width() + lineLegend.margin().right));
+          .arrange(Math.floor(widthRatio * maxLineLegendWidth));
+          //.arrange(Math.floor(availableWidth - barLegend.width()));
+
+
+        barLegendWrap
+          .attr('transform', 'translate(' + (direction === 'rtl' ? availableWidth - barLegend.width() : 0) + ',' + innerMargin.top + ')');
         lineLegendWrap
-          .attr('transform', 'translate(' + (barLegend.width() - barLegend.margin().left) + ',' + innerMargin.top + ')');
+          .attr('transform', 'translate(' + (direction === 'rtl' ? 0 : availableWidth - lineLegend.width()) + ',' + innerMargin.top + ')');
       }
 
       //------------------------------------------------------------
@@ -394,12 +404,14 @@ nv.models.paretoChart = function() {
         .width(innerWidth)
         .height(innerHeight)
         .forceY([0, forceY])
+        .useVoronoi(false)
         .id('outline_' + chart.id());
       lines2
         .margin({top: 0, right: lOffset, bottom: 0, left: lOffset})
         .width(innerWidth)
         .height(innerHeight)
         .forceY([0, forceY])
+        .useVoronoi(false)
         .size(function() { return Math.pow(6, 2) * Math.PI; })
         .id('foreground_' + chart.id());
       linesWrap1
@@ -477,7 +489,7 @@ nv.models.paretoChart = function() {
           .attr('class', 'nv-quotaValue')
           .attr('dy', '.36em')
           .attr('dx', '0')
-          .attr('text-anchor', 'end')
+          .attr('text-anchor', direction === 'rtl' ? 'start' : 'end')
           .attr('transform', 'translate(' + -yAxis.tickPadding() + ',' + y(quotaValue) + ')');
 
         tickTextHeight = Math.round(parseInt(g.select('text.nv-quotaValue').node().getBoundingClientRect().height, 10) / 1.15);
@@ -526,7 +538,7 @@ nv.models.paretoChart = function() {
           .attr('class', 'nv-targetQuotaValue')
           .attr('dy', '.36em')
           .attr('dx', '0')
-          .attr('text-anchor', 'end')
+          .attr('text-anchor', direction === 'rtl' ? 'start' : 'end')
           .attr('transform', 'translate(' + -yAxis.tickPadding() + ',' + y(targetQuotaValue) + ')');
 
         tickTextHeight = Math.round(parseInt(g.select('text.nv-targetQuotaValue').node().getBoundingClientRect().height, 10) / 1.15);
@@ -720,62 +732,78 @@ nv.models.paretoChart = function() {
   d3.rebind(chart, xAxis, 'rotateTicks', 'reduceXTicks', 'staggerTicks', 'wrapTicks');
 
   chart.colorData = function(_) {
-    var colors = function(d, i) {
-          return nv.utils.defaultColor()(d, d.series);
-        },
-        classes = function(d, i) {
-          return 'nv-group nv-series-' + d.series;
-        },
-        type = arguments[0],
+    var type = arguments[0],
         params = arguments[1] || {};
+    var barColor = function(d, i) {
+          return nv.utils.defaultColor()(d, d.series);
+        };
+    var barClasses = function(d, i) {
+          return 'nv-group nv-series-' + d.series;
+        };
+    var lineColor = function(d, i) {
+          var p = params.lineColor ? params.lineColor : {
+            c1: '#1A8221',
+            c2: '#62B464',
+            l: 1
+          };
+          return d.color || d3.interpolateHsl(d3.rgb(p.c1), d3.rgb(p.c2))(i / 1);
+        };
+    var lineClasses = function(d, i) {
+          return 'nv-group nv-series-' + d.series;
+        };
 
     switch (type) {
-    case 'graduated':
-      var c1 = params.c1,
-          c2 = params.c2,
-          l = params.l;
-      colors = function(d, i) {
-        return d3.interpolateHsl(d3.rgb(c1), d3.rgb(c2))(i / l);
-      };
-      break;
-    case 'class':
-      colors = function() {
-        return 'inherit';
-      };
-      classes = function(d, i) {
-        var iClass = (i * (params.step || 1)) % 14;
-        return 'nv-group nv-series-' + i + ' ' + (d.classes || 'nv-fill' + (iClass > 9 ? '' : '0') + iClass);
-      };
-      break;
+      case 'graduated':
+        barColor = function(d, i) {
+          return d3.interpolateHsl(d3.rgb(params.barColor.c1), d3.rgb(params.barColor.c2))(d.series / params.barColor.l);
+        };
+        break;
+      case 'class':
+        barColor = function() {
+          return 'inherit';
+        };
+        barClasses = function(d, i) {
+          var iClass = (d.series * (params.step || 1)) % 14;
+          iClass = (iClass > 9 ? '' : '0') + iClass;
+          return 'nv-group nv-series-' + d.series + ' nv-fill' + iClass;
+        };
+        lineClasses = function(d, i) {
+          var iClass = (d.series * (params.step || 1)) % 14;
+          iClass = (iClass > 9 ? '' : '0') + iClass;
+          return 'nv-group nv-series-' + d.series + ' nv-fill' + iClass + ' nv-stroke' + iClass;
+        };
+        break;
+      case 'data':
+        barColor = function(d, i) {
+          return d.classes ? 'inherit' : d.color || nv.utils.defaultColor()(d, d.series);
+        };
+        barClasses = function(d, i) {
+          return 'nv-group nv-series-' + d.series + (d.classes ? ' ' + d.classes : '');
+        };
+        lineClasses = function(d, i) {
+          return 'nv-group nv-series-' + d.series + (d.classes ? ' ' + d.classes : '');
+        };
+        break;
     }
 
-    var fill = (!params.gradient) ? colors : function(d, i) {
+    var barFill = (!params.gradient) ? barColor : function(d, i) {
       var p = {orientation: params.orientation || 'vertical', position: params.position || 'middle'};
-      return multibar.gradient(d, i, p);
+      return multibar.gradient(d, d.series, p);
     };
 
-    multibar.color(colors);
-    multibar.fill(fill);
-    multibar.classes(classes);
+    multibar.color(barColor);
+    multibar.fill(barFill);
+    multibar.classes(barClasses);
 
-    lines1.color(function(d, i) { return '#FFF'; });
-    lines1.fill(function(d, i) { return '#FFF'; });
+    lines2.color(lineColor);
+    lines2.fill(lineColor);
+    lines2.classes(lineClasses);
 
-    lines2.color(function(d, i) {
-      return d3.interpolateHsl(d3.rgb('#1A8221'), d3.rgb('#62B464'))(i / 1);
-    });
-    lines2.fill(function(d, i) {
-      return d3.interpolateHsl(d3.rgb('#1A8221'), d3.rgb('#62B464'))(i / 1);
-    });
-    lines2.classes(classes);
+    barLegend.color(barColor);
+    barLegend.classes(barClasses);
 
-    barLegend.color(colors);
-    barLegend.classes(classes);
-
-    lineLegend.color(function(d, i) {
-      return d.color || d3.interpolateHsl(d3.rgb('#1A8221'), d3.rgb('#62B464'))(i / 1);
-    });
-    lineLegend.classes(classes);
+    lineLegend.color(lineColor);
+    lineLegend.classes(lineClasses);
 
     return chart;
   };
@@ -936,6 +964,18 @@ nv.models.paretoChart = function() {
         strings[prop] = _[prop];
       }
     }
+    return chart;
+  };
+
+  chart.direction = function(_) {
+    if (!arguments.length) {
+      return direction;
+    }
+    direction = _;
+    multibar.direction(_);
+    yAxis.direction(_);
+    barLegend.direction(_);
+    lineLegend.direction(_);
     return chart;
   };
 

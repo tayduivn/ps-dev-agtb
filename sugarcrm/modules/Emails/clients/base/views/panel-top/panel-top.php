@@ -12,19 +12,13 @@
 $viewdefs['Emails']['base']['view']['panel-top'] = array(
     'buttons' => array(
         array(
-            'type' => 'button',
-            'css_class' => 'btn-invisible',
-            'icon' => 'icon-chevron-up',
-            'tooltip' => 'LBL_TOGGLE_VISIBILITY',
-        ),
-        array(
             'type' => 'actiondropdown',
             'name' => 'panel_dropdown',
             'css_class' => 'pull-right',
             'buttons' => array(
                 array(
                     'type' => 'emailaction-paneltop',
-                    'icon' => 'icon-plus',
+                    'icon' => 'fa-plus',
                     'name' => 'email_compose_button',
                     'label' => ' ',
                     'acl_action' => 'create',

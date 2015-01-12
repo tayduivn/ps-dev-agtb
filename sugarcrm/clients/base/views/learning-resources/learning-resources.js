@@ -20,7 +20,7 @@
  *     'resource_id' => array(
  *         'css_class' => 'resource-class',
  *         'color' => 'resource-color',
- *         'icon' => 'icon-resource-icon',
+ *         'icon' => 'fa-resource-icon',
  *         'url' => 'http://url.for.resource.com/',
  *         'link' => 'LBL_LEARNING_RESOURCES_RESOURCE_LINK',
  *         'teaser' => 'LBL_LEARNING_RESOURCES_RESOURCE_TEASER',

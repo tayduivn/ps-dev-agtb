@@ -9,9 +9,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
+ * EditrecurrencesbuttonField is a field for Meetings/Calls for the ability editing all recurring events for a parent record
+ *
+ * FIXME: This component will be moved out of clients/base folder as part of MAR-2274 and SC-3593
+ *
  * @class View.Fields.Base.EditrecurrencesbuttonField
  * @alias SUGAR.App.view.fields.BaseEditrecurrencesbuttonField
- * @extends View.Fields.Base.Rowaction
+ * @extends View.Fields.Base.RowactionField
  */
 ({
     extendsFrom: 'RowactionField',

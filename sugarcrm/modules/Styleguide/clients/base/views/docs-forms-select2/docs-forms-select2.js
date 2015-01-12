@@ -113,7 +113,7 @@
         $('#states5').select2({
             width: '100%',
             minimumResultsForSearch: 7,
-            closeOnSelect: false,
+            //closeOnSelect: false,
             containerCssClass: 'select2-choices-pills-close'
         });
 
@@ -121,9 +121,9 @@
         $('#states4').select2({
             width: '100%',
             minimumResultsForSearch: 7,
-            containerCssClass: 'select2-choices-pills',
+            containerCssClass: 'select2-choices-pills-close',
             formatSelection: function(item) {
-                return '<span>Choice</span><a href="javascript:void(0)" rel="' + item.id +'">'+ item.text +'</a>';
+                return '<span class="select2-choice-type">Link:</span><a href="javascript:void(0)" rel="' + item.id + '">' + item.text + '</a>';
             },
             escapeMarkup: function(m) { return m; }
         });

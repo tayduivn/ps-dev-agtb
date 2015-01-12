@@ -140,9 +140,16 @@ describe('View.Fields.Base.ParticipantsField', function() {
     });
 
     describe('when creating a new meeting', function() {
+        beforeEach(function() {
+            sandbox.stub(model, 'isNew').returns(true);
+        });
+
+        afterEach(function() {
+            app.user.attributes = {};
+        });
+
         it('should add the current user to the collection', function() {
             app.user.set({_module: 'Users', id: '1', name: 'Jim Brennan'});
-            sandbox.stub(model, 'isNew').returns(true);
             field = SugarTest.createField(
                 'base',
                 fieldDef.name,
@@ -153,8 +160,82 @@ describe('View.Fields.Base.ParticipantsField', function() {
                 model,
                 context
             );
+
             expect(field.getFieldValue().length).toBe(1);
+        });
+
+        it('should not include the current user in the link defaults', function() {
+            var links;
+
+            app.user.set({_module: 'Users', id: '1', name: 'Jim Brennan'});
+            field = SugarTest.createField(
+                'base',
+                fieldDef.name,
+                'participants',
+                'edit',
+                fieldDef,
+                module,
+                model,
+                context
+            );
+
+            links = field.getFieldValue().links;
+            expect(_.size(links)).toBe(3);
+            _.each(links, function(link) {
+                expect(link.defaults.length).toBe(0);
+            });
+        });
+    });
+
+    describe('when copying a meeting', function() {
+        beforeEach(function() {
+            sandbox.stub(model, 'isNew').returns(true);
+        });
+
+        afterEach(function() {
             app.user.attributes = {};
+        });
+
+        it('should include the participants from the copied record', function() {
+            var collection = app.data.createMixedBeanCollection();
+            app.user.set({_module: 'Users', id: '1', name: 'Jim Brennan'});
+            model.set(fieldDef.name, collection.add({_module: 'Users', id: '2', name: 'Foo Bar'}));
+
+            field = SugarTest.createField(
+                'base',
+                fieldDef.name,
+                'participants',
+                'edit',
+                fieldDef,
+                module,
+                model,
+                context
+            );
+
+            expect(field.getFieldValue().length).toBe(2);
+            expect(field.getFieldValue().at(0).id).toBe('2');
+        });
+
+        it('should include the current user', function() {
+            var user = {_module: 'Users', id: '1', name: 'Jim Brennan'},
+                collection = app.data.createMixedBeanCollection();
+
+            app.user.set(user);
+            model.set(fieldDef.name, collection);
+
+            field = SugarTest.createField(
+                'base',
+                fieldDef.name,
+                'participants',
+                'edit',
+                fieldDef,
+                module,
+                model,
+                context
+            );
+
+            expect(field.getFieldValue().length).toBe(1);
+            expect(field.getFieldValue().at(0).id).toBe('1');
         });
     });
 
@@ -222,7 +303,7 @@ describe('View.Fields.Base.ParticipantsField', function() {
             sandbox.stub($.fn, 'select2');
             field.render();
             field.$('button[data-action=addRow]').click();
-            expect(field.$('[name=newRow]').css('display')).toEqual('table');
+            expect(field.$('[name=newRow]').css('display')).toEqual('table-row');
             expect(field.$('button[data-action=addRow]').css('display')).toEqual('none');
         });
 
@@ -267,6 +348,12 @@ describe('View.Fields.Base.ParticipantsField', function() {
 
         it("should disable a participant's delete button when the participant is the assigned user", function() {
             field.model.set('assigned_user_id', '1');
+            field.render();
+            expect(field.$('button[data-action=removeRow][data-id=1]').hasClass('disabled')).toBe(true);
+        });
+
+        it("should disable a participant's delete button when the participant is marked as not deletable", function() {
+            field.model.set(field.name, {_module: 'Leads', id: '1', name: 'Foo Bar', deletable: false});
             field.render();
             expect(field.$('button[data-action=removeRow][data-id=1]').hasClass('disabled')).toBe(true);
         });
@@ -460,56 +547,68 @@ describe('View.Fields.Base.ParticipantsField', function() {
             expect(field.$('[data-render=timeline-header] .timeblock').filter(':nth-child(odd)').hasClass('alt')).toBe(true);
             expect(field.$('[data-render=timeline-header] .timeblock').filter(':nth-child(even)').hasClass('alt')).toBe(false);
         });
+    });
 
-        it('should mark the timeblocks that make up the meeting', function() {
-            var $blocks, $scheduledBlocks, start, end;
+    describe('rendering the meeting start and end overlay', function() {
+        beforeEach(function() {
+            field = SugarTest.createField(
+                'base',
+                fieldDef.name,
+                'participants',
+                'detail',
+                fieldDef,
+                module,
+                model,
+                context
+            );
+            field.model.set(field.name, participants);
+            field.model.off();
+            field.model.set('date_start', '2014-08-27T08:45');
+            field.model.set('date_end', '2014-08-27T10:15');
 
-            field.render();
-            $blocks = field.getTimelineBlocks('Contacts', '3');
-            $scheduledBlocks = $blocks.filter('.schedule');
-            start = $blocks.index($scheduledBlocks.first());
-            end = $blocks.index($scheduledBlocks.last());
-
-            expect(start).toBe(19);
-            expect(end).toBe(24);
+            sandbox.stub(field, 'getTimeFormat', function() {
+                return 'ha';
+            });
         });
 
-        it('should mark the first and the last timeblocks that make up the meeting', function() {
-            var $blocks, $scheduledBlocks;
+        it('should only happen for Users', function() {
+            var $overlays;
 
             field.render();
-            $blocks = field.getTimelineBlocks('Contacts', '3');
-            $scheduledBlocks = $blocks.filter('.schedule');
+            $overlays = field.$('.start_end_overlay');
 
-            expect($scheduledBlocks.first().hasClass('start')).toBe(true);
-            expect($scheduledBlocks.last().hasClass('end')).toBe(true);
+            expect($overlays.length).toBe(2);
+            expect($overlays.first().closest('.participant').data('id')).toBe(1);
+            expect($overlays.last().closest('.participant').data('id')).toBe(2);
         });
 
-        it('should mark the timeblock as start and end when the meeting is 15 minutes long', function() {
-            var $blocks, $scheduledBlocks;
+        it('should display the right border when the length of the meeting does not go past the timeline', function() {
+            var $overlays;
 
-            field.model.set('date_start', '2014-08-27T08:45:00-04:00');
-            field.model.set('date_end', '2014-08-27T09:00:00-04:00');
             field.render();
-            $blocks = field.getTimelineBlocks('Contacts', '3');
-            $scheduledBlocks = $blocks.filter('.schedule');
+            $overlays = field.$('.start_end_overlay');
 
-            expect($scheduledBlocks.length).toBe(1);
-            expect($scheduledBlocks.hasClass('start')).toBe(true);
-            expect($scheduledBlocks.hasClass('end')).toBe(true);
+            expect($overlays.hasClass('right_border')).toBe(true);
         });
 
-        it('should mark the timeblock to have the same start and end time when the meeting is 0 minutes long', function() {
-            var $blocks, $scheduledBlocks;
+        it('should not display the right border when the length of the meeting goes past the timeline', function() {
+            var $overlays;
 
-            field.model.set('date_start', '2014-08-27T08:45:00-04:00');
-            field.model.set('date_end', '2014-08-27T08:45:00-04:00');
+            field.model.set('date_end', '2014-08-27T16:00');
             field.render();
-            $blocks = field.getTimelineBlocks('Contacts', '3');
-            $scheduledBlocks = $blocks.filter('.start-end');
+            $overlays = field.$('.start_end_overlay');
 
-            expect($scheduledBlocks.length).toBe(1);
-            expect($blocks.index($scheduledBlocks.first())).toBe(19);
+            expect($overlays.hasClass('right_border')).toBe(false);
+        });
+
+        it('should make width 1px if the meeting is 0 minutes long', function() {
+            var $overlays;
+
+            field.model.set('date_end', '2014-08-27T08:45');
+            field.render();
+            $overlays = field.$('.start_end_overlay');
+
+            expect($overlays.width()).toBe(1);
         });
     });
 
@@ -536,16 +635,16 @@ describe('View.Fields.Base.ParticipantsField', function() {
         });
 
         it('should only fetch information for Users', function() {
-            var callBulkApiSpy = sandbox.spy(field, 'callBulkApi');
+            var freebusyFetchSpy = sandbox.spy(field.freebusy, 'fetch');
 
             field.render();
 
-            expect(callBulkApiSpy.args[0][0][0].url).toContain('rest/v10/Users/1/freebusy');
-            expect(callBulkApiSpy.args[0][0][1].url).toContain('rest/v10/Users/2/freebusy');
+            expect(freebusyFetchSpy.args[0][0][0].url).toContain('rest/v10/Users/1/freebusy');
+            expect(freebusyFetchSpy.args[0][0][1].url).toContain('rest/v10/Users/2/freebusy');
         });
 
         it('should not fetch information for a user if free/busy information has been cached for that user', function() {
-            var callBulkApiSpy = sandbox.spy(field, 'callBulkApi');
+            var freebusyFetchSpy = sandbox.spy(field.freebusy, 'fetch');
 
             field.cacheFreeBusyInformation({
                 id: '1',
@@ -554,23 +653,23 @@ describe('View.Fields.Base.ParticipantsField', function() {
             });
             field.render();
 
-            expect(_.size(callBulkApiSpy.args[0][0])).toBe(1);
-            expect(callBulkApiSpy.args[0][0][0].url).toContain('rest/v10/Users/2/freebusy');
+            expect(_.size(freebusyFetchSpy.args[0][0])).toBe(1);
+            expect(freebusyFetchSpy.args[0][0][0].url).toContain('rest/v10/Users/2/freebusy');
         });
 
         it('should fetch free busy information if date_start has changed', function() {
-            var callBulkApiSpy = sandbox.spy(field, 'callBulkApi');
+            var freebusyFetchSpy = sandbox.spy(field.freebusy, 'fetch');
 
             field.cacheFreeBusyInformation({module: 'Users', id: '1', freebusy: []});
             field.cacheFreeBusyInformation({module: 'Users', id: '2', freebusy: []});
             field.bindDataChange();
             field.render();
 
-            expect(_.size(callBulkApiSpy.args[0][0])).toBe(0);
+            expect(_.size(freebusyFetchSpy.args[0][0])).toBe(0);
 
-            field.model.set('date_start', '2014-08-27T08:00:00');
+            field.model.set('date_start', '2014-08-27T08:00:00-04:00');
 
-            expect(_.size(callBulkApiSpy.args[1][0])).toBe(2);
+            expect(_.size(freebusyFetchSpy.args[1][0])).toBe(2);
         });
 
         it('should mark busy indicators on timeslots that are taken up by other meetings', function() {
@@ -673,6 +772,54 @@ describe('View.Fields.Base.ParticipantsField', function() {
 
             expect(field._freeBusyCache.length).toBe(1);
             expect(field.getFreeBusyInformationFromCache('Users', '123').freebusy[0].start).toBe('bar');
+        });
+    });
+
+    describe('fetching the free/busy information', function() {
+        beforeEach(function() {
+            field = SugarTest.createField(
+                'base',
+                fieldDef.name,
+                'participants',
+                'detail',
+                fieldDef,
+                module,
+                model,
+                context
+            );
+        });
+
+        it('second time should not happen if fetching is already in process', function() {
+            var freebusyFetchStub = sandbox.stub(field.freebusy, 'fetch', function(requests, options) {
+                this.isFetching(true);
+            });
+
+            field.model.off();
+            field.getFieldValue().reset(participants);
+            field.model.set('date_start', '2014-08-27T08:45:00-04:00');
+            field.model.set('date_end', '2014-08-27T10:15:00-04:00');
+
+            field.fetchFreeBusyInformation();
+
+            expect(freebusyFetchStub.calledOnce).toBe(true);
+
+            field.fetchFreeBusyInformation();
+
+            expect(freebusyFetchStub.calledOnce).toBe(true);
+        });
+
+        it('should occur when the model is saved', function() {
+            var freebusyFetchSpy = sandbox.stub(field.freebusy, 'fetch');
+
+            field.model.off();
+            field.getFieldValue().reset(participants);
+            field.model.set('date_start', '2014-08-27T08:45:00-04:00');
+            field.model.set('date_end', '2014-08-27T10:15:00-04:00');
+            field.bindDataChange();
+
+            field.model.trigger('sync');
+
+            expect(freebusyFetchSpy.calledOnce).toBe(true);
         });
     });
 

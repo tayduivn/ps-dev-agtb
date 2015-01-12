@@ -21,7 +21,7 @@
         <div class="alert-wrapper">
             <div class="alert alert-danger alert-block" data-flag="3">
                 <button class="btn btn-link btn-invisible close" data-action="close">
-                    <i class="icon-remove"></i>
+                    <i class="fa fa-times"></i>
                 </button>
                 <strong>Error</strong>
                 The health check didn't pass. Please correct the issue and <a href="index.php?module=HealthCheck">restart</a>
@@ -29,28 +29,28 @@
             </div>
             <div class="alert alert-success alert-block" data-flag="1">
                 <button class="btn btn-link btn-invisible close" data-action="close">
-                    <i class="icon-remove"></i>
+                    <i class="fa fa-times"></i>
                 </button>
                 <strong>Success</strong>
                 You have passed the health check.
             </div>
             <div class="alert alert-warning alert-block" data-flag="2">
                 <button class="btn btn-link btn-invisible close" data-action="close">
-                    <i class="icon-remove"></i>
+                    <i class="fa fa-times"></i>
                 </button>
                 <strong>Warning</strong>
                 Adjustments to your system will be automatically applied, please take a note.
             </div>
             <div class="alert alert-success alert-block" data-send="ok">
                 <button class="btn btn-link btn-invisible close" data-action="close">
-                    <i class="icon-remove"></i>
+                    <i class="fa fa-times"></i>
                 </button>
                 <strong>Success</strong>
                 Log was sent successfully.
             </div>
             <div class="alert alert-danger alert-block" data-send="error">
                 <button class="btn btn-link btn-invisible close" data-action="close">
-                    <i class="icon-remove"></i>
+                    <i class="fa fa-times"></i>
                 </button>
                 <strong>Error</strong>
                 Unable to send log to Sugar. Please make sure you've internet connection.
@@ -116,7 +116,7 @@
         </div>
         <div class="modal-body record">
             <div class="row-fluid" id="healthcheck">
-                <h1><i class="icon-cog icon-spin color_yellow"></i>Performing health check. Please wait...</h1>
+                <h1><i class="fa fa-cog fa-spin color_yellow"></i>Performing health check. Please wait...</h1>
             </div>
         </div>
         <div class="modal-footer">
@@ -144,7 +144,7 @@
         (function () {
 
             function doHealthCheck() {
-                var flagToIcon = [, 'icon-ok-sign color_green', 'icon-ellipsis-horizontal color_yellow', 'icon-exclamation-sign color_red'],
+                var flagToIcon = [, 'fa-check-circle color_green', 'fa-ellipsis-h color_yellow', 'fa-exclamation-circle color_red'],
                         $healthcheck = $("#healthcheck");
                 $.ajax('index.php?module=HealthCheck&action=scan', {
                     dataType: 'json',

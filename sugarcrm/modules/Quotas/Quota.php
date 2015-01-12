@@ -81,7 +81,20 @@ class Quota extends SugarBean
          * @var TimePeriod
          */
         $timeperiod = BeanFactory::retrieveBean("TimePeriods", $this->timeperiod_id);
-        return "$timeperiod->name -- $this->user_full_name";
+        // make sure we have the full name before display happens
+        if (empty($this->user_full_name) && !empty($this->user_id)) {
+            $user = BeanFactory::getBean('Users', $this->user_id);
+            $this->user_full_name = $user->full_name;
+        }
+        $mod_strings = return_module_language($GLOBALS['current_language'], $this->module_name);
+
+        // get the quota type as a label
+        $quota_type = '';
+        if (!empty($this->quota_type)) {
+            $quota_type = $mod_strings['LBL_' . strtoupper($this->quota_type)] . ' ' . $mod_strings['LBL_MODULE_NAME_SINGULAR'] . ' ';
+        }
+
+        return "{$timeperiod->name} {$quota_type}- $this->user_full_name";
     }
 
     /**

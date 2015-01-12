@@ -15,7 +15,7 @@
   }
   textarea,
   input,
-  .preview > span > .icon-plus {
+  .preview > span > .fa-plus {
     border-color: @errorText !important;
     color: @errorText !important;
   }
@@ -24,12 +24,6 @@
     &:focus {
       border-color: @errorText !important;
       border-width: 1px !important;
-      &+ .add-on {
-        display: none;
-        &+ .add-on {
-          display: none;
-        }
-      }
     }
   }
   /* On fieldset/email, only the input that has an error must be decorate */
@@ -58,7 +52,10 @@
   .upload-field-custom.btn.avatar {
     border-color: @errorText;
   }
-  .preview > span > .icon-plus {
+  .select2-choice > .select2-chosen {
+    margin-right: 18px;
+  }
+  .preview > span > .fa-plus {
     border-color: @errorText;
     color: @errorText;
   }

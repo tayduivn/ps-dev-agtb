@@ -2855,6 +2855,9 @@ class InboundEmail extends SugarBean {
 			$email->retrieve($email->id);
 			$c = BeanFactory::getBean('Cases');
 			$c->description = $email->description;
+			if (empty($c->description) && !empty($email->description_html)) {
+			    $c->description = $email->description_html;
+			}
 			$c->assigned_user_id = $userId;
 			$c->name = $email->name;
 			$c->status = 'New';

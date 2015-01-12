@@ -24,27 +24,11 @@ ensureJSCacheFilesExist();
     <head>
         <title>Customer Self-Service Portal - Powered by SugarCRM.</title>
         <meta name="viewport" content="initial-scale=1.0">
+        <meta charset="UTF-8">
         <link rel="SHORTCUT ICON" href="../themes/default/images/sugar_icon.ico">
         <!-- CSS -->
-        <link rel="stylesheet" href="./assets/loading.css" type="text/css">
+        <link rel="stylesheet" href="../styleguide/assets/css/loading.css" type="text/css">
         <link rel="stylesheet" href="../sidecar/lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css" type="text/css"/>
-        <script src="../include/javascript/modernizr.js"></script>
-
-        <? if(inDeveloperMode()): ?>
-            <script src="../sidecar/minified/sidecar.js"></script>
-        <? else: ?>
-            <script src="../sidecar/minified/sidecar.min.js"></script>
-        <? endif; ?>
-
-        <!-- Sidecar Scripts -->
-        <script src="../cache/include/javascript/sugar_sidecar.min.js"></script>
-
-        <!-- Portal specific JS -->
-        <script src="../cache/portal2/portal.min.js"></script>
-        <script src="config.js"></script>
-
-        <!-- App Scripts -->
-        <script src="../cache/portal2/sugar_portal.min.js"></script>
     </head>
     <body>
         <div id="sidecar">
@@ -54,7 +38,7 @@ ensureJSCacheFilesExist();
                         <div class="alert alert-process">
                             <strong>Loading</strong>
                             <div class="loading">
-                                <i class="l1 icon-circle"></i><i class="l2 icon-circle"></i><i class="l3 icon-circle"></i>
+                                <i class="l1">&period;</i><i class="l2">&period;</i><i class="l3">&period;</i>
                             </div>
                         </div>
                     </div>
@@ -65,6 +49,17 @@ ensureJSCacheFilesExist();
                 <div id="drawers"></div>
             </div>
         </div>
+
+        <script src="../include/javascript/modernizr.js"></script>
+
+        <!-- Sidecar Scripts -->
+        <script src="../sidecar/minified/sidecar<? if (!inDeveloperMode()): ?>.min<? endif; ?>.js"></script>
+        <script src="../cache/include/javascript/sugar_sidecar.min.js"></script>
+
+        <!-- Portal specific JS -->
+        <script src="../cache/portal2/sugar_portal.min.js"></script>
+        <script src="config.js"></script>
+
         <script>
             var syncResult, view, layout, html;
             var App = SUGAR.App.init({

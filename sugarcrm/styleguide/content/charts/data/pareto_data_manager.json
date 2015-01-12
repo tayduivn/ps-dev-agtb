@@ -2,6 +2,7 @@
   "properties": {
     "name": " for Q3 2013",
     "quota": 1823353,
+    "quotaLabel": "Quota",
     "groupData": [
       {
         "group": 0,

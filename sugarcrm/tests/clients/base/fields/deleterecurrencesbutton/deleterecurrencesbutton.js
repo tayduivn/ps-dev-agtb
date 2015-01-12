@@ -21,6 +21,7 @@ describe('Delete Recurrences Field', function() {
             module: module,
             model: app.data.createBean('Meetings')
         });
+        field.model.module = 'Meetings';
 
     });
 

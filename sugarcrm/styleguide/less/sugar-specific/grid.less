@@ -12,7 +12,7 @@
   }
 
   .offsetX (@index) when (@index > 0) {
-    (~'.offset@{index}.absolute') { .offsetFirstChild(@index); }
+    .offset@{index}.absolute { .offsetFirstChild(@index); }
     .offsetX(@index - 1);
   }
   .offsetX (0) {}

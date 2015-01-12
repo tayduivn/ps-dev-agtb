@@ -17,8 +17,7 @@ $viewdefs['Opportunities']['base']['view']['config-opps-view-by'] = array(
             'fields' => array(
                 array(
                     'name' => 'opps_view_by',
-                    'type' => 'enum',
-                    'label' => 'LBL_OPPS_CONFIG_VIEW_BY_FIELD_TEXT',
+                    'type' => 'radioenum',
                     'view' => 'edit',
                     'options' => 'opps_config_view_by_options_dom',
                     'default' => false,
@@ -26,7 +25,7 @@ $viewdefs['Opportunities']['base']['view']['config-opps-view-by'] = array(
                 ),
                 array(
                     'name' => 'opps_closedate_rollup',
-                    'type' => 'enum',
+                    'type' => 'radioenum',
                     'label' => 'LBL_OPPS_CONFIG_VIEW_BY_DATE_ROLLUP',
                     'view' => 'edit',
                     'options' => 'opps_config_view_by_closedate_rollup_dom',

@@ -39,13 +39,21 @@
                         this.toggleAllRecurrencesMode(false); // default to off
                     }
 
+                    /**
+                     * When the data is loaded, force 'all recurrence' mode if not recurring
+                     *
+                     * When coming in from an edit route, fields were already toggled to
+                     * edit prior to sync, so we need to toggle again
+                     */
                     this.model.on('sync', function(model, data, options) {
                         if (options && options.refetch_list_collection) {
                             this._refetchListCollection();
                         }
-                        // when the data is loaded, force 'all recurrence' mode if not recurring
                         if (!this._isRecurringEvent(this.model)) {
                             this.toggleAllRecurrencesMode(true);
+                            if (this.context.get('action') === 'edit') {
+                                this.toggleEdit(true);
+                            }
                         }
                     }, this);
                 });
@@ -76,7 +84,7 @@
                  * add all_recurrences to action if in 'all recurrences' mode
                  */
                 this.setRoute = _.wrap(this.setRoute, function(_super, action) {
-                    if (this.allRecurrencesMode && action === 'edit') {
+                    if (this.allRecurrencesMode && this._isRecurringEvent(this.model) && action === 'edit') {
                         action = 'edit/all_recurrences';
                     }
                     _super.call(this, action);

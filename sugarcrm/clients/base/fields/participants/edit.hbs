@@ -52,6 +52,9 @@
                     {{str "LBL_CALENDAR_EVENT_SCHEDULE_UNAVAILABLE" ../../module}}
                 </div>
             {{/notEq}}
+            {{#eq module 'Users'}}
+                <div class="start_end_overlay"></div>
+            {{/eq}}
             <div class="container">
                 <div class="timeblock">
                     <span></span>
@@ -113,13 +116,13 @@
             <div class="btn-toolbar" style="display: table-cell;">
                 <div class="btn-group">
                     <button type="button" class="btn{{#unless deletable}} disabled{{/unless}}" data-action="removeRow" data-id="{{id}}">
-                        <i class="icon-minus"></i>
+                        <i class="fa fa-minus"></i>
                     </button>
                 </div>
                 <div class="btn-group">
                     {{#if last}}
                     <button type="button" class="btn" data-action="addRow">
-                        <i class="icon-plus"></i>
+                        <i class="fa fa-plus"></i>
                     </button>
                     {{/if}}
                 </div>
@@ -130,20 +133,21 @@
         <div class="cell"></div>
     </div>
     {{/each}}
-</div>
-<div class="participants-form" name="newRow">
-    <div class="cell select">
-        <div class="field">
-            <input type="hidden" class="select2 inherit-width" name="{{name}}" data-placeholder="{{placeholder}}" />
+    <div class="row participants-form" name="newRow">
+        <div class="cell"></div>
+        <div class="cell select">
+            <div class="field">
+                <input type="hidden" class="select2 inherit-width" name="{{name}}" data-placeholder="{{placeholder}}" />
+            </div>
         </div>
-    </div>
-    <div class="cell buttons">
-        <div class="btn-toolbar" style="display: table-cell;">
-            <div class="btn-group"></div>
-            <div class="btn-group">
-                <button type="button" class="btn" data-action="removeRow">
-                    <i class="icon-minus"></i>
-                </button>
+        <div class="cell buttons">
+            <div class="btn-toolbar" style="display: table-cell;">
+                <div class="btn-group"></div>
+                <div class="btn-group">
+                    <button type="button" class="btn" data-action="removeRow">
+                        <i class="fa fa-minus"></i>
+                    </button>
+                </div>
             </div>
         </div>
     </div>

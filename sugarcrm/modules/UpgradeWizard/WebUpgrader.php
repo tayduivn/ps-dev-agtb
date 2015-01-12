@@ -41,6 +41,14 @@ class WebUpgrader extends UpgradeDriver
         parent::__construct();
     }
 
+    public function start()
+    {
+        if (!isset($this->state['stage']) || !array_search('started', $this->state['stage'])) {
+            list($version, $build) = static::getVersion();
+            $this->log("WebUpgrader v.$version (build $build) starting");
+        }
+    }
+
     protected function initSession()
     {
         if (!isset($_SESSION)) {
@@ -60,10 +68,7 @@ class WebUpgrader extends UpgradeDriver
      */
     public function startRequest($token)
     {
-        if (empty($token) || empty($this->state['webToken']) || $token != $this->state['webToken']) {
-            return false;
-        }
-        if (empty($this->state['admin'])) {
+        if (!$this->checkTokenAndAdmin($token)) {
             return false;
         }
         if (!empty($this->state['zip'])) {
@@ -74,6 +79,17 @@ class WebUpgrader extends UpgradeDriver
                 ) . "-restore";
         }
         return true;
+    }
+
+    /**
+     * Checks token and Admin User
+     * @param string $token
+     * @return boolean
+     */
+    public function checkTokenAndAdmin($token)
+    {
+        return (!empty($token) && !empty($this->state['webToken'])
+            && $token == $this->state['webToken'] && !empty($this->state['admin']));
     }
 
     /**

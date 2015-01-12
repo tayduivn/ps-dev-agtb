@@ -36,6 +36,7 @@ $viewdefs['Calls']['base']['view']['record'] = array(
                 ),
                 array(
                     'type' => 'save-and-send-invites-button',
+                    'event' => 'button:save_button:click',
                     'name' => 'save_invite_button',
                     'label' => 'LBL_SAVE_AND_SEND_INVITES_BUTTON',
                     'acl_action' => 'edit',
@@ -87,25 +88,11 @@ $viewdefs['Calls']['base']['view']['record'] = array(
                 ),
                 array(
                     'type' => 'rowaction',
-                    'event' => 'button:find_duplicates_button:click',
-                    'name' => 'find_duplicates_button',
-                    'label' => 'LBL_DUP_MERGE',
-                    'acl_action' => 'edit',
-                ),
-                array(
-                    'type' => 'rowaction',
                     'event' => 'button:duplicate_button:click',
                     'name' => 'duplicate_button',
                     'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
                     'acl_module' => 'Calls',
                     'acl_action' => 'create',
-                ),
-                array(
-                    'type' => 'rowaction',
-                    'event' => 'button:audit_button:click',
-                    'name' => 'audit_button',
-                    'label' => 'LNK_VIEW_CHANGE_LOG',
-                    'acl_action' => 'view',
                 ),
                 array(
                     'type' => 'divider',
@@ -127,12 +114,14 @@ $viewdefs['Calls']['base']['view']['record'] = array(
                     'type' => 'closebutton',
                     'name' => 'record-close-new',
                     'label' => 'LBL_CLOSE_AND_CREATE_BUTTON_LABEL',
+                    'closed_status' => 'Held',
                     'acl_action' => 'edit',
                 ),
                 array(
                     'type' => 'closebutton',
                     'name' => 'record-close',
                     'label' => 'LBL_CLOSE_BUTTON_LABEL',
+                    'closed_status' => 'Held',
                     'acl_action' => 'edit',
                 ),
             ),
@@ -255,7 +244,7 @@ $viewdefs['Calls']['base']['view']['record'] = array(
                         array(
                             'label' => 'LBL_CALENDAR_REPEAT_UNTIL_DATE',
                             'name' => 'repeat_until',
-                            'type' => 'date',
+                            'type' => 'repeat-until',
                         ),
                         array(
                             'type' => 'label',

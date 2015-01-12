@@ -17,11 +17,11 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' =>'LBL_CREATE_DASHBOARD_MENU',
         'acl_action'=>'edit',
         'acl_module'=>$module_name,
-        'icon' => 'icon-plus',
+        'icon' => 'fa-plus',
     ),
     array(
         'route' => '#activities',
         'label' => 'LBL_ACTIVITIES',
-        'icon' => 'icon-time',
+        'icon' => 'fa-clock-o',
     ),
 );

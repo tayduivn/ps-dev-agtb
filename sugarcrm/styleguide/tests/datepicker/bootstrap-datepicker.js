@@ -16,11 +16,11 @@ describe("datepicker", function() {
             daysShort: ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"],
             daysMin: ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa", "Do"],
             months: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
-            monthsShort: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"] 
+            monthsShort: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"]
         };
     });
     afterEach(function(){
-        enDates = null; 
+        enDates = null;
         esDates = null;
     });
 
@@ -30,13 +30,13 @@ describe("datepicker", function() {
             this.mainDiv = $("<div id='main' />");
             this.component = $('<div class="input-append date" id="datepicker">'+
                                     '<input size="16" type="text" value="10-30-2012">'+
-                                    '<span class="add-on"><i class="icon-th"></i></span>'+
+                                    '<span class="add-on"><i class="fa fa-th"></i></span>'+
                                 '</div>')
                             .appendTo(this.mainDiv);
             this.input = this.component.find('input');
             this.input.datepicker({
                 format: "mm-dd-yyyy",
-                languageDictionary: enDates 
+                languageDictionary: enDates
             });
             this.addon = this.component.find('.add-on');
             this.dp = this.input.data('datepicker');
@@ -45,7 +45,7 @@ describe("datepicker", function() {
         afterEach(function(){
             this.picker.remove();
         });
-              
+
         it('should set possible characters from date format on initialization', function(){
             var expected;
             // First test with the prebuilt datepicker we already have
@@ -53,7 +53,7 @@ describe("datepicker", function() {
             expect(this.dp.possibleChars).toEqual(expected);
 
             // Rebuild the datepicker from scratch again so we can try another format
-            this.component = 
+            this.component =
                 $('<div class="date" id="datepicker"><input type="text"></div>')
                             .appendTo(this.mainDiv);
             this.input = this.component.find('input');
@@ -83,17 +83,17 @@ describe("datepicker", function() {
             expect(actual).toBeFalsy();
             actual = this.dp.verifyDate('11/1999/11');
             expect(actual).toBeFalsy();
-        }); 
+        });
         it('should verify date strings against date format but account for auto year corrections', function(){
             var actual = this.dp.verifyDate('03-24-13');
             expect(actual).toBeTruthy();
             actual = this.dp.verifyDate('03-24-9');
             expect(actual).toBeTruthy();
-        }); 
+        });
         it('should verify date strings against date format and NOT auto year correct for 3 digits', function(){
             var actual = this.dp.verifyDate('03-24-113');
             expect(actual).toBeFalsy();
-        }); 
+        });
         it('should replace two digit year entered with current century + entered in yyyy', function(){
             //format is currently: "mm-dd-yyyy"
             this.dp.update('03-24-13');
@@ -105,7 +105,7 @@ describe("datepicker", function() {
         });
         it('should add current century + entered when in yy and auto correct', function(){
             // Rebuild the datepicker from scratch again so we can try another format
-            this.component = 
+            this.component =
                 $('<div class="date" id="datepicker"><input type="text"></div>')
                             .appendTo(this.mainDiv);
             this.input = this.component.find('input');
@@ -148,7 +148,7 @@ describe("datepicker", function() {
             expect(actual).toBeFalsy();
             actual = this.dp.verifyDate('-2-');
             expect(actual).toBeFalsy();
-        }); 
+        });
         it('should verify date strings returning true if invalid string but still parsable', function(){
             var actual = this.dp.verifyDate('1xx-11-1999');
             expect(actual).toBeTruthy();
@@ -158,7 +158,7 @@ describe("datepicker", function() {
             expect(actual).toBeTruthy();
             actual = this.dp.verifyDate('x1x-x1x-x1x');
             expect(actual).toBeFalsy();
-        }); 
+        });
         it('should allow zeroes for years only', function(){
             // year can be zero (since we auto correct those <century> + 0)
             var actual = this.dp.verifyDate('0-11-11');//zero day no
@@ -167,13 +167,13 @@ describe("datepicker", function() {
             expect(actual).toBeFalsy();
             actual = this.dp.verifyDate('11-11-0');//zero year ok
             expect(actual).toBeTruthy();
-        }); 
+        });
         it('should dissallow invalid characters', function(){
             this.dp.update('01abc-01xyz-1999');
             expect(this.dp.date.getMonth()).toEqual(0);
             expect(this.dp.date.getDate()).toEqual(1);
             expect(this.dp.date.getFullYear()).toEqual(1999);
-        }); 
+        });
         it("should have format parts", function() {
             expect(this.dp.format.parts[0]).toEqual("mm");
             expect(this.dp.format.parts[1]).toEqual("dd");
@@ -228,8 +228,8 @@ describe("datepicker", function() {
             // Rebuld widget and verify picker markup has appropriate language we just set
             this.picker.remove();
             this.component = $('<div class="input-append date" id="datepicker">'+
-                                '<input size="16" type="text" value="10-30-2012" readonly>'+ 
-                                '<span class="add-on"><i class="icon-th"></i></span>'+ 
+                                '<input size="16" type="text" value="10-30-2012" readonly>'+
+                                '<span class="add-on"><i class="fa fa-th"></i></span>'+
                                 '</div>')
                             .appendTo(this.mainDiv);
             this.input = this.component.find('input');
@@ -254,13 +254,13 @@ describe("datepicker", function() {
             // October 31
             this.component = $('<div class="input-append date" id="datepicker">'+
                                     '<input size="16" type="text" value="10-31-2012">'+
-                                    '<span class="add-on"><i class="icon-th"></i></span>'+
+                                    '<span class="add-on"><i class="fa fa-th"></i></span>'+
                                 '</div>')
                             .appendTo(this.mainDiv);
             this.input = this.component.find('input');
             this.input.datepicker({
                 format: "mm-dd-yyyy",
-                languageDictionary: enDates 
+                languageDictionary: enDates
             });
             this.addon = this.component.find('.add-on');
             this.dp = this.input.data('datepicker');
@@ -269,7 +269,7 @@ describe("datepicker", function() {
         afterEach(function(){
             this.picker.remove();
         });
-     
+
         it('should navigate days with left and right arrow keys', function(){
             // We should have started out on the 31 day since 10-31-2012 specified
             var selected = this.picker.find(".datepicker-days td.active");
@@ -298,7 +298,7 @@ describe("datepicker", function() {
             expect(this.picker.find(".datepicker-days td.active").text()).toEqual("31");
             this.input.trigger({
                 type: "keydown",
-                keyCode: 33 // Page up 
+                keyCode: 33 // Page up
             });
             // Verify that we moved back to Septiembre 30
             expect(this.picker.find('.datepicker-days thead th.switch').text()).toEqual("September 2012");
@@ -317,7 +317,7 @@ describe("datepicker", function() {
             this.input.trigger({
                 type: "keydown",
                 shiftKey: true,
-                keyCode: 33 // Page up 
+                keyCode: 33 // Page up
 
             });
             expect(this.picker.find('.datepicker-days thead th.switch').text()).toEqual("October 2011");
@@ -365,7 +365,7 @@ describe("datepicker", function() {
             this.input.datepicker().focus();
             this.input.trigger({
                 type: 'keydown', // ESC
-                keyCode: 27 
+                keyCode: 27
             });
             expect(this.picker.is(':visible')).not.toBeTruthy();
         });
@@ -392,9 +392,9 @@ describe("datepicker", function() {
                 keyCode: 35 // End
             });
             expect(this.picker.find('.datepicker-days thead th.switch').text()).toEqual("Diciembre 2012");
-            expect(this.picker.find(".datepicker-days td.active").text()).toEqual("31"); 
+            expect(this.picker.find(".datepicker-days td.active").text()).toEqual("31");
 
-            // Set back to English 
+            // Set back to English
             this.dp.languageDictionary(enDates);
         });
 

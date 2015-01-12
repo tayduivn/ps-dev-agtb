@@ -17,6 +17,6 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' =>'LNK_CAMPAIGN_LIST',
         'acl_action'=>'list',
         'acl_module'=>'Campaigns',
-        'icon' => 'icon-reorder',
+        'icon' => 'fa-bars',
     ),
 );

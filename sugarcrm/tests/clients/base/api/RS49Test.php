@@ -25,6 +25,7 @@ class RS49Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user', array(true, true));
+        SugarTestHelper::setUP('app_list_strings');
 
         $this->service = SugarTestRestUtilities::getRestServiceMock();
         $this->api = new FileApi();

@@ -1,16 +1,14 @@
 <?php
-/*********************************************************************************
- * By installing or using this file, you are confirming on behalf of the entity
-* subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
-* the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
-* http://www.sugarcrm.com/master-subscription-agreement
-*
-* If Company is not bound by the MSA, then by installing or using this file
-* you are agreeing unconditionally that Company will be bound by the MSA and
-* certifying that you have authority to bind Company accordingly.
-*
-* Copyright (C) 2004-2014 SugarCRM Inc.  All rights reserved.
-********************************************************************************/
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
 require_once 'include/SugarFields/Fields/Multienum/SugarFieldMultienum.php';
 
 class SugarFieldTag extends SugarFieldMultienum
@@ -23,25 +21,21 @@ class SugarFieldTag extends SugarFieldMultienum
      * @param array     $properties
      */
     public function apiSave(SugarBean $bean, array $params, $field, $properties) {
-        if (empty($params[$field]) || !is_array($params[$field])) {
+        if (!is_array($params[$field])) {
             return;
         }
 
-        $lowercaseValues = array();
         foreach ($params[$field] as $key => &$record) {
             // First create tag bean if it needs to be created
-            $this->getTagBean($record);
+            $tag = $this->getTagBean($record);
 
             // Format tag to look more like a multienum field
-            $record = $record['name'];
-
-            // Make a lowercase version for storage and retrieval
-            $lowercaseValues[] = strtolower($record);
+            $record = $tag->name;
         }
 
         // Make the lowercase version of the tag and save that to the bean
-        if (isset($bean->field_defs[$field . '_lower']) && !empty($lowercaseValues)) {
-            $bean->{$field . '_lower'} = implode(' ', $lowercaseValues);
+        if (isset($bean->field_defs[$field . '_lower'])) {
+            $bean->{$field . '_lower'} = $this->getLowercase($params[$field]);
         }
 
         // Then save tags as a field on current bean
@@ -161,5 +155,36 @@ class SugarFieldTag extends SugarFieldMultienum
         }
 
         return explode(',', trim($value));
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function normalizeDefaultValue($value) {
+        // Treat field as an import list to make tags from string
+        $tags = $this->getTagValuesFromImport($value);
+        // Trim white space from each tag so users who type in 'tag1, tag2' won't end up with the tag: ' tag2'
+        $tags = array_map('trim', $tags);
+        // Sort tags in alphabetical order
+        sort($tags);
+
+        // Format tags to what the front end will expect
+        $return = array();
+        foreach ($tags as $tag) {
+            if (!empty($tag)) {
+                $return[] = array('name' => "$tag");
+            }
+        }
+        return $return;
+    }
+
+    /**
+     * Return tags in a space-delimited all-lowercase string
+     * @param $value
+     * @return string
+     */
+    public function getLowercase($value) {
+        $tags = unencodeMultienum($value);
+        return strtolower(implode(' ', $tags));
     }
 }

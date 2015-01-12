@@ -13,11 +13,11 @@
 <div class="btn-group" data-record-id="{{fieldValue this.model 'id'}}" data-toggle="buttons-radio">
     <button type="button" class="{{#eq value 'accept'}}active {{/eq}}btn btn-mini" data-action="accept"
             rel="tooltip" data-container="body"
-            data-original-title="{{getDDLabel 'accept' def.options}}"><i class="icon-ok-sign"></i></button>
+            data-original-title="{{getDDLabel 'accept' def.options}}"><i class="fa fa-check-circle"></i></button>
     <button type="button" class="{{#eq value 'tentative'}}active {{/eq}}btn btn-mini" data-action="tentative"
             rel="tooltip" data-container="body"
-            data-original-title="{{getDDLabel 'tentative' def.options}}"><i class="icon-question-sign"></i></button>
+            data-original-title="{{getDDLabel 'tentative' def.options}}"><i class="fa fa-question-circle"></i></button>
     <button type="button" class="{{#eq value 'decline'}}active {{/eq}}btn btn-mini" data-action="decline"
             rel="tooltip" data-container="body"
-            data-original-title="{{getDDLabel 'decline' def.options}}"><i class="icon-ban-circle"></i></button>
+            data-original-title="{{getDDLabel 'decline' def.options}}"><i class="fa fa-ban"></i></button>
 </div>

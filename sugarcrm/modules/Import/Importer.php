@@ -114,10 +114,23 @@ class Importer
         // Are we importing tags?
         $this->hasTags = array_search('tag', $this->importColumns);
 
+        //catch output including notices and warnings so import process can run to completion
+        $output = '';
+        ob_start();
         foreach($this->importSource as $row)
         {
             $this->importRow($row);
         }
+
+        //if any output was produced, then display it as an error.
+        //first, replace more than one consecutive spaces with a single space.  This is to condense
+        //multiple line/row errors and prevent miscount of rows in list navigation UI
+        $output = ob_get_clean();
+        if(!empty($output)) {
+            $output = preg_replace('/\s+/', ' ', trim($output));
+            $this->importSource->writeError( 'Execution', 'Execution Error', $output);
+        }
+
 
         // save mapping if requested
         if ( isset($_REQUEST['save_map_as']) && $_REQUEST['save_map_as'] != '' )

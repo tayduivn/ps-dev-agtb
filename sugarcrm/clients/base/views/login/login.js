@@ -131,6 +131,8 @@
      */
     _render: function() {
         this.logoUrl = app.metadata.getLogoUrl();
+        //It's possible for errors to prevent the postLogin from triggering so contentEl may be hidden.
+        app.$contentEl.show();
 
         this._super('_render');
 

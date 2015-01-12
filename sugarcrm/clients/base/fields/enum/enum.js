@@ -169,8 +169,8 @@
                 // call with {silent: true} on, so it won't re-render the field, since we haven't rendered the field yet
                 this.model.set(this.name, defaultValue, {silent: true});
                 //Forecasting uses backbone model (not bean) for custom enums so we have to check here
-                if (_.isFunction(this.model.setDefaultAttribute)) {
-                    this.model.setDefaultAttribute(this.name, defaultValue);
+                if (_.isFunction(this.model.setDefault)) {
+                    this.model.setDefault(this.name, defaultValue);
                 }
             }
         }
@@ -191,10 +191,6 @@
                     plugin.container.attr('dir', this.dir);
                     plugin.results.attr('dir', this.dir);
                 }
-
-                if (plugin && plugin.focusser) {
-                    plugin.focusser.on('select2-focus', _.bind(_.debounce(this.handleFocus, 0), this));
-                }
                 $el.select2("container").addClass("tleft");
                 $el.on('change', function(ev) {
                     var value = ev.val;
@@ -203,30 +199,25 @@
                     }
                     if (self.model) {
                         self.model.set(self.name, self.unformat(value));
-                        //Forecasting uses backbone model (not bean) for custom enums so we have to check here
-                        if (_.isFunction(self.model.removeDefaultAttribute)) {
-                            self.model.removeDefaultAttribute(self.name)
-                        }
-
                     }
-                });
+                }).on('select2-focus', _.bind(_.debounce(this.handleFocus, 0), this));
                 if (this.def.ordered) {
-                    $el.select2("container").find("ul.select2-choices").sortable({
+                    $el.select2('container').find('ul.select2-choices').sortable({
                         containment: 'parent',
                         start: function() {
-                            $el.select2("onSortStart");
+                            $el.select2('onSortStart');
                         },
                         update: function() {
-                            $el.select2("onSortEnd");
+                            $el.select2('onSortEnd');
                         }
                     });
                 }
-            } else if(this.tplName === 'disabled') {
+            } else if (this.tplName === 'disabled') {
                 $el.select2(select2Options);
                 $el.select2('disable');
             }
             //Setup selected value in Select2 widget
-            if(!_.isUndefined(this.value)){
+            if (!_.isUndefined(this.value)) {
                 // To make pills load properly when autoselecting a string val
                 // from a list val needs to be an array
                 if (!_.isArray(this.value)) {
@@ -238,7 +229,7 @@
             }
         } else {
             // Set loading message in place of empty DIV while options are loaded via API
-            this.$el.html(app.lang.get("LBL_LOADING"));
+            this.$el.html(app.lang.get('LBL_LOADING'));
         }
         return this;
     },
@@ -260,10 +251,11 @@
      * @param {Function} callback (optional) Called when enum options are available.
      */
     loadEnumOptions: function(fetch, callback) {
-        var self = this,
-            meta = app.metadata.getModule(this.module, 'fields'),
-            fieldMeta = meta && meta[this.name] ? app.utils.deepCopy(meta[this.name]) : this.def;
-        this.items = this.def.options || fieldMeta.options;
+        var self = this;
+        var _itemsKey = 'cache:' + this.module + ':' + this.name + ':items';
+
+        this.items = this.def.options || this.context.get(_itemsKey);
+
         fetch = fetch || false;
 
         if (fetch || !this.items) {
@@ -284,7 +276,7 @@
                         if(self.disposed) { return; }
                         if (self.items !== o) {
                             self.items = o;
-                            fieldMeta.options = self.items;
+                            self.context.set(_itemsKey, self.items);
                             self.context.unset(_key);
                             callback.call(self);
                         }
