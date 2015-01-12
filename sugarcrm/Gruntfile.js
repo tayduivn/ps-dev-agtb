@@ -13,6 +13,7 @@ var os = require('os');
 
 module.exports = function(grunt) {
     grunt.loadTasks('grunt/tasks');
+    grunt.loadTasks('grunt/tasks/check-license');
     grunt.loadNpmTasks('grunt-jsduck');
 
     var path = grunt.option('path');
@@ -73,6 +74,45 @@ module.exports = function(grunt) {
                     'junit'
                 ]
             }
+        },
+        'check-license': {
+            excludedExtensions: [
+                'json',
+                // image files
+                'gif',
+                'jpeg',
+                'jpg',
+                'png',
+                'ico',
+                // special system files
+                'DS_Store',
+                // Doc files
+                'md',
+                'txt',
+                // vector files
+                'svg',
+                'svgz',
+                // font files
+                'eot',
+                'ttf',
+                'woff',
+                'otf',
+                // stylesheets
+                'less',
+                'css'
+            ],
+            // Array of directory patterns (PCRE regex).
+            // Only works with the name, not its path.
+            excludedDirectories: [
+                'node_modules',
+                'vendor',
+                'tests',
+                // sugarcharts should be ignored
+                'SugarCharts'
+            ],
+            licenseFile: 'LICENSE',
+            // Add paths you want to exclude in the whiteList file.
+            whiteList: 'grunt/assets/check-license/license-white-list.json'
         },
         jsduck: {
             all: {
