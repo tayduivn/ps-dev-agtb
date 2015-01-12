@@ -85,7 +85,8 @@ class PMSELogicHook
                     'Subscriptions',
                     'OAuthToken',
                     'Dashboards',
-                    'Activities'
+                    'Activities',
+                    'Filters',
                 ), $pmseModulesList);
             //if ($bean->object_name == 'OAuthToken') {
             //    return true;

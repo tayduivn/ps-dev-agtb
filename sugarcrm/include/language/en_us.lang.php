@@ -2538,6 +2538,8 @@ $app_strings = array (
 
     'WARNING_NO_DELETE_SELECTED_STAGE' => 'One or more of the selected records has a sales stage of Closed Won or Closed Lost and cannot be deleted.',
     'WARNING_NO_DELETE_SELECTED_STATUS' => 'One or more of the selected records has a status of Closed Won or Closed Lost and cannot be deleted.',
+    'WARNING_NO_DELETE_CLOSED_SELECTED_STATUS' => 'One or more of the selected records has a RLI with status of ' .
+        'Closed Won or Closed Lost and cannot be deleted.',
 
     'LBL_ACCOUNT'=>'Account',
     'LBL_OLD_ACCOUNT_LINK'=>'Old Account',
@@ -5254,7 +5256,7 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_PMSE_PROCESSES_DASHLET_DESCRIPTION' => 'Processes dashlet displays the templates that can be used inside of Process Author.',
 
     //PMSE Process Definitions Dashlet
-    'LBL_PMSE_PROCESS_DEFINITIONS_DASHLET' => 'Process Defintions',
+    'LBL_PMSE_PROCESS_DEFINITIONS_DASHLET' => 'Process Definitions',
     'LBL_PMSE_PROCESS_DEFINITIONS_DASHLET_DESCRIPTION' => 'Process Definitions dashlet displays the templates that can be used inside of Process Author.',
     'LNK_PMSE_PROCESS_DEFINITIONS_NEW_RECORD' => 'Create Process Definitions',
     'LNK_PMSE_PROCESS_DEFINITIONS_IMPORT_RECORD' => 'Import Process Definitions',

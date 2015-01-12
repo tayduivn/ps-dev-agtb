@@ -19,6 +19,25 @@
         "use-include-path" : false
     },
     "minimum-stability": "stable",
+    "autoload": {
+        "psr-4": {
+            "Sugarcrm\\Sugarcrm\\": [
+                "src/",
+                ""
+            ],
+            "Sugarcrm\\Sugarcrm\\custom\\": [
+                "custom/src/",
+                "custom/"
+            ],
+            "Sugarcrm\\Sugarcrm\\inc\\": "include/",
+            "Sugarcrm\\Sugarcrm\\custom\\inc\\": "custom/include/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Sugarcrm\\SugarcrmTest\\": "test/"
+        }
+    },
     "require": {
         "ruflin/elastica" : "v1.2.1.0",
         "onelogin/php-saml" : "2.1.0.1",

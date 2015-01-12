@@ -19,6 +19,28 @@
     extendsFrom: 'ConfigHeaderButtonsView',
 
     /**
+     * The current opps_view_by config setting when the view is initialized
+     */
+    currentOppsViewBySetting: undefined,
+
+    /**
+     * Stores if Forecasts is set up or not
+     */
+    isForecastsSetup: false,
+
+    /**
+     * @inheritdoc
+     */
+    initialize: function(options) {
+        this._super('initialize', [options]);
+
+        this.currentOppsViewBySetting = this.model.get('opps_view_by');
+
+        // get the boolean form of if Forecasts is configured
+        this.isForecastsSetup = !!app.metadata.getModule('Forecasts', 'config').is_setup;
+    },
+
+    /**
      * Before the save triggers, we need to show the alert so the users know it's doing something.
      * @private
      */
@@ -33,5 +55,38 @@
     showSavedConfirmation: function(onClose) {
         app.alert.dismiss('opp.config.save');
         this._super('showSavedConfirmation', [onClose]);
+    },
+
+    /**
+     * Displays the Forecast warning confirm alert
+     */
+    displayWarningAlert: function() {
+        app.alert.show('forecast-warning', {
+            level: 'confirmation',
+            title: app.lang.get('LBL_WARNING'),
+            messages: app.lang.get('LBL_OPPS_CONFIG_ALERT', 'Opportunities'),
+            onConfirm: _.bind(function() {
+                this._super('saveConfig');
+            }, this),
+            onCancel: _.bind(function() {
+                this.model.set('opps_view_by', this.currentOppsViewBySetting);
+            }, this)
+        });
+    },
+
+    /**
+     * @inheritdoc
+     *
+     * Overriding the default saveConfig to display the warning alert first, then on confirm of the
+     * warning alert, it calls the parent saveConfig to actually save the config settings
+     *
+     * @override
+     */
+    saveConfig: function() {
+        if (this.isForecastsSetup && this.currentOppsViewBySetting !== this.model.get('opps_view_by')) {
+            this.displayWarningAlert();
+        } else {
+            this._super('saveConfig');
+        }
     }
 })

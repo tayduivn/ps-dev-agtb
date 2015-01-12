@@ -41,7 +41,7 @@
         this.type = this.def.type = 'int';
 
         this.def['default'] = this.def['default'] || this.defaultCount;
-        if (this.model.isNew()) {
+        if (this.model.isNew() && !this.model.isCopy()) {
             this.model.setDefault(this.name, this.def['default']);
         }
 

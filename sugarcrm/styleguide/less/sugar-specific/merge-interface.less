@@ -74,27 +74,6 @@ h4.merge-interface-header {
     }
   }
 
-  .input-append.date {
-    top: 4px;
-  }
-  .datetime {
-    input[type="text"].datepicker,
-    input[type="text"].ui-timepicker-input {
-      width: 86px;
-    }
-    .add-on {
-      position: absolute;
-      right: 11px;
-      left: auto;
-      &.time {
-        top: 38px;
-      }
-    }
-    .ui-timepicker-input {
-      margin-left: 0;
-    }
-  }
-
   .col {
     min-width: 130px;
     width: 130px;
@@ -264,7 +243,7 @@ h4.merge-interface-header {
         height: 75px;
       }
       .controls label > span > div {
-        width: 90%;
+        width: 100%;
         margin-left: 0;
       }
     }
@@ -294,16 +273,24 @@ h4.merge-interface-header {
       }
     }
     &.merge-row-field-datetimecombo {
-      height: 70px;
       .controls label {
         height: 75px;
         overflow: visible;
+        .calcWidth(~"100% - 20px") !important;
+        input.datepicker {
+          .calcWidth(~"55% - 21px");
+        }
+        input.ui-timepicker-input {
+          .calcWidth(~"45% - 21px");
+          margin-left: 12px;
+        }
       }
-      .controls label > span > div {
-        width: 90%;
-        margin-left: 0;
-        &.input-append {
-          white-space: normal;
+      .input-append {
+        white-space: normal;
+        padding-top: 4px;
+        .add-on {
+          left: 0;
+          margin-left: -24px;
         }
       }
     }
@@ -370,3 +357,31 @@ h4.merge-interface-header {
 }
 .loopingClass (0) {}
 .loopingClass (@iterations);
+
+@col-iterations: 4;
+@col-merge-threshold-step: 200;
+.colLoopingClass (@col-index) when (@col-index > 0) {
+  @col-media-query-threshold: e( %("%dpx", (900 + (@col-merge-threshold-step * (@col-index - 1)))) );
+  @media screen and (max-width: @col-media-query-threshold) {
+    @col-class: @col-index + 1;
+    .merge-interface {
+      .num-cols-@{col-class} {
+        .merge-row.merge-row-field-datetimecombo {
+          height: 70px;
+          .controls label {
+            input.datepicker,
+            input.ui-timepicker-input {
+              .calcWidth(~"100% - 18px");
+            }
+            .ui-timepicker-input {
+              margin-left: 0;
+            }
+          }
+        }
+      }
+    }
+  }
+  .colLoopingClass(@col-index - 1);
+}
+.colLoopingClass (0) {}
+.colLoopingClass (@col-iterations);

@@ -402,7 +402,7 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
      * @param $project_id Project id
      * @return stdClass
      */
-    public function retrieveProject($projectId)
+    public function retrieveProject($projectId, $completeData = false)
     {
         $response = array();
         if ($this->project->retrieve_by_string_fields(array('id' => $projectId))) {

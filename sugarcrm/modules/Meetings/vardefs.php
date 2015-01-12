@@ -598,6 +598,13 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
         'source' => 'non-db',
         'reportable' => false,
     ),
+    'contact_parent' => array(
+        'name' => 'contact_parent',
+        'type' => 'link',
+        'relationship' => 'contact_meetings_parent',
+        'source' => 'non-db',
+        'reportable' => false,
+    ),
 ),
  'relationships' => array (
 	  'meetings_assigned_user' =>
