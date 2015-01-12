@@ -699,6 +699,7 @@ class ModuleBuilderController extends SugarController
         $parser->saveDropDown($_REQUEST);
         MetaDataManager::refreshSectionCache(MetaDataManager::MM_LABELS);
         MetaDataManager::refreshSectionCache(MetaDataManager::MM_ORDEREDLABELS);
+        MetaDataManager::refreshSectionCache(MetaDataManager::MM_EDITDDFILTERS);
         $this->view = 'dropdowns';
     }
 
