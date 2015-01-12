@@ -45,7 +45,13 @@ class LeadConvertApi extends ModuleApi
     {
         $leadConvert = new LeadConvert($args['leadId']);
         $modules = $this->loadModules($api, $leadConvert->getAvailableModules(), $args['modules']);
-        $modules = $leadConvert->convertLead($modules);
+
+        $transferActivitiesModules =
+            empty($args['transferActivitiesModules']) ? array() : $args['transferActivitiesModules'];
+        $transferActivitiesAction =
+            empty($args['transferActivitiesAction']) ? '' : $args['transferActivitiesAction'];
+
+        $modules = $leadConvert->convertLead($modules, $transferActivitiesAction, $transferActivitiesModules);
 
         return array (
             'modules' => $this->formatBeans($api, $args, $modules)
