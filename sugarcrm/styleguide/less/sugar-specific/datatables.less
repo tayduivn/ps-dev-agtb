@@ -164,10 +164,13 @@
       input[type="text"].datepicker {
         width: 50%;
         .calcWidth(~"55% - 2px");
+        min-width: 0;
       }
       input[type="text"].ui-timepicker-input {
         width: 40%;
         .calcWidth(~"45% - 2px");
+        margin-left: -24px;
+        min-width: 0;
       }
     }
     &[data-type="avatar"] {
@@ -332,6 +335,14 @@
             margin-left: 0;
             width: 100%;
             .box-sizing(border-box);
+          }
+        }
+        &[data-type="textarea"] {
+          textarea {
+            .calcWidth(~"100% - 12px");
+            max-width: calc(~"100% - 12px");
+            height: 18px;
+            margin: 0px;
           }
         }
         &[data-type="fullname"] {

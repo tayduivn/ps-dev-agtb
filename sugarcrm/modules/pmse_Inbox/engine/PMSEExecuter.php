@@ -505,7 +505,9 @@ class PMSEExecuter
         switch ($executionMode) {
             case 'RESUME_EXECUTION':
                 $executionResult = $pmseElement->run($flowData, $bean, $externalAction, $arguments);
-                $executionResult['flow_action'] = 'UPDATE';
+                $executionResult['flow_action'] = isset($executionResult['flow_action']) ?
+                    $executionResult['flow_action'] :
+                    'UPDATE';
                 $executionResult['flow_id'] = $flowData['id'];
                 break;
             case 'ASYNC':

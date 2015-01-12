@@ -34,7 +34,7 @@ File Source:<select id='filesource' name='filesource' onchange='filesource_selec
 </select>
 <span id='zipspan' style="display:none">
 <br/>
-Enter zip file name:<input type='text' name='zip_name'>&nbsp;<span>(Place the zip fie in the current directory.)</span>
+Enter zip file name:<input type='text' name='zip_name'>&nbsp;<span>(Place the zip file in the current directory.)</span>
 </span>
 <br/>
 <br/>
@@ -161,7 +161,7 @@ if(!empty($_POST['filestopatch'])){
 			die('A zip name is required.');
 		}
 		
-		echo "<br/>Unzipping conents...";
+		echo "<br/>Unzipping contents...";
 		unzip(dirname(__FILE__).'/'.$_POST['zip_name'],$unzip_dir);
 		
 	 	$zipcontents=scandir($unzip_dir);

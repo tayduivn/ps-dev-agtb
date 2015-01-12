@@ -120,7 +120,7 @@ class ViewConfigureshortcutbar extends SugarView
      *
      * @return array
      */
-    protected function getQuickCreateModules()
+    public function getQuickCreateModules()
     {
         global $moduleList;
         $enabledModules = array();
@@ -179,7 +179,7 @@ class ViewConfigureshortcutbar extends SugarView
      * @param $modulesToEnable array
      * @return bool
      */
-    protected function saveChangesToQuickCreateMetadata($enabled, $disabled, $modulesToEnable)
+    public function saveChangesToQuickCreateMetadata($enabled, $disabled, $modulesToEnable)
     {
         $success = true;
 

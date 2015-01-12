@@ -157,23 +157,22 @@ class Call extends SugarBean {
         }
 
         $check_notify = $this->send_invites;
-
-		if($this->send_invites == false) {
-			$old_assigned_user_id = '';
-			if(!empty($this->id)) {
-				$old_record = BeanFactory::getBean('Calls', $this->id);
-				$old_assigned_user_id = $old_record->assigned_user_id;
-			}
-			if((!isset($GLOBALS['installing']) || $GLOBALS['installing'] != true) && (empty($this->id) && isset($this->assigned_user_id) && !empty($this->assigned_user_id) && $GLOBALS['current_user']->id != $this->assigned_user_id) || (isset($old_assigned_user_id) && !empty($old_assigned_user_id) && isset($this->assigned_user_id) && !empty($this->assigned_user_id) && $old_assigned_user_id != $this->assigned_user_id) ){
-				$this->special_notification = true;
-				if(!static::inOperation('saving_related')) {
-					$check_notify = true;
-				}
-                if(isset($_REQUEST['assigned_user_name'])) {
+        if ($this->send_invites == false) {
+            $old_assigned_user_id = CalendarEvents::$old_assigned_user_id;
+            if ((empty($GLOBALS['installing']) || $GLOBALS['installing'] != true) &&
+                (!empty($this->assigned_user_id) &&
+                    $this->assigned_user_id != $GLOBALS['current_user']->id &&
+                    $this->assigned_user_id != $old_assigned_user_id)
+            ) {
+                $this->special_notification = true;
+                $check_notify = true;
+                CalendarEvents::$old_assigned_user_id = $this->assigned_user_id;
+                if (isset($_REQUEST['assigned_user_name'])) {
                     $this->new_assigned_user_name = $_REQUEST['assigned_user_name'];
                 }
-			}
-		}
+            }
+        }
+
         if (empty($this->status) ) {
             $this->status = $this->getDefaultStatus();
         }
@@ -205,16 +204,6 @@ class Call extends SugarBean {
             $this->load_relationship('leads');
             if (!$this->leads->relationship_exists('leads', array('id' => $this->parent_id))) {
                 $this->leads->add($this->parent_id);
-            }
-        }
-
-        if (!empty($this->contact_id)) {
-            if (is_array($this->contacts_arr) && !in_array($this->contact_id, $this->contacts_arr)) {
-                $this->contacts_arr[] = $this->contact_id;
-            }
-            $this->load_relationship('contacts');
-            if (!$this->contacts->relationship_exists('contacts', array('id' => $this->contact_id))) {
-                $this->contacts->add($this->contact_id);
             }
         }
 

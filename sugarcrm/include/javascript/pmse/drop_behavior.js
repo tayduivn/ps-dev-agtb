@@ -530,7 +530,7 @@ AdamConnectionDropBehavior.prototype.onDrop = function (shape) {
         if (shape.getConnectionType() === "none") {
             App.alert.show('warning_connection', {
                 level: 'warning',
-                messages: translate('LBL_PMSE_ADAM_UI_INVALID_CONNECTION'),
+                messages: translate('LBL_PMSE_MESSAGE_INVALID_CONNECTION'),
                 autoClose: true,
                 autoCloseDelay: 9000
             });

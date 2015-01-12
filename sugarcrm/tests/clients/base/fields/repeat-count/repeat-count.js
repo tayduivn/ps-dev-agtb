@@ -37,10 +37,23 @@ describe('View.Fields.Base.RepeatCountField', function() {
         sandbox.stub(field, '_super');
         sandbox.stub(field.model, 'isNew').returns(true);
         sandbox.stub(field.model, 'addValidationTask');
+        field.model.unset(field.name);
 
         field.initialize();
 
         expect(field.model.get(field.name)).toBe(field.defaultCount);
+    });
+
+    it('should not default the value when the model has been copied', function() {
+        sandbox.stub(field, '_super');
+        sandbox.stub(field.model, 'isNew').returns(true);
+        sandbox.stub(field.model, 'isCopy').returns(true);
+        sandbox.stub(field.model, 'addValidationTask');
+        field.model.unset(field.name);
+
+        field.initialize();
+
+        expect(field.model.get(field.name)).toBeUndefined();
     });
 
     it('should not default the value when not creating a new record', function() {

@@ -23,6 +23,11 @@ class SugarAutoLoader
     const CLASS_CACHE_FILE = "class_map.php";
 
     /**
+     * Root namespace
+     */
+    const NS_ROOT = 'Sugarcrm\\Sugarcrm\\';
+
+    /**
      * Direct class mapping
      * @var array name => path
      */
@@ -75,7 +80,12 @@ class SugarAutoLoader
      * To add namespaces dynamically it's advised to use `self::addNamespace`
      * as this method will ensure a correct order from more to less
      * specific namespace prefixes. Also every prefix supports multiple
-     * paths.
+     * paths which are iterated in order to find a match.
+     *
+     * A better way to introduce new namespaces is by loading your libraries
+     * through composer.json. The namespace definition as per the autoload
+     * section will be automatically honored by this autoloader and avoids
+     * the need of programmatically adding new namespaces using addNameSpace.
      *
      * @var array nsPrefix => array(directories)
      */
@@ -343,11 +353,6 @@ class SugarAutoLoader
         // try namespaces
         if (false !== strpos($class, '\\')) {
             if ($file = self::getFilenameForFQCN($class)) {
-                // Currently no sugar files are loaded through namespaces,
-                // therefor we do not try to load files from custom. When
-                // Sugarcrm namespaces are introduced we will add specific
-                // handling for this as requireWithCustom is not namespace
-                // aware for the moment.
                 if (self::load($file)) {
                     self::$classMap[$class] = $file;
                     self::$classMapDirty = true;
@@ -455,7 +460,7 @@ class SugarAutoLoader
      * Return filename for given Fully Qualified Class Name
      *
      * @param string $class FQCN without leading backslash
-     * @return mixed(string|boolean)
+     * @return string|false
      */
     public static function getFilenameForFQCN($class)
     {
@@ -471,7 +476,7 @@ class SugarAutoLoader
      * PSR-0 support http://www.php-fig.org/psr/psr-0/
      *
      * @param string $class Fully Qualified Class Name
-     * @return mixed(string|boolean)
+     * @return string|false
      */
     public static function getFileNamePsr0($class)
     {
@@ -485,7 +490,9 @@ class SugarAutoLoader
                     } else {
                         $path .= str_replace('_', '/', $class) . '.php';
                     }
-                    return $path;
+                    if (self::fileExists($path)) {
+                        return $path;
+                    }
                 }
             }
         }
@@ -505,7 +512,9 @@ class SugarAutoLoader
                 if (strpos($class, $prefix) === 0) {
                     $path = empty($path) ? '' : $path . '/';
                     $path .= str_replace('\\', '/', str_replace($prefix, '', $class)) . '.php';
-                    return $path;
+                    if (self::fileExists($path)) {
+                        return $path;
+                    }
                 }
             }
         }
@@ -1282,19 +1291,45 @@ class SugarAutoLoader
         return $data;
     }
 
-	/**
-	 * Get custom class name if that exists or original one if not
-	 * @param string $classname
-	 * @return string Classname
-	 */
-	public static function customClass($classname, $autoload = false)
-	{
-	    $customClass = 'Custom'.$classname;
-	    if(class_exists($customClass, $autoload)) {
-	        return $customClass;
-	    }
-	    return $classname;
-	}
+    /**
+     * Get custom class name if that exists or original one if not
+     * @param string $className Class name, legacy or FQCN
+     * @param boolean $autoload Try to autoload the custom class, always true
+     *      when a namespaced class name is passed in.
+     * @return string Classname
+     */
+    public static function customClass($className, $autoload = false)
+    {
+        if (strpos($className, '\\') !== false) {
+            $customClass = self::getCustomClassFQCN($className);
+            $autoload = true;
+        } else {
+            $customClass = 'Custom'.$className;
+        }
+
+        if ($customClass && class_exists($customClass, $autoload)) {
+            return $customClass;
+        }
+
+        return $className;
+    }
+
+    /**
+     * Get custom fully qualified class name, return false if not able
+     * to transform the given class name into its custom counterpart.
+     * Will also return false if given class name is already in custom
+     * format.
+     * @param string $className Fully qualified class name
+     * @return string|false
+     */
+    public static function getCustomClassFQCN($className)
+    {
+        $customBase = self::NS_ROOT . 'custom\\';
+        if (strpos($className, self::NS_ROOT) === 0 && strpos($className, $customBase) === false) {
+            return str_replace(self::NS_ROOT, $customBase, $className);
+        }
+        return false;
+    }
 
 	/**
 	 * Unlink and delete from map

@@ -24,6 +24,7 @@ var Button = function (options, parent) {
     this.caption = null;
     this.action = null;
     this.icon = null;
+    this.cssClasses = [];
     Button.prototype.initObject.call(this, options, parent);
 };
 
@@ -36,18 +37,21 @@ Button.prototype.initObject = function (options, parent) {
     var defaults, self = this;
     if (options.isAction) {
         this.loadAction(options, parent);
+        this.setCssClasses((options && options.cssClasses) || []);
     } else {
         defaults = {
             caption: null,
             parent: parent || null,
             jtype: 'normal',
             handler: function () {},
-            icon: null
+            icon: null,
+            cssClasses: []
         };
         $.extend(true, defaults, options);
         this.setCaption(defaults.caption)
             .setParent(defaults.parent)
-            .setIcon(defaults.icon);
+            .setIcon(defaults.icon)
+            .setCssClasses(defaults.cssClasses);
         switch (defaults.jtype) {
         case 'reset':
             this.action = new Action({
@@ -76,6 +80,14 @@ Button.prototype.initObject = function (options, parent) {
             break;
         }
     }
+};
+
+Button.prototype.setCssClasses = function (cssClasses) {
+    var oldClasses = this.cssClasses.join(" "),
+        newClasses = cssClasses.join(" ");
+    this.cssClasses = cssClasses;
+    jQuery(this.html).remove(oldClasses).addClass(newClasses);
+    return this;
 };
 
 Button.prototype.loadAction = function (action, parent) {
@@ -121,6 +133,7 @@ Button.prototype.createHTML = function () {
     buttonAnchor.appendChild(labelSpan);
 
     this.html = buttonAnchor;
+    this.setCssClasses(this.cssClasses);
 
     return this.html;
 };

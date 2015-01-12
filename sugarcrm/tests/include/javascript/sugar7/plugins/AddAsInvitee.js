@@ -139,4 +139,42 @@ describe('Plugins.AddAsInvitee', function() {
         view.model.set('assigned_user_name', user.get('name'));
         expect(view.model.get('invitees').get(user.id)).not.toBeUndefined();
     });
+
+    it('should invite the contact defined by contact_id field if populated on create', function() {
+        var contact = new app.Bean({id: '123', _module: 'Contacts', name: 'Foo Contact'});
+        contact.module = contact.get('_module');
+        sandbox.stub(app.data, 'createBean').withArgs('Contacts').returns(contact);
+
+        view.model.set('invitees', new Backbone.Collection(), {silent: true});
+        view.model.set('contact_id', contact.id, {silent: true});
+        view.model.set('contact_name', contact.get('name'), {silent: true});
+        expect(view.model.get('invitees').get(contact.id)).toBeUndefined();
+        view.render();
+        expect(view.model.get('invitees').get(contact.id)).not.toBeUndefined();
+    });
+
+    it('should correctly check if invitee is going to be added automatically', function() {
+        var id = '123',
+            module = 'Contacts',
+            invitee = new app.Bean({id: id}),
+            model = new app.Bean();
+
+        invitee.module = module;
+        model.link = {
+            bean: invitee
+        };
+
+        expect(view._isCreateAndLinkAction(invitee, model)).toBe(true);
+    });
+
+    it('should correctly check if invitee is not going to be added automatically', function() {
+        var id = '123',
+            module = 'Contacts',
+            invitee = new app.Bean({id: id}),
+            model = new app.Bean();
+
+        invitee.module = module;
+
+        expect(view._isCreateAndLinkAction(invitee, model)).toBe(false);
+    });
 });

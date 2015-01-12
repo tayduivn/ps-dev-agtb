@@ -16,6 +16,14 @@ describe('View.Fields.Base.RepeatUntilField', function() {
             module: module
         };
         field = SugarTest.createField(createFieldProperties);
+        field.view = {
+            getField: function(){}
+        };
+        sinon.stub(field.view, 'getField', function() {
+            return {
+                label: 'foo'
+            }
+        });
     });
 
     afterEach(function() {
@@ -28,56 +36,51 @@ describe('View.Fields.Base.RepeatUntilField', function() {
         app.view.reset();
     });
 
-    using('different repeat until and end date values', [
+    using('different repeat until and start date values', [
         {
-            expectation: 'should error when repeat until is before end date',
+            expectation: 'should error when repeat until is before start date',
             action: 'edit',
             repeatUntil: '2014-11-17',
-            endDate: '2014-11-18T13:00:00-05:00',
+            startDate: '2014-11-18T13:00:00-05:00',
             isErrorExpected: true
         },
         {
-            expectation: 'should error when repeat until is same as end date',
+            expectation: 'should not error when repeat until is same as start date',
             action: 'edit',
             repeatUntil: '2014-11-18',
-            endDate: '2014-11-18T13:00:00-05:00',
-            isErrorExpected: true
+            startDate: '2014-11-18T13:00:00-05:00',
+            isErrorExpected: false
         },
         {
-            expectation: 'should not error when repeat until is after end date',
+            expectation: 'should not error when repeat until is after start date',
             action: 'edit',
             repeatUntil: '2014-11-19',
-            endDate: '2014-11-18T13:00:00-05:00',
+            startDate: '2014-11-18T13:00:00-05:00',
             isErrorExpected: false
         },
         {
             expectation: 'should not error when repeat until is not set',
             action: 'edit',
             repeatUntil: '',
-            endDate: '2014-11-18T13:00:00-05:00',
+            startDate: '2014-11-18T13:00:00-05:00',
             isErrorExpected: false
         },
         {
             expectation: 'should not error when not in edit mode',
             action: 'detail',
             repeatUntil: '2014-11-17',
-            endDate: '2014-11-18T13:00:00-05:00',
+            startDate: '2014-11-18T13:00:00-05:00',
             isErrorExpected: false
         }
     ], function(value) {
         it(value.expectation, function() {
             var errors = {};
 
-            field.model.fields = {
-                'date_end': {
-                    name: 'date_end',
-                    type: 'date'
-                }
-            };
             field.action = value.action;
             field.model.set('repeat_until', value.repeatUntil, {silent: true});
-            field.model.set('date_end', value.endDate, {silent: true});
+            field.model.set('date_start', value.startDate, {silent: true});
             field._doValidateRepeatUntil(null, errors, $.noop);
+
             expect(!_.isEmpty(errors)).toBe(value.isErrorExpected);
         });
     });

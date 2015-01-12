@@ -44,12 +44,14 @@
             {id: this._allModulesId, text: app.lang.get('Target Module')}
         ];
 
-        url = app.api.buildURL('pmse_Emails_Templates', this.collection.baseModule +  '/find_modules');
+        url = app.api.buildURL('pmse_Emails_Templates', this.collection.baseModule +  '/find_modules?module_list='+this.collection.baseModule);
         app.api.call('read', url, null, {
             success:function (result){
                 if (result.success) {
                     _.each(result.result, function(module) {
-                        self._moduleFilterList.push({id: module.value, text: module.text});
+                        if(module.value!=self.collection.baseModule){
+                            self._moduleFilterList.push({id: module.value, text: module.text});
+                        }
                     }, self);
                 }
             }

@@ -1871,6 +1871,10 @@ EOQ;
             case 'WorkFlowAlerts':
             case 'WorkFlowAlertShells':
             case 'WorkFlowTriggerShells':
+            case 'pmse_Project':
+            case 'pmse_Inbox':
+            case 'pmse_Emails_Templates':
+            case 'psme_Business_Rules':
                 return true;
         }
 

@@ -141,23 +141,6 @@ class CallTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals('accept', $a['accept_status'], "Call wasn't accepted by the User");         
     }
 
-    public function testCallContactIdSet()
-    {
-        global $db, $current_user;
-        $call = BeanFactory::newBean('Calls');
-        $call->name = 'Super Awesome Call Ville USA';
-        $call->contact_id = $this->contact->id;
-        $call->date_start = date('Y-m-d H:i:s');
-        $call->assigned_user_id = $current_user->id;
-        $call->save();
-
-        $q = "SELECT mu.contact_id FROM calls_contacts mu WHERE mu.call_id = '{$call->id}'";
-        $r = $db->query($q);
-        $a = $db->fetchByAssoc($r);
-        $this->assertEquals($this->contact->id, $a['contact_id'], "Contact wasn't set as an invitee");
-
-    }
-
     public function testLoadFromRow()
     {
         /** @var Call $call */

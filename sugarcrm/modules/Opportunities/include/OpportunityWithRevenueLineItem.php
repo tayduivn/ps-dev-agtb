@@ -238,6 +238,9 @@ EOL;
         // handle the parent_type_field
         $this->setRevenueLineItemInParentRelateDropDown(true);
 
+        // enable the item in the quick create
+        $this->toggleRevenueLineItemQuickCreate(true);
+
         // place the studio file
         sugar_touch($this->rliStudioFile);
 

@@ -89,8 +89,8 @@ $viewdefs['base']['view']['dnb-premium-company-info'] = array(
                 'marketind' => true,
                 'dunsselfind' => true,
                 'nonmarkreastxt' => true,
-                'orgid' => '1',
-                'indcodes' => '1',
+                'orgid' => true,
+                'indcodes' => true,
 
             ),
             'preview' => array(
@@ -162,8 +162,8 @@ $viewdefs['base']['view']['dnb-premium-company-info'] = array(
                 'marketind' => true,
                 'dunsselfind' => true,
                 'nonmarkreastxt' => true,
-                'orgid' => '1',
-                'indcodes' => '1',
+                'orgid' => true,
+                'indcodes' => true,
             ),
         ),
     ),

@@ -51,6 +51,7 @@
      * Init dashlet settings
      */
     initDashlet: function() {
+        this._super('initDashlet');
         var pagesz = this.settings.get('pagesz')
         if (_.isUndefined(pagesz)){
             pagesz = 10;

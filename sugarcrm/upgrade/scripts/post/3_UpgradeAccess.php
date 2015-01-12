@@ -55,7 +55,8 @@ class SugarUpgradeUpgradeAccess extends UpgradeScript
          */
         if (file_exists($htaccess_file)) {
 
-            $cache_headers = <<<EOQ
+            //There are two versions of cache_headers: one list ends with ico, the other list ends with woff.
+            $cache_headers_ico = <<<EOQ
 <FilesMatch "\.(jpg|png|gif|js|css|ico)$">
         <IfModule mod_headers.c>
                 Header set ETag ""
@@ -72,6 +73,27 @@ class SugarUpgradeUpgradeAccess extends UpgradeScript
         ExpiresByType image/png "access plus 1 month"
 </IfModule>
 EOQ;
+            $cache_headers_woff = <<<EOQ
+<IfModule mod_mime.c>
+    AddType application/x-font-woff .woff
+</IfModule>
+<FilesMatch "\.(jpg|png|gif|js|css|ico|woff)$">
+        <IfModule mod_headers.c>
+                Header set ETag ""
+                Header set Cache-Control "max-age=2592000"
+                Header set Expires "01 Jan 2112 00:00:00 GMT"
+        </IfModule>
+</FilesMatch>
+<IfModule mod_expires.c>
+        ExpiresByType text/css "access plus 1 month"
+        ExpiresByType text/javascript "access plus 1 month"
+        ExpiresByType application/x-javascript "access plus 1 month"
+        ExpiresByType image/gif "access plus 1 month"
+        ExpiresByType image/jpg "access plus 1 month"
+        ExpiresByType image/png "access plus 1 month"
+        ExpiresByType application/x-font-woff "access plus 1 month"
+</IfModule>
+EOQ;
             $mod_rewrite = <<<EOQ
 <IfModule mod_rewrite.c>
     Options +FollowSymLinks
@@ -84,7 +106,8 @@ EOQ;
 
         
             $htaccess_contents = file_get_contents($htaccess_file);
-            $htaccess_contents = str_replace($cache_headers, '', $htaccess_contents);
+            $htaccess_contents = str_replace($cache_headers_ico, '', $htaccess_contents);
+            $htaccess_contents = str_replace($cache_headers_woff, '', $htaccess_contents);
             $htaccess_contents = str_replace($mod_rewrite, '', $htaccess_contents);
             $status =  $this->putFile($htaccess_file, $htaccess_contents);
             if( $status === false){

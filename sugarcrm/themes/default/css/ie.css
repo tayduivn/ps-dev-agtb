@@ -24,12 +24,6 @@
     table-layout: fixed;
 }
 
-.headerpane .table-cell-wrapper,
-.headerpane span[data-type=name] .table-cell-wrapper {
-    max-width: inherit;
-    width: inherit;
-}
-
 /* SC-3435: temporary 6.5 fix _only_; to be removed in forthcoming releases */
 .dataTable th:not(:first-child):not(:last-child) {
   width: 82px;
@@ -43,6 +37,10 @@
 
 .flex-list-view .flex-list-view-content {
   overflow-y: hidden;
+}
+
+table.reorderable-columns th[data-fieldname] > div > div[data-draggable="true"] {
+  padding-right: 0;
 }
 
 @media (max-width: 768px) {
