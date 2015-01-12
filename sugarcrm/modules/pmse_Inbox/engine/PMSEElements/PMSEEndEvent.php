@@ -44,7 +44,7 @@ class PMSEEndEvent extends PMSEEvent
     public function run($flowData, $bean = null, $externalAction = '', $arguments = array())
     {
         $count = $this->countNumberOpenThreads($flowData);
-        if ($count<=0) {
+        if ($count <= 0) {
             //close the whole case, flows and remaining threads included
             $this->caseFlowHandler->closeCase($flowData['cas_id']);
         } else {
@@ -61,13 +61,13 @@ class PMSEEndEvent extends PMSEEvent
         // Original Query
         // $query = "select count(*) as open from  pmse_bpm_thread where cas_id = {$flowData['cas_id']} and cas_thread_status = 'OPEN' ";
 
-        $q = new SugarQuery();
-        $q->from(BeanFactory::retrieveBean('pmse_BpmThread'));
+        $q = $this->caseFlowHandler->retrieveSugarQueryObject();
+        $q->from($this->caseFlowHandler->retrieveBean('pmse_BpmThread'));
         $q->select()->fieldRaw("count(id) open");
         $q->where()->equals('cas_id', $flowData['cas_id']);
         $q->where()->equals('cas_thread_status', 'OPEN');
-        $sql = $q->compileSql();
-        $result = array_pop($q->execute());
-        return $result['open'];
+        $result = $q->execute();
+        $count = array_pop($result);
+        return $count['open'];
     }
 }

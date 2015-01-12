@@ -201,7 +201,7 @@ class PMSEEmailsTemplates extends vCardApi
 
     public function retrieveRelatedBeans($api, $args)
     {
-        $related_modules = $this->crmDataWrapper->retrieveRelatedBeans('Leads');
+        $related_modules = $this->crmDataWrapper->retrieveRelatedBeans($args['module_list']);
         return $related_modules;
     }
 

@@ -29,6 +29,8 @@ $viewdefs['Calls']['base']['view']['subpanel-list'] = array(
           'enabled' => true,
           'default' => true,
           'name' => 'status',
+            'type' => 'event-status',
+            'css_class' => 'full-width',
         ),
         array(
           'label' => 'LBL_LIST_DATE',

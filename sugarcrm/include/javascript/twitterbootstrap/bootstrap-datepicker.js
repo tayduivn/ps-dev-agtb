@@ -272,15 +272,19 @@
 			nextMonth.setDate(nextMonth.getDate() + 42);
 			nextMonth = nextMonth.valueOf();
 			var html = [];
-			var clsName;
+			var clsName,
+				prevY,
+				prevM;
 			while(prevMonth.valueOf() < nextMonth) {
 				if (prevMonth.getDay() === this.weekStart) {
 					html.push('<tr>');
 				}
 				clsName = '';
-				if (prevMonth.getMonth() < month) {
+				prevY = prevMonth.getFullYear();
+				prevM = prevMonth.getMonth();
+				if ((prevM < month &&  prevY === year) ||  prevY < year) {
 					clsName += ' old';
-				} else if (prevMonth.getMonth() > month) {
+				} else if ((prevM > month && prevY === year) || prevY > year) {
 					clsName += ' new';
 				}
 				if (prevMonth.valueOf() === currentDate) {

@@ -646,6 +646,10 @@
         deletable = function(participant) {
             var assignedUser, undeletable;
 
+            if (participant.deletable === false) {
+                return false;
+            }
+
             assignedUser = self.model.get('assigned_user_id');
             undeletable = [assignedUser];
 

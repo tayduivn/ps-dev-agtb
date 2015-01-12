@@ -170,6 +170,7 @@ class SugarUpgradeForecastRemoveFiles extends UpgradeScript
 
         if (version_compare($this->to_version, '7.6', '<=')) {
             $files[] = 'modules/Forecasts/upgrade/scripts/post/2_ForecastsChangeForecastBy.php';
+            $files[] = 'modules/Forecasts/clients/base/fields/reportingUsers/reportingUsers.php';
         }
 
         if (!empty($files)) {
@@ -177,3 +178,4 @@ class SugarUpgradeForecastRemoveFiles extends UpgradeScript
         }
     }
 }
+

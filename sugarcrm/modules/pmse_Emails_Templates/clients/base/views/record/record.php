@@ -192,8 +192,18 @@ $viewdefs[$module_name] =
                                                             ),
                                                         1 => 'date_modified',
                                                         2 => 'date_entered',
-                                                        3 => 'subject',
-                                                        4 => 'body_html',
+                                                        3 =>
+                                                            array (
+                                                                'name' => 'subject',
+                                                                'readonly' => true,
+                                                                'css_class' => 'hidden',
+                                                            ),
+                                                        4 =>
+                                                            array (
+                                                                'name' => 'body_html',
+                                                                'readonly' => true,
+                                                                'css_class' => 'hidden',
+                                                            ),
                                                     ),
                                             ),
                                     ),

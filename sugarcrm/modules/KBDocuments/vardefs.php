@@ -402,7 +402,7 @@ $dictionary['KBDocument'] = array(
     'vname' => 'LBL_ASSIGNED_TO',
     'type' => 'id',
     'isnull' => 'false',
-    'reportable'=>true,
+    'reportable'=>false,
     'audited'=>true,
     'comment' => 'User ID assigned to record'
     ),

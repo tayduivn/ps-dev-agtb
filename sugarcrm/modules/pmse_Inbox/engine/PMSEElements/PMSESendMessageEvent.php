@@ -112,7 +112,7 @@ class PMSESendMessageEvent extends PMSEIntermediateEvent
     {
         if ($externalAction == 'RESUME_EXECUTION') {
             $this->sendEmail($flowData);
-            return $this->prepareResponse($flowData, 'NONE', 'UPDATE');
+            return $this->prepareResponse($flowData, 'NONE', 'NONE');
         } else {
             $flowData['cas_flow_status'] = 'QUEUE';
             return $this->prepareResponse($flowData, 'QUEUE', 'CREATE');

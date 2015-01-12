@@ -151,9 +151,9 @@ if($email_type == 'archived') {
 		$return_id = $_REQUEST['return_module'];
 	}
 	$replyType = "reply";
-    if ($_REQUEST['type'] == 'forward' || $_REQUEST['type'] == 'replyAll') {
-        $replyType = $_REQUEST['type'];
-    }
+	if (!empty($_REQUEST['type']) && ($_REQUEST['type'] == 'forward' || $_REQUEST['type'] == 'replyAll')) {
+		$replyType = $_REQUEST['type'];
+	}
 
 	header("Location: index.php?module=Emails&action=Compose&record=$focus->id&replyForward=true&reply=$replyType");
 	return;
@@ -249,8 +249,8 @@ if(isset($_REQUEST['inbound_email_id'])) {
 
 	///////////////////////////////////////////////////////////////////////////
 	////	PRIMARY PARENT LINKING
-	if(empty($focus->parent_type) && empty($focus->parent_id)) {
-		$focus->fillPrimaryParentFields();
+	if (!empty($focus->parent_type) && empty($focus->parent_id)) {
+		$focus->fillPrimaryParentFields($focus->parent_type);
 	}
 	////	END PRIMARY PARENT LINKING
 	///////////////////////////////////////////////////////////////////////////

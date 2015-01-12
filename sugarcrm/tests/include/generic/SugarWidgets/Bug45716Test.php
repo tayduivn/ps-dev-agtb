@@ -220,19 +220,6 @@ class Bug45716Helper {
             'duplicate_merge' => 'disabled',
             'real_table' => 'opportunities',
             ),
-        'self:campaign_link' => 
-        array (
-            'name' => 'campaign_link',
-            'type' => 'link',
-            'relationship' => 'campaign_opportunities',
-            'vname' => 'LBL_CAMPAIGNS',
-            'link_type' => 'one',
-            'module' => 'Opportunities',
-            'bean_name' => 'Campaign',
-            'source' => 'non-db',
-            'reportable' => false,
-            'real_table' => 'opportunities',
-            ),
         'self:campaign_name' => 
         array (
             'name' => 'campaign_name',

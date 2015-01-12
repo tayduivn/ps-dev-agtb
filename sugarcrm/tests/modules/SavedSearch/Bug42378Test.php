@@ -842,17 +842,6 @@ class Bug42377MockOpportunity extends Opportunity
                 'source' => 'non-db',
                 'vname' => 'LBL_CAMPAIGNS',
             ),
-        'campaign_link' =>
-            array(
-                'name' => 'campaign_link',
-                'type' => 'link',
-                'relationship' => 'campaign_opportunities',
-                'vname' => 'LBL_CAMPAIGNS',
-                'link_type' => 'one',
-                'module' => 'Campaigns',
-                'bean_name' => 'Campaign',
-                'source' => 'non-db',
-            ),
         'currencies' =>
             array(
                 'name' => 'currencies',
