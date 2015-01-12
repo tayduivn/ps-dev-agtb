@@ -558,6 +558,28 @@ abstract class OpportunitySetup
         }
     }
 
+    protected function toggleRevenueLineItemQuickCreate($enable = false)
+    {
+        SugarAutoLoader::load('modules/Administration/views/view.configureshortcutbar.php');
+        $cscb = new ViewConfigureshortcutbar();
+
+        $modules = $cscb->getQuickCreateModules();
+
+        $enModules = array();
+        foreach ($modules['enabled'] as $module => $def) {
+            $enModules[$module] = $def['order'];
+        }
+
+        $hasRLI = isset($enModules['RevenueLineItems']);
+        if ($enable === true && $hasRLI === false) {
+            $enModules['RevenueLineItems'] = count($enModules);
+        } elseif ($enable === false && $hasRLI === true) {
+            unset($enModules['RevenueLineItems']);
+        }
+
+        $cscb->saveChangesToQuickCreateMetadata($modules['enabled'], $modules['disabled'], $enModules);
+    }
+
     /**
      * Process WorkFlows
      *
