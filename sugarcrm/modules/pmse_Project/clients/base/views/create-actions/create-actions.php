@@ -24,6 +24,9 @@ $viewdefs[$module_name ]['base']['view']['create-actions'] = array(
             'type'      => 'button',
             'label'     => 'LBL_CANCEL_BUTTON_LABEL',
             'css_class' => 'btn-invisible btn-link',
+            'events' => array(
+                'click' => 'button:cancel_button:click',
+            ),
         ),
         array(
             'name'      => 'restore_button',
@@ -31,23 +34,32 @@ $viewdefs[$module_name ]['base']['view']['create-actions'] = array(
             'label'     => 'LBL_RESTORE',
             'css_class' => 'btn-invisible btn-link',
             'showOn'    => 'select',
+            'events' => array(
+                'click' => 'button:restore_button:click',
+            ),
         ),
         array(
             'type'    => 'actiondropdown',
             'name'    => 'main_dropdown',
             'primary' => true,
             'switch_on_click' => true,
+            'showOn' => 'create',
             'buttons' => array(
                 array(
                     'type'   => 'rowaction',
                     'name'   => 'save_open_design',
                     'label'  => 'LBL_PMSE_SAVE_DESIGN_BUTTON_LABEL',
-                    'showOn' => 'create',
+                    'events' => array(
+                        'click' => 'button:save_open_design:click',
+                    ),
                 ),
                 array(
                     'type'  => 'rowaction',
                     'name'  => 'save_button',
                     'label' => 'LBL_SAVE_BUTTON_LABEL',
+                    'events' => array(
+                        'click' => 'button:save_button:click',
+                    ),
                 ),
             ),
         ),
