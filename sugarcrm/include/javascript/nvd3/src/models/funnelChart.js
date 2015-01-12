@@ -234,8 +234,9 @@ nv.models.funnelChart = function() {
 
         legend
           .arrange(availableWidth);
+
         legendWrap
-          .attr('transform', 'translate(0,' + innerMargin.top + ')');
+          .attr('transform', 'translate(' + (direction === 'rtl' || !legend.collapsed() ? 0 : availableWidth - legend.width()) + ',' + innerMargin.top + ')');
 
         innerMargin.top += legend.height() + 4;
       }
