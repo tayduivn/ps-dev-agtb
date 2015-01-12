@@ -119,6 +119,10 @@
         </td>
     </tr>
     <tr>
+        <td scope="row">{$MOD.LBL_LEAD_CONV_OPTION}:&nbsp;{sugar_help text=$MOD.LEAD_CONV_OPT_HELP}</td>
+        <td><select name="lead_conv_activity_opt">{$lead_conv_activities}</select></td>
+    </tr>
+    <tr>
         <td  scope="row" nowrap>{$MOD.LBL_ENABLE_ACTION_MENU}: &nbsp;{sugar_help text=$MOD.LBL_ENABLE_ACTION_MENU_DESC}</td>
     {if isset($config.enable_action_menu) && $config.enable_action_menu != "true" }
         {assign var='enable_action_menu' value=''}
