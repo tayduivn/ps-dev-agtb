@@ -53,6 +53,7 @@ if (isset($_REQUEST['process']) && $_REQUEST['process'] == 'true') {
             $GLOBALS['db']->connect();
         }
 
+        $GLOBALS['db']->setCollation($_REQUEST['collation']);
         $cfg->config['dbconfigoption']['collation'] = $_REQUEST['collation'];
     }
     $cfg->populateFromPost();
