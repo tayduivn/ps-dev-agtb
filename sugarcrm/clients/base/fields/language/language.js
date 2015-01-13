@@ -21,9 +21,7 @@
      */
     initialize: function(options) {
         this._super('initialize', [options]);
-        if (!this.model.has(this.name)) {
-            this._setToDefault();
-        }
+        this.model.setDefault(this.name, this._getDefaultOption());
     },
 
     /**
@@ -46,7 +44,7 @@
     format: function(value) {
         if (!this.items[value]) {
             value = this._getDefaultOption();
-            this._setToDefault();
+            this.model.set(this.name, value);
         }
 
         return value;
