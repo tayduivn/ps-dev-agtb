@@ -461,7 +461,7 @@ class ConvertKBDocument
                     $count
                 );
                 $sql = "UPDATE {$fmd->table_name}
-                  SET id={$db->quoted($field['id'])}, custom_module={$db->quoted($field['id'])}
+                  SET id={$db->quoted($field['id'])}, custom_module={$db->quoted($field['custom_module'])}
                   WHERE id={$db->quoted($id)}";
                 $db->query($sql);
             }
