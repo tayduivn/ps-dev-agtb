@@ -58,16 +58,4 @@
     _getDefaultOption: function(optionsKeys) {
         return app.lang.getDefaultLanguage();
     },
-
-    /**
-     * Sets the default value for the field.
-     */
-    _setToDefault: function() {
-        var defaultValue = this._getDefaultOption();
-        this.model.set(this.name, defaultValue);
-        //Forecasting uses backbone model (not bean) for custom enums so we have to check here
-        if (_.isFunction(this.model.setDefault)) {
-            this.model.setDefault(this.name, defaultValue);
-        }
-    }
 })
