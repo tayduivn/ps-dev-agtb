@@ -27,13 +27,4 @@ sugarcrm/custom/themes/
 build/rome/MAMP
 atlassian-ide-plugin.xml
 sugarcrm/node_modules
-sugarcrm/vendor/autoload.php
-sugarcrm/vendor/composer/
-sugarcrm/vendor/ruflin/
-sugarcrm/vendor/bin/
-sugarcrm/vendor/phpunit/
-sugarcrm/vendor/sebastian/
-sugarcrm/vendor/symfony/
-sugarcrm/vendor/ocramius/
-sugarcrm/vendor/onelogin/
-sugarcrm/vendor/doctrine/
+sugarcrm/vendor/
