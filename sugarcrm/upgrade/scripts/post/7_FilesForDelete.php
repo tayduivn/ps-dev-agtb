@@ -279,6 +279,7 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
                 'clients/base/fields/datetimecombo/list.hbs',
                 'clients/base/fields/listeditable',
                 'clients/base/fields/shareaction/detail.hbs',
+                'clients/base/fields/label/detail.hbs',
                 'clients/base/layouts/link-selection',
                 'clients/base/layouts/search',
                 'clients/base/layouts/detail',
