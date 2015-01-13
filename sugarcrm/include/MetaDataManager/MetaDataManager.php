@@ -1942,8 +1942,10 @@ class MetaDataManager
     protected function translateConfigProperty($property)
     {
         return lcfirst(
-            preg_replace(
-                '/(^|_)([a-z])/e', 'strtoupper("\\2")',
+            preg_replace_callback(
+                '/(^|_)([a-z])/', function($match) {
+                return strtoupper($match[2]);
+            },
                 $property
             )
         );

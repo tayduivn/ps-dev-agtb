@@ -614,7 +614,6 @@ $renamedefs = array(
             array('name' => 'LBL_CLOSED_WON_OPPORTUNITIES', 'type' => 'plural', 'source' => 'Opportunities'),
             array('name' => 'LBL_CAMPAIGN_OPPORTUNITY', 'type' => 'singular', 'source' => 'Campaigns'),
             array('name' => 'LBL_CAMPAIGN_OPPORTUNITY', 'type' => 'singular', 'source' => 'Opportunities'),
-            array('name' => 'LBL_CAMPAIGN_LINK', 'type' => 'singular', 'source' => 'Campaigns'),
             array('name' => 'LBL_EXPORT_CAMPAIGN_ID', 'type' => 'singular', 'source' => 'Campaigns'),
             array('name' => 'LBL_OPPORTUNITY_TYPE', 'type' => 'singular', 'source' => 'Opportunities'),
             array('name' => 'LBL_CONTACT_HISTORY_SUBPANEL_TITLE', 'type' => 'plural', 'source' => 'Contacts'),

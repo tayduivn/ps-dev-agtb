@@ -184,7 +184,11 @@ $mod_strings = array (
 
     // Help Text
     // List View Help Text
-    'LBL_HELP_RECORDS' => 'The {{plural_module_name}} module consists of {{meetings_singular_module}} records logged by users in your organization. {{plural_module_name}} may be in a status of "Scheduled", "Held", or "Canceled". From this {{plural_module_name}} list view, you can click the close action button on any planned {{meetings_singular_module}}\'s row actions in order to mark it as held. Sugar users as well as {{contacts_module}} and {{leads_module}} may be added as invitees. There are various ways you can create {{meetings_module}} in Sugar such as via the {{plural_module_name}} module, {{calendar_module}} module, importing {{meetings_module}}, etc. Users can also schedule {{meetings_module}} via the Activities subpanel (for Legacy modules) or Planned Activities dashlet (for Sidecar modules) on related module records (e.g. {{contacts_module}}, {{accounts_module}}, {{leads_module}}, etc.), which automatically creates a relationship between both records. Once the {{meetings_singular_module}} record is created, you can view and edit information pertaining to the {{meetings_singular_module}} via the {{module_name}} detail view.',
+    'LBL_HELP_RECORDS' => 'The {{plural_module_name}} module consists of meeting records which may be in a status of "Scheduled", "Held", or "Canceled". Upcoming meetings scheduled within the next 24 hours show the start date highlighted in blue. Overdue meetings show the start date highlighted in red.
+
+From this {{plural_module_name}} list view, you can view and in-line edit meeting information. Additional actions are available in the menu at the end of each meeting\'s row. You can select "Close" from the menu on any scheduled meeting\'s row in order to mark it as held.
+
+Sugar users, contacts, and leads may be added as meeting invitees. {{plural_module_name}} may be created via the {{plural_module_name}} module, Calendar module, import, as well as via the Activities subpanel (for Legacy modules) or Planned Activities dashlet (for Sidecar modules) on related module records (e.g. Contacts, Accounts, etc.), which automatically creates a relationship between both records.',
 
     // Record View Help Text
     'LBL_HELP_RECORD' => 'The {{plural_module_name}} module consists of {{meetings_singular_module}} records logged by users in your organization. {{plural_module_name}} may be in a status of "Scheduled", "Held", or "Canceled". Sugar users as well as {{contacts_module}} and {{leads_module}} may be added as invitees.

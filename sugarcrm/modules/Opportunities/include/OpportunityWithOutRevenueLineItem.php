@@ -161,6 +161,9 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
      */
     protected function fixRevenueLineItemModule()
     {
+        // hide the RLI module from the quick create, this needs to be done first, so it's properly removed
+        $this->toggleRevenueLineItemQuickCreate(false);
+
         // cleanup on the current request
         $GLOBALS['modInvisList'][] = 'RevenueLineItems';
         if (isset($GLOBALS['moduleList']) && is_array($GLOBALS['moduleList'])) {
