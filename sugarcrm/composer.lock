@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "0a1cc255d518c4ac44262f8c628ffb58",
+    "hash": "582573f727d140e2574f46000fda5da7",
     "packages": [
         {
             "name": "onelogin/php-saml",
@@ -56,12 +56,50 @@
             "time": "2014-09-27 00:00:51"
         },
         {
+            "name": "psr/log",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/log.git",
+                "reference": "fe0936ee26643249e916849d48e3a51d5f5e278b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/log/zipball/fe0936ee26643249e916849d48e3a51d5f5e278b",
+                "reference": "fe0936ee26643249e916849d48e3a51d5f5e278b",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Psr\\Log\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "http://www.php-fig.org/"
+                }
+            ],
+            "description": "Common interface for logging libraries",
+            "keywords": [
+                "log",
+                "psr",
+                "psr-3"
+            ],
+            "time": "2012-12-21 11:40:51"
+        },
+        {
             "name": "ruflin/elastica",
-            "version": "v1.2.1.0",
+            "version": "dev-sugarcrm-v1.3.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sugarcrm/Elastica",
-                "reference": "3c3ee39f90d942b1f25fdfb9d39669067375fa79"
+                "reference": "621f88865dca6ad935203e594802b819a8a5b9d4"
             },
             "require": {
                 "php": ">=5.3.3"
@@ -79,6 +117,11 @@
                 "psr/log": "for logging"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.3.x-dev"
+                }
+            },
             "autoload": {
                 "psr-0": {
                     "Elastica": "lib/",
@@ -86,7 +129,7 @@
                 }
             },
             "license": [
-                "Apache 2.0"
+                "MIT"
             ],
             "authors": [
                 {
@@ -100,7 +143,7 @@
                 "client",
                 "search"
             ],
-            "time": "2014-06-14 08:44:53"
+            "time": "2014-10-30 07:01:40"
         }
     ],
     "packages-dev": [
@@ -848,9 +891,18 @@
             "time": "2015-01-03 15:33:07"
         }
     ],
-    "aliases": [],
+    "aliases": [
+        {
+            "alias": "v1.3.4.0",
+            "alias_normalized": "1.3.4.0",
+            "version": "dev-sugarcrm-v1.3.4.0",
+            "package": "ruflin/elastica"
+        }
+    ],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "ruflin/elastica": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
