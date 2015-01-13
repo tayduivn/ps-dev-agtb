@@ -108,15 +108,158 @@ class SugarArrayUtilsTest extends Sugar_PHPUnit_Framework_TestCase
 		$this->assertEquals($expected, override_value_to_string_recursive($key_names, $array_name, $value));	
 	} 
 
-	//Todo: hit the if statement
-	public function test_setDeepArrayValue()
-	{
-		$arrayActualSimple = array(1=>'a');
-		setDeepArrayValue($arrayActualSimple, 1, 'b');
-		$arrayExpectedSimple = array(1=>'b');
-		
-		$this->assertEquals($arrayExpectedSimple, $arrayActualSimple);	
-	}	
+    //Todo: hit the if statement
+    public function test_setDeepArrayValue()
+    {
+        $arrayActualSimple = array(1=>'a');
+        setDeepArrayValue($arrayActualSimple, 1, 'b');
+        $arrayExpectedSimple = array(1=>'b');
+
+        $this->assertEquals($arrayExpectedSimple, $arrayActualSimple);
+    }
+    
+    /**
+     * Note that this test case is moved from "array_utils.php".
+     * @ticket 396
+     * @dataProvider providerOverride
+     */
+    public function test_override_value_to_string_recursive2($array_name, $value_name, $value, $config, $expected)
+    {
+        $this->assertEquals(
+            $expected,
+            override_value_to_string_recursive2($array_name, $value_name, $value, true, $config)
+        );
+    }
+
+    /**
+     * This function provides inputs for test_override_value_to_string_recursive2().
+     *
+     * @return array the expected values of the test cases.
+     */
+    public function providerOverride()
+    {
+        $returnArray = array(
+            array( // Append: sequential array exists in config.php
+                "sugar_config",
+                "http_referer_396",
+                array('list' => array(3 => 'location.com')), // structure from config_override.php
+                array('http_referer_396' =>
+                    array('list' => array(0 => 'abc.com', 1 => '123.com', 2 => 'mylocation.com'))),
+                "\$sugar_config['http_referer_396']['list'][] = 'location.com';\n"
+            ),
+            array( // Append: non-sequential array exists in config.php
+                "sugar_config",
+                "http_referer_396",
+                array('list' => array(3 => 'location.com')), // structure from config_override.php
+                array('http_referer_396' => array('list' => array(0 => 'abc.com',  2 => 'mylocation.com'))),
+                "\$sugar_config['http_referer_396']['list'][3] = 'location.com';\n"
+            ),
+            array( // Append: no array exists in config.php and key = 0, treat it as append
+                "sugar_config",
+                "http_referer_396",
+                array('list' => array(0 => 'location.com')), // structure from config_override.php
+                array(),
+                "\$sugar_config['http_referer_396']['list'][] = 'location.com';\n"
+            ),
+            array( // Override: sequential array exists in config.php but old key is overridden
+                "sugar_config",
+                "http_referer_396",
+                array('list' => array(0 => 'otherlocation.com')), // structure from config_override.php
+                array('http_referer_396' => array('list' => array(0 => 'location.com', 1 => '123.com'))),
+                "\$sugar_config['http_referer_396']['list'][0] = 'otherlocation.com';\n"
+            ),
+            array( // Override: does not exist in config.php
+                "sugar_config",
+                "full_text_engine_396",
+                array('Elastic' => array('curl' => array(123 => 'user:password'))), // from config_override.php
+                array(),
+                "\$sugar_config['full_text_engine_396']['Elastic']['curl'][123] = 'user:password';\n"
+            ),
+            array( // Override: key is a string
+                "sugar_config",
+                "test_396",
+                array('def' => 'def2'), // structure from config_override.php
+                array("test_396" => array('abc' => 'abc', 'def' => 'def')),
+                "\$sugar_config['test_396']['def'] = 'def2';\n"
+            ),
+            array( // Override: test app_list_strings
+                "app_list_strings",
+                "http_referer_396",
+                array('list' => array(0 => 'location.com')), // structure from config_override.php
+                null,
+                "\$app_list_strings['http_referer_396']['list'][0] = 'location.com';\n"
+            ),
+        );
+        return $returnArray;
+    }
+
+    /**
+     * This function tests cases for the upgrade scenario.
+     *
+     * @param string $array_name : name of the array
+     * @param string $value_name : name of the array keys
+     * @param array  $value : value of current array
+     * @param array  $config : value of current array
+     * @param string $expected : the expected result of the test case.
+     *
+     * @dataProvider providers_Override2StringForUpgrade
+     */
+    public function test_Override2StringForUpgrade($array_name, $value_name, $value, $config, $expected)
+    {
+        $this->assertEquals(
+            $expected,
+            override_value_to_string_recursive2($array_name, $value_name, $value, true, $config)
+        );
+    }
+
+    /**
+     * This function provides inputs for test_Override2StringWithEmptyOriginal().
+     *
+     * @return array the expected values of the test.
+     */
+    public function providers_Override2StringForUpgrade()
+    {
+        $returnArray = array(
+            array( // Case: $value is boolean
+                "sugar_config",
+                "fts_disable_notification",
+                false,
+                array(),
+                "\$sugar_config['fts_disable_notification'] = false;\n"
+            ),
+            array( // Case: $value is an array
+                "sugar_config",
+                "dashlet_display_row_options",
+                array('0' => '1', '1' => '5', '2' => '10'),
+                array(),
+                "\$sugar_config['dashlet_display_row_options'][] = '1';\n" .
+                "\$sugar_config['dashlet_display_row_options'][1] = '5';\n" .
+                "\$sugar_config['dashlet_display_row_options'][2] = '10';\n"
+            ),
+            array( // Case: $value is an element added in an array
+                   // the original input from "config_override.php" could be
+                   // $sugar_config['dashlet_display_row_options'][3] = '20', or
+                   // $sugar_config['dashlet_display_row_options'][] = '20';
+                "sugar_config",
+                "dashlet_display_row_options",
+                array(3 => '20'),
+                array('dashlet_display_row_options' => array(0 => '1', 1 => '5', 2 => '10')),
+                "\$sugar_config['dashlet_display_row_options'][] = '20';\n"
+            ),
+            array( // Case: $value is a completely new element
+                   // the original input from "config_override.php" could be
+                   // $sugar_config['dashlet_display_row_options'][0] = '20', or
+                   // $sugar_config['dashlet_display_row_options'][] = '20';
+                "sugar_config",
+                "dashlet_display_row_options",
+                array(0 => '20'),
+                array(),
+                "\$sugar_config['dashlet_display_row_options'][] = '20';\n"
+            ),
+        );
+        return $returnArray;
+    }
+
 }
 
 class SimpleObejct

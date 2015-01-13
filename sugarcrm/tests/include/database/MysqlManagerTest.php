@@ -28,6 +28,9 @@ class MysqlManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        if (version_compare(phpversion(), '5.5.0', '>=')) {
+            $this->markTestSkipped('The mysql extension is deprecated since php 5.5.');
+        }
         if ( $GLOBALS['db']->dbType != 'mysql' ) {
             $this->markTestSkipped('Only applies to MySQL');
         }

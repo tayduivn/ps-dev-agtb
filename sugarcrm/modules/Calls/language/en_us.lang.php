@@ -151,7 +151,12 @@ $mod_strings = array (
 
     // Help Text
     // List View Help Text
-    'LBL_HELP_RECORDS' => 'The {{plural_module_name}} module consists of calls logged by users in your organization. {{plural_module_name}} may be in a status of "Scheduled", "Held", or "Canceled". From this {{plural_module_name}} list view, you can click the "X" icon on any scheduled call\'s row in order to mark it as held. Sugar users as well as contacts and leads may be added as invitees. There are various ways you can create calls in Sugar such as via the {{calls_module}} module, {{calendar_module}} module, and import. Users can also schedule calls via the Activities subpanel (for Legacy modules) or Planned Activities dashlet (for Sidecar modules) on related module records (e.g. {{contacts_module}}, {{accounts_module}}, {{leads_module}}, etc.), which automatically creates a relationship between both records. Once the call record is created, you can view and edit information pertaining to the call via the {{plural_module_name}} record view.',
+    'LBL_HELP_RECORDS' => 'The {{plural_module_name}} module consists of call records which may be in a status of "Scheduled", "Held", or "Canceled". Upcoming calls scheduled within the next 24 hours have the start date highlighted in blue. Overdue calls have the start date highlighted in red.
+
+From this {{plural_module_name}} list view, you can view and in-line edit call information. Additional actions are available in the menu at the end of each call\'s row. You can select "Close" from the menu on any scheduled call\'s row in order to mark it as held.
+
+Sugar users, contacts, and leads may be added as call invitees. {{plural_module_name}} may be created via the {{plural_module_name}} module, Calendar module, import, as well as via the Activities subpanel (for Legacy modules) or Planned Activities dashlet (for Sidecar modules) on related module records (e.g. Contacts, Accounts, etc.), which automatically creates a relationship between both records.',
+
     // Record View Help Text
     'LBL_HELP_RECORD' => 'The {{plural_module_name}} module consists of {{calls_singular_module}} records logged by users in your organization.  {{plural_module_name}} may be in a status of "Scheduled", "Held", or "Canceled". Sugar users as well as {{contacts_module}} and {{leads_module}} may be added as invitees.
 

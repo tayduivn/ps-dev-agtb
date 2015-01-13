@@ -30,7 +30,7 @@ class BugPAT667Test extends Sugar_PHPUnit_Framework_TestCase
      * @var array
      */
     private static $custom_field_def = array(
-        'name'        => 'test_bugPAT667',
+        'name'        => 'test_bugpat667',
         'type'        => 'multienum',
         'module'      => 'ModuleBuilder',
         'view_module' => 'Accounts',
@@ -69,7 +69,7 @@ class BugPAT667Test extends Sugar_PHPUnit_Framework_TestCase
         $data = array(
             "operator" => "AND",
             0 => array(
-                "name" => "test_bugPAT667_c",
+                "name" => self::$custom_field_def['name'] . '_c',
                 "table_key" => "self",
                 "qualifier_name" => "one_of",
                 "input_name0" => array("Consultants")
