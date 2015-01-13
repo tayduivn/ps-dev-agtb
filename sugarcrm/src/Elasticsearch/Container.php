@@ -123,6 +123,7 @@ class Container
      */
     public function registerProviders()
     {
+        $this->registerProvider('GlobalSearch');
     }
 
     /**
