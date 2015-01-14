@@ -13,7 +13,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once 'modules/ModuleBuilder/parsers/ModuleBuilderParser.php';
 require_once 'modules/Administration/Common.php';
-require_once 'include/MetaDataManager/MetaDataManager.php';
 require_once 'modules/ModuleBuilder/Module/DropDownBrowser.php';
 
 class ParserDropDown extends ModuleBuilderParser
@@ -150,6 +149,13 @@ class ParserDropDown extends ModuleBuilderParser
         sugar_cache_reset();
         sugar_cache_reset_full();
         clearAllJsAndJsLangFilesWithoutOutput();
+
+        /**
+         * Per MAR-2467, this class is loaded in the pre-upgrade script. Since the included file did not exist prior to
+         * 6.7, the pre-upgrade script will fatal when upgrading from a version that precedes 6.7. To avoid that
+         * scenario -- one in which the file is not needed -- the file is now included only when it is needed.
+         */
+        require_once 'include/MetaDataManager/MetaDataManager.php';
 
         // Clear out the api metadata languages cache for selected language
         MetaDataManager::refreshLanguagesCache($selected_lang);
