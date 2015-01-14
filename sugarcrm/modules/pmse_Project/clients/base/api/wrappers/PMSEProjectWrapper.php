@@ -103,29 +103,29 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
      */
     public function __construct()
     {
+        $this->project = $this->getBean('pmse_Project');
+        $this->diagram = $this->getBean('pmse_BpmnDiagram');
+        $this->process = $this->getBean('pmse_BpmnProcess');
+        $this->processDefinition = $this->getBean('pmse_BpmProcessDefinition');
+
+        $this->activityBean = $this->getBean('pmse_BpmnActivity');
+        $this->artifactBean = $this->getBean('pmse_BpmnArtifact');
+        $this->gatewayBean = $this->getBean('pmse_BpmnGateway');
+        $this->eventBean = $this->getBean('pmse_BpmnEvent');
+        //$this->laneBean = $this-getBean('pmse_BpmnLane');
+        //$this->lanesetBean = $this-getBean('pmse_BpmnLaneset');
+        $this->flowBean = $this->getBean('pmse_BpmnFlow');
+        //$this->participantBean = $this-getBean('pmse_BpmnParticipant');
+        //$this->dataBean = $this-getBean('pmse_BpmnData');
+        $this->activityDefinitionBean = $this->getBean('pmse_BpmActivityDefinition');
+        $this->eventDefinitionBean = $this->getBean('pmse_BpmEventDefinition');
+        $this->boundBean = $this->getBean('pmse_BpmnBound');
         $this->observers = array();
+        //$this->dynaformBean = $this-getBean('pmse_BpmDynaform');
+        //$this->relatedDependencyBean = $this-getBean('pmse_BpmnRelatedDependency');
+        //$this->beanFactory = new ADAMBeanFactory();
     }
 
-    /**
-     * The initWrapper method initializes the bean based attributes,
-     * by calling their respective getter method.
-     */
-    public function initWrapper()
-    {
-        $this->getProject();
-        $this->getDiagram();
-        $this->getProcess();
-        $this->getProcessDefinition();
-        $this->getActivityBean();
-        $this->getArtifactBean();
-        $this->getGatewayBean();
-        $this->getEventBean();
-        $this->getFlowBean();
-        $this->getActivityDefinitionBean();
-        $this->getEventDefinitionBean();
-        $this->getBoundBean();
-    }
-    
     /**
      *
      * @return type
@@ -133,9 +133,6 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
      */
     public function getProject()
     {
-        if (is_null($this->project)) {
-            $this->project = $this->getBean('pmse_Project');
-        }
         return $this->project;
     }
 
@@ -146,9 +143,6 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
      */
     public function getDiagram()
     {
-        if (is_null($this->diagram)) {
-            $this->diagram = $this->getBean('pmse_BpmnDiagram');
-        }
         return $this->diagram;
     }
 
@@ -159,9 +153,6 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
      */
     public function getProcess()
     {
-        if (is_null($this->process)) {
-            $this->process = $this->getBean('pmse_BpmnProcess');
-        }
         return $this->process;
     }
 
@@ -172,9 +163,6 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
      */
     public function getProcessDefinition()
     {
-        if (is_null($this->processDefinition)) {
-            $this->processDefinition = $this->getBean('pmse_BpmProcessDefinition');
-        }
         return $this->processDefinition;
     }
 
@@ -185,9 +173,6 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
      */
     public function getActivityBean()
     {
-        if (is_null($this->activityBean)) {
-            $this->activityBean = $this->getBean('pmse_BpmnActivity');
-        }
         return $this->activityBean;
     }
 
@@ -198,9 +183,6 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
      */
     public function getArtifactBean()
     {
-        if (is_null($this->artifactBean)) {
-            $this->artifactBean = $this->getBean('pmse_BpmnArtifact');
-        }
         return $this->artifactBean;
     }
 
@@ -211,9 +193,6 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
      */
     public function getGatewayBean()
     {
-        if (is_null($this->gatewayBean)) {
-            $this->gatewayBean = $this->getBean('pmse_BpmnGateway');
-        }
         return $this->gatewayBean;
     }
 
@@ -224,9 +203,6 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
      */
     public function getEventBean()
     {
-        if (is_null($this->eventBean)) {
-            $this->eventBean = $this->getBean('pmse_BpmnEvent');
-        }
         return $this->eventBean;
     }
 
@@ -237,9 +213,6 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
      */
     public function getFlowBean()
     {
-        if (is_null($this->flowBean)) {
-            $this->flowBean = $this->getBean('pmse_BpmnFlow');
-        }
         return $this->flowBean;
     }
 
@@ -250,9 +223,6 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
      */
     public function getActivityDefinitionBean()
     {
-        if (is_null($this->activityDefinitionBean)) {
-            $this->activityDefinitionBean = $this->getBean('pmse_BpmActivityDefinition');
-        }
         return $this->activityDefinitionBean;
     }
 
@@ -263,9 +233,6 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
      */
     public function getEventDefinitionBean()
     {
-        if (is_null($this->eventDefinitionBean)) {
-            $this->eventDefinitionBean = $this->getBean('pmse_BpmEventDefinition');
-        }
         return $this->eventDefinitionBean;
     }
 
@@ -276,9 +243,6 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
      */
     public function getBoundBean()
     {
-        if (is_null($this->boundBean)) {
-            $this->boundBean = $this->getBean('pmse_BpmnBound');
-        }
         return $this->boundBean;
     }
 
@@ -440,7 +404,6 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
      */
     public function retrieveProject($projectId, $completeData = false)
     {
-        $this->initWrapper();
         $response = array();
         if ($this->project->retrieve_by_string_fields(array('id' => $projectId))) {
 
@@ -473,7 +436,6 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
 
     public function updateProject($projectId, $args)
     {
-        $this->initWrapper();
         $response = array("success" => false);
 
         if (!is_null($this->project->retrieve_by_string_fields(array('id' => $projectId)))) {
@@ -500,8 +462,6 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
 
     public function getProjectDiagram($prjID)
     {
-        // init the wrapper components inside the method for performance reasons
-        $this->initWrapper();
         $diagramData = array();
         $activityData = array();
         $artifactData = array();
@@ -694,7 +654,8 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
 
     public function updateDiagram($diagramArray, $keysArray)
     {
-        $this->initWrapper();
+
+
         $var = $diagramArray['flows'];
         unset($diagramArray['flows']);
         $diagramArray['flows'] = $var;
@@ -921,7 +882,6 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
 
     public function updateDiagramElements($entityData, $keysArray, $elementArray, $args = array())
     {
-        $this->initWrapper();
         $action = strtolower($elementArray['action']);
         unset($elementArray['action']);
         $bean = $this->getBean($entityData['bean_object']);
@@ -1110,7 +1070,6 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
      */
     public function updateProcessDefinition($args)
     {
-        $this->initWrapper();
         //Update ProcessDefinition
         $this->processDefinition = $this->getBean('pmse_BpmProcessDefinition')->retrieve_by_string_fields(array('prj_id' => $args['record']));
         //Update Diagrams
