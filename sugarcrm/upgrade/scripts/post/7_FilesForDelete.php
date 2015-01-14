@@ -257,6 +257,7 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
 
         if (version_compare($this->from_version, '7.7', '<')) {
             $files[] = 'clients/base/views/interactionschart';
+            $files[] = 'clients/base/fields/label/detail.hbs';
         }
 
         $this->fileToDelete($files);
@@ -279,7 +280,6 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
                 'clients/base/fields/datetimecombo/list.hbs',
                 'clients/base/fields/listeditable',
                 'clients/base/fields/shareaction/detail.hbs',
-                'clients/base/fields/label/detail.hbs',
                 'clients/base/layouts/link-selection',
                 'clients/base/layouts/search',
                 'clients/base/layouts/detail',
