@@ -1596,6 +1596,14 @@ class MetaDataManager
             foreach (array(true, false) as $public) {
                 $mm = MetaDataManager::getManager($platform, $public, true);
                 if (method_exists($mm, $method)) {
+                    //When a change occurs in the base metadata, we need to clear the cache for all contexts
+                    if (empty($params)) {
+                        $allContexts = static::getAllMetadataContexts($public);
+                        foreach($allContexts as $context) {
+                            $mm->deletePlatformVisibilityCaches($context);
+                        }
+                    }
+
                     $contexts = static::getMetadataContexts($public, $params);
                     foreach ($contexts as $context) {
                         $mm->$method($args, $context);
@@ -3681,9 +3689,9 @@ class MetaDataManager
             foreach ($roleSets as $roleSet) {
                 $contexts[] = new MetaDataContextRoleSet($roleSet);
             }
-        } else {
-            $contexts[] = new MetaDataContextDefault();
         }
+        $contexts[] = new MetaDataContextDefault();
+
 
         return $contexts;
     }
@@ -3722,6 +3730,10 @@ class MetaDataManager
     protected static function getAllRoleSets()
     {
         $roleSet = BeanFactory::getBean('ACLRoleSets');
+        //Verify that rolesets are operable before attempting to use them.
+        if (empty($roleSet)) {
+            return array();
+        }
         $query = new SugarQuery();
         $query->from($roleSet);
         $query->select('id', 'hash');
