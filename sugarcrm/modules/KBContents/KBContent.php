@@ -160,6 +160,8 @@ class KBContent extends SugarBean {
             $doc->new_with_id = true;
             $doc->id = create_guid();
             $doc->name = $this->name;
+            $doc->team_set_id = $this->team_set_id;
+            $doc->team_id = $this->team_id;
             $doc->save();
             $this->load_relationship('kbdocuments_kbcontents');
             $this->kbdocuments_kbcontents->add($doc);
@@ -170,6 +172,8 @@ class KBContent extends SugarBean {
             $article->new_with_id = true;
             $article->id = create_guid();
             $article->name = $this->name;
+            $article->team_set_id = $this->team_set_id;
+            $article->team_id = $this->team_id;
             $article->save();
             $this->load_relationship('kbarticles_kbcontents');
             $this->kbarticles_kbcontents->add($article);

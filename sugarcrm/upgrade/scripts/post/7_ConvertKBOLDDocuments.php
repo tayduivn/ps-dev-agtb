@@ -76,6 +76,8 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
             }
 
             $KBContent->populateFromRow($data);
+            $KBContent->set_created_by = false;
+            $KBContent->update_modified_by = false;
             $KBContent->save();
 
             $KBContent->load_relationship('tags');
@@ -111,6 +113,16 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
             } else {
                 $this->log("Can't load tags.");
             }
+
+            foreach ($KBContent->kbarticles_kbcontents->getBeans() as $bean) {
+                $bean->assigned_user_id = $data['assigned_user_id'];
+                $bean->save();
+            }
+            foreach ($KBContent->kbdocuments_kbcontents->getBeans() as $bean) {
+                $bean->assigned_user_id = $data['assigned_user_id'];
+                $bean->save();
+            }
+
             $KBContent->load_relationship('attachments');
 
             // Converts attached files to Notes.
