@@ -162,6 +162,10 @@ class SupportPortalVisibility extends SugarVisibility
                     }
                 }
                 break;
+            case 'pmse_Project/pmse_BpmConfig':
+                // This is absolutely needed otherwise PMSESettings cannot
+                // retrieve config and will end up in a infinite loop.
+                break;
             case 'Cases':
                 // Cases: Any case that has the portal_viewable flag set to true and is related to the account list
             default:

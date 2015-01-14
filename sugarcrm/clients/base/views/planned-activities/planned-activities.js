@@ -9,7 +9,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * {@inheritDoc}
+ * {@inheritdoc}
  *
  * Planned Activities dashlet takes advantage of the tabbed dashlet abstraction
  * by using its metadata driven capabilities to configure its tabs in order to
@@ -32,7 +32,7 @@
     extendsFrom: 'HistoryView',
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
      * @property {Object} _defaultSettings
      * @property {String} _defaultSettings.date Date against which retrieved
@@ -61,7 +61,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
      * Store current date state in settings.
      */
@@ -82,7 +82,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
      * Once new records are received, prevent rendering new rows until we fetch
      * the invitation collection by calling {@link #updateInvitation}.
@@ -126,7 +126,7 @@
      *
      * @param {Data.Bean} model Call/Meeting model to be marked as `Held`.
      */
-    heldActivity: function(model){
+    heldActivity: function(model) {
         var self = this;
         var name = Handlebars.Utils.escapeExpression(app.utils.getRecordName(model)).trim();
         var context = app.lang.getModuleName(model.module).toLowerCase() + ' ' + name;
@@ -147,8 +147,8 @@
      *
      * @param {Event} event Click event.
      * @param {Object} params
-     * @param {String} params.module Module name.
-     * @param {String} params.link Relationship link.
+     * @param {string} params.module Module name.
+     * @param {string} params.link Relationship link.
      */
     createRecord: function(event, params) {
         // FIXME: At the moment there are modules marked as bwc enabled though
@@ -194,8 +194,8 @@
      * parameter is used and the new record is associated with the record
      * currently being viewed.
      *
-     * @param {String} module Module name.
-     * @param {String} link Relationship link.
+     * @param {string} module Module name.
+     * @param {string} link Relationship link.
      * @protected
      */
     _createBwcRecord: function(module, link) {
@@ -215,11 +215,11 @@
     },
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      * @protected
      */
     _initTabs: function() {
-        this._super("_initTabs");
+        this._super('_initTabs');
 
         _.each(this.tabs, function(tab) {
             if (!tab.invitation_actions) {
@@ -250,7 +250,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     _getRecordsTemplate: function(module) {
         this._recordsTpl = this._recordsTpl || {};
@@ -269,7 +269,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     _getFilters: function(index) {
 
@@ -290,7 +290,7 @@
     },
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     tabSwitcher: function(event) {
         var tab = this.tabs[this.settings.get('activeTab')];
@@ -320,7 +320,7 @@
      * Get current date state.
      * Returns default value if can't find in last state or settings.
      *
-     * @return {String} Date state.
+     * @return {string} Date state.
      */
     getDate: function() {
         var date = app.user.lastState.get(
@@ -331,21 +331,19 @@
     },
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
      * On load of new data, make sure we reload invitations related data, if
      * it is defined for the current tab.
      */
-    loadData: function(options) {
-        if (this.disposed || this.meta.config) {
-            return;
-        }
+    loadDataForTabs: function(tabs, options) {
+        _.each(tabs, function(tab) {
+            if (tab.invitations) {
+                tab.invitations.dataFetched = false;
+            }
+        }, this);
 
-        var tab = this.tabs[this.settings.get('activeTab')];
-        if (tab.invitations) {
-            tab.invitations.dataFetched = false;
-        }
-        this._super('loadData', [options]);
+        this._super('loadDataForTabs', [tabs, options]);
     },
 
     /**
@@ -387,8 +385,9 @@
             }
         });
     },
+
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
      * New model related properties are injected into each model:
      *
@@ -399,7 +398,7 @@
      */
     _renderHtml: function() {
         if (this.meta.config) {
-            this._super("_renderHtml");
+            this._super('_renderHtml');
             return;
         }
 

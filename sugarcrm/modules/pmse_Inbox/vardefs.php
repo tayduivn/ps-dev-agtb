@@ -358,9 +358,10 @@ $dictionary['pmse_Inbox'] = array(
       'fields' => array('cas_id')
     ),
 ),
-	'optimistic_locking'=>true,
-		'unified_search'=>true,
-	);
+    'optimistic_locking' => true,
+    'unified_search' => true,
+    'acls' => array('SugarACLDeveloperOrAdmin' => array('aclModule' => 'pmse_Inbox', 'allowUserRead' => true)),
+);
 if (!class_exists('VardefManager')){
         require_once('include/SugarObjects/VardefManager.php');
 }

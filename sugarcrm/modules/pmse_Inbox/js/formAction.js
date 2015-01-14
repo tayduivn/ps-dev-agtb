@@ -16,17 +16,6 @@ if(App){
 else{
     _App = parent.SUGAR.App;
 }
-//var getFormData = function(address)
-//{
-//    var responseData;
-//    $.ajax({
-//        url: address,
-//        async: false
-//    }).done(function(ajaxResponse) {
-//        responseData = ajaxResponse;
-//    });
-//    return responseData;
-//}
 
 var confirmAdhocReassign = function()
 {
@@ -38,7 +27,7 @@ var confirmAdhocReassign = function()
     }).done(function(ajaxResponse) {
         window.location.href = "./index.php"
     });
-}
+};
 
 var confirmReassign = function()
 {
@@ -51,28 +40,28 @@ var confirmReassign = function()
         w.close();
         //window.location.href = "./index.php"
     });
-}
+};
 var reassignFormBWC = function(casId, casIndex, flowId, pmseInboxId, taskName, valuesA,valuesB)
 {
     var value=new Object();
     value.moduleName = valuesA;
     value.beanId = valuesB;
     reassignForm(casId, casIndex, flowId, pmseInboxId, taskName, value);
-}
+};
 var reassignForm = function(casId, casIndex, flowId, pmseInboxId, taskName, values)
 {
     //showModalWindow("?module=ProcessMaker&action=reassignForm&to_pdf=1&cas_id=" + casId + "&cas_index=" + casIndex + "&team_id=" + teamId, '# ' + casId + ': Reassignment');
     showModalWindow(casId, casIndex, 'reassign', flowId, pmseInboxId, taskName, values);
-}
+};
 var adhocFormBWC = function(casId, casIndex, flowId, pmseInboxId, taskName, valuesA,valuesB){
     var value=new Object();
     value.moduleName = valuesA;
     value.beanId = valuesB;
     adhocForm(casId, casIndex, flowId, pmseInboxId, taskName, value);
-}
+};
 var adhocForm = function(casId, casIndex, flowId, pmseInboxId, taskName, values){
     showModalWindow(casId, casIndex, 'adhoc', flowId, pmseInboxId, taskName, values);
-}
+};
 var claim_case = function(cas_id,cas_index){
     var value = {};
     value.cas_id = cas_id;
@@ -85,31 +74,7 @@ var claim_case = function(cas_id,cas_index){
             }
         }
     });
-}
-//var adhocForm = function(casId, casIndex)
-//{
-//
-//    showModalWindow("?module=ProcessMaker&action=adhocForm&to_pdf=1&cas_id=" + casId + "&cas_index=" + casIndex, '# ' + casId + ': Adhoc Reassignment');
-// //   showModal(casId, casIndex);
-//
-//}
-
-//var showModalWindow = function (address, title)
-//{
-//    hp = new HtmlPanel({
-//        source: getFormData(address),
-//        scroll: false
-//    });
-//    w = new Window({
-//        width: 800,
-//        height: 340,
-//        modal: true,
-//        title: title
-//    });
-//
-//    w.addPanel(hp);
-//    w.show();
-//}
+};
 var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,taskName,values) {
     var f,
         w,
@@ -117,7 +82,7 @@ var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,task
         items,
         proxy,
         proxyUsers,
-        textArea,
+        //textArea,
         url,
         wtitle,
         wWidth,
@@ -133,11 +98,7 @@ var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,task
         bean_Id,
         full_Name,
         valAux;
-//        restClient = new RestClient ();
-//    restClient.setRestfulBehavior(SUGAR_REST);
-//    if (!SUGAR_REST) {
-//        restClient.setBackupAjaxUrl(SUGAR_AJAX_URL);
-//    }
+
     module_Name = new HiddenField({
         name: 'moduleName',
         value: values.moduleName
@@ -186,12 +147,6 @@ var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,task
         submit: true,
         //change: hiddenUpdateFn,
         proxy:null,
-//        proxy: new RestProxy({
-//            url: SUGAR_URL + '/rest/v10/AdhocForm/users',
-//            restClient: restClient,
-//            uid : '',
-//            callback: null
-//        }),
         required: true,
         helpTooltip: {
             message: translate('LBL_PMSE_FORM_TOOLTIP_SELECT_USER', 'pmse_Inbox')
@@ -209,12 +164,6 @@ var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,task
         required: true
     });
 
-    textArea = new TextareaField({
-        name: 'adhoc_comment',
-        label: translate('LBL_PMSE_FORM_LABEL_NOTE', 'pmse_Inbox'),
-        fieldWidth: '300px',
-        fieldHeight: '100px'
-    });
     user_Name = new HiddenField({
         name: 'user_name',
         value: ''
@@ -232,7 +181,6 @@ var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,task
             casInboxId,
             combo_users,
             combo_type,
-            textArea,
             task_Name,
             user_Name,
             module_Name,
@@ -240,7 +188,6 @@ var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,task
             full_Name
         ];
         combo_users.setName('adhoc_user');
-        textArea.setName('adhoc_comment')
     } else {
         url = 'pmse_Inbox/ReassignForm';
         wtitle = translate('LBL_PMSE_TITLE_REASSIGN', 'pmse_Inbox');
@@ -262,17 +209,15 @@ var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,task
         combo_users.setName('reassign_user');
         textArea.setName('reassign_comment');
     }
-    flowId = (flowId) ? flowId : urlCase.id; // esta modificacion es por la version de compatibilidad
+    flowId = (flowId) ? flowId : urlCase.id;
     proxyUsers =  new SugarProxy({
         url: url + '/users/' + flowId,
-        //restClient: this.canvas.project.restClient,
         uid: null,
         callback: null
     });
     combo_users.setProxy(proxyUsers);
     proxy = new SugarProxy({
         url: url,
-//        restClient: restClient,
         uid : '',
         callback: null
     });
@@ -283,8 +228,11 @@ var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,task
         buttons: [
             {jtype: 'normal', caption: translate('LBL_PMSE_BUTTON_SAVE', 'pmse_Inbox') , handler: function () {
                 var cbDate=$("#reassign_user option:selected").html();
-                items[8].setValue($("#adhoc_user option:selected").html());
-//                f.submit();
+                if(cbDate){
+                    items[6].setValue(cbDate);
+                }else{
+                    items[7].setValue($("#adhoc_user option:selected").html());
+                }
                 var urlIni = _App.api.buildURL(url, null, null);
                 attributes = {
                     data: f.getData()
@@ -326,14 +274,7 @@ var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,task
                 casIndexField.setValue(casIndex);
 
                 var users, aUsers = [{'text':translate('LBL_PMSE_FORM_OPTION_SELECT', 'pmse_Inbox'), 'value':''}];
-//                combo_users.proxy.getData(null, {
-//                    success: function(users) {
-//                        if (users) {
-//                            aUsers = aUsers.concat(users.result);
-//                            combo_users.setOptions(aUsers);
-//                        }
-//                    }
-//                });
+
                 //--
                 var urlGet = _App.api.buildURL(url+'/users/'+ flowId, null, null);
                 _App.api.call('read', urlGet, {}, {
@@ -355,7 +296,7 @@ var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,task
     });
     w.addPanel(f);
     w.show();
-}
+};
 
 
 function onSubmit(e) {
@@ -404,7 +345,6 @@ function onSubmit(e) {
                 }
             },
             failure: function (xhr, response) {
-                //console.log(response);
                 mp.setTitle('Error');
                 mp.setMessageType('Error');
                 mp.setMessage(translate('LBL_PMSE_LABEL_ERROR_GENERIC'));

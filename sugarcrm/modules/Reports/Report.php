@@ -2271,6 +2271,12 @@ class Report
                 $this->layout_manager->setAttribute('context', 'List');
             }
 
+            // Make sure 'AVG' aggregate is shown as float, regardless of the original field type
+            if (!empty($display_column['group_function']) && strtolower($display_column['group_function']) === 'avg'
+                && $display_column['type'] != 'currency') {
+                $display_column['type'] = 'float';
+            }
+
             if ($display_column['type'] != 'currency' || (substr_count($display_column['name'], '_usdoll') == 0 &&
                     (isset($display_column['group_function']) ?
                         ($display_column['group_function'] != 'weighted_amount' && $display_column['group_function'] != 'weighted_sum') :

@@ -270,6 +270,7 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
      */
     private function getStaleFilesBy7220()
     {
+        $files = array();
         if (version_compare($this->from_version, '7.2.2.0', '<')) {
             $files = array(
                 'clients/base/fields/date/detail.hbs',
@@ -278,6 +279,7 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
                 'clients/base/fields/datetimecombo/list.hbs',
                 'clients/base/fields/listeditable',
                 'clients/base/fields/shareaction/detail.hbs',
+                'clients/base/fields/label/detail.hbs',
                 'clients/base/layouts/link-selection',
                 'clients/base/layouts/search',
                 'clients/base/layouts/detail',
@@ -667,8 +669,7 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
                 'vendor/Elastica/Transport/Abstract.php',
                 'vendor/Elastica/Type/Abstract.php',
             );
-
-            return $files;
         }
+        return $files;
     }
 }

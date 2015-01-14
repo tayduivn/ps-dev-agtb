@@ -50,7 +50,7 @@ class SugarACLStatic extends SugarACLStrategy
         }
 
         // make sure we have the correct action name
-        $action = $this->fixUpActionName($action);
+        $action = !empty($_REQUEST['bwcFrame']) ? strtolower($action) : $this->fixUpActionName($action);
         //BEGIN SUGARCRM flav=pro ONLY
         if($action == "field") {
             return $this->fieldACL($module, $context['action'], $context);

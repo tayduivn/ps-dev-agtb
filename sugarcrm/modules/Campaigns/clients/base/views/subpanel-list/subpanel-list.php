@@ -43,7 +43,7 @@ $viewdefs['Campaigns']['base']['view']['subpanel-list'] = array(
                 'allow_bwc' => true,
             ),
             array(
-                'type' => 'fa-chain-broken',
+                'type' => 'unlink-action',
                 'icon' => 'fa-chain-broken',
                 'label' => 'LBL_UNLINK_BUTTON',
             ),

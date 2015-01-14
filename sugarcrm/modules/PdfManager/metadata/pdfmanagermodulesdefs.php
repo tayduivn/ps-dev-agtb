@@ -65,7 +65,6 @@ $bannedPdfManagerFieldsAndLinks['Leads'] = array (
 );
 $bannedPdfManagerFieldsAndLinks['Opportunities'] = array (
     'relationships' => array(
-        'campaign_link',
         'campaigns',
     ),
 );

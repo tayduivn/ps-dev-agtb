@@ -60,6 +60,7 @@ $is_uninstallable = true;
 $id_name = '';
 $dependencies = array();
 $remove_tables = 'true';
+$roles = array();
 
 unzip( $install_file, $unzip_dir );
 if($install_type == 'module' && $mode != 'Uninstall' && $mode != 'Disable'){
@@ -206,11 +207,23 @@ $hidden_fields .= "<input type=hidden name=\"version\" value=\"$version\"/>";
 $serial_manifest = array();
 $serial_manifest['manifest'] = (isset($manifest) ? $manifest : '');
 $serial_manifest['installdefs'] = (isset($installdefs) ? $installdefs : '');
+if (isset($installdefs['roles']) && $mode === 'Install' && $install_type === 'module') {
+    $roles = $installdefs['roles'];
+}
 $serial_manifest['upgrade_manifest'] = (isset($upgrade_manifest) ? $upgrade_manifest : '');
 $hidden_fields .= "<input type=hidden name=\"s_manifest\" value='".base64_encode(serialize($serial_manifest))."'>";
 // present list to user
+
+if (count($roles) == 0) {
+    $action = '_commit';
+    $buttonLabel = 'LBL_ML_COMMIT';
+} else {
+    $action = '_map_roles';
+    $buttonLabel = 'LBL_ML_NEXT';
+}
+ 
 ?>
-<form action="<?php print( $form_action . "_commit" ); ?>" name="files" method="post"  onSubmit="return validateForm(<?php print($require_license); ?>);">
+<form action="<?php print( $form_action . $action ); ?>" name="files" method="post" onsubmit="return validateForm(<?php print($require_license); ?>);">
 <?php
 if(empty($new_studio_mod_files)) {
 	if(!empty($mode) && $mode == 'Uninstall')
@@ -330,7 +343,7 @@ switch( $mode ){
 
 
 ?>
-<input type=submit value="<?php echo $mod_strings['LBL_ML_COMMIT'];?>" class="button" id="submit_button" />
+<input type=submit value="<?php echo $mod_strings[$buttonLabel];?>" class="button" id="submit_button" />
 <input type=button value="<?php echo $mod_strings['LBL_ML_CANCEL'];?>" class="button" onClick="location.href='index.php?module=Administration&action=UpgradeWizard&view=module';"/>
 
 <?php

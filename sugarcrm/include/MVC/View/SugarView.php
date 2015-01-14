@@ -1227,7 +1227,7 @@ EOHTML;
     * Return the "breadcrumbs" to display at the top of the page
     *
     * @param  bool $show_help optional, true if we show the help links
-    * @return HTML string containing breadcrumb title
+    * @return string HTML string containing breadcrumb title
     */
     public function getModuleTitle(
         $show_help = true

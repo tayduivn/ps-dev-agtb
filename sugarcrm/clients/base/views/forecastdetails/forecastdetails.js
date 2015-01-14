@@ -52,6 +52,11 @@
     isForecastAdmin: false,
 
     /**
+     * Track if current user is manager.
+     */
+    isManager: false,
+
+    /**
      * Holds the subDetails template so the timeperiod field doesn't re-fetch every re-render
      */
     subDetailsTpl: {},
@@ -153,6 +158,7 @@
         this.isForecastSetup = this.forecastConfig.is_setup;
         this.forecastsConfigOK = app.utils.checkForecastConfig();
         this.isForecastAdmin = _.isUndefined(app.user.getAcls()['Forecasts'].admin);
+        this.isManager = app.user.get('is_manager');
 
         if(!this.isForecastSetup) {
             this.forecastsNotSetUpMsg = app.utils.getForecastNotSetUpMessage(this.isForecastAdmin);

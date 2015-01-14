@@ -37,6 +37,11 @@
     forecastWorksheetContext: undefined,
 
     /**
+     * Track if current user is manager.
+     */
+    isManager: false,
+    
+    /**
      * @inheritdoc
      */
     initialize: function(options) {
@@ -46,6 +51,7 @@
         this.once('render', function() {
             this.parseCollectionForData();
         }, this);
+        this.isManager = app.user.get('is_manager');
         this._super('initialize', [options]);
         if (!this.meta.config) {
             var ctx = this.context.parent,
