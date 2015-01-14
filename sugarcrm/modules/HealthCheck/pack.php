@@ -28,6 +28,7 @@ function packHealthCheck(ZipArchive $zip, $manifest = array(), $installdefs = ar
         // misc
         'include/SugarSystemInfo/SugarSystemInfo.php',
         'include/SugarHeartbeat/SugarHeartbeatClient.php',
+        'include/SugarHttpClient.php',
         // healtcheck module
         'styleguide/assets/css/upgrade.css',
         'styleguide/assets/fonts/fontawesome-webfont.eot',

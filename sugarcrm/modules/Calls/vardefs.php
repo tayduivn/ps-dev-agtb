@@ -531,6 +531,13 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
         'source' => 'non-db',
         'reportable' => false
     ),
+    'task_parent' => array(
+        'name' => 'task_parent',
+        'type' => 'link',
+        'relationship' => 'task_calls_parent',
+        'source' => 'non-db',
+        'reportable' => false,
+    ),
 ),
 'indices' => array (
 	array(

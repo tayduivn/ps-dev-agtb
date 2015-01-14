@@ -39,6 +39,10 @@ class ConvertLayoutMetadataParser extends GridLayoutMetaDataParser
         'ProductTemplates',
         'Leads',
         'Users',
+        'pmse_Business_Rules',
+        'pmse_Emails_Templates',
+        'pmse_Inbox',
+        'pmse_Project',
     );
 
     //fields that should be hidden in the create layout
