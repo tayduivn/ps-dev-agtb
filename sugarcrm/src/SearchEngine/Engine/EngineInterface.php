@@ -47,4 +47,11 @@ interface EngineInterface
      * @return boolean
      */
     public function scheduleIndexing(array $modules = array(), $clearData = false);
+
+    /**
+     * Index given bean
+     * @param \SugarBean $bean The bean to index
+     * @param array $options Optional options
+     */
+    public function indexBean(\SugarBean $bean, array $options = array());
 }

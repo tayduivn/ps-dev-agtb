@@ -74,4 +74,12 @@ class Elastic implements EngineInterface
     {
         return $this->container;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function indexBean(\SugarBean $bean, array $options = array())
+    {
+        $this->container->indexer->indexBean($bean);
+    }
 }
