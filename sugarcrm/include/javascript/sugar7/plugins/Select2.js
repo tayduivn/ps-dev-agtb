@@ -22,6 +22,9 @@
              * Dispose safe select2 drop mask on destroy.
              */
             destroy: function() {
+                if (this.propertyObserver && typeof(this.propertyObserver.disconnect) !== 'function') {
+                    this.propertyObserver.disconnect = function() {};
+                }
                 originalDestroy.call(this);
                 var mask = $('#select2-drop-mask');
                 mask.remove();
