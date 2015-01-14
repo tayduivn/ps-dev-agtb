@@ -282,7 +282,7 @@
              */
             checkCreateLocalization: function(model) {
                 var langs = this.getAvailableLangsForLocalization(model),
-                    config = app.metadata.getModule('KBDocuments', 'config');
+                    config = app.metadata.getModule('KBContents', 'config');
 
                 if (!langs || !config['languages']) {
                     return true;
