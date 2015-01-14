@@ -37,7 +37,7 @@ $dictionary['HealthCheck'] = array(
             'vname' => 'LBL_LOGMETA',
             'type' => 'json',
             //Sugar 6 does not support `type` => `json` so `blob` is needed to skip SugarBean::cleanBean
-            'dbType' => 'longblob',
+            'dbType' => 'longtext',
         ),
         'error' => array(
             'name' => 'error',
