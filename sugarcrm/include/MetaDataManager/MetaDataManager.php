@@ -1097,12 +1097,12 @@ class MetaDataManager
         }
 
         // Get the listing of files in the cache directory
-        $caches = glob(sugar_cached('api/metadata/') . '*.php');
+        $caches = glob(sugar_cached('api/metadata/') . '*.*');
         foreach ($caches as $cache) {
-            $file = basename($cache, '.php');
+            $file = basename($cache, '.' . pathinfo($cache, PATHINFO_EXTENSION));
             // If the filename fits the pattern of a metadata cache file get the
             // platform for the file so long as it isn't base
-            preg_match('/^metadata_(.*)_(private|public)$/', $file, $m);
+            preg_match('/^.*_(.*)_(private|public)/', $file, $m);
             if (isset($m[1])) {
                 $platforms[$m[1]] = $m[1];
             }
