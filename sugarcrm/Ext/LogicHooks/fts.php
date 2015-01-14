@@ -1,5 +1,5 @@
 <?php
- if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -11,15 +11,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-// Full text search.
-
-$managerClassPath = SugarAutoLoader::requireWithCustom('include/SugarSearchEngine/SugarSearchEngineQueueManager.php');
-$managerClassName = SugarAutoLoader::customClass('SugarSearchEngineQueueManager');
+// Full text search after_save hook to update/index a bean
 
 $hook_array['after_save'][] = array(
     1,
     'fts',
-    $managerClassPath,
-    $managerClassName,
-    'populateIndexQueue'
+    null,
+    '\\Sugarcrm\\Sugarcrm\\SearchEngine\\HookHandler',
+    'indexBean',
 );
