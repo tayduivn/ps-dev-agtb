@@ -43,9 +43,9 @@ class PMSEBusinessRuleImporter extends PMSEImporter
     {
         $source_definition = json_decode($projectData['rst_source_definition']);
         if (isset($projectData[$this->suffix . 'name']) && !empty($projectData[$this->suffix . 'name'])) {
-            $name = $this->getNameWhitSuffix($projectData[$this->suffix . 'name']);
+            $name = $this->getNameWithSuffix($projectData[$this->suffix . 'name']);
         } else {
-            $name = $this->getNameWhitSuffix($projectData[$this->name]);
+            $name = $this->getNameWithSuffix($projectData[$this->name]);
         }
         $projectData['rst_uid'] = PMSEEngineUtils::generateUniqueID();
         $source_definition->name = $name;

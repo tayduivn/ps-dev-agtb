@@ -59,7 +59,7 @@ class PMSEProjectImporter extends PMSEImporter
      */
     public function __construct()
     {
-        $this->bean = BeanFactory::getBean('pmse_Project'); //new BpmEmailTemplate();
+        $this->bean = BeanFactory::getBean('pmse_Project');
         $this->dependenciesWrapper = new PMSERelatedDependencyWrapper();
         $this->name = 'name';
         $this->id = 'prj_id';
@@ -155,7 +155,7 @@ class PMSEProjectImporter extends PMSEImporter
     public function saveProjectData($projectData)
     {
         global $current_user;
-        $projectObject = $this->getBean(); //new BpmnProject();
+        $projectObject = $this->getBean();
         $keysArray = array();
         unset($projectData[$this->id]);
         //Unset common fields
@@ -249,9 +249,9 @@ class PMSEProjectImporter extends PMSEImporter
     public function saveProjectActivitiesData($activitiesData, $keysArray)
     {
         foreach ($activitiesData as $element) {
-            $activityBean = BeanFactory::getBean('pmse_BpmnActivity'); //new BpmnActivity();
-            $boundBean = BeanFactory::getBean('pmse_BpmnBound'); //new BpmnBound();
-            $definitionBean = BeanFactory::getBean('pmse_BpmActivityDefinition'); //new BpmActivityDefinition();
+            $activityBean = BeanFactory::getBean('pmse_BpmnActivity');
+            $boundBean = BeanFactory::getBean('pmse_BpmnBound');
+            $definitionBean = BeanFactory::getBean('pmse_BpmActivityDefinition');
             $element['prj_id'] = $keysArray['prj_id'];
             $element['pro_id'] = $keysArray['pro_id'];
             foreach ($element as $key => $value) {
@@ -425,7 +425,7 @@ class PMSEProjectImporter extends PMSEImporter
     public function saveProjectFlowsData($flowsData, $keysArray)
     {
         foreach ($flowsData as $element) {
-            $flowBean = BeanFactory::getBean('pmse_BpmnFlow'); //new BpmnFlow();
+            $flowBean = BeanFactory::getBean('pmse_BpmnFlow');
             $element['prj_id'] = $keysArray['prj_id'];
             $element['pro_id'] = $keysArray['pro_id'];
             $element['dia_id'] = $keysArray['dia_id'];
@@ -486,8 +486,8 @@ class PMSEProjectImporter extends PMSEImporter
         $field_uid = ''
     ) {
          foreach ($elementsData as $element) {
-            $boundBean = BeanFactory::getBean('pmse_BpmnBound'); //new BpmnBound();
-            $elementBean = BeanFactory::getBean($beanType); //$beanFactory->getBean($beanType);
+            $boundBean = BeanFactory::getBean('pmse_BpmnBound');
+            $elementBean = BeanFactory::getBean($beanType);
 
             $element['prj_id'] = $keysArray['prj_id'];
             $element['pro_id'] = $keysArray['pro_id'];
@@ -511,9 +511,21 @@ class PMSEProjectImporter extends PMSEImporter
                 $this->savedElements[$beanType][$elementBean->$uid] = $savedId;
             }
             if (!empty($field_uid)) {
-                $elementBean->$field_uid = PMSEEngineUtils::generateUniqueID(); //$elementBean->validateUniqueUid();
+                $elementBean->$field_uid = PMSEEngineUtils::generateUniqueID();
             }
             if ($generateBound) {
+                switch($beanType) {
+                    case 'pmse_BpmnArtifact':
+                        $element_type = 'bpmnArtifact';
+                        break;
+                    default:
+                        $element_type = '';
+                }
+                $boundBean->bou_uid = PMSEEngineUtils::generateUniqueID();
+                $boundBean->dia_id = $keysArray['dia_id'];
+                $boundBean->element_id = $keysArray['dia_id'];
+                $boundBean->bou_element_type = $element_type;
+                $boundBean->bou_element = $savedId;
                 $boundBean->save();
             }
         }
@@ -534,9 +546,9 @@ class PMSEProjectImporter extends PMSEImporter
     public function processDefaultFlows()
     {
         foreach ($this->defaultFlowList as $defaultFlow) {
-            $elementBean = BeanFactory::getBean('pmse_' . $defaultFlow['bean']); //new $defaultFlow['bean']();
+            $elementBean = BeanFactory::getBean('pmse_' . $defaultFlow['bean']);
             $elementBean->retrieve_by_string_fields(array($defaultFlow['search_field'] => $defaultFlow['search_field_value']));
-            $flowBean = BeanFactory::getBean('pmse_BpmnFlow'); //new BpmnFlow();
+            $flowBean = BeanFactory::getBean('pmse_BpmnFlow');
             $flowBean->retrieve_by_string_fields(array('flo_uid' => $defaultFlow['default_flow']));
             $elementBean->$defaultFlow['default_flow_field'] = $flowBean->flo_id;
             $elementBean->save();
