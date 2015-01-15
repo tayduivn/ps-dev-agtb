@@ -195,7 +195,7 @@ function disableReturnSubmission(e) {
                     </tr>
                     <tr>
                         <td width="17%" scope="row" nowrap="nowrap"><slot>
-                            {$MOD.LBL_CURRENCY_SIG_DIGITS}:
+                            {$MOD.LBL_SYSTEM_SIG_DIGITS}:
                         </slot></td>
                         <td ><slot>
                             <select id='sigDigits' onchange='setSigDigits(this.value);' name='default_currency_significant_digits'>{$sigDigits}</select>

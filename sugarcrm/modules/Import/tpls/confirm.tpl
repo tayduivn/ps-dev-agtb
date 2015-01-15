@@ -107,7 +107,7 @@
                         </slot></td>
                     </tr>
                     <tr>
-                        <td scope="col"><slot><label for="sigDigits">{$MOD.LBL_CURRENCY_SIG_DIGITS}:</label></slot></td>
+                        <td scope="col"><slot><label for="sigDigits">{$MOD.LBL_SYSTEM_SIG_DIGITS}:</label></slot></td>
                         <td ><slot><select id='sigDigits' onchange='setSigDigits(this.value);' name='importlocale_default_currency_significant_digits'>{$sigDigits}</select>
                         </slot></td>
                         <td scope="col"><slot><i>{$MOD.LBL_LOCALE_EXAMPLE_NAME_FORMAT}</i>:</slot></td>

@@ -19,9 +19,23 @@ if (!isset($install_script) || !$install_script) {
     die($mod_strings['ERR_NO_DIRECT_SCRIPT']);
 }
 ini_set("output_buffering", "0");
+
+// Give the install ample time to finish
 set_time_limit(3600);
-// flush after each output so the user can see the progress in real-time
+
+// Implicitly set character set to skip browser buffer sniffing
+header('Content-Type: text/html; charset=UTF-8');
+
+// Bypass output buffering if enforced by FastCGI implementation
+header('X-Accel-Buffering: no');
+
+// Flush after each output so the user can see the progress in real-time
 ob_implicit_flush();
+
+// When output_buffering is enabled - which is recommended in production -
+// make sure we flush the current output buffer(s) otherwise we are still
+// buffering at this point and real-time updates wont make it to the screen.
+while (@ob_end_flush());
 
 require_once('install/install_utils.php');
 
