@@ -2736,6 +2736,9 @@ class SugarBean
 						}
 						else
 						{
+                            //Converting from db fields is needed
+                            //Example: from "2015-01-08 22:32:00.000000" (retrieved from DB2) to "2015-01-08 22:32:00"
+                            $this->$field = $this->db->fromConvert($this->$field, 'datetime');
 							if(empty($disable_date_format)) {
 								$this->$field = $timedate->to_display_date_time($this->$field, true, true);
 							}
