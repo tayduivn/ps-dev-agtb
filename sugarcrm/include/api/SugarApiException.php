@@ -223,3 +223,13 @@ class SugarApiExceptionMaintenance extends SugarApiException
     public $errorLabel = 'maintenance';
     public $messageLabel = 'EXCEPTION_MAINTENANCE';
 }
+
+/**
+ * The server is busy or overloaded. Generally should be temporary.
+ */
+class SugarApiExceptionServiceUnavailable extends SugarApiException
+{
+    public $httpCode = 503;
+    public $errorLabel = 'service_unavailable';
+    public $messageLabel = 'EXCEPTION_SERVICE_UNAVAILABLE';
+}
