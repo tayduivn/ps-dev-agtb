@@ -699,6 +699,29 @@ FLEXLIST GENERIC */
     }
   }
 
+  /* LEFT AND RIGHT ACTION COLUMNS WITHOUT TABLE SCROLL */
+  &[class$="-actions"]:not(.scroll-width) {
+    .flex-list-view-content {
+      overflow-x: visible;
+      .dataTable {
+        th:first-child,
+        td:first-child,
+        th:last-child,
+        td:last-child {
+          height: auto;
+          > span {
+            position: static;
+            top: 0;
+            right: 0;
+            padding: 0;
+            margin: 0;
+            border-color: transparent;
+          }
+        }
+      }
+    }
+  }
+
   /*DUPLICATES*/
   .dataTable.duplicates {
     tr {
