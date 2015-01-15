@@ -190,7 +190,7 @@ nv.models.lineChart = function() {
             .attr('class', 'nv-title')
             .attr('x', direction === 'rtl' ? availableWidth : 0)
             .attr('y', 0)
-            .attr('dy', '.71em')
+            .attr('dy', '1em')
             .attr('text-anchor', 'start')
             .text(properties.title)
             .attr('stroke', 'none')

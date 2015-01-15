@@ -1550,6 +1550,7 @@ nv.models.legend = function() {
       gutter = 10,
       equalColumns = true,
       showAll = false,
+      collapsed = false,
       rowsCount = 3, //number of rows to display if showAll = false
       enabled = false,
       strings = {close: 'Hide legend', type: 'Show legend'},
@@ -1602,10 +1603,10 @@ nv.models.legend = function() {
       var wrap = container.selectAll('g.nv-chart-legend').data([data]);
       var wrapEnter = wrap.enter().append('g').attr('class', 'nv-chart-legend');
 
-      var defs = wrapEnter.append('defs');
-      defs
+      wrapEnter.append('defs')
         .append('clipPath').attr('id', 'nv-edge-clip-' + id)
         .append('rect');
+      var defs = wrap.select('defs');
       var clip = wrap.select('#nv-edge-clip-' + id + ' rect');
 
       wrapEnter
@@ -1884,6 +1885,7 @@ nv.models.legend = function() {
         if (showAll || rows < rowsCount + 1) {
 
           legendOpen = 0;
+          collapsed = false;
 
           legend
             .width(margin.left + maxRowWidth + margin.right)
@@ -1964,8 +1966,10 @@ nv.models.legend = function() {
 
         } else {
 
+          collapsed = true;
+
           legend
-            .width(radius * 2 + d3.max(keyWidths) - gutter + (position === 'start' ? 0 : 2 * radius + 3) + radius * 2)
+            .width(radius * 2 + d3.max(keyWidths) - gutter + (position === 'start' ? 0 : radius * 2 + 3) + radius * 2)
             .height(radius * 2 + radius * 2 + radius * 2);
 
           legendHeight = radius * 2 + radius * 2 * keys + (keys - 1) * 10 + radius * 2;//TODO: why is this 10 hardcoded?
@@ -2158,6 +2162,10 @@ nv.models.legend = function() {
     if (!arguments.length) { return showAll; }
     showAll = _;
     return legend;
+  };
+
+  legend.collapsed = function(_) {
+    return collapsed;
   };
 
   legend.rowsCount = function(_) {
@@ -3587,7 +3595,7 @@ nv.models.bubbleChart = function () {
               .attr('class', 'nv-title')
               .attr('x', direction === 'rtl' ? availableWidth : 0)
               .attr('y', 0)
-              .attr('dy', '.71em')
+              .attr('dy', '1em')
               .attr('text-anchor', 'start')
               .text(properties.title)
               .attr('stroke', 'none')
@@ -5022,7 +5030,7 @@ nv.models.funnelChart = function() {
             .attr('class', 'nv-title')
             .attr('x', direction === 'rtl' ? availableWidth : 0)
             .attr('y', 0)
-            .attr('dy', '.71em')
+            .attr('dy', '1em')
             .attr('text-anchor', 'start')
             .text(properties.title)
             .attr('stroke', 'none')
@@ -5050,8 +5058,9 @@ nv.models.funnelChart = function() {
 
         legend
           .arrange(availableWidth);
+
         legendWrap
-          .attr('transform', 'translate(0,' + innerMargin.top + ')');
+          .attr('transform', 'translate(' + (direction === 'rtl' || !legend.collapsed() ? 0 : availableWidth - legend.width()) + ',' + innerMargin.top + ')');
 
         innerMargin.top += legend.height() + 4;
       }
@@ -5973,7 +5982,7 @@ nv.models.gaugeChart = function() {
             .attr('class', 'nv-title')
             .attr('x', direction === 'rtl' ? availableWidth : 0)
             .attr('y', 0)
-            .attr('dy', '.71em')
+            .attr('dy', '1em')
             .attr('text-anchor', 'start')
             .text(properties.title)
             .attr('stroke', 'none')
@@ -6720,7 +6729,7 @@ nv.models.lineChart = function() {
             .attr('class', 'nv-title')
             .attr('x', direction === 'rtl' ? availableWidth : 0)
             .attr('y', 0)
-            .attr('dy', '.71em')
+            .attr('dy', '1em')
             .attr('text-anchor', 'start')
             .text(properties.title)
             .attr('stroke', 'none')
@@ -8892,7 +8901,7 @@ nv.models.multiBarChart = function() {
             .attr('class', 'nv-title')
             .attr('x', direction === 'rtl' ? availableWidth : 0)
             .attr('y', 0)
-            .attr('dy', '.71em')
+            .attr('dy', '1em')
             .attr('text-anchor', 'start')
             .text(properties.title)
             .attr('stroke', 'none')
@@ -9770,7 +9779,7 @@ nv.models.paretoChart = function() {
             .attr('class', 'nv-title')
             .attr('x', direction === 'rtl' ? availableWidth : 0)
             .attr('y', 0)
-            .attr('dy', '.71em')
+            .attr('dy', '1em')
             .attr('text-anchor', 'start')
             .attr('stroke', 'none')
             .attr('fill', 'black');
@@ -11193,7 +11202,7 @@ nv.models.pieChart = function() {
             .attr('class', 'nv-title')
             .attr('x', direction === 'rtl' ? availableWidth : 0)
             .attr('y', 0)
-            .attr('dy', '.71em')
+            .attr('dy', '1em')
             .attr('text-anchor', 'start')
             .text(properties.title)
             .attr('stroke', 'none')
@@ -12566,7 +12575,7 @@ nv.models.stackedAreaChart = function() {
             .attr('class', 'nv-title')
             .attr('x', direction === 'rtl' ? availableWidth : 0)
             .attr('y', 0)
-            .attr('dy', '.71em')
+            .attr('dy', '1em')
             .attr('text-anchor', 'start')
             .text(properties.title)
             .attr('stroke', 'none')

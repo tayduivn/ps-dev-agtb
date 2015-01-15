@@ -206,7 +206,7 @@ nv.models.funnelChart = function() {
             .attr('class', 'nv-title')
             .attr('x', direction === 'rtl' ? availableWidth : 0)
             .attr('y', 0)
-            .attr('dy', '.71em')
+            .attr('dy', '1em')
             .attr('text-anchor', 'start')
             .text(properties.title)
             .attr('stroke', 'none')
@@ -234,8 +234,9 @@ nv.models.funnelChart = function() {
 
         legend
           .arrange(availableWidth);
+
         legendWrap
-          .attr('transform', 'translate(0,' + innerMargin.top + ')');
+          .attr('transform', 'translate(' + (direction === 'rtl' || !legend.collapsed() ? 0 : availableWidth - legend.width()) + ',' + innerMargin.top + ')');
 
         innerMargin.top += legend.height() + 4;
       }
