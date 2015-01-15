@@ -4,21 +4,15 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "ff57f0feccd9427f3f6477b50c198356",
+    "hash": "0a1cc255d518c4ac44262f8c628ffb58",
     "packages": [
         {
             "name": "onelogin/php-saml",
             "version": "2.1.0.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/sugarcrm/php-saml.git",
+                "url": "https://github.com/sugarcrm/php-saml",
                 "reference": "a8ba9dbb92c6dac3f50dac268764b5d2a56e706e"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/sugarcrm/php-saml/zipball/a8ba9dbb92c6dac3f50dac268764b5d2a56e706e",
-                "reference": "a8ba9dbb92c6dac3f50dac268764b5d2a56e706e",
-                "shasum": ""
             },
             "require": {
                 "php": ">=5.3.2"
