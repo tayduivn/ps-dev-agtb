@@ -294,7 +294,7 @@ var AdamCanvas = function (options) {
                 }
             ]
 
-        },
+        }/*,
         AdamArtifact: {
             textannotation : [
                 {
@@ -315,7 +315,7 @@ var AdamCanvas = function (options) {
                     ]
                 }
             ]
-        }
+        }*/
     };
 
     AdamCanvas.prototype.initObject.call(this, options);
@@ -459,7 +459,7 @@ AdamCanvas.prototype.getContextMenu = function () {
         name: 'pro_terminate_variables',
         label: translate('LBL_PMSE_LABEL_TERMINATE_PROCESS'),
         required: false,
-        fieldWidth: 250,
+        fieldWidth: 414,
         fieldHeight: 80,
         decimalSeparator: SUGAR.App.config.defaultDecimalSeparator,
         numberGroupingSeparator: SUGAR.App.config.defaultNumberGroupingSeparator,
@@ -467,8 +467,8 @@ AdamCanvas.prototype.getContextMenu = function () {
             logic: true,
             group: true
         },
-        constant: false,
-        decimalSeparator: PMSE_DECIMAL_SEPARATOR
+        constant: false/*,
+        decimalSeparator: PMSE_DECIMAL_SEPARATOR*/
     });
 
     fieldsItems = function (value, initial) {
@@ -540,8 +540,6 @@ AdamCanvas.prototype.getContextMenu = function () {
 
             //modulesList = App.metadata.getModules();
             //for( var property in modulesList ){
-            //    //console.log( property );
-            //    //console.log( modulesList[property] );
             //    if (modulesList[property].favoritesEnabled) {
             //        options.push({'value': property, 'text': property});
             //    }
@@ -555,7 +553,6 @@ AdamCanvas.prototype.getContextMenu = function () {
             //    return 0 //default return value (no sorting)
             //});
             //comboModules.setOptions(options);
-            //console.log(PROJECT_MODULE);
             //comboModules.setValue(PROJECT_MODULE || options[0].value);
 
             comboModules.proxy.getData(null, {
@@ -637,7 +634,6 @@ AdamCanvas.prototype.getContextMenu = function () {
                 //        }
                 //    },
                 //    failure: function (xhr, response) {
-                //        //console.log(response);
                 //        //TODO Process HERE error at loading project
                 //    }
                 //});
@@ -775,7 +771,6 @@ AdamCanvas.prototype.getContextMenu = function () {
 
                         },
                         failure: function (xhr, response) {
-                            //console.log(response);
                             //TODO FAILURE ALERT
                         }
                     });
@@ -823,41 +818,49 @@ AdamCanvas.prototype.getContextMenu = function () {
         buttons: [
            // { jtype: 'submit', caption: 'Save' },
 
-            { jtype: 'normal', caption: translate('LBL_PMSE_BUTTON_SAVE'), handler: function () {
-                f.submit();
-            }},
-
-
-            { jtype: 'normal', caption: translate('LBL_PMSE_BUTTON_CANCEL'), handler: function () {
-                if (f.isDirty()) {
-                    cancelInformation =  new MessagePanel({
-                        title: "Confirm",
-                        wtype: 'Confirm',
-                        message: translate('LBL_PMSE_MESSAGE_CANCEL_CONFIRM'),
-                        buttons: [
-                            {
-                                jtype: 'normal',
-                                caption: translate('LBL_PMSE_BUTTON_YES'),
-                                handler: function () {
-                                    PROJECT_LOCKED_VARIABLES = project.process_definition.pro_locked_variables.slice();
-                                    cancelInformation.close();
-                                    w.close();
+            {
+                jtype: 'normal',
+                caption: translate('LBL_PMSE_BUTTON_SAVE'),
+                handler: function () {
+                    f.submit();
+                },
+                cssClasses: ['btn', 'btn-primary']
+            },
+            {
+                jtype: 'normal',
+                caption: translate('LBL_PMSE_BUTTON_CANCEL'),
+                handler: function () {
+                    if (f.isDirty()) {
+                        cancelInformation =  new MessagePanel({
+                            title: "Confirm",
+                            wtype: 'Confirm',
+                            message: translate('LBL_PMSE_MESSAGE_CANCEL_CONFIRM'),
+                            buttons: [
+                                {
+                                    jtype: 'normal',
+                                    caption: translate('LBL_PMSE_BUTTON_YES'),
+                                    handler: function () {
+                                        PROJECT_LOCKED_VARIABLES = project.process_definition.pro_locked_variables.slice();
+                                        cancelInformation.close();
+                                        w.close();
+                                    }
+                                },
+                                {
+                                    jtype: 'normal',
+                                    caption: translate('LBL_PMSE_BUTTON_NO'),
+                                    handler: function () {
+                                        cancelInformation.close();
+                                    }
                                 }
-                            },
-                            {
-                                jtype: 'normal',
-                                caption: translate('LBL_PMSE_BUTTON_NO'),
-                                handler: function () {
-                                    cancelInformation.close();
-                                }
-                            }
-                        ]
-                    });
-                    cancelInformation.show();
-                } else {
-                    w.close();
-                }
-            }}
+                            ]
+                        });
+                        cancelInformation.show();
+                    } else {
+                        w.close();
+                    }
+                },
+                cssClasses: ['btn btn-invisible btn-link']
+            }
         ],
         callback: callbackModule,
         proxy: null,
@@ -865,7 +868,7 @@ AdamCanvas.prototype.getContextMenu = function () {
     });
 
     w = new Window({
-        width: 580,
+        width: 690,
         height: 450,
         modal: true,
         title: translate('LBL_PMSE_CONTEXT_MENU_PROCESS_DEFINITION')
@@ -1057,17 +1060,16 @@ AdamCanvas.prototype.onRemoveElementHandler = function (element) {
         Tree.treeReload('tree', items2);
         this.project.updatePropertiesGrid();
     }
-    //console.log('Remove Element');
     if (listPanelError){
         if (listPanelError.items.length){
             for ( i = 0 ; i < element.length ; i+=1 ) {
                 if (!(element[i].type === "Connection")){
-                    item = listPanelError.getItemById(element[i].getID()); 
+                    item = listPanelError.getItemById(element[i].getID());
                     if (item){
                         listPanelError.removeItemById(element[i].getID());
                     }
                 }
-            }   
+            }
         }
     }
     this.bpmnValidation();
