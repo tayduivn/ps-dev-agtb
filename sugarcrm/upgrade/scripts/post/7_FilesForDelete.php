@@ -226,6 +226,7 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
 
         if (version_compare($this->from_version, '7.6', '<')) {
             $files[] = 'clients/base/fields/fieldset-with-labels';
+            $files[] = 'clients/base/views/create-nodupecheck/create-nodupecheck.php';
             $files[] = 'modules/Contacts/clients/base/views/create-actions/create-actions.php';
             $files[] = 'modules/ForecastWorksheets/clients/base/views/list-bottom';
             $files[] = 'modules/Leads/clients/base/views/create-actions/create-actions.php';
