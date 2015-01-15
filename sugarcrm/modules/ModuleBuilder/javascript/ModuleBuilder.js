@@ -1583,16 +1583,20 @@ if (typeof(ModuleBuilder) == 'undefined') {
             var $input = $('input[name="role"]');
             var previousRole = $input.val();
             var role = $select.val();
-            $input.val(role);
-
             var params = ModuleBuilder.urlToParams(ModuleBuilder.contentURL);
             params.role = role;
             var url = ModuleBuilder.paramsToUrl(params);
-
-            ModuleBuilder.getContent(url, null, function() {
-                $input.val(previousRole);
-                $select.val(previousRole);
-            });
+            $input.val('');
+            ModuleBuilder.getContent(
+                url,
+                function(r) {
+                    $input.val(role);
+                    ModuleBuilder.updateContent(r);
+                }, function() {
+                    $input.val(previousRole);
+                    $select.val(previousRole);
+                }
+            );
         },
         copyLayoutFromRole: function() {
             var dialog = ModuleBuilder.getCopyLayoutDialog();
