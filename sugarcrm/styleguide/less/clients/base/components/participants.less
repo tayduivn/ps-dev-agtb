@@ -3,11 +3,14 @@
 .participants-schedule {
   display: table;
   width: 100%;
+  margin-left: -1px;
   &.new {
     width: 100%;
   }
   .row {
     display: table-row;
+    width: 100%;
+    margin-left: 0px;
     .cell {
       display: table-cell;
       vertical-align: middle;
@@ -94,6 +97,7 @@
           border-radius: 0 3px 3px 0;
           position: relative;
           background-color: white;
+          width: 100%;
           &.unavailable, &.loading {
             .overlay {
               position: absolute;
@@ -154,11 +158,12 @@
         }
         &.buttons {
           border: none;
-          width: 1px;
+          width: 72px;
           .btn-toolbar {
             margin: 0 -2px 0 0;
             padding-left: 0;
             white-space: nowrap;
+            width: 72px;
             .btn + .btn {
               margin-left: 8px;
             }
@@ -174,28 +179,24 @@
   }
 }
 .participants-form {
-  display: table-row;
-  width: 100%;
-  margin-left: -9px;
   .cell {
     display: table-cell;
     vertical-align: middle;
     &.select {
+      width: 100%;
       .field {
-        margin-left: -197px;
-        > .select2-container {
-          margin: 0;
-        }
+        margin-left: -199px;
       }
     }
     &.buttons {
-      width: 1px;
+      width: 72px;
       .btn-toolbar {
         margin: 0;
         padding: 0;
         white-space: nowrap;
+        width: 70px;
         .btn-group + .btn-group {
-          margin-left: 9px;
+          margin-left: 8px;
         }
       }
     }
@@ -228,4 +229,8 @@
     width: 95px;
     max-width: 95px;
   }
+}
+
+.record .record-cell[data-type="participants"] .normal > .detail {
+  padding: 0;
 }
