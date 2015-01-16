@@ -126,16 +126,17 @@ class PMSEEngineFilterApi extends FilterApi
         self::addFilters(array(), $where, $q);
         $type = '';
         $isEmpty = empty($filters);
-
-        foreach ($filters as $filter) {
-            foreach ($filter as $field => $values) {
-                if (is_array($values)) {
-                    foreach ($values as $condition => $value) {
-                        if ($field != 'in_time') {
-                            if (is_array($value)) {
-                                $type = $this->applyArrayFilter($where, $condition, $field, $value);
-                            } else {
-                                $type = ($field == 'act_assignment_method') ? $value : $type;
+        if (!$isEmpty) {
+            foreach ($filters as $filter) {
+                foreach ($filter as $field => $values) {
+                    if (is_array($values)) {
+                        foreach ($values as $condition => $value) {
+                            if ($field != 'in_time') {
+                                if (is_array($value)) {
+                                    $type = $this->applyArrayFilter($where, $condition, $field, $value);
+                                } else {
+                                    $type = ($field == 'act_assignment_method') ? $value : $type;
+                                }
                             }
                         }
                     }
