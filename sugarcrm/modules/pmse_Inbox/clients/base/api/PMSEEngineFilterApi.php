@@ -110,14 +110,9 @@ class PMSEEngineFilterApi extends FilterApi
         // return $args['filter'];
         if (!isset($args['filter']) || !is_array($args['filter'])) {
             $args['filter'] = array();
-        } 
+        }
 
         $this->addFiltersAux($args['filter'], $q->where(), $q);
-//        $isStatic = $args['filter'][0]['act_assignment_method']['$equals'];
-
-//        if (!empty($args['my_items']) && $isStatic=='static') {
-//            self::addOwnerFilter($q, $q->where(), '_this');
-//        }
 
         if (!empty($args['favorites'])) {
             self::$isFavorite = true;
@@ -148,8 +143,9 @@ class PMSEEngineFilterApi extends FilterApi
                 }
             }
         }
+
         global $current_user;
-        
+
         if (strtolower($type) == 'selfservice' || strtolower($type) == 'balanced') {
             $teams = array_keys($current_user->get_my_teams());
             $and = $where->queryAnd();
@@ -157,7 +153,7 @@ class PMSEEngineFilterApi extends FilterApi
             $and->isNull('cas_start_date');
             $and->equals('activity_definition.act_assignment_method', 'selfservice');
         }
-        
+
         if (strtolower($type) == 'static') {
             $and = $where->queryAnd();
             $and->equals('cas_user_id', $current_user->id);
@@ -180,15 +176,15 @@ class PMSEEngineFilterApi extends FilterApi
             $and2->equals('cas_user_id', $current_user->id);
             $or2 = $and2->queryOr();
             $or2->equals('activity_definition.act_assignment_method', 'static');
-            $or2->equals('activity_definition.act_assignment_method', 'balanced');            
+            $or2->equals('activity_definition.act_assignment_method', 'balanced');
             $and3 = $or2->queryAnd();
             $and3->equals('activity_definition.act_assignment_method', 'selfservice');
             $and3->notNull('cas_start_date');
         }
     }
-    
-    
-    
+
+
+
     public function applyArrayFilter($where, $condition, $field, $value)
     {
         $type = '';
@@ -197,7 +193,7 @@ class PMSEEngineFilterApi extends FilterApi
         }
         return $type;
     }
-    
+
     public function applyUserFilter($q, $condition, $field, $value)
     {
         if ($condition == '$equals' && $field == 'user_disabled' && $value==1) {
@@ -207,7 +203,7 @@ class PMSEEngineFilterApi extends FilterApi
                 ->notEquals('users.employee_status', 'Active');
         }
     }
-    
+
     private function getQueryObjectAux(SugarBean $seed, array $options)
     {
         if (empty($options['select'])) {
@@ -217,7 +213,7 @@ class PMSEEngineFilterApi extends FilterApi
         if ($queryOptions['add_deleted'] == false) {
             $options['select'][] = 'deleted';
         }
-        
+
         $q = new SugarQuery();
         $q->from($seed, $queryOptions);
         $q->distinct(false);
@@ -230,32 +226,22 @@ class PMSEEngineFilterApi extends FilterApi
                 $fields[] = $field;
             }
         }
-        //INNER JOIN BPM FLOW TABLE
-        //$q->joinTable('pmse_bpm_flow', array('alias' => 'flow', 'joinType' => 'INNER', 'linkingTable' => true))
-        //    ->on()
-        //    ->equalsField('flow.cas_id', 'cas_id')
-        //    ->equals('flow.deleted', 0);
-        //$fields[] = array("flow.id", 'flow_id');
-        //$fields[] = array("flow.cas_flow_status", 'cas_flow_status');
-        //$q->where()
-        //    ->equals('flow.cas_flow_status', 'FORM');
-        
+
         //INNER JOIN BPM INBOX TABLE
         $fields[] = array("date_entered", 'date_entered');
         $fields[] = array("cas_id", 'cas_id');
         $fields[] = array("cas_sugar_module", 'cas_sugar_module');
 
-        
+
         $q->joinTable('pmse_inbox', array('alias' => 'inbox', 'joinType' => 'INNER', 'linkingTable' => true))
             ->on()
             ->equalsField('inbox.cas_id', 'cas_id')
             ->equals('inbox.deleted', 0);
         $fields[] = array("inbox.id", 'inbox_id');
         $fields[] = array("inbox.cas_title", 'cas_title');
-//        $fields[] = array("inbox.id", 'inbox_id');
         $q->where()
             ->equals('cas_flow_status', 'FORM');
-            
+
         //INNER JOIN BPMN ACTIVITY DEFINITION
         $q->joinTable('pmse_bpmn_activity', array('alias' => 'activity', 'joinType' => 'INNER', 'linkingTable' => true))
             ->on()
@@ -269,21 +255,21 @@ class PMSEEngineFilterApi extends FilterApi
             ->equalsField('activity_definition.id', 'activity.id')
             ->equals('activity_definition.deleted', 0);
         $fields[] = array("activity_definition.act_assignment_method", 'act_assignment_method');
-        
+
         //INNER JOIN BPMN PROCESS DEFINTION
         $q->joinTable('pmse_bpmn_process', array('alias' => 'process', 'joinType' => 'INNER', 'linkingTable' => true))
             ->on()
             ->equalsField('process.id', 'inbox.pro_id')
             ->equals('process.deleted', 0);
         $fields[] = array("process.name", 'pro_title');
-        
+
         //INNER JOIN USER_DATA DEFINTION
         $q->joinTable('users', array('alias' => 'user_data', 'joinType' => 'LEFT', 'linkingTable' => true))
             ->on()
             ->equalsField('user_data.id', 'cas_user_id')
             ->equals('user_data.deleted', 0);
         $fields[] = array("user_data.user_name", 'user_name');
-        
+
         //INNER JOIN TEAM_DATA DEFINTION
         $q->joinTable('teams', array('alias' => 'team_data', 'joinType' => 'LEFT', 'linkingTable' => true))
             ->on()
@@ -324,7 +310,6 @@ class PMSEEngineFilterApi extends FilterApi
             $arr_aux['act_assignment_method'] = $bean->fetched_row['act_assignment_method'];
             $arr_aux['cas_title'] = $bean->fetched_row['cas_title'];
             $arr_aux['pro_title'] = $bean->fetched_row['pro_title'];
-            $arr_aux['cas_flow_status'] = $bean->fetched_row['cas_flow_status'];
             $arr_aux['date_entered'] = $bean->fetched_row['date_entered'];
             $arr_aux['name'] = $bean->fetched_row['cas_title'];
             $arr_aux['cas_create_date'] = $bean->fetched_row['date_entered'];
