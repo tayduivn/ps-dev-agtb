@@ -65,47 +65,65 @@ class WorkFlowGlue {
     }
 
     /**
-     * @param $shell_object object
-     * @param $is_equal bool set separator to condition '==' if true and '!=' if false
+     * Generates field equality comparison PHP code
+     *
+     * @param WorkFlowTriggerShell $shell_object
+     * @param bool $is_equal
      * @return string
      */
-	private function getCompareText($shell_object, $is_equal)
+    private function getCompareText($shell_object, $is_equal)
     {
-        //We need to parse datetime fields as they may come from the DB in a different format from the one in save which
-        //would cause a normal string compare to fail
+        global $dictionary;
+
+        $parentWorkflow = $shell_object->get_workflow_type();
+        if (empty($parentWorkflow->base_module)) {
+            $GLOBALS['log']->error(
+                "WorkFlowTriggerShell ({$shell_object->id}) " .
+                "parent WorkFlow ({$parentWorkflow->id}) has no base module set."
+            );
+        }
+
         $useStrict = true;
-        if (!empty($_REQUEST['base_module']))
-        {
-            global $beanList, $dictionary;
-            $moduleName = $_REQUEST['base_module'];
-            $objectName = BeanFactory::getObjectName($moduleName);
-            VardefManager::loadVardef($moduleName, $objectName);
-            if (!empty($dictionary[$objectName]) && !empty($dictionary[$objectName]['fields'][$shell_object->field]))
-            {
-                $vardef = $dictionary[$objectName]['fields'][$shell_object->field];
-                if (!empty($vardef['type']) && ($vardef['type'] == 'date' || $vardef['type'] == 'datetime'))
-                {
-                    // Adding an isset check for fetched_row since new records don't have it
-                    return " ( (empty(\$focus->fetched_row['".$shell_object->field."']) && !empty(\$focus->".$shell_object->field.") ) ||"
-                                  ." ( isset(\$focus->".$shell_object->field.") && isset(\$focus->fetched_row['".$shell_object->field."']) && "
-                                  . "\$GLOBALS['timedate']->to_display_date_time(\$focus->fetched_row['".$shell_object->field."'])"
-                                  . " != \$GLOBALS['timedate']->to_display_date_time(\$focus->".$shell_object->field."))) ";
 
+        $moduleName = $parentWorkflow->base_module;
+        $objectName = BeanFactory::getObjectName($moduleName);
+        $field = $shell_object->field;
+        VardefManager::loadVardef($moduleName, $objectName);
 
-                } else if (!empty($vardef['type']) && ($vardef['type'] == 'currency' || $vardef['type'] == 'double' || $vardef['type'] == 'int')) {
-                    $useStrict = false;
-                }
+        if (!empty($dictionary[$objectName]) && !empty($dictionary[$objectName]['fields'][$field])) {
+            $vardef = $dictionary[$objectName]['fields'][$field];
+
+            // Don't use strict for numerical types
+            if (!empty($vardef['type']) && (in_array($vardef['type'], array('currency', 'double', 'int')))) {
+                $useStrict = false;
+            }
+
+            // Use to_display_date for Date fields
+            if (!empty($vardef['type']) && (in_array($vardef['type'], array('date')))) {
+                $dateTimeFunction = 'to_display_date';
+            }
+            // Use to_display_date_time for DateTime fields
+            if (!empty($vardef['type']) && (in_array($vardef['type'], array('datetime', 'datetimecombo')))) {
+                $dateTimeFunction = 'to_display_date_time';
             }
         }
 
+        $sep = $is_equal ? '==' : '!=';
         if ($useStrict) {
-            $sep = $is_equal ? '===' : '!==';
-        } else {
-            $sep = $is_equal ? '==' : '!=';
+            $sep .= '=';
         }
 
-        // Remove check if old value is set. This should trigger when old value was empty, and new value is entered
-        return " ( isset(\$focus->".$shell_object->field.") && ( empty(\$focus->fetched_row) || array_key_exists('".$shell_object->field."', \$focus->fetched_row) ) && \$focus->fetched_row['".$shell_object->field."'] " . $sep . " \$focus->".$shell_object->field.") ";
+        $equalityCheck = "\$focus->fetched_row['" . $field . "'] " . $sep . " \$focus->" . $field;
+
+        if (!empty($dateTimeFunction)) {
+            $equalityCheck = "\$GLOBALS['timedate']->{$dateTimeFunction}(\$focus->fetched_row['" . $field . "'])"
+                . " $sep "
+                . "\$GLOBALS['timedate']->{$dateTimeFunction}(\$focus->" . $field . ")";
+        }
+
+        return " (isset(\$focus->" . $field . ") && " .
+            "(empty(\$focus->fetched_row) || array_key_exists('" . $field . "', \$focus->fetched_row)) " .
+            "&& {$equalityCheck}) ";
     }
 
 	function glue_normal_compare_change(& $shell_object){

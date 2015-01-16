@@ -41,6 +41,7 @@ class FetchByQueryCallsProcessRecordTest extends Sugar_PHPUnit_Framework_TestCas
         $hook_array[\'process_record\'][] = array(1,\'test\',\'custom/modules/Accounts/checkProcess.php\',\'checkProcess\',\'account_check\',);
         ?>';
         file_put_contents($this->accountsHookFile, $hookArrayCont);
+        SugarAutoLoader::addToMap($this->accountsHookFile, false);
 
         //now  write out the script that the logichook executes.  This will keep track of times called
         $fileCont = '<?php class checkProcess {
@@ -50,6 +51,8 @@ class FetchByQueryCallsProcessRecordTest extends Sugar_PHPUnit_Framework_TestCas
                     $accountHookRunCount++;
                 }}}?>';
         file_put_contents($this->accountsLogicHookFile, $fileCont);
+        SugarAutoLoader::addToMap($this->accountsLogicHookFile, false);
+
         LogicHook::refreshHooks();
 
         //finally, lets make sure there is at least one account to fetch
@@ -67,7 +70,7 @@ class FetchByQueryCallsProcessRecordTest extends Sugar_PHPUnit_Framework_TestCas
         } else if(file_exists($this->accountsHookFile)) {
             SugarAutoLoader::unlink($this->accountsHookFile);
         }
-        unlink($this->accountsLogicHookFile);
+        SugarAutoLoader::unlink($this->accountsLogicHookFile);
         unset($GLOBALS['accountHookRunCount']);
         unset($GLOBALS['logic_hook']);
         SugarTestAccountUtilities::removeAllCreatedAccounts();

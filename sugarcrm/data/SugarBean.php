@@ -4416,7 +4416,7 @@ class SugarBean
                             }
                         }
 
-                        $relate_query = $rel_mod->getRelateFieldQuery($data, $params['join_table_alias']);
+                        $relate_query = $rel_mod->getRelateFieldQuery($data, $params['join_table_alias'], $secondarySelectedFields);
                         if ($relate_query['select'] && !isset($data['relationship_fields'])) {
                             $ret_array['secondary_select'] .= ', ' . $relate_query['select'];
                         }
@@ -4437,6 +4437,7 @@ class SugarBean
                                 $ret_array['select'] .= ", '                                    '  " . $join['rel_key'] . ' ';
                             }
                             $ret_array['secondary_select'] .= ', ' . $params['join_table_link_alias'].'.'. $join['rel_key'] .' ' . $join['rel_key'];
+                            $secondarySelectedFields[$join['rel_key']] = true;
                         }
                         if(isset($data['relationship_fields']))
                         {
@@ -7685,7 +7686,7 @@ class SugarBean
      *
      * @return array
      */
-    public function getRelateFieldQuery($field_def, $joinTableAlias)
+    public function getRelateFieldQuery($field_def, $joinTableAlias, $selectedFields=array())
     {
         global $locale;
 
@@ -7737,7 +7738,9 @@ class SugarBean
 
         $parts = array();
         foreach ($fields as $alias => $field) {
-            $parts[] = $field . ' ' . $alias;
+            if (!in_array($alias, $selectedFields)) {
+                $parts[] = $field . ' ' . $alias;
+            }
         }
 
         $select = implode(', ', $parts);

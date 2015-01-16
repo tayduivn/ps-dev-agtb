@@ -5323,7 +5323,7 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_PMSE_CANCELLED_STATUS' => 'Cancelled',
     'LBL_PMSE_TERMINATED_STATUS' => 'Terminated',
     'LBL_PMSE_ERROR_STATUS' => 'Error',
-    'LBL_PMSE_SETTINGS' => 'Settings',
+    'LBL_PMSE_SETTINGS' => 'Process Author Settings',
 
     'LBL_PRO_DISABLE_CONFIRMATION' => 'Are you sure you want to disable this record?',
     'LBL_PRO_ENABLE_CONFIRMATION' => 'Are you sure you want to enable this record?',

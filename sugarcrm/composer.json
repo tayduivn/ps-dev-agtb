@@ -35,7 +35,11 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Sugarcrm\\SugarcrmTest\\": "test/"
+            "Sugarcrm\\SugarcrmTest\\": [
+                "tests/src/",
+                "tests/"
+            ],
+            "Sugarcrm\\SugarcrmTest\\inc\\": "tests/include/"
         }
     },
     "require": {

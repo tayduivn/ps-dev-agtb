@@ -259,6 +259,22 @@ $dictionary['Task'] = array(
             'source' => 'non-db',
             'reportable' => false
         ),
+        'meetings_parent' => array(
+            'name' => 'meetings_parent',
+            'type' => 'link',
+            'relationship' => 'task_meetings_parent',
+            'source' => 'non-db',
+            'vname' => 'LBL_MEETINGS',
+            'reportable' => false,
+        ),
+        'calls_parent' => array(
+            'name' => 'calls_parent',
+            'type' => 'link',
+            'relationship' => 'task_calls_parent',
+            'source' => 'non-db',
+            'vname' => 'LBL_CALLS',
+            'reportable' => false,
+        ),
     ),
     'relationships' => array(
         'tasks_notes' => array(
@@ -296,7 +312,29 @@ $dictionary['Task'] = array(
             'rhs_table' => 'tasks',
             'rhs_key' => 'created_by',
             'relationship_type' => 'one-to-many'
-        )
+        ),
+        'task_meetings_parent' => array(
+            'lhs_module' => 'Tasks',
+            'lhs_table' => 'tasks',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Meetings',
+            'rhs_table' => 'meetings',
+            'rhs_key' => 'parent_id',
+            'relationship_type' => 'one-to-many',
+            'relationship_role_column' => 'parent_type',
+            'relationship_role_column_value' => 'Tasks',
+        ),
+        'task_calls_parent' => array(
+            'lhs_module' => 'Tasks',
+            'lhs_table' => 'tasks',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Calls',
+            'rhs_table' => 'calls',
+            'rhs_key' => 'parent_id',
+            'relationship_type' => 'one-to-many',
+            'relationship_role_column' => 'parent_type',
+            'relationship_role_column_value' => 'Tasks',
+        ),
     ),
     'indices' => array(
         array(
