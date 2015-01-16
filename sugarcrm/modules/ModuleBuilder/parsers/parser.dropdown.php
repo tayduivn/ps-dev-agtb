@@ -13,10 +13,49 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once 'modules/ModuleBuilder/parsers/ModuleBuilderParser.php';
 require_once 'modules/Administration/Common.php';
-require_once 'include/MetaDataManager/MetaDataManager.php';
+require_once 'modules/ModuleBuilder/Module/DropDownBrowser.php';
 
 class ParserDropDown extends ModuleBuilderParser
 {
+    /**
+     * Returns a hash of all dropdown lists extracted from the file specified.
+     *
+     * It is assumed that the file has a variable named `$app_list_strings`. This variable is only used locally, so it
+     * will not impact any global variables by the same name. Do not use the global variable `$app_list_strings` inside
+     * the method.
+     *
+     * Any {@link DropDownBrowser::$restrictedDropdowns restricted dropdown lists} are skipped.
+     *
+     * @param string $file Load the dropdown lists for the specified language.
+     * @return array The keys are the dropdown list names and the values are the dropdown list options. An empty array
+     * is returned if the file does not exist.
+     */
+    public function getDropDowns($file)
+    {
+        $dropdowns = array();
+        $app_list_strings = array();
+
+        if (file_exists($file)) {
+            include $file;
+        }
+
+        // checking that it's an array just in case the included file changes the type
+        if (is_array($app_list_strings)) {
+            foreach ($app_list_strings as $key => $value) {
+                if (!is_array($value) || array_filter($value, 'is_array')) {
+                    // it's only a dropdown list if the value is an array
+                    continue;
+                }
+
+                if (!in_array($key, DropDownBrowser::$restrictedDropdowns)) {
+                    $dropdowns[$key] = $value;
+                }
+            }
+        }
+
+        return $dropdowns;
+    }
+
     /**
      * Takes in the request params from a save request and processes
      * them for the save.
@@ -110,6 +149,13 @@ class ParserDropDown extends ModuleBuilderParser
         sugar_cache_reset();
         sugar_cache_reset_full();
         clearAllJsAndJsLangFilesWithoutOutput();
+
+        /**
+         * Per MAR-2467, this class is loaded in the pre-upgrade script. Since the included file did not exist prior to
+         * 6.7, the pre-upgrade script will fatal when upgrading from a version that precedes 6.7. To avoid that
+         * scenario -- one in which the file is not needed -- the file is now included only when it is needed.
+         */
+        require_once 'include/MetaDataManager/MetaDataManager.php';
 
         // Clear out the api metadata languages cache for selected language
         MetaDataManager::refreshLanguagesCache($selected_lang);
