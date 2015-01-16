@@ -1,0 +1,6 @@
+<div class="accordion-heading convert-options">
+    <span class="transfer-activities-label">{{str transferLabel module}}:</span>
+        {{#each meta.fields}}
+            {{field ../this model=../this.model}}
+        {{/each}}
+</div>
