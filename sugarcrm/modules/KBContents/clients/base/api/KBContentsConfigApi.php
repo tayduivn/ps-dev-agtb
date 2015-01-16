@@ -68,7 +68,7 @@ class KBContentsConfigApi extends ConfigModuleApi
             $configSaved = $admin->saveSetting(
                 $module,
                 $name,
-                is_array($value) ? json_encode($value, JSON_UNESCAPED_UNICODE) : $value,
+                is_array($value) ? $this->_encodeJSON($value) : $value,
                 $api->platform
             );
 
@@ -149,5 +149,25 @@ class KBContentsConfigApi extends ConfigModuleApi
             }
         }
         return $result;
+    }
+
+    /**
+     * IMPORTANT: this function will be deprecated and should be deleted when minimum version of PHP become 5.4
+     *
+     * Encode JSON.
+     *
+     * @param $value
+     * @return string
+     */
+    private function _encodeJSON($value) {
+        if (version_compare(PHP_VERSION, '5.4.0') >= 0) {
+            return json_encode($value, JSON_UNESCAPED_UNICODE);
+        } else {
+            // For PHP <= 5.4.0 to emulate JSON_UNESCAPED_UNICODE behavior.
+            array_walk_recursive($value, function (&$item, $key) {
+                if (is_string($item)) $item = mb_encode_numericentity($item, array(0x80, 0xffff, 0, 0xffff), 'UTF-8');
+            });
+            return mb_decode_numericentity(json_encode($value), array(0x80, 0xffff, 0, 0xffff), 'UTF-8');
+        }
     }
 }
