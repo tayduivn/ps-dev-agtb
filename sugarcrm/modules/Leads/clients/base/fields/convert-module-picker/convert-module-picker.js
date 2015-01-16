@@ -26,17 +26,15 @@
      */
     _render: function() {
         this._super('_render');
-
         this.initializeSelect2();
         this.$select2.on('change', _.bind(this.handleChange, this));
-        this.$select2.on('select2-selecting', this.handleSelection);
     },
 
     /**
      * Initialize select2 widget
      */
     initializeSelect2: function() {
-        this.$select2 = this.$('.select2').select2({
+        this.$select2 = this.$(this.fieldTag).select2({
             data: this.moduleList,
             placeholder: '',
             multiple: true,
@@ -74,20 +72,20 @@
      * Handle request to add a module to the list - ignore any requests where
      * the module was previously removed from the list.
      *
-     * @param {string} moduleToAdd
+     * @param {string} moduleNameToAdd
      */
-    handleAutoAddRequest: function(moduleToAdd) {
-        var module, selectedModules;
+    handleAutoAddRequest: function(moduleNameToAdd) {
+        var moduleToAdd, selectedModules;
 
         //don't add if previously removed
-        if (_.contains(this.removedModules, moduleToAdd)) {
+        if (_.contains(this.removedModules, moduleNameToAdd)) {
             return;
         }
 
-        module = _.findWhere(this.moduleList, {id: moduleToAdd});
+        moduleToAdd = _.findWhere(this.moduleList, {id: moduleNameToAdd});
         selectedModules = this.$select2.select2('data');
-        if (!_.contains(selectedModules, module)) {
-            selectedModules.push(module);
+        if (!_.contains(selectedModules, moduleToAdd)) {
+            selectedModules.push(moduleToAdd);
             this.$select2.select2('data', selectedModules);
         }
     },
@@ -110,7 +108,9 @@
      * @inheritdoc
      */
     unbindDom: function() {
-        this.$('.select2field').select2('destroy');
+        if (this.$select2) {
+            this.$select2.select2('destroy');
+        }
         this._super('unbindDom');
     }
 })
