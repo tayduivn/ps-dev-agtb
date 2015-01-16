@@ -639,16 +639,28 @@
      *      the value is the field name in the Opportunities record.
      */
     openSelectDrawer: function() {
-        app.drawer.open({
-            layout: 'selection-list',
-            context: {
+        var layout, context;
+        if (!!this.def.isMultiSelect) {
+            layout = 'multi-selection-list';
+            context = {
                 module: this.getSearchModule(),
                 fields: this.getSearchFields(),
                 filterOptions: this.getFilterOptions(),
                 preselectedModelIds: _.clone(this.model.get(this.def.id_name)),
                 isMultiSelect: this.def.isMultiSelect,
                 maxSelectedRecords: this.maxSelectedRecords
-            }
+            };
+        } else {
+            layout = 'selection-list';
+            context = {
+                module: this.getSearchModule(),
+                fields: this.getSearchFields(),
+                filterOptions: this.getFilterOptions()
+            };
+        }
+        app.drawer.open({
+            layout: layout,
+            context: context
         }, _.bind(this.setValue, this));
     },
 

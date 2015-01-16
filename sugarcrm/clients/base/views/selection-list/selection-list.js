@@ -55,47 +55,28 @@
     extendsFrom: 'FlexListView',
 
     initialize: function(options) {
-        /**
-         * Boolean to know if we can link multiple items.
-         *
-         * @property {boolean}
-         */
-        this.isMultiSelect = !_.isUndefined(this.isMultiSelect) ? this.isMultiSelect : options.context.get('isMultiSelect');
-        /**
-         * Maximum number of records a user can select.
-         *
-         * @property {number}
-         */
-        this.maxSelectedRecords = options.context.get('maxSelectedRecords');
         this.plugins = _.union(this.plugins, ['ListColumnEllipsis', 'ListRemoveLinks']);
         //setting skipFetch to true so that loadData will not run on initial load and the filter load the view.
         options.context.set('skipFetch', true);
         options.meta = options.meta || {};
-
-        //Allow multiselect if allowed.
-        if (this.isMultiSelect) {
-            options.meta.selection = {
-                type: 'multi',
-                isSearchAndSelectAction: true
-            };
-        } else {
-            options.meta.selection = {
-                type: 'single',
-                label: 'LBL_LINK_SELECT',
-                isSearchAndSelectAction: true
-            };
-        }
-
+        this.setSelectionType(options);
         this._super('initialize', [options]);
 
         this.events = _.extend({}, this.events, {
             'click .search-and-select .single': 'triggerCheck'
         });
-
         this.initializeEvents();
     },
 
-    /**
+    setSelectionType: function(options) {
+        options.meta.selection = {
+            type: 'single',
+            label: 'LBL_LINK_SELECT',
+            isSearchAndSelectAction: true
+        };
+    },
+
+/**
      * Checks the checkbox when the row is clicked.
      *
      * @param {object} event
@@ -103,14 +84,8 @@
     triggerCheck: function(event) {
         //Ignore inputs and links/icons, because those already have defined effects
         if (!($(event.target).is('a,i,input'))) {
-            if (this.isMultiSelect) {
-                //simulate click on the input for this row
-                var checkbox = $(event.currentTarget).find('input[name="check"]');
-                checkbox[0].click();
-            } else {
-                var radioButton = $(event.currentTarget).find('.selection[type="radio"]');
-                radioButton[0].click();
-            }
+            var radioButton = $(event.currentTarget).find('.selection[type="radio"]');
+            radioButton[0].click();
         }
     },
 
@@ -119,46 +94,7 @@
      *
      */
     initializeEvents: function() {
-        if (this.isMultiSelect) {
-            this.context.on('selection:select:fire', this._selectMultipleAndClose, this);
-        } else {
-            this.context.on('change:selection_model', this._selectAndClose, this);
-        }
-    },
-
-    /**
-     * Closes the drawer passing the selected models attributes to the callback.
-     *
-     * @protected
-     */
-    _selectMultipleAndClose: function() {
-        var selections = this.context.get('mass_collection');
-        if (selections) {
-            if (selections.length > this.maxSelectedRecords) {
-                this._showMaxSelectedRecordsAlert();
-                return;
-            }
-            app.drawer.close(this._getCollectionAttributes(selections));
-        }
-    },
-
-    /**
-     * Displays error message since the number of selected records exceeds the
-     * maximum allowed.
-     *
-     * @private
-     */
-    _showMaxSelectedRecordsAlert: function() {
-        var msg = app.lang.get('TPL_FILTER_MAX_NUMBER_RECORDS', this.module,
-            {
-                maxRecords: this.maxSelectedRecords
-            }
-        );
-        app.alert.show('too-many-selected-records', {
-            level: 'warning',
-            messages: msg,
-            autoClose: true
-        });
+        this.context.on('change:selection_model', this._selectAndClose, this);
     },
 
     /**
@@ -197,20 +133,6 @@
             }
         }, this);
 
-        return attributes;
-    },
-
-    /**
-     * Returns an array of attributes given a collection.
-     *
-     * @param {collection} collection A collection of records.
-     * @return {object[]} attributes An array containing the attribute object of
-     *   each model.
-     *
-     * @private
-     */
-    _getCollectionAttributes: function(collection) {
-        var attributes = _.map(collection.models, this._getModelAttributes, this);
         return attributes;
     },
 

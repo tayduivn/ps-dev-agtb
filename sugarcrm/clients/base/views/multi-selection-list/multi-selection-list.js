@@ -1,0 +1,116 @@
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+/**
+ * The MultiSelectionListView extends SelectionListView and adds the ability to
+ * select multiple records in the list. The way to use it is similar to the
+ * SelectionListView.
+ *
+ * It adds the following property:
+ *
+ * - `maxSelectedRecords` The max number of records the user can select in the
+ *    case of multiselect selection list.
+ *
+ *  Example of usage:
+ *
+ * @class View.Views.Base.MultiSelectionListView
+ * @alias SUGAR.App.view.views.BaseMultiSelectionListView
+ * @extends View.Views.Base.SelectionListView
+ */
+({
+    extendsFrom: 'SelectionListView',
+
+    initialize: function(options) {
+        this._super('initialize', [options]);
+
+        /**
+         * Maximum number of records a user can select.
+         *
+         * @property {number}
+         */
+        this.maxSelectedRecords = options.context.get('maxSelectedRecords');
+    },
+
+    setSelectionType: function(options) {
+        options.meta.selection = {
+            type: 'multi',
+            isSearchAndSelectAction: true
+        };
+    },
+    /**
+     * Sets up events.
+     *
+     */
+    initializeEvents: function() {
+            this.context.on('selection:select:fire', this.validateSelection, this);
+    },
+
+    /**
+     * Checks the checkbox when the row is clicked.
+     *
+     * @param {object} event
+     */
+    triggerCheck: function(event) {
+        //Ignore inputs and links/icons, because those already have defined effects
+        if (!($(event.target).is('a,i,input'))) {
+                //simulate click on the input for this row
+                var checkbox = $(event.currentTarget).find('input[name="check"]');
+                checkbox[0].click();
+        }
+    },
+    /**
+     * Closes the drawer passing the selected models attributes to the callback.
+     *
+     * @protected
+     */
+    validateSelection: function() {
+        var selectedModels = this.context.get('mass_collection');
+        if (selectedModels) {
+            if (selectedModels.length > this.maxSelectedRecords) {
+                this._showMaxSelectedRecordsAlert();
+                return;
+            }
+            app.drawer.close(this._getCollectionAttributes(selectedModels));
+        }
+    },
+
+    /**
+     * Displays error message since the number of selected records exceeds the
+     * maximum allowed.
+     *
+     * @private
+     */
+    _showMaxSelectedRecordsAlert: function() {
+        var msg = app.lang.get('TPL_FILTER_MAX_NUMBER_RECORDS', this.module,
+            {
+                maxRecords: this.maxSelectedRecords
+            }
+        );
+        app.alert.show('too-many-selected-records', {
+            level: 'warning',
+            messages: msg,
+            autoClose: true
+        });
+    },
+
+    /**
+     * Returns an array of attributes given a collection.
+     *
+     * @param {collection} collection A collection of records.
+     * @return {object[]} attributes An array containing the attribute object of
+     *   each model.
+     *
+     * @private
+     */
+    _getCollectionAttributes: function(collection) {
+        var attributes = _.map(collection.models, this._getModelAttributes, this);
+        return attributes;
+    }
+})
