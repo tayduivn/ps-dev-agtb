@@ -363,18 +363,7 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
 	 */
 	function save ($defs)
 	{
-		//If we are pulling from the History Location, that means we did a restore, and we need to save the history for the previous file.
-		if ($this->_sourceFilename == $this->getFileName ( $this->_view, $this->_moduleName, MB_HISTORYMETADATALOCATION )) {
-			foreach ( array ( MB_WORKINGMETADATALOCATION , MB_CUSTOMMETADATALOCATION , MB_BASEMETADATALOCATION ) as $type ) {
-				if (file_exists($this->getFileName ( $this->_view, $this->_moduleName, $type ))) {
-					$this->_history->append ( $this->getFileName ( $this->_view, $this->_moduleName, $type )) ;
-					break;
-				}
-			}
-		} else {
-			$this->_history->append ( $this->_sourceFilename ) ;
-		}
-
+        $this->saveHistory();
 		$GLOBALS [ 'log' ]->debug ( get_class ( $this ) . "->save(): writing to " . $this->getFileName ( $this->_view, $this->_moduleName, MB_WORKINGMETADATALOCATION ) ) ;
 		$this->_saveToFile ( $this->getFileName ( $this->_view, $this->_moduleName, MB_WORKINGMETADATALOCATION ), $defs ) ;
 	}
@@ -384,17 +373,7 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
 	 * @param array defs    Layout definition in the same format as received by the constructor
 	 */
 	function deploy($defs) {
-		if ($this->_sourceFilename == $this->getFileName($this->_view, $this->_moduleName, MB_HISTORYMETADATALOCATION )) {
-			foreach (array(MB_WORKINGMETADATALOCATION, MB_CUSTOMMETADATALOCATION, MB_BASEMETADATALOCATION) as $type) {
-				if (file_exists($this->getFileName($this->_view, $this->_moduleName, $type))) {
-					$this->_history->append($this->getFileName($this->_view, $this->_moduleName, $type));
-					break;
-				}
-			}
-		} else {
-			$this->_history->append($this->_sourceFilename);
-		}
-
+        $this->saveHistory();
 		// when we deploy get rid of the working file; we have the changes in the MB_CUSTOMMETADATALOCATION so no need for a redundant copy in MB_WORKINGMETADATALOCATION
 		// this also simplifies manual editing of layouts. You can now switch back and forth between Studio and manual changes without having to keep these two locations in sync
         $workingFilename = $this->getFileNameNoDefault($this->_view, $this->_moduleName, MB_WORKINGMETADATALOCATION);
@@ -570,6 +549,7 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
         if (count($this->params) > 0) {
             $fileName = $this->getFileNameNoDefault($this->_view, $this->_moduleName);
             if (file_exists($fileName)) {
+                $this->saveHistory();
                 SugarAutoLoader::unlink($fileName, true);
                 MetaDataFiles::clearModuleClientCache($this->_moduleName, 'view');
                 // Clear out the cache just for the platform we are on
@@ -580,6 +560,28 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
                     $this->params
                 );
             }
+        }
+    }
+
+    /**
+     * Saves the history for the previous state.
+     */
+    public function saveHistory()
+    {
+        if ($this->_sourceFilename == $this->getFileName(
+                $this->_view,
+                $this->_moduleName,
+                MB_HISTORYMETADATALOCATION
+            )
+        ) {
+            foreach (array(MB_WORKINGMETADATALOCATION, MB_CUSTOMMETADATALOCATION, MB_BASEMETADATALOCATION) as $type) {
+                if (file_exists($this->getFileName($this->_view, $this->_moduleName, $type))) {
+                    $this->_history->append($this->getFileName($this->_view, $this->_moduleName, $type));
+                    break;
+                }
+            }
+        } else {
+            $this->_history->append($this->_sourceFilename);
         }
     }
 }
