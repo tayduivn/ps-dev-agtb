@@ -163,7 +163,7 @@
             self._initComponentSize = self._components.length;
         }
 
-        this._addComponentsFromDef(components);
+        this.initComponents(components);
 
         self.context.off("modal:callback");
         self.context.on("modal:callback", function(model) {

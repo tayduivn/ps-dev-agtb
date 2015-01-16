@@ -34,7 +34,7 @@ describe('Base.Layout.DashablelistFilter', function() {
             layout = SugarTest.createLayout('base', 'Accounts', 'dashablelist-filter', {}, false, false, {layout: parentLayout});
         });
 
-        describe('initialize', function() {
+        describe('initComponents', function() {
             var _comp, getComponentStub;
 
             beforeEach(function() {
@@ -42,8 +42,8 @@ describe('Base.Layout.DashablelistFilter', function() {
                 getComponentStub = sinon.collection.stub(layout, 'getComponent').returns(_comp);
             });
 
-            it('should initialize and bind events', function() {
-                layout.initialize(layout.options);
+            it('should initialize components and bind events', function() {
+                layout.initComponents();
 
                 expect(getComponentStub).toHaveBeenCalledWith('filterpanel');
                 expect(_comp.before).toHaveBeenCalled();
@@ -53,7 +53,7 @@ describe('Base.Layout.DashablelistFilter', function() {
             });
 
             it('should call render when dashlet:filter:reinitialize is triggered', function() {
-                layout.initialize(layout.options);
+                layout.initComponents();
                 parentLayout.trigger('dashlet:filter:reinitialize');
 
                 expect(_comp.render).toHaveBeenCalled();

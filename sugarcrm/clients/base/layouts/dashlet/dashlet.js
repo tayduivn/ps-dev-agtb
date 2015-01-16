@@ -256,8 +256,7 @@
             })
         }
         this.meta.components = [component];
-        this._addComponentsFromDef(this.meta.components);
-        this.trigger('init');
+        this.initComponents(this.meta.components);
         this.model.set('updated', true);
         this.loadData();
         this.render();
@@ -301,7 +300,7 @@
             component.dispose();
         }, this);
         this._components = [];
-        this._addComponentsFromDef([
+        this.initComponents([
             {
                 view: 'dashlet-cell-empty',
                 context: {

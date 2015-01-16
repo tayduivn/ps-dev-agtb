@@ -678,6 +678,7 @@
                 name: 'create-dupecheck',
                 module: this.module
             });
+            this.dupecheckList.initComponents();
             this.addToLayoutComponents(this.dupecheckList);
         }
 

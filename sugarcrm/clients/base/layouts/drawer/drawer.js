@@ -271,7 +271,7 @@
             delete layoutDef.context.parent;
         }
 
-        this._addComponentsFromDef([layoutDef], parentContext);
+        this.initComponents([layoutDef], parentContext);
     },
 
     /**

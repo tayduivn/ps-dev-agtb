@@ -71,6 +71,12 @@
     },
 
     /**
+     * @override
+     */
+    initComponents: function() {
+    },
+
+    /**
      * Blocks forecasts from continuing to load
      */
     codeBlockForecasts: function(title, msg) {
@@ -321,6 +327,7 @@
     _onceInitSelectedUser: function(model, change) {
         // init the recordlist view
         app.view.Layout.prototype.initialize.call(this, this.initOptions);
+        app.view.Layout.prototype.initComponents.call(this);
 
         // set the selected user and forecast type on the model
         this.model.set('selectedUserId', change.id, {silent: true});
