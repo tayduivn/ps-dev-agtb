@@ -22,7 +22,7 @@ class CurrencyCacheClearTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        
+
         $this->testCacheFile = sugar_cached('api/metadata/metadata_unit_test.php');
         //Turn off caching now() or else date_modified checks are invalid
         TimeDate::getInstance()->allow_cache = false;
@@ -70,6 +70,9 @@ class CurrencyCacheClearTest extends Sugar_PHPUnit_Framework_TestCase
         $defaultCurrency = BeanFactory::newBean('Currencies');
         $defaultCurrency = $defaultCurrency->retrieve('-99');
         $defaultCurrency->save();
+
+        // Get the current metadata to ensure there is a cache built
+        $data = $mm->getMetadata();
         
         // Test the file first
         $newDateModified =  $db->getOne("SELECT date_modified FROM metadata_cache WHERE type='meta_hash_base'");
