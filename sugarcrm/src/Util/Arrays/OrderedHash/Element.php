@@ -21,14 +21,14 @@ namespace Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash;
 class Element
 {
     /**
-     * @var string
+     * @var string|int
      *
      * The key by which the element is referenced.
      */
     protected $key;
 
     /**
-     * @var string
+     * @var mixed
      *
      * The value stored under the key.
      */
@@ -49,11 +49,11 @@ class Element
     protected $after;
 
     /**
-     * An element is identifiable by it's key, which is unique within a hash. It's value is the string accessed by its
+     * An element is identifiable by it's key, which is unique within a hash. It's value is the data accessed by its
      * key.
      *
-     * @param string $key
-     * @param string $value
+     * @param string|int $key
+     * @param mixed $value
      */
     public function __construct($key, $value)
     {
@@ -104,7 +104,7 @@ class Element
     /**
      * Sets the element's key.
      *
-     * @param string $key
+     * @param string|int $key
      */
     public function setKey($key)
     {
@@ -114,7 +114,7 @@ class Element
     /**
      * Returns the element's key.
      *
-     * @return string
+     * @return string|int
      */
     public function getKey()
     {
@@ -124,7 +124,7 @@ class Element
     /**
      * Sets the element's value.
      *
-     * @param string $value
+     * @param mixed $value
      */
     public function setValue($value)
     {
@@ -134,7 +134,7 @@ class Element
     /**
      * Returns the element's value.
      *
-     * @return string
+     * @return mixed
      */
     public function getValue()
     {
