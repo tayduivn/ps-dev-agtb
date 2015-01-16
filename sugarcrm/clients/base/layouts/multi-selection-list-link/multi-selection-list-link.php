@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$viewdefs['base']['layout']['selection-list-link'] = array(
+$viewdefs['base']['layout']['multi-selection-list-link'] = array(
     'components' => array(
         array(
             'layout' => array(
@@ -61,7 +61,7 @@ $viewdefs['base']['layout']['selection-list-link'] = array(
                                                 "targetEl" => '.filter-options'
                                             ),
                                             array(
-                                                'view' => 'selection-list-link',
+                                                'view' => 'multi-selection-list-link',
                                             ),
                                             array(
                                                 'view' => 'list-bottom',
@@ -114,7 +114,7 @@ $viewdefs['base']['layout']['selection-list-link'] = array(
             ),
         ),
     ),
-    'type' => 'selection-list-link',
+    'type' => 'multi-selection-list-link',
     'name' => 'base',
     'span' => 12,
 );

@@ -9,10 +9,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * @class View.Layouts.Base.SelectionListLinkLayout
- * @alias SUGAR.App.view.layouts.BaseSelectionListLinkLayout
- * @extends View.Layouts.Base.SelectionListLayout
+ * @class View.Layouts.Base.MultiSelectionListLinkLayout
+ * @alias SUGAR.App.view.layouts.BaseMultiSelectionListLinkLayout
+ * @extends View.Layouts.Base.MultiSelectionListLayout
  */
 ({
-    extendsFrom: 'SelectionListLayout'
+    extendsFrom: 'MultiSelectionListLayout'
 })

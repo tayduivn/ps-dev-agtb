@@ -41,7 +41,7 @@
         }
 
         app.drawer.open({
-            layout: 'selection-list-link',
+            layout: 'multi-selection-list-link',
             context: {
                 module: 'Reports',
                 filterOptions: filterOptions.format(),

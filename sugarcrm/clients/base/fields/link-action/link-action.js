@@ -36,7 +36,7 @@
             self = this;
 
         app.drawer.open({
-            layout: 'selection-list-link',
+            layout: 'multi-selection-list-link',
             context: {
                 module: linkModule,
                 recParentModel: parentModel,
