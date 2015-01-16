@@ -80,6 +80,7 @@ class SugarUpgradeMergeDropdowns extends UpgradeScript
                     'view_package' => 'studio',
                 );
                 $parser->saveDropDown($params);
+                $this->log("{$name} has been merged for {$language}");
             }
         }
     }
