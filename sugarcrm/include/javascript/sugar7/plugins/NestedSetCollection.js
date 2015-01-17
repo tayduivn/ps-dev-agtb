@@ -77,7 +77,9 @@
                 app.Bean.prototype.set.apply(this, arguments);
 
                 this.module = data['_module'] || this.collection.module;
-                this.fields = app.metadata.getModule(this.module).fields;
+                if (!_.isUndefined(app.metadata.getModule(this.module))) {
+                    this.fields = app.metadata.getModule(this.module).fields;
+                }
                 return this;
             },
 
