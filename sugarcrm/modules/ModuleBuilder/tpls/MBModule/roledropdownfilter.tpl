@@ -163,17 +163,39 @@
             }
         });
 
-        $("#ul1").on("change", "input[type=checkbox]", function() {
-            var $this = $(this);
-            $this.closest("li").toggleClass("deleted", !$this.prop("checked"));
+        var toggleItem = function($el, record) {
+            if (record) {
+                SimpleList.jstransaction.record('toggleDropdown', $el);
+            } else {
+                $el.prop("checked", !$el.prop("checked"));
+            }
+            $el.closest("li").toggleClass("deleted", !$el.prop("checked"));
+        }
+        var toggleAll = function(checked, record) {
+            $("input[type=checkbox]", "#ul1").prop("checked", !checked).trigger("change", false);
+            if (record) {
+                SimpleList.jstransaction.record('toggleAll', checked);
+            }
+        }
+
+        SimpleList.jstransaction.register('toggleDropdown', toggleItem, toggleItem);
+        SimpleList.jstransaction.register(
+                'toggleAll',
+                function(checked){toggleAll(!checked)}, // undo
+                function(checked){toggleAll(checked)}   // redo
+        );
+
+        $("#ul1").on("change", "input[type=checkbox]", function(event, record){
+            record = record === false ? false : true;
+            toggleItem($(this), record);
         });
 
         $("#select-all").click(function() {
-            $("input[type=checkbox]", "#ul1").prop("checked", true).trigger("change");
+            toggleAll(true, true);
         });
 
         $("#select-none").click(function() {
-            $("input[type=checkbox]", "#ul1").prop("checked", false).trigger("change");
+            toggleAll(false, true);
         });
 
         $('select').on('change', function () {
