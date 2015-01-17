@@ -20,10 +20,6 @@ class ParserDropDown extends ModuleBuilderParser
     /**
      * Returns a hash of all dropdown lists extracted from the file specified.
      *
-     * It is assumed that the file has a variable named `$app_list_strings`. This variable is only used locally, so it
-     * will not impact any global variables by the same name. Do not use the global variable `$app_list_strings` inside
-     * the method.
-     *
      * Any {@link DropDownBrowser::$restrictedDropdowns restricted dropdown lists} are skipped.
      *
      * @param string $file Load the dropdown lists for the specified language.
@@ -32,7 +28,14 @@ class ParserDropDown extends ModuleBuilderParser
      */
     public function getDropDowns($file)
     {
+        global $app_list_strings;
+
         $dropdowns = array();
+
+        // back up the $app_list_strings so that it's safe to manipulate the global variable
+        $appListStringsBackup = $app_list_strings;
+
+        // clear $app_list_strings so that only the strings found in the file are loaded into the variable
         $app_list_strings = array();
 
         if (file_exists($file)) {
@@ -52,6 +55,9 @@ class ParserDropDown extends ModuleBuilderParser
                 }
             }
         }
+
+        // restore $app_list_strings
+        $app_list_strings = $appListStringsBackup;
 
         return $dropdowns;
     }

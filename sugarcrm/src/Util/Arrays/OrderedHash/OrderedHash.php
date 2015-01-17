@@ -67,15 +67,15 @@ class OrderedHash implements \Iterator, \ArrayAccess, \Countable
      *
      * @param null|Element $before The element that precedes the new element. The element is inserted at the beginning
      * when this parameter is NULL.
-     * @param string $key The new element's key.
-     * @param string $value The new element's value.
-     * @throws \OutOfRangeException Thrown when the key is not a string.
+     * @param string|int $key The new element's key.
+     * @param mixed $value The new element's value.
+     * @throws \OutOfRangeException Thrown when the key is not a string or integer.
      * @throws \RuntimeException Thrown when the key is not unique.
      */
     public function add($before, $key, $value)
     {
-        if (!is_string($key)) {
-            throw new \OutOfRangeException("{$key} must be a string");
+        if (!(is_string($key) || is_int($key))) {
+            throw new \OutOfRangeException("{$key} must be a string or an integer");
         }
 
         if ($this->offsetExists($key)) {
@@ -164,7 +164,7 @@ class OrderedHash implements \Iterator, \ArrayAccess, \Countable
     /**
      * Returns the key of the current element.
      *
-     * @return null|string
+     * @return null|string|int
      */
     public function key()
     {
@@ -176,7 +176,7 @@ class OrderedHash implements \Iterator, \ArrayAccess, \Countable
     /**
      * Locates the element in the hash by the key provided and moves the element to follow the element specified.
      *
-     * @param string $key The key of the element to move.
+     * @param string|int $key The key of the element to move.
      * @param null|Element $before The element that should precede the element being moved. The element is moved to the
      * beginning when this parameter is NULL.
      */
@@ -211,7 +211,7 @@ class OrderedHash implements \Iterator, \ArrayAccess, \Countable
     /**
      * Returns whether the requested key exists.
      *
-     * @param string $key
+     * @param string|int $key
      * @return bool
      */
     public function offsetExists($key)
@@ -222,14 +222,14 @@ class OrderedHash implements \Iterator, \ArrayAccess, \Countable
     /**
      * Returns the element that is identified by the key provided.
      *
-     * @param string $key
+     * @param string|int $key
      * @return null|Element NULL is returned when the element isn't found.
-     * @throws \OutOfRangeException Thrown when the key is not a string.
+     * @throws \OutOfRangeException Thrown when the key is not a string or integer.
      */
     public function offsetGet($key)
     {
-        if (!is_string($key)) {
-            throw new \OutOfRangeException("{$key} must be a string");
+        if (!(is_string($key) || is_int($key))) {
+            throw new \OutOfRangeException("{$key} must be a string or an integer");
         }
 
         return $this->offsetExists($key) ? $this->elements[$key] : null;
@@ -240,14 +240,14 @@ class OrderedHash implements \Iterator, \ArrayAccess, \Countable
      *
      * A new element is appended if the key does not already exist in the hash.
      *
-     * @param string $key
-     * @param string $value
-     * @throws \OutOfRangeException Thrown when the key is not a string.
+     * @param string|int $key
+     * @param mixed $value
+     * @throws \OutOfRangeException Thrown when the key is not a string or integer.
      */
     public function offsetSet($key, $value)
     {
-        if (!is_string($key)) {
-            throw new \OutOfRangeException("{$key} must be a string");
+        if (!(is_string($key) || is_int($key))) {
+            throw new \OutOfRangeException("{$key} must be a string or an integer");
         }
 
         if ($this->offsetExists($key)) {
@@ -263,7 +263,7 @@ class OrderedHash implements \Iterator, \ArrayAccess, \Countable
      * The iterator is moved to the next element if the iterator is currently pointing at the removed element.
      *
      * @uses OrderedHash::offsetGet to retrieve the element to remove.
-     * @param string $key
+     * @param string|int $key
      */
     public function offsetUnset($key)
     {
@@ -329,8 +329,8 @@ class OrderedHash implements \Iterator, \ArrayAccess, \Countable
     /**
      * Adds a new element to the end of the hash.
      *
-     * @param string $key The new element's key.
-     * @param string $value The new element's value.
+     * @param string|int $key The new element's key.
+     * @param mixed $value The new element's value.
      */
     public function push($key, $value)
     {
@@ -399,8 +399,8 @@ class OrderedHash implements \Iterator, \ArrayAccess, \Countable
     /**
      * Adds a new element to the beginning of the hash.
      *
-     * @param string $key The new element's key.
-     * @param string $value The new element's value.
+     * @param string|int $key The new element's key.
+     * @param mixed $value The new element's value.
      */
     public function unshift($key, $value)
     {

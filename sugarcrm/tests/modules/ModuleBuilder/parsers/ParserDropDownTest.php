@@ -196,4 +196,50 @@ EOF;
 
         $this->assertEmpty($actual);
     }
+
+    /**
+     * @covers ParserDropDown::getDropDowns
+     */
+    public function testGetDropDowns_GLOBALSIsUsedInTheCustomizations_ReturnsCustomDropDowns()
+    {
+        $core = <<<EOF
+\$app_list_strings = array(
+    'sales_stage_default_key' => 'Prospecting',
+    'activity_dom' => array(
+        'Call' => 'Call',
+        'Meeting' => 'Meeting',
+        'Task' => 'Task',
+        'Email' => 'Email',
+        'Note' => 'Note',
+    ),
+    'meeting_status_dom' => array(
+        'Planned' => 'Planned',
+        'Held' => 'Held',
+        'Not Held' => 'Not Held',
+    ),
+);
+
+EOF;
+
+        $custom = <<<EOF
+\$GLOBALS['app_list_strings']['activity_dom'] = array(
+    'Call' => 'Call',
+    'Meeting' => 'Meeting',
+    'Task' => 'To Do',
+    'Email' => 'Email',
+    'Note' => 'Note',
+    'SMS' => 'Text Message',
+);
+
+EOF;
+
+        SugarTestLanguageFileUtilities::write($this->corePath, $GLOBALS['current_language'], $core);
+        SugarTestLanguageFileUtilities::write($this->customPath, $GLOBALS['current_language'], $custom);
+
+        $actual = $this->parser->getDropDowns("{$this->customPath}{$GLOBALS['current_language']}.lang.php");
+
+        $this->assertArrayHasKey('activity_dom', $actual);
+        $this->assertArrayNotHasKey('meeting_status_dom', $actual);
+        $this->assertEquals('To Do', $actual['activity_dom']['Task']);
+    }
 }

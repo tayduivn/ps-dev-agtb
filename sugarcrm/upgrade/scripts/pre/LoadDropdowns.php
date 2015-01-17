@@ -117,6 +117,8 @@ class SugarUpgradeLoadDropdowns extends UpgradeScript
                 'old' => $old,
                 'custom' => $custom,
             );
+
+            $this->log("customized for {$language}: " . implode(', ', array_keys($old)));
         }
     }
 

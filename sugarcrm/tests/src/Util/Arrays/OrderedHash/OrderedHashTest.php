@@ -74,9 +74,9 @@ class OrderedHashTest extends Sugar_PHPUnit_Framework_TestCase
      * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash::add
      * @expectedException OutOfRangeException
      */
-    public function testAdd_KeyIsNotAString_ThrowsException()
+    public function testAdd_KeyIsNotAStringOrInteger_ThrowsException()
     {
-        $this->hash->add($this->hash->top(), 5, 'Foo');
+        $this->hash->add($this->hash->top(), false, 'Foo');
     }
 
     /**
@@ -271,9 +271,9 @@ class OrderedHashTest extends Sugar_PHPUnit_Framework_TestCase
      * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash::move
      * @expectedException OutOfRangeException
      */
-    public function testMove_KeyIsNotAString_ThrowsException()
+    public function testMove_KeyIsNotAStringOrInteger_ThrowsException()
     {
-        $this->hash->move(5, $this->hash->top());
+        $this->hash->move(true, $this->hash->top());
     }
 
     /**
@@ -324,9 +324,9 @@ class OrderedHashTest extends Sugar_PHPUnit_Framework_TestCase
      * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash::offsetGet
      * @expectedException OutOfRangeException
      */
-    public function testOffsetGet_KeyIsNotAString_ThrowsException()
+    public function testOffsetGet_KeyIsNotAStringOrInteger_ThrowsException()
     {
-        $element = $this->hash[5];
+        $element = $this->hash[5.5];
     }
 
     /**
@@ -349,9 +349,9 @@ class OrderedHashTest extends Sugar_PHPUnit_Framework_TestCase
      * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash::offsetSet
      * @expectedException OutOfRangeException
      */
-    public function testOffsetSet_KeyIsNotAString_ThrowsException()
+    public function testOffsetSet_KeyIsNotAStringOrInteger_ThrowsException()
     {
-        $this->hash[5] = 'Foo';
+        $this->hash[5.5] = 'Foo';
     }
 
     /**
@@ -381,9 +381,9 @@ class OrderedHashTest extends Sugar_PHPUnit_Framework_TestCase
      * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash::offsetUnset
      * @expectedException OutOfRangeException
      */
-    public function testOffsetUnset_KeyIsNotAString_ThrowsException()
+    public function testOffsetUnset_KeyIsNotAStringOrInteger_ThrowsException()
     {
-        unset($this->hash[5]);
+        unset($this->hash[5.5]);
     }
 
     /**

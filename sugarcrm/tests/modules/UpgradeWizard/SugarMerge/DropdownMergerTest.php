@@ -1544,4 +1544,47 @@ class DropdownMergerTest extends Sugar_PHPUnit_Framework_TestCase
         $actual = $this->merger->merge($old, $new, $custom);
         $this->assertEquals(json_encode($expected), json_encode($actual));
     }
+
+    /**
+     * @covers DropdownMerger::merge
+     */
+    public function testMerge_KeysAreIntegers()
+    {
+        $old = array(
+            60 => '1 minute',
+            300 => '5 minutes',
+            600 => '10 minutes',
+            900 => '15 minutes',
+            1800 => '30 minutes',
+            3600 => '1 hour',
+        );
+
+        $custom = array(
+            60 => '1 minute',
+            //300 => '5 minutes', // removed
+            //600 => '10 minutes', // removed
+            //900 => '15 minutes', // removed
+            1800 => '30 minutes',
+            3600 => '1 hour',
+        );
+
+        $new = array(
+            0 => '0 minutes', // added
+            60 => '1 minute',
+            300 => '5 minutes',
+            600 => '10 minutes',
+            900 => '15 minutes',
+            1800 => '30 minutes',
+            3600 => '1 hour',
+        );
+
+        $expected = array(
+            0 => '0 minutes',
+            60 => '1 minute',
+            1800 => '30 minutes',
+            3600 => '1 hour',
+        );
+        $actual = $this->merger->merge($old, $new, $custom);
+        $this->assertEquals(json_encode($expected), json_encode($actual));
+    }
 }
