@@ -22,6 +22,16 @@ class ViewLayoutView extends SugarView
     /** @var GridLayoutMetaDataParser */
     protected $parser;
 
+    /**
+     * Brittle list of roles that should not be used with RBV.
+     * We need a better way of identifing these roles in the future.
+     * @var array
+     */
+    protected $hiddenRoles = array(
+        "Tracker",
+        "Customer Self-Service Portal Role"
+    );
+
     function ViewLayoutView ()
     {
         $GLOBALS [ 'log' ]->debug ( 'in ViewLayoutView' ) ;
@@ -401,6 +411,11 @@ class ViewLayoutView extends SugarView
         $roles = new SplObjectStorage();
         //Only super user should have access to all roles
         $allRoles = $current_user->isAdmin() ? ACLRole::getAllRoles() : ACLRole::getUserRoles($current_user->id, false);
+        $hiddenRoles = $this->hiddenRoles;
+        //Remove roles that should not be used on normal users.
+        $allRoles = array_filter($allRoles, function($role) use ($hiddenRoles) {
+            return !in_array($role->name, $hiddenRoles);
+        });
         foreach ($allRoles as $role) {
             $hasMetadata = $implementation->fileExists(
                 $this->editLayout,
