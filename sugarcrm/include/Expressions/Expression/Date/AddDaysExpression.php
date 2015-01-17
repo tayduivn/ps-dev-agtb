@@ -48,7 +48,7 @@ class AddDaysExpression extends DateExpression
 
 		    //Clone the object to prevent possible issues with other operations on this variable.
 		    var d = new Date(date);
-		    d.setDate(d.getDate() + days);
+		    d.setDate(d.getDate() + parseInt(days, 10));
 
             // if we're calling this from Sidecar, we need to pass back the date
             // as a string, not a Date object otherwise it won't validate properly
