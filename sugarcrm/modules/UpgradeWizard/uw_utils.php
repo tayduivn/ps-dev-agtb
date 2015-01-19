@@ -3899,8 +3899,7 @@ function merge_config_si_settings($write_to_upgrade_log=false, $config_location=
 	$modified = false;
 	foreach($sugar_config_si as $key=>$value)
 	{
-		if(!preg_match('/^setup_/', $key) && !isset($sugar_config[$key]))
-		{
+        if (!preg_match('/^setup_/', $key)) {
 		   if($write_to_upgrade_log)
 		   {
 		      logThis('Merge key (' . $key . ') with value (' . $value . ')', $path);
