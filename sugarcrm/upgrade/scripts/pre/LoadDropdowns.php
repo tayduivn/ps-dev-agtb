@@ -76,8 +76,8 @@ class SugarUpgradeLoadDropdowns extends UpgradeScript
             return;
         }
 
-        // ParserDropDown::getDropDowns is needed and was introduced in 7.6
-        $importFile = "{$this->context['new_source_dir']}/modules/ModuleBuilder/parsers/parser.dropdown.php";
+        // use the version in the new source directory
+        $importFile = "{$this->context['new_source_dir']}/upgrade/UpgradeDropdownsHelper.php";
         require_once $importFile;
 
         if (!is_array($this->upgrader->state)) {
@@ -86,7 +86,7 @@ class SugarUpgradeLoadDropdowns extends UpgradeScript
 
         $this->upgrader->state['dropdowns_to_merge'] = array();
 
-        $parser = new ParserDropDown();
+        $helper = new UpgradeDropdownsHelper();
 
         // search each i18n translation file in the application
         foreach (glob('include/language/*.lang.php') as $coreFile) {
@@ -100,10 +100,10 @@ class SugarUpgradeLoadDropdowns extends UpgradeScript
             $language = $this->getLanguage($coreFile);
 
             // load all of the core dropdown lists
-            $core = $parser->getDropDowns($coreFile);
+            $core = $helper->getDropdowns($coreFile);
 
             // load all of the customized dropdown lists
-            $custom = $parser->getDropDowns($customFile);
+            $custom = $helper->getDropdowns($customFile);
 
             if (empty($core) && empty($custom)) {
                 // only restricted dropdown lists were encountered; restricted dropdown lists are ignored

@@ -10,16 +10,16 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/ModuleBuilder/parsers/parser.dropdown.php';
+require_once 'upgrade/UpgradeDropdownsHelper.php';
 
 /**
- * @covers ParserDropDown
+ * @covers UpgradeDropdownsHelper
  */
-class ParserDropDownTest extends Sugar_PHPUnit_Framework_TestCase
+class UpgradeDropdownsHelperTest extends Sugar_PHPUnit_Framework_TestCase
 {
     protected $corePath = 'include/language/';
     protected $customPath = 'custom/include/language/';
-    protected $parser;
+    protected $helper;
 
     public function setUp()
     {
@@ -31,7 +31,7 @@ class ParserDropDownTest extends Sugar_PHPUnit_Framework_TestCase
         sugar_cache_clear("app_strings.{$GLOBALS['current_language']}");
         sugar_cache_clear("app_list_strings.{$GLOBALS['current_language']}");
 
-        $this->parser = new ParserDropDown();
+        $this->helper = new UpgradeDropdownsHelper();
     }
 
     public function tearDown()
@@ -43,9 +43,9 @@ class ParserDropDownTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers ParserDropDown::getDropDowns
+     * @covers UpgradeDropdownsHelper::getDropdowns
      */
-    public function testGetDropDowns_ReturnsCoreDropDowns()
+    public function testGetDropdowns_ReturnsCoreDropDowns()
     {
         $core = <<<EOF
 \$app_list_strings = array(
@@ -83,7 +83,7 @@ EOF;
         SugarTestLanguageFileUtilities::write($this->corePath, $GLOBALS['current_language'], $core);
         SugarTestLanguageFileUtilities::write($this->customPath, $GLOBALS['current_language'], $custom);
 
-        $actual = $this->parser->getDropDowns("{$this->corePath}{$GLOBALS['current_language']}.lang.php");
+        $actual = $this->helper->getDropdowns("{$this->corePath}{$GLOBALS['current_language']}.lang.php");
 
         $this->assertArrayHasKey('activity_dom', $actual);
         $this->assertArrayHasKey('meeting_status_dom', $actual);
@@ -91,9 +91,9 @@ EOF;
     }
 
     /**
-     * @covers ParserDropDown::getDropDowns
+     * @covers UpgradeDropdownsHelper::getDropdowns
      */
-    public function testGetDropDowns_ReturnsCustomDropDowns()
+    public function testGetDropdowns_ReturnsCustomDropDowns()
     {
         $core = <<<EOF
 \$app_list_strings = array(
@@ -131,7 +131,7 @@ EOF;
         SugarTestLanguageFileUtilities::write($this->corePath, $GLOBALS['current_language'], $core);
         SugarTestLanguageFileUtilities::write($this->customPath, $GLOBALS['current_language'], $custom);
 
-        $actual = $this->parser->getDropDowns("{$this->customPath}{$GLOBALS['current_language']}.lang.php");
+        $actual = $this->helper->getDropdowns("{$this->customPath}{$GLOBALS['current_language']}.lang.php");
 
         $this->assertArrayHasKey('activity_dom', $actual);
         $this->assertArrayNotHasKey('meeting_status_dom', $actual);
@@ -147,11 +147,11 @@ EOF;
     }
 
     /**
-     * @covers ParserDropDown::getDropDowns
+     * @covers UpgradeDropdownsHelper::getDropdowns
      * @dataProvider getDropDownsRestrictedDropDownsAreIgnoredProvider
      * @param $isCustom
      */
-    public function testGetDropDowns_RestrictedDropDownsAreIgnored($isCustom)
+    public function testGetDropdowns_RestrictedDropDownsAreIgnored($isCustom)
     {
         $core = <<<EOF
 \$app_list_strings = array(
@@ -182,25 +182,25 @@ EOF;
         SugarTestLanguageFileUtilities::write($this->customPath, $GLOBALS['current_language'], $custom);
 
         $prefix = $isCustom ? $this->customPath : $this->corePath;
-        $actual = $this->parser->getDropDowns("{$prefix}{$GLOBALS['current_language']}.lang.php");
+        $actual = $this->helper->getDropdowns("{$prefix}{$GLOBALS['current_language']}.lang.php");
 
         $this->assertEmpty($actual);
     }
 
     /**
-     * @covers ParserDropDown::getDropDowns
+     * @covers UpgradeDropdownsHelper::getDropdowns
      */
-    public function testGetDropDowns_FileDoesNotExist_ReturnsAnEmptyArray()
+    public function testGetDropdowns_FileDoesNotExist_ReturnsAnEmptyArray()
     {
-        $actual = $this->parser->getDropDowns('./foobar');
+        $actual = $this->helper->getDropdowns('./foobar');
 
         $this->assertEmpty($actual);
     }
 
     /**
-     * @covers ParserDropDown::getDropDowns
+     * @covers UpgradeDropdownsHelper::getDropdowns
      */
-    public function testGetDropDowns_GLOBALSIsUsedInTheCustomizations_ReturnsCustomDropDowns()
+    public function testGetDropdowns_GLOBALSIsUsedInTheCustomizations_ReturnsCustomDropDowns()
     {
         $core = <<<EOF
 \$app_list_strings = array(
@@ -236,7 +236,7 @@ EOF;
         SugarTestLanguageFileUtilities::write($this->corePath, $GLOBALS['current_language'], $core);
         SugarTestLanguageFileUtilities::write($this->customPath, $GLOBALS['current_language'], $custom);
 
-        $actual = $this->parser->getDropDowns("{$this->customPath}{$GLOBALS['current_language']}.lang.php");
+        $actual = $this->helper->getDropdowns("{$this->customPath}{$GLOBALS['current_language']}.lang.php");
 
         $this->assertArrayHasKey('activity_dom', $actual);
         $this->assertArrayNotHasKey('meeting_status_dom', $actual);

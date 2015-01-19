@@ -13,6 +13,7 @@
 class DropDownBrowser
 {
     // Restrict the full dropdown list to remove some options that shouldn't be edited by the end users
+    //TODO: this list needs to be kept in sync with $restrictedDropdowns in UpgradeDropdownsHelper::getDropdowns
     public static $restrictedDropdowns = array(
         'eapm_list',
         'eapm_list_documents',
