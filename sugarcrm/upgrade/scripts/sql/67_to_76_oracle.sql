@@ -9,5 +9,4 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-ALTER TABLE config add COLUMN platform varchar(32) NULL;
-UPDATE `fields_meta_data` SET `len` = 0 WHERE `type` = 'html';
+UPDATE fields_meta_data SET len = 0 WHERE type = 'html';
