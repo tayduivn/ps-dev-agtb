@@ -114,7 +114,6 @@ class MetaDataLocationChangeTest extends Sugar_PHPUnit_Framework_TestCase
             array('module' => 'Bugs', 'view' => 'record', 'filepath' => 'modules/Bugs/clients/portal/views/record/record.php'),
             array('module' => 'Cases', 'view' => 'list', 'filepath' => 'modules/Cases/clients/portal/views/list/list.php'),
             array('module' => 'Contacts', 'view' => 'record', 'filepath' => 'modules/Contacts/clients/portal/views/record/record.php'),
-            array('module' => 'KBOLDDocuments', 'view' => 'record', 'filepath' => 'modules/KBOLDDocuments/clients/portal/views/record/record.php'),
         );
     }
     //END SUGARCRM flav=ent ONLY

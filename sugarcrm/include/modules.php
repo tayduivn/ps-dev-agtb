@@ -169,11 +169,6 @@ $beanList['WorkFlowActionShells']  = 'WorkFlowActionShell';
 $beanList['WorkFlowActions']  = 'WorkFlowAction';
 $beanList['Expressions']  = 'Expression';
 $beanList['Contracts']  = 'Contract';
-$beanList['KBOLDDocuments'] = 'KBOLDDocument';
-$beanList['KBOLDDocumentRevisions'] = 'KBOLDDocumentRevision';
-$beanList['KBOLDTags'] = 'KBOLDTag';
-$beanList['KBOLDDocumentKBOLDTags'] = 'KBOLDDocumentKBOLDTag';
-$beanList['KBOLDContents'] = 'KBOLDContent';
 $beanList['ContractTypes']  = 'ContractType';
 $beanList['Holidays'] = 'Holiday';
 $beanList['ProjectResources'] = 'ProjectResource';
@@ -346,11 +341,6 @@ $beanFiles['WorkFlowAction']  = 'modules/WorkFlowActions/WorkFlowAction.php';
 $beanFiles['Expression']  = 'modules/Expressions/Expression.php';
 $beanFiles['System']      = 'modules/Administration/System.php';
 $beanFiles['SessionManager']      = 'modules/Administration/SessionManager.php';
-$beanFiles['KBOLDDocument'] = 'modules/KBOLDDocuments/KBOLDDocument.php';
-$beanFiles['KBOLDDocumentRevision'] = 'modules/KBOLDDocumentRevisions/KBOLDDocumentRevision.php';
-$beanFiles['KBOLDTag'] = 'modules/KBOLDTags/KBOLDTag.php';
-$beanFiles['KBOLDDocumentKBOLDTag'] = 'modules/KBOLDDocumentKBOLDTags/KBOLDDocumentKBOLDTag.php';
-$beanFiles['KBOLDContent'] = 'modules/KBOLDContents/KBOLDContent.php';
 $beanFiles['ContractType']  = 'modules/ContractTypes/ContractType.php';
 $beanFiles['ProjectResource'] = 'modules/ProjectResources/ProjectResource.php';
 $beanFiles['Holiday'] = 'modules/Holidays/Holiday.php';
@@ -409,7 +399,7 @@ $modInvisList = array('Administration', 'Currencies', 'CustomFields', 'Connector
     //BEGIN SUGARCRM flav=pro ONLY
     'Manufacturers', 'ProductBundles', 'ProductBundleNotes', 'ProductCategories', 'ProductTemplates', 'ProductTypes',
     'Shippers', 'TaxRates', 'TeamNotices', 'Teams', 'TimePeriods', 'ForecastOpportunities', 'Quotas',
-    'KBOLDDocumentRevisions', 'KBOLDDocumentKBOLDTags', 'KBOLDTags', 'KBOLDContents', 'KBOLDDocuments', 'ContractTypes',
+    'ContractTypes',
     'ACLFields', 'Holidays', 'SNIP', 'ForecastDirectReports', 'System',
     //END SUGARCRM flav=pro ONLY
     'Releases','Sync',
@@ -688,14 +678,6 @@ $bwcModules = array(
     'iCals',
     'Import',
     'InboundEmail',
-    //BEGIN SUGARCRM flav=pro ONLY
-    'KBOLDContents',
-    'KBOLDDocuments',
-    'KBOLDDocumentRevisions',
-    'KBOLDTags',
-    'KBOLDDocumentKBOLDTags',
-    'KBOLDContents',
-    //END SUGARCRM flav=pro ONLY
     'Manufacturers',
     'MergeRecords',
     'ModuleBuilder',
@@ -795,7 +777,6 @@ $beanFiles['HealthCheck'] = 'modules/HealthCheck/HealthCheck.php';
 $modInvisList[] = 'HealthCheck';
 $adminOnlyList['HealthCheck'] = array('all' => 1);
 $bwcModules[] = 'HealthCheck';
-$moduleList[] = 'KBOLDDocuments';
 foreach(SugarAutoLoader::existing('include/modules_override.php', SugarAutoLoader::loadExtension("modules")) as $modExtFile) {
     include $modExtFile;
 }

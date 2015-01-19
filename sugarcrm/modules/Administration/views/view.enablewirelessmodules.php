@@ -62,7 +62,6 @@ class AdministrationViewEnablewirelessmodules extends SugarView
             'Bugs',
             'Campaigns',
             'Contracts',
-            'KBOLDDocuments', // Knowledge base
             'Prospects', // this is Targets
             'Users',
             'pmse_Business_Rules',

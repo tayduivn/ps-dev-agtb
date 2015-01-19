@@ -197,37 +197,8 @@ class DownloadFile {
                                     return false;
                                 }
                             }
-                        } elseif ($bean->object_name == 'KBOLDDocument') {
-                            // Sorta the same thing with KBOLDDocuments
-                            $revision = BeanFactory::getBean('KBOLDDocumentRevisions', $bean->id);
-
-                            if (!empty($revision)) {
-                                $revision = BeanFactory::getBean('DocumentRevisions', $revision->document_revision_id);
-                                // Last change to fail, if nothing found, return false
-                                if (empty($revision)) {
-                                    return false;
-                                }
-
-                                $fileid = $revision->id;
-                                $name   = $revision->filename;
-                                $fileurl = empty($revision->doc_url) ? '' : $revision->doc_url;
-                            } else {
-                                // Try the kbdoc revision
-                                $revision = BeanFactory::getBean('KBOLDDocumentRevisions', $bean->kbolddocument_revision_id);
-                                if (!empty($revision)) {
-                                    $revision = BeanFactory::getBean('DocumentRevisions', $revision->document_revision_id);
-                                    // Last change to fail, if nothing found, return false
-                                    if (empty($revision)) {
-                                        return false;
-                                    }
-
-                                    $fileid = $revision->id;
-                                    $name   = $revision->filename;
-                                    $fileurl = empty($revision->doc_url) ? '' : $revision->doc_url;
-                                } else {
-                                    return false;
-                                }
-                            }
+                        } else {
+                            return false;
                         }
                     } else {
                         $fileid = $bean->id;

@@ -690,63 +690,6 @@ foreach($sugar_demodata['contract_seed_data'] as $v){
 ///
 /// SEED DATA FOR KNOWLEDGE BASE
 ///
-$kboldtags_hash = array();
-foreach($sugar_demodata['kbolddocument_seed_data_kboldtags'] as $v){
-    $kboldtag = new KBOLDTag;
-    $kboldtag->tag_name = $v;
-    $id = $kboldtag->save();
-    $kboldtags_hash[$id] = $v;
-}
-
-foreach($sugar_demodata['kbolddocument_seed_data'] as $v){
-	$kbdoc = new KBOLDDocument();
-	$kbdoc->kbolddocument_name = $v['name'];
-	$kbdoc->status_id = 'Published';
-	$kbdoc->team_id = 1;
-	$kbdoc->assigned_user_id = 'seed_will_id';
-	$kbdoc->active_date = $v['start_date'];
-	$kbdoc->exp_date = $v['exp_date'];
-//BEGIN SUGARCRM flav=ent ONLY
-    $kbdoc->is_external_article = 1;
-//END SUGARCRM flav=ent ONLY
-	$kbdoc->save();
-
-	$kbdocRevision = new KBOLDDocumentRevision;
-	$kbdocRevision->change_log = translate('DEF_CREATE_LOG','KBOLDDocuments');
-	$kbdocRevision->revision = '1';
-	$kbdocRevision->kbolddocument_id = $kbdoc->id;
-	$kbdocRevision->latest = true;
-	$kbdocRevision->save();
-
-	$docRevision = new DocumentRevision();
-	$docRevision->filename = $kbdoc->kbolddocument_name;
-	$docRevision->save();
-
-    $kbdocContent = new KBOLDContent();
-    $kbdocContent->document_revision_id = $docRevision->id;
-    $kbdocContent->team_id = $kbdoc->team_id;
-	$kbdocContent->kbolddocument_body = $v['body'];
-	$kbdocContent->save();
-
-	$kbdocRevision->kboldcontent_id = $kbdocContent->id;
-    $kbdocRevision->document_revision_id = $docRevision->id;
-    $kbdocRevision->save();
-
-    $kbdoc->kbolddocument_revision_id = $kbdocRevision->id;
-	$kbdoc->save();
-
-	foreach ($v['tags'] as $tag) {
-	    $kbdocKBOLDTag = new KBOLDDocumentKBOLDTag();
-	    $kbdocKBOLDTag->kboldtag_id = array_search($tag,$kboldtags_hash);
-	    $kbdocKBOLDTag->kbolddocument_id = $kbdoc->id;
-	    $kbdocKBOLDTag->team_id = $kbdoc->team_id;
-	    $kbdocKBOLDTag->save();
-	}
-}
-
-///
-/// SEED DATA FOR KNOWLEDGE BASE
-///
 $categoryIds = array();
 foreach ($sugar_demodata['kbcategories_array'] as $name => $v) {
     $kbCategory = BeanFactory::newBean('Categories');

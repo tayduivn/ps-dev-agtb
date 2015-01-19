@@ -392,9 +392,6 @@ $scheduler->rebuildDefaultSchedulers();
 installerHook('post_createDefaultSchedulers');
 
 
-///create kb tag data.
-installLog("create oldkb tag default data");
-KBOLDTag::default_install_data();
 
 echo $mod_strings['LBL_PERFORM_DONE'];
 

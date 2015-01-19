@@ -2310,7 +2310,7 @@ private function dir_file_count($path){
         // these modules either lack editviews/detailviews or use custom mechanisms for the editview/detailview.
         // In either case, we don't want to attempt to add a relate field to them
         // would be better if GridLayoutMetaDataParser could handle this gracefully, so we don't have to maintain this list here
-        $invalidModules = array ( 'emails' , 'kbolddocuments' ) ;
+        $invalidModules = array ( 'emails' ) ;
 
         foreach ( $layoutAdditions as $deployedModuleName => $fieldName )
         {
@@ -2338,7 +2338,7 @@ private function dir_file_count($path){
         // these modules either lack editviews/detailviews or use custom mechanisms for the editview/detailview.
         // In either case, we don't want to attempt to add a relate field to them
         // would be better if GridLayoutMetaDataParser could handle this gracefully, so we don't have to maintain this list here
-        $invalidModules = array ( 'emails' , 'kbolddocuments' ) ;
+        $invalidModules = array ( 'emails' ) ;
 
         foreach ( $layoutAdditions as $deployedModuleName => $fieldName )
         {

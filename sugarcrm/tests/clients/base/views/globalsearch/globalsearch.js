@@ -55,11 +55,10 @@ describe("Global Search", function() {
                     return true;
                 }
             },
-            moduleNames = ['Bugs','Cases','KBOLDDocuments','Home'],
+            moduleNames = ['Bugs','Cases','Home'],
             modules = {
                 Bugs: {globalSearchEnabled:true},
                 Cases: {globalSearchEnabled:true},
-                KBOLDDocuments: {globalSearchEnabled:true},
                 Home: {globalSearchEnabled: false}
             };
         actual = view.populateSearchableModules({
@@ -71,7 +70,6 @@ describe("Global Search", function() {
         });
         expect(_.contains(actual, 'Bugs')).toBeTruthy();
         expect(_.contains(actual, 'Cases')).toBeTruthy();
-        expect(_.contains(actual, 'KBOLDDocuments')).toBeTruthy();
         expect(_.contains(actual, 'Home')).toBeFalsy();
     });
     it("Should check 'Search all' and uncheck other modules by default", function() {

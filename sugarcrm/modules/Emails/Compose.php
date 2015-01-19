@@ -111,15 +111,6 @@ function generateComposeDataPackage($data,$forFullCompose = TRUE, $bean = null)
 				$namePlusEmail .= from_html($contact->full_name) . " <".from_html($contact->emailAddress->getPrimaryAddress($contact)).">";
 			}
 		}
-		if ($bean->module_dir == 'KBOLDDocuments') {
-
-			require_once("modules/Emails/EmailUI.php");
-			$subject = $bean->kbolddocument_name;
-			$article_body = str_replace('/cache/images/',$GLOBALS['sugar_config']['site_url'].'/cache/images/',KBOLDDocument::get_kbdoc_body_without_incrementing_count($bean->id));
-			$body = from_html($article_body);
-			$attachments = KBOLDDocument::get_kbdoc_attachments_for_newemail($bean->id);
-			$attachments = $attachments['attachments'];
-		} // if
 		if ($bean->module_dir == 'Quotes' && isset($data['recordId'])) {
 			$quotesData = getQuotesRelatedData($bean,$data);
 			global $current_language;

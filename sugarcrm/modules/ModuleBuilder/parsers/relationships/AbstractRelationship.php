@@ -466,9 +466,6 @@ class AbstractRelationship
                 case 'documents' :
                     $vardef [ 'rname' ] = 'document_name' ;
                     break ;
-                case 'kbolddocuments' :
-                    $vardef [ 'rname' ] = 'kbolddocument_name' ;
-                    break ;
                 case 'leads' :
                 case 'contacts' :
                     // special handling as these modules lack a name column in the database; instead 'name' refers to a non-db field that concatenates first_name and last_name

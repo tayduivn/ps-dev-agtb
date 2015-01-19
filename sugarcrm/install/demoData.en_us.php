@@ -21570,71 +21570,6 @@ $sugar_demodata['producttemplate_seed_data'][] = array(
 	'qty_in_stock' => '65',
 ); 
 
-//BEGIN SUGARCRM flav=pro ONLY
-// KBOLDDocuments
-$sugar_demodata['kbolddocument_seed_data_kboldtags'] = array(
-    'OS and Interface',
-    'Hardware',
-    'WiFi, Bluetooth, and Networking',
-    'Tools',
-    'Basic Usage',
-    );
-
-$sugar_demodata['kbolddocument_seed_data'][] = array(
-    'name' => 'Connecting to the Internet',
-    'start_date' => '2010-01-01',
-    'exp_date' => '2015-12-31',
-    'body' => '<p>To connect your device to the Internet, use any application that accesses the Internet. You can connect using either Wi-Fi or Bluetooth.</p>',
-    'tags' => array(
-        'WiFi, Bluetooth, and Networking',
-        ),
-    );
-
-$sugar_demodata['kbolddocument_seed_data'][] = array(
-    'name' => 'Charging the battery',
-    'start_date' => '2010-01-01',
-    'exp_date' => '2015-12-31',
-    'body' => '<p>To charge the battery, try the following:</p>
-   <ul><li>Connect device to a power outlet using the included cable and the USB power adapter.</li>
-    <li>Connect to a high-power USB 2.0 port using the included cable.</li></ul>',
-    'tags' => array(
-        'Basic Usage',
-        'Hardware',
-        ),
-    );
-
-$sugar_demodata['kbolddocument_seed_data'][] = array(
-    'name' => 'How to print',
-    'start_date' => '2010-01-01',
-    'exp_date' => '2015-12-31',
-    'body' => '<p>In order to print, you first need to send your file to your computer. Access and print the file from your computer.</p>',
-    'tags' => array(
-        'Basic Usage',
-        'Tools',
-        ),
-    );
-
-$sugar_demodata['kbolddocument_seed_data'][] = array(
-    'name' => 'How to change the language',
-    'start_date' => '2010-01-01',
-    'exp_date' => '2015-12-31',
-    'body' => '<p>If your device is not set to your preferred language, please make sure you have completed the setup. In the Settings screen, select Languages. Select the language you prefer.</p>',
-    'tags' => array(
-        'Basic Usage',
-        'OS and Interface',
-        ),
-    );
-
-$sugar_demodata['kbolddocument_seed_data'][] = array(
-    'name' => 'Resetting the device',
-    'start_date' => '2010-01-01',
-    'exp_date' => '2010-12-31',
-    'body' => '<p>When things are not working as expected, try resetting the device. Hold the Start button until the dialog box displays.  Select the Reset option.</p>',
-    'tags' => array(
-        'Basic Usage',
-        'Hardware',
-        ),
-);
 
 // KBDocuments
 $sugar_demodata['kbcategories_array'] = array(
@@ -21723,8 +21658,6 @@ $sugar_demodata['kbdocuments_seed_data'][] = array(
     'body' => '<p>When things are not working as expected, try resetting the device. Hold the Start button until the dialog box displays.  Select the Reset option.</p>',
     'tag' => '^Basic Usage^,^Hardware^',
 );
-//END SUGARCRM flav=pro ONLY
-
 $sugar_demodata['contract_seed_data'][] = array(
 	'name' => 'IT Tech Support for UK Datacenter',
 	'reference_code' => 'EMP-9802',

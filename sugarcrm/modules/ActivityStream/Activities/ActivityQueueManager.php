@@ -26,7 +26,7 @@ class ActivityQueueManager
     );
     public static $linkDupeCheck = array();
     public static $moduleBlacklist = array('OAuthTokens', 'SchedulersJobs',
-        'Activities', 'vCals', 'KBOLDContents', 'KBArticles', 'KBDocuments',
+        'Activities', 'vCals', 'KBArticles', 'KBDocuments',
         'Forecasts', 'ForecastWorksheets', 'ForecastManagerWorksheets', 'Notifications',
         'Quotes', //Quotes should not allow admin to enable activities until Quotes are converted to sidecar
         // BEGIN SUGARCRM flav=pro && flav!=ent ONLY
