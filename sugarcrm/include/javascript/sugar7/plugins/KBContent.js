@@ -39,6 +39,7 @@
                 this.on('init', function() {
                     this.context.on('button:create_localization_button:click', this.createLocalization, this);
                     this.context.on('button:create_revision_button:click', this.createRevision, this);
+                    this.context.on('button:create_article_button:click', this.createArticle, this);
 
                     if (this.action == 'list') {
                         this.context.on('list:editrow:fire', _.bind(function(model, view) {
@@ -169,6 +170,27 @@
              */
             createRevision: function(model) {
                 this.createRelatedContent(model, this.CONTENT_REVISION);
+            },
+
+            /**
+             * Handler to create a new article.
+             * @param {Data.Model} model A record view model caused creation.
+             */
+            createArticle: function(model) {
+                var prefill = app.data.createBean('KBContents'),
+                    bodyTmpl = app.template.getField('htmleditable_tinymce', 'create-article', 'KBContents');
+                prefill.set('name', model.get('name'));
+                prefill.set('kbdocument_body', bodyTmpl({model: model}));
+
+                app.drawer.open({
+                    layout: 'create-actions',
+                    context: {
+                        create: true,
+                        model: prefill,
+                        module: 'KBContents'
+                    }},
+                    function(context, newModel) {}
+                );
             },
 
             /**
