@@ -686,7 +686,12 @@ $dictionary['RevenueLineItem'] = array(
             'comment' => 'Forecast commit category: Include, Likely, Omit etc.',
             'function' => 'getCommitStageDropdown',
             'function_bean' => 'Forecasts',
-            'default' => 'exclude'
+            'default' => 'exclude',
+            'formula' => 'forecastCommitStage($probability)',
+            'calculated' => true,
+            'related_fields' => array(
+                'probability'
+            )
         ),
         'sales_stage' => array(
             'name' => 'sales_stage',
