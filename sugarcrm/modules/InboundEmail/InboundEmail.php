@@ -4175,6 +4175,9 @@ class InboundEmail extends SugarBean {
 			$email->description_html= $this->getMessageText($msgNo, 'HTML', $structure, $fullHeader,$clean_email); // runs through handleTranserEncoding() already
 			$email->description	= $this->getMessageText($msgNo, 'PLAIN', $structure, $fullHeader,$clean_email); // runs through handleTranserEncoding() already
 			$this->imagePrefix = $oldPrefix;
+            if (empty($email->description)) {
+                $email->description = strip_tags($email->description_html);
+            }
 
 			// empty() check for body content
 			if(empty($email->description)) {
