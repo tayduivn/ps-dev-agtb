@@ -605,6 +605,13 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
         'source' => 'non-db',
         'reportable' => false,
     ),
+    'lead_parent' => array(
+        'name' => 'lead_parent',
+        'type' => 'link',
+        'relationship' => 'lead_meetings_parent',
+        'source' => 'non-db',
+        'reportable' => false
+    ),
 ),
  'relationships' => array (
 	  'meetings_assigned_user' =>
