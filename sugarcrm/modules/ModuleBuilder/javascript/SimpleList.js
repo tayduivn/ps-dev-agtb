@@ -191,11 +191,13 @@ if(typeof(SimpleList) == 'undefined'){
         };
         var ul1=YAHOO.util.Dom.get("ul1");
         var hasDeletedItem = false;
-        for(j = 0; j < SimpleList.jstransaction.JSTransactions.length; j++){            
-            var liEl = new YAHOO.util.Element(SimpleList.jstransaction.JSTransactions[j]['data']['id']);
-            if(liEl && liEl.hasClass('deleted'))
-            	hasDeletedItem = true;
-            	break;
+        for(j = 0; j < SimpleList.jstransaction.JSTransactions.length; j++){
+            if(SimpleList.jstransaction.JSTransactions[j]['transaction'] == 'deleteDropDown') {
+                var liEl = new YAHOO.util.Element(SimpleList.jstransaction.JSTransactions[j]['data']['id']);
+                if (liEl && liEl.hasClass('deleted'))
+                    hasDeletedItem = true;
+                break;
+            }
         }
         if(hasDeletedItem) {
         	if(!confirm(SUGAR.language.get('ModuleBuilder', 'LBL_CONFIRM_SAVE_DROPDOWN')))
