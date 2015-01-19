@@ -1,6 +1,5 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -11,7 +10,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-
 
 require_once('include/EditView/EditView2.php');
 require_once('modules/pmse_Project/clients/base/api/wrappers/PMSEWrapper.php');
@@ -72,7 +70,7 @@ class pmse_InboxViewShowCase extends SugarView
 
             $this->module = $module;
 
-            $metadataFile = $this->getMetaDataFile();//$this->getMetaDataFile($this->bean, $viewMode);
+            $metadataFile = $this->getMetaDataFile();
 
             $viewdefs = '';
 
@@ -106,7 +104,7 @@ class pmse_InboxViewShowCase extends SugarView
             $this->th = new TemplateHandler();
             $this->th->ss = &$this->ss;
             $this->tpl = $tpl;
-            //$tplFile = $this->th->cacheDir . $this->th->templateDir . $this->bean->module_name . '/' . $this->view . '.tpl';
+
             if ($this->th->checkTemplate($this->bean->module_name, $this->view)) {
                 $this->th->deleteTemplate($this->bean->module_name, $this->view);
             }
@@ -125,11 +123,9 @@ class pmse_InboxViewShowCase extends SugarView
             $this->returnModule = $this->ev->returnModule;
             $this->returnAction = $this->ev->returnAction;
             $this->returnId = $this->ev->returnId;
-            $this->returnRelationship = $this->ev->returnRelationship;
-            $this->returnName = $this->ev->returnName;
+            //$this->returnRelationship = $this->ev->returnRelationship;
+            //$this->returnName = $this->ev->returnName;
 
-
-//            $this->processData();
             return $this->setupAll(false, false, $this->bean->module_name, $readonly);
         }
     }
@@ -205,44 +201,26 @@ class pmse_InboxViewShowCase extends SugarView
         $expected_time_message = '';
 
         global $current_user;
-        //extrac cas_id and cas_index
+        //extract cas_id and cas_index
         $beanFlow = BeanFactory::getBean('pmse_BpmFlow', $id_flow);
         $cas_id = $beanFlow->cas_id;
         $cas_index = $beanFlow->cas_index;
 
-        $caseBean = BeanFactory::newBean('pmse_Inbox'); //BpmInbox();
+        $caseBean = BeanFactory::newBean('pmse_Inbox');
         $joinTables = array(
             array('LEFT', 'pmse_bpm_flow', 'pmse_inbox.cas_id = pmse_bpm_flow.cas_id')
         );
         $records = $this->wrapper->getSelectRows($caseBean, 'cas_id desc',
             "pmse_bpm_flow.cas_id = $cas_id and cas_index = $cas_index ", 0, -1, -1, array('*', 'pmse_inbox.id idInbox'), $joinTables);
-//            "pmse_bpm_flow.cas_id = $cas_id and cas_index = $cas_index ", 0, -1, -1, array(), $joinTables);
         $totalRecords = $records['totalRows'];
         $caseData = $records['rowList'][0];
 
-
-        //COUNT NOTES
-        //TODO habilitar notas luego
-//        $notesBean = new BpmNotes();
-//        $where = 'cas_id = ' . $cas_id;
-//        $rsNotes = $notesBean->getSelectRows('', $where);
-        $totalNotes = 0;//$rsNotes['totalRows'];
+        $totalNotes = 0;
 
         $smarty = new Sugar_Smarty();
 
         $smarty->assign('caseData', $caseData);
         $simpleRouting = false;
-
-        //REDIRECTO TO NO SHOW CASE IF A SELF SERVICE CASE DO NOT BELONGS TO CURRENT USER
-//        if (($caseData['cas_start_date']!== '') && $current_user->id != $caseData['cas_user_id']) {
-//            $encodedId = 'zxy';//ADAMEngineUtils::simpleEncode($cas_id . '-' . $cas_index);
-//            $params = array(
-//                'module' => 'pmse_Inbox', // $bean->module_name,
-//                'action' => 'noShowCase',
-//                'id' => $encodedId
-//            );
-//            SugarApplication::redirect('index.php?' . http_build_query($params));
-//        }
 
         switch ($caseData['cas_flow_status']) {
             case 'FORM':
@@ -257,37 +235,11 @@ class pmse_InboxViewShowCase extends SugarView
                 $resultActi = $db->Query($sql);
 
 
-                $this->activityRow = $db->fetchByAssoc($resultActi);//$this->activityRow['rowList'][0];
-                $activityName = $this->activityRow['act_name'];
+                $this->activityRow = $db->fetchByAssoc($resultActi);
+                $activityName = $this->activityRow['name'];
                 $taskName = $this->activityRow['name'];
                 $smarty->assign('nameTask', $taskName);
                 $smarty->assign('flowId', $id_flow);
-                // assigning a third parameter 'bpm' 'edit' or 'detail' can change
-                // the display mode of the template
-                // edit, detail , bpm
-//                $defaultButtons = array();
-//                switch (strtolower($this->activityRow['act_type'])) {
-//                    case 'editview':
-//                        $displayMode = 'edit';
-//                        $templateFile = 'EditView';
-//                        $defaultButtons = $this->getButtonArray(array('approve' => true, 'reject' => true));
-//                        break;
-//                    case 'defaultview':
-//                        $displayMode = 'bpm';
-//                        $templateFile = 'BpmView';
-//                        $defaultButtons = $this->getButtonArray(array('approve' => true, 'reject' => true, 'reassign' => true));
-//                        break;
-//                    case 'detailview':
-//                        $displayMode = 'detail';
-//                        $templateFile = 'DetailView';
-//                        $defaultButtons = $this->getButtonArray(array('route' => true));
-//                        break;
-//                    default:
-//                        $displayMode = array('displayMode' => 'bpm', 'dyn_uid' => $this->activityRow['act_type']);
-//                        $templateFile = 'BpmView';
-//                        $defaultButtons = $this->getButtonArray(array('route'=>true));
-//                        break;
-//                }
 
                 //DUE DATE SECCION
                 $data_aux = new stdClass();
@@ -301,17 +253,6 @@ class pmse_InboxViewShowCase extends SugarView
                 } else {
                     $expected_time_message = "Due Date";
                 }
-//                if (!empty($expected_time)) {
-//                    if ($time_data->getNow()->ts > $expected_time) {
-//                        $date_friendly = SugarFeed::getTimeLapse($time_data->to_display_date_time(gmdate('Y-m-d H:i:s', $expected_time)));
-//                        $pos = strpos(trim($date_friendly), '0');
-//                        if ($pos !== false && $pos === 0) {
-//                            $date_friendly = trim(substr($date_friendly, 7));
-//                        }
-//                        $expected_time_message = $expected_time; //sprintf(translate('LBL_PMSE_LABEL_ERROR_EXPECTED_DUE_DATE'), $date_friendly);
-//                        $expected_time_warning = true;
-//                    }
-//                }
 
                 $displayMode = array('displayMode' => 'bpm', 'dyn_uid' => $this->activityRow['act_type']);
                 //INIT CLAIM CASE AND DEFINE DISPLAY MODE
@@ -336,7 +277,6 @@ class pmse_InboxViewShowCase extends SugarView
                     $this->defs['BPM']['buttons']['approve'] = (strtoupper($this->activityRow['act_response_buttons']) == 'APPROVE') ? true : false;
                     $this->defs['BPM']['buttons']['route'] = (strtoupper($this->activityRow['act_response_buttons']) == 'ROUTE') ? true : false;
                 } else {
-                    //$this->defs['BPM']['buttons']['approve'] = (strtoupper($activityRow['act_response_buttons'])=='APPROVE')?true:false;
                     $this->defs['BPM']['buttons']['route'] = true;
                 }
 
@@ -346,15 +286,11 @@ class pmse_InboxViewShowCase extends SugarView
                 $smarty->assign('cas_current_user_id', $current_user->id);
                 $smarty->assign('act_name', $activityName);
                 $smarty->assign('act_adhoc_behavior', $this->activityRow['act_adhoc_behavior']);
-                //$smarty->assign('act_adhoc_assignment', $activityRow['act_adhoc_assignment']);
                 $smarty->assign('act_adhoc', $this->activityRow['act_adhoc'] == 1 ? true : false);
                 $smarty->assign('act_reassign', $this->activityRow['act_reassign'] == 1 ? true : false);
                 $smarty->assign('act_note', true);
                 $smarty->assign('expected_time_warning', $expected_time_warning);
                 $smarty->assign('expected_time_message', $expected_time_message);
-//                if ($expected_time <> 0) {
-//                    $smarty->assign('expected_time', $time_data->to_display_date_time(date('Y-m-d H:i:s', $expected_time), true, true, $current_user));
-//                }
                 $smarty->assign('expected_time', $expected_time);
                 $smarty->assign('reclaimCaseByUser', $reclaimCaseByUser);
                 $smarty->assign('totalNotes', $totalNotes);
@@ -379,26 +315,13 @@ class pmse_InboxViewShowCase extends SugarView
                     $smarty->assign('customButtons', $defaultButtons);
                 }
 
-
                 //TPL SECTION
-                // assigning simpleRouting to false can enable the case detail panel
-//                if ($simpleRouting) {
-//                    $openHeaderTemplate = 'modules/pmse_Inbox/tpls/showCaseRouteSimple.tpl';
-//                } else {
+
                 $openHeaderTemplate = 'modules/pmse_Inbox/tpls/showCaseRoute.tpl';
-//                }
+
                 $closeHeaderTemplate = 'modules/pmse_Inbox/tpls/showCaseCloseHeader.tpl';
                 $openFooterTemplate = 'modules/pmse_Inbox/tpls/showCaseOpenFooter.tpl';
                 $closeFooterTemplate = 'modules/pmse_Inbox/tpls/showCaseRouteFooter.tpl';
-
-                // check if the route was already derivated with a ROUND_TRIP
-                // The reassign button now deppends in the previous form action and the current state.
-//                $engine = new ADAMEngine();
-
-
-                //                $adhocAssignableUsers = $activityRow['act_adhoc']==1?$engine->getAdhocAssignableUserList($cas_id, $cas_index):array();
-                //                $reassignableUsers = $activityRow['act_reassign']==1?$engine->getReassignableUserList($cas_id, $cas_index):array();
-
 
                 //DISPLAY SECTION
                 $smarty->display($openHeaderTemplate);
@@ -414,12 +337,8 @@ class pmse_InboxViewShowCase extends SugarView
                     $smarty->display($openFooterTemplate);
                 }
 
-                //$this->_displaySubPanels();
                 $smarty->display($closeFooterTemplate);
 
-//                $engine = new PMSEEngine();//new ADAMEngine();
-//                if(!$reclaimCaseByUser)
-//                    $engine->setStartDateInCaseFlow($cas_id, $cas_index);
                 break;
             default:
                 global $sugar_config;
@@ -468,7 +387,6 @@ class pmse_InboxViewShowCase extends SugarView
         $this->th->ss->assign('module', $moduleName);
         $this->th->ss->assign('current_user', $current_user);
         $this->th->ss->assign('bean', $this->focus);
-//        $this->th->ss->assign('isAuditEnabled', $this->focus->is_AuditEnabled());
         $this->th->ss->assign('gridline', $current_user->getPreference('gridline') == 'on' ? '1' : '0');
         $this->th->ss->assign('tabDefs',
             isset($this->defs['templateMeta']['tabDefs']) ? $this->defs['templateMeta']['tabDefs'] : false);
@@ -493,9 +411,7 @@ class pmse_InboxViewShowCase extends SugarView
             $form_id = 'form_' . $this->view . '_' . $moduleName;
             $form_name = $form_id;
             $this->view = $form_name;
-            //$this->defs['templateMeta']['form']['buttons'] = array();
-            //$this->defs['templateMeta']['form']['buttons']['ajax_save'] = array('id' => 'AjaxSave', 'customCode'=>'<input type="button" class="button" value="Save" onclick="this.form.action.value=\'AjaxFormSave\';return saveForm(\''.$form_name.'\', \'multiedit_form_{$module}\', \'Saving {$module}...\');"/>');
-        }
+       }
 
         $form_name = $form_name == 'QuickCreate' ? "QuickCreate_{$moduleName}" : $form_name;
         $form_id = $form_id == 'QuickCreate' ? "QuickCreate_{$moduleName}" : $form_id;
@@ -704,7 +620,9 @@ class pmse_InboxViewShowCase extends SugarView
     {
         $requiredFields = '';
         foreach ($this->fieldDefs as $fieldKey => $field) {
-            if ($this->fieldDefs[$fieldKey]['required'] && $field['viewType'] != 'DetailView') {
+            if (isset($this->fieldDefs[$fieldKey]['required'])
+                && $this->fieldDefs[$fieldKey]['required']
+                && $field['viewType'] != 'DetailView') {
                 $requiredFields .= '"' . $this->fieldDefs[$fieldKey]['name'] . '",';
             }
         }
@@ -736,9 +654,6 @@ class pmse_InboxViewShowCase extends SugarView
     }
 
 
-    /**
-     * para visualizar los panel
-     */
     protected function _displaySubPanels()
     {
         if (!empty($this->bean->id) &&
@@ -746,7 +661,6 @@ class pmse_InboxViewShowCase extends SugarView
                 SugarAutoLoader::loadExtension("layoutdefs", $this->module))
         ) {
             $GLOBALS['focus'] = $this->bean;
-//            echo $this->SubPanelRelatedModules();
             require_once('include/SubPanel/SubPanelTiles.php');
             $subpanel = new SubPanelTiles($this->bean, $this->module);
             echo $subpanel->display();
