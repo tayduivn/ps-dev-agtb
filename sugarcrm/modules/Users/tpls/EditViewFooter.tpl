@@ -299,7 +299,7 @@
                             <td ><slot><select tabindex='14' name='timeformat'>{$TIMEOPTIONS}</select></slot></td>
                             <!-- BEGIN: currency -->
                             <td width="17%" scope="row"><slot>
-                                {$MOD.LBL_CURRENCY_SIG_DIGITS}:
+                                {$MOD.LBL_SYSTEM_SIG_DIGITS}:
                             </slot></td>
                             <td ><slot>
                                 <select id='sigDigits' onchange='setSigDigits(this.value);' name='default_currency_significant_digits'>{$sigDigits}</select>

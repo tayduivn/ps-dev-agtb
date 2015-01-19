@@ -74,10 +74,31 @@
                 callback(data);
             },
 
-            createSearchChoice: function(term) {
+            createSearchChoice: function(term, results) {
                 // If tag is for filter, don't allow new choices to be selected
                 if (self.view.action === 'filter-rows') {
                     return false;
+                }
+
+                // Check previously found results to see tag exists with different casing
+                if (results && results.length) {
+                    if (_.find(results, function(tag) {
+                        return tag.text.toLowerCase() === term.toLowerCase();
+                    })) {
+                        return false;
+                    }
+                }
+
+                // Check tags that were just created but not saved yet for casing mismatches
+                if (self.$select2 && _.isFunction(self.$select2.val)) {
+                    var currentSelections = self.$select2.val().split(',');
+                }
+                if (currentSelections && currentSelections.length) {
+                    if (_.find(currentSelections, function(tag) {
+                        return tag.toLowerCase() === term.toLowerCase();
+                    })) {
+                        return false;
+                    }
                 }
 
                 return {
@@ -144,9 +165,9 @@
 
                 var tags = self.$select2.select2('data');
 
-                // If the current input already exists as a tag, just exit
+                // If the current input already exists as a tag (case insensitive), just exit
                 var exists = _.find(tags, function(tag) {
-                    return tag.id === this.value;
+                    return tag.id.toLowerCase() === this.value.toLowerCase();
                 }, this);
                 if (exists) {
                     // Close the search box and return

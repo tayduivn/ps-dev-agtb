@@ -141,7 +141,7 @@ class Task extends SugarBean {
 		if (is_subclass_of($parent, 'Person')) {
 			$query = "SELECT first_name, last_name, assigned_user_id parent_name_owner from $parent->table_name where id = '$this->parent_id'";
 		}
-		else if (is_subclass_of($parent, 'File')) {
+		else if (is_subclass_of($parent, 'File') || $parent->module_dir == 'Documents') {
 			$query = "SELECT document_name, assigned_user_id parent_name_owner from $parent->table_name where id = '$this->parent_id'";
 		}
 		else {
@@ -167,7 +167,7 @@ class Task extends SugarBean {
 		{
             $this->parent_name = $locale->formatName($this->parent_type, $row);
 		}
-		else if (is_subclass_of($parent, 'File') && $row != null) {
+		else if ((is_subclass_of($parent, 'File') || $parent->module_dir == 'Documents') && $row != null) {
 			$this->parent_name = $row['document_name'];
 		}
 		elseif($row != null)

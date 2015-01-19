@@ -122,7 +122,12 @@ class ParserLabel extends ModuleBuilderParser
         }
 
         if ($changed) {
-            if (!write_array_to_file("mod_strings", $mod_strings, $filename)) {
+            $write  = "<?php\n// WARNING: The contents of this file are auto-generated.\n";
+            foreach ($mod_strings as $k => $v) {
+                $write .= "\$mod_strings['$k'] = " . var_export($v, 1) . ";\n";
+            }
+            
+            if (!SugarAutoLoader::put($filename, $write, true)) {
                 $GLOBALS['log']->fatal("Could not write $filename");
             } else {
                 // if we have a cache to worry about, then clear it now

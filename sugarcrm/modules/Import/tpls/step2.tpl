@@ -75,7 +75,7 @@
           </tr>
 	</table>
     <br>
-    <table border="0" cellspacing="0" cellpadding="0" width="100%">
+    <table border="0" cellspacing="0" cellpadding="0" width="100%" class="preset-settings">
           {foreach from=$custom_mappings item=item name=custommappings}
           {capture assign=mapping_label}{$MOD.LBL_CUSTOM_MAPPING_}{$item|upper}{/capture}
           <tr>
@@ -90,8 +90,8 @@
                 <h3>{$MOD.LBL_PUBLISHED_SOURCES}&nbsp;{sugar_help text=$savedMappingHelpText}</h3></td>
           </tr>
           
-          <tr id="custom_import_{$smarty.foreach.saved.index}">
-            <td scope="row" colspan="4">
+          <tr id="custom_import_{$smarty.foreach.saved.index}" class="preset-row preset-none">
+            <td scope="row" colspan="4" class="preset-label">
                 <input class="radio" type="radio" name="source" value=""/>
                 &nbsp;{$MOD.LBL_NONE}
             </td>
@@ -99,12 +99,12 @@
           </tr>
           {/if}
           {foreach from=$custom_imports key=key item=item name=saved}
-          <tr id="custom_import_{$smarty.foreach.saved.index}">
-            <td scope="row" colspan="2" width="10%" style="padding-right: 10px;">
+          <tr id="custom_import_{$smarty.foreach.saved.index}" class="preset-row preset-custom">
+            <td scope="row" colspan="2" width="10%" class="preset-label">
                 <input class="radio" type="radio" name="source" value="custom:{$item.IMPORT_ID}"/>
                 &nbsp;{$item.IMPORT_NAME}
             </td>
-            <td scope="row">
+            <td scope="row" class="preset-actions">
                 {if $is_admin}
                 <input type="button" name="publish" value="{$MOD.LBL_PUBLISH}" class="button" publish="yes"
                     onclick="publishMapping(this, 'yes','{$item.IMPORT_ID}');">
@@ -116,12 +116,12 @@
           {/foreach}
 
           {foreach from=$published_imports key=key item=item name=published}
-          <tr id="published_import_{$smarty.foreach.published.index}">
-            <td scope="row" colspan="2">
+          <tr id="published_import_{$smarty.foreach.published.index}" class="preset-row preset-custom">
+            <td scope="row" colspan="2" class="preset-label">
                 <input class="radio" type="radio" name="source" value="custom:{$item.IMPORT_ID}"/>
                 &nbsp;{$item.IMPORT_NAME}
             </td>
-            <td scope="row">
+            <td scope="row" class="preset-actions">
                 {if $is_admin}
                 <input type="button" name="publish" value="{$MOD.LBL_UNPUBLISH}" class="button" publish="no"
                     onclick="publishMapping(this, 'no','{$item.IMPORT_ID}');">

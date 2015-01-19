@@ -35,26 +35,26 @@
                             {{#each grid}}
                                 {{#each this}}
                                     <span class="record-cell" data-type="{{type}}" data-name="{{name}}">
-                                {{#if ../../this.labels}}
-                                    {{#unless dismiss_label}}
-                                        <div class="record-label"
-                                             data-name="{{name}}">{{str label ../../../../../../this.model.module}}</div>
-                                    {{/unless}}
-                                {{/if}}
+                                    <span class="table-cell-wrapper">
+                                        {{#if ../../this.labels}}
+                                            {{#unless dismiss_label}}
+                                                <span class="record-label" data-name="{{name}}">{{str label ../../../../../../this.model.module}}</span>
+                                            {{/unless}}
+                                        {{/if}}
                                         <span class="index{{index}}" data-fieldname="{{name}}" data-index="{{index}}">
                                             {{field ../../../../this model=../../../../this.model template=../../../../this.action}}
                                         </span>
                                         {{#unless ../../../../../case.reclaim}}
-                                        {{#unless ../../../../../createMode}}
-                                            {{#notHas name ../../../../../../noEditFields}}
-                                                <span class="record-edit-link-wrapper" data-name="{{name}}">
-                                            <a class="record-edit-link btn btn-invisible" data-type="{{type}}"
-                                               data-name="{{name}}"><i class="fa fa-pencil"></i></a>
-                                        </span>
-                                            {{/notHas}}
+                                            {{#unless ../../../../createMode}}
+                                                {{#notHas name ../../../../../noEditFields}}
+                                                    <span class="record-edit-link-wrapper" data-name="{{name}}">
+                                                    <a class="record-edit-link btn btn-invisible" data-type="{{type}}" data-name="{{name}}"><i class="fa fa-pencil"></i></a>
+                                                </span>
+                                                {{/notHas}}
+                                            {{/unless}}
                                         {{/unless}}
-                                        {{/unless}}
-                            </span>
+                                    </span>
+                                </span>
                                 {{/each}}
                             {{/each}}
                         {{/if}}
