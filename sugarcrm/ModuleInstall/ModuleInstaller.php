@@ -2891,6 +2891,10 @@ class ModuleInstaller{
                     'target' => '#drawers',
                     'layout' => 'drawer'
                 ),
+                'spotlight' => array(
+                    'target' => '#spotlight',
+                    'layout' => 'spotlight'
+                ),
             ),
             'alertsEl' => '#alerts',
             'alertAutoCloseDelay' => 2500,
