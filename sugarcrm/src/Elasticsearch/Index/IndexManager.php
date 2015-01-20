@@ -107,8 +107,7 @@ class IndexManager
     protected function readyForIndexChanges()
     {
         // force connectivity check
-        $this->container->client->verifyConnectivity();
-        if (!$this->container->client->isAvailable()) {
+        if (!$this->container->client->isAvailable(true)) {
             return false;
         }
         return $this->container->queueManager->pauseQueue();

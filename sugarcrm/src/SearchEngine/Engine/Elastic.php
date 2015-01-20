@@ -80,6 +80,14 @@ class Elastic implements EngineInterface, GlobalSearch
     /**
      * {@inheritDoc}
      */
+    public function verifyConnectivity($updateAvailability = true)
+    {
+        return $this->container->client->verifyConnectivity($updateAvailability);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function scheduleIndexing(array $modules = array(), $clearData = false)
     {
         return $this->container->indexManager->scheduleIndexing($modules, $clearData);

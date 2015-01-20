@@ -107,12 +107,13 @@ class Client extends BaseClient
     /**
      * This call will *always* try to create a connection to the Elasticsearch
      * backend to determine its availability. This should basically only be
-     * called by the Indexer Job and should never be used on inline calls
-     * except during install/upgrade and the search admin section.
+     * called during install/upgrade and the search admin section. The usage
+     * of `$this->isAvailable` is preferred.
      *
+     * @param boolean Update cached availability flag
      * @return integer Connection status, see declared CONN_ constants
      */
-    public function verifyConnectivity()
+    public function verifyConnectivity($updateAvailability = true)
     {
         try {
             $result = $this->ping();
@@ -138,8 +139,10 @@ class Client extends BaseClient
             $this->_logger->critical("Elasticsearch connection failure");
         }
 
-        $availability = ($status > 0) ? true : false;
-        $this->updateAvailability($availability);
+        if ($updateAvailability) {
+            $availability = ($status > 0) ? true : false;
+            $this->updateAvailability($availability);
+        }
 
         return $status;
     }
@@ -174,7 +177,8 @@ class Client extends BaseClient
      */
     protected function isVersionCompatible($version)
     {
-        // TODO add dev mode support
+        return true;
+        // TODO add dev mode support and expand functionality with blacklisting etc
         return in_array($version, $this->supportedVersions);
     }
 
@@ -185,6 +189,7 @@ class Client extends BaseClient
      */
     protected function updateAvailability($status)
     {
+
         $this->loadAvailability();
 
         if ($status !== $this->available) {
