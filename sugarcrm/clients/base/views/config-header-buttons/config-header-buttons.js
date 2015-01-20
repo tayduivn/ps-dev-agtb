@@ -153,7 +153,7 @@
          * END HACK
          */
 
-        this.before('save', this._beforeSaveConfig, null, this);
+        this.before('save', this._beforeSaveConfig, this);
     },
 
     /**

@@ -62,7 +62,7 @@
 
         app.view.View.prototype.initialize.call(this, options);
         this.bwcModel = app.data.createBean('bwc');
-        app.routing.before('route', this.beforeRoute, null, this);
+        app.routing.before('route', this.beforeRoute, this);
     },
 
     /**

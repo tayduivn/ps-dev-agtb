@@ -251,7 +251,7 @@
                 this.saveDashletFilter();
                 // NOTE: This prevents the drawer from closing prematurely.
                 return false;
-            }, null, this);
+            }, this);
 
         } else if (this.moduleIsAvailable) {
             var filterId = this.settings.get('filter_id');

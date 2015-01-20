@@ -34,7 +34,7 @@
 
         //clear out drawers before routing to another page
         this.name = 'drawer';
-        app.routing.before("route", this.reset, this, true);
+        app.routing.before('route', this.reset, this);
         app.view.Layout.prototype.initialize.call(this, options);
 
         // Browser find functionality auto-scrolls even when overflow is set to hidden.

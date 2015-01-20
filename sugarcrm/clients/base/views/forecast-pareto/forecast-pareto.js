@@ -298,7 +298,7 @@
                 if (chartField && dashletToolbar) {
                     chartField.before('chart:pareto:render', function() {
                         this.$('[data-action=loading]').removeClass(this.cssIconDefault).addClass(this.cssIconRefresh);
-                    }, {}, dashletToolbar);
+                    }, dashletToolbar);
                     chartField.on('chart:pareto:rendered', function() {
                         this.$('[data-action=loading]').removeClass(this.cssIconRefresh).addClass(this.cssIconDefault);
                     }, dashletToolbar);

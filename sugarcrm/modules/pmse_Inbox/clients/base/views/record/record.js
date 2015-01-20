@@ -82,7 +82,7 @@
         //event register for preventing actions
         // when user escapes the page without confirming deleting
         // add a callback to close the alert if users navigate from the page
-        app.routing.before('route', this.dismissAlert, undefined, this);
+        app.routing.before('route', this.dismissAlert, this);
         $(window).on('beforeunload.delete' + this.cid, _.bind(this.warnDeleteOnRefresh, this));
 
         this.delegateButtonEvents();

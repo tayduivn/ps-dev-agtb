@@ -84,7 +84,7 @@
 //        this.before('render:rows', function(data) {
 //            this.updateInvitation(this.collection, data);
 //            return false;
-//        }, null, this);
+//        }, this);
 
         return this;
     },

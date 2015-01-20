@@ -56,7 +56,7 @@
             this.factorFieldLabel = this.getFactorFieldLabel();
             this.disableDiscountField();
             this.factorValue = this.model.get('pricing_factor');
-        }, null, this);
+        }, this);
 
         this.listenTo(this, 'render', function() {
             // only setup the formulas when the action is edit
