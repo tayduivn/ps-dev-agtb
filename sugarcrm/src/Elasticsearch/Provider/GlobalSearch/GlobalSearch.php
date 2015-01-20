@@ -56,7 +56,7 @@ class GlobalSearch extends AbstractProvider
     /**
      * Enable/disable module aggregation facet
      * @param boolean $toggle
-     * @return \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\GlobalSearch
+     * @return GlobalSearch
      */
     public function moduleAgg($toggle)
     {
@@ -163,7 +163,7 @@ class GlobalSearch extends AbstractProvider
      */
     public function search()
     {
-        $builder = new QueryBuilder();
+        $builder = new QueryBuilder($this->container);
         $builder
             ->setUser($this->user)
             ->setModules($this->modules)
@@ -204,7 +204,7 @@ class GlobalSearch extends AbstractProvider
 
     /**
      * Get highlighter object
-     * @return \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\PlainHighLighter
+     * @return PlainHighLighter
      */
     protected function getHighlighter()
     {
@@ -226,7 +226,7 @@ class GlobalSearch extends AbstractProvider
     /**
      * Get module aggregator
      * @param array $modules
-     * @return \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\ModuleAggregation
+     * @return ModuleAggregation
      */
     protected function getModuleAggregator(array $modules)
     {
@@ -273,7 +273,7 @@ class GlobalSearch extends AbstractProvider
     /**
      * Set search term
      * @param string $term Search term
-     * @return AbstractSearchProvider
+     * @return GlobalSearch
      */
     public function term($term)
     {
@@ -284,7 +284,7 @@ class GlobalSearch extends AbstractProvider
     /**
      * Set modules to search for
      * @param array $modules
-     * @return AbstractSearchProvider
+     * @return GlobalSearch
      */
     public function from(array $modules = array())
     {
@@ -302,7 +302,7 @@ class GlobalSearch extends AbstractProvider
 
     /**
      * Query all available modules
-     * @return AbstractSearchProvider
+     * @return GlobalSearch
      */
     public function fromAll()
     {
@@ -313,7 +313,7 @@ class GlobalSearch extends AbstractProvider
     /**
      * Set limit (query size)
      * @param integer $limit
-     * @return AbstractSearchProvider
+     * @return GlobalSearch
      */
     public function limit($limit)
     {
@@ -324,7 +324,7 @@ class GlobalSearch extends AbstractProvider
     /**
      * Set offset
      * @param integer $offset
-     * @return AbstractSearchProvider
+     * @return GlobalSearch
      */
     public function offset($offset)
     {
@@ -334,7 +334,7 @@ class GlobalSearch extends AbstractProvider
 
     /**
      * Add filter
-     * @return AbstractSearchProvider
+     * @return GlobalSearch
      */
     public function filter()
     {
@@ -345,7 +345,7 @@ class GlobalSearch extends AbstractProvider
     /**
      * Enable field boosts (disabled by default)
      * @param boolean $toggle
-     * @return AbstractSearchProvider
+     * @return GlobalSearch
      */
     public function fieldBoost($toggle)
     {
@@ -356,7 +356,7 @@ class GlobalSearch extends AbstractProvider
     /**
      * Enable/disable highlighter (disabled by default)
      * @param boolean $toggle
-     * @return AbstractSearchProvider
+     * @return GlobalSearch
      */
     public function highlighter($toggle)
     {

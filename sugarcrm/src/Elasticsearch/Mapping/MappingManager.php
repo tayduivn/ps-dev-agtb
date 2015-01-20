@@ -12,7 +12,6 @@
 
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Mapping;
 
-use Sugarcrm\Sugarcrm\Elasticsearch\Provider\ProviderInterface;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\ProviderCollection;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\PropertyInterface;
 
@@ -29,7 +28,7 @@ class MappingManager
 {
     /**
      * List of loaded property objects
-     * @var \Sugarcrm\Sugarcrm\Elasticsearch\Provider\ProviderInterface[]
+     * @var \Sugarcrm\Sugarcrm\Elasticsearch\Provider\AbstractProvider[]
      */
     protected $loadedProperties = array();
 
@@ -60,7 +59,7 @@ class MappingManager
     /**
      * Get mapping for given module
      * @param string $module
-     * @param \Sugarcrm\Sugarcrm\Elasticsearch\Provider\ProviderInterface[] $providers
+     * @param \Sugarcrm\Sugarcrm\Elasticsearch\Provider\AbstractProvider[] $providers
      * @return \Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping
      */
     protected function getMappingForModule($module, array $providers)

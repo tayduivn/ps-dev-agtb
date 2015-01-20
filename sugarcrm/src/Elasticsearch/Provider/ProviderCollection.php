@@ -22,7 +22,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Container;
 class ProviderCollection implements \IteratorAggregate
 {
     /**
-     * @var ProviderInterface[]
+     * @var AbstractProvider[]
      */
     private $providers = array();
 
@@ -32,7 +32,7 @@ class ProviderCollection implements \IteratorAggregate
     public function __construct(Container $container, array $providers = array())
     {
         foreach ($providers as $provider) {
-            if (!$provider instanceof ProviderInterface) {
+            if (!$provider instanceof AbstractProvider) {
                 $provider = $container->getProvider($provider);
             }
             $this->addProvider($provider);
@@ -49,9 +49,9 @@ class ProviderCollection implements \IteratorAggregate
 
     /**
      * Add provider
-     * @param ProviderInterface $provider
+     * @param AbstractProvider $provider
      */
-    public function addProvider(ProviderInterface $provider)
+    public function addProvider(AbstractProvider $provider)
     {
         $this->providers[] = $provider;
     }
