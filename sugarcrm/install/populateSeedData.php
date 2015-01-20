@@ -744,6 +744,56 @@ foreach($sugar_demodata['kbolddocument_seed_data'] as $v){
 	}
 }
 
+///
+/// SEED DATA FOR KNOWLEDGE BASE
+///
+$categoryIds = array();
+foreach ($sugar_demodata['kbcategories_array'] as $name => $v) {
+    $kbCategory = BeanFactory::newBean('Categories');
+    $kbCategory->name = $name;
+
+    $KBContent = BeanFactory::getBean('KBContents');
+    $rootTopic = BeanFactory::getBean(
+        'Categories',
+        $KBContent->getCategoryRoot(),
+        array('use_cache' => false)
+    );
+    $rootTopic->append($kbCategory);
+    $idCategory = $kbCategory->save();
+    array_push($categoryIds, $idCategory);
+
+    if (count($v) > 0) {
+        foreach ($v as $subname) {
+            $kbSubCategory = BeanFactory::newBean('Categories');
+            $kbSubCategory->name = $subname;
+
+            $KBSubContent = BeanFactory::getBean('KBContents');
+            $rootSubTopic = BeanFactory::getBean(
+                'Categories',
+                $idCategory,
+                array('use_cache' => false)
+            );
+            $rootSubTopic->append($kbSubCategory);
+            $idSubCategory = $kbSubCategory->save();
+            array_push($categoryIds, $idSubCategory);
+        }
+    }
+}
+
+foreach($sugar_demodata['kbdocuments_seed_data'] as $v){
+    $kbdocContent = new KBContent();
+    $kbdocContent->name = $v['name'];
+    $kbdocContent->kbdocument_body = $v['body'];
+    $kbdocContent->tag = $v['tag'];
+    $kbdocContent->status = $sugar_demodata['kbdocuments_statuses'][array_rand($sugar_demodata['kbdocuments_statuses'])];
+    $kbdocContent->active_date = isset($v['active_date']) ? $v['active_date'] : null;
+    $kbdocContent->exp_date = isset($v['exp_date']) ? $v['exp_date'] : null;
+    $kbdocContent->useful = isset($v['useful']) ? $v['useful'] : 0;
+    $kbdocContent->notuseful = isset($v['notuseful']) ? $v['notuseful'] : 0;
+    $kbdocContent->category_id = $categoryIds[array_rand($categoryIds)];
+    $kbdocContent->save();
+}
+
 //END SUGARCRM flav=pro ONLY
 
 ///
