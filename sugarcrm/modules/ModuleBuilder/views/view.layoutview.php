@@ -329,6 +329,7 @@ class ViewLayoutView extends SugarView
                 'disabled' => $disableLayout,
             );
         } elseif (!empty($GLOBALS['sugar_config']['roleBasedViews'])
+            && !isModuleBWC($this->editModule)
             && ($this->editLayout == MB_RECORDVIEW
                 || $this->editLayout == MB_WIRELESSEDITVIEW
                 || $this->editLayout == MB_WIRELESSDETAILVIEW)
