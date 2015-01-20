@@ -14,7 +14,6 @@ namespace Sugarcrm\Sugarcrm\Elasticsearch\Indexer;
 
 use Sugarcrm\Sugarcrm\Elasticsearch\Container;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\ProviderCollection;
-use Sugarcrm\Sugarcrm\Elasticsearch\Provider\ProviderInterface;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Document;
 
 /**
@@ -42,6 +41,11 @@ class Indexer
     protected $async = false;
 
     /**
+     * @var boolean Disable indexer
+     */
+    protected $disabled = false;
+
+    /**
      * Ctor
      * @param array $config
      */
@@ -65,6 +69,11 @@ class Indexer
      */
     public function indexBean(\SugarBean $bean, $batch = true)
     {
+        // Skip indexing if we are disabled
+        if ($this->disabled) {
+            return false;
+        }
+
         // Send to database queue when Elastic is unavailable
         if (!$this->container->client->isAvailable() || $this->async) {
             $this->container->queueManager->queueBean($bean);
@@ -89,6 +98,11 @@ class Indexer
      */
     public function indexDocument(Document $document, $batch = true)
     {
+        // Skip indexing if we are disabled
+        if ($this->disabled) {
+            return false;
+        }
+
         // Safeguard avoid sending documents without data
         if (!$document->hasData()) {
             return;
@@ -111,6 +125,24 @@ class Indexer
     }
 
     /**
+     * Enable/disable asynchronous indexing
+     * @param boolean $toggle
+     */
+    public function setForceAsyncIndex($toggle)
+    {
+        $this->async = $toggle;
+    }
+
+    /**
+     * Enable/disable indexing
+     * @param boolean $toggle
+     */
+    public function setDisable($toggle)
+    {
+        $this->disabled = $toggle;
+    }
+
+    /**
      * Lazy load local bulk handler
      * @return \Sugarcrm\Sugarcrm\Elasticsearch\Indexer\BulkHandler
      */
@@ -122,6 +154,10 @@ class Indexer
         return $this->bulkHandler;
     }
 
+    /**
+     * Create new bulk handler object
+     * @return \Sugarcrm\Sugarcrm\Elasticsearch\Indexer\BulkHandler
+     */
     protected function newBulkHandler()
     {
         return new BulkHandler($this->container);
