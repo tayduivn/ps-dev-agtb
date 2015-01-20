@@ -119,7 +119,6 @@ include("metadata/forecast_treeMetaData.php");
 //END SUGARCRM flav=pro ONLY
 include("metadata/oauth_nonce.php");
 include("metadata/activities_usersMetaData.php");
-include("metadata/tag_bean_relMetaData.php");
 include("metadata/metadata_cacheMetaData.php");
 
 $defs = SugarAutoLoader::loadExtension('tabledictionary');

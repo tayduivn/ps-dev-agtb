@@ -14,9 +14,14 @@ require_once('modules/Reports/config.php');
 
 class ReportsViewBuildreportmoduletree extends SugarView
 {
+    /**
+     * Listing of modules that should not be reported on. This is a simple key
+     * value pair like 'module_name' => true.
+     *
+     * @var array
+     */
     protected $nonReportableModules = array(
         'Currencies' => true,
-        'Tags' => true,
     );
 
     protected function isRelationshipReportable($rel)

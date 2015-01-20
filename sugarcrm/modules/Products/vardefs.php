@@ -1138,9 +1138,6 @@ $dictionary['Product'] = array(
             )
         )
     ),
-    'uses' => array(
-        'taggable',
-    ),
 );
 
 VardefManager::createVardef(

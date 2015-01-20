@@ -22,7 +22,6 @@ $viewdefs[$module_name]['base']['filter']['default'] = array(
         'lead_source' => array(),
         'sales_stage' => array(),
         'assigned_user_name' => array(),
-        'tag' => array(),
         '$owner' => array(
             'predefined_filter' => true,
             'vname' => 'LBL_CURRENT_USER_FILTER',

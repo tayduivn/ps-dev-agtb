@@ -7790,30 +7790,4 @@ class SugarBean
 
         return $fields;
     }
-
-    /**
-     * Checks to see if a bean implements taggable
-     *
-     * @return boolean True if tags are enabled for this bean
-     */
-    public function isTaggable()
-    {
-        return $this->getTagField() !== null;
-    }
-
-    /**
-     * Gets the field_defs key for the tag field of a bean
-     *
-     * @return string
-     */
-    public function getTagField()
-    {
-        foreach ($this->field_defs as $name => $def) {
-            if (isset($def['type']) && $def['type'] === 'tag') {
-                return $name;
-            }
-        }
-
-        return null;
-    }
 }
