@@ -13,13 +13,14 @@
 namespace Sugarcrm\Sugarcrm\SearchEngine\Engine;
 
 use Sugarcrm\Sugarcrm\Elasticsearch\Container;
+use Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch;
 
 /**
  *
  * Elasticsearch engine
  *
  */
-class Elastic implements EngineInterface
+class Elastic implements EngineInterface, GlobalSearch
 {
     /**
      * @var \Sugarcrm\Sugarcrm\Elasticsearch\Container
@@ -34,9 +35,10 @@ class Elastic implements EngineInterface
         $this->container = $container ?: Container::create();
     }
 
+    //// BASE INTERFACE ////
+
     /**
      * {@inheritDoc}
-     * @see \Sugarcrm\Sugarcrm\SearchEngine\Engine\EngineInterface::setEngineConfig()
      */
     public function setEngineConfig(array $config)
     {
@@ -45,13 +47,31 @@ class Elastic implements EngineInterface
 
     /**
      * {@inheritDoc}
-     * @see \Sugarcrm\Sugarcrm\SearchEngine\Engine\EngineInterface::setGlobalConfig()
+     */
+    public function getEngineConfig()
+    {
+        return $this->container->getConfig('engine');
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public function setGlobalConfig(array $config)
     {
         $this->container->setConfig('global', $config);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public function getGlobalConfig()
+    {
+        return $this->container->getConfig('global');
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function isAvailable($force = false)
     {
         return $this->container->client->isAvailable($force);
@@ -59,12 +79,104 @@ class Elastic implements EngineInterface
 
     /**
      * {@inheritDoc}
-     * @see SearchEngineInterface::scheduleIndexing()
      */
     public function scheduleIndexing(array $modules = array(), $clearData = false)
     {
         return $this->container->indexManager->scheduleIndexing($modules, $clearData);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function indexBean(\SugarBean $bean, array $options = array())
+    {
+        $this->container->indexer->indexBean($bean);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function runFullReindex($clearData = false)
+    {
+        $this->scheduleIndexing(array(), $clearData);
+        $this->container->queueManager->consumeQueue();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setForceAsyncIndex($toggle)
+    {
+        $this->container->indexer->setForceAsyncIndex($toggle);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setDisableIndexing($toggle)
+    {
+        $this->container->indexer->setDisable($toggle);
+    }
+
+    //// GLOBALSEARCH CAPABILITY /////
+
+    /**
+     * {@inheritDoc}
+     */
+    public function search()
+    {
+        return $this->gsProvider()->search();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function term($term)
+    {
+        return $this->gsProvider()->term($term);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function from(array $modules = array())
+    {
+        return $this->gsProvider()->from($modules);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function limit($limit)
+    {
+        return $this->gsProvider()->limit($limit);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function offset($offset)
+    {
+        return $this->gsProvider()->offset($offset);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function highlighter($toggle)
+    {
+        return $this->gsProvider()->highlighter($toggle);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function fieldBoost($toggle)
+    {
+        return $this->gsProvider()->fieldBoost($toggle);
+    }
+
+    //// ELASTIC ENGINE SPECIFIC ////
 
     /**
      * Get Elastic service container
@@ -76,10 +188,10 @@ class Elastic implements EngineInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @return \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\GlobalSearch
      */
-    public function indexBean(\SugarBean $bean, array $options = array())
+    protected function gsProvider()
     {
-        $this->container->indexer->indexBean($bean);
+        return $this->container->getProvider('GlobalSearch');
     }
 }

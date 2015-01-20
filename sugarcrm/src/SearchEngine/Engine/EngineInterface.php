@@ -27,11 +27,23 @@ interface EngineInterface
     public function setEngineConfig(array $config);
 
     /**
+     * Get engine configuration
+     * @return array
+     */
+    public function getEngineConfig();
+
+    /**
      * Set global search engine configuration parameters which
      * are defined in `$sugar_config['search_engine']`
      * @param array $config
      */
     public function setGlobalConfig(array $config);
+
+    /**
+     * Get global search engine configuration
+     * @return array
+     */
+    public function getGlobalConfig();
 
     /**
      * Verify if search engine connection is available
@@ -54,4 +66,22 @@ interface EngineInterface
      * @param array $options Optional options
      */
     public function indexBean(\SugarBean $bean, array $options = array());
+
+    /**
+     * Run full reindexing inline
+     * @param string $clearData
+     */
+    public function runFullReindex($clearData = false);
+
+    /**
+     * Enable/disable asynchronous indexing
+     * @param boolean $toggle
+     */
+    public function setForceAsyncIndex($toggle);
+
+    /**
+     * Enable/disable indexing
+     * @param boolean $toggle
+     */
+    public function setDisableIndexing($toggle);
 }
