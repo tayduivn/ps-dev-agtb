@@ -39,6 +39,8 @@ class HealthCheckScannerMeta
     const MANUAL = 'F';
     // already on 7
     const UPGRADED = 'G';
+    //unsupported database
+    const UNSUPPORTED_DB = 'H';
 
     /**
      *
@@ -412,6 +414,11 @@ class HealthCheckScannerMeta
             'bucket' => self::UPGRADED,
         ),
 
+        902 => array(
+            'report' => 'unsupportedDatabase',
+            'bucket' => self::UNSUPPORTED_DB,
+        ),
+
         // Catch all meta
         999 => array(
             'report' => 'unknownFailure',
@@ -440,6 +447,7 @@ class HealthCheckScannerMeta
         self::CUSTOM => self::FLAG_YELLOW,
         self::MANUAL => self::FLAG_RED,
         self::UPGRADED => self::FLAG_GREEN,
+        self::UNSUPPORTED_DB => self::FLAG_RED,
     );
 
     /**
