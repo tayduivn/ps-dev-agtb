@@ -65,18 +65,13 @@ class ConsumerJob implements \RunnableSchedulerJob
             return $this->job->failJob("Missing module parameter");
         }
 
-        // Verify that the module is FTS enabled
-        if (!$this->isModuleEnabled($module)) {
-            return $this->job->failJob("Module '{$module}' is not FTS enabled");
-        }
-
         // Force connectivity check
         if (!$this->engine->isAvailable(true)) {
-            $msg = 'Searchengine not available, postponing execution';
+            $msg = 'SearchEngine not available, postponing execution';
             return $this->job->postponeJob($msg);
         }
 
-        list($success, $processed, $duration, $errorMsg) = $this->consumeQueue($module);
+        list($success, $processed, $duration, $errorMsg) = $this->consumeModuleFromQueue($module);
 
         $msg = sprintf("Processed %s records in %s second(s)", $processed, $duration);
         if ($success) {
@@ -97,22 +92,12 @@ class ConsumerJob implements \RunnableSchedulerJob
     }
 
     /**
-     * Wrapper to check if given module is enabled
-     * @param string $module
-     * @return boolean
-     */
-    protected function isModuleEnabled($module)
-    {
-        return $this->engine->getContainer()->metaDataHelper->isModuleEnabled($module);
-    }
-
-    /**
      * Consume queue for givem nodule
      * @param string $module
      * @return array
      */
-    protected function consumeQueue($module)
+    protected function consumeModuleFromQueue($module)
     {
-        return $this->engine->getContainer()->queueManager->consumeQueue($module);
+        return $this->engine->getContainer()->queueManager->consumeModuleFromQueue($module);
     }
 }

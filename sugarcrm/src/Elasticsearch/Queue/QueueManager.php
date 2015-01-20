@@ -321,11 +321,16 @@ class QueueManager
     }
 
     /**
-     * Consume records from database queue
+     * Consume records from database queue for given module
      * @param string $module
      */
-    public function consumeQueue($module)
+    public function consumeModuleFromQueue($module)
     {
+        // make sure the module is fts enabled
+        if (!$this->container->metaDataHelper->isModuleEnabled($module)) {
+            return array(false, 0, 0, "Module $module not enabled");
+        }
+
         $start = time();
         $errorMsg = '';
         $success = true;
@@ -365,7 +370,13 @@ class QueueManager
         );
         $result = $this->db->query($sql);
         while ($row = $this->db->fetchByAssoc($result)) {
-            $modules[] = $row['bean_module'];
+            $module = $row['bean_module'];
+            if ($this->container->metaDataHelper->isModuleEnabled($module)) {
+                $modules[] = $module;
+            } else {
+                // remove module from queue as there is no use to have them
+                $this->resetQueue(array($module));
+            }
         }
         return $modules;
     }
@@ -519,5 +530,15 @@ class QueueManager
          * - inactivate scheduler
          */
         return true;
+    }
+
+    /**
+     * Consume all records from database queue
+     */
+    public function consumeQueue()
+    {
+        foreach ($this->getQueuedModules() as $module) {
+            $this->consumeModuleFromQueue($module);
+        }
     }
 }

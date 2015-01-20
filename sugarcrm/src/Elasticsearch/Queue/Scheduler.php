@@ -61,7 +61,7 @@ class Scheduler implements \RunnableSchedulerJob
         }
 
         // Force connectivity check
-        if (!$this->isElasticAvailable()) {
+        if (!$this->isAvailable()) {
             $msg = 'Elasticsearch not available, postponing consumer job creation';
             return $this->job->failJob($msg);
         }
@@ -69,10 +69,8 @@ class Scheduler implements \RunnableSchedulerJob
         // Create consumer jobs
         $list = array();
         foreach ($this->getQueuedModules() as $module) {
-            if ($this->validateModule($module)) {
-                $this->engine->getContainer()->queueManager->createConsumer($module);
-                $list[] = $module;
-            }
+            $this->engine->getContainer()->queueManager->createConsumer($module);
+            $list[] = $module;
         }
 
         if (!empty($list)) {
@@ -97,7 +95,7 @@ class Scheduler implements \RunnableSchedulerJob
      * Wrapper to verify Elastichsearch availability
      * @return boolean
      */
-    protected function isElasticAvailable()
+    protected function isAvailable()
     {
         return $this->engine->isAvailable(true);
     }
@@ -109,22 +107,5 @@ class Scheduler implements \RunnableSchedulerJob
     protected function getQueuedModules()
     {
         return $this->engine->getContainer()->queueManager->getQueuedModules();
-    }
-
-    /**
-     * Validate if given module is FTS enabled. If not do some housekeeping and
-     * cleanup what is not supposed to be in the queue.
-     *
-     * @return boolean
-     */
-    protected function validateModule($module)
-    {
-        if ($this->engine->getContainer()->metaDataHelper->isModuleEnabled($module)) {
-            return true;
-        }
-
-        // remove records from queue when not enabled
-        $this->engine->getContainer()->queueManager->resetQueue(array($module));
-        return false;
     }
 }
