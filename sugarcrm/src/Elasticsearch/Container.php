@@ -20,6 +20,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\MappingManager;
 use Sugarcrm\Sugarcrm\Elasticsearch\Indexer\Indexer;
 use Sugarcrm\Sugarcrm\Elasticsearch\Exception\ProviderException;
 use Sugarcrm\Sugarcrm\Elasticsearch\Queue\QueueManager;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\AbstractProvider;
 
 /**
  *
@@ -80,7 +81,7 @@ class Container
     private $indexer;
 
     /**
-     * Registered providers (name/class mapping)
+     * Registered providers
      * @var array
      */
     private $providers = array();
@@ -287,12 +288,17 @@ class Container
             throw new ProviderException("Unknown Elastic provider '{$name}'");
         }
 
+        if ($this->providers[$name] instanceof AbstractProvider) {
+            return $this->providers[$name];
+        }
+
         $providerClassName = \SugarAutoLoader::customClass(
             sprintf('\\Sugarcrm\\Sugarcrm\\Elasticsearch\\Provider\\%s\\%s', $name, $name)
         );
 
         if (class_exists($providerClassName)) {
-            return new $providerClassName($this);
+            $this->providers[$name] = new $providerClassName($this);
+            return $this->providers[$name];
         }
 
         throw new ProviderException("Invalid provider class '{$providerClassName}' for '{$name}'");
