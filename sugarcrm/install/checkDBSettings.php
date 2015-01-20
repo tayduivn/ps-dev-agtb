@@ -11,22 +11,16 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-// $Id: checkSystem.php 19538 2007-01-23 01:16:25 +0000 (Tue, 23 Jan 2007) chris $
+use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
 
 function checkFTSSettings()
 {
     installLog("Begining to check FTS Settings.");
-    require_once 'include/SugarSearchEngine/SugarSearchEngineFactory.php';
-
-    $searchEngine = SugarSearchEngineFactory::getInstance(
-        $_SESSION['setup_fts_type'],
-        getFtsSettings()
-    );
-
-    $status = $searchEngine->getServerStatus();
-    installLog("FTS connection results: " . var_export($status, TRUE));
-
-    return $status['valid'];
+    $engine = SearchEngine::newEngine($_SESSION['setup_fts_type'], getFtsSettings());
+    $status = $engine->verifyConnectivity(false);
+    installLog("FTS connection results: $status");
+    $success = $status > 0 ? true : false;
+    return $success;
 }
 
 function checkDBSettings($silent=false) {
