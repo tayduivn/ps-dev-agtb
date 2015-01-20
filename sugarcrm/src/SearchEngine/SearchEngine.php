@@ -56,7 +56,7 @@ class SearchEngine
             }
 
             $type = array_pop(array_keys($config));
-            self::$instance = $instance = new self(self::newEngine($type), $config[$type]);
+            self::$instance = $instance = new self(self::newEngine($type, $config[$type]));
             $instance->setGlobalConfig($sugarConfig->get('search_engine', array()));
         }
 
