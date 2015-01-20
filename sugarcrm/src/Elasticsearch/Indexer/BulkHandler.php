@@ -43,7 +43,7 @@ class BulkHandler
      * `$sugar_config['search_engine']['max_bulk_threshold']`.
      * @var integer
      */
-    protected $maxBulkThreshold = 10;
+    protected $maxBulkThreshold = 100;
 
     /**
      * When enabled all documents are send with an explicit index parameter
@@ -127,7 +127,7 @@ class BulkHandler
         }
 
         // When reaching the maximum, send out the request
-        if (count($this->documents[$index]) > $this->maxBulkThreshold) {
+        if (count($this->documents[$index]) >= $this->maxBulkThreshold) {
             $this->sendBulk($index, $this->documents[$index]);
             $this->documents[$index] = array();
         }
@@ -144,6 +144,15 @@ class BulkHandler
                 $this->sendBulk($index, $documents);
             }
         }
+    }
+
+    /**
+     * Set maxBulkThreshold
+     * @param integer $threshold
+     */
+    public function setMaxBulkThreshold($threshold)
+    {
+        $this->maxBulkThreshold = $threshold;
     }
 
     /**

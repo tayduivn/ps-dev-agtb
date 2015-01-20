@@ -36,7 +36,9 @@ class Indexer
     protected $bulkHandler;
 
     /**
-     * @var boolean Asynchronous index mode
+     * Asynchronous index mode, can be configured using
+     * `$sugar_config['search_engine']['force_async_index']`.
+     * @var boolean
      */
     protected $async = false;
 
@@ -46,13 +48,24 @@ class Indexer
     protected $disabled = false;
 
     /**
+     * Maximum documents being sent in one bulk request as defined in
+     * `$sugar_config['search_engine']['max_bulk_threshold']`.
+     * @var integer
+     */
+    protected $maxBulkThreshold = 100;
+
+    /**
      * Ctor
      * @param array $config
+     * @param Container $container
      */
     public function __construct(array $config, Container $container)
     {
         if (!empty($config['force_async_index'])) {
-            $this->async = $config['force_async_index'];
+            $this->async = (bool) $config['force_async_index'];
+        }
+        if (!empty($config['max_bulk_threshold'])) {
+            $this->maxBulkThreshold = (int) $config['max_bulk_threshold'];
         }
 
         $this->container = $container;
@@ -160,7 +173,9 @@ class Indexer
      */
     protected function newBulkHandler()
     {
-        return new BulkHandler($this->container);
+        $bulk = new BulkHandler($this->container);
+        $bulk->setMaxBulkThreshold($this->maxBulkThreshold);
+        return $bulk;
     }
 
     /**
