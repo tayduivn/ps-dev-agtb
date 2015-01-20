@@ -98,7 +98,7 @@
              * @override
              * @param options
              */
-            this.model.addValidationTask('password_confirmation', _.bind(this.model._doValidatePasswordConfirmation, this.model));
+            this.model.addValidationTask('password_confirmation_' + this.cid, _.bind(this.model._doValidatePasswordConfirmation, this.model));
 
             /**
              * Unsets new password and confirmation values on revertAttributes
@@ -214,5 +214,14 @@
     togglePasswordFields: function(event) {
         this.showPasswordFields = true;
         this.render();
+    },
+
+    /**
+     * Remove validation on the model.
+     * @inheritdoc
+     */
+    _dispose: function() {
+        this.model.removeValidationTask('password_confirmation_' + this.cid);
+        this._super('_dispose');
     }
 })

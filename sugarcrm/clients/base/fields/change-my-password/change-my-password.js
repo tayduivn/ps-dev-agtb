@@ -113,7 +113,7 @@
                     }
                 });
             };
-            this.model.addValidationTask('current_password', _.bind(this.model._doValidateCurrentPassword, this.model));
+            this.model.addValidationTask('current_password_' + this.cid, _.bind(this.model._doValidateCurrentPassword, this.model));
 
             this.model.revertAttributes = function(options) {
                 // Find any change password field
@@ -182,5 +182,14 @@
         this.$el.removeClass("error");
         this.$el.closest('.record-cell').removeClass("error");
     },
+
+    /**
+     * Remove validation on the model.
+     * @inheritdoc
+     */
+    _dispose: function() {
+        this.model.removeValidationTask('current_password_' + this.cid);
+        this._super('_dispose');
+    }
 
 })
