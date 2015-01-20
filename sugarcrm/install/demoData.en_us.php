@@ -21656,13 +21656,38 @@ $sugar_demodata['kbdocuments_statuses'] = array(
     'published',
     'published-in',
     'published-ex',
-    'expired'
+);
+
+$sugar_demodata['kbdocuments_languages'] = array(
+    array(
+        'en' => 'English',
+        'primary' => true
+    ),
+    array(
+        'de' => 'Deutsch',
+        'primary' => false
+    ),
 );
 
 $sugar_demodata['kbdocuments_seed_data'][] = array(
     'name' => 'Connecting to the Internet',
     'body' => '<p>To connect your device to the Internet, use any application that accesses the Internet. You can connect using either Wi-Fi or Bluetooth.</p>',
     'tag' => '^WiFi^,^Bluetooth^,^Networking^',
+    'localizations' => array(
+        array(
+            'language' => 'de',
+            'name' => 'Verbinden mit dem Internet',
+            'body' => '<p>Um das Gerät mit dem Internet verbinden, verwenden Sie alle Anwendungen, die auf das Internet zugreift. Sie können eine Verbindung sowohl mit der Wi-Fi oder Bluetooth.</p>'
+        )
+    ),
+    'revisions' => array(
+        array(
+            'name' => 'Connecting to the Internet - revision 2'
+        ),
+        array(
+            'name' => 'Connecting to the Internet - revision 3'
+        )
+    )
 );
 $sugar_demodata['kbdocuments_seed_data'][] = array(
     'name' => 'Charging the battery',

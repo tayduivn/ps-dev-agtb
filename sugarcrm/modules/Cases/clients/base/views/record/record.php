@@ -70,10 +70,11 @@ $viewdefs['Cases']['base']['view']['record'] = array(
                 ),
                 //BEGIN SUGARCRM flav=pro ONLY
                 array(
-                    'type' => 'create-article-action',
-                    'name' => 'create_kbolddocument_button',
+                    'name' => 'create_kbdocument_button',
+                    'type' => 'rowaction',
+                    'event' => 'button:create_article_button:click',
                     'label' => 'LBL_CREATE_KB_DOCUMENT',
-                    'acl_module' => 'KBOLDDocuments',
+                    'acl_module' => 'KBContents',
                     'acl_action' => 'create',
                 ),
                 array(

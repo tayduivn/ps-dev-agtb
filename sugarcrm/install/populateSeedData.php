@@ -780,8 +780,15 @@ foreach ($sugar_demodata['kbcategories_array'] as $name => $v) {
     }
 }
 
+$system_config = new Administration();
+$system_config->saveSetting('KBContents', 'languages', json_encode($sugar_demodata['kbdocuments_languages']), 'base');
+
 foreach($sugar_demodata['kbdocuments_seed_data'] as $v){
     $kbdocContent = new KBContent();
+    $kbdocContent->team_id = 1;
+    $kbdocContent->team_set_id = 1;
+    $kbdocContent->assigned_user_id = 'seed_will_id';
+    $kbdocContent->assigned_user_name = "seed_will";
     $kbdocContent->name = $v['name'];
     $kbdocContent->kbdocument_body = $v['body'];
     $kbdocContent->tag = $v['tag'];
@@ -791,7 +798,28 @@ foreach($sugar_demodata['kbdocuments_seed_data'] as $v){
     $kbdocContent->useful = isset($v['useful']) ? $v['useful'] : 0;
     $kbdocContent->notuseful = isset($v['notuseful']) ? $v['notuseful'] : 0;
     $kbdocContent->category_id = $categoryIds[array_rand($categoryIds)];
-    $kbdocContent->save();
+    $idDocument = $kbdocContent->save();
+    if (isset($v['localizations'])) {
+        foreach($v['localizations'] as $localization) {
+            $KBLocalization = BeanFactory::retrieveBean('KBContents', $idDocument);
+            unset($KBLocalization->id);
+            unset($KBLocalization->kbarticle_id);
+            $KBLocalization->language = $localization['language'];
+            $KBLocalization->name = $localization['name'];
+            $KBLocalization->kbdocument_name = $localization['name'];
+            $KBLocalization->kbdocument_body = $localization['body'];
+            $KBLocalization->save();
+        }
+    }
+    if (isset($v['revisions'])) {
+        foreach($v['revisions'] as $revision) {
+            $KBRevision = BeanFactory::retrieveBean('KBContents', $idDocument);
+            unset($KBRevision->id);
+            unset($KBRevision->revision);
+            $KBRevision->name = $revision['name'];
+            $KBRevision->save();
+        }
+    }
 }
 
 //END SUGARCRM flav=pro ONLY
