@@ -24,24 +24,75 @@
      */
     initialize: function(options) {
         this._super('initialize', [options]);
-        this.library = [];
-        this.addModuleLinks();
+        app.events.on('app:sync:complete', this.initLibrary, this);
+        this.lastTerm = '';
     },
 
-    addModuleLinks: function() {
-        var moduleList = app.metadata.getModuleNames({filter:'display_tab'});
-        this.library.concat(_.map(moduleList, function(module) {
+    initLibrary: function() {
+        this.library = [];
+        this.addToInternalLibrary(this.getModuleLinks());
+        this.addToInternalLibrary(this.getModuleCreateLinks());
+        this.addToInternalLibrary([
+            {
+                module: 'Accounts',
+                label: 'Ac',
+                name: 'Chandler Logistics Inc',
+                route: '#Accounts/f1c7a996-e0d1-d59b-258e-54bec38d95da'
+            },
+            {
+                module: 'Contacts',
+                label: 'Co',
+                name: 'Octavia Stella',
+                route: '#Contacts/f0bbaf0b-a38f-a037-caf6-54bec3fe5ce5'
+            }
+        ]);
+        var options = {
+            keys: ['module', 'name'],
+            threshold: '0.1'
+        };
+        this.fuse = new Fuse(this.library, options);
+    },
+
+    addToInternalLibrary: function(items) {
+        this.library = this.library.concat(items);
+    },
+
+    getModuleLinks: function() {
+        var moduleList = app.metadata.getModuleNames({filter: 'display_tab'});
+        return _.map(moduleList, function(module) {
             return {
                 module: module,
                 label: module.substr(0, 2),
-                name: app.lang.get('LBL_MODULE_NAME', module)
+                name: app.lang.getModuleName(module, {plural: true}),
+                route: '#' + module
             }
-        }));
+        });
+    },
+
+    getModuleCreateLinks: function() {
+        var moduleList = app.metadata.getModuleNames({filter: 'display_tab', access: 'create'});
+        return _.map(moduleList, function(module) {
+            return {
+                module: module,
+                label: module.substr(0, 2),
+                name: app.lang.get('LNK_CREATE', module),
+                route: '#' + module + '/create'
+            }
+        });
     },
 
     applyQuickSearch: function() {
         var term = this.$('input').val();
-        console.log('should search ' + term);
+        if (term === this.lastTerm) {
+            return;
+        }
+        var results = [];
+        if (!_.isEmpty(term)) {
+            results = this.fuse.search(term);
+            results = results.slice(0, 6);
+        }
+        this.layout.trigger('spotlight:results', results);
+        this.lastTerm = term;
     },
 
     throttledSearch: _.debounce(function(event) {
