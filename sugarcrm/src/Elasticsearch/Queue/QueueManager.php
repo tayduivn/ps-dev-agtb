@@ -100,6 +100,11 @@ class QueueManager
     {
         // Safeguard to remove ids from queue
         if (!empty($this->deleteFromQueue)) {
+            // As this is a desctructor call, we need to make sure our logger
+            // object is available for the db backend
+            if (empty($GLOBALS['log'])) {
+                $GLOBALS['log'] = \LoggerManager::getLogger();
+            }
             $this->flushDeleteFromQueue();
         }
     }
@@ -495,7 +500,7 @@ class QueueManager
     protected function batchDeleteFromQueue($id, $module = null)
     {
         $this->deleteFromQueue[] = $id;
-        if (count($this->deleteFromQueue) > $this->maxBulkDeleteThreshold) {
+        if (count($this->deleteFromQueue) >= $this->maxBulkDeleteThreshold) {
             $this->flushDeleteFromQueue($module);
         }
     }
@@ -515,6 +520,7 @@ class QueueManager
             $idClause
         );
         $this->db->query($sql);
+        $this->deleteFromQueue = array();
     }
 
     /**
