@@ -139,7 +139,8 @@ class ModuleBuilderController extends SugarController
             if ($current_user->isAdmin() || ($current_user->isDeveloperForAnyModule() && !isset($_REQUEST['view_module']) && (isset($_REQUEST['action']) && $_REQUEST['action'] != 'package')) ||
                 (isset($_REQUEST['view_module']) && (in_array($_REQUEST['view_module'], $access) || empty($_REQUEST['view_module']))) ||
                 (isset($_REQUEST['type']) && (($_REQUEST['type'] == 'dropdowns' && $current_user->isDeveloperForAnyModule()) ||
-                    ($_REQUEST['type'] == 'studio' && displayStudioForCurrentUser() == true)))
+                    ($_REQUEST['type'] == 'studio' && displayStudioForCurrentUser() == true))) ||
+                (isset($_REQUEST['entryPoint']) && $_REQUEST['entryPoint'] == 'jslang' && $current_user->isDeveloperForAnyModule())
             ) {
                 $this->hasAccess = true;
             } else {
