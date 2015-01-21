@@ -22,7 +22,6 @@ class PMSEPreProcessorTest extends PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $GLOBALS['db'] = DBManagerFactory::getInstance();
         $this->loggerMock = $this->getMockBuilder("PSMELogger")
                 ->disableOriginalConstructor()
                 ->setMethods(array('info', 'debug'))

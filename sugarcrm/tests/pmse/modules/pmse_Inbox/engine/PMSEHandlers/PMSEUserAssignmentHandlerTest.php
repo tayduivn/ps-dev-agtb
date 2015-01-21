@@ -10,26 +10,23 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-class PMSEUserAssignmentHandlerTest extends PHPUnit_Framework_TestCase 
+class PMSEUserAssignmentHandlerTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    /**
-     * Sets up the test data, for example, 
-     *     opens a network connection.
-     * This method is called before a test is executed.
-     */
-    protected function setUp()
+    protected $originals = array();
+
+    public function setUp()
     {
-        
+        parent::setUp();
+        $this->originals['current_user'] = $GLOBALS['current_user'];
+        $this->originals['db'] = $GLOBALS['db'];
     }
 
-    /**
-     * Removes the initial test configurations for each test, for example:
-     *     close a network connection. 
-     * This method is called after a test is executed.
-     */
-    protected function tearDown()
+    public function tearDown()
     {
-        
+        foreach ($this->originals as $varname => $value) {
+            $GLOBALS[$varname] = $value;
+        }
+        parent::tearDown();
     }
     
     public function testTaskAssignmentUndefinedMethod()
