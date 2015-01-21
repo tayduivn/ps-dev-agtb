@@ -783,11 +783,11 @@ $modInvisList[] = 'KBArticles';
 
 $beanList['KBContentTemplates'] = 'KBContentTemplate';
 $beanFiles['KBContentTemplate'] = 'modules/KBContentTemplates/KBContentTemplate.php';
-$moduleList[] = 'KBContentTemplates';
+$modInvisList[] = 'KBContentTemplates';
 
 $beanList['EmbeddedFiles'] = 'EmbeddedFile';
 $beanFiles['EmbeddedFile'] = 'modules/EmbeddedFiles/EmbeddedFile.php';
-$moduleList[] = 'EmbeddedFiles';
+$modInvisList[] = 'EmbeddedFiles';
 
 // Health Check module
 $beanList['HealthCheck'] = 'HealthCheck';
