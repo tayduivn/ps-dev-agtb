@@ -731,7 +731,7 @@ class PMSEImageGenerator
                     $spriteCoords = $xSpriteMap[$css];
                     $mk = explode('_', $figure[7]);
                     //CURRENT CASE
-                    if ($element_running->running) {
+                    if (isset($element_running->running) && $element_running->running) {
                         //                        imageline($img, $X2 + 5 , $figure[2] - $y1, $X2 + 5, $figure[2] - $y1 + $figure[4], $red);
                         //                        imageline($img, $X2 , $figure[2] - $y1 - 5, $X2 + 5, $figure[2] - $y1, $red);
                         //                        imageline($img, $X2 + 5 ,  $figure[2] - $y1 + $figure[4], $X2,  $figure[2] - $y1 + $figure[4] + 5, $red);
@@ -763,7 +763,7 @@ class PMSEImageGenerator
                         }
                     }
 
-                    if ($element_running->terminated) {
+                    if (isset($element_running->terminated) && $element_running->terminated) {
                         imagecopymerge($img, $shape_image, $X2, $figure[2] - $y1, $xSpriteMap['icon_terminated'][0],
                             $xSpriteMap['icon_terminated'][1], 12, 12, 100);
                     }
@@ -829,7 +829,11 @@ class PMSEImageGenerator
                                     $lines[$key + 1]->y - $y1, $line_color);
                             }
                             if ((int)((sizeof($lines) - 1) / 2) == $key) {
-                                ($element_running->count > 1) ? $cf = ' (' . $element_running->count . ')' : $cf = '';
+                                if (isset($element_running->count) && $element_running->count > 1) {
+                                    $cf = ' (' . $element_running->count . ')';
+                                } else {
+                                    $cf = '';
+                                }
                                 $this->print_text($img, $figure[1] . $cf, 10, 0, $black, $font, $lines[$key]->x - $x1,
                                     $lines[$key]->y, $lines[$key + 1]->x - $x1, $lines[$key + 1]->y - $y1);
                             }
@@ -975,7 +979,7 @@ class PMSEImageGenerator
 
     private function get_element_running($id)
     {
-        $element = $this->running_elements[$id];
+        $element = isset($this->running_elements[$id])? $this->running_elements[$id] : null;
         if (isset($element) && !empty($element)) {
             $element->in_flow = true;
         } else {
