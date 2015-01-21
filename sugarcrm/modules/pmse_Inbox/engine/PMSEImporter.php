@@ -152,7 +152,7 @@ class PMSEImporter
         if (isset($projectData[$this->suffix . 'name']) && !empty($projectData[$this->suffix . 'name'])) {
             $name = $this->getNameWithSuffix($projectData[$this->suffix . 'name']);
         } else {
-            $name = $this->getNameWihtSuffix($projectData[$this->name]);
+            $name = $this->getNameWithSuffix($projectData[$this->name]);
         }
         $projectData[$this->name] = $name;
         foreach ($projectData as $key => $field) {
