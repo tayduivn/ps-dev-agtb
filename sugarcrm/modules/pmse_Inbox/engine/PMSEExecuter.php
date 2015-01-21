@@ -17,7 +17,6 @@ require_once 'PMSESettings.php';
 require_once 'PMSEHandlers/PMSECaseFlowHandler.php';
 require_once 'PMSEFlowRouter.php';
 require_once 'PMSEExceptions/PMSEElementException.php';
-require_once 'PMSEExceptions/PMSEEvaluateException.php';
 
 class PMSEExecuter
 {
@@ -439,8 +438,6 @@ class PMSEExecuter
             // If the status is put into error then the Inbox record should be updated as well
             $this->caseFlowHandler->changeCaseStatus($executionData['flow_data']['cas_id'], 'ERROR');
             $routeData = $this->flowRouter->routeFlow($executionData, $flowData, $createThread);
-        } catch (PMSEFlowRouterException $e) {
-
         } catch (Exception $e) {
             $this->logger->warning($e->getMessage());
             $element = $this->retrievePMSEElement('');
