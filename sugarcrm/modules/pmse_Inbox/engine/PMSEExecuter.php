@@ -439,8 +439,6 @@ class PMSEExecuter
             // If the status is put into error then the Inbox record should be updated as well
             $this->caseFlowHandler->changeCaseStatus($executionData['flow_data']['cas_id'], 'ERROR');
             $routeData = $this->flowRouter->routeFlow($executionData, $flowData, $createThread);
-        } catch (PMSEFlowRouterException $e) {
-
         } catch (Exception $e) {
             $this->logger->warning($e->getMessage());
             $element = $this->retrievePMSEElement('');
