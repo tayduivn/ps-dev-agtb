@@ -17,7 +17,6 @@ require_once 'PMSESettings.php';
 require_once 'PMSEHandlers/PMSECaseFlowHandler.php';
 require_once 'PMSEFlowRouter.php';
 require_once 'PMSEExceptions/PMSEElementException.php';
-require_once 'PMSEExceptions/PMSEEvaluateException.php';
 
 class PMSEExecuter
 {
