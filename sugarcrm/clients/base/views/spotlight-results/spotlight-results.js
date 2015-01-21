@@ -50,6 +50,7 @@
         // enter?
         if (e.keyCode == 13) {
             app.router.navigate(this.$('li.hover').data('route'), {trigger: true});
+            this.layout.toggle();
             return;
         }
         $li.removeClass('hover')
