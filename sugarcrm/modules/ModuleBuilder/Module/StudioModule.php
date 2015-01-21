@@ -27,6 +27,10 @@ class StudioModule
         'KBDocuments', // Knowledge Base
         'ProductTemplates', // Product Catalog
         'Prospects', // Targets
+        'pmse_Business_Rules', // Process Business Rules
+        'pmse_Project', // Process Definitions
+        'pmse_Emails_Templates', // Process Emails Templates
+        'pmse_Inbox', // Processes
     );
 
     /**
