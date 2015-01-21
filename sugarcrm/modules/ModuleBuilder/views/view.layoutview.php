@@ -16,21 +16,12 @@ if (! defined ( 'sugarEntry' ) || ! sugarEntry)
 require_once ('modules/ModuleBuilder/parsers/ParserFactory.php') ;
 require_once ('modules/ModuleBuilder/MB/AjaxCompose.php') ;
 require_once 'modules/ModuleBuilder/parsers/constants.php' ;
+require_once 'modules/ModuleBuilder/MB/MBHelper.php';
 
 class ViewLayoutView extends SugarView
 {
     /** @var GridLayoutMetaDataParser */
     protected $parser;
-
-    /**
-     * Brittle list of roles that should not be used with RBV.
-     * We need a better way of identifing these roles in the future.
-     * @var array
-     */
-    protected $hiddenRoles = array(
-        "Tracker",
-        "Customer Self-Service Portal Role"
-    );
 
     function ViewLayoutView ()
     {
@@ -350,7 +341,7 @@ class ViewLayoutView extends SugarView
                 'id' => 'roleList',
                 'type' => 'enum',
                 'actionScript' => 'style="max-width:150px" onchange="ModuleBuilder.switchLayoutRole(this)"',
-                "options" => $this->getAvailableRoleList($availableRoles),
+                "options" => $this->getAvailableRoleList($implementation),
                 "selected" => empty($params['role']) ? "" :  $params['role'],
             );
 
@@ -406,47 +397,18 @@ class ViewLayoutView extends SugarView
      */
     protected function getRoleList(MetaDataImplementationInterface $implementation)
     {
-        global $current_user;
-
-        $roles = new SplObjectStorage();
-        //Only super user should have access to all roles
-        $allRoles = $current_user->isAdmin() ? ACLRole::getAllRoles() : ACLRole::getUserRoles($current_user->id, false);
-        $hiddenRoles = $this->hiddenRoles;
-        //Remove roles that should not be used on normal users.
-        $allRoles = array_filter($allRoles, function($role) use ($hiddenRoles) {
-            return !in_array($role->name, $hiddenRoles);
-        });
-        foreach ($allRoles as $role) {
-            $hasMetadata = $implementation->fileExists(
-                $this->editLayout,
-                $this->editModule,
-                MB_CUSTOMMETADATALOCATION,
-                array(
-                    'role' => $role->id,
-                )
-            );
-            $roles[$role] = $hasMetadata;
-        }
-
-        return $roles;
+        return MBHelper::getRoles($this->getHasMetaCallback($implementation));
     }
 
     /**
      * Returns list of roles with marker indicating whether role specific metadata exists
      *
-     * @param SplObjectStorage $roles
+     * @param MetaDataImplementationInterface $implementation
      * @return array
      */
-    protected function getAvailableRoleList(SplObjectStorage $roles)
+    protected function getAvailableRoleList(MetaDataImplementationInterface $implementation)
     {
-        $result = array('' => translate('LBL_DEFAULT'));
-        foreach ($roles as $role) {
-            $hasMetadata = $roles->offsetGet($role);
-            $prefix = $hasMetadata ? '* ' : '';
-            $result[$role->id] = $prefix . $role->name;
-        }
-
-        return $result;
+        return MBHelper::getAvailableRoleList($this->getHasMetaCallback($implementation));
     }
 
     /**
@@ -467,5 +429,27 @@ class ViewLayoutView extends SugarView
         }
 
         return $result;
+    }
+
+    /**
+     * @param MetaDataImplementationInterface $implementation
+     *
+     * @return callable
+     */
+    protected function getHasMetaCallback(MetaDataImplementationInterface $implementation) {
+        $editLayout = $this->editLayout;
+        $editModule = $this->editModule;
+
+        return function($params) use ($implementation, $editLayout, $editModule) {
+            //Remove roles that should not be used on normal users.
+            return $implementation->fileExists(
+                $editLayout,
+                $editModule,
+                MB_CUSTOMMETADATALOCATION,
+                array(
+                    'role' => $params['role'],
+                )
+            );
+        };
     }
 }
