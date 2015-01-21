@@ -43,7 +43,6 @@
         var self=this;
 
         var msg=app.lang.get('LBL_PMSE_CANCEL_MESSAGE', this.module);
-        msg=msg.replace('[]',model.get('cas_title'));
         msg=msg.replace('{}',model.get('cas_id'));
 
         app.alert.show('cancelCase-id', {
