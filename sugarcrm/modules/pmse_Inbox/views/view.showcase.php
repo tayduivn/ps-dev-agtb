@@ -211,7 +211,7 @@ class pmse_InboxViewShowCase extends SugarView
             array('LEFT', 'pmse_bpm_flow', 'pmse_inbox.cas_id = pmse_bpm_flow.cas_id')
         );
         $records = $this->wrapper->getSelectRows($caseBean, 'cas_id desc',
-            "pmse_bpm_flow.cas_id = $cas_id and cas_index = $cas_index ", 0, -1, -1, array('*', 'pmse_inbox.id idInbox'), $joinTables);
+            "pmse_bpm_flow.cas_id = $cas_id and cas_index = $cas_index ", 0, -1, -1, array('*'), $joinTables);
         $totalRecords = $records['totalRows'];
         $caseData = $records['rowList'][0];
 
