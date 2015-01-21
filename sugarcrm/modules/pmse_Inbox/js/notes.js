@@ -8,58 +8,36 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-var getNotesData,
-    showNotes,
+var showNotes,
     addNotes,
     deleteNotes,
     addRow,
     deleteRow;
 
-getNotesData = function (caseId, caseIndex, noEdit) {
-    var responseData;
-    $.ajax({
-        url:   "./index.php?module=ProcessMaker&action=showNotes&to_pdf=1&cas_id=" + caseId + '&cas_index=' + caseIndex + '&noEdit=' + noEdit,
-        async: false
-    }).done(function (ajaxResponse) {
-        responseData = ajaxResponse;
-    });
-    return responseData;
-};
-
 showNotes = function (caseId, caseIndex, noEdit) {
-    var f, w, np, notesTextArea, proxy, log, newLog, pictureUrl, i;
-//    hp = new HtmlPanel({
-//        source: getNotesData(caseId, caseIndex, noEdit),
-//        scroll: false
-//    });
-    proxy = new SugarProxy({
-        //url: SUGAR_URL + '/rest/v10/Log/',
-        url: 'pmse_Inbox/note_list/' + caseId,
-//        restClient: restClient,
-//        uid : caseId,
-        callback: null
-    });
+    var f, w, np, notesTextArea, proxy, log, newLog, pictureUrl, i, _App;
+    if(App){ _App = App; } else { _App = parent.SUGAR.App; }
+
+    url = _App.api.buildURL('pmse_Inbox/note_list/' + caseId);
+
     notesTextArea = new TextareaField({
         name: 'notesTextArea',
         label: '',
         fieldWidth: '80%'
     });
 
-    App.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
+    _App.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
     np = new NotePanel({
         items :[notesTextArea],
         caseId : caseId,
         caseIndex : caseIndex,
         callback :{
             'loaded': function (data) {
-
-                proxy.getData(null, {
-                    success: function(notes) {
-
-
+                _App.api.call('read', url, {}, {
+                    success: function (notes) {
                         for (i = 0 ; i < notes.rowList.length; i += 1) {
                             log = notes.rowList[i];
-                            pictureUrl = App.api.buildFileURL({
+                            pictureUrl = _App.api.buildFileURL({
                                 module: 'Users',
                                 id: log.not_user_id,
                                 field: 'picture'
@@ -70,25 +48,26 @@ showNotes = function (caseId, caseIndex, noEdit) {
                                 user:  log.last_name,
                                 picture : pictureUrl,
                                 duration: '<strong> ' + timeElapsedString(Date.parse(notes.currentDate), Date.parse(log.date_entered)) + ' <strong>',
-                                startDate: Date.parse(log.date_entered).toString('MMMM d, yyyy HH:mm'),
+                                //startDate: Date.parse(log.date_entered).toString('MMMM d, yyyy HH:mm'),
+                                startDate: log.date_entered,
                                 logId: log.id
                             };
                             np.addLog(newLog);
 
                         }
-                        App.alert.dismiss('upload');
+                        _App.alert.dismiss('upload');
+                    },
+                    error: function (sugarHttpError) {
+
                     }
                 });
-//
-//
-
             }}
     });
     w = new Window({
         width: 800,
         height: 380,
         modal: true,
-        title: translate('LBL_PMSE_TITLE_CURRENT_CASE_NOTES') + ' # ' + caseId
+        title: translate('LBL_PMSE_TITLE_PROCESS_NOTES', 'pmse_Inbox') + ' # ' + caseId
     });
 
     w.addPanel(np);
