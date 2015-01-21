@@ -349,7 +349,7 @@ class OracleManager extends DBManager
             $row = array();
             foreach ($temp as $key => $val)
                 // make the column keys as lower case. Trim the val returned
-                $row[strtolower($key)] = is_string($val) ? trim($val) : $val;
+                $row[strtolower($key)] = trim($val);
         }
         else
             return false;
