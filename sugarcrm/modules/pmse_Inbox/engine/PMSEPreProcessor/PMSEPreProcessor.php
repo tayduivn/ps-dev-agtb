@@ -273,7 +273,6 @@ class PMSEPreProcessor
      */
     public function getAllEvents($bean = '')
     {
-        global $db;
         $fields = array(
             'evn_id',
             'evn_uid',
@@ -323,8 +322,7 @@ class PMSEPreProcessor
             ->addRaw("(((evn_type = 'START' OR evn_type = 'GLOBAL_TERMINATE')" .
                 " AND (hp.deleted IS NULL OR hp.deleted=0)" .
                 " AND (flow.cas_flow_status IS NULL OR flow.cas_flow_status<>'WAITING')" .
-                " AND ((evn_module = '$bean->module_name' AND COALESCE({$db->convert('rel_element_module', 'length')}, 0) = 0)" .
-                " OR rel_element_module='$bean->module_name'))" . // " AND evn_module = '$bean->module_name')".
+                " AND ((evn_module = '$bean->module_name' AND rel_element_module='') OR rel_element_module='$bean->module_name'))" . // " AND evn_module = '$bean->module_name')".
                 " OR (evn_type = 'INTERMEDIATE'" .
                 " AND evn_marker = 'MESSAGE'" .
                 " AND evn_behavior = 'CATCH'" .
