@@ -35,6 +35,13 @@
                         <strong>{$LBL_LOADING}</strong>
                         <i class="fa fa-circle l1"></i><i class="fa fa-circle l2"></i><i class="fa fa-circle l3"></i>
                     </div>
+                    <noscript>
+                        <div class="alert-top">
+                            <div class="alert alert-danger">
+                                <strong>{$LBL_ENABLE_JAVASCRIPT}</strong>
+                            </div>
+                        </div>
+                    </noscript>
                 </div>
                 <div id="header"></div>
                 <div id="content"></div>
