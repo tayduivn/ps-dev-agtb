@@ -14,9 +14,34 @@
  * @extends View.Layout
  */
 ({
+    events: {
+        'keyup': 'escape'
+    },
+
     initialize: function(options) {
-        console.log('boo!');
-        // need to check if we are logged in first.
         this._super('initialize', [options]);
+        app.shortcuts.register(app.shortcuts.GLOBAL + 'Spotlight', 'alt+space', this.toggle, this, true);
+    },
+
+    _render: function() {
+        if (!app.api.isAuthenticated()) {
+            return;
+        }
+        this._super('_render');
+    },
+
+    escape: function(evt) {
+        if (evt.keyCode === 27) {
+            this.toggle();
+        }
+    },
+
+    toggle: function() {
+        this.$('input').val('');
+        this.$el.fadeToggle(50, 'linear', _.bind(this.onToggleComplete, this));
+    },
+
+    onToggleComplete: function() {
+        this.$('input').focus();
     }
 })
