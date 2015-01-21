@@ -273,7 +273,7 @@ class PMSEPreProcessor
      */
     public function getAllEvents($bean = '')
     {
-        global $db;
+        $db = DBManagerFactory::getInstance();
         $fields = array(
             'evn_id',
             'evn_uid',
