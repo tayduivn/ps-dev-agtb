@@ -1030,7 +1030,7 @@ class MssqlManager extends DBManager
             return false;
         }
         foreach($row as $key => $column) {
-            $row[$key] = is_string($column) ? trim($column) : $column;
+            $row[$key] = trim($column);
         }
         return $row;
 	}
