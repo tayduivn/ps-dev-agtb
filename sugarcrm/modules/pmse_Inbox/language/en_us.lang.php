@@ -51,6 +51,12 @@ $mod_strings = array (
     'LBL_PMSE_LABEL_HISTORY' => 'History',
     'LBL_PMSE_LABEL_NOTES' => 'Notes',
 
+    'LBL_PMSE_LABEL_ADD_NOTES' => 'Add Notes',
+//    'LBL_PMSE_LABEL_UNASSIGNED' => 'Unassigned',
+//    'LBL_PMSE_LABEL_ERROR_EXPECTED_DUE_DATE' => 'Due date',
+//    'LBL_PMSE_LABEL_ERROR_EXPECTED_OVERDUE' => 'Overdue',
+//    'LBL_PMSE_LABEL_ERROR_EXPECTED_DUE_DATE_NO_SET' => ' < no set >',
+
     'LBL_PMSE_FORM_OPTION_SELECT' => 'Select...',
     'LBL_PMSE_FORM_LABEL_USER' => 'User',
     'LBL_PMSE_FORM_LABEL_TYPE' => 'Type',
@@ -85,6 +91,7 @@ $mod_strings = array (
     'LBL_PMSE_TITLE_HISTORY' => 'Process History',
     'LBL_PMSE_TITLE_IMAGE_GENERATOR' => 'Process #%s: Current Status',
     'LBL_PMSE_TITLE_LOG_VIEWER' => 'Process Author Log Viewer',
+    'LBL_PMSE_TITLE_PROCESS_NOTES' => 'Process Notes',
 
     'LBL_PMSE_MY_PROCESSES' => 'My Processes',
     'LBL_PMSE_SELF_SERVICE_PROCESSES' => 'Self Service Processes',
