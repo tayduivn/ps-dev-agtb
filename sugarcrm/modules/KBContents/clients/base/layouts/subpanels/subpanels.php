@@ -30,6 +30,14 @@ $viewdefs['KBContents']['base']['layout']['subpanels'] = array (
           ),
           'acl_action' => 'edit',
       ),
+      array(
+          'layout' => 'subpanel',
+          'label' => 'LBL_NOTES_SUBPANEL_TITLE',
+          'context' => array(
+              'link' => 'notes',
+          ),
+          'acl_action' => 'edit',
+      ),
   ),
   'type' => 'subpanels',
   'span' => 12,
