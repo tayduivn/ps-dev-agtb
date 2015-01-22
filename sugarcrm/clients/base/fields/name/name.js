@@ -22,6 +22,7 @@
             this.def.link = false;
         } else if (this.view.name === 'preview') {
             this.def.link = _.isUndefined(this.def.link) ? true : this.def.link;
+            this.def.events = false;
         }
         this._super('_render');
     }
