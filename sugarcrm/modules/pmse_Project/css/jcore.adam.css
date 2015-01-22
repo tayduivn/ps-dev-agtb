@@ -1296,11 +1296,26 @@ div.line {
   /* Line width of 3 */
   background: #000000;
   /* Black fill */
+  background-clip: content-box;
+  cursor: pointer;
 }
-div.line:hover {
+
+.adam-flow div.line.line-horizontal {
+  padding: 1px 0;
+}
+
+.adam-flow div.line.line-vertical {
+  padding: 0 1px;
+}
+
+.adam-flow:hover div.line {
   background: #C30;
-  box-shadow: 0 0 8px #C30;
+  /*box-shadow: 0 0 8px #C30;*/
   opacity: 1;
+  -moz-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 .adam-error-color {
