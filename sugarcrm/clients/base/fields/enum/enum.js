@@ -444,7 +444,7 @@
 
         //Now remove the disabled options
         _.each(filter, function(visible, key) {
-            if (visible || key in currentIndex) {
+            if ((visible || key in currentIndex) && !_.isUndefined(options[key]) && options[key] !== false) {
                 newOptions[key] = options[key];
             }
         });
