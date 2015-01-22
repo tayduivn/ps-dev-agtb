@@ -96,6 +96,43 @@ describe("enum field", function() {
         expect(field.model.get(field.name)).toBeUndefined();
     });
 
+    describe('the value is not a valid option', function() {
+        var field, sandbox;
+
+        beforeEach(function() {
+            sandbox = sinon.sandbox.create();
+            field = SugarTest.createField(
+                'base',
+                fieldName,
+                'enum',
+                'edit',
+                {
+                    options: {
+                        first: 'first',
+                        second: 'second'
+                    }
+                }
+            );
+        });
+
+        afterEach(function() {
+            sandbox.restore();
+        });
+
+        it('should set the field to the default value', function() {
+            field.render();
+
+            expect(field.model.get(field.name)).toEqual('first');
+        });
+
+        it('should unset the field if there is no default value', function() {
+            sandbox.stub(field, '_getDefaultOption').returns(null);
+            field.render();
+
+            expect(field.model.get(field.name)).toBeUndefined();
+        });
+    });
+
     describe('enum API', function() {
         it('should load options from enum API if options is undefined or null', function() {
             var callStub = sinon.stub(app.api, 'enumOptions', function(module, field, callbacks) {

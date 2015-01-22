@@ -177,9 +177,10 @@
         //After rendering the dropdown, the selected value should be the value set in the model,
         //or the default value. The default value fallbacks to the first option if no other is selected.
         // if the user has write access to the model for the field we are currently on
-        if (!this.def.isMultiSelect && _.isUndefined(this.model.get(this.name))
-            && app.acl.hasAccessToModel('write', this.model, this.name)
-            ) {
+        if (!this.def.isMultiSelect &&
+            !_.contains(optionsKeys, this.model.get(this.name)) &&
+            app.acl.hasAccessToModel('write', this.model, this.name)
+        ) {
             defaultValue = this._getDefaultOption(optionsKeys);
             if (defaultValue) {
                 // call with {silent: true} on, so it won't re-render the field, since we haven't rendered the field yet
@@ -188,6 +189,8 @@
                 if (_.isFunction(this.model.setDefault)) {
                     this.model.setDefault(this.name, defaultValue);
                 }
+            } else {
+                this.model.unset(this.name, {silent: true});
             }
         }
         app.view.Field.prototype._render.call(this);
