@@ -12604,7 +12604,7 @@ var jCore = (function ($, window) {
             customShape.wasDragged = false;
 //        customShape.canvas.setCurrentShape(customShape);
             e.stopPropagation();
-            //select in list item for element panel with errors 
+            //select in list item for element panel with errors
             if ( listPanelError !== undefined ) {
                 erros = customShape.BPMNError.asArray();
                 if ( erros.length ) {
@@ -17216,6 +17216,20 @@ var jCore = (function ($, window) {
     };
 
     CustomLine.prototype.createDiv = function(x, y, w, h, transform){
+        var orientation = (w === 1 ? 1 : (h === 1 ? 0: -1)), offset;
+
+        if (transform) {
+            offset = {
+                left: x,
+                top: y
+            };
+        } else {
+            offset = {
+                left: x - (orientation === 1 ? 1 : 0),
+                top: y - (orientation === 0 ? 1 : 0)
+            };
+
+        }
         this.html = $('<div>')
             .addClass('line')
             .css({
@@ -17224,7 +17238,7 @@ var jCore = (function ($, window) {
             })
             .width(w)
             .height(h)
-            .offset({left: x, top: y});
+            .offset(offset);
         if (transform) {
             $(this.html).css({
                 '-webkit-transform': transform,
@@ -17232,6 +17246,8 @@ var jCore = (function ($, window) {
                 '-ms-transform': transform,
                 'transform': transform
             });
+        } else {
+            $(this.html).addClass((orientation === 1 ? 'line-vertical' : (orientation === 0 ? 'line-horizontal': '')));
         }
     };
 

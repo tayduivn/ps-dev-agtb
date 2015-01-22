@@ -517,7 +517,7 @@ AdamFlow.prototype.createHTML = function () {
     if (this.html === null) {
         that = this;
         jCore.Connection.prototype.createHTML.call(this);
-        $(this.html).on('click', '.line', function () {
+        $(this.html).addClass('adam-flow').on('click', '.line', function () {
             that.fixZIndex();
             $(that.destDecorator.getHTML()).trigger('click');
         });
