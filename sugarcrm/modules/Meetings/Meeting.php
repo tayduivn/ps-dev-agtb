@@ -606,7 +606,9 @@ class Meeting extends SugarBean {
 		parent::send_assignment_notifications($notify_user, $admin);
 
 		$path = SugarConfig::getInstance()->get('upload_dir','upload/') . $this->id;
-		unlink($path);
+        if (SugarAutoLoader::fileExists($path)) {
+            SugarAutoLoader::unlink($path);
+        }
 	}
 
 	function get_meeting_users() {
