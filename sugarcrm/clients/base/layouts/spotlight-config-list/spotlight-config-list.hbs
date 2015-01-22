@@ -16,18 +16,15 @@
             <table class="table table-striped table-bordered">
                 <thead>
                 <tr>
-                    <th></th>
-                    <th>{{str 'LBL_SPOTLIGHT_ACTION'}}</th>
-                    <th>{{str 'LBL_SPOTLIGHT_KEY'}}</th>
+                    <th class="span1"></th>
+                    <th class="span5">{{str 'LBL_SPOTLIGHT_ACTION'}}</th>
+                    <th class="span5">{{str 'LBL_SPOTLIGHT_KEY'}}</th>
                 </tr>
                 </thead>
-                <tbody data-spotlight="actions">
-                    {{!-- #each goes here --}}
-                    {{partial 'spotlight-config-list-row'}}
-                </tbody>
+                <tbody data-spotlight="actions"></tbody>
                 <tfoot>
                     <tr data-spotlight="add">
-                        <td colspan="3" style="text-align: center;"><i class="fa fa-plus-circle"> {{str 'LBL_SPOTLIGHT_ADD'}}</td>
+                        <td colspan="3"><i class="fa fa-plus-circle"> {{str 'LBL_SPOTLIGHT_ADD'}}</td>
                     </tr>
                 </tfoot>
             </table>

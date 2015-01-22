@@ -14,16 +14,25 @@
     },
 
     initialize: function(options) {
-        this.rowTpl = app.template.get('spotlight-config-list.spotlight-config-list-row');
         this._super('initialize', [options]);
     },
 
     /**
-     * Adds a row.
+     * Adds a `spotlight-config-list-row` view to the layout.
      * @param {Event} evt The `click` event.
      */
     addRow: function(evt) {
-        var $row = this.rowTpl();
-        this.$('[data-spotlight=actions]').append($row);
+        var def = _.extend({view: 'spotlight-config-list-row'}, app.metadata.getView(null, 'spotlight-config-list-row'));
+        var rowComponent = this.createComponentFromDef(def, this.context, this.module);
+
+        this.addComponent(rowComponent, def);
+        rowComponent.render();
+    },
+
+    /**
+     * @override
+     */
+    _placeComponent: function(component) {
+        this.$('[data-spotlight=actions]').append(component.el);
     }
 })

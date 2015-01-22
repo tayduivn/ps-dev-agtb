@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -9,16 +10,18 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-$viewdefs['base']['layout']['spotlight-config'] = array(
-    'type' => 'spotlight-config',
-    'name' => 'spotlight-config',
-    'css_class' => 'main-pane row-fluid',
-    'components' => array(
+
+$viewdefs['base']['view']['spotlight-config-list-row'] = array(
+    'action' => 'edit',
+    'fields' => array(
         array(
-            'view' => 'spotlight-headerpane',
+            'name' => 'spotlight-actions',
+            'type' => 'enum',
+            'options' => 'tasks_visibility_options',
         ),
         array(
-            'layout' => 'spotlight-config-list',
+            'name' => 'spotlight-keyword',
+            'type' => 'base',
         ),
     ),
 );

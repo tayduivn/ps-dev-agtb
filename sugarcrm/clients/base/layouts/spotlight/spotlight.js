@@ -68,9 +68,17 @@
      * to configure the spotlight.
      */
     openConfigPanel: function() {
+        var activeDrawerLayout = app.drawer.getActiveDrawerLayout();
+        if (activeDrawerLayout.type === 'spotlight-config') {
+            return;
+        }
+
         app.drawer.open({
             layout: 'spotlight-config',
-            context: this.context
+            context: {
+                skipFetch: true,
+                forceNew: true
+            }
         }, this.saveConfig);
     },
 
