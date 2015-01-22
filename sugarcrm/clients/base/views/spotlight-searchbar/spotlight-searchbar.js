@@ -111,7 +111,6 @@
                 updatedLibrary[item.id] = item;
                 recordList.push(item);
             }
-            ;
         });
         this.temporaryLibrary = updatedLibrary;
         return recordList;
@@ -140,12 +139,28 @@
             var menuMeta = app.metadata.getModule(module).menu;
             var headerMeta = menuMeta && menuMeta.header && menuMeta.header.meta;
             _.each(headerMeta, function(action) {
-                actions.push({
+                var name;
+                var jsFunc = 'push';
+                var weight;;
+                if (action.route === '#'+module) {
+                    jsFunc = 'unshift';
+                    name = app.lang.getModuleName(module, {plural: true});
+                    weight = 10;
+                }
+                else if (action.route === '#'+module+'/create') {
+                    weight = 20;
+                    name = app.lang.get(action.label, module)
+                } else {
+                    weight = 30;
+                    name = app.lang.get(action.label, module)
+                }
+                actions[jsFunc]({
                     module: module,
                     label: module.substr(0, 2),
-                    name: app.lang.get(action.label, module),
+                    name: name,
                     route: action.route,
-                    icon: action.icon
+                    icon: action.icon,
+                    weight: weight
                 })
             });
         });
@@ -216,6 +231,7 @@
         this.fuse = new Fuse(this.getLibrary(), options);
         var results = this.fuse.search(term);
         results = results.slice(0, 6);
+        results = _.sortBy(results, 'weight');
         return results;
     },
 
@@ -267,7 +283,8 @@
                         module: record._module,
                         label: record._module.substr(0, 2),
                         route: '#' + app.router.buildRoute(record._module, record.id),
-                        timestamp: now
+                        timestamp: now,
+                        weight: 40
                     };
 
                     if ((record._search.highlighted)) { // full text search
