@@ -15,7 +15,7 @@
  */
 ({
     events: {
-        'click a[name=save_button]':   'save'
+        'click a[name=save_button]': 'save'
     },
 
     /**

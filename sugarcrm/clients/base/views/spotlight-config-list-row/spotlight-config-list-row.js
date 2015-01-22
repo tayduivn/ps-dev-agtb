@@ -11,6 +11,7 @@
 ({
     tagName: 'tr',
     className: 'config-list-row',
+    plugins: ['Tooltip'],
     events: {
         'click [data-spotlight=remove]': 'removeRow'
     },

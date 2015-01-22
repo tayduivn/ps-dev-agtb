@@ -2896,6 +2896,7 @@ $app_strings = array (
     'LBL_SPOTLIGHT_ACTION' => 'Spotlight Action',
     'LBL_SPOTLIGHT_KEY' => 'Keyword',
     'LBL_SPOTLIGHT_ADD' => 'Add a Spotlight action',
+    'LBL_SPOTLIGHT_REMOVE' => 'Remove action',
 
     'LBL_RELATED' => 'Related',
     'LBL_RELATED_INFORMATION' => 'Related Information',
