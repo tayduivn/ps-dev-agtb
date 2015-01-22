@@ -112,8 +112,9 @@ class SugarUpgradeFixClassConstructor extends UpgradeScript
     private function replaceCustomModuleClassesByReflection($moduleName)
     {
         $className = $moduleName . '_sugar';
+        $file = $this->getModuleClassFile($moduleName);
 
-        require_once 'modules' . DIRECTORY_SEPARATOR . $moduleName . DIRECTORY_SEPARATOR . $moduleName . '_sugar.php';
+        require_once $file;
 
         try {
             $reflectionClass = new \ReflectionClass($className);
@@ -234,8 +235,24 @@ class SugarUpgradeFixClassConstructor extends UpgradeScript
         //write sugar generated class
         $this->log("FixClassConstructor: Replace {$moduleName}_sugar.php for module: {$moduleName}");
         sugar_file_put_contents_atomic(
-            'modules' . DIRECTORY_SEPARATOR . $moduleName . DIRECTORY_SEPARATOR . $moduleName . '_sugar.php',
+            $this->getModuleClassFile($moduleName),
             $content
         );
+    }
+
+    /**
+     * Return file with a class for module.
+     * @param string $moduleName
+     * @return string
+     */
+    protected function getModuleClassFile($moduleName)
+    {
+        global $beanList;
+
+        $fBeanList = array_flip($beanList);
+
+        $className = $moduleName . '_sugar';
+
+        return 'modules' . DIRECTORY_SEPARATOR . $fBeanList[$moduleName] . DIRECTORY_SEPARATOR . $className . '.php';
     }
 }
