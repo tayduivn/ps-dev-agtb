@@ -77,14 +77,14 @@ class OutboundSmtpEmailConfiguration extends OutboundEmailConfiguration
      * @throws MailerException
      */
     public function setHost($host = "localhost") {
-        if (!is_string($host)) {
+        if (!is_string($host) && !is_null($host)) {
             throw new MailerException(
                 "Invalid Configuration: host must be a domain name or IP address (string) resolving to the SMTP server",
                 MailerException::InvalidConfiguration
             );
         }
 
-        $this->host = $host;
+        $this->host = trim($host);
     }
 
     /**
@@ -189,14 +189,14 @@ class OutboundSmtpEmailConfiguration extends OutboundEmailConfiguration
      * @throws MailerException
      */
     public function setUsername($username = "") {
-        if (!is_string($username)) {
+        if (!is_string($username) && !is_null($username)) {
             throw new MailerException(
                 "Invalid Configuration: username must be a string",
                 MailerException::InvalidConfiguration
             );
         }
 
-        $this->username = $username;
+        $this->username = trim($username);
     }
 
     /**
@@ -217,14 +217,14 @@ class OutboundSmtpEmailConfiguration extends OutboundEmailConfiguration
      * @throws MailerException
      */
     public function setPassword($password = "") {
-        if (!is_string($password)) {
+        if (!is_string($password) && !is_null($password)) {
             throw new MailerException(
                 "Invalid Configuration: password must be a string",
                 MailerException::InvalidConfiguration
             );
         }
 
-        $this->password = $password;
+        $this->password = trim($password);
     }
 
     /**
