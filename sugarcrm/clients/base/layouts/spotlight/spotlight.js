@@ -20,7 +20,8 @@
 
     initialize: function(options) {
         this._super('initialize', [options]);
-        app.shortcuts.register(app.shortcuts.GLOBAL + 'Spotlight', 'alt+space', this.toggle, this, true);
+        app.shortcuts.register(app.shortcuts.GLOBAL + 'Spotlight', 'shift+space', this.toggle, this, true);
+        this.on('spotlight:config', this.openConfigPanel, this);
     },
 
     _render: function() {
@@ -43,5 +44,16 @@
 
     onToggleComplete: function() {
         this.$('input').focus();
+    },
+
+    openConfigPanel: function() {
+        app.drawer.open({
+            layout: 'spotlight-config',
+            context: this.context
+        }, this.saveConfig);
+    },
+
+    saveConfig: function(model) {
+        console.log('saving the config', model);
     }
 })

@@ -16,7 +16,8 @@
 ({
     className: 'spotlight-searchbar',
     events: {
-        'keyup input': 'throttledSearch'
+        'keyup input': 'throttledSearch',
+        'click [data-action=configure]': 'initConfig'
     },
 
     /**
@@ -26,6 +27,11 @@
         this._super('initialize', [options]);
         app.events.on('app:sync:complete', this.initLibrary, this);
         this.lastTerm = '';
+    },
+
+    initConfig: function(evt) {
+        this.layout.toggle();
+        this.layout.trigger('spotlight:config');
     },
 
     initLibrary: function() {

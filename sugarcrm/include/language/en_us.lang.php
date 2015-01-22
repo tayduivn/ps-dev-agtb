@@ -2892,6 +2892,11 @@ $app_strings = array (
     // Strings for Opportunity Metrics dashlet
     'LBL_OPPORTUNITY_METRICS' => 'Opportunity Metrics',
 
+    'LBL_SPOTLIGHT_CONFIG' => 'Spotlight Configuration Panel',
+    'LBL_SPOTLIGHT_ACTION' => 'Spotlight Action',
+    'LBL_SPOTLIGHT_KEY' => 'Keyword',
+    'LBL_SPOTLIGHT_ADD' => 'Add a Spotlight action',
+
     'LBL_RELATED' => 'Related',
     'LBL_RELATED_INFORMATION' => 'Related Information',
     'LBL_RELATED_RECORDS' => 'Related Records',

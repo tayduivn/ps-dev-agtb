@@ -3,7 +3,16 @@
 @spotLightHeight: 60px;
 @spotLightGrey: #DBDBDB;
 
+.noselect {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
 #spotlight {
+  .noselect();
   display: none;
   position: fixed;
   width: @spotLightWidth;
@@ -43,6 +52,14 @@
     top: 10px;
     right: 10px;
     opacity: 0.6;
+  }
+
+  i {
+    margin: 3px 3px 0 0;
+    &:hover {
+      color: #333;
+      cursor: pointer;
+    }
   }
 
   .spotlight-searchbar {

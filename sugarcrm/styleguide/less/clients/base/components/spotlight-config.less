@@ -1,0 +1,42 @@
+.main-pane {
+    .container-fluid {
+        margin-top: 80px;
+    }
+}
+
+table {
+    tbody {
+        tr {
+            height: 30px;
+            td.remove {
+                width: 26px;
+                text-align: center;
+                i {
+                    display: none;
+                    &:hover {
+                        cursor: pointer;
+                        color: #333;
+                    }
+                }
+            }
+            &:hover {
+                background-color: #EDEDED;
+                td.remove {
+                    i {
+                        display: block;
+                    }
+                }
+            }
+        }
+    }
+    tfoot {
+        tr {
+            &:hover {
+                background-color: #EDEDED;
+            }
+            &[data-spotlight=add]:hover {
+                cursor: pointer;
+            }
+        }
+    }
+}
