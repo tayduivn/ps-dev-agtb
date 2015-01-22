@@ -49,7 +49,7 @@ $mod_strings = array (
     'LBL_PMSE_LABEL_EXECUTE' => 'Execute',
     'LBL_PMSE_LABEL_CANCEL' => 'Cancel',
     'LBL_PMSE_LABEL_HISTORY' => 'History',
-    'LBL_PMSE_LABEL_NOTES' => 'Notes',
+    'LBL_PMSE_LABEL_NOTES' => 'Show Notes',
     'LBL_PMSE_LABEL_ADD_NOTES' => 'Add Notes',
 
     'LBL_PMSE_FORM_OPTION_SELECT' => 'Select...',
