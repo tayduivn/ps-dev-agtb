@@ -306,8 +306,6 @@
             }
         }
 
-        select2Options.transformVal = _.identity;
-
         /* From http://ivaynberg.github.com/select2/#documentation:
          * Initial value that is selected if no other selection is made
          */
