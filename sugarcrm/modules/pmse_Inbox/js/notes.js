@@ -100,7 +100,6 @@ addNotes = function (casId, caseIndex) {
         type: 'POST'
     })
         .done(function (ajaxResponse) {
-//            console.log(ajaxResponse);
             if (ajaxResponse.success) {
                 addRow(ajaxResponse.data);
                 txtNote.value = '';
@@ -132,7 +131,6 @@ addRow = function (args) {
         rowCount = table.rows.length,
         row = table.insertRow(rowCount),
         lastRow,
-//        colCount = table.rows[rowCount - 1].cells.length,
         col1,
         pic,
         html;
@@ -156,8 +154,6 @@ addRow = function (args) {
         pic = 'index.php?entryPoint=download&amp;id=' + args.user_picture + '&amp;type=SugarFieldImage&amp;isTempFile=1';
     }
 
-//    console.log(args.user_picture);
-
     html = '<div>';
     html += '<div style="float: left; margin-right: 3px; width: 50px; height: 50px;">';
     html += '<img style="max-width: 50px; max-height: 50px;" src="' + pic + '">';
@@ -174,21 +170,8 @@ addRow = function (args) {
     html += '<div class="clear"></div>';
     html += '</div>';
 
-
     col1 = row.insertCell(0);
     col1.innerHTML = html;
-
-//    col2 = row.insertCell(1);
-//    col2.innerHTML = args.user_name;
-//
-//    col3 = row.insertCell(2);
-//    col3.innerHTML = args.not_date;
-//
-//    col4 = row.insertCell(3);
-//    col4.innerHTML = args.not_content;
-//
-//    col5 = row.insertCell(4);
-//    col5.innerHTML = '<a href="javascript:deleteRow(\'' + args.not_id + '\');">Delete</a>';
 
 };
 

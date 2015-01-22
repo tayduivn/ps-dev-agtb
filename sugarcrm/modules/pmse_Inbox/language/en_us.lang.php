@@ -50,12 +50,7 @@ $mod_strings = array (
     'LBL_PMSE_LABEL_CANCEL' => 'Cancel',
     'LBL_PMSE_LABEL_HISTORY' => 'History',
     'LBL_PMSE_LABEL_NOTES' => 'Notes',
-
     'LBL_PMSE_LABEL_ADD_NOTES' => 'Add Notes',
-//    'LBL_PMSE_LABEL_UNASSIGNED' => 'Unassigned',
-//    'LBL_PMSE_LABEL_ERROR_EXPECTED_DUE_DATE' => 'Due date',
-//    'LBL_PMSE_LABEL_ERROR_EXPECTED_OVERDUE' => 'Overdue',
-//    'LBL_PMSE_LABEL_ERROR_EXPECTED_DUE_DATE_NO_SET' => ' < no set >',
 
     'LBL_PMSE_FORM_OPTION_SELECT' => 'Select...',
     'LBL_PMSE_FORM_LABEL_USER' => 'User',
