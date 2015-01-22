@@ -3952,8 +3952,8 @@ Sincerely, SugarCRM',
     'LBL_DASHLET_COUNTRY_CHART_DESCRIPTION' => 'Displays the sales chart by country map.',
 
     /* Knowledge base topics tree dashlet */
-    'LBL_DASHLET_TOPICS_NAME' => 'Knowledge Base Topics',
-    'LBL_DASHLET_TOPICS_DESCRIPTION' => 'Topics tree dashelet description',
+    'LBL_DASHLET_TOPICS_NAME' => 'Knowledge Base Categories',
+    'LBL_DASHLET_TOPICS_DESCRIPTION' => 'Categories tree dashelet description',
 
     /* Knowledge base localizations dashlet */
     'LBL_DASHLET_LOCALIZATIONS_NAME' => 'Other Languages',
