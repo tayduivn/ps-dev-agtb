@@ -5613,10 +5613,6 @@ class SugarBean
             $tracker = BeanFactory::getBean('Trackers');
             $tracker->makeInvisibleForAll($id);
 
-            require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
-            $searchEngine = SugarSearchEngineFactory::getInstance();
-            $searchEngine->delete($this);
-
             SugarRelationship::resaveRelatedBeans();
 
             // call the custom business logic
@@ -5638,6 +5634,7 @@ class SugarBean
         $custom_logic_arguments['id'] = $id;
         $this->call_custom_logic("before_restore", $custom_logic_arguments);
 
+        $this->deleted = 0;
 		$date_modified = $GLOBALS['timedate']->nowDb();
 		$query = "UPDATE $this->table_name set deleted=0 , date_modified = '$date_modified' where id='$id'";
 		$this->db->query($query, true,"Error marking record undeleted: ");

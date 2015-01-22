@@ -20,3 +20,19 @@ $hook_array['after_save'][] = array(
     '\\Sugarcrm\\Sugarcrm\\SearchEngine\\HookHandler',
     'indexBean',
 );
+
+$hook_array['after_delete'][] = array(
+    1,
+    'fts',
+    null,
+    '\\Sugarcrm\\Sugarcrm\\SearchEngine\\HookHandler',
+    'indexBean',
+);
+
+$hook_array['after_restore'][] = array(
+    1,
+    'fts',
+    null,
+    '\\Sugarcrm\\Sugarcrm\\SearchEngine\\HookHandler',
+    'indexBean',
+);

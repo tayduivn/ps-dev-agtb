@@ -87,13 +87,14 @@ class Indexer
             return false;
         }
 
+        // Skip bean if module not enabled.
+        if (!$this->container->metaDataHelper->isModuleEnabled($bean->module_name)) {
+            return;
+        }
+
         // Send to database queue when Elastic is unavailable
         if (!$this->container->client->isAvailable() || $this->async) {
             $this->container->queueManager->queueBean($bean);
-        }
-
-        // Skip bean if module not enabled.
-        if (!$this->container->metaDataHelper->isModuleEnabled($bean->module_name)) {
             return;
         }
 
@@ -109,21 +110,11 @@ class Indexer
      * @param \Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Document $document
      * @param string $batch
      */
-    public function indexDocument(Document $document, $batch = true)
+    protected function indexDocument(Document $document, $batch = true)
     {
-        // Skip indexing if we are disabled
-        if ($this->disabled) {
-            return false;
-        }
-
         // Safeguard avoid sending documents without data
-        if (!$document->hasData()) {
+        if (!$document->hasData() && $document->getOpType() !== \Elastica\Bulk\Action::OP_TYPE_DELETE) {
             return;
-        }
-
-        // Send to database queue when Elastic is unavailable
-        if (!$this->container->client->isAvailable() || $this->async) {
-            $this->container->queueManager->queueDocument($document);
         }
 
         if ($batch) {
@@ -226,6 +217,7 @@ class Indexer
             return $document;
         }
 
+        // Populate field data
         $fields = $this->getBeanIndexFields($module);
         $data = array();
         foreach ($fields as $field => $type) {
@@ -233,6 +225,8 @@ class Indexer
                 $data[$field] = $bean->$field;
             }
         }
+
+        // TODO: add additional fields/data for diff providers and visibility
 
         $document->setId($bean->id);
         $document->setData($data);
