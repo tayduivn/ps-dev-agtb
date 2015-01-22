@@ -18,6 +18,7 @@ $dictionary['Team'] = array(
             'type' => 'name',
             'dbType' => 'varchar',
             'len' => 128,
+            'fields' => array(0 => 'name', 1 => 'name_2'),
         ),
         'name_2' => array(
             'name' => 'name_2',
