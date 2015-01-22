@@ -85,6 +85,10 @@
             self.listenTo(app.router, 'route', self.handleRouteChange);
         });
 
+        app.events.on('app:help', function() {
+            this.help();
+        }, this);
+
         app.events.on('app:help:shown', function() {
             this.toggleHelpButton(true);
             this.disableHelpButton(false);
@@ -210,18 +214,18 @@
     help: function(event) {
         if (this.layoutName === 'bwc' || this.layoutName === 'about') {
             this.bwcHelpClicked();
-        } else {
-            var button = $(event.currentTarget),
-                buttonDisabled = button.hasClass('disabled'),
-                buttonAppEvent = button.hasClass('active') ? 'app:help:hide' : 'app:help:show';
+            return;
+        }
+        var button = this.$('[data-action="help"]');
+        var buttonDisabled = button.hasClass('disabled');
+        var buttonAppEvent = button.hasClass('active') ? 'app:help:hide' : 'app:help:show';
 
-            if (!buttonDisabled) {
-                // add the disabled so that way if it's clicked again, it won't triggered the events again,
-                // this will get removed below
-                button.addClass('disabled');
-                // trigger the app event to show and hide the help dashboard
-                app.events.trigger(buttonAppEvent);
-            }
+        if (!buttonDisabled) {
+            // add the disabled so that way if it's clicked again, it won't triggered the events again,
+            // this will get removed below
+            button.addClass('disabled');
+            // trigger the app event to show and hide the help dashboard
+            app.events.trigger(buttonAppEvent);
         }
     },
 
