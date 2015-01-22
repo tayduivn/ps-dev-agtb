@@ -5300,7 +5300,10 @@ To create a new record using the values you have entered, click "Ignore Duplicat
 
     //Tag Strings
     'LBL_TAG_NEW_TAG' => '(New Tag)',
-    'LBL_TAG_FETCH_ERROR' => 'An error has occurred while retrieving tags.'
+    'LBL_TAG_FETCH_ERROR' => 'An error has occurred while retrieving tags.',
+
+    //Javascript enable string
+    'LBL_ENABLE_JAVASCRIPT' => 'Please enable the JavaScript for better usability',
 );
 
 $app_list_strings['interactions_options'] = array (

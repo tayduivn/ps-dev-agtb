@@ -29,8 +29,8 @@ Studio2 = {
 			DDM = YAHOO.utilDragDropMgr;
 		
 		Studio2.maxColumns = parseInt(document.getElementById('maxColumns').value);
-		Studio2.setStartId(parseInt(document.getElementById('idCount').value));
-		Studio2.setStartId(1000);
+		//Studio2.setStartId(parseInt(document.getElementById('idCount').value));
+		Studio2.setStartId(10000);
 		Studio2.fieldwidth = parseInt(document.getElementById('fieldwidth').value);
 		Studio2.panelNumber = parseInt(document.getElementById('nextPanelId').value);
 		Studio2.isIE = SUGAR.isIE;
