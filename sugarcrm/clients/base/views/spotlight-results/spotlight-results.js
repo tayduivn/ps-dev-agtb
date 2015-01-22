@@ -49,8 +49,13 @@
         var $li = this.$('li.hover');
         // enter?
         if (e.keyCode == 13) {
-            app.router.navigate(this.$('li.hover').data('route'), {trigger: true});
+            this.layout[this.$('li.hover').data('action')];
             this.layout.toggle();
+            if (this.$('li.hover').data('route')) {
+                app.router.navigate(this.$('li.hover').data('route'), {trigger: true});
+            }
+            var action = this.$('li.hover').data('callback');
+            this.layout.triggerSystemAction(action);
             return;
         }
         $li.removeClass('hover')
