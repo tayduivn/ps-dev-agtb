@@ -53,11 +53,11 @@ $viewdefs['KBContents']['base']['view']['list'] = array(
                         'exp_date',
                     ),
                 ),
-                array(
-                    'name' => 'tag',
-                    'default' => true,
+                array (
+                    'name' => 'category_name',
+                    'label' => 'LBL_TOPIC_NAME',
                     'enabled' => true,
-                    'sortable' => false,
+                    'default' => true,
                 ),
             ),
         ),
