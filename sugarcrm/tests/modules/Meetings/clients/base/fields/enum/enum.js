@@ -1,4 +1,4 @@
-describe('View.Fields.Base.Meetings.TypeField', function() {
+describe('View.Fields.Base.Meetings.EnumField', function() {
     var app, field, sandbox, createFieldProperties,
         module = 'Meetings';
 
@@ -12,7 +12,7 @@ describe('View.Fields.Base.Meetings.TypeField', function() {
         createFieldProperties = {
             client: 'base',
             name: 'type',
-            type: 'type',
+            type: 'enum',
             viewName: 'edit',
             module: module,
             loadFromModule: true
