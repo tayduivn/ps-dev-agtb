@@ -288,7 +288,7 @@
         }, this);
 
         app.api.call('create', myURL, convertModel, {
-            success: _.bind(this.uploadAssociatedRecordFiles, this),
+            success: _.bind(this.convertSuccess, this),
             error: _.bind(this.convertError, this)
         });
     },
@@ -331,66 +331,12 @@
         return filteredModels;
     },
 
-    /**
-     * After successfully converting a lead, loop through all modules and attempt to upload file input fields
-     * All modules are done asynchronously and the last one to complete calls the appropriate completion callback
-     *
-     * @param {Object} convertResults
-     */
-    uploadAssociatedRecordFiles: function(convertResults) {
-        if (this.disposed) return;
-
-        var modulesToProcess = _.keys(this.associatedModels).length,
-            failureCount = 0;
-
-        var completeFn = _.bind(function() {
-            modulesToProcess--;
-            if (modulesToProcess === 0) {
-                if (failureCount > 0) {
-                    this.convertWarning();
-                } else {
-                    this.convertSuccess();
-                }
-            }
-        }, this);
-
-        _.each(this.associatedModels, function(associatedModel, associatedModule) {
-            var moduleResult = _.find(convertResults.modules, function(result) {
-                return (associatedModule === result._module);
-            }, this);
-
-            //if associatedModel has no id, then it came from createView on convertPanel and may need file uploads
-            if (moduleResult && _.isEmpty(associatedModel.get('id'))) {
-                associatedModel.set('id', moduleResult.id);
-                app.file.checkFileFieldsAndProcessUpload(
-                    this.convertPanels[associatedModule].createView,
-                    {
-                        success: function() { completeFn(); },
-                        error: function() { failureCount++; completeFn(); }
-                    },
-                    {deleteIfFails: false},
-                    false
-                );
-
-            } else {
-                //no files to upload because an existing record was selected for this module, just run complete
-                completeFn();
-            }
-        }, this);
-    },
 
     /**
      * Lead was successfully converted
      */
     convertSuccess: function() {
         this.convertComplete('success', 'LBL_CONVERTLEAD_SUCCESS', true);
-    },
-
-    /**
-     * Lead was converted, but some files failed to upload
-     */
-    convertWarning: function() {
-        this.convertComplete('warning', 'LBL_CONVERTLEAD_FILE_WARN', true);
     },
 
     /**
