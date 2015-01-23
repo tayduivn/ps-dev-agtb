@@ -101,11 +101,19 @@
 
     /**
      * Creates a Filters BeanCollection to easily apply filters.
+     * The user must have `list` access to the search module to create a
+     * {@link Data.Base.FiltersBeanCollection}.
      *
      * @protected
      */
     _createFiltersCollection: function() {
         var searchModule = this.getSearchModule();
+
+        if (!app.acl.hasAccess('list', searchModule)) {
+            app.logger.debug('No "list" access to ' + searchModule + ' so skipping the creation of filter.');
+            return;
+        }
+
         if (app.metadata.getModule('Filters') && searchModule) {
             this.filters = app.data.createBeanCollection('Filters');
             this.filters.setModuleName(searchModule);
