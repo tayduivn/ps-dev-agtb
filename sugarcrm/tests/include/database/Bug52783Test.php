@@ -79,6 +79,14 @@ class Bug52783Test extends Sugar_PHPUnit_Framework_TestCase
 			
 				"ISNULL(contacts.last_name,'')))"
 			),
+            // CRYS-676. Alias isn't converted when an order string contains a point or more than one part.
+            array(
+                'SELECT contacts.id as id_alias, contacts.title as title_alias
+                 FROM contacts
+                 WHERE contacts.deleted = 0
+                 ORDER BY id_alias ASC,title_alias ASC',
+                'ORDER BY contacts.id ASC,contacts.title ASC',
+            ),
 		);
 	}
 }
