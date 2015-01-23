@@ -8,18 +8,23 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+/**
+ * Enum modifications that are specific to Meeting type field
+ * These modifications are temporary until the can (hopefully) be addressed in
+ * the Enum field refactoring (SC-3481)
+ *
+ * @class View.Fields.Base.Meetings.EnumField
+ * @alias SUGAR.App.view.fields.BaseMeetingsEnumField
+ * @extends View.Fields.Base.EnumField
+ */
 ({
-    extendsFrom: 'EnumField',
-
     /**
-     * @inheritDoc
-     *
-     * @private
+     * @inheritdoc
      */
     _render: function() {
-        this._ensureSelectedValueInItems();
-        //use enum field templates
-        this.type = 'enum';
+        if (this.name === 'type') {
+            this._ensureSelectedValueInItems();
+        }
         this._super('_render');
     },
 
@@ -30,8 +35,6 @@
      * the type. If User B does not have WebEx set up (only needed to create
      * WebEx meetings, not to join), User B should still see WebEx selected
      * on existing meetings, but not be able to create a meeting with WebEx.
-     *
-     * @private
      */
     _ensureSelectedValueInItems: function() {
         var value = this.model.get(this.name),
@@ -48,5 +51,20 @@
             //...add it to the list
             this.items[value] = meetingTypeLabels[value];
         }
+    },
+
+    /**
+     * @inheritdoc
+     *
+     * Remove options for meeting type field which comes from the vardef - this
+     * will force a retrieval of options from the server. Options is in the
+     * vardef for meeting type to support mobile which does not have the ability
+     * to pull dynamic enum list from the server yet.
+     */
+    loadEnumOptions: function(fetch, callback) {
+        if (this.name === 'type') {
+            this.def.options = '';
+        }
+        this._super('loadEnumOptions', [fetch, callback]);
     }
 })
