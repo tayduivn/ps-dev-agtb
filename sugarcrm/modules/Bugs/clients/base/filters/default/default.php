@@ -25,7 +25,6 @@ $viewdefs['Bugs']['base']['filter']['default'] = array(
         'bug_number' => array(),
         'date_entered' => array(),
         'date_modified' => array(),
-        'tag' => array(),
         'assigned_user_name' => array(),
         '$owner' => array(
             'predefined_filter' => true,

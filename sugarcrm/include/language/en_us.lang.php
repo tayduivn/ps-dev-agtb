@@ -109,7 +109,6 @@ $app_list_strings = array (
     'UserSignatures' => 'User Signatures',
     'Shippers' => 'Shipping Providers',
     'Styleguide' => 'Styleguide',
-    'Tags' => 'Tags',
   ),
 
     'moduleIconList' =>
@@ -221,7 +220,6 @@ $app_list_strings = array (
     'Shippers' => 'Shipping Provider',
     'Subscriptions' => 'Subscription',
     'UserSignatures' => 'User Signature',
-    'Tags' => 'Tag',
   ),
 
 /*
@@ -5296,14 +5294,8 @@ To create a new record using the values you have entered, click "Ignore Duplicat
 
     'LBL_PRO_ENABLE' => 'Updating',
     'LBL_PRO_DISABLE' => 'Updating',
-//END SUGARCRM flav=ent ONLY
-
-    //Tag Strings
-    'LBL_TAG_NEW_TAG' => '(New Tag)',
-    'LBL_TAG_FETCH_ERROR' => 'An error has occurred while retrieving tags.',
-
-    //Javascript enable string
-    'LBL_ENABLE_JAVASCRIPT' => 'Please enable the JavaScript for better usability',
+    // Javascript enable string
+    'LBL_ENABLE_JAVASCRIPT' => 'SugarCRM requires javascript. Please enable javascript to continue using SugarCRM.',
 );
 
 $app_list_strings['interactions_options'] = array (

@@ -193,10 +193,6 @@ $viewdefs['ProspectLists']['base']['view']['record'] = array(
                         ),
                     ),
                 ),
-                array(
-                    'name' => 'tag',
-                    'span' => 12,
-                ),
             )
         ),
     ),

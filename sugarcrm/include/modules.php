@@ -530,7 +530,6 @@ $report_include_modules['Contracts']='Contract';
 //add Tracker modules
 
 $report_include_modules['Trackers']         = 'Tracker';
-$report_include_modules['Tags'] = 'Tag';
 
 //BEGIN SUGARCRM flav=pro ONLY
 $report_include_modules['TrackerPerfs']     = 'TrackerPerf';
@@ -613,10 +612,6 @@ $modInvisList[] = 'Filters';
 $beanList['Dashboards'] = 'Dashboard';
 $beanFiles['Dashboard'] = 'modules/Dashboards/Dashboard.php';
 $modInvisList[] = 'Dashboards';
-
-$beanList['Tags'] = 'Tag';
-$beanFiles['Tag'] = 'modules/Tags/Tag.php';
-$modInvisList[] = 'Tags';
 
 //Object list is only here to correct for modules that break
 //the bean class name == dictionary entry/object name convention
