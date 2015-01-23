@@ -27,6 +27,8 @@ $viewdefs['Meetings']['base']['view']['selection-list'] = array(
                     'link' => false,
                     'default' => true,
                     'enabled' => true,
+                    'type' => 'event-status',
+                    'css_class' => 'full-width',
                 ),
                 array(
                     'name' => 'parent_name',
