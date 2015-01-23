@@ -79,17 +79,44 @@ class ParserRoleDropDownFilter extends ModuleBuilderParser
     public function getDropDownFiltersFromFiles(array $files)
     {
         ${$this->varName} = array();
+        $filePath = "";
         foreach ($files as $file) {
             if (is_array($file) && isset($file['path'])) {
                 $file = $file['path'];
             }
-            if (is_string($file) && SugarAutoLoader::fileExists($file)) {
-                require $file;
+            if (is_string($file)) {
+                $filePath = $file;
+                if (SugarAutoLoader::fileExists($file)) {
+                    require $file;
+                }
             }
-
         }
 
-        return ${$this->varName};
+        return $this->validateDropDownFilter(${$this->varName}, basename($filePath, ".php"));
+    }
+
+    /**
+     * Returns the filter with no longer valid keys removed from the list.
+     * @param        $filter
+     * @param        $dropdownName
+     * @param string $language
+     *
+     * @return array
+     */
+    protected function validateDropDownFilter($filter, $dropdownName, $language = 'en_us') {
+        $list_strings = return_app_list_strings_language($language);
+        $ret[$dropdownName] = array();
+        if (isset($list_strings[$dropdownName]) && is_array($list_strings[$dropdownName]) &&
+            isset($filter[$dropdownName]) && is_array($filter[$dropdownName])) {
+            $dropdownList = $list_strings[$dropdownName];
+            foreach($filter[$dropdownName] as $key => $visible) {
+                if (isset($dropdownList[$key])) {
+                    $ret[$dropdownName][$key] = $visible;
+                }
+            }
+        }
+
+        return $ret;
     }
 
     /**
