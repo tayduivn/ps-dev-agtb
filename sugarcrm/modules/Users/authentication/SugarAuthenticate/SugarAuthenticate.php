@@ -333,7 +333,7 @@ class SugarAuthenticate{
 				}
 				// we have a different IP address
 				if ($_SESSION["ipaddress"] != $clientIP && empty ($classCheck)) {
-					$GLOBALS['log']->error("IP Address mismatch: SESSION IP: {$_SESSION['ipaddress']} CLIENT IP: {$clientIP}");
+                                    $GLOBALS['log']->fatal("IP Address mismatch: SESSION IP: {$_SESSION['ipaddress']} CLIENT IP: {$clientIP}");
 					$isValidIP = false;
 				}
 			} else {
