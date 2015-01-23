@@ -61,6 +61,9 @@ $viewdefs['base']['layout']['multi-selection-list-link'] = array(
                                                 "targetEl" => '.filter-options'
                                             ),
                                             array(
+                                                'view' => 'mass-link',
+                                            ),
+                                            array(
                                                 'view' => 'multi-selection-list-link',
                                             ),
                                             array(

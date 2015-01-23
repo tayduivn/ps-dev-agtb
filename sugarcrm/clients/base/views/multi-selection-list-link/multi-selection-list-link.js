@@ -21,20 +21,6 @@
 
         this._super('initialize', [options]);
         this.meta.selection = _.extend({}, options.meta.selection, {isLinkAction: true});
-
-        //Set up mass linker component
-        var pageComponent = this.layout.getComponent('mass-link');
-        if (!pageComponent) {
-            pageComponent = app.view.createView({
-                context: this.context,
-                name: 'mass-link',
-                module: this.module,
-                primary: false,
-                layout: this.layout
-            });
-            this.layout.addComponent(pageComponent);
-        }
-        pageComponent.render();
     },
 
     /**
