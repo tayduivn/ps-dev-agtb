@@ -5294,6 +5294,8 @@ To create a new record using the values you have entered, click "Ignore Duplicat
 
     'LBL_PRO_ENABLE' => 'Updating',
     'LBL_PRO_DISABLE' => 'Updating',
+//END SUGARCRM flav=ent ONLY
+
     // Javascript enable string
     'LBL_ENABLE_JAVASCRIPT' => 'SugarCRM requires javascript. Please enable javascript to continue using SugarCRM.',
 );
