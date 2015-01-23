@@ -388,6 +388,11 @@ $dictionary['ForecastWorksheet'] = array(
             'studio' => false,
             'function' => 'getCommitStageDropdown',
             'function_bean' => 'Forecasts',
+            'formula' => 'forecastCommitStage($probability)',
+            'calculated' => true,
+            'related_fields' => array(
+                'probability'
+            )
         ),
         'draft' =>
         array(
