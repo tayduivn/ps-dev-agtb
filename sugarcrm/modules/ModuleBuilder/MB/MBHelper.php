@@ -16,6 +16,16 @@
 class MBHelper
 {
     /**
+     * Brittle list of roles that should not be used with RBV.
+     * We need a better way of identifing these roles in the future.
+     * @var array
+     */
+    protected static $hiddenRoles = array(
+        "Tracker",
+        "Customer Self-Service Portal Role"
+    );
+
+    /**
      * Returns list of roles with marker indicating whether role specific metadata exists
      *
      * @param callable $callback Callback that checks if there is role specific metadata
@@ -64,7 +74,7 @@ class MBHelper
      * @param callable $callback Callback that checks if there is role specific metadata
      * @return SplObjectStorage
      */
-    protected static function getRoles($callback)
+    public static function getRoles($callback)
     {
         global $current_user;
 
@@ -72,6 +82,9 @@ class MBHelper
         //Only super user should have access to all roles
         $allRoles = $current_user->isAdmin() ? ACLRole::getAllRoles() : ACLRole::getUserRoles($current_user->id, false);
         foreach ($allRoles as $role) {
+            if (in_array($role->name, static::$hiddenRoles)) {
+                continue;
+            }
             $roles[$role] = $callback(array(
                 'role' => $role->id,
             ));
