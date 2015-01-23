@@ -9,8 +9,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 ({
-    plugins: ['Editable'],
-
     events: {
         'click [data-spotlight=add]': 'addRow'
     },
@@ -19,14 +17,8 @@
         this._super('initialize', [options]);
     
         this.initRows();
-        this.backupModel = this.collection.toJSON()
     },
 
-    hasUnsavedChanges: function() {
-        var newModel = this.collection.toJSON();
-
-        return !_.isEqual(this.backupModel, newModel);
-    },
 
     initRows: function() {
         var key = app.user.lastState.buildKey('spotlight', 'config');

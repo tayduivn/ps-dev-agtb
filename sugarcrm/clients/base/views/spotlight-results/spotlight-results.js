@@ -31,7 +31,8 @@
             this.render();
         }, this);
 
-        $(window).on('keydown.'+this.cid, _.bind(this.focus, this));
+        this.layout.on('spotlight:status', this.toggleCallback, this);
+
     },
 
     /**
@@ -40,6 +41,14 @@
     _render: function() {
         this._super('_render');
         this.$('li:first').addClass('hover');
+    },
+
+    toggleCallback: function(isOpen) {
+        if (isOpen) {
+            $(window).on('keydown.' + this.cid, _.bind(this.focus, this));
+        } else {
+            $(window).off('keydown.' + this.cid);
+        }
     },
 
     /**
@@ -86,7 +95,7 @@
      * @inheritDoc
      */
     _dispose: function() {
-        $(window).off('keydown.'+this.cid);
+        $(window).off('keydown.' + this.cid);
         this._super('_dispose');
     }
 })

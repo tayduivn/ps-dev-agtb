@@ -23,6 +23,7 @@
      */
     initialize: function(options) {
         this._super('initialize', [options]);
+        this.isOpen = false;
         app.shortcuts.register(app.shortcuts.GLOBAL + 'Spotlight', 'shift+space', this.toggle, this, true);
         this.on('spotlight:config', this.openConfigPanel, this);
     },
@@ -52,8 +53,10 @@
      * Toggles the spotlight.
      */
     toggle: function() {
+        this.isOpen = !this.isOpen;
         this.$('input').val('');
         this.$el.fadeToggle(50, 'linear', _.bind(this.focusInput, this));
+        this.trigger('spotlight:status', this.isOpen);
     },
 
     /**

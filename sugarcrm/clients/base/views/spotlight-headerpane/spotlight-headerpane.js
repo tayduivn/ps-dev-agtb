@@ -14,6 +14,8 @@
  * @extends View.View
  */
 ({
+    plugins: ['Editable'],
+
     events: {
         'click a[name=save_button]': 'save',
         'click a[name=cancel_button]': 'cancel'
@@ -35,16 +37,14 @@
                 $saveButton.click();
             }
         }, this, true);
+
+        this.backupModel = this.collection.toJSON()
     },
 
-    /**
-     * @inheritDoc
-     */
     hasUnsavedChanges: function() {
-        // var previousAttributes = _.extend(this.model.previousAttributes(), {
-        //     label: this._translatedLabel
-        // });
-        // return !_.isEmpty(this.model.changedAttributes(previousAttributes));
+        var newModel = this.collection.toJSON();
+
+        return !_.isEqual(this.backupModel, newModel);
     },
 
     save: function() {
