@@ -40,7 +40,19 @@ abstract class SugarRelationship
     protected $ignore_role_filter = false;
     protected $self_referencing = false; //A relationship is self referencing when LHS module = RHS Module
 
-    protected static $beansToResave = array();
+    /**
+     * Bean resave queue
+     *
+     * @var SugarBean[]
+     */
+    protected static $resaveQueue = array();
+
+    /**
+     * Index of bean resave queue
+     *
+     * @var array
+     */
+    protected static $resaveIndex = array();
 
     public abstract function add($lhs, $rhs, $additionalFields = array());
 
@@ -643,10 +655,12 @@ abstract class SugarRelationship
      */
     public static function addToResaveList($bean)
     {
-        if (!isset(self::$beansToResave[$bean->module_dir])) {
-            self::$beansToResave[$bean->module_dir] = array();
+        if (isset(self::$resaveIndex[$bean->module_dir][$bean->id])) {
+            return;
         }
-        self::$beansToResave[$bean->module_dir][$bean->id] = $bean;
+
+        self::$resaveIndex[$bean->module_dir][$bean->id] = true;
+        self::$resaveQueue[] = $bean;
     }
 
     /**
@@ -662,30 +676,31 @@ abstract class SugarRelationship
         }
 
         //Resave any bean not currently in the middle of a save operation
-        foreach (self::$beansToResave as $module => $beans) {
-            foreach ($beans as $bean) {
-                if (empty($bean->deleted) && empty($bean->in_save)) {
-                    if ($refresh) {
-                        // Make sure we're using the newest version of the bean, not the one queued
-                        $latestBean = BeanFactory::retrieveBean($module, $bean->id);
-                        if ($latestBean !== null) {
-                            $bean = $latestBean;
-                        }
+        while (count(self::$resaveQueue) > 0) {
+            $bean = array_shift(self::$resaveQueue);
+            if (empty($bean->deleted) && empty($bean->in_save)) {
+                if ($refresh) {
+                    // Make sure we're using the newest version of the bean, not the one queued
+                    $latestBean = BeanFactory::retrieveBean($bean->module_name, $bean->id);
+                    if ($latestBean !== null) {
+                        $bean = $latestBean;
                     }
-                    $bean->save();
-                } else {
-                    // Bug 55942 save the in-save id which will be used to send workflow alert later
-                    if (isset($bean->id) && !empty($_SESSION['WORKFLOW_ALERTS'])) {
-                        $_SESSION['WORKFLOW_ALERTS']['id'] = $bean->id;
-                    }
+                }
+                $bean->save();
+            } else {
+                // Bug 55942 save the in-save id which will be used to send workflow alert later
+                if (isset($bean->id) && !empty($_SESSION['WORKFLOW_ALERTS'])) {
+                    $_SESSION['WORKFLOW_ALERTS']['id'] = $bean->id;
                 }
             }
         }
 
         SugarBean::leaveOperation('saving_related');
 
-        //Reset the list of beans that will need to be resaved
-        self::$beansToResave = array();
+        //Reset the queue index
+        self::$resaveIndex = array();
+
+        SugarBean::clearRecursiveResave();
     }
 
     /**

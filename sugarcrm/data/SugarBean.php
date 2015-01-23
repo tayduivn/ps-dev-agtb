@@ -390,6 +390,20 @@ class SugarBean
     protected static $loadedDefs = array();
 
     /**
+     * Keeps track of links used during recursive resave of related beans
+     *
+     * @var array
+     */
+    protected static $recursivelyResavedLinks = array();
+
+    /**
+     * The flag tracking whether resave of the beans on the "many" side of link has triggered
+     *
+     * @var boolean
+     */
+    protected static $recursivelyResavedManyBeans = false;
+
+    /**
      * This method has been moved into the __construct() method to follow php standards
      *
      * Please start using __construct() as this method will be removed in a future version
@@ -1950,19 +1964,30 @@ class SugarBean
             return;
         }
 
-        if (!static::enterOperation('saving_related')) {
-            return;
-        }
-
         // If linkName is empty then we need to handle all links
         if (empty($linkName)) {
             $GLOBALS['log']->debug("Updating records related to {$this->module_dir} {$this->id}");
             if (!empty($dictionary[$this->object_name]['related_calc_fields'])) {
                 $links = $dictionary[$this->object_name]['related_calc_fields'];
+                $resavedManyBeans = false;
                 foreach($links as $lname) {
+                    if (isset(self::$recursivelyResavedLinks[$this->module_name][$lname])) {
+                        continue;
+                    }
+
                     if ((empty($this->$lname) && !$this->load_relationship($lname)) || !($this->$lname instanceof Link2)) {
                         continue;
                     }
+
+                    // do not let resave of the beans on "many" side of link to trigger more than once during recursion
+                    if ($this->$lname->getType() == REL_TYPE_MANY) {
+                        if (self::$recursivelyResavedManyBeans) {
+                            continue;
+                        }
+                        $resavedManyBeans = true;
+                    }
+
+                    self::$recursivelyResavedLinks[$this->module_name][$lname] = true;
 
                     $this->addParentRecordsToResave($lname);
 
@@ -2002,14 +2027,14 @@ class SugarBean
                         }
                     }
                 }
+
+                self::$recursivelyResavedManyBeans = $resavedManyBeans;
             }
         }
         else if ($this->has_calc_field_with_link($linkName)) {
             //Save will update the saved_beans array
             SugarRelationship::addToResaveList($this);
         }
-
-        static::leaveOperation('saving_related');
     }
 
     protected function addParentRecordsToResave($lname) {
@@ -7703,5 +7728,14 @@ class SugarBean
         }
 
         return $fields;
+    }
+
+    /**
+     * Clears the status recursive resave
+     */
+    public static function clearRecursiveResave()
+    {
+        self::$recursivelyResavedLinks = array();
+        self::$recursivelyResavedManyBeans = false;
     }
 }
