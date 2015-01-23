@@ -63,6 +63,11 @@ $viewdefs['Styleguide']['base']['view']['create-actions'] = array(
                     'name' => 'display_error_state',
                     'label' => 'Toggle error state',
                 ),
+                array(
+                    'type' => 'rowaction',
+                    'name' => 'display_form_horizontal',
+                    'label' => 'Toggle form horizontal',
+                ),
             ),
         ),
         array(
