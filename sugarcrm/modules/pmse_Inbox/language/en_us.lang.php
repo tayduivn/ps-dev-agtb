@@ -49,7 +49,8 @@ $mod_strings = array (
     'LBL_PMSE_LABEL_EXECUTE' => 'Execute',
     'LBL_PMSE_LABEL_CANCEL' => 'Cancel',
     'LBL_PMSE_LABEL_HISTORY' => 'History',
-    'LBL_PMSE_LABEL_NOTES' => 'Notes',
+    'LBL_PMSE_LABEL_NOTES' => 'Show Notes',
+    'LBL_PMSE_LABEL_ADD_NOTES' => 'Add Notes',
 
     'LBL_PMSE_FORM_OPTION_SELECT' => 'Select...',
     'LBL_PMSE_FORM_LABEL_USER' => 'User',
@@ -85,6 +86,7 @@ $mod_strings = array (
     'LBL_PMSE_TITLE_HISTORY' => 'Process History',
     'LBL_PMSE_TITLE_IMAGE_GENERATOR' => 'Process #%s: Current Status',
     'LBL_PMSE_TITLE_LOG_VIEWER' => 'Process Author Log Viewer',
+    'LBL_PMSE_TITLE_PROCESS_NOTES' => 'Process Notes',
 
     'LBL_PMSE_MY_PROCESSES' => 'My Processes',
     'LBL_PMSE_SELF_SERVICE_PROCESSES' => 'Self Service Processes',
