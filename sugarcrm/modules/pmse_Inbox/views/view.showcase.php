@@ -14,6 +14,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('include/EditView/EditView2.php');
 require_once('modules/pmse_Project/clients/base/api/wrappers/PMSEWrapper.php');
 require_once('modules/pmse_Inbox/engine/wrappers/PMSECaseWrapper.php');
+require_once('modules/pmse_Inbox/engine/PMSE.php');
 
 class pmse_InboxViewShowCase extends SugarView
 {
@@ -130,7 +131,7 @@ class pmse_InboxViewShowCase extends SugarView
         }
     }
 
-    public function getButtonArray($buttonList = array(), $casId = '', $casIndex = '', $teamId = '')
+    public function getButtonArray($buttonList = array(), $casId = '', $casIndex = '', $teamId = '', $title='', $idInbox='')
     {
         $buttons = array(
             'claim' => array(
@@ -138,7 +139,7 @@ class pmse_InboxViewShowCase extends SugarView
                 'name' => 'Type',
                 'value' => 'Claim',
                 'type' => 'button',
-                'onclick' => 'javascript:claim_case(\'' . $casId . '\', \'' . $casIndex . '\');'
+                'onclick' => 'javascript:claim_case(\'' . $casId . '\', \'' . $casIndex . '\', \'' . $title . '\', \'' . $idInbox . '\');'
             ),
             'approve' => array('id' => 'ApproveBtn', 'name' => 'Type', 'value' => 'Approve', 'type' => 'submit'),
             'reject' => array('id' => 'RejectBtn', 'name' => 'Type', 'value' => 'Reject', 'type' => 'submit'),
@@ -308,7 +309,7 @@ class pmse_InboxViewShowCase extends SugarView
                     $smarty->assign('validations', array());
                 }
                 $customButtons = $this->getButtonArray($this->defs['BPM']['buttons'], $cas_id, $cas_index,
-                    $this->focus->team_id);
+                    $this->focus->team_id, $caseData['cas_title'], $caseData['idInbox']);
                 if (count($customButtons) > 1) {
                     $smarty->assign('customButtons', $customButtons);
                 } else {
