@@ -78,6 +78,8 @@ $viewdefs['base']['layout']['merge-duplicates'] = array(
                 'type' => 'default',
                 'name' => 'sidebar',
                 'span' => 12,
+                'default_hide' => '1',
+                'hide_key' => 'hide-merge',
             ),
         ),
     ),
