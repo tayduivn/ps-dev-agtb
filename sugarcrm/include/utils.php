@@ -1659,6 +1659,21 @@ function get_admin_modules_for_user($user)
 
  function get_workflow_admin_modules_for_user($user)
  {
+    /* Workflow modules blacklist */
+    $workflowNotSupportedModules = array(
+        'iFrames',
+        'Feeds',
+        'Home',
+        'Dashboard',
+        'Calendar',
+        'Activities',
+        'Reports',
+        'pmse_Business_Rules', // Process Business Rules
+        'pmse_Project', // Process Definitions
+        'pmse_Emails_Templates', // Process Emails Templates
+        'pmse_Inbox', // Processes
+    );
+
     if (isset($_SESSION['get_workflow_admin_modules_for_user'])) {
         return $_SESSION['get_workflow_admin_modules_for_user'];
     }
@@ -1685,8 +1700,7 @@ function get_admin_modules_for_user($user)
     }
     $actions = ACLAction::getUserActions($user->id);
     foreach ($workflow_mod_list as $key=>$val) {
-        if(!in_array($val, $workflow_admin_modules) && ($val!='iFrames' && $val!='Feeds' && $val!='Home' && $val!='Dashboard'
-            && $val!='Calendar' && $val!='Activities' && $val!='Reports') &&
+        if (!in_array($val, $workflow_admin_modules) && !in_array($val, $workflowNotSupportedModules) &&
            ($user->isDeveloperForModule($key))) {
                 $workflow_admin_modules[$key] = $val;
         }
