@@ -33,6 +33,35 @@
         };
 
         /**
+         * Verifies if the user has access to the action
+         *
+         * @param {string} module The module corresponding to the action.
+         * @param {string} action The action
+         * @returns {Object|boolean} The action object if the user has access,
+         *  `false` otherwise.
+         */
+        var hasAccessToAction = function(module, action) {
+            if(module && action.acl_action) {
+                if(!app.acl.hasAccess(action.acl_action, module)) {
+                    return false;
+                }
+                return action;
+            }
+
+            if(action.acl_action === 'admin' && action['label'] === 'LBL_ADMIN') {
+                //Edge case for admin link. We only show the Admin link when
+                //user has the "Admin & Developer" or "Developer" (so developer
+                //in either case; see SP-1827)
+                if (!app.acl.hasAccessToAny('developer')) {
+                    return false;
+                }
+                return action;
+            }
+
+            return action;
+        };
+
+        /**
          * Gets all the mega menu actions.
          *
          * @return {Array} Formatted items.
@@ -44,6 +73,10 @@
                 var menuMeta = app.metadata.getModule(module).menu;
                 var headerMeta = menuMeta && menuMeta.header && menuMeta.header.meta;
                 _.each(headerMeta, function(action) {
+                    if (hasAccessToAction(action.acl_module || module, action) === false) {
+                        return;
+                    }
+
                     var name;
                     var jsFunc = 'push';
                     var weight;;
@@ -69,6 +102,35 @@
                     })
                 });
             });
+            var studio = {
+                module: 'Administration',
+                label: 'Ad',
+                name: app.lang.get('LBL_STUDIO', 'Administration'),
+                acl_action: 'admin',
+                route: '#bwc/index.php?module=ModuleBuilder&action=index&type=studio',
+                icon: 'fa-cogs'
+            };
+            var systemSettings = {
+                module: 'Administration',
+                label: 'Ad',
+                name: app.lang.get('LBL_CONFIGURE_SETTINGS_TITLE', 'Administration'),
+                acl_action: 'admin',
+                route: '#bwc/index.php?module=Configurator&action=EditView',
+                icon: 'fa-cogs'
+            };
+            var styleguide = {
+                module: 'Administration',
+                label: 'Ad',
+                name: app.lang.get('LBL_MANAGE_STYLEGUIDE', 'Administration'),
+                acl_action: 'admin',
+                route: '#Styleguide',
+                icon: 'fa-cogs'
+            };
+            if (hasAccessToAction('Administration', studio) !== false) {
+                actions.push(studio);
+                actions.push(systemSettings);
+                actions.push(styleguide);
+            }
             actions.push({
                 name: app.lang.getModuleName('Forecasts', {plural: true}),
                 module: 'Forecasts',
@@ -78,6 +140,10 @@
             });
             var profileActions = app.metadata.getView(null, 'profileactions');
             _.each(profileActions, function(action) {
+                if (hasAccessToAction(action.acl_module, action) === false) {
+                    return;
+                }
+
                 actions.push({
                     name: app.lang.get(action.label),
                     route: action.route,

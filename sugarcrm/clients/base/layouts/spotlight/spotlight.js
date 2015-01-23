@@ -26,6 +26,11 @@
         this.isOpen = false;
         app.shortcuts.register(app.shortcuts.GLOBAL + 'Spotlight', 'shift+space', this.toggle, this, true);
         this.on('spotlight:config', this.openConfigPanel, this);
+        app.events.on('app:logout', function() {
+            if (this.isOpen) {
+                this.toggle();
+            }
+        }, this);
     },
 
     /**
