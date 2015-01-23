@@ -15,7 +15,8 @@
  */
 ({
     events: {
-        'click a[name=save_button]': 'save'
+        'click a[name=save_button]': 'save',
+        'click a[name=cancel_button]': 'cancel'
     },
 
     /**
@@ -61,6 +62,11 @@
         //         app.drawer.close(this.model);
         //     }
         // }, this));
-        app.drawer.close();
+        app.drawer.close(this.collection);
+    },
+
+    cancel: function() {
+        this.collection.cancel = true
+        app.drawer.close(this.collection);
     }
 })

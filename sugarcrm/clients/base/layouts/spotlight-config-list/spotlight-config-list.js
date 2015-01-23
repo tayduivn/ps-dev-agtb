@@ -9,17 +9,41 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 ({
+    plugins: ['Editable'],
+
     events: {
         'click [data-spotlight=add]': 'addRow'
     },
 
     initialize: function(options) {
         this._super('initialize', [options]);
+    
+        this.initRows();
+        this.backupModel = this.collection.toJSON()
+    },
+
+    hasUnsavedChanges: function() {
+        var newModel = this.collection.toJSON();
+
+        return !_.isEqual(this.backupModel, newModel);
+    },
+
+    initRows: function() {
+        var key = app.user.lastState.buildKey('spotlight', 'config');
+        var data = app.user.lastState.get(key);
+        if (!data) {
+            return;
+        }
+        _.each(data, function(row) {
+            var rowComponent = this.addRow();
+            rowComponent.model.set('action', row.action);
+            rowComponent.model.set('keyword', row.keyword);
+        }, this);
     },
 
     /**
      * Adds a `spotlight-config-list-row` view to the layout.
-     * @param {Event} evt The `click` event.
+     * @param {Event} [evt] The `click` event.
      */
     addRow: function(evt) {
         var def = _.extend({view: 'spotlight-config-list-row'}, app.metadata.getView(null, 'spotlight-config-list-row'));
@@ -27,6 +51,7 @@
 
         this.addComponent(rowComponent, def);
         rowComponent.render();
+        return rowComponent;
     },
 
     /**

@@ -19,16 +19,27 @@
     initialize: function(options) {
         options.model = app.data.createBean();
         this._super('initialize', [options]);
+        this.prepareActionDropdown();
+        this.collection.add(options.model);
     },
 
-    _renderHtml: function() {
-        this._super('_renderHtml');
+    prepareActionDropdown: function() {
+        var field = _.find(this.meta.fields, function(field) {
+            return field.name === 'action';
+        });
+        var actions = app.metadata.getSpotlightActions();
+        var options = {};
+        _.each(actions, function(action, id) {
+            options[id] = action.name;
+        });
+        field.options = options;
     },
 
     /**
      * @inheritDoc
      */
     removeRow: function() {
+        this.model.collection.remove(this.model.id);
         this.dispose();
         if (this.layout) {
             this.layout.removeComponent(this);

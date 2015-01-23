@@ -85,10 +85,17 @@
     /**
      * Saves the spotlight settings when the drawer closes.
      *
-     * @param {Data.Bean} model The spotlight model.
+     * @param {Data.BeanCollection} collection The spotlight configuration
+     *   collection.
      */
-    saveConfig: function(model) {
-        console.log('saving the config', model);
+    saveConfig: function(collection) {
+        if (collection.cancel) {
+            return;
+        }
+        var json = collection.toJSON();
+        var key = app.user.lastState.buildKey('spotlight', 'config');
+        app.user.lastState.set(key, json);
+        app.events.trigger('spotlight:reset');
     },
 
     /**

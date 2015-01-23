@@ -25,7 +25,7 @@
      */
     initialize: function(options) {
         this._super('initialize', [options]);
-        app.events.on('app:sync:complete', this.initLibrary, this);
+        app.events.on('app:sync:complete spotlight:reset', this.initLibrary, this);
         this.lastTerm = '';
     },
 
@@ -59,7 +59,7 @@
          */
         this.temporaryLibrary = {};
 
-        this.addToInternalLibrary(_.flatten(app.metadata.getSpotlightActions()));
+        this.addToInternalLibrary(this.getSpotlightActions());
 
         // Parse the library to remove duplicate
         this.internalLibrary = _.chain(this.internalLibrary)
@@ -71,6 +71,21 @@
                 return JSON.parse(item)
             })
             .value();
+    },
+
+    getSpotlightActions: function() {
+        var actionsById = app.metadata.getSpotlightActions();
+
+        var key = app.user.lastState.buildKey('spotlight', 'config');
+        var data = app.user.lastState.get(key);
+
+        _.each(data, function(customSetting) {
+            if (!actionsById[customSetting.action]) {
+                return;
+            }
+            actionsById[customSetting.action].keyword = customSetting.keyword;
+        });
+        return _.flatten(actionsById);
     },
 
     /**
@@ -157,7 +172,7 @@
      */
     doSearch: function(term) {
         var options = {
-            keys: ['module', 'name'],
+            keys: ['keyword', 'module', 'name'],
             threshold: '0.1'
         };
         this.fuse = new Fuse(this.getLibrary(), options);

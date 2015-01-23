@@ -15,12 +15,11 @@ $viewdefs['base']['view']['spotlight-config-list-row'] = array(
     'action' => 'edit',
     'fields' => array(
         array(
-            'name' => 'spotlight-actions',
+            'name' => 'action',
             'type' => 'enum',
-            'options' => 'tasks_visibility_options',
         ),
         array(
-            'name' => 'spotlight-keyword',
+            'name' => 'keyword',
             'type' => 'base',
         ),
     ),
