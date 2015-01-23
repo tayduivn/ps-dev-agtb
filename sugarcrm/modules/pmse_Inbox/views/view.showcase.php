@@ -308,8 +308,9 @@ class pmse_InboxViewShowCase extends SugarView
                 } else {
                     $smarty->assign('validations', array());
                 }
+                $idInbox = isset($caseData['idInbox']) ? $caseData['idInbox'] : null;
                 $customButtons = $this->getButtonArray($this->defs['BPM']['buttons'], $cas_id, $cas_index,
-                    $this->focus->team_id, $caseData['cas_title'], $caseData['idInbox']);
+                    $this->focus->team_id, $caseData['cas_title'], $idInbox);
                 if (count($customButtons) > 1) {
                     $smarty->assign('customButtons', $customButtons);
                 } else {
