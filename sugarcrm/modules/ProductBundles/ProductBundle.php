@@ -513,10 +513,10 @@ class ProductBundle extends SugarBean
      */
     public static function compareProductBundlesByIndex($pb1, $pb2)
     {
-        if ($pb1->bundle_index == $pb2->bundle_index) {
+        if ($pb1->position == $pb2->position) {
             return 0;
         }
-        return ($pb1->bundle_index < $pb2->bundle_index) ? -1 : 1;
+        return ($pb1->position < $pb2->position) ? -1 : 1;
     }
 
     /**
