@@ -12604,7 +12604,7 @@ var jCore = (function ($, window) {
             customShape.wasDragged = false;
 //        customShape.canvas.setCurrentShape(customShape);
             e.stopPropagation();
-            //select in list item for element panel with errors 
+            //select in list item for element panel with errors
             if ( listPanelError !== undefined ) {
                 erros = customShape.BPMNError.asArray();
                 if ( erros.length ) {
@@ -17345,7 +17345,7 @@ var jCore = (function ($, window) {
                     if (activeCanvas && !activeCanvas.currentLabel) {
                         activeCanvas.removeElements();
                     }
-                } else if (activeCanvas.currentConnection) {
+                } else if (activeCanvas && activeCanvas.currentConnection) {
                     activeCanvas.removeElements();
                 }
                 break;
