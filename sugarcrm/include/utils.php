@@ -490,6 +490,7 @@ function get_sugar_config_defaults()
         'tmp_file_max_lifetime' => 86400,
         'diagnostic_file_max_lifetime' => 604800,
         'pdf_file_max_lifetime' => 86400,
+        'roleBasedViews' => true,
     );
 
     if (empty($locale)) {

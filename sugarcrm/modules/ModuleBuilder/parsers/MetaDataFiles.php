@@ -414,40 +414,22 @@ class MetaDataFiles
      * @param  string $module The module for this metadata file
      * @param  string $type   The type of metadata file location (custom, working, etc)
      * @param  string $client The client type for this file
+     * @param  array $params  Optional metadata file parameters
      * @return string
      */
-    public static function getDeployedFileName($view, $module, $type = MB_CUSTOMMETADATALOCATION, $client = '')
-    {
-        $type = strtolower($type);
-        $paths = self::getPaths();
-        $names = self::getNames();
+    public static function getDeployedFileName(
+        $view,
+        $module,
+        $type = MB_CUSTOMMETADATALOCATION,
+        $client = '',
+        array $params = array()
+    ) {
+        $file = self::getFile($view, $module, array_merge($params, array(
+            'client' => $client,
+            'location' => $type,
+        )));
 
-        //In a deployed module, we can check for a studio module with file name overrides.
-        $sm = StudioModuleFactory::getStudioModule($module);
-        foreach ($sm->sources as $file => $def) {
-            if (!empty($def['view'])) {
-                $names[$def['view']] = substr($file, 0, strlen($file) - 4);
-            }
-        }
-
-        // BEGIN ASSERTIONS
-        if (!isset($paths[$type])) {
-            sugar_die("MetaDataFiles::getDeployedFileName(): Type $type is not recognized");
-        }
-
-        if (!isset($names[$view])) {
-            sugar_die("MetaDataFiles::getDeployedFileName(): View $view is not recognized");
-        }
-        // END ASSERTIONS
-
-        // Construct filename
-        if (!empty($client)) {
-            $viewPath = 'clients/' . $client . '/' . self::$viewsPath . $names[$view] . '/';
-        } else {
-            $viewPath = 'metadata/';
-        }
-
-        return $paths[$type] . 'modules/' . $module . '/' . $viewPath . $names[$view] . '.php';
+        return self::getFilePath($file);
     }
 
     /**
@@ -464,42 +446,49 @@ class MetaDataFiles
      */
     public static function getUndeployedFileName($view, $module, $packageName, $type = MB_BASEMETADATALOCATION, $client = '')
     {
-        $type = strtolower($type);
+        $file = self::getFile($view, $module, array(
+            'package' => $packageName,
+            'location' => $type,
+            'client' => $client,
+        ));
 
-        // BEGIN ASSERTIONS
-        switch ($type) {
-            case MB_BASEMETADATALOCATION:
-            case MB_HISTORYMETADATALOCATION:
-            case MB_WORKINGMETADATALOCATION:
-                break;
-            default:
-                // just warn rather than die
-                $GLOBALS['log']->warn(
-                    "UndeployedMetaDataImplementation->getFileName(): view type $type is not recognized"
-                );
-                break;
-        }
-        // END ASSERTIONS
+        return self::getFilePath($file);
+    }
 
-        $names = self::getNames();
+    public static function getFile($view, $module, array $params = array())
+    {
+        require_once 'modules/ModuleBuilder/parsers/MetaDataFile.php';
+        $file = new MetaDataFile($view, $module);
 
-        // Get final filename path part
-        if (!empty($client)) {
-            $viewPath = 'clients/' . $client . '/' . self::$viewsPath . $names[$view] . '/';
+        if (!empty($params['client'])) {
+            require_once 'modules/ModuleBuilder/parsers/MetaDataFile/MetaDataFileSidecar.php';
+            $file = new MetaDataFileSidecar($file, $params['client']);
         } else {
-            $viewPath = 'metadata/';
+            require_once 'modules/ModuleBuilder/parsers/MetaDataFile/MetaDataFileBwc.php';
+            $file = new MetaDataFileBwc($file);
         }
 
-        switch ($type) {
-            case MB_HISTORYMETADATALOCATION:
-                return self::$paths[MB_WORKINGMETADATALOCATION] . 'modulebuilder/packages/' . $packageName . '/modules/' . $module . '/' . $viewPath . $names[$view] . '.php';
-            default:
-                // get the module again, all so we can call this method statically without relying on the module stored in the class variables
-                require_once 'modules/ModuleBuilder/MB/ModuleBuilder.php';
-                $mb = new ModuleBuilder();
+        if (!empty($params['location'])) {
+            if (!empty($params['package'])) {
+                require_once 'modules/ModuleBuilder/parsers/MetaDataFile/MetaDataFileUndeployed.php';
+                $file = new MetaDataFileUndeployed($file, $params['package'], $params['location']);
+            } else {
+                require_once 'modules/ModuleBuilder/parsers/MetaDataFile/MetaDataFileDeployed.php';
+                $file = new MetaDataFileDeployed($file, $params['location']);
 
-                return $mb->getPackageModule($packageName, $module)->getModuleDir() . '/' . $viewPath . $names[$view] . '.php';
+                if (!empty($params['role'])) {
+                    require_once 'modules/ModuleBuilder/parsers/MetaDataFile/MetaDataFileRoleDependent.php';
+                    $file = new MetaDataFileRoleDependent($file, $params['role']);
+                }
+            }
         }
+
+        return $file;
+    }
+
+    public static function getFilePath(MetaDataFileInterface $file)
+    {
+        return implode('/', $file->getPath()) . '.php';
     }
 
     /**
@@ -543,7 +532,7 @@ class MetaDataFiles
      */
     public static function getSugarObjectFileName($module, $deftype, $client = '', $component = self::COMPONENTVIEW)
     {
-        $filename =  self::getSugarObjectFileDir($module, $client, $component) . $deftype . '.php';
+        $filename =  self::getSugarObjectFileDir($module, $client, $component) . '/' . $deftype . '.php';
 
         return $filename;
     }
@@ -585,11 +574,11 @@ class MetaDataFiles
         require_once 'modules/ModuleBuilder/Module/StudioModule.php';
         $sm = new StudioModule($module);
 
-        $dirname = 'include/SugarObjects/templates/' . $sm->getType() . '/';
+        $dirname = 'include/SugarObjects/templates/' . $sm->getType();
         if (!empty($client)) {
-            $dirname .= 'clients/' . $client . '/' . $component . 's/';
+            $dirname .= '/clients/' . $client . '/' . $component . 's';
         } else {
-            $dirname .= 'metadata/';
+            $dirname .= '/metadata';
         }
 
         return $dirname;
@@ -735,8 +724,8 @@ class MetaDataFiles
      * Removes module cache files. This can clear a single cache file by type or
      * all cache files for a module. Can also clear a single platform type cache
      * for a module.
-     * 
-     * @param array $modules The modules to clear the cache for. An empty array 
+     *
+     * @param array $modules The modules to clear the cache for. An empty array
      *                       clears caches for all modules
      * @param string $type   The cache file to clear. An empty string clears all
      *                       cache files for a module
@@ -753,17 +742,17 @@ class MetaDataFiles
             // They want all of the modules, so get them if they are already set
             $modules = empty($GLOBALS['app_list_strings']['moduleList']) ? array() : array_keys($GLOBALS['app_list_strings']['moduleList']);
         }
-        
+
         // Clean up the type
         if ( empty($type) ) {
             $type = '*';
         }
-        
+
         // Clean up the platforms
         if (empty($platforms)) {
             $platforms = array('*');
         }
-        
+
         // Handle it
         foreach ($modules as $module) {
             // Start at the client dir level
@@ -775,10 +764,10 @@ class MetaDataFiles
                     foreach ($platformDirs as $platformDir) {
                         // Get all of the files in question
                         $cacheFiles = glob($platformDir . $type . '.php');
-                        
+
                         // Handle nuking the files
                         foreach ($cacheFiles as $cacheFile) {
-                            unlink($cacheFile);
+                            SugarAutoLoader::unlink($cacheFile);
                         }
                     }
                 }
@@ -789,22 +778,23 @@ class MetaDataFiles
     /**
      * Gets all module cache files for a module. Uses the first platform in the
      * platform list to get the cache files.
-     * 
+     *
      * @param array $platforms The list of platforms to get a module cache for.
      *                         Uses the first member of this list as the platform.
      * @param string $type     The type of cache file to get.
      * @param string $module   The module to get the cache for.
-     * @return array 
+     * @param MetaDataContextInterface|null $context Metadata context
+     * @return array
      */
-    public static function getModuleClientCache( $platforms, $type, $module )
+    public static function getModuleClientCache($platforms, $type, $module, MetaDataContextInterface $context = null)
     {
         if (empty($module)) {
             return null;
         }
         $clientCache = array();
         $cacheFile = sugar_cached('modules/'.$module.'/clients/'.$platforms[0].'/'.$type.'.php');
-        if ( !file_exists($cacheFile) ) {
-            self::buildModuleClientCache( $platforms, $type, $module );
+        if (!empty($GLOBALS['sugar_config']['roleBasedViews']) || !file_exists($cacheFile)) {
+            self::buildModuleClientCache($platforms, $type, $module, $context);
         }
         $clientCache[$module][$platforms[0]][$type] = array();
         require $cacheFile;
@@ -814,14 +804,19 @@ class MetaDataFiles
 
     /**
      * Builds up module client cache files
-     * 
-     * @param array $platforms A list of platforms to build for. Uses the first 
+     *
+     * @param array $platforms A list of platforms to build for. Uses the first
      *                         platform in the list as the platform.
      * @param string $type     The type of file to create the cache for.
      * @param array $modules   The module to create the cache for.
+     * @param MetaDataContextInterface|null $context Metadata context
      */
-    public static function buildModuleClientCache( $platforms, $type, $modules = array() )
-    {
+    public static function buildModuleClientCache(
+        $platforms,
+        $type,
+        $modules = array(),
+        MetaDataContextInterface $context = null
+    ) {
         if ( is_string($modules) ) {
             // They just want one module
             $modules = array($modules);
@@ -829,9 +824,12 @@ class MetaDataFiles
             // They want all of the modules
             $modules = array_keys($GLOBALS['app_list_strings']['moduleList']);
         }
+        if (!$context) {
+            $context = new MetaDataContextDefault();
+        }
         foreach ($modules as $module) {
             $seed = BeanFactory::getBean($module);
-            $fileList = self::getClientFiles($platforms, $type, $module);
+            $fileList = self::getClientFiles($platforms, $type, $module, $context);
             $moduleResults = self::getClientFileContents($fileList, $type, $module);
 
             if ($type == "view") {
@@ -875,10 +873,11 @@ class MetaDataFiles
      *                          platform in the list as the platform.
      * @param string $type      The type of file to retrieve for building metadata.
      * @param string $module    The module to retrieve for building metadata.
+     * @param MetaDataContextInterface|null $context Metadata context
      *
      * @return array
      */
-    public static function getClientFiles( $platforms, $type, $module = '' )
+    public static function getClientFiles( $platforms, $type, $module = null, MetaDataContextInterface $context = null)
     {
         $checkPaths = array();
 
@@ -914,7 +913,7 @@ class MetaDataFiles
         }
 
         // Second, get a list of files in those directories, sorted by "relevance"
-        $fileList = self::getClientFileList($checkPaths);
+        $fileList = self::getClientFileList($checkPaths, $context);
         return $fileList;
     }
 
@@ -922,23 +921,24 @@ class MetaDataFiles
      * Get a list of files in the given directories.
      *
      * @param array $checkPaths A list of directories to include files.
+     * @param MetaDataContextInterface|null $context Metadata context
      *
      * @return array
      */
-    public static function getClientFileList($checkPaths)
+    public static function getClientFileList($checkPaths, MetaDataContextInterface $context = null)
     {
-
-        $fileList = array();
+        $fileLists = array();
         foreach ($checkPaths as $path => $pathInfo) {
             // Looks at /modules/Accounts/clients/base/views/*
             // So should pull up "record","list","preview"
-            $dirsInPath = SugarAutoLoader::getDirFiles($path,true);
+            $dirsInPath = SugarAutoLoader::getDirFiles($path, true, null, true);
+            $fileList = array();
 
             foreach ($dirsInPath as $fullSubPath) {
                 $subPath = basename($fullSubPath);
                 // This should find the files in each view/layout
                 // So it should pull up list.js, list.php, list.hbs
-                $filesInDir = SugarAutoLoader::getDirFiles($fullSubPath,false);
+                $filesInDir = SugarAutoLoader::getDirFiles($fullSubPath, false, null, true);
                 foreach ($filesInDir as $fullFile) {
                     // If this file is an excluded file, skip it
                     if (self::isExcludedClientFile($fullFile)) {
@@ -948,17 +948,44 @@ class MetaDataFiles
                     $file = basename($fullFile);
                     $fileIndex = $fullFile;
                     if ( !isset($fileList[$fileIndex]) ) {
-                        $fileList[$fileIndex] = array('path'=>$fullFile, 'file'=>$file, 'subPath'=>$subPath, 'platform'=>$pathInfo['platform']);
-                        if ( $pathInfo['template'] && (substr($file,-4)=='.php') ) {
-                            $fileList[$fileIndex]['template'] = true;
-                        } else {
-                            $fileList[$fileIndex]['template'] = false;
-                        }
+                        $fileList[$fileIndex] = array(
+                            'path' => $fullFile,
+                            'file' => $file,
+                            'subPath' => $subPath,
+                            'platform' => $pathInfo['platform'],
+                            'template' => $pathInfo['template'] && substr($file, -4) == '.php',
+                            'params' => self::getClientFileParams($fullFile),
+                        );
                     }
                 }
             }
+
+            if ($context) {
+                $fileList = self::filterClientFiles($fileList, $context);
+            }
+            $fileLists[] = $fileList;
         }
-        return $fileList;
+
+        return call_user_func_array('array_merge', $fileLists);
+    }
+
+    /**
+     * Returns context parameters which are required for the given file to be effective
+     *
+     * @param $path
+     * @return array
+     * @todo Make this back protected after handling role based LOV is reworked
+     * @see MetaDataManager::getEditableDropdownFilters()
+     */
+    public static function getClientFileParams($path)
+    {
+        if (preg_match('/\/roles\/([^\/]+)\//', $path, $matches)) {
+            return array(
+                'role' => $matches[1],
+            );
+        }
+
+        return array();
     }
     /**
      * Get the content from the global files.
@@ -1013,7 +1040,7 @@ class MetaDataFiles
     {
         $results = array();
 
-        foreach ($fileList as $fileIndex => $fileInfo) {
+        foreach ($fileList as $fileInfo) {
             $extension = substr($fileInfo['path'],-3);
             switch ($extension) {
                 case '.js':
@@ -1269,5 +1296,26 @@ class MetaDataFiles
 
         return $text;
 
+    }
+
+    /**
+     * Filters client files
+     *
+     * @param array $files Files to be filtered
+     * @param MetaDataContextInterface $context Metadata context
+     *
+     * @return array Filtered set of files
+     */
+    protected static function filterClientFiles(array $files, MetaDataContextInterface $context)
+    {
+        $files = array_filter($files, function (array $file) use ($context) {
+            return $context->isValid($file);
+        });
+
+        uasort($files, function ($a, $b) use ($context) {
+            return $context->compare($a, $b);
+        });
+
+        return $files;
     }
 }

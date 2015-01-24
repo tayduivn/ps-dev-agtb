@@ -78,12 +78,12 @@ class MetaDataManagerCacheRefreshTest extends Sugar_PHPUnit_Framework_TestCase
     public static function tearDownAfterClass()
     {
         // After all is said and done, reset our caches to the beginning
-        MetaDataManager::clearAPICache();
+        //MetaDataManager::clearAPICache();
     }
-    
+
     /**
      * Tests the metadatamanager getManager method gets the right manager
-     * 
+     *
      * @group MetaDataManager
      * @dataProvider managerTypeProvider
      * @param string $platform
@@ -97,7 +97,7 @@ class MetaDataManagerCacheRefreshTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * Tests delete and rebuild of cache files
-     * 
+     *
      * @group MetaDataManager
      */
     public function testRefreshCacheCreatesNewCacheEntries()
@@ -105,19 +105,19 @@ class MetaDataManagerCacheRefreshTest extends Sugar_PHPUnit_Framework_TestCase
         $db = DBManagerFactory::getInstance();
 
         // Start by wiping out everything
-        MetaDataManager::clearAPICache();
+        TestMetaDataManager::clearAPICache();
         $this->assertEmpty($db->getOne("SELECT id FROM metadata_cache WHERE type='meta_hash_public_base'"));
         $this->assertEmpty($db->getOne("SELECT id FROM metadata_cache WHERE type='meta_hash_base'"));
 
         // Refresh the cache and ensure that there are file in place
-        MetaDataManager::refreshCache(array('base'), true);
+        TestMetaDataManager::refreshCache(array('base'), true);
         $this->assertNotEmpty($db->getOne("SELECT id FROM metadata_cache WHERE type='meta_hash_public_base'"));
         $this->assertNotEmpty($db->getOne("SELECT id FROM metadata_cache WHERE type='meta_hash_base'"));
     }
 
     /**
      * Tests that the cache files for a platform were refreshed
-     * 
+     *
      * @group MetaDataManager
      * @dataProvider platformProvider
      * @param string $platform
@@ -128,7 +128,7 @@ class MetaDataManagerCacheRefreshTest extends Sugar_PHPUnit_Framework_TestCase
 
         // Get the private metadata manager for $platform
         $mm = MetaDataManager::getManager($platform);
-        
+
         // Get the current metadata to ensure there is a cache built
         $mm->getMetadata();
 
@@ -143,7 +143,7 @@ class MetaDataManagerCacheRefreshTest extends Sugar_PHPUnit_Framework_TestCase
 
         //Wait to ensure timestamp inscreases
         sleep(1);
-        
+
         // This will wipe out and rebuild the private metadata cache for $platform
         $mm->rebuildCache();
 
@@ -151,7 +151,7 @@ class MetaDataManagerCacheRefreshTest extends Sugar_PHPUnit_Framework_TestCase
         $newDateModified = TimeDate::getInstance()->fromDb(
             $db->fromConvert($db->getOne("SELECT date_modified FROM metadata_cache WHERE type='$key'"), 'datetime')
         );
-        
+
         // Test the time on the new file
         $this->assertGreaterThan(
             $dateModified->getTimestamp(),
@@ -161,9 +161,9 @@ class MetaDataManagerCacheRefreshTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * Essentially the same test as directly hitting metadata manager, except 
+     * Essentially the same test as directly hitting metadata manager, except
      * this tests Quick Repairs access to it.
-     * 
+     *
      * @group MetaDataManager
      * @dataProvider visibilityFlags
      */
@@ -174,19 +174,19 @@ class MetaDataManagerCacheRefreshTest extends Sugar_PHPUnit_Framework_TestCase
         $key = $public ? "meta_hash_public_base" : "meta_hash_base";
         // Get the metadata manager for use in this test
         $mm = MetaDataManager::getManager(array('base'), $public);
-        
+
         // Wipe out the cache
         $repair = new RepairAndClear();
         $repair->clearMetadataAPICache();
         $this->assertEmpty($db->getOne("SELECT id FROM metadata_cache WHERE type='$key'"));
-        
+
         // Build the cache now to ensure we have a cache file
         $mm->getMetadata();
         $this->assertNotEmpty($db->getOne("SELECT id FROM metadata_cache WHERE type='$key'"),
             "Could not load the metadata cache for $key after load"
         );
 
-        
+
         // Refresh the cache and ensure that there are file in place
         $repair->repairMetadataAPICache();
         $this->assertNotEmpty($db->getOne("SELECT id FROM metadata_cache WHERE type='$key'"),
@@ -196,23 +196,23 @@ class MetaDataManagerCacheRefreshTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * Tests that a section of metadata was updated
-     * 
+     *
      * @group MetaDataManager
      */
     public function testSectionCacheRefreshes()
     {
         $mmPri = MetaDataManager::getManager('base');
-        
+
         // Get our private and public metadata
         $mdPri = $mmPri->getMetadata();
-        
+
         // Change the build number to ensure that server info gets changed
         $GLOBALS['sugar_build'] = 'TESTBUILDXXX';
         MetaDataManager::refreshSectionCache(MetaDataManager::MM_SERVERINFO, array('base'));
-        
+
         // Get the newest metadata, which should be different
         $dataPri = $mmPri->getMetadata();
-        
+
         $this->assertNotEmpty($mdPri['server_info'], "Server info from the initial fetch is empty");
         $this->assertNotEmpty($dataPri['server_info'], "Server info from the second fetch is empty");
         $this->assertNotEquals($mdPri['server_info'], $dataPri['server_info'], "First and second metadata server_info sections are the same");
@@ -220,21 +220,21 @@ class MetaDataManagerCacheRefreshTest extends Sugar_PHPUnit_Framework_TestCase
     //BEGIN SUGARCRM flav=pro ONLY
     /**
      * Tests module data refreshing
-     * 
+     *
      * @group MetaDataManager
      */
     public function testSectionModuleCacheRefreshes()
     {
         $mm = MetaDataManager::getManager('mobile');
-        
+
         // Get our private and public metadata
         $md = $mm->getMetadata();
-        
+
         // Add two things: a new view to Accounts and a new View to Cases. Test
         // that the Accounts view got picked up and that the Notes view didn't.
         sugar_mkdir(dirname($this->accountsFile));
         sugar_mkdir(dirname($this->casesFile));
-        
+
         $casesFile = '<?php
 $viewdefs[\'Cases\'][\'mobile\'][\'view\'][\'fandy\'] = array(\'test\' => \'test this\');';
 
@@ -244,21 +244,21 @@ $viewdefs[\'Accounts\'][\'mobile\'][\'view\'][\'herfy\'] = array(\'test\' => \'t
         sugar_file_put_contents($this->accountsFile, $AccountsFile);
         SugarAutoLoader::addToMap($this->casesFile, false);
         SugarAutoLoader::addToMap($this->accountsFile); // Only save the file map cache on the second add
-        
+
         // Refresh the modules cache
         MetaDataManager::refreshModulesCache(array('Accounts'), array('mobile'));
-        
+
         // Get the newest metadata, which should be different
         $data = $mm->getMetadata();
-        
+
         // Basic assertions
         $this->assertNotEmpty($md['modules']['Accounts'], "Accounts module data from the initial fetch is empty");
         $this->assertNotEmpty($data['modules']['Accounts'], "Accounts module data the second fetch is empty");
-        
+
         // Assertions of state prior to refresh
         $this->assertArrayNotHasKey('herfy', $md['modules']['Accounts']['views'], "The test view was found in the original Accounts metadata.");
         $this->assertArrayNotHasKey('fandy', $md['modules']['Cases']['views'], "The test view was found in the original Cases metadata.");
-        
+
         // Assertions of state after refresh. Mobile will cull certain elements from metadata
         $this->assertEquals($md['modules']['Accounts']['views'], $data['modules']['Accounts']['views'], "First and second metadata Accounts module sections are not the same");
         $this->assertEquals($md['modules']['Cases']['views'], $data['modules']['Cases']['views'], "First and second metadata Cases module sections are different");
@@ -278,7 +278,7 @@ $viewdefs[\'Accounts\'][\'mobile\'][\'view\'][\'herfy\'] = array(\'test\' => \'t
             array('platform' => 'base', 'manager' => 'MetaDataManager'),
         );
     }
-    
+
     public function platformProvider()
     {
         return array(
@@ -291,7 +291,7 @@ $viewdefs[\'Accounts\'][\'mobile\'][\'view\'][\'herfy\'] = array(\'test\' => \'t
             array('platform' => 'base'),
         );
     }
-    
+
     public function visibilityFlags()
     {
         return array(
@@ -302,3 +302,20 @@ $viewdefs[\'Accounts\'][\'mobile\'][\'view\'][\'herfy\'] = array(\'test\' => \'t
 }
 
 
+/**
+ * Class TestMetaDataManager
+ * Test version that ignores per-user metadata contexts
+ */
+class TestMetaDataManager extends MetaDataManager
+{
+    /**
+     * @param bool $public
+     *
+     * For test purposes, always return the public contexts. Role contexts will be tested elsewhere
+     * @return MetaDataContextInterface[]
+     */
+    protected static function getAllMetadataContexts($public)
+    {
+        return parent::getAllMetadataContexts(true);
+    }
+}

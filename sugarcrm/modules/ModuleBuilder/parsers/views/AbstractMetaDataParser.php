@@ -218,4 +218,15 @@ abstract class AbstractMetaDataParser
         
         return null;
     }
+
+    /**
+     * Resets user specific metadata to default
+     */
+    public function resetToDefault()
+    {
+        if ($this->implementation->isDeployed()) {
+            $this->implementation->resetToDefault();
+            $this->_clearCaches();
+        }
+    }
 }

@@ -16,7 +16,7 @@ $dictionary['metadata_cache'] = array(
     'table' => 'metadata_cache',
     'fields' => array(
         array('name' => 'id', 'type' => 'varchar', 'len' => '36'),
-        array('name' => 'type', 'type' => 'varchar', 'len' => '36'),
+        array('name' => 'type', 'type' => 'varchar', 'len' => '255'),
         array('name' => 'data', 'type' => 'longblob'),
         array('name' => 'date_modified', 'type' => 'datetime'),
         array('name' => 'deleted', 'type' => 'bool', 'len' => '1', 'default' => '0')

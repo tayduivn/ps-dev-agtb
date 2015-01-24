@@ -39,6 +39,7 @@ require_once 'modules/ModuleBuilder/parsers/relationships/UndeployedRelationship
 
 // Used in action_SaveDropDown
 require_once 'modules/ModuleBuilder/parsers/parser.dropdown.php';
+require_once 'modules/ModuleBuilder/parsers/parser.roledropdownfilter.php';
 
 // Used in action_searchViewSave
 // Bug56789 - Without a client, the wrong viewdef file was getting picked up
@@ -699,6 +700,18 @@ class ModuleBuilderController extends SugarController
         $parser->saveDropDown($_REQUEST);
         MetaDataManager::refreshSectionCache(MetaDataManager::MM_LABELS);
         MetaDataManager::refreshSectionCache(MetaDataManager::MM_ORDEREDLABELS);
+        MetaDataManager::refreshSectionCache(MetaDataManager::MM_EDITDDFILTERS);
+        $this->view = 'dropdowns';
+    }
+
+    public function action_SaveRoleDropDownFilter()
+    {
+        $params = $_REQUEST;
+        if(empty($params['dropdown_role']) || empty($params['dropdown_name']) || empty($params['dropdown_keys'])) {
+            return;
+        }
+        $parser = new ParserRoleDropDownFilter();
+        $parser->handleSave($params['dropdown_role'], $params['dropdown_name'], $params['dropdown_keys']);
         $this->view = 'dropdowns';
     }
 
@@ -837,13 +850,18 @@ class ModuleBuilderController extends SugarController
         }
         //END SUGARCRM flav=ent ONLY
 
-
-
-        $parser = ParserFactory::getParser ( $parserview,
-                                             $_REQUEST['view_module'],
-                                             isset( $_REQUEST [ 'view_package' ] ) ? $_REQUEST [ 'view_package' ] : null,
-                                             null,
-                                             $client) ;
+        $params = array();
+        if (!empty($_REQUEST['role'])) {
+            $params['role'] = $_REQUEST['role'];
+        }
+        $parser = ParserFactory::getParser(
+            $parserview,
+            $_REQUEST['view_module'],
+            isset($_REQUEST ['view_package']) ? $_REQUEST ['view_package'] : null,
+            null,
+            $client,
+            $params
+        );
         $parser->writeWorkingFile () ;
 
 
@@ -871,13 +889,25 @@ class ModuleBuilderController extends SugarController
             //BEGIN SUGARCRM flav=ent ONLY
         }
         //END SUGARCRM flav=ent ONLY
-        $parser = ParserFactory::getParser ( $parserview,
-                                             $_REQUEST['view_module'],
-                                             isset ( $_REQUEST [ 'view_package' ] ) ? $_REQUEST [ 'view_package' ] : null,
-                                             null,
-                                             $client);
-        $parser->handleSave () ;
 
+        $params = array();
+        if (!empty($_REQUEST['role'])) {
+            $params['role'] = $_REQUEST['role'];
+        }
+        $parser = ParserFactory::getParser(
+            $parserview,
+            $_REQUEST['view_module'],
+            isset ($_REQUEST ['view_package']) ? $_REQUEST ['view_package'] : null,
+            null,
+            $client,
+            $params
+        );
+
+        if (!empty($_REQUEST['is_synced'])) {
+            $parser->resetToDefault();
+        } else {
+            $parser->handleSave();
+        }
 
         if (!empty($_REQUEST [ 'sync_detail_and_edit' ]) && $_REQUEST['sync_detail_and_edit'] != false && $_REQUEST['sync_detail_and_edit'] != "false") {
             if (strtolower ($parser->_view) == MB_EDITVIEW) {
@@ -1117,6 +1147,27 @@ class ModuleBuilderController extends SugarController
             $val = array('key' => $key, 'direction' => $direction);
             $current_user->setPreference('fieldsTableColumn', getJSONobj()->encode($val), 0, 'ModuleBuilder');
         }
+    }
+
+    public function action_copyLayout()
+    {
+        $module = $_REQUEST['view_module'];
+        $view = $_REQUEST['view'];
+        $role = $_REQUEST['role'];
+        $source = $_REQUEST['source'];
+
+        $sourceParser = ParserFactory::getParser($view, $module, null, null, null, array('role' => $source));
+        $sourceImplementation = $sourceParser->getImplementation();
+        $fileName = $sourceImplementation->getFileNameNoDefault($view, $module);
+        if (!file_exists($fileName)) {
+            return;
+        }
+
+        $parser = ParserFactory::getParser($view, $module, null, null, null, array('role' => $role));
+        $history = $parser->getHistory();
+        $history->savePreview($fileName);
+
+        $this->view = 'layoutview';
     }
 
     /**
