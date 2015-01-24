@@ -296,6 +296,16 @@ $mod_strings = array (
     'LBL_PMSE_EXPCONTROL_CONSTANTS_BASIC_ADD_BOOLEAN' => 'add boolean',
     'LBL_PMSE_EXPCONTROL_EVALUATIONS_TITLE' => 'Evaluations',
     'LBL_PMSE_EXPCONTROL_CONSTANTS_TITLE' => 'Constants',
+    'LBL_PMSE_EXPCONTROL_OPERATOR_MINOR_THAN' => 'is less than',
+    'LBL_PMSE_EXPCONTROL_OPERATOR_MINOR_THAN_DATE' => 'before',
+    'LBL_PMSE_EXPCONTROL_OPERATOR_MINOR_EQUAL_THAN' => 'is less than or equal to',
+    'LBL_PMSE_EXPCONTROL_OPERATOR_EQUAL' => 'is equal to',
+    'LBL_PMSE_EXPCONTROL_OPERATOR_EQUAL_TEXT' => 'exactly matches',
+    'LBL_PMSE_EXPCONTROL_OPERATOR_MAJOR_EQUAL' => 'is greater than or equal to',
+    'LBL_PMSE_EXPCONTROL_OPERATOR_MAJOR' => 'is greater than',
+    'LBL_PMSE_EXPCONTROL_OPERATOR_MAJOR_DATE' => 'after',
+    'LBL_PMSE_EXPCONTROL_OPERATOR_NOT_EQUAL' => 'is not equal to',
+    'LBL_PMSE_EXPCONTROL_OPERATOR_NOT_EQUAL_TEXT' => 'not exactly matches',
 
     'LBL_PMSE_FORMPANEL_SUBMIT' => 'Submit',
 
