@@ -50,10 +50,11 @@ class ReportsDashletsApi extends SugarApi
         // Make sure the user isn't seeing reports they don't have access to
         require_once('modules/Reports/SavedReport.php');
         $modules = array_keys(getACLDisAllowedModules());
+        $fieldList = array('id', 'name', 'module', 'report_type', 'content', 'chart_type', 'assigned_user_id');
 
         $sq = new SugarQuery();
         $sq->from(BeanFactory::getBean('Reports'));
-        $sq->select(array('id', 'name', 'module', 'report_type', 'content', 'chart_type'));
+        $sq->select($fieldList);
         $sq->orderBy('name', 'asc');
 
         // if there were restricted modules, add those to the query
@@ -65,7 +66,20 @@ class ReportsDashletsApi extends SugarApi
             $sq->where()->notEquals('chart_type', 'none');
         }
 
-        return $sq->execute();
+        $result = $sq->execute();
+        // check acls
+        foreach ($result as $key => &$row) {
+            $savedReport = $this->getSavedReportFromData($row);
+
+            if ($savedReport->ACLAccess('list')) {
+                // for front-end to check acls
+                $row['_acl'] = ApiHelper::getHelper($api,$savedReport)->getBeanAcl($savedReport, $fieldList);
+            }
+            else {
+                unset($result[$key]);
+            }
+        }
+        return $result;
     }
 
 
@@ -80,9 +94,13 @@ class ReportsDashletsApi extends SugarApi
     {
         require_once("include/SugarCharts/ChartDisplay.php");
 
-        $chartReport = BeanFactory::getBean('Reports', $args['reportId'], array("encode" => false));
+        $chartReport = $this->getSavedReportById($args['reportId']);
 
         if (!empty($chartReport)) {
+            if (!$chartReport->ACLAccess('view')) {
+                throw new SugarApiExceptionNotAuthorized('No access to view this report');
+            }
+
             $returnData = array();
 
             $this->title = $chartReport->name;
@@ -115,5 +133,29 @@ class ReportsDashletsApi extends SugarApi
 
             return $returnData;
         }
+    }
+
+    /**
+     * Retrieves a saved Report by Report Id
+     * @param $reportId
+     *
+     * @return SugarBean
+     */
+    protected function getSavedReportById($reportId)
+    {
+        return BeanFactory::getBean("Reports", $reportId, array("encode" => false));
+    }
+
+    /**
+     * Creates a SavedReport bean from query result
+     * @param $row
+     *
+     * @return SugarBean
+     */
+    protected function getSavedReportFromData($row)
+    {
+        $savedReport = BeanFactory::getBean('Reports');
+        $savedReport->populateFromRow($row);
+        return $savedReport;
     }
 }
