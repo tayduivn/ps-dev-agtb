@@ -334,7 +334,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             $batchedDocs = array();
             $x = 0;
 
-            $bulk = new Elastica\Bulk($this->_client);
+            $bulk = $this->newElasticaBulk();
 
             /* If we use a single index we can put it directly in the url
              * of our request. This will make the bulk request smaller and
@@ -360,10 +360,8 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
                     $bulk->addDocuments($batchedDocs);
                     $bulk->send();
                     $batchedDocs = array();
-                } else {
-                    $batchedDocs[] = $singleDoc;
                 }
-
+                $batchedDocs[] = $singleDoc;
                 $x++;
             }
 
@@ -382,6 +380,17 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         }
 
         return true;
+    }
+
+    /**
+     * Get new Elastica Bulk object
+     * @param \Elastica\Client $client
+     * @return \Elastica\Bulk
+     */
+    protected function newElasticaBulk(\Elastica\Client $client = null)
+    {
+        $client = $client ?: $this->_client;
+        return new \Elastica\Bulk($client);
     }
 
     /**
