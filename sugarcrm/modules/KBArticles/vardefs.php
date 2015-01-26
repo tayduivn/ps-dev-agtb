@@ -12,6 +12,7 @@
 
 $dictionary['KBArticle'] = array(
     'table' => 'kbarticles',
+    'reassignable' => false,
     'favorites' => true,
     'unified_search' => true,
     'full_text_search' => true,
