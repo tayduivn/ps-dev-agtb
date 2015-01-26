@@ -28,7 +28,7 @@ function addDecisionTable(data) {
             ERROR_INCORRECT_BUILD: translate('LBL_PMSE_BUSINESSRULES_ERROR_INCORRECT_BUILD', module),
             MSG_DELETE_ROW: translate('LBL_PMSE_MESSAGE_LABEL_DELETE_ROW',module),
             LBL_RETURN: translate('LBL_PMSE_LABEL_RETURN', module),
-            ERROR_NO_VARIABLE_SELECTED: translate('LBL_PMSE_BUSINESSRULES_ERROR_NOVARIABLE_SELECTED', module),
+            ERROR_NO_VARIABLE_SELECTED: translate('LBL_PMSE_MESSAGE_LABEL_DEFINE_COLUMN_TYPE', module),
             ERROR_INVALID_EXPRESSION: translate('LBL_PMSE_BUSINESSRULES_ERROR_INVALIDEXPRESSION', module),
             ERROR_MISSING_EXPRESSION_OR_OPERATOR: translate('LBL_PMSE_MESSAGE_LABEL_MISSING_EXPRESSION_OR_OPERATOR', module),
             LBL_VARIABLES: translate('LBL_PMSE_ADAM_UI_LBL_VARIABLES', module),
@@ -65,11 +65,11 @@ function addDecisionTable(data) {
     };
 
     decision_table.onRemoveColumn = function () {
-        updateDimensions()
+        updateDimensions();
     };
 
     decision_table.onRemoveRow = function () {
-        updateDimensions()
+        updateDimensions();
     };
 
     $('#businessruledesigner').prepend(decision_table.getHTML());
@@ -94,7 +94,6 @@ function saveBR(route) {
                     App.alert.dismiss('upload');
                     decision_table.setIsDirty(false, true);
                     App.router.navigate(route, {trigger: true});
-                    
                 } else {
                     decision_table.setIsDirty(false);
                     App.alert.dismiss('upload');
