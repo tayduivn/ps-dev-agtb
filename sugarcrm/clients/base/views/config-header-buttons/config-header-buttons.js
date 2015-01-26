@@ -41,7 +41,7 @@
 
         this.currentModule = app.controller.context.get('module');
         this.moduleLangObj = {
-            module: this.currentModule
+            'module': app.lang.get('LBL_MODULE_NAME', this.currentModule)
         };
 
         /**
