@@ -44,6 +44,11 @@ $viewdefs['Opportunities']['base']['view']['list'] = array(
                     'default' => true,
                 ),
                 array(
+                    'name' => 'commit_stage',
+                    'enabled' => true,
+                    'default' => true,
+                ),
+                array(
                     'name' => 'amount',
                     'type' => 'currency',
                     'label' => 'LBL_LIKELY',

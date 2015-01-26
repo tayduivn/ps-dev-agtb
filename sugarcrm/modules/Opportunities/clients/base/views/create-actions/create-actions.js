@@ -1,4 +1,3 @@
-//FILE SUGARCRM flav=ent ONLY
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -13,6 +12,7 @@
 ({
     extendsFrom: 'CreateActionsView',
 
+    //BEGIN SUGARCRM flav=ent ONLY
     /**
      * Used by the alert openRLICreate method
      */
@@ -33,13 +33,20 @@
      */
     alert: undefined,
 
+    //END SUGARCRM flav=ent ONLY
+
     /**
      * {@inheritDoc}
      */
     initialize: function(options) {
+        //BEGIN SUGARCRM flav=ent ONLY
         this.plugins = _.union(this.plugins, ['LinkedModel']);
+        //END SUGARCRM flav=ent ONLY
         this._super('initialize', [options]);
+        app.utils.hideForecastCommitStageField(this.meta.panels);
     },
+
+    //BEGIN SUGARCRM flav=ent ONLY
 
     /**
      * @override
@@ -147,4 +154,5 @@
 
         this._super('_dispose', []);
     }
+    //END SUGARCRM flav=ent ONLY
 })

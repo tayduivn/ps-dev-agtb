@@ -135,6 +135,7 @@ $mod_strings = array(
     'LBL_COMMITTED' => 'Committed',
     'LBL_FORECAST' => 'Include in Forecast',
     'LBL_COMMIT_STAGE' => 'Commit Stage',
+    'LBL_COMMIT_STAGE_FORECAST' => 'Forecast',
     'LBL_WORKSHEET' => 'Worksheet',
 
     //BEGIN SUGARCRM flav=ent ONLY

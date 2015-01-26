@@ -68,7 +68,6 @@ describe("RevenueLineItems.Base.View.CreateActions", function() {
                     buckets_dom: "commit_stage_binary_dom"
                 }
             })
-            sinon.stub(view, "_parsePanelFields");
 
         });
 
@@ -76,19 +75,6 @@ describe("RevenueLineItems.Base.View.CreateActions", function() {
             view._parsePanelFields.restore();
             app.metadata.getModule.restore();
             app.view.views.BaseCreateView.prototype.initialize.restore();
-        });
-    });
-
-    describe("_parsePanelFields method", function() {
-        it("should replace commit_stage with a spacer", function() {
-            sinon.stub(app.metadata, "getModule", function () {
-                return {
-                    is_setup: false
-                }
-            });
-            view._parsePanelFields(options.meta.panels);
-            expect(options.meta.panels[0].fields).toEqual([{ name : 'spacer', span : 6, readonly : true }]);
-            app.metadata.getModule.restore();
         });
     });
 
