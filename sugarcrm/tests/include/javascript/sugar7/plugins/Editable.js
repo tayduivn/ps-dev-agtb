@@ -6,6 +6,9 @@ describe("Editable Plugin", function() {
         app = SugarTest.app;
         SugarTest.testMetadata.init();
         SugarTest.loadHandlebarsTemplate('record', 'view', 'base');
+        SugarTest.loadHandlebarsTemplate('record', 'view', 'base', 'headerpane');
+        SugarTest.loadHandlebarsTemplate('record', 'view', 'base', 'tabspanels');
+        SugarTest.loadHandlebarsTemplate('record', 'view', 'base', 'businesscard');
         SugarTest.loadComponent('base', 'view', 'record');
         SugarTest.testMetadata.addViewDefinition('record', {
             "panels": [{
