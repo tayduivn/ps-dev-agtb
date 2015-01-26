@@ -48,8 +48,26 @@ class SugarHeartbeatClient extends nusoap_client
      */
     public function __construct()
     {
+        $endpoint = $this->getEndpoint();
+        $this->setupNuSoap($endpoint);
         $options = $this->getOptions();
-        parent::__construct($this->getEndpoint(), false, false, false, false, false, $options['connection_timeout']);
+        parent::__construct($endpoint, false, false, false, false, false, $options['connection_timeout']);
+    }
+
+    /**
+     * Setup nuSoap before making any connections based on given endpoint.
+     * @param string $endpoint Endpoint
+     */
+    protected function setupNuSoap($endpoint)
+    {
+        // validate server cert for SSL connections
+        if (strpos($endpoint, 'https://') === 0) {
+            $this->setUseCURL(true);
+            $this->curl_options = array(
+                CURLOPT_SSL_VERIFYPEER => true,
+                CURLOPT_SSL_VERIFYHOST => 2,
+            );
+        }
     }
 
     /**
