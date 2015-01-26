@@ -69,8 +69,8 @@
      */
     setViewContent: function(value){
         var editable = this._getHtmlEditableField();
-        if(editable && !_.isUndefined(editable.get(0))){
-            if (!_.isEmpty(editable.get(0).contentDocument) && editable.contents().find('body').length > 0) {
+        if (editable && !_.isUndefined(editable.get(0)) && !_.isEmpty(editable.get(0).contentDocument)) {
+            if (editable.contents().find('body').length > 0) {
                 editable.contents().find('body').html(value);
             }
         } else if (editable) {
