@@ -1,5 +1,4 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -20,36 +19,53 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 class SugarHttpClient
 {
+    /**
+     * @var string
+     */
     protected $last_error = '';
+
     /**
      * sends POST request to REST service via CURL
      * @param string $url URL to call
      * @param string $postArgs POST args
+     * @param array $curlOpts cURL options
+     * @return string|boolean
      */
-    public function callRest($url, $postArgs)
+    public function callRest($url, $postArgs, array $curlOpts = array())
     {
-        if(!function_exists("curl_init")) {
+        // cURL extension is required
+        if (!function_exists("curl_init")) {
             $this->last_error = 'ERROR_NO_CURL';
             $GLOBALS['log']->fatal("REST call failed - no cURL!");
             return false;
         }
+
         $curl = curl_init($url);
-        curl_setopt($curl, CURLOPT_POST, true);
-        curl_setopt($curl, CURLOPT_HEADER, false);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $postArgs);
-        curl_setopt($curl, CURLOPT_TIMEOUT, 10);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
+
+        // cURL post options
+        $postOpts = array(
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => $postArgs,
+        );
+
+        // Merge defaults, override and post options together
+        $curlOpts = $postOpts + $this->getCurlOpts($curlOpts);
+        curl_setopt_array($curl, $curlOpts);
+
+        // Perform cURL call
         $GLOBALS['log']->debug("HTTP client call: $url -> " . var_export($postArgs, true));
         $response = curl_exec($curl);
-        if($response === false) {
+
+        // Handle error
+        if ($response === false) {
             $this->last_error = 'ERROR_REQUEST_FAILED';
             $curl_errno = curl_errno($curl);
             $curl_error = curl_error($curl);
-            $GLOBALS['log']->error("HTTP client: cURL call failed: error $curl_errno: $curl_error");
+            $GLOBALS['log']->error("HTTP client: cURL call failed for '$url': error $curl_errno: $curl_error");
             return false;
         }
+
+        // Close
         $GLOBALS['log']->debug("HTTP client response: $response");
         curl_close($curl);
         return $response;
@@ -62,5 +78,25 @@ class SugarHttpClient
     public function getLastError()
     {
         return $this->last_error;
+    }
+
+    /**
+     * Get list of cURL options based on historical defaults. Note that for
+     * secure connections it is strongly advised to use the proper SSL flags
+     * as if none are set, an insecure default approach is used.
+     *
+     * @param array $opts List op cURL options to add or override the defauls
+     * @return array
+     */
+    protected function getCurlOpts(array $opts = array())
+    {
+        $default = array(
+            CURLOPT_HEADER => false,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT => 10,
+            CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_SSL_VERIFYHOST => 0,
+        );
+        return $opts + $default;
     }
 }
