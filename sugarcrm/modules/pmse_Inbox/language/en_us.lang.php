@@ -77,6 +77,11 @@ $mod_strings = array (
     'LBL_PROCESS_NAME'  => "Process Name",
     'LBL_PROCESS_DEFINITION_NAME'  => "Process Definition Name",
     'LBL_OWNER' => 'Assigned User',
+    'LBL_STATUS_COMPLETED' => 'Processes Completed',
+    'LBL_STATUS_TERMINATED' => 'Processes Terminated',
+    'LBL_STATUS_IN_PROGRESS' => 'Processes In Progress',
+    'LBL_STATUS_CANCELLED' => 'Processes Cancelled',
+    'LBL_STATUS_ERROR' => 'Processes Error',
 
     'LBL_PMSE_TITLE_PROCESSESS_LIST'  => 'Processes List',
     'LBL_PMSE_TITLE_UNATTENDED_CASES' => 'Unattended Processes',

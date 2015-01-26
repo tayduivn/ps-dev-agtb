@@ -17361,7 +17361,7 @@ var jCore = (function ($, window) {
                     if (activeCanvas && !activeCanvas.currentLabel) {
                         activeCanvas.removeElements();
                     }
-                } else if (activeCanvas.currentConnection) {
+                } else if (activeCanvas && activeCanvas.currentConnection) {
                     activeCanvas.removeElements();
                 }
                 break;
