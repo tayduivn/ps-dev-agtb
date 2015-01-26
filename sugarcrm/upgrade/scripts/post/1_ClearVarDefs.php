@@ -40,11 +40,10 @@ class SugarUpgradeClearVarDefs extends UpgradeScript
         $needClearCache = false;
         foreach ($beanList as $bean => $class) {
             VardefManager::refreshVardefs($bean, $class);
-            SugarBean::clearLoadedDef($class);
-            SugarRelationshipFactory::rebuildCache();
             $seed = BeanFactory::getBean($bean);
             if ($seed instanceof SugarBean) {
                 if (!$this->checkBean($seed)) {
+                    SugarRelationshipFactory::rebuildCache();
                     $needClearCache = true;
                 }
             }
@@ -98,7 +97,9 @@ class SugarUpgradeClearVarDefs extends UpgradeScript
                 $this->removeField($seed, $field['name']);
             }
         }
-        $this->updateLinks($linkToUpdate, $seed, $fieldDefs);
+        if ($this->updateLinks($linkToUpdate, $seed, $fieldDefs)) {
+            $result = false;
+        }
         return $result;
     }
 
@@ -361,6 +362,7 @@ class SugarUpgradeClearVarDefs extends UpgradeScript
      */
     protected function updateLinks($links, $seed, $defs)
     {
+        $updated = false;
         foreach (array_keys($links) as $link) {
             $def = $defs[$link];
             if (empty($def) || empty($def['relationship'])) {
@@ -381,9 +383,11 @@ class SugarUpgradeClearVarDefs extends UpgradeScript
                         $out .= override_value_to_string_recursive2('dictionary', $key, $dictionary[$key]);
                     }
                     file_put_contents($file, $out);
+                    $updated = true;
                 }
             }
         }
+        return $updated;
     }
 
     /**
