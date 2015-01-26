@@ -160,6 +160,7 @@ class PMSEProjectImporter extends PMSEImporter
         unset($projectData[$this->id]);
         //Unset common fields
         $this->unsetCommonFields($projectData);
+        //unset($projectData['assigned_user_id']);
         if (!isset($projectData['assigned_user_id'])) {
             $projectData['assigned_user_id'] = $current_user->id;
         }
