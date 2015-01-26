@@ -305,7 +305,7 @@ $mod_strings = array (
     'LBL_PMSE_EXPCONTROL_OPERATOR_MAJOR' => 'is greater than',
     'LBL_PMSE_EXPCONTROL_OPERATOR_MAJOR_DATE' => 'after',
     'LBL_PMSE_EXPCONTROL_OPERATOR_NOT_EQUAL' => 'is not equal to',
-    'LBL_PMSE_EXPCONTROL_OPERATOR_NOT_EQUAL_TEXT' => 'not exactly matches',
+    'LBL_PMSE_EXPCONTROL_OPERATOR_NOT_EQUAL_TEXT' => 'is not',
 
     'LBL_PMSE_FORMPANEL_SUBMIT' => 'Submit',
 
