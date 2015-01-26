@@ -12,7 +12,6 @@
     plugins: ['JSTree', 'NestedSetCollection'],
 
     events: {
-        'click [data-name=addnode]': 'addNodeHandler',
         'keyup [data-name=search]': '_keyHandler',
         'click [data-role=icon-remove]': function() {
             this.trigger('search:clear');
@@ -84,6 +83,7 @@
         this._super('initialize', [options]);
         this._initSettings();
         this._initCallbacks();
+        this.layout.on('click:add_node_button', this.addNodeHandler, this);
     },
 
     /**
