@@ -116,7 +116,7 @@
                         .attr('class', 'nv-pie-hole-label')
                         .attr('dy', '.8em')
                         .style('fill', '#333')
-                        .style('font-size', '14px');
+                        .style('font-size', '11px');
                     return total;
                 }
             );
