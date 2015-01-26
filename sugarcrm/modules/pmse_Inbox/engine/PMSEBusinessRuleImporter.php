@@ -52,6 +52,18 @@ class PMSEBusinessRuleImporter extends PMSEImporter
         $source_definition->id = $projectData['rst_uid'];
         $projectData['rst_source_definition'] = json_encode($source_definition);
         unset($projectData[$this->id]);
-        return parent::saveProjectData($projectData);
+        unset($projectData['rst_uid']);
+        $new_uid = parent::saveProjectData($projectData);
+        if ($new_uid) {
+            // Update new id into 'rst_source_definition' field
+            $br_bean = BeanFactory::getBean('pmse_Business_Rules', $new_uid);
+            $def = json_decode($br_bean->rst_source_definition);
+            $def->id = $new_uid;
+            $br_bean->rst_source_definition = json_encode($def);
+            $br_bean->save();
+            return $new_uid;
+        } else {
+            return false;
+        }
     }
 }
