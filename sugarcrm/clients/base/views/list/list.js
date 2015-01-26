@@ -32,6 +32,11 @@
         "list:sort:fire": "sort"
     },
 
+    /**
+     * View name that corresponds to the list of fields API should retrieve
+     */
+    dataViewName: 'list',
+
     defaultContextEvents: {},
 
     // Model being previewed (if any)
@@ -53,6 +58,9 @@
         options = this.parseFieldMetadata(options);
 
         app.view.View.prototype.initialize.call(this, options);
+
+        //Set the context to load the field list from the record metadata.
+        this.context.set('dataView', this.dataViewName);
 
         this.attachEvents();
         this.orderByLastStateKey = app.user.lastState.key('order-by', this);
