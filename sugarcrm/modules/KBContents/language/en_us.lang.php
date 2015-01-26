@@ -18,7 +18,6 @@ $mod_strings = array (
     'LBL_KNOWLEDGE_BASE_ADMIN_MENU' => 'Configuration',
     'LBL_EDIT_LANGUAGES' => 'Edit languages',
     'LBL_ADMIN_LABEL_LANGUAGES' => 'Available languages',
-    'LBL_CONFIG_TITLE_MODULE_SETTINGS' => 'Knowledge Base Settings',
     'LBL_CONFIG_LANGUAGES_TITLE' => 'Available languages',
     'LBL_CONFIG_LANGUAGES_TEXT' => 'Conﬁgure languages that will be used in the Knowledge Base module.',
     'LBL_SET_ITEM_PRIMARY' => 'Set Value as Primary',
