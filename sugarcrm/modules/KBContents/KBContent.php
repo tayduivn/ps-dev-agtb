@@ -283,14 +283,54 @@ class KBContent extends SugarBean {
         $bean = ($bean === null) ? $this : $bean;
         if (empty($bean->kbarticle_id)) {
             $bean->active_rev = 1;
-        } elseif ($bean->isPublished()) {
-            $bean->resetActivRev();
-            $bean->active_rev = 1;
-            $bean->expirePublished();
-            if (empty($bean->active_date)) {
-                $bean->active_date = $bean->db->convert($GLOBALS['timedate']->nowDbDate(), 'datetime');
+        } else {
+            if ($bean->isPublished()) {
+                $bean->resetActivRev();
+                $bean->active_rev = 1;
+                $bean->expirePublished();
+                if (empty($bean->active_date)) {
+                    $bean->active_date = $bean->db->convert($GLOBALS['timedate']->nowDbDate(), 'datetime');
+                }
+            } else {
+                $activeRevisionStatus = $this->getActiveRevisionStatus($bean);
+                if ($activeRevisionStatus && !in_array($activeRevisionStatus['status'], array('published-in', 'published-ex', 'published'))) {
+                    $bean->resetActivRev();
+                    $bean->active_rev = 1;
+                    if (empty($bean->active_date)) {
+                        $bean->active_date = $bean->db->convert($GLOBALS['timedate']->nowDbDate(), 'datetime');
+                    }
+                }
             }
         }
+    }
+
+    /**
+     * Get status for document with active revision.
+     * @param KBContent $bean
+     * @return bool
+     * @throws SugarQueryException
+     */
+    protected function getActiveRevisionStatus(KBContent $bean)
+    {
+        if ($bean->kbdocument_id && $bean->kbarticle_id) {
+            $query = new SugarQuery();
+            $query->from(BeanFactory::getBean('KBContents'));
+            $query->select(array('id', 'status'));
+            $query->where()
+                ->notEquals('id', $bean->id)
+                ->equals('active_rev', 1)
+                ->equals('kbdocument_id', $bean->kbdocument_id)
+                ->equals('kbarticle_id', $bean->kbarticle_id);
+            $query->orderBy('revision', 'DESC');
+            $query->limit(1);
+
+            $result = $query->execute();
+
+            if ($result) {
+                return $result[0];
+            }
+        }
+        return false;
     }
 
     /**
