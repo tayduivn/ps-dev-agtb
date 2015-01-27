@@ -30,39 +30,6 @@ class RestPortalSecurityTest extends RestTestPortalBase {
         parent::setUp();
     }
     
-    public function tearDown()
-    {
-        // KBDoc cleanup
-        if (!empty($this->kbDocId)) {
-            $GLOBALS['db']->query("DELETE FROM kbolddocuments WHERE id = '" . $this->kbDocId . "'");
-            $GLOBALS['db']->query("DELETE FROM kbolddocument_revisions WHERE id = '" . $this->kbDocId . "'");
-            $GLOBALS['db']->query("DELETE FROM document_revisions WHERE id = '" . $this->kbDocId . "'");
-        }
-        parent::tearDown();
-    }
-
-    public function testBug57022KBOLDDocuments() {
-        //bug57022 : Retrieve of KB articles return 0 records when no account is associated to a portal contact
-
-        // Add 1 KBOLDDocument
-        $kbdoc = new KBOLDDocument();
-        $kbdoc->kbolddocument_name = "KBOLDDocument bug57022 - " . create_guid();
-        $kbdoc->body = 'This is a document for the unit test system';
-        $startDate = new SugarDateTime();
-        $startDate->modify('-7 weeks');
-        $endDate = new SugarDateTime();
-        $endDate->modify('+7 weeks');
-        $kbdoc->active_date = $startDate->format('Y-m-d');
-        $kbdoc->exp_date = $endDate->format('Y-m-d');
-        $kbdoc->status_id = 'Published';
-        $kbdoc->is_external_article = '1';
-        $kbdoc->save();
-        $this->kbDocId =$kbdoc->id;
-            // Positive Test : Should be able to see the KBDoc
-        $restReply = $this->_restCall("KBOLDDocuments/" . $kbdoc->id);
-        $this->assertEquals($kbdoc->id,$restReply['reply']['id'], 'bug57022 : Retrieve of KB articles return 0 records when no account is associated to a portal contact');
-    }
-
     /**
      * @group rest
      */
@@ -130,47 +97,6 @@ class RestPortalSecurityTest extends RestTestPortalBase {
                 $opp->contacts->add(array($this->contacts[$contactNum]),array('contact_role'=>$contact_type));
             }
         }
-        // Add some KBOLDDocuments
-        for ( $i = 0 ; $i < 6 ; $i++ ) {
-            $kbdoc = new KBOLDDocument();
-            $kbdoc->kbolddocument_name = "KBOLDDocument ".($i+1)." - ".create_guid();
-            $kbdoc->body = 'This is a document for the unit test system';
-            $startDate = new SugarDateTime();
-            $startDate->modify('-7 weeks');
-            $endDate = new SugarDateTime();
-            $endDate->modify('+7 weeks');
-            $kbdoc->active_date = $startDate->format('Y-m-d');
-            $kbdoc->exp_date = $endDate->format('Y-m-d');
-            $kbdoc->status_id = 'Published';
-            $kbdoc->is_external_article = '1';
-
-            switch($i) {
-                case 0:
-                    $kbdoc->status_id = 'Not Published';
-                    break;
-                case 1:
-                    $kbdoc->is_external_article = '0';
-                    break;
-                case 2:
-                    // Set the start date to the future.
-                    $startDate->modify('+8 weeks');
-                    $kbdoc->active_date = $startDate->format('Y-m-d');
-                    break;
-                case 3:
-                    // Set the end date to the past
-                    $endDate->modify('-8 weeks');
-                    $kbdoc->exp_date = $endDate->format('Y-m-d');
-                    break;
-                case 4:
-                    // docs without expire date and start date in the past should always be visible
-                    unset($kbdoc->exp_date);
-                    break;
-            }
-
-            $kbdoc->save();
-            $this->kbdocs[] = $kbdoc;
-        }
-
 
         // How about some cases?
         for ( $i = 0 ; $i < 30 ; $i++ ) {
@@ -488,32 +414,6 @@ class RestPortalSecurityTest extends RestTestPortalBase {
         $this->assertNotEmpty($restReply['reply']['related_record']['id']);
         $createdNote = BeanFactory::getBean('Notes',$restReply['reply']['related_record']['id']);
         $this->notes[] = $createdNote;
-
-
-        // Validate KBOLDDocuments
-        $restReply = $this->_restCall("KBOLDDocuments/");
-
-        $this->assertTrue(is_array($restReply['reply']['records']), "Reply Records was not array");
-
-        foreach ( $restReply['reply']['records'] as $kbdoc ) {
-            $this->assertEquals(true,$kbdoc['is_external_article']);
-            $this->assertEquals('Published',$kbdoc['status_id']);
-            $startTime = SugarDateTime::createFromFormat('Y-m-d',$kbdoc['active_date'])->getTimestamp();
-            $this->assertLessThan(time(),$startTime,"Current date is less than: ".$kbdoc['active_date']);
-            // Valid expiration dates are either before now or not set
-            $validExpire = (!isset($kbdoc['exp_date']) || time() < SugarDateTime::createFromFormat('Y-m-d',$kbdoc['exp_date'])->getTimestamp());
-            $this->assertTrue($validExpire,"Expiration date is invalid. ");
-        }
-        // Should not be able to fetch some of the records, let's test that.
-        for ( $i = 0; $i < 3 ; $i++ ) {
-            $restReply = $this->_restCall("KBOLDDocuments/".$this->kbdocs[$i]->id);
-            $this->assertEquals('not_found',$restReply['reply']['error']);
-        }
-        // The last two KBDocs we created should be visible.
-        $restReply = $this->_restCall("KBOLDDocuments/".$this->kbdocs[4]->id);
-        $this->assertEquals($this->kbdocs[4]->id,$restReply['reply']['id']);
-        $restReply = $this->_restCall("KBOLDDocuments/".$this->kbdocs[5]->id);
-        $this->assertEquals($this->kbdocs[5]->id,$restReply['reply']['id']);
 
     }
 

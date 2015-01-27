@@ -162,7 +162,6 @@ switch ($_REQUEST['view']) {
                 'datasets' => array(array('name' => 'Reports')),
                 'dataformat' => array(array('name' => 'Reports')),
                 'employees' => array(array('name' => 'Administration', 'anchor' => '1957677')),
-                'kbolddocuments' => array(array('name' => 'Administration', 'action' => 'kbadminview', 'anchor' => '1957677')),
             );
 
 			if(!empty($sendModuleMap[strtolower($send_module)])) {

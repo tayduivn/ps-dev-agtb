@@ -91,10 +91,6 @@ class RestMetadataModuleListPortalTest extends RestTestPortalBase {
         if ( is_int($idx) ) {
             unset($restModules[$idx]);
         }
-        $idx = array_search('KBOLDDocuments',$restModules);
-        if ( is_int($idx)) {
-            unset($restModules[$idx]);
-        }
         // Although there are 4 OOTB portal modules, only 2 are enabled by default
         $this->assertEquals(2,count($restModules),'There are extra modules in the portal module list');
         // add module

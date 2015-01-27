@@ -81,7 +81,6 @@ include("metadata/contracts_quotesMetaData.php");
 include("metadata/contracts_productsMetaData.php");
 include("metadata/projects_quotesMetaData.php");
 include("metadata/projects_revenuelineitemsMetaData.php");
-include("metadata/kbolddocuments_views_ratingsMetaData.php");
 include("metadata/users_holidaysMetaData.php");
 
 //END SUGARCRM flav=pro ONLY

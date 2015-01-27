@@ -1132,10 +1132,6 @@ $mod_strings = array (
 	'Import_2'       => 'UsersLastImport',
 	'InboundEmail' => 'InboundEmail',
 
-	'KBOLDContents' => 'KBOLDContent',
-	'KBOLDDocumentKBOLDTags' => 'KBOLDDocumentKBOLDTag',
-	'KBOLDDocumentRevisions' => 'KBOLDDocumentRevision',
-	'KBOLDTags' => 'KBOLDTag',
 	'Manufacturers'  => 'Manufacturer',
 	'ProductBundleNotes' => 'ProductBundleNote',
 	'ProductBundles'   => 'ProductBundle',

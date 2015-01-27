@@ -1708,7 +1708,7 @@ class PMSECrmDataWrapper implements PMSEObservable
     {
         if ($field['type'] == 'file' || ($field['type'] == 'id' && !$this->isCustomField(
                     $field
-                )) || $field['type'] == 'image' || isset($field['group']) || $field['name'] == 'id' || $field['vname'] == 'LBL_DELETED' || $field['vname'] == 'LBL_DOCUMENT_REVISION_ID' || $field['vname'] == 'LBL_SYSTEM_ID' || $field['vname'] == 'LBL_OUTLOOK_ID' || $field['vname'] == 'LBL_AUTHENTICATE_ID' || $field['vname'] == 'LBL_LATEST_REVISION' || $field['vname'] == 'LBL_KBOLDDOCUMENT_REVISION_NUMBER' || $field['vname'] == 'LBL_RESOURCE_ID' || $field['vname'] == 'LBL_PARENT_TASK_ID' || $field['vname'] == 'LBL_PROJECT_TASK_ID' || $field['vname'] == 'LBL_DEAL_TOT_USDOLLAR'
+                )) || $field['type'] == 'image' || isset($field['group']) || $field['name'] == 'id' || $field['vname'] == 'LBL_DELETED' || $field['vname'] == 'LBL_DOCUMENT_REVISION_ID' || $field['vname'] == 'LBL_SYSTEM_ID' || $field['vname'] == 'LBL_OUTLOOK_ID' || $field['vname'] == 'LBL_AUTHENTICATE_ID' || $field['vname'] == 'LBL_LATEST_REVISION' || $field['vname'] == 'LBL_RESOURCE_ID' || $field['vname'] == 'LBL_PARENT_TASK_ID' || $field['vname'] == 'LBL_PROJECT_TASK_ID' || $field['vname'] == 'LBL_DEAL_TOT_USDOLLAR'
         ) {
             return true;
         }

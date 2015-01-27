@@ -223,7 +223,6 @@ class ViewRelationship extends SugarView
             // Clean up the relatable module name
             $relatable[$name] = $this->getModuleName($name);
         }
-        unset($relatable['KBOLDDocuments']);
         natcasesort($relatable);
         $this->smarty->assign('relatable', array_keys($relatable));
         $this->smarty->assign('translated_relatable', $relatable);

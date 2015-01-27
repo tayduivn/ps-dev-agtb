@@ -111,15 +111,7 @@ else {
 			}
             //END SUGARCRM flav=pro ONLY
 			$query .= "WHERE document_revisions.id = '".$db->quote($_REQUEST['id'])."' ";
-		} elseif($file_type == 'kbolddocuments') {
-				$query="SELECT document_revisions.filename name	FROM document_revisions INNER JOIN kbolddocument_revisions ON document_revisions.id = kbolddocument_revisions.document_revision_id INNER JOIN kbolddocuments ON kbolddocument_revisions.kbolddocument_id = kbolddocuments.id ";
-            //BEGIN SUGARCRM flav=pro ONLY
-            if(!$focus->disable_row_level_security){
-                $focus->add_team_security_where_clause($query);
-            }
-            //END SUGARCRM flav=pro ONLY
-            $query .= "WHERE document_revisions.id = '" . $db->quote($_REQUEST['id']) ."'";
-		}  elseif($file_type == 'notes') {
+		} elseif($file_type == 'notes') {
 			$query = "SELECT filename name FROM notes ";
             //BEGIN SUGARCRM flav=pro ONLY
             if(!$focus->disable_row_level_security){

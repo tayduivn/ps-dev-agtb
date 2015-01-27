@@ -37,7 +37,7 @@ class ViewListViewTest extends Sugar_PHPUnit_Framework_TestCase
             "sugar_body_only"=>"1",
             "module"=>"ModuleBuilder",
             "view_package"=>"",
-            "view_module"=>"KBOLDDocuments",
+            "view_module"=>"Bugs",
             "view"=>"listview",
         );
         $view = new ViewListView();

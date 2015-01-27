@@ -109,9 +109,6 @@ class RestMetadataModuleListTest extends RestTestBase {
         if ( isset($restModules['Bugs']) ) {
             unset($restModules['Bugs']);
         }
-        if ( isset($restModules['KBOLDDocuments']) ) {
-            unset($restModules['KBOLDDocuments']);
-        }
         // Although there are 4 OOTB portal modules, only 2 are enabled by default
         $this->assertEquals(2,count($restModules),'There are extra modules in the portal module list');
         // add module
@@ -378,9 +375,5 @@ class RestMetadataModuleListTest extends RestTestBase {
         $this->assertEquals(true, $restReply['reply']['modules']['Cases']['fields']['priority']['sortable'], "Cases 'priority' field should be sortable");
         $this->assertEquals(true, $restReply['reply']['modules']['Cases']['fields']['type']['sortable'], "Cases 'type' field should be sortable");
 
-        $this->assertArrayHasKey('KBOLDDocuments', $restReply['reply']['modules'], 'Bugs was not returned in module metadata as expected');
-        $this->assertEquals(true, $restReply['reply']['modules']['KBOLDDocuments']['fields']['active_date']['sortable'], "KBOLDDocuments 'active_date' field should be sortable");
-        $this->assertEquals(true, $restReply['reply']['modules']['KBOLDDocuments']['fields']['exp_date']['sortable'], "KBOLDDocuments 'exp_date' field should be sortable");
-    }
     //END SUGARCRM flav=ent ONLY
 }
