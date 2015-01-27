@@ -818,9 +818,13 @@ html.rtl {
         left: 0;
     }
 
-    .dropdown-menu.left {
-        left: 0;
-        right: auto;
+    .dropdown-menu {
+        right: 0;
+        left: auto;
+        &.left {
+            left: 0;
+            right: auto;
+        }
     }
 
     .morecol .dropdown-menu {
