@@ -181,16 +181,14 @@
             !_.contains(optionsKeys, this.model.get(this.name)) &&
             app.acl.hasAccessToModel('write', this.model, this.name)
         ) {
-            defaultValue = this._getDefaultOption(optionsKeys);
-            if (defaultValue) {
-                // call with {silent: true} on, so it won't re-render the field, since we haven't rendered the field yet
-                this.model.set(this.name, defaultValue, {silent: true});
-                //Forecasting uses backbone model (not bean) for custom enums so we have to check here
-                if (_.isFunction(this.model.setDefault)) {
-                    this.model.setDefault(this.name, defaultValue);
-                }
-            } else {
-                this.model.unset(this.name, {silent: true});
+            defaultValue = this._getDefaultOption(optionsKeys) || '';
+
+            // call with {silent: true} on, so it won't re-render the field, since we haven't rendered the field yet
+            this.model.set(this.name, defaultValue, {silent: true});
+
+            //Forecasting uses backbone model (not bean) for custom enums so we have to check here
+            if (_.isFunction(this.model.setDefault)) {
+                this.model.setDefault(this.name, defaultValue);
             }
         }
         app.view.Field.prototype._render.call(this);
