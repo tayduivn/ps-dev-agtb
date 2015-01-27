@@ -18,7 +18,6 @@ $viewdefs['Cases']['mobile']['view']['list'] = array(
             'fields' => array(
                 array(
                     'name' => 'name',
-                    'width' => '32',
 		            'label' => 'LBL_SUBJECT',
                     'link' => true,
                     'default' => true,
@@ -26,7 +25,6 @@ $viewdefs['Cases']['mobile']['view']['list'] = array(
                 ),
                 array(
                     'name' => 'status',
-                    'width' => '10',
 		            'label' => 'LBL_STATUS',
                     'default' => true,
                     'enabled' => true,
@@ -40,14 +38,12 @@ $viewdefs['Cases']['mobile']['view']['list'] = array(
                 ),
                 array(
                     'name' => 'priority',
-                    'width' => '10',
                     'label' => 'LBL_PRIORITY',
                     'default' => true,
                     'enabled' => true,
                 ),
                 array(
                     'name' => 'resolution',
-                    'width' => '10',
                     'label' => 'LBL_RESOLUTION',
                     'default' => true,
                     'enabled' => true,
@@ -55,7 +51,6 @@ $viewdefs['Cases']['mobile']['view']['list'] = array(
                 //BEGIN SUGARCRM flav=pro ONLY
                 array(
                     'name' => 'team_name',
-                    'width' => '9',
                     'label' => 'LBL_TEAM',
                     'default' => true,
                     'enabled' => true,
@@ -63,7 +58,6 @@ $viewdefs['Cases']['mobile']['view']['list'] = array(
                 //END SUGARCRM flav=pro ONLY
                 array(
                     'name' => 'assigned_user_name',
-                    'width' => '9',
                     'label' => 'LBL_ASSIGNED_USER',
                     'default' => true,
                     'enabled' => true,
