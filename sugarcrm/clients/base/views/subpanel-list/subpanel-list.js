@@ -58,7 +58,7 @@
 
         //event register for preventing actions
         //when user escapes the page without confirming deletion
-        app.routing.before("route", this.beforeRouteUnlink, this, true);
+        app.routing.before("route", this.beforeRouteUnlink, this);
         $(window).on("beforeunload.unlink" + this.cid, _.bind(this.warnUnlinkOnRefresh, this));
     },
     // SP-1383: Subpanel filters hide some panels when related filters are changed

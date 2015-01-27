@@ -60,9 +60,7 @@
 
         if (this.meta.config) {
             this.listenTo(this.layout, 'init', this._addFilterComponent);
-            this.layout.before('dashletconfig:save', function() {
-                this.saveDashletFilter();
-            }, null, this);
+            this.layout.before('dashletconfig:save', this.saveDashletFilter, this);
         }
     },
 

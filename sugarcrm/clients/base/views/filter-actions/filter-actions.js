@@ -81,7 +81,7 @@
         this.listenTo(this.layout, 'filter:set:name', this.setFilterName);
         this.listenTo(this.context, 'change:filterOptions', this.render);
 
-        this.before('render', this.setShowActions, null, this);
+        this.before('render', this.setShowActions, this);
     },
 
     /**

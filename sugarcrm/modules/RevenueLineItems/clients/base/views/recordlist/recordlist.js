@@ -18,7 +18,7 @@
             this.deleteCommitWarning(deletedModel);
         }, this);
 
-        this.before('mergeduplicates', this._checkMergeModels, undefined, this);
+        this.before('mergeduplicates', this._checkMergeModels, this);
     },
 
     /**

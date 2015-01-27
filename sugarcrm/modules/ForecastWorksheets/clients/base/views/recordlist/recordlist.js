@@ -356,7 +356,7 @@
                     }
                 }, this);
 
-                app.routing.before('route', this.beforeRouteHandler, {}, this);
+                app.routing.before('route', this.beforeRouteHandler, this);
 
                 $(window).bind("beforeunload." + this.worksheetType, _.bind(function() {
                     var ret = this.showNavigationMessage('window');
@@ -380,7 +380,7 @@
                 return false;
             }
             return true;
-        }, undefined, this);
+        }, this);
 
         this.collection.on('reset change', function() {
             this.calculateTotals();

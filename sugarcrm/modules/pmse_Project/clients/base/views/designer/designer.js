@@ -26,7 +26,7 @@
     initialize: function (options) {
         _.bindAll(this);
         app.view.View.prototype.initialize.call(this, options);
-        app.routing.before('route', this.beforeRouteChange, this, true);
+        app.routing.before('route', this.beforeRouteChange, this);
     },
 
     render: function () {
