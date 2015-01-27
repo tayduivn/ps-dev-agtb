@@ -20,10 +20,12 @@ class Bug47010Test extends Sugar_PHPUnit_Framework_TestCase {
         $_SESSION['authenticated_user_language'] = 'en_us';
 
         $_REQUEST['dropdown_name'] = 'testDD';
+        $_REQUEST['dropdown_lang'] = 'en_us';
     }
 
     public function tearDown() {
         unset($_REQUEST['dropdown_name']);
+        unset($_REQUEST['dropdown_lang']);
         unset($_SESSION['authenticated_user_language']);
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestHelper::tearDown();
@@ -33,7 +35,7 @@ class Bug47010Test extends Sugar_PHPUnit_Framework_TestCase {
 
         $view = new ViewDropdown();
         try {
-            $smarty = $view->generateSmarty();
+            $smarty = $view->generateSmarty($_REQUEST);
         } catch (Exception $e) {
             $this->fail('An exception has been raised: ' . $e->getMessage());
         }

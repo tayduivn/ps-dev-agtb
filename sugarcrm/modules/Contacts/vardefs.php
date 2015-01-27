@@ -884,7 +884,6 @@ $dictionary['Contact'] = array(
         'team_security',
 //END SUGARCRM flav=pro ONLY
         'person',
-        'taggable',
     ),
 );
 

@@ -719,9 +719,6 @@ $dictionary['Opportunity'] = array(
     ),
 //This enables optimistic locking for Saves From EditView
     'optimistic_locking' => true,
-    'uses' => array(
-        'taggable',
-    ),
 );
 VardefManager::createVardef(
     'Opportunities',

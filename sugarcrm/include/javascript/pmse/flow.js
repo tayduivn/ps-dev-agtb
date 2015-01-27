@@ -511,3 +511,16 @@ AdamFlow.prototype.saveAndDestroy = function () {
         this.getSrcPort().getParent().updateDefaultFlow("");
     }
 };
+
+AdamFlow.prototype.createHTML = function () {
+    var that;
+    if (this.html === null) {
+        that = this;
+        jCore.Connection.prototype.createHTML.call(this);
+        $(this.html).addClass('adam-flow').on('click', '.line', function () {
+            that.fixZIndex();
+            $(that.destDecorator.getHTML()).trigger('click');
+        });
+    }
+    return this.html;
+};

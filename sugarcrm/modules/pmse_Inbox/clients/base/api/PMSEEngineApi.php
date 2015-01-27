@@ -1168,12 +1168,12 @@ class PMSEEngineApi extends SugarApi
                         'label' => translate('LBL_PMSE_LABEL_STATUS', $module_name),
                         'event' => 'case:status',
                     ),
-//                    array(
-//                        'type' => 'rowaction',
-//                        'name' => 'add-notes',
-//                        'label' => 'Add notes',
-//                        'event' => 'case:add:notes',
-//                    ),
+                    array(
+                        'type' => 'rowaction',
+                        'name' => 'add-notes',
+                        'label' => translate('LBL_PMSE_LABEL_ADD_NOTES', $module_name),
+                        'event' => 'case:add:notes',
+                    ),
                 ),
             ),
         );

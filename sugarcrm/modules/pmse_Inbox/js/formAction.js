@@ -41,11 +41,12 @@ var confirmReassign = function()
         //window.location.href = "./index.php"
     });
 };
-var reassignFormBWC = function(casId, casIndex, flowId, pmseInboxId, taskName, valuesA,valuesB)
+var reassignFormBWC = function(casId, casIndex, flowId, pmseInboxId, taskName, valuesA, valuesB, fullName)
 {
     var value=new Object();
     value.moduleName = valuesA;
     value.beanId = valuesB;
+    value.full_name = fullName;
     reassignForm(casId, casIndex, flowId, pmseInboxId, taskName, value);
 };
 var reassignForm = function(casId, casIndex, flowId, pmseInboxId, taskName, values)
@@ -62,10 +63,12 @@ var adhocFormBWC = function(casId, casIndex, flowId, pmseInboxId, taskName, valu
 var adhocForm = function(casId, casIndex, flowId, pmseInboxId, taskName, values){
     showModalWindow(casId, casIndex, 'adhoc', flowId, pmseInboxId, taskName, values);
 };
-var claim_case = function(cas_id,cas_index){
+var claim_case = function(cas_id, cas_index, full_name, idInbox){
     var value = {};
     value.cas_id = cas_id;
     value.cas_index = cas_index;
+    value.full_name = full_name;
+    value.beanId = idInbox;
     var pmseInboxUrl = _App.api.buildURL('pmse_Inbox/engine_claim','',{},{});
     _App.api.call('update', pmseInboxUrl, value,{
         success: function (){
@@ -164,6 +167,12 @@ var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,task
         required: true
     });
 
+    textArea = new TextareaField({
+        name: 'adhoc_comment',
+        label: translate('LBL_PMSE_FORM_LABEL_NOTE', 'pmse_Inbox'),
+        fieldWidth: '300px',
+        fieldHeight: '100px'
+    });
     user_Name = new HiddenField({
         name: 'user_name',
         value: ''
@@ -274,7 +283,6 @@ var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,task
                 casIndexField.setValue(casIndex);
 
                 var users, aUsers = [{'text':translate('LBL_PMSE_FORM_OPTION_SELECT', 'pmse_Inbox'), 'value':''}];
-
                 //--
                 var urlGet = _App.api.buildURL(url+'/users/'+ flowId, null, null);
                 _App.api.call('read', urlGet, {}, {
@@ -373,7 +381,7 @@ function onSubmit(e) {
     }
 
     return result2;
-}
+};
 
 $(function () {
     $('#showCaseForm').attr("novalidate", "novalidate").on('submit', onSubmit);

@@ -49,7 +49,7 @@ YAHOO.extend(Studio2.PanelDD, YAHOO.util.DDProxy, {
     },
 
     endDrag: function(e) {
-		ModuleBuilder.state.isDirty=true;
+        ModuleBuilder.state.markAsDirty();
         Studio2.clearScrollObj();
 //  	alert("endDrag");
      

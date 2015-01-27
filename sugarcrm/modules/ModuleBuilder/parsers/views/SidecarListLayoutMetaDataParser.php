@@ -85,7 +85,7 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
                     if (!empty($field['name'])) {
                         if ($this->isDefaultField($field)) {
                             if (isset($this->_fielddefs[$field['name']])) {
-                                $defaultFields[$field['name']] = self::_trimFieldDefs($this->_fielddefs[$field['name']]);
+                                $defaultFields[$field['name']] = self::_trimFieldDefs(array_merge($this->_fielddefs[$field['name']], $field));
                                 if (!empty($field['label'])) {
                                     $defaultFields[$field['name']]['label'] = $field['label'];
                                 }

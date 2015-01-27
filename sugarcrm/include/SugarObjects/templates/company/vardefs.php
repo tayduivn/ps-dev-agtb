@@ -10,9 +10,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-$vardefs= array (  
+$vardefs= array (
 'fields' => array (
-   'name' => 
+   'name' =>
   array (
     'name' => 'name',
     'type' => 'name',
@@ -57,7 +57,7 @@ $vardefs= array (
         'duplicate_on_record_copy' => 'always',
         'comment' => 'The Google Plus name of the company'
     ),
-   strtolower($object_name).'_type' => 
+   strtolower($object_name).'_type' =>
   array (
     'name' => strtolower($object_name).'_type',
     'vname' => 'LBL_TYPE',
@@ -66,8 +66,8 @@ $vardefs= array (
     'len'=>50,
     'duplicate_on_record_copy' => 'always',
     'comment' => 'The Company is of this type',
-  ),  
-'industry' => 
+  ),
+'industry' =>
   array (
     'name' => 'industry',
     'vname' => 'LBL_INDUSTRY',
@@ -78,7 +78,7 @@ $vardefs= array (
     'comment' => 'The company belongs in this industry',
     'merge_filter' => 'enabled',
   ),
-    'annual_revenue' => 
+    'annual_revenue' =>
   array (
     'name' => 'annual_revenue',
     'vname' => 'LBL_ANNUAL_REVENUE',
@@ -88,7 +88,7 @@ $vardefs= array (
     'comment' => 'Annual revenue for this company',
     'merge_filter' => 'enabled',
   ),
-  'phone_fax' => 
+  'phone_fax' =>
   array (
     'name' => 'phone_fax',
     'vname' => 'LBL_FAX',
@@ -99,9 +99,9 @@ $vardefs= array (
     'duplicate_on_record_copy' => 'always',
     'full_text_search' => array('enabled' => true, 'boost' => 1),
     'comment' => 'The fax phone number of this company',
-  ), 
-  
-  'billing_address_street' => 
+  ),
+
+  'billing_address_street' =>
   array (
     'name' => 'billing_address_street',
     'vname' => 'LBL_BILLING_ADDRESS_STREET',
@@ -113,7 +113,7 @@ $vardefs= array (
     'merge_filter' => 'enabled',
     'duplicate_on_record_copy' => 'always',
   ),
-  'billing_address_street_2' => 
+  'billing_address_street_2' =>
   array (
     'name' => 'billing_address_street_2',
     'vname' => 'LBL_BILLING_ADDRESS_STREET_2',
@@ -122,7 +122,7 @@ $vardefs= array (
     'source'=>'non-db',
     'duplicate_on_record_copy' => 'always',
   ),
-  'billing_address_street_3' => 
+  'billing_address_street_3' =>
   array (
     'name' => 'billing_address_street_3',
     'vname' => 'LBL_BILLING_ADDRESS_STREET_3',
@@ -131,7 +131,7 @@ $vardefs= array (
     'source'=>'non-db',
     'duplicate_on_record_copy' => 'always',
   ),
-  'billing_address_street_4' => 
+  'billing_address_street_4' =>
   array (
     'name' => 'billing_address_street_4',
     'vname' => 'LBL_BILLING_ADDRESS_STREET_4',
@@ -140,7 +140,7 @@ $vardefs= array (
     'source'=>'non-db',
     'duplicate_on_record_copy' => 'always',
   ),
-  'billing_address_city' => 
+  'billing_address_city' =>
   array (
     'name' => 'billing_address_city',
     'vname' => 'LBL_BILLING_ADDRESS_CITY',
@@ -151,7 +151,7 @@ $vardefs= array (
     'merge_filter' => 'enabled',
     'duplicate_on_record_copy' => 'always',
   ),
-  'billing_address_state' => 
+  'billing_address_state' =>
   array (
     'name' => 'billing_address_state',
     'vname' => 'LBL_BILLING_ADDRESS_STATE',
@@ -162,7 +162,7 @@ $vardefs= array (
     'merge_filter' => 'enabled',
     'duplicate_on_record_copy' => 'always',
   ),
-  'billing_address_postalcode' => 
+  'billing_address_postalcode' =>
   array (
     'name' => 'billing_address_postalcode',
     'vname' => 'LBL_BILLING_ADDRESS_POSTALCODE',
@@ -173,7 +173,7 @@ $vardefs= array (
     'merge_filter' => 'enabled',
     'duplicate_on_record_copy' => 'always',
   ),
-  'billing_address_country' => 
+  'billing_address_country' =>
   array (
     'name' => 'billing_address_country',
     'vname' => 'LBL_BILLING_ADDRESS_COUNTRY',
@@ -183,7 +183,7 @@ $vardefs= array (
     'merge_filter' => 'enabled',
     'duplicate_on_record_copy' => 'always',
   ),
-   'rating' => 
+   'rating' =>
   array (
     'name' => 'rating',
     'vname' => 'LBL_RATING',
@@ -192,21 +192,21 @@ $vardefs= array (
     'duplicate_on_record_copy' => 'always',
     'comment' => 'An arbitrary rating for this company for use in comparisons with others',
   ),
-    'phone_office' => 
+    'phone_office' =>
   array (
     'name' => 'phone_office',
     'vname' => 'LBL_PHONE_OFFICE',
     'type' => 'phone',
     'dbType' => 'varchar',
     'len' => 100,
-    'audited'=>true,         
-    'unified_search' => true,  
+    'audited'=>true,
+    'unified_search' => true,
     'duplicate_on_record_copy' => 'always',
     'full_text_search' => array('enabled' => true, 'boost' => 1),
     'comment' => 'The office phone number',
     'merge_filter' => 'enabled',
   ),
-    'phone_alternate' => 
+    'phone_alternate' =>
   array (
     'name' => 'phone_alternate',
     'vname' => 'LBL_PHONE_ALT',
@@ -220,7 +220,7 @@ $vardefs= array (
     'comment' => 'An alternate phone number',
     'merge_filter' => 'enabled',
   ),
-   'website' => 
+   'website' =>
   array (
     'name' => 'website',
     'vname' => 'LBL_WEBSITE',
@@ -230,7 +230,7 @@ $vardefs= array (
     'duplicate_on_record_copy' => 'always',
     'comment' => 'URL of website for the company',
   ),
-   'ownership' => 
+   'ownership' =>
   array (
     'name' => 'ownership',
     'vname' => 'LBL_OWNERSHIP',
@@ -239,7 +239,7 @@ $vardefs= array (
     'duplicate_on_record_copy' => 'always',
     'comment' => '',
   ),
-   'employees' => 
+   'employees' =>
   array (
     'name' => 'employees',
     'vname' => 'LBL_EMPLOYEES',
@@ -248,7 +248,7 @@ $vardefs= array (
     'duplicate_on_record_copy' => 'always',
     'comment' => 'Number of employees, varchar to accomodate for both number (100) or range (50-100)',
   ),
-  'ticker_symbol' => 
+  'ticker_symbol' =>
   array (
     'name' => 'ticker_symbol',
     'vname' => 'LBL_TICKER_SYMBOL',
@@ -258,7 +258,7 @@ $vardefs= array (
     'comment' => 'The stock trading (ticker) symbol for the company',
     'merge_filter' => 'enabled',
   ),
-  'shipping_address_street' => 
+  'shipping_address_street' =>
   array (
     'name' => 'shipping_address_street',
     'vname' => 'LBL_SHIPPING_ADDRESS_STREET',
@@ -270,7 +270,7 @@ $vardefs= array (
     'comment' => 'The street address used for for shipping purposes',
     'merge_filter' => 'enabled',
   ),
-  'shipping_address_street_2' => 
+  'shipping_address_street_2' =>
   array (
     'name' => 'shipping_address_street_2',
     'vname' => 'LBL_SHIPPING_ADDRESS_STREET_2',
@@ -279,7 +279,7 @@ $vardefs= array (
     'duplicate_on_record_copy' => 'always',
     'source'=>'non-db',
   ),
-  'shipping_address_street_3' => 
+  'shipping_address_street_3' =>
   array (
     'name' => 'shipping_address_street_3',
     'vname' => 'LBL_SHIPPING_ADDRESS_STREET_3',
@@ -288,7 +288,7 @@ $vardefs= array (
     'duplicate_on_record_copy' => 'always',
     'source'=>'non-db',
   ),
-  'shipping_address_street_4' => 
+  'shipping_address_street_4' =>
   array (
     'name' => 'shipping_address_street_4',
     'vname' => 'LBL_SHIPPING_ADDRESS_STREET_4',
@@ -296,8 +296,8 @@ $vardefs= array (
     'len' => 150,
     'duplicate_on_record_copy' => 'always',
     'source'=>'non-db',
-  ),    
-  'shipping_address_city' => 
+  ),
+  'shipping_address_city' =>
   array (
     'name' => 'shipping_address_city',
     'vname' => 'LBL_SHIPPING_ADDRESS_CITY',
@@ -308,7 +308,7 @@ $vardefs= array (
     'comment' => 'The city used for the shipping address',
     'merge_filter' => 'enabled',
   ),
-  'shipping_address_state' => 
+  'shipping_address_state' =>
   array (
     'name' => 'shipping_address_state',
     'vname' => 'LBL_SHIPPING_ADDRESS_STATE',
@@ -319,7 +319,7 @@ $vardefs= array (
     'comment' => 'The state used for the shipping address',
     'merge_filter' => 'enabled',
   ),
-  'shipping_address_postalcode' => 
+  'shipping_address_postalcode' =>
   array (
     'name' => 'shipping_address_postalcode',
     'vname' => 'LBL_SHIPPING_ADDRESS_POSTALCODE',
@@ -330,7 +330,7 @@ $vardefs= array (
     'comment' => 'The zip code used for the shipping address',
     'merge_filter' => 'enabled',
   ),
-  'shipping_address_country' => 
+  'shipping_address_country' =>
   array (
     'name' => 'shipping_address_country',
     'vname' => 'LBL_SHIPPING_ADDRESS_COUNTRY',
@@ -344,7 +344,6 @@ $vardefs= array (
 ),
 'uses' => array(
     'email_address',
-    'taggable',
 ),
 'relationships'=>array(
 ),

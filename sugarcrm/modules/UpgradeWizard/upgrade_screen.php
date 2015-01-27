@@ -168,6 +168,10 @@ $(window).bind("load", function () {
                 uploader.displayError("Please select upgrade package file");
                 return;
             }
+
+            var $next = $("a[name=next_button]");
+            $next.addClass("disabled");
+
             uploader.stage = uploader.stages.indexOf('unpack');
             uploader.updateProgress('unpack', 25);
 
@@ -183,6 +187,7 @@ $(window).bind("load", function () {
                     }
                 }
             ).complete(function (data) {
+                    $next.removeClass("disabled");
 
                     try {
                         var response = $.parseJSON(data.responseText);
@@ -256,7 +261,9 @@ $(window).bind("load", function () {
         $('#uploadForm').submit(uploader.upload);
 
         $('a[name="next_button"]').on('click', function() {
-           $('#uploadForm').submit();
+            if (!$(this).hasClass("disabled")) {
+                $('#uploadForm').submit();
+            }
         });
 
         $('a[name="export_button"]').on('click', function() {

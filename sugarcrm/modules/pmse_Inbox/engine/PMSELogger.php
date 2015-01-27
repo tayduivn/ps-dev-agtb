@@ -246,6 +246,9 @@ class PMSELogger extends AbstractLogger
             $data->tags = $params['tags'];
             $i = 0;
             foreach ($params['tags'] as $value) {
+                if (empty($value['name'])) {
+                    $value = $this->getNameField($value);
+                }
                 $patterns[] = "/&" . $i . "/";
                 $substitutions[] = "@[{$value['module']}:{$value['id']}:{$value['name']}]";
                 $i++;
@@ -260,6 +263,17 @@ class PMSELogger extends AbstractLogger
         $beanActivity->activity_type = 'post';
         $beanActivity->data = json_encode($data);
         $beanActivity->save();
+    }
+
+    private function getNameField($args){
+        $result = array();
+        if (!empty($args['id']) && !empty($args['module'])){
+            $moduleBean = BeanFactory::getBean($args['module'], $args['id']);
+            $result['id'] = $moduleBean->id;
+            $result['module'] = $moduleBean->module_name;
+            $result['name'] = ($moduleBean->module_name == 'Users') ? $moduleBean->full_name : $moduleBean->name;
+        }
+        return $result;
     }
 
 }

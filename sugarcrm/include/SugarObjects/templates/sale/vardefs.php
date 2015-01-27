@@ -205,9 +205,6 @@ $vardefs = array(
             //END SUGARCRM flav=pro ONLY
         )
     ),
-    'uses' => array(
-        'taggable',
-    ),
     'duplicate_check' => array(
         'enabled' => true,
         'FilterDuplicateCheck' => array(

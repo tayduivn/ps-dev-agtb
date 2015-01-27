@@ -51,10 +51,17 @@ class ParserFactory
      * @param string $moduleName    Module name
      * @param string $packageName   Package name. If present implies that we are being called from ModuleBuilder
      * @param string $client        The view client (e.g. portal, wireless, etc.)
+     * @param array  $params        Additional parser parameters
      * @return AbstractMetaDataParser
      */
-    public static function getParser ( $view , $moduleName , $packageName = null , $subpanelName = null, $client = '' )
-    {
+    public static function getParser(
+        $view,
+        $moduleName,
+        $packageName = null,
+        $subpanelName = null,
+        $client = '',
+        array $params = array()
+    ) {
         $GLOBALS [ 'log' ]->info ( "ParserFactory->getParser($view,$moduleName,$packageName,$subpanelName,$client )" ) ;
         $sm = null;
         $lView = strtolower ( $view );
@@ -76,7 +83,7 @@ class ParserFactory
         switch ( $lView) {
             case MB_RECORDVIEW:
                 require_once 'modules/ModuleBuilder/parsers/views/SidecarGridLayoutMetaDataParser.php' ;
-                return new SidecarGridLayoutMetaDataParser ( $view, $moduleName, $packageName, 'base' ) ;
+                return new SidecarGridLayoutMetaDataParser($view, $moduleName, $packageName, 'base', $params);
             case MB_EDITVIEW :
             case MB_DETAILVIEW :
             case MB_QUICKCREATE :
@@ -101,7 +108,7 @@ class ParserFactory
                 }
                 require_once 'modules/ModuleBuilder/parsers/views/SidecarGridLayoutMetaDataParser.php';
 
-                return new SidecarGridLayoutMetaDataParser ( $view, $moduleName, $packageName, $client ) ;
+                return new SidecarGridLayoutMetaDataParser($view, $moduleName, $packageName, $client, $params);
             case MB_WIRELESSLISTVIEW:
             //BEGIN SUGARCRM flav=ent ONLY
             case MB_PORTALLISTVIEW:

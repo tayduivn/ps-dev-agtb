@@ -17,13 +17,10 @@
         SAVE_OPEN_EMAILS_TEMPLATES: 'saveOpenEmailsTemplates'
     },
 
-    initialize: function (options) {
-        app.view.invokeParent(this, {type: 'view', name: 'create-actions', method: 'initialize', args:[options]});
-
-        var createViewEvents = {};
-        createViewEvents['click a[name=' + this.saveOpenEmailsTemplatesName + ']:not(.disabled)'] = 'saveOpenEmailsTemplates';
-        this.events = _.extend({}, this.events, createViewEvents);
-
+    initialize: function(options) {
+        options.meta = _.extend({}, app.metadata.getView(null, 'create-actions'), options.meta);
+        this._super('initialize', [options]);
+        this.context.on('button:' + this.saveOpenEmailsTemplatesName + ':click', this.saveOpenEmailsTemplates, this);
     },
 
     saveOpenEmailsTemplates: function() {

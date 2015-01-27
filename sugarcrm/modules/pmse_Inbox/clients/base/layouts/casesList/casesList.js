@@ -16,7 +16,17 @@
     initialize: function(options) {
         app.view.Layout.prototype.initialize.call(this, options);
         this.collection.sync = this.sync;
-        this.collection.allowed_modules = ['Cases Title', 'Process Name', 'Status', 'Owner'];
+//        this.collection.allowed_modules = ['Cases Title', 'Process Name', 'Status', 'Owner'];
+        this.collection.allowed_modules = [
+            app.lang.get('LBL_STATUS_COMPLETED', options.module),
+            app.lang.get('LBL_STATUS_TERMINATED', options.module),
+            app.lang.get('LBL_STATUS_IN_PROGRESS', options.module),
+            app.lang.get('LBL_STATUS_CANCELLED', options.module),
+            app.lang.get('LBL_STATUS_ERROR', options.module),
+            app.lang.get('LBL_PROCESS_DEFINITION_NAME', options.module),
+            app.lang.get('LBL_RECORD_NAME', options.module),
+            app.lang.get('LBL_PMSE_LABEL_STATUS', options.module),
+            app.lang.get('LBL_OWNER', options.module)];
         this.context.on('compose:addressbook:search', this.search, this);
         this.context.on('case:status', this.viewStatus, this);
         this.context.on('case:history', this.viewHistory, this);

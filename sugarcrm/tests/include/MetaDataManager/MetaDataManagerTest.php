@@ -616,6 +616,39 @@ PLATFORMS;
 
         return $db;
     }
+
+    /**
+     * @dataProvider getPlatformsWithCachesProvider
+     */
+    public function testGetPlatformsWithCaches($fileName, $platformName)
+    {
+        $dir = 'cache/api/metadata';
+        SugarTestHelper::saveFile($dir . '/' . $fileName);
+
+        SugarAutoLoader::ensureDir($dir);
+        SugarAutoLoader::put($dir . '/' . $fileName, '');
+
+        $platforms = MetaDataManager::getPlatformsWithCaches(false);
+        $this->assertContains($platformName, $platforms);
+    }
+
+    public static function getPlatformsWithCachesProvider()
+    {
+        return array(
+            array(
+                'en_us_test_base_public_ordered.json',
+                'base'
+            ),
+            array(
+                'en_us_test_portal_public.json',
+                'portal'
+            ),
+            array(
+                'metadata_test_mobile_private.php',
+                'mobile'
+            )
+        );
+    }
 }
 
 class MetadataManagerMock extends MetadataManager

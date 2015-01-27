@@ -135,30 +135,31 @@ if(typeof(SimpleList) == 'undefined'){
             //Cleanup the placeholder element
             parent.removeChild(placeholder);
         }
-        
-        while ( increment > 0 )
-        {
-        	for (var i = increment; i < items.length; i++)
-        	{
-            	var j = i;
-            	var id = items[i].id;
-            	var iValue = document.getElementById( 'input_' + id ).value.toLowerCase() ;
-              
-            	while ( ( j >= increment ) && ( document.getElementById( 'input_' + items [j-increment].id ).value.toLowerCase() > iValue ) )
-            	{
-            		// logically, this is what we need to do: items [j] = items [j - increment];
-            		// but we're working with the DOM through a NodeList (items) which is readonly, so things aren't that simple
-            		// A placeholder will be used to keep track of where in the DOM the swap needs to take place
-            		// especially with IE which enforces the prohibition on duplicate Ids, so copying nodes is problematic
-            		swapItems(items [j], items [j - increment]);
-                	j = j - increment;
-            	}
+
+        while (increment > 0) {
+            for (var i = increment; i < items.length; i++) {
+                var j = i,
+                    getItemValue = function(id) {
+                        var input = document.getElementById('input_' + id) || document.getElementById('value_' + id);
+                        return input && input.value ? input.value.toLowerCase() : "";
+                    },
+                    id = items[i].id,
+                    iValue = getItemValue(id);
+
+                while ((j >= increment) && (getItemValue(items[j - increment].id) > iValue)) {
+                    // logically, this is what we need to do: items [j] = items [j - increment];
+                    // but we're working with the DOM through a NodeList (items) which is readonly, so things aren't that simple
+                    // A placeholder will be used to keep track of where in the DOM the swap needs to take place
+                    // especially with IE which enforces the prohibition on duplicate Ids, so copying nodes is problematic
+                    swapItems(items [j], items [j - increment]);
+                    j = j - increment;
+                }
             }
-             
+
             if (increment == 2)
-            	increment = 1;
-            else 
-            	increment = Math.floor (increment / 2.2);
+                increment = 1;
+            else
+                increment = Math.floor(increment / 2.2);
         }
     },
     sortDescending: function ()
@@ -190,11 +191,13 @@ if(typeof(SimpleList) == 'undefined'){
         };
         var ul1=YAHOO.util.Dom.get("ul1");
         var hasDeletedItem = false;
-        for(j = 0; j < SimpleList.jstransaction.JSTransactions.length; j++){            
-            var liEl = new YAHOO.util.Element(SimpleList.jstransaction.JSTransactions[j]['data']['id']);
-            if(liEl && liEl.hasClass('deleted'))
-            	hasDeletedItem = true;
-            	break;
+        for(j = 0; j < SimpleList.jstransaction.JSTransactions.length; j++){
+            if(SimpleList.jstransaction.JSTransactions[j]['transaction'] == 'deleteDropDown') {
+                var liEl = new YAHOO.util.Element(SimpleList.jstransaction.JSTransactions[j]['data']['id']);
+                if (liEl && liEl.hasClass('deleted'))
+                    hasDeletedItem = true;
+                break;
+            }
         }
         if(hasDeletedItem) {
         	if(!confirm(SUGAR.language.get('ModuleBuilder', 'LBL_CONFIRM_SAVE_DROPDOWN')))

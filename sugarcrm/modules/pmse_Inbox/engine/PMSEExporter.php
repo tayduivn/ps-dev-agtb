@@ -138,8 +138,8 @@ class PMSEExporter
         global $sugar_version;
         global $sugar_config;
         //$pmseSingleton = PMSE::getInstance();
-        $pmseName = 'ProcessMaker'; //$pmseSingleton->getModuleName();
-        $pmseVersion = '2.0'; //$pmseSingleton->getVersion();
+        $pmseName = 'ProcessAuthor'; //$pmseSingleton->getModuleName();
+        $pmseVersion = '1.0'; //$pmseSingleton->getVersion();
         $metadataObject = new stdClass();
         $metadataObject->SugarCRMFlavor = $sugar_flavor;
         $metadataObject->SugarCRMVersion = $sugar_version;
