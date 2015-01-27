@@ -197,8 +197,6 @@ class DownloadFile {
                                     return false;
                                 }
                             }
-                        } else {
-                            return false;
                         }
                     } else {
                         $fileid = $bean->id;
