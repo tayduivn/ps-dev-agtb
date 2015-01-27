@@ -220,6 +220,9 @@ $mod_strings = array (
     'LBL_PMSE_FORM_LABEL_EMAIL_CC' => 'Cc',
     'LBL_PMSE_FORM_LABEL_EMAIL_BCC' => 'Bcc',
 
+    //ROLES IN EXPRESSION BUILDER
+    'LBL_PMSE_FORM_OPTION_ADMINISTRATOR' => 'Administrator',
+
     /**GATEWAYS**/
     // CONTEXT MENU
     'LBL_PMSE_CONTEXT_MENU_DIRECTION' => 'Direction...',
@@ -296,6 +299,16 @@ $mod_strings = array (
     'LBL_PMSE_EXPCONTROL_CONSTANTS_BASIC_ADD_BOOLEAN' => 'add boolean',
     'LBL_PMSE_EXPCONTROL_EVALUATIONS_TITLE' => 'Evaluations',
     'LBL_PMSE_EXPCONTROL_CONSTANTS_TITLE' => 'Constants',
+    'LBL_PMSE_EXPCONTROL_OPERATOR_MINOR_THAN' => 'is less than',
+    'LBL_PMSE_EXPCONTROL_OPERATOR_MINOR_THAN_DATE' => 'before',
+    'LBL_PMSE_EXPCONTROL_OPERATOR_MINOR_EQUAL_THAN' => 'is less than or equal to',
+    'LBL_PMSE_EXPCONTROL_OPERATOR_EQUAL' => 'is equal to',
+    'LBL_PMSE_EXPCONTROL_OPERATOR_EQUAL_TEXT' => 'is',
+    'LBL_PMSE_EXPCONTROL_OPERATOR_MAJOR_EQUAL' => 'is greater than or equal to',
+    'LBL_PMSE_EXPCONTROL_OPERATOR_MAJOR' => 'is greater than',
+    'LBL_PMSE_EXPCONTROL_OPERATOR_MAJOR_DATE' => 'after',
+    'LBL_PMSE_EXPCONTROL_OPERATOR_NOT_EQUAL' => 'is not equal to',
+    'LBL_PMSE_EXPCONTROL_OPERATOR_NOT_EQUAL_TEXT' => 'is not',
 
     'LBL_PMSE_FORMPANEL_SUBMIT' => 'Submit',
 

@@ -8,7 +8,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-//DecisionTable    
+//DecisionTable
     var DecisionTable = function(options) {
         Element.call(this, {id: options.id});
         this.base_module = null;
@@ -289,8 +289,8 @@
 
             conclusions = ruleset[i].conclusions;
             for(j = 0; j < conclusions.length; j+=1) {
-                auxKey = (conclusions[j].conclusion_type === "return" ? "result" : this.base_module 
-                    + this.moduleFieldSeparator + conclusions[j].conclusion_value); 
+                auxKey = (conclusions[j].conclusion_type === "return" ? "result" : this.base_module
+                    + this.moduleFieldSeparator + conclusions[j].conclusion_value);
                 if(typeof conclusion_column_helper[auxKey] !== 'undefined') {
                     this.conclusions[conclusion_column_helper[auxKey]].addValue(conclusions[j].value);
                 } else {
@@ -1420,7 +1420,7 @@
                 moduleFieldConcat = newField;
                 field = newField.split(this.parent.moduleFieldSeparator);
                 module = field[0];
-                field = field[1];    
+                field = field[1];
             } else {
                 module = newField.module;
                 field = newField.field;
@@ -1888,8 +1888,10 @@
                 return;
             }
             var control = controlCreationFunction();
-            $(this.parentElement).empty().append(control);
-            $(control).select().focus();
+            if (control) {
+                $(this.parentElement).empty().append(control);
+                $(control).select().focus();
+            }
         };
     };
 
@@ -2052,8 +2054,8 @@
         return this.html;
     };
 
-    DecisionTableValueEvaluation.prototype.fillOperators = function(select) {
-        var i, option, type = this.parentElement.fieldType.toLowerCase(), enabledOperators;
+    DecisionTableValueEvaluation.prototype.fillOperators = function(select, type) {
+        var i, option, enabledOperators;
 
         switch (type) {
             case 'date':
@@ -2094,10 +2096,19 @@
     DecisionTableValueEvaluation.prototype.createOperatorControl = function() {
         var that = this;
         return function() {
-            var select = document.createElement('select');
-            that.fillOperators(select);
-            select.value = that.operator;
-            return select;
+            var select = document.createElement('select'), parent = that.parentElement, type = parent.fieldType;
+            if (typeof type !== 'string') {
+                App.alert.show(null, {
+                    level: 'warning',
+                    messages: parent.language.ERROR_NO_VARIABLE_SELECTED,
+                    autoClose: true
+                });
+                return null;
+            } else {
+                that.fillOperators(select, type);
+                select.value = that.operator;
+                return select;
+            }
         };
     };
 
