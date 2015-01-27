@@ -3348,7 +3348,10 @@ private function dir_file_count($path){
                     // if replacement is not empty, try to replace the value
                     $patched = str_replace($search, $param . '/' . $replace, $path, $count);
                     if ($count > 0) {
-                        return $patched;
+                        if (isValidCopyPath($patched)) {
+                            return $patched;
+                        }
+                        return null;
                     }
                 } else {
                     // if replacement is empty, it means that the file should be excluded from the package
