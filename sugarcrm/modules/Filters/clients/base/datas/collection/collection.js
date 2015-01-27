@@ -150,7 +150,7 @@
             return;
         }
 
-        this._resetFiltersCache(module);
+        this._initFiltersModuleCache();
 
         // No cache found, retrieve filters.
         this._loadPredefinedFilters();
@@ -463,11 +463,11 @@
     },
 
     /**
-     * Resets the filter cache for this module.
+     * Initializes the filter cache for this module.
      *
      * @private
      */
-    _resetFiltersCache: function() {
+    _initFiltersModuleCache: function() {
         var prototype = this._getPrototype();
         prototype._cache = prototype._cache || {};
         prototype._cache[this.moduleName] = {
@@ -476,6 +476,18 @@
             template: {},
             user: {}
         };
+    },
+
+    /**
+     * Clears all the filters and their associated HTTP requests from the cache.
+     */
+    resetFiltersCacheAndRequests: function() {
+        var prototype = this._getPrototype();
+        prototype._cache = {};
+        _.each(prototype._request, function(request, module) {
+            request.xhr.abort();
+        });
+        prototype._request = {};
     },
 
     /**
