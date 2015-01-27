@@ -893,13 +893,11 @@ function handlePortalConfig()
 }
 //END SUGARCRM flav=ent ONLY
 
-//BEGIN SUGARCRM flav=pro ONLY
 function handleSidecarConfig()
 {
     require_once 'ModuleInstall/ModuleInstaller.php';
     return ModuleInstaller::handleBaseConfig();
 }
-//END SUGARCRM flav=pro ONLY
 
 /**
  * Set up proper .htaccess content
@@ -1324,13 +1322,10 @@ function insert_default_settings(){
     //insert default tracker settings
     $db->query("INSERT INTO config (category, name, value) VALUES ('tracker', 'Tracker', '1')");
 
-    //BEGIN SUGARCRM flav=pro ONLY
     $db->query("INSERT INTO config (category, name, value) VALUES ('tracker', 'tracker_perf', '1')");
     $db->query("INSERT INTO config (category, name, value) VALUES ('tracker', 'tracker_sessions', '1')");
     $db->query("INSERT INTO config (category, name, value) VALUES ('tracker', 'tracker_queries', '1')");
-    //END SUGARCRM flav=pro ONLY
 
-    //BEGIN SUGARCRM flav=pro ONLY
     //systems data
     global $sugar_config;
 
@@ -1340,8 +1335,6 @@ function insert_default_settings(){
     $system->last_connect_date = create_current_date_time();
     $system_id = $system->retrieveNextKey(false, true);
     $db->query( "INSERT INTO config (category, name, value) VALUES ( 'system', 'system_id', '" . $system_id . "')" );
-
-    //END SUGARCRM flav=pro ONLY
 
     $db->query( "INSERT INTO config (category, name, value) VALUES ( 'system', 'skypeout_on', '1')" );
     $db->query( "INSERT INTO config (category, name, value) VALUES ( 'system', 'tweettocase_on', '0')" );
@@ -1701,11 +1694,8 @@ function pullSilentInstallVarsIntoSession() {
     $derived = array (
         'setup_site_admin_password_retype'      => $sugar_config_si['setup_site_admin_password'],
         'setup_db_sugarsales_password_retype'   => $config_subset['setup_db_sugarsales_password'],
-        //BEGIN SUGARCRM flav=pro ONLY
         'oc_run' => 'convert',
-         //END SUGARCRM flav=pro ONLY
     );
-     //BEGIN SUGARCRM flav=pro ONLY
     if(isset($sugar_config_si['oc_server_url']))
         $derived['oc_server_url'] = $sugar_config_si['oc_server_url'];
     if(isset($sugar_config_si['oc_username']))
@@ -1714,7 +1704,6 @@ function pullSilentInstallVarsIntoSession() {
         $derived['oc_password'] = $sugar_config_si['oc_password'];
     if(isset($sugar_config_si['install_method']))
         $derived['install_method'] = $sugar_config_si['install_method'];
-    //END SUGARCRM flav=pro ONLY
 
     $needles = array(
         'setup_db_create_database',
@@ -1784,7 +1773,6 @@ function copyFromArray($input_array, $needles, $output_array){
     }
 }
 
-//BEGIN SUGARCRM flav=pro ONLY
 function validate_offlineClientConfig() {
     global $mod_strings;
     $errors = array();
@@ -1799,7 +1787,6 @@ function validate_offlineClientConfig() {
     }
     return $errors;
 }
-//END SUGARCRM flav=pro ONLY
 
 
 /**
@@ -2157,13 +2144,11 @@ function getInstallType( $type_string ){
 }
 }
 
-//BEGIN SUGARCRM flav=pro ONLY
 function removeConfig_SIFile(){
     if(file_exists('config_si.php')){
        unlink('config_si.php');
     }
 }
-//END SUGARCRM flav=pro ONLY
 
 
 //mysqli connector has a separate parameter for port.. We need to separate it out from the host name
@@ -2337,9 +2322,7 @@ function get_help_button_url(){
     //BEGIN SUGARCRM flav=corp ONLY
     $help_url = 'http://support.sugarcrm.com/02_Documentation/01_Sugar_Editions/03_Sugar_Corporate';
     //END SUGARCRM flav=corp ONLY
-    //BEGIN SUGARCRM flav=pro ONLY
     $help_url = 'http://support.sugarcrm.com/02_Documentation/01_Sugar_Editions/04_Sugar_Professional';
-    //END SUGARCRM flav=pro ONLY
     //BEGIN SUGARCRM flav=ent ONLY
     $help_url = 'http://support.sugarcrm.com/02_Documentation/01_Sugar_Editions/02_Sugar_Enterprise';
     //END SUGARCRM flav=ent ONLY

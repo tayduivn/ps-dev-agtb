@@ -331,7 +331,6 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
       'vname'        => 'LBL_PROSPECTS',
       'module'       => 'Prospects',
   ),
-//BEGIN SUGARCRM flav=pro ONLY
   'quotes' =>
   array(
       'name' => 'quotes',
@@ -339,8 +338,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
       'relationship' => 'quote_calls',
       'source'=>'non-db',
       'vname'=>'LBL_QUOTES',
-  ),    
-//END SUGARCRM flav=pro ONLY
+  ),
   'users' =>
   array (
   	'name' => 'users',
@@ -627,8 +625,6 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
 );
 
 VardefManager::createVardef('Calls','Call', array('default', 'assignable',
-//BEGIN SUGARCRM flav=pro ONLY
 'team_security',
-//END SUGARCRM flav=pro ONLY
 ));
 ?>

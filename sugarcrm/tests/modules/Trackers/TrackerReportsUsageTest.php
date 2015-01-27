@@ -34,9 +34,7 @@ class TrackerReportsUsageTest extends Sugar_PHPUnit_Framework_TestCase
         $monitor->setValue('action', 'index');
         $monitor->setValue('session_id', 'test_session');
         $monitor->setValue('user_id', $GLOBALS['current_user']->id);
-        //BEGIN SUGARCRM flav=pro ONLY
         $monitor->setValue('team_id', $GLOBALS['current_user']->getPrivateTeamID());
-        //END SUGARCRM flav=pro ONLY
         $trackerManager->save();
         
         $monitor->setValue('module_name', 'Contacts');
@@ -46,9 +44,7 @@ class TrackerReportsUsageTest extends Sugar_PHPUnit_Framework_TestCase
         $monitor->setValue('action', 'index');
         $monitor->setValue('session_id', 'test_session');        
         $monitor->setValue('user_id', $GLOBALS['current_user']->id);
-        //BEGIN SUGARCRM flav=pro ONLY
         $monitor->setValue('team_id', $GLOBALS['current_user']->getPrivateTeamID());
-        //END SUGARCRM flav=pro ONLY
         $trackerManager->save();
        
         $monitor->setValue('module_name', 'Contacts');
@@ -58,9 +54,7 @@ class TrackerReportsUsageTest extends Sugar_PHPUnit_Framework_TestCase
         $monitor->setValue('action', 'index');
         $monitor->setValue('session_id', 'test_session');
         $monitor->setValue('user_id', $GLOBALS['current_user']->id);            
-        //BEGIN SUGARCRM flav=pro ONLY
         $monitor->setValue('team_id', $GLOBALS['current_user']->getPrivateTeamID());
-        //END SUGARCRM flav=pro ONLY
         $trackerManager->save();
 
         parent::setUp();

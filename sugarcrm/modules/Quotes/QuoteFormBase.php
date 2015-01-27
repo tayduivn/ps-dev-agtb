@@ -247,9 +247,7 @@ $lbl_quote_name = $mod_strings['LBL_QUOTE_NAME'];
 $lbl_quote_stage = $mod_strings['LBL_QUOTE_STAGE'];
 
 $user_id = $current_user->id;
-//BEGIN SUGARCRM flav=pro ONLY
 $team_id = $current_user->default_team;
-//END SUGARCRM flav=pro ONLY
 
 ///////////////////////////////////////
 ///
@@ -281,14 +279,12 @@ $the_form = <<<EOQ
 
 			<p><input type="hidden" name="{$prefix}record" value="">
 			<input type="hidden" name="{$prefix}assigned_user_id" value="{$user_id}">
-<!--//BEGIN SUGARCRM flav=pro ONLY -->
 			<input type="hidden" name="{$prefix}team_id" value="{$team_id}">
 			<input type="hidden" name="{$prefix}billing_address_street">
 			<input type="hidden" name="{$prefix}billing_address_city">
 			<input type="hidden" name="{$prefix}billing_address_state">
 			<input type="hidden" name="{$prefix}billing_address_postalcode">
 			<input type="hidden" name="{$prefix}billing_address_country">
-<!--//END SUGARCRM flav=pro ONLY -->
 		$lbl_quote_name&nbsp;<span class="required">$lbl_required_symbol</span><br>
 		<input name='{$prefix}name' type="text" value=""><br>
 		${mod_strings['LBL_ACCOUNT_NAME']}&nbsp;<span class="required">${lbl_required_symbol}</span><br>

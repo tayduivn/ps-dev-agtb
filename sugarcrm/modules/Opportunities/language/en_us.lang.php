@@ -123,7 +123,6 @@ $mod_strings = array(
     'LBL_CONTACT_HISTORY_SUBPANEL_TITLE' => 'Related Contacts\' Emails',
     'LBL_FILENAME' => 'Attachment',
     'LBL_PRIMARY_QUOTE_ID' => 'Primary Quote',
-    //BEGIN SUGARCRM flav=pro ONLY
     'LBL_CONTRACTS' => 'Contracts',
     'LBL_CONTRACTS_SUBPANEL_TITLE' => 'Contracts',
     'LBL_PRODUCTS' => 'Quoted Line Items',
@@ -137,7 +136,6 @@ $mod_strings = array(
     'LBL_FORECAST' => 'Include in Forecast',
     'LBL_COMMIT_STAGE' => 'Commit Stage',
     'LBL_WORKSHEET' => 'Worksheet',
-    //END SUGARCRM flav=pro ONLY
 
     //BEGIN SUGARCRM flav=ent ONLY
     'TPL_RLI_CREATE' => 'An Opportunity must have an associated Revenue Line Item.',

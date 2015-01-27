@@ -27,9 +27,7 @@ class Lead extends Person {
 	var $created_by;
 	var $created_by_name;
 	var $modified_by_name;
-	//BEGIN SUGARCRM flav=pro ONLY
 	var $team_id;
-	//END SUGARCRM flav=pro ONLY
 	var $description;
 	var $salutation;
 	var $first_name;
@@ -94,9 +92,7 @@ class Lead extends Person {
     var $primary_address_street_2;
     var $primary_address_street_3;
 
-	//BEGIN SUGARCRM flav=pro ONLY
 	var $team_name;
-	//END SUGARCRM flav=pro ONLY
 
     //Marketo
     var $mkto_sync;
@@ -129,14 +125,12 @@ class Lead extends Person {
 
 	public function __construct() {
 		parent::__construct();
-		//BEGIN SUGARCRM flav=pro ONLY
 		global $current_user;
 		if(!empty($current_user)) {
 			$this->team_id = $current_user->default_team;	//default_team is a team id
 		} else {
 			$this->team_id = 1; // make the item globally accessible
 		}
-		//END SUGARCRM flav=pro ONLY
 	}
 
 	function get_account()
@@ -205,23 +199,17 @@ class Lead extends Person {
 
 
 			$query .= "$this->table_name.*, users.user_name assigned_user_name";
-			//BEGIN SUGARCRM flav=pro ONLY
 			$query .= ", teams.name team_name";
-			//END SUGARCRM flav=pro ONLY
             $query .= $custom_join['select'];
             $query .= " FROM leads ";
 
-//BEGIN SUGARCRM flav=pro ONLY
 		// We need to confirm that the user is a member of the team of the item.
 		$this->add_team_security_where_clause($query);
-//END SUGARCRM flav=pro ONLY
 			$query .= "			LEFT JOIN users
                                 ON leads.assigned_user_id=users.id ";
 			$query .= "LEFT JOIN email_addr_bean_rel eabl  ON eabl.bean_id = leads.id AND eabl.bean_module = 'Leads' and eabl.primary_address = 1 and eabl.deleted=0 ";
         	$query .= "LEFT JOIN email_addresses ea ON (ea.id = eabl.email_address_id) ";
-            //BEGIN SUGARCRM flav=pro ONLY
             $query .= getTeamSetNameJoin('leads');
-            //END SUGARCRM flav=pro ONLY
         $query .= $custom_join['join'];
 			$where_auto = '1=1';
 			if($show_deleted == 0){
@@ -575,7 +563,6 @@ class Lead extends Person {
         return $return_array;
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
     /**
      * Overriden to filter legacy calls and meetings
      * @see SugarBean::call_vardef_handler()
@@ -585,6 +572,5 @@ class Lead extends Person {
         require_once('modules/Leads/LeadsVarDefHandler.php');
         $this->vardef_handler = new LeadsVarDefHandler($this, $meta_array_type);
     }
-    //END SUGARCRM flav=pro ONLY
 }
 

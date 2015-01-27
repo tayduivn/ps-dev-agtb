@@ -34,9 +34,7 @@ class RestServerInfoTest extends RestTestBase {
 
         $this->assertTrue(isset($restReply['reply']['server_info']['flavor']), "No Flavor Set");
         $this->assertTrue(isset($restReply['reply']['server_info']['version']), "No Version Set");
-        //BEGIN SUGARCRM flav=pro ONLY
         $this->assertTrue(is_array($restReply['reply']['server_info']['fts']), "No FTS Info Set");
-        //END SUGARCRM flav=pro ONLY
     }
 
 }

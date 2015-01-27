@@ -414,7 +414,6 @@ function smarty_function_sugar_button($params, $smarty)
                 $output = '{if $bean->aclAccess("detail")}{if !empty($fields.id.value) && $isAuditEnabled}'.$audit_link.'{/if}{/if}';
             break;
 
-			//BEGIN SUGARCRM flav=pro ONLY
 			//Button for the Connector intergration wizard
 			case "CONNECTOR":
 				require_once('include/connectors/utils/ConnectorUtils.php');
@@ -439,9 +438,6 @@ function smarty_function_sugar_button($params, $smarty)
 					}
 				}
 				return '';
-
-			//END SUGARCRM flav=pro ONLY
-			//BEGIN SUGARCRM flav=pro ONLY
             case "PDFVIEW":
                 $output='{sugar_button module="$module" id="REALPDFVIEW" view="$view" form_id="formDetailView" record=$fields.id.value}';
                 break;
@@ -775,8 +771,6 @@ function smarty_function_sugar_button($params, $smarty)
 ENDB;
               $output = $shareButton;
               break;
-
-				//END SUGARCRM flav=pro ONLY
    	  } //switch
       if(isset($params['appendTo'])) {
           $smarty->append($params['appendTo'], $output);

@@ -15,7 +15,6 @@ $searchFields['Notes'] =
 		'name' => array( 'query_type'=>'default'),
         'contact_name' => array( 'query_type'=>'default','db_field'=>array('contacts.first_name','contacts.last_name')),  
         
-		//BEGIN SUGARCRM flav=pro ONLY
 		'favorites_only' => array(
             'query_type'=>'format',
 			'operator' => 'subquery',
@@ -24,7 +23,6 @@ $searchFields['Notes'] =
 			                        and sugarfavorites.module = \'Notes\' 
 			                        and sugarfavorites.assigned_user_id = \'{0}\'',
 			'db_field'=>array('id')),
-		//END SUGARCRM flav=pro ONLY
 		
 	   //Range Search Support 
 	   'range_date_entered' => array ('query_type' => 'default', 'enable_range_search' => true, 'is_date_field' => true),

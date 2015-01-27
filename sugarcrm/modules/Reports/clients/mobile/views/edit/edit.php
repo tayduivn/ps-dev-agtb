@@ -43,9 +43,7 @@ $viewdefs['Reports']['mobile']['view']['edit'] = array(
                     'options' => 'dom_report_types',
                 ),
                 'assigned_user_name',
-                //BEGIN SUGARCRM flav=pro ONLY
                 'team_name',
-                //END SUGARCRM flav=pro ONLY
             )
         )
     ),

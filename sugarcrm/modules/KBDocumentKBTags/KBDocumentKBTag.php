@@ -26,9 +26,8 @@ class KBDocumentKBTag extends SugarBean {
 	var $date_modified;
 	var $modified_user_id;
 	var $kbdocument_name;
-	//BEGIN SUGARCRM flav=pro ONLY
+
 	var $team_id;
-	//END SUGARCRM flav=pro ONLY
 
 
 	var $table_name = "kbdocuments_kbtags";

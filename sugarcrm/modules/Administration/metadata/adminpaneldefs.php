@@ -15,9 +15,7 @@ global $current_user,$admin_group_header;
 $admin_option_defs=array();
 $admin_option_defs['Users']['user_management']= array('Users','LBL_MANAGE_USERS_TITLE','LBL_MANAGE_USERS','./index.php?module=Users&action=index');
 $admin_option_defs['Users']['roles_management']= array('Roles','LBL_MANAGE_ROLES_TITLE','LBL_MANAGE_ROLES','./index.php?module=ACLRoles&action=index');
-//BEGIN SUGARCRM flav=pro ONLY
 $admin_option_defs['Users']['teams_management']= array('Teams','LBL_MANAGE_TEAMS_TITLE','LBL_MANAGE_TEAMS','./index.php?module=Teams&action=index');
-//END SUGARCRM flav=pro ONLY
 $admin_option_defs['Administration']['password_management']= array('Password','LBL_MANAGE_PASSWORD_TITLE','LBL_MANAGE_PASSWORD','./index.php?module=Administration&action=PasswordManager');
 $admin_group_header[]= array('LBL_USERS_TITLE','',false,$admin_option_defs, 'LBL_USERS_DESC');
 $license_management = false;
@@ -91,21 +89,15 @@ if (!isset($GLOBALS['sugar_config']['hide_admin_diagnostics']) || !$GLOBALS['sug
 // Connector Integration
 $admin_option_defs['Administration']['connector_settings']=array('icon_Connectors','LBL_CONNECTOR_SETTINGS','LBL_CONNECTOR_SETTINGS_DESC','./index.php?module=Connectors&action=ConnectorSettings');
 
-//BEGIN SUGARCRM flav=pro ONLY
 $admin_option_defs['Administration']['tracker_settings']=array('Trackers','LBL_TRACKER_SETTINGS','LBL_TRACKER_SETTINGS_DESC','./index.php?module=Trackers&action=TrackerSettings');
-//END SUGARCRM flav=pro ONLY
 
 $admin_option_defs['Administration']['scheduler'] = array('Schedulers','LBL_SUGAR_SCHEDULER_TITLE','LBL_SUGAR_SCHEDULER','./index.php?module=Schedulers&action=index');
 
-//BEGIN SUGARCRM flav=pro ONLY
 $admin_option_defs['Administration']['pdfmanager']= array('icon_PdfManager','LBL_PDFMANAGER_SETTINGS','LBL_PDFMANAGER_SETTINGS_DESC','./index.php?module=PdfManager&action=index');
-//END SUGARCRM flav=pro ONLY
 
-//BEGIN SUGARCRM flav=pro ONLY
 // Enable/Disable wireless modules
 $admin_option_defs['Administration']['enable_wireless_modules']=array('icon_AdminMobile','LBL_WIRELESS_MODULES_ENABLE','LBL_WIRELESS_MODULES_ENABLE_DESC','./index.php?module=Administration&action=EnableWirelessModules');
 $admin_option_defs['Administration']['web_logic_hooks']=array('Administration','LBL_WEB_LOGIC_HOOKS','LBL_WEB_LOGIC_HOOKS_DESC','javascript:parent.SUGAR.App.router.navigate("WebLogicHooks", {trigger: true});');
-//END SUGARCRM flav=pro ONLY
 
 
 
@@ -127,9 +119,7 @@ $admin_option_defs['Emails']['mailboxes']= array('InboundEmail','LBL_MANAGE_MAIL
 $admin_option_defs['Campaigns']['mass_Email']= array('EmailMan','LBL_MASS_EMAIL_MANAGER_TITLE','LBL_MASS_EMAIL_MANAGER_DESC','./index.php?module=EmailMan&action=index');
 $admin_option_defs['Emails']['history_contacts_emails'] = array('ConfigureTabs', 'LBL_HISTORY_CONTACTS_EMAILS', 'LBL_HISTORY_CONTACTS_EMAILS_DESC', './index.php?module=Configurator&action=historyContactsEmails');
 
-//BEGIN SUGARCRM flav=pro ONLY
 $admin_option_defs['Campaigns']['register_snip']=array('icon_AdminThemes','LBL_CONFIGURE_SNIP','LBL_CONFIGURE_SNIP_DESC','./index.php?module=SNIP&action=ConfigureSnip');
-//END SUGARCRM flav=pro ONLY
 
 $admin_group_header[]= array('LBL_EMAIL_TITLE','',false,$admin_option_defs, 'LBL_EMAIL_DESC');
 
@@ -148,9 +138,7 @@ $admin_option_defs['Administration']['configure_tabs']= array('ConfigureTabs','L
 $admin_option_defs['Administration']['module_loader'] = array('ModuleLoader','LBL_MODULE_LOADER_TITLE','LBL_MODULE_LOADER','./index.php?module=Administration&action=UpgradeWizard&view=module');
 
 
-// BEGIN SUGARCRM flav=pro ONLY
 $admin_option_defs['Administration']['config_prod_bar']=array('icon_ShortcutBar','LBL_CONFIGURE_SHORTCUT_BAR','LBL_CONFIGURE_SHORTCUT_BAR_DESC','./index.php?module=Administration&action=ConfigureShortcutBar');
-//END SUGARCRM flav=pro ONLY
 
 $admin_option_defs['any']['dropdowneditor']= array('Dropdown','LBL_DROPDOWN_EDITOR','DESC_DROPDOWN_EDITOR','./index.php?module=ModuleBuilder&action=index&type=dropdowns');
 
@@ -160,9 +148,7 @@ $admin_option_defs['Administration']['sugarportal']= array('SugarPortal','LBL_SU
 
 //$admin_option_defs['migrate_custom_fields']= array('MigrateFields','LBL_EXTERNAL_DEV_TITLE','LBL_EXTERNAL_DEV_DESC','./index.php?module=Administration&action=Development');
 
-//BEGIN SUGARCRM flav=pro ONLY
 $admin_option_defs['any']['workflow_management']= array('WorkFlow','LBL_MANAGE_WORKFLOW','LBL_WORKFLOW_DESC','./index.php?module=WorkFlow&action=ListView');
-//END SUGARCRM flav=pro ONLY
 
 $admin_option_defs['Administration']['styleguide'] = array(
     'Documents',
@@ -174,7 +160,6 @@ $admin_option_defs['Administration']['styleguide'] = array(
 $admin_group_header[]= array('LBL_STUDIO_TITLE','',false,$admin_option_defs, 'LBL_TOOLS_DESC');
 
 
-//BEGIN SUGARCRM flav=pro ONLY
 //product catalog.
 
 $admin_option_defs=array();
@@ -187,8 +172,6 @@ $admin_option_defs['Products']['product_types']= array('Product_Types','LBL_PROD
 $admin_option_defs['Quotes']['tax_rates']= array('TaxRates','LBL_TAXRATES_TITLE','LBL_TAXRATES','./index.php?module=TaxRates&action=index');
 
 $admin_group_header[]= array('LBL_PRICE_LIST_TITLE','',false,$admin_option_defs, 'LBL_PRICE_LIST_DESC');
-
-//END SUGARCRM flav=pro ONLY
 //bug tracker.
 $admin_option_defs=array();
 $admin_option_defs['Bugs']['bug_tracker']= array('Releases','LBL_MANAGE_RELEASES','LBL_RELEASE','./index.php?module=Releases&action=index');

@@ -88,7 +88,6 @@ $json = getJSONobj();
 $smarty->assign('group_folder_array', $json->encode($groupFoldersOrig));
 $smarty->assign('group_folder_options', get_select_options_with_id($groupFolders, $addToGroupFolder));
 
-//BEGIN SUGARCRM flav=pro ONLY
 $groupFolderTeamId = "";
 if(!empty($focus->id)) {
 	$groupFolderTeamId = $focus->team_id;
@@ -113,7 +112,6 @@ $code = $teamSetField->getClassicView();
 $smarty->assign('JAVASCRIPT', $quicksearch_js);
 $smarty->assign("TEAM_SET_FIELD", $code);
 $smarty->assign("langHeader", get_language_header());
-//END SUGARCRM flav=pro ONLY
 
 $smarty->assign('CSS',SugarThemeRegistry::current()->getCSS());
 

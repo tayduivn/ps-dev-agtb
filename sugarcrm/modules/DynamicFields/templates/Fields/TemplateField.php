@@ -350,7 +350,6 @@ class TemplateField{
         if (isset($this->full_text_search)) {
             $array['full_text_search'] = $this->full_text_search;
         }
-        //BEGIN SUGARCRM flav=pro ONLY
         if (!empty($this->calculated) && !empty($this->formula) && is_string($this->formula)) {
             $array['calculated'] = $this->calculated;
             $array['formula'] = html_entity_decode($this->formula);
@@ -369,7 +368,6 @@ class TemplateField{
         if (!empty($this->dependency) && is_string($this->dependency)) {
             $array['dependency'] = html_entity_decode($this->dependency);
         }
-        //END SUGARCRM flav=pro ONLY
 		if(!empty($this->len)){
 			$array['len'] = $this->len;
 		}
@@ -541,7 +539,6 @@ class TemplateField{
      */
     protected function applyVardefRules()
     {
-        //BEGIN SUGARCRM flav=pro ONLY
         if (!empty($this->calculated) && !empty($this->formula)
             && is_string($this->formula) && !empty($this->enforced) && $this->enforced)
         {
@@ -549,7 +546,6 @@ class TemplateField{
             $this->duplicate_merge = 0;
             $this->duplicate_merge_dom_value = 0;
         }
-        //END SUGARCRM flav=pro ONLY
 
         if(!empty($this->full_text_search))
         {

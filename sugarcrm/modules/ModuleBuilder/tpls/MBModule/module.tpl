@@ -67,9 +67,7 @@
                     <td align='center'>
                         <table id='type_{$type}' onclick='ModuleBuilder.buttonDown(this,"{$type}", "type"); ModuleBuilder.buttonToForm("CreateModule", "type", "type");' class='wizardButton' onmousedown='return false;' onmouseout='ModuleBuilder.buttonOut(this,"{$type}", "type");'>
 						  <tr>
-							  {* //BEGIN SUGARCRM flav=pro ONLY *}
 						      <td  align='center'>{sugar_image name=$imgurl width=32 height=32}</td>
-							  {* //END SUGARCRM flav=pro ONLY *}
 							  {* //BEGIN SUGARCRM flav=com ONLY *}
 						      <td  align='center'>{sugar_image name=$type width=48 height=48}</td>
 							  {* //END SUGARCRM flav=com ONLY *}
@@ -79,9 +77,7 @@
                         <script>ModuleBuilder.buttonAdd('type_{$type}', '{$type}', 'type');</script>
                     </td>
                     {else}
-					{* //BEGIN SUGARCRM flav=pro ONLY *}
                     <td align='center'>{sugar_image name=$imgurl width=32 height=32}<br>
-					{* //END SUGARCRM flav=pro ONLY *}
 					{* //BEGIN SUGARCRM flav=com ONLY *}
                     <td align='center'>{sugar_image name=$type width=48 height=48}<br>
 					{* //END SUGARCRM flav=com ONLY *}

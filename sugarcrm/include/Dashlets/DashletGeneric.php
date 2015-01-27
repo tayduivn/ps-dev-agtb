@@ -129,9 +129,7 @@ class DashletGeneric extends Dashlet {
         // Bug 39517 - Don't add custom fields automatically to the available fields to display in the listview
         //$this->addCustomFields();
         if($this->displayColumns) {
-             //BEGIN SUGARCRM flav=pro ONLY
              $this->seedBean->ACLFilterFieldList($this->displayColumns, array("owner_override" => true));
-             //END SUGARCRM flav=pro ONLY
              // columns to display
              foreach($this->displayColumns as $num => $name) {
                     // defensive code for array being returned
@@ -148,9 +146,7 @@ class DashletGeneric extends Dashlet {
              }
         }
         else {
-             //BEGIN SUGARCRM flav=pro ONLY
              $this->seedBean->ACLFilterFieldList($this->columns, array("owner_override" => true));
-             //END SUGARCRM flav=pro ONLY
              foreach($this->columns as $name => $val) {
                 // defensive code for array being returned
                 $translated = translate($this->columns[$name]['label'], $this->seedBean->module_dir);
@@ -363,9 +359,7 @@ class DashletGeneric extends Dashlet {
         }
         $this->lvs->displayColumns = $displayColumns;
 
-        //BEGIN SUGARCRM flav=pro ONLY
         $this->seedBean->ACLFilterFieldList($this->lvs->displayColumns, array("owner_override" => true));
-        //END SUGARCRM flav=pro ONLY
 
         $this->lvs->lvd->setVariableName($this->seedBean->object_name, array());
         $lvdOrderBy = $this->lvs->lvd->getOrderBy(); // has this list been ordered, if not use default

@@ -48,11 +48,10 @@ class OpportunitiesViewEdit extends ViewEdit
         if (empty($this->bean->id) && empty($_REQUEST['probability'])) {
             $prePopProb = 'document.getElementsByName(\'sales_stage\')[0].onchange();';
         }
-        //BEGIN SUGARCRM flav=pro ONLY
+
         $admin = BeanFactory::getBean('Administration');
         $settings = $admin->getConfigForModule('Forecasts');
         $wonStages = $json->encode($settings['sales_stage_won']);
-        //END SUGARCRM flav=pro ONLY
 
         $probability_script = <<<EOQ
 	<script>
@@ -61,7 +60,7 @@ class OpportunitiesViewEdit extends ViewEdit
 	if(sales_stage) {
 
         var probability = document.getElementsByName('probability')[0];
-        //BEGIN SUGARCRM flav=pro ONLY
+
         won_stages = $wonStages;
         var best_case = document.getElementsByName('best_case')[0];
         var worst_case = document.getElementsByName('worst_case')[0];
@@ -77,7 +76,6 @@ class OpportunitiesViewEdit extends ViewEdit
                 worst_case.setAttribute("readonly", "true");
             }
         }
-        //END SUGARCRM flav=pro ONLY
         sales_stage.onchange = function() {
             if(typeof(sales_stage.value) != "undefined"
                 && prob_array[sales_stage.value]
@@ -86,7 +84,7 @@ class OpportunitiesViewEdit extends ViewEdit
                 probability.value = prob_array[sales_stage.value];
                 SUGAR.util.callOnChangeListers(probability);
             }
-        //BEGIN SUGARCRM flav=pro ONLY
+
             if(won_stages.indexOf(sales_stage.value) > -1) {
                 if(best_case) {
                     best_case.value = amount.value;
@@ -114,7 +112,6 @@ class OpportunitiesViewEdit extends ViewEdit
                     worst_case.value = amount.value;
                 }
             }
-        //END SUGARCRM flav=pro ONLY
         };
 	}
 	$prePopProb

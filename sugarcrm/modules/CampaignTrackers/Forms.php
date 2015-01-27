@@ -84,9 +84,7 @@ function get_new_record_form () {
 	$form->assign("TYPE_OPTIONS", get_select_options_with_id($app_list_strings['campaign_type_dom'], ""));
 
 	$form->assign("USER_ID", $current_user->id);
-	//BEGIN SUGARCRM flav=pro ONLY
 	$form->assign("TEAM_ID", sprintf('<input type="hidden" name="team_id" value="%s">', $current_user->default_team));
-	//END SUGARCRM flav=pro ONLY
 
 
 	$form->assign("CALENDAR_LANG", "en");

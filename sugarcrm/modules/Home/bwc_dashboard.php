@@ -37,10 +37,8 @@ $defaultHomepage = false;
 $hasUserPreferences = (!isset($pages) || empty($pages) || !isset($dashlets) || empty($dashlets)) ? false : true;
 
 if(!$hasUserPreferences){
-	//BEGIN SUGARCRM flav=pro ONLY
 	// BEGIN 'My Sugar'
 	$defaultHomepage = true;
-	//END SUGARCRM flav=pro ONLY
     $dashlets = array();
 
     //list of preferences to move over and to where
@@ -132,11 +130,8 @@ if(!$hasUserPreferences){
 	    }
 	}
 
-    //BEGIN SUGARCRM flav=pro ONLY
     // END 'My Sugar'
-    //END SUGARCRM flav=pro ONLY
 
-    //BEGIN SUGARCRM flav=pro ONLY
 
 
     // BEGIN 'Sales Page'
@@ -372,10 +367,7 @@ if(!$hasUserPreferences){
 
 
 	// END 'Tracker'
-	//END SUGARCRM flav=pro ONLY
-    //BEGIN SUGARCRM flav=pro ONLY
     $dashlets = array_merge($dashlets, $salesDashlets, $marketingDashlets, $supportDashlets, $trackingDashlets);
-    //END SUGARCRM flav=pro ONLY
 
 
     $current_user->setPreference('dashlets', $dashlets, 0, 'Home');
@@ -410,7 +402,6 @@ if (empty($pages)){
 	$pages[0]['numColumns'] = '2';
 	$pages[0]['pageTitleLabel'] = 'LBL_HOME_PAGE_1_NAME';	// "My Sugar"
 	$pageIndex++;
-//BEGIN SUGARCRM flav=pro ONLY
 
 	$pages[$pageIndex]['columns'] = $salesColumns;
 	$pages[$pageIndex]['numColumns'] = '2';
@@ -437,20 +428,14 @@ if (empty($pages)){
 		$pages[$pageIndex]['pageTitleLabel'] = 'LBL_HOME_PAGE_4_NAME';	// "Tracker"
 		$pageIndex++;
 	}
-
-
-//END SUGARCRM flav=pro ONLY
 	$current_user->setPreference('pages', $pages, 0, 'Home');
-//BEGIN SUGARCRM flav=pro ONLY
     $_COOKIE[$current_user->id . '_activePage'] = '0';
     setcookie($current_user->id . '_activePage','0',3000);
-//END SUGARCRM flav=pro ONLY
     $activePage = 0;
 }
 
 $sugar_smarty = new Sugar_Smarty();
 
-//BEGIN SUGARCRM flav=pro ONLY
 if(!empty($_REQUEST) && isset($_REQUEST['activeTab']) && strlen($_REQUEST['activeTab']) > 0) {
 	if($_REQUEST['activeTab'] == 'AddTab')  {
 		$activePage = isset($_COOKIE[$current_user->id . '_activePage']) ? intval($_COOKIE[$current_user->id . '_activePage']) : 0;
@@ -466,17 +451,13 @@ if(!empty($_REQUEST) && isset($_REQUEST['activeTab']) && strlen($_REQUEST['activ
 } else {
     $_COOKIE[$current_user->id . '_activePage'] = '0';
     setcookie($current_user->id . '_activePage','0',3000);
-//END SUGARCRM flav=pro ONLY
     $activePage = 0;
-//BEGIN SUGARCRM flav=pro ONLY
 }
-//END SUGARCRM flav=pro ONLY
 
 $divPages[] = $activePage;
 
 $numCols = $pages[$activePage]['numColumns'];
 
-//BEGIN SUGARCRM flav=pro ONLY
 foreach($pages as $pageNum => $page){
     //grab the now viewed pages to render the <div> foreach
     if($pageNum != $activePage)
@@ -498,7 +479,6 @@ foreach($pages as $pageNum => $page){
         $pageData[$pageNum]['visibility'] = 'none';
     }
 }
-//END SUGARCRM flav=pro ONLY
 
 $count = 0;
 $dashletIds = array(); // collect ids to pass to javascript
@@ -526,16 +506,12 @@ foreach($pages[$activePage]['columns'] as $colNum => $column) {
 
 			if($myDashlet->checkDashletDisplay()) {
         		require_once($dashlets[$id]['fileLocation']);
-        		//BEGIN SUGARCRM flav=pro ONLY
         		if ($dashlets[$id]['className'] == 'ChartsDashlet'){
         			$dashlet = new $dashlets[$id]['className']($id, $dashlets[$id]['reportId'], (isset($dashlets[$id]['options']) ? $dashlets[$id]['options'] : array()));
         		}
             	else{
-            	//END SUGARCRM flav=pro ONLY
 	            	$dashlet = new $dashlets[$id]['className']($id, (isset($dashlets[$id]['options']) ? $dashlets[$id]['options'] : array()));
-	        	//BEGIN SUGARCRM flav=pro ONLY
             	}
-        		//END SUGARCRM flav=pro ONLY
                 // Need to add support to dynamically display/hide dashlets
                 // If it has a method 'shouldDisplay' we will call it to see if we should display it or not
                 if (method_exists($dashlet,'shouldDisplay')) {
@@ -574,11 +550,9 @@ foreach($pages[$activePage]['columns'] as $colNum => $column) {
 
 if(!empty($sugar_config['lock_homepage']) && $sugar_config['lock_homepage'] == true) $sugar_smarty->assign('lock_homepage', true);
 
-//BEGIN SUGARCRM flav=pro ONLY
 $sugar_smarty->assign('pages', $pageData);
 $sugar_smarty->assign('numPages', sizeof($pages));
 $sugar_smarty->assign('loadedPage', 'pageNum_' . $activePage .'_div');
-//END SUGARCRM flav=pro ONLY
 
 $sugar_smarty->assign('sugarVersion', $sugar_version);
 $sugar_smarty->assign('sugarFlavor', $sugar_flavor);
@@ -596,17 +570,14 @@ $sugar_smarty->assign('theme', $theme);
 
 $sugar_smarty->assign('divPages', $divPages);
 $sugar_smarty->assign('activePage', $activePage);
-//BEGIN SUGARCRM flav=pro ONLY
 $sugar_smarty->assign('numCols', $pages[$activePage]['numColumns']);
 $sugar_smarty->assign('default', $defaultHomepage);
-//END SUGARCRM flav=pro ONLY
 
 $sugar_smarty->assign('current_user', $current_user->id);
 
 $sugar_smarty->assign('lblAdd', $GLOBALS['app_strings']['LBL_ADD_BUTTON']);
 $sugar_smarty->assign('lblAddDashlets', $GLOBALS['app_strings']['LBL_ADD_DASHLETS']);
 $sugar_smarty->assign('lblLnkHelp', $GLOBALS['app_strings']['LNK_HELP']);
-//BEGIN SUGARCRM flav=pro ONLY
 $sugar_smarty->assign('lblAddPage', $GLOBALS['app_strings']['LBL_ADD_PAGE']);
 $sugar_smarty->assign('lblPageName', $GLOBALS['app_strings']['LBL_PAGE_NAME']);
 $sugar_smarty->assign('lblChangeLayout', $GLOBALS['app_strings']['LBL_CHANGE_LAYOUT']);
@@ -615,7 +586,6 @@ $sugar_smarty->assign('lbl1Column', $GLOBALS['app_strings']['LBL_1_COLUMN']);
 $sugar_smarty->assign('lbl2Column', $GLOBALS['app_strings']['LBL_2_COLUMN']);
 $sugar_smarty->assign('lbl3Column', $GLOBALS['app_strings']['LBL_3_COLUMN']);
 $sugar_smarty->assign('form_header', getClassicModuleTitle("Home",array(), false));
-//END SUGARCRM flav=pro ONLY
 
 $sugar_smarty->assign('mod', return_module_language($GLOBALS['current_language'], 'Home'));
 $sugar_smarty->assign('app', $GLOBALS['app_strings']);

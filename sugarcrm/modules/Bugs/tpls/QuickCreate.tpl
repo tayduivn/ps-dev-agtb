@@ -25,9 +25,7 @@
 <input type="hidden" name="duplicate_parent_id" value="{$REQUEST.duplicate_parent_id}">
 <input type="hidden" name="to_pdf" value='1'>
 <input id='assigned_user_id' name='assigned_user_id' type="hidden" value="{$ASSIGNED_USER_ID}" />
-<!--//BEGIN SUGARCRM flav=pro ONLY -->
 <input id='team_id' name='team_id' type="hidden" value="{$TEAM_ID}" />
-<!--//END SUGARCRM flav=pro ONLY -->
 <table width="100%" cellpadding="0" cellspacing="0" border="0">
 	<tr>
 	<td align="left" style="padding-bottom: 2px;">

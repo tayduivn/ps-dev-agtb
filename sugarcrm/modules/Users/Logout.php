@@ -33,7 +33,6 @@ if(isset($_COOKIE[session_name()])) {
 }
 
 //Update the tracker_sessions table
-//BEGIN SUGARCRM flav=pro ONLY
 $trackerManager = TrackerManager::getInstance();
 if($monitor = $trackerManager->getMonitor('tracker_sessions')){ 
 	$monitor->setValue('user_id', $GLOBALS['current_user']->id);
@@ -43,7 +42,6 @@ if($monitor = $trackerManager->getMonitor('tracker_sessions')){
 	$monitor->setValue('active', 0);
 	$trackerManager->saveMonitor($monitor);
 }
-//END SUGARCRM flav=pro ONLY
 // clear out the authenticating flag
 session_destroy();
 

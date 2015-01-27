@@ -16,9 +16,7 @@ $dictionary['Note'] = array(
         'portal' => false,
     //END SUGARCRM flav=ent ONLY
     ),
-    //BEGIN SUGARCRM flav=pro ONLY
     'favorites'=>true,
-    //END SUGARCRM flav=pro ONLY
     'table' => 'notes',
     'activity_enabled' => true,
 	'unified_search' => true, 'full_text_search' => true, 'unified_search_default_enabled' => true,
@@ -200,7 +198,6 @@ $dictionary['Note'] = array(
     'reportable'=>false,
 	'source'=>'non-db',
   ),
-  //BEGIN SUGARCRM flav=pro ONLY
   'product_id' =>
   array (
     'name' => 'product_id',
@@ -217,7 +214,6 @@ $dictionary['Note'] = array(
     'reportable'=>false,
 	'source'=>'non-db',
   ),
-  //END SUGARCRM flav=pro ONLY
 
   'contact' =>
   array (
@@ -259,7 +255,6 @@ $dictionary['Note'] = array(
     'source'=>'non-db',
     'vname'=>'LBL_LEADS',
   ),
-//BEGIN SUGARCRM flav=pro ONLY
   'products' =>
   array (
     'name' => 'products',
@@ -300,7 +295,6 @@ $dictionary['Note'] = array(
       'source' => 'non-db',
       'vname' => 'LBL_PROSPECTS',
     ),
-//END SUGARCRM flav=pro ONLY
   'bugs' =>
   array (
     'name' => 'bugs',
@@ -392,8 +386,6 @@ $dictionary['Note'] = array(
 );
 
 VardefManager::createVardef('Notes','Note', array('default', 'assignable',
-//BEGIN SUGARCRM flav=pro ONLY
 'team_security',
-//END SUGARCRM flav=pro ONLY
 ));
 ?>

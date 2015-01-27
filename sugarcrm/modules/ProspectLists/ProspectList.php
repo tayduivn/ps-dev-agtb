@@ -24,10 +24,8 @@ class ProspectList extends SugarBean {
 	var $modified_by_name;
 	var $list_type;
 	var $domain_name;
-	//BEGIN SUGARCRM flav=pro ONLY
 	var $team_id;
 	var $team_name;
-	//END SUGARCRM flav=pro ONLY
 
 	var $name;
 	var $description;
@@ -73,20 +71,14 @@ class ProspectList extends SugarBean {
 		if($custom_join){
 			$query .= $custom_join['select'];
 		}
-        //BEGIN SUGARCRM flav=pro ONLY
         $query .= ", teams.name as team_name";
-        //END SUGARCRM flav=pro ONLY
 		$query .= " FROM prospect_lists ";
 
-		//BEGIN SUGARCRM flav=pro ONLY
 		// We need to confirm that the user is a member of the team of the item.
 		$this->add_team_security_where_clause($query);
-		//END SUGARCRM flav=pro ONLY
 		$query .= "LEFT JOIN users
 					ON prospect_lists.assigned_user_id=users.id ";
-		//BEGIN SUGARCRM flav=pro ONLY
 		$query .= "LEFT JOIN teams ON prospect_lists.team_id=teams.id ";
-		//END SUGARCRM flav=pro ONLY
 
 		if($custom_join){
 			$query .= $custom_join['join'];
@@ -265,7 +257,6 @@ FROM prospect_lists_prospects plp
 	function get_list_view_data(){
 		$temp_array = $this->get_list_view_array();
 		$temp_array["ENTRY_COUNT"] = $this->get_entry_count();
-		//BEGIN SUGARCRM flav=pro ONLY
 	    $this->load_relationship('teams');
         require_once('modules/Teams/TeamSetManager.php');
         $teams = TeamSetManager::getTeamsFromSet($this->team_set_id);
@@ -277,7 +268,6 @@ FROM prospect_lists_prospects plp
 						</a>
 						</span>";
         }
-        //END SUGARCRM flav=pro ONLY
 		return $temp_array;
 	}
 	/**

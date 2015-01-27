@@ -95,14 +95,12 @@ $mod_strings = array (
   'LNK_NEW_EMPLOYEE' => 'Create Employee',
   'LNK_EMPLOYEE_LIST' => 'View Employees',
   'ERR_DELETE_RECORD' => 'You must specify a record number to delete the account.',
-//BEGIN SUGARCRM flav=pro ONLY
   'LBL_DEFAULT_TEAM' => 'Default Team:',
   'LBL_DEFAULT_TEAM_TEXT' => 'Selects default team for new records',
   'LBL_MY_TEAMS' => 'My Teams',
   'LBL_LIST_DESCRIPTION' => 'Description',
   'LNK_EDIT_TABS'=>'Edit Tabs',
   'NTC_REMOVE_TEAM_MEMBER_CONFIRMATION' => 'Are you sure you want to remove this employee\\\'s membership?',
-//END SUGARCRM flav=pro ONLY
   'LBL_LIST_EMPLOYEE_STATUS' => 'Employee Status',
 
   'LBL_SUGAR_LOGIN' => 'Is Sugar User',  

@@ -117,9 +117,8 @@ $mod_strings = array (
 	'LBL_IS_EXTERNAL_ARTICLE' => 'External Article? :',
 	'LBL_SHOW_TAGS' => 'Show More Tags',
     'LBL_HIDE_TAGS' => 'Hide Tags',
-//BEGIN SUGARCRM flav=pro ONLY
+
 	'LBL_TEAM'=> 'Team:',
-//END SUGARCRM flav=pro ONLY
 	'LBL_DOC_DESCRIPTION'=>'Description:',
 	'LBL_KBDOC_SUBJECT' =>'Subject:',
 	'LBL_DOC_ACTIVE_DATE'=> 'Publish Date:',

@@ -56,12 +56,10 @@ $listViewDefs['Tasks'] = array(
         'sortable' => false, 
         'link' => false,
         'default' => true),   
-    //BEGIN SUGARCRM flav=pro ONLY
     'TEAM_NAME' => array(
         'width' => '2', 
         'label' => 'LBL_LIST_TEAM',
-        'default' => false),        
-    //END SUGARCRM flav=pro ONLY
+        'default' => false),
     
     'ASSIGNED_USER_NAME' => array(
         'width' => '2', 

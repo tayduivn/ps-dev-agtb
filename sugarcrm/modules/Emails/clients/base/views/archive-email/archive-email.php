@@ -177,13 +177,11 @@ $viewdefs['Emails']['base']['view']['archive-email'] = array(
             'labelsOnTop' => false,
             'placeholders' => true,
             'fields' => array(
-                //BEGIN SUGARCRM flav=pro ONLY
                 array(
                     'type' => 'teamset',
                     'name' => 'team_name',
                     'span' => 12,
                 ),
-                //END SUGARCRM flav=pro ONLY
                 array(
                     'label' => 'LBL_LIST_RELATED_TO',
                     'type' => 'parent',

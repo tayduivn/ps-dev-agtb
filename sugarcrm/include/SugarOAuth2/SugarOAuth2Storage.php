@@ -15,9 +15,7 @@ require_once('vendor/oauth2-php/lib/IOAuth2GrantUser.php');
 require_once('vendor/oauth2-php/lib/IOAuth2RefreshTokens.php');
 require_once('vendor/oauth2-php/lib/IOAuth2GrantExtension.php');
 
-//BEGIN SUGARCRM flav=pro ONLY
 require_once('modules/Administration/SessionManager.php');
-//END SUGARCRM flav=pro ONLY
 
 require_once('include/api/SugarApiException.php');
 

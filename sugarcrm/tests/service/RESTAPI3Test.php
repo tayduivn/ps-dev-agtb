@@ -392,7 +392,6 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
 
     }
     
-    //BEGIN SUGARCRM flav=pro ONLY
     public static function _wirelessGridModuleLayoutProvider()
     {
         return array(
@@ -487,8 +486,7 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
         $panels = $result[$module][$type][$view]['panels'];
         $this->assertTrue(isset($panels[0][0]['name']), 'No name index in the first row array of panel fields');
         $this->assertEquals(count($legacyFields), count($currentFields), 'Field count differs between legacy and current metadata');
-    }    
-    //END SUGARCRM flav=pro ONLY
+    }
 
     public function testGetAvailableModules()
     {
@@ -505,13 +503,11 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
 
         $sh = new SugarWebServiceUtilv3();
 
-//BEGIN SUGARCRM flav=pro ONLY
         $mobileResult = $this->_makeRESTCall('get_available_modules', array('session' => $session, 'filter' => 'mobile' ));
         $mobileResultExpected = $sh->get_visible_mobile_modules($fullResult['modules']);
         $mobileResultExpected = md5(serialize(array('modules' => $mobileResultExpected)));
         $mobileResult = md5(serialize($mobileResult));
         $this->assertEquals($mobileResultExpected, $mobileResult, "Unable to get all visible mobile modules");
-//END SUGARCRM flav=pro ONLY
 
         $defaultResult = $this->_makeRESTCall('get_available_modules', array('session' => $session, 'filter' => 'default' ));
         $defaultResult = md5(serialize($defaultResult['modules']));
@@ -816,13 +812,11 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
                 'type' => 'default',
                 'view' => 'subpanel',
             ),
-            //BEGIN SUGARCRM flav=pro ONLY
             array(
                 'module' => 'Leads',
                 'type' => 'wireless',
                 'view' => 'subpanel',
             ),
-            //END SUGARCRM flav=pro ONLY
         );
     }
 
@@ -844,7 +838,6 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertTrue(isset($results[$module][$type][$view]), "Unable to get subpanel defs");
     }
-     //BEGIN SUGARCRM flav=pro ONLY
     /**
      * @depends SOAPAPI3Test::testSetEntriesForAccount
      */
@@ -888,9 +881,7 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
         $timeStamp = TimeDate::getInstance()->nowDb();
         $monitor = $trackerManager->getMonitor('tracker');
 
-        //BEGIN SUGARCRM flav=pro ONLY
         $monitor->setValue('team_id', $this->_user->getPrivateTeamID());
-        //END SUGARCRM flav=pro ONLY
         $monitor->setValue('action', 'detail');
         $monitor->setValue('user_id', $this->_user->id);
         $monitor->setValue('module_name', $module);
@@ -900,7 +891,6 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
         $monitor->setValue('item_summary', $summaryText);
         $trackerManager->saveMonitor($monitor, true, true);
      }
-     //END SUGARCRM flav=pro ONLY
      public function testGetUpcomingActivities()
      {
          $expected = $this->_createUpcomingActivities(); //Seed the data.

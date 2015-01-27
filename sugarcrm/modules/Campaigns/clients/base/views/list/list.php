@@ -45,7 +45,6 @@ $viewdefs['Campaigns']['base']['view']['list'] = array(
                     'default' => true,
                     'enabled' => true,
                 ),
-                //BEGIN SUGARCRM flav=pro ONLY
                 array(
                     'name'    => 'team_name',
                     'label'   => 'LBL_TEAM',
@@ -53,7 +52,6 @@ $viewdefs['Campaigns']['base']['view']['list'] = array(
                     'enabled' => true,
                     'width'   => '2',
                 ),
-                //END SUGARCRM flav=pro ONLY
                 array(
                     'name'     => 'assigned_user_name',
                     'module'   => 'Users',

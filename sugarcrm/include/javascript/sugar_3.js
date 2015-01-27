@@ -1124,7 +1124,6 @@ function isFieldTypeExceptFromEmptyCheck(fieldType)
     }
     return results;
 }
-//BEGIN SUGARCRM flav=pro ONLY
 function isFieldHidden(field, type)
 {
     var Dom = YAHOO.util.Dom;
@@ -1141,7 +1140,6 @@ function isFieldHidden(field, type)
 
     return Dom.hasClass(td, 'vis_action_hidden');
 }
-//END SUGARCRM flav=pro ONLY
 function validate_form(formname, startsWith){
     requiredTxt = SUGAR.language.get('app_strings', 'ERR_MISSING_REQUIRED_FIELDS');
     invalidTxt = SUGAR.language.get('app_strings', 'ERR_INVALID_VALUE');

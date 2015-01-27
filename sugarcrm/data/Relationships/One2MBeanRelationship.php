@@ -234,7 +234,6 @@ class One2MBeanRelationship extends One2MRelationship
             }
 
             $from = $this->def['rhs_table'];
-            //BEGIN SUGARCRM flav=pro ONLY
             if (!empty($params['enforce_teams'])) {
                 // This may have been set already
                 if (empty($relatedSeed)) {
@@ -245,7 +244,6 @@ class One2MBeanRelationship extends One2MRelationship
                 }
                 $relatedSeed->add_team_security_where_clause($from);
             }
-            //END SUGARCRM flav=pro ONLY
 
             if (empty($params['return_as_array'])) {
                 //Limit is not compatible with return_as_array

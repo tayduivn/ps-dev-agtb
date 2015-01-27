@@ -13,7 +13,6 @@
 <script src="{sugar_getjspath file='modules/ACLRoles/ACLRoles.js'}"></script>
 <b>{$MOD.LBL_EDIT_VIEW_DIRECTIONS}</b>
 <table width='100%'><tr>
-{* //BEGIN SUGARCRM flav=pro ONLY*}
 <td valign='top'>
 <TABLE class='edit view' border='0' cellpadding=0 cellspacing = 1  >
 <tr> <td colspan="2" scope="row"><a href='javascript:void(0);' onclick='aclviewer.view("{$ROLE.id}", "All");'><b>{$MOD.LBL_ALL}</b></a></td></tr>
@@ -31,7 +30,6 @@
 {/foreach}
 </TABLE>
 </td>
-{* //END SUGARCRM flav=pro ONLY*}
 <td width= '100%'  valign='top'>
 <div id='category_data'>
 {include file='modules/ACLRoles/EditAllBody.tpl'}

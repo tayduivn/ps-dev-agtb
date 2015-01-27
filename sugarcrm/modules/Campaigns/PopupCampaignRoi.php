@@ -98,10 +98,9 @@ if(is_admin($current_user) && $_REQUEST['module'] != 'DynamicLayout' && !empty($
 // adding custom fields:
 //require_once('modules/DynamicFields/templates/Files/DetailView.php');
 
-//BEGIN SUGARCRM flav=pro ONLY
+
 //$xtpl->assign("TEAM_NAME", $focus->team_name);
 //$xtpl->parse("main.pro");
-//END SUGARCRM flav=pro ONLY
 /* we need to build the dropdown of related marketing values
     $latest_marketing_id = '';
     $selected_marketing_id = '';

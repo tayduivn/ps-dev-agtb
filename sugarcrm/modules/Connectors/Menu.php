@@ -14,9 +14,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 global $mod_strings;
 global $current_user;
 $actions = array('ModifyProperties', 'ModifyDisplay',
-//BEGIN SUGARCRM flav=pro ONLY
 'ModifySearch',
-//END SUGARCRM flav=pro ONLY
 'ModifyMapping', 'ConnectorSettings');
 if(in_array($GLOBALS['action'], $actions)){
 	$module_menu[]=Array("index.php?module=Connectors&action=ConnectorSettings", $mod_strings['LBL_ADMINISTRATION_MAIN'],"icon_Connectors");
@@ -24,11 +22,8 @@ if(in_array($GLOBALS['action'], $actions)){
 	$module_menu[]=Array("index.php?module=Connectors&action=ModifyDisplay", $mod_strings['LBL_MODIFY_DISPLAY_TITLE'],"icon_ConnectorEnable_16");
 	$module_menu[]=Array("index.php?module=Connectors&action=ModifyMapping", $mod_strings['LBL_MODIFY_MAPPING_TITLE'],"icon_ConnectorMap_16");
 
-	//BEGIN SUGARCRM flav=pro ONLY
 
 	$module_menu[]=Array("index.php?module=Connectors&action=ModifySearch", $mod_strings['LBL_MODIFY_SEARCH_TITLE'],"icon_ConnectorSearchFields_16");
-
-	//END SUGARCRM flav=pro ONLY
 
 }
 

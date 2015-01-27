@@ -13,9 +13,7 @@
 {include file="_head.tpl" theme_template=true}
 <body class="yui-skin-sam">
     <a name="top"></a>
-	{* //BEGIN SUGARCRM flav=pro ONLY *}
 	{include file="_dcmenu.tpl" theme_template=true}
-	{* //END SUGARCRM flav=pro ONLY *}
 
 	<div class="clear"></div>
     <div class="clear"></div>

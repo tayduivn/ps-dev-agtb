@@ -20,7 +20,6 @@ require_once("include/OutboundEmail/OutboundEmail.php");
 
 class UsersController extends SugarController
 {
-    //BEGIN SUGARCRM flav=pro ONLY
 	protected function action_login()
 	{
 		if (isset($_REQUEST['mobile']) && $_REQUEST['mobile'] == 1) {
@@ -47,7 +46,6 @@ class UsersController extends SugarController
 			$this->view = 'classic';
 		}
 	}
-    //END SUGARCRM flav=pro ONLY
 
     /**
      * Triggers reset preferences for a given user.
@@ -88,14 +86,12 @@ class UsersController extends SugarController
             $eapm->delete_user_accounts($_REQUEST['record']);
             $GLOBALS['log']->info("Removing user's External Accounts");
 
-            //BEGIN SUGARCRM flav=PRO ONLY
             if($u->portal_only == '0'){
                 SugarApplication::redirect("index.php?module=Users&action=reassignUserRecords&record={$u->id}");
             }
             else{
                 SugarApplication::redirect("index.php?module=Users&action=index");
             }
-            //END SUGARCRM flav=PRO ONLY
             //BEGIN SUGARCRM flav=COM ONLY
             SugarApplication::redirect("index.php?module=Users&action=index");
             //END SUGARCRM flav=COM ONLY
@@ -103,7 +99,6 @@ class UsersController extends SugarController
         else
             sugar_die("Unauthorized access to administration.");
 	}
-    //BEGIN SUGARCRM flav=pro ONLY
 	/**
 	 * Clear the reassign user records session variables.
 	 *
@@ -120,7 +115,6 @@ class UsersController extends SugarController
 	{
 		$this->view = 'wirelessmain';
 	}
-	//END SUGARCRM flav=pro ONLY
 	protected function action_wizard()
 	{
 		$this->view = 'wizard';

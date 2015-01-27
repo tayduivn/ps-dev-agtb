@@ -11,7 +11,6 @@
  */
 *}
 
-{* //BEGIN SUGARCRM flav=pro ONLY *}
 {if $hideLevel < 5 && $show_fts}
 <tr>
     <td class='mbLBL'>{sugar_translate module="DynamicFields" label="COLUMN_TITLE_FTS"}:</td>
@@ -27,12 +26,10 @@
 {/if}
 
 {include file='modules/DynamicFields/templates/Fields/Forms/coreDependent.tpl'}
-{* //END SUGARCRM flav=pro ONLY *}
 
 {if $vardef.type != 'bool' && !$hideRequired}
 <tr ><td class='mbLBL'>{sugar_translate module="DynamicFields" label="COLUMN_TITLE_REQUIRED_OPTION"}:</td><td><input type="checkbox" name="required" value="1" {if !empty($vardef.required)}CHECKED{/if} {if $hideLevel > 5}disabled{/if}/>{if $hideLevel > 5}<input type="hidden" name="required" value="{$vardef.required}">{/if}</td></tr>
 {/if}
-{* //BEGIN SUGARCRM flav=pro ONLY*}
 <tr>
 {if !$hideReportable}
 <td class='mbLBL'>{sugar_translate module="DynamicFields" label="COLUMN_TITLE_REPORTABLE"}:</td>
@@ -43,7 +40,6 @@
 </td>
 </tr>
 {/if}
-{* //END SUGARCRM flav=pro ONLY*}
 <tr><td class='mbLBL'>{sugar_translate module="DynamicFields" label="COLUMN_TITLE_AUDIT"}:</td><td><input type="checkbox" name="audited" value="1" {if !empty($vardef.audited) }CHECKED{/if} {if $hideLevel > 5}disabled{/if}/>{if $hideLevel > 5}<input type="hidden" name="audited" value="{$vardef.audited}">{/if}</td></tr>
 
 {* //BEGIN SUGARCRM flav=int ONLY *}

@@ -127,10 +127,8 @@ require_once('include/EditView/EditView2.php');
  		$return_txt = '';
 		$this->th->ss->assign('module', $this->module);
 		$this->th->ss->assign('action', $this->action);
-		//BEGIN SUGARCRM flav=pro ONLY
 		SugarACL::listFilter($this->module, $this->fieldDefs, array("owner_override" => true),
 		    array("use_value" => true, "suffix" => '_'.$this->parsedView, "add_acl" => true));
-		//END SUGARCRM flav=pro ONLY
 		$this->th->ss->assign('displayView', $this->displayView);
 		$this->th->ss->assign('APP', $GLOBALS['app_strings']);
 		//Show the tabs only if there is more than one
@@ -439,12 +437,10 @@ require_once('include/EditView/EditView2.php');
 
 	        } //foreach
 
-	        //BEGIN SUGARCRM flav=pro ONLY
 	        //CL: Override the custom_type so that we show a relate field in the basic search screen
 	        if(isset($this->fieldDefs['team_name_basic'])) {
 	           $this->fieldDefs['team_name_basic']['custom_type'] = 'relate';
 	        }
-            //END SUGARCRM flav=pro ONLY
 
 		}
 
@@ -486,7 +482,6 @@ require_once('include/EditView/EditView2.php');
                         }
                     }
                 }
-                //BEGIN SUGARCRM flav=pro ONLY
                 if(isset($array['team_name_advanced_new_on_update'])){
                    	require_once('include/SugarFields/SugarFieldHandler.php');
 					$sfh = new SugarFieldHandler();
@@ -497,7 +492,6 @@ require_once('include/EditView/EditView2.php');
                    	   $this->searchFields['team_id'] = $sf->getTeamIdSearchField("primary_team_name_advanced_collection");
               	    }
                 }
-                //END SUGARCRM flav=pro ONLY
             }else{
 
             	$fromMergeRecords = isset($array['merge_module']);
@@ -565,7 +559,6 @@ require_once('include/EditView/EditView2.php');
                         }
                     }
                 }
-                //BEGIN SUGARCRM flav=pro ONLY
                 if(isset($array['team_name_advanced_new_on_update'])){
                    	require_once('include/SugarFields/SugarFieldHandler.php');
 					$sfh = new SugarFieldHandler();
@@ -576,7 +569,6 @@ require_once('include/EditView/EditView2.php');
                    	   $this->searchFields['team_id'] = $sf->getTeamIdSearchField("primary_team_name_advanced_collection", 'any', array(), $array);
                     }
                 }
-                //END SUGARCRM flav=pro ONLY
             }
         }
 
@@ -648,13 +640,11 @@ require_once('include/EditView/EditView2.php');
          $this->seed->fill_in_additional_detail_fields();
 
          //rrs check for team_id
-        //BEGIN SUGARCRM flav=pro ONLY
          if(!empty($this->searchFields['team_id']) && !empty($this->searchFields['team_id']['value'])){
              if(!empty($this->searchFields['team_name'])){
                  unset($this->searchFields['team_name']);
              }
          }
-         //END SUGARCRM flav=pro ONLY
 
          foreach($this->searchFields as $field=>$parms) {
              $customField = false;
@@ -966,7 +956,6 @@ require_once('include/EditView/EditView2.php');
                              }
                          }
 
-                         //BEGIN SUGARCRM flav=pro ONLY
                          if ( preg_match("/favorites_only.*/", $field) ) {
                              if ( $field_value == '1' ) {
                                  $field_value = $GLOBALS['current_user']->id;
@@ -975,7 +964,6 @@ require_once('include/EditView/EditView2.php');
                                  continue 2;
                              }
                          }
-                         //END SUGARCRM flav=pro ONLY
 
                          if($db->supports("case_sensitive") && isset($parms['query_type']) && $parms['query_type'] == 'case_insensitive') {
                                $db_field = 'upper(' . $db_field . ")";

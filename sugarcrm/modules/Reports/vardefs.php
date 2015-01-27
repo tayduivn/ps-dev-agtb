@@ -12,9 +12,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 $dictionary['SavedReport'] = array ( 'table' => 'saved_reports',
     'visibility' => array('ReportVisibility' => true),
-    //BEGIN SUGARCRM flav=pro ONLY
     'favorites'=>true,
-    //END SUGARCRM flav=pro ONLY
     'fields' => array (
   'id' =>
   array (
@@ -220,8 +218,6 @@ $dictionary['SavedReport'] = array ( 'table' => 'saved_reports',
 );
 
 VardefManager::createVardef('Reports','SavedReport', array(
-//BEGIN SUGARCRM flav=pro ONLY
 'team_security',
-//END SUGARCRM flav=pro ONLY
 ));
 ?>

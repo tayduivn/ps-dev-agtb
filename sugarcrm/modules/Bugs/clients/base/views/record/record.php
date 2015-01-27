@@ -67,7 +67,6 @@ $viewdefs['Bugs']['base']['view']['record'] = array(
                 array(
                     'type' => 'divider',
                 ),
-                //BEGIN SUGARCRM flav=pro ONLY
                 array(
                     'type' => 'rowaction',
                     'route' => '#bwc/index.php?' . http_build_query(
@@ -84,7 +83,6 @@ $viewdefs['Bugs']['base']['view']['record'] = array(
                 array(
                     'type' => 'divider',
                 ),
-                //END SUGARCRM flav=pro ONLY
                 array(
                     'type' => 'rowaction',
                     'event' => 'button:find_duplicates_button:click',

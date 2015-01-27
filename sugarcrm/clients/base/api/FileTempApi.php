@@ -82,10 +82,8 @@ class FileTempApi extends FileApi {
         // Get the bean
         $bean = BeanFactory::newBean($args['module']);
 
-        //BEGIN SUGARCRM flav=pro ONLY
         // Handle ACL
         $this->verifyFieldAccess($bean, $field);
-        //END SUGARCRM flav=pro ONLY
 
         $filepath = UploadStream::path("upload://tmp/") . $args['temp_id'];
         if (is_file($filepath)) {

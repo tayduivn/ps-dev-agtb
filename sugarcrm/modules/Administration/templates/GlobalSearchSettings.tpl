@@ -56,7 +56,6 @@
 			</tr>
 		</table>
 	</div>
-{* //BEGIN SUGARCRM flav=pro ONLY *}
     <div {if $hide_fts_config}style="display:none;"{/if}>
 
         <br>
@@ -87,7 +86,6 @@
             </tbody>
         </table>
     </div>
-{* //END SUGARCRM flav=pro ONLY *}
 	<table border="0" cellspacing="1" cellpadding="1">
 		<tr>
 			<td>
@@ -187,7 +185,6 @@
     }
 	SUGAR.saveGlobalSearchSettings = function()
 	{
-        {* //BEGIN SUGARCRM flav=pro ONLY *}
         var host = document.getElementById('fts_host').value;
         var port = document.getElementById('fts_port').value;
         var typeEl = document.getElementById('fts_type');
@@ -198,7 +195,6 @@
             if(!check_form('GlobalSearchSettings'))
                 return;
         }
-        {* //END SUGARCRM flav=pro ONLY *}
 		var enabledTable = SUGAR.globalSearchEnabledTable;
 		var modules = SUGAR.getEnabledModules();
 		modules = modules == "" ? modules : modules.substr(1);
@@ -211,11 +207,9 @@
 			SUGAR.util.paramsToUrl({
 				module: "Administration",
 				action: "saveglobalsearchsettings",
-                {* //BEGIN SUGARCRM flav=pro ONLY *}
                 host: host,
                 port: port,
                 type: type,
-                {* //END SUGARCRM flav=pro ONLY *}
 				enabled_modules: modules
 			}) + "to_pdf=1"
         );
@@ -242,7 +236,6 @@
 {/literal}
 </script>
 <script type="text/javascript">
-    {* //BEGIN SUGARCRM flav=pro ONLY *}
     var justRequestedAScheduledIndex = '{$justRequestedAScheduledIndex}';
     {literal}
     $(document).ready(function()
@@ -403,5 +396,4 @@
     addForm('GlobalSearchSettings');
     addToValidateMoreThan('GlobalSearchSettings', 'fts_port', 'int', true, '{$MOD.LBL_FTS_PORT}', 1);
     addToValidate('GlobalSearchSettings', 'fts_host', 'varchar', 'true', '{$MOD.LBL_FTS_URL}');
-    {* //END SUGARCRM flav=pro ONLY *}
 </script>

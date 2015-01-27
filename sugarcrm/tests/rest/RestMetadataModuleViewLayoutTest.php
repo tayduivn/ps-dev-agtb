@@ -20,10 +20,8 @@ class RestMetadataModuleViewLayoutTest extends RestTestBase {
 
         $this->oldFiles = array();
 
-//BEGIN SUGARCRM flav=pro ONLY
         $this->_restLogin('','','mobile');
         $this->mobileAuthToken = $this->authToken;
-//END SUGARCRM flav=pro ONLY
         $this->_restLogin('','','base');
         $this->baseAuthToken = $this->authToken;
 

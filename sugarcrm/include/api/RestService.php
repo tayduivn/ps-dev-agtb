@@ -556,9 +556,7 @@ class RestService extends ServiceBase
         }
 
         if ($valid) {
-            //BEGIN SUGARCRM flav=pro ONLY
             SugarApplication::trackLogin();
-            //END SUGARCRM flav=pro ONLY
 
             // Setup visibility where needed
             $oauthServer->setupVisibility();

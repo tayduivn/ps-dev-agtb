@@ -47,10 +47,8 @@ SUGAR.util.doWhen(function(){
             {{/if}}
         {{/foreach}}
     {{/if}}
-    {* //BEGIN SUGARCRM flav=pro ONLY *}
     {{sugar_button module="$module" id="PDFVIEW" view="$view" form_id="formDetailView" appendTo="detail_header_buttons"}}
     {{sugar_button module="$module" id="PDFEMAIL" view="$view" form_id="formDetailView" appendTo="detail_header_buttons"}}
-    {* //END SUGARCRM flav=pro ONLY *}
 {{/if}}
 
 {{if empty($form.hideAudit) || !$form.hideAudit}}

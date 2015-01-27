@@ -16,7 +16,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $layout_defs['Users'] = array(
 	// default subpanel provided by this SugarBean
 	'subpanel_setup' => array(
-		//BEGIN SUGARCRM flav=pro ONLY
 	    'holidays' => array(
 			'order' => 30,
 			'sort_by' => 'holiday_date',
@@ -30,7 +29,6 @@ $layout_defs['Users'] = array(
 			),
 			'title_key' => 'LBL_USER_HOLIDAY_SUBPANEL_TITLE',
 		),
-		//END SUGARCRM flav=pro ONLY
 	),
 	'default_subpanel_define' => array(
 		'subpanel_title' => 'LBL_DEFAULT_SUBPANEL_TITLE',
@@ -127,7 +125,6 @@ $layout_defs['UserEAPM'] = array(
 
     ),
 );
-//BEGIN SUGARCRM flav=pro ONLY
 $layout_defs['UsersHolidays']['subpanel_setup']['holidays'] = $layout_defs['Users']['subpanel_setup']['holidays'];
 
 //remove the administrator create button holiday for the user admin only
@@ -138,4 +135,3 @@ if(!is_admin($current_user)&& $current_user->isAdminForModule('Users')&& $row['i
 	$layout_defs['Users']['subpanel_setup']['holidays']['top_buttons']= array();
 }
 }
-//END SUGARCRM flav=pro ONLY

@@ -32,9 +32,7 @@ $viewdefs[$module_name]['mobile']['view']['detail'] = array(
                 'sales_stage',
                 'date_closed',
                 'assigned_user_name',
-                //BEGIN SUGARCRM flav=pro ONLY
                 'team_name',
-                //END SUGARCRM flav=pro ONLY
             ),
         ),
 	),

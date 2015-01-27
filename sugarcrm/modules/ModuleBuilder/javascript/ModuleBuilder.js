@@ -1350,7 +1350,6 @@ if (typeof(ModuleBuilder) == 'undefined') {
 			}
 			return false;
 		}
-		//BEGIN SUGARCRM flav=pro ONLY
 		,moduleLoadFormula: function(formula, targetId, returnType){
             if (!targetId)
                 targetId = "formula";
@@ -1650,7 +1649,6 @@ if (typeof(ModuleBuilder) == 'undefined') {
             ModuleBuilder.copyLayoutDialog = dialog;
             return dialog;
         }
-		//END SUGARCRM flav=pro ONLY
         //BEGIN SUGARCRM flav=een ONLY
         ,moduleLoadVisibility: function(fieldname, options, trigger , targetId){
             var EditorWindow = new Ext.Window({

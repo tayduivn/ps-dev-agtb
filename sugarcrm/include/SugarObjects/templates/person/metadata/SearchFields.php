@@ -33,7 +33,6 @@ $searchFields[$module_name] =
 		'address_postalcode'=> array('query_type'=>'default','db_field'=>array('primary_address_postalcode','alt_address_postalcode')),
 		'address_country'=> array('query_type'=>'default','db_field'=>array('primary_address_country','alt_address_country')),
 		'current_user_only'=> array('query_type'=>'default','db_field'=>array('assigned_user_id'),'my_items'=>true, 'vname' => 'LBL_CURRENT_USER_FILTER', 'type' => 'bool'),
-		//BEGIN SUGARCRM flav=pro ONLY
 		'favorites_only' => array(
             'query_type'=>'format',
 			'operator' => 'subquery',
@@ -42,7 +41,6 @@ $searchFields[$module_name] =
 			                        and sugarfavorites.module = \''.$module_name.'\' 
 			                        and sugarfavorites.assigned_user_id = \'{0}\'',
 			'db_field'=>array('id')),
-		//END SUGARCRM flav=pro ONLY
 		
 		//Range Search Support 
 	   'range_date_entered' => array ('query_type' => 'default', 'enable_range_search' => true, 'is_date_field' => true),

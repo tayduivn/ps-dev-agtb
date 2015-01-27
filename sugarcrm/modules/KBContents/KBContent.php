@@ -23,9 +23,8 @@ class KBContent extends SugarBean {
 	var $date_modified;
 	var $modified_user_id;
 	var $document_revision_id;
-	//BEGIN SUGARCRM flav=pro ONLY
+
 	var $team_id;
-	//END SUGARCRM flav=pro ONLY
 	var $active_date;
 	var $exp_date;	
 	var $table_name = "kbcontents";

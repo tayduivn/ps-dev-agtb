@@ -100,7 +100,6 @@ class AdministrationController extends SugarController
         );
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
     public function action_updatewirelessenabledmodules()
     {
         require_once('modules/Administration/Forms.php');
@@ -213,7 +212,6 @@ class AdministrationController extends SugarController
         }
         sugar_cleanup(TRUE);
     }
-    //END SUGARCRM flav=pro ONLY
 
     /**
      * action_saveglobalsearchsettings
@@ -237,7 +235,6 @@ class AdministrationController extends SugarController
 	    	 require_once('modules/Home/UnifiedSearchAdvanced.php');
 	    	 $unifiedSearchAdvanced = new UnifiedSearchAdvanced();
 	    	 $unifiedSearchAdvanced->saveGlobalSearchSettings();
-             //BEGIN SUGARCRM flav=pro ONLY
              //Save FTS Settings
              $type = !empty($_REQUEST['type']) ? $_REQUEST['type'] : '';
              $host = !empty($_REQUEST['host']) ? $_REQUEST['host'] : '';
@@ -271,7 +268,6 @@ class AdministrationController extends SugarController
              if(!$ftsConnectionValid)
                  echo $GLOBALS['mod_strings']['LBL_FTS_CONNECTION_INVALID'];
              else
-             //END SUGARCRM flav=pro ONLY
 	    	    echo "true";
     	 }
          catch (Exception $ex)

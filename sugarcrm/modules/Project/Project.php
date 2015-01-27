@@ -22,31 +22,23 @@ class Project extends SugarBean {
 	var $assigned_user_id;
 	var $modified_user_id;
 	var $created_by;
-	//BEGIN SUGARCRM flav=pro ONLY
 	var $team_id;
-	//END SUGARCRM flav=pro ONLY
 	var $name;
 	var $description;
 	var $deleted;
 
-	//BEGIN SUGARCRM flav=pro ONLY
 	var $is_template;
-	//END SUGARCRM flav=pro ONLY
 
 	// related information
 	var $assigned_user_name;
 	var $modified_by_name;
 	var $created_by_name;
-	//BEGIN SUGARCRM flav=pro ONLY
 	var $team_name;
-	//END SUGARCRM flav=pro ONLY
 
 	var $account_id;
 	var $contact_id;
 	var $opportunity_id;
-	//BEGIN SUGARCRM flav=pro ONLY
 	var $quote_id;
-	//END SUGARCRM flav=pro ONLY
 	var $email_id;
     var $estimated_start_date;
 
@@ -63,23 +55,17 @@ class Project extends SugarBean {
 	var $additional_column_fields = array(
 		'account_id',
 		'contact_id',
-//BEGIN SUGARCRM flav=pro ONLY
 		'quote_id',
-//END SUGARCRM flav=pro ONLY
 		'opportunity_id',
 	);
 
 	var $relationship_fields = array(
 		'account_id' => 'accounts',
 		'contact_id'=>'contacts',
-//BEGIN SUGARCRM flav=pro ONLY
 		'quote_id'=>'quotes',
-//END SUGARCRM flav=pro ONLY
 		'opportunity_id'=>'opportunities',
 		'email_id' => 'emails',
-//BEGIN SUGARCRM flav=pro ONLY
 		'holiday_id' => 'holidays',
-//END SUGARCRM flav=pro ONLY
 	);
 
 	//////////////////////////////////////////////////////////////////
@@ -205,7 +191,6 @@ class Project extends SugarBean {
 		return false;
 	}
 
-//BEGIN SUGARCRM flav=pro ONLY
 	function getProjectHolidays()
 	{
 	    $firstName = $this->db->convert($this->db->convert('users.first_name', "IFNULL", array('contacts.first_name')), "IFNULL", array("''"));
@@ -228,7 +213,6 @@ class Project extends SugarBean {
 		else
 			return false;
 	}
-//END SUGARCRM flav=pro ONLY
 	function getAllProjectTasks(){
 		$projectTasks = array();
 
@@ -242,7 +226,6 @@ class Project extends SugarBean {
 
 		return $projectTasks;
 	}
-//BEGIN SUGARCRM flav=pro ONLY
 	/* helper function for UserHoliday subpanel -- display javascript that cannot be achieved through AJAX call */
 	function resourceSelectJS(){
        	$userBean = BeanFactory::getBean('Users');
@@ -326,6 +309,5 @@ function constructContactSelect(){
 }
 ";
 	}
-//END SUGARCRM flav=pro ONLY
 }
 ?>

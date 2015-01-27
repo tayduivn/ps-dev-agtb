@@ -42,9 +42,7 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
         MB_SIDECARLISTVIEW,
         MB_SIDECARPOPUPVIEW,
         MB_SIDECARDUPECHECKVIEW,
-        //BEGIN SUGARCRM flav=pro ONLY
         MB_WIRELESSLISTVIEW,
-        //END SUGARCRM flav=pro ONLY
         //BEGIN SUGARCRM flav=ent ONLY
         MB_PORTALLISTVIEW,
         //END SUGARCRM flav=ent ONLY

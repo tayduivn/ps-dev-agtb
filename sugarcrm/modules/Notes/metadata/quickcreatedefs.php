@@ -77,7 +77,6 @@ array (
             ),
           ),
         ),
-	//BEGIN SUGARCRM flav=pro ONLY
 		array (
 			array (
 				'name' => 'portal_flag',
@@ -86,14 +85,11 @@ array (
 				'displayParams'=>array('required'=>false),
 			),
 		),
-	//END SUGARCRM flav=pro ONLY
          array (
            
-          //BEGIN SUGARCRM flav=pro ONLY
             array (
               'name' => 'team_name',
             ),
-            //END SUGARCRM flav=pro ONLY
         ),
       ),
     ),

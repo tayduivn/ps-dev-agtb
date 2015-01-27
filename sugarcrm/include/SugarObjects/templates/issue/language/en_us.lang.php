@@ -38,9 +38,7 @@ $mod_strings = array (
   'LBL_ASSIGNED_USER' => 'Assigned User:',
   'LBL_ASSIGNED_USER_NAME' => 'Assigned to',
   'LBL_SYSTEM_ID' =>'System Id:',
-  //BEGIN SUGARCRM flav=pro ONLY
   'LBL_TEAM_NAME' =>'Team Name:',
-  //END SUGARCRM flav=pro ONLY
   'LBL_TYPE'=>'Type:',
   'LBL_SUBJECT' => 'Subject:',
 

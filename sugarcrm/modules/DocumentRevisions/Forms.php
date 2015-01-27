@@ -107,10 +107,8 @@ $lbl_start_date = $mod_strings['ERR_DOC_ACTIVE_DATE'];
 $lbl_file_name = $mod_strings['ERR_FILENAME'];
 $lbl_file_version=$mod_strings['ERR_DOC_VERSION'];
 $sqs_no_match = $app_strings['ERR_SQS_NO_MATCH'];
-//BEGIN SUGARCRM flav=pro ONLY
 $sqs_no_match .= ' : ' . $app_strings['LBL_LIST_TEAM'];
 $lbl_list_team = $app_strings['LBL_LIST_TEAM'];
-//END SUGARCRM flav=pro ONLY
 $err_missing_required_fields = $app_strings['ERR_MISSING_REQUIRED_FIELDS'];
 
 if(isset($_REQUEST['record'])) {
@@ -154,7 +152,6 @@ function verify_data(form) {
 		errorMessage += "\\n$lbl_file_version";
 	}
 
-	//BEGIN SUGARCRM flav=pro ONLY
 	if(trim(form.team_name.value) == "") {
 		isError = true;
 		errorMessage += "\\n$lbl_list_team";
@@ -164,7 +161,6 @@ function verify_data(form) {
 		isError = true;
 		errorMessage += "\\n$sqs_no_match";	
 	}
-	//END SUGARCRM flav=pro ONLY
 	
 	if (isError == true) {
 		alert("$err_missing_required_fields" + errorMessage);

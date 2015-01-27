@@ -21,9 +21,7 @@ $dashletData['MyTasksDashlet']['searchFields'] = array('name'           => array
                                                        'date_entered'   => array('default' => ''),
                                                        'date_start'       => array('default' => ''),                                                          
                                                        'date_due'       => array('default' => ''),
-                                                       //BEGIN SUGARCRM flav=pro ONLY
                                                        'team_id'          => array('default' => '', 'label' => 'LBL_TEAMS'),
-                                                       //END SUGARCRM flav=pro ONLY
                                                        'assigned_user_id' => array('type'    => 'assigned_user_name',
 																				   'label'   => 'LBL_ASSIGNED_TO', 
                                                                                    'default' => $current_user->name));
@@ -77,11 +75,9 @@ $dashletData['MyTasksDashlet']['columns'] = array('set_complete' => array('width
         																    'module' => 'Contacts',//my open tasks dashlet because some of the parameters were not set
         																    'ACLTag' => 'CONTACT',// like id, link etc.
         																    'related_fields' => array('contact_id')),
-                                                   //BEGIN SUGARCRM flav=pro ONLY
                                                    'team_name' => array('width'   => '15', 
                                                                         'label'   => 'LBL_LIST_TEAM', 
                                                                         'sortable' => false),
-                                                   //END SUGARCRM flav=pro ONLY
                                                                          );
 
 

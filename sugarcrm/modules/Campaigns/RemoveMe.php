@@ -37,9 +37,7 @@ if(!empty($_REQUEST['identifier'])) {
      }elseif(!empty($keys) && isset($keys['campaign_id']) && !empty($keys['campaign_id'])){
         //we need to unsubscribe the user from this particular campaign
         $focus = BeanFactory::getBean($keys['target_type'], $keys['target_id']
-        //BEGIN SUGARCRM flav=pro ONLY
         , array('disable_row_level_security' => true)
-        //END SUGARCRM flav=pro ONLY
         );
         unsubscribe($keys['campaign_id'], $focus);
 

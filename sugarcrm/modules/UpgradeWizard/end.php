@@ -125,7 +125,6 @@ if($db->supports('recursive_query')) {
 
 $ce_to_pro_ent = isset($_SESSION['upgrade_from_flavor']) && preg_match('/^SugarCE.*?(Pro|Ent|Corp|Ult)$/', $_SESSION['upgrade_from_flavor']);
 
-//BEGIN SUGARCRM flav=pro ONLY
 // Run this code if we are upgrading from pre-550 version or if we are doing a CE to PRO/ENT conversion
 if($ce_to_pro_ent)
 {
@@ -157,7 +156,6 @@ if($ce_to_pro_ent)
 logThis("Starting to add pdf template", $path);
 addPdfManagerTemplate();
 logThis("Finished adding pdf template", $path);
-//END SUGARCRM flav=pro ONLY
 
 logThis(" Start Rebuilding the config file again", $path);
 
@@ -188,7 +186,6 @@ logThis(" Finish Rebuilding the config file again", $path);
 
 set_upgrade_progress('end','in_progress');
 
-//BEGIN SUGARCRM flav=pro ONLY
 // If going from pre 610 to 610+, migrate the report favorites
 logThis("Begin: Migrating Sugar Reports Favorites to new SugarFavorites", $path);
 migrate_sugar_favorite_reports();
@@ -197,18 +194,15 @@ logThis("Complete: Migrating Sugar Reports Favorites to new SugarFavorites", $pa
 logThis("Begin: Update custom module built using module builder to add favorites", $path);
 add_custom_modules_favorites_search();
 logThis("Complete: Update custom module built using module builder to add favorites", $path);
-//END SUGARCRM flav=pro ONLY
 
 if(isset($_SESSION['current_db_version']) && isset($_SESSION['target_db_version'])){
     if (version_compare($_SESSION['current_db_version'], $_SESSION['target_db_version'], '!='))
     {
-		//BEGIN SUGARCRM flav=pro ONLY
 		logThis("Adding Saved Report Chart Types", $path);
 		if(file_exists("$unzip_dir/scripts/upgrade_homepage.php")) {
             require_once("$unzip_dir/scripts/upgrade_homepage.php");
 		    add_report_chart_types();
 		}
-		//END SUGARCRM flav=pro ONLY
 	 }
 
 
@@ -255,7 +249,6 @@ if(file_exists('include/SugarLogger/LoggerManager.php')){
 	$GLOBALS['log'] = LoggerManager::getLogger('SugarCRM');
 }
 
-//BEGIN SUGARCRM flav=pro ONLY
 if(function_exists('upgradeUserPreferences')){
 	logThis('Upgrading user preferences start .', $path);
 	upgradeUserPreferences();
@@ -271,7 +264,6 @@ if($ce_to_pro_ent){
 if(!$ce_to_pro_ent) {
    fix_report_relationships($path);
 }
-//END SUGARCRM flav=pro ONLY
 
 //Upgrade connectors
 logThis('Begin upgrade_connectors', $path);
@@ -299,7 +291,6 @@ require_once('modules/UpgradeWizard/uw_utils.php');
 //Patch for bug57431 : Module name isn't updated in portal layout editor
 updateRenamedModulesLabels();
 
-//BEGIN SUGARCRM flav=PRO ONLY
 //setup forecast defualt settings
 if(version_compare($_SESSION['current_db_version'], '6.7.0', '<'))
 {
@@ -310,7 +301,6 @@ if(version_compare($_SESSION['current_db_version'], '6.7.0', '<'))
     // do the config update to add the 'support' platform to any config with the category of 'portal'
     updatePortalConfigToContainPlatform();
 }
-//END SUGARCRM flav=PRO ONLY
 
 //Update the license
 logThis('Start Updating the license ', $path);

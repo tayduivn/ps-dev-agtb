@@ -323,9 +323,7 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                         ),
                     ),
                 ),
-                //BEGIN SUGARCRM flav=pro ONLY
                 'team_name',
-                //END SUGARCRM flav=pro ONLY
                 array(
                     'name' => 'date_modified_by',
                     'readonly' => true,

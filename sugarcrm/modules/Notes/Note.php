@@ -47,9 +47,7 @@ class Note extends SugarBean {
 	var $parent_id;
 	var $contact_id;
 	var $portal_flag;
-//BEGIN SUGARCRM flav=pro ONLY
 	var $team_id;
-//END SUGARCRM flav=pro ONLY
 
 	var $parent_name;
 	var $contact_name;
@@ -202,12 +200,10 @@ class Note extends SugarBean {
                 $note_fields['FILENAME'] = $this->filename;
                 $note_fields['FILE_URL'] = UploadFile::get_upload_url($this);
             }
-            //BEGIN SUGARCRM flav=pro ONLY
             elseif(!empty($sugar_config['disc_client']) && $sugar_config['disc_client']){
                 $file_display = " (".$mod_strings['LBL_OC_FILE_NOTICE'].")";
                 $note_fields['FILENAME'] = $file_display;
             }
-            //END SUGARCRM flav=pro ONLY
         }
         if(isset($this->contact_id) && $this->contact_id != '') {
 			$contact = BeanFactory::getBean('Contacts', $this->contact_id);

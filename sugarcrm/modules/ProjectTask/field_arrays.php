@@ -24,9 +24,7 @@ $fields_array['ProjectTask'] = array ('column_fields' => array(
 		'assigned_user_id',
 		'modified_user_id',
 		'created_by',
-//BEGIN SUGARCRM flav=pro ONLY
 		'team_id',
-//END SUGARCRM flav=pro ONLY
 		'name',
 		'date_start',
 		'date_finish',

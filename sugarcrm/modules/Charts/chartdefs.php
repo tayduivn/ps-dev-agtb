@@ -13,7 +13,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $chartsStrings = return_module_language($GLOBALS['current_language'], 'Charts');
 
 $chartDefs = array(
-	//BEGIN SUGARCRM flav=pro ONLY
+
 	'pipeline_by_sales_stage_funnel'=>
 		array(	'type' => 'code',
 				'id' => 'Chart_pipeline_by_sales_stage',
@@ -29,7 +29,6 @@ $chartDefs = array(
 						 ),
 				'url_params' => array( 'assigned_user_id', 'sales_stage', 'date_start', 'date_closed' ),
 			 ),
-	//END SUGARCRM flav=pro ONLY
 	'pipeline_by_sales_stage'=>
 		array( 	'type' => 'code',
 				'id' => 'Chart_pipeline_by_sales_stage',
@@ -90,7 +89,7 @@ $chartDefs = array(
 						 ),
 				'url_params' => array( 'lead_source', ),
 			 ),
-	//BEGIN SUGARCRM flav=pro ONLY
+
 	'opportunities_this_quarter' =>
 		array( 	'type' => 'code',
 				'id' => 'opportunities_this_quarter',
@@ -106,7 +105,6 @@ $chartDefs = array(
 							'searchFormTab' => 'advanced_search',
 						 ),
 		),
-	//END SUGARCRM flav=pro ONLY
 
 	'my_modules_used_last_30_days' =>
 		array( 	'type' => 'code',
@@ -124,7 +122,7 @@ $chartDefs = array(
 
 		),
 
-    //BEGIN SUGARCRM flav=pro ONLY
+
 	'my_team_modules_used_last_30_days' =>
 		array( 	'type' => 'code',
 				'id' => 'my_team_modules_used_last_30_days',
@@ -139,7 +137,6 @@ $chartDefs = array(
 							'searchFormTab' => 'advanced_search',
 						 ),
 		),
-	//END SUGARCRM flav=pro ONLY
 );
 
 if(SugarAutoLoader::existing('custom/Charts/chartDefs.ext.php')) {

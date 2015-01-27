@@ -30,10 +30,8 @@ class Bug48800Test extends Sugar_PHPUnit_Framework_TestCase
         $this->emailTemplate = new EmailTemplate();
         $this->emailTemplate->name = 'Bug48800Test';
         $this->emailTemplate->assigned_user_id = $this->user->id;
-        //BEGIN SUGARCRM flav=pro ONLY
         $this->emailTemplate->team_id = $this->user->team_id;
         $this->emailTemplate->team_set_id = $this->user->team_id;
-        //END SUGARCRM flav=pro ONLY
         $this->emailTemplate->save();
         //$this->useOutputBuffering = false;
     }

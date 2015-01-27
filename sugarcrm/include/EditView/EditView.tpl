@@ -115,11 +115,9 @@ class="yui-navset"
     {{if !empty($colData.field.hideIf)}}
     	{if !({{$colData.field.hideIf}}) }
     {{/if}}
-	{{* //BEGIN SUGARCRM flav=pro ONLY*}}
 	{{if !empty($colData.field.name)}}
 		{if $fields.{{$colData.field.name}}.acl > 1 || ($showDetailData && $fields.{{$colData.field.name}}.acl > 0)}
 	{{/if}}
-	{{* //END SUGARCRM flav=pro ONLY*}}
 
 		{{if empty($def.templateMeta.labelsOnTop) && empty($colData.field.hideLabel)}}
 		<td valign="top" id='{{$colData.field.name}}_label' width='{{$def.templateMeta.widths[$smarty.foreach.colIteration.index].label}}%' scope="col">
@@ -185,11 +183,9 @@ class="yui-navset"
 			{{/if}}
 
 		{{$colData.field.prefix}}
-		{{* //BEGIN SUGARCRM flav=pro ONLY*}}
 		{{if !empty($colData.field.name)}}
 			{if $fields.{{$colData.field.name}}.acl > 1}
 		{{/if}}
-		{{* //END SUGARCRM flav=pro ONLY*}}
 
 			{{if $fields[$colData.field.name] && !empty($colData.field.fields) }}
 			    {{foreach from=$colData.field.fields item=subField}}
@@ -206,7 +202,6 @@ class="yui-navset"
 			    {{$colData.displayParams}}
 				{{sugar_field parentFieldArray='fields'  accesskey=$ACCKEY tabindex=$tabindex vardef=$fields[$colData.field.name] displayType='EditView' displayParams=$colData.field.displayParams typeOverride=$colData.field.type formName=$form_name}}
 			{{/if}}
-		{{* //BEGIN SUGARCRM flav=pro ONLY*}}
 		{{if !empty($colData.field.name)}}
 		{{if $showDetailData }}
 		{else}
@@ -244,7 +239,6 @@ class="yui-navset"
 
 		</td>
 	{{/if}}
-	{{* //END SUGARCRM flav=pro ONLY*}}
 	{{if !empty($colData.field.customCode) && !empty($colData.field.customCodeRenderField)}}
 	    {counter name="panelFieldCount"}
 	    {{sugar_evalcolumn var=$colData.field.customCode colData=$colData tabindex=$tabindex}}

@@ -25,9 +25,7 @@ $fields_array['Email'] = array(
 		, "assigned_user_id"
 		, "modified_user_id"
 		, "created_by"
-		//BEGIN SUGARCRM flav=pro ONLY
 		,"team_id"
-		//END SUGARCRM flav=pro ONLY
 		, "description"
 		, "description_html"
 		, "name"
@@ -55,10 +53,8 @@ $fields_array['Email'] = array(
 		),
 	'list_fields' => array(
 		'id', 'name', 'parent_type', 'parent_name', 'parent_id', 'date_start', 'time_start', 'assigned_user_name', 'assigned_user_id', 'contact_name', 'contact_id', 'first_name','last_name','to_addrs','from_addr','date_sent','type_name','type','status','link_action','date_entered','attachment_image','intent','date_sent'
-	//BEGIN SUGARCRM flav=pro ONLY
 	, "team_id"
 	, "team_name"
-	//END SUGARCRM flav=pro ONLY
 		),
 );
 ?>

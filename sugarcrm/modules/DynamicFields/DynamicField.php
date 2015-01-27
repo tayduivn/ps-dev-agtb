@@ -652,9 +652,7 @@ class DynamicField {
 
         switch ($property) {
             case "importable":
-            //BEGIN SUGARCRM flav=pro ONLY
             case "reportable":
-            //END SUGARCRM flav=pro ONLY
                 return ( $value === 'true' || $value === '1' || $value === true || $value === 1 ); break;
             case "required":
             case "audited":

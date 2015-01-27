@@ -37,10 +37,7 @@ class BeanFactory {
      * @static
      * @param String $module
      * @param String $id
-     * @param Array $params A name/value array of parameters. Names: encode, deleted,
-     * //BEGIN SUGARCRM flav=pro ONLY
-     *        disable_row_level_security
-     * //END SUGARCRM flav=pro ONLY
+     * @param Array $params A name/value array of parameters. Names: encode, deleted, disable_row_level_security
      *        If $params is boolean we revert to the old arguments (encode, deleted), and use $params as $encode.
      *        This will be changed to using only $params in later versions.
      * @param Bool $deleted @see SugarBean::retrieve
@@ -85,13 +82,11 @@ class BeanFactory {
             {
                 // $bean = new $beanClass();
                 $bean = SugarBean::_createBean($beanClass);
-                //BEGIN SUGARCRM flav=pro ONLY
                 // Pro+ versions, to disable team check if we have rights
                 // to change the parent bean, but not the related (e.g. change Account Name of Opportunity)
                 if (!empty($params['disable_row_level_security'])) {
                     $bean->disable_row_level_security = true;
                 }
-                //END SUGARCRM flav=pro ONLY
                 $result = $bean->retrieve($id, $encode, $deleted);
 
                 if(empty($result)) {

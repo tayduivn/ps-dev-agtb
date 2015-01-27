@@ -11,12 +11,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-//BEGIN SUGARCRM flav=pro ONLY
 require_once('include/SugarSearchEngine/SugarSearchEngineFullIndexer.php');
 require_once('include/SugarSearchEngine/SugarSearchEngineMetadataHelper.php');
 require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
 require_once('include/SugarSearchEngine/SugarSearchEngineAbstractBase.php');
-//END SUGARCRM flav=pro ONLY
 require_once('modules/Administration/Administration.php');
 
 class AdministrationViewGlobalsearchsettings extends SugarView
@@ -60,7 +58,6 @@ class AdministrationViewGlobalsearchsettings extends SugarView
 
         $sugar_smarty->assign('enabled_modules', json_encode($modules['enabled']));
         $sugar_smarty->assign('disabled_modules', json_encode($modules['disabled']));
-        //BEGIN SUGARCRM flav=pro ONLY
 
         $defaultEngine = SugarSearchEngineFactory::getFTSEngineNameFromConfig();
         $config = $GLOBALS['sugar_config']['full_text_engine'][$defaultEngine];
@@ -91,7 +88,6 @@ class AdministrationViewGlobalsearchsettings extends SugarView
                 $admin->saveSetting('info', 'fts_index_done', 0);
             }
         }
-        //END SUGARCRM flav=pro ONLY
 
         echo $sugar_smarty->fetch(SugarAutoLoader::existingCustomOne('modules/Administration/templates/GlobalSearchSettings.tpl'));
 

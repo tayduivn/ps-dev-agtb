@@ -67,11 +67,10 @@ class ViewMappingProperties extends ViewList
 	    			   continue;
 	    			}
 	    			   
-	    			//BEGIN SUGARCRM flav=pro ONLY
+
 	    			if($def['name'] == 'team_set_id') {
 	    			   continue;
 	    			}
-					//END SUGARCRM flav=pro ONLY
 	    			
 	    			if(isset($def['vname'])) {
 	    			   $available_fields[$id] = !empty($mod_strings[$def['vname']]) ? $mod_strings[$def['vname']] : $id;

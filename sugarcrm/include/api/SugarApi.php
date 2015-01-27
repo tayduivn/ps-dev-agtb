@@ -192,11 +192,9 @@ abstract class SugarApi {
 
         $id = $bean->id;
 
-        //BEGIN SUGARCRM flav=pro ONLY
         if(isset($args['my_favorite'])) {
             $this->toggleFavorites($bean, $args['my_favorite']);
         }
-        //END SUGARCRM flav=pro ONLY
 
         $bean->retrieve($id);
         /*
@@ -206,7 +204,6 @@ abstract class SugarApi {
         return $id;
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
 
 
     /**
@@ -265,8 +262,6 @@ abstract class SugarApi {
 
     }
 
-    //END SUGARCRM flav=pro ONLY
-
 
     /**
      * Verifies field level access for a bean and field for the logged in user
@@ -278,12 +273,10 @@ abstract class SugarApi {
      * @throws SugarApiExceptionNotAuthorized
      */
     protected function verifyFieldAccess(SugarBean $bean, $field, $action = 'access', $context = array()) {
-        //BEGIN SUGARCRM flav=pro ONLY
         if (!$bean->ACLFieldAccess($field, $action, $context)) {
             // @TODO Localize this exception message
             throw new SugarApiExceptionNotAuthorized('Not allowed to ' . $action . ' ' . $field . ' field in ' . $bean->object_name . ' module.');
         }
-        //END SUGARCRM flav=pro ONLY
     }
 
     /**
@@ -306,9 +299,7 @@ abstract class SugarApi {
             return;
         }
 
-        //BEGIN SUGARCRM flav=pro ONLY
         $monitor->setValue('team_id', $this->api->user->getPrivateTeamID());
-        //END SUGARCRM flav=pro ONLY
         $monitor->setValue('action', $this->action);
         $monitor->setValue('user_id', $this->api->user->id);
         $monitor->setValue('module_name', $bean->module_dir);

@@ -54,9 +54,7 @@ $viewdefs['Accounts']['mobile']['view']['detail'] = array(
                 'shipping_address_postalcode',
                 'shipping_address_country',
                 'assigned_user_name',
-                //BEGIN SUGARCRM flav=pro ONLY
                 'team_name',
-                //END SUGARCRM flav=pro ONLY
             ),
         ),
 	),

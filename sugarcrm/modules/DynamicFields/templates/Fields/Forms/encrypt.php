@@ -18,9 +18,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
  
 function get_body(&$ss, $vardef){
-	//BEGIN SUGARCRM flav=pro ONLY
     $ss->assign('hideReportable', true);
-    //END SUGARCRM flav=pro ONLY
 	return $ss->fetch('modules/DynamicFields/templates/Fields/Forms/encrypt.tpl');
  }
 ?>

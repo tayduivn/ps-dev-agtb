@@ -35,12 +35,10 @@ height: 10px;
 {$mySugarChartResources}
 
 <script type="text/javascript">
-//BEGIN SUGARCRM flav=pro ONLY
 var numPages = {$numPages};
 var loadedPages = new Array();
 loadedPages[0] = '{$loadedPage}';
 var numCols = {$numCols};
-//END SUGARCRM flav=pro ONLY
 var activePage = {$activePage};
 var theme = '{$theme}';
 current_user_id = '{$current_user}';
@@ -58,7 +56,6 @@ var mySugarLoader = new YAHOO.util.YUILoader({
 	onSuccess: function(){
 		initMySugar();
 		initmySugarCharts();
-		//BEGIN SUGARCRM flav=pro ONLY
 		{/literal}
 		{counter assign=hiddenCounter start=0 print=false}
 		{foreach from=$columns key=colNum item=data}
@@ -68,7 +65,6 @@ var mySugarLoader = new YAHOO.util.YUILoader({
 		{counter}
 		{/foreach}
 		{literal}
-		//END SUGARCRM flav=pro ONLY
 		SUGAR.mySugar.maxCount = 	{/literal}{$maxCount}{literal};
 		SUGAR.mySugar.homepage_dd = new Array();
 		var j = 0;
@@ -77,9 +73,7 @@ var mySugarLoader = new YAHOO.util.YUILoader({
 		var dashletIds = {$dashletIds};
 
 		{if !$lock_homepage}
-			<!--//BEGIN SUGARCRM flav=pro ONLY -->
 			SUGAR.mySugar.attachDashletCtrlEvent();
-			<!--//END SUGARCRM flav=pro ONLY -->
 			for(i in dashletIds) {ldelim}
 				SUGAR.mySugar.homepage_dd[j] = new ygDDList('dashlet_' + dashletIds[i]);
 				SUGAR.mySugar.homepage_dd[j].setHandleElId('dashlet_header_' + dashletIds[i]);
@@ -99,16 +93,12 @@ var mySugarLoader = new YAHOO.util.YUILoader({
 		{/if}
 		{literal}
 		SUGAR.mySugar.renderDashletsDialog();
-		//BEGIN SUGARCRM flav=pro ONLY
 		SUGAR.mySugar.renderAddPageDialog();
 		SUGAR.mySugar.renderChangeLayoutDialog();
 		SUGAR.mySugar.renderLoadingDialog();
-		//END SUGARCRM flav=pro ONLY
 		SUGAR.mySugar.sugarCharts.loadSugarCharts(activePage);
 		{/literal}
-		//BEGIN SUGARCRM flav=pro ONLY
 		{$activeTabJavascript}
-		//END SUGARCRM flav=pro ONLY
 		{literal}
 	}
 });
@@ -135,7 +125,6 @@ app.user.lastState.set('Home:last-visit:Home.', '#bwc/index.php?module=Home&acti
 
 
 
-<!--//BEGIN SUGARCRM flav=pro ONLY -->
 {$form_header}
 <table cellpadding="0" cellspacing="0" border="0" width="100%" id="tabListContainerTable">
 <tr>
@@ -170,17 +159,14 @@ app.user.lastState.set('Home:last-visit:Home.', '#bwc/index.php?module=Home&acti
 	</div>
 
 </div>
-<!--//BEGIN SUGARCRM flav=pro ONLY -->
 {if !$lock_homepage}
 	<div id="addPage">
 		{capture assign=attr}id="add_page" onclick="return SUGAR.mySugar.showAddPageDialog();"{/capture}
 		{capture assign=img_attr}align="absmiddle" border="0" alt="{$app.LBL_ADD_PAGE}"{/capture}
 		{sugar_getlink url="javascript:void(0)" title="Add page" attr=$attr img_name="info-add-page.png" img_attr=$img_attr}
 	</div>
-<!--//END SUGARCRM flav=pro ONLY -->
 {/if}
 </td>
-<!--//BEGIN SUGARCRM flav=pro ONLY -->
 {if !$lock_homepage}
 <td nowrap id="dashletCtrlsTD">
 	<div id="dashletCtrls">
@@ -188,30 +174,22 @@ app.user.lastState.set('Home:last-visit:Home.', '#bwc/index.php?module=Home&acti
 			{capture assign=img_attr} border="0"  alt=""{/capture}
 			{sugar_getlink url="javascript:void(0)" title=$mod.LBL_ADD_DASHLETS attr=$attr 
 					img_name="info-add.png" img_attr=$img_attr img_placement="left"}
-			<!--//BEGIN SUGARCRM flav=pro ONLY -->
 			{capture assign=attr}id="change_layout" onclick="return SUGAR.mySugar.showChangeLayoutDialog();" class="utilsLink"{/capture}
 			{capture assign=img_attr} border="0" alt=""{/capture}
 			{sugar_getlink url="javascript:void(0)" title=$app.LBL_CHANGE_LAYOUT attr=$attr 
 					img_name="info-layout.png" img_attr=$img_attr img_placement="left"}
-			<!--//END SUGARCRM flav=pro ONLY -->
 	</div>
 </td>
 {/if}
-<!--//END SUGARCRM flav=pro ONLY -->
 </tr>
 </table>
-<!--//END SUGARCRM flav=pro ONLY -->
 <div class="clear"></div>
 <div id="pageContainer" class="yui-skin-sam">
 <div id="pageNum_{$activePage}_div">
 <table width="100%" cellspacing="0" cellpadding="0" border="0" style="margin-top: 5px;">
-	{* //BEGIN SUGARCRM flav=pro ONLY*}
 	{if $numCols > 1}
-	{* //END SUGARCRM flav=pro ONLY*}
  	<tr>
- 		{* //BEGIN SUGARCRM flav=pro ONLY*}
  		{if $numCols > 2}
- 		{* //END SUGARCRM flav=pro ONLY*}
 	 	<td>
 
 		</td>
@@ -219,7 +197,6 @@ app.user.lastState.set('Home:last-visit:Home.', '#bwc/index.php?module=Home&acti
 		<td rowspan="3">
 				{sugar_getimage name="blank.gif"  width='40' height='1' border='0'}
 		</td>
- 		{* //BEGIN SUGARCRM flav=pro ONLY*}
 		{/if}
 		{if $numCols > 1}
 		<td>
@@ -229,16 +206,13 @@ app.user.lastState.set('Home:last-visit:Home.', '#bwc/index.php?module=Home&acti
 				{sugar_getimage name="blank.gif"  width='40' height='1' border='0'}
 		</td>
 		{/if}
-		{* //END SUGARCRM flav=pro ONLY*}
 		{* //BEGIN SUGARCRM flav=com ONLY*}
 		<td align='right'>
 			{if !$lock_homepage}<input id="add_dashlets" class="button" type="button" value="{$lblAddDashlets}" onclick="return SUGAR.mySugar.showDashletsDialog();"/>{/if}
 		</td>
 		{* //END SUGARCRM flav=com ONLY*}
 	</tr>
-	{* //BEGIN SUGARCRM flav=pro ONLY*}
 	{/if}
-	{* //END SUGARCRM flav=pro ONLY*}
 	<tr>
 		{counter assign=hiddenCounter start=0 print=false}
 		{foreach from=$columns key=colNum item=data}
@@ -269,7 +243,6 @@ app.user.lastState.set('Home:last-visit:Home.', '#bwc/index.php?module=Home&acti
 	</div>
 	{/foreach}
 
-	{* //BEGIN SUGARCRM flav=pro ONLY*}
 	<div id="addPageDialog" style="display:none;">
 		<div class="hd">{$lblAddPage}</div>
 		<div class="bd">
@@ -289,9 +262,7 @@ app.user.lastState.set('Home:last-visit:Home.', '#bwc/index.php?module=Home&acti
 			</form>
 		</div>
 	</div>
-	{* //END SUGARCRM flav=pro ONLY*}
 
-	{* //BEGIN SUGARCRM flav=pro ONLY*}
 	<div id="changeLayoutDialog" style="display:none;">
 		<div class="hd">{$lblChangeLayout}</div>
 		<div class="bd">
@@ -318,7 +289,6 @@ app.user.lastState.set('Home:last-visit:Home.', '#bwc/index.php?module=Home&acti
 			</table>
 		</div>
 	</div>
-	{* //END SUGARCRM flav=pro ONLY*}
 
 	<div id="dashletsDialog" style="display:none;">
 		<div class="hd" id="dashletsDialogHeader"><a href="javascript:void(0)" onClick="javascript:SUGAR.mySugar.closeDashletsDialog();">

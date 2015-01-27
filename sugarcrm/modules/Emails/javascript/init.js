@@ -81,9 +81,7 @@ function email2init() {
 	//onloadTreeinit();
 	SUGAR.email2.folders.rebuildFolders(true);
 	
-   	//BEGIN SUGARCRM flav=pro ONLY
 	//SUGAR.email2.folders.retrieveTeamInfo();
-    //END SUGARCRM flav=pro ONLY
 	
     //Setup the Message Box overlay
     /*Ext.MessageBox.maxWidth = 350;
@@ -284,7 +282,6 @@ function email2init() {
 	SEC.contactsContextMenu.render();
 	}
 	
-	//BEGIN SUGARCRM flav=pro ONLY
 	SEC.initListsMenu = function() {
 	// contact mailing lists
 	SEC.mailingListContextMenu = new YAHOO.widget.ContextMenu("listsMenu", {
@@ -318,7 +315,6 @@ function email2init() {
 	
 	SEC.mailingListContextMenu.render();
 	}
-	//END SUGARCRM flav=pro ONLY
 	
 	// set auto-check timer
 	SUGAR.email2.folders.startCheckTimer();

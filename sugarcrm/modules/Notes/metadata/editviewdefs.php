@@ -43,13 +43,11 @@ function deleteAttachmentCallBack(text)
 					array ( 
 						'filename',
 
-	      				//BEGIN SUGARCRM flav=pro ONLY
 					    array('name'=>'portal_flag',
 					          'displayParams'=>array('required'=>false),
 			   				  'label' => 'LBL_PORTAL_FLAG',
                 		      'hideIf' => 'empty($PORTAL_ENABLED)',
 					    ),
-					    //END SUGARCRM flav=pro ONLY
 	    			),
 	    			array (
                         array('name' => 'description', 'label' => 'LBL_NOTE_STATUS'),
@@ -61,9 +59,7 @@ function deleteAttachmentCallBack(text)
 	  'LBL_PANEL_ASSIGNMENT' => array(
 	    array(
 		    array ('name' => 'assigned_user_name','label' => 'LBL_ASSIGNED_TO'),
-		    //BEGIN SUGARCRM flav=pro ONLY
 		    array('name'=>'team_name'),
-		    //END SUGARCRM flav=pro ONLY
 	    ),
 	  ),
 	)

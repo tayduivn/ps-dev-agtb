@@ -432,12 +432,10 @@ $detailView->processListNavigation($xtpl, "EMAIL", $offset, false);
 // adding custom fields:
 require_once('modules/DynamicFields/templates/Files/DetailView.php');
 $do_open = true;
-//BEGIN SUGARCRM flav=pro ONLY
 require_once('modules/Teams/TeamSetManager.php');
 $xtpl->assign("TEAM", TeamSetManager::getCommaDelimitedTeams($focus->team_set_id, $focus->team_id, true));
 $xtpl->parse("main.pro");
 $do_open = false;
-//END SUGARCRM flav=pro ONLY
 if ($do_open) {
 	$xtpl->parse("main.open_source");
 }

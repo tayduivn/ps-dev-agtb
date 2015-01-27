@@ -55,12 +55,10 @@ $viewdefs['Documents']['QuickCreate'] = array(
        'category_id',
     ),
     
-    //BEGIN SUGARCRM flav=pro ONLY
     array (
       array('name'=>'assigned_user_name',),
       array('name'=>'team_name','displayParams'=>array('required'=>true)),
     ),
-    //END SUGARCRM flav=pro ONLY
 
     array (
       array('name'=>'description', 'displayParams'=>array('rows'=>10, 'cols'=>120)),

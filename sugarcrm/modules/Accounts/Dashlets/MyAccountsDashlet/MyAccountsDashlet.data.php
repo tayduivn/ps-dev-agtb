@@ -19,9 +19,7 @@ $dashletData['MyAccountsDashlet']['searchFields'] = array('date_entered'     => 
                                                           'account_type'    => array('default' => ''),
  														  'industry'    => array('default' => ''),
 														  'billing_address_country' => array('default'=>''),
-                                                          //BEGIN SUGARCRM flav=pro ONLY
                                                           'team_id'          => array('default' => '', 'label'=>'LBL_TEAMS'),
-                                                          //END SUGARCRM flav=pro ONLY
                                                           'assigned_user_id' => array('type'    => 'assigned_user_name', 
                                                                                       'default' => $current_user->name,
 																					  'label' => 'LBL_ASSIGNED_TO'));
@@ -73,9 +71,7 @@ $dashletData['MyAccountsDashlet']['columns'] =  array('name' => array('width'   
                                                                             'label'   => 'LBL_CREATED'),
                                                       'assigned_user_name' => array('width'   => '8', 
                                                                                      'label'   => 'LBL_LIST_ASSIGNED_USER'),
-                                                      //BEGIN SUGARCRM flav=pro ONLY
                                                       'team_name' => array('width'   => '15', 
                                                                            'label'   => 'LBL_LIST_TEAM'),
-                                                      //END SUGARCRM flav=pro ONLY
                                                );
 ?>

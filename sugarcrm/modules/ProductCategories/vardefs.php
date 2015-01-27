@@ -25,7 +25,6 @@ $dictionary['ProductCategory'] = array(
             'len' => '4',
             'comment' => 'Order within list',
         ),
-        //BEGIN SUGARCRM flav=pro ONLY
         'parent_id' => array(
             'name' => 'parent_id',
             'vname' => 'LBL_PARENT_NAME',
@@ -79,7 +78,6 @@ $dictionary['ProductCategory'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_FORECAST_WORKSHEET',
         ),
-        //END SUGARCRM flav=pro ONLY
     ),
     'acls' => array('SugarACLDeveloperOrAdmin' => array('aclModule' => 'Products', 'allowUserRead' => true)),
     'indices' => array(

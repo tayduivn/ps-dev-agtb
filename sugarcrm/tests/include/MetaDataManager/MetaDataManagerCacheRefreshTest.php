@@ -217,7 +217,6 @@ class MetaDataManagerCacheRefreshTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertNotEmpty($dataPri['server_info'], "Server info from the second fetch is empty");
         $this->assertNotEquals($mdPri['server_info'], $dataPri['server_info'], "First and second metadata server_info sections are the same");
     }
-    //BEGIN SUGARCRM flav=pro ONLY
     /**
      * Tests module data refreshing
      *
@@ -265,16 +264,13 @@ $viewdefs[\'Accounts\'][\'mobile\'][\'view\'][\'herfy\'] = array(\'test\' => \'t
         $this->assertFalse(isset($data['modules']['Accounts']['views']['herfy']), "The test view was found in the refreshed Accounts metadata.");
         $this->assertArrayNotHasKey('fandy', $md['modules']['Cases']['views'], "The test view was found in the refreshed Cases metadata.");
     }
-    //END SUGARCRM flav=pro ONLY
     public function managerTypeProvider()
     {
         return array(
             //BEGIN SUGARCRM flav=ent ONLY
             array('platform' => 'portal', 'manager' => 'MetaDataManagerPortal'),
             //END SUGARCRM flav=ent ONLY
-            //BEGIN SUGARCRM flav=pro ONLY
             array('platform' => 'mobile', 'manager' => 'MetaDataManagerMobile'),
-            //END SUGARCRM flav=pro ONLY
             array('platform' => 'base', 'manager' => 'MetaDataManager'),
         );
     }
@@ -285,9 +281,7 @@ $viewdefs[\'Accounts\'][\'mobile\'][\'view\'][\'herfy\'] = array(\'test\' => \'t
             //BEGIN SUGARCRM flav=ent ONLY
             array('platform' => 'portal'),
             //END SUGARCRM flav=ent ONLY
-            //BEGIN SUGARCRM flav=pro ONLY
             array('platform' => 'mobile'),
-            //END SUGARCRM flav=pro ONLY
             array('platform' => 'base'),
         );
     }

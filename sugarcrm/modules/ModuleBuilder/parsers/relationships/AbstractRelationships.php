@@ -42,10 +42,8 @@ class AbstractRelationships
         'Vardefs' => 'vardefs',
         'FieldsToLayouts' => 'layoutfields',
         'ClientFiles' => 'clientfiles',
-        //BEGIN SUGARCRM flav=pro ONLY
         'WirelessSubpanelDefinitions' => 'wireless_subpanels',
         'SidecarMobileSubpanelDefinitions' => 'sidecar',
-        //END SUGARCRM flav=pro ONLY
     );
     static $activities = array ( 'calls' => 'Calls' , 'meetings' => 'Meetings' , 'notes' => 'Notes' , 'tasks' => 'Tasks' , 'emails' => 'Emails' ) ;
 
@@ -650,7 +648,6 @@ class AbstractRelationships
         return $this->saveSidecarSubpanelDefinitions($basepath , $installDefPrefix , $relationshipName , $subpanelDefinitions, $client);
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
     protected function saveWirelessSubpanelDefinitions ($basepath , $installDefPrefix , $relationshipName , $subpanelDefinitions)
     {
         mkdir_recursive ( "$basepath/wirelesslayoutdefs/" ) ;
@@ -677,7 +674,6 @@ class AbstractRelationships
         }
         return $installDefs ;
     }
-    //END SUGARCRM flav=pro ONLY
 
     /*
      * Translate a set of linkFieldDefinitions into files for the Module Loader

@@ -67,13 +67,11 @@ abstract class AbstractMetaDataImplementation
     MB_DETAILVIEW               => 'viewdefs',
     MB_QUICKCREATE              => 'viewdefs',
     MB_RECORDVIEW               => 'viewdefs',
-    //BEGIN SUGARCRM flav=pro ONLY
     MB_WIRELESSEDITVIEW         => 'viewdefs',
     MB_WIRELESSDETAILVIEW       => 'viewdefs',
     MB_WIRELESSLISTVIEW         => 'viewdefs',
     MB_WIRELESSBASICSEARCH      => 'searchdefs',
     MB_WIRELESSADVANCEDSEARCH   => 'searchdefs',
-    //END SUGARCRM flav=pro ONLY
     //BEGIN SUGARCRM flav=ent ONLY
     MB_PORTALEDITVIEW           => 'viewdefs',
     MB_PORTALDETAILVIEW         => 'viewdefs',

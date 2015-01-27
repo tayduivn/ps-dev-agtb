@@ -162,7 +162,6 @@
 									checked=checked
 								{/if}
 								/>
-	                    {* //BEGIN SUGARCRM flav=pro ONLY*}
                         {elseif $params.type == 'teamset'}
                             <{$pageData.tag.$id[$params.ACLTag]|default:$pageData.tag.$id.MAIN} href='javascript:void(0)' onclick="send_back('{if $params.dynamic_module}{$rowData[$params.dynamic_module]}{else}{$params.module|default:$pageData.bean.moduleDir}{/if}','{$rowData[$params.id]|default:$rowData.ID}');">
                             {if $rowData.TEAM_COUNT > 1}
@@ -173,7 +172,6 @@
                                 {$rowData.$col}
                             {/if}
                             </{$pageData.tag.$id[$params.ACLTag]|default:$pageData.tag.$id.MAIN}>
-                        {* //END SUGARCRM flav=pro ONLY*}
                         {elseif $params.type == 'multienum' } 
 								{counter name="oCount" assign="oCount" start=0}
 								{multienum_to_array string=$rowData.$col assign="vals"}

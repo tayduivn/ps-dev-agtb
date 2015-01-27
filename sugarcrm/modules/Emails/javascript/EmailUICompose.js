@@ -27,11 +27,9 @@ SE.addressBook = {
 	relatedBeanId : '',
 	relatedBeanType : '',
 	idx : 0,
-    //BEGIN SUGARCRM flav=pro ONLY
 
     focusMailingList : "", // mailing list that is currently being editted
     focusMailingListUpdated : null, // temp storage until committed via save for above
-    //END SUGARCRM flav=pro ONLY
 
     itemSpacing : 'white-space:nowrap; padding:2px;',
     reGUID : SE.reGUID,
@@ -97,9 +95,7 @@ SE.addressBook = {
             SE.composeLayout.c0_composeNewEmail();
             setTimeout("SE.addressBook.composeTo('" + type + "', true);");
 	        SE.contextMenus.contactsContextMenu.hide();
-	        //BEGIN SUGARCRM flav=pro ONLY
 			SE.contextMenus.mailingListContextMenu.hide();
-			//END SUGARCRM flav=pro ONLY
             return;
         }
         var idx = activePanel.substring(10);
@@ -113,7 +109,6 @@ SE.addressBook = {
             }
             removeHiddenNodes(rows, SE.contactView);
         }
-		//BEGIN SUGARCRM flav=pro ONLY
 		else if (type =='lists'){
 			ids = SE.emailListsView.getSelectedRows();
 			for (var i in ids) {
@@ -121,7 +116,6 @@ SE.addressBook = {
             }
 			removeHiddenNodes(rows, SE.emailListsView);
         }
-		//END SUGARCRM flav=pro ONLY
 		else { return; }
 
         if(rows.length > 0) {
@@ -1268,7 +1262,6 @@ SE.composeLayout = {
             nodes = data;
         }
 
-        //BEGIN SUGARCRM flav=pro ONLY
         //If a mailing list was dropped
         if (source == SE.emailListsView) {
             for(var i in nodes) {
@@ -1299,7 +1292,6 @@ SE.composeLayout = {
             } // for
             return;
         }
-        //END SUGARCRM flav=pro ONLY
         if (target.id.indexOf('address') > -1) {
             // dropped onto email to/cc/bcc field
             for(var i in nodes) {
@@ -1873,12 +1865,10 @@ SE.composeLayout = {
 
         var form = document.getElementById('emailCompose' + idx);
         var composeOptionsFormName = "composeOptionsForm" + idx;
-        //BEGIN SUGARCRM flav=pro ONLY
         if (!SUGAR.collection.prototype.validateTemSet(composeOptionsFormName, 'team_name')) {
         	alert(mod_strings.LBL_EMAILS_NO_PRIMARY_TEAM_SPECIFIED);
         	return false;
         } // if
-        //END SUGARCRM flav=pro ONLY
 
 
         var t = SE.util.getTiny('htmleditor' + idx);
@@ -1960,12 +1950,10 @@ SE.composeLayout = {
         form.uid.value = uid;
         form.ieId.value = ieId;
         form.mbox.value = mbox;
-        //BEGIN SUGARCRM flav=pro ONLY
 		var teamIdsArray = SUGAR.collection.prototype.getTeamIdsfromUI(composeOptionsFormName, 'team_name');
 		form.teamIds.value = teamIdsArray.join(",");
         //form.selectedTeam.value = document.getElementById('teamOptions' + idx).value;
         form.primaryteam.value = SUGAR.collection.prototype.getPrimaryTeamidsFromUI(composeOptionsFormName, 'team_name');
-        //END SUGARCRM flav=pro ONLY
 
         // email attachments
         var addedFiles = document.getElementById('addedFiles' + idx);
@@ -2334,7 +2322,6 @@ SE.composeLayout = {
             et.options.add(opt);
         }
 
-		//BEGIN SUGARCRM flav=pro ONLY
 		var renderTeam = true;
 		if (SE.composeLayout.draftObject != null && SE.composeLayout.draftObject.id != null) {
 			if (SE.composeLayout.draftObject.id == idx) {
@@ -2351,8 +2338,6 @@ SE.composeLayout = {
 	        teamOptions.innerHTML = teamOptionsString;
 	        SUGAR.util.evalScript(teamOptionsString);
 		}
-
-		//END SUGARCRM flav=pro ONLY
         // signatures
         var sigs = document.getElementById('signatures' + idx);
         SE.util.emptySelectOptions(sigs);

@@ -37,9 +37,7 @@ $viewdefs[$module_name]['QuickCreate'] = array(
 	
     array(
 		'amount',
-		//BEGIN SUGARCRM flav=pro ONLY 
-    	array('name'=>'team_name','displayParams'=>array('required'=>true)),
-		//END SUGARCRM flav=pro ONLY 
+		array('name'=>'team_name','displayParams'=>array('required'=>true)),
 	),
 	
 	array($_object_name.'_type', 'date_closed'),

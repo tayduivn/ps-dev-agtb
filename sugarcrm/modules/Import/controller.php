@@ -151,9 +151,7 @@ class ImportController extends SugarController
     {
         $fromAdminView = isset($_REQUEST['from_admin_wizard']) ? $_REQUEST['from_admin_wizard'] : FALSE;
         if( $this->importModule == 'Administration' || $fromAdminView
-           //BEGIN SUGARCRM flav=pro ONLY
             || $this->bean instanceof Person
-            //END SUGARCRM flav=pro ONLY
         )
         {
     		$this->view = 'step1';

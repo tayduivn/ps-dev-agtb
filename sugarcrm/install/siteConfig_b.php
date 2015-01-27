@@ -115,9 +115,8 @@ $out =<<<EOQ
    <tr><th colspan="3" align="left">{$mod_strings['LBL_SITECFG_SITE_SECURITY']}</td></tr>
 
 EOQ;
-//BEGIN SUGARCRM flav=pro ONLY
+
 $out .= '<!--';
-//END SUGARCRM flav=pro ONLY
 $checked = '';
 if(!empty($_SESSION['setup_site_sugarbeet_anonymous_stats'])) $checked = 'checked="checked"';
 $out .= "
@@ -126,10 +125,9 @@ $out .= "
        <td><b>{$mod_strings['LBL_SITECFG_ANONSTATS']}</b><br><i>{$mod_strings['LBL_SITECFG_ANONSTATS_DIRECTIONS']}</i></td></tr>
 
 ";
-//BEGIN SUGARCRM flav=pro ONLY
+
 $out .= '-->';
 $out .= "<tr><td><input type='checkbox' style='display:none' name='setup_site_sugarbeet_anonymous_stats' value='yes' checked='checked' /></td></tr>";
-//END SUGARCRM flav=pro ONLY
 $checked = '';
 if(!empty($_SESSION['setup_site_sugarbeet_automatic_checks'])) $checked = 'checked="checked"';
 $out .= <<<EOQ

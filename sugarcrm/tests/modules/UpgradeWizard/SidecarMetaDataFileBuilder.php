@@ -27,7 +27,6 @@ class SidecarMetaDataFileBuilder
      * @var array
      */
     private $filesToMake = array(
-        //BEGIN SUGARCRM flav=pro ONLY
         array(
             'module'      => 'Accounts', 'view' => 'edit', 'type' => 'mobile',
             'testpath'    => 'tests/modules/UpgradeWizard/metadata/Accountswirelessedit.php',
@@ -58,7 +57,6 @@ class SidecarMetaDataFileBuilder
             'legacypath'  => 'custom/modules/Bugs/metadata/listviewdefs.php',
             'sidecarpath' => 'custom/modules/Bugs/clients/base/views/list/list.php',
         ),
-        //END SUGARCRM flav=pro ONLY
         //BEGIN SUGARCRM flav=ent ONLY
         array(
             'module'      => 'Accounts', 'view' => 'edit', 'type' => 'portal',

@@ -162,7 +162,7 @@ class DashletsDialog {
         $this->dashlets = $dashletsList;
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
+
     function getReportCharts($category){
     	global $current_user;
 
@@ -254,7 +254,6 @@ class DashletsDialog {
 		asort($chartsList);
 		$this->dashlets[$category] = $chartsList;
     }
-    //END SUGARCRM flav=pro ONLY
 }
 
 ?>

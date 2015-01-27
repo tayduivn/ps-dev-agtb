@@ -24,9 +24,8 @@ $searchdefs['Contacts'] = array(
 		        'label' => 'LBL_CURRENT_USER_FILTER',
 		        'type' => 'bool',
 		      ),
-		      //BEGIN SUGARCRM flav=pro ONLY
+
 		      array ('name' => 'favorites_only','label' => 'LBL_FAVORITES_FILTER','type' => 'bool',),
-		      //END SUGARCRM flav=pro ONLY
 		    ),
 		    'advanced_search' => 
 		    array (
@@ -128,9 +127,8 @@ $searchdefs['Contacts'] = array(
 		        'width' => '10%',
 		      ),
 		      
-		      //BEGIN SUGARCRM flav=pro ONLY
+
 		      array ('name' => 'favorites_only','label' => 'LBL_FAVORITES_FILTER','type' => 'bool',),
-		      //END SUGARCRM flav=pro ONLY
 		    ),
 		  )
 );

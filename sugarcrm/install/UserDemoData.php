@@ -103,7 +103,6 @@ class UserDemoData {
 
 		$u->save();
 
-        // BEGIN SUGARCRM flav=pro ONLY
         if($id == "seed_jim_id") {
             // add to Sales Administrator Role
             $acl_roles = new ACLRole();
@@ -122,7 +121,6 @@ class UserDemoData {
                 }
             }
         }
-        // END SUGARCRM flav=pro ONLY
 	}
 
 	/**

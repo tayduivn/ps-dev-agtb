@@ -496,7 +496,6 @@ class M2MRelationship extends SugarRelationship
 
         $deleted = !empty($params['deleted']) ? 1 : 0;
         $from = $rel_table . " ";
-        //BEGIN SUGARCRM flav=pro ONLY
         if (!empty($params['enforce_teams']) && $relatedSeed !== false)
         {
             if ($rel_table != $relatedSeed->table_name) {
@@ -504,7 +503,6 @@ class M2MRelationship extends SugarRelationship
             }
             $relatedSeed->add_team_security_where_clause($from);
         }
-        //END SUGARCRM flav=pro ONLY
         if ((!empty($params['where']) || !empty($params['orderby'])) && !empty($whereTable)) {
             $from .= " LEFT JOIN $whereTable on $rel_table.$targetKey=$whereTable.id";
             if (isset($relatedSeed->custom_fields)) {

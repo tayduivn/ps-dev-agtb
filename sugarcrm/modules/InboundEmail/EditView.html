@@ -148,16 +148,12 @@
 		<tr>
 			<td valign="top" scope="row" width="15%" NOWRAP>
 				<slot>
-				<!--//BEGIN SUGARCRM flav=pro ONLY -->
 				{MOD.LBL_ASSIGN_TEAM}:<span span name="teamSpanRequired" id="teamSpanRequired" class="required">{APP.LBL_REQUIRED_SYMBOL}</span>{TIPS.LBL_ASSIGN_TO_TEAM_DESC}
-				<!--//END SUGARCRM flav=pro ONLY -->
 				&nbsp;</slot></td>
 
 			<td valign="top"  width="35%">
 				<slot>
-				<!--//BEGIN SUGARCRM flav=pro ONLY -->
 				{TEAM_SET_FIELD}
-				<!--//END SUGARCRM flav=pro ONLY -->
 				&nbsp;</slot></td>
 			<td valign="top" scope="row" width="15%" NOWRAP>
 				<slot>{MOD.LBL_FROM_NAME}:<span class="required">{APP.LBL_REQUIRED_SYMBOL}</span>&nbsp;</slot></td>
@@ -343,25 +339,19 @@ function showCreateCaseRow() {
 function possibleActionChange() {
 	var mailBoxType = document.getElementById('mailbox_type');
 	var trashRequiredSpan = document.getElementById('trashRequiredSpan');
-	<!--//BEGIN SUGARCRM flav=pro ONLY -->
 	var teamSpanRequired = document.getElementById('teamSpanRequired');
 
-	<!--//END SUGARCRM flav=pro ONLY -->
 	if(mailBoxType.value == 'bounce') {
 
 		trashRequiredSpan.style.display = 'none';
 		trashRequiredSpan.style.display = 'none';
-		<!--//BEGIN SUGARCRM flav=pro ONLY -->
 		teamSpanRequired.style.display = 'none';
 		teamSpanRequired.style.display = 'none';
-		<!--//END SUGARCRM flav=pro ONLY -->
 	} else {
 		trashRequiredSpan.style.display = '';
 		trashRequiredSpan.style.display = '';
-		<!--//BEGIN SUGARCRM flav=pro ONLY -->
 		teamSpanRequired.style.display = '';
 		teamSpanRequired.style.display = '';
-		<!--//END SUGARCRM flav=pro ONLY -->
 	} // else
 }
 

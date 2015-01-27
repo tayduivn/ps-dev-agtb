@@ -49,7 +49,6 @@ function getHeaderText($action, $currentModule){
 	global $app_strings;
 	$button  = "<table cellspacing='0' cellpadding='0' border='0'><form border='0' action='index.php' method='post' name='form' id='form'>\n";
 	$button .= "<input type='hidden' name='module' value='Notes'>\n";
-//BEGIN SUGARCRM flav=pro ONLY
 	if ($currentModule == 'Products') {
 		$button .= "<input type='hidden' name='contact_id' value='".$this->focus->contact_id."'>\n";
 		$button .= "<input type='hidden' name='contact_name' value='".$this->focus->contact_name."'>\n";
@@ -62,7 +61,6 @@ function getHeaderText($action, $currentModule){
 		$button .= "<input type='hidden' name='action'>\n";
 		$button .= "<tr>";
 	}
-//END SUGARCRM flav=pro ONLY
 	if(!$this->hideNewButton){
 		$button .= "<td><input title='".$app_strings['LBL_NEW_BUTTON_TITLE']."' class='button' onclick=\"this.form.action.value='EditView'\" type='submit' name='button' value='  ".$app_strings['LBL_NEW_BUTTON_LABEL']."  '></td>\n";
 	}

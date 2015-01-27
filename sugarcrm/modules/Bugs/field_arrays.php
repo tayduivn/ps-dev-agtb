@@ -24,9 +24,7 @@ $fields_array['Bug'] = array ('column_fields' => Array("id"
 		, "date_modified"
 		, "modified_user_id"
 		, "assigned_user_id"
-		//BEGIN SUGARCRM flav=pro ONLY
 		,"team_id"
-		//END SUGARCRM flav=pro ONLY
 		, "status"
 		, "found_in_release"
 		, "created_by"
@@ -40,10 +38,8 @@ $fields_array['Bug'] = array ('column_fields' => Array("id"
 		, "product_category"
 		),
         'list_fields' => Array('id', 'priority', 'status', 'name', 'bug_number', 'assigned_user_name', 'assigned_user_id', 'release', 'found_in_release', 'resolution', 'type'
-	//BEGIN SUGARCRM flav=pro ONLY
 	, "team_id"
 	, "team_name"
-	//END SUGARCRM flav=pro ONLY
 		),
         'required_fields' => array('name'=>1),
 );

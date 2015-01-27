@@ -22,16 +22,12 @@ SUGAR.mySugar = function() {
 
     var closeDashletsDialogTimer = null;
 	
-	//BEGIN SUGARCRM flav=pro ONLY
 	var num_pages = numPages;
-	//END SUGARCRM flav=pro ONLY
 	var activeTab = activePage;
 	var current_user = current_user_id;
 	
 	var module = moduleName;
-	//BEGIN SUGARCRM flav=pro ONLY
 	var cookiePageIndex;
-	//END SUGARCRM flav=pro ONLY
 	
 	var charts = new Object();
 	
@@ -44,12 +40,9 @@ SUGAR.mySugar = function() {
 	
 	var homepage_dd;
 	
-	//BEGIN SUGARCRM flav=pro ONLY
 	var populatedReportCharts = false;
-	//END SUGARCRM flav=pro ONLY
 
 	return {
-		//BEGIN SUGARCRM flav=pro ONLY
 		togglePages: function(activePage){
 		    var pageId = 'pageNum_' + activePage;
 		    activeDashboardPage = activePage;
@@ -87,9 +80,7 @@ SUGAR.mySugar = function() {
 		        }
 		    }
 		},
-		//END SUGARCRM flav=pro ONLY
 		
-		//BEGIN SUGARCRM flav=pro ONLY
         deletePage: function(){
             var pageNum = activeTab;
             var tabListElem = document.getElementById('tabList');
@@ -97,17 +88,13 @@ SUGAR.mySugar = function() {
 
             if(confirm(SUGAR.language.get('app_strings', 'LBL_DELETE_PAGE_CONFIRM')))
                 window.location = "index.php?module="+module+"&action=DynamicAction&DynamicAction=deletePage&pageNumToDelete="+pageNum;
-        },		
-        //END SUGARCRM flav=pro ONLY
+        },
 
-		//BEGIN SUGARCRM flav=pro ONLY
 		renamePage: function(pageNum){
 		    SUGAR.mySugar.toggleSpansForRename(pageNum);
 		    document.getElementById('pageNum_'+pageNum+'_name_input').focus();
 		},
-		//END SUGARCRM flav=pro ONLY
 		
-		//BEGIN SUGARCRM flav=pro ONLY
 		toggleSpansForRename: function(pageNum){
 		    var tabInputSpan = document.getElementById('pageNum_'+pageNum+'_input_span');
 		    var tabLinkSpan = document.getElementById('pageNum_'+pageNum+'_link_span');
@@ -120,10 +107,8 @@ SUGAR.mySugar = function() {
 		        tabLinkSpan.style.display = 'none';
 		        tabInputSpan.style.display = 'inline';
 		    }
-		},	
-		//END SUGARCRM flav=pro ONLY
+		},
 		
-		//BEGIN SUGARCRM flav=pro ONLY
         savePageTitle: function(pageNum,newTitleValue)
         {
             var currentTitleValue = document.getElementById('pageNum_'+pageNum+'_name_hidden_input').value;
@@ -156,9 +141,7 @@ SUGAR.mySugar = function() {
 
             SUGAR.mySugar.toggleSpansForRename(pageNum);
         },
-        //END SUGARCRM flav=pro ONLY
 
-		//BEGIN SUGARCRM flav=pro ONLY
 		pageIsLoaded: function(pageDivId){
 		    for(var count=0; count < loadedPages.length; count++)
 		    {
@@ -167,19 +150,15 @@ SUGAR.mySugar = function() {
 		    }
 		    return false;
 		},
-		//END SUGARCRM flav=pro ONLY
 		
-		//BEGIN SUGARCRM flav=pro ONLY
 		retrieveChartDashlet: function(name, xmlFile, width, height){
 			var chartDiv = document.getElementById(name + '_div');
 			
 			chartDiv.style.width = width;
 			chartDiv.style.height = height;
 		},
-		//END SUGARCRM flav=pro ONLY
 		
 
-		//BEGIN SUGARCRM flav=pro ONLY
         retrievePage: function(pageNum){
 			if (document.getElementById('loading_c'))
                 document.getElementById('loading_c').style.display = '';
@@ -275,18 +254,14 @@ SUGAR.mySugar = function() {
 
 
         },
-        //END SUGARCRM flav=pro ONLY
         
-        //BEGIN SUGARCRM flav=pro ONLY
         showAddPageDialog: function(){
             if ( document.getElementById('addPageDialog_c') == null ) { setTimeout(SUGAR.mySugar.showAddPageDialog,100); return false; }
 			document.getElementById('addPageDialog_c').style.display = '';
         	SUGAR.mySugar.addPageDialog.show();        	
 			SUGAR.mySugar.addPageDialog.configFixedCenter(null, false) ;
         },
-        //END SUGARCRM flav=pro ONLY
         
-        //BEGIN SUGARCRM flav=pro ONLY
 		addTab: function(newPageName,numCols){
 			var pageCount = num_pages;
 			var tabListElem = document.getElementById('tabList');
@@ -365,9 +340,7 @@ SUGAR.mySugar = function() {
                                                    {success: addBlankPage, failure: addBlankPage} , null);
 		
 		},
-		//END SUGARCRM flav=pro ONLY
 		
-		//BEGIN SUGARCRM flav=pro ONLY
 		insertInputSpanElement: function(page_num, pageName){
 			var inputSpanElement = document.createElement("span");
 			inputSpanElement.id = 'pageNum_'+page_num+'_input_span';
@@ -393,9 +366,6 @@ SUGAR.mySugar = function() {
 			return inputSpanElement;
 		},
 		
-		//END SUGARCRM flav=pro ONLY
-		
-		//BEGIN SUGARCRM flav=pro ONLY
 		insertTabNameDisplay: function(page_num, pageName){
 			var spanElement = document.createElement("span");
 			spanElement.id = 'pageNum_'+page_num+'_link_span';
@@ -411,15 +381,12 @@ SUGAR.mySugar = function() {
 			
 			return spanElement;
 		},
-		//END SUGARCRM flav=pro ONLY
 				
-		//BEGIN SUGARCRM flav=pro ONLY
 		showChangeLayoutDialog: function(tabNum){
 			document.getElementById('changeLayoutDialog_c').style.display = '';
 			SUGAR.mySugar.changeLayoutDialog.show();
 			SUGAR.mySugar.changeLayoutDialog.configFixedCenter(null, false) ;			
 		},
-		//END SUGARCRM flav=pro ONLY
 		
 		// get the current dashlet layout
 		getLayout: function(asString) {
@@ -471,7 +438,6 @@ SUGAR.mySugar = function() {
 			var cObj = YAHOO.util.Connect.asyncRequest('GET', url, {success: success, failure: success});					  
 		},
 
-		//BEGIN SUGARCRM flav=pro ONLY
 		changeLayout: function(numCols) {
 			ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_SAVING_LAYOUT'));
 
@@ -486,7 +452,6 @@ SUGAR.mySugar = function() {
 			url = 'index.php?to_pdf=1&module='+module+'&action=DynamicAction&DynamicAction=changeLayout&selectedPage=' + activeTab + '&numColumns=' + numCols;
 			var cObj = YAHOO.util.Connect.asyncRequest('GET', url, {success: success, failure: success});					  
 		},
-		//END SUGARCRM flav=pro ONLY
 
 		uncoverPage: function(id) {
 			if (!SUGAR.isIE){	
@@ -541,11 +506,9 @@ SUGAR.mySugar = function() {
 													  {success: fillInConfigureDiv, failure: fillInConfigureDiv}, null);
 		},
 		
-		//BEGIN SUGARCRM flav=pro ONLY
 		configureChartDashlet: function(id, report_id){
 			window.location = "index.php?module=Reports&id=" + report_id + "&action=index&page=report";
 		},
-		//END SUGARCRM flav=pro ONLY
 				
 		/** returns dashlets contents
 		 * if url is defined, dashlet will be retrieve with it, otherwise use default url
@@ -568,13 +531,11 @@ SUGAR.mySugar = function() {
 				is_chart_dashlet = true;
 			}
 			
-			//BEGIN SUGARCRM flav=pro ONLY
 			else if (url == 'chart'){
 				url = 'index.php?action=DynamicAction&DynamicAction=displayChartDashlet&session_commit=1&module='+module+'&to_pdf=1&id=' + id;
 				scriptUrl = 'index.php?action=DynamicAction&DynamicAction=getChartScript&session_commit=1&module='+module+'&to_pdf=1&id=' + id;
 				is_chart_dashlet = true;
 			}
-			//END SUGARCRM flav=pro ONLY
 			
 			if(dynamic) {
 				url += '&dynamic=true';
@@ -616,7 +577,6 @@ SUGAR.mySugar = function() {
 					var chartScriptObj = YAHOO.util.Connect.asyncRequest('GET', scriptUrl,
 													  {success: processChartScript, failure: processChartScript}, null);
 				}
-				//BEGIN SUGARCRM flav=pro ONLY
 				SUGAR.mySugar.attachToggleToolsetEvent(id);
 
                 //we need to reinit the quickEdit Listeners whenever a dashlet is refreshed
@@ -624,7 +584,6 @@ SUGAR.mySugar = function() {
                     //reinitialize the Quick Edit events
                     qe_init();
                 }
-				//END SUGARCRM flav=pro ONLY
 			}
 			
 			SUGAR.mySugar.currentDashlet = document.getElementById('dashlet_entire_' + id);
@@ -743,9 +702,7 @@ SUGAR.mySugar = function() {
 					dashletEntire.style.top = '0px';
 					dashletEntire.className = 'dashletPanel';
 					
-					//BEGIN SUGARCRM flav=pro ONLY
 					SUGAR.mySugar.attachToggleToolsetEvent(data.responseText);
-					//END SUGARCRM flav=pro ONLY
 					
 					var anim = new YAHOO.util.Anim('dashlet_entire_' + data.responseText, { height: {to: dashletRegion.bottom - dashletRegion.top} }, .5 );
 					anim.onComplete.subscribe(function() { document.getElementById('dashlet_entire_' + data.responseText).style.height = '100%'; });	
@@ -821,9 +778,7 @@ SUGAR.mySugar = function() {
                 window.clearTimeout(this.closeDashletsDialogTimer);
             }
             this.closeDashletsDialogTimer = window.setTimeout("document.getElementById('dashletsDialog_c').style.display = 'none';", 2000);
-			//BEGIN SUGARCRM flav=pro ONLY
 			populatedReportCharts = false;
-			//END SUGARCRM flav=pro ONLY
 		},
 
 		toggleDashletCategories: function(category){
@@ -882,11 +837,9 @@ SUGAR.mySugar = function() {
 					webTabAnchor.className = '';
 					webListDiv.style.display = 'none';
 					
-					//BEGIN SUGARCRM flav=pro ONLY
 					if (!populatedReportCharts){
 						SUGAR.mySugar.populateReportCharts();
 					}
-					//END SUGARCRM flav=pro ONLY
 					break;
 				case 'tools':
 					moduleTab.className = '';
@@ -931,7 +884,6 @@ SUGAR.mySugar = function() {
 			document.getElementById('search_category').value = category;
 		},
 		
-		//BEGIN SUGARCRM flav=pro ONLY
 		populateReportCharts: function(){
 			var globalList = document.getElementById('globalReportsChartDashletsList');
 			var myTeamsList = document.getElementById('myTeamReportsChartDashletsList');
@@ -964,7 +916,6 @@ SUGAR.mySugar = function() {
 			
 			populatedReportCharts = true;
 		},
-		//END SUGARCRM flav=pro ONLY
 
 		searchDashlets: function(searchStr, searchCategory){
 			var moduleTab = document.getElementById('moduleCategory');
@@ -1045,7 +996,6 @@ SUGAR.mySugar = function() {
 			return false;
 		},
 
-		//BEGIN SUGARCRM flav=pro ONLY
 		renderFirstLoadDialog: function() {
 			SUGAR.mySugar.firstLoad = new YAHOO.widget.Panel("firstLoad",
 			{ width:"240px",
@@ -1069,9 +1019,7 @@ SUGAR.mySugar = function() {
 			SUGAR.mySugar.firstLoad.hide();
 			document.getElementById('firstLoad_c').style.display = 'none';																
 		},
-		//END SUGARCRM flav=pro ONLY
 		
-		//BEGIN SUGARCRM flav=pro ONLY
 		renderLoadingDialog: function() {
 			SUGAR.mySugar.loading = new YAHOO.widget.Panel("loading",
 			{ width:"240px",
@@ -1089,9 +1037,7 @@ SUGAR.mySugar = function() {
 			if (document.getElementById('loading_c'))
                 document.getElementById('loading_c').style.display = 'none';
 		},
-		//END SUGARCRM flav=pro ONLY
 		
-		//BEGIN SUGARCRM flav=pro ONLY
 		renderAddPageDialog: function() {
 			var handleSuccess = function(o){
 				var response = o.responseText;
@@ -1167,7 +1113,6 @@ SUGAR.mySugar = function() {
 			document.getElementById('addPageDialog_c').style.display = 'none';			
 		
 		},
-		//END SUGARCRM flav=pro ONLY
 		
 		renderDashletsDialog: function(){	
             var minHeight = 120;
@@ -1197,7 +1142,6 @@ SUGAR.mySugar = function() {
 			SUGAR.mySugar.dashletsDialog.render();
 			document.getElementById('dashletsDialog_c').style.display = 'none';			
 		}	
-		//BEGIN SUGARCRM flav=pro ONLY
 		,
 
 		changePageLayout: function(numCols){
@@ -1244,8 +1188,6 @@ SUGAR.mySugar = function() {
 					}); 
 				}
 		}
-		//END SUGARCRM flav=pro ONLY
-		//BEGIN SUGARCRM flav=pro ONLY
 		,
 		attachToggleToolsetEvent: function(dashletId){
 			var header = document.getElementById("dashlet_header_"+dashletId);
@@ -1267,7 +1209,6 @@ SUGAR.mySugar = function() {
 					}); 
 				}
 		}
-		//END SUGARCRM flav=pro ONLY
 	 }; 
 }();
 };

@@ -143,7 +143,6 @@ EOQ;
 
 }
 
-//BEGIN SUGARCRM flav=pro ONLY
 if ($db->supports('fulltext')) {
     if($db->full_text_indexing_installed()){
         $FTSData = $mod_strings['LBL_FTS_INSTALLED'];
@@ -158,7 +157,6 @@ $out .=<<<EOQ
             </tr>
 EOQ;
 }
-//END SUGARCRM flav=pro ONLY
 
 if(isset($_SESSION['install_type'])  && !empty($_SESSION['install_type'])  && $_SESSION['install_type']=='custom'){
 $out .=<<<EOQ

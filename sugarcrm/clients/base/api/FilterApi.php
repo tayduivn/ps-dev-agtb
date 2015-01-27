@@ -329,7 +329,6 @@ class FilterApi extends SugarApi
         $fields = array();
         foreach ($options['select'] as $field) {
             // FIXME: convert this to vardefs too?
-            //BEGIN SUGARCRM flav=pro ONLY
             if ($field == 'my_favorite') {
                 if (self::$isFavorite) {
                     $joinType = 'INNER';
@@ -340,7 +339,6 @@ class FilterApi extends SugarApi
                 $fields[] = array($fjoin->joinName() . ".id", 'my_favorite');
                 continue;
             }
-            //END SUGARCRM flav=pro ONLY
 
             // fields that aren't in field defs are removed, since we don't know
             // what to do with them

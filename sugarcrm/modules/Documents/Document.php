@@ -29,9 +29,7 @@ class Document extends SugarBean {
 	var $date_modified;
 	var $modified_user_id;
     var $assigned_user_id;
-	//BEGIN SUGARCRM flav=pro ONLY
 	var $team_id;
-	//END SUGARCRM flav=pro ONLY
 	var $active_date;
 	var $exp_date;
 	var $document_revision_id;
@@ -347,14 +345,12 @@ class Document extends SugarBean {
        		}
        	}
 
-        //BEGIN SUGARCRM flav=pro ONLY
         //Remove the contracts relationships
         $this->load_relationship('contracts');
         if(!empty($this->contracts))
         {
             $this->contracts->delete($id);
         }
-        //END SUGARCRM flav=pro ONLY
 	}
 
 

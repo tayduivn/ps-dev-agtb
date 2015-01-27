@@ -51,9 +51,7 @@ $fields_array['Account'] = array ('column_fields' => Array(
 		,"account_type"
 		,"website"
 		, "created_by"
-//BEGIN SUGARCRM flav=pro ONLY
 		,"team_id"
-//END SUGARCRM flav=pro ONLY
 		),
         'list_fields' => Array('id', 'name', 'website', 'phone_office', 'assigned_user_name', 'assigned_user_id'
 	, 'billing_address_street'
@@ -66,10 +64,8 @@ $fields_array['Account'] = array ('column_fields' => Array(
 	, 'shipping_address_state'
 	, 'shipping_address_postalcode'
 	, 'shipping_address_country'
-//BEGIN SUGARCRM flav=pro ONLY
 	, "team_id"
 	, "team_name"
-//END SUGARCRM flav=pro ONLY
 		),
         'required_fields' => array("name"=>1),
 );

@@ -15,23 +15,18 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 global $db;
 function displayAdminError($errorString){
 	$output = '<p class="error">' . $errorString .'</p>';
-	//BEGIN SUGARCRM flav=pro ONLY
 	if(!empty($GLOBALS['buffer_system_notifications'])){
 		$GLOBALS['system_notification_count']++;
 		$GLOBALS['system_notification_buffer'][] = $output;
 	}else{
-		//END SUGARCRM flav=pro ONLY
 		echo $output;
-		//BEGIN SUGARCRM flav=pro ONLY
 	}
-		//END SUGARCRM flav=pro ONLY
 }
 
 if(!empty($_SESSION['display_lotuslive_alert'])){
     displayAdminError(translate('MSG_RECONNECT_LOTUSLIVE', 'Administration'));
 }
 
-//BEGIN SUGARCRM flav=pro ONLY
 if( is_admin($current_user) && SugarAutoLoader::fileExists('include/SugarSearchEngine/SugarSearchEngineFactory.php') )
 {
     require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
@@ -42,7 +37,6 @@ if( is_admin($current_user) && SugarAutoLoader::fileExists('include/SugarSearchE
     }
 
 }
-//END SUGARCRM flav=pro ONLY
 
 
 
@@ -119,14 +113,12 @@ if(trim($admin->settings['mail_smtpserver']) == '' && !$sendMailEnabled) {
     if($admin->settings['notify_on']) {
         $smtp_error = true;
     }
-    //BEGIN SUGARCRM flav=pro ONLY
     else {
         $workflow = BeanFactory::getBean('WorkFlow');
         if($workflow->getActiveWorkFlowCount()>0) {
             $smtp_error = true;
         }
     }
-    //END SUGARCRM flav=pro ONLY
 }
 
 if($smtp_error) {

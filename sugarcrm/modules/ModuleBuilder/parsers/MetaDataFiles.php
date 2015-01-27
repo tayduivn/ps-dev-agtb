@@ -67,13 +67,11 @@ class MetaDataFiles
      * @static
      */
     public static $clientsByView = array(
-        //BEGIN SUGARCRM flav=pro ONLY
         MB_WIRELESSDETAILVIEW => MB_WIRELESS,
         MB_WIRELESSEDITVIEW => MB_WIRELESS,
         MB_WIRELESSLISTVIEW => MB_WIRELESS,
         MB_WIRELESSADVANCEDSEARCH => MB_WIRELESS,
         MB_WIRELESSBASICSEARCH => MB_WIRELESS,
-        //END SUGARCRM flav=pro ONLY
         //BEGIN SUGARCRM flav=ent ONLY
         MB_PORTALEDITVIEW => MB_PORTAL,
         MB_PORTALDETAILVIEW => MB_PORTAL,
@@ -105,13 +103,11 @@ class MetaDataFiles
         MB_RECORDVIEW             => 'record',
         MB_SIDECARPOPUPVIEW       => 'selection-list',
         MB_SIDECARDUPECHECKVIEW   => 'dupecheck-list',
-        //BEGIN SUGARCRM flav=pro ONLY
         MB_WIRELESSEDITVIEW       => 'edit' ,
         MB_WIRELESSDETAILVIEW     => 'detail' ,
         MB_WIRELESSLISTVIEW       => 'list' ,
         MB_WIRELESSBASICSEARCH    => 'search' ,
         MB_WIRELESSADVANCEDSEARCH => 'search' ,
-        //END SUGARCRM flav=pro ONLY
         //BEGIN SUGARCRM flav=ent ONLY
         MB_PORTALEDITVIEW         => 'edit',
         MB_PORTALDETAILVIEW       => 'detail',
@@ -134,10 +130,8 @@ class MetaDataFiles
         MB_QUICKCREATE => 'QuickCreate',
         MB_RECORDVIEW  => array('base', 'view', 'record'),
 
-        //BEGIN SUGARCRM flav=pro ONLY
         MB_WIRELESSEDITVIEW => array('mobile','view','edit'),
         MB_WIRELESSDETAILVIEW => array('mobile','view','detail'),
-        //END SUGARCRM flav=pro ONLY
         //BEGIN SUGARCRM flav=ent ONLY
         MB_PORTALEDITVIEW => array('portal','view','edit'),
         MB_PORTALDETAILVIEW => array('portal','view','detail'),

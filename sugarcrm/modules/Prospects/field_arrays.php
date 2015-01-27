@@ -23,9 +23,7 @@ $fields_array['Prospect'] = array ('column_fields' => Array("id"
 		,"modified_user_id"
 		,"assigned_user_id"
 		, "created_by"
-//BEGIN SUGARCRM flav=pro ONLY
 		,"team_id"
-//END SUGARCRM flav=pro ONLY
 		,"salutation"
 		,"first_name"
 		,"last_name"
@@ -60,10 +58,8 @@ $fields_array['Prospect'] = array ('column_fields' => Array("id"
 		,'account_name'
 		),
         'list_fields' =>  Array('full_name','id', 'first_name', 'last_name', 'account_name', 'account_id', 'title', 'email1','email2', 'phone_work', 'assigned_user_name', 'assigned_user_id','email_and_name1','email_and_name2'
-//BEGIN SUGARCRM flav=pro ONLY
 	, "team_id"
 	, "team_name"
-//END SUGARCRM flav=pro ONLY
 ,'invalid_email'
 ,'lead_id'
 		),

@@ -102,12 +102,9 @@ function populateFromPost($prefix, &$focus, $skipRetrieve=false) {
 			$focus->$field = $value;
 		}
 	}
-    //BEGIN SUGARCRM flav=pro ONLY
     populateFromPostACL($focus);
-    //END SUGARCRM flav=pro ONLY
 	return $focus;
 }
-//BEGIN SUGARCRM flav=pro ONLY
 /**
  * If current user have not permit to change field function replace default value
  *
@@ -137,7 +134,6 @@ function populateFromPostACL(SugarBean $focus)
         }
     }
 }
-//END SUGARCRM flav=pro ONLY
 
 function add_hidden_elements($key, $value) {
 
@@ -258,16 +254,12 @@ function buildRedirectURL($return_id = '', $return_module = '', array $additiona
 		// if we create a new record "Save", we want to redirect to the DetailView
 		else if(isset($_REQUEST['action']) && $_REQUEST['action'] == "Save"
 			&& $_REQUEST['return_module'] != 'Activities'
-//BEGIN SUGARCRM flav=pro ONLY
 			&& $_REQUEST['return_module'] != 'WorkFlow'
-//END SUGARCRM flav=pro ONLY
 			&& $_REQUEST['return_module'] != 'Home'
 			&& $_REQUEST['return_module'] != 'Forecasts'
 			&& $_REQUEST['return_module'] != 'Calendar'
 			&& $_REQUEST['return_module'] != 'MailMerge'
-			//BEGIN SUGARCRM flav=pro ONLY
 			&& $_REQUEST['return_module'] != 'TeamNotices'
-			//END SUGARCRM flav=pro ONLY
 			)
 			{
 			    $return_action = 'DetailView';
@@ -336,7 +328,6 @@ function isCloseAndCreateNewPressed() {
            $_REQUEST['isSaveAndNew'] == 'true';
 }
 
-//BEGIN SUGARCRM flav=pro ONLY
 /**
  * This is a helper function to return the url portion of the teams sent
  *
@@ -410,7 +401,6 @@ function get_teams_hidden_inputs($module='') {
 	}
 	return $input;
 }
-//END SUGARCRM flav=pro ONLY
 
 /**
  * Functions from Save2.php

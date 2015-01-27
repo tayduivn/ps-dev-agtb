@@ -64,7 +64,6 @@ if ( !is_admin($focus) ) {
     
     echo $subpanel->display(true,true);
 }
-//BEGIN SUGARCRM flav=pro ONLY
 if ( empty($hideTeams) ) {
     $focus_list =$focus->get_my_teams(TRUE);
     
@@ -77,4 +76,3 @@ if ( empty($hideTeams) ) {
         $SubPanel->ProcessSubPanelListView("modules/Teams/SubPanelViewUsers.html", $mod_strings, 'DetailView');
     }
 }
-//END SUGARCRM flav=pro ONLY

@@ -16,8 +16,6 @@ SUGAR.default_inbound_accnt_id = '{$defaultOutID}';
 SUGAR.email2.userPrefs = {$userPrefs};
 SUGAR.email2.signatures = {$defaultSignature};
 {$tinyMCE}
-<!--//BEGIN SUGARCRM flav=pro ONLY -->
 SUGAR.email2.composeLayout.teams = {$teamsdata};
-<!--//END SUGARCRM flav=pro ONLY -->
 linkBeans = {$linkBeans};
 {$lang}

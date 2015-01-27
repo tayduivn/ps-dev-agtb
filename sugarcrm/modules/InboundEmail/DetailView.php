@@ -256,7 +256,6 @@ $xtpl->assign('EMAIL_NUM_AUTOREPLIES_24_HOURS', $email_num_autoreplies_24_hours)
 if(!empty($focus->port)) {
 	$xtpl->assign('PORT', $focus->port);
 }
-//BEGIN SUGARCRM flav=pro ONLY
 if(!empty($focus->team_id)) {
 	require_once('modules/Teams/TeamSetManager.php');
 	$team_name = TeamSetManager::getCommaDelimitedTeams($focus->team_set_id, $focus->team_id, true);
@@ -266,7 +265,6 @@ if(!empty($focus->team_id)) {
 	}
 	$xtpl->assign('TEAM_NAME', $team_name);
 }
-//END SUGARCRM flav=pro ONLY
 if($focus->handleIsPersonal()) {
 	$xtpl->assign('LBL_GROUP_QUEUE', $mod_strings['LBL_ASSIGN_TO_USER']);
 } else {

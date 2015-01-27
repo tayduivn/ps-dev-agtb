@@ -27,19 +27,15 @@ $fields_array['Case'] = array ('column_fields' => Array("id"
         , "modified_user_id"
         , "assigned_user_id"
         , "created_by"
-        //BEGIN SUGARCRM flav=pro ONLY
         ,"team_id"
-        //END SUGARCRM flav=pro ONLY
         , "status"
         , "priority"
         , "description"
         , "resolution"
         ),
         'list_fields' => Array('id', 'priority', 'status', 'name', 'account_name', 'case_number', 'account_id', 'assigned_user_name', 'assigned_user_id'
-    //BEGIN SUGARCRM flav=pro ONLY
     , "team_id"
     , "team_name"
-    //END SUGARCRM flav=pro ONLY
         ),
         'required_fields' => array('name'=>1, 'account_name'=>2),
 );

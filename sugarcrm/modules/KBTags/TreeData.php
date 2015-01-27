@@ -379,11 +379,10 @@ function getParentNode($tag_id){
     $docs = array();
     $count = 0;	 
     $query = " select count(kbt.id) doc_count from kbdocuments_kbtags kbt";
-    //BEGIN SUGARCRM flav=pro ONLY
+
     if (!is_admin($current_user)){ 
         $query.= " inner Join team_memberships tm on kbt.team_id = tm.team_id  AND tm.user_id =  '".$current_user->id. "' and tm.deleted = 0 ";
     }
-    //END SUGARCRM flav=pro ONLY
     $query.= " where kbt.kbtag_id='$tag_id' and kbt.deleted=0";
  	$result=$GLOBALS['db']->query($query);    
     $docs = $GLOBALS['db']->fetchByAssoc($result);   
@@ -581,11 +580,10 @@ function get_tag_nodes_for_browsing($parent_id=null){
     $count = 0;  
     $dbType = $GLOBALS['db']->dbType;
     $query = "select count(kb.id) doc_count  from kbdocuments kb";
-    //BEGIN SUGARCRM flav=pro ONLY
+
     if (!is_admin($current_user)){ 
         $query.= " Inner Join team_memberships tm on kb.team_id = tm.team_id  AND tm.user_id =  '".$current_user->id. "' and tm.deleted = 0 ";
     }
-        //END SUGARCRM flav=pro ONLY
     $query.= " where kb.id not in (select kbdocument_id from kbdocuments_kbtags where deleted=0) and kb.deleted = 0";
     $result=$GLOBALS['db']->query($query);    
     $docs = $GLOBALS['db']->fetchByAssoc($result);   

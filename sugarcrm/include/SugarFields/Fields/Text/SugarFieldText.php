@@ -19,13 +19,12 @@ class SugarFieldText extends SugarFieldBase {
 		$displayParams['url2html'] = true;
 		return parent::getDetailViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex);
     }
-    //BEGIN SUGARCRM flav=pro ONLY
+
 	function getWirelessEditViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
 		$displayParams['nl2br'] = true;
 		$displayParams['url2html'] = true;
 		return parent::getWirelessEditViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex);
     }
-    //END SUGARCRM flav=pro ONLY
     function getClassicEditView($field_id='description', $value='', $prefix='', $rich_text=false, $maxlength='', $tabindex=1, $cols=80, $rows=4) {
 
         $this->ss->assign('prefix', $prefix);

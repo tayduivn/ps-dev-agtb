@@ -24,9 +24,8 @@ class KBTag extends SugarBean {
 	var $modified_user_id;
 	var $tag_name;
 	var $parent_tag_id;
-	//BEGIN SUGARCRM flav=pro ONLY
+
 	var $team_id;
-	//END SUGARCRM flav=pro ONLY
 	var $active_date;
 	
 	//additional fields.
@@ -71,10 +70,9 @@ class KBTag extends SugarBean {
 	}
 
 	function save($check_notify = false) {
-        //BEGIN SUGARCRM flav=pro ONLY
+
         //Default the tag id to 1 which will make it global
         $this->team_id = '1';
-        //END SUGARCRM flav=pro ONLY
 		return parent::save($check_notify);
 	}
 	function get_summary_text() {

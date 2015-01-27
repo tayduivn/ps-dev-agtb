@@ -219,17 +219,13 @@ class ViewSugarFieldCollection{
                         $v['displayParams']=array();
                     }
                 }
-                //BEGIN SUGARCRM flav=pro ONLY
                 // Wireless view for Enum type because the wireless view retrieve and translate the list on real time.
                 if($collection_field_vardef['type'] == 'enum'){
                     //TODO Change to an other view
                     $viewtype='WirelessEditView';
                 }else{
-                //END SUGARCRM flav=pro ONLY
                     $viewtype='EditView';
-                //BEGIN SUGARCRM flav=pro ONLY
                 }
-                //END SUGARCRM flav=pro ONLY
                 $name = $collection_field_vardef['name'];
                 // Rearranging the array with name as key instaead of number. This is required for displaySmarty() to assign the good variable.
                 $this->displayParams['collection_field_list'][$name]['vardefName'] = $this->displayParams['collection_field_list'][$k]['name'];
@@ -344,12 +340,9 @@ FRA;
                 } else if($matches[0] == 'Campaigns') {
                     $sqs_objects[$name1] = $qsd->getQSCampaigns();
 
-            //BEGIN SUGARCRM flav=pro ONLY
 
                 } else if($matches[0] == 'Teams') {
                     $sqs_objects[$name1] = $qsd->getQSTeam();
-
-            //END SUGARCRM flav=pro ONLY
                 } else if($matches[0] == 'Users'){
                     $sqs_objects[$name1] = $qsd->getQSUser();
 

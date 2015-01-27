@@ -35,26 +35,20 @@ class EmailTemplate extends SugarBean {
 	var $attachments;
 	var $from_name;
 	var $from_address;
-	//BEGIN SUGARCRM flav=pro ONLY
 	var $team_id;
 	var $assigned_name;
 	var $base_module;
-	//END SUGARCRM flav=pro ONLY
 	var $table_name = "email_templates";
 	var $object_name = "EmailTemplate";
 	var $module_dir = "EmailTemplates";
 	var $new_schema = true;
 	// This is used to retrieve related fields from form posts.
 	var $additional_column_fields = array(
-		//BEGIN SUGARCRM flav=pro ONLY
 		'base_module'
-		//END SUGARCRM flav=pro ONLY
 	);
 	// add fields here that would not make sense in an email template
 	var $badFields = array(
-		//BEGIN SUGARCRM flav=pro ONLY
 		'team_id',
-		//END SUGARCRM flav=pro ONLY
 		'account_description',
 		'contact_id',
 		'lead_id',
@@ -102,14 +96,12 @@ class EmailTemplate extends SugarBean {
 	public function __construct() {
 		parent::__construct();
 
-		//BEGIN SUGARCRM flav=pro ONLY
 		global $current_user;
 		if(!empty($current_user)) {
 			$this->team_id = $current_user->default_team;	//default_team is a team id
 		} else {
 			$this->team_id = 1; // make the item globally accessible
 		}
-		//END SUGARCRM flav=pro ONLY
 	}
 
 	/**
@@ -206,11 +198,9 @@ class EmailTemplate extends SugarBean {
 		global $app_list_strings, $focus, $action, $currentModule;
 		$fields = $this->get_list_view_array();
 		$fields["DATE_MODIFIED"] = substr($fields["DATE_MODIFIED"], 0 , 10);
-		//BEGIN SUGARCRM flav=pro ONLY
 		if($fields['BASE_MODULE']!='') {
             $fields['BASE_MODULE'] = $app_list_strings['moduleList'][$fields['BASE_MODULE']];
 		}
-		//END SUGARCRM flav=pro ONLY
 		return $fields;
 	}
 

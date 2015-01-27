@@ -30,10 +30,8 @@ $fields_array['KBDocument'] = array ('column_fields' => Array("id"
 //BEGIN SUGARCRM flav=ent ONLY
 		,"is_external_article"
 //END SUGARCRM flav=ent ONLY
-//BEGIN SUGARCRM flav=pro ONLY
 
 		,"team_id"
-//END SUGARCRM flav=pro ONLY
 		,"kbdocument_revision_id"
 		,"related_doc_id"
 		,"related_doc_rev_id"
@@ -55,9 +53,7 @@ $fields_array['KBDocument'] = array ('column_fields' => Array("id"
 		,"kbdoc_approver_id"
 		,"kbdoc_approver_name"
 		,"modified_user_id"
-//BEGIN SUGARCRM flav=pro ONLY
 		,"team_id"
-//END SUGARCRM flav=pro ONLY
 		,"kbdocument_revision_id"
 		,"last_rev_create_date"
 		,"last_rev_created_by"

@@ -20,7 +20,6 @@ class DropDownBrowser
         'eapm_list_import',
         'extapi_meeting_password',
         'Elastic_boost_options',
-        //BEGIN SUGARCRM flav=pro ONLY
         'commit_stage_dom',
         'commit_stage_custom_dom',
         'commit_stage_binary_dom',
@@ -30,7 +29,6 @@ class DropDownBrowser
         'forecasts_config_worksheet_layout_forecast_by_options_dom',
         'forecasts_timeperiod_options_dom',
         'generic_timeperiod_options',
-        //END SUGARCRM flav=pro ONLY
         // 'moduleList', // We may want to put this in at a later date
         // 'moduleListSingular', // Same with this
     );

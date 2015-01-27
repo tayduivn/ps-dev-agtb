@@ -25,9 +25,7 @@ class Email extends SugarBean {
 	var $assigned_user_name;
 	var $modified_user_id;
 	var $created_by;
-	//BEGIN SUGARCRM flav=pro ONLY
 	var $team_id;
-	//END SUGARCRM flav=pro ONLY
 	var $deleted;
 	var $from_addr;
 	var $reply_to_addr;
@@ -158,9 +156,7 @@ class Email extends SugarBean {
 	    global $current_user;
 	    $this->cachePath = sugar_cached('modules/Emails');
 		parent::__construct();
-		//BEGIN SUGARCRM flav=pro ONLY
 		$this->team_id = 1; // make the item globally accessible
-		//END SUGARCRM flav=pro ONLY
 
 		$this->emailAddress = BeanFactory::getBean('EmailAddresses');
 
@@ -647,12 +643,10 @@ class Email extends SugarBean {
                             $note->name           = $filename;
                             $note->filename       = $filename;
                             $note->file_mime_type = $this->email2GetMime($fileLocation);
-                            //BEGIN SUGARCRM flav=pro ONLY
                             $note->team_id     = (isset($_REQUEST['primaryteam']) ? $_REQUEST['primaryteam'] : $current_user->getPrivateTeamID());
                             $noteTeamSet       = new TeamSet();
                             $noteteamIdsArray  = (isset($_REQUEST['teamIds']) ? explode(",", $_REQUEST['teamIds']) : array($current_user->getPrivateTeamID()));
                             $note->team_set_id = $noteTeamSet->addTeams($noteteamIdsArray);
-                            //END SUGARCRM flav=pro ONLY
                             $dest = "upload://{$note->id}";
 
                             if (!file_exists($fileLocation) || (!copy($fileLocation, $dest))) {
@@ -715,10 +709,8 @@ class Email extends SugarBean {
                             $note->name           = $filename;
                             $note->filename       = $filename;
                             $note->file_mime_type = $documentRevision->file_mime_type;
-                            //BEGIN SUGARCRM flav=pro ONLY
                             $note->team_id     = $this->team_id;
                             $note->team_set_id = $this->team_set_id;
-                            //END SUGARCRM flav=pro ONLY
                             $dest = "upload://{$note->id}";
                             if (!file_exists($fileLocation) || (!copy($fileLocation, $dest))) {
                                 $GLOBALS['log']->debug("EMAIL 2.0: could not copy SugarDocument revision file $fileLocation => $dest");
@@ -873,12 +865,10 @@ class Email extends SugarBean {
 			$this->cc_addrs_names = $_REQUEST['sendCc'];
 			$this->bcc_addrs = $_REQUEST['sendBcc'];
 			$this->bcc_addrs_names = $_REQUEST['sendBcc'];
-			//BEGIN SUGARCRM flav=pro ONLY
 			$this->team_id = (isset($_REQUEST['primaryteam']) ?  $_REQUEST['primaryteam'] : $current_user->getPrivateTeamID());
 			$teamSet = BeanFactory::getBean('TeamSets');
 			$teamIdsArray = (isset($_REQUEST['teamIds']) ?  explode(",", $_REQUEST['teamIds']) : array($current_user->getPrivateTeamID()));
 			$this->team_set_id = $teamSet->addTeams($teamIdsArray);
-			//END SUGARCRM flav=pro ONLY
 			$this->assigned_user_id = $current_user->id;
 
 			$this->date_sent = $timedate->now();
@@ -983,7 +973,6 @@ class Email extends SugarBean {
                 // For CE, just get primary e-mail address
                 $emailAddress = $bean->email1;
 
-                //BEGIN SUGARCRM flav=pro ONLY
                 $emailAddress = '';
                 // If has access to primary mail, use it
                 if ($bean->ACLFieldAccess('email1', 'read'))
@@ -995,7 +984,6 @@ class Email extends SugarBean {
                 {
                     $emailAddress = $bean->email2;
                 }
-                //END SUGARCRM flav=pro ONLY
 
                 // If we have an e-mail address loaded
                 if (!empty($emailAddress))
@@ -1108,10 +1096,8 @@ class Email extends SugarBean {
 	    $tmpNote->name = $filename;
 	    $tmpNote->filename = $filename;
 	    $tmpNote->file_mime_type = $mimeType;
-	    //BEGIN SUGARCRM flav=pro ONLY
 	    $tmpNote->team_id = $this->team_id;
 	    $tmpNote->team_set_id = $this->team_set_id;
-	    //END SUGARCRM flav=pro ONLY
 	    $noteFile = "upload://{$tmpNote->id}";
         if(!file_exists($fileLocation) || (!copy($fileLocation, $noteFile))) {
     	    $GLOBALS['log']->fatal("EMAIL 2.0: could not copy SugarDocument revision file $fileLocation => $noteFile");
@@ -1788,9 +1774,7 @@ class Email extends SugarBean {
 				$noteTemplate->parent_type = $this->module_dir;
 				$noteTemplate->date_entered = '';
 				$noteTemplate->save();
-				//BEGIN SUGARCRM flav=pro ONLY
 				$noteTemplate->team_id = $this->team_id;
-				//END SUGARCRM flav=pro ONLY
 
 				$noteFile = new UploadFile();
 				$noteFile->duplicate_file($noteId, $noteTemplate->id, $noteTemplate->filename);
@@ -1851,9 +1835,7 @@ class Email extends SugarBean {
 				$note->filename = $upload_file->get_stored_file_name();
 				$note->file = $upload_file;
 				$note->name = $mod_strings['LBL_EMAIL_ATTACHMENT'].': '.$note->file->original_file_name;
-				//BEGIN SUGARCRM flav=pro ONLY
 				$note->team_id = $this->team_id;
-				//END SUGARCRM flav=pro ONLY
 
 				$this->attachments[] = $note;
 			}
@@ -2244,11 +2226,9 @@ class Email extends SugarBean {
     	if ($where != "" && (strpos($where, "contacts.first_name") > 0))  {
 			$query .= " LEFT JOIN emails_beans ON emails.id = emails_beans.email_id\n";
     	}
-		//BEGIN SUGARCRM flav=pro ONLY
 		// We need to confirm that the user is a member of the team of the item.
 		$this->addVisibilityFrom($query, array('where_condition' => true));
     	$query .= " LEFT JOIN teams ON emails.team_id=teams.id";
-    	//END SUGARCRM flav=pro ONLY
 
     	$query .= " LEFT JOIN users ON emails.assigned_user_id=users.id \n";
     	if ($where != "" && (strpos($where, "contacts.first_name") > 0))  {
@@ -2610,9 +2590,7 @@ class Email extends SugarBean {
                                     AND er_to.address_type='to' AND ea_to.email_address LIKE '%" . $to_addrs . "%'";
         }
 
-        //BEGIN SUGARCRM flav=pro ONLY
 		$this->add_team_security_where_clause($query['joins']);
-		//END SUGARCRM flav=pro ONLY
         $query['where'] = " WHERE (emails.type= 'inbound' OR emails.type='archived' OR emails.type='out') AND emails.deleted = 0 ";
 		if( !empty($additionalWhereClause) )
     	    $query['where'] .= "AND $additionalWhereClause";
@@ -2744,13 +2722,11 @@ class Email extends SugarBean {
 		$distribution	= get_select_options_with_id($app_list_strings['dom_email_distribution'], '');
 		$_SESSION['distribute_where'] = $where;
 
-		//BEGIN SUGARCRM flav=pro ONLY
 		require_once('include/SugarFields/Fields/Teamset/EmailSugarFieldTeamsetCollection.php');
 		$teamSetField = new EmailSugarFieldTeamsetCollection($this, $this->field_defs, '', 'Distribute');
 		$code = $teamSetField->get_code();
 		$sqs_objects = $teamSetField->createQuickSearchCode(true);
 		$teamWidget = $code.$sqs_objects;
-		//END SUGARCRM flav=pro ONLY
 
 		$out = '<form name="Distribute" id="Distribute">';
 		$out .= get_form_header($mod_strings['LBL_DIST_TITLE'], '', false);
@@ -2862,13 +2838,11 @@ eoq;
 					$out .= '</td>
 							</tr>';
 
-					//BEGIN SUGARCRM flav=pro ONLY
 					$out .= '<tr><td/>';
 					$out .= '<td>'.translate('LBL_TEAMS', 'EmailTemplates');
 					$out .= $teamWidget;
 					$out .= '</td>
 							</tr>';
-					//END SUGARCRM flav=pro ONLY
 
 					$out .= '<tr>
 								<td scope="col" width="50%" scope="row" NOWRAP align="right" colspan="2">
@@ -2893,7 +2867,6 @@ eoq;
 		$colspan = 1;
 		$setTeamUserFunction = '';
 
-		//BEGIN SUGARCRM flav=pro ONLY
 		$colspan++;
 		$teams = array();
 
@@ -2931,8 +2904,6 @@ eoq;
 		$setTeamUserFunction .= 'setCheckMark();';
 		$setTeamUserFunction .= 'return;';
 		$setTeamUserFunction .= '}';
-
-		//END SUGARCRM flav=pro ONLY
 
 		// get users
 		$r = $this->db->query("SELECT users.id, users.user_name, users.first_name, users.last_name FROM users WHERE deleted=0 AND status = 'Active' AND is_group=0 ORDER BY users.last_name, users.first_name");
@@ -3011,11 +2982,9 @@ eoq;
 					</tr>
 					<tr>';
 //<td valign="middle" height="30"  colspan="'.$colspan.'" id="hiddenhead" onClick="hideUserSelect();" onMouseOver="this.style.border = \'outset red 1px\';" onMouseOut="this.style.border = \'inset white 0px\';this.style.borderBottom = \'inset red 1px\';">
-//BEGIN SUGARCRM flav=pro ONLY
 		$out .= '		<td style="padding:5px" class="oddListRowS1" bgcolor="#fdfdfd" valign="top" align="left" style="left:0;top:0;">';
 		$out .= $teamTable;
 		$out .= '		</td>';
-//END SUGARCRM flav=pro ONLY
 		$out .=	'		<td style="padding:5px" class="oddListRowS1" bgcolor="#fdfdfd" valign="top" align="left" style="left:0;top:0;">
 							'.$userTable.'
 						</td>

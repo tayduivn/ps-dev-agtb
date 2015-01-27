@@ -170,14 +170,12 @@ if (isset($_REQUEST['run_query']) && ($_REQUEST['run_query'] == 1)) {
 	if ($_REQUEST['assigned_user_id'] == $current_user->id)
 		$isOwner = 1;
 	$sugar_smarty->assign("IS_OWNER", $isOwner);
-	//BEGIN SUGARCRM flav=pro ONLY
 	require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
 	$teamSetField = new SugarFieldTeamset('Teamset');
 	$field_defs = VardefManager::loadVardef('Reports', 'SavedReport');
 	$teamSetField->initClassicView($GLOBALS['dictionary']['SavedReport']['fields'], 'ReportsWizardForm');
 	$team_html = $teamSetField->getClassicView();
 	$sugar_smarty->assign("TEAM_HTML", $team_html);
-	//END SUGARCRM flav=pro ONLY
 	$sugar_smarty->assign("USER_HTML", $assigned_user_html);
 	$sugar_smarty->assign("report_offset", $args['reporter']->report_offset);
 	$sugar_smarty->assign("chart_description", htmlentities( $args['reporter']->chart_description, ENT_QUOTES, 'UTF-8'));
@@ -249,7 +247,6 @@ else if (isset($_REQUEST['save_report']) && ($_REQUEST['save_report'] == 'on')) 
 		if ($_REQUEST['assigned_user_id'] == $current_user->id)
 			$isOwner = 1;
 		$sugar_smarty->assign("IS_OWNER", $isOwner);
-		//BEGIN SUGARCRM flav=pro ONLY
 		require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
 		$teamSetField = new SugarFieldTeamset('Teamset');
 		$field_defs = VardefManager::loadVardef('Reports', 'SavedReport');
@@ -257,7 +254,6 @@ else if (isset($_REQUEST['save_report']) && ($_REQUEST['save_report'] == 'on')) 
 		$team_html = $teamSetField->getClassicView();
 
 		$sugar_smarty->assign("TEAM_HTML", $team_html);
-		//END SUGARCRM flav=pro ONLY
 		$sugar_smarty->assign("USER_HTML", $assigned_user_html);
 		$sugar_smarty->assign("report_offset", $args['reporter']->report_offset);
 		$sugar_smarty->assign("chart_description", htmlentities( $args['reporter']->chart_description, ENT_QUOTES, 'UTF-8'));
@@ -359,7 +355,6 @@ else if (!empty($_REQUEST['id'])) {
 	if ($saved_report_seed->assigned_user_id == $current_user->id)
 		$isOwner = 1;
 	$sugar_smarty->assign("IS_OWNER", $isOwner);
-	//BEGIN SUGARCRM flav=pro ONLY
 	require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
 	$teamSetField = new SugarFieldTeamset('Teamset');
 	$field_defs = VardefManager::loadVardef('Reports', 'SavedReport');
@@ -367,7 +362,6 @@ else if (!empty($_REQUEST['id'])) {
 	$team_html = $teamSetField->getClassicView();
 
 	$sugar_smarty->assign("TEAM_HTML", $team_html);
-	//END SUGARCRM flav=pro ONLY
 	$sugar_smarty->assign("USER_HTML", $assigned_user_html);
 	$sugar_smarty->assign("report_offset", $args['reporter']->report_offset);
 	$sugar_smarty->assign("chart_description", htmlentities( $args['reporter']->chart_description, ENT_QUOTES, 'UTF-8'));
@@ -388,14 +382,12 @@ else {
 	$assigned_user_html = get_select_related_html($assigned_user_html_def);
 
 	$sugar_smarty->assign("do_round", 1);
-	//BEGIN SUGARCRM flav=pro ONLY
 	require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
 	$teamSetField = new SugarFieldTeamset('Teamset');
 	$field_defs = VardefManager::loadVardef('Reports', 'SavedReport');
 	$teamSetField->initClassicView($GLOBALS['dictionary']['SavedReport']['fields'], 'ReportsWizardForm');
 	$team_html = $teamSetField->getClassicView();
 	$sugar_smarty->assign("TEAM_HTML", $team_html);
-	//END SUGARCRM flav=pro ONLY
 	$sugar_smarty->assign("USER_HTML", $assigned_user_html);
 	$sugar_smarty->assign("report_offset", $args['reporter']->report_offset);
 	$sugar_smarty->assign("chart_description", htmlentities( $args['reporter']->chart_description, ENT_QUOTES, 'UTF-8'));

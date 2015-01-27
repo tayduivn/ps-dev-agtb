@@ -111,8 +111,7 @@ $dictionary['KBTag'] = array('table' => 'kbtags'
 );
 
 VardefManager::createVardef('KBTags','KBTag', array(
-//BEGIN SUGARCRM flav=pro ONLY
+
 'team_security',
-//END SUGARCRM flav=pro ONLY
 ));
 ?>

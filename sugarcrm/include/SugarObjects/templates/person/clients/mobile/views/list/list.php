@@ -25,7 +25,6 @@ $viewdefs[$module_name]['mobile']['view']['list'] = array(
                     'link' => true,
                     'related_fields' => array('first_name', 'last_name', 'salutation'),
                 ),
-                //BEGIN SUGARCRM flav=pro ONLY
                 array(
                     'name' => 'team_name',
                     'label' => 'LBL_TEAM',
@@ -33,7 +32,6 @@ $viewdefs[$module_name]['mobile']['view']['list'] = array(
                     'default' => true,
                     'enabled' => true,
                 ),
-                //END SUGARCRM flav=pro ONLY
                 array(
                     'name' => 'assigned_user_name',
                     'label' => 'LBL_ASSIGNED_TO_NAME',

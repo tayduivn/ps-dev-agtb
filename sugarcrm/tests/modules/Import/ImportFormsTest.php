@@ -174,7 +174,6 @@ class ImportFormsTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertRegExp('/type=\'text\'/',$html);
         $this->assertRegExp('/value=\'poo\'/',$html);
     }
-    //BEGIN SUGARCRM flav=pro ONLY
     /**
      * @ticket 32626
      */
@@ -184,7 +183,6 @@ class ImportFormsTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertNotContains('manufacturer_status_dom',$html);
     }
-    //END SUGARCRM flav=pro ONLY
 
     /**
      * @group bug41447

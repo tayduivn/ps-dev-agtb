@@ -24,10 +24,8 @@ require_once('modules/Cases/Case.php');
 //ignore notices
 error_reporting(E_ALL ^ E_NOTICE);
 
-//BEGIN SUGARCRM flav=pro ONLY
 checkSystemLicenseStatus();
 checkSystemState();
-//END SUGARCRM flav=pro ONLY
 
 global $HTTP_RAW_POST_DATA;
 
@@ -51,10 +49,8 @@ require_once('soap/SoapDeprecated.php');
 require_once('soap/SoapStudio.php');
 //END SUGARCRM flav=int ONLY
 
-//BEGIN SUGARCRM flav=pro ONLY
 require_once('soap/SoapSync.php');
 require_once('soap/SoapUpgradeUtils.php');
-//END SUGARCRM flav=pro ONLY
 
 /* Begin the HTTP listener service and exit. */
 ob_clean();

@@ -19,7 +19,6 @@ $searchFields['Contracts'] =
         'start_date' => array( 'query_type'=>'default'),      
         'end_date' => array( 'query_type'=>'default'),      
         'assigned_user_id'=> array('query_type'=>'default'),
-		//BEGIN SUGARCRM flav=pro ONLY
 		'favorites_only' => array(
             'query_type'=>'format',
 			'operator' => 'subquery',
@@ -28,7 +27,6 @@ $searchFields['Contracts'] =
 			                        and sugarfavorites.module = \'Contracts\' 
 			                        and sugarfavorites.assigned_user_id = {0}',
 			'db_field'=>array('id')),
-		//END SUGARCRM flav=pro ONLY
 		//Range Search Support 
 	   'range_date_entered' => array ('query_type' => 'default', 'enable_range_search' => true, 'is_date_field' => true),
 	   'start_range_date_entered' => array ('query_type' => 'default',  'enable_range_search' => true, 'is_date_field' => true),

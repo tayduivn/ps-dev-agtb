@@ -57,7 +57,6 @@ function parent_typechangeQS() {
 </tbody></table>
 <table border="0" cellpadding="0" cellspacing="1" width="100%">
 <tbody>
-<!--//BEGIN SUGARCRM flav=pro ONLY -->
 {if $showTeam}
 <tr>
 <td scope="row" nowrap="nowrap" valign="top" width="12%">
@@ -70,7 +69,6 @@ function parent_typechangeQS() {
 {$TEAM_SET_FIELD}
 </td></tr>
 {/if}
-<!--//END SUGARCRM flav=pro ONLY -->
 <tr>
 {if $showAssignedTo}
 <td scope="row" nowrap="nowrap" valign="top" width="12%">

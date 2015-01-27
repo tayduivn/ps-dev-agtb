@@ -48,9 +48,8 @@ $viewdefs['Contacts']['mobile']['view']['detail'] = array(
                 'alt_address_country',
                 'assigned_user_name',
                 'picture',
-                //BEGIN SUGARCRM flav=pro ONLY
+
                 'team_name',
-                //END SUGARCRM flav=pro ONLY
             ),
         )
     )

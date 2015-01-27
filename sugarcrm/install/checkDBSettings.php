@@ -13,7 +13,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 // $Id: checkSystem.php 19538 2007-01-23 01:16:25 +0000 (Tue, 23 Jan 2007) chris $
 
-//BEGIN SUGARCRM flav=pro ONLY
 function checkFTSSettings()
 {
     installLog("Begining to check FTS Settings.");
@@ -29,7 +28,6 @@ function checkFTSSettings()
 
     return $status['valid'];
 }
-//END SUGARCRM flav=pro ONLY
 
 function checkDBSettings($silent=false) {
 
@@ -177,7 +175,6 @@ function checkDBSettings($silent=false) {
             }
         }
 
-        //BEGIN SUGARCRM flav=pro ONLY
         //Test FTS Settings
         if (empty($_SESSION['setup_fts_type'])) {
             installLog("ERROR:: Elastic Search is required.");
@@ -188,7 +185,6 @@ function checkDBSettings($silent=false) {
                 $errors['ERR_FTS'] = $mod_strings['LBL_FTS_ERROR'];
             }
         }
-        //END SUGARCRM flav=pro ONLY
 
         if($silent){
             return $errors;

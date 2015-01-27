@@ -39,9 +39,7 @@
             	{assign var="EMAIL_REMINDER_TIME_DISPLAY" value="inline"}
         {/if}
 
-{* //BEGIN SUGARCRM flav=pro ONLY *}
 {if $view == "EditView" || $view == "QuickCreate" || $view == "QuickEdit" || $view == "wirelessedit"}
-{* //END SUGARCRM flav=pro ONLY *}
 
 {* //BEGIN SUGARCRM flav!=pro ONLY *}
 {if $view == "EditView" || $view == "QuickCreate" || $view == "QuickEdit"}

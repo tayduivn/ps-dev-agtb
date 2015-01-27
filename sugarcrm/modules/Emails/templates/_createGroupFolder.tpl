@@ -39,7 +39,6 @@ currentFolders = {$group_folder_array};
 	}
 
 	function checkTeamSetData() {
-	<!--//BEGIN SUGARCRM flav=pro ONLY -->
         if (!SUGAR.collection.prototype.validateTemSet('EditView', 'team_name')) {
         	alert({/literal}'{$app_strings.ERR_NO_PRIMARY_TEAM_SPECIFIED}'{literal});
         	return false;
@@ -48,7 +47,6 @@ currentFolders = {$group_folder_array};
 		var primaryTeamId = SUGAR.collection.prototype.getPrimaryTeamidsFromUI('EditView', 'team_name');
 		document.getElementById('primaryTeamId').value = primaryTeamId;
 		document.getElementById('teamIds').value = teamIdsArray.join(",");
-	<!--//END SUGARCRM flav=pro ONLY -->
 		return true
 	} // fn
 
@@ -83,10 +81,8 @@ currentFolders = {$group_folder_array};
 	<input type="hidden" name="return_action">
 	<input type="hidden" name="return_id">
 	<input type="hidden" name="groupFoldersUser" value="">
-	<!--//BEGIN SUGARCRM flav=pro ONLY -->
 	<input type="hidden" id="primaryTeamId" name="primaryTeamId">
 	<input type="hidden" id="teamIds" name="teamIds">
-	<!--//END SUGARCRM flav=pro ONLY -->
 
 
 	<table width="100%" border="0" align="center" cellspacing="{$GRIDLINE}" cellpadding="0">
@@ -115,7 +111,6 @@ currentFolders = {$group_folder_array};
 				<select name="groupFoldersAdd" id="groupFoldersAdd">{$group_folder_options}</select>
 			</div>
 			<br />
-			<!--//BEGIN SUGARCRM flav=pro ONLY -->
 			<div>
 				{$app_strings.LBL_EMAIL_FOLDERS_USING_TEAM}:
 			</div>
@@ -123,7 +118,6 @@ currentFolders = {$group_folder_array};
 				{$TEAM_SET_FIELD}
 			</div>
 			<br />
-			<!--//END SUGARCRM flav=pro ONLY -->
 			<input type="button" style="{$createGroupFolderStyle}" class="button" value="   {$app_strings.LBL_EMAIL_FOLDERS_ADD_NEW_FOLDER}   " {literal} onclick="addNewGroupFolder();" {/literal}>
 			<input type="button" style="{$editGroupFolderStyle}" class="button" value="   {$app_strings.LBL_EMAIL_SAVE}   " onclick="editGroupFolder();" >
 			<input type="button" class="button" value="   {$app_strings.LBL_EMAIL_CLOSE}   " onclick="window.close();">

@@ -93,7 +93,7 @@ class SugarFieldDatetimecombo extends SugarFieldBase {
         return $this->fetch($this->findTemplate('SearchView'));
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
+
     function getWirelessEditViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
     	global $timedate;
     	$datetime_prefs = $GLOBALS['current_user']->getUserDateTimePreferences();
@@ -122,7 +122,6 @@ class SugarFieldDatetimecombo extends SugarFieldBase {
     	$this->setup($parentFieldArray, $vardef, $displayParams, $tabindex, false);
     	return $this->fetch($this->findTemplate('WirelessEditView'));
     }
-    //END SUGARCRM flav=pro ONLY
 
 	public function getEmailTemplateValue($inputField, $vardef, $context = null, $tabindex = 0){
         // This does not return a smarty section, instead it returns a direct value

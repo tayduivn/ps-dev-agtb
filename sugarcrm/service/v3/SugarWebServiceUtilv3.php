@@ -230,7 +230,6 @@ class SugarWebServiceUtilv3 extends SoapHelperWebServices {
 	    $results = array();
 	    switch ($type)
 	    {
-//BEGIN SUGARCRM flav=pro ONLY
 	        case 'wireless':
 	            $defs = SugarAutoLoader::existingCustomOne('modules/'.$module.'/metadata/wireless.subpaneldefs.php');
 	            if($defs) {
@@ -242,8 +241,6 @@ class SugarWebServiceUtilv3 extends SoapHelperWebServices {
                     require $defs;
                 }
 	            break;
-
-//END SUGARCRM flav=pro ONLY
 	        case 'default':
 	        default:
 	            $defs = SugarAutoLoader::loadWithMetafiles($module, 'subpaneldefs');
@@ -294,7 +291,6 @@ class SugarWebServiceUtilv3 extends SoapHelperWebServices {
         return $results;
     }
 
-//BEGIN SUGARCRM flav=pro ONLY
     /**
      * Examine the wireless_module_registry to determine which modules have been enabled for the mobile view.
      *
@@ -316,8 +312,6 @@ class SugarWebServiceUtilv3 extends SoapHelperWebServices {
 
         return $enabled_modules;
     }
-
-//END SUGARCRM flav=pro ONLY
     /**
      * Examine the application to determine which modules have been enabled..
      *

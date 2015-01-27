@@ -45,14 +45,12 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $GLOBALS['ACLActions'] = array(
 	'module'=>array('actions'=>
 						array(
-						//BEGIN SUGARCRM flav=pro ONLY
 						'admin'=>
 								array(
 									'aclaccess'=>array( ACL_ALLOW_NORMAL,ACL_ALLOW_DEFAULT, ACL_ALLOW_ADMIN, ACL_ALLOW_DEV, ACL_ALLOW_ADMIN_DEV),
 									'label'=>'LBL_ACTION_ADMIN',
 									'default'=>ACL_ALLOW_NORMAL,
 								),
-							//END SUGARCRM flav=pro ONLY
 						'access'=>
 								array(
 									'aclaccess'=>array(ACL_ALLOW_ENABLED,ACL_ALLOW_DEFAULT, ACL_ALLOW_DISABLED),
@@ -108,7 +106,6 @@ $GLOBALS['ACLActions'] = array(
 
 
 				),),
-//BEGIN SUGARCRM flav=pro ONLY
 'Tracker'=>array('actions'=>
 						array(
 						'admin'=>
@@ -358,7 +355,6 @@ $GLOBALS['ACLActions'] = array(
 								),
 						),
 				),
-//END SUGARCRM flav=pro ONLY
 );
 
 

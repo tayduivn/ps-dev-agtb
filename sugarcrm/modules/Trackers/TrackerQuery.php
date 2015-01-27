@@ -29,9 +29,8 @@ class TrackerQuery extends SugarBean {
     var $acltype = 'TrackerQuery';
     var $acl_category = 'TrackerQueries';
     var $disable_custom_fields = true;
-    //BEGIN SUGARCRM flav=pro ONLY
+
     var $disable_row_level_security = true;
-    //END SUGARCRM flav=pro ONLY
 
     function bean_implements($interface){
         switch($interface){

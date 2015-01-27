@@ -20,7 +20,6 @@ $viewdefs['ProjectTask']['EditView'] = array(
                             'includes'=> array(
                                             array('file'=>'modules/ProjectTask/ProjectTask.js'),
                                          ),                                        
-							//BEGIN SUGARCRM flav=pro ONLY
                             'form' => array(
 										'buttons' => array(		
 				                            				array( 'customCode' => '{if $FROM_GRID}<input title="{$APP.LBL_SAVE_BUTTON_TITLE}" accessKey="{$APP.LBL_SAVE_BUTTON_KEY}" class="button" '.
@@ -47,7 +46,6 @@ $viewdefs['ProjectTask']['EditView'] = array(
 															),
 														),
 							),
-							//END SUGARCRM flav=pro ONLY
     ),
  'panels' =>array (
   'default' => 
@@ -61,14 +59,11 @@ $viewdefs['ProjectTask']['EditView'] = array(
       
       array (
         'name' => 'project_task_id',
-        //BEGIN SUGARCRM flav=pro ONLY
         'type' => 'readonly',
-        //END SUGARCRM flav=pro ONLY
         'label' => 'LBL_TASK_ID',
       ),
     ),
 
-	//BEGIN SUGARCRM flav=pro ONLY
     array (
       array (
       	'name' => 'duration',
@@ -76,21 +71,16 @@ $viewdefs['ProjectTask']['EditView'] = array(
       	'customCode' => '{$fields.duration.value}&nbsp;{$fields.duration_unit.value}',
       ),
     ),
-  	//END SUGARCRM flav=pro ONLY
   	    
     array (  
       array (
         'name' => 'date_start',
-        //BEGIN SUGARCRM flav=pro ONLY
         'type' => 'readonly',
-        //END SUGARCRM flav=pro ONLY
       ),
       
       array (
         'name' => 'date_finish',
-        //BEGIN SUGARCRM flav=pro ONLY
         'type' => 'readonly',
-        //END SUGARCRM flav=pro ONLY
       ),
     ),
     //BEGIN SUGARCRM flav=com ONLY
@@ -112,19 +102,14 @@ $viewdefs['ProjectTask']['EditView'] = array(
       
       array (
         'name' => 'percent_complete',
-        //BEGIN SUGARCRM flav=pro ONLY
         /*
-        //END SUGARCRM flav=pro ONLY
         'customCode' => '<input type="text" name="{$fields.percent_complete.name}" id="{$fields.percent_complete.name}" size="30" value="{$fields.percent_complete.value}" title="" tabindex="0" onChange="update_status(this.value);" /></tr>',
-        //BEGIN SUGARCRM flav=pro ONLY
         */
-		'customCode' => '<span id="percent_complete_text">{$fields.percent_complete.value}</span><input type="hidden" name="{$fields.percent_complete.name}" id="{$fields.percent_complete.name}" value="{$fields.percent_complete.value}" /></tr>',        
-        //END SUGARCRM flav=pro ONLY
+		'customCode' => '<span id="percent_complete_text">{$fields.percent_complete.value}</span><input type="hidden" name="{$fields.percent_complete.name}" id="{$fields.percent_complete.name}" value="{$fields.percent_complete.value}" /></tr>',
       ),
     ),
 
     
-	//BEGIN SUGARCRM flav=pro ONLY
     array (
       array(
       	'name' => 'resource_id',
@@ -138,7 +123,6 @@ $viewdefs['ProjectTask']['EditView'] = array(
 	        'label' => 'LBL_TEAM',
 		),
     ),
-    //END SUGARCRM flav=pro ONLY
     
     array (
       	'milestone_flag',
@@ -148,19 +132,15 @@ $viewdefs['ProjectTask']['EditView'] = array(
       
       array (
         'name' => 'project_name',
-        //BEGIN SUGARCRM flav=pro ONLY
         'type' => 'readonly',
         'customCode' => '<a href="index.php?module=Project&action=DetailView&record={$fields.project_id.value}">{$fields.project_name.value}&nbsp;</a>',
-       	//END SUGARCRM flav=pro ONLY
         'label' => 'LBL_PROJECT_NAME',
       ),
-      //BEGIN SUGARCRM flav=pro ONLY
       array(
       	'name' => 'actual_duration',
       	'customCode' => '<input id="actual_duration" type="text" tabindex="2" value="{$fields.actual_duration.value}" size="3" name="actual_duration"/>&nbsp;{$fields.duration_unit.value}',
       	'label' => 'LBL_ACTUAL_DURATION',
       ),
-      //END SUGARCRM flav=pro ONLY
     ),
     array (
 
@@ -178,9 +158,7 @@ $viewdefs['ProjectTask']['EditView'] = array(
         'name' => 'description',
       ),
     ),
-    //BEGIN SUGARCRM flav=pro ONLY
     /*
-    //END SUGARCRM flav=pro ONLY
   	//BEGIN SUGARCRM flav=com ONLY
     array (
       array (
@@ -197,9 +175,7 @@ $viewdefs['ProjectTask']['EditView'] = array(
       	),
     ),
     //END SUGARCRM flav=com ONLY
-    //BEGIN SUGARCRM flav=pro ONLY
-     */    
-    //END SUGARCRM flav=pro ONLY
+     */
   ),
 )
 

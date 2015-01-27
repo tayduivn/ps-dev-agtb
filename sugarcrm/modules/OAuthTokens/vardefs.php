@@ -12,9 +12,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 $dictionary['OAuthToken'] = array(
     'table' => 'oauth_tokens',
-//BEGIN SUGARCRM flav=pro ONLY
     'favorites' => false,
-//END SUGARCRM flav=pro ONLY
     'comment' => 'OAuth tokens',
     'audited' => false,
     'fields' => array (

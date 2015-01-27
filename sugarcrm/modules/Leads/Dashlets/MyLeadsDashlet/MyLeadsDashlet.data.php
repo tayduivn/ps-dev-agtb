@@ -18,9 +18,7 @@ $dashletData['MyLeadsDashlet']['searchFields'] = array('date_entered'     => arr
 													   'title' => array('default' => ''),
 													   'primary_address_country' => array('default' => ''),
                                                        //'status'           => array('default' => array('New', 'Assigned', 'In Process')), 
-                                                        //BEGIN SUGARCRM flav=pro ONLY
                                                        'team_id'          => array('default' => '', 'label'=>'LBL_TEAMS'),
-                                                        //END SUGARCRM flav=pro ONLY
 													   'assigned_user_id' => array('type'    => 'assigned_user_name',
 																				   'label'   => 'LBL_ASSIGNED_TO',
                                                                                    'default' => $current_user->name));
@@ -61,9 +59,7 @@ $dashletData['MyLeadsDashlet']['columns'] = array('name' => array('width'       
                                                                         'label'   => 'LBL_CREATED'),
                                                   'assigned_user_name' => array('width'   => '8', 
                                                                                 'label'   => 'LBL_LIST_ASSIGNED_USER'),
-                                                  //BEGIN SUGARCRM flav=pro ONLY
                                                   'team_name' => array('width'   => '15', 
                                                                        'label'   => 'LBL_LIST_TEAM'),
-                                                  //END SUGARCRM flav=pro ONLY
                                                  );
 ?>

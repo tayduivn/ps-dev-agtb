@@ -16,9 +16,7 @@ $viewdefs['Contacts']['EditView'] = array(
     											          '<input type="hidden" name="email_id" value="{$smarty.request.email_id}">',
     											          '<input type="hidden" name="inbound_email_id" value="{$smarty.request.inbound_email_id}">')),
 							'maxColumns' => '2',
-							//BEGIN SUGARCRM flav=pro ONLY
 							'useTabs' => true,
-							//END SUGARCRM flav=pro ONLY
                             'widths' => array(
                                             array('label' => '10', 'field' => '30'),
                                             array('label' => '10', 'field' => '30'),
@@ -217,9 +215,7 @@ $viewdefs['Contacts']['EditView'] = array(
             'name' => 'assigned_user_name',
             'label' => 'LBL_ASSIGNED_TO_NAME',
           ),
-	      //BEGIN SUGARCRM flav=pro ONLY
 	      'team_name',
-	      //END SUGARCRM flav=pro ONLY
         ),
       ),
     )

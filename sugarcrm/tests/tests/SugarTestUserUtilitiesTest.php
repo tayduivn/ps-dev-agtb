@@ -41,7 +41,6 @@ class SugarTestUserUtilitiesTest extends Sugar_PHPUnit_Framework_TestCase
         return $snapshot;
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
     public function _takeTeamDBSnapshot() 
     {
         $snapshot = array();
@@ -52,7 +51,6 @@ class SugarTestUserUtilitiesTest extends Sugar_PHPUnit_Framework_TestCase
         }
         return $snapshot;
     }
-    //END SUGARCRM flav=pro ONLY
 
     public function _takeSignatureDBSnapshot()
     {
@@ -102,9 +100,7 @@ class SugarTestUserUtilitiesTest extends Sugar_PHPUnit_Framework_TestCase
     public function testCanTearDownAllCreatedAnonymousUsers() 
     {
         $userIds = array();
-        //BEGIN SUGARCRM flav=pro ONLY
         $before_snapshot_teams = $this->_takeTeamDBSnapshot();
-        //END SUGARCRM flav=pro ONLY
         for ($i = 0; $i < 5; $i++) {
             $userIds[] = SugarTestUserUtilities::createAnonymousUser()->id;
         }
@@ -112,10 +108,8 @@ class SugarTestUserUtilitiesTest extends Sugar_PHPUnit_Framework_TestCase
         
         $this->assertEquals($this->_before_snapshot, $this->_takeUserDBSnapshot(),
             'SugarTest_UserUtilities::removeAllCreatedAnonymousUsers() should have removed the users it added');
-        //BEGIN SUGARCRM flav=pro ONLY
         $this->assertEquals($before_snapshot_teams, $this->_takeTeamDBSnapshot(),
             'SugarTest_UserUtilities::removeAllCreatedAnonymousUsers() should have removed the teams it added');
-        //END SUGARCRM flav=pro ONLY
 
         $count = function ($table, $where) {
             $num = 0;

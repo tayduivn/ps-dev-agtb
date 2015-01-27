@@ -149,7 +149,6 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
             $nameValueArray['mobile_max_list_entries'] = self::$helperObject->get_name_value('mobile_max_list_entries', $sugar_config['wl_list_max_entries_per_page'] );
             $nameValueArray['mobile_max_subpanel_entries'] = self::$helperObject->get_name_value('mobile_max_subpanel_entries', $sugar_config['wl_list_max_entries_per_subpanel'] );
 
-            //BEGIN SUGARCRM flav=pro ONLY
             if($application == 'mobile')
             {
                 $modules = $availModuleNames = array();
@@ -164,7 +163,6 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
 
                 self::$helperObject->get_mobile_login_data($nameValueArray);
             }
-            //END SUGARCRM flav=pro ONLY
 
             $currencyObject = BeanFactory::getBean('Currencies', $cur_id);
             $nameValueArray['user_currency_name'] = self::$helperObject->get_name_value('user_currency_name', $currencyObject->name);
@@ -521,12 +519,10 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
     	            }
 
     	            $list_params = array();
-    	            //BEGIN SUGARCRM flav=pro ONLY
     	            if( $seed->isFavoritesEnabled() && $favorites === TRUE )
     	            {
     	                $list_params['favorites'] = 2;
     	            }
-    	            //END SUGARCRM flav=pro ONLY
 
     				$ret_array = $seed->create_new_list_query('', $where, $filterFields, $list_params, 0, '', true, $seed, true);
     		        if(empty($params) or !is_array($params)) $params = array();
@@ -589,7 +585,6 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
     } // fn
 
 
-    //BEGIN SUGARCRM flav=pro ONLY
     /**
      * Get the base64 contents of a quote pdf.
      *
@@ -676,7 +671,6 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
 
         $GLOBALS['log']->info('End: SugarWebServiceImpl->get_report_pdf');
     }
-    //END SUGARCRM flav=pro ONLY
 
     /**
      * Get OAuth reqtest token
@@ -736,7 +730,6 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
         return $result;
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
     /**
      * Import emails from the SNIP service.
      *
@@ -791,7 +784,6 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
         }
         return array('results' => $emails, 'count' => count($emails), 'message' => '');
     }
-    //END SUGARCRM flav=pro ONLY
 
     /**
      * Get next job from the queue

@@ -23,9 +23,8 @@ var ERR_REENTER_PASSWORDS = '{/literal}{$MOD.ERR_REENTER_PASSWORDS}{literal}';
 <script type='text/javascript' src='{/literal}{sugar_getjspath file="modules/Users/PasswordRequirementBox.js"}{literal}'></script>
 <style type="text/css">
 <!--
-<!--//BEGIN SUGARCRM flav=pro ONLY -->
+
 @import url({sugar_getjspath file='modules/Users/PasswordRequirementBox.css'});
-<!--//END SUGARCRM flav=pro ONLY -->
 .body 
 { 
     font-size: 12px;
@@ -114,11 +113,10 @@ form
 		{/if}
 			{$OLD_PASSWORD_FIELD}
 			{$USERNAME_FIELD}
-			<!--//BEGIN SUGARCRM flav=pro ONLY -->
+
 			<th rowspan='3' align='center'>
                 {sugar_password_requirements_box width='300px' class='x-sqs-list' style='background-color:white; padding:5px !important;'}
 			</th>
-			<!--//END SUGARCRM flav=pro ONLY -->
 		</tr>
 		<tr>
 			<td scope="row">{$MOD.LBL_NEW_PASSWORD}:</td>

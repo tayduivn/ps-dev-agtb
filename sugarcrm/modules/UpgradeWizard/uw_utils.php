@@ -2710,7 +2710,6 @@ function repairDBForUpgrade($execute=false,$path=''){
 	 }
 }
 
-//BEGIN SUGARCRM flav=pro ONLY
 /**
  * upgradeDashletsForSalesAndMarketing
  *
@@ -2960,7 +2959,6 @@ function upgradeDashletsForSalesAndMarketing() {
 		} //while
 
 } //upgradeDashletsForSalesAndMarketing
-//END SUGARCRM flav=pro ONLY
 
 
 /**
@@ -2996,7 +2994,6 @@ function upgradeUserPreferences() {
         $localization->createInvalidLocaleNameFormatUpgradeNotice();
     }
 
-//BEGIN SUGARCRM flav=pro ONLY
 	if(file_exists($cachedfile = sugar_cached('dashlets/dashlets.php'))) {
    	   require($cachedfile);
    	} else if(file_exists('modules/Dashboard/dashlets.php')) {
@@ -3024,7 +3021,6 @@ function upgradeUserPreferences() {
 							   );
 
     $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'Home');
-//END SUGARCRM flav=pro ONLY
 
     $ce_to_pro_or_ent = (isset($_SESSION['upgrade_from_flavor']) && preg_match('/^SugarCE.*?(Pro|Ent|Corp|Ult)$/', $_SESSION['upgrade_from_flavor']));
 
@@ -3051,7 +3047,6 @@ function upgradeUserPreferences() {
         	$changed = true;
         }
 
-        //BEGIN SUGARCRM flav=pro ONLY
 	      //Set the user theme to be 'Sugar' theme since this is run for CE flavor conversions
 	      $userTheme = $current_user->getPreference('user_theme', 'global');
 
@@ -3129,7 +3124,6 @@ function upgradeUserPreferences() {
 				$current_user->setPreference('pages', $pages, 0, 'Home');
                 $changed = true;
 		  } //if
-        //END SUGARCRM flav=pro ONLY
 
         // we need to force save the changes to disk, otherwise we lose them.
         if($changed)
@@ -3138,7 +3132,6 @@ function upgradeUserPreferences() {
         }
 
 	} //while
-//BEGIN SUGARCRM flav=pro ONLY
 
     /*
 	 * This section checks to see if the Tracker settings for the corresponding versions have been
@@ -3189,7 +3182,6 @@ function upgradeUserPreferences() {
 	   }
 	   write_array_to_file("dashletsFiles", $dashletsFiles, $cachedfile);
 	} //if
-	//END SUGARCRM flav=pro ONLY
 }
 
 
@@ -3223,7 +3215,6 @@ function upgradeLocaleNameFormat($name_format) {
 }
 
 
-// BEGIN SUGARCRM flav=pro ONLY
 function migrate_sugar_favorite_reports(){
     require_once('modules/SugarFavorites/SugarFavorites.php');
 
@@ -3273,7 +3264,6 @@ function migrate_sugar_favorite_reports(){
         }
     }
 }
-// END SUGARCRM flav=pro ONLY
 
 function add_custom_modules_favorites_search(){
     $module_directories = scandir('modules');
@@ -3626,7 +3616,6 @@ function upgradeModulesForTeam() {
 		}
 	}
 
-	//BEGIN SUGARCRM flav=pro ONLY
 	function check_FTS(){
 		//check to see if FTS is installed
 		global $sugar_config;
@@ -3635,7 +3624,6 @@ function upgradeModulesForTeam() {
 		}
 		return false;
 	}
-	//END SUGARCRM flav=pro ONLY
 
     /**
      * convertImageToText
@@ -3733,7 +3721,6 @@ function upgradeModulesForTeam() {
 	}
 
 
-	//BEGIN SUGARCRM flav=pro ONLY
 	/**
 	 * fix_assigned_user_link_reports
 	 *
@@ -3777,7 +3764,6 @@ function upgradeModulesForTeam() {
            logThis('End fix_report_relationships', $path);
         }
 	}
-	//END SUGARCRM flav=pro ONLY
 
 	/**
 	 * upgradeDocumentTypeFields
@@ -4459,7 +4445,6 @@ function updateRenamedModulesLabels()
 }
 
 
-//BEGIN SUGARCRM flav=pro ONLY
 /**
  * addPdfManagerTemplate
  *
@@ -4496,4 +4481,3 @@ function updatePortalConfigToContainPlatform()
     $sql = "UPDATE config SET platform = 'support' where category = 'portal'";
     $db->query($sql);
 }
-//END SUGARCRM flav=pro ONLY

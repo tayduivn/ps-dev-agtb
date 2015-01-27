@@ -206,9 +206,7 @@ $mod_strings = array (
   'LBL_PUBLISHED_LEAD_REPORTS' => 'Published Lead Reports',
   'LBL_PUBLISHED_QUOTE_REPORTS' => 'Published Quote Reports',
 
-  //BEGIN SUGARCRM flav=pro ONLY
   'LBL_PUBLISHED_QUOTA_REPORTS' => 'Published Quota Reports',
-  //END SUGARCRM flav=pro ONLY
 
   'LBL_PUBLISHED_CALL_REPORTS' => 'Published Call Reports',
   'LBL_PUBLISHED_MEETING_REPORTS' => 'Published Meeting Reports',
@@ -349,11 +347,9 @@ $mod_strings = array (
 	'LBL_NONE' => '-- none --',
 	'LBL_NONE_STRING' => 'None',
   	'LBL_DATE_BASED_FILTERS' => '<i>Date filters are relative to the time zone of the report\'s <b>Assigned To</b> user</i>',
-//BEGIN SUGARCRM flav=pro ONLY
 	'LBL_CONTRACT_REPORTS'=>'Contract Reports',
   	'LBL_MY_CONTRACT_REPORTS' => 'My Contract Reports',
   	'LBL_PUBLISHED_CONTRACT_REPORTS'=>'Published Contract Reports',
-//END SUGARCRM flav=pro ONLY
 	'LBL_HELLO' => 'Hello',
 	'LBL_SCHEDULED_REPORT_MSG_INTRO' => 'Attached is an auto-generated report sent to you from the Sugar application.  This report was created on ',
 	'LBL_SCHEDULED_REPORT_MSG_BODY1' => ' and saved with the name "',
@@ -536,11 +532,9 @@ $mod_strings = array (
     'LBL_ALT_INFORMATION' => 'Information',
     'LBL_REPORT_GRAND_TOTAL' => "Grand Total",
 
-//BEGIN SUGARCRM flav=pro ONLY
     'LBL_REPORTS_TO' => 'Reports To',
     'LBL_LESS_THAN_EQUAL' => 'Less Than Equal To',
     'LBL_GREATER_THAN_EQUAL' => 'Greater Than Equal To',
-//END SUGARCRM flav=pro ONLY
 
     'LBL_FILTER_BY_MODULE' => 'By Module',
 );

@@ -30,16 +30,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
   $ie->email = $email;
   $json = getJSONobj();
 
-  //BEGIN SUGARCRM flav=pro ONLY
   require_once("include/SugarRouting/SugarRouting.php");
   $rules = new SugarRouting($ie, $current_user);
-  //END SUGARCRM flav=pro ONLY
 
   $showFolders = unserialize(base64_decode($current_user->getPreference('showFolders', 'Emails')));
 
  if (isset($_REQUEST['emailUIAction'])) {
   switch($_REQUEST['emailUIAction']) {
-    //BEGIN SUGARCRM flav=pro ONLY
     ///////////////////////////////////////////////////////////////////////////
     ////    RULES & ROUTING
     case "loadRulesForSettings":
@@ -56,7 +53,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
         break;
         ////    END RULES & ROUTING
         ///////////////////////////////////////////////////////////////////////////
-        //END SUGARCRM flav=pro ONLY
 
 
         ///////////////////////////////////////////////////////////////////////////
@@ -385,10 +381,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
             $GLOBALS['log']->debug("**********Imported Email");
             $ie->email->assigned_user_id = $controller->bean->assigned_user_id;
             $ie->email->assigned_user_name = $controller->bean->assigned_user_name;
-            //BEGIN SUGARCRM flav=pro ONLY
             $ie->email->team_id = $controller->bean->team_id;
             $ie->email->team_set_id = $controller->bean->team_set_id;
-            //END SUGARCRM flav=pro ONLY
         }
         if (isset($ie->email->id)) {
         	if (empty($ie->email->parent_id)) {
@@ -761,14 +755,12 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
                 $ret = $ie->email->et->getDraftAttachments($ret, $ie);
             	$ret = $ie->email->et->getFromAllAccountsArray($ie, $ret);
 
-	            //BEGIN SUGARCRM flav=pro ONLY
 				require_once('include/SugarFields/Fields/Teamset/EmailSugarFieldTeamsetCollection.php');
 				$teamSetField = new EmailSugarFieldTeamsetCollection($ie->email, $ie->email->field_defs, "get_non_private_teams_array", 'composeEmailForm');
 				$teamSetField->user_id = $current_user->id;
 				$sqs_objects = $teamSetField->createQuickSearchCode(true);
 				$code = $teamSetField->get_code();
 	            $ret['teamSetCode'] = $code . $sqs_objects;
-	            //END SUGARCRM flav=pro ONLY
 
                 $out = $json->encode($ret, true);
                 echo $out;
@@ -1108,19 +1100,16 @@ eoq;
             $ret['folderId'] = $email->et->folder->id;
             $ret['folderName'] = $email->et->folder->name;
             $ret['parentFolderId'] = $email->et->folder->parent_folder;
-            //BEGIN SUGARCRM flav=pro ONLY
 			require_once('include/SugarFields/Fields/Teamset/EmailSugarFieldTeamsetCollection.php');
 			$teamSetField = new EmailSugarFieldTeamsetCollection($email->et->folder, $ie->field_defs, "get_non_private_teams_array", 'EditViewGroupFolder');
 			$sqs_objects = $teamSetField->createQuickSearchCode(true);
 			//$quicksearch_js = '<script type="text/javascript" language="javascript">sqs_objects = ' . $json->encode($sqs_objects) . '</script>';
 			$code = $teamSetField->get_code();
             $ret['team_id'] = $code . $sqs_objects;
-            //END SUGARCRM flav=pro ONLY
             $out = $json->encode($ret);
             echo $out;
         break;
 
-    //BEGIN SUGARCRM flav=pro ONLY
 
     case "retrieveTeamsInfoForSettings":
     	$emailUI = new EmailUI();
@@ -1128,7 +1117,6 @@ eoq;
         $out = $json->encode($returnArray);
         echo $out;
     	break;
-    //END SUGARCRM flav=pro ONLY
 
     case "rebuildFolders":
         $GLOBALS['log']->debug("********** EMAIL 2.0 - Asynchronous - at: rebuildFolders");
@@ -1572,7 +1560,6 @@ eoq;
         }
    break;
 
-        //BEGIN SUGARCRM flav=pro ONLY
         /* MAILING LISTS */
     case "editMailingList":
         $GLOBALS['log']->debug("********** EMAIL 2.0 - Asynchronous - at: editMailingList");
@@ -1610,7 +1597,6 @@ eoq;
         echo $out;
         break;
         /* END MAILING LISTS */
-        //END SUGARCRM flav=pro ONLY
 
         // address book search
     case "getUnionData":

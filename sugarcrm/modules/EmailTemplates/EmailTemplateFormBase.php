@@ -209,9 +209,7 @@ EOQ;
 				$note->filename = $upload_file->get_stored_file_name();
 				$note->file = $upload_file;
 				$note->name = $mod_strings['LBL_EMAIL_ATTACHMENT'].': '.$note->file->original_file_name;
-				//BEGIN SUGARCRM flav=pro ONLY
 				$note->team_id = $focus->team_id;
-				//END SUGARCRM flav=pro ONLY
 				if(isset($_REQUEST['embedded'.$i]) && !empty($_REQUEST['embedded'.$i])){
                   if($_REQUEST['embedded'.$i]=='true'){
 				  	$note->embed_flag =true;

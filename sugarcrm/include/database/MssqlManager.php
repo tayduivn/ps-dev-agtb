@@ -293,11 +293,9 @@ class MssqlManager extends DBManager
         $this->query_time = microtime(true) - $this->query_time;
         $GLOBALS['log']->info('Query Execution Time:'.$this->query_time);
 
-        //BEGIN SUGARCRM flav=pro ONLY
         if($this->dump_slow_queries($sql)) {
             $this->track_slow_queries($sql);
         }
-        //END SUGARCRM flav=pro ONLY
 
         $this->checkError($msg.' Query Failed: ' . $sql, $dieOnError);
 

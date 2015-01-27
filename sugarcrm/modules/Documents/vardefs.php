@@ -281,7 +281,6 @@ $dictionary['Document'] = array('table' => 'documents',
             'source' => 'non-db',
             'vname' => 'LBL_BUGS_SUBPANEL_TITLE',
         ),
-        //BEGIN SUGARCRM flav=pro ONLY
         'quotes' =>
         array(
             'name' => 'quotes',
@@ -307,7 +306,6 @@ $dictionary['Document'] = array('table' => 'documents',
             'vname' => 'LBL_RLI_SUBPANEL_TITLE',
             'workflow' => false
         ),
-        //END SUGARCRM flav=pro ONLY
         'related_doc_id' =>
         array(
             'name' => 'related_doc_id',
@@ -485,8 +483,6 @@ $dictionary['Document'] = array('table' => 'documents',
 
 );
 VardefManager::createVardef('Documents', 'Document', array('default', 'assignable',
-//BEGIN SUGARCRM flav=pro ONLY
     'team_security',
-//END SUGARCRM flav=pro ONLY
 ));
 ?>

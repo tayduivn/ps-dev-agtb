@@ -17,10 +17,8 @@ class RestMetadataSugarViewsTest extends RestTestBase {
     {
         parent::setUp();
         $this->oldFiles = array();
-//BEGIN SUGARCRM flav=pro ONLY
         $this->_restLogin('','','mobile');
         $this->mobileAuthToken = $this->authToken;
-//END SUGARCRM flav=pro ONLY
         $this->_restLogin('','','base');
         $this->baseAuthToken = $this->authToken;
     }
@@ -45,12 +43,10 @@ class RestMetadataSugarViewsTest extends RestTestBase {
             'custom/clients/base/views/address/detailView.hbs',
             'clients/mobile/views/address/editView.hbs',
             'clients/mobile/views/address/detailView.hbs',
-            //BEGIN SUGARCRM flav=pro ONLY
             'clients/mobile/views/address/editView.hbs',
             'clients/mobile/views/address/detailView.hbs',
             'custom/clients/mobile/views/address/editView.hbs',
             'custom/clients/mobile/views/address/detailView.hbs',
-            //END SUGARCRM flav=pro ONLY
             //BEGIN SUGARCRM flav=ent ONLY
             'custom/clients/portal/views/address/editView.hbs',
             'custom/clients/portal/views/address/detailView.hbs',
@@ -63,10 +59,8 @@ class RestMetadataSugarViewsTest extends RestTestBase {
         $dirsToMake = array(
                             'clients/base/views/address',
                             'custom/clients/base/views/address',
-                            //BEGIN SUGARCRM flav=pro ONLY
                             'clients/mobile/views/address',
                             'custom/clients/mobile/views/address',
-                            //END SUGARCRM flav=pro ONLY
                             //BEGIN SUGARCRM flav=ent ONLY
                             'clients/portal/views/address',
                             'custom/clients/portal/views/address',
@@ -76,7 +70,6 @@ class RestMetadataSugarViewsTest extends RestTestBase {
         foreach ($dirsToMake as $dir ) {
             SugarAutoLoader::ensureDir($dir);
         }
-        //BEGIN SUGARCRM flav=pro ONLY
         // Make sure we get it when we ask for mobile
         SugarAutoLoader::put('clients/mobile/views/address/editView.hbs','MOBILE EDITVIEW', true);
         $this->_clearMetadataCache();
@@ -96,7 +89,6 @@ class RestMetadataSugarViewsTest extends RestTestBase {
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata/?type_filter=views&platform=mobile');
         $this->assertEquals('MOBILE EDITVIEW',$restReply['reply']['views']['address']['templates']['editView'],"Didn't get mobile code when base code was there.");
-        //END SUGARCRM flav=pro ONLY
 
 
         // Make sure we get the base code when we ask for it.
@@ -108,7 +100,6 @@ class RestMetadataSugarViewsTest extends RestTestBase {
         $restReply = $this->_restCall('metadata/?type_filter=views&platform=base');
         $this->assertEquals('BASE EDITVIEW',$restReply['reply']['views']['address']['templates']['editView'],"Didn't get base code when it was the direct option");
 
-        //BEGIN SUGARCRM flav=pro ONLY
         // Delete the mobile address and make sure it falls back to base
         SugarAutoLoader::unlink('clients/mobile/views/address/editView.hbs', true);
         $this->_clearMetadataCache();
@@ -122,7 +113,6 @@ class RestMetadataSugarViewsTest extends RestTestBase {
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata/?type_filter=views&platform=mobile');
         $this->assertEquals('CUSTOM MOBILE EDITVIEW',$restReply['reply']['views']['address']['templates']['editView'],"Didn't use the custom mobile code.");
-        //END SUGARCRM flav=pro ONLY
 
         // Make sure custom base code works
         SugarAutoLoader::put('custom/clients/base/views/address/editView.hbs','CUSTOM BASE EDITVIEW', true);

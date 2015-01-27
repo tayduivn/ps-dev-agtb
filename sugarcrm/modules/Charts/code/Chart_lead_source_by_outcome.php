@@ -224,9 +224,7 @@ global  $timedate;
 				$where .= "AND opportunities.lead_source IN	($datayArr) ";
 			}
 			$query = "SELECT lead_source,sales_stage,sum(amount_usdollar/1000) as total,count(*) as opp_count FROM opportunities ";
-			//BEGIN SUGARCRM flav=pro ONLY
 			$opp->add_team_security_where_clause($query);
-			//END SUGARCRM flav=pro ONLY
 			$query .= "WHERE " .$where." AND opportunities.deleted=0 ";
 			$query .= " GROUP BY sales_stage,lead_source ORDER BY lead_source,sales_stage";
 			//Now do the db queries
@@ -411,9 +409,7 @@ global  $timedate;
 			$where .= "AND opportunities.lead_source IN	($datayArr) ";
 		}
 		$query = "SELECT lead_source,sales_stage,sum(amount_usdollar/1000) as total,count(*) as opp_count FROM opportunities ";
-		//BEGIN SUGARCRM flav=pro ONLY
 		$opp->add_team_security_where_clause($query);
-		//END SUGARCRM flav=pro ONLY
 		$query .= "WHERE " .$where." AND opportunities.deleted=0 ";
 		$query .= " GROUP BY sales_stage,lead_source ORDER BY lead_source,sales_stage";
 

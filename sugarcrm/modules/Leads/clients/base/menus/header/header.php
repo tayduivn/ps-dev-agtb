@@ -33,7 +33,6 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'acl_module'=>$module_name,
         'icon' => 'fa-bars',
     ),
-    //BEGIN SUGARCRM flav=pro ONLY
     array(
         'route'=>'#bwc/index.php?module=Reports&action=index&view=leads&query=true&report_module=Leads',
         'label' =>'LNK_LEAD_REPORTS',
@@ -41,7 +40,6 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'acl_module'=>$module_name,
         'icon' => 'fa-bar-chart-o',
     ),
-    //END SUGARCRM flav=pro ONLY
     array(
         'route'=>'#bwc/index.php?module=Import&action=Step1&import_module=Leads&return_module=Leads&return_action=index',
         'label' =>'LNK_IMPORT_LEADS',

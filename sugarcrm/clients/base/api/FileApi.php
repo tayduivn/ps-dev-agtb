@@ -146,7 +146,6 @@ class FileApi extends SugarApi {
             throw new SugarApiExceptionNotAuthorized('No access to view records for module: '.$args['module']);
         }
 
-        //BEGIN SUGARCRM flav=pro ONLY
         // Handle ACL - if there is no current field data, it is a CREATE
         // This addresses an issue where the portal user has create but not edit
         // rights for particular modules. The perspective here is that even if
@@ -154,7 +153,6 @@ class FileApi extends SugarApi {
         // attachment instead of EDITING the parent record. -rgonzalez
         $accessType = empty($bean->$field) ? 'create' : 'edit';
         $this->verifyFieldAccess($bean, $field, $accessType);
-        // END SUGARCRM flav=pro ONLY
     }
 
     /**
@@ -366,10 +364,8 @@ class FileApi extends SugarApi {
             throw new SugarApiExceptionNotFound("The requested file $args[module] :: $field could not be found.");
         }
 
-        //BEGIN SUGARCRM flav=pro ONLY
         // Handle ACL
         $this->verifyFieldAccess($bean, $field);
-        //END SUGARCRM flav=pro ONLY
 
         $def = $bean->field_defs[$field];
         //for the image type field, forceDownload set default as false in order to display on the image element.
@@ -402,10 +398,8 @@ class FileApi extends SugarApi {
         // Get the bean
         $bean = $this->loadBean($api, $args);
 
-        //BEGIN SUGARCRM flav=pro ONLY
         // Handle ACL
         $this->verifyFieldAccess($bean, $field, 'delete');
-        //END SUGARCRM flav=pro ONLY
 
         // Only remove if there is something to remove
         if (!empty($bean->{$field})) {

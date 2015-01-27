@@ -22,9 +22,7 @@ class ACLAction  extends SugarBean
     var $table_name = 'acl_actions';
     var $new_schema = true;
     var $disable_custom_fields = true;
-    //BEGIN SUGARCRM flav=pro ONLY
     public $disable_row_level_security = true;
-    //END SUGARCRM flav=pro ONLY
 
     /**
      * Cache of the ACL values

@@ -19,8 +19,6 @@ function get_body(&$ss, $vardef){
 		$fieldOptions[$id] = $def['name'];
 	}
 	$ss->assign('fieldOpts', $fieldOptions);
-	//BEGIN SUGARCRM flav=pro ONLY
     $ss->assign('hideReportable', true);
-    //END SUGARCRM flav=pro ONLY
 	return $ss->fetch('modules/DynamicFields/templates/Fields/Forms/iframe.tpl');
  }

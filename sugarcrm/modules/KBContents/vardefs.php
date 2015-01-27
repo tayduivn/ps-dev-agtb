@@ -99,8 +99,6 @@ $dictionary['KBContent'] = array(
 );
 
 VardefManager::createVardef('KBContents','KBContent', array(
-//BEGIN SUGARCRM flav=pro ONLY
 'team_security',
-//END SUGARCRM flav=pro ONLY
 ));
 ?>

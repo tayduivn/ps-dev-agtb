@@ -62,7 +62,6 @@ class ProductTemplate extends SugarBean {
 	var $category_name;
 	var $category_id;
 
-//BEGIN SUGARCRM flav=pro ONLY
 
 	var $parent_node_id;
 	var $node_id;
@@ -70,7 +69,6 @@ class ProductTemplate extends SugarBean {
 	var $type;
 	var $default_tree_type;	//specified in save_branch function
 	var $category_tree_table = "category_tree";
-//END SUGARCRM flav=pro ONLY
 
 	var $table_name = "product_templates";
 	var $rel_manufacturers = "manufacturers";
@@ -85,12 +83,10 @@ class ProductTemplate extends SugarBean {
 	// This is used to retrieve related fields from form posts.
 	var $additional_column_fields = Array(
 		"manufacturer_name"
-        //BEGIN SUGARCRM flav=pro ONLY
 		,"parent_node_id"
 		,"parent_name"
 		,"node_id"
 		,"type"
-        //END SUGARCRM flav=pro ONLY
 	);
 
     /**
@@ -106,16 +102,13 @@ class ProductTemplate extends SugarBean {
 
 	public function __construct() {
 		parent::__construct();
-		//BEGIN SUGARCRM flav=pro ONLY
 		$this->disable_row_level_security =true;
-		//END SUGARCRM flav=pro ONLY
 
 		$currency = BeanFactory::getBean('Currencies');
 		$this->default_currency_symbol = $currency->getDefaultCurrencySymbol();
 	}
 
 
-//BEGIN SUGARCRM flav=pro ONLY
 	//////////////////////////TREEVIEW////////////////////////
 	function clear_leaf($id){
 		$query = "delete from $this->category_tree_table where self_id='$id'";
@@ -206,7 +199,6 @@ class ProductTemplate extends SugarBean {
 		$this->name = js_escape($this->name, false);
 	}
 //////////////////////////TREEVIEW/////////
-//END SUGARCRM flav=pro ONLY
 
 
 

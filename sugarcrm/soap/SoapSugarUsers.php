@@ -13,10 +13,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('soap/SoapHelperFunctions.php');
 require_once('soap/SoapTypes.php');
 
-//BEGIN SUGARCRM flav=pro ONLY
 
 require_once('modules/Reports/Report.php');
-//END SUGARCRM flav=pro ONLY
 /*************************************************************************************
 
 THIS IS FOR SUGARCRM USERS
@@ -484,17 +482,13 @@ function get_entries($session, $module_name, $ids,$select_fields ){
 		$error->set_error('no_access');
 		return array('field_list'=>$field_list, 'entry_list'=>array(), 'error'=>$error->get_soap_array());
 	}
-	//BEGIN SUGARCRM flav=pro ONLY
 	if($module_name == 'Reports'){
 		$result = get_report_value($seed);
 		$output_list = $result['output_list'];
 		$field_list = $result['field_list'];
 	}else{
-	//END SUGARCRM flav=pro ONLY
 		$output_list[] = get_return_value($seed, $module_name);
-	//BEGIN SUGARCRM flav=pro ONLY
 	}
-	//END SUGARCRM flav=pro ONLY
 
 		if(empty($field_list)){
 				$field_list = get_field_list($seed);
@@ -1005,15 +999,11 @@ $server->register(
 function get_user_team_id($session){
 	if(validate_authenticated($session))
 	{
-//BEGIN SUGARCRM flav=pro ONLY
 		global $current_user;
 		return $current_user->default_team;
 		/*
-//END SUGARCRM flav=pro ONLY
 		 return 1;
-//BEGIN SUGARCRM flav=pro ONLY
 		 */
-//END SUGARCRM flav=pro ONLY
 	}else{
 		return '-1';
 	}
@@ -1158,9 +1148,7 @@ function get_relationships($session, $module_name, $module_id, $related_module, 
 
 	$sql = "SELECT {$related_mod->table_name}.id FROM {$related_mod->table_name} ";
 
-	//BEGIN SUGARCRM flav=pro ONLY
 	$related_mod->add_team_security_where_clause($sql);
-	//END SUGARCRM flav=pro ONLY
 
     if (isset($related_mod->custom_fields)) {
         $customJoin = $related_mod->custom_fields->getJOIN();
@@ -1542,12 +1530,10 @@ function search_by_module($user_name, $password, $search_string, $modules, $offs
 							$tmpQuery = ' UNION ';
 						$tmpQuery .= "SELECT ".$query_array[$module_name]['fields']." FROM $seed->table_name ";
 						// We need to confirm that the user is a member of the team of the item.
-						//BEGIN SUGARCRM flav=pro ONLY
 						if ($module_name != 'Users') {
 							$seed->add_team_security_where_clause($tmpQuery);
 							$tmpQuery .= "LEFT JOIN teams ON $seed->table_name.team_id=teams.id AND (teams.deleted=0) ";
 						}
-						//END SUGARCRM flav=pro ONLY
 
 
 		                if($module_name == 'ProjectTask'){
@@ -2015,9 +2001,7 @@ function get_entries_count($session, $module_name, $query, $deleted) {
 
 	$sql = 'SELECT COUNT(*) result_count FROM ' . $seed->table_name . ' ';
 
-	//BEGIN SUGARCRM flav=pro ONLY
 	$seed->add_team_security_where_clause($sql);
-	//END SUGARCRM flav=pro ONLY
 
     $customJoin = $seed->getCustomJoin();
     $sql .= $customJoin['join'];

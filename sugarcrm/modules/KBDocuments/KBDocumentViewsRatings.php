@@ -22,9 +22,8 @@ class KBDocumentViewsRating extends SugarBean {
     var $date_entered;
     var $date_modified;
     var $modified_user_id;
-    //BEGIN SUGARCRM flav=pro ONLY
+
     var $team_id;
-    //END SUGARCRM flav=pro ONLY
 
 
     var $table_name = "kbdocuments_views_ratings";

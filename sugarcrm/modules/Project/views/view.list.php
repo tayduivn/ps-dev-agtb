@@ -35,7 +35,7 @@ class ProjectViewList extends ViewList{
     {
         $this->processSearchForm();
                 
-        //BEGIN SUGARCRM flav=pro ONLY
+
         // RETRIEVE PROJECTS NOT SET AS PROJECT TEMPLATES
         if ($this->where != "")
         {
@@ -45,7 +45,6 @@ class ProjectViewList extends ViewList{
         {
             $this->where .= $this->seed->table_name . '.is_template = 0 ';
         }
-        //END SUGARCRM flav=pro ONLY
         
         $this->lv->searchColumns = $this->searchForm->searchColumns;
         

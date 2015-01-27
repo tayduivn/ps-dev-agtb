@@ -38,9 +38,7 @@ class Audit extends SugarBean
     public function __construct()
     {
         parent::__construct();
-        //BEGIN SUGARCRM flav=pro ONLY
         $this->team_id = 1; // make the item globally accessible
-        //END SUGARCRM flav=pro ONLY
 
         // load up the assoc fields array from globals
         $this->getAssocFieldsArray();
@@ -133,7 +131,6 @@ class Audit extends SugarBean
 
         while ($row = $db->fetchByAssoc($results)) {
 
-            //BEGIN SUGARCRM flav=pro ONLY
             if (!ACLField::hasAccess(
                 $row['field_name'],
                 $bean->module_dir,
@@ -148,7 +145,6 @@ class Audit extends SugarBean
                 $return[] = $this->handleTeamSetField($row);
                 continue;
             }
-            //END SUGARCRM flav=pro ONLY
 
             // look for opportunities to relate ids to name values.
             if (!empty($this->genericAssocFieldsArray[$row['field_name']]) ||
@@ -301,7 +297,6 @@ class Audit extends SugarBean
                 require 'metadata/audit_templateMetaData.php';
                 $fieldDefs = $dictionary['audit']['fields'];
                 while (($row = $focus->db->fetchByAssoc($result))!= null) {
-                    //BEGIN SUGARCRM flav=pro ONLY
                     if(!ACLField::hasAccess($row['field_name'], $focus->module_dir, $GLOBALS['current_user']->id, $focus->isOwner($GLOBALS['current_user']->id))) continue;
 
                     //If the team_set_id field has a log entry, we retrieve the list of teams to display
@@ -311,8 +306,6 @@ class Audit extends SugarBean
                        $row['before_value_string'] = TeamSetManager::getCommaDelimitedTeams($row['before_value_string']);
                        $row['after_value_string'] = TeamSetManager::getCommaDelimitedTeams($row['after_value_string']);
                     }
-
-                    //END SUGARCRM flav=pro ONLY
                     $temp_list = array();
 
                     foreach ($fieldDefs as $field) {

@@ -445,7 +445,7 @@ class ConnectorUtils
         $insertConnectorButton = true;
 
 
-        //BEGIN SUGARCRM flav=pro ONLY
+
 
         if(!empty($viewdefs)) {
             $buttons = !empty($viewdefs[$module]['DetailView']['templateMeta']['form']['buttons']) ? $viewdefs[$module]['DetailView']['templateMeta']['form']['buttons'] : array();
@@ -465,8 +465,6 @@ class ConnectorUtils
        $hasWizardSourceEnabled = self::hasWizardSourceEnabledForModule($module);
        //Update the button changes
        $viewdefs[$module]['DetailView']['templateMeta']['form']['buttons'] = $buttons;
-
-       //END SUGARCRM flav=pro ONLY
 
 
        self::removeHoverField($viewdefs, $module);
@@ -522,7 +520,7 @@ class ConnectorUtils
                      $insertConnectorButton = true;
 
 
-                     //BEGIN SUGARCRM flav=pro ONLY
+
 
                      if(!empty($viewdefs)) {
                         $buttons = !empty($viewdefs[$module]['DetailView']['templateMeta']['form']['buttons']) ? $viewdefs[$module]['DetailView']['templateMeta']['form']['buttons'] : array();
@@ -549,8 +547,6 @@ class ConnectorUtils
 
                      //Update the button changes
                      $viewdefs[$module]['DetailView']['templateMeta']['form']['buttons'] = $buttons;
-
-                     //END SUGARCRM flav=pro ONLY
 
 
                      self::removeHoverField($viewdefs, $module);
@@ -949,7 +945,7 @@ class ConnectorUtils
         }
 
 
-        //BEGIN SUGARCRM flav=pro ONLY
+
 
         //Remove from searchdefs
         $searchdefs = ConnectorUtils::getSearchDefs();
@@ -961,8 +957,6 @@ class ConnectorUtils
            $GLOBALS['log']->fatal("Cannot write file custom/modules/Connectors/metadata/searchdefs.php");
            return false;
         }
-
-        //END SUGARCRM flav=pro ONLY
 
         return true;
     }

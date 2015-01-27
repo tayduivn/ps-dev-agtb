@@ -316,7 +316,6 @@ class AbstractRelationship
         return array ( $subpanelDefinition );
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
     protected function getWirelessSubpanelDefinition ($relationshipName , $sourceModule , $subpanelName, $titleKeyName = '', $source = "")
     {
         if (empty($source))
@@ -334,7 +333,6 @@ class AbstractRelationship
 
         return array ( $subpanelDefinition );
     }
-    //END SUGARCRM flav=pro ONLY
 
 
     /*

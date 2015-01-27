@@ -222,11 +222,9 @@ class LayoutManager
                 //bug 39170 - end
                     $widget_def['widget_class'] = 'Fielduser_name';
                 break;
-                //BEGIN SUGARCRM flav=pro ONLY
                 case 'team_id':
                     $widget_def['widget_class'] = 'Fieldteam_name';
                 break;
-                //END SUGARCRM flav=pro ONLY
                 default:
                     if ( isset($widget_def['type']) ) {
                         $widget_def['widget_class'] = 'Field' . $widget_def['type'];

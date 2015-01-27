@@ -37,15 +37,13 @@ function getDurationMinutesOptions($focus, $field, $value, $view) {
 		$focus->duration_minutes = "1";
 	
     if($view == 'EditView' || $view == 'MassUpdate' || $view == "QuickCreate"
-    //BEGIN SUGARCRM flav=pro ONLY
+
     || ($view == 'wirelessedit' && $focus->ACLFieldAccess($field, 'write'))
-    //END SUGARCRM flav=pro ONLY
     ) {
        $html = '<select id="duration_minutes" ';
        if($view != 'MassUpdate' 
-       		//BEGIN SUGARCRM flav=pro ONLY
+
        		&& $view != 'wirelessedit'
-       		//END SUGARCRM flav=pro ONLY
        	 ) {
             $html .= 'onchange="SugarWidgetScheduler.update_time();" ';
        }
@@ -82,9 +80,8 @@ function getReminderTime($focus, $field, $value, $view) {
     }
 
 	if($view == 'EditView' || $view == 'MassUpdate' || $view == "SubpanelCreates" || $view == "QuickCreate"
-	//BEGIN SUGARCRM flav=pro ONLY
+
     || $view == 'wirelessedit'
-    //END SUGARCRM flav=pro ONLY
     ) {
 		global $app_list_strings;
         $html = '<select id="reminder_time" name="reminder_time">';

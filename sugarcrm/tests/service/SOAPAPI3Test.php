@@ -144,7 +144,6 @@ class SOAPAPI3Test extends SOAPTestCase
             'Can not create new account using testSetEntriesForAccount. Error ('.$this->_soapClient->faultcode.'): '.$this->_soapClient->faultstring.': '.$this->_soapClient->faultdetail);
     } // fn
 
-    //BEGIN SUGARCRM flav=pro ONLY
     /**
      * @depends testSetEntriesForAccount
      */
@@ -177,9 +176,7 @@ class SOAPAPI3Test extends SOAPTestCase
 
         $timeStamp = TimeDate::getInstance()->nowDb();
         $monitor = $trackerManager->getMonitor('tracker');
-        //BEGIN SUGARCRM flav=pro ONLY
         $monitor->setValue('team_id', $GLOBALS['current_user']->getPrivateTeamID());
-        //END SUGARCRM flav=pro ONLY
         $monitor->setValue('action', 'detail');
         $monitor->setValue('user_id', $GLOBALS['current_user']->id);
         $monitor->setValue('module_name', $module);
@@ -190,7 +187,6 @@ class SOAPAPI3Test extends SOAPTestCase
         $trackerManager->saveMonitor($monitor, true, true);
         $GLOBALS['db']->commit();
      }
-     //END SUGARCRM flav=pro ONLY
 
     /**
      * Get Module Layout functions not exposed to soap service, make sure they are not available.

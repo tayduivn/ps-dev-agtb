@@ -199,7 +199,6 @@ class UnifiedSearchApi extends SugarListApi {
      */
     public function globalSearch(ServiceBase $api, array $args) {
         $api->action = 'list';
-        //BEGIN SUGARCRM flav=pro ONLY
         require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
 
         // This is required to keep the loadFromRow() function in the bean from making our day harder than it already is.
@@ -218,7 +217,6 @@ class UnifiedSearchApi extends SugarListApi {
             $recordSet = $this->globalSearchFullText($api,$args,$searchEngine,$options);
             $sortByDateModified = false;
         }
-        //END SUGARCRM flav=pro ONLY
 
         //BEGIN SUGARCRM flav!=pro ONLY
         $GLOBALS['disable_date_format'] = true;
@@ -232,7 +230,6 @@ class UnifiedSearchApi extends SugarListApi {
         return $recordSet;
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
     /**
      * This function is used to determine the search engine to use
      * @param $api ServiceBase The API class of the request
@@ -284,7 +281,6 @@ class UnifiedSearchApi extends SugarListApi {
         }
         return 'SugarSearchEngine';
     }
-    //END SUGARCRM flav=pro ONLY
 
     /**
      * This function is used to hand off the global search to the FTS Search Emgine

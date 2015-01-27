@@ -56,13 +56,11 @@ $listViewDefs['ProjectTask'] = array(
 		'module' => 'Employees',
         'id' => 'ASSIGNED_USER_ID',
         'default' => true),
-    //BEGIN SUGARCRM flav=pro ONLY
     'TEAM_NAME' => array(
         'width' => '2', 
         'label' => 'LBL_LIST_TEAM',
 //        'related_fields' => array('team_id'),        
-        'default' => false),        
-    //END SUGARCRM flav=pro ONLY
+        'default' => false),
 );
 
 ?>

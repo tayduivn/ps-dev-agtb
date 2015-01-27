@@ -59,7 +59,6 @@ $listViewDefs['Documents'] = array(
     'label' => 'LBL_LIST_SUBCATEGORY',
     'default' => true,
   ),
-//BEGIN SUGARCRM flav=pro ONLY
   'TEAM_NAME' => 
   array(
     'width' => '2', 
@@ -67,7 +66,6 @@ $listViewDefs['Documents'] = array(
     'default' => false,
     'sortable' => false
   ),
-//END SUGARCRM flav=pro ONLY
   'LAST_REV_CREATE_DATE' =>
   array (
     'width' => '10%',

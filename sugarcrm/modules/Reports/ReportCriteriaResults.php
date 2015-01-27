@@ -202,11 +202,9 @@ $params = array();
 if(!empty($_REQUEST['favorite']))
     $params[] = "<a href='index.php?module=Reports&action=index&favorite=1'>{$mod_strings['LBL_FAVORITES_TITLE']}</a>";
 $star = '';
-//BEGIN SUGARCRM flav=pro ONLY
 if(!empty($args['reporter']->saved_report->id)){
     $star = SugarFavorites::generateStar(SugarFavorites::isUserFavorite('Reports', $args['reporter']->saved_report->id), 'Reports', $args['reporter']->saved_report->id);
 }
-//END SUGARCRM flav=pro ONLY
 if (!empty($args['reporter']->name))
     $params[] = "{$args['reporter']->name}&nbsp;{$star}";
 

@@ -47,7 +47,6 @@ class InstallUtilsTest extends Sugar_PHPUnit_Framework_TestCase
 		}
 	}
 
-    //BEGIN SUGARCRM flav=pro ONLY
     /**
      * This is a test to check the creation of the config.js file used by the sidecar framework beginning in the 6.7 release.
      * In the future this configuration may move to be contained within a database.
@@ -63,5 +62,4 @@ class InstallUtilsTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertRegExp('/\"platform\"\s*?\:\s*?\"base\"/', $configJSContents);
         $this->assertRegExp('/\"clientID\"\s*?\:\s*?\"sugar\"/', $configJSContents);
     }
-    //END SUGARCRM flav=pro ONLY
 }

@@ -60,13 +60,11 @@ class SidecarMetaDataUpgrader
             'working' => 'custom/working/portal/',
         ),
         //END SUGARCRM flav=ent ONLY
-        //BEGIN SUGARCRM flav=pro ONLY
         'wireless' => array(
             'custom'  => 'custom/',
             'history' => 'custom/history/',
             'working' => 'custom/working/',
         ),
-        //END SUGARCRM flav=pro ONLY
         'base'        => array(
             'custom'  => 'custom/',
             'working' => 'custom/working/',
@@ -96,7 +94,6 @@ class SidecarMetaDataUpgrader
      * @var array
      */
     protected $legacyMetaDataFileNames = array(
-        //BEGIN SUGARCRM flav=pro ONLY
         'wireless' => array(
             MB_WIRELESSEDITVIEW       => 'wireless.editviewdefs' ,
             MB_WIRELESSDETAILVIEW     => 'wireless.detailviewdefs' ,
@@ -105,7 +102,6 @@ class SidecarMetaDataUpgrader
             // Advanced is unneeded since it shares with basic
             //MB_WIRELESSADVANCEDSEARCH => 'wireless.searchdefs' ,
         ),
-        //END SUGARCRM flav=pro ONLY
         //BEGIN SUGARCRM flav=ent ONLY
         'portal' => array(
             MB_PORTALLISTVIEW         => 'listviewdefs',

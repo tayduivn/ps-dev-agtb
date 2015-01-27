@@ -81,11 +81,9 @@ if (!$current_user->is_admin) $sugar_smarty->assign('OLD_PASSWORD_FIELD','<td sc
 $pwd_settings=$GLOBALS['sugar_config']['passwordsetting'];
 
 
-//BEGIN SUGARCRM flav=pro ONLY
 $pwd_regex=str_replace( "\\","\\\\",$pwd_settings['customregex']);
 $sugar_smarty->assign("REGEX",$pwd_regex);
 $rules = "'" . $pwd_settings["minpwdlength"] . "','" . $pwd_settings['maxpwdlength'] . "','" . $pwd_settings['customregex'] . "'";
-//END SUGARCRM flav=pro ONLY
 //BEGIN SUGARCRM flav!=pro ONLY
 $rules = "'','',''";
 //END SUGARCRM flav!=pro ONLY

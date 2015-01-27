@@ -116,11 +116,10 @@ function ConvertItems(id)  {ldelim}
             'name' => 'assigned_user_name',
             'label' => 'LBL_ASSIGNED_TO',
           ),
-	      //BEGIN SUGARCRM flav=pro ONLY
+
 		  array (
 		    'name'=>'team_name', 'displayParams'=>array('display'=>true),
 		  ),
-		  //END SUGARCRM flav=pro ONLY
         ),  
   ),
 )

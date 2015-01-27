@@ -91,9 +91,7 @@ class SugarController
 	public $process_tasks = array(
 						'blockFileAccess',
 						'handleEntryPoint',
-						//BEGIN SUGARCRM flav=pro ONLY
 						'remapWirelessAction',
-						//END SUGARCRM flav=pro ONLY
 						'callLegacyCode',
 						'remapAction',
 						'handle_action',
@@ -522,21 +520,17 @@ class SugarController
 
     public function action_spot()
     {
-        //BEGIN SUGARCRM flav=pro ONLY
         require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
         $searchEngine = SugarSearchEngineFactory::getInstance('', array(), true);
         //Default db search will be handled by the spot view, everything else by fts.
         if($searchEngine instanceOf SugarSearchEngine)
         {
-            //END SUGARCRM flav=pro ONLY
             $this->view = 'spot';
-            //BEGIN SUGARCRM flav=pro ONLY
         }
         else
         {
             $this->view = 'fts';
         }
-        //END SUGARCRM flav=pro ONLY
     }
 
 
@@ -939,7 +933,6 @@ class SugarController
 		}
 	}
 
-    //BEGIN SUGARCRM flav=pro ONLY
     /**
 	 * Remap the action to the wireless equivalent if the module supports it and
 	 * the user is on a mobile device. Also, map wireless actions to normal ones if the
@@ -966,5 +959,4 @@ class SugarController
 		}
         $this->do_action = $this->action;
     }
-    //END SUGARCRM flav=pro ONLY
 }

@@ -164,23 +164,19 @@ class ViewLayoutView extends SugarView
             MB_DETAILVIEW => 'LBL_DETAILVIEW' ,
             MB_QUICKCREATE => 'LBL_QUICKCREATE',
             MB_RECORDVIEW => 'LBL_RECORDVIEW',
-            //BEGIN SUGARCRM flav=pro ONLY
             MB_WIRELESSEDITVIEW => 'LBL_WIRELESSEDITVIEW' ,
             MB_WIRELESSDETAILVIEW => 'LBL_WIRELESSDETAILVIEW' ,
-            //END SUGARCRM flav=pro ONLY
         );
 
         $layoutLabel = 'LBL_LAYOUTS' ;
         $layoutView = 'layouts' ;
 
-        //BEGIN SUGARCRM flav=pro ONLY
         if ( in_array ( $this->editLayout , array ( MB_WIRELESSEDITVIEW , MB_WIRELESSDETAILVIEW ) ) )
         {
         	$layoutLabel = 'LBL_WIRELESSLAYOUTS' ;
         	$layoutView = 'wirelesslayouts' ;
         	$smarty->assign('wireless', true);
         }
-        //END SUGARCRM flav=pro ONLY
 
         $ajax = new AjaxCompose ( ) ;
 

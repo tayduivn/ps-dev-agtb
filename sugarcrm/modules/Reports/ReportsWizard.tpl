@@ -319,12 +319,11 @@ document.getElementById('progress_div').innerHTML = '{sugar_getimage name="bar_l
 				<td scope='row'><label for='assigned_user_name'>{$MOD.LBL_OWNER}:</label> <span class='required'>*</span></td>
 				<td>{$USER_HTML}</td>
 			</tr>	
-			{* //BEGIN SUGARCRM flav=pro ONLY *}
+
 			<tr>
 				<td scope='row'>{$MOD.LBL_TEAM}: <span class='required'>*</span></td>
 				<td>{$TEAM_HTML}</td>
 			</tr>
-			{* //END SUGARCRM flav=pro ONLY *}
 			<tr id='outerjoin_row' style="display:none">
 				<td scope='row'>{$MOD.LBL_OUTER_JOIN_CHECKBOX}: {$help_image}
 				</td>

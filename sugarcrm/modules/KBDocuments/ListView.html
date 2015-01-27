@@ -23,11 +23,9 @@
 	<td scope="col" width="23%"  NOWRAP><slot><a href="{ORDER_BY}account_name1" class="listViewThLinkS1">{MOD.LBL_LIST_ACCOUNT_NAME}{arrow_start}{account_name_arrow}{arrow_end}</a></slot></td>
 	<td scope="col" width="10%"  NOWRAP><slot><a href="{ORDER_BY}priority" class="listViewThLinkS1">{MOD.LBL_LIST_PRIORITY}{arrow_start}{priority_arrow}{arrow_end}</a></slot></td>
 	<td scope="col" width="10%"  NOWRAP><slot><a href="{ORDER_BY}status" class="listViewThLinkS1">{MOD.LBL_LIST_STATUS}{arrow_start}{status_arrow}{arrow_end}</a></slot></td>
-   	<!--//BEGIN SUGARCRM flav=pro ONLY -->
    	<!-- BEGIN: pro_nav -->
 	<td scope="col" width="9%"  NOWRAP><slot><a href="{ORDER_BY}team_id" class="listViewThLinkS1">{APP.LBL_LIST_TEAM}{arrow_start}{team_id_arrow}{arrow_end}</a></slot></td>
 	<!-- END: pro_nav -->
-   	<!--//END SUGARCRM flav=pro ONLY -->
    	<!-- BEGIN: open_source -->
    	<!-- END: open_source -->
 	<td scope="col" width="9%"  NOWRAP><slot><a href="{ORDER_BY}assigned_user_id" class="listViewThLinkS1">{APP.LBL_LIST_ASSIGNED_USER}{arrow_start}{assigned_user_id_arrow}{arrow_end}</a></slot></td>
@@ -42,11 +40,9 @@
 <td valign=TOP><slot><{TAG.ACCOUNT} href="{URL_PREFIX}index.php?action=DetailView&module=Accounts&record={CASE.ACCOUNT_ID}" >{CASE.ACCOUNT_NAME}</{TAG.ACCOUNT}></slot></td>
 <td valign=TOP><slot>{CASE.PRIORITY}</slot></td>
 <td valign=TOP><slot>{CASE.STATUS}</slot></td>
-<!--//BEGIN SUGARCRM flav=pro ONLY -->
 <!-- BEGIN: pro -->
 <td nowrap="nowrap" valign="top"><slot>{CASE.TEAM_NAME}</slot></td>
 <!-- END: pro -->
-<!--//END SUGARCRM flav=pro ONLY -->
 <!-- BEGIN: open_source -->
 <!-- END: open_source -->
 <td valign=TOP  nowrap><slot>{CASE.ASSIGNED_USER_NAME}</slot></td>

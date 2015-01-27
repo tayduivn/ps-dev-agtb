@@ -98,7 +98,7 @@ $viewdefs['Opportunities']['mobile']['view']['list'] = array(
                 ),
 //END SUGARCRM flav=pro && flav!=ent && flav!=ult ONLY
 
-//BEGIN SUGARCRM flav=pro ONLY
+
                 array(
                     'name' => 'team_name',
                     'width' => '5',
@@ -106,7 +106,6 @@ $viewdefs['Opportunities']['mobile']['view']['list'] = array(
                     'default' => false,
                     'enabled' => true
                 ),
-//END SUGARCRM flav=pro ONLY
                 array(
                     'name' => 'assigned_user_name',
                     'width' => '5',

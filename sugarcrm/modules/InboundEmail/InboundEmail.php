@@ -1318,14 +1318,12 @@ class InboundEmail extends SugarBean {
 		$GLOBALS['log']->info("[EMAIL] Done IMAP search on mailbox [{$mailbox}] for user [{$current_user->user_name}]. Result count = ".count($searchResults));
 
 		if(!empty($searchResults)) {
-			//BEGIN SUGARCRM flav=pro ONLY
 			// process rules
 			if(($this->mailbox == 'INBOX') && ($shouldProcessRules == true)) { // only process rules when looking at INBOX emails
 				$GLOBALS['log']->info("[EMAIL] Start processing rules mailbox [{$mailbox}] for user [{$current_user->user_name}]");
 				$searchResults = $this->processRules($searchResults);
 				$GLOBALS['log']->info("[EMAIL] Done processing rules mailbox [{$mailbox}] for user [{$current_user->user_name}]");
 			}
-			//END SUGARCRM flav=pro ONLY
 
 			$concatResults = implode(",", $searchResults);
 			$GLOBALS['log']->info("[EMAIL] Start IMAP fetch overview on mailbox [{$mailbox}] for user [{$current_user->user_name}]");
@@ -1412,14 +1410,12 @@ class InboundEmail extends SugarBean {
         $searchResults = $this->getCachedIMAPSearch($criteria);
 
         if(!empty($searchResults)) {
-            //BEGIN SUGARCRM flav=pro ONLY
             // process rules
             /*if(($this->mailbox == 'INBOX') && ($shouldProcessRules == true)) { // only process rules when looking at INBOX emails
                 $GLOBALS['log']->info("INBOUNDEMAIL: Start processing rules mailbox [{$mailbox}] for user [{$current_user->user_name}]");
                 $searchResults = $this->processRules($searchResults);
                 $GLOBALS['log']->info("INBOUNDEMAIL: Done processing rules mailbox [{$mailbox}] for user [{$current_user->user_name}]");
             }*/
-            //END SUGARCRM flav=pro ONLY
 
             $total = sizeof($searchResults);
             $searchResults = array_slice($searchResults, $start, $max);
@@ -1715,7 +1711,6 @@ class InboundEmail extends SugarBean {
 		}
 	}
 
-	//BEGIN SUGARCRM flav=pro ONLY
 	/**
 	 * Applies rules where applicable
 	 * @param array $searchResults
@@ -1786,7 +1781,6 @@ class InboundEmail extends SugarBean {
 
 		return $newSearchResults;
 	}
-	//END SUGARCRM flav=pro ONLY
 
 	/**
 	 * Deletes cached messages when moving from folder to folder
@@ -2285,13 +2279,11 @@ class InboundEmail extends SugarBean {
 		$this->mailbox = $_REQUEST['mailbox'];
 		$this->mailbox_type = 'pick'; // forcing this
 
-		//BEGIN SUGARCRM flav=pro ONLY
 		if(!empty($userId)) {
 			$teamId = ($_REQUEST['ie_team'] == '-1') ? User::getPrivateTeam($userId) : $_REQUEST['ie_team'];
 			$this->team_id = $teamId;
 			$this->team_set_id = $this->getTeamSetIdForTeams($teamId);
 		}
-		//END SUGARCRM flav=pro ONLY
 
 		if(isset($_REQUEST['ssl']) && $_REQUEST['ssl'] == 1) { $useSsl = true; }
 		else $useSsl = false;
@@ -2862,10 +2854,8 @@ class InboundEmail extends SugarBean {
 			$c->name = $email->name;
 			$c->status = 'New';
 			$c->priority = 'P1';
-			//BEGIN SUGARCRM flav=pro ONLY
 			$c->team_id = $_REQUEST['team_id'];
 			$c->team_set_id = $_REQUEST['team_set_id'];
-			//END SUGARCRM flav=pro ONLY
 
 			if(!empty($email->reply_to_email)) {
 				$contactAddr = $email->reply_to_email;
@@ -3446,7 +3436,7 @@ class InboundEmail extends SugarBean {
 		$imapDecode => stdClass Object
 			(
 				[charset] => utf-8
-				[text] => w�hlen.php
+				[text] => wï¿½hlen.php
 			)
 
 					OR
@@ -3630,7 +3620,6 @@ class InboundEmail extends SugarBean {
 	    $attach = BeanFactory::getBean('Notes');
 	    $attach->parent_id = $emailId;
 	    $attach->parent_type = 'Emails';
-	    //BEGIN SUGARCRM flav=pro ONLY
 	    // Check whether it is from Email Module Import or from CheckInboundEmail
 	    if(isset($_REQUEST['primary_team_id']) && !empty($_REQUEST['primary_team_id'])) {
 	        $attach->team_id = $_REQUEST['primary_team_id'];
@@ -3644,7 +3633,6 @@ class InboundEmail extends SugarBean {
 	        $attach->team_id = $this->team_id;
 	        $attach->team_set_id = $this->team_set_id;
 	    }
-	    //END SUGARCRM flav=pro ONLY
 
 	    return $attach;
 	}
@@ -4191,7 +4179,6 @@ class InboundEmail extends SugarBean {
 				// Samir Gandhi : Commented out this code as its not needed
 				//$email->assigned_user_id = $this->group_id;
 			}
-			//BEGIN SUGARCRM flav=pro ONLY
 			// assign to mailbox team if available
 			if (!empty($_REQUEST['team_ids']))
 			{
@@ -4224,8 +4211,6 @@ class InboundEmail extends SugarBean {
 					$email->team_set_id = $_REQUEST['team_set_id'];
 				} // if
 			}
-
-			//END SUGARCRM flav=pro ONLY
 
 	        //Assign Parent Values if set
 	        if (!empty($_REQUEST['parent_id']) && !empty($_REQUEST['parent_type'])) {
@@ -4407,11 +4392,9 @@ class InboundEmail extends SugarBean {
 		$attach = BeanFactory::getBean('Notes');
 		$attach->parent_id = $id;
 		$attach->parent_type = 'Emails';
-		//BEGIN SUGARCRM flav=pro ONLY
 		$attach->team_id = $this->team_id;
 		$attach->team_set_id = $this->team_set_id;
 		//$attach
-		//END SUGARCRM flav=pro ONLY
 
 		$fname = $this->handleEncodedFilename($fileName);
 
@@ -5042,11 +5025,9 @@ eoq;
 		$teamJoin = '';
 
 
-		//BEGIN SUGARCRM flav=pro ONLY
         $this->disable_row_level_security = false;
 		$this->add_team_security_where_clause($teamJoin);
 		$this->disable_row_level_security = true;
-		//END SUGARCRM flav=pro ONLY
 
         // bug 50536: groupfolder_id cannot be updated to NULL from sugarbean's nullable check ('type' set to ID in the vardef)
         // hence the awkward or check -- rbacon
@@ -5084,11 +5065,9 @@ eoq;
 		$teamJoin = '';
 
 
-		//BEGIN SUGARCRM flav=pro ONLY
         $this->disable_row_level_security = false;
 		$this->add_team_security_where_clause($teamJoin);
 		$this->disable_row_level_security = true;
-		//END SUGARCRM flav=pro ONLY
 
 
 
@@ -5312,10 +5291,8 @@ eoq;
 
 					// when you move from My Emails to Group Folder, Assign To field for the Email should become null
 					if ($fromSugarFolder->is_dynamic && $toSugarFolder->is_group) {
-            			//BEGIN SUGARCRM flav=pro ONLY
 						$email->team_id = $toSugarFolder->team_id;
 						$email->team_set_id = $toSugarFolder->team_set_id;
-            			//END SUGARCRM flav=pro ONLY
                         // Bug 50972 - assigned_user_id set to empty string not true null
                         // Modifying the field defs in just this one place to allow
                         // a true null since this is what is expected when reading
@@ -5325,7 +5302,6 @@ eoq;
 						$email->save();
                         $email->revertFieldNullable('assigned_user_id');
                         // End fix 50972
-						//BEGIN SUGARCRM flav=pro ONLY
 						$email->getNotes($id);
                         if(!empty($email->attachments)) {
                             foreach($email->attachments as $note) {
@@ -5334,7 +5310,6 @@ eoq;
                                 $note->save();
                             }
                         }
-                        //END SUGARCRM flav=pro ONLY
 						if (!$toSugarFolder->checkEmailExistForFolder($id)) {
 							$fromSugarFolder->deleteEmailFromAllFolder($id);
 							$toSugarFolder->addBean($email);
@@ -5356,12 +5331,10 @@ eoq;
 						} // if
 						if (!$toSugarFolder->checkEmailExistForFolder($id)) {
 							if (!$toSugarFolder->is_dynamic) {
-            					//BEGIN SUGARCRM flav=pro ONLY
 								if ($email->team_id != $toSugarFolder->team_id) {
 									$email->team_id = $toSugarFolder->team_id;
 									$email->team_set_id = $toSugarFolder->team_set_id;
 								} // if
-            					//END SUGARCRM flav=pro ONLY
 								$fromSugarFolder->deleteEmailFromAllFolder($id);
 								$toSugarFolder->addBean($email);
 							} else {
@@ -5439,7 +5412,6 @@ eoq;
 								$this->deleteMessageOnMailServer($uid);
 								$this->deleteMessageFromCache($uid);
 							} // if
-                            //BEGIN SUGARCRM flav=pro ONLY
                             if ($sugarFolder->is_group) {
                                 $this->email->getNotes($this->email->id);
                                 if(!empty($this->email->attachments)) {
@@ -5450,7 +5422,6 @@ eoq;
                                     }
                                 }
                             }
-                            //END SUGARCRM flav=pro ONLY
 						}
 						$return[] = $app_strings['LBL_EMAIL_MESSAGE_NO'] . " " . $count . ", " . $app_strings['LBL_STATUS'] . " " . ($importStatus ? $app_strings['LBL_EMAIL_IMPORT_SUCCESS'] : $app_strings['LBL_EMAIL_IMPORT_FAIL']);
 						$count++;
@@ -6206,10 +6177,8 @@ eoq;
 	    $folder->assign_to_id = $current_user->id;
 	    $folder->parent_folder = "";
 
-	    //BEGIN SUGARCRM flav=pro ONLY
 	    $folder->team_id = $this->team_id;
 	    $folder->team_set_id = empty($this->team_set_id ) ? $this->team_id : $this->team_set_id;
-	    //END SUGARCRM flav=pro ONLY
 
 	    //If this inbound email is marked as inactive, don't add subscriptions.
 	    $addSubscriptions = ($this->status == 'Inactive' || $this->mailbox_type == 'bounce') ? FALSE : TRUE;

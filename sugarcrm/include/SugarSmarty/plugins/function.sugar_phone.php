@@ -82,10 +82,9 @@ function smarty_function_sugar_phone($params, &$smarty)
     	&& isset($params['value']) && skype_formatted($params['value'])  ) {
     		$GLOBALS['log']->debug($params['value']);
 			return '<a href="callto:'.format_skype($params['value']).'">'.$params['value'].'</a>';
-    //BEGIN SUGARCRM flav=pro ONLY
+
     } elseif(isset($_SESSION['isMobile'])) {
         return '<a href="tel:'.format_skype($params['value']).'">'.$params['value'].'</a>';
-    //END SUGARCRM flav=pro ONLY
     } else {
     	return $params['value'];
     }

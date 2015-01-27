@@ -77,7 +77,6 @@ class OneToManyRelationship extends AbstractRelationship
         );
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
     function buildWirelessSubpanelDefinitions ()
     {
         if ($this->relationship_only)
@@ -91,7 +90,6 @@ class OneToManyRelationship extends AbstractRelationship
         	)
         );
     }
-    //END SUGARCRM flav=pro ONLY
 
     /*
      * @return array    An array of field definitions, ready for the vardefs, keyed by module

@@ -29,11 +29,9 @@ class NoteSoap
 
         $focus = BeanFactory::getBean('Notes');
 
-				//BEGIN SUGARCRM flav=pro ONLY
                 if($portal){
                         $focus->disable_row_level_security = true;
                 }
-                //END SUGARCRM flav=pro ONLY
 
 
         if(!empty($note['id'])){
@@ -73,11 +71,9 @@ class NoteSoap
 
         $focus = BeanFactory::getBean('Notes');
 
-		//BEGIN SUGARCRM flav=pro ONLY
         if($portal){
         	$focus->disable_row_level_security = true;
         }
-        //END SUGARCRM flav=pro ONLY
 
         if(!empty($note['id'])){
         	$focus->retrieve($note['id']);

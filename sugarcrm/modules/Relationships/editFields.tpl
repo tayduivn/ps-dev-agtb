@@ -16,11 +16,9 @@
 {counter name="fieldsUsed" start=0 print=false assign="fieldsUsed"}
 {capture name="tr" assign="tableRow"}
 <tr>
-    {{* //BEGIN SUGARCRM flav=pro ONLY*}}
 	{{if !empty($colData.field.name)}}
 		{if $fields.{{$colData.field.name}}.acl > 1 || ($showDetailData && $fields.{{$colData.field.name}}.acl > 0)}
 	{{/if}}
-	{{* //END SUGARCRM flav=pro ONLY*}}
    	<td valign="top" id='{{$colData.field.name}}_label' scope="row">
 			{{if isset($colData.field.customLabel)}}
 			   {{$colData.field.customLabel}}
@@ -63,11 +61,9 @@
 				{{/if}}
 			{{/if}}
 
-		{{* //BEGIN SUGARCRM flav=pro ONLY*}}
 		{{if !empty($colData.field.name)}}
 			{if $fields.{{$colData.field.name}}.acl > 1}
 		{{/if}}
-		{{* //END SUGARCRM flav=pro ONLY*}}
 
 			{{if $fields[$colData.field.name] && !empty($colData.field.fields) }}
 			    {{foreach from=$colData.field.fields item=subField}}
@@ -84,7 +80,6 @@
 			    {{$colData.displayParams}}
 				{{sugar_field parentFieldArray='fields' tabindex=$colData.field.tabindex vardef=$fields[$colData.field.name] displayType='EditView' displayParams=$colData.field.displayParams typeOverride=$colData.field.type formName=$form_name}}
 			{{/if}}
-		{{* //BEGIN SUGARCRM flav=pro ONLY*}}
 		{{if !empty($colData.field.name)}}
 		{{if $showDetailData }}
 		{else}
@@ -117,7 +112,6 @@
 
 		</td>
 	{{/if}}
-	{{* //END SUGARCRM flav=pro ONLY*}}
     {{if !empty($colData.field.hideIf)}}
 		{else}
 		<td></td><td></td>

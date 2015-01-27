@@ -29,7 +29,6 @@ $tracker_config =
         0 => 'DatabaseStore',
       ),
     ),
-    //BEGIN SUGARCRM flav=pro ONLY
     'tracker_sessions' => 
     array (
       'bean' => 'TrackerSession',
@@ -69,6 +68,5 @@ $tracker_config =
         0 => 'DatabaseStore',
       ),
     ),
-    //END SUGARCRM flav=pro ONLY
   );
 ?>

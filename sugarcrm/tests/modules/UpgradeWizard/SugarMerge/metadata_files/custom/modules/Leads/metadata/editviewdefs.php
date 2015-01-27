@@ -86,12 +86,10 @@ $viewdefs['Leads']['EditView'] = array(
       'department',
     ),
     
-    //BEGIN SUGARCRM flav=pro ONLY
     array (
        array('name'=>'team_name','displayParams'=>array('required'=>true)),
        ''
     ),
-	//END SUGARCRM flav=pro ONLY
     
     array (
       'assigned_user_name',

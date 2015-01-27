@@ -36,7 +36,7 @@ class ProjectTaskViewEdit extends ViewEdit
 			$focus->retrieve($_REQUEST['record']);
 		}
 		
-		//BEGIN SUGARCRM flav=pro ONLY
+
 		$this->ss->assign('resource', $focus->getResourceName());
 		
 		if (isset($_REQUEST['fromGrid']) && $_REQUEST['fromGrid'] == '1'){
@@ -46,7 +46,6 @@ class ProjectTaskViewEdit extends ViewEdit
 		else{
 			$this->ss->assign('FROM_GRID', false);
 		}
-		//END SUGARCRM flav=pro ONLY
 		
  		parent::display();
  	}

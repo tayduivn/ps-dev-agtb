@@ -230,9 +230,7 @@ echo get_validate_chart_js();
 			//build the where clause for the query that matches $date_start and $date_end
 			$where .= "AND opportunities.date_closed >= ".db_convert("'".$date_start."'",'date')." AND opportunities.date_closed <= ".db_convert("'".$date_end."'",'date')." AND opportunities.deleted=0";
 			$query = "SELECT sales_stage,".db_convert('opportunities.date_closed','date_format',array("'%Y-%m'"),array("'YYYY-MM'"))." as m, sum(amount_usdollar/1000) as total, count(*) as opp_count FROM opportunities ";
-			//BEGIN SUGARCRM flav=pro ONLY
 			$opp->add_team_security_where_clause($query);
-			//END SUGARCRM flav=pro ONLY
 			$query .= "WHERE ".$where;
 			$query .= " GROUP BY sales_stage,".db_convert('opportunities.date_closed','date_format',array("'%Y-%m'"),array("'YYYY-MM'"))."ORDER BY m";
 			//Now do the db queries
@@ -422,9 +420,7 @@ echo get_validate_chart_js();
 		//build the where clause for the query that matches $date_start and $date_end
 		$where .= "AND opportunities.date_closed >= ".db_convert("'".$date_start."'",'date')." AND opportunities.date_closed <= ".db_convert("'".$date_end."'",'date')." AND opportunities.deleted=0";
 		$query = "SELECT sales_stage,".db_convert('opportunities.date_closed','date_format',array("'%Y-%m'"),array("'YYYY-MM'"))." as m, sum(amount_usdollar/1000) as total, count(*) as opp_count FROM opportunities ";
-		//BEGIN SUGARCRM flav=pro ONLY
 		$opp->add_team_security_where_clause($query);
-		//END SUGARCRM flav=pro ONLY
 		$query .= "WHERE ".$where;
 		$query .= " GROUP BY sales_stage,".db_convert('opportunities.date_closed','date_format',array("'%Y-%m'"),array("'YYYY-MM'"))."ORDER BY m";
 		return $query;

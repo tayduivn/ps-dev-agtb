@@ -206,9 +206,7 @@ $mod_strings = array (
   	'LBL_LIST_ASSIGNED_TO_NAME' => 'Assigned User',
     'LBL_PROSPECT_LIST' => 'Prospect List',
     'LBL_CAMPAIGN_LEAD' => 'Campaigns',
-    //BEGIN SUGARCRM flav=pro ONLY
 	'LNK_LEAD_REPORTS' => 'View Lead Reports',
-    //END SUGARCRM flav=pro ONLY
     'LBL_BIRTHDATE' => 'Birthdate:',
     'LBL_THANKS_FOR_SUBMITTING_LEAD' =>'Thank You For Your Submission.',
     'LBL_SERVER_IS_CURRENTLY_UNAVAILABLE' =>'We are sorry, the server is currently unavailable, please try again later.',
@@ -230,9 +228,7 @@ $mod_strings = array (
     'LBL_CONVERT_EDIT' => 'Edit',
     'LBL_CONVERT_DELETE' => 'Delete',
     'LBL_CONVERT_ADD_MODULE' => 'Add Module',
-	//BEGIN SUGARCRM flav=pro ONLY
     'LBL_CONVERT_EDIT_LAYOUT' => 'Edit Convert Layout',
-	//END SUGARCRM flav=pro ONLY
     'LBL_CREATE' => 'Create',
     'LBL_SELECT' => ' <b>OR</b> Select',
 	'LBL_WEBSITE' => 'Website',
@@ -309,9 +305,9 @@ To create a {{module_name}}:
     // Convert View Help Text
     'LBL_HELP_CONVERT' => 'Sugar enables you to convert {{plural_module_name}} into {{contacts_module}}, {{accounts_module}}, and other modules once the {{module_name}} meets your qualification criteria.
 
-Step through each module by modifying fields then confirming the new record’s values by clicking each Associate button.
+Step through each module by modifying fields then confirming the new recordâs values by clicking each Associate button.
 
-If Sugar detects an existing record that matches your {{module_name}}’s information, you have the option to choose a duplicate and confirm the selection with the Associate button or to click "Ignore and create new" and proceed normally.
+If Sugar detects an existing record that matches your {{module_name}}âs information, you have the option to choose a duplicate and confirm the selection with the Associate button or to click "Ignore and create new" and proceed normally.
 
 After confirming each required and desired module, click the Save and Convert button at the top to finalize the conversion.',
 

@@ -12,9 +12,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 $dictionary['User'] = array(
     'table' => 'users',
-//BEGIN SUGARCRM flav=pro ONLY
     'favorites' => false,
-//END SUGARCRM flav=pro ONLY
     'fields' => array(
         'id' => array(
             'name' => 'id',
@@ -37,14 +35,12 @@ $dictionary['User'] = array(
                'quickcreate' => false,
                'basic_search' => false,
                'advanced_search' => false,
-               //BEGIN SUGARCRM flav=pro ONLY
                'wirelesseditview' => false,
                'wirelessdetailview' => true,
                'wirelesslistview' => false,
                'wireless_basic_search' => false,
                'wireless_advanced_search' => false,
                'rollup' => false,
-               //END SUGARCRM flav=pro ONLY
                ),
         ) ,
         'user_hash' => array(
@@ -60,11 +56,9 @@ $dictionary['User'] = array(
                 'no_duplicate'=>true,
                 'listview' => false,
                 'searchview'=>false,
-                //BEGIN SUGARCRM flav=pro ONLY
                 'related' => false,
                 'formula' => false,
                 'rollup' => false,
-                //END SUGARCRM flav=pro ONLY
             ),
         ) ,
         'system_generated_password' => array(
@@ -79,12 +73,10 @@ $dictionary['User'] = array(
                 'searchview'=>false,
                 'editview'=>false,
                 'quickcreate'=>false,
-                //BEGIN SUGARCRM flav=pro ONLY
                 'wirelesseditview' => false,
                 'related' => false,
                 'formula' => false,
                 'rollup' => false,
-                //END SUGARCRM flav=pro ONLY
             ),
         ) ,
 
@@ -217,9 +209,7 @@ $dictionary['User'] = array(
             'studio' => array(
                 'editview' => false,
                 'quickcreate' => false,
-//BEGIN SUGARCRM flav=pro ONLY
                 'wirelesseditview' => false,
-//END SUGARCRM flav=pro ONLY
             ),
             'readonly' => true,
         ) ,
@@ -231,9 +221,7 @@ $dictionary['User'] = array(
             'studio' => array(
                 'editview' => false,
                 'quickcreate' => false,
-//BEGIN SUGARCRM flav=pro ONLY
                 'wirelesseditview' => false,
-//END SUGARCRM flav=pro ONLY
             ),
             'readonly' => true,
         ),
@@ -282,13 +270,11 @@ $dictionary['User'] = array(
             'type' => 'varchar',
             'source' => 'non-db',
             'importable' => 'false',
-            //BEGIN SUGARCRM flav=pro ONLY
             'studio' => array(
                 'related' => false,
                 'formula' => false,
                 'rollup' => false,
             ),
-            //END SUGARCRM flav=pro ONLY
             'readonly' => true,
         ) ,
         'title' => array(
@@ -395,7 +381,6 @@ $dictionary['User'] = array(
             'reportable' => false,
             'studio' => array('formula' => false),
         ),
-        //BEGIN SUGARCRM flav=pro ONLY
         'default_team' => array(
             'name' => 'default_team',
             'vname' => 'LBL_DEFAULT_TEAM',
@@ -556,8 +541,6 @@ $dictionary['User'] = array(
 			    'studio' => 'false',
 			    'reportable'=>false,
 			    ),
-
-        //END SUGARCRM flav=pro ONLY
         'deleted' => array(
             'name' => 'deleted',
             'vname' => 'LBL_DELETED',
@@ -835,7 +818,6 @@ $dictionary['User'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_EMAILS'
         ),
-//BEGIN SUGARCRM flav=pro ONLY
         'holidays' => array(
             'name' => 'holidays',
             'type' => 'link',
@@ -844,7 +826,6 @@ $dictionary['User'] = array(
             'side' => 'right',
             'vname' => 'LBL_HOLIDAYS',
         ) ,
-//END SUGARCRM flav=pro ONLY
 
        'eapm' =>
 		  array (
@@ -866,7 +847,6 @@ $dictionary['User'] = array(
         'source'=>'non-db',
         'side' => 'left',
       ),
-//BEGIN SUGARCRM flav=pro ONLY
         'project_resource'=>
 		array (
 			'name' => 'project_resource',
@@ -893,7 +873,6 @@ $dictionary['User'] = array(
             'link_type'=>'one',
             'vname'=>'LBL_FORECASTS',
         ),
-//END SUGARCRM flav=pro ONLY
 
     'preferred_language' =>
       array(
@@ -960,13 +939,11 @@ $dictionary['User'] = array(
             'type' => 'index',
             'fields' => array('last_login')
         ),
-     //BEGIN SUGARCRM flav=pro ONLY
 		array(
 			'name' => 'idx_users_tmst_id',
 			'type' => 'index',
 			'fields' => array('team_set_id')
 		),
-	//END SUGARCRM flav=pro ONLY
         array('name' => 'idx_user_title', 'type' => 'index', 'fields' => array('title')),
         array('name' => 'idx_user_department', 'type' => 'index', 'fields' => array('department')),
     ) ,
@@ -998,7 +975,6 @@ $dictionary['User'] = array(
 		        'join_table'=> 'email_addr_bean_rel', 'join_key_lhs'=>'bean_id', 'join_key_rhs'=>'email_address_id',
 		        'relationship_role_columns'=>array('primary_address' => '1', 'bean_module' => 'Users'),
 		    ),
-		//BEGIN SUGARCRM flav=pro ONLY
 		'users_team_count_relationship' =>
 			 array(
 			 	'lhs_module'=> 'Teams',
@@ -1067,7 +1043,6 @@ $dictionary['User'] = array(
             'rhs_key' => 'default_team',
             'relationship_type'=>'one-to-many'
         ),
-	   //END SUGARCRM flav=pro ONLY
         'users_acl_role_sets' => array(
             'lhs_module' => 'ACLRoleSets',
             'lhs_table'=> 'acl_role_sets',

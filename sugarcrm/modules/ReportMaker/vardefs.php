@@ -112,8 +112,6 @@ $dictionary['ReportMaker'] = array('table' => 'report_maker'
                             );
 
 VardefManager::createVardef('ReportMaker','ReportMaker', array(
-//BEGIN SUGARCRM flav=pro ONLY
 'team_security',
-//END SUGARCRM flav=pro ONLY
 ));
 ?>

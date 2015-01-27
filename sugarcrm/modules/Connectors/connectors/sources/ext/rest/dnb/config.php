@@ -25,11 +25,9 @@ $config = array (
   ),
   'order' => 75,
   'properties' => array (
-      //BEGIN SUGARCRM flav=pro ONLY
       'dnb_username' => '',
       'dnb_password' => '',
       'dnb_env' => 'prod' // stg or prod
-      //END SUGARCRM flav=pro ONLY
       ),
 );
 

@@ -20,9 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 $mod_strings = array(
 
-	//BEGIN SUGARCRM flav=pro ONLY
 	'LBL_ASSIGN_TEAM'		=> 'Assign To Teams',
-	//END SUGARCRM flav=pro ONLY
 
 	'LBL_RE'					=> 'RE:',
 

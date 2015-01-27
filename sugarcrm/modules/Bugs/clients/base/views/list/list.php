@@ -69,13 +69,11 @@ $viewdefs['Bugs']['base']['view']['list'] = array(
                     'enabled' => true,
                     'default'=>false,
                 ),
-                //BEGIN SUGARCRM flav=pro ONLY
                 array(
                     'name'=>  'team_name',
                     'enabled' => true,
                     'default'=>false,
                 ),
-                //END SUGARCRM flav=pro ONLY
                 array(
                     'name' => 'date_modified',
                     'enabled' => true,

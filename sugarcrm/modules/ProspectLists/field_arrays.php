@@ -21,17 +21,13 @@ $fields_array['ProspectList'] = array ('column_fields' => array(
 				"id", "date_entered",
 				"date_modified", "modified_user_id",
 				"assigned_user_id", "created_by",
-				//BEGIN SUGARCRM flav=pro ONLY
 				"team_id",
-				//END SUGARCRM flav=pro ONLY
 				"name", "description",'list_type','domain_name',
 	),
         'list_fields' =>  array(
 				'id', 'name', 'description','list_type',
 				'assigned_user_id','assigned_user_name',
-				//BEGIN SUGARCRM flav=pro ONLY
 				'team_id','team_name',
-				//END SUGARCRM flav=pro ONLY
 	),
     'required_fields' =>  array('name'=>1,'list_type'=>2),
 );

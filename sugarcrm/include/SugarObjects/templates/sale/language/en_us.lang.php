@@ -33,9 +33,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
   'LBL_LIST_DATE_CLOSED' => 'Close',
   'LBL_LIST_SALE_STAGE' => 'Sales Stage',
   'LBL_ACCOUNT_ID'=>'Account ID',
-   //BEGIN SUGARCRM flav=pro ONLY
   'LBL_TEAM_ID' =>'Team ID',
-  //END SUGARCRM flav=pro ONLY
 //DON'T CONVERT THESE THEY ARE MAPPINGS
   'db_sales_stage' => 'LBL_LIST_SALES_STAGE',
   'db_name' => 'LBL_NAME',
