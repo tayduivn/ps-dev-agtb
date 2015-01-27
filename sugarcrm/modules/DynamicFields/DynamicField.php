@@ -977,10 +977,13 @@ class DynamicField {
             return false;
         }
 
+        // Don't use $GLOBALS use the Factory Instance instead
+        $db = DBManagerFactory::getInstance();
+
         $table = $this->bean->table_name . "_cstm";
         $query = "SELECT {$table}.* FROM {$table} WHERE id_c='{$this->bean->id}'";
-        $result = $GLOBALS['db']->query($query);
-        $row = $GLOBALS['db']->fetchByAssoc($result);
+        $result = $db->query($query);
+        $row = $db->fetchByAssoc($result);
 
         if($row)
         {
