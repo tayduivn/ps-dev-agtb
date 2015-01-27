@@ -13,6 +13,11 @@
   display: none;
 }
 
+.dnb-dashlet-height {
+  max-height: 250px;
+  overflow: auto;
+}
+
 /* notifications in dashlets*/
 #dnb-no-duns,
 #dnb-search-hint {
@@ -70,7 +75,7 @@ div.dnb-show-less {
 }
 
 div.dnb-show-all {
-  height: auto;
+  .dnb-dashlet-height
 }
 
 div.dnb-show-more {
@@ -323,9 +328,6 @@ li.txt {
 }
 
 /*Build A List Styles*/
-.dnb-bal-add-btn {
-  margin-top: -5px;
-}
 .dnb-bal-param-label {
   font-size: 14px;
 }
@@ -364,4 +366,7 @@ li.txt {
 }
 .dnb-cntrl-chkbox {
   .dnb-chk-box;
+}
+#dnb-bal-result li:first-child {
+  background: @grayLighter;
 }

@@ -12,54 +12,60 @@
 
 require_once('include/workflow/glue.php');
 /**
- * Bug #52584
- * Time triggered workflow isn't working when condition checkes a calculated field.
- *
- * @author myarotsky@sugarcrm.com
- * @ticket 52584
+ * Time triggered workflow isn't working when condition checks a calculated field.
  */
 class Bug52584Test extends Sugar_PHPUnit_Framework_TestCase
 {
-    /**
-     * @var object
-     */
     private $shell_object;
-
-    /**
-     * @var object
-     */
     private $focus;
-
-    /**
-     * @var string
-     */
     private $field;
+    private $toClean = array();
 
     public function setUp()
     {
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('current_user');
+
         $this->field = 'a';
         $this->value = 'test';
 
-        $this->shell_object = new stdClass();
-        $this->shell_object->field = $this->field;
-        $this->shell_object->parent_id = 'Bug52584Test';
+        $workflow = BeanFactory::getBean('WorkFlow');
+        $workflow->base_module = 'Opportunities';
+        $workflow->save();
+        $this->toClean['workflow'] = $workflow->id;
+
+        $workflowShell = BeanFactory::getBean('WorkFlowTriggerShells');
+        $workflowShell->parent_id = $workflow->id;
+        $workflowShell->field = $this->field;
+        $workflowShell->save();
+        $this->toClean['workflow_triggershells'] = $workflowShell->id;
+
+        $this->shell_object = $workflowShell;
 
         $this->focus = new stdClass();
         $this->focus->{$this->field} = $this->value;
         $this->focus->fetched_row[$this->field] = $this->value;
     }
 
+    public function tearDown()
+    {
+        foreach ($this->toClean as $key => $value) {
+            $GLOBALS['db']->query("DELETE FROM $key WHERE id = '$value'");
+        }
+
+        SugarTestHelper::tearDown();
+    }
+
     /**
-     * Condition Return TRUE If Value Not Changes
-     * @group 52584
+     * Condition return TRUE if value doesn't changes
      */
     public function testConditionReturnTrueIfValueNotChanges()
     {
         $this->assertTrue($this->getConditionResult());
     }
     /**
-     * Condition Return FALSE If Value Is Changes
-     * @group 52584
+     * Condition return FALSE if value changes
      */
     public function testConditionReturnFalseIfValueIsChanges()
     {

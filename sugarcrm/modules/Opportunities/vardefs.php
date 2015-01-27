@@ -337,6 +337,11 @@ $dictionary['Opportunity'] = array(
             'comment' => 'Forecast commit ranges: Include, Likely, Omit etc.',
             'function' => 'getCommitStageDropdown',
             'function_bean' => 'Forecasts',
+            'formula' => 'forecastCommitStage($probability)',
+            'calculated' => true,
+            'related_fields' => array(
+                'probability'
+            )
         ),
         //BEGIN SUGARCRM flav=ent ONLY
         'total_revenue_line_items' => array(

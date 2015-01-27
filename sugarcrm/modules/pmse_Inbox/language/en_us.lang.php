@@ -168,8 +168,7 @@ $mod_strings = array (
 //    'LBL_NSC_MESSAGE'=>"This process was ",
 //    'LBL_NSC_CANCELED'=>" cancelled due that the record related to this Process has been removed",
 //    'LBL_NSC_CLAIM'=>" claimed by other user",
-    'LBL_PMSE_CANCEL_MESSAGE'=>"Are you sure to want cancel the process: [] with Process Id: {}",
-//
+    'LBL_CANCEL_MESSAGE'=>"Are you sure to want cancel the process: [] with Process Id: {}",
     'LBL_ASSIGNED_USER'=>"User Assigned",
 //
 //    'LBL_PMSE_SETTING_LOG_LEVEL' => 'Error Log Level',

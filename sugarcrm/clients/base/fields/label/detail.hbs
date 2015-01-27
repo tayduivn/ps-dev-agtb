@@ -10,8 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-<div class="record">
-    <aside class='txt'>
-        {{str "LBL_DNB_INDUSTRY_INFO_DESC"}}
-    </aside>
-</div>
+{{#if value}}
+    <div class="ellipsis_inline" data-placement="bottom"{{#if dir}} dir="{{dir}}"{{/if}} title="{{value}}">
+        {{value}}
+    </div>
+{{/if}}

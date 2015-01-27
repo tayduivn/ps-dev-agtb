@@ -699,6 +699,14 @@ class ProjectTask extends SugarBean {
             $task->save(false);
         }
     }
+
+    public function updateRelatedCalcFields($linkName = "")
+    {
+        parent::updateRelatedCalcFields($linkName);
+        if ($linkName == 'projects' && !$this->project_id) {
+            $this->mark_deleted($this->id);
+        }
+    }
 }
 
 function getUtilizationDropdown($focus, $field, $value, $view) {

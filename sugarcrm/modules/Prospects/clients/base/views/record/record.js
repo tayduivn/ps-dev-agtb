@@ -21,7 +21,7 @@
 
     delegateButtonEvents: function() {
         this.context.on('button:convert_button:click', this.convertProspectClicked, this);
-        this._super("delegateButtonEvents");
+        this._super('delegateButtonEvents');
     },
 
     convertProspectClicked: function() {
@@ -42,5 +42,7 @@
                 this.model.fetch();
             }
         }, this));
+
+        prefill.trigger('duplicate:field', this.model);
     }
 })
