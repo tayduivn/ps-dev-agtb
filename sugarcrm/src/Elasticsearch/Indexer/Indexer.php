@@ -217,6 +217,9 @@ class Indexer
             return $document;
         }
 
+        // Ensure we have an explicit action set for graceful handling further down the line
+        $document->setOpType(\Elastica\Bulk\Action::OP_TYPE_INDEX);
+
         // Populate field data
         $fields = $this->getBeanIndexFields($module);
         $data = array();
