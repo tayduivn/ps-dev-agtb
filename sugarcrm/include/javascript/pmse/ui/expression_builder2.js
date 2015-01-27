@@ -1224,8 +1224,7 @@ ExpressionControl.prototype._createModulePanel = function () {
                     label: translate("LBL_PMSE_EXPCONTROL_MODULE_FIELD_EVALUATION_MODULE"),
                     width: "100%",
                     required: true,
-                    dependantFields: ['field'],
-                    required: true
+                    dependantFields: ['field']
                 },
                 {
                     type: "dropdown",
