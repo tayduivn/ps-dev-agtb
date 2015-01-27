@@ -26,11 +26,6 @@
  * - `module` {String} The module the list is related to.
  * - `fields` {Array} The fields to be displayed.
  * - `filterOptions` {Object} the filter options for the list view.
- * - `preselectedModelIds` {Array} The array of ids of preselected records.
- * - `isMultiSelect` {boolean} A boolean that tells if the user can select
- *    multiple records.
- * - `maxSelectedRecords` {number} The max number of records the user can select
- *    in the case of multiselect selecttion list.
  *
  *  Example of usage:
  *

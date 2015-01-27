@@ -17,6 +17,7 @@
  *
  * - `maxSelectedRecords` The max number of records the user can select in the
  *    case of multiselect selection list.
+ * - `preselectedModelIds` {Array} The array of ids of preselected records.
  *
  *  Example of usage:
  *
