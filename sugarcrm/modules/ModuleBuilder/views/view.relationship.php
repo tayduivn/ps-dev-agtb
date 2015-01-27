@@ -116,14 +116,14 @@ class ViewRelationship extends SugarView
             $definition = $relationship->getDefinition();
             if (!$this->fromModuleBuilder) {
                 $modStrings = return_module_language($selected_lang, $relationship->rhs_module, true);
-                if (isset($definition['lhs_vname'])) {
+                if (!empty($definition['lhs_vname'])) {
                     $definition['lhs_label'] = translate($definition['lhs_vname']);
                 } else {
                     $definition['lhs_label'] = isset($modStrings[$relationship->getTitleKey()])?$modStrings[$relationship->getTitleKey()] : $relationship->lhs_module;
                 }
 
                 $modStrings = return_module_language( $selected_lang, $relationship->lhs_module, true );
-                if (isset($definition['rhs_vname'])) {
+                if (!empty($definition['rhs_vname'])) {
                     $definition['rhs_label'] = translate($definition['rhs_vname']);
                 } else {
                     $definition['rhs_label'] = isset($modStrings[$relationship->getTitleKey(true)])?$modStrings[$relationship->getTitleKey(true)] : $relationship->rhs_module;

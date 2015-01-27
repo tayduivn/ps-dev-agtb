@@ -1246,31 +1246,40 @@ AdamActivity.prototype.createConfigurateAction = function () {
             closeContainerOnSubmit: true,
             labelWidth: '16%',
             buttons: [
-                { jtype: 'submit', caption: translate('LBL_PMSE_BUTTON_SAVE')},
-                { jtype: 'normal', caption: translate('LBL_PMSE_BUTTON_CANCEL'), handler: function () {
-                    if (f2.isDirty()) {
-                        cancelInformation.setButtons([
-                            {
-                                jtype: 'normal',
-                                caption: translate('LBL_PMSE_BUTTON_YES'),
-                                handler: function () {
-                                    cancelInformation.hide();
-                                    w.close();
+                {
+                    jtype: 'submit',
+                    caption: translate('LBL_PMSE_BUTTON_SAVE'),
+                    cssClasses: ['btn', 'btn-primary']
+                },
+                {
+                    jtype: 'normal',
+                    caption: translate('LBL_PMSE_BUTTON_CANCEL'),
+                    handler: function () {
+                        if (f2.isDirty()) {
+                            cancelInformation.setButtons([
+                                {
+                                    jtype: 'normal',
+                                    caption: translate('LBL_PMSE_BUTTON_YES'),
+                                    handler: function () {
+                                        cancelInformation.hide();
+                                        w.close();
+                                    }
+                                },
+                                {
+                                    jtype: 'normal',
+                                    caption: translate('LBL_PMSE_BUTTON_NO'),
+                                    handler: function () {
+                                        cancelInformation.hide();
+                                    }
                                 }
-                            },
-                            {
-                                jtype: 'normal',
-                                caption: translate('LBL_PMSE_BUTTON_NO'),
-                                handler: function () {
-                                    cancelInformation.hide();
-                                }
-                            }
-                        ]);
-                        cancelInformation.show();
-                    } else {
-                        w.close();
-                    }
-                }}
+                            ]);
+                            cancelInformation.show();
+                        } else {
+                            w.close();
+                        }
+                    },
+                    cssClasses: ['btn btn-invisible btn-link']
+                }
             ],
             language: PMSE_DESIGNER_FORM_TRANSLATIONS
         });
@@ -1290,31 +1299,40 @@ AdamActivity.prototype.createConfigurateAction = function () {
             closeContainerOnSubmit: true,
             labelWidth: '16%',
             buttons: [
-                { jtype: 'submit', caption: translate('LBL_PMSE_BUTTON_SAVE')},
-                { jtype: 'normal', caption: translate('LBL_PMSE_BUTTON_CANCEL'), handler: function () {
-                    if (f2.isDirty()) {
-                        cancelInformation.setButtons([
-                            {
-                                jtype: 'normal',
-                                caption: translate('LBL_PMSE_BUTTON_YES'),
-                                handler: function () {
-                                    cancelInformation.hide();
-                                    w.close();
+                {
+                    jtype: 'submit',
+                    caption: translate('LBL_PMSE_BUTTON_SAVE'),
+                    cssClasses: ['btn btn-primary']
+                },
+                {
+                    jtype: 'normal',
+                    caption: translate('LBL_PMSE_BUTTON_CANCEL'),
+                    handler: function () {
+                        if (f2.isDirty()) {
+                            cancelInformation.setButtons([
+                                {
+                                    jtype: 'normal',
+                                    caption: translate('LBL_PMSE_BUTTON_YES'),
+                                    handler: function () {
+                                        cancelInformation.hide();
+                                        w.close();
+                                    }
+                                },
+                                {
+                                    jtype: 'normal',
+                                    caption: translate('LBL_PMSE_BUTTON_NO'),
+                                    handler: function () {
+                                        cancelInformation.hide();
+                                    }
                                 }
-                            },
-                            {
-                                jtype: 'normal',
-                                caption: translate('LBL_PMSE_BUTTON_NO'),
-                                handler: function () {
-                                    cancelInformation.hide();
-                                }
-                            }
-                        ]);
-                        cancelInformation.show();
-                    } else {
-                        w.close();
-                    }
-                }}
+                            ]);
+                            cancelInformation.show();
+                        } else {
+                            w.close();
+                        }
+                    },
+                    cssClasses: ['btn btn-invisible btn-link']
+                }
             ]
         });
 
@@ -1322,31 +1340,40 @@ AdamActivity.prototype.createConfigurateAction = function () {
             closeContainerOnSubmit: true,
             labelWidth: '100%',
             buttons: [
-                { jtype: 'submit', caption: translate('LBL_PMSE_BUTTON_SAVE')},
-                { jtype: 'normal', caption: translate('LBL_PMSE_BUTTON_CANCEL'), handler: function () {
-                    if (f2.isDirty()) {
-                        cancelInformation.setButtons([
-                            {
-                                jtype: 'normal',
-                                caption: translate('LBL_PMSE_BUTTON_YES'),
-                                handler: function () {
-                                    cancelInformation.hide();
-                                    w.close();
+                {
+                    jtype: 'submit',
+                    caption: translate('LBL_PMSE_BUTTON_SAVE'),
+                    cssClasses: ['btn btn-primary']
+                },
+                {
+                    jtype: 'normal',
+                    caption: translate('LBL_PMSE_BUTTON_CANCEL'),
+                    handler: function () {
+                        if (f2.isDirty()) {
+                            cancelInformation.setButtons([
+                                {
+                                    jtype: 'normal',
+                                    caption: translate('LBL_PMSE_BUTTON_YES'),
+                                    handler: function () {
+                                        cancelInformation.hide();
+                                        w.close();
+                                    }
+                                },
+                                {
+                                    jtype: 'normal',
+                                    caption: translate('LBL_PMSE_BUTTON_NO'),
+                                    handler: function () {
+                                        cancelInformation.hide();
+                                    }
                                 }
-                            },
-                            {
-                                jtype: 'normal',
-                                caption: translate('LBL_PMSE_BUTTON_NO'),
-                                handler: function () {
-                                    cancelInformation.hide();
-                                }
-                            }
-                        ]);
-                        cancelInformation.show();
-                    } else {
-                        w.close();
-                    }
-                }}
+                            ]);
+                            cancelInformation.show();
+                        } else {
+                            w.close();
+                        }
+                    },
+                    cssClasses: ['btn btn-invisible btn-link']
+                }
             ]
         });
 
@@ -1400,31 +1427,40 @@ AdamActivity.prototype.createConfigurateAction = function () {
             items: itemsF3,
             closeContainerOnSubmit: true,
             buttons: [
-                { jtype: 'submit', caption: translate('LBL_PMSE_BUTTON_SAVE')},
-                { jtype: 'normal', caption: translate('LBL_PMSE_BUTTON_CANCEL'), handler: function () {
-                    if (f3.isDirty()) {
-                        cancelInformation.setButtons([
-                            {
-                                jtype: 'normal',
-                                caption: translate('LBL_PMSE_BUTTON_YES'),
-                                handler: function () {
-                                    cancelInformation.hide();
-                                    w.close();
+                {
+                    jtype: 'submit',
+                    caption: translate('LBL_PMSE_BUTTON_SAVE'),
+                    cssClasses: ['btn btn-primary']
+                },
+                {
+                    jtype: 'normal',
+                    caption: translate('LBL_PMSE_BUTTON_CANCEL'),
+                    handler: function () {
+                        if (f3.isDirty()) {
+                            cancelInformation.setButtons([
+                                {
+                                    jtype: 'normal',
+                                    caption: translate('LBL_PMSE_BUTTON_YES'),
+                                    handler: function () {
+                                        cancelInformation.hide();
+                                        w.close();
+                                    }
+                                },
+                                {
+                                    jtype: 'normal',
+                                    caption: translate('LBL_PMSE_BUTTON_NO'),
+                                    handler: function () {
+                                        cancelInformation.hide();
+                                    }
                                 }
-                            },
-                            {
-                                jtype: 'normal',
-                                caption: translate('LBL_PMSE_BUTTON_NO'),
-                                handler: function () {
-                                    cancelInformation.hide();
-                                }
-                            }
-                        ]);
-                        cancelInformation.show();
-                    } else {
-                        w.close();
-                    }
-                }}
+                            ]);
+                            cancelInformation.show();
+                        } else {
+                            w.close();
+                        }
+                    },
+                    cssClasses: ['btn btn-invisible btn-link']
+                }
             ],
             language: PMSE_DESIGNER_FORM_TRANSLATIONS
         });
@@ -1717,31 +1753,40 @@ AdamActivity.prototype.createConfigurateAction = function () {
         items: items,
         closeContainerOnSubmit: true,
         buttons: [
-            { jtype: 'submit', caption: translate('LBL_PMSE_BUTTON_SAVE') },
-            { jtype: 'normal', caption: translate('LBL_PMSE_BUTTON_CANCEL'), handler: function () {
-                if (f.isDirty()) {
-                    cancelInformation.setButtons([
-                        {
-                            jtype: 'normal',
-                            caption: translate('LBL_PMSE_BUTTON_YES'),
-                            handler: function () {
-                                cancelInformation.hide();
-                                w.close();
+            {
+                jtype: 'submit',
+                caption: translate('LBL_PMSE_BUTTON_SAVE'),
+                cssClasses: ['btn btn-primary']
+            },
+            {
+                jtype: 'normal',
+                caption: translate('LBL_PMSE_BUTTON_CANCEL'),
+                handler: function () {
+                    if (f.isDirty()) {
+                        cancelInformation.setButtons([
+                            {
+                                jtype: 'normal',
+                                caption: translate('LBL_PMSE_BUTTON_YES'),
+                                handler: function () {
+                                    cancelInformation.hide();
+                                    w.close();
+                                }
+                            },
+                            {
+                                jtype: 'normal',
+                                caption: translate('LBL_PMSE_BUTTON_NO'),
+                                handler: function () {
+                                    cancelInformation.hide();
+                                }
                             }
-                        },
-                        {
-                            jtype: 'normal',
-                            caption: translate('LBL_PMSE_BUTTON_NO'),
-                            handler: function () {
-                                cancelInformation.hide();
-                            }
-                        }
-                    ]);
-                    cancelInformation.show();
-                } else {
-                    w.close();
-                }
-            }}
+                        ]);
+                        cancelInformation.show();
+                    } else {
+                        w.close();
+                    }
+                },
+                cssClasses: ['btn btn-invisible btn-link']
+            }
         ],
         callback: callback,
         language: PMSE_DESIGNER_FORM_TRANSLATIONS
@@ -1957,31 +2002,40 @@ AdamActivity.prototype.createAssignUsersAction = function () {
         items: [combo_method, combo_teams, combo_users, assignUserField, assignTeamField],
         closeContainerOnSubmit: true,
         buttons: [
-            { jtype: 'submit', caption: translate('LBL_PMSE_BUTTON_SAVE') },
-            { jtype: 'normal', caption: translate('LBL_PMSE_BUTTON_CANCEL'), handler: function () {
-                if (f.isDirty()) {
-                    cancelInformation.setButtons([
-                        {
-                            jtype: 'normal',
-                            caption: translate('LBL_PMSE_BUTTON_YES'),
-                            handler: function () {
-                                cancelInformation.hide();
-                                w.close();
+            {
+                jtype: 'submit',
+                caption: translate('LBL_PMSE_BUTTON_SAVE'),
+                cssClasses: ['btn btn-primary']
+            },
+            {
+                jtype: 'normal',
+                caption: translate('LBL_PMSE_BUTTON_CANCEL'),
+                handler: function () {
+                    if (f.isDirty()) {
+                        cancelInformation.setButtons([
+                            {
+                                jtype: 'normal',
+                                caption: translate('LBL_PMSE_BUTTON_YES'),
+                                handler: function () {
+                                    cancelInformation.hide();
+                                    w.close();
+                                }
+                            },
+                            {
+                                jtype: 'normal',
+                                caption: translate('LBL_PMSE_BUTTON_NO'),
+                                handler: function () {
+                                    cancelInformation.hide();
+                                }
                             }
-                        },
-                        {
-                            jtype: 'normal',
-                            caption: translate('LBL_PMSE_BUTTON_NO'),
-                            handler: function () {
-                                cancelInformation.hide();
-                            }
-                        }
-                    ]);
-                    cancelInformation.show();
-                } else {
-                    w.close();
-                }
-            }}
+                        ]);
+                        cancelInformation.show();
+                    } else {
+                        w.close();
+                    }
+                },
+                cssClasses: ['btn btn-invisible btn-link']
+            }
         ],
         callback: callback,
         language: PMSE_DESIGNER_FORM_TRANSLATIONS
@@ -2400,43 +2454,56 @@ AdamActivity.prototype.actionFactory = function (type) {
         proxy: proxy,
         items: items,
         closeContainerOnSubmit: true,
+        footerAlign: 'right',
         buttons: [
-            { jtype: 'normal', caption: translate('LBL_PMSE_BUTTON_SAVE'), handler: function () {
-                if (fields_updater && fields_updater.multiplePanel) {
-                    fields_updater.multiplePanel.close();
-                }
-                f.submit();
-            }},
-            { jtype: 'normal', caption: translate('LBL_PMSE_BUTTON_CANCEL'), handler: function () {
-                if (fields_updater && fields_updater.multiplePanel) {
-                    fields_updater.multiplePanel.close();
-                }
+            {
+                jtype: 'normal',
+                caption: translate('LBL_PMSE_BUTTON_SAVE'),
+                handler: function () {
+                    if (fields_updater && fields_updater.multiplePanel) {
+                        fields_updater.multiplePanel.close();
+                    }
+                    f.submit();
+                },
+                cssClasses: ['btn btn-primary']
 
-                if (f.isDirty()) {
-                    cancelInformation.setButtons(
-                        [
-                            {
-                                jtype: 'normal',
-                                caption: translate('LBL_PMSE_BUTTON_YES'),
-                                handler: function () {
-                                    cancelInformation.hide();
-                                    w.close();
+            },
+            {
+                jtype: 'normal',
+                caption: translate('LBL_PMSE_BUTTON_CANCEL'),
+                handler: function () {
+                    if (fields_updater && fields_updater.multiplePanel) {
+                        fields_updater.multiplePanel.close();
+                    }
+
+                    if (f.isDirty()) {
+                        cancelInformation.setButtons(
+                            [
+                                {
+                                    jtype: 'normal',
+                                    caption: translate('LBL_PMSE_BUTTON_YES'),
+                                    handler: function () {
+                                        cancelInformation.hide();
+                                        w.close();
+                                    }
+                                },
+                                {
+                                    jtype: 'normal',
+                                    caption: translate('LBL_PMSE_BUTTON_NO'),
+                                    handler: function () {
+                                        cancelInformation.hide();
+                                    }
                                 }
-                            },
-                            {
-                                jtype: 'normal',
-                                caption: translate('LBL_PMSE_BUTTON_NO'),
-                                handler: function () {
-                                    cancelInformation.hide();
-                                }
-                            }
-                        ]
-                    );
-                    cancelInformation.show();
-                } else {
-                    w.close();
-                }
-            }}
+                            ]
+                        );
+                        cancelInformation.show();
+                    } else {
+                        w.close();
+                    }
+                },
+                cssClasses: ['btn btn-invisible btn-link']
+
+            }
         ],
         labelWidth: labelWidth,
         callback: callback,

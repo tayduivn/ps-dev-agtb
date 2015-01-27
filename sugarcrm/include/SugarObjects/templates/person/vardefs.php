@@ -143,7 +143,7 @@ $vardefs =array(
 			'dbType' => 'varchar',
 			'len' => 100,
             'duplicate_on_record_copy' => 'always',
-			'unified_search' => true, 
+			'unified_search' => true,
 			'full_text_search' => array('enabled' => true, 'boost' => 1),
 			'comment' => 'Home phone number of the contact',
             'merge_filter' => 'enabled',
@@ -390,7 +390,7 @@ $vardefs =array(
             'border' => '',
             'duplicate_on_record_copy' => 'always',
 		),
-	//END SUGARCRM flav!=com ONLY		        
+	//END SUGARCRM flav!=com ONLY
 ),
      'name_format_map' => array(
         'f' => 'first_name',
@@ -400,7 +400,6 @@ $vardefs =array(
     ),
 'uses' => array(
     'email_address',
-    'taggable',
 ),
 'relationships'=>array(
 ),

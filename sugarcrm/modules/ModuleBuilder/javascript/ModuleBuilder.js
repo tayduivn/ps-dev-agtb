@@ -282,7 +282,8 @@ if (typeof(ModuleBuilder) == 'undefined') {
 					view_package: ModuleBuilder.MBpackage,
 					view_module: module,
 					view: layout,
-					subpanel: subpanel
+                    subpanel: subpanel,
+                    role: $("input[name=role]").val()
 				};
 				ModuleBuilder.history.popup_window.load(ModuleBuilder.paramsToUrl(ModuleBuilder.history.params));
 				ModuleBuilder.history.popup_window.show();
@@ -299,7 +300,8 @@ if (typeof(ModuleBuilder) == 'undefined') {
 						view_module: module,
 						view: layout,
 						sid: id,
-						subpanel: subpanel
+                        subpanel: subpanel,
+                        role: $("input[name=role]").val()
 					};
 					prevPanel = new YAHOO.SUGAR.ClosableTab({
 						dataSrc: Connect.url + "&" + ModuleBuilder.paramsToUrl(ModuleBuilder.history.params),
@@ -316,7 +318,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
 				}
 				
 			},
-			revert: function(module, layout, id, subpanel){
+            revert: function(module, layout, id, subpanel, isDefault) {
 				var prevTab = ModuleBuilder.tabPanel.getTabIndex("preview:" + id);
 				if(prevTab) ModuleBuilder.tabPanel.removeTab(prevTab);
 				
@@ -328,19 +330,47 @@ if (typeof(ModuleBuilder) == 'undefined') {
 					view_module: module,
 					view: layout,
 					sid: id,
-					subpanel: subpanel
+                    subpanel: subpanel,
+                    role: $("input[name=role]").val()
 				};
 				ModuleBuilder.asyncRequest(ModuleBuilder.history.params, function(){
 					ModuleBuilder.history.reverted = true;
-					ModuleBuilder.getContent("module=ModuleBuilder&action=editLayout" +
-						"&view=" + layout +
-						"&view_module=" + module +
-						"&subpanel=" + subpanel +
-						"&view_package=" + ModuleBuilder.MBpackage
-					);
-					ModuleBuilder.state.isDirty = true;
+                    ModuleBuilder.getContent(ModuleBuilder.paramsToUrl({
+                        module: "ModuleBuilder",
+                        action: "editLayout",
+                        view: layout,
+                        view_module: module,
+                        subpanel: subpanel,
+                        view_package: ModuleBuilder.MBpackage
+                    }), function(content) {
+                        ModuleBuilder.updateContent(content);
+                        if (isDefault) {
+                            ModuleBuilder.state.markAsReset();
+                        } else {
+                            ModuleBuilder.state.markAsDirty();
+                        }
+                    });
 				});
 			},
+            resetToDefault: function(module, layout) {
+                ModuleBuilder.history.params = {
+                    module: 'ModuleBuilder',
+                    histAction: 'resetToDefault',
+                    action: 'history',
+                    view_package: ModuleBuilder.MBpackage,
+                    view_module: module,
+                    view: layout,
+                    role: $("input[name=role]").val()
+                };
+                ModuleBuilder.asyncRequest(ModuleBuilder.history.params, function(){
+                    ModuleBuilder.history.reverted = true;
+                    ModuleBuilder.getContent(ModuleBuilder.contentURL, function(content) {
+                        ModuleBuilder.updateContent(content);
+                        ModuleBuilder.state.markAsDirty();
+                        ModuleBuilder.state.markAsReset();
+                    });
+                });
+            },
 			cleanup: function() {
 				if (ModuleBuilder.history.reverted && ModuleBuilder.history.params.histAction) {
 					ModuleBuilder.history.params.histAction = 'unrestore';
@@ -362,6 +392,22 @@ if (typeof(ModuleBuilder) == 'undefined') {
 		},
 		state: {
 			isDirty: false,
+            isReset: false,
+            markAsDirty: function() {
+                ModuleBuilder.state.isDirty = true;
+                ModuleBuilder.state.markAsNotReset();
+            },
+            markAsClean: function() {
+                ModuleBuilder.state.isDirty = false;
+            },
+            markAsReset: function() {
+                ModuleBuilder.state.isReset = true;
+                $("#saveBtn").prop("disabled", true);
+            },
+            markAsNotReset: function() {
+                ModuleBuilder.state.isReset = false;
+                $("#saveBtn").prop("disabled", false);
+            },
 			saving: false,
             hideFailedMesage: false,
 			intended_view: {
@@ -383,7 +429,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
 				//set dirty = false
 				//call the save method of the current view.
 				//call the intended action.
-				ModuleBuilder.state.isDirty = false;
+                ModuleBuilder.state.markAsClean();
 				var saveBtn = document.getElementById("saveBtn");
 				if (!saveBtn) {
 					var mbForm = document.forms[1];
@@ -414,7 +460,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
 			onDontSaveClick: function(){
 				//set dirty to false
 				//call the intended action.
-				ModuleBuilder.state.isDirty = false;
+                ModuleBuilder.state.markAsClean();
 				ModuleBuilder.history.cleanup();
 				ModuleBuilder.getContent(ModuleBuilder.state.intended_view.url, ModuleBuilder.state.intended_view.successCall);
 				ModuleBuilder.state.popup_window.hide();
@@ -441,6 +487,9 @@ if (typeof(ModuleBuilder) == 'undefined') {
                         isDefault:true,
                         handler: function(){
                             ModuleBuilder.state.popup_window.hide()
+                            if (ModuleBuilder.state.intended_view.cancelCall) {
+                                ModuleBuilder.state.intended_view.cancelCall();
+                            }
                         }
                      },{
                         text: SUGAR.language.get('ModuleBuilder', 'LBL_BTN_SAVE_CHANGES'),
@@ -468,7 +517,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
             ModuleBuilder.getContent(url+"&copyFromEditView=true");
              ModuleBuilder.contentURL = url;
             ModuleBuilder.state.intended_view.url = url;
-            ModuleBuilder.state.isDirty = true;
+            ModuleBuilder.state.markAsDirty();
         },
 		//AJAX Navigation Functions
 		navigate : function(url) {
@@ -477,7 +526,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
 				ModuleBuilder.getContent(url);
 			}
 		},
-		getContent: function(url, successCall){
+        getContent: function(url, successCall, cancelCall) {
 			if (!url) return;
 			
 			if (url.substring(0, 11) == "javascript:")
@@ -489,6 +538,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
 			//save a pointer to intended action
 			ModuleBuilder.state.intended_view.url = url;
 			ModuleBuilder.state.intended_view.successCall = successCall;
+            ModuleBuilder.state.intended_view.cancelCall = cancelCall;
 			if(ModuleBuilder.state.isDirty){ //prompt to save current data.
 				//check if we are editing a property of the current view (such views open up in new tabs)
 				//if so we leave the state dirty and return
@@ -500,7 +550,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
 				ModuleBuilder.state.current_view.url = url;
 				ModuleBuilder.state.current_view.successCall = successCall;
 			}
-			
+			ModuleBuilder.centerContentURL = ModuleBuilder.contentURL || url;
 			ModuleBuilder.contentURL =  url;
 			if (typeof(successCall) != 'function') {
 				if (ModuleBuilder.callInProgress)
@@ -508,9 +558,23 @@ if (typeof(ModuleBuilder) == 'undefined') {
 				ModuleBuilder.callInProgress = true;
 				successCall = ModuleBuilder.updateContent;
 			}
-			ModuleBuilder.asyncRequest(url, successCall);
+
+            var requestUrl = url,
+                currModule = ModuleBuilder.urlToParams(ModuleBuilder.centerContentURL).view_module,
+                toModule = ModuleBuilder.urlToParams(url).view_module,
+                role = $("input[name=role]").val();
+            if (role && (!currModule || !toModule || currModule == toModule)) {
+                requestUrl += "&role=" + encodeURIComponent(role);
+            }
+
+            ModuleBuilder.asyncRequest(requestUrl, successCall);
 		},
 		updateContent: function(o){
+            if (ModuleBuilder.copyLayoutDialog) {
+                ModuleBuilder.copyLayoutDialog.destroy();
+                delete ModuleBuilder.copyLayoutDialog;
+            }
+
 			ModuleBuilder.callInProgress = false;
 			//Check if a save action was called and now we need to move-on
 			if (ModuleBuilder.state.saving) {
@@ -545,6 +609,11 @@ if (typeof(ModuleBuilder) == 'undefined') {
 				ModuleBuilder.tabPanel.getTab(0).set(t.exec(ajaxResponse.data));
 				SUGAR.util.evalScript(t.exec(ajaxResponse.data));
 				return true;
+			}
+			// If the center panel isn't being updated, revert the content URL since we only care about the center panel
+			// for reload purposes
+			if (!ajaxResponse.center) {
+				ModuleBuilder.contentURL = ModuleBuilder.centerContentURL;
 			}
 			
 			for (var maj in ajaxResponse) {
@@ -592,8 +661,8 @@ if (typeof(ModuleBuilder) == 'undefined') {
 						}
 					} else {
 						//Store Center pane changes in browser history
-						YAHOO.util.History.navigate('mbContent', ModuleBuilder.contentURL);
 						if (name == 'mbcenter') {
+							YAHOO.util.History.navigate('mbContent', ModuleBuilder.contentURL);
 							ModuleBuilder.closeAllTabs();
 							comp = ModuleBuilder.tabPanel.getTab(0);
 						}
@@ -865,7 +934,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
 		},
 		handleSave: function(form, callBack){
 			if (check_form(form)) {
-				ModuleBuilder.state.isDirty=false;
+                ModuleBuilder.state.markAsClean();
 				ModuleBuilder.submitForm(form, callBack);
 			}
 		},
@@ -1119,6 +1188,14 @@ if (typeof(ModuleBuilder) == 'undefined') {
 			}
 			return url;
 		},
+        urlToParams: function(url) {
+            var params = {};
+            for (var pairs = url.split("&"), parts, i = 0, length = pairs.length; i < length; i++) {
+                parts = pairs[i].split("=", 2);
+                params[decodeURIComponent(parts[0])] = decodeURIComponent(parts[1]);
+            }
+            return params;
+        },
 		/**
 		 * Indicates whether the text presented shows that the request failed and
 		 * is requiring a login via redirect.
@@ -1500,6 +1577,78 @@ if (typeof(ModuleBuilder) == 'undefined') {
             if (rel)
                 tmpElem.rel = rel;
             headElem.appendChild(tmpElem);
+        },
+        switchLayoutRole: function(element) {
+            var $select = $(element);
+            var $input = $('input[name="role"]');
+            var previousRole = $input.val();
+            var role = $select.val();
+            var params = ModuleBuilder.urlToParams(ModuleBuilder.contentURL);
+            params.role = role;
+            var url = ModuleBuilder.paramsToUrl(params);
+            $input.val('');
+            ModuleBuilder.getContent(
+                url,
+                function(r) {
+                    $input.val(role);
+                    ModuleBuilder.updateContent(r);
+                }, function() {
+                    $input.val(previousRole);
+                    $select.val(previousRole);
+                }
+            );
+        },
+        copyLayoutFromRole: function() {
+            var dialog = ModuleBuilder.getCopyLayoutDialog();
+            dialog.show();
+        },
+        getCopyLayoutDialog: function() {
+            if (ModuleBuilder.copyLayoutDialog) {
+                return ModuleBuilder.copyLayoutDialog;
+            }
+
+            var dialog = new YAHOO.widget.SimpleDialog("copy-from-dialog", {
+                fixedcenter: true,
+                modal: true,
+                draggable: false,
+                buttons: [{
+                    text: SUGAR.language.get("ModuleBuilder", "LBL_BTN_COPY"),
+                    handler: function() {
+                        var role = $("input[name=role]").val();
+                        var source = $("#copy-from-options").val();
+
+                        var originalUrl = ModuleBuilder.contentURL;
+
+                        var params = ModuleBuilder.urlToParams(ModuleBuilder.contentURL);
+                        params.action = "copyLayout";
+                        params.source = source;
+                        var url = ModuleBuilder.paramsToUrl(params);
+
+                        var dialog = this;
+                        ModuleBuilder.getContent(url, function() {
+                            ModuleBuilder.updateContent.apply(this, arguments);
+                            ModuleBuilder.state.markAsDirty();
+                            dialog.cancel();
+                        });
+                        ModuleBuilder.contentURL = originalUrl;
+                    }
+                }, {
+                    text: SUGAR.language.get("ModuleBuilder", "LBL_BTN_CANCEL"),
+                    isDefault:true,
+                    handler: function(){
+                        this.cancel();
+                    }
+                }]
+            });
+
+            var contents = document.getElementById("copy-from-contents");
+            contents.style.display = "";
+            dialog.setHeader(SUGAR.language.get("ModuleBuilder", "LBL_HEADER_COPY_FROM_LAYOUT"));
+            dialog.setBody(contents);
+            dialog.render(document.body);
+
+            ModuleBuilder.copyLayoutDialog = dialog;
+            return dialog;
         }
 		//END SUGARCRM flav=pro ONLY
         //BEGIN SUGARCRM flav=een ONLY

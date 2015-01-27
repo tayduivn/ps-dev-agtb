@@ -21,7 +21,6 @@ $viewdefs[$module_name]['base']['view']['list'] = array(
                     'name' => $_module_name . '_number',
                     'width' => '5',
                     'label' => 'LBL_NUMBER',
-                    'link' => true,
                     'default' => true,
                     'enabled' => true,
                 ),

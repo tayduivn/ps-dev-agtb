@@ -10,13 +10,15 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-class PMSEBeanHandlerTest extends PHPUnit_Framework_TestCase 
+class PMSEBeanHandlerTest extends Sugar_PHPUnit_Framework_TestCase
 {
     /**
      *
      * @var PMSELogger 
      */
     protected $loggerMock;
+
+    protected $originals = array();
 
     /**
      * Sets up the test data, for example, 
@@ -25,7 +27,12 @@ class PMSEBeanHandlerTest extends PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
+        parent::setUp();
         global $beanList, $db;
+
+        $this->originals['beanList'] = $GLOBALS['beanList'];
+        $this->originals['db'] = $GLOBALS['db'];
+
         $beanList = array('Opportunities'=>array(), 'Notes'=>array(), 'Leads'=>array(), 'Meetings'=>array());
         $db = $this->getMockBuilder('DBHandler')
                 ->disableOriginalConstructor()
@@ -45,13 +52,14 @@ class PMSEBeanHandlerTest extends PHPUnit_Framework_TestCase
      */
     protected function tearDown()
     {
-        
+        parent::tearDown();
+        foreach($this->originals as $varname => $value) {
+            $GLOBALS[$varname] = $value;
+        }
     }
     
     public function testGetRelationshipDataInvalidModule()
     {
-        global $beanList;
-
         $beanHandlerMock = $this->getMockBuilder('PMSEBeanHandler')
                 ->disableOriginalConstructor()
                 ->setMethods(array('retrieveBean', 'getRelationshipData'))

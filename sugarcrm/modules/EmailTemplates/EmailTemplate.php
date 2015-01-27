@@ -84,7 +84,6 @@ class EmailTemplate extends SugarBean {
 		'created_by_name',
 		'accept_status_id',
 		'accept_status_name',
-        'tag_lower',
 	);
 
     protected $storedVariables = array();
@@ -159,7 +158,7 @@ class EmailTemplate extends SugarBean {
 						(in_array($field_def['name'], $this->badFields)) ) {
 				        continue;
 				    }
-                    
+
                     // Set a label if it doesn't exist
 				    if(!isset($field_def['vname'])) {
 				    	$field_def['vname'] = empty($field_def['name']) ? $key : $field_def['name'];

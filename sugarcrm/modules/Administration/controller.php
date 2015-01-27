@@ -34,6 +34,9 @@ class AdministrationController extends SugarController
         array_unshift($enabled_tabs, 'Home');
         $tabs = new TabController();
         $tabs->set_system_tabs($enabled_tabs);
+        //BEGIN SUGARCRM flav=ent ONLY
+        $tabs->setPortalTabs(array_values(array_intersect($enabled_tabs, $tabs->getAllPortalTabs())));
+        //END SUGARCRM flav=ent ONLY
         $tabs->set_users_can_edit(isset($_REQUEST['user_edit_tabs']) && $_REQUEST['user_edit_tabs'] == 1);
 
         // handle the subpanels

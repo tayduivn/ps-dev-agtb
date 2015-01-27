@@ -58,6 +58,7 @@ class MetaDataManager
     const MM_LOGOURL        = 'logo_url';
     const MM_OVERRIDEVALUES = '_override_values';
     const MM_FILTERS        = 'filters';
+    const MM_EDITDDFILTERS  = 'editable_dropdown_filters';
 
     /**
      * Collection of fields in the user metadata that can trigger a reauth when
@@ -152,6 +153,7 @@ class MetaDataManager
         self::MM_MODULETABMAP   => 'getModuleTabMap',
         self::MM_LOGOURL        => 'getLogoUrl',
         self::MM_FILTERS        => 'getSugarFilters',
+        self::MM_EDITDDFILTERS  => 'getEditableDropdownFilters'
     );
 
     /**
@@ -324,7 +326,7 @@ class MetaDataManager
      * In most cases this will never be changed, but in the case of module builder
      * this will usually be turned off so that the postExecute method can force
      * it to run explicitly.
-     * 
+     *
      * @var boolean
      */
     protected static $runQueueOnCall = true;
@@ -505,12 +507,13 @@ class MetaDataManager
      * This method collects all view data for a modul
      *
      * @param $moduleName The name of the sugar module to collect info about.
+     * @param MetaDataContextInterface|null $context Metadata context
      *
      * @return Array A hash of all of the view data.
      */
-    public function getModuleViews($moduleName)
+    public function getModuleViews($moduleName, MetaDataContextInterface $context = null)
     {
-        $data = $this->getModuleClientData('view', $moduleName);
+        $data = $this->getModuleClientData('view', $moduleName, $context);
         $data = $this->removeDisabledFields($data);
         return $data;
     }
@@ -540,6 +543,31 @@ class MetaDataManager
         }
 
         return $data;
+    }
+
+    /**
+     * Returns metadata context for current user
+     *
+     * @return MetaDataContextInterface
+     */
+    protected function getCurrentUserContext()
+    {
+        $user = $this->getCurrentUser();
+        if ($user && $user->id) {
+            return new MetaDataContextUser($user);
+        }
+
+        return $this->getDefaultContext();
+    }
+
+    /**
+     * Returns default metadata context
+     *
+     * @return MetaDataContextInterface
+     */
+    protected function getDefaultContext()
+    {
+        return new MetaDataContextDefault();
     }
 
     /**
@@ -605,10 +633,11 @@ class MetaDataManager
     /**
      * Gets metadata for all modules
      *
+     * @param MetaDataContextInterface|null $context Metadata context
      * @return array An array of hashes containing the modules and their
      * metadata.
      */
-    public function getModulesData()
+    public function getModulesData(MetaDataContextInterface $context = null)
     {
         if (!isset($this->data['full_module_list'])) {
             $this->data['full_module_list'] = $this->getModuleList();
@@ -621,7 +650,7 @@ class MetaDataManager
             }
 
             $bean = BeanFactory::newBean($module);
-            $modules[$module] = $this->getModuleData($module);
+            $modules[$module] = $this->getModuleData($module, $context);
             $this->relateFields($data, $module, $bean);
         }
         return $modules;
@@ -631,10 +660,11 @@ class MetaDataManager
      * The collector method for modules.  Gets metadata for all of the module specific data
      *
      * @param $moduleName The name of the module to collect metadata about.
+     * @param MetaDataContextInterface|null $context Metadata context
      * @return array An array of hashes containing the metadata.  Empty arrays are
      * returned in the case of no metadata.
      */
-    public function getModuleData($moduleName)
+    public function getModuleData($moduleName, MetaDataContextInterface $context = null)
     {
         //BEGIN SUGARCRM flav=pro ONLY
         require_once 'include/SugarSearchEngine/SugarSearchEngineMetadataHelper.php';
@@ -649,7 +679,7 @@ class MetaDataManager
         // Add the _hash for the fields array
         $data['fields']['_hash'] = md5(serialize($data['fields']));
         $data['nameFormat'] = isset($vardefs['name_format_map'])?$vardefs['name_format_map']:null;
-        $data['views'] = $this->getModuleViews($moduleName);
+        $data['views'] = $this->getModuleViews($moduleName, $context);
         $data['datas'] = $this->getModuleDatas($moduleName);
         $data['layouts'] = $this->getModuleLayouts($moduleName);
         $data['fieldTemplates'] = $this->getModuleFields($moduleName);
@@ -997,11 +1027,12 @@ class MetaDataManager
      *
      * @param string $type View, Layout, etc
      * @param string $module
+     * @param MetaDataContextInterface|null $context Metadata context
      * @return array
      */
-    public function getModuleClientData($type, $module)
+    public function getModuleClientData($type, $module, MetaDataContextInterface $context = null)
     {
-        return MetaDataFiles::getModuleClientCache($this->platforms, $type, $module);
+        return MetaDataFiles::getModuleClientCache($this->platforms, $type, $module, $context);
     }
 
     /**
@@ -1098,12 +1129,12 @@ class MetaDataManager
         }
 
         // Get the listing of files in the cache directory
-        $caches = glob(sugar_cached('api/metadata/') . '*.php');
+        $caches = glob(sugar_cached('api/metadata/') . '*.*');
         foreach ($caches as $cache) {
-            $file = basename($cache, '.php');
+            $file = basename($cache, '.' . pathinfo($cache, PATHINFO_EXTENSION));
             // If the filename fits the pattern of a metadata cache file get the
             // platform for the file so long as it isn't base
-            preg_match('/^metadata_(.*)_(private|public)$/', $file, $m);
+            preg_match('/^.*_(.*)_(private|public)/', $file, $m);
             if (isset($m[1])) {
                 $platforms[$m[1]] = $m[1];
             }
@@ -1247,25 +1278,27 @@ class MetaDataManager
      * refreshModulesCache().
      *
      * @param array $data Existing metadata
+     * @param MetaDataContextInterface $context Metadata context
      * @return array
      */
-    protected function rebuildModulesSection($data)
+    protected function rebuildModulesSection($data, MetaDataContextInterface $context)
     {
         // If we are in a rebuild process for the modules section, clear the module
         // client cache so that module metadata is fresh
         if (isset(self::$currentProcess[self::MM_MODULES])) {
             MetaDataFiles::clearModuleClientCache();
         }
-        return $this->setupModuleLists($data);
+        return $this->setupModuleLists($data, $context);
     }
 
     /**
      * Rebuilds the JS Source File section of the metadata. Called by refreshSectionCache
      *
      * @param array $data Existing metadata
+     * @param MetaDataContextInterface $context Metadata context
      * @return mixed
      */
-    protected function rebuildJssourceSection($data)
+    protected function rebuildJssourceSection($data, MetaDataContextInterface $context)
     {
 
         $data['jssource'] = $this->buildJavascriptComponentFile($data, !$this->public);
@@ -1273,7 +1306,7 @@ class MetaDataManager
         //If it has changed, the client will need to refresh to load it.
         if (!$this->public) {
             $this->public = true;
-            $cache = $this->getMetadataCache(true);
+            $cache = $this->getMetadataCache(true, $context);
             if (empty($cache['jssource'])) {
                 $publicMM = MetaDataManager::getManager($this->platforms, true);
                 $cache = $publicMM->getMetadata($this->args);
@@ -1288,22 +1321,25 @@ class MetaDataManager
 
     /**
      * Rebuilds the label section of metadata and clears language caches
+     *
+     * @param array $languages Array of languages to refresh the caches of
+     * @param MetaDataContextInterface $context Metadata context
      */
-    public function rebuildLanguagesCache()
+    protected function rebuildLanguagesCache($languages, MetaDataContextInterface $context)
     {
         // We will always need the metadata for this process, but only if there
         // is existing metadata to work (why build a section of an empty set)
-        $data = $this->getMetadataCache(true);
+        $data = $this->getMetadataCache(true, $context);
 
         // NOTE: Do not try to rebuild language cache files as this could be
         // problematic on installations with many installed languages, like OD
         if (!empty($data)) {
             $this->clearLanguagesCache();
-            $data = $this->loadSectionMetadata(self::MM_LABELS, $data);
-            $data = $this->loadSectionMetadata(self::MM_ORDEREDLABELS, $data);
+            $data = $this->loadSectionMetadata(self::MM_LABELS, $data, $context);
+            $data = $this->loadSectionMetadata(self::MM_ORDEREDLABELS, $data, $context);
             $data = $this->normalizeMetadata($data);
             $data['_hash'] = $this->hashChunk($data);
-            $this->putMetadataCache($data);
+            $this->putMetadataCache($data, $context);
         }
     }
 
@@ -1312,21 +1348,18 @@ class MetaDataManager
      * exists already.
      *
      * @param string|array $modules A single module or array of modules
-     * @param array $data Existing metadata
+     * @param MetaDataContextInterface $context Metadata context
      */
-    public function rebuildModulesCache($modules, $data = array())
+    protected function rebuildModulesCache($modules, MetaDataContextInterface $context)
     {
         // Only write if were actually asked for
         $write = false;
 
         // Only process if there are modules to work on
         if (!empty($modules) && $this->isValidSection('modules')) {
-            // If there was no metadata payload given, get the metadata from the
-            // source. Same as with section caching, we only want to rebuild the
+            // Same as with section caching, we only want to rebuild the
             // modules metadata if there are modules metadata already.
-            if (empty($data)) {
-                $data = $this->getMetadataCache(true);
-            }
+            $data = $this->getMetadataCache(true, $context);
 
             if (!empty($data)) {
                 // Now clear the module client cache for these modules so that
@@ -1346,7 +1379,7 @@ class MetaDataManager
 
                         $bean = BeanFactory::newBean($module);
                         if ($bean) {
-                            $data['modules'][$module] = $this->getModuleData($module);
+                            $data['modules'][$module] = $this->getModuleData($module, $context);
                             $this->relateFields($data, $module, $bean);
                             unset($bean);
 
@@ -1364,7 +1397,7 @@ class MetaDataManager
             if ($write) {
                 $data = $this->normalizeMetadata($data);
                 $data['_hash'] = $this->hashChunk($data);
-                $this->putMetadataCache($data);
+                $this->putMetadataCache($data, $context);
             }
         }
     }
@@ -1374,8 +1407,9 @@ class MetaDataManager
      * already exists.
      *
      * @param string|array $section
+     * @param MetaDataContextInterface $context Metadata context
      */
-    public function rebuildSectionCache($section = '')
+    protected function rebuildSectionCache($section, MetaDataContextInterface $context)
     {
         // Only write if the section or module(s) were actually found and gettable
         $write = false;
@@ -1384,7 +1418,7 @@ class MetaDataManager
         if (!empty($section)) {
             // We will always need the metadata for this process, but only if there
             // is existing metadata to work (why build a section of an empty set)
-            $data = $this->getMetadataCache(true);
+            $data = $this->getMetadataCache(true, $context);
 
             if (!empty($data)) {
                 // Handle the section(s)
@@ -1395,7 +1429,7 @@ class MetaDataManager
                         }
 
                         self::$currentProcess[$index] = true;
-                        $data = $this->loadSectionMetadata($index, $data);
+                        $data = $this->loadSectionMetadata($index, $data, $context);
                         unset(self::$currentProcess[$index]);
 
                         if (!$write) {
@@ -1409,7 +1443,7 @@ class MetaDataManager
             if ($write) {
                 $data = $this->normalizeMetadata($data);
                 $data['_hash'] = $this->hashChunk($data);
-                $this->putMetadataCache($data);
+                $this->putMetadataCache($data, $context);
             }
         }
     }
@@ -1418,19 +1452,24 @@ class MetaDataManager
      * Rebuilds the cache for this platform and visibility
      *
      * @param bool $force Indicator that tells this method whether to force a build
+     * @param MetaDataContextInterface|null $context Metadata context
      */
-    public function rebuildCache($force = false)
+    public function rebuildCache($force = false, MetaDataContextInterface $context = null)
     {
+        if (!$context) {
+            $context = $this->getDefaultContext();
+        }
+
         // Delete our current supply of caches if there are any
-        $deleted = $this->deletePlatformVisibilityCaches();
+        $deleted = $this->deletePlatformVisibilityCaches($context);
 
         // Rebuild the cache if there was a deleted cache or if we are forced to
         if ($force || $deleted) {
             // Clear the module client cache first
             MetaDataFiles::clearModuleClientCache(array(), '', array($this->platforms[0]));
 
-            $data = $this->loadMetadata();
-            $this->putMetadataCache($data);
+            $data = $this->loadMetadata(array(), $context);
+            $this->putMetadataCache($data, $context);
         }
     }
 
@@ -1444,17 +1483,17 @@ class MetaDataManager
     {
         // If we are in queue state (like in RepairAndRebuild), hold on to this
         // request until we are told to run it
-        if (self::$isQueued) {
-            self::$queue['full'] = $platforms;
+        if (static::$isQueued) {
+            static::$queue['full'] = $platforms;
             return;
         }
 
         // Set our inProcess flag;
-        self::$inProcess = true;
+        static::$inProcess = true;
 
         // The basics are, for each platform, rewrite the cache for public and private
         if (empty($platforms)) {
-            $platforms = self::getPlatformList();
+            $platforms = static::getPlatformList();
         }
 
         // Make sure the LanguageManager created modules cache is clear
@@ -1462,13 +1501,16 @@ class MetaDataManager
 
         foreach ((array) $platforms as $platform) {
             foreach (array(true, false) as $public) {
-                $mm = self::getManager($platform, $public, true);
-                $mm->rebuildCache($force);
+                $mm = static::getManager($platform, $public, true);
+                $contexts = static::getAllMetadataContexts($public);
+                foreach ($contexts as $context) {
+                    $mm->rebuildCache($force, $context);
+                }
             }
         }
 
         // Reset the in process flag
-        self::$inProcess = false;
+        static::$inProcess = false;
     }
 
     /**
@@ -1476,10 +1518,11 @@ class MetaDataManager
      *
      * @param string $section
      * @param array $platforms
+     * @param array $params Additional metadata parameters
      */
-    public static function refreshSectionCache($section, $platforms = array())
+    public static function refreshSectionCache($section, $platforms = array(), $params = array())
     {
-        self::refreshCachePart('section', $section, $platforms);
+        self::refreshCachePart('section', $section, $platforms, $params);
     }
 
     /**
@@ -1487,10 +1530,11 @@ class MetaDataManager
      *
      * @param array $modules
      * @param array $platforms
+     * @param array $params Additional metadata parameters
      */
-    public static function refreshModulesCache($modules, $platforms = array())
+    public static function refreshModulesCache($modules, $platforms = array(), $params = array())
     {
-        self::refreshCachePart('modules', $modules, $platforms);
+        self::refreshCachePart('modules', $modules, $platforms, $params);
     }
 
     /**
@@ -1499,10 +1543,11 @@ class MetaDataManager
      *
      * @param array $languages Array of languages to refresh the caches of
      * @param array $platforms List of platforms for this request
+     * @param array $params Additional metadata parameters
      */
-    public static function refreshLanguagesCache($languages, $platforms = array())
+    public static function refreshLanguagesCache($languages, $platforms = array(), $params = array())
     {
-        self::refreshCachePart('languages', $languages, $platforms);
+        self::refreshCachePart('languages', $languages, $platforms, $params = array());
     }
 
     /**
@@ -1513,9 +1558,10 @@ class MetaDataManager
      * @param string $part which part of the cache to build
      * @param array $args List of items to be passed to the rebuild method
      * @param array $platforms List of platforms to carry out the refresh for
+     * @param array $params Additional metadata parameters
      * @return null
      */
-    protected static function refreshCachePart($part, $args = array(), $platforms = array())
+    protected static function refreshCachePart($part, $args = array(), $platforms = array(), $params = array())
     {
         // No args, no worries
         if (empty($args)) {
@@ -1530,7 +1576,9 @@ class MetaDataManager
         // If we are in queue state (like in RepairAndRebuild), hold on to this
         // request until we are told to run it
         if (self::$isQueued) {
-            self::buildCacheRefreshQueueSection($part, $args, $platforms);
+            self::buildCacheRefreshQueueSection($part, $args, array_merge($params, array(
+                'platforms' => $platforms,
+            )));
             return;
         }
 
@@ -1549,7 +1597,18 @@ class MetaDataManager
             foreach (array(true, false) as $public) {
                 $mm = MetaDataManager::getManager($platform, $public, true);
                 if (method_exists($mm, $method)) {
-                    $mm->$method($args);
+                    //When a change occurs in the base metadata, we need to clear the cache for all contexts
+                    if (empty($params)) {
+                        $allContexts = static::getAllMetadataContexts($public);
+                        foreach($allContexts as $context) {
+                            $mm->deletePlatformVisibilityCaches($context);
+                        }
+                    }
+
+                    $contexts = static::getMetadataContexts($public, $params);
+                    foreach ($contexts as $context) {
+                        $mm->$method($args, $context);
+                    }
                 }
             }
         }
@@ -1560,9 +1619,9 @@ class MetaDataManager
      *
      * @param string $name Name of the queue section
      * @param array  $data The list of modules or sections
-     * @param array  $platforms The list of platforms
+     * @param array  $params Additional metadata parameters
      */
-    protected static function buildCacheRefreshQueueSection($name, $data, $platforms)
+    protected static function buildCacheRefreshQueueSection($name, $data, $params)
     {
         if (is_array($data)) {
             foreach ($data as $item) {
@@ -1572,12 +1631,17 @@ class MetaDataManager
             self::$queue[$name][$data] = $data;
         }
 
-        // Keep track of platforms... use the fullest list presented
-        if (!isset(self::$queue[$name]['platforms'])) {
-            self::$queue[$name]['platforms'] = array();
-        }
+        // Keep track of additional parameters... use the fullest list presented
+        foreach ($params as $paramName => $value) {
+            if (!isset(self::$queue[$name]['params'][$paramName])) {
+                self::$queue[$name]['params'][$paramName] = array();
+            }
 
-        self::$queue[$name]['platforms'] = array_merge(self::$queue[$name]['platforms'], (array) $platforms);
+            self::$queue[$name]['params'][$paramName] = array_merge(
+                self::$queue[$name]['params'][$paramName],
+                (array) $value
+            );
+        }
     }
 
     /**
@@ -1607,14 +1671,21 @@ class MetaDataManager
             // Run modules first
             foreach (self::$cacheParts as $part => $method) {
                 if (isset(self::$queue[$part])) {
-                    if (isset(self::$queue[$part]['platforms'])) {
-                        $platforms = self::$queue[$part]['platforms'];
-                        unset(self::$queue[$part]['platforms']);
+                    if (isset(self::$queue[$part]['params'])) {
+                        $params = self::$queue[$part]['params'];
+                        unset(self::$queue[$part]['params']);
+                    } else {
+                        $params = array();
+                    }
+
+                    if (isset($params['platforms'])) {
+                        $platforms = $params['platforms'];
+                        unset($params['platforms']);
                     } else {
                         $platforms = array();
                     }
 
-                    self::$method(self::$queue[$part], $platforms);
+                    self::$method(self::$queue[$part], $platforms, $params);
                     unset(self::$queue[$part]);
                 }
             }
@@ -1647,7 +1718,7 @@ class MetaDataManager
 
     /**
      * Sets the queue runner flag to boolean true or false
-     * 
+     *
      * @param boolean $value Flag that tells the queue runner to run or not
      */
     public static function setRunQueueOnCall($value)
@@ -1988,12 +2059,17 @@ class MetaDataManager
      * the database.
      *
      * @param array $args Arguments passed into the request for metadata
+     * @param MetaDataContextInterface|null $context Metadata context
      * @return mixed
      */
-    public function getMetadata($args = array())
+    public function getMetadata($args = array(), MetaDataContextInterface $context = null)
     {
+        if (!$context) {
+            $context = $this->getCurrentUserContext();
+        }
+
         // Get our metadata
-        $data = $this->getMetadataCache();
+        $data = $this->getMetadataCache(false, $context);
 
         //If we failed to load the metadata from cache, load it now the hard way.
         if (empty($data) || !$this->verifyJSSource($data)) {
@@ -2001,13 +2077,13 @@ class MetaDataManager
             if (!$this->public) {
                 ini_set('max_execution_time', 0);
             }
-            $data = $this->loadMetadata($args);
+            $data = $this->loadMetadata($args, $context);
         }
 
         // Cache the data so long as the current cache is different from the data
         // hash
         if ($data['_hash'] != $this->getMetadataHash()) {
-            $this->putMetadataCache($data);
+            $this->putMetadataCache($data, $context);
         }
 
         // We need to see if we need to send any warnings down to the user
@@ -2026,15 +2102,20 @@ class MetaDataManager
      * Gets the metadata cache for a given platform and visibility
      *
      * @param boolean $ignoreDevMode If true, ignore developer mode and return cached metadata
+     * @param MetaDataContextInterface $context Metadata context
      * @return array The metadata cache is it exists, null otherwise
      */
-    protected function getMetadataCache($ignoreDevMode = false)
+    protected function getMetadataCache($ignoreDevMode, MetaDataContextInterface $context)
     {
         if (inDeveloperMode() && !$ignoreDevMode) {
             return null;
         }
 
-        return $this->getFromCacheTable($this->getCachedMetadataHashKey());
+        if (!$context) {
+            $context = $this->getCurrentUserContext();
+        }
+
+        return $this->getFromCacheTable($this->getCachedMetadataHashKey($context));
     }
 
     /**
@@ -2055,9 +2136,10 @@ class MetaDataManager
      * Builds the current platform and visibility metadata and returns it
      *
      * @param array $args Arguments passed into the request for metadata
+     * @param MetaDataContextInterface $context Metadata context
      * @return array
      */
-    protected function loadMetadata($args = array())
+    protected function loadMetadata($args, MetaDataContextInterface $context)
     {
         $this->args = $args;
         // Start collecting data
@@ -2071,7 +2153,7 @@ class MetaDataManager
                 continue;
             }
 
-            $this->data = $this->loadSectionMetadata($section, $this->data);
+            $this->data = $this->loadSectionMetadata($section, $this->data, $context);
         }
 
         // Handle overrides
@@ -2092,18 +2174,19 @@ class MetaDataManager
      *
      * @param string $section The section to build
      * @param array $data The metadata payload that is appended to
+     * @param MetaDataContextInterface $context Metadata context
      * @return array Appended metadata
      */
-    protected function loadSectionMetadata($section, $data)
+    protected function loadSectionMetadata($section, $data, MetaDataContextInterface $context)
     {
         // Adopt the same logic as the section rebuilder
         if (isset($this->sectionMap[$section])) {
             if ($this->sectionMap[$section] === false) {
                 $method = 'rebuild' . ucfirst($section) . 'Section';
-                $data = $this->$method($data);
+                $data = $this->$method($data, $context);
             } else {
                 $method = $this->sectionMap[$section];
-                $data[$section] = $this->$method();
+                $data[$section] = $this->$method($data, $context);
             }
         }
 
@@ -2375,13 +2458,14 @@ class MetaDataManager
      * populate the modules/full_module_list section of the metadata
      *
      * @param array $data Existing metadata
+     * @param MetaDataContextInterface|null $context Metadata context
      * @return array
      */
-    public function populateModules($data)
+    public function populateModules($data, MetaDataContextInterface $context = null)
     {
         $this->data['full_module_list'] = $this->getModuleList();
         $data['full_module_list'] = $this->data['full_module_list'];
-        $data['modules'] = $this->getModulesData();
+        $data['modules'] = $this->getModulesData($context);
         $data['modules_info'] = $this->getModulesInfo();
         return $data;
     }
@@ -2512,6 +2596,10 @@ class MetaDataManager
             $list = $als['moduleList'];
         } else {
             $list = $GLOBALS['app_list_strings']['moduleList'];
+        }
+        $user = $this->getCurrentUser();
+        if (!empty($user->id) && !empty($GLOBALS['sugar_config']['roleBasedViews']) && !$this->public) {
+            $list = SugarACL::filterModuleList($list);
         }
 
         // TODO - need to make this more extensible through configuration
@@ -2860,7 +2948,7 @@ class MetaDataManager
 
     /**
      * Returns array of fields of static::$cacheTable
-     * 
+     *
      * @return array
      */
     protected function getFields()
@@ -2966,22 +3054,27 @@ class MetaDataManager
      * Adds a metadata file hash to the hash cache
      *
      * @param string $hash The hash for the metadata file
-     * @return null
+     * @param MetaDataContextInterface $context Metadata context
      */
-    protected function cacheMetadataHash($hash)
+    protected function cacheMetadataHash($hash, MetaDataContextInterface $context)
     {
-        $key = $this->getCachedMetadataHashKey();
-        return $this->addToHashCache($key, $hash);
+        $key = $this->getCachedMetadataHashKey($context);
+        $this->addToHashCache($key, $hash);
     }
 
     /**
      * Gets the hash for a metadata file cache
      *
+     * @param MetaDataContextInterface|null $context Metadata context
      * @return string A metadata cache file hash or false if not found
      */
-    public function getCachedMetadataHash()
+    public function getCachedMetadataHash(MetaDataContextInterface $context = null)
     {
-        $key = $this->getCachedMetadataHashKey();
+        if (!$context) {
+            $context = $this->getCurrentUserContext();
+        }
+
+        $key = $this->getCachedMetadataHashKey($context);
         return $this->getFromHashCache($key);
     }
 
@@ -2989,21 +3082,25 @@ class MetaDataManager
      * Saves the metadata into a cache file
      *
      * @param array $data The metadata to cache
+     * @param MetaDataContextInterface $context Metadata context
      */
-    protected function putMetadataCache($data)
+    protected function putMetadataCache($data, MetaDataContextInterface $context)
     {
-        $this->storeToCacheTable($this->getCachedMetadataHashKey(), $data);
+        $this->storeToCacheTable($this->getCachedMetadataHashKey($context), $data);
 
         // Cache the hash as well
         if (isset($data['_hash'])) {
-            $this->cacheMetadataHash($data['_hash']);
+            $this->cacheMetadataHash($data['_hash'], $context);
         }
     }
 
     /**
      * Deletes caches for this metadata manager visibility and platform
+     *
+     * @param MetaDataContextInterface|null $context Metadata context
+     * @return boolean
      */
-    protected function deletePlatformVisibilityCaches()
+    protected function deletePlatformVisibilityCaches(MetaDataContextInterface $context)
     {
         //Sets a flag that tells callers whether this action actually did something
         $deleted = false;
@@ -3037,7 +3134,7 @@ class MetaDataManager
 
         // Then delete the metadata cache and delete from the hash cache if there
         // is a cache to handle
-        $cacheKey = $this->getCachedMetadataHashKey();
+        $cacheKey = $this->getCachedMetadataHashKey($context);
         if (!empty($hashes[$cacheKey])) {
             $this->removeFromCacheTable($cacheKey);
             unset($hashes[$cacheKey]);
@@ -3119,6 +3216,7 @@ class MetaDataManager
             self::MM_LOGOURL,
             self::MM_LANGUAGES,
             self::MM_OVERRIDEVALUES,
+            self::MM_EDITDDFILTERS
         );
     }
 
@@ -3187,12 +3285,23 @@ class MetaDataManager
     /**
      * Gets the key used for the metadata hash cache store
      *
+     * @param MetaDataContextInterface|null $context Metadata context
      * @return string The key for this platform and visibility version of metadata
      */
-    public function getCachedMetadataHashKey()
+    protected function getCachedMetadataHashKey(MetaDataContextInterface $context)
     {
-        $public = $this->public ? "public_" : "";
-        $key = "meta_hash_$public" . implode( "_", $this->platforms);
+        if ($this->public) {
+            $prefix = 'public_';
+        } else {
+            $hash = $context->getHash();
+            if ($hash) {
+                $prefix = $hash . '_';
+            } else {
+                $prefix = '';
+            }
+        }
+
+        $key = "meta_hash_$prefix" . implode("_", $this->platforms);
         return $key;
     }
 
@@ -3202,16 +3311,21 @@ class MetaDataManager
      *
      * @param bool $verifyDataExists if true, the javascript component files
      * will be verified as a part of the hash check
+     * @param MetaDataContextInterface|null $context Metadata context
      *
      * @return string A metadata cache file hash or false if not found
      */
-    public function getMetadataHash($verifyDataExists = false)
+    public function getMetadataHash($verifyDataExists = false, MetaDataContextInterface $context = null)
     {
+        if (!$context) {
+            $context = $this->getCurrentUserContext();
+        }
+
         // Start with the known has if there is one
-        $hash = $this->getCachedMetadataHash();
+        $hash = $this->getCachedMetadataHash($context);
 
         if ($verifyDataExists) {
-            $data = $this->getMetadataCache(true);
+            $data = $this->getMetadataCache(true, $context);
             if (!$this->verifyJSSource($data)) {
                 //The jssource file is invalid, we need to invalidate the hash as well.
                 return false;
@@ -3235,23 +3349,25 @@ class MetaDataManager
      * Sets up the modules and full_module_list portion of metadata
      *
      * @param array $data Array of arguments or existing data to be written
+     * @param MetaDataContextInterface $context Metadata context
      * @return array Array of data containing full_module_list and modules
      */
-    protected function setupModuleLists($data)
+    protected function setupModuleLists($data, MetaDataContextInterface $context)
     {
         $method = 'setup' . ucfirst($this->visibility) . 'ModuleLists';
-        return $this->$method($data);
+        return $this->$method($data, $context);
     }
 
     /**
      * Sets up the private module lists consisting of modules and full_module_list
      *
      * @param array $data Array of arguments or existing data to be written
+     * @param MetaDataContextInterface $context Metadata context
      * @return array Array of data containing full_module_list and modules
      */
-    protected function setupPrivateModuleLists($data)
+    protected function setupPrivateModuleLists($data, MetaDataContextInterface $context)
     {
-        $data = $this->populateModules($data);
+        $data = $this->populateModules($data, $context);
         foreach ($data['modules'] as $moduleName => $moduleDef) {
             if (!array_key_exists($moduleName, $data['full_module_list']) && array_key_exists($moduleName, $data['modules'])) {
                 unset($data['modules'][$moduleName]);
@@ -3369,11 +3485,12 @@ class MetaDataManager
      *
      * @param string $moduleName The name of the module
      * @param string $view       The view name
+     * @param MetaDataContextInterface|null $context Metadata context
      * @return array
      */
-    public function getModuleView($moduleName, $view)
+    public function getModuleView($moduleName, $view, $context = null)
     {
-        $views = $this->getModuleViews($moduleName);
+        $views = $this->getModuleViews($moduleName, $context);
         if (isset($views[$view])) {
             return $views[$view];
         }
@@ -3392,7 +3509,7 @@ class MetaDataManager
     public function getModuleViewFields($moduleName, $view, &$displayParams = array())
     {
         $displayParams = array();
-        $viewData = $this->getModuleView($moduleName, $view);
+        $viewData = $this->getModuleView($moduleName, $view, $this->getCurrentUserContext());
         if (!isset($viewData['meta']) || !isset($viewData['meta']['panels'])) {
             return array();
         }
@@ -3447,6 +3564,53 @@ class MetaDataManager
     }
 
     /**
+     * Returns editable dropdown filters
+     *
+     * @param array $data Existing data
+     * @param MetaDataContextInterface $context Metadata context
+     *
+     * @return array
+     */
+    public function getEditableDropdownFilters($data = array(), MetaDataContextInterface $context = null)
+    {
+        if ($this->public) {
+            return array();
+        }
+        if (is_null($context)) {
+            $context = $this->getCurrentUserContext();
+        }
+
+        require_once 'modules/ModuleBuilder/parsers/parser.roledropdownfilter.php';
+
+        $parser = new ParserRoleDropDownFilter();
+        $platform = $this->platforms[0];
+        $files = array_map(
+            function ($file) use ($platform) {
+                $info = pathinfo($file);
+                return array(
+                   'path'=>$file,
+                   'file'=>$info['basename'],
+                   'subPath'=>$info['dirname'],
+                   'platform'=>$platform,
+                    'params' => MetaDataFiles::getClientFileParams($file),
+               );
+            },
+            $parser->getAllFiles()
+        );
+        $files = array_filter($files, function (array $file) use ($context) {
+            return $context->isValid($file);
+        });
+
+        uasort($files, function ($a, $b) use ($context) {
+            return $context->compare($a, $b);
+        });
+
+        $values = $parser->getDropDownFiltersFromFiles($files);
+
+        return $values;
+    }
+
+    /**
      * Lazily loads metadata hacks instance
      *
      * @return MetaDataHacks
@@ -3488,5 +3652,117 @@ class MetaDataManager
     public static function disableCache()
     {
         self::$isCacheEnabled = false;
+    }
+
+    /**
+     * Returns all possible metadata context combinations from the given set of metadata parameters
+     *
+     * @param boolean $public Is metadata public
+     * @param array $params Additional metadata parameters
+     * @return MetaDataContextInterface[]
+     */
+    protected static function getMetadataContexts($public, array $params)
+    {
+        $contexts = array();
+        if (!$public && isset($params['role'])) {
+            $roleSets = self::getRoleSetsByRoles($params['role']);
+            foreach ($roleSets as $roleSet) {
+                $contexts[] = new MetaDataContextRoleSet($roleSet);
+            }
+        } else {
+            $contexts[] = new MetaDataContextDefault();
+        }
+
+        return $contexts;
+    }
+
+    /**
+     * Returns all possible metadata contexts
+     *
+     * @param boolean $public Is metadata public
+     * @return MetaDataContextInterface[]
+     */
+    protected static function getAllMetadataContexts($public)
+    {
+        $contexts = array();
+        if (!$public) {
+            $roleSets = self::getAllRoleSets();
+            foreach ($roleSets as $roleSet) {
+                $contexts[] = new MetaDataContextRoleSet($roleSet);
+            }
+        }
+        $contexts[] = new MetaDataContextDefault();
+
+
+        return $contexts;
+    }
+
+    /**
+     * Returns set of role sets which include any of the given roles
+     *
+     * @param array $roles IDs of roles
+     * @return ACLRoleSet[]
+     * @todo Move this to ACLRoleSet when it's merged
+     */
+    protected static function getRoleSetsByRoles(array $roles)
+    {
+        if (!$roles) {
+            return array();
+        }
+
+        $roleSet = BeanFactory::getBean('ACLRoleSets');
+        $query = new SugarQuery();
+        $query->distinct(true);
+        $query->from($roleSet);
+        $query->select('id', 'hash');
+        $query->join('acl_roles', array('alias' => 'roles'));
+        $query->where()->in('roles.id', $roles);
+        $data = $query->execute();
+
+        return self::createCollectionFromDatSet($roleSet, $data);
+    }
+
+    /**
+     * Returns all role sets
+     *
+     * @return ACLRoleSet[]
+     * @todo Move this to ACLRoleSet when it's merged
+     */
+    protected static function getAllRoleSets()
+    {
+        $roleSet = BeanFactory::getBean('ACLRoleSets');
+        //Verify that rolesets are operable before attempting to use them.
+        if (empty($roleSet)) {
+            return array();
+        }
+        $query = new SugarQuery();
+        $query->from($roleSet);
+        $query->select('id', 'hash');
+        $data = $query->execute();
+
+        return self::createCollectionFromDatSet($roleSet, $data);
+    }
+
+    /**
+     * Creates collection of beans from the seed and data set
+     *
+     * @param SugarBean $seed Seed bean
+     * @param array $data Data set
+     *
+     * @return SugarBean[]
+     * @todo Move this to ACLRoleSet when it's merged
+     */
+    protected function createCollectionFromDatSet(SugarBean $seed, array $data)
+    {
+        $result = array();
+
+        // clone the seed for each row and populate it with the row data.
+        // do not construct every instance individually since it's relatively expensive
+        foreach ($data as $row) {
+            $result[] = $clone = clone $seed;
+            $clone->populateFromRow($row);
+        }
+
+        return $result;
     }
 }

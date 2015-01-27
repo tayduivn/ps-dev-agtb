@@ -53,17 +53,14 @@ class ViewPortalConfig extends SugarView
         $userList[''] = '';
         require_once("modules/MySettings/TabController.php");
         $controller = new TabController();
-        $tabs = $controller->get_tabs_system();
         $disabledModulesFlag = false;
-        $disabledModules = array();
-        // TODO: maybe consolidate this with the portal module list in install/install_utils.php
-        $maybeDisabledModules = array('Bugs','KBDocuments', 'Cases');
-        foreach ($maybeDisabledModules as $moduleName) {
-          if (in_array($moduleName, $tabs[1])) {
-              $disabledModules[]=translate($moduleName);
-              $disabledModulesFlag = true;
-          }
-        };
+        $disabledModules = array_diff($controller->getAllPortalTabs(), $controller->getPortalTabs());
+        if (!empty($disabledModules)) {
+            $disabledModulesFlag = true;
+            array_walk($disabledModules, function (&$item) {
+                $item = translate($item);
+            });
+        }
 
         $admin = Administration::getSettings();
 

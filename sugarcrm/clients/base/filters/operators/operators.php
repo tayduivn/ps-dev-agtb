@@ -145,10 +145,6 @@ $viewdefs['base']['filter']['operators'] = array(
         '$equals' => 'LBL_OPERATOR_IS',
         '$not_equals' => 'LBL_OPERATOR_IS_NOT',
     ),
-    'tag' => array(
-        '$contains' => 'LBL_OPERATOR_CONTAINS',
-        '$not_contains' => 'LBL_OPERATOR_NOT_CONTAINS',
-    ),
     'teamset' => array(
         '$equals' => 'LBL_OPERATOR_IS',
         '$not_equals' => 'LBL_OPERATOR_IS_NOT',

@@ -19,7 +19,7 @@
     {foreach from=$customButtons key='key' item='item'}
         {if $item.value=='Claim'}
             <a href="{$item.onclick}" title="{$item.value}"><span class="btn">{$item.value}</span></a>
-            {else}
+        {else}
             <input name="{$item.name}" type="{$item.type}" value={$item.value} onclick="{$item.onclick}">
         {/if}
     {/foreach}
@@ -83,9 +83,9 @@
                                     {/if}
                                     <li><a href="javascript:showHistory({$caseData.cas_id});" title="{sugar_translate label='LBL_PMSE_LABEL_HISTORY'}"><span class="adam-icon-history"></span></a></li>
                                     <li><a href="javascript:showImage({$caseData.cas_id});" title="{sugar_translate label='LBL_PMSE_LABEL_STATUS'}"><span class="adam-icon-status"></span></a></li>
-                                    {*{if $act_note}
+                                    {if $act_note}
                                         <li><a href="javascript:showNotes({$caseData.cas_id}, {$caseData.cas_index});" title="{sugar_translate label='LBL_PMSE_LABEL_NOTES'}"><span class="adam-icon-notes" style="position: relative;"><div id="countNotes" {if $totalNotes == 0} style="display:none;" {/if} >{$totalNotes}</div></span></a></li>
-                                    {/if}*}
+                                    {/if}
                                 </ul>
                             </div>
                         </td>
@@ -122,4 +122,4 @@
 <script type="text/javascript" src="{sugar_getjspath file='modules/pmse_Inbox/js/historyEntries.js'}"></script>
 <script type="text/javascript" src="{sugar_getjspath file='modules/pmse_Inbox/js/formAction.js'}"></script>
 <script type="text/javascript" src="{sugar_getjspath file='modules/pmse_Inbox/js/get_process_image.js'}"></script>
-{*<script type="text/javascript" src="{sugar_getjspath file='modules/pmse_Inbox/js/notes.js'}"></script>*}
+<script type="text/javascript" src="{sugar_getjspath file='modules/pmse_Inbox/js/notes.js'}"></script>

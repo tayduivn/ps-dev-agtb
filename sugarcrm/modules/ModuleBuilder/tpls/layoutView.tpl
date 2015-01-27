@@ -260,6 +260,7 @@
     <input type='hidden' name='MB' value='1'>
     <input type='hidden' name='view_package' value='{$view_package}'>
 {/if}
+<input type='hidden' name='role' value='{$selected_role}'>
 <input type='hidden' name='to_pdf' value='1'>
 </form>
 <script>
@@ -363,3 +364,8 @@ ModuleBuilder.package={if $fromModuleBuilder}"{$view_package}"{else}false{/if};
 
 ModuleBuilder.disablePopupPrompt = {if $syncDetailEditViews}{$syncDetailEditViews}{else}false{/if};
 </script>
+
+<div id="copy-from-contents" style="display: none">
+    <label for="copy-from-options">{sugar_translate label="LBL_COPY_FROM" module="ModuleBuilder"}:&nbsp;</label>
+    {html_options name="copy-from-options" id="copy-from-options" options=$copy_from_options}
+</div>

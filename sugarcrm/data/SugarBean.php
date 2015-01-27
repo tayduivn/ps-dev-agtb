@@ -2736,6 +2736,9 @@ class SugarBean
 						}
 						else
 						{
+                            //Converting from db fields is needed
+                            //Example: from "2015-01-08 22:32:00.000000" (retrieved from DB2) to "2015-01-08 22:32:00"
+                            $this->$field = $this->db->fromConvert($this->$field, 'datetime');
 							if(empty($disable_date_format)) {
 								$this->$field = $timedate->to_display_date_time($this->$field, true, true);
 							}
@@ -7786,31 +7789,5 @@ class SugarBean
         }
 
         return $fields;
-    }
-
-    /**
-     * Checks to see if a bean implements taggable
-     *
-     * @return boolean True if tags are enabled for this bean
-     */
-    public function isTaggable()
-    {
-        return $this->getTagField() !== null;
-    }
-
-    /**
-     * Gets the field_defs key for the tag field of a bean
-     *
-     * @return string
-     */
-    public function getTagField()
-    {
-        foreach ($this->field_defs as $name => $def) {
-            if (isset($def['type']) && $def['type'] === 'tag') {
-                return $name;
-            }
-        }
-
-        return null;
     }
 }

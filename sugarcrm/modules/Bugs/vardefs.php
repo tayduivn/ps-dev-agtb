@@ -24,8 +24,8 @@ $dictionary['Bug'] = array('table' => 'bugs',    'audited'=>true, 'activity_enab
     'duplicate_merge' => 'disabled',
     'audited' =>true,
   	'studio' => array(
-          'fields' => 'false', 
-          'listview' => false, 
+          'fields' => 'false',
+          'listview' => false,
           //BEGIN SUGARCRM flav=pro ONLY
           // Bug 54507 - Add wireless and portal to exclude list
           'wirelesslistview' => false,
@@ -49,16 +49,16 @@ $dictionary['Bug'] = array('table' => 'bugs',    'audited'=>true, 'activity_enab
     'reportable'=>false,
     'source'=>'non-db',
     'table'=>'releases',
-    'merge_filter' => 'enabled', //bug 22994, we should use the release name to search, I have write codes to operate the cross table query. 
+    'merge_filter' => 'enabled', //bug 22994, we should use the release name to search, I have write codes to operate the cross table query.
     'id_name'=>'found_in_release',
     'module'=>'Releases',
     'link' => 'release_link',
     'massupdate' => false,
 	'studio' => array(
-       'editview' => false, 
+       'editview' => false,
        'detailview' => false,
-       'quickcreate' => false, 
-       'basic_search' => false, 
+       'quickcreate' => false,
+       'basic_search' => false,
        'advanced_search' => false,
 	   //BEGIN SUGARCRM flav=pro ONLY
 	   'wirelesseditview' => false,
@@ -88,8 +88,8 @@ $dictionary['Bug'] = array('table' => 'bugs',    'audited'=>true, 'activity_enab
     'duplicate_merge' => 'disabled',
     'audited' =>true,
   	'studio' => array(
-          'fields' => 'false', 
-          'listview' => false, 
+          'fields' => 'false',
+          'listview' => false,
           //BEGIN SUGARCRM flav=pro ONLY
           // Bug 54507 - Add wireless and portal to exclude list
           'wirelesslistview' => false,
@@ -120,10 +120,10 @@ $dictionary['Bug'] = array('table' => 'bugs',    'audited'=>true, 'activity_enab
     'source'=>'non-db',
     'link' => 'fixed_in_release_link',
 	'studio' => array(
-       'editview' => false, 
+       'editview' => false,
        'detailview' => false,
-       'quickcreate' => false, 
-       'basic_search' => false, 
+       'quickcreate' => false,
+       'basic_search' => false,
        'advanced_search' => false,
        //BEGIN SUGARCRM flav=pro ONLY
        'wirelesseditview' => false,
@@ -370,9 +370,6 @@ $dictionary['Bug'] = array('table' => 'bugs',    'audited'=>true, 'activity_enab
 
     //This enables optimistic locking for Saves From EditView
 	'optimistic_locking'=>true,
-    'uses' => array(
-        'taggable',
-    ),
  );
 
 VardefManager::createVardef('Bugs','Bug', array('default', 'assignable',

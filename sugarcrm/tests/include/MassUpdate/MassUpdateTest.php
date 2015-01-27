@@ -49,6 +49,7 @@ class MassUpdateTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $mass = new MassUpdate();
         $options = array (
+            '' => '',
             '10' => 'ten',
             '20' => 'twenty',
             '30' => 'thirty',

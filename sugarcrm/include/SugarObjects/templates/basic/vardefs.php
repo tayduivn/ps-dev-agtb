@@ -9,7 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
+
 $vardefs = array(
 //BEGIN SUGARCRM flav=pro ONLY
     'favorites' => true,
@@ -135,7 +135,7 @@ $vardefs = array(
                 'massupdate' => false,
                 'duplicate_on_record_copy' => 'no',
                 'readonly' => true,
-                'sort_on' => array('last_name'),                
+                'sort_on' => array('last_name'),
             ),
         'doc_owner' => array(
                 'name' => 'doc_owner',
@@ -274,7 +274,6 @@ $vardefs = array(
     'uses' => array(
         'following',
         'favorite',
-        'taggable',
     ),
     'duplicate_check' => array(
         'enabled' => true,

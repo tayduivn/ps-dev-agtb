@@ -406,7 +406,6 @@ AdamGateway.prototype.getContextMenu = function () {
         cssStyle : 'adam-menu-icon-gateway-converging',
         handler: function () {
             self.updateDirection('CONVERGING');
-           // console.log(self);
             self.cleanFlowConditions();
 
         },
@@ -547,36 +546,45 @@ AdamGateway.prototype.createConfigureAction = function () {
         //items: criteriaItems,
         proxy: proxy,
         buttons: [
-            { jtype: 'submit', caption: translate('LBL_PMSE_BUTTON_SAVE') },
-            { jtype: 'normal', caption: translate('LBL_PMSE_BUTTON_CANCEL'), handler: function () {
-                if (f.isDirty()) {
-                    cancelInformation =  new MessagePanel({
-                        title: "Confirm",
-                        wtype: 'Confirm',
-                        message: translate('LBL_PMSE_MESSAGE_CANCEL_CONFIRM'),
-                        buttons: [
-                            {
-                                jtype: 'normal',
-                                caption: translate('LBL_PMSE_BUTTON_YES'),
-                                handler: function () {
-                                    cancelInformation.close();
-                                    w.close();
+            {
+                jtype: 'submit',
+                caption: translate('LBL_PMSE_BUTTON_SAVE'),
+                cssClasses: ['btn', 'btn-primary']
+            },
+            {
+                jtype: 'normal',
+                caption: translate('LBL_PMSE_BUTTON_CANCEL'),
+                handler: function () {
+                    if (f.isDirty()) {
+                        cancelInformation =  new MessagePanel({
+                            title: "Confirm",
+                            wtype: 'Confirm',
+                            message: translate('LBL_PMSE_MESSAGE_CANCEL_CONFIRM'),
+                            buttons: [
+                                {
+                                    jtype: 'normal',
+                                    caption: translate('LBL_PMSE_BUTTON_YES'),
+                                    handler: function () {
+                                        cancelInformation.close();
+                                        w.close();
+                                    }
+                                },
+                                {
+                                    jtype: 'normal',
+                                    caption: translate('LBL_PMSE_BUTTON_NO'),
+                                    handler: function () {
+                                        cancelInformation.close();
+                                    }
                                 }
-                            },
-                            {
-                                jtype: 'normal',
-                                caption: translate('LBL_PMSE_BUTTON_NO'),
-                                handler: function () {
-                                    cancelInformation.close();
-                                }
-                            }
-                        ]
-                    });
-                    cancelInformation.show();
-                } else {
-                    w.close();
-                }
-            }}
+                            ]
+                        });
+                        cancelInformation.show();
+                    } else {
+                        w.close();
+                    }
+                },
+                cssClasses: ['btn btn-invisible btn-link']
+            }
         ],
         callback: {
             submit: function (data, other) {
@@ -613,7 +621,6 @@ AdamGateway.prototype.createConfigureAction = function () {
                     },
                     start: function (event, ui) {
                         var fields, i;
-                        //console.log('was changed');
                         fields = f.items;
                         for (i = 0; i < fields.length; i += 1) {
                             fields[i].closePanel();
@@ -633,7 +640,6 @@ AdamGateway.prototype.createConfigureAction = function () {
                     e.stopPropagation();
                 });
 
-                //console.log(data);
                 flows = data.data;
                 if (data && data.data) {
                 for (i = 0; i < flows.length; i += 1) {
@@ -642,7 +648,6 @@ AdamGateway.prototype.createConfigureAction = function () {
                         && connection.getName() !== '')
                         ? connection.getName() : connection.getDestPort().parent.getName();
                     criteriaLabel = translate('LBL_PMSE_FORM_LABEL_CRITERIA') + ' (' + criteriaName + ')';
-//                    console.log(connection.getFlowCondition());
                     criteriaItems.push(
                         {
                             jtype: 'criteria',
@@ -650,15 +655,15 @@ AdamGateway.prototype.createConfigureAction = function () {
                             label: criteriaLabel,
                             required: false,
                             value: connection.getFlowCondition(),
-                            fieldWidth: 288,
+                            fieldWidth: 420,
                             fieldHeight: 128,
                             decimalSeparator: SUGAR.App.config.defaultDecimalSeparator,
                             numberGroupingSeparator: SUGAR.App.config.defaultNumberGroupingSeparator,
                             operators: {
-                                logic: true, 
+                                logic: true,
                                 group: true,
                                 aritmetic: false,
-                                comparison: false   
+                                comparison: false
                             },
                             evaluation: {
                                 module: {
@@ -760,7 +765,6 @@ AdamGateway.prototype.cleanFlowConditions = function () {
         port = this.getPorts().get(i);
         connection = port.connection;
         if (connection.srcPort.parent.getID() === this.getID()) {
-            //console.log(connection);
             oldValues = {
                 condition: connection.getFlowCondition(),
                 type: connection.getFlowType()
