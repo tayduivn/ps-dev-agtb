@@ -48,7 +48,6 @@ $viewdefs['Employees']['base']['view']['list'] = array(
                 ),
                 array(
                     'name' => 'email',
-                    'width' => '15%',
                     'label' => 'LBL_EMAIL',
                     'enabled' => true,
                     'default' => true,
@@ -56,7 +55,6 @@ $viewdefs['Employees']['base']['view']['list'] = array(
                 ),
                 array(
                     'name' => 'phone_work',
-                    'width' => '15%',
                     'label' => 'LBL_OFFICE_PHONE',
                     'default' => true,
                     'enabled' => true,

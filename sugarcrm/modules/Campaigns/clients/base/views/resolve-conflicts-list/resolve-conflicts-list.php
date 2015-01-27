@@ -17,7 +17,6 @@ $viewdefs['Campaigns']['base']['view']['resolve-conflicts-list'] = array(
             'fields' => array(
                 array(
                     'name' => 'name',
-                    'width' => 40,
                     'link' => true,
                     'label' => 'LBL_LIST_NAME',
                     'enabled' => true,
@@ -25,21 +24,18 @@ $viewdefs['Campaigns']['base']['view']['resolve-conflicts-list'] = array(
                 ),
                 array(
                     'name' => 'status',
-                    'width' => 10,
                     'label' => 'LBL_LIST_STATUS',
                     'enabled' => true,
                     'default' => true,
                 ),
                 array(
                     'name' => 'campaign_type',
-                    'width' => 10,
                     'label' => 'LBL_LIST_TYPE',
                     'enabled' => true,
                     'default' => true,
                 ),
                 array(
                     'name' => 'end_date',
-                    'width' => 13,
                     'label' => 'LBL_LIST_END_DATE',
                     'default' => true,
                     'enabled' => true,
@@ -49,12 +45,10 @@ $viewdefs['Campaigns']['base']['view']['resolve-conflicts-list'] = array(
                     'label' => 'LBL_TEAM',
                     'default' => false,
                     'enabled' => true,
-                    'width' => '2',
                 ),
                 array(
                     'name' => 'assigned_user_name',
                     'module' => 'Users',
-                    'width' => 14,
                     'label' => 'LBL_LIST_ASSIGNED_USER',
                     'id' => 'ASSIGNED_USER_ID',
                     'sortable' => false,
@@ -66,7 +60,6 @@ $viewdefs['Campaigns']['base']['view']['resolve-conflicts-list'] = array(
                     'type' => 'datetime',
                     'label' => 'LBL_DATE_ENTERED',
                     'enabled' => true,
-                    'width' => 13,
                     'default' => false,
                     'readonly' => true,
                 ),

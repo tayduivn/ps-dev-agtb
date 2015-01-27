@@ -18,7 +18,6 @@ $viewdefs['KBDocuments']['portal']['view']['list'] = array(
             'fields' => array(
                  array (
                     'name' => 'kbdocument_name',
-                    'width' => '45%',
                     'label' => 'LBL_NAME',
                     'link' => true,
                     'bwcLink' => false,
@@ -29,21 +28,18 @@ $viewdefs['KBDocuments']['portal']['view']['list'] = array(
                     'name' => 'active_date',
                     'label' => 'LBL_DOC_ACTIVE_DATE',
                     'enabled' => true,
-                    'width' => '10%',
                     'default' => true,
                 ),
                 array (
                     'name' => 'exp_date',
                     'label' => 'LBL_DOC_EXP_DATE',
                     'enabled' => true,
-                    'width' => '10%',
                     'default' => true,
                 ),
                 array (
                     'name' => 'date_entered',
                     'label' => 'LBL_DATE_ENTERED',
                     'enabled' => true,
-                    'width' => '10%',
                     'default' => true,
                     'readonly' => true,
                 ),
@@ -51,7 +47,6 @@ $viewdefs['KBDocuments']['portal']['view']['list'] = array(
                     'name' => 'kbdocument_revision_number',
                     'label' => 'LBL_KBDOCUMENT_REVISION_NUMBER',
                     'enabled' => true,
-                    'width' => '10%',
                     'default' => true,
                 ),
             ),
