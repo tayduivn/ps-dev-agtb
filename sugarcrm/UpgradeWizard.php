@@ -12,19 +12,16 @@ if(!defined('sugarEntry'))define('sugarEntry', true);
  */
 
 // if we're in upgrade, upgrade files will be preserved in special place
-if(empty($_REQUEST['action']) || empty($_REQUEST['token'])) {
-    $files_dir = 'modules/UpgradeWizard/';
-} else {
+$webUpgraderFile = 'modules/UpgradeWizard/WebUpgrader.php';
+if(!empty($_REQUEST['action']) && !empty($_REQUEST['token'])) {
     session_start();
-    if (!empty($_SESSION['upgrade_dir']) && is_dir($_SESSION['upgrade_dir'])) {
-        $files_dir = $_SESSION['upgrade_dir'];
-    } else {
-        $files_dir = 'modules/UpgradeWizard/';
+    if (!empty($_SESSION['upgrade_dir']) && is_file($_SESSION['upgrade_dir'] . 'WebUpgrader.php')) {
+        $webUpgraderFile = $_SESSION['upgrade_dir'] . 'WebUpgrader.php';
     }
     session_write_close();
 }
 // we inlcude either original or the copy preserved so that upgrading won't mess it up
-require_once "{$files_dir}WebUpgrader.php";
+require_once $webUpgraderFile;
 $upg = new WebUpgrader(dirname(__FILE__));
 $upg->init();
 
