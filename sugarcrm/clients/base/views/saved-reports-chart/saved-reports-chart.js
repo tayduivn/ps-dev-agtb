@@ -175,6 +175,10 @@
                 // show or hide 'Edit Selected Report' link
                 this.updateEditLink(model.get('saved_report_id'));
             }, this);
+            this.settings.on('change:chart_type', function(model) {
+                // toggle display of chart display option controls based on chart type
+                this._toggleChartFields();
+            }, this);
         }
     },
 
@@ -273,8 +277,8 @@
         // update the settings model for use by chart field
         this.settings.set(params);
 
-        // toggle display of stack data series checkbox based on chart type
-        this._toggleStackableField();
+        // toggle display of chart display option controls based on chart type
+        this._toggleChartFields();
 
         // set the title of the dashlet to the report title
         this.$('[name="label"]').val(this.settings.get('label'));
@@ -341,7 +345,7 @@
                 break;
 
             default:
-                barType = disabled;
+                barType = 'disabled';
                 break;
         }
 
@@ -440,16 +444,77 @@
     },
 
     /**
-     * Handle the display of the stacked checkbox control based on chart type
+     * Handle the display of the chart display option controls based on chart type
      *
      * @private
      */
-    _toggleStackableField: function() {
+    _toggleChartFields: function() {
         if (this.meta.config) {
-            var stackedField = this.getField('stacked'),
-                barType = this._getBarType(this.settings.get('chart_type'));
-            if (stackedField) {
-                stackedField.$el.toggleClass('hide', (barType !== 'stacked' && barType !== 'grouped'));
+            var xOptionsFieldset = this.getField('x_label_options'),
+                tickDisplayMethods = this.getField('tickDisplayMethods'),
+                yOptionsFieldset = this.getField('y_label_options'),
+                showValuesField = this.getField('showValues'),
+                groupDisplayOptions = this.getField('groupDisplayOptions'),
+                stackedField = this.getField('stacked'),
+                showDimensionOptions = false,
+                showBarOptions = false,
+                showStacked = false;
+
+            switch (this.settings.get('chart_type')) {
+                case 'pie chart':
+                case 'gauge chart':
+                case 'funnel chart 3D':
+                    showDimensionOptions = false;
+                    showBarOptions = false;
+                    break;
+
+                case 'line chart':
+                    showDimensionOptions = true;
+                    showBarOptions = false;
+                    break;
+
+                case 'stacked group by chart':
+                case 'horizontal group by chart':
+                case 'group by chart':
+                    showDimensionOptions = true;
+                    showBarOptions = true;
+                    showStacked = true;
+                    break;
+
+                case 'vertical bar chart':
+                case 'vertical':
+                case 'horizontal bar chart':
+                case 'horizontal':
+                case 'bar chart':
+                    showDimensionOptions = true;
+                    showBarOptions = true;
+                    showStacked = false;
+                    break;
+
+                default:
+                    showDimensionOptions = false;
+                    showBarOptions = false;
+                    break;
+            }
+
+            if (xOptionsFieldset) {
+                xOptionsFieldset.$el.closest('.record-cell').toggleClass('hide', !showDimensionOptions);
+            }
+            if (tickDisplayMethods) {
+                tickDisplayMethods.$el.closest('.record-cell').toggleClass('hide', !showDimensionOptions);
+            }
+            if (yOptionsFieldset) {
+                yOptionsFieldset.$el.closest('.record-cell').toggleClass('hide', !showDimensionOptions);
+            }
+
+            if (showValuesField) {
+                showValuesField.$el.closest('.record-cell').toggleClass('hide', !showBarOptions);
+            }
+            if (groupDisplayOptions) {
+                groupDisplayOptions.$el.closest('.record-cell').toggleClass('hide', !showBarOptions);
+                if (stackedField) {
+                    stackedField.$el.toggleClass('hide', !showStacked);
+                }
             }
         }
     },
