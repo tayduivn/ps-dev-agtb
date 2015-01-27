@@ -31,6 +31,8 @@
         app.plugins.register('AddAsInvitee', ['view'], {
             onAttach: function() {
                 this.once('render', function() {
+                    this.turnOffAutoInviteParent();
+
                     if (this.isFieldPrepopulatedOnCreate('parent_name')) {
                         this.handleParentChange(this.model);
                     }
@@ -95,7 +97,6 @@
                 });
 
                 if (this.isPossibleInvitee(parent)) {
-                    this.turnOffAutoInviteParent();
                     if (this._isCreateAndLinkAction(parent, model)) {
                         parent.deletable = false;
                     }
