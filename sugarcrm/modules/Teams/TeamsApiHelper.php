@@ -29,12 +29,11 @@ class TeamsApiHelper extends SugarBeanApiHelper
     {
         $data = parent::formatForApi($bean, $fieldList, $options);
 
-        if (in_array("name", $fieldList)) {
-            $name = '';
-            foreach ($bean->field_defs['name']['fields'] as $field) {
-                $name = $name . " " .  $bean->$field;
+        if (in_array("name", $fieldList) && !empty($bean->name_2)) {
+            $data['name'] = trim($bean->name . ' ' . $bean->name_2);
+            if (!empty($data['name_2'])) {
+                $data['name_2'] = '';
             }
-            $data['name'] = trim($name);
         }
 
         return $data;
