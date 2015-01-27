@@ -45,7 +45,6 @@ $viewdefs['Users']['base']['view']['dupecheck-list'] = array(
                 ),
                 array(
                     'name' => 'email',
-                    'width' => '15%',
                     'label' => 'LBL_EMAIL',
                     'enabled' => true,
                     'default' => false,
@@ -53,7 +52,6 @@ $viewdefs['Users']['base']['view']['dupecheck-list'] = array(
                 ),
                 array(
                     'name' => 'phone_work',
-                    'width' => '15%',
                     'label' => 'LBL_OFFICE_PHONE',
                     'enabled' => true,
                     'default' => false,

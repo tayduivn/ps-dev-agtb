@@ -30,28 +30,24 @@ $viewdefs[$module_name]['base']['view']['list'] = array(
                 array(
                     'name' => 'prj_module',
                     'label' => 'LBL_PRJ_MODULE',
-                    'width' => 10,
                     'default' => true,
                     'enabled' => true,
                 ),
                 array(
                     'name' => 'prj_status',
                     'label' => 'LBL_PRJ_STATUS',
-                    'width' => 10,
                     'default' => true,
                     'enabled' => true,
                 ),
                 array(
                     'name' => 'team_name',
                     'label' => 'LBL_TEAM',
-                    'width' => 9,
                     'default' => false,
                     'enabled' => true,
                 ),
                 array(
                     'name' => 'assigned_user_name',
                     'label' => 'LBL_ASSIGNED_TO_NAME',
-                    'width' => 9,
                     'default' => true,
                     'enabled' => true,
                     'link' => true,

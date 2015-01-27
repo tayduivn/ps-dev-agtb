@@ -16,7 +16,6 @@ $viewdefs['ProspectLists']['base']['view']['resolve-conflicts-list'] = array(
             'fields' => array(
                 array(
                     'name' => 'name',
-                    'width' => '25',
                     'label' => 'LBL_LIST_PROSPECT_LIST_NAME',
                     'link' => true,
                     'enabled' => true,
@@ -24,21 +23,18 @@ $viewdefs['ProspectLists']['base']['view']['resolve-conflicts-list'] = array(
                 ),
                 array(
                     'name' => 'list_type',
-                    'width' => '15',
                     'label' => 'LBL_LIST_TYPE_LIST_NAME',
                     'enabled' => true,
                     'default' => true,
                 ),
                 array(
                     'name' => 'description',
-                    'width' => '40',
                     'label' => 'LBL_LIST_DESCRIPTION',
                     'enabled' => true,
                     'default' => true,
                 ),
                 array (
                     'name' => 'assigned_user_name',
-                    'width' => '10%',
                     'label' => 'LBL_LIST_ASSIGNED_USER',
                     'id' => 'ASSIGNED_USER_ID',
                     'enabled' => true,
@@ -49,7 +45,6 @@ $viewdefs['ProspectLists']['base']['view']['resolve-conflicts-list'] = array(
                     'name' => 'date_entered',
                     'type' => 'datetime',
                     'label' => 'LBL_DATE_ENTERED',
-                    'width' => '10',
                     'enabled' => true,
                     'default' => false,
                     'readonly' => true,

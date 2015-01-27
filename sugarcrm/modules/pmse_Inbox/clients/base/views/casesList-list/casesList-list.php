@@ -104,7 +104,6 @@ $viewdefs[$module_name]['base']['view']['casesList-list'] = array(
                     'default' => true,
                     'enabled' => true,
                     'link' => true,
-                    'width' => '3%',
                 ),
                 array(
                     'name' => 'pro_title',

@@ -46,7 +46,6 @@ $viewdefs['Opportunities']['base']['view']['subpanel-for-accounts'] = array(
                     ),
                     'currency_field' => 'currency_id',
                     'base_rate_field' => 'base_rate',
-                    'width' => 10,
                     'enabled' => true,
                     'default' => true,
                 ),
