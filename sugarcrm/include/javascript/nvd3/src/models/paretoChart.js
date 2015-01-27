@@ -456,6 +456,46 @@ nv.models.paretoChart = function() {
             innerHeight = availableHeight - innerMargin.top - innerMargin.bottom;
 
             //------------------------------------------------------------
+            // Recall Main Chart Components based on final dimensions
+
+            multibar
+                .width(innerWidth)
+                .height(innerHeight);
+
+            barsWrap
+                .attr('transform', 'translate(' + innerMargin.left + ',' + innerMargin.top + ')')
+                .call(multibar);
+
+            lines1
+                .width(innerWidth)
+                .height(innerHeight);
+            lines2
+                .width(innerWidth)
+                .height(innerHeight);
+
+            linesWrap1
+                .attr('transform', 'translate(' + innerMargin.left + ',' + innerMargin.top + ')')
+                .call(lines1);
+            linesWrap2
+                .attr('transform', 'translate(' + innerMargin.left + ',' + innerMargin.top + ')')
+                .call(lines2);
+
+            quotaWrap
+                .attr('transform', 'translate(' + innerMargin.left + ',' + innerMargin.top + ')');
+
+            xAxisWrap
+                .attr('transform', 'translate(' + innerMargin.left + ',' + (xAxis.orient() === 'bottom' ? innerHeight + innerMargin.top : innerMargin.top) + ')')
+                .call(xAxis);
+
+            yAxis
+                .ticks(innerHeight / 100)
+                .tickSize(-innerWidth, 0);
+
+            yAxisWrap
+                .attr('transform', 'translate(' + (yAxis.orient() === 'left' ? innerMargin.left : innerMargin.left + innerWidth) + ',' + innerMargin.top + ')')
+                .call(yAxis);
+
+            //------------------------------------------------------------
             // Quota Line
 
             quotaWrap.selectAll('line').remove();
@@ -589,46 +629,6 @@ nv.models.paretoChart = function() {
                         pos: [d3.event.pageX, d3.event.pageY]
                     });
                 });
-
-            //------------------------------------------------------------
-            // Recall Main Chart Components based on final dimensions
-
-            multibar
-                .width(innerWidth)
-                .height(innerHeight);
-
-            barsWrap
-                .attr('transform', 'translate(' + innerMargin.left + ',' + innerMargin.top + ')')
-                .call(multibar);
-
-            lines1
-                .width(innerWidth)
-                .height(innerHeight);
-            lines2
-                .width(innerWidth)
-                .height(innerHeight);
-
-            linesWrap1
-                .attr('transform', 'translate(' + innerMargin.left + ',' + innerMargin.top + ')')
-                .call(lines1);
-            linesWrap2
-                .attr('transform', 'translate(' + innerMargin.left + ',' + innerMargin.top + ')')
-                .call(lines2);
-
-            quotaWrap
-                .attr('transform', 'translate(' + innerMargin.left + ',' + innerMargin.top + ')');
-
-            xAxisWrap
-                .attr('transform', 'translate(' + innerMargin.left + ',' + (xAxis.orient() === 'bottom' ? innerHeight + innerMargin.top : innerMargin.top) + ')')
-                .call(xAxis);
-
-            yAxis
-                .ticks(innerHeight / 100)
-                .tickSize(-innerWidth, 0);
-
-            yAxisWrap
-                .attr('transform', 'translate(' + (yAxis.orient() === 'left' ? innerMargin.left : innerMargin.left + innerWidth) + ',' + innerMargin.top + ')')
-                .call(yAxis);
 
             //============================================================
             // Event Handling/Dispatching (in chart's scope)
