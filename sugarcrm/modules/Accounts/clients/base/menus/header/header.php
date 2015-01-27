@@ -21,13 +21,6 @@ $viewdefs[$moduleName]['base']['menu']['header'] = array(
         'route'=>'#'.$moduleName.'/create',
     ),
     array(
-        'label' => 'LBL_BAL',
-        'acl_action' => 'create',
-        'acl_module' => $moduleName,
-        'icon' => 'fa-plus',
-        'route' => '#'.$moduleName.'/layout/dnb-bal',
-    ),
-    array(
         'route'=>'#'.$moduleName,
         'label' =>'LNK_ACCOUNT_LIST',
         'acl_action'=>'list',
@@ -61,5 +54,12 @@ $viewdefs[$moduleName]['base']['menu']['header'] = array(
         'acl_action'=>'import',
         'acl_module'=>$moduleName,
         'icon' => 'fa-arrow-circle-o-up',
+    ),
+    array(
+        'label' => 'LBL_BAL',
+        'acl_action' => 'create',
+        'acl_module' => $moduleName,
+        'icon' => 'fa-arrow-circle-o-up',
+        'route' => '#'.$moduleName.'/layout/dnb-bal',
     ),
 );
