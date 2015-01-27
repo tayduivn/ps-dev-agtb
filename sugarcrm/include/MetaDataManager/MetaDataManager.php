@@ -204,6 +204,7 @@ class MetaDataManager
         'module_tab_map',
         'hidden_subpanels',
         'config',
+        'editable_dropdown_filters',
     );
 
     /**
