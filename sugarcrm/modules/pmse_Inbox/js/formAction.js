@@ -85,7 +85,7 @@ var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,task
         items,
         proxy,
         proxyUsers,
-        //textArea,
+        textArea,
         url,
         wtitle,
         wWidth,
@@ -190,6 +190,7 @@ var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,task
             casInboxId,
             combo_users,
             combo_type,
+            textArea,
             task_Name,
             user_Name,
             module_Name,
@@ -231,50 +232,58 @@ var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,task
         callback: null
     });
     f = new Form({
-        //proxy: proxy,
         items: items,
         closeContainerOnSubmit: true,
         buttons: [
-            {jtype: 'normal', caption: translate('LBL_PMSE_BUTTON_SAVE', 'pmse_Inbox') , handler: function () {
-                var cbDate=$("#reassign_user option:selected").html();
-                if(cbDate){
-                    items[6].setValue(cbDate);
-                }else{
-                    items[7].setValue($("#adhoc_user option:selected").html());
-                }
-                var urlIni = _App.api.buildURL(url, null, null);
-                attributes = {
-                    data: f.getData()
-                };
-                _App.api.call('update', urlIni, attributes, {
-                    success: function (response) {
-                        if (wtype == 'reassign')
-                        {
-                            w.close();
-                            _App.router.redirect('Home');
-                        }
-                        else if(wtype == 'adhoc')
-                        {
-                            if ($('#assigned_user_name').length)
+            {
+                jtype: 'normal',
+                caption: translate('LBL_PMSE_BUTTON_SAVE', 'pmse_Inbox'),
+                cssClasses: ['btn', 'btn-primary'],
+                handler: function () {
+                    var cbDate=$("#reassign_user option:selected").html();
+                    if(cbDate){
+                        items[6].setValue(cbDate);
+                    }else{
+                        items[7].setValue($("#adhoc_user option:selected").html());
+                    }
+                    var urlIni = _App.api.buildURL(url, null, null);
+                    attributes = {
+                        data: f.getData()
+                    };
+                    _App.api.call('update', urlIni, attributes, {
+                        success: function (response) {
+                            if (wtype == 'reassign')
                             {
-                                $("#assigned_user_name").val(cbDate);
                                 w.close();
+                                _App.router.redirect('Home');
                             }
-                            else
+                            else if(wtype == 'adhoc')
                             {
-                                w.close();
-                                if(!_App.router.refresh()){
-                                    window.location.reload();
+                                if ($('#assigned_user_name').length)
+                                {
+                                    $("#assigned_user_name").val(cbDate);
+                                    w.close();
+                                }
+                                else
+                                {
+                                    w.close();
+                                    if(!_App.router.refresh()){
+                                        window.location.reload();
+                                    }
                                 }
                             }
                         }
-                    }
-                });
-                //--
-            }},
-            { jtype: 'normal', caption: translate('LBL_PMSE_BUTTON_CLOSE', 'pmse_Inbox'), handler: function () {
-                w.close();
-            }}
+                    });
+                }
+            },
+            {
+                jtype: 'normal',
+                caption: translate('LBL_PMSE_BUTTON_CANCEL', 'pmse_Inbox'),
+                cssClasses: ['btn btn-invisible btn-link'],
+                handler: function () {
+                    w.close();
+                }
+            }
         ],
         labelWidth: 300,
         callback : {
