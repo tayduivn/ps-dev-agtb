@@ -12,8 +12,8 @@
 $viewdefs['base']['view']['dashlet-nestedset-list'] = array(
     'dashlets' => array(
         array(
-            'label' => 'LBL_DASHLET_TOPICS_NAME',
-            'description' => 'LBL_DASHLET_TOPICS_DESCRIPTION',
+            'label' => 'LBL_DASHLET_CATEGORIES_NAME',
+            'description' => 'LBL_DASHLET_CATEGORIES_DESCRIPTION',
             'config' => array(
                 'last_state' => array(
                     'id' => 'dashlet-nestedset-list-kbcontents',

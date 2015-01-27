@@ -17,7 +17,7 @@ $viewdefs['KBContents']['base']['view']['module-menu'] = array(
         'config_provider' => 'KBContents',
         'root_name' => 'category_root'
     ),
-    'label' => 'LNK_LIST_KBSTOPICS',
+    'label' => 'LNK_LIST_KBCATEGORIES',
     'filterDef' => array(
         array(
             'active_rev' => array(

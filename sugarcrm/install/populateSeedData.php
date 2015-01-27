@@ -753,12 +753,12 @@ foreach ($sugar_demodata['kbcategories_array'] as $name => $v) {
     $kbCategory->name = $name;
 
     $KBContent = BeanFactory::getBean('KBContents');
-    $rootTopic = BeanFactory::getBean(
+    $rootCategory = BeanFactory::getBean(
         'Categories',
         $KBContent->getCategoryRoot(),
         array('use_cache' => false)
     );
-    $rootTopic->append($kbCategory);
+    $rootCategory->append($kbCategory);
     $idCategory = $kbCategory->save();
     array_push($categoryIds, $idCategory);
 
@@ -768,12 +768,12 @@ foreach ($sugar_demodata['kbcategories_array'] as $name => $v) {
             $kbSubCategory->name = $subname;
 
             $KBSubContent = BeanFactory::getBean('KBContents');
-            $rootSubTopic = BeanFactory::getBean(
+            $rootSubCategory = BeanFactory::getBean(
                 'Categories',
                 $idCategory,
                 array('use_cache' => false)
             );
-            $rootSubTopic->append($kbSubCategory);
+            $rootSubCategory->append($kbSubCategory);
             $idSubCategory = $kbSubCategory->save();
             array_push($categoryIds, $idSubCategory);
         }
