@@ -135,11 +135,12 @@ require_once 'SugarTestWebLogicHookUtilities.php';
 require_once 'SugarTestRelationshipUtilities.php';
 require_once 'SugarTestSugarEmailAddressUtilities.php';
 require_once 'SugarTestCaseUtilities.php';
-require_once 'SugarTestTagUtilities.php';
 require_once 'SugarTestDatabaseMock.php';
 //BEGIN SUGARCRM flav=ent ONLY
 require_once 'SugarTestProcessAuthorUtilities.php';
 //END SUGARCRM flav=ent ONLY
+require_once 'SugarTestLanguageFileUtilities.php';
+
 // custom helper support
 $customHelperIncludeFile = 'custom/tests/SugarTestHelperInclude.php';
 if (file_exists($customHelperIncludeFile)) {

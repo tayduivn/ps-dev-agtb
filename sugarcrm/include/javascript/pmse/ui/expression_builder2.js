@@ -47,8 +47,7 @@ ExpressionControl.prototype.type = "ExpressionControl";
 ExpressionControl.prototype._regex = {
 	string: /("(?:[^"\\]|\\.)*")|('(?:[^'\\]|\\.)*')/,
 	datetime: /^\d{4}-((0[1-9])|(1[0-2]))-((0[1-9])|([12][0-9])|(3[01]))(\s((0[0-9])|(1[0-2])|(2[0-3])):[0-5][0-9]:[0-5][0-9])?$/,
-	unittime: /^\d+[wdhm]$//*,
-	number: /^[+-]?\d+(\.\d+)?$/*/
+	unittime: /^\d+[wdhm]$/
 };
 
 ExpressionControl.prototype._typeToControl = {

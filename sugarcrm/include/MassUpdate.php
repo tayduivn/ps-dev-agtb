@@ -1177,15 +1177,18 @@ EOQ;
 		// cn: added "mass_" to the id tag to differentiate from the status id in StoreQuery
 		$html = '<td scope="row" width="15%">'.$displayname.'</td><td>';
 		if(is_array($options)){
-			if(!isset($options['']) && !isset($options['0'])){
+            if (!isset($options['']) && !isset($options['0'])) {
+                $emptyval = false;
 			   $new_options = array();
 			   $new_options[''] = '';
 			   foreach($options as $key=>$value) {
 			   	   $new_options[$key] = $value;
 			   }
 			   $options = $new_options;
-			}
-			$options = get_select_options_with_id_separate_key($options, $options, '', true);;
+            } else {
+                $emptyval = true;
+            }
+            $options = get_select_options_with_id_separate_key($options, $options, '', $emptyval);
 			$html .= '<select id="mass_'.$varname.'" name="'.$varname.'">'.$options.'</select>';
 		}else{
 			$html .= $options;

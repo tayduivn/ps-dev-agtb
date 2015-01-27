@@ -15,6 +15,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $exemptModules[] = 'ProspectLists';
 $exemptModules[] = 'Reports';
 $exemptModules[] = 'WebLogicHooks';
-$exemptModules[] = 'Tags';
+$exemptModules[] = 'pmse_Project';
+$exemptModules[] = 'pmse_Inbox';
+$exemptModules[] = 'pmse_Business_Rules';
+$exemptModules[] = 'pmse_Emails_Templates';
 
 // For $additionalModules, set the value to the module name to add

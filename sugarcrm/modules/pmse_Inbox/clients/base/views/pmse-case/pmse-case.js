@@ -52,7 +52,6 @@
 
     initialize: function(options) {
         this.case = this.options.context.get('case');
-        //console.log(this);
         _.bindAll(this);
         options.meta = _.extend({}, app.metadata.getView(this.options.module, 'record'), options.meta);
         options.meta.buttons = this.case.buttons;

@@ -27,8 +27,6 @@ class PMSECaseFlowHandler
      */
     public function __construct()
     {
-        $this->bpmFlow = BeanFactory::getBean('pmse_BpmFlow');
-        $this->bpmnFlow = BeanFactory::getBean('pmse_BpmnFlow');
         $this->sugarQueryObject = new SugarQuery();
     }
 
@@ -160,6 +158,9 @@ class PMSECaseFlowHandler
      */
     public function getBpmFlow()
     {
+        if (is_null($this->bpmFlow)) {
+            $this->bpmFlow = BeanFactory::getBean('pmse_BpmFlow');
+        }
         return $this->bpmFlow;
     }
 
@@ -170,6 +171,9 @@ class PMSECaseFlowHandler
      */
     public function getBpmnFlow()
     {
+        if (is_null($this->bpmnFlow)) {
+            $this->bpmnFlow = BeanFactory::getBean('pmse_BpmnFlow');
+        }
         return $this->bpmnFlow;
     }
 
@@ -200,6 +204,8 @@ class PMSECaseFlowHandler
      */
     public function retrieveFlowData($flowData)
     {
+        // set the bpmFlow attribute in this line for performance reasons
+        $this->getBpmFlow();
         $sugarQueryObject = $this->retrieveSugarQueryObject();
         $sugarQueryObject->select(array(
             'id',
@@ -229,6 +235,8 @@ class PMSECaseFlowHandler
      */
     public function retrieveMaxIndex($flowData)
     {
+        // set the bpmFlow attribute in this line for performance reasons
+        $this->getBpmFlow();
         if (!isset($flowData['cas_id']) || empty($flowData['cas_id'])) {
             return 0;
         }

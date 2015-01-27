@@ -16,7 +16,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * All Rights Reserved.
  * Contributor(s): ______________________________________..
  ********************************************************************************/
- 
+
  $vardefs=array(
   'fields' => array (
 
@@ -25,7 +25,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
     'name' => 'document_name',
     'vname' => 'LBL_NAME',
     'type' => 'name',
-  	'link' => true, // bug 39288 
+  	'link' => true, // bug 39288
 	'dbType' => 'varchar',
     'len' => '255',
     'required'=>true,
@@ -149,9 +149,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
     'Comment' => 'Document status for Meta-Data framework',
   ),
  ),
-     'uses' => array(
-         'taggable',
-     ),
  'duplicate_check' => array(
      'enabled' => true,
      'FilterDuplicateCheck' => array(
@@ -164,4 +161,3 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
      )
  )
 );
-

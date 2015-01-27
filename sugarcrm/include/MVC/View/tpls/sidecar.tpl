@@ -40,6 +40,13 @@
                             </div>
                         </div>
                     </div>
+                    <noscript>
+                        <div class="alert-top">
+                            <div class="alert alert-danger">
+                                <strong>{$LBL_ENABLE_JAVASCRIPT}</strong>
+                            </div>
+                        </div>
+                    </noscript>
                 </div>
                 <div id="header"></div>
                 <div id="content"></div>

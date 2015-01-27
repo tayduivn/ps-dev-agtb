@@ -109,6 +109,20 @@ describe('Leads.Base.Layout.ConvertMain', function() {
             contextTriggerStub.restore();
         });
 
+        it('should have created a convert options component with list of convert modules on the context', function() {
+            var convertOptions, expectedConvertModuleList;
+
+            convertOptions = layout.getComponent('convert-options');
+            expectedConvertModuleList = [
+                {id: 'Foo', text: 'Foo', required: true},
+                {id: 'Bar', text: 'Bar', required: true},
+                {id: 'Baz', text: 'Baz', required: false}
+            ];
+
+            expect(convertOptions).not.toBeUndefined();
+            expect(convertOptions.context.get('convertModuleList')).toEqual(expectedConvertModuleList);
+        });
+
         it('should pull out the dependencies based on the module metadata', function() {
             expect(layout.dependentModules['Foo']).toBeUndefined();
             expect(layout.dependentModules['Bar']).toBeUndefined();
@@ -116,7 +130,7 @@ describe('Leads.Base.Layout.ConvertMain', function() {
         });
 
         it('should retrieve the lead data from api and push model to the context for panel to use', function() {
-            var mockModel = new Backbone.Model({id:'123'}),
+            var mockModel = new Backbone.Model({id: '123'}),
                 fetchStub = sinon.stub(mockModel, 'fetch', function(options) {
                     options.success(mockModel);
                 });
@@ -126,7 +140,7 @@ describe('Leads.Base.Layout.ConvertMain', function() {
             fetchStub.restore();
         });
 
-        it('should ignore hidden/shown events that are propagated to the panel body not directly on it', function () {
+        it('should ignore hidden/shown events that are propagated to the panel body not directly on it', function() {
             var mockPropagatedEvent = {
                 target: '<tooltip></tooltip>',
                 currentTarget: '<panelBody></panelBody>'
@@ -135,7 +149,7 @@ describe('Leads.Base.Layout.ConvertMain', function() {
             expect(contextTriggerStub.callCount).toEqual(0);
         });
 
-        it('should pass along hidden/shown events to the context if event is fired directly on the panel body', function () {
+        it('should pass along hidden/shown events to the context if event is fired directly on the panel body', function() {
             var mockTargetHtml = '<div data-module="Foo"></div>';
             var mockEvent = {
                 type: 'shown',
@@ -146,8 +160,8 @@ describe('Leads.Base.Layout.ConvertMain', function() {
             expect(contextTriggerStub.lastCall.args).toEqual(['lead:convert:Foo:shown']);
         });
 
-        it('should add/remove model from associated model array when panel is complete/reset', function () {
-            var mockModel = {id:'123'};
+        it('should add/remove model from associated model array when panel is complete/reset', function() {
+            var mockModel = {id: '123'};
             expect(layout.associatedModels['Foo']).toBeUndefined();
             layout.handlePanelComplete('Foo', mockModel);
             expect(layout.associatedModels['Foo']).toEqual(mockModel);
@@ -155,73 +169,79 @@ describe('Leads.Base.Layout.ConvertMain', function() {
             expect(layout.associatedModels['Foo']).toBeUndefined();
         });
 
-        it('should enable dependent panels when dependencies are met', function () {
-            layout.associatedModels['Foo'] = {id:'123'};
+        it('should enable dependent panels when dependencies are met', function() {
+            layout.associatedModels['Foo'] = {id: '123'};
             layout.checkDependentModules();
             expect(contextTriggerStub.lastCall.args).toEqual(['lead:convert:Baz:enable', true]);
         });
 
-        it('should disable dependent panels when dependencies are not met', function () {
+        it('should disable dependent panels when dependencies are not met', function() {
             delete layout.associatedModels['Foo'];
             layout.checkDependentModules();
             expect(contextTriggerStub.lastCall.args).toEqual(['lead:convert:Baz:enable', false]);
         });
 
-        it('should enable save button when all required modules have been complete', function () {
-            layout.associatedModels['Foo'] = {id:'123'};
-            layout.associatedModels['Bar'] = {id:'456'};
+        it('should enable save button when all required modules have been complete', function() {
+            layout.associatedModels['Foo'] = {id: '123'};
+            layout.associatedModels['Bar'] = {id: '456'};
             layout.checkRequired();
             expect(contextTriggerStub.lastCall.args).toEqual(['lead:convert-save:toggle', true]);
         });
 
-        it('should enable save button when all required modules have been complete', function () {
+        it('should enable save button when all required modules have been complete', function() {
             delete layout.associatedModels['Foo'];
-            layout.associatedModels['Bar'] = {id:'456'};
+            layout.associatedModels['Bar'] = {id: '456'};
             layout.checkRequired();
             expect(contextTriggerStub.lastCall.args).toEqual(['lead:convert-save:toggle', false]);
         });
 
-        describe('Convert Save', function () {
+        describe('Convert Save', function() {
             var ajaxSpy, convertCompleteStub, leadConvertPattern, mockLeadConvertResponse;
 
-            beforeEach(function () {
-                ajaxSpy = sinon.spy($, 'ajax')
+            beforeEach(function() {
+                ajaxSpy = sinon.spy($, 'ajax');
                 convertCompleteStub = sinon.stub(layout, 'convertComplete');
 
                 SugarTest.seedFakeServer();
                 leadConvertPattern = /.*rest\/v10\/Leads\/lead123\/convert.*/;
                 mockLeadConvertResponse = [200, { 'Content-Type': 'application/json'}, JSON.stringify({})];
 
-                layout.context.set('leadsModel', new Backbone.Model({id:'lead123'}));
+                layout.context.set('leadsModel', new Backbone.Model({id: 'lead123'}));
             });
 
-            afterEach(function () {
+            afterEach(function() {
                 ajaxSpy.restore();
                 convertCompleteStub.restore();
             });
 
-            it('should call lead convert api with associated models and call to upload files', function () {
-                var uploadFilesStub = sinon.stub(layout, 'uploadAssociatedRecordFiles'),
+            it('should call lead convert api with associated models and call to upload files', function() {
+                var expectedRequest,
+                    uploadFilesStub = sinon.stub(layout, 'uploadAssociatedRecordFiles'),
                     getEditableFieldsStub = sinon.stub(app.data, 'getEditableFields', function(model, fields) {
                         return model;
                     });
 
                 layout.associatedModels = {
-                    Foo: {id:123},
-                    Bar: {id:456},
-                    Baz: {id:789}
+                    Foo: {id: 123},
+                    Bar: {id: 456},
+                    Baz: {id: 789}
                 };
                 SugarTest.server.respondWith('POST', leadConvertPattern, mockLeadConvertResponse);
 
                 layout.handleSave();
                 SugarTest.server.respond();
-                expect(ajaxSpy.lastCall.args[0].data).toEqual('{"modules":{"Foo":{"id":123},"Bar":{"id":456},"Baz":{"id":789}}}');
+                expectedRequest = JSON.stringify({
+                    modules: layout.associatedModels,
+                    transfer_activities_action: undefined,
+                    transfer_activities_modules: []
+                });
+                expect(ajaxSpy.lastCall.args[0].data).toEqual(expectedRequest);
                 expect(uploadFilesStub.callCount).toEqual(1);
                 uploadFilesStub.restore();
                 getEditableFieldsStub.restore();
             });
 
-            it('should disable the save button while saving and re-enable if there is an error', function () {
+            it('should disable the save button while saving and re-enable if there is an error', function() {
                 mockLeadConvertResponse[0] = 500;
                 SugarTest.server.respondWith('POST', leadConvertPattern, mockLeadConvertResponse);
                 layout.handleSave();
@@ -232,10 +252,10 @@ describe('Leads.Base.Layout.ConvertMain', function() {
             });
         });
 
-        describe('Upload Associated Record Files', function () {
+        describe('Upload Associated Record Files', function() {
             var convertCompleteStub, checkAndProcessUploadStub, checkAndProcessUploadCallbacks, mockLeadConvertResponse;
 
-            beforeEach(function () {
+            beforeEach(function() {
                 convertCompleteStub = sinon.stub(layout, 'convertComplete');
 
                 checkAndProcessUploadCallbacks = {};
@@ -252,16 +272,16 @@ describe('Leads.Base.Layout.ConvertMain', function() {
                 };
             });
 
-            afterEach(function () {
+            afterEach(function() {
                 convertCompleteStub.restore();
                 checkAndProcessUploadStub.restore();
             });
 
             it('should check for upload files on each module where we are creating a record (no id passed)', function() {
                 layout.associatedModels = {
-                    Foo: new Backbone.Model({name:'foo'}),
-                    Bar: new Backbone.Model({name:'bar'}),
-                    Baz: new Backbone.Model({id:'789'})
+                    Foo: new Backbone.Model({name: 'foo'}),
+                    Bar: new Backbone.Model({name: 'bar'}),
+                    Baz: new Backbone.Model({id: '789'})
                 };
                 layout.uploadAssociatedRecordFiles(mockLeadConvertResponse);
                 expect(checkAndProcessUploadStub.callCount).toEqual(2);
@@ -269,9 +289,9 @@ describe('Leads.Base.Layout.ConvertMain', function() {
 
             it('should throw a convert success if all calls succeed', function() {
                 layout.associatedModels = {
-                    Foo: new Backbone.Model({name:'foo'}),
-                    Bar: new Backbone.Model({name:'bar'}),
-                    Baz: new Backbone.Model({id:'789'})
+                    Foo: new Backbone.Model({name: 'foo'}),
+                    Bar: new Backbone.Model({name: 'bar'}),
+                    Baz: new Backbone.Model({id: '789'})
                 };
                 layout.uploadAssociatedRecordFiles(mockLeadConvertResponse);
                 checkAndProcessUploadCallbacks.success();
@@ -281,9 +301,9 @@ describe('Leads.Base.Layout.ConvertMain', function() {
 
             it('should throw a convert warning if any calls fail', function() {
                 layout.associatedModels = {
-                    Foo: new Backbone.Model({name:'foo'}),
-                    Bar: new Backbone.Model({name:'bar'}),
-                    Baz: new Backbone.Model({id:'789'})
+                    Foo: new Backbone.Model({name: 'foo'}),
+                    Bar: new Backbone.Model({name: 'bar'}),
+                    Baz: new Backbone.Model({id: '789'})
                 };
                 layout.uploadAssociatedRecordFiles(mockLeadConvertResponse);
                 checkAndProcessUploadCallbacks.success();
@@ -292,7 +312,7 @@ describe('Leads.Base.Layout.ConvertMain', function() {
             });
         });
 
-        describe('parseEditableFields', function () {
+        describe('parseEditableFields', function() {
             afterEach(function() {
                 sinon.collection.restore();
             });
@@ -301,7 +321,7 @@ describe('Leads.Base.Layout.ConvertMain', function() {
                 var hash,
                     dm = app.data;
                     accountsModel = dm.createBean('Accounts', {id: '123'}),
-                    contactsModel  = dm.createBean('Contacts', {first_name: 'First', last_name: 'Last', id: '123'}),
+                    contactsModel = dm.createBean('Contacts', {first_name: 'First', last_name: 'Last', id: '123'}),
                     associatedModels = {
                         'Accounts' : accountsModel,
                         'Contacts' : contactsModel
@@ -317,6 +337,51 @@ describe('Leads.Base.Layout.ConvertMain', function() {
                 expect(hash.Contacts['last_name']).toBeFalsy();
                 expect(hash.Contacts['first_name']).toBeTruthy();
                 expect(hash.Accounts['id']).toBeTruthy();
+            });
+        });
+
+        describe('getTransferActivitiesAttributes', function() {
+            var leadConvActivityOptBefore;
+
+            beforeEach(function() {
+                leadConvActivityOptBefore = app.metadata.getConfig().leadConvActivityOpt;
+            });
+
+            afterEach(function() {
+                app.metadata.getConfig().leadConvActivityOpt = leadConvActivityOptBefore;
+            });
+
+            using('different transfer settings and modules', [
+                {
+                    message: 'should pass correct transfer activity attributes',
+                    associatedModules: ['Foo', 'Bar', 'Baz'],
+                    transferModules: ['Foo', 'Baz'],
+                    transferAction: 'move',
+                    expectedModules: ['Foo', 'Baz']
+                },
+                {
+                    message: 'should not have non-associated module on list of transfer activities modules',
+                    associatedModules: ['Foo', 'Bar'],
+                    transferModules: ['Foo', 'Baz'],
+                    transferAction: 'copy',
+                    expectedModules: ['Foo']
+                },
+                {
+                    message: 'should pass empty array for transfer activities modules when transfer action is donothing',
+                    associatedModules: ['Foo', 'Bar', 'Baz'],
+                    transferModules: ['Foo', 'Baz'],
+                    transferAction: 'donothing',
+                    expectedModules: []
+                }
+            ], function(data) {
+                it(data.message, function() {
+                    layout.model.set('transfer_activities_modules', data.transferModules);
+                    app.metadata.getConfig().leadConvActivityOpt = data.transferAction;
+                    expect(layout.getTransferActivitiesAttributes(data.associatedModules)).toEqual({
+                        transfer_activities_action: data.transferAction,
+                        transfer_activities_modules: data.expectedModules
+                    });
+                });
             });
         });
     });

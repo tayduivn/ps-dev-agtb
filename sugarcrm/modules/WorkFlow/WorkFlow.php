@@ -1291,10 +1291,15 @@ check_logic_hook_file($module_name, $event, $action_array);
 
     /**
      * Repair and rebuild all Workflows
+     * @param bool $skipDeactivated optional Skip repairing deactivated workflow or not
      */
-    public function repair_workflow()
+    public function repair_workflow($skipDeactivated = false)
     {
-        $query = "SELECT DISTINCT base_module, id FROM $this->table_name WHERE deleted = 0";
+        $skipWhere = '';
+        if ($skipDeactivated) {
+            $skipWhere = ' and status = 1';
+        }
+        $query = "SELECT DISTINCT base_module, id FROM $this->table_name WHERE deleted = 0" . $skipWhere;
 
         $result = $this->db->query($query, true, " Error repairing workflow: ");
 

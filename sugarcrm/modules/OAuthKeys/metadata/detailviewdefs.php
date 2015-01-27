@@ -11,7 +11,8 @@
  */
 $module_name = 'OAuthKeys';
 $viewdefs[$module_name]['DetailView'] = array(
-'templateMeta' => array('maxColumns' => '2',
+'templateMeta' => array('form' => array('buttons'=>array('EDIT', 'DELETE')),
+                        'maxColumns' => '2',
                         'widths' => array(
                                         array('label' => '10', 'field' => '30'),
                                         array('label' => '10', 'field' => '30')

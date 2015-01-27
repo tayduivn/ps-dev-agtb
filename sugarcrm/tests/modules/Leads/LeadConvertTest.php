@@ -15,7 +15,7 @@ require_once('modules/Leads/LeadConvert.php');
 /**
  * @group leadconvert
  */
-class LeadConvertTest  extends Sugar_PHPUnit_Framework_TestCase
+class LeadConvertTest extends Sugar_PHPUnit_Framework_TestCase
 {
     private $lead;
     private $leadId;
@@ -25,9 +25,11 @@ class LeadConvertTest  extends Sugar_PHPUnit_Framework_TestCase
     private $tasksDef;
     private $modulesDef;
 
-    public function setUp() {
+    public function setUp()
+    {
         parent::setUp();
         SugarTestHelper::setUp("current_user");
+        $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
 
         $this->lead = SugarTestLeadUtilities::createLead();
         $this->leadId = $this->lead->id;
@@ -58,14 +60,14 @@ class LeadConvertTest  extends Sugar_PHPUnit_Framework_TestCase
             )
         );
 
-        $this->tasksDef =   array(
+        $this->tasksDef = array(
             'module' => 'Tasks',
             'required' => false,
             'duplicateCheck' => true,
             'fieldMapping' => array()
         );
 
-        $this->modulesDef =array(
+        $this->modulesDef = array(
             $this->contactsDef,
             $this->accountsDef,
             $this->opportunitiesDef,
@@ -75,7 +77,8 @@ class LeadConvertTest  extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('dictionary');
     }
 
-    public function tearDown() {
+    public function tearDown()
+    {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestCampaignUtilities::removeAllCreatedCampaigns();
         SugarTestContactUtilities::removeAllCreatedContacts();
@@ -93,7 +96,8 @@ class LeadConvertTest  extends Sugar_PHPUnit_Framework_TestCase
         parent::tearDown();
     }
 
-    public function testInitialize_Successful() {
+    public function testInitialize_Successful()
+    {
         $leadConvert = $this->getMock('LeadConvert', array('getVarDefs'), array($this->leadId), '', false);
 
         $leadConvert->expects($this->any())
@@ -103,7 +107,8 @@ class LeadConvertTest  extends Sugar_PHPUnit_Framework_TestCase
         $leadConvert->initialize($this->leadId);
     }
 
-    public function testInitialize_InvalidLeadId_ThrowsException() {
+    public function testInitialize_InvalidLeadId_ThrowsException()
+    {
         $leadConvert = $this->getMock('LeadConvert', array('getVarDefs'), array($this->leadId), '', false);
         $leadConvert->expects($this->any())
             ->method('getVarDefs')
@@ -119,8 +124,15 @@ class LeadConvertTest  extends Sugar_PHPUnit_Framework_TestCase
      * @group bug44522
      * @dataProvider providerDataAddLogForContactInCampaign
      */
-    public function testAddLogForContactInCampaign_LogsProperlyWhenCorrectDataSet($hasCampaign, $hasContact, $expected) {
-        $leadConvert = $this->getMock('LeadConvert', array('getVarDefs','addCampaignLog'), array($this->leadId), '', false);
+    public function testAddLogForContactInCampaign_LogsProperlyWhenCorrectDataSet($hasCampaign, $hasContact, $expected)
+    {
+        $leadConvert = $this->getMock(
+            'LeadConvert',
+            array('getVarDefs', 'addCampaignLog'),
+            array($this->leadId),
+            '',
+            false
+        );
 
         $leadConvert->expects($this->any())
             ->method('getVarDefs')
@@ -133,7 +145,7 @@ class LeadConvertTest  extends Sugar_PHPUnit_Framework_TestCase
             $leadConvert->getLead()->campaign_id = $campaign->id;
         }
 
-        if($hasContact) {
+        if ($hasContact) {
             $leadConvert->setContact(SugarTestContactUtilities::createContact());
         }
         $leadConvert->expects($this->exactly($expected))
@@ -172,25 +184,41 @@ class LeadConvertTest  extends Sugar_PHPUnit_Framework_TestCase
 
         //Relationship is in own def and based on lhs
         $relationshipField = $leadConvert->findRelationship($account, $contact);
-        $this->assertEquals('contacts', $relationshipField, "Relationship is not correct From:" . $account->name . " To:" . $contact->name);
+        $this->assertEquals(
+            'contacts',
+            $relationshipField,
+            "Relationship is not correct From:" . $account->name . " To:" . $contact->name
+        );
 
         //Relationship is in from module def in the relationship section
         $to = SugarTestProductUtilities::createProduct();
         $relationshipField = $leadConvert->findRelationship($contact, $to);
-        $this->assertEquals('products', $relationshipField, "Relationship is not correct From:" . $contact->name . " To:" . $to->name);
+        $this->assertEquals(
+            'products',
+            $relationshipField,
+            "Relationship is not correct From:" . $contact->name . " To:" . $to->name
+        );
 
         //Relationship is in 'to' module def in the relationship section
         $from = SugarTestProductUtilities::createProduct();
         $to = SugarTestQuoteUtilities::createQuote();
         $relationshipField = $leadConvert->findRelationship($from, $to);
-        $this->assertEquals('quotes', $relationshipField, "Relationship is not correct From:" . $from->name . " To:" . $to->name);
+        $this->assertEquals(
+            'quotes',
+            $relationshipField,
+            "Relationship is not correct From:" . $from->name . " To:" . $to->name
+        );
 
         //Relationship is in 'to' module def in the relationship section
         $from = SugarTestMeetingUtilities::createMeeting();
         $to = SugarTestProductUtilities::createProduct();
         $relationshipField = $leadConvert->findRelationship($from, $to);
-        $this->assertEquals(false, $relationshipField, "Relationship is not correct From:" . $contact->name . " To:" . $to->name);
-   }
+        $this->assertEquals(
+            false,
+            $relationshipField,
+            "Relationship is not correct From:" . $contact->name . " To:" . $to->name
+        );
+    }
 
     public function testSetRelationshipForModulesToLeads_OneToManyRelationship_RelationshipIsStoredOnlead()
     {
@@ -262,8 +290,12 @@ class LeadConvertTest  extends Sugar_PHPUnit_Framework_TestCase
         $account = SugarTestAccountUtilities::createAccount();
         $contact = SugarTestContactUtilities::createContact();
 
-        $leadConvert->setModules(array('Accounts' => $account,
-            'Contacts' => $contact));
+        $leadConvert->setModules(
+            array(
+                'Accounts' => $account,
+                'Contacts' => $contact
+            )
+        );
         $leadConvert->setContact($contact);
 
         $leadConvert->setRelationshipsForModulesToContacts($this->accountsDef);
@@ -295,8 +327,12 @@ class LeadConvertTest  extends Sugar_PHPUnit_Framework_TestCase
         $opp = SugarTestOpportunityUtilities::createOpportunity();
         $contact = SugarTestContactUtilities::createContact();
 
-        $leadConvert->setModules(array('Opportunities' => $opp,
-            'Contacts' => $contact));
+        $leadConvert->setModules(
+            array(
+                'Opportunities' => $opp,
+                'Contacts' => $contact
+            )
+        );
         $leadConvert->setContact($contact);
 
         $leadConvert->setRelationshipsForModulesToContacts($this->opportunitiesDef);
@@ -313,7 +349,7 @@ class LeadConvertTest  extends Sugar_PHPUnit_Framework_TestCase
         $this->assertNotEmpty($related[$opp->id]);
     }
 
-    public function testSetRelationshipsForModulesToContacts_OneToManyRelationship_RelationshipIsAdded_FieldOnContactSet()
+    public function testSetRelationshipsForModulesToContacts_OneToManyRelationship_RelationshipAdded_FieldOnContactSet()
     {
         $leadConvert = $this->getMock('LeadConvert', array('getVarDefs'), array($this->leadId), '', false);
 
@@ -326,8 +362,12 @@ class LeadConvertTest  extends Sugar_PHPUnit_Framework_TestCase
         $task = SugarTestTaskUtilities::createTask();
         $contact = SugarTestContactUtilities::createContact();
 
-        $leadConvert->setModules(array('Tasks' => $task,
-            'Contacts' => $contact));
+        $leadConvert->setModules(
+            array(
+                'Tasks' => $task,
+                'Contacts' => $contact
+            )
+        );
         $leadConvert->setContact($contact);
 
         $leadConvert->setRelationshipsForModulesToContacts($this->tasksDef);
@@ -358,8 +398,20 @@ class LeadConvertTest  extends Sugar_PHPUnit_Framework_TestCase
             'Accounts' => $account
         );
 
-        $leadConvert = $this->getMock('LeadConvert',
-            array('getVarDefs','setRelationshipsForModulesToContacts', 'setAssignedForModulesToLeads', 'setRelationshipForModulesToLeads', 'addLogForContactInCampaign', 'updateOpportunityWithAccountInformation'), array($this->lead->id), '', false);
+        $leadConvert = $this->getMock(
+            'LeadConvert',
+            array(
+                'getVarDefs',
+                'setRelationshipsForModulesToContacts',
+                'setAssignedForModulesToLeads',
+                'setRelationshipForModulesToLeads',
+                'addLogForContactInCampaign',
+                'updateOpportunityWithAccountInformation'
+            ),
+            array($this->lead->id),
+            '',
+            false
+        );
         $leadConvert->expects($this->once())
             ->method('getVarDefs')
             ->will($this->returnValue($this->modulesDef));
@@ -379,7 +431,11 @@ class LeadConvertTest  extends Sugar_PHPUnit_Framework_TestCase
 
         $lead = BeanFactory::getBean('Leads', $this->leadId);
 
-        $this->assertEquals(LeadConvert::STATUS_CONVERTED, $lead->status, 'Lead status field was not changed properly.');
+        $this->assertEquals(
+            LeadConvert::STATUS_CONVERTED,
+            $lead->status,
+            'Lead status field was not changed properly.'
+        );
         $this->assertEquals(true, $lead->converted, 'Lead converted field not set properly');
         $this->assertEquals(true, $lead->in_workflow, 'Lead workflow field not set properly');
     }
@@ -400,8 +456,20 @@ class LeadConvertTest  extends Sugar_PHPUnit_Framework_TestCase
             'Opportunities' => $opp
         );
 
-        $leadConvert = $this->getMock('LeadConvert',
-            array('getVarDefs','setRelationshipsForModulesToContacts', 'setAssignedForModulesToLeads', 'setRelationshipForModulesToLeads', 'addLogForContactInCampaign', 'updateOpportunityWithAccountInformation'), array($this->lead->id), '', false);
+        $leadConvert = $this->getMock(
+            'LeadConvert',
+            array(
+                'getVarDefs',
+                'setRelationshipsForModulesToContacts',
+                'setAssignedForModulesToLeads',
+                'setRelationshipForModulesToLeads',
+                'addLogForContactInCampaign',
+                'updateOpportunityWithAccountInformation'
+            ),
+            array($this->lead->id),
+            '',
+            false
+        );
         $leadConvert->expects($this->once())
             ->method('getVarDefs')
             ->will($this->returnValue($this->modulesDef));
@@ -420,7 +488,11 @@ class LeadConvertTest  extends Sugar_PHPUnit_Framework_TestCase
         $leadConvert->convertLead($modules);
 
         $lead = BeanFactory::getBean('Leads', $this->leadId);
-        $this->assertEquals(LeadConvert::STATUS_CONVERTED, $lead->status, 'Lead status field was not changed properly.');
+        $this->assertEquals(
+            LeadConvert::STATUS_CONVERTED,
+            $lead->status,
+            'Lead status field was not changed properly.'
+        );
         $this->assertEquals(true, $lead->converted, 'Lead converted field not set properly');
         $this->assertEquals(true, $lead->in_workflow, 'Lead workflow field not set properly');
     }
@@ -443,8 +515,20 @@ class LeadConvertTest  extends Sugar_PHPUnit_Framework_TestCase
             'Opportunities' => $opp
         );
 
-        $leadConvert = $this->getMock('LeadConvert',
-            array('getVarDefs','setRelationshipsForModulesToContacts', 'setAssignedForModulesToLeads', 'setRelationshipForModulesToLeads', 'addLogForContactInCampaign', 'updateOpportunityWithAccountInformation'), array($this->lead->id), '', false);
+        $leadConvert = $this->getMock(
+            'LeadConvert',
+            array(
+                'getVarDefs',
+                'setRelationshipsForModulesToContacts',
+                'setAssignedForModulesToLeads',
+                'setRelationshipForModulesToLeads',
+                'addLogForContactInCampaign',
+                'updateOpportunityWithAccountInformation'
+            ),
+            array($this->lead->id),
+            '',
+            false
+        );
         $leadConvert->expects($this->once())
             ->method('getVarDefs')
             ->will($this->returnValue($this->modulesDef));
@@ -466,7 +550,11 @@ class LeadConvertTest  extends Sugar_PHPUnit_Framework_TestCase
 
         $lead = BeanFactory::getBean('Leads', $this->leadId);
 
-        $this->assertEquals(LeadConvert::STATUS_CONVERTED, $lead->status, 'Lead status field was not changed properly.');
+        $this->assertEquals(
+            LeadConvert::STATUS_CONVERTED,
+            $lead->status,
+            'Lead status field was not changed properly.'
+        );
         $this->assertEquals(true, $lead->converted, 'Lead converted field not set properly');
         $this->assertEquals(true, $lead->in_workflow, 'Lead workflow field not set properly');
     }
@@ -490,8 +578,13 @@ class LeadConvertTest  extends Sugar_PHPUnit_Framework_TestCase
             'Opportunities' => $opp
         );
 
-        $leadConvert = $this->getMock('LeadConvert',
-            array('getVarDefs'), array($this->lead->id), '', false);
+        $leadConvert = $this->getMock(
+            'LeadConvert',
+            array('getVarDefs'),
+            array($this->lead->id),
+            '',
+            false
+        );
         $leadConvert->expects($this->once())
             ->method('getVarDefs')
             ->will($this->returnValue($this->modulesDef));
@@ -500,12 +593,188 @@ class LeadConvertTest  extends Sugar_PHPUnit_Framework_TestCase
         $leadConvert->convertLead($modules);
 
         $lead = BeanFactory::getBean('Leads', $this->leadId);
-        $this->assertEquals(LeadConvert::STATUS_CONVERTED, $lead->status, 'Lead status field was not changed properly.');
+        $this->assertEquals(
+            LeadConvert::STATUS_CONVERTED,
+            $lead->status,
+            'Lead status field was not changed properly.'
+        );
 
         $contact_id = $lead->contact_id;
-        $this->assertNotEmpty($contact_id, "contact id was not created during conversion process.  An error has ocurred");
+        $this->assertNotEmpty(
+            $contact_id,
+            "contact id was not created during conversion process.  An error has ocurred"
+        );
 
         $contact = BeanFactory::getBean('Contacts', $contact_id);
-        $this->assertEquals($lead->account_id, $contact->account_id, "Account id from converted lead does not match the new contact account id, there was an error during conversion.");
+        $this->assertEquals(
+            $lead->account_id,
+            $contact->account_id,
+            "Account id from converted lead does not match the new contact account id, there was an error during conversion."
+        );
+    }
+
+    public function testCopyActivities_CopyTaskToAccountAndContact_SuccessFullyCopied()
+    {
+        $leadConvert = $this->getMock('LeadConvert', array('getVarDefs'), array($this->leadId), '', false);
+        $leadConvert->expects($this->any())
+            ->method('getVarDefs')
+            ->will($this->returnValue($this->modulesDef));
+
+        $leadConvert->initialize($this->leadId);
+        $account = SugarTestAccountUtilities::createAccount();
+        $contact = SugarTestContactUtilities::createContact();
+        $task = SugarTestTaskUtilities::createTask();
+        $modules = array(
+            "Accounts" => $account,
+            "Contacts" => $contact,
+            "Tasks" => $task,
+        );
+
+        $transferActivitiesModules = array(
+            'Contacts',
+            'Accounts'
+        );
+
+        $leadConvert->setModules($modules);
+        $lead = $leadConvert->getLead();
+        $leadConvert->setRelationshipForModulesToLeads($this->tasksDef);
+        $linkedTasks = $lead->tasks->get();
+
+        /*--- We Should Have the Task Linked to this Lead ---*/
+        $this->assertEquals(1, count($linkedTasks), "Expected 1 Task to Be Linked to Lead");
+
+        /*--- Copy Activities to Contact and Account ---*/
+        $leadConvert->copyActivities(
+            $lead,
+            $modules,
+            $transferActivitiesModules
+        );
+
+        unset($lead->tasks);
+        /*-- Verify Task Remains Linked to Lead --*/
+        $this->assertTrue($lead->load_relationship("tasks"), "Failed Loading Task Relationship on Lead");
+        $leadTasks = $lead->tasks->get();
+        $this->assertEquals(1, count($leadTasks), "Expected Task to remain linked to Lead on Copy");
+
+        /*-- Verify copy of Task has been linked to Contact --*/
+        $this->assertTrue($contact->load_relationship("tasks"), "Failed Loading Task Relationship on Contact");
+        $contactTasks = $contact->tasks->get();
+        $this->assertEquals(1, count($contactTasks), "Expected 1 Task to be linked to Contact");
+
+        /*-- Verify copy of Task has been linked to Account --*/
+        $this->assertTrue($account->load_relationship("tasks"), "Failed Loading Task Relationship on Account");
+        $accountTasks = $account->tasks->get();
+        $this->assertEquals(1, count($accountTasks), "Expected 1 Task to be linked to Account");
+    }
+
+    public function testMoveActivities_CopyTaskToAccountAndContact_MovedSuccessFully()
+    {
+        $leadConvert = $this->getMock(
+            'LeadConvert',
+            array('getVarDefs', 'getActivitySetting'),
+            array($this->leadId),
+            '',
+            false
+        );
+        $leadConvert->expects($this->any())
+            ->method('getVarDefs')
+            ->will($this->returnValue($this->modulesDef));
+
+        $leadConvert->expects($this->once())
+            ->method('getActivitySetting')
+            ->will($this->returnValue('move'));
+
+        $leadConvert->initialize($this->leadId);
+        $account = SugarTestAccountUtilities::createAccount();
+        $contact = SugarTestContactUtilities::createContact();
+        $task = SugarTestTaskUtilities::createTask();
+        $modules = array(
+            "Accounts" => $account,
+            "Contacts" => $contact,
+            "Tasks" => $task,
+        );
+
+        $transferActivitiesModules = array(
+            'Contacts',
+            'Accounts'
+        );
+
+        $leadConvert->setModules($modules);
+        $lead = $leadConvert->getLead();
+        $leadConvert->setRelationshipForModulesToLeads($this->tasksDef);
+        $linkedTasks = $lead->tasks->get();
+
+        /*--- We Should Have the Task Linked to this Lead ---*/
+        $this->assertEquals(1, count($linkedTasks), "Expected 1 Task to Be Linked to Lead");
+
+        /*--- Move Activities to Contact and Account ---*/
+        $leadConvert->performLeadActivitiesTransfer('move', $transferActivitiesModules);
+
+        unset($lead->tasks);
+        /*-- Verify Task Has been Unlinked from Lead --*/
+        $this->assertTrue($lead->load_relationship("tasks"), "Failed Loading Task Relationship on Lead");
+        $leadTasks = $lead->tasks->get();
+        $this->assertEquals(0, count($leadTasks), "Expected Task to be unlinked from Lead on Move");
+
+        /*-- Verify move of Task has been linked to Contact --*/
+        $this->assertTrue($contact->load_relationship("tasks"), "Failed Loading Task Relationship on Contact");
+        $contactTasks = $contact->tasks->get();
+        $this->assertEquals(1, count($contactTasks), "Expected 1 Task to be linked to Contact");
+
+        /*-- Verify move of Task has been linked to Account --*/
+        $this->assertTrue($account->load_relationship("tasks"), "Failed Loading Task Relationship on Account");
+        $accountTasks = $account->tasks->get();
+        $this->assertEquals(1, count($accountTasks), "Expected 1 Task to be linked to Account");
+    }
+
+    public function testHandleActivities_TransferAction_DoNothing_NoActivitiesTransferred()
+    {
+        $task = SugarTestTaskUtilities::createTask();
+        $contact = SugarTestContactUtilities::createContact();
+        $account = SugarTestAccountUtilities::createAccount();
+
+        $modules = array(
+            'Tasks' => $task,
+            'Contacts' => $contact,
+            'Accounts' => $account
+        );
+
+        $leadConvert = $this->getMock(
+            'LeadConvert',
+            array(
+                'getVarDefs',
+                'copyActivities',
+                'removeActivitiesFromLead',
+                'getActivitySetting'
+            ),
+            array($this->lead->id),
+            '',
+            false
+        );
+        $leadConvert->expects($this->once())
+            ->method('getVarDefs')
+            ->will($this->returnValue($this->modulesDef));
+
+        $leadConvert->expects($this->never())
+            ->method('copyActivities');
+
+        $leadConvert->expects($this->never())
+            ->method('removeActivitiesFromLead');
+
+        $leadConvert->expects($this->once())
+            ->method('getActivitySetting')
+            ->will($this->returnValue('donothing'));
+
+        $leadConvert->initialize($this->leadId);
+        $leadConvert->convertLead($modules, 'donothing', array('Accounts', 'Contacts'));
+
+        $lead = BeanFactory::getBean('Leads', $this->leadId);
+
+        $this->assertEquals(
+            LeadConvert::STATUS_CONVERTED,
+            $lead->status,
+            'Lead status field was not changed properly.'
+        );
+        $this->assertEquals(true, $lead->converted, 'Lead converted field not set properly');
     }
 }

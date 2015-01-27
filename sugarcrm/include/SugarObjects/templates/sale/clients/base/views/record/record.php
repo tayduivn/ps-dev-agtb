@@ -62,10 +62,6 @@ $viewdefs[$module_name]['base']['view']['record'] = array(
                     ),
                 ),
                 'sales_stage',
-                array(
-                    'name' => 'tag',
-                    'span' => 12,
-                ),
             ),
         ),
         array(

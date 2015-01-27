@@ -38,10 +38,10 @@ class DeployedSidecarFilterImplementation extends AbstractMetaDataImplementation
      * @var array
      */
     protected $currentStateFiles = array(
+        MB_HISTORYMETADATALOCATION,
         MB_WORKINGMETADATALOCATION,
         MB_CUSTOMMETADATALOCATION,
         MB_BASEMETADATALOCATION,
-        MB_HISTORYMETADATALOCATION,
     );
 
     /**
@@ -195,7 +195,7 @@ class DeployedSidecarFilterImplementation extends AbstractMetaDataImplementation
         $workingFilename = $this->getMetadataFilename(MB_WORKINGMETADATALOCATION);
 
         if (file_exists($workingFilename)) {
-            unlink($workingFilename);
+            SugarAutoLoader::unlink($workingFilename);
         }
 
         // clear the cache for this module

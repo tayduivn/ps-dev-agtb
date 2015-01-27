@@ -139,9 +139,9 @@ class MetaDataManagerPortal extends MetaDataManager
      * Load Portal specific metadata (heavily pruned to only show modules enabled for Portal)
      * @return array Portal metadata
      */
-    protected function loadMetadata($args = array())
+    protected function loadMetadata($args = array(), MetaDataContextInterface $context)
     {
-        $data = parent::loadMetadata($args);
+        $data = parent::loadMetadata($args, $context);
 
         if (!empty($data['modules'])) {
             foreach ($data['modules'] as $modKey => $modMeta) {

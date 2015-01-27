@@ -27,6 +27,8 @@ $viewdefs['Calls']['base']['view']['selection-list'] = array(
                     'enabled' => true,
                     'default' => true,
                     'name' => 'status',
+                    'type' => 'event-status',
+                    'css_class' => 'full-width',
                 ),
                 array(
                     'name' => 'parent_name',

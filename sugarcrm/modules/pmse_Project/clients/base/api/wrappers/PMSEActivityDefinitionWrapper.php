@@ -277,15 +277,15 @@ class PMSEActivityDefinitionWrapper
         $output = array();
         foreach ($fieldsData as $field) {
             if (isset($field['vname']) && (PMSEEngineUtils::isValidDefinitionField($field) || $field['name'] == 'id') && $field['vname'] != 'LBL_DELETED') {
-                if ($field['type'] != 'bool' && $field['type'] != 'radioenum'
-                    && isset($field['required']) && $field['required'] == false
-                ) {
-                    $tmpField = array();
-                    $tmpField['name'] = $field['name'];
-                    $tmpField['label'] = str_replace(':', '',
-                        translate($field['vname'], $this->processDefinition->pro_module));
-                    $tmpField['required'] = false;
-                    $output[] = $tmpField;
+                if ($field['type'] != 'bool' && $field['type'] != 'radioenum' ) {
+                    if (!(isset($field['required']) && $field['required'])) {
+                        $tmpField = array();
+                        $tmpField['name'] = $field['name'];
+                        $tmpField['label'] = str_replace(':', '',
+                            translate($field['vname'], $this->processDefinition->pro_module));
+                        $tmpField['required'] = false;
+                        $output[] = $tmpField;
+                    }
                 }
             }
         }

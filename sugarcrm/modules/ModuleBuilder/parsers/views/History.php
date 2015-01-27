@@ -61,6 +61,9 @@ class History implements HistoryInterface
         {
             sort ( $this->_list ) ;
         }
+
+        // Make sure to clear the old _previewFilename on instantiation
+        $this->undoRestore();
     }
 
 
@@ -158,7 +161,7 @@ class History implements HistoryInterface
         if (file_exists($this->_previewFilename))
         {
             $GLOBALS [ 'log' ]->debug( get_class($this)."->append(): removing old history file at {$this->_previewFilename}");
-            unlink ( $this->_previewFilename);
+            SugarAutoLoader::unlink ( $this->_previewFilename);
         }
 
         return $time ;
@@ -176,10 +179,20 @@ class History implements HistoryInterface
 
         if (file_exists ( $filename ))
         {
-            copy ( $filename, $this->_previewFilename ) ;
+            $this->savePreview($filename);
             return $timestamp ;
         }
         return null ;
+    }
+
+    /**
+     * Saves given file for preview
+     *
+     * @param $filename File name
+     */
+    public function savePreview($filename)
+    {
+        copy($filename, $this->_previewFilename);
     }
 
     /*
@@ -189,7 +202,7 @@ class History implements HistoryInterface
     {
         if (file_exists ( $this->_previewFilename ))
         {
-            unlink ( $this->_previewFilename ) ;
+            SugarAutoLoader::unlink ( $this->_previewFilename ) ;
         }
     }
 

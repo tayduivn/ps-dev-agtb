@@ -243,6 +243,7 @@
 
         app.events.on('preview:open', _.bind(this.onPreviewToggle, this, true), this);
         app.events.on('preview:close', _.bind(this.onPreviewToggle, this, false), this);
+        this.on('render', this._showAlertIfIdentical, this);
     },
 
     /**
@@ -789,7 +790,6 @@
         }, this);
         this.setPrimaryEditable(this.primaryRecord.id);
         this.setDraggable();
-        this._showAlertIfIdentical();
     },
 
     /**

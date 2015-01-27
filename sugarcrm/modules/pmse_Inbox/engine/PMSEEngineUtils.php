@@ -948,6 +948,9 @@ class PMSEEngineUtils
             'assigned_user_name',
             'assigned_user_name_owner',
             'assigned_user_name_mod',
+            'tags',
+            'tag',
+            'tag_lower',
         );
         //UNSET comun fields
         foreach ($projectData as $key => $value) {

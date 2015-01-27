@@ -109,7 +109,6 @@ $app_list_strings = array (
     'UserSignatures' => 'User Signatures',
     'Shippers' => 'Shipping Providers',
     'Styleguide' => 'Styleguide',
-    'Tags' => 'Tags',
   ),
 
     'moduleIconList' =>
@@ -221,7 +220,6 @@ $app_list_strings = array (
     'Shippers' => 'Shipping Provider',
     'Subscriptions' => 'Subscription',
     'UserSignatures' => 'User Signature',
-    'Tags' => 'Tag',
   ),
 
 /*
@@ -3826,11 +3824,11 @@ Sincerely, SugarCRM',
     'LBL_DNB_NEWS_WIKI' => 'Wikipedia',
 
     /* D&B Build A List */
-    'LBL_DNB_BAL_RSLT' => 'D&B: Build A List Preview',
-    'LBL_BAL' => 'Build A List',
-    'LBL_DNB_BAL' => 'D&B Build A List',
+    'LBL_DNB_BAL_RSLT' => 'D&B: Build a List Preview',
+    'LBL_BAL' => 'Import from Build a List',
+    'LBL_DNB_BAL' => 'D&B Build a List',
     'LBL_DNB_BAL_ACCT_HEADER' => 'Accounts',
-    'LBL_DNB_BAL_LIST' => 'Back To D&B Build A List Results',
+    'LBL_DNB_BAL_LIST' => 'Back To D&B Build a List Results',
     'LBL_DNB_BAL_HINT' => 'Choose crtieria to build a list',
     'LBL_DNB_BAL_PARAM_COMP' => 'Company Location',
     'LBL_DNB_BAL_PARAM_STATES' => 'States',
@@ -3854,6 +3852,7 @@ Sincerely, SugarCRM',
     'LBL_DNB_BAL_PARAM_COMP_INFORMATION' => 'Company Information',
     'LBL_DNB_BAL_YEAR_OF_FOUNDING' => 'Year of Founding',
     'LBL_DNB_BAL_DUNS' => 'DUNS',
+    'LBL_DNB_BAL_GU_DUNS' => 'GU DUNS',
     'LBL_DNB_BAL_UK_REG_NO' => 'UK Reg. No.',
     'LBL_DNB_BAL_UK_VAT_NO' => 'UK VAT No.',
     'LBL_DNB_BAL_INDUSTRY' => 'Industry',
@@ -3888,6 +3887,7 @@ Sincerely, SugarCRM',
     'LBL_DNB_BAL_TITLE' => 'Title',
     'LBL_DNB_BAL_BIO' => 'Bio',
     'LBL_DNB_BAL_BOTH' => 'Both',
+    'LBL_DNB_BAL_CNTCT_TYPE' => 'Contact Type',
     'LBL_DNB_BAL_PRESCREEN_SCORE' => 'D&B Prescreen Score',
     'LBL_DNB_BAL_LOW' => 'Low',
     'LBL_DNB_BAL_MED' => 'Medium',
@@ -5303,9 +5303,8 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_PRO_DISABLE' => 'Updating',
 //END SUGARCRM flav=ent ONLY
 
-    //Tag Strings
-    'LBL_TAG_NEW_TAG' => '(New Tag)',
-    'LBL_TAG_FETCH_ERROR' => 'An error has occurred while retrieving tags.'
+    // Javascript enable string
+    'LBL_ENABLE_JAVASCRIPT' => 'SugarCRM requires javascript. Please enable javascript to continue using SugarCRM.',
 );
 
 $app_list_strings['activity_user_options'] = array (
@@ -6345,6 +6344,11 @@ $app_list_strings['dnb_countries_radius_iso'] = array(
 $app_list_strings['dnb_sic_naics_code'] = array(
     "3599" => "SIC Code",
     "700" => "NAICS Code"
+);
+
+$app_list_strings['dnb_bal_cntct_type'] = array(
+    "all" => "All Contacts",
+    "prem" => "Premium Only"
 );
 
 $app_list_strings['dnb_contact_types'] = array(

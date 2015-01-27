@@ -34,6 +34,16 @@ class MBPackage{
         'ULT'  => array('ENT', 'ULT'),
     );
 
+    /**
+     * Exportable customizations in "include/" directory. Key is variable name, value is root directory.
+     *
+     * @var array
+     */
+    protected static $includes = array(
+        'language' => 'app_list_strings',
+        'dropdown_filters' => 'role_dropdown_filters',
+    );
+
     function MBPackage($name){
         $this->name = $name;
         $this->load();
@@ -368,26 +378,27 @@ function buildInstall($path){
 
         //creation of the installdefs[] array for the manifest when exporting customizations
     function customBuildInstall($modules, $path, $extensions = array()){
-        $columns=$this->getColumnsName();
         $installdefs = array ('id' => $this->name, 'relationships' => array());
-        $include_path="$path/SugarModules/include/language";
-        if(file_exists($include_path) && is_dir($include_path)){
-            $dd= dir($include_path);
-            while($gg = $dd->read()){
-                if(substr($gg, 0, 1) != '.' && is_file($include_path . '/' . $gg)){
-                    $lang = substr($gg, 0, strpos($gg, '.'));
-                    $installdefs['language'][] = array(
-                    'from'=> '<basepath>/SugarModules/include/language/'. $gg,
+        foreach (self::$includes as $type => $varName) {
+            $include_path = $path . '/SugarModules/include/' . $type;
+            $it = $this->getDirectoryIterator($include_path);
+            foreach ($it as $file) {
+                $subPathName = $it->getSubPathname();
+                $def = array(
+                    'from'=> '<basepath>/SugarModules/include/' . $type . '/' . $subPathName,
                     'to_module'=> 'application',
-                    'language'=>$lang
-                    );
+                );
+                $baseName = $file->getBasename();
+                if ($type == 'language') {
+                    $def['language'] = substr($baseName, 0, strpos($baseName, '.'));
                 }
+                $installdefs[$type][] = $def;
             }
         }
 
         foreach($modules as $value){
-            $custom_module = $this->getCustomModules($value);
-            foreach($custom_module as $va) {
+            $custom_module = $this->getModuleCustomizations($value);
+            foreach ($custom_module as $va => $_) {
                 switch ($va) {
                     case 'language':
                     case 'Ext';
@@ -438,7 +449,52 @@ function buildInstall($path){
         {
             $this->getExtensionsManifestForPackage($path, $installdefs);
         }
+
+        $roles = $this->extractRoles($installdefs);
+        $installdefs['roles'] = $this->getRoleNames($roles);
+
         return "\n".'$installdefs = ' . var_export_helper($installdefs). ';';
+    }
+
+    /**
+     * Extracts IDs of ACL roles from package manifest
+     *
+     * @param array $installdefs Package manifest
+     * @return array
+     */
+    protected function extractRoles(array $installdefs)
+    {
+        $roles = array();
+        foreach ($installdefs as $section) {
+            if (is_array($section)) {
+                foreach ($section as $def) {
+                    if (isset($def['from']) && preg_match('/\/roles\/([^\/]+)/', $def['from'], $matches)) {
+                        $roles[$matches[1]] = true;
+                    }
+                }
+            }
+        }
+
+        return array_keys($roles);
+    }
+
+    /**
+     * Retrieves names of the roles with the given IDs
+     *
+     * @param array $ids ACL role IDs
+     * @return array
+     */
+    protected function getRoleNames(array $ids)
+    {
+        $roles = array();
+        foreach ($ids as $id) {
+            $role = BeanFactory::retrieveBean('ACLRoles', $id);
+            if ($role) {
+                $roles[$id] = $role->name;
+            }
+        }
+
+        return $roles;
     }
 
     private function getLanguageManifestForModule($module, &$installdefs)
@@ -504,12 +560,11 @@ function buildInstall($path){
      */
     public function getCustomClientMetadata($module, &$installdefs)
     {
-        $path = "custom/modules/$module/clients/*/*/*/*.php";
-        $files = glob($path);
-        foreach ($files as $file) {
+        $it = $this->getDirectoryIterator('custom/modules/' . $module . '/clients');
+        foreach ($it as $file) {
             $installdefs['copy'][] = array(
                 'from' => str_replace('custom/modules', '<basepath>/SugarModules/modules', $file),
-                'to'   => $file,
+                'to' => $file->getPathname(),
             );
         }
     }
@@ -603,12 +658,12 @@ function buildInstall($path){
         //Copy the custom files to the build dir
         foreach ($modules as $module) {
             $pathmod = "$path/SugarModules/modules/$module";
-            if (mkdir_recursive($pathmod)) {
-                if (file_exists("custom/modules/$module")) {
-                    copy_recursive("custom/modules/$module", "$pathmod");
-                    //Don't include cached extension files
-                    if (is_dir("$pathmod/Ext"))
-                        rmdir_recursive("$pathmod/Ext");
+            // create module directory only if customizations that belong directly to the module exist
+            if (file_exists("custom/modules/$module") && mkdir_recursive($pathmod)) {
+                copy_recursive("custom/modules/$module", "$pathmod");
+                //Don't include cached extension files
+                if (is_dir("$pathmod/Ext")) {
+                    rmdir_recursive("$pathmod/Ext");
                 }
                 //Convert modstring files to extension compatible arrays
                 $this->convertLangFilesToExtensions("$pathmod/language");
@@ -627,11 +682,14 @@ function buildInstall($path){
             }
         }
 
-        $this->copyCustomDropdownValuesForModules($modules,$path);
-        if(file_exists($path)){
-            $manifest = $this->getManifest(true).$this->customBuildInstall($modules,$path);
-            sugar_file_put_contents($path .'/manifest.php', $manifest);
+        $this->copyCustomIncludesForModules($modules, $path);
+        if (!is_dir($path)) {
+            sugar_die('Build directory has not been created');
         }
+
+        $manifest = $this->getManifest(true) . $this->customBuildInstall($modules, $path);
+        sugar_file_put_contents($path .'/manifest.php', $manifest);
+
         if(file_exists('modules/ModuleBuilder/MB/LICENSE.txt')){
             copy('modules/ModuleBuilder/MB/LICENSE.txt', $path . '/LICENSE.txt');
         }
@@ -673,33 +731,51 @@ function buildInstall($path){
             }
         }
     }
-    private function copyCustomDropdownValuesForModules($modules, $path)
+    private function copyCustomIncludesForModules($modules, $path)
     {
-        if(file_exists("custom/include/language")){
-            if(mkdir_recursive("$path/SugarModules/include")){
-                global $app_list_strings;
-                $backStrings = $app_list_strings;
-                foreach(scandir("custom/include/language") as $langFile)
-                {
-                    $app_list_strings = array();
-                    if (strcasecmp(substr($langFile, -4), ".php") != 0)
-                       continue;
-                    include("custom/include/language/$langFile");
-                    $out = "<?php \n";
-                    $lang = substr($langFile, 0, -9);
-                    $options = $this->getCustomDropDownStringsForModules($modules, $app_list_strings);
-                    foreach($options as $name => $arr) {
-                        $out .= override_value_to_string('app_list_strings', $name, $arr);
+        foreach (self::$includes as $type => $varName) {
+            $it = $this->getDirectoryIterator('custom/include/' . $type);
+            $$varName = array();
+            foreach ($it as $file) {
+                include $file;
+
+                $values = $this->getCustomOptionsForModules($modules, $$varName);
+                if (count($values) > 0) {
+                    $contents = "<?php \n";
+                    foreach ($values as $name => $arr) {
+                        $contents .= override_value_to_string($varName, $name, $arr);
                     }
-                    mkdir_recursive("$path/SugarModules/include/language/");
-                    sugar_file_put_contents("$path/SugarModules/include/language/$lang.$this->name.php", $out);
+                    $subPathName = $it->getSubPathname();
+                    $subPathName = str_replace('.lang', '', $subPathName);
+                    $subPathName = substr($subPathName, 0, -4) . '.' . $this->name . substr($subPathName, -4);
+                    $destination = $path . '/SugarModules/include/' . $type . '/' . $subPathName;
+                    mkdir_recursive(dirname($destination));
+                    sugar_file_put_contents($destination, $contents);
                 }
-                $app_list_strings = $backStrings;
             }
         }
     }
 
-    function getCustomDropDownStringsForModules($modules, $list_strings) {
+    /**
+     * Returns iterator over *.php files in the given directory and subdirectories
+     *
+     * @param string $dir Directory path
+     * @return RecursiveDirectoryIterator|SplFileInfo[]
+     */
+    protected function getDirectoryIterator($dir)
+    {
+        if (file_exists($dir)) {
+            $it = new RecursiveDirectoryIterator($dir, FilesystemIterator::SKIP_DOTS);
+            $it = new RecursiveIteratorIterator($it);
+            $it = new RegexIterator($it, '/\.php$/');
+            return $it;
+        }
+
+        return new EmptyIterator();
+    }
+
+    protected function getCustomOptionsForModules($modules, $list_strings)
+    {
         $options = array();
         foreach($modules as $module)
         {
@@ -718,94 +794,157 @@ function buildInstall($path){
         return $options;
     }
 
-
-
-    //if $module=false : return an array with custom module and there customizations.
-    //if $module=!false : return an array with the directories of custom/module/$module.
-    function getCustomModules($module=false){
+    /**
+     * Returns associative array containing module names as keys and types of their customizations as values
+     *
+     * @return array
+     */
+    public function getCustomModules()
+    {
         global $mod_strings;
-        $path='custom/modules/';
-        $extPath = 'custom/Extension/modules/';
-        if(!file_exists($path) || !is_dir($path)){
-            return array($mod_strings['LBL_EC_NOCUSTOM'] => "");
-        }
-        else{
-            if ($module != false ){
-                $path=$path . $module . '/';
+        global $modInvisList;
+
+        $modulesWithCustomDropdowns = $this->getModulesWithCustomIncludes();
+        $modules = array_merge($this->getSubdirectories('custom/modules/'), $modulesWithCustomDropdowns);
+        $modules = array_unique($modules);
+
+        $exclude = array_merge($modInvisList, array('Project', 'ProjectTask'));
+        $modules = array_diff($modules, $exclude);
+
+        $result = array();
+        foreach ($modules as $module) {
+            $result[$module] = $this->getModuleCustomizations($module);
+            if (in_array($module, $modulesWithCustomDropdowns)) {
+                $result[$module]['Dropdown'] = $mod_strings['LBL_EC_CUSTOMDROPDOWN'];
             }
-            $scanlisting = scandir($path);
-            $dirlisting = array();
+        }
 
-            global $modInvisList;
+        return array_filter($result);
+    }
 
-            foreach ($scanlisting as $value){
-                if(is_dir($path . $value) == true && $value != '.' && $value != '..') {
-                    if (($value == "Project" || $value == "ProjectTask") && in_array($value, $modInvisList)) {
-                        continue;
+    /**
+     * Returns types of existing customizations for the given module
+     * 
+     * @param string $module Module name
+     * @return array
+     */
+    protected function getModuleCustomizations($module)
+    {
+        global $mod_strings;
+
+        $result = array();
+        if (!SugarAutoLoader::existingCustomOne("modules/{$module}/metadata/studio.php")) {
+            return $result;
+        }
+
+        $path = 'custom/modules/' . $module;
+        $subdirectories = $this->getSubdirectories('custom/modules/' . $module);
+        foreach ($subdirectories as $type) {
+            switch ($type) {
+                case 'language':
+                    $result[$type] = $mod_strings['LBL_EC_CUSTOMFIELD'];
+                    break;
+                case 'metadata':
+                case 'clients':
+                    // BWC modules keep metadata in the 'metadata' directory
+                    if (isModuleBWC($module)) {
+                        $result[$type] = $mod_strings['LBL_EC_CUSTOMLAYOUT'];
+                    } else {
+                        // New style pathing
+                        $fullpath = $path . '/' . $type;
+                        // Right now only views are customizable in studio
+                        $newfiles = glob("$fullpath/*/views/*");
+                        if (!empty($newfiles)) {
+                            $result[$type] = $mod_strings['LBL_EC_CUSTOMLAYOUT'];
+                        }
                     }
-                    $dirlisting[] = $value;
+                    break;
+                case 'Ext':
+                    // Simply checking the Ext directory isn't enough...
+                    // we need to check certain directories inside of it
+                    // to make sure there are things that are eligible
+                    // to export
+                    $fullpath = $path . '/' . $type;
+
+                    // Start first with custom fields
+                    if ($this->isDirectoryExportable("{$fullpath}Vardefs")) {
+                        $result["$type/Vardefs"] = $mod_strings['LBL_EC_CUSTOMFIELD'];
+                    }
+
+                    // Now check custom labels
+                    if ($this->isDirectoryExportable("{$fullpath}Language")) {
+                        $result["$type/Language"] = $mod_strings['LBL_EC_CUSTOMLABEL'];
+                    }
+                    break;
+                default:
+                    $result[$type] = $mod_strings['LBL_UNDEFINED'];
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Returns array of subdirectories for the given directory
+     *
+     * @param string $path Directory path
+     * @return array
+     */
+    protected function getSubdirectories($path)
+    {
+        $path = rtrim($path, '/');
+        $subdirectories = array();
+        if (is_dir($path)) {
+            $files = scandir($path);
+            foreach ($files as $value) {
+                if (is_dir($path . '/' . $value) && $value != '.' && $value != '..') {
+                    $subdirectories[] = $value;
                 }
             }
-			if(empty($dirlisting)){
-                return array($mod_strings['LBL_EC_NOCUSTOM'] => "");
+        }
+
+        return $subdirectories;
+    }
+
+    /**
+     * Returns array of module names that use customizations in include/ directory
+     * 
+     * @return array
+     */
+    protected function getModulesWithCustomIncludes()
+    {
+        global $beanList;
+
+        $app_list_strings = $role_dropdown_filters = array();
+        foreach (self::$includes as $type => $varName) {
+            $it = $this->getDirectoryIterator('custom/include/' . $type);
+            foreach ($it as $file) {
+                include $file;
             }
-            if ($module == false ){
-                $return = array();
-                foreach ($dirlisting as $value){
-                	if(!SugarAutoLoader::existingCustomOne("modules/{$value}/metadata/studio.php"))
-                		continue;
-                    $custommodules[$value]=$this->getCustomModules($value);
-                    foreach ($custommodules[$value] as $va){
-                        switch ($va) {
-                        case 'language':
-                            $return[$value][$va] = $mod_strings['LBL_EC_CUSTOMFIELD'];
-                            break;
-                        case 'metadata':
-                        case 'clients':
-                            // BWC modules keep metadata in the 'metadata' directory
-                            if (isModuleBWC($value)) {
-                                $return[$value][$va] = $mod_strings['LBL_EC_CUSTOMLAYOUT'];
-                            } else {
-                                // New style pathing
-                                $fullpath = "{$path}$value/$va/";
-                                // Right now only views are customizable in studio
-                                $newfiles = glob("$fullpath/*/views/*");
-                                if (!empty($newfiles)) {
-                                    $return[$value][$va] = $mod_strings['LBL_EC_CUSTOMLAYOUT'];
-                                }
-                            }
-                            break;
-                        case 'Ext':
-                            // Simply checking the Ext directory isn't enough...
-                            // we need to check certain directories inside of it
-                            // to make sure there are things that are eligible
-                            // to export
-                            $fullpath = "{$path}$value/$va/";
+        }
 
-                            // Start first with custom fields
-                            if ($this->isDirectoryExportable("{$fullpath}Vardefs")) {
-                                $return[$value]["$va/Vardefs"] = $mod_strings['LBL_EC_CUSTOMFIELD'];
-                            }
+        $modules = array();
+        if (count($app_list_strings) > 0 || count($role_dropdown_filters) > 0) {
+            foreach ($beanList as $module => $_) {
+                $bean = BeanFactory::getBean($module);
+                if (!isset($bean->field_defs) || !is_array($bean->field_defs)) {
+                    continue;
+                }
 
-                            // Now check custom labels
-                            if ($this->isDirectoryExportable("{$fullpath}Language")) {
-                                $return[$value]["$va/Language"] = $mod_strings['LBL_EC_CUSTOMLABEL'];
+                foreach ($bean->field_defs as $field => $def) {
+                    if (isset($def['options'])) {
+                        foreach (self::$includes as $varName) {
+                            if (isset(${$varName}[$def['options']])) {
+                                $modules[] = $module;
+                                continue 3;
                             }
-                            break;
-                        case '':
-                            $return[$value . " " . $mod_strings['LBL_EC_EMPTYCUSTOM']] = "";
-                            break;
-                        default:
-                            $return[$value][$va] = $mod_strings['LBL_UNDEFINED'];
                         }
                     }
                 }
-                return $return;
-            }
-            else{
-                return $dirlisting;
             }
         }
+
+        return $modules;
     }
 
     /**

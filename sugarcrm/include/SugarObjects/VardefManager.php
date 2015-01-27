@@ -20,13 +20,12 @@ class VardefManager{
     public static $inReload = array();
 
     /**
-     * List of templates to ignore for BWC modules when adding templates
-     * 
+     * List of templates to ignore for BWC modules when adding templates. This
+     * should be a key value pair like 'template_name' => true.
+     *
      * @var array
      */
-    public static $ignoreBWCTemplates = array(
-        'taggable' => true,
-    );
+    public static $ignoreBWCTemplates = array();
 
     /**
      * this method is called within a vardefs.php file which extends from a SugarObject.
@@ -136,9 +135,9 @@ class VardefManager{
     }
 
     /**
-     * Checks to see if the template for a module should be skipped. Used by 
+     * Checks to see if the template for a module should be skipped. Used by
      * addTemplate to see if certain templates should be added by BWC modules.
-     * 
+     *
      * @param string $module The name of the module to check
      * @param string $template The template to check for the module
      * @return boolean

@@ -19,6 +19,16 @@ class ViewHistory extends SugarView
     var $pageSize = 10 ;
 
     /**
+     * @var History
+     */
+    protected $history;
+
+    /**
+     * @var AbstractMetaDataParser
+     */
+    protected $parser;
+
+    /**
 	 * @see SugarView::_getModuleTitleParams()
 	 */
 	protected function _getModuleTitleParams($browserTitle = false)
@@ -44,8 +54,19 @@ class ViewHistory extends SugarView
         
         $packageName = (isset ( $_REQUEST [ 'view_package' ] ) && (strtolower ( $_REQUEST [ 'view_package' ] ) != 'studio')) ? $_REQUEST [ 'view_package' ] : null ;
         $this->module = $_REQUEST [ 'view_module' ] ;
-        
-        $this->parser = ParserFactory::getParser ( $this->layout, $this->module, $packageName, $subpanelName ) ;
+
+        $params = array();
+        if (!empty($_REQUEST['role'])) {
+            $params['role'] = $_REQUEST['role'];
+        }
+        $this->parser = ParserFactory::getParser(
+            $this->layout,
+            $this->module,
+            $packageName,
+            $subpanelName,
+            null,
+            $params
+        );
         $this->history = $this->parser->getHistory () ;
         $action = ! empty ( $_REQUEST [ 'histAction' ] ) ? $_REQUEST [ 'histAction' ] : 'browse' ;
         $GLOBALS['log']->debug( get_class($this)."->display(): performing History action {$action}" ) ;
@@ -73,11 +94,18 @@ class ViewHistory extends SugarView
         $snapshots = array ( ) ;
         for ( $i = 0 ; $i <= $this->pageSize && $ts > 0 ; $i ++ )
         {
-            $dbDate = $timedate->fromTimestamp($ts)->asDb();
-            $displayTS = $timedate->to_display_date_time ( $dbDate ) ;
-            if ($page * $this->pageSize + $i + 1 == $count)
-                $displayTS = translate("LBL_MB_DEFAULT_LAYOUT");
-            $snapshots [ $ts ] = $displayTS ;
+            if ($page * $this->pageSize + $i + 1 == $count) {
+                $label = translate('LBL_MB_DEFAULT_LAYOUT');
+                $isDefault = true;
+            } else {
+                $dbDate = $timedate->fromTimestamp($ts)->asDb();
+                $label = $timedate->to_display_date_time($dbDate);
+                $isDefault = false;
+            }
+            $snapshots[$ts] = array(
+                'label' => $label,
+                'isDefault' => $isDefault,
+            );
             $ts = $this->history->getNext () ;
         }
         if (count ( $snapshots ) > $this->pageSize)
@@ -145,6 +173,13 @@ class ViewHistory extends SugarView
         }
         $sid = $_REQUEST [ 'sid' ] ;
         $this->history->restoreByTimestamp ( $sid ) ;
+    }
+
+    protected function resetToDefault()
+    {
+        $implementation = $this->parser->getImplementation();
+        $fileName = $implementation->getDefaultFileName($this->layout, $this->module);
+        $this->history->savePreview($fileName);
     }
 
 	/**

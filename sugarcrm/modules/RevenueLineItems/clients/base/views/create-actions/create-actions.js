@@ -58,6 +58,7 @@
                     if (field.name == 'commit_stage') {
                         panel.fields[index] = {
                             'name': 'spacer',
+                            'label': field.label,
                             'span': 6,
                             'readonly': true
                         };

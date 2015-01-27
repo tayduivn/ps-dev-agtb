@@ -256,6 +256,10 @@ class PMSEUserAssignmentHandler
                 "module" => "Users"
             )
         );
+        if (empty($caseData['taskName'])){
+            $activityBean = $this->retrieveBean('pmse_BpmnActivity', $caseData['bpmn_id']);
+            $caseData['taskName'] = $activityBean->name;
+        }
         $params['module_name'] = 'pmse_Inbox';
         $this->logger->activity(sprintf(translate('LBL_PMSE_ACTIVITY_STREAM_REASSIGN', $params['module_name']),
                 $caseData['taskName']), $params);

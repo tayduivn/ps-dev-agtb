@@ -10,7 +10,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-class PMSECrmDataWrapperTest extends PHPUnit_Framework_TestCase
+class PMSECrmDataWrapperTest extends Sugar_PHPUnit_Framework_TestCase
 {
     /**
      * @var PMSECrmDataWrapper
@@ -40,12 +40,18 @@ class PMSECrmDataWrapperTest extends PHPUnit_Framework_TestCase
     protected $beanList;
     protected $db;
 
+    protected $originals = array();
+
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
     protected function setUp()
     {
+        parent::setUp();
+        $this->originals['current_user'] = $GLOBALS['current_user'];
+        $this->originals['db'] = $GLOBALS['db'];
+
         $this->object = $this->getMockBuilder('PMSECrmDataWrapper')
             ->setMethods(null)
             ->disableOriginalConstructor()
@@ -138,6 +144,10 @@ class PMSECrmDataWrapperTest extends PHPUnit_Framework_TestCase
      */
     protected function tearDown()
     {
+        foreach($this->originals as $varname => $value) {
+            $GLOBALS[$varname] = $value;
+        }
+        parent::tearDown();
     }
 
     /**

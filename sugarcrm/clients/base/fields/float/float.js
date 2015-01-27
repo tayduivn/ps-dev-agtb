@@ -56,7 +56,7 @@
      *   preferences.
      */
     format: function(value) {
-        if (this.def.disable_num_format) {
+        if (this.def.disable_num_format || _.isNull(value)|| _.isUndefined(value) || _.isNaN(value)) {
             return value;
         }
 

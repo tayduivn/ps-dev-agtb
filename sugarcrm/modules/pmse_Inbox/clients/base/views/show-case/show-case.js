@@ -33,7 +33,8 @@
             this.params = {
                 action: 'detail',
                 layout: 'pmse-case',
-                module: 'pmse_Inbox',
+                module: data.case.flow.cas_sugar_module,
+                modelId: data.case.flow.cas_sugar_object_id,
                 case: data.case
             };
             app.controller.loadView(this.params);

@@ -84,7 +84,7 @@ var link_defs_<?php echo $module_name; ?> = new Object();
         if (!empty($linked_field['vname'])) {
             $vname = $linked_field['vname'];
         }
-        
+
         // In order to get the correct label, we have to track down and see if there is a name field and use that for the label.
         foreach ($module->field_defs as $idx => $fieldDef) {
             if (!isset($fieldDef['link'])) {
@@ -93,7 +93,7 @@ var link_defs_<?php echo $module_name; ?> = new Object();
             if ($fieldDef['link'] != $linked_field['name']) {
                 continue;
             }
-            if ($fieldDef['type'] == 'relate' 
+            if ($fieldDef['type'] == 'relate'
                 && $fieldDef['rname'] == 'name'
                 && !empty($fieldDef['vname'])) {
                 // This is the name field for the link field
@@ -617,11 +617,6 @@ qualifiers[qualifiers.length] = {name:'not_one_of',value:'<?php echo $mod_string
 qualifiers[qualifiers.length] = {name:'empty',value:'<?php echo $mod_strings['LBL_IS_EMPTY']; ?>'};
 qualifiers[qualifiers.length] = {name:'not_empty',value:'<?php echo $mod_strings['LBL_IS_NOT_EMPTY']; ?>'};
 filter_defs['multienum'] = qualifiers;
-
-var qualifiers =  new Array();
-qualifiers[qualifiers.length] = {name:'contains',value:'<?php echo $mod_strings['LBL_CONTAINS']; ?>'};
-qualifiers[qualifiers.length] = {name:'not_contains',value:'<?php echo $mod_strings['LBL_DOES_NOT_CONTAIN']; ?>'};
-filter_defs['tag'] = qualifiers;
 
 var qualifiers =  new Array();
 qualifiers[qualifiers.length] = {name:'is',value:'<?php echo $mod_strings['LBL_IS']; ?>'};

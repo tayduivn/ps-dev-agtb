@@ -66,7 +66,7 @@ class ConvertLayoutMetadataParser extends GridLayoutMetaDataParser
         $this->_view = MB_EDITVIEW;
         $this->_fielddefs = $this->seed->field_defs;
         $this->loadViewDefs();
-        $this->_history = new History($this->fileName);
+        $this->_history = new History($this->pathMap[MB_HISTORYMETADATALOCATION] . $this->fileName);
     }
 
     public function getOriginalViewDefs()

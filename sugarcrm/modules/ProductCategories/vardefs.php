@@ -96,9 +96,6 @@ $dictionary['ProductCategory'] = array(
             'relationship_type' => 'one-to-many'
         ),
     ),
-    'uses' => array(
-        'taggable'
-    ),
 );
 
 VardefManager::createVardef(
