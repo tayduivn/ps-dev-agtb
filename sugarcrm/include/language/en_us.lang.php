@@ -4667,7 +4667,7 @@ Sincerely, SugarCRM',
     'LBL_RECENTS' => 'Recents',
 
     'ERR_SYNC_FAILED' => 'Unable to sync with server.',
-    'ERR_MOBILE_SSO_NOT_CONFIGURED' => 'External login is not supported for mobile. Please contact your system administrator.',
+    'ERR_MOBILE_SSO_NOT_CONFIGURED' => 'SSO login is unavailable. Ensure the instance is on Sugar 7.5 or greater and configured for SSO.',
     'ERR_MOBILE_NOT_AUTHORIZED' => 'Access not authorized.',
     'ERR_MOBILE_INVALID_CREDS' => 'Invalid username or password.',
     'ERR_MOBILE_SESSION_EXPIRED' => 'Your session expired.',
