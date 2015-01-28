@@ -55,7 +55,7 @@ $viewdefs['KBContents']['base']['view']['list'] = array(
                 ),
                 array (
                     'name' => 'category_name',
-                    'label' => 'LBL_TOPIC_NAME',
+                    'label' => 'LBL_CATEGORY_NAME',
                     'enabled' => true,
                     'default' => true,
                 ),

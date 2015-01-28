@@ -51,14 +51,14 @@
         this.label = this.meta.label || '';
 
         this.events = _.extend({}, this.events, {
-            'click [data-event="tree:list:fire"]': 'handleTopicsList'
+            'click [data-event="tree:list:fire"]': 'handleCategoriesList'
         });
     },
 
     /**
-     * Handle click on KB topics menu item.
+     * Handle click on KB category menu item.
      */
-    handleTopicsList: function() {
+    handleCategoriesList: function() {
         var treeOptions = {
             category_root: this.categoryRoot,
             module_root: this.moduleRoot,

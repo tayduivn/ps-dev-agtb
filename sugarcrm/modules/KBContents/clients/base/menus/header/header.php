@@ -43,7 +43,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
     ),
     array(
         'event' => 'tree:list:fire',
-        'label' => 'LNK_LIST_KBSTOPICS',
+        'label' => 'LNK_LIST_KBCATEGORIES',
         'acl_action' => 'list',
         'acl_module' => $module_name,
         'icon' => 'fa-reorder',
