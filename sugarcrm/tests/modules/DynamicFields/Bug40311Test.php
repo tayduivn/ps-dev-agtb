@@ -20,43 +20,50 @@ class Bug40311Test extends Sugar_PHPUnit_Framework_TestCase
     private $_tablename;
     private $_old_installing;
 
+    /**
+     * @var SugarTestDatabaseMock
+     */
+    private $db;
+
     public function setUp()
     {
+        $this->db = SugarTestHelper::setUp('mock_db');
+
         $this->accountMockBean = $this->getMock('Account' , array('hasCustomFields'));
         $this->_tablename = 'test' . date("YmdHis");
         if ( isset($GLOBALS['installing']) )
             $this->_old_installing = $GLOBALS['installing'];
         $GLOBALS['installing'] = true;
 
-        $GLOBALS['db']->createTableParams($this->_tablename . '_cstm',
-            array(
-                'id_c' => array (
-                    'name' => 'id_c',
-                    'type' => 'id',
-                    ),
-                'foo_c' => array (
-                    'name' => 'foo_c',
-                    'type' => 'datetime',
-                    ),
-                ),
-            array()
-            );
-        $GLOBALS['db']->query("INSERT INTO {$this->_tablename}_cstm (id_c,foo_c) VALUES ('12345',NULL)");
     }
 
     public function tearDown()
     {
-        $GLOBALS['db']->dropTableName($this->_tablename . '_cstm');
         if ( isset($this->_old_installing) ) {
             $GLOBALS['installing'] = $this->_old_installing;
         }
         else {
             unset($GLOBALS['installing']);
         }
+        SugarTestHelper::tearDown();
+        parent::tearDown();
     }
 
     public function testDynamicFieldsNullWorks()
     {
+
+        $this->db->addQuerySpy(
+            'dynamic_field',
+            '/' . $this->_tablename . '_cstm\.\*/',
+            array(
+                array(
+                    'id_c' => '12345',
+                    'foo_c' => NULL
+                )
+            )
+        );
+
+
         $bean = $this->accountMockBean;
         $bean->custom_fields = new DynamicField($bean->module_dir);
         $bean->custom_fields->setup($bean);

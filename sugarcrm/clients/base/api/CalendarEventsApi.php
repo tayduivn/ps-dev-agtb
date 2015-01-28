@@ -69,14 +69,19 @@ class CalendarEventsApi extends ModuleApi
      * @param ServiceBase $api
      * @param array $args API arguments
      * @param array $additionalProperties Additional properties to be set on the bean
+     * @return SugarBean
      */
     public function createBean(ServiceBase $api, array $args, array $additionalProperties = array())
     {
         $this->requireArgs($args, array('module'));
         $this->getCalendarEvents()->setOldAssignedUser($args['module'], null);
 
-        $bean = parent::createBean($api,$args, $additionalProperties);
+        $bean = parent::createBean($api, $args, $additionalProperties);
         if (!empty($bean->id)) {
+            if ($this->shouldAutoInviteParent($bean, $args)) {
+                $this->getCalendarEvents()->inviteParent($bean, $args['parent_type'], $args['parent_id']);
+            }
+
             if ($this->getCalendarEvents()->isEventRecurring($bean)) {
                 $this->generateRecurringCalendarEvents($bean);
             } else {
@@ -100,6 +105,10 @@ class CalendarEventsApi extends ModuleApi
 
         $api->action = 'view';
         $bean = $this->loadBean($api, $args, 'view');
+
+        if ($this->shouldAutoInviteParent($bean, $args)) {
+            $this->getCalendarEvents()->inviteParent($bean, $args['parent_type'], $args['parent_id']);
+        }
 
         if ($this->getCalendarEvents()->isEventRecurring($bean)) {
             if (isset($args['all_recurrences']) && $args['all_recurrences'] === 'true') {
@@ -253,5 +262,42 @@ class CalendarEventsApi extends ModuleApi
         }
 
         return $this->calendarEvents;
+    }
+
+    /**
+     * Determine if parent field record should be automatically added as an
+     * invitee on the event.
+     *
+     * On create, happens if parent field is set and auto_invite_parent is not
+     * false. On update, happens if parent field is updated and
+     * auto_invite_parent is not false.
+     *
+     * @param SugarBean $bean
+     * @param array $args
+     * @return bool
+     */
+    protected function shouldAutoInviteParent($bean, $args)
+    {
+        $isUpdate = isset($args['id']);
+
+        // allow auto invite to be turned off with flag on the request
+        if (isset($args['auto_invite_parent']) && $args['auto_invite_parent'] === false) {
+            return false;
+        }
+
+        // if parent field is empty, nothing to auto-invite
+        if (empty($args['parent_type']) || empty($args['parent_id'])) {
+            return false;
+        }
+
+        // if updating and parent field has not changed, no auto-invite
+        if ($isUpdate
+            && ($bean->parent_type === $args['parent_type'])
+            && ($bean->parent_id === $args['parent_id'])
+        ) {
+            return false;
+        }
+
+        return true;
     }
 }

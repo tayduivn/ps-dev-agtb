@@ -222,6 +222,7 @@ class PMSEFlowRouter
                 $resultData['previous_closed_flow'] = $this->caseFlowHandler->closePreviousFlow($previousFlowData);
                 break;
             case 'CLOSE':
+                $resultData['processed_flow'] = null;
                 $resultData['previous_closed_flow'] = $this->caseFlowHandler->closePreviousFlow($previousFlowData);
                 break;
             case 'NONE':

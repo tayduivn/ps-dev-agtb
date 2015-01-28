@@ -339,7 +339,7 @@ UpdaterField.prototype.setValue = function (value) {
                 for (i = 0; i < fields.length; i += 1) {
                     for (j = 0; j < this.options.length; j += 1) {
                         if (fields[i].field === this.options[j].getName()) {
-                            this.options[j].enable();    
+                            this.options[j].enable();
                             /*if (this.hasCheckbox) {
                                 this.options[j].checkboxControl.checked = true;
                             }*/
@@ -454,10 +454,10 @@ UpdaterField.prototype._onValueGenerationHandler = function (module) {
             aux2 = currentValue.substr(i);
             newExpression = aux + newExpression + aux2;
         }
-        
+
         field.setValue(newExpression);
         if (!(panel instanceof ExpressionControl)) {
-            panel.close();  
+            panel.close();
         }
     //Previous version
         /*var input, currentValue, i, newExpression = "{::" + module + "::" + value + "::}", aux, aux2, field = that.currentField;
@@ -522,7 +522,7 @@ UpdaterField.prototype._onValueGenerationHandler = function (module) {
  * @param {Object} field
  */
 UpdaterField.prototype.openPanelOnItem = function (field) {
-    var that = this, settings, inputPos, textSize, subjectInput, i, 
+    var that = this, settings, inputPos, textSize, subjectInput, i,
         variablesDataSource = project.getMetadata("targetModuleFieldsDataSource"), currentFilters, list, targetPanel,
         currentOwner, fieldType = field.getFieldType();
 
@@ -548,7 +548,7 @@ UpdaterField.prototype.openPanelOnItem = function (field) {
                 onClose: function () {
                     jQuery(that.currentField.html).removeClass("opened");
                 }
-            });    
+            });
         }
         if (this._datePanel && this._datePanel.isOpen()) {
             this._datePanel.close();
@@ -556,16 +556,16 @@ UpdaterField.prototype.openPanelOnItem = function (field) {
         targetPanel = this._variablesList;
         list = this._variablesList.getItems()[0];
         currentFilters = list.getFilter();
-        //We check if the variables list has the same filter than the one we need right now, 
+        //We check if the variables list has the same filter than the one we need right now,
         //if it do then we don't need to apply the data filtering for a new criteria
         if (fieldType === 'TextField' || fieldType === 'TextArea' || fieldType === 'Name') {
             if (list.getFilterMode() === 'inclusive') {
-                list.setFilterMode('exclusive') 
-                    .setDataItems(this._variables, "fieldType", ["Checkbox", "DropDown"]);      
+                list.setFilterMode('exclusive')
+                    .setDataItems(this._variables, "fieldType", ["Checkbox", "DropDown"]);
             }
-        } else if (!(currentFilters.length === 1 && currentFilters.indexOf(field._fieldType) > 0)) {        
-            list.setFilterMode('inclusive')         
-                .setDataItems(this._variables, "fieldType", field._fieldType);      
+        } else if (!(currentFilters.length === 1 && currentFilters.indexOf(field._fieldType) > 0)) {
+            list.setFilterMode('inclusive')
+                .setDataItems(this._variables, "fieldType", field._fieldType);
         }
         this.currentField = field;
     } else {
@@ -591,7 +591,7 @@ UpdaterField.prototype.openPanelOnItem = function (field) {
                 this._datePanel.setOperators({
                     arithmetic: ["+", "-"]
                 }).setConstantPanel({
-                    date: true, 
+                    date: true,
                     timespan: true
                 });
             } else {
@@ -655,7 +655,7 @@ UpdaterField.prototype.openPanelOnItem = function (field) {
     subjectInput = field._control;
     currentOwner = targetPanel.getOwner();
     if (currentOwner !== subjectInput) {
-        targetPanel.close(); 
+        targetPanel.close();
         targetPanel.setOwner(subjectInput);
         targetPanel.open();
     } else {
@@ -665,7 +665,7 @@ UpdaterField.prototype.openPanelOnItem = function (field) {
             targetPanel.open();
         }
     }
-    
+
     /*this.multiplePanel.open();
     if (this.multiplePanel.subpanels[0]) {
         this.multiplePanel.subpanels[0].open();
@@ -682,7 +682,7 @@ UpdaterField.prototype.openPanelOnItem = function (field) {
             that.multiplePanel.close();
         }
     });*/
-    
+
     return this;
 };
 UpdaterField.prototype.setVariables = function (variables) {
@@ -859,7 +859,7 @@ UpdaterField.prototype.setVariables = function (variables) {
         }
         if (this._control) {
             this._setValueToControl(value);
-            this._value = this._getValueFromControl();    
+            this._value = this._getValueFromControl();
         } else {
             this._value = value;
         }
@@ -893,7 +893,7 @@ UpdaterField.prototype.setVariables = function (variables) {
     UpdaterItem.prototype._createConfigButton = function () {
         var button = this.createHTMLElement("a");
         button.href = "#";
-        button.className = "adam-itemupdater-cfg icon-cog";
+        button.className = "adam-itemupdater-cfg fa fa-cog";
         this._configButton = button;
         return this._configButton;
     };
@@ -955,12 +955,12 @@ UpdaterField.prototype.setVariables = function (variables) {
     };
 
     UpdaterItem.prototype.createHTML = function () {
-        var label, 
-            controlContainer, 
+        var label,
+            controlContainer,
             activationControl,
             labelContent,
-            labelText, 
-            requiredContainer, 
+            labelText,
+            requiredContainer,
             messageContainer,
             configButton,
             messageContainer;
@@ -1001,9 +1001,9 @@ UpdaterField.prototype.setVariables = function (variables) {
             controlContainer.appendChild(this._createControl());
             this._createConfigButton();
             if (this._configButton) {
-                controlContainer.appendChild(this._configButton);    
+                controlContainer.appendChild(this._configButton);
             }
-            
+
             this._dom.labelText = labelText;
             this._dom.requiredContainer = requiredContainer;
 
@@ -1064,7 +1064,7 @@ UpdaterField.prototype.setVariables = function (variables) {
             } else {
                 this._control.removeAttribute("maxlength");
             }
-            
+
         }
         return this;
     };
@@ -1111,7 +1111,7 @@ UpdaterField.prototype.setVariables = function (variables) {
             value = JSON.parse(value);
         }
         if (this._control) {
-            this._setValueToControl(value);   
+            this._setValueToControl(value);
         }
         this._value = value;
         return this;
@@ -1252,7 +1252,7 @@ UpdaterField.prototype.setVariables = function (variables) {
             value = JSON.parse(value);
         }
         if (this._control) {
-            this._setValueToControl(value);   
+            this._setValueToControl(value);
         }
         this._value = value;
         return this;
@@ -1313,7 +1313,7 @@ UpdaterField.prototype.setVariables = function (variables) {
             }
             if (isInDOM(this._control)) {
                 this._setValueToControl(value);
-                this._value = this._getValueFromControl();    
+                this._value = this._getValueFromControl();
             } else {
                 if (this._existsValueInOptions(value)) {
                     this._value = value;

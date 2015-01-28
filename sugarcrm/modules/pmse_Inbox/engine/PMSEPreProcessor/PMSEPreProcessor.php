@@ -202,7 +202,7 @@ class PMSEPreProcessor
 
             if ($validatedRequest->isValid()) {
                 $data = $validatedRequest->getFlowData();
-                if ($data['evn_type'] != 'GLOBAL_TERMINATE') {
+                if (!(isset($data['evn_type']) && $data['evn_type'] == 'GLOBAL_TERMINATE')) {
                     $this->logger->info('Request validated for element: ' . $data['bpmn_type'] . ' with id: ' . $data['bpmn_id']);
                     $_SESSION['pmse_start_time'] = microtime(true);
 

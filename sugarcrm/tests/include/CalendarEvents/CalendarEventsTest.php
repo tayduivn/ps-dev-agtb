@@ -139,6 +139,36 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($childMeetingAcceptStatus, 'accept', 'Current user should have auto-accepted in child meeting');
     }
 
+    public function testInviteParent_ParentIsContact_ShouldInviteButNotReInvite()
+    {
+        global $current_user;
+        $args['name'] = "Test Meeting";
+        $args['date_start'] = '2030-08-15 13:00:00';
+        $args['duration_hours'] = '1';
+        $args['duration_minutes'] = '30';
+        $args['assigned_user_id'] = $current_user->id;
+
+        $meeting = $this->newMeeting('', $args);
+        $contact = SugarTestContactUtilities::createContact();
+
+        $this->calendarEventsService->inviteParent($meeting, 'Contacts', $contact->id);
+        $this->assertEquals(array($contact->id), $meeting->contacts->get(), 'should be linked to the one contact');
+
+        // try inviting again
+        $this->calendarEventsService->inviteParent($meeting, 'Contacts', $contact->id);
+        $this->assertEquals(array($contact->id), $meeting->contacts->get(), 'should only have one link to the contact');
+
+        SugarTestMeetingUtilities::removeMeetingContacts();
+        SugarTestContactUtilities::removeAllCreatedContacts();
+    }
+
+    public function testInviteParent_ParentIsNotContactOrLead_ShouldNotInvite()
+    {
+        $meeting = BeanFactory::newBean('Meetings');
+        $this->calendarEventsService->inviteParent($meeting, 'Accounts', '123');
+        $this->assertNull($meeting->accounts);
+    }
+
     /**
      * Instantiate a new Meeting and prepopulate values from args
      * Add Meeting to meetingIds array to ensure its deletion on teardown

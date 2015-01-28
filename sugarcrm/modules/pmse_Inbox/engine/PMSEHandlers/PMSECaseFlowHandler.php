@@ -827,7 +827,14 @@ class PMSECaseFlowHandler
             //$this->bpmLog('INFO', "Saving changed data " . serialize($params['log_data']));
             $formActionBeanObject->cas_pre_data = serialize($params['log_data']);
         }
-        $formActionBeanObject->frm_action = isset($params['Type']) ? $params['Type'] : $params['frm_action'];
+        if (isset($params['Type'])) {
+            $frmAction = $params['Type'];
+        } else if (isset($params['frm_action'])) {
+            $frmAction = $params['frm_action'];
+        } else {
+            $frmAction = null;
+        }
+        $formActionBeanObject->frm_action = $frmAction;
         $formActionBeanObject->frm_action = $formActionBeanObject->frm_action=='Approve'?'Approved':$formActionBeanObject->frm_action;
         $formActionBeanObject->frm_action = $formActionBeanObject->frm_action=='Reject'?'Rejected':$formActionBeanObject->frm_action;
         
