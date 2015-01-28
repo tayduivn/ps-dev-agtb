@@ -214,10 +214,9 @@ describe('Leads.Base.Layout.ConvertMain', function() {
                 convertCompleteStub.restore();
             });
 
-            it('should call lead convert api with associated models and call to upload files', function() {
+            it('should call lead convert api with associated models', function() {
                 var expectedRequest,
-                    uploadFilesStub = sinon.stub(layout, 'uploadAssociatedRecordFiles'),
-                    getEditableFieldsStub = sinon.stub(app.data, 'getEditableFields', function(model, fields) {
+                    getEditableFieldsStub = sinon.stub(app.data, 'getEditableFields', function(model) {
                         return model;
                     });
 
@@ -236,8 +235,6 @@ describe('Leads.Base.Layout.ConvertMain', function() {
                     transfer_activities_modules: []
                 });
                 expect(ajaxSpy.lastCall.args[0].data).toEqual(expectedRequest);
-                expect(uploadFilesStub.callCount).toEqual(1);
-                uploadFilesStub.restore();
                 getEditableFieldsStub.restore();
             });
 
@@ -249,66 +246,6 @@ describe('Leads.Base.Layout.ConvertMain', function() {
                 expect(contextTriggerStub.calledWith('lead:convert-save:toggle', false)).toBe(true);
                 expect(contextTriggerStub.calledWith('lead:convert-save:toggle', true)).toBe(true);
                 expect(convertCompleteStub.calledWith('error')).toBe(true);
-            });
-        });
-
-        describe('Upload Associated Record Files', function() {
-            var convertCompleteStub, checkAndProcessUploadStub, checkAndProcessUploadCallbacks, mockLeadConvertResponse;
-
-            beforeEach(function() {
-                convertCompleteStub = sinon.stub(layout, 'convertComplete');
-
-                checkAndProcessUploadCallbacks = {};
-                checkAndProcessUploadStub = sinon.stub(app.file, 'checkFileFieldsAndProcessUpload', function(view, options) {
-                    checkAndProcessUploadCallbacks = options;
-                });
-
-                mockLeadConvertResponse = {
-                    modules: [
-                        {_module: 'Foo', id: '123'},
-                        {_module: 'Bar', id: '456'},
-                        {_module: 'Baz', id: '789'}
-                    ]
-                };
-            });
-
-            afterEach(function() {
-                convertCompleteStub.restore();
-                checkAndProcessUploadStub.restore();
-            });
-
-            it('should check for upload files on each module where we are creating a record (no id passed)', function() {
-                layout.associatedModels = {
-                    Foo: new Backbone.Model({name: 'foo'}),
-                    Bar: new Backbone.Model({name: 'bar'}),
-                    Baz: new Backbone.Model({id: '789'})
-                };
-                layout.uploadAssociatedRecordFiles(mockLeadConvertResponse);
-                expect(checkAndProcessUploadStub.callCount).toEqual(2);
-            });
-
-            it('should throw a convert success if all calls succeed', function() {
-                layout.associatedModels = {
-                    Foo: new Backbone.Model({name: 'foo'}),
-                    Bar: new Backbone.Model({name: 'bar'}),
-                    Baz: new Backbone.Model({id: '789'})
-                };
-                layout.uploadAssociatedRecordFiles(mockLeadConvertResponse);
-                checkAndProcessUploadCallbacks.success();
-                checkAndProcessUploadCallbacks.success();
-                expect(convertCompleteStub.calledWith('success')).toBe(true);
-            });
-
-            it('should throw a convert warning if any calls fail', function() {
-                layout.associatedModels = {
-                    Foo: new Backbone.Model({name: 'foo'}),
-                    Bar: new Backbone.Model({name: 'bar'}),
-                    Baz: new Backbone.Model({id: '789'})
-                };
-                layout.uploadAssociatedRecordFiles(mockLeadConvertResponse);
-                checkAndProcessUploadCallbacks.success();
-                checkAndProcessUploadCallbacks.error();
-                expect(convertCompleteStub.calledWith('warning')).toBe(true);
             });
         });
 
