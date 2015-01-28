@@ -4381,7 +4381,7 @@ nv.models.funnel = function() {
               d0 = d.labelTop;
             });
 
-          if (d0) {
+          if (d0 < 0) {
             sideLabels.each(function(d, i) {
                 d.labelTop -= d0;
                 d.labelBottom -= d0;
