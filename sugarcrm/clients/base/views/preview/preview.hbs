@@ -16,7 +16,7 @@
     <div class="row-fluid{{#if ../hide}}{{#if ../../../hidePanel}} hide{{/if}} panel_hidden{{/if}}">
         <div class="span5">{{str  this.label ../../this.model.module}}</div>
         <div class="span7" data-type="{{type}}" name="{{name}}">
-            {{field ../../this model=../../model}}
+            {{field ../../this model=../../model template="preview"}}
         </div>
     </div>
 {{/each}}

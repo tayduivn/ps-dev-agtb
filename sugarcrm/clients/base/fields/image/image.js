@@ -68,7 +68,9 @@
     _dispose: function() {
         //Remove specific validation task from the model
         this.model.hasImageRequiredValidator = false;
-        this.model.removeValidationTask('image_required_' + this.cid);
+        if (this.model.removeValidationTask) {
+            this.model.removeValidationTask('image_required_' + this.cid);
+        }
         app.view.Field.prototype._dispose.call(this);
     },
 

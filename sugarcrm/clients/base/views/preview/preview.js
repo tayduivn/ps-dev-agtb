@@ -242,7 +242,7 @@
      * @param module Optional
      */
     switchPreview: function(data, index, id, module) {
-        var currID = id || this.model.get("id"),
+        var currID = id || this.model.get('id'),
             currIndex = index || _.indexOf(this.collection.models, this.collection.get(currID));
 
         if( this.switching || this.collection.models.length < 2) {
@@ -260,7 +260,7 @@
             data.direction === "left" ? currIndex -= 1 : currIndex += 1;
 
             //Reset the preview
-            app.events.trigger("preview:render", this.collection.models[currIndex], null, true);
+            app.events.trigger('preview:render', this.collection.models[currIndex], null, true);
             this.switching = false;
         }
     },
