@@ -35,7 +35,6 @@ $moduleList[] = 'Quotes';
 $moduleList[] = 'Products';
 $moduleList[] = 'Forecasts';
 $moduleList[] = 'Contracts';
-$moduleList[] = 'KBDocuments';
 //BEGIN SUGARCRM flav=ent ONLY
 $moduleList[] = 'pmse_Project';
 $moduleList[] = 'pmse_Inbox';

@@ -209,10 +209,6 @@ $viewdefs['KBContents']['base']['view']['record'] = array(
                     'bLabel' => 'LBL_ADD_ATTACHMENT',
                     'span' => 12,
                 ),
-                array(
-                    'name' => 'tag',
-                    'span' => 12,
-                ),
             ),
         ),
         array(

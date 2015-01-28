@@ -465,9 +465,6 @@ $dictionary['KBContent'] = array(
     'duplicate_check' => array(
         'enabled' => false,
     ),
-    'uses' => array(
-        'taggable',
-    ),
 );
 
 VardefManager::createVardef(
