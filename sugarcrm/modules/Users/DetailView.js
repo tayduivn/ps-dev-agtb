@@ -92,11 +92,9 @@ function user_status_display(field){
 		    document.getElementById("locale").style.display="none";
 			document.getElementById("settings").style.display="none";
 			document.getElementById("information").style.display="none";
-            //BEGIN SUGARCRM flav=pro ONLY
 			if(document.getElementById("pdf")) {
 				document.getElementById("pdf").style.display="none";
 			}
-            //END SUGARCRM flav=pro ONLY
             document.getElementById("email_options_link_type").style.display="none";
 	    break;
 
@@ -106,11 +104,9 @@ function user_status_display(field){
 		    document.getElementById("locale").style.display="none";
 			document.getElementById("settings").style.display="none";
 			document.getElementById("information").style.display="none";
-			//BEGIN SUGARCRM flav=pro ONLY
 			if(document.getElementById("pdf")) {
 				document.getElementById("pdf").style.display="none";
 			}
-            //END SUGARCRM flav=pro ONLY
             document.getElementById("email_options_link_type").style.display="none";
 	    break;
 	}
@@ -130,11 +126,9 @@ function confirmDelete() {
     if(user_portal_group == 'GroupUser'){
         confirm_text = SUGAR.language.get('Users', 'LBL_DELETE_GROUP_CONFIRM');
     }
-    //BEGIN SUGARCRM flav=pro ONLY
     else if(user_portal_group == 'PortalUser'){
         confirm_text = SUGAR.language.get('Users', 'LBL_DELETE_PORTAL_CONFIRM');
     }
-    //END SUGARCRM flav=pro ONLY
 
     var confirmDeletePopup = new YAHOO.widget.SimpleDialog("Confirm ", {
                 width: "400px",

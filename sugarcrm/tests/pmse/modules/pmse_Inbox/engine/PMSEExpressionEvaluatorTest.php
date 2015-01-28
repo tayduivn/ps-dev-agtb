@@ -20,7 +20,10 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        
+        // The default timezone is set to phoenix because the server could
+        // have a different timezone that triggers failures with the tests 
+        // already defined values.
+        date_default_timezone_set("America/Phoenix");        
     }
 
     /**

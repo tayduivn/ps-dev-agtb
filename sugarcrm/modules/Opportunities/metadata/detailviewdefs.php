@@ -28,12 +28,10 @@ $viewdefs['Opportunities']['DetailView'] = array(
 	        	'date_closed',
 	        ),
 
-            //BEGIN SUGARCRM flav=pro ONLY
             array(
                 'best_case',
                 'worst_case',
             ),
-            //END SUGARCRM flav=pro ONLY
 
 	        array (
 	        	'sales_stage',
@@ -72,9 +70,7 @@ $viewdefs['Opportunities']['DetailView'] = array(
 	          ),
 	        ),
 	        array (
-			  //BEGIN SUGARCRM flav=pro ONLY
-			  'team_name', 
-			  //END SUGARCRM flav=pro ONLY
+			  'team_name',
 	          array (
 	            'name' => 'date_entered',
 	            'customCode' => '{$fields.date_entered.value} {$APP.LBL_BY} {$fields.created_by_name.value}',

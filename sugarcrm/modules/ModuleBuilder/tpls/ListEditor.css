@@ -38,9 +38,28 @@ li {
 	border: none;
 }
 
-.deleted table, .deleted td{ 
-	text-decoration: line-through;	
-	background-color: #AAA;
+.listContainer {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.listContainer li {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.listContainer li .fieldValue {
+    line-height: 30px;
+}
+
+li.deleted {
+    background-color: #AAA;
+}
+
+.deleted td.first {
+    text-decoration: line-through;
 }
 
 .list-editor ul, .preview-content ul{

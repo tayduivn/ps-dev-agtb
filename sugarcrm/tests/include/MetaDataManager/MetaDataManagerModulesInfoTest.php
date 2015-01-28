@@ -58,7 +58,6 @@ class MetaDataManagerModulesInfoTest extends Sugar_PHPUnit_Framework_TestCase
     static protected $savedPortalTabs;
     //END SUGARCRM flav=ent ONLY
 
-    //BEGIN SUGARCRM flav=pro ONLY
     /**
      * @var string Location of the mobile tabs metadata file
      */
@@ -84,8 +83,6 @@ class MetaDataManagerModulesInfoTest extends Sugar_PHPUnit_Framework_TestCase
      */
     static protected $mobileCreatedPath;
 
-    //END SUGARCRM flav=pro ONLY
-
     /**
      * Set up once before all tests are run
      */
@@ -106,9 +103,7 @@ class MetaDataManagerModulesInfoTest extends Sugar_PHPUnit_Framework_TestCase
         self::$tabs->setPortalTabs(array_keys(self::$testPortalTabs));
         //END SUGARCRM flav=ent ONLY
 
-        //BEGIN SUGARCRM flav=pro ONLY
         self::setUpMobile();
-        //END SUGARCRM flav=pro ONLY
     }
 
     /**
@@ -124,9 +119,7 @@ class MetaDataManagerModulesInfoTest extends Sugar_PHPUnit_Framework_TestCase
         self::$tabs->setPortalTabs(self::$savedPortalTabs);
         //END SUGARCRM flav=ent ONLY
 
-        //BEGIN SUGARCRM flav=pro ONLY
         self::tearDownMobile();
-        //END SUGARCRM flav=pro ONLY
 
         SugarTestHelper::tearDown();
     }
@@ -223,7 +216,6 @@ class MetaDataManagerModulesInfoTest extends Sugar_PHPUnit_Framework_TestCase
     }
     //END SUGARCRM flav=ent ONLY
 
-    //BEGIN SUGARCRM flav=pro ONLY
     /**
      * Test getModulesInfo method for mobile
      *
@@ -263,9 +255,7 @@ class MetaDataManagerModulesInfoTest extends Sugar_PHPUnit_Framework_TestCase
             }
         }
     }
-    //END SUGARCRM flav=pro ONLY
 
-    //BEGIN SUGARCRM flav=pro ONLY
     static protected function setUpMobile()
     {
         if (file_exists(self::$customMobileMetaFile)) {
@@ -330,7 +320,6 @@ EOF;
             SugarAutoLoader::delFromMap(self::$customMobileMetaFile);
         }
     }
-    //END SUGARCRM flav=pro ONLY
 }
 
 class MetadataManagerBaseMockForModulesData extends MetadataManager

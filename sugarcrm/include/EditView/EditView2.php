@@ -361,7 +361,6 @@ class EditView
                 $this->focus->job_function = $this->focus->job;
             }
 
-            //BEGIN SUGARCRM flav=pro ONLY
             if (empty($this->focus->team_id)) {
                 $this->focus->team_id = $current_user->default_team;
                 $this->focus->team_name = $current_user->default_team_name;
@@ -370,7 +369,6 @@ class EditView
                     $this->focus->team_name = Team::getTeamName($this->focus->team_id);
                 }
             }
-            //END SUGARCRM flav=pro ONLY
             foreach ($this->focus->toArray() as $name => $value)
             {
                 $valueFormatted = false;
@@ -486,9 +484,7 @@ class EditView
                    }
                 }
             }
-            //BEGIN SUGARCRM flav=pro ONLY
             $this->focus->ACLFilterFieldList($this->fieldDefs, array(), array("add_acl" => true));
-            //END SUGARCRM flav=pro ONLY
         }
 
         if (isset($this->focus->additional_meta_fields))
@@ -621,7 +617,6 @@ class EditView
         $this->th->ss->assign('includes', isset($this->defs['templateMeta']['includes']) ? $this->defs['templateMeta']['includes'] : null);
         $this->th->ss->assign('view', $this->view);
 
-        //BEGIN SUGARCRM flav=pro ONLY
         $admin = Administration::getSettings();
         if (isset($admin->settings['portal_on']) && $admin->settings['portal_on'])
         {
@@ -631,7 +626,6 @@ class EditView
         {
            $this->th->ss->assign("PORTAL_ENABLED", false);
         }
-        //END SUGARCRM flav=pro ONLY
 
         //Calculate time & date formatting (may need to calculate this depending on a setting)
         global $timedate;

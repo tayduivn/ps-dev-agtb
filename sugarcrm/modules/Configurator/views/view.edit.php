@@ -79,14 +79,12 @@ class ConfiguratorViewEdit extends ViewEdit
         }else{
             $this->ss->assign("PROXY_AUTH_DISPLAY", 'none');
         }
-        //BEGIN SUGARCRM flav=pro ONLY
         $ini_session_val = ini_get('session.gc_maxlifetime');
         if(!empty($focus->settings['system_session_timeout'])){
             $this->ss->assign("SESSION_TIMEOUT", $focus->settings['system_session_timeout']);
         }else{
             $this->ss->assign("SESSION_TIMEOUT", $ini_session_val);
         }
-        //END SUGARCRM flav=pro ONLY
         if (!empty($configurator->config['logger']['level'])) {
             $this->ss->assign('log_levels', get_select_options_with_id(  LoggerManager::getLoggerLevels(), $configurator->config['logger']['level']));
         } else {
@@ -127,9 +125,7 @@ class ConfiguratorViewEdit extends ViewEdit
         $javascript->addFieldGeneric("proxy_port", "int", $mod_strings['LBL_PROXY_PORT'], TRUE, "");
         $javascript->addFieldGeneric("proxy_password", "varchar", $mod_strings['LBL_PROXY_PASSWORD'], TRUE, "");
         $javascript->addFieldGeneric("proxy_username", "varchar", $mod_strings['LBL_PROXY_USERNAME'], TRUE, "");
-        //BEGIN SUGARCRM flav=pro ONLY
         $javascript->addFieldRange("system_session_timeout", "int", $mod_strings['SESSION_TIMEOUT'], TRUE, "", 0, $ini_session_val);
-        //END SUGARCRM flav=pro ONLY
         echo $javascript->getScript();
 	}
 }

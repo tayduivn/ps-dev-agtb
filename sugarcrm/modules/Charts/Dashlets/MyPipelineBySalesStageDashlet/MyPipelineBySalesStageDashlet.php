@@ -21,9 +21,7 @@ class MyPipelineBySalesStageDashlet extends DashletGenericChart
     public $mypbss_date_start;
     public $mypbss_date_end;
     public $mypbss_sales_stages = array();
-    //BEGIN SUGARCRM flav=pro ONLY
     public $mypbss_chart_type = 'fun';
-    //END SUGARCRM flav=pro ONLY
 
     protected $_seedName = 'Opportunities';
 
@@ -63,9 +61,7 @@ class MyPipelineBySalesStageDashlet extends DashletGenericChart
 
         $this->_searchFields['mypbss_sales_stages']['options'] = $app_list_strings['sales_stage_dom'];
         $this->_searchFields['mypbss_sales_stages']['input_name0'] = $selected_datax;
-        //BEGIN SUGARCRM flav=pro ONLY
         $this->_searchFields['mypbss_chart_type']['options'] = $app_list_strings['pipeline_chart_dom'];
-        //END SUGARCRM flav=pro ONLY
 
         return parent::displayOptions();
     }
@@ -100,15 +96,12 @@ class MyPipelineBySalesStageDashlet extends DashletGenericChart
         $subtitle = translate('LBL_OPP_SIZE', 'Charts') . " " . $currency_symbol . "1" . translate('LBL_OPP_THOUSANDS', 'Charts');
 
         $query = $this->constructQuery();
-		//BEGIN SUGARCRM flav=pro ONLY
 		if ($this->mypbss_chart_type == 'hbar'){
-		//END SUGARCRM flav=pro ONLY
 			$dataset = $this->constructCEChartData($this->getChartData($query));
 			$sugarChart->setData($dataset);
 			$total = format_number($this->getHorizBarTotal($dataset), 0, 0, array('convert'=>true));
 			$pipeline_total_string = translate('LBL_TOTAL_PIPELINE', 'Charts') . $sugarChart->currency_symbol . $total . $sugarChart->thousands_symbol;
 			$sugarChart->setProperties($pipeline_total_string, $subtitle, 'horizontal bar chart');
-		//BEGIN SUGARCRM flav=pro ONLY
 		}
 		else{
 			$sugarChart->setData($this->getChartData($query));
@@ -116,7 +109,6 @@ class MyPipelineBySalesStageDashlet extends DashletGenericChart
 			$pipeline_total_string = translate('LBL_TOTAL_PIPELINE', 'Charts') . $sugarChart->currency_symbol . $total . $sugarChart->thousands_symbol;
 			$sugarChart->setProperties($pipeline_total_string, $subtitle, 'funnel chart 3D');
 		}
-        //END SUGARCRM flav=pro ONLY
 
         // Bug #53753 We have to add values for filter based on "Expected Close Date" field
         if (!empty($this->mypbss_date_start) && !empty($this->mypbss_date_end))
@@ -240,9 +232,7 @@ class MyPipelineBySalesStageDashlet extends DashletGenericChart
                         count(*) AS opp_count,
                         sum(amount_usdollar/1000) AS total
                     FROM users,opportunities  ";
-        //BEGIN SUGARCRM flav=pro ONLY
         $this->getSeedBean()->add_team_security_where_clause($query);
-        //END SUGARCRM flav=pro ONLY
         $query .= " WHERE opportunities.assigned_user_id IN ('{$GLOBALS['current_user']->id}') " .
                         " AND opportunities.date_closed >= ". db_convert("'".$this->mypbss_date_start."'",'date').
                         " AND opportunities.date_closed <= ".db_convert("'".$this->mypbss_date_end."'",'date') .
@@ -261,13 +251,9 @@ class MyPipelineBySalesStageDashlet extends DashletGenericChart
     {
     	$groupBy = array('sales_stage');
 
-    	//BEGIN SUGARCRM flav=pro ONLY
     	if ($this->mypbss_chart_type == 'hbar'){
-    	//END SUGARCRM flav=pro ONLY
     		array_push($groupBy, 'user_name');
-    	//BEGIN SUGARCRM flav=pro ONLY
     	}
-    	//END SUGARCRM flav=pro ONLY
     	return $groupBy;
     }
 }

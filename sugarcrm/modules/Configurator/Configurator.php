@@ -216,12 +216,10 @@ class Configurator {
 		if (!empty ($_POST['company_logo'])) {
 			$this->saveCompanyLogo("upload://".$_POST['company_logo']);
 		}
-		//BEGIN SUGARCRM flav=pro ONLY
 		if (!empty ($_POST['quotes_logo'])) {
 			$this->saveCompanyQuoteLogo("upload://".$_POST['quotes_logo']);
 			rmdir_recursive(sugar_cached('smarty/templates_c'));
 		}
-		//END SUGARCRM flav=pro ONLY
 	}
 
 	function checkTempImage($path)

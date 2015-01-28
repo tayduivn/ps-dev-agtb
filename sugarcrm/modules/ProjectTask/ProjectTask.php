@@ -19,9 +19,7 @@ class ProjectTask extends SugarBean {
 	//var $assigned_user_id;
 	//var $modified_user_id;
 	//var $created_by;
-	//BEGIN SUGARCRM flav=pro ONLY
 	var $team_id;
-	//END SUGARCRM flav=pro ONLY
 	var $name;
     var $description;
     var $project_id;
@@ -33,10 +31,8 @@ class ProjectTask extends SugarBean {
     var $percent_complete;
     var $parent_task_id;
     var $predecessors;
-    //BEGIN SUGARCRM flav=pro ONLY
     var $resource_id;
     var $resource_name;
-    //END SUGARCRM flav=pro ONLY
     var $priority;
 
 	// related information
@@ -44,9 +40,7 @@ class ProjectTask extends SugarBean {
 	var $parent_name;
 	var $depends_on_name;
 	var $email_id;
-	//BEGIN SUGARCRM flav=pro ONLY
 	var $team_name;
-	//END SUGARCRM flav=pro ONLY
 
 	var $table_name = 'project_task';
 	var $object_name = 'ProjectTask';
@@ -103,14 +97,12 @@ class ProjectTask extends SugarBean {
 				$this->assigned_user_name = $current_user->user_name;
 			}
 
-			//BEGIN SUGARCRM flav=pro ONLY
 			global $current_user;
 			if(!empty($current_user)) {
 				$this->team_id = $current_user->default_team;	//default_team is a team id
 			} else {
 				$this->team_id = 1; // make the item globally accessible
 			}
-			//END SUGARCRM flav=pro ONLY
 		}
 	}
     /**
@@ -148,9 +140,7 @@ class ProjectTask extends SugarBean {
    {
        parent::fill_in_additional_detail_fields();
        $this->project_name = $this->_get_project_name($this->project_id);
-      //BEGIN SUGARCRM flav=pro ONLY
        $this->resource_name = $this->getResourceName();
-      //END SUGARCRM flav=pro ONLY
    }
 
 	/*
@@ -317,7 +307,6 @@ class ProjectTask extends SugarBean {
 		return $array_assign;
 	}
 
-	//BEGIN SUGARCRM flav=pro ONLY
     public function create_new_list_query(
         $order_by,
         $where,
@@ -376,7 +365,6 @@ class ProjectTask extends SugarBean {
 			return '';
 		}
     }
-    //END SUGARCRM flav=pro ONLY
 
     /**
     * This method recalculates the percent complete of a parent task

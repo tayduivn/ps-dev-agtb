@@ -20,13 +20,6 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'icon' => 'fa-plus',
     ),
     array(
-        'route' => '#'.$module_name.'/layout/dnb-bal',
-        'label' => 'LBL_BAL',
-        'acl_action' => 'create',
-        'acl_module' => $module_name,
-        'icon' => 'fa-plus',
-    ),
-    array(
         'route'=>'#'.$module_name.'/vcard-import',
         'label' =>'LNK_IMPORT_VCARD',
         'acl_action'=>'create',
@@ -40,7 +33,6 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'acl_module'=>$module_name,
         'icon' => 'fa-bars',
     ),
-    //BEGIN SUGARCRM flav=pro ONLY
     array(
         'route'=>'#bwc/index.php?module=Reports&action=index&view=leads&query=true&report_module=Leads',
         'label' =>'LNK_LEAD_REPORTS',
@@ -48,7 +40,6 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'acl_module'=>$module_name,
         'icon' => 'fa-bar-chart-o',
     ),
-    //END SUGARCRM flav=pro ONLY
     array(
         'route'=>'#bwc/index.php?module=Import&action=Step1&import_module=Leads&return_module=Leads&return_action=index',
         'label' =>'LNK_IMPORT_LEADS',
@@ -56,4 +47,11 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'acl_module'=>$module_name,
         'icon' => 'fa-arrow-circle-o-up',
     ),
+    array(
+        'label' => 'LBL_BAL',
+        'acl_action' => 'create',
+        'acl_module' => $module_name,
+        'icon' => 'fa-arrow-circle-o-up',
+        'route' => '#'.$module_name.'/layout/dnb-bal',
+    )
 );

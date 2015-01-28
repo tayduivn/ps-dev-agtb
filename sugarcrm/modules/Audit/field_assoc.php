@@ -25,13 +25,11 @@ $genericAssocFieldsArray = array('assigned_user_id' =>
                                     'select_field_name' => 'user_name',
                                     'select_field_join'  => 'id',
                                 ),
-								//BEGIN SUGARCRM flav=pro ONLY
                                 'team_id' =>
                                     array('table_name' => 'teams',
                                     'select_field_name' => 'name',
                                     'select_field_join'  => 'id',
                                   ),
-                               //END SUGARCRM flav=pro ONLY
                                   'account_id' =>
                                   array('table_name' => 'accounts',
                                     'select_field_name' => 'name',

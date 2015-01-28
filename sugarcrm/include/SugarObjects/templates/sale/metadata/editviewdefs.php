@@ -40,9 +40,7 @@ $viewdefs[$module_name]['EditView'] = array(
     ),
     array ('lead_source', 'date_closed'),
     array (
-  		//BEGIN SUGARCRM flav=pro ONLY
     	array('name'=>'team_name','displayParams'=>array('required'=>true)),
-		//END SUGARCRM flav=pro ONLY
         'sales_stage',
     ),
 

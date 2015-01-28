@@ -11,9 +11,8 @@
  */
 $viewdefs['Prospects']['EditView'] = array(
     'templateMeta' => array('maxColumns' => '2', 
-                            //BEGIN SUGARCRM flav=pro ONLY
+
                             'useTabs' => true,
-                            //END SUGARCRM flav=pro ONLY
                             'widths' => array(
                                             array('label' => '10', 'field' => '30'), 
                                             array('label' => '10', 'field' => '30')
@@ -81,9 +80,8 @@ $viewdefs['Prospects']['EditView'] = array(
   'LBL_PANEL_ASSIGNMENT' => array(
     array (
 	  'assigned_user_name',
-	  //BEGIN SUGARCRM flav=pro ONLY
+
 	  array('name'=>'team_name','displayParams'=>array('required'=>true)),
-	  //END SUGARCRM flav=pro ONLY
     ),    
 
   ),

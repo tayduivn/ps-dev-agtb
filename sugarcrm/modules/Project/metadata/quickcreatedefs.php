@@ -34,9 +34,7 @@ array (
   
   array('priority',),
   array('assigned_user_name',
-	  //BEGIN SUGARCRM flav=pro ONLY
 	  'team_name',
-	  //END SUGARCRM flav=pro ONLY,
   ),
   array (
     array (

@@ -18,7 +18,6 @@ require_once('service/core/SugarWebServiceImpl.php');
 
 class SugarWebServiceImplv2_1 extends SugarWebServiceImpl
 {
-    //BEGIN SUGARCRM flav=pro ONLY
     /**
      * Retrieve a list of Reports info based on provided IDs. Override from v2
      *
@@ -46,7 +45,6 @@ class SugarWebServiceImplv2_1 extends SugarWebServiceImpl
 		}
 		return array('field_list'=>$fieldList, 'entry_list'=>$outputList);
 	} // fn
-	//END SUGARCRM flav=pro ONLY
 	/**
 	 * Retrieve a list of beans.  This is the primary method for getting list of SugarBeans from Sugar using the SOAP API.
 	 *

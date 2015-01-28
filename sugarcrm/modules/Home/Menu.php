@@ -18,7 +18,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-//BEGIN SUGARCRM flav=pro ONLY
 global $mod_strings, $app_strings;
 global $current_user;
 $module_menu = array();
@@ -26,5 +25,4 @@ if ( isTouchScreen() ) {
     $module_menu[] = Array('index.php?module=Home&action=index', $mod_strings['LBL_MODULE_NAME'], 'Home', 'Home');
 }
 $module_menu[] = Array('index.php?module=Home&action=index&activeTab=AddTab', $app_strings['LBL_ADD_PAGE'], 'AddTab', 'Home');
-//END SUGARCRM flav=pro ONLY
 ?>

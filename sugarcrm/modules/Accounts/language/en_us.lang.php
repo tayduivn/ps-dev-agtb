@@ -16,13 +16,11 @@ $mod_strings = array (
 	'db_website' => 'LBL_LIST_WEBSITE',
 	'db_billing_address_city' => 'LBL_LIST_CITY',
 	// END DON'T CONVERT
-	//BEGIN SUGARCRM flav=pro ONLY
 	'LBL_CONTRACTS'=>'Contracts',
 	'LBL_CONTRACTS_SUBPANEL_TITLE'=>'Contracts',
     'LBL_RLI_SUBPANEL_TITLE' => 'Revenue Line Items',
 	'LBL_QUOTES_SUBPANEL_TITLE' => 'Quotes',
 	'LNK_ACCOUNT_REPORTS' => 'View Account Reports',
-	//END SUGARCRM flav=pro ONLY
     'LBL_DOCUMENTS_SUBPANEL_TITLE' => 'Documents',
 	// Dashlet Categories
 	'LBL_CHARTS'    => 'Charts',

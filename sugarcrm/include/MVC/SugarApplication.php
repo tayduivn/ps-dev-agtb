@@ -258,7 +258,6 @@ EOF;
 				session_destroy();
 				SugarApplication::redirect($this->getUnauthenticatedHomeUrl());
 				die();
-                //BEGIN SUGARCRM flav=pro ONLY
             } else {
                 $trackerManager = TrackerManager::getInstance();
                 $monitor = $trackerManager->getMonitor('tracker_sessions');
@@ -287,7 +286,6 @@ EOF;
                     }
                 }
             }
-            //END SUGARCRM flav=pro ONLY
         }
         $GLOBALS['log']->debug('Current user is: ' . $GLOBALS['current_user']->user_name);
         $GLOBALS['logic_hook']->call_custom_logic('', 'after_load_user');
@@ -749,15 +747,12 @@ EOF;
             }
         }
 
-        //BEGIN SUGARCRM flav=pro ONLY
         self::trackLogin();
-        //END SUGARCRM flav=pro ONLY
 
         LogicHook::initialize()->call_custom_logic('', 'after_session_start');
     }
 
 
-    //BEGIN SUGARCRM flav=pro ONLY
     /**
      * trackLogin
      *
@@ -805,12 +800,9 @@ EOF;
         }
     }
 
-    //END SUGARCRM flav=pro ONLY
-
 
     function endSession()
     {
-        //BEGIN SUGARCRM flav=pro ONLY
 
         $trackerManager = TrackerManager::getInstance();
         if ($monitor = $trackerManager->getMonitor('tracker_sessions')) {
@@ -819,7 +811,6 @@ EOF;
             $monitor->setValue('seconds', $seconds);
             $monitor->setValue('active', 0);
         }
-        //END SUGARCRM flav=pro ONLY
         session_destroy();
     }
 

@@ -75,9 +75,7 @@ $dictionary['Case'] = array('table' => 'cases','audited'=>true, 'activity_enable
     'len' => 100,
     'audited'=>true,
     'comment' => 'The status of the case',
-    //BEGIN SUGARCRM flav=pro ONLY
     'merge_filter' => 'enabled',
-    //END SUGARCRM flav=pro ONLY
     'sortable' => true,
   ),
    'priority' =>
@@ -89,9 +87,7 @@ $dictionary['Case'] = array('table' => 'cases','audited'=>true, 'activity_enable
     'len' => 100,
     'audited'=>true,
     'comment' => 'The priority of the case',
-    //BEGIN SUGARCRM flav=pro ONLY
     'merge_filter' => 'enabled',
-    //END SUGARCRM flav=pro ONLY
     'sortable' => true,
   ),
   'resolution' =>
@@ -212,14 +208,10 @@ $dictionary['Case'] = array('table' => 'cases','audited'=>true, 'activity_enable
 	),
 
   ), 'indices' => array (
-       //BEGIN SUGARCRM flav=pro ONLY
        /*
-       //END SUGARCRM flav=pro ONLY
        array('name' =>'case_number' , 'type'=>'index' , 'fields'=>array('case_number')),
-       //BEGIN SUGARCRM flav=pro ONLY
         */
        array('name' =>'case_number' , 'type'=>'unique' , 'fields'=>array('case_number', 'system_id')),
-      //END SUGARCRM flav=pro ONLY
 
        array('name' =>'idx_case_name', 'type' =>'index', 'fields'=>array('name')),
        array( 'name' => 'idx_account_id', 'type' => 'index', 'fields'=> array('account_id')),
@@ -288,22 +280,12 @@ $dictionary['Case'] = array('table' => 'cases','audited'=>true, 'activity_enable
 
 //This enables optimistic locking for Saves From EditView
     'optimistic_locking'=>true,
-    'uses' => array(
-        'taggable',
-    ),
 );
-VardefManager::createVardef(
-    'Cases',
-    'Case',
-    array(
-        'default',
-        'assignable',
-        //BEGIN SUGARCRM flav=pro ONLY
-        'team_security',
-        //END SUGARCRM flav=pro ONLY
-        'issue',
-    ),
-    'case'
+VardefManager::createVardef('Cases','Case', array('default', 'assignable',
+'team_security',
+'issue',
+),
+'case'
 );
 
 //jc - adding for refactor for import to not use the required_fields array

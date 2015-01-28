@@ -11,11 +11,9 @@ Activity::disable();
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-//BEGIN SUGARCRM flav=pro ONLY
 require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
 require_once('modules/Teams/TeamSet.php');
 require_once('modules/Teams/TeamSetManager.php');
-//END SUGARCRM flav=pro ONLY
 
 global $mod_strings, $app_strings;
 $mod_strings_users = $mod_strings;
@@ -108,7 +106,6 @@ echo get_select_options_with_id($all_users, isset($_SESSION['reassignRecords']['
 ?>
 </select>
 <?php
-//BEGIN SUGARCRM flav=pro ONLY
 ?>
 <BR>
 <BR>
@@ -127,7 +124,6 @@ echo $teamSetField->getClassicView();
 ?>
 
 <?php
-//END SUGARCRM flav=pro ONLY
 ?>
 <BR>
 <?php echo $mod_strings_users['LBL_REASS_MOD_REASSIGN']; ?>
@@ -138,9 +134,7 @@ if(!isset($_SESSION['reassignRecords']['assignedModuleListCache'])){
 
     $beanListDup = $beanList;
 
-    //BEGIN SUGARCRM flav=pro ONLY
     unset($beanListDup['ForecastManagerWorksheets']);
-    //END SUGARCRM flav=pro ONLY
 
     foreach ($beanListDup as $m => $p) {
         if (empty($beanFiles[$p])) {
@@ -278,7 +272,6 @@ else if(!isset($_GET['execute'])){
 		if($row['id'] == $_POST['touser'])
 			$tousername = $row['user_name'];
 	}
-	//BEGIN SUGARCRM flav=pro ONLY
 	//rrs bug: 31056 - instead of setting the team_id let's set the team_set_id and set the team_id as the primary
 	$teamSetField = new SugarFieldTeamset('Teamset');
 	$teams = $teamSetField->getTeamsFromRequest('team_name');
@@ -288,7 +281,6 @@ else if(!isset($_GET['execute'])){
 	$team_set_id = $teamSet->addTeams($team_ids);
 
 	$toteamname = TeamSetManager::getCommaDelimitedTeams($team_set_id,$team_id,true);
-	//END SUGARCRM flav=pro ONLY
     echo "{$mod_strings_users['LBL_REASS_DESC_PART2']}\n";
 	echo "<form action=\"index.php?module=Users&action=reassignUserRecords&execute=true\" method=post>\n";
 	echo "<BR>{$mod_strings_users['LBL_REASS_NOTES_TITLE']}\n";
@@ -333,13 +325,11 @@ else if(!isset($_GET['execute'])){
             $q_set .= ", modified_user_id = '{$current_user->id}' ";
         }
 
-		//BEGIN SUGARCRM flav=pro ONLY
         //make sure team_id and team_set_id columns are available
 		if(!empty($team_id) && isset($object->field_defs['team_id']))
         {
 			$q_set .= ", team_id = '{$team_id}', team_set_id = '{$team_set_id}' ";
 		}
-		//END SUGARCRM flav=pro ONLY
 		$q_tables   = " {$object->table_name} ";
 		$q_where  = "where {$object->table_name}.deleted=0 and {$object->table_name}.assigned_user_id = '{$_POST['fromuser']}' ";
 
@@ -401,11 +391,9 @@ else if(!isset($_GET['execute'])){
 		$countquery = "select count(*) AS count from $q_tables $q_where";
 		$updatequery = "$q_update $q_tables $q_set $q_where";
 
-		//BEGIN SUGARCRM flav=pro ONLY
 		$_SESSION['reassignRecords']['toteam'] = $team_id;
 		$_SESSION['reassignRecords']['toteamsetid'] = $team_set_id;
 		$_SESSION['reassignRecords']['toteamname'] = $toteamname;
-		//END SUGARCRM flav=pro ONLY
 		$_SESSION['reassignRecords']['fromuser'] = $_POST['fromuser'];
 		$_SESSION['reassignRecords']['touser'] = $_POST['touser'];
 		$_SESSION['reassignRecords']['fromusername'] = $fromusername;
@@ -437,11 +425,9 @@ else if(isset($_GET['execute']) && $_GET['execute'] == true) {
 	$touser = $_SESSION['reassignRecords']['touser'];
 	$fromusername = $_SESSION['reassignRecords']['fromusername'];
 	$tousername = $_SESSION['reassignRecords']['tousername'];
-	//BEGIN SUGARCRM flav=pro ONLY
 	$toteam = $_SESSION['reassignRecords']['toteam'];
 	$toteamsetid = $_SESSION['reassignRecords']['toteamsetid'];
 	$toteamname = $_SESSION['reassignRecords']['toteamname'];
-	//END SUGARCRM flav=pro ONLY
 
 	//$beanListFlip = array_flip($_SESSION['reassignRecords']['assignedModuleListCache']);
 
@@ -455,19 +441,15 @@ else if(isset($_GET['execute']) && $_GET['execute'] == true) {
 
 		echo "<h5>{$mod_strings_users['LBL_PROCESSING']} {$moduleLabel}</h5>";
 
-        //BEGIN SUGARCRM flav=pro ONLY
         // nutmeg sfa-219 : Fix reassignment of records when user set to Inactive
         if ($module == 'ForecastWorksheets') {
             $affected_rows = ForecastWorksheet::reassignForecast($fromuser, $touser);
             echo "{$mod_strings_users['LBL_UPDATE_FINISH']}: $affected_rows {$mod_strings_users['LBL_AFFECTED']}<BR>\n";
             continue;
         } else {
-        //END SUGARCRM flav=pro ONLY
             $res = $db->query($query, true);
             $affected_rows = $db->getAffectedRowCount($res);
-        //BEGIN SUGARCRM flav=pro ONLY
         }
-        //END SUGARCRM flav=pro ONLY
 
 		//echo "<i>Workflow and Notifications <b>".($workflow ? "enabled" : "disabled")."</b> for this module record reassignment</i>\n<BR>\n";
 		echo "<table border='0' cellspacing='0' cellpadding='0'  class='detail view'>\n";
@@ -493,14 +475,12 @@ else if(isset($_GET['execute']) && $_GET['execute'] == true) {
 
 				$bean->assigned_user_id = $touser;
 
-				//BEGIN SUGARCRM flav=pro ONLY
 				if($toteam != '0'){
 					$bean->team_id = $toteam;
 				}
 				if($toteamsetid != '0'){
 					$bean->team_set_id = $toteamsetid;
 				}
-				//END SUGARCRM flav=pro ONLY
                 $linkname = "record with id {$bean->id}";
                 if(!empty($bean->name)){
                     $linkname = $bean->name;
@@ -513,9 +493,7 @@ else if(isset($_GET['execute']) && $_GET['execute'] == true) {
                 }
 				if($bean->save()){
 					$successstr = "{$mod_strings_users['LBL_REASS_SUCCESS_ASSIGN']} {$bean->object_name} \"<i><a href=\"index.php?module={$bean->module_dir}&action=DetailView&record={$bean->id}\">$linkname</a></i>\" {$mod_strings_users['LBL_REASS_FROM']} $fromusername {$mod_strings_users['LBL_REASS_TO']} $tousername";
-					//BEGIN SUGARCRM flav=pro ONLY
 					$successstr .= ($toteam != '0' ? ", {$mod_strings_users['LBL_REASS_TEAM_SET_TO']} $toteamname." : ".");
-					//END SUGARCRM flav=pro ONLY
 					$successarr[] = $successstr;
 				} else {
 					$failarr[] = "{$mod_strings_users['LBL_REASS_FAILED_SAVE']} \"<i><a href=\"index.php?module={$bean->module_dir}&action=DetailView&record={$bean->id}\">$linkname</a></i>\".";
@@ -551,12 +529,10 @@ else if(isset($_GET['execute']) && $_GET['execute'] == true) {
 
 /////////////////// END STEP 3 - Execute reassignment ///////////////////////
 }
-//BEGIN SUGARCRM flav=pro ONLY
 if(!empty($quicksearch_js)){
 	//rrs - bug: 31056 - move to end to allow for form field to render
 	echo $quicksearch_js;
 }
-//END SUGARCRM flav=pro ONLY
 ?>
 <script type="text/javascript">
 

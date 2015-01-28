@@ -15,6 +15,7 @@ $mod_strings = array(
     'LBL_HIDEOPTIONS' => 'Hide Options' /*for 508 compliance fix*/,
     'LBL_DELETE' => 'Delete' /*for 508 compliance fix*/,
     'LBL_POWERED_BY_SUGAR' => 'Powered By SugarCRM' /*for 508 compliance fix*/,
+    'LBL_ROLE' => 'Role',
 'help'=>array(
     'package'=>array(
             'create'=>'Provide a <b>Name</b> for the package.  The name you enter must be alphanumeric and contain no spaces. (Example: HR_Management)<br/><br/> You can provide <b>Author</b> and <b>Description</b> information for package. <br/><br/>Click <b>Save</b> to create the package.',
@@ -38,9 +39,7 @@ $mod_strings = array(
 
     ),
     'module'=>array(
-        //BEGIN SUGARCRM flav=pro ONLY
         'create'=>'Provide a <b>Name</b> for the module. The <b>Label</b> that you provide will appear in the navigation tab. <br/><br/>Choose to display a navigation tab for the module by checking the <b>Navigation Tab</b> checkbox.<br/><br/>Check the <b>Team Security</b> checkbox to have a Team selection field within the module records. <br/><br/>Then choose the type of module you would like to create. <br/><br/>Select a template type. Each template contains a specific set of fields, as well as pre-defined layouts, to use as a basis for your module. <br/><br/>Click <b>Save</b> to create the module.',
-        //END SUGARCRM flav=pro ONLY
         //BEGIN SUGARCRM flav=com ONLY
         'create'=>'Provide a <b>Name</b> for the module. The <b>Label</b> that you provide will appear in the navigation tab. <br/><br/>Choose to display a navigation tab for the module by checking the <b>Navigation Tab</b> checkbox.<br/><br/>Then choose the type of module you would like to create. <br/><br/>Select a template type. Each template contains a specific set of fields, as well as pre-defined layouts, to use as a basis for your module. <br/><br/>Click <b>Save</b> to create the module.',
         //END SUGARCRM flav=com ONLY
@@ -77,9 +76,7 @@ $mod_strings = array(
     ),
     'subPanelEditor'=>array(
         'modify'	=> 'All of the fields that can be displayed in the <b>Subpanel</b> appear here.<br><br>The <b>Default</b> column contains the fields that are displayed in the Subpanel.<br/><br/>The <b>Hidden</b> column contains fields that can be added to the Default column.'
-    //BEGIN SUGARCRM flav=pro ONLY
     . '<br/><br/><!--not_in_theme!--><img src="themes/default/images/SugarLogic/icon_dependent.png"/>Indicates a Dependent field that may or may not be visible based on the value of a formula.<br/><!--not_in_theme!--><img src="themes/default/images/SugarLogic/icon_calculated.png" /> Indicates a Calculated field whose value will be automatically determined based on a formula.'
-    //END SUGARCRM flav=pro ONLY
     ,
         'savebtn'	=> 'Click <b>Save & Deploy</b> to save changes you made and to make them active within the module.',
         'historyBtn'=> 'Click <b>View History</b> to view and restore a previously saved layout from the history.',
@@ -90,9 +87,7 @@ $mod_strings = array(
     ),
     'listViewEditor'=>array(
         'modify'	=> 'All of the fields that can be displayed in the <b>ListView</b> appear here.<br><br>The <b>Default</b> column contains the fields that are displayed in the ListView by default.<br/><br/>The <b>Available</b> column contains fields that a user can select in the Search to create a custom ListView. <br/><br/>The <b>Hidden</b> column contains fields that can be added to the Default or Available column.'
-    //BEGIN SUGARCRM flav=pro ONLY
     . '<br/><br/><!--not_in_theme!--><img src="themes/default/images/SugarLogic/icon_dependent.png"/>Indicates a Dependent field that may or may not be visible based on the value of a formula.<br/><!--not_in_theme!--><img src="themes/default/images/SugarLogic/icon_calculated.png" /> Indicates a Calculated field whose value will be automatically determined based on a formula.'
-    //END SUGARCRM flav=pro ONLY
     ,
         'savebtn'	=> 'Click <b>Save & Deploy</b> to save changes you made and to make them active within the module.',
         'historyBtn'=> 'Click <b>View History</b> to view and restore a previously saved layout from the history.<br><br><b>Restore</b> within <b>View History</b> restores the field placement within previously saved layouts. To change field labels, click the Edit icon next to each field.',
@@ -103,9 +98,7 @@ $mod_strings = array(
     ),
     'popupListViewEditor'=>array(
         'modify'	=> 'All of the fields that can be displayed in the <b>ListView</b> appear here.<br><br>The <b>Default</b> column contains the fields that are displayed in the ListView by default.<br/><br/>The <b>Hidden</b> column contains fields that can be added to the Default or Available column.'
-    //BEGIN SUGARCRM flav=pro ONLY
     . '<br/><br/><!--not_in_theme!--><img src="themes/default/images/SugarLogic/icon_dependent.png"/>Indicates a Dependent field that may or may not be visible based on the value of a formula.<br/><!--not_in_theme!--><img src="themes/default/images/SugarLogic/icon_calculated.png" /> Indicates a Calculated field whose value will be automatically determined based on a formula.'
-    //END SUGARCRM flav=pro ONLY
     ,
         'savebtn'	=> 'Click <b>Save & Deploy</b> to save changes you made and to make them active within the module.',
         'historyBtn'=> 'Click <b>View History</b> to view and restore a previously saved layout from the history.<br><br><b>Restore</b> within <b>View History</b> restores the field placement within previously saved layouts. To change field labels, click the Edit icon next to each field.',
@@ -115,9 +108,7 @@ $mod_strings = array(
     ),
     'searchViewEditor'=>array(
         'modify'	=> 'All of the fields that can be displayed in the <b>Search</b> form appear here.<br><br>The <b>Default</b> column contains the fields that will be displayed in the Search form.<br/><br/>The <b>Hidden</b> column contains fields available for you as an admin to add to the Search form.'
-    //BEGIN SUGARCRM flav=pro ONLY
     . '<br/><br/><!--not_in_theme!--><img src="themes/default/images/SugarLogic/icon_dependent.png"/>Indicates a Dependent field that may or may not be visible based on the value of a formula.<br/><!--not_in_theme!--><img src="themes/default/images/SugarLogic/icon_calculated.png" /> Indicates a Calculated field whose value will be automatically determined based on a formula.'
-    //END SUGARCRM flav=pro ONLY
     . '<br/><br/>This configuration applies to popup search layout in legacy modules only.',
         'savebtn'	=> 'Clicking <b>Save & Deploy</b> will save all changes and make them active',
         'Hidden' 	=> '<b>Hidden</b> fields do not appear in the Search.',
@@ -127,26 +118,18 @@ $mod_strings = array(
     ),
     'layoutEditor'=>array(
         'defaultdetailview'=>'The <b>Layout</b> area contains the fields that are currently displayed within the <b>DetailView</b>.<br/><br/>The <b>Toolbox</b> contains the <b>Recycle Bin</b> and the fields and layout elements that can be added to the layout.<br><br>Make changes to the layout by dragging and dropping elements and fields between the <b>Toolbox</b> and the <b>Layout</b> and within the layout itself.<br><br>To remove a field from the layout, drag the field to the <b>Recycle Bin</b>. The field will then be available in the Toolbox to add to the layout.'
-    //BEGIN SUGARCRM flav=pro ONLY
     . '<br/><br/><!--not_in_theme!--><img src="themes/default/images/SugarLogic/icon_dependent.png"/>Indicates a Dependent field that may or may not be visible based on the value of a formula.<br/><!--not_in_theme!--><img src="themes/default/images/SugarLogic/icon_calculated.png" /> Indicates a Calculated field whose value will be automatically determined based on a formula.'
-    //END SUGARCRM flav=pro ONLY
     ,
         'defaultquickcreate'=>'The <b>Layout</b> area contains the fields that are currently displayed within the <b>QuickCreate</b> form.<br><br>The QuickCreate form appears in the subpanels for the module when the Create button is clicked.<br/><br/>The <b>Toolbox</b> contains the <b>Recycle Bin</b> and the fields and layout elements that can be added to the layout.<br><br>Make changes to the layout by dragging and dropping elements and fields between the <b>Toolbox</b> and the <b>Layout</b> and within the layout itself.<br><br>To remove a field from the layout, drag the field to the <b>Recycle Bin</b>. The field will then be available in the Toolbox to add to the layout.'
-    //BEGIN SUGARCRM flav=pro ONLY
     . '<br/><br/><!--not_in_theme!--><img src="themes/default/images/SugarLogic/icon_dependent.png"/>Indicates a Dependent field that may or may not be visible based on the value of a formula.<br/><!--not_in_theme!--><img src="themes/default/images/SugarLogic/icon_calculated.png" /> Indicates a Calculated field whose value will be automatically determined based on a formula.'
-    //END SUGARCRM flav=pro ONLY
     ,
         //this defualt will be used for edit view
         'default'	=> 'The <b>Layout</b> area contains the fields that are currently displayed within the <b>EditView</b>.<br/><br/>The <b>Toolbox</b> contains the <b>Recycle Bin</b> and the fields and layout elements that can be added to the layout.<br><br>Make changes to the layout by dragging and dropping elements and fields between the <b>Toolbox</b> and the <b>Layout</b> and within the layout itself.<br><br>To remove a field from the layout, drag the field to the <b>Recycle Bin</b>. The field will then be available in the Toolbox to add to the layout.'
-    //BEGIN SUGARCRM flav=pro ONLY
     . '<br/><br/><!--not_in_theme!--><img src="themes/default/images/SugarLogic/icon_dependent.png"/>Indicates a Dependent field that may or may not be visible based on the value of a formula.<br/><!--not_in_theme!--><img src="themes/default/images/SugarLogic/icon_calculated.png" /> Indicates a Calculated field whose value will be automatically determined based on a formula.'
-    //END SUGARCRM flav=pro ONLY
     ,
         //this defualt will be used for edit view
         'defaultrecordview'   => 'The <b>Layout</b> area contains the fields that are currently displayed within the <b>Record View</b>.<br/><br/>The <b>Toolbox</b> contains the <b>Recycle Bin</b> and the fields and layout elements that can be added to the layout.<br><br>Make changes to the layout by dragging and dropping elements and fields between the <b>Toolbox</b> and the <b>Layout</b> and within the layout itself.<br><br>To remove a field from the layout, drag the field to the <b>Recycle Bin</b>. The field will then be available in the Toolbox to add to the layout.'
-    //BEGIN SUGARCRM flav=pro ONLY
     . '<br/><br/><!--not_in_theme!--><img src="themes/default/images/SugarLogic/icon_dependent.png"/>Indicates a Dependent field that may or may not be visible based on the value of a formula.<br/><!--not_in_theme!--><img src="themes/default/images/SugarLogic/icon_calculated.png" /> Indicates a Calculated field whose value will be automatically determined based on a formula.'
-    //END SUGARCRM flav=pro ONLY
     ,
         'saveBtn'	=> 'Click <b>Save</b> to preserve the changes you made to the layout since the last time you saved it.<br><br>The changes will not be displayed in the module until you Deploy the saved changes.',
         'historyBtn'=> 'Click <b>View History</b> to view and restore a previously saved layout from the history.<br><br><b>Restore</b> within <b>View History</b> restores the field placement within previously saved layouts. To change field labels, click the Edit icon next to each field.',
@@ -208,7 +191,7 @@ $mod_strings = array(
         'DashletSearchViewBtn' =>'The <b>Sugar Dashlet Search</b> filters records for the Sugar Dashlet listview.',
         'popupHelp' =>'The <b>Popup</b> layouts that can be customized appear here.<br>',
         'PopupListViewBtn' => '<b>Popup ListView</b> layout is used to view a list of records when selecting one or more records to relate to the current record.',
-        'PopupSearchViewBtn' => '<b>Popup Search</b> layout allows users to search for records to relate to a current record and appears above the popup listview in the same window. Legacy modules use this layout for popup searching while Sidecar modules use the Search layout’s configuration.',
+        'PopupSearchViewBtn' => '<b>Popup Search</b> layout allows users to search for records to relate to a current record and appears above the popup listview in the same window. Legacy modules use this layout for popup searching while Sidecar modules use the Search layoutâs configuration.',
         'BasicSearchBtn' => 'Customize the <b>Basic Search</b> form that appears in the Basic Search tab in the Search area for the module.',
         'AdvancedSearchBtn' => 'Customize the <b>Advanced Search</b> form that appears in the Advanced Search tab in the Search area for the module.',
         'portalHelp' => 'Manage and customize the <b>Sugar Portal</b>.',
@@ -438,9 +421,11 @@ $mod_strings = array(
 'LBL_SYNC_TO_DETAILVIEW' => 'Sync to DetailView',
 'LBL_SYNC_TO_DETAILVIEW_HELP' => 'Select this option to sync this EditView layout to the corresponding DetailView layout. Fields and field placement in the EditView<br>will be sync\'d and saved to the DetailView automatically upon clicking Save or Save & Deploy in the EditView. <br>Layout changes will not be able to be made in the DetailView.',
 'LBL_SYNC_TO_DETAILVIEW_NOTICE' => 'This DetailView is sync\'d with the corresponding EditView.<br> Fields and field placement in this DetailView reflect the fields and field placement in the EditView.<br> Changes to the DetailView cannot be saved or deployed within this page. Make changes or un-sync the layouts in the EditView. ',
+'LBL_COPY_FROM' => 'Copy from',
 'LBL_COPY_FROM_EDITVIEW' => 'Copy from EditView',
 'LBL_DROPDOWN_BLANK_WARNING' => 'Values are required for both the Item Name and the Display Label. To add a blank item, click Add without entering any values for the Item Name and the Display Label.',
 'LBL_DROPDOWN_KEY_EXISTS' => 'Key already exists in list',
+'LBL_DROPDOWN_LIST_EMPTY' => 'The list must contain at least one enabled item',
 'LBL_NO_SAVE_ACTION' => 'Could not find the save action for this view.',
 'LBL_BADLY_FORMED_DOCUMENT' => 'Studio2:establishLocation: badly formed document',
 // @TODO: Remove this lang string and uncomment out the string below once studio
@@ -448,15 +433,12 @@ $mod_strings = array(
 'LBL_INDICATES_COMBO_FIELD' => '** Indicates a combination field. A combination field is a collection of individual fields. For example, "Address" is a combination field that contains "Street address", "City", "Zip Code","State" and "Country".<br><br>Doubleclick a combination field to see which fields it contains.',
 'LBL_COMBO_FIELD_CONTAINS' => 'contains:',
 
-//BEGIN SUGARCRM flav=pro ONLY
 'LBL_WIRELESSLAYOUTS'=>'Mobile Layouts',
 'LBL_WIRELESSEDITVIEW'=>'Mobile EditView',
 'LBL_WIRELESSDETAILVIEW'=>'Mobile DetailView',
 'LBL_WIRELESSLISTVIEW'=>'Mobile ListView',
 'LBL_WIRELESSSEARCH'=>'Mobile Search',
-//END SUGARCRM flav=pro ONLY
 
-//BEGIN SUGARCRM flav=pro ONLY
 'LBL_BTN_ADD_DEPENDENCY'=>'Add Dependency',
 'LBL_BTN_EDIT_FORMULA'=>'Edit Formula',
 'LBL_DEPENDENCY' => 'Dependency',
@@ -478,9 +460,8 @@ $mod_strings = array(
 'LBL_VISIBILITY_EDITOR' => 'Visibility Editor',
 'LBL_ROLLUP' => 'Rollup',
 'LBL_RELATED_FIELD' => 'Related Field',
-'LBL_CONFIG_PORTAL_URL'=>'URL to custom logo image. The recommended logo dimensions are 163 × 18 pixels.',
+'LBL_CONFIG_PORTAL_URL'=>'URL to custom logo image. The recommended logo dimensions are 163 Ã 18 pixels.',
 'LBL_PORTAL_ROLE_DESC' => 'Do not delete this role. Customer Self-Service Portal Role is a system-generated role created during the Sugar Portal activation process. Use Access controls within this Role to enable and/or disable Bugs, Cases or Knowledge Base modules in Sugar Portal. Do not modify any other access controls for this role to avoid unknown and unpredictable system behavior. In case of accidental deletion of this role, recreate it by disabling and enabling Sugar Portal.',
-//END SUGARCRM flav=pro ONLY
 
 //RELATIONSHIPS
 'LBL_MODULE' => 'Module',
@@ -577,6 +558,8 @@ $mod_strings = array(
 'LBL_BTN_NEXT'=>'Next',
 'LBL_BTN_BACK'=>'Back',
 'LBL_BTN_CLONE'=>'Clone',
+'LBL_BTN_COPY' => 'Copy',
+'LBL_BTN_COPY_FROM' => 'Copy from…',
 'LBL_BTN_ADDCOLS'=>'Add Columns',
 'LBL_BTN_ADDROWS'=>'Add Rows',
 'LBL_BTN_ADDFIELD'=>'Add Field',
@@ -611,7 +594,6 @@ $mod_strings = array(
 'ERROR_REQUIRED_FIELDS' => 'Are you sure you wish to continue? The following required fields are missing from the layout:  ',
 'ERROR_ARE_YOU_SURE' => 'Are you sure you wish to continue?',
 
-//BEGIN SUGARCRM flav=pro ONLY
 'ERROR_CALCULATED_MOBILE_FIELDS' => 'The following field(s) have calculated values which will not be re-calculated in real time in the SugarCRM Mobile Edit View:',
 'ERROR_CALCULATED_PORTAL_FIELDS' => 'The following field(s) have calculated values which will not be re-calculated in real time in the SugarCRM Portal Edit View:',
 
@@ -659,8 +641,6 @@ $mod_strings = array(
 'LBL_PRIORITY'=>'Priority:',
 'LBL_SUBJECT'=>'Subject',
 
-//END SUGARCRM flav=pro ONLY
-
 //PACKAGE AND MODULE BUILDER
 'LBL_PACKAGE_NAME'=>'Package Name:',
 'LBL_MODULE_NAME'=>'Module Name:',
@@ -695,6 +675,7 @@ $mod_strings = array(
 'LBL_ACTIVITIES'=>'Activity Stream',
 'LBL_SEARCH'=>'Search',
 'LBL_NEW'=>'New',
+'LBL_ROLE'=>'Role',
 'LBL_TYPE_BASIC'=>'basic',
 'LBL_TYPE_COMPANY'=>'company',
 'LBL_TYPE_PERSON'=>'person',
@@ -719,8 +700,8 @@ $mod_strings = array(
 'LBL_EC_CHECKERROR'=>'Please select a module.',
 'LBL_EC_CUSTOMFIELD'=>'customized field(s)',
 'LBL_EC_CUSTOMLAYOUT'=>'customized layout(s)',
+'LBL_EC_CUSTOMDROPDOWN' => 'customized dropdown(s)',
 'LBL_EC_NOCUSTOM'=>'No modules have been customized.',
-'LBL_EC_EMPTYCUSTOM'=>'has empty customizations.',
 'LBL_EC_EXPORTBTN'=>'Export',
 'LBL_MODULE_DEPLOYED' => 'Module has been deployed.',
 'LBL_UNDEFINED' => 'undefined',
@@ -754,9 +735,7 @@ $mod_strings = array(
 
 // Specific dropdown list should be:
 // LBL_JS_DELETE_REQUIRED_DDL_ITEM_(UPPERCASE_DDL_NAME)
-//BEGIN SUGARCRM flav=pro ONLY
 'LBL_JS_DELETE_REQUIRED_DDL_ITEM_SALES_STAGE_DOM' => 'Are you sure you wish to delete this dropdown list item? Deleting the Closed Won or Closed Lost stages will cause the Forecasting module to not work properly',
-//END SUGARCRM flav=pro ONLY
 
 // Specific list items should be:
 // LBL_JS_DELETE_REQUIRED_DDL_ITEM_(UPPERCASE_ITEM_NAME)
@@ -766,17 +745,13 @@ $mod_strings = array(
 'LBL_JS_DELETE_REQUIRED_DDL_ITEM_NEW' => 'Are you sure you wish to delete the New sales status? Deleting this status will cause the Opportunities module Revenue Line Item workflow to not work properly.',
 'LBL_JS_DELETE_REQUIRED_DDL_ITEM_IN_PROGRESS' => 'Are you sure you wish to delete the In Progress sales status? Deleting this status will cause the Opportunities module Revenue Line Item workflow to not work properly.',
 //END SUGARCRM flav=ent ONLY
-//BEGIN SUGARCRM flav=pro ONLY
 'LBL_JS_DELETE_REQUIRED_DDL_ITEM_CLOSED_WON' => 'Are you sure you wish to delete the Closed Won sales stage? Deleting this stage will cause the Forecasting module to not work properly',
 'LBL_JS_DELETE_REQUIRED_DDL_ITEM_CLOSED_LOST' => 'Are you sure you wish to delete the Closed Lost sales stage? Deleting this stage will cause the Forecasting module to not work properly',
-//END SUGARCRM flav=pro ONLY
 
 //CONFIRM
 'LBL_CONFIRM_FIELD_DELETE'=>"Deleting this custom field will delete both the custom field and all the data related to the custom field in the database. The field will be no longer appear in any module layouts."
-//BEGIN SUGARCRM flav=pro ONLY
         . " If the field is involved in a formula to calculate values for any fields, the formula will no longer work."
         . "\\n\\nThe field will no longer be available to use in Reports; this change will be in effect after logging out and logging back in to the application. Any reports containing the field will need to be updated in order to be able to be run."
-//END SUGARCRM flav=pro only
         . "\\n\\nDo you wish to continue?",
 'LBL_CONFIRM_RELATIONSHIP_DELETE'=>'Are you sure you wish to delete this relationship?<br>Note: This operation may not complete for several minutes.',
 'LBL_CONFIRM_RELATIONSHIP_DEPLOY'=>'This will make this relationship permanent. Are you sure you wish to deploy this relationship?',
@@ -791,11 +766,8 @@ $mod_strings = array(
 'LBL_POPHELP_IMAGE_WIDTH'=>'Enter a number for Width, as measured in pixels.<br> The uploaded image will be scaled to this Width.',
 'LBL_POPHELP_IMAGE_HEIGHT'=>'Enter a number for the Height, as measured in pixels.<br> The uploaded image will be scaled to this Height.',
 'LBL_POPHELP_DUPLICATE_MERGE'=>'<b>Enabled</b>: The field will appear in the Merge Duplicates feature, but will not be available to use for the filter conditions in the Find Duplicates feature.<br><b>Disabled</b>: The field will not appear in the Merge Duplicates feature, and will not be available to use for the filter conditions in the Find Duplicates feature.'
-//BEGIN SUGARCRM flav=pro ONLY
 . '<br><b>In Filter</b>: The field will appear in the Merge Duplicates feature, and will also be available in the Find Duplicates feature.<br><b>Filter Only</b>: The field will not appear in the Merge Duplicates feature, but will be available in the Find Duplicates feature.<br><b>Default Selected Filter</b>: The field will be used for a filter condition by default in the Find Duplicates page, and will also appear in the Merge Duplicates feature.'
-//END SUGARCRM flav=pro ONLY
 ,
-//BEGIN SUGARCRM flav=pro ONLY
 'LBL_POPHELP_CALCULATED'=>"Create a formula to determine the value in this field.<br>"
    . "Workflow definitions containing an action that are set to update this field will no longer execute the action.<br>"
    . "Fields using formulas will not be calculated in real-time in "
@@ -808,7 +780,6 @@ $mod_strings = array(
         . "Dependent fields will follow the dependency formula in the browser-based mobile view, <br/>"
         . "but will not follow the formula in the native applications, such as Sugar Mobile for iPhone. <br/>"
         . "They will not follow the formula in the Sugar Self-Service Portal.",
-//END SUGARCRM flav=pro ONLY
 'LBL_POPHELP_GLOBAL_SEARCH'=>'Select to use this field when searching for records using the Global Search on this module.',
 //Revert Module labels
 'LBL_RESET' => 'Reset',
@@ -868,4 +839,5 @@ $mod_strings = array(
                                  "is saved. The following format will be applied: (xxx) xxx-xxxx.",
 'LBL_ALL_MODULES'=>'All Modules',
 'LBL_RELATED_FIELD_ID_NAME_LABEL' => '{0} (related {1} ID)',
+'LBL_HEADER_COPY_FROM_LAYOUT' => 'Copy from layout',
 );

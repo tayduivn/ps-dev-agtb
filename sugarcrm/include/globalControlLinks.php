@@ -40,9 +40,7 @@ $global_control_links['employees'] = array(
 );
 if (
         is_admin($current_user)
-		//BEGIN SUGARCRM flav=pro ONLY
 		|| $current_user->isDeveloperForAnyModule()
-		//END SUGARCRM flav=pro ONLY
 
         ) $global_control_links['admin'] = array(
 

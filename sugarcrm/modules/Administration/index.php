@@ -55,10 +55,8 @@ foreach ($admin_group_header as $key=>$values) {
     $addedHeaderGroups = array();
     foreach ($module_index as $mod_key=>$mod_val) {
         if(
-        //BEGIN SUGARCRM flav=pro ONLY
         (in_array($mod_val, $access) || (is_admin($current_user) && ($mod_val=='Administration')) ||
         $mod_val=='studio'||($mod_val=='Forecasts')) &&
-        //END SUGARCRM flav=pro ONLY
         (!isset($addedHeaderGroups[$values[0]]))) {
             $admin_group_header_tab[]=$values;
             $group_header_value=get_form_header(translate($values[0],'Administration'),$values[1],$values[2]);
@@ -72,7 +70,6 @@ foreach ($admin_group_header as $key=>$values) {
             $i=0;
             $fix = array_keys($values[3]);
             if(count($values[3])>1){
-                //BEGIN SUGARCRM flav=pro ONLY
                 if(!is_admin($current_user)&& isset($values[3]['Administration'])){
                     unset($values[3]['Administration']);
                 }
@@ -94,7 +91,6 @@ foreach ($admin_group_header as $key=>$values) {
                 if(!in_array('Campaigns', $access)&& isset($values[3]['Campaigns'])){
                     unset($values[3]['Campaigns']);
                 }
-                //END SUGARCRM flav=pro ONLY
 
                 //////////////////
                 $tmp_array = $values[3];

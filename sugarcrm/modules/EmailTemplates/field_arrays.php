@@ -28,18 +28,14 @@ $fields_array['EmailTemplate'] = array ('column_fields' => Array("id"
 		, "body_html"
 		, "name"
 		, "published"
-//BEGIN SUGARCRM flav=pro ONLY
 		,"team_id"
 		,"team_name"
 		,"base_module"
 		,"from_name"
 		,"from_address"
-//END SUGARCRM flav=pro ONLY
 		),
         'list_fields' =>  Array('id', 'name', 'description','date_modified'
-//BEGIN SUGARCRM flav=pro ONLY
 	, "team_id"
-//END SUGARCRM flav=pro ONLY
 	),
     'required_fields' => array("name"=>1),
 );

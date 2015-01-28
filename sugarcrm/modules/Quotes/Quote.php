@@ -424,9 +424,7 @@ class Quote extends SugarBean
         }
 
         $temp_array["ENCODED_NAME"] = $this->name;
-        //BEGIN SUGARCRM flav=pro ONLY
         $temp_array["QUOTE_NUM"] = format_number_display($this->quote_num, $this->system_id);
-        //END SUGARCRM flav=pro ONLY
         return $temp_array;
     }
 

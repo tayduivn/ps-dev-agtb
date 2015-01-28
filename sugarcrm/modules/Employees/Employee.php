@@ -62,9 +62,7 @@ class Employee extends Person {
 
 	var $module_dir = "Employees";
 
-	//BEGIN SUGARCRM flav=pro ONLY
 	var $default_team;
-	//END SUGARCRM flav=pro ONLY
 
 	var $table_name = "users";
 
@@ -94,9 +92,7 @@ class Employee extends Person {
 	public function __construct() {
 		parent::__construct();
 		$this->setupCustomFields('Users');
-		//BEGIN SUGARCRM flav=pro ONLY
 		$this->disable_row_level_security =true;
-		//END SUGARCRM flav=pro ONLY
 		$this->emailAddress = BeanFactory::getBean('EmailAddresses');
 	}
 
@@ -162,7 +158,6 @@ class Employee extends Person {
 		return $list_form;
 	}
 
-	//BEGIN SUGARCRM flav=pro ONLY
 	/**
 	 * When the user's reports to id is changed, this method is called.  This method needs to remove all
 	 * of the implicit assignements that were created based on this user, then recreated all of the implicit
@@ -175,7 +170,6 @@ class Employee extends Person {
 		$team = BeanFactory::getBean('Teams');
 		$team->user_manager_changed($this->id, $old_reports_to_id, $this->reports_to_id);
 	}
-	//END SUGARCRM flav=pro ONLY
 
 	function preprocess_fields_on_save(){
 		parent::preprocess_fields_on_save();

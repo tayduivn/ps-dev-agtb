@@ -37,10 +37,8 @@ $first_name_count = count($sugar_demodata['first_name_array']);
 $company_name_count = count($sugar_demodata['company_name_array']);
 $street_address_count = count($sugar_demodata['street_address_array']);
 $city_array_count = count($sugar_demodata['city_array']);
-//BEGIN SUGARCRM flav=pro ONLY
 //Turn disable_workflow to Yes so that we don't run workflow for any seed modules
 $_SESSION['disable_workflow'] = "Yes";
-//END SUGARCRM flav=pro ONLY
 global $app_list_strings;
 global $sugar_config;
 $_REQUEST['useEmailWidget'] = "true";
@@ -92,11 +90,9 @@ if($large_scale_test) {
 	$number_leads = 100000;
 }
 
-//BEGIN SUGARCRM flav=pro ONLY
 $seed_team = new Team();
 $team_demo_data = new TeamDemoData($seed_team, $large_scale_test);
 $team_demo_data->create_demo_data();
-//END SUGARCRM flav=pro ONLY
 
 $possible_duration_hours_arr = array( 0, 1, 2, 3);
 $possible_duration_minutes_arr = array('00' => '00','15' => '15', '30' => '30', '45' => '45');
@@ -124,7 +120,6 @@ $replacements[] = '';
 $replacements[] = '';
 $replacements[] = '';
 
-//BEGIN SUGARCRM flav=pro ONLY
 //create timeperiods - pro only
 require_once('modules/Forecasts/ForecastDirectReports.php');
 require_once('modules/Forecasts/Common.php');
@@ -132,7 +127,6 @@ require_once('modules/TimePeriods/TimePeriodsSeedData.php');
 
 $timedate = TimeDate::getInstance();
 $timeperiods = TimePeriodsSeedData::populateSeedData();
-//END SUGARCRM flav=pro ONLY
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -185,7 +179,6 @@ for($i = 0; $i < $number_companies; $i++) {
 		$account->assigned_user_id = $account->assigned_user_name."_id";
 	}
 
-//BEGIN SUGARCRM flav=pro ONLY
 	// If this is a large scale test, switch to the bulk teams 90% of the time.
 	if ($large_scale_test) {
 		$assigned_team = $team_demo_data->get_random_team();
@@ -209,7 +202,6 @@ for($i = 0; $i < $number_companies; $i++) {
 		$account->team_id = $account->billing_address_state == "CA" ? "West" : "East";
 		$account->team_set_id = $account->team_id;
 	}
-//END SUGARCRM flav=pro ONLY
 	$account->billing_address_postalcode = mt_rand(10000, 99999);
 	$account->billing_address_country = 'USA';
 	$account->shipping_address_street = $account->billing_address_street;
@@ -233,10 +225,8 @@ for($i = 0; $i < $number_companies; $i++) {
 	$case->name = $sugar_demodata['case_seed_names'][mt_rand(0,4)];
 	$case->assigned_user_id = $account->assigned_user_id;
 	$case->assigned_user_name = $account->assigned_user_name;
-//BEGIN SUGARCRM flav=pro ONLY
 	$case->team_id = $account->team_id;
 	$case->team_set_id = $account->team_set_id;
-//END SUGARCRM flav=pro ONLY
 //BEGIN SUGARCRM flav=ent ONLY
     $case->portal_viewable = 1;
 //END SUGARCRM flav=ent ONLY
@@ -251,10 +241,8 @@ for($i = 0; $i < $number_companies; $i++) {
 	$bug->name = $sugar_demodata['bug_seed_names'][mt_rand(0,4)];
 	$bug->assigned_user_id = $account->assigned_user_id;
 	$bug->assigned_user_name = $account->assigned_user_name;
-//BEGIN SUGARCRM flav=pro ONLY
 	$bug->team_id = $account->team_id;
 	$bug->team_set_id = $account->team_set_id;
-//END SUGARCRM flav=pro ONLY
 //BEGIN SUGARCRM flav=ent ONLY
     $bug->portal_viewable = 1;
 //END SUGARCRM flav=ent ONLY
@@ -268,10 +256,8 @@ for($i = 0; $i < $number_companies; $i++) {
 	$note->description = $sugar_demodata['note_seed_names_and_Descriptions'][$seed_data_index][1];
 	$note->assigned_user_id = $account->assigned_user_id;
 	$note->assigned_user_name = $account->assigned_user_name;
-//BEGIN SUGARCRM flav=pro ONLY
 	$note->team_id = $account->team_id;
 	$note->team_set_id = $account->team_set_id;
-//END SUGARCRM flav=pro ONLY
 	$note->save();
 
 	$call = new Call();
@@ -286,10 +272,8 @@ for($i = 0; $i < $number_companies; $i++) {
 	$call->duration_minutes='30';
 	$call->account_id =$account->id;
     $call->status = array_rand($app_list_strings['call_status_dom']);
-//BEGIN SUGARCRM flav=pro ONLY
 	$call->team_id = $account->team_id;
 	$call->team_set_id = $account->team_set_id;
-//END SUGARCRM flav=pro ONLY
 	$call->save();
 
     //Set the user to accept the call
@@ -338,11 +322,9 @@ for($i=0; $i<$number_contacts; $i++) {
     $contact->portal_password = User::getPasswordHash($contact->first_name.$contact->last_name.$i);
     $contact->preferred_language = $preferred_language;
 //END SUGARCRM flav=ent ONLY
-//BEGIN SUGARCRM flav=pro ONLY
 /* comment out the non-pro code
 for($i=0; $i<1000; $i++)
 {
-//END SUGARCRM flav=pro ONLY
 	$contact->assigned_user_id = $assigned_user_id;
 	$contact->email1 = createEmailAddress();
 	$key = array_rand($sugar_demodata['street_address_array']);
@@ -351,10 +333,8 @@ for($i=0; $i<1000; $i++)
 	$contact->primary_address_city = $sugar_demodata['city_array'][$key];
 	$contact->lead_source = array_rand($app_list_strings['lead_source_dom']);
 	$contact->title = $titles[array_rand($titles)];
-//BEGIN SUGARCRM flav=pro ONLY
 
 */
-//END SUGARCRM flav=pro ONLY
 	$contact->phone_work = create_phone_number();
 	$contact->phone_home = create_phone_number();
 	$contact->phone_mobile = create_phone_number();
@@ -363,10 +343,8 @@ for($i=0; $i<1000; $i++)
 	// Fill in a bogus address
 	$contacts_account = $accounts[$account_number];
 	$contact->primary_address_state = $contacts_account->billing_address_state;
-//BEGIN SUGARCRM flav=pro ONLY
 	$contact->team_id = $contacts_account->team_id;
 	$contact->team_set_id = $contacts_account->team_set_id;
-//END SUGARCRM flav=pro ONLY
 	$contact->assigned_user_id = $contacts_account->assigned_user_id;
 	$contact->assigned_user_name = $contacts_account->assigned_user_name;
 	$contact->primary_address_postalcode = mt_rand(10000,99999);
@@ -383,10 +361,8 @@ for($i=0; $i<1000; $i++)
 	//separate date and time field have been merged into one.
 	$task->date_due = create_date() . ' ' . create_time();
 	$task->date_due_flag = 0;
-//BEGIN SUGARCRM flav=pro ONLY
 	$task->team_id = $contacts_account->team_id;
 	$task->team_set_id = $contacts_account->team_set_id;
-//END SUGARCRM flav=pro ONLY
 	$task->assigned_user_id = $contacts_account->assigned_user_id;
 	$task->assigned_user_name = $contacts_account->assigned_user_name;
 	$task->priority = array_rand($app_list_strings['task_priority_dom']);
@@ -407,10 +383,8 @@ for($i=0; $i<1000; $i++)
 	$meeting->duration_hours = array_rand($possible_duration_hours_arr);
 	$meeting->duration_minutes = array_rand($possible_duration_minutes_arr);
 	$meeting->assigned_user_id = $assigned_user_id;
-//BEGIN SUGARCRM flav=pro ONLY
 	$meeting->team_id = $contacts_account->team_id;
 	$meeting->team_set_id = $contacts_account->team_set_id;
-//END SUGARCRM flav=pro ONLY
 	$meeting->assigned_user_id = $contacts_account->assigned_user_id;
 	$meeting->assigned_user_name = $contacts_account->assigned_user_name;
 	$meeting->description = $sugar_demodata['meeting_seed_data_descriptions'];
@@ -434,10 +408,8 @@ for($i=0; $i<1000; $i++)
 	$email->duration_hours = array_rand($possible_duration_hours_arr);
 	$email->duration_minutes = array_rand($possible_duration_minutes_arr);
 	$email->assigned_user_id = $assigned_user_id;
-//BEGIN SUGARCRM flav=pro ONLY
 	$email->team_id = $contacts_account->team_id;
 	$email->team_set_id = $contacts_account->team_set_id;
-//END SUGARCRM flav=pro ONLY
 	$email->assigned_user_id = $contacts_account->assigned_user_id;
 	$email->assigned_user_name = $contacts_account->assigned_user_name;
 	$email->description = $sugar_demodata['email_seed_data_descriptions'];
@@ -526,13 +498,10 @@ for($i=0; $i<$number_leads; $i++)
 	{
 		if(mt_rand(0,100) < 90) {
 			$assigned_team = $team_demo_data->get_random_team();
-	//BEGIN SUGARCRM flav=pro ONLY
 			$lead->team_id = $assigned_team;
 			$lead->assigned_user_id = $account->assigned_user_id;
-	//END SUGARCRM flav=pro ONLY
 			$lead->assigned_user_name = $assigned_team;
 		}
-	//BEGIN SUGARCRM flav=pro ONLY
         else {
 
 			$teams = $team_demo_data->get_random_teamset();
@@ -540,9 +509,7 @@ for($i=0; $i<$number_leads; $i++)
 			$lead->teams->add($teams);
 			$lead->assigned_user_id = $account->assigned_user_id;
 		}
-	//END SUGARCRM flav=pro ONLY
 	}
-	//BEGIN SUGARCRM flav=pro ONLY
     else {
     	if(mt_rand(0,100) < 50) {
     		$lead->team_id = $lead->billing_address_state == "CA" ? "West" : "East";
@@ -554,14 +521,12 @@ for($i=0; $i<$number_leads; $i++)
 			$lead->team_set_id = $lead->team_id;
     	}
 	}
-	//END SUGARCRM flav=pro ONLY
 	$lead->primary_address_postalcode = mt_rand(10000,99999);
 	$lead->primary_address_country = $sugar_demodata['primary_address_country'];
 	$lead->save();
 }
 
 
-//BEGIN SUGARCRM flav=pro ONLY
 foreach($sugar_demodata['manufacturer_seed_data_names'] as $v){
 	$manufacturer = new Manufacturer;
 	$manufacturer->name = $v;
@@ -764,8 +729,6 @@ foreach($sugar_demodata['kbdocuments_seed_data'] as $v){
         }
     }
 }
-
-//END SUGARCRM flav=pro ONLY
 
 ///
 /// SEED DATA FOR EMAIL TEMPLATES

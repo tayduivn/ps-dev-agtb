@@ -30,11 +30,9 @@ var $upload_file;
 
         $focus = BeanFactory::getBean('Documents');
 
-				//BEGIN SUGARCRM flav=pro ONLY
                 if($portal){
                         $focus->disable_row_level_security = true;
                 }
-                //END SUGARCRM flav=pro ONLY
 
 
         if(!empty($document['id'])){

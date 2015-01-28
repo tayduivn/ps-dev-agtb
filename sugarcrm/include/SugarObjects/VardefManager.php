@@ -20,13 +20,12 @@ class VardefManager{
     public static $inReload = array();
 
     /**
-     * List of templates to ignore for BWC modules when adding templates
-     * 
+     * List of templates to ignore for BWC modules when adding templates. This
+     * should be a key value pair like 'template_name' => true.
+     *
      * @var array
      */
-    public static $ignoreBWCTemplates = array(
-        'taggable' => true,
-    );
+    public static $ignoreBWCTemplates = array();
 
     /**
      * this method is called within a vardefs.php file which extends from a SugarObject.
@@ -136,9 +135,9 @@ class VardefManager{
     }
 
     /**
-     * Checks to see if the template for a module should be skipped. Used by 
+     * Checks to see if the template for a module should be skipped. Used by
      * addTemplate to see if certain templates should be added by BWC modules.
-     * 
+     *
      * @param string $module The name of the module to check
      * @param string $template The template to check for the module
      * @return boolean
@@ -193,9 +192,7 @@ class VardefManager{
                 'relationships',
                 'indices',
                 'name_format_map',
-                //BEGIN SUGARCRM flav=pro ONLY
                 'visibility',
-                //BEGIN SUGARCRM flav=pro ONLY
                 'acls',
             );
 
@@ -216,12 +213,10 @@ class VardefManager{
                $GLOBALS['dictionary'][$object]['duplicate_check'] = $templates[$template]['duplicate_check'];
             }
 
-            //BEGIN SUGARCRM flav=pro ONLY
             if(isset($templates[$template]['favorites']) && !isset($GLOBALS['dictionary'][$object]['favorites']))
             {
             	$GLOBALS['dictionary'][$object]['favorites'] = $templates[$template]['favorites'];
             }
-            //END SUGARCRM flav=pro ONLY
             // maintain a record of this objects inheritance from the SugarObject templates...
             $GLOBALS['dictionary'][$object]['templates'][ $template ] = $template ;
 
@@ -354,12 +349,10 @@ class VardefManager{
             $bean = $params['bean'];
         } else {
             if(!empty($dictionary[$object])) {
-                //BEGIN SUGARCRM flav=pro ONLY
                 // to avoid extra refresh - we'll fill it in later
                 if(!isset($GLOBALS['dictionary'][$object]['related_calc_fields'])) {
                     $GLOBALS['dictionary'][$object]['related_calc_fields'] = array();
                 }
-                //END SUGARCRM flav=pro ONLY
             }
             // we will instantiate here even though dictionary may not be there,
             // since in case somebody calls us with wrong module name we need bean
@@ -523,7 +516,6 @@ class VardefManager{
         return $results;
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
     /**
      * @static
      * @param  $module String name of module.
@@ -659,8 +651,6 @@ class VardefManager{
         return $relMods;
     }
 
-    //END SUGARCRM flav=pro ONLY
-
 
     /**
      * applyGlobalAccountRequirements
@@ -703,13 +693,11 @@ class VardefManager{
 
         $GLOBALS['log']->debug("VardefManager::loadVardef called for module: $module");
 
-        //BEGIN SUGARCRM flav=pro ONLY
         if (empty($params['ignore_rel_calc_fields']) &&
             !empty($GLOBALS['dictionary'][$object]) &&
             !isset($GLOBALS['dictionary'][$object]['related_calc_fields'])) {
             $refresh = true;
         }
-        //END SUGARCRM flav=pro ONLY
 
         // Some of the vardefs do not correctly define dictionary as global.  Declare it first.
         global $dictionary;

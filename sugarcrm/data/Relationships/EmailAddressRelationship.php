@@ -35,17 +35,13 @@ class EmailAddressRelationship extends M2MRelationship
             return false;
         }
 
-        //BEGIN SUGARCRM flav=pro ONLY
         if ((empty($_SESSION['disable_workflow']) || $_SESSION['disable_workflow'] != "Yes"))
         {
-            //END SUGARCRM flav=pro ONLY
             if ($lhs->$lhsLinkName->beansAreLoaded())
                 $lhs->$lhsLinkName->addBean($rhs);
 
             $this->callBeforeAdd($lhs, $rhs, $lhsLinkName);
-            //BEGIN SUGARCRM flav=pro ONLY
         }
-        //END SUGARCRM flav=pro ONLY
 
         //Many to many has no additional logic, so just add a new row to the table and notify the beans.
         $dataToInsert = $this->getRowToInsert($lhs, $rhs, $additionalFields);
@@ -55,17 +51,13 @@ class EmailAddressRelationship extends M2MRelationship
         if ($this->self_referencing)
             $this->addSelfReferencing($lhs, $rhs, $additionalFields);
 
-        //BEGIN SUGARCRM flav=pro ONLY
         if ((empty($_SESSION['disable_workflow']) || $_SESSION['disable_workflow'] != "Yes"))
         {
-        //END SUGARCRM flav=pro ONLY
             if ($lhs->$lhsLinkName->beansAreLoaded())
                 $lhs->$lhsLinkName->addBean($rhs);
 
             $this->callAfterAdd($lhs, $rhs, $lhsLinkName);
-        //BEGIN SUGARCRM flav=pro ONLY
         }
-        //END SUGARCRM flav=pro ONLY
 
         return true;
     }

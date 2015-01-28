@@ -94,11 +94,9 @@ class="yui-navset detailview_tabs"
 	    {{if !empty($colData.field.hideIf)}}
 	    	{if !({{$colData.field.hideIf}}) }
 	    {{/if}}
-	    {{* //BEGIN SUGARCRM flav=pro ONLY*}}
 	    {{if !empty($colData.field.name)}}
 			{if $fields.{{$colData.field.name}}.acl > 0}
 		{{/if}}
-		{{* //END SUGARCRM flav=pro ONLY*}}
 			{counter name="fieldsUsed"}
 			{{if empty($colData.field.hideLabel)}}
 			<td width='{{$def.templateMeta.widths[$smarty.foreach.colIteration.index].label}}%' scope="col">
@@ -128,10 +126,8 @@ class="yui-navset detailview_tabs"
                    {sugar_help text=$popupText WIDTH=400}
                 {{/if}}
                 {{if !empty($colData.field.name)}}
-                {{* //BEGIN SUGARCRM flav=pro ONLY*}}
                 {else}
                     {counter name="fieldsHidden"}
-                {{* //END SUGARCRM flav=pro ONLY*}}
                 {/if}
                 {{/if}}
                 {{/if}}
@@ -167,15 +163,13 @@ class="yui-navset detailview_tabs"
 				{/if}
 				{{/if}}
 			</td>
-		{{* //BEGIN SUGARCRM flav=pro ONLY*}}
 		{{if !empty($colData.field.name)}}
 			{else}
 
 			<td>&nbsp;</td><td>&nbsp;</td>
 			{/if}
 		{{/if}}
-		{{* //END SUGARCRM flav=pro ONLY*}}
-	    {{if !empty($colData.field.hideIf)}}
+		{{if !empty($colData.field.hideIf)}}
 			{else}
 
 			<td>&nbsp;</td><td>&nbsp;</td>

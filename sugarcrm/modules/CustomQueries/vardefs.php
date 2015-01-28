@@ -131,8 +131,6 @@ $dictionary['CustomQuery'] = array('table' => 'custom_queries',
                             );
 
 VardefManager::createVardef('CustomQueries','CustomQuery', array(
-//BEGIN SUGARCRM flav=pro ONLY
 'team_security',
-//END SUGARCRM flav=pro ONLY
 ));
 ?>

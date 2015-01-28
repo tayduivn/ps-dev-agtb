@@ -114,8 +114,6 @@ $dictionary['SavedSearch'] = array('table' => 'saved_search',
 );
 
 VardefManager::createVardef('SavedSearch','SavedSearch', array(
-//BEGIN SUGARCRM flav=pro ONLY
 'team_security',
-//END SUGARCRM flav=pro ONLY
 ));
 ?>

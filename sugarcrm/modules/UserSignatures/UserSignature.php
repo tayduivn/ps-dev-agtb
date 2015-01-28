@@ -24,9 +24,7 @@ class UserSignature extends Basic
     public $module_dir = 'UserSignatures';
     public $object_name = 'UserSignature';
     public $disable_custom_fields = true;
-    //BEGIN SUGARCRM flav=pro ONLY
     public $disable_row_level_security = true;
-    //END SUGARCRM flav=pro ONLY
     public $set_created_by = false;
 
     /**

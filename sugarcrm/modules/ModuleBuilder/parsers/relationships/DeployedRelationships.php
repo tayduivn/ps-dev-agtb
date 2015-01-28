@@ -58,9 +58,7 @@ class DeployedRelationships extends AbstractRelationships implements Relationshi
             }
 
             $invalidModules = array();
-            //BEGIN SUGARCRM flav=pro ONLY
             $invalidModules [] = 'Teams' ;
-            //END SUGARCRM flav=pro ONLY
             $validModules = array_keys ( self::findRelatableModules () ) ;
 
             // now convert the relationships array into an array of AbstractRelationship objects

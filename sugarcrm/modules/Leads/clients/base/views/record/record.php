@@ -196,10 +196,6 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                 'do_not_call',
                 'account_name',
                 'email',
-                array(
-                    'name' => 'tag',
-                    'span' => 12,
-                ),
             ),
         ),
         array(
@@ -327,9 +323,7 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                         ),
                     ),
                 ),
-                //BEGIN SUGARCRM flav=pro ONLY
                 'team_name',
-                //END SUGARCRM flav=pro ONLY
                 array(
                     'name' => 'date_modified_by',
                     'readonly' => true,

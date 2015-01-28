@@ -293,11 +293,9 @@ class MssqlManager extends DBManager
         $this->query_time = microtime(true) - $this->query_time;
         $GLOBALS['log']->info('Query Execution Time:'.$this->query_time);
 
-        //BEGIN SUGARCRM flav=pro ONLY
         if($this->dump_slow_queries($sql)) {
             $this->track_slow_queries($sql);
         }
-        //END SUGARCRM flav=pro ONLY
 
         $this->checkError($msg.' Query Failed: ' . $sql, $dieOnError);
 
@@ -803,6 +801,14 @@ class MssqlManager extends DBManager
     {
         $sql = strtolower($sql);
         $orig_order_match = trim($orig_order_match);
+        if (strpos($orig_order_match, ',') !== false) {
+            $parts = explode(',', $orig_order_match);
+            foreach ($parts as &$part) {
+                $part = $this->returnOrderBy($sql, $part);
+            }
+            return implode(',', $parts);
+        }
+
         if (strpos($orig_order_match, ".") != 0)
             //this has a tablename defined, pass in the order match
             return $orig_order_match;
@@ -817,7 +823,7 @@ class MssqlManager extends DBManager
 
         //split order by into column name and ascending/descending
         $orderMatch = " " . strtolower(substr($orig_order_match, 0, $firstSpace));
-        $asc_desc =  substr($orig_order_match,$firstSpace);
+        $asc_desc = substr($orig_order_match, $firstSpace + 1);
 
         //look for column name as an alias in sql string
         $found_in_sql = $this->findColumnByAlias($sql, $orderMatch);
@@ -1030,7 +1036,7 @@ class MssqlManager extends DBManager
             return false;
         }
         foreach($row as $key => $column) {
-            $row[$key] = trim($column);
+            $row[$key] = is_string($column) ? trim($column) : $column;
         }
         return $row;
 	}

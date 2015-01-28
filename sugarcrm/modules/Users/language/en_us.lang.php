@@ -19,7 +19,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 $mod_strings = array (
-//BEGIN SUGARCRM flav=pro ONLY
 	'LBL_ASSIGN_PRIVATE_TEAM'			=> '(private team on save)',
 	'LBL_ASSIGN_TEAM'					=> 'Assign To Team',
 	'LBL_DEFAULT_TEAM_TEXT'				=> 'Teams available to appear by default in records are those of which you are a member.',
@@ -35,8 +34,6 @@ $mod_strings = array (
 	'LBL_TEAM_UPLINE_EXPLICIT'			=> 'Member',
     'LBL_TEAM_MEMBERSHIP'               => 'Team Membership',
     'LBL_TEAM_SET'                      => 'Team Set',
-
-//END SUGARCRM flav=pro ONLY
     'LBL_DELETE_USER_CONFIRM'           => 'When the User record is deleted, the corresponding Employee record will also be deleted. After the user is deleted, any workflow definitions and reports involving the user might need to be updated.<br/><br/>'.
                                                 'Deleting a User record cannot be undone.',
 	'LBL_DELETE_GROUP_CONFIRM'          => 'Are you sure you want to delete this Group User? Click OK to delete the User record.<br/>After clicking OK, you will be given the ability to reassign records assigned to the Group User to another user.',
@@ -106,10 +103,8 @@ $mod_strings = array (
 	//END SUGARCRM flav=com ONLY
 
 
-	//BEGIN SUGARCRM flav=pro ONLY
 	'LBL_ADMIN_DESC'					=> 'User can access the Administration page all records, regardless of team security.',
 	'LBL_REGULAR_DESC'					=> 'User can access modules and records based on team security and roles.',
-	//END SUGARCRM flav=pro ONLY
 	'LBL_ADMIN'							=> 'System Administrator',
 	'LBL_ADVANCED'                     => 'Advanced',
     'LBL_ANY_ADDRESS'                  => 'Any Address:',
@@ -402,7 +397,6 @@ $mod_strings = array (
 
     'LBL_USER_NAME_FOR_ROLE'            =>'Users/Teams/Roles',
     'LBL_SESSION_EXPIRED'               => 'You have been logged out because your session has expired.',
-//BEGIN SUGARCRM flav=pro ONLY
 
     'LBL_TOO_MANY_CONCURRENT'           => 'This session has ended because another session has been started under the same username.',
 // MASS REASSIGNMENT SCRIPT STRINGS
@@ -461,8 +455,6 @@ $mod_strings = array (
 	'ERR_REASS_SELECT_MODULE'			=> 'Please go back and select at least one module.',
 	'ERR_REASS_DIFF_USERS'				=> 'Please select a To User that is different from the From User.',
 // END MASS REASSIGNMENT SCRIPT STRINGS
-
-//END SUGARCRM flav=pro ONLY
 
 // INBOUND EMAIL STRINGS
 	'LBL_APPLY_OPTIMUMS'				=> 'Apply Optimums',

@@ -54,7 +54,7 @@ $mod_strings = array(
 	//END SUGARCRM flav=ent ONLY
     'ERR_DB_VERSION_FAILURE'			=> 'Unable to check database version.',
 
-	//BEGIN SUGARCRM flav=pro ONLY
+
 	'ERR_OC_PASSWORD'					=> 'Password is required.',
 	'ERR_OC_SERVER_URL'					=> 'Sugar Server URL is required.',
 	'ERR_OC_USERNAME'					=> 'Username of server user is required.',
@@ -70,7 +70,6 @@ $mod_strings = array(
 	'LBL_OC_INSTALL_USERNAME'			=> 'Username',
 	'LBL_PERFORM_OC_INSTALL'			=> 'Initializing Offline Client Installation',
     'LBL_OC_INSTALL_DIRECTIONS'         => 'Please enter the details below in order to properly install and sync your offline client.',
-	//END SUGARCRM flav=pro ONLY
 
 	'DEFAULT_CHARSET'					=> 'UTF-8',
     'ERR_ADMIN_USER_NAME_BLANK'         => 'Provide the user name for the Sugar admin user. ',
@@ -81,9 +80,8 @@ $mod_strings = array(
 // BEGIN SUGARCRM flav!=pro ONLY
 	'ERR_CHECKSYS_CURL'					=> 'Not found: Sugar Scheduler will run with limited functionality.',
 // END SUGARCRM flav!=pro ONLY
-// BEGIN SUGARCRM flav=pro ONLY
+
 	'ERR_CHECKSYS_CURL'					=> 'Not found: Sugar Scheduler will run with limited functionality. The Email Archiving service will not run.',
-// END SUGARCRM flav=pro ONLY
     'ERR_CHECKSYS_IMAP'					=> 'Not found: InboundEmail and Campaigns (Email) require the IMAP libraries. Neither will be functional.',
 	'ERR_CHECKSYS_MSSQL_MQGPC'			=> 'Magic Quotes GPC cannot be turned "On" when using MS SQL Server.',
 	'ERR_CHECKSYS_MEM_LIMIT_0'			=> 'Warning: ',
@@ -540,9 +538,8 @@ $mod_strings = array(
                                 ",
     'LBL_WELCOME_PLEASE_READ_BELOW' => 'Please read the following important information before proceeding with the installation.  The information will help you determine whether or not you are ready to install the application at this time.',
 
-//BEGIN SUGARCRM flav=pro ONLY
+
 	'LBL_WELCOME_2'						=> 'For installation documentation, please visit the <a href="http://www.sugarcrm.com/crm/installation" target="_blank">Sugar Wiki</a>.  <BR><BR> To contact a SugarCRM support engineer for installation help, please log in to the <a target="_blank" href="http://support.sugarcrm.com">SugarCRM Support Portal</a> and submit a support case.',
-//END SUGARCRM flav=pro ONLY
 	'LBL_WELCOME_CHOOSE_LANGUAGE'		=> '<b>Choose your language</b>',
 	'LBL_WELCOME_SETUP_WIZARD'			=> 'Setup Wizard',
 	'LBL_WELCOME_TITLE_WELCOME'			=> 'Welcome to the SugarCRM ',
@@ -562,7 +559,7 @@ $mod_strings = array(
     'LBL_UPDATE_TRACKER_SESSIONS' => 'Update tracker_sessions table',
     'LBL_OOTB_CLEANUP_QUEUE' => 'Clean Jobs Queue',
 
-    // BEGIN SUGARCRM flav=pro ONLY
+
     'LBL_FTS_TABLE_TITLE'     => 'Provide Full-Text Search Settings',
     'LBL_FTS_HOST'     => 'Host',
     'LBL_FTS_PORT'     => 'Port',
@@ -570,7 +567,6 @@ $mod_strings = array(
     'LBL_FTS_HELP'      => 'To enable full-text searching, enter the Host and Port where the search engine is hosted. Sugar includes built-in support for the elasticsearch engine.',
     'LBL_FTS_REQUIRED'    => 'Elastic Search is required.',
     'LBL_FTS_ERROR'    => 'Unable to connect to Full Text Search server, please verify your settings.',
-    // END SUGARCRM flav=pro ONLY
 
     'LBL_PATCHES_TITLE'     => 'Install Latest Patches',
     'LBL_MODULE_TITLE'      => 'Install Language Packs',

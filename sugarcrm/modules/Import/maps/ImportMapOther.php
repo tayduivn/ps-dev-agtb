@@ -109,7 +109,6 @@ class ImportMapOther
                 "Probability (%)"=>"probability",
                 "Account Name"=>"account_name");
             break;
-        //BEGIN SUGARCRM flav=pro ONLY
         case 'ProductTemplates':
             return array(
                 "Product Name"=>"name",
@@ -145,7 +144,6 @@ class ImportMapOther
                 'Related To Module'=>'parent_type',
             );
             break;
-        //END SUGARCRM flav=pro ONLY
         default:
             return array();
         }

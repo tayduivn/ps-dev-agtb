@@ -32,6 +32,7 @@
         'change [name="dnb_bal_prescreen_score"]': 'mapSelect2Params',
         'change [name="dnb_bal_job_fn"]': 'mapSelect2Params',
         'change [name="dnb_bal_ind_code_type"]': 'modifyIndustryModel',
+        'change [name="dnb_bal_cntct_filter"]': 'setBalFilter',
         'shown #dnb_bal_accordian': 'handlePanelShown',
         'hidden #dnb_bal_accordian': 'handlePanelHidden',
         'mouseenter [rel="tooltip"]': 'showTooltip',
@@ -578,6 +579,9 @@
     triggerBAL: function() {
         var balAttr = _.intersection(this.modelAttr, _.keys(this.model.attributes)),
             balParams = {};
+        if (balAttr.length === 1 && balAttr[0] === 'balFilter') {
+            return;
+        }
         _.each(balAttr, function(paramName) {
             var tmpAttr = this.model.get(paramName);
             if (!_.isUndefined(tmpAttr)) {
@@ -740,5 +744,80 @@
         this.model.clear();
         this.triggerBAL();
         this.loadData();
+    },
+
+    /**
+     * Set filters on BAL
+     * @param {Object} event
+     */
+    setBalFilter: function(event) {
+        if (event.target.name) {
+            //meta data for filter
+            var modelMeta = this.balSelector[event.target.name] || {};
+            //modelKey  = key to be set on model eb. balFilter
+            //modelSubKey = name of property on object set to modelKey on model eg. InclusionDataDescription-1
+            //model will look like {'balFilter': {'InclusionDataDescription-1': 'filterValue'}}
+            var modelKey = modelMeta.modelKey || null,
+                modelSubKey = modelMeta.modelSubKey || null,
+                modelAttr;
+            //if the model already has the modelKey
+            //then clone the object so that it can be modified
+            if (!_.isNull(modelKey) && this.model.has(modelKey)) {
+                modelAttr = _.clone(this.model.get(modelKey));
+            } else {
+                modelAttr = {};
+            }
+            //add the newly added filter
+            if (event.added.id) {
+                //try to lookup if the event.added.id is a valid value in the filter lookup
+                var filterValue = modelMeta.lookup[event.added.id];
+                if (_.isUndefined(filterValue)) {
+                    //this loop aims at clearing the filter
+                    _.each(modelAttr, function(value, key) {
+                        if (key.indexOf(modelSubKey) !== -1) {
+                            delete modelAttr[key];
+                        }
+                    });
+                } else {
+                    //add data to modelKey
+                    //modelKeys can have multiple values
+                    //eg. InclusionDataDescription-1, InclusionDataDescription-2 .. InclusionDataDescription-n
+                    if (modelMeta.multiple) {
+                        var paramIndex = 1;
+                        //check if model has modelKey
+                        if (!_.isEmpty(modelAttr)) {
+                            _.each(modelAttr, function(value, key) {
+                                if (key.indexOf(modelSubKey) !== -1) {
+                                    paramIndex++;
+                                }
+                            });
+                        }
+                        modelAttr[modelSubKey + paramIndex] = filterValue;
+                    } else {
+                        modelAttr[modelSubKey] = filterValue;
+                    }
+                }
+            } else if (event.removed.id) {
+                //remove the data from model
+                var removedData = event.removed.id;
+                //to do make this code more efficient
+                _.each(modelAttr, function(value, key) {
+                    if (value === removedData) {
+                        delete modelAttr[key];
+                    }
+                }, this);
+            }
+            if (!_.isEmpty(modelAttr)) {
+                //modify the bal panel heading based on the change in model
+                var accordionHeader = this.$(event.target).closest('.accordion-body').siblings('.accordion-heading').children('.step-circle');
+                this.model.set(modelKey, modelAttr);
+                this.layout.trigger('dnbbal:param:add', accordionHeader);
+            } else {
+                this.model.unset(modelKey);
+                this.layout.trigger('dnbbal:param:remove', modelKey);
+            }
+            //check if parameters apart from the filter are set before triggering bal
+            this.triggerBAL();
+        }
     }
 })

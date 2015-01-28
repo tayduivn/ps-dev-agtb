@@ -26,12 +26,10 @@ $viewdefs[$module_name]['DetailView'] = array(
     'name',
     'assigned_user_name',
   ),
-   //BEGIN SUGARCRM flav=pro ONLY
   array (
 
     'team_name',''
   ),
-   //END SUGARCRM flav=pro ONLY
 
   array (
 	array (

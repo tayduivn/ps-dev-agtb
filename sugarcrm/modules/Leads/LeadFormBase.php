@@ -33,12 +33,10 @@ public function getDuplicateQuery($focus, $prefix='')
 
     // Bug #46427 : Records from other Teams shown on Potential Duplicate Contacts screen during Lead Conversion
     // add team security
-    //BEGIN SUGARCRM flav=pro ONLY
     if( !empty($focus) && !$focus->disable_row_level_security )
     {
         $focus->add_team_security_where_clause($query);
     }
-    //END SUGARCRM flav=pro ONLY
 
     $query .= " WHERE leads.deleted != 1 AND (leads.status <> 'Converted' OR leads.status IS NULL) AND ";
 
@@ -262,9 +260,7 @@ return $the_form;
                 $emailAddress = BeanFactory::getBean('EmailAddresses');
                 $get .= $emailAddress->getFormBaseURL($focus);
 
-                //BEGIN SUGARCRM flav=pro ONLY
                 $get .= get_teams_url('Leads');
-                //END SUGARCRM flav=pro ONLY
 
                 //create list of suspected duplicate lead ids in redirect get string
                 $i=0;

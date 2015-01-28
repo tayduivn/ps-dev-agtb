@@ -26,10 +26,8 @@ $dictionary['Bug'] = array('table' => 'bugs',    'audited'=>true, 'activity_enab
   	'studio' => array(
           'fields' => 'false', 
           'listview' => false, 
-          //BEGIN SUGARCRM flav=pro ONLY
           // Bug 54507 - Add wireless and portal to exclude list
           'wirelesslistview' => false,
-          //END SUGARCRM flav=pro ONLY
           //BEGIN SUGARCRM flav=ent ONLY
           // Bug 54507 - Add wireless and portal to exclude list
           'portalrecordview' => false,
@@ -49,24 +47,22 @@ $dictionary['Bug'] = array('table' => 'bugs',    'audited'=>true, 'activity_enab
     'reportable'=>false,
     'source'=>'non-db',
     'table'=>'releases',
-    'merge_filter' => 'enabled', //bug 22994, we should use the release name to search, I have write codes to operate the cross table query. 
+    'merge_filter' => 'enabled', //bug 22994, we should use the release name to search, I have write codes to operate the cross table query.
     'id_name'=>'found_in_release',
     'module'=>'Releases',
     'link' => 'release_link',
     'massupdate' => false,
 	'studio' => array(
-       'editview' => false, 
+       'editview' => false,
        'detailview' => false,
-       'quickcreate' => false, 
-       'basic_search' => false, 
+       'quickcreate' => false,
+       'basic_search' => false,
        'advanced_search' => false,
-	   //BEGIN SUGARCRM flav=pro ONLY
 	   'wirelesseditview' => false,
 	   'wirelessdetailview' => false,
 	   'wirelesslistview' => 'visible',
 	   'wireless_basic_search' => false,
 	   'wireless_advanced_search' => false,
-	   //END SUGARCRM flav=pro ONLY
        //BEGIN SUGARCRM flav=ent ONLY
        // Bug 54507 - Add portal to exclude from layout list
        'portalrecordview' => 'visible',
@@ -90,10 +86,8 @@ $dictionary['Bug'] = array('table' => 'bugs',    'audited'=>true, 'activity_enab
   	'studio' => array(
           'fields' => 'false', 
           'listview' => false, 
-          //BEGIN SUGARCRM flav=pro ONLY
           // Bug 54507 - Add wireless and portal to exclude list
           'wirelesslistview' => false,
-          //END SUGARCRM flav=pro ONLY
           //BEGIN SUGARCRM flav=ent ONLY
           // Bug 54507 - Add wireless and portal to exclude list
           'portalrecordview' => false,
@@ -120,18 +114,16 @@ $dictionary['Bug'] = array('table' => 'bugs',    'audited'=>true, 'activity_enab
     'source'=>'non-db',
     'link' => 'fixed_in_release_link',
 	'studio' => array(
-       'editview' => false, 
+       'editview' => false,
        'detailview' => false,
-       'quickcreate' => false, 
-       'basic_search' => false, 
+       'quickcreate' => false,
+       'basic_search' => false,
        'advanced_search' => false,
-       //BEGIN SUGARCRM flav=pro ONLY
        'wirelesseditview' => false,
        'wirelessdetailview' => false,
        'wirelesslistview' => 'visible',
        'wireless_basic_search' => false,
        'wireless_advanced_search' => false,
-       //END SUGARCRM flav=pro ONLY
        //BEGIN SUGARCRM flav=ent ONLY
        // Bug 54507 - Add portal to exclude from layout list
        'portalrecordview' => 'visible',
@@ -277,14 +269,10 @@ $dictionary['Bug'] = array('table' => 'bugs',    'audited'=>true, 'activity_enab
 
 )
                                                       , 'indices' => array (
-              //BEGIN SUGARCRM flav=pro ONLY
        /*
-       //END SUGARCRM flav=pro ONLY
       array('name' =>'bug_number', 'type' =>'index', 'fields'=>array('bug_number')),
-       //BEGIN SUGARCRM flav=pro ONLY
         */
        array('name' =>'bug_number', 'type' =>'unique', 'fields'=>array('bug_number', 'system_id')),
-       //END SUGARCRM flav=pro ONLY
 
        array('name' =>'idx_bug_name', 'type' =>'index', 'fields'=>array('name')),
 
@@ -370,23 +358,12 @@ $dictionary['Bug'] = array('table' => 'bugs',    'audited'=>true, 'activity_enab
 
     //This enables optimistic locking for Saves From EditView
 	'optimistic_locking'=>true,
-    'uses' => array(
-        'taggable',
-    ),
  );
 
-VardefManager::createVardef(
-    'Bugs',
-    'Bug',
-    array(
-        'default',
-        'assignable',
-        //BEGIN SUGARCRM flav=pro ONLY
-        'team_security',
-        //END SUGARCRM flav=pro ONLY
-        'issue',
-    )
-);
+VardefManager::createVardef('Bugs','Bug', array('default', 'assignable',
+'team_security',
+'issue',
+));
 
 //jc - adding for refactor for import to not use the required_fields array
 //defined in the field_arrays.php file

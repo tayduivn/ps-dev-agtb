@@ -127,7 +127,6 @@ $layout_defs['Quotes'] = array(
 				array('widget_class' => 'SubPanelTopSelectButton', 'mode'=>'MultiSelect'),
 			),
 		),
-        //BEGIN SUGARCRM flav=pro ONLY
 		'contracts' => array(
 			'order' => 30,
 			'module' => 'Contracts',
@@ -143,7 +142,6 @@ $layout_defs['Quotes'] = array(
 						'initial_filter_fields'=>array('billing_account_id'=>'account_id','billing_account_name'=>'account_name')),
 			),
 		),
-        //END SUGARCRM flav=pro ONLY
 	),
 );
 ?>

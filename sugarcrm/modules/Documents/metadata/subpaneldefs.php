@@ -26,7 +26,6 @@ $layout_defs['Documents'] = array(
 			'get_subpanel_data' => 'revisions',
 			'fill_in_additional_fields'=>true,
 		),
-		//BEGIN SUGARCRM flav=pro ONLY
 		'contracts' => array(
 			'order' => 20,
 			'sort_order' => 'desc',
@@ -38,7 +37,6 @@ $layout_defs['Documents'] = array(
 			'title_key' => 'LBL_CONTRACTS_SUBPANEL_TITLE',
 			'top_buttons' => array(),	
 		),
-		//END SUGARCRM flav=pro ONLY
         'accounts' => array(
             'order' => 30,
             'module' => 'Accounts',
@@ -144,7 +142,6 @@ $layout_defs['Documents'] = array(
                     ),
                 ),
         ),
-        //BEGIN SUGARCRM flav=pro ONLY
         'quotes' => array(
             'order' => 70,
             'module' => 'Quotes',
@@ -162,7 +159,6 @@ $layout_defs['Documents'] = array(
                     ),
                 ),
         ),
-        //END SUGARCRM flav=pro ONLY
         //BEGIN SUGARCRM flav=ent ONLY
         'revenuelineitems' => array(
             'order' => 80,

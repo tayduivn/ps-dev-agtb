@@ -44,10 +44,8 @@ class RestMetadataSugarLayoutsTest extends RestTestBase {
         }
         SugarAutoLoader::saveMap();
 
-//BEGIN SUGARCRM flav=pro ONLY
         $this->_restLogin('','','mobile');
         $this->mobileAuthToken = $this->authToken;
-//END SUGARCRM flav=pro ONLY
         $this->_restLogin('','','base');
         $this->baseAuthToken = $this->authToken;
         $this->_clearMetadataCache();
@@ -86,7 +84,6 @@ class RestMetadataSugarLayoutsTest extends RestTestBase {
         $this->assertTrue(isset($reply['reply']['layouts']['_hash']), 'Layout hash is missing.');
         $this->assertArrayHasKey('woggle', $reply['reply']['layouts'], 'Test result not found');
     }
-    //BEGIN SUGARCRM flav=pro ONLY
     /**
      * @group rest
      */
@@ -111,5 +108,4 @@ class RestMetadataSugarLayoutsTest extends RestTestBase {
         $this->assertArrayHasKey('wiggle', $reply['reply']['layouts'], 'BASE metadata not picked up');
         $this->assertNotEmpty($reply['reply']['layouts']['wiggle']['meta']['test'], 'Test result data not returned');
     }
-    //END SUGARCRM flav=pro ONLY
 }

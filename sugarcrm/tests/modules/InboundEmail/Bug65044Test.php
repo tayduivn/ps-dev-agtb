@@ -53,11 +53,9 @@ class Bug65044Test extends Sugar_PHPUnit_Framework_TestCase
         $this->ie->groupfolder_id = "non-empty";
         $this->ie->from_addr = $this->contact->email1;
 
-        //BEGIN SUGARCRM flav=pro ONLY
         $teamId = $GLOBALS["current_user"]->getPrivateTeam();
         $this->ie->team_id = $_REQUEST["team_id"] = $teamId;
         $this->ie->team_set_id = $_REQUEST["team_set_id"] = $this->ie->getTeamSetIdForTeams($teamId);
-        //END SUGARCRM flav=pro ONLY
 
         $this->ie->save();
     }

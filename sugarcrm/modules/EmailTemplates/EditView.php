@@ -187,13 +187,11 @@ if(isset($focus->text_only) && $focus->text_only){
 }
 
 
-//BEGIN SUGARCRM flav=pro ONLY
 //Assign the Teamset field
 require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
 $teamSetField = new SugarFieldTeamset('Teamset');
 $code = $teamSetField->getClassicView($focus->field_defs);
 $xtpl->assign("TEAM", $code);
-//END SUGARCRM flav=pro ONLY
 
 $xtpl->assign("FIELD_DEFS_JS", $focus->generateFieldDefsJS());
 $xtpl->assign("LBL_CONTACT",$app_list_strings['moduleList']['Contacts']);

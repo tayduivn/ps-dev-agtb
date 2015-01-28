@@ -327,7 +327,6 @@ if(!empty($create_case_email_template)) {
 }
 
 $quicksearch_js = "";
-//BEGIN SUGARCRM flav=pro ONLY
 $teamArr = array();
 $teamArr[''] = $app_strings['LBL_NONE'];
 $xtpl->assign('PERSONAL', $focus->is_personal);
@@ -382,7 +381,6 @@ $javascript->addFieldGeneric('team_name', 'varchar', $app_strings['LBL_TEAM'] ,'
 $code = $teamSetField->get_code();
 }
 $xtpl->assign("TEAM_SET_FIELD", $code);
-//END SUGARCRM flav=pro ONLY
 
 //$javascript = get_set_focus_js(). $javascript->getScript() . $quicksearch_js;
 $xtpl->assign('JAVASCRIPT', get_set_focus_js(). $javascript->getScript() . $quicksearch_js);

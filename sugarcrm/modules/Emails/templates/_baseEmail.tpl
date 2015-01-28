@@ -29,9 +29,7 @@
 
     SUGAR.email2.detailView.qcmodules = {$qcModules};
 
-    <!--//BEGIN SUGARCRM flav=pro ONLY -->
     //SUGAR.email2.composeLayout.teamsSettingsFolder = {$teamsSettingsFolder};
-    <!--//END SUGARCRM flav=pro ONLY -->
 
     var isAdmin = {$is_admin};
     var loadingSprite = app_strings.LBL_EMAIL_LOADING + " <img src='{sugar_getjspath file='include/javascript/yui/build/assets/skins/sam/wait.gif'}' alt=$mod_strings.LBL_WAIT height='14' align='absmiddle'>";

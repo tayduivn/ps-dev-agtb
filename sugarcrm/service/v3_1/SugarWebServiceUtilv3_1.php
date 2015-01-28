@@ -41,9 +41,7 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
         $trackerManager = TrackerManager::getInstance();
 		if($monitor = $trackerManager->getMonitor('tracker'))
 		{
-			//BEGIN SUGARCRM flav=pro ONLY
 	        $monitor->setValue('team_id', $GLOBALS['current_user']->getPrivateTeamID());
-			//END SUGARCRM flav=pro ONLY
 	        $monitor->setValue('date_modified', TimeDate::getInstance()->nowDb());
 	        $monitor->setValue('user_id', $GLOBALS['current_user']->id);
 	        $monitor->setValue('module_name', $seed->module_dir);
@@ -78,7 +76,6 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
         return $enabled_modules;
     }
 
-//BEGIN SUGARCRM flav=pro ONLY
     /**
      * Examine the wireless_module_registry to determine which modules have been enabled for the mobile view.
      *
@@ -92,7 +89,6 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
         }
         return $this->getModulesFromList($wireless_module_registry, $availModules);
     }
-//END SUGARCRM flav=pro ONLY
 
     /**
      * Examine the application to determine which modules have been enabled..
@@ -376,7 +372,6 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
 	       return $metadata;
 	}
 
-//BEGIN SUGARCRM flav=pro ONLY
 	/**
 	 * Parse wireless listview metadata and add ACL values.
 	 *
@@ -447,7 +442,6 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
 	    $results['panels'] = $aclRows;
 	    return $results;
 	}
-//END SUGARCRM flav=pro ONLY
 
 	/**
 	 * Return the field level acl raw value.  We cannot use the hasAccess call as we do not have a valid bean

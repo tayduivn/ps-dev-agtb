@@ -60,7 +60,6 @@ $listViewDefs['Quotes'] = array(
         'link' => false,
         'default' => true        
         ),
-//BEGIN SUGARCRM flav=pro ONLY
 	'TEAM_NAME' => array(
 		'width' => '10', 
 		'label' => 'LBL_LIST_TEAM',
@@ -68,7 +67,6 @@ $listViewDefs['Quotes'] = array(
         'default' => false,
         'related_fields' => array('team_id'),        
         ),
-//END SUGARCRM flav=pro ONLY
 	'ASSIGNED_USER_NAME' => array(
 		'width' => '10', 
 		'label' => 'LBL_LIST_ASSIGNED_USER',

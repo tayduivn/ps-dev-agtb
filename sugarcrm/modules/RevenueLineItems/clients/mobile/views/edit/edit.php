@@ -58,9 +58,7 @@ $viewdefs['RevenueLineItems']['mobile']['view']['edit'] = array(
                     'readonly' => true,
                 ),
                 'assigned_user_name',
-                //BEGIN SUGARCRM flav=pro ONLY
                 'team_name',
-                //END SUGARCRM flav=pro ONLY
             ),
         ),
     ),

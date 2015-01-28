@@ -53,12 +53,11 @@ function toggle_domain_name(list_type)  {ldelim}
             'name' => 'assigned_user_name',
             'label' => 'LBL_ASSIGNED_TO_NAME',
           ),
-        //BEGIN SUGARCRM flav=pro ONLY
+
           array(
 		   	'name'=>'team_name', 
 		    'displayParams'=>array('display'=>true),
           ),
-          //END SUGARCRM flav=pro ONLY
         ),
       ),
 )

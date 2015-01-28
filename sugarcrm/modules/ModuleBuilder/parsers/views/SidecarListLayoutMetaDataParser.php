@@ -42,9 +42,7 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
         MB_SIDECARLISTVIEW,
         MB_SIDECARPOPUPVIEW,
         MB_SIDECARDUPECHECKVIEW,
-        //BEGIN SUGARCRM flav=pro ONLY
         MB_WIRELESSLISTVIEW,
-        //END SUGARCRM flav=pro ONLY
         //BEGIN SUGARCRM flav=ent ONLY
         MB_PORTALLISTVIEW,
         //END SUGARCRM flav=ent ONLY
@@ -85,7 +83,7 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
                     if (!empty($field['name'])) {
                         if ($this->isDefaultField($field)) {
                             if (isset($this->_fielddefs[$field['name']])) {
-                                $defaultFields[$field['name']] = self::_trimFieldDefs($this->_fielddefs[$field['name']]);
+                                $defaultFields[$field['name']] = self::_trimFieldDefs(array_merge($this->_fielddefs[$field['name']], $field));
                                 if (!empty($field['label'])) {
                                     $defaultFields[$field['name']]['label'] = $field['label'];
                                 }

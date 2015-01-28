@@ -20,7 +20,6 @@ $viewdefs['Quotes']['base']['filter']['default'] = array(
         'date_quote_expected_closed' => array(),
         'date_entered' => array(),
         'date_modified' => array(),
-        'tag' => array(),
         'assigned_user_name' => array(),
         'team_name' => array(),
         '$owner' => array(

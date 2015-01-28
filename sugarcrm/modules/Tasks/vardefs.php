@@ -243,7 +243,6 @@ $dictionary['Task'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_NOTES',
         ),
-//BEGIN SUGARCRM flav=pro ONLY
         'quotes' => array(
             'name' => 'quotes',
             'type' => 'link',
@@ -251,7 +250,6 @@ $dictionary['Task'] = array(
             'vname' => 'LBL_QUOTES',
             'source' => 'non-db',
         ),
-//END SUGARCRM flav=pro ONLY
         'contact_parent' => array(
             'name' => 'contact_parent',
             'type' => 'link',
@@ -373,9 +371,6 @@ $dictionary['Task'] = array(
     ),
     //This enables optimistic locking for Saves From EditView
     'optimistic_locking' => true,
-    'uses' => array(
-        'taggable',
-    ),
 );
 
 VardefManager::createVardef(
@@ -384,8 +379,6 @@ VardefManager::createVardef(
     array(
         'default',
         'assignable',
-        //BEGIN SUGARCRM flav=pro ONLY
         'team_security',
-        //END SUGARCRM flav=pro ONLY
     )
 );

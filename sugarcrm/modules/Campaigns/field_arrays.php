@@ -21,9 +21,7 @@ $fields_array['Campaign'] = array ('column_fields' => array(
 				"id", "date_entered",
 				"date_modified", "modified_user_id",
 				"assigned_user_id", "created_by",
-				//BEGIN SUGARCRM flav=pro ONLY
 				"team_id",
-				//END SUGARCRM flav=pro ONLY
 				"name", "start_date",
 				"end_date", "status",
 				"budget", "expected_cost",
@@ -36,10 +34,8 @@ $fields_array['Campaign'] = array ('column_fields' => array(
         'list_fields' => array(
 				'id', 'name', 'status',
 				'campaign_type','assigned_user_id','assigned_user_name','end_date',
-				//BEGIN SUGARCRM flav=pro ONLY
 				'team_id',
 				'team_name',
-				//END SUGARCRM flav=pro ONLY
 				'refer_url',"currency_id",
 	),
         'required_fields' => array(

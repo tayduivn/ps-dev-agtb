@@ -652,9 +652,7 @@ class DynamicField {
 
         switch ($property) {
             case "importable":
-            //BEGIN SUGARCRM flav=pro ONLY
             case "reportable":
-            //END SUGARCRM flav=pro ONLY
                 return ( $value === 'true' || $value === '1' || $value === true || $value === 1 ); break;
             case "required":
             case "audited":
@@ -977,7 +975,8 @@ class DynamicField {
             return false;
         }
 
-        $query = "SELECT * FROM ".$this->bean->table_name."_cstm WHERE id_c='".$this->bean->id."'";
+        $table = $this->bean->table_name . "_cstm";
+        $query = "SELECT {$table}.* FROM {$table} WHERE id_c='{$this->bean->id}'";
         $result = $GLOBALS['db']->query($query);
         $row = $GLOBALS['db']->fetchByAssoc($result);
 

@@ -26,7 +26,6 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'acl_module'=>$module_name,
         'icon' => 'fa-bars',
     ),
-    //BEGIN SUGARCRM flav=pro ONLY
     array(
         'route'=>'#bwc/index.php?module=Reports&action=index&view=quotes&query=true&report_module=Quotes',
         'label' =>'LNK_QUOTE_REPORTS',
@@ -34,5 +33,4 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'acl_module'=>$module_name,
         'icon' => 'fa-bar-chart-o',
     ),
-    //END SUGARCRM flav=pro ONLY
 );

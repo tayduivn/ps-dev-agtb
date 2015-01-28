@@ -243,17 +243,13 @@ class SugarView
         $trackerManager = TrackerManager::getInstance();
         $timeStamp = TimeDate::getInstance()->nowDb();
         if($monitor = $trackerManager->getMonitor('tracker')){
-            //BEGIN SUGARCRM flav=pro ONLY
             $monitor->setValue('team_id', $GLOBALS['current_user']->getPrivateTeamID());
-            //END SUGARCRM flav=pro ONLY
             $monitor->setValue('action', $action);
             $monitor->setValue('user_id', $GLOBALS['current_user']->id);
             $monitor->setValue('module_name', $this->module);
             $monitor->setValue('date_modified', $timeStamp);
             $monitor->setValue('visible', (($monitor->action == 'detailview') || ($monitor->action == 'editview')
-                                            //BEGIN SUGARCRM flav=pro ONLY
                                             || ($monitor->action == 'wirelessdetail') || ($monitor->action == 'wirelessedit')
-                                            //END SUGARCRM flav=pro ONLY
                                             ) ? 1 : 0);
 
             if (!empty($this->bean->id)) {
@@ -433,9 +429,7 @@ class SugarView
             $ss->assign("ONLOAD", 'onload="set_focus()"');
 
         $ss->assign("AUTHENTICATED",isset($_SESSION["authenticated_user_id"]));
-        //BEGIN SUGARCRM flav=pro ONLY
         $ss->assign("ISPRINT",isset($_REQUEST['print'])); //this will be used by header.tpl to hide the megamenu bar when its 'print' view
-        //END SUGARCRM flav=pro ONLY
 
         // get other things needed for page style popup
         if (isset($_SESSION["authenticated_user_id"])) {
@@ -457,7 +451,6 @@ class SugarView
 		$ss->assign("homeImage",$homeImage);
         global $mod_strings;
         $mod_strings = $bakModStrings;
-        //BEGIN SUGARCRM flav=pro ONLY
 		/******************DC MENU*********************/
         // DEPRECATED since 7.0, will be removed from 7.2
 //		if(!empty($current_user->id) && !$this->_getOption('view_print')){
@@ -496,7 +489,6 @@ class SugarView
 //			//$ss->assign('SUGAR_DCMENU', $data['html']);
 //		}
 		/******************END DC MENU*********************/
-        //END SUGARCRM flav=pro ONLY
         $headerTpl = $themeObject->getTemplate('header.tpl');
         if (inDeveloperMode() )
             $ss->clear_compiled_tpl($headerTpl);
@@ -571,7 +563,6 @@ class SugarView
         echo getVersionedScript('cache/include/javascript/sugar_grp1_jquery.js');
         echo getVersionedScript('cache/include/javascript/sugar_grp1_yui.js');
         echo getVersionedScript('cache/include/javascript/sugar_grp1.js');
-        //BEGIN SUGARCRM flav=pro ONLY
         if (!is_file(sugar_cached("Expressions/functions_cache.js"))) {
             $GLOBALS['updateSilent'] = true;
             include("include/Expressions/updatecache.php");
@@ -580,7 +571,6 @@ class SugarView
             echo getVersionedScript('cache/Expressions/functions_cache_debug.js');
         else
             echo getVersionedScript('cache/Expressions/functions_cache.js');
-        //END SUGARCRM flav=pro ONLY
         echo <<<EOQ
         <script>
             if ( typeof(SUGAR) == 'undefined' ) {SUGAR = {}};
@@ -698,7 +688,6 @@ EOHTML;
             if(isset( $sugar_config['disc_client']) && $sugar_config['disc_client'])
                 echo getVersionedScript('modules/Sync/headersync.js');
 
-            //BEGIN SUGARCRM flav=pro ONLY
             if (!is_file(sugar_cached("Expressions/functions_cache.js"))) {
                 $GLOBALS['updateSilent'] = true;
                 include("include/Expressions/updatecache.php");
@@ -710,7 +699,6 @@ EOHTML;
 
             require_once("include/Expressions/DependencyManager.php");
             echo "\n" . '<script type="text/javascript">' . DependencyManager::getJSUserVariables($GLOBALS['current_user']) . "</script>\n";
-            //END SUGARCRM flav=pro ONLY
 
             //echo out the $js_vars variables as javascript variables
             echo "<script type='text/javascript'>\n";
@@ -893,14 +881,12 @@ EOHTML;
         }
         // End Required Image
         $ss->assign('COPYRIGHT',$copyright);
-        //BEGIN SUGARCRM flav=pro ONLY
         if(isset($GLOBALS['current_user']) && !empty($GLOBALS['current_user']->id))
         {
             require_once('include/DashletContainer/DCFactory.php');
             $dcm = DCFactory::getContainer(null, 'DCMenu');
             $ss->assign('DYNAMICDCACTIONS',$dcm->getPartnerIconMenus());
         }
-        //END SUGARCRM flav=pro ONLY
 
         // here we allocate the help link data
         $help_actions_blacklist = array('Login'); // we don't want to show a context help link here
@@ -917,10 +903,8 @@ EOHTML;
         $ss->assign('TOUR_LINK',SugarThemeRegistry::current()->getLink("javascript: void(0);", $app_strings['LNK_TOUR'], "id='tour_link'",
             '', '',null,null,'','',"<i class='icon-road icon'></i>"));
 
-        //BEGIN SUGARCRM flav=pro ONLY
         if (!empty($GLOBALS['sugar_config']['disabled_feedback_widget']))
             $ss->assign('DISABLE_FEEDBACK_WIDGET', TRUE);
-        //END SUGARCRM flav=pro ONLY
 
         $ss->display(SugarThemeRegistry::current()->getTemplate('footer.tpl'));
         */
@@ -982,7 +966,6 @@ EOHTML;
 
 
         $trackerManager = TrackerManager::getInstance();
-        //BEGIN SUGARCRM flav=pro ONLY
 
         if(!$trackerManager->isPaused())
         {
@@ -1009,7 +992,6 @@ EOHTML;
 		        $monitor3->setValue('user_id', $GLOBALS['current_user']->id);
 			}
         }
-	    //END SUGARCRM flav=pro ONLY
 	    $trackerManager->save();
 
     }
@@ -1320,10 +1302,8 @@ EOHTML;
                 break;
             case 'DetailView':
                 $beanName = $this->bean->get_summary_text();
-                //BEGIN SUGARCRM flav=pro ONLY
                 if($this->bean->isFavoritesEnabled())
                     $beanName .= '&nbsp;' . SugarFavorites::generateStar(SugarFavorites::isUserFavorite($this->module, $this->bean->id), $this->module, $this->bean->id);
-                //END SUGARCRM flav=pro ONLY
                 $params[] = $beanName;
                 break;
             }
@@ -1516,9 +1496,7 @@ EOHTML;
 
         $favicon = '';
         if ( $module_favicon )
-            //BEGIN SUGARCRM flav=pro ONLY
             $favicon = $themeObject->getImageURL($this->module.'_favico.png',false);
-            //END SUGARCRM flav=pro ONLY
             //BEGIN SUGARCRM flav=com ONLY
             $favicon = $themeObject->getImageURL($this->module.'.gif',false);
             //END SUGARCRM flav=com ONLY

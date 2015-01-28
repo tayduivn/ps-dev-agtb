@@ -52,9 +52,7 @@ class Bug40019_Test extends Sugar_PHPUnit_Framework_TestCase
 	            $monitor->setValue('item_id', $account->id);
 	            $monitor->setValue('item_summary', $account->name);
 	            $monitor->setValue('visible',1);
-	            //BEGIN SUGARCRM flav=pro ONLY
 	        	$monitor->setValue('team_id', $GLOBALS['current_user']->getPrivateTeamID());
-	        	//END SUGARCRM flav=pro ONLY
 	            $trackerManager->saveMonitor($monitor, true, true);
 	            
 	            $monitor = $trackerManager->getMonitor('tracker');
@@ -65,9 +63,7 @@ class Bug40019_Test extends Sugar_PHPUnit_Framework_TestCase
 	            $monitor->setValue('item_id', $contact->id);
 	            $monitor->setValue('item_summary', $contact->name);
 	            $monitor->setValue('visible',1);
-	            //BEGIN SUGARCRM flav=pro ONLY
 	        	$monitor->setValue('team_id', $GLOBALS['current_user']->getPrivateTeamID());
-	        	//END SUGARCRM flav=pro ONLY
 	            $trackerManager->saveMonitor($monitor, true, true);	            
 	        }	
 		}

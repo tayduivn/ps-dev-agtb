@@ -31,7 +31,7 @@
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td>
-<!--//BEGIN SUGARCRM flav=pro ONLY -->
+
 <table id="passRequirementId" name="passRequirementName" width="100%" border="0" cellspacing="1" cellpadding="0"
        class="edit view">
     <tr>
@@ -143,7 +143,6 @@
         </td>
     </tr>
 </table>
-<!--//END SUGARCRM flav=pro ONLY -->
 
 <table id="sysGeneratedId" name="sysGeneratedName" width="100%" border="0" cellspacing="1" cellpadding="0"
        class="edit view">
@@ -432,7 +431,7 @@
     </tr>
 </table>
 
-<!--//BEGIN SUGARCRM flav=pro ONLY -->
+
 
 
 <table id="userGenPassExpId" name="userGenPassExpName" width="100%" border="0" cellspacing="1" cellpadding="0"
@@ -568,8 +567,6 @@
         </td>
     </tr>
 </table>
-
-<!--//END SUGARCRM flav=pro ONLY -->
 
 {if !empty($settings.system_ldap_enabled)}
     {assign var='system_ldap_enabled_checked' value='CHECKED'}
@@ -886,10 +883,9 @@
 function addcheck(form) {{/literal}
     addForm('ConfigurePasswordSettings');
 
-    //BEGIN SUGARCRM flav=pro ONLY
+
     removeFromValidate('ConfigurePasswordSettings', 'passwordsetting_minpwdlength');
     addToValidateLessThan('ConfigurePasswordSettings', 'passwordsetting_minpwdlength', 'int', false, "{$MOD.LBL_PASSWORD_MINIMUM_LENGTH}", document.getElementById('passwordsetting_maxpwdlength').value, "{$MOD.LBL_PASSWORD_MAXIMUM_LENGTH}");
-    //END SUGARCRM flav=pro ONLY
 
     if (document.getElementById('forgotpassword_checkbox').checked) {literal}{{/literal}
         addToValidate('ConfigurePasswordSettings', 'passwordsetting_linkexpirationtime', 'int', form.required_link_exp_time.checked, "{$MOD.ERR_PASSWORD_LINK_EXPIRE_TIME} ");
@@ -904,7 +900,7 @@ function addcheck(form) {{/literal}
     }
     {/literal}
 
-    //BEGIN SUGARCRM flav=pro ONLY
+
     addToValidate('ConfigurePasswordSettings', 'passwordsetting_userexpirationtime', 'int', form.required_user_pwd_exp_time.checked, "{$MOD.ERR_PASSWORD_EXPIRE_TIME}");
     addToValidate('ConfigurePasswordSettings', 'passwordsetting_userexpirationlogin', 'int', form.required_user_pwd_exp_login.checked, "{$MOD.ERR_PASSWORD_EXPIRE_LOGIN}");
 
@@ -926,7 +922,6 @@ function addcheck(form) {{/literal}
 
     if (document.getElementById('customregex').value != '')
         addToValidate('ConfigurePasswordSettings', 'passwordsetting_regexcomment', 'alpha', 'true', "{$MOD.ERR_EMPTY_REGEX_DESCRIPTION}");
-    //END SUGARCRM flav=pro ONLY
 
     {literal}
 }
@@ -952,22 +947,20 @@ function enableDisablePasswordTable(checkbox_id) {
         document.getElementById("emailTemplatesId").style.display = "none";
         document.getElementById("sysGeneratedId").style.display = "none";
         document.getElementById("userResetPassId").style.display = "none";
-        //BEGIN SUGARCRM flav=pro ONLY
+
         document.getElementById("passRequirementId").style.display = "none";
         document.getElementById("userGenPassExpId").style.display = "none";
         document.getElementById("loginLockoutId").style.display = "none";
         document.getElementById(other).style.display = "none";
-        //END SUGARCRM flav=pro ONLY
     } else {
         document.getElementById("emailTemplatesId").style.display = "";
         document.getElementById("sysGeneratedId").style.display = "";
         document.getElementById("userResetPassId").style.display = "";
-        //BEGIN SUGARCRM flav=pro ONLY
+
         document.getElementById("passRequirementId").style.display = "";
         document.getElementById("userGenPassExpId").style.display = "";
         document.getElementById("loginLockoutId").style.display = "";
         document.getElementById(other).style.display = "";
-        //END SUGARCRM flav=pro ONLY
 
     }
 } // if

@@ -26,12 +26,10 @@ $mod_strings = array (
 
 	'LBL_CONFIRM_DELETE'		=> 'Are you sure you want to delete this folder?',
 	'LBL_ENTER_FOLDER_NAME'		=> 'Please enter a folder name',
-//BEGIN SUGARCRM flav=pro ONLY
 	'LBL_QUOTES_SUBPANEL_TITLE'	=> 'Quotes',
 	'LBL_EMAILS_QUOTES_REL'		=> 'Emails:Quotes',
     'LBL_ERROR_SELECT_REPORT'   => 'Please select a report',
     'LBL_ERROR_SELECT_MODULE_SELECT'   => 'Please select a name by clicking on the select button next to Related To field',
-//END SUGARCRM flav=pro ONLY
 
 	'LBL_ERROR_SELECT_MODULE'   => 'Please select a module for the Related to field',
 

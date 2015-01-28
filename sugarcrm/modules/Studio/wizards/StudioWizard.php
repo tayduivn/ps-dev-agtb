@@ -30,19 +30,15 @@ class StudioWizard{
     	                 'RenameTabs'=>$GLOBALS['mod_strings']['LBL_SW_RENAME_TABS'],
     	                 'ConfigureTabs'=>$GLOBALS['mod_strings']['LBL_SW_EDIT_TABS'],
     	                 'Portal'=>$GLOBALS['mod_strings']['LBL_SW_EDIT_PORTAL'],
-				         //BEGIN SUGARCRM flav=pro ONLY
 				         'Workflow'=>$GLOBALS['mod_strings']['LBL_SW_EDIT_WORKFLOW'],
-				         //END SUGARCRM flav=pro ONLY
 				         'RepairCustomFields'=>$GLOBALS['mod_strings']['LBL_SW_REPAIR_CUSTOMFIELDS'],
 				         'MigrateCustomFields'=>$GLOBALS['mod_strings']['LBL_SW_MIGRATE_CUSTOMFIELDS'],
 
         
         );
-        //BEGIN SUGARCRM flav=pro ONLY
     	if(!empty($GLOBALS['license']->settings['license_num_portal_users'])){
         	$options['SugarPortal']=$GLOBALS['mod_strings']['LBL_SW_SUGARPORTAL'];
         }
-        //END SUGARCRM flav=pro ONLY
         return $options;
         
         
@@ -72,11 +68,9 @@ class StudioWizard{
             case 'Workflow':
                 header('Location: index.php?module=WorkFlow&action=ListView');
                 sugar_cleanup(true);
-            //BEGIN SUGARCRM flav=pro ONLY
             case 'Portal':
                 header('Location: index.php?module=iFrames&action=index');
                 sugar_cleanup(true);
-            //END SUGARCRM flav=pro ONLY
             case 'RepairCustomFields':
             	header('Location: index.php?module=Administration&action=UpgradeFields');
             	sugar_cleanup(true);

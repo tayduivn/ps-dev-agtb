@@ -31,16 +31,14 @@ class Audit extends SugarBean
     public $genericAssocFieldsArray = array();
     public $moduleAssocFieldsArray = array();
     private $fieldDefs;
-    
+
     // This is used to retrieve related fields from form posts.
     public $additional_column_fields = Array();
 
     public function __construct()
     {
         parent::__construct();
-        //BEGIN SUGARCRM flav=pro ONLY
         $this->team_id = 1; // make the item globally accessible
-        //END SUGARCRM flav=pro ONLY
 
         // load up the assoc fields array from globals
         $this->getAssocFieldsArray();
@@ -133,7 +131,6 @@ class Audit extends SugarBean
 
         while ($row = $db->fetchByAssoc($results)) {
 
-            //BEGIN SUGARCRM flav=pro ONLY
             if (!ACLField::hasAccess(
                 $row['field_name'],
                 $bean->module_dir,
@@ -148,7 +145,6 @@ class Audit extends SugarBean
                 $return[] = $this->handleTeamSetField($row);
                 continue;
             }
-            //END SUGARCRM flav=pro ONLY
 
             // look for opportunities to relate ids to name values.
             if (!empty($this->genericAssocFieldsArray[$row['field_name']]) ||
@@ -168,7 +164,7 @@ class Audit extends SugarBean
             $row = $this->formatRowForApi($row);
 
             $fieldName = $row['field_name'];
-            $fieldType = $bean->field_defs[$fieldName]['type'];
+            $fieldType = $db->getFieldType($bean->field_defs[$row['field_name']]);
             switch ($fieldType) {
                 case 'date':
                 case 'time':
@@ -195,10 +191,6 @@ class Audit extends SugarBean
                             $row['after'] = $otherSideBeanAfter->get_summary_text();
                         }
                     }
-                    break;
-                case 'tag':
-                    $row['before'] = $this->formatTags($row['before']);
-                    $row['after'] = $this->formatTags($row['after']);
                     break;
             }
 
@@ -261,27 +253,6 @@ class Audit extends SugarBean
     }
 
     /**
-     * Formats tags value.
-     *
-     * @param string $tags String in database format,
-     *   e.g.: ^t1^,...,^tN^
-     * @return array Array of tags,
-     *   e.g.: array(array('name' => 't1'), ..., array('name' => 'tN'))
-     */
-    protected function formatTags($tags)
-    {
-        if (empty($tags)) {
-            return array();
-        }
-
-        $tags = explode(',', str_replace('^', '', $tags));
-
-        return array_map(function ($tag) {
-            return array('name' => $tag);
-        }, $tags);
-    }
-
-    /**
      * Formats datetime value according to type, or returns it as is in case it's empty
      *
      * @param mixed $value
@@ -326,7 +297,6 @@ class Audit extends SugarBean
                 require 'metadata/audit_templateMetaData.php';
                 $fieldDefs = $dictionary['audit']['fields'];
                 while (($row = $focus->db->fetchByAssoc($result))!= null) {
-                    //BEGIN SUGARCRM flav=pro ONLY
                     if(!ACLField::hasAccess($row['field_name'], $focus->module_dir, $GLOBALS['current_user']->id, $focus->isOwner($GLOBALS['current_user']->id))) continue;
 
                     //If the team_set_id field has a log entry, we retrieve the list of teams to display
@@ -336,8 +306,6 @@ class Audit extends SugarBean
                        $row['before_value_string'] = TeamSetManager::getCommaDelimitedTeams($row['before_value_string']);
                        $row['after_value_string'] = TeamSetManager::getCommaDelimitedTeams($row['after_value_string']);
                     }
-
-                    //END SUGARCRM flav=pro ONLY
                     $temp_list = array();
 
                     foreach ($fieldDefs as $field) {

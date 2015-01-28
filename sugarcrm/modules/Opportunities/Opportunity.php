@@ -49,11 +49,9 @@ class Opportunity extends SugarBean
     public $sales_status;
     public $probability;
     public $campaign_id;
-    //BEGIN SUGARCRM flav=pro ONLY
     public $team_name;
     public $team_id;
     public $quote_id;
-    //END SUGARCRM flav=pro ONLY
 
     // These are related
     public $account_name;
@@ -70,13 +68,11 @@ class Opportunity extends SugarBean
     public $rel_account_table = "accounts_opportunities";
     public $rel_contact_table = "opportunities_contacts";
     public $module_dir = "Opportunities";
-//BEGIN SUGARCRM flav=pro ONLY
     public $rel_quote_table = "quotes_opportunities";
     public $best_case;
     public $worst_case;
     public $timeperiod_id;
     public $commit_stage;
-//END SUGARCRM flav=pro ONLY
 
     //Marketo
     var $mkto_sync;
@@ -104,10 +100,8 @@ class Opportunity extends SugarBean
         'meeting_id',
         'call_id',
         'email_id'
-        //BEGIN SUGARCRM flav=pro ONLY
     ,
         'quote_id'
-        //END SUGARCRM flav=pro ONLY
     );
 
     public $relationship_fields = Array(
@@ -120,9 +114,7 @@ class Opportunity extends SugarBean
         'project_id' => 'project',
         // Bug 38529 & 40938
         'currency_id' => 'currencies',
-        //BEGIN SUGARCRM flav=pro ONLY
         'quote_id' => 'quotes',
-        //END SUGARCRM flav=pro ONLY
     );
 
     /**
@@ -145,14 +137,12 @@ class Opportunity extends SugarBean
         if (empty($sugar_config['require_accounts'])) {
             unset($this->required_fields['account_name']);
         }
-        //BEGIN SUGARCRM flav=pro ONLY
         global $current_user;
         if (!empty($current_user)) {
             $this->team_id = $current_user->default_team; //default_team is a team id
         } else {
             $this->team_id = 1; // make the item globally accessible
         }
-        //END SUGARCRM flav=pro ONLY
     }
 
 
@@ -176,30 +166,22 @@ class Opportunity extends SugarBean
                             accounts.name as account_name,
                             accounts.assigned_user_id account_id_owner,
                             users.user_name as assigned_user_name ";
-        //BEGIN SUGARCRM flav=pro ONLY
         $query .= ",teams.name AS team_name ";
-        //END SUGARCRM flav=pro ONLY
         if ($custom_join) {
             $query .= $custom_join['select'];
         }
         $query .= " ,opportunities.*
                             FROM opportunities ";
 
-//BEGIN SUGARCRM flav=pro ONLY
         // We need to confirm that the user is a member of the team of the item.
         $this->add_team_security_where_clause($query);
-//END SUGARCRM flav=pro ONLY
         $query .= "LEFT JOIN users
                             ON opportunities.assigned_user_id=users.id ";
-        //BEGIN SUGARCRM flav=pro ONLY
         $query .= getTeamSetNameJoin('opportunities');
-        //END SUGARCRM flav=pro ONLY
 
-        //BEGIN SUGARCRM flav=pro ONLY
         $query .= " LEFT JOIN timeperiods
                         ON timeperiods.start_date_timestamp <= opportunities.date_closed_timestamp
                         AND timeperiods.end_date_timestamp >= opportunities.date_closed_timestamp ";
-        //END SUGARCRM flav=pro ONLY
 
         $query .= "LEFT JOIN $this->rel_account_table
                             ON opportunities.id=$this->rel_account_table.opportunity_id

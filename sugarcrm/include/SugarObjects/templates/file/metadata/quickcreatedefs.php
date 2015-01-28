@@ -51,9 +51,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
             		  		<input name="uploadfile" type = {$type} size="30" maxlength="" onchange="setvalue(this);" value="{$fields.filename.value}">{$fields.filename.value}',
             'displayParams'=>array('required'=>true),
             ),
-	//BEGIN SUGARCRM flav=pro ONLY
       array('name'=>'team_name','displayParams'=>array('required'=>true)),
-      //END SUGARCRM flav=pro ONLY
 	),
 
     array (

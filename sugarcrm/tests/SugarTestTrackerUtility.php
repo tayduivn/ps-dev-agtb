@@ -52,17 +52,13 @@ class SugarTestTrackerUtility
         $_REQUEST['action'] = $action;
         if($monitor = $trackerManager->getMonitor('tracker'))
         {
-            //BEGIN SUGARCRM flav=pro ONLY
             $monitor->setValue('team_id', $GLOBALS['current_user']->getPrivateTeamID());
-            //END SUGARCRM flav=pro ONLY
             $monitor->setValue('action', $action);
             $monitor->setValue('user_id', $GLOBALS['current_user']->id);
             $monitor->setValue('module_name', $bean->module_dir);
             $monitor->setValue('date_modified', $timeStamp);
             $monitor->setValue('visible', (($action == 'detailview') || ($action == 'editview')
-            //BEGIN SUGARCRM flav=pro ONLY
                                             || ($action == 'wirelessdetail') || ($action == 'wirelessedit')
-            //END SUGARCRM flav=pro ONLY
                                             ) ? 1 : 0);
 
             if (!empty($bean->id))

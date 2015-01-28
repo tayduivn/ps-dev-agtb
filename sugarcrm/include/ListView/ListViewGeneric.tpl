@@ -99,13 +99,11 @@
 					&nbsp;
 				</td>
 			{/if}
-			{* //BEGIN SUGARCRM flav=pro ONLY *}
 			{if $favorites}
 			<td class='td_alt' >
 					&nbsp;
 			</td>
 			{/if}
-			{* //END SUGARCRM flav=pro ONLY *}
 			{if !empty($quickViewLinks)}
 			<td class='td_alt' width='1%' style="padding: 0px;">&nbsp;</td>
 			{/if}
@@ -173,11 +171,9 @@
 				 {/if}
 				</td>
 				{/if}
-				{* //BEGIN SUGARCRM flav=pro ONLY *}
 				{if $favorites}
 					<td>{$rowData.star}</td>
 				{/if}
-				{* //END SUGARCRM flav=pro ONLY *}
 				{if !empty($quickViewLinks)}
 	            {capture assign=linkModule}{$pageData.bean.moduleDir}{/capture}
 	            {capture assign=action}{if $act}{$act}{else}EditView{/if}{/capture}
@@ -185,10 +181,8 @@
 	                {if $pageData.rowAccess[$id].edit}
 	                <a title='{$editLinkString}' id="edit-{$rowData.ID}"
 	href="index.php?module={$linkModule}&offset={$offset}&stamp={$pageData.stamp}&return_module={$linkModule}&action={$action}&record={$rowData.ID}"
-	{* //BEGIN SUGARCRM flav=pro ONLY *}
 	data-record='{$rowData.ID}' data-module='{$pageData.bean.moduleDir}'
 	 data-list = 'true' class="quickEdit"
-	{* //END SUGARCRM flav=pro ONLY *}
 	                >
 	                    {capture name='tmp1' assign='alt_edit'}{sugar_translate label="LNK_EDIT"}{/capture}
 	                    {sugar_getimage name="edit_inline.gif" attr='border="0" ' alt="$alt_edit"}</a>
@@ -274,12 +268,10 @@ function lvg_nav(m,id,act,offset,t){
 {literal}
     function lvg_dtails(id){{/literal}
         return SUGAR.util.getAdditionalDetails( '{$pageData.bean.moduleDir|default:$params.module}',id, 'adspan_'+id);{literal}}{/literal}
-{* //BEGIN SUGARCRM flav=pro ONLY *}
 {literal}
     if(typeof(qe_init) != 'undefined'){
         qe_init(); //qe_init is defined in footer.tpl
     }
 {/literal}
-{* //END SUGARCRM flav=pro ONLY *}
 </script>
 {/if}

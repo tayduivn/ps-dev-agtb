@@ -58,9 +58,7 @@
   .select2-search-field {
     height: 20px;
     input {
-      padding: 0 0 0 8px;
-      line-height: 19px;
-      height: 20px;
+      padding: 0 6px;
     }
   }
   .select2-choice-type {
@@ -196,12 +194,8 @@
 
     &.select2field {
       .select2-search-field {
-        input {
-          padding: 6px 4px;
-          margin: -6px 0 0;
-          &.select2-active {
-            background: transparent !important;
-          }
+        input.select2-active {
+          background: transparent !important;
         }
       }
     }
@@ -262,12 +256,6 @@
           }
         }
       }
-      .select2-search-field {
-        input {
-          padding: 6px 4px;
-          margin: -1px 0 0;
-        }
-      }
     }
   }
   .select2-select-legend {
@@ -287,6 +275,8 @@
     line-height: 26px;
     height: 26px;
     .border-radius(3px);
+    //TODO: added by UIUX-1795
+    padding-left: 6px;
     .box-shadow(none);
     &:focus {
       border-color: @linkColor;
@@ -320,13 +310,20 @@
       }
     }
   }
-  &.select2-container-active .select2-choice {
-    border-color: @linkColor;
-    outline: 0;
-    outline: ~"thin dotted \9"; /* IE6-9 */
+  &.select2-container-active {
+    &.required .select2-choice {
+      border-color: @linkColor;
+    }
+    .select2-choice {
+      border-color: @linkColor;
+      outline: 0;
+      outline: ~"thin dotted \9"; /* IE6-9 */
+    }
   }
   &.required .select2-choice {
-    border-color: darken(@grayLighter, 10%);
+    //TODO: find out why this was set to light gray
+    //border-color: darken(@grayLighter, 10%);
+    border-color: @grayLight;;
     &:focus {
       border-color: @linkColor !important;
     }
@@ -389,8 +386,8 @@
 }
 
 .select2-container-multi .select2-choices .select2-search-field input {
-  margin:0;
-  padding: 3px 7px;
+  margin: 0;
+  padding: 0 6px;
 }
 
 .select2-drop-bootstrap {
@@ -538,6 +535,7 @@
 // Added for currency field, or any field that has
 // a select2 field at end of input
 .select2-addon {
+  min-height: 28px;
   .input-append {
     width: 50%;
     .calcWidth(~"100% - 100px");

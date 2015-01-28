@@ -77,10 +77,6 @@ $viewdefs['ProductCategories']['base']['view']['record'] = array(
                         ),
                     ),
                 ),
-                array(
-                    'name' => 'tag',
-                    'span' => 12,
-                ),
             ),
         ),
     )

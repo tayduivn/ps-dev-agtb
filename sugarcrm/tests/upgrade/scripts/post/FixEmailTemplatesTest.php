@@ -323,10 +323,8 @@ class FixEmailTemplatesTest extends UpgradeTestCase
         $emailTpl->assigned_user_id = $current_user->id;
         $emailTpl->body_html = $bodyHtml;
         $emailTpl->body = 'some text';
-        //BEGIN SUGARCRM flav=pro ONLY
         $emailTpl->team_id = $current_user->team_id;
         $emailTpl->team_set_id = $current_user->team_id;
-        //END SUGARCRM flav=pro ONLY
 
         $id = $emailTpl->save();
         $this->templateIds[] = $id;

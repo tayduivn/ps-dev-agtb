@@ -124,7 +124,6 @@ $layout_defs['Emails'] = array(
 			),
 		),
 
-//BEGIN SUGARCRM flav=pro ONLY
         'quotes' => array(
 			'order' => 70,
 			'module' => 'Quotes',
@@ -153,7 +152,6 @@ $layout_defs['Emails'] = array(
 			'function_parameters' => array('import_function_file' => 'modules/SNIP/utils.php', 'module'=>'Contacts'),
 		    'top_buttons' => array(),
 		),
-//END SUGARCRM flav=pro ONLY
 
         'project' => array(
 			'order' => 80,

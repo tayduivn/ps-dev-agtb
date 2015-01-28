@@ -18,10 +18,8 @@ class RestMetadataViewTemplatesTest extends RestTestBase
     {
         parent::setUp();
 
-//BEGIN SUGARCRM flav=pro ONLY
         $this->_restLogin('','','mobile');
         $this->mobileAuthToken = $this->authToken;
-//END SUGARCRM flav=pro ONLY
         $this->_restLogin('','','base');
         $this->baseAuthToken = $this->authToken;
 
@@ -44,12 +42,10 @@ class RestMetadataViewTemplatesTest extends RestTestBase
                 'clients/base/views/edit/edit.hbs',
                 'custom/clients/base/views/edit/edit.hbs',
             ),
-            //BEGIN SUGARCRM flav=pro ONLY
             'mobile' => array(
                 'clients/mobile/views/edit/edit.hbs',
                 'custom/clients/mobile/views/edit/edit.hbs',
             ),
-            //END SUGARCRM flav=pro ONLY
         );
         SugarTestHelper::saveFile($filesToCheck['base']);
         SugarTestHelper::saveFile($filesToCheck['mobile']);
@@ -73,7 +69,6 @@ class RestMetadataViewTemplatesTest extends RestTestBase
             }
         }
 
-        //BEGIN SUGARCRM flav=pro ONLY
         // Make sure we get it when we ask for mobile
         SugarAutoLoader::put($filesToCheck['mobile'][0],'MOBILE CODE', true);
         $this->_clearMetadataCache();
@@ -87,13 +82,10 @@ class RestMetadataViewTemplatesTest extends RestTestBase
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata/?type_filter=views');
         $this->assertEquals('MOBILE CODE',$restReply['reply']['views']['edit']['templates']['edit'],"Didn't get mobile code when base code was there.");
-        //END SUGARCRM flav=ent ONLY
 
         // Make sure we get the base code when we ask for it.
-        //BEGIN SUGARCRM flav=com ONLY
         SugarAutoLoader::put($filesToCheck['base'][0],'BASE CODE', true);
         $this->_clearMetadataCache();
-        //END SUGARCRM flav=com ONLY
         $this->authToken = $this->baseAuthToken;
         $restReply = $this->_restCall('metadata/?type_filter=views');
         $this->assertEquals('BASE CODE',$restReply['reply']['views']['edit']['templates']['edit'],"Didn't get base code when it was the direct option");

@@ -187,14 +187,12 @@ array (
     'label' => 'LBL_CREATED',
     'default' => false,
   ),
-  //BEGIN SUGARCRM flav=pro ONLY
   'TEAM_NAME' => 
   array (
     'width' => '5%',
     'label' => 'LBL_LIST_TEAM',
     'default' => false,
   ),
-  //END SUGARCRM flav=pro ONLY
   'MODIFIED_BY_NAME' => 
   array (
     'width' => '5%',

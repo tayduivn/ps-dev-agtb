@@ -100,7 +100,7 @@ class TrackerUpgradeDashletTest extends Sugar_PHPUnit_Framework_TestCase  {
  */
 private function upgradeUserPreferencesCopy() {
 	
-//BEGIN SUGARCRM flav=pro ONLY
+
 	if(file_exists($GLOBALS['sugar_config']['cache_dir'].'dashlets/dashlets.php')) {
    	   require($GLOBALS['sugar_config']['cache_dir'].'dashlets/dashlets.php');
    	} else if(file_exists('modules/Dashboard/dashlets.php')) {
@@ -266,7 +266,6 @@ private function upgradeUserPreferencesCopy() {
 	       }
 	   }
 	}
-	//END SUGARCRM flav=pro ONLY
 }    
     
 }  

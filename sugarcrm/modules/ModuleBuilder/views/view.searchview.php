@@ -77,12 +77,10 @@ class ViewSearchView extends ViewListView
  		$ajax = new AjaxCompose ( ) ;
  		switch ( $this->editLayout )
  		{
- 			//BEGIN SUGARCRM flav=pro ONLY
  			case MB_WIRELESSBASICSEARCH:
  			case MB_WIRELESSADVANCEDSEARCH:
  				$searchLabel = 'LBL_WIRELESSSEARCH' ;
  				break;
- 			//END SUGARCRM flav=pro ONLY
  			default:
                 if(isModuleBWC($this->editModule)) {
                     $searchLabel = 'LBL_' . strtoupper($this->editLayout);
@@ -95,13 +93,11 @@ class ViewSearchView extends ViewListView
         $layoutLabel = 'LBL_LAYOUTS' ;
         $layoutView = 'layouts' ;
 
-        //BEGIN SUGARCRM flav=pro ONLY
         if ( in_array ( $this->editLayout , array ( MB_WIRELESSBASICSEARCH , MB_WIRELESSADVANCEDSEARCH ) ) )
         {
         	$layoutLabel = 'LBL_WIRELESSLAYOUTS' ;
         	$layoutView = 'wirelesslayouts' ;
         }
-        //END SUGARCRM flav=pro ONLY
 
  		if ($this->fromModuleBuilder)
  		{

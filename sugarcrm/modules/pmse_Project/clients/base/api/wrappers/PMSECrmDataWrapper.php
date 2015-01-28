@@ -2217,7 +2217,7 @@ class PMSECrmDataWrapper implements PMSEObservable
                 ) //TYPE original relate
             )
         );
-        return $arraymodules[$module];
+        return isset($arraymodules[$module])? $arraymodules[$module] : array();
     }
 
     /**

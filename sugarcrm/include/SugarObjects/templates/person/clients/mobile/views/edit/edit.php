@@ -38,9 +38,7 @@ $viewdefs[$module_name]['mobile']['view']['edit'] = array(
                 ),
                 'email1',
                 'assigned_user_name',
-                //BEGIN SUGARCRM flav=pro ONLY
 			    'team_name',
-		        //END SUGARCRM flav=pro ONLY
             ),
 	    ),
 	),

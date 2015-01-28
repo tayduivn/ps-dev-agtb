@@ -18,12 +18,10 @@ global $current_user;
 $focus = BeanFactory::getBean('Emails');
 // Get Group User IDs
 $groupUserQuery = 'SELECT name, group_id FROM inbound_email ie INNER JOIN users u ON (ie.group_id = u.id AND u.is_group = 1)';
-//BEGIN SUGARCRM flav=pro ONLY
 $groupUserQuery = 'SELECT group_id FROM inbound_email ie';
 $groupUserQuery .= ' INNER JOIN team_memberships tm ON ie.team_id = tm.team_id';
 $groupUserQuery .= ' INNER JOIN teams ON ie.team_id = teams.id AND teams.private = 0';
 $groupUserQuery .= ' WHERE tm.user_id = \''.$current_user->id.'\'';
-//END SUGARCRM flav=pro ONLY
 _pp($groupUserQuery);
 $r = $focus->db->query($groupUserQuery);
 $groupIds = '';
@@ -33,16 +31,12 @@ while($a = $focus->db->fetchByAssoc($r)) {
 $groupIds = substr($groupIds, 0, (strlen($groupIds) - 2));
 
 $query = 'SELECT emails.id AS id FROM emails';
-//BEGIN SUGARCRM flav=pro ONLY
 $query .= ' LEFT JOIN team_memberships ON emails.team_id = team_memberships.team_id';
 $query .= ' LEFT JOIN teams ON emails.team_id = teams.id ';
-//END SUGARCRM flav=pro ONLY
 $query .= " WHERE emails.deleted = 0 AND emails.status = 'unread' AND emails.assigned_user_id IN ({$groupIds})";  
-//BEGIN SUGARCRM flav=pro ONLY
 if(!$current_user->is_admin) {
 	$query .= "	AND team_memberships.user_id = '{$current_user->id}'";
 }
-//END SUGARCRM flav=pro ONLY
 //$query .= ' LIMIT 1';
 
 //_ppd($query);

@@ -54,9 +54,7 @@ class ListLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
         MB_POPUPLIST,
         MB_POPUPSEARCH,
         MB_SIDECARPOPUPVIEW,
-        //BEGIN SUGARCRM flav=pro ONLY
     	MB_WIRELESSLISTVIEW,
-    	//END SUGARCRM flav=pro ONLY
         //BEGIN SUGARCRM flav=ent ONLY
         MB_PORTALLISTVIEW,
         //END SUGARCRM flav=ent ONLY

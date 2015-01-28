@@ -35,9 +35,7 @@ include("metadata/meetings_leadsMetaData.php");
 include("metadata/opportunities_contactsMetaData.php");
 include("metadata/user_feedsMetaData.php");
 include("metadata/users_passwordLinkMetaData.php");
-//BEGIN SUGARCRM flav=pro ONLY
 include("metadata/team_sets_teamsMetaData.php");
-//END SUGARCRM flav=pro ONLY
 include("metadata/prospect_list_campaignsMetaData.php");
 include("metadata/prospect_lists_prospectsMetaData.php");
 include("metadata/roles_modulesMetaData.php");
@@ -55,13 +53,10 @@ include("metadata/projects_contactsMetaData.php");
 include("metadata/projects_opportunitiesMetaData.php");
 
 
-//BEGIN SUGARCRM flav=pro ONLY
 include("metadata/report_cache.php");
 include("metadata/report_schedulesMetaData.php");
 include("metadata/saved_reportsMetaData.php");
-//END SUGARCRM flav=pro ONLY
 
-//BEGIN SUGARCRM flav=pro ONLY
 include("metadata/product_bundle_noteMetaData.php");
 include("metadata/product_bundle_productMetaData.php");
 include("metadata/product_bundle_quoteMetaData.php");
@@ -71,10 +66,8 @@ include("metadata/quotes_contactsMetaData.php");
 include("metadata/quotes_opportunitiesMetaData.php");
 include("metadata/products_categoryTreeMetaData.php");
 include("metadata/fts_queueMetaData.php");
-//END SUGARCRM flav=pro ONLY
 include("metadata/workflow_schedulesMetaData.php");
 include("metadata/schedulers_timesMetaData.php");
-//BEGIN SUGARCRM flav=pro ONLY
 include("metadata/contracts_opportunitiesMetaData.php");
 include("metadata/contracts_contactsMetaData.php");
 include("metadata/contracts_quotesMetaData.php");
@@ -82,8 +75,6 @@ include("metadata/contracts_productsMetaData.php");
 include("metadata/projects_quotesMetaData.php");
 include("metadata/projects_revenuelineitemsMetaData.php");
 include("metadata/users_holidaysMetaData.php");
-
-//END SUGARCRM flav=pro ONLY
 //BEGIN SUGARCRM flav=ent ONLY
 
 include("metadata/dataset_layoutsMetaData.php");
@@ -100,9 +91,7 @@ include("metadata/email_marketing_prospect_listsMetaData.php");
 
 //linked documents.
 include("metadata/linked_documentsMetaData.php");
-//BEGIN SUGARCRM flav=pro ONLY
 include("metadata/sessionHistoryMetaData.php");
-//END SUGARCRM flav=pro ONLY
 
 // Documents, so we can start replacing Notes as the primary way to attach something to something else.
 include("metadata/documents_accountsMetaData.php");
@@ -110,15 +99,12 @@ include("metadata/documents_contactsMetaData.php");
 include("metadata/documents_opportunitiesMetaData.php");
 include("metadata/documents_casesMetaData.php");
 include("metadata/documents_bugsMetaData.php");
-//BEGIN SUGARCRM flav=pro ONLY
 include("metadata/documents_productsMetaData.php");
 include("metadata/documents_revenuelineitemsMetaData.php");
 include("metadata/documents_quotesMetaData.php");
 include("metadata/forecast_treeMetaData.php");
-//END SUGARCRM flav=pro ONLY
 include("metadata/oauth_nonce.php");
 include("metadata/activities_usersMetaData.php");
-include("metadata/tag_bean_relMetaData.php");
 include("metadata/metadata_cacheMetaData.php");
 
 $defs = SugarAutoLoader::loadExtension('tabledictionary');

@@ -10,6 +10,9 @@ describe("Drawer Layout", function() {
     beforeEach(function() {
         SugarTest.testMetadata.init();
         SugarTest.loadHandlebarsTemplate('record', 'view', 'base');
+        SugarTest.loadHandlebarsTemplate('record', 'view', 'base', 'headerpane');
+        SugarTest.loadHandlebarsTemplate('record', 'view', 'base', 'tabspanels');
+        SugarTest.loadHandlebarsTemplate('record', 'view', 'base', 'businesscard');
         SugarTest.loadHandlebarsTemplate('button', 'field', 'base', 'edit');
         SugarTest.loadHandlebarsTemplate('drawer', 'layout', 'base', 'expand');
         SugarTest.loadComponent('base', 'view', 'record');

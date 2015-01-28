@@ -66,10 +66,8 @@ class NoBlankFieldUpdateOnFirstSyncTest extends SOAPTestCase
         $contact2->disable_custom_fields = true;
         $contact2->email1 = '';
         $contact2->email2 = '';
-        //BEGIN SUGARCRM flav=pro ONLY
         $contact2->team_id = '1';
         $contact2->team_set_id = '1';
-        //END SUGARCRM flav=pro ONLY
         $contact2->save();
 		$this->c2 = $contact2;
         //DELETE contact_users entries that may have remained

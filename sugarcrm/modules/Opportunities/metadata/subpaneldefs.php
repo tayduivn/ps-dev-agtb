@@ -152,7 +152,6 @@ $layout_defs['Opportunities'] = array(
 				),
 			),
 		),
-        //BEGIN SUGARCRM flav=pro ONLY
 		'quotes' => array(
 			'order' => 40,
 			'module' => 'Quotes',
@@ -217,7 +216,6 @@ $layout_defs['Opportunities'] = array(
 						'initial_filter_fields'=>array('account_id'=>'account_id','account_name'=>'account_name')),
 				)
 		),
-        //END SUGARCRM flav=pro ONLY
 	),
 );
 ?>

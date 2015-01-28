@@ -285,9 +285,6 @@ $dictionary['Prospect'] = array(
             )
         )
     ),
-    'uses' => array(
-        'taggable',
-    ),
 );
 VardefManager::createVardef(
     'Prospects',

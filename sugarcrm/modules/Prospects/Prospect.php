@@ -25,9 +25,7 @@ class Prospect extends Person {
 	var $created_by;
 	var $created_by_name;
 	var $modified_by_name;
-//BEGIN SUGARCRM flav=pro ONLY
 	var $team_id;
-//END SUGARCRM flav=pro ONLY
 	var $description;
 	var $salutation;
 	var $first_name;
@@ -64,9 +62,7 @@ class Prospect extends Person {
 	var $assigned_real_user_name;
 	// These are for related fields
 	var $assigned_user_name;
-//BEGIN SUGARCRM flav=pro ONLY
 	var $team_name;
-//END SUGARCRM flav=pro ONLY
 	var $module_dir = 'Prospects';
 	var $table_name = "prospects";
 	var $object_name = "Prospect";
@@ -91,14 +87,12 @@ class Prospect extends Person {
 
 	public function __construct() {
 		parent::__construct();
-		//BEGIN SUGARCRM flav=pro ONLY
 		global $current_user;
 		if(!empty($current_user)) {
 			$this->team_id = $current_user->default_team;	//default_team is a team id
 		} else {
 			$this->team_id = 1; // make the item globally accessible
 		}
-		//END SUGARCRM flav=pro ONLY
 	}
 
 	function fill_in_additional_list_fields()

@@ -179,7 +179,6 @@ class TemplateEnum extends TemplateText{
      * @param DynamicField $df
      */
     function delete($df){
-        //BEGIN SUGARCRM flav=pro ONLY
         //If a dropdown uses the field that is being delted as a parent dropdown, we need to remove that dependency
         $seed = BeanFactory::getBean($df->getModuleName());
         if ($seed)
@@ -206,8 +205,6 @@ class TemplateEnum extends TemplateText{
                 }
             }
         }
-
-        //END SUGARCRM flav=pro ONLY
         parent::delete($df);
     }
 }

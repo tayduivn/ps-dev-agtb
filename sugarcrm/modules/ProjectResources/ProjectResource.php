@@ -32,17 +32,15 @@ class ProjectResource extends SugarBean {
 	var $assigned_user_id;
 	var $modified_user_id;
 	var $created_by;
-	//BEGIN SUGARCRM flav=pro ONLY
+
 	var $team_id;
-	//END SUGARCRM flav=pro ONLY
 	var $deleted;
 
 	// related information
 	var $modified_by_name;
 	var $created_by_name;
-	//BEGIN SUGARCRM flav=pro ONLY
+
 	var $team_name;
-	//END SUGARCRM flav=pro ONLY
 
 	var $project_id;
 	var $resource_id;

@@ -34,6 +34,9 @@ class AdministrationController extends SugarController
         array_unshift($enabled_tabs, 'Home');
         $tabs = new TabController();
         $tabs->set_system_tabs($enabled_tabs);
+        //BEGIN SUGARCRM flav=ent ONLY
+        $tabs->setPortalTabs(array_values(array_intersect($enabled_tabs, $tabs->getAllPortalTabs())));
+        //END SUGARCRM flav=ent ONLY
         $tabs->set_users_can_edit(isset($_REQUEST['user_edit_tabs']) && $_REQUEST['user_edit_tabs'] == 1);
 
         // handle the subpanels
@@ -97,7 +100,6 @@ class AdministrationController extends SugarController
         );
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
     public function action_updatewirelessenabledmodules()
     {
         require_once('modules/Administration/Forms.php');
@@ -210,7 +212,6 @@ class AdministrationController extends SugarController
         }
         sugar_cleanup(TRUE);
     }
-    //END SUGARCRM flav=pro ONLY
 
     /**
      * action_saveglobalsearchsettings
@@ -234,7 +235,6 @@ class AdministrationController extends SugarController
 	    	 require_once('modules/Home/UnifiedSearchAdvanced.php');
 	    	 $unifiedSearchAdvanced = new UnifiedSearchAdvanced();
 	    	 $unifiedSearchAdvanced->saveGlobalSearchSettings();
-             //BEGIN SUGARCRM flav=pro ONLY
              //Save FTS Settings
              $type = !empty($_REQUEST['type']) ? $_REQUEST['type'] : '';
              $host = !empty($_REQUEST['host']) ? $_REQUEST['host'] : '';
@@ -268,7 +268,6 @@ class AdministrationController extends SugarController
              if(!$ftsConnectionValid)
                  echo $GLOBALS['mod_strings']['LBL_FTS_CONNECTION_INVALID'];
              else
-             //END SUGARCRM flav=pro ONLY
 	    	    echo "true";
     	 }
          catch (Exception $ex)

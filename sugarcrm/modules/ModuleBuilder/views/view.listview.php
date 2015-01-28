@@ -83,19 +83,15 @@ class ViewListView extends SugarView
         $layoutLabel = 'LBL_LAYOUTS' ;
         $layoutView = 'layouts' ;
 
-        //BEGIN SUGARCRM flav=pro ONLY
         if ( $this->editLayout == MB_WIRELESSLISTVIEW )
         {
         	$layoutLabel = 'LBL_WIRELESSLAYOUTS' ;
         	$layoutView = 'wirelesslayouts' ;
         }
-        //END SUGARCRM flav=pro ONLY
 
         $labels = array (
         			MB_LISTVIEW => 'LBL_LISTVIEW' ,
-        			//BEGIN SUGARCRM flav=pro ONLY
         			MB_WIRELESSLISTVIEW => 'LBL_WIRELESSLISTVIEW' ,
-        			//END SUGARCRM flav=pro ONLY
         			) ;
         $translatedViewType = '' ;
 		if ( isset ( $labels [ strtolower ( $this->editLayout ) ] ) )

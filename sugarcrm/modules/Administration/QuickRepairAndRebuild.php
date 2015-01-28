@@ -116,14 +116,12 @@ class RepairAndClear
             case 'repairMetadataAPICache':
                 $this->repairMetadataAPICache();
                 break;
-            //BEGIN SUGARCRM flav=pro ONLY
             case 'clearPDFFontCache':
                 $this->clearPDFFontCache();
                 break;
             case 'resetForecasting':
                 $this->resetForecasting();
                 break;
-            //END SUGARCRM flav=pro ONLY
             case 'repairConfigs':
                 $this->repairBaseConfig();
                 //BEGIN SUGARCRM flav=ent ONLY
@@ -140,9 +138,7 @@ class RepairAndClear
                 $this->clearSearchCache();
                 $this->clearExternalAPICache();
                 $this->clearAdditionalCaches();
-                //BEGIN SUGARCRM flav=pro ONLY
                 $this->clearPDFFontCache();
-                //END SUGARCRM flav=pro ONLY
                 $this->rebuildExtensions();
                 $this->rebuildFileMap();
                 $this->rebuildAuditTables();
@@ -471,7 +467,6 @@ class RepairAndClear
         
         ExternalAPIFactory::clearCache();
     }
-	//BEGIN SUGARCRM flav=pro ONLY
     public function clearPDFFontCache()
 	{
         global $mod_strings, $sugar_config;
@@ -480,7 +475,6 @@ class RepairAndClear
         $fontManager = new FontManager();
         $fontManager->clearCachedFile();
     }
-    //END SUGARCRM flav=pro ONLY
 
     /*
      * Catch all function to clear out any misc. caches we may have
@@ -627,7 +621,6 @@ class RepairAndClear
 			next($beanList);
 		}
 	}
-    //BEGIN SUGARCRM flav=pro ONLY
 
     /**
      * This is a private function to allow forecasts config settings to be reset
@@ -638,5 +631,4 @@ class RepairAndClear
         $db->query("UPDATE config SET value = 0 WHERE name = 'is_setup'");
         $db->query("UPDATE config SET value = 0 WHERE name = 'has_commits'");
     }
-    //END SUGARCRM flav=pro ONLY
 }

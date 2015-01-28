@@ -32,9 +32,7 @@ $fields_array['TeamNotices'] = array ('column_fields' =>Array("id"
 		,'url_title'
 		),
         'list_fields' =>  Array('id', 'name', 'description','date_start', 'date_end', 'status', 'url', 'url_title'
-	//BEGIN SUGARCRM flav=pro ONLY
 	, "team_name"
-	//END SUGARCRM flav=pro ONLY
 	),
     'required_fields' =>   array("name"=>1, "status"=>2, "date_start"=>1, "date_end"=>2),
 );

@@ -35,10 +35,8 @@ class StudioBrowser{
     function loadRelatableModules(){
         $d = dir('modules');
         while($e = $d->read()){
-        	//BEGIN SUGARCRM flav=pro ONLY
         	if( ( (isset($_REQUEST['view_module'])) && ($_REQUEST['view_module'] == 'Project') )
                 && ($e=='ProjectTask') && (isset($_REQUEST['id'])) && $_REQUEST['id']=='relEditor' && $_REQUEST['relationship_name'] == '') continue; //46141 - disabling creating custom relationship between Projects and ProjectTasks in studio
-            //END SUGARCRM flav=pro ONLY
         	if(substr($e, 0, 1) == '.' || !is_dir('modules/' . $e))continue;
             if(SugarAutoLoader::existingCustomOne("modules/{$e}/metadata/studio.php") && isset($GLOBALS [ 'beanList' ][$e])) // installed modules must also exist in the beanList
             {

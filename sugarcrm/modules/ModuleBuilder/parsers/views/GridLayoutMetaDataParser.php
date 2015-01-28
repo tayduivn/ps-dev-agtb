@@ -24,10 +24,8 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
     	MB_EDITVIEW => 'EditView' ,
     	MB_DETAILVIEW => 'DetailView' ,
     	MB_QUICKCREATE => 'QuickCreate',
-    	//BEGIN SUGARCRM flav=pro ONLY
     	MB_WIRELESSEDITVIEW => 'EditView' ,
     	MB_WIRELESSDETAILVIEW => 'DetailView' ,
-    	//END SUGARCRM flav=pro ONLY
         //BEGIN SUGARCRM flav=ent ONLY
         MB_PORTALRECORDVIEW => array('portal','view','record'),
         //END SUGARCRM flav=ent ONLY
@@ -60,8 +58,9 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
      * @param string $moduleName     The name of the module to which this view belongs
      * @param string $packageName    If not empty, the name of the package to which this view belongs
      * @param string $client         The client making the request for this parser
+     * @param array  $params         Additional parser parameters
      */
-    function __construct ($view , $moduleName , $packageName = '', $client = '')
+    public function __construct($view, $moduleName, $packageName = '', $client = '', array $params = array())
     {
         $GLOBALS [ 'log' ]->debug ( get_class ( $this ) . "->__construct( {$view} , {$moduleName} , {$packageName} )" ) ;
 
@@ -78,7 +77,7 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
         if (empty ( $packageName ))
         {
             require_once 'modules/ModuleBuilder/parsers/views/DeployedMetaDataImplementation.php' ;
-            $this->implementation = new DeployedMetaDataImplementation($view, $moduleName, $client);
+            $this->implementation = new DeployedMetaDataImplementation($view, $moduleName, $client, $params);
         } else
         {
             require_once 'modules/ModuleBuilder/parsers/views/UndeployedMetaDataImplementation.php' ;
@@ -714,7 +713,6 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
                 	{
                         $newRow [ $colID - $offset ] = $fieldname;
                 	}
-                	//BEGIN SUGARCRM flav=pro ONLY
 	                if ($this->_view == MB_WIRELESSEDITVIEW && !empty($fielddefs [ $fieldname ]['calculated']))
 			        {
 			            if (is_array($newRow [ $colID - $offset ]))
@@ -725,7 +723,6 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
 			            	$newRow [ $colID - $offset ] = array('name' => $newRow [ $colID - $offset ],  'ReadOnly' => true);
 			            }
 			        }
-			        //END SUGARCRM flav=pro ONLY
                 }
                 $panels [ $panelID ] [ $rowID ] = $newRow ;
             }
@@ -894,13 +891,11 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
         {
 	        foreach ( $panels as $rows) {
 	            foreach ($rows as $fields) {
-//BEGIN SUGARCRM flav=pro ONLY
 	            	//wireless layouts have one less level of depth
 	                if (is_array($fields) && isset($fields['name'])) {
 	                	$ret[$fields['name']] = $fields;
 	                	continue;
 	                }
-//END SUGARCRM flav=pro ONLY
 	                if (!is_array($fields)) {
 	                	$ret[$fields] = $fields;
 	                	continue;

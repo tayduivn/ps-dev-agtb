@@ -153,9 +153,7 @@ class TemplateHandler {
                 $javascript->addAllFields('', null,true);
 
             $validatedFields = array();
-            //BEGIN SUGARCRM flav=pro ONLY
             $validatedFields[] = 'team_name';
-            //END SUGARCRM flav=pro ONLY
             $javascript->addToValidateBinaryDependency('assigned_user_name', 'alpha', $javascript->buildStringToTranslateInSmarty('ERR_SQS_NO_MATCH_FIELD').': '.$javascript->buildStringToTranslateInSmarty('LBL_ASSIGNED_TO'), 'false', '', 'assigned_user_id');
             $validatedFields[] = 'assigned_user_name';
             //Add remaining validation dependency for related fields
@@ -188,9 +186,7 @@ class TemplateHandler {
             $contents .= "{literal}\n";
             $contents .= $javascript->getScript();
             $contents .= $this->createQuickSearchCode($defs, $defs2, $view, $module);
-			//BEGIN SUGARCRM flav=pro ONLY
 			$contents .= $this->createDependencyJavascript($defs, $metaDataDefs, $view, $module);
-			//END SUGARCRM flav=pro ONLY
             $contents .= "{/literal}\n";
         }else if(preg_match('/^SearchForm_.+/', $view)){
             global $dictionary, $app_strings, $mod_strings;
@@ -200,7 +196,6 @@ class TemplateHandler {
             $contents .= $this->createQuickSearchCode($defs, array(), $view);
             $contents .= '{/literal}';
         }//if
-		//BEGIN SUGARCRM flav=pro ONLY
 		else if ($view == 'DetailView') {
             global $dictionary, $app_strings, $mod_strings;
             $mod = BeanFactory::getObjectName($module);
@@ -209,7 +204,6 @@ class TemplateHandler {
             $contents .= $this->createDependencyJavascript($defs, $metaDataDefs, $view, $module);
             $contents .= "{/literal}\n";
         }//if
-		//END SUGARCRM flav=pro ONLY
 
         //Remove all the copyright comments
         $contents = preg_replace('/\{\*[^\}]*?\*\}/', '', $contents);
@@ -325,10 +319,8 @@ class TemplateHandler {
 
                         if($matches[0] == 'Campaigns') {
                             $sqs_objects[$name.'_'.$parsedView] = $qsd->loadQSObject('Campaigns', 'Campaign', $field['name'], $field['id_name'], $field['id_name']);
-                        //BEGIN SUGARCRM flav=pro ONLY
                         } else if($matches[0] == 'Teams') {
                             $sqs_objects[$name.'_'.$parsedView] = $qsd->loadQSObject('Teams', 'Team', $field['name'], $field['name'], $field['id_name']);
-                        //END SUGARCRM flav=pro ONLY
                         } else if($matches[0] == 'Users'){
 
                             if(!empty($f['name']) && !empty($f['id_name'])) {
@@ -339,10 +331,8 @@ class TemplateHandler {
                             }
                         } else if($matches[0] == 'Campaigns') {
                             $sqs_objects[$name.'_'.$parsedView] = $qsd->loadQSObject('Campaigns', 'Campaign', $field['name'], $field['id_name'], $field['id_name']);
-                        //BEGIN SUGARCRM flav=pro ONLY
                         } else if($matches[0] == 'Teams') {
                             $sqs_objects[$name.'_'.$parsedView] = $qsd->loadQSObject('Teams', 'Team', $field['name'], $field['name'], $field['id_name']);
-                        //END SUGARCRM flav=pro ONLY
                         } else if($matches[0] == 'Accounts') {
                             $nameKey = $name;
                             $idKey = isset($field['id_name']) ? $field['id_name'] : 'account_id';
@@ -414,10 +404,8 @@ class TemplateHandler {
 
                         if($matches[0] == 'Campaigns') {
                             $sqs_objects[$name] = $qsd->loadQSObject('Campaigns', 'Campaign', $field['name'], $field['id_name'], $field['id_name']);
-                            //BEGIN SUGARCRM flav=pro ONLY
                         } else if($matches[0] == 'Teams') {
                             $sqs_objects[$name] = $qsd->loadQSObject('Teams', 'Team', $field['name'], $field['name'], $field['id_name']);
-                            //END SUGARCRM flav=pro ONLY
                         } else if($matches[0] == 'Users'){
                             if($field['name'] == 'reports_to_name'){
                                 $sqs_objects[$name] = $qsd->getQSUser('reports_to_name','reports_to_id');
@@ -432,10 +420,8 @@ class TemplateHandler {
 							}
                         } else if($matches[0] == 'Campaigns') {
                             $sqs_objects[$name] = $qsd->loadQSObject('Campaigns', 'Campaign', $field['name'], $field['id_name'], $field['id_name']);
-                        //BEGIN SUGARCRM flav=pro ONLY
                         } else if($matches[0] == 'Teams') {
                             $sqs_objects[$name] = $qsd->loadQSObject('Teams', 'Team', $field['name'], $field['name'], $field['id_name']);
-                        //END SUGARCRM flav=pro ONLY
                         } else if($matches[0] == 'Accounts') {
                             $nameKey = $name;
                             $idKey = isset($field['id_name']) ? $field['id_name'] : 'account_id';
@@ -519,7 +505,6 @@ class TemplateHandler {
        return '';
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
     /**
      * prepare Calculation Fields for creation formula
      *
@@ -589,7 +574,6 @@ class TemplateHandler {
 
         return $js;
     }
-    //END SUGARCRM flav=pro ONLY
     
     /**
      * Get lookup array for QuickSearchDefaults custom class

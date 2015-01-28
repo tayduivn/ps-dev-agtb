@@ -72,6 +72,8 @@ var NotePanel = function (options) {
 
     this.parent = null;
 
+    this.app = null;
+
     NotePanel.prototype.initObject.call(this, options);
 };
 
@@ -111,7 +113,11 @@ NotePanel.prototype.initObject = function (options) {
 //        .setLabelWidth(defaults.labelWidth)
 //        .setFooterAlign(defaults.footerAlign);
 //        .setLogType(defaults.logType);
-
+    if(App){
+        this.app = App;
+    } else {
+        this.app = parent.SUGAR.App;
+    }
 };
 
 /**
@@ -230,45 +236,6 @@ NotePanel.prototype.load = function () {
 };
 
 /**
- * Reloads the form
- */
-//
-//HistoryPanel.prototype.reload = function () {
-//    this.loaded = false;
-//    this.load();
-//};
-
-/**
- * Applies the data to the form
- */
-//HistoryPanel.prototype.applyData = function (dontLoad) {
-//    var propertyName, i, related;
-//    if (this.data) {
-//        if (this.data.related) {
-//            for (i = 0; i < this.items.length; i += 1) {
-//                if (this.items[i].getType() === 'ComboboxField' && this.items[i].related) {
-//                    related = this.items[i].related;
-//                    if (this.data.related[related]) {
-//                        this.items[i].setOptions(this.data.related[related]);
-//                    }
-//                }
-//            }
-//        }
-//        for (propertyName in this.data) {
-//            for (i = 0; i < this.items.length; i += 1) {
-//                if (this.items[i].name === propertyName) {
-//                    this.items[i].setValue(this.data[propertyName]);
-//                    break;
-//                }
-//            }
-//        }
-//    }
-//    if (this.callback.loaded && !dontLoad) {
-//        this.callback.loaded(this.data, this.proxy !== null);
-//    }
-//};
-
-/**
  * Add Fields Items
  * @param {Object/Field}item
  */
@@ -276,10 +243,8 @@ NotePanel.prototype.addLog = function (options) {
     var html,
         newItem,
         buttonAnchor,
-        proxy,
-    //that = this;
-
-        newItem = new LogField(options);
+        self = this;
+    newItem = new LogField(options);
 
     newItem.setParent(this);
     newItem.logId = options.logId;
@@ -295,24 +260,15 @@ NotePanel.prototype.addLog = function (options) {
     $(buttonAnchor).click(function (e) {
         e.preventDefault();
         e.stopPropagation();
-        App.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
-        proxy = new SugarProxy({
-            //url: SUGAR_URL + '/rest/v10/Log/',
-            url: 'pmse_Inbox/delete_notes/'+newItem.logId,
-//              restClient: restClient,
-//                 uid : root.caseId,
-            callback: null
-        });
-        proxy.removeData (null, {
-            success: function (data) {
+        self.app.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
+
+        url = self.app.api.buildURL('pmse_Inbox/delete_notes/'+newItem.logId, null, null);
+        self.app.api.call('delete', url, {}, {
+            success: function (response) {
                 $(newItem.html).remove();
-                App.alert.dismiss('upload');
+                self.app.alert.dismiss('upload');
             }
         });
-
-
-        //console.log(newItem);
-
     });
 
     this.body.appendChild(html);
@@ -320,26 +276,8 @@ NotePanel.prototype.addLog = function (options) {
 
     if (options.callback) options.callback.success();
 
-
-
-
     return this;
 };
-
-
-/**
- * Sets the items
- * @param {Array} items
- * @return {*}
- */
-//HistoryPanel.prototype.setItems = function (items) {
-//    var i;
-//    for (i = 0; i < items.length; i += 1) {
-//        this.addItem(items[i]);
-//    }
-//    return this;
-//};
-
 
 /**
  * Returns the data
@@ -366,7 +304,7 @@ NotePanel.prototype.setDirty = function (value) {
 
 
 NotePanel.prototype.attachListeners = function () {
-    var i, root = this, proxy, data;
+    var i, root = this, proxy, data, self = this;
 
 
     for (i = 0; i < this.items.length; i += 1) {
@@ -379,56 +317,48 @@ NotePanel.prototype.attachListeners = function () {
     $(this.body).mousedown(function (e) {
         e.stopPropagation();
     });
+
     $(this.addNoteBtn).click(function (e) {
         e.preventDefault();
         e.stopPropagation();
-        App.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
-        //alert('hello add note btn');
-//        console.log('hello add note btn');
-//        console.log(root.items[0].value);
-        var pictureUrl = App.api.buildFileURL({
+        self.app.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
+        var pictureUrl = self.app.api.buildFileURL({
             module: 'Users',
-            id: App.user.id,
+            id: self.app.user.id,
             field: 'picture'
         });
         var f = new Date();
         if (root.items[0].value && root.items[0].value.trim()!=='') {
-
-//            console.log(root.items[0].value);
             data = {
                 not_content: root.items[0].value,
                 cas_id: root.caseId,
                 cas_index:root.caseIndex,
                 not_user_id: 1
             };
+            url = self.app.api.buildURL('pmse_Inbox/save_notes/', null, null);
+            attributes = {
+                data: data
+            };
 
-            proxy = new SugarProxy({
-                //url: SUGAR_URL + '/rest/v10/Log/',
-                url: 'pmse_Inbox/save_notes/',
-//              restClient: restClient,
-//                 uid : root.caseId,
-                callback: null
-            });
-            proxy.createData(data, {
+            self.app.api.call('create', url, attributes, {
                 success: function (result) {
-                   var newLog = {
+                    var newLog = {
                         name: 'log' ,
                         label: root.items[0].value,
-                        user: App.user.attributes.full_name,
+                        user: self.app.user.attributes.full_name,
                         picture : pictureUrl,
                         duration : '5 Second',
-                        startDate: Date.parse(result.date_entered).toString('MMMM d, yyyy HH:mm'),
+                        //startDate: Date.parse(result.date_entered).toString('MMMM d, yyyy HH:mm'),
+                        startDate: result.date_entered,
                         deleteBtn : true,
                         logId  : result.id
                     };
                     root.addLog(newLog);
                     root.items[0].setValue('');
-                    App.alert.dismiss('upload');
+                    self.app.alert.dismiss('upload');
                 }
             });
-
         }
-
     });
 
 };

@@ -67,13 +67,11 @@ abstract class AbstractMetaDataImplementation
     MB_DETAILVIEW               => 'viewdefs',
     MB_QUICKCREATE              => 'viewdefs',
     MB_RECORDVIEW               => 'viewdefs',
-    //BEGIN SUGARCRM flav=pro ONLY
     MB_WIRELESSEDITVIEW         => 'viewdefs',
     MB_WIRELESSDETAILVIEW       => 'viewdefs',
     MB_WIRELESSLISTVIEW         => 'viewdefs',
     MB_WIRELESSBASICSEARCH      => 'searchdefs',
     MB_WIRELESSADVANCEDSEARCH   => 'searchdefs',
-    //END SUGARCRM flav=pro ONLY
     //BEGIN SUGARCRM flav=ent ONLY
     MB_PORTALEDITVIEW           => 'viewdefs',
     MB_PORTALDETAILVIEW         => 'viewdefs',
@@ -102,6 +100,47 @@ abstract class AbstractMetaDataImplementation
     public function isDeployed()
     {
         return $this->_deployed;
+    }
+
+    /**
+     * Checks if metadata file with the given parameters exists
+     *
+     * @param string $view The view type
+     * @param string $moduleName The name of the module that will use this metadata
+     * @param string $location The location of the file
+     * @param array $params Additional metadata parameters
+     *
+     * @return bool
+     */
+    public function fileExists($view, $moduleName, $location, array $params)
+    {
+        $filename = $this->getFileNameByParameters($view, $moduleName, $location, null, $params);
+        return file_exists($filename);
+    }
+
+    /**
+     * Returns metadata file name for the given additional metadata parameters
+     *
+     * @param string $view The view type
+     * @param string $module The name of the module that will use this metadata
+     * @param string $location The location of the file
+     * @param string $client The client type
+     * @param array $params Additional metadata parameters
+     * @return string
+     */
+    protected function getFileNameByParameters($view, $module, $location, $client, array $params = array())
+    {
+        $params = array_merge($params, array(
+            'client' => $this->_viewClient,
+            'location' => $location,
+        ));
+
+        if ($client) {
+            $params['client'] = $client;
+        }
+
+        $file = MetaDataFiles::getFile($view, $module, $params);
+        return MetaDataFiles::getFilePath($file);
     }
 
     /*
@@ -476,5 +515,4 @@ abstract class AbstractMetaDataImplementation
             }
         }
     }
-
 }

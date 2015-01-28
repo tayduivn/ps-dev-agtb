@@ -49,9 +49,7 @@ $viewdefs['Calls']['mobile']['view']['edit'] = array(
                 ),
                 'description',
                 'assigned_user_name',
-                //BEGIN SUGARCRM flav=pro ONLY
                 'team_name',
-                //END SUGARCRM flav=pro ONLY
             ),
         ),
 	),

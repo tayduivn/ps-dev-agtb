@@ -35,9 +35,7 @@ $dictionary['Account'] = array(
             'type' => 'varchar',
             'len' => 10,
             'comment' => 'SIC code of the account',
-            //BEGIN SUGARCRM flav=pro ONLY
             'merge_filter' => 'enabled',
-            //END SUGARCRM flav=pro ONLY
         ),
          'duns_num' =>
           array (
@@ -186,7 +184,6 @@ $dictionary['Account'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_OPPORTUNITY',
         ),
-        //BEGIN SUGARCRM flav=pro ONLY
         'quotes' => array(
             'name' => 'quotes',
             'type' => 'link',
@@ -206,7 +203,6 @@ $dictionary['Account'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_QUOTES_SHIP_TO',
         ),
-//END SUGARCRM flav=pro ONLY
         'project' => array (
              'name' => 'project',
              'type' => 'link',
@@ -246,7 +242,6 @@ $dictionary['Account'] = array(
             'relationship' => 'campaign_accounts',
             'source' => 'non-db',
         ),
-//BEGIN SUGARCRM flav=pro ONLY
         'revenuelineitems' =>  array(
             'name' => 'revenuelineitems',
             'type' => 'link',
@@ -282,7 +277,6 @@ $dictionary['Account'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_CONTRACTS',
         ),
-//END SUGARCRM flav=pro ONLY
         'campaign_id' => array(
             'name' => 'campaign_id',
             'comment' => 'Campaign that generated Account',
@@ -482,11 +476,8 @@ $dictionary['Account'] = array(
     'uses' => array(
         'default',
         'assignable',
-//BEGIN SUGARCRM flav=pro ONLY
         'team_security',
-//END SUGARCRM flav=pro ONLY
         'company',
-        'taggable',
     ),
 );
 

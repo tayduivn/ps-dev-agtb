@@ -29,9 +29,7 @@ $viewdefs[$module_name]['DetailView'] = array(
   
   array (
     'priority',
-	//BEGIN SUGARCRM flav=pro ONLY
     'team_name',
-	//END SUGARCRM flav=pro ONLY
   ),
   
   array (

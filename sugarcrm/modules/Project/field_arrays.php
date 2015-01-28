@@ -24,9 +24,7 @@ $fields_array['Project'] = array ('column_fields' => array(
         'assigned_user_id',
         'modified_user_id',
         'created_by',
-//BEGIN SUGARCRM flav=pro ONLY
         'team_id',
-//END SUGARCRM flav=pro ONLY
         'name',
         'description',
         'deleted',
@@ -40,10 +38,8 @@ $fields_array['Project'] = array ('column_fields' => array(
         'id',
         'assigned_user_id',
         'assigned_user_name',
-//BEGIN SUGARCRM flav=pro ONLY
         'team_id',
         'team_name',
-//END SUGARCRM flav=pro ONLY
         'name',
         'relation_id',
         'relation_name',

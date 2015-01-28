@@ -41,10 +41,8 @@ class BugsApi extends ModuleApi
 
             if (!empty($contact)) {
                 $args['assigned_user_id'] = $contact->assigned_user_id;
-                //BEGIN SUGARCRM flav=pro ONLY
                 $args['team_id']     = $contact->fetched_row['team_id'];
                 $args['team_set_id'] = $contact->fetched_row['team_set_id'];
-                //END SUGARCRM flav=pro ONLY
             }
         }
 

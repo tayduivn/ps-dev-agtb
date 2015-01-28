@@ -29,8 +29,8 @@ Studio2 = {
 			DDM = YAHOO.utilDragDropMgr;
 		
 		Studio2.maxColumns = parseInt(document.getElementById('maxColumns').value);
-		Studio2.setStartId(parseInt(document.getElementById('idCount').value));
-		Studio2.setStartId(1000);
+		//Studio2.setStartId(parseInt(document.getElementById('idCount').value));
+		Studio2.setStartId(10000);
 		Studio2.fieldwidth = parseInt(document.getElementById('fieldwidth').value);
 		Studio2.panelNumber = parseInt(document.getElementById('nextPanelId').value);
 		Studio2.isIE = SUGAR.isIE;
@@ -573,7 +573,6 @@ Studio2 = {
 				var newRow = Studio2.newRow(false);
 				panel.appendChild(newRow);
 				Studio2.activateElement(newRow);
-//				debugger;
 			}
 		}
 	},
@@ -802,8 +801,12 @@ Studio2 = {
 	},
 
 	handleSave: function() {
+        // do not save role specific view which is synchronized with the based one without deployment
+        if (ModuleBuilder.state.isSynced) {
+            return;
+        }
 		ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_SAVING'));
-		ModuleBuilder.state.isDirty=false;
+        ModuleBuilder.state.markAsClean();
 		this.prepareForSave();
 		// set <input type='hidden' name='action' value='saveLayout'>
 		var saveForm = document.forms['prepareForSave'];
@@ -818,7 +821,7 @@ Studio2 = {
 
 	handlePublish: function() {
 		ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_SAVING'));
-		ModuleBuilder.state.isDirty=false;
+        ModuleBuilder.state.markAsClean();
 		this.prepareForSave();
 		// set <input type='hidden' name='action' value='saveAndPublishLayout'>
 		var saveForm = document.forms['prepareForSave'];
@@ -827,6 +830,13 @@ Studio2 = {
 		inputField.setAttribute('name','action');
 		inputField.setAttribute('value','saveAndPublishLayout');
 		saveForm.appendChild(inputField);
+
+        var isSynced = document.createElement('input');
+        isSynced.setAttribute('type', 'hidden');
+        isSynced.setAttribute('name', 'is_synced');
+        isSynced.setAttribute('value', ModuleBuilder.state.isReset ? 1 : 0);
+        saveForm.appendChild(isSynced);
+
 		ModuleBuilder.submitForm('prepareForSave');
 		ajaxStatus.flashStatus(SUGAR.language.get('ModuleBuilder','LBL_DEPLOYE_COMPLETE'),5000);
 	},
@@ -839,12 +849,10 @@ Studio2 = {
 		}
 		if (view == "detailview")	
 			return true;  
-		//BEGIN SUGARCRM flav=pro ONLY
 		else if (view == "wirelessdetailview")
 			return true;
 		else if (view == "wirelesseditview" && !Studio2.checkCalcFields(view, 'ERROR_CALCULATED_MOBILE_FIELDS'))
 			return false;
-		//END SUGARCRM flav=pro ONLY
 		
 	    return Studio2.checkRequiredFields();
 	},
@@ -886,10 +894,8 @@ Studio2 = {
 	checkCalcFields: function(view, error) {
 		if (view == "DetailView")
            return true;
-        //BEGIN SUGARCRM flav=pro ONLY
    		else if (view == "wirelessdetailview")
    			return true;
-   		//END SUGARCRM flav=pro ONLY
 		
    		var Dom = YAHOO.util.Dom;
 	    var panels = Dom.get('panels');

@@ -21,9 +21,7 @@
      */
     initialize: function(options) {
         this._super('initialize', [options]);
-        if (!this.model.has(this.name)) {
-            this._setToDefault();
-        }
+        this.model.setDefault(this.name, this._getDefaultOption());
     },
 
     /**
@@ -46,7 +44,7 @@
     format: function(value) {
         if (!this.items[value]) {
             value = this._getDefaultOption();
-            this._setToDefault();
+            this.model.set(this.name, value);
         }
 
         return value;
@@ -60,16 +58,4 @@
     _getDefaultOption: function(optionsKeys) {
         return app.lang.getDefaultLanguage();
     },
-
-    /**
-     * Sets the default value for the field.
-     */
-    _setToDefault: function() {
-        var defaultValue = this._getDefaultOption();
-        this.model.set(this.name, defaultValue);
-        //Forecasting uses backbone model (not bean) for custom enums so we have to check here
-        if (_.isFunction(this.model.setDefault)) {
-            this.model.setDefault(this.name, defaultValue);
-        }
-    }
 })

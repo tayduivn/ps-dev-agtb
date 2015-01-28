@@ -265,7 +265,6 @@ class ViewModulefield extends SugarView
         ksort($field_types);
         $fv->ss->assign('field_types',$field_types);
 
-        //BEGIN SUGARCRM flav=pro ONLY
         $ftsEngineType = getFTSEngineType();
         $usa = new UnifiedSearchAdvanced();
         if(SugarSearchEngineFactory::getInstance()->isTypeFtsEnabled($vardef['type']) &&
@@ -295,7 +294,6 @@ class ViewModulefield extends SugarView
                     break;
             }
         }
-        //END SUGARCRM flav=pro ONLY
 
         $fv->ss->assign('importable_options', $GLOBALS['app_list_strings']['custom_fields_importable_dom']);
         $fv->ss->assign('duplicate_merge_options', $GLOBALS['app_list_strings']['custom_fields_merge_dup_dom']);
@@ -322,11 +320,9 @@ class ViewModulefield extends SugarView
         $fv->ss->assign('mod_strings',$GLOBALS['mod_strings']);
 
 		// jchi #24880
-		//BEGIN SUGARCRM flav=pro ONLY
 		if(!isset($vardef['reportable'])){
             $vardef['reportable'] = 1;
 		}
-		//END SUGARCRM flav=pro ONLY
 		// end
 
         $layout = $fv->getLayout($vardef);

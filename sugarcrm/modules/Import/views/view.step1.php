@@ -269,7 +269,6 @@ YAHOO.util.Event.onDOMReady(function(){
         //the external source.
         var selectedModule = selectedModuleEl.value;
         document.getElementById('importstep1').import_module.value = selectedModule;
-        //BEGIN SUGARCRM flav=pro ONLY
         if( personModules[selectedModule] )
         {
             document.getElementById('ext_source_tr').style.display = '';
@@ -284,19 +283,16 @@ YAHOO.util.Event.onDOMReady(function(){
             document.getElementById('ext_source_csv').style.display = 'none';
             document.getElementById('csv_source').checked = true;
         }
-        //END SUGARCRM flav=pro ONLY
     }
 
     YAHOO.util.Event.addListener('ext_source_sign_in_bttn', "click", openExtAuthWindow);
     YAHOO.util.Event.addListener('admin_import_module', "change", setImportModule);
 
-    //BEGIN SUGARCRM flav=pro ONLY
     oButtonGroup.subscribe('checkedButtonChange', function(e)
     {
         selectedExternalSource = e.newValue.get('value');
         isExtSourceValid(selectedExternalSource);
     });
-    //END SUGARCRM flav=pro ONLY
 
     function initExtSourceSelection()
     {

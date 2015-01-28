@@ -38,9 +38,7 @@ class ACLRole extends SugarBean{
 
     public function __construct(){
         parent::__construct();
-        //BEGIN SUGARCRM flav=pro ONLY
         $this->disable_row_level_security =true;
-        //END SUGARCRM flav=pro ONLY
     }
 
     // bug 16790 - missing get_summary_text method led Tracker to display SugarBean's "base implementation"

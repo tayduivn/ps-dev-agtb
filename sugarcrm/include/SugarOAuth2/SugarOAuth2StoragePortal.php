@@ -60,10 +60,8 @@ class SugarOAuth2StoragePortal extends SugarOAuth2StoragePlatform {
             return $userBean;
         } else {
             $contactBean = BeanFactory::newBean('Contacts');
-            //BEGIN SUGARCRM flav=pro ONLY
             // Need to disable the row-level security because this user probably doesn't have access to much of anything
             $contactBean->disable_row_level_security = true;
-            //END SUGARCRM flav=pro ONLY
             $contactBean->retrieve($user_id);
             if ( empty($contactBean->id) ) {
                 return false;
@@ -94,14 +92,12 @@ class SugarOAuth2StoragePortal extends SugarOAuth2StoragePlatform {
             $_SESSION['type'] = $this->userType;
             $_SESSION['contact_id'] = $this->contactBean->id;
             $_SESSION['portal_user_id'] = $this->userBean->id;
-            //BEGIN SUGARCRM flav=pro ONLY
             // This is to make sure the licensing is handled correctly for portal logins
             $sessionManager = new SessionManager();
             $sessionManager->session_type = 'contact';
             $sessionManager->last_request_time = TimeDate::getInstance()->nowDb();
             $sessionManager->session_id = session_id();
             $sessionManager->save();
-            //END SUGARCRM flav=pro ONLY
         }
     }
 
@@ -116,9 +112,7 @@ class SugarOAuth2StoragePortal extends SugarOAuth2StoragePlatform {
             return false;
         }
         $contact = BeanFactory::newBean('Contacts');
-        //BEGIN SUGARCRM flav=pro ONLY
         $contact->disable_row_level_security = true;
-        //END SUGARCRM flav=pro ONLY
         $authBean = $contact->retrieve($token->contact_id);
         if ( $authBean->portal_active != 1 ) {
             $authBean = null;
@@ -266,14 +260,12 @@ class SugarOAuth2StoragePortal extends SugarOAuth2StoragePlatform {
         }
 
         if ( !empty($contact) ) {
-            //BEGIN SUGARCRM flav=pro ONLY
             $sessionManager = new SessionManager();
             if(!$sessionManager->canAddSession()) {
                 //not able to add another session right now
                 $GLOBALS['log']->error("Unable to add new session");
                 throw new SugarApiExceptionNeedLogin('too_many_concurrent_connections',array('Too many concurrent sessions'));
             }
-            //END SUGARCRM flav=pro ONLY
 
             $this->contactBean = $contact;
             if (empty($this->userBean)) {
@@ -298,9 +290,7 @@ class SugarOAuth2StoragePortal extends SugarOAuth2StoragePlatform {
     {
         // It's a portal user, log them in against the Contacts table
         $contact = BeanFactory::newBean('Contacts');
-        //BEGIN SUGARCRM flav=pro ONLY
         $contact->disable_row_level_security = true;
-        //END SUGARCRM flav=pro ONLY
         $contact = $contact->retrieve_by_string_fields(
             array(
                 'portal_name'=>$username,

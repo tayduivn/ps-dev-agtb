@@ -43,13 +43,11 @@ $listViewDefs['Contracts'] = array(
         'label' => 'LBL_LIST_END_DATE', 
         'link' => false,
         'default' => true),    
-    //BEGIN SUGARCRM flav=pro ONLY
     'TEAM_NAME' => array(
         'width' => '2', 
         'label' => 'LBL_LIST_TEAM',
         'default' => false,
-        'related_fields' => array('team_id')),        
-    //END SUGARCRM flav=pro ONLY
+        'related_fields' => array('team_id')),
     
     'ASSIGNED_USER_NAME' => array(
         'width' => '2', 

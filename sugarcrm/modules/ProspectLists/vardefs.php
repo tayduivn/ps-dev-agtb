@@ -10,9 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 $dictionary['ProspectList'] = array(
-    //BEGIN SUGARCRM flav=pro ONLY
     'favorites'        => true,
-    //END SUGARCRM flav=pro ONLY
     'table'            => 'prospect_lists',
     'unified_search'   => true,
     'full_text_search' => true,
@@ -217,18 +215,13 @@ $dictionary['ProspectList'] = array(
             'users',
         ),
     ),
-    'uses' => array(
-        'taggable',
-    ),
 );
 
 VardefManager::createVardef(
     'ProspectLists',
     'ProspectList',
     array(
-        'assignable',
-        //BEGIN SUGARCRM flav=pro ONLY
-        'team_security',
-        //END SUGARCRM flav=pro ONLY
+         'assignable',
+         'team_security',
     )
 );

@@ -12,7 +12,6 @@
  */
 
 $searchdefs = array(
-    //BEGIN SUGARCRM flav=pro ONLY
     'ext_rest_zoominfocompany' => array(
         'Leads' => array(
             'companyname',
@@ -49,5 +48,4 @@ $searchdefs = array(
             'companyname'
         )
     ),
-    //END SUGARCRM flav=pro ONLY
 );

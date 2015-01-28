@@ -60,7 +60,6 @@ class SugarFieldDatetime extends SugarFieldBase {
         return $this->fetch($this->findTemplate('EditView'));
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
     function getWirelessEditViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
         global $timedate;
         $datetime_prefs = $GLOBALS['current_user']->getUserDateTimePreferences();
@@ -84,7 +83,6 @@ class SugarFieldDatetime extends SugarFieldBase {
         $this->setup($parentFieldArray, $vardef, $displayParams, $tabindex, false);
         return $this->fetch($this->findTemplate('WirelessEditView'));
     }
-    //END SUGARCRM flav=pro ONLY
 
     function getSearchViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
         if($this->isRangeSearchView($vardef)) {

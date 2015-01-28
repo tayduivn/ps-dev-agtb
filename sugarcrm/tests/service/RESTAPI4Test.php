@@ -54,20 +54,16 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
 
         $this->aclRole->set_relationship('acl_roles_users', array('role_id'=>$this->aclRole->id ,'user_id'=> $this->_user->id), false);
         $GLOBALS['db']->commit(); // Making sure we commit any changes before continuing
-        //BEGIN SUGARCRM flav=pro ONLY
         $this->aclField = new ACLField();
         $this->aclField->setAccessControl('Accounts', $this->aclRole->id, 'website', -99);
         $GLOBALS['db']->commit(); // Making sure we commit any changes before continuing
         ACLField::loadUserFields('Accounts', 'Account', $this->_user->id, true );
         $GLOBALS['db']->commit(); // Making sure we commit any changes before continuing
-        //END SUGARCRM flav=pro ONLY
     }
 
     public function tearDown()
 	{
-	    //BEGIN SUGARCRM flav=pro ONLY
 	    $GLOBALS['db']->query("DELETE FROM acl_fields WHERE role_id IN ( SELECT id FROM acl_roles WHERE id IN ( SELECT role_id FROM acl_roles_users WHERE user_id = '{$GLOBALS['current_user']->id}' ) )");
-	    //END SUGARCRM flav=pro ONLY
 	    $GLOBALS['db']->query("DELETE FROM acl_roles WHERE id IN ( SELECT role_id FROM acl_roles_users WHERE user_id = '{$GLOBALS['current_user']->id}' )");
 	    $GLOBALS['db']->query("DELETE FROM acl_roles_users WHERE user_id = '{$GLOBALS['current_user']->id}'");
 
@@ -131,7 +127,6 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
                 )
             );
     }
-    //BEGIN SUGARCRM flav=pro ONLY
 
     /**
      * Test the get_entry_list call with Export access disabled to ensure results are returned.
@@ -210,7 +205,6 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
         $result = $this->_makeRESTCall('get_quotes_pdf', array($session, '-1', 'Standard' ));
         $this->assertTrue(!empty($result['file_contents']));
     }
-    //END SUGARCRM flav=pro ONLY
     /**
      * Ensure the ability to retrieve a module list of recrods that are favorites.
      *
@@ -335,7 +329,6 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertTrue( self::$helperObject->findBeanIdFromEntryList($results['entry_list'],$account->id,'Accounts'), "Unable to find {$account->id} id in favorites search.");
         $this->assertFalse( self::$helperObject->findBeanIdFromEntryList($results['entry_list'],$account2->id,'Accounts'), "Account {$account2->id} id in favorites search should not be there.");
     }
-    //BEGIN SUGARCRM flav=pro ONLY
     public function _aclEditViewFieldProvider()
     {
         return array(
@@ -422,7 +415,6 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
             }
         }
     }
-    //END SUGARCRM flav=pro ONLY
     /**
      * Private helper function to mark a bean as a favorite item.
      *
@@ -555,7 +547,6 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertNull($result);
 
     }
-    //BEGIN SUGARCRM flav=pro ONLY
     public static function _wirelessGridModuleLayoutProvider()
     {
         return array(
@@ -658,7 +649,6 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertTrue(isset($panels[0][0]['name']), 'No name index in the first row array of panel fields');
         $this->assertEquals(count($legacyFields), count($currentFields), 'Field count differs between legacy and current metadata');
     }
-    //END SUGARCRM flav=pro ONLY
     
     /*
     public function testAddFieldLevelACLsToWirelessList() {

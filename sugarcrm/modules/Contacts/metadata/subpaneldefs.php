@@ -161,7 +161,6 @@ $layout_defs['Contacts'] = array(
 				array('widget_class' => 'SubPanelTopSelectButton', 'mode'=>'MultiSelect')
 			),
 		),
-		//BEGIN SUGARCRM flav=pro ONLY
 		'quotes' => array(
 			'order' => 40,
 			'module' => 'Quotes',
@@ -176,7 +175,6 @@ $layout_defs['Contacts'] = array(
 				array('widget_class' => 'SubPanelTopCreateButton'),
 			),
 		),
-		//END SUGARCRM flav=pro ONLY
 		'cases' => array(
 			'order' => 80,
 			'sort_order' => 'desc',
@@ -241,7 +239,6 @@ $layout_defs['Contacts'] = array(
 			'subpanel_name' => 'ForTargets',
 			'title_key' => 'LBL_CAMPAIGN_LIST_SUBPANEL_TITLE',
 		),
-        //BEGIN SUGARCRM flav=pro ONLY
 		'contracts' => array(
 			'order' => 120,
 			'sort_order' => 'desc',
@@ -252,7 +249,6 @@ $layout_defs['Contacts'] = array(
 			'add_subpanel_data' => 'contract_id',
 			'title_key' => 'LBL_CONTRACTS_SUBPANEL_TITLE',
 		),
-        //END SUGARCRM flav=pro ONLY
 	),
 );
 ?>

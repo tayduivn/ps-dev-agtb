@@ -68,7 +68,6 @@ class RestUpdateTest extends RestTestBase {
                             "Rest Reply and Bean Do Not Match.");
     }
     
-    //BEGIN SUGARCRM flav=pro ONLY
     /**
      * @group rest
      */
@@ -154,8 +153,7 @@ class RestUpdateTest extends RestTestBase {
         $is_fav = SugarFavorites::isUserFavorite('Accounts', $this->account->id, $this->_user->id);
         
         $this->assertEquals($is_fav, (bool) $restReply['reply']['my_favorite'], "The returned favorite was not the same.");
-    }    
-    //END SUGARCRM flav=pro ONLY
+    }
 
     /**
      * @group rest

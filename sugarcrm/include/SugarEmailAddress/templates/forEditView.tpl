@@ -86,12 +86,10 @@ function init{$module}Email{$index}(){ldelim}
 		   document.getElementById('{$module}_email_widget_id').value = eaw.count;
 		{rdelim}
 		SUGAR_callsInProgress--;
-        //BEGIN SUGARCRM flav=pro ONLY
         //if the form has already been registered, re-register it with the new element
         var form = Dom.getAncestorByTagName(table, "form");
         if (SUGAR.forms.AssignmentHandler.VARIABLE_MAP[form.name])
             SUGAR.forms.AssignmentHandler.registerForm(form.name, form);
-        //END SUGARCRM flav=pro ONLY
 	{rdelim}else{ldelim}
 		setTimeout("init{$module}Email{$index}();", 500);
 	{rdelim}

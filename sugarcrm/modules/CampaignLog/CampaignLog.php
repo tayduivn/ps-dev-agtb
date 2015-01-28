@@ -48,10 +48,8 @@ class CampaignLog extends SugarBean {
         global $sugar_config;
         parent::__construct();
 
-        //BEGIN SUGARCRM flav=pro ONLY
         $this->disable_row_level_security=true;
         //$this->team_id = 1; // make the item globally accessible
-        //END SUGARCRM flav=pro ONLY
     }
 
     function get_list_view_data(){

@@ -39,6 +39,7 @@ require_once 'modules/ModuleBuilder/parsers/relationships/UndeployedRelationship
 
 // Used in action_SaveDropDown
 require_once 'modules/ModuleBuilder/parsers/parser.dropdown.php';
+require_once 'modules/ModuleBuilder/parsers/parser.roledropdownfilter.php';
 
 // Used in action_searchViewSave
 // Bug56789 - Without a client, the wrong viewdef file was getting picked up
@@ -139,7 +140,8 @@ class ModuleBuilderController extends SugarController
             if ($current_user->isAdmin() || ($current_user->isDeveloperForAnyModule() && !isset($_REQUEST['view_module']) && (isset($_REQUEST['action']) && $_REQUEST['action'] != 'package')) ||
                 (isset($_REQUEST['view_module']) && (in_array($_REQUEST['view_module'], $access) || empty($_REQUEST['view_module']))) ||
                 (isset($_REQUEST['type']) && (($_REQUEST['type'] == 'dropdowns' && $current_user->isDeveloperForAnyModule()) ||
-                    ($_REQUEST['type'] == 'studio' && displayStudioForCurrentUser() == true)))
+                    ($_REQUEST['type'] == 'studio' && displayStudioForCurrentUser() == true))) ||
+                (isset($_REQUEST['entryPoint']) && $_REQUEST['entryPoint'] == 'jslang' && $current_user->isDeveloperForAnyModule())
             ) {
                 $this->hasAccess = true;
             } else {
@@ -167,24 +169,18 @@ class ModuleBuilderController extends SugarController
                 case MB_DETAILVIEW :
                 case MB_QUICKCREATE :
                 case MB_RECORDVIEW :
-                    //BEGIN SUGARCRM flav=pro ONLY
                 case MB_WIRELESSEDITVIEW :
                 case MB_WIRELESSDETAILVIEW :
-                    //END SUGARCRM flav=pro ONLY
                     $this->view = 'layoutView';
                     break;
                 case MB_LISTVIEW :
-                    //BEGIN SUGARCRM flav=pro ONLY
                 case MB_WIRELESSLISTVIEW :
-                    //END SUGARCRM flav=pro ONLY
                     $this->view = 'listView';
                     break;
                 case MB_BASICSEARCH :
                 case MB_ADVANCEDSEARCH :
-                    //BEGIN SUGARCRM flav=pro ONLY
                 case MB_WIRELESSBASICSEARCH :
                 case MB_WIRELESSADVANCEDSEARCH :
-                    //END SUGARCRM flav=pro ONLY
                     $this->view = 'searchView';
                     break;
                 case MB_DASHLET :
@@ -476,7 +472,6 @@ class ModuleBuilderController extends SugarController
                 //Ensure the vardefs are up to date for this module before we rebuild the cache now.
                 VardefManager::loadVardef($module, $obj, true);
 
-                //BEGIN SUGARCRM flav=pro ONLY
                 //Make sure to clear the vardef for related modules as well.
                 $relatedMods = array();
                 if (!empty($field->dependency)) {
@@ -495,7 +490,6 @@ class ModuleBuilderController extends SugarController
                         VardefManager::loadVardef($mName, $oName, true);
                     }
                 }
-                //END SUGARCRM flav=pro ONLY
                 //#28707 ,clear all the js files in cache
                 $repair->module_list = array();
                 $repair->clearJsFiles();
@@ -563,7 +557,6 @@ class ModuleBuilderController extends SugarController
 
         //Ensure the vardefs are up to date for this module before we rebuild the cache now.
         VardefManager::loadVardef($module, $obj, true);
-        //BEGIN SUGARCRM flav=pro ONLY
         //Make sure to clear the vardef for related modules as well
         $relatedMods = array();
         if (!empty($field->dependency))
@@ -574,7 +567,6 @@ class ModuleBuilderController extends SugarController
             $repair->repairAndClearAll(array('clearVardefs', 'clearTpls'), array($oName), true, false);
             VardefManager::clearVardef($mName, $oName);
         }
-        //END SUGARCRM flav=pro ONLY
 
         // now clear the cache so that the results are immediately visible
         TemplateHandler::clearCache($module);
@@ -698,6 +690,18 @@ class ModuleBuilderController extends SugarController
         $parser->saveDropDown($_REQUEST);
         MetaDataManager::refreshSectionCache(MetaDataManager::MM_LABELS);
         MetaDataManager::refreshSectionCache(MetaDataManager::MM_ORDEREDLABELS);
+        MetaDataManager::refreshSectionCache(MetaDataManager::MM_EDITDDFILTERS);
+        $this->view = 'dropdowns';
+    }
+
+    public function action_SaveRoleDropDownFilter()
+    {
+        $params = $_REQUEST;
+        if(empty($params['dropdown_role']) || empty($params['dropdown_name']) || empty($params['dropdown_keys'])) {
+            return;
+        }
+        $parser = new ParserRoleDropDownFilter();
+        $parser->handleSave($params['dropdown_role'], $params['dropdown_name'], $params['dropdown_keys']);
         $this->view = 'dropdowns';
     }
 
@@ -836,13 +840,18 @@ class ModuleBuilderController extends SugarController
         }
         //END SUGARCRM flav=ent ONLY
 
-
-
-        $parser = ParserFactory::getParser ( $parserview,
-                                             $_REQUEST['view_module'],
-                                             isset( $_REQUEST [ 'view_package' ] ) ? $_REQUEST [ 'view_package' ] : null,
-                                             null,
-                                             $client) ;
+        $params = array();
+        if (!empty($_REQUEST['role'])) {
+            $params['role'] = $_REQUEST['role'];
+        }
+        $parser = ParserFactory::getParser(
+            $parserview,
+            $_REQUEST['view_module'],
+            isset($_REQUEST ['view_package']) ? $_REQUEST ['view_package'] : null,
+            null,
+            $client,
+            $params
+        );
         $parser->writeWorkingFile () ;
 
 
@@ -870,13 +879,25 @@ class ModuleBuilderController extends SugarController
             //BEGIN SUGARCRM flav=ent ONLY
         }
         //END SUGARCRM flav=ent ONLY
-        $parser = ParserFactory::getParser ( $parserview,
-                                             $_REQUEST['view_module'],
-                                             isset ( $_REQUEST [ 'view_package' ] ) ? $_REQUEST [ 'view_package' ] : null,
-                                             null,
-                                             $client);
-        $parser->handleSave () ;
 
+        $params = array();
+        if (!empty($_REQUEST['role'])) {
+            $params['role'] = $_REQUEST['role'];
+        }
+        $parser = ParserFactory::getParser(
+            $parserview,
+            $_REQUEST['view_module'],
+            isset ($_REQUEST ['view_package']) ? $_REQUEST ['view_package'] : null,
+            null,
+            $client,
+            $params
+        );
+
+        if (!empty($_REQUEST['is_synced'])) {
+            $parser->resetToDefault();
+        } else {
+            $parser->handleSave();
+        }
 
         if (!empty($_REQUEST [ 'sync_detail_and_edit' ]) && $_REQUEST['sync_detail_and_edit'] != false && $_REQUEST['sync_detail_and_edit'] != "false") {
             if (strtolower ($parser->_view) == MB_EDITVIEW) {
@@ -1116,6 +1137,27 @@ class ModuleBuilderController extends SugarController
             $val = array('key' => $key, 'direction' => $direction);
             $current_user->setPreference('fieldsTableColumn', getJSONobj()->encode($val), 0, 'ModuleBuilder');
         }
+    }
+
+    public function action_copyLayout()
+    {
+        $module = $_REQUEST['view_module'];
+        $view = $_REQUEST['view'];
+        $role = $_REQUEST['role'];
+        $source = $_REQUEST['source'];
+
+        $sourceParser = ParserFactory::getParser($view, $module, null, null, null, array('role' => $source));
+        $sourceImplementation = $sourceParser->getImplementation();
+        $fileName = $sourceImplementation->getFileNameNoDefault($view, $module);
+        if (!file_exists($fileName)) {
+            return;
+        }
+
+        $parser = ParserFactory::getParser($view, $module, null, null, null, array('role' => $role));
+        $history = $parser->getHistory();
+        $history->savePreview($fileName);
+
+        $this->view = 'layoutview';
     }
 
     /**

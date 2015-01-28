@@ -19,9 +19,8 @@ $dashletData['MyEmailsDashlet']['searchFields'] = array(
 												 	   'date_sent'  => array('default' => ''),
                                                        'name'  => array('default' => ''),
 													   //'from_addr_name' => array('default' => ''),
-                                                       //BEGIN SUGARCRM flav=pro ONLY
-                                                       //'team_id'          => array('default' => '', 'label'=>'LBL_TEAMS'),
-                                                       //END SUGARCRM flav=pro ONLY													
+
+                                                       //'team_id'          => array('default' => '', 'label'=>'LBL_TEAMS'),													
                                                        'assigned_user_id'   => array('default' => ''),
                                                        );
 $dashletData['MyEmailsDashlet']['columns'] = array(
@@ -39,11 +38,10 @@ $dashletData['MyEmailsDashlet']['columns'] = array(
                                                                          'label'   => 'LBL_LIST_ASSIGNED',
                                                                          'default' => false),
 
-                                                   //BEGIN SUGARCRM flav=pro ONLY
+
                                                    'team_name' => array('width'   => '15',
                                                                         'label'   => 'LBL_LIST_TEAM',
                                                                         'sortable' => false),
-                                                   //END SUGARCRM flav=pro ONLY
                                                    'date_sent' => array('width'   => '15',
                                                                          'label'   => 'LBL_DATE_SENT',
                                                                          'default' => true,

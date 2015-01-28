@@ -21,9 +21,7 @@ if (!defined('SUGAR_PHPUNIT_RUNNER')) {
     session_regenerate_id(false);
 }
 global $mod_strings;
-//BEGIN SUGARCRM flav=pro ONLY
 $res = $GLOBALS['sugar_config']['passwordsetting'];
-//END SUGARCRM flav=pro ONLY
 $login_vars = $GLOBALS['app']->getLoginVars(false);
 
 $user_name = isset($_REQUEST['user_name'])
@@ -47,7 +45,6 @@ if(isset($_SESSION['authenticated_user_id'])) {
     global $current_user;
     global $sugar_config;
 
-    //BEGIN SUGARCRM flav=pro ONLY
     if ( isset($_SESSION['isMobile'])
             && ( empty($_REQUEST['login_module']) || $_REQUEST['login_module'] == 'Users' )
             && ( empty($_REQUEST['login_action']) || $_REQUEST['login_action'] == 'wirelessmain' ) ) {
@@ -57,7 +54,6 @@ if(isset($_SESSION['authenticated_user_id'])) {
             $login_vars['login_action'] = $_REQUEST['login_action'] = 'wirelessmodule';
         }
     }
-    //END SUGARCRM flav=pro ONLY
     global $current_user;
 
     if(isset($current_user)  && empty($login_vars)) {
@@ -86,12 +82,10 @@ if(isset($_SESSION['authenticated_user_id'])) {
 
 // construct redirect url
 $url = 'Location: '.$url;
-//BEGIN SUGARCRM flav=pro ONLY
 // check for presence of a mobile device, redirect accordingly
 //if(isset($_SESSION['isMobile'])){
 //    $url = $url . '&mobile=1';
 //}
-//END SUGARCRM flav=pro ONLY
 
 //adding this for bug: 21712.
 if(!empty($GLOBALS['app'])) {

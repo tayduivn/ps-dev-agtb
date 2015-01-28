@@ -38,7 +38,6 @@ $searchFields['Leads'] =
         'current_user_only'=> array('query_type'=>'default','db_field'=>array('assigned_user_id'),'my_items'=>true, 'vname' => 'LBL_CURRENT_USER_FILTER', 'type' => 'bool'),
         'assigned_user_id'=> array('query_type'=>'default'),
         'status'=> array('query_type'=>'default', 'options'=>'lead_status_dom', 'template_var' => 'STATUS_OPTIONS'),
-		//BEGIN SUGARCRM flav=pro ONLY
 		'favorites_only' => array(
             'query_type'=>'format',
 			'operator' => 'subquery',
@@ -47,7 +46,6 @@ $searchFields['Leads'] =
 			                        and sugarfavorites.module = \'Leads\'
 			                        and sugarfavorites.assigned_user_id = \'{0}\'',
 			'db_field'=>array('id')),
-		//END SUGARCRM flav=pro ONLY
 		'open_only' => array(
 			'query_type'=>'default',
 			'db_field'=>array('status'),

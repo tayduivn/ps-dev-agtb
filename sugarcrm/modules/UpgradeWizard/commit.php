@@ -18,7 +18,6 @@ $trackerManager = TrackerManager::getInstance();
 $trackerManager->pause();
 $trackerManager->unsetMonitors();
 
-//BEGIN SUGARCRM flav=pro ONLY
 //bug: 38017 - SugarView is not yet pulled out of memory and to avoid putting a check-in there for every call, will just
 //put in here for one call
 $timeStamp = gmdate('Y-m-d H:i:s');
@@ -26,7 +25,6 @@ $monitor3 = $trackerManager->getMonitor('tracker_sessions');
 if(!empty($monitor3)) {
    $monitor3->setValue('date_start', $timeStamp);
 }
-//END SUGARCRM flav=pro ONLY
 $_SESSION['upgrade_complete'] = '';
 $_REQUEST['upgradeWizard'] = true;
 

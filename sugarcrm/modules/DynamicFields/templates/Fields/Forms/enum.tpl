@@ -46,7 +46,6 @@
 	</td>
 </tr>
 {/if}
-{* //BEGIN SUGARCRM flav=pro ONLY *}
 {if !$radio}
 <tr id='depTypeRow' class="toggleDep"><td class='mbLBL'>{sugar_translate module="DynamicFields" label="LBL_DEPENDENT"}:</td>
     <td>
@@ -85,5 +84,4 @@
 	</td>
 </tr>
 {/if}
-{* //END SUGARCRM flav=pro ONLY *}
 {include file="modules/DynamicFields/templates/Fields/Forms/coreBottom.tpl"}

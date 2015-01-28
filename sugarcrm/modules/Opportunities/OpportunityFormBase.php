@@ -192,24 +192,19 @@ if (isset($lead->assigned_user_id)) {
 	$user_id = $current_user->id;
 }
 
-//BEGIN SUGARCRM flav=pro ONLY
 
 if (isset($lead->team_id)) {
 	$team_id=$lead->team_id;
 } else {
 	$team_id=$current_user->default_team;
 }
-//END SUGARCRM flav=pro ONLY
 
 // Unimplemented until jscalendar language files are fixed
 // $cal_lang = (empty($cal_codes[$current_language])) ? $cal_codes[$default_language] : $cal_codes[$current_language];
 $cal_lang = "en";
 
 $the_form="";
-//BEGIN SUGARCRM flav=pro ONLY
 		$the_form .=  "<input type=hidden name=".$prefix."team_id value=".$team_id.">";
-
-//END SUGARCRM flav=pro ONLY
 
 
 if (isset($lead->opportunity_amount)) {
@@ -328,9 +323,7 @@ $cal_dateformat = $timedate->get_cal_date_format();
 
 $user_id = $current_user->id;
 
-//BEGIN SUGARCRM flav=pro ONLY
 $team_id = $current_user->default_team;
-//END SUGARCRM flav=pro ONLY
 // Unimplemented until jscalendar language files are fixed
 // $cal_lang = (empty($cal_codes[$current_language])) ? $cal_codes[$default_language] : $cal_codes[$current_language];
 $cal_lang = "en";
@@ -340,9 +333,7 @@ $the_form = <<<EOQ
 			<input type="hidden" name="{$prefix}record" value="">
 			<input type="hidden" name="{$prefix}assigned_user_id" value='${user_id}'>
 
-<!--//BEGIN SUGARCRM flav=pro ONLY -->
 			<input type="hidden" name="{$prefix}team_id" value='${team_id}'>
-<!--//END SUGARCRM flav=pro ONLY -->
 		$lbl_opportunity_name&nbsp;<span class="required">$lbl_required_symbol</span><br>
 		<input name='{$prefix}name' type="text" value="">
 EOQ;

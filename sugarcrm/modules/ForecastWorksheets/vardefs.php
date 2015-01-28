@@ -388,6 +388,11 @@ $dictionary['ForecastWorksheet'] = array(
             'studio' => false,
             'function' => 'getCommitStageDropdown',
             'function_bean' => 'Forecasts',
+            'formula' => 'forecastCommitStage($probability)',
+            'calculated' => true,
+            'related_fields' => array(
+                'probability'
+            )
         ),
         'draft' =>
         array(
@@ -622,8 +627,6 @@ VardefManager::createVardef(
     array(
         'default',
         'assignable',
-//BEGIN SUGARCRM flav=pro ONLY
         'team_security',
-//END SUGARCRM flav=pro ONLY
     )
 );

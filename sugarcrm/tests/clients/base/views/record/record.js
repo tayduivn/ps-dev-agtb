@@ -12,6 +12,9 @@ describe("Record View", function () {
         SugarTest.loadHandlebarsTemplate('button', 'field', 'base', 'detail');
         SugarTest.loadHandlebarsTemplate('rowaction', 'field', 'base', 'detail');
         SugarTest.loadHandlebarsTemplate(viewName, 'view', 'base');
+        SugarTest.loadHandlebarsTemplate(viewName, 'view', 'base', 'headerpane');
+        SugarTest.loadHandlebarsTemplate(viewName, 'view', 'base', 'tabspanels');
+        SugarTest.loadHandlebarsTemplate(viewName, 'view', 'base', 'businesscard');
         SugarTest.loadComponent('base', 'field', 'base');
         SugarTest.loadComponent('base', 'field', 'button');
         SugarTest.loadComponent('base', 'field', 'rowaction');

@@ -45,15 +45,12 @@ class SugarAuthenticate{
 	function loginAuthenticate($username, $password, $fallback=false, $PARAMS = array ()){
 		global $app_strings;
 		unset($_SESSION['login_error']);
-		//BEGIN SUGARCRM flav=pro ONLY
 		$res = $GLOBALS['sugar_config']['passwordsetting'];
-        //END SUGARCRM flav=pro ONLY
         $usr = BeanFactory::getBean('Users');
         $usr->retrieve_by_string_fields(array('user_name'=>$username));
 		$_SESSION['login_error']='';
 		$_SESSION['waiting_error']='';
 		$_SESSION['hasExpiredPassword']='0';
-		//BEGIN SUGARCRM flav=pro ONLY
 		$usr->reloadPreferences();
 		// if there is too many login attempts
 		if (!empty($usr->id) && $res['lockoutexpiration'] > 0 && $usr->getPreference('loginfailed')>=($res['lockoutexpirationlogin']) && !($usr->portal_only)){
@@ -108,7 +105,6 @@ class SugarAuthenticate{
 		        return false;
 			}
 		}
-		//END SUGARCRM flav=pro ONLY
 		if ($this->userAuthenticate->loadUserOnLogin($username, $password, $fallback, $PARAMS)) {
 			require_once('modules/Users/password_utils.php');
             if (hasPasswordExpired($username, true)) {

@@ -89,12 +89,10 @@ $listViewDefs[$module_name] = array(
 		'customCode' => '{$EMAIL1_LINK}{$EMAIL1}</a>',
         'default' => true
 		),  
-//BEGIN SUGARCRM flav=pro ONLY
     'TEAM_NAME' => array(
         'width' => '2', 
         'label' => 'LBL_TEAM',
         'default' => false),
-//END SUGARCRM flav=pro ONLY
     'ASSIGNED_USER_NAME' => array(
         'width' => '2', 
         'label' => 'LBL_ASSIGNED_USER',

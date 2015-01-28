@@ -299,10 +299,8 @@ $mod_strings = array (
     'LBL_GLOBAL_SEARCH_SETTINGS' => 'Global Search',
 	'LBL_GLOBAL_SEARCH_SETTINGS_DESC' => 'Configure the global search options for the system.',
     //END SUGARCRM flav=com ONLY
-    //BEGIN SUGARCRM flav=pro ONLY
     'LBL_GLOBAL_SEARCH_SETTINGS' => 'Search',
     'LBL_GLOBAL_SEARCH_SETTINGS_DESC' => 'Select modules for the Global Search and configure full-text searching.',
-    //END SUGARCRM flav=pro ONLY
     'LBL_FTS_SETTINGS' => 'Full-Text Search',
    	'LBL_FTS_SETTINGS_DESC' => 'Configure the full-text search system.',
     'LBL_GLOBAL_TEAM_DESC' => 'Globally Visible',
@@ -664,10 +662,8 @@ $mod_strings = array (
     'LBL_REBUILD_SCHEDULERS_TITLE' => 'Rebuild Schedulers',
     'LBL_REBUILD_SPRITES_TITLE' => 'Rebuild Sprites',
     'LBL_REBUILD_SPRITES_DESC_SHORT' => 'Rebuilds the sprite images and configuration files',
-    //BEGIN SUGARCRM flav=pro ONLY
     'LBL_REBUILD_WORKFLOW_DESC' => 'Rebuilds the workflow cache & compile plugins after you re-install, drop tables or install a new workflow plugin',
     'LBL_REBUILD_WORKFLOW' => 'Rebuild WorkFlow',
-	//END SUGARCRM flav=pro ONLY
     'LBL_REBUILD_WORKFLOW_CACHE' => 'Rebuilding Workflow Cache...<BR>',
     'LBL_REBUILD_WORKFLOW_COMPILING' => 'Compiling Plugins... <BR>',
     'LBL_REBUILD' => 'Rebuild',
@@ -837,7 +833,6 @@ $mod_strings = array (
     'LBL_USER_NAME' => 'User Name:',
     'LBL_USERNAME'             => 'User Name',
     'LBL_USERS_TITLE' => 'Users',
-    //BEGIN SUGARCRM flav=pro ONLY
 	'LBL_WIRELESS_MODULES_ENABLE' => 'Mobile',
     'LBL_WIRELESS_MODULES_ENABLE_DESC' => 'Select modules to appear in the browser-based mobile view and in the Sugar Mobile application',
 	'LBL_WIRELESS_MODULES_ENABLE_DESC2' => 'Drag and Drop the modules below to make them available or hidden in the browser-based and native SugarCRM Mobile application.',
@@ -845,7 +840,6 @@ $mod_strings = array (
     'LBL_WIRELESS_SUPPORTED_MODULES' => '* The following modules are available for SugarCRM Mobile: Accounts, Contacts, Leads, Opportunities, Meetings, Calls, Tasks, Notes, Reports, Cases, Quotes, Employees, and custom modules. All modules apply for Sugar Mobile.',
     'LBL_WIRELESS_SUPPORTED_MODULES2' => '* The Bug Tracker, Campaigns, Contracts, Knowledge Base and Targets modules are not available for SugarCRM Mobile.',
     'LBL_WIRELESS_URL_HELP' => 'Click to configure Sugar Mobile Plus applications',
-    //END SUGARCRM flav=pro ONLY
     'LBL_HISTORY_CONTACTS_EMAILS' => 'Related Contacts Emails',
     'LBL_HISTORY_CONTACTS_EMAILS_DESC' => 'Enable/Disable emails from related (or linked) contacts to show in Email Subpanel.',
     //BEGIN SUGARCRM flav=int ONLY
@@ -868,16 +862,11 @@ $mod_strings = array (
     'LBL_USERS_DESC' => 'Create, edit, activate and deactivate users in Sugar.',
     //END SUGARCRM flav=com ONLY
 
-    //BEGIN SUGARCRM flav=pro ONLY
 
     'LBL_USERS_DESC' => 'Create, edit, activate and deactivate users in Sugar. Create and manage teams and roles, including module- and field-level access.',
 
-    //END SUGARCRM flav=pro ONLY
-
-    //BEGIN SUGARCRM flav=pro ONLY
     'LBL_WEB_LOGIC_HOOKS' => 'Web Logic Hooks',
     'LBL_WEB_LOGIC_HOOKS_DESC' => 'Manage Sugar Web Logic Hooks',
-    //END SUGARCRM flav=pro ONLY
 
 
     'LBL_UW_BTN_BACK_TO_MOD_LOADER'         => 'Back to Module Loader',
@@ -1051,9 +1040,7 @@ $mod_strings = array (
     'LBL_QR_CLEARPDFFONT'=>'Clearing PDF Font Cache File...done',
     'LBL_QR_CLEAR_EXT_API'=>'Clearing External API Cache File...done',
     'LBL_QR_CLEAR_ADD_CACHE' => 'Clearing Addtional Cache Files...done',
-	//BEGIN SUGARCRM flav=pro ONLY
 	'LBL_UPDATE_CHECK_LOCKOUT_NOTICE' => 'If this box is unchecked, an admin will be required to manually revalidate after system license expires, otherwise users will be unable to login.',
-	 //END SUGARCRM flav=pro ONLY
 	'LBL_TRACKER_SETTINGS' => 'Tracker',
 	'LBL_TRACKER_SETTINGS_DESC' => 'Enable/Disable tracking',
 	'LBL_REPAIR_SEED_USERS_TITLE'	=> 'Enable/Disable Seed Users',
@@ -1086,11 +1073,9 @@ $mod_strings = array (
 'ML_MANIFEST_ISSUE'=>'Issue with the manifest',
 'ML_CONFIG_OVERRIDE'=>'Config modification is not allowed',
 
-//BEGIN SUGARCRM flav=pro ONLY
 	'LBL_CONFIGURE_SHORTCUT_BAR' => 'Configure Navigation Bar Quick Create',
 	'LBL_CONFIGURE_SHORTCUT_BAR_DESC' => 'Select which modules are available in the navigation bar quick create',
     'LBL_CONFIGURE_SHORTCUT_BAR_HELP' => 'Choose which modules for which users can quickly create records using the Plus icon in the top navigation bar. Drag & drop modules between the Enabled Modules and Disabled Modules boxes.',
-//END SUGARCRM flav=pro ONLY
 	'LBL_ACTIVE_MODULES' => 'Enabled Modules',
 	'LBL_DISABLED_MODULES' => 'Disabled Modules',
 	'LBL_SAVE_SUCCESS' => '<h4>Changes Successfully Saved</h4><br/>You will now be redirected back to the administration home.',
@@ -1173,9 +1158,7 @@ $mod_strings = array (
     //BEGIN SUGARCRM flav=com ONLY
     'LBL_GLOBAL_SEARCH_SETTINGS_TITLE' => 'Select the module(s) that users will be able to search against using the Global Search.',
     //END SUGARCRM flav=com ONLY
-    //BEGIN SUGARCRM flav=pro ONLY
     'LBL_GLOBAL_SEARCH_SETTINGS_TITLE' => 'Select the module(s) that users will be able to search against using the Global Search. Perform a full system index after enabling modules for the Global Search. To enable module fields for full text searching, use <a href="index.php?module=ModuleBuilder&action=index&type=studio">Studio</a>.',
-    //END SUGARCRM flav=pro ONLY
    'LBL_SELECT_MODULES' => 'Advanced',
    'LBL_SELECT_MODULES_TITLE' => 'Drag and drop to select modules and to change the display order. Perform a search to apply the changes.',
    'LBL_SELECT_FTS_MODULES_TITLE' => 'Drag and drop to select modules to be used in the Global Search. Click Save to apply the changes.',
@@ -1232,10 +1215,8 @@ $mod_strings = array (
     'LBL_FTS_CONN_UNKNOWN_FAILURE' => 'An unknown error occured connecting to the specified full text seach server',
 	'LBL_FTS_CONN_SUCCESS_SHORT' => 'A system index operation has been scheduled to run within the next several minutes.',
     'LBL_FTS_CONN_FAILURE_SHORT' => 'Unable to schedule an index operation.',
-//BEGIN SUGARCRM flav=pro ONLY
     'LBL_PDFMANAGER_SETTINGS' => 'PDF Manager',
     'LBL_PDFMANAGER_SETTINGS_DESC' => 'Manage templates for generated PDF files',
-//END SUGARCRM flav=pro ONLY
     'LBL_FTS_PAGE_DESC' => 'To configure full text searching:<br>
 1) Enter the host and port of the search engine.<br>
 2) Click Test to make sure Sugar can connect to the search engine.<br>

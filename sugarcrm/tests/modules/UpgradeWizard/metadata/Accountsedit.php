@@ -13,9 +13,7 @@ $viewdefs['Accounts']['EditView'] = array(
     'templateMeta' => array(
                             'form' => array('buttons'=>array('SAVE', 'CANCEL')),
                             'maxColumns' => '2', 
-                            //BEGIN SUGARCRM flav=pro ONLY
                             'useTabs' => true,
-                            //END SUGARCRM flav=pro ONLY
                             'widths' => array(
                                             array('label' => '10', 'field' => '30'),
                                             array('label' => '10', 'field' => '30'),
@@ -141,12 +139,10 @@ $viewdefs['Accounts']['EditView'] = array(
             'name' => 'assigned_user_name',
             'label' => 'LBL_ASSIGNED_TO',
           ),
-          //BEGIN SUGARCRM flav=pro ONLY
           array (
             'name'=>'team_name', 'displayParams'=>array('display'=>true),
           ),
           'id', // Unit test specific
-          //END SUGARCRM flav=pro ONLY
         ),
       ),
     )

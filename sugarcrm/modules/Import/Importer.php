@@ -67,13 +67,6 @@ class Importer
      */
     protected $currencyFieldPosition = false;
 
-    /**
-     * Flag that tells the importer whether to look for tags
-     *
-     * @var boolean
-     */
-    protected $hasTags = false;
-
     public function __construct($importSource, $bean)
     {
         global $mod_strings, $sugar_config;
@@ -110,9 +103,6 @@ class Importer
 
         // do we have a currency_id field
         $this->currencyFieldPosition = array_search('currency_id', $this->importColumns);
-
-        // Are we importing tags?
-        $this->hasTags = array_search('tag', $this->importColumns);
 
         //catch output including notices and warnings so import process can run to completion
         $output = '';
@@ -253,14 +243,12 @@ class Importer
             {
                 $defaultRowValue = $this->populateDefaultMapValue($field, $_REQUEST[$field], $fieldDef);
 
-                //BEGIN SUGARCRM flav=pro ONLY
                 if(!empty($fieldDef['custom_type']) && $fieldDef['custom_type'] == 'teamset' && empty($rowValue))
                 {
                     require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
                     $sugar_field = new SugarFieldTeamset('Teamset');
                     $rowValue = implode(', ',$sugar_field->getTeamsFromRequest($field));
                 }
-                //END SUGARCRM flav=pro ONLY
 
                 if( empty($rowValue))
                 {
@@ -520,8 +508,6 @@ class Importer
 
         if ($do_save)
         {
-            // handleTagsImport() needs to be called before saveImportBean()
-            $this->handleTagsImport($focus, $row);
             $this->saveImportBean($focus, $newRecord);
             // Update the created/updated counter
             $this->importSource->markRowAsImported($newRecord);
@@ -531,70 +517,6 @@ class Importer
 
         unset($defaultRowValue);
 
-    }
-
-    /**
-     * Handles importing of tags for a row
-     * 
-     * @param SugarBean $focus The parent sugar bean
-     * @param array $row The row of data being imported
-     */
-    public function handleTagsImport($focus, $row)
-    {
-        // Handle tags import - this needs to be done only when we have an 
-        // ID for the parent record as relationships don't like it when you
-        // don't have a real record to relate to
-        if ($this->hasTags !== false && $focus->isTaggable() && !empty($row[$this->hasTags])) {
-            $sfh = new SugarFieldHandler();
-
-            // Get the Tag SugarField for handling the saving
-            $sfTag = $sfh->getSugarField('tag');
-
-            // Build an argument list for this save
-            $tagFieldName = $focus->getTagField();
-            $tagField = $focus->field_defs[$tagFieldName];
-
-            // Build the params array so the field can save what needs saving
-            $params[$tagFieldName] = array();
-
-            // Get the tags from the bean if they exist. Using a fresh bean
-            // because at this point $focus is the new data.
-            // THIS LINE IS FOR MERGING TAGS INSTEAD OF OVERRIDING THEM
-            //$currentTags = $sfTag->getTagValues(BeanFactory::getBean($focus->module_dir, $focus->id), $tagFieldName);
-
-            // Get the tags from the row. Tags are separated by double quotes.
-            // ex Value1,Value2,Value3 and then merged with existing tags
-            $importTags = $sfTag->getTagValuesFromImport($row[$this->hasTags]);
-
-            // Now get all tags and massage them a little bit for uniqueness.
-            // THIS LINE IS FOR MERGING TAGS INSTEAD OF OVERRIDING THEM
-            //$allTags = array_merge($currentTags, $importTags);
-            $allTags = $importTags;
-
-            // Holds the lowercase tag name to make sure tags are unique for this record
-            $tagCheck = array();
-            foreach ($allTags as $tag) {
-                // Simple cleansing
-                $tag = trim($tag);
-
-                // If the tag, after trim, is empty, move on
-                if (!empty($tag)) {
-                    $tagLower = strtolower($tag);
-
-                    // If we haven't touched this tag yet, hit it
-                    if (!isset($tagCheck[$tagLower])) {
-                        // Add it to the params array
-                        $params[$tagFieldName][] = array('name' => $tag);
-
-                        // Mark that it has been checked
-                        $tagCheck[$tagLower] = 1;
-                    }
-                }
-            }
-
-            // Now save the field
-            $sfTag->apiSave($focus, $params, $tagFieldName, $tagField);
-        }
     }
 
     protected function sanitizeFieldValueByType($rowValue, $fieldDef, $defaultRowValue, $focus, $fieldTranslated)
@@ -701,12 +623,10 @@ class Importer
         {
             $focus->assigned_user_id = $current_user->id;
         }
-        //BEGIN SUGARCRM flav=pro ONLY
         if ( !isset($focus->team_id) || $focus->team_id == '' && $newRecord )
         {
             $focus->team_id = $current_user->default_team;
         }
-        //END SUGARCRM flav=pro ONLY
         /*
         * Bug 34854: Added all conditions besides the empty check on date modified.
         */

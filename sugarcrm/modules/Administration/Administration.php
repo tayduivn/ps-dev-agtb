@@ -38,9 +38,7 @@ class Administration extends SugarBean {
     );
     var $disable_custom_fields = true;
     var $checkbox_fields = Array("notify_send_by_default", "mail_smtpauth_req", "notify_on", 'tweettocase_on', 'skypeout_on', 'system_mailmerge_on', 'proxy_auth', 'proxy_on', 'system_ldap_enabled','captcha_on', 'honeypot_on');
-    //BEGIN SUGARCRM flav=pro ONLY
     public $disable_row_level_security = true;
-    //END SUGARCRM flav=pro ONLY
 
     /**
      * This is a depreciated method, please start using __construct() as this method will be removed in a future version
@@ -57,9 +55,7 @@ class Administration extends SugarBean {
         parent::__construct();
 
         $this->setupCustomFields('Administration');
-        //BEGIN SUGARCRM flav=pro ONLY
         $this->disable_row_level_security =true;
-        //END SUGARCRM flav=pro ONLY
     }
 
     function retrieveSettings($category = false, $clean=false) {

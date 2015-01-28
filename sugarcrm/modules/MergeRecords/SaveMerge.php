@@ -85,7 +85,6 @@ if (is_array($_POST['merged_ids'])) {
             if ($name == 'accounts' && $focus->merge_bean->module_dir == 'Opportunities')
             	continue;
 
-            //BEGIN SUGARCRM flav=pro ONLY
             if ($name == 'teams') {
 				require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
 				$teamSetField = new SugarFieldTeamset('Teamset');
@@ -97,7 +96,6 @@ if (is_array($_POST['merged_ids'])) {
 			    }
             	continue;
             }
-            //END SUGARCRM flav=pro ONLY
 
             if ($mergesource->load_relationship($name)) {
                 //check to see if loaded relationship is with email address

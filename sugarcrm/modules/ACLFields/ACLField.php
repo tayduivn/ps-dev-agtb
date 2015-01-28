@@ -23,9 +23,7 @@ class ACLField  extends ACLAction
     public $table_name = 'acl_fields';
     public $disable_custom_fields = true;
     public $new_schema = true;
-    //BEGIN SUGARCRM flav=pro ONLY
     public $disable_row_level_security = true;
-    //END SUGARCRM flav=pro ONLY
 
     /**
      * Cache of the ACL fields

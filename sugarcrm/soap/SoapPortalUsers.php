@@ -45,9 +45,7 @@ function portal_login($portal_auth, $user_name, $application_name){
         return array('id'=>-1, 'error'=>$error->get_soap_array());
     }
     global $current_user;
-    //BEGIN SUGARCRM flav=pro ONLY
     $sessionManager = new SessionManager();
-    //END SUGARCRM flav=pro ONLY
 
     if($user_name == 'lead'){
         session_start();
@@ -55,12 +53,10 @@ function portal_login($portal_auth, $user_name, $application_name){
         $_SESSION['ip_address'] = query_client_ip();
         $_SESSION['portal_id'] = $current_user->id;
         $_SESSION['type'] = 'lead';
-        //BEGIN SUGARCRM flav=pro ONLY
         $sessionManager->session_type = 'lead';
         $sessionManager->last_request_time = TimeDate::getInstance()->nowDb();
         $sessionManager->session_id = session_id();
         $sessionManager->save();
-        //END SUGARCRM flav=pro ONLY
         login_success();
         return array('id'=>session_id(), 'error'=>$error->get_soap_array());
     }else if($user_name == 'portal'){
@@ -69,12 +65,10 @@ function portal_login($portal_auth, $user_name, $application_name){
         $_SESSION['ip_address'] = query_client_ip();
         $_SESSION['portal_id'] = $current_user->id;
         $_SESSION['type'] = 'portal';
-        //BEGIN SUGARCRM flav=pro ONLY
         $sessionManager->session_type = 'portal';
         $sessionManager->last_request_time = TimeDate::getInstance()->nowDb();
         $sessionManager->session_id = session_id();
         $sessionManager->save();
-        //END SUGARCRM flav=pro ONLY
         $GLOBALS['log']->debug("Saving new session");
         login_success();
         return array('id'=>session_id(), 'error'=>$error->get_soap_array());
@@ -88,17 +82,13 @@ function portal_login($portal_auth, $user_name, $application_name){
         $_SESSION['portal_id'] = $current_user->id;
 
         $_SESSION['type'] = 'contact';
-        //BEGIN SUGARCRM flav=pro ONLY
         $_SESSION['team_id'] = $contact->team_id;
         $_SESSION['team_set_id'] = $contact->team_set_id;
-        //END SUGARCRM flav=pro ONLY
         $_SESSION['assigned_user_id'] = $contact->assigned_user_id;
-        //BEGIN SUGARCRM flav=pro ONLY
         $sessionManager->session_type = 'contact';
         $sessionManager->last_request_time = TimeDate::getInstance()->nowDb();
         $sessionManager->session_id = session_id();
         $sessionManager->save();
-        //END SUGARCRM flav=pro ONLY
         login_success();
         build_relationship_tree($contact);
         return array('id'=>session_id(), 'error'=>$error->get_soap_array());
@@ -108,7 +98,6 @@ function portal_login($portal_auth, $user_name, $application_name){
     return array('id'=>-1, 'error'=>$error->get_soap_array());
 }
 
-//BEGIN SUGARCRM flav=pro ONLY
 $server->register(
         'portal_login_contact',
         array('portal_auth'=>'tns:user_auth','contact_portal_auth'=>'tns:user_auth', 'application_name'=>'xsd:string'),
@@ -131,9 +120,7 @@ function portal_login_contact($portal_auth, $contact_portal_auth, $application_n
         return array('id'=>-1, 'error'=>$error->get_soap_array());
     }
     global $current_user;
-    //BEGIN SUGARCRM flav=pro ONLY
     $sessionManager = new SessionManager();
-    //END SUGARCRM flav=pro ONLY
     $contact = $contact->retrieve_by_string_fields(array('portal_name'=>$contact_portal_auth['user_name'],  'portal_active'=>'1', 'deleted'=>0) );
     if(!empty($contact) && !User::checkPasswordMD5($contact_portal_auth['password'], $contact->portal_password)) {
         $contact = null;
@@ -162,12 +149,10 @@ function portal_login_contact($portal_auth, $contact_portal_auth, $application_n
             'Campaigns',
         );
 
-        //BEGIN SUGARCRM flav=pro ONLY
         $sessionManager->session_type = 'contact';
         $sessionManager->last_request_time = TimeDate::getInstance()->nowDb();
         $sessionManager->session_id = session_id();
         $sessionManager->save();
-        //END SUGARCRM flav=pro ONLY
         login_success();
         build_relationship_tree($contact);
         return array('id'=>session_id(), 'error'=>$error->get_soap_array());
@@ -177,7 +162,6 @@ function portal_login_contact($portal_auth, $contact_portal_auth, $application_n
         return array('id'=>-1, 'error'=>$error->get_soap_array());
     }
 }
-//END SUGARCRM flav=pro ONLY
 /*
 this validates the session and starts the session;
 */
@@ -188,16 +172,12 @@ function portal_validate_authenticated($session_id){
     // This little construct checks to see if the session validated
     if(session_start()) {
         $valid_session = true;
-        //BEGIN SUGARCRM flav=pro ONLY
         $valid_session = SessionManager::getValidSession($session_id);
-        //END SUGARCRM flav=pro ONLY
 
 		if(!empty($_SESSION['is_valid_session']) && $_SESSION['ip_address'] == query_client_ip() && $valid_session != null && ($_SESSION['type'] == 'contact' || $_SESSION['type'] == 'lead' || $_SESSION['type'] == 'portal')){
 			global $current_user;
-			//BEGIN SUGARCRM flav=pro ONLY
             $valid_session->last_request_time = TimeDate::getInstance()->nowDb();
             $valid_session->save();
-            //END SUGARCRM flav=pro ONLY
             $current_user = BeanFactory::getBean('Users', $_SESSION['portal_id']);
             login_success();
             error_reporting($old_error_reporting);
@@ -219,10 +199,8 @@ $server->register(
 function portal_logout($session){
     $error = new SoapError();
     if(portal_validate_authenticated($session)){
-        //BEGIN SUGARCRM flav=pro ONLY
         $sessionManager = new SessionManager();
         $sessionManager->archiveSession($session);
-        //END SUGARCRM flav=pro ONLY
         session_destroy();
         return $error->get_soap_array();
     }
@@ -443,9 +421,7 @@ function portal_set_entry($session,$module_name, $name_value_list){
 
     foreach($name_value_list as $value){
         if($value['name'] == 'id' && !empty($value['value'])) {
-    //BEGIN SUGARCRM flav=pro ONLY
             $seed->disable_row_level_security = true;
-    //END SUGARCRM flav=pro ONLY
             $seed->retrieve($value['value']);
             $is_update = true;
             break;
@@ -466,7 +442,6 @@ function portal_set_entry($session,$module_name, $name_value_list){
     }
 
     if(!$is_update){
-    //BEGIN SUGARCRM flav=pro ONLY
         if(!key_exists('team_id', $values_set) && isset($_SESSION['team_id'])){
             $seed->team_id = $_SESSION['team_id'];
         }
@@ -474,7 +449,6 @@ function portal_set_entry($session,$module_name, $name_value_list){
         if(!key_exists('team_set_id', $values_set) && isset($_SESSION['team_set_id'])){
             $seed->team_set_id = $_SESSION['team_set_id'];
         }
-    //END SUGARCRM flav=pro ONLY
         if(isset($_SESSION['assigned_user_id']) && (!key_exists('assigned_user_id', $values_set) || empty($values_set['assigned_user_id']))){
             $seed->assigned_user_id = $_SESSION['assigned_user_id'];
         }
@@ -484,13 +458,9 @@ function portal_set_entry($session,$module_name, $name_value_list){
         $seed->portal_flag = 1;
         $seed->portal_viewable = true;
     }
-    //BEGIN SUGARCRM flav=pro ONLY
     $seed->disable_row_level_security = true;
-    //END SUGARCRM flav=pro ONLY
     $id = $seed->save();
-    //BEGIN SUGARCRM flav=pro ONLY
     $seed->disable_row_level_security = true;
-    //END SUGARCRM flav=pro ONLY
     set_module_in(array('in'=>"('".$GLOBALS['db']->quote($id)."')", 'list'=>array($id)), $module_name);
     if($_SESSION['type'] == 'contact' && $module_name != 'Contacts' && !$is_update){
         if($module_name == 'Notes'){
@@ -503,9 +473,7 @@ function portal_set_entry($session,$module_name, $name_value_list){
             $id = $seed->save();
         }else{
             $contact = BeanFactory::getBean('Contacts', $_SESSION['user_id']
-//BEGIN SUGARCRM flav=pro ONLY
                 , array("disable_row_level_security" => true)
-//END SUGARCRM flav=pro ONLY
             );
             $seed->contact_id = $contact;
 
@@ -569,9 +537,7 @@ function portal_remove_note_attachment($session, $id)
     }
 
     $focus = BeanFactory::getBean('Notes', $id
-    //BEGIN SUGARCRM flav=pro ONLY
         , array("disable_row_level_security" => true)
-    //END SUGARCRM flav=pro ONLY
     );
     $result = $focus->deleteAttachment();
 
@@ -599,9 +565,7 @@ function portal_get_note_attachment($session,$id)
     $current_user = $seed_user;
 
     $note = BeanFactory::getBean('Notes', $id
-//BEGIN SUGARCRM flav=pro ONLY
                 , array("disable_row_level_security" => true)
-//END SUGARCRM flav=pro ONLY
     );
     require_once('modules/Notes/NoteSoap.php');
     $ns = new NoteSoap();
@@ -642,9 +606,7 @@ function portal_relate_note_to_module($session,$note_id, $module_name, $module_i
         return array('id'=>-1, 'error'=>$error->get_soap_array());
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
     $seed->disable_row_level_security = true;
-    //END SUGARCRM flav=pro ONLY
     $seed->retrieve($module_id);
     if($module_name == 'Cases' || $module_name == 'Bugs') {
         $seed->note_id =  $note_id;
@@ -815,9 +777,7 @@ function portal_get_subscription_lists($session){
     require_once('modules/Campaigns/utils.php');
 
     $contact = BeanFactory::getBean('Contacts');
-    //BEGIN SUGARCRM flav=pro ONLY
     $contact->disable_row_level_security = true;
-    //END SUGARCRM flav=pro ONLY
     $contact->retrieve($_SESSION['user_id']);
 
     if(!empty($contact->id)) {
@@ -859,9 +819,7 @@ function portal_set_newsletters($session, $subscribe_ids, $unsubscribe_ids){
     require_once('modules/Campaigns/utils.php');
 
     $contact = BeanFactory::getBean('Contacts');
-    //BEGIN SUGARCRM flav=pro ONLY
     $contact->disable_row_level_security = true;
-    //END SUGARCRM flav=pro ONLY
     $contact->retrieve($_SESSION['user_id']);
 
     if(!empty($contact->id)) {

@@ -40,12 +40,10 @@ $viewdefs[$module_name]['EditView'] = array(
 		        array('ownership','industry'),
 
 		        array($_object_name . '_type', 'annual_revenue'),
-			    //BEGIN SUGARCRM flav=pro ONLY
 			    array (
 			      array('name'=>'team_name', 'displayParams'=>array('display'=>true)),
 			      ''
 			    ),
-			    //END SUGARCRM flav=pro ONLY
                 array('assigned_user_name'),
 	   ),
 	   'lbl_address_information'=>array(

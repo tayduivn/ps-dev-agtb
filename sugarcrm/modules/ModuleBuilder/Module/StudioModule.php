@@ -27,6 +27,10 @@ class StudioModule
         'KBContents', // Knowledge Base
         'ProductTemplates', // Product Catalog
         'Prospects', // Targets
+        'pmse_Business_Rules', // Process Business Rules
+        'pmse_Project', // Process Definitions
+        'pmse_Emails_Templates', // Process Emails Templates
+        'pmse_Inbox', // Processes
     );
 
     /**
@@ -284,7 +288,6 @@ class StudioModule
                 'help' => 'subpanelsBtn',
             ), 
         );
-        //BEGIN SUGARCRM flav=pro ONLY
         if (self::isMobileLayoutsSupported($this->module)) {
             $sources[translate('LBL_WIRELESSLAYOUTS')] = array(
                 'children' => 'getWirelessLayouts',
@@ -293,7 +296,6 @@ class StudioModule
                 'help' => 'wirelesslayoutsBtn',
             );
         }
-        //END SUGARCRM flav=pro ONLY
         //BEGIN SUGARCRM flav=ent ONLY
         $sources[translate('LBL_PORTAL_LAYOUTS')] = array(
             'children' => 'getPortal',
@@ -400,7 +402,6 @@ class StudioModule
 
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
     /**
      * Gets wiresless layouts for this module
      * 
@@ -435,7 +436,6 @@ class StudioModule
 
         return $layouts ;
     }
-    //END SUGARCRM flav=pro ONLY
 
     /**
      * Gets appropriate search layouts for the module
@@ -485,7 +485,6 @@ class StudioModule
         return new DeployedRelationships($this->module);
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
     /**
      * Gets the collection of portal layouts for this module, if they exist
      * 
@@ -507,8 +506,6 @@ class StudioModule
 
         return $nodes;
     }
-
-    //END SUGARCRM flav=pro ONLY
 
     /**
      * Gets a list of subpanels used by the current module
@@ -665,9 +662,7 @@ class StudioModule
         $sources[] = array('type'  => MB_BASICSEARCH);
         $sources[] = array('type'  => MB_ADVANCEDSEARCH);
         $sources[] = array('type'  => MB_POPUPSEARCH);
-        //BEGIN SUGARCRM flav=pro ONLY
         $sources = array_merge($sources, $this->getWirelessLayouts());
-        //END SUGARCRM flav=pro ONLY
         //BEGIN SUGARCRM flav=ent ONLY
         $sources = array_merge($sources, $this->getPortalLayoutSources());
         //END SUGARCRM flav=ent ONLY
@@ -711,9 +706,7 @@ class StudioModule
         $sources[] = array('type'  => MB_BASICSEARCH);
         $sources[] = array('type'  => MB_ADVANCEDSEARCH);
         $sources[] = array('type'  => MB_POPUPLIST);
-        //BEGIN SUGARCRM flav=pro ONLY
         $sources = array_merge($sources, $this->getWirelessLayouts());
-        //END SUGARCRM flav=pro ONLY
         //BEGIN SUGARCRM flav=ent ONLY
         $sources = array_merge($sources, $this->getPortalLayoutSources());
         //END SUGARCRM flav=ent ONLY

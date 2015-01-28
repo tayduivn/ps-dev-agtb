@@ -19,21 +19,17 @@ $installed_classes = array();
 $ACLbeanList=$beanList;
 
 
-//BEGIN SUGARCRM flav=pro ONLY
 // In the event that previous Tracker entries were installed from 510RC, we need to fix the category value
 $GLOBALS['db']->query("UPDATE acl_actions set acltype = 'TrackerPerf' where category = 'TrackerPerfs'");
 $GLOBALS['db']->query("UPDATE acl_actions set acltype = 'TrackerSession' where category = 'TrackerSessions'");
 $GLOBALS['db']->query("UPDATE acl_actions set acltype = 'TrackerQuery' where category = 'TrackerQueries'");
-//END SUGARCRM flav=pro ONLY
 
 if(is_admin($current_user)){
     foreach($ACLbeanList as $module=>$class){
 
         if(empty($installed_classes[$class]) && isset($beanFiles[$class])){
             if($class == 'Tracker'){
-                //BEGIN SUGARCRM flav=pro ONLY
                 ACLAction::addActions('Trackers', 'Tracker');
-                //END SUGARCRM flav=pro ONLY
             } else {
                 $mod = BeanFactory::newBeanByName($class);
                 $GLOBALS['log']->debug("DOING: $class");
@@ -55,7 +51,6 @@ if(is_admin($current_user)){
     }
 
 
-//BEGIN SUGARCRM flav=pro ONLY
 
 $installActions = false;
 $missingAclRolesActions = false;
@@ -184,6 +179,5 @@ if($installActions || $missingAclRolesActions) {
         }
     }
 }
-//END SUGARCRM flav=pro ONLY
 }
 ?>

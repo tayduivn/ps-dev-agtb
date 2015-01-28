@@ -25,7 +25,6 @@ if(isset($_REQUEST['login_language'])){
 $sugar_smarty = new Sugar_Smarty();
 echo '<link rel="stylesheet" type="text/css" media="all" href="'.getJSPath('modules/Users/login.css').'">';
 echo '<script type="text/javascript" src="'.getJSPath('modules/Users/login.js').'"></script>';
-//BEGIN SUGARCRM flav=pro ONLY
 // detect mobile device on login page, redirect accordingly
 if ( isset($_REQUEST['mobile']) && $_REQUEST['mobile'] == '0' ) {
     if (isset($_SESSION['isMobile'])) unset($_SESSION['isMobile']);
@@ -36,7 +35,6 @@ elseif (checkForMobile()){
     $url = $GLOBALS['app']->getLoginRedirect()."&mobile=1";
     header( "Location: ". $url );
 }
-//END SUGARCRM flav=pro ONLY
 global $app_language, $sugar_config;
 //we don't want the parent module's string file, but rather the string file specifc to this subpanel
 global $current_language;

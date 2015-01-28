@@ -21,9 +21,7 @@ $dashletData['MyBugsDashlet']['searchFields'] = array('date_entered'          =>
                                                       'status'                => array('default' => array('Assigned', 'New', 'Pending')),
                                                       'type'                  => array('default' => ''),
                                                       'name'                  => array('default' => ''),
-                                                      //BEGIN SUGARCRM flav=pro ONLY
                                                       'team_id'               => array('default' => '', 'label'=>'LBL_TEAMS'),
-                                                      //END SUGARCRM flav=pro ONLY
                                                       'assigned_user_id'      => array('type'    => 'assigned_user_name',
 																			         'label' => 'LBL_ASSIGNED_TO', 
                                                                                      'default' => $current_user->name));
@@ -59,9 +57,7 @@ $dashletData['MyBugsDashlet']['columns'] = array('bug_number' => array('width'  
                                                                        'label'   => 'LBL_CREATED'),
                                                  'assigned_user_name' => array('width'   => '8', 
                                                                                'label'   => 'LBL_LIST_ASSIGNED_USER'),
-                                                 //BEGIN SUGARCRM flav=pro ONLY
                                                  'team_name' => array('width'   => '15', 
                                                                       'label'   => 'LBL_LIST_TEAM'),
-                                                 //END SUGARCRM flav=pro ONLY
                                                      );
 ?>

@@ -62,9 +62,7 @@ class RestFilterTest extends RestTestBase
     {
         parent::tearDown();
 
-        //BEGIN SUGARCRM flav=pro ONLY
         $GLOBALS['db']->query("DELETE FROM sugarfavorites WHERE created_by = '".$GLOBALS['current_user']->id."'");
-        //END SUGARCRM flav=pro ONLY
 
         $this->_cleanUpRecords();
         SugarTestFilterUtilities::removeAllCreatedFilters();
@@ -134,7 +132,6 @@ class RestFilterTest extends RestTestBase
         $this->assertEquals(1,count($reply['reply']['records']),'And: Returned too many results');
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
     /**
      * @group rest
      */
@@ -219,7 +216,6 @@ class RestFilterTest extends RestTestBase
         $this->assertEquals(2,count($reply['reply']['records']),'FavMulRelated: Returned too many results');
 
     }
-    //BEGIN SUGARCRM flav=pro ONLY
 
     /**
      * @group rest

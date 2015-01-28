@@ -285,7 +285,6 @@ EOD
     ;
 
     $reportName =  $args['reporter']->saved_report->name;
-    //BEGIN SUGARCRM flav=pro ONLY
 
     $shareButtonCode = "parent.SUGAR.App.bwc.shareRecord('Reports', '$report_id', '$reportName');";
     $buttons[] = <<<EOD
@@ -309,7 +308,6 @@ EOD
 EOD
         ;
     }
-    //END SUGARCRM flav=pro ONLY
     if ($report_export_access) {
         //workaround for SP-1685, Need to clear bwcModel so change confirmation doesn't fire after making a PDF.
         $buttons[] = <<<EOD
@@ -330,7 +328,6 @@ EOD
         ;
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
     if ($report_delete_access) {
         $buttons[] = <<<EOD
         <input type="button" class="button"  name="deleteReportButton" id="deleteReportButton" accessKey="{$app_strings['LBL_DELETE_BUTTON_KEY']}" value="{$app_strings['LBL_DELETE_BUTTON_LABEL']}" title="{$app_strings['LBL_DELETE_BUTTON_TITLE']}"
@@ -338,7 +335,6 @@ EOD
 EOD
         ;
     }
-    //END SUGARCRM flav=pro ONLY
     $smarty->assign('action_button', $buttons);
 
     $reportType = ($reporter->report_def['report_type'] == 'tabular' ? $mod_strings['LBL_ROWS_AND_COLUMNS_REPORT'] : $mod_strings['LBL_SUMMATION_REPORT']);
@@ -415,10 +411,8 @@ EOD
     $smarty->assign('reportType', $reportType);
     $smarty->assign('reportModuleList', implode(", ", $fullTableListArray));
     $smarty->assign('reportDisplayColumnsList', implode(", ", $displayColumnsArray));
-    //BEGIN SUGARCRM flav=pro ONLY
     require_once('modules/Teams/TeamSetManager.php');
     $smarty->assign('reportTeam', TeamSetManager::getCommaDelimitedTeams($args['reporter']->saved_report->team_set_id, $args['reporter']->saved_report->team_id, true));
-    //END SUGARCRM flav=pro ONLY
     $smarty->assign('reportAssignedToName', $args['reporter']->saved_report->assigned_user_name);
     $smarty->assign('summaryAndGroupDefData', $summaryAndGroupDefData);
 

@@ -134,10 +134,6 @@ $viewdefs[$module_name]['base']['view']['record'] = array(
                         ),
                     ),
                 ),
-                array(
-                    'name' => 'tag',
-                    'span' => 12,
-                ),
             ),
         ),
         array(
@@ -182,9 +178,7 @@ $viewdefs[$module_name]['base']['view']['record'] = array(
                 //BEGIN SUGARCRM flav=com ONLY
                 '',
                 //END SUGARCRM flav=com ONLY
-                //BEGIN SUGARCRM flav=pro ONLY
                 'team_name',
-                //END SUGARCRM flav=pro ONLY
                 array(
                     'name' => 'date_entered_by',
                     'readonly' => true,

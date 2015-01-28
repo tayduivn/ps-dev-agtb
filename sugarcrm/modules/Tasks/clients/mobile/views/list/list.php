@@ -45,7 +45,6 @@ $viewdefs['Tasks']['mobile']['view']['list'] = array(
                     'default' => true,
                     'enabled' => true,
                 ),
-                //BEGIN SUGARCRM flav=pro ONLY
                 array(
                     'name' => 'team_name',
                     'width' => '9',
@@ -53,7 +52,6 @@ $viewdefs['Tasks']['mobile']['view']['list'] = array(
                     'default' => true,
                     'enabled' => true,
                 ),
-                //END SUGARCRM flav=pro ONLY
             ),
         ),
     ),

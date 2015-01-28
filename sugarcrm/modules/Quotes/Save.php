@@ -197,10 +197,8 @@ for ($i = 0; $i < $product_count; $i++) {
                 $product->currency_id = $focus->currency_id;
                 $product->base_rate = $focus->base_rate;
 
-                //BEGIN SUGARCRM flav=pro ONLY
                 $product->team_id = $focus->team_id;
                 $product->team_set_id = $focus->team_set_id;
-                //END SUGARCRM flav=pro ONLY
 
                 $product->assigned_user_name = $focus->assigned_user_name;
                 $product->assigned_user_id = $focus->assigned_user_id;

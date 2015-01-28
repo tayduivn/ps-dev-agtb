@@ -192,7 +192,6 @@ class CurrentUserApi extends SugarApi
         $user_data['address_country'] = $current_user->address_country;
         $user_data['address_postalcode'] = $current_user->address_postalcode;
 
-        //BEGIN SUGARCRM flav=pro ONLY
         require_once 'modules/Teams/TeamSetManager.php';
 
         $teams = $current_user->get_my_teams();
@@ -210,7 +209,6 @@ class CurrentUserApi extends SugarApi
             }
         }
         $user_data['preferences']['default_teams'] = $defaultTeams;
-        //END SUGARCRM flav=pro ONLY
 
         // Send back a hash of this data for use by the client
         $user_data['_hash'] = $current_user->getUserMDHash();

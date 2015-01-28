@@ -217,11 +217,9 @@ $workflow = array(  'welcome.php',
                     'license.php',
                     'installType.php',
 );
-                  //BEGIN SUGARCRM flav=pro ONLY
                   if(isset($_SESSION['oc_install']) &&  $_SESSION['oc_install']) {
                      $_SESSION['setup_db_type'] = 'mysql';
                   }
-                  //END SUGARCRM flav=pro ONLY
 $workflow[] =  'systemOptions.php';
 $workflow[] = 'dbConfig_a.php';
 //$workflow[] = 'dbConfig_b.php';
@@ -280,7 +278,6 @@ if (!isset($_SESSION['cache_dir']) || empty($_SESSION['cache_dir'])) {
     $_SESSION['cache_dir'] = isset($sugar_config['cache_dir']) ? $sugar_config['cache_dir'] : 'cache/';
 }
 
-  //BEGIN SUGARCRM flav=pro ONLY
     //check if this is an offline client installation
     if(file_exists('config.php')) {
         global $sugar_config;
@@ -292,8 +289,6 @@ if (!isset($_SESSION['cache_dir']) || empty($_SESSION['cache_dir'])) {
             $_SESSION['oc_install'] = false;
         }
     }
-
-  //END SUGARCRM flav=pro ONLY
   $workflow[] = 'confirmSettings.php';
   $workflow[] = 'performSetup.php';
 
@@ -514,7 +509,6 @@ if($next_clicked) {
                 $next_step--;
             }
             break;
-        //BEGIN SUGARCRM flav=pro ONLY
          case 'oc_install.php':
             	$_SESSION['oc_server_url']	= $_REQUEST['oc_server_url'];
             	$_SESSION['oc_username']    = $_REQUEST['oc_username'];
@@ -542,7 +536,6 @@ if($next_clicked) {
                	 $next_step--;
             	}
             break;
-        //END SUGARCRM flav=pro ONLY
 }
     }
 
@@ -685,7 +678,6 @@ EOQ;
                 }
             }
         }
-		//BEGIN SUGARCRM flav=pro ONLY
         $offline_client_install = false;
         if(isset($_REQUEST['oc_install']) && ($_REQUEST['oc_install'] == 'true')) {
             $_SESSION['oc_install'] = true;
@@ -694,7 +686,6 @@ EOQ;
         {
         	$_SESSION['oc_install'] = false;
         }
-        //END SUGARCRM flav=pro ONLY
         break;
 	}
 }

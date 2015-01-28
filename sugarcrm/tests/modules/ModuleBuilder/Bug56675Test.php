@@ -81,7 +81,6 @@ class Bug56675Test extends Sugar_PHPUnit_Framework_TestCase {
         // Make sure the clients directory is there
         $this->assertFileExists($this->dirname, "$this->dirname was not created when the custom module was saved.");
         
-        //BEGIN SUGARCRM flav=pro ONLY
         // Make sure the child directories and files are there for mobile
         $types = array('list', 'edit', 'detail');
         foreach ($types as $type) {
@@ -91,7 +90,6 @@ class Bug56675Test extends Sugar_PHPUnit_Framework_TestCase {
             $file = $dir . '/' . $type . '.php';
             $this->assertFileExists($file, "$file was not created when module was saved");
         }
-        //END SUGARCRM flav=pro ONLY
         
         //BEGIN SUGARCRM flav=ent ONLY
         // Modified this test for Bug 57259 to test NOT exists for portal viewdefs
@@ -100,7 +98,6 @@ class Bug56675Test extends Sugar_PHPUnit_Framework_TestCase {
         //END SUGARCRM flav=ent ONLY
     }
     
-    //BEGIN SUGARCRM flav=pro ONLY
     /**
      * @group Bug56675
      */
@@ -112,5 +109,4 @@ class Bug56675Test extends Sugar_PHPUnit_Framework_TestCase {
         $this->assertTrue(is_array($paneldefs), "Undeployed Module List view panel defs are not of type ARRAY");
         $this->assertTrue(isset($paneldefs[0]['label']), "Undeployed Module List view panel defs do not have a label");
     }
-    //END SUGARCRM flav=pro ONLY
 }

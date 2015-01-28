@@ -127,8 +127,6 @@ $dictionary['TeamNotices'] = array('table' => 'team_notices'
                             );
 
 VardefManager::createVardef('TeamNotices','TeamNotices', array(
-//BEGIN SUGARCRM flav=pro ONLY
 'team_security',
-//END SUGARCRM flav=pro ONLY
 ));
 ?>

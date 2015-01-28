@@ -99,12 +99,10 @@ class SoapHelperWebServices {
 			$module_fields['assigned_user_name'] = $module_fields['assigned_user_id'];
 			$module_fields['assigned_user_name']['name'] = 'assigned_user_name';
 		}
-		//BEGIN SUGARCRM flav=pro ONLY
 		if(isset($value->assigned_name) && isset($module_fields['team_id'])) {
 			$module_fields['team_name'] = $module_fields['team_id'];
 			$module_fields['team_name']['name'] = 'team_name';
 		}
-		//END SUGARCRM flav=pro ONLY
 		if(isset($module_fields['modified_user_id'])) {
 			$module_fields['modified_by_name'] = $module_fields['modified_user_id'];
 			$module_fields['modified_by_name']['name'] = 'modified_by_name';
@@ -366,11 +364,9 @@ function validate_user($user_name, $password){
 			if(isset($value->assigned_user_name)) {
 				$list['assigned_user_name'] = $this->get_name_value('assigned_user_name', $value->assigned_user_name);
 			}
-			//BEGIN SUGARCRM flav=pro ONLY
 			if(isset($value->assigned_name)) {
 				$list['team_name'] = $this->get_name_value('team_name', $value->assigned_name);
 			}
-			//END SUGARCRM flav=pro ONLY
 			if(isset($value->modified_by_name)) {
 				$list['modified_by_name'] = $this->get_name_value('modified_by_name', $value->modified_by_name);
 			}
@@ -436,11 +432,9 @@ function validate_user($user_name, $password){
 			if(isset($value->assigned_user_name) && in_array('assigned_user_name', $fields)) {
 				$list['assigned_user_name'] = $this->get_name_value('assigned_user_name', $value->assigned_user_name);
 			}
-			//BEGIN SUGARCRM flav=pro ONLY
 			if(isset($value->assigned_name) && in_array('assigned_name', $fields)) {
 				$list['team_name'] = $this->get_name_value('team_name', $value->assigned_name);
 			}
-			//END SUGARCRM flav=pro ONLY
 			if(isset($value->modified_by_name) && in_array('modified_by_name', $fields)) {
 				$list['modified_by_name'] = $this->get_name_value('modified_by_name', $value->modified_by_name);
 			}
@@ -450,12 +444,10 @@ function validate_user($user_name, $password){
 
 			$filterFields = $this->filter_fields($value, $fields);
 
-           //BEGIN SUGARCRM flav=pro ONLY
             //now check field level acl's if this bean implements them
             if($value->bean_implements('ACL') && !empty($GLOBALS['current_user'])){
                 $filterFields = $this->returnFieldsWithAccess($value, $filterFields);
             }
-          //END SUGARCRM flav=pro ONLY
 
 			foreach($filterFields as $field){
 				$var = $value->field_defs[$field];
@@ -892,7 +884,6 @@ function validate_user($user_name, $password){
 					);
 	}
 
-	//BEGIN SUGARCRM flav=pro ONLY
 	/**
 	 * Return the data from a report
 	 *
@@ -959,7 +950,6 @@ function validate_user($user_name, $password){
 		$GLOBALS['log']->info('End: SoapHelperWebServices->get_report_value');
 		return $result;
 	} // fn
-	//END SUGARCRM flav=pro ONLY
 
 	function get_return_module_fields($value, $module,$fields, $translate=true){
 		$GLOBALS['log']->info('Begin: SoapHelperWebServices->get_return_module_fields');
@@ -1184,7 +1174,6 @@ function validate_user($user_name, $password){
 	} // fn
 
 
-    //BEGIN SUGARCRM flav=pro ONLY
     /**
      * returnFieldsWithAccess
      *
@@ -1219,7 +1208,6 @@ function validate_user($user_name, $password){
         }
         return $select_fields;
     }
-  //END SUGARCRM flav=pro ONLY
 
 
 } // clazz

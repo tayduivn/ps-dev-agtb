@@ -63,7 +63,6 @@
                                 </td>
                             </tr>
                             {* //END SUGARCRM flav=com ONLY *}
-                            {* //BEGIN SUGARCRM flav=pro ONLY *}
                             <tr id="ext_source_help">
                                 <td align="left" scope="row" colspan="3"><h3>{$MOD.LBL_WHAT_IS}&nbsp;</h3></td>
                             </tr>
@@ -97,7 +96,6 @@
                                     <input id="ext_source_sign_in_bttn" type="button" value="{$MOD.LBL_EXT_SOURCE_SIGN_IN}" style="display:none;vertical-align:top; !important">
                                 </td>
                             </tr>
-                            {* //END SUGARCRM flav=pro ONLY *}
                             </table>
                         </td>
                     </tr>

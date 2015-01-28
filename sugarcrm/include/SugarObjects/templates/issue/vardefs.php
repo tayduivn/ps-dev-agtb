@@ -32,7 +32,7 @@ $vardefs = array (
 			'name' => 'name',
 			'vname' => 'LBL_SUBJECT',
 			'type' => 'name',
-			'link' => true, // bug 39288 
+			'link' => true, // bug 39288
 			'dbType' => 'varchar',
 			'len' => 255,
 			'audited' => true,
@@ -43,7 +43,7 @@ $vardefs = array (
 			'required'=>true,
             'importable' => 'required',
             'duplicate_on_record_copy' => 'always',
-			
+
 		),
         'type' => array (
             'name' => 'type',
@@ -94,10 +94,9 @@ $vardefs = array (
 			'merge_filter' => 'enabled',
             'sortable' => true,
             'duplicate_on_record_copy' => 'always',
-			
+
 		),
 
-			//BEGIN SUGARCRM flav=pro ONLY
 	    'system_id' => array (
 			'name' => 'system_id',
 			'vname' => 'LBL_SYSTEM_ID',
@@ -105,7 +104,6 @@ $vardefs = array (
             'duplicate_on_record_copy' => 'always',
 			'comment' => 'The offline client device that created the bug'
 		),
-			//END SUGARCRM flav=pro ONLY
 
 
 			//not in cases.
@@ -117,14 +115,11 @@ $vardefs = array (
 			'comment' => 'Free-form text used to denote activities of interest'
 		),
 
-		
+
 	),
 	'indices'=>array(
 		 'number'=>array('name' =>strtolower($module).'numk', 'type' =>'unique', 'fields'=>array($_object_name . '_number'))
 	),
-    'uses' => array(
-        'taggable',
-    ),
     'duplicate_check' => array(
         'enabled' => true,
         'FilterDuplicateCheck' => array(

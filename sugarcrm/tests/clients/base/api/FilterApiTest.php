@@ -87,9 +87,7 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-        //BEGIN SUGARCRM flav=pro ONLY
         $GLOBALS['db']->query("DELETE FROM sugarfavorites WHERE created_by = '" . $GLOBALS['current_user']->id . "'");
-        //END SUGARCRM flav=pro ONLY
         $GLOBALS['db']->query("DELETE FROM subscriptions WHERE created_by = '{$GLOBALS['current_user']->id}'");
         $GLOBALS['sugar_config']['max_list_limit'] = self::$oldLimit;
     }
@@ -382,7 +380,6 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
         );
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
     public function testFavoriteFilter()
     {
         $this->assertEquals(
@@ -536,8 +533,6 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(3, $reply['record_count'], 'FavMulRelated: Returned too many results');
 
     }
-
-    //END SUGARCRM flav=pro ONLY
 
     public function testOwnerFilter()
     {

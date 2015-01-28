@@ -51,13 +51,11 @@ if (empty($focus->status)) {
 $focus->save();
 $return_id = $focus->id;
 
-//BEGIN SUGARCRM flav=pro ONLY
 // If reports to has changed, call update team memberships to correct the membership tree
 if ($old_reports_to_id != $focus->reports_to_id)
 {
 	$focus->update_team_memberships($old_reports_to_id);
 }
-//END SUGARCRM flav=pro ONLY
 
 if(isset($_POST['return_module']) && $_POST['return_module'] != "") $return_module = $_POST['return_module'];
 else $return_module = "Employees";

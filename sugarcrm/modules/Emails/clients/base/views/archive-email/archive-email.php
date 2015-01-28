@@ -100,7 +100,7 @@ $viewdefs['Emails']['base']['view']['archive-email'] = array(
                                 array(
                                     'name' => 'upload_new_button',
                                     'type' => 'attachment-button',
-                                    'icon' => 'fa-paper-clip',
+                                    'icon' => 'fa-paperclip',
                                     'label' => 'LBL_ATTACHMENT',
                                 ),
                                 array(
@@ -123,7 +123,7 @@ $viewdefs['Emails']['base']['view']['archive-email'] = array(
                                 array(
                                     'name' => 'template_button',
                                     'type' => 'button',
-                                    'icon' => 'fa-file-alt',
+                                    'icon' => 'fa-file-o',
                                     'label' => 'LBL_EMAIL_TEMPLATES',
                                 ),
                             ),
@@ -155,13 +155,11 @@ $viewdefs['Emails']['base']['view']['archive-email'] = array(
             'labelsOnTop' => false,
             'placeholders' => true,
             'fields' => array(
-                //BEGIN SUGARCRM flav=pro ONLY
                 array(
                     'type' => 'teamset',
                     'name' => 'team_name',
                     'span' => 12,
                 ),
-                //END SUGARCRM flav=pro ONLY
                 array(
                     'label' => 'LBL_LIST_RELATED_TO',
                     'type' => 'parent',

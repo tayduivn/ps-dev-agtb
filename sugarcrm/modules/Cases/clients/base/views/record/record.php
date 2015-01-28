@@ -68,7 +68,6 @@ $viewdefs['Cases']['base']['view']['record'] = array(
                 array(
                     'type' => 'divider',
                 ),
-                //BEGIN SUGARCRM flav=pro ONLY
                 array(
                     'name' => 'create_kbdocument_button',
                     'type' => 'rowaction',
@@ -80,7 +79,6 @@ $viewdefs['Cases']['base']['view']['record'] = array(
                 array(
                     'type' => 'divider',
                 ),
-                //END SUGARCRM flav=pro ONLY
                 array(
                     'type' => 'rowaction',
                     'event' => 'button:find_duplicates_button:click',
@@ -178,10 +176,6 @@ $viewdefs['Cases']['base']['view']['record'] = array(
                 array(
                     'name' => 'description',
                     'nl2br' => true,
-                    'span' => 12,
-                ),
-                array(
-                    'name' => 'tag',
                     'span' => 12,
                 ),
             ),

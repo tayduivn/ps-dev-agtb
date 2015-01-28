@@ -693,7 +693,6 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             if (isset($options['filter']) && $options['filter']['type'] == 'range') {
                 $moduleFilter = $this->constructRangeFilter($moduleFilter, $options['filter']);
             }
-            //BEGIN SUGARCRM flav=pro ONLY
 
             // we only want JUST favorites if the option is 2
             // if the option is 1 that means we want all including favorites,
@@ -701,7 +700,6 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             if (isset($options['favorites']) && $options['favorites'] == 2) {
                 $moduleFilter = $this->constructMyFavoritesFilter($moduleFilter);
             }
-            //END SUGARCRM flav=pro ONLY
 
             $mainFilter->addShould($moduleFilter);
 
@@ -711,7 +709,6 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
     }
 
 
-    //BEGIN SUGARCRM flav=pro ONLY
 
     /**
      * Construct a favorites filter
@@ -729,7 +726,6 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
 
         return $moduleFilter;
     }
-    //END SUGARCRM flav=pro ONLY
 
     /**
      * Construct a Range Filter to

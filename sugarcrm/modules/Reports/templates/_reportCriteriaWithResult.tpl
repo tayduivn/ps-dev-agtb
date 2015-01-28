@@ -78,14 +78,12 @@ ACLAllowedModules = {$ACLAllowedModules};
 </tr>
 </table>
 {/if}
-{* //BEGIN SUGARCRM flav=pro ONLY*}
 <table width="100%" cellspacing=0 cellpadding=0 class="actionsContainer">
 <tr>
 <td><input type=button name="showHideReportDetails" id="showHideReportDetails" class="button" title="{$reportDetailsButtonTitle}" value="{$reportDetailsButtonTitle}" onClick="showHideReportDetailsButton();">
 </td>
 </tr>
 </table>
-{* //END SUGARCRM flav=pro ONLY*}
 <table width="100%" cellspacing=0 cellpadding=0>
 <tr>
 	<td width="100%" scope="row">
@@ -102,11 +100,9 @@ ACLAllowedModules = {$ACLAllowedModules};
 				<td wrap="true">
 					<b>{$mod_strings.LBL_REPORT_ATT_MODULES}:</b> {$reportModuleList}
 				</td>
-				{* //BEGIN SUGARCRM flav=pro ONLY *}
 				<td wrap="true">
 					<b>{$mod_strings.LBL_TEAM}:</b> {$reportTeam}
 				</td>
-				{* //END SUGARCRM flav=pro ONLY *}
 			</tr>
 			<tr>
 				<td wrap="true">

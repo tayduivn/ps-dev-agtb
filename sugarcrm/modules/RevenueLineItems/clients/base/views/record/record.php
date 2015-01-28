@@ -77,10 +77,6 @@ $fields = array(
         'name' => 'discount_rate_percent',
         'readonly' => true,
     ),
-    array(
-        'name' => 'tag',
-        'span' => 12,
-    ),
 );
 
 $fieldsHidden = array(
@@ -255,10 +251,6 @@ $fields = array(
         'related_fields' => array('quote_id'),
         // this is a hack to get the quote_id field loaded
         'readonly' => true,
-    ),
-    array(
-        'name' => 'tag',
-        'span' => 12,
     ),
 );
 

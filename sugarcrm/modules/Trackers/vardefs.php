@@ -58,14 +58,13 @@ $dictionary['Tracker'] = array(
             'len' => '255',
             'isnull' => 'false',
         ),
-		//BEGIN SUGARCRM flav=pro ONLY
+
 		'team_id'=>array(
 			'name' => 'team_id',
 			'vname' => 'LBL_TEAM_ID',
 			'type' => 'id',
 			'len' => '36',
 		),
-		//END SUGARCRM flav=pro ONLY
         'date_modified'=>array(
             'name' => 'date_modified',
             'vname' => 'LBL_DATE_LAST_ACTION',
@@ -101,7 +100,7 @@ $dictionary['Tracker'] = array(
 		    'reportable'=>false,
 		    'comment' => 'Record deletion indicator'
 		),
-//BEGIN SUGARCRM flav=pro ONLY
+
 		'assigned_user_link'=>array (
 		    'name' => 'assigned_user_link',
 		    'type' => 'link',
@@ -111,8 +110,7 @@ $dictionary['Tracker'] = array(
 		    'module'=>'Users',
 		    'bean_name'=>'User',
 		    'source'=>'non-db',
-		),
-//END SUGARCRM flav=pro ONLY        
+		),        
 		'monitor_id_link'=>array (
 		    'name' => 'monitor_id_link',
 		    'type' => 'link',

@@ -474,13 +474,11 @@ class ViewConvertLead extends SugarView
         {
             if (!empty($lead))
             {
-                //BEGIN SUGARCRM flav=pro ONLY
                 if(empty($bean->team_name))
                {
                    $bean->team_id = $lead->team_id;
                    $bean->team_set_id = $lead->team_set_id;
                 }
-                //END SUGARCRM flav=pro ONLY
                 if (empty($bean->assigned_user_id))
                 {
                     $bean->assigned_user_id = $lead->assigned_user_id;

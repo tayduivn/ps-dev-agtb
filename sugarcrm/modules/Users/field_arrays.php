@@ -52,10 +52,8 @@ $fields_array['User'] = array (
 		,'messenger_type'
 		,'is_group'
 
-		//BEGIN SUGARCRM flav=pro ONLY
 
 		,'default_team'
-		//END SUGARCRM flav=pro ONLY
 	),
     'list_fields' => array(
     	'full_name',
@@ -106,10 +104,8 @@ $fields_array['User'] = array (
 		,'messenger_type'
 		,'is_group'
 
-		//BEGIN SUGARCRM flav=pro ONLY
 
 		,'default_team'
-		//END SUGARCRM flav=pro ONLY
 	),
     'required_fields' =>   array("last_name"=>1,'user_name'=>2,'status'=>3),
 );

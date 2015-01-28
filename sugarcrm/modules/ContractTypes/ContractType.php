@@ -69,9 +69,7 @@ class ContractType extends SugarBean {
 	/*This bean's constructor*/
 	public function __construct() {
 		parent::__construct();
-		//BEGIN SUGARCRM flav=pro ONLY
 		$this->disable_row_level_security=true;
-		//END SUGARCRM flav=pro ONLY
 	}
 
 	/* This method should return the summary text which is used to build the bread crumb navigation*/

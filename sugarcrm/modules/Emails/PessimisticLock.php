@@ -39,7 +39,6 @@ if(isset($_REQUEST['next_free']) && $_REQUEST['next_free'] == true) {
 		$in .= ') ';
 		
 		$team = '';
-		//BEGIN SUGARCRM flav=pro ONLY
 		$qT = 'SELECT count(team_id) AS c FROM team_memberships WHERE user_id'.$in;
 		$rT = $next->db->query($qT);
 		while($aT = $next->db->fetchByAssoc($rT)) {
@@ -54,7 +53,6 @@ if(isset($_REQUEST['next_free']) && $_REQUEST['next_free'] == true) {
 			$team = substr($team, 0, (strlen($team) - 2));
 			$team .= ') ';
 		}
-		//END SUGARCRM flav=pro ONLY
 		
 		$qE = 'SELECT count(id) AS c FROM emails WHERE deleted = 0 AND assigned_user_id'.$in.$team.'LIMIT 1';
 		$rE = $next->db->query($qE);

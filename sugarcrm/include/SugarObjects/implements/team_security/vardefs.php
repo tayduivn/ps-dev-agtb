@@ -13,7 +13,6 @@
 $vardefs = array(
   'visibility' => array('TeamSecurity' => true),
   'fields' => array(
-	 //BEGIN SUGARCRM flav=pro ONLY
 	'team_id' =>
 		array (
 			'name' => 'team_id',
@@ -87,11 +86,9 @@ $vardefs = array(
 			'len' => 36,
 			'custom_type' => 'teamset',
             'studio' => array(
-                   //BEGIN SUGARCRM flav=pro ONLY
                    // Bug 56832 - Exclude list/detail/edit view from portal
                    'portallistview' => false,
                    'portalrecordview' => false,
-                   //END SUGARCRM flav=pro ONLY
                ), // don't show in studio fields list
             'duplicate_on_record_copy' => 'always',
             'exportable'=>true,
@@ -136,7 +133,6 @@ $vardefs = array(
 		'studio' => 'false',
 		'reportable'=>false,
         ),
-	//END SUGARCRM flav=pro ONLY
 ),
 
 'relationships'=>array(
@@ -163,12 +159,10 @@ $vardefs = array(
             'join_key_lhs'      => 'team_set_id',
             'join_key_rhs'      => 'team_id',
 		),
-//BEGIN SUGARCRM flav=pro ONLY
    strtolower($module). '_team' =>
    array('lhs_module'=> 'Teams', 'lhs_table'=> 'teams', 'lhs_key' => 'id',
     'rhs_module'=> $module, 'rhs_table'=> $table_name, 'rhs_key' => 'team_id',
    'relationship_type'=>'one-to-many'),
-//END SUGARCRM flav=pro ONLY
 ),
 'indices' => array(
 		'team_set_'.strtolower($table_name) => array(

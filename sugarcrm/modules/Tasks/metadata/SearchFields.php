@@ -18,7 +18,6 @@ $searchFields['Tasks'] =
         'assigned_user_id'=> array('query_type'=>'default'),
         'status'=> array('query_type'=>'default', 'options' => 'task_status_dom', 'template_var' => 'STATUS_FILTER'),
         
-		//BEGIN SUGARCRM flav=pro ONLY
 		'favorites_only' => array(
             'query_type'=>'format',
 			'operator' => 'subquery',
@@ -27,7 +26,6 @@ $searchFields['Tasks'] =
 			                        and sugarfavorites.module = \'Tasks\'
 			                        and sugarfavorites.assigned_user_id = \'{0}\'',
 			'db_field'=>array('id')),
-		//END SUGARCRM flav=pro ONLY
 		'open_only' => array(
 			'query_type'=>'default',
 			'db_field'=>array('status'),

@@ -16,10 +16,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $focus = BeanFactory::getBean('Groups');
 
 // New user
-//BEGIN SUGARCRM flav=pro ONLY
 	// track the current reports to id to be able to use it if it has changed
 	$old_reports_to_id = $focus->reports_to_id;
-//END SUGARCRM flav=pro ONLY
 
 // Update
 if(isset($_REQUEST['record']) && !empty($_REQUEST['record'])) {
@@ -44,9 +42,7 @@ if(isset($_REQUEST['user_name']) && !empty($_REQUEST['user_name'])) {
 	$focus->last_name	= $_REQUEST['user_name'];
 }
 $focus->description	= $_REQUEST['description'];
-//BEGIN SUGARCRM flav=pro ONLY
 $focus->default_team = $_REQUEST['team_id'];
-//END SUGARCRM flav=pro ONLY
 $focus->save();
 
 

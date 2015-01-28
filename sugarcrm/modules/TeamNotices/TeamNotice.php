@@ -31,10 +31,8 @@ class TeamNotice extends SugarBean {
 	var $team_id;
 	var $url;
 	var $url_title;
-	//BEGIN SUGARCRM flav=pro ONLY
 	var $team_name;
 	var $team_set_name;
-	//END SUGARCRM flav=pro ONLY
 
 	var $table_name = "team_notices";
 	var $module_dir = 'TeamNotices';
@@ -62,9 +60,7 @@ class TeamNotice extends SugarBean {
 			$this->field_name_map[$field['name']] = $field;
 		}
 
-		//BEGIN SUGARCRM flav=pro ONLY
 		$this->team_id = 1; // make the item globally accessible
-		//END SUGARCRM flav=pro ONLY
 	}
 
 	function save_relationship_changes($is_update)
@@ -94,7 +90,6 @@ class TeamNotice extends SugarBean {
         global $mod_strings;
 	  $temp_array = $this->get_list_view_array();
       $temp_array['ENCODED_NAME']=$this->name;
-      //BEGIN SUGARCRM flav=pro ONLY
       $this->load_relationship('teams');
       require_once('modules/Teams/TeamSetManager.php');
       $teams = TeamSetManager::getTeamsFromSet($this->team_set_id);
@@ -106,7 +101,6 @@ class TeamNotice extends SugarBean {
 						</a>
 						</span>";
       }
-      //END SUGARCRM flav=pro ONLY
       return $temp_array;
 
 	}

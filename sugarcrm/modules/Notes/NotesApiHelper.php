@@ -46,10 +46,8 @@ class NotesApiHelper extends SugarBeanApiHelper
 
             $bean->assigned_user_id = $contact->assigned_user_id;
 
-            //BEGIN SUGARCRM flav=pro ONLY
             $bean->team_id = $contact->fetched_row['team_id'];
             $bean->team_set_id = $contact->fetched_row['team_set_id'];
-            //END SUGARCRM flav=pro ONLY
 
             $bean->account_id = $account;
             $bean->contact_id= $contact->id;

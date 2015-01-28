@@ -21,9 +21,7 @@ class Meeting extends SugarBean {
 	var $created_by;
 	var $created_by_name;
 	var $modified_by_name;
-	//BEGIN SUGARCRM flav=pro ONLY
 	var $team_id;
-	//END SUGARCRM flav=pro ONLY
 	var $description;
 	var $name;
 	var $location;
@@ -61,9 +59,7 @@ class Meeting extends SugarBean {
 	var $sequence;
 	var $recurring_source;
 
-	//BEGIN SUGARCRM flav=pro ONLY
 	var $team_name;
-	//END SUGARCRM flav=pro ONLY
 	var $update_vcal = true;
 	var $contacts_arr = array();
 	var $users_arr = array();
@@ -116,7 +112,6 @@ class Meeting extends SugarBean {
 		    }
 			$this->field_name_map[$field['name']] = $field;
 		}
-		//BEGIN SUGARCRM flav=pro ONLY
 		global $current_user;
 		if(!empty($current_user)) {
 			$this->team_id = $current_user->default_team;	//default_team is a team id
@@ -124,7 +119,6 @@ class Meeting extends SugarBean {
 		} else {
 			$this->team_id = 1; // make the item globally accessible
 		}
-		//END SUGARCRM flav=pro ONLY
 //		$this->fill_in_additional_detail_fields();
         if(!empty($GLOBALS['app_list_strings']['duration_intervals'])) {
             $this->minutes_values = $GLOBALS['app_list_strings']['duration_intervals'];
@@ -606,7 +600,9 @@ class Meeting extends SugarBean {
 		parent::send_assignment_notifications($notify_user, $admin);
 
 		$path = SugarConfig::getInstance()->get('upload_dir','upload/') . $this->id;
-		unlink($path);
+		if (file_exists($path)) {
+			unlink($path);
+		}
 	}
 
 	function get_meeting_users() {

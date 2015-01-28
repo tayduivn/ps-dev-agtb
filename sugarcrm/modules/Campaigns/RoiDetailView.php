@@ -178,14 +178,12 @@ $campaign_id = $focus->id;
     $xtpl = $smarty;
     require_once('modules/DynamicFields/templates/Files/DetailView.php');
     
-    //BEGIN SUGARCRM flav=pro ONLY
+
     $smarty->assign("TEAM_NAME", $focus->team_name);
     /* comment out the non-pro code
-    //END SUGARCRM flav=pro ONLY
 
-    //BEGIN SUGARCRM flav=pro ONLY
+
     */
-    //END SUGARCRM flav=pro ONLY
     
     
     

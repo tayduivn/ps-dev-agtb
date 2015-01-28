@@ -21,7 +21,6 @@ $viewdefs[$module_name]['base']['view']['list'] = array(
                     'name' => $_module_name . '_number',
                     'width' => '5',
                     'label' => 'LBL_NUMBER',
-                    'link' => true,
                     'default' => true,
                     'enabled' => true,
                 ),
@@ -54,7 +53,6 @@ $viewdefs[$module_name]['base']['view']['list'] = array(
                     'default' => true,
                     'enabled' => true,
                 ),
-                //BEGIN SUGARCRM flav=pro ONLY
                 array(
                     'name' => 'team_name',
                     'width' => '9',
@@ -62,7 +60,6 @@ $viewdefs[$module_name]['base']['view']['list'] = array(
                     'default' => true,
                     'enabled' => true,
                 ),
-                //END SUGARCRM flav=pro ONLY
                 array(
                     'name' => 'assigned_user_name',
                     'width' => '9',

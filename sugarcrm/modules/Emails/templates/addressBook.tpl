@@ -20,7 +20,6 @@
 </span>
 </div>
 <div id="contacts"></div>
-<!--//BEGIN SUGARCRM flav=pro ONLY -->
 <div class="addressbookSearch">
 <span >
     {$app_strings.LBL_EMAIL_ADDRESS_BOOK_ADD_LIST}:&nbsp;<input size="10" class="input" type="text" id="addListField" name="addListField" align="absmiddle">
@@ -31,5 +30,3 @@
 <div id="lists"></div>
 <div id="contactsMenu"></div>
 <div id="listsMenu"></div>
-
-<!--//END SUGARCRM flav=pro ONLY -->

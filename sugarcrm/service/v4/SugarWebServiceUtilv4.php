@@ -45,7 +45,6 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
         return $results;
     }
 
-//BEGIN SUGARCRM flav=pro ONLY
     /**
      * Format the results for wirless list view metadata from an associative array to a
      * numerically indexed array.  This conversion will ensure that consumers of the metadata
@@ -66,7 +65,6 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
 
         return $results;
     }
-//END SUGARCRM flav=pro ONLY
 
     /**
      * Equivalent of get_list function within SugarBean but allows the possibility to pass in an indicator
@@ -123,16 +121,13 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
      */
     function is_favorites_enabled($module_name)
     {
-        //BEGIN SUGARCRM flav=pro ONLY
         $mod = BeanFactory::newBean($module_name);
         if(!empty($mod) && is_callable(array($mod, "isFavoritesEnabled"))) {
             return $mod->isFavoritesEnabled();
         }
-        //END SUGARCRM flav=pro ONLY
         return false;
     }
 
-//BEGIN SUGARCRM flav=pro ONLY
    /**
 	 * Parse wireless editview metadata and add ACL values.
 	 *
@@ -209,7 +204,6 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
 
 	    return $results;
 	}
-//END SUGARCRM flav=pro ONLY
 
 	/**
 	 * Processes the filter_fields attribute to use with SugarBean::create_new_list_query()
@@ -522,7 +516,6 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
 		}
 	}
 
-	//BEGIN SUGARCRM flav=pro ONLY
 	function get_mobile_login_data(&$nameValueArray)
 	{
    	    require_once('modules/Quotes/Layouts.php');
@@ -536,7 +529,6 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
         $nameValueArray['sugar_flavor'] = $sugar_flavor;
         $nameValueArray['sugar_version'] = $sugar_version;
 	}
-	//END SUGARCRM flav=pro ONLY
 
     function checkSessionAndModuleAccess($session, $login_error_key, $module_name, $access_level, $module_access_level_error_key, $errorObject)
     {

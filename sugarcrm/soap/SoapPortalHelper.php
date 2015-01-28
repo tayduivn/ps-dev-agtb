@@ -30,17 +30,13 @@ function get_bugs_in_contacts($in, $orderBy = '')
             $query .= ' ORDER BY ' . $orderBy;
         }
         //END SUGARCRM flav=com ONLY
-        //BEGIN SUGARCRM flav=pro ONLY
         $query = "SELECT cb.bug_id as id from contacts_bugs cb, bugs b where cb.bug_id = b.id and b.deleted = 0 and b.portal_viewable = 1 and cb.contact_id IN $in AND cb.deleted=0";
         if(!empty($orderBy)){
             $query .= ' ORDER BY ' . $orderBy;
         }
-        //END SUGARCRM flav=pro ONLY
 
         $sugar = BeanFactory::getBean('Contacts');
-        //BEGIN SUGARCRM flav=pro ONLY
         $sugar->disable_row_level_security = true;
-        //END SUGARCRM flav=pro ONLY
         set_module_in($sugar->build_related_in($query), 'Bugs');
     }
 
@@ -56,17 +52,13 @@ function get_bugs_in_accounts($in, $orderBy = '')
             $query .= ' ORDER BY ' . $orderBy;
         }
         //END SUGARCRM flav=com ONLY
-        //BEGIN SUGARCRM flav=pro ONLY
         $query = "SELECT ab.bug_id as id from accounts_bugs ab, bugs b where ab.bug_id = b.id and b.deleted = 0 and b.portal_viewable = 1 and ab.account_id IN $in AND ab.deleted=0";
         if(!empty($orderBy)){
             $query .= ' ORDER BY ' . $orderBy;
         }
-        //END SUGARCRM flav=pro ONLY
 
         $sugar = BeanFactory::getBean('Accounts');
-        //BEGIN SUGARCRM flav=pro ONLY
         $sugar->disable_row_level_security = true;
-        //END SUGARCRM flav=pro ONLY
 
         set_module_in($sugar->build_related_in($query), 'Bugs');
     }
@@ -87,17 +79,13 @@ function get_cases_in_contacts($in, $orderBy = '')
             $query .= ' ORDER BY ' . $orderBy;
         }
         //END SUGARCRM flav=com ONLY
-        //BEGIN SUGARCRM flav=pro ONLY
         $query = "SELECT case_id as id from contacts_cases cc, cases c where cc.case_id = c.id AND c.deleted = 0 AND c.portal_viewable = 1 AND cc.contact_id IN $in AND cc.deleted=0";
         if(!empty($orderBy)){
             $query .= ' ORDER BY ' . $orderBy;
         }
-        //END SUGARCRM flav=pro ONLY
 
         $sugar = BeanFactory::getBean('Contacts');
-        //BEGIN SUGARCRM flav=pro ONLY
         $sugar->disable_row_level_security = true;
-        //END SUGARCRM flav=pro ONLY
         set_module_in($sugar->build_related_in($query), 'Cases');
     }
 
@@ -115,17 +103,13 @@ function get_cases_in_accounts($in, $orderBy = '')
             $query .= ' ORDER BY ' . $orderBy;
         }
         //END SUGARCRM flav=com ONLY
-        //BEGIN SUGARCRM flav=pro ONLY
         $query = "SELECT id from cases where deleted = 0 AND portal_viewable = 1 AND account_id IN $in";
         if(!empty($orderBy)){
             $query .= ' ORDER BY ' . $orderBy;
         }
-        //END SUGARCRM flav=pro ONLY
 
         $sugar = BeanFactory::getBean('Accounts');
-        //BEGIN SUGARCRM flav=pro ONLY
         $sugar->disable_row_level_security = true;
-        //END SUGARCRM flav=pro ONLY
         set_module_in($sugar->build_related_in($query), 'Cases');
     }
 
@@ -147,13 +131,9 @@ function get_notes_in_contacts($in, $orderBy = '')
         }
 
         $contact = BeanFactory::getBean('Contacts');
-        //BEGIN SUGARCRM flav=pro ONLY
         $contact->disable_row_level_security = true;
-        //END SUGARCRM flav=pro ONLY
         $note = BeanFactory::getBean('Notes');
-        //BEGIN SUGARCRM flav=pro ONLY
         $note->disable_row_level_security = true;
-        //END SUGARCRM flav=pro ONLY
         return $contact->build_related_list($query, $note);
     }
 
@@ -172,13 +152,9 @@ function get_notes_in_module($in, $module, $orderBy = '')
             return array();
         }
 
-        //BEGIN SUGARCRM flav=pro ONLY
         $sugar->disable_row_level_security = true;
-        //END SUGARCRM flav=pro ONLY
         $note = BeanFactory::getBean('Notes');
-        //BEGIN SUGARCRM flav=pro ONLY
         $note->disable_row_level_security = true;
-        //END SUGARCRM flav=pro ONLY
         return $sugar->build_related_list($query, $note);
     }
 
@@ -214,10 +190,8 @@ function get_notes_in_module($in, $module, $orderBy = '')
 
         }
 
-        //BEGIN SUGARCRM flav=pro ONLY
         $sugar->disable_row_level_security = true;
         $rel->disable_row_level_security = true;
-        //END SUGARCRM flav=pro ONLY
 
         $count_query = $sugar->create_list_count_query($query);
         if(!empty($count_query))
@@ -243,9 +217,7 @@ function get_accounts_from_contact($contact_id, $orderBy = '')
             $query .= ' ORDER BY ' . $orderBy;
         }
         $sugar = BeanFactory::getBean('Contacts');
-        //BEGIN SUGARCRM flav=pro ONLY
         $sugar->disable_row_level_security = true;
-        //END SUGARCRM flav=pro ONLY
         set_module_in($sugar->build_related_in($query), 'Accounts');
     }
 
@@ -257,16 +229,12 @@ function get_contacts_from_account($account_id, $orderBy = '')
             $query .= ' ORDER BY ' . $orderBy;
         }
         $sugar = BeanFactory::getBean('Accounts');
-        //BEGIN SUGARCRM flav=pro ONLY
         $sugar->disable_row_level_security = true;
-        //END SUGARCRM flav=pro ONLY
         set_module_in($sugar->build_related_in($query), 'Contacts');
     }
 
 function get_related_list($in, $template, $where, $order_by, $row_offset = 0, $limit = ""){
-        //BEGIN SUGARCRM flav=pro ONLY
         $template->disable_row_level_security = true;
-        //END SUGARCRM flav=pro ONLY
 
         $q = '';
         //if $in is empty then pass in a query to get the list of related list
@@ -296,9 +264,7 @@ function build_relationship_tree($contact){
     global $sugar_config;
     $contact->retrieve($contact->id);
 
-    //BEGIN SUGARCRM flav=pro ONLY
     $contact->disable_row_level_security = true;
-    //END SUGARCRM flav=pro ONLY
     get_accounts_from_contact($contact->id);
 
     set_module_in(array('list'=>array($contact->id), 'in'=> "('".$GLOBALS['db']->quote($contact->id)."')"), 'Contacts');

@@ -150,7 +150,6 @@ class Contract extends SugarBean
 
         $this->setCalculatedValues(false);
         $return_id = parent::save($check_notify);
-        //BEGIN SUGARCRM flav=pro ONLY
         if (!empty($_SESSION["workflow_cron"])
             && $_SESSION["workflow_cron"] == "Yes"
             && !empty($_SESSION["workflow_id_cron"])
@@ -158,7 +157,6 @@ class Contract extends SugarBean
         ) {
             $this->special_notification = false;
         }
-        //END SUGARCRM flav=pro ONLY
         return $return_id;
     }
 

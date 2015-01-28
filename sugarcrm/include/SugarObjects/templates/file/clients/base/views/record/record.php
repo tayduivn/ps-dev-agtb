@@ -65,10 +65,6 @@ $viewdefs[$module_name]['base']['view']['record'] = array(
                   'span' => 12,
                 ),
                 'uploadfile',
-                array(
-                    'name' => 'tag',
-                    'span' => 12,
-                ),
             ),
         ),
         array(
@@ -118,9 +114,7 @@ $viewdefs[$module_name]['base']['view']['record'] = array(
                     ),
                 ),
                 'assigned_user_name',
-                //BEGIN SUGARCRM flav=pro ONLY
                 'team_name',
-                //END SUGARCRM flav=pro ONLY
             ),
         ),
     ),

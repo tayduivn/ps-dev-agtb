@@ -12,9 +12,7 @@
 $module_name = '<module_name>';
 $viewdefs[$module_name]['EditView'] = array(
     'templateMeta' => array('maxColumns' => '2', 
-                            //BEGIN SUGARCRM flav=pro ONLY
                             'useTabs' => true,
-                            //END SUGARCRM flav=pro ONLY
                             'widths' => array(
                                             array('label' => '10', 'field' => '30'), 
                                             array('label' => '10', 'field' => '30'),
@@ -58,12 +56,10 @@ $viewdefs[$module_name]['EditView'] = array(
     	'do_not_call',
     ),
 
-    //BEGIN SUGARCRM flav=pro ONLY
     array (
       array('name'=>'team_name', 'displayParams'=>array('display'=>true)),
       '',
     ),
-    //END SUGARCRM flav=pro ONLY
     array (
     	'description',
   	),

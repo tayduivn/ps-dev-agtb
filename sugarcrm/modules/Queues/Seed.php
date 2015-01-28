@@ -56,7 +56,6 @@ while($a = $focus->db->fetchByAssoc($res)) {
 }
 
 
-//BEGIN SUGARCRM flav=pro ONLY
 ///////////////////////////////////////////////////////////////////////////////
 ////    CREATE TEAM QUEUES
 ////	this will mirror the team_memberships table 
@@ -83,12 +82,10 @@ while($aTeams = $db->fetchByAssoc($rTeams)) {
 			)";
 	$rT = $db->query($qT);
 }
-//END SUGARCRM flav=pro ONLY
 
 ///////////////////////////////////////////////////////////////////////////////
 ////    GENERATE QUEUES_QUEUE RELATIONSHIPS
 ///////////////////////////////////////////////////////////////////////////////
-//BEGIN SUGARCRM flav=pro ONLY
 $res4 = $db->query("SELECT team_id, user_id FROM team_memberships WHERE explicit_assign = '1' AND team_id != '1' ORDER BY team_id");
 while($a4 = $db->fetchByAssoc($res4)) {
 	$guid = create_guid();
@@ -110,7 +107,6 @@ while($a4 = $db->fetchByAssoc($res4)) {
 		$r5 = $db->query($q5);
 	}
 }
-//END SUGARCRM flav=pro ONLY
 
 
 // all queues inherit from Global

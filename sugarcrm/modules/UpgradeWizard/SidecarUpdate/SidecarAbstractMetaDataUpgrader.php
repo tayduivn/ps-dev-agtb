@@ -153,13 +153,11 @@ abstract class SidecarAbstractMetaDataUpgrader
             'detail' => 'viewdefs',
         ),
         //END SUGARCRM flav=ent ONLY
-        //BEGIN SUGARCRM flav=pro ONLY
         'wireless' => array(
             'list'   => 'listViewDefs',
             'edit'   => 'viewdefs',
             'detail' => 'viewdefs',
         ),
-        //END SUGARCRM flav=pro ONLY
         'base' => array(
             'list'   => 'listViewDefs',
             'edit'   => 'viewdefs',
@@ -181,12 +179,10 @@ abstract class SidecarAbstractMetaDataUpgrader
         'portalrecordview' => MB_RECORDVIEW,
         'portalportalrecordview' => MB_RECORDVIEW,
         //END SUGARCRM flav=ent ONLY
-        //BEGIN SUGARCRM flav=pro ONLY
         'wirelessedit'   => MB_WIRELESSEDITVIEW,
         'wirelessdetail' => MB_WIRELESSDETAILVIEW,
         'wirelesslist'   => MB_WIRELESSLISTVIEW,
         'wirelesssearch' => MB_WIRELESSBASICSEARCH,
-        //END SUGARCRM flav=pro ONLY
         'baselist'        => MB_SIDECARLISTVIEW,
         'baserecordview'  => MB_RECORDVIEW,
         'basefilter'      => MB_SEARCHVIEW,
@@ -205,11 +201,9 @@ abstract class SidecarAbstractMetaDataUpgrader
         'portaledit'     => 'editview',
         'portaldetail'   => 'detailview',
         //END SUGARCRM flav=ent ONLY
-        //BEGIN SUGARCRM flav=pro ONLY
         'wirelessedit'   => 'EditView',
         'wirelesslist'   => '',
         'wirelessdetail' => 'DetailView',
-        //END SUGARCRM flav=pro ONLY
         'baselist'       => '',
         'baseedit'       => 'EditView',
         'basedetail'     => 'DetailView',

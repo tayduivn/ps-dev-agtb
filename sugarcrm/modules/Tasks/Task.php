@@ -24,9 +24,7 @@ class Task extends SugarBean {
 	var $created_by;
 	var $created_by_name;
 	var $modified_by_name;
-	//BEGIN SUGARCRM flav=pro ONLY
 	var $team_id;
-	//END SUGARCRM flav=pro ONLY
 	var $description;
 	var $name;
 	var $status;
@@ -46,9 +44,7 @@ class Task extends SugarBean {
 	var $contact_phone;
 	var $contact_email;
 	var $assigned_user_name;
-	//BEGIN SUGARCRM flav=pro ONLY
 	var $team_name;
-	//END SUGARCRM flav=pro ONLY
 
 //bug 28138 todo
 //	var $default_task_name_values = array('Assemble catalogs', 'Make travel arrangements', 'Send a letter', 'Send contract', 'Send fax', 'Send a follow-up letter', 'Send literature', 'Send proposal', 'Send quote', 'Call to schedule meeting', 'Setup evaluation', 'Get demo feedback', 'Arrange introduction', 'Escalate support request', 'Close out support request', 'Ship product', 'Arrange reference call', 'Schedule training', 'Send local user group information', 'Add to mailing list');
@@ -141,7 +137,7 @@ class Task extends SugarBean {
 		if (is_subclass_of($parent, 'Person')) {
 			$query = "SELECT first_name, last_name, assigned_user_id parent_name_owner from $parent->table_name where id = '$this->parent_id'";
 		}
-		else if (is_subclass_of($parent, 'File')) {
+		else if (is_subclass_of($parent, 'File') || $parent->module_dir == 'Documents') {
 			$query = "SELECT document_name, assigned_user_id parent_name_owner from $parent->table_name where id = '$this->parent_id'";
 		}
 		else {
@@ -167,7 +163,7 @@ class Task extends SugarBean {
 		{
             $this->parent_name = $locale->formatName($this->parent_type, $row);
 		}
-		else if (is_subclass_of($parent, 'File') && $row != null) {
+		else if ((is_subclass_of($parent, 'File') || $parent->module_dir == 'Documents') && $row != null) {
 			$this->parent_name = $row['document_name'];
 		}
 		elseif($row != null)

@@ -21,9 +21,7 @@ $mod_strings = return_module_language($sugar_config['default_language'], 'Leads'
 
 $app_list_strings['record_type_module'] = array('Contact'=>'Contacts', 'Account'=>'Accounts', 'Opportunity'=>'Opportunities', 'Case'=>'Cases', 'Note'=>'Notes', 'Call'=>'Calls', 'Email'=>'Emails', 'Meeting'=>'Meetings', 'Task'=>'Tasks', 'Lead'=>'Leads','Bug'=>'Bugs',
 
-//BEGIN SUGARCRM flav=pro ONLY
 'Report'=>'Reports',  'Quote'=>'Quotes'
-//END SUGARCRM flav=pro ONLY
 );
 
 /**

@@ -1050,7 +1050,6 @@ class SugarEmailAddress extends SugarBean
         return $newEmail;
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
     /**
      * Returns the HTML/JS for the EmailAddress widget
      * @param string $parent_id ID of parent bean, generally $focus
@@ -1097,8 +1096,6 @@ class SugarEmailAddress extends SugarBean
 
         return $newEmail;
     }
-
-    //END SUGARCRM flav=pro ONLY
 
     /**
      * Returns the HTML/JS for the EmailAddress widget
@@ -1305,23 +1302,17 @@ function getEmailAddressWidget($focus, $field, $value, $view, $tabindex = '0')
     $sea = BeanFactory::getBean('EmailAddresses');
     $sea->setView($view);
 
-    //BEGIN SUGARCRM flav=pro ONLY
     if ($focus->ACLFieldAccess($field, "edit")) {
-        //END SUGARCRM flav=pro ONLY
         if ($view == 'EditView' || $view == 'QuickCreate' || $view == 'ConvertLead') {
             $module = $focus->module_dir;
             if ($view == 'ConvertLead' && $module == "Contacts") $module = "Leads";
 
             return $sea->getEmailAddressWidgetEditView($focus->id, $module, false, '', $tabindex);
         }
-        //BEGIN SUGARCRM flav=pro ONLY
         elseif ($view == 'wirelessedit') {
             return $sea->getEmailAddressWidgetWirelessEdit($focus->id, $focus->module_dir, false);
         }
-        //END SUGARCRM flav=pro ONLY
 
-        //BEGIN SUGARCRM flav=pro ONLY
     }
-    //END SUGARCRM flav=pro ONLY
     return $sea->getEmailAddressWidgetDetailView($focus);
 }

@@ -32,13 +32,13 @@ $viewdefs[$module_name]['base']['view']['casesList-list'] = array(
                 'event' => 'case:history',
                 'css_class'=>'overflow-visible',
             ),
-//            array(
-//                'type' => 'rowaction',
-//                'name' => 'viewNotes',
-//                'label' => 'LBL_PMSE_LABEL_NOTES',
-//                'event' => 'case:notes',
-//                'css_class'=>'overflow-visible',
-//            ),
+            array(
+                'type' => 'rowaction',
+                'name' => 'viewNotes',
+                'label' => 'LBL_PMSE_LABEL_NOTES',
+                'event' => 'case:notes',
+                'css_class'=>'overflow-visible',
+            ),
             array(
                 'type' => 'reassignbutton',
                 'name' => 'reassignButton',

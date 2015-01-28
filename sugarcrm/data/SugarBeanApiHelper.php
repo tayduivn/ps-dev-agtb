@@ -56,13 +56,11 @@ class SugarBeanApiHelper
                     continue;
                 }
 
-                //BEGIN SUGARCRM flav=pro ONLY
                 if ( !$bean->ACLFieldAccess($fieldName,'read') ) {
                     // No read access to the field, eh?  Unset the field from the array of data returned
                     unset($data[$fieldName]);
                     continue;
                 }
-                //END SUGARCRM flav=pro ONLY
 
                 $type = !empty($properties['custom_type']) ? $properties['custom_type'] : $properties['type'];
                 $field = $sfh->getSugarField($type);
@@ -74,7 +72,6 @@ class SugarBeanApiHelper
                 }
             }
 
-            //BEGIN SUGARCRM flav=pro ONLY
             // mark if its a favorite
             if (in_array('my_favorite', $fieldList) || empty($fieldList)) {
                 if (isset($bean->my_favorite)) {
@@ -84,7 +81,6 @@ class SugarBeanApiHelper
                     $data['my_favorite'] = false;
                 }
             }
-            //END SUGARCRM flav=pro ONLY
         } else {
             if (isset($bean->id)) {
                 $data['id'] = $bean->id;
@@ -250,7 +246,6 @@ class SugarBeanApiHelper
             $context['owner_override'] = true;
         }
 
-        //BEGIN SUGARCRM flav=pro ONLY
         // check ACLs first
         $acl = !empty($options['acl']) ? $options['acl'] : 'save';
         foreach ($bean->field_defs as $fieldName => $properties) {
@@ -265,7 +260,6 @@ class SugarBeanApiHelper
                 );
             }
         }
-        //END SUGARCRM flav=pro ONLY
 
         // now update the fields
         foreach ($bean->field_defs as $fieldName => $properties) {

@@ -11,7 +11,6 @@
 
 // $Id$
 
-//BEGIN SUGARCRM flav=pro ONLY
 function prep_edit_task_in_grid(the_form)
 {
 	the_form.return_module.value='ProjectTask';
@@ -20,7 +19,6 @@ function prep_edit_task_in_grid(the_form)
 	the_form.module.value='Project';
 	the_form.action.value='EditGridView';
 }
-//END SUGARCRM flav=pro ONLY
 
 function update_status(percent_complete){
 	if (percent_complete == '0'){
@@ -48,7 +46,5 @@ function update_percent_complete(status){
 		percent_value = '0';
 	}
 	document.getElementById('percent_complete').value = percent_value;		
-	//BEGIN SUGARCRM flav=pro ONLY
 	document.getElementById('percent_complete_text').innerHTML = percent_value;
-	//END SUGARCRM flav=pro ONLY
 }

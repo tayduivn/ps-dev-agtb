@@ -145,7 +145,6 @@ class EmailUI {
 		///////////////////////////////////////////////////////////////////////
 		////	USER SETTINGS
 		// settings: accounts
-		//BEGIN SUGARCRM flav=pro ONLY
 		$this->smarty->assign("pro", 1);
 		$this->smarty->assign("ie_team", $current_user->getPrivateTeam());
 
@@ -155,7 +154,6 @@ class EmailUI {
 		);
 
 		$this->retrieveTeamInfoForSettingsUI();
-		//END SUGARCRM flav=pro ONLY
 
 		$cuDatePref = $current_user->getUserDateTimePreferences();
 		$this->smarty->assign('dateFormat', $cuDatePref['date']);
@@ -456,7 +454,6 @@ eoq;
         $this->smarty->assign('app_strings', $app_strings);
 		$this->smarty->assign('mod_strings', $email_mod_strings);
         $ie1 = BeanFactory::getBean('InboundEmail');
-        //BEGIN SUGARCRM flav=pro ONLY
 		$ie1->team_id = empty($current_user->default_team) ? $current_user->team_id : $current_user->default_team;
 		$ie1->team_set_id = $current_user->team_set_id;
 
@@ -465,7 +462,6 @@ eoq;
 		$code1 = $teamSetField->get_code();
 		$sqs_objects1 = $teamSetField->createQuickSearchCode(true);
 		$this->smarty->assign('teamsdata', json_encode($code1 . $sqs_objects1));
-        //END SUGARCRM flav=pro ONLY
 
         //Signatures
         $defsigID = $current_user->getPreference('signature_default');
@@ -506,7 +502,6 @@ eoq;
 	}
 
 
-		//BEGIN SUGARCRM flav=pro ONLY
 
 	function retrieveTeamInfoForSettingsUI() {
 		global $current_user;
@@ -523,8 +518,6 @@ eoq;
 		//return $return;
 
 	} // fn
-
-		//END SUGARCRM flav=pro ONLY
 
 	////	END CORE
 	///////////////////////////////////////////////////////////////////////////
@@ -588,11 +581,9 @@ eoq;
 
 		$q = "DELETE FROM address_book WHERE assigned_user_id = '{$current_user->id}' AND bean_id IN ({$concat})";
 		$r = $this->db->query($q);
-		//BEGIN SUGARCRM flav=pro ONLY
 		//Delete references to this contact from email lists.
 		$q = "DELETE FROM address_book_list_items WHERE address_book_list_items.bean_id IN (SELECT id FROM email_addr_bean_rel eabr WHERE eabr.deleted=0 AND eabr.bean_id IN ({$concat}))";
 		$r = $this->db->query($q);
-		//END SUGARCRM flav=pro ONLY
 	}
 
 	/**
@@ -672,7 +663,6 @@ eoq;
 		return $ret;
 	}
 
-	//BEGIN SUGARCRM flav=pro ONLY
 	/* *************** MAILING LISTS ***************** */
 	/**
 	 * Adds contact items to a mailing list
@@ -806,7 +796,6 @@ eoq;
 			return $ret;
 		}
 	}
-	//END SUGARCRM flav=pro ONLY
 
 	/**
 	 * Retrieves a concatenated list of contacts, those with assigned_user_id = user's id and those in the address_book
@@ -941,11 +930,9 @@ eoq;
 			'signature_default' => $signatureDefault
 		);
 
-		//BEGIN SUGARCRM flav=pro ONLY
 		// email lists (addressBook)
 		$lists = $this->getLists();
 		$lists = (empty($lists)) ? array() : $lists;
-		//END SUGARCRM flav=pro ONLY
 
 		// current_user
 		$user = array(
@@ -962,9 +949,7 @@ eoq;
 		$userPreferences['showUnreadOnly'] = $showUnreadOnly;
 		$userPreferences['listViewSort'] = $listViewSort;
 		$userPreferences['signatures'] = $signatures;
-		//BEGIN SUGARCRM flav=pro ONLY
 		$userPreferences['emailLists'] = $lists;
-		//END SUGARCRM flav=pro ONLY
 		$userPreferences['current_user'] = $user;
 		return $userPreferences;
 	}
@@ -989,9 +974,7 @@ eoq;
 		$this->folder->created_by = $current_user->id;
 		$this->folder->modified_by = $current_user->id;
 		$this->folder->date_modified = $this->folder->date_created = TimeDate::getInstance()->nowDb();
-		//BEGIN SUGARCRM flav=pro ONLY
 		$this->folder->team_id = $current_user->getPrivateTeamID();
-		//END SUGARCRM flav=pro ONLY
 
 		$this->folder->save();
 		return array(
@@ -1462,9 +1445,7 @@ eoq;
 		$focus->description = trim(strip_tags($email->description));
 		$focus->assigned_user_id = $current_user->id;
 
-		//BEGIN SUGARCRM flav=pro ONLY
 		$focus->team_id = $current_user->default_team;
-		//END SUGARCRM flav=pro ONLY
 
 		$EditView = new EditView();
 		$EditView->ss = new Sugar_Smarty();
@@ -1564,7 +1545,6 @@ EOQ;
         $smarty = new Sugar_Smarty();
         $smarty->assign("APP",$app_strings);
         $smarty->assign('formName',$formName);
-		//BEGIN SUGARCRM flav=pro ONLY
 
         $showTeam = false;
         if (!isset($vars['showTeam']) || $vars['showTeam'] == true) {
@@ -1583,8 +1563,6 @@ EOQ;
 		$sqs_objects1 = $teamSetField->createQuickSearchCode(true);
 		//$sqs_objects = array_merge($sqs_objects, $sqs_objects1);
 		$smarty->assign("TEAM_SET_FIELD", $code . $sqs_objects1);
-
-		//END SUGARCRM flav=pro ONLY
         $showAssignTo = false;
         if (!isset($vars['showAssignTo']) || $vars['showAssignTo'] == true) {
         	$showAssignTo = true;
@@ -1684,11 +1662,9 @@ EOQ;
 		$smarty->assign("TAG", $focus->listviewACLHelper());
 		$smarty->assign("SUGAR_VERSION", $GLOBALS['sugar_version']);
 		$smarty->assign("JS_CUSTOM_VERSION", $GLOBALS['sugar_config']['js_custom_version']);
-//BEGIN SUGARCRM flav=pro ONLY
 
 		require_once('modules/Teams/TeamSetManager.php');
 		$smarty->assign("TEAM",  TeamSetManager::getCommaDelimitedTeams($focus->team_set_id, $focus->team_id, true));
-//END SUGARCRM flav=pro ONLY
 		if(!empty($focus->reply_to_email)) {
 			$replyTo = "
 				<tr>
@@ -1931,7 +1907,6 @@ function doAssignment($distributeMethod, $ieid, $folder, $uids, $users) {
  * @return  array
  */
 function getTeams() {
-	//BEGIN SUGARCRM flav=pro ONLY
 	$teamInfo = array();
 	if (!empty($_REQUEST['team_ids'])) {
 		$teamInfo['primaryTeamId'] = $_REQUEST['primary_team_id'];
@@ -1940,7 +1915,6 @@ function getTeams() {
 		$teamInfo['teamSetId'] = $teamSet->addTeams($teamIds);
 	} // if
 	return $teamInfo;
-	//END SUGARCRM flav=pro ONLY
 }
 
 function doDistributionWithMethod($users, $emailIds, $distributionMethod) {
@@ -1969,9 +1943,7 @@ function doDistributionWithMethod($users, $emailIds, $distributionMethod) {
  */
 function distRoundRobin($userIds, $mailIds) {
 	// check if we have a 'lastRobin'
-	//BEGIN SUGARCRM flav=pro ONLY
 	$assignedTeamInfo = $this->getTeams();
-	//END SUGARCRM flav=pro ONLY
 	$lastRobin = $userIds[0];
 	foreach($mailIds as $k => $mailId) {
 		$userIdsKeys = array_flip($userIds); // now keys are values
@@ -1987,12 +1959,9 @@ function distRoundRobin($userIds, $mailIds) {
 		$email = BeanFactory::getBean('Emails', $mailId);
 		$email->assigned_user_id = $thisRobin;
 		$email->status = 'unread';
-		//BEGIN SUGARCRM flav=pro ONLY
 		$email->team_id = $assignedTeamInfo['primaryTeamId'];
 		$email->team_set_id = $assignedTeamInfo['teamSetId'];
-		//END SUGARCRM flav=pro ONLY
 		$email->save();
-		//BEGIN SUGARCRM flav=pro ONLY
 		$email->getNotes($mailId);
         if(!empty($email->attachments)) {
             foreach($email->attachments as $note) {
@@ -2001,7 +1970,6 @@ function distRoundRobin($userIds, $mailIds) {
                 $note->save();
             }
         }
-		//END SUGARCRM flav=pro ONLY
 	}
 
 	return true;
@@ -2014,9 +1982,7 @@ function distRoundRobin($userIds, $mailIds) {
  * @return  boolean		true on success
  */
 function distLeastBusy($userIds, $mailIds) {
-	//BEGIN SUGARCRM flav=pro ONLY
 	$assignedTeamInfo = $this->getTeams();
-	//END SUGARCRM flav=pro ONLY
 	foreach($mailIds as $k => $mailId) {
 		$email = BeanFactory::getBean('Emails', $mailId);
 		foreach($userIds as $k => $id) {
@@ -2029,12 +1995,9 @@ function distLeastBusy($userIds, $mailIds) {
 		$leastBusy = array_shift($countsKeys); // user id of lowest item count
 		$email->assigned_user_id = $leastBusy;
 		$email->status = 'unread';
-		//BEGIN SUGARCRM flav=pro ONLY
 		$email->team_id = $assignedTeamInfo['primaryTeamId'];
 		$email->team_set_id = $assignedTeamInfo['teamSetId'];
-		//END SUGARCRM flav=pro ONLY
 		$email->save();
-		//BEGIN SUGARCRM flav=pro ONLY
 		$email->getNotes($mailId);
         if(!empty($email->attachments)) {
             foreach($email->attachments as $note) {
@@ -2043,7 +2006,6 @@ function distLeastBusy($userIds, $mailIds) {
                 $note->save();
             }
         }
-		//END SUGARCRM flav=pro ONLY
 	}
 	return true;
 }
@@ -2055,15 +2017,12 @@ function distLeastBusy($userIds, $mailIds) {
  * @return  boolean		true on success
  */
 function distDirect($user, $mailIds) {
-	//BEGIN SUGARCRM flav=pro ONLY
 	$assignedTeamInfo = $this->getTeams();
-	//END SUGARCRM flav=pro ONLY
 	foreach($mailIds as $k => $mailId) {
 		$email = BeanFactory::getBean('Emails', $mailId);
 		$email->assigned_user_id = $user;
 		$email->status = 'unread';
 
-		//BEGIN SUGARCRM flav=pro ONLY
 
 		$email->load_relationship('teams');
 		if( !empty($email->teams) && $assignedTeamInfo)
@@ -2079,9 +2038,7 @@ function distDirect($user, $mailIds) {
 			$email->teams->save(false, false);
 
 		}
-		//END SUGARCRM flav=pro ONLY
 		$email->save();
-		//BEGIN SUGARCRM flav=pro ONLY
 		$email->getNotes($mailId);
         if(!empty($email->attachments)) {
             foreach($email->attachments as $note) {
@@ -2090,7 +2047,6 @@ function distDirect($user, $mailIds) {
                 $note->save();
             }
         }
-		//END SUGARCRM flav=pro ONLY
 	}
 	return true;
 }
@@ -2423,9 +2379,7 @@ eoq;
 			$t .= "FROM {$table} ";
 			$t .= "JOIN email_addr_bean_rel eabr ON ({$table}.id = eabr.bean_id and eabr.deleted=0) ";
 			$t .= "JOIN email_addresses ea ON (eabr.email_address_id = ea.id) ";
-			//BEGIN SUGARCRM flav=pro ONLY
 			$person->add_team_security_where_clause($t);
-			//END SUGARCRM flav=pro ONLY
 			$t .= " WHERE {$where}";
 
 			if(!empty($q)) {
@@ -2561,9 +2515,7 @@ eoq;
 			$t .= "FROM {$table} ";
 			$t .= "JOIN email_addr_bean_rel eabr ON ({$table}.id = eabr.bean_id and eabr.deleted=0) ";
 			$t .= "JOIN email_addresses ea ON (eabr.email_address_id = ea.id) ";
-			//BEGIN SUGARCRM flav=pro ONLY
 			$person->add_team_security_where_clause($t);
-			//END SUGARCRM flav=pro ONLY
 			$t .= " WHERE {$where} AND ea.invalid_email = 0 AND ea.opt_out = 0";
 		} // if
 		return $t;
@@ -2616,9 +2568,7 @@ eoq;
 
 			if($a['count'] < 1) {
 				require_once("include/SugarFolders/SugarFolders.php");
-				//BEGIN SUGARCRM flav=pro ONLY
 				$privateTeam = $user->getPrivateTeamID();
-				//END SUGARCRM flav=pro ONLY
 				// My Emails
 				$folder = new SugarFolder();
 				$folder->new_with_id = true;
@@ -2630,12 +2580,10 @@ eoq;
 				$folder->is_dynamic = 1;
 				$folder->folder_type = "inbound";
 				$folder->dynamic_query = $this->generateDynamicFolderQuery('inbound', $user->id);
-				//BEGIN SUGARCRM flav=pro ONLY
 				$teamSet = BeanFactory::getBean('TeamSets');
 				$team_set_id = $teamSet->addTeams($privateTeam);
 				$folder->team_id = $privateTeam;
 				$folder->team_set_id = $team_set_id;
-				//END SUGARCRM flav=pro ONLY
 				$folder->save();
 
 				// My Drafts
@@ -2648,10 +2596,8 @@ eoq;
 				$drafts->is_dynamic = 1;
 				$drafts->folder_type = "draft";
 				$drafts->dynamic_query = $this->generateDynamicFolderQuery('draft', $user->id);
-				//BEGIN SUGARCRM flav=pro ONLY
 				$drafts->team_id = $privateTeam;
 				$drafts->team_set_id = $team_set_id;
-				//END SUGARCRM flav=pro ONLY
 				$drafts->save();
 
 
@@ -2665,10 +2611,8 @@ eoq;
 				$archived->is_dynamic = 1;
 				$archived->folder_type = "sent";
 				$archived->dynamic_query = $this->generateDynamicFolderQuery('sent', $user->id);
-				//BEGIN SUGARCRM flav=pro ONLY
 				$archived->team_id = $privateTeam;
 				$archived->team_set_id = $team_set_id;
-				//END SUGARCRM flav=pro ONLY
 				$archived->save();
 
 				// Archived Emails
@@ -2681,10 +2625,8 @@ eoq;
 				$archived->is_dynamic = 1;
 				$archived->folder_type = "archived";
 				$archived->dynamic_query = '';
-				//BEGIN SUGARCRM flav=pro ONLY
 				$archived->team_id = $privateTeam;
 				$archived->team_set_id = $team_set_id;
-				//END SUGARCRM flav=pro ONLY
 				$archived->save();
 
 			// set flag to show that this was run

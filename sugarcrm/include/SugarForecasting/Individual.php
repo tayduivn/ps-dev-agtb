@@ -64,13 +64,11 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
                continue;
             }
 
-            //BEGIN SUGARCRM flav=pro ONLY
             if (!$seed->ACLFieldAccess($fieldName,'save') ) {
                 // No write access to this field, but they tried to edit it
                 global $app_strings;
                 throw new SugarApiException(string_format($app_strings['SUGAR_API_EXCEPTION_NOT_AUTHORIZED'], array($fieldName, $this->args['module'])));
             }
-            //END SUGARCRM flav=pro ONLY
 
             $type = !empty($properties['custom_type']) ? $properties['custom_type'] : $properties['type'];
             $field = $sfh->getSugarField($type);

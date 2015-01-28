@@ -38,21 +38,15 @@ $job_strings = array (
 	3 => 'pruneDatabase',
 	4 => 'trimTracker',
 	/*4 => 'securityAudit()',*/
-	//BEGIN SUGARCRM flav=pro ONLY
     6 => 'processWorkflow',
 	7 => 'processQueue',
     9 => 'updateTrackerSessions',
-	//END SUGARCRM flav=pro ONLY
     12 => 'sendEmailReminders',
-    //BEGIN SUGARCRM flav=pro ONLY
     13 => 'performFullFTSIndex',
-    //END SUGARCRM flav=pro ONLY
     15 => 'cleanJobQueue',
-    //BEGIN SUGARCRM flav=pro ONLY
     //Add class to build additional TimePeriods as necessary
     16 => 'class::SugarJobCreateNextTimePeriod',
     17 => 'class::SugarJobHeartbeat',
-    //END SUGARCRM flav=pro ONLY
     20 => 'cleanOldRecordLists',
     //BEGIN SUGARCRM flav=int ONLY
 	999 => 'testEmail',
@@ -124,15 +118,12 @@ function pollMonitoredInboxes() {
 					if ($groupFolderId != null && $groupFolderId != "") {
 						$sugarFolder->retrieve($groupFolderId);
 						$isGroupFolderExists = true;
-						//BEGIN SUGARCRM flav=pro ONLY
 						$_REQUEST['team_id'] = $sugarFolder->team_id;
 						$_REQUEST['team_set_id'] = $sugarFolder->team_set_id;
-						//END SUGARCRM flav=pro ONLY
 					} // if
 					$messagesToDelete = array();
 					if ($ieX->isMailBoxTypeCreateCase()) {
 						$users[] = $sugarFolder->assign_to_id;
-						//BEGIN SUGARCRM flav=pro ONLY
 						require_once("modules/Teams/TeamSet.php");
 						require_once("modules/Teams/Team.php");
 						$GLOBALS['log']->debug('Getting users for teamset');
@@ -146,8 +137,6 @@ function pollMonitoredInboxes() {
 							} // if
 							$users[] = $userObject->id;
 						} // foreach
-
-						//END SUGARCRM flav=pro ONLY
 						$distributionMethod = $ieX->get_stored_options("distrib_method", "");
 						if ($distributionMethod != 'roundRobin') {
 							$counts = $emailUI->getAssignedEmailsCountForUsers($users);
@@ -164,10 +153,8 @@ function pollMonitoredInboxes() {
 							$uid = imap_uid($ieX->conn, $msgNo);
 						} // else
 						if ($isGroupFolderExists) {
-							//BEGIN SUGARCRM flav=pro ONLY
 							$_REQUEST['team_id'] = $sugarFolder->team_id;
 							$_REQUEST['team_set_id'] = $sugarFolder->team_set_id;
-							//END SUGARCRM flav=pro ONLY
 							if ($ieX->importOneEmail($msgNo, $uid)) {
 								// add to folder
 								$sugarFolder->addBean($ieX->email);
@@ -228,7 +215,6 @@ function pollMonitoredInboxes() {
 										$contactAddr = $email->from_addr;
 									}
 									$mailBoxType = $ieX->mailbox_type;
-									//BEGIN SUGARCRM flav=pro ONLY
 									if (($mailBoxType == 'support') || ($mailBoxType == 'pick')) {
 										if(!class_exists('aCase')) {
 
@@ -241,11 +227,8 @@ function pollMonitoredInboxes() {
 											$ieX->handleAutoresponse($email, $contactAddr);
 										} // else
 									} else {
-									//END SUGARCRM flav=pro ONLY
 										$ieX->handleAutoresponse($email, $contactAddr);
-									//BEGIN SUGARCRM flav=pro ONLY
 									} // else
-									//END SUGARCRM flav=pro ONLY
 								} // else
 						} // else
 						$GLOBALS['log']->debug('***** On message [ '.$current.' of '.$total.' ] *****');
@@ -454,7 +437,6 @@ function pollMonitoredInboxesForBouncedCampaignEmails() {
 	return true;
 }
 
-//BEGIN SUGARCRM flav=pro ONLY
 /**
  * Job 6
  */
@@ -470,10 +452,8 @@ function processQueue() {
     include_once('process_queue.php');
     return true;
 }
-//END SUGARCRM flav=pro ONLY
 
 
-//BEGIN SUGARCRM flav=pro ONLY
 /**
  * Job 9
  */
@@ -489,7 +469,6 @@ function updateTrackerSessions() {
 	$db->query($query);
 	return true;
 }
-//END SUGARCRM flav=pro ONLY
 
 /**
  * Job 12
@@ -501,7 +480,6 @@ function sendEmailReminders(){
 	return $reminder->process();
 }
 
-//BEGIN SUGARCRM flav=pro ONLY
 function performFullFTSIndex()
 {
     require_once('include/SugarSearchEngine/SugarSearchEngineFullIndexer.php');
@@ -510,7 +488,6 @@ function performFullFTSIndex()
     $GLOBALS['log']->info("FTS Indexer initiated.");
     return true;
 }
-//END SUGARCRM flav=pro ONLY
 
 /**
  * Job 20

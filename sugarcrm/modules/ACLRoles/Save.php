@@ -13,9 +13,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 
 
-//BEGIN SUGARCRM flav=pro ONLY
 
-//END SUGARCRM flav=pro ONLY
 $role = BeanFactory::getBean('ACLRoles');
 if(isset($_REQUEST['record']))$role->id = $_POST['record'];
 if(!empty($_REQUEST['name'])){
@@ -33,13 +31,11 @@ if(!empty($_REQUEST['name'])){
 	            }
 	        }
 	    }
-	    //BEGIN SUGARCRM flav=pro ONLY
 	    // duplicate field ACL
 	    $fields = ACLField::getACLFieldsByRole($_REQUEST['isduplicate']);
 	    foreach($fields as $field){
             ACLField::setAccessControl($field['category'], $role->id, $field['name'], $field['aclaccess']);
 	    }
-	    //END SUGARCRM flav=pro ONLY
 	}
 }else{
     ob_clean();	
@@ -50,13 +46,11 @@ if(!empty($_REQUEST['name'])){
     
     		$role->setAction($role->id,$name, $value);
     	}
-    	//BEGIN SUGARCRM flav=pro ONLY
     	if(substr_count($name, 'flc_guid') > 0){
     		$flc_module = $_REQUEST['flc_module'];
     		$name = str_replace('flc_guid', '', $name);
     		ACLField::setAccessControl($flc_module, $role->id, $name, $value);
     	}
-    	//END SUGARCRM flav=pro ONLY
     	
     }
     echo "result = {role_id:'$role->id', module:'$flc_module'}";

@@ -117,12 +117,10 @@ function get_field_list($value, $translate=true){
 		$list['assigned_user_name'] = $list['assigned_user_id'];
 		$list['assigned_user_name']['name'] = 'assigned_user_name';
 	}
-	//BEGIN SUGARCRM flav=pro ONLY
 	if(isset($value->assigned_name) && isset($list['team_id'])) {
 		$list['team_name'] = $list['team_id'];
 		$list['team_name']['name'] = 'team_name';
 	}
-	//END SUGARCRM flav=pro ONLY
 	if(isset($list['modified_user_id'])) {
 		$list['modified_by_name'] = $list['modified_user_id'];
 		$list['modified_by_name']['name'] = 'modified_by_name';
@@ -214,12 +212,10 @@ function new_get_field_list($value, $translate=true) {
 		$module_fields['assigned_user_name'] = $module_fields['assigned_user_id'];
 		$module_fields['assigned_user_name']['name'] = 'assigned_user_name';
 	}
-	//BEGIN SUGARCRM flav=pro ONLY
 	if(isset($value->assigned_name) && isset($module_fields['team_id'])) {
 		$module_fields['team_name'] = $module_fields['team_id'];
 		$module_fields['team_name']['name'] = 'team_name';
 	}
-	//END SUGARCRM flav=pro ONLY
 	if(isset($module_fields['modified_user_id'])) {
 		$module_fields['modified_by_name'] = $module_fields['modified_user_id'];
 		$module_fields['modified_by_name']['name'] = 'modified_by_name';
@@ -334,11 +330,9 @@ function get_name_value_list($value, $returnDomValue = false){
 		if(isset($value->assigned_user_name)) {
 			$list['assigned_user_name'] = get_name_value('assigned_user_name', $value->assigned_user_name);
 		}
-		//BEGIN SUGARCRM flav=pro ONLY
 		if(isset($value->assigned_name)) {
 			$list['team_name'] = get_name_value('team_name', $value->assigned_name);
 		}
-		//END SUGARCRM flav=pro ONLY
 		if(isset($value->modified_by_name)) {
 			$list['modified_by_name'] = get_name_value('modified_by_name', $value->modified_by_name);
 		}
@@ -403,11 +397,9 @@ function get_name_value_list_for_fields($value, $fields) {
 		if(isset($value->assigned_user_name) && in_array('assigned_user_name', $fields)) {
 			$list['assigned_user_name'] = get_name_value('assigned_user_name', $value->assigned_user_name);
 		}
-		//BEGIN SUGARCRM flav=pro ONLY
 		if(isset($value->assigned_name) && in_array('assigned_name', $fields)) {
 			$list['team_name'] = get_name_value('team_name', $value->assigned_name);
 		}
-		//END SUGARCRM flav=pro ONLY
 		if(isset($value->modified_by_name) && in_array('modified_by_name', $fields)) {
 			$list['modified_by_name'] = get_name_value('modified_by_name', $value->modified_by_name);
 		}
@@ -751,7 +743,6 @@ function get_return_value($value, $module, $returnDomValue = false){
 				);
 }
 
-//BEGIN SUGARCRM flav=pro ONLY
 /**
  * Return the data from a report
  *
@@ -806,7 +797,6 @@ function get_report_value($seed){
 	$result['field_list'] = $field_list;
 	return $result;
 }
-//END SUGARCRM flav=pro ONLY
 
 function get_encoded_Value($value) {
 
@@ -934,9 +924,7 @@ function add_create_account($seed)
 	    $arr = array();
 
 	    $query = "select {$focus->table_name}.id, {$focus->table_name}.deleted from {$focus->table_name} ";
-	//BEGIN SUGARCRM flav=pro ONLY
 	    $focus->add_team_security_where_clause($query);
-	//END SUGARCRM flav=pro ONLY
 	    $query .= " WHERE name='".$seed->db->quote($account_name)."'";
 	    $query .=" ORDER BY deleted ASC";
 	    $result = $seed->db->query($query, true);

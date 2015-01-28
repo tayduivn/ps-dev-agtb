@@ -196,13 +196,11 @@ $nonStandardModules = array(//'Tracker',
 // Disable the activity stream from creating messages while installing.
 Activity::disable();
 
-//BEGIN SUGARCRM flav=pro ONLY
 //If this is MIcrosoft install and FTS is enabled, then fire index wake up method to prime the indexing service.
 if ($db->supports('fulltext') && $db->full_text_indexing_installed()) {
     installLog("Enabling fulltext indexing");
     $db->full_text_indexing_setup();
 }
-//END SUGARCRM flav=pro ONLY
 
 /**
  * loop through all the Beans and create their tables
@@ -259,13 +257,10 @@ foreach ($beanFiles as $bean => $file) {
                 $new_config = 1;
             }
 
-            //BEGIN SUGARCRM flav=pro ONLY
 
             if ($bean == "SavedReport") {
                 $new_report = 1;
             }
-
-            //END SUGARCRM flav=pro ONLY
 
         }
 
@@ -624,11 +619,9 @@ require_once('modules/Connectors/InstallDefaultConnectors.php');
 ////    INSTALL PASSWORD TEMPLATES
 include('install/seed_data/Advanced_Password_SeedData.php');
 
-//BEGIN SUGARCRM flav=pro ONLY
 ///////////////////////////////////////////////////////////////////////////////
 ////    INSTALL PDF TEMPLATES
 include('install/seed_data/PdfManager_SeedData.php');
-//END SUGARCRM flav=pro ONLY
 
 ///////////////////////////////////////////////////////////////////////////////
 ////    SETUP DONE

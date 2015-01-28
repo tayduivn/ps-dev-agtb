@@ -19,6 +19,11 @@
         'paste .search-name':        'throttledSearch',
         'click .add-on.fa-times':    'clearInput'
     },
+    processStatus: [app.lang.get('LBL_STATUS_COMPLETED', this.module),
+        app.lang.get('LBL_STATUS_TERMINATED', this.module),
+        app.lang.get('LBL_STATUS_IN_PROGRESS', this.module),
+        app.lang.get('LBL_STATUS_CANCELLED', this.module),
+        app.lang.get('LBL_STATUS_ERROR', this.module)],
     /**
      * Converts the input field to a select2 field and adds the module filter for refining the search.
      *
@@ -101,7 +106,7 @@
      */
     throttledSearch: _.debounce(function(evt) {
         var newSearch = this.$(evt.currentTarget).val();
-        if (this._currentSearch !== newSearch) {
+        if (this._currentSearch !== newSearch && _.indexOf(this.processStatus, this._selectedModule) == -1) {
             this._currentSearch = newSearch;
             this.applyFilter();
         }

@@ -21,6 +21,7 @@
 .filter-view {
   border: @inputBorder;
   //display: table-row;
+  position: relative;
   white-space: nowrap;
   margin-left: 0;
   background-color: @white;
@@ -81,6 +82,7 @@
   .choice-filter {
     background: @gray;
     color: @white;
+    cursor: text;
   }
   // select2 filter pills
   .select2-container {
@@ -226,7 +228,7 @@
   // clear search text
   .add-on.fa-times {
     position: absolute;
-    right: 65px;
+    right: 0;
     top: 0;
     padding: 7px 10px;
     color: @gray;

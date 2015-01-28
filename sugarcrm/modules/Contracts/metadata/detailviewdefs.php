@@ -88,9 +88,7 @@ $viewdefs['Contracts']['DetailView'] = array(
                 ),
             ),
             array(
-                //BEGIN SUGARCRM flav=pro ONLY
                 'team_name',
-                //END SUGARCRM flav=pro ONLY
                 array(
                     'name' => 'date_entered',
                     'customCode' => '{$fields.date_entered.value}&nbsp;{$APP.LBL_BY}&nbsp;{$fields.created_by_name.value}',

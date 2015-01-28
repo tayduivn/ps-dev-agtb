@@ -27,7 +27,6 @@ class SugarWidgetSubPanelEditButton extends SugarWidgetField
         global $subpanel_item_count;
 		$unique_id = $layout_def['subpanel_id']."_edit_".$subpanel_item_count; //bug 51512
         $onclick ='';
-//BEGIN SUGARCRM flav=pro ONLY
 		$formname = $this->getFormName($layout_def);
 
 		$onclick = "document.forms['{$formname}'].record.value='{$layout_def['fields']['ID']}';";
@@ -41,7 +40,6 @@ class SugarWidgetSubPanelEditButton extends SugarWidgetField
 			return '<a href="#" class="listViewTdToolsS1" id="'.$unique_id .'" onclick="' . $onclick . '">' .
                       $app_strings['LNK_EDIT'] .'</a>';
 		}else
-//END SUGARCRM flav=pro ONLY
         if($layout_def['EditView']) {
             if (isModuleBWC($layout_def['module'])) {
                 $label = $app_strings['LNK_EDIT'];
@@ -60,7 +58,6 @@ class SugarWidgetSubPanelEditButton extends SugarWidgetField
         return '';
     }
 
-//BEGIN SUGARCRM flav=pro ONLY
 
     protected function getSubpanelDefs($module_dir)
     {
@@ -193,7 +190,6 @@ class SugarWidgetSubPanelEditButton extends SugarWidgetField
         return $formname . $layout_def['module'];
 
 	}
-//END SUGARCRM flav=pro ONLY
 }
 
 ?>

@@ -20,3 +20,4 @@ $mod_strings = array(
     'LBL_CONTENT' => 'Content',
     'LBL_ATTACHMENTS' => 'Attachments',
 );
+?>

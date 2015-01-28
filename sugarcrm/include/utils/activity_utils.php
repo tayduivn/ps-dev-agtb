@@ -23,9 +23,7 @@ function build_related_list_by_user_id($bean, $user_id,$where) {
 
     $auto_where .= " {$bean->rel_users_table}.{$bean_id_name}={$bean->table_name}.id AND {$bean->rel_users_table}.user_id='{$user_id}' AND {$bean->table_name}.deleted=0 AND {$bean->rel_users_table}.deleted=0";
 
-    //BEGIN SUGARCRM flav=pro ONLY
     $bean->add_team_security_where_clause($select);
-    //END SUGARCRM flav=pro ONLY
 
     $query = $select.$auto_where;
 

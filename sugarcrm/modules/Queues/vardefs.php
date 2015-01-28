@@ -203,8 +203,6 @@ $dictionary['Queue'] = array('table' => 'queues',
 );
 
 VardefManager::createVardef('Queues','Queue', array(
-//BEGIN SUGARCRM flav=pro ONLY
 'team_security',
-//END SUGARCRM flav=pro ONLY
 ));
 ?>

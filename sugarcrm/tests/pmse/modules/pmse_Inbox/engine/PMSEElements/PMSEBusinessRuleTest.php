@@ -101,7 +101,7 @@ class PMSEBusinessRuleTest extends PHPUnit_Framework_TestCase
                 ->will($this->returnValue($processDefinition));
         
         
-        $dbHandler = $this->geTMockBuilder('DBHandler')
+        $dbHandler = $this->getMockBuilder('DBHandler')
             ->setMethods(array('Query', 'fetchByAssoc'))
             ->getMock();
         
@@ -248,7 +248,7 @@ class PMSEBusinessRuleTest extends PHPUnit_Framework_TestCase
                 ->will($this->returnValue($processDefinition));
         
         
-        $dbHandler = $this->geTMockBuilder('DBHandler')
+        $dbHandler = $this->getMockBuilder('DBHandler')
             ->setMethods(array('Query', 'fetchByAssoc'))
             ->getMock();
         

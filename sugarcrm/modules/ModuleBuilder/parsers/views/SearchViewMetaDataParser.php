@@ -20,10 +20,8 @@ class SearchViewMetaDataParser extends ListLayoutMetaDataParser
     static $variableMap = array (
     						MB_BASICSEARCH => 'basic_search' ,
     						MB_ADVANCEDSEARCH => 'advanced_search' ,
-    						//BEGIN SUGARCRM flav=pro ONLY
     						MB_WIRELESSBASICSEARCH => 'basic_search' ,
     						MB_WIRELESSADVANCEDSEARCH => 'advanced_search'
-    						//END SUGARCRM flav=pro ONLY
     						) ;
     // Columns is used by the view to construct the listview - each column is built by calling the named function
     public $columns = array ( 'LBL_DEFAULT' => 'getDefaultFields' , 'LBL_HIDDEN' => 'getAvailableFields' ) ;
@@ -136,11 +134,9 @@ class SearchViewMetaDataParser extends ListLayoutMetaDataParser
         if ($populate)
             $this->_populateFromRequest() ;
             
-        //BEGIN SUGARCRM flav=pro ONLY
         if($this->_searchLayout == 'basic_search' && isset($this->_viewdefs['team_name'])) {
            $this->_viewdefs['team_name']['label'] = 'LBL_TEAM';  //Change to singular form label
         }
-        //END SUGARCRM flav=pro ONLY
             
         $this->_saved [ 'layout' ] [ self::$variableMap [ $this->_searchLayout ] ] = $this->convertSearchViewToListView($this->_viewdefs);;
         $this->implementation->deploy ( $this->_saved ) ;

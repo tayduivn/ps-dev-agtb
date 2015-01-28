@@ -40,14 +40,12 @@ define('MB_MANYTOMANY', 'many-to-many');
 define('MB_MAXDBIDENTIFIERLENGTH', 30); // maximum length of any identifier in our supported databases
 define('MB_EXPORTPREPEND', 'project_');
 define('MB_VISIBILITY', 'visibility');
-//BEGIN SUGARCRM flav=pro ONLY
 define('MB_WIRELESSEDITVIEW', 'wirelesseditview');
 define('MB_WIRELESSDETAILVIEW', 'wirelessdetailview');
 define('MB_WIRELESSLISTVIEW', 'wirelesslistview');
 define('MB_WIRELESSBASICSEARCH', 'wireless_basic_search' );
 define('MB_WIRELESSADVANCEDSEARCH', 'wireless_advanced_search' );
 define('MB_WIRELESS', 'mobile');
-//END SUGARCRM flav=pro ONLY
 //BEGIN SUGARCRM flav=ent ONLY
 define('MB_PORTALEDITVIEW','portaleditview');
 define('MB_PORTALDETAILVIEW','portaldetailview');

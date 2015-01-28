@@ -27,15 +27,14 @@ class HistoryTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->_path = tempnam(sys_get_temp_dir() . 'tmp', 'history');
+        $this->_path = sys_get_temp_dir() . '/history/' . time();
         $this->_history = new History($this->_path);
     }
 
     public function tearDown()
     {
-        // Bug 54466 Clean up all test files that were created
-        $dirname = $this->getHistoryDir();
-        $files = array_filter(glob($dirname . '/history*'), 'is_file');
+        // Clean all temporary files created
+        $files = glob($this->getHistoryDir() . '/*');
         foreach ($files as $file) {
             @unlink($file);
         }
@@ -43,30 +42,37 @@ class HistoryTest extends PHPUnit_Framework_TestCase
 
     public function testConstructor()
     {
-        $this->assertTrue(is_dir($this->getHistoryDir()), "__constructor() creates unique directory for file history");
+        $this->assertTrue(is_dir($this->getHistoryDir()), "History dir not created");
     }
 
-    public function testAppendAndRestore()
+    /**
+     * Append a file to the history, check if it's properly added, restore it, and check if it's there
+     */
+    public function testAppendRestoreUndo()
     {
-        $time = $this->_history->append($this->_path);
-        $this->assertTrue(file_exists($this->_history->getFileByTimestamp($time)), '->append() creates history file');
-        $this->assertEquals($this->_history->restoreByTimestamp( $time ), $time, '->restoreByTimestamp() returns correct timestamp');
-    }
+        $tempFile = tempnam($this->getHistoryDir(), 'history');
 
-    public function testUndoRestore()
-    {
+        $time = $this->_history->append($tempFile);
+        $this->assertTrue(file_exists($this->_history->getFileByTimestamp($time)), "Didn't create history file");
+        $this->assertEquals($this->_history->restoreByTimestamp($time), $time, 'Restore returns incorrect timestamp');
+
+        $this->assertTrue(file_exists($this->_path), 'Preview file not created');
+        $this->assertFileEquals($tempFile, $this->_path, 'Restored file incorrect');
+
         $this->_history->undoRestore();
-        $this->assertFalse(file_exists($this->_path), '->undoRestore removes file');
+        $this->assertFalse(file_exists($this->_path), 'Preview file not removed');
     }
 
+    /**
+     * Add several files to history, test getter functions for the history list
+     */
     public function testPositioning()
     {
-        $tempFile = tempnam(sys_get_temp_dir() . 'tmp', 'history');
 
         // Pause for a second in between each append for different timestamps
-        $el1 = $this->_history->append($tempFile);
-        $el2 = $this->_history->append($tempFile);
-        $el3 = $this->_history->append($tempFile);
+        $el1 = $this->_history->append(tempnam($this->getHistoryDir(), 'history'));
+        $el2 = $this->_history->append(tempnam($this->getHistoryDir(), 'history'));
+        $el3 = $this->_history->append(tempnam($this->getHistoryDir(), 'history'));
 
         // Grab our values for testing
         $getFirst = $this->_history->getFirst();
@@ -83,9 +89,6 @@ class HistoryTest extends PHPUnit_Framework_TestCase
         // Last assertion
         $getNext  = $this->_history->getNext();
         $this->assertFalse($getNext, "Expected getNext() [$getNext] to return false");
-
-        // Clean up
-        unlink($tempFile);
     }
 
     private function getHistoryDir()

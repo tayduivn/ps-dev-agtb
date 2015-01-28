@@ -14,7 +14,6 @@ require_once('tests/rest/RestFileTestBase.php');
 
 class RestFileTempTest extends RestFileTestBase
 {
-    //BEGIN SUGARCRM flav=pro ONLY
     /**
      * @group rest
      */
@@ -35,6 +34,5 @@ class RestFileTempTest extends RestFileTestBase
         $this->assertArrayHasKey('error', $fetch['reply'], 'Temporary file is still here');
         $this->assertEquals('invalid_parameter', $fetch['reply']['error'], 'Expected error string not returned');
     }
-    //END SUGARCRM flav=pro ONLY
 }
 

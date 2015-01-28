@@ -253,7 +253,6 @@ class ListViewData {
         if (empty($params['skipOrderSave'])) { // don't save preferences if told so
             $current_user->setPreference('listviewOrder', $order, 0, $this->var_name); // save preference
         }
-        //BEGIN SUGARCRM flav=pro ONLY
         if ($seed->isFavoritesEnabled()) {
             $params['favorites'] = !empty($_REQUEST['my_favorites'])?2:1;
 		}
@@ -264,7 +263,6 @@ class ListViewData {
         {
             $filter_fields[$field] = true;
         }
-		//END SUGARCRM flav=pro ONLY
 
 		// If $params tells us to override for the special last_name, first_name sorting
 		if (!empty($params['overrideLastNameOrder']) && $order['orderBy'] == 'last_name') {
@@ -407,17 +405,13 @@ class ListViewData {
 				}else{
 				    $pageData['tag'][$dataIndex] = $pageData['tag'][$idIndex[$row[$id_field]][0]];
 				}
-				//BEGIN SUGARCRM flav=pro ONLY
 				$temp->updateDependentFieldForListView('', $filter_fields);
-				//END SUGARCRM flav=pro ONLY
 				$data[$dataIndex] = $temp->get_list_view_data($filter_fields);
-				//BEGIN SUGARCRM flav=pro ONLY
                 if($temp->isFavoritesEnabled()){
 					$data[$dataIndex]['star'] = SugarFavorites::generateStar(!empty($row['my_favorite']), $temp->module_dir, $temp->id);
 				}
 
 				$temp->ACLFilterFieldList($data[$dataIndex]);
-				//END SUGARCRM flav=pro ONLY
                 //Preventing multiple (same) ACLAccess calls
                 $tempACL['EditView'] = $temp->ACLAccess('EditView');
                 $tempACL['DetailView'] = $temp->ACLAccess('DetailView');

@@ -595,7 +595,6 @@ $server->wsdl->addComplexType(
 	)
 );
 
-//BEGIN SUGARCRM flav=pro ONLY
 //SYNC ENCODED (PHP ONLY SUPPORT)
 
 $server->wsdl->addComplexType(
@@ -611,8 +610,6 @@ $server->wsdl->addComplexType(
 		'error' => array('name' =>'error', 'type'=>'tns:error_value'),
 	)
 );
-
-//END SUGARCRM flav=pro ONLY
 $server->wsdl->addComplexType(
     'document_revision',
     'complexType',

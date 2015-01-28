@@ -81,7 +81,6 @@ $viewdefs[$module_name]['mobile']['view']['list'] = array(
                     'label' => 'LBL_CREATED',
                     'readonly' => true,
                 ),
-                //BEGIN SUGARCRM flav=pro ONLY
                 array(
                     'name' => 'team_name',
                     'width' => '5',
@@ -89,7 +88,6 @@ $viewdefs[$module_name]['mobile']['view']['list'] = array(
                     'default' => true,
                     'enabled' => true,
                 ),
-                //END SUGARCRM flav=pro ONLY
                 array(
                     'name' => 'assigned_user_name',
                     'width' => '5',

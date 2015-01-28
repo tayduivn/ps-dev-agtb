@@ -170,9 +170,7 @@ $vardefs = array(
             'len' => '100',
             'comment' => 'The next step in the sales process',
             'duplicate_on_record_copy' => 'always',
-            //BEGIN SUGARCRM flav=pro ONLY
             'merge_filter' => 'enabled',
-            //END SUGARCRM flav=pro ONLY
         ),
         'sales_stage' =>
         array(
@@ -186,9 +184,7 @@ $vardefs = array(
             'required' => true,
             'importable' => 'required',
             'duplicate_on_record_copy' => 'always',
-            //BEGIN SUGARCRM flav=pro ONLY
             'merge_filter' => 'enabled',
-            //END SUGARCRM flav=pro ONLY
         ),
         'probability' =>
         array(
@@ -200,13 +196,8 @@ $vardefs = array(
             'comment' => 'The probability of closure',
             'validation' => array('type' => 'range', 'min' => 0, 'max' => 100),
             'duplicate_on_record_copy' => 'always',
-            //BEGIN SUGARCRM flav=pro ONLY
             'merge_filter' => 'enabled',
-            //END SUGARCRM flav=pro ONLY
         )
-    ),
-    'uses' => array(
-        'taggable',
     ),
     'duplicate_check' => array(
         'enabled' => true,

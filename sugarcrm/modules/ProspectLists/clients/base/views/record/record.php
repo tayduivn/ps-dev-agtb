@@ -168,12 +168,10 @@ $viewdefs['ProspectLists']['base']['view']['record'] = array(
                         ),
                     ),
                 ),
-                //BEGIN SUGARCRM flav=pro ONLY
                 array(
                     "type" => "teamset",
                     "name" => "team_name"
                 ),
-                //END SUGARCRM flav=pro ONLY
                 array(
                     'name' => 'date_entered_by',
                     'readonly' => true,
@@ -192,10 +190,6 @@ $viewdefs['ProspectLists']['base']['view']['record'] = array(
                             'name' => 'created_by_name',
                         ),
                     ),
-                ),
-                array(
-                    'name' => 'tag',
-                    'span' => 12,
                 ),
             )
         ),

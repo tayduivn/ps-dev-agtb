@@ -29,9 +29,7 @@ $fields_array['Document'] = array ('column_fields' => Array("id"
 		,"date_modified"
 		,"created_by"
 		,"modified_user_id"
-//BEGIN SUGARCRM flav=pro ONLY
 		,"team_id"
-//END SUGARCRM flav=pro ONLY
 		,"document_revision_id"
 		,"related_doc_id"
 		,"related_doc_rev_id"
@@ -50,9 +48,7 @@ $fields_array['Document'] = array ('column_fields' => Array("id"
 		,"date_modified"
 		,"created_by"
 		,"modified_user_id"
-//BEGIN SUGARCRM flav=pro ONLY
 		,"team_id"
-//END SUGARCRM flav=pro ONLY
 		,"document_revision_id"
 		,"last_rev_create_date"
 		,"last_rev_created_by"

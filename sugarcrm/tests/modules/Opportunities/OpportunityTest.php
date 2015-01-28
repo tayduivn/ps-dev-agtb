@@ -35,10 +35,8 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestRevenueLineItemUtilities::removeAllCreatedRevenueLineItems();
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
         SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
-        //BEGIN SUGARCRM flav=pro ONLY
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
         SugarTestProductUtilities::removeAllCreatedProducts();
-        //END SUGARCRM flav=pro ONLY
         SugarTestAccountUtilities::removeAllCreatedAccounts();
     }
 
@@ -48,7 +46,6 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::tearDown();
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
     public function dataProviderCaseFieldEqualsAmountWhenCaseFieldEmpty()
     {
         return array(array('best_case'), array('worst_case'));
@@ -90,8 +87,6 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
         $opportunity->save();
         $this->assertEquals(0, $opportunity->$case);
     }
-
-    //END SUGARCRM flav=pro ONLY
     //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
     /**
      * This test checks to see if we correctly set the timeperiod_id value of an Opportunity record
@@ -185,10 +180,8 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
         $opportunity->name = "Test Opportunity Delete Me";
         $opportunity->amount = "5000.00";
         $opportunity->date_closed = TimeDate::getInstance()->getNow()->modify("+10 days")->asDbDate();
-        //BEGIN SUGARCRM flav=pro ONLY
         $opportunity->best_case = "1000.00";
         $opportunity->worst_case = "600.00";
-        //END SUGARCRM flav=pro ONLY
         $opportunity->save();
         $this->assertEquals(
             sprintf('%.6f', $opportunity->base_rate),
@@ -210,10 +203,8 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
         $opportunity->name = "Test Opportunity Delete Me";
         $opportunity->amount = "5000.00";
         $opportunity->date_closed = TimeDate::getInstance()->getNow()->modify("+10 days")->asDbDate();
-        //BEGIN SUGARCRM flav=pro ONLY
         $opportunity->best_case = "1000.00";
         $opportunity->worst_case = "600.00";
-        //END SUGARCRM flav=pro ONLY
         $opportunity->save();
 
         $this->assertEquals(

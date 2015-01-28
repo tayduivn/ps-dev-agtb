@@ -100,7 +100,6 @@ class SOAPAPI3_1Test extends SOAPTestCase
        $actual = $result['relationship_list'][0]['link_list'][0]['records'][0]['link_value'][1]['value'];
        $this->assertEquals($c1->email1, $actual);
     }
-    //BEGIN SUGARCRM flav=pro ONLY
     /**
      * Test get avaiable modules call
      *
@@ -115,7 +114,6 @@ class SOAPAPI3_1Test extends SOAPTestCase
         $this->assertEquals('Accounts', $actual['module_key'] );
         $this->assertArrayHasKey('acls', $actual);
     }
-    //END SUGARCRM flav=pro ONLY
     /**
      * Test get avaiable modules call
      *

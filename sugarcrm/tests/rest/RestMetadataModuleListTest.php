@@ -44,9 +44,7 @@ class RestMetadataModuleListTest extends RestTestBase {
             $this->createdStudioFile = true;
         }
         //END SUGARCRM flav=ent ONLY
-        //BEGIN SUGARCRM flav=pro ONLY
         $this->unitTestFiles[] = 'custom/include/MVC/Controller/wireless_module_registry.php';
-        //END SUGARCRM flav=pro ONLY
 
         // Start off by clearing our metadata cache
         $this->_clearMetadataCache();
@@ -155,7 +153,6 @@ class RestMetadataModuleListTest extends RestTestBase {
     }
     //END SUGARCRM flav=ent ONLY
 
-    //BEGIN SUGARCRM flav=pro ONLY
     /**
      * @group rest
      */
@@ -196,7 +193,6 @@ class RestMetadataModuleListTest extends RestTestBase {
 
 
     }
-    //END SUGARCRM flav=pro ONLY
 
 
     /**

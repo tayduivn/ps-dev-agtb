@@ -87,14 +87,11 @@ if(!$current_user->is_admin && !$GLOBALS['current_user']->isAdminForModule('User
         }
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
     require_once 'include/SugarFields/Fields/Teamset/SugarFieldTeamset.php';
     $teamSetField = new SugarFieldTeamset('Teamset');
     if (!$newUser && $teamSetField != null) {
        $teamSetField->save($focus, $_POST, 'team_name', '');
     }
-
-    //END SUGARCRM flav=pro ONLY
     $portal=array("user_name","last_name","status","portal_only");
     $group=array("user_name","last_name","status","is_group");
     if (isset($_POST['portal_only']) && ($_POST['portal_only']=='1' || $focus->portal_only)) {

@@ -95,12 +95,10 @@ class UsersViewDetail extends ViewDetail {
             require_once('modules/ACLRoles/DetailUserRole.php');
             echo "</div></div>";
 
-            //BEGIN SUGARCRM flav=pro ONLY
             $file = SugarAutoLoader::loadExtension("userpage");
             if($file) {
                 include $file;
             }
-            //END SUGARCRM flav=pro ONLY
 
             $role_html = ob_get_contents();
             ob_end_clean();

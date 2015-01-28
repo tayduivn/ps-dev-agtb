@@ -26,9 +26,7 @@ require_once 'data/BeanDuplicateCheck.php';
 require_once 'data/SugarACL.php';
 require_once "modules/Mailer/MailerFactory.php"; // imports all of the Mailer classes that are needed
 require_once('include/utils.php');
-//BEGIN SUGARCRM flav=pro ONLY
 require_once('include/Expressions/Expression/Parser/Parser.php');
-//END SUGARCRM flav=pro ONLY
 
 /**
  * SugarBean is the base class for all business objects in Sugar.  It implements
@@ -68,7 +66,6 @@ class SugarBean
 	 */
 	var $new_with_id = false;
 
-	//BEGIN SUGARCRM flav=pro ONLY
 	/**
 	 * Pro Only -- When all data of a specifiy module is publically available,
 	 * row level security can be turned off.  This should only be used for modules
@@ -83,8 +80,6 @@ class SugarBean
 	 * @var BeanVisibility
 	 */
 	protected $visibility;
-
-	//END SUGARCRM flav=pro ONLY
 
 	/**
 	 * How deep logic hooks can go
@@ -233,10 +228,8 @@ class SugarBean
     */
     var $acltype = 'module';
 
-    //BEGIN SUGARCRM flav=pro ONLY
     var $vardef_handler;
     var $rel_handler;
-    //END SUGARCRM flav=pro ONLY
 
     var $additional_meta_fields = array();
 
@@ -458,7 +451,6 @@ class SugarBean
         if (empty($this->module_name))
             $this->module_name = $this->module_dir;
 
-        //BEGIN SUGARCRM flav=pro ONLY
         if(isset($this->disable_team_security)){
             $this->disable_row_level_security = $this->disable_team_security;
         }
@@ -472,7 +464,6 @@ class SugarBean
         {
             $this->disable_row_level_security =true;
         }
-        //END SUGARCRM flav=pro ONLY
         if (false == $this->disable_vardefs && (empty(self::$loadedDefs[$this->object_name]) || !empty($GLOBALS['reload_vardefs'])))
         {
             //BEGIN SUGARCRM flav=int ONLY
@@ -564,14 +555,12 @@ class SugarBean
             }
         }
 
-        //BEGIN SUGARCRM flav=pro ONLY
         // Verify that current user is not null then do an ACL check.  The current user check is to support installation.
         if(!$this->disable_row_level_security && !empty($current_user->id) && !isset($this->disable_team_security)
 			&& !SugarACL::checkAccess($this->module_dir, 'team_security', array('bean' => $this))) {
         	// We can disable team security for this module
         	$this->disable_row_level_security =true;
         }
-        //END SUGARCRM flav=pro ONLY
 
         if($this->bean_implements('ACL')){
             $this->acl_fields = (isset($dictionary[$this->object_name]['acl_fields']) && $dictionary[$this->object_name]['acl_fields'] === false)?false:true;
@@ -583,11 +572,9 @@ class SugarBean
             $this->addVisibilityStrategy("ACLVisibility");
         }
         $this->populateDefaultValues();
-        //BEGIN SUGARCRM flav=pro ONLY
         if(isset($this->disable_team_security)){
             $this->disable_row_level_security = $this->disable_team_security;
         }
-        //END SUGARCRM flav=pro ONLY
     }
 
     /**
@@ -690,9 +677,7 @@ class SugarBean
     public function beforeSseIndexing()
     {
         $this->updateDocOwner();
-        //BEGIN SUGARCRM flav=pro ONLY
         $this->updateUserFavorites();
-        //END SUGARCRM flav=pro ONLY
     	$this->loadVisibility()->beforeSseIndexing();
     }
 
@@ -739,13 +724,9 @@ class SugarBean
             {
                 if (
                 (
-                //BEGIN SUGARCRM flav=pro ONLY
                 $field == 'team_id' or
-                //END SUGARCRM flav=pro ONLY
                 !empty($properties['Audited']) || !empty($properties['audited']))
-                //BEGIN SUGARCRM flav=pro ONLY
                 && SugarACL::checkField($this->module_dir, $field, "access", array("bean" => $this))
-                //END SUGARCRM flav=pro ONLY
                 )
                 {
 
@@ -1006,7 +987,6 @@ class SugarBean
         }
         return $def;
     }
-    //BEGIN SUGARCRM flav=pro ONLY
     public function isFavoritesEnabled()
     {
     	if(isset($GLOBALS['dictionary'][$this->getObjectName()]['favorites']))
@@ -1015,7 +995,6 @@ class SugarBean
     	}
         return false;
     }
-    //END SUGARCRM flav=pro ONLY
 
     /**
      * Returns the value for the requested field.
@@ -1788,7 +1767,6 @@ class SugarBean
         }
 
 
-        //BEGIN SUGARCRM flav=pro ONLY
         // if the module has a team_id field and no team_id is specified, set team_id as the current_user's default team
         // currently, the default_team is only enforced in the presentation layer-- this enforces it at the data layer as well
 
@@ -1797,7 +1775,6 @@ class SugarBean
             $this->team_id = $current_user->team_id;
             $usedDefaultTeam = true;
         }
-        //END SUGARCRM flav=pro ONLY
 
         // if this bean has a currency_id and base_rate, verify that base_rate is set to the correct amount
         if (isset($this->field_defs['currency_id']) && isset($this->field_defs['base_rate'])) {
@@ -1812,9 +1789,7 @@ class SugarBean
             $this->save_relationship_changes($isUpdate);
             static::leaveOperation('updating_relationships');
         }
-        //BEGIN SUGARCRM flav=pro ONLY
         $this->updateCalculatedFields();
-        //END SUGARCRM flav=pro ONLY
         if($isUpdate && !$this->update_date_entered)
         {
             unset($this->date_entered);
@@ -1833,7 +1808,6 @@ class SugarBean
             $this->custom_fields->bean = $this;
             $this->custom_fields->save($isUpdate);
         }
-        //BEGIN SUGARCRM flav=pro ONLY
         //rrs new functionality to check if the team_id is set and the team_set_id is not set,
         //then see what we can do about saving to team_set_id. It is important for this code block to be below
         //the 'before_save' custom logic hook as that is where workflow is called.
@@ -1847,7 +1821,6 @@ class SugarBean
                 $this->teams->save(false, $usedDefaultTeam);
             }
         }
-        //END SUGARCRM flav=pro ONLY
 
         // use the db independent query generator
         $this->preprocess_fields_on_save();
@@ -1881,9 +1854,7 @@ class SugarBean
             }
         }
 
-        //BEGIN SUGARCRM flav=pro ONLY
         $this->updateRelatedCalcFields();
-        //END SUGARCRM flav=pro ONLY
 
         // populate fetched row with newest changes in the bean
         foreach ($dataChanges as $change) {
@@ -1896,11 +1867,9 @@ class SugarBean
             SugarRelationship::resaveRelatedBeans();
         }
 
-        //BEGIN SUGARCRM flav=pro ONLY
         //rrs - bug 7908
         $this->process_workflow_alerts();
         //rrs
-        //END SUGARCRM flav=pro ONLY
 
         //If we aren't in setup mode and we have a current user and module, then we track
         if(isset($GLOBALS['current_user']) && isset($this->module_dir))
@@ -1917,7 +1886,6 @@ class SugarBean
         return $this->id;
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
     /**
     * Retrieves and executes the CF dependencies for this bean
     */
@@ -2120,7 +2088,6 @@ class SugarBean
         }
         return false;
     }
-    //END SUGARCRM flav=pro ONLY
 
     /**
      * Performs a check if the record has been modified since the specified date
@@ -2745,6 +2712,9 @@ class SugarBean
 						}
 						else
 						{
+                            //Converting from db fields is needed
+                            //Example: from "2015-01-08 22:32:00.000000" (retrieved from DB2) to "2015-01-08 22:32:00"
+                            $this->$field = $this->db->fromConvert($this->$field, 'datetime');
 							if(empty($disable_date_format)) {
 								$this->$field = $timedate->to_display_date_time($this->$field, true, true);
 							}
@@ -3025,7 +2995,6 @@ class SugarBean
             }
         }
 
-        //BEGIN SUGARCRM flav=pro ONLY
         if(!empty($this->field_defs['team_name']) && !empty($this->field_defs['team_id']) && (empty($this->field_defs['team_id']['source']))) {
             $query_select .= ", teams_tn.name as tn_name, teams_tn.name_2 as tn_name_2";
             $query_from .= " LEFT JOIN teams teams_tn ON teams_tn.id = {$this->table_name}.team_id";
@@ -3043,24 +3012,19 @@ class SugarBean
             $query_select .= ', case when sub.id IS NOT NULL then 1 else 0 end following';
             $query_from .= " LEFT JOIN subscriptions sub ON sub.deleted = 0 AND sub.parent_type = '{$this->module_name}' AND sub.parent_id = {$this->db->quoted($id)} AND sub.modified_user_id = '{$GLOBALS['current_user']->id}'";
         }
-        //END SUGARCRM flav=pro ONLY
 
         $query = "SELECT $query_select FROM $query_from ";
         $options = array('where_condition' => true);
-        //BEGIN SUGARCRM flav=pro ONLY
         if(!$this->disable_row_level_security)
         {
             //$this->table_name != 'users' && $this->table_name != 'teams' && $this->table_name != 'team_memberships' && $this->table_name != 'currencies')
             $this->addVisibilityFrom($query, $options);
         }
-        //END SUGARCRM flav=pro ONLY
 
         $query .= $where;
-        //BEGIN SUGARCRM flav=pro ONLY
         if(!$this->disable_row_level_security) {
             $this->addVisibilityWhere($query, $options);
         }
-        //END SUGARCRM flav=pro ONLY
 
         $GLOBALS['log']->debug("Retrieve $this->object_name : ".$query);
         $result = $this->db->limitQuery($query,0,1,true, "Retrieving record by id $this->table_name:$id found ");
@@ -3836,7 +3800,6 @@ class SugarBean
                     $acl_fields[$list_key] = true;
                 }
 
-                //BEGIN SUGARCRM flav=pro ONLY
                 SugarACL::listFilter($submodule->module_dir, $acl_fields, array("bean" => $submodule, "owner_override" => true), array("blank_value" => true));
                 foreach($list_fields as $list_key=>$list_field)
                 {
@@ -3852,7 +3815,6 @@ class SugarBean
 		            //Add the team_id entry so that we can retrieve the team_id to display primary team
 		            $list_fields['team_id'] = true;
 		        }
-		        //END SUGARCRM flav=pro ONLY
 
                 if(!$subpanel_def->isCollection() && isset($list_fields[$order_by]) && isset($submodule->field_defs[$order_by])&& (!isset($submodule->field_defs[$order_by]['source']) || $submodule->field_defs[$order_by]['source'] == 'db'))
                 {
@@ -4133,9 +4095,7 @@ class SugarBean
      */
 	function create_new_list_query($order_by, $where,$filter=array(),$params=array(), $show_deleted = 0,$join_type='', $return_array = false,$parentbean=null, $singleSelect = false, $ifListForExport = false)
     {
-        //BEGIN SUGARCRM flav=pro ONLY
         $favorites = (!empty($params['favorites']))?$params['favorites']: 0;
-        //END SUGARCRM flav=pro ONLY
         global $beanFiles, $beanList;
         $selectedFields = array();
         $secondarySelectedFields = array();
@@ -4157,9 +4117,7 @@ class SugarBean
             $ret_array['select'] = " SELECT $distinct $this->table_name.id ";
         }
         $ret_array['from'] = " FROM $this->table_name ";
-        //BEGIN SUGARCRM flav=pro ONLY
         $this->addVisibilityFrom($ret_array['from'], $options);
-        //END SUGARCRM flav=pro ONLY
         $ret_array['from_min'] = $ret_array['from'];
         $ret_array['secondary_from'] = $ret_array['from'] ;
         $ret_array['where'] = '';
@@ -4568,12 +4526,10 @@ class SugarBean
             {
                 $ret_array['select'] .= ", $this->table_name.system_id ";
             }
-            //BEGIN SUGARCRM flav=pro ONLY
             if(isset($selectedFields[$this->table_name.'.team_id']) && isset($this->field_defs['team_set_id']) && empty($selectedFields[$this->table_name.'.team_set_id']))
             {
             $ret_array['select'] .= ", $this->table_name.team_set_id ";
             }
-            //END SUGARCRM flav=pro ONLY
         }
 
 	if ($ifListForExport) {
@@ -4585,7 +4541,6 @@ class SugarBean
 		}
 	}
 
-        //BEGIN SUGARCRM flav=pro ONLY
         if(!empty($favorites)){
             $ret_array['select'] .= " , sfav.id my_favorite ";
             if($favorites == 2){
@@ -4596,7 +4551,6 @@ class SugarBean
 
         $ret_array['from'] .= " sugarfavorites sfav ON sfav.module ='{$this->module_dir}' AND sfav.record_id={$this->table_name}.id AND sfav.created_by='{$GLOBALS['current_user']->id}' AND sfav.deleted=0 ";
         }
-        //END SUGARCRM flav=pro ONLY
         $where_auto = '1=1';
         if($show_deleted == 0)
         {
@@ -5320,9 +5274,7 @@ class SugarBean
 	{
 	    $trackerManager = TrackerManager::getInstance();
 		if($monitor = $trackerManager->getMonitor('tracker')){
-			//BEGIN SUGARCRM flav=pro ONLY
 	        $monitor->setValue('team_id', $GLOBALS['current_user']->getPrivateTeamID());
-			//END SUGARCRM flav=pro ONLY
 	        $monitor->setValue('date_modified', $GLOBALS['timedate']->nowDb());
 	        $monitor->setValue('user_id', $user_id);
 	        $monitor->setValue('module_name', $current_module);
@@ -5388,7 +5340,6 @@ class SugarBean
             }
         }
 
-        //BEGIN SUGARCRM flav=pro ONLY
         if(!empty($this->field_defs['team_name']) && !empty($this->team_id) && empty($this->team_name) && !empty($this->fetched_row['tn_name'])) {
             if(!empty($GLOBALS['current_user']) && $GLOBALS['current_user']->showLastNameFirst()) {
 		        $this->assigned_name = $this->team_name = trim($this->fetched_row['tn_name_2'] . ' ' . $this->fetched_row['tn_name']);
@@ -5396,14 +5347,11 @@ class SugarBean
 		      $this->assigned_name = $this->team_name = trim($this->fetched_row['tn_name'] . ' ' . $this->fetched_row['tn_name_2']);
 		    }
         }
- 		//END SUGARCRM flav=pro ONLY
 
 		if(!empty($this->field_defs['parent_name'])){
 			$this->fill_in_additional_parent_fields();
 		}
-        //BEGIN SUGARCRM flav=pro ONLY
         $this->updateDependentField();
-        //END SUGARCRM flav=pro ONLY
     }
 
     /**
@@ -5597,18 +5545,14 @@ class SugarBean
                 }
                 $query = "UPDATE $this->table_name set deleted=1, date_modified = '$date_modified',
                             modified_user_id = '$this->modified_user_id' where id='$id'";
-                //BEGIN SUGARCRM flav=pro ONLY
                 if ($this->isFavoritesEnabled()) {
                     SugarFavorites::markRecordDeletedInFavorites($id, $date_modified, $this->modified_user_id);
                 }
-                //END SUGARCRM flav=pro ONLY
             } else {
                 $query = "UPDATE $this->table_name set deleted=1 , date_modified = '$date_modified' where id='$id'";
-                //BEGIN SUGARCRM flav=pro ONLY
                 if ($this->isFavoritesEnabled()) {
                     SugarFavorites::markRecordDeletedInFavorites($id, $date_modified);
                 }
-                //END SUGARCRM flav=pro ONLY
             }
             $this->db->query($query, true, "Error marking record deleted: ");
 
@@ -5616,11 +5560,9 @@ class SugarBean
             $tracker = BeanFactory::getBean('Trackers');
             $tracker->makeInvisibleForAll($id);
 
-            //BEGIN SUGARCRM flav=pro ONLY
             require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
             $searchEngine = SugarSearchEngineFactory::getInstance();
             $searchEngine->delete($this);
-            //END SUGARCRM flav=pro ONLY
 
             SugarRelationship::resaveRelatedBeans();
 
@@ -5693,9 +5635,7 @@ class SugarBean
         while($row = $this->db->fetchByAssoc($result))
         {
             $record = BeanFactory::retrieveBean($template->module_name, $row['id']
-            //BEGIN SUGARCRM flav=pro ONLY
             , array("disable_row_level_security" => $template->disable_row_level_security)
-            //END SUGARCRM flav=pro ONLY
             );
             if(!empty($record))
             {
@@ -5760,9 +5700,7 @@ class SugarBean
     while($row = $db->fetchByAssoc($result))
     {
         $record = BeanFactory::retrieveBean($template->module_dir, $row['id']
-        //BEGIN SUGARCRM flav=pro ONLY
         , array("disable_row_level_security" => $template->disable_row_level_security)
-        //END SUGARCRM flav=pro ONLY
         );
         if(!empty($record))
         {
@@ -5849,7 +5787,6 @@ class SugarBean
     function list_view_parse_additional_sections(&$list_form)
     {
     }
-	//BEGIN SUGARCRM flav=pro ONLY
 	/*
      * fix bug #54042: ListView calculates all field dependencies
      *
@@ -5886,7 +5823,6 @@ class SugarBean
         $this->updateDependentField($filter_fields);
         $this->is_updated_dependent_fields = true;
     }
-	//END SUGARCRM flav=pro ONLY
 
     /**
      * Assigns all of the values into the template for the list view
@@ -6126,7 +6062,6 @@ class SugarBean
 
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
     /**
      * Add visibility clauses to the query
      * @param string $query
@@ -6187,7 +6122,6 @@ class SugarBean
             }
         }
     }
-    //END SUGARCRM flav=pro ONLY
 
     function &parse_additional_headers(&$list_form, $xTemplateSection)
     {
@@ -6240,15 +6174,12 @@ class SugarBean
                 }
             }
         }
-        //BEGIN SUGARCRM flav=pro ONLY
 
         $this->assigned_name = 'Assigned To Team Name';
         $this->assigned_user_id = '1';
         $this->assigned_user_name = 'Assigned To User Name';
         $this->team_name = 'Assigned To Team Name';
         $this->team_id = '1';
-
-        //END SUGARCRM flav=pro ONLY
     }
 
     /*
@@ -6334,7 +6265,6 @@ class SugarBean
             }
         }
     }
-    //BEGIN SUGARCRM flav=pro ONLY
     /*
     The vardef handler allows you set filters against the vardefs for a bean
     and return an array with what you need.  This is being used right now for
@@ -6368,8 +6298,6 @@ class SugarBean
 
         return $rel_handler;
     }
-
-    //END SUGARCRM flav=pro ONLY
 
     /**
     * Trigger custom logic for this module that is defined for the provided hook
@@ -6420,17 +6348,14 @@ class SugarBean
             $logicHook->setBean($this);
             $logicHook->call_custom_logic($this->module_dir, $event, $arguments);
             $this->logicHookDepth[$event]--;
-            //BEGIN SUGARCRM flav=pro ONLY
             //Fire dependency manager dependencies here for some custom logic types.
             if (in_array($event, array('after_relationship_add', 'after_relationship_delete', 'before_delete')))
             {
                 $this->updateRelatedCalcFields(isset($arguments['link']) ? $arguments['link'] : "");
             }
-            //END SUGARCRM flav=pro ONLY
         }
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
     /**
      * Any alerts that have been placed into the session, be sure to process them.
      * This function was created as a result of bug 7908
@@ -6459,7 +6384,6 @@ class SugarBean
             }
         }
     }
-    //END SUGARCRM flav=pro ONLY
 
     /*	When creating a custom field of type Dropdown, it creates an enum row in the DB.
      A typical get_list_view_array() result will have the *KEY* value from that drop-down.
@@ -6515,7 +6439,6 @@ class SugarBean
         return array_merge($data, self::$default_acls);
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
     /**
      * Filter fields for specific view - null those that aren't allowed by ACL
      * @param string $view
@@ -6535,7 +6458,6 @@ class SugarBean
             }
         }
     }
-    //END SUGARCRM flav=pro ONLY
 
     /**
      * Filter list of fields and remove/blank fields that we can not access
@@ -6754,7 +6676,6 @@ class SugarBean
         return '';
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
     /**
      * Updates the user_favorites property if it exists
      * By default it is as it is part of the Basic vardefs.
@@ -6767,7 +6688,6 @@ class SugarBean
             $this->user_favorites = SugarFavorites::getUserIdsForFavoriteRecordByModuleRecord($this->module_dir, $this->id);
         }
     }
-    //END SUGARCRM flav=pro ONLY
 
     /**
     *
@@ -7062,7 +6982,6 @@ class SugarBean
         }
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
     /**
     * Set the given module's default team in SuagrCRM Professional
     */
@@ -7076,7 +6995,6 @@ class SugarBean
         }
 
     }
-    //END SUGARCRM flav=pro ONLY
 
     /**
      * Called from ImportFieldSanitize::relate(), when creating a new bean in a related module. Will
@@ -7393,7 +7311,6 @@ class SugarBean
             && $field_def['type'] == 'relate'
             && isset($field_def['link']);
     }
-//BEGIN SUGARCRM flav=pro ONLY
     /**
      * Returns array of linked bean's calculated fields which use relation to
      * the current bean in their formulas
@@ -7483,7 +7400,6 @@ class SugarBean
 
         return array_unique($result);
     }
-//END SUGARCRM flav=pro ONLY
 
     /**
      * Proxy method for DynamicField::getJOIN
@@ -7794,31 +7710,5 @@ class SugarBean
         }
 
         return $fields;
-    }
-
-    /**
-     * Checks to see if a bean implements taggable
-     *
-     * @return boolean True if tags are enabled for this bean
-     */
-    public function isTaggable()
-    {
-        return $this->getTagField() !== null;
-    }
-
-    /**
-     * Gets the field_defs key for the tag field of a bean
-     *
-     * @return string
-     */
-    public function getTagField()
-    {
-        foreach ($this->field_defs as $name => $def) {
-            if (isset($def['type']) && $def['type'] === 'tag') {
-                return $name;
-            }
-        }
-
-        return null;
     }
 }

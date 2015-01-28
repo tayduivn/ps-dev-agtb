@@ -195,11 +195,10 @@ class SqlsrvManager extends MssqlManager
         $this->query_time = microtime(true) - $this->query_time;
         $GLOBALS['log']->info('Query Execution Time:'.$this->query_time);
 
-        //BEGIN SUGARCRM flav=pro ONLY
+
         if($this->dump_slow_queries($sql)) {
             $this->track_slow_queries($sql);
         }
-        //END SUGARCRM flav=pro ONLY
 
         $this->checkError($msg.' Query Failed:' . $sql . '::', $dieOnError);
 
@@ -244,7 +243,7 @@ class SqlsrvManager extends MssqlManager
         }
 
         foreach($row as $key => $column) {
-            $row[$key] = trim($column);
+            $row[$key] = is_string($column) ? trim($column) : $column;
         }
 
         return $row;

@@ -23,9 +23,7 @@ $fields_array['Task'] = array ('column_fields' =>Array("id"
 		, "assigned_user_id"
 		, "modified_user_id"
 		, "created_by"
-		//BEGIN SUGARCRM flav=pro ONLY
 		,"team_id"
-		//END SUGARCRM flav=pro ONLY
 		, "description"
 		, "name"
 		, "status"
@@ -41,10 +39,8 @@ $fields_array['Task'] = array ('column_fields' =>Array("id"
 		, "contact_id"
 		),
         'list_fields' =>  Array('id', 'status', 'name', 'parent_type', 'parent_name', 'parent_id', 'date_due', 'contact_id', 'contact_name', 'assigned_user_name', 'assigned_user_id','first_name','last_name','time_due', 'priority'
-	//BEGIN SUGARCRM flav=pro ONLY
 	, "team_id"
 	, "team_name"
-	//END SUGARCRM flav=pro ONLY
 		),
     'required_fields' =>   array('name'=>1),
 );

@@ -106,9 +106,8 @@ $viewdefs['Contracts']['EditView'] = array(
 	array(
 	    array (
       'assigned_user_name',
-      //BEGIN SUGARCRM flav=pro ONLY
+
       array('name'=>'team_name','displayParams'=>array('required'=>true)),
-      //END SUGARCRM flav=pro ONLY
       ),
   ),
 )

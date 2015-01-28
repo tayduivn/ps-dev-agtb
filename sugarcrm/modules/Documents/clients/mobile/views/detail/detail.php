@@ -30,9 +30,7 @@ $viewdefs['Documents']['mobile']['view']['detail'] = array(
                 'category_id',
                 'subcategory_id',
                 'status_id',
-                //BEGIN SUGARCRM flav=pro ONLY
                 'team_name',
-                //END SUGARCRM flav=pro ONLY
             ),
     	),
 	),

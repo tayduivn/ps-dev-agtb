@@ -10,3 +10,4 @@
  */
 
 ALTER TABLE [config] add [platform] nvarchar(32) NULL;
+UPDATE [fields_meta_data] SET [len] = 0 WHERE [type] = 'html';

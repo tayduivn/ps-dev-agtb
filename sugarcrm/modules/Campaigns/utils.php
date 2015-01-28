@@ -29,12 +29,10 @@ function get_message_scope_dom($campaign_id, $campaign_name,$db=null, $mod_strin
     $query =  "SELECT prospect_list_id, prospect_lists.name ";
     $query .= "FROM prospect_list_campaigns ";
     $query .= "INNER join prospect_lists on prospect_lists.id = prospect_list_campaigns.prospect_list_id ";
-    //BEGIN SUGARCRM flav=pro ONLY
 	// We need to confirm that the user is a member of the team of the item.
 	$bean = new SugarBean();
 	$bean->disable_row_level_security = false;
 	$bean->add_team_security_where_clause($query, "prospect_lists");
-	//END SUGARCRM flav=pro ONLY
     $query .= "WHERE prospect_lists.deleted = 0 ";
     $query .= "AND prospect_list_campaigns.deleted=0 ";
     $query .= "AND campaign_id='".$campaign_id."'";
@@ -314,7 +312,6 @@ function get_subscription_lists_query($focus, $additional_fields = null) {
     if(is_array($additional_fields) && !empty($additional_fields)) $all_news_type_pl_query .= ', ' . implode(', ', $additional_fields);
     $all_news_type_pl_query .= " from prospect_list_campaigns plc , prospect_lists pl, campaigns c ";
 
-    //BEGIN SUGARCRM flav=pro ONLY
     // We need to confirm that the user is a member of the team of the item.
     global $current_user;
     $bean = BeanFactory::getBean('Campaigns');
@@ -330,7 +327,6 @@ function get_subscription_lists_query($focus, $additional_fields = null) {
     //END SUGARCRM flav=ent ONLY
 
     $bean->add_team_security_where_clause($all_news_type_pl_query, 'c');
-	//END SUGARCRM flav=pro ONLY
 
 	$all_news_type_pl_query .= "where plc.campaign_id = c.id ";
     $all_news_type_pl_query .= "and plc.prospect_list_id = pl.id ";
@@ -689,14 +685,10 @@ function process_subscriptions($subscription_string_to_parse) {
             //user is not exempted yet , so add to unsubscription list
 
 
-            //BEGIN SUGARCRM flav=pro ONLY
             $tmp_security = $exempt_list->disable_row_level_security;
             $exempt_list->disable_row_level_security = 1;
-            //END SUGARCRM flav=pro ONLY
             $exempt_result = $exempt_list->retrieve($exempt_id);
-            //BEGIN SUGARCRM flav=pro ONLY
             $exempt_list->disable_row_level_security = $tmp_security ;
-            //END SUGARCRM flav=pro ONLY
             if($exempt_result == null)
             {//error happened while retrieving this list
                 return;

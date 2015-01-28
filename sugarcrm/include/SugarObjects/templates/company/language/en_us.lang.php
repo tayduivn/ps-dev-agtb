@@ -85,9 +85,7 @@ $mod_strings = array (
 	'LBL_SHIPPING_ADDRESS' => 'Shipping Address:',
 
 	'LBL_STATE' => 'State:',
-	//BEGIN SUGARCRM flav=pro ONLY
 	'LBL_TEAMS_LINK'=>'Teams',
-	//END SUGARCRM flav=pro ONLY
 	'LBL_TICKER_SYMBOL' => 'Ticker Symbol:',
 	'LBL_TYPE' => 'Type:',
 	'LBL_USERS_ASSIGNED_LINK'=>'Assigned Users',

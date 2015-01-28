@@ -160,14 +160,11 @@ class registry {
 	        array('session'=>'xsd:string', 'module_name'=>'xsd:string', 'query'=>'xsd:string', 'deleted' => 'xsd:int'),
 	        array('return'=>'tns:get_entries_count_result'));
 
-		//BEGIN SUGARCRM flav=pro ONLY
 	        
 	    $this->serviceClass->registerFunction(
     		'get_report_entries',
     		array('session'=>'xsd:string', 'ids'=>'tns:select_fields', 'select_fields'=>'tns:select_fields'),
     		array('return'=>'tns:get_entry_result_for_reports'));
-
-		//END SUGARCRM flav=pro ONLY
     		
 	    $GLOBALS['log']->info('END: registry->registerFunction');
 	        
@@ -628,7 +625,6 @@ class registry {
 			)
 		);
 				
-		//BEGIN SUGARCRM flav=pro ONLY
 		
 		$this->serviceClass->registerType(
 		    'report_field_list',
@@ -667,8 +663,6 @@ class registry {
 				'entry_list' => array('name' =>'entry_list', 'type'=>'tns:report_entry_list'),
 			)
 		);
-			
-		//END SUGARCRM flav=pro ONLY
 		
 		$GLOBALS['log']->info('End: registry->registerTypes');
 

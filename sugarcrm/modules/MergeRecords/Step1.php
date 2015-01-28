@@ -18,9 +18,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-//BEGIN SUGARCRM flav=pro ONLY
 
-//END SUGARCRM flav=pro ONLY
 
 
 
@@ -55,9 +53,7 @@ $avail_fields=array();
 $sel_fields=array();
 $temp_field_array = $focus->merge_bean->field_defs;
 $bean_data=array();
-//BEGIN SUGARCRM flav=pro ONLY
 $focus->merge_bean->ACLFilterFieldList($temp_field_array);
-//END SUGARCRM flav=pro ONLY
 foreach($temp_field_array as $field_array)
 {
 	if (isset($field_array['merge_filter'])) {

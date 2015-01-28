@@ -47,10 +47,8 @@
 		<td width="35%" colspan="3"><slot>{$DATE_START} {$TIME_START}</slot></td>
 	</tr>
 	<tr>
-		<!--//BEGIN SUGARCRM flav=pro ONLY -->
 		<td scope="row"><slot>{$APP.LBL_TEAMS}:</slot></td>
 		<td><slot>{$TEAM}</slot></td>
-		<!--//END SUGARCRM flav=pro ONLY -->
 		 <!--//BEGIN SUGARCRM flav=com ONLY -->
 		<td scope="row"><slot>&nbsp;</slot></td>
 		<td><slot>&nbsp;</slot></td>

@@ -32,10 +32,8 @@ class PredefinedChart
 				return $this->pipelineByLeadSourceQuery($params);
 		    case 'my_modules_used_last_30_days':
 		        return $this->myModuleUsageLast30Days();
-		    //BEGIN SUGARCRM flav=pro ONLY
             case 'my_team_modules_used_last_30_days':
 				return $this->myTeamModuleUsageLast30Days();
-			//END SUGARCRM flav=pro ONLY
 			default:
 				return $this->customChartQuery($chart);
 		}
@@ -192,9 +190,7 @@ class PredefinedChart
 						count( * ) AS opp_count,
 						sum(amount_usdollar/1000) AS total
 					FROM users,opportunities  ";
-		//BEGIN SUGARCRM flav=pro ONLY
 		$opp->add_team_security_where_clause($query);
-		//END SUGARCRM flav=pro ONLY
 		$query .= "WHERE " .$where;
 		$query .= " GROUP BY opportunities.sales_stage";
 
@@ -290,9 +286,7 @@ class PredefinedChart
 			$where .= "AND opportunities.lead_source IN	($datayArr) ";
 		}
 		$query = "SELECT lead_source,sales_stage,sum(amount_usdollar/1000) as total,count(*) as opp_count FROM opportunities ";
-		//BEGIN SUGARCRM flav=pro ONLY
 		$opp->add_team_security_where_clause($query);
-		//END SUGARCRM flav=pro ONLY
 		$query .= "WHERE " .$where." AND opportunities.deleted=0 ";
 		$query .= " GROUP BY sales_stage,lead_source ORDER BY lead_source,sales_stage";
 
@@ -384,9 +378,7 @@ class PredefinedChart
 		//build the where clause for the query that matches $date_start and $date_end
 		$where .= "AND opportunities.date_closed >= ".db_convert("'".$date_start."'",'date')." AND opportunities.date_closed <= ".db_convert("'".$date_end."'",'date')." AND opportunities.deleted=0";
 		$query = "SELECT sales_stage,".db_convert('opportunities.date_closed','date_format',array("'%Y-%m'"),array("'YYYY-MM'"))." as m, sum(amount_usdollar/1000) as total, count(*) as opp_count FROM opportunities ";
-		//BEGIN SUGARCRM flav=pro ONLY
 		$opp->add_team_security_where_clause($query);
-		//END SUGARCRM flav=pro ONLY
 		$query .= "WHERE ".$where;
 		$query .= " GROUP BY sales_stage,".db_convert('opportunities.date_closed','date_format',array("'%Y-%m'"),array("'YYYY-MM'"))."ORDER BY m";
 		return $query;
@@ -473,9 +465,7 @@ class PredefinedChart
 			$where .= " opportunities.lead_source IN	($legendItems) ";
 		}
 		$query = "SELECT lead_source,sum(amount_usdollar/1000) as total,count(*) as opp_count FROM opportunities ";
-		//BEGIN SUGARCRM flav=pro ONLY
 		$opp->add_team_security_where_clause($query);
-		//END SUGARCRM flav=pro ONLY
 		$query .= "WHERE ".$where." AND opportunities.deleted=0 ";
 		$query .= "GROUP BY lead_source ORDER BY total DESC";
 
@@ -494,7 +484,6 @@ class PredefinedChart
 		return $query;
 	}
 
-	//BEGIN SUGARCRM flav=pro ONLY
 	function myTeamModuleUsageLast30Days() {
         global $timedate;
 		$dateValue = db_convert("'".$timedate->getNow()->modify("-30 days")->asDb()."'" ,"datetime");
@@ -507,7 +496,6 @@ class PredefinedChart
 	    $query .= "ORDER BY l1.user_name ASC";
         return $query;
 	}
-	//END SUGARCRM flav=pro ONLY
 
 	// This function will grab a query from the custom directory to be used for charting
 	function customChartQuery($chart)

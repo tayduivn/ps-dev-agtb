@@ -82,7 +82,6 @@ class Bug40247Test extends Sugar_PHPUnit_Framework_TestCase
         SugarAutoLoader::buildCache();
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
     function test_default_pro_connectors() {
         $this->install_connectors();
         if(!file_exists('custom/modules/connectors/metadata/display_config.php')) {
@@ -154,7 +153,6 @@ class Bug40247Test extends Sugar_PHPUnit_Framework_TestCase
 	        $this->assertTrue($twitter_hover_link_set, "Assert that the Twitter hover link is properly set for {$mod}.");
         }
     }
-    //END SUGARCRM flav=pro ONLY
 
     //BEGIN SUGARCRM flav=com ONLY
     function test_default_com_connectors() {

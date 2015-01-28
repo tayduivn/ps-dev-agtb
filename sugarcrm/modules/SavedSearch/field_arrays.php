@@ -24,9 +24,7 @@ $fields_array['SavedSearch'] = array ('column_fields' => Array(
 		,'description'
 		,'contents'
 		,'assigned_user_id'
-//BEGIN SUGARCRM flav=pro ONLY
 		,'team_id'
-//END SUGARCRM flav=pro ONLY
 		,'date_entered'
 		,'date_modified'
 		,'deleted'

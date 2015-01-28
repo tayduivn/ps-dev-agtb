@@ -62,9 +62,7 @@ class SugarFoldersTest extends Sugar_PHPUnit_Framework_TestCase
         $this->folder->new_with_id = TRUE;
 
         $fields = array('name' => 'TEST_FOLDER','parent_folder' => 'PRNT_FOLDER',
-                        //BEGIN SUGARCRM flav=pro ONLY
                         'team_id' => create_guid(),'team_set_id' => create_guid(),
-                        //END SUGARCRM flav=pro ONLY
                         );
 
         $this->folder->setFolder($fields);
@@ -75,10 +73,8 @@ class SugarFoldersTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals($fields['name'], $this->folder->name, $error_message );
         $this->assertEquals($fields['parent_folder'], $this->folder->parent_folder, $error_message );
-        //BEGIN SUGARCRM flav=pro ONLY
         $this->assertEquals($fields['team_id'], $this->folder->team_id, $error_message );
         $this->assertEquals($fields['team_set_id'], $this->folder->team_set_id, $error_message );
-        //END SUGARCRM flav=pro ONLY
         $this->assertEquals($this->_user->id, $this->folder->assign_to_id, $error_message );
 
         //Check for folder subscriptions create for global user

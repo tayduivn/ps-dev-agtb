@@ -243,11 +243,9 @@ eoq;
 		if(isset($_POST['mass']) && is_array($_POST['mass'])  && $_REQUEST['massupdate'] == 'true'){
 			$count = 0;
 
-			//BEGIN SUGARCRM flav=pro ONLY
 			if(isset($_SESSION['REASSIGN_TEAMS'])) {
 			   unset($_SESSION['REASSIGN_TEAMS']);
 			}
-			//END SUGARCRM flav=pro ONLY
 
             // should use 'User Type' to change this field
             if ($this->sugarbean->object_name == 'User' && isset($_POST['is_admin'])) {
@@ -261,7 +259,6 @@ eoq;
 				if(isset($_POST['Delete'])){
 					$this->sugarbean->retrieve($id);
 					if($this->sugarbean->ACLAccess('Delete')){
-						//BEGIN SUGARCRM flav=pro ONLY
 					    if ($this->sugarbean->object_name == 'Team' && $this->sugarbean->has_records_in_modules()) {
                             if(!isset($_SESSION['REASSIGN_TEAMS'])) {
                                 $_SESSION['REASSIGN_TEAMS'] = array();
@@ -269,14 +266,11 @@ eoq;
                             $_SESSION['REASSIGN_TEAMS'][] = $this->sugarbean->id;
 						    continue;
 						}
-						//END SUGARCRM flav=pro ONLY
 						$this->sugarbean->mark_deleted($id);
-                        //BEGIN SUGARCRM flav=pro ONLY
                         // ideally we should use after_delete logic hook
                         require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
                         $searchEngine = SugarSearchEngineFactory::getInstance();
                         $searchEngine->delete($this->sugarbean);
-                        //END SUGARCRM flav=pro ONLY
                     } else {
                         $retval[] = $id;
                     }
@@ -315,7 +309,6 @@ eoq;
 
 					$this->sugarbean->retrieve($id);
 
-					//BEGIN SUGARCRM flav=pro ONLY
 					////////////////////////
 					//IS USER OFFLINE CLIENT ENABLED
 					if($this->sugarbean->object_name == 'User' && isset($_POST['oc_status'])){
@@ -323,7 +316,6 @@ eoq;
 					}
 					//
 					////////////////////////
-					//END SUGARCRM flav=pro ONLY
 
 					if($this->sugarbean->ACLAccess('Save', array("massupdate" => true))) {
 						$_POST['record'] = $id;
@@ -399,20 +391,16 @@ eoq;
 
 						if(!empty($old_reports_to_id) && method_exists($newbean, 'update_team_memberships')) {
 						   $old_id = $old_reports_to_id == 'null' ? '' : $old_reports_to_id;
-						   //BEGIN SUGARCRM flav=pro ONLY
 						   $newbean->update_team_memberships($old_id);
-						   //END SUGARCRM flav=pro ONLY
 						}
 					}
 				}
 			}
 
-			//BEGIN SUGARCRM flav=pro ONLY
 			if(isset($_SESSION['REASSIGN_TEAMS'])) {
 			   header("Location: index.php?module=Teams&action=ReassignTeams");
 			   die();
 			}
-			//END SUGARCRM flav=pro ONLY
 		}
 		$disable_date_format = $old_value;
             return $retval;
@@ -559,11 +547,9 @@ eoq;
 
 		foreach($this->sugarbean->field_defs as $field)
 		{
-			//BEGIN SUGARCRM flav=pro ONLY
 			   if(!$this->sugarbean->ACLFieldAccess($field['name'], 'edit')) {
 			   	  continue;
 			   }
-			//END SUGARCRM flav=pro ONLY
 
             if ($this->sugarbean->object_name == 'User' && $field['name'] == 'is_admin') {
                 // already have 'User Type'
@@ -638,9 +624,7 @@ eoq;
 						$even = !$even; $newhtml .= $this->addDatetime($displayname,  $field["name"]); break;
 						case "datetime":
 						case "date":$even = !$even; $newhtml .= $this->addDate($displayname,  $field["name"]); break;
-						//BEGIN SUGARCRM flav=pro ONLY
 						case "team_list": $teamhtml = $this->addTeamList(translate('LBL_TEAMS'),  $field); break;
-						//END SUGARCRM flav=pro ONLY
                         default:
                             $newhtml .= $this->addDefault($displayname,  $field, $even); break;
                             break;
@@ -660,7 +644,6 @@ eoq;
 			}
 		}
 
-		//BEGIN SUGARCRM flav=pro ONLY
 		if(isset($teamhtml))
 		{
 			if(!$even)
@@ -675,7 +658,6 @@ eoq;
 
 		    $field_count++;
 		}
-		//END SUGARCRM flav=pro ONLY
 
         /*---------------------------------------------------------------
         This is being taken off of the Menu as part of MAR-1421 until the support for it exists in the new MassUpdate Api
@@ -1106,7 +1088,6 @@ EOHTML;
 							return $html;
 	}
 
-	//BEGIN SUGARCRM flav=pro ONLY
 	/**
 	  * Add Team selection popup window HTML code
 	  * @param displayname Name to display in the popup window
@@ -1121,7 +1102,6 @@ EOHTML;
 		$html .= "<td>".$sfh->displaySmarty('fields', $field, 'MassUpdateView')."</td>";
 		return $html;
 	}
-	//END SUGARCRM flav=pro ONLY
 	/**
 	  * Add AssignedUser popup window HTML code
 	  * @param displayname Name to display in the popup window
@@ -1177,15 +1157,18 @@ EOQ;
 		// cn: added "mass_" to the id tag to differentiate from the status id in StoreQuery
 		$html = '<td scope="row" width="15%">'.$displayname.'</td><td>';
 		if(is_array($options)){
-			if(!isset($options['']) && !isset($options['0'])){
+            if (!isset($options['']) && !isset($options['0'])) {
+                $emptyval = false;
 			   $new_options = array();
 			   $new_options[''] = '';
 			   foreach($options as $key=>$value) {
 			   	   $new_options[$key] = $value;
 			   }
 			   $options = $new_options;
-			}
-			$options = get_select_options_with_id_separate_key($options, $options, '', true);;
+            } else {
+                $emptyval = true;
+            }
+            $options = get_select_options_with_id_separate_key($options, $options, '', $emptyval);
 			$html .= '<select id="mass_'.$varname.'" name="'.$varname.'">'.$options.'</select>';
 		}else{
 			$html .= $options;
@@ -1470,9 +1453,7 @@ EOQ;
     {
         static $banned = array('date_modified'=>1, 'date_entered'=>1, 'created_by'=>1, 'modified_user_id'=>1, 'deleted'=>1,'modified_by_name'=>1,);
         foreach($this->sugarbean->field_defs as $field) {
-            //BEGIN SUGARCRM flav=pro ONLY
             if(!$this->sugarbean->ACLFieldAccess($field['name'], 'edit')) continue;
-            //END SUGARCRM flav=pro ONLY
             if(!isset($banned[$field['name']]) && (!isset($field['massupdate']) || !empty($field['massupdate']))){
                 if(isset($field['type']) && $field['type'] == 'relate' && isset($field['id_name']) && $field['id_name'] == 'assigned_user_id')
                     $field['type'] = 'assigned_user_name';
@@ -1494,9 +1475,7 @@ EOQ;
                     case "datetimecombo":
                     case "datetime":
                     case "date":
-                    //BEGIN SUGARCRM flav=pro ONLY
                     case "team_list":
-                    //END SUGARCRM flav=pro ONLY
                         return true;
                         break;
                     }

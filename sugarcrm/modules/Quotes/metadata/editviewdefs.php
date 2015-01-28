@@ -73,9 +73,8 @@ $viewdefs['Quotes']['EditView'] = array(
     'LBL_PANEL_ASSIGNMENT' => array ( 
 	    array (
 	      'assigned_user_name',
-	      //BEGIN SUGARCRM flav=pro ONLY
+
 	      array('name'=>'team_name','displayParams'=>array('required'=>true)),
-	      //END SUGARCRM flav=pro ONLY
 	    ),    
     ),
 )

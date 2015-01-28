@@ -62,10 +62,6 @@ $viewdefs[$module_name]['base']['view']['record'] = array(
                     ),
                 ),
                 'sales_stage',
-                array(
-                    'name' => 'tag',
-                    'span' => 12,
-                ),
             ),
         ),
         array(
@@ -81,12 +77,10 @@ $viewdefs[$module_name]['base']['view']['record'] = array(
                 //BEGIN SUGARCRM flav=com ONLY
                 '',
                 //END SUGARCRM flav=com ONLY
-                //BEGIN SUGARCRM flav=pro ONLY
                 array(
                     'name' => 'team_name',
                     'required' => true,
                 ),
-                //END SUGARCRM flav=pro ONLY
                 array(
                     'name' => 'assigned_user_name',
                     'required' => true,

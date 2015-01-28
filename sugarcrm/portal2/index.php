@@ -58,6 +58,11 @@ ensureJSCacheFilesExist();
 
         <!-- Portal specific JS -->
         <script src="../cache/portal2/sugar_portal.min.js"></script>
+        <? if(inDeveloperMode()): ?>
+            <script src="../cache/Expressions/functions_cache_debug.js"></script>
+        <? else: ?>
+            <script src="../cache/Expressions/functions_cache.js"></script>
+        <? endif; ?>
         <script src="config.js"></script>
 
         <script>

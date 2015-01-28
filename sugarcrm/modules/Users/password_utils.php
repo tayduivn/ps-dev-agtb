@@ -79,11 +79,9 @@ function hasPasswordExpired($username, $updateNumberLogins = false)
 	if ($usr->system_generated_password == '1'){
         $type='syst';
     }
-	//BEGIN SUGARCRM flav=pro ONLY
     else{
         $type='user';
     }
-	//END SUGARCRM flav=pro ONLY
 
     if ($usr->portal_only=='0'){
 	    $res=$GLOBALS['sugar_config']['passwordsetting'];

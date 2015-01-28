@@ -67,12 +67,9 @@
 		</tr>
 		{/foreach}
 	</table>
-<!--//BEGIN SUGARCRM flav=pro ONLY -->
 	<hr>
-<!--//END SUGARCRM flav=pro ONLY -->
 	</div>
 	{/if}
-<!--//BEGIN SUGARCRM flav=pro ONLY -->
 	<h3><span id="reportChartDashletsExpCol"><a href="javascript:void(0)" onClick="javascript:SUGAR.mySugar.collapseList('reportChartDashlets');">{sugar_getimage name="basic_search" ext=".gif" other_attributes='align="absmiddle" border="0" '}</span></a>&nbsp;{sugar_translate label='LBL_REPORT_CHARTS' module='Home'}</h3>
 	<div id="reportChartDashletsList">
 		<div id="myFavoriteReportsChartDashlets" style="display:inline;">
@@ -92,7 +89,6 @@
 			<div id="globalReportsChartDashletsList" style="display:none;">{sugar_getimage alt=$app_strings.LBL_LOADING name="img_loading" ext=".gif" other_attributes='align="absmiddle" '}</div>
 		</div>
 	</div>
-<!--//END SUGARCRM flav=pro ONLY -->
 </div>
 
 {if $moduleName == 'Home'}
