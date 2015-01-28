@@ -14,7 +14,6 @@ $viewdefs['KBContents']['base']['filter']['default'] = array(
     'fields' => array(
         'name' => array(),
         'status' => array(),
-        'tag' => array(),
         'language' => array(
             'type' => 'enum-config',
             'key' => 'languages',

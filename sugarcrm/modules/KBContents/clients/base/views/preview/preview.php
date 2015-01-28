@@ -50,11 +50,6 @@ $viewdefs['KBContents']['base']['view']['preview'] = array(
                     'module' => 'Notes',
                     'modulefield' => 'filename',
                 ),
-                array(
-                    'name' => 'tag',
-                    'enabled' => true,
-                    'default' => true,
-                ),
             ),
         ),
         array(
