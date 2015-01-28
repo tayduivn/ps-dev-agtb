@@ -1165,3 +1165,7 @@ a.adam-tooltip-error-off {
 .updaterfield-item {
   margin-bottom: 2px;
 }
+
+.updaterfield-item .updateritem-control[readonly] {
+  background-color: inherit;
+}
