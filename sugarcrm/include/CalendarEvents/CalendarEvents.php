@@ -211,4 +211,30 @@ class CalendarEvents
             }
         }
     }
+
+    /**
+     * Add record defined by parent field as an invitee if it is a Contact or Lead record
+     *
+     * @param $bean
+     * @param $parentType
+     * @param $parentId
+     */
+    public function inviteParent($bean, $parentType, $parentId)
+    {
+        $inviteeRelationships = array(
+            'Contacts' => 'contacts',
+            'Leads' => 'leads',
+        );
+
+        foreach($inviteeRelationships as $module => $relationship) {
+            if ($parentType == $module) {
+                $bean->load_relationship($relationship);
+                if (!$bean->$relationship->relationship_exists($relationship, array('id' => $parentId))) {
+                    $bean->$relationship->add($parentId);
+                }
+            }
+        }
+    }
+
+
 }

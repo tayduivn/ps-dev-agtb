@@ -92,7 +92,6 @@ class Call extends SugarBean {
 								);
 
 	public $send_invites = false;
-    public $auto_invite_parent = true;
 
     /**
      * This is a depreciated method, please start using __construct() as this method will be removed in a future version
@@ -188,24 +187,6 @@ class Call extends SugarBean {
 		}*/
 
         $return_id = parent::save($check_notify);
-        // Previously this was handled in both the CallFormBase and the AfterImportSave function, so now it just happens every time you save a record.
-        if ($this->parent_type == 'Contacts' && $this->auto_invite_parent !== false) {
-            if (is_array($this->contacts_arr) && !in_array($this->parent_id, $this->contacts_arr)) {
-                $this->contacts_arr[] = $this->parent_id;
-            }
-            $this->load_relationship('contacts');
-            if (!$this->contacts->relationship_exists('contacts', array('id' => $this->parent_id))) {
-                $this->contacts->add($this->parent_id);
-            }
-        } elseif ($this->parent_type == 'Leads' && $this->auto_invite_parent !== false) {
-            if (is_array($this->leads_arr) && !in_array($this->parent_id, $this->leads_arr)) {
-                $this->leads_arr[] = $this->parent_id;
-            }
-            $this->load_relationship('leads');
-            if (!$this->leads->relationship_exists('leads', array('id' => $this->parent_id))) {
-                $this->leads->add($this->parent_id);
-            }
-        }
 
         $this->setUserInvitees($this->users_arr);
 

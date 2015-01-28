@@ -830,6 +830,110 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
         $calendarEventsApiMock->deleteCalendarEvent($this->api, $args);
     }
 
+    public function dataProviderForShouldAutoInviteParent()
+    {
+        $meetingId = '123';
+        $parentType = 'Contacts';
+        $parentId1 = '456';
+        $parentId2 = '789';
+
+        return array(
+            array(
+                array(
+                    'id' => $meetingId,
+                ),
+                array(
+                    'auto_invite_parent' => false,
+                ),
+                false,
+                'should be false when auto_invite_parent flag is false on create',
+            ),
+            array(
+                array(
+                    'id' => $meetingId,
+                    'parent_type' => $parentType,
+                    'parent_id' => $parentId1,
+                ),
+                array(
+                    'id' => $meetingId,
+                    'auto_invite_parent' => false,
+                    'parent_type' => $parentType,
+                    'parent_id' => $parentId2,
+                ),
+                false,
+                'should be false when auto_invite_parent flag is false on update',
+            ),
+            array(
+                array(
+                    'id' => $meetingId,
+                    'parent_type' => $parentType,
+                    'parent_id' => $parentId1,
+                ),
+                array(
+                    'id' => $meetingId,
+                    'parent_type' => $parentType,
+                ),
+                false,
+                'should be false when parent id not set',
+            ),
+            array(
+                array(
+                    'id' => $meetingId,
+                    'parent_type' => $parentType,
+                    'parent_id' => $parentId1,
+                ),
+                array(
+                    'parent_type' => $parentType,
+                    'parent_id' => $parentId1,
+                ),
+                true,
+                'should be true when parent set on create',
+            ),
+            array(
+                array(
+                    'id' => $meetingId,
+                    'parent_type' => $parentType,
+                    'parent_id' => $parentId1,
+                ),
+                array(
+                    'id' => $meetingId,
+                    'parent_type' => $parentType,
+                    'parent_id' => $parentId2,
+                ),
+                true,
+                'should be true when parent changed on update',
+            ),
+            array(
+                array(
+                    'id' => $meetingId,
+                    'parent_type' => $parentType,
+                    'parent_id' => $parentId1,
+                ),
+                array(
+                    'id' => $meetingId,
+                    'parent_type' => $parentType,
+                    'parent_id' => $parentId1,
+                ),
+                false,
+                'should be false when parent not changed on update',
+            ),
+        );
+    }
+
+    /**
+     * @dataProvider dataProviderForShouldAutoInviteParent
+     */
+    public function testShouldAutoInviteParent($beanValues, $args, $expected, $message)
+    {
+        $bean = BeanFactory::newBean('Meetings');
+        foreach($beanValues as $field => $value) {
+            $bean->$field = $value;
+        }
+
+        $actual = SugarTestReflection::callProtectedMethod($this->calendarEventsApi, 'shouldAutoInviteParent', array($bean, $args));
+        $this->assertEquals($expected, $actual, $message);
+    }
+
     private function dateTimeAsISO($dbDateTime)
     {
         global $timedate;
