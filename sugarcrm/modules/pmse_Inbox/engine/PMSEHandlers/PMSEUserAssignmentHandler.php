@@ -238,7 +238,7 @@ class PMSEUserAssignmentHandler
         $newFlowRow->save();
         //$caseBean->create($flowRow);
 
-        global $current_user;
+        /*global $current_user;
         $params['tags'] = array(
             array(
                 "id" => $caseData['cas_sugar_object_id'],
@@ -262,7 +262,7 @@ class PMSEUserAssignmentHandler
         }
         $params['module_name'] = 'pmse_Inbox';
         $this->logger->activity(sprintf(translate('LBL_PMSE_ACTIVITY_STREAM_REASSIGN', $params['module_name']),
-                $caseData['taskName']), $params);
+                $caseData['taskName']), $params);*/
 
         return $this->reassignCaseToUser($caseData, $userId);
     }

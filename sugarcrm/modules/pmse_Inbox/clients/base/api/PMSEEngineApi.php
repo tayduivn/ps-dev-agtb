@@ -305,7 +305,7 @@ class PMSEEngineApi extends SugarApi
     {
         // The handler will call to the preprocessor in this step
         $this->retrieveRequestHandler('direct')->executeRequest($args, false, null, strtoupper($args['frm_action']));
-        $taskName = $args['taskName'];
+        /*$taskName = $args['taskName'];
         $message = '';
         global $current_user;
         require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
@@ -333,7 +333,7 @@ class PMSEEngineApi extends SugarApi
         } elseif ($args['frm_action'] == 'Route') {
             $message = sprintf(translate('LBL_PMSE_ACTIVITY_STREAM_ROUTE', $params['module_name']), $taskName);
         }
-        $log->activity($message, $params);
+        $log->activity($message, $params);*/
         // return the success request array
         return array('success' => true);
     }
