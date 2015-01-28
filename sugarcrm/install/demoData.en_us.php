@@ -21614,14 +21614,6 @@ $sugar_demodata['kbdocuments_seed_data'][] = array(
             'name' => 'Verbinden mit dem Internet',
             'body' => '<p>Um das Gerät mit dem Internet verbinden, verwenden Sie alle Anwendungen, die auf das Internet zugreift. Sie können eine Verbindung sowohl mit der Wi-Fi oder Bluetooth.</p>'
         )
-    ),
-    'revisions' => array(
-        array(
-            'name' => 'Connecting to the Internet - revision 2'
-        ),
-        array(
-            'name' => 'Connecting to the Internet - revision 3'
-        )
     )
 );
 $sugar_demodata['kbdocuments_seed_data'][] = array(
@@ -21630,6 +21622,14 @@ $sugar_demodata['kbdocuments_seed_data'][] = array(
     <ul><li>Connect device to a power outlet using the included cable and the USB power adapter.</li>
     <li>Connect to a high-power USB 2.0 port using the included cable.</li></ul>',
     'tag' => '^Basic Usage^,^Hardware^',
+    'revisions' => array(
+        array(
+            'name' => 'Charging the battery - revision 2'
+        ),
+        array(
+            'name' => 'Charging the battery - revision 3'
+        )
+    )
 );
 $sugar_demodata['kbdocuments_seed_data'][] = array(
     'name' => 'How to print',
