@@ -423,7 +423,14 @@ SE.accounts = {
 	},
 
 	smtp_setDefaultSMTPPort : function() {
-		useSSLPort = !document.getElementById("mail_smtpssl").options[0].selected;
+        var useSSLPort = false;
+        var ssl = document.getElementById("mail_smtpssl");
+        for (var j = 0; j < ssl.options.length; j++) {
+            if (ssl.options[j].text == 'SSL' && ssl.options[j].selected) {
+                useSSLPort = true;
+                break;
+            }
+        }
 
         if ( useSSLPort && document.getElementById("mail_smtpport").value == '25' ) {
             document.getElementById("mail_smtpport").value = '465';
