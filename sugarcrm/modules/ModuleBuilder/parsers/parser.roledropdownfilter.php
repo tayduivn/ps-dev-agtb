@@ -111,7 +111,9 @@ class ParserRoleDropDownFilter extends ModuleBuilderParser
      * @return array
      */
     protected function validateDropDownFilter($filter, $language = 'en_us') {
+        $ret = array();
         $list_strings = return_app_list_strings_language($language);
+
         foreach($filter as $dropdownName => $values) {
             $ret[$dropdownName] = array();
             if (isset($list_strings[$dropdownName]) && is_array($list_strings[$dropdownName]) &&
