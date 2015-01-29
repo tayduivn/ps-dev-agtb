@@ -25,7 +25,6 @@ $viewdefs[$module_name]['mobile']['view']['list'] = array(
             'fields' => array(
                 array(
                     'name' => 'document_name',
-                    'width' => '40',
                     'label' => 'LBL_NAME',
                     'link' => true,
                     'default' => true,
@@ -33,7 +32,6 @@ $viewdefs[$module_name]['mobile']['view']['list'] = array(
                 ),
                 array(
                     'name' => 'modified_by_name',
-                    'width' => '10',
                     'label' => 'LBL_MODIFIED_USER',
                     'module' => 'Users',
                     'id' => 'USERS_ID',
@@ -43,21 +41,18 @@ $viewdefs[$module_name]['mobile']['view']['list'] = array(
                 ),
                 array(
                     'name' => 'category_id',
-                    'width' => '40',
                     'label' => 'LBL_LIST_CATEGORY',
                     'default' => true,
                     'enabled' => true,
                 ),
                 array(
                     'name' => 'subcategory_id',
-                    'width' => '40',
                     'label' => 'LBL_LIST_SUBCATEGORY',
                     'default' => true,
                     'enabled' => true,
                 ),
                 array(
                     'name' => 'team_name',
-                    'width' => '2',
                     'label' => 'LBL_LIST_TEAM',
                     'sortable' => false,
                     'default' => true,
@@ -65,7 +60,6 @@ $viewdefs[$module_name]['mobile']['view']['list'] = array(
                 ),
                 array(
                     'name' => 'created_by_name',
-                    'width' => '2',
                     'label' => 'LBL_LIST_LAST_REV_CREATOR',
                     'default' => true,
                     'sortable' => false,
@@ -73,14 +67,12 @@ $viewdefs[$module_name]['mobile']['view']['list'] = array(
                 ),
                 array(
                     'name' => 'active_date',
-                    'width' => '10',
                     'label' => 'LBL_LIST_ACTIVE_DATE',
                     'default' => true,
                     'enabled' => true,
                 ),
                 array(
                     'name' => 'exp_date',
-                    'width' => '10',
                     'label' => 'LBL_LIST_EXP_DATE',
                     'default' => true,
                     'enabled' => true,
