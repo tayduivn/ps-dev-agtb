@@ -32,73 +32,9 @@
     restoreButtonName: 'restore_button',
 
     /**
-     * An array of the {@link #alerts alert} names in this view.
-     *
-     * @protected
-     * @type {Array}
-     */
-    _viewAlerts: [],
-
-    /**
      * If this create view has subpanel models to save
      */
     hasSubpanelModels: false,
-
-    /**
-     * A collection of alert messages to be used in this view. The alert methods
-     * should be invoked by Function.prototype.call(), passing in an instance of
-     * a sidecar view. For example:
-     *
-     *     // ...
-     *     this.alerts.showInvalidModel.call(this);
-     *     // ...
-     *
-     * FIXME: SC-3451 will refactor this `alerts` structure.
-     * @property {Object}
-     */
-    alerts: {
-        showInvalidModel: function() {
-            if (!this instanceof app.view.View) {
-                app.logger.error('This method should be invoked by Function.prototype.call(), passing in as argument' +
-                    'an instance of this view.');
-                return;
-            }
-            var name = 'invalid-data';
-            this._viewAlerts.push(name);
-            app.alert.show(name, {
-                level: 'error',
-                messages: 'ERR_RESOLVE_ERRORS'
-            });
-        },
-        showServerError: function() {
-            if (!this instanceof app.view.View) {
-                app.logger.error('This method should be invoked by Function.prototype.call(), passing in as argument' +
-                    'an instance of this view.');
-                return;
-            }
-            var name = 'server-error';
-            this._viewAlerts.push(name);
-            app.alert.show(name, {
-                level: 'error',
-                messages: 'ERR_GENERIC_SERVER_ERROR'
-            });
-        },
-        showSuccessButDeniedAccess: function() {
-            if (!this instanceof app.view.View) {
-                app.logger.error('This method should be invoked by Function.prototype.call(), passing in as argument' +
-                    'an instance of this view.');
-                return;
-            }
-            var name = 'invalid-data';
-            this._viewAlerts.push(name);
-            app.alert.show(name, {
-                level: 'warning',
-                messages: 'LBL_RECORD_SAVED_ACCESS_DENIED',
-                autoClose: true,
-                autoCloseDelay: 9000
-            });
-        }
-    },
 
     /**
      * Initialize the view and prepare the model with default button metadata
@@ -120,6 +56,39 @@
         options.meta = _.extend({}, app.metadata.getView(null, 'create'), options.meta);
 
         this._super("initialize", [options]);
+
+        // FIXME: SC-3451 will refactor this `alerts` structure.
+        this.alerts = _.extend({}, this.alerts, {
+            showServerError: function() {
+                if (!this instanceof app.view.View) {
+                    app.logger.error('This method should be invoked by Function.prototype.call(), passing in as argument' +
+                    'an instance of this view.');
+                    return;
+                }
+                var name = 'server-error';
+                this._viewAlerts.push(name);
+                app.alert.show(name, {
+                    level: 'error',
+                    messages: 'ERR_GENERIC_SERVER_ERROR'
+                });
+            },
+            showSuccessButDeniedAccess: function() {
+                if (!this instanceof app.view.View) {
+                    app.logger.error('This method should be invoked by Function.prototype.call(), passing in as argument' +
+                    'an instance of this view.');
+                    return;
+                }
+                var name = 'invalid-data';
+                this._viewAlerts.push(name);
+                app.alert.show(name, {
+                    level: 'warning',
+                    messages: 'LBL_RECORD_SAVED_ACCESS_DENIED',
+                    autoClose: true,
+                    autoCloseDelay: 9000
+                });
+            }
+        });
+
         this.model.off("change", null, this);
 
         //keep track of what post-save action was chosen in case user chooses to ignore dupes
@@ -127,6 +96,9 @@
 
         //listen for the select and edit button
         this.context.on('list:dupecheck-list-select-edit:fire', this.editExisting, this);
+
+        //enable buttons if there is an error
+        this.model.on('error:validation', this.enableButtons, this);
 
         //extend the record view definition
         this.meta = _.extend({}, app.metadata.getView(this.module, 'record'), this.meta);
@@ -160,11 +132,6 @@
             this.model.relatedAttributes.assigned_user_id = app.user.id;
             this.model.relatedAttributes.assigned_user_name = app.user.get('full_name');
         }
-
-        this.model.on('error:validation', function() {
-            this.alerts.showInvalidModel.call(this);
-            this.enableButtons();
-        }, this);
 
         // need to reset the default attributes because the plugin may have
         // calculated default values.
@@ -736,19 +703,5 @@
                 $cancelButton.get(0).click();
             }
         }, this, true);
-    },
-
-    /**
-     * Dismisses all {@link #_viewAlerts alerts} defined in this view.
-     *
-     * @private
-     */
-    _dismissAllAlerts: function() {
-        if (_.isEmpty(this._viewAlerts)) {
-            return;
-        }
-        _.each(_.uniq(this._viewAlerts), function(alert) {
-            app.alert.dismiss(alert);
-        });
     }
 })

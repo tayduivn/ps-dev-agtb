@@ -64,6 +64,9 @@
     // width of the layout that contains this view
     _containerWidth: 0,
 
+    /**
+     * @inheritDoc
+     */
     initialize: function(options) {
         _.bindAll(this);
         /**
@@ -76,6 +79,42 @@
         options.meta.hashSync = _.isUndefined(options.meta.hashSync) ? true : options.meta.hashSync;
         app.view.View.prototype.initialize.call(this, options);
         this.buttons = {};
+
+        /**
+         * An array of the {@link #alerts alert} names in this view.
+         *
+         * @property {Array}
+         * @protected
+         */
+        this._viewAlerts = [];
+
+        /**
+         * A collection of alert messages to be used in this view. The alert methods
+         * should be invoked by Function.prototype.call(), passing in an instance of
+         * a sidecar view. For example:
+         *
+         *     // ...
+         *     this.alerts.showInvalidModel.call(this);
+         *     // ...
+         *
+         * FIXME: SC-3451 will refactor this `alerts` structure.
+         * @property {Object}
+         */
+        this.alerts = {
+            showInvalidModel: function() {
+                if (!this instanceof app.view.View) {
+                    app.logger.error('This method should be invoked by Function.prototype.call(), passing in as argument' +
+                    'an instance of this view.');
+                    return;
+                }
+                var name = 'invalid-data';
+                this._viewAlerts.push(name);
+                app.alert.show(name, {
+                    level: 'error',
+                    messages: 'ERR_RESOLVE_ERRORS'
+                });
+            }
+        };
         this.createMode = this.context.get('create') ? true : false;
 
         // Even in createMode we want it to start in detail so that we, later, respect
@@ -87,6 +126,8 @@
         //Set the context to load the field list from the record metadata.
         this.context.set('dataView', 'record');
         this.model.on('duplicate:before', this.setupDuplicateFields, this);
+        // displays error msg when required field is missing
+        this.model.on('error:validation', this.alerts.showInvalidModel, this);
         this.on('editable:keydown', this.handleKeyDown, this);
         this.on('editable:mousedown', this.handleMouseDown, this);
         this.on('field:error', this.handleFieldError, this);
@@ -662,6 +703,7 @@
         this.model.revertAttributes();
         this.toggleEdit(false);
         this.inlineEditMode = false;
+        this._dismissAllAlerts();
     },
 
     /**
@@ -1348,5 +1390,20 @@
                 $primaryDropdown.click();
             }
         }, this);
+    },
+
+    /**
+     * Dismisses all {@link #_viewAlerts alerts} defined in this view.
+     *
+     * @protected
+     */
+    _dismissAllAlerts: function() {
+        if (_.isEmpty(this._viewAlerts)) {
+            return;
+        }
+        _.each(_.uniq(this._viewAlerts), function(alert) {
+            app.alert.dismiss(alert);
+        });
+        this._viewAlerts = [];
     }
 })
