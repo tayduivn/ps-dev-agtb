@@ -127,7 +127,7 @@ class ForecastsSeedData
                     $forecast->user_id = $commit_type_array[0];
                     $forecast->opp_count = $totals['included_opp_count'];
                     if ($totals['included_opp_count'] > 0) {
-                        $forecast->opp_weigh_value = SugarMath::init()->exp(
+                        $forecast->opp_weigh_value = SugarMath::init()->setScale(0)->exp(
                             '(?/?)/?',
                             array($totals['amount'], $ratio[$key], $totals['included_opp_count'])
                         )->result();
@@ -156,7 +156,7 @@ class ForecastsSeedData
                     $forecast2->user_id = $commit_type_array[0];
                     $forecast2->opp_count = $totals['included_opp_count'];
                     if ($totals['included_opp_count'] > 0) {
-                        $forecast2->opp_weigh_value = SugarMath::init()->exp(
+                        $forecast2->opp_weigh_value = SugarMath::init()->setScale(0)->exp(
                             '?/?',
                             array($totals['amount'], $totals['included_opp_count'])
                         )->result();
@@ -202,7 +202,7 @@ class ForecastsSeedData
                     $forecast->timeperiod_id = $timeperiod_id;
                     $forecast->user_id = $commit_type_array[0];
                     $forecast->opp_count = $totals['included_opp_count'];
-                    $forecast->opp_weigh_value = SugarMath::init()->exp(
+                    $forecast->opp_weigh_value = SugarMath::init()->setScale(0)->exp(
                         '?/?',
                         array($totals['likely_adjusted'], $totals['included_opp_count'])
                     )->result();
