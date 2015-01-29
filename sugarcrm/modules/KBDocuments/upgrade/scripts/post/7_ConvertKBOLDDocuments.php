@@ -12,8 +12,6 @@
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/SugarFields/Fields/Tag/SugarFieldTag.php';
-
 /**
  * Converts KBOLDDocuments to KBContents.
  */
@@ -22,11 +20,6 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
     public $order = 7100;
     public $type = self::UPGRADE_CUSTOM;
     public $version = '7.5';
-
-    /**
-     * @var array Where key is a converted KB tag ID and a value is KBS category ID.
-     */
-    protected $convertedTagsCategories = array();
 
     /**
      * @var array ID => Name.
@@ -59,49 +52,10 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
                 $statusKey = array_search($data['status_id'], $app_list_strings['kbdocument_status_dom']);
                 $data['status'] = ($statusKey !== false) ? $statusKey : 'draft';
 
-                $tagSet = $this->getOldTags($row['id']);
-                foreach ($tagSet as $tag) {
-                    $this->log("Convert the KBOLDTag {$tag['id']} to a category.");
-                    $this->convertTagsToCategoriesRecursive($tag);
-                }
-
                 $KBContent->populateFromRow($data);
                 $KBContent->set_created_by = false;
                 $KBContent->update_modified_by = false;
                 $KBContent->save();
-
-                $KBContent->load_relationship('tags');
-                if (!empty($KBContent->tags)) {
-                    $tagField = new SugarFieldTag('tag');
-                    $tagParams['tag'] = array();
-                    foreach ($tagSet as $tag) {
-                        $this->log("Convert the KBOLDTag {$tag['id']} to a tag.");
-                        $apiParams = array('name' => $tag['tag_name']);
-
-                        // Get last child element from each entry, i.e. the entries "p1->c1", "p2->p3->c2", "p4"
-                        // are converted to the set "c1, c2, p4".
-                        $index = array_search($tag['tag_name'], $this->newTags);
-                        if ($index === false) {
-                            $newTag = BeanFactory::getBean('Tags');
-                            $newTag->name = $tag['tag_name'];
-                            $newTag->save();
-
-                            $this->newTags[$newTag->id] = $newTag->name;
-                            $apiParams['id'] = $newTag->id;
-                        } else {
-                            $newTag = BeanFactory::getBean('Tags', $index);
-                        }
-                        $KBContent->tags->add($newTag);
-
-                        array_push($tagParams['tag'], $apiParams);
-                    }
-                    if (!empty($tagParams['tag'])) {
-                        $tagField->apiSave($KBContent, $tagParams, 'tag', array('link' => 'tags'));
-                        $KBContent->save();
-                    }
-                } else {
-                    $this->log("Can't load tags.");
-                }
 
                 foreach ($KBContent->kbarticles_kbcontents->getBeans() as $bean) {
                     $bean->assigned_user_id = $data['assigned_user_id'];
@@ -218,78 +172,4 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
         return $data;
     }
 
-    /**
-     * Return tags by document ID.
-     * Written because the KBOLDDocument's functions get_tags() and get_kbdoc_tags() return only one tag.
-     *
-     * @param string $docId KBOLDDocument ID.
-     * @return array
-     */
-    protected function getOldTags($docId)
-    {
-        $data = array();
-        $query = "SELECT tags.*
-        FROM kboldtags tags
-        LEFT JOIN kbolddocuments_kboldtags kbtags
-          ON kbtags.kboldtag_id = tags.id
-          AND kbtags.deleted = 0
-        WHERE
-          kbtags.kbolddocument_id = {$this->db->quoted($docId)}
-          AND tags.deleted = 0";
-        $result = $this->db->query($query);
-        while ($row = $this->db->fetchByAssoc($result)) {
-            array_push($data, $row);
-        }
-        return $data;
-    }
-
-    /**
-     * Return data for old KBTag.
-     * @param string $id
-     * @return mixed
-     */
-    protected function getOldTag($id)
-    {
-        $query = "SELECT tags.*
-          FROM kboldtags tags
-        WHERE
-          tags.id = {$this->db->quoted($id)}
-          AND tags.deleted = 0";
-        return $this->db->fetchOne($query);
-    }
-
-    /**
-     * Recursively converts old tags to categories.
-     *
-     * @param array $tag
-     * @return string Associated category ID.
-     */
-    protected function convertTagsToCategoriesRecursive($tag)
-    {
-        if (isset($this->convertedTagsCategories[$tag['id']])) {
-            return $this->convertedTagsCategories[$tag['id']];
-        }
-        $category = BeanFactory::newBean('Categories');
-        $category->name = $tag['tag_name'];
-
-        if ($tag['parent_tag_id']) {
-            $parentTag = $this->getOldTag($tag['parent_tag_id']);
-            $parentCategoryId = $this->convertTagsToCategoriesRecursive($parentTag);
-            $parentCategory = BeanFactory::getBean('Categories', $parentCategoryId, array('use_cache' => false));
-            $parentCategory->append($category);
-        } else {
-            $KBContent = BeanFactory::getBean('KBContents');
-            $rootCategory = BeanFactory::getBean(
-                'Categories',
-                $KBContent->getCategoryRoot(),
-                array('use_cache' => false)
-            );
-            $rootCategory->append($category);
-        }
-
-        $categoryID = $category->save();
-        $this->convertedTagsCategories[$tag['id']] = $categoryID;
-
-        return $categoryID;
-    }
 }
