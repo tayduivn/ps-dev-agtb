@@ -524,7 +524,7 @@ UpdaterField.prototype._onValueGenerationHandler = function (module) {
 UpdaterField.prototype.openPanelOnItem = function (field) {
     var that = this, settings, inputPos, textSize, subjectInput, i,
         variablesDataSource = project.getMetadata("targetModuleFieldsDataSource"), currentFilters, list, targetPanel,
-        currentOwner, fieldType = field.getFieldType();
+        currentOwner, fieldType = field.getFieldType(), constantPanelCfg;
 
     if (!(field instanceof DateUpdaterItem || field instanceof NumberUpdaterItem)) {
         if (!this._variablesList) {
@@ -588,12 +588,20 @@ UpdaterField.prototype.openPanelOnItem = function (field) {
         //in order to do it, we verify if the current field class is the same that the previous field's.
         if (!this.currentField || (this.currentField.constructor !== field.constructor)) {
             if (field instanceof DateUpdaterItem) {
+                if (fieldType === 'Date') {
+                    constantPanelCfg = {
+                        date: true,
+                        timespan: true
+                    };
+                } else {
+                    constantPanelCfg = {
+                        datetime: true,
+                        timespan: true
+                    };
+                }
                 this._datePanel.setOperators({
                     arithmetic: ["+", "-"]
-                }).setConstantPanel({
-                    date: true,
-                    timespan: true
-                });
+                }).setConstantPanel(constantPanelCfg);
             } else {
                 this._datePanel.setOperators({
                     arithmetic: true

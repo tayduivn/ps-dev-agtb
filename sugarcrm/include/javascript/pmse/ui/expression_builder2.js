@@ -275,6 +275,9 @@ ExpressionControl.prototype.setDateFormat = function(dateFormat) {
     if (this._constantPanels.date) {
         this._constantPanels.date.getItem("date").setFormat(dateFormat);
     }
+    if (this._constantPanels.datetime) {
+        this._constantPanels.datetime.getItem("datetime").setFormat(dateFormat);
+    }
     return this;
 };
 
@@ -433,7 +436,7 @@ ExpressionControl.prototype.setOnChangeHandler = function (handler) {
     }
     this.onChange = handler;
     return this;
-}
+};
 
 ExpressionControl.prototype.setWidth = function (w) {
     if (!(typeof w === 'number' ||
@@ -479,6 +482,7 @@ ExpressionControl.prototype.setConstantPanel = function(settings) {
         defaults = {
             basic: true,
             date: true,
+            datetime: true,
             timespan: true
         };
     } else {
@@ -490,6 +494,7 @@ ExpressionControl.prototype.setConstantPanel = function(settings) {
     if (this._constantPanel) {
         this._createBasicConstantPanel()
             ._createDateConstantPanel()
+            ._createDateTimeConstantPanel()
             ._createTimespanPanel();
     }
 
@@ -1001,6 +1006,14 @@ ExpressionControl.prototype._onPanelValueGeneration = function () {
                         expValue: data.date
                     };
                     break;
+                case 'form-constant-datetime':
+                    itemData = {
+                        expType: 'CONSTANT',
+                        expSubtype: "datetime",
+                        expLabel: subpanel.getItem("datetime").getFormattedDate(),
+                        expValue: data.datetime
+                    };
+                    break;
                 case 'form-constant-timespan':
                     itemData = {
                         expType: "CONSTANT",
@@ -1010,7 +1023,7 @@ ExpressionControl.prototype._onPanelValueGeneration = function () {
                     };
                     break;
                 default:
-                    throw new Error("_onPanelValueGeneration(): Invalid source data.")
+                    throw new Error("_onPanelValueGeneration(): Invalid source data.");
             }
         } else {
             itemData = {
@@ -1035,7 +1048,7 @@ ExpressionControl.prototype._createOperatorPanel = function () {
         this._operatorPanel = new FieldPanelButtonGroup({
             id: "button-panel-operators"
         });
-    };
+    }
     if (this._operatorSettings) {
         this._operatorPanel.clearItems();
         for (key in this._operatorSettings) {
@@ -1655,6 +1668,36 @@ ExpressionControl.prototype._createDateConstantPanel = function() {
     return this;
 };
 
+ExpressionControl.prototype._createDateTimeConstantPanel = function() {
+    var settings = this._constantSettings.datetime;
+    if (!this._constantPanels.datetime) {
+        this._constantPanels.datetime = new FormPanel({
+            id: "form-constant-datetime",
+            title: translate("LBL_PMSE_EXPCONTROL_CONSTANTS_FIXED_DATETIME"),
+            items: [
+                {
+                    type: "datetime",
+                    name: "datetime",
+                    label: "Date Time",
+                    width: "100%",
+                    format: this._dateFormat,
+                    required: true
+                }
+            ],
+            onCollapse: function (formPanel) {
+                formPanel.getItem("datetime").closeAll();
+            }
+        });
+        this._constantPanel.addItem(this._constantPanels.datetime);
+    }
+    if (settings) {
+        this._constantPanels.datetime.enable();
+    } else {
+        this._constantPanels.datetime.disable();
+    }
+    return this;
+};
+
 ExpressionControl.prototype._createTimespanPanel = function() {
     var settings = this._constantSettings.timespan;
     if (!this._constantPanels.timespan) {
@@ -1841,6 +1884,7 @@ ExpressionControl.prototype._createMainPanel = function () {
         if (this._constantSettings) {
             this._createBasicConstantPanel();
             this._createDateConstantPanel();
+            this._createDateTimeConstantPanel();
             this._createTimespanPanel();
         }
         items.push(this._constantPanel);

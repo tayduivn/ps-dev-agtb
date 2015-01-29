@@ -100,7 +100,7 @@
 			case 'checkbox':
 				field = new FormPanelCheckbox(defaults);
 				break;
-			case 'button': 
+			case 'button':
 				field = new FormPanelButton(defaults);
 				break;
 			default:
@@ -122,7 +122,7 @@
 
 	FormPanel.prototype.getItem = function (field) {
 		if (typeof field === 'string') {
-			return this._items.find("_name", field);	
+			return this._items.find("_name", field);
 		} else if (typeof field === 'number') {
 			return this._items.get(field);
 		} else if (field instanceof FormPanelItem && this._items.indexOf(field) >= 0) {
@@ -163,8 +163,8 @@
 				for (i = 0; i < dependency.length; i += 1) {
 					if(dependencyField = this.getItem(dependency[i])) {
 						dependencyField.fireDependentFields();
-					}	
-				}	
+					}
+				}
 			}
 			itemToAdd.fireDependentFields();
 		}
@@ -177,7 +177,7 @@
 		itemIndex = this._items.indexOf(itemToBeReplaced);
 		if (itemIndex >= 0) {
 			this.removeItem(itemToBeReplaced);
-			this.addItem(newItem, itemIndex);	
+			this.addItem(newItem, itemIndex);
 		}
 		return this;
 	};
@@ -194,12 +194,12 @@
 		}
 		return valid;
 	};
-  
+
 	FormPanel.prototype._createBody = function () {
 		var element = this.createHTMLElement('form');
 		element.className = 'form-panel-body';
 		return element;
-	};	
+	};
 
 	FormPanel.prototype.getValueObject = function () {
 		var i, fields = this._items.asArray(), valueObject = {
@@ -318,7 +318,7 @@
 //FormPanelItem
 	var FormPanelItem = function (settings) {
 		Element.call(this, settings);
-		this._name = null; 
+		this._name = null;
 		this._label = null;
 		this._disabled = null;
 		this._form = null;
@@ -332,7 +332,7 @@
 	FormPanelItem.prototype.init = function (settings) {
 		var defaults = {
 			name: this.id,
-			form: null, 
+			form: null,
 			label: "[form-item]",
 			disabled: false,
 			height: "auto"
@@ -721,7 +721,7 @@
 		var i;
 		if (this._htmlControl && this._htmlControl.length) {
 			for (i = 0; i < this._htmlControl.length; i += 1) {
-				this._htmlControl[i].disabled = false;	
+				this._htmlControl[i].disabled = false;
 			}
 		}
 		return FormPanelItem.prototype.enable.call(this);
@@ -758,7 +758,7 @@
 				if (dependantField) {
 					dependantField._fireDependencyHandler(this, value);
 				}
-			}	
+			}
 		}
 		return this;
 	};
@@ -766,7 +766,7 @@
 	FormPanelField.prototype._onChangeHandler = function () {
 		var that = this;
 		return function () {
-			var currValue = that._value, 
+			var currValue = that._value,
 				newValue = that._getValueFromControl(),
 				valueHasChanged = currValue !== newValue,
 				i, dependantField;
@@ -1004,7 +1004,7 @@
 
 	FormPanelNumber.prototype._getValueFromControl = function () {
 		var groupingSeparatorRegExp, numberParts, value = this._htmlControl[0].value, numericValue;
-		
+
 		if (this._groupingSeparator) {
 			groupingSeparatorRegExp = new RegExp((this._isRegExpSpecialChar(this._groupingSeparator) ? "\\" : "") + this._groupingSeparator, "g");
 			value = value.replace(groupingSeparatorRegExp, "");
@@ -1048,7 +1048,7 @@
 			throw new Error("setDecimalSeparator(): Invalid parameter.");
 		}
 		if (decimalSeparator === this._groupingSeparator) {
-			throw new Error("setDecimalSeparator(): The decimal separator must be different than the " 
+			throw new Error("setDecimalSeparator(): The decimal separator must be different than the "
 				+ "grouping separator.");
 		}
 		this._decimalSeparator = decimalSeparator;
@@ -1063,12 +1063,12 @@
 		if (!(typeof groupingSeparator === 'string' && groupingSeparator.length <= 1)) {
 			throw new Error("setGroupingSeparator(): The parameter must be a single character or empty string.");
 		}
-		if (!(isNaN(groupingSeparator)  
+		if (!(isNaN(groupingSeparator)
 			|| ["+", "-", "/", "*"].indexOf(groupingSeparator) < 0)) {
 			throw new Error("setGroupingSeparator(): Invalid parameter.");
 		}
 		if (groupingSeparator === this._decimalSeparator) {
-			throw new Error("setGroupingSeparator(): The grouping separator must be different than the " 
+			throw new Error("setGroupingSeparator(): The grouping separator must be different than the "
 				+ "decimal separator.");
 		}
 		this._groupingSeparator = groupingSeparator;
@@ -1164,7 +1164,7 @@
 					aux = aux.slice(0, -3);
 				}
 			}
-			label = aux + label + decimalSeparator + decimal;	
+			label = aux + label + decimalSeparator + decimal;
 		}
 		return label;
 	};
@@ -1172,7 +1172,7 @@
 	FormPanelNumber.prototype._onKeyDown = function () {
 		var that = this;
 		return function (e) {
-			if (that._precision === 0 && (e.keyCode < 48 || (e.keyCode > 57 && e.keyCode < 96) || e.keyCode >105) 
+			if (that._precision === 0 && (e.keyCode < 48 || (e.keyCode > 57 && e.keyCode < 96) || e.keyCode >105)
 				&& e.keyCode !== 37 && e.keyCode !== 39 && e.keyCode !== 8 && e.keyCode !== 46) {
 				e.preventDefault();
 			}
@@ -1348,7 +1348,7 @@
 			date = this._htmlControl[0].value;
 			time = this._htmlControl[1].value;
 			if (date && time) {
-				value = SUGAR.App.date(date + " " + time, this._dateFormat.toUpperCase() + " " + SUGAR.App.date.convertFormat(this._timeFormat), true);	
+				value = SUGAR.App.date(date + " " + time, this._dateFormat.toUpperCase() + " " + SUGAR.App.date.convertFormat(this._timeFormat), true);
 				isValid = value.isValid();
 			}
 			if (!isValid) {
@@ -1419,7 +1419,7 @@
 					} else if (timeParts[3] === "A") {
 						formattedTime += dayPeriod.toUpperCase();
 					} else {
-						formattedTime += " " 
+						formattedTime += " "
 							+ (timeParts[4] === "A" ? dayPeriod.toUpperCase() : (timeParts[4] === "a" ? dayPeriod : ""));
 					}
 				}
@@ -1433,6 +1433,18 @@
 			});
 		}
 		return this;
+	};
+
+	FormPanelDatetime.prototype._format = function (value) {
+		if (!value) {
+			return value;
+		}
+		value = App.date(value);
+		if (!value.isValid()) {
+			return null;
+		}
+
+		return value.format(this._dateFormat.toUpperCase()) + " " + this._htmlControl[1].value + " " + value.format("Z");
 	};
 
 	FormPanelDatetime.prototype._attachListeners = function	() {
@@ -1494,7 +1506,7 @@
 		if (typeof defaults._dataURL === 'string') {
 			this.load();
 		} else {
-			this.setOptions(defaults.options);	
+			this.setOptions(defaults.options);
 		}
 	};
 
@@ -1664,7 +1676,7 @@
 			jQuery(this._htmlControl[0]).empty();
 			for (i = 0; i < options.length; i += 1) {
 				this._paintOption(options[i]);
-			}	
+			}
 		}
 		return this;
 	};
@@ -1779,7 +1791,7 @@
 			if ($items.length) {
 				value = $items.val();
 			}
-		}	
+		}
 
 		return value;
 	};
