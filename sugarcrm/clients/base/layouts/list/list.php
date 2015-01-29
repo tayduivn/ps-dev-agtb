@@ -28,7 +28,6 @@ $viewdefs['base']['layout']['list'] = array(
             'view' => 'list-bottom',
         ),
     ),
-    'type' => 'simple',
     'name' => 'list',
     'span' => 12,
 );

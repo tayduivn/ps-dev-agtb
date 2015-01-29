@@ -27,7 +27,7 @@
         this.context.on("businessRules:cancel:button", this.cancelBusinessRules, this);
 
         this.myDefaultLayout = this.closestComponent('sidebar');
-        app.routing.before('route', this.beforeRouteChange, this, true);
+        app.routing.before('route', this.beforeRouteChange, this);
     },
 
     render: function () {

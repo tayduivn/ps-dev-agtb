@@ -113,7 +113,7 @@
             this._invisible = false;
             this.show();
             this.setShowMoreLabel();
-        }, null, this);
+        }, this);
     },
 
     /**

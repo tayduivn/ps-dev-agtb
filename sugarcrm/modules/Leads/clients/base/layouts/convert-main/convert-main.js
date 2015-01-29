@@ -110,6 +110,7 @@
                 type: 'convert-panel',
                 platform: this.options.platform
             });
+            view.initComponents();
 
             //This is because backbone injects a wrapper element.
             view.$el.addClass('accordion-group');

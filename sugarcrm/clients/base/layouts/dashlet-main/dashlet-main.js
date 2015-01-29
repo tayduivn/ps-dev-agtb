@@ -47,7 +47,7 @@
 
         var components = app.utils.deepCopy(this.model.get("metadata")).components;
         _.each(components, function(component, index) {
-            this._addComponentsFromDef([{
+            this.initComponents([{
                 layout: {
                     type: 'dashlet-row',
                     width: component.width,
@@ -56,6 +56,7 @@
                 }
             }]);
         } , this);
+
         this.loadData();
         this.render();
     },

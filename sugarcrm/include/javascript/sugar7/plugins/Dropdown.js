@@ -22,7 +22,7 @@
             onAttach: function(component, plugin) {
                 this.on('init', function() {
                     this.listenTo(app.bwc, 'clicked', this.closeDropdown);
-                    app.routing.before('route', this.closeDropdown, this, true);
+                    app.routing.before('route', this.closeDropdown, this);
                 });
             },
 

@@ -186,14 +186,10 @@
                     }
                 }, this);
                 // before render has happened, potentially stopping the render from happening
-                this.before('render', function() {
-                    return this.beforeRenderCallback();
-                }, true);
+                this.before('render', this.beforeRenderCallback, this);
 
                 // after render has completed
-                this.on('render', function() {
-                    this.renderCallback();
-                }, this);
+                this.on('render', this.renderCallback, this);
 
                 this.on('list:toggle:column', function(column, isVisible, columnMeta) {
                     // if we hide or show a column, recalculate totals
@@ -347,7 +343,7 @@
                     this.refreshData();
                 }, this);
 
-                app.routing.before('route', this.beforeRouteHandler, {}, this);
+                app.routing.before('route', this.beforeRouteHandler, this);
 
                 $(window).bind("beforeunload." + this.worksheetType, _.bind(function() {
                     if (!this.disposed) {
@@ -424,7 +420,7 @@
                 return false;
             }
             return true;
-        }, undefined, this);
+        }, this);
 
         /**
          * On Collection Reset or Change, calculate the totals

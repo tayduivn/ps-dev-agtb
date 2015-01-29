@@ -106,7 +106,7 @@
 
             // False return tells the drawer that it shouldn't close
             return false;
-        }, null, this);
+        }, this);
     },
 
     /**

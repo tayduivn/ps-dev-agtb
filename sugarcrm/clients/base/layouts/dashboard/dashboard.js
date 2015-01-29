@@ -528,7 +528,7 @@
             ctxVars.modelId = id;
         }
 
-        layout._addComponentsFromDef([
+        layout.initComponents([
             {
                 layout: {
                     type: 'dashboard',
@@ -550,6 +550,7 @@
                 }, ctxVars)
             }
         ]);
+
         layout.removeComponent(0);
         layout.loadData({}, false);
         layout.render();

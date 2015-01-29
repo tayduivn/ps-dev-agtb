@@ -371,7 +371,7 @@
             if (dashToolbar) {
                 field.before('chart:pareto:render', function() {
                     this.$("[data-action=loading]").removeClass(this.cssIconDefault).addClass(this.cssIconRefresh);
-                }, {}, dashToolbar);
+                }, dashToolbar);
                 field.on('chart:pareto:rendered', function() {
                     this.$("[data-action=loading]").removeClass(this.cssIconRefresh).addClass(this.cssIconDefault);
                 }, dashToolbar);

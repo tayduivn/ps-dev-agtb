@@ -19,14 +19,14 @@
     /**
      * {@inheritDoc}
      */
-    initialize: function(options) {
-        this._super('initialize', [options]);
+    initComponents: function(components, context, module) {
+        this._super('initComponents', [components, context, module]);
 
         // We need to initialize the filterpanel with the filter and module
         // saved on the dashlet.
         var filterPanelLayout = this.getComponent('filterpanel');
         if (filterPanelLayout) {
-            filterPanelLayout.before('render', this._reinitializeFilterPanel, null, this);
+            filterPanelLayout.before('render', this._reinitializeFilterPanel, this);
             this.listenTo(this.layout, 'dashlet:filter:reinitialize', filterPanelLayout.render);
         }
     },
