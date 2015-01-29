@@ -3951,21 +3951,21 @@ Sincerely, SugarCRM',
 
     /* Knowledge base category tree dashlet */
     'LBL_DASHLET_CATEGORIES_NAME' => 'Knowledge Base Categories',
-    'LBL_DASHLET_CATEGORIES_DESCRIPTION' => 'Categories tree dashlet description',
+    'LBL_DASHLET_CATEGORIES_DESCRIPTION' => 'A tree view of the Knowledge Base Categories',
 
     /* Knowledge base localizations dashlet */
     'LBL_DASHLET_LOCALIZATIONS_NAME' => 'Other Languages',
-    'LBL_DASHLET_LOCALIZATIONS_DESCRIPTION' => 'Localizations dashelet description',
+    'LBL_DASHLET_LOCALIZATIONS_DESCRIPTION' => 'A list of localized Knowledge Base Articles',
 
     // Most Useful Knowledge Base Articles dashlet
     'LBL_DASHLET_MOST_USEFUL_NAME' => 'Most Useful Knowledge Base Articles',
-    'LBL_DASHLET_MOST_USEFUL_DESC' => 'Most Useful Knowledge Base Articles Description',
+    'LBL_DASHLET_MOST_USEFUL_DESC' => 'A list of Knowledge Base Articles liked most by users',
 
     'LBL_FILTERED_LIST_BY_FIELD' => '{{module}} filtered by {{label}} "{{value}}"',
 
     // Usefulness for Articles dashlet
     'LBL_DASHLET_USEFULNESS_NAME' => 'Usefulness for Articles',
-    'LBL_DASHLET_USEFULNESS_DESC' => 'Usefulness for Articles Description',
+    'LBL_DASHLET_USEFULNESS_DESC' => 'A chart showing how useful the Knowledge Base article is',
 
     // MySugar Menu Options
     'LBL_ADD_PAGE' => 'Add Page',
@@ -5111,8 +5111,8 @@ Sincerely, SugarCRM',
     'LBL_DASHLET_SAVED_REPORTS_CHART_DESC' => 'Displays any chart from a saved report.',
     'LBL_QUESTION_MARK' => '?',
 
-    'LBL_DASHLET_RELATED_DOCUMENTS' => 'Related Documents',
-    'LBL_DASHLET_RELATED_DOCUMENTS_DESC' => 'Related Documents',
+    'LBL_DASHLET_RELATED_DOCUMENTS' => 'Related Articles',
+    'LBL_DASHLET_RELATED_DOCUMENTS_DESC' => 'A list of related Knowledge Base articles',
 
     // Historical Summary
     'LBL_HISTORICAL_SUMMARY' => 'Historical Summary',
