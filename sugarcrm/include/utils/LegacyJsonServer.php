@@ -274,6 +274,10 @@ class LegacyJsonServer
                     "accounts_contacts lnk WHERE ac.id = lnk.account_id " .
                     "AND ac.deleted = 0 AND lnk.deleted = 0 AND ac.name LIKE '%{$condition['value']}%' )";
                 array_push($cond_arr, $account_name);
+            } elseif ($condition['name'] === 'account_name' && $module === 'Leads') {
+                $account_name = " {$table}id in ( SELECT leads.id AS id FROM accounts ac, leads " .
+                    "WHERE ac.id = leads.account_id AND ac.deleted = 0 AND leads.deleted = 0 AND ac.name LIKE '%{$condition['value']}%' )";
+                array_push($cond_arr, $account_name);
             } elseif ($condition['name'] === 'full_name') {
                 $query_parts = explode(' ', $condition['value']);
                 $first_name_query = array_shift($query_parts);
