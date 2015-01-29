@@ -84,10 +84,9 @@
 
     /**
      * @override
-     * @private
+     * @protected
      */
     _renderHtml: function() {
-        debugger;
         this.logoUrl = app.metadata.getLogoUrl();
         this._super('_renderHtml');
         return this;

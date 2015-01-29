@@ -184,7 +184,6 @@
             ) {
             defaultValue = this._getDefaultOption(optionsKeys);
             if (defaultValue) {
-
                 //Forecasting uses backbone model (not bean) for custom enums so we have to check here
                 if (_.isFunction(this.model.setDefault)) {
                     this.model.setDefault(this.name, defaultValue);
