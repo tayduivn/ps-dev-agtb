@@ -1759,29 +1759,20 @@ class PMSECrmDataWrapper implements PMSEObservable
         $processDefinitionBean = $this->getProcessDefinition();
         $activityDefinitionBean = $this->getActivityDefinitionBean();
         $projectBean = $this->getProjectBean();
-        //$ruleSetBean = $this->getRuleSetBean();
         $output = array();
 
         if ($projectBean->retrieve($filter)) {
-            //$processDefinitionBean->retrieve_by_string_fields(array('prj_id' => $projectBean->id));
             $processDefinitionBean->retrieve($projectBean->id);
-
-            //$where = 'pmse_bpm_activity_definition.act_field_module!=\'\' AND pmse_bpm_activity_definition.act_field_module IS NOT NULL AND pmse_bpmn_activity.prj_id=\'' . $projectBean->id . '\' AND pmse_bpmn_activity.act_script_type = \'BUSINESS_RULE\'';
-            //$joinTables = array(
-            //    array('INNER', 'pmse_bpmn_activity', 'pmse_bpmn_activity.id = pmse_bpm_activity_definition.id')
-            //);
 
             $this->sugarQueryObject->select(array('id', 'name'));
             $this->sugarQueryObject->from($activityDefinitionBean, array('alias' => 'a'));
             $this->sugarQueryObject->joinRaw("INNER JOIN pmse_bpmn_activity b ON (b.id = a.id)", array('alias' => 'b'));
             $this->sugarQueryObject->where()->queryAnd()
                 ->addRaw(
-                    "a.act_field_module!='' AND a.act_field_module IS NOT NULL AND b.prj_id='" . $projectBean->id . "' AND b.act_script_type = 'BUSINESS_RULE'"
+                    "b.prj_id='" . $projectBean->id . "' AND b.act_script_type = 'BUSINESS_RULE'"
                 );
             $this->sugarQueryObject->select->fieldRaw('b.name');
-            //$v = $q->compileSql();
             $rows = $this->sugarQueryObject->execute();
-            //$activityDefinitionList = $this->getSelectRows($activityDefinitionBean,'', $where, 0, -1, 0, array(), $joinTables);
 
             foreach ($rows as $key => $definition) {
                 $tmpArray = array();
@@ -1790,7 +1781,6 @@ class PMSECrmDataWrapper implements PMSEObservable
                 $output[] = $tmpArray;
             }
         }
-        //$res->result = $output;
         return $output;
     }
 

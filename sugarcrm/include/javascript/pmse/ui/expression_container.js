@@ -301,10 +301,28 @@ ExpressionContainer.prototype.handleCriteriaBuilder = function (globalParent, pa
                                 date: true
                             }
                         });
+                    } else {
+                        $.extend(true, config, {
+                            constants: {
+                                basic: {
+                                    string: true
+                                }
+                            },
+                            variables: {
+                                dataRoot: null,
+                                data: parentVariable.fields,
+                                dataFormat: "tabular",
+                                textField: "label",
+                                typeFilter: parentVariable.fieldType,
+                                moduleTextField: "moduleText",
+                                moduleValueField: "moduleValue"
+                            }
+                        });
                     }
-            }    
+                    break;
+            }
         }
-        
+
         $.extend(true, defaults, config);
         //globalParent.globalCBControl.clear();
         globalParent.globalCBControl
@@ -346,7 +364,7 @@ ExpressionContainer.prototype.handleDropDownBuilder = function (globalParent, pa
             }
             //self.setIsDDOpen(false);
         });
-        globalParent.globalDDSelector.setValues(parentVariable.combos[parentVariable.module + globalParent.moduleFieldSeparator 
+        globalParent.globalDDSelector.setValues(parentVariable.combos[parentVariable.module + globalParent.moduleFieldSeparator
             + parentVariable.field]);
         globalParent.globalDDSelector.setValue(this.expression);
         globalParent.globalDDSelector.open();

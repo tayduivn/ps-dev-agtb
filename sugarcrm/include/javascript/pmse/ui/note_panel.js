@@ -383,7 +383,7 @@ NotePanel.prototype.createHTML = function () {
 
         buttonAnchor = this.createHTMLElement('a');
         buttonAnchor.href = '#';
-        buttonAnchor.className = 'adam-button';
+        buttonAnchor.className = 'adam-button btn btn-primary';
         buttonAnchor.id = 'noteBtn';
 
         labelSpan = this.createHTMLElement('span');

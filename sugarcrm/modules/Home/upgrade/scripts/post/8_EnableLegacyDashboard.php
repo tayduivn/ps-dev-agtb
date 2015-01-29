@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -25,14 +26,11 @@ class SugarUpgradeEnableLegacyDashboard extends UpgradeScript
         // If the from_version is less than 7, we need to enable the legacy dashboards
         if (version_compare($this->from_version, '7.0.0', '<')) {
 
-            // Append the new settings to the end of the file, without changing the existing content.
-            // Note:
-            // If these settings are already in config_override.php, there will be double entries in the file.
-            // Since these values are appended in the end, the previously values are overridden.
-            // Reloading the file will get the correct values.
-            $newSettings = "\n";
-            $newSettings .= "\$sugar_config['enable_legacy_dashboards'] = true;\n";
-            $newSettings .= "\$sugar_config['lock_homepage'] = true;\n";
+            // Append the new settings.
+            $newSettings = array(
+                'enable_legacy_dashboards' => true,
+                'lock_homepage' => true,
+            );
 
             if ($this->appendOverrideConfig($newSettings) === true) {
                 $this->log('Legacy Dashboards Enabled!');
@@ -41,27 +39,34 @@ class SugarUpgradeEnableLegacyDashboard extends UpgradeScript
     }
 
     /**
-     * Append a string of new settings to the end of the file "config_override.php".
-     *
-     * @param string $newStr the string of added configs.
-     * @throws Exception if the file "config_override.php" is not writable or the writing fails.
-     * @return true if everything goes well.
+     * Append a array of new settings to the file "config_override.php".
+     * @param $settings Array of settings
+     * @return bool
+     * @throws Exception
      */
-    public function appendOverrideConfig($newStr)
+    public function appendOverrideConfig($settings)
     {
-        if ( !file_exists('config_override.php') ) {
-            touch('config_override.php');
+        $file = 'config_override.php';
+        $sugar_config = array();
+
+        if (file_exists($file)) {
+            $this->upgrader->backupFile($file);
+            include $file;
         }
-        if ( !(make_writable('config_override.php')) ||  !(is_writable('config_override.php')) ) {
-            throw new Exception("Unable to write to the config_override.php file. Check the file permissions");
+
+        foreach ($settings as $key => $val) {
+            $sugar_config[$key] = $val;
         }
-        $fp = sugar_fopen('config_override.php', 'a');
-        if ($fp === false) {
-            throw new Exception("Failed writing to the config_override.php file.");
-        } else {
-            fwrite($fp, $newStr);
-            fclose($fp);
+
+        $out = "<?php\n // created: " . date('Y-m-d H:i:s') . "\n";
+        foreach (array_keys($sugar_config) as $key) {
+            $out .= override_value_to_string_recursive2('sugar_config', $key, $sugar_config[$key]);
         }
+
+        if (!sugar_file_put_contents_atomic($file, $out)) {
+            throw new Exception("Failed writing to the $file file.");
+        }
+
         return true;
     }
 }

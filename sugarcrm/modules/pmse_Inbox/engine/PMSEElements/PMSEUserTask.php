@@ -80,6 +80,9 @@ class PMSEUserTask extends PMSEActivity
                 $flowData['cas_adhoc_type'] = isset($arguments['adhoc_type']) ? $arguments['adhoc_type'] : $flowData['cas_adhoc_type'];
                 $flowData['user_name'] = isset($arguments['user_name']) ? $arguments['user_name'] : '';
                 $flowData['full_name'] = isset($arguments['full_name']) ? $arguments['full_name'] : '';
+                $flowData['taskName'] = isset($arguments['taskName']) ? $arguments['taskName'] : '';
+                $flowData['evn_type'] = 'REASSIGN';
+                $flowData['idInbox'] = isset($arguments['flow_id']) ? $arguments['flow_id'] : '';
                 $this->userAssignmentHandler->adhocReassign($flowData, $arguments['adhoc_user']);
                 $userId = $flowData['cas_user_id'];
                 $flowData['cas_flow_status'] = 'FORM';
@@ -114,7 +117,7 @@ class PMSEUserTask extends PMSEActivity
         $flowData['assigned_user_id'] = $userId;
 
         if ($saveBeanData) {
-            $this->lockFlowRoute($arguments['idFlow']);
+            $this->lockFlowRoute($arguments['flow_id']);
             $this->saveBeanData($arguments);
         }
 
@@ -174,7 +177,7 @@ class PMSEUserTask extends PMSEActivity
     {
         $fields = $beanData;
 
-        $bpmInboxId = $fields['idInbox'];
+        $bpmInboxId = $fields['flow_id'];
         $moduleName = $fields['moduleName'];
         $moduleId = $fields['beanId'];
 

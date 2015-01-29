@@ -612,10 +612,19 @@ include_once("include/workflow/alert_utils.php");
 
 	function build_action_shell_list($action_array){
 
+		global $beanList;
+
 		$action_shell_array = "";
 
+		$action_module = $action_array['action_module'];
+		if (empty($beanList[$action_module])) {
+		    if (!empty($beanList[ucfirst(strtolower($action_module))])) {
+		        $action_module = ucfirst(strtolower($action_module));
+		    }
+		}
+
 		$action_shell_array .= "\t\t 'action_type' => '".$action_array['action_type']."', \n";
-		$action_shell_array .= "\t\t 'action_module' => '".$action_array['action_module']."', \n";
+		$action_shell_array .= "\t\t 'action_module' => '".$action_module."', \n";
 		$action_shell_array .= "\t\t 'rel_module' => '".strtolower($action_array['rel_module'])."', \n";
 		$action_shell_array .= "\t\t 'rel_module_type' => '".$action_array['rel_module_type']."', \n";
 
