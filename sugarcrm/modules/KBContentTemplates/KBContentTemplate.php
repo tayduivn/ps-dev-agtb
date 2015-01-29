@@ -19,6 +19,18 @@ class KBContentTemplate extends SugarBean
 
     /**
      * {@inheritdoc}
+     * Check KBContents create.
+     **/
+    public function save($check_notify = false)
+    {
+        if (!SugarACL::checkAccess('KBContents', 'create')) {
+            return;
+        }
+        return parent::save($check_notify);
+    }
+
+    /**
+     * {@inheritdoc}
      **/
     public function bean_implements($interface)
     {
