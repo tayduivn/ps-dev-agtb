@@ -28,13 +28,11 @@ $viewdefs['Calls']['mobile']['view']['list'] = array(
                     'default' => true,
                     'enabled' => true,
                     'link' => true,
-                    'width' => '10%',
                 ),
                 array(
                     'name' => 'date_start',
                     'label' => 'LBL_DATE',
                     'enabled' => true,
-                    'width' => '10%',
                     'default' => true,
                 ),
             ),

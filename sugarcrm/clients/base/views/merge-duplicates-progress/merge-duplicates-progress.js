@@ -164,7 +164,7 @@
      * token can be expired.
      */
     showProgress: function() {
-        app.drawer.before('reset', this._onDrawerReset, this, true);
+        app.drawer.before('reset', this._onDrawerReset, this);
         this._super('showProgress');
     },
 
@@ -276,7 +276,7 @@
             return;
         }
         this.on('render', this.initHolders, this);
-        this.before('start', this.checkAvailable, this, true);
+        this.before('start', this.checkAvailable, this);
         this.model.on('massupdate:always', this.updateProgress, this);
         this.model.on('massupdate:start', this.showProgress, this);
         this.model.on('massupdate:end', this.hideProgress, this);

@@ -316,12 +316,3 @@ ListPanel.prototype._createBody = function () {
 ListPanel.prototype.getValueObject = function (item) {
 	return item.getData();
 };
-
-/*ListPanel.prototype.createHTML = function () {
-	if(!this.html) {
-		this.html = this.createHTMLElement("div");
-		this.html.className = "adam list-panel";
-		CollapsiblePanel.prototype.createHTML.call(this);
-	}
-	return this.html;
-};*/

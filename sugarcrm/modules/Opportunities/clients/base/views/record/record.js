@@ -72,7 +72,7 @@
      */
     showRLIWarningMessage: function() {
         // add a callback to close the alert if users navigate from the page
-        app.routing.before('route', this.dismissAlert, undefined, this);
+        app.routing.before('route', this.dismissAlert, this);
 
         var message = app.lang.get('TPL_RLI_CREATE', 'Opportunities') +
             '  <a href="javascript:void(0);" id="createRLI">' +

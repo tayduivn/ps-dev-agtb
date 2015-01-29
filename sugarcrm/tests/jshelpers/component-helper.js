@@ -216,6 +216,10 @@
             meta: meta,
             platform: client
         }, params));
+
+        //FIXME: SC-3880 Execution of this line should be contingent on params passed
+        layout.initComponents();
+
         var _origDispose = layout._dispose;
         layout._dispose = function() {
             if(this.context) {

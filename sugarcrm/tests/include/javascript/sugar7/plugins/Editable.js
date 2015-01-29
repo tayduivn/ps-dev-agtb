@@ -151,7 +151,9 @@ describe("Editable Plugin", function() {
             expect(alertShowStub).not.toHaveBeenCalledOnce();
         });
 
-        it("should warn unsaved changes if router is changed with unsaved values", function() {
+        // FIXME Unskip this test when MAR-2680 is fixed
+        xit("should warn unsaved changes if router is changed with unsaved values", function() {
+
             sinonSandbox.stub(view, "hasUnsavedChanges", function() {
                 return true;
             });

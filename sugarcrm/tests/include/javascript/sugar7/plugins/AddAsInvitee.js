@@ -177,4 +177,9 @@ describe('Plugins.AddAsInvitee', function() {
 
         expect(view._isCreateAndLinkAction(invitee, model)).toBe(false);
     });
+
+    it('should set auto_invite_parent flag to false', function() {
+        view.render();
+        expect(view.model.get('auto_invite_parent')).toEqual(false);
+    });
 });

@@ -96,7 +96,6 @@ $viewdefs[$module_name]['base']['view']['list'] = array(
                 array(
                     'name' => 'pro_title',
                     'label' => 'Process',
-                    'width' => 9,
                     'default' => true,
                     'readonly' => true,
                     'enabled' => true,
@@ -105,7 +104,6 @@ $viewdefs[$module_name]['base']['view']['list'] = array(
                 array(
                     'name' => 'task_name',
                     'label' => 'Task Name',
-                    'width' => 9,
                     'default' => true,
                     'enabled' => true,
                     'readonly' => true,

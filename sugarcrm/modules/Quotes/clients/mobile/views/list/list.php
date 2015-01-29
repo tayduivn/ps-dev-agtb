@@ -21,13 +21,11 @@ $viewdefs['Quotes']['mobile']['view']['list'] = array(
                     'default' => true,
                     'enabled' => true,
                     'link' => true,
-                    'width' => '10%',
                 ),
                 array(
                     'name' => 'billing_account_name',
                     'label' => 'LBL_ACCOUNT_NAME',
                     'enabled' => true,
-                    'width' => '10%',
                     'default' => true,
                 ),
             ),

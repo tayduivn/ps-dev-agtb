@@ -13,7 +13,7 @@
 <link type="text/css" href="{sugar_getjspath file='modules/pmse_Project/css/jcore.libraries.css'}" rel="stylesheet" />
 <link type="text/css" href="{sugar_getjspath file='modules/pmse_Project/css/jcore.adam-ui.css'}" rel="stylesheet" />
 <link type="text/css" href="{sugar_getjspath file='modules/pmse_Project/css/jcore.adam.css'}" rel="stylesheet" />
-{*<link type="text/css" href="{sugar_getjspath file='modules/pmse_Project/css/jcore.adam-ui-extend.css'}" rel="stylesheet" />*}
+<link type="text/css" href="{sugar_getjspath file='modules/pmse_Project/css/jcore.adam-ui.extend.css'}" rel="stylesheet" />
 <!---------------  START WORKFLOW SHOWCASE ------------>
 <form action="index.php?module=pmse_Inbox&action=routeCase" id="showCaseForm" method="POST">
     {foreach from=$customButtons key='key' item='item'}

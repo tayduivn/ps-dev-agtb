@@ -106,7 +106,7 @@
 
         //event register for preventing actions
         // when user escapes the page without confirming deleting
-        app.routing.before("route", this.beforeRouteDelete, this, true);
+        app.routing.before("route", this.beforeRouteDelete, this);
         $(window).on("beforeunload.delete" + this.cid, _.bind(this.warnDeleteOnRefresh, this));
     },
 

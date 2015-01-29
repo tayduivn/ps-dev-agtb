@@ -56,9 +56,8 @@ class PAT189Test extends Sugar_PHPUnit_Framework_TestCase
         $this->contact->accounts->add($this->account1);
 
         $this->call = SugarTestCallUtilities::createCall();
-        $this->call->parent_type = 'Contacts';
-        $this->call->parent_id = $this->contact->id;
-        $this->call->save();
+        $this->call->load_relationship('contacts');
+        $this->call->contacts->add($this->contact);
     }
 
     protected function tearDown()

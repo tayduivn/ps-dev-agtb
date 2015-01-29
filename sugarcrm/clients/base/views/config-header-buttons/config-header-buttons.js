@@ -153,8 +153,8 @@
          * END HACK
          */
 
-        this.before('save', this._beforeSaveConfig, null, this);
-        this.before('cancel', this._beforeCancelConfig, null, this);
+        this.before('save', this._beforeSaveConfig, this);
+        this.before('cancel', this._beforeCancelConfig, this);
     },
 
     /**
