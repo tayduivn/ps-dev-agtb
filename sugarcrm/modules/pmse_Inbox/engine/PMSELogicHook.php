@@ -10,11 +10,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-
-if (!defined('sugarEntry') || !sugarEntry) {
-    die('Not A Valid Entry Point');
-}
-
 require_once('PMSEHandlers/PMSEHookHandler.php');
 
 class PMSELogicHook
@@ -115,6 +110,7 @@ class PMSELogicHook
             'MonthTimePeriod',
             'AnnualTimePeriod',
             'QuarterTimePeriod',
+            'InboundEmail',
         );
         if (isset($bean->module_name)) {
             $excludedModules = array_merge($blacklistedModules, $pmseModulesList);
