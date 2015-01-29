@@ -108,7 +108,11 @@ class PMSELogicHook
 
     private function isSugarInstalled()
     {
-        //TODO: Need to find a way to test that Sugar is correctly installed
+        global $sugar_config;
+
+        if( !isset($sugar_config['installer_locked']) || $sugar_config['installer_locked'] == false ){
+            return false;
+        }
         return true;
     }
 }
