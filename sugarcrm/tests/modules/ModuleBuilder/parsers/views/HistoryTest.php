@@ -37,7 +37,7 @@ class HistoryTest extends PHPUnit_Framework_TestCase
         $dirname = $this->getHistoryDir();
         $files = glob($dirname . '/history*');
         foreach ($files as $file) {
-            unlink($file);
+            @unlink($file);
         }
     }
 
