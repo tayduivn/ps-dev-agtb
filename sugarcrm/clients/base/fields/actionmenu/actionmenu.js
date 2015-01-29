@@ -92,9 +92,9 @@
 
     toggleSelect: function(checked) {
         if (!!checked) {
-            this.view.trigger('mass_collection:add', this.model);
+            this.context.trigger('mass_collection:add', this.model);
         } else {
-            this.view.trigger('mass_collection:remove', this.model);
+            this.context.trigger('mass_collection:remove', this.model);
         }
     },
 
@@ -107,9 +107,9 @@
         var $checkbox = this.$(this.fieldTag);
         var isChecked = $checkbox.is(':checked');
         if (!!isChecked) {
-            this.view.trigger('mass_collection:add:all', this.model);
+            this.context.trigger('mass_collection:add:all', this.model);
         } else {
-            this.view.trigger('mass_collection:remove:all', this.model);
+            this.context.trigger('mass_collection:remove:all', this.model);
         }
     },
 

@@ -647,7 +647,8 @@
                 fields: this.getSearchFields(),
                 filterOptions: this.getFilterOptions(),
                 preselectedModelIds: _.clone(this.model.get(this.def.id_name)),
-                maxSelectedRecords: this.maxSelectedRecords
+                maxSelectedRecords: this.maxSelectedRecords,
+                isMultiSelect: true
             };
         } else {
             layout = 'selection-list';

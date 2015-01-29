@@ -22,6 +22,9 @@ $viewdefs['base']['layout']['multi-selection-list-link'] = array(
                                     'view' => 'selection-headerpane',
                                 ),
                                 array(
+                                    'view' => 'selection-list-context',
+                                ),
+                                array(
                                     'layout' => array(
                                         'type' => 'filterpanel',
                                         'span' => 12,

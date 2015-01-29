@@ -11,3 +11,19 @@
  */
 --}}
 
+<div class="label-selected-records">Selected:</div>
+<div class="selected-records select2-container select2-container-multi select2-choices-pills-close select2">
+    <ul class="select2-choices">
+        {{#each pills}}
+        <li class="select2-search-choice" data-id="{{id}}">
+            <div>
+                <div class="ellipsis_inline">
+                    {{name}}
+                </div>
+            </div>
+            <a class="select2-search-choice-close" data-unselect-pill="true" tabindex="-1"></a>
+        </li>
+        {{/each}}
+    </ul>
+</div>
+

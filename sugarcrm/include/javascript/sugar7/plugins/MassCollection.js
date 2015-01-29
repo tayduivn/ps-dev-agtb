@@ -22,10 +22,10 @@
             onAttach: function() {
                 this.on('init', function() {
                     this.createMassCollection();
-                    this.on('mass_collection:add', this.addModel, this);
-                    this.on('mass_collection:add:all', this.addAllModels, this);
-                    this.on('mass_collection:remove', this.removeModel, this);
-                    this.on('mass_collection:remove:all', this.removeAllModels, this);
+                    this.context.on('mass_collection:add', this.addModel, this);
+                    this.context.on('mass_collection:add:all', this.addAllModels, this);
+                    this.context.on('mass_collection:remove', this.removeModel, this);
+                    this.context.on('mass_collection:remove:all', this.removeAllModels, this);
 
                 }, this);
 
