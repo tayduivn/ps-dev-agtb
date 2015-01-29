@@ -160,15 +160,19 @@
      */
     deleteRecord: function(model) {
         var self = this,
-            name = model.get('name') || '',
-            context = app.lang.get('LBL_MODULE_NAME_SINGULAR', model.module).toLowerCase() + ' - ' + name.trim(),
-            verifyURL = App.api.buildURL(
+            verifyURL = app.api.buildURL(
                 this.module,
                 'verify',
                 {
                 id : model.get('id')
                 }
             );
+        var messages = {};
+        var name = Handlebars.Utils.escapeExpression(app.utils.getRecordName(model)).trim();
+        var context = app.lang.getModuleName(model.module).toLowerCase() + ' ' + name;
+
+        messages.confirmation = app.utils.formatString(app.lang.get('NTC_DELETE_CONFIRMATION_FORMATTED'), [context]);
+
         this._modelToDelete = true;
 
         app.api.call('read', verifyURL, null, {
@@ -176,11 +180,10 @@
                 if (!data) {
                     app.alert.show(model.get('id') + ':deleted', {
                          level: 'confirmation',
-                         messages: app.utils.formatString(app.lang.get('LBL_PRO_DELETE_CONFIRMATION', model.module)),
+                         messages: messages.confirmation,
                          onConfirm: function() {
                              model.destroy({
                                  showAlerts: true,
-                                 //                    relate: true
                                  success: self._getRemoveRecord()
                              });
                          }

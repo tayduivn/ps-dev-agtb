@@ -432,7 +432,7 @@ class PMSEProjectApi extends ModuleApi
             array('strict_retrieve' => true, 'disable_row_level_security' => true));
         $processBean = BeanFactory::getBean('pmse_BpmnProcess')->retrieve_by_string_fields(array("prj_id" => $projectBean->id));
         $casesBean = BeanFactory::getBean('pmse_Inbox')->retrieve_by_string_fields(array("pro_id" => $processBean->id));
-        if ($processBean && $casesBean) {
+        if ($processBean && $casesBean && !in_array($casesBean->cas_status , ['COMPLETED', 'TERMINATED', 'CANCELLED'])) {
             $result = true;
         }
         return $result;

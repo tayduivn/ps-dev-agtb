@@ -106,5 +106,29 @@
                 console.log(error);
             }
         });
+    },
+    warnDelete: function(model) {
+        var verifyURL = app.api.buildURL(
+            this.module,
+            'verify',
+            {
+                id : model.get('id')
+            }
+        ),
+            self = this;
+        app.api.call('read', verifyURL, null, {
+            success: function(data) {
+                if (!data) {
+                    self._super('warnDelete', [model]);
+                } else {
+                    app.alert.show('message-id', {
+                        level: 'error',
+                        title:'Warning!!!',
+                        messages: 'The current process has dependant cases',
+                        autoClose: false
+                    });
+                }
+            }
+        });
     }
 })
