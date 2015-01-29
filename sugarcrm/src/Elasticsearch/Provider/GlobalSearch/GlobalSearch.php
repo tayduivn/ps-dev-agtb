@@ -33,6 +33,7 @@ class GlobalSearch extends AbstractProvider
         'phone' => 'gs_string',
         'int' => 'gs_string',
         'text' => 'gs_string',
+        'datetime' => 'gs_datetime',
     );
 
     /**
@@ -44,6 +45,12 @@ class GlobalSearch extends AbstractProvider
             'index' => 'analyzed',
             'index_analyzer' => 'gs_default_index_analyzer',
             'search_analyzer' => 'gs_default_search_analyzer',
+            'store' => false,
+        ),
+        'gs_datetime' => array(
+            'type' => 'date',
+            'format' => 'YYYY-MM-dd HH:mm:ss',
+            'index' => 'no',
             'store' => false,
         ),
     );
@@ -132,11 +139,7 @@ class GlobalSearch extends AbstractProvider
      */
     protected function getSearchFields($boost = false)
     {
-        // if no boost are required, just use a field wildcard
-        if (!$boost) {
-            return array('*.gs_string');
-        }
-
+        $fields = array();
         foreach ($this->modules as $module) {
             foreach ($this->getFtsFields($module) as $name => $params) {
 
@@ -145,18 +148,48 @@ class GlobalSearch extends AbstractProvider
                 if (!$type = $this->getMappingForSugarType($params['type'])) {
                     continue;
                 } else {
-                    $type = array_pop(array_keys($type));
+                    $types = array_keys($type);
                 }
 
-                $field = "{$module}.{$name}.{$type}";
-                if ($boost && !empty($params['full_text_search']['boost'])) {
-                    $field .= "^" . (float) $params['full_text_search']['boost'];
+                foreach ($types as $type) {
+                    if ($this->isFieldSearchable($params) == true) {
+                        $field = "{$module}.{$name}.{$type}";
+                        if ($boost && !empty($params['full_text_search']['boost'])) {
+                            $field .= "^" . (float)$params['full_text_search']['boost'];
+                        }
+                        $fields[] = $field;
+                    }
                 }
-                $fields[] = $field;
             }
         }
         return $fields;
     }
+
+
+    /**
+     * Check if a field is searchable or not.
+     * @param array $params : the parameters of a field from vardefs metadata file.
+     * @return boolean
+     */
+    protected function isFieldSearchable($params)
+    {
+        $isSearchable = false;
+
+        //decide to include the field in the query or not, given the conditions:
+        // 1. searchable is not null and is set to true;
+        // 2. searchable is null and boost is not null;
+        if (isset($params['full_text_search']['searchable'])) {
+            if ($params['full_text_search']['searchable'] == true) {
+                $isSearchable = true;
+            }
+        } else {
+            if (!empty($params['full_text_search']['boost'])) {
+                $isSearchable = true;
+            }
+        }
+        return $isSearchable;
+    }
+
 
     /**
      * {@inheritdoc}

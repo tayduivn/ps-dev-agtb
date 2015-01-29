@@ -61,6 +61,7 @@ $vardefs = array(
                 'group' => 'modified_by_name',
                 'comment' => 'Date record last modified',
                 'enable_range_search' => true,
+                'full_text_search' => array('enabled' => true, 'searchable' => false),
                 'studio' => array(
                     'portaleditview' => false, // Bug58408 - hide from Portal edit layout
                 ),
