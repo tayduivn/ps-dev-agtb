@@ -41,7 +41,13 @@ describe('ProductTemplates.Base.Field.PricingFormula', function() {
             fieldDef: {
                 name: 'pricing_formula',
                 type: 'pricing-formula',
-                options: 'pricing_formula_dom'
+                options: {
+                    Fixed: 'Fixed Price',
+                    ProfitMargin: 'Profit Margin',
+                    PercentageMarkup: 'Markup over Cost',
+                    PercentageDiscount: 'Discount from List',
+                    IsList: 'Same as List'
+                }
             },
             module: moduleName,
             model: testModel,
