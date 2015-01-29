@@ -17,9 +17,10 @@
  *
  * - `maxSelectedRecords` The max number of records the user can select in the
  *    case of multiselect selection list.
- * - `preselectedModelIds` {Array} The array of ids of preselected records.
- *
- *  Example of usage:
+ * - `independentMassCollection` {boolean} `true` if the selected records should
+ *   be handled independently from the view collection. If `false` selected
+ *   records are tied to the view collection, which means they are reset if the
+ *   view collection is reset.
  *
  * @class View.Views.Base.MultiSelectionListView
  * @alias SUGAR.App.view.views.BaseMultiSelectionListView
@@ -27,8 +28,21 @@
  */
 ({
     extendsFrom: 'SelectionListView',
+    /**
+     * Boolean to know whether the selected records called `mass collection`
+     * should be tied to the view collection or independant.
+     *
+     * If tied, selected records would have to be in the current view collection.
+     * As soon as the view collection is reset, the mass collection would be
+     * reset.
+     *
+     * @property {boolean} `true` for an independent mass collection. `false`
+     *   for the mass collection to be tied to the view collection.
+     */
+    independentMassCollection: true,
 
     initialize: function(options) {
+        this.plugins = _.extend(this.plugins, ['MassCollection']);
         this._super('initialize', [options]);
 
         /**

@@ -43,18 +43,6 @@
      */
     initialize: function(options) {
         this._super('initialize', [options]);
-        var massCollection = this.context.get('mass_collection');
-        if (!massCollection) {
-            var MassCollection = app.BeanCollection.extend({
-                reset: function(models, options) {
-                    this.filterDef = null;
-                    this.entire = false;
-                    Backbone.Collection.prototype.reset.call(this, models, options);
-                }
-            });
-            massCollection = new MassCollection();
-            this.context.set('mass_collection', massCollection);
-        }
         this.def.disable_select_all_alert = !!this.def.disable_select_all_alert;
         this._initTemplates();
 
@@ -95,12 +83,19 @@
 
     /**
      * Selects or unselects a record.
-     *
-     * @param {Event} event The `click` event.
      */
-    check: function(event) {
+    check: function() {
         var $checkbox = this.$(this.fieldTag);
-        this.toggleSelect($checkbox.is(':checked'));
+        var isChecked = $checkbox.is(':checked');
+        this.toggleSelect(isChecked);
+    },
+
+    toggleSelect: function(checked) {
+        if (!!checked) {
+            this.view.trigger('mass_collection:add', this.model);
+        } else {
+            this.view.trigger('mass_collection:remove', this.model);
+        }
     },
 
     /**
@@ -110,50 +105,16 @@
      */
     checkAll: function(event) {
         var $checkbox = this.$(this.fieldTag);
-
-        if ($checkbox && event.currentTarget === event.target) {
-            var isChecked = $checkbox.is(':checked');
-            $checkbox.attr('checked', !isChecked);
-            this.toggleSelect(!isChecked);
-        }
-    },
-
-    /**
-     * Takes a specific record and add it or remove it from the mass update
-     * collection.
-     *
-     * @param {Boolean} checked `true` to add it, `false` to remove it.
-     */
-    toggleSelect: function(checked) {
-        var massCollection = this.context.get('mass_collection');
-        if (!massCollection) {
-            return;
-        }
-
-        if (checked) {
-            if (this.model.id) { //each selection
-                massCollection.add(this.model);
-            } else {
-                //entire selection
-                massCollection.reset(this.collection.models);
-                massCollection.filterDef = this.collection.filterDef;
-            }
+        var isChecked = $checkbox.is(':checked');
+        if (!!isChecked) {
+            this.view.trigger('mass_collection:add:all', this.model);
         } else {
-            if (this.model.id) { //each selection
-                if (massCollection.entire) {
-                    massCollection.reset(this.collection.models);
-                    massCollection.remove(this.model);
-                } else {
-                    massCollection.remove(this.model);
-                }
-            } else { //entire selection
-                massCollection.reset();
-            }
+            this.view.trigger('mass_collection:remove:all', this.model);
         }
     },
 
     /**
-     * @inheritDoc
+     * @override
      *
      * Listen to events on the collection, and update the checkboxes
      * consequently.
@@ -187,19 +148,27 @@
             } else {
                 delete this.selected;
             }
-
-        } else { //listeners for entire selection
+        } else { //Listeners on the checkAll/uncheckAll checkbox.
             if (this.collection) {
+
                 this.collection.on('reset', function() {
                     if (massCollection.entire) {
                         massCollection.reset();
                     }
                 }, this);
+
                 this.collection.on('add', function() {
-                    if (!this.disposed && massCollection.length < this.collection.length) {
-                        this.$(this.fieldTag).attr('checked', false);
-                        this.view.layout.trigger('list:alert:hide');
+                    if (!this.view.independentMassCollection) {
+                        if (!this.disposed && massCollection.length < this.collection.length) {
+                            this.$(this.fieldTag).attr('checked', false);
+                            this.view.layout.trigger('list:alert:hide');
+                        }
                     }
+                }, this);
+
+                // Getting the event from MassCollection plugin.
+                massCollection.on('all:checked', function() {
+                    this.$(this.fieldTag).attr('checked', true);
                 }, this);
             }
 
@@ -207,16 +176,13 @@
 
             massCollection.on('add', function(model) {
                 this.$(this.actionDropDownTag).removeClass('disabled');
-                if (massCollection.length === this.collection.length) {
-                    this.$(this.fieldTag).attr('checked', true);
-                }
                 this.toggleSelectAll();
             }, this);
             massCollection.on('remove reset', function(model) {
+                this.$(this.fieldTag).attr('checked', false);
                 if (massCollection.length === 0) {
                     this.$(this.actionDropDownTag).addClass('disabled');
-                    this.$(this.fieldTag).attr('checked', false);
-                } else if (massCollection.length === this.collection.length) {
+                } else if (!this.view.independentMassCollection && massCollection.length === this.collection.length) {
                     this.$(this.actionDropDownTag).removeClass('disabled');
                     this.$(this.fieldTag).attr('checked', true);
                 }
