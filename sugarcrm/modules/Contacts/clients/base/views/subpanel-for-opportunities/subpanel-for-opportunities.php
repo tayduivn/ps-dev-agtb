@@ -26,7 +26,6 @@ $viewdefs['Contacts']['base']['view']['subpanel-for-opportunities'] = array(
                 'last_name',
             ),
             'link' => true,
-          'css_class' => 'full-name',
           'width' =>  49,
           'label' => 'LBL_LIST_NAME',
           'enabled' => true,
