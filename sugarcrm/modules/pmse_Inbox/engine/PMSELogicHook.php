@@ -16,7 +16,6 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 require_once('PMSEHandlers/PMSEHookHandler.php');
-require_once('PMSEModules.php');
 
 class PMSELogicHook
 {
@@ -66,6 +65,7 @@ class PMSELogicHook
 
     private function isExpectedModule($bean)
     {
+        include('PMSEModules.php');
         $pmseModulesList = (isset($pmseModulesList)) ? $pmseModulesList : array();
         //returns immediately if the bean is a common module
         $result = true;
@@ -82,6 +82,19 @@ class PMSELogicHook
             'ACLAction',
             'SessionManager',
             'vCal',
+            'TeamSetModule',
+            'ForecastWorksheet',
+            'ACLField',
+            'ACLRole',
+            'DocumentRevision',
+            'SavedReport',
+            'ForecastManagerWorksheet',
+            'KBDocumentRevision',
+            'KBContent',
+            'KBDocumentKBTag',
+            'EmailTemplate',
+            'TeamMembership',
+            'TaxRate',
         );
         if (isset($bean->module_name)) {
             $excludedModules = array_merge($blacklistedModules, $pmseModulesList);
@@ -90,16 +103,12 @@ class PMSELogicHook
             }
         }
 
-        //if the record is going to be updated by the engine, we need to skip the "partial update" section
-        if (isset($bean->skipPartialUpdate) && $bean->skipPartialUpdate) {
-            return true;
-        }
         return $result;
     }
 
     private function isSugarInstalled()
     {
-        //TODO: Need to find a way to comprobe that Sugar is correctly installed
+        //TODO: Need to find a way to test that Sugar is correctly installed
         return true;
     }
 }
