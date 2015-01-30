@@ -44,7 +44,7 @@ $viewdefs['base']['view']['saved-reports-chart'] = array(
                 ),
                 array(
                     'name' => 'chart_type',
-                    'label' => 'Chart type',
+                    'label' => 'LBL_CHART_CONFIG_CHART_TYPE',
                     'type' => 'enum',
                     'sort_alpha' => true,
                     'ordered' => true,
@@ -65,7 +65,7 @@ $viewdefs['base']['view']['saved-reports-chart'] = array(
                     'type' => 'fieldset',
                     'inline' => true,
                     'show_child_labels' => false,
-                    'label' => 'Show title',
+                    'label' => 'LBL_CHART_CONFIG_SHOW_TITLE',
                     'toggle' => 'show_title',
                     'dependent' => 'report_title',
                     'fields' => array(
@@ -83,7 +83,7 @@ $viewdefs['base']['view']['saved-reports-chart'] = array(
 
                 array(
                     'name' => 'show_legend',
-                    'label' => 'Show legend',
+                    'label' => 'LBL_CHART_LEGEND_OPEN',
                     'type' => 'bool',
                     'default' => 1,
                 ),
@@ -93,7 +93,7 @@ $viewdefs['base']['view']['saved-reports-chart'] = array(
                     'type' => 'fieldset',
                     'inline' => true,
                     'show_child_labels' => false,
-                    'label' => 'Show x-axis label',
+                    'label' => 'LBL_CHART_CONFIG_SHOW_XAXIS_LABEL',
                     'toggle' => 'show_x_label',
                     'dependent' => 'x_axis_label',
                     'fields' => array(
@@ -113,24 +113,24 @@ $viewdefs['base']['view']['saved-reports-chart'] = array(
                     'type' => 'fieldset',
                     'inline' => true,
                     'show_child_labels' => true,
-                    'label' => 'Tick display methods',
+                    'label' => 'LBL_CHART_CONFIG_TICK_DISPLAY',
                     'css_class' => 'fieldset-wrap',
                     'fields' => array(
                         array(
                             'name' => 'wrapTicks',
-                            'text' => 'Wrap ticks',
+                            'text' => 'LBL_CHART_CONFIG_TICK_WRAP',
                             'type' => 'bool',
                             'default' => 1,
                         ),
                         array(
                             'name' => 'staggerTicks',
-                            'text' => 'Stagger ticks',
+                            'text' => 'LBL_CHART_CONFIG_TICK_STAGGER',
                             'type' => 'bool',
                             'default' => 1,
                         ),
                         array(
                             'name' => 'rotateTicks',
-                            'text' => 'Rotate ticks',
+                            'text' => 'LBL_CHART_CONFIG_TICK_ROTATE',
                             'type' => 'bool',
                             'default' => 1,
                         ),
@@ -142,7 +142,7 @@ $viewdefs['base']['view']['saved-reports-chart'] = array(
                     'type' => 'fieldset',
                     'inline' => true,
                     'show_child_labels' => false,
-                    'label' => 'Show y-axis label',
+                    'label' => 'LBL_CHART_CONFIG_SHOW_YAXIS_LABEL',
                     'toggle' => 'show_y_label',
                     'dependent' => 'y_axis_label',
                     'fields' => array(
@@ -162,7 +162,7 @@ $viewdefs['base']['view']['saved-reports-chart'] = array(
 
                 array(
                     'name' => 'showValues',
-                    'label' => 'Bar chart value placement',
+                    'label' => 'LBL_CHART_CONFIG_VALUE_PLACEMENT',
                     'type' => 'enum',
                     'default' => false,
                     'options' => 'd3_value_placement',
@@ -173,24 +173,24 @@ $viewdefs['base']['view']['saved-reports-chart'] = array(
                     'type' => 'fieldset',
                     'inline' => true,
                     'show_child_labels' => false,
-                    'label' => 'Bar chart display options',
+                    'label' => 'LBL_CHART_CONFIG_BAR_CHART_OPTIONS',
                     'css_class' => 'fieldset-wrap',
                     'fields' => array(
                         array(
                             'name' => 'allowScroll',
-                            'text' => 'Allow scrolling',
+                            'text' => 'LBL_CHART_CONFIG_ALLOW_SCROLLING',
                             'type' => 'bool',
                             'default' => 1,
                         ),
                         array(
                             'name' => 'stacked',
-                            'text' => 'Stack data series',
+                            'text' => 'LBL_CHART_CONFIG_STACK_DATA',
                             'type' => 'bool',
                             'default' => 1,
                         ),
                         array(
                             'name' => 'hideEmptyGroups',
-                            'text' => 'Hide empty groups',
+                            'text' => 'LBL_CHART_CONFIG_HIDE_EMPTY_GROUPS',
                             'type' => 'bool',
                             'default' => 1,
                         ),
@@ -201,7 +201,7 @@ $viewdefs['base']['view']['saved-reports-chart'] = array(
     ),
     'chart' => array(
         'name' => 'chart',
-        'label' => 'Chart',
+        'label' => 'LBL_CHART',
         'type' => 'chart',
         'view' => 'detail'
     ),
