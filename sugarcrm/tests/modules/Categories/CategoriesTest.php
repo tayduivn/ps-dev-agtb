@@ -94,7 +94,7 @@ class CategoriesTest extends Sugar_PHPUnit_Framework_TestCase
             ':id' => self::$root->id,
         ));
 
-        $this->assertTrue($result);
+        $this->assertNotFalse($result);
 
         $root = BeanFactory::retrieveBean('Categories', self::$root->id, array(
             'use_cache' => false,
@@ -114,7 +114,7 @@ class CategoriesTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertTrue($bean->lft == 1);
         $this->assertTrue($bean->rgt == 2);
-        $this->assertTrue($bean->level == 0);
+        $this->assertTrue($bean->lvl == 0);
         $this->assertTrue($bean->root == $bean->id);
     }
 
@@ -155,7 +155,7 @@ class CategoriesTest extends Sugar_PHPUnit_Framework_TestCase
         $subnode = new CategoryMock();
         self::$root->addNodeMock($subnode, 2, 1);
 
-        $this->assertTrue($subnode->level == 1);
+        $this->assertTrue($subnode->lvl == 1);
         $this->assertTrue($subnode->lft == 2);
         $this->assertTrue($subnode->rgt == 3);
         $this->assertFalse($subnode->isRoot());
@@ -206,7 +206,7 @@ class CategoriesTest extends Sugar_PHPUnit_Framework_TestCase
         foreach ($roots as $root) {
             $this->assertEquals($root['id'], $root['root']);
             $this->assertEquals($root['lft'], '1');
-            $this->assertEquals($root['level'], '0');
+            $this->assertEquals($root['lvl'], '0');
         }
     }
 

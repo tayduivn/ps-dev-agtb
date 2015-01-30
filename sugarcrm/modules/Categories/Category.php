@@ -24,7 +24,7 @@ class Category extends SugarBean implements NestedBeanInterface
     public $root;
     public $lft;
     public $rgt;
-    public $level;
+    public $lvl;
 
     /**
      * This method creates basic SugarQuery object
@@ -68,7 +68,7 @@ class Category extends SugarBean implements NestedBeanInterface
         $node->root = $this->root;
         $node->lft = $key;
         $node->rgt = $key + 1;
-        $node->level = $this->level + $levelUp;
+        $node->lvl = $this->lvl + $levelUp;
         $node->shiftLeftRight($key, 2);
     }
 
@@ -117,7 +117,7 @@ class Category extends SugarBean implements NestedBeanInterface
         $db = DBManagerFactory::getInstance();
         $left = $this->lft;
         $right = $this->rgt;
-        $levelDelta = $target->level - $this->level + $levelUp;
+        $levelDelta = $target->lvl - $this->lvl + $levelUp;
         $delta = $right - $left + 1;
 
         $this->shiftLeftRight($key, $delta);
@@ -127,7 +127,7 @@ class Category extends SugarBean implements NestedBeanInterface
         }
 
         $this->update(array(
-            'level' => 'level' . sprintf('%+d', $levelDelta),
+            'lvl' => 'lvl' . sprintf('%+d', $levelDelta),
         ), 'lft >= :left AND rgt <= :right AND root = :root', array(
             ':left' => $left,
             ':right' => $right,
@@ -169,7 +169,7 @@ class Category extends SugarBean implements NestedBeanInterface
             $data['children'] = array();
             $stackLength = count($stack);
 
-            while ($stackLength > 0 && $stack[$stackLength - 1]['level'] >= $data['level']) {
+            while ($stackLength > 0 && $stack[$stackLength - 1]['lvl'] >= $data['lvl']) {
                 array_pop($stack);
                 $stackLength--;
             }
@@ -221,8 +221,8 @@ class Category extends SugarBean implements NestedBeanInterface
         );
 
         if ($depth) {
-            $level = $this->level + $depth;
-            $condition[] = 'node.level <= ' . $level;
+            $lvl = $this->lvl + $depth;
+            $condition[] = 'node.lvl <= ' . $lvl;
         }
 
         $query->whereRaw(implode(' AND ', $condition));
@@ -332,7 +332,7 @@ class Category extends SugarBean implements NestedBeanInterface
         }
         $this->lft = 1;
         $this->rgt = 2;
-        $this->level = 0;
+        $this->lvl = 0;
 
         if (empty($this->id)) {
             $this->new_with_id = true;
