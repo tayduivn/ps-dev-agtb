@@ -56,9 +56,11 @@ class ViewHistory extends SugarView
         $this->module = $_REQUEST [ 'view_module' ] ;
 
         $params = array();
+// BEGIN SUGARCRM flav=ent ONLY
         if (!empty($_REQUEST['role'])) {
             $params['role'] = $_REQUEST['role'];
         }
+// END SUGARCRM flav=ent ONLY
         $this->parser = ParserFactory::getParser(
             $this->layout,
             $this->module,
@@ -175,12 +177,14 @@ class ViewHistory extends SugarView
         $this->history->restoreByTimestamp ( $sid ) ;
     }
 
+// BEGIN SUGARCRM flav=ent ONLY
     protected function resetToDefault()
     {
         $implementation = $this->parser->getImplementation();
         $fileName = $implementation->getDefaultFileName($this->layout, $this->module);
         $this->history->savePreview($fileName);
     }
+// END SUGARCRM flav=ent ONLY
 
 	/**
  	 * Restores a layout to its current customized state. 

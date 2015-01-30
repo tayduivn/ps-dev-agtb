@@ -66,11 +66,13 @@ class ViewLayoutView extends SugarView
     {
         global $mod_strings ;
         $params = array();
+// BEGIN SUGARCRM flav=ent ONLY
         if (!empty($_REQUEST['role'])) {
             $role = $params['role'] = $_REQUEST['role'];
         } else {
             $role = null;
         }
+// END SUGARCRM flav=ent ONLY
         $this->parser = $parser = ParserFactory::getParser(
             $this->editLayout,
             $this->editModule,
@@ -125,10 +127,12 @@ class ViewLayoutView extends SugarView
 
             $buttons = $this->getButtons($history, $disableLayout, $params);
 
+// BEGIN SUGARCRM flav=ent ONLY
             $implementation = $parser->getImplementation();
             $roles = $this->getRoleList($implementation);
             $copyFromOptions = $this->getRoleListWithMetadata($roles, $role);
             $smarty->assign('copy_from_options', $copyFromOptions);
+// END SUGARCRM flav=ent ONLY
         }
 
         $smarty->assign('buttons', $this->getButtonHTML($buttons));
@@ -142,7 +146,9 @@ class ViewLayoutView extends SugarView
         $smarty->assign ( 'field_defs', $parser->getFieldDefs () ) ;
         $smarty->assign ( 'view_module', $this->editModule ) ;
         $smarty->assign ( 'view', $this->editLayout ) ;
+// BEGIN SUGARCRM flav=ent ONLY
         $smarty->assign('selected_role', $role);
+// END SUGARCRM flav=ent ONLY
         $smarty->assign ( 'maxColumns', $parser->getMaxColumns() ) ;
         $smarty->assign ( 'nextPanelId', $parser->getFirstNewPanelId() ) ;
         $smarty->assign ( 'displayAsTabs', $parser->getUseTabs() ) ;
@@ -301,19 +307,23 @@ class ViewLayoutView extends SugarView
             'disabled' => $disableLayout,
         );
 
+// BEGIN SUGARCRM flav=ent ONLY
         if (!$params) {
+// END SUGARCRM flav=ent ONLY
             $action = 'ModuleBuilder.history.revert('
                 . '"' . $this->editModule . '",'
                 . '"' . $this->editLayout . '",'
                 . '"' . $history->getLast() . '",'
                 . '""'
                 . ')';
+// BEGIN SUGARCRM flav=ent ONLY
         } else {
             $action = 'ModuleBuilder.history.resetToDefault('
                 . '"' . $this->editModule . '",'
                 . '"' . $this->editLayout . '"'
                 . ')';
         }
+// END SUGARCRM flav=ent ONLY
 
         $buttons [] = array(
             'id' => 'historyDefault',
@@ -329,6 +339,7 @@ class ViewLayoutView extends SugarView
                 'actionScript' => "onclick='ModuleBuilder.copyFromView(\"{$this->editModule}\", \"{$this->editLayout}\")'",
                 'disabled' => $disableLayout,
             );
+// BEGIN SUGARCRM flav=ent ONLY
         } elseif (!empty($GLOBALS['sugar_config']['roleBasedViews'])
             && !isModuleBWC($this->editModule)
             && ($this->editLayout == MB_RECORDVIEW
@@ -355,6 +366,7 @@ class ViewLayoutView extends SugarView
                     'disabled' => !count($rolesWithMetadata),
                 );
             }
+// END SUGARCRM flav=ent ONLY
         }
         return $buttons;
     }
@@ -389,6 +401,7 @@ class ViewLayoutView extends SugarView
         return $html;
     }
 
+// BEGIN SUGARCRM flav=ent ONLY
     /**
      * Returns object storage containing available roles as keys
      * and flags indicating if there is role specific metadata as value
@@ -453,4 +466,5 @@ class ViewLayoutView extends SugarView
             );
         };
     }
+// END SUGARCRM flav=ent ONLY
 }

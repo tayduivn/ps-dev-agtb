@@ -35,8 +35,10 @@
  						'home'=>'home',
                         'visibilityeditor' => 'visibilityeditor',
  						'exportcustomizations'=>'exportcustomizations',
-                        //BEGIN SUGARCRM flav=pro ONLY
+                        // BEGIN SUGARCRM flav=ent ONLY
                         'roledropdownfilter' => 'roledropdownfilter',
+                        // END SUGARCRM flav=ent ONLY
+                        //BEGIN SUGARCRM flav=pro ONLY
                         'depdropdown' => 'depdropdown',
                         //END SUGARCRM flav=pro ONLY
  						//BEGIN SUGARCRM flav=ent ONLY
