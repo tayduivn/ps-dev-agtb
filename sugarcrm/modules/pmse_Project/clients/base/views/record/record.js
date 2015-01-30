@@ -52,9 +52,9 @@
                     self._super('warnDelete', []);
                 } else {
                     app.alert.show('message-id', {
-                        level: 'error',
-                        title:'Warning!!!',
-                        messages: 'The current process has dependant cases',
+                        level: 'warning',
+                        title: app.lang.get('LBL_WARNING'),
+                        messages: app.lang.get('LBL_PA_PRODEF_HAS_PENDING_PROCESSES'),
                         autoClose: false
                     });
                 }

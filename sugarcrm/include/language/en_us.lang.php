@@ -5294,6 +5294,7 @@ To create a new record using the values you have entered, click "Ignore Duplicat
 
     'LBL_PRO_ENABLE' => 'Updating',
     'LBL_PRO_DISABLE' => 'Updating',
+    'LBL_PA_PRODEF_HAS_PENDING_PROCESSES' => 'You cannot delete this Process Definition because have pending processes running.',
 //END SUGARCRM flav=ent ONLY
 
     // Javascript enable string
