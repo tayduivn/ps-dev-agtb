@@ -139,6 +139,8 @@ class SidecarFilterMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
                 );
                 if (!empty($searchFields[$name]['type'])) {
                     $fields[$name]['type'] = $searchFields[$name]['type'];
+                } else {
+                    $fields[$name]['type'] = 'text';
                 }
                 if (empty($fields[$name]['dbFields']) && !$this->isValidField($name)) {
                     unset($fields[$name]);

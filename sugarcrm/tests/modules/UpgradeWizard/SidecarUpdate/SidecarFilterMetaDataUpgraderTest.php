@@ -95,7 +95,8 @@ class SidecarFilterMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase
                     'name' => array(),
                     'account_name' => array(
                         'dbFields' => array(),
-                        'vname' => 'LBL_ACC'
+                        'vname' => 'LBL_ACC',
+                        'type' => 'text',
                     ),
                     'another_field' => array(
                         'dbFields' => array('name'),
