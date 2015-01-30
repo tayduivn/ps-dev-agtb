@@ -14,11 +14,11 @@
         "root": "76c5ad26-21db-1be5-85ee-54258f68dd4a",
         "lft": "8",
         "rgt": "9",
-        "level": "1",
+        "lvl": "1",
         "data": "First",
         "_module": "Categories",
         "metadata": {"id": "1"},
-        "attr": {"data-id": "1", "data-level": "1"},
+        "attr": {"data-id": "1", "data-lvl": "1"},
         "children": {
             "records": [
                 {
@@ -36,11 +36,11 @@
                     "root": "76c5ad26-21db-1be5-85ee-54258f68dd4a",
                     "lft": "9",
                     "rgt": "10",
-                    "level": "1",
+                    "lvl": "1",
                     "data": "Third",
                     "_module": "Categories",
                     "metadata": {"id": "3"},
-                    "attr": {"data-id": "3", "data-level": "2"},
+                    "attr": {"data-id": "3", "data-lvl": "2"},
                     "children": {
                         "next_offset": -1,
                         "records": []
@@ -61,11 +61,11 @@
                     "root": "76c5ad26-21db-1be5-85ee-54258f68dd4a",
                     "lft": "12",
                     "rgt": "12",
-                    "level": "1",
+                    "lvl": "1",
                     "data": "Fourth",
                     "_module": "Categories",
                     "metadata": {"id": "4"},
-                    "attr": {"data-id": "4", "data-level": "2"},
+                    "attr": {"data-id": "4", "data-lvl": "2"},
                     "children": {
                         "next_offset": -1,
                         "records": []
@@ -90,7 +90,7 @@
         "root": "76c5ad26-21db-1be5-85ee-54258f68dd4a",
         "lft": "10",
         "rgt": "11",
-        "level": "1",
+        "lvl": "1",
         "children": {
             "next_offset": -1,
             "records": []
@@ -98,6 +98,6 @@
         "data": "Second",
         "_module": "Categories",
         "metadata": {"id": "2"},
-        "attr": {"data-id": "2", "data-level": "1"}
+        "attr": {"data-id": "2", "data-lvl": "1"}
     }
 ]

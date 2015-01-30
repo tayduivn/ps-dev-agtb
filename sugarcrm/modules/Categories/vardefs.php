@@ -47,8 +47,8 @@ $dictionary['Category'] = array(
             'isnull' => false,
             'required' => true,
         ),
-        'level' => array(
-            'name' => 'level',
+        'lvl' => array(
+            'name' => 'lvl',
             'type' => 'int',
             'comment' => 'Node level',
             'isnull' => false,
