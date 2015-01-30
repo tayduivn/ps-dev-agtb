@@ -315,6 +315,7 @@ class Product extends SugarBean
         $id = parent::save($check_notify);
 
         // We need to update the associated product bundle and quote totals that might be impacted by this product.
+
         if (isset($id) && $this->ignoreQuoteSave === false) {
             $tax_rate = 0.00;
             $query = "select * from quotes INNER JOIN taxrates on quotes.taxrate_id=taxrates.id where quotes.id='" . $this->quote_id . "' and quotes.deleted=0 and taxrates.deleted=0";
@@ -367,11 +368,11 @@ class Product extends SugarBean
                     /** @var $currency Currency */
                     $currency = BeanFactory::getBean('Currencies');
 
-                    $total = $currency->convertFromDollar($total_usdollar);
-                    $subtotal = $currency->convertFromDollar($subtotal_usdollar);
-                    $new_sub = $currency->convertFromDollar($new_sub_usdollar);
-                    $tax = $currency->convertFromDollar($tax_usdollar);
-                    $deal_tot = $currency->convertFromDollar($deal_tot_usdollar);
+                    $total = SugarCurrency::convertWithRate($total_usdollar, '1.0', $this->base_rate);
+                    $subtotal = SugarCurrency::convertWithRate($subtotal_usdollar, '1.0', $this->base_rate);
+                    $new_sub = SugarCurrency::convertWithRate($new_sub_usdollar, '1.0', $this->base_rate);
+                    $tax = SugarCurrency::convertWithRate($tax_usdollar, '1.0', $this->base_rate);
+                    $deal_tot = SugarCurrency::convertWithRate($deal_tot_usdollar, '1.0', $this->base_rate);
                     $updateQuery = "update product_bundles set tax=" . $tax . ",tax_usdollar=" . $tax_usdollar . ",total=" . $total . ",deal_tot_usdollar=" . $deal_tot_usdollar . ",deal_tot=" . $deal_tot . ",total_usdollar=" . $total_usdollar .
                         ",new_sub=" . $new_sub . ",new_sub_usdollar=" . $new_sub_usdollar . ",subtotal=" . $subtotal .
                         ",subtotal_usdollar=" . $subtotal_usdollar . " where id='" . $bundle_id . "'";
@@ -401,12 +402,12 @@ class Product extends SugarBean
                         $new_sub_usdollar = is_numeric($row['new_sub_usdollar']) ? $row['new_sub_usdollar'] : 0.00;
                         $tax_usdollar = is_numeric($row['tax_usdollar']) ? $row['tax_usdollar'] : 0.00;
                         $total_usdollar += $row['new_sub_usdollar'] + $row['tax_usdollar'] + $shipping_usdollar;
-                        $total = $currency->convertFromDollar($total_usdollar);
-                        $subtotal = $currency->convertFromDollar($subtotal_usdollar);
+                        $total = SugarCurrency::convertWithRate($total_usdollar, '1.0', $this->base_rate);
+                        $subtotal = SugarCurrency::convertWithRate($subtotal_usdollar, '1.0', $this->base_rate);
                         $deal_tot_usdollar = $deal_tot_usdollar;
-                        $deal_tot = $currency->convertFromDollar($deal_tot_usdollar);
-                        $new_sub = $currency->convertFromDollar($new_sub_usdollar);
-                        $tax = $currency->convertFromDollar($tax_usdollar);
+                        $deal_tot = SugarCurrency::convertWithRate($deal_tot_usdollar, '1.0', $this->base_rate);
+                        $new_sub = SugarCurrency::convertWithRate($new_sub_usdollar, '1.0', $this->base_rate);
+                        $tax = SugarCurrency::convertWithRate($tax_usdollar, '1.0', $this->base_rate);
                         $updateQuery = "update quotes set tax=" . $tax . ",tax_usdollar=" . $tax_usdollar . ",total=" . $total . ",total_usdollar=" . $total_usdollar . ",deal_tot=" . $deal_tot . ",deal_tot_usdollar=" . $deal_tot_usdollar . ",new_sub=" . $new_sub . ",new_sub_usdollar=" . $new_sub_usdollar . ",subtotal=" . $subtotal .
                             ",subtotal_usdollar=" . $subtotal_usdollar . " where id='" . $this->quote_id . "'";
                         $result = $this->db->query($updateQuery);
