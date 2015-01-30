@@ -15,7 +15,7 @@
  */
 ({
     events: {
-        'click .checkall': 'checkAll',
+        'click .checkall > input[name="check"]': 'checkAll',
         'click input[name="check"]': 'check'
     },
 

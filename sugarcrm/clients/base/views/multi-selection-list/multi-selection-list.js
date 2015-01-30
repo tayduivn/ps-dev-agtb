@@ -42,7 +42,7 @@
     independentMassCollection: true,
 
     initialize: function(options) {
-        this.plugins = _.extend(this.plugins, ['MassCollection']);
+        this.plugins = _.union(this.plugins, ['MassCollection']);
         this._super('initialize', [options]);
 
         /**

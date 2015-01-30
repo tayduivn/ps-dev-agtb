@@ -25,6 +25,7 @@
                     this.context.on('mass_collection:add:all', this.addAllModels, this);
                     this.context.on('mass_collection:remove', this.removeModel, this);
                     this.context.on('mass_collection:remove:all', this.removeAllModels, this);
+                    this.context.on('mass_collection:clear', this.clearMassCollection, this);
 
                 }, this);
 
@@ -132,6 +133,20 @@
                 } else {
                     massCollection.remove(this.collection.models);
                 }
+            },
+
+            /**
+             * Clears the mass collection.
+             *
+             * @param {Collection} massCollection The mass collection.
+             */
+            clearMassCollection: function(massCollection) {
+                var massCollection = massCollection || this.context.get('mass_collection');
+                if (!massCollection) {
+                    return;
+                }
+                massCollection.reset();
+                massCollection.trigger('not:all:checked');
             },
 
             /**
