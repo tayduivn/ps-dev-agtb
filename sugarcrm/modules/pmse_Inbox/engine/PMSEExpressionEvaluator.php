@@ -14,7 +14,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 /**
  * Description of PMSEExpressionEvaluator
- * 
+ *
  */
 class PMSEExpressionEvaluator
 {
@@ -25,7 +25,7 @@ class PMSEExpressionEvaluator
     public $arrayGroups;
 
     /**
-     * The types of operators that supports the evaluation according to the 
+     * The types of operators that supports the evaluation according to the
      * following order ot operations
      * 'unary', 'exponent', 'multiplication/division', 'addition/substraction', 'relations', 'logic'
      * @var array
@@ -58,7 +58,7 @@ class PMSEExpressionEvaluator
                 if (in_array($token->expValue, $groupOperator)
                         && $token->expType!=='VARIABLE'
                         && $token->expType!=='CONSTANT') {
-                    
+
                     if ($groupKey != 'unary') {
                         $firstOperand = array_pop($accArray);
                     } else {
@@ -79,7 +79,7 @@ class PMSEExpressionEvaluator
         }
         return $expression;
     }
-    
+
     public function getDefaultToken()
     {
         $token = new stdClass();
@@ -89,7 +89,7 @@ class PMSEExpressionEvaluator
         $token->expLabel = '';
         return $token;
     }
-    
+
     public function processOperation($groupKey, $firstToken, $token, $secondToken)
     {
         $resultToken = new stdClass();
@@ -110,10 +110,10 @@ class PMSEExpressionEvaluator
         $this->processTokenAttributes($resultToken);
         return $resultToken;
     }
-    
+
     public function checkDateEvaluation($key, $firstToken, $operator, $secondToken)
     {
-        if (strtolower($firstToken->expSubtype)=='date' && strtolower($secondToken->expSubtype)=='timespan') {
+        if ((strtolower($firstToken->expSubtype)=='date' || strtolower($firstToken->expSubtype)=='datetime') && strtolower($secondToken->expSubtype)=='timespan') {
             switch ($operator->expValue) {
                 case '+':
                     $key = 'dateAdd';
@@ -125,7 +125,7 @@ class PMSEExpressionEvaluator
         }
         return $key;
     }
-    
+
     public function processExpression($expression = array())
     {
         $resultGroup = array();
@@ -142,12 +142,12 @@ class PMSEExpressionEvaluator
                     $resultGroup[] = $token;
                     break;
             }
-            
+
         }
         return $this->evaluateExpression($resultGroup);
     }
-       
-       
+
+
     /**
      * Check to see if there groups and get their positions
      * @param array $array Array in which groups will verify if there
@@ -214,7 +214,7 @@ class PMSEExpressionEvaluator
 //                while ((count($array) - 1) >= $j) {
 //                    $ele = isset($array[$j]) ? $array[$j] : '';
 //                    if ("$ele" == $sig && "$ele" != 'NOT') {
-//                        $array[$j - 1] = $this->routeFunctionOperator($funOpe, 
+//                        $array[$j - 1] = $this->routeFunctionOperator($funOpe,
 //                        $array[$j - 1], $array[$j], $array[$j + 1]);
 //                        unset($array[$j + 1]);
 //                        unset($array[$j]);
@@ -285,7 +285,7 @@ class PMSEExpressionEvaluator
         }
         return $result;
     }
-    
+
     public function processTokenAttributes($token)
     {
         switch (true) {
@@ -318,7 +318,7 @@ class PMSEExpressionEvaluator
     {
         return pow($value1, $value2);
     }
-    
+
     public function executeUnaryOp($operator, $value)
     {
         $result = 0;
@@ -346,7 +346,7 @@ class PMSEExpressionEvaluator
         }
         return $result;
     }
-    
+
     public function executeAddSubstractOp($value1, $operator, $value2)
     {
         $result = 0;
@@ -377,7 +377,7 @@ class PMSEExpressionEvaluator
         $result = $matches[1]." ".$dateUnit;
         return $result;
     }
-    
+
     public function processDateUnit($unit)
     {
         switch ($unit) {
@@ -401,8 +401,8 @@ class PMSEExpressionEvaluator
             break;
         }
     }
-    
-    
+
+
     /**
      * Method that evaluates the arithmetic part
      * @param int $value1 value
@@ -439,7 +439,7 @@ class PMSEExpressionEvaluator
     /**
      * Method that evaluates the relational part
      * @param string $value1 value
-     * @param string $relational This value can be null or 
+     * @param string $relational This value can be null or
      * must not contain the "==", "=", ">", "> =", "<>", "! =", "<", "<="
      * @param string $value2 value
      * @return int
