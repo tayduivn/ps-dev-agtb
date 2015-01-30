@@ -99,7 +99,7 @@ class PMSEStartEvent extends PMSEEvent
         $processBean = BeanFactory::getBean('pmse_BpmnProcess', $pro_id); //new BpmnProcess();
 
         if (!$processBean->fetched_row) {
-            $this->logger->error("[$cas_id][1] process name not found using Process Id: $pro_id");
+            $this->logger->error("[$cas_id][1] process name not found using Process Number: $pro_id");
             //$this->bpmLog('ERROR', "[$cas_id][1] process name not found using Process Id: $pro_id");
             $pro_title = 'unknown';
         } else {

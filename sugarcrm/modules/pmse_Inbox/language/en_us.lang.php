@@ -19,7 +19,7 @@ $mod_strings = array (
     'LBL_MODULE_NAME_SINGULAR' => 'Processes',
     'LNK_LIST' => 'View Processes',
 
-    'LBL_CAS_ID' => 'Process Id',
+    'LBL_CAS_ID' => 'Process Number',
     'LBL_PMSE_HISTORY_LOG_NOTFOUND_USER' => "Unknown (according UserId:'%s')",
     'LBL_PMSE_HISTORY_LOG_TASK_HAS_BEEN' => "task has been ",
     'LBL_PMSE_HISTORY_LOG_TASK_WAS' => "task was ",
@@ -102,7 +102,7 @@ $mod_strings = array (
     'LBL_PMSE_ACTIVITY_STREAM_ROUTE'=>'&0 on <strong>%s</strong> Routed ',
     'LBL_PMSE_ACTIVITY_STREAM_CLAIM'=>"&0 on <strong>%s</strong> Claimed ",
     'LBL_PMSE_ACTIVITY_STREAM_REASSIGN'=>"&0 on <strong>%s</strong> assigned to user &1 ",
-    'LBL_PMSE_CANCEL_MESSAGE' => "Are you sure you want to cancel Process ID #{}?",
+    'LBL_PMSE_CANCEL_MESSAGE' => "Are you sure you want to cancel Process Number #{}?",
     'LBL_ASSIGNED_USER'=>"User Assigned",
     'LBL_PMSE_SETTING_NUMBER_CYCLES' => "Error Number of Cycles",
     'LBL_PMSE_SHOW_PROCESS' => 'Show Process',
