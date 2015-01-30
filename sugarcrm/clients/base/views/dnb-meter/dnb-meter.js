@@ -22,9 +22,9 @@
         'productCode': {
             'json_path': 'DNBProductID',
             'productMapping': {
-                'DCP_PREM': 'LBL_DNB_METER_PREM_ACCT',
-                'DCP_STD': 'LBL_DNB_METER_STD_ACCT',
-                'DCP_BAS': 'LBL_DNB_METER_BAS_ACCT',
+                'DCP_PREM': 'LBL_DNB_METER_ACCT',
+                'DCP_STD': 'LBL_DNB_METER_ACCT',
+                'DCP_BAS': 'LBL_DNB_METER_ACCT',
                 'LNK_FF': 'LBL_DNB_METER_FF',
                 'CNTCT_PLUS': 'LBL_DNB_METER_PREM_CNTCT',
                 'CNTCT': 'LBL_DNB_METER_STD_CNTCT'
