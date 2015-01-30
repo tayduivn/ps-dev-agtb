@@ -9,16 +9,15 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+/**
+ * This plugin handles the collection (called the mass collection)
+ * of selected items in listViews.
+ * It has to be attached to any view that has `actionmenu` fields.
+ *
+ */
 (function(app) {
     app.events.on('app:init', function() {
         app.plugins.register('MassCollection', ['view'], {
-
-            /**
-             * This plugin handles the collection (called the mass collection)
-             * of selected items in listViews.
-             * It has to be attached to any view that has `actionmenu` fields.
-             *
-             */
             onAttach: function() {
                 this.on('init', function() {
                     this.createMassCollection();
@@ -32,13 +31,18 @@
                 this.on('render', function() {
                     var massCollection = this.context.get('mass_collection');
                     if (this.collection.length !== 0) {
-                        if (this.isAllChecked(massCollection)) {
+                        if (this._isAllChecked(massCollection)) {
                             massCollection.trigger('all:checked');
                         }
                     }
                 }, this);
             },
 
+            /**
+             * Creates the mass collection and set it in the context.
+             *
+             * @return {Collection} massCollection The mass collection.
+             */
             createMassCollection: function() {
                 var massCollection = this.context.get('mass_collection');
                 if (!massCollection) {
@@ -51,12 +55,9 @@
                     });
                     massCollection = new MassCollection();
                     this.context.set('mass_collection', massCollection);
-                    massCollection.on('add remove reset', function() {
-                        console.log(massCollection.length);
-                    });
 
                     // Resets the mass collection on collection reset for non
-                    // standalone mass collection.
+                    // independent mass collection.
                     if (!this.independentMassCollection) {
                         this.collection.on('reset', function() {
                             massCollection.reset();
@@ -78,7 +79,7 @@
                         return;
                     }
                     massCollection.add(model);
-                    if (this.isAllChecked(massCollection)) {
+                    if (this._isAllChecked(massCollection)) {
                         massCollection.trigger('all:checked');
                     }
                 }
@@ -86,7 +87,6 @@
 
             /**
              * Adds all models of the view collection to the mass collection.
-             *
              */
             addAllModels: function() {
                 var massCollection = this.context.get('mass_collection');
@@ -112,12 +112,15 @@
                         return;
                     }
                     massCollection.remove(model);
+                    if (!this._isAllChecked(massCollection)) {
+                        massCollection.trigger('not:all:checked');
+                    }
                 }
             },
 
             /**
-             * Removes all models of the view collection to the mass collection.
-             *
+             * Removes all models of the view collection from the mass
+             * collection.
              */
             removeAllModels: function() {
                 var massCollection = this.context.get('mass_collection');
@@ -131,7 +134,14 @@
                 }
             },
 
-            isAllChecked: function(massCollection) {
+            /**
+             * Checks if all models of the view collection are in the mass
+             * collection.
+             *
+             * @return {boolean} allChecked `true` if all models of the view
+             * collection are in the mass collection.
+             */
+            _isAllChecked: function(massCollection) {
                 var allChecked = _.every(this.collection.models, function(model) {
                     return _.contains(_.pluck(massCollection.models, 'id'), model.id);
                 }, this);
@@ -140,14 +150,14 @@
             },
 
             /**
-             * Destroy tooltips on dispose.
+             * Unbind events on dispose.
              */
             onDetach: function() {
                 $(window).off('resize.' + this.cid);
-                this.off('mass_collection:add');
-                this.off('mass_collection:add:all');
-                this.off('mass_collection:remove');
-                this.off('mass_collection:remove:all');
+                this.context.off('mass_collection:add');
+                this.context.off('mass_collection:add:all');
+                this.context.off('mass_collection:remove');
+                this.context.off('mass_collection:remove:all');
             }
         });
     });

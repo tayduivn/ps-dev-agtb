@@ -69,10 +69,17 @@
      * @private
      */
     _preselectModel: function() {
+        if (!this.model.id) {
+            return;
+        }
 
         this.preselectedModelIds = this.context.get('preselectedModelIds');
         if (!_.isEmpty(this.preselectedModelIds)) {
-            this._isModelPreselected = _.contains(this.preselectedModelIds, this.model.id);
+            if (!_.isArray(this.preselectedModelIds)) {
+                this.preselectedModelIds = [this.preselectedModelIds];
+            }
+            if (this.preselectedModelIds)
+                this._isModelPreselected = _.contains(this.preselectedModelIds, this.model.id);
             if (this._isModelPreselected) {
                 this.toggleSelect(true);
                 var index = this.preselectedModelIds.indexOf(this.model.id);
@@ -90,6 +97,13 @@
         this.toggleSelect(isChecked);
     },
 
+    /**
+     * Sends an event to the context to add or remove the model from the mass
+     * collection.
+     *
+     * @param {boolean} checked `true` if the checkbox is checked, `false`
+     * otherwise.
+     */
     toggleSelect: function(checked) {
         if (!!checked) {
             this.context.trigger('mass_collection:add', this.model);
@@ -99,7 +113,8 @@
     },
 
     /**
-     * Select or unselect all records.
+     * Sends an event to the context to add or remove all models from the mass
+     * collection.
      *
      * @param {Event} event The `click` event.
      */
@@ -116,7 +131,7 @@
     /**
      * @override
      *
-     * Listen to events on the collection, and update the checkboxes
+     * Listens to events on the collection, and update the checkboxes
      * consequently.
      */
     bindDataChange: function() {
@@ -166,9 +181,16 @@
                     }
                 }, this);
 
-                // Getting the event from MassCollection plugin.
+                // Checks the checkbox if checkboxes of each row are all
+                // checked.
                 massCollection.on('all:checked', function() {
                     this.$(this.fieldTag).attr('checked', true);
+                }, this);
+
+                // Unchecks the checkbox if checkboxes of each row are NOT all
+                // checked.
+                massCollection.on('not:all:checked', function() {
+                    this.$(this.fieldTag).attr('checked', false);
                 }, this);
             }
 
@@ -179,7 +201,6 @@
                 this.toggleSelectAll();
             }, this);
             massCollection.on('remove reset', function(model) {
-                this.$(this.fieldTag).attr('checked', false);
                 if (massCollection.length === 0) {
                     this.$(this.actionDropDownTag).addClass('disabled');
                 } else if (!this.view.independentMassCollection && massCollection.length === this.collection.length) {

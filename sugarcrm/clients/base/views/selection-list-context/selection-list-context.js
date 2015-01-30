@@ -24,24 +24,42 @@
         'click [data-unselect-pill]': 'closePill'
     },
 
+    /**
+     * {@inheritDoc}
+     */
     initialize: function(options) {
         this.pills = [];
         app.view.View.prototype.initialize.call(this, options);
      },
 
+    /**
+     * Adds a pill in the template.
+     *
+     * @param {Model} model The model corresponding to the pill to add.
+     */
     addPill: function(model) {
         var name = !!model.name || model.get('name');
         this.pills.push({id: model.id, name: name});
         this.render();
     },
 
+    /**
+     * Removes a pill from the template.
+     *
+     * @param {Model} model The model corresponding to the pill to remove.
+     */
     removePill: function(model) {
         this.pills = _.filter(this.pills, function(pill) {return pill.id !== model.id});
         this._render();
     },
 
+    /**
+     * Click handler for the `close` button on a pill.
+     *
+     * @param {Event} event The click event.
+     */
     closePill: function(event) {
-        var modelId = this.$(event.target).closest('.select2-search-choice').data('id');
+        var modelId = this.$(event.target).closest('.select2-search-choice').data('id').toString();
         this.removePill({id: modelId});
         var massCollection = this.context.get('mass_collection');
         if (!massCollection) {
@@ -62,16 +80,19 @@
         }
         this.stopListening(massCollection);
 
-//        this.pills = _.map(massCollection.models, function(model) {
-//            return {id: model.id, name: model.get('name')};
-//        });
-            this.listenTo(massCollection, 'add', this.addPill);
-            this.listenTo(massCollection, 'remove', this.removePill);
-//            massCollection.on('remove', this.removePill, this);
+        this.listenTo(massCollection, 'add', this.addPill);
+        this.listenTo(massCollection, 'remove', this.removePill);
     },
 
-    bindDataChange: function() {
+    /**
+     * @inheritDoc
+     */
+    unbind: function() {
+        var massCollection = this.context.get('mass_collection');
+        if (!massCollection) {
+            return;
+        }
+        this.stopListening(massCollection);
+        this._super('unbind');
     }
-
-
 })
