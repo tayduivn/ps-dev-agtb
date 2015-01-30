@@ -50,15 +50,15 @@ class TreeApiTest extends Sugar_PHPUnit_Framework_TestCase
      * @var array
      */
     public static $testData = array(
-        array('lft' => '2', 'rgt' => '9', 'level' => '1'),
-        array('lft' => '3', 'rgt' => '4', 'level' => '2'),
-        array('lft' => '5', 'rgt' => '6', 'level' => '2'),
-        array('lft' => '7', 'rgt' => '8', 'level' => '2'),
-        array('lft' => '10', 'rgt' => '19', 'level' => '1'),
-        array('lft' => '11', 'rgt' => '14', 'level' => '2'),
-        array('lft' => '12', 'rgt' => '13', 'level' => '3'),
-        array('lft' => '15', 'rgt' => '16', 'level' => '2'),
-        array('lft' => '17', 'rgt' => '18', 'level' => '2'),
+        array('lft' => '2', 'rgt' => '9', 'lvl' => '1'),
+        array('lft' => '3', 'rgt' => '4', 'lvl' => '2'),
+        array('lft' => '5', 'rgt' => '6', 'lvl' => '2'),
+        array('lft' => '7', 'rgt' => '8', 'lvl' => '2'),
+        array('lft' => '10', 'rgt' => '19', 'lvl' => '1'),
+        array('lft' => '11', 'rgt' => '14', 'lvl' => '2'),
+        array('lft' => '12', 'rgt' => '13', 'lvl' => '3'),
+        array('lft' => '15', 'rgt' => '16', 'lvl' => '2'),
+        array('lft' => '17', 'rgt' => '18', 'lvl' => '2'),
     );
 
     public static function setUpBeforeClass()
@@ -97,7 +97,7 @@ class TreeApiTest extends Sugar_PHPUnit_Framework_TestCase
             $bean->name = 'SugarCategory' . mt_rand();
             $bean->lft = $node['lft'];
             $bean->rgt = $node['rgt'];
-            $bean->level = $node['level'];
+            $bean->lvl = $node['lvl'];
             $bean->root = $root->id;
             $bean->save();
             $GLOBALS['db']->commit();
@@ -141,7 +141,7 @@ class TreeApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertNotEmpty($result);
         $this->assertInternalType('array', $result);
         $this->assertTrue(array_key_exists('id', $result));
-        $this->assertTrue(array_key_exists('level', $result));
+        $this->assertTrue(array_key_exists('lvl', $result));
 
         $tree = $this->treeApi->tree($this->serviceMock, array(
             'module' => self::$root->module_dir,
@@ -166,7 +166,7 @@ class TreeApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertNotEmpty($result);
         $this->assertInternalType('array', $result);
         $this->assertTrue(array_key_exists('id', $result));
-        $this->assertTrue(array_key_exists('level', $result));
+        $this->assertTrue(array_key_exists('lvl', $result));
 
         $tree = $this->treeApi->tree($this->serviceMock, array(
             'module' => self::$root->module_dir,
@@ -196,7 +196,7 @@ class TreeApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertNotEmpty($result);
         $this->assertInternalType('array', $result);
         $this->assertTrue(array_key_exists('id', $result));
-        $this->assertTrue(array_key_exists('level', $result));
+        $this->assertTrue(array_key_exists('lvl', $result));
 
         $tree = $this->treeApi->tree($this->serviceMock, array(
             'module' => self::$root->module_dir,
@@ -239,7 +239,7 @@ class TreeApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertNotEmpty($result);
         $this->assertInternalType('array', $result);
         $this->assertTrue(array_key_exists('id', $result));
-        $this->assertTrue(array_key_exists('level', $result));
+        $this->assertTrue(array_key_exists('lvl', $result));
 
         $tree = $this->treeApi->tree($this->serviceMock, array(
             'module' => self::$root->module_dir,
