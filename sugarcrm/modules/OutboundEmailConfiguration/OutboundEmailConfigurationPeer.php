@@ -549,6 +549,12 @@ class OutboundEmailConfigurationPeer
 
         $outboundEmailConfiguration->setMode($mode);
 
+        // hostname for SMTP HELO
+        $hostname = !empty($GLOBALS['sugar_config']['helo_hostname'])
+            ? $GLOBALS['sugar_config']['helo_hostname']
+            : $GLOBALS['sugar_config']['host_name'];
+        $outboundEmailConfiguration->setHostname($hostname);
+
         if (!empty($configurations["config_id"])) {
             $outboundEmailConfiguration->setConfigId($configurations["config_id"]);
         }
