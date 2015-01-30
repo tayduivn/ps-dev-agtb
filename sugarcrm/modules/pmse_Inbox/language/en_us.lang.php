@@ -84,7 +84,7 @@ $mod_strings = array (
     'LBL_STATUS_CANCELLED' => 'Processes Cancelled',
     'LBL_STATUS_ERROR' => 'Processes Error',
 
-    'LBL_PMSE_TITLE_PROCESSESS_LIST'  => 'Processes List',
+    'LBL_PMSE_TITLE_PROCESSESS_LIST'  => 'Process Management',
     'LBL_PMSE_TITLE_UNATTENDED_CASES' => 'Unattended Processes',
     'LBL_PMSE_TITLE_REASSIGN' => 'User can change Record Owner',
     'LBL_PMSE_TITLE_AD_HOC' => 'Reassign',
