@@ -156,13 +156,15 @@
                     // match beginning, decimal of 0 to 3 places, percent sign, end
                     var percent = field.width.toString().match(/^(\d{0,3})\%$/);
                     // ignore if defined as percent
-                    if (!percent && !_.isEmpty(field.width)) {
+                    if (!percent && !_.isEmpty(field.width+'')) {
                         var width = parseInt(field.width, 10);
                         if (!_.isNaN(width) && _.isNumber(width)) {
-                            var styles = 'width:' + width + 'px;max-width:' + width + 'px;min-width:' + width + 'px';
+                            var styles = 'max-width:' + width + 'px;min-width:' + width + 'px';
                             fieldFromMeta.styles = styles;
+                            fieldFromMeta.expectedWidth = width;
                         } else {
                             fieldFromMeta.widthClass = 'cell-' + field.width;
+                            fieldFromMeta.expectedWidth = field.width;
                         }
                     }
                 }
