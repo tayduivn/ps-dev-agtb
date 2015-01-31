@@ -165,36 +165,22 @@
 
         this.previewId = previewId;
     },
-    bindUpdates: function(sourceModel) {
-        if (this.sourceModel) {
-            this.stopListening(this.sourceModel);
-        }
-        this.sourceModel = sourceModel;
-        // If we've just sync'd, use sync'd model and re-render preview
-        this.listenTo(this.sourceModel, 'sync', function(model) {
-            if (!this.model) {
-                return;
-            }
-            this.model = model;
-            this.renderPreview(this.model);
-        }, this);
-        this.listenTo(this.sourceModel, 'change', function() {
-            if (!this.model) {
-                return;
-            }
-            this.model.set(this.sourceModel.attributes);
-        }, this);
-        // Close preview when model destroy
-        this.listenTo(this.sourceModel, 'destroy', function(model) {
-            if (model && this.model && (this.model.get("id") == model.get("id"))) {
-                // Remove the decoration of the highlighted row
-                app.events.trigger("list:preview:decorate", false);
-                // Close the preview panel
-                app.events.trigger('preview:close');
-                return;
-            }
+    /**
+     * Use the given model to render preview.
+     * @param {Bean} model Model to render preview
+     */
+    switchModel: function(model) {
+        this.stopListening(this.model);
+        this._disposeFields();
+        this.model = model;
 
-        }, this);
+        // Close preview when model destroyed by deleting the record
+        this.listenTo(this.model, 'destroy', function() {
+            // Remove the decoration of the highlighted row
+            app.events.trigger('list:preview:decorate', false);
+            // Close the preview panel
+            app.events.trigger('preview:close');
+        });
     },
     /**
      * Renders the preview dialog with the data from the current model and collection
@@ -207,15 +193,7 @@
         }
 
         if (model) {
-            this.bindUpdates(model);
-
-            // FIXME why can't we reuse the model that we have on the collection. We should fix this in SP-1483.
-            this.model = app.data.createBean(model.module, model.toJSON());
-
-            this.listenTo(this.model, 'change', function() {
-                this.sourceModel.set(this.model.attributes);
-            }, this);
-
+            this.switchModel(model);
             this.render();
 
             // TODO: Remove when pagination on activity streams is fixed.
@@ -264,8 +242,7 @@
      * @param module Optional
      */
     switchPreview: function(data, index, id, module) {
-        var self = this,
-            currID = id || this.model.get("id"),
+        var currID = id || this.model.get('id'),
             currIndex = index || _.indexOf(this.collection.models, this.collection.get(currID));
 
         if( this.switching || this.collection.models.length < 2) {
@@ -282,23 +259,9 @@
             // We can increment/decrement
             data.direction === "left" ? currIndex -= 1 : currIndex += 1;
 
-            //  If module not specified we need select module from model in collection by current index.
-            var currModule = module || this.collection.models[currIndex].module;
-            this.model = app.data.createBean(currModule);
-            this.bindUpdates(this.collection.models[currIndex]);
-            this.model.set("id", this.collection.models[currIndex].get("id"));
-            this.model.fetch({
-                //Show alerts for this request
-                showAlerts: true,
-                success: function(model) {
-                    model.module = currModule;
-                    self.model = null;
-                    //Reset the preview
-                    app.events.trigger("preview:render", model, null, false);
-                    self.switching = false;
-                },
-                view: 'record'
-            });
+            //Reset the preview
+            app.events.trigger('preview:render', this.collection.models[currIndex], null, true);
+            this.switching = false;
         }
     },
 
