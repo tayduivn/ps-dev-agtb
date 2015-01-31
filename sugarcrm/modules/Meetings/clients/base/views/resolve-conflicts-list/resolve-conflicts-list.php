@@ -66,7 +66,6 @@ $viewdefs['Meetings']['base']['view']['resolve-conflicts-list'] = array(
                 ),
                 array(
                     'name' => 'date_entered',
-                    'width' => '10%',
                     'label' => 'LBL_DATE_ENTERED',
                     'default' => false,
                     'enabled' => true,

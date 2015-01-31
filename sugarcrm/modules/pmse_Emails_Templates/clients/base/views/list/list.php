@@ -35,14 +35,12 @@ array (
                 'default' => true,
                 'enabled' => true,
                 'link' => true,
-                'width' => '10%',
               ),
               1 => 
               array (
                 'name' => 'base_module',
                 'label' => 'LBL_BASE_MODULE',
                 'enabled' => true,
-                'width' => '10%',
                 'default' => true,
               ),
               2 => 
@@ -51,7 +49,6 @@ array (
                 'label' => 'LBL_DATE_ENTERED',
                 'enabled' => true,
                 'readonly' => true,
-                'width' => '10%',
                 'default' => true,
               ),
               3 => 
@@ -61,7 +58,6 @@ array (
                 'default' => false,
                 'name' => 'date_modified',
                 'readonly' => true,
-                'width' => '10%',
               ),
             ),
           ),

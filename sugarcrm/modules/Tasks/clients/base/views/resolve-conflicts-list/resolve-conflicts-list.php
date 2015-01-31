@@ -16,7 +16,6 @@ $viewdefs['Tasks']['base']['view']['resolve-conflicts-list'] = array(
             'fields' => array(
                 array(
                     'name' => 'name',
-                    'width' => 40,
                     'link' => true,
                     'label' => 'LBL_LIST_SUBJECT',
                     'enabled' => true,
@@ -24,7 +23,6 @@ $viewdefs['Tasks']['base']['view']['resolve-conflicts-list'] = array(
                 ),
                 array(
                     'name' => 'contact_name',
-                    'width' => '20',
                     'label' => 'LBL_LIST_CONTACT',
                     'link' => true,
                     'id' => 'CONTACT_ID',
@@ -36,7 +34,6 @@ $viewdefs['Tasks']['base']['view']['resolve-conflicts-list'] = array(
                 ),
                 array(
                     'name' => 'parent_name',
-                    'width' => '20',
                     'label' => 'LBL_LIST_RELATED_TO',
                     'dynamic_module' => 'PARENT_TYPE',
                     'id' => 'PARENT_ID',
@@ -49,7 +46,6 @@ $viewdefs['Tasks']['base']['view']['resolve-conflicts-list'] = array(
                 ),
                 array(
                     'name' => 'date_due',
-                    'width' => '15',
                     'label' => 'LBL_LIST_DUE_DATE',
                     'link' => false,
                     'enabled' => true,
@@ -57,14 +53,12 @@ $viewdefs['Tasks']['base']['view']['resolve-conflicts-list'] = array(
                 ),
                 array(
                     'name' => 'team_name',
-                    'width' => '2',
                     'label' => 'LBL_LIST_TEAM',
                     'enabled' => true,
                     'default' => false,
                 ),
                 array(
                     'name' => 'assigned_user_name',
-                    'width' => '2',
                     'label' => 'LBL_LIST_ASSIGNED_TO_NAME',
                     'id' => 'ASSIGNED_USER_ID',
                     'enabled' => true,
@@ -72,7 +66,6 @@ $viewdefs['Tasks']['base']['view']['resolve-conflicts-list'] = array(
                 ),
                 array(
                     'name' => 'date_start',
-                    'width' => '5',
                     'label' => 'LBL_LIST_START_DATE',
                     'link' => false,
                     'enabled' => true,
@@ -80,7 +73,6 @@ $viewdefs['Tasks']['base']['view']['resolve-conflicts-list'] = array(
                 ),
                 array(
                     'name' => 'status',
-                    'width' => '10',
                     'label' => 'LBL_LIST_STATUS',
                     'link' => false,
                     'enabled' => true,
@@ -88,7 +80,6 @@ $viewdefs['Tasks']['base']['view']['resolve-conflicts-list'] = array(
                 ),
                 array(
                     'name' => 'date_entered',
-                    'width' => '10',
                     'label' => 'LBL_DATE_ENTERED',
                     'enabled' => true,
                     'default' => false,
