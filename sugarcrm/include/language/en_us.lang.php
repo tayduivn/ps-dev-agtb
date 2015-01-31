@@ -2690,6 +2690,7 @@ $app_strings = array (
     'LBL_MISSING_CUSTOM_DELIMITER' => 'Must specify a custom delimiter.',
     'LBL_LAST_VIEWED' => 'Recently Viewed',
     'LBL_SELECTED_RECORDS' => 'Selected: ',
+    'LBL_MAX_PILLS_DISPLAYED' => 'Only {{maxPillsDisplayed}} records are visualized.',
     'LBL_SHOW_LESS' => 'Show less',
     'LBL_SHOW_MORE' => 'Show more',
     'LBL_SHOW_MORE_MODULE' => 'More {{{module}}}...',

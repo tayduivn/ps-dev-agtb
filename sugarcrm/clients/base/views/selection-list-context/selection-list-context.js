@@ -26,6 +26,7 @@
     },
 
     plugins: ['EllipsisInline'],
+    maxPillsDisplayed: 50,
 
     /**
      * {@inheritDoc}
@@ -43,7 +44,7 @@
     addPill: function(model) {
         var name = !!model.name || model.get('name');
         this.pills.push({id: model.id, name: name});
-        this.render();
+        this._render();
     },
 
     /**
@@ -102,6 +103,16 @@
      * @private
      */
     _render: function() {
+        if (this.pills.length > this.maxPillsDisplayed) {
+            this.displayedPills = this.pills.slice(0, this.maxPillsDisplayed);
+            this.tooManySelectedRecords = true;
+            this.msgMaxPillsDisplayed = app.lang.get('LBL_MAX_PILLS_DISPLAYED',
+                this.module, {maxPillsDisplayed: this.maxPillsDisplayed});
+        } else {
+            this.tooManySelectedRecords = false;
+            this.displayedPills = this.pills;
+        }
+
         this._super('_render');
         var massCollection = this.context.get('mass_collection');
         if (!massCollection) {

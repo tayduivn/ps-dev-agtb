@@ -21,6 +21,7 @@
             onAttach: function() {
                 this.on('init', function() {
                     this.createMassCollection();
+                    this._preselectModels();
                     this.context.on('mass_collection:add', this.addModel, this);
                     this.context.on('mass_collection:add:all', this.addAllModels, this);
                     this.context.on('mass_collection:remove', this.removeModel, this);
@@ -66,6 +67,32 @@
                     }
                     return massCollection;
                 }
+            },
+
+            /**
+             * Adds preselected model to the mass collection.
+             *
+             * @private
+             */
+            _preselectModels: function() {
+
+                this.preselectedModelIds = this.context.get('preselectedModelIds');
+                if (!_.isArray(this.preselectedModelIds)) {
+                    this.preselectedModelIds = [this.preselectedModelIds];
+                }
+
+                var preselectedCollection = app.data.createBeanCollection(this.module);
+                preselectedCollection.fetch({
+                    fields: ['name'],
+                    params: {
+                        filter: [
+                            {'id': {'$in': this.preselectedModelIds}}
+                        ]
+                    },
+                    success: _.bind(function(collection) {
+                        collection.each(_.bind(this.addModel, this));
+                    }, this)
+                });
             },
 
             /**

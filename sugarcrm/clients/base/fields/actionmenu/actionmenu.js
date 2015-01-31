@@ -59,33 +59,6 @@
                 }
             }, this);
         }
-
-        this._preselectModel();
-    },
-
-    /**
-     * Checks the checkbox if the model is preselected.
-     *
-     * @private
-     */
-    _preselectModel: function() {
-        if (!this.model.id) {
-            return;
-        }
-
-        this.preselectedModelIds = this.context.get('preselectedModelIds');
-        if (!_.isEmpty(this.preselectedModelIds)) {
-            if (!_.isArray(this.preselectedModelIds)) {
-                this.preselectedModelIds = [this.preselectedModelIds];
-            }
-            if (this.preselectedModelIds)
-                this._isModelPreselected = _.contains(this.preselectedModelIds, this.model.id);
-            if (this._isModelPreselected) {
-                this.toggleSelect(true);
-                var index = this.preselectedModelIds.indexOf(this.model.id);
-                this.preselectedModelIds.splice(index, 1);
-            }
-        }
     },
 
     /**
@@ -184,7 +157,9 @@
                 // Checks the checkbox if checkboxes of each row are all
                 // checked.
                 massCollection.on('all:checked', function() {
-                    this.$(this.fieldTag).attr('checked', true);
+                    if (this.collection.length !== 0) {
+                        this.$(this.fieldTag).attr('checked', true);
+                    }
                 }, this);
 
                 // Unchecks the checkbox if checkboxes of each row are NOT all
