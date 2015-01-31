@@ -286,6 +286,17 @@ html.rtl {
     }
 
     .headerpane {
+
+        h1 > .record-cell[data-type="label"] {
+            padding-left: 0;
+            padding-right: 20px;
+
+            &+ [data-type="collection-count"] {
+                padding-right: 5px;
+                padding-left: 18px;
+            }
+        }
+
         h1 > .btn-toolbar {
             padding: 15px 0 0 8px;
         }
@@ -293,8 +304,11 @@ html.rtl {
             padding: 3px 13px 0 0;
         }
 
+        span[data-type="name"]:not(.edit), span[data-type="fullname"]:not(.edit) {
+            padding-left: 0;
+        }
         span[data-type="favorite"] {
-            padding: 19px 0 0 16px;
+            padding: 19px 20px 0 16px;
         }
         span[data-type="follow"],
         span[data-type="badge"] {
