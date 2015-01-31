@@ -24,7 +24,6 @@ $viewdefs['Contacts']['base']['view']['dupecheck-list'] = array(
                     ),
                     'link' => true,
                     'css_class' => 'full-name',
-                    'width' => 49,
                     'label' => 'LBL_LIST_NAME',
                     'enabled' => true,
                     'default' => true,
@@ -51,7 +50,6 @@ $viewdefs['Contacts']['base']['view']['dupecheck-list'] = array(
                 ),
                 array(
                     'name' => 'assigned_user_name',
-                    'width' => '10%',
                     'label' => 'LBL_LIST_ASSIGNED_USER',
                     'id' => 'ASSIGNED_USER_ID',
                     'enabled' => true,

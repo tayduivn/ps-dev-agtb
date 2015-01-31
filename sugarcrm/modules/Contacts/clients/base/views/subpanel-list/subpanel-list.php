@@ -27,7 +27,6 @@ $viewdefs['Contacts']['base']['view']['subpanel-list'] = array(
                     ),
                     'link' => true,
                     'css_class' => 'full-name',
-                    'width' =>  49,
                     'label' => 'LBL_LIST_NAME',
                     'enabled' => true,
                     'default' => true,
