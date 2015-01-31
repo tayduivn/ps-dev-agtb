@@ -219,7 +219,7 @@ class PMSEChangeField extends PMSEScriptTask
                 }
                 $bean->skipPartialUpdate = true;
                 $bean->new_with_id = false;
-                $res = $bean->save(true);
+                $res = $bean->save();
                 $scriptTaskExecuted = true;
                 $params = array();
                 $params['cas_id'] = $flowData['cas_id'];
