@@ -176,42 +176,10 @@ $mod_strings = array(
 // BEGIN ENT/ULT
 
     // Opps Config - View By Opportunities
-    'LBL_HELP_CONFIG_OPPS' => 'Sales and forecasting will be tracked as {{plural_module_name}}, and {{revenuelineitems_module}} will not be available.
-
-Changing the setting from "{{plural_module_name}} and {{revenuelineitems_module}}" to "{{plural_module_name}}" will result in existing data being changed, added, and removed as follows:
-
-- In addition to the information already summarized in each {{module_name}}, the following information from the {{revenuelineitems_module}} will be will be saved in the {{module_name}}:
-    - If all {{revenuelineitems_module}} are in the "Closed Lost" Sales Stage, the {{module_name}} will be marked as "Closed Lost"
-    - If all {{revenuelineitems_module}} are closed and at least one was won, the {{module_name}} will be marked as "Closed Won"
-    - If any of the {{revenuelineitems_module}} are still open, the {{module_name}} will be marked with the least-advanced sales stage.
-- A {{notes_singular_module}} record will be created and attached to the {{module_name}} to preserve the individual {{revenuelineitems_module}} values for the following fields:
-    - Likely Amount, Best Amount, Worst Amount
-    - Expected Close Date
-    - Next Step
-    - Sales Stage
-    - Probability
-    - Please Note: Custom fields in the {{revenuelineitems_module}} will not be preserved.
-- All {{revenuelineitems_module}} will be removed from the system.
-- All {{forecasts_singular_module}} data will be removed and forecasting starts anew.
-
-',
+    'LBL_HELP_CONFIG_OPPS' => 'After you initiate this change, the Revenue Line Item summarization notes will be built in the background. When the notes are complete and available, a notification will be sent to the email address on your user profile. If your instance is set up for {{forecasts_module}}, Sugar will also send you a notification when your {{module_name}} records are synced to the {{forecasts_module}} module and available for new {{forecasts_module}}. Please note that your instance must be configured to send email via Admin > Email Settings in order for the notifications to be sent.',
 
     // Opps Config - View By Opportunities And RLIs
-    'LBL_HELP_CONFIG_RLIS' => 'Sales will be tracked as {{plural_module_name}} with {{revenuelineitems_module}}. An {{module_name}} consists of one or more {{revenuelineitems_module}}. This affords sales to be detailed in separate line items, and summarized in an {{module_name}}. {{forecasts_module}} will be created using {{revenuelineitems_module}}.
-
-Changing the setting from "{{plural_module_name}}" to "{{plural_module_name}} and {{revenuelineitems_module}}" will result in existing data being changed, added, and removed as follows:
-
-- Your existing {{plural_module_name}} will each have one {{revenuelineitems_singular_module}} created and attached to the {{module_name}}.
-- The following fields and values will be duplicated from the existing {{module_name}} records to the new {{revenuelineitems_singular_module}} records:
-    - Likely Amount, Best Amount, Worst Amount
-    - Expected Close Date
-    - Next Step
-- The following fields and values will be moved from the existing {{module_name}} records to the new {{revenuelineitems_singular_module}} records:
-    - Sales Stage
-    - Probability
-- All {{forecasts_singular_module}} data will be removed and forecasting starts anew.
-
- ',
+    'LBL_HELP_CONFIG_RLIS' => 'After you initiate this change, Revenue Line Item records will be created for each existing {{module_name}} in the background. When the Revenue Line Items are complete and available, a notification will be sent to the email address on your user profile. Please note that your instance must be configured to send email via Admin > Email Settings in order for the notification to be sent.',
     // List View Help Text
     'LBL_HELP_RECORDS' => 'The {{plural_module_name}} module allows you to track individual sales and the line items belonging to those sales from start to finish. Each {{module_name}} record represents a header for a group of {{revenuelineitems_module}} as well as relating to other important records such as {{quotes_module}}, {{contacts_module}}, etc. Each {{revenuelineitems_singular_module}} is the prospective sale of a particular product and includes relevant sale data. Each {{revenuelineitems_singular_module}} will typically progress through several Sales Stages until it is marked either "Closed Won" or "Closed Lost". The {{module_name}} record reflects the amount and expected close date of its {{revenuelineitems_module}}. {{plural_module_name}} and {{revenuelineitems_module}} can be leveraged even further by using Sugar\'s {{forecasts_singular_module}}ing module to understand and predict sales trends as well as focus work to achieve sales quotas.',
 
