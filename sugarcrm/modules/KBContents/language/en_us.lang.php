@@ -46,6 +46,7 @@ $mod_strings = array (
     'LBL_RATING' => 'Rating',
     'LBL_VIEWED_COUNT' => 'View Count',
     'LBL_DOWNLOAD_ALL' => 'Download All',
+    'LBL_DOWNLOAD_ONE' => 'Download',
     'LBL_ATTACHMENTS' => 'Attachments',
     'LBL_ADD_ATTACHMENT' => 'Browse',
     'LBL_CATEGORIES' => 'Knowledge Base Categories',
