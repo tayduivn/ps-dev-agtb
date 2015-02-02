@@ -15,8 +15,8 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
     array(
         'route'=>'#bwc/index.php?module=ReportMaker&action=EditView&return_module=ReportMaker&return_action=DetailView',
         'label' =>'LNK_NEW_REPORTMAKER',
-        'acl_action'=>'',
-        'acl_module'=>'',
+        'acl_action' => 'admin',
+        'acl_module' => 'ReportMaker',
         'icon' => 'fa-plus',
     ),
     array(
