@@ -155,6 +155,41 @@ class SupportPortalVisibility extends SugarVisibility
                     }
                 }
                 break;
+            case 'pmse_Inbox':
+            case 'pmse_Business_Rules':
+            case 'pmse_Emails_Templates':
+            case 'pmse_Project':
+            case 'pmse_Project/pmse_BpmAccessManagement':
+            case 'pmse_Project/pmse_BpmActivityDefinition':
+            case 'pmse_Project/pmse_BpmActivityStep':
+            case 'pmse_Project/pmse_BpmActivityUser':
+            case 'pmse_Project/pmse_BpmCaseData':
+            case 'pmse_Project/pmse_BpmDynaForm':
+            case 'pmse_Project/pmse_BpmEventDefinition':
+            case 'pmse_Project/pmse_BpmFlow':
+            case 'pmse_Project/pmse_BpmFormAction':
+            case 'pmse_Project/pmse_BpmGatewayDefinition':
+            case 'pmse_Project/pmse_BpmGroup':
+            case 'pmse_Project/pmse_BpmGroupUser':
+            case 'pmse_Project/pmse_BpmnActivity':
+            case 'pmse_Project/pmse_BpmnArtifact':
+            case 'pmse_Project/pmse_BpmnBound':
+            case 'pmse_Project/pmse_BpmnData':
+            case 'pmse_Project/pmse_BpmnDiagram':
+            case 'pmse_Project/pmse_BpmnDocumentation':
+            case 'pmse_Project/pmse_BpmnEvent':
+            case 'pmse_Project/pmse_BpmnExtension':
+            case 'pmse_Project/pmse_BpmnFlow':
+            case 'pmse_Project/pmse_BpmnGateway':
+            case 'pmse_Project/pmse_BpmnLane':
+            case 'pmse_Project/pmse_BpmnLaneset':
+            case 'pmse_Project/pmse_BpmnNotes':
+            case 'pmse_Project/pmse_BpmnParticipant':
+            case 'pmse_Project/pmse_BpmnProcess':
+            case 'pmse_Project/pmse_BpmProcessDefinition':
+            case 'pmse_Project/pmse_BpmRelatedDependency':
+            case 'pmse_Project/pmse_BpmThread':
+                // PA tables need to be visible in Portal without restrictions because they are acting globally
             case 'pmse_Project/pmse_BpmConfig':
                 // This is absolutely needed otherwise PMSESettings cannot
                 // retrieve config and will end up in a infinite loop.
