@@ -31,7 +31,7 @@ $viewdefs[$module_name]['mobile']['view']['detail'] = array(
                 array (
                     'name' => 'phone_work',
                 ),
-                'email1',
+                'email',
                 'assigned_user_name',
                 //BEGIN SUGARCRM flav=pro ONLY
 		    	'team_name',

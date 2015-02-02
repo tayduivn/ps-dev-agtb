@@ -125,7 +125,7 @@ $viewdefs['Contacts']['EditView'] = array(
         array (
 
           array (
-            'name' => 'email1',
+            'name' => 'email',
             'studio' => 'false',
             'label' => 'LBL_EMAIL_ADDRESS',
           ),

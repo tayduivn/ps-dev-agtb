@@ -23,11 +23,13 @@ $vardefs = array(
 				'id',
             ),
 			'vname' =>'LBL_ANY_EMAIL',
-			'studio' => array('visible'=>false, 'searchview'=>true),
+			'studio' => array('visible'=>true, 'searchview'=>true),
             'duplicate_on_record_copy' => 'always',
             'len' => 100,
-            'sort_on' => 'email1',
             'importable' => false,
+            'link' => 'email_addresses_primary',
+            'rname' => 'email_address',
+            'module' => 'EmailAddresses',
         ),
         'email1' => array(
 			'name'		=> 'email1',
@@ -43,13 +45,7 @@ $vardefs = array(
 			'group'=>'email1',
             'merge_filter' => 'enabled',
             'module' => 'EmailAddresses',
-		    'studio' => array(
-                'listview' => false,
-                'editview' => true, 
-                'editField' => true, 
-                'searchview' => false, 
-                'popupsearch' => false
-            ),
+		    'studio' => false,
             'full_text_search' => array(
                 'enabled' => true,
                 'boost' => 3, 
