@@ -245,8 +245,15 @@
      * @return {string}
      */
     getTimeFormat: function() {
-        var timeFormat = app.date.getUserTimeFormat();
-        return (timeFormat.charAt(0) + timeFormat.charAt(4));
+        var timeFormat = app.date.getUserTimeFormat(),
+            hourFormat = timeFormat.charAt(0),
+            meridiem = '';
+
+        if (hourFormat === 'h') {
+            meridiem = timeFormat.substr(-1, 1);
+        }
+
+        return (hourFormat + meridiem);
     },
 
     /**
