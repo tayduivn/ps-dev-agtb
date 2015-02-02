@@ -434,12 +434,28 @@ $dictionary['Lead'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_MEETINGS',
         ),
+        'meetings_parent' => array(
+            'name' => 'meetings_parent',
+            'type' => 'link',
+            'relationship' => 'lead_meetings_parent',
+            'source' => 'non-db',
+            'vname' => 'LBL_CALLS',
+            'reportable' => false,
+        ),
         'calls' => array(
             'name' => 'calls',
             'type' => 'link',
             'relationship' => 'calls_leads',
             'source' => 'non-db',
             'vname' => 'LBL_CALLS',
+        ),
+        'calls_parent' => array(
+            'name' => 'calls_parent',
+            'type' => 'link',
+            'relationship' => 'lead_calls_parent',
+            'source' => 'non-db',
+            'vname' => 'LBL_CALLS',
+            'reportable' => false,
         ),
         'oldmeetings' => array(
             'name' => 'oldmeetings',
@@ -617,6 +633,17 @@ $dictionary['Lead'] = array(
             'relationship_role_column' => 'parent_type',
             'relationship_role_column_value' => 'Leads'
         ),
+        'lead_meetings_parent' => array(
+            'lhs_module' => 'Leads',
+            'lhs_table' => 'leads',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Meetings',
+            'rhs_table' => 'meetings',
+            'rhs_key' => 'parent_id',
+            'relationship_type' => 'one-to-many',
+            'relationship_role_column' => 'parent_type',
+            'relationship_role_column_value' => 'Leads',
+        ),
         'lead_calls' => array(
             'lhs_module' => 'Leads',
             'lhs_table' => 'leads',
@@ -627,6 +654,17 @@ $dictionary['Lead'] = array(
             'relationship_type' => 'one-to-many',
             'relationship_role_column' => 'parent_type',
             'relationship_role_column_value' => 'Leads'
+        ),
+        'lead_calls_parent' => array(
+            'lhs_module' => 'Leads',
+            'lhs_table' => 'leads',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Calls',
+            'rhs_table' => 'calls',
+            'rhs_key' => 'parent_id',
+            'relationship_type' => 'one-to-many',
+            'relationship_role_column' => 'parent_type',
+            'relationship_role_column_value' => 'Leads',
         ),
         'lead_emails' => array(
             'lhs_module' => 'Leads',
