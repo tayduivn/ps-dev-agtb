@@ -148,10 +148,16 @@ class PMSEEvaluator
 
         $parsedArray = $this->criteriaEvaluator->evaluateCriteriaTokenList($parsedArray);
         $resultArray = $this->expressionEvaluator->processExpression($parsedArray);
-        
-        $result = array_pop($resultArray);
-        if (!$returnToken) {
-            $result = $result->expValue;
+
+        if (empty($resultArray)) {
+            // Empty $resultArray means that criteria is not defined or empty,
+            // so return true is correct.
+            $result = true;
+        } else {
+            $result = array_pop($resultArray);
+            if (!$returnToken) {
+                $result = $result->expValue;
+            }
         }
 
         return $result;
