@@ -514,7 +514,8 @@ class HealthCheckScanner
     public function scan()
     {
         set_error_handler(array($this, 'scriptErrorHandler'), E_ALL & ~E_STRICT & ~E_DEPRECATED);
-        $this->log(vsprintf("HealthCheck v.%s (build %s) starting scanning $this->instance", $this->getVersion()));
+        $toVersionInfo = $this->getVersion();
+        $this->log(vsprintf("HealthCheck v.%s (build %s) starting scanning $this->instance", $toVersionInfo));
         if (!$this->init()) {
             return $this->logMeta;
         }
@@ -526,6 +527,13 @@ class HealthCheckScanner
         if (version_compare($sugar_version, '7.0', '>')) {
             $this->updateStatus("alreadyUpgraded");
             $this->log("Instance already upgraded to 7");
+            return $this->logMeta;
+        }
+
+        if (version_compare($sugar_version, 7, '<') && version_compare($toVersionInfo[0], "7.7", '<') &&
+            !($this->db instanceof MysqlManager)
+        ) {
+            $this->updateStatus("unsupportedDatabase", $sugar_version);
             return $this->logMeta;
         }
 
