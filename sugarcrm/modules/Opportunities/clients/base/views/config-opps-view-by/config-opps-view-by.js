@@ -23,6 +23,11 @@
     currentOppsViewBySetting: undefined,
 
     /**
+     * Are we currently waiting for the field items?
+     */
+    waitingForFieldItems: false,
+
+    /**
      * @inheritdoc
      */
     initialize: function(options) {
@@ -79,13 +84,40 @@
      * @override
      */
     _updateTitleValues: function() {
-        var title = app.lang.getAppListStrings('opps_config_view_by_options_dom') || '';
+        var items = this._getFieldOptions();
+        if (items) {
+            // defensive coding in case user removed this options dom
+            var title = '';
+            if (items && _.isObject(items)) {
+                title = items[this.model.get('opps_view_by')];
+            }
 
-        // defensive coding in case user removed this options dom
-        if (title && _.isObject(title)) {
-            title = title[this.model.get('opps_view_by')]
+            this.titleSelectedValues = title;
         }
+    },
 
-        this.titleSelectedValues = title;
+    /**
+     * Get the options from the field, vs form the dom, since it's
+     * customized to show the correct module names by the end point
+     *
+     * @return {boolean|Object}
+     * @private
+     */
+    _getFieldOptions: function() {
+        var f = this.getField('opps_view_by');
+
+        if (_.isUndefined(f.items)) {
+            if (this.waitingForFieldItems === false) {
+                this.waitingForFieldItems = true;
+                f.once('render', function() {
+                    this.waitingForFieldItems = false;
+                    this.updateTitle();
+                }, this);
+            }
+
+            return false;
+        } else {
+            return f.items;
+        }
     }
 })
