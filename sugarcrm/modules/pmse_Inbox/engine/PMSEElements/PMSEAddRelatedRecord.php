@@ -109,7 +109,7 @@ class PMSEAddRelatedRecord extends PMSEScriptTask
                             $this->logger->info("Data generated $newValue for $key");
                         }
                     }
-                    $relatedModule->parent_type = $bean->module ;
+                    $relatedModule->parent_type = $bean->object_names;
                     $relatedModule->parent_id = $bean->id;
                     $relatedModule->save();
                     if (!$relatedModule->in_save) {
