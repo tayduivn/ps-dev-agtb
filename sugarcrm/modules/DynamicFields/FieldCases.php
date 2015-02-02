@@ -38,6 +38,7 @@ require_once('modules/DynamicFields/templates/Fields/TemplateId.php');
 require_once('modules/DynamicFields/templates/Fields/TemplateImage.php');
 require_once('modules/DynamicFields/templates/Fields/TemplateDecimal.php');
 require_once('modules/DynamicFields/templates/Fields/TemplateLink.php');
+require_once('modules/DynamicFields/templates/Fields/TemplatePricingFormula.php');
 function get_widget($type)
 {
 
@@ -101,6 +102,8 @@ function get_widget($type)
                         $local_temp = new TemplateImage(); break;
             case 'link':
                         $local_temp = new TemplateLink(); break;
+            case 'pricing-formula':
+                        $local_temp = new TemplatePricingFormula(); break;
 			default:
 						if(SugarAutoLoader::requireWithCustom('modules/DynamicFields/templates/Fields/Template'. ucfirst($type) . '.php')) {
 							$class  = SugarAutoLoader::customClass('Template' . ucfirst($type));
