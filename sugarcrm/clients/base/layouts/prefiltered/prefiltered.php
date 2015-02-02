@@ -61,7 +61,7 @@ $viewdefs['base']['layout']['prefiltered'] = array(
                                                 "targetEl" => '.filter-options'
                                             ),
                                             array(
-                                                'view' => 'recordlist',
+                                                'view' => 'prefilteredlist',
                                             ),
                                             array(
                                                 'view' => 'list-bottom',
