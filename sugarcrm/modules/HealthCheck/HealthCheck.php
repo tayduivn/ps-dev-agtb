@@ -48,9 +48,8 @@ class HealthCheck extends Basic
             $GLOBALS['log']->fatal("Error executing Health Check: " . $e->getMessage());
             $this->error = $e->getMessage();
         }
-        if (!in_array($this->bucket, array('H'))) {
-            $this->save();
-        }
+
+        $this->save();
         return $this;
     }
 

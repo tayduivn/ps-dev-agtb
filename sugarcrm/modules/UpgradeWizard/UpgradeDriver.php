@@ -882,10 +882,7 @@ abstract class UpgradeDriver
         // validate manifest
         list($this->from_version, $this->from_flavor) = $this->loadVersion();
         $db = DBManagerFactory::getInstance();
-        $manifest = $this->getManifest();
-        if (version_compare($this->from_version, 7, '<') && version_compare($manifest['version'], "7.7", '<') &&
-            !$db instanceof MysqlManager
-        ) {
+        if (version_compare($this->from_version, 7, '<') && !$db instanceof MysqlManager) {
             return $this->error("Can't upgrade version 6.x on non-Mysql database", true);
         }
         $res = $this->validateManifest();
