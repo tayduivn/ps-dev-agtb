@@ -103,7 +103,7 @@
   var chartsView = new ChartsView({ el: $('#chart1 svg'), collection: charts });
   chartsView.render();
 
-  d3.json("data/pareto_data_salesrep_probability.json", function(data) {
+  d3.json("data/pareto_data_manager.json", function(data) {
     charts.reset(data);
   });
 
