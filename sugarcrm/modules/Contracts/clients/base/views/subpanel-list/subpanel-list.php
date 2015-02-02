@@ -58,7 +58,6 @@ $viewdefs['Contracts']['base']['view']['subpanel-list'] = array(
                     ),
                     'currency_field' => 'currency_id',
                     'base_rate_field' => 'base_rate',
-                    'width' => 10,
                     'enabled' => true,
                     'default' => true,
                 ),

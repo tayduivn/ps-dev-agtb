@@ -35,14 +35,12 @@ array (
                 'default' => true,
                 'enabled' => true,
                 'link' => true,
-                'width' => '10%',
               ),
               1 => 
               array (
                 'name' => 'rst_type',
                 'label' => 'LBL_RST_TYPE',
                 'enabled' => true,
-                'width' => '10%',
                 'default' => true,
               ),
               2 => 
@@ -50,7 +48,6 @@ array (
                 'name' => 'rst_module',
                 'label' => 'LBL_RST_MODULE',
                 'enabled' => true,
-                'width' => '10%',
                 'default' => true,
               ),
               3 => 
@@ -60,7 +57,6 @@ array (
                 'default' => true,
                 'name' => 'date_modified',
                 'readonly' => true,
-                'width' => '10%',
               ),
               4 => 
               array (
@@ -68,7 +64,6 @@ array (
                 'label' => 'LBL_DATE_ENTERED',
                 'enabled' => true,
                 'readonly' => true,
-                'width' => '10%',
                 'default' => false,
               ),
             ),

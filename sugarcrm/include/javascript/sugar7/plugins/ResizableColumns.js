@@ -9,6 +9,26 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 (function(app) {
+
+    // Sums the values of an array.
+    var _sum = function(array) {
+        return _.reduce(array, function(memo, num) {
+            return memo + num;
+        }, 0);
+    };
+
+    // Maps width classes defined into Styleguide to their actual size in
+    // pixels.
+    var _mapClassesToPixels = {
+        'xxsmall': 21,
+        'xsmall': 42,
+        'small': 68,
+        'medium': 110,
+        'large': 178,
+        'xlarge': 288,
+        'xxlarge': 466
+    };
+
     app.events.on('app:init', function() {
 
         /**
@@ -46,6 +66,13 @@
                     return;
                 }
 
+                var proto = Object.getPrototypeOf(this);
+                var getMinTableWidth;
+                if (_.isFunction(proto.getMinTableWidth)) {
+                    getMinTableWidth = _.bind(proto.getMinTableWidth, this);
+                }
+
+                var self = this;
                 var $table = this.$('table');
                 $table.resizableColumns({
                     usePixels: true,
@@ -61,13 +88,44 @@
                     /**
                      * Sets the column widths to the table headers.
                      *
-                     * @param {Event} event The `column:resize:restore` event.
-                     * @param {Array} columns The column widths.
+                     * The column widths are adjusted in case the sum of the
+                     * columns is gonna be less than the table width.
+                     *
+                     * @param {Event} [event] The `column:resize:restore` event.
+                     * @param {Array} [columns] The column widths.
                      */
                     restore: function(event, columns) {
-                        var i = 0;
+                        if (self.disposed) {
+                            return;
+                        }
                         var resizableColumns = $table.data('resizableColumns');
 
+                        if (columns) {
+                            resizableColumns._expectedWidths = columns;
+                        } else {
+                            columns = resizableColumns._expectedWidths;
+                        }
+
+                        var expectedWidth = _sum(columns);
+
+                        // The available width is
+                        // the non-scrollable parent width
+                        // less the non resizable columns.
+                        var availableWidth = resizableColumns.options.getMinTableWidth() - resizableColumns._leftoverWidth;
+
+                        // Each column has a border-right: 1px, so we need to
+                        // remove a pixel per column.
+                        availableWidth = availableWidth - columns.length;
+
+                        var rate = expectedWidth / availableWidth;
+
+                        if (rate < 1) {
+                            columns = _.map(columns, function(col) {
+                                return parseInt(col / rate, 10);
+                            });
+                        }
+
+                        var i = 0;
                         resizableColumns.$tableHeaders.each(function(index, el) {
                             var $el, width;
                             $el = $(el);
@@ -77,14 +135,38 @@
                             }
                         });
                         resizableColumns.syncHandleWidths();
-                    }
+                    },
+
+                    /**
+                     * Returns the table's parent width.
+                     *
+                     * Feel free to override it if you need to return another
+                     * minimum width.
+                     * You can also set it to `null` if you don't want a minimum
+                     * width.
+                     *
+                     * This is useful in case the table's parent element is
+                     * not scrollable, so that we can make sure the table fills
+                     * the full width of the non scrollable area.
+                     *
+                     * @return {number} The width in pixels.
+                     */
+                    getMinTableWidth: !_.isUndefined(getMinTableWidth) ?
+                        getMinTableWidth :
+                        function() {
+                            return $table.parent().width();
+                        }
                 });
 
                 // Restore the cache widths.
                 var cachedSizes = this.getCacheWidths();
-                if (!_.isEmpty(cachedSizes)) {
-                    $table.trigger('column:resize:restore', [cachedSizes]);
+                if (_.isEmpty(cachedSizes)) {
+                    cachedSizes = _.map(this._fields.visible, function(field) {
+                        var width = field.expectedWidth || 'medium';
+                        return _mapClassesToPixels[width] || width;
+                    });
                 }
+                $table.trigger('column:resize:restore', [cachedSizes]);
                 $(window).resize();
 
                 // Triggers an event to tell the view to save changes.

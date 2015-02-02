@@ -246,5 +246,14 @@
         this.type = 'fieldset';
         this._super('_loadTemplate');
         this.type = originalType;
+    },
+
+    /**
+     * Remove validation on the model.
+     * @inheritdoc
+     */
+    _dispose: function() {
+        this.model.removeValidationTask('duration_date_range_' + this.cid);
+        this._super('_dispose');
     }
 })

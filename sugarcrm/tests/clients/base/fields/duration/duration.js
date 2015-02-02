@@ -223,4 +223,17 @@ describe('Base.Field.Duration', function() {
             expect(field.isDateRangeValid()).toBe(false);
         });
     });
+
+    describe('Validate model', function() {
+        it('should add custom validation to the model', function() {
+            expect(field.model._validationTasks['duration_date_range_' + field.cid]).toBeDefined();
+        });
+
+        it('should remove custom validation once it has been disposed', function() {
+            var model = field.model;
+            field.dispose();
+
+            expect(model._validationTasks['duration_date_range_' + field.cid]).not.toBeDefined();
+        });
+    });
 });

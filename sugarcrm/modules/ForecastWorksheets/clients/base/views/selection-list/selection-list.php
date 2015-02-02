@@ -91,7 +91,6 @@ $viewdefs['ForecastWorksheets']['base']['view']['selection-list'] = array(
                     'enabled' => true,
                     'click_to_edit' => true,
                     'align' => 'right',
-                    'width' => '7%'
                 ),
                 array(
                     'name' => 'likely_case',

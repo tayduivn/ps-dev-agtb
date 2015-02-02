@@ -17,7 +17,6 @@ $viewdefs['Notes']['base']['view']['selection-list'] = array(
             'fields' => array(
                 array(
                     'name' => 'name',
-                    'width' => '40%',
                     'label' => 'LBL_LIST_SUBJECT',
                     'link' => true,
                     'enabled' => true,
@@ -25,7 +24,6 @@ $viewdefs['Notes']['base']['view']['selection-list'] = array(
                 ),
                 array(
                     'name' => 'contact_name',
-                    'width' => '20%',
                     'label' => 'LBL_LIST_CONTACT',
                     'link' => true,
                     'id' => 'CONTACT_ID',
@@ -40,7 +38,6 @@ $viewdefs['Notes']['base']['view']['selection-list'] = array(
                 ),
                 array(
                     'name' => 'parent_name',
-                    'width' => '20%',
                     'label' => 'LBL_LIST_RELATED_TO',
                     'dynamic_module' => 'PARENT_TYPE',
                     'id' => 'PARENT_ID',
@@ -57,7 +54,6 @@ $viewdefs['Notes']['base']['view']['selection-list'] = array(
                 ),
                 array(
                     'name' => 'filename',
-                    'width' => '20%',
                     'label' => 'LBL_LIST_FILENAME',
                     'enabled' => true,
                     'default' => true,
@@ -77,7 +73,6 @@ $viewdefs['Notes']['base']['view']['selection-list'] = array(
                     'name' => 'created_by_name',
                     'type' => 'relate',
                     'label' => 'LBL_CREATED_BY',
-                    'width' => '10%',
                     'enabled' => true,
                     'default' => false,
                     'related_fields' => array('created_by'),

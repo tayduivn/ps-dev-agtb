@@ -1096,8 +1096,8 @@ class ExtAPIDnb extends ExternalAPIBase
             //retrieve possible duplicates
             $results = $bean->findDuplicates();
             $duplicateRecordCount = 0;
-            if (isset($results)) {
-                $duplicateRecordCount = count($results->records);
+            if (!empty($results['records'])) {
+                $duplicateRecordCount = count($results['records']);
             }
             if ($duplicateRecordCount === 0) {
                 $bean->save();

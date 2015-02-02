@@ -26,7 +26,6 @@ $viewdefs['Styleguide']['base']['view']['list'] = array(
                         'last_name',
                     ),
                     'link' => true,
-                    'width' =>  49,
                     'label' => 'fullname',
                     'enabled' => true,
                     'default' => true,
@@ -51,7 +50,6 @@ $viewdefs['Styleguide']['base']['view']['list'] = array(
                 ),
                 array (
                     'name' => 'assigned_user_name',
-                    'width' => '10%',
                     'label' => 'relate',
                     'id' => 'ASSIGNED_USER_ID',
                     'default' => true,
