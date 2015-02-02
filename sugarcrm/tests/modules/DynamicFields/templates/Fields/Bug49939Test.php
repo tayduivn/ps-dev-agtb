@@ -28,12 +28,13 @@ class Bug49939Test extends Sugar_PHPUnit_Framework_TestCase {
  */
 public function xssFields() {
    return array(
-       array(htmlentities('<script>alert(50);</script>'), ''),
-       array(htmlentities('This is some help text'), 'This is some help text'),
-       array(htmlentities('???'), '???'),
-       array(htmlentities('Foo Foo<script type="text/javascript">alert(50);</script>Bar Bar'), 'Foo FooBar Bar'),
-       array(htmlentities('I am trying to <b>Bold</b> this!'), 'I am trying to &lt;b&gt;Bold&lt;/b&gt; this!'),
-       array(htmlentities(''), ''),
+        array(htmlspecialchars('<script>alert(50);</script>'), ''),
+        array(htmlspecialchars('This is some help text'), 'This is some help text'),
+        array(htmlspecialchars('???'), '???'),
+        array(htmlspecialchars('Foo Foo<script type="text/javascript">alert(50);</script>Bar Bar'), 'Foo FooBar Bar'),
+        array(htmlspecialchars('I am trying to <b>Bold</b> this!'), 'I am trying to &lt;b&gt;Bold&lt;/b&gt; this!'),
+        array(htmlspecialchars(''), ''),
+        array(htmlspecialchars('ä, ö, ü, å, æ, ø, å'), 'ä, ö, ü, å, æ, ø, å'),
    );
 }
 

@@ -519,7 +519,7 @@ class TemplateField{
                 if($field == 'help' && !empty($this->$vardef))
                 {
                     $help = htmlspecialchars_decode($this->$vardef, ENT_QUOTES);
-                    $this->$vardef = htmlentities(remove_xss($help));
+                    $this->$vardef = htmlspecialchars(remove_xss($help));
                 }
 
 
