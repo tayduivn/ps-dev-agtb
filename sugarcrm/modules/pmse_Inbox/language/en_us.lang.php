@@ -70,7 +70,7 @@ $mod_strings = array (
     'LBL_PMSE_LABEL_ACTIVITY_DELEGATE_DATE' => 'Activity Delegate Data',
     'LBL_PMSE_LABEL_EXPECTED_TIME' => 'Expected Time',
     'LBL_PMSE_LABEL_DUE_DATE' => 'Due Date',
-    'LBL_PMSE_LABEL_IN_TIME' => 'In Time',
+    'LBL_PMSE_LABEL_CURRENT' => 'Current',
     'LBL_PMSE_LABEL_OVERDUE' => 'Overdue',
     'LBL_PMSE_LABEL_PROCESS' => 'Process',
 
