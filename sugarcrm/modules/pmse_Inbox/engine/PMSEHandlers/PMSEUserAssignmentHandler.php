@@ -238,31 +238,6 @@ class PMSEUserAssignmentHandler
         $newFlowRow->save();
         //$caseBean->create($flowRow);
 
-        global $current_user;
-        $params['tags'] = array(
-            array(
-                "id" => $caseData['cas_sugar_object_id'],
-                "name" => $caseData['full_name'],
-                "module" => $caseData['cas_sugar_module']
-            ),
-            array(
-                "id" => $caseData['cas_user_id'],
-                "name" => $caseData['user_name'],
-                "module" => "Users"
-            ),
-            array(
-                "id" => $current_user->id,
-                "name" => $current_user->full_name,
-                "module" => "Users"
-            )
-        );
-        if (empty($caseData['taskName'])){
-            $activityBean = $this->retrieveBean('pmse_BpmnActivity', $caseData['bpmn_id']);
-            $caseData['taskName'] = $activityBean->name;
-        }
-        $params['module_name'] = 'pmse_Inbox';
-        $this->logger->activity(sprintf(translate('LBL_PMSE_ACTIVITY_STREAM_REASSIGN', $params['module_name']),
-                $caseData['taskName']), $params);
 
         return $this->reassignCaseToUser($caseData, $userId);
     }
