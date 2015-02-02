@@ -1348,6 +1348,9 @@ function renderProject (prjCode) {
         newZoomValue = parseInt($(this).val());
         jCore.getActiveCanvas().applyZoom(newZoomValue);
         jCore.getActiveCanvas().bpmnValidation();
+        $('.ui-layout-north').css('overflow', 'hidden');
+    }).mouseenter(function() {
+        $('.ui-layout-north').css('overflow', 'visible');
     });
 
     project.setUid(prjCode);
