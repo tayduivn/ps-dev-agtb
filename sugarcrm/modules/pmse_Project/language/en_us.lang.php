@@ -179,7 +179,7 @@ $mod_strings = array (
     'LBL_PMSE_LABEL_RULE' => 'Rule',
 
     'LBL_PMSE_FORM_TITLE_ASSIGN_USER' => 'Assign User',
-    'LBL_PMSE_FORM_LABEL_UPDATE_RECORD_OWNER' => 'Notify Record Owner',
+    'LBL_PMSE_FORM_LABEL_UPDATE_RECORD_OWNER' => 'Change Record Owner',
 
     'LBL_PMSE_FORM_TITLE_ADD_RELATED_RECORD' => 'Add Related Record',
     'LBL_PMSE_FORM_LABEL_RELATED_MODULE' => 'Related Module',
