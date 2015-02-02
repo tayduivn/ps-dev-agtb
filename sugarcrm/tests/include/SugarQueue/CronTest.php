@@ -136,12 +136,12 @@ class CronTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testJobsCount()
     {
+        $td = TimeDate::getInstance();
         // job 1 - oldest, should be executed
         $job = new SchedulersJob();
         $job->status = SchedulersJob::JOB_STATUS_QUEUED;
         $job->scheduler_id = 'unittest';
-        $job->execute_time = TimeDate::getInstance()->nowDb();
-        $job->date_entered = '2010-01-01 12:00:00';
+        $job->execute_time = $td->nowDb();
         $job->name = "Unit test Job 1";
         $job->target = "function::CronTest::cronJobFunction";
         $job->assigned_user_id = $GLOBALS['current_user']->id;
@@ -151,8 +151,7 @@ class CronTest extends Sugar_PHPUnit_Framework_TestCase
         $job = new SchedulersJob();
         $job->status = SchedulersJob::JOB_STATUS_QUEUED;
         $job->scheduler_id = 'unittest';
-        $job->execute_time = TimeDate::getInstance()->nowDb();
-        $job->date_entered = '2012-01-01 12:00:00';
+        $job->execute_time = $td->asDb($td->getNow()->modify('+1 day'));
         $job->name = "Unit test Job 2";
         $job->target = "function::CronTest::cronJobFunction";
         $job->assigned_user_id = $GLOBALS['current_user']->id;
@@ -177,12 +176,12 @@ class CronTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testJobsTimeCutoff()
     {
+        $td = TimeDate::getInstance();
         // job 1 - oldest, should be executed
         $job = new SchedulersJob();
         $job->status = SchedulersJob::JOB_STATUS_QUEUED;
         $job->scheduler_id = 'unittest';
-        $job->execute_time = TimeDate::getInstance()->nowDb();
-        $job->date_entered = '2010-01-01 12:00:00';
+        $job->execute_time = $td->nowDb();
         $job->name = "Unit test Job 1";
         $job->target = "function::CronTest::cronJobLongFunction";
         $job->assigned_user_id = $GLOBALS['current_user']->id;
@@ -192,8 +191,7 @@ class CronTest extends Sugar_PHPUnit_Framework_TestCase
         $job = new SchedulersJob();
         $job->status = SchedulersJob::JOB_STATUS_QUEUED;
         $job->scheduler_id = 'unittest';
-        $job->execute_time = TimeDate::getInstance()->nowDb();
-        $job->date_entered = '2012-01-01 12:00:00';
+        $job->execute_time = $td->asDb($td->getNow()->modify('+1 day'));
         $job->name = "Unit test Job 2";
         $job->target = "function::CronTest::cronJobLongFunction";
         $job->assigned_user_id = $GLOBALS['current_user']->id;
