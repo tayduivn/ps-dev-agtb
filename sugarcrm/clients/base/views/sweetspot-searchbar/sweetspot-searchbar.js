@@ -9,12 +9,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * @class View.Views.Base.SpotlightSearchbarView
- * @alias SUGAR.App.view.views.BaseSpotlightSearchbarView
+ * @class View.Views.Base.SweetspotSearchbarView
+ * @alias SUGAR.App.view.views.BaseSweetspotSearchbarView
  * @extends View.View
  */
 ({
-    className: 'spotlight-searchbar',
+    className: 'sweetspot-searchbar',
     events: {
         'keyup input': 'throttledSearch',
         'click [data-action=configure]': 'initConfig'
@@ -25,13 +25,13 @@
      */
     initialize: function(options) {
         this._super('initialize', [options]);
-        app.events.on('app:sync:complete spotlight:reset', this.initLibrary, this);
+        app.events.on('app:sync:complete sweetspot:reset', this.initLibrary, this);
         this.lastTerm = '';
     },
 
     initConfig: function(evt) {
         this.layout.toggle();
-        this.layout.trigger('spotlight:config');
+        this.layout.trigger('sweetspot:config');
     },
 
     /**
@@ -59,7 +59,7 @@
          */
         this.temporaryLibrary = {};
 
-        this.addToInternalLibrary(this.getSpotlightActions());
+        this.addToInternalLibrary(this.getSweetspotActions());
 
         // Parse the library to remove duplicate
         this.internalLibrary = _.chain(this.internalLibrary)
@@ -73,10 +73,10 @@
             .value();
     },
 
-    getSpotlightActions: function() {
-        var actionsById = app.metadata.getSpotlightActions();
+    getSweetspotActions: function() {
+        var actionsById = app.metadata.getSweetspotActions();
 
-        var key = app.user.lastState.buildKey('spotlight', 'config');
+        var key = app.user.lastState.buildKey('sweetspot', 'config');
         var data = app.user.lastState.get(key);
 
         _.each(data, function(customSetting) {
@@ -183,12 +183,12 @@
     },
 
     /**
-     * Triggers `spotlight:results` with the results of the search.
+     * Triggers `sweetspot:results` with the results of the search.
      *
      * @param {Array} Hopefully a list of results.
      */
     sendResults: function(results) {
-        this.layout.trigger('spotlight:results', results);
+        this.layout.trigger('sweetspot:results', results);
     },
 
     /**

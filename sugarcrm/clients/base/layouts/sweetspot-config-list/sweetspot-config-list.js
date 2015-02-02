@@ -8,20 +8,24 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+ /**
+  * @class View.Layouts.Base.SweetspotConfigListLayout
+  * @alias SUGAR.App.view.layouts.BaseSweetspotConfigListLayout
+  * @extends View.Layout
+  */
 ({
     events: {
-        'click [data-spotlight=add]': 'addRow'
+        'click [data-sweetspot=add]': 'addRow'
     },
 
     initialize: function(options) {
         this._super('initialize', [options]);
-    
         this.initRows();
     },
 
 
     initRows: function() {
-        var key = app.user.lastState.buildKey('spotlight', 'config');
+        var key = app.user.lastState.buildKey('sweetspot', 'config');
         var data = app.user.lastState.get(key);
         if (!data) {
             return;
@@ -34,11 +38,11 @@
     },
 
     /**
-     * Adds a `spotlight-config-list-row` view to the layout.
+     * Adds a `sweetspot-config-list-row` view to the layout.
      * @param {Event} [evt] The `click` event.
      */
     addRow: function(evt) {
-        var def = _.extend({view: 'spotlight-config-list-row'}, app.metadata.getView(null, 'spotlight-config-list-row'));
+        var def = _.extend({view: 'sweetspot-config-list-row'}, app.metadata.getView(null, 'sweetspot-config-list-row'));
         var rowComponent = this.createComponentFromDef(def, this.context, this.module);
 
         this.addComponent(rowComponent, def);
@@ -50,6 +54,6 @@
      * @override
      */
     _placeComponent: function(component) {
-        this.$('[data-spotlight=actions]').append(component.el);
+        this.$('[data-sweetspot=actions]').append(component.el);
     }
 })

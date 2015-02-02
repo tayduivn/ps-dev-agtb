@@ -11,7 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$viewdefs['base']['view']['spotlight-config-list-row'] = array(
+$viewdefs['base']['view']['sweetspot-config-list-row'] = array(
     'action' => 'edit',
     'fields' => array(
         array(

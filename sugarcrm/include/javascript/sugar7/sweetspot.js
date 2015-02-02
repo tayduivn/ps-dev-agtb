@@ -16,7 +16,7 @@
          *
          * These action items should have a `callback` string that maps to a
          * system action on
-         * {@link View.Layouts.Base.SpotlightLayout#_systemActions}.
+         * {@link View.Layouts.Base.SweetspotLayout#_systemActions}.
          *
          * @return {Array} Formatted items.
          */
@@ -154,11 +154,11 @@
         };
 
         /**
-         * Gets all the spotlight actions.
+         * Gets all the sweetspot actions.
          *
          * @returns {Object} The list of actions.
          */
-        app.metadata.getSpotlightActions = function() {
+        app.metadata.getSweetspotActions = function() {
             var collection = {};
             var actions = getModuleLinks().concat(getSystemActions());
             _.each(actions, function(action) {

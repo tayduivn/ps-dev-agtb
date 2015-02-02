@@ -9,8 +9,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * @class View.Views.Base.SpotlightHeaderpaneView
- * @alias SUGAR.App.view.views.BaseSpotlightHeaderpaneView
+ * @class View.Views.Base.SweetspotHeaderpaneView
+ * @alias SUGAR.App.view.views.BaseSweetspotHeaderpaneView
  * @extends View.View
  */
 ({
@@ -22,8 +22,7 @@
     },
 
     /**
-     * {@inheritDoc}
-     * Binds the listener for the before `save` event.
+     * @inheritDoc
      */
     initialize: function(options) {
         this._super('initialize', [options]);
@@ -41,6 +40,9 @@
         this.backupModel = this.collection.toJSON()
     },
 
+    /**
+     * @override
+     */
     hasUnsavedChanges: function() {
         var newModel = this.collection.toJSON();
 

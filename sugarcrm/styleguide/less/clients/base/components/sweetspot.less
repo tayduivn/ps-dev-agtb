@@ -1,7 +1,7 @@
-@spotLightWidth: 500px;
-@spotLightHalfWidth: 50px;
-@spotLightHeight: 60px;
-@spotLightGrey: #DBDBDB;
+@sweetspotWidth: 500px;
+@sweetspotHalfWidth: 50px;
+@sweetspotHeight: 60px;
+@sweetspotGrey: #DBDBDB;
 
 .noselect {
   -webkit-touch-callout: none;
@@ -11,12 +11,12 @@
   user-select: none;
 }
 
-#spotlight {
+#sweetspot {
   .noselect();
   display: none;
   position: fixed;
-  width: @spotLightWidth;
-  min-height: @spotLightHeight;
+  width: @sweetspotWidth;
+  min-height: @sweetspotHeight;
   background-color: @grayLighter;
   top: 14%;
   z-index: 100000;
@@ -37,7 +37,7 @@
     position: absolute;
     .calcWidth(~"100% - 75px");
     color: @grayDark;
-    background-color: @spotLightGrey;
+    background-color: @sweetspotGrey;
     font-size: 34px;
     box-shadow: none;
     height: 50px;
@@ -62,10 +62,10 @@
     }
   }
 
-  .spotlight-searchbar {
-    height: @spotLightHeight;
+  .sweetspot-searchbar {
+    height: @sweetspotHeight;
   }
-  .spotlight-results {
+  .sweetspot-results {
     position: relative;
     width: 100%;
     padding: 0;
@@ -86,14 +86,14 @@
         left: 6px;
       }
 
-      .spotlight-text {
+      .sweetspot-text {
         position: absolute;
         left: 50px;
         font-size: 24px;
         top: 19px;
       }
       &.hover {
-        background-color: @spotLightGrey;
+        background-color: @sweetspotGrey;
 
         .fa-mail-forward {
           display: block;
@@ -109,7 +109,7 @@
           display: none;
       }
 
-      .spotlight-icon {
+      .sweetspot-icon {
         position: absolute;
         right: 20px;
         top: 15px;

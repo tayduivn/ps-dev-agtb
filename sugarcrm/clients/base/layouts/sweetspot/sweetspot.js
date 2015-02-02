@@ -9,8 +9,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * @class View.Layouts.Base.SpotlightLayout
- * @alias SUGAR.App.view.layouts.BaseSpotlightLayout
+ * @class View.Layouts.Base.SweetspotLayout
+ * @alias SUGAR.App.view.layouts.BaseSweetspotLayout
  * @extends View.Layout
  */
 ({
@@ -24,8 +24,8 @@
     initialize: function(options) {
         this._super('initialize', [options]);
         this.isOpen = false;
-        app.shortcuts.register(app.shortcuts.GLOBAL + 'Spotlight', 'shift+space', this.toggle, this, true);
-        this.on('spotlight:config', this.openConfigPanel, this);
+        app.shortcuts.register(app.shortcuts.GLOBAL + 'Sweetspot', 'shift+space', this.toggle, this, true);
+        this.on('sweetspot:config', this.openConfigPanel, this);
         app.events.on('app:logout', function() {
             if (this.isOpen) {
                 this.toggle();
@@ -44,7 +44,7 @@
     },
 
     /**
-     * Closes the spotlight when you press `Esc`.
+     * Closes the Sweet Spot when you press `Esc`.
      *
      * @param {Event} evt The `keyup` event.
      */
@@ -55,13 +55,13 @@
     },
 
     /**
-     * Toggles the spotlight.
+     * Toggles the Sweet Spot.
      */
     toggle: function() {
         this.isOpen = !this.isOpen;
         this.$('input').val('');
         this.$el.fadeToggle(50, 'linear', _.bind(this.focusInput, this));
-        this.trigger('spotlight:status', this.isOpen);
+        this.trigger('sweetspot:status', this.isOpen);
     },
 
     /**
@@ -72,17 +72,17 @@
     },
 
     /**
-     * Opens a drawer with the {@link View.Layouts.Base.SpotlightConfigLayout}
-     * to configure the spotlight.
+     * Opens a drawer with the {@link View.Layouts.Base.SweetspotConfigLayout}
+     * to configure the Sweet Spot.
      */
     openConfigPanel: function() {
         var activeDrawerLayout = app.drawer.getActiveDrawerLayout();
-        if (activeDrawerLayout.type === 'spotlight-config') {
+        if (activeDrawerLayout.type === 'sweetspot-config') {
             return;
         }
 
         app.drawer.open({
-            layout: 'spotlight-config',
+            layout: 'sweetspot-config',
             context: {
                 skipFetch: true,
                 forceNew: true
@@ -91,9 +91,9 @@
     },
 
     /**
-     * Saves the spotlight settings when the drawer closes.
+     * Saves the Sweet Spot settings when the drawer closes.
      *
-     * @param {Data.BeanCollection} collection The spotlight configuration
+     * @param {Data.BeanCollection} collection The Sweet Spot configuration
      *   collection.
      */
     saveConfig: function(collection) {
@@ -101,9 +101,9 @@
             return;
         }
         var json = collection.toJSON();
-        var key = app.user.lastState.buildKey('spotlight', 'config');
+        var key = app.user.lastState.buildKey('sweetspot', 'config');
         app.user.lastState.set(key, json);
-        app.events.trigger('spotlight:reset');
+        app.events.trigger('sweetspot:reset');
     },
 
     /**

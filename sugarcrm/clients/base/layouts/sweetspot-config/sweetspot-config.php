@@ -1,5 +1,4 @@
 <?php
-
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -10,15 +9,16 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-
-$viewdefs['base']['layout']['spotlight'] = array(
-    'name' => 'spotlight',
+$viewdefs['base']['layout']['sweetspot-config'] = array(
+    'type' => 'sweetspot-config',
+    'name' => 'sweetspot-config',
+    'css_class' => 'main-pane row-fluid',
     'components' => array(
         array(
-            'view' => 'spotlight-searchbar',
+            'view' => 'sweetspot-headerpane',
         ),
         array(
-            'view' => 'spotlight-results',
+            'layout' => 'sweetspot-config-list',
         ),
     ),
 );

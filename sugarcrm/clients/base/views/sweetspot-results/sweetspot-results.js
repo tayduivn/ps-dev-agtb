@@ -9,30 +9,29 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * @class View.Views.Base.SpotlightResultsView
- * @alias SUGAR.App.view.views.BaseSpotlightResultsView
+ * @class View.Views.Base.SweetspotResultsView
+ * @alias SUGAR.App.view.views.BaseSweetspotResultsView
  * @extends View.View
  */
 ({
-    className: 'spotlight-results',
+    className: 'sweetspot-results',
     tagName: 'ul',
 
     /**
      * @inheritDoc
      *
-     * - Listens to `spotlight:results` on the layout to update the results.
+     * - Listens to `sweetspot:results` on the layout to update the results.
      * - Listens to `keydown` on `window` to highlight an item.
      */
     initialize: function(options) {
         this._super('initialize', [options]);
 
-        this.layout.on('spotlight:results', function(results) {
+        this.layout.on('sweetspot:results', function(results) {
             this.results = results;
             this.render();
         }, this);
 
-        this.layout.on('spotlight:status', this.toggleCallback, this);
-
+        this.layout.on('sweetspot:status', this.toggleCallback, this);
     },
 
     /**

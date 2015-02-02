@@ -8,12 +8,17 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+ /**
+  * @class View.Views.Base.SweetspotConfigListRowView
+  * @alias SUGAR.App.view.views.BaseSweetspotConfigListRowView
+  * @extends View.View
+  */
 ({
     tagName: 'tr',
     className: 'config-list-row',
     plugins: ['Tooltip'],
     events: {
-        'click [data-spotlight=remove]': 'removeRow'
+        'click [data-sweetspot=remove]': 'removeRow'
     },
 
     initialize: function(options) {
@@ -27,7 +32,7 @@
         var field = _.find(this.meta.fields, function(field) {
             return field.name === 'action';
         });
-        var actions = app.metadata.getSpotlightActions();
+        var actions = app.metadata.getSweetspotActions();
         var options = {};
         _.each(actions, function(action, id) {
             options[id] = action.name;

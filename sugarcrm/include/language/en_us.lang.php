@@ -2892,11 +2892,11 @@ $app_strings = array (
     // Strings for Opportunity Metrics dashlet
     'LBL_OPPORTUNITY_METRICS' => 'Opportunity Metrics',
 
-    'LBL_SPOTLIGHT_CONFIG' => 'Spotlight Configuration Panel',
-    'LBL_SPOTLIGHT_ACTION' => 'Spotlight Action',
-    'LBL_SPOTLIGHT_KEY' => 'Keyword',
-    'LBL_SPOTLIGHT_ADD' => 'Add a Spotlight action',
-    'LBL_SPOTLIGHT_REMOVE' => 'Remove action',
+    'LBL_SWEETSPOT_CONFIG' => 'Sweet Spot Configuration Panel',
+    'LBL_SWEETSPOT_ACTION' => 'Sweet Spot Action',
+    'LBL_SWEETSPOT_KEY' => 'Keyword',
+    'LBL_SWEETSPOT_ADD' => 'Add a Sweet Spot action',
+    'LBL_SWEETSPOT_REMOVE' => 'Remove action',
 
     'LBL_RELATED' => 'Related',
     'LBL_RELATED_INFORMATION' => 'Related Information',
@@ -5244,6 +5244,7 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_SHORTCUT_MASS_UPDATE_SAVE' => 'Update records',
     'LBL_SHORTCUT_ALERT_CONFIRM' => 'Confirm',
     'LBL_SHORTCUT_ALERT_CANCEL' => 'Cancel',
+    'LBL_SHORTCUT_SWEETSPOT' => 'Toggle the Sweet Spot bar',
 
     // config drawer
     'LBL_CONFIG_TITLE_MODULE_SETTINGS' => '{{module}} Settings',

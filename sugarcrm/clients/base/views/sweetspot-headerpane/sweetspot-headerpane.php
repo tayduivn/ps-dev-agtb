@@ -9,13 +9,13 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-$viewdefs['base']['view']['spotlight-headerpane'] = array(
+$viewdefs['base']['view']['sweetspot-headerpane'] = array(
     'template' => 'headerpane',
     'fields' => array(
         array(
             'name' => 'title',
             'type' => 'label',
-            'default_value' => 'LBL_SPOTLIGHT_CONFIG',
+            'default_value' => 'LBL_SWEETSPOT_CONFIG',
         ),
     ),
     'buttons' => array(
