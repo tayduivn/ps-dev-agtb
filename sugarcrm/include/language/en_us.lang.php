@@ -5256,7 +5256,7 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     //PMSE Process Definitions Dashlet
     'LBL_PMSE_PROCESS_DEFINITIONS_DASHLET' => 'Process Definitions',
     'LBL_PMSE_PROCESS_DEFINITIONS_DASHLET_DESCRIPTION' => 'Process Definitions dashlet displays the templates that can be used inside of Process Author.',
-    'LNK_PMSE_PROCESS_DEFINITIONS_NEW_RECORD' => 'Create Process Definitions',
+    'LNK_PMSE_PROCESS_DEFINITIONS_NEW_RECORD' => 'Create Process Definition',
     'LNK_PMSE_PROCESS_DEFINITIONS_IMPORT_RECORD' => 'Import Process Definitions',
 
     //PMSE Process Business Rules
