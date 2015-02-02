@@ -1329,7 +1329,7 @@ UpdaterField.prototype.setVariables = function (variables) {
         var optionHTML;
         optionHTML = this.createHTMLElement('option');
         optionHTML.textContent = optionHTML.label = option.text;
-        optionHTML.value = optionHTML.value;
+        optionHTML.value = option.value;
         this._control.appendChild(optionHTML);
         return this;
     };

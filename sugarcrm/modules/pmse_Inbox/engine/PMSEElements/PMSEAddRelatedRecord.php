@@ -78,7 +78,8 @@ class PMSEAddRelatedRecord extends PMSEScriptTask
                             $key = $value->field;
                             $newValue = '';
                             if ($value->type == 'Datetime') {
-                                list($date_t, $newValue) = $this->beanHandler->calculateDueDate($value->value, $bean);
+                                $finishDate = $this->beanHandler->processValueExpression($value->value, $bean);
+                                $newValue = date("Y-m-d H:i:s", strtotime($finishDate));
                             } elseif ($key == 'assigned_user_id') {
                                 switch ($value->value) {
                                     case 'currentuser':
@@ -108,6 +109,8 @@ class PMSEAddRelatedRecord extends PMSEScriptTask
                             $this->logger->info("Data generated $newValue for $key");
                         }
                     }
+                    $relatedModule->parent_type = $bean->module ;
+                    $relatedModule->parent_id = $bean->id;
                     $relatedModule->save();
                     if (!$relatedModule->in_save) {
                         $rel_id = $relatedModule->id;
