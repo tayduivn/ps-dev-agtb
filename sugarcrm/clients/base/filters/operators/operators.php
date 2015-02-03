@@ -27,6 +27,10 @@ $viewdefs['base']['filter']['operators'] = array(
         '$equals' => 'LBL_OPERATOR_MATCHES',
         '$starts' => 'LBL_OPERATOR_STARTS_WITH',
     ),
+    'email' => array(
+        '$equals' => 'LBL_OPERATOR_MATCHES',
+        '$starts' => 'LBL_OPERATOR_STARTS_WITH',
+    ),
     'text' => array(
         '$equals' => 'LBL_OPERATOR_MATCHES',
         '$starts' => 'LBL_OPERATOR_STARTS_WITH',

@@ -95,4 +95,5 @@ class HistoryTest extends PHPUnit_Framework_TestCase
     {
         return dirname($this->_path);
     }
+    
 }
