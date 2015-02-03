@@ -63,7 +63,7 @@
                     url = app.api.buildURL(real_module, action, {}, options.params);
                     break;
                 case "record":
-                    url = app.api.buildURL(real_module, "activities", {id: modelId, link: true}, options.params);
+                    url = app.api.buildURL(real_module, null, {id: modelId, link: 'activities'}, options.params);
                     break;
             }
             return app.api.call("read", url, null, callbacks);
