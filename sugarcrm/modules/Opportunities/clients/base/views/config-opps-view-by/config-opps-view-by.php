@@ -19,7 +19,6 @@ $viewdefs['Opportunities']['base']['view']['config-opps-view-by'] = array(
                     'name' => 'opps_view_by',
                     'type' => 'radioenum',
                     'view' => 'edit',
-                    'options' => 'opps_config_view_by_options_dom',
                     'default' => false,
                     'enabled' => true,
                 ),
