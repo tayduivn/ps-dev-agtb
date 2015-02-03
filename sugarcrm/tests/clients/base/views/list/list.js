@@ -70,7 +70,8 @@ describe("Base.View.List", function () {
                 'after': {
                     'name': 'test',
                     'width': '30px',
-                    'styles': 'width:30px;max-width:30px;min-width:30px'
+                    'styles': 'max-width:30px;min-width:30px',
+                    'expectedWidth': 30
                 }
             },
             {
@@ -78,7 +79,8 @@ describe("Base.View.List", function () {
                 'after': {
                     'name': 'test',
                     'width': '30',
-                    'styles': 'width:30px;max-width:30px;min-width:30px'
+                    'styles': 'max-width:30px;min-width:30px',
+                    'expectedWidth': 30
                 }
             },
             {
@@ -86,7 +88,8 @@ describe("Base.View.List", function () {
                 'after': {
                     'name': 'test',
                     'width': 'small',
-                    'widthClass': 'cell-small'
+                    'widthClass': 'cell-small',
+                    'expectedWidth': 'small'
                 }
             },
             {
@@ -94,7 +97,8 @@ describe("Base.View.List", function () {
                 'after': {
                     'name': 'test',
                     'width': 'xlarge',
-                    'widthClass': 'cell-xlarge'
+                    'widthClass': 'cell-xlarge',
+                    'expectedWidth': 'xlarge'
                 }
             }
         ], function(data) {

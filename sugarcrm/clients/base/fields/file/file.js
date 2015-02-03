@@ -147,7 +147,7 @@
      */
     _dispose: function() {
         // Remove specific validation task from the model.
-        this.model._validationTasks = _.omit(this.model._validationTasks, 'file_upload_' + this.cid);
+        this.model.removeValidationTask('file_upload_' + this.cid);
         this._super('_dispose');
     },
 

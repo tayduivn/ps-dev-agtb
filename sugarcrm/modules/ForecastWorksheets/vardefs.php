@@ -12,7 +12,7 @@
 $dictionary['ForecastWorksheet'] = array(
     'table' => 'forecast_worksheets',
     'studio' => false,
-    'acls' => array('SugarACLForecastWorksheets' => true, 'SugarACLStatic' => true),
+    'acls' => array('SugarACLForecastWorksheets' => true),
     'fields' => array(
         'parent_id' =>
         array(

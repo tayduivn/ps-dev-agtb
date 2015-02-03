@@ -72,7 +72,7 @@ class SmtpMailer extends BaseMailer
             // transfer the attachments to PHPMailer
             $this->transferAttachments($mailer);
         } catch (MailerException $me) {
-            $GLOBALS["log"]->error($me->getLogMessage());
+            $GLOBALS["log"]->fatal($me->getLogMessage());
             $GLOBALS["log"]->info($me->getTraceMessage());
             $GLOBALS["log"]->info(print_r($this->config->toArray(),true));
             throw($me);

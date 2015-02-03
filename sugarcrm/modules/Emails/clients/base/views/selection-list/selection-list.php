@@ -30,7 +30,6 @@ $viewdefs['Emails']['base']['view']['selection-list'] = array(
                 ),
                 array(
                     'name' => 'parent_name',
-                    'width' => '20%',
                     'label' => 'LBL_LIST_RELATED_TO',
                     'dynamic_module' => 'PARENT_TYPE',
                     'id' => 'PARENT_ID',

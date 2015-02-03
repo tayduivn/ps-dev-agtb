@@ -10,6 +10,7 @@ var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments)
 
 (function($, window) {
     var ResizableColumns, pointerX, stripPx, _parseWidth, _setWidth;
+    var uniqueIds = 0;
     stripPx = function(width) {
         if (!width) {
             return 0;
@@ -22,15 +23,14 @@ var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments)
         }
     };
     _parseWidth = function(_usePixels, node) {
-        return parseFloat(node.style.width.replace((_usePixels ? 'px' : '%'), ''));
+        return parseFloat((node.offsetWidth+'').replace((_usePixels ? 'px' : '%'), ''));
     };
     _setWidth = function(_usePixels, node, width) {
         if (_usePixels) {
             width = width.toFixed(2);
             $(node).children().width(width);
-            width = "" + width + "px";
+            width = width + 'px';
             node.style.minWidth = width;
-            node.style.width = width;
             node.style.maxWidth = width;
         } else {
             width = width.toFixed(2);
@@ -74,11 +74,24 @@ var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments)
                 this.restoreColumnWidths();
             }
             this.syncHandleWidths();
-            $(window).on('resize.rc', ((function(_this) {
+
+            this._uniqueId = ++uniqueIds;
+
+            $(window).on('resize.rc' + this._uniqueId, ((function(_this) {
                 return function() {
-                    return _this.syncHandleWidths();
+                    var sync = _this.syncHandleWidths();
+                    var minTableWidth = _this.options.getMinTableWidth && _this.options.getMinTableWidth();
+                    if (minTableWidth) {
+                        _this._minTableWidth = minTableWidth;
+                    }
+                    if (_this.options.restore) {
+                        _this.options.restore();
+                    }
+                    _this._currentTableWidth = _this.$table.width();
+                    return sync;
                 };
             })(this)));
+
             if (this.options.start) {
                 this.$table.bind('column:resize:start.rc', this.options.start);
             }
@@ -105,7 +118,15 @@ var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments)
         };
 
         ResizableColumns.prototype.setHeaders = function() {
+            this._leftoverWidth = this.$table.width();
             this.$tableHeaders = this.$table.find(this.options.selector);
+            var i = this.$tableHeaders.length;
+            var width;
+            while (i) {
+                i--;
+                width = $(this.$tableHeaders[i]).outerWidth();
+                this._leftoverWidth -= width;
+            }
             if (this.options.usePixels) {
                 this.assignPixelWidths();
             } else {
@@ -115,9 +136,9 @@ var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments)
         };
 
         ResizableColumns.prototype.destroy = function() {
+            $(window).off('resize.rc' + this._uniqueId);
             this.$handleContainer.remove();
             this.$table.removeData('resizableColumns');
-            return this.$table.add(window).off('.rc');
         };
 
         ResizableColumns.prototype.assignPercentageWidths = function() {
@@ -131,13 +152,18 @@ var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments)
         };
 
         ResizableColumns.prototype.assignPixelWidths = function() {
-            return this.$tableHeaders.each((function(_this) {
+            var columns = [];
+            var self = this;
+            this.$tableHeaders.each((function(_this) {
                 return function(_, el) {
                     var $el;
                     $el = $(el);
-                    return _this.setWidth($el[0], $el.outerWidth() - stripPx($el.css('paddingLeft') - stripPx($el.css('paddingRight'))));
+                    columns.push($el.outerWidth() - stripPx($el.css('paddingLeft') - stripPx($el.css('paddingRight'))));
                 };
             })(this));
+            return this.$tableHeaders.each(function(i, el) {
+                return self.setWidth(el, columns[i]);
+            });
         };
 
         ResizableColumns.prototype.createHandles = function() {
@@ -222,11 +248,11 @@ var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments)
         };
 
         ResizableColumns.prototype.syncHandleWidthsPx = function() {
-            return this.$handleContainer.css('minWidth', this.totalColumnWidthsPx()).find('.rc-handle').each((function(_this) {
+            return this.$handleContainer.css('minWidth', '100%').find('.rc-handle').each((function(_this) {
                 return function(_, el) {
                     var $el, height, left;
                     $el = $(el);
-                    left = $el.data('th').outerWidth();
+                    left = $el.data('th').innerWidth();
                     left -= stripPx($el.css('paddingLeft'));
                     left -= stripPx($el.css('paddingRight'));
                     left += $el.data('th').offset().left;
@@ -247,9 +273,7 @@ var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments)
                 return function(_, el) {
                     var $el;
                     $el = $(el);
-                    total += parseFloat(stripPx($el[0].style.width || $el.width()));
-                    total += parseFloat(stripPx($el.css('paddingLeft')));
-                    return total += parseFloat(stripPx($el.css('paddingRight')));
+                    return total += parseFloat(stripPx($el.outerWidth()));
                 };
             })(this));
             return total;
@@ -293,7 +317,12 @@ var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments)
             $ownerDocument.on('mousemove.rc touchmove.rc', (function(_this) {
                 return function(e) {
                     var difference;
+                    var localWidths = {
+                        left: newWidths.left,
+                        right: newWidths.right
+                    };
                     difference = pointerX(e) - startPosition;
+                    startPosition = pointerX(e);
                     if (!isLtr) {
                         difference = -difference;
                     }
@@ -301,8 +330,12 @@ var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments)
                         difference = difference / _this.$table.width() * 100;
                     }
                     if (_this.options.usePixels) {
-                        _this.setWidth($leftColumn[0], _this.constrainWidth(widths.left + difference));
-                        _this.setWidth($leftColumn[0], newWidths.left = $leftColumn.outerWidth());
+                        _this._currentTableWidth = _this.$table.width() + difference;
+                        var shouldRestrict = _this._minTableWidth && (_this._currentTableWidth < _this._minTableWidth);
+                        if (shouldRestrict) {
+                            _this.setWidth($rightColumn[0], newWidths.right = _this.constrainWidth(localWidths.right - difference));
+                        }
+                        _this.setWidth($leftColumn[0], newWidths.left = _this.constrainWidth(localWidths.left + difference));
                     } else {
                         _this.setWidth($leftColumn[0], newWidths.left = _this.constrainWidth(widths.left + difference));
                         _this.setWidth($rightColumn[0], newWidths.right = _this.constrainWidth(widths.right - difference));

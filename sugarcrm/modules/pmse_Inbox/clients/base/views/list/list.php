@@ -58,7 +58,6 @@ $viewdefs[$module_name]['base']['view']['list'] = array(
                 array(
                     'name' => 'case_init',
                     'label' => 'LBL_OWNER',
-                    'width' => 9,
                     'default' => true,
                     'enabled' => true,
                     'link' => false,

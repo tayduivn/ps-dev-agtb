@@ -71,10 +71,7 @@
      * @inheritdoc
      */
     _dispose: function() {
-        this.model._validationTasks = _.omit(
-            this.model._validationTasks,
-            'repeat_until_validator_' + this.cid
-        );
+        this.model.removeValidationTask('repeat_until_validator_' + this.cid);
         this._super('_dispose');
     }
 })

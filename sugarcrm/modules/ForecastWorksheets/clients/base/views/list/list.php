@@ -84,7 +84,6 @@ $viewdefs['ForecastWorksheets']['base']['view']['list'] = array(
                     'maxValue' => 100,
                     'minValue' => 0,
                     'align' => 'right',
-                    'width' => '7%',
                     'related_fields' => array(
                         'sales_stage'
                     )
@@ -100,7 +99,6 @@ $viewdefs['ForecastWorksheets']['base']['view']['list'] = array(
                     'skip_preferred_conversion' => true,
                     'align' => 'right',
                     'click_to_edit' => true,
-                    'width' => '22%',
                     'related_fields' => array(
                         'base_rate',
                         'currency_id',
@@ -119,7 +117,6 @@ $viewdefs['ForecastWorksheets']['base']['view']['list'] = array(
                     'skip_preferred_conversion' => true,
                     'align' => 'right',
                     'click_to_edit' => true,
-                    'width' => '22%',
                     'related_fields' => array(
                         'base_rate',
                         'currency_id',

@@ -74,7 +74,6 @@ $viewdefs['Meetings']['base']['view']['dupecheck-list'] = array(
                 ),
                 array(
                     'name' => 'date_entered',
-                    'width' => '10%',
                     'label' => 'LBL_DATE_ENTERED',
                     'default' => false,
                     'enabled' => true,

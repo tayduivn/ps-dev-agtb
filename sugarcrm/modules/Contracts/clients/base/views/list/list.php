@@ -17,7 +17,6 @@ $viewdefs['Contracts']['base']['view']['list'] = array(
             'fields' => array(
                 array(
                     'name' => 'name',
-                    'width' => '40',
                     'label' => 'LBL_LIST_CONTRACT_NAME',
                     'link' => true,
                     'default' => true,
@@ -25,7 +24,6 @@ $viewdefs['Contracts']['base']['view']['list'] = array(
                 ),
                 array(
                     'name' => 'account_name',
-                    'width' => '20',
                     'label' => 'LBL_LIST_ACCOUNT_NAME',
                     'link' => true,
                     'default' => true,
@@ -33,7 +31,6 @@ $viewdefs['Contracts']['base']['view']['list'] = array(
                 ),
                 array(
                     'name' => 'status',
-                    'width' => '10',
                     'label' => 'LBL_STATUS',
                     'link' => false,
                     'default' => true,
@@ -41,7 +38,6 @@ $viewdefs['Contracts']['base']['view']['list'] = array(
                 ),
                 array(
                     'name' => 'start_date',
-                    'width' => '15',
                     'label' => 'LBL_LIST_START_DATE',
                     'link' => false,
                     'default' => true,
@@ -49,7 +45,6 @@ $viewdefs['Contracts']['base']['view']['list'] = array(
                 ),
                 array(
                     'name' => 'end_date',
-                    'width' => '15',
                     'label' => 'LBL_LIST_END_DATE',
                     'link' => false,
                     'default' => true,
@@ -57,14 +52,12 @@ $viewdefs['Contracts']['base']['view']['list'] = array(
                 ),
                 array(
                     'name' => 'team_name',
-                    'width' => '2',
                     'label' => 'LBL_LIST_TEAM',
                     'default' => false,
                     'enabled' => true,
                 ),
                 array(
                     'name' => 'assigned_user_name',
-                    'width' => '2',
                     'label' => 'LBL_LIST_ASSIGNED_TO_USER',
                     'default' => true,
                     'enabled' => true,
