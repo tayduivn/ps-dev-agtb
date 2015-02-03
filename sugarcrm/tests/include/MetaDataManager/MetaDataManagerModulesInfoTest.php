@@ -236,7 +236,6 @@ class MetaDataManagerModulesInfoTest extends Sugar_PHPUnit_Framework_TestCase
         // Run the test
         $mm = new MetadataManagerMobile();
         $fullModuleList = $mm->getFullModuleList();
-        $defaultEnabledModuleList = $mm->getDefaultEnabledModuleList();
         $expectedTabs = array_keys(self::$testSystemTabs);
         $expectedSubpanels = SubPanelDefinitions::get_all_subpanels();
 
@@ -244,7 +243,7 @@ class MetaDataManagerModulesInfoTest extends Sugar_PHPUnit_Framework_TestCase
 
         foreach ($fullModuleList as $module) {
             // Test tabs
-            if (in_array($module, $defaultEnabledModuleList)) {
+            if ($module === 'Users') {
                 $this->assertFalse($modulesInfo[$module]['display_tab'], $module . ' tab should be hidden');
             } else {
                 $this->assertTrue($modulesInfo[$module]['display_tab'], $module . ' tab should be visible');
