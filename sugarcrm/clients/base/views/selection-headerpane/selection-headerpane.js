@@ -34,8 +34,8 @@
             buttonsToRemove.push('link_button');
         }
 
-        options = this._removeButtons(options, buttonsToRemove);
         this._super('initialize', [options]);
+        this._removeButtons(buttonsToRemove);
     },
 
     /**
@@ -83,20 +83,26 @@
     },
 
     /**
-     * Remove the specified buttons from the options metadata
+     * Removes buttons from main_dropdown
      *
-     * @param {object} options
-     * @param {array} buttons
-     * @return {*}
+     * @param {Array} buttons The names of the buttons to remove.
      * @private
      */
-    _removeButtons: function(options, buttons) {
-        if (options && options.meta && options.meta.buttons) {
-            options.meta.buttons = _.filter(options.meta.buttons, function(button) {
-                return !_.contains(buttons, button.name);
-            });
+    _removeButtons: function(buttons) {
+        if (!buttons.length) {
+            return;
         }
 
-        return options;
+        var mainDropdown = _.find(this.meta.buttons, function(button) {
+            return button.name === 'main_dropdown';
+        });
+
+        if (!mainDropdown) {
+            return;
+        }
+
+        mainDropdown.buttons = _.filter(mainDropdown.buttons, function(button) {
+            return !_.contains(buttons, button.name);
+        });
     }
 })
