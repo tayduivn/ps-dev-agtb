@@ -2724,7 +2724,8 @@ class SugarBean
 						}
 						else
 						{
-							if(empty($disable_date_format)) {
+                            $this->$field = $this->db->fromConvert($this->$field, 'date');
+							if (empty($disable_date_format)) {
 								$this->$field = $timedate->to_display_date($this->$field, false);
 							}
 						}
