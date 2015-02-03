@@ -14,7 +14,7 @@
  * @extends View.Field
  */
 ({
-    plugins: ['Tinymce'],
+    plugins: ['Tinymce', 'EllipsisInline'],
     fieldSelector: '.htmleditable', //iframe or textarea selector
     _htmleditor: null, // TinyMCE html editor
     _isDirty: false,
@@ -69,6 +69,10 @@
      */
     setViewContent: function(value){
         var editable = this._getHtmlEditableField();
+        if (this.action == 'list') {
+            // Strip HTML tags for ListView.
+            value = $('<div/>').html(value).text();
+        }
         if (editable && !_.isUndefined(editable.get(0)) && !_.isEmpty(editable.get(0).contentDocument)) {
             if (editable.contents().find('body').length > 0) {
                 editable.contents().find('body').html(value);
