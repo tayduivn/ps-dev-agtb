@@ -31,6 +31,7 @@ var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments)
             $(node).children().width(width);
             width = width + 'px';
             node.style.minWidth = width;
+            node.style.width = width;
             node.style.maxWidth = width;
         } else {
             width = width.toFixed(2);
