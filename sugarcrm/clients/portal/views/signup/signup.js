@@ -83,8 +83,7 @@
     },
 
     /**
-     * @override
-     * @protected
+     * @inheritDoc
      */
     _renderHtml: function() {
         this.logoUrl = app.metadata.getLogoUrl();

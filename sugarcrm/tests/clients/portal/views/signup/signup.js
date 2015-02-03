@@ -5,6 +5,7 @@ describe("Portal Signup View", function() {
 
     beforeEach(function() {
         SugarTest.testMetadata.init();
+        SugarTest.loadHandlebarsTemplate('signup', 'view', 'portal');
         SugarTest.testMetadata.addViewDefinition('signup', {
             "panels": [
                 {
@@ -14,13 +15,25 @@ describe("Portal Signup View", function() {
                         },
                         {
                             "name": "last_name"
+                        },
+                        {
+                            "name": "country",
+                            "type": "enum",
+                            "options": "countries_dom"
+                        },
+                        {
+                            "name": "state",
+                            "type": "enum",
+                            "options": "states_dom"
                         }
                     ]
                 }
             ]
         });
         SugarTest.testMetadata.set();
+        SugarTest.app.data.declareModels();
         view = SugarTest.createView("portal","Signup", "signup");
+        view.render();
         app = SUGAR.App;
     });
 
@@ -42,38 +55,26 @@ describe("Portal Signup View", function() {
     });
 
     describe("signup", function() {
+        var stateField, displaySpy;
+        beforeEach(function() {
+            stateField = view.getField('state');
+        });
+        it("should show state field", function() {
+            displaySpy = sinon.spy(stateField, 'show');
 
-        it("should toggle state field", function() {
-            var value;
-            var $countries = $('<input type="hidden">').attr('name', 'country');
-
-            var $states = $('<input type="hidden">').attr('name', 'state');
-
-            $('<div></div>').append($countries).appendTo(view.$el);
-            $('<div></div>').append($states).appendTo(view.$el);
-
-            view.stateField = view.$('input[name=state]');
-            view.countryField = view.$('input[name=country]');
-            var stubFn = function(arg1, arg2){
-                if(arg1 === 'val'){
-                    if(_.isUndefined(arg2)){
-                        return value;
-                    } else {
-                        value = arg2;
-                    }
-                }
-            };
-            var stateSelect2Stub = sinon.stub(view.stateField, "select2", stubFn);
-            var countrySelect2Stub = sinon.stub(view.countryField, "select2", stubFn);
-            value = 'NOT_USA';
+            view.model.set('country', 'USA');
             view.toggleStateField();
-            expect(view.$('input[name=state]').parent().css('display')).toEqual('none');
-            value = 'USA';
-            view.toggleStateField();
-            expect(view.$('input[name=state]').parent().css('display')).not.toEqual('none');
+            expect(stateField.show).toHaveBeenCalled();
+        });
+        it("should hide state field", function() {
+            displaySpy = sinon.spy(stateField, 'hide');
 
-            stateSelect2Stub.restore();
-            countrySelect2Stub.restore();
+            view.model.set('country', 'MEXICO');
+            view.toggleStateField();
+            expect(stateField.hide).toHaveBeenCalled();
+        });
+        afterEach(function() {
+            displaySpy.restore();
         });
     });
 });
