@@ -214,17 +214,12 @@
      * @inheritDoc
      */
     setMode: function(name) {
-        var attrs = this.model.getSyncedAttributes();
-
         if (!_.isEmpty(this._errors)) {
             if (this.action === 'edit') {
                 this.clearErrorDecoration();
                 this.decorateError(this._errors);
+                return;
             }
-        }
-
-        if (attrs[this.name] !== this.model.get(this.name)) {
-            return;
         }
 
         this._super('setMode', [name]);
