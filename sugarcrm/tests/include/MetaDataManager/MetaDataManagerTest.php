@@ -44,6 +44,8 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
         }
 
         MetaDataFiles::clearModuleClientCache();
+        MetaDataFiles::clearModuleClientCache();
+        MetaDataManager::resetManagers();
         SugarTestHelper::tearDown();
     }
 
@@ -618,9 +620,9 @@ PLATFORMS;
     }
 
     /**
-     * @dataProvider getPlatformsWithCachesProvider
+     * @dataProvider getPlatformsWithCachesInFilesystemProvider
      */
-    public function testGetPlatformsWithCaches($fileName, $platformName)
+    public function testGetPlatformsWithCachesInFilesystem($fileName, $platformName)
     {
         $dir = 'cache/api/metadata';
         SugarTestHelper::saveFile($dir . '/' . $fileName);
@@ -628,11 +630,11 @@ PLATFORMS;
         SugarAutoLoader::ensureDir($dir);
         SugarAutoLoader::put($dir . '/' . $fileName, '');
 
-        $platforms = MetaDataManager::getPlatformsWithCaches(false);
+        $platforms = SugarTestReflection::callProtectedMethod('MetaDataManager', 'getPlatformsWithCachesInFilesystem');
         $this->assertContains($platformName, $platforms);
     }
 
-    public static function getPlatformsWithCachesProvider()
+    public static function getPlatformsWithCachesInFilesystemProvider()
     {
         return array(
             array(
@@ -647,6 +649,39 @@ PLATFORMS;
                 'metadata_test_mobile_private.php',
                 'mobile'
             )
+        );
+    }
+
+    /**
+     * @dataProvider getPlatformsWithCachesInDatabaseProvider
+     */
+    public function testGetPlatformsWithCachesInDatabase($key, $expected)
+    {
+        $this->assertNotEmpty($expected);
+        SugarTestReflection::callProtectedMethod($this->mm, 'storeToCacheTable', array($key, null));
+
+        $platforms = SugarTestReflection::callProtectedMethod('MetaDataManager', 'getPlatformsWithCachesInDatabase');
+        foreach ($expected as $platform) {
+            $this->assertContains($platform, $platforms);
+        }
+    }
+
+    public static function getPlatformsWithCachesInDatabaseProvider()
+    {
+        return array(
+            array(
+                'meta_hash_public_base',
+                array(
+                    'base' => 'base',
+                ),
+            ),
+            array(
+                'meta_hash_base_mobile',
+                array(
+                    'base' => 'base',
+                    'mobile' => 'mobile',
+                ),
+            ),
         );
     }
 }
