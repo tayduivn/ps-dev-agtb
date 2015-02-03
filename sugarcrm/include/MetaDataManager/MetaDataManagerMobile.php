@@ -38,31 +38,14 @@ class MetaDataManagerMobile extends MetaDataManager
     protected function getModules() {
         // Get the current user module list
         $modules = $this->getTabList();
-        $defaultEnabledModules = $this->getDefaultEnabledModuleList();
-
-        // Add default enabled modules to the list
-        $modules = array_keys(array_merge(array_flip($modules), array_flip($defaultEnabledModules)));
-
+        
+        // add in Users [Bug59548] since it is forcefully removed for the 
+        // CurrentUserApi
+        if(!array_search('Users', $modules)) {
+            $modules[] = 'Users';
+        }
+        
         return $modules;
-    }
-
-    /**
-     * Gets default enabled module list of Mobile.
-     *
-     * @return array List of Mobile module names
-     */
-    public function getDefaultEnabledModuleList()
-    {
-        return array(
-            'Forecasts',
-            'ForecastWorksheets',
-            'ForecastManagerWorksheets',
-            'TimePeriods',
-            'Activities',
-            // add in Users [Bug59548] since it is forcefully removed for the
-            // CurrentUserApi
-            'Users',
-        );
     }
 
     /**
