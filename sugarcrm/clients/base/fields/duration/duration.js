@@ -131,7 +131,9 @@
             duration = app.date.duration(endDate - startDate);
             durationString = duration.format() || ('0 ' + app.lang.get('LBL_DURATION_MINUTES'));
 
-            if ((duration.days() === 0) && (duration.months() === 0) && (duration.years() === 0)) {
+            if ((startDate.date() === endDate.date())
+                && (startDate.month() === endDate.month())
+                && (startDate.year() === endDate.year())) {
                 // Should not display the date twice when the start and the end dates are the same.
                 displayString = app.lang.get('LBL_START_AND_END_DATE_SAME_DAY', this.module, {
                     date: startDate.formatUser(true),
