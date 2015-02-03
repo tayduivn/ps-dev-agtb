@@ -174,6 +174,7 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                     'related_fields' => array(
                         'converted',
                         'account_id',
+                        'account_name',
                         'contact_id',
                         'contact_name',
                         'opportunity_id',
