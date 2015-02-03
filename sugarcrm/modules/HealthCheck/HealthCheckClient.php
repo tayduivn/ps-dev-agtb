@@ -26,10 +26,14 @@ class HealthCheckClient extends SugarHttpClient
      */
     public function send($key, $logFilePath)
     {
-        $response = $this->callRest($this->getEndpoint(), array(
-                'key' => $key,
-                "log" => "@$logFilePath",
-        ));
+        $data = array(
+            "key" => $key,
+            "log" => "@$logFilePath",
+        );
+
+        $endpoint = $this->getEndpoint();
+        $curlOpts = $this->getOptsForEndpoint($endpoint);
+        $response = $this->callRest($endpoint, $data, $curlOpts);
 
         return strpos($response, "Saved:") !== false;
     }
@@ -44,5 +48,24 @@ class HealthCheckClient extends SugarHttpClient
     protected function getEndpoint()
     {
         return SugarConfig::getInstance()->get('healthcheck.endpoint', self::DEFAULT_ENDPOINT);
+    }
+
+    /**
+     * Get cURL options for given endpoint
+     * @param string $endpoint Endpoint
+     * @return array
+     */
+    protected function getOptsForEndpoint($endpoint)
+    {
+        $curlOpts = array();
+
+        // validate server cert for SSL connections
+        if (strpos($endpoint, 'https://') === 0) {
+            $curlOpts = array(
+                CURLOPT_SSL_VERIFYPEER => true,
+                CURLOPT_SSL_VERIFYHOST => 2,
+            );
+        }
+        return $curlOpts;
     }
 }
