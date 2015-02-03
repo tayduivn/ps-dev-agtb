@@ -80,6 +80,7 @@
                 if (!_.isArray(this.preselectedModelIds)) {
                     this.preselectedModelIds = [this.preselectedModelIds];
                 }
+                if (_.isEmpty(this.preselectedModelIds)) return;
 
                 var preselectedCollection = app.data.createBeanCollection(this.module);
                 preselectedCollection.fetch({

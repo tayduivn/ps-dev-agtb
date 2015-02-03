@@ -292,7 +292,7 @@
                 if (!plugin.searchmore) {
                     var $content = $('<li class="select2-result">').append(
                             $('<div/>').addClass('select2-result-label')
-                                .html(app.lang.get('LBL_MODIFY_SELECTION', self.module))
+                                .html(app.lang.get('LBL_SEARCH_AND_SELECT_ELLIPSIS', self.module))
                         ).mousedown(function() {
                             plugin.opts.element.trigger($.Event('searchmore'));
                             plugin.close();
