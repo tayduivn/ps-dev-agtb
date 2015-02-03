@@ -3068,7 +3068,9 @@ function _ppl($mixed, $die=false, $displayStackTrace=false, $loglevel="fatal")
     $GLOBALS['log']->$loglevel($mix);
     if ($displayStackTrace) {
         foreach ($stack as $position) {
-            $GLOBALS['log']->$loglevel($position['file']."({$position['line']})");
+            if (isset($position['file']) && isset($position['line'])) {
+                $GLOBALS['log']->$loglevel($position['file']."({$position['line']})");
+            }
         }
     }
 
