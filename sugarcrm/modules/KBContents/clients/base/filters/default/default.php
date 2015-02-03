@@ -18,6 +18,7 @@ $viewdefs['KBContents']['base']['filter']['default'] = array(
             'type' => 'enum-config',
             'key' => 'languages',
         ),
+        'category_name' => array(),
         'revision' => array(),
         '$owner' => array(
             'predefined_filter' => true,

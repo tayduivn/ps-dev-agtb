@@ -164,4 +164,8 @@ $viewdefs['base']['filter']['operators'] = array(
     'parent' => array(
         '$equals' => 'LBL_OPERATOR_IS',
     ),
+    'nestedSet' => array(
+        '$equals' => 'LBL_OPERATOR_IS',
+        '$not_equals' => 'LBL_OPERATOR_IS_NOT',
+    ),
 );

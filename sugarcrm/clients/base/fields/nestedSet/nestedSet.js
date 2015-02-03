@@ -79,7 +79,7 @@
         var treeOptions = {},
             self = this;
         this._super('_render', []);
-        if (this.$(this.ddEl).length !== 0 && this.action === 'edit') {
+        if (this.$(this.ddEl).length !== 0 && (this.action === 'edit' || this.meta.view === 'edit')) {
             this.$(this.ddEl).dropdown();
             this.$(this.ddEl).data('dropdown').opened = false;
             this.$(this.ddEl).off('click.bs.dropdown');
@@ -126,7 +126,7 @@
      * @param {Event} evt Triggered mouse event.
      */
     openDropDown: function(evt) {
-        if (this.action === 'edit') {
+        if (this.action === 'edit' || this.meta.view === 'edit') {
             var dropdown = this.$(this.ddEl).data('dropdown');
             if (dropdown.opened === false) {
                 $('body').on('click.bs.dropdown.data-api', this.dropdownCallback);
@@ -197,7 +197,7 @@
      * Override `Editable` plugin event to prevent default behavior.
      */
     focus: function() {
-        if (this.action === 'edit') {
+        if (this.action === 'edit' || this.meta.view === 'edit') {
             this.$('[data-role=treeinput]').click();
         }
     },
@@ -252,7 +252,7 @@
      */
     bindDataChange: function() {
         this._super('bindDataChange', []);
-        if (this.action === 'edit') {
+        if (this.action === 'edit' || this.meta.view === 'edit') {
             this.$('[name=' + this.def.name + ']').html(this.model.get(this.def.name));
             this.$('[name=' + this.def.id_name + ']').val(this.model.get(this.def.id_name));
         }
@@ -262,7 +262,7 @@
      * {@inheritDoc}
      */
     _dispose: function() {
-        if (this.action === 'edit') {
+        if (this.action === 'edit' || this.meta.view === 'edit') {
             $('body').off('click.bs.dropdown.data-api', this.dropdownCallback);
         }
         this._super('_dispose');
