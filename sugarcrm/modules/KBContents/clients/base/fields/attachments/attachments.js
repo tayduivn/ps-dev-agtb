@@ -46,6 +46,11 @@
     _select2formatSelectionTemplate: null,
 
     /**
+     * Label for `Download all`.
+     */
+    download_label: '',
+
+    /**
      * {@inheritDoc}
      */
     initialize: function (opts) {
@@ -116,7 +121,7 @@
         if (this.action == 'noaccess') {
             return;
         }
-
+        this.download_label = (this.value && this.value.length > 1) ? 'LBL_DOWNLOAD_ALL' : 'LBL_DOWNLOAD_ONE';
         // Please, do not put this._super call before acl check,
         // due to _loadTemplate function logic from sidecar/src/view.js file
         this._super('_render',[]);
