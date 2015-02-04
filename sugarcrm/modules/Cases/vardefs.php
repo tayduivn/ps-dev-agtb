@@ -95,6 +95,7 @@ $dictionary['Case'] = array('table' => 'cases','audited'=>true, 'activity_enable
     'name' => 'resolution',
     'vname' => 'LBL_RESOLUTION',
     'type' => 'text',
+    'full_text_search' => array('enabled' => true, 'searchable' => true),
     'comment' => 'The resolution of the case'
   ),
 
