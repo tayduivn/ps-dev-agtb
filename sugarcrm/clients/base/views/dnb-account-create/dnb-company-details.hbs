@@ -63,33 +63,31 @@
                                                     <div class="dnb-show-all">
                                                         {{#if dnbProduct.product}}
                                                             <div class='dnb-company-details'>
-                                                                <table class="table table-striped table-condensed">
+                                                                <ul class="unstyled listed">
                                                                     {{#each dnbProduct.product}}
-                                                                        <tr>
-                                                                            <td>
-                                                                                <div class='dnb-checkbox-nav'>
-                                                                                    <input type="checkbox" name="{{this.dataName}}" id="{{this.dataName}}" class="dnb_checkbox" checked />
-                                                                                </div>
-                                                                                <div class="dnb-company-label">
-                                                                                    {{#if this.dnbLabel}}
-                                                                                        {{{this.dnbLabel}}}
-                                                                                    {{else}}
-                                                                                        {{str this.dataLabel}}
-                                                                                    {{/if}}
-                                                                                </div>
-                                                                                {{#if this.dataType}}
-                                                                                    {{#eq this.dataType 'link'}}
-                                                                                        <div class="url-txt importData">
-                                                                                    {{/eq}}
+                                                                        <li>
+                                                                            <div class='dnb-checkbox-nav'>
+                                                                                <input type="checkbox" name="{{this.dataName}}" id="{{this.dataName}}" class="dnb_checkbox" checked />
+                                                                            </div>
+                                                                            <div class="dnb-company-label">
+                                                                                {{#if this.dnbLabel}}
+                                                                                    {{{this.dnbLabel}}}
                                                                                 {{else}}
-                                                                                    <div class="txt importData">
+                                                                                    {{str this.dataLabel}}
                                                                                 {{/if}}
-                                                                                {{this.dataElement}}
-                                                                                </div>
-                                                                            </td>
-                                                                        </tr>
+                                                                            </div>
+                                                                            {{#if this.dataType}}
+                                                                                {{#eq this.dataType 'link'}}
+                                                                                    <div class="url-txt importData">
+                                                                                {{/eq}}
+                                                                            {{else}}
+                                                                                <div class="txt importData">
+                                                                            {{/if}}
+                                                                            {{this.dataElement}}
+                                                                            </div>
+                                                                        </li>
                                                                     {{/each}}
-                                                                </table>
+                                                                </ul>
                                                             </div>
                                                         {{else}}
                                                             <aside class='create-no-data'>
