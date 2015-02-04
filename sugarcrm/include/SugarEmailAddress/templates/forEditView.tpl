@@ -22,7 +22,7 @@ $emailInstances['module']++;
 <script type="text/javascript" language="javascript">
 var emailAddressWidgetLoaded = false;
 </script>
-<script type="text/javascript" src="include/SugarEmailAddress/SugarEmailAddress.js"></script>
+<script type="text/javascript" src="{sugar_getjspath file='include/SugarEmailAddress/SugarEmailAddress.js'}"></script>
 <script type="text/javascript">
 	var module = '{$module}';
 </script>
