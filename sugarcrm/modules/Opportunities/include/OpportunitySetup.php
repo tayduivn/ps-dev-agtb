@@ -510,7 +510,9 @@ abstract class OpportunitySetup
         // What lists need updating
         $listsToUpdate = array(
             'moduleList',
-            'parent_type_display'
+            'parent_type_display',
+            'record_type_display_notes',
+            'record_type_display'
         );
 
         // load the Dropdown parser so it can easily be saved

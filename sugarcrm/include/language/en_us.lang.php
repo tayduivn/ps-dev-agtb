@@ -624,7 +624,6 @@ $app_list_strings = array (
     'Leads' => 'Lead',
     'Contacts' => 'Contacts', // cn (11/22/2005) added to support Emails
     'Products' => 'Quoted Line Item',
-    'RevenueLineItems' => 'Revenue Line Item',
     'Quotes' => 'Quote',
     'Bugs' => 'Bug',
     'Project' => 'Project',
@@ -645,9 +644,6 @@ $app_list_strings = array (
     'Quotes' => 'Quote',
     'Products' => 'Quoted Line Item',
     'Contracts' => 'Contract',
-    //BEGIN SUGARCRM flav=ent ONLY
-    'RevenueLineItems' => 'Revenue Line Item',
-    //END SUGARCRM flav=ent ONLY
     'Emails' => 'Email',
 
     'Bugs' => 'Bug',
