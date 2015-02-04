@@ -26,7 +26,7 @@
     },
 
     plugins: ['EllipsisInline'],
-    maxPillsDisplayed: 50,
+    maxPillsDisplayed: 20,
 
     /**
      * {@inheritDoc}
@@ -74,7 +74,7 @@
      * @param {Object[]} models The models to add to pills.
      */
     resetPills: function(models) {
-        this.pills = _.map(models, function(model) {return {id: model.id, name: model.get('name')}});
+        this.pills.length = models.length;
         this.render();
     },
 

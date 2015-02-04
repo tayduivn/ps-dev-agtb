@@ -109,9 +109,9 @@
             }
         );
         app.alert.show('too-many-selected-records', {
-            level: 'warning',
+            level: 'error',
             messages: msg,
-            autoClose: true
+            autoClose: false
         });
     },
 

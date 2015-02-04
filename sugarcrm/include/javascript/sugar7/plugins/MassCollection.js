@@ -197,10 +197,10 @@
              */
             onDetach: function() {
                 $(window).off('resize.' + this.cid);
-                this.context.off('mass_collection:add');
-                this.context.off('mass_collection:add:all');
-                this.context.off('mass_collection:remove');
-                this.context.off('mass_collection:remove:all');
+                this.context.off('mass_collection:add', this);
+                this.context.off('mass_collection:add:all', this);
+                this.context.off('mass_collection:remove', this);
+                this.context.off('mass_collection:remove:all', this);
             }
         });
     });

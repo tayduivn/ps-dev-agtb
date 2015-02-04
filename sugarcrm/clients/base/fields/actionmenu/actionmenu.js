@@ -169,11 +169,14 @@
                 }, this);
             }
 
-            this.on('render', this.toggleSelectAll, this);
-
+            if (!this.view.maxSelectedRecords) {
+                this.on('render', this.toggleSelectAll, this);
+            }
             massCollection.on('add', function(model) {
                 this.$(this.actionDropDownTag).removeClass('disabled');
-                this.toggleSelectAll();
+                if (!this.view.maxSelectedRecords) {
+                    this.toggleSelectAll();
+                }
             }, this);
             massCollection.on('remove reset', function(model) {
                 if (massCollection.length === 0) {
@@ -182,7 +185,9 @@
                     this.$(this.actionDropDownTag).removeClass('disabled');
                     this.$(this.fieldTag).attr('checked', true);
                 }
-                this.toggleSelectAll();
+                if (!this.view.maxSelectedRecords) {
+                    this.toggleSelectAll();
+                }
             }, this);
             this.action_enabled = (massCollection.length > 0);
             this.selected = (massCollection.entire);
@@ -317,7 +322,8 @@
                 return;
             }
 
-            if (massCollection.length === self.collection.length) {
+            var selectedRecordsInPage = _.intersection(massCollection.models, self.collection.models);
+            if (selectedRecordsInPage.length === self.collection.length) {
                 if (self.collection.next_offset > 0) {
                     alert = self._buildAlertForEntire(massCollection);
                 } else {
