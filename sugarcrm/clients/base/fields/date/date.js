@@ -180,7 +180,7 @@
      */
     _getAppendToTarget: function() {
         if (this.$el.parents('div#drawers').length) {
-            return 'div#drawers .active .main-pane:first';
+            return 'div#drawers > .drawer:last';
         }
 
         if (this.$el.parents('div#content').length) {
