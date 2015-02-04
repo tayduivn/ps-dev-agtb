@@ -1451,6 +1451,7 @@ $app_list_strings = array (
   'wflow_adv_team_type_dom' =>
         array (
     'team_id' => 'Current Team of triggered Record',
+    'team_set_id' => 'Current Team Set of triggered Record',
     'current_team' => 'Team of Logged-in User',
   ),
   'wflow_adv_enum_type_dom' =>
