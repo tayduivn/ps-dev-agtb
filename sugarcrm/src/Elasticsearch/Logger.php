@@ -12,8 +12,7 @@
 
 namespace Sugarcrm\Sugarcrm\Elasticsearch;
 
-use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Client;
-use Psr\Log\AbstractLogger;
+use Sugarcrm\Sugarcrm\Logger\LoggerTransition as BaseLogger;
 use Psr\Log\LogLevel;
 use Elastica\Request;
 use Elastica\Response;
@@ -22,50 +21,11 @@ use Elastica\JSON;
 
 /**
  *
- * PSR-0 adapter for SugarLogger until Monolog is integrated.
+ * Logger specially for Elastic search.
  *
  */
-class Logger extends AbstractLogger
+class Logger extends BaseLogger
 {
-    /**
-     * @var \LoggerManager
-     */
-    protected $logger;
-
-    /**
-     * @var array Mapping from PSR0 to Sugar log levels
-     */
-    protected $psrSugarMap = array();
-
-    /**
-     * @param \SugarLogger $logger
-     */
-    public function __construct(\LoggerManager $logger)
-    {
-        $this->logger = $logger;
-        $this->psrSugarMap = array(
-            LogLevel::EMERGENCY => 'fatal',
-            LogLevel::ALERT => 'fatal',
-            LogLevel::CRITICAL => 'fatal',
-            LogLevel::ERROR => 'error',
-            LogLevel::WARNING => 'warn',
-            LogLevel::NOTICE => 'info',
-            LogLevel::INFO => 'info',
-            LogLevel::DEBUG => 'debug',
-        );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function log($level, $message, array $context = array())
-    {
-        $callBack = array($this->logger, $this->getSugarLevel($level));
-
-        // LoggerManager doesn't support context so lets skip it for now
-        return call_user_func($callBack, $message);
-    }
-
     /**
      * Handle request logging on success.
      * @param \Elastica\Request $request
@@ -110,16 +70,6 @@ class Logger extends AbstractLogger
             "ELASTIC FAILURE ... need more details here"
         );
         $this->log(LogLevel::CRITICAL, $msg);
-    }
-
-    /**
-     * PSR-0 to sugar mapper
-     * @param string $level
-     * @return multitype:
-     */
-    protected function getSugarLevel($level)
-    {
-        return $this->psrSugarMap[$level];
     }
 
     /**
