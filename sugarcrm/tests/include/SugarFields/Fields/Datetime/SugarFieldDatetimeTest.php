@@ -19,6 +19,8 @@ class SugarFieldDatetimeTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
+        SugarTestHelper::setUp('timedate');
+        $GLOBALS['timedate']->allow_cache = false;
     }
 
     public static function tearDownAfterClass()
@@ -60,9 +62,9 @@ class SugarFieldDatetimeTest extends Sugar_PHPUnit_Framework_TestCase
         return array(
             array('Europe/Helsinki', '2013-08-05T08:15:30+02:00', '2013-08-05 06:15:30'),
             array('America/Boise', '2013-08-05T08:15:30-07:00', '2013-08-05 15:15:30'),
-            array('America/NewYork','2013-08-05T08:15:30','2013-08-05 05:15:30'),
+            array('America/New_York','2013-08-05T08:15:30','2013-08-05 12:15:30'),
             array('Europe/Minsk','2013-08-05T08:15:30+03:00','2013-08-05 05:15:30'),
-            array('Antarctica/Vostok','2013-08-05T08:15:30','2013-08-05 05:15:30'),
+            array('Antarctica/Vostok','2013-08-05T08:15:30','2013-08-05 02:15:30'),
         );
     }
 
