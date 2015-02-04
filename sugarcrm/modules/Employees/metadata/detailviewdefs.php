@@ -180,7 +180,7 @@ $viewdefs['Employees']['DetailView'] = array(
   ),
   array(
   array (
-      'name' => 'email1',
+      'name' => 'email',
       'label' => 'LBL_EMAIL',
     ),
   ),

@@ -58,12 +58,12 @@ $listViewDefs['Contacts'] = array(
         'sortable'=> true,
         'ACLTag' => 'ACCOUNT',
         'related_fields' => array('account_id')),
-	'EMAIL1' => array(
+	'EMAIL' => array(
 		'width' => '15%', 
 		'label' => 'LBL_LIST_EMAIL_ADDRESS',
 		'sortable' => false,
 		'link' => true,
-		'customCode' => '{$EMAIL1_LINK}{$EMAIL1}</a>',
+		'customCode' => '{$EMAIL_LINK}{$EMAIL}</a>',
         'default' => true
 		),  
 	'PHONE_WORK' => array(

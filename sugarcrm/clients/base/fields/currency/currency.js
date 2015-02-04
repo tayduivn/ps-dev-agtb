@@ -42,7 +42,11 @@
      */
     _lastCurrencyId: null,
 
-    plugins: ['FieldDuplicate'],
+    plugins: [
+        'FieldDuplicate',
+        'EllipsisInline',
+        'Tooltip'
+    ],
 
     /**
      * @inheritDoc

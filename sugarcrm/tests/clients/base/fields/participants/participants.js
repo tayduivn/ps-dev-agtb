@@ -970,4 +970,37 @@ describe('View.Fields.Base.ParticipantsField', function() {
             expect(args.order_by).toEqual('full_name:asc');
         });
     });
+
+    describe('getTimeFormat', function() {
+        beforeEach(function() {
+            field = SugarTest.createField(
+                'base',
+                'invitees',
+                'participants',
+                'detail',
+                fieldDef,
+                module,
+                model,
+                context
+            );
+        });
+
+        using('time formats', [
+                ['HH:mm', 'H'],
+                ['HH.mm', 'H'],
+                ['hh:mma', 'ha'],
+                ['hh:mm a', 'ha'],
+                ['hh:mmA', 'hA'],
+                ['hh:mm A', 'hA']
+            ], function(timeFormat, expected) {
+                it('should return display time format correctly', function() {
+                    sandbox.stub(app.date, 'getUserTimeFormat', function() {
+                        return timeFormat;
+                    });
+
+                    expect(field.getTimeFormat()).toEqual(expected);
+                });
+            }
+        );
+    });
 });

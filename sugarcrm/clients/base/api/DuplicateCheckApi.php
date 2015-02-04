@@ -86,8 +86,8 @@ class DuplicateCheckApi extends SugarApi
     {
         $errors = ApiHelper::getHelper($api,$bean)->populateFromApi($bean,$args,$options);
 
-        // remove email_addr_bean_rel records created by SugarFieldEmail::apiSave()
-        if (!empty($bean->emailAddress)) {
+        // remove email_addr_bean_rel records created by SugarFieldEmail::apiSave() for new bean (empty id)
+        if (empty($args['id']) && !empty($bean->emailAddress)) {
             $bean->emailAddress->deleteLinks($bean->id, $bean->module_dir);
         }
 

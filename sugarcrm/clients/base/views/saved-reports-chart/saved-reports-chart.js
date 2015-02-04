@@ -16,6 +16,31 @@
 ({
     plugins: ['Dashlet'],
 
+    /**
+     * Holds report data from the server's endpoint once we fetch it
+     */
+    reportData: undefined,
+
+    /**
+     * Holds a reference to the Chart field
+     */
+    chartField: undefined,
+
+    /**
+     * Holds all report ID's and titles
+     */
+    reportOptions: undefined,
+
+    /**
+     * Holds acls for all reports
+     */
+    reportAcls: undefined,
+
+    /**
+     * ID for the autorefresh timer
+     */
+    timerId: undefined,
+
     events: {
         'click a[name=editReport]': 'editSavedReport'
     },
@@ -144,12 +169,30 @@
                         this.setChartParams(data, true);
                     }, this)
                 });
+                // set the title of the dashlet to the report title
+                $('[name="label"]').val(reportTitle);
+                
+                // show or hide 'Edit Selected Report' link
+                this.updateEditLink(model.get('saved_report_id'));
             }, this);
         }
     },
 
     /**
-     * @inheritdoc
+     * Check acls to show/hide 'Edit Selected Report' link
+     */
+    updateEditLink: function(reportId) {
+        var acls = this.reportAcls[reportId || this.settings.get('saved_report_id')];
+        if (acls && acls['edit'] === 'no') {
+            $('[name="editReport"]').hide();
+        }
+        else {
+            $('[name="editReport"]').show();
+        }
+    },
+
+    /**
+     * {@inheritdoc}
      */
     loadData: function(options) {
         options = options || {};
@@ -326,10 +369,12 @@
      */
     parseAllSavedReports: function(reports) {
         this.reportOptions = {};
+        this.reportAcls = {};
 
         _.each(reports, function(report) {
             // build the reportOptions key/value pairs
             this.reportOptions[report.id] = report.name;
+            this.reportAcls[report.id] = report._acl;
         }, this);
 
         // find the saved_report_id field
@@ -348,6 +393,9 @@
             // set field options and render
             reportsField.items = this.reportOptions;
             reportsField._render();
+
+            // check acls to show or hide 'Edit Selected Report' link
+            this.updateEditLink();
         }
     },
 

@@ -140,7 +140,7 @@ $viewdefs['Leads']['DetailView'] = array (
 		),
 
 		array (
-			'email1',
+			'email',
 		),			
 		
 		array (
