@@ -107,6 +107,7 @@ include("metadata/forecast_treeMetaData.php");
 include("metadata/oauth_nonce.php");
 include("metadata/activities_usersMetaData.php");
 include("metadata/metadata_cacheMetaData.php");
+include("metadata/tag_bean_relMetaData.php");
 
 $defs = SugarAutoLoader::loadExtension('tabledictionary');
 if($defs) {
