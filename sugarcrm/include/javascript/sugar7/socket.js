@@ -18,28 +18,45 @@
             _.isUndefined(app.config.websockets.client.url)) {
             return;
         }
-        
-        var socket = io(app.config.websockets.client.url, {
-            autoConnect: false
-        });
 
-        var connect = function() {
-            socket.emit('OAuthToken', {
-                'siteUrl': app.config.siteUrl,
-                'serverUrl': app.config.serverUrl,
-                'publicSecret': app.config.websockets.publicSecret,
-                'token': app.api.getOAuthToken()
+        if (!_.isUndefined(app.config.websockets) &&
+            !_.isUndefined(app.config.websockets.client) &&
+            app.config.websockets.client.balancer) {
+            $.get(app.config.websockets.client.url).done(function(data) {
+                initSocket(data);
             });
-        };
-
-        socket.on('connect', connect);
-        app.events.on('app:login:success', connect);
-        app.events.on('app:logout', connect);
-
-        socket.on('message', _.bind(function(data) {
-            app.socket.trigger(data.message, data.args);
-        }, this));
-
-        socket.open();
+        } else {
+            initSocket(app.config.websockets.client.url);
+        }
     });
+
+    function initSocket(url) {
+        var regexp = /^(http?):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?$/i;
+        if (regexp.test(url)) {
+            var socket = io(url, {
+                autoConnect: false
+            });
+
+            console.dir(socket);
+
+            var connect = function() {
+                socket.emit('OAuthToken', {
+                    'siteUrl': app.config.siteUrl,
+                    'serverUrl': app.config.serverUrl,
+                    'publicSecret': app.config.websockets.publicSecret,
+                    'token': app.api.getOAuthToken()
+                });
+            };
+
+            socket.on('connect', connect);
+            app.events.on('app:login:success', connect);
+            app.events.on('app:logout', connect);
+
+            socket.on('message', _.bind(function(data) {
+                app.socket.trigger(data.message, data.args);
+            }, this));
+
+            socket.open();
+        }
+    }
 })(SUGAR.App);

@@ -237,7 +237,8 @@ class AdministrationController extends SugarController
                     'url' => $websocket_server_url
                 ),
                 'client' => array(
-                    'url' => $websocket_client_url
+                    'url' => $websocket_client_url,
+                    'balancer' => SugarSocket::isBalancer($websocket_client_url)
                 ),
                 'public_secret' => $websocket_public_secret,
             );

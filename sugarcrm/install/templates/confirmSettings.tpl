@@ -96,7 +96,7 @@
                         </tr>
                         <tr>
                             <td></td>
-                            <td>{$MOD.LBL_WEB_SOCKET_CONFIGURATION_SECRET}</td>
+                            <td><strong>{$MOD.LBL_WEB_SOCKET_CONFIGURATION_SECRET}</strong></td>
                             <td>{$smarty.session.websockets.public_secret}</td>
                         </tr>
                     {/if}

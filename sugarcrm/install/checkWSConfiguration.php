@@ -27,7 +27,7 @@ function checkWSConfiguration($silent = false)
     if (trim($_SESSION['websockets']['client']['url']) == '') {
         $errors['ERR_WEB_SOCKET_CLIENT_URL'] = $mod_strings['ERR_WEB_SOCKET_CLIENT_URL'];
     } else {
-        if (!SugarSocket::checkWSSettings($_SESSION['websockets']['client']['url'], 'client', true)) {
+        if (!SugarSocket::checkWSSettings($_SESSION['websockets']['client']['url'], 'client')) {
             $errors['ERR_WEB_SOCKET_CLIENT_ERROR'] = str_replace("{{WSURL}}", 'Client', $mod_strings['ERR_WEB_SOCKET_ERROR']);
         }
     }
@@ -35,7 +35,7 @@ function checkWSConfiguration($silent = false)
     if (trim($_SESSION['websockets']['server']['url']) == '') {
         $errors['ERR_WEB_SOCKET_SERVER_URL'] = $mod_strings['ERR_WEB_SOCKET_SERVER_URL'];
     } else {
-        if (!SugarSocket::checkWSSettings($_SESSION['websockets']['server']['url'], 'server', true)) {
+        if (!SugarSocket::checkWSSettings($_SESSION['websockets']['server']['url'], 'server')) {
             $errors['ERR_WEB_SOCKET_SERVER_ERROR'] = str_replace("{{WSURL}}", 'Server', $mod_strings['ERR_WEB_SOCKET_ERROR']);
         }
     }
@@ -83,6 +83,8 @@ function copyInputsIntoSession()
             filter_var(trim($_REQUEST['websockets']['client']['url']), FILTER_VALIDATE_URL) ?
                 trim($_REQUEST['websockets']['client']['url']) :
                 '';
+        $_SESSION['websockets']['client']['balancer'] =
+            SugarSocket::isBalancer($_SESSION['websockets']['client']['url']);
     }
 
     if (isset($_REQUEST['websockets']['server']['url'])) {
@@ -90,6 +92,7 @@ function copyInputsIntoSession()
             filter_var(trim($_REQUEST['websockets']['server']['url']), FILTER_VALIDATE_URL) ?
                 trim($_REQUEST['websockets']['server']['url']) :
                 '';
+        // No need to save server balancer configuration.
     }
 
     if (isset($_REQUEST['websockets']['public_secret'])) {

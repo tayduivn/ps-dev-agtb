@@ -167,9 +167,9 @@ class SugarSocket
      * Check WebSocket settings.
      * @param $url
      * @param $type
-     * @param $log
+     * @return bool
      */
-    public static function checkWSSettings($url, $type, $log = false)
+    public static function checkWSSettings($url, $type)
     {
         $statusMessages = array(
             'server' => 'SugarCRM Server Side',
@@ -178,26 +178,44 @@ class SugarSocket
 
         $availability = false;
 
-        if ($log) {
-            installLog("Beginning to check WebSocket Settings.");
-        }
-
         if (self::ping($url)) {
-            $fileContent = file_get_contents($url);
-            if (filter_var($fileContent, FILTER_VALIDATE_URL)) {
-                $fileContent = file_get_contents($fileContent);
-            }
+            $fileContent = file_get_contents(self::getURL($url));
             if ($fileContent == $statusMessages[$type]) {
                 $availability = true;
             }
         }
-
         $status = array('url' => $url, 'type' => $type, 'available' => $availability);
 
-        if ($log) {
-            installLog("WebSocket connection results: " . var_export($status, true));
-        }
-
         return $status['available'];
+    }
+
+    /**
+     * Get URL.
+     * @param $url
+     * @return string|bool
+     */
+    public static function getURL($url) {
+        if (filter_var($url, FILTER_VALIDATE_URL)) {
+            if (self::isBalancer($url)) {
+                return json_decode(file_get_contents($url));
+            } else {
+                return $url;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Checks if provided URL is a balancer.
+     * @param $url checked URL
+     * @return bool
+     */
+    public static function isBalancer($url)
+    {
+        if (filter_var(json_decode(file_get_contents($url)), FILTER_VALIDATE_URL)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

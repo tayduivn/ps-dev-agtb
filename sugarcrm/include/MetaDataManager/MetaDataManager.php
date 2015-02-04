@@ -290,6 +290,7 @@ class MetaDataManager
         'websockets' => array(
             'client' => array(
                 'url' => true,
+                'balancer' => true
             ),
             'public_secret' => true,
         ),
