@@ -10,14 +10,16 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+namespace Sugarcrm\SugarcrmTestsUnit\Util\Arrays\OrderedHash;
+
 use Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash;
 use Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\Element;
 
 /**
- * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash
- * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\Element
+ * @coversDefaultClass Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash
+ * @coversDefaultClass Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\Element
  */
-class OrderedHashTest extends Sugar_PHPUnit_Framework_TestCase
+class OrderedHashTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var OrderedHash
