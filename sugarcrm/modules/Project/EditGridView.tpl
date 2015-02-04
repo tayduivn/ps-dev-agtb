@@ -335,5 +335,11 @@ SUGAR.gantt.createTable('biweek', document.getElementById('calendar_start').valu
     SUGAR.grid.onAfterInsertRow = function(num) {ldelim}
         YAHOO.util.Dom.setAttribute(YAHOO.util.Selector.query('input[size="40"]'), 'maxlength', { $NAME_LENGTH });
     {rdelim}
+
+{if $TASKCOUNT == 0}
+for (i = 0; i < 2; i++)
+	SUGAR.grid.insertRow();
+{/if}
+
 </script>
 {$JAVASCRIPT}
