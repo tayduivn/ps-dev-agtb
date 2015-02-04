@@ -148,7 +148,7 @@
             module: context.get('module')
         });
         this.duplicateView.context.on('change:selection_model', this.handleDupeSelectedChange, this);
-        this.duplicateView.collection.once('reset', this.dupeCheckComplete, this);
+        this.duplicateView.collection.on('reset', this.dupeCheckComplete, this);
         this.addComponent(this.duplicateView);
     },
 
@@ -620,15 +620,24 @@
     },
 
     /**
-     * Resets the state of the panels based on a dependent module being reset
+     * Resets the state of the panel based on a dependent module being reset
      */
     resetFromDependentModuleChanges: function(moduleName) {
         var dependencies = this.meta.dependentModules;
         if (dependencies && dependencies[moduleName]) {
             //if dupe check has already been run, reset but don't run again yet - just update status
-            if (this.currentState.dupeCount) {
+            if (this.currentState.dupeCount && this.currentState.dupeCount > 0) {
                 this.duplicateView.collection.reset();
+                this.currentState.dupeCount = 0;
             }
+            //undo any dependency field mapping that was done previously
+            if (dependencies && dependencies[moduleName] && dependencies[moduleName].fieldMapping) {
+                _.each(dependencies[moduleName].fieldMapping, function(sourceField, targetField) {
+                    this.createView.model.unset(targetField);
+                }, this);
+            }
+            //make sure if we re-trigger dupe check again we handle as if it never happened before
+            this.toggledOffDupes = false;
             this.resetPanel();
         }
     },

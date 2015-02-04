@@ -539,6 +539,20 @@ describe('Leads.Base.Layout.ConvertPanel', function() {
         expect(layout.currentState.dupeCount).toEqual(0);
     });
 
+    it('should clear dependency mapped fields if a dependency module is reset', function() {
+        layout.createView.model.set('foo_id', '123');
+        layout.resetFromDependentModuleChanges('Foo');
+
+        expect(layout.createView.model.get('foo_id')).toBeUndefined();
+    });
+
+    it('should reset toggle state flag if a dependency module is reset', function() {
+        layout.toggledOffDupes = true;
+        layout.resetFromDependentModuleChanges('Foo');
+
+        expect(layout.toggledOffDupes).toBe(false);
+    });
+
     it('should remove unsaved changes when turnOffUnsavedChanges is called', function() {
         var hasUnsavedChanges = function(view) {
             return view.model.isNew() && view.model.hasChanged();
