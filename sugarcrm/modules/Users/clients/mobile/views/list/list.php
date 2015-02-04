@@ -32,11 +32,11 @@ $viewdefs['Users']['mobile']['view']['list'] = array(
                     'enabled' => true,
                 ),
                 array(
-                    'name' => 'email1',
+                    'name' => 'email',
                     'label' => 'LBL_EMAIL',
                     'sortable' => false,
                     'link' => true,
-                    'customCode' => '{$EMAIL1_LINK}{$EMAIL1}</a>',
+                    'customCode' => '{$EMAIL_LINK}{$EMAIL}</a>',
                     'default' => true,
                     'enabled' => true,
                 ),

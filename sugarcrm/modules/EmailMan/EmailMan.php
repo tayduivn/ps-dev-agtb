@@ -237,7 +237,7 @@ class EmailMan extends SugarBean{
         }
 
         $this->email1 = $temp_array['RECIPIENT_EMAIL'];
-		$temp_array['EMAIL1_LINK'] = $current_user->getEmailLink('email1', $this, '', '', 'ListView');
+		$temp_array['EMAIL_LINK'] = $current_user->getEmailLink('email1', $this, '', '', 'ListView');
 
         return $temp_array;
     }
