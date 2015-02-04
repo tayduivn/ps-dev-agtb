@@ -780,12 +780,7 @@ class PMSECaseFlowHandler
 
         //ADD COMMENT IN BPM_NOTES
         if (isset($params['not_type']) && !empty($params['not_type'])) {
-            $noteBean = $this->retrieveBean('pmse_BpmNotes'); //new BpmNotes();
-            $noteBean->retrieve_by_string_fields(array(
-                    'cas_id' => $cas_id,
-                    'cas_index' => $cas_index,
-                    'not_type' => $params['not_type']
-                ));
+            $noteBean = $this->retrieveBean('pmse_BpmNotes');
             $noteBean->cas_id = $cas_id;
             $noteBean->cas_index = $cas_index;
             $noteBean->not_user_id = $current_user->id;
