@@ -58,8 +58,7 @@ class PMSEEngineApi extends SugarApi
                 'pathVars' => array('module', ''),
                 'jsonParams' => array('filter'),
                 'method' => 'engineRoute',
-                'shortHelp' => 'An API to route a case of ProcessMaker',                
-                'longHelp' => 'include/api/help/module_engine_route_put.html',
+                'shortHelp' => 'An API to route a case of Process Author',
                 'keepSession' => true
             ),
             'engineClaim' => array(
@@ -67,15 +66,14 @@ class PMSEEngineApi extends SugarApi
                 'path' => array('pmse_Inbox', 'engine_claim'),
                 'pathVars' => array('module', ''),
                 'method' => 'engineClaim',
-                'shortHelp' => 'An API to claim a case of ProcessMaker',
-                'longHelp' => 'include/api/help/module_engine_claim_put.html',
+                'shortHelp' => 'An API to claim a case of Process Author',
                 'keepSession' => true
             ),
             'historyLogList' => array(
                 'reqType' => 'GET',
                 'path' => array('pmse_Inbox','historyLog','?'),
                 'pathVars' => array('module','','filter'),
-                'method' => 'retrieveHistoryLog',                
+                'method' => 'retrieveHistoryLog',
                 'shortHelp' => 'retrieve history log',
                 'keepSession' => true
                 //'longHelp' => 'include/api/help/module_recordlist_delete.html',
@@ -84,19 +82,17 @@ class PMSEEngineApi extends SugarApi
                 'reqType' => 'GET',
                 'path' => array('pmse_Inbox','note_list','?'),
                 'pathVars' => array('module','','cas_id'),
-                'method' => 'getNotes',                
+                'method' => 'getNotes',
                 'shortHelp' => 'retrieve history log',
                 'keepSession' => true
-                //'longHelp' => 'include/api/help/module_recordlist_delete.html',
             ),
             'savenoteList' => array(
                 'reqType' => 'POST',
                 'path' => array('pmse_Inbox','save_notes'),
                 'pathVars' => array('module',''),
-                'method' => 'saveNotes',                
+                'method' => 'saveNotes',
                 'shortHelp' => 'retrieve history log',
                 'keepSession' => true
-                //'longHelp' => 'include/api/help/module_recordlist_delete.html',
             ),
             'deletenoteList' => array(
                 'reqType' => 'DELETE',
@@ -105,15 +101,13 @@ class PMSEEngineApi extends SugarApi
                 'method' => 'deleteNotes',
                 'shortHelp' => 'retrieve history log',
                 'keepSession' => true
-                //'longHelp' => 'include/api/help/module_recordlist_delete.html',
             ),
             'saveReassignRecord' => array(
                 'reqType' => 'PUT',
                 'path' => array('pmse_Inbox', 'ReassignForm'),
                 'pathVars' => array('module', ''),
                 'method' => 'reassignRecord',
-                'shortHelp' => 'An API to claim a case of ProcessMaker',               
-                'longHelp' => 'include/api/help/module_engine_claim_put.html',
+                'shortHelp' => 'An API to claim a case of Process Author',
                 'keepSession' => true
             ),
             'saveAdhocReassign' => array(
@@ -121,8 +115,7 @@ class PMSEEngineApi extends SugarApi
                 'path' => array('pmse_Inbox', 'AdhocReassign'),
                 'pathVars' => array('module', ''),
                 'method' => 'adhocReassign',
-                'shortHelp' => 'An API to claim a case of ProcessMaker',
-                'longHelp' => 'include/api/help/module_engine_claim_put.html',
+                'shortHelp' => 'An API to claim a case of Process Author',
                 'keepSession' => true
             ),
             'getReassignRecord' => array(
@@ -130,8 +123,7 @@ class PMSEEngineApi extends SugarApi
                 'path' => array('pmse_Inbox', 'ReassignForm', '?', '?'),
                 'pathVars' => array('module', '', 'data', 'flowId'),
                 'method' => 'getReassign',
-                'shortHelp' => 'An API to claim a case of ProcessMaker',
-                'longHelp' => 'include/api/help/module_engine_claim_put.html',
+                'shortHelp' => 'An API to claim a case of Process Author',
                 'keepSession' => true
             ),
             'getAdhocReassign' => array(
@@ -139,8 +131,7 @@ class PMSEEngineApi extends SugarApi
                 'path' => array('pmse_Inbox', 'AdhocReassign', '?', '?'),
                 'pathVars' => array('module', '', 'data', 'flowId'),
                 'method' => 'getAdhoc',
-                'shortHelp' => 'An API to claim a case of ProcessMaker',
-                'longHelp' => 'include/api/help/module_engine_claim_put.html',
+                'shortHelp' => 'An API to claim a case of Process Author',
                 'keepSession' => true
             ),
             'getChangeCaseUser' => array(
@@ -148,8 +139,7 @@ class PMSEEngineApi extends SugarApi
                 'path' => array('pmse_Inbox', 'changeCaseUser', '?'),
                 'pathVars' => array('module', '', 'cas_id'),
                 'method' => 'changeCaseUser',
-                'shortHelp' => 'An API to claim a case of ProcessMaker',
-                'longHelp' => 'include/api/help/module_engine_claim_put.html',
+                'shortHelp' => 'An API to claim a case of Process Author',
                 'keepSession' => true
             ),
             'getUserListByTeam' => array(
@@ -157,8 +147,7 @@ class PMSEEngineApi extends SugarApi
                 'path' => array('pmse_Inbox', 'userListByTeam', '?'),
                 'pathVars' => array('module', '', 'id'),
                 'method' => 'userListByTeam',
-                'shortHelp' => 'An API to claim a case of ProcessMaker',
-                'longHelp' => 'include/api/help/module_engine_claim_put.html',
+                'shortHelp' => 'An API to claim a case of Process Author',
                 'keepSession' => true
             ),
             'updateChangeCaseFlow' => array(
@@ -166,8 +155,7 @@ class PMSEEngineApi extends SugarApi
                 'path' => array('pmse_Inbox', 'updateChangeCaseFlow'),
                 'pathVars' => array('module', ''),
                 'method' => 'updateChangeCaseFlow',
-                'shortHelp' => 'An API to claim a case of ProcessMaker',
-                'longHelp' => 'include/api/help/module_engine_claim_put.html',
+                'shortHelp' => 'An API to claim a case of Process Author',
                 'keepSession' => true
             ),
             'reactivateFlows' => array(
@@ -178,7 +166,6 @@ class PMSEEngineApi extends SugarApi
                 'method' => 'reactivateFlows',
                 'shortHelp' => 'The API method used to reactivate erring cases',
                 'keepSession' => true
-                //'longHelp' => 'include/api/help/module_engine_claim_put.html'
             ),
             'reassignFlows' => array(
                 'reqType' => 'PUT',
@@ -188,7 +175,6 @@ class PMSEEngineApi extends SugarApi
                 'method' => 'reassignFlows',
                 'shortHelp' => 'The API method is used to reassign a flow to a new user.',
                 'keepSession' => true
-                //'longHelp' => 'include/api/help/module_engine_claim_put.html'
             ),
             'getReassignFlows' => array(
                 'reqType' => 'GET',
@@ -198,14 +184,12 @@ class PMSEEngineApi extends SugarApi
                 'method' => 'getReassignFlows',
                 'shortHelp' => 'The API method is used to reassign a flow to a new user.',
                 'keepSession' => true
-                //'longHelp' => 'include/api/help/module_engine_claim_put.html'
             ),
             'getModuleCase' => array(
                 'reqType' => 'GET',
                 'path' => array('pmse_Inbox', 'case', '?', '?'),
                 'pathVars' => array('module', 'case', 'id', 'idflow'),
                 'method' => 'selectCase',
-                //'jsonParams' => array('filter'),
                 'shortHelp' => 'This method updates a record of the specified type',
                 'longHelp' => 'include/api/help/module_record_put_help.html',
                 'keepSession' => true
@@ -226,7 +210,6 @@ class PMSEEngineApi extends SugarApi
                 'method' => 'getUnattendedCases',
                 'shortHelp' => 'The API method is used to reassign a flow to a new user.',
                 'keepSession' => true
-                //'longHelp' => 'include/api/help/module_engine_claim_put.html'
             ),
             'getSettingsEngine' => array(
                 'reqType' => 'GET',
@@ -235,7 +218,6 @@ class PMSEEngineApi extends SugarApi
                 'method' => 'getSettingsEngine',
                 'shortHelp' => 'The API method is used to reassign a flow to a new user.',
                 'keepSession' => true
-                //'longHelp' => 'include/api/help/module_engine_claim_put.html'
             ),
             'putSettingsEngine' => array(
                 'reqType' => 'PUT',
@@ -244,7 +226,6 @@ class PMSEEngineApi extends SugarApi
                 'method' => 'putSettingsEngine',
                 'shortHelp' => 'The API method is used to reassign a flow to a new user.',
                 'keepSession' => true
-                //'longHelp' => 'include/api/help/module_engine_claim_put.html'
             ),
         );
     }
@@ -609,7 +590,7 @@ class PMSEEngineApi extends SugarApi
     }
 
     /**
-     * 
+     *
      * @global type $db
      * @global type $current_user
      * @param type $api
@@ -921,6 +902,13 @@ class PMSEEngineApi extends SugarApi
             } elseif ($args['module_list'] == 'Process Name') {
                 $q->where()->queryAnd()
                     ->addRaw("pmse_inbox.pro_title LIKE '%" . $args['q'] . "%'");
+            }
+        }
+
+        if (isset($args['order_by'])) {
+            $columnToSort = explode(":", $args["order_by"]);
+            if (count($columnToSort) === 2) {
+                $q->orderBy($columnToSort[0], $columnToSort[1]);
             }
         }
 
