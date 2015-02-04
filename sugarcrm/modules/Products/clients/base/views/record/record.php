@@ -218,6 +218,10 @@ $viewdefs['Products']['base']['view']['record'] = array(
                 ),
                 'discount_select',
                 'contact_name',
+                array(
+                    'name' => 'tag',
+                    'span' => 12,
+                ),
             ),
         ),
         array(

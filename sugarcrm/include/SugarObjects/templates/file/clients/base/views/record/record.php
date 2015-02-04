@@ -151,6 +151,10 @@ $viewdefs[$module_name]['base']['view']['record'] = array(
                   'span' => 12,
                 ),
                 'uploadfile',
+                array(
+                    'name' => 'tag',
+                    'span' => 12,
+                ),
             ),
         ),
         array(

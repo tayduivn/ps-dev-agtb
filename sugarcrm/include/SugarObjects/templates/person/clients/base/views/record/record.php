@@ -238,6 +238,14 @@ $viewdefs[$module_name]['base']['view']['record'] = array(
                     ),
                 ),
                 'team_name',
+                // Placeholder to push tags onto its own row
+                array(
+                    'span' => 6,
+                ),
+                array(
+                    'name' => 'tag',
+                    'span' => 12,
+                ),
             ),
         ),
         array(

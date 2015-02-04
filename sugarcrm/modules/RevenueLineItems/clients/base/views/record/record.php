@@ -77,6 +77,10 @@ $fields = array(
         'name' => 'discount_rate_percent',
         'readonly' => true,
     ),
+    array(
+        'name' => 'tag',
+        'span' => 12,
+    ),
 );
 
 $fieldsHidden = array(
