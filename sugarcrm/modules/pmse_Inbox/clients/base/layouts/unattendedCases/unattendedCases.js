@@ -15,7 +15,9 @@
     initialize: function(options) {
         app.view.Layout.prototype.initialize.call(this, options);
         this.collection.sync = this.sync;
-        this.collection.allowed_modules = ['Cases Title', 'Process Name'];
+        this.collection.allowed_modules = [
+            app.lang.get('LBL_CAS_ID',options.module),
+            app.lang.get('LBL_PROCESS_DEFINITION_NAME',options.module)];
         this.context.on('compose:addressbook:search', this.search, this);
         //this.context.on('compose:addressbook:search', this.search, this);
     },
