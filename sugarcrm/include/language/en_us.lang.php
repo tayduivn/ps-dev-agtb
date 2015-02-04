@@ -5293,7 +5293,7 @@ To create a new record using the values you have entered, click "Ignore Duplicat
 //END SUGARCRM flav=ent ONLY
 
     // Javascript enable string
-    'LBL_ENABLE_JAVASCRIPT' => 'SugarCRM requires javascript. Please enable javascript to continue using SugarCRM.',
+    'LBL_ENABLE_JAVASCRIPT' => 'Sugar 7 requires javascript. Please enable Javascript in your browser to use Sugar 7.',
 );
 
 $app_list_strings['interactions_options'] = array (
