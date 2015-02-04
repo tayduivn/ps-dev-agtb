@@ -28,6 +28,7 @@
 
         this.myDefaultLayout = this.closestComponent('sidebar');
         app.routing.before('route', this.beforeRouteChange, this, true);
+        this._currentUrl = Backbone.history.getFragment();
     },
 
     render: function () {
@@ -44,25 +45,24 @@
     },
 
     cancelBusinessRules: function () {
-        cancelAction(app.router);
+        app.router.navigate('pmse_Business_Rules', {trigger: true});
     },
 
     beforeRouteChange: function () {
-        var self = this,
-            resp = false;
-        if (decision_table.isDirty){
-            var targetUrl = Backbone.history.getFragment();
+        var targetUrl = Backbone.history.getFragment();
+        if (decision_table.getIsDirty()) {
             //Replace the url hash back to the current staying page
-            app.router.navigate(targetUrl, {trigger: false, replace: true});
+            app.router.navigate(this._currentUrl, {trigger: false, replace: true});
             app.alert.show('leave_confirmation', {
                 level: 'confirmation',
                 messages: app.lang.get('LBL_WARN_UNSAVED_CHANGES', this.module),
                 onConfirm: function () {
-                    var targetUrl = Backbone.history.getFragment();
+                    decision_table.setIsDirty(false, true);
                     app.router.navigate(targetUrl , {trigger: true, replace: true });
-                    window.location.reload()
                 },
-                onCancel: $.noop
+                onCancel: function () {
+                    $.noop
+                }
             });
             return false;
         }
