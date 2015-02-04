@@ -58,6 +58,8 @@
             return;
         }
 
+        app.events.on("api:refreshtoken:success", this._refreshSession, this);
+
         app.view.View.prototype.initialize.call(this, options);
         this.bwcModel = app.data.createBean('bwc');
         app.routing.before('route', this.beforeRoute, null, this);
@@ -585,11 +587,20 @@
      * {@inheritDoc}
      */
     _dispose: function() {
+        app.events.off("api:refreshtoken:success", this._refreshSession, this);
+
         app.routing.offBefore('route', this.beforeRoute, this);
         if (this.bwcModel) {
             this.bwcModel.off();
             this.bwcModel = null;
         }
         app.view.View.prototype._dispose.call(this);
+    },
+
+    /**
+     * Refreshes session on server side
+     */
+    _refreshSession: function() {
+        app.bwc.login();
     }
 })

@@ -318,6 +318,12 @@
         ];
 
         app.routing.setRoutes(routes);
+
+        // allow subscription to successful token refresh
+        app.api.setRefreshTokenSuccessCallback(function(callback) {
+            callback();
+            app.events.trigger("api:refreshtoken:success");
+        });
     });
 
     app.routing.before('route', function(options) {
