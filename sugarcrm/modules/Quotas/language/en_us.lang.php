@@ -24,6 +24,7 @@ $mod_strings = array (
   'LBL_MODULE_TITLE' => 'Quotas: Home',
   'LBL_LIST_FORM_TITLE' => 'Quota List',
   'LBL_QUOTA' => 'Quota:',
+  'LBL_ADJUSTED' => 'Adjusted',
   
   'LBL_DIRECT_REPORT' => 'Direct Report',
   'LBL_QUOTA_AMOUNT' => 'Quota Amount',
