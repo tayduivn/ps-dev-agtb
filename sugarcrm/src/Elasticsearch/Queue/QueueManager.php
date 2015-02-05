@@ -67,12 +67,6 @@ class QueueManager
     protected $deleteFromQueue = array();
 
     /**
-     * Logger object
-     * @var \LoggerManager
-     */
-    protected $logger;
-
-    /**
      * Ctor
      * @param array $config See `$sugar_config['search_engine']`
      */
@@ -90,7 +84,6 @@ class QueueManager
 
         $this->container = $container;
         $this->db = $db ?: \DBManagerFactory::getInstance();
-        $this->logger = \LoggerManager::getLogger();
     }
 
     /**
@@ -154,11 +147,11 @@ class QueueManager
             $scheduler->date_time_start = '2001-01-01 00:00:01';
             $scheduler->date_time_end = '2037-12-31 23:59:59';
             $scheduler->catch_up = '0';
-            $this->logger->fatal("Create elastic queue scheduler");
+            $this->getLogger()->info("Create elastic queue scheduler");
         } else {
             $scheduler = array_shift($result);
             $scheduler->status = 'Active';
-            $this->logger->fatal("Elasticsearch queue scheduler already exists, activating");
+            $this->getLogger()->info("Elasticsearch queue scheduler already exists, activating");
         }
 
         $scheduler->save();
@@ -196,9 +189,9 @@ class QueueManager
 
             $this->submitNewJob($job);
 
-            $this->logger->fatal("Create elastic consumer for $module");
+            $this->getLogger()->info("Create elastic consumer for $module");
         } else {
-            $this->logger->fatal("Elastic consumer for $module already present");
+            $this->getLogger()->info("Elastic consumer for $module already present");
         }
     }
 
@@ -553,5 +546,14 @@ class QueueManager
         foreach ($this->getQueuedModules() as $module) {
             $this->consumeModuleFromQueue($module);
         }
+    }
+
+    /**
+     * Get logger object
+     * @return \Sugarcrm\Sugarcrm\Elasticsearch\Logger
+     */
+    protected function getLogger()
+    {
+        return $this->container->logger;
     }
 }
