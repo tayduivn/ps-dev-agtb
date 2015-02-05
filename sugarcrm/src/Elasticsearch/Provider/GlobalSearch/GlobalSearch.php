@@ -204,9 +204,11 @@ class GlobalSearch extends AbstractProvider
             ->setOffset($this->offset)
         ;
 
-        // Set query only when search term(s) are available
+        // Use MultiMatch if we are actually searching or fallback to MatchAll
         if (!empty($this->term)) {
             $builder->setQuery($this->getQuery());
+        } else {
+            $builder->setQuery($this->getMatchAllQuery());
         }
 
         // Set highlighter
@@ -233,6 +235,15 @@ class GlobalSearch extends AbstractProvider
         $query->setQuery($this->term);
         $query->setFields($this->getSearchFields($this->fieldBoost));
         return $query;
+    }
+
+    /**
+     * Get match all query
+     * @return \Elastica\Query\MatchAll
+     */
+    protected function getMatchAllQuery()
+    {
+        return new \Elastica\Query\MatchAll();
     }
 
     /**
