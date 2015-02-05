@@ -14,7 +14,6 @@
      * {@inheritDoc}
      */
     events: {
-        'click [data-action=download]': 'startDownload',
         'click [data-action=download-all]': 'startDownloadArchive'
     },
 
@@ -299,24 +298,6 @@
      */
     formatSelection: function (attachment) {
         return this._select2formatSelectionTemplate(attachment);
-    },
-
-    /**
-     * Download file from server.
-     * @param {Event} evt
-     */
-    startDownload: function (evt) {
-        var uri = this.$(evt.currentTarget).data('url');
-        app.api.fileDownload(
-            uri,
-            {
-                error: function (data) {
-                    // refresh token if it has expired
-                    app.error.handleHttpError(data, {});
-                }
-            },
-            {iframe: this.$el}
-        );
     },
 
     /**
