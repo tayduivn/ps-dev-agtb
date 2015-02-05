@@ -229,6 +229,7 @@ class QueryBuilder
         $search = $this->newSearchObject();
         $search->setQuery($query);
         $search->addIndices($this->getReadIndices($this->modules, $this->user));
+        $search->addTypes($this->modules);
 
         return new ResultSet($search->search());
     }
