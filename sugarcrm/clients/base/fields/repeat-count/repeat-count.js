@@ -119,10 +119,7 @@
      * @inheritdoc
      */
     _dispose: function() {
-        this.model._validationTasks = _.omit(
-            this.model._validationTasks,
-            'repeat_count_max_validator_' + this.cid
-        );
+        this.model.removeValidationTask('repeat_count_max_validator_' + this.cid);
         this._super('_dispose');
     }
 })

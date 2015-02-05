@@ -57,7 +57,7 @@
         // FIXME: we should have a {@link Da
         if (_.isFunction(this.model.addValidationTask)) {
             this.model.hasImageRequiredValidator = true;
-            this.model.addValidationTask('image_required', _.bind(this._doValidateImageField, this));
+            this.model.addValidationTask('image_required_' + this.cid, _.bind(this._doValidateImageField, this));
         }
     },
 
@@ -68,7 +68,9 @@
     _dispose: function() {
         //Remove specific validation task from the model
         this.model.hasImageRequiredValidator = false;
-        this.model._validationTasks = _.omit(this.model._validationTasks, 'image_required');
+        if (this.model.removeValidationTask) {
+            this.model.removeValidationTask('image_required_' + this.cid);
+        }
         app.view.Field.prototype._dispose.call(this);
     },
 

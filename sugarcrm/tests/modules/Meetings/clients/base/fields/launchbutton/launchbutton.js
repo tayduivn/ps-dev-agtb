@@ -112,7 +112,9 @@ describe('View.Fields.Base.Meetings.LaunchbuttonField', function() {
     });
 
     describe('launching the external meeting', function() {
-        var windowOpenStub, alertStub;
+        var windowOpenStub, alertStub,
+            hostUrl = 'http://hosturl',
+            joinUrl = 'http://joinurl';
 
         beforeEach(function() {
             field = SugarTest.createField(createFieldProperties);
@@ -123,25 +125,39 @@ describe('View.Fields.Base.Meetings.LaunchbuttonField', function() {
         using('external meeting permissions',
             [
                 ['should start/host the meeting if user clicks button and has host permissions',
-                    true, true, true, 1, 0],
+                    hostUrl, joinUrl,
+                    true, true, true, 1, false],
                 ['should display error if user clicks start/host button and does not have host permissions',
-                    true, false, true, 0, 1],
+                    hostUrl, joinUrl,
+                    true, false, true, 0, 'LBL_EXTNOSTART_MAIN'],
                 ['should join the meeting if user clicks button and has join permissions',
-                    false, true, true, 1, 0],
+                    hostUrl, joinUrl,
+                    false, true, true, 1, false],
                 ['should display error if user clicks join button and does not have join permissions',
-                    false, false, false, 0, 1]
+                    hostUrl, joinUrl,
+                    false, false, false, 0, 'LBL_EXTNOT_MAIN'],
+                ['should display error if user clicks host button and there is no host url',
+                    '', joinUrl,
+                    true, true, true, 0, 'LBL_EXTERNAL_MEETING_NO_URL'],
+                ['should display error if user clicks join button and there is no join url',
+                    hostUrl, '',
+                    false, true, true, 0, 'LBL_EXTERNAL_MEETING_NO_URL']
             ],
-            function(expectation, isHost, hostAllowed, joinAllowed, launchCount, alertCount) {
+            function(expectation, hostUrl, joinUrl, isHost, hostAllowed, joinAllowed, launchCount, alert) {
                 it(expectation, function() {
                     field.isHost = isHost;
                     field._launchMeeting({
                         is_host_option_allowed: hostAllowed,
-                        host_url: 'http://hosturl',
+                        host_url: hostUrl,
                         is_join_option_allowed: joinAllowed,
-                        join_url: 'http://joinurl'
+                        join_url: joinUrl
                     });
                     expect(windowOpenStub.callCount).toEqual(launchCount);
-                    expect(alertStub.callCount).toEqual(alertCount);
+                    if (alert) {
+                        expect(alertStub.lastCall.args[1].messages).toEqual(alert);
+                    } else {
+                        expect(alertStub.callCount).toEqual(0);
+                    }
                 });
             });
     });

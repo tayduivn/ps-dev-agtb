@@ -114,6 +114,7 @@ $mod_strings = array (
     'LBL_ACCEPT_STATUS' => 'Accept Status',
     'LBL_ACCEPT_LINK' => 'Accept Link',
     'LBL_ERROR_LAUNCH_MEETING_GENERAL' => 'There was an error launching this meeting. Please contact your Administrator.',
+    'LBL_EXTERNAL_MEETING_NO_URL' => 'The link to launch {{meetingType}} was not generated properly when the meeting was created. Please contact your Administrator.',
     // You are not invited to the meeting messages
     'LBL_EXTNOT_HEADER' => 'Error: Not Invited',
     'LBL_EXTNOT_MAIN' => 'You are not able to join this Meeting because you are not an Invitee.',

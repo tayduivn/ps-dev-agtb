@@ -1494,6 +1494,9 @@ function search_by_module($user_name, $password, $search_string, $modules, $offs
                 'where' => array(
                     $module => array(
                         0 => "$namefield like '{0}%'"
+                    ),
+                    'EmailAddresses' => array(
+                        0 => "ea.email_address like '{0}%'"
                     )
                 ),
                 'fields' => "$lc_module.id, $namefield AS name"

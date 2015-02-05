@@ -338,7 +338,7 @@ $(window).bind("load", function () {
         </div>
         <div class="modal-footer">
           <span sfuuid="25" class="detail">
-            <a class="btn btn-invisible btn-link" href="index.php">Cancel</a>
+            <a class="btn btn-invisible btn-link" href="index.php#bwc/index.php?module=Administration&action=index">Cancel</a>
             <a class="btn btn-primary" href="javascript:void(0);" name="next_button">Upload</a>
           </span>
         </div>

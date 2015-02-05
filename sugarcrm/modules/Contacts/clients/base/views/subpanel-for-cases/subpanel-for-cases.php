@@ -27,7 +27,6 @@ $viewdefs['Contacts']['base']['view']['subpanel-for-cases'] = array(
                'last_name',
            ),
            'link' => true,
-          'width' =>  49,
           'label' => 'LBL_LIST_NAME',
           'enabled' => true,
           'default' => true,

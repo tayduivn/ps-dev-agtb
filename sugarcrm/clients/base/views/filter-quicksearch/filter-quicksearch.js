@@ -53,8 +53,6 @@
     _renderHtml: function() {
         this._super('_renderHtml');
         this.setElement(this.$('input'));
-        this._lastQuicksearchKey = this._getLastQuicksearchKey();
-        this.$el.val(app.user.lastState.get(this._lastQuicksearchKey));
     },
 
     /**
@@ -136,28 +134,7 @@
         var newSearch = this.$el.val();
         if (this.currentSearch !== newSearch) {
             this.currentSearch = newSearch;
-            app.user.lastState.set(this._lastQuicksearchKey, newSearch);
             this.layout.trigger('filter:apply', newSearch);
         }
-    },
-
-    /**
-     * Gets the key containing the last quicksearch value.
-     *
-     * @return {string} The key.
-     * @protected
-     */
-    _getLastQuicksearchKey: function() {
-        var parentModuleKey = this.context.parent ? '-' + this.context.parent.get('module') : '';
-
-        /**
-         * The key in which we set the last quicksearch value.
-         *
-         * @property {string}
-         * @private
-         */
-        this._lastQuicksearchKey = this._lastQuicksearchKey ||
-            app.user.lastState.key('last-quickSearch-' + this.layout.layoutType + parentModuleKey, this.layout);
-        return this._lastQuicksearchKey;
     }
 })

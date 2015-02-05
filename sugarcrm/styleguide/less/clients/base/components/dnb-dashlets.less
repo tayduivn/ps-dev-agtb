@@ -29,11 +29,9 @@
 div.dnb-company-label {
   font-size: @fontSizeSmall;
   color: darken(@grayLight, 5%);
-  padding-bottom: 2px;
 }
-
 div.txt {
-  font-size: 12px;
+  font-size: 15px;
   color: #454545;
 }
 /*dnb mixins*/
@@ -60,7 +58,7 @@ div.dnb-company-title {
 }
 
 div.url-txt {
-  font-size: 13px;
+  font-size: 15px;
   color: #1571CE;
 }
 
@@ -341,6 +339,7 @@ li.txt {
 }
 .dnb-bal-list {
   .common-font;
+  clear: right;
 }
 .dnb-bal-rslt {
   font-size: @fontSizeLarge;
@@ -362,10 +361,11 @@ li.txt {
 }
 .dnb-rslt-chkbox {
   .dnb-chk-box;
-  margin: 10px 0px;
+  margin: 10px 10px 10px 0px;
 }
 .dnb-cntrl-chkbox {
   .dnb-chk-box;
+  margin-right: 10px;
 }
 #dnb-bal-result li:first-child {
   background: @grayLighter;
