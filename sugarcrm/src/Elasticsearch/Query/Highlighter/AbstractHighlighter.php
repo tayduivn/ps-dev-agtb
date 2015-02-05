@@ -62,6 +62,11 @@ abstract class AbstractHighlighter implements HighlighterInterface
     protected $requireFieldMatch = true;
 
     /**
+     * @var string Field encoder, accepts html or default
+     */
+    protected $encoder = 'html';
+
+    /**
      * Set fields
      * @param array $fields
      * @return AbstractHighlighter
@@ -165,6 +170,7 @@ abstract class AbstractHighlighter implements HighlighterInterface
             'require_field_match' => $this->requireFieldMatch,
             'number_of_fragments' => $this->numberOfFrags,
             'fragment_size' => $this->fragSize,
+            'encoder' => $this->encoder,
         );
         $properties = array_merge($this->globalProps, $properties);
 
