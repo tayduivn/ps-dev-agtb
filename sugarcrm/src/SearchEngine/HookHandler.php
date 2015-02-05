@@ -20,7 +20,7 @@ namespace Sugarcrm\Sugarcrm\SearchEngine;
 class HookHandler
 {
     /**
-     * Usually called upon after_save logic hook to (re)index the bean.
+     * To be used from logic hooks to index a bean.
      *
      * @param \SugarBean $bean
      * @param string $event Triggered event
@@ -29,10 +29,28 @@ class HookHandler
     public function indexBean($bean, $event, $arguments)
     {
         if (!$bean instanceof \SugarBean) {
-            $GLOBALS['log']->fatal("Not bean ->" . var_export(get_class($bean), true));
+            $this->getLogger()->fatal("Not bean ->" . var_export(get_class($bean), true));
             return;
         }
 
-        $engine = SearchEngine::getInstance()->indexBean($bean);
+        $engine = $this->getSearchEngine()->indexBean($bean);
+    }
+
+    /**
+     * Get search engine object
+     * @return \Sugarcrm\Sugarcrm\SearchEngine\SearchEngine
+     */
+    protected function getSearchEngine()
+    {
+        return SearchEngine::getInstance();
+    }
+
+    /**
+     * Get logger object
+     * @return \LoggerManager
+     */
+    protected function getLogger()
+    {
+        return \LoggerManager::getLogger();
     }
 }
