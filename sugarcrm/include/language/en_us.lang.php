@@ -110,6 +110,7 @@ $app_list_strings = array (
     'Shippers' => 'Shipping Providers',
     'Styleguide' => 'Styleguide',
     'Feedbacks' => 'Feedbacks',
+    'Tags' => 'Tags',
   ),
 
     'moduleIconList' =>
@@ -222,7 +223,8 @@ $app_list_strings = array (
     'Subscriptions' => 'Subscription',
     'UserSignatures' => 'User Signature',
     'Feedbacks' => 'Feedback',
-),
+    'Tags' => 'Tag',
+  ),
 
 /*
  * @deprecated as of 7.2.0 since it is only used on massupdate in BWC mode.
@@ -5358,6 +5360,10 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_PRO_DISABLE' => 'Updating',
     'LBL_PA_PRODEF_HAS_PENDING_PROCESSES' => 'You cannot delete this Process Definition because have pending processes running.',
 //END SUGARCRM flav=ent ONLY
+
+    //Tag Strings
+    'LBL_TAG_NEW_TAG' => '(New Tag)',
+    'LBL_TAG_FETCH_ERROR' => 'An error has occurred while retrieving tags.',
 
     // Javascript enable string
     'LBL_ENABLE_JAVASCRIPT' => 'Sugar 7 requires javascript. Please enable Javascript in your browser to use Sugar 7.',
