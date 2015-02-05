@@ -1,4 +1,4 @@
-//FILE SUGARCRM flav=ent ONLY
+
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-describe("Opportunities.Base.Views.Record", function() {
+describe('Opportunities.Base.Views.Record', function() {
     var app, view, options, sinonSandbox;
 
     afterEach(function() {
@@ -26,7 +26,10 @@ describe("Opportunities.Base.Views.Record", function() {
                     {
                         fields: [
                             {
-                                name: "name"
+                                name: 'name'
+                            },{
+                                name: 'commit_stage',
+                                label: 'LBL_COMMIT_STAGE'
                             }
                         ]
                     }
@@ -55,6 +58,8 @@ describe("Opportunities.Base.Views.Record", function() {
 
         view = SugarTest.createView('base', 'Opportunities', 'record', options.meta, context, true);
     });
+
+    //BEGIN SUGARCRM flav=ent ONLY
 
     describe('rliCreateClose', function() {
         afterEach(function() {
@@ -126,5 +131,5 @@ describe("Opportunities.Base.Views.Record", function() {
         });
     });
 
-
+    //END SUGARCRM flav=ent ONLY
 });

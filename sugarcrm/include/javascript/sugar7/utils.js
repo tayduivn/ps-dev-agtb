@@ -105,6 +105,31 @@
             },
 
             /**
+             * If Forecasts is not setup, it will convert commit_stage into a spacer field and show no-data
+             *
+             * @param {Object} panels
+             */
+            hideForecastCommitStageField: function(panels) {
+                if (!app.metadata.getModule('Forecasts', 'config').is_setup) {
+                    _.each(panels, function(panel) {
+                        // use _.every so we can break out after we found the commit_stage field
+                        _.every(panel.fields, function(field, index) {
+                            if (field.name == 'commit_stage') {
+                                panel.fields[index] = {
+                                    'name': 'spacer',
+                                    'label': field.label,
+                                    'span': 6,
+                                    'readonly': true
+                                };
+                                return false;
+                            }
+                            return true;
+                        }, this);
+                    }, this);
+                }
+            },
+
+            /**
              * Takes two Forecasts models and returns HTML for the history log
              *
              * @param oldestModel {Backbone.Model} the oldest model by date_entered

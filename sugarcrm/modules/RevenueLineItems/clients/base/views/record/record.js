@@ -17,7 +17,7 @@
     initialize: function(options) {
         this.plugins = _.union(this.plugins || [], ['HistoricalSummary']);
         this._super('initialize', [options]);
-        this._parsePanelFields(this.meta.panels);
+        app.utils.hideForecastCommitStageField(this.meta.panels);
     },
 
     /**
@@ -113,30 +113,5 @@
     _handleDuplicateBefore: function(new_model) {
         new_model.unset('quote_id');
         new_model.unset('quote_name');
-    },
-
-    /**
-     * Parse the fields in the panel for the different requirement that we have
-     *
-     * @param {Array} panels
-     * @protected
-     */
-    _parsePanelFields: function(panels) {
-        _.each(panels, function(panel) {
-            if (!app.metadata.getModule('Forecasts', 'config').is_setup) {
-                // use _.every so we can break out after we found the commit_stage field
-                _.every(panel.fields, function(field, index) {
-                    if (field.name == 'commit_stage') {
-                        panel.fields[index] = {
-                            'name': 'spacer',
-                            'span': 6,
-                            'readonly': true
-                        };
-                        return false;
-                    }
-                    return true;
-                }, this);
-            }
-        }, this);
     }
 })

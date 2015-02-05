@@ -64,6 +64,8 @@
             copyModel.unset('date_closed');
             copyModel.unset('date_closed_timestamp');
         }, this);
+
+        app.utils.hideForecastCommitStageField(this.meta.panels);
     },
 
 //BEGIN SUGARCRM flav=ent ONLY

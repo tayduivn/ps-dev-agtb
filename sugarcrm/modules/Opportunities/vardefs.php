@@ -331,7 +331,7 @@ $dictionary['Opportunity'] = array(
         ),
         'commit_stage' => array(
             'name' => 'commit_stage',
-            'vname' => 'LBL_COMMIT_STAGE',
+            'vname' => 'LBL_COMMIT_STAGE_FORECAST',
             'type' => 'enum',
             'len' => '50',
             'comment' => 'Forecast commit ranges: Include, Likely, Omit etc.',

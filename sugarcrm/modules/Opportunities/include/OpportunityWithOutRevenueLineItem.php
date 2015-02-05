@@ -128,6 +128,7 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
         // fix the various list views
         $this->fixListViews(
             array(
+                'commit_stage' => $this->isForecastSetup(),
                 'sales_status' => 'sales_stage',
                 'probability' => true,
             )
