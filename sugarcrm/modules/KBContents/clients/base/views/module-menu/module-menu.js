@@ -68,13 +68,15 @@
 
         var treeCallbacks = {
             onSelect: function() { return; }
-        };
+            },
+        // @TODO: Find out why params from context for drawer don't pass to our view tree::_initSettings
+            context = _.extend({}, this.context, {treeoptions: treeOptions, treecallbacks: treeCallbacks});
 
         app.drawer.open({
             layout: 'nested-set-list',
             context: {
                 module: 'Categories',
-                parent: this.context,
+                parent: context,
                 title: app.lang.getModString(this.label, this.module),
                 treeoptions: treeOptions,
                 treecallbacks: treeCallbacks

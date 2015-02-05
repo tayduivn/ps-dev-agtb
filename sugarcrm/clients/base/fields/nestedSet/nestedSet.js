@@ -299,12 +299,14 @@
             module_root: this.moduleRoot,
             plugins: ['dnd', 'contextmenu'],
             isDrawer: true
-        };
+            },
+        // @TODO: Find out why params from context for drawer don't pass to our view tree::_initSettings
+            context = _.extend({}, this.context, {treeoptions: treeOptions});
         app.drawer.open({
             layout: 'nested-set-list',
             context: {
                 module: 'Categories',
-                parent: this.context,
+                parent: context,
                 treeoptions: treeOptions
             }
         }, _.bind(this.selectedNode, this));
