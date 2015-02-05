@@ -2296,14 +2296,20 @@ AdamActivity.prototype.actionFactory = function (type) {
                         success: function(modules) {
                             if (modules && modules.success) {
                                 combo_modules.setOptions(modules.result);
+                                initialModule = data.act_field_module || modules.result[0].value;
+                                project.addMetadata('projectModuleFields', {
+                                    dataURL: 'pmse_Project/CrmData/fields/'+ PROJECT_MODULE,
+                                    dataRoot: 'result',
+                                    success: function (data) {
+                                        updater_field.setVariables(data);
+                                    }
+                                });
                                 updater_field.proxy.uid = PROJECT_MODULE;
-                                initialModule = PROJECT_MODULE;
-                                updater_field.proxy.url = 'pmse_Project/CrmData/fields/' + initialModule
+                                updater_field.proxy.url = 'pmse_Project/CrmData/fields/' + initialModule;
                                 updater_field.proxy.getData(null, {
                                     success: function(fields) {
                                         if (fields) {
-
-                                            updater_field.setVariables(fields.result);
+                                            //updater_field.setVariables(fields.result);
                                             updater_field.setOptions(fields.result, true);
                                             updater_field.setValue(data.act_fields || null);
                                             App.alert.dismiss('upload');
@@ -2383,15 +2389,22 @@ AdamActivity.prototype.actionFactory = function (type) {
                                initialModule = data.act_field_module || modules.result[0].value;
                                updater_field.proxy.uid = PROJECT_MODULE;
                                updater_field.proxy.url = 'pmse_Project/CrmData/addRelatedRecord/' + initialModule;
+                               project.addMetadata('projectModuleFieldsRelated', {
+                                    dataURL: 'pmse_Project/CrmData/addRelatedRecord/'+ PROJECT_MODULE,
+                                    dataRoot: 'result',
+                                    success: function (data) {
+                                        updater_field.setVariables(data);
+                                    }
+                                });
                                updater_field.proxy.getData(null,{
-                                   success: function(fields) {
-                                       updater_field.setOptions(fields.result);
-                                       updater_field.setVariables(fields.result);
-                                       updater_field.setValue(data.act_fields || null);
-                                       App.alert.dismiss('upload');
-                                       w.html.style.display = 'inline';
-                                   }
-                               });
+                                    success: function(fields) {
+                                        updater_field.setOptions(fields.result);
+                                        //updater_field.setVariables(fields.result);
+                                        updater_field.setValue(data.act_fields || null);
+                                        App.alert.dismiss('upload');
+                                        w.html.style.display = 'inline';
+                                    }
+                                });
                            }
                        }
                     });
