@@ -60,9 +60,7 @@
                     decision_table.setIsDirty(false, true);
                     app.router.navigate(targetUrl , {trigger: true, replace: true });
                 },
-                onCancel: function () {
-                    $.noop
-                }
+                onCancel: $.noop
             });
             return false;
         }
