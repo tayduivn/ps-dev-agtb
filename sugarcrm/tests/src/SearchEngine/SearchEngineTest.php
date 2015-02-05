@@ -1,0 +1,113 @@
+<?php
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+
+namespace Sugarcrm\SugarcrmTest\SearchEngine;
+
+use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
+use Sugarcrm\Sugarcrm\SearchEngine\Engine\EngineInterface;
+
+/**
+ *
+ * Tests for \Sugarcrm\Sugarcrm\SearchEngine\SearchEngine
+ *
+ */
+class SearchEngineTest extends \Sugar_PHPUnit_Framework_TestCase
+{
+    /**
+     * @covers \Sugarcrm\Sugarcrm\SearchEngine\SearchEngine::hasCapability
+     * @dataProvider dataProviderTestHasCapability
+     * @group unit
+     *
+     * @param string $interface
+     * @param string $capability
+     * @param boolean $expected
+     */
+    public function testHasCapability($interface, $capability, $expected)
+    {
+        $engine = new SearchEngine($this->getMock($interface));
+        $this->assertSame($expected, $engine->hasCapability($capability));
+    }
+
+    public function dataProviderTestHasCapability()
+    {
+        return array(
+            array(
+                'Sugarcrm\\Sugarcrm\\SearchEngine\\Engine\\EngineInterface',
+                'DoesNotExist',
+                false,
+            ),
+            array(
+                'Sugarcrm\\Sugarcrm\\SearchEngine\\Capability\\GlobalSearch\\GlobalSearchInterface',
+                'FakeCapability',
+                false,
+            ),
+            array(
+                'Sugarcrm\\Sugarcrm\\SearchEngine\\Capability\\GlobalSearch\\GlobalSearchInterface',
+                'GlobalSearch',
+                true,
+            )
+        );
+    }
+
+    /**
+     * @covers \Sugarcrm\Sugarcrm\SearchEngine\SearchEngine::getEngine
+     * @dataProvider dataProviderTestGetEngine
+     * @group unit
+     *
+     * @param EngineInterface $implement
+     */
+    public function testGetEngine(EngineInterface $engineObject)
+    {
+        $engine = new SearchEngine($engineObject);
+        $this->assertSame($engineObject, $engine->getEngine());
+    }
+
+    public function dataProviderTestGetEngine()
+    {
+        return array(
+            array($this->getMock('Sugarcrm\\Sugarcrm\\SearchEngine\\Engine\\EngineInterface')),
+            array($this->getMock('Sugarcrm\\Sugarcrm\\SearchEngine\\Capability\\GlobalSearch\\GlobalSearchInterface')),
+        );
+    }
+
+    /**
+     * @covers \Sugarcrm\Sugarcrm\SearchEngine\SearchEngine::newEngine
+     * @expectedException \RuntimeException
+     */
+    public function testNewEngineExceptions()
+    {
+        $engine = SearchEngine::newEngine('Unknown');
+    }
+
+    /**
+     * @covers \Sugarcrm\Sugarcrm\SearchEngine\SearchEngine::newEngine
+     * @dataProvider dataProviderTestNewEngine
+     *
+     * @param string $type
+     * @param array $config
+     */
+    public function testNewEngine($type, array $config)
+    {
+        $engine = SearchEngine::newEngine($type, $config);
+        $this->assertSame($config, $engine->getEngineConfig());
+    }
+
+    public function dataProviderTestNewEngine()
+    {
+        return array(
+            array(
+                'Elastic',
+                array('foo' => 'bar', 0 => 'sweet', 'config' => true),
+            ),
+        );
+    }
+}

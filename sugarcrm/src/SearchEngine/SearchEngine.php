@@ -61,7 +61,7 @@ class SearchEngine
         }
 
         // Check for capability if requested
-        if (!empty($capabilities) && !$instance->hasCapability($capability)) {
+        if (!empty($capability) && !$instance->hasCapability($capability)) {
             return false;
         }
 
@@ -124,15 +124,19 @@ class SearchEngine
      */
     public function hasCapability($capability)
     {
-        $interface = sprintf('Sugarcrm\\Sugarcrm\\SearchEngine\\Capability\\%s', $capability);
-        return in_array($interface, get_declared_interfaces($this->engine));
+        $interface = sprintf(
+            'Sugarcrm\\Sugarcrm\\SearchEngine\\Capability\\%s\\%sInterface',
+            $capability,
+            $capability
+        );
+        return in_array($interface, class_implements($this->engine, false));
     }
 
     /**
-     * Return implementation object
+     * Return the actual engine object
      * @return \Sugarcrm\Sugarcrm\SearchEngine\Engine\EngineInterface
      */
-    public function getImplementation()
+    public function getEngine()
     {
         return $this->engine;
     }

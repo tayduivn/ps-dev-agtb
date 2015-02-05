@@ -88,7 +88,7 @@ class ConsumerJob implements \RunnableSchedulerJob
      */
     protected function isElasticSearchEngine()
     {
-        return ($this->engine->getImplementation() instanceof \Sugarcrm\Sugarcrm\SearchEngine\Engine\Elastic);
+        return ($this->engine->getEngine() instanceof \Sugarcrm\Sugarcrm\SearchEngine\Engine\Elastic);
     }
 
     /**

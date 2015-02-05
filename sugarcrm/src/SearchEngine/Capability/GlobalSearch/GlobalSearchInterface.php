@@ -10,18 +10,20 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\Sugarcrm\SearchEngine\Capability;
+namespace Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch;
+
+use Sugarcrm\Sugarcrm\SearchEngine\Engine\EngineInterface;
 
 /**
  *
  * GlobalSearch capability
  *
  */
-interface GlobalSearch
+interface GlobalSearchInterface extends EngineInterface
 {
     /**
      * Execute search
-     * @return
+     * @return ResultSetInterface
      */
     public function search();
 

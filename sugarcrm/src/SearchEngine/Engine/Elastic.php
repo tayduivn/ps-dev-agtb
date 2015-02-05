@@ -13,14 +13,14 @@
 namespace Sugarcrm\Sugarcrm\SearchEngine\Engine;
 
 use Sugarcrm\Sugarcrm\Elasticsearch\Container;
-use Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch;
+use Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\GlobalSearchInterface;
 
 /**
  *
  * Elasticsearch engine
  *
  */
-class Elastic implements EngineInterface, GlobalSearch
+class Elastic implements EngineInterface, GlobalSearchInterface
 {
     /**
      * @var \Sugarcrm\Sugarcrm\Elasticsearch\Container
