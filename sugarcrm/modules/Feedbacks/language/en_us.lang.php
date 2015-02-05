@@ -5,6 +5,6 @@ $mod_strings = array(
     'LBL_FEEDBACK_TEXT_PLACEHOLDER' => 'Feedback description',
     'LBL_BTN_SUBMIT_FEEDBACK' => 'Send',
     'LBL_FEEDBACK_SENT' => 'Feedback sent.',
-    'LBL_FEEDBACK_SEND_ERROR' => 'Feedback not sent, please verify the form.',
+    'LBL_FEEDBACK_SEND_ERROR' => 'Feedback not sent, please fill in both fields.',
     'LBL_PANEL_CSAT' => 'How would you describe your overall satisfaction with this product?',
 );

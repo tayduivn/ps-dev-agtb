@@ -192,7 +192,7 @@
         layout.$popover = this.$('[data-action="feedback"]');
         layout.$popover.popover({
             trigger: 'manual',
-            title: 'Feedback',
+            title: app.lang.get('LBL_FEEDBACK'),
             content: layout.$el,
             html: true,
             placement: 'top',

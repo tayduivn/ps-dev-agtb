@@ -29,10 +29,10 @@
             feedback_app_path: window.location.href,
             feedback_user_browser: navigator.userAgent + " (" + navigator.language + ")",
             feedback_user_os: navigator.platform,
-            feedback_sugar_version: app.metadata.getServerInfo().product_name + " " + app.metadata.getServerInfo().version + " " + app.metadata.getServerInfo().fts.type,
+            //feedback_sugar_version: app.metadata.getServerInfo().product_name + " " + app.metadata.getServerInfo().version + " " + app.metadata.getServerInfo().fts.type,
+            feedback_sugar_version: _.toArray(_.pick(app.metadata.getServerInfo(), 'product_name', 'version')).join(' '),
         });
         this._super('_render');
-        //console.log('feedback view is rendered');
     },
     close: function() {
         if (this.layout.$popover) {
@@ -84,6 +84,5 @@
                 self.closeFeedback();
             }
         });
-        //console.log('submit feedback form');
     }
 })
