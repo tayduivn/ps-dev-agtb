@@ -1211,7 +1211,7 @@
             width -= ellipsifiedCell.getCellPadding();
             ellipsifiedCell.setMaxWidth(width);
         } else {
-            $ellipsisCell.css({'max-width': width});
+            $ellipsisCell.children().css({'max-width': width});
         }
     },
 
