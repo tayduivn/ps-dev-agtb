@@ -11,9 +11,9 @@
  */
 
 use Sugarcrm\Sugarcrm\Elasticsearch\Container;
-use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\ResultSet;
 use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
-use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Result;
+use Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\ResultSetInterface;
+use Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\ResultInterface;
 
 /**
  *
@@ -33,6 +33,11 @@ class GlobalSearchApi extends SugarApi
     protected $defaultLimit = 20;
 
     /**
+     * @var \Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearchInterface
+     */
+    private $engine;
+
+    /**
      * Register endpoints
      * @return array
      */
@@ -40,7 +45,7 @@ class GlobalSearchApi extends SugarApi
     {
         return array(
 
-            // Replaces /search from UnifiedSearchApi
+            // /globalsearch
             'globalSearch' => array(
                 'reqType' => 'GET',
                 'path' => array('globalsearch'),
@@ -51,11 +56,11 @@ class GlobalSearchApi extends SugarApi
                 'noLoginRequired' => false,
             ),
 
-            // New endpoint /<module>/search
-            'moduleSearch' => array(
+            // /<modules>/globalsearch
+            'modulesGlobalSearch' => array(
                 'reqType' => 'GET',
                 'path' => array('?', 'globalsearch'),
-                'pathVars' => array('module', ''),
+                'pathVars' => array('modules', ''),
                 'method' => 'globalSearch',
                 'shortHelp' => '',
                 'longHelp' => '',
@@ -73,13 +78,9 @@ class GlobalSearchApi extends SugarApi
     public function globalSearch(\RestService $api, array $args)
     {
         $api->action = 'list';
-        $parsed = $this->parseArguments($args);
 
-        if (!$engine = $this->getSearchEngine()) {
-            // TODO - what to return ? HTTP code ...
-            $GLOBALS['log']->fatal('SearchEngine does not support GlobalSearch');
-            return false;
-        }
+        $engine = $this->getSearchEngine();
+        $parsed = $this->parseArguments($args);
 
         $engine
             ->from($parsed['modules'])
@@ -90,27 +91,51 @@ class GlobalSearchApi extends SugarApi
             ->highlighter(true)
         ;
 
-        $results = $engine->search();
+        $resultSet = $engine->search();
 
         $nextOffset = $this->getNextOffset(
-            $results->getTotalHits(),
+            $resultSet->getTotalHits(),
             $parsed['limit'],
             $parsed['offset']
         );
 
         return array(
             'next_offset' => $nextOffset,
-            'records' => $this->formatResults($api, $results),
+            'total' => $resultSet->getTotalHits(),
+            'query_time' => $resultSet->getQueryTime(),
+            'records' => $this->formatResults($api, $resultSet),
         );
     }
 
     /**
      * Get global search provider
-     * @return \Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearchInterface
+     * @throws SugarApiExceptionSearchUncapable
+     * @throws SugarApiExceptionSearchUnavailable
+     * @return \Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\GlobalSearchInterface
      */
     protected function getSearchEngine()
     {
-        return SearchEngine::getInstance('GlobalSearch');
+        if ($this->engine === null) {
+
+            // Instantiate search engine with GlobalSearch capability
+            try {
+                $this->engine = SearchEngine::getInstance('GlobalSearch');
+            } catch (\Exception $e) {
+                throw new SugarApiExceptionSearchRuntime(null, array($e->getMessage()));
+            }
+
+            // Check capability
+            if (!$this->engine) {
+                throw new SugarApiExceptionSearchUncapable(null, array('GlobalSearch'));
+            }
+        }
+
+        // Alth0ugh this check run implicitly, we can already bail out here if unavailabe
+        if (!$this->engine->isAvailable()) {
+            throw new SugarApiExceptionSearchUnavailable();
+        }
+
+        return $this->engine;
     }
 
     /**
@@ -137,16 +162,17 @@ class GlobalSearchApi extends SugarApi
      */
     protected function parseArguments(array $args)
     {
-        if (empty($args['module_list'])) {
+        // Modules can be a comma separated list
+        if (empty($args['modules'])) {
             $modules = array();
         } else {
-            $modules = explode(',', $args['module_list']);
+            $modules = explode(',', $args['modules']);
         }
 
         return array(
             'term' => empty($args['q']) ? false : $args['q'],
-            'limit' => empty($args['max_num']) ? $this->defaultLimit : $args['max_num'],
-            'offset' => empty($args['offset']) ? $this->defaultOffset : $args['offset'],
+            'limit' => (int) isset($args['max_num']) ?  $args['max_num'] : $this->defaultLimit,
+            'offset' => (int) isset($args['offset']) ? $args['offset'] : $this->defaultOffset,
             'modules' => $modules,
         );
     }
@@ -155,62 +181,30 @@ class GlobalSearchApi extends SugarApi
      * Format result set
      *
      * @param \RestService $api
-     * @param \Sugarcrm\Core\lib\SugarElastic\Adapter\ResultSet $results
+     * @param ResultSetInterface $results
      * @return array
      */
-    protected function formatResults(\RestService $api, ResultSet $results)
+    protected function formatResults(\RestService $api, ResultSetInterface $results)
     {
         $formattedResults = array();
 
+        /* @var $result ResultInterface */
         foreach ($results as $result) {
 
-            // Create our seed bean
-            $seed = BeanFactory::getBean($result->getType());
-            $seed->id = $result->getId();
-
-            // set values directly from Elasticsearch instead of bean retrieve
-            $source = $result->getSource();
-            foreach ($source as $field => $value) {
-                $seed->$field = $value;
-            }
-
-            //$args = array('fields' => array_keys($source));
-            // FIXME: aparently name field is required here, it shouldnt
-            $args = array('fields' => 'name');
-            $formatted = $this->formatBean($api, $args, $seed);
+            // get bean data based on available fields in the result
+            $args = array('fields' => $result->getDataFields());
+            $data = $this->formatBean($api, $args, $result->getBean());
 
             // add search specific meta info
-            $formatted['_search'] = array(
+            $formatted = array(
+                'data' => $data,
                 'score' => $result->getScore(),
-                'highlighted' => $this->getHighlights($result),
+                'highlights' => $result->getHighlights(),
             );
 
             $formattedResults[] = $formatted;
         }
 
         return $formattedResults;
-    }
-
-    /**
-     * Format highlight according to current format
-     * TODO: do we need this ?
-     * @param Result $result
-     * @return array
-     */
-    protected function getHighlights(Result $result)
-    {
-        $formatted = array();
-        $raw = $result->getHighlights();
-        foreach ($raw as $field => $highlight) {
-            if (!is_array($highlight) || !isset($highlight[0])) {
-                continue;
-            }
-            $formatted[$field] = array(
-                'text' => $highlight[0],
-                'module' => $result->getType(),
-                'label' => 'LBL_NAME',
-            );
-        }
-        return $formatted;
     }
 }
