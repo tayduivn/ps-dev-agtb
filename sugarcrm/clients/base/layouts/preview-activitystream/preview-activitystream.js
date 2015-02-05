@@ -60,7 +60,7 @@
                  * Retrieve activities for the model that the user wants to preview
                  */
                 endpoint: function(method, collection, options, callbacks) {
-                    var url = app.api.buildURL(model.module, 'activities', {id: model.get('id'), link: true}, options.params);
+                    var url = app.api.buildURL(model.module, null, {id: model.get('id'), link: 'activities'}, options.params);
 
                     return app.api.call('read', url, null, callbacks);
                 },
