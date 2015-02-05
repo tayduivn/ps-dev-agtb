@@ -346,9 +346,16 @@ class QueueManager
         $sql = $this->generateQueryModuleFromQueue($bean);
         $result = $this->db->query($sql);
         while ($row = $this->db->fetchByAssoc($result)) {
+
+            // Don't perform a full bean retrieve, rely on the generated query.
+            // Related fields will be handled separately.
             $bean->populateFromRow($bean->convertRow($row));
-            $this->container->indexer->indexBean($bean);
-            $this->batchDeleteFromQueue($row['fts_id'], $module);
+
+            // Index the bean and flag for removal when appropriate
+            if ($status = $this->container->indexer->indexBean($bean, true, true)) {
+                $this->batchDeleteFromQueue($row['fts_id'], $module);
+            }
+
             $processed++;
         }
 
@@ -399,7 +406,7 @@ class QueueManager
             VALUES (%s, %s, %s, %s, %s)',
             self::FTS_QUEUE,
             $this->db->getGuidSQL(),
-            $id,
+            $this->db->quoted($id),
             $this->db->quoted($module),
             $this->db->now(),
             $this->db->now()
@@ -474,7 +481,7 @@ class QueueManager
         $beanFields[] = 'deleted';
 
         $sq = new \SugarQuery();
-        $sq->from($bean);
+        $sq->from($bean, array('add_deleted' => false));
         $sq->select($beanFields);
         $sq->limit($this->maxBulkQueryThreshold);
 

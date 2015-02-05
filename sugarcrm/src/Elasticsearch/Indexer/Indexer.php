@@ -43,7 +43,10 @@ class Indexer
     protected $async = false;
 
     /**
-     * @var boolean Disable indexer
+     * Disable indexer. Note that the status of this flag only affects the
+     * current process. Disabling the indexer this way should only happen
+     * for specific use cases like the installer/upgrader.
+     * @var boolean
      */
     protected $disabled = false;
 
@@ -75,12 +78,15 @@ class Indexer
      * Index SugarBean into Elastichsearch. By default we send all beans
      * through the bulk (batch) handler to minimize the amount of updates
      * to the Elasticsearch backend. On the end of the page load the in
-     * memory queue will be flushed.
+     * memory queue will be flushed. When calling this method from the queue
+     * directly, make sure to set `$fromQueue` to avoid loops.
      *
      * @param \SugarBean $bean
      * @param boolean $batch
+     * @param boolean $fromQueue
+     * @return boolean
      */
-    public function indexBean(\SugarBean $bean, $batch = true)
+    public function indexBean(\SugarBean $bean, $batch = true, $fromQueue = false)
     {
         // Skip indexing if we are disabled
         if ($this->disabled) {
@@ -89,16 +95,17 @@ class Indexer
 
         // Skip bean if module not enabled.
         if (!$this->container->metaDataHelper->isModuleEnabled($bean->module_name)) {
-            return;
+            return true;
         }
 
-        // Send to database queue when Elastic is unavailable
-        if (!$this->container->client->isAvailable() || $this->async) {
+        // Send to database queue when Elastic is unavailable or in async mode
+        if (!$this->container->client->isAvailable() || ($this->async && !$fromQueue)) {
             $this->container->queueManager->queueBean($bean);
-            return;
+            return false;
         }
 
         $this->indexDocument($this->getDocumentFromBean($bean), $batch);
+        return true;
     }
 
     /**
@@ -112,7 +119,7 @@ class Indexer
      */
     protected function indexDocument(Document $document, $batch = true)
     {
-        // Safeguard avoid sending documents without data
+        // Safeguard avoid sending documents without data, exception for deletes
         if (!$document->hasData() && $document->getOpType() !== \Elastica\Bulk\Action::OP_TYPE_DELETE) {
             return;
         }
