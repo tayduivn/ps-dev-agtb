@@ -17,11 +17,7 @@ $viewdefs['KBContents']['base']['filter']['basic'] = array(
         array(
             'id' => 'all_records',
             'name' => 'LBL_LISTVIEW_FILTER_ALL',
-            'filter_definition' => array(
-                array(
-                    'active_rev' => array('$equals' => '1'),
-                ),
-            ),
+            'filter_definition' => array(),
             'editable' => false,
         ),
         array(
