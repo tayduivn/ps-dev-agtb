@@ -15,26 +15,31 @@ describe('Base.Field.Name', function() {
     });
 
     describe('Render', function() {
-        using('different view names', [
+        using('different view names and values', [
             {
-                view: 'record',
-                value: undefined,
+                view: 'audit',
+                linkValue: undefined,
                 expected: false
             },
             {
                 view: 'preview',
-                value: undefined,
+                linkValue: undefined,
                 expected: true
             },
             {
                 view: 'preview',
-                value: false,
+                linkValue: false,
                 expected: false
+            },
+            {
+                view: 'other',
+                linkValue: undefined,
+                expected: undefined
             }
         ], function(options) {
-            it('should set def.link appropriately on preview and record view', function() {
+            it('should set def.link appropriately on preview and audit view', function() {
                 field.view.name = options.view;
-                field.def.link = options.value;
+                field.def.link = options.linkValue;
                 field.render();
                 expect(field.def.link).toEqual(options.expected);
             });

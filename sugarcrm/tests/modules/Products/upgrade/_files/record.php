@@ -26,6 +26,7 @@ array (
               1 =>
               array (
                 'name' => 'name',
+                'link' => false,
                 'label' => 'LBL_MODULE_NAME_SINGULAR',
               ),
               2 =>

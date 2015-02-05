@@ -118,7 +118,10 @@ $viewdefs[$module_name]['base']['view']['record'] = array(
                     'dismiss_label' => true,
                     'readonly'      => true,
                 ),
-                'name',
+                array(
+                    'name' => 'name',
+                    'link' => false,
+                ),
                 array(
                     'name' => 'favorite',
                     'label' => 'LBL_FAVORITE',

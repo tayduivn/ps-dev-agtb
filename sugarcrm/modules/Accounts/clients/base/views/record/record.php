@@ -127,6 +127,7 @@ $viewdefs['Accounts']['base']['view']['record'] = array(
                 ),
                 array(
                     'name' => 'name',
+                    'link' => false,
                     'events' => array(
                         'keyup' => 'update:account',
                     ),

@@ -19,6 +19,7 @@ $viewdefs['WebLogicHooks']['base']['view']['record'] = array(
             'fields' => array(
                 array(
                     'name' => 'name',
+                    'link' => false,
                     'required' => true,
                     'label' => 'LBL_NAME'
                 ),
