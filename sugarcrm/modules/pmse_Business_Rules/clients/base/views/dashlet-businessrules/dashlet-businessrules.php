@@ -157,7 +157,7 @@ $viewdefs[$module_name]['base']['view']['dashlet-businessrules'] = array(
                 ),
                 array(
                     'type' => 'rowaction',
-                    'icon' => 'fa-download',
+                    'icon' => 'fa fa-download',
                     'css_class' => 'btn btn-mini',
                     'event' => 'dashlet-businessrules:download:fire',
                     'target' => 'view',

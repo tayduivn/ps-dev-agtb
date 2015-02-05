@@ -162,7 +162,7 @@ $viewdefs[$module_name]['base']['view']['dashlet-processes'] = array(
                 ),
                 array(
                     'type' => 'rowaction',
-                    'icon' => 'fa-arrow-circle-o-up',
+                    'icon' => 'fa fa-download',
                     'css_class' => 'btn btn-mini',
                     'event' => 'dashlet-processes:download:fire',
                     'target' => 'view',
@@ -219,7 +219,7 @@ $viewdefs[$module_name]['base']['view']['dashlet-processes'] = array(
                 ),
                 array(
                     'type' => 'rowaction',
-                    'icon' => 'fa-arrow-circle-o-up',
+                    'icon' => 'fa fa-download',
                     'css_class' => 'btn btn-mini',
                     'event' => 'dashlet-processes:download:fire',
                     'target' => 'view',
