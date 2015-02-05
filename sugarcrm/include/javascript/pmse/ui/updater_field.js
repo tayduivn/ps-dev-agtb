@@ -207,7 +207,6 @@ UpdaterField.prototype.setOptions = function (settings) {
         case 'Currency':
         case 'Decimal':
         case 'Float':
-            //newOption =  new OptionNumberField(currentSetting, this);
             newOption =  new NumberUpdaterItem(currentSetting);
             break;
         default:

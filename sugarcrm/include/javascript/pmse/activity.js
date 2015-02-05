@@ -2309,7 +2309,6 @@ AdamActivity.prototype.actionFactory = function (type) {
                                 updater_field.proxy.getData(null, {
                                     success: function(fields) {
                                         if (fields) {
-                                            //updater_field.setVariables(fields.result);
                                             updater_field.setOptions(fields.result, true);
                                             updater_field.setValue(data.act_fields || null);
                                             App.alert.dismiss('upload');
@@ -2397,14 +2396,13 @@ AdamActivity.prototype.actionFactory = function (type) {
                                     }
                                 });
                                updater_field.proxy.getData(null,{
-                                    success: function(fields) {
-                                        updater_field.setOptions(fields.result);
-                                        //updater_field.setVariables(fields.result);
-                                        updater_field.setValue(data.act_fields || null);
-                                        App.alert.dismiss('upload');
-                                        w.html.style.display = 'inline';
-                                    }
-                                });
+                                   success: function(fields) {
+                                       updater_field.setOptions(fields.result);
+                                       updater_field.setValue(data.act_fields || null);
+                                       App.alert.dismiss('upload');
+                                       w.html.style.display = 'inline';
+                                   }
+                               });
                            }
                        }
                     });
