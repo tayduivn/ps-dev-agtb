@@ -51,12 +51,12 @@ array (
     'label' => 'LBL_LIST_PHONE',
     'default' => true,
   ),
-  'EMAIL1' => 
+  'EMAIL' => 
   array (
     'width' => '16%',
     'label' => 'LBL_LIST_EMAIL_ADDRESS',
     'sortable' => false,
-    'customCode' => '{$EMAIL1_LINK}{$EMAIL1}</a>',
+    'customCode' => '{$EMAIL_LINK}{$EMAIL}</a>',
     'default' => true,
   ),
   'ASSIGNED_USER_NAME' => 

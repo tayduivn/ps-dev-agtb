@@ -73,7 +73,10 @@ class ViewModifyProperties extends SugarView
 		}
 		$this->ss->assign('SOURCES', $connectorsToShow);
 		$this->ss->assign('REQUIRED_FIELDS', $required_fields);
-	    echo $this->getModuleTitle(false);
+        // Handle active tab selection
+        $active_tab = isset($_REQUEST['active_tab']) ? $_REQUEST['active_tab'] : null;
+        $this->ss->assign('ACTIVE_TAB', $active_tab);
+        echo $this->getModuleTitle(false);
         $this->ss->display($this->getCustomFilePathIfExists('modules/Connectors/tpls/modify_properties.tpl'));
     }
 }

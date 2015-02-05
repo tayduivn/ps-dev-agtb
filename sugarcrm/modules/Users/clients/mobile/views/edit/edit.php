@@ -47,7 +47,7 @@ $viewdefs['Users']['mobile']['view']['edit'] = array(
                 ),
                 'phone_work',
                 'phone_mobile',
-                'email1',
+                'email',
                 'address_street',
                 'address_city',
                 'address_state',

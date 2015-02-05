@@ -1275,8 +1275,8 @@ $mod_strings = array (
     'LBL_PMSE_ADMIN_TITLE_ENGINELOGS' => 'Log Viewer',
     'LBL_PMSE_ADMIN_DESC_ENGINELOGS' => 'Process Author logs can be accessed here.',
 
-    'LBL_PMSE_ADMIN_TITLE_CASESLIST' => 'Processes List',
-    'LBL_PMSE_ADMIN_DESC_CASESLIST' => 'Processes List can be accessed here.',
+    'LBL_PMSE_ADMIN_TITLE_CASESLIST' => 'Process Management',
+    'LBL_PMSE_ADMIN_DESC_CASESLIST' => 'Process Management can be accessed here.',
 
     'LBL_PMSE_ADMIN_TITLE_MODULE' => 'Process Author',
     'LBL_PMSE_ADMIN_DESC_MODULE' => 'Process Author conforms a standard compliant BPM suite that can improve your SugarCRM work.',

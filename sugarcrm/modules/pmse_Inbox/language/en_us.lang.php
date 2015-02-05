@@ -19,7 +19,7 @@ $mod_strings = array (
     'LBL_MODULE_NAME_SINGULAR' => 'Processes',
     'LNK_LIST' => 'View Processes',
 
-    'LBL_CAS_ID' => 'Process Id',
+    'LBL_CAS_ID' => 'Process Number',
     'LBL_PMSE_HISTORY_LOG_NOTFOUND_USER' => "Unknown (according UserId:'%s')",
     'LBL_PMSE_HISTORY_LOG_TASK_HAS_BEEN' => "task has been ",
     'LBL_PMSE_HISTORY_LOG_TASK_WAS' => "task was ",
@@ -70,7 +70,7 @@ $mod_strings = array (
     'LBL_PMSE_LABEL_ACTIVITY_DELEGATE_DATE' => 'Activity Delegate Data',
     'LBL_PMSE_LABEL_EXPECTED_TIME' => 'Expected Time',
     'LBL_PMSE_LABEL_DUE_DATE' => 'Due Date',
-    'LBL_PMSE_LABEL_IN_TIME' => 'In Time',
+    'LBL_PMSE_LABEL_CURRENT' => 'Current',
     'LBL_PMSE_LABEL_OVERDUE' => 'Overdue',
     'LBL_PMSE_LABEL_PROCESS' => 'Process',
 
@@ -84,7 +84,7 @@ $mod_strings = array (
     'LBL_STATUS_CANCELLED' => 'Processes Cancelled',
     'LBL_STATUS_ERROR' => 'Processes Error',
 
-    'LBL_PMSE_TITLE_PROCESSESS_LIST'  => 'Processes List',
+    'LBL_PMSE_TITLE_PROCESSESS_LIST'  => 'Process Management',
     'LBL_PMSE_TITLE_UNATTENDED_CASES' => 'Unattended Processes',
     'LBL_PMSE_TITLE_REASSIGN' => 'User can change Record Owner',
     'LBL_PMSE_TITLE_AD_HOC' => 'Reassign',
@@ -102,7 +102,7 @@ $mod_strings = array (
     'LBL_PMSE_ACTIVITY_STREAM_ROUTE'=>'&0 on <strong>%s</strong> Routed ',
     'LBL_PMSE_ACTIVITY_STREAM_CLAIM'=>"&0 on <strong>%s</strong> Claimed ",
     'LBL_PMSE_ACTIVITY_STREAM_REASSIGN'=>"&0 on <strong>%s</strong> assigned to user &1 ",
-    'LBL_PMSE_CANCEL_MESSAGE' => "Are you sure you want to cancel Process ID #{}?",
+    'LBL_PMSE_CANCEL_MESSAGE' => "Are you sure you want to cancel Process Number #{}?",
     'LBL_ASSIGNED_USER'=>"User Assigned",
     'LBL_PMSE_SETTING_NUMBER_CYCLES' => "Error Number of Cycles",
     'LBL_PMSE_SHOW_PROCESS' => 'Show Process',

@@ -201,7 +201,8 @@ $viewdefs['base']['view']['dnb-lite-company-info'] = array(
                 'name' => 'mailingaddrctrycd',
                 'label' => 'LBL_DNB_MAIL_CTRY_CD',
                 'desc' => 'LBL_DNB_PRIM_CTRY_CD_DESC',
-                'type' => 'bool'
+                'type' => 'bool',
+                'last' => '1'
             ),
             array(
                 'name' => 'phone',
