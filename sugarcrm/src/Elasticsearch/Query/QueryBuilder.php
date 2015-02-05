@@ -18,6 +18,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Query\Aggregation\AggregationInterface;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\ResultSet;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Search;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Client;
+use Sugarcrm\Sugarcrm\Elasticsearch\Exception\QueryBuilderException;
 
 /**
  *
@@ -217,11 +218,15 @@ class QueryBuilder
     }
 
     /**
-     * Execute query against search API
+     * Execute query against search AP
      * @return \Sugarcrm\Sugarcrm\Elasticsearch\Adapter\ResultSet
      */
     public function executeSearch()
     {
+        if (empty($this->modules) || empty($this->user)) {
+            throw new QueryBuilderException('executeSearch failed');
+        }
+
         // Build query
         $query = $this->build();
 
