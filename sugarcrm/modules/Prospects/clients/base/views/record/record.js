@@ -40,6 +40,13 @@
             //if lead is created, grab the new relationship to the target so the convert-results will refresh
             if (model && model.id && !this.disposed) {
                 this.model.fetch();
+                _.each(this.context.children, function(child) {
+                    if (!_.isUndefined(child.attributes) && !_.isUndefined(child.attributes.isSubpanel)) {
+                        if (child.attributes.isSubpanel && !child.attributes.hidden) {
+                            child.attributes.collection.fetch();
+                        }
+                    }
+                });
             }
         }, this));
     }
