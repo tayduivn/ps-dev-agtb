@@ -66,7 +66,6 @@ class Bug45966 extends Sugar_PHPUnit_Framework_TestCase {
             $this->form,
             $this->seed
         );
-        TimeDate::getInstance()->clearCache();
         SugarTestHelper::tearDown();
         parent::tearDown();
     }
