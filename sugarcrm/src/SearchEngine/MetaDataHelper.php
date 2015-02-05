@@ -74,6 +74,10 @@ class MetaDataHelper
         $vardefs = $this->getModuleVardefs($module);
         foreach ($vardefs['fields'] as $field => $defs) {
             if (isset($defs['full_text_search']) && !empty($defs['full_text_search']['enabled'])) {
+                //the type in 'full_text_search' overrides the type in the field
+                if (!empty($defs['full_text_search']['type'])) {
+                    $defs['type'] = $defs['full_text_search']['type'];
+                }
                 $ftsFields[$field] = $defs;
             }
         }
