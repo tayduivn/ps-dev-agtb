@@ -53,6 +53,7 @@ $dictionary['KBContent'] = array(
             'type' => 'date',
             'sortable' => true,
             'studio' => false,
+            'massupdate' => false,
         ),
         'exp_date' => array(
             'name' => 'exp_date',
@@ -68,6 +69,7 @@ $dictionary['KBContent'] = array(
             'sortable' => true,
             'duplicate_on_record_copy' => 'no',
             'studio' => false,
+            'massupdate' => false,
         ),
         'status' => array(
             'name' => 'status',
@@ -179,6 +181,7 @@ $dictionary['KBContent'] = array(
             'module' => 'KBDocuments',
             'duplicate_merge' => 'disabled',
             'studio' => false,
+            'massupdate' => false,
         ),
         'active_rev' => array(
             'name' => 'active_rev',
@@ -241,6 +244,7 @@ $dictionary['KBContent'] = array(
             'module' => 'KBArticles',
             'duplicate_merge' => 'disabled',
             'studio' => false,
+            'massupdate' => false,
         ),
         'localizations' => array(
             'name' => 'localizations',
@@ -251,6 +255,7 @@ $dictionary['KBContent'] = array(
             'vname' => 'LBL_KBSLOCALIZATIONS',
             'relationship' => 'localizations',
             'studio' => false,
+            'massupdate' => false,
         ),
         'revisions' => array(
             'name' => 'revisions',
@@ -261,6 +266,7 @@ $dictionary['KBContent'] = array(
             'vname' => 'LBL_KBSREVISIONS',
             'relationship' => 'revisions',
             'studio' => false,
+            'massupdate' => false,
         ),
         'related_languages' => array(
             'name' => 'related_languages',
@@ -270,6 +276,7 @@ $dictionary['KBContent'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_KBSLOCALIZATIONS',
             'studio' => false,
+            'massupdate' => false,
         ),
         'kbsapprovers_kbcontents' => array(
             'name' => 'kbsapprovers_kbcontents',
