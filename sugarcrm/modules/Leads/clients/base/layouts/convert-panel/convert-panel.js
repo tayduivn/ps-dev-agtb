@@ -562,10 +562,11 @@
         var hasChanged = false;
 
         _.each(fieldMapping, function(sourceField, targetField) {
-            if (model.has(sourceField) && model.get(sourceField) !== this.createView.model.get(targetField)) {
-                this.createView.model.setDefault(targetField, model.get(sourceField));
-                this.createView.model.set(targetField, model.get(sourceField));
-                hasChanged = true;
+            if (model.has(sourceField) && !_.isEmpty(model.get(sourceField)) &&
+                model.get(sourceField) !== this.createView.model.get(targetField)) {
+                    this.createView.model.setDefault(targetField, model.get(sourceField));
+                    this.createView.model.set(targetField, model.get(sourceField));
+                    hasChanged = true;
             }
         }, this);
 
