@@ -16,31 +16,6 @@
 ({
     plugins: ['Dashlet'],
 
-    /**
-     * Holds report data from the server's endpoint once we fetch it
-     */
-    reportData: undefined,
-
-    /**
-     * Holds a reference to the Chart field
-     */
-    chartField: undefined,
-
-    /**
-     * Holds all report ID's and titles
-     */
-    reportOptions: undefined,
-
-    /**
-     * Holds acls for all reports
-     */
-    reportAcls: undefined,
-
-    /**
-     * ID for the autorefresh timer
-     */
-    timerId: undefined,
-
     events: {
         'click a[name=editReport]': 'editSavedReport'
     },
@@ -169,12 +144,11 @@
                         this.setChartParams(data, true);
                     }, this)
                 });
-                // set the title of the dashlet to the report title
-                $('[name="label"]').val(reportTitle);
-                
+
                 // show or hide 'Edit Selected Report' link
-                this.updateEditLink(model.get('saved_report_id'));
+                this.updateEditLink(reportId);
             }, this);
+
             this.settings.on('change:chart_type', function(model) {
                 // toggle display of chart display option controls based on chart type
                 this._toggleChartFields();
@@ -186,13 +160,9 @@
      * Check acls to show/hide 'Edit Selected Report' link
      */
     updateEditLink: function(reportId) {
-        var acls = this.reportAcls[reportId || this.settings.get('saved_report_id')];
-        if (acls && acls['edit'] === 'no') {
-            $('[name="editReport"]').hide();
-        }
-        else {
-            $('[name="editReport"]').show();
-        }
+        var acls = this.reportAcls[reportId || this.settings.get('saved_report_id')],
+            showEditLink = !acls || acls['edit'] !== 'no';
+        this.$('[name="editReport"]').toggle(showEditLink);
     },
 
     /**
