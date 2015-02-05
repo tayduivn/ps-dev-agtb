@@ -12,12 +12,14 @@
 
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Adapter;
 
+use Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\ResultSetInterface;
+
 /**
  *
  * Adapter class for \Elastica\ResultSet
  *
  */
-class ResultSet implements \Iterator, \Countable
+class ResultSet implements \Iterator, \Countable, ResultSetInterface
 {
     /**
      * @var \Elastica\ResultSet
@@ -92,11 +94,21 @@ class ResultSet implements \Iterator, \Countable
         return $this->resultSet->count();
     }
 
+    //// ResultSetInterface ////
+
     /**
-     * @return \Elastica\ResultSet
+     * {@inheritdoc}
      */
-    public function getResultSet()
+    public function getTotalHits()
     {
-        return $this->resultSet;
+        return $this->resultSet->getTotalHits();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getQueryTime()
+    {
+        return $this->resultSet->getTotalTime();
     }
 }
