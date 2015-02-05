@@ -95,6 +95,8 @@
         var $checkbox = this.$(this.fieldTag);
         var isChecked = $checkbox.is(':checked');
         if (!!isChecked) {
+            //FIXME : Doing this way is slow to check all checkboxes when there
+            // are more than 20. SC-4079 will address this problem.
             this.context.trigger('mass_collection:add:all', this.model);
         } else {
             this.context.trigger('mass_collection:remove:all', this.model);
@@ -137,6 +139,9 @@
                 delete this.selected;
             }
         } else { //Listeners on the checkAll/uncheckAll checkbox.
+            //FIXME: We should not listen to events on the collection and update
+            //the massCollection here. This should be done in MassCollection
+            // plugin. This will be adressed by SC-1723.
             if (this.collection) {
 
                 this.collection.on('reset', function() {
@@ -181,6 +186,8 @@
             massCollection.on('remove reset', function(model) {
                 if (massCollection.length === 0) {
                     this.$(this.actionDropDownTag).addClass('disabled');
+                    //FIXME: We should not rely on a view property. This will be
+                    //adressed by SC-1723.
                 } else if (!this.view.independentMassCollection && massCollection.length === this.collection.length) {
                     this.$(this.actionDropDownTag).removeClass('disabled');
                     this.$(this.fieldTag).attr('checked', true);
@@ -306,6 +313,9 @@
      * It is possible to prevent the `select all` alert from being shown by
      * passing `disable_select_all_alert => true` on the metadata.
      * is disabled.
+     *
+     * FIXME: This method will be removed by SC-3999 because the alert generated
+     * in this method has to be removed.
      */
     toggleSelectAll: function() {
         var self = this,
