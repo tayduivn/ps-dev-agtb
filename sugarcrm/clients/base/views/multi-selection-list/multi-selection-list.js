@@ -53,7 +53,11 @@
         this.maxSelectedRecords = options.context.get('maxSelectedRecords');
     },
 
-    setSelectionType: function(options) {
+    /**
+     * @inheritDoc
+     * FIXME: SC-4075 will remove this method.
+     */
+    setSelectionMeta: function(options) {
         options.meta.selection = {
             type: 'multi',
             isSearchAndSelectAction: true
@@ -62,6 +66,7 @@
     /**
      * Sets up events.
      *
+     * @override
      */
     initializeEvents: function() {
             this.context.on('selection:select:fire', this.validateSelection, this);

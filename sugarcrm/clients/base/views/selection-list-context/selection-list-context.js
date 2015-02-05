@@ -26,7 +26,7 @@
     },
 
     plugins: ['EllipsisInline'],
-    maxPillsDisplayed: 20,
+    maxPillsDisplayed: 50,
 
     /**
      * {@inheritDoc}
@@ -44,7 +44,7 @@
     addPill: function(model) {
         var name = !!model.name || model.get('name');
         this.pills.push({id: model.id, name: name});
-        this._render();
+        this.render();
     },
 
     /**

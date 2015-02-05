@@ -54,7 +54,7 @@
         //setting skipFetch to true so that loadData will not run on initial load and the filter load the view.
         options.context.set('skipFetch', true);
         options.meta = options.meta || {};
-        this.setSelectionType(options);
+        this.setSelectionMeta(options);
         this._super('initialize', [options]);
 
         this.events = _.extend({}, this.events, {
@@ -63,7 +63,14 @@
         this.initializeEvents();
     },
 
-    setSelectionType: function(options) {
+    /**
+     * Sets metadata proper to selection-list.
+     *
+     * @param options
+     *
+     * FIXME: SC-4075 will remove this method.
+     */
+    setSelectionMeta: function(options) {
         options.meta.selection = {
             type: 'single',
             label: 'LBL_LINK_SELECT',
@@ -71,7 +78,7 @@
         };
     },
 
-/**
+    /**
      * Checks the checkbox when the row is clicked.
      *
      * @param {object} event
@@ -86,7 +93,6 @@
 
     /**
      * Sets up events.
-     *
      */
     initializeEvents: function() {
         this.context.on('change:selection_model', this._selectAndClose, this);

@@ -24,7 +24,8 @@
     },
 
     /**
-     * Sets up events
+     * @inheritDoc
+     * @override
      */
     initializeEvents: function() {
         this.context.on('selection-list:link:multi', this._selectMultipleAndClose, this);
@@ -105,5 +106,5 @@
                 });
             }
         });
-    },
+    }
 })
