@@ -30,15 +30,23 @@
             this.events = _.extend({}, this.events, additionalEvents);
         }
 
+        this._super('initialize', [options]);
+
         this.isMultiLink = options.context.has('recLink');
         if (!this.isMultiLink) {
             buttonsToRemove.push('link_button');
+        } else {
+            //FIXME: This will be removed with SC-4073.
+            var linkTitleLabel = _.find(this.meta.fields, function(field) {
+                return field.name = 'title';
+            }, this);
+            linkTitleLabel.default_value = 'LBL_SEARCH_AND_ADD';
         }
+
         if (!multiSelectFilter) {
             buttonsToRemove.push('select_button');
         }
 
-        this._super('initialize', [options]);
         this._removeButtons(buttonsToRemove);
     },
 

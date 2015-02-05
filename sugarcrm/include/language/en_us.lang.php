@@ -4247,6 +4247,7 @@ Sincerely, SugarCRM',
     'LBL_TEAM_SELECTED_TITLE' => 'Team Selected ',
     'LBL_TEAM_SELECT_AS_PRIM_TITLE' => 'Select to make this team primary',
     'LBL_SEARCH_AND_SELECT' => 'Search and Select {{module}}',
+    'LBL_SEARCH_AND_ADD' => 'Search and Add {{module}}',
 
     //for upload errors
     'UPLOAD_ERROR_TEXT'          => 'ERROR: There was an error during upload. Error code: {0} - {1}',
