@@ -158,7 +158,7 @@
      * @param evt Triggered mouse event.
      */
     handleGlobalClick: function(evt) {
-        if (this.action === 'edit') {
+        if (this.action === 'edit' || this.meta.view === 'edit') {
             this.closeDD();
             evt.preventDefault();
             evt.stopPropagation();
