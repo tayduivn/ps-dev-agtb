@@ -196,6 +196,7 @@ class Indexer
 
         // TODO: needs to be extended with additional fields from provider
         // TODO: add visibility
+
         return $fields;
     }
 
@@ -223,7 +224,7 @@ class Indexer
         // Populate field data
         $fields = $this->getBeanIndexFields($module);
         $data = array();
-        foreach ($fields as $field => $type) {
+        foreach (array_keys($fields) as $field) {
             if (isset($bean->$field)) {
                 $data[$field] = $bean->$field;
             }

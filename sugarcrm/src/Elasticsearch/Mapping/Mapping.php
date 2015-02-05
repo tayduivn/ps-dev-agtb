@@ -119,10 +119,10 @@ class Mapping
     }
 
     /**
-     * Initialize mapping property structure
+     * Initialize base property mapping
      * @param string $field
      */
-    protected function initProperty($field)
+    public function initProperty($field)
     {
         if (!isset($this->properties[$field])) {
             $this->properties[$field] = $this->defaultMapping;
