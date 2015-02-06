@@ -100,14 +100,14 @@ class SearchFields
         $list = array();
 
         // Get list of mapping definitions
-        $mappingDefs = $this->provider->getMappingDefsForSugarType($defs['type']);
+        $mappingDefs = $this->getMappingDefsForSugarType($defs['type']);
 
         foreach ($mappingDefs as $type) {
 
             $searchField = $module . self::FIELD_SEP . $field . self::FIELD_SEP .  $type;
 
             if ($this->boost) {
-                $searchField = $this->boostHandler->getBoostedField($searchField, $defs, $type);
+                $searchField = $this->getBoostedField($searchField, $defs, $type);
             }
 
             $list[] = $searchField;
@@ -148,5 +148,27 @@ class SearchFields
     protected function getFtsFields($module)
     {
         return $this->provider->getContainer()->metaDataHelper->getFtsFields($module);
+    }
+
+    /**
+     * Get mapping defs wrapper
+     * @param string $sugarType
+     * @return array
+     */
+    protected function getMappingDefsForSugarType($sugarType)
+    {
+        return $this->provider->getMappingDefsForSugarType($sugarType);
+    }
+
+    /**
+     * Get boosted field wrapper
+     * @param string $searchField
+     * @param array $defs
+     * @param string $type
+     * @return array
+     */
+    protected function getBoostedField($searchField, array $defs, $type)
+    {
+        return $this->boostHandler->getBoostedField($field, $defs, $type);
     }
 }

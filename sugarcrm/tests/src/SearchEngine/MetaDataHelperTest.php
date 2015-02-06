@@ -13,7 +13,7 @@
 namespace Sugarcrm\SugarcrmTest\SearchEngine\MetaDataHelper;
 
 /**
- * Test for the generic Logger.
+ * MetaDataHelper tests
  */
 class MetaDataHelperTest extends \Sugar_PHPUnit_Framework_TestCase
 {

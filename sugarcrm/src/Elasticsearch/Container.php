@@ -84,13 +84,13 @@ class Container
      * Registered providers
      * @var array
      */
-    private $providers = array();
+    protected $providers = array();
 
     /**
      * Configuration parameters
      * @var array
      */
-    private $config = array(
+    protected $config = array(
         'engine' => array(),
         'global' => array(),
     );
@@ -100,12 +100,9 @@ class Container
      * of using this ctor directly unless you know what your are doing. This
      * ctor is not made private for testing purposes and edge cases where
      * its desirable to be able to instantiate this container directly.
-     *
-     * @param array $config Optional configuration settings
      */
-    public function __construct(array $config = array())
+    public function __construct()
     {
-        $this->config = $config;
         $this->registerProviders();
     }
 
@@ -120,11 +117,90 @@ class Container
     }
 
     /**
-     * Stock providers, can be overriden in custom class implementation.
+     * Overload for container resources
+     * @param string $resource
      */
-    public function registerProviders()
+    public function __get($resource)
     {
-        $this->registerProvider('GlobalSearch');
+        // Return the resource if already initialized
+        if (!empty($this->$resource)) {
+            return $this->$resource;
+        }
+
+        // Lazy load resources when accessed
+        $init = 'init' . ucfirst($resource);
+        if (property_exists($this, $resource) && method_exists($this, $init)) {
+            $this->$init();
+            return $this->$resource;
+        }
+    }
+
+    /**
+     * Initialize \Sugarcrm\Sugarcrm\Elasticsearch\Logger
+     */
+    protected function initLogger()
+    {
+        $this->logger = new Logger(\LoggerManager::getLogger());
+    }
+
+    /**
+     * Initialize \Sugarcrm\Sugarcrm\SearchEngine\MetaDataHelper
+     */
+    protected function initMetaDataHelper()
+    {
+        $this->metaDataHelper = new MetaDataHelper();
+    }
+
+    /**
+     * Initialize \Sugarcrm\Sugarcrm\SearchEngine\Queue\QueueManager
+     */
+    protected function initQueueManager()
+    {
+        $this->queueManager = new QueueManager($this->getConfig('global'), $this);
+    }
+
+    /**
+     * Initialize \Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Client
+     */
+    protected function initClient()
+    {
+        $this->initLogger();
+        $this->client = new Client($this->getConfig('engine'), $this->logger);
+    }
+
+    /**
+     * Initialize \Sugarcrm\Sugarcrm\Elasticsearch\Index\IndexPool
+     */
+    protected function initIndexPool()
+    {
+        $prefix = \SugarConfig::getInstance()->get('unique_key', 'sugarcrm');
+        $config = \SugarArray::staticGet($this->getConfig('engine'), 'index_strategy', array());
+        $this->indexPool = new IndexPool($prefix, $config, $this);
+    }
+
+    /**
+     * Initialize \Sugarcrm\Sugarcrm\Elasticsearch\Index\IndexManager
+     */
+    protected function initIndexManager()
+    {
+        $config = \SugarArray::staticGet($this->getConfig('engine'), 'index_settings', array());
+        $this->indexManager = new IndexManager($config, $this);
+    }
+
+    /**
+     * Initialize \Sugarcrm\Sugarcrm\Elasticsearch\Mapping\MappingManager
+     */
+    protected function initMappingManager()
+    {
+        $this->mappingManager = new MappingManager();
+    }
+
+    /**
+     * Initialize \Sugarcrm\Sugarcrm\Elasticsearch\Indexer\Indexer
+     */
+    protected function initIndexer()
+    {
+        $this->indexer = new Indexer($this->getConfig('global'), $this);
     }
 
     /**
@@ -151,90 +227,11 @@ class Container
     }
 
     /**
-     * Overload for container resources
-     * @param string $resource
+     * Stock providers, can be overriden in custom class implementation.
      */
-    public function __get($resource)
+    public function registerProviders()
     {
-        // Return the resource if already initialized
-        if (!empty($this->$resource)) {
-            return $this->$resource;
-        }
-
-        // Lazy load resources when accessed
-        $init = 'init' . ucfirst($resource);
-        if (property_exists($this, $resource) && method_exists($this, $init)) {
-            $this->$init();
-            return $this->$resource;
-        }
-    }
-
-    /**
-     * Initialize \Sugarcrm\Sugarcrm\Elasticsearch\Logger
-     */
-    private function initLogger()
-    {
-        $this->logger = new Logger(\LoggerManager::getLogger());
-    }
-
-    /**
-     * Initialize \Sugarcrm\Sugarcrm\SearchEngine\MetaDataHelper
-     */
-    private function initMetaDataHelper()
-    {
-        $this->metaDataHelper = new MetaDataHelper();
-    }
-
-    /**
-     * Initialize \Sugarcrm\Sugarcrm\SearchEngine\Queue\QueueManager
-     */
-    private function initQueueManager()
-    {
-        $this->queueManager = new QueueManager($this->getConfig('global'), $this);
-    }
-
-    /**
-     * Initialize \Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Client
-     */
-    private function initClient()
-    {
-        $this->initLogger();
-        $this->client = new Client($this->getConfig('engine'), $this->logger);
-    }
-
-    /**
-     * Initialize \Sugarcrm\Sugarcrm\Elasticsearch\Index\IndexPool
-     */
-    private function initIndexPool()
-    {
-        $prefix = \SugarConfig::getInstance()->get('unique_key', 'sugarcrm');
-        $config = \SugarArray::staticGet($this->getConfig('engine'), 'index_strategy', array());
-        $this->indexPool = new IndexPool($prefix, $config, $this);
-    }
-
-    /**
-     * Initialize \Sugarcrm\Sugarcrm\Elasticsearch\Index\IndexManager
-     */
-    private function initIndexManager()
-    {
-        $config = \SugarArray::staticGet($this->getConfig('engine'), 'index_settings', array());
-        $this->indexManager = new IndexManager($config, $this);
-    }
-
-    /**
-     * Initialize \Sugarcrm\Sugarcrm\Elasticsearch\Mapping\MappingManager
-     */
-    private function initMappingManager()
-    {
-        $this->mappingManager = new MappingManager();
-    }
-
-    /**
-     * Initialize \Sugarcrm\Sugarcrm\Elasticsearch\Indexer\Indexer
-     */
-    private function initIndexer()
-    {
-        $this->indexer = new Indexer($this->getConfig('global'), $this);
+        $this->registerProvider('GlobalSearch');
     }
 
     /**
@@ -297,10 +294,20 @@ class Container
         );
 
         if (class_exists($providerClassName)) {
-            $this->providers[$name] = new $providerClassName($this);
+            $this->providers[$name] = $this->newProvider($providerClassName);
             return $this->providers[$name];
         }
 
         throw new ProviderException("Invalid provider class '{$providerClassName}' for '{$name}'");
+    }
+
+    /**
+     *
+     * @param unknown $providerClass
+     * @return unknown
+     */
+    protected function newProvider($providerClass)
+    {
+        return new $providerClass($this);
     }
 }
