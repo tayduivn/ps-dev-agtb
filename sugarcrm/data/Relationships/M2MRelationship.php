@@ -661,6 +661,7 @@ class M2MRelationship extends SugarRelationship
             if (!empty($bean) && $bean->hasCustomFields()) {
                 $table_cstm = $bean->get_custom_table_name();
                 $alias_cstm = "{$targetTable_alias}_cstm";
+                $alias_cstm = $bean->db->getValidDBName($alias_cstm, false, 'alias');
                 $sugar_query->joinTable($table_cstm, array('alias' => $alias_cstm, 'joinType' => "LEFT", 'linkingTable' => true))
                     ->on()->equalsField("$alias_cstm.id_c", "{$targetTable_alias}.id");
             }
