@@ -28,22 +28,30 @@ class GlobalSearch extends AbstractProvider
      * {@inheritdoc}
      */
     protected $sugarTypes = array(
-        'varchar' => array('gs_string'),
-        'name' => 'gs_string',
+        'varchar' => array('gs_string', 'gs_string_ngram'),
+        'name' => array('gs_string', 'gs_string_ngram'),
         'phone' => 'gs_string',
         'int' => 'gs_string',
-        'text' => 'gs_string',
+        'text' => array('gs_string', 'gs_string_ngram'),
         'datetime' => 'gs_datetime',
+        'text' => array('gs_string', 'gs_string_ngram'),
     );
 
     /**
      * {@inheritdoc}
      */
     protected $mappingDefs = array(
+        'gs_string_ngram' => array(
+            'type' => 'string',
+            'index' => 'analyzed',
+            'index_analyzer' => 'gs_ngram_index_analyzer',
+            'search_analyzer' => 'gs_default_search_analyzer',
+            'store' => false,
+        ),
         'gs_string' => array(
             'type' => 'string',
             'index' => 'analyzed',
-            'index_analyzer' => 'gs_default_index_analyzer',
+            'index_analyzer' => 'standard',
             'search_analyzer' => 'gs_default_search_analyzer',
             'store' => false,
         ),
@@ -53,6 +61,14 @@ class GlobalSearch extends AbstractProvider
             'index' => 'no',
             'store' => false,
         ),
+    );
+
+    /**
+     * List of mapping defs which will be weighted during boost time
+     * @var array
+     */
+    protected $weightedBoost = array(
+        'gs_string_ngram' => 0.35,
     );
 
     /**
@@ -98,7 +114,7 @@ class GlobalSearch extends AbstractProvider
                 array('lowercase')
             )
             ->addCustomAnalyzer(
-                'gs_default_index_analyzer',
+                'gs_ngram_index_analyzer',
                 'whitespace',
                 array('lowercase', 'gs_filter_ngram')
             )
@@ -111,8 +127,7 @@ class GlobalSearch extends AbstractProvider
     public function getBeanIndexFields($module)
     {
         $indexFields = array();
-        $ftsFields = $this->getFtsFields($module);
-        foreach ($ftsFields as $field => $defs) {
+        foreach ($this->getFtsFields($module) as $field => $defs) {
 
             // ensure a type has been defined
             if (empty($defs['type'])) {
@@ -131,65 +146,6 @@ class GlobalSearch extends AbstractProvider
         }
         return $indexFields;
     }
-
-    /**
-     * Query field constructor
-     * @param boolean $boost Apply field boost values
-     * @return array
-     */
-    protected function getSearchFields($boost = false)
-    {
-        $fields = array();
-        foreach ($this->modules as $module) {
-            foreach ($this->getFtsFields($module) as $name => $params) {
-
-                // TODO: this part is hacky and needs to be redone based on the
-                // hashes of available fields per provider somehow.
-                if (!$type = $this->getMappingForSugarType($params['type'])) {
-                    continue;
-                } else {
-                    $types = array_keys($type);
-                }
-
-                foreach ($types as $type) {
-                    if ($this->isFieldSearchable($params) == true) {
-                        $field = "{$module}.{$name}.{$type}";
-                        if ($boost && !empty($params['full_text_search']['boost'])) {
-                            $field .= "^" . (float)$params['full_text_search']['boost'];
-                        }
-                        $fields[] = $field;
-                    }
-                }
-            }
-        }
-        return $fields;
-    }
-
-
-    /**
-     * Check if a field is searchable or not.
-     * @param array $params : the parameters of a field from vardefs metadata file.
-     * @return boolean
-     */
-    protected function isFieldSearchable($params)
-    {
-        $isSearchable = false;
-
-        //decide to include the field in the query or not, given the conditions:
-        // 1. searchable is not null and is set to true;
-        // 2. searchable is null and boost is not null;
-        if (isset($params['full_text_search']['searchable'])) {
-            if ($params['full_text_search']['searchable'] == true) {
-                $isSearchable = true;
-            }
-        } else {
-            if (!empty($params['full_text_search']['boost'])) {
-                $isSearchable = true;
-            }
-        }
-        return $isSearchable;
-    }
-
 
     /**
      * {@inheritdoc}
@@ -234,7 +190,30 @@ class GlobalSearch extends AbstractProvider
         $query->setType(\Elastica\Query\MultiMatch::TYPE_CROSS_FIELDS);
         $query->setQuery($this->term);
         $query->setFields($this->getSearchFields($this->fieldBoost));
+        $query->setTieBreaker(1.0); // TODO make configurable
         return $query;
+    }
+
+    /**
+     * Get search field wrapper
+     * @return array
+     */
+    protected function getSearchFields()
+    {
+        $sf = new SearchFields($this, $this->newBoostHandler());
+        $sf->setBoost($this->fieldBoost);
+        return $sf->getSearchFields($this->modules);
+    }
+
+    /**
+     * Instantiate boost handler
+     * @return \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\BoostHandler
+     */
+    protected function newBoostHandler()
+    {
+        $boost = new BoostHandler();
+        $boost->setWeighted($this->weightedBoost);
+        return $boost;
     }
 
     /**
@@ -264,6 +243,7 @@ class GlobalSearch extends AbstractProvider
         // Just select all eligible global search fields here
         return array(
             '*.gs_string' => array(),
+            '*.gs_string_ngram' => array(),
         );
     }
 
