@@ -41,6 +41,7 @@ class PMSEAddRelatedRecord extends PMSEScriptTask
      */
     public function run($flowData, $bean = null, $externalAction = '', $arguments = array())
     {
+        global $timedate;
         $bpmnElement = $this->retrieveDefinitionData($flowData['bpmn_id']);
         $definitionBean = $this->caseFlowHandler->retrieveBean('pmse_BpmActivityDefinition'); //new BpmActivityDefinition();
         $processDefinitionBean = $this->caseFlowHandler->retrieveBean('pmse_BpmProcessDefinition'); //new BpmProcessDefinition();
@@ -79,7 +80,8 @@ class PMSEAddRelatedRecord extends PMSEScriptTask
                             $newValue = '';
                             if ($value->type == 'Datetime') {
                                 $finishDate = $this->beanHandler->processValueExpression($value->value, $bean);
-                                $newValue = date("Y-m-d H:i:s", strtotime($finishDate));
+                                $date = $timedate->fromIso($finishDate);
+                                $newValue = $date->asDb();
                             } elseif ($key == 'assigned_user_id') {
                                 switch ($value->value) {
                                     case 'currentuser':
