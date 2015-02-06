@@ -42,7 +42,7 @@
      * @param {Model} model The model corresponding to the pill to add.
      */
     addPill: function(model) {
-        var name = !!model.name || model.get('name');
+        var name = model.name || model.get('name');
         this.pills.push({id: model.id, name: name});
         this.render();
     },
@@ -60,8 +60,10 @@
     /**
      * Removes all the pills and sends an event to clear the mass collection.
      */
-    removeAllPills: function() {
-        if (this.$(event.target).hasClass('disabled')) return;
+    removeAllPills: function(event) {
+        if (!!event) {
+            if (this.$(event.target).hasClass('disabled')) return;
+        }
         this.pills = [];
         this.render();
         this.context.trigger('mass_collection:clear');
@@ -72,6 +74,10 @@
      * on mass collection reset.
      *
      * @param {Object[]} models The models to add to pills.
+     *
+     * FIXME: SC-4092 : Here we should add `models` in `this.pills`. To do this,
+     * we need to get the `name` property in each model, we currently only
+     * get `id`.
      */
     resetPills: function(models) {
         this.pills.length = models.length;
