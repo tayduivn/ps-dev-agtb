@@ -17,7 +17,10 @@
         this.collection.sync = this.sync;
         this.collection.allowed_modules = [
             app.lang.get('LBL_CAS_ID',options.module),
-            app.lang.get('LBL_PROCESS_DEFINITION_NAME',options.module)];
+            app.lang.get('LBL_PROCESS_DEFINITION_NAME',options.module),
+            app.lang.get('LBL_RECORD_NAME',options.module),
+            app.lang.get('LBL_OWNER',options.module)
+        ];
         this.context.on('compose:addressbook:search', this.search, this);
         //this.context.on('compose:addressbook:search', this.search, this);
     },

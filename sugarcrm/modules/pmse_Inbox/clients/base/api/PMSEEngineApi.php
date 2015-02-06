@@ -924,6 +924,14 @@ class PMSEEngineApi extends SugarApi
                 $q->where()->queryAnd()
                     ->addRaw("pmse_inbox.pro_title LIKE '%" . $args['q'] . "%'");
                     break;
+                case translate('LBL_RECORD_NAME', 'pmse_Inbox'):
+                    $q->where()->queryAnd()
+                        ->addRaw("pmse_inbox.cas_title LIKE '%" . $args['q'] . "%'");
+                    break;
+                case translate('LBL_OWNER', 'pmse_Inbox'):
+                    $q->where()->queryAnd()
+                        ->addRaw("pmse_inbox.cas_init_user LIKE '%" . $args['q'] . "%'");
+                    break;
             }
         }
 
