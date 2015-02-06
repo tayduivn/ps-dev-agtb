@@ -354,6 +354,13 @@
             return true;
         }
 
+        // for empty value in currency we dont want to validate
+        if (!_.isUndefined(data.valueField) && !_.isArray(data.valueField) && data.valueField.type ==='currency'
+            && (_.isEmpty(data.value) || (_.isObject(data.value) &&
+            _.isEmpty(data.valueField.model.get(data.name))))) {
+            return false;
+        }
+
         //For date range and predefined filters there is no value
         if (data.isDateRange || data.isPredefinedFilter) {
             return true;
@@ -442,13 +449,21 @@
             } else if (key === '$and') {
                 var values = _.reduce(value, function(memo, obj) {
                         return _.extend(memo, obj);
-                    }, {}),
-                    def = _.find(this.fieldList, function(fieldDef) {
-                        return _.has(values, fieldDef.id_name);
+                    }, {});
+                var def = _.find(this.fieldList, function(fieldDef) {
+                        return _.has(values, fieldDef.id_name || fieldDef.name);
                     }, this);
 
+                var operator = '$equals';
                 key = def ? def.name : key;
-                value = {'$equals': values};
+
+                //  We want to get the operator from our values object only for currency fields
+                if (def && !_.isString(values[def.name]) && def.type === 'currency') {
+                    operator = _.keys(values[def.name])[0]
+                    values[key] = values[key][operator];
+                }
+                value = {};
+                value[operator] = values;
             } else if (!fieldMeta[key] && !isPredefinedFilter) {
                 return;
             }
@@ -594,7 +609,6 @@
         var fieldOpts = [
             {'field': 'valueField', 'value': 'value'}
         ];
-
         this._disposeRowFields($row, fieldOpts);
         this.initValueField($row);
     },
@@ -696,8 +710,15 @@
 
         //If the operation is $between we need to set two inputs.
         if (operation === '$between' || operation === '$dateBetween') {
-            var minmax = [],
-                value = $row.data('value') || [];
+            var minmax = [];
+            var value = $row.data('value') || [];
+            if (fieldType === 'currency' && $row.data('value')) {
+                value = $row.data('value') || {};
+                model.set(value);
+                value = value[fieldName] || [];
+                // FIXME: Change currency.js to retrieve correct unit for currency filters (see TY-156).
+                model.id = 'not_new';
+            }
 
             model.set(fieldName + '_min', value[0] || '');
             model.set(fieldName + '_max', value[1] || '');
@@ -713,6 +734,7 @@
             }
 
             data['valueField'] = minmax;
+
             _.each(minmax, function(field) {
                 var fieldContainer = $(field.getPlaceholder().string);
                 $fieldValue.append(fieldContainer);
@@ -757,7 +779,16 @@
                 this._renderField(field, fieldContainer);
             }
         } else {
-            model.set(fieldDef.id_name || fieldName, $row.data('value'));
+            // value is either an empty object OR an object containing `currency_id` and currency amount
+            if (fieldType === 'currency' && $row.data('value')) {
+                // for stickiness & to retrieve correct saved values, we need to set the model with data.value object
+                model.set($row.data('value'));
+                // FIXME: Change currency.js to retrieve correct unit for currency filters (see TY-156).
+                // Mark this one as not_new so that model isn't treated as new
+                model.id = 'not_new';
+            } else {
+                model.set(fieldDef.id_name || fieldName, $row.data('value'));
+            }
             // Render the value field
             var field = this.createField(model, _.extend({}, fieldDef, {name: fieldName})),
                 fieldContainer = $(field.getPlaceholder().string);
@@ -799,6 +830,9 @@
         // Manually trigger the filter request if a value has been selected lately
         // This is the case for checkbox fields or enum fields that don't have empty values.
         var modelValue = model.get(fieldDef.id_name || fieldName);
+
+        // To handle case: value is an object with 'currency_id' = 'xyz' and 'likely_case' = ''
+        // For currency fields, when value becomes an object, trigger change
         if (!_.isEmpty(modelValue) && modelValue !== $row.data('value')) {
             model.trigger('change');
         }
@@ -954,6 +988,41 @@
                     idFilter[data.id_name] = valueField.model.get(data.id_name);
                     typeFilter[data.type_name] = valueField.model.get(data.type_name);
                     filter['$and'] = [idFilter, typeFilter];
+                // Creating currency filter. For all but `$between` operators we use type property from data.valueField.
+                // For `$between`, data.valueField is an array and therefore we check for type==='currency' from
+                // either of the elements.
+                } else if (data['valueField'] && (data['valueField'].type === 'currency' ||
+                    (_.isArray(data.valueField) && data.valueField[0].type === 'currency'))
+                    ) {
+                    // initially value is an array which we later convert into an object for saving and retrieving
+                    // purposes (stickiness structure constraints)
+                    var amountValue;
+                    if (_.isObject(value) && !_.isUndefined(value[name])) {
+                        amountValue = value[name];
+                    } else {
+                        amountValue = value;
+                    }
+
+                    var amountFilter = {};
+                    amountFilter[name] = {};
+                    amountFilter[name][operator] = amountValue;
+
+                    // for `$between`, we use first element to get dataField ('currency_id') since it is same
+                    // for both elements and also because data.valueField is an array
+                    var dataField;
+                    if (_.isArray(data.valueField)) {
+                        dataField = data.valueField[0];
+                    } else {
+                        dataField = data.valueField;
+                    }
+
+                    var currencyId;
+                    currencyId = dataField.getCurrencyField().name;
+
+                    var currencyFilter = {};
+                    currencyFilter[currencyId] = dataField.model.get(currencyId);
+
+                    filter['$and'] = [amountFilter, currencyFilter];
                 } else if (operator === '$equals') {
                     filter[name] = value;
                 } else if (data.isDateRange) {
