@@ -7,24 +7,24 @@ describe("Portal Signup View", function() {
         SugarTest.testMetadata.init();
         SugarTest.loadHandlebarsTemplate('signup', 'view', 'portal');
         SugarTest.testMetadata.addViewDefinition('signup', {
-            "panels": [
+            panels: [
                 {
-                    "fields": [
+                    fields: [
                         {
-                            "name": "first_name"
+                            name: 'first_name'
                         },
                         {
-                            "name": "last_name"
+                            name: 'last_name'
                         },
                         {
-                            "name": "country",
-                            "type": "enum",
-                            "options": "countries_dom"
+                            name: 'country',
+                            type: 'enum',
+                            options: 'countries_dom'
                         },
                         {
-                            "name": "state",
-                            "type": "enum",
-                            "options": "states_dom"
+                            name: 'state',
+                            type: 'enum',
+                            options: 'states_dom'
                         }
                     ]
                 }
@@ -32,7 +32,7 @@ describe("Portal Signup View", function() {
         });
         SugarTest.testMetadata.set();
         SugarTest.app.data.declareModels();
-        view = SugarTest.createView("portal","Signup", "signup");
+        view = SugarTest.createView('portal','Signup', 'signup');
         view.render();
         app = SUGAR.App;
     });
@@ -45,9 +45,9 @@ describe("Portal Signup View", function() {
         sinon.collection.restore();
     });
 
-    describe("Declare Sign Up Bean", function() {
+    describe('Declare Sign Up Bean', function() {
 
-        it("should have declared a Bean with the fields metadata", function() {
+        it('should have declared a Bean with the fields metadata', function() {
             expect(view.model.fields).toBeDefined();
             expect(_.size(view.model.fields)).toBeGreaterThan(0);
             expect(_.size(view.model.fields.first_name)).toBeDefined();
@@ -55,21 +55,21 @@ describe("Portal Signup View", function() {
         });
     });
 
-    describe("signup", function() {
+    describe('signup', function() {
         var stateField;
         beforeEach(function() {
             stateField = view.getField('state');
         });
 
-        it("should show state field", function() {
-            displaySpy = sinon.spy(stateField, 'show');
+        it('should show state field', function() {
+            sinon.collection.spy(stateField, 'show');
 
             view.model.set('country', 'USA');
             view.toggleStateField();
             expect(stateField.show).toHaveBeenCalled();
         });
 
-        it("should hide state field", function() {
+        it('should hide state field', function() {
             sinon.collection.spy(stateField, 'hide');
 
             view.model.set('country', 'MEXICO');
