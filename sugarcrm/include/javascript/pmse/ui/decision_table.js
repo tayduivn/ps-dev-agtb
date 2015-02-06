@@ -36,6 +36,8 @@
         this.globalCBControl = null;
         this.globalDDSelector = null;
         this.moduleFieldSeparator = "|||";
+        this._dateFormat = null;
+        this._timeFormat = null;
         DecisionTable.prototype.initObject.call(this, options || {});
     };
 
@@ -62,6 +64,8 @@
             onRemoveColumn: null,
             onChange: null,
             showDirtyIndicator: true,
+            dateFormat: "yyyy-mm-dd",
+            timeFormat: "H:i",
             language: {
                 SINGLE_HIT: 'Single Hit',
                 MULTIPLE_HIT: 'Multiple Hit',
@@ -106,6 +110,8 @@
         this.language = defaults.language;
 
         this.setName(defaults.name)
+            .setDateFormat(defaults.dateFormat)
+            .setTimeFormat(defaults.timeFormat)
             .setProxy(defaults.proxy/*, defaults.restClient*/)
             .setBaseModule(defaults.base_module)
             .setHitType(defaults.type)
@@ -130,6 +136,8 @@
             width: 250,
             allowInput: false,
             itemContainerHeight: 70,
+            dateFormat: this._dateFormat,
+            timeFormat: this._timeFormat,
             appendTo: jQuery("#businessrulecontainer").get(0)
         });
 
@@ -140,12 +148,28 @@
         this.getFields();
     };
 
-    DecisionTable.prototype.setShowDirtyIndicator = function(show) {
+    DecisionTable.prototype.setDateFormat = function (dateFormat) {
+        if (this.globalCBControl) {
+            this.globalCBControl.setDateFormat(dateFormat);
+        }
+        this._dateFormat = dateFormat;
+        return this;
+    };
+
+    DecisionTable.prototype.setTimeFormat = function (timeFormat) {
+        if (this.globalCBControl) {
+            this.globalCBControl.setDateFormat(timeFormat);
+        }
+        this._timeFormat = timeFormat;
+        return this;
+    };
+
+    DecisionTable.prototype.setShowDirtyIndicator = function (show) {
         this.showDirtyIndicator = !!show;
         return this;
     };
 
-    DecisionTable.prototype.getIsDirty = function() {
+    DecisionTable.prototype.getIsDirty = function () {
         return this.isDirty;
     };
 

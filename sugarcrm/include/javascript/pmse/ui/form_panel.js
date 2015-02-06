@@ -778,7 +778,7 @@
 				}
 				that.fireDependentFields();
 			}
-		}
+		};
 	};
 
 	FormPanelField.prototype._attachListeners = function () {
@@ -1254,7 +1254,7 @@
 		if (this.html) {
 			jQuery(this._htmlControl[0]).on('changeDate change', this._onChangeHandler())
 				.on("show", function() {
-					$('.datepicker').filter(":visible").css("z-index", 1300)
+					$('.datepicker').filter(":visible").css("z-index", 1300);
 				});
 		}
 		return this;
@@ -1264,7 +1264,7 @@
 		if (typeof dateFormat !== 'string') {
 			throw new Error("setFormat(): The parameter must be a string.");
 		}
-		this._dateFormat = dateFormat;
+		this._dateFormat = dateFormat.toLowerCase();
 		if (this._htmlControl[0]) {
 			$(this._htmlControl[0]).datepicker({
 				format: this._dateFormat/*,
@@ -1444,7 +1444,7 @@
 			return null;
 		}
 
-		return value.format(this._dateFormat.toUpperCase()) + " " + this._htmlControl[1].value + " " + value.format("Z");
+		return value.format(this._dateFormat.toUpperCase()) + " " + this._htmlControl[1].value;
 	};
 
 	FormPanelDatetime.prototype._attachListeners = function	() {

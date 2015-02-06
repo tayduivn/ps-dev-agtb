@@ -33,6 +33,7 @@ var ExpressionControl = function(settings) {
     //this._appendTo = null;
     this._expressionVisualizer = null;
     this._dateFormat = null;
+    this._timeFormat = null;
     this._decimalSeparator = null;
     this._numberGroupingSeparator = null;
     this._auxSeparator = "|||";
@@ -170,6 +171,7 @@ ExpressionControl.prototype.init = function (settings) {
         matchOwnerWidth: true,
         expressionVisualizer: true,
         dateFormat: "yyyy-mm-dd",
+        timeFormat: "H:i",
         decimalSeparator: settings.numberGroupingSeparator === "." ? "," : ".",
         numberGroupingSeparator: settings.decimalSeparator === "," ? "." : ",",
         allowInput: true,
@@ -209,6 +211,7 @@ ExpressionControl.prototype.init = function (settings) {
     this.setWidth(defaults.width)
         .setHeight(defaults.height)
         .setDateFormat(defaults.dateFormat)
+        .setTimeFormat(defaults.timeFormat)
         .setDecimalSeparator(defaults.decimalSeparator)
         .setNumberGroupingSeparator(defaults.numberGroupingSeparator)
         .setOwner(defaults.owner)
@@ -270,13 +273,21 @@ ExpressionControl.prototype.setNumberGroupingSeparator = function (separator) {
     return this;
 };
 
-ExpressionControl.prototype.setDateFormat = function(dateFormat) {
+ExpressionControl.prototype.setDateFormat = function (dateFormat) {
     this._dateFormat = dateFormat;
     if (this._constantPanels.date) {
         this._constantPanels.date.getItem("date").setFormat(dateFormat);
     }
     if (this._constantPanels.datetime) {
         this._constantPanels.datetime.getItem("datetime").setFormat(dateFormat);
+    }
+    return this;
+};
+
+ExpressionControl.prototype.setTimeFormat = function (timeFormat) {
+    this._timeFormat = timeFormat;
+    if (this._constantPanels.datetime) {
+        this._constantPanels.datetime.getItem("datetime").setTimeFormat(timeFormat);
     }
     return this;
 };
@@ -860,7 +871,7 @@ ExpressionControl.prototype._getStringOrNumber = function (value) {
 };
 
 ExpressionControl.prototype._createItem = function (data, usableItem) {
-    var newItem;
+    var newItem, aux;
 
     if(usableItem instanceof SingleItem) {
         newItem = usableItem;
@@ -904,9 +915,9 @@ ExpressionControl.prototype._onPanelValueGeneration = function () {
                 case "form-response-evaluation":
                     itemData = {
                         expType: "CONTROL",
-                        expLabel: subpanel.getItem("form").getSelectedText() + " "
-                            + subpanel.getItem("operator").getSelectedText() + " "
-                            + data.status,
+                        expLabel: subpanel.getItem("form").getSelectedText() + " " +
+                            subpanel.getItem("operator").getSelectedText() + " " +
+                            data.status,
                         expOperator: data.operator,
                         expValue: data.status,
                         expField: data.form
@@ -916,8 +927,8 @@ ExpressionControl.prototype._onPanelValueGeneration = function () {
                     aux = data.field.split(that._auxSeparator);
                     value = that._getStringOrNumber(data.value);
                     valueType = typeof data.value === 'string' ? typeof value : typeof data.value;
-                    label = subpanel.getItem("field").getSelectedText() + " "
-                            + subpanel.getItem("operator").getSelectedText() + " " ;
+                    label = subpanel.getItem("field").getSelectedText() + " " +
+                            subpanel.getItem("operator").getSelectedText() + " ";
                     valueField = subpanel.getItem("value");
                     if (aux[1] === "Date") {
                         label += valueField.getFormattedDate();
@@ -941,9 +952,9 @@ ExpressionControl.prototype._onPanelValueGeneration = function () {
                     valueType = typeof value;
                     itemData = {
                         expType: "BUSINESS_RULES",
-                        expLabel: subpanel.getItem("rule").getSelectedText() + " "
-                            + subpanel.getItem("operator").getSelectedText() + " "
-                            + (valueType === "string" ? "\"" + value + "\"" : value),
+                        expLabel: subpanel.getItem("rule").getSelectedText() + " " +
+                            subpanel.getItem("operator").getSelectedText() + " " +
+                            (valueType === "string" ? "\"" + value + "\"" : value),
                         expValue: value,
                         expOperator: data.operator,
                         expField: data.rule
@@ -1594,7 +1605,6 @@ ExpressionControl.prototype._isRegExpSpecialChar = function (c) {
         case "{":
         case "}":
             return true;
-            break;
     }
     return false;
 };
@@ -1649,7 +1659,7 @@ ExpressionControl.prototype._createDateConstantPanel = function() {
                     name: "date",
                     label: "Date",
                     width: "100%",
-                    format: this._dateFormat,
+                    dateFormat: this._dateFormat,
                     required: true
                 }
             ],
@@ -1680,7 +1690,8 @@ ExpressionControl.prototype._createDateTimeConstantPanel = function() {
                     name: "datetime",
                     label: "Date Time",
                     width: "100%",
-                    format: this._dateFormat,
+                    dateFormat: this._dateFormat,
+                    timeFormat: this._timeFormat,
                     required: true
                 }
             ],

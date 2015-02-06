@@ -576,6 +576,8 @@ UpdaterField.prototype.openPanelOnItem = function (field) {
                 appendTo: (this.parent && this.parent.parent && this.parent.parent.html) || null,
                 decimalSeparator: this._decimalSeparator,
                 numberGroupingSeparator: this._numberGroupingSeparator,
+                dateFormat: SUGAR.App.date.convertFormat(SUGAR.App.user.getPreference("datepref")),
+                timeFormat: SUGAR.App.user.getPreference("timepref"),
                 onOpen: function () {
                     jQuery(that.currentField.html).addClass("opened");
                 },
@@ -1105,8 +1107,23 @@ UpdaterField.prototype.setVariables = function (variables) {
     };
 
     DateUpdaterItem.prototype._setValueToControl = function (value) {
-        var friendlyValue = "", i;
+        var friendlyValue = "", i, dateFormat, timeFormat;
         value.forEach(function(value, index, arr) {
+            if (value && value.expType === 'CONSTANT') {
+                if (!dateFormat) {
+                    dateFormat = SUGAR.App.date.convertFormat(SUGAR.App.user.getPreference("datepref"));
+                }
+                if (value.expSubtype === "datetime") {
+                    if (!timeFormat) {
+                        timeFormat = SUGAR.App.date.convertFormat(SUGAR.App.user.getPreference("timepref"));
+                    }
+                    aux = App.date(value.expValue);
+                    value.expLabel = aux.format(dateFormat + " " + timeFormat);
+                } else if (value.expSubtype === "date") {
+                    aux = App.date(value.expValue);
+                    value.expLabel = aux.format(dateFormat);
+                }
+            }
             friendlyValue += " " + value.expLabel;
         });
         this._control.value = friendlyValue;
