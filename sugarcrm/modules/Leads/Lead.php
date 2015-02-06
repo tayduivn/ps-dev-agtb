@@ -341,7 +341,9 @@ class Lead extends Person {
     	{
     		foreach ($fieldDefs as $name=>$properties)
     		{
-    			if ($name == 'oldmeetings' || $name == 'oldcalls') { continue; }
+                if ($name == 'meetings_parent' || $name == 'calls_parent') {
+                    continue;
+                }
     			elseif (array_search('link',$properties) === 'type')
     			{
     				$linked_fields[$name]=$properties;

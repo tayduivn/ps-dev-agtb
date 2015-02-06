@@ -40,8 +40,8 @@ class Bug59144Test extends Sugar_PHPUnit_Framework_TestCase
         $this->lead = SugarTestLeadUtilities::createLead();
         $this->call = SugarTestCallUtilities::createCall();
 
-        $this->lead->load_relationship('oldcalls');
-        $this->lead->oldcalls->add($this->call);
+        $this->lead->load_relationship('calls_parent');
+        $this->lead->calls_parent->add($this->call);
         $this->has_disable_count_query_enabled = !empty($sugar_config['disable_count_query']);
     }
 
@@ -70,8 +70,8 @@ class Bug59144Test extends Sugar_PHPUnit_Framework_TestCase
 
         $lead = new Lead();
         $lead->retrieve($this->lead->id);
-        $lead->load_relationship('oldcalls');
-        $calls = $lead->oldcalls->getBeans(
+        $lead->load_relationship('calls_parent');
+        $calls = $lead->calls_parent->getBeans(
             array(
                 'enforce_teams' => true,
             )
@@ -84,7 +84,7 @@ class Bug59144Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($this->call->id, $call->id);
         // now without count query
         $sugar_config['disable_count_query'] = true;
-        $calls = $lead->oldcalls->getBeans(
+        $calls = $lead->calls_parent->getBeans(
                 array(
                         'enforce_teams' => true,
                 )
