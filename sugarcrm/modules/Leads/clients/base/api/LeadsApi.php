@@ -51,10 +51,18 @@ class LeadsApi extends ModuleApi {
             return $data;
         }
 
-        //handle Convert Target/Prospect use case
-        if (isset($args['prospect_id']) && !empty($args['prospect_id'])) {
-            $campaignId = (isset($data['campaign_id'])) ? $data['campaign_id'] : null;
-            $this->convertProspect($args['prospect_id'], $leadId, $campaignId);
+        // Handle Lead-Prospect post processing
+        if (!empty($args['relate_to']) && $args['relate_to'] === 'Prospects' && !empty($args['relate_id'])) {
+            // Save lead_id for display purposes
+            $prospectId = $args['relate_id'];
+            $prospect = BeanFactory::getBean('Prospects', $prospectId);
+            $prospect->lead_id = $leadId;
+            $prospect->save();
+            // Handle Campaign Log entry creation
+            if (!empty($data['campaign_id'])) {
+                $lead = BeanFactory::getBean('Leads', $leadId);
+                campaign_log_lead_or_contact_entry($data['campaign_id'], $prospect, $lead, 'lead');
+            }
         }
 
         //handle Create Lead from Email use case
@@ -79,30 +87,6 @@ class LeadsApi extends ModuleApi {
             "id" => $bean->id,
             "freebusy" => $bean->getFreeBusySchedule($args),
         );
-    }
-
-    /**
-     * Convert Target/Prospect to a Lead by linking the lead to the prospect
-     * and creating a campaign log entry if newly created Lead is related to a campaign.
-     * TODO: This logic is brought over from LeadFormBase->handleSave() - need refactoring to use Link2?
-     *
-     * @param $prospectId
-     * @param $leadId
-     * @param null $campaignId
-     */
-    protected function convertProspect($prospectId, $leadId, $campaignId = null) {
-        $prospect = new Prospect();
-        $prospect->retrieve($prospectId);
-        $prospect->lead_id = $leadId;
-        // Set to keep email in target
-        $prospect->in_workflow = true;
-        $prospect->save();
-
-        if (!empty($campaignId)) {
-            $lead = new Lead();
-            $lead->id = $leadId;
-            campaign_log_lead_or_contact_entry($campaignId, $prospect, $lead, 'lead');
-        }
     }
 
     /**
