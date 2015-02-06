@@ -25,7 +25,7 @@
         'sic_code': 3599,
         'hoovers_ind_code': 25838,
         'sic_to_hic': 3599,
-        'connectorSettingsURL': 'index.php#bwc/index.php?module=Connectors&action=ModifyProperties',
+        'connectorSettingsURL': 'index.php#bwc/index.php?module=Connectors&action=ModifyProperties&active_tab=ext_rest_dnb',
         'systemSettingsURL': 'index.php#bwc/index.php?module=Configurator&action=EditView'
     },
 

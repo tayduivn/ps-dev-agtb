@@ -1009,16 +1009,14 @@ class MetaDataFiles
             $extension = substr($fileInfo['path'], -3);
             if ($extension == 'php') {
                 $viewdefs = array();
-                if (isset($results[$subPath]['meta'])) {
-                    continue;
-                }
                 require $fileInfo['path'];
                 if (isset($viewdefs[$platform][$type][$subPath])) {
-                    $results[$subPath]['meta'] = $viewdefs[$platform][$type][$subPath];
+                    $results = $viewdefs[$platform][$type][$subPath];
+                    break;
                 }
             }
         }
-        return $results[$subPath]['meta'];
+        return $results;
     }
 
     /**

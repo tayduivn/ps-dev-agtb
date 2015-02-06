@@ -321,14 +321,15 @@ NotePanel.prototype.attachListeners = function () {
     $(this.addNoteBtn).click(function (e) {
         e.preventDefault();
         e.stopPropagation();
-        self.app.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
+
+        if (root.items[0].value && root.items[0].value.trim()!=='') {
+            self.app.alert.show('upload', {level: 'process', title: 'LBL_SAVING', autoclose: false});
         var pictureUrl = self.app.api.buildFileURL({
             module: 'Users',
             id: self.app.user.id,
             field: 'picture'
         });
         var f = new Date();
-        if (root.items[0].value && root.items[0].value.trim()!=='') {
             data = {
                 not_content: root.items[0].value,
                 cas_id: root.caseId,
@@ -358,6 +359,12 @@ NotePanel.prototype.attachListeners = function () {
                     self.app.alert.dismiss('upload');
                 }
             });
+        }
+        else{
+            document.getElementById("notesTextArea").className="control-group error";
+            setTimeout(function(){
+                document.getElementById("notesTextArea").className="";
+            }, 1000);
         }
     });
 

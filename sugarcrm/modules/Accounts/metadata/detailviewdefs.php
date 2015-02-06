@@ -98,7 +98,7 @@ $viewdefs['Accounts']['DetailView'] = array(
 
         array (
           array (
-            'name' => 'email1',
+            'name' => 'email',
             'studio' => 'false',
             'label' => 'LBL_EMAIL',
           ),

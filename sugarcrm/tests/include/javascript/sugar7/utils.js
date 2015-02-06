@@ -20,6 +20,40 @@ describe("Sugar7 utils", function() {
 
     });
 
+    describe('hideForecastCommitStageField()', function() {
+        var options;
+        beforeEach(function() {
+            options = {
+                panels: [
+                    {
+                        fields: [
+                            {
+                                name: 'commit_stage',
+                                label: 'LBL_COMMIT_STAGE'
+                            }
+                        ]
+                    }
+                ]
+            };
+        });
+
+        afterEach(function() {
+            options = undefined;
+        });
+        it('should replace commit_stage with a spacer', function() {
+            sinon.stub(app.metadata, 'getModule', function() {
+                return {
+                    is_setup: false
+                };
+            });
+            app.utils.hideForecastCommitStageField(options.panels);
+            expect(options.panels[0].fields[0]).toEqual(
+                {name: 'spacer', label: 'LBL_COMMIT_STAGE', span: 6, readonly: true}
+            );
+            app.metadata.getModule.restore();
+        });
+    });
+
     describe("getSubpanelCollection()", function() {
         it("should return the proper subpanel collection", function() {
             var ctx = {};

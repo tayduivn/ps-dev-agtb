@@ -626,7 +626,6 @@ $app_list_strings = array (
     'Leads' => 'Lead',
     'Contacts' => 'Contacts', // cn (11/22/2005) added to support Emails
     'Products' => 'Quoted Line Item',
-    'RevenueLineItems' => 'Revenue Line Item',
     'Quotes' => 'Quote',
     'Bugs' => 'Bug',
     'Project' => 'Project',
@@ -647,9 +646,6 @@ $app_list_strings = array (
     'Quotes' => 'Quote',
     'Products' => 'Quoted Line Item',
     'Contracts' => 'Contract',
-    //BEGIN SUGARCRM flav=ent ONLY
-    'RevenueLineItems' => 'Revenue Line Item',
-    //END SUGARCRM flav=ent ONLY
     'Emails' => 'Email',
 
     'Bugs' => 'Bug',
@@ -5291,7 +5287,7 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     //PMSE Process Definitions Dashlet
     'LBL_PMSE_PROCESS_DEFINITIONS_DASHLET' => 'Process Definitions',
     'LBL_PMSE_PROCESS_DEFINITIONS_DASHLET_DESCRIPTION' => 'Process Definitions dashlet displays the templates that can be used inside of Process Author.',
-    'LNK_PMSE_PROCESS_DEFINITIONS_NEW_RECORD' => 'Create Process Definitions',
+    'LNK_PMSE_PROCESS_DEFINITIONS_NEW_RECORD' => 'Create Process Definition',
     'LNK_PMSE_PROCESS_DEFINITIONS_IMPORT_RECORD' => 'Import Process Definitions',
 
     //PMSE Process Business Rules

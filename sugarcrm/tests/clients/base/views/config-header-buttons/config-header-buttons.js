@@ -23,12 +23,19 @@ describe('Base.View.ConfigHeaderButtons', function() {
             context: context
         };
 
+        sinon.collection.stub(app.controller.context, 'get').withArgs('module').returns('Opportunities');
+        sinon.collection.stub(app.lang, 'getModuleName').withArgs('Opportunities', {plural: true}).returns('Opps');
+
         view = SugarTest.createView('base', null, 'config-header-buttons');
     });
 
     afterEach(function() {
         sinon.collection.restore();
         view = null;
+    });
+
+    it('will have custom module name in moduleLangObj', function() {
+        expect(view.moduleLangObj.module).toBe('Opps');
     });
 
     describe('cancelConfig()', function() {

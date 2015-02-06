@@ -74,7 +74,7 @@ $viewdefs['Employees']['EditView'] = array(
 	    ),
         array(
           array (
-              'name' => 'email1',
+              'name' => 'email',
               'label' => 'LBL_EMAIL',
             ),
   		),

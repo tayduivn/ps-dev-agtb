@@ -1,4 +1,3 @@
-//FILE SUGARCRM flav=ent ONLY
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -20,6 +19,9 @@ describe('Opportunities.Base.Views.CreateActions', function() {
                 panels: [{
                     fields: [{
                         name: 'name'
+                    },{
+                        name: 'commit_stage',
+                        label: 'LBL_COMMIT_STAGE'
                     }]
                 }]
             }
@@ -40,6 +42,7 @@ describe('Opportunities.Base.Views.CreateActions', function() {
         sinon.sandbox.restore();
     });
 
+    //BEGIN SUGARCRM flav=ent ONLY
     describe('getCustomSaveOptions', function() {
         var opts;
 
@@ -111,4 +114,5 @@ describe('Opportunities.Base.Views.CreateActions', function() {
             expect(newModel.relatedAttributes['user_name']).toBe(parentModel.get('assigned_user_name'));
         });
     });
+    //END SUGARCRM flav=ent ONLY
 });

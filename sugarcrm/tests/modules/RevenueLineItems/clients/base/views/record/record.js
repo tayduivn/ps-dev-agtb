@@ -58,59 +58,6 @@ describe("RevenueLineItems.Base.View.Record", function() {
         view = SugarTest.createView('base', 'RevenueLineItems', 'record', options.meta, null, true);
     });
 
-    describe("initialization", function() {
-        beforeEach(function() {
-            sinon.stub(app.view.views.BaseRecordView.prototype, "initialize");
-
-            sinon.stub(app.metadata, "getModule", function() {
-                return {
-                    is_setup: true,
-                    buckets_dom: "commit_stage_binary_dom"
-                }
-            })
-            sinon.stub(view, "_parsePanelFields");
-
-        });
-
-        afterEach(function() {
-            view._parsePanelFields.restore();
-            app.metadata.getModule.restore();
-            app.view.views.BaseRecordView.prototype.initialize.restore();
-        });
-    });
-
-    describe("_parsePanelFields method", function() {
-        var panels;
-        beforeEach(function() {
-            panels = [
-                {
-                    fields: [
-                        {
-                            name: "commit_stage"
-                        }
-                    ]
-                }
-            ];
-        });
-
-        afterEach(function() {
-            panels = undefined;
-        });
-
-        it("should replace commit_stage with a spacer", function() {
-            sinon.stub(app.metadata, "getModule", function() {
-                return {
-                    is_setup: false
-                }
-            });
-            view._parsePanelFields(panels);
-            expect(panels[0].fields).toEqual([
-                { name: 'spacer', span: 6, readonly: true }
-            ]);
-            app.metadata.getModule.restore();
-        });
-    });
-
     describe('_handleDuplicateBefore', function() {
         var new_model;
         beforeEach(function() {

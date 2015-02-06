@@ -41,7 +41,8 @@
 
         this.currentModule = app.controller.context.get('module');
         this.moduleLangObj = {
-            'module': app.lang.get('LBL_MODULE_NAME', this.currentModule)
+            // get the actual plural module name
+            module: app.lang.getModuleName(this.currentModule, { plural: true })
         };
 
         /**

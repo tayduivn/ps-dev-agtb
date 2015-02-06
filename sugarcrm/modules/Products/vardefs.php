@@ -106,7 +106,6 @@ $dictionary['Product'] = array(
         'subtotal' => array(
             'name' => 'subtotal',
             'vname' => 'LBL_SUBTOTAL',
-            'dbType' => 'decimal',
             'type' => 'currency',
             'len' => '26,6',
             'related_fields' => array(

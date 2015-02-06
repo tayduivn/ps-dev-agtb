@@ -305,35 +305,6 @@ class PMSEEngineApi extends SugarApi
     {
         // The handler will call to the preprocessor in this step
         $this->retrieveRequestHandler('direct')->executeRequest($args, false, null, strtoupper($args['frm_action']));
-        $taskName = $args['taskName'];
-        $message = '';
-        global $current_user;
-        require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
-        $log = PMSELogger::getInstance();
-        if (empty($args['full_name'])) {
-            $args['full_name'] = $args['name'];
-        }
-        $params['tags'] = array(
-            array(
-                "id" => $args['beanId'],
-                "name" => $args['full_name'],
-                "module" => $args['moduleName']
-            ),
-            array(
-                "id" => $current_user->id,
-                "name" => $current_user->full_name,
-                "module" => "Users"
-            )
-        );
-        $params['module_name'] = 'pmse_Inbox';
-        if ($args['frm_action'] == 'Approve') {
-            $message = sprintf(translate('LBL_PMSE_ACTIVITY_STREAM_APPROVE', $params['module_name']), $taskName);
-        } elseif ($args['frm_action'] == 'Reject') {
-            $message = sprintf(translate('LBL_PMSE_ACTIVITY_STREAM_REJECT', $params['module_name']), $taskName);
-        } elseif ($args['frm_action'] == 'Route') {
-            $message = sprintf(translate('LBL_PMSE_ACTIVITY_STREAM_ROUTE', $params['module_name']), $taskName);
-        }
-        $log->activity($message, $params);
         // return the success request array
         return array('success' => true);
     }
@@ -374,35 +345,6 @@ class PMSEEngineApi extends SugarApi
                     " cas_started    = 1 " .
                     $isSelfService .
                     " where cas_id = $cas_id and cas_index = $cas_index ";
-
-            global $current_user;
-            require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
-            $log = PMSELogger::getInstance();
-            if (empty($args['full_name'])) {
-                $args['full_name'] = $args['name'];
-            }
-            if (isset($args['moduleName'])) {
-                $module = $args['moduleName'];
-            } else {
-                $module = $args['module'];
-            }
-            
-            $params['tags'] = array(
-                array(
-                    "id" => $args['beanId'],
-                    "name" => $args['full_name'],
-                    "module" => $module
-                ),
-                array(
-                    "id" => $current_user->id,
-                    "name" => $current_user->full_name,
-                    "module" => "Users"
-                )
-            );
-            $params['module_name'] = 'pmse_Inbox';
-            $log->activity(sprintf(translate('LBL_PMSE_ACTIVITY_STREAM_CLAIM', $params['module_name']), $taskName),
-                $params);
-
 
             if ($db->query($query, true, "Error updating pmse_bpm_flow record ")) {
                 return array('success' => false);

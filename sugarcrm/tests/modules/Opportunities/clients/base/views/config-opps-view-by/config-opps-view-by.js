@@ -67,6 +67,8 @@ describe('Opportunities.View.ConfigOppsViewBy', function() {
     describe('_render()', function() {
         beforeEach(function() {
             sinon.collection.stub(view, 'showRollupOptions');
+            sinon.collection.stub(view, '_updateTitleValues', function() {
+            });
         });
         it('should call showRollupOptions()', function() {
             view._render();
@@ -77,16 +79,50 @@ describe('Opportunities.View.ConfigOppsViewBy', function() {
     describe('_updateTitleValues()', function() {
         beforeEach(function() {
             sinon.collection.stub(view, 'showRollupOptions');
-            sinon.collection.stub(app.lang, 'getAppListStrings', function() {
+            sinon.collection.stub(view, '_getFieldOptions', function() {
                 return {
                     'testValue': 'Test Value'
-                }
+                };
             });
         });
         it('should set this.titleSelectedValues', function() {
             view.model.set('opps_view_by', 'testValue');
             view._updateTitleValues();
             expect(view.titleSelectedValues).toBe('Test Value');
+        });
+    });
+    describe('_getFieldOptions', function() {
+        var field;
+        beforeEach(function() {
+            field = {
+                items: {
+                    'testValue': 'Test Value'
+                },
+                once: function() {
+                }
+            };
+        });
+        it('with items defined', function() {
+            sinon.collection.stub(field, 'once');
+            sinon.collection.stub(view, 'getField', function() {
+                return field;
+            });
+
+            view._getFieldOptions();
+            expect(field.once).not.toHaveBeenCalled();
+        });
+
+        it('with items is undefined', function() {
+            field.items = undefined;
+
+            sinon.collection.stub(field, 'once');
+            sinon.collection.stub(view, 'getField', function() {
+                return field;
+            });
+
+            view._getFieldOptions();
+            expect(field.once).toHaveBeenCalled();
+            expect(view.waitingForFieldItems).toBe(true);
         });
     });
 });
