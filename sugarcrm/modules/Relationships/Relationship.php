@@ -230,25 +230,33 @@ class Relationship extends SugarBean
 
     function load_relationship_meta()
     {
-        if (!file_exists(Relationship::cache_file_dir() . '/' . Relationship::cache_file_name_only())) {
+        if (!$this->cache_exists()) {
             $this->build_relationship_cache();
         }
         include(Relationship::cache_file_dir() . '/' . Relationship::cache_file_name_only());
         $GLOBALS['relationships'] = $relationships;
     }
 
-    function build_relationship_cache()
+    function build_relationship_cache($modulesChanged = array())
     {
-        $query = "SELECT * from relationships where deleted=0";
+        if (!empty($modulesChanged)) {
+            $relationships = $GLOBALS['relationships'];
+            $module1 = $modulesChanged[0];
+            $module2 = !empty($modulesChanged[1]) ? $modulesChanged[1] : $modulesChanged[0];
+            $query = "SELECT * FROM relationships WHERE (rhs_module = '{$module1}' AND lhs_module = '{$module2}') OR (rhs_module = '{$module2}' AND lhs_module = '{$module2}')";
+        } else {
+            $query = "SELECT * FROM relationships WHERE deleted=0";
+            $relationships = array();
+        }
+
         $result = $this->db->query($query);
 
-        $relationships = array();
-		while (($row = $this->db->fetchByAssoc($result)) != null) {
-		    $row = $this->convertRow($row);
-			$relationships[$row['relationship_name']] = $row;
-		}
+        while (($row = $this->db->fetchByAssoc($result)) != null) {
+            $row = $this->convertRow($row);
+            $relationships[$row['relationship_name']] = $row;
+        }
 
-		sugar_mkdir($this->cache_file_dir(), null, true);
+        sugar_mkdir($this->cache_file_dir(), null, true);
         $out = "<?php \n \$relationships = " . var_export($relationships, true) . ";";
         sugar_file_put_contents_atomic(
             Relationship::cache_file_dir() . '/' . Relationship::cache_file_name_only(),
@@ -314,11 +322,18 @@ class Relationship extends SugarBean
 	//end function trace_relationship_module
 	}
 
-	public function rebuild_relationship_cache()
-	{
-		self::delete_cache();
-		$this->load_relationship_meta();
-	}
+    public function rebuild_relationship_cache($modules = array())
+    {
+        if (empty($modules) || !$this->cache_exists()) {
+            static::delete_cache();
+            $this->load_relationship_meta();
+        } else {
+            if (empty($GLOBALS['relationships'])) {
+                $this->load_relationship_meta();
+            }
+            $this->build_relationship_cache($modules);
+        }
+    }
 
     /**
      * @see SugarBean::bean_implements
@@ -332,5 +347,9 @@ class Relationship extends SugarBean
                 return true;
         }
         return false;
+    }
+
+    protected function cache_exists() {
+        return file_exists(Relationship::cache_file_dir() . '/' . Relationship::cache_file_name_only());
     }
 }

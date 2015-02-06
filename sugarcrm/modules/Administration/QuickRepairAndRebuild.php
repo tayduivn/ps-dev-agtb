@@ -270,8 +270,20 @@ class RepairAndClear
 		}
 	}
 
-	public function rebuildExtensions($modules = array())
+	public function rebuildExtensions($objects = array())
 	{
+        $modules = array();
+        global $beanList;
+        $modBeans = array_flip($beanList);
+        foreach($objects as $obj) {
+            //We expect $objects to be a list of bean classes that we need to map back to modules
+            //But also check if the list is actually modules
+            if (isset($modBeans[$obj])) {
+                $modules[] = $modBeans[$obj];
+            } else if (isset($beanList[$obj])) {
+                $modules[] = $obj;
+            }
+        }
         // Rebuild extensions may have already been called. Don't do it again.
         if (isset($this->called['rebuildExtensions'])) {
             return;

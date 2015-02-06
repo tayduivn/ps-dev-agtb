@@ -254,8 +254,7 @@ class ParserLabel extends ModuleBuilderParser
             self::$moduleInstaller = new ModuleInstaller();
             self::$moduleInstaller->silent = true;
         }
-
-        self::$moduleInstaller->rebuild_extensions();
+        self::$moduleInstaller->rebuild_extensions(array($moduleName), array('languages'));
         
         // While this *is* called from rebuild_extensions, it doesn't do anything
         // there because there is no language or module provided to it. This fixes
