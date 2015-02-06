@@ -110,6 +110,7 @@
     handleToggleClick: function(event) {
         var nextToggle = this.$(event.target).data('next-toggle');
         this.layout.trigger('toggle:showcomponent', nextToggle);
+        event.preventDefault();
         event.stopPropagation();
     },
 
