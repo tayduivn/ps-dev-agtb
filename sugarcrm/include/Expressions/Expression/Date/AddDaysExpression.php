@@ -43,20 +43,27 @@ class AddDaysExpression extends DateExpression
 	static function getJSEvaluate() {
 		return <<<EOQ
 		    var params = this.getParameters();
-			var date = SUGAR.util.DateUtils.parse(params[0].evaluate(), 'user');
-			var days = params[1].evaluate();
+    		var fromDate = params[0].evalute();
+    		if (!fromDate) {
+    			return '';
+    		}
+			var days = parseInt(params[1].evaluate(), 10);
+			if (_.isNaN(days)) {
+				return '';
+			}
+			var date = SUGAR.util.DateUtils.parse(fromDate, 'user');
 
-		    //Clone the object to prevent possible issues with other operations on this variable.
-		    var d = new Date(date);
-		    d.setDate(d.getDate() + parseInt(days, 10));
+    		//Clone the object to prevent possible issues with other operations on this variable.
+    		var d = new Date(date);
+    		d.setDate(d.getDate() + days);
 
-            // if we're calling this from Sidecar, we need to pass back the date
-            // as a string, not a Date object otherwise it won't validate properly
-            if (this.context.view) {
-                d = App.date.format(d, 'Y-m-d');
-            }
+            // if we're calling this from Sidecar, we need to pass back the date
+            // as a string, not a Date object otherwise it won't validate properly
+            if (this.context.view) {
+                d = App.date.format(d, 'Y-m-d');
+            }
 
-		    return d;
+  			return d;
 EOQ;
 	}
 
