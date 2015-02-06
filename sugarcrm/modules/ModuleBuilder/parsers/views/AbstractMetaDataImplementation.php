@@ -37,6 +37,14 @@ abstract class AbstractMetaDataImplementation
     protected $_moduleName;
     protected $_viewdefs; // Raw $viewdefs from the metadata file
     protected $_originalViewdefs = array();
+
+    /**
+     * Base (standard) view definitions
+     *
+     * @var array
+     */
+    protected $baseViewdefs = array();
+
     protected $_fielddefs;
     protected $_paneldefs;
     protected $_paneldefsPath = array();
@@ -107,6 +115,11 @@ abstract class AbstractMetaDataImplementation
     public function getOriginalViewdefs()
     {
         return $this->_originalViewdefs;
+    }
+
+    public function getBaseViewdefs()
+    {
+        return $this->baseViewdefs;
     }
 
     public function getFielddefs ()

@@ -83,6 +83,8 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
                     $this->_useWorkingFile = true;
                 } elseif (MB_HISTORYMETADATALOCATION == $type && $this->_useWorkingFile) {
                     $this->_useWorkingFile = false;
+                } elseif ($type === MB_BASEMETADATALOCATION) {
+                    $this->baseViewdefs = $layout;
                 }
 				// merge in the fielddefs from this layout
 				$this->_mergeFielddefs ( $fielddefs , $layout ) ;

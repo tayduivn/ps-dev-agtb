@@ -31,11 +31,8 @@ $canonicals = array(
                 'name' => 'description',
                 'label' => 'LBL_DESCRIPTION',
                 'comment' => 'Full text of the note',
-                'span' => 6
             ),
-            array(
-                'span' => 6
-            )
+            array()
         ),
         'name' => 0,
         'label' => '0',
@@ -76,11 +73,8 @@ $canonicals = array(
             'status',
             array(
                 'name' => 'description',
-                'span' => 6
             ),
-            array(
-                'span' => 6
-            )
+            array()
         ),
         'name' => 0,
         'label' => '0',
@@ -90,12 +84,8 @@ $canonicals = array(
     )),
     array(array(
         'fields' => array(
-            array(
-                'span' => 6
-            ),
-            array(
-                'span' => 6
-            )
+            array(),
+            array()
         ),
         'name' => 0,
         'label' => '0',
