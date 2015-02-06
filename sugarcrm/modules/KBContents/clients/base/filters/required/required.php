@@ -17,6 +17,13 @@ $viewdefs['KBContents']['base']['filter']['required'] = array(
             ),
         ),
     ),
+    'dashablelist' => array(
+        array(
+            'active_rev' => array(
+                '$equals' => '1',
+            ),
+        ),
+    ),
     'records-noedit' => array(
         array(
             'active_rev' => array(
