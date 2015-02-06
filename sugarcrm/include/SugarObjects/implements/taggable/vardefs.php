@@ -18,6 +18,10 @@ $vardefs = array(
             'type' => 'tag',
             'link' => 'tag_link',
             'source' => 'non-db',
+            'studio' => array(
+                'mobile' => false,
+                'portal' => false,
+            ),
         ),
         'tag_link' => array(
             'name' => 'tag_link',
