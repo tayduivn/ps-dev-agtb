@@ -99,12 +99,14 @@
     toggleStateField: function() {
         var state = this.getField('state');
         // FIXME TY-143, this if block is undesirable
-        if (state) {
-            if (this.model.get('country') === 'USA') {
-                state.show();
-            } else {
-                state.hide();
-            }
+        if (!state) {
+            return;
+        }
+
+        if (this.model.get('country') === 'USA') {
+            state.show();
+        } else {
+            state.hide();
         }
     },
 

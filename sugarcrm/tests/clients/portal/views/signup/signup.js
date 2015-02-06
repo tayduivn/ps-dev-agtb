@@ -42,6 +42,7 @@ describe("Portal Signup View", function() {
         app.view.reset();
         Handlebars.templates = {};
         view = null;
+        sinon.collection.restore();
     });
 
     describe("Declare Sign Up Bean", function() {
@@ -55,7 +56,7 @@ describe("Portal Signup View", function() {
     });
 
     describe("signup", function() {
-        var stateField, displaySpy;
+        var stateField;
         beforeEach(function() {
             stateField = view.getField('state');
         });
@@ -69,15 +70,11 @@ describe("Portal Signup View", function() {
         });
 
         it("should hide state field", function() {
-            displaySpy = sinon.spy(stateField, 'hide');
+            sinon.collection.spy(stateField, 'hide');
 
             view.model.set('country', 'MEXICO');
             view.toggleStateField();
             expect(stateField.hide).toHaveBeenCalled();
-        });
-
-        afterEach(function() {
-            displaySpy.restore();
         });
     });
 });
