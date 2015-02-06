@@ -14,23 +14,54 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Container;
 use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
 use Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\ResultSetInterface;
 use Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\ResultInterface;
+use Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\GlobalSearchInterface;
 
 /**
  *
  * GlobalSearch API using Elasticsearch
  *
+ * Available URL parameters:
+ *  - q = search term
+ *  - limit = defaults to 20, how many results to return
+ *  - offset = defaults to 0, used for paging
+ *  - modules = comma separated list of modules (*)
+ *
+ *  (*) Instead of using the modules URL parameter, its possible and encouraged
+ *  to use list the modules directly in the URL instead using a comma separated
+ *  list like `/Accounts,Contacts/globalsearch?q=stuff`
+ *
  */
 class GlobalSearchApi extends SugarApi
 {
     /**
-     * @var integer Default offset
+     * @var integer Offset
      */
-    protected $defaultOffset = 0;
+    protected $offset = 0;
 
     /**
-     * @var integer Default limit
+     * @var integer Limit
      */
-    protected $defaultLimit = 20;
+    protected $limit = 20;
+
+    /**
+     * @var boolean Collect highlights
+     */
+    protected $highlights = true;
+
+    /**
+     * @var boolean Apply field boosts
+     */
+    protected $fieldBoost = true;
+
+    /**
+     * @var array List of modules to query
+     */
+    protected $modules = array();
+
+    /**
+     * @var string Search term
+     */
+    protected $term = '';
 
     /**
      * @var \Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearchInterface
@@ -50,7 +81,7 @@ class GlobalSearchApi extends SugarApi
                 'reqType' => 'GET',
                 'path' => array('globalsearch'),
                 'pathVars' => array(''),
-                'method' => 'globalSearch',
+                'method' => 'globalSearchEntry',
                 'shortHelp' => '',
                 'longHelp' => '',
                 'noLoginRequired' => false,
@@ -61,50 +92,82 @@ class GlobalSearchApi extends SugarApi
                 'reqType' => 'GET',
                 'path' => array('?', 'globalsearch'),
                 'pathVars' => array('modules', ''),
-                'method' => 'globalSearch',
+                'method' => 'globalSearchEntry',
                 'shortHelp' => '',
                 'longHelp' => '',
                 'noLoginRequired' => false,
             ),
-
         );
     }
 
     /**
+     * GlobalSearch entrypoint
      * @param \RestService $api
      * @param array $args
      * @return array
      */
-    public function globalSearch(\RestService $api, array $args)
+    public function globalSearchEntry(\RestService $api, array $args)
     {
         $api->action = 'list';
 
-        $engine = $this->getSearchEngine();
-        $parsed = $this->parseArguments($args);
+        // Set properties from arguments
+        $this->parseArguments($args);
 
-        $engine
-            ->from($parsed['modules'])
-            ->term($parsed['term'])
-            ->limit($parsed['limit'])
-            ->offset($parsed['offset'])
-            ->fieldBoost(true)
-            ->highlighter(true)
-        ;
-
-        $resultSet = $engine->search();
-
-        $nextOffset = $this->getNextOffset(
-            $resultSet->getTotalHits(),
-            $parsed['limit'],
-            $parsed['offset']
-        );
+        // Get search results
+        $resultSet = $this->executeGlobalSearch($this->getSearchEngine());
 
         return array(
-            'next_offset' => $nextOffset,
+            'next_offset' => $this->getNextOffset($resultSet->getTotalHits(), $this->limit, $this->offset),
             'total' => $resultSet->getTotalHits(),
             'query_time' => $resultSet->getQueryTime(),
             'records' => $this->formatResults($api, $resultSet),
         );
+    }
+
+    /**
+     *
+     * @param array $args
+     */
+    protected function parseArguments(array $args)
+    {
+        // Modules can be a comma separated list
+        if (!empty($args['modules'])) {
+            $this->modules = explode(',', $args['modules']);
+        }
+
+        // Set search term
+        if (!empty($args['q'])) {
+            $this->term = $args['q'];
+        }
+
+        // Set limit
+        if (isset($args['limit'])) {
+            $this->limit = (int) $args['limit'];
+        }
+
+        // Set offset
+        if (isset($args['offset'])) {
+            $this->offset = (int) $args['offset'];
+        }
+    }
+
+    /**
+     * Execute search
+     * @param GlobalSearchInterface $engine
+     * @return \Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\ResultSetInterface
+     */
+    protected function executeGlobalSearch(GlobalSearchInterface $engine)
+    {
+        $engine
+            ->from($this->modules)
+            ->term($this->term)
+            ->limit($this->limit)
+            ->offset($this->offset)
+            ->fieldBoost($this->fieldBoost)
+            ->highlighter($this->highlights)
+        ;
+
+        return $engine->search();
     }
 
     /**
@@ -135,7 +198,7 @@ class GlobalSearchApi extends SugarApi
             throw new SugarApiExceptionSearchUnavailable();
         }
 
-        return $this->engine;
+        return $this->engine->getEngine();
     }
 
     /**
@@ -156,28 +219,6 @@ class GlobalSearchApi extends SugarApi
     }
 
     /**
-     * Parse arguments
-     * @param array $args
-     * @return array
-     */
-    protected function parseArguments(array $args)
-    {
-        // Modules can be a comma separated list
-        if (empty($args['modules'])) {
-            $modules = array();
-        } else {
-            $modules = explode(',', $args['modules']);
-        }
-
-        return array(
-            'term' => empty($args['q']) ? false : $args['q'],
-            'limit' => (int) isset($args['max_num']) ?  $args['max_num'] : $this->defaultLimit,
-            'offset' => (int) isset($args['offset']) ? $args['offset'] : $this->defaultOffset,
-            'modules' => $modules,
-        );
-    }
-
-    /**
      * Format result set
      *
      * @param \RestService $api
@@ -186,7 +227,7 @@ class GlobalSearchApi extends SugarApi
      */
     protected function formatResults(\RestService $api, ResultSetInterface $results)
     {
-        $formattedResults = array();
+        $formatted = array();
 
         /* @var $result ResultInterface */
         foreach ($results as $result) {
@@ -196,15 +237,19 @@ class GlobalSearchApi extends SugarApi
             $data = $this->formatBean($api, $args, $result->getBean());
 
             // add search specific meta info
-            $formatted = array(
+            $entry = array(
                 'data' => $data,
                 'score' => $result->getScore(),
-                'highlights' => $result->getHighlights(),
             );
 
-            $formattedResults[] = $formatted;
+            // Add highlights if requested
+            if ($this->highlights) {
+                $entry['highlights'] = $result->getHighlights();
+            }
+
+            $formatted[] = $entry;
         }
 
-        return $formattedResults;
+        return $formatted;
     }
 }
