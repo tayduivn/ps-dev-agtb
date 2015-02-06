@@ -98,6 +98,7 @@
      */
     toggleStateField: function() {
         var state = this.getField('state');
+        // FIXME TY-143, this if block is undesirable
         if (state) {
             if (this.model.get('country') === 'USA') {
                 state.show();
@@ -156,6 +157,11 @@
                     {
                         success: function() {
                             // Flags to know when to render the success
+                            /**
+                             *  FIXME TY-143 we should not be using the same view
+                             * for both the signup and success. It should
+                             * instead be using a different view. 
+                             */
                             self._showSignupSuccess = true;
 
                             // Replace buttons by a unique Back button

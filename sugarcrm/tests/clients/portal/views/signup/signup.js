@@ -59,6 +59,7 @@ describe("Portal Signup View", function() {
         beforeEach(function() {
             stateField = view.getField('state');
         });
+
         it("should show state field", function() {
             displaySpy = sinon.spy(stateField, 'show');
 
@@ -66,6 +67,7 @@ describe("Portal Signup View", function() {
             view.toggleStateField();
             expect(stateField.show).toHaveBeenCalled();
         });
+
         it("should hide state field", function() {
             displaySpy = sinon.spy(stateField, 'hide');
 
@@ -73,6 +75,7 @@ describe("Portal Signup View", function() {
             view.toggleStateField();
             expect(stateField.hide).toHaveBeenCalled();
         });
+
         afterEach(function() {
             displaySpy.restore();
         });
