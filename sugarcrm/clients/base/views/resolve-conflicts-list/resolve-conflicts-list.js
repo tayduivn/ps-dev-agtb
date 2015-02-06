@@ -55,8 +55,8 @@
             this._buildFieldDefinitions(copyOfModelToSave, modelInDb);
 
             // set IDs to be different so that backbone collection can recognize that they're not the same
-            copyOfModelToSave.set('id', originalId + '-client');
-            modelInDb.set('id', originalId + '-database');
+            copyOfModelToSave.id = originalId + '-client';
+            modelInDb.id = originalId + '-database';
 
             // indicate which model is from the client and the server
             copyOfModelToSave.set('_dataOrigin', 'client');
@@ -172,7 +172,7 @@
 
         this.context.off('list:preview:fire', null, this);
         this.context.on('list:preview:fire', function (model) {
-            app.events.trigger('preview:render', model, this.collection, false, undefined, false);
+            app.events.trigger('preview:render', model, this.collection, false, model.id, false);
             app.events.trigger('preview:pagination:hide');
         }, this);
     },
