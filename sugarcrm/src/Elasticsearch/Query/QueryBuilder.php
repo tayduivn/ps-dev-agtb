@@ -223,8 +223,12 @@ class QueryBuilder
      */
     public function executeSearch()
     {
-        if (empty($this->modules) || empty($this->user)) {
-            throw new QueryBuilderException('executeSearch failed');
+        if (empty($this->user)) {
+            throw new QueryBuilderException('QueryBuilder executeSearch failed - no user context');
+        }
+
+        if (empty($this->modules)) {
+            throw new QueryBuilderException('QueryBuilder executeSearch failed - no modules avialable');
         }
 
         // Build query
