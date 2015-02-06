@@ -28,13 +28,21 @@ class GlobalSearch extends AbstractProvider
      * {@inheritdoc}
      */
     protected $sugarTypes = array(
-        'varchar' => array('gs_string', 'gs_string_ngram'),
-        'name' => array('gs_string', 'gs_string_ngram'),
-        'phone' => 'gs_string',
-        'int' => 'gs_string',
-        'text' => array('gs_string', 'gs_string_ngram'),
-        'datetime' => 'gs_datetime',
-        'text' => array('gs_string', 'gs_string_ngram'),
+        'varchar' => array(
+            'gs_string_default',
+            'gs_string_ngram'
+        ),
+        'name' => array(
+            'gs_string_default',
+            'gs_string_ngram'
+        ),
+        'text' => array(
+            'gs_string_default',
+            'gs_string_ngram'
+        ),
+        'datetime' => array(
+            'gs_datetime',
+        ),
     );
 
     /**
@@ -44,15 +52,15 @@ class GlobalSearch extends AbstractProvider
         'gs_string_ngram' => array(
             'type' => 'string',
             'index' => 'analyzed',
-            'index_analyzer' => 'gs_ngram_index_analyzer',
-            'search_analyzer' => 'gs_default_search_analyzer',
+            'index_analyzer' => 'gs_analyzer_ngram',
+            'search_analyzer' => 'gs_analyzer_default',
             'store' => false,
         ),
-        'gs_string' => array(
+        'gs_string_default' => array(
             'type' => 'string',
             'index' => 'analyzed',
-            'index_analyzer' => 'standard',
-            'search_analyzer' => 'gs_default_search_analyzer',
+            'index_analyzer' => 'gs_analyzer_default',
+            'search_analyzer' => 'gs_analyzer_default',
             'store' => false,
         ),
         'gs_datetime' => array(
@@ -68,6 +76,7 @@ class GlobalSearch extends AbstractProvider
      * @var array
      */
     protected $weightedBoost = array(
+        'gs_string_default' => 1,
         'gs_string_ngram' => 0.35,
     );
 
@@ -109,12 +118,17 @@ class GlobalSearch extends AbstractProvider
                 array('min_gram' => 2, 'max_gram' => 15)
             )
             ->addCustomAnalyzer(
-                'gs_default_search_analyzer',
+                'gs_analyzer_default',
                 'whitespace',
                 array('lowercase')
             )
             ->addCustomAnalyzer(
-                'gs_ngram_index_analyzer',
+                'gs_analyzer_standard',
+                'standard',
+                array('standard', 'lowercase')
+            )
+            ->addCustomAnalyzer(
+                'gs_analyzer_ngram',
                 'whitespace',
                 array('lowercase', 'gs_filter_ngram')
             )
