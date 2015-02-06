@@ -21,6 +21,9 @@ require_once 'modules/ModuleBuilder/parsers/ParserFactory.php';
 class DeployedRelationships extends AbstractRelationships implements RelationshipsInterface
 {
 
+
+    protected static $subpanelDefs = array();
+
     function __construct ($moduleName)
     {
         $this->moduleName = $moduleName ;
@@ -185,31 +188,37 @@ class DeployedRelationships extends AbstractRelationships implements Relationshi
      * @param string $sourceModuleName  Name of the primary module
      * @return string Name of the subpanel if found; null otherwise
      */
-    static private function identifySubpanel ($thisModuleName , $sourceModuleName)
+    static private function identifySubpanel($thisModuleName, $sourceModuleName)
     {
-        $module = BeanFactory::getBean($thisModuleName);
-        if(empty($module)) {
+        $bean = BeanFactory::getBean($thisModuleName);
+        if (empty($bean)) {
             return null;
-        }        require_once ('include/SubPanel/SubPanelDefinitions.php') ;
-        $spd = new SubPanelDefinitions ( $module ) ;
-        $subpanelNames = $spd->get_available_tabs () ; // actually these are the displayed subpanels
+        }
+        require_once('include/SubPanel/SubPanelDefinitions.php');
 
-        foreach ( $subpanelNames as $key => $name )
-        {
-            $GLOBALS [ 'log' ]->debug ( $thisModuleName . " " . $name ) ;
-
-            $subPanel = $spd->load_subpanel ( $name ) ;
-            if ($subPanel && ! isset ( $subPanel->_instance_properties [ 'collection_list' ] ))
-            {
-                if ($sourceModuleName == $subPanel->_instance_properties [ 'module' ])
-                {
-                    return $subPanel->_instance_properties [ 'subpanel_name' ] ;
+        foreach(static::loadSubpanelDefs($bean) as $subPanel) {
+            if ($subPanel && !isset ($subPanel->_instance_properties ['collection_list'])) {
+                if ($sourceModuleName == $subPanel->_instance_properties ['module']) {
+                    return $subPanel->_instance_properties ['subpanel_name'];
                 }
             }
         }
 
-        return null ;
+        return null;
 
+    }
+
+    static protected function loadSubpanelDefs($bean) {
+        $module = $bean->module_dir;
+        if (!isset(static::$subpanelDefs[$module])) {
+            static::$subpanelDefs[$module] = array();
+            $spd = new SubPanelDefinitions ($bean);
+            $subpanelNames = $spd->get_available_tabs(); // actually these are the displayed subpanels
+            foreach ($subpanelNames as $key => $name) {
+                static::$subpanelDefs[$module][$name] = $spd->load_subpanel($name);
+            }
+        }
+        return static::$subpanelDefs[$module];
     }
 
     /*
@@ -377,7 +386,7 @@ class DeployedRelationships extends AbstractRelationships implements Relationshi
         $rac->clearVardefs();
         $rac->clearJsLangFiles();
         $rac->clearLanguageCache();
-        $rac->rebuildExtensions();
+        $rac->rebuildExtensions(array_keys($modulesToBuild));
         $rac->clearVardefs();
 
         foreach ($rac->module_list as $moduleName => $ignore) {
