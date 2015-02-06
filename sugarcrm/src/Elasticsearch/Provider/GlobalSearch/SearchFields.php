@@ -167,7 +167,7 @@ class SearchFields
      * @param string $type
      * @return array
      */
-    protected function getBoostedField($searchField, array $defs, $type)
+    protected function getBoostedField($field, array $defs, $type)
     {
         return $this->boostHandler->getBoostedField($field, $defs, $type);
     }
