@@ -2492,6 +2492,7 @@ $app_strings = array (
     'EXCEPTION_CLIENT_OUTDATED'         => 'Your software is out of date, please update your client before attempting to connect again.',
     'EXCEPTION_CONNECTOR_RESPONSE'      => 'A connector or an integration request resulted in a failed response.',
     'EXCEPTION_MAINTENANCE'             => 'SugarCRM is in maintenance mode. Only admins can login. Please contact your administrator for details.',
+    'EXCEPTION_SERVICE_UNAVAILABLE'     => 'The server cannot process your request because it is busy or unavailable at this time.',
 
     // Default SugarApiException descriptions, used in the exceptions help endpoint
     'EXCEPTION_UNKNOWN_EXCEPTION_DESC'     => 'A condition was encountered because of a general failure or error. The reasons for this exception range but generally fall outside the scope of a more specific API exception.',
@@ -2513,6 +2514,7 @@ $app_strings = array (
     'EXCEPTION_CLIENT_OUTDATED_DESC'       => 'Indicates the client consuming the API is out of date and must be updated before further consumption of the API can take place.',
     'EXCEPTION_CONNECTOR_RESPONSE_DESC'    => 'Indicates that a request made through the API to another service, endpoint or URI  has failed or could not be handled by the server.',
     'EXCEPTION_MAINTENANCE_DESC'           => 'The instance of SugarCRM that is serving the API is in maintenance mode. Access to the API is restricted to administrators only.',
+    'EXCEPTION_SERVICE_UNAVAILABLE_DESC'   => 'Indicates that the server is busy, overloaded or down.',
 
     //Lotus Live specific error messages
     'ERR_EXTERNAL_API_LOTUS_LIVE_CONFLICT' => 'A file with the same name already exists in the system.',
