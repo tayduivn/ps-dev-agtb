@@ -1151,7 +1151,7 @@ abstract class UpgradeDriver
         if (!defined('sugarEntry')) {
             define('sugarEntry', true);
         }
-        $this->log("Initializig SugarCRM environment");
+        $this->log("Initializing SugarCRM environment");
         global $beanFiles, $beanList, $objectList, $timedate, $moduleList, $modInvisList, $sugar_config, $locale,
                $sugar_version, $sugar_flavor, $sugar_build, $sugar_db_version, $sugar_timestamp, $db, $locale,
                $installing, $bwcModules, $app_list_strings, $modules_exempt_from_availability_check;
