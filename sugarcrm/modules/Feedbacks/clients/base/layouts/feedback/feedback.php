@@ -12,7 +12,6 @@
 
 $viewdefs['Feedbacks']['base']['layout']['feedback'] = array(
     'name' => 'feedback',
-    'css_class' => 'row-fluid',
     'components' => array(
         array(
             'view' => 'feedback',
