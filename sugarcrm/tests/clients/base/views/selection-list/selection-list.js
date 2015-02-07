@@ -1,3 +1,4 @@
+//FIXME: SC-4097 will rewrite this file properly.
 describe("Base.View.SelectionList", function () {
     var view, layout, app, moduleName;
     beforeEach(function () {
@@ -84,7 +85,7 @@ describe("Base.View.SelectionList", function () {
         delete app.drawer;
     });
 
-    it('should remove all links except rowactions', function(){
+    it('should remove all links except rowactions', function() {
         var htmlBefore = '<a href="javascript:void(0)">unwrapped</a><a href="" class="rowaction">wrapped</a>',
             htmlAfter = 'unwrapped<a href="" class="rowaction">wrapped</a>';
 
@@ -94,59 +95,10 @@ describe("Base.View.SelectionList", function () {
         expect(view.$el.html()).toEqual(htmlAfter);
     });
 
-    it('should add preview row action', function(){
+    it('should add preview row action', function() {
         var hasPreview = _.some(view.rightColumns, function(column) {
             return (column.event === "list:preview:fire");
         });
         expect(hasPreview).toBe(true);
-    });
-
-    describe('Multiselect', function() {
-        beforeEach(function() {
-            view.multiSelect = true;
-        });
-
-        it('should display the select button', function() {
-
-        });
-
-        it('should call _showMaxSelectedRecordsAlert if the number of selected items exceeds the maximum', function() {
-            var models = new Backbone.Collection([{id: '1'}, {id: '2'}, {id: '3'}]),
-                showMaxSelectedRecordsAlert = sinon.collection.stub(view, '_showMaxSelectedRecordsAlert');
-            view.maxSelectedRecords = 2;
-            view.context.set('mass_collection', models);
-            view._selectMultipleAndClose();
-
-            expect(showMaxSelectedRecordsAlert).toHaveBeenCalled();
-        });
-
-        it('should call _selectMultipleAndClose when select_button is clicked', function() {
-            var selectMultipleAndClose = sinon.collection.stub(view, '_selectMultipleAndClose');
-
-            //click on select
-
-//            expect(selectMultipleAndClose).toHaveBeenCalled();
-        });
-
-        it('should display checkboxes instead of radio buttons', function() {
-
-        });
-
-        it('should not call _selectAndClose when a checkbox is checked', function() {
-
-//            expect(_selectAndClose).not.toHaveBeenCalled();
-        });
-
-        it('should get the attributes of every selected record', function() {
-            var models = new Backbone.Collection([{id: '1'}, {id: '2'}, {id: '3'}]);
-            view.maxSelectedRecords = 20;
-            view.context.set('mass_collection', models);
-            var selections = view.context.get('mass_collection'),
-                attributes = view._getCollectionAttributes(selections);
-
-            expect(selections.at(0).attributes).toEqual(attributes[0]);
-            expect(selections.at(1).attributes).toEqual(attributes[1]);
-            expect(selections.at(2).attributes).toEqual(attributes[2]);
-        });
     });
 });
