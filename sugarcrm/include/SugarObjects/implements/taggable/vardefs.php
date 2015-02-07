@@ -12,20 +12,19 @@
 
 $vardefs = array(
     'fields' => array(
-        'tags' => array(
-            'name' => 'tags',
+        'tag' => array(
+            'name' => 'tag',
             'vname' =>'LBL_TAGS',
-            'type' => 'tags',
-            'link' => 'tags_link',
+            'type' => 'tag',
+            'link' => 'tag_link',
             'source' => 'non-db',
         ),
-        'tags_link' => array(
-            'name' => 'tags_link',
+        'tag_link' => array(
+            'name' => 'tag_link',
             'type' => 'link',
             'vname' => 'LBL_TAGS_LINK',
             'relationship' => strtolower($module).'_tags',
             'source' => 'non-db',
-            'comment' => '',
         ),
     ),
     'relationships' => array(
