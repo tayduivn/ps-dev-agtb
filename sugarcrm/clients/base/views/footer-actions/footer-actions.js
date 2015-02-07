@@ -167,7 +167,7 @@
      * TODO move this to a feedback field
      *
      * This currently sets and uses the internal `_feedbackIsOpen` flag to
-     * create and dispose the layout.
+     * create and dispose the {@link FeedbackView}.
      * FIXME this shouldn't work that way and should trigger an event that the
      * additionalComponent (the feedback layout) is listening to and the toggle
      * will simply trigger the event for the layout to show and hide.
@@ -182,23 +182,14 @@
             this._disposeFeedbackLayout();
             return;
         }
-        var layout = this._feedbackLayout = app.view.createLayout({
+        var view = this._feedbackView = app.view.createView({
             module: 'Feedbacks',
             name: 'feedback'
         });
-        this._feedbackLayout.on('feedback:close', this._disposeFeedbackLayout, this);
+        this._feedbackView.on('feedback:close', this._disposeFeedbackLayout, this);
 
-        layout.render();
-        layout.$popover = this.$('[data-action="feedback"]');
-        layout.$popover.popover({
-            trigger: 'manual',
-            title: app.lang.get('LBL_FEEDBACK'),
-            content: layout.$el,
-            html: true,
-            placement: 'top',
-            template: '<div class="popover feedback""><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>'
-        });
-        layout.$popover.popover('show');
+        view.$popover = this.$('[data-action="feedback"]');
+        view.render();
         this._feedbackIsOpen = true;
     },
 
@@ -210,7 +201,7 @@
      * @private
      */
     _disposeFeedbackLayout: function() {
-        this._feedbackLayout.dispose();
+        this._feedbackView.dispose();
         this.$('[data-action="feedback"]').popover('destroy');
         this.$('[data-action="feedback"]').removeClass('active');
         this._feedbackIsOpen = false;

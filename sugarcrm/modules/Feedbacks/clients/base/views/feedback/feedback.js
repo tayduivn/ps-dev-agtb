@@ -13,11 +13,12 @@
         this._super('initialize', [options]);
         this.context.set('skipFetch', true);
     },
-    _render: function() {
-        var email = app.user.get('email');
-        if (_.first(email)) {
-            email = email[0].email_address;
-        }
+
+    _renderHtml: function() {
+        var emails = app.user.get('email');
+        var primary = _.filter(emails, function(email) { return email.primary_address; });
+        var email = _.first(primary || _.first(emails)).email_address;
+
         this.model.set({
             name: app.user.get('full_name'),
             username: app.user.get('user_name'),
@@ -32,8 +33,23 @@
             //feedback_sugar_version: app.metadata.getServerInfo().product_name + " " + app.metadata.getServerInfo().version + " " + app.metadata.getServerInfo().fts.type,
             feedback_sugar_version: _.toArray(_.pick(app.metadata.getServerInfo(), 'product_name', 'version')).join(' '),
         });
-        this._super('_render');
+        this._super('_renderHtml');
     },
+
+    _render: function() {
+        this._super('_render');
+
+        this.$popover.popover({
+            trigger: 'manual',
+            title: app.lang.get('LBL_FEEDBACK'),
+            content: this.$el,
+            html: true,
+            placement: 'top',
+            template: '<div class="popover feedback""><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>'
+        });
+        this.$popover.popover('show');
+    },
+
     close: function() {
         if (this.layout.$popover) {
             this.layout.$popover.popover('hide');
@@ -41,6 +57,8 @@
         }
     },
     send: function() {
+        debugger;
+        return;
         var self = this,
             post_url = 'https://docs.google.com/forms/d/1iIdfeWma_OUUkaP-wSojZW2GelaxMOBgDq05A8PGHY8/formResponse';
         if(this.model.get('feedback_text')==undefined || this.model.get('feedback_csat')==undefined) {
