@@ -17,7 +17,7 @@
     events: {
         'click [data-action=shortcuts]': 'shortcuts',
         'click [data-action=tour]': 'showTutorialClick',
-        'click [data-action=feedback]': 'toggleFeedbackPopover',
+        'click [data-action=feedback]': 'feedback',
         'click [data-action=support]': 'support',
         'click [data-action=help]': 'help'
     },
@@ -32,12 +32,6 @@
         'about',
         'first-login-wizard'
     ],
-
-    /**
-     * Internal flag that knows if the feedback module is open or closed.
-     * @private
-     */
-    _feedbackIsOpen: false,
 
     handleViewChange: function(layout, params) {
         var module = params && params.module ? params.module : null;
@@ -176,35 +170,20 @@
      *
      * @param {Event} evt the `click` event.
      */
-    toggleFeedbackPopover: function(evt) {
-        this.$('[data-action="feedback"]').addClass('active');
-        if (this._feedbackIsOpen) {
-            this._disposeFeedbackLayout();
-            return;
+    feedback: function(evt) {
+        if (!this._feedbackView) {
+            this._feedbackView = app.view.createView({
+                module: 'Feedbacks',
+                name: 'feedback',
+                button: this.$('[data-action="feedback"]')
+            });
+            this._feedbackView.render();
+            this.listenTo(this._feedbackView, 'show hide', function(view, active) {
+                this.$('[data-action="feedback"]').toggleClass('active', active);
+            });
+
+            this._feedbackView.toggle();
         }
-        var view = this._feedbackView = app.view.createView({
-            module: 'Feedbacks',
-            name: 'feedback'
-        });
-        this._feedbackView.on('feedback:close', this._disposeFeedbackLayout, this);
-
-        view.$popover = this.$('[data-action="feedback"]');
-        view.render();
-        this._feedbackIsOpen = true;
-    },
-
-    /**
-     * Dispose the Feedback layout.
-     *
-     * This will prevent memory leaks when closing the feedback pop up.
-     *
-     * @private
-     */
-    _disposeFeedbackLayout: function() {
-        this._feedbackView.dispose();
-        this.$('[data-action="feedback"]').popover('destroy');
-        this.$('[data-action="feedback"]').removeClass('active');
-        this._feedbackIsOpen = false;
     },
 
     support: function() {
