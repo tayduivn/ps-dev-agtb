@@ -14,7 +14,7 @@
 require_once('include/workflow/action_utils.php');
 require_once('modules/WorkFlow/WorkFlow.php');
 
-class PAT1261Test extends Sugar_PHPUnit_Framework_TestCase
+class WorkFlowProcessActionsTest extends Sugar_PHPUnit_Framework_TestCase
 {
     private $quote;
     private $_wf_array;
@@ -36,7 +36,7 @@ class PAT1261Test extends Sugar_PHPUnit_Framework_TestCase
         $workflow->fire_order = 'alerts_actions';
         $workflow->parent_id = null;
         $workflow->record_type = 'All';
-        $this->_workflow_id = $workflow->save();
+        $workflow->save();
         $workflow->check_logic_hook_file();
         $workflow->write_workflow();
         $this->_workflow_id = $workflow->id;
@@ -87,6 +87,7 @@ class PAT1261Test extends Sugar_PHPUnit_Framework_TestCase
 
         SugarTestQuoteUtilities::removeAllCreatedQuotes();
         SugarTestAccountUtilities::removeAllCreatedAccounts();
+        SugarTestTaskUtilities::removeAllCreatedTasks();
         SugarTestTeamUtilities::removeAllCreatedAnonymousTeams();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
