@@ -736,6 +736,7 @@ class SugarTestHelper
     protected static function tearDown_timedate()
     {
         $GLOBALS['timedate']->clearCache();
+        $GLOBALS['timedate']->allow_cache = true;
 
         return true;
     }
