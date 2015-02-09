@@ -265,7 +265,8 @@ class PMSEEngineFilterApi extends FilterApi
             ->on()
             ->equalsField('user_data.id', 'cas_user_id')
             ->equals('user_data.deleted', 0);
-        $fields[] = array("user_data.user_name", 'user_name');
+        $fields[] = array("user_data.first_name", 'first_name');
+        $fields[] = array("user_data.last_name", 'last_name');
 
         //INNER JOIN TEAM_DATA DEFINTION
         $q->joinTable('teams', array('alias' => 'team_data', 'joinType' => 'LEFT', 'linkingTable' => true))
@@ -274,12 +275,18 @@ class PMSEEngineFilterApi extends FilterApi
             ->equals('team_data.deleted', 0);
         $fields[] = array("team.name", 'team_name');
 
-        $q->select($fields);
+        $q->select($fields)
+            ->fieldRaw('CONCAT(COALESCE(user_data.first_name, ""), " ", user_data.last_name)', 'assigned_user_name');
 
         foreach ($options['order_by'] as $orderBy) {
-            // ID and date_modified are used to give some order to the system
-            if ( $orderBy[0] != 'date_modified' && $orderBy[0] != 'id' ) {
-                self::verifyField($q, $orderBy[0]);
+            if ($orderBy[0] == 'pro_title'){
+                $orderBy[0] = 'process.name';
+            }
+            if ($orderBy[0] == 'task_name'){
+                $orderBy[0] = 'activity.name';
+            }
+            if ($orderBy[0] == 'cas_title'){
+                $orderBy[0] = 'inbox.cas_title';
             }
             $q->orderBy($orderBy[0], $orderBy[1]);
         }
@@ -314,7 +321,7 @@ class PMSEEngineFilterApi extends FilterApi
             $arr_aux['id2'] = $bean->fetched_row['inbox_id'];
             $arr_aux['task_name'] = $bean->fetched_row['act_name'];
             $arr_aux['cas_status'] = $bean->fetched_row['act_assignment_method'];
-            $arr_aux['case_init'] = $bean->fetched_row['user_name'];
+            $arr_aux['assigned_user_name'] = $bean->fetched_row['assigned_user_name'];
             $arr_aux['cas_sugar_module'] = $bean->fetched_row['cas_sugar_module'];
             $arr_aux['in_time'] = true;
             $arr_aux['id'] = $bean->fetched_row['inbox_id'];
@@ -322,5 +329,33 @@ class PMSEEngineFilterApi extends FilterApi
         }
 
         return $ret;
+    }
+
+    protected function getOrderByFromArgs(array $args, SugarBean $seed = null)
+    {
+        $orderBy = array();
+        if (!isset($args['order_by']) || !is_string($args['order_by'])) {
+            return $orderBy;
+        }
+
+        $columns = explode(',', $args['order_by']);
+        $parsed = array();
+        foreach ($columns as $column) {
+            $column = explode(':', $column, 2);
+            $field = array_shift($column);
+
+            // do not override previous value if it exists since it should have higher precedence
+            if (!isset($parsed[$field])) {
+                $direction = array_shift($column);
+                $parsed[$field] = strtolower($direction) !== 'desc';
+            }
+        }
+
+        $converted = array();
+        foreach ($parsed as $field => $direction) {
+            $converted[] = array($field, $direction ? 'ASC' : 'DESC');
+        }
+
+        return $converted;
     }
 }

@@ -202,9 +202,7 @@ class PMSECasesListApi extends FilterApi
         $data = array();
         $data['next_offset'] = $offset;
         $data['records'] = $list;
-        //$data['options'] = $options;
-        //$data['args'] = $args;
-        $data['sql'] = $q->compileSql();
+        //$data['sql'] = $q->compileSql();
         return $data;
     }
 
