@@ -16,11 +16,26 @@
 ({
     extendsFrom: 'EnumField',
 
+    /**
+     * @inheritdoc
+     */
     initialize: function(options) {
         // we need to make a clone of the plugins and then push to the new object. this prevents double plugin
         // registration across ExtendedComponents
         this.plugins = _.clone(this.plugins) || [];
         this.plugins.push('ClickToEdit');
         this._super("initialize", [options]);
+    },
+
+    /**
+     * @inheritdoc
+     */
+    _render: function() {
+        this._super('_render');
+
+        // make sure commit_stage enum maintains 'list' class for style reasons
+        if(this.name === 'commit_stage' && this.$el.hasClass('disabled')) {
+            this.$el.addClass('list');
+        }
     }
 })

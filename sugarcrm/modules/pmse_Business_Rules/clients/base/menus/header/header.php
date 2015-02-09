@@ -34,6 +34,6 @@ $viewdefs[$moduleName]['base']['menu']['header'] = array(
         'label' =>'LNK_PMSE_BUSINESS_RULES_IMPORT_RECORD',
         'acl_action'=>'upload',
         'acl_module'=>$moduleName,
-        'icon' => 'fa-upload',
+        'icon' => 'fa-arrow-circle-o-up',
     ),
 );

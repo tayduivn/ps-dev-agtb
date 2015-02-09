@@ -18,7 +18,7 @@ require_once('modules/pmse_Inbox/engine/PMSE.php');
 
 class pmse_InboxViewShowCase extends SugarView
 {
-    public $type = 'edit';
+    public $type = 'list';
     public $activityRow = array();
     public $dyn_uid = '';
     public $workFlowType = '';

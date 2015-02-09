@@ -106,5 +106,29 @@
                 console.log(error);
             }
         });
+    },
+    warnDelete: function(model) {
+        var verifyURL = app.api.buildURL(
+            this.module,
+            'verify',
+            {
+                id : model.get('id')
+            }
+        ),
+            self = this;
+        app.api.call('read', verifyURL, null, {
+            success: function(data) {
+                if (!data) {
+                    self._super('warnDelete', [model]);
+                } else {
+                    app.alert.show('message-id', {
+                        level: 'warning',
+                        title: app.lang.get('LBL_WARNING'),
+                        messages: app.lang.get('LBL_PA_PRODEF_HAS_PENDING_PROCESSES'),
+                        autoClose: false
+                    });
+                }
+            }
+        });
     }
 })

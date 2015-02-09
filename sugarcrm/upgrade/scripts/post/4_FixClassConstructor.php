@@ -253,6 +253,8 @@ class SugarUpgradeFixClassConstructor extends UpgradeScript
 
         $className = $moduleName . '_sugar';
 
-        return 'modules' . DIRECTORY_SEPARATOR . $fBeanList[$moduleName] . DIRECTORY_SEPARATOR . $className . '.php';
+        $dirName = !empty($fBeanList[$moduleName]) ? $fBeanList[$moduleName] : $moduleName;
+
+        return 'modules' . DIRECTORY_SEPARATOR . $dirName . DIRECTORY_SEPARATOR . $className . '.php';
     }
 }

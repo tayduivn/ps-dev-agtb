@@ -247,4 +247,109 @@ EOF;
         $actual = return_app_list_strings_language($GLOBALS['current_language']);
         $this->assertArrayHasKey('foo_dom', $actual);
     }
+
+    /**
+     * Test for check settings of use_push parameter
+     *
+     * @param array $old Old $app_list_strings values
+     * @param array $new New $app_list_strings values
+     * @param array $custom Custom $app_list_strings values
+     * @param array $dropdownsToPush Array of dropdonws that need to be used with use_push parameter
+     * @param array $use_push Expected result of use_push parameter
+     *
+     * @dataProvider usePushSettingsProvider
+     */
+    public function testRun_UsePushSettings($old, $new, $custom, $dropdownsToPush, $use_push)
+    {
+        $params = array();
+
+        $parserMock = $this->getMock('ParserDropDown', array('saveDropDown'));
+        $parserMock->expects($this->once())
+                   ->method('saveDropDown')
+                   ->will(
+                       $this->returnCallback(
+                           function ($data) use (&$params) {
+                               $params = $data;
+                               return $data;
+                           }
+                       )
+                   );
+
+        $helperMock = $this->getMock('UpgradeDropdownsHelper', array('getDropdowns', 'getDropdownsToPush'));
+        $helperMock->expects($this->once())->method('getDropdowns')->willReturn($new);
+        $helperMock->expects($this->once())->method('getDropdownsToPush')->willReturn($dropdownsToPush);
+
+        $this->upgrader->state['dropdowns_to_merge'] = array(
+            $GLOBALS['current_language'] => array(
+                'old' => $old,
+                'custom' => $custom,
+            ),
+        );
+
+        $mockObject = $this->getMock(
+            'SugarUpgradeMergeDropdowns',
+            array('getDropdownParser', 'getDropdownHelper'),
+            array($this->upgrader)
+        );
+
+        $mockObject->expects($this->once())->method('getDropdownParser')->willReturn($parserMock);
+        $mockObject->expects($this->once())->method('getDropdownHelper')->willReturn($helperMock);
+
+        $mockObject->run();
+
+        $this->assertEquals($params['use_push'], $use_push);
+
+    }
+
+    public function usePushSettingsProvider()
+    {
+        return array(
+            array(
+                'old' => array(
+                    'moduleList' => array(
+                        'ACLRoles' => 'Roles',
+                        'Bugs' => 'Bugs',
+                        'iFrames' => 'My Sites',
+                        'test' => 'test',
+                    ),
+                ),
+                'new' => array(
+                    'moduleList' => array(
+                        'ACLRoles' => 'Roles',
+                        'Bugs' => 'Bug Tracker',
+                        'WebLogicHooks' => 'Web Logic Hooks',
+                        'iFrames' => 'My Sites',
+                    ),
+                ),
+                'custom' => array(
+                    'moduleList' => array('Bugs' => 'Help Desks'),
+                ),
+                'dropdowns' => array('moduleList'),
+                true,
+            ),
+            array(
+                'old' => array(
+                    'moduleList' => array(
+                        'ACLRoles' => 'Roles',
+                        'Bugs' => 'Bugs',
+                        'iFrames' => 'My Sites',
+                        'test' => 'test',
+                    ),
+                ),
+                'new' => array(
+                    'moduleList' => array(
+                        'ACLRoles' => 'Roles',
+                        'Bugs' => 'Bug Tracker',
+                        'WebLogicHooks' => 'Web Logic Hooks',
+                        'iFrames' => 'My Sites',
+                    ),
+                ),
+                'custom' => array(
+                    'moduleList' => array('Bugs' => 'Help Desks'),
+                ),
+                'dropdowns' => array(),
+                false,
+            ),
+        );
+    }
 }
