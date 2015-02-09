@@ -133,7 +133,7 @@
      * to prevent long names from overflowing the outer record-cell container
      */
     setMaxWidth: function(width) {
-        this.$('.record-cell').css({'max-width': width});
+        this.$('.record-cell').children().css({'max-width': width});
     },
 
     /**
