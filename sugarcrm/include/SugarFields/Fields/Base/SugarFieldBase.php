@@ -31,9 +31,26 @@ class SugarFieldBase {
     protected static $base = array();
     public $needsSecondaryQuery = false;
 
+    /**
+     * The name of the module the field belongs to
+     *
+     * @var string
+     */
+    protected $module;
+
     function SugarFieldBase($type) {
     	$this->type = $type;
         $this->ss = new Sugar_Smarty();
+    }
+
+    /**
+     * Sets the field module
+     *
+     * @param $module
+     */
+    public function setModule($module)
+    {
+        $this->module = $module;
     }
 
     function fetch($path)
@@ -864,39 +881,32 @@ class SugarFieldBase {
     }
 
     /**
-     * Processes layout field by collecting its display parameters and processing nested fields
+     * Processes view field by calling callbacks with its attributes and iterating over nested fields
      *
-     * @param MetaDataManager $metaDataManager Metadata manager
-     * @param array $field The field being processed
-     * @param array $fieldDefs Field definitions of the module the layout belongs to
-     * @param array $fields Resulting set of fields
-     * @param array $displayParams Resulting display parameters
+     * @param ViewIterator $iterator View iterator
+     * @param array $field The view definition of the field being processed
+     * @param callable $callback Iterator callback
      */
-    public function processLayoutField(
-        MetaDataManager $metaDataManager,
+    public function iterateViewField(
+        ViewIterator $iterator,
         array $field,
-        array $fieldDefs,
-        array &$fields,
-        array &$displayParams
+        /* callable */ $callback
     ) {
-        $isNamedField = isset($field['name']);
-        if ($isNamedField) {
-            $displayParams[$field['name']] = $field;
-            unset($displayParams[$field['name']]['name']);
+        $fieldSetAttributes = array('fields', 'related_fields');
+        $fieldSets = array();
+        foreach ($fieldSetAttributes as $attribute) {
+            if (isset($field[$attribute]) && is_array($field[$attribute])) {
+                $fieldSets[] = $field[$attribute];
+                unset($field[$attribute]);
+            }
         }
 
-        $fieldAttributes = array('fields', 'related_fields');
-        foreach ($fieldAttributes as $attribute) {
-            if (isset($field[$attribute]) && is_array($field[$attribute])) {
-                $fields = array_merge($fields, $metaDataManager->getFieldNames(
-                    $field[$attribute],
-                    $fieldDefs,
-                    $displayParams
-                ));
-                if ($isNamedField) {
-                    unset($displayParams[$field['name']][$attribute]);
-                }
-            }
+        if (isset($field['name'])) {
+            $callback($field);
+        }
+
+        foreach ($fieldSets as $fieldSet) {
+            $iterator->apply($fieldSet, $callback);
         }
     }
 }

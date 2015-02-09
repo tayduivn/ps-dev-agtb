@@ -3512,7 +3512,10 @@ class MetaDataManager
         // flatten fields
         foreach ($viewData['meta']['panels'] as $panel) {
             if (isset($panel['fields']) && is_array($panel['fields'])) {
-                $fields = array_merge($fields, $this->getFieldNames($panel['fields'], $fieldDefs, $displayParams));
+                $fields = array_merge(
+                    $fields,
+                    $this->getFieldNames($moduleName, $panel['fields'], $fieldDefs, $displayParams)
+                );
             }
         }
 
@@ -3523,6 +3526,7 @@ class MetaDataManager
      * Return list of fields from view def field set and populate $displayParams with display parameters
      * of link and collection fields
      *
+     * @param string $module Module name
      * @param array $fieldSet The field set
      * @param array $fieldDefs Bean field definitions
      * @param array $displayParams Associative array of field names and their display params
@@ -3530,28 +3534,34 @@ class MetaDataManager
      *
      * @access protected Should be used only by SugarFieldBase and subclasses
      */
-    public function getFieldNames(array $fieldSet, array $fieldDefs, &$displayParams)
+    public function getFieldNames($module, array $fieldSet, array $fieldDefs, &$displayParams)
     {
         $fields = array();
-        foreach ($fieldSet as $field) {
-            if (is_string($field)) {
-                // direct field name
-                $field = array('name' => $field);
-            }
-            if (is_array($field)) {
-                $type = 'base';
-                if (isset($field['name'])) {
-                    $fields[] = $field['name'];
-                    if (isset($fieldDefs[$field['name']]['type'])) {
-                        $type = $fieldDefs[$field['name']]['type'];
-                    }
-                }
+        $it = $this->getViewIterator($module, $fieldDefs);
+        $it->apply($fieldSet, function (array $field) use (&$fields, &$displayParams) {
+            $name = $field['name'];
+            unset($field['name']);
 
-                $sf = SugarFieldHandler::getSugarField($type);
-                $sf->processLayoutField($this, $field, $fieldDefs, $fields, $displayParams);
-            }
-        }
+            $displayParams[$name] = $field;
+        });
+
+        $fields = array_keys($displayParams);
+
         return $fields;
+    }
+
+    /**
+     * Returns view iterator for the given module and field definitions
+     *
+     * @param string $module Module name
+     * @param array $fieldDefs Field definitions
+     *
+     * @return ViewIterator
+     */
+    protected function getViewIterator($module, array $fieldDefs)
+    {
+        require_once 'include/MetaDataManager/ViewIterator.php';
+        return new ViewIterator($module, $fieldDefs);
     }
 
     /**
