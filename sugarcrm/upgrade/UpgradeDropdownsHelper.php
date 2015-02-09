@@ -78,4 +78,20 @@ class UpgradeDropdownsHelper
 
         return $dropdowns;
     }
+
+    /**
+     * Returns array of app_list_strings keys that need to be used with use_push parameter in ParserDropDown::saveDropDown
+     * @see ParserDropDown::saveDropDown for more details
+     * @return array
+     */
+    public function getDropdownsToPush()
+    {
+        return array(
+            'moduleList',
+            'moduleListSingular',
+            'record_type_display',
+            'parent_type_display',
+            'record_type_display_notes',
+        );
+    }
 }
