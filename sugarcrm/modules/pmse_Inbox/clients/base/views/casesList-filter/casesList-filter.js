@@ -133,7 +133,7 @@
         // update the text for the selected module
         this.getModuleFilter().html(item.text);
         return '<span class="select2-choice-type">'
-            + app.lang.get('Fields')
+            + app.lang.get('Filter')
             + '<i class="fa fa-caret-down"></i></span>';
     },
     /**
