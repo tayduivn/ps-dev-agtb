@@ -57,14 +57,35 @@
             }, this);
         }
         //END SUGARCRM flav=ent ONLY
-        this._super('initialize', [options]);
 
-        // Unset vars if user is creating an Opp by copying another
-        this.model.on('duplicate:before', function(copyModel) {
-            copyModel.unset('date_closed');
-            copyModel.unset('date_closed_timestamp');
-        }, this);
+        this._super('initialize', [options]);
     },
+
+    //BEGIN SUGARCRM flav=ent ONLY
+    /**
+     * Loops through all fields on the model returning only the fields with calculated => true set
+     * @returns {Array}
+     */
+    getCalculatedFields: function() {
+        return _.filter(this.model.fields, function(field) {
+            return field.calculated;
+        });
+    },
+
+    /**
+     * @inheritdoc
+     */
+    setupDuplicateFields: function(prefill) {
+        if (app.metadata.getModule('Opportunities', 'config').opps_view_by === 'RevenueLineItems') {
+            var calcFields = this.getCalculatedFields();
+            if (calcFields) {
+                _.each(calcFields, function(field) {
+                    prefill.unset(field.name);
+                }, this);
+            }
+        }
+    },
+    //END SUGARCRM flav=ent ONLY
 
 //BEGIN SUGARCRM flav=ent ONLY
     /**
