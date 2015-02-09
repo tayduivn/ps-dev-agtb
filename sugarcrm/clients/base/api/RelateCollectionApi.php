@@ -55,6 +55,14 @@ class RelateCollectionApi extends CollectionApi
                 'shortHelp' => 'Lists collection records.',
                 'longHelp' => 'include/api/help/module_record_collection_collection_name_get_help.html',
             ),
+            'getCollectionCount' => array(
+                'reqType' => 'GET',
+                'path' => array('<module>', '?', 'collection', '?', 'count'),
+                'pathVars' => array('module', 'record', '', 'collection_name', ''),
+                'method' => 'getCollectionCount',
+                'shortHelp' => 'Counts collection records.',
+                'longHelp' => 'include/api/help/module_record_collection_collection_name_count_get_help.html',
+            ),
         );
     }
 
@@ -75,6 +83,13 @@ class RelateCollectionApi extends CollectionApi
     {
         $args['link_name'] = $source;
         return $this->getRelateApi()->filterRelated($api, $args);
+    }
+
+    /** {@inheritDoc} */
+    protected function getSourceCount($api, $source, $args)
+    {
+        $args['link_name'] = $source;
+        return $this->getRelateApi()->filterRelatedCount($api, $args);
     }
 
     /** {@inheritDoc} */
