@@ -15,7 +15,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 $dictionary['pmse_Business_Rules'] = array(
     'table'=>'pmse_business_rules',
-    'audited'=>true,
+    'audited'=>false,
     'activity_enabled'=>true,
     'duplicate_merge'=>true,
     'fields'=>array (
