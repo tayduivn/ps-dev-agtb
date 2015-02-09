@@ -1372,6 +1372,7 @@ class HealthCheckScanner
             $allHistoryCode = array();
             foreach ($historyFiles as $file) {
                 //for history files check internal functions and replace them with random names CRYS-498
+                $replacedNames = array();
                 $tmpName = tempnam(sys_get_temp_dir(), $file);
                 if ($tmpName && is_writable($tmpName) && file_exists($file)) {
                     $tmpContents = file_get_contents($file);
@@ -1379,7 +1380,7 @@ class HealthCheckScanner
                     if (preg_match_all('/function\s+(\w+)\s*\(/', $tmpContents, $matches) && isset($matches[1])) {
                         $tmpMatch = array();
                         foreach ($matches[1] as $key => $value) {
-                            $tmpMatch[$key] = $value . md5($tmpName);
+                            $tmpMatch[$key] = $replacedNames[] = $value . md5($tmpName);
                         }
                         $tmpContents = str_replace($matches[1], $tmpMatch, $tmpContents);
 
@@ -1390,6 +1391,8 @@ class HealthCheckScanner
                 }
 
                 $historyDefs = $this->loadFromFile($file, $varname);
+                // Make sure we got initial values, but not replaced with md5 ones
+                $historyDefs = json_decode(str_replace($replacedNames, $matches[1], json_encode($historyDefs)), true);
 
                 if ($tmpName) {
                     @unlink($tmpName);
