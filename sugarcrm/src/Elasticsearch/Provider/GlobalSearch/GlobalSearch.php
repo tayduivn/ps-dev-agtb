@@ -43,6 +43,11 @@ class GlobalSearch extends AbstractProvider
         'datetime' => array(
             'gs_datetime',
         ),
+        'int' => array(
+            'gs_string_default',
+            'gs_string_ngram',
+            //'gs_int_default',
+        ),
     );
 
     /**
@@ -66,6 +71,11 @@ class GlobalSearch extends AbstractProvider
         'gs_datetime' => array(
             'type' => 'date',
             'format' => 'YYYY-MM-dd HH:mm:ss',
+            'index' => 'no',
+            'store' => false,
+        ),
+        'gs_int_default' => array(
+            'type' => 'integer',
             'index' => 'no',
             'store' => false,
         ),
@@ -160,6 +170,60 @@ class GlobalSearch extends AbstractProvider
         }
         return $indexFields;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function processBeanPreIndex(\SugarBean $bean)
+    {
+        $this->setAutoIncrementValues($bean);
+    }
+
+    /**
+     * Update a bean's auto-increment fields' values from database,
+     * since they are not available before saving to database.
+     * @param \SugarBean $bean
+     */
+    public function setAutoIncrementValues(\SugarBean $bean)
+    {
+        //retrieve the auto-incremented fields' names for a module
+        $incFields = $this->getFtsAutoIncrementFields($bean->module_name);
+
+        if (!empty($incFields)) {
+            foreach ($incFields as $fieldName) {
+                //If the field is empty, retrieve its value from database
+                if (!isset($bean->$fieldName)) {
+                    $fieldValue = $this->retrieveFieldByQuery($bean, $fieldName);
+                    if (isset($fieldValue)) {
+                        $bean->$fieldName = $fieldValue;
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Retrieve the value of a given field.
+     * @param \SugarBean $bean
+     * @param $fieldName : the name of the field
+     * @return $string
+     */
+    public function retrieveFieldByQuery(\SugarBean $bean, $fieldName)
+    {
+        $sq = new \SugarQuery();
+        $sq->select(array($fieldName));
+        $sq->from($bean);
+        $sq->where()->equals("id", $bean->id);
+        $result = $sq->execute();
+
+        // expect only one record
+        if (!empty($result)) {
+            return $result[0][$fieldName];
+        } else {
+            return null;
+        }
+    }
+
 
     /**
      * {@inheritdoc}

@@ -128,6 +128,17 @@ abstract class AbstractProvider implements ProviderInterface
     }
 
     /**
+     * Get fts auto-incremented field names.
+     * @param string $module
+     * @return array
+     */
+    protected function getFtsAutoIncrementFields($module)
+    {
+        return $this->container->metaDataHelper->getFtsAutoIncrementFields($module);
+    }
+
+
+    /**
      * Get module list for user
      * @return array
      */

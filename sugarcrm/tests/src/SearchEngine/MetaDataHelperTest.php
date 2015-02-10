@@ -27,10 +27,10 @@ class MetaDataHelperTest extends \Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetFtsFields($module, $vardef, $result)
     {
-        $helper = $this->getMock(
-            'Sugarcrm\Sugarcrm\SearchEngine\MetaDataHelper',
+        $helper = $this->getMetaDataHelperMock(
             array('getModuleVardefs')
         );
+
         $helper->expects($this->any())
             ->method('getModuleVardefs')
             ->will($this->returnValue($vardef));
@@ -87,6 +87,80 @@ class MetaDataHelperTest extends \Sugar_PHPUnit_Framework_TestCase
                 ),
             ),
         );
+    }
+
+
+    /**
+     * Test getting the auto-incremented fields
+     * @param array $module : the name of modules
+     * @param array $vardef : the fields from getModuleVardefs()
+     * @param array $result : the expected fields
+     * @dataProvider providerGetFtsAutoIncrementFields
+     */
+    public function testGetFtsAutoIncrementFields($module, $vardef, $result)
+    {
+        $helper = $this->getMetaDataHelperMock(
+            array('getModuleVardefs')
+        );
+
+        $helper->expects($this->any())
+            ->method('getModuleVardefs')
+            ->will($this->returnValue($vardef));
+
+        $fields = $helper->getFtsAutoIncrementFields($module);
+        $this->assertEquals($result, $fields);
+    }
+
+    /**
+     * Data provider to test getFtsAutoIncrementFields().
+     * @return array
+     */
+    public function providerGetFtsAutoIncrementFields()
+    {
+        return array(
+            array(
+                'Bugs',
+                array(
+                    'fields' => array(
+                        'name' => array(
+                            'name' => 'name',
+                            'type' => 'name',
+                        ),
+                        'bug_number' => array(
+                            'name' => 'bug_number',
+                            'auto_increment' => true,
+                        ),
+                        'foo' => array(
+                            'name' => 'foo',
+                            'auto_increment' => false,
+                        ),
+                        'bar' => array(
+                            'name' => 'bar',
+                            'auto_increment' => true,
+                        ),
+                    ),
+                    'indices' => array(),
+                    'relationship' => array(),
+                ),
+                array(
+                    'bug_number',
+                    'bar'
+                ),
+            ),
+        );
+    }
+
+    /**
+     *
+     * @param array $methods
+     * @return \Sugarcrm\Sugarcrm\SearchEngine\MetaDataHelper
+     */
+    protected function getMetaDataHelperMock(array $methods = null)
+    {
+        return $this->getMockBuilder('Sugarcrm\Sugarcrm\SearchEngine\MetaDataHelper')
+            ->disableOriginalConstructor()
+            ->setMethods($methods)
+            ->getMock();
     }
 
 }

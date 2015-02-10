@@ -141,4 +141,22 @@ class MetaDataHelper
         }
         return $filtered;
     }
+
+    /**
+     * Get the auto-incremented fields of a given module.
+     * @param string $module : the name of module
+     * @return array
+     */
+    public function getFtsAutoIncrementFields($module)
+    {
+        $incFields = array();
+        $vardefs = $this->getModuleVardefs($module);
+        foreach ($vardefs['fields'] as $field => $defs) {
+            if (!empty($defs['auto_increment'])) {
+                $incFields[] = $defs['name'];
+            }
+        }
+        return $incFields;
+    }
+
 }

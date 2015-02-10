@@ -41,4 +41,10 @@ interface ProviderInterface
      * @return array
      */
     public function getBeanIndexFields($module);
+
+    /**
+     * Pass the bean to the providers for processing, before the indexing.
+     * @param \SugarBean $bean
+     */
+    public function processBeanPreIndex(\SugarBean $bean);
 }

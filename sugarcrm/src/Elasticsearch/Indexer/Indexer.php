@@ -104,9 +104,33 @@ class Indexer
             return false;
         }
 
+        //Process the bean before indexing
+        $this->processBeanPreIndex($bean);
+
         $this->indexDocument($this->getDocumentFromBean($bean), $batch);
         return true;
     }
+
+    /**
+     * Pass beans to all the providers before indexing.
+     * @param \SugarBean $bean : the bean of the module
+     */
+    public function processBeanPreIndex(\SugarBean $bean)
+    {
+        foreach ($this->getRegisteredProviders() as $provider) {
+            $provider->processBeanPreIndex($bean);
+        }
+    }
+
+    /**
+     * Get list of all registered provider names
+     * @return array
+     */
+    protected function getRegisteredProviders()
+    {
+        return  new ProviderCollection($this->container, $this->container->getRegisteredProviders());
+    }
+
 
     /**
      * Index Elastica Document into Elasticsearch. By default we send all
@@ -195,8 +219,8 @@ class Indexer
     public function getBeanIndexFields($module)
     {
         $fields = array();
-        $providers = new ProviderCollection($this->container, $this->container->getRegisteredProviders());
-        foreach ($providers as $provider) {
+
+        foreach ($this->getRegisteredProviders() as $provider) {
             /* @var $provider ProviderInterace */
             $fields = array_merge($fields, $provider->getBeanIndexFields($module));
         }
