@@ -35,7 +35,10 @@ class ValueOfExpression extends NumericExpression
             } else {
                 $val = (int)$val;
             }
+        } elseif ($val === null) {
+            $val = 0;
         }
+
         if (is_numeric($val)) {
             return $val;
         } else {
