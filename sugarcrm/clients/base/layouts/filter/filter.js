@@ -570,44 +570,6 @@
     },
 
     /**
-     * Apply required filters.
-     * @param {Array|string} filterDef Preselected filters defs.
-     * @param {Context} context Context object.
-     * @return {Array} Filter defs.
-     */
-    applyRequiredFilters: function(filterDef, context) {
-        var specialField = /^\$/,
-            meta = app.metadata.getModule(context.get('module')),
-            filtersMeta = meta.filters || null,
-            filtersMetaSection = context.get('layout') || context.get('link');
-
-        if (context.has('requiredFilter')) {
-            filtersMetaSection = context.get('requiredFilter');
-        }
-
-        if (!filtersMetaSection || !filtersMeta) {
-            return filterDef;
-        }
-
-        filtersMeta = filtersMeta.required && filtersMeta.required.meta;
-
-        if (filtersMeta && filtersMeta[filtersMetaSection]) {
-            filterDef = _.isArray(filterDef) ? filterDef : [filterDef];
-
-            filtersMeta = _.filter(filtersMeta[filtersMetaSection], function(def) {
-                var fieldName = _.keys(def).pop();
-                return specialField.test(fieldName) || meta.fields[fieldName];
-            }, this);
-
-            _.each(filtersMeta, function(filter) {
-                filterDef.push(filter);
-            });
-        }
-
-        return filterDef;
-    },
-
-    /**
      * Loads the full filter panel for a module.
      *
      * @param {String} moduleName The module name.
