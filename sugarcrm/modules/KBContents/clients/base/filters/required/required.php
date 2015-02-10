@@ -23,7 +23,7 @@ $viewdefs['KBContents']['base']['filter']['required'] = array(
                 '$equals' => '1',
             ),
             'status' => array(
-                '$in' => array('published', 'published-ex', 'published-in'),
+                '$in' => KBContent::getPublishedStatuses(),
             ),
         ),
     ),

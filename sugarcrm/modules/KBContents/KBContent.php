@@ -300,7 +300,9 @@ class KBContent extends SugarBean {
                 }
             } else {
                 $activeRevisionStatus = $this->getActiveRevisionStatus($bean);
-                if ($activeRevisionStatus && !in_array($activeRevisionStatus['status'], array('published-in', 'published-ex', 'published'))) {
+                if ($activeRevisionStatus &&
+                    !in_array($activeRevisionStatus['status'], static::getPublishedStatuses())
+                ) {
                     $bean->resetActivRev();
                     $bean->active_rev = 1;
                     if (empty($bean->active_date)) {
@@ -364,14 +366,19 @@ class KBContent extends SugarBean {
     {
         $bean = ($bean === null) ? $this : $bean;
         $expDate = $this->db->convert("'".$GLOBALS['timedate']->nowDb()."'", 'datetime');
-        $publishStatuses = implode("', '", array('published-in', 'published-ex', 'published'));
+        $statuses = static::getPublishedStatuses();
+        $db = DBManagerFactory::getInstance();
+        foreach ($statuses as $key => $status) {
+            $statuses[$key] = $db->quoted($status);
+        }
+        $statuses = implode(",", $statuses);
         $query = "UPDATE {$bean->table_name}
-                    SET exp_date = {$expDate}, status = {$bean->db->quoted("expired")}
+                    SET exp_date = {$expDate}, status = {$db->quoted(static::ST_EXPIRED)}
                     WHERE
-                      kbdocument_id = {$bean->db->quoted($bean->kbdocument_id)} AND
-                      kbarticle_id = {$bean->db->quoted($bean->kbarticle_id)} AND
-                      id != {$bean->db->quoted($bean->id)} AND
-                      status IN ('{$publishStatuses}')
+                      kbdocument_id = {$db->quoted($bean->kbdocument_id)} AND
+                      kbarticle_id = {$db->quoted($bean->kbarticle_id)} AND
+                      id != {$db->quoted($bean->id)} AND
+                      status IN ({$statuses})
                 ";
         $bean->db->query($query);
     }

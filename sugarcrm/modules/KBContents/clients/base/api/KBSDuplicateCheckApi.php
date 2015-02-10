@@ -88,9 +88,10 @@ class KBSDuplicateCheckApi extends SugarListApi
         $mainFilter->addMust($langFilter);
 
         $statusFilterOr = new \Elastica\Filter\BoolOr();
-        $statusFilterOr->addFilter(new \Elastica\Filter\Term(array('status' => 'published')));
-        $statusFilterOr->addFilter(new \Elastica\Filter\Term(array('status' => 'published-in')));
-        $statusFilterOr->addFilter(new \Elastica\Filter\Term(array('status' => 'published-ex')));
+        foreach ($bean->getPublishedStatuses() as $status) {
+            $statusFilterOr->addFilter(new \Elastica\Filter\Term(array('status' => $status)));
+        }
+
         $mainFilter->addMust($statusFilterOr);
 
 
