@@ -22,7 +22,6 @@ $viewdefs['Cases']['portal']['view']['list'] = array(
             array(
                 array(
                     'name' => 'case_number',
-                    'link' => true,
                     'label' => 'LBL_LIST_NUMBER',
                     'enabled' => true,
                     'default' => true,

@@ -147,7 +147,7 @@ $viewdefs['pmse_Emails_Templates']['base']['view']['dashlet-email'] = array(
                 ),
                 array(
                     'type' => 'rowaction',
-                    'icon' => 'fa-download',
+                    'icon' => 'fa fa-download',
                     'css_class' => 'btn btn-mini',
                     'event' => 'dashlet-email:download:fire',
                     'target' => 'view',

@@ -86,7 +86,8 @@ class RS46Test extends Sugar_PHPUnit_Framework_TestCase
         $actual = $this->api->createRecord($this->service, array(
                 'module' => 'Leads',
                 'name' => 'Test ' . __CLASS__,
-                'prospect_id' => $prospect->id,
+                'relate_to' => 'Prospects',
+                'relate_id' => $prospect->id,
                 'campaign_id' => $campaign->id,
             ));
         $this->assertArrayHasKey('id', $actual);

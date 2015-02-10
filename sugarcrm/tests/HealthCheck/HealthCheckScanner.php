@@ -49,4 +49,9 @@ class HealthCheckScannerCasesTestMock extends HealthCheckScanner
     {
         // nothing to do
     }
+
+    public function isDBValid($sugar_version)
+    {
+        return true;
+    }
 }

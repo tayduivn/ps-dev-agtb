@@ -21,7 +21,6 @@ $viewdefs['Bugs']['portal']['view']['list'] = array(
             array(
                 array(
                     'name' => 'bug_number',
-                    'link' => true,
                     'label' => 'LBL_BUG_NUMBER',
                     'enabled' => true,
                     'default' => true,

@@ -22,6 +22,41 @@ class SugarUpgradeMergeDropdowns extends UpgradeScript
     public $type = self::UPGRADE_CUSTOM;
     public $version = '7.6.0';
 
+    protected $dropdownHelper = null;
+    protected $dropdownParser = null;
+
+    /**
+     * Returns instance of ParserDropDown
+     * @return ParserDropDown
+     */
+    public function getDropdownParser()
+    {
+        if (is_null($this->dropdownParser)) {
+            if (!class_exists('ParserDropDown')) {
+                require_once 'modules/ModuleBuilder/parsers/parser.dropdown.php';
+            }
+            $this->dropdownParser = new ParserDropDown();
+        }
+        return $this->dropdownParser;
+    }
+
+    /**
+     * Returns instance of UpgradeDropdownsHelper
+     * @return UpgradeDropdownsHelper
+     */
+    public function getDropdownHelper()
+    {
+        if (is_null($this->dropdownHelper)) {
+            if (!class_exists('UpgradeDropdownsHelper')) {
+                // use the version in the new source directory
+                $importFile = "{$this->context['new_source_dir']}/upgrade/UpgradeDropdownsHelper.php";
+                require_once $importFile;
+            }
+            $this->dropdownHelper = new UpgradeDropdownsHelper();
+        }
+        return $this->dropdownHelper;
+    }
+
     /**
      * {@inheritdoc}
      *
@@ -40,24 +75,15 @@ class SugarUpgradeMergeDropdowns extends UpgradeScript
             return;
         }
 
-        if (!class_exists('UpgradeDropdownsHelper')) {
-            // use the version in the new source directory
-            $importFile = "{$this->context['new_source_dir']}/upgrade/UpgradeDropdownsHelper.php";
-            require_once $importFile;
-        }
-
         if (empty($this->upgrader->state['dropdowns_to_merge'])) {
             $this->log('**** Skipped Dropdown Lists Merge **** There are no dropdown lists to merge.');
             return;
         }
 
-        if (!class_exists('ParserDropDown')) {
-            require_once 'modules/ModuleBuilder/parsers/parser.dropdown.php';
-        }
 
-        $helper = new UpgradeDropdownsHelper();
-        $parser = new ParserDropDown();
         $merger = new DropdownMerger();
+        $helper = $this->getDropdownHelper();
+        $parser = $this->getDropdownParser();
 
         foreach ($this->upgrader->state['dropdowns_to_merge'] as $language => $dropdowns) {
             $new = $helper->getDropdowns("include/language/{$language}.lang.php");
@@ -84,7 +110,9 @@ class SugarUpgradeMergeDropdowns extends UpgradeScript
                     'list_value' => $listValue,
                     'skip_sync' => true,
                     'view_package' => 'studio',
+                    'use_push' => in_array($name, $helper->getDropdownsToPush()),
                 );
+
                 $parser->saveDropDown($params);
                 $this->log("{$name} has been merged for {$language}");
             }
