@@ -49,37 +49,58 @@ describe('Base.Layout.Default', function() {
             });
         });
 
-        it('should return true', function() {
-            lastState = undefined;
-            expect(layout.isSidePaneVisible()).toBeTruthy();
+        using('different states and calling isSidePaneVisible', [
+            {
+                'lastState': '0',
+                'expected': true
+            },
+            {
+                'lastState': '1',
+                'expected': false
+            },
+            {
+                'lastState': undefined,
+                'expected': true
+            }
+        ], function (option) {
+            it('should return the proper value', function() {
+                lastState = option.lastState;
+                expect(layout.isSidePaneVisible()).toBe(option.expected);
+            });
         });
 
-        it('should return false', function() {
-            lastState = 'hide';
-            expect(layout.isSidePaneVisible()).toBeFalsy();
+        describe('when the default hide is set to "1"', function() {
+            beforeEach(function (){
+                def['default_hide'] = '1';
+                layout.initialize({ meta: def });
+            });
+            it('should default false', function() {
+                lastState = undefined;
+                expect(layout.isSidePaneVisible()).toBeFalsy();
+            });
         });
     });
 
     describe('toggleSidePane', function() {
         var isSidePaneVisibleStub, isSidePaneVisible,
-            lastStateSetStub, lastStateRemoveStub,
-            _toggleVisibilityStub;
+            lastStateSetStub,
+            _toggleVisibilityStub,
+            validHideLastStateKey;
 
         beforeEach(function() {
             isSidePaneVisibleStub = sinon.collection.stub(layout, 'isSidePaneVisible', function() {
                 return isSidePaneVisible;
             });
             lastStateSetStub = sinon.collection.stub(app.user.lastState, 'set');
-            lastStateRemoveStub = sinon.collection.stub(app.user.lastState, 'remove');
             _toggleVisibilityStub = sinon.collection.stub(layout, '_toggleVisibility');
+            validHideLastStateKey = 'default:hide';
         });
 
         describe('when "true" is passed', function() {
-            it('should remove key and call _toggleVisibility with "true"', function() {
+            it('should set key to 0 and call _toggleVisibility with "true"', function() {
                 isSidePaneVisible = false;
                 layout.toggleSidePane(true);
-                expect(lastStateSetStub).not.toHaveBeenCalled();
-                expect(lastStateRemoveStub).toHaveBeenCalled();
+                expect(lastStateSetStub).toHaveBeenCalledWith(validHideLastStateKey, '0');
                 expect(_toggleVisibilityStub).toHaveBeenCalled();
             });
 
@@ -87,17 +108,15 @@ describe('Base.Layout.Default', function() {
                 isSidePaneVisible = true;
                 layout.toggleSidePane(true);
                 expect(lastStateSetStub).not.toHaveBeenCalled();
-                expect(lastStateRemoveStub).not.toHaveBeenCalled();
                 expect(_toggleVisibilityStub).not.toHaveBeenCalled();
             });
         });
 
         describe('when "false" is passed', function() {
-            it('should set key and call _toggleVisibility with "false"', function() {
+            it('should set key to 1 and call _toggleVisibility with "false"', function() {
                 isSidePaneVisible = true;
                 layout.toggleSidePane(false);
-                expect(lastStateSetStub).toHaveBeenCalled();
-                expect(lastStateRemoveStub).not.toHaveBeenCalled();
+                expect(lastStateSetStub).toHaveBeenCalledWith(validHideLastStateKey, '1');
                 expect(_toggleVisibilityStub).toHaveBeenCalled();
             });
 
@@ -105,28 +124,39 @@ describe('Base.Layout.Default', function() {
                 isSidePaneVisible = false;
                 layout.toggleSidePane(false);
                 expect(lastStateSetStub).not.toHaveBeenCalled();
-                expect(lastStateRemoveStub).not.toHaveBeenCalled();
                 expect(_toggleVisibilityStub).not.toHaveBeenCalled();
             });
         });
 
         describe('when nothing is passed', function() {
-            it('should set key and call _toggleVisibility with "false"', function() {
+            it('should set key to 1 and call _toggleVisibility with "false"', function() {
                 isSidePaneVisible = true;
                 layout.toggleSidePane();
-                expect(lastStateSetStub).toHaveBeenCalled();
-                expect(lastStateRemoveStub).not.toHaveBeenCalled();
+                expect(lastStateSetStub).toHaveBeenCalledWith(validHideLastStateKey, '1');
                 expect(_toggleVisibilityStub).toHaveBeenCalled();
             });
 
-            it('should remove key and call _toggleVisibility with "true"', function() {
+            it('should set key to 0 and call _toggleVisibility with "true"', function() {
                 isSidePaneVisible = false;
                 layout.toggleSidePane();
-                expect(lastStateSetStub).not.toHaveBeenCalled();
-                expect(lastStateRemoveStub).toHaveBeenCalled();
+                expect(lastStateSetStub).toHaveBeenCalledWith(validHideLastStateKey, '0');
                 expect(_toggleVisibilityStub).toHaveBeenCalled();
             });
         });
+
+        describe('when the last state key is manually defined', function(){
+            beforeEach(function () {
+                validHideLastStateKey = 'default:hide-test';
+                def['hide_key'] = 'hide-test';
+                layout.initialize({ meta: def });
+            });
+            it('should use the defined last state key', function () {
+                isSidePaneVisible = undefined;
+                layout.toggleSidePane();
+                expect(lastStateSetStub).toHaveBeenCalledWith(validHideLastStateKey, '0');
+                expect(_toggleVisibilityStub).toHaveBeenCalled();
+            });
+        })
     });
 
 

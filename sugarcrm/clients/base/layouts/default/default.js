@@ -34,25 +34,73 @@
     className: 'row-fluid',
 
     /**
-     * Name of the last state.
-     *
-     * @cfg {String}
-     */
-    HIDE_KEY: 'hide',
-
-    /**
-     * Key for storing the last state.
-     *
-     * @type {String}
-     * @protected
-     */
-    _hideLastStateKey: null,
-
-    /**
      * @inheritDoc
      */
     initialize: function(options) {
+        /**
+         * Name of the last state. This can be overridden in metadata, please
+         * refer to the example.
+         *
+         * Example:
+         *
+         *     array(
+         *          'default_hide' => '1',
+         *          'hide_key' => 'hide-merge',
+         *     ),
+         *
+         * @cfg {String}
+         */
+        this.HIDE_KEY = 'hide';
+
+        /**
+         * Default value for hiding the sidepane. `1` is hidden, `0` is show.
+         * This is because the code which retrieves data from local storage
+         * checks the value of the data and will return undefined if the result
+         * resolves to a boolean false.
+         *
+         * Since an undefined hide value means "use the default" and int 0 means
+         * show, but they both resolve to false, this causes complications. As a
+         * result, we have to use a string.
+         *
+         * Using a string `0` or `1` is superior to something like "yes" and
+         * "no" because we can use parseInt instead of an if/else setup.
+         *
+         * This setting can be overridden in metadata, please refer to the
+         * example.
+         *
+         * Example:
+         *
+         *     array(
+         *          'default_hide' => '1',
+         *          'hide_key' => 'hide-merge',
+         *     ),
+         *
+         * @property {String}
+         * @protected
+         */
+        this._defaultHide = '0';
+
+        /**
+         * Key for storing the last state. This key is used in localstorage of the
+         * browser. It is generated using `HIDE_KEY`
+         *
+         * Example:
+         *
+         *     state:Accounts:default:hide_last_state_key
+         *
+         *
+         * @property {String}
+         * @protected
+         */
+        this._hideLastStateKey = null;
+
         this._super('initialize', [options]);
+        if (!_.isUndefined(this.meta.default_hide)) {
+            this._defaultHide = this.meta.default_hide;
+        }
+        if (!_.isUndefined(this.meta.hide_key)) {
+            this.HIDE_KEY = this.meta.hide_key;
+        }
 
         this.processDef();
 
@@ -67,21 +115,23 @@
     },
 
     /**
-     * Check wether the side pane is currently visible.
+     * Check whether the side pane is currently visible.
      *
      * @return {Boolean} `true` if visible, `false` otherwise.
      */
     isSidePaneVisible: function() {
         var hideLastState = app.user.lastState.get(this._hideLastStateKey);
-        return _.isUndefined(hideLastState);
+        var hidden = hideLastState || this._defaultHide;
+        return !parseInt(hidden, 10);
     },
 
     /**
      * Toggle sidebar and save the current state.
      *
-     * Only the hidden state is stored. That means the side pane is `visible` by
-     * default. In case it was hidden and we make it visible, the entry from the
-     * cache is removed.
+     * Both the hidden and show state is stored. In the default configuration,
+     * the side pane is `visible`.
+     * In the non-default case, the hidden state is represented by `0`, and the
+     * show state is represented by `1`.
      *
      * @param {Boolean} [visible] Pass `true` to show the sidepane, `false` to
      *  hide it, otherwise will toggle the current state.
@@ -95,11 +145,10 @@
             return;
         }
 
-        if (visible) {
-            app.user.lastState.remove(this._hideLastStateKey);
-        } else {
-            app.user.lastState.set(this._hideLastStateKey, 1);
-        }
+        app.user.lastState.set(
+            this._hideLastStateKey,
+            visible ? '0' : '1'
+        );
 
         this._toggleVisibility(visible);
     },
