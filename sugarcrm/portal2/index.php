@@ -31,11 +31,11 @@ ensureJSCacheFilesExist();
         <link rel="stylesheet" href="../sidecar/lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css" type="text/css"/>
         <script src="../include/javascript/modernizr.js"></script>
 
-        <? if(inDeveloperMode()): ?>
+        <?php if(inDeveloperMode()): ?>
             <script src="../sidecar/minified/sidecar.js"></script>
-        <? else: ?>
+        <?php else: ?>
             <script src="../sidecar/minified/sidecar.min.js"></script>
-        <? endif; ?>
+        <?php endif; ?>
 
         <!-- Sidecar Scripts -->
         <script src="../cache/include/javascript/sugar_sidecar.min.js"></script>
