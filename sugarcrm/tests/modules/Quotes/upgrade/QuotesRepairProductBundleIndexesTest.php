@@ -59,10 +59,10 @@ class QuotesRepairProductBundleIndexesTest extends UpgradeTestCase
 
         $result = $this->db->query(
             "
-            SELECT quote_id, count(quote_id) AS count
+            SELECT quote_id, count(quote_id) AS cnt
             FROM product_bundle_quote
             GROUP BY quote_id, bundle_index
-            HAVING count > 1
+            HAVING count(quote_id) > 1
             "
         );
         $row = $this->db->fetchByAssoc($result);

@@ -275,8 +275,8 @@ describe('Resolve Conflicts List View', function() {
 
             view._buildList();
 
-            expect(view.collection.at(0).get('id')).toBe('1-client');
-            expect(view.collection.at(1).get('id')).toBe('1-database');
+            expect(view.collection.at(0).id).toBe('1-client');
+            expect(view.collection.at(1).id).toBe('1-database');
 
             buildFieldDefinitionsStub.restore();
             populateMissingDataFromDatabaseStub.restore();

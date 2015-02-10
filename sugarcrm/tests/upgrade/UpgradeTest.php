@@ -48,7 +48,9 @@ END;
         $this->assertNotEmpty($runsql);
 
         $mock = $this->getMock(get_class($runsql), array("parseAndExecuteSqlFile"), array($this->upgrader));
-        $dbMock = $this->getMock("MysqlManager");
+        $dbMock = $this->getMockBuilder('DBManager')
+            ->setMethods(array('getScriptName'))
+            ->getMockForAbstractClass();
         $dbMock->expects($this->any())->method("getScriptName")->will($this->returnValue($db));
         $this->upgrader->setDb($dbMock);
 

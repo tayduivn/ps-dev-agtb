@@ -252,17 +252,15 @@ class SugarFieldCollection extends SugarFieldBase {
     /**
      * {@inheritDoc}
      *
-     * Only populates display params since collection field cannot have nested fields
+     * Applies the callback only to the given field and does not iterate over "fields" since they mean collection fields
+     * to be retrieved, not nested fields as in base field.
      */
-    public function processLayoutField(
-        MetaDataManager $metaDataManager,
+    public function iterateViewField(
+        ViewIterator $iterator,
         array $field,
-        array $fieldDefs,
-        array &$fields,
-        array &$displayParams
+        /* callable */ $callback
     ) {
-        $displayParams[$field['name']] = $field;
-        unset($displayParams[$field['name']]['name']);
+        $callback($field);
     }
 
     /**

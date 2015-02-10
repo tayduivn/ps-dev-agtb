@@ -746,7 +746,7 @@
             this._previewed = model;
             this.$("tr.highlighted").removeClass("highlighted current above below");
             if (model) {
-                var rowName = model.module + "_" + model.get("id");
+                var rowName = model.module + "_" + model.id;
                 var curr = this.$("tr[name='" + rowName + "']");
                 curr.addClass("current highlighted");
                 curr.prev("tr").addClass("highlighted above");
