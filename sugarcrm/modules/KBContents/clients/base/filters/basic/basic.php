@@ -25,7 +25,7 @@ $viewdefs['KBContents']['base']['filter']['basic'] = array(
             'name' => 'LBL_KBSTATUS_DRAFT',
             'filter_definition' => array(
                 array(
-                    'status' => array('$equals' => 'draft'),
+                    'status' => array('$equals' => KBContent::ST_DRAFT),
                 ),
             ),
             'editable' => false,
@@ -35,7 +35,7 @@ $viewdefs['KBContents']['base']['filter']['basic'] = array(
             'name' => 'LBL_KBSTATUS_EXPIRED',
             'filter_definition' => array(
                 array(
-                    'status' => array('$equals' => 'expired'),
+                    'status' => array('$equals' => KBContent::ST_EXPIRED),
                 ),
             ),
             'editable' => false,
@@ -45,7 +45,7 @@ $viewdefs['KBContents']['base']['filter']['basic'] = array(
             'name' => 'LBL_KBSTATUS_INREVIEW',
             'filter_definition' => array(
                 array(
-                    'status' => array('$equals' => 'in-review'),
+                    'status' => array('$equals' => KBContent::ST_IN_REVIEW),
                 ),
             ),
             'editable' => false,
@@ -55,7 +55,7 @@ $viewdefs['KBContents']['base']['filter']['basic'] = array(
             'name' => 'LBL_KBSTATUS_PUBLISHED_IN',
             'filter_definition' => array(
                 array(
-                    'status' => array('$equals' => 'published-in'),
+                    'status' => array('$equals' => KBContent::ST_PUBLISHED_IN),
                 ),
             ),
             'editable' => false,
@@ -65,7 +65,7 @@ $viewdefs['KBContents']['base']['filter']['basic'] = array(
             'name' => 'LBL_KBSTATUS_PUBLISHED_EX',
             'filter_definition' => array(
                 array(
-                    'status' => array('$equals' => 'published-ex'),
+                    'status' => array('$equals' => KBContent::ST_PUBLISHED_EX),
                 ),
             ),
             'editable' => false,
@@ -75,7 +75,7 @@ $viewdefs['KBContents']['base']['filter']['basic'] = array(
             'name' => 'LBL_KBSTATUS_PUBLISHED',
             'filter_definition' => array(
                 array(
-                    'status' => array('$equals' => 'published'),
+                    'status' => array('$equals' => KBContent::ST_PUBLISHED),
                 ),
             ),
             'editable' => false,

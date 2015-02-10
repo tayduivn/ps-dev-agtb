@@ -82,9 +82,9 @@ class KBContentsApi extends SugarListApi
         $mainFilter->addMust($activeRevFilter);
 
         $statusFilterOr = new \Elastica\Filter\BoolOr();
-        $statusFilterOr->addFilter(new \Elastica\Filter\Term(array('status' => 'published')));
-        $statusFilterOr->addFilter(new \Elastica\Filter\Term(array('status' => 'published-in')));
-        $statusFilterOr->addFilter(new \Elastica\Filter\Term(array('status' => 'published-ex')));
+        foreach ($targetBean->getPublishedStatuses() as $status) {
+            $statusFilterOr->addFilter(new \Elastica\Filter\Term(array('status' => $status)));
+        }
         $mainFilter->addMust($statusFilterOr);
 
         $query = new \Elastica\Query($boolQuery);
