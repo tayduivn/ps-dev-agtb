@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav=ent ONLY
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -10,7 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase 
+class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
 {
 
     /**
@@ -21,21 +20,21 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
     protected function setUp()
     {
         // The default timezone is set to phoenix because the server could
-        // have a different timezone that triggers failures with the tests 
+        // have a different timezone that triggers failures with the tests
         // already defined values.
-        date_default_timezone_set("America/Phoenix");        
+        date_default_timezone_set("America/Phoenix");
     }
 
     /**
      * Removes the initial test configurations for each test, for example:
-     *     close a network connection. 
+     *     close a network connection.
      * This method is called after a test is executed.
      */
     protected function tearDown()
     {
-        
+
     }
-    
+
     public function testEvaluateSingleElementZero()
     {
         $fixture = '[
@@ -44,11 +43,11 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
                 "expSubtype": "number",
                 "expLabel": "0",
                 "expValue": 0
-            }            
+            }
         ]';
-        
+
         $expression = json_decode($fixture);
-        
+
         $expressionEvaluatorMock = $this->getMockBuilder('PMSEExpressionEvaluator')
                 ->disableOriginalConstructor()
                 ->setMethods(null)
@@ -59,13 +58,13 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
         $expectedToken->expLabel = "0";
         $expectedToken->expSubtype = "number";
         $expectedToken->expType = "CONSTANT";
-        
+
         $expectedResult = array($expectedToken);
-        
+
         $result = $expressionEvaluatorMock->evaluateExpression($expression);
         $this->assertEquals($expectedResult, $result);
     }
-    
+
     public function testEvaluateSingleElement()
     {
         $fixture = '[
@@ -74,11 +73,11 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
                 "expSubtype": "number",
                 "expLabel": "2",
                 "expValue": 2
-            }            
+            }
         ]';
-        
+
         $expression = json_decode($fixture);
-        
+
         $expressionEvaluatorMock = $this->getMockBuilder('PMSEExpressionEvaluator')
                 ->disableOriginalConstructor()
                 ->setMethods(null)
@@ -89,13 +88,13 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
         $expectedToken->expLabel = "2";
         $expectedToken->expSubtype = "number";
         $expectedToken->expType = "CONSTANT";
-        
+
         $expectedResult = array($expectedToken);
-        
+
         $result = $expressionEvaluatorMock->evaluateExpression($expression);
         $this->assertEquals($expectedResult, $result);
     }
-    
+
     public function testEvaluateMultiply()
     {
         $fixture = '[
@@ -117,9 +116,9 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
                 "expValue": 4
             }
         ]';
-        
+
         $expression = json_decode($fixture);
-        
+
         $expressionEvaluatorMock = $this->getMockBuilder('PMSEExpressionEvaluator')
                 ->disableOriginalConstructor()
                 ->setMethods(null)
@@ -130,13 +129,13 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
         $expectedToken->expLabel = "8";
         $expectedToken->expSubtype = "number";
         $expectedToken->expType = "CONSTANT";
-        
+
         $expectedResult = array($expectedToken);
-        
+
         $result = $expressionEvaluatorMock->evaluateExpression($expression);
         $this->assertEquals($expectedResult, $result);
     }
-    
+
     public function testEvaluateDivide()
     {
         $fixture = '[
@@ -158,28 +157,28 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
                 "expValue": 4
             }
         ]';
-        
+
         $expression = json_decode($fixture);
-        
+
         $expressionEvaluatorMock = $this->getMockBuilder('PMSEExpressionEvaluator')
                 ->disableOriginalConstructor()
                 ->setMethods(null)
                 ->getMock();
-        
+
         $expectedToken = new stdClass();
         $expectedToken->expValue = 1;
         $expectedToken->expLabel = "1";
         $expectedToken->expSubtype = "number";
         $expectedToken->expType = "CONSTANT";
-        
+
         $expectedResult = array($expectedToken);
-        
+
         $result = $expressionEvaluatorMock->evaluateExpression($expression);
         $this->assertEquals($expectedResult, $result);
     }
-    
-    
-    
+
+
+
     public function testEvaluateAdd()
     {
         $fixture = '[
@@ -201,26 +200,26 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
                 "expValue": 3
             }
         ]';
-        
+
         $expression = json_decode($fixture);
-        
+
         $expressionEvaluatorMock = $this->getMockBuilder('PMSEExpressionEvaluator')
                 ->disableOriginalConstructor()
                 ->setMethods(null)
                 ->getMock();
-        
+
         $expectedToken = new stdClass();
         $expectedToken->expValue = 7;
         $expectedToken->expLabel = "7";
         $expectedToken->expSubtype = "number";
         $expectedToken->expType = "CONSTANT";
-        
+
         $expectedResult = array($expectedToken);
-        
+
         $result = $expressionEvaluatorMock->evaluateExpression($expression);
         $this->assertEquals($expectedResult, $result);
     }
-    
+
     public function testEvaluateSubstract()
     {
         $fixture = '[
@@ -242,26 +241,26 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
                 "expValue": 3
             }
         ]';
-        
+
         $expression = json_decode($fixture);
-        
+
         $expressionEvaluatorMock = $this->getMockBuilder('PMSEExpressionEvaluator')
                 ->disableOriginalConstructor()
                 ->setMethods(null)
                 ->getMock();
-        
+
         $expectedToken = new stdClass();
         $expectedToken->expValue = 1;
         $expectedToken->expLabel = "1";
         $expectedToken->expSubtype = "number";
         $expectedToken->expType = "CONSTANT";
-        
+
         $expectedResult = array($expectedToken);
-        
+
         $result = $expressionEvaluatorMock->evaluateExpression($expression);
         $this->assertEquals($expectedResult, $result);
     }
-    
+
     public function testEvaluateComplexMultiplySum()
     {
         $fixture = '[
@@ -294,9 +293,9 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
                 "expValue": 3
             }
         ]';
-        
+
         $expression = json_decode($fixture);
-        
+
         $expressionEvaluatorMock = $this->getMockBuilder('PMSEExpressionEvaluator')
                 ->disableOriginalConstructor()
                 ->setMethods(null)
@@ -307,9 +306,9 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
         $expectedToken->expLabel = "11";
         $expectedToken->expSubtype = "number";
         $expectedToken->expType = "CONSTANT";
-        
+
         $expectedResult = array($expectedToken);
-        
+
         $result = $expressionEvaluatorMock->evaluateExpression($expression);
         $this->assertEquals($expectedResult, $result);
     }
@@ -346,9 +345,9 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
                 "expValue": 3
             }
         ]';
-        
+
         $expression = json_decode($fixture);
-        
+
         $expressionEvaluatorMock = $this->getMockBuilder('PMSEExpressionEvaluator')
                 ->disableOriginalConstructor()
                 ->setMethods(null)
@@ -359,13 +358,13 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
         $expectedToken->expLabel = "15";
         $expectedToken->expSubtype = "number";
         $expectedToken->expType = "CONSTANT";
-        
+
         $expectedResult = array($expectedToken);
-        
+
         $result = $expressionEvaluatorMock->evaluateExpression($expression);
         $this->assertEquals($expectedResult, $result);
     }
-    
+
     public function testEvaluateComplexMultiplication()
     {
         $fixture = '[
@@ -398,10 +397,10 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
                 "expValue": 3
             },
             {
-                "expType": "ARITHMETIC",                
+                "expType": "ARITHMETIC",
                 "expLabel": "x",
                 "expValue": "x"
-            },            
+            },
             {
                 "expType": "CONSTANT",
                 "expSubtype": "number",
@@ -409,7 +408,7 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
                 "expValue": 1
             }
         ]';
-        
+
         $expression = json_decode($fixture);
         $expressionEvaluatorMock = $this->getMockBuilder('PMSEExpressionEvaluator')
                 ->disableOriginalConstructor()
@@ -421,7 +420,7 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
         $expectedToken->expLabel = "15";
         $expectedToken->expSubtype = "number";
         $expectedToken->expType = "CONSTANT";
-        
+
         $expectedResult = array($expectedToken);
 
         $result = $expressionEvaluatorMock->processExpression($expression);
@@ -460,7 +459,7 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
                 "expValue": 3
             },
             {
-                "expType": "ARITHMETIC",                
+                "expType": "ARITHMETIC",
                 "expLabel": "x",
                 "expValue": "x"
             },
@@ -492,7 +491,7 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
                 "expValue": ")"
             }
         ]';
-        
+
         $expression = json_decode($fixture);
         $expressionEvaluatorMock = $this->getMockBuilder('PMSEExpressionEvaluator')
                 ->disableOriginalConstructor()
@@ -504,12 +503,12 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
         $expectedToken->expLabel = "63";
         $expectedToken->expSubtype = "number";
         $expectedToken->expType = "CONSTANT";
-        
+
         $expectedResult = array($expectedToken);
         $result = $expressionEvaluatorMock->processExpression($expression);
         $this->assertEquals($expectedResult, $result);
     }
-    
+
 
     public function testProcessComplexExpression()
     {
@@ -543,7 +542,7 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
                 "expValue": 3
             },
             {
-                "expType": "ARITHMETIC",                
+                "expType": "ARITHMETIC",
                 "expLabel": "x",
                 "expValue": "x"
             },
@@ -575,7 +574,7 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
                 "expValue": ")"
             },
             {
-                "expType": "ARITHMETIC",                
+                "expType": "ARITHMETIC",
                 "expLabel": "+",
                 "expValue": "+"
             },
@@ -586,7 +585,7 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
                 "expValue": 3
             }
         ]';
-        
+
         $expression = json_decode($fixture);
         $expressionEvaluatorMock = $this->getMockBuilder('PMSEExpressionEvaluator')
                 ->disableOriginalConstructor()
@@ -598,12 +597,12 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
         $expectedToken->expLabel = "30";
         $expectedToken->expSubtype = "number";
         $expectedToken->expType = "CONSTANT";
-        
+
         $expectedResult = array($expectedToken);
         $result = $expressionEvaluatorMock->processExpression($expression);
         $this->assertEquals($expectedResult, $result);
     }
-    
+
     public function testProcessComplexRelationalExpressions()
     {
         $fixture = '[
@@ -636,7 +635,7 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
                 "expValue": 3
             },
             {
-                "expType": "ARITHMETIC",                
+                "expType": "ARITHMETIC",
                 "expLabel": "x",
                 "expValue": "x"
             },
@@ -690,7 +689,7 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
                 "expValue": 30
             }
         ]';
-        
+
         $expression = json_decode($fixture);
         $expressionEvaluatorMock = $this->getMockBuilder('PMSEExpressionEvaluator')
                 ->disableOriginalConstructor()
@@ -702,7 +701,7 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
         $expectedToken->expLabel = "true";
         $expectedToken->expSubtype = "boolean";
         $expectedToken->expType = "CONSTANT";
-        
+
         $expectedResult = array($expectedToken);
         $result = $expressionEvaluatorMock->processExpression($expression);
         $this->assertEquals($expectedResult, $result);
@@ -740,7 +739,7 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
                 "expValue": 3
             },
             {
-                "expType": "ARITHMETIC",                
+                "expType": "ARITHMETIC",
                 "expLabel": "x",
                 "expValue": "x"
             },
@@ -806,7 +805,7 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
         $expectedToken->expLabel = "false";
         $expectedToken->expSubtype = "boolean";
         $expectedToken->expType = "CONSTANT";
-        
+
         $expectedResult = array($expectedToken);
         $result = $expressionEvaluatorMock->processExpression($expression);
         $this->assertEquals($expectedResult, $result);
@@ -866,7 +865,7 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
                 "expType": "GROUP",
                 "expLabel": ")",
                 "expValue": ")"
-            }            
+            }
         ]';
 
         $expression = json_decode($fixture);
@@ -880,15 +879,15 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
         $expectedToken->expLabel = "9";
         $expectedToken->expSubtype = "number";
         $expectedToken->expType = "CONSTANT";
-        
+
         $expectedResult = array($expectedToken);
         $result = $expressionEvaluatorMock->processExpression($expression);
         $this->assertEquals($expectedResult, $result);
     }
-    
+
     /**
      * The following tests test the evaluator against the operation 6/2x(1+2)
-     * the result is the same 
+     * the result is the same
      */
     public function testProcessExpressionSecondAmbiguousExpression()
     {
@@ -941,7 +940,7 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
                 "expType": "GROUP",
                 "expLabel": ")",
                 "expValue": ")"
-            }            
+            }
         ]';
 
         $expression = json_decode($fixture);
@@ -955,15 +954,15 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
         $expectedToken->expLabel = "288";
         $expectedToken->expSubtype = "number";
         $expectedToken->expType = "CONSTANT";
-        
+
         $expectedResult = array($expectedToken);
         $result = $expressionEvaluatorMock->processExpression($expression);
         $this->assertEquals($expectedResult, $result);
     }
-    
+
     /**
      * The following tests test the evaluator against the operation 6/2x(1+2)
-     * the result is the same 
+     * the result is the same
      */
     public function testProcessExpressionString()
     {
@@ -998,15 +997,15 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
         $expectedToken->expLabel = "true";
         $expectedToken->expSubtype = "boolean";
         $expectedToken->expType = "CONSTANT";
-        
+
         $expectedResult = array($expectedToken);
         $result = $expressionEvaluatorMock->processExpression($expression);
         $this->assertEquals($expectedResult, $result);
     }
-    
+
     /**
      * The following tests test the evaluator against the operation 6/2x(1+2)
-     * the result is the same 
+     * the result is the same
      */
     public function testProcessExpressionDifferentString()
     {
@@ -1041,15 +1040,15 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
         $expectedToken->expLabel = "true";
         $expectedToken->expSubtype = "boolean";
         $expectedToken->expType = "CONSTANT";
-        
+
         $expectedResult = array($expectedToken);
         $result = $expressionEvaluatorMock->processExpression($expression);
         $this->assertEquals($expectedResult, $result);
     }
-    
+
     /**
      * The following tests test the evaluator against the operation 6/2x(1+2)
-     * the result is the same 
+     * the result is the same
      */
     public function testProcessExpressionLogicOperators()
     {
@@ -1106,15 +1105,15 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
         $expectedToken->expLabel = "true";
         $expectedToken->expSubtype = "boolean";
         $expectedToken->expType = "CONSTANT";
-        
+
         $expectedResult = array($expectedToken);
         $result = $expressionEvaluatorMock->processExpression($expression);
         $this->assertEquals($expectedResult, $result);
     }
-    
+
     /**
      * The following tests test the evaluator against the operation 6/2x(1+2)
-     * the result is the same 
+     * the result is the same
      */
     public function testProcessExpressionLogicOperatorsAND()
     {
@@ -1171,15 +1170,15 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
         $expectedToken->expLabel = "false";
         $expectedToken->expSubtype = "boolean";
         $expectedToken->expType = "CONSTANT";
-        
+
         $expectedResult = array($expectedToken);
         $result = $expressionEvaluatorMock->processExpression($expression);
         $this->assertEquals($expectedResult, $result);
     }
-    
+
     /**
      * The following tests test the evaluator against the operation 6/2x(1+2)
-     * the result is the same 
+     * the result is the same
      */
     public function testProcessExpressionLogicOperatorsOR()
     {
@@ -1236,15 +1235,15 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
         $expectedToken->expLabel = "true";
         $expectedToken->expSubtype = "boolean";
         $expectedToken->expType = "CONSTANT";
-        
+
         $expectedResult = array($expectedToken);
         $result = $expressionEvaluatorMock->processExpression($expression);
         $this->assertEquals($expectedResult, $result);
     }
-    
+
     /**
      * The following tests test the evaluator against the operation 6/2x(1+2)
-     * the result is the same 
+     * the result is the same
      */
     public function testProcessExpressionNOT()
     {
@@ -1295,15 +1294,15 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
         $expectedToken->expLabel = "true";
         $expectedToken->expSubtype = "boolean";
         $expectedToken->expType = "CONSTANT";
-        
+
         $expectedResult = array($expectedToken);
         $result = $expressionEvaluatorMock->processExpression($expression);
         $this->assertEquals($expectedResult, $result);
     }
-    
+
     /**
      * The following tests test the evaluator against the operation 6/2x(1+2)
-     * the result is the same 
+     * the result is the same
      */
     public function testProcessExpressionComplexNOT()
     {
@@ -1329,7 +1328,7 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
                 "expType": "LOGIC",
                 "expLabel": "OR",
                 "expValue": "OR"
-            },           
+            },
             {
                 "expType": "CONSTANT",
                 "expSubtype": "bool",
@@ -1349,15 +1348,15 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
         $expectedToken->expLabel = "false";
         $expectedToken->expSubtype = "boolean";
         $expectedToken->expType = "CONSTANT";
-        
+
         $expectedResult = array($expectedToken);
         $result = $expressionEvaluatorMock->processExpression($expression);
         $this->assertEquals($expectedResult, $result);
     }
-    
+
     /**
      * The following tests test the evaluator against the operation 6/2x(1+2)
-     * the result is the same 
+     * the result is the same
      */
     public function testProcessExpressionDATES()
     {
@@ -1392,15 +1391,57 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
         $expectedToken->expLabel = "2014-10-21 00:00:00";
         $expectedToken->expSubtype = "date";
         $expectedToken->expType = "CONSTANT";
-        
+
         $expectedResult = array($expectedToken);
         $result = $expressionEvaluatorMock->processExpression($expression);
         $this->assertEquals($expectedResult, $result);
     }
-    
+
     /**
-     * The following tests test the evaluator against the operation 
-     * the result is the same 
+     * The following tests test the evaluator against the operation 6/2x(1+2)
+     * the result is the same
+     */
+    public function testProcessExpressionDATETIME()
+    {
+        $fixture = '[
+            {
+                "expType": "CONSTANT",
+                "expSubtype": "datetime",
+                "expLabel": "2014-10-16 00:00:00",
+                "expValue": "2014-10-16T00:00:00-07:00"
+            },
+            {
+                "expType": "ARITHMETIC",
+                "expLabel": "+",
+                "expValue": "+"
+            },
+            {
+                "expType": "CONSTANT",
+                "expSubtype": "timespan",
+                "expLabel": "5d",
+                "expValue": "5d"
+            }
+        ]';
+
+        $expression = json_decode($fixture);
+        $expressionEvaluatorMock = $this->getMockBuilder('PMSEExpressionEvaluator')
+                ->disableOriginalConstructor()
+                ->setMethods(null)
+                ->getMock();
+
+        $expectedToken = new stdClass();
+        $expectedToken->expValue = "2014-10-21T00:00:00-07:00";
+        $expectedToken->expLabel = "2014-10-21 00:00:00";
+        $expectedToken->expSubtype = "date";
+        $expectedToken->expType = "CONSTANT";
+
+        $expectedResult = array($expectedToken);
+        $result = $expressionEvaluatorMock->processExpression($expression);
+        $this->assertEquals($expectedResult, $result);
+    }
+    /**
+     * The following tests test the evaluator against the operation
+     * the result is the same
      */
     public function testProcessExpressionComplexDATES()
     {
@@ -1465,7 +1506,7 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
                 "expSubtype": "timespan",
                 "expLabel": "20min",
                 "expValue": "20min"
-            },            
+            },
             {
                 "expType": "ARITHMETIC",
                 "expLabel": "-",
@@ -1490,15 +1531,113 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
         $expectedToken->expLabel = "2014-10-20 03:15:00";
         $expectedToken->expSubtype = "date";
         $expectedToken->expType = "CONSTANT";
-        
+
         $expectedResult = array($expectedToken);
         $result = $expressionEvaluatorMock->processExpression($expression);
         $this->assertEquals($expectedResult, $result);
     }
-    
+
     /**
-     * The following tests test the evaluator against the operation 
-     * the result is the same 
+     * The following tests test the evaluator against the operation
+     * the result is the same
+     */
+    public function testProcessExpressionComplexDATETIME()
+    {
+        $fixture = '[
+            {
+                "expType": "CONSTANT",
+                "expSubtype": "datetime",
+                "expLabel": "2014-05-16 00:00:00",
+                "expValue": "2014-05-16T00:00:00-07:00"
+            },
+            {
+                "expType": "ARITHMETIC",
+                "expLabel": "+",
+                "expValue": "+"
+            },
+            {
+                "expType": "CONSTANT",
+                "expSubtype": "timespan",
+                "expLabel": "5m",
+                "expValue": "5m"
+            },
+            {
+                "expType": "ARITHMETIC",
+                "expLabel": "+",
+                "expValue": "+"
+            },
+            {
+                "expType": "CONSTANT",
+                "expSubtype": "timespan",
+                "expLabel": "4d",
+                "expValue": "4d"
+            },
+            {
+                "expType": "ARITHMETIC",
+                "expLabel": "+",
+                "expValue": "+"
+            },
+            {
+                "expType": "CONSTANT",
+                "expSubtype": "timespan",
+                "expLabel": "4h",
+                "expValue": "4h"
+            },
+            {
+                "expType": "ARITHMETIC",
+                "expLabel": "-",
+                "expValue": "-"
+            },
+            {
+                "expType": "CONSTANT",
+                "expSubtype": "timespan",
+                "expLabel": "1h",
+                "expValue": "1h"
+            },
+            {
+                "expType": "ARITHMETIC",
+                "expLabel": "+",
+                "expValue": "+"
+            },
+            {
+                "expType": "CONSTANT",
+                "expSubtype": "timespan",
+                "expLabel": "20min",
+                "expValue": "20min"
+            },
+            {
+                "expType": "ARITHMETIC",
+                "expLabel": "-",
+                "expValue": "-"
+            },
+            {
+                "expType": "CONSTANT",
+                "expSubtype": "timespan",
+                "expLabel": "5min",
+                "expValue": "5min"
+            }
+        ]';
+
+        $expression = json_decode($fixture);
+        $expressionEvaluatorMock = $this->getMockBuilder('PMSEExpressionEvaluator')
+                ->disableOriginalConstructor()
+                ->setMethods(null)
+                ->getMock();
+
+        $expectedToken = new stdClass();
+        $expectedToken->expValue = "2014-10-20T03:15:00-07:00";
+        $expectedToken->expLabel = "2014-10-20 03:15:00";
+        $expectedToken->expSubtype = "date";
+        $expectedToken->expType = "CONSTANT";
+
+        $expectedResult = array($expectedToken);
+        $result = $expressionEvaluatorMock->processExpression($expression);
+        $this->assertEquals($expectedResult, $result);
+    }
+
+    /**
+     * The following tests test the evaluator against the operation
+     * the result is the same
      */
     public function testProcessExpressionSampleCriteriaFALSE()
     {
@@ -1619,15 +1758,15 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
         $expectedToken->expLabel = "false";
         $expectedToken->expSubtype = "boolean";
         $expectedToken->expType = "CONSTANT";
-        
+
         $expectedResult = array($expectedToken);
         $result = $expressionEvaluatorMock->processExpression($expression);
         $this->assertEquals($expectedResult, $result);
     }
-    
+
     /**
-     * The following tests test the evaluator against the operation 
-     * the result is the same 
+     * The following tests test the evaluator against the operation
+     * the result is the same
      */
     public function testProcessExpressionSampleCriteriaTRUE()
     {
@@ -1743,10 +1882,10 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
         $expectedToken->expLabel = "true";
         $expectedToken->expSubtype = "boolean";
         $expectedToken->expType = "CONSTANT";
-        
+
         $expectedResult = array($expectedToken);
         $result = $expressionEvaluatorMock->processExpression($expression);
-        
+
         $this->assertEquals($expectedResult, $result);
     }
 
@@ -1756,14 +1895,14 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
                 ->disableOriginalConstructor()
                 ->setMethods(null)
                 ->getMock();
-        
+
         $interval = "4d";
         $expected = "4 days";
 
         $result = $expressionEvaluatorMock->processDateInterval($interval);
         $this->assertEquals($expected, $result);
     }
-    
+
     public function testProcessDateIntervalMonths()
     {
         $expressionEvaluatorMock = $this->getMockBuilder('PMSEExpressionEvaluator')
@@ -1775,7 +1914,7 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
         $result = $expressionEvaluatorMock->processDateInterval($interval);
         $this->assertEquals($expected, $result);
     }
-    
+
     public function testExecuteDateSubstractOp()
     {
         $expressionEvaluatorMock = $this->getMockBuilder('PMSEExpressionEvaluator')

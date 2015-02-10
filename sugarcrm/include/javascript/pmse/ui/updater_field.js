@@ -524,7 +524,7 @@ UpdaterField.prototype._onValueGenerationHandler = function (module) {
 UpdaterField.prototype.openPanelOnItem = function (field) {
     var that = this, settings, inputPos, textSize, subjectInput, i,
         variablesDataSource = project.getMetadata("targetModuleFieldsDataSource"), currentFilters, list, targetPanel,
-        currentOwner, fieldType = field.getFieldType();
+        currentOwner, fieldType = field.getFieldType(), constantPanelCfg;
 
     if (!(field instanceof DateUpdaterItem || field instanceof NumberUpdaterItem)) {
         if (!this._variablesList) {
@@ -576,6 +576,8 @@ UpdaterField.prototype.openPanelOnItem = function (field) {
                 appendTo: (this.parent && this.parent.parent && this.parent.parent.html) || null,
                 decimalSeparator: this._decimalSeparator,
                 numberGroupingSeparator: this._numberGroupingSeparator,
+                dateFormat: SUGAR.App.date.convertFormat(SUGAR.App.user.getPreference("datepref")),
+                timeFormat: SUGAR.App.user.getPreference("timepref"),
                 onOpen: function () {
                     jQuery(that.currentField.html).addClass("opened");
                 },
@@ -588,12 +590,20 @@ UpdaterField.prototype.openPanelOnItem = function (field) {
         //in order to do it, we verify if the current field class is the same that the previous field's.
         if (!this.currentField || (this.currentField.constructor !== field.constructor)) {
             if (field instanceof DateUpdaterItem) {
+                if (fieldType === 'Date') {
+                    constantPanelCfg = {
+                        date: true,
+                        timespan: true
+                    };
+                } else {
+                    constantPanelCfg = {
+                        datetime: true,
+                        timespan: true
+                    };
+                }
                 this._datePanel.setOperators({
                     arithmetic: ["+", "-"]
-                }).setConstantPanel({
-                    date: true,
-                    timespan: true
-                });
+                }).setConstantPanel(constantPanelCfg);
             } else {
                 this._datePanel.setOperators({
                     arithmetic: true
@@ -1097,8 +1107,23 @@ UpdaterField.prototype.setVariables = function (variables) {
     };
 
     DateUpdaterItem.prototype._setValueToControl = function (value) {
-        var friendlyValue = "", i;
+        var friendlyValue = "", i, dateFormat, timeFormat;
         value.forEach(function(value, index, arr) {
+            if (value && value.expType === 'CONSTANT') {
+                if (!dateFormat) {
+                    dateFormat = SUGAR.App.date.convertFormat(SUGAR.App.user.getPreference("datepref"));
+                }
+                if (value.expSubtype === "datetime") {
+                    if (!timeFormat) {
+                        timeFormat = SUGAR.App.date.convertFormat(SUGAR.App.user.getPreference("timepref"));
+                    }
+                    aux = App.date(value.expValue);
+                    value.expLabel = aux.format(dateFormat + " " + timeFormat);
+                } else if (value.expSubtype === "date") {
+                    aux = App.date(value.expValue);
+                    value.expLabel = aux.format(dateFormat);
+                }
+            }
             friendlyValue += " " + value.expLabel;
         });
         this._control.value = friendlyValue;

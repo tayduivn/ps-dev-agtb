@@ -32,6 +32,7 @@ CriteriaField.prototype.init = function(settings) {
 		fieldWidth: 200,
 		disabled: false,
 		dateFormat: "yyyy-mm-dd",
+		timeFormat: "H:i",
 		decimalSeparator: ".",
 		numberGroupingSeparator: ","
 	};
@@ -50,7 +51,7 @@ CriteriaField.prototype.init = function(settings) {
 		},
 		onBlur: function () {
 			if (that._panelFlag) {
-				that.closePanel();	
+				that.closePanel();
 			}
 			that._panelFlag = true;
 		}
@@ -60,6 +61,7 @@ CriteriaField.prototype.init = function(settings) {
 		itemContainer: this.controlObject,
 		owner: this.controlObject,
 		dateFormat: defaults.dateFormat,
+		timeFormat: defaults.timeFormat,
 		operators: defaults.operators,
 		evaluation: defaults.evaluation,
 		variable: defaults.variable,
@@ -95,7 +97,7 @@ CriteriaField.prototype.enable = function () {
 	this._disabled = false;
 	this.controlObject.enable();
 	jQuery(this.labelObject).removeClass('adam-form-label-disabled');
-	return this;	
+	return this;
 };
 
 CriteriaField.prototype.setFieldWidth = function (width) {
@@ -208,7 +210,7 @@ CriteriaField.prototype.openPanel = function() {
 };
 
 CriteriaField.prototype.scrollTo = function () {
-    var fieldsDiv = this.html.parentNode, 
+    var fieldsDiv = this.html.parentNode,
     	scrollForControlObject = getRelativePosition(this.controlObject.html, fieldsDiv).top + $(this.controlObject.html).outerHeight() + fieldsDiv.scrollTop,
     	that = this;
     if (fieldsDiv.scrollTop + $(fieldsDiv).outerHeight() < scrollForControlObject) {
