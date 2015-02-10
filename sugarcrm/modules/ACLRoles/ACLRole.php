@@ -171,6 +171,8 @@ function getAllRoles($returnAsArray = false){
  */
 function getRoleActions($role_id, $type='module'){
         global $beanList;
+        global $dictionary;
+
         //if we don't have it loaded then lets check against the db
         $additional_where = '';
         $db = DBManagerFactory::getInstance();
@@ -202,6 +204,13 @@ function getRoleActions($role_id, $type='module'){
                 continue;
             }
             //end
+
+            // Skipping modules that have 'hidden_to_role_assignment' property
+            if (isset($dictionary[$action->category]) &&
+                isset($dictionary[$action->category]['hidden_to_role_assignment']) &&
+                $dictionary[$action->category]['hidden_to_role_assignment']){
+                continue;
+            }
 
             if(!isset($role_actions[$action->category])){
                 $role_actions[$action->category] = array();

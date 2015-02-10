@@ -290,6 +290,7 @@ $dictionary['pmse_Emails_Templates'] = array(
             'aclModule' => 'pmse_Emails_Templates', 'allowUserRead' => false
         )
     ),
+    'hidden_to_role_assignment' => true,
 );
 if (!class_exists('VardefManager')){
         require_once('include/SugarObjects/VardefManager.php');

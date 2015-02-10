@@ -329,6 +329,7 @@ $dictionary['pmse_Project'] = array(
     'optimistic_locking' => true,
     'unified_search' => true,
     'acls' => array('SugarACLDeveloperOrAdmin' => array('aclModule' => 'pmse_Project', 'allowUserRead' => false)),
+    'hidden_to_role_assignment' => true,
 );
 if (!class_exists('VardefManager')){
         require_once('include/SugarObjects/VardefManager.php');
