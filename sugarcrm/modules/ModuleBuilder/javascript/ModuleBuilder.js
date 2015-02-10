@@ -560,15 +560,34 @@ if (typeof(ModuleBuilder) == 'undefined') {
 			}
 
             var requestUrl = url,
-                currModule = ModuleBuilder.urlToParams(ModuleBuilder.centerContentURL).view_module,
-                toModule = ModuleBuilder.urlToParams(url).view_module,
                 role = $("input[name=role]").val();
-            if (role && (!currModule || !toModule || currModule == toModule)) {
+            if (role && ModuleBuilder.isLayoutTheSame(url)) {
                 requestUrl += "&role=" + encodeURIComponent(role);
             }
 
             ModuleBuilder.asyncRequest(requestUrl, successCall);
 		},
+
+        /**
+         * Checks if the layout corresponding to the given URL is the same as current one
+         *
+         * @param {String} url The URL to be requested
+         * @returns {Boolean}
+         */
+        isLayoutTheSame: function(url) {
+            var params = ["view_module", "view"];
+            var values = ModuleBuilder.urlToParams(url);
+            var currentValues = ModuleBuilder.urlToParams(ModuleBuilder.centerContentURL);
+            for (var i = 0, param; i < params.length; i++) {
+                param = params[i];
+                if (values[param] && currentValues[param] && values[param] != currentValues[param]) {
+                    return false;
+                }
+            }
+
+            return true;
+        },
+
 		updateContent: function(o){
             if (ModuleBuilder.copyLayoutDialog) {
                 ModuleBuilder.copyLayoutDialog.destroy();
