@@ -49,8 +49,15 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
 
                 $app_list_strings = return_app_list_strings_language('en_us');
                 // Yes, the status_id is a lable.
-                $statusKey = array_search($data['status_id'], $app_list_strings['kbdocument_status_dom']);
-                $data['status'] = ($statusKey !== false) ? $statusKey : 'draft';
+                if ($data['status_id'] == 'Published') {
+                    $data['status'] = ($data['is_external_article'] == 1) ?
+                        KBContent::ST_PUBLISHED_EX :
+                        KBContent::ST_PUBLISHED_IN;
+                } else {
+                    $statusKey = array_search($data['status_id'], $app_list_strings['kbdocument_status_dom']);
+                    $data['status'] = ($statusKey !== false) ? $statusKey : KBContent::DEFAULT_STATUS;
+                }
+
 
                 $KBContent->populateFromRow($data);
                 $KBContent->set_created_by = false;

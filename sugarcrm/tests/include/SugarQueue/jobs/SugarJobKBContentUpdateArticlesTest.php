@@ -111,7 +111,7 @@ class SugarJobKBContentUpdateArticlesTest extends Sugar_PHPUnit_Framework_TestCa
         $td = new TimeDate();
         $newDate = $td->getNow()->modify('-10 days');
 
-        $this->expArticle->status = KBContent::ST_PUBLISHED;
+        $this->expArticle->status = KBContent::ST_PUBLISHED_IN;
         $this->expArticle->exp_date = $td->asUserDate($newDate);
         $this->expArticle->save();
 
@@ -135,7 +135,7 @@ class SugarJobKBContentUpdateArticlesTest extends Sugar_PHPUnit_Framework_TestCa
         $this->job->run(null);
 
         $this->approvedArticle->retrieve();
-        $this->assertEquals(KBContent::ST_PUBLISHED, $this->approvedArticle->status);
+        $this->assertEquals(KBContent::ST_PUBLISHED_EX, $this->approvedArticle->status);
     }
 
     /**
@@ -149,7 +149,7 @@ class SugarJobKBContentUpdateArticlesTest extends Sugar_PHPUnit_Framework_TestCa
         $this->job->run(null);
 
         $this->approvedArticle->retrieve();
-        $this->assertEquals(KBContent::ST_PUBLISHED, $this->approvedArticle->status);
+        $this->assertEquals(KBContent::ST_PUBLISHED_EX, $this->approvedArticle->status);
     }
 
     /**
@@ -185,9 +185,6 @@ class SugarJobKBContentUpdateArticlesTest extends Sugar_PHPUnit_Framework_TestCa
     public function providerPublishingStatuses()
     {
         return array(
-            array(
-                KBContent::ST_PUBLISHED,
-            ),
             array(
                 KBContent::ST_PUBLISHED_IN,
             ),

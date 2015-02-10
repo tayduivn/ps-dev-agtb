@@ -64,7 +64,7 @@
                     '$equals': 1
                 },
                 'status': {
-                    '$in': ['published', 'published-in', 'published-ex']
+                    '$in': ['published-in', 'published-ex']
                 }
             }
         };

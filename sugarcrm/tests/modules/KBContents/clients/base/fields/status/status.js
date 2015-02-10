@@ -32,12 +32,12 @@ describe('modules.kbcontents.clients.base.fields.status', function() {
 
     it('should be rendered with valid status', function() {
         model.set({
-            status: 'published'
+            status: 'published-in'
         });
         field.render();
-        expect(model.get('status')).toEqual('published');
-        expect(field.statusClass).toEqual('st-pub');
-        expect(field.statusLabel).toEqual('published');
+        expect(model.get('status')).toEqual('published-in');
+        expect(field.statusClass).toEqual('st-pub-in');
+        expect(field.statusLabel).toEqual('published-in');
     });
 
     it('should return valid data type when checking access to action', function() {

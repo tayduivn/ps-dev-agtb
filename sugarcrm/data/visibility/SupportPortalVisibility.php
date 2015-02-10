@@ -87,8 +87,9 @@ class SupportPortalVisibility extends SugarVisibility
                 break;
             case 'KBContents':
                 if ($queryType == 'where') {
+                    $status = KBContent::ST_PUBLISHED_EX;
                     $queryPart = " $table_alias.active_rev=1 AND"
-                                ." ($table_alias.status = 'published-ex' OR $table_alias.status ='published') ";
+                                ." ($table_alias.status = '{$status}') ";
                 }
                 break;
             case 'Contacts':

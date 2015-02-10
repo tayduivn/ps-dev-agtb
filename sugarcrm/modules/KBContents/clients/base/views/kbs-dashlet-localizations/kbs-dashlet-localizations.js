@@ -79,7 +79,7 @@
                     '$not_equals': this.model.get('id')
                 },
                 'status': {
-                    '$in': ['published', 'published-in', 'published-ex']
+                    '$in': ['published-in', 'published-ex']
                 },
                 'active_rev': {
                     '$equals': 1
