@@ -136,7 +136,7 @@ $viewdefs[$module_name]['base']['view']['casesList-list'] = array(
                     'label' => 'LBL_OWNER',
                     'enabled' => true,
                     'default' => true,
-                    'name' => 'last_name',
+                    'name' => 'assigned_user_name',
                     'readonly' => true,
                 ),
             ),

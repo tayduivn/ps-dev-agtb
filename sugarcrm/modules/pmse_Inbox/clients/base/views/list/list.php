@@ -48,15 +48,8 @@ $viewdefs[$module_name]['base']['view']['list'] = array(
                     'enabled' => true,
                     'link' => false,
                 ),
-                /*array(
-                    'name' => 'cas_status',
-                    'label' => 'Status',
-                    'default' => true,
-                    'enabled' => true,
-                    'link' => false,
-                ),*/
                 array(
-                    'name' => 'case_init',
+                    'name' => 'assigned_user_name',
                     'label' => 'LBL_OWNER',
                     'default' => true,
                     'enabled' => true,
@@ -77,67 +70,3 @@ $viewdefs[$module_name]['base']['view']['list'] = array(
         'direction' => 'desc',
     ),
 );
-
-/*$module_name = 'pmse_Inbox';
-$viewdefs[$module_name]['base']['view']['list'] = array(
-    'panels' => array(
-        array(
-            'label' => 'LBL_PANEL_1',
-            'fields' => array(
-                array(
-                    'name' => 'cas_name',
-                    'label' => 'Case Title',
-                    'default' => true,
-                    'enabled' => true,
-                    'readonly' => true,
-                    'link' => false,
-                ),
-                array(
-                    'name' => 'pro_title',
-                    'label' => 'Process',
-                    'width' => 9,
-                    'default' => true,
-                    'readonly' => true,
-                    'enabled' => true,
-                    'link' => false
-                ),
-                array(
-                    'name' => 'task_name',
-                    'label' => 'Task Name',
-                    'width' => 9,
-                    'default' => true,
-                    'enabled' => true,
-                    'readonly' => true,
-                    'link' => false,
-                ),
-                array(
-                    'name' => 'cas_id',
-                    'label' => 'Case ID',
-                    'enabled' => true,
-                    'default' => true,
-                    'readonly' => true,
-                ),
-                array(
-                    'name' => 'cas_delegate_date',
-                    'label' => 'Delegated',
-                    'enabled' => true,
-                    'default' => true,
-                    'readonly' => true,
-                    'link' => false
-                ),
-                array(
-                    'name' => 'cas_due_date',
-                    'label' => 'Due Date',
-                    'enabled' => true,
-                    'default' => true,
-                    'readonly' => true,
-                    'link' => false
-                ),
-            ),
-        ),
-    ),
-    'orderBy' => array(
-        'field' => 'date_entered',
-        'direction' => 'asc',
-    ),
-);*/
