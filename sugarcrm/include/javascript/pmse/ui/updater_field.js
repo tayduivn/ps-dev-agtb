@@ -135,7 +135,6 @@ UpdaterField.prototype._parseSettings = function (settings) {
         value: "name",
         text: "label",
         type: "fieldType",
-        len: "maxLength",
         optionItem: "options",
         required: "required"
     }, parsedSettings = {}, key;
