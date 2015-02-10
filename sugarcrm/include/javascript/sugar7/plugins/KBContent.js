@@ -476,7 +476,7 @@
              * @return {Boolean}
              */
             _isPublishingStatus: function(status) {
-                return ['published', 'published-in', 'published-ex'].indexOf(status) !== -1;
+                return ['published-in', 'published-ex'].indexOf(status) !== -1;
             }
 
         });

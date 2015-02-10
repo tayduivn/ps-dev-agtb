@@ -29,7 +29,6 @@
         'draft': 'st-draft',
         'in-review': 'st-review',
         'approved': 'st-approved',
-        'published': 'st-pub',
         'published-in': 'st-pub-in',
         'published-ex': 'st-pub-ex',
         'expired': 'st-expired'

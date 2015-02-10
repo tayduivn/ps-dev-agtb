@@ -64,7 +64,7 @@ class SugarJobKBContentUpdateArticles implements RunnableSchedulerJob
                 if ($bean->internal_rev) {
                     $bean->status = KBContent::ST_PUBLISHED_IN;
                 } else {
-                    $bean->status = KBContent::ST_PUBLISHED;
+                    $bean->status = KBContent::ST_PUBLISHED_EX;
                 }
             }
             $bean->active_date = $this->td->nowDate();
@@ -84,7 +84,7 @@ class SugarJobKBContentUpdateArticles implements RunnableSchedulerJob
         $sq->select(array('id'));
         $sq->from(BeanFactory::getBean('KBContents'));
         $sq->where()
-            ->in('status', array('published-in', 'published-ex', 'published'))
+            ->in('status', KBContent::getPublishedStatuses())
             ->lte('exp_date', $this->td->nowDbDate());
         return $sq->execute();
     }
@@ -100,7 +100,7 @@ class SugarJobKBContentUpdateArticles implements RunnableSchedulerJob
         $sq->select(array('id'));
         $sq->from(BeanFactory::getBean('KBContents'));
         $sq->where()
-            ->equals('status', 'approved')
+            ->equals('status', KBContent::ST_APPROVED)
             ->lte('active_date', $this->td->nowDbDate());
         return $sq->execute();
     }
