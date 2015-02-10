@@ -77,6 +77,11 @@
         if (_.isEmpty(this.bwcModel.attributes) || _.isUndefined(bwcWindow.EditView) || $(bwcWindow.EditView).data('disablebwchaschanged')) {
             return false;
         }
+        // some forms may still be doing async loading after document ready
+        // do not compare if the loading is not done yet
+        if (!_.isUndefined(bwcWindow.asyncLoading) && bwcWindow.asyncLoading) {
+            return false;
+        }
         var newAttributes = this.serializeObject(bwcWindow.EditView);
         return !_.isEmpty(this.bwcModel.changedAttributes(newAttributes));
     },

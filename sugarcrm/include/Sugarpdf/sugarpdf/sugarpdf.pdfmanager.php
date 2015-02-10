@@ -28,6 +28,9 @@ class SugarpdfPdfmanager extends SugarpdfSmarty
         // settings for disable smarty php tags
         $this->ss->security_settings['PHP_TAGS'] = false;
         $this->ss->security = true;
+        if (defined('SUGAR_SHADOW_PATH')) {
+            $this->ss->secure_dir[] = SUGAR_SHADOW_PATH;
+        }
 
         // header/footer settings
         $this->setPrintHeader(false);
