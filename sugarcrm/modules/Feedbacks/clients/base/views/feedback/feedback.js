@@ -1,3 +1,25 @@
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+/**
+ * This View allows the user to provide Feedback about SugarCRM platform to a
+ * GoogleDoc spreadsheet.
+ *
+ * The view can stay visible while the user is navigating and will use the
+ * current URL when the user clicks submit. Other fields are mapped into the
+ * spreadsheet and might become metadata driven in the future.
+ *
+ * @class View.Views.Base.Feedbacks.FeedbackView
+ * @alias SUGAR.App.view.views.BaseFeedbacksFeedbackView
+ * @extends View.View
+ */
 ({
     plugins: ['ErrorDecoration'],
 
@@ -34,9 +56,16 @@
         // TODO Once the view renders the button, this is no longer needed
         this.button = $(options.button);
 
-        this.button.on('show.bs.popover hide.bs.popover', _.bind(function(evt) {
-            this.trigger(evt.type, this, evt.type === 'show' ? true : false);
-        }, this));
+        /**
+         * The internal state of this view.
+         * By default this view is closed ({@link #toggle} will call render).
+         *
+         * This is needed because of the bad popover plugin.
+         *
+         * @type {boolean}
+         * @private
+         */
+        this._isOpen = false;
     },
 
     /**
@@ -53,21 +82,7 @@
             placement: 'top',
             trigger: 'manual',
             template: '<div class="popover feedback"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>'
-        }).on('click.' + this.cid, _.bind(function() {
-            this.toggle();
-        }, this));
-    },
-
-    /**
-     * @inheritDoc
-     *
-     * After `render` generate the popup with the content of this view using
-     * the popover plugin.
-     */
-    _render: function() {
-        this.button.popover('destroy');
-        this._super('_render');
-        this._initPopover(this.button);
+        });
     },
 
     /**
@@ -80,17 +95,28 @@
     },
 
     /**
-     * Toggle this view (show/hide) and allow force option.
+     * Toggle this view (by re-rendering) and allow force option.
      *
      * @param {boolean} [show] `true` to show, `false` to hide, `undefined`
      *   toggles the current state.
      */
     toggle: function(show) {
+
         if (_.isUndefined(show)) {
-            this.button.popover('toggle');
-            return;
+            this._isOpen = !this._isOpen;
+        } else {
+            this._isOpen = show;
         }
-        this.button.popover(show ? 'show' : 'hide');
+
+        this.button.popover('destroy');
+        this.render();
+
+        if (this._isOpen) {
+            this._initPopover(this.button);
+            this.button.popover('show');
+        }
+
+        this.trigger(this._isOpen ? 'show' : 'hide', this, this._isOpen);
     },
 
     /**
@@ -99,9 +125,9 @@
      */
     _dispose: function() {
         if (this.button) {
-            this.button.off('click.' + this.cid);
             this.button.popover('destroy');
         }
+        this._super('_dispose');
     },
 
     /**

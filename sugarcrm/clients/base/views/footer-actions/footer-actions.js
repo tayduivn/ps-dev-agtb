@@ -171,19 +171,18 @@
      * @param {Event} evt the `click` event.
      */
     feedback: function(evt) {
-        if (!this._feedbackView) {
+        if (!this._feedbackView || this._feedbackView.disposed) {
             this._feedbackView = app.view.createView({
                 module: 'Feedbacks',
                 name: 'feedback',
                 button: this.$('[data-action="feedback"]')
             });
-            this._feedbackView.render();
+
             this.listenTo(this._feedbackView, 'show hide', function(view, active) {
                 this.$('[data-action="feedback"]').toggleClass('active', active);
             });
-
-            this._feedbackView.toggle();
         }
+        this._feedbackView.toggle();
     },
 
     support: function() {
