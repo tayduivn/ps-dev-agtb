@@ -325,7 +325,10 @@ if (typeof(ModuleBuilder) == 'undefined') {
             revert: function(module, layout, id, subpanel, isDefault) {
 				var prevTab = ModuleBuilder.tabPanel.getTabIndex("preview:" + id);
 				if(prevTab) ModuleBuilder.tabPanel.removeTab(prevTab);
-				
+
+// BEGIN SUGARCRM flav=ent ONLY
+                var role = $("input[name=role]").val();
+// END SUGARCRM flav=ent ONLY
 				ModuleBuilder.history.params = {
 					module: 'ModuleBuilder',
 					histAction: 'restore',
@@ -336,7 +339,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
 					sid: id,
                     subpanel: subpanel
 // BEGIN SUGARCRM flav=ent ONLY
-                    ,role: $("input[name=role]").val()
+                    ,role: role
 // END SUGARCRM flav=ent ONLY
 				};
 				ModuleBuilder.asyncRequest(ModuleBuilder.history.params, function(){
@@ -351,7 +354,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
                     }), function(content) {
                         ModuleBuilder.updateContent(content);
 // BEGIN SUGARCRM flav=ent ONLY
-                        if (isDefault) {
+                        if (role && isDefault) {
                             ModuleBuilder.state.markAsReset();
                         } else {
 // END SUGARCRM flav=ent ONLY
