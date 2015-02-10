@@ -473,6 +473,14 @@ $dictionary['KBContent'] = array(
     'duplicate_check' => array(
         'enabled' => false,
     ),
+    'acls' => array(
+        'SugarACLStatic' => true,
+        'SugarACLKB' => true,
+    ),
+    'visibility' => array(
+        'KBVisibility' => true,
+        'TeamSecurity' => true,
+    ),
 );
 
 VardefManager::createVardef(

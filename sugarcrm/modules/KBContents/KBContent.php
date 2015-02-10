@@ -261,7 +261,7 @@ class KBContent extends SugarBean {
      */
     protected function isPublished()
     {
-        $published = array('published-in', 'published-ex', 'published');
+        $published = static::getPublishedStatuses();
         if(empty($this->id) || !empty($this->new_with_id)) {
             return in_array($this->status, $published);
         } else {
@@ -272,6 +272,11 @@ class KBContent extends SugarBean {
             return in_array($dataChanges['status']['after'], $published) &&
             !in_array($dataChanges['status']['before'], $published);
         }
+    }
+
+    public static function getPublishedStatuses()
+    {
+        return array(static::ST_PUBLISHED_IN, static::ST_PUBLISHED_EX, static::ST_PUBLISHED);
     }
 
     /**
