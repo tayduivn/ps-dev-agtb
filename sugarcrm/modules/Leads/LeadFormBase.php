@@ -186,8 +186,14 @@ return $the_form;
     /**
      *
      */
-    function handleSave($prefix,$redirect=true, $useRequired=false, $do_save=true, $exist_lead=null)
-    {
+    public function handleSave(
+        $prefix,
+        $redirect = true,
+        $useRequired = false,
+        $do_save = true,
+        $exist_lead = null,
+        $acl_check = true
+    ) {
         require_once('modules/Campaigns/utils.php');
         require_once('include/formbase.php');
 
@@ -202,7 +208,8 @@ return $the_form;
             return null;
         }
         $focus = populateFromPost($prefix, $focus);
-        if(!$focus->ACLAccess('Save')){
+
+        if ($acl_check && !$focus->ACLAccess('Save')) {
             ACLController::displayNoAccess(true);
             sugar_cleanup(true);
         }
