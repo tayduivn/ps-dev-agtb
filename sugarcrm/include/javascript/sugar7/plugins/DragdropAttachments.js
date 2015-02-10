@@ -57,6 +57,15 @@
                                 size = file.size,
                                 unique = _.uniqueId('activitystream_attachment');
 
+                            // Is the file too large?
+                            if (size > app.config.uploadMaxsize) {
+                                app.alert.show('file_too_big', {
+                                    level: 'error',
+                                    messages: 'ERROR_MAX_FILESIZE_EXCEEDED'
+                                });
+                                return;
+                            }
+
                             while (size > 1024 && size_index < sizes.length - 1) {
                                 size_index++;
                                 size /= 1024;
@@ -123,6 +132,13 @@
 
                     component.trigger('attachments:start');
 
+                    if (_.size(attachments) > 0){
+                        app.alert.show('uploading_attachments', {
+                            level: 'process',
+                            title: app.lang.get('LBL_UPLOADING')
+                        });
+                    }
+
                     _.each(attachments, function(file) {
                         var note = app.data.createBean('Notes');
                         note.set(_.extend({
@@ -135,6 +151,9 @@
                                 note.save(null, {
                                     success: function(noteModel) {
                                         callback(null, noteModel);
+                                    },
+                                    error: function() {
+                                        callback(true);
                                     }
                                 });
                             },
@@ -157,6 +176,8 @@
                                     contentType: false
                                 }).then(function() {
                                     callback(null);
+                                }, function() {
+                                    callback(true);
                                 });
                             },
                             //then create the 'attach' type activity
@@ -178,14 +199,20 @@
                                     success: function(activityModel) {
                                         self.collection.add(activityModel);
                                         callback(null, activityModel);
+                                    },
+                                    error: function() {
+                                        callback(true);
                                     }
                                 });
                             }
                         ], function(err, activity) {
+                            app.alert.dismiss('uploading_attachments');
                             component.trigger('attachments:end');
                             if (err) {
-                                var errorMessage = app.lang.get('LBL_EMAIL_ATTACHMENT_UPLOAD_FAILED');
-                                app.alert.show('upload_error', errorMessage);
+                                app.alert.show('upload_failed', {
+                                    level: 'error',
+                                    messages: app.lang.get('LBL_EMAIL_ATTACHMENT_UPLOAD_FAILED')
+                                });
                             } else {
                                 self.context.reloadData({recursive: false});
                                 self.clearAttachments.call(self);
