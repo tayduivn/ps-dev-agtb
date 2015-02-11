@@ -133,7 +133,7 @@
         // update the text for the selected module
         this.getModuleFilter().html(item.text);
         return '<span class="select2-choice-type">'
-            + app.lang.get('Filter')
+            + app.lang.get('LBL_PMSE_FILTER', this.module)
             + '<i class="fa fa-caret-down"></i></span>';
     },
     /**
