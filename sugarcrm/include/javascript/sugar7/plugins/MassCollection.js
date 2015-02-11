@@ -13,7 +13,6 @@
  * This plugin handles the collection (called the mass collection)
  * of selected items in listViews.
  * It has to be attached to any view that has `actionmenu` fields.
- *
  */
 (function(app) {
     app.events.on('app:init', function() {
@@ -75,6 +74,9 @@
             /**
              * Adds preselected model to the mass collection.
              *
+             * Because we only have a list of ids, and in order to display the
+             * selected records we need the names, we have to fetch the names.
+             *
              * @private
              */
             _preselectModels: function() {
@@ -96,15 +98,16 @@
                         ]
                     },
                     success: _.bind(function(collection) {
-                        collection.each(_.bind(this.addModel, this));
+                        this.addModel(collection.models);
                     }, this)
                 });
             },
 
             /**
-             * Adds a model to the mass collection.
+             * Adds a model or a list of models to the mass collection.
              *
-             * @param {Model} model The model to add.
+             * @param {Data.Bean|Array} models The model or the list of models
+             *   to add.
              */
             addModel: function(models) {
                 var massCollection = this.context.get('mass_collection');
@@ -143,9 +146,10 @@
             },
 
             /**
-             * Removes a model from the mass collection.
+             * Removes a model or a list of models from the mass collection.
              *
-             * @param {Model} model The model to remove.
+             * @param {Data.Bean|Array} models The model or the list of models
+             *   to remove.
              */
             removeModel: function(models) {
                 var massCollection = this.context.get('mass_collection');
@@ -217,10 +221,10 @@
              */
             onDetach: function() {
                 $(window).off('resize.' + this.cid);
-                this.context.off('mass_collection:add', this);
-                this.context.off('mass_collection:add:all', this);
-                this.context.off('mass_collection:remove', this);
-                this.context.off('mass_collection:remove:all', this);
+                this.context.off('mass_collection:add', null, this);
+                this.context.off('mass_collection:add:all', null, this);
+                this.context.off('mass_collection:remove', null, this);
+                this.context.off('mass_collection:remove:all', null, this);
             }
         });
     });
