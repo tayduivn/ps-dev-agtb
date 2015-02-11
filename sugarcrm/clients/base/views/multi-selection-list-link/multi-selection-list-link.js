@@ -17,6 +17,9 @@
 ({
     extendsFrom: 'MultiSelectionListView',
 
+    /**
+     * @inheritDoc
+     */
     initialize: function(options) {
         this._super('initialize', [options]);
         this.meta.selection = _.extend({}, options.meta.selection, {isLinkAction: true});
@@ -37,7 +40,7 @@
      *
      * @private
      */
-    _refreshList: function(model) {
+    _refreshList: function() {
         this.context.reloadData({
             recursive: false,
             error: function(error) {
@@ -98,7 +101,7 @@
             success: function() {
                 view.layout.trigger('filter:record:linked');
             },
-            error: function(error) {
+            error: function() {
                 app.alert.show('server-error', {
                     level: 'error',
                     messages: 'ERR_GENERIC_SERVER_ERROR'

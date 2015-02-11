@@ -119,16 +119,16 @@ describe('Base.View.SelectionListContext', function() {
         });
     });
 
-        //FIXME: SC-4092: Need to fix resetPills method first before running this test.
-//    describe('resetPills:', function() {
-//        it('should reset the pills array to match the given models array', function() {
-//            var models = [{id: '1', name: 'toto'}, {id: '2', name: 'tata'}, {id: '3', name: 'titi'}];
-//            view.resetPills(models);
-//
-//           expect(_.isEqual(view.pills, models)).toBe(true);
-//           expect(view.pills.length).toEqual(models.length);
-//        });
-//    });
+    //FIXME: SC-4092: Need to fix resetPills method first before running this test.
+    xdescribe('resetPills:', function() {
+        it('should reset the pills array to match the given models array', function() {
+            var models = [{id: '1', name: 'toto'}, {id: '2', name: 'tata'}, {id: '3', name: 'titi'}];
+            view.resetPills(models);
+
+           expect(_.isEqual(view.pills, models)).toBe(true);
+           expect(view.pills.length).toEqual(models.length);
+        });
+    });
 
 
 

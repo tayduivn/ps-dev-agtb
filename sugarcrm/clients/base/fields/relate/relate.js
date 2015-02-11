@@ -252,51 +252,20 @@
                 dropdownCssClass: _.bind(this._buildCssClasses, this),
                 multiple: !!this.def.isMultiSelect,
                 containerCssClass: _.bind(this._buildCssClasses, this),
-                separator: self.separator,
-                initSelection: function(el, callback) {
-                    var $el = $(el),
-                        id = $el.val(),
-                        text = $el.data('rname');
-
-                    if (!self.def.isMultiSelect) {
-                        return callback({id: id, text: text});
-                    }
-                    var ids = id.split(self.separator);
-                    text = text.split(self.separator);
-                    callback(_.map(ids, function(value, index) {
-                        return {id: value, text: text[index]};
-                    }));
-                },
+                separator: this.separator,
+                initSelection: _.bind(this._onInitSelect, this),
                 formatInputTooShort: function() {
                     return '';
                 },
-                formatSelection: function(obj) {
-                    var ctx = {};
-                    //TODO We should investigate why it's sometimes `text` and
-                    //sometimes `id` and make it always same if possible.
-                    ctx.text = obj.text || obj.id;
-                    return self._select2formatSelectionTemplate(ctx);
-                },
+                formatSelection: _.bind(this._onFormatSelection, this),
                 formatSearching: loadingLabel,
                 placeholder: this.getPlaceHolder(),
                 allowClear: self.allow_single_deselect,
                 minimumInputLength: self.minChars,
                 maximumSelectionSize: 20,
                 query: _.bind(this.search, this)
-            }).on('select2-open', function() {
-                var plugin = $(this).data('select2');
-                if (!plugin.searchmore) {
-                    var $content = $('<li class="select2-result">').append(
-                            $('<div/>').addClass('select2-result-label')
-                                .html(app.lang.get('LBL_SEARCH_AND_SELECT_ELLIPSIS', self.module))
-                        ).mousedown(function() {
-                            plugin.opts.element.trigger($.Event('searchmore'));
-                            plugin.close();
-                        });
-                    plugin.searchmore = $('<ul class="select2-results">').append($content);
-                    plugin.dropdown.append(plugin.searchmore);
-                }
-            }).on('searchmore', function() {
+            }).on('select2-open', _.bind(this._onSelect2Open, this))
+              .on('searchmore', function() {
                 $(this).select2('close');
                 self.openSelectDrawer();
             }).on('change', function(e) {
@@ -332,7 +301,7 @@
                     return;
                 }
 
-                var value = (id) ? plugin.selection.find("span").text() : $(this).data('rname'),
+                var value = (id) ? plugin.selection.find('span').text() : $(this).data('rname'),
                     collection = plugin.context,
                     attributes = {};
                 //Update the source element or else reverting back to the original value will not trigger a change event.
@@ -389,6 +358,63 @@
     },
 
     /**
+     * Callback for select2 `initSelection` property.
+     *
+     * @param {HTMLElement} el The select2 element that stores values.
+     * @param {Function} callback select2 callback to initialize the plugin.
+     * @private
+     */
+    _onInitSelect: function(el, callback) {
+        var $el = $(el),
+            id = $el.val(),
+            text = $el.data('rname');
+
+        if (!this.def.isMultiSelect) {
+            return callback({id: id, text: text});
+        }
+        var ids = id.split(this.separator);
+        text = text.split(this.separator);
+        callback(_.map(ids, function(value, index) {
+            return {id: value, text: text[index]};
+        }));
+    },
+
+    /**
+     * Callback for select2 `formatSelection` property.
+     *
+     * @param {object} obj object containing the item name.
+     * @return {string} A string containing template for a pill.
+     *
+     * @private
+    */
+    _onFormatSelection: function(obj) {
+        var ctx = {};
+        //TODO We should investigate why it's sometimes `text` and
+        //sometimes `id` and make it always same if possible.
+        ctx.text = obj.text || obj.id;
+        return this._select2formatSelectionTemplate(ctx);
+    },
+
+    /**
+     * Callback when select2 plugin opens.
+     */
+    _onSelect2Open: function() {
+        var plugin = $(this.$(this.fieldTag)).data('select2');
+        if (plugin.searchmore) {
+            return;
+        }
+        var label = app.lang.get('LBL_SEARCH_AND_SELECT_ELLIPSIS', this.module);
+        var $tpl = $('<div/>').addClass('select2-result-label').html(label);
+        var onMouseDown = function() {
+            plugin.opts.element.trigger($.Event('searchmore'));
+            plugin.close();
+        };
+        var $content = $('<li class="select2-result">').append($tpl).mousedown(onMouseDown);
+        plugin.searchmore = $('<ul class="select2-results">').append($content);
+        plugin.dropdown.append(plugin.searchmore);
+    },
+
+    /**
      * Builds the route for the relate module's record.
      * @param {String} module The related module.
      * @param {String} id The record id to link to.
@@ -396,7 +422,7 @@
      * TODO since base.js has a build href, we should try to reuse code or
      * extend this one from other "link" field
      */
-    buildRoute: function (module, id) {
+    buildRoute: function(module, id) {
         var oldModule = module;
         // This is a workaround until bug 61478 is resolved to keep parity with 6.7
         if (module === 'Users' && this.context.get('module') !== 'Users') {
@@ -485,7 +511,7 @@
     /**
      * Sets the value in the field.
      *
-     * @param {Data.bean | Array} models The source models attributes.
+     * @param {Object | Array} models The source models attributes.
      */
     setValue: function(models) {
 

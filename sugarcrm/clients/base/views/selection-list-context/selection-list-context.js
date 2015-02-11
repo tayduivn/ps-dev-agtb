@@ -33,6 +33,7 @@
     initialize: function(options) {
         this.pills = [];
         /**
+         * The maximum number of pills that can be displayed.
          *
          * @property {number}
          */
@@ -68,7 +69,9 @@
      */
     removeAllPills: function(event) {
         if (!!event) {
-            if (this.$(event.target).hasClass('disabled')) return;
+            if (this.$(event.target).hasClass('disabled')) {
+                return;
+            }
         }
         this.pills = [];
         this.render();
@@ -108,14 +111,14 @@
 
     /**
      * @inheritDoc
-     * @private
      */
     _render: function() {
         if (this.pills.length > this.maxPillsDisplayed) {
             this.displayedPills = this.pills.slice(0, this.maxPillsDisplayed);
             this.tooManySelectedRecords = true;
-            this.msgMaxPillsDisplayed = app.lang.get('TBL_MAX_PILLS_DISPLAYED',
-                this.module, {maxPillsDisplayed: this.maxPillsDisplayed});
+            this.msgMaxPillsDisplayed = app.lang.get('TBL_MAX_PILLS_DISPLAYED', this.module, {
+                maxPillsDisplayed: this.maxPillsDisplayed
+            });
         } else {
             this.tooManySelectedRecords = false;
             this.displayedPills = this.pills;

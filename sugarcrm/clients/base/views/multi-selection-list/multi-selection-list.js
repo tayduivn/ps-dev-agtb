@@ -79,9 +79,9 @@
     triggerCheck: function(event) {
         //Ignore inputs and links/icons, because those already have defined effects
         if (!($(event.target).is('a,i,input'))) {
-                //simulate click on the input for this row
-                var checkbox = $(event.currentTarget).find('input[name="check"]');
-                checkbox[0].click();
+            //simulate click on the input for this row
+            var checkbox = $(event.currentTarget).find('input[name="check"]');
+            checkbox[0].click();
         }
     },
     /**
@@ -107,11 +107,9 @@
      * @private
      */
     _showMaxSelectedRecordsAlert: function() {
-        var msg = app.lang.get('TPL_FILTER_MAX_NUMBER_RECORDS', this.module,
-            {
-                maxRecords: this.maxSelectedRecords
-            }
-        );
+        var msg = app.lang.get('TPL_FILTER_MAX_NUMBER_RECORDS', this.module, {
+            maxRecords: this.maxSelectedRecords
+        });
         app.alert.show('too-many-selected-records', {
             level: 'error',
             messages: msg,

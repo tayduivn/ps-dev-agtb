@@ -57,11 +57,11 @@ $viewdefs['base']['layout']['multi-selection-list-link'] = array(
                                             ),
                                             array(
                                                 'view' => 'filter-rows',
-                                                "targetEl" => '.filter-options'
+                                                'targetEl' => '.filter-options'
                                             ),
                                             array(
                                                 'view' => 'filter-actions',
-                                                "targetEl" => '.filter-options'
+                                                'targetEl' => '.filter-options'
                                             ),
                                             array(
                                                 'view' => 'mass-link',
