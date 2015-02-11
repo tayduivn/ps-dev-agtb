@@ -277,6 +277,26 @@ describe('Base.Field.DateTimeCombo', function() {
 
                 clock.restore();
             });
+
+            it('should not display 24:00 when given 24 hour time format', function() {
+                var $timepickerList,
+                    now = new Date('Sun Jan 15 1984 19:20:42'),
+                    clock = sinon.useFakeTimers(now.getTime(), 'Date');
+
+                sinon.collection.stub(field, 'getUserTimeFormat').returns('H:i');
+
+                field.render();
+
+                $timepickerList = field.$(field.secondaryFieldTag)
+                    .focus()
+                    .data('timepickerList');
+
+                expect($timepickerList.find('li').length).toBe(96);
+                expect($timepickerList.find('li:contains("24:00")').length).toBe(0);
+                expect($timepickerList.find('li:contains("00:00")').length).toBe(1);
+
+                clock.restore();
+            });
         });
 
         describe('_enableDuration', function() {
