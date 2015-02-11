@@ -58,7 +58,7 @@
 
             // if there's no value here yet, set to latest
             if (!this.model.has('opps_closedate_rollup')) {
-                this.$('input[value="latest"').attr('checked', true);
+                this.$('input[value="latest"]').prop('checked', true);
             }
         } else {
             this.getField('opps_closedate_rollup').hide();
