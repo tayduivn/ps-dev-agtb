@@ -227,7 +227,7 @@
             cssClasses.push('select2-parent');
         }
         if (this.def.isMultiSelect) {
-            cssClasses.push('select2-choices-pills-close');
+            cssClasses.push('select2-choices-pills-close same-size-pills');
         }
         return cssClasses.join(' ');
     },

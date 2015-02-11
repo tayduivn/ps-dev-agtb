@@ -42,7 +42,7 @@
 
         /**
          * Boolean to know whether the selected records called `mass collection`
-         * should be tied to the view collection or independant.
+         * should be tied to the view collection or independent.
          *
          * If tied, selected records would have to be in the current view collection.
          * As soon as the view collection is reset, the mass collection would be

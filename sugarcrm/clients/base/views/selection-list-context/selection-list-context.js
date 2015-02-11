@@ -26,13 +26,17 @@
     },
 
     plugins: ['EllipsisInline'],
-    maxPillsDisplayed: 50,
 
     /**
      * {@inheritDoc}
      */
     initialize: function(options) {
         this.pills = [];
+        /**
+         *
+         * @property {number}
+         */
+        this.maxPillsDisplayed = 50;
         this._super('initialize', [options]);
      },
 

@@ -190,7 +190,7 @@
             /**
              * Clears the mass collection.
              *
-             * @param {Collection} massCollection The mass collection.
+             * @param {Collection} [massCollection] The mass collection.
              */
             clearMassCollection: function(massCollection) {
                 var massCollection = massCollection || this.context.get('mass_collection');
