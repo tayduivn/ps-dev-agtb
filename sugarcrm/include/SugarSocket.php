@@ -11,8 +11,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use ElephantIO\Engine\SocketIO\Version1X as Socket;
-
 /**
  * Class SugarSocket allows us to send messages to connected clients.
  *
@@ -43,51 +41,12 @@ class SugarSocket
     const RECIPIENT_USER_TYPE = 'userType';
 
     /**
-     * Pointer to socket object
-     *
-     * @var Socket
-     */
-    protected $socket = null;
-
-    /**
      * Name of room for message, by default message will be send to all sockets
      * To specify room use SugarSocket::to method with type of room
      *
      * @var string
      */
     protected $room = 'all';
-
-    /**
-     * @param string $host
-     */
-    protected function __construct($host = '')
-    {
-        if ($host == '') {
-            $host = $this->getHost();
-        }
-        $this->socket = $this->getSocket($host);
-    }
-
-    /**
-     * Returns default path to server socket url
-     *
-     * @return string
-     */
-    protected function getHost()
-    {
-        return SugarConfig::getInstance()->get('websockets.server.url');
-    }
-
-    /**
-     * Returns initialized Socket object
-     *
-     * @param string $host
-     * @return Socket
-     */
-    protected function getSocket($host)
-    {
-        return new Socket($host);
-    }
 
     /**
      * The method should be used if we need to send message to specified user, team, or type of user
@@ -103,6 +62,18 @@ class SugarSocket
     }
 
     /**
+     * Returns object of SugarSocket, customized if it's present
+     *
+     * @return SugarSocket|CustomSugarSocket
+     */
+    public static function getInstance()
+    {
+        SugarAutoLoader::requireWithCustom('include/SugarSocket.php');
+        $class = SugarAutoLoader::customClass('SugarSocket');
+        return new $class();
+    }
+
+    /**
      * Sending $message with $data to socket
      *
      * @param string $message
@@ -112,33 +83,22 @@ class SugarSocket
     public function send($message, $data = null)
     {
         try {
-            $this->socket->connect();
-            $this->socket->emit('forward', array(
-                'room' =>
-                    SugarConfig::getInstance()->get('site_url')
-                    . ':' . SugarConfig::getInstance()->get('websockets.public_secret')
-                    . ':' . $this->room,
-                'message' => $message,
-                'args' => $data,
-            ));
-            $this->socket->close();
+            $params = json_encode(
+                array(
+                    'room' =>
+                        SugarConfig::getInstance()->get('site_url')
+                        . ':' . SugarConfig::getInstance()->get('websockets.public_secret')
+                        . ':' . $this->room,
+                    'message' => $message,
+                    'args' => $data
+                )
+            );
+            $client = new Zend_Http_Client(SugarConfig::getInstance()->get('websockets.server.url') . '/forward');
+            $client->setRawData($params, 'application/json')->request('POST');
         } catch (\Exception $exception) {
             return false;
         }
         return true;
-    }
-
-    /**
-     * Returns object of SugarSocket, customized if it's present
-     *
-     * @param string $host host of socket
-     * @return SugarSocket|CustomSugarSocket
-     */
-    public static function getInstance($host = '')
-    {
-        SugarAutoLoader::requireWithCustom('include/SugarSocket.php');
-        $class = SugarAutoLoader::customClass('SugarSocket');
-        return new $class($host);
     }
 
     /**
@@ -175,47 +135,20 @@ class SugarSocket
             'server' => 'SugarCRM Server Side',
             'client' => 'SugarCRM Client Side'
         );
-
         $availability = false;
+        $isBalancer = false;
+        $httpClient = new Zend_Http_Client();
 
-        if (self::ping($url)) {
-            $fileContent = file_get_contents(self::getURL($url));
+        if (filter_var($url, FILTER_VALIDATE_URL) && self::ping($url)) {
+            $fileContent = $httpClient->setUri($url)->request()->getBody();
+            if (filter_var(json_decode($fileContent), FILTER_VALIDATE_URL)) {
+                $isBalancer = true;
+                $fileContent = $httpClient->setUri(json_decode($fileContent))->request()->getBody();
+            }
             if ($fileContent == $statusMessages[$type]) {
                 $availability = true;
             }
         }
-        $status = array('url' => $url, 'type' => $type, 'available' => $availability);
-
-        return $status['available'];
-    }
-
-    /**
-     * Get URL.
-     * @param $url
-     * @return string|bool
-     */
-    public static function getURL($url) {
-        if (filter_var($url, FILTER_VALIDATE_URL)) {
-            if (self::isBalancer($url)) {
-                return json_decode(file_get_contents($url));
-            } else {
-                return $url;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Checks if provided URL is a balancer.
-     * @param $url checked URL
-     * @return bool
-     */
-    public static function isBalancer($url)
-    {
-        if (filter_var(json_decode(file_get_contents($url)), FILTER_VALIDATE_URL)) {
-            return true;
-        } else {
-            return false;
-        }
+        return array('url' => $url, 'type' => $type, 'available' => $availability, 'isBalancer' => $isBalancer);
     }
 }

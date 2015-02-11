@@ -1168,7 +1168,8 @@ $mod_strings = array (
     'ERR_WEB_SOCKET_CLIENT_URL'         => 'WebSocket Client URL required',
     'ERR_WEB_SOCKET_SERVER_URL'         => 'WebSocket Server URL required',
     'ERR_WEB_SOCKET_SECRET'             => 'WebSocket Secret code required',
-    'ERR_WEB_SOCKET_ERROR'              => 'Unable to connect to WebSocket {{WSURL}} URL.',
+    'ERR_WEB_SOCKET_CLIENT_ERROR'       => 'Unable to connect to WebSocket Client URL.',
+    'ERR_WEB_SOCKET_SERVER_ERROR'       => 'Unable to connect to WebSocket Server URL.',
 
     //FTS
     'LBL_FTS_TYPE' => 'System Type',

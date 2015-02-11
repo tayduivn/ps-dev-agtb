@@ -209,12 +209,13 @@ class AdministrationController extends SugarController
         $errors = array();
 
         if (!empty($websocket_client_url) && !empty($websocket_server_url) && !empty($websocket_public_secret)) {
-            if (!(SugarSocket::checkWSSettings($websocket_client_url, 'client'))) {
-                $errors['ERR_WEB_SOCKET_SERVER_ERROR'] = str_replace("{{WSURL}}", 'Client', $GLOBALS['mod_strings']['ERR_WEB_SOCKET_ERROR']);
+            $clientSettings = SugarSocket::checkWSSettings($websocket_client_url, 'client');
+            if (!$clientSettings['available']) {
+                $errors['ERR_WEB_SOCKET_CLIENT_ERROR'] = $GLOBALS['mod_strings']['ERR_WEB_SOCKET_CLIENT_ERROR'];
             }
-
-            if (!(SugarSocket::checkWSSettings($websocket_server_url, 'server'))) {
-                $errors['ERR_WEB_SOCKET_SERVER_ERROR'] = str_replace("{{WSURL}}", 'Server', $GLOBALS['mod_strings']['ERR_WEB_SOCKET_ERROR']);
+            $serverSettings = SugarSocket::checkWSSettings($websocket_server_url, 'server');
+            if (!$serverSettings['available']) {
+                $errors['ERR_WEB_SOCKET_SERVER_ERROR'] = $GLOBALS['mod_strings']['ERR_WEB_SOCKET_SERVER_ERROR'];
             }
         } else {
             if (empty($websocket_client_url)) {
@@ -238,7 +239,7 @@ class AdministrationController extends SugarController
                 ),
                 'client' => array(
                     'url' => $websocket_client_url,
-                    'balancer' => SugarSocket::isBalancer($websocket_client_url)
+                    'balancer' => $clientSettings['isBalancer']
                 ),
                 'public_secret' => $websocket_public_secret,
             );
