@@ -181,24 +181,6 @@ function goBack(router) {
     router.goBack();
 }
 
-function cancelAction(router) {
-    if (decision_table.getIsDirty()) {
-        App.alert.show('dirty-br-confirmation', {
-            level: 'confirmation',
-            //TODO Add Label with the message when BR is dirty
-            messages: 'Do you want to exit without save the changes in the Business Rule?',
-            onCancel: function () {
-                return;
-            },
-            onConfirm: function () {
-                App.router.navigate('pmse_Business_Rules', {trigger: true});
-            }
-        });
-    } else {
-        App.router.navigate('pmse_Business_Rules', {trigger: true});
-    }
-}
-
 function updateBRHeader(name, module) {
     $(".brTitle").text(name);
     $(".brModule").text(module);

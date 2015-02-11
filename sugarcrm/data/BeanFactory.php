@@ -104,7 +104,7 @@ class BeanFactory {
                 // check if cached bean is deleted
                 if ($deleted && !empty($bean->deleted)) { 
                     if(empty($params['strict_retrieve'])) {
-                        return SugarBean::_createBean($beanClass);;
+                        return SugarBean::_createBean($beanClass);
                     } else {
                         return null;
                     }
@@ -112,7 +112,7 @@ class BeanFactory {
 
                 // cached bean was retrieved with team security disabled
                 if (empty($params['disable_row_level_security']) && !empty($bean->disable_row_level_security)) {
-                    $newBean = SugarBean::_createBean($beanClass);;
+                    $newBean = SugarBean::_createBean($beanClass);
                     
                     if (isset($params['disable_row_level_security'])) { // false
                         $newBean->disable_row_level_security = false;

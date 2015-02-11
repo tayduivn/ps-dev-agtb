@@ -110,7 +110,7 @@
      * @returns {boolean}
      */
     resize: function() {
-        if (this.isDashletVisible()) {
+        if (this.isDashletVisible() && this.paretoChart && _.isFunction(this.paretoChart.update)) {
             this.paretoChart.update();
         }
     },

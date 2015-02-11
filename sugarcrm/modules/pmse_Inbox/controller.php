@@ -26,20 +26,12 @@ class pmse_InboxController extends SugarController
 
     public function action_showCase()
     {
-        //if ($this->accessManager->casesCanBeExecuted()) {
         $this->view = 'showCase';
-        //} else {
-        //    $this->view = 'limitReached';
-        //}
     }
 
     public function action_noShowCase()
     {
-//        if ($this->accessManager->casesCanBeExecuted()) {
         $this->view = 'noShowCase';
-//        } else {
-//            $this->view = 'limitReached';
-//        }
     }
 
     /**

@@ -236,12 +236,9 @@ class SugarQuery_Builder_Field
                 if ($this instanceof SugarQuery_Builder_Field_Select) {
                     $params['team_security'] = false;
                 }
-                $join = $this->query->join($this->def['link'], $params);
-                $jta = $join->joinName();
-
                 if (isset($this->def['id_name']) && $this->def['id_name'] != $this->def['name']) {
                     //Custom relate fields may have the id field on the custom table, need to check for that.
-                    $idField = new SugarQuery_Builder_Field($this->def['id_name'], $this->query);
+                    $idField = new SugarQuery_Builder_Field_Select($this->def['id_name'], $this->query);
                     $idField->setupField($this->query);
                     $idField->checkCustomField();
                     if ($idField->custom) {
@@ -249,6 +246,8 @@ class SugarQuery_Builder_Field
                         $this->query->joinCustomTable($this->query->getFromBean());
                     }
                 }
+                $join = $this->query->join($this->def['link'], $params);
+                $jta = $join->joinName();
             } elseif(!empty($this->def['link']) && $this->query->getJoinAlias($this->def['link'])) {
                 $jta = $this->query->getJoinAlias($this->def['link']);
             }

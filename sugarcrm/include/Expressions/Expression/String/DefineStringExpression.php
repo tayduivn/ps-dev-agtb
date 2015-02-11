@@ -54,7 +54,15 @@ class DefineStringExpression extends StringExpression {
 	 */
 	static function getJSEvaluate() {
 		return <<<EOQ
-			return this.getParameters().evaluate() + "";
+        var value = this.getParameters().evaluate(),
+            string;
+        if (value instanceof Date) {
+            var dateOnly = value.type == "date";
+            string = App.date(value).formatUser(dateOnly);
+        } else {
+            string = value + "";
+        }
+        return string;
 EOQ;
 	}
 
@@ -86,4 +94,3 @@ EOQ;
 	function toString() {
 	}
 }
-?>
