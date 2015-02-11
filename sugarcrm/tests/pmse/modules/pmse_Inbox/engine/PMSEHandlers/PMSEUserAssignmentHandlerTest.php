@@ -1283,10 +1283,6 @@ class PMSEUserAssignmentHandlerTest extends Sugar_PHPUnit_Framework_TestCase
     
     public function testGetAssignableUserList()
     {
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
-
         $userAssignmentHandlerMock = $this->getMockBuilder('PMSEUserAssignmentHandler')
                 ->disableOriginalConstructor()
                 ->setMethods(array('retrieveBean', 'getReassignedUserList'))
@@ -1307,9 +1303,9 @@ class PMSEUserAssignmentHandlerTest extends Sugar_PHPUnit_Framework_TestCase
         $flowMock->bpmn_type = 'bpmnActivity';
         $flowMock->cas_reassign_level = 2;
         
-        $userAssignmentHandlerMock->expects($this->at(0))
+        /*$userAssignmentHandlerMock->expects($this->at(0))
                 ->method('retrieveBean')
-                ->will($this->returnValue($flowMock));
+                ->will($this->returnValue($flowMock));*/
         
         $activityMock = $this->getMockBuilder('pmse_BpmnActivity')
                 ->disableOriginalConstructor()
@@ -1318,7 +1314,7 @@ class PMSEUserAssignmentHandlerTest extends Sugar_PHPUnit_Framework_TestCase
         $activityMock->act_adhoc_team = 'teamAdhoc';
         $activityMock->act_reassign_team = 'teamReassign';
         
-        $userAssignmentHandlerMock->expects($this->at(2))
+        $userAssignmentHandlerMock->expects($this->at(1))
                 ->method('retrieveBean')
                 ->will($this->returnValue($activityMock));
         
@@ -1337,13 +1333,13 @@ class PMSEUserAssignmentHandlerTest extends Sugar_PHPUnit_Framework_TestCase
                 ->method('get_full_list')
                 ->will($this->returnValue($membersMock));
         
-        $userAssignmentHandlerMock->expects($this->at(4))
+        $userAssignmentHandlerMock->expects($this->at(3))
                 ->method('retrieveBean')
                 ->will($this->returnValue($membershipMock));
         
         $userMock = new stdClass();
         
-        $userAssignmentHandlerMock->expects($this->at(5,6,7))
+        $userAssignmentHandlerMock->expects($this->at(4,5,6))
                 ->method('retrieveBean')
                 ->will($this->returnValue($userMock));
         
@@ -1354,16 +1350,12 @@ class PMSEUserAssignmentHandlerTest extends Sugar_PHPUnit_Framework_TestCase
         
         $expectedList = array('user02', 'user03');
         
-        $list = $userAssignmentHandlerMock->getAssignableUserList($caseId, $caseIndex, $fullList, $type);
+        $list = $userAssignmentHandlerMock->getAssignableUserList($flowMock, $fullList, $type);
         $this->assertCount(2, $list);
     }
     
     public function testGetAssignableUserListForCurrentTeam()
     {
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
-
         global $current_user;
         $current_user = new stdClass();
         $current_user->id = 'current_user_01';
@@ -1387,10 +1379,17 @@ class PMSEUserAssignmentHandlerTest extends Sugar_PHPUnit_Framework_TestCase
         $flowMock->bpmn_id = 'act01';
         $flowMock->bpmn_type = 'bpmnActivity';
         $flowMock->cas_reassign_level = 2;
-        
-        $userAssignmentHandlerMock->expects($this->at(0))
+
+        $activityDefinitionMock = $this->getMockBuilder('pmse_BpmActivityDefinition')
+            ->disableOriginalConstructor()
+            ->setMethods(array('retrieve_by_string_fields'))
+            ->getMock();
+
+        $activityDefinitionMock->act_adhoc_team = 'current_team';
+
+        $userAssignmentHandlerMock->expects($this->at(1))
                 ->method('retrieveBean')
-                ->will($this->returnValue($flowMock));
+                ->will($this->returnValue($activityDefinitionMock));
         
         $activityMock = $this->getMockBuilder('pmse_BpmnActivity')
                 ->disableOriginalConstructor()
@@ -1402,48 +1401,34 @@ class PMSEUserAssignmentHandlerTest extends Sugar_PHPUnit_Framework_TestCase
         $userAssignmentHandlerMock->expects($this->at(2))
                 ->method('retrieveBean')
                 ->will($this->returnValue($activityMock));
-        
-        $teamMock = $this->getMockBuilder('Teams')
-                ->disableOriginalConstructor()
-                ->setMethods(array('getTeamsByUser', 'getTeamObject', 'setTeamObject', 'getMembers'))
-                ->getMock();
-        
-        $teams = array(
-            (object)array('id' => 'team01'),
-            (object)array('id' => 'team02'),
-            (object)array('id' => 'team03')
-        );
-        
-        $teamMock->expects($this->once())   
-                ->method('getTeamsByUser')
-                ->will($this->returnValue($teams));
-        
-        $teamMock->expects($this->atLeastOnce())   
-                ->method('getTeamObject')
-                ->will($this->returnSelf());
-        
+
+        $membershipMock = $this->getMockBuilder('TeamMembership')
+            ->disableOriginalConstructor()
+            ->setMethods(array('get_full_list'))
+            ->getMock();
+
         $membersMock = array(
-            (object)array('id' => 'user01', 'user_id' => 'user01'),
-            (object)array('id' => 'user02', 'user_id' => 'user01'),
-            (object)array('id' => 'user03', 'user_id' => 'user01'),
+            (object)array('user_id' => 'user01'),
+            (object)array('user_id' => 'user02'),
+            (object)array('user_id' => 'user03'),
         );
-        
-        $teamMock->expects($this->atLeastOnce())
-                ->method('getMembers')
-                ->will($this->returnValue($membersMock));
-        
+
+        $membershipMock->expects($this->once())
+            ->method('get_full_list')
+            ->will($this->returnValue($membersMock));
+
         $userAssignmentHandlerMock->expects($this->at(3))
-                ->method('retrieveBean')
-                ->will($this->returnValue($teamMock));
+            ->method('retrieveBean')
+            ->will($this->returnValue($membershipMock));
         
         $caseId = 1;
         $caseIndex = 2;
         $fullList = false;
-        $type = 'ADHOC';
+        $type = 'REASSIGN';
         
         
-        $list = $userAssignmentHandlerMock->getAssignableUserList($caseId, $caseIndex, $fullList, $type);
-        $this->assertCount(0, $list);
+        $list = $userAssignmentHandlerMock->getAssignableUserList($flowMock, $fullList, $type);
+        $this->assertCount(2, $list);
     }
     
     public function testGetCurrentUserId()
