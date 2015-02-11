@@ -94,6 +94,7 @@
 
     // fn to turn off event listeners and reenable tooltips
     resetDropdownDelegate: function(e) {
+        this.$el.removeClass('no-touch-scrolling');
         var $b = this.$(e.currentTarget).first();
         $b.parent().closest('.list').removeClass('open');
         $b.off('resetDropdownDelegate.right-actions');
@@ -111,6 +112,7 @@
                 );
             };
 
+        this.$el.addClass('no-touch-scrolling');
         // add open class to parent list to elevate absolute z-index for iOS
         $buttonGroup.parent().closest('.list').addClass('open');
         // detect window bottom collision
