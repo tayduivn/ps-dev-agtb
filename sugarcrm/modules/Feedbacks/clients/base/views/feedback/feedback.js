@@ -147,12 +147,12 @@
 
         var emails = app.user.get('email');
         var primary = _.filter(emails, function(email) { return email.primary_address; });
-        var email = _.first(primary || _.first(emails)).email_address;
+        var email = _.first(primary || _.first(emails));
 
         this.model.set({
             name: app.user.get('full_name'),
             username: app.user.get('user_name'),
-            email: email,
+            email: email && email.email_address || '',
             phone: 'n/a',
             timezone: app.user.getPreference('timezone'),
             account_type: app.user.get('type'),
