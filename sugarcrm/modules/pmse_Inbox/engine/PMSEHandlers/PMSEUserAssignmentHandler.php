@@ -111,7 +111,7 @@ class PMSEUserAssignmentHandler
         $currentUserId = $flowData['cas_user_id'];
         $currentSugarId = $flowData['cas_sugar_object_id'];
         $currentSugarModule = $flowData['cas_sugar_module'];
-        $today = date('Y-m-d H:i:s');
+        $today =  $GLOBALS['timedate']->nowDb();
 
         $activitiesDef = $activityDefinitionBean->get_list('pmse_bpm_activity_definition.id',
             "pmse_bpm_activity_definition.id = '$actId' ", 0, -1, -1, array());
@@ -221,7 +221,7 @@ class PMSEUserAssignmentHandler
         $newFlowRow->cas_previous = $caseData['cas_index'];
         $newFlowRow->cas_adhoc_type = isset($caseData['cas_adhoc_type']) ? $caseData['cas_adhoc_type'] : $flowRow->cas_adhoc_type;
         $newFlowRow->cas_task_start_date = !isset($flowRow->cas_task_start_date) ? $flowRow->cas_delegate_date : $flowRow->cas_task_start_date;
-        $newFlowRow->cas_delegate_date = date('Y-m-d H:i:s');
+        $newFlowRow->cas_delegate_date = $GLOBALS['timedate']->nowDb();
 
         if ($isRoundTripReassign) {
             $newFlowRow->cas_reassign_level--;

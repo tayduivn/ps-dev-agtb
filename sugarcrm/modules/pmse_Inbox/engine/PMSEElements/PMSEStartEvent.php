@@ -88,8 +88,10 @@ class PMSEStartEvent extends PMSEEvent
         $cas_id = 0;
         $updateCaseWithNumber = false;
 
-        $today = date('Y-m-d H:i:s');
-        $dueDate = date('Y-m-d H:i:s', strtotime("+2 days"));
+        $today = $GLOBALS['timedate']->nowDb();
+        $_date = new DateTime($today);
+        $_date->add(new DateInterval('P2D'));
+        $dueDate = $_date->format('Y-m-d H:i:s');
 
         //todo: generate a pin
         $cas_pin = rand(0, 10000);
