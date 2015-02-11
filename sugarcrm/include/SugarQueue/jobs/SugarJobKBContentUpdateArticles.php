@@ -61,10 +61,10 @@ class SugarJobKBContentUpdateArticles implements RunnableSchedulerJob
                 $bean->exp_date = $this->td->nowDate();
                 $bean->status = KBContent::ST_EXPIRED;
             } else {
-                if ($bean->internal_rev) {
-                    $bean->status = KBContent::ST_PUBLISHED_IN;
-                } else {
+                if ($bean->is_external) {
                     $bean->status = KBContent::ST_PUBLISHED_EX;
+                } else {
+                    $bean->status = KBContent::ST_PUBLISHED_IN;
                 }
             }
             $bean->active_date = $this->td->nowDate();

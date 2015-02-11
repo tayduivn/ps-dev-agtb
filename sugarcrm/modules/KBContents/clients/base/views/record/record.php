@@ -239,8 +239,8 @@ $viewdefs['KBContents']['base']['view']['record'] = array(
                 'team_name' => array(
                     'name' => 'team_name',
                 ),
-                'internal_rev' => array(
-                    'name' => 'internal_rev',
+                'is_external' => array(
+                    'name' => 'is_external',
                     'type' => 'bool',
                 ),
                 'date_entered' => array(

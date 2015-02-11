@@ -30,7 +30,7 @@ class KBContent extends SugarBean {
 
     public $status;
     public $active_rev;
-    public $internal_rev;
+    public $is_external;
     public $active_date;
     public $exp_date;
 
