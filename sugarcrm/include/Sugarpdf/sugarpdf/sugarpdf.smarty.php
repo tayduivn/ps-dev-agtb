@@ -78,6 +78,10 @@ class SugarpdfSmarty extends Sugarpdf{
             // Enable enhanced security for user-provided templates. This
             // includes disabling the {php} Smarty tag.
             $this->ss->security = true;
+            if (defined('SUGAR_SHADOW_PATH')) {
+                $this->ss->secure_dir[] = SUGAR_SHADOW_PATH;
+            }
+
             $this->ss->assign('MOD', $GLOBALS['mod_strings']);
             $this->ss->assign('APP', $GLOBALS['app_strings']);
         }
