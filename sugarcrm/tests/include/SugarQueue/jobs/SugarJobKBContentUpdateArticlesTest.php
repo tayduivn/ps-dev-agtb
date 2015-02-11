@@ -44,6 +44,7 @@ class SugarJobKBContentUpdateArticlesTest extends Sugar_PHPUnit_Framework_TestCa
 
         $this->approvedArticle = SugarTestKBContentUtilities::createBean();
         $this->approvedArticle->active_date = $td->nowDate();
+        $this->approvedArticle->is_external = false;
         $this->approvedArticle->save();
 
         $schedulersJob = $this->getMock('SchedulersJob');
@@ -135,7 +136,7 @@ class SugarJobKBContentUpdateArticlesTest extends Sugar_PHPUnit_Framework_TestCa
         $this->job->run(null);
 
         $this->approvedArticle->retrieve();
-        $this->assertEquals(KBContent::ST_PUBLISHED_EX, $this->approvedArticle->status);
+        $this->assertEquals(KBContent::ST_PUBLISHED_IN, $this->approvedArticle->status);
     }
 
     /**
@@ -144,6 +145,7 @@ class SugarJobKBContentUpdateArticlesTest extends Sugar_PHPUnit_Framework_TestCa
     public function testPublishing()
     {
         $this->approvedArticle->status = KBContent::ST_APPROVED;
+        $this->approvedArticle->is_external = true;
         $this->approvedArticle->save();
 
         $this->job->run(null);
@@ -158,13 +160,13 @@ class SugarJobKBContentUpdateArticlesTest extends Sugar_PHPUnit_Framework_TestCa
     public function testPublishingAsInternal()
     {
         $this->approvedArticle->status = KBContent::ST_APPROVED;
-        $this->approvedArticle->internal_rev = true;
+        $this->approvedArticle->is_external = true;
         $this->approvedArticle->save();
 
         $this->job->run(null);
 
         $this->approvedArticle->retrieve();
-        $this->assertEquals(KBContent::ST_PUBLISHED_IN, $this->approvedArticle->status);
+        $this->assertEquals(KBContent::ST_PUBLISHED_EX, $this->approvedArticle->status);
     }
 
     /**

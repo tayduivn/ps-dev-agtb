@@ -46,11 +46,12 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
                 unset($data['id']);
                 $data['kbdocument_body'] = $data['body'];
                 $data['kbsapprover_id'] = $data['kbdoc_approver_id'];
+                $data['is_external'] = empty($data['is_external_article']) ? false : true;
 
                 $app_list_strings = return_app_list_strings_language('en_us');
                 // Yes, the status_id is a lable.
                 if ($data['status_id'] == 'Published') {
-                    $data['status'] = ($data['is_external_article'] == 1) ?
+                    $data['status'] = ($data['is_external'] === true) ?
                         KBContent::ST_PUBLISHED_EX :
                         KBContent::ST_PUBLISHED_IN;
                 } else {

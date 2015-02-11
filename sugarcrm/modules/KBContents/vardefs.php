@@ -199,12 +199,12 @@ $dictionary['KBContent'] = array(
             'studio' => false,
             'readonly' => true,
         ),
-        'internal_rev' => array(
-            'name' => 'internal_rev',
+        'is_external' => array(
+            'name' => 'is_external',
             'vname' => 'LBL_INTERNAL_REV',
             'type' => 'tinyint',
             'isnull' => 'true',
-            'comment' => 'Internal revision flag',
+            'comment' => 'Extarnal article flag',
             'default' => 0,
             'duplicate_on_record_copy' => 'no',
             'studio' => false,
