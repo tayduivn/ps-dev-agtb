@@ -518,13 +518,27 @@ hr.soften {
     > i {
       font-size: 1.4em;
       margin: 0 2px 0;
+      cursor: pointer;
       &:before {
         color: @blue;
+      }
+      &:hover {
+        &:before {
+          color: @linkColorHover;
+        }
       }
     }
   }
   .feedback-footer {
     line-height: 2em;
     margin-top: 10px;
+  }
+  aside {
+    margin-top: 10px;
+    line-height: 12px;
+    margin-bottom: 5px;
+    font-size: 75%;
+    color: @grayLight;
+    text-align: justify;
   }
 }

@@ -187,6 +187,7 @@
             crossDomain: true,
             cache: false,
             context: this,
+            timeout: 10000,
             success: function() {
                 app.alert.show('send_feedback', {
                     level: 'success',
@@ -196,6 +197,12 @@
                 this.model.unset('feedback_text');
                 this.model.unset('feedback_csat');
                 this.toggle(false);
+            },
+            error: function(){
+                app.alert.show('send_feedback', {
+                    level: 'error',
+                    messages: app.lang.get('LBL_FEEDBACK_NOT_SENT', this.module)
+                });
             }
         });
     }
