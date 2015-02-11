@@ -150,6 +150,7 @@ Work on the code as much as you want and commit as much as you want; but keep in
 
 * Follow the coding [standards](#coding-standards);
 * Check for unnecessary whitespace with `git diff --check` before committing. (use `git diff --check` to check for trailing spaces -- also read the tip below);
+* You can use <a href="https://github.com/mozilla/moz-git-tools">moz-git-tools'</a> git-fix-whitespace tool to automatically remove most such whitespace.
 * Add unit tests to prove that the bug is fixed or that the new feature actually works;
 * Try hard to not break backward compatibility (if you must do so, try to provide a compatibility layer to support the old way) -- patches that break backward compatibility have less chance to be merged;
 * Do atomic and logically separate commits (use the power of `git rebase` to have a clean and logical history);
