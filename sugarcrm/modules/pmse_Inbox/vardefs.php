@@ -361,6 +361,7 @@ $dictionary['pmse_Inbox'] = array(
     'optimistic_locking' => true,
     'unified_search' => true,
     'acls' => array('SugarACLDeveloperOrAdmin' => array('aclModule' => 'pmse_Inbox', 'allowUserRead' => true)),
+    'hidden_to_role_assignment' => true,
 );
 if (!class_exists('VardefManager')){
         require_once('include/SugarObjects/VardefManager.php');
