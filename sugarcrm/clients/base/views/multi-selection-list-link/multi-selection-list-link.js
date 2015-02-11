@@ -18,7 +18,6 @@
     extendsFrom: 'MultiSelectionListView',
 
     initialize: function(options) {
-
         this._super('initialize', [options]);
         this.meta.selection = _.extend({}, options.meta.selection, {isLinkAction: true});
     },
@@ -75,9 +74,9 @@
             collectionOptions = context.get('collectionOptions') || {};
 
         if (context.has('parentModel')) {
-            var parentModel = context.get('parentModel'),
-                syncedAttributes = parentModel.getSyncedAttributes(),
-                updatedAttributes = _.reduce(data.record, function(memo, val, key) {
+            var parentModel = context.get('parentModel');
+            var syncedAttributes = parentModel.getSyncedAttributes();
+            var updatedAttributes = _.reduce(data.record, function(memo, val, key) {
                     if (!_.isEqual(syncedAttributes[key], val)) {
                         memo[key] = val;
                     }

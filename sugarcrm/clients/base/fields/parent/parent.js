@@ -116,31 +116,40 @@
             this.$(this.typeFieldTag).select2("enable");
         }
     },
-    setValue: function(model) {
-        if (!model) {
+
+    /**
+     * @override
+     */
+    setValue: function(models) {
+        if (!models) {
             return;
         }
-        var silent = model.silent || false,
+        models = _.isArray(models) ? models : [models];
+        _.each(models, _.bind(function(model) {
+
+            var silent = model.silent || false,
             // FIXME we shouldn't make this assumption and this method should
             // receive a true Backbone.Model or Data.Bean
-            module = model.module || model._module;
+                module = model.module || model._module;
 
-        this._createFiltersCollection();
+            this._createFiltersCollection();
 
-        if (app.acl.hasAccessToModel(this.action, this.model, this.name)) {
-            if (module) {
-                this.model.set('parent_type', module, {silent: silent});
-                this._createSearchCollection();
+            if (app.acl.hasAccessToModel(this.action, this.model, this.name)) {
+                if (module) {
+                    this.model.set('parent_type', module, {silent: silent});
+                    this._createSearchCollection();
+                }
+                // only set when we have an id on the model, as setting undefined
+                // is causing issues with the warnUnsavedChanges() method
+                if (!_.isUndefined(model.id)) {
+                    this.model.set('parent_id', model.id, {silent: silent});
+                    // FIXME we shouldn't rely on model.value... and hack the full_name here until we fix it properly
+                    var value = model.value || model[this.def.rname || 'name'] || model['full_name'];
+                    this.model.set('parent_name', value, {silent: silent});
+                }
             }
-            // only set when we have an id on the model, as setting undefined
-            // is causing issues with the warnUnsavedChanges() method
-            if (!_.isUndefined(model.id)) {
-                this.model.set('parent_id', model.id, {silent: silent});
-                // FIXME we shouldn't rely on model.value... and hack the full_name here until we fix it properly
-                var value = model.value || model[this.def.rname || 'name'] || model['full_name'];
-                this.model.set('parent_name', value, {silent: silent});
-            }
-        }
+        }, this));
+
         // TODO we should support the auto populate of other fields like we do on normal relate.js
     },
     /**

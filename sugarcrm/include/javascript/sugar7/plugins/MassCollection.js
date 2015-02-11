@@ -18,28 +18,36 @@
     app.events.on('app:init', function() {
         app.plugins.register('MassCollection', ['view'], {
             onAttach: function() {
-                this.on('init', function() {
-                    this.createMassCollection();
-                    this._preselectModels();
-                    this.context.on('mass_collection:add', this.addModel, this);
-                    this.context.on('mass_collection:add:all', this.addAllModels, this);
-                    this.context.on('mass_collection:remove', this.removeModel, this);
-                    this.context.on('mass_collection:remove:all', this.removeAllModels, this);
-                    this.context.on('mass_collection:clear', this.clearMassCollection, this);
+                this.on('init', this._initMassCollectionPlugin, this);
+                this.on('render', this.onMassCollectionRender, this);
+            },
 
-                    this.independentMassCollection = this.independentMassCollection ||
-                        this.context.get('independentMassCollection') || false;
+            /**
+             * Initializes the plugin.
+             *
+             * @private
+             */
+            _initMassCollectionPlugin: function() {
+                this.createMassCollection();
+                this._preselectModels();
+                this.context.on('mass_collection:add', this.addModel, this);
+                this.context.on('mass_collection:add:all', this.addAllModels, this);
+                this.context.on('mass_collection:remove', this.removeModel, this);
+                this.context.on('mass_collection:remove:all', this.removeAllModels, this);
+                this.context.on('mass_collection:clear', this.clearMassCollection, this);
+            },
 
-                }, this);
-
-                this.on('render', function() {
-                    var massCollection = this.context.get('mass_collection');
-                    if (this.collection.length !== 0) {
-                        if (this._isAllChecked(massCollection)) {
-                            massCollection.trigger('all:checked');
-                        }
+            /**
+             * Callback on view `render` that triggers an `all:check` event if
+             * all records in the collection are checked.
+             */
+            onMassCollectionRender: function() {
+                var massCollection = this.context.get('mass_collection');
+                if (this.collection.length !== 0) {
+                    if (this._isAllChecked(massCollection)) {
+                        massCollection.trigger('all:checked');
                     }
-                }, this);
+                }
             },
 
             /**
@@ -80,7 +88,6 @@
              * @private
              */
             _preselectModels: function() {
-
                 this.preselectedModelIds = this.context.get('preselectedModelIds');
                 if (!_.isArray(this.preselectedModelIds)) {
                     this.preselectedModelIds = [this.preselectedModelIds];
@@ -206,9 +213,11 @@
              * collection.
              *
              * @return {boolean} allChecked `true` if all models of the view
-             * collection are in the mass collection.
+             *   collection are in the mass collection.
              */
             _isAllChecked: function(massCollection) {
+                if (massCollection.length < this.collection.length) return false;
+
                 var allChecked = _.every(this.collection.models, function(model) {
                     return _.contains(_.pluck(massCollection.models, 'id'), model.id);
                 }, this);

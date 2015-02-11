@@ -40,7 +40,7 @@
             var linkTitleLabel = _.find(this.meta.fields, function(field) {
                 return field.name = 'title';
             }, this);
-            linkTitleLabel.default_value = 'LBL_SEARCH_AND_ADD';
+            linkTitleLabel.default_value = 'TPL_SEARCH_AND_ADD';
         }
 
         if (!multiSelectFilter) {

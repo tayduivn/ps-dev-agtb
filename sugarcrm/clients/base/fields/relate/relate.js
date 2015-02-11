@@ -102,19 +102,15 @@
          * @property {number}
          */
         this.maxSelectedRecords = 20;
-        /**
-         * Maximum number of items we display in the field.
-         *
-         * @property {number}
-         */
-        app.view.Field.prototype.initialize.call(this, options);
+
+        this._super('initialize', [options]);
         /**
          * The template used for a pill in case of multiselect field.
          *
          * @property {Function}
          * @private
          */
-        this._select2formatSelectionTemplate = app.template.get("f.relate.pill");
+        this._select2formatSelectionTemplate = app.template.getField('relate', 'pill', this.module);
 
         var populateMetadata = app.metadata.getModule(this.getSearchModule());
 
@@ -238,7 +234,7 @@
     _render: function() {
         var self = this;
         var searchModule = this.getSearchModule();
-        var loadingLabel = app.lang.get('LBL_LOADING', self.module);
+        var loadingLabel = app.lang.get('LBL_LOADING', this.module);
 
         //Do not render if the related module is invalid
         if (searchModule && !_.contains(app.metadata.getModuleNames(), searchModule)) {
@@ -489,7 +485,7 @@
     /**
      * Sets the value in the field.
      *
-     * @param {Array} models The source models attributes.
+     * @param {Data.bean | Array} models The source models attributes.
      */
     setValue: function(models) {
 
@@ -639,26 +635,22 @@
      *      the value is the field name in the Opportunities record.
      */
     openSelectDrawer: function() {
-        var layout, context;
+        var layout = 'selection-list';
+        var context = {
+            module: this.getSearchModule(),
+            fields: this.getSearchFields(),
+            filterOptions: this.getFilterOptions()
+        };
+
         if (!!this.def.isMultiSelect) {
             layout = 'multi-selection-list';
-            context = {
-                module: this.getSearchModule(),
-                fields: this.getSearchFields(),
-                filterOptions: this.getFilterOptions(),
+            _.extend(context, {
                 preselectedModelIds: _.clone(this.model.get(this.def.id_name)),
                 maxSelectedRecords: this.maxSelectedRecords,
-                isMultiSelect: true,
-                independentMassCollection: true
-            };
-        } else {
-            layout = 'selection-list';
-            context = {
-                module: this.getSearchModule(),
-                fields: this.getSearchFields(),
-                filterOptions: this.getFilterOptions()
-            };
+                isMultiSelect: true
+            });
         }
+
         app.drawer.open({
             layout: layout,
             context: context

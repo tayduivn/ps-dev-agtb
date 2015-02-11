@@ -2690,7 +2690,7 @@ $app_strings = array (
     'LBL_MISSING_CUSTOM_DELIMITER' => 'Must specify a custom delimiter.',
     'LBL_LAST_VIEWED' => 'Recently Viewed',
     'LBL_SELECTED_RECORDS' => 'Selected: ',
-    'LBL_MAX_PILLS_DISPLAYED' => 'Only {{maxPillsDisplayed}} records are visualized.',
+    'TPL_MAX_PILLS_DISPLAYED' => 'Only {{maxPillsDisplayed}} records are visualized.',
     'LBL_SHOW_LESS' => 'Show less',
     'LBL_SHOW_MORE' => 'Show more',
     'LBL_SHOW_MORE_MODULE' => 'More {{{module}}}...',
@@ -4247,7 +4247,7 @@ Sincerely, SugarCRM',
     'LBL_TEAM_SELECTED_TITLE' => 'Team Selected ',
     'LBL_TEAM_SELECT_AS_PRIM_TITLE' => 'Select to make this team primary',
     'LBL_SEARCH_AND_SELECT' => 'Search and Select {{module}}',
-    'LBL_SEARCH_AND_ADD' => 'Search and Add {{module}}',
+    'TPL_SEARCH_AND_ADD' => 'Search and Add {{module}}',
 
     //for upload errors
     'UPLOAD_ERROR_TEXT'          => 'ERROR: There was an error during upload. Error code: {0} - {1}',

@@ -120,7 +120,8 @@
         if (!massCollection) {
             return;
         }
-        if (this.model.id) { //listeners for each record selection
+        //listeners for each record selection
+        if (this.model.id) {
             massCollection.on('add', function(model) {
                 if (this.model && model.id === this.model.id) {
                     this.$(this.fieldTag).attr('checked', true);
@@ -143,12 +144,12 @@
             } else {
                 delete this.selected;
             }
-        } else { //Listeners on the checkAll/uncheckAll checkbox.
+        //Listeners on the checkAll/uncheckAll checkbox.
+        } else {
             //FIXME: We should not listen to events on the collection and update
             //the massCollection here. This should be done in MassCollection
             // plugin. This will be adressed by SC-1723.
             if (this.collection) {
-
                 this.collection.on('reset', function() {
                     if (massCollection.entire) {
                         massCollection.reset();

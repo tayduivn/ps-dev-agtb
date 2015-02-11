@@ -57,7 +57,9 @@
      * @param {Model} model The model corresponding to the pill to remove.
      */
     removePill: function(model) {
-        this.pills = _.filter(this.pills, function(pill) {return pill.id !== model.id});
+        this.pills = _.reject(this.pills, function(pill) {
+            return pill.id === model.id;
+        });
         this.render();
     },
 
@@ -97,11 +99,7 @@
     closePill: function(event) {
         var modelId = this.$(event.target).closest('.select2-search-choice').data('id').toString();
         this.removePill({id: modelId});
-        var massCollection = this.context.get('mass_collection');
-        if (!massCollection) {
-            return;
-        }
-        var model = _.find(massCollection.models, function(model) {
+        var model = _.find(this.massCollection.models, function(model) {
             return model.id === modelId;
         });
 
@@ -116,7 +114,7 @@
         if (this.pills.length > this.maxPillsDisplayed) {
             this.displayedPills = this.pills.slice(0, this.maxPillsDisplayed);
             this.tooManySelectedRecords = true;
-            this.msgMaxPillsDisplayed = app.lang.get('LBL_MAX_PILLS_DISPLAYED',
+            this.msgMaxPillsDisplayed = app.lang.get('TBL_MAX_PILLS_DISPLAYED',
                 this.module, {maxPillsDisplayed: this.maxPillsDisplayed});
         } else {
             this.tooManySelectedRecords = false;
@@ -124,26 +122,22 @@
         }
 
         this._super('_render');
-        var massCollection = this.context.get('mass_collection');
-        if (!massCollection) {
+        this.massCollection = this.context.get('mass_collection');
+        if (!this.massCollection) {
             return;
         }
-        this.stopListening(massCollection);
+        this.stopListening(this.massCollection);
 
-        this.listenTo(massCollection, 'add', this.addPill);
-        this.listenTo(massCollection, 'remove', this.removePill);
-        this.listenTo(massCollection, 'reset', this.resetPills);
+        this.listenTo(this.massCollection, 'add', this.addPill);
+        this.listenTo(this.massCollection, 'remove', this.removePill);
+        this.listenTo(this.massCollection, 'reset', this.resetPills);
     },
 
     /**
      * @inheritDoc
      */
     unbind: function() {
-        var massCollection = this.context.get('mass_collection');
-        if (!massCollection) {
-            return;
-        }
-        this.stopListening(massCollection);
+        this.stopListening(this.massCollection);
         this._super('unbind');
     }
 })
