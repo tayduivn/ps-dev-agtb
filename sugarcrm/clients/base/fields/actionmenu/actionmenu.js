@@ -16,7 +16,7 @@
 ({
     events: {
         'click .checkall > input[name="check"]': 'checkAll',
-        'click input[name="check"]': 'check'
+        'click input[name="check"].check-one': 'check'
     },
 
     plugins: ['Tooltip'],
@@ -74,33 +74,38 @@
      * Sends an event to the context to add or remove the model from the mass
      * collection.
      *
-     * @param {boolean} checked `true` if the checkbox is checked, `false`
-     * otherwise.
+     * @param {boolean} checked `true` to pass the model to the mass collection,
+     *   `false` to remove it.
      */
     toggleSelect: function(checked) {
-        if (!!checked) {
-            this.context.trigger('mass_collection:add', this.model);
-        } else {
-            this.context.trigger('mass_collection:remove', this.model);
-        }
+        var event = !!checked ? 'mass_collection:add' : 'mass_collection:remove';
+        this.context.trigger(event, this.model);
+    },
+
+    /**
+     * Selects or unselects all records that are in the current collection.
+     */
+    checkAll: function() {
+        var $checkbox = this.$(this.fieldTag);
+        var isChecked = $checkbox.is(':checked');
+        this.toggleAll(isChecked);
     },
 
     /**
      * Sends an event to the context to add or remove all models from the mass
      * collection.
      *
-     * @param {Event} event The `click` event.
+     * @param {boolean} checked `true` to pass all models in the collection to
+     *   the mass collection, `false` to remove them.
+     *
+     *
+     * FIXME : Doing this way is slow to check all checkboxes when there
+     * are more than 20. We should check checkboxes before adding records to
+     * the mass collection SC-4079 will address this problem.
      */
-    checkAll: function(event) {
-        var $checkbox = this.$(this.fieldTag);
-        var isChecked = $checkbox.is(':checked');
-        if (!!isChecked) {
-            //FIXME : Doing this way is slow to check all checkboxes when there
-            // are more than 20. SC-4079 will address this problem.
-            this.context.trigger('mass_collection:add:all', this.model);
-        } else {
-            this.context.trigger('mass_collection:remove:all', this.model);
-        }
+    toggleAll: function(checked) {
+        var event = !!checked ? 'mass_collection:add:all' : 'mass_collection:remove:all';
+        this.context.trigger(event, this.model);
     },
 
     /**

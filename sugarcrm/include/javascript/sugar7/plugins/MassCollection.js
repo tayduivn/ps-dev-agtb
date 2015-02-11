@@ -65,8 +65,8 @@
                             massCollection.reset();
                         });
                     }
-                    return massCollection;
                 }
+                return massCollection;
             },
 
             /**
@@ -101,16 +101,23 @@
              *
              * @param {Model} model The model to add.
              */
-            addModel: function(model) {
-                if (model.id) { //each selection
-                    var massCollection = this.context.get('mass_collection');
-                    if (!massCollection) {
-                        return;
+            addModel: function(models) {
+                var massCollection = this.context.get('mass_collection');
+                if (!massCollection) {
+                    return;
+                }
+
+                models = _.isArray(models) ? models : [models];
+
+                _.each(models, function(model) {
+                    //each selection
+                    if (model.id) {
+                        massCollection.add(model);
                     }
-                    massCollection.add(model);
-                    if (this._isAllChecked(massCollection)) {
-                        massCollection.trigger('all:checked');
-                    }
+                });
+
+                if (this._isAllChecked(massCollection)) {
+                    massCollection.trigger('all:checked');
                 }
             },
 
@@ -127,6 +134,7 @@
                 } else {
                     massCollection.add(this.collection.models);
                 }
+                massCollection.trigger('all:checked');
             },
 
             /**
@@ -134,16 +142,22 @@
              *
              * @param {Model} model The model to remove.
              */
-            removeModel: function(model) {
-                if (model.id) {
-                    var massCollection = this.context.get('mass_collection');
-                    if (!massCollection) {
-                        return;
+            removeModel: function(models) {
+                var massCollection = this.context.get('mass_collection');
+                if (!massCollection) {
+                    return;
+                }
+
+                models = _.isArray(models) ? models : [models];
+
+                _.each(models, function(model) {
+                    if (model.id) {
+                        massCollection.remove(model);
                     }
-                    massCollection.remove(model);
-                    if (!this._isAllChecked(massCollection)) {
-                        massCollection.trigger('not:all:checked');
-                    }
+                });
+
+                if (!this._isAllChecked(massCollection)) {
+                    massCollection.trigger('not:all:checked');
                 }
             },
 
@@ -161,6 +175,7 @@
                 } else {
                     massCollection.remove(this.collection.models);
                 }
+                massCollection.trigger('not:all:checked');
             },
 
             /**
