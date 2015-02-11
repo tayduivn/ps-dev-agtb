@@ -488,9 +488,9 @@ $enabled_tabs[] = 'pmse_Project';
 $enabled_tabs[] = 'pmse_Inbox';
 $enabled_tabs[] = 'pmse_Business_Rules';
 $enabled_tabs[] = 'pmse_Emails_Templates';
+$enabled_tabs[] = 'KBContents';
 
 if ($_SESSION['demoData'] != 'no') {
-    $enabled_tabs[] = 'KBDocuments';
     $enabled_tabs[] = 'Bugs';
 }
 //END SUGARCRM flav=ent ONLY
