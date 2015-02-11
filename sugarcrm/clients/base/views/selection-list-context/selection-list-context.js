@@ -33,7 +33,7 @@
      */
     initialize: function(options) {
         this.pills = [];
-        app.view.View.prototype.initialize.call(this, options);
+        this._super('initialize', [options]);
      },
 
     /**

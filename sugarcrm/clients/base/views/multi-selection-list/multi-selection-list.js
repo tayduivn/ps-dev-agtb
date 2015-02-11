@@ -13,7 +13,7 @@
  * select multiple records in the list. The way to use it is similar to the
  * SelectionListView.
  *
- * It adds the following property:
+ * It adds the following properties which have to be set in the context:
  *
  * - `maxSelectedRecords` The max number of records the user can select in the
  *    case of multiselect selection list.
@@ -28,18 +28,6 @@
  */
 ({
     extendsFrom: 'SelectionListView',
-    /**
-     * Boolean to know whether the selected records called `mass collection`
-     * should be tied to the view collection or independant.
-     *
-     * If tied, selected records would have to be in the current view collection.
-     * As soon as the view collection is reset, the mass collection would be
-     * reset.
-     *
-     * @property {boolean} `true` for an independent mass collection. `false`
-     *   for the mass collection to be tied to the view collection.
-     */
-    independentMassCollection: true,
 
     initialize: function(options) {
         this.plugins = _.union(this.plugins, ['MassCollection']);
@@ -51,6 +39,19 @@
          * @property {number}
          */
         this.maxSelectedRecords = options.context.get('maxSelectedRecords');
+
+        /**
+         * Boolean to know whether the selected records called `mass collection`
+         * should be tied to the view collection or independant.
+         *
+         * If tied, selected records would have to be in the current view collection.
+         * As soon as the view collection is reset, the mass collection would be
+         * reset.
+         *
+         * @property {boolean} `true` for an independent mass collection. `false`
+         *   for the mass collection to be tied to the view collection.
+         */
+        this.independentMassCollection = options.context.get('independentMassCollection') || true;
     },
 
     /**
@@ -69,13 +70,11 @@
      * @override
      */
     initializeEvents: function() {
-            this.context.on('selection:select:fire', this.validateSelection, this);
+        this.context.on('selection:select:fire', this._validateSelection, this);
     },
 
     /**
-     * Checks the checkbox when the row is clicked.
-     *
-     * @param {object} event
+     * @inheritDoc
      */
     triggerCheck: function(event) {
         //Ignore inputs and links/icons, because those already have defined effects
@@ -90,7 +89,7 @@
      *
      * @protected
      */
-    validateSelection: function() {
+    _validateSelection: function() {
         var selectedModels = this.context.get('mass_collection');
         if (selectedModels) {
             if (selectedModels.length > this.maxSelectedRecords) {

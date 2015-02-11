@@ -28,6 +28,9 @@
                     this.context.on('mass_collection:remove:all', this.removeAllModels, this);
                     this.context.on('mass_collection:clear', this.clearMassCollection, this);
 
+                    this.independentMassCollection = this.independentMassCollection ||
+                        this.context.get('independentMassCollection') || false;
+
                 }, this);
 
                 this.on('render', function() {
@@ -80,7 +83,9 @@
                 if (!_.isArray(this.preselectedModelIds)) {
                     this.preselectedModelIds = [this.preselectedModelIds];
                 }
-                if (_.isEmpty(this.preselectedModelIds)) return;
+                if (_.isEmpty(this.preselectedModelIds)) {
+                    return;
+                }
 
                 var preselectedCollection = app.data.createBeanCollection(this.module);
                 preselectedCollection.fetch({

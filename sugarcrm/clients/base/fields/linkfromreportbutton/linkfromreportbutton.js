@@ -45,7 +45,8 @@
             context: {
                 module: 'Reports',
                 filterOptions: filterOptions.format(),
-                parent: this.context
+                parent: this.context,
+                independentMassCollection: true
             }
         }, _.bind(this.selectDrawerCallback, this));
     },

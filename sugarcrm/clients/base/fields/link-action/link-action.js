@@ -42,7 +42,8 @@
                 recParentModel: parentModel,
                 recLink: link,
                 recContext: this.context,
-                recView: this.view
+                recView: this.view,
+                independentMassCollection: true
             }
         }, function(model) {
             if (!model) {
