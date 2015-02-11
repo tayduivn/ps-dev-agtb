@@ -600,6 +600,7 @@ class PMSEEngineApi extends SugarApi
         $res = array(); //new stdClass();
         $res['success'] = true;
         global $current_user;
+        $today = $GLOBALS['timedate']->nowDb();
         foreach ($args['data'] as $value) {
             if (is_array($value)) {
 //                $update_activity = "update bpm_flow set cas_user_id = '".$value['cas_user_id']."' where cas_id = ".$value['cas_id']." and cas_index = ".$value['cas_index'].";";
@@ -635,15 +636,15 @@ class PMSEEngineApi extends SugarApi
                 $flow->cas_sugar_module = $flows['rowList'][0]['cas_sugar_module'];
                 $flow->cas_sugar_object_id = $flows['rowList'][0]['cas_sugar_object_id'];
                 $flow->cas_sugar_action = $flows['rowList'][0]['cas_sugar_action'];
-                $flow->cas_delegate_date = ($to != $from) ? $GLOBALS['timedate']->nowDb() : $flows['rowList'][0]['cas_delegate_date']; //$flows['rowList'][0]['cas_delegate_date'];
+                $flow->cas_delegate_date = ($to != $from) ? $today : $flows['rowList'][0]['cas_delegate_date']; //$flows['rowList'][0]['cas_delegate_date'];
                 $flow->cas_start_date = $flows['rowList'][0]['cas_start_date']; //all start events are started inmediately
                 $flow->cas_finish_date = $flows['rowList'][0]['cas_finish_date'];
                 $ts1 = strtotime($flows['rowList'][0]['cas_delegate_date']);
                 $ts2 = strtotime($flows['rowList'][0]['cas_due_date']);
-                $today = strtotime(date('Y-m-d H:i:s'));
+                $today_a = strtotime($today);
                 $expectedTime = $ts2 - $ts1;
                 //$expectedTime = date_diff($flows['rowList'][0]['cas_delegate_date'], $flows['rowList'][0]['cas_due_date']);
-                (!empty($expectedTime)) ? $dueDate = date('Y-m-d H:i:s', $today + $expectedTime) : $dueDate = null;
+                (!empty($expectedTime)) ? $dueDate = date('Y-m-d H:i:s', $today_a + $expectedTime) : $dueDate = null;
                 $flow->cas_due_date = ($to != $from) ? $dueDate : $flows['rowList'][0]['cas_due_date'];
                 $flow->cas_queue_duration = $flows['rowList'][0]['cas_queue_duration'];
                 $flow->cas_duration = $flows['rowList'][0]['cas_duration'];
