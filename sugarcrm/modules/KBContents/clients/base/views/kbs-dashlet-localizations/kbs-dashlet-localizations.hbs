@@ -14,7 +14,7 @@
     <ul class="unstyled listed kbcontents" data-action="pagination-body">
         {{#each collection.models}}
             <li>
-                <h5><a href="#{{buildRoute model=this action="detail"}}">{{getFieldValue this "name"}}</a></h5>
+                <h4><a href="#{{buildRoute model=this action="detail"}}">{{getFieldValue this "name"}}</a></h4>
                 <div class="details">
                     {{relativeTime attributes.date_modified class='date'}}
                 </div>
