@@ -91,13 +91,11 @@
      */
     _validateSelection: function() {
         var selectedModels = this.context.get('mass_collection');
-        if (selectedModels) {
-            if (selectedModels.length > this.maxSelectedRecords) {
-                this._showMaxSelectedRecordsAlert();
-                return;
-            }
-            app.drawer.close(this._getCollectionAttributes(selectedModels));
+        if (selectedModels.length > this.maxSelectedRecords) {
+            this._showMaxSelectedRecordsAlert();
+            return;
         }
+        app.drawer.close(this._getCollectionAttributes(selectedModels));
     },
 
     /**

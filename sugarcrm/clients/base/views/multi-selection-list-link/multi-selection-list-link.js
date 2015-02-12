@@ -72,9 +72,9 @@
     _closeDrawer: function(model, data, response) {
         app.drawer.close();
 
-        var context = this.options.context.get('recContext'),
-            view = this.options.context.get('recView'),
-            collectionOptions = context.get('collectionOptions') || {};
+        var context = this.options.context.get('recContext');
+        var view = this.options.context.get('recView');
+        var collectionOptions = context.get('collectionOptions') || {};
 
         if (context.has('parentModel')) {
             var parentModel = context.get('parentModel');

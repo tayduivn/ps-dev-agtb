@@ -52,7 +52,7 @@
  * ```
  * array(
  *     //...
- *     'minChars' => 3,
+ *     '_minChars' => 3,
  * )
  * ```
  *
@@ -80,28 +80,32 @@
          * Boolean used for the 'allowClear' select2 option.
          *
          * @property {boolean}
+         * @protected
          */
-        this.allow_single_deselect = true;
+        this._allow_single_deselect = true;
         /**
          * Minimum input characters to trigger the search. Used for
          * `minimumInputLength` select2 option.
          *
          * @property {number}
+         * @protected
          */
-        this.minChars = options.def.minChars || 1;
+        this._minChars = options.def.minChars || 1;
         /**
          * Separator used by select2 to separate values. Used for `separator`
          * select2 option.
          *
          * @property {string}
+         * @protected
          */
-        this.separator = '|';
+        this._separator = '|';
         /**
          * Maximum number of records the user can select.
          *
          * @property {number}
+         * @protected
          */
-        this.maxSelectedRecords = 20;
+        this._maxSelectedRecords = 20;
 
         this._super('initialize', [options]);
         /**
@@ -252,7 +256,7 @@
                 dropdownCssClass: _.bind(this._buildCssClasses, this),
                 multiple: !!this.def.isMultiSelect,
                 containerCssClass: _.bind(this._buildCssClasses, this),
-                separator: this.separator,
+                separator: this._separator,
                 initSelection: _.bind(this._onInitSelect, this),
                 formatInputTooShort: function() {
                     return '';
@@ -260,8 +264,8 @@
                 formatSelection: _.bind(this._onFormatSelection, this),
                 formatSearching: loadingLabel,
                 placeholder: this.getPlaceHolder(),
-                allowClear: self.allow_single_deselect,
-                minimumInputLength: self.minChars,
+                allowClear: self._allow_single_deselect,
+                minimumInputLength: self._minChars,
                 maximumSelectionSize: 20,
                 query: _.bind(this.search, this)
             }).on('select2-open', _.bind(this._onSelect2Open, this))
@@ -282,7 +286,7 @@
                 // to re-render the field.
                 if (self.def.isMultiSelect) {
                     var dataRname = plugin.opts.element.data('rname');
-                    dataRname = dataRname ? dataRname.split(self.separator) : [];
+                    dataRname = dataRname ? dataRname.split(self._separator) : [];
                     var ids = $(this).select2('val');
 
                     if (e.added) {
@@ -292,7 +296,7 @@
                     } else {
                         return;
                     }
-                    plugin.opts.element.data('rname', dataRname.join(self.separator));
+                    plugin.opts.element.data('rname', dataRname.join(self._separator));
                     var models = _.map(ids, function(id, index) {
                         return {id: id, value: dataRname[index]};
                     });
@@ -348,8 +352,8 @@
                     return app.lang.get('LBL_LOADING', self.module);
                 },
                 placeholder: this.getPlaceHolder(),
-                allowClear: self.allow_single_deselect,
-                minimumInputLength: self.minChars,
+                allowClear: self._allow_single_deselect,
+                minimumInputLength: self._minChars,
                 query: _.bind(this.search, this)
             });
             this.$(this.fieldTag).select2('disable');
@@ -372,8 +376,8 @@
         if (!this.def.isMultiSelect) {
             return callback({id: id, text: text});
         }
-        var ids = id.split(this.separator);
-        text = text.split(this.separator);
+        var ids = id.split(this._separator);
+        text = text.split(this._separator);
         callback(_.map(ids, function(value, index) {
             return {id: value, text: text[index]};
         }));
@@ -499,8 +503,8 @@
         }
 
         if (_.isArray(value)) {
-            this.formattedRname = value.join(this.separator);
-            this.formattedIds = this.model.get(this.def.id_name).join(this.separator);
+            this.formattedRname = value.join(this._separator);
+            this.formattedIds = this.model.get(this.def.id_name).join(this._separator);
         } else {
             this.formattedRname = value;
             this.formattedIds = this.model.get(this.def.id_name);
@@ -670,7 +674,7 @@
             layout = 'multi-selection-list';
             _.extend(context, {
                 preselectedModelIds: _.clone(this.model.get(this.def.id_name)),
-                maxSelectedRecords: this.maxSelectedRecords,
+                maxSelectedRecords: this._maxSelectedRecords,
                 isMultiSelect: true
             });
         }

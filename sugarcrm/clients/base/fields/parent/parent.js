@@ -14,7 +14,7 @@
  * @extends View.Fields.Base.RelateField
  */
 ({
-    minChars: 1,
+    _minChars: 1,
     extendsFrom: 'RelateField',
     fieldTag: 'input.select2[name=parent_name]',
     typeFieldTag: 'select.select2[name=parent_type]',

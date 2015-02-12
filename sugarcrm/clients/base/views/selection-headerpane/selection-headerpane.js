@@ -38,7 +38,7 @@
         } else {
             //FIXME: This will be removed with SC-4073.
             var linkTitleLabel = _.find(this.meta.fields, function(field) {
-                return field.name = 'title';
+                return field.name === 'title';
             }, this);
             linkTitleLabel.default_value = 'TPL_SEARCH_AND_ADD';
         }
