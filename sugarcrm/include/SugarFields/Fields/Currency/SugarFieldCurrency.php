@@ -176,8 +176,7 @@ class SugarFieldCurrency extends SugarFieldFloat
         ServiceBase $service = null
     ) {
         $this->ensureApiFormatFieldArguments($fieldList, $service);
-
-        if (isset($bean->$fieldName)) {
+        if (isset($bean->$fieldName) && $bean->$fieldName !== 'NULL') {
             $data[$fieldName] = $bean->$fieldName;
         } else {
             $data[$fieldName] = '';

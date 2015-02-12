@@ -666,6 +666,10 @@ $dictionary['User'] = array(
         'email'=> array(
             'name' => 'email',
             'type' => 'email',
+            'function'  => array(
+                'name'      => 'getEmailAddressWidget',
+                'returns'   => 'html',
+            ),
             'query_type' => 'default',
             'source' => 'non-db',
             'operator' => 'subquery',

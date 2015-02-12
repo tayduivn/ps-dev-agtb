@@ -4984,12 +4984,29 @@ Sincerely, SugarCRM',
     'LBL_INACTIVE_TASKS_DASHLET_GROUP_BUTTON_LABEL' => 'Team Tasks',
 
     //common chart strings
+    'LBL_CHART' => 'Chart',
     'LBL_CHART_NO_DATA' => 'No data available.',
     'LBL_CHART_LEGEND_CLOSE' => 'Hide legend',
     'LBL_CHART_LEGEND_OPEN' => 'Show legend',
     'LBL_CHART_CONTROLS_CLOSE' => 'Hide controls',
     'LBL_CHART_CONTROLS_OPEN' => 'Show controls',
     'LBL_CHART_UNDEFINED' => 'Undefined',
+
+    //common chart config field labels
+    'LBL_CHART_CONFIG_CHART_TYPE' => 'Chart type',
+    'LBL_CHART_CONFIG_SHOW_TITLE' => 'Show title',
+    'LBL_CHART_CONFIG_SHOW_XAXIS_LABEL' => 'Show x-axis label',
+    'LBL_CHART_CONFIG_SHOW_YAXIS_LABEL' => 'Show y-axis label',
+    'LBL_CHART_CONFIG_TICK_DISPLAY' => 'Tick display methods',
+    'LBL_CHART_CONFIG_TICK_WRAP' => 'Wrap ticks',
+    'LBL_CHART_CONFIG_TICK_STAGGER' => 'Stagger ticks',
+    'LBL_CHART_CONFIG_TICK_ROTATE' => 'Rotate ticks',
+    'LBL_CHART_CONFIG_VALUE_PLACEMENT' => 'Bar chart value placement',
+    'LBL_CHART_CONFIG_BAR_CHART_OPTIONS' => 'Bar chart display options',
+    'LBL_CHART_CONFIG_ALLOW_SCROLLING' => 'Allow scrolling',
+    'LBL_CHART_CONFIG_STACK_DATA' => 'Stack data series',
+    'LBL_CHART_CONFIG_HIDE_EMPTY_GROUPS' => 'Hide empty groups',
+
 
     // interactions chart dashlet
     'LBL_EMAIL_SENT' => 'sent',

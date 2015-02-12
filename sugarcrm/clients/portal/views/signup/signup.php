@@ -1,6 +1,5 @@
 <?php
 
-if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -38,49 +37,49 @@ $viewdefs['portal']['view']['signup'] = array(
                 array(
                     'name' => 'first_name',
                     'type' => 'varchar',
-                    'placeholder' => "LBL_PORTAL_SIGNUP_FIRST_NAME",
+                    'placeholder' => 'LBL_PORTAL_SIGNUP_FIRST_NAME',
                     'required' => true,
                 ),
                 array(
                     'name' => 'last_name',
                     'type' => 'varchar',
-                    'placeholder' => "LBL_PORTAL_SIGNUP_LAST_NAME",
+                    'placeholder' => 'LBL_PORTAL_SIGNUP_LAST_NAME',
                     'required' => true,
                 ),
                 array(
                     'name' => 'email',
                     'type' => 'email-text',
-                    'placeholder' => "LBL_PORTAL_SIGNUP_EMAIL",
+                    'placeholder' => 'LBL_PORTAL_SIGNUP_EMAIL',
                     'required' => true,
                 ),
                 array(
                     'name' => 'phone_work',
                     'type' => 'phone',
-                    'placeholder' => "LBL_PORTAL_SIGNUP_PHONE",
+                    'placeholder' => 'LBL_PORTAL_SIGNUP_PHONE',
                 ),
                 array(
                     'name' => 'country',
                     'type' => 'enum',
-                    'placeholder' => "LBL_PORTAL_SIGNUP_COUNTRY",
-                    "options" => "countries_dom",
+                    'placeholder' => 'LBL_PORTAL_SIGNUP_COUNTRY',
+                    'options' => 'countries_dom',
                     'required' => true,
                 ),
                 array(
                     'name' => 'state',
                     'type' => 'enum',
-                    'placeholder' => "LBL_PORTAL_SIGNUP_STATE",
-                    "options" => "state_dom",
+                    'placeholder' => 'LBL_PORTAL_SIGNUP_STATE',
+                    'options' => 'state_dom',
                 ),
                 array(
                     'name' => 'company',
                     'type' => 'varchar',
-                    'placeholder' => "LBL_PORTAL_SIGNUP_COMPANY",
+                    'placeholder' => 'LBL_PORTAL_SIGNUP_COMPANY',
                     'required' => true,
                 ),
                 array(
                     'name' => 'title',
                     'type' => 'varchar',
-                    'placeholder' => "LBL_PORTAL_SIGNUP_JOBTITLE",
+                    'placeholder' => 'LBL_PORTAL_SIGNUP_JOBTITLE',
                 ),
             ),
         ),

@@ -38,6 +38,7 @@ $viewdefs[$module_name]['base']['view']['list'] = array(
                     'label' => 'LBL_PRJ_STATUS',
                     'default' => true,
                     'enabled' => true,
+                    'readonly' => true,
                 ),
                 array(
                     'name' => 'team_name',

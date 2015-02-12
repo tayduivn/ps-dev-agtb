@@ -15,7 +15,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 $dictionary['pmse_Project'] = array(
 	'table'=>'pmse_project',
-	'audited'=>true,
+	'audited'=>false,
 	'activity_enabled'=>true,
 		'duplicate_merge'=>true,
 		'fields'=>array (
@@ -329,6 +329,7 @@ $dictionary['pmse_Project'] = array(
     'optimistic_locking' => true,
     'unified_search' => true,
     'acls' => array('SugarACLDeveloperOrAdmin' => array('aclModule' => 'pmse_Project', 'allowUserRead' => false)),
+    'hidden_to_role_assignment' => true,
 );
 if (!class_exists('VardefManager')){
         require_once('include/SugarObjects/VardefManager.php');

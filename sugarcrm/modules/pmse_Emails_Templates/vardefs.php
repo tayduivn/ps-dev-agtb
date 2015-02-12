@@ -15,7 +15,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 $dictionary['pmse_Emails_Templates'] = array(
 	'table'=>'pmse_emails_templates',
-	'audited'=>true,
+	'audited'=>false,
 	'activity_enabled'=>true,
 		'duplicate_merge'=>true,
 		'fields'=>array (
@@ -290,6 +290,7 @@ $dictionary['pmse_Emails_Templates'] = array(
             'aclModule' => 'pmse_Emails_Templates', 'allowUserRead' => false
         )
     ),
+    'hidden_to_role_assignment' => true,
 );
 if (!class_exists('VardefManager')){
         require_once('include/SugarObjects/VardefManager.php');

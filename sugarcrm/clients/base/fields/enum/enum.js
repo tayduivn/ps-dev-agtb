@@ -176,23 +176,34 @@
         }
         var optionsKeys = _.isObject(this.items) ? _.keys(this.items) : [],
             defaultValue;
+
         //After rendering the dropdown, the selected value should be the value set in the model,
         //or the default value. The default value fallbacks to the first option if no other is selected.
         // if the user has write access to the model for the field we are currently on
         if (!this.def.isMultiSelect &&
-            !_.contains(optionsKeys, this.model.get(this.name)) &&
             app.acl.hasAccessToModel('write', this.model, this.name)
         ) {
             defaultValue = this._getDefaultOption(optionsKeys) || '';
 
-            // call with {silent: true} on, so it won't re-render the field, since we haven't rendered the field yet
-            this.model.set(this.name, defaultValue, {silent: true});
+            if (!this.model.has(this.name)) {
+                //Forecasting uses backbone model (not bean) for custom enums so we have to check here
+                if (_.isFunction(this.model.setDefault)) {
+                    this.model.setDefault(this.name, defaultValue);
+                } else {
+                    // call with {silent: true} on, so it won't re-render the field, since we haven't rendered the field yet
+                    this.model.set(this.name, defaultValue, {silent: true});
+                }
+            } else if(!_.contains(optionsKeys, this.model.get(this.name))) {
+                //lead convert requires this to be called in order to populate defaul values properly
+                this.model.set(this.name, defaultValue, {silent: true});
 
-            //Forecasting uses backbone model (not bean) for custom enums so we have to check here
-            if (_.isFunction(this.model.setDefault)) {
-                this.model.setDefault(this.name, defaultValue);
+                //Forecasting uses backbone model (not bean) for custom enums so we have to check here
+                if (_.isFunction(this.model.setDefault)) {
+                    this.model.setDefault(this.name, defaultValue);
+                }
             }
         }
+
         app.view.Field.prototype._render.call(this);
         // if displaying the noaccess template, just exit the method
         if (this.tplName == 'noaccess') {
