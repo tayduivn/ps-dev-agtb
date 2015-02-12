@@ -824,6 +824,11 @@ eoq;
             $exIds = explode(",", $_REQUEST['uid']);
             $out = array();
 
+            if (!empty($_REQUEST['ieId'])) {
+                $ie->retrieve($_REQUEST['ieId']);
+                $ie->mailbox = $_REQUEST['mbox'];
+            }
+
             foreach($exIds as $id) {
                 $e = BeanFactory::getBean('Emails', $id);
                 $e->description_html = from_html($e->description_html);

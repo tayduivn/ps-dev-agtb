@@ -1742,14 +1742,14 @@ SE.detailView = {
         if(mboxStr.substring(0,7) == 'sugar::') {
             // display an email from Sugar
             document.getElementById('emailUIAction').value = 'getMultipleMessagesFromSugar';
-            document.getElementById('uid').value = uids;
         } else {
             // display an email from an email server
             document.getElementById('emailUIAction').value = 'getMultipleMessages';
-            document.getElementById('mbox').value = mbox;
-            document.getElementById('ieId').value = ieId;
-            document.getElementById('uid').value = uids;
         }
+
+        document.getElementById('mbox').value = mbox;
+        document.getElementById('ieId').value = ieId;
+        document.getElementById('uid').value = uids;
 
         var formObject = document.getElementById('emailUIForm');
         YAHOO.util.Connect.setForm(formObject);
