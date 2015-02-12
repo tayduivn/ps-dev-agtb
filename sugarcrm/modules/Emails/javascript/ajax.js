@@ -707,7 +707,7 @@ AjaxObject.detailView = {
             SED.quickCreateDialog.setHeader(app_strings.LBL_EMAIL_QUICK_CREATE);
 		} // end lazy load
 		if (ret.html) {
-			ret.html = ret.html.replace('<script type="text/javascript" src="include/SugarEmailAddress/SugarEmailAddress.js"></script>', "");
+			ret.html = ret.html.replace('<script type="text/javascript" src="include/SugarEmailAddress/SugarEmailAddress.js?v='+SUGAR.VERSION_MARK+'"></script>', "");
 		}
 		SED.quickCreateDialog.setBody(ret.html ? ret.html : "&nbsp;");
 		SED.quickCreateDialog.render();
