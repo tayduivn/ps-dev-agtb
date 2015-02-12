@@ -8,9 +8,6 @@
       .subpanel-list {
         display: none;
       }
-      i.fa-chevron-up::before {
-        content: "\f078";
-      }
     }
     &.empty {
       .label {
@@ -87,6 +84,9 @@
   }
 
   &.ui-sortable {
+    .label-module {
+      cursor: move;
+    }
     .subpanel-header {
       cursor: move;
     }
