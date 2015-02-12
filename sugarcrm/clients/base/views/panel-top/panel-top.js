@@ -33,7 +33,6 @@
      */
     events: {
         'click': 'togglePanel',
-        'click [data-toggle=true]': 'toggleSubpanel',
         'click a[name=create_button]:not(".disabled")': 'createRelatedClicked',
     },
 
@@ -75,21 +74,21 @@
     },
 
     /**
-    * Event handler that closes the subpanel layout when the SubpanelHeader is
+    * Event handler that toggles the subpanel layout when the SubpanelHeader is
     * clicked.
+    *
+    * Triggers the `panel:toggle` event to toggle the subpanel.
     *
     * @param evt The `click` event.
     */
     togglePanel: function(evt) {
-        if (evt.target === this.$el.get(0)) {
-            this.toggleSubpanel();
-        }
-    },
+        var $target = this.$(evt.target),
+            isLink = $target.closest('a, button').length;
 
-    /**
-     * Triggers the `panel:toggle` event to toggle the subpanel.
-     */
-    toggleSubpanel: function() {
+        if (isLink) {
+            return;
+        }
+
         if (!this.layout.disposed) {
             var isHidden = this.layout.$('.subpanel').hasClass('closed');
             this.layout.trigger('panel:toggle', isHidden);

@@ -722,6 +722,7 @@ $mod_strings = array(
 
 'LBL_DEPLOY_IN_PROGRESS' => 'Deploying Package',
 'LBL_JS_VALIDATE_NAME'=>'Name - Must be alphanumeric, begin with a letter and contain no spaces.',
+'LBL_JS_VALIDATE_PACKAGE_KEY'=>'Package Key already exists',
 'LBL_JS_VALIDATE_PACKAGE_NAME'=>'Package Name already exists',
 'LBL_JS_VALIDATE_KEY_WITH_SPACE'=>'Key - Must be alphanumeric and begin with a letter.',
 'LBL_JS_VALIDATE_KEY'=>'Key - Must be alphanumeric, begin with a letter and contain no spaces.',

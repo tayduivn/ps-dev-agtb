@@ -492,8 +492,11 @@ class ListViewData {
         }
         else if (isset($_REQUEST["searchFormTab"]) && $_REQUEST["searchFormTab"] == "basic_search")
         {
-            if($seed->module_dir == "Reports") $searchMetaData = SearchFormReports::retrieveReportsSearchDefs();
-            else $searchMetaData = SearchForm::retrieveSearchDefs($seed->module_dir);
+            if ($seed->module_dir == "Reports") {
+                $searchMetaData = SearchFormReports::retrieveReportsSearchDefs();
+            } else {
+                $searchMetaData = method_exists('SearchForm','retrieveSearchDefs') ? SearchForm::retrieveSearchDefs($seed->module_dir) : array();
+            }
 
             $basicSearchFields = array();
 

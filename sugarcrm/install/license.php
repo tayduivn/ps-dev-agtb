@@ -35,8 +35,8 @@ $out =<<<EOQ
    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
    <meta http-equiv="Content-Style-Type" content="text/css">
    <title>{$mod_strings['LBL_WIZARD_TITLE']} {$mod_strings['LBL_LICENSE_ACCEPTANCE']}</title>
-   <link REL="SHORTCUT ICON" HREF="include/images/sugar_icon.ico">
-   <link rel="stylesheet" href="install/install.css" type="text/css">
+   <link REL="SHORTCUT ICON" HREF="include/images/sugar_icon.ico?v={$versionToken}">
+   <link rel="stylesheet" href="install/install.css?v={$versionToken}" type="text/css">
    <script src="cache/include/javascript/sugar_grp1_yui.js?v={$versionToken}"></script>
    <script type="text/javascript">
     <!--
@@ -44,8 +44,8 @@ $out =<<<EOQ
         UA = YAHOO.env.ua;
     -->
     </script>
-    <link rel='stylesheet' type='text/css' href='include/javascript/yui/build/container/assets/container.css' />
-   <script type="text/javascript" src="install/license.js"></script>
+    <link rel='stylesheet' type='text/css' href='include/javascript/yui/build/container/assets/container.css?v={$versionToken}' />
+   <script type="text/javascript" src="install/license.js?v={$versionToken}"></script>
 </head>
 
 <body onload="javascript:toggleNextButton();document.getElementById('button_next2').focus();">
@@ -61,7 +61,7 @@ $out =<<<EOQ
 		</p>
       {$mod_strings['LBL_LICENSE_ACCEPTANCE']}</th>
       <th width="200" height="30" style="text-align: right;"><a href="http://www.sugarcrm.com" target="_blank">
-      	<IMG src="include/images/sugarcrm_login.png" alt="SugarCRM" border="0"></a>
+      	<IMG src="include/images/sugarcrm_login.png?v={$versionToken}" alt="SugarCRM" border="0"></a>
       </th>
     </tr>
     <tr>

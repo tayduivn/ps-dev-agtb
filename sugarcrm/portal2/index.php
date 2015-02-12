@@ -18,6 +18,7 @@ global $sugar_config, $db, $fileName, $current_user, $locale, $current_language,
 require_once('include/entryPoint.php');
 // Make sure the cache files exist
 ensureJSCacheFilesExist();
+$versionToken = getVersionedPath(null);
 ?>
 <!DOCTYPE HTML>
 <html>
@@ -25,10 +26,10 @@ ensureJSCacheFilesExist();
         <title>Customer Self-Service Portal - Powered by SugarCRM.</title>
         <meta name="viewport" content="initial-scale=1.0">
         <meta charset="UTF-8">
-        <link rel="SHORTCUT ICON" href="../themes/default/images/sugar_icon.ico">
+        <link rel="SHORTCUT ICON" href="../themes/default/images/sugar_icon.ico?v=<?php echo $versionToken;?>">
         <!-- CSS -->
-        <link rel="stylesheet" href="../styleguide/assets/css/loading.css" type="text/css">
-        <link rel="stylesheet" href="../sidecar/lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css" type="text/css"/>
+        <link rel="stylesheet" href="../styleguide/assets/css/loading.css?v=<?php echo $versionToken;?>" type="text/css">
+        <link rel="stylesheet" href="../sidecar/lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css?v=<?php echo $versionToken;?>" type="text/css"/>
     </head>
     <body>
         <div id="sidecar">
@@ -50,20 +51,20 @@ ensureJSCacheFilesExist();
             </div>
         </div>
 
-        <script src="../include/javascript/modernizr.js"></script>
+        <script src="../include/javascript/modernizr.js?v=<?php echo $versionToken;?>"></script>
 
         <!-- Sidecar Scripts -->
-        <script src="../sidecar/minified/sidecar<? if (!inDeveloperMode()): ?>.min<? endif; ?>.js"></script>
-        <script src="../cache/include/javascript/sugar_sidecar.min.js"></script>
+        <script src="../sidecar/minified/sidecar<? if (!inDeveloperMode()): ?>.min<? endif; ?>.js?v=<?php echo $versionToken;?>"></script>
+        <script src="../cache/include/javascript/sugar_sidecar.min.js?v=<?php echo $versionToken;?>"></script>
 
         <!-- Portal specific JS -->
-        <script src="../cache/portal2/sugar_portal.min.js"></script>
+        <script src="../cache/portal2/sugar_portal.min.js?v=<?php echo $versionToken;?>"></script>
         <? if(inDeveloperMode()): ?>
-            <script src="../cache/Expressions/functions_cache_debug.js"></script>
+            <script src="../cache/Expressions/functions_cache_debug.js?v=<?php echo $versionToken;?>"></script>
         <? else: ?>
-            <script src="../cache/Expressions/functions_cache.js"></script>
+            <script src="../cache/Expressions/functions_cache.js?v=<?php echo $versionToken;?>"></script>
         <? endif; ?>
-        <script src="config.js"></script>
+        <script src="config.js?v=<?php echo $versionToken;?>"></script>
 
         <script>
             var syncResult, view, layout, html;
