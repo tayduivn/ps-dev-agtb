@@ -9,13 +9,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * @class View.Views.Base.GlobarsearchView
- * @alias SUGAR.App.view.views.BaseGlobalsearchView
- * @extends View.Views.Base.GlobalsearchView
- *
- * @deprecated Since 7.7 will be removed on 7.9. See SC-4107. This is divided
- * into globalsearch-bar view and globalsearch-quickresult view.
- *
+ * @class View.Views.Base.GlobalsearchbarView
+ * @alias SUGAR.App.view.views.BaseGlobalsearchbarView
+ * @extends View.View
  */
 ({
     // FIXME this needs to be removed so that we can be able to reuse this view
@@ -147,7 +143,7 @@
 
         // Search ahead drop down menu stuff
         var self = this,
-            menuTemplate = app.template.getView(this.name + '.result');
+            menuTemplate = app.template.getView('globalsearch-quickresults');
 
         this.$('.search-query').searchahead({
             request: function(term) {
@@ -195,9 +191,9 @@
         var highlightedSpanRe = /<strong>.*?<\/strong>/g,
             higlightSpanTagsRe = /(<strong>)|(<\/strong>)/g,
             escape = Handlebars.Utils.escapeExpression,
-            // First, all of the HTML is escaped.
+        // First, all of the HTML is escaped.
             result = escape(html),
-            // Then, we find all pieces highlighted by the server.
+        // Then, we find all pieces highlighted by the server.
             highlightedSpan = html.match(highlightedSpanRe),
             highlightedContent,
             self = this;
@@ -266,8 +262,8 @@
                         _.each(record._search.highlighted, function(val, key) {
                             var safeString = self._escapeSearchResults(val.text);
                             if (key !== 'name') { // found in a related field
-                               formattedRecord.field_name = app.lang.get(val.label, val.module);
-                               formattedRecord.field_value = safeString;
+                                formattedRecord.field_name = app.lang.get(val.label, val.module);
+                                formattedRecord.field_value = safeString;
                             } else { // if it is a name that is found, we need to replace the name with the highlighted text
                                 formattedRecord.name = safeString;
                             }
