@@ -151,7 +151,9 @@ class ViewDropdown extends SugarView
         $smarty->assign('module_name', $module_name);
         $smarty->assign('selected_lang', $params['dropdown_lang']);
         $smarty->assign('available_languages', get_languages());
+// BEGIN SUGARCRM flav=ent ONLY
         $smarty->assign('roles', $this->getAvailableRoleList($params['dropdown_name']));
+// END SUGARCRM flav=ent ONLY
         $smarty->assign('package_name', $package_name);
         return $smarty;
     }
@@ -172,6 +174,7 @@ class ViewDropdown extends SugarView
         return $params;
     }
 
+// BEGIN SUGARCRM flav=ent ONLY
     /**
      * Returns list of roles with marker indicating whether role specific metadata for the given dropdown field exists
      *
@@ -185,4 +188,5 @@ class ViewDropdown extends SugarView
             return $parser->hasMetadata($name, $params['role']);
         });
     }
+// END SUGARCRM flav=ent ONLY
 }

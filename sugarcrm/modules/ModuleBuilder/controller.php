@@ -39,7 +39,9 @@ require_once 'modules/ModuleBuilder/parsers/relationships/UndeployedRelationship
 
 // Used in action_SaveDropDown
 require_once 'modules/ModuleBuilder/parsers/parser.dropdown.php';
+// BEGIN SUGARCRM flav=ent ONLY
 require_once 'modules/ModuleBuilder/parsers/parser.roledropdownfilter.php';
+// END SUGARCRM flav=ent ONLY
 
 // Used in action_searchViewSave
 // Bug56789 - Without a client, the wrong viewdef file was getting picked up
@@ -700,10 +702,13 @@ class ModuleBuilderController extends SugarController
         $parser->saveDropDown($_REQUEST);
         MetaDataManager::refreshSectionCache(MetaDataManager::MM_LABELS);
         MetaDataManager::refreshSectionCache(MetaDataManager::MM_ORDEREDLABELS);
+// BEGIN SUGARCRM flav=ent ONLY
         MetaDataManager::refreshSectionCache(MetaDataManager::MM_EDITDDFILTERS);
+// END SUGARCRM flav=ent ONLY
         $this->view = 'dropdowns';
     }
 
+// BEGIN SUGARCRM flav=ent ONLY
     public function action_SaveRoleDropDownFilter()
     {
         $params = $_REQUEST;
@@ -714,6 +719,7 @@ class ModuleBuilderController extends SugarController
         $parser->handleSave($params['dropdown_role'], $params['dropdown_name'], $params['dropdown_keys']);
         $this->view = 'dropdowns';
     }
+// END SUGARCRM flav=ent ONLY
 
     public function action_DeleteField()
     {
@@ -851,9 +857,11 @@ class ModuleBuilderController extends SugarController
         //END SUGARCRM flav=ent ONLY
 
         $params = array();
+// BEGIN SUGARCRM flav=ent ONLY
         if (!empty($_REQUEST['role'])) {
             $params['role'] = $_REQUEST['role'];
         }
+// END SUGARCRM flav=ent ONLY
         $parser = ParserFactory::getParser(
             $parserview,
             $_REQUEST['view_module'],
@@ -891,9 +899,11 @@ class ModuleBuilderController extends SugarController
         //END SUGARCRM flav=ent ONLY
 
         $params = array();
+// BEGIN SUGARCRM flav=ent ONLY
         if (!empty($_REQUEST['role'])) {
             $params['role'] = $_REQUEST['role'];
         }
+// END SUGARCRM flav=ent ONLY
         $parser = ParserFactory::getParser(
             $parserview,
             $_REQUEST['view_module'],
@@ -903,11 +913,15 @@ class ModuleBuilderController extends SugarController
             $params
         );
 
-        if (!empty($_REQUEST['is_synced'])) {
+// BEGIN SUGARCRM flav=ent ONLY
+        if (!empty($_REQUEST['is_reset'])) {
             $parser->resetToDefault();
         } else {
+// END SUGARCRM flav=ent ONLY
             $parser->handleSave();
+// BEGIN SUGARCRM flav=ent ONLY
         }
+// END SUGARCRM flav=ent ONLY
 
         if (!empty($_REQUEST [ 'sync_detail_and_edit' ]) && $_REQUEST['sync_detail_and_edit'] != false && $_REQUEST['sync_detail_and_edit'] != "false") {
             if (strtolower ($parser->_view) == MB_EDITVIEW) {
@@ -1149,6 +1163,7 @@ class ModuleBuilderController extends SugarController
         }
     }
 
+// BEGIN SUGARCRM flav=ent ONLY
     public function action_copyLayout()
     {
         $module = $_REQUEST['view_module'];
@@ -1169,6 +1184,7 @@ class ModuleBuilderController extends SugarController
 
         $this->view = 'layoutview';
     }
+// END SUGARCRM flav=ent ONLY
 
     /**
      * Nomalizes module strings.

@@ -476,10 +476,12 @@ class MetaDataFiles
                 require_once 'modules/ModuleBuilder/parsers/MetaDataFile/MetaDataFileDeployed.php';
                 $file = new MetaDataFileDeployed($file, $params['location']);
 
+// BEGIN SUGARCRM flav=ent ONLY
                 if (!empty($params['role'])) {
                     require_once 'modules/ModuleBuilder/parsers/MetaDataFile/MetaDataFileRoleDependent.php';
                     $file = new MetaDataFileRoleDependent($file, $params['role']);
                 }
+// END SUGARCRM flav=ent ONLY
             }
         }
 
@@ -793,7 +795,11 @@ class MetaDataFiles
         }
         $clientCache = array();
         $cacheFile = sugar_cached('modules/'.$module.'/clients/'.$platforms[0].'/'.$type.'.php');
-        if (!empty($GLOBALS['sugar_config']['roleBasedViews']) || !file_exists($cacheFile)) {
+        if (!file_exists($cacheFile)
+// BEGIN SUGARCRM flav=ent ONLY
+            || !empty($GLOBALS['sugar_config']['roleBasedViews'])
+// END SUGARCRM flav=ent ONLY
+        ) {
             self::buildModuleClientCache($platforms, $type, $module, $context);
         }
         $clientCache[$module][$platforms[0]][$type] = array();
@@ -974,16 +980,20 @@ class MetaDataFiles
      *
      * @param $path
      * @return array
+// BEGIN SUGARCRM flav=ent ONLY
      * @todo Make this back protected after handling role based LOV is reworked
+// END SUGARCRM flav=ent ONLY
      * @see MetaDataManager::getEditableDropdownFilters()
      */
     public static function getClientFileParams($path)
     {
+// BEGIN SUGARCRM flav=ent ONLY
         if (preg_match('/\/roles\/([^\/]+)\//', $path, $matches)) {
             return array(
                 'role' => $matches[1],
             );
         }
+// END SUGARCRM flav=ent ONLY
 
         return array();
     }
