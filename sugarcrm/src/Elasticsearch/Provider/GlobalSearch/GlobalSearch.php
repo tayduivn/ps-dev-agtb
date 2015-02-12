@@ -48,6 +48,9 @@ class GlobalSearch extends AbstractProvider
             'gs_string_ngram',
             //'gs_int_default',
         ),
+        'phone' => array(
+            'gs_phone',
+        ),
     );
 
     /**
@@ -77,6 +80,13 @@ class GlobalSearch extends AbstractProvider
         'gs_int_default' => array(
             'type' => 'integer',
             'index' => 'no',
+            'store' => false,
+        ),
+        'gs_phone' => array(
+            'type' => 'string',
+            'index' => 'analyzed',
+            'index_analyzer' => 'gs_analyzer_phone_ngram',
+            'search_analyzer' => 'gs_analyzer_phone_full',
             'store' => false,
         ),
     );
@@ -127,6 +137,11 @@ class GlobalSearch extends AbstractProvider
                 'nGram',
                 array('min_gram' => 2, 'max_gram' => 15)
             )
+            ->addCharFilter(
+                'gs_char_num_pattern',
+                'pattern_replace',
+                array('pattern' => '[^\\d]+', 'replacement' => '')
+            )
             ->addCustomAnalyzer(
                 'gs_analyzer_default',
                 'whitespace',
@@ -141,6 +156,18 @@ class GlobalSearch extends AbstractProvider
                 'gs_analyzer_ngram',
                 'whitespace',
                 array('lowercase', 'gs_filter_ngram')
+            )
+            ->addCustomAnalyzer(
+                'gs_analyzer_phone_ngram',
+                'standard',
+                array('gs_filter_ngram'),
+                array('gs_char_num_pattern')
+            )
+            ->addCustomAnalyzer(
+                'gs_analyzer_phone_full',
+                'standard',
+                array(),
+                array('gs_char_num_pattern')
             )
         ;
     }
