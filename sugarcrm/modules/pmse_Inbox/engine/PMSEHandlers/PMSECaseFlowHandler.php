@@ -543,9 +543,8 @@ class PMSECaseFlowHandler
     public function processFlowData($flowData)
     {
         $today = TimeDate::getInstance()->nowDb();
-        $_date = new DateTime($today);
-        $_date->add(new DateInterval('P1D'));
-        $dueDate = $_date->format('Y-m-d H:i:s');
+        $_date = TimeDate::getInstance()->getNow()->add(new DateInterval('P1D'));
+        $dueDate = $_date->asDb();
 
         $preparedFlow = array();
         $preparedFlow['id'] = isset($flowData['id']) ? $flowData['id'] : '';

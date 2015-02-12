@@ -89,9 +89,8 @@ class PMSEStartEvent extends PMSEEvent
         $updateCaseWithNumber = false;
 
         $today = TimeDate::getInstance()->nowDb();
-        $_date = new DateTime($today);
-        $_date->add(new DateInterval('P2D'));
-        $dueDate = $_date->format('Y-m-d H:i:s');
+        $_date = TimeDate::getInstance()->getNow()->add(new DateInterval('P2D'));
+        $dueDate = $_date->asDb();
 
         //todo: generate a pin
         $cas_pin = rand(0, 10000);
