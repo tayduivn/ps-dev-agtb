@@ -296,7 +296,7 @@ class PMSEEngineApi extends SugarApi
         $cas_id = $args['cas_id'];
         $cas_index = $args['cas_index'];
         $taskName = $args['taskName'];
-        $today = $GLOBALS['timedate']->nowDb();
+        $today = TimeDate::getInstance()->nowDb();
 
         $query = "select cas_flow_status, cas_started, bpmn_type, bpmn_id " .
                 " from pmse_bpm_flow where cas_id = $cas_id and cas_index = $cas_index ";
@@ -600,7 +600,7 @@ class PMSEEngineApi extends SugarApi
         $res = array(); //new stdClass();
         $res['success'] = true;
         global $current_user;
-        $today = $GLOBALS['timedate']->nowDb();
+        $today = TimeDate::getInstance()->nowDb();
         foreach ($args['data'] as $value) {
             if (is_array($value)) {
 //                $update_activity = "update bpm_flow set cas_user_id = '".$value['cas_user_id']."' where cas_id = ".$value['cas_id']." and cas_index = ".$value['cas_index'].";";

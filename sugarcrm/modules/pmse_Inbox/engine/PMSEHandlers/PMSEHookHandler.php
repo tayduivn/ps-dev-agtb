@@ -174,7 +174,7 @@ class PMSEHookHandler
     private function wakeUpSleepingFlows()
     {
         $this->logger->info("Checking flows with status sleeping");
-        $today = $GLOBALS['timedate']->nowDb();
+        $today = TimeDate::getInstance()->nowDb();
 
         //get all records with status = sleeping
         $flowBean = BeanFactory::getBean('pmse_BpmFlow');//new BpmFlow();

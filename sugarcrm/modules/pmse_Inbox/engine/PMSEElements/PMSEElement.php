@@ -305,7 +305,7 @@ class PMSEElement implements PMSERunnable
      */
     public function getCurrentDate()
     {
-        return $GLOBALS['timedate']->nowDb();
+        return TimeDate::getInstance()->nowDb();
     }
 
     /**

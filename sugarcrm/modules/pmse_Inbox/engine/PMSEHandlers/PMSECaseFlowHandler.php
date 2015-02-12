@@ -542,7 +542,7 @@ class PMSECaseFlowHandler
 
     public function processFlowData($flowData)
     {
-        $today = $GLOBALS['timedate']->nowDb();
+        $today = TimeDate::getInstance()->nowDb();
         $_date = new DateTime($today);
         $_date->add(new DateInterval('P1D'));
         $dueDate = $_date->format('Y-m-d H:i:s');
@@ -717,9 +717,10 @@ class PMSECaseFlowHandler
     public function closeCase($cas_id, $status = 'COMPLETED')
     {
         global $db;
+        $today = TimeDate::getInstance()->nowDb();
         $query = "update pmse_inbox set " .
             " cas_status = '{$status}', " .
-            " cas_finish_date = '" . $GLOBALS['timedate']->nowDb() . "' " .
+            " cas_finish_date = '" . $today . "' " .
             " where cas_id = $cas_id ";
         $db->query($query, true, "Error updating bpm_inbox record ");
 
@@ -734,8 +735,9 @@ class PMSECaseFlowHandler
     public function terminateCaseFlow($cas_id)
     {
         global $db;
+        $today = TimeDate::getInstance()->nowDb();
         $query = "update pmse_bpm_flow set " .
-            " cas_finish_date = '" . $GLOBALS['timedate']->nowDb() . "', " .
+            " cas_finish_date = '" . $today . "', " .
             " cas_finished    = 1, " .
             " cas_flow_status = 'TERMINATED' " .
             " where cas_id = $cas_id AND cas_flow_status <> 'CLOSED' AND cas_flow_status <> 'TERMINATED'";
@@ -753,7 +755,7 @@ class PMSECaseFlowHandler
     public function setCloseStatusForThisThread($cas_id, $cas_thread_index)
     {
         global $db;
-        $today = $GLOBALS['timedate']->nowDb();
+        $today = TimeDate::getInstance()->nowDb();
         $query = "update pmse_bpm_flow set " .
             " cas_finish_date = '$today', " .
             " cas_finished    = 1, " .

@@ -88,7 +88,7 @@ class PMSEStartEvent extends PMSEEvent
         $cas_id = 0;
         $updateCaseWithNumber = false;
 
-        $today = $GLOBALS['timedate']->nowDb();
+        $today = TimeDate::getInstance()->nowDb();
         $_date = new DateTime($today);
         $_date->add(new DateInterval('P2D'));
         $dueDate = $_date->format('Y-m-d H:i:s');
