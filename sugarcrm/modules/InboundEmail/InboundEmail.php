@@ -2527,7 +2527,6 @@ class InboundEmail extends SugarBean {
 					//BEGIN SUGARCRM flav=int ONLY
 					$GLOBALS['log']->debug($l.': I-E ERROR: $ie->findOptimums() failed due to bad user credentials for user password: '.$this->email_password);
 					//END SUGARCRM flav=int ONLY
-					return $retArray;
 				} elseif( in_array($errors, $acceptableWarnings, TRUE)) { // false positive
 					$GLOBALS['log']->debug($l.': I-E found good connection but with warnings ['.$serviceTest.'] Errors:' . $errors);
 					$retArray['good'][$k] = $returnService[$k];
