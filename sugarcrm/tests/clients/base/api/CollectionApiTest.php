@@ -24,6 +24,145 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->api = new CollectionApi();
     }
 
+    /**
+     * @dataProvider buildResponseProvider
+     */
+    public function testBuildResponse(array $records, array $offsets, array $errors, array $response)
+    {
+        $actual = SugarTestReflection::callProtectedMethod(
+            $this->api,
+            'buildResponse',
+            array($records, $offsets, $errors)
+        );
+
+        $this->assertEquals($response, $actual);
+    }
+
+    public function buildResponseProvider()
+    {
+        $exception = new SugarApiExceptionNotAuthorized('SUGAR_API_EXCEPTION_RECORD_NOT_AUTHORIZED', array('view'));
+
+        return array(
+            'no_errors' => array(
+                array(
+                    array(
+                        'a' => 'x',
+                        '_link' => 'l1',
+                    ),
+                    array(
+                        'a' => 'y',
+                        '_link' => 'l2',
+                    ),
+                ),
+                array(
+                    'l1' => 1,
+                    'l2' => -1,
+                ),
+                array(),
+                array(
+                    'records' => array(
+                        array(
+                            'a' => 'x',
+                            '_link' => 'l1',
+                        ),
+                        array(
+                            'a' => 'y',
+                            '_link' => 'l2',
+                        ),
+                    ),
+                    'next_offset' => array(
+                        'l1' => 1,
+                        'l2' => -1,
+                    ),
+                ),
+            ),
+            'all_errors' => array(
+                array(),
+                array(
+                    'l1' => -1,
+                    'l2' => -1,
+                ),
+                array(
+                    'l1' => array(
+                        'code' => $exception->getHttpCode(),
+                        'error' => $exception->getErrorLabel(),
+                        'error_message' => $exception->getMessage(),
+                    ),
+                    'l2' => array(
+                        'code' => $exception->getHttpCode(),
+                        'error' => $exception->getErrorLabel(),
+                        'error_message' => $exception->getMessage(),
+                    ),
+                ),
+                array(
+                    'records' => array(),
+                    'next_offset' => array(
+                        'l1' => -1,
+                        'l2' => -1,
+                    ),
+                    'errors' => array(
+                        'l1' => array(
+                            'code' => $exception->getHttpCode(),
+                            'error' => $exception->getErrorLabel(),
+                            'error_message' => $exception->getMessage(),
+                        ),
+                        'l2' => array(
+                            'code' => $exception->getHttpCode(),
+                            'error' => $exception->getErrorLabel(),
+                            'error_message' => $exception->getMessage(),
+                        ),
+                    ),
+                ),
+            ),
+            'some_errors' => array(
+                array(
+                    array(
+                        'a' => 'x',
+                        '_link' => 'l1',
+                    ),
+                    array(
+                        'a' => 'y',
+                        '_link' => 'l2',
+                    ),
+                ),
+                array(
+                    'l1' => 1,
+                    'l2' => -1,
+                ),
+                array(
+                    'l2' => array(
+                        'code' => $exception->getHttpCode(),
+                        'error' => $exception->getErrorLabel(),
+                        'error_message' => $exception->getMessage(),
+                    ),
+                ),
+                array(
+                    'records' => array(
+                        array(
+                            'a' => 'x',
+                            '_link' => 'l1',
+                        ),
+                        array(
+                            'a' => 'y',
+                            '_link' => 'l2',
+                        ),
+                    ),
+                    'next_offset' => array(
+                        'l1' => 1,
+                        'l2' => -1,
+                    ),
+                    'errors' => array(
+                        'l2' => array(
+                            'code' => $exception->getHttpCode(),
+                            'error' => $exception->getErrorLabel(),
+                            'error_message' => $exception->getMessage(),
+                        ),
+                    ),
+                ),
+            ),
+        );
+    }
+
     public function testGetData()
     {
         /** @var RelateApi|PHPUnit_Framework_MockObject_MockObject $api */
@@ -92,6 +231,162 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
                 ),
             ),
         ), $actual);
+    }
+
+    public function testGetData_AllSubRequestsThrowExceptions()
+    {
+        $exception = new SugarApiExceptionNotAuthorized('SUGAR_API_EXCEPTION_RECORD_NOT_AUTHORIZED', array('view'));
+        $error = array(
+            'next_offset' => -1,
+            'records' => array(),
+            'error' => array(
+                'code' => $exception->getHttpCode(),
+                'error' => $exception->getErrorLabel(),
+                'error_message' => $exception->getMessage(),
+            ),
+        );
+
+        /** @var RelateApi|PHPUnit_Framework_MockObject_MockObject $api */
+        $relateApi = $this->getMockBuilder('RelateApi')
+            ->disableOriginalConstructor()
+            ->setMethods(array('filterRelated'))
+            ->getMock();
+        $relateApi->expects($this->any())
+            ->method('filterRelated')
+            ->will($this->throwException($exception));
+
+        /** @var CollectionApi|PHPUnit_Framework_MockObject_MockObject $api */
+        $api = $this->getMockBuilder('CollectionApi')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getLinkArguments'))
+            ->getMock();
+        $api->expects($this->any())
+            ->method('getLinkArguments')
+            ->will($this->returnValue(array()));
+
+        SugarTestReflection::setProtectedValue($api, 'relateApi', $relateApi);
+
+        $service = SugarTestRestUtilities::getRestServiceMock();
+
+        $actual = SugarTestReflection::callProtectedMethod(
+            $api,
+            'getData',
+            array(
+                $service,
+                array(
+                    'offset' => array(
+                        'a' => 0,
+                        'b' => 0,
+                        'c' => 0,
+                    ),
+                ),
+                new SugarBean(),
+                array(
+                    array('name' => 'a'),
+                    array('name' => 'b'),
+                    array('name' => 'c'),
+                ),
+                array(
+                    'a' => array(),
+                    'b' => array(),
+                    'c' => array(),
+                ),
+            )
+        );
+
+        $this->assertEquals(
+            array(
+                'a' => $error,
+                'b' => $error,
+                'c' => $error,
+            ),
+            $actual
+        );
+    }
+
+    public function testGetData_SomeSubRequestsThrowExceptions()
+    {
+        $exception = new SugarApiExceptionNotAuthorized('SUGAR_API_EXCEPTION_RECORD_NOT_AUTHORIZED', array('view'));
+        $error = array(
+            'next_offset' => -1,
+            'records' => array(),
+            'error' => array(
+                'code' => $exception->getHttpCode(),
+                'error' => $exception->getErrorLabel(),
+                'error_message' => $exception->getMessage(),
+            ),
+        );
+        $records = array(
+            'next_offset' => -1,
+            'records' => array(
+                array('name' => 'a'),
+                array('name' => 'b'),
+                array('name' => 'c'),
+            ),
+        );
+
+        /** @var RelateApi|PHPUnit_Framework_MockObject_MockObject $api */
+        $relateApi = $this->getMockBuilder('RelateApi')
+            ->disableOriginalConstructor()
+            ->setMethods(array('filterRelated'))
+            ->getMock();
+        $relateApi->expects($this->at(0))
+            ->method('filterRelated')
+            ->will($this->throwException($exception));
+        $relateApi->expects($this->at(1))
+            ->method('filterRelated')
+            ->will($this->returnValue($records));
+        $relateApi->expects($this->at(2))
+            ->method('filterRelated')
+            ->will($this->throwException($exception));
+
+        /** @var CollectionApi|PHPUnit_Framework_MockObject_MockObject $api */
+        $api = $this->getMockBuilder('CollectionApi')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getLinkArguments'))
+            ->getMock();
+        $api->expects($this->any())
+            ->method('getLinkArguments')
+            ->will($this->returnValue(array()));
+
+        SugarTestReflection::setProtectedValue($api, 'relateApi', $relateApi);
+
+        $service = SugarTestRestUtilities::getRestServiceMock();
+
+        $actual = SugarTestReflection::callProtectedMethod(
+            $api,
+            'getData',
+            array(
+                $service,
+                array(
+                    'offset' => array(
+                        'a' => 0,
+                        'b' => 0,
+                        'c' => 0,
+                    ),
+                ),
+                new SugarBean(),
+                array(
+                    array('name' => 'a'),
+                    array('name' => 'b'),
+                    array('name' => 'c'),
+                ),
+                array(
+                    'a' => array(),
+                    'b' => array(),
+                    'c' => array(),
+                ),
+            )
+        );
+
+        $this->assertEquals(
+            array(
+                'a' => $error,
+                'b' => $records,
+                'c' => $error,
+            ),
+            $actual
+        );
     }
 
     /**
@@ -446,6 +741,162 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
                     'offset' => 'a',
                 ),
                 array(),
+            ),
+        );
+    }
+
+    /**
+     * @dataProvider extractErrorsProvider
+     */
+    public function testExtractErrors(array $data, array $expectedData, array $expectedErrors)
+    {
+        $errors = SugarTestReflection::callProtectedMethod($this->api, 'extractErrors', array(&$data));
+
+        $this->assertEquals($expectedData, $data);
+        $this->assertEquals($expectedErrors, $errors);
+    }
+
+    public function extractErrorsProvider()
+    {
+        $exception = new SugarApiExceptionNotAuthorized('SUGAR_API_EXCEPTION_RECORD_NOT_AUTHORIZED', array('view'));
+
+        return array(
+            'no_errors' => array(
+                array(
+                    'l1' => array(
+                        'records' => array(
+                            array(
+                                'a' => 'x',
+                            ),
+                            array(
+                                'a' => 'z',
+                            ),
+                        ),
+                        'next_offset' => -1,
+                    ),
+                    'l2' => array(
+                        'records' => array(
+                            array(
+                                'a' => 'y',
+                            ),
+                        ),
+                        'next_offset' => -1,
+                    ),
+                ),
+                array(
+                    'l1' => array(
+                        'records' => array(
+                            array(
+                                'a' => 'x',
+                            ),
+                            array(
+                                'a' => 'z',
+                            ),
+                        ),
+                        'next_offset' => -1,
+                    ),
+                    'l2' => array(
+                        'records' => array(
+                            array(
+                                'a' => 'y',
+                            ),
+                        ),
+                        'next_offset' => -1,
+                    ),
+                ),
+                array(),
+            ),
+            'one_success_and_one_error' => array(
+                array(
+                    'l1' => array(
+                        'records' => array(
+                            array(
+                                'a' => 'x',
+                            ),
+                            array(
+                                'a' => 'z',
+                            ),
+                        ),
+                        'next_offset' => -1,
+                    ),
+                    'l2' => array(
+                        'records' => array(),
+                        'next_offset' => -1,
+                        'error' => array(
+                            'code' => $exception->getHttpCode(),
+                            'error' => $exception->getErrorLabel(),
+                            'error_message' => $exception->getMessage(),
+                        ),
+                    ),
+                ),
+                array(
+                    'l1' => array(
+                        'records' => array(
+                            array(
+                                'a' => 'x',
+                            ),
+                            array(
+                                'a' => 'z',
+                            ),
+                        ),
+                        'next_offset' => -1,
+                    ),
+                    'l2' => array(
+                        'records' => array(),
+                        'next_offset' => -1,
+                    ),
+                ),
+                array(
+                    'l2' => array(
+                        'code' => $exception->getHttpCode(),
+                        'error' => $exception->getErrorLabel(),
+                        'error_message' => $exception->getMessage(),
+                    ),
+                ),
+            ),
+            'all_errors' => array(
+                array(
+                    'l1' => array(
+                        'records' => array(),
+                        'next_offset' => -1,
+                        'error' => array(
+                            'code' => $exception->getHttpCode(),
+                            'error' => $exception->getErrorLabel(),
+                            'error_message' => $exception->getMessage(),
+                        ),
+                    ),
+                    'l2' => array(
+                        'records' => array(),
+                        'next_offset' => -1,
+                        'error' => array(
+                            'code' => $exception->getHttpCode(),
+                            'error' => $exception->getErrorLabel(),
+                            'error_message' => $exception->getMessage(),
+                        ),
+                    ),
+                ),
+                array(
+                    'l1' => array(
+                        'records' => array(),
+                        'next_offset' => -1,
+                    ),
+                    'l2' => array(
+                        'records' => array(),
+                        'next_offset' => -1,
+                    ),
+                ),
+                array(
+                    'l1' => array(
+                        'code' => $exception->getHttpCode(),
+                        'error' => $exception->getErrorLabel(),
+                        'error_message' => $exception->getMessage(),
+                    ),
+                    'l2' => array(
+                        'code' => $exception->getHttpCode(),
+                        'error' => $exception->getErrorLabel(),
+                        'error_message' => $exception->getMessage(),
+                    ),
+                ),
             ),
         );
     }

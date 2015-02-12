@@ -110,6 +110,12 @@ describe('Base.Layout.ModuleList', function() {
 
                 _tabMap[moduleName] = value.module;
                 sinon.collection.stub(app.metadata, 'getModuleTabMap').returns(_tabMap);
+                sinon.collection.stub(app.metadata, 'getFullModuleList', function() {
+                    return {
+                        MyCustomCases: 'MyCustomCases',
+                        Cases: 'Cases'
+                    };
+                });
 
                 layout.handleViewChange();
 
@@ -118,12 +124,40 @@ describe('Base.Layout.ModuleList', function() {
             });
         });
 
+        it('should show the correct mapped version of the module only if the module exists', function() {
+            var _tabMap = {},
+                toggleModuleStub = sinon.collection.stub(layout, 'toggleModule');
+
+            layout.layout = {
+                trigger: $.noop,
+                off: $.noop
+            };
+
+            _tabMap[moduleName] = 'InvalidModule';
+            sinon.collection.stub(app.metadata, 'getModuleTabMap').returns(_tabMap);
+            sinon.collection.stub(app.metadata, 'getFullModuleList', function() {
+                return {
+                    Cases: 'Cases'
+                };
+            });
+
+            layout.handleViewChange();
+
+            expect(toggleModuleStub.called).toBeFalsy;
+        });
+
         it('should hide cached versions of the modules', function() {
             layout.layout = {
                 trigger: $.noop,
                 off: $.noop
             };
 
+            sinon.collection.stub(app.metadata, 'getFullModuleList', function() {
+                return {
+                    CachedModule: 'CachedModule',
+                    Cases: 'Cases'
+                };
+            });
             layout._setActiveModule('CachedModule');
             layout.handleViewChange();
 

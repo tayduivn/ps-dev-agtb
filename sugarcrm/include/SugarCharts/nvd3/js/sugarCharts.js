@@ -607,7 +607,7 @@ function swapChart(chartId, jsonFilename, css, chartConfig) {
                 switch (chartConfig['chartType']) {
 
                     case 'barChart':
-                        data = (chartConfig.barType === 'stacked') ?
+                        data = (chartConfig.barType === 'stacked' || chartConfig.barType === 'grouped') ?
                             json.label.map(function(d, i) {
                                 return {
                                     'key': (d !== '') ? d : strUndefined,

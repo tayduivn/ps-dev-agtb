@@ -135,7 +135,6 @@ UpdaterField.prototype._parseSettings = function (settings) {
         value: "name",
         text: "label",
         type: "fieldType",
-        len: "maxLength",
         optionItem: "options",
         required: "required"
     }, parsedSettings = {}, key;
@@ -157,60 +156,60 @@ UpdaterField.prototype.setOptions = function (settings) {
         options = [],
         newOption,
         aUsers = [],
-        customUsers = {};
+        customUsers = {},
+        currentSetting;
     this.list = settings;
     for (i = 0; i < settings.length; i += 1) {
         /*CREATE INPUT FIELD*/
-        settings[i] = this._parseSettings(settings[i]);
-        settings[i].parent = this;
-        settings[i].allowDisabling = this.hasCheckbox;
-        settings[i].disabled = this.hasCheckbox;
-        switch (settings[i].fieldType) {
+        currentSetting = this._parseSettings(settings[i]);
+        currentSetting.parent = this;
+        currentSetting.allowDisabling = this.hasCheckbox;
+        currentSetting.disabled = this.hasCheckbox;
+        switch (currentSetting.fieldType) {
         case 'TextField':
-            newOption =  new TextUpdaterItem(settings[i]);
+            newOption =  new TextUpdaterItem(currentSetting);
             break;
         case 'TextArea':
-            newOption =  new TextAreaUpdaterItem(settings[i]);
+            newOption =  new TextAreaUpdaterItem(currentSetting);
             break;
         case 'Date':
         case 'Datetime':
-            newOption =  new DateUpdaterItem(settings[i]);
+            newOption =  new DateUpdaterItem(currentSetting);
             break;
         case 'DropDown':
             aUsers = [];
-            if (settings[i].options instanceof Array) {
-                if (settings[i].value === 'assigned_user_id') {
+            if (currentSetting.options instanceof Array) {
+                if (currentSetting.value === 'assigned_user_id') {
                     aUsers = [
                         {'text': translate('LBL_PMSE_FORM_OPTION_CURRENT_USER'), 'value': 'currentuser'},
                         {'text': translate('LBL_PMSE_FORM_OPTION_RECORD_OWNER'), 'value': 'owner'},
                         {'text': translate('LBL_PMSE_FORM_OPTION_SUPERVISOR'), 'value': 'supervisor'}
                     ];
-                    customUsers = aUsers.concat(settings[i].options);
-                    settings[i].options = customUsers;
+                    customUsers = aUsers.concat(currentSetting.options);
+                    currentSetting.options = customUsers;
                 }
             } else {
-                if (settings[i].options) {
-                    $.each(settings[i].options, function (key, value) {
+                if (currentSetting.options) {
+                    $.each(currentSetting.options, function (key, value) {
                         aUsers.push({value: key, text: value});
                     });
                 }
-                settings[i].options = aUsers;
+                currentSetting.options = aUsers;
 
             }
-            newOption =  new DropdownUpdaterItem(settings[i]);
+            newOption =  new DropdownUpdaterItem(currentSetting);
             break;
         case 'Checkbox':
-            newOption =  new CheckboxUpdaterItem(settings[i]);
+            newOption =  new CheckboxUpdaterItem(currentSetting);
             break;
         case 'Integer':
         case 'Currency':
         case 'Decimal':
         case 'Float':
-            //newOption =  new OptionNumberField(settings[i], this);
-            newOption =  new NumberUpdaterItem(settings[i]);
+            newOption =  new NumberUpdaterItem(currentSetting);
             break;
         default:
-            newOption =  new TextUpdaterItem(settings[i]);
+            newOption =  new TextUpdaterItem(currentSetting);
             break;
         }
 
@@ -447,7 +446,7 @@ UpdaterField.prototype._onValueGenerationHandler = function (module) {
         } else {
             panel = arguments[0];
             list = arguments[1];
-            newExpression = "{::" + module + "::" + arguments[2].name  + "::}";
+            newExpression = "{::" + module + "::" + arguments[2].value  + "::}";
             i = control.selectionStart;
             i = i || 0;
             aux = currentValue.substr(0, i);
@@ -524,7 +523,7 @@ UpdaterField.prototype._onValueGenerationHandler = function (module) {
 UpdaterField.prototype.openPanelOnItem = function (field) {
     var that = this, settings, inputPos, textSize, subjectInput, i,
         variablesDataSource = project.getMetadata("targetModuleFieldsDataSource"), currentFilters, list, targetPanel,
-        currentOwner, fieldType = field.getFieldType();
+        currentOwner, fieldType = field.getFieldType(), constantPanelCfg;
 
     if (!(field instanceof DateUpdaterItem || field instanceof NumberUpdaterItem)) {
         if (!this._variablesList) {
@@ -536,7 +535,7 @@ UpdaterField.prototype.openPanelOnItem = function (field) {
                         type: "list",
                         bodyHeight: 100,
                         collapsed: false,
-                        itemsContent: "{{label}}",
+                        itemsContent: "{{text}}",
                         fieldToFilter: "type",
                         title: translate('LBL_PMSE_UPDATERFIELD_VARIABLES_LIST_TITLE').replace(/%MODULE%/g, PROJECT_MODULE)
                     }
@@ -576,6 +575,8 @@ UpdaterField.prototype.openPanelOnItem = function (field) {
                 appendTo: (this.parent && this.parent.parent && this.parent.parent.html) || null,
                 decimalSeparator: this._decimalSeparator,
                 numberGroupingSeparator: this._numberGroupingSeparator,
+                dateFormat: SUGAR.App.date.convertFormat(SUGAR.App.user.getPreference("datepref")),
+                timeFormat: SUGAR.App.user.getPreference("timepref"),
                 onOpen: function () {
                     jQuery(that.currentField.html).addClass("opened");
                 },
@@ -588,12 +589,20 @@ UpdaterField.prototype.openPanelOnItem = function (field) {
         //in order to do it, we verify if the current field class is the same that the previous field's.
         if (!this.currentField || (this.currentField.constructor !== field.constructor)) {
             if (field instanceof DateUpdaterItem) {
+                if (fieldType === 'Date') {
+                    constantPanelCfg = {
+                        date: true,
+                        timespan: true
+                    };
+                } else {
+                    constantPanelCfg = {
+                        datetime: true,
+                        timespan: true
+                    };
+                }
                 this._datePanel.setOperators({
                     arithmetic: ["+", "-"]
-                }).setConstantPanel({
-                    date: true,
-                    timespan: true
-                });
+                }).setConstantPanel(constantPanelCfg);
             } else {
                 this._datePanel.setOperators({
                     arithmetic: true
@@ -610,10 +619,10 @@ UpdaterField.prototype.openPanelOnItem = function (field) {
                     items: this._variables
                 }],
                 dataFormat: "hierarchical",
-                typeField: "fieldType",
+                typeField: "type",
                 typeFilter: field._fieldType,
-                textField: "label",
-                valueField: "name",
+                textField: "text",
+                valueField: "value",
                 dataChildRoot: "items",
                 moduleTextField: "name",
                 moduleValueField: "value"
@@ -1097,8 +1106,23 @@ UpdaterField.prototype.setVariables = function (variables) {
     };
 
     DateUpdaterItem.prototype._setValueToControl = function (value) {
-        var friendlyValue = "", i;
+        var friendlyValue = "", i, dateFormat, timeFormat;
         value.forEach(function(value, index, arr) {
+            if (value && value.expType === 'CONSTANT') {
+                if (!dateFormat) {
+                    dateFormat = SUGAR.App.date.convertFormat(SUGAR.App.user.getPreference("datepref"));
+                }
+                if (value.expSubtype === "datetime") {
+                    if (!timeFormat) {
+                        timeFormat = SUGAR.App.date.convertFormat(SUGAR.App.user.getPreference("timepref"));
+                    }
+                    aux = App.date(value.expValue);
+                    value.expLabel = aux.format(dateFormat + " " + timeFormat);
+                } else if (value.expSubtype === "date") {
+                    aux = App.date(value.expValue);
+                    value.expLabel = aux.format(dateFormat);
+                }
+            }
             friendlyValue += " " + value.expLabel;
         });
         this._control.value = friendlyValue;

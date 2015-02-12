@@ -18,8 +18,7 @@
      */
     events: {
         'click [name=cancel_button]': 'cancel',
-        'click [name=signup_button]': 'signup',
-        'change input[name=country]': 'render'
+        'click [name=signup_button]': 'signup'
     },
 
     /**
@@ -60,7 +59,8 @@
         // Manually injects app_list_strings
         app.metadata.set(this._metadata);
 
-        app.view.View.prototype.initialize.call(this, options);
+        this._super('initialize', [options]);
+
         this._showSignupSuccess = false;
         this.model.set({
             'email': [
@@ -74,31 +74,39 @@
         // FIXME: Enforce action `edit` on portal signup to avoid field render on
         // `bindDataChange`. This should be fixed when SC-3145.
         this.action = 'edit';
+
+        // FIXME TY-129 this should be in the country fieldset
+        this.model.on('change:country', function() {
+            this.toggleStateField();
+        }, this);
+        this.on('render', this.toggleStateField, this);
     },
 
     /**
-     * @override
-     * @private
+     * @inheritDoc
      */
-    _render: function() {
+    _renderHtml: function() {
         this.logoUrl = app.metadata.getLogoUrl();
-        app.view.View.prototype._render.call(this);
-
-        this.stateField = this.$('input[name=state]');
-        this.countryField = this.$('input[name=country]');
-        this.toggleStateField();
+        this._super('_renderHtml');
         return this;
     },
 
     /**
      * For USA country only we need to display the State dropdown
+     * FIXME TY-129 create a country fieldset and move this into it
+     * properties.
      */
     toggleStateField: function() {
-        if (this.countryField.select2('val') == 'USA') {
-            this.stateField.parent().show();
+        var state = this.getField('state');
+        // FIXME TY-143, this if block is undesirable
+        if (!state) {
+            return;
+        }
+
+        if (this.model.get('country') === 'USA') {
+            state.show();
         } else {
-            this.stateField.parent().hide();
-            this.context.get('model').unset('state');
+            state.hide();
         }
     },
 
@@ -151,6 +159,11 @@
                     {
                         success: function() {
                             // Flags to know when to render the success
+                            /**
+                             *  FIXME TY-143 we should not be using the same view
+                             * for both the signup and success. It should
+                             * instead be using a different view. 
+                             */
                             self._showSignupSuccess = true;
 
                             // Replace buttons by a unique Back button

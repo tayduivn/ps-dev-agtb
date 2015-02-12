@@ -115,7 +115,7 @@ class PMSECasesListApi extends FilterApi
         $q->select($fields);
         $q->from($inboxBean, array('alias' => 'a'));
         $q->joinRaw('INNER JOIN users u ON a.created_by=u.id');
-        $q->select->fieldRaw('u.last_name', 'last_name');
+        $q->select->fieldRaw('CONCAT(COALESCE(u.first_name, ""), " ", u.last_name)', 'assigned_user_name');
         //Flow query breaks on mssql due to the use of row_number() / count in a subselect which is not supported
         //Doesn't appear to be used.
         //$q->select->fieldRaw('('.$flowQuery->compileSql().')','flow_error');
@@ -202,9 +202,7 @@ class PMSECasesListApi extends FilterApi
         $data = array();
         $data['next_offset'] = $offset;
         $data['records'] = $list;
-        //$data['options'] = $options;
-        //$data['args'] = $args;
-        $data['sql'] = $q->compileSql();
+        //$data['sql'] = $q->compileSql();
         return $data;
     }
 
@@ -477,4 +475,4 @@ class PMSECasesListApi extends FilterApi
             ),
         );
     }
-} 
+}

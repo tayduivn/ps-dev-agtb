@@ -72,7 +72,7 @@
 
             var pmseInboxUrl = app.api.buildFileURL({
                 module: 'pmse_Inbox',
-                id: model.get('cas_id'),
+                id: model.get('cas_id') || (self.collection.get(model)).get('cas_id'),
                 field: 'id'
             }, {cleanCache: true});
             this.image_preview_url = pmseInboxUrl;

@@ -30,6 +30,10 @@ if (!is_admin($current_user) && empty($workflow_modules)) {
 	include('modules/Users/Logout.php');
 }
 
+//BEGIN SUGARCRM flav=ent ONLY
+displayAdminError(translate('WARN_WORKFLOW_DEPRECATED_ERROR', 'WorkFlow'));
+//END SUGARCRM flav=ent ONLY
+
 global $mod_strings;
 global $app_list_strings;
 global $app_strings;

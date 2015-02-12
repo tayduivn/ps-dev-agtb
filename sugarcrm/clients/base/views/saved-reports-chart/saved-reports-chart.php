@@ -44,16 +44,20 @@ $viewdefs['base']['view']['saved-reports-chart'] = array(
                 ),
                 array(
                     'name' => 'chart_type',
-                    'label' => 'Chart type',
+                    'label' => 'LBL_CHART_CONFIG_CHART_TYPE',
                     'type' => 'enum',
+                    'sort_alpha' => true,
+                    'ordered' => true,
+                    'searchBarThreshold' => -1,
                     'options' => 'd3_chart_types',
                 ),
+
                 array(
-                    'name' => 'showValues',
-                    'label' => 'Value placement',
-                    'type' => 'enum',
-                    'default' => false,
-                    'options' => 'd3_value_placement',
+                    'name' => 'editReport',
+                    'label' => 'LBL_REPORT_EDIT',
+                    'type' => 'button',
+                    'css_class' => 'btn-invisible btn-link btn-inline',
+                    'dismiss_label' => true,
                 ),
 
                 array(
@@ -61,7 +65,7 @@ $viewdefs['base']['view']['saved-reports-chart'] = array(
                     'type' => 'fieldset',
                     'inline' => true,
                     'show_child_labels' => false,
-                    'label' => 'Show title',
+                    'label' => 'LBL_CHART_CONFIG_SHOW_TITLE',
                     'toggle' => 'show_title',
                     'dependent' => 'report_title',
                     'fields' => array(
@@ -79,58 +83,9 @@ $viewdefs['base']['view']['saved-reports-chart'] = array(
 
                 array(
                     'name' => 'show_legend',
-                    'label' => 'Show legend',
+                    'label' => 'LBL_CHART_LEGEND_OPEN',
                     'type' => 'bool',
                     'default' => 1,
-                ),
-
-                array(
-                    'name' => 'y_label_options',
-                    'type' => 'fieldset',
-                    'inline' => true,
-                    'show_child_labels' => false,
-                    'label' => 'Show y-axis label',
-                    'toggle' => 'show_y_label',
-                    'dependent' => 'y_axis_label',
-                    'fields' => array(
-                        array(
-                            'name' => 'show_y_label',
-                            'type' => 'bool',
-                            'default' => 0,
-                        ),
-                        array(
-                            'name' => 'y_axis_label',
-                        ),
-                    ),
-                ),
-
-                array(
-                    'name' => 'groupDisplayOptions',
-                    'type' => 'fieldset',
-                    'inline' => true,
-                    'show_child_labels' => false,
-                    'label' => 'Group display options',
-                    'css_class' => 'fieldset-wrap',
-                    'fields' => array(
-                        array(
-                            'name' => 'allowScroll',
-                            'text' => 'Allow scrolling',
-                            'type' => 'bool',
-                            'default' => 1,
-                        ),
-                        array(
-                            'name' => 'stacked',
-                            'text' => 'Stack data series',
-                            'type' => 'bool',
-                            'default' => 1,
-                        ),
-                        array(
-                            'name' => 'hideEmptyGroups',
-                            'text' => 'Hide empty groups',
-                            'type' => 'bool',
-                            'default' => 1,
-                        ),
-                    ),
                 ),
 
                 array(
@@ -138,7 +93,7 @@ $viewdefs['base']['view']['saved-reports-chart'] = array(
                     'type' => 'fieldset',
                     'inline' => true,
                     'show_child_labels' => false,
-                    'label' => 'Show x-axis label',
+                    'label' => 'LBL_CHART_CONFIG_SHOW_XAXIS_LABEL',
                     'toggle' => 'show_x_label',
                     'dependent' => 'x_axis_label',
                     'fields' => array(
@@ -158,24 +113,24 @@ $viewdefs['base']['view']['saved-reports-chart'] = array(
                     'type' => 'fieldset',
                     'inline' => true,
                     'show_child_labels' => true,
-                    'label' => 'Tick display methods',
+                    'label' => 'LBL_CHART_CONFIG_TICK_DISPLAY',
                     'css_class' => 'fieldset-wrap',
                     'fields' => array(
                         array(
+                            'name' => 'rotateTicks',
+                            'text' => 'LBL_CHART_CONFIG_TICK_ROTATE',
+                            'type' => 'bool',
+                            'default' => 0,
+                        ),
+                        array(
                             'name' => 'wrapTicks',
-                            'text' => 'Wrap ticks',
+                            'text' => 'LBL_CHART_CONFIG_TICK_WRAP',
                             'type' => 'bool',
                             'default' => 1,
                         ),
                         array(
                             'name' => 'staggerTicks',
-                            'text' => 'Stagger ticks',
-                            'type' => 'bool',
-                            'default' => 1,
-                        ),
-                        array(
-                            'name' => 'rotateTicks',
-                            'text' => 'Rotate ticks',
+                            'text' => 'LBL_CHART_CONFIG_TICK_STAGGER',
                             'type' => 'bool',
                             'default' => 1,
                         ),
@@ -183,18 +138,70 @@ $viewdefs['base']['view']['saved-reports-chart'] = array(
                 ),
 
                 array(
-                    'name' => 'editReport',
-                    'label' => 'LBL_REPORT_EDIT',
-                    'type' => 'button',
-                    'css_class' => 'btn-invisible btn-link btn-inline',
-                    'dismiss_label' => true,
+                    'name' => 'y_label_options',
+                    'type' => 'fieldset',
+                    'inline' => true,
+                    'show_child_labels' => false,
+                    'label' => 'LBL_CHART_CONFIG_SHOW_YAXIS_LABEL',
+                    'toggle' => 'show_y_label',
+                    'dependent' => 'y_axis_label',
+                    'fields' => array(
+                        array(
+                            'name' => 'show_y_label',
+                            'type' => 'bool',
+                            'default' => 0,
+                        ),
+                        array(
+                            'name' => 'y_axis_label',
+                        ),
+                    ),
+                ),
+
+                array(
+                ),
+
+                array(
+                    'name' => 'showValues',
+                    'label' => 'LBL_CHART_CONFIG_VALUE_PLACEMENT',
+                    'type' => 'enum',
+                    'default' => false,
+                    'options' => 'd3_value_placement',
+                ),
+
+                array(
+                    'name' => 'groupDisplayOptions',
+                    'type' => 'fieldset',
+                    'inline' => true,
+                    'show_child_labels' => false,
+                    'label' => 'LBL_CHART_CONFIG_BAR_CHART_OPTIONS',
+                    'css_class' => 'fieldset-wrap',
+                    'fields' => array(
+                        array(
+                            'name' => 'allowScroll',
+                            'text' => 'LBL_CHART_CONFIG_ALLOW_SCROLLING',
+                            'type' => 'bool',
+                            'default' => 1,
+                        ),
+                        array(
+                            'name' => 'stacked',
+                            'text' => 'LBL_CHART_CONFIG_STACK_DATA',
+                            'type' => 'bool',
+                            'default' => 1,
+                        ),
+                        array(
+                            'name' => 'hideEmptyGroups',
+                            'text' => 'LBL_CHART_CONFIG_HIDE_EMPTY_GROUPS',
+                            'type' => 'bool',
+                            'default' => 1,
+                        ),
+                    ),
                 ),
             ),
         ),
     ),
     'chart' => array(
         'name' => 'chart',
-        'label' => 'Chart',
+        'label' => 'LBL_CHART',
         'type' => 'chart',
         'view' => 'detail'
     ),
