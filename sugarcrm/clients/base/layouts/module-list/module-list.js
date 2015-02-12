@@ -329,16 +329,18 @@
         var tabMap = app.metadata.getModuleTabMap(),
             mappedModule = _.isUndefined(tabMap[module]) ? module : tabMap[module],
             $activeModule = this.$('[data-container=module-list]').children('.active').removeClass('active'),
-            activeModule = $activeModule.data('module');
+            activeModule = $activeModule.data('module'),
+            moduleList = app.metadata.getFullModuleList(),
+            inModuleList = !_.isUndefined(moduleList[mappedModule]);
 
         if (this._catalog[activeModule] && !this._catalog[activeModule].short) {
             // hide the cached version only module
             this.toggleModule(activeModule, false);
         }
 
-        // If this is a tab-mapped module, but not mapped to anything,
-        // don't continue execution.
-        if (!mappedModule) {
+        // If this is a tab-mapped module, but not mapped to anything
+        // or invalid mapping, don't continue execution.
+        if (!mappedModule || !inModuleList) {
             return this;
         }
 
