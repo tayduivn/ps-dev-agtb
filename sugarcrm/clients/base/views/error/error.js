@@ -42,39 +42,54 @@
         app.view.View.prototype._render.call(this);
     },
     getErrorAttributes: function() {
-        var attributes = {};
-        if(this.context.get('errorType') ==='404') {
-            attributes = {
-                title: 'ERR_HTTP_404_TITLE',
-                type: 'ERR_HTTP_404_TYPE',
-                message: 'ERR_HTTP_404_TEXT',
-                link: '<a href="javascript:window.history.back()">' + app.lang.get('ERR_HTTP_404_ACTION') + '</a>'
-            };
-        } else if(this.context.get('errorType') ==='422') {
-            attributes = {
-                title: 'ERR_HTTP_DEFAULT_TEXT',
-                type: error.status || 'ERR_HTTP_DEFAULT_TYPE',
-                message: 'ERR_CONTACT_TECH_SUPPORT',
-                link: '<a href="javascript:window.history.back()">' + app.lang.get('ERR_HTTP_DEFAULT_ACTION') + '</a>'
-            };
-        } else if(this.context.get('errorType') ==='500') {
-            attributes = {
-                title: 'ERR_HTTP_500_TITLE',
-                type: 'ERR_HTTP_500_TYPE',
-                message: 'ERR_HTTP_500_TEXT',
-                link: '<a href="javascript:window.history.back()">' + app.lang.get('ERR_HTTP_500_ACTION') + '</a>'
-            };
-        } else {
-            var error = this.context.get('error') || {};
-            var title = null;
-            if (error.status && error.errorThrown) {
-                title = 'HTTP: ' + error.status + ' ' + error.errorThrown;
-            }
-            attributes = {
-                title: title || 'ERR_HTTP_DEFAULT_TITLE',
-                type: error.status || 'ERR_HTTP_DEFAULT_TYPE',
-                message: error.message || 'ERR_HTTP_DEFAULT_TEXT'
-            };
+        var errorType = this.context.get('errorType'),
+            attributes;
+
+        switch (errorType) {
+            case '400':
+                attributes = {
+                    title: 'ERR_HTTP_400_TITLE',
+                    type: 'ERR_HTTP_400_TYPE',
+                    messages: ['ERR_HTTP_400_TEXT_LINE1', 'ERR_HTTP_400_TEXT_LINE2'],
+                    linkText: app.lang.get('ERR_HTTP_400_ACTION')
+                };
+                break;
+            case '404':
+                attributes = {
+                    title: 'ERR_HTTP_404_TITLE',
+                    type: 'ERR_HTTP_404_TYPE',
+                    messages: ['ERR_HTTP_404_TEXT'],
+                    linkText: app.lang.get('ERR_HTTP_404_ACTION')
+                };
+                break;
+            case '422':
+                attributes = {
+                    title: 'ERR_HTTP_DEFAULT_TEXT',
+                    type: error.status || 'ERR_HTTP_DEFAULT_TYPE',
+                    messages: ['ERR_CONTACT_TECH_SUPPORT'],
+                    linkText: app.lang.get('ERR_HTTP_DEFAULT_ACTION')
+                };
+                break;
+            case '500':
+                attributes = {
+                    title: 'ERR_HTTP_500_TITLE',
+                    type: 'ERR_HTTP_500_TYPE',
+                    messages: ['ERR_HTTP_500_TEXT'],
+                    linkText: app.lang.get('ERR_HTTP_500_ACTION')
+                };
+                break;
+            default:
+                var error = this.context.get('error') || {};
+                var title = null;
+                if (error.status && error.errorThrown) {
+                    title = 'HTTP: ' + error.status + ' ' + error.errorThrown;
+                }
+                attributes = {
+                    title: title || 'ERR_HTTP_DEFAULT_TITLE',
+                    type: error.status || 'ERR_HTTP_DEFAULT_TYPE',
+                    messages: [error.message || 'ERR_HTTP_DEFAULT_TEXT']
+                };
+                break;
         }
         return attributes;
     },

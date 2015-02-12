@@ -60,6 +60,18 @@
     };
 
     /**
+     * Non-OAuth bad request error
+     */
+     app.error.handleUnspecified400Error = function(error) {
+        app.controller.loadView({
+            layout: 'error',
+            errorType: '400',
+            module: 'Error',
+            create: true
+        });
+    };
+
+    /**
      * 0 Timeout error handler. If server doesn't respond within timeout.
      */
     app.error.handleTimeoutError = function(error) {
