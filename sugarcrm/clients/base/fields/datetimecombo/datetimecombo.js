@@ -273,6 +273,12 @@
             $timeField = this.$(this.secondaryFieldTag);
 
         $timeField.timepicker().on({
+            showTimepicker: function() {
+                // Remove 24:00 from the list since it does not make sense when used in conjunction with a date.
+                // Timepicker plugin specifically added 24:00 since it can be used by itself without a date and
+                // that is what the standard calls for. (https://github.com/jonthornton/jquery-timepicker/issues/149)
+                $(this).data('timepickerList').find('li:contains("24:00")').remove();
+            },
             change: _.bind(function() {
                 var t = $timeField.val().trim(),
                     datetime = '';
