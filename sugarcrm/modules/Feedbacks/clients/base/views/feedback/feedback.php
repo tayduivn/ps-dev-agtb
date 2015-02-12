@@ -2,7 +2,7 @@
 $viewdefs['Feedbacks']['base']['view']['feedback'] = array(
     'panels' => array(
         array(
-            'label' => 'LBL_PANEL_CSAT',
+            'label' => 'LBL_FEEDBACK_CSAT',
             'fields' => array(
                 array(
                     'name' => 'feedback_csat',
