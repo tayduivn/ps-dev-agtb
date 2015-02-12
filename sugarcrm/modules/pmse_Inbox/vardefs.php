@@ -17,6 +17,7 @@ $dictionary['pmse_Inbox'] = array(
 	'table'=>'pmse_inbox',
 	'audited'=>false,
 	'activity_enabled'=>true,
+    'reassignable' => false,
 		'duplicate_merge'=>true,
 		'fields'=>array (
   'cas_id' => 
