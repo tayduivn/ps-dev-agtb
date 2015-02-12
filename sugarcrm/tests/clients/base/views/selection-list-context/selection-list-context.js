@@ -99,6 +99,7 @@ describe('Base.View.SelectionListContext', function() {
                 '</div><a class="select2-search-choice-close" data-close-pill="true" tabindex="-1"></a></li>';
             view.$el.append(pillHtml);
             event = {target: '.select2-search-choice-close'};
+            view.massCollection = view.context.get('mass_collection');
 
         });
         it('should remove the pill', function() {

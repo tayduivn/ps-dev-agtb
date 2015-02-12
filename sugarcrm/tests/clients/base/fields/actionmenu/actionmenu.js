@@ -10,8 +10,8 @@ describe("Base.Field.ActionMenu", function() {
         app = SugarTest.app;
         layout = {trigger: function(){}, off: function(){}};
         var def = {};
-        SugarTest.loadComponent("base", "view", "list");
-        SugarTest.loadComponent("base", "view", "flex-list");
+        SugarTest.loadComponent('base', 'view', 'list');
+        SugarTest.loadComponent('base', 'view', 'flex-list');
         field = SugarTest.createField('base', 'actionmenu', 'actionmenu', 'recordlist', def);
         field.view.layout = layout;
 
@@ -133,7 +133,7 @@ describe("Base.Field.ActionMenu", function() {
             ]
         };
 
-        field = SugarTest.createField("base","actionmenu", "actionmenu", "list-header", def);
+        field = SugarTest.createField('base','actionmenu', 'actionmenu', 'list-header', def);
         field._loadTemplate = function() { this.template = function(){ return '<a href="javascript:void(0);"></a>'}; };
         var MassCollection = app.BeanCollection.extend();
         var massCollection = new MassCollection();
