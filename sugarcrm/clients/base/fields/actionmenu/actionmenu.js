@@ -15,7 +15,7 @@
  */
 ({
     events: {
-        'click .checkall > input[name="check"]': 'checkAll',
+        'click .checkall': 'checkAll',
         'click input[name="check"].check-one': 'check'
     },
 
@@ -62,7 +62,7 @@
     },
 
     /**
-     * Selects or unselects a record.
+     * Calls {@link #toggleSelect} to help pass the information to the context.
      */
     check: function() {
         var $checkbox = this.$(this.fieldTag);
@@ -87,6 +87,9 @@
      */
     checkAll: function() {
         var $checkbox = this.$(this.fieldTag);
+        if ($checkbox && $(event.target).hasClass('checkall')) {
+            $checkbox.prop('checked', !$checkbox.is(':checked'));
+        }
         var isChecked = $checkbox.is(':checked');
         this.toggleAll(isChecked);
     },

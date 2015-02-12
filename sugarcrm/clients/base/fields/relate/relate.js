@@ -514,7 +514,6 @@
      * @param {Object | Array} models The source models attributes.
      */
     setValue: function(models) {
-
         if (!models) {
             return;
         }
@@ -638,7 +637,6 @@
                 self.model.set(newData);
             }
         });
-
     },
 
     /**
