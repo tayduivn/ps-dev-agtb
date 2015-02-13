@@ -26,9 +26,6 @@ $viewdefs[$module_name]['base']['layout']['unattendedCases-list'] = array(
                 'view' => 'unattendedCases-list',
                 'primary' => true,
             ),
-            array(
-                'view' => 'list-bottom',
-            ),
         ),
     'type' => 'simple',
     'name' => 'unattendedCases-list',
