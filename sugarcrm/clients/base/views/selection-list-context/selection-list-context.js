@@ -89,7 +89,6 @@
      * get `id`.
      */
     resetPills: function(models) {
-        this.pills.length = models.length;
         this.render();
     },
 
@@ -113,6 +112,7 @@
      * @inheritDoc
      */
     _render: function() {
+
         if (this.pills.length > this.maxPillsDisplayed) {
             this.displayedPills = this.pills.slice(0, this.maxPillsDisplayed);
             this.tooManySelectedRecords = true;
@@ -124,11 +124,11 @@
             this.displayedPills = this.pills;
         }
 
-        this._super('_render');
         this.massCollection = this.context.get('mass_collection');
         if (!this.massCollection) {
             return;
         }
+        this._super('_render');
         this.stopListening(this.massCollection);
 
         this.listenTo(this.massCollection, 'add', this.addPill);
