@@ -66,6 +66,20 @@
          * @private
          */
         this._isOpen = false;
+
+        /**
+         * Aside text with all the translated links and strings to easily show
+         * it in the view.
+         * @type {String}
+         */
+        this.aside = new Handlebars.SafeString(app.lang.get('TPL_FEEDBACK_ASIDE', this.module, {
+            learnMoreLink: new Handlebars.SafeString('<a href="http://support.sugarcrm.com">' + Handlebars.Utils.escapeExpression(
+                app.lang.get('LBL_FEEDBACK_ASIDE_CLICK_MORE', this.module)
+            ) + '</a>'),
+            contactSupportLink: new Handlebars.SafeString('<a href="http://www.sugarcrm.com/crm/product_doc.php?edition=ENT&version=7.6.0.0RC1&lang=en_us&module=Feedback&route=list">' + Handlebars.Utils.escapeExpression(
+                app.lang.get('LBL_FEEDBACK_ASIDE_CONTACT_SUPPORT', this.module)
+            ) + '</a>')
+        }));
     },
 
     /**
@@ -188,8 +202,7 @@
                     messages: app.lang.get('LBL_FEEDBACK_SENT', this.module),
                     autoClose: true
                 });
-                this.model.unset('feedback_text');
-                this.model.unset('feedback_csat');
+                this.model.clear();
                 this.toggle(false);
             },
             error: function(){
