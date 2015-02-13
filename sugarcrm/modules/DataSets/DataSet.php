@@ -256,36 +256,62 @@ class DataSet extends SugarBean {
 		$temp_array['REPORT_NAME'] = $this->report_name;
 
         if (SugarACL::checkAccess('DataSets', 'edit')) {
-            $image = SugarThemeRegistry::current()->getImage(
-                'edit_inline',
-                'align="absmiddle" border="0"',
-                null,
-                null,
-                '.gif',
-                $app_strings['LNK_EDIT']
-            );
-
-            $params = array(
+            $temp_array['UP_BUTTON'] = $this->getButton('uparrow_inline', 'LNK_UP', array(
+                'module' => 'DataSets',
+                'action' => 'Save',
+                'data_set_id' => $this->id,
+                'direction' => 'Up',
+            ), $focus);
+            $temp_array['DOWN_BUTTON'] = $this->getButton('downarrow_inline', 'LNK_DOWN', array(
+                'module' => 'DataSets',
+                'action' => 'Save',
+                'data_set_id' => $this->id,
+                'direction' => 'Up',
+            ), $focus);
+            $temp_array['EDIT_BUTTON'] = $this->getButton('edit_inline', 'LNK_EDIT', array(
                 'module' => 'DataSets',
                 'action' => 'EditView',
                 'record' => $this->id,
-            );
-
-            if ($focus) {
-                $params = array_merge($params, array(
-                    'return_module' => $focus->module_name,
-                    'return_action' => 'DetailView',
-                    'return_id' => $focus->id,
-                ));
-            }
-
-            $url = 'index.php?' . http_build_query($params);
-            $temp_array['EDIT_BUTTON'] = '<a class="listViewTdToolsS1" href="' . $url . '">'
-                . $image . $app_strings['LNK_EDIT'] . '</a>&nbsp;&nbsp;';
+            ), $focus);
         }
 
 		return $temp_array;
 	}
+
+    /**
+     * Returns HTML for a record action button
+     * 
+     * @param string $image
+     * @param string $label
+     * @param array $params
+     * @param SugarBean $focus
+     *
+     * @return string
+     */
+    protected function getButton($image, $label, $params, SugarBean $focus = null)
+    {
+        $image = SugarThemeRegistry::current()->getImage(
+            $image,
+            'align="absmiddle" border="0"',
+            null,
+            null,
+            '.gif',
+            translate($label)
+        );
+
+        if ($focus) {
+            $params = array_merge($params, array(
+                'return_module' => $focus->module_name,
+                'return_action' => 'DetailView',
+                'return_id' => $focus->id,
+            ));
+        }
+
+        $url = 'index.php?' . http_build_query($params);
+        return '<a class="listViewTdToolsS1" href="' . htmlspecialchars($url) . '">'
+            . $image . htmlspecialchars(translate($label)) . '</a>&nbsp;&nbsp;';
+    }
+
 	/**
 		builds a generic search based on the query string using or
 		do not include any $this-> because this is called on without having the class instantiated
