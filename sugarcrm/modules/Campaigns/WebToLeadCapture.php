@@ -84,7 +84,7 @@ if (isset($_POST['campaign_id']) && !empty($_POST['campaign_id'])) {
             $_POST['dup_checked'] = true;
 
             // checkRequired needs a major overhaul before it works for web to lead forms.
-            $lead = $leadForm->handleSave($prefix, false, false, false, $lead);
+            $lead = $leadForm->handleSave($prefix, false, false, false, $lead, false);
             
 			if(!empty($lead)){
 				
