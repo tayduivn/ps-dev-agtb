@@ -164,6 +164,8 @@ $viewdefs[$module_name] =
                                                             array (
                                                                 'span' => 6,
                                                             ),
+                                                        2 => 'assigned_user_name',
+                                                        3 => 'team_name',
                                                     ),
                                             ),
                                         2 =>
@@ -189,13 +191,11 @@ $viewdefs[$module_name] =
                                                             array (
                                                                 'name' => 'subject',
                                                                 'readonly' => true,
-                                                                'css_class' => 'hidden',
                                                             ),
                                                         4 =>
                                                             array (
                                                                 'name' => 'body_html',
                                                                 'readonly' => true,
-                                                                'css_class' => 'hidden',
                                                             ),
                                                     ),
                                             ),

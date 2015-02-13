@@ -295,4 +295,4 @@ $dictionary['pmse_Emails_Templates'] = array(
 if (!class_exists('VardefManager')){
         require_once('include/SugarObjects/VardefManager.php');
 }
-VardefManager::createVardef('pmse_Emails_Templates','pmse_Emails_Templates', array('basic','assignable'));
+VardefManager::createVardef('pmse_Emails_Templates','pmse_Emails_Templates', array('basic', 'team_security', 'assignable'));
