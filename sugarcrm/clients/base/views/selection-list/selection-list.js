@@ -15,9 +15,8 @@
  * The SelectionListView has a generic implementation and can be overriden for
  * particular uses.
  *
- * It has the following properties:
+ * It has the following properties that have to be passed in the context:
  *
- * - `isMultiSelect` A boolean that tells if the user can select multiple records.
  * - `maxSelectedRecords` The max number of records the user can select in the
  *    case of multiselect selecttion list.
  *
@@ -66,7 +65,7 @@
     /**
      * Sets metadata proper to selection-list.
      *
-     * @param options
+     * @param {Object} options
      *
      * FIXME: SC-4075 will remove this method.
      */
@@ -79,15 +78,15 @@
     },
 
     /**
-     * Checks the checkbox when the row is clicked.
+     * Checks the `[data-check=one]` element when the row is clicked.
      *
-     * @param {object} event
+     * @param {Event} event The `click` event.
      */
     triggerCheck: function(event) {
         //Ignore inputs and links/icons, because those already have defined effects
         if (!($(event.target).is('a,i,input'))) {
-            var radioButton = $(event.currentTarget).find('.selection[type="radio"]');
-            radioButton[0].click();
+            var checkbox = $(event.currentTarget).find('[data-check=one]');
+            checkbox[0].click();
         }
     },
 
@@ -102,7 +101,7 @@
      * Closes the drawer passing the selected model attributes to the callback.
      *
      * @param {object} context
-     * @param {object} selectedModel The selected record.
+     * @param {Data.Bean} selectedModel The selected record.
      *
      * @protected
      */
@@ -116,7 +115,7 @@
     /**
      * Returns attributes given a model with ACL check.
      *
-     * @param {object} model
+     * @param {Data.bean} model
      * @return {object} attributes
      *
      * @private

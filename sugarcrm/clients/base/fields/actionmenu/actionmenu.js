@@ -15,8 +15,8 @@
  */
 ({
     events: {
-        'click .checkall': 'checkAll',
-        'click input[name="check"].check-one': 'check'
+        'click [data-check=all]': 'checkAll',
+        'click [data-check=one]': 'check'
     },
 
     plugins: ['Tooltip'],

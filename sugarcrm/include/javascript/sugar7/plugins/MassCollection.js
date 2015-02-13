@@ -18,7 +18,7 @@
     app.events.on('app:init', function() {
         app.plugins.register('MassCollection', ['view'], {
             onAttach: function() {
-                this.on('init', this.createMassCollection, this);
+                this.on('init', this._initMassCollectionPlugin, this);
                 this.on('render', this._onMassCollectionRender, this);
             },
 
@@ -28,12 +28,9 @@
              * @private
              */
             _initMassCollectionPlugin: function() {
+                this.createMassCollection();
                 this._preselectModels();
-                this.context.on('mass_collection:add', this.addModel, this);
-                this.context.on('mass_collection:add:all', this.addAllModels, this);
-                this.context.on('mass_collection:remove', this.removeModel, this);
-                this.context.on('mass_collection:remove:all', this.removeAllModels, this);
-                this.context.on('mass_collection:clear', this.clearMassCollection, this);
+                this._bindMassCollectionEvents();
             },
 
             /**
@@ -53,7 +50,7 @@
             /**
              * Creates the mass collection and set it in the context.
              *
-             * @return {Collection} massCollection The mass collection.
+             * @return {Data.BeanCollection} massCollection The mass collection.
              */
             createMassCollection: function() {
                 this.massCollection = this.context.get('mass_collection');
@@ -75,7 +72,6 @@
                             this.massCollection.reset();
                         }, this);
                     }
-                this._initMassCollectionPlugin();
                 }
 
                 return this.massCollection;
@@ -113,6 +109,19 @@
             },
 
             /**
+             * Binds mass collection events listeners.
+             *
+             * @private
+             */
+            _bindMassCollectionEvents: function() {
+                this.context.on('mass_collection:add', this.addModel, this);
+                this.context.on('mass_collection:add:all', this.addAllModels, this);
+                this.context.on('mass_collection:remove', this.removeModel, this);
+                this.context.on('mass_collection:remove:all', this.removeAllModels, this);
+                this.context.on('mass_collection:clear', this.clearMassCollection, this);
+            },
+
+            /**
              * Adds a model or a list of models to the mass collection.
              *
              * @param {Data.Bean|Array} models The model or the list of models
@@ -120,14 +129,7 @@
              */
             addModel: function(models) {
                 models = _.isArray(models) ? models : [models];
-
-                _.each(models, function(model) {
-                    //each selection
-                    if (model.id) {
-                        this.massCollection.add(model);
-                    }
-                }, this);
-
+                this.massCollection.add(models);
                 if (this._isAllChecked(this.massCollection)) {
                     this.massCollection.trigger('all:checked');
                 }
@@ -153,13 +155,7 @@
              */
             removeModel: function(models) {
                 models = _.isArray(models) ? models : [models];
-
-                _.each(models, function(model) {
-                    if (model.id) {
-                        this.massCollection.remove(model);
-                    }
-                }, this);
-
+                this.massCollection.remove(models);
                 if (!this._isAllChecked(this.massCollection)) {
                     this.massCollection.trigger('not:all:checked');
                 }

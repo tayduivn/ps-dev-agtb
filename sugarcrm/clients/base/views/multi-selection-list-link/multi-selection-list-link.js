@@ -53,7 +53,8 @@
     },
 
     /**
-     * Select multiple models to link and fire the mass link event
+     * Selects multiple models to link and fire the mass link event.
+     *
      * @private
      */
     _selectMultipleAndClose: function() {
@@ -72,8 +73,8 @@
     _closeDrawer: function(model, data, response) {
         app.drawer.close();
 
-        var context = this.options.context.get('recContext');
-        var view = this.options.context.get('recView');
+        var context = this.context.get('recContext');
+        var view = this.context.get('recView');
         var collectionOptions = context.get('collectionOptions') || {};
 
         if (context.has('parentModel')) {

@@ -52,7 +52,7 @@
  * ```
  * array(
  *     //...
- *     '_minChars' => 3,
+ *     'minChars' => 3,
  * )
  * ```
  *
@@ -213,6 +213,7 @@
     },
 
     /**
+     * //FIXME: We shouldn't have this method. SC-4121 will address this.
      * Creates the css classes to set to the select2 plugin.
      *
      * @return {string}

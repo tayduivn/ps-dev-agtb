@@ -26,9 +26,9 @@
     },
 
     /**
-     * Selects the given model and close the drawer immediately.
+     * Selects the given model and closes the drawer immediately.
      *
-     * @param {object} model
+     * @param {Data.Bean} model
      * @private
      */
     _selectAndCloseImmediately: function(model) {

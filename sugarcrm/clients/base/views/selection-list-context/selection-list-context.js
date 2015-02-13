@@ -28,7 +28,7 @@
     plugins: ['EllipsisInline'],
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     initialize: function(options) {
         this.pills = [];
@@ -44,10 +44,10 @@
     /**
      * Adds a pill in the template.
      *
-     * @param {Model} model The model corresponding to the pill to add.
+     * @param {Data.Bean} model The model corresponding to the pill to add.
      */
     addPill: function(model) {
-        var name = model.name || model.get('name');
+        var name = model.get('name');
         this.pills.push({id: model.id, name: name});
         this.render();
     },
@@ -55,7 +55,7 @@
     /**
      * Removes a pill from the template.
      *
-     * @param {Model} model The model corresponding to the pill to remove.
+     * @param {Data.Bean} model The model corresponding to the pill to remove.
      */
     removePill: function(model) {
         this.pills = _.reject(this.pills, function(pill) {
@@ -66,9 +66,11 @@
 
     /**
      * Removes all the pills and sends an event to clear the mass collection.
+     *
+     * @param {Event} The click event.
      */
     removeAllPills: function(event) {
-        if (!!event) {
+        if (event) {
             if (this.$(event.target).hasClass('disabled')) {
                 return;
             }
@@ -101,10 +103,7 @@
     closePill: function(event) {
         var modelId = this.$(event.target).closest('.select2-search-choice').data('id').toString();
         this.removePill({id: modelId});
-        var model = _.find(this.massCollection.models, function(model) {
-            return model.id === modelId;
-        });
-
+        var model = this.massCollection.get(modelId);
         this.context.trigger('mass_collection:remove', model);
     },
 

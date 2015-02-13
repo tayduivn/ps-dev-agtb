@@ -29,6 +29,9 @@
 ({
     extendsFrom: 'SelectionListView',
 
+    /**
+     * @inheritDoc
+     */
     initialize: function(options) {
         this.plugins = _.union(this.plugins, ['MassCollection']);
         this._super('initialize', [options]);
@@ -38,7 +41,7 @@
          *
          * @property {number}
          */
-        this.maxSelectedRecords = options.context.get('maxSelectedRecords');
+        this.maxSelectedRecords = this.context.get('maxSelectedRecords');
 
         /**
          * Boolean to know whether the selected records called `mass collection`
@@ -51,7 +54,7 @@
          * @property {boolean} `true` for an independent mass collection. `false`
          *   for the mass collection to be tied to the view collection.
          */
-        this.independentMassCollection = options.context.get('independentMassCollection') || true;
+        this.independentMassCollection = this.context.get('independentMassCollection') || true;
     },
 
     /**
@@ -64,6 +67,7 @@
             isSearchAndSelectAction: true
         };
     },
+
     /**
      * Sets up events.
      *
@@ -73,17 +77,6 @@
         this.context.on('selection:select:fire', this._validateSelection, this);
     },
 
-    /**
-     * @inheritDoc
-     */
-    triggerCheck: function(event) {
-        //Ignore inputs and links/icons, because those already have defined effects
-        if (!($(event.target).is('a,i,input'))) {
-            //simulate click on the input for this row
-            var checkbox = $(event.currentTarget).find('input[name="check"]');
-            checkbox[0].click();
-        }
-    },
     /**
      * Closes the drawer passing the selected models attributes to the callback.
      *
@@ -118,8 +111,8 @@
     /**
      * Returns an array of attributes given a collection.
      *
-     * @param {collection} collection A collection of records.
-     * @return {object[]} attributes An array containing the attribute object of
+     * @param {Data.BeanCollection} collection A collection of records.
+     * @return {Object[]} attributes An array containing the attribute object of
      *   each model.
      *
      * @private

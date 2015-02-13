@@ -19,11 +19,11 @@
     initialize: function(options) {
         var moduleMeta = app.metadata.getModule(options.module),
             isBwcEnabled = (moduleMeta && moduleMeta.isBwcEnabled),
-            multiSelectFilter = options.context.get('isMultiSelect'),
+            multiSelect = options.context.get('isMultiSelect'),
             buttonsToRemove = [],
             additionalEvents = {};
 
-        if (isBwcEnabled || multiSelectFilter) {
+        if (isBwcEnabled || multiSelect) {
             buttonsToRemove.push('create_button');
         } else {
             additionalEvents['click [name=create_button]'] = 'createAndSelect';
@@ -33,17 +33,17 @@
         this._super('initialize', [options]);
 
         this.isMultiLink = options.context.has('recLink');
-        if (!this.isMultiLink) {
-            buttonsToRemove.push('link_button');
-        } else {
+        if (this.isMultiLink) {
             //FIXME: This will be removed with SC-4073.
             var linkTitleLabel = _.find(this.meta.fields, function(field) {
                 return field.name === 'title';
             }, this);
             linkTitleLabel.default_value = 'TPL_SEARCH_AND_ADD';
+        } else {
+            buttonsToRemove.push('link_button');
         }
 
-        if (!multiSelectFilter) {
+        if (!multiSelect) {
             buttonsToRemove.push('select_button');
         }
 
