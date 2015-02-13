@@ -27,6 +27,16 @@ class SugarUpgradeClearVarDefs extends UpgradeScript
     protected $modules;
 
     /**
+     * In case off Employees->Users hierarhy we need a way
+     * to ignore fields which are related to Users module when we scan Employees module  
+     */
+    protected $combinedModules = array(
+        'Employees' => array(
+            'Users',
+        ),
+    );
+
+    /**
      * {@inheritdoc}
      */
     public function run()
@@ -235,14 +245,26 @@ class SugarUpgradeClearVarDefs extends UpgradeScript
         if (!empty($mainKey)) {
             if (!empty($def[$relateKey])) {
                 $relatedBean = $this->getBean($def[$relateKey]);
-                if (!empty($relatedBean->module_name) && $def[$relateKey] != $relatedBean->module_name) {
-                    $def[$relateKey] = $relatedBean->module_name;
-                    $modified = true;
+                if (!empty($relatedBean->module_name)) {
+                    $beanNames = array($relatedBean->module_name);
+                    if (array_key_exists($relatedBean->module_name, $this->combinedModules)) {
+                        $beanNames = array_merge($beanNames, $this->combinedModules[$relatedBean->module_name]);
+                    }
+                    if (!in_array($def[$relateKey], $beanNames)) {
+                        $def[$relateKey] = $relatedBean->module_name;
+                        $modified = true;
+                    }
                 }
             }
-            if (!empty($def[$mainKey]) && $def[$mainKey] != $seed->module_name) {
-                $def[$mainKey] = $seed->module_name;
-                $modified = true;
+            if (!empty($seed->module_name)) {
+                $beanNames = array($seed->module_name);
+                if (array_key_exists($seed->module_name, $this->combinedModules)) {
+                    $beanNames = array_merge($beanNames, $this->combinedModules[$seed->module_name]);
+                }
+                if (!empty($def[$mainKey]) && !in_array($def[$mainKey], $beanNames)) {
+                    $def[$mainKey] = $seed->module_name;
+                    $modified = true;
+                }
             }
         }
         if ($modified) {
