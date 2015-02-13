@@ -32,7 +32,6 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
          * width of one column to render bars
          */
         minColumnWidth = 40;
-
     var params = _.extend({
         show_title: true,
         show_legend: true,
@@ -312,6 +311,10 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                         .showTitle(params.show_title)
                         .showLegend(params.show_legend)
                         .colorData(params.colorData)
+                        .donut(params.donut || false)
+                        .donutLabelsOutside(params.donutLabelsOutside || false)
+                        .hole(params.hole || false)
+                        .donutRatio(params.donutRatio || 0.5)
                         .direction(params.direction)
                         .strings({
                             legend: {
@@ -640,10 +643,17 @@ function swapChart(chartId, jsonFilename, css, chartConfig) {
 
                     case 'pieChart':
                         data = json.values.map(function(d, i) {
-                            return {
+                            var data = {
                                 'key': d.label[0] !== '' ? d.label[0] : strUndefined,
                                 'value': parseFloat(d.values[0])
                             };
+                            if (d.color !== undefined) {
+                                data.color = d.color;
+                            }
+                            if (d.classes !== undefined) {
+                                data.classes = d.classes;
+                            }
+                            return data;
                         });
                         break;
 
