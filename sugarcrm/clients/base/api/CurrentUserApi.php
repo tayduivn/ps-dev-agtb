@@ -174,7 +174,6 @@ class CurrentUserApi extends SugarApi
         $current_user->_create_proper_name_field();
         $user_data['full_name'] = $current_user->full_name;
         $user_data['user_name'] = $current_user->user_name;
-        $user_data['email'] = $current_user->email;
         $user_data['roles'] = ACLRole::getUserRoles($current_user->id);
         $user_data = $this->setExpiredPassword($user_data);
         $user_data['picture'] = $current_user->picture;

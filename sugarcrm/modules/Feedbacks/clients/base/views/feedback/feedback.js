@@ -145,14 +145,9 @@
      */
     send: function() {
 
-        var emails = app.user.get('email');
-        var primary = _.filter(emails, function(email) { return email.primary_address; });
-        var email = _.first(primary || _.first(emails));
-
         this.model.set({
             name: app.user.get('full_name'),
             username: app.user.get('user_name'),
-            email: email && email.email_address || '',
             phone: 'n/a',
             timezone: app.user.getPreference('timezone'),
             account_type: app.user.get('type'),
@@ -170,7 +165,6 @@
             type: 'POST',
             data: {
                 'entry.720195324': this.model.get('name'),
-                'entry.767714183': this.model.get('email'),
                 'entry.99686462': this.model.get('phone'),
                 'entry.860101942': this.model.get('username'),
                 'entry.98009013': this.model.get('account_type'),
