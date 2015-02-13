@@ -871,7 +871,7 @@
                 if (!_.isEmpty(this.$(this.fieldTag).data('select2'))) {
                     // Just setting the value on select2 doesn't cause the label to show up
                     // so we need to render the field next after setting this value
-                    this.$(this.fieldTag).select2('val', this.model.get(this.name));
+                    this.$(this.fieldTag).select2('val', this.model.get(this.def.idName));
                 }
                 // double-check field isn't disposed before trying to render
                 if (!this.disposed) {
