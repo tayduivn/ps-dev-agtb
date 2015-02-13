@@ -47,7 +47,7 @@
      * @param {Data.Bean} model The model corresponding to the pill to add.
      */
     addPill: function(model) {
-        var name = model.get('name');
+        var name = model.get('name') || model.get('full_name');
         this.pills.push({id: model.id, name: name});
         this.render();
     },

@@ -42,7 +42,7 @@
             _onMassCollectionRender: function() {
                 if (this.collection.length !== 0) {
                     if (this._isAllChecked(this.massCollection)) {
-                        massCollection.trigger('all:checked');
+                        this.massCollection.trigger('all:checked');
                     }
                 }
             },
