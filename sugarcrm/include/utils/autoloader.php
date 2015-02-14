@@ -1,5 +1,4 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -196,35 +195,42 @@ class SugarAutoLoader
 
     /**
      * Initialize the loader
+     *
+     * @param boolean $useConfig Used for UnitTest Runs since we don't have the stack installed
      */
-    public static function init()
+    public static function init($useConfig = true)
     {
-        $config = SugarConfig::getInstance();
+        if ($useConfig === true) {
+            $config = SugarConfig::getInstance();
 
-        /*
-         * When development mode is enabled, we bypass the usage
-         * of the filemap and build the classmap dynamically on
-         * every page load. We drop both cache file to make sure
-         * when devMode is disabled again that the system is
-         * properly initialized again withour the need for
-         * running a QuickRepairRebuild.
-         */
-        self::$devMode = $config->get('developerMode', false);
-        if (self::$devMode) {
-            @unlink(sugar_cached(self::CACHE_FILE));
-            @unlink(sugar_cached(self::CLASS_CACHE_FILE));
-        }
+            /*
+             * When development mode is enabled, we bypass the usage
+             * of the filemap and build the classmap dynamically on
+             * every page load. We drop both cache file to make sure
+             * when devMode is disabled again that the system is
+             * properly initialized again withour the need for
+             * running a QuickRepairRebuild.
+             */
+            self::$devMode = $config->get('developerMode', false);
+            if (self::$devMode) {
+                @unlink(sugar_cached(self::CACHE_FILE));
+                @unlink(sugar_cached(self::CLASS_CACHE_FILE));
+            }
 
-        // Extensions included from config
-        $exts = $config->get('autoloader.exts');
-        if (is_array($exts)) {
-            self::$exts += $exts;
-        }
+            // Extensions included from config
+            $exts = $config->get('autoloader.exts');
+            if (is_array($exts)) {
+                self::$exts += $exts;
+            }
 
-        // Excludes from config
-        $exclude = $config->get('autoloader.exclude');
-        if (is_array($exclude)) {
-            self::$exclude += $exclude;
+            // Excludes from config
+            $exclude = $config->get('autoloader.exclude');
+            if (is_array($exclude)) {
+                self::$exclude += $exclude;
+            }
+        } else {
+            // since we are ignoring the config, we have to use DevMode
+            self::$devMode = true;
         }
 
         // Create file map

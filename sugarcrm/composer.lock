@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "582573f727d140e2574f46000fda5da7",
+    "hash": "c5aee77653aaf2feadcafdcbc1edfa18",
     "packages": [
         {
             "name": "onelogin/php-saml",

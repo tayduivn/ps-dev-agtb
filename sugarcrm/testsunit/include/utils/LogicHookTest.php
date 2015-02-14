@@ -10,19 +10,26 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\SugarcrmTest\inc\utils;
+namespace Sugarcrm\SugarcrmTestUnit\inc\utils;
+
+use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
  *
  * LogicHook tests
  *
  */
-class LogicHookTest extends \Sugar_PHPUnit_Framework_TestCase
+class LogicHookTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var array List of files/directories to cleanup
      */
     protected $toDelete = array();
+
+    public static function setupBeforeClass()
+    {
+        require_once 'include/utils/LogicHook.php';
+    }
 
     /**
      * {@inheritDoc}
@@ -193,7 +200,7 @@ class LogicHookTest extends \Sugar_PHPUnit_Framework_TestCase
     public function testGetProcessOrder(array $hookArray, array $expected)
     {
         $lh = new \LogicHook();
-        $result = \SugarTestReflection::callProtectedMethod($lh, 'getProcessOrder', array($hookArray));
+        $result = TestReflection::callProtectedMethod($lh, 'getProcessOrder', array($hookArray));
         $this->assertSame($expected, $result);
     }
 
@@ -270,7 +277,7 @@ class LogicHookTest extends \Sugar_PHPUnit_Framework_TestCase
         }
 
         $lh = new \LogicHook();
-        $valid = \SugarTestReflection::callProtectedMethod($lh, 'loadHookClass', array($class, $file));
+        $valid = TestReflection::callProtectedMethod($lh, 'loadHookClass', array($class, $file));
         $this->assertSame($expected, $valid);
 
         if ($valid) {
@@ -356,8 +363,10 @@ class LogicHookTest extends \Sugar_PHPUnit_Framework_TestCase
      */
     protected function createFile($file, $contents)
     {
-        file_put_contents($file, $contents);
+        // since we don't set the main dir, this needs to be changed to the base sugar dir so the
+        // name spaces will work
+        file_put_contents(SUGAR_BASE_DIR . $file, $contents);
         \SugarAutoLoader::addToMap($file, false);
-        $this->toDelete[] = $file;
+        $this->toDelete[] = SUGAR_BASE_DIR . $file;
     }
 }
