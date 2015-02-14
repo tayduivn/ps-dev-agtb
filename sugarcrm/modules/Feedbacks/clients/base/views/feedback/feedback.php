@@ -34,7 +34,7 @@ $viewdefs['Feedbacks']['base']['view']['feedback'] = array(
                     'template' => 'edit',
                     'required' => true,
                     'css_class' => 'feedback-text',
-                    'placeholder' => 'LBL_FEEDBACK_TEXT_PLACEHOLDER'
+                    'placeholder' => 'LBL_FEEDBACK_TEXT_PLACEHOLDER',
                 ),
             ),
         ),
