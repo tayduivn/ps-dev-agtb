@@ -10,33 +10,36 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\SugarcrmTest\Elasticsearch;
+namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch;
 
+use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 use Sugarcrm\Sugarcrm\Elasticsearch\Logger;
 
 /**
- * Test for the Elastic Logger.
+ *
+ * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Logger
+ *
  */
-class LoggerTest extends \Sugar_PHPUnit_Framework_TestCase
+class LoggerTest extends \PHPUnit_Framework_TestCase
 {
 
     /**
-     * Test encoding data for log messages.
-     * @param $inputData
-     * @param $outputData
+     * @covers ::encodeData
      * @dataProvider providerEncodeData
+     *
+     * @param string $inputData
+     * @param string $outputData
      */
     public function testEncodeData($inputData, $outputData)
     {
-        $logger = new Logger(\LoggerManager::getLogger());
-        $encoded = \SugarTestReflection::callProtectedMethod($logger, 'encodeData', array($inputData));
+        $logger = $this->getMockBuilder('Sugarcrm\Sugarcrm\Elasticsearch\Logger')
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock(); 
+        $encoded = TestReflection::callProtectedMethod($logger, 'encodeData', array($inputData));
         $this->assertEquals($outputData, $encoded);
     }
 
-    /**
-     * Data provider to test encodeData().
-     * @return array
-     */
     public function providerEncodeData()
     {
         return array(

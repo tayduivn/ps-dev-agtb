@@ -16,7 +16,7 @@ use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
  *
- * LogicHook tests
+ * @coversDefaultClass \LogicHook
  *
  */
 class LogicHookTest extends \PHPUnit_Framework_TestCase
@@ -66,7 +66,7 @@ class LogicHookTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test logic hook triggers
-     * @covers \LogicHook::process_hooks
+     * @covers ::process_hooks
      * @dataProvider dataProviderTestProcessHooks
      *
      * @param string $file Filename
@@ -191,7 +191,7 @@ class LogicHookTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \LogicHook::getProcessOrder
+     * @covers ::getProcessOrder
      * @dataProvider dataProviderTestGetProcessOrder
      *
      * @param array $hookArray
@@ -264,7 +264,7 @@ class LogicHookTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \LogicHook::loadHookClass
+     * @covers ::loadHookClass
      * @dataProvider dataProviderTestLoadHookClass
      *
      * @param string $class

@@ -10,19 +10,22 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\SugarcrmTest\Elasticsearch;
+namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch;
 
 use Sugarcrm\Sugarcrm\Elasticsearch\Container;
 
 /**
- * Service Container tests
+ *
+ * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Container
+ *
  */
-class ContainerTest extends \Sugar_PHPUnit_Framework_TestCase
+class ContainerTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @covers \Sugarcrm\Sugarcrm\Elasticsearch\Container::__get
+     * @covers ::__get
      * @dataProvider dataProviderTestGetOverloadLazyLoad
-     * @group unit
+     *
+     * @param string $property
      */
     public function testGetOverloadLazyLoad($property)
     {
@@ -49,9 +52,8 @@ class ContainerTest extends \Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \Sugarcrm\Sugarcrm\Elasticsearch\Container::getConfig
-     * @covers \Sugarcrm\Sugarcrm\Elasticsearch\Container::setConfig
-     * @group unit
+     * @covers ::getConfig
+     * @covers ::setConfig
      */
     public function testSetConfig()
     {
@@ -74,12 +76,12 @@ class ContainerTest extends \Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \Sugarcrm\Sugarcrm\Elasticsearch\Container::registerProviders
-     * @covers \Sugarcrm\Sugarcrm\Elasticsearch\Container::getRegisteredProviders
-     * @covers \Sugarcrm\Sugarcrm\Elasticsearch\Container::isProviderAvailable
-     * @covers \Sugarcrm\Sugarcrm\Elasticsearch\Container::registerProvider
-     * @covers \Sugarcrm\Sugarcrm\Elasticsearch\Container::unregisterProvider
-     * @group unit
+     * @covers ::__construct
+     * @covers ::registerProviders
+     * @covers ::registerProvider
+     * @covers ::getRegisteredProviders
+     * @covers ::isProviderAvailable
+     * @covers ::unregisterProvider
      */
     public function testRegisterProviders()
     {
@@ -96,9 +98,11 @@ class ContainerTest extends \Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \Sugarcrm\Sugarcrm\Elasticsearch\Container::getProvider
+     * @covers ::getProvider
      * @dataProvider dataProviderTestGetProvider
-     * @group unit
+     *
+     * @param string $provider
+     * @param string $class
      */
     public function testGetProvider($provider, $class)
     {
@@ -122,6 +126,7 @@ class ContainerTest extends \Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * Get Container mock
      * @return \Sugarcrm\Sugarcrm\Elasticsearch\Container
      */
     protected function getContainerMock(array $methods = null)

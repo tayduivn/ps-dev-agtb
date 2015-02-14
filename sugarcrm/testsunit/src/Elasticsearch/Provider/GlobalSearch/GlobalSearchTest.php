@@ -10,12 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\SugarcrmTest\Elasticsearch\Provider\GlobalSearch;
+namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Provider\GlobalSearch;
 
 /**
- * GlobalSearch provider tests
+ *
+ * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\GlobalSearch
+ *
  */
-class GlobalSearchTest extends \Sugar_PHPUnit_Framework_TestCase
+class GlobalSearchTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Test updating the auto-incremented fields.

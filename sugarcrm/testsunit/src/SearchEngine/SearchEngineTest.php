@@ -10,22 +10,21 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\SugarcrmTest\SearchEngine;
+namespace Sugarcrm\SugarcrmTestsUnit\SearchEngine;
 
 use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
 use Sugarcrm\Sugarcrm\SearchEngine\Engine\EngineInterface;
 
 /**
  *
- * Tests for \Sugarcrm\Sugarcrm\SearchEngine\SearchEngine
+ * @coversDefaultClass \Sugarcrm\Sugarcrm\SearchEngine\SearchEngine
  *
  */
-class SearchEngineTest extends \Sugar_PHPUnit_Framework_TestCase
+class SearchEngineTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @covers \Sugarcrm\Sugarcrm\SearchEngine\SearchEngine::hasCapability
+     * @covers ::hasCapability
      * @dataProvider dataProviderTestHasCapability
-     * @group unit
      *
      * @param string $interface
      * @param string $capability
@@ -41,17 +40,17 @@ class SearchEngineTest extends \Sugar_PHPUnit_Framework_TestCase
     {
         return array(
             array(
-                'Sugarcrm\\Sugarcrm\\SearchEngine\\Engine\\EngineInterface',
+                'Sugarcrm\Sugarcrm\SearchEngine\Engine\EngineInterface',
                 'DoesNotExist',
                 false,
             ),
             array(
-                'Sugarcrm\\Sugarcrm\\SearchEngine\\Capability\\GlobalSearch\\GlobalSearchInterface',
+                'Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\GlobalSearchInterface',
                 'FakeCapability',
                 false,
             ),
             array(
-                'Sugarcrm\\Sugarcrm\\SearchEngine\\Capability\\GlobalSearch\\GlobalSearchInterface',
+                'Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\GlobalSearchInterface',
                 'GlobalSearch',
                 true,
             )
@@ -59,9 +58,8 @@ class SearchEngineTest extends \Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \Sugarcrm\Sugarcrm\SearchEngine\SearchEngine::getEngine
+     * @covers ::getEngine
      * @dataProvider dataProviderTestGetEngine
-     * @group unit
      *
      * @param EngineInterface $implement
      */
@@ -74,13 +72,13 @@ class SearchEngineTest extends \Sugar_PHPUnit_Framework_TestCase
     public function dataProviderTestGetEngine()
     {
         return array(
-            array($this->getMock('Sugarcrm\\Sugarcrm\\SearchEngine\\Engine\\EngineInterface')),
-            array($this->getMock('Sugarcrm\\Sugarcrm\\SearchEngine\\Capability\\GlobalSearch\\GlobalSearchInterface')),
+            array($this->getMock('Sugarcrm\Sugarcrm\SearchEngine\Engine\EngineInterface')),
+            array($this->getMock('Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\GlobalSearchInterface')),
         );
     }
 
     /**
-     * @covers \Sugarcrm\Sugarcrm\SearchEngine\SearchEngine::newEngine
+     * @covers ::newEngine
      * @expectedException \RuntimeException
      */
     public function testNewEngineExceptions()
@@ -89,7 +87,7 @@ class SearchEngineTest extends \Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \Sugarcrm\Sugarcrm\SearchEngine\SearchEngine::newEngine
+     * @covers ::newEngine
      * @dataProvider dataProviderTestNewEngine
      *
      * @param string $type

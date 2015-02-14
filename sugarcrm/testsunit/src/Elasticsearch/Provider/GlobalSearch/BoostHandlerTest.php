@@ -10,25 +10,32 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\SugarcrmTest\Elasticsearch\Provider\GlobalSearch;
+namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Provider\GlobalSearch;
 
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\BoostHandler;
 
 /**
- * BoostHandler tests
+ *
+ * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\BoostHandler
+ *
  */
-class BoostHandlerTest extends \Sugar_PHPUnit_Framework_TestCase
+class BoostHandlerTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @covers \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\BoostHandler::setWeighted
-     * @covers \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\BoostHandler::getBoostedField
-     * @covers \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\BoostHandler::getBoostValue
-     * @covers \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\BoostHandler::normalizeBoost
-     * @covers \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\BoostHandler::weight
+     * @covers ::setWeighted
+     * @covers ::getBoostedField
+     * @covers ::getBoostValue
+     * @covers ::normalizeBoost
+     * @covers ::weight
      * @dataProvider dataProviderTestGetBoostedField
-     * @group unit
+     *
+     * @param array $weighted
+     * @param string $field
+     * @param array $defs
+     * @param string $type
+     * @param string $expected
      */
-    public function testGetBoostedField($weighted, $field, array $defs, $type, $expected)
+    public function testGetBoostedField(array $weighted, $field, array $defs, $type, $expected)
     {
         $bh = new BoostHandler();
         $bh->setWeighted($weighted);

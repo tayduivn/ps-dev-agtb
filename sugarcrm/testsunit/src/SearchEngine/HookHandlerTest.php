@@ -10,29 +10,30 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\SugarcrmTest\SearchEngine;
+namespace Sugarcrm\SugarcrmTestsUnit\SearchEngine;
 
 use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
 use Sugarcrm\Sugarcrm\SearchEngine\HookHandler;
 
+require_once 'include/SugarLogger/SugarNullLogger.php';
+
 /**
  *
- * Tests for \Sugarcrm\Sugarcrm\SearchEngine\HookHandler
+ * @coversDefaultClass \Sugarcrm\Sugarcrm\SearchEngine\HookHandler
  *
  */
-class HookHandlerTest extends \Sugar_PHPUnit_Framework_TestCase
+class HookHandlerTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @covers \Sugarcrm\Sugarcrm\SearchEngine\HookHandler::indexBean
+     * @covers ::indexBean
      * @dataProvider dataProviderTestIndexBean
-     * @group unit
      *
      * @param \SugarBean|null $bean
      * @param integer $count
      */
     public function testIndexBean($bean, $count)
     {
-        $hook = $this->getMockBuilder('\\Sugarcrm\\Sugarcrm\\SearchEngine\\HookHandler')
+        $hook = $this->getMockBuilder('Sugarcrm\Sugarcrm\SearchEngine\HookHandler')
             ->setMethods(array('getSearchEngine', 'getLogger'))
             ->getMock();
 
@@ -40,9 +41,12 @@ class HookHandlerTest extends \Sugar_PHPUnit_Framework_TestCase
             ->method('getSearchEngine')
             ->will($this->returnValue($this->getSearchEngineMock($count)));
 
+        $logger = $this->getMockBuilder('SugarNullLogger')
+            ->getMock();
+
         $hook->expects($this->any())
             ->method('getLogger')
-            ->will($this->returnValue(new \SugarNullLogger()));
+            ->will($this->returnValue($logger));
 
         $hook->indexBean($bean, 'event', array());
     }
@@ -62,12 +66,13 @@ class HookHandlerTest extends \Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * Get SearchEngine mock
      * @param integer $callIndexBeanCount
      * @return \Sugarcrm\Sugarcrm\SearchEngine\SearchEngine
      */
     protected function getSearchEngineMock($callIndexBeanCount)
     {
-        $engine = $this->getMock('\\Sugarcrm\\Sugarcrm\\SearchEngine\\Engine\\EngineInterface');
+        $engine = $this->getMock('\Sugarcrm\Sugarcrm\SearchEngine\Engine\EngineInterface');
 
         $engine->expects($this->exactly($callIndexBeanCount))
             ->method('indexBean');

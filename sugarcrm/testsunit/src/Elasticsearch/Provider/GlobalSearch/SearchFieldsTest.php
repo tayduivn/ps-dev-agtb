@@ -10,24 +10,29 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\SugarcrmTest\Elasticsearch\Provider\GlobalSearch;
+namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Provider\GlobalSearch;
 
+use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\SearchFields;
 
 /**
- * SearchFields tests
+ *
+ * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\SearchFields
+ *
  */
-class SearchFieldsTest extends \Sugar_PHPUnit_Framework_TestCase
+class SearchFieldsTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @covers \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\SearchFields::isFieldSearchable
+     * @covers ::isFieldSearchable
      * @dataProvider dataProviderIsFieldSearchable
-     * @group unit
+     *
+     * @param array $params
+     * @param boolean $isSearchable
      */
-    public function testIsFieldSearchable($params, $isSearchable)
+    public function testIsFieldSearchable(array $params, $isSearchable)
     {
         $sf = $this->getSearchFieldsMock();
-        $result = \SugarTestReflection::callProtectedMethod($sf, 'isFieldSearchable', array($params));
+        $result = TestReflection::callProtectedMethod($sf, 'isFieldSearchable', array($params));
         $this->assertSame($isSearchable, $result);
     }
 
@@ -73,14 +78,18 @@ class SearchFieldsTest extends \Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\SearchFields::getSearchFields
-     * @covers \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\SearchFields::getModuleSearchFields
-     * @covers \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\SearchFields::getMultiFieldSearchFields
-     *
+     * @covers ::getSearchFields
+     * @covers ::getModuleSearchFields
+     * @covers ::getMultiFieldSearchFields
      * @dataProvider dataProviderGetSearchFields
-     * @group unit
+     *
+     * @param array $modules
+     * @param array $vardef
+     * @param array $mappingDefs
+     * @param integer $boost
+     * @param array $expected
      */
-    public function testGetSearchFields($modules, $vardef, $mappingDefs, $boost, $expected)
+    public function testGetSearchFields(array $modules, array $vardef, array $mappingDefs, $boost, array $expected)
     {
         $sf = $this->getSearchFieldsMock(
             array(
@@ -104,7 +113,7 @@ class SearchFieldsTest extends \Sugar_PHPUnit_Framework_TestCase
 
         $sf->setBoost((bool) $boost);
 
-        $fields = \SugarTestReflection::callProtectedMethod($sf, 'getSearchFields', array($modules));
+        $fields = TestReflection::callProtectedMethod($sf, 'getSearchFields', array($modules));
         $this->assertEquals($expected, $fields);
     }
 
@@ -169,6 +178,10 @@ class SearchFieldsTest extends \Sugar_PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * Used as callback for testGetSearchFields
+     * @return string
+     */
     public function getBoostedField()
     {
         $args = func_get_args();
@@ -176,7 +189,7 @@ class SearchFieldsTest extends \Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     *
+     * Get SearchFields mock
      * @param array $methods
      * @return \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\SearchFields
      */
