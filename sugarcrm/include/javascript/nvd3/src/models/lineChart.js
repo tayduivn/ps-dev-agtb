@@ -35,7 +35,7 @@ nv.models.lineChart = function() {
         .clipEdge(true),
       xAxis = nv.models.axis()
         .orient('bottom')
-        .tickPadding(7)
+        .tickPadding(4)
         .highlightZero(false)
         .showMaxMin(false)
         .tickFormat(function(d) { return d; }),

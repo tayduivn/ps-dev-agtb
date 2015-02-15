@@ -58,7 +58,7 @@ nv.models.paretoChart = function() {
         xAxis = nv.models.axis()
             .orient('bottom')
             .tickSize(0)
-            .tickPadding(7)
+            .tickPadding(4)
             .wrapTicks(true)
             .highlightZero(false)
             .showMaxMin(false)

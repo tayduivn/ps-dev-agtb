@@ -53,7 +53,7 @@ nv.models.bubbleChart = function () {
       xAxis = nv.models.axis()
         .orient('bottom')
         .tickSize(0)
-        .tickPadding(5)
+        .tickPadding(4)
         .highlightZero(false)
         .showMaxMin(false)
         .ticks(d3.time.months, 1)

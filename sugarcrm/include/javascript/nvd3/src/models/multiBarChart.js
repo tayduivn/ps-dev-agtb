@@ -39,7 +39,7 @@ nv.models.multiBarChart = function() {
         .stacked(false),
       xAxis = nv.models.axis()
         .tickSize(0)
-        .tickPadding(8)
+        .tickPadding(4)
         .highlightZero(false)
         .showMaxMin(false)
         .tickFormat(function(d) { return d; }),

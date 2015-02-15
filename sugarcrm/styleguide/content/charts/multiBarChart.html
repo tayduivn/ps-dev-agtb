@@ -71,6 +71,12 @@
         <label><input type="radio" name="direction" value="ltr" checked="checked"> LTR</label>
         <label><input type="radio" name="direction" value="rtl"> RTL</label>
       </div>
+      <div>
+        <span>Tick Display Methods</span><br>
+        <label><input type="checkbox" name="tick_display" value="wrap"> Wrap</label>
+        <label><input type="checkbox" name="tick_display" value="stagger"> Stagger</label>
+        <label><input type="checkbox" name="tick_display" value="rotate"> Rotate</label>
+      </div>
     </div>
 
     <div id="chart1" class="nv-chart nv-chart-multibar" style="height:600px">
@@ -121,6 +127,11 @@
     if (direction) {
       selectedDirection.val([direction[2]]);
     }
+    var tickDisplay = window.location.href.match(/(\?|&)tick_display=([0-9a-z]+)(&|$)/),
+        selectedTickDisplay = $('input[type="checkbox"][name="tick_display"]');
+    if (tickDisplay) {
+      selectedTickDisplay.val([tickDisplay[2]]);
+    }
 
     jsonFile = selectedFile.val();
     orientation = selectedOrientation.filter(':checked').val() || 'vertical';
@@ -129,6 +140,10 @@
     allowScroll = selectedAllowScroll.filter(':checked').val() || 'no';
     direction = selectedDirection.filter(':checked').val() || 'ltr';
     $('html').css('direction', direction);
+    tickDisplay = selectedTickDisplay.filter(':checked').serializeArray().map(function(d) {
+      return d.value;
+    });
+    //$.merge(tickDisplay, ['rotate']);
 
     var chartData = [];
 
@@ -153,7 +168,10 @@
           })
           .showValues(showValues === '1' ? true : showValues === '0' ? false : showValues)
           .vertical(orientation === 'vertical' ? true : false)
-          .allowScroll(allowScroll === 'no' ? false : true);
+          .allowScroll(allowScroll === 'no' ? false : true)
+          .rotateTicks($.inArray('rotate', tickDisplay) !== -1)
+          .wrapTicks($.inArray('wrap', tickDisplay) !== -1)
+          .staggerTicks($.inArray('stagger', tickDisplay) !== -1);
 
     chart.yAxis
       .axisLabel('This is y-Axis')
@@ -225,6 +243,16 @@
       $('html').css('direction', direction);
       chart
         .direction(direction);
+      chart.update();
+    });
+    selectedTickDisplay.on('change', function(d) {
+      tickDisplay = selectedTickDisplay.filter(':checked').serializeArray().map(function(d) {
+        return d.value;
+      });
+      chart
+        .rotateTicks($.inArray('rotate', tickDisplay) !== -1)
+        .wrapTicks($.inArray('wrap', tickDisplay) !== -1)
+        .staggerTicks($.inArray('stagger', tickDisplay) !== -1);
       chart.update();
     });
 </script>

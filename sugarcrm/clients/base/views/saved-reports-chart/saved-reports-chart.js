@@ -197,7 +197,7 @@
                 hideEmptyGroups: true,
                 wrapTicks:       true,
                 staggerTicks:    true,
-                rotateTicks:     false
+                rotateTicks:     true
             };
         return _.defaults(settings, defaults);
     },
@@ -428,6 +428,7 @@
                 stackedField = this.getField('stacked'),
                 showDimensionOptions = false,
                 showBarOptions = false,
+                showTickOptions = false,
                 showStacked = false;
 
             switch (this.settings.get('chart_type')) {
@@ -464,15 +465,29 @@
                 default:
                     showDimensionOptions = false;
                     showBarOptions = false;
-                    break;
+            }
+
+            if (showDimensionOptions) {
+                switch (this.settings.get('chart_type')) {
+                    case 'horizontal group by chart':
+                    case 'horizontal bar chart':
+                    case 'horizontal':
+                    case 'line chart':
+                        showTickOptions = false;
+                        break;
+
+                    default:
+                        showTickOptions = true;
+                }
             }
 
             if (xOptionsFieldset) {
                 xOptionsFieldset.$el.closest('.record-cell').toggleClass('hide', !showDimensionOptions);
             }
             if (tickDisplayMethods) {
-                tickDisplayMethods.$el.closest('.record-cell').toggleClass('hide', !showDimensionOptions);
+                tickDisplayMethods.$el.closest('.record-cell').toggleClass('hide', !showDimensionOptions || !showTickOptions);
             }
+
             if (yOptionsFieldset) {
                 yOptionsFieldset.$el.closest('.record-cell').toggleClass('hide', !showDimensionOptions);
             }
