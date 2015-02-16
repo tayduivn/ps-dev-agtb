@@ -45,7 +45,7 @@ function packHealthCheck(ZipArchive $zip, $manifest = array(), $installdefs = ar
         'modules/HealthCheck/vardefs.php',
     );
 
-    $chdir = __DIR__ . "/../..";
+    $chdir = dirname(__FILE__) . "/../..";
 
     $manifest = array_merge(
         $manifest,

@@ -28,6 +28,21 @@ class WebUpgrader extends UpgradeDriver
      */
     public $readme;
 
+    /**
+     * {@inheritDoc}
+     */
+    public static $version = '1.0.0-dev';
+
+    /**
+     * {@inheritDoc}
+     */
+    public static $build = '999';
+
+    /**
+     * {@inheritDoc}
+     */
+    const VERSION_FILE = 'version.json';
+
     public function runStage($stage)
     {
         return $this->run($stage);
@@ -44,7 +59,7 @@ class WebUpgrader extends UpgradeDriver
     public function start()
     {
         if (!isset($this->state['stage']) || !array_search('started', $this->state['stage'])) {
-            list($version, $build) = static::getVersion();
+            list($version, $build) = self::getVersion();
             $this->log("WebUpgrader v.$version (build $build) starting");
         }
     }
@@ -313,5 +328,32 @@ class WebUpgrader extends UpgradeDriver
 
         $this->log("Skipping health check - we have a confirmed id");
         return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public static function getVersion()
+    {
+        $version = self::$version;
+        $build = self::$build;
+        $vfile = __DIR__ . "/" . self::VERSION_FILE;
+        if (file_exists($vfile)) {
+            $data = json_decode(file_get_contents($vfile), true);
+            if (!empty($data['version'])) {
+                $version = $data['version'];
+            }
+            if (!empty($data['build'])) {
+                $build = $data['build'];
+            }
+        } elseif (file_exists('sugar_version.php')) {
+            if (!defined('sugarEntry')) {
+                define('sugarEntry', 'upgrader');
+            }
+            include 'sugar_version.php';
+            $version = $sugar_version;
+            $build = $sugar_build;
+        }
+        return array($version, $build);
     }
 }

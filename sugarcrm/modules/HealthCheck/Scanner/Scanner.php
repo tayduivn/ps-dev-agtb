@@ -11,7 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once __DIR__ . '/ScannerMeta.php';
+require_once dirname(__FILE__) . '/ScannerMeta.php';
 
 /**
  *
@@ -523,7 +523,11 @@ class HealthCheckScanner
      */
     public function scan()
     {
-        set_error_handler(array($this, 'scriptErrorHandler'), E_ALL & ~E_STRICT & ~E_DEPRECATED);
+        $flags = E_ALL & ~E_STRICT;
+        if (defined('E_DEPRECATED')) {
+            $flags = $flags & ~E_DEPRECATED;
+        }
+        set_error_handler(array($this, 'scriptErrorHandler'), $flags);
         $toVersionInfo = $this->getVersion();
         $this->log(vsprintf("HealthCheck v.%s (build %s) starting scanning $this->instance", $toVersionInfo));
         if (!$this->init()) {
@@ -1083,17 +1087,7 @@ class HealthCheckScanner
         // check custom viewdefs
         $defs = array_filter(
             $this->getPhpFiles("custom/modules/$module/metadata"),
-            function ($def) {
-                $filesToExclude = array(
-                    'dashletviewdefs.php', // CRYS-424 - exclude dashletviewdefs.php
-                    'quickcreatedefs.php', // CRYS-426 - exclude quickcreatedefs.php
-                    'wireless.editviewdefs.php',
-                    'wireless.detailviewdefs.php',
-                    'wireless.listviewdefs.php',
-                    'convertdefs.php',     // CRYS-536 - exclude */Leads/metadata/convertdefs.php
-                );
-                return !in_array(basename($def), $filesToExclude);
-            }
+            array($this, 'filterViewDefs')
         );
 
         if ($module == "Connectors") {
@@ -1140,21 +1134,14 @@ class HealthCheckScanner
             // check for custom views
             $defs = array_filter(
                 $this->getPhpFiles("custom/modules/$module/views"),
-                function ($def) {
-                    // ENGRD-248 - exclude view.sidequickcreate.php
-                    return basename($def) != 'view.sidequickcreate.php';
-                }
+                array($this, 'sideQuickCreateFilter')
             );
             if (!empty($defs)) {
                 $this->updateStatus("hasCustomViews", $module, $defs);
             }
-            $md5 = $this->md5_files; // work around 5.3 missing $this in closures
             $defs = array_filter(
                 $this->getPhpFiles("modules/$module/views"),
-                function ($def) use ($md5) {
-                    // ENGRD-248 - exclude view.sidequickcreate.php
-                    return basename($def) != 'view.sidequickcreate.php' && !isset($md5["./" . $def]);
-                }
+                array($this, 'sideQuickCreateMD5Filter')
             );
             if (!empty($defs)) {
                 $this->updateStatus("hasCustomViewsModDir", $module, $defs);
@@ -1188,6 +1175,55 @@ class HealthCheckScanner
 
         // check logic hooks for module
         $this->checkHooks($module, $bwc ? HealthCheckScannerMeta::CUSTOM : HealthCheckScannerMeta::MANUAL, $bwc);
+    }
+
+    /**
+     * Callback for filter viewdefs.
+     * @param array $file
+     * @return bool
+     */
+    public function filterViewDefs($file)
+    {
+        $filesToExclude = array(
+            'dashletviewdefs.php', // CRYS-424 - exclude dashletviewdefs.php
+            'quickcreatedefs.php', // CRYS-426 - exclude quickcreatedefs.php
+            'wireless.editviewdefs.php',
+            'wireless.detailviewdefs.php',
+            'wireless.listviewdefs.php',
+            'convertdefs.php',     // CRYS-536 - exclude */Leads/metadata/convertdefs.php
+        );
+        return !in_array(basename($file), $filesToExclude);
+    }
+
+    /**
+     * Callback to filter metadata file based on it's name.
+     * @param string $file
+     * @return bool
+     */
+    public function sideQuickCreateFilter($file)
+    {
+        return basename($file) != 'view.sidequickcreate.php';
+    }
+
+    /**
+     * Callback to filter metadata file based on it's name and MD5 hash.
+     * @param string $file
+     * @return bool
+     */
+    public function sideQuickCreateMD5Filter($file)
+    {
+        $result = $this->sideQuickCreateFilter($file);
+        return $result && !isset($this->md5_files["./" . $file]);
+    }
+
+    /**
+     * Callback to filter module name from it's path.
+     * @param string $file
+     * @return string
+     */
+    public function cutOffModuleFromName($file)
+    {
+        return substr($file, 8); /* cut off modules/ */
     }
 
     /**
@@ -1326,12 +1362,12 @@ class HealthCheckScanner
         // We found something, do more precise check through all available history
         if (!empty($foundCustomCode) && !empty($history)) {
 
-            $historyFiles = array_filter(
-                $history,
-                function ($fileName) use ($deffile) {
-                    return (strpos(basename($fileName), basename($deffile, '.php')) !== false);
+            $historyFiles = array();
+            foreach ($history as $key => $file) {
+                if (strpos(basename($file), basename($deffile, '.php')) !== false) {
+                    $historyFiles[$key] = $file;
                 }
-            );
+            }
 
             $allHistoryCode = array();
             foreach ($historyFiles as $file) {
@@ -1341,10 +1377,11 @@ class HealthCheckScanner
                     $tmpContents = file_get_contents($file);
                     $matches = array();
                     if (preg_match_all('/function\s+(\w+)\s*\(/', $tmpContents, $matches) && isset($matches[1])) {
-
-                        $tmpContents = str_replace($matches[1], array_map(function ($value) use ($tmpName) {
-                            return $value . md5($tmpName);
-                        }, $matches[1]), $tmpContents);
+                        $tmpMatch = array();
+                        foreach ($matches[1] as $key => $value) {
+                            $tmpMatch[$key] = $value . md5($tmpName);
+                        }
+                        $tmpContents = str_replace($matches[1], $tmpMatch, $tmpContents);
 
                         if (file_put_contents($tmpName, $tmpContents)) {
                             $file = $tmpName;
@@ -1544,9 +1581,7 @@ class HealthCheckScanner
         $this->setupHealthCheckModule();
 
         return array_map(
-            function ($m) {
-                return substr($m, 8); /* cut off modules/ */
-            },
+            array($this, 'cutOffModuleFromName'),
             glob("modules/*", GLOB_ONLYDIR)
         );
     }
@@ -1640,7 +1675,8 @@ class HealthCheckScanner
                 continue;
             }
 
-            $extension = $item->getExtension();
+            $extension = explode('.', $filename);
+            $extension = count($extension) >= 2 ? $extension[count($extension) - 1] : $extension[0];
             if ($item->isDir() && in_array($filename, $this->excludedScanDirectories)) {
                 continue;
             } elseif ($item->isDir()) {
@@ -2392,8 +2428,8 @@ ENDP;
             'version' => 'N/A',
             'build' => 'N/A'
         );
-        if (file_exists(__DIR__ . '/' . self::VERSION_FILE)) {
-            $json = file_get_contents(__DIR__ . '/' . self::VERSION_FILE);
+        if (file_exists(dirname(__FILE__) . '/' . self::VERSION_FILE)) {
+            $json = file_get_contents(dirname(__FILE__) . '/' . self::VERSION_FILE);
             $data = json_decode($json, true);
             $version = array_merge($version, $data);
         } elseif ($sugar_version && $sugar_build) {
