@@ -33,16 +33,19 @@ class ParserRoleDropDownFilter extends ModuleBuilderParser
      */
     public function getOne($role, $dropdown)
     {
-        $filePath = SugarAutoLoader::existingCustomOne($this->getFilePath($role, $dropdown));
-        if (!file_exists($filePath)) {
-            return array();
+        $paths = array(
+            SugarAutoLoader::existingCustomOne($this->getFilePath($role, $dropdown)),
+            'custom/application/Ext/DropdownFilters/' . $role . '/dropdownfilters.ext.php',
+        );
+
+        foreach ($paths as $path) {
+            $filter = $this->getFilterFromFile($path, $dropdown);
+            if ($filter) {
+                return $filter;
+            }
         }
-        require $filePath;
-        if (empty(${$this->varName}[$dropdown])) {
-            $GLOBALS['log']->error("ParserRoleDropDownFilter :: Cannot find \$$this->varName[$dropdown] in $filePath");
-            return array();
-        }
-        return ${$this->varName}[$dropdown];
+
+        return array();
     }
 
     /**
@@ -55,8 +58,8 @@ class ParserRoleDropDownFilter extends ModuleBuilderParser
      */
     public function hasMetadata($name, $role)
     {
-        $filePath = SugarAutoLoader::existingCustomOne($this->getFilePath($role, $name));
-        return file_exists($filePath);
+        $filter = $this->getOne($role, $name);
+        return count($filter) > 0;
     }
 
     /**
@@ -203,5 +206,31 @@ class ParserRoleDropDownFilter extends ModuleBuilderParser
         }
 
         return $converted;
+    }
+
+    /**
+     * Returns filter metadata for the given dropdown defined in the file
+     *
+     * @param string $path File path
+     * @param string $dropdown Dropdown name
+     *
+     * @return array|null
+     */
+    protected function getFilterFromFile($path, $dropdown)
+    {
+        global $log;
+
+        if (file_exists($path)) {
+            ${$this->varName} = array();
+            require $path;
+            if (isset(${$this->varName}[$dropdown])) {
+                if (is_array(${$this->varName}[$dropdown])) {
+                    return ${$this->varName}[$dropdown];
+                }
+                $log->error("ParserRoleDropDownFilter :: \$$this->varName[$dropdown] is not an array in $path");
+            }
+        }
+
+        return null;
     }
 }
