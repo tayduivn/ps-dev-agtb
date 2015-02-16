@@ -146,6 +146,7 @@ describe('Base.Layout.Filter', function() {
                         fakeContext = {
                             get: function() { return { resetPagination: function() { }}; },
                             set: function() { },
+                            has: function() {},
                             resetLoadFlag: function() { },
                             resetPagination: function() { },
                             loadData: function(options) {
