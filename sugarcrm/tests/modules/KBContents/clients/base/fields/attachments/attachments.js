@@ -144,25 +144,6 @@ describe('modules.kbcontents.clients.base.fields.attachments', function() {
         expect(field.events[event]).toEqual('uploadFile');
     });
 
-    it('should be able to download file from server', function() {
-        var apiDownloadCallStub = sandbox.stub(app.api, 'fileDownload', function(url, callbacks) {
-            if (callbacks && callbacks.success)
-                callbacks.success({});
-        });
-
-        model.set('attachments', [{   
-            id: 'testAttach1',
-            name: 'testAttach1'
-        }]);
-
-        field = SugarTest.createField('base', fieldName, fieldType, 'detail', 
-            fieldDef, module, model, null, true
-        );
-        field.render();
-        field.$('[data-action="download"]').first().click();
-        expect(apiDownloadCallStub).toHaveBeenCalled();
-    });
-
     it('should be able to download all files as archive from server', function() {
         var apiDownloadCallStub = sandbox.stub(app.api, 'fileDownload', function(url, callbacks) {
             if (callbacks && callbacks.success)

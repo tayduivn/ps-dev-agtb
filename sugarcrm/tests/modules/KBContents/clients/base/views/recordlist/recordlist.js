@@ -202,19 +202,20 @@ describe('KBContents.Base.Views.RecordList', function() {
             sandbox.stub(view.model, 'changedAttributes', function() {
                 return {status: 'approved'};
             });
-            view.model.set('status', 'published');
+            view.model.set('status', 'published-in');
             view._validationComplete(view.model, true);
 
             expect(view.model.get('active_date')).toEqual(app.date().formatServer(true));
         });
 
+
         it('Switching from publishing to publishing should not change own date.', function() {
             sandbox.stub(view.model, 'changedAttributes', function() {
-                return {status: 'published'};
+                return {status: 'published-in'};
             });
             var expectedDate = '2000-10-10';
             view.model.set('active_date', '2000-10-10');
-            view.model.set('status', 'published-in');
+            view.model.set('status', 'published-ex');
             view._validationComplete(view.model, true);
 
             expect(view.model.get('active_date')).toEqual(expectedDate);
