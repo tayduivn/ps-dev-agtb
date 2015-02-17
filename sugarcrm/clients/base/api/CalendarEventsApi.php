@@ -178,7 +178,15 @@ class CalendarEventsApi extends ModuleApi
 
         // if event is still recurring after update, save recurring events
         if ($this->getCalendarEvents()->isEventRecurring($bean)) {
-            $this->getCalendarEvents()->saveRecurringEvents($bean);
+            $updateComplete = false;
+            // Only perform full Re-Creation of Recurring Events if required - otherwise just apply changes to meetings
+            $inviteeChanges = $this->getInviteeChanges($args);
+            if (!$this->getCalendarEvents()->isFullReconstructionOfRecurringSeriesRequired($bean, $inviteeChanges)) {
+                $updateComplete = $this->getCalendarEvents()->applyChangesToRecurringEvents($bean, $inviteeChanges);
+            }
+            if (!$updateComplete) {
+                $this->getCalendarEvents()->saveRecurringEvents($bean);
+            }
         } else {
             // event is not recurring anymore, delete child instances
             $this->deleteRecurrences($bean);
@@ -262,6 +270,30 @@ class CalendarEventsApi extends ModuleApi
         }
 
         return $this->calendarEvents;
+    }
+
+    /**
+     * Siphon off the updates that were part of this Update Request and
+     * put them into an array keyed by 'action'
+     *
+     * @param array $args
+     * @return array Invitee Changes
+     */
+    protected function getInviteeChanges($args)
+    {
+        $modules = array('contacts', 'leads', 'users');
+        $actions = array('add', 'delete');
+
+        $inviteeChanges = array();
+        foreach ($actions as $action) {
+            foreach ($modules AS $module) {
+                if (!empty($args[$module][$action])) {
+                    $inviteeChanges[$action][$module] = $args[$module][$action];
+                }
+            }
+        }
+
+        return $inviteeChanges;
     }
 
     /**

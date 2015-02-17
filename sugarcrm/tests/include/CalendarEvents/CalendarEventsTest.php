@@ -170,6 +170,81 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider providerCheckWhetherRecurringEventNeedsToBeReconstructed
+     */
+    public function testWhetherFullReconstructionOfEventSeriesIsRequired(
+        $moduleName,
+        $repeatType,
+        $dateStart,
+        $dataChanges,
+        $inviteeChanges,
+        $expected
+    ) {
+        $bean = BeanFactory::newBean($moduleName);
+        $bean->id = create_guid();
+        $bean->date_start = $dateStart;
+        $bean->repeat_type = $repeatType;
+        $bean->dataChanges = $dataChanges;
+        $calEvents = new CalendarEvents();
+
+        $actual = $calEvents->isFullReconstructionOfRecurringSeriesRequired($bean, $inviteeChanges);
+        $this->assertEquals($expected, $actual, "Full Recurring Series Reconstruction Check Failed");
+    }
+
+    /**
+     * @return array
+     */
+    public function providerCheckWhetherRecurringEventNeedsToBeReconstructed()
+    {
+        return array(
+            array(
+                'Contacts',
+                'Daily',
+                '2015-01-01T00:00:00+00:00',
+                array('location' => array('before' => 'Here', 'after' => 'There')),
+                array(),
+                true  // Not Recurring Module Type
+            ),
+            array(
+                'Contacts',
+                'None',
+                '2015-01-01T00:00:00+00:00',
+                array('location' => array('before' => 'Here', 'after' => 'There')),
+                array(),
+                true  // Not Valid Recurring Event - Event Type
+            ),
+            array(
+                'Contacts',
+                'Daily',
+                '',
+                array('location' => array('before' => 'Here', 'after' => 'There')),
+                array(),
+                true  // Not Valid Recurring Event - No Date Start
+            ),
+            array(
+                'Meetings',
+                'Daily',
+                '2015-01-01T00:00:00+00:00',
+                array('location' => array('before' => 'Here', 'after' => 'There')),
+                array('add' => array('123')),
+                true // Change To Invitee List requires Full Reconstruction
+            ),
+            array(
+                'Meetings',
+                'Daily',
+                '2015-01-01T00:00:00+00:00',
+                array(
+                    'name' => array('before' => 'Meeting One', 'after' => 'Meeting Two'),
+                    'location' => array('before' => 'Here', 'after' => 'There'),
+                    'description' => array('before' => 'This is Meeting One', 'after' => 'This is Meeting Two'),
+                ),
+                array(),
+                false // All changes are safe .. No reconstruction required
+            ),
+        );
+    }
+
+    /**
      * Instantiate a new Meeting and prepopulate values from args
      * Add Meeting to meetingIds array to ensure its deletion on teardown
      * @param string $id  meeting ID to assign

@@ -27,6 +27,31 @@ class CalendarEvents
         'Calls',
         'Tasks',
     );
+
+    /**
+     * Recurring record fields that require a full re-construction of a recurring event if their values change
+     * NOTE: Fields tied to meeting duration do NOT require a full reconstruction of the series
+     *        'duration_hours'
+     *        'duration_minutes'
+     *        'date_end'
+     * @TODO
+     *      There would be little effort needed to remove 'repeat_until' and 'repeat_count' from
+     *      this list, since they only change the total number of meetings. A method to lengthen
+     *      or shorten the series using the existing recurrence rules should be reasonably
+     *      straight forward to implement.
+     *
+     * @var array
+     *
+     */
+    public $fieldChangesRequiringRebuild = array(
+        'date_start' => true,
+        'repeat_type' => true,
+        'repeat_interval' => true,
+        'repeat_dow' => true,
+        'repeat_until' => true,
+        'repeat_count' => true,
+    );
+
     /**
      * @param SugarBean $bean
      * @return bool
@@ -61,14 +86,105 @@ class CalendarEvents
     }
 
     /**
+     * Determine whether the recurring series needs to be fully rebuilt
+     * @param SugarBean $parentBean recurring event parent
+     * @param array $inviteeChanges
+     * @return bool true if full reconstruction of the event series is required
+     */
+    public function isFullReconstructionOfRecurringSeriesRequired(SugarBean $parentBean, $inviteeChanges = array())
+    {
+        // If we don't recognize the bean as a valid Recurring Event, we will return true
+        try {
+            if (!$this->isEventRecurring($parentBean)) {
+                return true;
+            }
+        } catch(Exception $e) {
+            return true;
+        }
+
+        // If there are any changes to the invitee list, a full reconstruction of the series is required
+        if (!empty($inviteeChanges) &&
+            ((isset($inviteeChanges['add']) && !empty($inviteeChanges['add'])) ||
+                (isset($inviteeChanges['delete']) && !empty($inviteeChanges['delete'])))
+        ) {
+            return true;
+        }
+
+        // Assume that a full reconstruction is required unless the data Changes array is present and
+        // none of the field changes it holds require reconstruction
+        if (!empty($parentBean->dataChanges) && is_array($parentBean->dataChanges)) {
+            foreach ($parentBean->dataChanges AS $field => $changeInfo) {
+                if (!empty($this->fieldChangesRequiringRebuild[$field])) {
+                    return true;
+                }
+            }
+        }
+
+        // There are changes - but none that require full reconstruction of the recurring series
+        return false;
+    }
+
+    /**
+     * Update all children of the recurring series by overwriting all
+     * children with the changes made to the parent
+     * @param SugarBean $parentBean
+     * @return bool true if successfully completed all updates
+     */
+    public function applyChangesToRecurringEvents(SugarBean $parentBean)
+    {
+        $moduleName = $parentBean->module_name;
+        $success = false;
+
+         try {
+            Activity::disable();
+            $clone = clone $parentBean;
+
+            $limit = 200;
+            $offset = 0;
+            $q = new SugarQuery();
+            $q->select(array('id'));
+            $q->from($parentBean);
+            $q->where()->equals('repeat_parent_id', $parentBean->id);
+            $q->limit($limit);
+
+            while (true) {
+                $q->offset($offset);
+                $rows = $q->execute();
+                $rowCount = count($rows);
+                foreach ($rows as $row) {
+                    $childBean = BeanFactory::getBean($moduleName, $row['id']);
+                    if (empty($childBean) || $childBean->id !== $row['id']) {
+                        throw new SugarException('Unable to Load Child Occurrence: ' . $moduleName);
+                    }
+                    $clone->id = $childBean->id;
+                    $clone->date_start = $childBean->date_start;
+                    $clone->recurring_source = $childBean->recurring_source;
+                    $clone->repeat_parent_id = $parentBean->id;
+                    $clone->update_vcal = false;
+                    $clone->save(false);
+                }
+                if ($rowCount < $limit) {
+                    break;
+                }
+                $offset += $rowCount;
+            }
+            $success = true;
+            Activity::enable();
+            vCal::cache_sugar_vcal($GLOBALS['current_user']);
+        } catch (Exception $e) {
+            Activity::enable();
+        }
+
+        return $success;
+    }
+
+    /**
      * @param SugarBean $parentBean
      * @return array events saved
      * @throws SugarException
      */
     public function saveRecurringEvents(SugarBean $parentBean)
     {
-        global $timedate;
-
         if (!$this->isEventRecurring($parentBean)) {
             $logmsg = 'SaveRecurringEvents() : Event is not a Recurring Event';
             $GLOBALS['log']->error($logmsg);
