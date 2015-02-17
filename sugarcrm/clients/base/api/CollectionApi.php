@@ -62,6 +62,8 @@ class CollectionApi extends SugarApi
     /**
      * API endpoint
      *
+     * If sub-requests result in errors, those errors will be appended to the response under the `errors` key.
+     *
      * @param ServiceBase $api
      * @param array $args
      *
@@ -90,14 +92,39 @@ class CollectionApi extends SugarApi
         // remove unwanted fields from the data
         $records = $this->cleanData($records, $sortFields);
 
-        return array(
+        $errors = $this->extractErrors($data);
+
+        return $this->buildResponse($records, $nextOffset, $errors);
+    }
+
+    /**
+     * Returns an array representing the API response from the sets of records, offsets, and errors.
+     *
+     * @param array $records
+     * @param array $nextOffset
+     * @param array $errors
+     * @return array
+     */
+    protected function buildResponse(array $records, array $nextOffset, array $errors)
+    {
+        $response = array(
             'records' => $records,
             'next_offset' => $nextOffset,
         );
+
+        if (!empty($errors)) {
+            $response['errors'] = $errors;
+        }
+
+        return $response;
     }
 
     /**
      * Retrieves records from collection links
+     *
+     * Any SugarApiException's that are thrown when retrieving related records are caught and added to the return value.
+     * Even though the API may respond with "200 OK", the client should handle these errors appropriately. In these
+     * cases, the HTTP error code, the application error string, and the error message are included in the response.
      *
      * @param ServiceBase $api
      * @param array $args API arguments
@@ -106,8 +133,6 @@ class CollectionApi extends SugarApi
      * @param array $sortFields Additional fields required for client side sort
      *
      * @return array
-     * @throws SugarApiExceptionNotAuthorized
-     * @throws SugarApiExceptionNotFound
      */
     protected function getData(
         ServiceBase $api,
@@ -121,7 +146,20 @@ class CollectionApi extends SugarApi
             $linkName = $link['name'];
             if ($args['offset'][$linkName] >= 0) {
                 $linkArgs = $this->getLinkArguments($api, $args, $bean, $link, $sortFields[$linkName]);
-                $response = $this->getRelateApi()->filterRelated($api, $linkArgs);
+                $response = array();
+
+                try {
+                    $response = $this->getRelateApi()->filterRelated($api, $linkArgs);
+                } catch (SugarApiException $e) {
+                    $response['next_offset'] = -1;
+                    $response['records'] = array();
+                    $response['error'] = array(
+                        'code' => $e->getHttpCode(),
+                        'error' => $e->getErrorLabel(),
+                        'error_message' => $e->getMessage(),
+                    );
+                }
+
                 $data[$linkName] = $response;
             }
         }
@@ -338,8 +376,31 @@ class CollectionApi extends SugarApi
     }
 
     /**
+     * Returns an array of errors, grouped by link, that were encountered.
+     *
+     * Any errors are removed from $data. The records and offset are preserved so that they can be used in generating
+     * the response.
+     *
+     * @param array $data Collection data group by link
+     * @return array
+     */
+    protected function extractErrors(array &$data)
+    {
+        $errors = array();
+
+        foreach ($data as $linkName => $linkData) {
+            if (isset($linkData['error'])) {
+                $errors[$linkName] = $linkData['error'];
+                unset($data[$linkName]['error']);
+            }
+        }
+
+        return $errors;
+    }
+
+    /**
      * Sorts collection data by preserving original order of records of the same module and populates offset
-     * with the value corresponding to the next page 
+     * with the value corresponding to the next page
      *
      * @param array $data Collection data grouped by link
      * @param array $spec Sorting specification

@@ -33,6 +33,7 @@ var ExpressionControl = function(settings) {
     //this._appendTo = null;
     this._expressionVisualizer = null;
     this._dateFormat = null;
+    this._timeFormat = null;
     this._decimalSeparator = null;
     this._numberGroupingSeparator = null;
     this._auxSeparator = "|||";
@@ -170,6 +171,7 @@ ExpressionControl.prototype.init = function (settings) {
         matchOwnerWidth: true,
         expressionVisualizer: true,
         dateFormat: "yyyy-mm-dd",
+        timeFormat: "H:i",
         decimalSeparator: settings.numberGroupingSeparator === "." ? "," : ".",
         numberGroupingSeparator: settings.decimalSeparator === "," ? "." : ",",
         allowInput: true,
@@ -209,6 +211,7 @@ ExpressionControl.prototype.init = function (settings) {
     this.setWidth(defaults.width)
         .setHeight(defaults.height)
         .setDateFormat(defaults.dateFormat)
+        .setTimeFormat(defaults.timeFormat)
         .setDecimalSeparator(defaults.decimalSeparator)
         .setNumberGroupingSeparator(defaults.numberGroupingSeparator)
         .setOwner(defaults.owner)
@@ -270,10 +273,21 @@ ExpressionControl.prototype.setNumberGroupingSeparator = function (separator) {
     return this;
 };
 
-ExpressionControl.prototype.setDateFormat = function(dateFormat) {
+ExpressionControl.prototype.setDateFormat = function (dateFormat) {
     this._dateFormat = dateFormat;
     if (this._constantPanels.date) {
         this._constantPanels.date.getItem("date").setFormat(dateFormat);
+    }
+    if (this._constantPanels.datetime) {
+        this._constantPanels.datetime.getItem("datetime").setFormat(dateFormat);
+    }
+    return this;
+};
+
+ExpressionControl.prototype.setTimeFormat = function (timeFormat) {
+    this._timeFormat = timeFormat;
+    if (this._constantPanels.datetime) {
+        this._constantPanels.datetime.getItem("datetime").setTimeFormat(timeFormat);
     }
     return this;
 };
@@ -433,7 +447,7 @@ ExpressionControl.prototype.setOnChangeHandler = function (handler) {
     }
     this.onChange = handler;
     return this;
-}
+};
 
 ExpressionControl.prototype.setWidth = function (w) {
     if (!(typeof w === 'number' ||
@@ -479,6 +493,7 @@ ExpressionControl.prototype.setConstantPanel = function(settings) {
         defaults = {
             basic: true,
             date: true,
+            datetime: true,
             timespan: true
         };
     } else {
@@ -490,6 +505,7 @@ ExpressionControl.prototype.setConstantPanel = function(settings) {
     if (this._constantPanel) {
         this._createBasicConstantPanel()
             ._createDateConstantPanel()
+            ._createDateTimeConstantPanel()
             ._createTimespanPanel();
     }
 
@@ -855,7 +871,7 @@ ExpressionControl.prototype._getStringOrNumber = function (value) {
 };
 
 ExpressionControl.prototype._createItem = function (data, usableItem) {
-    var newItem;
+    var newItem, aux;
 
     if(usableItem instanceof SingleItem) {
         newItem = usableItem;
@@ -899,9 +915,9 @@ ExpressionControl.prototype._onPanelValueGeneration = function () {
                 case "form-response-evaluation":
                     itemData = {
                         expType: "CONTROL",
-                        expLabel: subpanel.getItem("form").getSelectedText() + " "
-                            + subpanel.getItem("operator").getSelectedText() + " "
-                            + data.status,
+                        expLabel: subpanel.getItem("form").getSelectedText() + " " +
+                            subpanel.getItem("operator").getSelectedText() + " " +
+                            data.status,
                         expOperator: data.operator,
                         expValue: data.status,
                         expField: data.form
@@ -911,8 +927,8 @@ ExpressionControl.prototype._onPanelValueGeneration = function () {
                     aux = data.field.split(that._auxSeparator);
                     value = that._getStringOrNumber(data.value);
                     valueType = typeof data.value === 'string' ? typeof value : typeof data.value;
-                    label = subpanel.getItem("field").getSelectedText() + " "
-                            + subpanel.getItem("operator").getSelectedText() + " " ;
+                    label = subpanel.getItem("field").getSelectedText() + " " +
+                            subpanel.getItem("operator").getSelectedText() + " ";
                     valueField = subpanel.getItem("value");
                     if (aux[1] === "Date") {
                         label += valueField.getFormattedDate();
@@ -936,9 +952,9 @@ ExpressionControl.prototype._onPanelValueGeneration = function () {
                     valueType = typeof value;
                     itemData = {
                         expType: "BUSINESS_RULES",
-                        expLabel: subpanel.getItem("rule").getSelectedText() + " "
-                            + subpanel.getItem("operator").getSelectedText() + " "
-                            + (valueType === "string" ? "\"" + value + "\"" : value),
+                        expLabel: subpanel.getItem("rule").getSelectedText() + " " +
+                            subpanel.getItem("operator").getSelectedText() + " " +
+                            (valueType === "string" ? "\"" + value + "\"" : value),
                         expValue: value,
                         expOperator: data.operator,
                         expField: data.rule
@@ -1001,6 +1017,14 @@ ExpressionControl.prototype._onPanelValueGeneration = function () {
                         expValue: data.date
                     };
                     break;
+                case 'form-constant-datetime':
+                    itemData = {
+                        expType: 'CONSTANT',
+                        expSubtype: "datetime",
+                        expLabel: subpanel.getItem("datetime").getFormattedDate(),
+                        expValue: data.datetime
+                    };
+                    break;
                 case 'form-constant-timespan':
                     itemData = {
                         expType: "CONSTANT",
@@ -1010,7 +1034,7 @@ ExpressionControl.prototype._onPanelValueGeneration = function () {
                     };
                     break;
                 default:
-                    throw new Error("_onPanelValueGeneration(): Invalid source data.")
+                    throw new Error("_onPanelValueGeneration(): Invalid source data.");
             }
         } else {
             itemData = {
@@ -1035,7 +1059,7 @@ ExpressionControl.prototype._createOperatorPanel = function () {
         this._operatorPanel = new FieldPanelButtonGroup({
             id: "button-panel-operators"
         });
-    };
+    }
     if (this._operatorSettings) {
         this._operatorPanel.clearItems();
         for (key in this._operatorSettings) {
@@ -1581,7 +1605,6 @@ ExpressionControl.prototype._isRegExpSpecialChar = function (c) {
         case "{":
         case "}":
             return true;
-            break;
     }
     return false;
 };
@@ -1636,7 +1659,7 @@ ExpressionControl.prototype._createDateConstantPanel = function() {
                     name: "date",
                     label: "Date",
                     width: "100%",
-                    format: this._dateFormat,
+                    dateFormat: this._dateFormat,
                     required: true
                 }
             ],
@@ -1652,6 +1675,37 @@ ExpressionControl.prototype._createDateConstantPanel = function() {
         this._constantPanels.date.disable();
     }
 
+    return this;
+};
+
+ExpressionControl.prototype._createDateTimeConstantPanel = function() {
+    var settings = this._constantSettings.datetime;
+    if (!this._constantPanels.datetime) {
+        this._constantPanels.datetime = new FormPanel({
+            id: "form-constant-datetime",
+            title: translate("LBL_PMSE_EXPCONTROL_CONSTANTS_FIXED_DATETIME"),
+            items: [
+                {
+                    type: "datetime",
+                    name: "datetime",
+                    label: "Date Time",
+                    width: "100%",
+                    dateFormat: this._dateFormat,
+                    timeFormat: this._timeFormat,
+                    required: true
+                }
+            ],
+            onCollapse: function (formPanel) {
+                formPanel.getItem("datetime").closeAll();
+            }
+        });
+        this._constantPanel.addItem(this._constantPanels.datetime);
+    }
+    if (settings) {
+        this._constantPanels.datetime.enable();
+    } else {
+        this._constantPanels.datetime.disable();
+    }
     return this;
 };
 
@@ -1841,6 +1895,7 @@ ExpressionControl.prototype._createMainPanel = function () {
         if (this._constantSettings) {
             this._createBasicConstantPanel();
             this._createDateConstantPanel();
+            this._createDateTimeConstantPanel();
             this._createTimespanPanel();
         }
         items.push(this._constantPanel);

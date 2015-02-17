@@ -251,6 +251,7 @@ class MetaDataManager
         'list_max_entries_per_subpanel' => true,
         'max_record_fetch_size' => true,
         'max_record_link_fetch_size' => true,
+        'upload_maxsize' => true,
         'mass_actions' => array(
             'mass_update_chunk_size' => true,
             'mass_delete_chunk_size' => true,
@@ -453,6 +454,14 @@ class MetaDataManager
         }
 
         return self::$managers[$key];
+    }
+
+    /**
+     * Reset static instances of metadata managers. May be used in unit tests.
+     */
+    public static function resetManagers()
+    {
+        self::$managers = array();
     }
 
     /**
@@ -1123,6 +1132,24 @@ class MetaDataManager
             $platforms['base'] = 'base';
         }
 
+        $platforms = array_merge(
+            $platforms,
+            self::getPlatformsWithCachesInFilesystem(),
+            self::getPlatformsWithCachesInDatabase()
+        );
+
+        return $platforms;
+    }
+
+    /**
+     * Returns list of platforms that have cached metadata in filesystem cache.
+     *
+     * @return array
+     */
+    protected static function getPlatformsWithCachesInFilesystem()
+    {
+        $platforms = array();
+
         // Get the listing of files in the cache directory
         $caches = glob(sugar_cached('api/metadata/') . '*.*');
         foreach ($caches as $cache) {
@@ -1132,6 +1159,35 @@ class MetaDataManager
             preg_match('/^.*_(.*)_(private|public)/', $file, $m);
             if (isset($m[1])) {
                 $platforms[$m[1]] = $m[1];
+            }
+        }
+
+        return $platforms;
+    }
+
+    /**
+     * Returns list of platforms that have cached metadata in database cache.
+     *
+     * @return array
+     */
+    protected static function getPlatformsWithCachesInDatabase()
+    {
+        $platforms = array();
+
+        // Get the listing of files in the cache directory
+        $db = DBManagerFactory::getInstance();
+        $sql = 'SELECT type FROM ' . static::$cacheTable;
+        $result = $db->query($sql);
+        while ($row = $db->fetchByAssoc($result)) {
+            $type = $row['type'];
+            // If the cache key fits the pattern of a metadata cache key get the
+            // platforms for the cache entry
+            // @see static::getCachedMetadataHashKey()
+            if (preg_match('/^meta_hash(_public)?_(.*)$/', $type, $matches)) {
+                $key_platforms = explode('_', $matches[2]);
+                foreach ($key_platforms as $platform) {
+                    $platforms[$platform] = $platform;
+                }
             }
         }
 

@@ -223,9 +223,9 @@ class PMSEElementValidator implements PMSEValidate
      */
     public function validateStartEvent($bean, $flowData, $request)
     {
-        if (($this->isNewRecord($bean) && $flowData['evn_params'] == 'new') ||
-            (!$this->isNewRecord($bean) && $flowData['evn_params'] == 'updated'
-                && !$this->isCaseDuplicated($bean, $flowData))
+        if (($this->isNewRecord($bean) && $flowData['evn_params'] == 'new' ||
+                !$this->isNewRecord($bean) && $flowData['evn_params'] == 'updated')
+            && !$this->isCaseDuplicated($bean, $flowData)
         ) {
             $request->validate();
         } else {

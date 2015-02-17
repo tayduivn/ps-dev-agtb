@@ -140,8 +140,7 @@ class PMSERelatedDependencyWrapper
                 if ($token->expType == 'MODULE') {
                     $tmpObj = new stdClass();
                     $tmpObj->pro_id = $eventData['pro_id'];
-                    $processDefBean = $this->getBean('pmse_BpmProcessDefinition');
-                    $processDefBean->retrieve_by_string_fields(array('id' => $tmpObj->pro_id));
+                    $processDefBean = $this->getBean('pmse_BpmProcessDefinition', $eventData['pro_id']);
                     $tmpObj->rel_process_module = $processDefBean->pro_module;
                     $tmpObj->rel_element_id = $eventData['id'];
                     $tmpObj->rel_element_type = $eventData['evn_type'] . '_EVENT';
@@ -167,17 +166,31 @@ class PMSERelatedDependencyWrapper
 
                 }
             }
+            if (empty($resultArray)) {
+                $tmpObj = new stdClass();
+                $tmpObj->pro_id = $eventData['pro_id'];
+                $processDefBean = $this->getBean('pmse_BpmProcessDefinition', $eventData['pro_id']);
+                $tmpObj->pro_module = $processDefBean->pro_module;
+                $tmpObj->pro_status = $processDefBean->pro_status;
+                $tmpObj->pro_locked_variables = $processDefBean->pro_locked_variables;
+                $tmpObj->pro_terminate_variables = $processDefBean->pro_terminate_variables;
+                $tmpObj->evn_id = $eventData['id'];
+                foreach ($eventData as $key => $value) {
+                    if ($key != 'id') {
+                        $tmpObj->$key = $value;
+                    }
+                }
+                $resultArray[] = $tmpObj;
+            }
         } else {
             $tmpObj = new stdClass();
             $tmpObj->pro_id = $eventData['pro_id'];
-            $processDefBean = $this->getBean('pmse_BpmProcessDefinition');
-            $processDefBean->retrieve_by_string_fields(array('id' => $tmpObj->pro_id));
+            $processDefBean = $this->getBean('pmse_BpmProcessDefinition', $eventData['pro_id']);
             $tmpObj->pro_module = $processDefBean->pro_module;
             $tmpObj->pro_status = $processDefBean->pro_status;
             $tmpObj->pro_locked_variables = $processDefBean->pro_locked_variables;
             $tmpObj->pro_terminate_variables = $processDefBean->pro_terminate_variables;
             $tmpObj->evn_id = $eventData['id'];
-            //unset($eventData['id']);
             foreach ($eventData as $key => $value) {
                 if ($key != 'id') {
                     $tmpObj->$key = $value;

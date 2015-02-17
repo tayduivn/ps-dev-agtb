@@ -50,7 +50,9 @@ class PMSECriteriaEvaluator
         $resultToken = new stdClass();
         $resultToken->expType = 'CONSTANT';
         $operationGroup = 'relation';
-        //$resultToken->expSubtype = $this->retrieveCriteriaSubtype($criteriaToken->expSubtype);
+        if (!isset($criteriaToken->expSubtype)) {
+            $criteriaToken->expSubtype = '';
+        }
         $resultToken->expValue = $this->expressionEvaluator->routeFunctionOperator(
             $operationGroup,
             $criteriaToken->currentValue,

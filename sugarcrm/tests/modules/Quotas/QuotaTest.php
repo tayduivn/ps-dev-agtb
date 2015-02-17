@@ -129,7 +129,7 @@ class QuotaTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Quotas::get_summary_text
+     * @covers Quota::get_summary_text
      */
     public function testGetSummaryText()
     {

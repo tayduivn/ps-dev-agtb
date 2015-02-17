@@ -12,7 +12,7 @@
 -->
 <h2>Overview</h2>
 <span class="lead">
-    Lists related records from multiple links at at time.
+    Lists related records from multiple links at a time.
 </span>
 
 <h2>Summary</h2>
@@ -102,40 +102,52 @@
         <td>Array</td>
         <td>The record result set.</td>
     </tr>
+    <tr>
+        <td>errors</td>
+        <td>Map</td>
+        <td>Errors encountered while making requests for the individual links. These errors are returned for the client to consume, but do not affect the response status of the request.</td>
+    </tr>
     </tbody>
 </table>
 
 <h3>Response</h3>
 <pre class="pre-scrollable">
 {
-   "next_offset": {
-      "calls": 1,
-      "meetings": -1,
-      "tasks": -2,
-   },
-   "records": [
-      {
-         "_module": "Calls",
-         "_link": "calls",
-         "id": "8703fbf3-0ffa-c288-8d2c-512f943ecdc3",
-         "name": "Discuss review process",
-         "date_end": "2014-02-26T19:12:00+00:00"
-      },
-      {
-         "_module": "Tasks",
-         "_link": "tasks",
-         "id": "e1c495cb-af17-1b37-dd66-512f934fe155",
-         "name": "Introduce all players",
-         "due_date": "2014-02-26T19:12:00+00:00"
-      },
-      {
-         "_module": "Tasks",
-         "_link": "tasks",
-         "id": "456b7848-9959-5a64-cd34-512d0938addd",
-         "name": "Follow-up on proposal",
-         "due_date": "2014-02-26T19:12:00+00:00"
-      }
-   ]
+    "next_offset": {
+        "calls": 1,
+        "meetings": -1,
+        "tasks": -1,
+    },
+    "records": [
+        {
+            "_module": "Calls",
+            "_link": "calls",
+            "id": "8703fbf3-0ffa-c288-8d2c-512f943ecdc3",
+            "name": "Discuss review process",
+            "date_end": "2014-02-26T19:12:00+00:00"
+        },
+        {
+            "_module": "Tasks",
+            "_link": "tasks",
+            "id": "e1c495cb-af17-1b37-dd66-512f934fe155",
+            "name": "Introduce all players",
+            "due_date": "2014-02-26T19:12:00+00:00"
+        },
+        {
+            "_module": "Tasks",
+            "_link": "tasks",
+            "id": "456b7848-9959-5a64-cd34-512d0938addd",
+            "name": "Follow-up on proposal",
+            "due_date": "2014-02-26T19:12:00+00:00"
+        }
+    ],
+    "errors": {
+        "meetings": {
+            "code": 403,
+            "error": "not_authorized",
+            "error_message": "You are not authorized to perform this action. Contact your administrator if you need access."
+        }
+    }
 }
 </pre>
 

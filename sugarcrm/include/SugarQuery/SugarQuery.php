@@ -143,11 +143,23 @@ class SugarQuery
     protected $dataItems = array();
     protected $dataSegment;
 
-    public function __construct()
+    /**
+     * @param DBManager $db
+     */
+    public function __construct(DBManager $db = null)
     {
         $this->select = new SugarQuery_Builder_Select($this, array());
-        $this->db = DBManagerFactory::getInstance();
-        if(!$this->db->usePreparedStatements) {
+        $this->setDBManager($db ?: DBManagerFactory::getInstance());
+    }
+
+    /**
+     * Set DBManager
+     * @param DBManager $db
+     */
+    public function setDBManager(DBManager $db)
+    {
+        $this->db = $db;
+        if (!$this->db->usePreparedStatements) {
             $this->usePreparedStatements = false;
         }
     }

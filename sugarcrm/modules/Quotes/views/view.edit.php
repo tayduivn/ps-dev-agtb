@@ -314,6 +314,7 @@ class QuotesViewEdit extends ViewEdit
             if(typeof add_row_stack != 'undefined' && add_row_stack.length > 0) {
                 //interval is in msec,
                 //size is the number of rows rendering every time
+                asyncLoading = true; // to indicate that the content is still loading
                 var _interval = 100,
                     _size = 3,
                     _exec = add_row_stack.splice(0, _size),
@@ -330,6 +331,7 @@ class QuotesViewEdit extends ViewEdit
                 }
                 window.setTimeout(add_rows_on_load, _interval);
             } else {
+                asyncLoading = false; // content is loaded
                 var _header_button = document.getElementById('SAVE_HEADER'),
                     _footer_button = document.getElementById('SAVE_FOOTER');
                 if(_header_button) {

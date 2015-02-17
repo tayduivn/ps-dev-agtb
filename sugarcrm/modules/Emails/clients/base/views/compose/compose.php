@@ -18,6 +18,9 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
             'name'      => 'cancel_button',
             'label'     => 'LBL_CANCEL_BUTTON_LABEL',
             'css_class' => 'btn-invisible btn-link',
+            'events' => array(
+                'click' => 'button:cancel_button:click',
+            ),
         ),
         array(
             'type'    => 'actiondropdown',
@@ -28,11 +31,17 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
                     'name'  => 'send_button',
                     'type'  => 'rowaction',
                     'label' => 'LBL_SEND_BUTTON_LABEL',
+                    'events' => array(
+                        'click' => 'button:send_button:click',
+                    ),
                 ),
                 array(
                     'name'  => 'draft_button',
                     'type'  => 'rowaction',
                     'label' => 'LBL_SAVE_AS_DRAFT_BUTTON_LABEL',
+                    'events' => array(
+                        'click' => 'button:draft_button:click',
+                    ),
                 ),
             ),
         ),

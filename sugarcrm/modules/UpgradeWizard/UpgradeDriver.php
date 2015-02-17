@@ -1194,7 +1194,7 @@ abstract class UpgradeDriver
         $this->sugar_initialized = true;
         $this->loadStrings();
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
-        $this->log("Done initializig SugarCRM environment");
+        $this->log("Done initializing SugarCRM environment");
     }
 
     /**

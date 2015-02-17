@@ -177,21 +177,20 @@
     },
 
     /**
-     * Retrieve a selector against which the date picker should be appended to.
+     * Retrieve an element against which the date picker should be appended to.
      *
      * FIXME: find a proper way to do this and avoid scrolling issues SC-2739
      *
-     * @return {String/undefined} Selector against which the date picker should
+     * @return {jQuery/undefined} Element against which the date picker should
      *   be appended to, `undefined` if none.
      * @private
      */
     _getAppendToTarget: function() {
-        if (this.$el.parents('div#drawers').length) {
-            return 'div#drawers > .active';
-        }
+        var component = this.closestComponent('main-pane') ||
+            this.closestComponent('drawer');
 
-        if (this.$el.parents('div#content').length) {
-            return 'div#content .main-pane:first';
+        if (component) {
+            return component.$el;
         }
 
         return;
@@ -235,7 +234,7 @@
 
         $('.main-pane, .flex-list-view-content').on('scroll.' + this.cid, _.bind(function() {
             // make sure the dom element exists before trying to place the datepicker
-            if ($(this._getAppendToTarget()).length) {
+            if (this._getAppendToTarget()) {
                 $field.datepicker('place');
             }
         }, this));

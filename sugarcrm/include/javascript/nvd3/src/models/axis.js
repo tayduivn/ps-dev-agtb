@@ -72,6 +72,10 @@ nv.models.axis = function() {
         axis.ticks(Math.ceil(Math.abs(scale.range()[1] - scale.range()[0]) / 100));
       }
 
+      // test to see if rotateTicks was passed as a boolean
+      if (rotateTicks && !isFinite(String(rotateTicks))) {
+        rotateTicks = 30;
+      }
       if (rotateTicks % 360 && axis.orient() === 'bottom') {
         axis.tickPadding(0);
       }
