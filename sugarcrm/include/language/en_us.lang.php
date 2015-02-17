@@ -1707,13 +1707,13 @@ $app_list_strings = array (
         'pieWedgeName'      => 'sections',
     ),
     'd3_chart_types' => array (
-        'pie chart'            => 'Pie Chart',
-        'bar chart'            => 'Vertical Bar Chart',
-        'group by chart'       => 'Vertical Bar Grouped Chart',
+        'pie chart' => 'Pie Chart',
+        'bar chart' => 'Vertical Bar Chart',
+        'group by chart' => 'Vertical Bar Grouped Chart',
         'horizontal bar chart' => 'Horizontal Bar Chart',
         'horizontal group by chart' => 'Horizontal Bar Grouped Chart',
-        'line chart'           => 'Line Chart',
-        'funnel chart 3D'      => 'Funnel Chart',
+        'line chart' => 'Line Chart',
+        'funnel chart' => 'Funnel Chart',
     ),
     'd3_value_placement' => array (
         '0'            => 'None',
