@@ -39,10 +39,12 @@ describe('MassCollection plugin:', function() {
             sinon.collection.stub(view, 'createMassCollection');
             sinon.collection.stub(view, '_preselectModels');
         });
+
         it('should create the mass collection', function() {
             view.trigger('init');
             expect(view.createMassCollection).toHaveBeenCalled();
         });
+
         it('should handle preselected models', function() {
             view.trigger('init');
             massCollection = view.context.get('mass_collection');
@@ -61,24 +63,22 @@ describe('MassCollection plugin:', function() {
     describe('addModel:', function() {
         beforeEach(function() {
             massCollection = view.context.get('mass_collection');
-            massCollection.add([{id: 1}, {id: 2}]);
+            massCollection.add([{id: 1}]);
+            view.collection.add([{id: 1}, {id: 2}]);
         });
+
         it('should add the model to the mass collection', function() {
             view.addModel({id: 3});
-            var addedModel = _.find(massCollection.models, function(model) {
-                return model.id == 3;
-            });
+            var addedModel = massCollection.get('3');
 
             expect(addedModel).toBeDefined();
         });
 
         it('should trigger the "all:checked" event on the massCollection when adding the last model', function() {
-            sinon.collection.stub(view, '_isAllChecked', function() {return true});
-            sinon.collection.stub(massCollection, 'trigger');
-            view.addModel({id: 1});
+            sinon.collection.spy(massCollection, 'trigger');
+            view.addModel({id: 2});
 
-            expect(massCollection.trigger).toHaveBeenCalled();
-
+            expect(massCollection.trigger).toHaveBeenCalledWith('all:checked');
         });
     });
 
@@ -88,6 +88,7 @@ describe('MassCollection plugin:', function() {
             massCollection.add([{id: 1}, {id: 2}, {id: 3}]);
             view.collection.add([{id: 4}, {id: 5}]);
         });
+
         it('should add all models of the current collection to the massCollection', function() {
             view.addAllModels();
             expect(_.intersection(view.collection.models, massCollection.models)).toEqual(view.collection.models);
@@ -105,18 +106,14 @@ describe('MassCollection plugin:', function() {
         beforeEach(function() {
             massCollection = view.context.get('mass_collection');
             massCollection.add([{id: 1}, {id: 2}, {id: 3}]);
+            view.collection.add([{id: 1}, {id: 2}]);
         });
+
         it('should remove the model from the mass collection', function() {
             view.removeModel({id: 1});
-            var model1 = _.find(massCollection.models, function(model) {
-                return model.id == 1;
-            });
-            var model2 = _.find(massCollection.models, function(model) {
-                return model.id == 2;
-            });
-            var model3 = _.find(massCollection.models, function(model) {
-                return model.id == 3;
-            });
+            var model1 = massCollection.get('1');
+            var model2 = massCollection.get('2');
+            var model3 = massCollection.get('3');
 
             expect(model1).toBeUndefined();
             expect(model2).toBeDefined();
@@ -124,8 +121,7 @@ describe('MassCollection plugin:', function() {
         });
 
         it('should trigger the event "not:all:checked" on the massCollection', function() {
-            sinon.collection.stub(view, '_isAllChecked', function() {return false});
-            sinon.collection.stub(massCollection, 'trigger');
+            sinon.collection.spy(massCollection, 'trigger');
             view.removeModel({id: 1});
 
             expect(massCollection.trigger).toHaveBeenCalledWith('not:all:checked');
@@ -138,23 +134,21 @@ describe('MassCollection plugin:', function() {
             massCollection.add([{id: 1}, {id: 2}, {id: 3}]);
             view.collection.add([{id: 2}, {id: 3}]);
         });
-        it('should remove all the records in the view collection from the mass collection', function() {
-            view.removeAllModels();
-            var removedModel1 = _.find(massCollection.models, function(model) {
-                return model.id == 2;
-            });
-            var removedModel2 = _.find(massCollection.models, function(model) {
-                return model.id == 3;
-            });
-            expect(removedModel1).toBeUndefined();
-            expect(removedModel2).toBeUndefined();
-        });
-        it('should clear the mass collection', function() {
-            var clearMassCollectionStub = sinon.collection.stub(view, 'clearMassCollection');
-            view.independentMassCollection = false;
-            view.removeAllModels();
 
-            expect(clearMassCollectionStub).toHaveBeenCalled();
+        using('independentMassCollection boolean', [true, false], function(independentMassCollection) {
+            it('should remove models from the mass collection', function() {
+                view.independentMassCollection = independentMassCollection;
+                view.removeAllModels();
+                var removedModel1 = massCollection.get('2');
+                var removedModel2 = massCollection.get('3');
+                if (independentMassCollection) {
+                    expect(removedModel1).toBeFalsy();
+                    expect(removedModel2).toBeFalsy();
+                    expect(massCollection.length).toBeGreaterThan(0);
+                } else {
+                    expect(massCollection.length).toBe(0);
+                }
+            });
 
         });
     });
@@ -164,13 +158,15 @@ describe('MassCollection plugin:', function() {
             massCollection = view.context.get('mass_collection');
             massCollection.add([{id: 1}, {id: 2}, {id: 3}]);
         });
-       it('should clear the mass collection', function() {
-           var resetSpy = sinon.collection.spy(massCollection, 'reset');
-           view.clearMassCollection();
 
-           expect(resetSpy).toHaveBeenCalled();
-           expect(_.isEmpty(massCollection.models)).toBe(true);
-       });
+        it('should clear the mass collection', function() {
+            var resetSpy = sinon.collection.spy(massCollection, 'reset');
+            view.clearMassCollection();
+
+            expect(resetSpy).toHaveBeenCalled();
+            expect(_.isEmpty(massCollection.models)).toBe(true);
+        });
+
         it('should trigger the "not:all:checked" event on the massCollection', function() {
             sinon.collection.stub(massCollection, 'trigger');
             view.clearMassCollection();
@@ -188,6 +184,7 @@ describe('MassCollection plugin:', function() {
             expect(view.addModel).toHaveBeenCalled();
         });
     });
+
     describe('getting an "mass_collection:add:all" event', function() {
         it('should call addAllModels method', function() {
             sinon.collection.stub(view, 'addAllModels');
@@ -196,6 +193,7 @@ describe('MassCollection plugin:', function() {
             expect(view.addAllModels).toHaveBeenCalled();
         });
     });
+
     describe('getting an "mass_collection:remove" event', function() {
         it('should call removeModel method', function() {
             sinon.collection.stub(view, 'removeModel');
@@ -204,6 +202,7 @@ describe('MassCollection plugin:', function() {
             expect(view.removeModel).toHaveBeenCalled();
         });
     });
+
     describe('getting an "mass_collection:remove:all" event', function() {
         it('should call removeAllModels method', function() {
             sinon.collection.stub(view, 'removeAllModels');
@@ -212,6 +211,7 @@ describe('MassCollection plugin:', function() {
             expect(view.removeAllModels).toHaveBeenCalled();
         });
     });
+
     describe('getting an "mass_collection:clear" event', function() {
         it('should call clearMassCollection method', function() {
             sinon.collection.stub(view, 'clearMassCollection');

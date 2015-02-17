@@ -8,7 +8,9 @@ describe('Base.View.SelectionListContext', function() {
 
         var context = app.context.getContext();
         context.set({
-            mass_collection: {models: [{id: '1', name: 'toto'}, {id: '2', name: 'tata'}, {id: '3', name: 'titi'}]}
+            mass_collection: new Backbone.Collection([
+                {id: 1, name: 'toto'}, {id: 2, name: 'tata'}, {id: 3, name: 'titi'}
+            ])
         });
 
         view = SugarTest.createView('base', moduleName, viewName, null, context, null, layout);
@@ -29,14 +31,14 @@ describe('Base.View.SelectionListContext', function() {
 
     describe('addPill:', function() {
         beforeEach(function() {
-            model1 = {id: '1', name: 'toto'};
+            model1 = new Backbone.Model({name: 'toto'});
             renderStub = sinon.collection.stub(view, 'render');
         });
         it('should add a model to the pills array', function() {
             view.addPill(model1);
 
             expect(_.find(view.pills, function(pill) {
-                return _.isEqual(pill, model1);
+                return _.isEqual(pill.id, model1.id);
             })).toBeDefined();
         });
         it('should render the view', function() {
@@ -73,14 +75,10 @@ describe('Base.View.SelectionListContext', function() {
             view.pills = [{id: '1', name: 'toto'}, {id: '2', name: 'tata'}, {id: '3', name: 'titi'}];
             renderStub = sinon.collection.stub(view, 'render');
         });
-        it('should clear the pills array', function() {
+        it('should render the view with no pills', function() {
             view.removeAllPills();
 
             expect(_.isEmpty(view.pills)).toBe(true);
-        });
-        it('should render the view', function() {
-            view.removeAllPills();
-
             expect(renderStub).toHaveBeenCalled();
         });
         it('should trigger a "mass_collection:clear" event', function() {
@@ -94,29 +92,22 @@ describe('Base.View.SelectionListContext', function() {
 
     describe('closePill:', function() {
         beforeEach(function() {
-            var pillHtml = ' <li class="select2-search-choice" data-id="1"><div>' +
+            view.massCollection = view.context.get('mass_collection');
+            model1 = view.massCollection.get('1');
+            var pillHtml = ' <li class="select2-search-choice" data-id="'+ model1.id +'"><div>' +
                 '<div class="ellipsis_inline" title="toto">toto</div>' +
                 '</div><a class="select2-search-choice-close" data-close-pill="true" tabindex="-1"></a></li>';
             view.$el.append(pillHtml);
-            event = {target: '.select2-search-choice-close'};
-            view.massCollection = view.context.get('mass_collection');
 
         });
-        it('should remove the pill', function() {
+        it('should remove the pill and trigger a "mass_collection:remove" event', function() {
             var removePillStub = sinon.collection.stub(view, 'removePill');
+            sinon.collection.spy(view.context, 'trigger');
 
-            view.closePill(event);
+            view.closePill(model1.id.toString());
 
             expect(removePillStub).toHaveBeenCalledWith({id: '1'});
-        });
-
-        it('should trigger a "mass_collection:remove" event', function() {
-            sinon.collection.stub(view, 'removePill');
-            var triggerStub = sinon.collection.stub(view.context, 'trigger');
-
-            view.closePill(event);
-
-            expect(triggerStub).toHaveBeenCalledWith('mass_collection:remove', {id: '1', name: 'toto'});
+            expect(view.context.trigger).toHaveBeenCalledWith('mass_collection:remove', model1);
         });
     });
 
@@ -130,8 +121,5 @@ describe('Base.View.SelectionListContext', function() {
            expect(view.pills.length).toEqual(models.length);
         });
     });
-
-
-
 });
 

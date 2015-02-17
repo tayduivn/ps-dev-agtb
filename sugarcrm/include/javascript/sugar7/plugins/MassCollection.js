@@ -10,9 +10,19 @@
  */
 
 /**
- * This plugin handles the collection (called the mass collection)
- * of selected items in listViews.
- * It has to be attached to any view that has `actionmenu` fields.
+ * This plugin handles a collection (called the mass collection) of models.
+ * It creates the mass collection in the context of the view it's attached to
+ * and then provide convenient methods to `add` and `remove` models.
+ *
+ * The way to use it is to trigger the following context events:
+ *  -`mass_collection:add` To add the model passed in argument to the mass
+ *    collection.
+ *  -`mass_collection:add:all` To add all models of the collection in the mass
+ *     collection.
+ *  -`mass_collection:remove` To remove the model passed in arguments from the
+ *    mass collection.
+ *  -`mass_collection:remove:all` To remove all models in the collection from
+ *    the mass collection.
  */
 (function(app) {
     app.events.on('app:init', function() {
@@ -170,8 +180,8 @@
                     this.clearMassCollection(this.massCollection);
                 } else {
                     this.massCollection.remove(this.collection.models);
+                    this.massCollection.trigger('not:all:checked');
                 }
-                this.massCollection.trigger('not:all:checked');
             },
 
             /**

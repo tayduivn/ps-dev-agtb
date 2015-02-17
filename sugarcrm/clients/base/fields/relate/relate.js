@@ -387,7 +387,7 @@
     /**
      * Callback for select2 `formatSelection` property.
      *
-     * @param {object} obj object containing the item name.
+     * @param {Object} obj object containing the item name.
      * @return {string} A string containing template for a pill.
      *
      * @private
@@ -516,7 +516,7 @@
     /**
      * Sets the value in the field.
      *
-     * @param {Object | Array} models The source models attributes.
+     * @param {Object|Array} models The source models attributes.
      */
     setValue: function(models) {
         if (!models) {

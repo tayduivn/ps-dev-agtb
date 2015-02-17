@@ -21,7 +21,7 @@
 ({
     className: 'selection-context',
     events: {
-        'click [data-close-pill]': 'closePill',
+        'click [data-close-pill]': 'handleClosePillEvent',
         'click .reset_button': 'removeAllPills'
     },
 
@@ -95,13 +95,22 @@
     },
 
     /**
-     * Click handler for the `close` button on a pill. It removes the pill and
-     * triggers an event to remove it the model from the mass collection.
+     * Click handler for the `close` button on a pill.
      *
      * @param {Event} event The click event.
      */
-    closePill: function(event) {
-        var modelId = this.$(event.target).closest('.select2-search-choice').data('id').toString();
+    handleClosePillEvent: function(event) {
+        var id = this.$(event.target).closest('.select2-search-choice').data('id').toString();
+        this.closePill(id);
+    },
+
+    /**
+     * Removes the pill and triggers an event to remove it the model from the
+     * mass collection.
+     *
+     * @param {string} modelId The id of the model to remove.
+     */
+    closePill: function(modelId) {
         this.removePill({id: modelId});
         var model = this.massCollection.get(modelId);
         this.context.trigger('mass_collection:remove', model);

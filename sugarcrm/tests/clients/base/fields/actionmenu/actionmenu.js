@@ -70,35 +70,32 @@ describe("Base.Field.ActionMenu", function() {
 
     describe('toggleSelect:', function() {
         beforeEach(function() {
-            triggerStub = sinon.collection.stub(field.context, 'trigger');
+            sinon.collection.spy(field.context, 'trigger');
         });
         it('should trigger a "mass_collection:add" event', function() {
             field.toggleSelect(true);
-            expect(triggerStub).toHaveBeenCalledWith('mass_collection:add');
+            expect(field.context.trigger).toHaveBeenCalledWith('mass_collection:add');
 
         });
         it('should trigger a "mass_collection:remove" event', function() {
             field.toggleSelect(false);
-            expect(triggerStub).toHaveBeenCalledWith('mass_collection:remove');
+            expect(field.context.trigger).toHaveBeenCalledWith('mass_collection:remove');
         });
     });
 
-    describe('checkAll:', function() {
+    describe('toggleAll:', function() {
         beforeEach(function() {
-            triggerStub = sinon.collection.stub(field.context, 'trigger');
-            $checkBox = '<input type="checkbox" name="check">';
-            field.$el.append($checkBox);
+            sinon.collection.spy(field.context, 'trigger');
         });
+
         it('should trigger a "mass_collection:add:all" event', function() {
-            field.$(field.fieldTag).prop('checked', true);
-            field.checkAll();
-            expect(triggerStub).toHaveBeenCalledWith('mass_collection:add:all');
+            field.toggleAll(true);
+            expect(field.context.trigger).toHaveBeenCalledWith('mass_collection:add:all');
         });
 
         it('should trigger a "mass_collection:remove:all" event', function() {
-            field.$(field.fieldTag).prop('checked', false);
-            field.checkAll();
-            expect(triggerStub).toHaveBeenCalledWith('mass_collection:remove:all');
+            field.toggleAll(false);
+            expect(field.context.trigger).toHaveBeenCalledWith('mass_collection:remove:all');
         });
     });
 
