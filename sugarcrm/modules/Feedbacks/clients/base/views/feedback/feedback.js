@@ -176,7 +176,8 @@
             feedback_app_path: window.location.href,
             feedback_user_browser: navigator.userAgent + ' (' + navigator.language + ')',
             feedback_user_os: navigator.platform,
-            feedback_sugar_version: _.toArray(_.pick(app.metadata.getServerInfo(), 'product_name', 'version')).join(' ')
+            feedback_sugar_version: _.toArray(_.pick(app.metadata.getServerInfo(), 'product_name', 'version')).join(' '),
+            company: app.config.systemName
         });
 
         var post_url = 'https://docs.google.com/forms/d/1iIdfeWma_OUUkaP-wSojZW2GelaxMOBgDq05A8PGHY8/formResponse';
@@ -196,7 +197,8 @@
                 'entry.1750203592': this.model.get('feedback_user_browser'),
                 'entry.1115361778': this.model.get('feedback_user_os'),
                 'entry.1700062722': this.model.get('feedback_csat'),
-                'entry.1926759955': this.model.get('feedback_sugar_version')
+                'entry.1926759955': this.model.get('feedback_sugar_version'),
+                'entry.398692075': this.model.get('company')
             },
             dataType: 'script',
             crossDomain: true,
