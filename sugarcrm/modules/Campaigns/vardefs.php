@@ -122,27 +122,6 @@ $dictionary['Campaign'] = array (
             'reportable' => true,
             'comment' => 'Expected Click throughs manually entered by Campaign Manager'
         ),
-        'currency_id' => array (
-            'name' => 'currency_id',
-            'vname' => 'LBL_CURRENCY',
-            'type' => 'currency_id',
-            'dbType' => 'id',
-            'group' => 'currency_id',
-            'function' => 'getCurrencies',
-            'function_bean' => 'Currencies',
-            'required' => false,
-            'do_report' => false,
-            'reportable' => false,
-            'default' => '-99',
-            'comment' => 'Currency in use for the campaign'
-        ),
-        'base_rate' => array(
-            'name' => 'base_rate',
-            'vname' => 'LBL_CURRENCY_RATE',
-            'type' => 'decimal',
-            'len' => '26,6',
-            'studio' => false
-        ),
         'budget' => array (
             'name' => 'budget',
             'vname' => 'LBL_CAMPAIGN_BUDGET',
@@ -437,5 +416,6 @@ VardefManager :: createVardef(
         'default',
         'assignable',
         'team_security',
+        'currency'
        )
 );

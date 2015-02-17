@@ -221,42 +221,6 @@ $dictionary['ProductTemplate'] = array(
             'calculated' => true,
             'enforced' => true,
         ),
-        'currency_id' => array(
-            'name' => 'currency_id',
-            'vname' => 'LBL_CURRENCY',
-            'type' => 'currency_id',
-            'dbType' => 'id',
-            'function' => 'getCurrencies',
-            'function_bean' => 'Currencies',
-            'javascript' => 'onchange="ConvertItems(this.options[selectedIndex].value);"',
-            'required' => false,
-            'reportable' => false,
-            'importable' => 'true',
-            'default' => '-99',
-            'comment' => 'Currency of the product',
-        ),
-        'base_rate' => array(
-            'name' => 'base_rate',
-            'vname' => 'LBL_CURRENCY_RATE',
-            'type' => 'decimal',
-            'len' => '26,6',
-            'studio' => false,
-        ),
-        'currency_symbol' => array(
-            'name' => 'currency_symbol',
-            'type' => 'varchar',
-            'vname' => 'LBL_CURRENCY_SYMBOL_NAME',
-            'source' => 'non-db',
-        ),
-        'currency' => array(
-            'name' => 'currency',
-            'vname' => 'LBL_CURRENCY',
-            'type' => 'varchar',
-            'required' => false,
-            'reportable' => false,
-            'importable' => 'false',
-            'comment' => 'Currency of the product',
-        ),
         'status' => array(
             'name' => 'status',
             'vname' => 'LBL_STATUS',
@@ -433,5 +397,6 @@ VardefManager::createVardef(
     array(
         'default',
         'assignable',
+        'currency'
     )
 );

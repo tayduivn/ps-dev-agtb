@@ -399,25 +399,6 @@ $dictionary['RevenueLineItem'] = array(
             'calculated' => true,
             'enforced' => true,
         ),
-        'currency_id' => array(
-            'name' => 'currency_id',
-            'dbType' => 'id',
-            'vname' => 'LBL_CURRENCY_ID',
-            'type' => 'currency_id',
-            'function' => 'getCurrencies',
-            'function_bean' => 'Currencies',
-            'required' => false,
-            'reportable' => false,
-            'default' => '-99',
-            'comment' => 'Currency of the product'
-        ),
-        'base_rate' => array(
-            'name' => 'base_rate',
-            'vname' => 'LBL_CURRENCY_RATE',
-            'type' => 'decimal',
-            'len' => '26,6',
-            'studio' => false
-        ),
         'status' => array(
             'name' => 'status',
             'vname' => 'LBL_STATUS',
@@ -796,41 +777,6 @@ $dictionary['RevenueLineItem'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_DOCUMENTS_SUBPANEL_TITLE',
         ),
-        // Added for Meta-Data framework
-        'currency_name' => array(
-            'name' => 'currency_name',
-            'rname' => 'name',
-            'id_name' => 'currency_id',
-            'vname' => 'LBL_CURRENCY_NAME',
-            'type' => 'relate',
-            'link' => 'currencies',
-            'isnull' => true,
-            'table' => 'currencies',
-            'module' => 'Currencies',
-            'source' => 'non-db',
-            'function' => 'getCurrencies',
-            'function_bean' => 'Currencies',
-            'studio' => false,
-            'duplicate_merge' => 'disabled',
-            'massupdate' => false
-        ),
-        'currency_symbol' => array(
-            'name' => 'currency_symbol',
-            'rname' => 'symbol',
-            'id_name' => 'currency_id',
-            'vname' => 'LBL_CURRENCY_SYMBOL',
-            'type' => 'relate',
-            'link' => 'currencies',
-            'isnull' => true,
-            'table' => 'currencies',
-            'module' => 'Currencies',
-            'source' => 'non-db',
-            'function' => 'getCurrencySymbols',
-            'function_bean' => 'Currencies',
-            'studio' => false,
-            'duplicate_merge' => 'disabled',
-            'massupdate' => false
-        ),
         'quote_name' => array(
             'name' => 'quote_name',
             'rname' => 'name',
@@ -924,13 +870,6 @@ $dictionary['RevenueLineItem'] = array(
             'dbType' => 'varchar',
             'len' => '255',
             'source' => 'non-db',
-        ),
-        'currencies' => array(
-            'name' => 'currencies',
-            'type' => 'link',
-            'relationship' => 'revenuelineitem_currencies',
-            'source' => 'non-db',
-            'vname' => 'LBL_CURRENCIES',
         ),
         'account_link' => array(
             'name' => 'account_link',
@@ -1052,15 +991,6 @@ $dictionary['RevenueLineItem'] = array(
         array('name' => 'idx_revenuelineitem_oppid', 'type' => 'index', 'fields' => array('opportunity_id')),
     ),
     'relationships' => array(
-        'revenuelineitem_currencies' => array(
-            'lhs_module' => 'RevenueLineItems',
-            'lhs_table' => 'revenue_line_items',
-            'lhs_key' => 'currency_id',
-            'rhs_module' => 'Currencies',
-            'rhs_table' => 'currencies',
-            'rhs_key' => 'id',
-            'relationship_type' => 'one-to-many'
-        ),
         'revenuelineitem_tasks' => array(
             'lhs_module' => 'RevenueLineItems',
             'lhs_table' => 'revenue_line_items',
@@ -1186,5 +1116,6 @@ VardefManager::createVardef(
         'default',
         'assignable',
         'team_security',
+        'currency'
     )
 );
