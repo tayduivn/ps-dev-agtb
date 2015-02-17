@@ -569,7 +569,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     array(
         'name' => 'idx_calls_repeat_parent_id',
         'type' => 'index',
-        'fields' => array('repeat_parent_id'),
+        'fields' => array('repeat_parent_id', 'deleted'),
     ),
     // due to pulls from client side to check if there are reminders to handle.
     array(
