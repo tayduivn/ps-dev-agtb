@@ -55,41 +55,6 @@
     /**
      * @inheritdoc
      *
-     * Remove blank element from the days of the week list -
-     * Day of week list starts Sunday with 1, but needs to start with 0 for API -
-     * Transform the list of items to conform to the API spec
-     */
-    loadEnumOptions: function(fetch, callback) {
-        var enumOptions = this.def.options;
-        if (enumOptions === 'dom_cal_day_short' || enumOptions === 'dom_cal_day_long') {
-            this.items = this._transformDowItems(app.lang.getAppListStrings(enumOptions));
-        } else {
-            this._super('loadEnumOptions', [fetch, callback]);
-        }
-    },
-
-    /**
-     * Remove blank element from the days of the week list -
-     * Day of week list starts Sunday with 1, but needs to start with 0 for API -
-     * Transform the list of items to conform to API spec
-     *
-     * @param {Object} items Days of the week list needing to be transformed
-     * @return {Object}
-     * @private
-     */
-    _transformDowItems: function(items) {
-        return _.reduce(items, function(newItems, value, key) {
-            // remove empty key 0 and shift keys down one
-            if (key !== '0') {
-                newItems[key-1] = value;
-            }
-            return newItems;
-        }, {});
-    },
-
-    /**
-     * @inheritdoc
-     *
      * Model day of week format is a string of numeric characters ('1'-'7')
      * Select2 needs an array of these numeric strings
      */

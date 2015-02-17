@@ -963,6 +963,15 @@ $app_list_strings = array (
                 '6'=>"Fri",
                 '7'=>"Sat",
         ),
+    'dom_cal_day_of_week' => array(
+        '0' => 'Sun',
+        '1' => 'Mon',
+        '2' => 'Tue',
+        '3' => 'Wed',
+        '4' => 'Thu',
+        '5' => 'Fri',
+        '6' => 'Sat',
+    ),
     'dom_meridiem_lowercase'=>array(
                 'am'=>"am",
                 'pm'=>"pm"
