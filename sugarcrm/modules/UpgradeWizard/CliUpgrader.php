@@ -9,7 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once __DIR__ . '/UpgradeDriver.php';
+require_once dirname(__FILE__)  . '/UpgradeDriver.php';
 
 /**
  * Command-line upgrader
@@ -57,6 +57,21 @@ class CliUpgrader extends UpgradeDriver
         'cleanup' => 5
     );
 
+    /**
+     * {@inheritDoc}
+     */
+    public static $version = '1.0.0-dev';
+
+    /**
+     * {@inheritDoc}
+     */
+    public static $build = '999';
+
+    /**
+     * {@inheritDoc}
+     */
+    const VERSION_FILE = 'version.json';
+
     /*
      * CLI arguments: Zipfile Logfile Sugardir Adminuser [Stage]
      */
@@ -87,7 +102,7 @@ class CliUpgrader extends UpgradeDriver
     protected static function usage()
     {
         global $argv;
-        list($version, $build) = static::getVersion();
+        list($version, $build) = self::getVersion();
         $usage = <<<eoq2
 CLI Upgrader v.$version (build $build)
 Usage:
@@ -265,7 +280,7 @@ eoq2;
             $longopt[] = $data[2] . ':';
         }
         /* FIXME: getopt always uses global argv */
-        $opts = getopt($opt, $longopt);
+        $opts = @getopt($opt, $longopt);
 
         if (empty($opts)) {
             $this->argError("Invalid upgrader options");
@@ -356,7 +371,12 @@ eoq2;
             $context['php'] = $php_path . "php";
         }
         if (empty($context['script'])) {
-            $pharPath = Phar::running(false);
+            if (class_exists('Phar')) {
+                $pharPath = Phar::running(false);
+            } else {
+                $pharPath = null;
+            }
+
             $context['script'] = $pharPath ? $pharPath : __FILE__;
         }
         $context['argv'] = $argv;
@@ -384,11 +404,11 @@ eoq2;
     public function start()
     {
         global $argv;
-        $upgrader = new static();
+        $upgrader = new self();
         $upgrader->parseArgs($argv);
         $upgrader->verifyArguments($argv);
         $upgrader->init();
-        list($version, $build) = static::getVersion();
+        list($version, $build) = self::getVersion();
         $upgrader->log("CliUpgrader v.$version (build $build) starting");
         if (isset($upgrader->context['stage'])) {
             $stage = $upgrader->context['stage'];
@@ -577,7 +597,7 @@ eoq2;
     protected function isHealthCheckInstalled()
     {
         set_include_path(
-            __DIR__ . DIRECTORY_SEPARATOR . realpath(
+            dirname(__FILE__) . DIRECTORY_SEPARATOR . realpath(
                 $this->context['health_check_path']
             ) . PATH_SEPARATOR . get_include_path()
         );
@@ -601,6 +621,63 @@ eoq2;
             $md5sum = md5_file($this->context['zip']);
         }
         return $md5sum;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public static function getVersion()
+    {
+        $version = self::$version;
+        $build = self::$build;
+        $vfile = dirname(__FILE__) . "/" . self::VERSION_FILE;
+        if (file_exists($vfile)) {
+            $data = json_decode(file_get_contents($vfile), true);
+            if (!empty($data['version'])) {
+                $version = $data['version'];
+            }
+            if (!empty($data['build'])) {
+                $build = $data['build'];
+            }
+        } elseif (file_exists('sugar_version.php')) {
+            if (!defined('sugarEntry')) {
+                define('sugarEntry', 'upgrader');
+            }
+            include 'sugar_version.php';
+            $version = $sugar_version;
+            $build = $sugar_build;
+        }
+        return array($version, $build);
+    }
+}
+
+if (!function_exists('stream_resolve_include_path')) {
+    /**
+     *
+     * Resolve filename against the include path
+     *
+     * stream_resolve_include_path was introduced in PHP 5.3.2. But this script must work on PHP 5.2.
+     *
+     * @param $filename
+     * @return bool|string
+     */
+    function stream_resolve_include_path($filename)
+    {
+        $paths = explode(PATH_SEPARATOR, get_include_path());
+
+        foreach ($paths as $prefix) {
+            $suffix = '';
+            if (substr($prefix, -1) != DIRECTORY_SEPARATOR) {
+                $suffix = DIRECTORY_SEPARATOR;
+            }
+            $file = $prefix . $suffix . $filename;
+
+            if (file_exists($file)) {
+                return $file;
+            }
+        }
+
+        return false;
     }
 }
 

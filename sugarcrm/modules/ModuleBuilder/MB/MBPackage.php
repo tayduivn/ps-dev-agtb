@@ -41,7 +41,9 @@ class MBPackage{
      */
     protected static $includes = array(
         'language' => 'app_list_strings',
+// BEGIN SUGARCRM flav=ent ONLY
         'dropdown_filters' => 'role_dropdown_filters',
+// END SUGARCRM flav=ent ONLY
     );
 
     function MBPackage($name){
@@ -450,12 +452,15 @@ function buildInstall($path){
             $this->getExtensionsManifestForPackage($path, $installdefs);
         }
 
+// BEGIN SUGARCRM flav=ent ONLY
         $roles = $this->extractRoles($installdefs);
         $installdefs['roles'] = $this->getRoleNames($roles);
+// END SUGARCRM flav=ent ONLY
 
         return "\n".'$installdefs = ' . var_export_helper($installdefs). ';';
     }
 
+// BEGIN SUGARCRM flav=ent ONLY
     /**
      * Extracts IDs of ACL roles from package manifest
      *
@@ -496,6 +501,7 @@ function buildInstall($path){
 
         return $roles;
     }
+// END SUGARCRM flav=ent ONLY
 
     private function getLanguageManifestForModule($module, &$installdefs)
     {
@@ -915,7 +921,10 @@ function buildInstall($path){
     {
         global $beanList;
 
-        $app_list_strings = $role_dropdown_filters = array();
+        $app_list_strings = array();
+// BEGIN SUGARCRM flav=ent ONLY
+        $role_dropdown_filters = array();
+// END SUGARCRM flav=ent ONLY
         foreach (self::$includes as $type => $varName) {
             $it = $this->getDirectoryIterator('custom/include/' . $type);
             foreach ($it as $file) {
@@ -924,7 +933,11 @@ function buildInstall($path){
         }
 
         $modules = array();
-        if (count($app_list_strings) > 0 || count($role_dropdown_filters) > 0) {
+        if (count($app_list_strings) > 0
+// BEGIN SUGARCRM flav=ent ONLY
+            || count($role_dropdown_filters) > 0
+// END SUGARCRM flav=ent ONLY
+        ) {
             foreach ($beanList as $module => $_) {
                 $bean = BeanFactory::getBean($module);
                 if (!isset($bean->field_defs) || !is_array($bean->field_defs)) {

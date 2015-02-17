@@ -47,7 +47,7 @@
     },
     executeCase: function(model){
         app.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
-        this.executeCasesList(Array(model.get('cas_id')));
+        this.executeCasesList([model.get('cas_id')]);
     },
     cancelCases: function(model){
         var self=this;
@@ -66,7 +66,7 @@
                 var massCollection=self.context.get('mass_collection');
                 var value = self.model.attributes;
 //        value.cas_id = this.buildVariablesString(massCollection);
-                value.cas_id = Array(model.get('cas_id'));
+                value.cas_id = [model.get('cas_id')];
                 var pmseInboxUrl = app.api.buildURL(self.module + '/cancelCases','',{},{});
                 app.api.call('update', pmseInboxUrl, value,{
                     success: function(data)
@@ -114,7 +114,7 @@
     },
 
     buildVariablesString: function(recipients) {
-        var listIdCases = new Array(),count=0;
+        var listIdCases = [],count=0;
         _.each(recipients.models, function(model) {
             listIdCases[count++]=model.attributes.cas_id
         });

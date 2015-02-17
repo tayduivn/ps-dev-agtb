@@ -17,6 +17,12 @@
         this.context.on('button:export_emailtemplates:click', this.exportEmailTemplates, this);
     },
 
+    _render: function() {
+        this._super('_render');
+        this.$('.record-cell[data-name=subject]').remove();
+        this.$('.record-cell[data-name=body_html]').remove();
+    },
+
     designEmailTemplates: function(model) {
         app.navigate(this.context, model, 'layout/emailtemplates');
     },

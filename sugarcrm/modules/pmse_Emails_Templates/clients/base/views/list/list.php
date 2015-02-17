@@ -43,19 +43,26 @@ array (
                 'enabled' => true,
                 'default' => true,
               ),
-              2 => 
-              array (
-                'name' => 'date_entered',
-                'label' => 'LBL_DATE_ENTERED',
+              2 =>
+              array(
+                'name' => 'team_name',
+                'label' => 'LBL_TEAM',
+                'default' => false,
                 'enabled' => true,
-                'readonly' => true,
-                'default' => true,
               ),
-              3 => 
+              3 =>
+                array(
+                'name' => 'assigned_user_name',
+                'label' => 'LBL_ASSIGNED_TO_NAME',
+                'default' => true,
+                'enabled' => true,
+                'link' => true,
+              ),
+              4 =>
               array (
                 'label' => 'LBL_DATE_MODIFIED',
                 'enabled' => true,
-                'default' => false,
+                'default' => true,
                 'name' => 'date_modified',
                 'readonly' => true,
               ),
