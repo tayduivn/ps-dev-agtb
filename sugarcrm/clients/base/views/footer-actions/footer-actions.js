@@ -168,9 +168,16 @@
      * This will improve performance (no more layout being disposed and created
      * on click).
      *
+     * If the app isn't yet in sync (all metadata loaded to create the view)
+     * the button doesn't do anything.
+     *
      * @param {Event} evt the `click` event.
      */
     feedback: function(evt) {
+        if (!app.isSynced) {
+            return;
+        }
+
         if (!this._feedbackView || this._feedbackView.disposed) {
             this._feedbackView = app.view.createView({
                 module: 'Feedbacks',
