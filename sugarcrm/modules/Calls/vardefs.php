@@ -566,6 +566,11 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
         'type' => 'index',
         'fields'=> array('date_start', 'date_end', 'deleted'),
     ),
+    array(
+        'name' => 'idx_calls_repeat_parent_id',
+        'type' => 'index',
+        'fields' => array('repeat_parent_id'),
+    ),
     // due to pulls from client side to check if there are reminders to handle.
     array(
         'name' => 'idx_calls_date_start_reminder',
