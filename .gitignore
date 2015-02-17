@@ -28,3 +28,5 @@ build/rome/MAMP
 atlassian-ide-plugin.xml
 sugarcrm/node_modules
 sugarcrm/vendor/
+sugarcrm/testsunit/phpunit.xml
+sugarcrm/tests/phpunit.xml
