@@ -420,6 +420,7 @@
      */
     _toggleChartFields: function() {
         if (this.meta.config) {
+
             var xOptionsFieldset = this.getField('x_label_options'),
                 tickDisplayMethods = this.getField('tickDisplayMethods'),
                 yOptionsFieldset = this.getField('y_label_options'),
@@ -428,7 +429,10 @@
                 stackedField = this.getField('stacked'),
                 showDimensionOptions = false,
                 showBarOptions = false,
-                showStacked = false;
+                showTickOptions = false,
+                showStacked = false,
+                xOptionsLabel = app.lang.get('LBL_CHART_CONFIG_SHOW_XAXIS_LABEL'),
+                yOptionsLabel = app.lang.get('LBL_CHART_CONFIG_SHOW_YAXIS_LABEL');
 
             switch (this.settings.get('chart_type')) {
                 case 'pie chart':
@@ -453,9 +457,9 @@
 
                 case 'vertical bar chart':
                 case 'vertical':
+                case 'bar chart':
                 case 'horizontal bar chart':
                 case 'horizontal':
-                case 'bar chart':
                     showDimensionOptions = true;
                     showBarOptions = true;
                     showStacked = false;
@@ -464,14 +468,31 @@
                 default:
                     showDimensionOptions = false;
                     showBarOptions = false;
-                    break;
+            }
+
+            if (showDimensionOptions) {
+                switch (this.settings.get('chart_type')) {
+                    case 'horizontal group by chart':
+                    case 'horizontal bar chart':
+                    case 'horizontal':
+                        showTickOptions = false;
+                        xOptionsLabel = app.lang.get('LBL_CHART_CONFIG_SHOW_YAXIS_LABEL');
+                        yOptionsLabel = app.lang.get('LBL_CHART_CONFIG_SHOW_XAXIS_LABEL');
+                        break;
+                    default:
+                        showTickOptions = true;
+                        xOptionsLabel = app.lang.get('LBL_CHART_CONFIG_SHOW_XAXIS_LABEL');
+                        yOptionsLabel = app.lang.get('LBL_CHART_CONFIG_SHOW_YAXIS_LABEL');
+                }
             }
 
             if (xOptionsFieldset) {
                 xOptionsFieldset.$el.closest('.record-cell').toggleClass('hide', !showDimensionOptions);
+                xOptionsFieldset.$el.closest('.record-cell').find('.record-label').text(xOptionsLabel);
+                yOptionsFieldset.$el.closest('.record-cell').find('.record-label').text(yOptionsLabel);
             }
             if (tickDisplayMethods) {
-                tickDisplayMethods.$el.closest('.record-cell').toggleClass('hide', !showDimensionOptions);
+                tickDisplayMethods.$el.closest('.record-cell').toggleClass('hide', !showDimensionOptions || !showTickOptions);
             }
             if (yOptionsFieldset) {
                 yOptionsFieldset.$el.closest('.record-cell').toggleClass('hide', !showDimensionOptions);
@@ -486,6 +507,7 @@
                     stackedField.$el.toggleClass('hide', !showStacked);
                 }
             }
+
         }
     },
 
