@@ -313,4 +313,4 @@ if (!class_exists('VardefManager')) {
     require_once('include/SugarObjects/VardefManager.php');
 }
 
-VardefManager::createVardef('pmse_Business_Rules', 'pmse_Business_Rules', array('basic', 'assignable'));
+VardefManager::createVardef('pmse_Business_Rules', 'pmse_Business_Rules', array('basic', 'team_security', 'assignable'));

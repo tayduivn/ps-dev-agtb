@@ -334,7 +334,7 @@ abstract class UpgradeDriver
             $this->script_mask &= $this->context['script_mask'];
         }
         if (empty($this->context['health_check_path'])) {
-            $this->context['health_check_path'] = __DIR__ . self::DEFAULT_HEALTHCHECK_PATH;
+            $this->context['health_check_path'] = dirname(__FILE__) . self::DEFAULT_HEALTHCHECK_PATH;
         }
         $this->context['case_insensitive_fs'] = $this->testFilesystemCaseInsensitive();
         $this->initialized = true;
@@ -1667,7 +1667,11 @@ abstract class UpgradeDriver
     public function run($stage)
     {
         ini_set('memory_limit', -1);
-        ini_set('error_reporting', E_ALL & ~E_STRICT & ~E_DEPRECATED);
+        $flags = E_ALL & ~E_STRICT;
+        if (defined('E_DEPRECATED')) {
+            $flags = $flags & ~E_DEPRECATED;
+        }
+        ini_set('error_reporting', $flags);
         ini_set('max_execution_time', 0);
         $this->log("Stage $stage starting");
         try {
@@ -1790,7 +1794,7 @@ abstract class UpgradeDriver
     {
         $version = self::$version;
         $build = self::$build;
-        $vfile = __DIR__ . "/" . self::VERSION_FILE;
+        $vfile = dirname(__FILE__) . "/" . self::VERSION_FILE;
         if (file_exists($vfile)) {
             $data = json_decode(file_get_contents($vfile), true);
             if (!empty($data['version'])) {

@@ -282,8 +282,10 @@ if (typeof(ModuleBuilder) == 'undefined') {
 					view_package: ModuleBuilder.MBpackage,
 					view_module: module,
 					view: layout,
-                    subpanel: subpanel,
-                    role: $("input[name=role]").val()
+                    subpanel: subpanel
+// BEGIN SUGARCRM flav=ent ONLY
+                    ,role: $("input[name=role]").val()
+// END SUGARCRM flav=ent ONLY
 				};
 				ModuleBuilder.history.popup_window.load(ModuleBuilder.paramsToUrl(ModuleBuilder.history.params));
 				ModuleBuilder.history.popup_window.show();
@@ -300,8 +302,10 @@ if (typeof(ModuleBuilder) == 'undefined') {
 						view_module: module,
 						view: layout,
 						sid: id,
-                        subpanel: subpanel,
-                        role: $("input[name=role]").val()
+                        subpanel: subpanel
+// BEGIN SUGARCRM flav=ent ONLY
+                        ,role: $("input[name=role]").val()
+// END SUGARCRM flav=ent ONLY
 					};
 					prevPanel = new YAHOO.SUGAR.ClosableTab({
 						dataSrc: Connect.url + "&" + ModuleBuilder.paramsToUrl(ModuleBuilder.history.params),
@@ -321,7 +325,10 @@ if (typeof(ModuleBuilder) == 'undefined') {
             revert: function(module, layout, id, subpanel, isDefault) {
 				var prevTab = ModuleBuilder.tabPanel.getTabIndex("preview:" + id);
 				if(prevTab) ModuleBuilder.tabPanel.removeTab(prevTab);
-				
+
+// BEGIN SUGARCRM flav=ent ONLY
+                var role = $("input[name=role]").val();
+// END SUGARCRM flav=ent ONLY
 				ModuleBuilder.history.params = {
 					module: 'ModuleBuilder',
 					histAction: 'restore',
@@ -330,8 +337,10 @@ if (typeof(ModuleBuilder) == 'undefined') {
 					view_module: module,
 					view: layout,
 					sid: id,
-                    subpanel: subpanel,
-                    role: $("input[name=role]").val()
+                    subpanel: subpanel
+// BEGIN SUGARCRM flav=ent ONLY
+                    ,role: role
+// END SUGARCRM flav=ent ONLY
 				};
 				ModuleBuilder.asyncRequest(ModuleBuilder.history.params, function(){
 					ModuleBuilder.history.reverted = true;
@@ -344,14 +353,19 @@ if (typeof(ModuleBuilder) == 'undefined') {
                         view_package: ModuleBuilder.MBpackage
                     }), function(content) {
                         ModuleBuilder.updateContent(content);
-                        if (isDefault) {
+// BEGIN SUGARCRM flav=ent ONLY
+                        if (role && isDefault) {
                             ModuleBuilder.state.markAsReset();
                         } else {
+// END SUGARCRM flav=ent ONLY
                             ModuleBuilder.state.markAsDirty();
+// BEGIN SUGARCRM flav=ent ONLY
                         }
+// END SUGARCRM flav=ent ONLY
                     });
 				});
 			},
+// BEGIN SUGARCRM flav=ent ONLY
             resetToDefault: function(module, layout) {
                 ModuleBuilder.history.params = {
                     module: 'ModuleBuilder',
@@ -371,6 +385,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
                     });
                 });
             },
+// END SUGARCRM flav=ent ONLY
 			cleanup: function() {
 				if (ModuleBuilder.history.reverted && ModuleBuilder.history.params.histAction) {
 					ModuleBuilder.history.params.histAction = 'unrestore';
@@ -392,14 +407,19 @@ if (typeof(ModuleBuilder) == 'undefined') {
 		},
 		state: {
 			isDirty: false,
+// BEGIN SUGARCRM flav=ent ONLY
             isReset: false,
+// END SUGARCRM flav=ent ONLY
             markAsDirty: function() {
                 ModuleBuilder.state.isDirty = true;
+// BEGIN SUGARCRM flav=ent ONLY
                 ModuleBuilder.state.markAsNotReset();
+// END SUGARCRM flav=ent ONLY
             },
             markAsClean: function() {
                 ModuleBuilder.state.isDirty = false;
             },
+// BEGIN SUGARCRM flav=ent ONLY
             markAsReset: function() {
                 ModuleBuilder.state.isReset = true;
                 $("#saveBtn").prop("disabled", true);
@@ -408,6 +428,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
                 ModuleBuilder.state.isReset = false;
                 $("#saveBtn").prop("disabled", false);
             },
+// END SUGARCRM flav=ent ONLY
 			saving: false,
             hideFailedMesage: false,
 			intended_view: {
@@ -559,11 +580,13 @@ if (typeof(ModuleBuilder) == 'undefined') {
 				successCall = ModuleBuilder.updateContent;
 			}
 
-            var requestUrl = url,
-                role = $("input[name=role]").val();
+            var requestUrl = url;
+// BEGIN SUGARCRM flav=ent ONLY
+            var role = $("input[name=role]").val();
             if (role && ModuleBuilder.isLayoutTheSame(url)) {
                 requestUrl += "&role=" + encodeURIComponent(role);
             }
+// END SUGARCRM flav=ent ONLY
 
             ModuleBuilder.asyncRequest(requestUrl, successCall);
 		},
@@ -589,10 +612,12 @@ if (typeof(ModuleBuilder) == 'undefined') {
         },
 
 		updateContent: function(o){
+// BEGIN SUGARCRM flav=ent ONLY
             if (ModuleBuilder.copyLayoutDialog) {
                 ModuleBuilder.copyLayoutDialog.destroy();
                 delete ModuleBuilder.copyLayoutDialog;
             }
+// END SUGARCRM flav=ent ONLY
 
 			ModuleBuilder.callInProgress = false;
 			//Check if a save action was called and now we need to move-on
@@ -1595,8 +1620,9 @@ if (typeof(ModuleBuilder) == 'undefined') {
             if (rel)
                 tmpElem.rel = rel;
             headElem.appendChild(tmpElem);
-        },
-        switchLayoutRole: function(element) {
+        }
+// BEGIN SUGARCRM flav=ent ONLY
+        ,switchLayoutRole: function(element) {
             var $select = $(element);
             var $input = $('input[name="role"]');
             var previousRole = $input.val();
@@ -1668,6 +1694,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
             ModuleBuilder.copyLayoutDialog = dialog;
             return dialog;
         }
+        // END SUGARCRM flav=ent ONLY
         //BEGIN SUGARCRM flav=een ONLY
         ,moduleLoadVisibility: function(fieldname, options, trigger , targetId){
             var EditorWindow = new Ext.Window({

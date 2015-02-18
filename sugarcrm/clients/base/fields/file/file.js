@@ -55,9 +55,14 @@
      */
     _doValidateFile: function(fields, errors, callback) {
         var fieldName = this.name,
-            $field = this.$(this.fieldTag),
-            val = $field.val();
+            $field = this.$(this.fieldTag);
 
+        if ($field.length === 0) {
+            callback(null, fields, errors);
+            return;
+        }
+
+        var val = $field.val();
         if (_.isEmpty(val)) {
             if (this.def.required) {
                 errors[fieldName] = errors[fieldName] || {};
@@ -68,11 +73,11 @@
         }
 
         var ajaxParams = {
-                temp: true,
-                iframe: true,
-                deleteIfFails: false,
-                htmlJsonFormat: true
-            };
+            temp: true,
+            iframe: true,
+            deleteIfFails: false,
+            htmlJsonFormat: true
+        };
 
         app.alert.show('upload', {
             level: 'process',
@@ -133,8 +138,8 @@
 
         switch (resp.error) {
             case 'request_too_large':
-               errors[fieldName].tooBig = true;
-               break;
+                errors[fieldName].tooBig = true;
+                break;
             default:
                 errors[fieldName].uploadFailed = true;
         }

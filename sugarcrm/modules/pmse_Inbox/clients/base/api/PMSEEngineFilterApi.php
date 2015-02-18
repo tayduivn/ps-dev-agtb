@@ -276,7 +276,7 @@ class PMSEEngineFilterApi extends FilterApi
         $fields[] = array("team.name", 'team_name');
 
         $q->select($fields)
-            ->fieldRaw('CONCAT(COALESCE(user_data.first_name, ""), " ", user_data.last_name)', 'assigned_user_name');
+            ->fieldRaw('user_data.last_name', 'assigned_user_name');
 
         foreach ($options['order_by'] as $orderBy) {
             if ($orderBy[0] == 'pro_title'){

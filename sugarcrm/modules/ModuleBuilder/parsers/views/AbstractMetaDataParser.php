@@ -219,6 +219,7 @@ abstract class AbstractMetaDataParser
         return null;
     }
 
+// BEGIN SUGARCRM flav=ent ONLY
     /**
      * Resets user specific metadata to default
      */
@@ -229,4 +230,5 @@ abstract class AbstractMetaDataParser
             $this->_clearCaches();
         }
     }
+// END SUGARCRM flav=ent ONLY
 }

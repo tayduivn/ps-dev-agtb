@@ -29,7 +29,7 @@ function packSortingHat($archive, $params, $installdefs = null, $internalPath = 
 
     $params = array_merge($defaults, $params);
 
-    file_put_contents(__DIR__ . '/Scanner/version.json', json_encode($params, true));
+    file_put_contents(dirname(__FILE__) . '/Scanner/version.json', json_encode($params, true));
 
     $files = array(
         'Scanner/Scanner.php',
@@ -41,7 +41,7 @@ function packSortingHat($archive, $params, $installdefs = null, $internalPath = 
     );
 
     foreach ($files as $file) {
-        $archive->addFile(__DIR__ . '/' . $file, $internalPath . $file);
+        $archive->addFile(dirname(__FILE__) . '/' . $file, $internalPath . $file);
         if(is_array($installdefs)) {
             $installdefs['copy'][] = array("from" => "<basepath>/$internalPath$file", "to" => $internalPath . $file);
         }

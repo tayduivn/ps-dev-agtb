@@ -537,6 +537,7 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
         return $this->params;
     }
 
+// BEGIN SUGARCRM flav=ent ONLY
     /**
      * Resets user specific metadata to default
      */
@@ -558,6 +559,7 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
             }
         }
     }
+// END SUGARCRM flav=ent ONLY
 
     /**
      * Saves the history for the previous state.

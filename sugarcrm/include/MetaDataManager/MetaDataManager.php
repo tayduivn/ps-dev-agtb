@@ -58,7 +58,9 @@ class MetaDataManager
     const MM_LOGOURL        = 'logo_url';
     const MM_OVERRIDEVALUES = '_override_values';
     const MM_FILTERS        = 'filters';
+// BEGIN SUGARCRM flav=ent ONLY
     const MM_EDITDDFILTERS  = 'editable_dropdown_filters';
+// END SUGARCRM flav=ent ONLY
 
     /**
      * Collection of fields in the user metadata that can trigger a reauth when
@@ -153,7 +155,9 @@ class MetaDataManager
         self::MM_MODULETABMAP   => 'getModuleTabMap',
         self::MM_LOGOURL        => 'getLogoUrl',
         self::MM_FILTERS        => 'getSugarFilters',
+// BEGIN SUGARCRM flav=ent ONLY
         self::MM_EDITDDFILTERS  => 'getEditableDropdownFilters'
+// END SUGARCRM flav=ent ONLY
     );
 
     /**
@@ -2644,10 +2648,13 @@ class MetaDataManager
         } else {
             $list = $GLOBALS['app_list_strings']['moduleList'];
         }
+
+// BEGIN SUGARCRM flav=ent ONLY
         $user = $this->getCurrentUser();
         if (!empty($user->id) && !empty($GLOBALS['sugar_config']['roleBasedViews']) && !$this->public) {
             $list = SugarACL::filterModuleList($list);
         }
+// END SUGARCRM flav=ent ONLY
 
         // TODO - need to make this more extensible through configuration
         $list['Audit'] = true;
@@ -3263,7 +3270,9 @@ class MetaDataManager
             self::MM_LOGOURL,
             self::MM_LANGUAGES,
             self::MM_OVERRIDEVALUES,
-            self::MM_EDITDDFILTERS
+// BEGIN SUGARCRM flav=ent ONLY
+            self::MM_EDITDDFILTERS,
+// END SUGARCRM flav=ent ONLY
         );
     }
 
@@ -3606,6 +3615,7 @@ class MetaDataManager
         return $fields;
     }
 
+// BEGIN SUGARCRM flav=ent ONLY
     /**
      * Returns view iterator for the given module and field definitions
      *
@@ -3666,6 +3676,7 @@ class MetaDataManager
 
         return $values;
     }
+// END SUGARCRM flav=ent ONLY
 
     /**
      * Lazily loads metadata hacks instance
@@ -3721,14 +3732,18 @@ class MetaDataManager
     protected static function getMetadataContexts($public, array $params)
     {
         $contexts = array();
+// BEGIN SUGARCRM flav=ent ONLY
         if (!$public && isset($params['role'])) {
             $roleSets = self::getRoleSetsByRoles($params['role']);
             foreach ($roleSets as $roleSet) {
                 $contexts[] = new MetaDataContextRoleSet($roleSet);
             }
         } else {
+// END SUGARCRM flav=ent ONLY
             $contexts[] = new MetaDataContextDefault();
+// BEGIN SUGARCRM flav=ent ONLY
         }
+// END SUGARCRM flav=ent ONLY
 
         return $contexts;
     }
@@ -3742,18 +3757,20 @@ class MetaDataManager
     protected static function getAllMetadataContexts($public)
     {
         $contexts = array();
+// BEGIN SUGARCRM flav=ent ONLY
         if (!$public) {
             $roleSets = self::getAllRoleSets();
             foreach ($roleSets as $roleSet) {
                 $contexts[] = new MetaDataContextRoleSet($roleSet);
             }
         }
+// END SUGARCRM flav=ent ONLY
         $contexts[] = new MetaDataContextDefault();
-
 
         return $contexts;
     }
 
+// BEGIN SUGARCRM flav=ent ONLY
     /**
      * Returns set of role sets which include any of the given roles
      *
@@ -3776,7 +3793,7 @@ class MetaDataManager
         $query->where()->in('roles.id', $roles);
         $data = $query->execute();
 
-        return self::createCollectionFromDatSet($roleSet, $data);
+        return self::createCollectionFromDataSet($roleSet, $data);
     }
 
     /**
@@ -3797,7 +3814,7 @@ class MetaDataManager
         $query->select('id', 'hash');
         $data = $query->execute();
 
-        return self::createCollectionFromDatSet($roleSet, $data);
+        return self::createCollectionFromDataSet($roleSet, $data);
     }
 
     /**
@@ -3809,7 +3826,7 @@ class MetaDataManager
      * @return SugarBean[]
      * @todo Move this to ACLRoleSet when it's merged
      */
-    protected function createCollectionFromDatSet(SugarBean $seed, array $data)
+    protected function createCollectionFromDataSet(SugarBean $seed, array $data)
     {
         $result = array();
 
@@ -3822,4 +3839,5 @@ class MetaDataManager
 
         return $result;
     }
+// END SUGARCRM flav=ent ONLY
 }

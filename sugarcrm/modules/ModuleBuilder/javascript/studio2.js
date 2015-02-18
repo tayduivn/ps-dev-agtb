@@ -801,10 +801,13 @@ Studio2 = {
 	},
 
 	handleSave: function() {
+// BEGIN SUGARCRM flav=ent ONLY
         // do not save role specific view which is synchronized with the based one without deployment
-        if (ModuleBuilder.state.isSynced) {
+        if (ModuleBuilder.state.isReset) {
             return;
         }
+// END SUGARCRM flav=ent ONLY
+
 		ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_SAVING'));
         ModuleBuilder.state.markAsClean();
 		this.prepareForSave();
@@ -831,11 +834,13 @@ Studio2 = {
 		inputField.setAttribute('value','saveAndPublishLayout');
 		saveForm.appendChild(inputField);
 
-        var isSynced = document.createElement('input');
-        isSynced.setAttribute('type', 'hidden');
-        isSynced.setAttribute('name', 'is_synced');
-        isSynced.setAttribute('value', ModuleBuilder.state.isReset ? 1 : 0);
-        saveForm.appendChild(isSynced);
+// BEGIN SUGARCRM flav=ent ONLY
+        var isReset = document.createElement('input');
+        isReset.setAttribute('type', 'hidden');
+        isReset.setAttribute('name', 'is_reset');
+        isReset.setAttribute('value', ModuleBuilder.state.isReset ? 1 : 0);
+        saveForm.appendChild(isReset);
+// END SUGARCRM flav=ent ONLY
 
 		ModuleBuilder.submitForm('prepareForSave');
 		ajaxStatus.flashStatus(SUGAR.language.get('ModuleBuilder','LBL_DEPLOYE_COMPLETE'),5000);
