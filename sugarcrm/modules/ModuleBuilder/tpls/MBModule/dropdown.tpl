@@ -41,6 +41,7 @@
                     <input type='button' class='button' name='cancel' value='{sugar_translate label='LBL_BTN_CANCEL'}'
                            onclick='ModuleBuilder.tabPanel.get("activeTab").close()'>
                 </td>
+{* // BEGIN SUGARCRM flav=ent ONLY *}
                 <td style="text-align: right">
                     <label>{sugar_translate label='LBL_ROLE'}
                         {if $name }
@@ -50,6 +51,7 @@
                         {/if}
                     </label>
                 </td>
+{* // END SUGARCRM flav=ent ONLY *}
             </tr>
             <tr>
                 <td colspan='3'>

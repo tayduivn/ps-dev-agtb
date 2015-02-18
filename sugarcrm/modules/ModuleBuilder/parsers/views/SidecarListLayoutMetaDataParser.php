@@ -214,7 +214,10 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
                                 $field['label'] = $this->_fielddefs[$field['name']]['vname'];
                             }
                         }
-                        $availableFields[$field['name']] = $field;
+                        // lets make sure that the field can still be in studio
+                        if ($this->isValidField($field['name'], $this->_fielddefs[$field['name']])) {
+                            $availableFields[$field['name']] = $field;
+                        }
                     }
                 }
             }

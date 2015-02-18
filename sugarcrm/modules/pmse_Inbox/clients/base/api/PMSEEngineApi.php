@@ -375,7 +375,7 @@ class PMSEEngineApi extends SugarApi
         }
         switch ($args['data']) {
             case 'users':
-                $result['result'] = $this->getUsersListReassign($args);
+                $result['result'] = $this->getUsersListReassign($flowBeanObject);
                 $result['success'] = true;
                 break;
             default:
@@ -392,11 +392,10 @@ class PMSEEngineApi extends SugarApi
      * @param array $args
      * @return array
      */
-    public function getUsersListReassign($args)
+    public function getUsersListReassign($beanFlow)
     {
         $resultArray = array();
-//        $userList = $this->engine->getReassignableUserList($args['cas_id'], $args['cas_index']);
-        $userList = $this->userAssignmentHandler->getAssignableUserList($args['cas_id'], $args['cas_index']);
+        $userList = $this->userAssignmentHandler->getReassignableUserList($beanFlow, true);
         foreach ($userList as $user) {
             $tmpArray = array();
             $tmpArray['value'] = $user->id;
@@ -460,7 +459,7 @@ class PMSEEngineApi extends SugarApi
         }
         switch ($args['data']) {
             case 'users':
-                $result['result'] = $this->getUsersListAdhoc($args);
+                $result['result'] = $this->getUsersListAdhoc($flowBeanObject);
                 $result['success'] = true;
                 break;
             default:
@@ -477,12 +476,10 @@ class PMSEEngineApi extends SugarApi
      * @param array $args
      * @return array
      */
-    public function getUsersListAdhoc($args)
+    public function getUsersListAdhoc($beanFlow)
     {
         $resultArray = array();
-        $this->userAssignmentHandler->getAdhocAssignableUserList($args['cas_id'], $args['cas_index']);
-//        $userList = $this->engine->getAdhocAssignableUserList($args['cas_id'], $args['cas_index']);
-        $userList = $this->userAssignmentHandler->getAdhocAssignableUserList($args['cas_id'], $args['cas_index']);
+        $userList = $this->userAssignmentHandler->getAdhocAssignableUserList($beanFlow);
         foreach ($userList as $user) {
             $tmpArray = array();
             $tmpArray['value'] = $user->id;

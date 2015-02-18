@@ -2811,7 +2811,9 @@ private function dir_file_count($path){
                 "_override_values",
                 "filters",
                 "logo_url",
+// BEGIN SUGARCRM flav=ent ONLY
                 "editable_dropdown_filters",
+// END SUGARCRM flav=ent ONLY
             ),
         );
 

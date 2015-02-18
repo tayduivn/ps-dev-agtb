@@ -451,9 +451,9 @@ class PMSEUserAssignmentHandler
      * @return type
      * @codeCoverageIgnore
      */
-    public function getReassignableUserList($caseId, $caseIndex, $fullList = false)
+    public function getReassignableUserList($beanFlow, $fullList = false)
     {
-        return $this->getAssignableUserList($caseId, $caseIndex, true, 'REASSIGN');
+        return $this->getAssignableUserList($beanFlow, $fullList, 'REASSIGN');
     }
 
     /**
@@ -465,9 +465,9 @@ class PMSEUserAssignmentHandler
      * @return type
      * @codeCoverageIgnore
      */
-    public function getAdhocAssignableUserList($caseId, $caseIndex, $fullList = false)
+    public function getAdhocAssignableUserList($beanFlow, $fullList = false)
     {
-        return $this->getAssignableUserList($caseId, $caseIndex, false, 'ADHOC');
+        return $this->getAssignableUserList($beanFlow, $fullList, 'ADHOC');
     }
 
     /**
@@ -479,22 +479,20 @@ class PMSEUserAssignmentHandler
      * @param type $type
      * @return type
      */
-    public function getAssignableUserList($caseId, $caseIndex, $fullList = false, $type = 'ADHOC')
+    public function getAssignableUserList($beanFlow, $fullList = false, $type = 'ADHOC')
     {
-        $flowBean = $this->retrieveBean('pmse_BpmFlow'); //new BpmFlow();
         $membersList = array();
         $membersIds = array();
         $reassignedUsers = array();
         $assignableUsers = array();
-        $flowBean->retrieve_by_string_fields(array('cas_id' => $caseId, 'cas_index' => $caseIndex));
         if (!$fullList) {
-            $reassignedUsers = $this->getReassignedUserList($flowBean->cas_id, $flowBean->bpmn_id, $flowBean->bpmn_type,
-                $flowBean->cas_reassign_level);
+            $reassignedUsers = $this->getReassignedUserList($beanFlow->cas_id, $beanFlow->bpmn_id, $beanFlow->bpmn_type,
+                $beanFlow->cas_reassign_level);
         }
         $activityDefinition = $this->retrieveBean('pmse_BpmActivityDefinition'); //new BpmActivityDefinition();
         $memberList = array();
-        if ($flowBean->bpmn_type == 'bpmnActivity') {
-            $activityDefinition->retrieve_by_string_fields(array('id' => $flowBean->bpmn_id));
+        if ($beanFlow->bpmn_type == 'bpmnActivity') {
+            $activityDefinition->retrieve_by_string_fields(array('id' => $beanFlow->bpmn_id));
             $teamBean = $this->retrieveBean('Teams'); //$this->beanFactory->getBean('Teams');
             $teamId = ($type == 'ADHOC') ? $activityDefinition->act_adhoc_team : $activityDefinition->act_reassign_team;
             if ($teamId == 'current_team') {
@@ -518,8 +516,6 @@ class PMSEUserAssignmentHandler
             } else {
                 $member = $this->retrieveBean('TeamMemberships');
                 $membersList = $member->get_full_list("", "team_id='$teamId'");
-                //$teamBean->getById($teamId);
-                //$membersList = $teamBean->getMembers();
             }
         }
 

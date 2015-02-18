@@ -32,6 +32,7 @@ class MetaDataContextUser implements MetaDataContextInterface
      */
     public function __construct(User $user)
     {
+// BEGIN SUGARCRM flav=ent ONLY
         if (!empty($GLOBALS['sugar_config']['roleBasedViews'])) {
             $roleSet = $this->getRoleSet($user);
             if ($roleSet) {
@@ -39,6 +40,7 @@ class MetaDataContextUser implements MetaDataContextInterface
                 return;
             }
         }
+// END SUGARCRM flav=ent ONLY
 
         $this->context = new MetaDataContextDefault();
     }
@@ -61,6 +63,7 @@ class MetaDataContextUser implements MetaDataContextInterface
         return $this->context->compare($a, $b);
     }
 
+// BEGIN SUGARCRM flav=ent ONLY
     /**
      * Gets the role set of the given user
      *
@@ -73,5 +76,8 @@ class MetaDataContextUser implements MetaDataContextInterface
             $roleSets = $user->acl_role_sets->getBeans();
             return array_shift($roleSets);
         }
+
+        return null;
     }
+// END SUGARCRM flav=ent ONLY
 }
