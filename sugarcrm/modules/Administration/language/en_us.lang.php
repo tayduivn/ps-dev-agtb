@@ -1286,18 +1286,18 @@ $mod_strings = array (
     'LBL_CONVERT_DISC_CLIENT_SYNC_SUBMIT' => 'Clicking Submit will synchronize you with the master server.',
     'LBL_OFFLINE_ENABLED' => 'Offline enabled',
     'LBL_OFFLINE_SETTINGS' => 'Offline Settings',
-    
+
     //BEGIN SUGARCRM flav=ent ONLY
     'LBL_PMSE_ADMIN_TITLE_SETTINGS' => 'Settings',
-    'LBL_PMSE_ADMIN_DESC_SETTINGS' => 'Process Author settings can be accessed here.',
+    'LBL_PMSE_ADMIN_DESC_SETTINGS' => 'Configure Process Author settings.',
 
     'LBL_PMSE_ADMIN_TITLE_ENGINELOGS' => 'Log Viewer',
-    'LBL_PMSE_ADMIN_DESC_ENGINELOGS' => 'Process Author logs can be accessed here.',
+    'LBL_PMSE_ADMIN_DESC_ENGINELOGS' => 'Access the Process Author log.',
 
     'LBL_PMSE_ADMIN_TITLE_CASESLIST' => 'Process Management',
-    'LBL_PMSE_ADMIN_DESC_CASESLIST' => 'Process Management can be accessed here.',
+    'LBL_PMSE_ADMIN_DESC_CASESLIST' => 'View all open and running Processes in the system.',
 
     'LBL_PMSE_ADMIN_TITLE_MODULE' => 'Process Author',
-    'LBL_PMSE_ADMIN_DESC_MODULE' => 'Process Author conforms a standard compliant BPM suite that can improve your SugarCRM work.',
-   //END SUGARCRM flav=ent ONLY
+    'LBL_PMSE_ADMIN_DESC_MODULE' => 'View logs and configure Process Author settings. Manage all BPM processes for all users via the Process Management.',
+    //END SUGARCRM flav=ent ONLY
 );
