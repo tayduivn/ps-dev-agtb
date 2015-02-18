@@ -1,5 +1,4 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -14,10 +13,8 @@ $mod_strings = array(
     'LBL_MODULE_NAME' => 'Knowledge Base',
     'LBL_MODULE_NAME_SINGULAR' => 'Knowledge Base',
     'LBL_MODULE_TITLE' => 'Knowledge Base Article',
-    'LBL_TAGS' => 'Tags',
     'LBL_STATUS' => 'Status',
     'LBL_KEYWORDS' => 'Keywords',
     'LBL_CONTENT' => 'Content',
     'LBL_ATTACHMENTS' => 'Attachments',
 );
-?>
