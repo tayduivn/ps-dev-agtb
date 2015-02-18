@@ -367,18 +367,18 @@ class PMSECaseWrapper //extends FilterApi
         global $current_user;
         $returnArray = array();
         $returnArray['expected_time_warning'] = false;
-        $returnArray['expected_time_message'] = '';
+        $returnArray['expected_time_message'] = false;
         $returnArray['expected_time_view'] = false;
+        $returnArray['expected_time'] = '';
         $expTime = json_decode(base64_decode($actExpected));
-        $expectedTime = PMSEEngineUtils::processExpectedTime($expTime, $caseData);
-        $returnArray['expected_time'] = !empty($expectedTime) ? $expectedTime : false;
-        if ($returnArray['expected_time']) {
+        if (!empty($expTime) && !empty($expTime->time)) {
+            $expectedTime = PMSEEngineUtils::processExpectedTime($expTime, $caseData);
             $currentDate = new DateTime($timedate->nowDb());
             if ($currentDate > $expectedTime){
                 $returnArray['expected_time_warning'] = true;
                 $returnArray['expected_time_message'] = true;
             }
-            $returnArray['expected_time'] = $timedate->to_display_date_time($returnArray['expected_time'], true, true, $current_user);
+            $returnArray['expected_time'] = $timedate->to_display_date_time($expectedTime->format('Y-m-d H:i:s'), true, true, $current_user);
         }
         return $returnArray;
     }
