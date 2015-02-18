@@ -3497,4 +3497,59 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $usql = $this->_db->updateSQL($acc);
         $this->assertContains($testString, $usql);
     }
+
+    /**
+     * This test is checking conversion blob field to clob
+     * @param string $data Data for insert into table
+     *
+     * @dataProvider providerBlobToClob
+     */
+    public function testAlterTableBlobToClob($data)
+    {
+        if (!($this->_db instanceof IBMDB2Manager)) {
+            $this->markTestSkipped('This test can run only on DB2 instance');
+        }
+        $params = array(
+            'logmeta' => array(
+                'name' => 'logmeta',
+                'vname' => 'LBL_LOGMETA',
+                'type' => 'json',
+                'dbType' => 'longblob',
+            ),
+        );
+        $tableName = 'testAlterTableBlobToClob' . mt_rand();
+
+        if ($this->_db->tableExists($tableName)) {
+            $this->_db->dropTableName($tableName);
+        }
+        $this->createTableParams($tableName, $params, array());
+
+        $this->_db->insertParams($tableName, $params, array('logmeta' => $data), null, true, true);
+
+        $params = array(
+            'logmeta' => array(
+                'name' => 'logmeta',
+                'vname' => 'LBL_LOGMETA',
+                'type' => 'json',
+                'dbType' => 'longtext',
+            ),
+        );
+
+        $this->_db->repairTableParams($tableName, $params, array(), true);
+
+        $columns = $this->_db->get_columns($tableName);
+        $this->assertEquals('clob', $columns['logmeta']['type']);
+
+        $checkResult = $this->_db->fetchOne('SELECT logmeta FROM ' . $tableName);
+        $this->assertEquals($data, $checkResult['logmeta']);
+    }
+
+    public function providerBlobToClob()
+    {
+        return array(
+            array('testAlterTableBlobToClob'),
+            array('縢嫆璻侁刵 榎 偢偣唲鷩'),
+            array(serialize(range(1, 262144))),
+        );
+    }
 }
