@@ -256,6 +256,10 @@ $fields = array(
         // this is a hack to get the quote_id field loaded
         'readonly' => true,
     ),
+    array(
+        'name' => 'tag',
+        'span' => 12,
+    ),
 );
 
 $fieldsHidden = array(
