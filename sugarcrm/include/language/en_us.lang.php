@@ -1845,7 +1845,7 @@ $app_strings = array (
   'LBL_FOLLOW_LINK' => 'Follow Link',
   'LBL_TOGGLE_VISIBILITY' => 'Toggle Visibility', // Record view header panel element
   'LBL_ACTIVITIES' => 'Activity Stream',
-  'LBL_COPYRIGHT' => 'Copyright © 2004-2014 SugarCRM Inc. All Rights Reserved.',
+  'LBL_COPYRIGHT' => 'Copyright © 2004-2015 SugarCRM Inc. All Rights Reserved.',
   'LBL_TRADEMARK' => 'SugarCRM is a trademark of SugarCRM, Inc. All other company and product names may be trademarks of the respective companies with which they are associated.',
   'LBL_TRADEMARK2' => 'SugarCRM ®, Sugar Enterprise™ and Sugar™ are trademarks of SugarCRM Inc.',
   'LBL_SEND_INVITE' => 'Send invite',
@@ -2958,9 +2958,9 @@ $app_strings = array (
 
     // The following version of LBL_SUGAR_COPYRIGHT is for Professional and Enterprise editions.
 
-    'LBL_SUGAR_COPYRIGHT_SUB' => '&copy; 2004-2014 <a href="http://www.sugarcrm.com" target="_blank" class="copyRightLink">SugarCRM Inc.</a> All Rights Reserved.<br />SugarCRM is a trademark of SugarCRM, Inc. All other company and product names may be trademarks of the respective companies with which they are associated.',
+    'LBL_SUGAR_COPYRIGHT_SUB' => '&copy; 2004-2015 <a href="http://www.sugarcrm.com" target="_blank" class="copyRightLink">SugarCRM Inc.</a> All Rights Reserved.<br />SugarCRM is a trademark of SugarCRM, Inc. All other company and product names may be trademarks of the respective companies with which they are associated.',
     'LBL_SUGAR_COPYRIGHT_NAME_AND_RIGHTS' => 'SugarCRM Inc. All Rights Reserved.',
-    'LBL_SUGAR7_COPYRIGHT' => '&copy; 2004-2014 <a href="http://www.sugarcrm.com" target="_blank">SugarCRM Inc.</a>',
+    'LBL_SUGAR7_COPYRIGHT' => '&copy; 2004-2015 <a href="http://www.sugarcrm.com" target="_blank">SugarCRM Inc.</a>',
 
 
     // LOGIN PAGE STRINGS
