@@ -25,7 +25,7 @@ class SugarTestUserUtilities
         self::removeAllCreatedUserSignatures();
     }
 
-    public static function createAnonymousUser($save = true, $is_admin=0)
+    public static function createAnonymousUser($save = true, $is_admin=0, $fields=array())
     {
         if (isset($_REQUEST['action'])) { 
         unset($_REQUEST['action']);
@@ -47,6 +47,13 @@ class SugarTestUserUtilities
         if ($is_admin) {
             $user->is_admin = 1;
         }
+
+        if (is_array($fields)) {
+            foreach ($fields as $field => $value) {
+                $user->$field = $value;
+            }
+        }
+
         //BEGIN SUGARCRM flav=pro ONLY
         $user->default_team = '1'; //Set Default Team to Global
         $user->team_id = '1';
