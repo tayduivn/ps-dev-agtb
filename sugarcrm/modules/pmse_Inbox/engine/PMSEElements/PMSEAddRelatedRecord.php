@@ -82,6 +82,10 @@ class PMSEAddRelatedRecord extends PMSEScriptTask
                                 $finishDate = $this->beanHandler->processValueExpression($value->value, $bean);
                                 $date = $timedate->fromIso($finishDate);
                                 $newValue = $date->asDb();
+                            } elseif ($value->type == 'Date') {
+                                $finishDate = $this->beanHandler->processValueExpression($value->value, $bean);
+                                $date = $timedate->fromIsoDate($finishDate);
+                                $newValue = $date->asDbDate();
                             } elseif ($key == 'assigned_user_id') {
                                 switch ($value->value) {
                                     case 'currentuser':
