@@ -98,11 +98,158 @@ describe('Plugins.NestedSetCollection', function() {
         expect(field.collection.get('5')).toBeUndefined();
     });
 
+    it('Nested bean should trigger app:nestedset:sync:complete when root collection is valid.', function() {
+        field.collection = new app.NestedSetCollection(treeData);
+        var model = field.collection.get('1');
+        sinonSandbox.stub(app.events, 'trigger');
+
+        model.trigger('sync', model);
+        expect(app.events.trigger).toHaveBeenCalledWith('app:nestedset:sync:complete');
+    });
+
+    it('Nested Collection reset should remove all models.', function() {
+        field.collection = new app.NestedSetCollection(treeData);
+        field.collection.reset();
+        expect(field.collection.length).toEqual(0);
+    });
+
+    it('Nested Collection remove should delete a specific model.', function() {
+        var modelId = 1;
+        field.collection = new app.NestedSetCollection(treeData);
+        field.collection.remove([field.collection.get(modelId)]);
+        expect(field.collection.getChild(modelId)).toBe(undefined);
+    });
+
+    it('Nested Collection get roots.', function() {
+        field.collection = new app.NestedSetCollection(treeData);
+        var apiStub = sinonSandbox.stub(SugarTest.app.api, 'call', function() {});
+        field.collection.roots();
+        expect(apiStub.lastCall.args[1].indexOf('tree/roots')).not.toBe(-1);
+    });
+
+    it('Nested Collection get tree.', function() {
+        field.collection = new app.NestedSetCollection(treeData);
+        var apiStub = sinonSandbox.stub(SugarTest.app.api, 'call', function() {});
+        field.collection.tree();
+        expect(apiStub.lastCall.args[1].indexOf('tree')).not.toBe(-1);
+    });
+
+    it('Nested Collection parse should save passed tree to a variable.', function() {
+        field.collection = new app.NestedSetCollection(treeData);
+        field.collection.parse(treeData);
+        expect(field.collection.jsonTree).toBe(treeData);
+    });
+
     it('Nested collection get child by ID.', function() {
         field.collection = new app.NestedSetCollection(treeData);
 
         var childModel = field.collection.getChild({id: '4'});
         expect(childModel instanceof app.NestedSetBean).toBeTruthy();
+    });
+
+    describe('Nested methods test', function() {
+        var ID = 1;
+        var targetId = '2';
+        var module = 'Categories';
+        var model;
+        beforeEach(function() {
+            field.collection = new app.NestedSetCollection(treeData);
+            field.collection.module = module;
+            model = field.collection.get(ID);
+        });
+
+        using('API get data provider', [
+            {
+                method: 'getChildren',
+                specificUrl: 'children'
+            },
+            {
+                method: 'getNext',
+                specificUrl: 'next'
+            },
+            {
+                method: 'getPrev',
+                specificUrl: 'prev'
+            },
+            {
+                method: 'getParent',
+                specificUrl: 'parent'
+            },
+            {
+                method: 'getPath',
+                specificUrl: 'path'
+            }
+        ], function(value) {
+            it('API methods should do a call with valid data', function() {
+                var url = app.api.buildURL(model.module, ID + '/' + value.specificUrl);
+                var apiStub = sinonSandbox.stub(SugarTest.app.api, 'call', function() {});
+
+                model[value.method]({
+                    success: function() {
+                    }
+                });
+                expect(apiStub.lastCall.args[1]).toEqual(url);
+            });
+        });
+
+        using('API move data provider', [
+            {
+                method: 'moveBefore',
+                specificUrl: 'movebefore'
+            },
+            {
+                method: 'moveAfter',
+                specificUrl: 'moveafter'
+            },
+            {
+                method: 'moveFirst',
+                specificUrl: 'movefirst'
+            },
+            {
+                method: 'moveLast',
+                specificUrl: 'movelast'
+            }
+        ], function(value) {
+            it('Move methods should use a collection.', function() {
+                var url = app.api.buildURL(module, ID + '/' + value.specificUrl + '/' + targetId);
+                var apiStub = sinonSandbox.stub(SugarTest.app.api, 'call', function() {});
+
+                model[value.method]({
+                    target: targetId,
+                    success: function() {
+                    }
+                });
+                expect(apiStub.lastCall.args[1]).toEqual(url);
+            });
+        });
+
+        using('API append data provider', [
+            {
+                method: 'append',
+                specificUrl: 'append'
+            },
+            {
+                method: 'prepend',
+                specificUrl: 'prepend'
+            },
+            {
+                method: 'insertBefore',
+                specificUrl: 'insertbefore'
+            },
+            {
+                method: 'insertAfter',
+                specificUrl: 'insertafter'
+            }
+        ], function(value) {
+            it('Move methods should use a collection.', function() {
+                var apiStub = sinonSandbox.stub(SugarTest.app.api, 'call', function() {});
+                field.collection[value.method]({
+                    target: targetId
+                });
+                expect(apiStub.lastCall.args[1].indexOf(value.specificUrl)).not.toBe(-1);
+            });
+        });
+
     });
 
 });
