@@ -18,6 +18,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Logger;
 /**
  *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Logger
+ * @uses \SugarAutoLoader
  *
  */
 class LoggerTest extends \PHPUnit_Framework_TestCase
@@ -35,7 +36,7 @@ class LoggerTest extends \PHPUnit_Framework_TestCase
         $logger = $this->getMockBuilder('Sugarcrm\Sugarcrm\Elasticsearch\Logger')
             ->disableOriginalConstructor()
             ->setMethods(null)
-            ->getMock(); 
+            ->getMock();
         $encoded = TestReflection::callProtectedMethod($logger, 'encodeData', array($inputData));
         $this->assertEquals($outputData, $encoded);
     }

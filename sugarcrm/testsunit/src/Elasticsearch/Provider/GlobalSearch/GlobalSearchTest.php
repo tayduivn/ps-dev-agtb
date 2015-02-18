@@ -15,19 +15,18 @@ namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Provider\GlobalSearch;
 /**
  *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\GlobalSearch
+ * @uses \SugarAutoLoader
  *
  */
 class GlobalSearchTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * Test updating the auto-incremented fields.
+     * @covers ::setAutoIncrementValues
+     * @dataProvider providerSetAutoIncrementValues
+     *
      * @param string $moduleName : the name of the module
      * @param string $fieldName : the name of the field
      * @param string $fieldValue : the value of the field
-     *
-     * @covers \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\GlobalSearch::setAutoIncrementValues
-     * @dataProvider providerSetAutoIncrementValues
-     * @group unit
      */
     public function testSetAutoIncrementValues($moduleName, $fieldName, $fieldValue)
     {
@@ -52,10 +51,6 @@ class GlobalSearchTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($fieldValue, $bean->$fieldName);
     }
 
-    /**
-     * Data provider to test setAutoIncrementValues().
-     * @return array
-     */
     public function providerSetAutoIncrementValues()
     {
         return array(
@@ -83,8 +78,6 @@ class GlobalSearchTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     *
-     * @param array $methods
      * @return \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\GlobalSearch
      */
     protected function getGlobalSearchMock(array $methods = null)
@@ -96,8 +89,6 @@ class GlobalSearchTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     *
-     * @param array $methods
      * @return \SugarBean
      */
     protected function getSugarBeanMock(array $methods = null)
@@ -107,6 +98,4 @@ class GlobalSearchTest extends \PHPUnit_Framework_TestCase
             ->setMethods($methods)
             ->getMock();
     }
-
-
 }

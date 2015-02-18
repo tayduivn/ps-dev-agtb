@@ -17,6 +17,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\BoostHandler;
 /**
  *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\BoostHandler
+ * @uses \SugarAutoLoader
  *
  */
 class BoostHandlerTest extends \PHPUnit_Framework_TestCase

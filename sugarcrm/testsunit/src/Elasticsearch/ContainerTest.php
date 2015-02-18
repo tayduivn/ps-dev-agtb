@@ -17,6 +17,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Container;
 /**
  *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Container
+ * @uses \SugarAutoLoader
  *
  */
 class ContainerTest extends \PHPUnit_Framework_TestCase

@@ -20,6 +20,7 @@ require_once 'include/SugarLogger/SugarNullLogger.php';
 /**
  *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\SearchEngine\HookHandler
+ * @uses \SugarAutoLoader
  *
  */
 class HookHandlerTest extends \PHPUnit_Framework_TestCase
@@ -55,13 +56,13 @@ class HookHandlerTest extends \PHPUnit_Framework_TestCase
     {
         return array(
             array(
-                $this->getMock('SugarBean'),
+                $this->getSugarBeanMock(),
                 1,
             ),
             array(
                 null,
                 0,
-            )
+            ),
         );
     }
 
@@ -73,10 +74,21 @@ class HookHandlerTest extends \PHPUnit_Framework_TestCase
     protected function getSearchEngineMock($callIndexBeanCount)
     {
         $engine = $this->getMock('\Sugarcrm\Sugarcrm\SearchEngine\Engine\EngineInterface');
-
         $engine->expects($this->exactly($callIndexBeanCount))
             ->method('indexBean');
 
-        return new SearchEngine($engine);
+        return $engine;
+    }
+
+    /**
+     * Get SugarBean mock
+     * @return \SugarBean
+     */
+    protected function getSugarBeanMock()
+    {
+        return $this->getMockBuilder('SugarBean')
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock();
     }
 }

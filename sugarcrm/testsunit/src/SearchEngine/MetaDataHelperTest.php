@@ -15,6 +15,7 @@ namespace Sugarcrm\SugarcrmTestsUnit\SearchEngine\MetaDataHelper;
 /**
  *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\SearchEngine\MetaDataHelper
+ * @uses \SugarAutoLoader
  *
  */
 class MetaDataHelperTest extends \PHPUnit_Framework_TestCase
