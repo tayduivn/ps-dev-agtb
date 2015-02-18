@@ -69,7 +69,7 @@ class SugarUpgradeMergeDropdownsTest extends UpgradeTestCase
      * @covers SugarUpgradeMergeDropdowns::run
      * @dataProvider dataProviderSavesAMergedDropdown
      */
-    public function testRun_SavesAMergedDropdown($old, $new, $custom, $key, $value)
+    public function testRun_SavesAMergedDropdown($old, $new, $custom, $expectedKey, $expectedValue)
     {
         $this->upgrader->state['dropdowns_to_merge'] = array(
             $GLOBALS['current_language'] => array(
@@ -77,15 +77,18 @@ class SugarUpgradeMergeDropdownsTest extends UpgradeTestCase
                 'custom' => $custom,
             ),
         );
+
         SugarTestLanguageFileUtilities::write($this->corePath, $GLOBALS['current_language'], $new);
         $this->script->run();
         $actual = return_app_list_strings_language($GLOBALS['current_language']);
-        $this->assertArrayHasKey($key, $actual['activity_dom']);
-        $this->assertEquals($value, $actual['activity_dom'][$key]);
+        $this->assertArrayHasKey($expectedKey, $actual['activity_dom']);
+        $this->assertEquals($expectedValue, $actual['activity_dom'][$expectedKey]);
     }
+
     public static function dataProviderSavesAMergedDropdown()
     {
         return array(
+            // Add the dropdown value from $new
             array(
                 array(
                     'activity_dom' => array(
@@ -117,6 +120,7 @@ class SugarUpgradeMergeDropdownsTest extends UpgradeTestCase
                 'New',
                 'New Value',
             ),
+            // Change value to the one from $new
             array(
                 array(
                     'activity_dom' => array(
@@ -137,6 +141,7 @@ class SugarUpgradeMergeDropdownsTest extends UpgradeTestCase
                 'Task',
                 'To Do',
             ),
+            // Change value to the one from $custom
             array(
                 array(
                     'activity_dom' => array(
