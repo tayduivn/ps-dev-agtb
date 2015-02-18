@@ -3184,8 +3184,9 @@ class SugarBean
 
             if (isset($def['source'])
                 && $def['source'] == 'non-db'
-                && (empty($def['rname'])  || empty($def['link']))) {
-                // Non-db that isn't a relate field.
+                && (empty($def['rname']) || empty($def['link']))
+                && empty($def['db_concat_fields'])) {
+                // Non-db that isn't a relate or db-concat field.
                 continue;
             }
             $queryFields[$field] = $field;

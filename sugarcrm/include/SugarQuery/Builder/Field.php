@@ -283,7 +283,10 @@ class SugarQuery_Builder_Field
      */
     public function shouldMarkNonDb()
     {
-        if ((isset($this->def['source']) && $this->def['source'] == 'non-db') && empty($this->def['rname_link'])) {
+        if ((isset($this->def['source']) && $this->def['source'] == 'non-db')
+            && empty($this->def['rname_link'])
+            && empty($this->def['db_concat_fields'])
+        ) {
             $this->markNonDb();
         }
     }
