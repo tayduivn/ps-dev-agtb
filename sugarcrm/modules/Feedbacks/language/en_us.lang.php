@@ -19,5 +19,5 @@ $mod_strings = array(
     'LBL_FEEDBACK_CSAT' => 'How would you describe your overall satisfaction with this product?',
     'TPL_FEEDBACK_ASIDE' => 'We collect certain usage data at the time of submission. {{learnMoreLink}}. We do not collect contact information. Please {{contactSupportLink}} for bugs or other issues that require a response.',
     'LBL_FEEDBACK_ASIDE_CLICK_MORE' => 'Click here to learn more',
-    'LBL_FEEDBACK_ASIDE_CONTACT_SUPPORT' => 'contact support',
+    'LBL_FEEDBACK_ASIDE_CONTACT_SUPPORT' => 'contact Support',
 );
