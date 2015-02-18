@@ -91,6 +91,9 @@
      * get `id`.
      */
     resetPills: function(models) {
+        if (!models.length) {
+            this.pills = [];
+        }
         this.render();
     },
 

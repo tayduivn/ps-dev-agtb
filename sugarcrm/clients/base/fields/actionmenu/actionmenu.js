@@ -568,6 +568,7 @@
      * @protected
      */
     _buildAlertForReset: function(massCollection, offset) {
+        var self = this;
         var alert = $('<span></span>').append(this._selectedOffsetTpl({
             offset: offset,
             num: massCollection.length
@@ -575,7 +576,7 @@
         alert.find('[data-action=clear]').each(function() {
             var $el = $(this);
             $el.on('click', function() {
-                massCollection.reset();
+                self.context.trigger('mass_collection:clear');
             });
             app.accessibility.run($el, 'click');
         });
