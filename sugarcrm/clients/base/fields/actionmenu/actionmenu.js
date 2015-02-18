@@ -49,7 +49,7 @@
         if (this.options.viewName === 'list-header') {
             app.shortcuts.register('SelectAll:Checkbox', 'ctrl+a', function() {
                 if (!this.isDisabled()) {
-                    this.$('.checkall:visible').click();
+                    this.$('[data-check=all]:visible').click();
                 }
             }, this);
             app.shortcuts.register('SelectAll:Dropdown', 'm', function() {
@@ -84,10 +84,12 @@
 
     /**
      * Selects or unselects all records that are in the current collection.
+     *
+     * @param {Event} The `click` or `keydown` event.
      */
-    checkAll: function() {
+    checkAll: function(event) {
         var $checkbox = this.$(this.fieldTag);
-        if ($checkbox && $(event.target).hasClass('checkall')) {
+        if ($checkbox && $(event.target).hasClass('checkall') || event.type === 'keydown') {
             $checkbox.prop('checked', !$checkbox.is(':checked'));
         }
         var isChecked = $checkbox.is(':checked');
