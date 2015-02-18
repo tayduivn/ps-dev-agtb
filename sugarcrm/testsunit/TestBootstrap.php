@@ -23,3 +23,15 @@ set_include_path(
 require_once 'include/utils/autoloader.php';
 // we need to pass in false since we don't have have an installed instance
 SugarAutoLoader::init(false);
+
+// load classmap into autoloader
+$classMapDirs = array(
+    'include',
+    'data',
+);
+
+$autoLoaderHelper = new Sugarcrm\SugarcrmTestsUnit\AutoLoaderHelper();
+$autoLoaderHelper->setBaseDir(SUGAR_BASE_DIR);
+$autoLoaderHelper->setClassMapDirs($classMapDirs);
+
+SugarAutoLoader::$classMap = $autoLoaderHelper->mergeClassMap(SugarAutoLoader::$classMap);
