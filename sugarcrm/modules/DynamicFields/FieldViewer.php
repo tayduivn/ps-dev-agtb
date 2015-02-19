@@ -107,8 +107,6 @@ class FieldViewer{
 			case 'phone':
 				require_once('modules/DynamicFields/templates/Fields/Forms/phone.php');
 				return get_body($this->ss, $vardef);
-            case 'nested-set':
-                require_once 'modules/DynamicFields/templates/Fields/Forms/nestedSet.php';
 			default:
 			    if(SugarAutoLoader::requireWithCustom('modules/DynamicFields/templates/Fields/Forms/'. $vardef['type'] . '.php')) {
 					return get_body($this->ss, $vardef);

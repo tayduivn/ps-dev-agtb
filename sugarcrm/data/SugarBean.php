@@ -395,7 +395,7 @@ class SugarBean
      */
     public static $relateFieldTypes = array(
         'relate',
-        'nestedSet',
+        'nestedset',
     );
 
     /**

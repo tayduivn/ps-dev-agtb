@@ -10,8 +10,8 @@
  */
 
 /**
- * @class View.Fields.Base.NestedSetField
- * @alias SUGAR.App.view.fields.BaseNestedSetField
+ * @class View.Fields.Base.NestedsetField
+ * @alias SUGAR.App.view.fields.BaseNestedsetField
  * @extends View.Field
  */
 ({
@@ -20,13 +20,13 @@
      */
     fieldTag: 'div',
     /**
-     * Root ID of a shown NestedSet.
+     * Root ID of a shown Nestedset.
      * @property {String}
      */
     categoryRoot: null,
 
     /**
-     * Module which implements NestedSet.
+     * Module which implements Nestedset.
      */
     moduleRoot: null,
 
