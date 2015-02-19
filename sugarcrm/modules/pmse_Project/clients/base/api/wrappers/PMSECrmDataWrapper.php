@@ -28,128 +28,128 @@ class PMSECrmDataWrapper implements PMSEObservable
 {
     /**
      *
-     * @var type 
+     * @var type
      */
     protected $defaultDynaform;
 
     /**
      *
-     * @var type 
+     * @var type
      */
     protected $beanFactory;
 
     /**
      *
-     * @var type 
+     * @var type
      */
     protected $studioBrowser;
 
     /**
      *
-     * @var type 
+     * @var type
      */
     protected $processDefinition;
 
     /**
      *
-     * @var type 
+     * @var type
      */
     protected $activityDefinitionBean;
 
     /**
      *
-     * @var type 
+     * @var type
      */
     protected $dynaformBean;
 
     /**
      *
-     * @var type 
+     * @var type
      */
     protected $teamsBean;
 
     /**
      *
-     * @var type 
+     * @var type
      */
     protected $projectBean;
 
     /**
      *
-     * @var type 
+     * @var type
      */
     protected $processBean;
 
     /**
      *
-     * @var type 
+     * @var type
      */
     protected $activityBean;
 
     /**
      *
-     * @var type 
+     * @var type
      */
     protected $ruleSetBean;
 
     /**
      *
-     * @var type 
+     * @var type
      */
     protected $emailTemplateBean;
 
     /**
      *
-     * @var type 
+     * @var type
      */
     protected $inboxBean;
 
     /**
      *
-     * @var type 
+     * @var type
      */
     protected $usersBean;
 
     /**
      *
-     * @var type 
+     * @var type
      */
     protected $emailBean;
 
     /**
      *
-     * @var type 
+     * @var type
      */
     protected $inboundEmailBean;
 
     /**
      *
-     * @var type 
+     * @var type
      */
     protected $sugarQueryObject;
 
     /**
      *
-     * @var type 
-     * 
+     * @var type
+     *
      */
     protected $beanList;
 
     /**
      *
-     * @var type 
+     * @var type
      */
     protected $aclRoleObject;
 
     /**
      *
-     * @var type 
+     * @var type
      */
     protected $db;
 
     /**
      *
-     * @var array 
+     * @var array
      */
     protected $observers;
 
@@ -629,7 +629,7 @@ class PMSECrmDataWrapper implements PMSEObservable
     }
 
     /**
-     * 
+     *
      * @return type
      * @codeCoverageIgnore
      */
@@ -639,7 +639,7 @@ class PMSECrmDataWrapper implements PMSEObservable
     }
 
     /**
-     * 
+     *
      * @param type $observers
      * @codeCoverageIgnore
      */
@@ -647,11 +647,11 @@ class PMSECrmDataWrapper implements PMSEObservable
     {
         $this->observers = $observers;
     }
-        
+
     /**
      * @codeCoverageIgnore
      */
-    public function _get(array $args)
+    public function _get(array $args, RestService $api)
     {
         $output = null;
         $data = $args['data'];
@@ -665,7 +665,7 @@ class PMSECrmDataWrapper implements PMSEObservable
                 $output = $this->retrieveTeams($filter);
                 break;
             case 'fields':
-                $output = $this->retrieveFields($filter);
+                $output = $this->retrieveFields($filter, array("api" => $api));
                 $outputType = 1;
                 break;
             case 'allFields':
@@ -940,7 +940,7 @@ class PMSECrmDataWrapper implements PMSEObservable
     }
 
     /**
-     * Retrieve list of Fieds 
+     * Retrieve list of Fieds
      * @param string $filter
      * @param array $additionalArgs
      * @return object
@@ -995,17 +995,21 @@ class PMSECrmDataWrapper implements PMSEObservable
                     )) || stristr($tmpField['value'], 'email') ? 'email' : $tmpField['type'];
                 $tmpField['optionItem'] = 'none';
                 if ($field['type'] == 'enum' || $field['type'] == 'radioenum') {
-                    if (!isset($field['options']) || !isset($app_list_strings[$field['options']])) {
-                        $tmpField['optionItem'] = null;
-                    } else {
-                        $tmpField['optionItem'] = $app_list_strings[$field['options']];
+                    if (!isset($moduleApiClass)) {
+                        $moduleApiClass = new ModuleApi();
                     }
+                    $tmpField['optionItem'] = $moduleApiClass->getEnumValues(
+                        $additionalArgs["api"],
+                        array(
+                            "module" => $filter,
+                            "field" => $field["name"]
+                        ));
                 }
-                
+
                 if ($field['type'] == 'bool') {
                     $tmpField['optionItem'] = array("TRUE" =>true, "FALSE" => false);
                 }
-                
+
                 if (isset($field['required'])) {
                     $tmpField['required'] = $field['required'];
                 }
@@ -1377,12 +1381,12 @@ class PMSECrmDataWrapper implements PMSEObservable
                     $output = array_merge($output_11, $output_1m);
                 break;
             }
-            
+
         }
 
         $filterArray = array('value' => $filter, 'text' => '<' . $filter . '>');
         array_unshift($output, $filterArray);
-        
+
         $res['result'] = $output;
         //$res->result = $output;
         return $res;
