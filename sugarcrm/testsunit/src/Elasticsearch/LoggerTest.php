@@ -53,4 +53,56 @@ class LoggerTest extends \PHPUnit_Framework_TestCase
             ),
         );
     }
+
+    /**
+     * @covers ::isFromDeleteIndexRequest
+     * @dataProvider providerIsFromDeleteIndexRequest
+     *
+     * @param array $expMsg : message for the exception
+     * @param string $path : path of the request
+     * @param string $method : method of the request
+     * @param string $output : the expected return value of the method
+     */
+    public function testIsFromDeleteIndexRequest($expMsg, $path, $method, $output)
+    {
+        $logger = new Logger(\LoggerManager::getLogger());
+
+        $request = new \Elastica\Request($path, $method);
+        $response = new \Elastica\Response($expMsg);
+        $e = new \Elastica\Exception\ResponseException($request, $response);
+
+        $result = $logger->isFromDeleteIndexRequest($e);
+        $this->assertEquals($output, $result);
+    }
+
+    public function providerIsFromDeleteIndexRequest()
+    {
+        return array(
+            array(
+                '{"error":"IndexMissingException[[0e787f44c65e77fc6ac2c4fac1a01c65_shared] missing]","status":400}',
+                "0e787f44c65e77fc6ac2c4fac1a01c65_shared/",
+                "DELETE",
+                true
+            ),
+            array(
+                '{"error":"IndexMissingException[[0e787f44c65e77fc6ac2c4fac1a01c65] missing]","status":400}',
+                "0e787f44c65e77fc6ac2c4fac1a01c65/",
+                "DELETE",
+                false
+            ),
+            array(
+                '{"error":"IndexMissingException[[0e787f44c65e77fc6ac2c4fac1a01c65_shared] missing]","status":400}',
+                "0e787f44c65e77fc6ac2c4fac1a01c65_shared/",
+                "GET",
+                false
+            ),
+            array(
+                '{"error":"IndexAlreadyExistsException[[0e787f44c65e77fc6ac2c4fac1a01c65_shared]]","status":400}',
+                "0e787f44c65e77fc6ac2c4fac1a01c65_shared/",
+                "DELETE",
+                false
+            )
+        );
+    }
+    
 }

@@ -61,11 +61,50 @@ class Logger extends BaseLogger
     }
 
     /**
+     * Check if the exception is from a request of index deletion
+     * @param \Exception $e
+     * @return bool
+     */
+    public function isFromDeleteIndexRequest(\Exception $e)
+    {
+        if ($e instanceof \Elastica\Exception\ResponseException) {
+            $request = $e->getRequest();
+
+            //method expected to be "DELETE"
+            $method = $request->getMethod();
+
+            //path expected to contain the index name
+            //example: "0e787f44c65e77fc6ac2c4fac1a01c65_shared/"
+            $path = $request->getPath();
+
+            //exception expected to contain the index name
+            //example: "IndexMissingException[[0e787f44c65e77fc6ac2c4fac1a01c65_shared] missing]"
+            $expMsg = $e->getMessage();
+
+            if ($method == "DELETE"
+                && substr($path, -8, 7) == "_shared"
+                && substr($expMsg, 0, 21) == "IndexMissingException") {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Handle request logging on failure.
      * @param \Exception $e
      */
     public function onRequestFailure(\Exception $e)
     {
+        //If the exception is from index deletion, no critical message is logged.
+        if ($this->isFromDeleteIndexRequest($e)) {
+            if ($this->logger->wouldLog(LogLevel::DEBUG)) {
+                $msg = "ELASTIC : Suppressed response exception of attempting to drop a non-existing index";
+                $this->log(LogLevel::DEBUG, $msg);
+            }
+            return;
+        }
+
         $msg = sprintf(
             "ELASTIC FAILURE ... need more details here"
         );
