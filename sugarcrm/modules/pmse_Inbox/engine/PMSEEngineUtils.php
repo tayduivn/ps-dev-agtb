@@ -848,19 +848,18 @@ class PMSEEngineUtils
      */
     public static function processExpectedTime($expectedTimeObject, $caseData)
     {
-        //$time_data = $GLOBALS['timedate'];
-        $unixTime = strtotime((!empty($caseData->cas_task_start_date) && $caseData->cas_task_start_date != '0000-00-00 00:00:00') ? $caseData->cas_task_start_date : $caseData->cas_delegate_date);
-        $expectedTime = '';
+        $dateToProcess = (!empty($caseData->cas_task_start_date) && $caseData->cas_task_start_date != '0000-00-00 00:00:00') ? $caseData->cas_task_start_date : $caseData->cas_delegate_date;
+        $expectedTime = new DateTime($dateToProcess);
         if (!empty($expectedTimeObject) && !empty($expectedTimeObject->time)) {
             switch ($expectedTimeObject->unit) {
                 case 'day':
-                    $expectedTime = $unixTime + ($expectedTimeObject->time * (24 * 60 * 60));
+                    $expectedTime->add(new DateInterval('P' . $expectedTimeObject->time . 'D'));
                     break;
                 case 'hour':
-                    $expectedTime = $unixTime + ($expectedTimeObject->time * (60 * 60));
+                    $expectedTime->add(new DateInterval('PT' . $expectedTimeObject->time . 'H'));
                     break;
                 case 'minute':
-                    $expectedTime = $unixTime + ($expectedTimeObject->time * (60));
+                    $expectedTime->add(new DateInterval('PT' . $expectedTimeObject->time . 'S'));
                     break;
             }
         }
