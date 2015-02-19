@@ -15,7 +15,6 @@ $viewdefs['KBDocuments']['base']['filter']['default'] = array(
     'fields' => array(
         'name' => array(),
         'status' => array(),
-        'tags' => array(),
         '$owner' => array(
             'predefined_filter' => true,
             'vname' => 'LBL_CURRENT_USER_FILTER',

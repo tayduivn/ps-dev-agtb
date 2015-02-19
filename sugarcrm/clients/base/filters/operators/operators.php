@@ -157,10 +157,6 @@ $viewdefs['base']['filter']['operators'] = array(
         '$starts' => 'LBL_OPERATOR_STARTS_WITH',
         '$equals' => 'LBL_OPERATOR_IS',
     ),
-    'tags' => array(
-        '$in' => 'LBL_OPERATOR_CONTAINS',
-        '$not_in' => 'LBL_OPERATOR_NOT_CONTAINS',
-    ),
     'radioenum' => array(
         '$equals' => 'LBL_OPERATOR_IS',
         '$not_equals' => 'LBL_OPERATOR_IS_NOT',
