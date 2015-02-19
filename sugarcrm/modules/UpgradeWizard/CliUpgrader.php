@@ -525,7 +525,7 @@ eoq2;
      */
     protected function doHealthcheck()
     {
-        $scanner = $this->getHealthCheckScanner();
+        $scanner = $this->getHealthCheckScanner('cli', $this->fp, 0);
         if (!$scanner) {
             return $this->error('Cannot find health check scanner. Skipping health check stage');
         }
@@ -561,23 +561,6 @@ eoq2;
     }
 
     /**
-     *
-     * Get Scanner object
-     * @return HealthCheckScannerCli
-     */
-    protected function  getHealthCheckScanner()
-    {
-        if ($this->isHealthCheckInstalled()) {
-            $scanner = $this->getHelper()->getScanner('cli');
-            $scanner->setVerboseLevel(0);
-            $scanner->setLogFilePointer($this->fp);
-            $scanner->setInstanceDir($this->context['source_dir']);
-            return $scanner;
-        }
-        return false;
-    }
-
-    /**
      * @return HealthCheckHelper
      */
     protected function getHelper()
@@ -587,22 +570,6 @@ eoq2;
         require_once 'HealthCheckClient.php';
         require_once 'HealthCheckHelper.php';
         return HealthCheckHelper::getInstance();
-    }
-
-    /**
-     *
-     * Verify if health check module is available
-     * @return boolean
-     */
-    protected function isHealthCheckInstalled()
-    {
-        set_include_path(
-            dirname(__FILE__) . DIRECTORY_SEPARATOR . realpath(
-                $this->context['health_check_path']
-            ) . PATH_SEPARATOR . get_include_path()
-        );
-        $file = 'Scanner/ScannerCli.php';
-        return stream_resolve_include_path($file);
     }
 
     /**
@@ -621,63 +588,6 @@ eoq2;
             $md5sum = md5_file($this->context['zip']);
         }
         return $md5sum;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public static function getVersion()
-    {
-        $version = self::$version;
-        $build = self::$build;
-        $vfile = dirname(__FILE__) . "/" . self::VERSION_FILE;
-        if (file_exists($vfile)) {
-            $data = json_decode(file_get_contents($vfile), true);
-            if (!empty($data['version'])) {
-                $version = $data['version'];
-            }
-            if (!empty($data['build'])) {
-                $build = $data['build'];
-            }
-        } elseif (file_exists('sugar_version.php')) {
-            if (!defined('sugarEntry')) {
-                define('sugarEntry', 'upgrader');
-            }
-            include 'sugar_version.php';
-            $version = $sugar_version;
-            $build = $sugar_build;
-        }
-        return array($version, $build);
-    }
-}
-
-if (!function_exists('stream_resolve_include_path')) {
-    /**
-     *
-     * Resolve filename against the include path
-     *
-     * stream_resolve_include_path was introduced in PHP 5.3.2. But this script must work on PHP 5.2.
-     *
-     * @param $filename
-     * @return bool|string
-     */
-    function stream_resolve_include_path($filename)
-    {
-        $paths = explode(PATH_SEPARATOR, get_include_path());
-
-        foreach ($paths as $prefix) {
-            $suffix = '';
-            if (substr($prefix, -1) != DIRECTORY_SEPARATOR) {
-                $suffix = DIRECTORY_SEPARATOR;
-            }
-            $file = $prefix . $suffix . $filename;
-
-            if (file_exists($file)) {
-                return $file;
-            }
-        }
-
-        return false;
     }
 }
 

@@ -103,6 +103,7 @@ $mod_strings = array(
 
     'LBL_SCAN_901_LOG' => 'Instance already upgraded to Sugar 7',
     'LBL_SCAN_902_LOG' => 'Can\'t upgrade version %s on non-Mysql database',
+    'LBL_SCAN_903_LOG' => 'Unsupported version of "Upgrade Driver". Install new Upgrader module',
     'LBL_SCAN_999_LOG' => 'Unknown failure, please consult support',
 
     'LBL_SCAN_101_TITLE' => '%s has studio history',
@@ -184,6 +185,7 @@ $mod_strings = array(
 
     'LBL_SCAN_901_TITLE' => 'Instance already upgraded to Sugar 7',
     'LBL_SCAN_902_TITLE' => 'Can\'t upgrade version %s on non-Mysql database',
+    'LBL_SCAN_903_TITLE' => 'Unsupported version of "Upgrade Driver". Install new Upgrader module',
     'LBL_SCAN_999_TITLE' => 'Unknown failure, please consult support',
 
     'LBL_SCAN_101_DESCR' => 'Studio customizations were detected on your instance.  We do not anticipate any problems with these customization and your customizations can be upgraded to Sugar7.',
@@ -265,5 +267,6 @@ $mod_strings = array(
 
     'LBL_SCAN_901_DESCR' => 'Instance already upgraded to Sugar 7',
     'LBL_SCAN_902_DESCR' => 'Can\'t upgrade version %s on non-Mysql database',
+    'LBL_SCAN_903_DESCR' => 'Unsupported version of "Upgrade Driver". Install new Upgrader module',
     'LBL_SCAN_999_DESCR' => 'Unknown failure, please consult support',
 );

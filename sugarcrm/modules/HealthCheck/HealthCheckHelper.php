@@ -40,7 +40,7 @@ class HealthCheckHelper
      */
     protected $registry = array(
         'web' => array(
-            'modules/HealthCheck/Scanner/ScannerWeb.php',
+            'Scanner/ScannerWeb.php',
             'HealthCheckScannerWeb'
         ),
         'cli' => array(

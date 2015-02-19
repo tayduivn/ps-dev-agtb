@@ -54,4 +54,9 @@ class HealthCheckScannerCasesTestMock extends HealthCheckScanner
     {
         return true;
     }
+
+    public function getVersion()
+    {
+        return array ('7.6.0.0','1000');
+    }
 }

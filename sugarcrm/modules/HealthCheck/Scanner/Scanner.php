@@ -261,6 +261,12 @@ class HealthCheckScanner
     protected $numberOfFilesToReport = 5;
 
     /**
+     * Upgrader object
+     * @var UpgradeDriver
+     */
+    protected $upgrader = null;
+
+    /**
      *
      * Ctor setup
      * @return void
@@ -269,6 +275,15 @@ class HealthCheckScanner
     {
         $this->meta = HealthCheckScannerMeta::getInstance();
         $this->logfile = "healthcheck-" . time() . ".log";
+    }
+
+    /**
+     * Set point to UpgradeDriver object
+     * @param UpgradeDriver $upgrader
+     */
+    public function setUpgrader(UpgradeDriver $upgrader)
+    {
+        $this->upgrader = $upgrader;
     }
 
     /**
@@ -552,9 +567,21 @@ class HealthCheckScanner
         $this->log("Instance version: $sugar_version");
         $this->log("Instance flavor: $sugar_flavor");
 
-        if (version_compare($sugar_version, '7.0', '>')) {
+
+        $manifest = $this->getPackageManifest();
+
+        if (version_compare($toVersionInfo[0], HealthCheckScannerMeta::ALLOWED_UPGRADER_VERSION, '<')) {
+            $this->updateStatus('unsupportedUpgrader');
+            $this->log('Unsupported version of "Upgrade Driver". Install new Upgrader module');
+            return $this->logMeta;
+        }
+
+        $manifestFlavor = !empty($manifest['flavor']) ? $manifest['flavor'] : '';
+        if ((!version_compare($sugar_version, $toVersionInfo[0]) && !strcasecmp($sugar_flavor, $manifestFlavor)) ||
+            version_compare($sugar_version, $toVersionInfo[0], '>')
+        ) {
             $this->updateStatus("alreadyUpgraded");
-            $this->log("Instance already upgraded to 7");
+            $this->log("Instance already upgraded to " . $toVersionInfo[0]);
             return $this->logMeta;
         }
 
@@ -2444,6 +2471,37 @@ ENDP;
     );
 
     /**
+     * Retrieve version.json file path
+     * @return null|string
+     */
+    protected function getVersionFile()
+    {
+        $versionFile = null;
+        if (file_exists(dirname(__FILE__) . '/' . self::VERSION_FILE)) {
+            $versionFile = dirname(__FILE__) . '/' . self::VERSION_FILE;
+        } elseif ($this->upgrader && isset ($this->upgrader->context['upgrader_dir']) &&
+            file_exists($this->upgrader->context['upgrader_dir'] . '/' . self::VERSION_FILE)
+        ) {
+            $versionFile = $this->upgrader->context['upgrader_dir'] . '/' . self::VERSION_FILE;
+        }
+        return $versionFile;
+    }
+
+    /**
+     * Get upgrade package manifest from upgrader context
+     * @return array
+     */
+    public function getPackageManifest()
+    {
+        if (!empty($this->upgrader->context['extract_dir'])) {
+            $fileReader = new FileLoaderWrapper();
+            $manifest = $fileReader->loadFile($this->upgrader->context['extract_dir'] . '/manifest.php', 'manifest');
+            return !empty($manifest) ? $manifest : array();
+        }
+        return array();
+    }
+
+    /**
      * Returns array that contains build and version
      */
     public function getVersion()
@@ -2451,10 +2509,11 @@ ENDP;
         global $sugar_version, $sugar_build;
         $version = array(
             'version' => 'N/A',
-            'build' => 'N/A'
+            'build' => 'N/A',
         );
-        if (file_exists(dirname(__FILE__) . '/' . self::VERSION_FILE)) {
-            $json = file_get_contents(dirname(__FILE__) . '/' . self::VERSION_FILE);
+        $versionFile = $this->getVersionFile();
+        if ($versionFile) {
+            $json = file_get_contents($versionFile);
             $data = json_decode($json, true);
             $version = array_merge($version, $data);
         } elseif ($sugar_version && $sugar_build) {

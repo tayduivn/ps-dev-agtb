@@ -59,8 +59,8 @@ class PackWebTest extends PHPUnit_Framework_TestCase
         $manifest = array();
         $zip = $this->getMock('ZipArchive');
         $versionFile = __DIR__ . '/../../../modules/UpgradeWizard/version.json';
-        $zip->expects($this->exactly(29))->method('addFile');
-        $zip->expects($this->exactly(5))->method('addFromString');
+        $zip->expects($this->exactly(16))->method('addFile');
+        $zip->expects($this->exactly(2))->method('addFromString');
         $installdefs = array();
         list($zip, $manifest, $installdefs) = packUpgradeWizardWeb($zip, $manifest, $installdefs, $params);
 
@@ -70,10 +70,9 @@ class PackWebTest extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('acceptable_sugar_versions', $manifest);
         $this->assertEquals(array($expect['from']), $manifest['acceptable_sugar_versions']);
         $this->assertArrayHasKey('copy', $installdefs);
-        $this->assertArrayHasKey('beans', $installdefs);
         $this->assertArrayHasKey(0, $installdefs['copy']);
-        $this->assertEquals('<basepath>/modules/HealthCheck/Scanner/Scanner.php', $installdefs['copy'][0]['from']);
-        $this->assertEquals('modules/HealthCheck/Scanner/Scanner.php', $installdefs['copy'][0]['to']);
+        $this->assertEquals('<basepath>/UpgradeWizard.php', $installdefs['copy'][0]['from']);
+        $this->assertEquals('UpgradeWizard.php', $installdefs['copy'][0]['to']);
         unlink($versionFile);
     }
 
