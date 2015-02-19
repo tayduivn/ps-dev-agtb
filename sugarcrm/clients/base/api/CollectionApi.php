@@ -222,6 +222,8 @@ abstract class CollectionApi extends SugarApi
         // are tied (like related collection), we use the bean in order to get fields from arguments
         $bean = isset($this->bean) ? $this->bean : null;
         $args['fields'] = $this->getFieldsFromArgs($api, $args, $bean);
+        $args['filter'] = $this->getSourceFilter($args, $definition, $source);
+        unset($args['stored_filter']);
 
         $args = $this->mapSourceArguments($definition, $source, $args);
 
@@ -239,6 +241,42 @@ abstract class CollectionApi extends SugarApi
     }
 
     /**
+     * Returns filter API argument for the given source
+     *
+     * @param array $args API arguments
+     * @param CollectionDefinitionInterface $definition
+     * @param string $source Collection source name
+     * @return array
+     */
+    protected function getSourceFilter(array $args, CollectionDefinitionInterface $definition, $source)
+    {
+        $filters = array();
+
+        if ($definition->hasSourceFilter($source)) {
+            $filters[] = $definition->getSourceFilter($source);
+        }
+
+        foreach ($args['stored_filter'] as $filterId) {
+            $filters[] = $definition->getStoredFilter($filterId);
+        }
+
+        if (isset($args['filter'])) {
+            $filter = $args['filter'];
+            if ($definition->hasFieldMap($source)) {
+                $fieldMap = $definition->getFieldMap($source);
+                $filter = $this->mapFilter($filter, $fieldMap);
+            }
+            $filters[] = $filter;
+        }
+
+        if (count($filters) > 0) {
+            return call_user_func_array('array_merge', $filters);
+        }
+
+        return array();
+    }
+
+    /**
      * Maps API arguments using the mapping from collection definition for the given source
      *
      * @param CollectionDefinitionInterface $definition Collection definition
@@ -252,9 +290,6 @@ abstract class CollectionApi extends SugarApi
         if ($definition->hasFieldMap($source)) {
             $fieldMap = $definition->getFieldMap($source);
             $args['fields'] = $this->mapFields($args['fields'], $fieldMap);
-            if (isset($args['filter'])) {
-                $args['filter'] = $this->mapFilter($args['filter'], $fieldMap);
-            }
             $args['order_by'] = $this->mapOrderBy($args['order_by'], $fieldMap);
         }
 
@@ -300,6 +335,7 @@ abstract class CollectionApi extends SugarApi
      * @param CollectionDefinitionInterface $definition
      *
      * @return array Normalized arguments
+     * @throws SugarApiExceptionInvalidParameter when arguments are invalid and thus cannot be normalized
      */
     protected function normalizeArguments(array $args, CollectionDefinitionInterface $definition)
     {
@@ -325,6 +361,8 @@ abstract class CollectionApi extends SugarApi
         if (!empty($args['fields']) && !is_array($args['fields'])) {
             $args['fields'] = explode(',',$args['fields']);
         }
+
+        $args['stored_filter'] = $this->normalizeStoredFilter($args, $definition);
 
         return $args;
     }
@@ -370,6 +408,31 @@ abstract class CollectionApi extends SugarApi
         $offset = array_intersect_key($offset, $keys);
 
         return $offset;
+    }
+
+    /**
+     * Normalizes and validates stored_filter API argument
+     *
+     * @param array $args API arguments
+     * @param array CollectionDefinitionInterface $definition
+     *
+     * @return array Normalized value
+     * @throws SugarApiExceptionInvalidParameter when the stored filter given isn't found.
+     */
+    protected function normalizeStoredFilter(array $args, CollectionDefinitionInterface $definition)
+    {
+        if (!isset($args['stored_filter'])) {
+            return array();
+        }
+
+        $filter = (array) $args['stored_filter'];
+        foreach ($filter as $filterName) {
+            if (!$definition->hasStoredFilter($filterName)) {
+                throw new SugarApiExceptionInvalidParameter('Stored filter not found');
+            }
+        }
+
+        return $filter;
     }
 
     /**

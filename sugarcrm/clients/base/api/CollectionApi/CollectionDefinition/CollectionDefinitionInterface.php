@@ -28,7 +28,7 @@ interface CollectionDefinitionInterface
     public function getSources();
 
     /**
-     * Checks if there is field map specified for the given source
+     * Checks if there is a field map specified for the given source
      *
      * @param string $source Source name
      * @return boolean
@@ -42,6 +42,38 @@ interface CollectionDefinitionInterface
      * @return array
      */
     public function getFieldMap($source);
+
+    /**
+     * Checks if there is a filter for the given source
+     *
+     * @param string $source Source name
+     * @return boolean
+     */
+    public function hasSourceFilter($source);
+
+    /**
+     * Returns the filter specified for the given source
+     *
+     * @param string $source Source name
+     * @return array
+     */
+    public function getSourceFilter($source);
+
+    /**
+     * Checks if there is a stored filter with the given name
+     *
+     * @param string $id Filter ID
+     * @return boolean
+     */
+    public function hasStoredFilter($id);
+
+    /**
+     * Returns the stored filter definition
+     *
+     * @param string $id Filter ID
+     * @return array
+     */
+    public function getStoredFilter($id);
 
     /**
      * Returns default ORDER BY expression for the collection, or NULL if not specified

@@ -375,10 +375,10 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
         $service = SugarTestRestUtilities::getRestServiceMock();
 
         $definition = $this->getMock('CollectionDefinitionInterface');
-        $definition->expects($this->once())
+        $definition->expects($this->any())
             ->method('hasFieldMap')
             ->willReturn(true);
-        $definition->expects($this->once())
+        $definition->expects($this->any())
             ->method('getFieldMap')
             ->willReturn(array(
                 'alias' => 'field',
@@ -413,6 +413,7 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
                         'test_source' => 10,
                     ),
                     'max_num' => 20,
+                    'stored_filter' => array(),
                 ),
                 'test_source',
                 array('sort_field'),
@@ -433,6 +434,107 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider getSourceFilterProvider
+     */
+    public function testGetSourceFilter(array $sourceFilter, array $storedFilter, array $apiFilter, array $expected)
+    {
+        $definition = $this->getMock('CollectionDefinitionInterface');
+        $definition->expects($this->once())
+            ->method('hasSourceFilter')
+            ->with('test-source')
+            ->willReturn(true);
+        $definition->expects($this->once())
+            ->method('getSourceFilter')
+            ->with('test-source')
+            ->willReturn($sourceFilter);
+        $definition->expects($this->any())
+            ->method('getStoredFilter')
+            ->will(
+                call_user_func_array(array($this, 'onConsecutiveCalls'), $storedFilter)
+            );
+        $definition->expects($this->once())
+            ->method('hasFieldMap')
+            ->with('test-source')
+            ->willReturn(true);
+        $definition->expects($this->once())
+            ->method('getFieldMap')
+            ->with('test-source')
+            ->willReturn(array(
+                'api-alias1' => 'api-filter1',
+                'api-alias2' => 'api-filter2',
+            ));
+
+        $actual = SugarTestReflection::callProtectedMethod(
+            $this->api,
+            'getSourceFilter',
+            array(array(
+                'filter' => $apiFilter,
+                'stored_filter' => array_keys($storedFilter),
+            ), $definition, 'test-source')
+        );
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    public static function getSourceFilterProvider()
+    {
+        return array(
+            'empty' => array(
+                array(),
+                array(),
+                array(),
+                array(),
+            ),
+            'combo' => array(
+                array(
+                    array(
+                        'source-filter1' => 'source-value1',
+                        'source-filter2' => 'source-value2',
+                    ),
+                ),
+                array(
+                    'sf1' => array(
+                        array(
+                            'stored-filter11' => 'stored-value11',
+                            'stored-filter12' => 'stored-value12',
+                        ),
+                    ),
+                    'sf2' => array(
+                        array(
+                            'stored-filter21' => 'stored-value21',
+                            'stored-filter22' => 'stored-value22',
+                        ),
+                    ),
+                ),
+                array(
+                    array(
+                        'api-alias1' => 'api-value1',
+                        'api-alias2' => 'api-value2',
+                    ),
+                ),
+                array(
+                    array(
+                        'source-filter1' => 'source-value1',
+                        'source-filter2' => 'source-value2',
+                    ),
+                    array(
+                        'stored-filter11' => 'stored-value11',
+                        'stored-filter12' => 'stored-value12',
+                    ),
+                    array(
+                        'stored-filter21' => 'stored-value21',
+                        'stored-filter22' => 'stored-value22',
+                    ),
+                    array(
+                        'api-filter1' => 'api-value1',
+                        'api-filter2' => 'api-value2',
+                    ),
+                ),
+            ),
+        );
+    }
+
+    /**
      * @dataProvider normalizeArgumentsProvider
      */
     public function testNormalizeArguments(array $args, $orderBy, $expected)
@@ -440,12 +542,17 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
         /** @var CollectionApi|PHPUnit_Framework_MockObject_MockObject $api */
         $api = $this->getMockBuilder('CollectionApi')
             ->disableOriginalConstructor()
-            ->setMethods(array('normalizeOffset', 'getDefaultLimit', 'getDefaultOrderBy'))
+            ->setMethods(array('normalizeOffset', 'normalizeStoredFilter', 'getDefaultLimit', 'getDefaultOrderBy'))
             ->getMockForAbstractClass();
         $api->expects($this->any())
             ->method('normalizeOffset')
             ->will($this->returnCallback(function () {
                 return 'from-normalize-offset';
+            }));
+        $api->expects($this->any())
+            ->method('normalizeStoredFilter')
+            ->will($this->returnCallback(function () {
+                return 'from-normalize-stored-filter';
             }));
         $api->expects($this->any())
             ->method('getDefaultLimit')
@@ -480,6 +587,7 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
                 null,
                 array(
                     'offset' => 'from-normalize-offset',
+                    'stored_filter' => 'from-normalize-stored-filter',
                     'max_num' => 'from-default-limit',
                     'order_by' => 'from-default-order-by',
                 ),
@@ -497,6 +605,7 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
                     ),
                     'max_num' => 25,
                     'offset' => 'from-normalize-offset',
+                    'stored_filter' => 'from-normalize-stored-filter',
                 ),
             ),
             'from-link-definition' => array(
@@ -504,6 +613,7 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
                 'defined,in:desc,link',
                 array(
                     'offset' => 'from-normalize-offset',
+                    'stored_filter' => 'from-normalize-stored-filter',
                     'max_num' => 'from-default-limit',
                     'order_by' => array(
                         'defined' => true,
@@ -594,6 +704,66 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
                     'offset' => 'a',
                 ),
             ),
+        );
+    }
+
+    /**
+     * @dataProvider normalizeStoredFilterSuccessProvider
+     */
+    public function testNormalizeStoredFilterSuccess(array $args, array $expected)
+    {
+        $definition = $this->getMock('CollectionDefinitionInterface');
+        $definition->expects($this->any())
+            ->method('hasStoredFilter')
+            ->willReturn(true);
+
+        $actual = SugarTestReflection::callProtectedMethod(
+            $this->api,
+            'normalizeStoredFilter',
+            array($args, $definition)
+        );
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    public static function normalizeStoredFilterSuccessProvider()
+    {
+        return array(
+            'not-set' => array(
+                array(),
+                array(),
+            ),
+            'string' => array(
+                array(
+                    'stored_filter' => 'test',
+                ),
+                array('test'),
+            ),
+            'array' => array(
+                array(
+                    'stored_filter' =>  array('test1', 'test2'),
+                ),
+                array('test1', 'test2'),
+            ),
+        );
+    }
+
+    /**
+     * @expectedException SugarApiExceptionInvalidParameter
+     */
+    public function testNormalizeStoredFilterFailure()
+    {
+        $definition = $this->getMock('CollectionDefinitionInterface');
+        $definition->expects($this->any())
+            ->method('hasStoredFilter')
+            ->willReturn(false);
+
+        SugarTestReflection::callProtectedMethod(
+            $this->api,
+            'normalizeStoredFilter',
+            array(array(
+                'stored_filter' => 'test',
+            ), $definition)
         );
     }
 
