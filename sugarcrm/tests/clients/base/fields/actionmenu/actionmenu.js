@@ -2,11 +2,19 @@ describe("Base.Field.ActionMenu", function() {
     var app,
         field,
         Account,
-        layout;
+        layout,
+        $checkBox,
+        triggerStub;
 
     beforeEach(function() {
         app = SugarTest.app;
         layout = {trigger: function(){}, off: function(){}};
+        var def = {};
+        SugarTest.loadComponent('base', 'view', 'list');
+        SugarTest.loadComponent('base', 'view', 'flex-list');
+        field = SugarTest.createField('base', 'actionmenu', 'actionmenu', 'recordlist', def);
+        field.view.layout = layout;
+
     });
 
     afterEach(function() {
@@ -16,12 +24,6 @@ describe("Base.Field.ActionMenu", function() {
         field._loadTemplate = null;
         field = null;
         Account = null;
-    });
-
-    it('should create mass model during init', function() {
-        var def = {};
-        field = SugarTest.createField("base","actionmenu", "actionmenu", "list", def);
-        expect(field.context.get("mass_collection")).toBeDefined();
     });
 
     describe('disable the alert when selecting all', function() {
@@ -66,38 +68,52 @@ describe("Base.Field.ActionMenu", function() {
         });
     });
 
-    it('should populate selected model items', function() {
-        var def = {};
-        SugarTest.loadComponent("base", "view", "list");
-        SugarTest.loadComponent("base", "view", "flex-list");
-        field = SugarTest.createField("base", "actionmenu", "actionmenu", "recordlist", def);
-        field.view.layout = layout;
-        field.view.collection = new Backbone.Collection({
-            next_offset: -1
+    describe('toggleSelect:', function() {
+        beforeEach(function() {
+            sinon.collection.spy(field.context, 'trigger');
+        });
+        it('should trigger a "mass_collection:add" event', function() {
+            field.toggleSelect(true);
+            expect(field.context.trigger).toHaveBeenCalledWith('mass_collection:add');
+
+        });
+        it('should trigger a "mass_collection:remove" event', function() {
+            field.toggleSelect(false);
+            expect(field.context.trigger).toHaveBeenCalledWith('mass_collection:remove');
+        });
+    });
+
+    describe('toggleAll:', function() {
+        beforeEach(function() {
+            sinon.collection.spy(field.context, 'trigger');
         });
 
-        var massCollection = field.context.get("mass_collection");
-        expect(massCollection.length).toBe(0);
-
-        Account = Backbone.Model.extend({});
-        field.model = new Account({
-            id: 'aaa',
-            name: 'boo'
+        it('should trigger a "mass_collection:add:all" event', function() {
+            field.toggleAll(true);
+            expect(field.context.trigger).toHaveBeenCalledWith('mass_collection:add:all');
         });
-        field.toggleSelect(true);
-        expect(massCollection.length).toBe(1);
-        field.toggleSelect(false);
-        expect(massCollection.length).toBe(0);
 
-        field.toggleSelect(true);
-        expect(massCollection.length).toBe(1);
-        expect(massCollection.get('aaa')).toBe(field.model);
+        it('should trigger a "mass_collection:remove:all" event', function() {
+            field.toggleAll(false);
+            expect(field.context.trigger).toHaveBeenCalledWith('mass_collection:remove:all');
+        });
+    });
 
-        massCollection.entire = true;
-        expect(massCollection.entire).toBe(true);
-        massCollection.reset();
-        expect(massCollection.entire).toBe(false);
-        expect(massCollection.length).toBe(0);
+    describe('check:', function() {
+        beforeEach(function() {
+            $checkBox = '<input type="checkbox" name="check">';
+            field.$el.append($checkBox);
+        });
+
+        using('checkbox state', [true, false], function(state) {
+            it('should call toggleSelect', function() {
+                var toggleSelectStub = sinon.collection.stub(field, 'toggleSelect');
+                field.$(field.fieldTag).prop('checked', state);
+                field.check();
+
+                expect(toggleSelectStub).toHaveBeenCalledWith(state);
+            });
+        });
     });
 
     it('should create action button components on the list header', function() {
@@ -114,8 +130,12 @@ describe("Base.Field.ActionMenu", function() {
             ]
         };
 
-        field = SugarTest.createField("base","actionmenu", "actionmenu", "list-header", def);
+        field = SugarTest.createField('base','actionmenu', 'actionmenu', 'list-header', def);
         field._loadTemplate = function() { this.template = function(){ return '<a href="javascript:void(0);"></a>'}; };
+        var MassCollection = app.BeanCollection.extend();
+        var massCollection = new MassCollection();
+        massCollection.add({id: '1', name: 'toto'}, {id: '2', name: 'tata'}, {id: '3', name: 'titi'});
+        field.context.set('mass_collection', massCollection);
         field.getPlaceholder();
 
         expect(def.buttons.length).toBe(field.fields.length);

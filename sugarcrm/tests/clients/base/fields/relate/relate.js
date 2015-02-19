@@ -121,11 +121,6 @@ describe('Base.Field.Relate', function() {
             var actual_id = field.model.get(field.def.id_name),
                 actual_name = field.model.get(field.def.name);
 
-            //Relate takes care of its unformating
-            //unformat is overriden to return the unformated value off the model
-            expect(field.unformat('test')).toEqual(actual_id);
-            expect(field.unformat('test')).toEqual(expected_id);
-
             expect(actual_id).toEqual(expected_id);
             expect(actual_name).toEqual(expected_name);
         });

@@ -95,8 +95,7 @@ describe("Base.View.FlexList", function () {
                     {
                         type:'actionmenu',
                         buttons:view.meta.selection.actions,
-                        disable_select_all_alert: false,
-                        isLinkAction: false,
+                        disable_select_all_alert: false
                     }
                 ],
                 value:false,
@@ -122,8 +121,7 @@ describe("Base.View.FlexList", function () {
                 fields: [{
                     type: 'actionmenu',
                     buttons: view.meta.selection.actions,
-                    disable_select_all_alert: true,
-                    isLinkAction: false,
+                    disable_select_all_alert: true
                 }],
                 value: false,
                 sortable: false

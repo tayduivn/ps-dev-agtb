@@ -2687,6 +2687,8 @@ $app_strings = array (
     'LBL_IMPORT_STARTED' => 'Import Started: ',
     'LBL_MISSING_CUSTOM_DELIMITER' => 'Must specify a custom delimiter.',
     'LBL_LAST_VIEWED' => 'Recently Viewed',
+    'LBL_SELECTED_RECORDS' => 'Selected: ',
+    'TPL_MAX_PILLS_DISPLAYED' => 'Only {{maxPillsDisplayed}} records are visualized.',
     'LBL_SHOW_LESS' => 'Show less',
     'LBL_SHOW_MORE' => 'Show more',
     'LBL_SHOW_MORE_MODULE' => 'More {{{module}}}...',
@@ -3212,6 +3214,7 @@ Sincerely, SugarCRM',
     'LBL_SEARCH_FOR' => 'Search for ',
     'LBL_SEARCH_FOR_MORE' => 'Search for more...',
     'LBL_SEARCH_SELECT' => 'Select...',
+    'LBL_SEARCH_AND_SELECT_ELLIPSIS' => 'Search and Select...',
     'LBL_SEARCH_SELECT_MODULE' => 'Select {{module}}...',
     'LBL_DETAILVIEW'=>'Detail View',
     'LBL_LISTVIEW'=>'List View',
@@ -4242,6 +4245,7 @@ Sincerely, SugarCRM',
     'LBL_TEAM_SELECTED_TITLE' => 'Team Selected ',
     'LBL_TEAM_SELECT_AS_PRIM_TITLE' => 'Select to make this team primary',
     'LBL_SEARCH_AND_SELECT' => 'Search and Select {{module}}',
+    'TPL_SEARCH_AND_ADD' => 'Search and Add {{module}}',
 
     //for upload errors
     'UPLOAD_ERROR_TEXT'          => 'ERROR: There was an error during upload. Error code: {0} - {1}',
@@ -4370,6 +4374,9 @@ Sincerely, SugarCRM',
     'LBL_MERGE_DUPLICATES_REMOVE'  =>
         'Are you sure you want to remove this record from merge?',
     'LBL_MERGE_DUPLICATES_REMOVE_TOOLTIP'  => 'Remove record from merge',
+
+    //Filters
+    'TPL_FILTER_MAX_NUMBER_RECORDS' => 'Invalid number of records passed. The valid range is from 1 to {{maxRecords}} records.',
 
     //for sugar7 errors
     'LBL_INVALID_CREDS' => 'The username/password combination provided is incorrect, please try again.',

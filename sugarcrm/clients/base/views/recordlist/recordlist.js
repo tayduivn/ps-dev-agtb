@@ -24,7 +24,8 @@
         'Editable',
         'MergeDuplicates',
         'Pagination',
-        'LinkedModel'
+        'LinkedModel',
+        'MassCollection'
     ],
 
     /**

@@ -15,8 +15,8 @@
  */
 ({
     extendsFrom: 'RelateField',
-    minChars: 1,
-    allow_single_deselect: false,
+    _minChars: 1,
+    _allow_single_deselect: false,
     events: {
         'click .btn[name=add]': 'addItem',
         'click .btn[name=remove]': 'removeItem',

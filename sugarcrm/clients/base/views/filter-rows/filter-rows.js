@@ -649,6 +649,7 @@
                 break;
             case 'relate':
                 fieldDef.auto_populate = true;
+                fieldDef.isMultiSelect = true;
                 break;
             case 'parent':
                 data.isFlexRelate = true;
@@ -750,21 +751,22 @@
                 field.$('.input-append').removeClass('date');
                 field.$('input, textarea').on('keyup',_.debounce(_.bind(_keyUpCallback, field), 400));
             });
-
-            if (fieldDef.type === 'relate' && $row.data('value')) {
+            if (fieldDef.type === 'relate' && !_.isEmpty($row.data('value'))) {
                 var self = this,
                     findRelatedName = app.data.createBeanCollection(fieldDef.module);
-                findRelatedName.fetch({fields: [fieldDef.rname], params: {filter: [{'id': $row.data('value')}]},
-                complete: function() {
-                    if (!self.disposed) {
-                        if (findRelatedName.first()) {
-                            model.set(fieldName, findRelatedName.first().get(fieldDef.rname), { silent: true });
-                        }
-                        if (!field.disposed) {
-                            self._renderField(field, fieldContainer);
+                findRelatedName.fetch({fields: [fieldDef.rname], params: {filter: [{'id': {'$in': $row.data('value')}}]},
+                    complete: function() {
+                        if (!self.disposed) {
+                            if (findRelatedName.length > 0) {
+                                model.set(fieldDef.id_name, findRelatedName.pluck('id'), { silent: true });
+                                model.set(fieldName, findRelatedName.pluck(fieldDef.rname), { silent: true });
+                            }
+                            if (!field.disposed) {
+                                self._renderField(field, fieldContainer);
+                            }
                         }
                     }
-                }});
+                });
             } else {
                 this._renderField(field, fieldContainer);
             }

@@ -659,7 +659,7 @@
     addActions: function() {
         var meta = this.meta;
         if (_.isObject(meta.selection)) {
-            this.isLinkAction = meta.selection.isLinkAction;
+            this.isSearchAndSelectAction = meta.selection.isSearchAndSelectAction;
             switch (meta.selection.type) {
                 case 'single':
                     this.addSingleSelectionAction();
@@ -694,25 +694,23 @@
      * Add multi selection field to left column
      */
     addMultiSelectionAction: function() {
-        var _generateMeta = function(buttons, disableSelectAllAlert, isLinkAction) {
+        var _generateMeta = function(buttons, disableSelectAllAlert) {
             return {
                 'type': 'fieldset',
                 'fields': [
                     {
                         'type': 'actionmenu',
                         'buttons': buttons || [],
-                        'disable_select_all_alert': !!disableSelectAllAlert,
-                        'isLinkAction': !!isLinkAction
+                        'disable_select_all_alert': !!disableSelectAllAlert
                     }
                 ],
                 'value': false,
                 'sortable': false
             };
         };
-        var buttons = this.meta.selection.actions,
-            disableSelectAllAlert = !!this.meta.selection.disable_select_all_alert,
-            isLinkAction = !!this.meta.selection.isLinkAction;
-        this.leftColumns.push(_generateMeta(buttons, disableSelectAllAlert, isLinkAction));
+        var buttons = this.meta.selection.actions;
+        var disableSelectAllAlert = !!this.meta.selection.disable_select_all_alert;
+        this.leftColumns.push(_generateMeta(buttons, disableSelectAllAlert));
     },
     /**
      * Add fieldset of rowactions to the right column

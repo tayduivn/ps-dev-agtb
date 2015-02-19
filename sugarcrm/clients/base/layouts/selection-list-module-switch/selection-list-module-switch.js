@@ -11,7 +11,7 @@
 /**
  * @class View.Layouts.Base.SelectionListModuleSwitchLayout
  * @alias SUGAR.App.view.layouts.BaseSelectionListModuleSwitchLayout
- * @extends View.SelectionListLayout
+ * @extends View.Layouts.Base.SelectionListLayout
  */
 ({
     extendsFrom: 'SelectionListLayout',

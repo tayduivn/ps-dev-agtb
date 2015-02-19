@@ -15,8 +15,8 @@
  */
 ({
     events: {
-        'click .checkall': 'checkAll',
-        'click input[name="check"]': 'check'
+        'click [data-check=all]': 'checkAll',
+        'click [data-check=one]': 'check'
     },
 
     plugins: ['Tooltip'],
@@ -43,25 +43,13 @@
      */
     initialize: function(options) {
         this._super('initialize', [options]);
-        var massCollection = this.context.get('mass_collection');
-        if (!massCollection) {
-            var MassCollection = app.BeanCollection.extend({
-                reset: function(models, options) {
-                    this.filterDef = null;
-                    this.entire = false;
-                    Backbone.Collection.prototype.reset.call(this, models, options);
-                }
-            });
-            massCollection = new MassCollection();
-            this.context.set('mass_collection', massCollection);
-        }
         this.def.disable_select_all_alert = !!this.def.disable_select_all_alert;
         this._initTemplates();
 
         if (this.options.viewName === 'list-header') {
             app.shortcuts.register('SelectAll:Checkbox', 'ctrl+a', function() {
                 if (!this.isDisabled()) {
-                    this.$('.checkall:visible').click();
+                    this.$('[data-check=all]:visible').click();
                 }
             }, this);
             app.shortcuts.register('SelectAll:Dropdown', 'm', function() {
@@ -74,67 +62,61 @@
     },
 
     /**
-     * Select or unselect a record.
-     *
-     * @param {Event} event The `click` event.
+     * Calls {@link #toggleSelect} to help pass the information to the context.
      */
-    check: function(event) {
-        this.toggleSelect(this.$(this.fieldTag).is(':checked'));
+    check: function() {
+        var $checkbox = this.$(this.fieldTag);
+        var isChecked = $checkbox.is(':checked');
+        this.toggleSelect(isChecked);
     },
 
     /**
-     * Select or unselect all records.
-     *
-     * @param {Event} event The `click` event.
-     */
-    checkAll: function(event) {
-        var checkbox = this.$(this.fieldTag);
-
-        if (checkbox && event.currentTarget === event.target) {
-            var isChecked = checkbox.is(':checked');
-            checkbox.attr('checked', !isChecked);
-            this.toggleSelect(!isChecked);
-        }
-    },
-
-    /**
-     * Takes a specific record and add it or remove it from the mass update
+     * Sends an event to the context to add or remove the model from the mass
      * collection.
      *
-     * @param {Boolean} checked `true` to add it, `false` to remove it.
+     * @param {boolean} checked `true` to pass the model to the mass collection,
+     *   `false` to remove it.
      */
     toggleSelect: function(checked) {
-        var massCollection = this.context.get('mass_collection');
-        if (!massCollection) {
-            return;
-        }
-
-        if (checked) {
-            if (this.model.id) { //each selection
-                massCollection.add(this.model);
-            } else {
-                //entire selection
-                massCollection.reset(this.collection.models);
-                massCollection.filterDef = this.collection.filterDef;
-            }
-        } else {
-            if (this.model.id) { //each selection
-                if (massCollection.entire) {
-                    massCollection.reset(this.collection.models);
-                    massCollection.remove(this.model);
-                } else {
-                    massCollection.remove(this.model);
-                }
-            } else { //entire selection
-                massCollection.reset();
-            }
-        }
+        var event = !!checked ? 'mass_collection:add' : 'mass_collection:remove';
+        this.context.trigger(event, this.model);
     },
 
     /**
-     * @inheritDoc
+     * Selects or unselects all records that are in the current collection.
      *
-     * Listen to events on the collection, and update the checkboxes
+     * @param {Event} The `click` or `keydown` event.
+     */
+    checkAll: function(event) {
+        var $checkbox = this.$(this.fieldTag);
+        if ($checkbox && $(event.target).hasClass('checkall') || event.type === 'keydown') {
+            $checkbox.prop('checked', !$checkbox.is(':checked'));
+        }
+        var isChecked = $checkbox.is(':checked');
+        this.toggleAll(isChecked);
+    },
+
+    /**
+     * Sends an event to the context to add or remove all models from the mass
+     * collection.
+     *
+     * @param {boolean} checked `true` to pass all models in the collection to
+     *   the mass collection, `false` to remove them.
+     *
+     *
+     * FIXME : Doing this way is slow to check all checkboxes when there
+     * are more than 20. We should check checkboxes before adding records to
+     * the mass collection SC-4079 will address this problem.
+     */
+    toggleAll: function(checked) {
+        var event = !!checked ? 'mass_collection:add:all' : 'mass_collection:remove:all';
+        this.context.trigger(event, this.model);
+    },
+
+    /**
+     * @override
+     *
+     * Listens to events on the collection, and update the checkboxes
      * consequently.
      */
     bindDataChange: function() {
@@ -143,7 +125,8 @@
         if (!massCollection) {
             return;
         }
-        if (this.model.id) { //listeners for each record selection
+        //listeners for each record selection
+        if (this.model.id) {
             massCollection.on('add', function(model) {
                 if (this.model && model.id === this.model.id) {
                     this.$(this.fieldTag).attr('checked', true);
@@ -158,46 +141,71 @@
                 this.$(this.fieldTag).attr('checked', !!massCollection.get(this.model.id));
             }, this);
 
+            // If the model is in the mass collection, make sure the checkbox
+            // is checked.
             if (massCollection.get(this.model) || massCollection.entire) {
                 this.$(this.fieldTag).attr('checked', true);
                 this.selected = true;
             } else {
                 delete this.selected;
             }
-
-        } else { //listeners for entire selection
+        //Listeners on the checkAll/uncheckAll checkbox.
+        } else {
+            //FIXME: We should not listen to events on the collection and update
+            //the massCollection here. This should be done in MassCollection
+            // plugin. This will be adressed by SC-1723.
             if (this.collection) {
                 this.collection.on('reset', function() {
                     if (massCollection.entire) {
                         massCollection.reset();
                     }
                 }, this);
+
                 this.collection.on('add', function() {
-                    if (!this.disposed && massCollection.length < this.collection.length) {
-                        this.$(this.fieldTag).attr('checked', false);
-                        this.view.layout.trigger('list:alert:hide');
+                    if (!this.view.independentMassCollection) {
+                        if (!this.disposed && massCollection.length < this.collection.length) {
+                            this.$(this.fieldTag).attr('checked', false);
+                            this.view.layout.trigger('list:alert:hide');
+                        }
                     }
+                }, this);
+
+                // Checks the checkbox if checkboxes of each row are all
+                // checked.
+                massCollection.on('all:checked', function() {
+                    if (this.collection.length !== 0) {
+                        this.$(this.fieldTag).attr('checked', true);
+                    }
+                }, this);
+
+                // Unchecks the checkbox if checkboxes of each row are NOT all
+                // checked.
+                massCollection.on('not:all:checked', function() {
+                    this.$(this.fieldTag).attr('checked', false);
                 }, this);
             }
 
-            this.on('render', this.toggleSelectAll, this);
-
+            if (!this.view.maxSelectedRecords) {
+                this.on('render', this.toggleSelectAll, this);
+            }
             massCollection.on('add', function(model) {
                 this.$(this.actionDropDownTag).removeClass('disabled');
-                if (massCollection.length === this.collection.length) {
-                    this.$(this.fieldTag).attr('checked', true);
+                if (!this.view.maxSelectedRecords) {
+                    this.toggleSelectAll();
                 }
-                this.toggleSelectAll();
             }, this);
             massCollection.on('remove reset', function(model) {
                 if (massCollection.length === 0) {
                     this.$(this.actionDropDownTag).addClass('disabled');
-                    this.$(this.fieldTag).attr('checked', false);
-                } else if (massCollection.length === this.collection.length) {
+                    //FIXME: We should not rely on a view property. This will be
+                    //adressed by SC-1723.
+                } else if (!this.view.independentMassCollection && massCollection.length === this.collection.length) {
                     this.$(this.actionDropDownTag).removeClass('disabled');
                     this.$(this.fieldTag).attr('checked', true);
                 }
-                this.toggleSelectAll();
+                if (!this.view.maxSelectedRecords) {
+                    this.toggleSelectAll();
+                }
             }, this);
             this.action_enabled = (massCollection.length > 0);
             this.selected = (massCollection.entire);
@@ -223,7 +231,7 @@
         filterDef = massCollection.filterDef || [];
         //if list view is for linking and link fetch size configuration exists, set it,
         //otherwise default to maxRecordFetchSize
-        max_num = (this.def.isLinkAction && app.config.maxRecordLinkFetchSize) ?
+        max_num = (this.view.meta.selection.isLinkAction && app.config.maxRecordLinkFetchSize) ?
             app.config.maxRecordLinkFetchSize :
             app.config.maxRecordFetchSize;
         order = this.context.get('collection').orderBy;
@@ -316,6 +324,9 @@
      * It is possible to prevent the `select all` alert from being shown by
      * passing `disable_select_all_alert => true` on the metadata.
      * is disabled.
+     *
+     * FIXME: This method will be removed by SC-3999 because the alert generated
+     * in this method has to be removed.
      */
     toggleSelectAll: function() {
         var self = this,
@@ -332,7 +343,8 @@
                 return;
             }
 
-            if (massCollection.length === self.collection.length) {
+            var selectedRecordsInPage = _.intersection(massCollection.models, self.collection.models);
+            if (selectedRecordsInPage.length === self.collection.length) {
                 if (self.collection.next_offset > 0) {
                     alert = self._buildAlertForEntire(massCollection);
                 } else {
@@ -556,6 +568,7 @@
      * @protected
      */
     _buildAlertForReset: function(massCollection, offset) {
+        var self = this;
         var alert = $('<span></span>').append(this._selectedOffsetTpl({
             offset: offset,
             num: massCollection.length
@@ -563,7 +576,7 @@
         alert.find('[data-action=clear]').each(function() {
             var $el = $(this);
             $el.on('click', function() {
-                massCollection.reset();
+                self.context.trigger('mass_collection:clear');
             });
             app.accessibility.run($el, 'click');
         });
