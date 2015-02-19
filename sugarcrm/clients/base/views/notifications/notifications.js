@@ -411,6 +411,11 @@
         }
 
         this._super('_renderHtml');
+
+        var favicon = new Favico({animation: 'none'});
+        if (this.collection) {
+            favicon.badge(this.collection.length);
+        }
     },
 
     /**
