@@ -60,7 +60,6 @@ $viewdefs['KBContents']['base']['view']['preview'] = array(
                 'revision',
                 'created_by_name',
                 'date_entered',
-                'approved',
                 'date_modified',
                 'team_name',
                 'exp_date',
