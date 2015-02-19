@@ -55,6 +55,16 @@
             operators = {};
         }
         this.filterOperatorMap = operators;
+
+        /**
+         * FIXME: we should consider moving it to metadata instead. (see TY-177).
+         * Storage for operators that have no values associated with them
+         *
+         * @private
+         * @property {Array}
+         * */
+        this._operatorsWithNoValues = ['$blank', '$not_blank'];
+
         app.view.View.prototype.initialize.call(this, opts);
 
         this.listenTo(this.layout, "filterpanel:change:module", this.handleFilterChange);
@@ -340,6 +350,10 @@
         var $row = $(row),
             data = $row.data();
 
+        if (_.contains(this._operatorsWithNoValues, data.operator)) {
+            return true;
+        }
+
         //For date range and predefined filters there is no value
         if (data.isDateRange || data.isPredefinedFilter) {
             return true;
@@ -597,6 +611,11 @@
         // Make sure the data attributes contain the right operator selected.
         data.operator = operation;
         if (!operation) {
+            return;
+        }
+
+        if (_.contains(this._operatorsWithNoValues, operation)) {
+            this.fireSearch();
             return;
         }
 

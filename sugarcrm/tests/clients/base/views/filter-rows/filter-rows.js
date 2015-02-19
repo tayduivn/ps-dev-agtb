@@ -841,6 +841,41 @@ describe('Base.View.FilterRows', function() {
             expect(triggerStub).toHaveBeenCalled();
             expect(triggerStub).toHaveBeenCalledWith('filter:apply');
         });
+
+        using('different operators', [{
+            operator: '$blank',
+            hasValueField: false
+        },{
+            operator: '$not_blank',
+            hasValueField: false
+        },{
+            operator: '$equals',
+            hasValueField: true
+        }], function(params) {
+            it('should initialize value field properly corresponding to the operator', function() {
+                sinon.collection.stub($.fn, 'select2').returns('account_type'); //returns an 'enum' field
+                sinon.collection.stub(view, '_renderField');
+                var model = app.data.createBean('Accounts', {
+                    filter_row_operator: params.operator
+                });
+                $operatorField = view.createField(model, {
+                    name: 'filter_row_operator',
+                    type: 'enum',
+                    options: {}
+                });
+                $row = $('<div>').data({
+                    name: 'account_type',
+                    operator: params.operator,
+                    operatorField: $operatorField,
+                    value: ''
+                });
+
+                view.initValueField($row);
+
+                var data = $row.data();
+                expect(_.isUndefined((data['valueField']))).not.toEqual(params.hasValueField);
+            });
+        });
     });
 
     describe('handleOperatorSelected', function() {
