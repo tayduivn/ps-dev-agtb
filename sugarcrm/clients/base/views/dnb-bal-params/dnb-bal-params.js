@@ -352,6 +352,7 @@
             this.layout.trigger('dnbbal:param:remove', modelKey);
         }
         this.triggerBAL();
+        this.showSidePanel();
     },
 
     /**
@@ -460,6 +461,7 @@
         this.appendTag(modelKey, tagText, paramMeta.container, this.tagTmpl1);
         this.model.set(modelKey, modelAttr);
         this.triggerBAL();
+        this.showSidePanel();
         var accordionHeader = this.$(paramMeta.container).closest('.accordion-body').siblings('.accordion-heading').children('.step-circle');
         this.layout.trigger('dnbbal:param:add', accordionHeader);
         this.model.unset(paramMeta.upperLimit);
@@ -566,6 +568,7 @@
         }, this);
         this.model.set(modelKey, modelAttr);
         this.triggerBAL();
+        this.showSidePanel();
         //setting the panel header as completer
         var accordionHeader = this.$(paramMeta.container).closest('.accordion-body').siblings('.accordion-heading').children('.step-circle');
         //triggering bal
@@ -683,6 +686,7 @@
         }
         this.model.set(modelKey, modelAttr);
         this.triggerBAL();
+        this.showSidePanel();
         var accordionHeader = this.$(paramMeta.container).closest('.accordion-body').siblings('.accordion-heading').children('.step-circle');
         this.layout.trigger('dnbbal:param:add', accordionHeader);
     },
@@ -740,5 +744,15 @@
         this.model.clear();
         this.triggerBAL();
         this.loadData();
+    },
+
+    /**
+     * To open side-pane in BAL page
+     */
+    showSidePanel: function(event) {
+        var defaultLayout = this.closestComponent('sidebar');
+        if (defaultLayout) {
+	        defaultLayout.trigger('sidebar:toggle', true);
+        }
     }
 })
