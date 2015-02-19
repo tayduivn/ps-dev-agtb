@@ -818,13 +818,13 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
         return $out;
     }
 
-    /*
+    /**
      * Remove a field from the layout
      *
      * @param string $fieldName Name of the field to remove
      * @return boolean True if the field was removed; false otherwise
      */
-    function removeField ($fieldName)
+    public function removeField ($fieldName)
     {
         // Set the return result
         $result = false;
@@ -858,7 +858,7 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
                     $cols = count($row);
                     $empties = 0;
                     foreach ($row as $field) {
-                        if ($field === MBConstants::$EMPTY['name']) {
+                        if ($field === MBConstants::$EMPTY['name'] || $field === MBConstants::$FILLER['name']) {
                             $empties++;
                         }
                     }
