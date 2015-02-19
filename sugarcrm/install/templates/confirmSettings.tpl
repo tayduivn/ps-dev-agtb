@@ -94,11 +94,6 @@
                             <td><strong>{$MOD.LBL_WEB_SOCKET_CONFIGURATION_SERVER} {$MOD.LBL_WEB_SOCKET_CONFIGURATION_URL}</strong></td>
                             <td>{$smarty.session.websockets.server.url}</td>
                         </tr>
-                        <tr>
-                            <td></td>
-                            <td><strong>{$MOD.LBL_WEB_SOCKET_CONFIGURATION_SECRET}</strong></td>
-                            <td>{$smarty.session.websockets.public_secret}</td>
-                        </tr>
                     {/if}
                     {if $smarty.session.install_type && $smarty.session.install_type eq 'custom'}
                         <tr>

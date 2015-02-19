@@ -204,11 +204,10 @@ class AdministrationController extends SugarController
     {
         $websocket_client_url = !empty($_REQUEST['websocket_client_url']) ? urldecode($_REQUEST['websocket_client_url']) : '';
         $websocket_server_url = !empty($_REQUEST['websocket_server_url']) ? urldecode($_REQUEST['websocket_server_url']) : '';
-        $websocket_public_secret = !empty($_REQUEST['websocket_public_secret']) ? urldecode($_REQUEST['websocket_public_secret']) : '';
 
         $errors = array();
 
-        if (!empty($websocket_client_url) && !empty($websocket_server_url) && !empty($websocket_public_secret)) {
+        if (!empty($websocket_client_url) && !empty($websocket_server_url)) {
             $clientSettings = SugarSocket::checkWSSettings($websocket_client_url, 'client');
             if (!$clientSettings['available']) {
                 $errors['ERR_WEB_SOCKET_CLIENT_ERROR'] = $GLOBALS['mod_strings']['ERR_WEB_SOCKET_CLIENT_ERROR'];
@@ -224,9 +223,6 @@ class AdministrationController extends SugarController
             if (empty($websocket_server_url)) {
                 $errors['ERR_WEB_SOCKET_SERVER_URL'] = $GLOBALS['mod_strings']['ERR_WEB_SOCKET_SERVER_URL'];
             }
-            if (empty($websocket_public_secret)) {
-                $errors['ERR_WEB_SOCKET_SECRET'] = $GLOBALS['mod_strings']['ERR_WEB_SOCKET_SECRET'];
-            }
         }
 
         if (count($errors) == 0) {
@@ -241,7 +237,6 @@ class AdministrationController extends SugarController
                     'url' => $websocket_client_url,
                     'balancer' => $clientSettings['isBalancer']
                 ),
-                'public_secret' => $websocket_public_secret,
             );
             $this->cfg->handleOverride();
         } else {

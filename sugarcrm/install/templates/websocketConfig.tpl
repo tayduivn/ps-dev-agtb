@@ -56,12 +56,6 @@
                         <td align="left"><input type="" name="websocket[server][url]" id="websocket_server_url"
                                                 value="{$smarty.session.websockets.server.url}" size="30"></td>
                     </tr>
-                    <tr>
-                        <td><span class="required">*</span></td>
-                        <td nowrap=""><strong>{$MOD.LBL_WEB_SOCKET_CONFIGURATION_SECRET}</strong></td>
-                        <td align="left"><input type="" name="websocket[public_secret]" id="websocket_public_secret"
-                                                value="{$smarty.session.websockets.public_secret}" size="30"></td>
-                    </tr>
                 </table>
             </td>
         </tr>
@@ -153,7 +147,6 @@
 
             postData += "&websockets[client][url]=" + document.wsConfig.websocket_client_url.value;
             postData += "&websockets[server][url]=" + document.wsConfig.websocket_server_url.value;
-            postData += "&websockets[public_secret]=" + document.wsConfig.websocket_public_secret.value;
 
             //if this is a call already in progress, then just return
             if (typeof ajxProgress != 'undefined') {ldelim}

@@ -772,7 +772,6 @@ function handleSugarConfig() {
                 'url' => $_SESSION['websockets']['client']['url'],
                 'balancer' => $_SESSION['websockets']['client']['balancer'],
             ),
-            'public_secret' => $_SESSION['websockets']['public_secret'],
         );
     }
 

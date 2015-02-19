@@ -292,7 +292,6 @@ class MetaDataManager
                 'url' => true,
                 'balancer' => true
             ),
-            'public_secret' => true,
         ),
         'lead_conv_activity_opt' => true,
     );

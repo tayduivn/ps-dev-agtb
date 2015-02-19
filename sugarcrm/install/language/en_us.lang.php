@@ -182,7 +182,6 @@ $mod_strings = array(
 	'ERROR_VERSION_INCOMPATIBLE'		=> 'The uploaded file is not compatible with this version of Sugar: ',
 	'ERR_WEB_SOCKET_CLIENT_URL'         => 'WebSocket Client URL required',
 	'ERR_WEB_SOCKET_SERVER_URL'         => 'WebSocket Server URL required',
-	'ERR_WEB_SOCKET_SECRET'             => 'WebSocket Secret code required',
 	'ERR_WEB_SOCKET_CLIENT_ERROR'       => 'Unable to connect to WebSocket Client URL.',
 	'ERR_WEB_SOCKET_SERVER_ERROR'       => 'Unable to connect to WebSocket Server URL.',
 
@@ -304,7 +303,6 @@ $mod_strings = array(
     'LBL_WEB_SOCKET_CONFIGURATION_SERVER'   => 'WebSocket Server Side',
     'LBL_WEB_SOCKET_CONFIGURATION_URL'      => 'URL',
     'LBL_WEB_SOCKET_CONFIGURATION_SECURED'  => 'Secure connection',
-    'LBL_WEB_SOCKET_CONFIGURATION_SECRET'   => 'WebSocket Secret code',
     'LBL_WEB_SOCKET_CHECK_HEADER'           => 'Verifying WebSocket configuration.',
 	'LBL_LANG_1'						=> 'To use a language in Sugar other than the default language (US-English), you can upload and install the language pack at this time. You will be able to upload and install language packs from within the Sugar application as well.  If you would like to skip this step, click Next.',
 	'LBL_LANG_BUTTON_COMMIT'			=> 'Install',

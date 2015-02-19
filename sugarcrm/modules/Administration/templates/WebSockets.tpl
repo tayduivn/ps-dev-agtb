@@ -59,15 +59,6 @@
                 <input type="text" name="websocket[server][url]" id="websocket_server_url" size="50" value="{$config.server.url}">
             </td>
         </tr>
-        <tr><td>&nbsp;</td></tr>
-        <tr>
-            <th align="left" scope="row"><h4>{$MOD.LBL_WEB_SOCKET_CONFIGURATION_SECRET}:</h4></th>
-        </tr>
-        <tr>
-            <td scope="row">
-                <input type="text" name="websocket_public_secret" id="websocket_public_secret" size="30" value="{$config.public_secret}">
-            </td>
-        </tr>
     </table>
 
     <table width="100%" cellpadding="0" cellspacing="0" border="0" class="actionsContainer">
@@ -100,7 +91,6 @@
             SUGAR.saveWebSocketsConfiguration = function() {
                 var websocket_client_url = document.getElementById('websocket_client_url').value;
                 var websocket_server_url = document.getElementById('websocket_server_url').value;
-                var websocket_public_secret = document.getElementById('websocket_public_secret').value;
 
                 ajaxStatus.showStatus(SUGAR.language.get('Administration', 'LBL_SAVING'));
                 Connect.asyncRequest(
@@ -111,8 +101,7 @@
                             module: "Administration",
                             action: "savewebsocketsconfiguration",
                             websocket_client_url: websocket_client_url,
-                            websocket_server_url: websocket_server_url,
-                            websocket_public_secret: websocket_public_secret,
+                            websocket_server_url: websocket_server_url
                         }) + "to_pdf=1"
                 );
 
@@ -129,7 +118,7 @@
                     var errMsg = response.errMsg;
                     YAHOO.SUGAR.MessageBox.show({msg: errMsg});
                 }
-            }
+            };
         })();
     </script>
 {/literal}

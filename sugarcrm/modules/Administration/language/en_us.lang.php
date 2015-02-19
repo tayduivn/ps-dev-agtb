@@ -1163,11 +1163,9 @@ $mod_strings = array (
     'LBL_WEB_SOCKET_CONFIGURATION_SECURED' => 'Secure connection',
     'LBL_WEB_SOCKET_CONFIGURATION' => 'WebSocket Configuration',
     'LBL_WEB_SOCKET_CONFIGURATION_DESC' => 'Here you can specify client and server URLs to web socket server.',
-    'LBL_WEB_SOCKET_CONFIGURATION_SECRET' => 'WebSocket secret code',
 
     'ERR_WEB_SOCKET_CLIENT_URL'         => 'WebSocket Client URL required',
     'ERR_WEB_SOCKET_SERVER_URL'         => 'WebSocket Server URL required',
-    'ERR_WEB_SOCKET_SECRET'             => 'WebSocket Secret code required',
     'ERR_WEB_SOCKET_CLIENT_ERROR'       => 'Unable to connect to WebSocket Client URL.',
     'ERR_WEB_SOCKET_SERVER_ERROR'       => 'Unable to connect to WebSocket Server URL.',
 

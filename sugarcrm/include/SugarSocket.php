@@ -82,15 +82,26 @@ class SugarSocket
      */
     public function send($message, $data = null)
     {
+        $admin = BeanFactory::getBean('Administration');
+        $config = $admin->getConfigForModule('auth');
+
+        if (empty($config['socket_token'])) {
+            $token = create_guid();
+            $admin->saveSetting('auth', 'socket_token', $token, 'base');
+        } else {
+            $token = $config['socket_token'];
+        }
+
         try {
             $params = json_encode(
                 array(
-                    'room' =>
-                        SugarConfig::getInstance()->get('site_url')
-                        . ':' . SugarConfig::getInstance()->get('websockets.public_secret')
-                        . ':' . $this->room,
-                    'message' => $message,
-                    'args' => $data
+                    'url' => SugarConfig::getInstance()->get('site_url'),
+                    'token' => $token,
+                    'data' => array(
+                        'room' => SugarConfig::getInstance()->get('site_url') . ':' . $this->room,
+                        'message' => $message,
+                        'args' => $data
+                    )
                 )
             );
             $client = new Zend_Http_Client(SugarConfig::getInstance()->get('websockets.server.url') . '/forward');
