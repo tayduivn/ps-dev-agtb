@@ -15,7 +15,7 @@ require_once('include/SugarFields/Fields/Relate/SugarFieldRelate.php');
 /**
  * Class to handle Nested Set field for sugar logic.
  */
-class SugarFieldNestedSet extends SugarFieldRelate
+class SugarFieldNestedset extends SugarFieldRelate
 {
 
     /**

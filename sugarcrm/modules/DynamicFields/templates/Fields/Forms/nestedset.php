@@ -22,5 +22,5 @@ function get_body (&$ss, $vardef)
     $ss->assign('nestedBeans', $nestedBeans);
     $ss->assign('beanRoots', JSON::encode($beanRoots));
 
-    return $ss->fetch('modules/DynamicFields/templates/Fields/Forms/nestedSet.tpl');
+    return $ss->fetch('modules/DynamicFields/templates/Fields/Forms/nestedset.tpl');
 }

@@ -1,4 +1,4 @@
-describe('Base.Field.NestedSet', function() {
+describe('Base.Field.Nestedset', function() {
     var module = 'KBContents',
         fieldDef = {
             category_root: '76c5ad26-21db-1be5-85ee-54258f68dd4a',
@@ -11,9 +11,9 @@ describe('Base.Field.NestedSet', function() {
         sinonSandbox = sinon.sandbox.create();
 
         SugarTest.testMetadata.init();
-        SugarTest.loadComponent('base', 'field', 'nestedSet');
+        SugarTest.loadComponent('base', 'field', 'nestedset');
         SugarTest.loadPlugin('NestedSetCollection');
-        SugarTest.loadHandlebarsTemplate('nestedSet', 'field', 'base', 'edit');
+        SugarTest.loadHandlebarsTemplate('nestedset', 'field', 'base', 'edit');
         SugarTest.testMetadata.set();
 
         app.data.declareModels();
@@ -24,7 +24,7 @@ describe('Base.Field.NestedSet', function() {
                 callback = args.shift();
             callback.apply(this, args);
         });
-        field = SugarTest.createField('base', 'nestedSet', 'nestedSet', 'edit', fieldDef, module);
+        field = SugarTest.createField('base', 'nestedset', 'nestedset', 'edit', fieldDef, module);
     });
 
     afterEach(function() {

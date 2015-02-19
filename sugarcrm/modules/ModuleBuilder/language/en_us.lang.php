@@ -818,7 +818,7 @@ $mod_strings = array(
                 //END SUGARCRM flav!=com ONLY
                 'datetimecombo' =>'Datetime',
                 'decimal'=>'Decimal',
-    'nestedSet' => 'Nested Set',
+    'nestedset' => 'Nested Set',
 ),
     'nestedBeans' => array(
         'Categories' => 'Categories',

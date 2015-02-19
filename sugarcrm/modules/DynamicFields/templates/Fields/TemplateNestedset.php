@@ -13,7 +13,7 @@
 /**
  * Class to handle Nested Set field in studio.
  */
-class TemplateNestedSet extends TemplateField
+class TemplateNestedset extends TemplateField
 {
 
     public function get_db_type()
