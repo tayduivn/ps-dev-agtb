@@ -44,8 +44,8 @@ $subpanel_layout = array(
 		 	'module' => 'Contacts',
 			'width' => '40%',
 		),
-		'email1'=>array(
-			'name'=>'email1',		
+		'email'=>array(
+			'name'=>'email',
 			'vname' => 'LBL_LIST_EMAIL',
 			'widget_class' => 'SubPanelEmailLink',
 			'width' => '35%',
