@@ -27,6 +27,16 @@ class SugarUpgradeClearVarDefs extends UpgradeScript
     protected $modules;
 
     /**
+     * In case off Employees->Users hierarhy we need a way
+     * to ignore fields which are related to Users module when we scan Employees module  
+     */
+    protected $combinedModules = array(
+        'Employees' => array(
+            'Users',
+        ),
+    );
+
+    /**
      * {@inheritdoc}
      */
     public function run()
@@ -40,11 +50,10 @@ class SugarUpgradeClearVarDefs extends UpgradeScript
         $needClearCache = false;
         foreach ($beanList as $bean => $class) {
             VardefManager::refreshVardefs($bean, $class);
-            SugarBean::clearLoadedDef($class);
-            SugarRelationshipFactory::rebuildCache();
             $seed = BeanFactory::getBean($bean);
             if ($seed instanceof SugarBean) {
                 if (!$this->checkBean($seed)) {
+                    SugarRelationshipFactory::rebuildCache();
                     $needClearCache = true;
                 }
             }
@@ -98,7 +107,9 @@ class SugarUpgradeClearVarDefs extends UpgradeScript
                 $this->removeField($seed, $field['name']);
             }
         }
-        $this->updateLinks($linkToUpdate, $seed, $fieldDefs);
+        if ($this->updateLinks($linkToUpdate, $seed, $fieldDefs)) {
+            $result = false;
+        }
         return $result;
     }
 
@@ -235,14 +246,26 @@ class SugarUpgradeClearVarDefs extends UpgradeScript
         if (!empty($mainKey)) {
             if (!empty($def[$relateKey])) {
                 $relatedBean = $this->getBean($def[$relateKey]);
-                if (!empty($relatedBean->module_name) && $def[$relateKey] != $relatedBean->module_name) {
-                    $def[$relateKey] = $relatedBean->module_name;
-                    $modified = true;
+                if (!empty($relatedBean->module_name)) {
+                    $beanNames = array($relatedBean->module_name);
+                    if (array_key_exists($relatedBean->module_name, $this->combinedModules)) {
+                        $beanNames = array_merge($beanNames, $this->combinedModules[$relatedBean->module_name]);
+                    }
+                    if (!in_array($def[$relateKey], $beanNames)) {
+                        $def[$relateKey] = $relatedBean->module_name;
+                        $modified = true;
+                    }
                 }
             }
-            if (!empty($def[$mainKey]) && $def[$mainKey] != $seed->module_name) {
-                $def[$mainKey] = $seed->module_name;
-                $modified = true;
+            if (!empty($seed->module_name)) {
+                $beanNames = array($seed->module_name);
+                if (array_key_exists($seed->module_name, $this->combinedModules)) {
+                    $beanNames = array_merge($beanNames, $this->combinedModules[$seed->module_name]);
+                }
+                if (!empty($def[$mainKey]) && !in_array($def[$mainKey], $beanNames)) {
+                    $def[$mainKey] = $seed->module_name;
+                    $modified = true;
+                }
             }
         }
         if ($modified) {
@@ -361,6 +384,7 @@ class SugarUpgradeClearVarDefs extends UpgradeScript
      */
     protected function updateLinks($links, $seed, $defs)
     {
+        $updated = false;
         foreach (array_keys($links) as $link) {
             $def = $defs[$link];
             if (empty($def) || empty($def['relationship'])) {
@@ -381,9 +405,11 @@ class SugarUpgradeClearVarDefs extends UpgradeScript
                         $out .= override_value_to_string_recursive2('dictionary', $key, $dictionary[$key]);
                     }
                     file_put_contents($file, $out);
+                    $updated = true;
                 }
             }
         }
+        return $updated;
     }
 
     /**
