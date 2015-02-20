@@ -983,14 +983,8 @@ EOHTML;
 		        }
 			}
 
-			// Track to tracker_sessions
-		    if($monitor3 = $trackerManager->getMonitor('tracker_sessions')){
-		        $monitor3->setValue('date_end', $timeStamp);
-		        if ( !isset($monitor3->date_start) ) $monitor3->setValue('date_start', $timeStamp);
-		        $seconds = strtotime($monitor3->date_end) -strtotime($monitor3->date_start);
-		        $monitor3->setValue('seconds', $seconds);
-		        $monitor3->setValue('user_id', $GLOBALS['current_user']->id);
-			}
+			// Load the monitor if on
+			$trackerManager->getMonitor('tracker_sessions');
         }
 	    $trackerManager->save();
 

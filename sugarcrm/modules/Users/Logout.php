@@ -32,16 +32,13 @@ if(isset($_COOKIE[session_name()])) {
 	setcookie(session_name(), '', time()-42000, '/');
 }
 
-//Update the tracker_sessions table
+// Update the tracker_sessions table
 $trackerManager = TrackerManager::getInstance();
-if($monitor = $trackerManager->getMonitor('tracker_sessions')){ 
-	$monitor->setValue('user_id', $GLOBALS['current_user']->id);
-	$monitor->setValue('date_end', TimeDate::getInstance()->nowDb());
-	$seconds = strtotime($monitor->date_end) - strtotime($monitor->date_start);
-	$monitor->setValue('seconds', $seconds);
-	$monitor->setValue('active', 0);
+if ($monitor = $trackerManager->getMonitor('tracker_sessions')) {
+    $monitor->closeSession();
 	$trackerManager->saveMonitor($monitor);
 }
+
 // clear out the authenticating flag
 session_destroy();
 

@@ -16,14 +16,14 @@ require_once('modules/Trackers/monitor/Monitor.php');
 require_once('modules/Trackers/Metric.php');
 require_once('modules/Trackers/Trackable.php');
 
-class tracker_queries_monitor extends Monitor implements Trackable {
+class TrackerQueryMonitor extends Monitor implements Trackable {
 
     var $cached_data = array();
     
     /**
      * constructor
      */
-    function tracker_queries_monitor($name='', $monitorId='', $metadata='', $store='') {
+    public function __construct($name='', $monitorId='', $metadata='', $store='') {
         parent::Monitor($name, $monitorId, $metadata, $store);
     }
    
