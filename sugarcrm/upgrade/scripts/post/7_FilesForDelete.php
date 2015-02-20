@@ -259,6 +259,8 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
         if (version_compare($this->from_version, '7.7', '<')) {
             $files[] = 'clients/base/views/interactionschart';
             $files[] = 'clients/base/fields/label/detail.hbs';
+            $files[] = 'include/javascript/sugar7/plugins/Timeago.js';
+            $files[] = 'sidecar/lib/sugar/sugar.timeago.js';
         }
 
         $this->fileToDelete($files);
