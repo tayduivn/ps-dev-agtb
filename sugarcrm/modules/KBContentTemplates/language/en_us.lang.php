@@ -14,6 +14,7 @@ $mod_strings = array(
     'LBL_MODULE_NAME' => 'Knowledge Base Templates',
     'LBL_MODULE_NAME_SINGULAR' => 'Knowledge Base Template',
     'LBL_MODULE_TITLE' => 'Knowledge Base Template',
+    'LBL_TEMPLATE_LOAD_ERROR' => 'Template cannot be loaded.',
     'LNK_NEW_KBCONTENT_TEMPLATE' => 'Create Template',
     'LNK_LIST_KBCONTENT_TEMPLATES' => 'View Templates',
     'LBL_TEXT_BODY' => 'Body',

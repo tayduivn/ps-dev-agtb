@@ -10,6 +10,11 @@
  */
 (function(app) {
     app.events.on('app:init', function() {
+        /**
+         * Adds ability to override TinyMCE default file upload functionality via the EmbeddedFiles module and fileAPI.
+         * Just override the TinyMCE file_browser_callback function with the tinyMCEFileBrowseCallback method.
+         * Once attached the plugin creates a hidden input to upload files.
+         */
         app.plugins.register('Tinymce', ['field'], {
 
             /**
@@ -31,7 +36,7 @@
                 this.$embeddedInput = $('<input />', {name: this.fileFieldName, type: 'file'}).hide();
                 component.on('render', function() {
                     component.$el.append(self.$embeddedInput);
-                });
+                }, this);
             },
 
             /**
@@ -102,6 +107,10 @@
                                         self.clearFileInput($target);
                                     },
                                     error: function() {
+                                        app.alert.show('upload-error', {
+                                            level: 'error',
+                                            messages: 'ERROR_UPLOAD_FAILED'
+                                        });
                                         self.clearFileInput($target);
                                     }
                                 }

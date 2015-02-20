@@ -179,7 +179,13 @@
                 this.collection.tree({
                     success: _.bind(function(data) {
                         this.createTree(data.jsonTree, this.$treeContainer, this.loadPluginsList());
-                    }, this)
+                    }, this),
+                    error: function(error) {
+                        app.alert.show('server-error', {
+                            level: 'error',
+                            messages: 'ERR_GENERIC_SERVER_ERROR'
+                        });
+                    }
                 });
             },
 
@@ -489,6 +495,7 @@
             deleteModel: function(options) {
                 options = options || {};
                 options.success = options.success || null;
+                options.error = options.error || null;
                 if (_.isEmpty(options.model)) {
                     return;
                 }
@@ -505,7 +512,8 @@
                             )
                         }
                     },
-                    success: options.success
+                    success: options.success,
+                    error: options.error
                 });
             },
 
@@ -876,6 +884,12 @@
                             if (!_.isUndefined(callback)) {
                                 callback(data, response);
                             }
+                        },
+                        error: function(error) {
+                            app.alert.show('server-error', {
+                                level: 'error',
+                                messages: 'ERR_GENERIC_SERVER_ERROR'
+                            });
                         }
                     });
                 }

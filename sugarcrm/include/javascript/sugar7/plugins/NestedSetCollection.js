@@ -9,6 +9,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 (function(app) {
+    /**
+     * Define a new collection and model type - NestedSetCollection and NestedSetBean that is used
+     * as interface for manipulating tree data via tree API.
+     */
     app.events.on('app:init', function() {
 
         /**

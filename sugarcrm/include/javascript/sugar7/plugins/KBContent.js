@@ -12,6 +12,14 @@
  */
 (function(app) {
     app.events.on('app:init', function() {
+        /**
+         * Is built to share knowledge base features among views.
+         *
+         * - Overrides duplicate check with KBDocument specific hierarchy check.
+         * - Adds validate tasks to follow dependencies between status, active and expiration dates fields.
+         * - Allows to inject KBContentTemplates templates into body fields.
+         * - Extends a view with create article and revision functionality.
+         */
         app.plugins.register('KBContent', ['view'], {
 
             events: {
@@ -213,6 +221,12 @@
                         } else {
                             self._onCreateRevision(prefill, parentModel);
                         }
+                    },
+                    error: function(error) {
+                        app.alert.show('server-error', {
+                            level: 'error',
+                            messages: 'ERR_GENERIC_SERVER_ERROR'
+                        });
                     }
                 });
             },
@@ -360,6 +374,12 @@
                                         onConfirm: replace
                                     });
                                 }
+                            },
+                            error: function(error) {
+                                app.alert.show('template-load-error', {
+                                    level: 'error',
+                                    messages: app.lang.get('LBL_TEMPLATE_LOAD_ERROR', 'KBContentTemplates')
+                                });
                             }
                         });
                     }, this)
@@ -477,6 +497,15 @@
              */
             _isPublishingStatus: function(status) {
                 return ['published-in', 'published-ex'].indexOf(status) !== -1;
+            },
+
+            /**
+             * {@inheritDoc}
+             * Remove validation on the model.
+             */
+            onDetach: function() {
+                this.model.removeValidationTask('exp_date_publish');
+                this.model.removeValidationTask('active_date_approve');
             }
 
         });
