@@ -189,103 +189,94 @@ nv.models.axis = function() {
 
         case 'bottom':
 
-          // if only rotate enabled, then that trumps all
-          if (!wrapTicks && !staggerTicks && rotateTicks % 360) {
 
+          var wrapSucceeded = false,
+              staggerSucceeded = false,
+              rotateSucceeded = false;
+
+          // if wrap is enabled, try it first
+          if (wrapTicks && labelCollision(1.25)) {
+            tickText.each(function(d) {
+
+              var textContent = this.textContent,
+                  textNode = d3.select(this),
+                  textArray = textContent.replace('/', '/ ').split(' '),
+                  i = 0,
+                  l = textArray.length,
+                  dy = 0.71,
+                  maxWidth = axis.scale().rangeBand();
+
+              // do wrapping if needed
+              if (this.getBoundingClientRect().width > maxWidth) {
+                this.textContent = '';
+
+                do {
+                  var textString,
+                    textSpan = textNode.append('tspan')
+                      .text(textArray[i] + ' ')
+                      .attr('dy', dy + 'em')
+                      .attr('x', 0 + 'px');
+
+                  if (i === 0) {
+                    dy = 1;
+                  }
+
+                  i += 1;
+
+                  while (i < l) {
+                    textString = textSpan.text();
+                    textSpan.text(textString + ' ' + textArray[i]);
+                    if (this.getBoundingClientRect().width <= maxWidth) {
+                      i += 1;
+                    } else {
+                      textSpan.text(textString);
+                      break;
+                    }
+                  }
+                } while (i < l);
+              }
+
+            });
+
+            // this resets the maxTickWidth for label collision detction
+            calculateMax();
+
+            // check to see if we still have collisions
+            if (labelCollision(1.25)) {
+              resetTicks();
+            } else {
+              wrapSucceeded = true;
+              thickness = 1;
+            }
+          }
+
+          // wrapping failed so fall back to stagger if enabled
+          if (!wrapSucceeded && staggerTicks && labelCollision(1.25)) {
+            tickText
+              .text(function(d, i) { return tickValueArray[i]; });
+
+            // this sets the maxTickWidth for label collision detction
+            calculateMax();
+
+            tickText
+              .attr('transform', function(d, i) { return 'translate(0,' + (i % 2 * (maxTickHeight + 2)) + ')'; });
+
+            // check to see if we still have collisions
+            if (labelCollision(2.5)) {
+              resetTicks();
+            } else {
+              staggerSucceeded = true;
+              thickness = maxTickHeight + 2;
+            }
+          }
+
+          // if we still have a collision
+          if (!wrapSucceeded && !staggerSucceeded && rotateTicks % 360 && labelCollision(1.25)) {
             tickRotation(rotateTicks);
-
+            rotateSucceeded = true;
           } else {
-
-            var wrapSucceeded = false,
-                staggerSucceeded = false;
-
-            // if wrap is enabled, try it first
-            if (wrapTicks && labelCollision(1.25)) {
-              tickText.each(function(d) {
-
-                var textContent = this.textContent,
-                    textNode = d3.select(this),
-                    textArray = textContent.replace('/', '/ ').split(' '),
-                    i = 0,
-                    l = textArray.length,
-                    dy = 0.71,
-                    maxWidth = axis.scale().rangeBand();
-
-                // do wrapping if needed
-                if (this.getBoundingClientRect().width > maxWidth) {
-                  this.textContent = '';
-
-                  do {
-                    var textString,
-                      textSpan = textNode.append('tspan')
-                        .text(textArray[i] + ' ')
-                        .attr('dy', dy + 'em')
-                        .attr('x', 0 + 'px');
-
-                    if (i === 0) {
-                      dy = 1;
-                    }
-
-                    i += 1;
-
-                    while (i < l) {
-                      textString = textSpan.text();
-                      textSpan.text(textString + ' ' + textArray[i]);
-                      if (this.getBoundingClientRect().width <= maxWidth) {
-                        i += 1;
-                      } else {
-                        textSpan.text(textString);
-                        break;
-                      }
-                    }
-                  } while (i < l);
-                }
-
-              });
-
-              // this resets the maxTickWidth for label collision detction
-              calculateMax();
-
-              // check to see if we still have collisions
-              if (labelCollision(1.25)) {
-                resetTicks();
-              } else {
-                wrapSucceeded = true;
-                textAnchorString = 'middle';
-                thickness = defaultThickness() + maxTickHeight + 1;
-              }
-            }
-
-            // wrapping failed so fall back to stagger if enabled
-            if (staggerTicks && !wrapSucceeded && labelCollision(1.25)) {
-              tickText
-                .text(function(d, i) { return tickValueArray[i]; });
-
-              // this sets the maxTickWidth for label collision detction
-              calculateMax();
-
-              tickText
-                .attr('transform', function(d, i) { return 'translate(0,' + (i % 2 * (maxTickHeight + 2)) + ')'; });
-
-              // check to see if we still have collisions
-              if (labelCollision(2.5)) {
-                resetTicks();
-              } else {
-                staggerSucceeded = true;
-                textAnchorString = 'middle';
-                thickness = defaultThickness() + maxTickHeight * 2 + 2;
-              }
-            }
-
-            // if we still have a collision
-            if (!wrapSucceeded && !staggerSucceeded) {
-              if (labelCollision(1.25)) {
-                tickRotation(30);
-              } else {
-                textAnchorString = 'middle';
-                thickness = defaultThickness() + maxTickHeight;
-              }
-            }
+            textAnchorString = 'middle';
+            thickness += defaultThickness() + maxTickHeight;
           }
 
           if (axisLabelText) {

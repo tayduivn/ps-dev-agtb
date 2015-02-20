@@ -358,7 +358,7 @@ nv.models.multiBarChart = function() {
             .attr('class', 'nv-title')
             .attr('x', direction === 'rtl' ? availableWidth : 0)
             .attr('y', 0)
-            .attr('dy', '1em')
+            .attr('dy', '.75em')
             .attr('text-anchor', 'start')
             .text(properties.title)
             .attr('stroke', 'none')
@@ -485,11 +485,8 @@ nv.models.multiBarChart = function() {
       innerWidth = availableWidth - innerMargin.left - innerMargin.right;
       innerHeight = availableHeight - innerMargin.top - innerMargin.bottom;
 
-      // Recalc chart scales based on new inner dimensions
-      multibar
-        .width(getDimension('width'))
-        .height(getDimension('height'));
-
+      // Recalc chart dimensions and scales based on new inner dimensions
+      multibar.resetDimensions(getDimension('width'), getDimension('height'));
       multibar.resetScale();
 
       // X-Axis
@@ -500,9 +497,8 @@ nv.models.multiBarChart = function() {
       innerWidth = availableWidth - innerMargin.left - innerMargin.right;
       innerHeight = availableHeight - innerMargin.top - innerMargin.bottom;
 
-      multibar
-        .width(getDimension('width'))
-        .height(getDimension('height'));
+      multibar.resetDimensions(getDimension('width'), getDimension('height'));
+      multibar.resetScale();
 
       //------------------------------------------------------------
       // Main Chart Components
@@ -550,8 +546,10 @@ nv.models.multiBarChart = function() {
       if (scrollEnabled) {
         var diff = (vertical ? innerWidth : innerHeight) - minDimension,
             panMultibar = function() {
-              scrollOffset = scroll.pan(diff);
               dispatch.tooltipHide(d3.event);
+              scrollOffset = scroll.pan(diff);
+              xAxisWrap.select('.nv-axislabel')
+                .attr('x', (vertical ? innerWidth - scrollOffset * 2 : scrollOffset * 2 - innerHeight) / 2);
             };
 
         scroll

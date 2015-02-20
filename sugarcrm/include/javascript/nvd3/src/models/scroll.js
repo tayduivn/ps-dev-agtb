@@ -48,14 +48,14 @@ nv.models.scroll = function() {
 
       scroll.pan = function(diff) {
 
-        // don't fire on events other than zoom and drag
-        // we need click for handling legend toggle
         var distance = 0,
             overflowDistance = 0,
             translate = '',
             x = 0,
             y = 0;
 
+        // don't fire on events other than zoom and drag
+        // we need click for handling legend toggle
         if (d3.event) {
           if (d3.event.type === 'zoom') {
             x = d3.event.sourceEvent.deltaX || 0;

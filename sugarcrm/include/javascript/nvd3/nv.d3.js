@@ -1046,103 +1046,94 @@ nv.models.axis = function() {
 
         case 'bottom':
 
-          // if only rotate enabled, then that trumps all
-          if (!wrapTicks && !staggerTicks && rotateTicks % 360) {
 
+          var wrapSucceeded = false,
+              staggerSucceeded = false,
+              rotateSucceeded = false;
+
+          // if wrap is enabled, try it first
+          if (wrapTicks && labelCollision(1.25)) {
+            tickText.each(function(d) {
+
+              var textContent = this.textContent,
+                  textNode = d3.select(this),
+                  textArray = textContent.replace('/', '/ ').split(' '),
+                  i = 0,
+                  l = textArray.length,
+                  dy = 0.71,
+                  maxWidth = axis.scale().rangeBand();
+
+              // do wrapping if needed
+              if (this.getBoundingClientRect().width > maxWidth) {
+                this.textContent = '';
+
+                do {
+                  var textString,
+                    textSpan = textNode.append('tspan')
+                      .text(textArray[i] + ' ')
+                      .attr('dy', dy + 'em')
+                      .attr('x', 0 + 'px');
+
+                  if (i === 0) {
+                    dy = 1;
+                  }
+
+                  i += 1;
+
+                  while (i < l) {
+                    textString = textSpan.text();
+                    textSpan.text(textString + ' ' + textArray[i]);
+                    if (this.getBoundingClientRect().width <= maxWidth) {
+                      i += 1;
+                    } else {
+                      textSpan.text(textString);
+                      break;
+                    }
+                  }
+                } while (i < l);
+              }
+
+            });
+
+            // this resets the maxTickWidth for label collision detction
+            calculateMax();
+
+            // check to see if we still have collisions
+            if (labelCollision(1.25)) {
+              resetTicks();
+            } else {
+              wrapSucceeded = true;
+              thickness = 1;
+            }
+          }
+
+          // wrapping failed so fall back to stagger if enabled
+          if (!wrapSucceeded && staggerTicks && labelCollision(1.25)) {
+            tickText
+              .text(function(d, i) { return tickValueArray[i]; });
+
+            // this sets the maxTickWidth for label collision detction
+            calculateMax();
+
+            tickText
+              .attr('transform', function(d, i) { return 'translate(0,' + (i % 2 * (maxTickHeight + 2)) + ')'; });
+
+            // check to see if we still have collisions
+            if (labelCollision(2.5)) {
+              resetTicks();
+            } else {
+              staggerSucceeded = true;
+              thickness = maxTickHeight + 2;
+            }
+          }
+
+          // if we still have a collision
+          if (!wrapSucceeded && !staggerSucceeded && rotateTicks % 360 && labelCollision(1.25)) {
             tickRotation(rotateTicks);
-
+            rotateSucceeded = true;
           } else {
-
-            var wrapSucceeded = false,
-                staggerSucceeded = false;
-
-            // if wrap is enabled, try it first
-            if (wrapTicks && labelCollision(1.25)) {
-              tickText.each(function(d) {
-
-                var textContent = this.textContent,
-                    textNode = d3.select(this),
-                    textArray = textContent.replace('/', '/ ').split(' '),
-                    i = 0,
-                    l = textArray.length,
-                    dy = 0.71,
-                    maxWidth = axis.scale().rangeBand();
-
-                // do wrapping if needed
-                if (this.getBoundingClientRect().width > maxWidth) {
-                  this.textContent = '';
-
-                  do {
-                    var textString,
-                      textSpan = textNode.append('tspan')
-                        .text(textArray[i] + ' ')
-                        .attr('dy', dy + 'em')
-                        .attr('x', 0 + 'px');
-
-                    if (i === 0) {
-                      dy = 1;
-                    }
-
-                    i += 1;
-
-                    while (i < l) {
-                      textString = textSpan.text();
-                      textSpan.text(textString + ' ' + textArray[i]);
-                      if (this.getBoundingClientRect().width <= maxWidth) {
-                        i += 1;
-                      } else {
-                        textSpan.text(textString);
-                        break;
-                      }
-                    }
-                  } while (i < l);
-                }
-
-              });
-
-              // this resets the maxTickWidth for label collision detction
-              calculateMax();
-
-              // check to see if we still have collisions
-              if (labelCollision(1.25)) {
-                resetTicks();
-              } else {
-                wrapSucceeded = true;
-                textAnchorString = 'middle';
-                thickness = defaultThickness() + maxTickHeight + 1;
-              }
-            }
-
-            // wrapping failed so fall back to stagger if enabled
-            if (staggerTicks && !wrapSucceeded && labelCollision(1.25)) {
-              tickText
-                .text(function(d, i) { return tickValueArray[i]; });
-
-              // this sets the maxTickWidth for label collision detction
-              calculateMax();
-
-              tickText
-                .attr('transform', function(d, i) { return 'translate(0,' + (i % 2 * (maxTickHeight + 2)) + ')'; });
-
-              // check to see if we still have collisions
-              if (labelCollision(2.5)) {
-                resetTicks();
-              } else {
-                staggerSucceeded = true;
-                textAnchorString = 'middle';
-                thickness = defaultThickness() + maxTickHeight * 2 + 2;
-              }
-            }
-
-            // if we still have a collision
-            if (!wrapSucceeded && !staggerSucceeded) {
-              if (labelCollision(1.25)) {
-                tickRotation(30);
-              } else {
-                textAnchorString = 'middle';
-                thickness = defaultThickness() + maxTickHeight;
-              }
-            }
+            textAnchorString = 'middle';
+            thickness += defaultThickness() + maxTickHeight;
           }
 
           if (axisLabelText) {
@@ -2299,14 +2290,14 @@ nv.models.scroll = function() {
 
       scroll.pan = function(diff) {
 
-        // don't fire on events other than zoom and drag
-        // we need click for handling legend toggle
         var distance = 0,
             overflowDistance = 0,
             translate = '',
             x = 0,
             y = 0;
 
+        // don't fire on events other than zoom and drag
+        // we need click for handling legend toggle
         if (d3.event) {
           if (d3.event.type === 'zoom') {
             x = d3.event.sourceEvent.deltaX || 0;
@@ -3623,7 +3614,7 @@ nv.models.bubbleChart = function () {
               .attr('class', 'nv-title')
               .attr('x', direction === 'rtl' ? availableWidth : 0)
               .attr('y', 0)
-              .attr('dy', '1em')
+              .attr('dy', '.75em')
               .attr('text-anchor', 'start')
               .text(properties.title)
               .attr('stroke', 'none')
@@ -5058,7 +5049,7 @@ nv.models.funnelChart = function() {
             .attr('class', 'nv-title')
             .attr('x', direction === 'rtl' ? availableWidth : 0)
             .attr('y', 0)
-            .attr('dy', '1em')
+            .attr('dy', '.75em')
             .attr('text-anchor', 'start')
             .text(properties.title)
             .attr('stroke', 'none')
@@ -6010,7 +6001,7 @@ nv.models.gaugeChart = function() {
             .attr('class', 'nv-title')
             .attr('x', direction === 'rtl' ? availableWidth : 0)
             .attr('y', 0)
-            .attr('dy', '1em')
+            .attr('dy', '.75em')
             .attr('text-anchor', 'start')
             .text(properties.title)
             .attr('stroke', 'none')
@@ -6757,7 +6748,7 @@ nv.models.lineChart = function() {
             .attr('class', 'nv-title')
             .attr('x', direction === 'rtl' ? availableWidth : 0)
             .attr('y', 0)
-            .attr('dy', '1em')
+            .attr('dy', '.75em')
             .attr('text-anchor', 'start')
             .text(properties.title)
             .attr('stroke', 'none')
@@ -7830,18 +7821,18 @@ nv.models.multiBar = function() {
 
       baseDimension = stacked ? vertical ? 72 : 30 : 20;
 
-      var availableWidth = width - margin.left - margin.right,
-          availableHeight = height - margin.top - margin.bottom,
-          container = d3.select(this),
+      var container = d3.select(this),
           orientation = vertical ? 'vertical' : 'horizontal',
+          availableWidth = width - margin.left - margin.right,
+          availableHeight = height - margin.top - margin.bottom,
+          maxX = vertical ? availableWidth : availableHeight,
+          maxY = vertical ? availableHeight : availableWidth,
           dimX = vertical ? 'width' : 'height',
           dimY = vertical ? 'height' : 'width',
           limDimX = 0,
           limDimY = 0,
           valX = vertical ? 'x' : 'y',
           valY = vertical ? 'y' : 'x',
-          maxX = vertical ? availableWidth : availableHeight,
-          maxY = vertical ? availableHeight : availableWidth,
           valuePadding = 0,
           seriesCount = 0,
           groupCount = 0;
@@ -7895,7 +7886,17 @@ nv.models.multiBar = function() {
       groupCount = data[0].values.length;
       seriesCount = data.length;
 
+      chart.resetDimensions = function(w, h) {
+        width = w;
+        height = h;
+        availableWidth = w - margin.left - margin.right;
+        availableHeight = h - margin.top - margin.bottom;
+        maxX = vertical ? availableWidth : availableHeight;
+        maxY = vertical ? availableHeight : availableWidth;
+      };
+
       chart.resetScale = function() {
+
         availableWidth = width - margin.left - margin.right;
         availableHeight = height - margin.top - margin.bottom;
         limDimX = vertical ? availableWidth : availableHeight;
@@ -7920,7 +7921,8 @@ nv.models.multiBar = function() {
                 negOffset = (vertical ? d.y : 0);
             return stacked ? (d.y > 0 ? d.y1 + posOffset : d.y1 + negOffset) : d.y;
           }).concat(forceY)))
-          .range(vertical ? [availableHeight, 0] : [0, availableWidth]);
+          .range(vertical ? [availableHeight, 0] : [0, availableWidth])
+          .nice();
 
         x0 = x0 || x;
         y0 = y0 || y;
@@ -8929,7 +8931,7 @@ nv.models.multiBarChart = function() {
             .attr('class', 'nv-title')
             .attr('x', direction === 'rtl' ? availableWidth : 0)
             .attr('y', 0)
-            .attr('dy', '1em')
+            .attr('dy', '.75em')
             .attr('text-anchor', 'start')
             .text(properties.title)
             .attr('stroke', 'none')
@@ -9056,11 +9058,8 @@ nv.models.multiBarChart = function() {
       innerWidth = availableWidth - innerMargin.left - innerMargin.right;
       innerHeight = availableHeight - innerMargin.top - innerMargin.bottom;
 
-      // Recalc chart scales based on new inner dimensions
-      multibar
-        .width(getDimension('width'))
-        .height(getDimension('height'));
-
+      // Recalc chart dimensions and scales based on new inner dimensions
+      multibar.resetDimensions(getDimension('width'), getDimension('height'));
       multibar.resetScale();
 
       // X-Axis
@@ -9071,9 +9070,8 @@ nv.models.multiBarChart = function() {
       innerWidth = availableWidth - innerMargin.left - innerMargin.right;
       innerHeight = availableHeight - innerMargin.top - innerMargin.bottom;
 
-      multibar
-        .width(getDimension('width'))
-        .height(getDimension('height'));
+      multibar.resetDimensions(getDimension('width'), getDimension('height'));
+      multibar.resetScale();
 
       //------------------------------------------------------------
       // Main Chart Components
@@ -9121,8 +9119,10 @@ nv.models.multiBarChart = function() {
       if (scrollEnabled) {
         var diff = (vertical ? innerWidth : innerHeight) - minDimension,
             panMultibar = function() {
-              scrollOffset = scroll.pan(diff);
               dispatch.tooltipHide(d3.event);
+              scrollOffset = scroll.pan(diff);
+              xAxisWrap.select('.nv-axislabel')
+                .attr('x', (vertical ? innerWidth - scrollOffset * 2 : scrollOffset * 2 - innerHeight) / 2);
             };
 
         scroll
@@ -9807,7 +9807,7 @@ nv.models.paretoChart = function() {
                     .attr('class', 'nv-title')
                     .attr('x', direction === 'rtl' ? availableWidth : 0)
                     .attr('y', 0)
-                    .attr('dy', '1em')
+                    .attr('dy', '.75em')
                     .attr('text-anchor', 'start')
                     .attr('stroke', 'none')
                     .attr('fill', 'black');
@@ -11242,7 +11242,7 @@ nv.models.pieChart = function() {
             .attr('class', 'nv-title')
             .attr('x', direction === 'rtl' ? availableWidth : 0)
             .attr('y', 0)
-            .attr('dy', '1em')
+            .attr('dy', '.75em')
             .attr('text-anchor', 'start')
             .text(properties.title)
             .attr('stroke', 'none')
@@ -12615,7 +12615,7 @@ nv.models.stackedAreaChart = function() {
             .attr('class', 'nv-title')
             .attr('x', direction === 'rtl' ? availableWidth : 0)
             .attr('y', 0)
-            .attr('dy', '1em')
+            .attr('dy', '.75em')
             .attr('text-anchor', 'start')
             .text(properties.title)
             .attr('stroke', 'none')
