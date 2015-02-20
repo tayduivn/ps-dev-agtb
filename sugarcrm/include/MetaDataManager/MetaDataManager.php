@@ -3615,7 +3615,6 @@ class MetaDataManager
         return $fields;
     }
 
-// BEGIN SUGARCRM flav=ent ONLY
     /**
      * Returns view iterator for the given module and field definitions
      *
@@ -3630,6 +3629,7 @@ class MetaDataManager
         return new ViewIterator($module, $fieldDefs);
     }
 
+// BEGIN SUGARCRM flav=ent ONLY
     /**
      * Returns editable dropdown filters
      *

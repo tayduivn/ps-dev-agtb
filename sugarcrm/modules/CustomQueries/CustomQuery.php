@@ -110,12 +110,13 @@ class CustomQuery extends SugarBean {
 	    $temp_mod_strings = return_module_language($current_language, "CustomQueries");
 		//Store query, in case we are saving;
 		$this->statis_query = $this->custom_query;
+		$customQuery = $this->custom_query;
 
 		//If check valid is set to true, then we are just checking for a valid query
 
 		// if this is a sub_query, then prepare
 		if(!empty($this->sub_query_array)){
-			$split_query = preg_split('{{sub}}', $this->custom_query);
+			$split_query = preg_split('{{sub}}', $customQuery);
 			if(!empty($split_query[1])){
 				$split_query_chunk = $split_query[1];
 			} else {
@@ -129,7 +130,7 @@ class CustomQuery extends SugarBean {
 				$replacement_chunk = "";
 			}
 
-			$this->custom_query = str_replace($sub_chunk, $replacement_chunk, $this->custom_query);
+			$customQuery = str_replace($sub_chunk, $replacement_chunk, $customQuery);
 
 		//end if this is a sub-query
 		} else {
@@ -138,7 +139,7 @@ class CustomQuery extends SugarBean {
 			if($building_query!=true){
 			//check for the word sub and return some sort of special message saying this is only
 			//accessable via the parent data set
-				$is_sub_query = strpos($this->custom_query, '{sub}');
+				$is_sub_query = strpos($customQuery, '{sub}');
 				if($is_sub_query!==false){
 					//if this function is not called from custom_layout then just return error
 					if($get_columns==true){
@@ -160,7 +161,7 @@ class CustomQuery extends SugarBean {
 		}
 
 		if($check_valid==true || $get_columns==true){
-			$split_query = preg_split('{{sub}}', $this->custom_query);
+			$split_query = preg_split('{{sub}}', $customQuery);
 			if(!empty($split_query[1])){
 
 				$sub_chunk = "{sub}".$split_query[1]."{sub}";
@@ -169,18 +170,18 @@ class CustomQuery extends SugarBean {
 				$sub_chunk = "{sub} {sub}";
 			}
 			$replacement_chunk = "1";
-			$this->custom_query = str_replace($sub_chunk, $replacement_chunk, $this->custom_query);
+			$customQuery = str_replace($sub_chunk, $replacement_chunk, $customQuery);
 		//replace the sub_query with dummy value
 		}
 
 		//Add the team membership join if the {{teamjoin}}basemodule{{teamjoin}} tag exists
 
 		//first check query for the following {{tj}}
-		if(strpos($this->custom_query, "{tj}")!==false){
+		if(strpos($customQuery, "{tj}")!==false){
 
 			//Not adin
 			if(!is_admin($current_user) || $building_query==true){
-				$split_query = preg_split('{{tj}}', $this->custom_query);
+				$split_query = preg_split('{{tj}}', $customQuery);
 
 				$team_join_part = 	"INNER JOIN team_memberships
 								ON team_memberships.deleted=0 AND ".$split_query[1].".team_id = team_memberships.team_id
@@ -190,20 +191,20 @@ class CustomQuery extends SugarBean {
 
 				$replacement_chunk = $team_join_part;
 
-				$this->custom_query = str_replace($sub_chunk, $replacement_chunk, $this->custom_query);
+				$customQuery = str_replace($sub_chunk, $replacement_chunk, $customQuery);
 			} else {
 				//If admin, remove the tj tags from the statement
-				$split_query = preg_split('{{tj}}', $this->custom_query);
+				$split_query = preg_split('{{tj}}', $customQuery);
 				$sub_chunk = "{tj}".$split_query[1]."{tj}";
 				$replacement_chunk = "";
-				$this->custom_query = str_replace($sub_chunk, $replacement_chunk, $this->custom_query);
+				$customQuery = str_replace($sub_chunk, $replacement_chunk, $customQuery);
 			}
 
 		//end if we need to add team_join_part
 		}
 		//This checks for either a bad query or checks for a wrong type of query.  Will only pass if
 		//it is a select statement.
-		$decoded_query = html_entity_decode($this->custom_query, ENT_QUOTES);
+		$decoded_query = html_entity_decode($customQuery, ENT_QUOTES);
         $result = $this->getSlaveDb()->validateQuery($decoded_query);
 
         if(!$result){

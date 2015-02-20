@@ -29,6 +29,7 @@ class SimpleQueryTest extends Sugar_PHPUnit_Framework_TestCase
     protected $contacts = array();
     protected $accounts = array();
     protected $notes = array();
+    protected $kbDocuments = array();
 
     public static function setupBeforeClass()
     {
@@ -78,6 +79,16 @@ class SimpleQueryTest extends Sugar_PHPUnit_Framework_TestCase
             }
             $this->db->query(
                 "DELETE FROM notes WHERE id IN (" . implode(",", $notesList) . ")"
+            );
+        }
+
+        if (!empty($this->kbDocuments)) {
+            $kbDocumentsList = array();
+            foreach ($this->kbDocuments as $kbDocument) {
+                $kbDocumentsList[] = $this->db->quoted($kbDocument->id);
+            }
+            $this->db->query(
+                "DELETE FROM kbdocuments WHERE id IN (" . implode(",", $kbDocumentsList) . ")"
             );
         }
     }
@@ -458,5 +469,26 @@ class SimpleQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $sql = $sq->compileSql();
 
         $this->assertContains('min(my_int_field)', $sql);
+    }
+
+    public function testSelectDbConcatField()
+    {
+        /** @var KBDocument $kbDocument */
+        $kbDocument = BeanFactory::getBean('KBDocuments');
+        $kbDocument->kbdocument_name = 'Test Document';
+        $kbDocument->save();
+        $this->kbDocuments[] = $kbDocument;
+
+        $sq = new SugarQuery();
+        $sq->from($kbDocument);
+        $sq->select('id', 'name');
+        $sq->where()->equals('id', $kbDocument->id);
+
+        $data = $sq->execute();
+        $this->assertCount(1, $data);
+
+        $row = array_shift($data);
+        $this->assertArrayHasKey('name', $row);
+        $this->assertEquals('Test Document', $row['name']);
     }
 }

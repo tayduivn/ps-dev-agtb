@@ -36,13 +36,14 @@
             self = this;
 
         app.drawer.open({
-            layout: 'selection-list',
+            layout: 'multi-selection-list-link',
             context: {
                 module: linkModule,
                 recParentModel: parentModel,
                 recLink: link,
                 recContext: this.context,
-                recView: this.view
+                recView: this.view,
+                independentMassCollection: true
             }
         }, function(model) {
             if (!model) {

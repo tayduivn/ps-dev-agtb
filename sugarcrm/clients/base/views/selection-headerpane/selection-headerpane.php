@@ -54,6 +54,14 @@ $viewdefs['base']['view']['selection-headerpane'] = array(
                     'label' => 'LBL_CREATE_BUTTON_LABEL',
                     'acl_action' => 'create',
                 ),
+                array(
+                    'name' => 'select_button',
+                    'type' => 'button',
+                    'label' => 'LBL_SELECT_BUTTON_LABEL',
+                    'events' => array(
+                        'click' => 'selection:select:fire',
+                    ),
+                ),
             ),
         ),
         array(

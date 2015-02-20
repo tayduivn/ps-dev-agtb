@@ -434,11 +434,6 @@
 
         //If the quicksearch field is not empty, append a remove icon so the user can clear the search easily
         this._toggleClearQuickSearchIcon(!_.isEmpty(query));
-        // reset the selected on filter apply
-        var massCollection = this.context.get('mass_collection');
-        if (massCollection && massCollection.models && massCollection.models.length > 0) {
-            massCollection.reset([], {silent: true});
-        }
         var self = this;
         var ctxList = this.getRelevantContextList();
         var batchId = ctxList.length > 1 ? _.uniqueId() : false;

@@ -1,3 +1,4 @@
+//FIXME: SC-4097 will rewrite this file properly.
 describe("Base.View.SelectionList", function () {
     var view, layout, app, moduleName;
     beforeEach(function () {
@@ -8,6 +9,7 @@ describe("Base.View.SelectionList", function () {
         SugarTest.loadHandlebarsTemplate('flex-list', 'view', 'base', 'flex-list');
         SugarTest.loadComponent('base', 'view', 'flex-list');
         SugarTest.loadComponent('base', 'view', 'selection-list');
+        SugarTest.loadComponent('base', 'view', 'selection-headerpane');
         SugarTest.testMetadata.addViewDefinition('list', {
             "panels":[
                 {
@@ -83,7 +85,7 @@ describe("Base.View.SelectionList", function () {
         delete app.drawer;
     });
 
-    it('should remove all links except rowactions', function(){
+    it('should remove all links except rowactions', function() {
         var htmlBefore = '<a href="javascript:void(0)">unwrapped</a><a href="" class="rowaction">wrapped</a>',
             htmlAfter = 'unwrapped<a href="" class="rowaction">wrapped</a>';
 
@@ -93,11 +95,10 @@ describe("Base.View.SelectionList", function () {
         expect(view.$el.html()).toEqual(htmlAfter);
     });
 
-    it('should add preview row action', function(){
+    it('should add preview row action', function() {
         var hasPreview = _.some(view.rightColumns, function(column) {
             return (column.event === "list:preview:fire");
         });
         expect(hasPreview).toBe(true);
     });
-
 });

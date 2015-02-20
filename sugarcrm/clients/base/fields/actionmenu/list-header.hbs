@@ -13,10 +13,10 @@
 
 {{#if def.buttons}}
 <div class="btn-group">
-    <div class="btn checkall"><input type="checkbox" name="check" class="toggle-all" {{#if selected}}checked{{/if}}></div>
+    <div class="btn checkall" data-check="all"><input type="checkbox" name="check" class="toggle-all" {{#if selected}}checked{{/if}}></div>
     <a class="btn dropdown-toggle {{#unless action_enabled}}disabled{{/unless}}" data-toggle="dropdown" href="javascript:void(0);" rel="tooltip" title="{{str "LBL_LISTVIEW_ACTIONS"}}" track="click:listactiondropdown"><span class="fa fa-caret-down"></span></a>
     {{actionPlaceHolder}}
 </div>
 {{else}}
-    <div class="btn checkall"><input type="checkbox" name="check" class="toggle-all" {{#if selected}}checked{{/if}}></div>
+    <div class="btn checkall" data-check="all"><input type="checkbox" name="check" class="toggle-all" {{#if selected}}checked{{/if}}></div>
 {{/if}}

@@ -1,4 +1,3 @@
-{{!--
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -9,5 +8,11 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
---}}
-<input data-check="one" type="checkbox" name="check" {{#if selected}}checked{{/if}}>
+/**
+ * @class View.Layouts.Base.MultiSelectionListLinkLayout
+ * @alias SUGAR.App.view.layouts.BaseMultiSelectionListLinkLayout
+ * @extends View.Layouts.Base.MultiSelectionListLayout
+ */
+({
+    extendsFrom: 'MultiSelectionListLayout'
+})
