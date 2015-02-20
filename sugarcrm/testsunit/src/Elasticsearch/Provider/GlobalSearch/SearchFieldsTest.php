@@ -96,6 +96,7 @@ class SearchFieldsTest extends \PHPUnit_Framework_TestCase
                 'getFtsFields',
                 'getMappingDefsForSugarType',
                 'getBoostedField',
+                'isStringBased',
             )
         );
 
@@ -110,6 +111,10 @@ class SearchFieldsTest extends \PHPUnit_Framework_TestCase
         $sf->expects($this->exactly($boost))
             ->method('getBoostedField')
             ->will($this->returnCallback(array($this, 'getBoostedField')));
+
+        $sf->expects($this->any())
+            ->method('isStringBased')
+            ->will($this->returnValue(true));
 
         $sf->setBoost((bool) $boost);
 
@@ -186,6 +191,56 @@ class SearchFieldsTest extends \PHPUnit_Framework_TestCase
     {
         $args = func_get_args();
         return $args[0] . '^69';
+    }
+
+    /**
+     * @covers \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\SearchFields::isStringBased
+     * @dataProvider dataProviderIsStringBased
+     */
+    public function testIsStringBased($mappingName, $mappingDef, $output)
+    {
+        $sf = $this->getSearchFieldsMock(
+            array(
+                'getMappingDefForMappingName'
+            )
+        );
+
+        $sf->expects($this->any())
+            ->method('getMappingDefForMappingName')
+            ->will($this->returnValue($mappingDef));
+
+        $result = $sf->isStringBased($mappingName);
+        $this->assertSame($output, $result);
+    }
+
+    public function dataProviderIsStringBased()
+    {
+        return array(
+            array(
+                'gs_string_default',
+                array(
+                    'type' => 'string',
+                    'index' => 'analyzed',
+                ),
+                true,
+            ),
+            array(
+                'gs_string_ngram',
+                array(
+                    'type' => 'string',
+                    'index' => 'analyzed',
+                ),
+                true,
+            ),
+            array(
+                'gs_int_default',
+                array(
+                    'type' => 'integer',
+                    'index' => 'analyzed',
+                ),
+                false,
+            ),
+        );
     }
 
     /**

@@ -89,6 +89,25 @@ class SearchFields
     }
 
     /**
+     * Test if the mapping def is string-based
+     * @param string $mapName : the name of the mapping
+     * @return bool
+     */
+    public function isStringBased($mapName)
+    {
+        //Expected the mapping's definition has the type 'string'
+        //Example:  Both 'gs_string_default' and 'gs_string_ngram' have the type 'string'.
+
+        $def = $this->getMappingDefForMappingName($mapName);
+        if (!empty($def)) {
+            if (isset($def['type']) && $def['type'] == 'string') {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Get search fields for given sugar field
      * @param string $module
      * @param string $field
@@ -104,13 +123,15 @@ class SearchFields
 
         foreach ($mappingDefs as $type) {
 
-            $searchField = $module . self::FIELD_SEP . $field . self::FIELD_SEP .  $type;
+            if ($this->isStringBased($type)) {
+                $searchField = $module . self::FIELD_SEP . $field . self::FIELD_SEP . $type;
 
-            if ($this->boost) {
-                $searchField = $this->getBoostedField($searchField, $defs, $type);
+                if ($this->boost) {
+                    $searchField = $this->getBoostedField($searchField, $defs, $type);
+                }
+
+                $list[] = $searchField;
             }
-
-            $list[] = $searchField;
         }
 
         return $list;
@@ -158,6 +179,16 @@ class SearchFields
     protected function getMappingDefsForSugarType($sugarType)
     {
         return $this->provider->getMappingDefsForSugarType($sugarType);
+    }
+
+    /**
+     * Get the mapping def for a given mapping name
+     * @param string $mapName
+     * @return array
+     */
+    protected function getMappingDefForMappingName($mapName)
+    {
+        return $this->provider->getMappingDefForMappingName($mapName);
     }
 
     /**

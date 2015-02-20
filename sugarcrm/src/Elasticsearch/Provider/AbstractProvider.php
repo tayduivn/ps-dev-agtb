@@ -220,6 +220,23 @@ abstract class AbstractProvider implements ProviderInterface
     }
 
     /**
+     * Get the mapping definition for a given mapping name
+     * @param string $mapName
+     * @return array
+     */
+    public function getMappingDefForMappingName($mapName)
+    {
+        // resolve sugar type with fallback to default definition if set
+        if (!isset($this->mappingDefs[$mapName])) {
+            return array();
+        }
+
+        $mappingDef = $this->mappingDefs[$mapName];
+        return $mappingDef;
+    }
+
+
+    /**
      * Verify if given sugar type is supported
      * @param string $type Sugar type
      * @return boolean
