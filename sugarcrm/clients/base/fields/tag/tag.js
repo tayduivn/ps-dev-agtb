@@ -13,6 +13,13 @@
     plugins: ['EllipsisInline'],
 
     /**
+     * HTML tag of the append tag checkbox.
+     *
+     * @property {String}
+     */
+    appendTagInput: 'input[name=append_tag]',
+
+    /**
      * {@inheritDoc}
      */
     initialize: function(options) {
@@ -20,6 +27,11 @@
 
         // init bean collection used for type aheads
         this.filterResults = app.data.createBeanCollection('Tags');
+
+        // initialize value to empty array
+        if (!this.model.get('tag')) {
+            this.model.set('tag', []);
+        }
     },
 
     /**
@@ -257,7 +269,6 @@
                 return record.name === e.removed.text;
             });
         }
-
         this.model.set('tag', this.value);
     },
 
@@ -273,12 +284,22 @@
      * @override
      */
     bindDomChange: function() {
+        // Borrowed from team set
+        var $el = this.$(this.appendTagInput);
+        if ($el.length) {
+            $el.on('change', _.bind(function() {
+                this.appendTagValue = $el.prop('checked');
+                this.model.set('tag_type', this.appendTagValue ? '1' : '0');
+            }, this));
+        }
     },
 
     /**
      * {@inheritDoc}
      */
     unbindDom: function() {
+        // This line is likewise borrowed from team set
+        this.$(this.appendTagInput).off();
         this.$('.select2field').select2('destroy');
         this._super('unbindDom');
     }

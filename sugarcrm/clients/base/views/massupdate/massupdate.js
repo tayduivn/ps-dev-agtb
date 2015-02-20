@@ -790,6 +790,8 @@
                 attributes.push('parent_id', 'parent_type');
             } else if (value.name === 'team_name') {
                 attributes.push('team_name_type');
+            } else if (value.name === 'tag') {
+                attributes.push('tag_type');
             } else if (value.isMultiSelect) {
                 attributes.push(value.name + '_replace');
             }

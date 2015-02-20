@@ -239,4 +239,17 @@ class SugarFieldRelatecollection extends SugarFieldBase
     {
         return new SugarQuery();
     }
+
+    /**
+     * Used during mass update process
+     * @param SugarBean $bean
+     * @param array     $params
+     * @param string    $fieldName
+     * @param array     $properties
+     * @return void
+     */
+    public function apiMassUpdate(SugarBean $bean, array $params, $fieldName, $properties)
+    {
+        return $this->apiSave($bean, $params, $fieldName, $properties);
+    }
 }

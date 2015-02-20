@@ -31,19 +31,28 @@ class SugarFieldTag extends SugarFieldRelatecollection
             return;
         }
 
-        // Loop through submitted Tags to make collection of  tag beans (either new or retrieved)
-        $relBeans = array();
-        foreach ($params[$field] as $key => $record) {
-            // Collect all tag beans
-            $relBeans[] = $this->getTagBean($record);
-        }
-
-        // get relationship name and load the relationship
+        // get and load the relationship
         // then figure out the tags which have been added / deleted by comparing between
         // original tags and the submitted tags
         $relField = $properties['link'];
 
         if ($bean->load_relationship($relField)) {
+
+            // if an empty array is passed delete all tags associated with the bean and exit
+            // Be careful not to delete all when empty array and "add" passed in
+            if (empty($params[$field]) &&
+                (!isset($params[$field . '_type']) || ($params[$field . '_type'] === 'replace'))) {
+                $bean->$relField->delete($bean->id);
+                return;
+            }
+
+            // Loop through submitted Tags to make collection of  tag beans (either new or retrieved)
+            $relBeans = array();
+            foreach ($params[$field] as $key => $record) {
+                // Collect all tag beans
+                $relBeans[] = $this->getTagBean($record);
+            }
+
             // get current tag beans on the record
             $currRelBeans = $bean->$relField->getBeans();
 
@@ -57,7 +66,10 @@ class SugarFieldTag extends SugarFieldRelatecollection
             list($addedTags, $removedTags) = $this->getChangedValues($originalTags, $changedTags);
 
             // Handle delete of tags
-            $this->removeTagsFromBean($bean, $currRelBeans, $relField, $removedTags);
+            // For mass append tag_type will be 'add' and hence delete can be skipped
+            if (!isset($params[$field . '_type']) || ($params[$field . '_type'] === 'replace')) {
+                $this->removeTagsFromBean($bean, $currRelBeans, $relField, $removedTags);
+            }
 
             // Handle adding new tags
             $this->addTagsToBean($bean, $relBeans, $relField, $addedTags);

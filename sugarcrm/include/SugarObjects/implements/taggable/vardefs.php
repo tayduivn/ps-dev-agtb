@@ -22,6 +22,7 @@ $vardefs = array(
                 'mobile' => false,
                 'portal' => false,
             ),
+            'massupdate' => true,
         ),
         'tag_link' => array(
             'name' => 'tag_link',
