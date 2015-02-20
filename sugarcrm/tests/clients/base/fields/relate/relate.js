@@ -459,7 +459,7 @@ describe('Base.Field.Relate', function() {
                 expected: {
                     label: 'The related Account',
                     filter_populate: {
-                        'account_id': '1234-5678'
+                        'account_id': {$in: ['1234-5678']}
                     }
                 }
             },
@@ -472,7 +472,7 @@ describe('Base.Field.Relate', function() {
                 expected: {
                     label: 'The related Contact',
                     filter_populate: {
-                        'id': 'abcd-efgh'
+                        'id': {$in: ['abcd-efgh']}
                     }
                 }
             }
