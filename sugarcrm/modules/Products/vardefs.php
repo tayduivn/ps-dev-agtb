@@ -458,25 +458,6 @@ $dictionary['Product'] = array(
             'calculated' => true,
             'enforced' => true,
         ),
-        'currency_id' => array(
-            'name' => 'currency_id',
-            'dbType' => 'id',
-            'vname' => 'LBL_CURRENCY_ID',
-            'type' => 'currency_id',
-            'function' => 'getCurrencies',
-            'function_bean' => 'Currencies',
-            'required' => false,
-            'reportable' => false,
-            'default' => '-99',
-            'comment' => 'Currency of the product'
-        ),
-        'base_rate' => array(
-            'name' => 'base_rate',
-            'vname' => 'LBL_CURRENCY_RATE',
-            'type' => 'decimal',
-            'len' => '26,6',
-            'studio' => false
-        ),
         'status' => array(
             'name' => 'status',
             'vname' => 'LBL_STATUS',
@@ -731,48 +712,6 @@ $dictionary['Product'] = array(
             'link_type' => 'one',
             'source' => 'non-db',
         ),
-        // Added for Meta-Data framework
-        'currency_name' => array(
-            'name' => 'currency_name',
-            'rname' => 'name',
-            'id_name' => 'currency_id',
-            'vname' => 'LBL_CURRENCY_NAME',
-            'type' => 'relate',
-            'link' => 'currencies',
-            'isnull' => true,
-            'table' => 'currencies',
-            'module' => 'Currencies',
-            'source' => 'non-db',
-            'function' => 'getCurrencies',
-            'function_bean' => 'Currencies',
-            'studio' => false,
-            'duplicate_merge' => 'disabled',
-            'massupdate' => false
-        ),
-        'currency_symbol' => array(
-            'name' => 'currency_symbol',
-            'rname' => 'symbol',
-            'id_name' => 'currency_id',
-            'vname' => 'LBL_CURRENCY_SYMBOL',
-            'type' => 'relate',
-            'link' => 'currencies',
-            'isnull' => true,
-            'table' => 'currencies',
-            'module' => 'Currencies',
-            'source' => 'non-db',
-            'function' => 'getCurrencySymbols',
-            'function_bean' => 'Currencies',
-            'studio' => false,
-            'duplicate_merge' => 'disabled',
-            'massupdate' => false
-        ),
-        'currencies' => array(
-            'name' => 'currencies',
-            'type' => 'link',
-            'relationship' => 'product_currencies',
-            'source' => 'non-db',
-            'vname' => 'LBL_CURRENCIES',
-        ),
         'quote_name' => array(
             'name' => 'quote_name',
             'rname' => 'name',
@@ -987,15 +926,6 @@ $dictionary['Product'] = array(
         array('name' => 'idx_product_rli', 'type' => 'index', 'fields' => array('revenuelineitem_id')),
     ),
     'relationships' => array(
-        'product_currencies' => array(
-            'lhs_module' => 'Products',
-            'lhs_table' => 'products',
-            'lhs_key' => 'currency_id',
-            'rhs_module' => 'Currencies',
-            'rhs_table' => 'currencies',
-            'rhs_key' => 'id',
-            'relationship_type' => 'one-to-many'
-        ),
         'product_notes' => array(
             'lhs_module' => 'Products',
             'lhs_table' => 'products',
@@ -1146,5 +1076,6 @@ VardefManager::createVardef(
         'default',
         'assignable',
         'team_security',
+        'currency'
     )
 );

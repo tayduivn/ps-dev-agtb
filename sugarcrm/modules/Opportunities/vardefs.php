@@ -142,13 +142,6 @@ $dictionary['Opportunity'] = array(
             'convertToBase' => true,
             'showTransactionalAmount' => true,
         ),
-        'base_rate' => array(
-            'name' => 'base_rate',
-            'vname' => 'LBL_CURRENCY_RATE',
-            'type' => 'decimal',
-            'len' => '26,6',
-            'studio' => false
-        ),
         'amount_usdollar' => array(
             'name' => 'amount_usdollar',
             'vname' => 'LBL_AMOUNT_USDOLLAR',
@@ -178,52 +171,6 @@ $dictionary['Opportunity'] = array(
             'formula' => 'ifElse(isNumeric($amount), currencyDivide($amount, $base_rate), "")',
             'calculated' => true,
             'enforced' => true,
-        ),
-        'currency_id' => array(
-            'name' => 'currency_id',
-            'type' => 'currency_id',
-            'dbType' => 'id',
-            'group' => 'currency_id',
-            'vname' => 'LBL_CURRENCY',
-            'function' => 'getCurrencies',
-            'function_bean' => 'Currencies',
-            'reportable' => false,
-            'comment' => 'Currency used for display purposes',
-            'default' => '-99'
-        ),
-        'currency_name' => array(
-            'name' => 'currency_name',
-            'rname' => 'name',
-            'id_name' => 'currency_id',
-            'vname' => 'LBL_CURRENCY_NAME',
-            'type' => 'relate',
-            'link' => 'currencies',
-            'isnull' => true,
-            'table' => 'currencies',
-            'module' => 'Currencies',
-            'source' => 'non-db',
-            'function' => 'getCurrencies',
-            'function_bean' => 'Currencies',
-            'studio' => false,
-            'duplicate_merge' => 'disabled',
-            'massupdate' => false
-        ),
-        'currency_symbol' => array(
-            'name' => 'currency_symbol',
-            'rname' => 'symbol',
-            'id_name' => 'currency_id',
-            'vname' => 'LBL_CURRENCY_SYMBOL',
-            'type' => 'relate',
-            'link' => 'currencies',
-            'isnull' => true,
-            'table' => 'currencies',
-            'module' => 'Currencies',
-            'source' => 'non-db',
-            'function' => 'getCurrencySymbols',
-            'function_bean' => 'Currencies',
-            'studio' => false,
-            'duplicate_merge' => 'disabled',
-            'massupdate' => false
         ),
         'date_closed' => array(
             'name' => 'date_closed',
@@ -495,13 +442,6 @@ $dictionary['Opportunity'] = array(
             'vname' => 'LBL_CAMPAIGNS',
             'reportable' => false
         ),
-        'currencies' => array(
-            'name' => 'currencies',
-            'type' => 'link',
-            'relationship' => 'opportunity_currencies',
-            'source' => 'non-db',
-            'vname' => 'LBL_CURRENCIES',
-        ),
         'contracts' => array(
             'name' => 'contracts',
             'type' => 'link',
@@ -653,15 +593,6 @@ $dictionary['Opportunity'] = array(
             'rhs_key' => 'opportunity_id',
             'relationship_type' => 'one-to-many'
         ),
-        'opportunity_currencies' => array(
-            'lhs_module' => 'Opportunities',
-            'lhs_table' => 'opportunities',
-            'lhs_key' => 'currency_id',
-            'rhs_module' => 'Currencies',
-            'rhs_table' => 'currencies',
-            'rhs_key' => 'id',
-            'relationship_type' => 'one-to-many'
-        ),
         'opportunities_assigned_user' => array(
             'lhs_module' => 'Users',
             'lhs_table' => 'users',
@@ -727,5 +658,6 @@ VardefManager::createVardef(
         'default',
         'assignable',
         'team_security',
+        'currency'
     )
 );
