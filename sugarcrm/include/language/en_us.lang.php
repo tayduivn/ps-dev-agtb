@@ -3976,6 +3976,7 @@ Sincerely, SugarCRM',
     'LBL_PAGE_NAME' => 'Page Name',
 
     'LBL_SEARCH_RESULTS' => 'Search Results',
+    'LBL_SEARCH_RESULTS_FOR' => 'Search Results for',
     'LBL_SEARCH_MODULES' => 'Modules',
     'LBL_SEARCH_CHARTS' => 'Charts',
     'LBL_SEARCH_REPORT_CHARTS' => 'Report Charts',
