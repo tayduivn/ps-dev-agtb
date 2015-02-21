@@ -302,6 +302,11 @@ $dictionary['ProductTemplate'] = array(
             'options' => 'pricing_formula_dom',
             'len' => 100,
             'comment' => 'Pricing formula (ex: Fixed, Markup over Cost)',
+            'studio' => array(
+                'field' => array(
+                    'options' => false,
+                ),
+            ),
             'related_fields' => array(
                 'pricing_factor',
             ),
