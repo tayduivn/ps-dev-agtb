@@ -38,9 +38,6 @@
         var changedAttributes = this.model.changedAttributes(this.model.getSyncedAttributes());
         this.model.set(changedAttributes);
         this._super('cancelClicked');
-
-        // re-trigger this event for dashlets to listen for
-        this.context.trigger('button:cancel_button:click');
     },
 
     /**

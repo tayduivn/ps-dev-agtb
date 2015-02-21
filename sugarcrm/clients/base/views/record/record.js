@@ -35,7 +35,6 @@
 
     events: {
         'click .record-edit-link-wrapper': 'handleEdit',
-        'click a[name=cancel_button]': 'cancelClicked',
         'click [data-action=scroll]': 'paginateRecord',
         'click .record-panel-header': 'togglePanel',
         'click #recordTab > .tab > a:not(.dropdown-toggle)': 'setActiveTab',
@@ -248,6 +247,7 @@
         this.context.on('button:save_button:click', this.saveClicked, this);
         this.context.on('button:delete_button:click', this.deleteClicked, this);
         this.context.on('button:duplicate_button:click', this.duplicateClicked, this);
+        this.context.on('button:cancel_button:click', this.cancelClicked, this);
     },
 
     _render: function() {
