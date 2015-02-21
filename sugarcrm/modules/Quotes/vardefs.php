@@ -540,7 +540,11 @@ $dictionary['Quote'] = array(
             'module' => 'Accounts',
             'source' => 'non-db',
             'massupdate' => false,
-            'studio' => 'false',
+            'studio' => array(
+                'edit' => 'false',
+                'detail' => 'false',
+                'list' => 'false',
+            )
         ),
         'account_id' => array(
             'name' => 'account_id',
