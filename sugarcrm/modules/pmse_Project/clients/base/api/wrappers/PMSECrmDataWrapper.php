@@ -24,7 +24,7 @@ require_once 'PMSEObservers/PMSEObservable.php';
  *
  * @package PMSE
  */
-class PMSECrmDataWrapper implements PMSEObservable
+class PMSECrmDataWrapper extends ModuleApi implements PMSEObservable
 {
     /**
      *
@@ -995,10 +995,7 @@ class PMSECrmDataWrapper implements PMSEObservable
                     )) || stristr($tmpField['value'], 'email') ? 'email' : $tmpField['type'];
                 $tmpField['optionItem'] = 'none';
                 if ($field['type'] == 'enum' || $field['type'] == 'radioenum') {
-                    if (!isset($moduleApiClass)) {
-                        $moduleApiClass = new ModuleApi();
-                    }
-                    $tmpField['optionItem'] = $moduleApiClass->getEnumValues(
+                    $tmpField['optionItem'] = $this->getEnumValues(
                         $additionalArgs["api"],
                         array(
                             "module" => $filter,
