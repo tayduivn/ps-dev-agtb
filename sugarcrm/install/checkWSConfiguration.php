@@ -22,42 +22,42 @@ function checkWSConfiguration($silent = false)
     global $mod_strings;
     $errors = array();
 
-    copyInputsIntoSession();
+    copyInputsIntoSessionWS();
 
     if (trim($_SESSION['websockets']['client']['url']) == '') {
         $errors['ERR_WEB_SOCKET_CLIENT_URL'] = $mod_strings['ERR_WEB_SOCKET_CLIENT_URL'];
+        installLog("ERROR::  {$errors['ERR_WEB_SOCKET_CLIENT_URL']}");
     } else {
         $clientSettings = SugarSocket::checkWSSettings($_SESSION['websockets']['client']['url'], 'client');
         $_SESSION['websockets']['client']['balancer'] = $clientSettings['isBalancer'];
         if (!$clientSettings['available']) {
             $errors['ERR_WEB_SOCKET_CLIENT_ERROR'] = $mod_strings['ERR_WEB_SOCKET_CLIENT_ERROR'];
+            installLog("ERROR::  {$errors['ERR_WEB_SOCKET_CLIENT_ERROR']}");
         }
     }
 
     if (trim($_SESSION['websockets']['server']['url']) == '') {
         $errors['ERR_WEB_SOCKET_SERVER_URL'] = $mod_strings['ERR_WEB_SOCKET_SERVER_URL'];
+        installLog("ERROR::  {$errors['ERR_WEB_SOCKET_CLIENT_URL']}");
     } else {
         $serverSettings = SugarSocket::checkWSSettings($_SESSION['websockets']['server']['url'], 'server');
         // No need to save server balancer configuration.
         if (!$serverSettings['available']) {
             $errors['ERR_WEB_SOCKET_SERVER_ERROR'] = $mod_strings['ERR_WEB_SOCKET_SERVER_ERROR'];
+            installLog("ERROR::  {$errors['ERR_WEB_SOCKET_SERVER_ERROR']}");
         }
-    }
-
-    if (trim($_SESSION['websockets']['public_secret']) == '') {
-        $errors['ERR_WEB_SOCKET_SECRET'] = $mod_strings['ERR_WEB_SOCKET_SECRET'];
     }
 
     if ($silent) {
         return $errors;
     } else {
-        printErrors($errors);
+        printErrorsWS($errors);
     }
 
     installLog("End WebSocket Configuration Check Process *************");
 }
 
-function printErrors($errors)
+function printErrorsWS($errors)
 {
     global $mod_strings;
 
@@ -80,7 +80,7 @@ function printErrors($errors)
     }
 }
 
-function copyInputsIntoSession()
+function copyInputsIntoSessionWS()
 {
     if (isset($_REQUEST['websockets']['client']['url'])) {
         $_SESSION['websockets']['client']['url'] =
@@ -94,9 +94,5 @@ function copyInputsIntoSession()
             filter_var(trim($_REQUEST['websockets']['server']['url']), FILTER_VALIDATE_URL) ?
                 trim($_REQUEST['websockets']['server']['url']) :
                 '';
-    }
-
-    if (isset($_REQUEST['websockets']['public_secret'])) {
-        $_SESSION['websockets']['public_secret'] = $_REQUEST['websockets']['public_secret'];
     }
 }

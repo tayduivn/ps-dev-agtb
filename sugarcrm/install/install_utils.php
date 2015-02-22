@@ -1627,6 +1627,12 @@ function validate_dbConfig() {
 
 }
 
+function validate_wsConfig() {
+    global $mod_strings;
+    require_once('install/checkWSConfiguration.php');
+    return checkWSConfiguration(true);
+}
+
 function validate_siteConfig($type){
     global $mod_strings;
    $errors = array();

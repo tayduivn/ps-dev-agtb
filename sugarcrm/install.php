@@ -645,6 +645,11 @@ EOQ;
             $the_file = 'siteConfig_b.php';
             $si_errors = true;
         }
+        $validation_errors = validate_wsConfig();
+        if(count($validation_errors) > 0) {
+            $the_file = 'websocketConfig.php';
+            $si_errors = true;
+        }
 
         if(!$si_errors){
             $the_file = 'performSetup.php';
