@@ -27,7 +27,7 @@
 
     fieldTag: 'input.select2',
 
-    plugins: ['Tooltip'],
+    plugins: ['Tooltip', 'DragdropSelect2'],
 
     /**
      * @override
@@ -55,6 +55,9 @@
             this.getFieldElement().select2('data', recipients);
             // rebuild the tooltips
             this.initializeAllPluginTooltips();
+            if (!this.def.readonly) {
+                this.setDragDropPluginEvents(this.getFieldElement());
+            }
         }, this);
         /**
          * Sets up event handlers that allow external forces to manipulate the contents of the collection, while
@@ -157,6 +160,10 @@
             if (!!this.def.disabled) {
                 $recipientsField.select2('disable');
             }
+
+            if (!this.def.readonly) {
+                this.setDragDropPluginEvents(this.getFieldElement());
+            }
         }
     },
 
@@ -235,6 +242,7 @@
             template = app.template.getField(this.type, 'select2-selection', this.module);
         if (template) {
             return template({
+                id: recipient.id,
                 name: value,
                 email: recipient.email
             });
