@@ -11,6 +11,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Data\NestedBeanInterface;
+
 require_once 'clients/base/api/FilterApi.php';
 
 class TreeApi extends FilterApi
@@ -174,7 +176,9 @@ class TreeApi extends FilterApi
         $bean = BeanFactory::retrieveBean($module, $id);
         
         if (false === ($bean instanceof NestedBeanInterface)) {
-            throw new SugarApiExceptionInvalidParameter('Requested module "' . $module . '" should be instance of NestedBeanInterface');
+            throw new SugarApiExceptionInvalidParameter(
+                'Requested module "' . $module . '" should be instance of Sugarcrm\Sugarcrm\Data\NestedBeanInterface'
+            );
         }
         
         if (null === $bean || $bean->deleted == 1) {
@@ -231,7 +235,10 @@ class TreeApi extends FilterApi
         $bean = BeanFactory::newBean($args['module']);
         
         if (false === ($bean instanceof NestedBeanInterface)) {
-            throw new SugarApiExceptionInvalidParameter('Requested module "' . $args['module'] . '" should be instance of NestedBeanInterface');
+            throw new SugarApiExceptionInvalidParameter(
+                'Requested module "' . $args['module'] . '" should be ' .
+                'instance of Sugarcrm\Sugarcrm\Data\NestedBeanInterface'
+            );
         }
 
         try {

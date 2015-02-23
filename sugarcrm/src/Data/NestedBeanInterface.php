@@ -1,5 +1,4 @@
 <?php
-
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -11,6 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+namespace Sugarcrm\Sugarcrm\Data;
+
+/**
+ * @package Sugarcrm\Sugarcrm\Data
+ */
 interface NestedBeanInterface
 {
 
@@ -52,7 +56,7 @@ interface NestedBeanInterface
 
     /**
      * Determines if node is descendant of target node.
-     * @param Category $target the subject node.
+     * @param Sugarcrm\Sugarcrm\Data\NestedBeanInterface $target the subject node.
      * @return boolean whether the node is descendant of target node.
      */
     public function isDescendantOf(NestedBeanInterface $target);
@@ -65,49 +69,50 @@ interface NestedBeanInterface
 
     /**
      * Inserts node as previous sibling of target.
-     * @param NestedBeanInterface $node.
+     * @param Sugarcrm\Sugarcrm\Data\NestedBeanInterface $node.
      */
     public function insertBefore(NestedBeanInterface $node);
 
     /**
      * Inserts node as next sibling of target.
-     * @param NestedBeanInterface $node.
+     * @param Sugarcrm\Sugarcrm\Data\NestedBeanInterface $node.
      */
     public function insertAfter(NestedBeanInterface $node);
 
     /**
      * Prepends node as first child.
-     * @param NestedBeanInterface $node.
+     * @param Sugarcrm\Sugarcrm\Data\NestedBeanInterface $node.
      */
     public function prepend(NestedBeanInterface $node);
 
     /**
      * Append node as last child.
-     * @param NestedBeanInterface $node.
+     * @param Sugarcrm\Sugarcrm\Data\NestedBeanInterface $node.
      */
     public function append(NestedBeanInterface $node);
 
     /**
      * Move node as previous sibling of target.
-     * @param NestedBeanInterface $target the target.
+     * @param Sugarcrm\Sugarcrm\Data\NestedBeanInterface $target the target.
      */
     public function moveBefore(NestedBeanInterface $target);
 
     /**
      * Move node as next sibling of target.
-     * @param NestedBeanInterface $target the target.
+     * @param Sugarcrm\Sugarcrm\Data\NestedBeanInterface $target the target.
      */
     public function moveAfter(NestedBeanInterface $target);
 
     /**
      * Move node as first child of target.
-     * @param NestedBeanInterface $target the target.
+     * @param Sugarcrm\Sugarcrm\Data\NestedBeanInterface $target the target.
      */
     public function moveAsFirst(NestedBeanInterface $target);
 
     /**
+     * @inheritDoc
      * Move node as last child of target.
-     * @param NestedBeanInterface $target the target.
+     * @param Sugarcrm\Sugarcrm\Data\NestedBeanInterface $target the target.
      */
     public function moveAsLast(NestedBeanInterface $target);
 }

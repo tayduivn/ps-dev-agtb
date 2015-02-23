@@ -11,7 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-include_once 'data/NestedBeanInterface.php';
+use Sugarcrm\Sugarcrm\Data\NestedBeanInterface;
 
 class Category extends SugarBean implements NestedBeanInterface
 {
@@ -302,9 +302,7 @@ class Category extends SugarBean implements NestedBeanInterface
     }
 
     /**
-     * Determines if node is descendant of target node.
-     * @param Category $target the subject node.
-     * @return boolean whether the node is descendant of target node.
+     * {@inheritDoc}
      */
     public function isDescendantOf(NestedBeanInterface $target)
     {
@@ -386,8 +384,7 @@ class Category extends SugarBean implements NestedBeanInterface
     }
 
     /**
-     * Append node as last child.
-     * @param NestedBeanInterface $node.
+     * {@inheritDoc}
      */
     public function append(NestedBeanInterface $node)
     {
@@ -395,8 +392,7 @@ class Category extends SugarBean implements NestedBeanInterface
     }
 
     /**
-     * Prepends node as first child.
-     * @param NestedBeanInterface $node.
+     * {@inheritDoc}
      */
     public function prepend(NestedBeanInterface $node)
     {
@@ -404,8 +400,7 @@ class Category extends SugarBean implements NestedBeanInterface
     }
 
     /**
-     * Inserts node as previous sibling of target.
-     * @param NestedBeanInterface $node.
+     * {@inheritDoc}
      */
     public function insertBefore(NestedBeanInterface $target)
     {
@@ -413,8 +408,7 @@ class Category extends SugarBean implements NestedBeanInterface
     }
 
     /**
-     * Inserts node as next sibling of target.
-     * @param NestedBeanInterface $node.
+     * {@inheritDoc}
      */
     public function insertAfter(NestedBeanInterface $target)
     {
@@ -422,8 +416,7 @@ class Category extends SugarBean implements NestedBeanInterface
     }
 
     /**
-     * Move node as first child of target.
-     * @param NestedBeanInterface $target the target.
+     * {@inheritDoc}
      */
     public function moveAsFirst(NestedBeanInterface $target)
     {
@@ -431,8 +424,7 @@ class Category extends SugarBean implements NestedBeanInterface
     }
 
     /**
-     * Move node as last child of target.
-     * @param NestedBeanInterface $target the target.
+     * {@inheritDoc}
      */
     public function moveAsLast(NestedBeanInterface $target)
     {
@@ -440,8 +432,7 @@ class Category extends SugarBean implements NestedBeanInterface
     }
 
     /**
-     * Move node as next sibling of target.
-     * @param NestedBeanInterface $target the target.
+     * {@inheritDoc}
      */
     public function moveAfter(NestedBeanInterface $target)
     {
@@ -449,8 +440,7 @@ class Category extends SugarBean implements NestedBeanInterface
     }
 
     /**
-     * Move node as previous sibling of target.
-     * @param NestedBeanInterface $target the target.
+     * {@inheritDoc}
      */
     public function moveBefore(NestedBeanInterface $target)
     {
