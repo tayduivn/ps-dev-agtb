@@ -146,7 +146,7 @@ class ModuleInstaller{
                 if(!empty($upgrade_manifest)){
                     if(!empty($upgrade_manifest['upgrade_paths'])){
                         if(!empty($upgrade_manifest['upgrade_paths'][$previous_version])){
-                            $installdefs = 	$upgrade_manifest['upgrade_paths'][$previous_version];
+                            $installdefs = $upgrade_manifest['upgrade_paths'][$previous_version];
                         }else{
                             $errors[] = 'No Upgrade Path Found in manifest.';
                             $this->abort($errors);
@@ -516,15 +516,15 @@ class ModuleInstaller{
      * @param string $filename Target filename
      * @param array  $modules
      */
-	public function rebuildExt($ext, $filename, $modules = array())
-	{
+    public function rebuildExt($ext, $filename, $modules = array())
+    {
         if (stristr($ext, '__PH_SUBTYPE__')) {
             $this->log(translate('LBL_MI_REBUILDING') . " " . translate('LBL_MI_REBUILDING_CLIENT_METADATA'));
         } else {
             $this->log(translate('LBL_MI_REBUILDING') . " $ext...");
         }
         $this->merge_files("Ext/$ext/", $filename, null, null, $modules);
-	}
+    }
 
     /**
      * Disable generic extension
@@ -1395,10 +1395,6 @@ class ModuleInstaller{
                 fclose ( $out ) ;
             }
 
-
-
-
-            Relationship::delete_cache();
             $this->rebuild_vardefs () ;
             $this->rebuild_layoutdefs () ;
             if ($save_table_dictionary)
@@ -1417,9 +1413,9 @@ class ModuleInstaller{
     function install_relationship($file)
     {
         $_REQUEST['moduleInstaller'] = true;
-        if(!file_exists($file))
-        {
-            $GLOBALS['log']->debug( 'File does not exists : '.$file);
+        if (!file_exists($file)) {
+            $GLOBALS['log']->debug('File does not exists : ' . $file);
+
             return;
         }
         include($file);
@@ -1427,27 +1423,25 @@ class ModuleInstaller{
 
         array_walk($rel_dictionary, array("ModuleInstaller", "cleanUpRelationship"));
 
-        foreach ($rel_dictionary as $rel_name => $rel_data)
-        {
-            $table = ''; // table is actually optional
+        foreach ($rel_dictionary as $rel_name => $rel_data) {
             // check if we have a table definition - not all relationships require a join table
-            if ( isset( $rel_data[ 'table' ] ) )
-            {
-                $table = $rel_data[ 'table' ];
+            if (isset($rel_data['table'])) {
+                $table = $rel_data['table'];
 
-                if(!$this->db->tableExists($table))
-                {
-                    $this->db->createTableParams($table, $rel_data[ 'fields' ], $rel_data[ 'indices' ]);
+                if (!$this->db->tableExists($table)) {
+                    $this->db->createTableParams($table, $rel_data['fields'], $rel_data['indices']);
                 }
             }
 
-            if(!$this->silent)
-                $GLOBALS['log']->debug("Processing relationship meta for ". $rel_name."...");
-            SugarBean::createRelationshipMeta($rel_name, $this->db,$table,$rel_dictionary,'');
-            Relationship::delete_cache();
-            if(!$this->silent)
-                $GLOBALS['log']->debug( 'done<br>');
+            if (!$this->silent) {
+                $GLOBALS['log']->debug("Processing relationship meta for " . $rel_name . "...");
+            }
+            if (!$this->silent) {
+                $GLOBALS['log']->debug('done<br>');
+            }
         }
+
+        SugarRelationshipFactory::deleteCache();
     }
 
 
@@ -1862,9 +1856,9 @@ class ModuleInstaller{
         $app_list_strings = return_app_list_strings_language($current_language);
     }
 
-	function rebuild_vardefs($modules = array())
-	{
-	    $this->rebuildExt("Vardefs", 'vardefs.ext.php', null, null, $modules);
+    function rebuild_vardefs($modules = array())
+    {
+        $this->rebuildExt("Vardefs", 'vardefs.ext.php', null, null, $modules);
         if (!empty($modules)) {
             foreach($modules as $module) {
                 VardefManager::clearVardef($module);
@@ -1872,25 +1866,22 @@ class ModuleInstaller{
         } else {
             VardefManager::clearVardef();
         }
-		sugar_cache_reset();
-	}
+        sugar_cache_reset();
+    }
 
 	function rebuild_dashletcontainers($modules = array()){
-            $this->log(translate('LBL_MI_REBUILDING') . " DC Actions...");
-			$this->merge_files('Ext/DashletContainer/Containers/', 'dcactions.ext.php', null, null, $modules);
-	}
+        $this->log(translate('LBL_MI_REBUILDING') . " DC Actions...");
+        $this->merge_files('Ext/DashletContainer/Containers/', 'dcactions.ext.php', null, null, $modules);
+    }
 
     function rebuild_tabledictionary()
     {
         $this->rebuildExt("TableDictionary", 'tabledictionary.ext.php');
     }
 
-    function rebuild_relationships($changedModules = array()) {
-        if(!$this->silent) echo translate('LBL_MI_REBUILDING') . ' Relationships';
-        $_REQUEST['silent'] = true;
-        global $beanFiles;
-        include('include/modules.php');
-        include("modules/Administration/RebuildRelationship.php");
+    function rebuild_relationships($changedModules = array())
+    {
+        SugarRelationshipFactory::rebuildCache($changedModules);
     }
 
     function remove_acl_actions() {
@@ -1916,20 +1907,23 @@ class ModuleInstaller{
      * @param boolean $silent
      * @param array   $modules optional list of modules to update. If $modules is empty, all modules are rebuilt
      */
-	function rebuild_all($silent=false, $modules = array()){
-		if(defined('TEMPLATE_URL'))SugarTemplateUtilities::disableCache();
-		$this->silent=$silent;
-		global $sugar_config;
+    function rebuild_all($silent = false, $modules = array())
+    {
+        if (defined('TEMPLATE_URL')) {
+            SugarTemplateUtilities::disableCache();
+        }
+        $this->silent = $silent;
+        global $sugar_config;
 
-		$this->rebuild_languages($sugar_config['languages']);
-		$this->rebuild_extensions($modules);
-		$this->rebuild_dashletcontainers();
-		// This will be a time consuming process, particularly if $modules is empty
-		$this->rebuild_relationships(array_flip($modules));
-		$this->rebuild_tabledictionary();
-		$this->reset_opcodes();
-		sugar_cache_reset();
-	}
+        $this->rebuild_languages($sugar_config['languages']);
+        $this->rebuild_extensions($modules);
+        $this->rebuild_dashletcontainers();
+        // This will be a time consuming process, particularly if $modules is empty
+        $this->rebuild_relationships($modules);
+        $this->rebuild_tabledictionary();
+        $this->reset_opcodes();
+        sugar_cache_reset();
+    }
 
     function reset_file_cache()
     {
@@ -2494,7 +2488,7 @@ class ModuleInstaller{
                 if(!empty($upgrade_manifest)){
                     if(!empty($upgrade_manifest['upgrade_paths'])){
                         if(!empty($upgrade_manifest['upgrade_paths'][$previous_version])){
-                            $installdefs = 	$upgrade_manifest['upgrade_paths'][$previous_version];
+                            $installdefs = $upgrade_manifest['upgrade_paths'][$previous_version];
                         }else{
                             $errors[] = 'No Upgrade Path Found in manifest.';
                             $this->abort($errors);
@@ -2608,7 +2602,7 @@ class ModuleInstaller{
             $str = "<?php \n //WARNING: The contents of this file are auto-generated\n";
             $save_table_dictionary = false;
             foreach($this->installdefs['relationships'] as $relationship){
-                $filename	=basename($relationship['meta_data']);
+                $filename = basename($relationship['meta_data']);
 
                 $save_table_dictionary  = true;
                 $str .= "include_once('metadata/$filename');\n";

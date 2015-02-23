@@ -480,9 +480,9 @@ class StudioModule
      * 
      * @return AbstractRelationships Set of relationships
      */
-    public function getRelationships()
+    public function getRelationships($relationshipName = "")
     {
-        return new DeployedRelationships($this->module);
+        return new DeployedRelationships($this->module, $relationshipName);
     }
 
     /**

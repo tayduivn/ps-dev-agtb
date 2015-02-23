@@ -1206,88 +1206,14 @@ class SugarBean
      *  @param boolean $iscustom Optional,set to true if module is installed in a custom directory. Default value is false.
      *  @static
      *
+     * @deprecated This is now handled through the SugarRelationshipFactory once the vardefs are loaded. No need to
+     * register an individual module
+     *
      *  Internal function, do not override.
      */
     function createRelationshipMeta($key,$db,$tablename,$dictionary,$module_dir,$iscustom=false)
     {
-        global $beanList;
-
-        //load the module dictionary if not supplied.
-        if (empty($dictionary) && !empty($module_dir)) {
-            if ($iscustom) {
-                $filename='custom/modules/' . $module_dir . '/Ext/Vardefs/vardefs.ext.php';
-            } else {
-                if ($key == 'User') {
-                    // a very special case for the Employees module
-                    // this must be done because the Employees/vardefs.php does an include_once on
-                    // Users/vardefs.php
-                    $filename='modules/Users/vardefs.php';
-                } else {
-                    $filename='modules/'. $module_dir . '/vardefs.php';
-                }
-            }
-
-            if (file_exists($filename)) {
-                include $filename;
-                // cn: bug 7679 - dictionary entries defined as $GLOBALS['name'] not found
-                if (empty($dictionary) || !empty($GLOBALS['dictionary'][$key])) {
-                    $dictionary = $GLOBALS['dictionary'];
-                }
-            } else {
-                $GLOBALS['log']->debug("createRelationshipMeta: no metadata file found" . $filename);
-                return;
-            }
-        }
-
-        if (!is_array($dictionary) or !array_key_exists($key, $dictionary)) {
-            $GLOBALS['log']->fatal("createRelationshipMeta: Metadata for table ".$tablename. " does not exist");
-            display_notice("meta data absent for table ".$tablename." keyed to $key ");
-        } else {
-            if (isset($dictionary[$key]['relationships'])) {
-                $RelationshipDefs = $dictionary[$key]['relationships'];
-                $beanList_ucase = array_change_key_case($beanList, CASE_UPPER);
-                $seed = BeanFactory::getBean("Relationships");
-                $keys = array_keys($seed->field_defs);
-                foreach ($RelationshipDefs as $rel_name => $rel_def) {
-                    if (isset($rel_def['lhs_module']) and !isset($beanList_ucase[strtoupper($rel_def['lhs_module'])])) {
-                        $GLOBALS['log']->debug('skipping orphaned relationship record ' . $rel_name . ' lhs module is missing ' . $rel_def['lhs_module']);
-                        continue;
-                    }
-
-                    if (isset($rel_def['rhs_module']) and !isset($beanList_ucase[strtoupper($rel_def['rhs_module'])])) {
-                        $GLOBALS['log']->debug('skipping orphaned relationship record ' . $rel_name . ' rhs module is missing ' . $rel_def['rhs_module']);
-                        continue;
-                    }
-
-                    //check whether relationship exists or not first.
-                    if (Relationship::exists($rel_name, $db)) {
-                        $GLOBALS['log']->debug('Skipping, relationship already exists '.$rel_name);
-                    } else {
-                        $toInsert = array();
-                        foreach($keys as $key) {
-                            if ($key == "id") {
-                                $toInsert[$key] = create_guid();
-                            } else if ($key == 'relationship_role_columns') {
-                                if (!empty($rel_def['relationship_role_columns'])) {
-                                    $toInsert[$key] = json_encode($rel_def['relationship_role_columns']);
-                                } else {
-                                    $toInsert[$key] = '';
-                                }
-                            } else if ($key == "relationship_name") {
-                                $toInsert[$key] = $rel_name;
-                            } else if (isset($rel_def[$key])) {
-                                $toInsert[$key] = $rel_def[$key];
-                            }
-                            //todo specify defaults if meta not defined.
-                        }
-                        DBManagerFactory::getInstance()->insertParams('relationships', $seed->field_defs, $toInsert);
-                        Relationship::$relCacheInternal[$rel_name] = true;
-                    }
-                }
-            } else {
-                $GLOBALS['log']->debug("createRelationshipMeta: No relationship metadata set for $module_dir");
-            }
-        }
+        $GLOBALS['log']->fatal("Deprecated function createRelationshipMeta called");
     }
 
     /**
@@ -1325,49 +1251,50 @@ class SugarBean
      * This method searches the vardef array for the requested attribute's definition. If the attribute is of the type
      * link then it creates a similary named variable and loads the relationship definition.
      *
-     * @param string $rel_name  relationship/attribute name.
-     * @return nothing.
+     * @param string $link_name link/attribute name.
+     *
+*@return nothing.
      */
-    function load_relationship($rel_name)
+    function load_relationship($link_name)
     {
-        $GLOBALS['log']->debug("SugarBean[{$this->object_name}].load_relationships, Loading relationship (".$rel_name.").");
+        $GLOBALS['log']->debug("SugarBean[{$this->object_name}].load_relationships, Loading link (" . $link_name.").");
 
-        if (empty($rel_name))
+        if (empty($link_name))
         {
-            $GLOBALS['log']->error("SugarBean.load_relationships, Null relationship name passed.");
+            $GLOBALS['log']->error("SugarBean.load_relationships, Null link name passed.");
             return false;
         }
         $fieldDefs = $this->getFieldDefinitions();
 
         //find all definitions of type link.
-        if (!empty($fieldDefs[$rel_name]))
+        if (!empty($fieldDefs[$link_name]))
         {
             //initialize a variable of type Link
             require_once('data/Link2.php');
-            $class = load_link_class($fieldDefs[$rel_name]);
-            if (isset($this->$rel_name) && $this->$rel_name instanceof $class) {
+            $class = load_link_class($fieldDefs[$link_name]);
+            if (isset($this->$link_name) && $this->$link_name instanceof $class) {
                     return true;
             }
             //if rel_name is provided, search the fieldef array keys by name.
-            if (isset($fieldDefs[$rel_name]['type']) && $fieldDefs[$rel_name]['type'] == 'link')
+            if (isset($fieldDefs[$link_name]['type']) && $fieldDefs[$link_name]['type'] == 'link')
             {
                 if ($class == "Link2")
-                    $this->$rel_name = new $class($rel_name, $this);
+                    $this->$link_name = new $class($link_name, $this);
                 else
-                    $this->$rel_name = new $class($fieldDefs[$rel_name]['relationship'], $this, $fieldDefs[$rel_name]);
+                    $this->$link_name = new $class($fieldDefs[$link_name]['relationship'], $this, $fieldDefs[$link_name]);
 
-                if (empty($this->$rel_name) ||
-                        (method_exists($this->$rel_name, "loadedSuccesfully") && !$this->$rel_name->loadedSuccesfully()))
+                if (empty($this->$link_name) ||
+                        (method_exists($this->$link_name, "loadedSuccesfully") && !$this->$link_name->loadedSuccesfully()))
                 {
-                    unset($this->$rel_name);
+                    unset($this->$link_name);
                     return false;
                 }
                 // keep track of the loaded relationships
-                $this->loaded_relationships[] = $rel_name;
+                $this->loaded_relationships[] = $link_name;
                 return true;
             }
         }
-        $GLOBALS['log']->debug("SugarBean.load_relationships, Error Loading relationship (".$rel_name.")");
+        $GLOBALS['log']->debug("SugarBean.load_relationships, Error Loading link (" . $link_name.")");
         return false;
     }
 
@@ -2367,7 +2294,6 @@ class SugarBean
      */
     protected function set_relationship_info($exclude = array())
     {
-
         $new_rel_id = false;
         $new_rel_link = false;
         // check incoming data
@@ -2633,14 +2559,13 @@ class SugarBean
      *
      * @api
      * @see save_relationship_changes
-     * @param string|boolean $new_rel_id
+     * @param string $new_rel_id
      * @param string $new_rel_link
      * @return boolean
      */
     protected function handle_request_relate($new_rel_id, $new_rel_link)
     {
         if (!empty($new_rel_id)) {
-
             if ($this->load_relationship($new_rel_link)) {
                 return $this->$new_rel_link->add(
                     $new_rel_id,
@@ -2650,24 +2575,27 @@ class SugarBean
                 $lower_link = strtolower($new_rel_link);
                 if ($this->load_relationship($lower_link)) {
                     return $this->$lower_link->add($new_rel_id);
+                } //Check if the $new_rel_id was a
+                else {
+                    if (BeanFactory::getBeanName($new_rel_id)) {
+                        $GLOBALS['log']->fatal("A request is attempting to relate two records by module name rather than link");
 
-                } else {
-                    require_once('data/Link2.php');
-                    $rel = Relationship::retrieve_by_modules($new_rel_link, $this->module_dir, $this->db, 'many-to-many');
+                        $rels = SugarRelationshipFactory::getInstance()->getRelationshipsBetweenModules($new_rel_id, $this->module_dir, "many-to-many");
 
-                    if (!empty($rel)) {
-                        foreach ($this->field_defs as $field => $def) {
-                            if ($def['type'] == 'link' && !empty($def['relationship']) && $def['relationship'] == $rel) {
-                                $this->load_relationship($field);
-                                return $this->$field->add($new_rel_id);
+                        if (!empty($rels)) {
+                            foreach ($this->field_defs as $field => $def) {
+                                if ($def['type'] == 'link' && !empty($def['relationship']) && in_array($def['relationship'], $rels)) {
+                                    if ($this->load_relationship($field)) {
+                                        return $this->$field->add($new_rel_id);
+                                    }
+                                }
                             }
-
                         }
-                        //ok so we didn't find it in the field defs let's save it anyway if we have the relationshp
-                        $this->$rel = new Link2($rel, $this, array());
-                        return $this->$rel->add($new_rel_id);
+
+                        $GLOBALS['log']->fatal("Unable to find a relationship to update between $new_rel_id and {$this->module_dir}");
                     }
                 }
+
             }
         }
 
@@ -3733,7 +3661,9 @@ class SugarBean
             $show_deleted = 1;
         }
 
-        $this->load_relationship($related_field_name);
+        if (!$this->load_relationship($related_field_name)) {
+            return array();
+        }
 
         if ($this->$related_field_name instanceof Link) {
 
