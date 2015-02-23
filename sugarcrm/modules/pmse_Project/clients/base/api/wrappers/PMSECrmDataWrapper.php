@@ -651,7 +651,7 @@ class PMSECrmDataWrapper extends ModuleApi implements PMSEObservable
     /**
      * @codeCoverageIgnore
      */
-    public function _get(array $args, RestService $api)
+    public function _get(array $args, ServiceBase $api)
     {
         $output = null;
         $data = $args['data'];
