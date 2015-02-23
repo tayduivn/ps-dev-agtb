@@ -653,6 +653,10 @@ $renamedefs = array(
             array('name' => 'LBL_OPPS_CONFIG_SALES_STAGE_2b', 'type' => 'singular', 'source' => 'Opportunities'),
             array('name' => 'LBL_OPPS_CONFIG_SALES_STAGE_3a', 'type' => 'plural', 'source' => 'RevenueLineItems'),
             array('name' => 'LBL_OPPS_CONFIG_SALES_STAGE_3b', 'type' => 'singular', 'source' => 'Opportunities'),
+            array('name' => 'LBL_HELP_CONFIG_OPPS', 'type' => 'plural', 'source' => 'RevenueLineItems'),
+            array('name' => 'LBL_HELP_CONFIG_OPPS', 'type' => 'singular', 'source' => 'RevenueLineItems'),
+            array('name' => 'LBL_HELP_CONFIG_RLIS', 'type' => 'plural', 'source' => 'RevenueLineItems'),
+            array('name' => 'LBL_HELP_CONFIG_RLIS', 'type' => 'singular', 'source' => 'RevenueLineItems'),
         ),
         'PdfManager' => array(
             array('name' => 'LBL_TPL_RLI', 'type' => 'plural', 'source' => 'RevenueLineItems'),
