@@ -18,4 +18,17 @@
  */
 ({
 
+    /**
+     * @InheritDoc
+     */
+    initialize: function(options) {
+        this._super('initialize', [options]);
+
+        this.collection.on('reset', function() {
+            _.each(this.collection.models, function(model) {
+                model.module = model.get('module');
+            });
+            this.render();
+        }, this);
+    }
 })
