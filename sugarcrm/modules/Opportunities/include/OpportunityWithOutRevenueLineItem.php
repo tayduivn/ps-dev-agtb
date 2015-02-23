@@ -83,6 +83,7 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
             'studio' => true,
             'massupdate' => true,
             'reportable' => true,
+            'importable' => 'required',
         ),
         'sales_status' => array(
             'studio' => false,
