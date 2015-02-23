@@ -282,4 +282,97 @@ class MetaDataConverterTest extends Sugar_PHPUnit_Framework_TestCase
         $convertedItem = $converter->convertCustomMenu($result);
         $this->assertEmpty($convertedItem);
     }
+
+    /**
+     * Test for not removing extra fields from defs while conversion.
+     *
+     * @param $viewdef
+     * @param $vardef
+     * @param $result
+     * @dataProvider provider_convertLegacyViewDefsToSidecar
+     */
+    public function testConvertLegacyViewDefsToSidecar($viewdef, $vardef, $result)
+    {
+        $mock = $this->getMock(
+            'MetaDataConverter',
+            array('loadSearchFields'),
+            array(),
+            '',
+            false,
+            false,
+            false
+        );
+        $mock->expects($this->any())
+            ->method('loadSearchFields')
+            ->will($this->returnValue($viewdef));
+        $defs = array();
+        $defs['layout']['basic_search'] = $viewdef;
+        $fields = $mock->convertLegacyViewDefsToSidecar($defs, "", $vardef, "", "");
+        $this->assertEquals($result, $fields['fields']);
+    }
+
+    /**
+     * Data provider.
+     *
+     * @return array
+     */
+    public function provider_convertLegacyViewDefsToSidecar()
+    {
+        return array(
+            array(
+                array(
+                    'name' => array(
+                        'query_type' => 'default',
+                        'label' => 'LBL_NAME'
+                    ),
+                    'account_name' => array(
+                        'query_type' => 'default',
+                        'label' => 'LBL_ACC',
+                        'db_field' => array(
+                            'accounts.name',
+                        ),
+                    ),
+                    'wrong_field' => array(
+                        'label' => 'LBL_FLD',
+                        'db_field' => array()
+                    ),
+                    'another_field' => array(
+                        'label' => 'LBL_FLD2',
+                        'db_field' => array('name'),
+                        'type' => 'bool',
+                    ),
+                ),
+                array(
+                    'name' => array(
+                        'name' => 'name',
+                        'type' => 'varchar',
+                    ),
+                    'account_name' => array(
+                        'name' => 'account_name',
+                        'type' => 'relate',
+                    ),
+                ),
+                array(
+                    'name' => array(),
+                    'account_name' => array(
+                        'dbFields' => array(),
+                        'vname' => 'LBL_ACC'
+                    ),
+                    'another_field' => array(
+                        'dbFields' => array('name'),
+                        'vname' => 'LBL_FLD2',
+                        'type' => 'bool',
+                    ),
+                    '$owner' => array(
+                        'predefined_filter' => 1,
+                        'vname' => 'LBL_CURRENT_USER_FILTER',
+                    ),
+                    '$favorite' => array(
+                        'predefined_filter' => 1,
+                        'vname' => 'LBL_FAVORITES_FILTER',
+                    )
+                ),
+            ),
+        );
+    }
 }
