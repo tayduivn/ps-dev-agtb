@@ -515,7 +515,7 @@ class Rome
     protected function saveSymlink($path, $link, $skipBuilds = array())
     {
         $path = $this->cleanPath($path);
-        $blackListPath = strpos($path, '/') == 0 ? substr($path, 1) : $path;
+        $blackListPath = $this->getBlacklistPath($path);
 
         foreach ($this->output as $f => $o) {
             if (!empty($this->onlyBuild) && empty($this->onlyBuild[$f])) {
@@ -558,7 +558,7 @@ class Rome
         //global  $SugarVersion;
         //global  $flavor;
         $path = $this->cleanPath($path);
-        $blackListPath = strpos($path, '/') == 0 ? substr($path, 1) : $path;
+        $blackListPath = $this->getBlacklistPath($path);
 
         foreach ($this->output as $f => $o) {
             if (!empty($this->onlyBuild) && empty($this->onlyBuild[$f])) {
@@ -643,7 +643,7 @@ class Rome
             $next = $path . '/' . $e;
             if (is_dir($next)) {
                 $sugar_path = $this->cleanPath($next);
-                $blackListPath = strpos($sugar_path, '/') == 0 ? substr($sugar_path, 1) : $sugar_path;
+                $blackListPath = $this->getBlacklistPath($sugar_path);
 
                 $nextSkip = $skipBuilds;
                 foreach ($this->active as $f => $a) {
@@ -722,6 +722,21 @@ class Rome
         $d->close();
 
         return rmdir($path);
+    }
+
+    /**
+     * @param string $path Path to the file that is being built
+     * @return string
+     */
+    protected function getBlacklistPath($path)
+    {
+        $blackListPath = strpos($path, '/') == 0 ? substr($path, 1) : $path;
+        // just in case someone is building with --base_dir pointed directly at the
+        // sugarcrm/ dir.
+        if (strpos($blackListPath, 'sugarcrm/') !== 0) {
+            $blackListPath = 'sugarcrm/' . $blackListPath;
+        }
+        return $blackListPath;
     }
 }
 
