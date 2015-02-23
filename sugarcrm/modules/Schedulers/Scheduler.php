@@ -991,6 +991,21 @@ class Scheduler extends SugarBean {
         $sched19->modified_user_id   = '1';
         $sched19->catch_up           = '1';
         $sched19->save();
+
+        //BEGIN SUGARCRM flav=ent ONLY
+        // Process Author OOTB Job
+        $sched20 = BeanFactory::getBean('Schedulers');
+        $sched20->name               = $mod_strings['LBL_OOTB_PROCESS_AUTHOR_JOB'];
+        $sched20->job                = 'function::PMSEEngineCron';
+        $sched20->date_time_start    = create_date(2015, 1, 1) . ' ' . create_time(0, 0, 1);
+        $sched20->date_time_end      = create_date(2040, 12, 31) . ' ' . create_time(23, 59, 59);
+        $sched20->job_interval       = '*::*::*::*::*';;
+        $sched20->status             = 'Active';
+        $sched20->created_by         = '1';
+        $sched20->modified_user_id   = '1';
+        $sched20->catch_up           = '1';
+        $sched20->save();
+        //END SUGARCRM flav=ent ONLY
 	}
 
 	////	END SCHEDULER HELPER FUNCTIONS
