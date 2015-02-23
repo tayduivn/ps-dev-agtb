@@ -160,7 +160,26 @@ abstract class SugarApi {
      * @param $args array The arguments array passed in from the API
      * @return id Bean id
      */
-    protected function updateBean(SugarBean $bean, ServiceBase $api, $args) {
+    protected function updateBean(SugarBean $bean, ServiceBase $api, $args)
+    {
+        $this->populateBean($bean, $api, $args);
+        $this->saveBean($bean, $api, $args);
+
+        return $bean->id;
+    }
+
+    /**
+     * Populates the given bean with the values from API arguments
+     *
+     * @param SugarBean $bean The bean to be populated
+     * @param ServiceBase $api
+     * @param array $args API arguments
+     * @throws SugarApiExceptionEditConflict
+     * @throws SugarApiExceptionInvalidParameter
+     * @throws SugarApiExceptionNotAuthorized
+     */
+    protected function populateBean(SugarBean $bean, ServiceBase $api, array $args)
+    {
         $helper = ApiHelper::getHelper($api,$bean);
         $options = array();
         if(!empty($args['_headers']['X_TIMESTAMP'])) {
@@ -180,28 +199,26 @@ abstract class SugarApi {
             // There were validation errors.
             throw new SugarApiExceptionInvalidParameter('There were validation errors on the submitted data. Record was not saved.');
         }
+    }
 
+    /**
+     * Saves the given bean
+     *
+     * @param SugarBean $bean The bean to be saved
+     * @param ServiceBase $api
+     * @param array $args API arguments
+     */
+    protected function saveBean(SugarBean $bean, ServiceBase $api, array $args)
+    {
+        $helper = ApiHelper::getHelper($api, $bean);
         $check_notify = $helper->checkNotify($bean);
         $bean->save($check_notify);
 
-        /*
-         * Refresh the bean with the latest data.
-         * This is necessary due to BeanFactory caching.
-         * Calling retrieve causes a cache refresh to occur.
-         */
-
-        $id = $bean->id;
+        BeanFactory::unregisterBean($bean->module_name, $bean->id);
 
         if(isset($args['my_favorite'])) {
             $this->toggleFavorites($bean, $args['my_favorite']);
         }
-
-        $bean->retrieve($id);
-        /*
-         * Even though the bean is refreshed above, return only the id
-         * This allows loadBean to be run to handle formatting and ACL
-         */
-        return $id;
     }
 
 

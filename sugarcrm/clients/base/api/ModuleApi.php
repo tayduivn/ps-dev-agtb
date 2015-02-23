@@ -203,15 +203,20 @@ class ModuleApi extends SugarApi {
         $bean->id = $args['id'];
         $bean->new_with_id = true;
 
+        // register newly created bean so that it could be accessible by related beans before it's saved
+        BeanFactory::registerBean($bean);
+
         foreach ($additionalProperties as $property => $value) {
             $bean->$property = $value;
         }
+
+        // populate parent bean before saving related ones
+        $this->populateBean($bean, $api, $args);
 
         // If we uploaded files during the record creation, move them from
         // the temporary folder to the configured upload folder.
         // FIXME Moving temporary files will be handled better in BR-2059.
         $this->moveTemporaryFiles($args, $bean);
-        $id = $this->updateBean($bean, $api, $args);
 
         $relateArgs = $this->getRelatedRecordArguments($bean, $args, 'add');
         $this->linkRelatedRecords($api, $bean, $relateArgs);
@@ -219,7 +224,10 @@ class ModuleApi extends SugarApi {
         $relateArgs = $this->getRelatedRecordArguments($bean, $args, 'create');
         $this->createRelatedRecords($api, $bean, $relateArgs);
 
-        $args['record'] = $id;
+        // finally save parent bean
+        $this->saveBean($bean, $api, $args);
+
+        $args['record'] = $bean->id;
 
         $this->processAfterCreateOperations($args, $bean);
 
