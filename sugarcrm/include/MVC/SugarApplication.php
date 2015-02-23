@@ -726,6 +726,17 @@ EOF;
     }
 
     /**
+     * This function writes log entries to the tracker_sessions table to record a login session.
+     *
+     * @deprecated use SugarApplication::trackSession() instead
+     */
+    public static function trackLogin()
+    {
+        $GLOBALS['log']->deprecated('Please use SugarApplication::trackSession() for session logging');
+        self::trackSession();
+    }
+
+    /**
      * Save Session Tracker info if on
      */
     public static function trackSession()

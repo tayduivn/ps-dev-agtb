@@ -13,7 +13,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('modules/Trackers/monitor/Monitor.php');
 
-class TrackerSessionMonitor extends Monitor
+class tracker_sessions_monitor extends Monitor
 {
     public function __construct($name = '', $monitorId = '', $metadata = '', $store = '')
     {
@@ -64,15 +64,20 @@ class TrackerSessionMonitor extends Monitor
 
     private function getSessionId()
     {
-        // Make sure we have the session
-        if (session_id() === '') {
-            session_start();
+        try {
+            // Make sure we have the session
+            if (session_id() === '') {
+                session_start();
+            }
+
+            $sessionId = session_id();
+            if (!empty($sessionId) && strlen($sessionId) > MAX_SESSION_LENGTH) {
+                $sessionId = md5($sessionId);
+            }
+        } catch (Exception $e) {
+            $sessionId = false;
         }
 
-        $sessionId = session_id();
-        if (!empty($sessionId) && strlen($sessionId) > MAX_SESSION_LENGTH) {
-            $sessionId = md5($sessionId);
-        }
         return $sessionId;
     }
 }

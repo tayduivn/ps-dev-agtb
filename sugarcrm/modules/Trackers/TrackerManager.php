@@ -113,8 +113,7 @@ public function getMonitor($name) {
                 $this->metadata[$name]['name'],
                 self::$monitor_id,
                 $this->metadata[$name]['metadata'],
-                $this->metadata[$name]['store'],
-                $this->metadata[$name]['bean']
+                $this->metadata[$name]['store']
             );
 	       $this->monitors[$name] = $instance;
 	       return $this->monitors[$name];
@@ -134,9 +133,9 @@ public function getMonitor($name) {
     }
 }
 
-private function _getMonitor($name = '', $monitorId = '', $metadata = '', $store = '', $bean = '')
+private function _getMonitor($name = '', $monitorId = '', $metadata = '', $store = '')
 {
-	$class = $bean . 'Monitor';
+	$class = strtolower($name . '_monitor');
 	$monitor = null;
 	if(SugarAutoLoader::requireWithCustom('modules/Trackers/monitor/'.$class.'.php') && class_exists($class)) {
 	    $monitor = new $class($name, $monitorId, $metadata, $store);

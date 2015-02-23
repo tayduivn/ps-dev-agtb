@@ -13,15 +13,19 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('modules/Trackers/monitor/Monitor.php');
 
-class TrackerMonitor extends Monitor {
+class tracker_monitor extends Monitor {
 
-    /**
-     * Monitor constructor
-     */
-    public function __construct($name='', $monitorId='', $metadata='', $store='') {
+    public function __construct($name = '', $monitorId = '', $metadata = '', $store = '') {
         parent::Monitor($name, $monitorId, $metadata, $store);
     }
-    
+
+    /**
+     * @deprecated
+     */
+    public function tracker_monitor($name = '', $monitorId = '', $metadata = '', $store = '') {
+        $GLOBALS['log']->deprecated('Please use parent::__construct() instead of parent::ClassName()');
+        self::__construct($name, $monitorId, $metadata, $store);
+    }
     
     /**
      * save
