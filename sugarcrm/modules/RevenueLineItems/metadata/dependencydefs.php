@@ -73,6 +73,26 @@ $dependencies['RevenueLineItems']['commit_stage_readonly_set_value'] = array(
     ),
 );
 
+$dependencies['RevenueLineItems']['set_base_rate'] = array(
+    'hooks' => array("edit"),
+    //Trigger formula for the dependency. Defaults to 'true'.
+    'trigger' => 'true',
+    'triggerFields' => array('sales_stage'),
+    'onload' => true,
+    //Actions is a list of actions to fire when the trigger is true
+    'actions' => array(
+        array(
+            'name' => 'SetValue', //Action type
+            //The parameters passed in depend on the action type
+            'params' => array(
+                'target' => 'base_rate',
+                'label' => 'base_rate_lable', //normally <field>_label
+                'value' => 'ifElse(isForecastClosed($sales_stage), $base_rate, currencyRate($currency_id))', //Formula
+            ),
+        )
+    )
+);
+
 /**
  * This dependency set the best and worst values to equal likely when the sales stage is
  * set to closed won.
