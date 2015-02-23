@@ -23,6 +23,7 @@ $vardefs = array(
                 'portal' => false,
             ),
             'massupdate' => true,
+            'exportable' => true,
         ),
         'tag_link' => array(
             'name' => 'tag_link',
@@ -30,6 +31,7 @@ $vardefs = array(
             'vname' => 'LBL_TAGS_LINK',
             'relationship' => strtolower($module).'_tags',
             'source' => 'non-db',
+            'exportable' => false,
         ),
     ),
     'relationships' => array(
