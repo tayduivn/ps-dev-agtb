@@ -18,12 +18,15 @@ $vardefs = array(
             'type' => 'tag',
             'link' => 'tag_link',
             'source' => 'non-db',
+            'module' => 'Tags',
+            'relate_collection' => true,
             'studio' => array(
                 'mobile' => false,
                 'portal' => false,
             ),
             'massupdate' => true,
             'exportable' => true,
+            'sortable' => false,
         ),
         'tag_link' => array(
             'name' => 'tag_link',

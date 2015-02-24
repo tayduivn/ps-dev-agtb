@@ -122,31 +122,38 @@ class SugarFieldTag extends SugarFieldRelatecollection
      */
     public function apiFormatField(&$data, $bean, $args, $fieldName, $properties)
     {
-        $relField = $properties['link'];
-        $tags = array();
-
-        if ($bean->load_relationship($relField)) {
-
-            $currRelBeans = $bean->$relField->getBeans();
-
-            if (!empty($currRelBeans)) {
-                // Placeholder for sorting the tags array by name
-                $names = array();
-
-                foreach ($currRelBeans as $tagId => $tagRecord) {
-                    // Build a sort array for sorting the tag list
-                    $names[$tagId] = $tagRecord->name;
-
-                    // Build a tag list, using the sort tag name value as the tag
-                    $tags[] = array('id' => $tagId, 'name' => $names[$tagId]);
-                }
-
-                // Sort the tags array in alphabetical order
-                array_multisort($names, SORT_ASC, $tags);
+        if (isset($args['rc_beans'])) {
+            if (!empty($args['rc_beans'][$fieldName][$bean->id])) {
+                $data[$fieldName] = $args['rc_beans'][$fieldName][$bean->id];
+            } else {
+                $data[$fieldName] = array();
             }
-        }
+        } else {
+            $relField = $properties['link'];
+            $tags = array();
 
-        $data[$fieldName] = $tags;
+            if ($bean->load_relationship($relField)) {
+                $currRelBeans = $bean->$relField->getBeans();
+
+                if (!empty($currRelBeans)) {
+                    // Placeholder for sorting the tags array by name
+                    $names = array();
+
+                    foreach ($currRelBeans as $tagId => $tagRecord) {
+                        // Build a sort array for sorting the tag list
+                        $names[$tagId] = $tagRecord->name;
+
+                        // Build a tag list, using the sort tag name value as the tag
+                        $tags[] = array('id' => $tagId, 'name' => $names[$tagId]);
+                    }
+
+                    // Sort the tags array in alphabetical order
+                    array_multisort($names, SORT_ASC, $tags);
+                }
+            }
+
+            $data[$fieldName] = $tags;
+        }
     }
 
 

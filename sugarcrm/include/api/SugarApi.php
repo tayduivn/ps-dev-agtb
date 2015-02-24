@@ -83,7 +83,7 @@ abstract class SugarApi {
         return $data;
     }
 
-    protected function formatBeans(ServiceBase $api, $args, $beans)
+    protected function formatBeans(ServiceBase $api, $args, $beans, $options = array())
     {
         if (!empty($args['fields']) && !is_array($args['fields'])) {
             $args['fields'] = explode(',',$args['fields']);
@@ -95,7 +95,7 @@ abstract class SugarApi {
             if (!is_subclass_of($bean, 'SugarBean')) {
                 continue;
             }
-            $ret[] = $this->formatBean($api, $args, $bean);
+            $ret[] = $this->formatBean($api, $args, $bean, $options);
         }
 
         return $ret;
