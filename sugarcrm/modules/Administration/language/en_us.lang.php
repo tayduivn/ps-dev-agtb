@@ -1298,6 +1298,6 @@ $mod_strings = array (
     'LBL_PMSE_ADMIN_DESC_CASESLIST' => 'View all open and running Processes in the system.',
 
     'LBL_PMSE_ADMIN_TITLE_MODULE' => 'Process Author',
-    'LBL_PMSE_ADMIN_DESC_MODULE' => 'View logs and configure Process Author settings. Manage all BPM processes for all users via the Process Management.',
+    'LBL_PMSE_ADMIN_DESC_MODULE' => 'Configure Process Author settings and view logs. Manage all BPM processes for all users via Process Management.',
     //END SUGARCRM flav=ent ONLY
 );
