@@ -11,29 +11,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$viewdefs['base']['layout']['header'] = array(
+$viewdefs['base']['layout']['globalsearch'] = array(
     'components' =>
     array(
         array(
-            'layout' => 'module-list',
+            'view' => 'globalsearch-bar',
         ),
         array(
-            'layout' => 'globalsearch',
-        ),
-        array(
-            'view' => 'notifications',
-        ),
-        array(
-            'view' => 'profileactions',
-        ),
-        array(
-            'view' => 'quickcreate',
-        ),
-    ),
-    'last_state' => array(
-        'id' => 'app-header',
-        'defaults' => array(
-            'last-home' => 'dashboard',
+            'view' => 'globalsearch-quickresult',
         ),
     )
 );
