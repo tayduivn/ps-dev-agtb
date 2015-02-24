@@ -111,7 +111,7 @@
       &[data-type="datetimecombo"] input[type="text"] {
         &.datepicker {
           width: 50%;
-          .calcWidth(~"55% - 2px");
+          .calcWidth(~"55% - 3px");
         }
         &.ui-timepicker-input {
           width: 40%;
@@ -365,6 +365,10 @@
       .add-on {
         left: 10px;
         font-size: @baseFontSize;
+        position: relative;
+      }
+      .error .add-on .fa {
+        color: @errorText;
       }
       .help-block {
         display: block;
@@ -455,21 +459,21 @@
       input[type="text"].datepicker {
         min-width: 0;
         width: 50%;
-        .calcWidth(~"55% - 11px");
+        .calcWidth(~"55% - 12px");
       }
       input[type="text"].ui-timepicker-input {
         min-width: 0;
         width: 40%;
-        .calcWidth(~"45% - 11px");
+        .calcWidth(~"45% - 12px");
       }
       .ui-timepicker-input,
       .ui-timepicker-list {
-        margin-left: -12px;
+        margin-left: -14px;
       }
       &.error {
         .ui-timepicker-input,
         .ui-timepicker-list {
-          margin-left: -46px;
+          margin-left: -36px;
         }
       }
       .help-block {
