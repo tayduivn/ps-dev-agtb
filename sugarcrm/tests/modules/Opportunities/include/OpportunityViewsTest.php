@@ -10,12 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 //FILE SUGARCRM flav=ent ONLY
-class OpportunitySetupTest extends Sugar_PHPUnit_Framework_TestCase
+class OpportunityViewsTest extends Sugar_PHPUnit_Framework_TestCase
 {
 
     public function testProcessList()
     {
-        require_once('modules/Opportunities/include/OpportunitySetup.php');
+        require_once('modules/Opportunities/include/OpportunityViews.php');
 
         $impl = $this->getMockBuilder('DeployedMetaDataImplementation')
             ->disableOriginalConstructor()
@@ -44,9 +44,8 @@ class OpportunitySetupTest extends Sugar_PHPUnit_Framework_TestCase
             ->method('generateFieldDef')
             ->willReturnMap($map);
 
-        $opp_setup = $this->getMockBuilder('OpportunitySetup')
+        $opp_setup = $this->getMockBuilder('OpportunityViews')
             ->disableOriginalConstructor()
-            ->setMethods(array('doDataConvert', 'fixRevenueLineItemModule', 'fixOpportunityModule'))
             ->getMockForAbstractClass();
 
         $bean = $this->getMockBuilder('Opportunity')
