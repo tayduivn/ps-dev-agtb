@@ -15,7 +15,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $module_name = 'pmse_Emails_Templates';
 $viewdefs[$module_name ]['base']['view']['recordlist'] = array(
-    'favorite' => false,
+    'favorite' => true,
     'following' => false,
     'selection' => array(
     ),
