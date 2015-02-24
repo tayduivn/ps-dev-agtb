@@ -137,27 +137,24 @@ class SugarSocket
     /**
      * Check WebSocket settings.
      * @param $url
-     * @param $type
-     * @return bool
+     * @return array
      */
-    public static function checkWSSettings($url, $type)
+    public static function checkWSSettings($url)
     {
-        $statusMessages = array(
-            'server' => 'SugarCRM Server Side',
-            'client' => 'SugarCRM Client Side'
-        );
         $availability = false;
         $isBalancer = false;
+        $type = false;
         $httpClient = new Zend_Http_Client();
 
         if (filter_var($url, FILTER_VALIDATE_URL) && self::ping($url)) {
-            $fileContent = $httpClient->setUri($url)->request()->getBody();
-            if (filter_var(json_decode($fileContent), FILTER_VALIDATE_URL)) {
+            $fileContent = json_decode($httpClient->setUri($url)->request()->getBody());
+            if (isset($fileContent->type) && $fileContent->type == 'balancer') {
                 $isBalancer = true;
-                $fileContent = $httpClient->setUri(json_decode($fileContent))->request()->getBody();
+                $fileContent = json_decode($httpClient->setUri($fileContent->location)->request()->getBody());
             }
-            if ($fileContent == $statusMessages[$type]) {
+            if (isset($fileContent->type) && in_array($fileContent->type, array('client', 'server'))) {
                 $availability = true;
+                $type = $fileContent->type;
             }
         }
         return array('url' => $url, 'type' => $type, 'available' => $availability, 'isBalancer' => $isBalancer);
