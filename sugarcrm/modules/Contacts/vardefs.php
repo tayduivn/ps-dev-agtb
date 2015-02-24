@@ -176,6 +176,7 @@ $dictionary['Contact'] = array(
                 'portalrecordview' => false,
                 'portallistview' => false,
             ),
+            'duplicate_on_record_copy' => 'no',
         ),
         'portal_active' => array(
             'name' => 'portal_active',
@@ -183,7 +184,8 @@ $dictionary['Contact'] = array(
             'type' => 'bool',
             'default' => '0',
             'group' => 'portal',
-            'comment' => 'Indicator whether this contact is a portal user'
+            'comment' => 'Indicator whether this contact is a portal user',
+            'duplicate_on_record_copy' => 'no',
         ),
         'portal_password' => array(
             'name' => 'portal_password',
@@ -198,6 +200,7 @@ $dictionary['Contact'] = array(
                 'portalrecordview' => false,
                 'portallistview' => false,
             ),
+            'duplicate_on_record_copy' => 'no',
         ),
         'portal_password1' => array(
             'name' => 'portal_password1',
@@ -221,6 +224,7 @@ $dictionary['Contact'] = array(
             'group' => 'portal',
             'len' => '255',
             'comment' => 'Reference to the portal',
+            'duplicate_on_record_copy' => 'no',
         ),
         'preferred_language' => array(
             'name' => 'preferred_language',
