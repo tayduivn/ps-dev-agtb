@@ -285,4 +285,56 @@ class SugarFieldTag extends SugarFieldRelatecollection
         return rtrim($exportString, ", ");
     }
 
+    /**
+     * Reads a string of input from an import process and gets the tag values from
+     * that string. The import string should look like Value1,Value2,Value3
+     *
+     * @param string $value The import row of data
+     * @return array
+     */
+    public function getTagValuesFromImport($value)
+    {
+        if (empty($value)) {
+            return array();
+        }
+
+        if (is_array($value)) {
+            return $value;
+        }
+
+        return explode(',', trim($value));
+    }
+
+    /**
+     * Gets the tags for a bean as an array of values
+     *
+     * @param SugarBean $bean The SugarBean that you are getting a value of
+     * @param string $field The field to get a normal value from
+     * @return Array
+     */
+    public function getTagValues(SugarBean $bean, $field)
+    {
+        return $this->getNormalizedFieldValues($bean, $field);
+    }
+
+    /**
+     * Gets the field values for the tag field as a cleaned up list of values
+     *
+     * @param SugarBean $bean The bean to get the values from
+     * @param string $fieldName The name of the field to get normalized values from
+     * @return array
+     */
+    public function getNormalizedFieldValues($bean, $fieldName)
+    {
+        $return = array();
+        if (isset($bean->field_defs[$fieldName]['link'])) {
+            $relField = $bean->field_defs[$fieldName]['link'];
+            if ($bean->load_relationship($relField)) {
+                $currRelBeans = $bean->$relField->getBeans();
+                $return = $this->getOriginalTags($currRelBeans);
+            }
+        }
+        return $return;
+    }
+
 }
