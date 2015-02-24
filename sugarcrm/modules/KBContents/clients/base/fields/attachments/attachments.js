@@ -238,6 +238,13 @@
                             self.model.set(self.name, _.union([], self.model.get(self.name) || [], [att]));
                             $input.val('');
                             self.render();
+                        },
+                        error: function(error) {
+                            app.alert.show('delete_confirmation', {
+                                level: 'error',
+                                title: 'LBL_EMAIL_ATTACHMENT_UPLOAD_FAILED',
+                                messages: [error.error_message]
+                            });
                         }
                     }
                 );
