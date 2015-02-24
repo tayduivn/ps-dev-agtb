@@ -187,7 +187,7 @@ class ParserLabel extends ModuleBuilderParser
             $changed = true;
         }
 
-        if ($changed) {
+        if (!empty($mod_strings) && $changed) {
             $GLOBALS['log']->debug("ParserLabel->addLabels: writing new mod_strings to $filename");
             $GLOBALS['log']->debug("ParserLabel->addLabels: mod_strings=".print_r($mod_strings, true));
             
