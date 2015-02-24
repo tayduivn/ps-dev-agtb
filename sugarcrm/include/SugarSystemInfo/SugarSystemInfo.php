@@ -140,7 +140,7 @@ class SugarSystemInfo
         } else {
             $query = "SELECT COUNT(DISTINCT users.id) AS user_count FROM tracker, users WHERE users.id = tracker.user_id AND tracker.date_modified >= %s AND %s";
         }
-        $query = sprintf($query, $this->getLastXDays($days), $this->getExcludeSystemUsersWhere());
+        $query = sprintf($query, $this->getLastXDays($days), $this->getActiveUsersWhere());
         return $this->db->getOne($query, false, 'fetching last 30 users count');
     }
 
@@ -151,11 +151,7 @@ class SugarSystemInfo
      */
     public function getAdminCount()
     {
-        $query = sprintf(
-            "SELECT COUNT(id) AS count FROM users WHERE status = %s AND deleted != 1 AND is_admin = 1 AND %s",
-            $this->db->quoted('Active'),
-            $this->getExcludeSystemUsersWhere()
-        );
+        $query = "SELECT COUNT(id) AS count FROM users WHERE is_admin = 1 AND " . $this->getActiveUsersWhere();
         return $this->db->getOne($query, false, 'fetching admin count');
     }
 
@@ -177,7 +173,7 @@ class SugarSystemInfo
      */
     public function getActiveUsersCount()
     {
-        $query = "SELECT count(id) AS total FROM users WHERE " . $this->getExcludeSystemUsersWhere();
+        $query = "SELECT COUNT(id) AS total FROM users WHERE " . $this->getActiveUsersWhere();
         return $this->db->getOne($query, false, 'fetching active users count');
     }
 
@@ -388,6 +384,22 @@ class SugarSystemInfo
      */
     protected function getExcludeSystemUsersWhere()
     {
-        return " user_name <> 'SugarCRMSupport' AND user_name <> 'SugarCRMUpgradeUser'";
+        return " deleted != 1 AND user_name NOT IN('SugarCRMSupport','SugarCRMUpgradeUser')";
+    }
+
+    /**
+     * Returns where clause for active users
+     * 
+     * @return string
+     */
+    protected function getActiveUsersWhere()
+    {
+        $query = sprintf(
+            " status = %s AND is_group != 1 AND portal_only != 1 AND %s",
+            $this->db->quoted('Active'),
+            $this->getExcludeSystemUsersWhere()
+        );
+
+        return $query;
     }
 }
