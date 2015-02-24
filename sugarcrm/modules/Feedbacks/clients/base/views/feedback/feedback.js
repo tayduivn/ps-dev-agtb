@@ -68,7 +68,7 @@
         this._isOpen = false;
 
         var learnMoreUrl = 'http://www.sugarcrm.com/crm/product_doc.php?' + $.param({
-            edition: app.metadata.getServerInfo().flav,
+            edition: app.metadata.getServerInfo().flavor,
             version: app.metadata.getServerInfo().version,
             lang: app.lang.getLanguage(),
             module: this.module,
