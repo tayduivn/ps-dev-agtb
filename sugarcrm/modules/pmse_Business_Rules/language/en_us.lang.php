@@ -48,7 +48,7 @@ $mod_strings = array (
     'LBL_PMSE_BUSINESS_RULES_SINGLE_HIT' => 'Process Business Rules Single Hit',
 
     'LBL_PMSE_BUSINESS_RULES_IMPORT_TEXT' => 'Automatically create a new Process Business Rule record by importing a *.pbr file from your file system.',
-    'LBL_PMSE_BUSINESS_RULES_IMPORT_SUCCESS' => 'Process Email Template was successfully imported into the system.',
+    'LBL_PMSE_BUSINESS_RULES_IMPORT_SUCCESS' => 'Process Business Rule was successfully imported into the system.',
     'LBL_PMSE_BUSINESS_RULES_EMPTY_WARNING' => 'Please select a valid *.pbr file.',
 
     'LBL_PMSE_MESSAGE_LABEL_DEFINE_COLUMN_TYPE' => 'Please define first the column type.',
