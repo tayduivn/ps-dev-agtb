@@ -109,6 +109,7 @@ $app_list_strings = array (
     'UserSignatures' => 'User Signatures',
     'Shippers' => 'Shipping Providers',
     'Styleguide' => 'Styleguide',
+    'Feedbacks' => 'Feedbacks',
   ),
 
     'moduleIconList' =>
@@ -220,7 +221,8 @@ $app_list_strings = array (
     'Shippers' => 'Shipping Provider',
     'Subscriptions' => 'Subscription',
     'UserSignatures' => 'User Signature',
-  ),
+    'Feedbacks' => 'Feedback',
+),
 
 /*
  * @deprecated as of 7.2.0 since it is only used on massupdate in BWC mode.

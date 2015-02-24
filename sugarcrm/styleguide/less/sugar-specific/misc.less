@@ -479,3 +479,66 @@ hr.soften {
 .leading-h4 {
   padding-top: 36px;
 }
+
+.feedback.popover {
+  background: @white;
+  width: 370px;
+  font-size: small;
+  .popover-content {
+    padding: 12px 12px 6px;
+  }
+  .fa.fa-times.feedback-close {
+    color: @gray !important;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+  }
+  .fa.fa-times.feedback-close {
+    color: @gray !important;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+  }
+  .popover-title {
+    background: @white;
+    color: @gray;
+    border-bottom-color: lighten(@grayLight, 40%);
+  }
+  .controls.span12 {
+    margin-left: 0;
+    textarea {
+      width: 100%;
+      min-height: 70px;
+      .box-sizing(border-box);
+     }
+  }
+  span.field-rating.edit {
+    text-align: center;
+    display: inherit;
+    > i {
+      font-size: 1.4em;
+      margin: 0 2px 0;
+      cursor: pointer;
+      &:before {
+        color: @blue;
+      }
+      &:hover {
+        &:before {
+          color: @linkColorHover;
+        }
+      }
+    }
+  }
+  .feedback-footer {
+    line-height: 2em;
+    margin-top: 10px;
+  }
+  aside {
+    margin-top: 10px;
+    line-height: 13px;
+    margin-bottom: 5px;
+    font-size: 11px;
+    color: @grayLight;
+    text-align: justify;
+  }
+}
