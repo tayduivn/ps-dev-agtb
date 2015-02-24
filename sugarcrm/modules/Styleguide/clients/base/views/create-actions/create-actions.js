@@ -20,11 +20,10 @@
     },
 
     _render: function() {
-        this._super('_render');
         var error_string = 'You did a bad, bad thing.';
         _.each(this.meta.panels, function(panel) {
             if (!panel.header) {
-                panel.labelsOnTop = this.showFormHorizontal;
+                panel.labelsOnTop = !this.showFormHorizontal;
             }
         }, this);
         if (this.showErrorDecoration) {
@@ -45,6 +44,7 @@
                 }
             }, this);
         }
+        this._super('_render');
     },
 
     _renderField: function(field) {
@@ -56,18 +56,24 @@
         }
     },
 
-    toggleHelpText: function() {
+    toggleHelpText: function(e) {
         this.showHelpText = !this.showHelpText;
         this.render();
+        e.preventDefault();
+        e.stopPropagation();
     },
 
-    toggleErrorDecoration: function() {
+    toggleErrorDecoration: function(e) {
         this.showErrorDecoration = !this.showErrorDecoration;
         this.render();
+        e.preventDefault();
+        e.stopPropagation();
     },
 
-    toggleFormHorizontal: function() {
+    toggleFormHorizontal: function(e) {
         this.showFormHorizontal = !this.showFormHorizontal;
         this.render();
+        e.preventDefault();
+        e.stopPropagation();
     }
 })
