@@ -21323,6 +21323,22 @@ $sugar_demodata['company_name_array'] = array(
 	"XY&Z Funding Inc",
 );
 
+$sugar_demodata['company_name_suffix_array'] = array(
+	'Consolidated',
+	'Enterprises',
+	'Incorporated',
+	'Limited',
+	'Ventures',
+	'Systems',
+	'Corporation',
+	'Group',
+	'Products',
+	'Manufacturing',
+	'Holdings',
+	'Consulting',
+	'Solutions',
+);
+
 $sugar_demodata['street_address_array'] = array(
 	 "123 Anywhere Street",
 	 "345 Sugar Blvd.",
