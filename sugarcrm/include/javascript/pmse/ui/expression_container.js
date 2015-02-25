@@ -26,7 +26,7 @@ ExpressionContainer.prototype.type = 'ExpressionContainer';
 
 ExpressionContainer.prototype.family = 'ExpressionContainer';
 
-ExpressionContainer.prototype.notSupportedTypes = [
+ExpressionContainer.prototype.unsupportedDataTypes = [
     'Encrypt', 
     'IFrame',
     'Image',
@@ -237,10 +237,10 @@ ExpressionContainer.prototype.handleCriteriaBuilder = function (globalParent, pa
                 }
             };
         } else {
-            if(this.notSupportedTypes.indexOf(parentVariable.fieldType) >= 0) {
-                App.alert.show('expression-variable-not-supported-data-type', {
+            if(this.unsupportedDataTypes.indexOf(parentVariable.fieldType) >= 0) {
+                App.alert.show('expression-variable-unsupported-data-type', {
                     level: 'warning',
-                    messages: translate('LBL_PMSE_MESSAGE_LABEL_NOT_SUPPORTED_DATA_TYPE', 'pmse_Business_Rules'),
+                    messages: translate('LBL_PMSE_MESSAGE_LABEL_UNSUPPORTED_DATA_TYPE', 'pmse_Business_Rules'),
                     autoClose: true
                 });
                 return;
