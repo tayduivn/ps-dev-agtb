@@ -4897,6 +4897,22 @@ function inDeveloperMode()
 }
 
 /**
+ * Checks if web resources should be minified
+ *
+ * @return bool
+ */
+function shouldResourcesBeMinified()
+{
+    global $sugar_config;
+
+    if (!isset($sugar_config['minify_resources'])) {
+        return !inDeveloperMode();
+    }
+
+    return (bool) $sugar_config['minify_resources'];
+}
+
+/**
  * Filter the protocol list for inbound email accounts.
  *
  * @param array $protocol
