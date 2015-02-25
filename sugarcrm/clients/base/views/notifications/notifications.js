@@ -91,6 +91,7 @@
         this._super('initialize', [options]);
         app.events.on('app:sync:complete', this._bootstrap, this);
         app.events.on('app:logout', this.stopPulling, this);
+        this.favicon = new Favico({animation: 'none'});
     },
 
     /**
@@ -411,15 +412,13 @@
         }
 
         this._super('_renderHtml');
-
-        var favicon = new Favico({animation: 'none'});
         if (this.collection) {
             var badge = this.collection.length;
             if(this.collection.next_offset > 0) {
                 badge = badge + "+";
 
             }
-            favicon.badge(badge);
+            this.favicon.badge(badge);
         }
     },
 
