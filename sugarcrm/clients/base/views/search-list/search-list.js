@@ -22,7 +22,6 @@
      */
     initialize: function(options) {
         this._super('initialize', [options]);
-
         /**
          * The fields metadata for this view per module.
          *
@@ -30,6 +29,7 @@
          * @private
          */
         this._fieldsMeta = {};
+        this.addPreviewEvents();
     },
 
     /**
@@ -185,5 +185,44 @@
             viewDefs[field.name] = _.extend({}, varDefs[field.name], viewDefs[field.name], field);
         });
         return viewDefs;
+    },
+
+    /**
+     * Adds event listeners related to preview.
+     */
+    addPreviewEvents: function() {
+        this.context.on('list:preview:fire', function(model) {
+            app.events.trigger('preview:render', model, this.collection, true);
+        }, this);
+
+        //When switching to next/previous record from the preview panel, we need
+        //to update the highlighted row.
+        app.events.on('list:preview:decorate', this.decorateRow, this);
+        if (this.layout) {
+            this.layout.on('list:paginate:success', function() {
+                //When fetching more records, we need to update the preview
+                //collection.
+                app.events.trigger('preview:collection:change', this.collection);
+                // If we have a model in preview, redecorate the row as previewed
+                if (this._previewed) {
+                    this.decorateRow(this._previewed);
+                }
+            }, this);
+        }
+    },
+
+    /**
+     * Decorates the row in the list that is being shown in Preview.
+     *
+     * @param {Data.Bean} model The model corresponding to the row to be
+     *   decorated. Pass a falsy value to clear decoration.
+     */
+    decorateRow: function(model) {
+        this._previewed = model;
+        this.$('li.highlighted').removeClass('highlighted current');
+        if (model) {
+            var curr = this.$('[data-id="' + model.id + '"]');
+            curr.addClass('current highlighted');
+        }
     }
 })
