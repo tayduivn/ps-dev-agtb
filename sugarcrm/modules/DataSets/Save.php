@@ -15,6 +15,12 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Description:  
  ********************************************************************************/
 
+global $app_strings;
+global $current_user;
+
+if (!is_admin($current_user)) {
+    sugar_die($app_strings['LBL_UNAUTH_ADMIN']);
+}
 
 require_once('include/controller/Controller.php');
 

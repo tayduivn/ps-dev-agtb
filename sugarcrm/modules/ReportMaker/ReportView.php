@@ -50,7 +50,11 @@ $button .= "<input type='hidden' name='return_id' value='".$focus->id."'>\n";
 $button .= "<input type='hidden' name='record' value='".$focus->id."'>\n";
 $button .= "<input type='hidden' name='action'>\n";
 $button .= "<input title='".$mod_strings['LBL_DETAILS_BUTTON_TITLE']."' class='button' onclick=\"this.form.action.value='DetailView'\" type='submit' name='button' value='  ".$mod_strings['LBL_DETAILS_BUTTON_LABEL']."  '>\n";
-$button .= "<input title='".$mod_strings['LBL_EDIT_BUTTON_TITLE']."' accessKey='".$mod_strings['LBL_EDIT_BUTTON_KEY']."' class='button' onclick=\"this.form.action.value='EditView'\" type='submit' name='button' value='  ".$mod_strings['LBL_EDIT_BUTTON_LABEL']."  '>\n";
+
+if (SugarACL::checkAccess($currentModule, 'edit')) {
+    $button .= "<input title='".$mod_strings['LBL_EDIT_BUTTON_TITLE']."' accessKey='".$mod_strings['LBL_EDIT_BUTTON_KEY']."' class='button' onclick=\"this.form.action.value='EditView'\" type='submit' name='button' value='  ".$mod_strings['LBL_EDIT_BUTTON_LABEL']."  '>\n";
+}
+
 $button .= "</form></table>\n";
 
 echo "$button";
