@@ -143,6 +143,13 @@ class SugarBean
 	var $deleted = 0;
 
     /**
+     * Holds any data changes determined when bean is saved.
+     *
+     * @var Array
+     */
+    var $dataChanges;
+
+    /**
      * Should the date modified column of the bean be updated during save?
      * This is used for admin level functionality that should not be updating
      * the date modified.  This is only used by sync to allow for updates to be
@@ -1830,7 +1837,7 @@ class SugarBean
         // use the db independent query generator
         $this->preprocess_fields_on_save();
 
-        $dataChanges = $this->db->getDataChanges($this);
+        $this->dataChanges = $this->db->getDataChanges($this);
 
         //construct the SQL to create the audit record if auditing is enabled.
         $auditDataChanges=array();
@@ -1839,7 +1846,7 @@ class SugarBean
                 $GLOBALS['log']->debug('Auditing: Retrieve was not called, audit record will not be created.');
             } else {
                 $auditFields = $this->getAuditEnabledFieldDefinitions();
-                $auditDataChanges = array_intersect_key($dataChanges, $auditFields);
+                $auditDataChanges = array_intersect_key($this->dataChanges, $auditFields);
             }
         }
         $this->_sendNotifications($check_notify);
@@ -1862,7 +1869,7 @@ class SugarBean
         $this->updateRelatedCalcFields();
 
         // populate fetched row with newest changes in the bean
-        foreach ($dataChanges as $change) {
+        foreach ($this->dataChanges as $change) {
             $this->fetched_row[$change['field_name']] = $change['after'];
         }
 
@@ -1884,7 +1891,7 @@ class SugarBean
 
         $this->call_custom_logic('after_save', array(
             'isUpdate' => $isUpdate,
-            'dataChanges' => $dataChanges,
+            'dataChanges' => $this->dataChanges,
         ));
 
         $this->in_save = false;
