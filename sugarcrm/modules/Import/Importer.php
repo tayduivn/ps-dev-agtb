@@ -241,6 +241,13 @@ class Importer
             // If there is an default value then use it instead
             if ( !empty($_REQUEST[$field]) )
             {
+                if ($fieldDef['type'] == 'relate' && isset($row[$fieldNum]) && $row[$fieldNum] != $_REQUEST[$field]) {
+                    $_REQUEST[$field] = $row[$fieldNum];
+                }
+                if ($fieldDef['type'] == 'id' && !isset($row[$fieldNum]) && in_array($fieldDef['group'], $this->importColumns)) {
+                    $_REQUEST[$field] = "";
+                }
+
                 $defaultRowValue = $this->populateDefaultMapValue($field, $_REQUEST[$field], $fieldDef);
 
                 if(!empty($fieldDef['custom_type']) && $fieldDef['custom_type'] == 'teamset' && empty($rowValue))
@@ -553,7 +560,7 @@ class Importer
                 if (!$returnValue && !empty($defaultRowValue))
                     $returnValue = $this->ifs->relate($defaultRowValue,$fieldDef, $focus);
                 // Bug 33623 - Set the id value found from the above method call as an importColumn
-                if ($returnValue !== false)
+                if ($returnValue !== false && !in_array($fieldDef['id_name'], $this->importColumns))
                     $this->importColumns[] = $fieldDef['id_name'];
                 return $rowValue;
                 break;
@@ -801,11 +808,6 @@ class Importer
     protected function populateDefaultMapValue($field, $fieldValue, $fieldDef)
     {
         global $timedate, $current_user;
-
-        // If the field we're examining is a relate, don't return a default value.
-        if ($fieldDef['type'] == 'relate') {
-            return '';
-        }
 
         if ( is_array($fieldValue) )
             $defaultRowValue = encodeMultienumValue($fieldValue);
