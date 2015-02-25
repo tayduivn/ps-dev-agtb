@@ -91,6 +91,7 @@
         this._super('initialize', [options]);
         app.events.on('app:sync:complete', this._bootstrap, this);
         app.events.on('app:logout', this.stopPulling, this);
+
         this.favicon = new Favico({animation: 'none'});
     },
 
@@ -107,6 +108,14 @@
         this.startPulling();
 
         this.collection.on('change:is_read', this.render, this);
+
+        this.collection.on('reset', function(){
+            var badge = this.collection.length;
+            if(this.collection.next_offset > 0) {
+                badge = badge + '+';
+            }
+            this.favicon.badge(badge);
+        }, this);
 
         return this;
     },
@@ -412,14 +421,6 @@
         }
 
         this._super('_renderHtml');
-        if (this.collection) {
-            var badge = this.collection.length;
-            if(this.collection.next_offset > 0) {
-                badge = badge + "+";
-
-            }
-            this.favicon.badge(badge);
-        }
     },
 
     /**
