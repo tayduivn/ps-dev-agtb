@@ -15,8 +15,9 @@ $viewdefs["base"]["view"]["dashletselect-headerpane"] = array(
     'fields' => array(
         array(
             'name' => 'title',
-            'type' => 'label',
-            'default_value' => 'LBL_DASHLET_ADD',
+            'type' => 'sugar-dashlet-label',
+            'module' => 'Home',
+            'label' => 'TPL_DASHLET_ADD',
         ),
     ),
     "buttons" => array(

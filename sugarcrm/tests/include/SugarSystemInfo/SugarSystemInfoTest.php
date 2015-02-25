@@ -32,6 +32,18 @@ class SugarSystemInfoTest extends Sugar_PHPUnit_Framework_TestCase
         $user->updateLastLogin();
         SugarTestTrackerUtility::insertTrackerEntry($bean, 'editview');
         $this->sysInfo = SugarSystemInfo::getInstance();
+
+        //add more users to test
+        $user1 = SugarTestUserUtilities::createAnonymousUser(true, false);
+        $user2 = SugarTestUserUtilities::createAnonymousUser(true, false);
+        $user2->updateLastLogin();
+
+        $user3 = SugarTestUserUtilities::createAnonymousUser(true, false, array('deleted' => 1));
+        $user4 = SugarTestUserUtilities::createAnonymousUser(true, false, array('status' => 'Inactive'));
+        $user4->updateLastLogin();
+
+        $user5 = SugarTestUserUtilities::createAnonymousUser(true, false, array('portal_only' => 1));
+        $user6 = SugarTestUserUtilities::createAnonymousUser(true, false, array('is_group' => 1));
     }
 
     protected function tearDown()
@@ -80,22 +92,22 @@ class SugarSystemInfoTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testGetActiveUsersXDaysCount()
     {
-        $this->assertGreaterThan(0, $this->sysInfo->getActiveUsersXDaysCount(30));
+        $this->assertGreaterThanOrEqual(2, $this->sysInfo->getActiveUsersXDaysCount(30));
     }
 
     public function testGetAdminCount()
     {
-        $this->assertGreaterThan(0, $this->sysInfo->getAdminCount());
+        $this->assertGreaterThanOrEqual(1, $this->sysInfo->getAdminCount());
     }
 
     public function testGetUsersCount()
     {
-        $this->assertGreaterThan(0, $this->sysInfo->getUsersCount());
+        $this->assertGreaterThanOrEqual(6, $this->sysInfo->getUsersCount());
     }
 
     public function testGetActiveUsersCount()
     {
-        $this->assertGreaterThan(0, $this->sysInfo->getActiveUsersCount());
+        $this->assertGreaterThanOrEqual(3, $this->sysInfo->getActiveUsersCount());
     }
 
     public function testGetSystemName()

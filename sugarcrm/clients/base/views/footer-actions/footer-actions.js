@@ -155,9 +155,43 @@
         this.isShortcutsEnabled = (this.isAuthenticated && app.shortcuts.isEnabled());
         app.view.View.prototype._renderHtml.call(this);
     },
-    feedback: function() {
-        window.open('http://www.sugarcrm.com/sugar7survey', '_blank');
+
+    /**
+     * Toggles feedback popup on click (open or close).
+     * TODO move this to a feedback field
+     *
+     * This currently sets and uses the internal `_feedbackIsOpen` flag to
+     * create and dispose the {@link FeedbackView}.
+     * FIXME this shouldn't work that way and should trigger an event that the
+     * additionalComponent (the feedback layout) is listening to and the toggle
+     * will simply trigger the event for the layout to show and hide.
+     * This will improve performance (no more layout being disposed and created
+     * on click).
+     *
+     * If the app isn't yet in sync (all metadata loaded to create the view)
+     * the button doesn't do anything.
+     *
+     * @param {Event} evt the `click` event.
+     */
+    feedback: function(evt) {
+        if (!app.isSynced) {
+            return;
+        }
+
+        if (!this._feedbackView || this._feedbackView.disposed) {
+            this._feedbackView = app.view.createView({
+                module: 'Feedbacks',
+                name: 'feedback',
+                button: this.$('[data-action="feedback"]')
+            });
+
+            this.listenTo(this._feedbackView, 'show hide', function(view, active) {
+                this.$('[data-action="feedback"]').toggleClass('active', active);
+            });
+        }
+        this._feedbackView.toggle();
     },
+
     support: function() {
         window.open('http://support.sugarcrm.com', '_blank');
     },

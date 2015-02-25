@@ -43,17 +43,15 @@ class PMSEAddRelatedRecord extends PMSEScriptTask
     {
         global $timedate;
         $bpmnElement = $this->retrieveDefinitionData($flowData['bpmn_id']);
-        $definitionBean = $this->caseFlowHandler->retrieveBean('pmse_BpmActivityDefinition'); //new BpmActivityDefinition();
-        $processDefinitionBean = $this->caseFlowHandler->retrieveBean('pmse_BpmProcessDefinition'); //new BpmProcessDefinition();
-        $definitionBean->retrieve_by_string_fields(array('id' => $bpmnElement['id']));
-        $processDefinitionBean->retrieve_by_string_fields(array('id' => $definitionBean->pro_id));
+        $definitionBean = $this->caseFlowHandler->retrieveBean('pmse_BpmActivityDefinition', $bpmnElement['id']);
+        $processDefinitionBean = $this->caseFlowHandler->retrieveBean('pmse_BpmProcessDefinition', $definitionBean->pro_id);
 
         if ((isset($definitionBean->act_field_module) && !empty($definitionBean->act_field_module)) &&
             (isset($definitionBean->act_fields) && !empty($definitionBean->act_fields))
         ) {
 
             $arr_module = $definitionBean->act_field_module;
-            $arr_fields = json_decode($definitionBean->act_fields);
+            $arr_fields = json_decode(htmlspecialchars_decode($definitionBean->act_fields));
 
             // TODO: Probably the act_module field should be used instead of pro_module
             $sugarModule = $processDefinitionBean->pro_module;

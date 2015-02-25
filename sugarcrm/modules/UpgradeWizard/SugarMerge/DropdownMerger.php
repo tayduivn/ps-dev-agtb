@@ -160,8 +160,10 @@ class DropdownMerger
         OrderedHash $custom
     ) {
         if (!$old->isEmpty()) {
+            $newEmpty = $new->isEmpty();
+            $customEmpty = $custom->isEmpty();
             foreach ($old as $key => $optionInOld) {
-                if (!$new[$key] || !$custom[$key]) {
+                if ((!$newEmpty && !$new[$key]) || (!$customEmpty && !$custom[$key])) {
                     unset($merged[$key]);
                 }
             }

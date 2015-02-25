@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-<div class="dashlet empty" data-action="addDashlet">
-    <p>{{fieldOfType 'sugar-dashlet-label' 'TPL_DASHLET_ADD'}}</p>
-    <div class="add-dashlet"><strong><i class="fa fa-plus"></i></strong></div>
-</div>
+{{#each stars}}
+    <i class="fa {{#if this}}fa-star{{else}}fa-star-o{{/if}}" data-value="{{@index}}"></i>
+{{/each}}

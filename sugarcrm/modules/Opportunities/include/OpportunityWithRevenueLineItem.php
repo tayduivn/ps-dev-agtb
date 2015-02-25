@@ -156,7 +156,7 @@ EOL;
 <?php
 if (isset(\$dependencies['Opportunities'])) {
     foreach(
-        array('commit_stage_readonly_set_value','best_worst_sales_stage_read_only','likely_case_copy_when_closed')
+        array('set_base_rate','commit_stage_readonly_set_value','best_worst_sales_stage_read_only','likely_case_copy_when_closed')
         as \$dep
     ) {
         if (isset(\$dependencies['Opportunities'][\$dep])) {

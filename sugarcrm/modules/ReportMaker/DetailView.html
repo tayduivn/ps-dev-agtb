@@ -24,8 +24,8 @@
 			<input type="hidden" name="return_id">			
 		<tr>
 		<td>
-		 <input title="{APP.LBL_EDIT_BUTTON_TITLE}" accessKey="{APP.LBL_EDIT_BUTTON_KEY}" class="button" onclick="this.form.return_module.value='ReportMaker'; this.form.return_action.value='DetailView'; this.form.return_id.value='{ID}'; this.form.action.value='EditView'" type="submit" name="Edit" value="  {APP.LBL_EDIT_BUTTON_LABEL}  ">
-		 <input title="{APP.LBL_DELETE_BUTTON_TITLE}" accessKey="{APP.LBL_DELETE_BUTTON_KEY}" class="button" onclick="this.form.return_module.value='ReportMaker'; this.form.return_action.value='ListView'; this.form.action.value='Delete'; return confirm('{APP.NTC_DELETE_CONFIRMATION}')" type="submit" name="Delete" value=" {APP.LBL_DELETE_BUTTON_LABEL} ">
+            {EDIT_BUTTON}
+            {DELETE_BUTTON}
 		  <input title="{MOD.LBL_RUN_BUTTON_TITLE}" class="button" onclick="this.form.return_module.value='ReportMaker'; this.form.return_action.value='DetailView'; this.form.return_id.value='{ID}'; this.form.action.value='ReportView'" type="submit" name="Run" value="  {MOD.LBL_RUN_BUTTON_LABEL}  ">
 		 </td>
 		<td align='right'>{ADMIN_EDIT}</td>
@@ -56,3 +56,10 @@
 <!-- BEGIN: subpanel -->
 <slot>{SUBDATASETS}</slot>
 <!-- END: subpanel -->
+
+<!-- BEGIN: edit_button -->
+<input title="{APP.LBL_EDIT_BUTTON_TITLE}" accessKey="{APP.LBL_EDIT_BUTTON_KEY}" class="button" onclick="this.form.return_module.value='ReportMaker'; this.form.return_action.value='DetailView'; this.form.return_id.value='{ID}'; this.form.action.value='EditView'" type="submit" name="Edit" value="  {APP.LBL_EDIT_BUTTON_LABEL}  ">
+<!-- END: edit_button -->
+<!-- BEGIN: delete_button -->
+<input title="{APP.LBL_DELETE_BUTTON_TITLE}" accessKey="{APP.LBL_DELETE_BUTTON_KEY}" class="button" onclick="this.form.return_module.value='ReportMaker'; this.form.return_action.value='ListView'; this.form.action.value='Delete'; return confirm('{APP.NTC_DELETE_CONFIRMATION}')" type="submit" name="Delete" value=" {APP.LBL_DELETE_BUTTON_LABEL} ">
+<!-- BEGIN: delete_button -->

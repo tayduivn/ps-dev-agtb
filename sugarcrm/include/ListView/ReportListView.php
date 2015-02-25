@@ -81,6 +81,7 @@ class ReportListView  extends ListView {
 	}	
 
 	function processDataSet(){
+        global $currentModule;
 
 		if(!isset($this->xTemplate)) $this->createXTemplate();
 	
@@ -111,7 +112,7 @@ class ReportListView  extends ListView {
 		}
 	
 		//show custom layout editor tools if enabled
-		if($this->custom_layout==true && $this->final_report_view==false){
+        if ($this->custom_layout && !$this->final_report_view && SugarACL::checkAccess($currentModule, 'edit')) {
 			$this->get_layout_head_editor();
 		}
 

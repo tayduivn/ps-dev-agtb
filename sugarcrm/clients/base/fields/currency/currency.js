@@ -131,14 +131,21 @@
 
         var currencyField = this.def.currency_field || 'currency_id';
         var baseRateField = this.def.base_rate_field || 'base_rate';
+        // if the base rate changes, it should trigger a field re-render
+        this.model.on('change:' + baseRateField, function(model, baseRate, options) {
+            var self = this;
+            _.defer(function() {
+                self.model.trigger('change:' + self.name, self.model, self.model.get(self.name));
+            });
+        }, this);
         this.model.on('change:' + currencyField, function(model, currencyId, options) {
             //When model is reset, it should not be called
             if (!currencyId || !this._lastCurrencyId) {
                 this._lastCurrencyId = currencyId;
                 return;
             }
-            // update the base rate in the model
-            this.model.set(baseRateField, app.metadata.getCurrency(currencyId).conversion_rate);
+            // update the base rate in the model, set it silently since we are already going to do a re-render
+            this.model.set(baseRateField, app.metadata.getCurrency(currencyId).conversion_rate, {silent: true});
             // convert the value to new currency on the model
             if (model.has(this.name)) {
                 var val = model.get(this.name);

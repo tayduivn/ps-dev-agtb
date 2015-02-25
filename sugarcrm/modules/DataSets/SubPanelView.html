@@ -43,10 +43,10 @@
     			<td valign=TOP ><slot><input type='checkbox' disabled=disabled class='checkbox' {DATA_SET.HEADER} /></slot></td>
     		<td nowrap align="center" valign=TOP>
     		<slot>
-    		<a href="{URL_PREFIX}index.php?module=DataSets&action=Save&data_set_id={DATA_SET.ID}&direction=Up&return_action=DetailView&return_module=ReportMaker&return_id={REPORT_ID}" class="listViewTdToolsS1">{UPARROW_INLINE} {UPARROW_TEXT}</a>&nbsp;&nbsp; 
-    		<a href="{URL_PREFIX}index.php?module=DataSets&action=Save&data_set_id={DATA_SET.ID}&direction=Down&return_action=DetailView&return_module=ReportMaker&return_id={REPORT_ID}" class="listViewTdToolsS1">{DOWNARROW_INLINE} {DOWNARROW_TEXT}</a>&nbsp;&nbsp; 
+            {DATA_SET.UP_BUTTON}
+            {DATA_SET.DOWN_BUTTON}
     		{DATA_SET.EDIT_BUTTON}
-    		<a href="{URL_PREFIX}index.php?module=DataSets&action=Save&record={DATA_SET.ID}&return_action=DetailView&return_module=ReportMaker&return_id={REPORT_ID}&rem_dataset=Y" class="listViewTdToolsS1" onclick="{DELETE_ONCLICK}">{DELETE_INLINE} {DELETE_TEXT}</a>
+            {DATA_SET.DELETE_BUTTON}
     		</slot></td>
 </tr>
 
