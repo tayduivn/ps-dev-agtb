@@ -447,23 +447,19 @@ class PMSEProjectImporter extends PMSEImporter
                             $flowBean->$key = $this->savedElements[$element['flo_element_dest_type']][$value];
                         }
                     } elseif ($key == 'flo_condition') {
-                        if (!empty($value)){
-                            if (!is_null($value)) {
-                                if (is_array($value)){
-                                    foreach ($value as $_key => $_value) {
-                                        switch ($_value->expType){
-                                            case 'CONTROL':
-                                                if (isset($this->changedUidElements[$_value->expField])) {
-                                                    $value[$_key]->expField = $this->changedUidElements[$_value->expField]['new_uid'];
-                                                }
-                                                break;
-                                            case 'BUSINESS_RULES':
-                                                break;
+                        if (!empty($value) && is_array($value)) {
+                            foreach ($value as $_key => $_value) {
+                                switch ($_value->expType){
+                                    case 'CONTROL':
+                                        if (isset($this->changedUidElements[$_value->expField])) {
+                                            $value[$_key]->expField = $this->changedUidElements[$_value->expField]['new_uid'];
                                         }
-                                    }
-                                    $flowBean->$key = json_encode($value);
+                                        break;
+                                    case 'BUSINESS_RULES':
+                                        break;
                                 }
                             }
+                            $flowBean->$key = json_encode($value);
                         }
                     } elseif ($key == 'flo_is_inmediate') {
                         $flowBean->$key = (!empty($value)) ? $value : null;
