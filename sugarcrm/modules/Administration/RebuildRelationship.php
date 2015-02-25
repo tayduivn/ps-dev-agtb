@@ -29,16 +29,24 @@ if (!empty($changedModules)) {
 $db->query ( $query ) ;
 
 //clear cache before proceeding..
-VardefManager::clearVardef () ;
+if (!empty($changedModules)) {
+    foreach ($changedModules as $module) {
+        VardefManager::clearVardef($module, BeanFactory::getObjectName($module));
+    }
+} else {
+    VardefManager::clearVardef();
+    Relationship::delete_cache();
+
+}
 
 $changedModules = empty($changedModules) ? $GLOBALS['beanList'] : $changedModules;
 
 // loop through all of the modules and create entries in the Relationships table (the relationships metadata) for every standard relationship, that is, relationships defined in the /modules/<module>/vardefs.php
 // SugarBean::createRelationshipMeta just takes the relationship definition in a file and inserts it as is into the Relationships table
 // It does not override or recreate existing relationships
-foreach ( $changedModules as $bean => $value )
+foreach ( $changedModules as $aModule => $value )
 {
-        $focus = BeanFactory::newBean($bean);
+        $focus = BeanFactory::newBean($aModule);
         if ( $focus instanceOf SugarBean ) {
             // Add defensive coding around required args for relationship meta
             $objName = $focus->getObjectName();
@@ -78,9 +86,12 @@ foreach ( $changedModules as $bean => $value )
     }
 
 //clean relationship cache..will be rebuilt upon first access.
-if (empty ( $_REQUEST [ 'silent' ] ))
+if (empty ( $_REQUEST [ 'silent' ] )) {
     echo $mod_strings [ 'LBL_REBUILD_REL_DEL_CACHE' ] ;
-Relationship::delete_cache () ;
+}
+
+$rel = BeanFactory::getBean('Relationships');
+$rel->rebuild_relationship_cache(array_keys($changedModules));
 
 //////////////////////////////////////////////////////////////////////////////
 // Remove the "Rebuild Relationships" red text message on admin logins
@@ -104,10 +115,6 @@ $date_entered = db_convert ( "'$gmdate'", 'datetime' ) ;
 $query = 'INSERT INTO versions (id, deleted, date_entered, date_modified, modified_user_id, created_by, name, file_version, db_version) ' . "VALUES ('$id', '0', $date_entered, $date_entered, '1', '1', 'Rebuild Relationships', '4.0.0', '4.0.0')" ;
 $log->info ( $query ) ;
 $db->query ( $query ) ;
-
-$rel = BeanFactory::getBean('Relationships');
-Relationship::delete_cache();
-$rel->build_relationship_cache();
 
 // unset the session variable so it is not picked up in DisplayWarnings.php
 if (isset ( $_SESSION [ 'rebuild_relationships' ] ))
