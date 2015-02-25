@@ -51,6 +51,12 @@ class PMSEImporter
     protected $suffix = '';
 
     /**
+     * @var $extension
+     * @access private
+     */
+    protected $extension;
+
+    /**
      * Get class Bean.
      * @codeCoverageIgnore
      * @return object
@@ -82,6 +88,27 @@ class PMSEImporter
     }
 
     /**
+     * Set extension of file to be imported.
+     * @codeCoverageIgnore
+     * @param string $extension
+     * @return void
+     */
+    public function setExtension($extension)
+    {
+        $this->extension = $extension;
+    }
+
+    /**
+     * get extension of file to be imported.
+     * @codeCoverageIgnore
+     * @return string
+     */
+    public function getExtension()
+    {
+        return $this->extension;
+    }
+
+    /**
      * Set name of file to be imported.
      * @codeCoverageIgnore
      * @param string $name
@@ -106,10 +133,10 @@ class PMSEImporter
             if ($project['project']) {
                 $result = $this->saveProjectData($project['project']);
             } else {
-                $result = false;
+                throw new SugarApiExceptionRequestMethodFailure('ERROR_UPLOAD_FAILED');
             }
         } else {
-            $result = false;
+            throw new SugarApiExceptionRequestMethodFailure('ERROR_UPLOAD_FAILED');
         }
         return $result;
     }

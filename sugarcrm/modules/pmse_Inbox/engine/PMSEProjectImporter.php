@@ -63,6 +63,7 @@ class PMSEProjectImporter extends PMSEImporter
         $this->dependenciesWrapper = new PMSERelatedDependencyWrapper();
         $this->name = 'name';
         $this->id = 'prj_id';
+        $this->extension = 'bpm';
     }
 
     /**

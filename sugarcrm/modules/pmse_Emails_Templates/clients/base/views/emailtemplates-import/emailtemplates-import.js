@@ -49,11 +49,10 @@
                             autoClose: true
                         });
                     },
-                    error: function (data) {
+                    error: function (error) {
                         app.alert.show('process-import-saved', {
                             level: 'error',
-                            messages: app.lang.get(data.responseText, self.module),
-                            autoClose: false
+                            messages: app.lang.get('LBL_PMSE_IMPORT_EMAIL_TEMPLATES_FAILURE', self.module, {module: self.module})
                         });
                     }
                 },
@@ -81,7 +80,6 @@
                 var $file = $($files[file]),
                     fileField = $file.attr("name");
                 if (callbacks.success) callbacks.success();
-
             }
         }
         else {
