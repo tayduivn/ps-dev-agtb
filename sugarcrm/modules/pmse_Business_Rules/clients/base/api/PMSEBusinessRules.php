@@ -75,15 +75,21 @@ class PMSEBusinessRules extends vCardApi
             ) {
                 try {
                     $importerObject = new PMSEBusinessRuleImporter();
-                    $data = $importerObject->importProject($_FILES[$first_key]['tmp_name']);
-                    $results = array('businessrules_import' => $data);
+                    $name = $_FILES[$first_key]['name'];
+                    $extension = end(explode(".", $name));
+                    if ($extension == $importerObject->getExtension()) {
+                        $data = $importerObject->importProject($_FILES[$first_key]['tmp_name']);
+                        $results = array('businessrules_import' => $data);
+                    } else  {
+                        throw new SugarApiExceptionRequestMethodFailure('ERROR_UPLOAD_FAILED');
+                    }
                 } catch (Exception $e) {
-                    throw new SugarApiExceptionRequestMethodFailure('ERR_VCARD_FILE_PARSE');
+                    throw new SugarApiExceptionRequestMethodFailure('ERROR_UPLOAD_FAILED');
                 }
                 return $results;
             }
         } else {
-            throw new SugarApiExceptionMissingParameter('ERR_VCARD_FILE_MISSING');
+            throw new SugarApiExceptionMissingParameter('ERROR_UPLOAD_FAILED');
         }
     }
 
