@@ -76,7 +76,7 @@ class PMSEBusinessRules extends vCardApi
                 try {
                     $importerObject = new PMSEBusinessRuleImporter();
                     $name = $_FILES[$first_key]['name'];
-                    $extension = end(explode(".", $name));
+                    $extension = pathinfo($name,  PATHINFO_EXTENSION);
                     if ($extension == $importerObject->getExtension()) {
                         $data = $importerObject->importProject($_FILES[$first_key]['tmp_name']);
                         $results = array('businessrules_import' => $data);

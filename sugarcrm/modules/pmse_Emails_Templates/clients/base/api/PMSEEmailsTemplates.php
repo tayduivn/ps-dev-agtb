@@ -216,7 +216,7 @@ class PMSEEmailsTemplates extends vCardApi
                 try {
                     $importerObject = new PMSEEmailTemplateImporter();
                     $name = $_FILES[$first_key]['name'];
-                    $extension = end(explode(".", $name));
+                    $extension = pathinfo($name,  PATHINFO_EXTENSION);
                     if ($extension == $importerObject->getExtension()) {
                         $data = $importerObject->importProject($_FILES[$first_key]['tmp_name']);
                         $result = array('emailtemplates_import' => $data);
