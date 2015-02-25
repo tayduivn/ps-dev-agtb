@@ -26,6 +26,15 @@ ExpressionContainer.prototype.type = 'ExpressionContainer';
 
 ExpressionContainer.prototype.family = 'ExpressionContainer';
 
+ExpressionContainer.prototype.notSupportedTypes = [
+    'Encrypt', 
+    'IFrame',
+    'Image',
+    'MultiSelect',
+    'FlexRelate',
+    'Relate'
+];
+
 ExpressionContainer.prototype.init = function (options, parent) {
     var defaults = {
         expression: [],
@@ -228,6 +237,14 @@ ExpressionContainer.prototype.handleCriteriaBuilder = function (globalParent, pa
                 }
             };
         } else {
+            if(this.notSupportedTypes.indexOf(parentVariable.fieldType) >= 0) {
+                App.alert.show('expression-variable-not-supported-data-type', {
+                    level: 'warning',
+                    messages: translate('LBL_PMSE_MESSAGE_LABEL_NOT_SUPPORTED_DATA_TYPE', 'pmse_Business_Rules'),
+                    autoClose: true
+                });
+                return;
+            }
             switch (parentVariable.fieldType) {
                 case 'Date':
                     config = {
@@ -272,6 +289,7 @@ ExpressionContainer.prototype.handleCriteriaBuilder = function (globalParent, pa
                     });
                     break;
                 case 'Integer':
+                case 'Currency':
                     $.extend(true, config, {
                         operators: {
                             arithmetic: true,

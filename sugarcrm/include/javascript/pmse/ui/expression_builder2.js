@@ -1824,7 +1824,7 @@ ExpressionControl.prototype._createBasicConstantPanel = function () {
                         }
                     }
                     if (enabledButtons === 1) {
-                        form.getItem("type").setValue(btn.getvdfvddfv().substr(4));
+                        form.getItem("type").setValue(btn.getLabel().substr(4));
                     } else {
                         return false;
                     }
