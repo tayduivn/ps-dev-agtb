@@ -271,7 +271,6 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                     lineChart.xAxis
                         .showMaxMin(false)
                         .highlightZero(false)
-                        .axisLabel(params.show_x_label)
                         .tickFormat(function(d, i) { return xLabels[d]; });
 
                     lineChart.yAxis
