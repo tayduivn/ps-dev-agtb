@@ -180,20 +180,21 @@
         //After rendering the dropdown, the selected value should be the value set in the model,
         //or the default value. The default value fallbacks to the first option if no other is selected
         //or the selected value is not available in the list of items,
-        //if the user has write access to the model for the field we are currently on
+        //if the user has write access to the model for the field we are currently on.
+        //This should be done only if available options are loaded, otherwise the value in model will be reset to
+        //default even if it's in available options but they are not loaded yet
         if (!this.def.isMultiSelect
+            && !_.isEmpty(this.items)
             && !(this.model.has(this.name) && this.model.get(this.name) in this.items)
             && app.acl.hasAccessToModel('write', this.model, this.name)
-            ) {
+        ) {
             defaultValue = this._getDefaultOption(optionsKeys);
-            if (defaultValue) {
-                //Forecasting uses backbone model (not bean) for custom enums so we have to check here
-                if (_.isFunction(this.model.setDefault)) {
-                    this.model.setDefault(this.name, defaultValue);
-                }
-                // call with {silent: true} on, so it won't re-render the field, since we haven't rendered the field yet
-                this.model.set(this.name, defaultValue, {silent: true});
+            //Forecasting uses backbone model (not bean) for custom enums so we have to check here
+            if (_.isFunction(this.model.setDefault)) {
+                this.model.setDefault(this.name, defaultValue);
             }
+            // call with {silent: true} on, so it won't re-render the field, since we haven't rendered the field yet
+            this.model.set(this.name, defaultValue, {silent: true});
         }
         app.view.Field.prototype._render.call(this);
         // if displaying the noaccess template, just exit the method
