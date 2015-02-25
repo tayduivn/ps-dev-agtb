@@ -414,7 +414,12 @@
 
         var favicon = new Favico({animation: 'none'});
         if (this.collection) {
-            favicon.badge(this.collection.length);
+            var badge = this.collection.length;
+            if(this.collection.next_offset > 0) {
+                badge = badge + "+";
+
+            }
+            favicon.badge(badge);
         }
     },
 
