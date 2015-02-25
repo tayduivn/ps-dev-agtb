@@ -66,9 +66,9 @@ class RevenueLineItem extends SugarBean
     public $currency_name;
     public $default_currency_symbol;
     public $discount_amount;
-    public $best_case = 0;
-    public $likely_case = 0;
-    public $worst_case = 0;
+    public $best_case;
+    public $likely_case;
+    public $worst_case;
     public $base_rate;
     public $probability;
     public $date_closed;
