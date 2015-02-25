@@ -54,6 +54,18 @@
           height: 22px;
           min-height: 22px;
         }
+        &.drop-highlight {
+          .select2-choices {
+            .box-shadow(0 0 1px transparent);
+            background-color: rgba(23,109,229,.075);
+          }
+          &.drop-hover {
+            .select2-choices {
+              background-color: @white;
+              border-color: rgba(23,109,229,.5);
+            }
+          }
+        }
       }
     }
     &[data-name="compose_addressbook_selected_recipients"] {
