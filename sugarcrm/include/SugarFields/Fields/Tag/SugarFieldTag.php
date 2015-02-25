@@ -25,7 +25,9 @@ class SugarFieldTag extends SugarFieldRelatecollection
      */
     public function apiSave(SugarBean $bean, array $params, $field, $properties)
     {
-        if (!is_array($params[$field])) {
+        // Exit save if nothing is to be saved, or if bean is being saved as part
+        // of a dupe check, to avoid adding relationship rows twice.
+        if (!is_array($params[$field]) || isset($this->options['find_duplicates'])) {
             return;
         }
 

@@ -270,6 +270,7 @@ class SugarBeanApiHelper
 
             $type = !empty($properties['custom_type']) ? $properties['custom_type'] : $properties['type'];
             $field = $sfh->getSugarField($type);
+            $field->setOptions($options);
 
             if ($field != null) {
                 if (!empty($options['massUpdate'])) {
