@@ -65,47 +65,65 @@ class WorkFlowGlue {
     }
 
     /**
-     * @param $shell_object object
-     * @param $is_equal bool set separator to condition '==' if true and '!=' if false
+     * Generates field equality comparison PHP code
+     *
+     * @param WorkFlowTriggerShell $shell_object
+     * @param bool $is_equal
      * @return string
      */
-	private function getCompareText($shell_object, $is_equal)
+    private function getCompareText($shell_object, $is_equal)
     {
-        //We need to parse datetime fields as they may come from the DB in a different format from the one in save which
-        //would cause a normal string compare to fail
+        global $dictionary;
+
+        $parentWorkflow = $shell_object->get_workflow_type();
+        if (empty($parentWorkflow->base_module)) {
+            $GLOBALS['log']->error(
+                "WorkFlowTriggerShell ({$shell_object->id}) " .
+                "parent WorkFlow ({$parentWorkflow->id}) has no base module set."
+            );
+        }
+
         $useStrict = true;
-        if (!empty($_REQUEST['base_module']))
-        {
-            global $beanList, $dictionary;
-            $moduleName = $_REQUEST['base_module'];
-            $objectName = BeanFactory::getObjectName($moduleName);
-            VardefManager::loadVardef($moduleName, $objectName);
-            if (!empty($dictionary[$objectName]) && !empty($dictionary[$objectName]['fields'][$shell_object->field]))
-            {
-                $vardef = $dictionary[$objectName]['fields'][$shell_object->field];
-                if (!empty($vardef['type']) && ($vardef['type'] == 'date' || $vardef['type'] == 'datetime'))
-                {
-                    // Adding an isset check for fetched_row since new records don't have it
-                    return " ( (empty(\$focus->fetched_row['".$shell_object->field."']) && !empty(\$focus->".$shell_object->field.") ) ||"
-                                  ." ( isset(\$focus->".$shell_object->field.") && isset(\$focus->fetched_row['".$shell_object->field."']) && "
-                                  . "\$GLOBALS['timedate']->to_display_date_time(\$focus->fetched_row['".$shell_object->field."'])"
-                                  . " != \$GLOBALS['timedate']->to_display_date_time(\$focus->".$shell_object->field."))) ";
 
+        $moduleName = $parentWorkflow->base_module;
+        $objectName = BeanFactory::getObjectName($moduleName);
+        $field = $shell_object->field;
+        VardefManager::loadVardef($moduleName, $objectName);
 
-                } else if (!empty($vardef['type']) && ($vardef['type'] == 'currency' || $vardef['type'] == 'double' || $vardef['type'] == 'int')) {
-                    $useStrict = false;
-                }
+        if (!empty($dictionary[$objectName]) && !empty($dictionary[$objectName]['fields'][$field])) {
+            $vardef = $dictionary[$objectName]['fields'][$field];
+
+            // Don't use strict for numerical types
+            if (!empty($vardef['type']) && (in_array($vardef['type'], array('currency', 'double', 'int')))) {
+                $useStrict = false;
+            }
+
+            // Use to_display_date for Date fields
+            if (!empty($vardef['type']) && (in_array($vardef['type'], array('date')))) {
+                $dateTimeFunction = 'to_display_date';
+            }
+            // Use to_display_date_time for DateTime fields
+            if (!empty($vardef['type']) && (in_array($vardef['type'], array('datetime', 'datetimecombo')))) {
+                $dateTimeFunction = 'to_display_date_time';
             }
         }
 
+        $sep = $is_equal ? '==' : '!=';
         if ($useStrict) {
-            $sep = $is_equal ? '===' : '!==';
-        } else {
-            $sep = $is_equal ? '==' : '!=';
+            $sep .= '=';
         }
 
-        // Remove check if old value is set. This should trigger when old value was empty, and new value is entered
-        return " ( isset(\$focus->".$shell_object->field.") && ( empty(\$focus->fetched_row) || array_key_exists('".$shell_object->field."', \$focus->fetched_row) ) && \$focus->fetched_row['".$shell_object->field."'] " . $sep . " \$focus->".$shell_object->field.") ";
+        $equalityCheck = "\$focus->fetched_row['" . $field . "'] " . $sep . " \$focus->" . $field;
+
+        if (!empty($dateTimeFunction)) {
+            $equalityCheck = "\$GLOBALS['timedate']->{$dateTimeFunction}(\$focus->fetched_row['" . $field . "'])"
+                . " $sep "
+                . "\$GLOBALS['timedate']->{$dateTimeFunction}(\$focus->" . $field . ")";
+        }
+
+        return " (isset(\$focus->" . $field . ") && " .
+            "(empty(\$focus->fetched_row) || array_key_exists('" . $field . "', \$focus->fetched_row)) " .
+            "&& {$equalityCheck}) ";
     }
 
 	function glue_normal_compare_change(& $shell_object){
@@ -395,7 +413,7 @@ class WorkFlowGlue {
             {
                 $eval_string .= build_source_array($parent_type, $type_object->lhs_field);
                 $eval_string .= " ".$this->operator_array[$type_object->operator]." ";
-                $eval_string .= " '".$this->write_escape($type_object->encrpyt_before_save($right_value))."'";
+                $eval_string .= " " . $this->write_escape($type_object->encrpyt_before_save($right_value));
                 $express_evaluated = true;
             }
 
@@ -407,7 +425,7 @@ class WorkFlowGlue {
 				$eval_string .= " " . $this->translateOperator($type_object->operator) . " ";
 
 				//escape the quotes as needed
-				$eval_string .= " '".$this->write_escape($right_value)."'";
+				$eval_string .= " " . $this->write_escape($right_value);
 
 
 
@@ -640,7 +658,7 @@ include_once("include/workflow/alert_utils.php");
 		// Get the id and the name.
 		while($row = $this->db->fetchByAssoc($result)){
 			///Start - Add the individual action components
-			$action_component_array .= "\t\t '".$row['field']."' => '".$this->write_escape($row['value'])."', \n";
+			$action_component_array .= "\t\t '" . $row['field'] . "' => " . $this->write_escape($row['value']) . ",\n";
 			if($row['ext1']!=""){
 				$action_component_array_ext .= "\t\t '".$row['field']."' => '".$row['ext1']."', \n";
 			}
@@ -669,7 +687,7 @@ include_once("include/workflow/alert_utils.php");
 		while($row = $this->db->fetchByAssoc($result)){
 			$action_component_array .= "\t '".$row['field']."' => array ( \n\n";
 			///Start - Add the individual action components
-				$action_component_array .= "\t\t\t 'value' => '".$this->write_escape($row['value'])."', \n";
+				$action_component_array .= "\t\t\t 'value' => " . $this->write_escape($row['value']) . ",\n";
 				$action_component_array .= "\t\t\t 'ext1' => '".$row['ext1']."', \n";
 				$action_component_array .= "\t\t\t 'ext2' => '".$row['ext2']."', \n";
 				$action_component_array .= "\t\t\t 'ext3' => '".$row['ext3']."', \n";
@@ -804,7 +822,7 @@ include_once("include/workflow/alert_utils.php");
 		$trigger_shell_array .= "\t '".$name."' => array ( \n\n";
 
 		foreach($sub_array as $key => $value){
-			$trigger_shell_array .= "\t\t '".$key."' => '".$this->write_escape($value)."', \n";
+			$trigger_shell_array .= "\t\t '" . $key . "' => " . $this->write_escape($value) . ",\n";
 		}
 
 		$trigger_shell_array .= "\t ), \n\n";
@@ -883,15 +901,14 @@ include_once("include/workflow/alert_utils.php");
 
 /////////////////////END PLUGIN GLUING FUNCTIONS/////////////////
 
-
-	function write_escape($value){
-
-		$target_value = html_entity_decode($value, ENT_QUOTES);
-		return addslashes($target_value);
-	//end function write_escape
-	}
-
-
-
-//end class WorkFlowGlue
+    /**
+     * Decode HTML values, and return the value for use in PHP, safe from injections
+     *
+     * @param $value - Value to be decoded/escaped
+     * @return string
+     */
+    public function write_escape($value) {
+        $target_value = html_entity_decode($value, ENT_QUOTES);
+        return "stripslashes('" . addslashes($target_value) . "')";
+    }
 }
