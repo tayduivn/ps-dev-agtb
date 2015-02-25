@@ -174,6 +174,9 @@ class PMSELogger extends AbstractLogger
      */
     private function formatMessage($message, $context)
     {
+        if (is_array($message) || is_object($message)) {
+            $message = print_r($message, true);
+        }
         if (!empty($context)) {
             $message .= PHP_EOL . $this->indent($this->contextToString($context));
         }

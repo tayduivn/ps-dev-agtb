@@ -120,7 +120,7 @@ class PMSETerminateValidator implements PMSEValidate
     public function validateRequest(PMSERequest $request)
     {
         $this->logger->info("Validate Request " . get_class($this));
-        $this->logger->debug("Request data" . print_r($request, true));
+        $this->logger->debug(array("Request data:", $request));
         $flowData = $request->getFlowData();
         $bean = $request->getBean();
         if ($flowData['evn_id'] == 'TERMINATE') {
