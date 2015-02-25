@@ -78,6 +78,41 @@ function UWrebuild() {
 	$db->query($query);
 }
 
+/**
+ * Returns manifest patch from user request
+ *
+ * @param array $request
+ * @return array
+ */
+function UW_get_patch_from_request(array $request)
+{
+    if (isset($request['patch'])) {
+        return $request['patch'];
+    }
+
+    return array();
+}
+
+/**
+ * Returns manifest patch from upgrade history of the given install file
+ *
+ * @param string $install_file
+ * @return array
+ */
+function UW_get_patch_for_file($install_file)
+{
+    $history = new UpgradeHistory();
+    $md5 = md5_file($install_file);
+    $matches = $history->findByMd5($md5);
+    $history = array_shift($matches);
+
+    if ($history && $history->patch) {
+        return unserialize(base64_decode($history->patch));
+    }
+
+    return array();
+}
+
 unset($_SESSION['rebuild_relationships']);
 unset($_SESSION['rebuild_extensions']);
 
@@ -129,6 +164,10 @@ if(isset($_REQUEST['id_name'])){
 $s_manifest = '';
 if(isset($_REQUEST['s_manifest'])){
  $s_manifest = $_REQUEST['s_manifest'];
+}
+$s_patch = null;
+if (isset($_REQUEST['patch'])) {
+    $s_patch = base64_encode(serialize($_REQUEST['patch']));
 }
 $previous_version = '';
 if(isset($_REQUEST['previous_version'])){
@@ -322,6 +361,8 @@ switch( $install_type ){
         $mi = new ModuleInstaller();
         switch( $mode ){
             case "Install":
+                $patch = UW_get_patch_from_request($_REQUEST);
+                $mi->setPatch($patch);
             //here we can determine if this is an upgrade or a new version
             	if(!empty($previous_version)){
             		$mi->install( "$unzip_dir", true, $previous_version);
@@ -342,6 +383,8 @@ switch( $install_type ){
                 	$GLOBALS['mi_remove_tables'] = false;
                 else
                 	$GLOBALS['mi_remove_tables'] = true;
+                $patch = UW_get_patch_for_file($install_file);
+                $mi->setPatch($patch);
                 $mi->uninstall( "$unzip_dir" );
                 break;
              case "Disable":
@@ -349,6 +392,8 @@ switch( $install_type ){
                 	$GLOBALS['mi_overwrite_files'] = false;
                 else
                 	$GLOBALS['mi_overwrite_files'] = true;
+                $patch = UW_get_patch_for_file($install_file);
+                $mi->setPatch($patch);
                 $mi->disable( "$unzip_dir" );
                 break;
              case "Enable":
@@ -356,6 +401,8 @@ switch( $install_type ){
                 	$GLOBALS['mi_overwrite_files'] = false;
                 else
                 	$GLOBALS['mi_overwrite_files'] = true;
+                $patch = UW_get_patch_for_file($install_file);
+                $mi->setPatch($patch);
                 $mi->enable( "$unzip_dir" );
                 break;
             default:
@@ -436,6 +483,7 @@ switch( $mode ){
         $new_upgrade->description   = $description;
         $new_upgrade->id_name		= $id_name;
         $new_upgrade->manifest		= $s_manifest;
+        $new_upgrade->patch         = $s_patch;
         $new_upgrade->save();
 
         //Check if we need to show a page for the user to finalize their install with.

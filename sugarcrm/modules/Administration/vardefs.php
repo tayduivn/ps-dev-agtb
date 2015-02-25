@@ -107,6 +107,11 @@ $dictionary['UpgradeHistory'] = array(
                 'type' => 'longtext',
     		    'comment' => 'A serialized copy of the manifest file.'
         ),
+        'patch' => array (
+            'name' => 'patch',
+            'type' => 'text',
+            'comment' => 'A serialized copy of the patch applied to the package during installation'
+        ),
         'date_entered' => array (
                 'name' => 'date_entered',
                 'type' => 'datetime',

@@ -403,13 +403,14 @@ function buildInstall($path){
             foreach ($custom_module as $va => $_) {
                 switch ($va) {
                     case 'language':
-                    case 'Ext';
+                    case 'Ext/Vardefs';
+                    case 'Ext/Language';
                         // Old way
                         if ($va === 'language') {
                             $this->getLanguageManifestForModule($value, $installdefs);
                             $this->getCustomFieldsManifestForModule($value, $installdefs);
                         } else {
-                            // Build a full path to the Ext directory for the 
+                            // Build a full path to the Ext directory for the
                             // package module
                             $fullpath = "$path/Extension/modules/$value/Ext/";
                             $paths = array(
@@ -873,12 +874,12 @@ function buildInstall($path){
                     $fullpath = $path . '/' . $type;
 
                     // Start first with custom fields
-                    if ($this->isDirectoryExportable("{$fullpath}Vardefs")) {
+                    if ($this->isDirectoryExportable("$fullpath/Vardefs")) {
                         $result["$type/Vardefs"] = $mod_strings['LBL_EC_CUSTOMFIELD'];
                     }
 
                     // Now check custom labels
-                    if ($this->isDirectoryExportable("{$fullpath}Language")) {
+                    if ($this->isDirectoryExportable("$fullpath/Language")) {
                         $result["$type/Language"] = $mod_strings['LBL_EC_CUSTOMLABEL'];
                     }
                     break;
