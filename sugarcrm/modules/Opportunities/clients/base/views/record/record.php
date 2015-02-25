@@ -125,6 +125,7 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
                 ),
                 array(
                     'name' => 'name',
+                    'link' => false,
                     //BEGIN SUGARCRM flav=ent ONLY
                     'related_fields' => array(
                         'total_revenue_line_items',
