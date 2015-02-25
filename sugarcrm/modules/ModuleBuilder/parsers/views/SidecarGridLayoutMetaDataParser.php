@@ -268,20 +268,6 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
     //END SUGARCRM flav=ent ONLY
 
     /**
-     * helper to pack a row with $cols members of [empty]
-     * @param $row
-     * @param $cols
-     * @return void
-     *
-     */
-    protected function _packRowWithEmpty(&$row, $cols)
-    {
-        for ($i=0; $i<$cols; $i++) {
-            $row[] = $this->_addInternalCell(MBConstants::$EMPTY);
-        }
-    }
-
-    /**
      * Helper to add a field (name) to the internal formatted row
      * used in case internal format goes to wanting arrays
      * @param $field
@@ -373,6 +359,13 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
             }
         }
 
+        $baseSpans = array();
+        foreach ($this->baseViewFields as $baseKey => $baseFieldDef) {
+            if (is_array($baseFieldDef) && isset($baseFieldDef['span'])) {
+                $baseSpans[$baseKey] = $baseFieldDef['span'];
+            }
+        }
+
         // Set up the panel index so we know where the header panel meta needs to
         // be injected if there is header panel meta to be injected
         $panelIndex = 0;
@@ -433,18 +426,19 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
                                         'name' => $fields[$lastRowIndex]
                                     );
                                 }
-                                $fields[$lastRowIndex]['span'] = $singleSpanUnit;
                             }
                         }
 
-                        $lastField = array(
-                            'span' => $singleSpanUnit,
-                        );
-
                         if ($fieldCount === 1) {
-                            $lastField = array(
-                                'span' => $this->maxSpan,
-                            );
+                            $lastField = array('span' => $this->maxSpan);
+                        } else {
+                            // calculate span of the filler based on span of the field it complements
+                            if (isset($lastField['name'], $baseSpans[$lastField['name']])) {
+                                $span = $this->maxSpan - $baseSpans[$lastField['name']];
+                                $lastField = array('span' => $span);
+                            } else {
+                                $lastField = array();
+                            }
                         }
                     }
                     else {
@@ -484,6 +478,23 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
                 }
             } else {
                 $newPanel = $panelDefaults;
+            }
+
+            // populate field spans with standard values unless other is defined layout
+            foreach ($fields as $i => $field) {
+                if (is_array($field)) {
+                    if (isset($field['name'])) {
+                        $fieldName = $field['name'];
+                        if (!isset($field['span']) && isset($baseSpans[$fieldName])) {
+                            $fields[$i]['span'] = $baseSpans[$fieldName];
+                        }
+                    }
+                } elseif (isset($baseSpans[$field])) {
+                    $fields[$i] = array(
+                        'name' => $field,
+                        'span' => $baseSpans[$field],
+                    );
+                }
             }
 
             $newPanel['fields'] = $fields;
@@ -548,63 +559,108 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
             $this->extraPanelMeta[strtoupper($pLabel)] = $panelMeta;
 
             // going from a list of fields to putting them in rows,cols format.
-            $internalFieldRows = array();
-            $row = array();
+            $panelRows = array();
+            $this->resetRow($row, $rowSpan);
 
+            $singleSpanUnit = $this->maxSpan / $panelColumns;
             foreach ($panel['fields'] as $field) {
-
-                // figure out the colspan of the current field
-                if (is_array($field) && ($span = $this->getFieldSpan($field)) > 0) {
-                    $colspan = floor($span / $this->maxSpan * $panelColumns);
+                // Simple aesthetics... make the name field a full span but
+                // only if this is the header panel
+                if (isset($panel['name']) && $panel['name'] === 'panel_header' && $field === 'name') {
+                    $fieldSpan = $this->maxSpan;
                 } else {
-                    // Simple aesthetics... make the name field a full span but
-                    // only if this is the header panel
-                    if (isset($panel['name']) && $panel['name'] === 'panel_header' && $field === 'name') {
-                        $colspan = $panelColumns;
-                    } else {
-                        $colspan = 1;
-                    }
-                }
-                $colsTaken = 0;
-
-                // figure out how much space is taken up already by other fields
-                foreach($row as $rowField) {
-                    if (is_array($rowField) && ($span = $this->getFieldSpan($rowField)) > 0) {
-                        $colsTaken = $colsTaken + floor($span / $this->maxSpan * $panelColumns);
-                    } else {
-                        $colsTaken = $colsTaken + 1;
-                    }
+                    $fieldSpan = $this->getFieldSpan($field, $singleSpanUnit);
                 }
 
-                $cols_left = $this->getMaxColumns() - $colsTaken;
-                if ($cols_left < $colspan) {
-                    // add $cols_left of (empty) to $row and put it in
-                   $this->_packRowWithEmpty($row, $cols_left);
-                   $internalFieldRows[] = $row;
-                   $row = array();
-                }
-
-                // Gets the proper field name to insert from the field def
-                $fieldToInsert = $this->getFieldToInsert($field);
-
-                // add field to row + enough (empty) to make it to colspan
-                $row[] = $this->_addInternalCell($fieldToInsert);
-                $this->_packRowWithEmpty($row, $colspan-1);
+                $this->addFieldToPanel($panelRows, $panelColumns, $row, $rowSpan, $field, $fieldSpan);
             }
 
             // add the last incomplete row if necessary
             if (!empty($row)) {
-                $cols_left = $this->getMaxColumns() - count($row);
-                // add $cols_left of (empty) to $row and put it in
-                $this->_packRowWithEmpty($row, $cols_left);
-                $internalFieldRows[] = $row;
+                $this->nextRow($panelRows, $panelColumns, $row, $rowSpan);
             }
-            $internalPanels[$pLabel] = $internalFieldRows;
+            $internalPanels[$pLabel] = $panelRows;
         }
 
         return $internalPanels;
     }
 
+    /**
+     * Resets current row
+     *
+     * @param mixed $row Current row fields
+     * @param int $rowSpan Row span
+     */
+    protected function resetRow(&$row, &$rowSpan)
+    {
+        $row = array();
+        $rowSpan = 0;
+    }
+
+    /**
+     * Adds field to panel
+     *
+     * @param array $panelRows Panel rows
+     * @param array $row Current row fields
+     * @param int $panelColumns Number of panel columns
+     * @param int $rowSpan Current row span
+     * @param mixed $field Field definition
+     * @param int $fieldSpan Field row span
+     */
+    protected function addFieldToPanel(array &$panelRows, $panelColumns, array &$row, &$rowSpan, $field, $fieldSpan)
+    {
+        $this->prepareRowForField($panelRows, $panelColumns, $row, $rowSpan, $fieldSpan);
+
+        // Gets the proper field name to insert from the field def
+        $fieldToInsert = $this->getFieldToInsert($field);
+
+        $row[] = $this->_addInternalCell($fieldToInsert);
+        $rowSpan += $fieldSpan;
+    }
+
+    /**
+     * Prepares row for the given field. If the field doesn't fit the row, closes current row and starts new one
+     *
+     * @param array $panelRows Panel rows
+     * @param int $panelColumns Number of panel columns
+     * @param array $row Current row fields
+     * @param int $rowSpan Current row span
+     * @param int $fieldSpan Field row span
+     */
+    protected function prepareRowForField(array &$panelRows, $panelColumns, array &$row, &$rowSpan, $fieldSpan)
+    {
+        $spanLeft = $this->maxSpan - $rowSpan;
+        if (count($row) >= $panelColumns || $spanLeft < $fieldSpan) {
+            $this->nextRow($panelRows, $panelColumns, $row, $rowSpan);
+        }
+    }
+
+    /**
+     * Finalizes current row, appends to the resulting set and starts new one
+     *
+     * @param array $panelRows Panel rows
+     * @param int $panelColumns Number of panel columns
+     * @param array $row Current row fields
+     * @param int $rowSpan Current row span
+     */
+    protected function nextRow(array &$panelRows, $panelColumns, array &$row, &$rowSpan)
+    {
+        if (count($row) < $panelColumns) {
+            $spanLeft = $this->maxSpan - $rowSpan;
+            if ($spanLeft > 0) {
+                // if there's some space left in the row,
+                // add filler which means the field may be expanded
+                $row[] = $this->_addInternalCell(MBConstants::$FILLER);
+            } else {
+                // if there's no space left in the row, but there are less fields
+                // then the number of columns, it means that the field is expanded
+                $row[] = $this->_addInternalCell(MBConstants::$EMPTY);
+            }
+        }
+
+        $panelRows[] = $row;
+        $this->resetRow($row, $rowSpan);
+    }
 
     /**
      * Returns a list of fields, generally from the original (not customized) viewdefs
@@ -885,23 +941,27 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
     }
     
     /**
-     * Gets a field span attribute if it is set
+     * Gets a field span
      * 
-     * @param array $field A field definition
+     * @param array|string $field A field definition
+     * @param integer $singleSpanUnit Default value of span for a single-column unit
+     *
      * @return integer
      */
-    protected function getFieldSpan(array $field)
+    protected function getFieldSpan($field, $singleSpanUnit)
     {
-        // Checkout both old and new styles
-        if (!empty($field['span'])) {
-            return $field['span'];
+        if (is_array($field)) {
+            if (!empty($field['span'])) {
+                return $field['span'];
+            }
+
+            // "colspan" means number of columns, so convert it to "span"
+            if (!empty($field['displayParams']['colspan'])) {
+                return $field['displayParams']['colspan'] * $singleSpanUnit;
+            }
         }
 
-        if (!empty($field['displayParams']['colspan'])) {
-            return $field['displayParams']['colspan'];
-        }
-
-        // Return a reasonable default
-        return 0;
+        // by default field occupies one column
+        return $singleSpanUnit;
     }
 }
