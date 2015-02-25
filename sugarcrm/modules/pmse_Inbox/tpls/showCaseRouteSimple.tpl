@@ -11,7 +11,7 @@
  */
 *}
 <!---------------  START WORKFLOW SHOWCASE ------------>
-<form action="index.php?module=ProcessMaker&action=routeCase" id="showCaseForm" method="POST">
+<form action="index.php?module=ProcessMaker&action=routeCase" id="EditView" method="POST">
     <input type="hidden" name="cas_id" id="cas_id" value="{$cas_id}"/>
     <input type="hidden" name="cas_index" id="cas_index" value="{$cas_index}"/>
     <input type="hidden" name="cas_current_user_id" id="cas_index" value="{$cas_current_user_id}"/>
