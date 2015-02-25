@@ -23,6 +23,16 @@
         this.context.on('button:' + this.saveOpenDesignName + ':click', this.saveOpenDesign, this);
     },
 
+    save: function () {
+        switch (this.context.lastSaveAction) {
+            case this.SAVEACTIONS.SAVE_OPEN_DESIGN:
+                this.saveOpenDesign();
+                break;
+            default:
+                this.saveAndClose();
+        }
+    },
+
     saveOpenDesign: function() {
         this.context.lastSaveAction = this.SAVEACTIONS.SAVE_OPEN_DESIGN;
         this.initiateSave(_.bind(function () {

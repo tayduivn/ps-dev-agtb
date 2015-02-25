@@ -23,6 +23,16 @@
         this.context.on('button:' + this.saveOpenEmailsTemplatesName + ':click', this.saveOpenEmailsTemplates, this);
     },
 
+    save: function () {
+        switch (this.context.lastSaveAction) {
+            case this.SAVEACTIONS.SAVE_OPEN_EMAILS_TEMPLATES:
+                this.saveOpenEmailsTemplates();
+                break;
+            default:
+                this.saveAndClose();
+        }
+    },
+
     saveOpenEmailsTemplates: function() {
         this.context.lastSaveAction = this.SAVEACTIONS.SAVE_OPEN_EMAILS_TEMPLATES;
         this.initiateSave(_.bind(function () {
