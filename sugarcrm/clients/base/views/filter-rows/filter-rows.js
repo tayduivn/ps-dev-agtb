@@ -314,9 +314,9 @@
     removeRow: function(e) {
         var $row = this.$(e.currentTarget).closest('[data-filter=row]'),
             fieldOpts = [
-                {'field': 'nameField', 'value': 'name'},
-                {'field': 'operatorField', 'value': 'operator'},
-                {'field': 'valueField', 'value': 'value'}
+                {field: 'nameField', value: 'name'},
+                {field: 'operatorField', value: 'operator'},
+                {field: 'valueField', value: 'value'}
             ];
 
         this._disposeRowFields($row, fieldOpts);
@@ -480,9 +480,9 @@
         var $el = this.$(e.currentTarget);
         var $row = $el.parents('[data-filter=row]');
         var fieldOpts = [
-                {'field': 'operatorField', 'value': 'operator'},
-                {'field': 'valueField', 'value': 'value'}
-            ];
+            {field: 'operatorField', value: 'operator'},
+            {field: 'valueField', value: 'value'}
+        ];
         this._disposeRowFields($row, fieldOpts);
         this.initOperatorField($row);
     },
@@ -1009,9 +1009,9 @@
      *
      *     @example of an `opts` object param:
      *      [
-     *       {'field': 'nameField', 'value': 'name'},
-     *       {'field': 'operatorField', 'value': 'operator'},
-     *       {'field': 'valueField', 'value': 'value'}
+     *       {field: 'nameField', value: 'name'},
+     *       {field: 'operatorField', value: 'operator'},
+     *       {field: 'valueField', value: 'value'}
      *      ]
      *
      * @param  {jQuery} $row The row which fields are to be disposed.
