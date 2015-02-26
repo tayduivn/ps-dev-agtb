@@ -290,6 +290,7 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             $files[] = 'modules/Accounts/clients/base/layouts/list-sidebar/list-sidebar.php';
             $files[] = 'modules/Bugs/clients/base/layouts/list-sidebar/list-sidebar.php';
             $files[] = 'modules/Cases/clients/base/layouts/list-sidebar/list-sidebar.php';
+            $files[] = 'modules/Leads/clients/base/layouts/convert-sidebar/convert-sidebar.php';
         }
 
         $this->fileToDelete($files);
