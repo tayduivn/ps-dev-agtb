@@ -26,36 +26,31 @@ $viewdefs['base']['view']['gsr-list'] = array(
     'fields' => array(
         'icon' => array(
             array(
-            'name' => 'picture',
-            'type' => 'avatar',
-            'align' => 'center',
-            'label' => 'LBL_MODULE_TYPE',
-            'dismiss_label' => true,
-            'readonly' => true,
-            'enabled' => true,
-            'default' => true,
-            'isSortable' => true,
-            'size' => 'medium',
+                'name' => 'picture',
+                'type' => 'avatar',
+                'align' => 'center',
+                'label' => 'LBL_MODULE_TYPE',
+                'dismiss_label' => true,
+                'readonly' => true,
+                'enabled' => true,
+                'default' => true,
+                'isSortable' => true,
+                'size' => 'medium',
             )
         ),
         'primary' => array(
-            'fields' => array(
-                array(
-                    'name' => 'name',
-                    'label' => 'LBL_SUBJECT',
-                    'type' => 'name',
-                    'enabled' => true,
-                    'default' => true,
-                    'link' => true,
-                    'isSortable' => true,
-                    'width' => 'large',
-                )
-            )
-
+            array(
+                'name' => 'name',
+                'label' => 'LBL_SUBJECT',
+                'type' => 'name',
+                'enabled' => true,
+                'default' => true,
+                'link' => true,
+                'isSortable' => true,
+                'width' => 'large',
+            ),
         ),
         'secondary' => array(
-            'fields' => array(
-            )
         ),
     )
 );
