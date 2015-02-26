@@ -23,7 +23,9 @@
             !_.isUndefined(app.config.websockets.client) &&
             app.config.websockets.client.balancer) {
             $.get(app.config.websockets.client.url).done(function(data) {
-                initSocket(data);
+                if (!_.isUndefined(data) && !_.isUndefined(data.location)) {
+                    initSocket(data.location);
+                }
             });
         } else {
             initSocket(app.config.websockets.client.url);
