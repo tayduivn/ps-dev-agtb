@@ -44,7 +44,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
         x_axis_label: '',
         vertical: true,
         wrapTicks: true,
-        staggerTicks: false,
+        staggerTicks: true,
         rotateTicks: 0,
         reduceXTicks: false,
         allowScroll: false,
@@ -171,6 +171,8 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                         .direction(params.direction)
                         .showLegend(params.show_legend)
                         .showControls(params.show_controls)
+                        .wrapTicks(params.wrapTicks)
+                        .staggerTicks(params.staggerTicks)
                         .rotateTicks(params.rotateTicks)
                         .reduceXTicks(params.reduceXTicks)
                         .colorData(params.colorData)
@@ -254,6 +256,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                         .showTitle(params.show_title)
                         .showLegend(params.show_legend)
                         .showControls(params.show_controls)
+                        .rotateTicks(params.rotateTicks)
                         .colorData(params.colorData)
                         .strings({
                             legend: {
