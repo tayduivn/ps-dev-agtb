@@ -151,6 +151,11 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
 
                     var json = SUGAR.charts.translateDataToD3(data, params, chartConfig);
 
+                    if (json.properties && json.properties.labels && json.properties.labels.length > 50) {
+                        SUGAR.charts.renderError(chartId, SUGAR.charts.translateString('LBL_CANNOT_DISPLAY_CHART_MESSAGE', 'Reports'));
+                        return;
+                    }
+
                     params.vertical = chartConfig['orientation'] === 'vertical' ? true : false;
 
                     var barChart = nv.models.multiBarChart()
@@ -304,6 +309,11 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
 
                     var json = SUGAR.charts.translateDataToD3(data, params, chartConfig);
 
+                    if (json.properties && json.properties.labels && json.properties.labels.length > 50) {
+                        SUGAR.charts.renderError(chartId, SUGAR.charts.translateString('LBL_CANNOT_DISPLAY_CHART_MESSAGE', 'Reports'));
+                        return;
+                    }
+
                     var pieChart = nv.models.pieChart()
                         .id(d3ChartId)
                         .margin(params.margin)
@@ -347,6 +357,11 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                 if (SUGAR.charts.isDataEmpty(data)) {
 
                     var json = SUGAR.charts.translateDataToD3(data, params, chartConfig);
+
+                    if (json.properties && json.properties.labels && json.properties.labels.length > 16) {
+                        SUGAR.charts.renderError(chartId, SUGAR.charts.translateString('LBL_CANNOT_DISPLAY_CHART_MESSAGE', 'Reports'));
+                        return;
+                    }
 
                     var funnelChart = nv.models.funnelChart()
                         .id(d3ChartId)
@@ -486,6 +501,22 @@ function swapChart(chartId, jsonFilename, css, chartConfig) {
                 .call(chart);
         },
 
+        renderError: function(id, str) {
+            $('#d3_' + id).empty();
+            d3.select('.reportChartContainer')
+                .style('height', 'auto');
+            d3.select('.reportChartContainer .chartContainer')
+                .style('float', 'none')
+                .style('position', 'relative')
+                .style('width', '100%');
+            d3.select('#d3_' + id)
+                .style('height', 'auto')
+                .append('div')
+                    .attr('class', 'nv-data-error')
+                    .attr('align', 'center')
+                    .style('padding', '12px')
+                    .text(str);
+        },
         /**
          * Handle the Legend Generation
          *
