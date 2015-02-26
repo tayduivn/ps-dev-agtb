@@ -18,6 +18,9 @@ require_once 'modules/ModuleBuilder/parsers/views/SidecarGridLayoutMetaDataParse
 
 class SidecarGridLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    /**
+     * @var SidecarGridLayoutMetaDataParserTestDerivative
+     */
     protected $_parser;
 
     public function setUp()
@@ -326,14 +329,14 @@ class SidecarGridLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCa
 
     /**
      * Test handling of span adjustments and mutation of the baseSpans array
-     * 
+     *
      * @param int $fieldCount The count of fields in a row
      * @param array $lastField The last field that was touched
      * @param array $baseSpans Array of fields that had spans orignally applied
      * @param int $singleSpanUnit The size of a single span
      * @param array $expectResult Expected return value
      * @param array $expectBaseSpans Expected baseSpans array
-     * @dataProvider testSpanAdjustmentsProvider
+     * @dataProvider spanAdjustmentsProvider
      */
     public function testSpanAdjustments($fieldCount, $lastField, $baseSpans, $singleSpanUnit, $expectResult, $expectBaseSpans)
     {
@@ -348,7 +351,7 @@ class SidecarGridLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCa
         $this->assertEquals($adjSpans, $expectBaseSpans);
     }
 
-    public function testSpanAdjustmentsProvider()
+    public function spanAdjustmentsProvider()
     {
         // maxSpan on the parser is 12 by default
         // maxCols on the parser is 2 by default
@@ -371,7 +374,7 @@ class SidecarGridLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCa
                 'expectResult' => array('span' => 6),
                 'expectBaseSpans' => array(
                     'test' => array(
-                        'span' => 6, 
+                        'span' => 6,
                         'adjustment' => 6,
                     ),
                 ),
@@ -437,6 +440,80 @@ class SidecarGridLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCa
                 ),
             ),
         );
+    }
+
+    /**
+     * @covers SidecarGridLayoutMetaDataParser::removeField
+     */
+    public function testRemoveFieldRemovesField()
+    {
+        $panel = array(
+            'LBL_RECORD_BODY' => array(
+                array(
+                    0 => 'account_name',
+                    1 => 'date_closed',
+                ),
+                array(
+                    0 => 'amount',
+                    1 => '(empty)',
+                ),
+                array(
+                    0 => 'best_case',
+                    1 => 'worst_case',
+                ),
+                array(
+                    0 => 'sales_status',
+                    1 => '(filler)',
+                ),
+            )
+        );
+
+        $this->_parser->_viewdefs['panels'] = $panel;
+
+        $this->_parser->removeField('sales_status');
+
+        foreach ( $this->_parser->_viewdefs [ 'panels' ] as $panelID => $panel ) {
+            foreach ($panel as $rowIndex => $row) {
+                if (is_array($row)) {
+                    foreach ($row as $fieldIndex => $field) {
+                        $this->assertNotEquals('sales_stage', $field);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * @covers SidecarGridLayoutMetaDataParser::removeField
+     */
+    public function testRemoveFieldRemovesRowWithEmptyAndFiller()
+    {
+        $panel = array(
+            'LBL_RECORD_BODY' => array(
+                array(
+                    0 => 'account_name',
+                    1 => 'date_closed',
+                ),
+                array(
+                    0 => 'amount',
+                    1 => '(empty)',
+                ),
+                array(
+                    0 => 'best_case',
+                    1 => 'worst_case',
+                ),
+                array(
+                    0 => 'sales_status',
+                    1 => '(filler)',
+                ),
+            )
+        );
+
+        $this->_parser->_viewdefs['panels'] = $panel;
+
+        $this->_parser->removeField('sales_status');
+
+        $this->assertCount(3, $this->_parser->_viewdefs['panels']['LBL_RECORD_BODY']);
     }
 }
 

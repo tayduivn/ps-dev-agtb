@@ -187,6 +187,9 @@ abstract class OpportunitySetup
 
         $fields = $gridDefParser->getAvailableFields();
 
+        // sort the map first, so the removes get done first
+        asort($fieldMap);
+
         foreach ($fieldMap as $fieldName => $fieldAction) {
             if ($fieldAction === true) {
                 // lets make sure the field is Available
