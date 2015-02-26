@@ -80,18 +80,6 @@ $viewdefs['base']['layout']['multi-selection-list'] = array(
                     ),
                     array(
                         'layout' => array(
-                            'components' => array(
-                                array(
-                                    'layout' => 'selection-sidebar',
-                                ),
-                            ),
-                            'type' => 'simple',
-                            'name' => 'side-pane',
-                            'span' => 4,
-                        ),
-                    ),
-                    array(
-                        'layout' => array(
                             'components' => array(),
                             'type' => 'simple',
                             'name' => 'dashboard-pane',
