@@ -109,9 +109,9 @@
 
         this.collection.on('change:is_read', this.render, this);
 
-        this.collection.on('reset', function(){
+        this.collection.on('reset', function() {
             var badge = this.collection.length;
-            if(this.collection.next_offset > 0) {
+            if (this.collection.next_offset > 0) {
                 badge = badge + '+';
             }
             this.favicon.badge(badge);
