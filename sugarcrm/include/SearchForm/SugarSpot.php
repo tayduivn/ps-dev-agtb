@@ -478,7 +478,10 @@ class SugarSpot
                     }
                 }
             }
-            $searchForm = new SearchForm ($seed, $moduleName);
+            SugarAutoLoader::requireWithCustom('include/SearchForm/SearchForm2.php');
+            $searchFormClass = SugarAutoLoader::customClass('SearchForm');
+            $searchForm = new $searchFormClass($seed, $moduleName);
+
             $searchForm->setup(array($moduleName => array()), $searchFields, '', 'saved_views' /* hack to avoid setup doing further unwanted processing */);
             $where_clauses = $searchForm->generateSearchWhere();
 
