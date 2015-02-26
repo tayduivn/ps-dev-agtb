@@ -638,7 +638,7 @@ class DynamicField {
             $to_save[$property] =
                 is_string($field->$property) ? htmlspecialchars_decode($field->$property, ENT_QUOTES) : $field->$property;
         }
-        $bean_name = $beanList[$this->module];
+        $bean_name = BeanFactory::getObjectName($this->module);
 
         $this->writeVardefExtension($bean_name, $field, $to_save);
     }
