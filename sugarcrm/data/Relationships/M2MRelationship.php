@@ -548,6 +548,8 @@ class M2MRelationship extends SugarRelationship
         $self_join = ($this->def['lhs_module'] == $this->def['rhs_module']) ? true : false;
 
         $startingKey = $linkIsLHS ? $this->def['lhs_key'] : $this->def['rhs_key'];
+        // Adding a check for badly defined relationships for self referencing relationship
+        // $this->lhsLinkDef['id_name'] & $this->rhsLinkDef['id_name'] would contain accurate join key in this case
         if ($self_join && !empty($this->lhsLinkDef['id_name']) && $this->lhsLinkDef['id_name'] != $this->def['join_key_lhs']) {
             $startingJoinKey = $linkIsLHS ? $this->lhsLinkDef['id_name'] : $this->rhsLinkDef['id_name'];
         }
@@ -556,6 +558,8 @@ class M2MRelationship extends SugarRelationship
         }
         $joinTable = $this->getRelationshipTable();
         $joinTableWithAlias = $joinTable;
+        // Adding a check for badly defined relationships for self referencing relationship
+        // $this->lhsLinkDef['id_name'] & $this->rhsLinkDef['id_name'] would contain accurate join key in this case
         if ($self_join && !empty($this->lhsLinkDef['id_name']) && $this->lhsLinkDef['id_name'] != $this->def['join_key_lhs']) {
             $joinKey = $linkIsLHS ? $this->rhsLinkDef['id_name'] : $this->lhsLinkDef['id_name'];
         }
