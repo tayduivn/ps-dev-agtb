@@ -699,6 +699,9 @@ $bwcModules = array(
     'WorkFlowTriggerShells'
 );
 
+// this module doesn't need a Bean
+$moduleList[] = 'Feedbacks';
+
 // Health Check module
 $beanList['HealthCheck'] = 'HealthCheck';
 $beanFiles['HealthCheck'] = 'modules/HealthCheck/HealthCheck.php';

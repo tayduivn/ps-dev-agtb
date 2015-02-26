@@ -74,6 +74,15 @@ global $current_user;
 // adding custom fields:
 require_once('modules/DynamicFields/templates/Files/DetailView.php');
 
+if (SugarACL::checkAccess('DataSets', 'edit')) {
+    $xtpl->parse('edit_button');
+    $xtpl->assign('EDIT_BUTTON', $xtpl->text('edit_button'));
+}
+
+if (SugarACL::checkAccess('DataSets', 'delete')) {
+    $xtpl->parse('delete_button');
+    $xtpl->assign('DELETE_BUTTON', $xtpl->text('delete_button'));
+}
 
 $xtpl->parse("main");
 $xtpl->out("main");
