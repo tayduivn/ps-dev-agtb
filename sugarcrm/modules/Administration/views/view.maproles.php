@@ -3,6 +3,8 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
+require_once 'modules/ModuleBuilder/MB/MBHelper.php';
+
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -51,12 +53,8 @@ class ViewMapRoles extends SugarView
      */
     protected function getInstanceRoles()
     {
-        global $current_user;
-
         $result = array('' => translate('LBL_UW_DO_NOT_MAP_ROLE'));
-        $roles = $current_user->isAdmin()
-            ? ACLRole::getAllRoles()
-            : ACLRole::getUserRoles($current_user->id, false);
+        $roles = MBHelper::getRoles();
         foreach ($roles as $role) {
             $result[$role->id] = $role->name;
         }

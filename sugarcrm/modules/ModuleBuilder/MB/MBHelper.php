@@ -74,7 +74,7 @@ class MBHelper
      * @param callable $callback Callback that checks if there is role specific metadata
      * @return SplObjectStorage
      */
-    public static function getRoles($callback)
+    public static function getRoles($callback = null)
     {
         global $current_user;
 
@@ -85,9 +85,9 @@ class MBHelper
             if (in_array($role->name, static::$hiddenRoles)) {
                 continue;
             }
-            $roles[$role] = $callback(array(
+            $roles[$role] = $callback ? $callback(array(
                 'role' => $role->id,
-            ));
+            )) : null;
         }
 
         return $roles;
