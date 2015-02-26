@@ -12,9 +12,8 @@
 
     plugins: ['Dashlet', 'NestedSetCollection', 'JSTree'],
 
-
     /**
-     * Module name that provides an netedset data
+     * Module name that provides an netedset data.
      *
      * @property {String}
      */
@@ -41,7 +40,7 @@
     loadedLeafs: null,
 
     /**
-     * Lifetime for data cache.
+     * Lifetime for data cache in ms.
      * @property {Number}
      */
     cacheLifetime: 300000,
@@ -53,7 +52,7 @@
     useStates: true,
 
     /**
-     * Value of extraModule.field
+     * Value of extraModule.field.
      * @property {String}
      */
     currentFieldValue: null,
@@ -71,20 +70,25 @@
             config.category_root :
             null;
         this.extraModule = this.meta.extra_provider || {};
+
         if (this.context.get('module') === this.extraModule.module &&
             (this.context.get('action') === 'detail' || this.context.get('action') === 'edit')
         ) {
             this.useStates = false;
             this.changedCallback = _.bind(this.modelFieldChanged, this);
             this.savedCallback = _.bind(this.modelSaved, this);
+
             this.context.get('model').on('change:' + this.extraModule.field, this.modelFieldChanged, this);
             this.context.get('model').on('data:sync:complete', this.modelSaved, this);
+
             this.currentFieldValue = this.context.get('model').get(this.extraModule.field);
         }
     },
 
     /**
-     * {@inheritDoc}
+     * The view doesn't need standard handlers for data change because it use own events and handlers.
+     *
+     * @override.
      */
     bindDataChange: function() {},
 
@@ -118,7 +122,7 @@
                 storage: this._getStorage()
             };
         }
-        this._super('_render', []);
+        this._super('_render');
         this._renderTree($('[data-place=dashlet-tree]'), treeOptions, callbacks);
     },
 
@@ -140,7 +144,7 @@
 
     /**
      * Handle tree selection.
-     * @param data
+     * @param data {Object} Selected item.
      */
     openRecord: function(data) {
         switch (data.type) {
@@ -195,7 +199,7 @@
 
     /**
      * Handle load state of tree.
-     * @param {Object} data
+     * @param {Object} data Data of loaded tree.
      */
     stateLoaded: function(data) {
         var originalUseState = this.useStates,
@@ -210,14 +214,12 @@
             });
             self.useStates = originalUseState;
         });
-        return true;
     },
 
     /**
      * Handle toggle of tree folder.
-     * @param {Object} data
+     * @param {Object} data Toggled folder.
      * @param {Function} callback Async callback to use with async.js
-     * @return {Boolean}
      */
     folderToggled: function (data, callback) {
         var triggeredCallback = false,
@@ -240,17 +242,16 @@
             }
         }
         if (triggeredCallback === false && _.isFunction(callback)) {
-                callback.call();
+            callback.call();
         }
         if (this.useStates) {
             this.saveJSTreeState();
         }
-        return true;
     },
 
     /**
      * Handle leaf click for tree.
-     * @param {Object} data
+     * @param {Object} data Clicked leaf.
      */
     leafClicked: function (data) {
         if (data.type !== 'folder') {
@@ -261,7 +262,7 @@
 
     /**
      * Load extra data for tree.
-     * @param {String} id
+     * @param {String} id Id of a leaf to load data in.
      * @param {Function} callback Async callback to use with async.js
      */
     loadAdditionalLeaf: function(id, callback) {
@@ -310,6 +311,10 @@
 
     /**
      * {@inheritDoc}
+     *
+     * Need additional check for tree leafs.
+     *
+     * @override
      */
     loadData: function(options) {
         if (!options || _.isUndefined(options.saveLeafs) || options.saveLeafs === false) {
@@ -324,7 +329,7 @@
 
     /**
      * Override behavior of JSTree plugin.
-     * @param {BeanCollection} collection
+     * @param {Data,BeanCollection} collection synced collection.
      */
     onNestedSetSyncComplete: function(collection) {
         if (this.disposed || this.collection.root !== collection.root) {
@@ -335,8 +340,8 @@
 
     /**
      * Handle change of this.extraModule.field.
-     * @param {Bean} model
-     * @param {String} value
+     * @param {Data.Bean} model Changed model.
+     * @param {String} value Current field value of the field.
      */
     modelFieldChanged: function(model, value) {
         delete this.loadedLeafs[this.currentFieldValue];
@@ -364,8 +369,8 @@
 
     /**
      * Add documents as leafs for categories.
-     * @param {Array} models
-     * @param {String} id
+     * @param {Array} models Documents which should be added into the tree.
+     * @param {String} id ID of category leaf to insert documents in.
      */
     addLeafs: function(models, id) {
         this.removeChildrens(id, 'document');

@@ -19,6 +19,7 @@
      * {@inheritDoc}
      */
     fieldTag: 'div',
+
     /**
      * Root ID of a shown Nestedset.
      * @property {String}
@@ -27,6 +28,7 @@
 
     /**
      * Module which implements Nestedset.
+     * @property {String}
      */
     moduleRoot: null,
 
@@ -48,7 +50,7 @@
 
     /**
      * Flag indicates if input for new node shown.
-     * @property {Bool}
+     * @property {Boolean}
      */
     inCreation: false,
 
@@ -69,7 +71,6 @@
         'click [data-action=create-new]': 'switchCreate',
         'keydown [data-role=add-item]': 'handleKeyDown',
         'click [data-action=show-list]': 'showList'
-
     },
 
     /**
@@ -79,7 +80,7 @@
         var treeOptions = {},
             self = this;
         this._super('_render', []);
-        if (this.$(this.ddEl).length !== 0 && (this.action === 'edit' || this.meta.view === 'edit')) {
+        if (this.$(this.ddEl).length !== 0 && this._dropdownExists()) {
             this.$(this.ddEl).dropdown();
             this.$(this.ddEl).data('dropdown').opened = false;
             this.$(this.ddEl).off('click.bs.dropdown');
@@ -126,25 +127,27 @@
      * @param {Event} evt Triggered mouse event.
      */
     openDropDown: function(evt) {
-        if (this.action === 'edit' || this.meta.view === 'edit') {
-            var dropdown = this.$(this.ddEl).data('dropdown');
-            if (dropdown.opened === false) {
-                $('body').on('click.bs.dropdown.data-api', this.dropdownCallback);
-                evt.stopPropagation();
-                evt.preventDefault();
-                _.defer(function (dropdown, self) {
-                    self.$(self.ddEl).dropdown('toggle');
-                    self.$('[data-role=secondinput]').val('');
-                    dropdown.opened = true;
-                    self.$('[data-role=secondinput]').focus();
-                }, dropdown, this);
-            }
+        if (!this._dropdownExists()) {
+            return;
         }
+        var dropdown = this.$(this.ddEl).data('dropdown');
+        if (dropdown.opened === true) {
+            return;
+        }
+        $('body').on('click.bs.dropdown.data-api', this.dropdownCallback);
+        evt.stopPropagation();
+        evt.preventDefault();
+        _.defer(function (dropdown, self) {
+            self.$(self.ddEl).dropdown('toggle');
+            self.$('[data-role=secondinput]').val('');
+            dropdown.opened = true;
+            self.$('[data-role=secondinput]').focus();
+        }, dropdown, this);
     },
 
     /**
      * Toggle icon in search field while loading tree.
-     * @param {Bool} hide
+     * @param {Boolean} hide
      */
     toggleSearchIcon: function(hide) {
         this.$('[data-role=secondinputaddon]')
@@ -155,10 +158,10 @@
 
     /**
      * Handle global dropdown clicks.
-     * @param evt Triggered mouse event.
+     * @param evt {Event} Triggered mouse event.
      */
     handleGlobalClick: function(evt) {
-        if (this.action === 'edit' || this.meta.view === 'edit') {
+        if (this._dropdownExists()) {
             this.closeDD();
             evt.preventDefault();
             evt.stopPropagation();
@@ -168,7 +171,7 @@
     /**
      * Handle all clicks for the field.
      * Need to catch for preventing external events.
-     * @param evt
+     * @param evt {Event} Triggered mouse event.
      */
     handleClick: function(evt) {
         evt.preventDefault();
@@ -184,27 +187,27 @@
     },
 
     /**
-     * Override `Editable` plugin event to prevent default behavior.
+     * @override `Editable` plugin event to prevent default behavior.
      */
     bindKeyDown: function() {},
 
     /**
-     * Override `Editable` plugin event to prevent default behavior.
+     * @override `Editable` plugin event to prevent default behavior.
      */
     bindDocumentMouseDown: function() {},
 
     /**
-     * Override `Editable` plugin event to prevent default behavior.
+     * @override `Editable` plugin event to prevent default behavior.
      */
     focus: function() {
-        if (this.action === 'edit' || this.meta.view === 'edit') {
+        if (this._dropdownExists()) {
             this.$('[data-role=treeinput]').click();
         }
     },
 
     /**
      * Handle key events in input fields.
-     * @param evt Triggered key event.
+     * @param evt {Event} Triggered key event.
      */
     handleKeyDown: function(evt) {
         var role = $(evt.currentTarget).data('role');
@@ -252,7 +255,7 @@
      */
     bindDataChange: function() {
         this._super('bindDataChange', []);
-        if (this.action === 'edit' || this.meta.view === 'edit') {
+        if (this._dropdownExists()) {
             this.$('[name=' + this.def.name + ']').html(this.model.get(this.def.name));
             this.$('[name=' + this.def.id_name + ']').val(this.model.get(this.def.id_name));
         }
@@ -262,7 +265,7 @@
      * {@inheritDoc}
      */
     _dispose: function() {
-        if (this.action === 'edit' || this.meta.view === 'edit') {
+        if (this._dropdownExists()) {
             $('body').off('click.bs.dropdown.data-api', this.dropdownCallback);
         }
         this._super('_dispose');
@@ -378,5 +381,13 @@
         this.setValue(id, val);
         this.bindDataChange();
         this.closeDD();
+    },
+
+    /**
+     * Checks whether we need to work with dropdown on the view.
+     * @private
+     */
+    _dropdownExists: function() {
+        return this.action === 'edit' || this.meta.view === 'edit';
     }
 })
