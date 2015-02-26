@@ -24,11 +24,11 @@ use Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\GlobalSearchInterface
  *  - q = search term
  *  - limit = defaults to 20, how many results to return
  *  - offset = defaults to 0, used for paging
- *  - modules = comma separated list of modules (*)
+ *  - module_list = comma separated list of modules (*)
  *
- *  (*) Instead of using the modules URL parameter, its possible and encouraged
- *  to use list the modules directly in the URL instead using a comma separated
- *  list like `/Accounts,Contacts/globalsearch?q=stuff`
+ *  (*) Instead of using the module_list parameter, its possible and encouraged
+ *  to use the list of modules directly in the URL instead using a comma
+ *  separated list like `/Accounts,Contacts/globalsearch?q=stuff`
  *
  */
 class GlobalSearchApi extends SugarApi
@@ -56,7 +56,7 @@ class GlobalSearchApi extends SugarApi
     /**
      * @var array List of modules to query
      */
-    protected $modules = array();
+    protected $moduleList = array();
 
     /**
      * @var string Search term
@@ -87,11 +87,11 @@ class GlobalSearchApi extends SugarApi
                 'noLoginRequired' => false,
             ),
 
-            // /<modules>/globalsearch
+            // /<module_list>/globalsearch
             'modulesGlobalSearch' => array(
                 'reqType' => 'GET',
                 'path' => array('?', 'globalsearch'),
-                'pathVars' => array('modules', ''),
+                'pathVars' => array('module_list', ''),
                 'method' => 'globalSearchEntry',
                 'shortHelp' => '',
                 'longHelp' => '',
@@ -131,8 +131,8 @@ class GlobalSearchApi extends SugarApi
     protected function parseArguments(array $args)
     {
         // Modules can be a comma separated list
-        if (!empty($args['modules'])) {
-            $this->modules = explode(',', $args['modules']);
+        if (!empty($args['module_list'])) {
+            $this->moduleList = explode(',', $args['module_list']);
         }
 
         // Set search term
@@ -159,7 +159,7 @@ class GlobalSearchApi extends SugarApi
     protected function executeGlobalSearch(GlobalSearchInterface $engine)
     {
         $engine
-            ->from($this->modules)
+            ->from($this->moduleList)
             ->term($this->term)
             ->limit($this->limit)
             ->offset($this->offset)
@@ -187,13 +187,13 @@ class GlobalSearchApi extends SugarApi
                 throw new SugarApiExceptionSearchRuntime(null, array($e->getMessage()));
             }
 
-            // Check capability
+            // Check if we have a valid capable engine
             if (!$this->engine) {
                 throw new SugarApiExceptionSearchUncapable(null, array('GlobalSearch'));
             }
         }
 
-        // Alth0ugh this check run implicitly, we can already bail out here if unavailabe
+        // Although this check runs implicitly, we can already bail out here if unavailabe
         if (!$this->engine->isAvailable()) {
             throw new SugarApiExceptionSearchUnavailable();
         }
