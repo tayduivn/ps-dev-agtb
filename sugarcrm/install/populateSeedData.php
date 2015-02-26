@@ -71,6 +71,7 @@ if( $memory_limit != "" && $memory_limit != "-1" ){ // if memory_limit is set
         ini_set("memory_limit", "$memory_needed" . "M");
     }
 }
+
 $large_scale_test = empty($sugar_config['large_scale_test']) ? false : $sugar_config['large_scale_test'];
 
 $seed_user = new User();
@@ -80,7 +81,7 @@ $number_contacts = 200;
 $number_companies = 50;
 $number_leads = 200;
 $number_cases = 5;
-$large_scale_test = empty($sugar_config['large_scale_test']) ? false : $sugar_config['large_scale_test'];
+
 // If large scale test is set to true, increase the seed data.
 if($large_scale_test) {
 	// increase the cuttoff time to 1 hour
@@ -137,11 +138,20 @@ $timeperiods = TimePeriodsSeedData::populateSeedData();
 $accounts_companies_list = $sugar_demodata['company_name_array'];
 
 for($i = 0; $i < $number_companies; $i++) {
-	// De-populate a copy of the company name list
-	// as each name is used to prevent duplication.
-	$account_num = array_rand($accounts_companies_list);
-	$account_name = $accounts_companies_list[$account_num];
-	unset($accounts_companies_list[$account_num], $account_num);
+
+    if (count($accounts_companies_list) > 0) {
+	    // De-populate a copy of the company name list
+	    // as each name is used to prevent duplication.
+	    $account_num = array_rand($accounts_companies_list);
+	    $account_name = $accounts_companies_list[$account_num];
+	    unset($accounts_companies_list[$account_num], $account_num);
+    } else {
+        // We've run out of preset company names so start generating new ones.
+        $account_name =
+            $sugar_demodata['first_name_array'][array_rand($sugar_demodata['first_name_array'])] . ' ' .
+            $sugar_demodata['last_name_array'][array_rand($sugar_demodata['last_name_array'])] . ' ' .
+            $sugar_demodata['company_name_suffix_array'][array_rand($sugar_demodata['company_name_suffix_array'])];
+    }
 
 	// Create new accounts.
 	$account = new Account();
