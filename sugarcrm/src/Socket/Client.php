@@ -1,5 +1,4 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -10,6 +9,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+namespace Sugarcrm\Sugarcrm\Socket;
 
 /**
  * Class SugarSocket allows us to send messages to connected clients.
@@ -31,7 +31,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * SugarSocket::getInstance()->recipient(SugarSocket::RECIPIENT_USER_TYPE, 'admin')->send('test');
  * </code>
  */
-class SugarSocket
+class Client
 {
     /**
      * Constants for types of recipients
@@ -53,7 +53,7 @@ class SugarSocket
      *
      * @param SugarSocket::RECIPIENT_USER_ID|SugarSocket::RECIPIENT_TEAM_ID|SugarSocket::RECIPIENT_USER_TYPE $type
      * @param string $id
-     * @return SugarSocket|CustomSugarSocket
+     * @return Client|CustomClient
      */
     public function recipient($type, $id)
     {
@@ -64,12 +64,11 @@ class SugarSocket
     /**
      * Returns object of SugarSocket, customized if it's present
      *
-     * @return SugarSocket|CustomSugarSocket
+     * @return Client|CustomClient
      */
     public static function getInstance()
     {
-        SugarAutoLoader::requireWithCustom('include/SugarSocket.php');
-        $class = SugarAutoLoader::customClass('SugarSocket');
+        $class = \SugarAutoLoader::customClass('Sugarcrm\Sugarcrm\Socket\Client');
         return new $class();
     }
 
@@ -82,7 +81,7 @@ class SugarSocket
      */
     public function send($message, $data = null)
     {
-        $admin = BeanFactory::getBean('Administration');
+        $admin = \BeanFactory::getBean('Administration');
         $config = $admin->getConfigForModule('auth');
 
         if (empty($config['socket_token'])) {
@@ -95,7 +94,7 @@ class SugarSocket
         try {
             $params = json_encode(
                 array(
-                    'url' => SugarConfig::getInstance()->get('site_url'),
+                    'url' => \SugarConfig::getInstance()->get('site_url'),
                     'token' => $token,
                     'data' => array(
                         'to' => $this->to,
@@ -104,7 +103,7 @@ class SugarSocket
                     )
                 )
             );
-            $client = new Zend_Http_Client(SugarConfig::getInstance()->get('websockets.server.url') . '/forward');
+            $client = new \Zend_Http_Client(\SugarConfig::getInstance()->get('websockets.server.url') . '/forward');
             $client->setRawData($params, 'application/json')->request('POST');
         } catch (\Exception $exception) {
             return false;
@@ -144,7 +143,7 @@ class SugarSocket
         $availability = false;
         $isBalancer = false;
         $type = false;
-        $httpClient = new Zend_Http_Client();
+        $httpClient = new \Zend_Http_Client();
 
         if (filter_var($url, FILTER_VALIDATE_URL) && self::ping($url)) {
             $fileContent = json_decode($httpClient->setUri($url)->request()->getBody());

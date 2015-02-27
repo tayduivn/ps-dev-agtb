@@ -11,6 +11,8 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Socket\Client as SugarSocketClient;
+
 /**
  * Check WebSocket configuration.
  * @param bool $silent
@@ -28,7 +30,7 @@ function checkWSConfiguration($silent = false)
         $errors['ERR_WEB_SOCKET_CLIENT_URL'] = $mod_strings['ERR_WEB_SOCKET_CLIENT_URL'];
         installLog("ERROR::  {$errors['ERR_WEB_SOCKET_CLIENT_URL']}");
     } else {
-        $clientSettings = SugarSocket::checkWSSettings($_SESSION['websockets']['client']['url']);
+        $clientSettings = SugarSocketClient::checkWSSettings($_SESSION['websockets']['client']['url']);
         $_SESSION['websockets']['client']['balancer'] = $clientSettings['isBalancer'];
         if (!$clientSettings['available'] || $clientSettings['type'] != 'client') {
             $errors['ERR_WEB_SOCKET_CLIENT_ERROR'] = $mod_strings['ERR_WEB_SOCKET_CLIENT_ERROR'];
@@ -40,7 +42,7 @@ function checkWSConfiguration($silent = false)
         $errors['ERR_WEB_SOCKET_SERVER_URL'] = $mod_strings['ERR_WEB_SOCKET_SERVER_URL'];
         installLog("ERROR::  {$errors['ERR_WEB_SOCKET_CLIENT_URL']}");
     } else {
-        $serverSettings = SugarSocket::checkWSSettings($_SESSION['websockets']['server']['url']);
+        $serverSettings = SugarSocketClient::checkWSSettings($_SESSION['websockets']['server']['url']);
         // No need to save server balancer configuration.
         if (!$serverSettings['available'] || $serverSettings['type'] != 'server') {
             $errors['ERR_WEB_SOCKET_SERVER_ERROR'] = $mod_strings['ERR_WEB_SOCKET_SERVER_ERROR'];
