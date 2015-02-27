@@ -125,7 +125,8 @@
     /**
      * Resets the menu based on new metadata information.
      *
-     * It resets components, catalog and template (html).
+     * It resets components, catalog and template (html), and calls
+     * {@link #resize} with the last known space available for this view.
      *
      * @protected
      */
@@ -141,6 +142,7 @@
         this._addDefaultMenus();
         this._setActiveModule(app.controller.context.get('module'));
         this.render();
+        this.resize(this._width);
     },
 
     /**
@@ -205,9 +207,17 @@
      * Resize the module list to the specified width and move the extra module
      * names to the `more-modules` drop down.
      *
-     * @param {Number} width The width that we have available.
+     * @param {number} width The width that we have available.
      */
     resize: function(width) {
+        /**
+         * Cached version of last width available for this view.
+         *
+         * @type {number}
+         * @private
+         */
+        this._width = width;
+
         if (width <= 0 || _.isEmpty(this._components)) {
             return;
         }
