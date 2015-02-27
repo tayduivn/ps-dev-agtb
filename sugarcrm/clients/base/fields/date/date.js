@@ -341,7 +341,7 @@
      */
     unformat: function(value) {
         if (!value) {
-            return;
+            return value;
         }
 
         value = app.date(value, app.date.convertFormat(this.getUserDateFormat()), true);

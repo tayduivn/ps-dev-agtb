@@ -132,6 +132,10 @@ describe('Base.Field.DateTimeCombo', function() {
             expect(field.unformat()).toBeUndefined();
             expect(field.unformat('32/01/1984 19:20:42')).toBeUndefined();
         });
+
+        it('should return \'\' if an empty string is supplied', function() {
+            expect(field.unformat('')).toBe('');
+        });
     });
 
     describe('defaults', function() {
