@@ -109,12 +109,12 @@ class GlueTest extends Sugar_PHPUnit_Framework_TestCase
             array(
                 'description',
                 false,
-                "\$focus->fetched_row['description'] !== \$focus->description)"
+                "\$focus->fetched_row['description'] !== \$focus->description"
             ),
             array(
                 'probability',
                 true,
-                "\$focus->fetched_row['probability'] == \$focus->probability)"
+                "\$focus->fetched_row['probability'] == \$focus->probability"
             ),
             array(
                 'date_closed',
