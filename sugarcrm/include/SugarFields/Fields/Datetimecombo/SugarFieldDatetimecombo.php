@@ -252,7 +252,7 @@ class SugarFieldDatetimecombo extends SugarFieldBase {
         $this->ensureApiFormatFieldArguments($fieldList, $service);
 
         if(empty($bean->$fieldName)) {
-            $data[$fieldName] = null;
+            $data[$fieldName] = '';
             return;
         }
 
