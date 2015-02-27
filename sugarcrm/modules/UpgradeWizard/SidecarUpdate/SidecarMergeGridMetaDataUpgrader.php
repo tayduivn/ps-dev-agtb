@@ -777,43 +777,51 @@ END;
             // email1 <=> email conversion
             foreach ($defaultDefs['panels'] as $panelIndex => $panel) {
                 foreach ($panel['fields'] as $fieldIndex => $fieldName) {
+
+                    // Turn a field name into a string for searching convenience
+                    if (is_array($fieldName)) {
+                        $lookupFieldName = (isset($fieldName['name'])) ? $fieldName['name'] : null;
+                    } else {
+                        $lookupFieldName = $fieldName;
+                    }
+
                     // Handle fields that are not meant to be here, like header
                     // fields, but only if we are not in the header panel
                     if ($panelIndex > 0) {
-                        $check1 = is_array($fieldName) && isset($fieldName['name']) && isset($headerFields[$fieldName['name']]);
-                        $check2 = is_string($fieldName) && isset($headerFields[$fieldName]);
-                        if ($check1 || $check2) {
+                        if (isset($lookupFieldName) && isset($headerFields[$lookupFieldName])) {
                             // Remove this field from the defs and move on
                             unset($defaultDefs['panels'][$panelIndex]['fields'][$fieldIndex]);
                             continue;
                         }
                     }
 
+                    // Delete 'team_name' from the layout if module doesn't implement team-security, otherwise leave it;
+                    // the field is a part of 'basic' template by default, but module may not implement team-security
+                    if (isset($lookupFieldName) && $lookupFieldName == 'team_name' && !$this->isValidField($fieldName)) {
+                        unset($defaultDefs['panels'][$panelIndex]['fields'][$fieldIndex]);
+                    }
+
                     // Hack email field into submission
-                    if ($fieldName == 'email1') {
-                        $defaultDefs['panels'][$panelIndex]['fields'][$fieldIndex] = 'email';
-                    } elseif (is_array($fieldName) && isset($fieldName['name']) && $fieldName['name'] === 'email1') {
-                        $fieldName['name'] = 'email';
-                        $defaultDefs['panels'][$panelIndex]['fields'][$fieldIndex] = $fieldName;
+                    if (isset($lookupFieldName) && $lookupFieldName == 'email1') {
+                        if (is_array($fieldName)) {
+                            $fieldName['name'] = 'email';
+                            $defaultDefs['panels'][$panelIndex]['fields'][$fieldIndex] = $fieldName;
+                        } else {
+                            $defaultDefs['panels'][$panelIndex]['fields'][$fieldIndex] = 'email';
+                        }
                     }
 
                     // Handle twitter_id to twitter renaming
-                    if ($fieldName == 'twitter_id' && $convertTwitter) {
-                        // If twitter is already on the defaults, remove twitter_id entirely
+                    if (isset($lookupFieldName) && $lookupFieldName == 'twitter_id' && $convertTwitter) {
+                        // If twitter is already on the defaults, remove twitter_id entirely,
+                        // otherwise rename twitter_id
                         if (isset($defaultDefsFields['twitter'])) {
                             unset($defaultDefs['panels'][$panelIndex]['fields'][$fieldIndex]);
-                        } else {
-                            // If twitter is not on the default layout, rename twitter_id
-                            $defaultDefs['panels'][$panelIndex]['fields'][$fieldIndex] = 'twitter';
-                        }
-                    } elseif (is_array($fieldName) && isset($fieldName['name']) && $fieldName['name'] === 'twitter_id' && $convertTwitter) {
-                        // If twitter is already on the defaults, remove twitter_id entirely
-                        if (isset($defaultDefsFields['twitter'])) {
-                            unset($defaultDefs['panels'][$panelIndex]['fields'][$fieldIndex]);
-                        } else {
-                            // If twitter is not on the default layout, rename twitter_id
+                        } elseif (is_array($fieldName)) {
                             $fieldName['name'] = 'twitter';
                             $defaultDefs['panels'][$panelIndex]['fields'][$fieldIndex] = $fieldName;
+                        } else {
+                            $defaultDefs['panels'][$panelIndex]['fields'][$fieldIndex] = 'twitter';
                         }
                     }
                 }
