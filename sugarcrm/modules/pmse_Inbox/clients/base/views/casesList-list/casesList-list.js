@@ -9,7 +9,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 ({
-    extendsFrom: 'FlexListView',
+    extendsFrom: 'RecordlistView',
     plugins: ['ListColumnEllipsis', 'ListRemoveLinks', 'Pagination'],
 
     /**
