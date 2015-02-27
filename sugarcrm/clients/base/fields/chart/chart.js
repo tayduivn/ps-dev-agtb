@@ -59,7 +59,7 @@
             chartId = this.cid,
             chartData = this.model.get('rawChartData'),
             chartParams = this.model.get('rawChartParams') || {},
-            chartConfig = this.getChartConfig(chartData.properties[0].type),
+            chartConfig = this.getChartConfig(chartData),
             reportData = this.model.get('rawReportData'),
             params = {
                 contentEl: chartId,
@@ -74,7 +74,7 @@
             chartData.properties[0].title = chartParams.report_title;
             chartData.properties[0].type = chartParams.chart_type;
             // allow override of chart type
-            chartConfig = this.getChartConfig(chartData.properties[0].type);
+            chartConfig = this.getChartConfig(chartData);
         }
 
         chartConfig['direction'] = app.lang.direction;
@@ -123,15 +123,14 @@
      * Builds the chart config based on the type of chart
      * @returns {*}
      */
-    getChartConfig: function() {
+    getChartConfig: function(chartData) {
         var chartConfig,
-            chartData = this.model.get('rawChartData');
+            chartData = chartData || this.model.get('rawChartData');
 
         switch (chartData.properties[0].type) {
             case 'pie chart':
                 chartConfig = {
                     pieType: 'basic',
-                    tip: 'name',
                     chartType: 'pieChart'
                 };
                 break;
@@ -139,7 +138,6 @@
             case 'line chart':
                 chartConfig = {
                     lineType: 'basic',
-                    tip: 'name',
                     chartType: 'lineChart'
                 };
                 break;
@@ -147,7 +145,6 @@
             case 'funnel chart 3D':
                 chartConfig = {
                     funnelType: 'basic',
-                    tip: 'name',
                     chartType: 'funnelChart'
                 };
                 break;
@@ -155,7 +152,6 @@
             case 'gauge chart':
                 chartConfig = {
                     gaugeType: 'basic',
-                    tip: 'name',
                     chartType: 'gaugeChart'
                 };
                 break;
@@ -164,7 +160,6 @@
                 chartConfig = {
                     orientation: 'vertical',
                     barType: 'stacked',
-                    tip: 'title',
                     chartType: 'barChart'
                 };
                 break;
@@ -173,7 +168,6 @@
                 chartConfig = {
                     orientation: 'vertical',
                     barType: 'grouped',
-                    tip: 'name',
                     chartType: 'barChart'
                 };
                 break;
@@ -182,7 +176,6 @@
                 chartConfig = {
                     orientation: 'vertical',
                     barType: 'basic',
-                    tip: 'label',
                     chartType: 'barChart'
                 };
                 break;
@@ -191,7 +184,6 @@
                 chartConfig = {
                     orientation: 'horizontal',
                     barType: 'stacked',
-                    tip: 'name',
                     chartType: 'barChart'
                 };
                 break;
@@ -201,7 +193,6 @@
                 chartConfig = {
                     orientation: 'horizontal',
                     barType: 'basic',
-                    tip: 'label',
                     chartType: 'barChart'
                 };
                 break;
@@ -210,7 +201,6 @@
                 chartConfig = {
                     orientation: 'vertical',
                     barType: 'stacked',
-                    tip: 'name',
                     chartType: 'barChart'
                 };
                 break;
