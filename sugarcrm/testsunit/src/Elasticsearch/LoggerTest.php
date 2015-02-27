@@ -18,7 +18,6 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Logger;
 /**
  *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Logger
- * @uses \SugarAutoLoader
  *
  */
 class LoggerTest extends \PHPUnit_Framework_TestCase

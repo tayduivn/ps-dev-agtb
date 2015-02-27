@@ -17,7 +17,6 @@ use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 /**
  *
  * @coversDefaultClass \LogicHook
- * @uses \SugarAutoLoader
  *
  */
 class LogicHookTest extends \PHPUnit_Framework_TestCase

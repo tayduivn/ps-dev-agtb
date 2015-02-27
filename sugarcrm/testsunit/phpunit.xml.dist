@@ -11,7 +11,9 @@
  */
 -->
 
-<phpunit backupGlobals="false"
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/4.1/phpunit.xsd"
+         backupGlobals="false"
          backupStaticAttributes="false"
          colors="true"
          convertErrorsToExceptions="true"
@@ -19,13 +21,29 @@
          convertWarningsToExceptions="true"
          processIsolation="false"
          stopOnFailure="false"
-         strict="true"
-         beStrictAboutOutputDuringTests="true"
          bootstrap="TestBootstrap.php"
-        >
+         beStrictAboutOutputDuringTests="true"
+         beStrictAboutTestsThatDoNotTestAnything="true"
+         beStrictAboutTestSize="true"
+>
     <php>
         <ini name="intl.default_locale" value="en"/>
         <ini name="intl.error_level" value="0"/>
         <ini name="memory_limit" value="-1"/>
     </php>
+    <testsuites>
+        <testsuite name="all">
+            <directory>src/</directory>
+            <directory>include/</directory>
+        </testsuite>
+    </testsuites>
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="false">
+            <directory suffix=".php">../src/</directory>
+            <directory suffix=".php">../include/</directory>
+        </whitelist>
+    </filter>
+    <listeners>
+        <listener class="Sugarcrm\SugarcrmTestsUnit\AnnotationListener"/>
+    </listeners>
 </phpunit>

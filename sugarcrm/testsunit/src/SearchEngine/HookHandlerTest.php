@@ -20,7 +20,6 @@ require_once 'include/SugarLogger/SugarNullLogger.php';
 /**
  *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\SearchEngine\HookHandler
- * @uses \SugarAutoLoader
  *
  */
 class HookHandlerTest extends \PHPUnit_Framework_TestCase

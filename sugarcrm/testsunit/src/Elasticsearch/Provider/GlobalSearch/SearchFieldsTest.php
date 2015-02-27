@@ -18,7 +18,6 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\SearchFields;
 /**
  *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\SearchFields
- * @uses \SugarAutoLoader
  *
  */
 class SearchFieldsTest extends \PHPUnit_Framework_TestCase

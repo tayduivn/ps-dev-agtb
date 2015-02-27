@@ -18,7 +18,6 @@ use Sugarcrm\Sugarcrm\SearchEngine\Engine\EngineInterface;
 /**
  *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\SearchEngine\SearchEngine
- * @uses \SugarAutoLoader
  *
  */
 class SearchEngineTest extends \PHPUnit_Framework_TestCase

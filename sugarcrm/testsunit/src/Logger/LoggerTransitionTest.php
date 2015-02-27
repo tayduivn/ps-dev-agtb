@@ -18,7 +18,6 @@ use Psr\Log\LogLevel;
 /**
  *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Logger\LoggerTransition
- * @uses \SugarAutoLoader
  *
  */
 class LoggerTransitionTest extends \PHPUnit_Framework_TestCase

@@ -15,7 +15,6 @@ namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Provider\GlobalSearch;
 /**
  *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\GlobalSearch
- * @uses \SugarAutoLoader
  *
  */
 class GlobalSearchTest extends \PHPUnit_Framework_TestCase
