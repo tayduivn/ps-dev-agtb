@@ -1717,9 +1717,8 @@ class PMSECrmDataWrapper implements PMSEObservable
      */
     public function fieldTodo($field)
     {
-        if ($field['type'] == 'file' || ($field['type'] == 'id' && !$this->isCustomField(
-                    $field
-                )) || $field['type'] == 'image' || isset($field['group']) || $field['name'] == 'id' || $field['vname'] == 'LBL_DELETED'
+        if ($field['type'] == 'file' || ($field['type'] == 'id' && !$this->isCustomField($field)) ||
+            $field['type'] == 'image' || $field['name'] == 'id' || $field['vname'] == 'LBL_DELETED'
         ) {
             return true;
         }
