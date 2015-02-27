@@ -218,20 +218,22 @@ class ParserLabel extends ModuleBuilderParser
     }
 
     /**
-     * Takes in the request params from a save request and processes
-     * them for the save.
-     * @param $metadata
-     * @param string $language      Language key, for example 'en_us'
+     * Save labels passed in metadata for a given language
+     *
+     * @param $metadata - The labels metadata
+     * @param $language - language key (e.g. en_us)
      */
-    function handleSaveRelationshipLabels ($metadata , $language)
-        {
-        foreach ( $metadata as $definition )
-            {
-        	$labels = array();
-        	$labels[$definition [ 'system_label' ]] = $definition [ 'display_label' ];
-        	self::addLabels ( $language, $labels, $definition [ 'module' ],null,true );
-            }
+    public function handleSaveRelationshipLabels($metadata, $language)
+    {
+        $labels = array();
+        foreach ($metadata as $definition) {
+            $labels[$definition['module']][$definition['system_label']] = $definition['display_label'];
         }
+
+        foreach ($labels as $module => $definition) {
+            self::addLabels($language, $definition, $module, null);
+        }
+    }
 
     function addLabelsToAllLanguages($labels)
             {
@@ -254,8 +256,7 @@ class ParserLabel extends ModuleBuilderParser
             self::$moduleInstaller = new ModuleInstaller();
             self::$moduleInstaller->silent = true;
         }
-
-        self::$moduleInstaller->rebuild_extensions();
+        self::$moduleInstaller->rebuild_extensions(array($moduleName), array('languages'));
         
         // While this *is* called from rebuild_extensions, it doesn't do anything
         // there because there is no language or module provided to it. This fixes

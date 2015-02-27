@@ -98,58 +98,6 @@ $vardefs = array(
             'calculated' => true,
             'enforced' => true,
         ),
-        'currency_id' =>
-        array(
-            'name' => 'currency_id',
-            'type' => 'currency_id',
-            'dbType' => 'id',
-            'group' => 'currency_id',
-            'vname' => 'LBL_CURRENCY',
-            'function' => 'getCurrencies',
-            'function_bean' => 'Currencies',
-            'reportable' => false,
-            'default' => '-99',
-            'duplicate_on_record_copy' => 'always',
-            'comment' => 'Currency used for display purposes'
-        ),
-        'base_rate' => array(
-            'name' => 'base_rate',
-            'vname' => 'LBL_CURRENCY_RATE',
-            'type' => 'decimal',
-            'len' => '26,6',
-            'studio' => false
-        ),
-        'currency_name' =>
-        array(
-            'name' => 'currency_name',
-            'rname' => 'name',
-            'id_name' => 'currency_id',
-            'vname' => 'LBL_CURRENCY_NAME',
-            'type' => 'relate',
-            'isnull' => 'true',
-            'table' => 'currencies',
-            'module' => 'Currencies',
-            'source' => 'non-db',
-            'function' => 'getCurrencies',
-            'function_bean' => 'Currencies',
-            'studio' => 'false',
-            'duplicate_on_record_copy' => 'always',
-        ),
-        'currency_symbol' =>
-        array(
-            'name' => 'currency_symbol',
-            'rname' => 'symbol',
-            'id_name' => 'currency_id',
-            'vname' => 'LBL_CURRENCY_SYMBOL',
-            'type' => 'relate',
-            'isnull' => 'true',
-            'table' => 'currencies',
-            'module' => 'Currencies',
-            'source' => 'non-db',
-            'function' => 'getCurrencySymbols',
-            'function_bean' => 'Currencies',
-            'duplicate_on_record_copy' => 'always',
-        ),
         'date_closed' =>
         array(
             'name' => 'date_closed',
@@ -209,5 +157,8 @@ $vardefs = array(
                 array('in_field_name' => 'name', 'dupe_field_name' => 'name'),
             )
         )
+    ),
+    'uses' => array(
+        'currency'
     )
 );

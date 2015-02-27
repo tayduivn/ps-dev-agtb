@@ -27,7 +27,9 @@ class QuotesSeedDataTest extends Sugar_PHPUnit_Framework_TestCase
         while($row = $GLOBALS['db']->fetchByAssoc($results)) {
         	$sugar_demodata['company_name_array'][] = $row['name'];
         }
-        
+
+        $sugar_demodata['users'][0]['id'] = $GLOBALS['current_user']->id;
+
         $this->quote_name = 'Test Quote ' . mktime();
         
 		$sugar_demodata['quotes_seed_data']['quotes'][0] = array(

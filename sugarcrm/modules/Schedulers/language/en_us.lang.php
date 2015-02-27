@@ -38,6 +38,7 @@ $mod_strings = array (
 'LBL_OOTB_CREATE_NEXT_TIMEPERIOD' => 'Create Future TimePeriods',
 'LBL_OOTB_HEARTBEAT' => 'Sugar Heartbeat',
 'LBL_OOTB_KBCONTENT_UPDATE' => 'Update KBContent articles.',
+'LBL_OOTB_PROCESS_AUTHOR_JOB' => 'Process Author Scheduled Job',
 
 // List Labels
 'LBL_LIST_JOB_INTERVAL' => 'Interval:',

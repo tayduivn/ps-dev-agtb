@@ -42,7 +42,7 @@ class SugarMin {
     }
 
     protected function jsParser() {
-        if (inDeveloperMode()) {
+        if (!shouldResourcesBeMinified()) {
             return $this->text;
         }
 

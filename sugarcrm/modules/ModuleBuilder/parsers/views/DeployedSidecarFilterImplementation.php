@@ -185,7 +185,7 @@ class DeployedSidecarFilterImplementation extends AbstractMetaDataImplementation
         $this->_viewdefs = $defs;
 
         // Now save the actual data
-        write_array_to_file(
+        $ret = write_array_to_file(
             "viewdefs['{$this->_moduleName}']['{$this->_viewClient}']['filter']['default']",
             $this->_viewdefs,
             $savefile
@@ -200,6 +200,7 @@ class DeployedSidecarFilterImplementation extends AbstractMetaDataImplementation
 
         // clear the cache for this module
         MetaDataManager::refreshModulesCache(array($this->_moduleName));
+        return $ret;
     }
 
     /*

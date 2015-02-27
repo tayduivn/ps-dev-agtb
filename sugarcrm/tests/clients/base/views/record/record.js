@@ -338,7 +338,7 @@ describe("Record View", function () {
                 name: 'Bar'
             });
 
-            view.$('a[name=cancel_button]').click();
+            view.context.trigger('button:cancel_button:click');
             expect(revertStub).toHaveBeenCalled();
         });
 
@@ -380,7 +380,7 @@ describe("Record View", function () {
                         view.render();
                         view.meta.hashSync = hashSyncValue;
                         view.context.trigger('button:edit_button:click');
-                        view.$('a[name=cancel_button]').click();
+                        view.context.trigger('button:cancel_button:click');
 
                         if (view.meta.hashSync) {
                             expect(navigateStub).toHaveBeenCalledWith('Cases/my-case-id', {trigger: false});

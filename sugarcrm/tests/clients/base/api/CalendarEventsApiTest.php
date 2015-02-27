@@ -431,13 +431,16 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
         );
 
         $calendarEvents = $this->getMockForCalendarEvents(
-            array('isEventRecurring', 'saveRecurringEvents')
+            array('isEventRecurring', 'saveRecurringEvents', 'applyChangesToRecurringEvents')
         );
         $calendarEvents->expects($this->any())
             ->method('isEventRecurring')
             ->will($this->returnValue(true));
         $calendarEvents->expects($this->once())
             ->method('saveRecurringEvents');
+        $calendarEvents->expects($this->any())
+            ->method('applyChangesToRecurringEvents')
+            ->will($this->returnValue(false));
 
         $calendarEventsApiMock = $this->getMockForCalendarEventsApi(
             array('updateRecord', 'getLoadedAndFormattedBean'),
@@ -447,6 +450,206 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
             ->method('updateRecord');
         $calendarEventsApiMock->expects($this->once())
             ->method('getLoadedAndFormattedBean')
+            ->will($this->returnValue(array()));
+
+        $calendarEventsApiMock->updateRecurringCalendarEvent($meeting, $this->api, $args);
+    }
+
+    public function testUpdateRecurringCalendarEvent_RecurringAfterUpdate_InviteeChangesRequireRebuild_FullRebuild()
+    {
+        $meeting = BeanFactory::newBean('Meetings');
+        $meeting->id = create_guid();
+        $meeting->repeat_parent_id = '';
+
+        $args = array(
+            'module' => 'Meetings',
+            'record' => $meeting->id,
+            'date_start' => $this->dateTimeAsISO('2014-12-25 13:00:00'),
+            'duration_hours' => '1',
+            'duration_minutes' => '30',
+        );
+
+        $calendarEvents = $this->getMockForCalendarEvents(
+            array('isEventRecurring', 'saveRecurringEvents', 'applyChangesToRecurringEvents')
+        );
+        $calendarEvents->expects($this->any())
+            ->method('isEventRecurring')
+            ->will($this->returnValue(true));
+        $calendarEvents->expects($this->never())
+            ->method('applyChangesToRecurringEvents');
+        $calendarEvents->expects($this->once())
+            ->method('saveRecurringEvents');
+
+        $calendarEventsApiMock = $this->getMockForCalendarEventsApi(
+            array('updateRecord', 'getLoadedAndFormattedBean', 'getInviteeChanges'),
+            $calendarEvents
+        );
+        $calendarEventsApiMock->expects($this->once())
+            ->method('updateRecord');
+        $calendarEventsApiMock->expects($this->once())
+            ->method('getLoadedAndFormattedBean')
+            ->will($this->returnValue(array()));
+        $calendarEventsApiMock->expects($this->once())
+            ->method('getInviteeChanges')
+            ->will($this->returnValue(array('add' => array('123'))));
+
+        $calendarEventsApiMock->updateRecurringCalendarEvent($meeting, $this->api, $args);
+    }
+
+    public function testUpdateRecurringCalendarEvent_RecurringAfterUpdate_FieldChangesRequireRebuild_FullRebuild()
+    {
+        $meeting = BeanFactory::newBean('Meetings');
+        $meeting->id = create_guid();
+        $meeting->repeat_parent_id = '';
+        $meeting->dataChanges=array(
+            "repeat_type" => array (
+                'before'=>'Daily',
+                'after'=>'Weekly'
+            ),
+        );
+
+        $args = array(
+            'module' => 'Meetings',
+            'record' => $meeting->id,
+            'date_start' => $this->dateTimeAsISO('2014-12-25 13:00:00'),
+            'duration_hours' => '1',
+            'duration_minutes' => '30',
+        );
+
+        $calendarEvents = $this->getMockForCalendarEvents(
+            array('isEventRecurring', 'saveRecurringEvents', 'applyChangesToRecurringEvents')
+        );
+        $calendarEvents->expects($this->any())
+            ->method('isEventRecurring')
+            ->will($this->returnValue(true));
+        $calendarEvents->expects($this->never())
+            ->method('applyChangesToRecurringEvents');
+        $calendarEvents->expects($this->once())
+            ->method('saveRecurringEvents');
+
+        $calendarEventsApiMock = $this->getMockForCalendarEventsApi(
+            array('updateRecord', 'getLoadedAndFormattedBean', 'getInviteeChanges'),
+            $calendarEvents
+        );
+        $calendarEventsApiMock->expects($this->once())
+            ->method('updateRecord');
+        $calendarEventsApiMock->expects($this->once())
+            ->method('getLoadedAndFormattedBean')
+            ->will($this->returnValue(array()));
+        $calendarEventsApiMock->expects($this->once())
+            ->method('getInviteeChanges')
+            ->will($this->returnValue(array()));
+
+        $calendarEventsApiMock->updateRecurringCalendarEvent($meeting, $this->api, $args);
+    }
+
+    public function testUpdateRecurringCalendarEvent_RecurringAfterUpdate_NoChangesRequireRebuild_ApplyChangesSucceeds()
+    {
+        $meeting = BeanFactory::newBean('Meetings');
+        $meeting->id = create_guid();
+        $meeting->repeat_parent_id = '';
+        $meeting->dataChanges=array(
+            "name" => array (
+                'before'=>'now',
+                'after'=>'then'
+            ),
+            "location" => array (
+                'before'=>'here',
+                'after'=>'there'
+            ),
+            "description" => array (
+                'before'=>'hello',
+                'after'=>'world'
+            ),
+        );
+
+        $args = array(
+            'module' => 'Meetings',
+            'record' => $meeting->id,
+            'date_start' => $this->dateTimeAsISO('2014-12-25 13:00:00'),
+            'duration_hours' => '1',
+            'duration_minutes' => '30',
+        );
+
+        $calendarEvents = $this->getMockForCalendarEvents(
+            array('isEventRecurring', 'saveRecurringEvents', 'applyChangesToRecurringEvents')
+        );
+        $calendarEvents->expects($this->any())
+            ->method('isEventRecurring')
+            ->will($this->returnValue(true));
+        $calendarEvents->expects($this->once())
+            ->method('applyChangesToRecurringEvents')
+            ->will($this->returnValue(true));
+        $calendarEvents->expects($this->never())
+            ->method('saveRecurringEvents');
+
+        $calendarEventsApiMock = $this->getMockForCalendarEventsApi(
+            array('updateRecord', 'getLoadedAndFormattedBean', 'getInviteeChanges'),
+            $calendarEvents
+        );
+        $calendarEventsApiMock->expects($this->once())
+            ->method('updateRecord');
+        $calendarEventsApiMock->expects($this->once())
+            ->method('getLoadedAndFormattedBean')
+            ->will($this->returnValue(array()));
+        $calendarEventsApiMock->expects($this->once())
+            ->method('getInviteeChanges')
+            ->will($this->returnValue(array()));
+
+        $calendarEventsApiMock->updateRecurringCalendarEvent($meeting, $this->api, $args);
+    }
+
+    public function testUpdateRecurringCalendarEvent_NoChangesRequireRebuild_ApplyChangesFails_FullRebuild()
+    {
+        $meeting = BeanFactory::newBean('Meetings');
+        $meeting->id = create_guid();
+        $meeting->repeat_parent_id = '';
+        $meeting->dataChanges=array(
+            "name" => array (
+                'before'=>'now',
+                'after'=>'then'
+            ),
+            "location" => array (
+                'before'=>'here',
+                'after'=>'there'
+            ),
+            "description" => array (
+                'before'=>'hello',
+                'after'=>'world'
+            ),
+        );
+
+        $args = array(
+            'module' => 'Meetings',
+            'record' => $meeting->id,
+            'date_start' => $this->dateTimeAsISO('2014-12-25 13:00:00'),
+            'duration_hours' => '1',
+            'duration_minutes' => '30',
+        );
+
+        $calendarEvents = $this->getMockForCalendarEvents(
+            array('isEventRecurring', 'saveRecurringEvents', 'applyChangesToRecurringEvents')
+        );
+        $calendarEvents->expects($this->any())
+            ->method('isEventRecurring')
+            ->will($this->returnValue(true));
+        $calendarEvents->expects($this->once())
+            ->method('applyChangesToRecurringEvents')
+            ->will($this->returnValue(false));
+        $calendarEvents->expects($this->once())
+            ->method('saveRecurringEvents');
+
+        $calendarEventsApiMock = $this->getMockForCalendarEventsApi(
+            array('updateRecord', 'getLoadedAndFormattedBean', 'getInviteeChanges'),
+            $calendarEvents
+        );
+        $calendarEventsApiMock->expects($this->once())
+            ->method('updateRecord');
+        $calendarEventsApiMock->expects($this->once())
+            ->method('getLoadedAndFormattedBean')
+            ->will($this->returnValue(array()));
+        $calendarEventsApiMock->expects($this->once())
+            ->method('getInviteeChanges')
             ->will($this->returnValue(array()));
 
         $calendarEventsApiMock->updateRecurringCalendarEvent($meeting, $this->api, $args);

@@ -729,6 +729,9 @@ function process_advanced_actions(& $focus, $field, $meta_array, & $rel_this){
 			}
 		//if value is current_user
 		}
+		else if ($meta_array['value'] == 'team_set_id'){
+		    $focus->team_set_id = $meta_array['value'];
+		}
 
 		if($meta_array['ext1']=="Self"){
 			return $focus->$meta_array['value'];

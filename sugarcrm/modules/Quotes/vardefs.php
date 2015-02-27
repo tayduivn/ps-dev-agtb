@@ -46,24 +46,6 @@ $dictionary['Quote'] = array(
             'vname' => 'LBL_SHIPPING_PROVIDER',
             'source' => 'non-db',
         ),
-        'currency_id' => array(
-            'name' => 'currency_id',
-            'vname' => 'LBL_CURRENCY_ID',
-            'type' => 'id',
-            'required' => false,
-            'do_report' => false,
-            'reportable' => false,
-            'default' => '-99',
-            'function' => 'getCurrencies',
-            'function_bean' => 'Currencies',
-        ),
-        'base_rate' => array(
-            'name' => 'base_rate',
-            'vname' => 'LBL_BASE_RATE',
-            'type' => 'decimal',
-            'len' => '26,6',
-            'studio' => false
-        ),
         'taxrate_id' => array(
             'name' => 'taxrate_id',
             'vname' => 'LBL_TAXRATE_ID',
@@ -558,7 +540,11 @@ $dictionary['Quote'] = array(
             'module' => 'Accounts',
             'source' => 'non-db',
             'massupdate' => false,
-            'studio' => 'false',
+            'studio' => array(
+                'edit' => 'false',
+                'detail' => 'false',
+                'list' => 'false',
+            )
         ),
         'account_id' => array(
             'name' => 'account_id',
@@ -937,5 +923,6 @@ VardefManager::createVardef(
         'default',
         'assignable',
         'team_security',
+        'currency'
     )
 );

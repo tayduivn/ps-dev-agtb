@@ -39,7 +39,7 @@ $versionToken = getVersionedPath(null);
                         <div class="alert alert-process">
                             <strong>Loading</strong>
                             <div class="loading">
-                                <i class="l1">&period;</i><i class="l2">&period;</i><i class="l3">&period;</i>
+                                <i class="l1">&#46;</i><i class="l2">&#46;</i><i class="l3">&#46;</i>
                             </div>
                         </div>
                     </div>
@@ -54,16 +54,12 @@ $versionToken = getVersionedPath(null);
         <script src="../include/javascript/modernizr.js?v=<?php echo $versionToken;?>"></script>
 
         <!-- Sidecar Scripts -->
-        <script src="../sidecar/minified/sidecar<?php if (!inDeveloperMode()): ?>.min<?php endif; ?>.js?v=<?php echo $versionToken;?>"></script>
+        <script src="../sidecar/minified/sidecar<?php if (shouldResourcesBeMinified()): ?>.min<?php endif; ?>.js?v=<?php echo $versionToken;?>"></script>
         <script src="../cache/include/javascript/sugar_sidecar.min.js?v=<?php echo $versionToken;?>"></script>
 
         <!-- Portal specific JS -->
         <script src="../cache/portal2/sugar_portal.min.js?v=<?php echo $versionToken;?>"></script>
-        <?php if(inDeveloperMode()): ?>
-            <script src="../cache/Expressions/functions_cache_debug.js?v=<?php echo $versionToken;?>"></script>
-        <?php else: ?>
-            <script src="../cache/Expressions/functions_cache.js?v=<?php echo $versionToken;?>"></script>
-        <?php endif; ?>
+        <script src="../cache/Expressions/functions_cache<?php if (!shouldResourcesBeMinified()): ?>_debug<?php endif; ?>.js?v=<?php echo $versionToken;?>"></script>
         <script src="config.js?v=<?php echo $versionToken;?>"></script>
 
         <script>

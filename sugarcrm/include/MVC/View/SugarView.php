@@ -567,10 +567,12 @@ class SugarView
             $GLOBALS['updateSilent'] = true;
             include("include/Expressions/updatecache.php");
         }
-        if(inDeveloperMode())
-            echo getVersionedScript('cache/Expressions/functions_cache_debug.js');
-        else
-            echo getVersionedScript('cache/Expressions/functions_cache.js');
+
+        $path = shouldResourcesBeMinified()
+            ? 'cache/Expressions/functions_cache.js'
+            : 'cache/Expressions/functions_cache_debug.js';
+        echo getVersionedScript($path);
+
         echo <<<EOQ
         <script>
             if ( typeof(SUGAR) == 'undefined' ) {SUGAR = {}};
@@ -692,10 +694,11 @@ EOHTML;
                 $GLOBALS['updateSilent'] = true;
                 include("include/Expressions/updatecache.php");
             }
-            if(inDeveloperMode())
-                echo getVersionedScript('cache/Expressions/functions_cache_debug.js');
-            else
-                echo getVersionedScript('cache/Expressions/functions_cache.js');
+
+            $path = shouldResourcesBeMinified()
+                ? 'cache/Expressions/functions_cache.js'
+                : 'cache/Expressions/functions_cache_debug.js';
+            echo getVersionedScript($path);
 
             require_once("include/Expressions/DependencyManager.php");
             echo "\n" . '<script type="text/javascript">' . DependencyManager::getJSUserVariables($GLOBALS['current_user']) . "</script>\n";

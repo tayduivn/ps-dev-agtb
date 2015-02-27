@@ -143,6 +143,13 @@ class SugarBean
 	var $deleted = 0;
 
     /**
+     * Holds any data changes determined when bean is saved.
+     *
+     * @var Array
+     */
+    var $dataChanges;
+
+    /**
      * Should the date modified column of the bean be updated during save?
      * This is used for admin level functionality that should not be updating
      * the date modified.  This is only used by sync to allow for updates to be
@@ -388,6 +395,20 @@ class SugarBean
      * @var array
      */
     protected static $loadedDefs = array();
+
+    /**
+     * Keeps track of links used during recursive resave of related beans
+     *
+     * @var array
+     */
+    protected static $recursivelyResavedLinks = array();
+
+    /**
+     * The flag tracking whether resave of the beans on the "many" side of link has triggered
+     *
+     * @var boolean
+     */
+    protected static $recursivelyResavedManyBeans = false;
 
     /**
      * Field's type which are behavior like related.
@@ -1825,7 +1846,7 @@ class SugarBean
         // use the db independent query generator
         $this->preprocess_fields_on_save();
 
-        $dataChanges = $this->db->getDataChanges($this);
+        $this->dataChanges = $this->db->getDataChanges($this);
 
         //construct the SQL to create the audit record if auditing is enabled.
         $auditDataChanges=array();
@@ -1834,7 +1855,7 @@ class SugarBean
                 $GLOBALS['log']->debug('Auditing: Retrieve was not called, audit record will not be created.');
             } else {
                 $auditFields = $this->getAuditEnabledFieldDefinitions();
-                $auditDataChanges = array_intersect_key($dataChanges, $auditFields);
+                $auditDataChanges = array_intersect_key($this->dataChanges, $auditFields);
             }
         }
         $this->_sendNotifications($check_notify);
@@ -1857,7 +1878,7 @@ class SugarBean
         $this->updateRelatedCalcFields();
 
         // populate fetched row with newest changes in the bean
-        foreach ($dataChanges as $change) {
+        foreach ($this->dataChanges as $change) {
             $this->fetched_row[$change['field_name']] = $change['after'];
         }
 
@@ -1879,7 +1900,7 @@ class SugarBean
 
         $this->call_custom_logic('after_save', array(
             'isUpdate' => $isUpdate,
-            'dataChanges' => $dataChanges,
+            'dataChanges' => $this->dataChanges,
         ));
 
         $this->in_save = false;
@@ -1959,19 +1980,30 @@ class SugarBean
             return;
         }
 
-        if (!static::enterOperation('saving_related')) {
-            return;
-        }
-
         // If linkName is empty then we need to handle all links
         if (empty($linkName)) {
             $GLOBALS['log']->debug("Updating records related to {$this->module_dir} {$this->id}");
             if (!empty($dictionary[$this->object_name]['related_calc_fields'])) {
                 $links = $dictionary[$this->object_name]['related_calc_fields'];
+                $resavedManyBeans = false;
                 foreach($links as $lname) {
+                    if (isset(self::$recursivelyResavedLinks[$this->module_name][$lname])) {
+                        continue;
+                    }
+
                     if ((empty($this->$lname) && !$this->load_relationship($lname)) || !($this->$lname instanceof Link2)) {
                         continue;
                     }
+
+                    // do not let resave of the beans on "many" side of link to trigger more than once during recursion
+                    if ($this->$lname->getType() == REL_TYPE_MANY) {
+                        if (self::$recursivelyResavedManyBeans) {
+                            continue;
+                        }
+                        $resavedManyBeans = true;
+                    }
+
+                    self::$recursivelyResavedLinks[$this->module_name][$lname] = true;
 
                     $this->addParentRecordsToResave($lname);
 
@@ -2011,14 +2043,14 @@ class SugarBean
                         }
                     }
                 }
+
+                self::$recursivelyResavedManyBeans = $resavedManyBeans;
             }
         }
         else if ($this->has_calc_field_with_link($linkName)) {
             //Save will update the saved_beans array
             SugarRelationship::addToResaveList($this);
         }
-
-        static::leaveOperation('saving_related');
     }
 
     protected function addParentRecordsToResave($lname) {
@@ -7712,5 +7744,14 @@ class SugarBean
         }
 
         return $fields;
+    }
+
+    /**
+     * Clears the status recursive resave
+     */
+    public static function clearRecursiveResave()
+    {
+        self::$recursivelyResavedLinks = array();
+        self::$recursivelyResavedManyBeans = false;
     }
 }

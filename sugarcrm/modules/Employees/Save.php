@@ -44,10 +44,6 @@ $old_reports_to_id = $focus->reports_to_id;
 
 populateFromRow($focus,$_POST);
 
-if (empty($focus->status)) {
-    $focus->status = "Active";
-}
-
 $focus->save();
 $return_id = $focus->id;
 

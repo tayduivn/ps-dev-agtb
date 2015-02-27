@@ -18,6 +18,9 @@ $viewdefs['Calls']['base']['view']['record'] = array(
             'label' => 'LBL_CANCEL_BUTTON_LABEL',
             'css_class' => 'btn-invisible btn-link',
             'showOn' => 'edit',
+            'events' => array(
+                'click' => 'button:cancel_button:click',
+            ),
         ),
         array(
             'type' => 'actiondropdown',
@@ -238,7 +241,7 @@ $viewdefs['Calls']['base']['view']['record'] = array(
                             'label' => 'LBL_CALENDAR_REPEAT_DOW',
                             'name' => 'repeat_dow',
                             'type' => 'repeat-dow',
-                            'options' => 'dom_cal_day_short',
+                            'options' => 'dom_cal_day_of_week',
                             'isMultiSelect' => true,
                         ),
                         array(

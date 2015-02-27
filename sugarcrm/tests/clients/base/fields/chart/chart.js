@@ -32,7 +32,6 @@ describe('Base.Field.Chart', function() {
 
             var cfg = field.getChartConfig();
             expect(cfg.pieType).toEqual('basic');
-            expect(cfg.tip).toEqual('name');
             expect(cfg.chartType).toEqual('pieChart');
         });
 
@@ -42,7 +41,6 @@ describe('Base.Field.Chart', function() {
 
             var cfg = field.getChartConfig();
             expect(cfg.lineType).toEqual('basic');
-            expect(cfg.tip).toEqual('name');
             expect(cfg.chartType).toEqual('lineChart');
         });
 
@@ -52,7 +50,6 @@ describe('Base.Field.Chart', function() {
 
             var cfg = field.getChartConfig();
             expect(cfg.funnelType).toEqual('basic');
-            expect(cfg.tip).toEqual('name');
             expect(cfg.chartType).toEqual('funnelChart');
         });
 
@@ -62,7 +59,6 @@ describe('Base.Field.Chart', function() {
 
             var cfg = field.getChartConfig();
             expect(cfg.gaugeType).toEqual('basic');
-            expect(cfg.tip).toEqual('name');
             expect(cfg.chartType).toEqual('gaugeChart');
         });
 
@@ -73,7 +69,6 @@ describe('Base.Field.Chart', function() {
             var cfg = field.getChartConfig();
             expect(cfg.orientation).toEqual('vertical');
             expect(cfg.barType).toEqual('stacked');
-            expect(cfg.tip).toEqual('title');
             expect(cfg.chartType).toEqual('barChart');
         });
 
@@ -84,7 +79,6 @@ describe('Base.Field.Chart', function() {
             var cfg = field.getChartConfig();
             expect(cfg.orientation).toEqual('vertical');
             expect(cfg.barType).toEqual('grouped');
-            expect(cfg.tip).toEqual('name');
             expect(cfg.chartType).toEqual('barChart');
         });
 
@@ -95,7 +89,6 @@ describe('Base.Field.Chart', function() {
             var cfg = field.getChartConfig();
             expect(cfg.orientation).toEqual('vertical');
             expect(cfg.barType).toEqual('basic');
-            expect(cfg.tip).toEqual('label');
             expect(cfg.chartType).toEqual('barChart');
         });
 
@@ -106,7 +99,6 @@ describe('Base.Field.Chart', function() {
             var cfg = field.getChartConfig();
             expect(cfg.orientation).toEqual('horizontal');
             expect(cfg.barType).toEqual('stacked');
-            expect(cfg.tip).toEqual('name');
             expect(cfg.chartType).toEqual('barChart');
         });
 
@@ -117,7 +109,6 @@ describe('Base.Field.Chart', function() {
             var cfg = field.getChartConfig();
             expect(cfg.orientation).toEqual('horizontal');
             expect(cfg.barType).toEqual('basic');
-            expect(cfg.tip).toEqual('label');
             expect(cfg.chartType).toEqual('barChart');
         });
 
@@ -128,7 +119,6 @@ describe('Base.Field.Chart', function() {
             var cfg = field.getChartConfig();
             expect(cfg.orientation).toEqual('horizontal');
             expect(cfg.barType).toEqual('basic');
-            expect(cfg.tip).toEqual('label');
             expect(cfg.chartType).toEqual('barChart');
         });
 
@@ -139,7 +129,6 @@ describe('Base.Field.Chart', function() {
             var cfg = field.getChartConfig();
             expect(cfg.orientation).toEqual('vertical');
             expect(cfg.barType).toEqual('stacked');
-            expect(cfg.tip).toEqual('name');
             expect(cfg.chartType).toEqual('barChart');
         });
     });

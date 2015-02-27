@@ -12,6 +12,10 @@
  * @class View.Views.Base.GlobarsearchView
  * @alias SUGAR.App.view.views.BaseGlobalsearchView
  * @extends View.Views.Base.GlobalsearchView
+ *
+ * @deprecated Since 7.7 will be removed on 7.9. See SC-4107. This is divided
+ * into globalsearch-bar view and globalsearch-quickresult view.
+ *
  */
 ({
     // FIXME this needs to be removed so that we can be able to reuse this view

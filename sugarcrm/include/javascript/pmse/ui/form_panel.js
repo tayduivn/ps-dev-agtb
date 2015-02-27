@@ -1235,7 +1235,7 @@
 	FormPanelDate.prototype._unformat = function (value) {
 		//based on unformat function in components_4ffa9804da5d932ba4c9ac5834421ed5.js line 3876
 		value = App.date(value, this._dateFormat.toUpperCase(), true);
-		return value.isValid() ? value.format() : null;
+		return value.isValid() ? value.format("YYYY-MM-DD") : null;
 	};
 	//Returns a date in user format.
 	FormPanelDate.prototype._format = function (value) {
@@ -1340,6 +1340,11 @@
 		}
 		return this;
 	};
+
+    FormPanelDatetime.prototype._unformat = function (value) {
+        value = App.date(value, this._dateFormat.toUpperCase(), true);
+        return value.isValid() ? value.format() : null;
+    };
 
 	FormPanelDatetime.prototype._getValueFromControl = function () {
 		var value = "", date, time, isValid = false, aux;

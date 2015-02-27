@@ -63,6 +63,7 @@ SUGAR.expressions.getDisplayFunctionList = function() {
         case "formatName":
         case "sugarField":
 		case "forecastCommitStage":
+        case "currencyRate":
             continue;
             break;
         }

@@ -258,64 +258,6 @@ $dictionary['ForecastWorksheet'] = array(
             'convertToBase' => true,
             'skip_preferred_conversion' => true
         ),
-        'base_rate' =>
-        array(
-            'name' => 'base_rate',
-            'vname' => 'LBL_BASE_RATE',
-            'type' => 'decimal',
-            'len' => '26,6',
-            'required' => true,
-            'studio' => false
-        ),
-        'currency_id' =>
-        array(
-            'name' => 'currency_id',
-            'type' => 'currency_id',
-            'dbType' => 'id',
-            'group' => 'currency_id',
-            'vname' => 'LBL_CURRENCY',
-            'function' => 'getCurrencies',
-            'function_bean' => 'Currencies',
-            'reportable' => false,
-            'comment' => 'Currency used for display purposes',
-            'studio' => false
-        ),
-        'currency_name' =>
-        array(
-            'name' => 'currency_name',
-            'rname' => 'name',
-            'id_name' => 'currency_id',
-            'vname' => 'LBL_CURRENCY_NAME',
-            'type' => 'relate',
-            'isnull' => 'true',
-            'table' => 'currencies',
-            'module' => 'Currencies',
-            'source' => 'non-db',
-            'function' => 'getCurrencies',
-            'function_bean' => 'Currencies',
-            'studio' => false,
-            'duplicate_merge' => 'disabled',
-            'link' => 'currency',
-            'formula' => 'related($currency, "name")',
-            'enforced' => true,
-            'calculated' => true,
-        ),
-        'currency_symbol' =>
-        array(
-            'name' => 'currency_symbol',
-            'rname' => 'symbol',
-            'id_name' => 'currency_id',
-            'vname' => 'LBL_CURRENCY_SYMBOL',
-            'type' => 'relate',
-            'isnull' => 'true',
-            'table' => 'currencies',
-            'module' => 'Currencies',
-            'source' => 'non-db',
-            'function' => 'getCurrencySymbols',
-            'function_bean' => 'Currencies',
-            'studio' => false,
-            'duplicate_merge' => 'disabled',
-        ),
         'date_closed' =>
         array(
             'name' => 'date_closed',
@@ -539,14 +481,6 @@ $dictionary['ForecastWorksheet'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_CATEGORY',
         ),
-        'currency' =>
-        array(
-            'name' => 'currency',
-            'type' => 'link',
-            'relationship' => 'forecastworksheets_currencies',
-            'source' => 'non-db',
-            'vname' => 'LBL_CURRENCY_NAME',
-        ),
     ),
     'indices' => array(
         array('name' => 'idx_worksheets_parent', 'type' => 'index', 'fields' => array('parent_id', 'parent_type')),
@@ -608,16 +542,7 @@ $dictionary['ForecastWorksheet'] = array(
             'rhs_table' => 'forecast_worksheets',
             'rhs_key' => 'category_id',
             'relationship_type' => 'one-to-many'
-        ),
-        'forecastworksheets_currencies' =>  array(
-            'lhs_module' => 'Currencies',
-            'lhs_table' => 'currencies',
-            'lhs_key' => 'id',
-            'rhs_module' => 'ForecastWorksheets',
-            'rhs_table' => 'forecast_worksheets',
-            'rhs_key' => 'currency_id',
-            'relationship_type' => 'one-to-many'
-        ),
+        )
     )
 );
 
@@ -628,5 +553,6 @@ VardefManager::createVardef(
         'default',
         'assignable',
         'team_security',
+        'currency'
     )
 );

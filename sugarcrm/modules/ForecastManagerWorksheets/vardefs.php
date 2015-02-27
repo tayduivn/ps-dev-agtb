@@ -65,22 +65,6 @@ $dictionary['ForecastManagerWorksheet'] = array(
             'type' => 'currency',
             'is_base_currency' => true
         ),
-        'currency_id' =>
-        array(
-            'name' => 'currency_id',
-            'vname' => 'LBL_CURRENCY_ID',
-            'type' => 'currency_id',
-            'dbType' => 'id',
-            'function' => 'getCurrencies',
-            'function_bean' => 'Currencies',
-        ),
-        'base_rate' =>
-        array(
-            'name' => 'base_rate',
-            'vname' => 'LBL_BASE_RATE',
-            'type' => 'decimal',
-            'len' => '26,6',
-        ),
         'timeperiod_id' =>
         array(
             'name' => 'timeperiod_id',
@@ -183,5 +167,6 @@ VardefManager::createVardef(
         'default',
         'assignable',
         'team_security',
+        'currency'
     )
 );

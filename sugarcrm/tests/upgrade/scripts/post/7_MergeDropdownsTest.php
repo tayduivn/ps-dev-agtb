@@ -60,44 +60,17 @@ class SugarUpgradeMergeDropdownsTest extends UpgradeTestCase
     }
 
     /**
+     * @param $old - Old dropdown values
+     * @param $new - New dropdown values (the one in the new version)
+     * @param $custom - Custom dropdown values (customer changes to the old array)
+     * @param $key - Key expected to exist in new array
+     * @param $value - Expected value of $key
+     *
      * @covers SugarUpgradeMergeDropdowns::run
+     * @dataProvider dataProviderSavesAMergedDropdown
      */
-    public function testRun_SavesAMergedDropdown()
+    public function testRun_SavesAMergedDropdown($old, $new, $custom, $expectedKey, $expectedValue)
     {
-        $old = array(
-            'activity_dom' => array(
-                'Call' => 'Call',
-                'Meeting' => 'Meeting',
-                'Task' => 'Task',
-                'Email' => 'Email',
-                'Note' => 'Note',
-            ),
-        );
-
-        $custom = array(
-            'activity_dom' => array(
-                'Call' => 'Call',
-                'Meeting' => 'Meeting',
-                'Task' => 'To Do',
-                'Email' => 'Email',
-                'Note' => 'Note',
-            ),
-        );
-
-        $new = <<<EOF
-\$app_list_strings = array(
-    'activity_dom' => array(
-        'Insert_At_Beginning' => 'Insert At Beginning',
-        'Call' => 'Call',
-        'Meeting' => 'Meeting',
-        'Task' => 'Task',
-        'Email' => 'Email',
-        'Note' => 'Note',
-    ),
-);
-
-EOF;
-
         $this->upgrader->state['dropdowns_to_merge'] = array(
             $GLOBALS['current_language'] => array(
                 'old' => $old,
@@ -106,12 +79,91 @@ EOF;
         );
 
         SugarTestLanguageFileUtilities::write($this->corePath, $GLOBALS['current_language'], $new);
-
         $this->script->run();
-
         $actual = return_app_list_strings_language($GLOBALS['current_language']);
-        $this->assertArrayHasKey('Insert_At_Beginning', $actual['activity_dom']);
-        $this->assertEquals('To Do', $actual['activity_dom']['Task']);
+        $this->assertArrayHasKey($expectedKey, $actual['activity_dom']);
+        $this->assertEquals($expectedValue, $actual['activity_dom'][$expectedKey]);
+    }
+
+    public static function dataProviderSavesAMergedDropdown()
+    {
+        return array(
+            // Add the dropdown value from $new
+            array(
+                array(
+                    'activity_dom' => array(
+                        'Call' => 'Call',
+                        'Meeting' => 'Meeting',
+                        'Task' => 'Task',
+                        'Email' => 'Email',
+                        'Note' => 'Note',
+                    ),
+                ),
+                "\$app_list_strings = array(
+                    'activity_dom' => array(
+                        'New' => 'New Value',
+                        'Call' => 'Call',
+                        'Meeting' => 'Meeting',
+                        'Task' => 'Task',
+                        'Email' => 'Email',
+                        'Note' => 'Note',
+                    ),
+                );",
+                array(
+                    'activity_dom' => array(
+                        'Call' => 'Call',
+                        'Meeting' => 'Meeting',
+                        'Email' => 'Email',
+                        'Note' => 'Note',
+                    ),
+                ),
+                'New',
+                'New Value',
+            ),
+            // Change value to the one from $new
+            array(
+                array(
+                    'activity_dom' => array(
+                        'Email' => 'Email',
+                        'Task' => 'Task',
+                    ),
+                ),
+                "\$app_list_strings = array(
+                    'activity_dom' => array(
+                        'Email' => 'Email',
+                        'Task' => 'To Do',
+                    ),
+                );",
+                array(
+                    'activity_dom' => array(
+                    ),
+                ),
+                'Task',
+                'To Do',
+            ),
+            // Change value to the one from $custom
+            array(
+                array(
+                    'activity_dom' => array(
+                        'Email' => 'Email',
+                        'Task' => 'Task',
+                    ),
+                ),
+                "\$app_list_strings = array(
+                    'activity_dom' => array(
+                        'Email' => 'Email',
+                        'Task' => 'To Do',
+                    ),
+                );",
+                array(
+                    'activity_dom' => array(
+                        'Task' => 'To Do 2',
+                    ),
+                ),
+                'Task',
+                'To Do 2',
+            ),
+        );
     }
 
     /**

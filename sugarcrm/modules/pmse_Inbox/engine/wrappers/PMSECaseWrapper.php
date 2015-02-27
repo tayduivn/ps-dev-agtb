@@ -363,35 +363,22 @@ class PMSECaseWrapper //extends FilterApi
 
     public function expectedTime($actExpected, $caseData)
     {
-        $time_data = $GLOBALS['timedate'];
         global $timedate;
+        global $current_user;
         $returnArray = array();
         $returnArray['expected_time_warning'] = false;
-        $returnArray['expected_time_message'] = '';
+        $returnArray['expected_time_message'] = false;
         $returnArray['expected_time_view'] = false;
+        $returnArray['expected_time'] = '';
         $expTime = json_decode(base64_decode($actExpected));
-        $expectedTime = PMSEEngineUtils::processExpectedTime($expTime, $caseData);
-        $returnArray['expected_time'] = !empty($expectedTime) ? $expectedTime : false;
-        if ($returnArray['expected_time']) {
-            $currentDate = date('Y-m-d H:i:s');
-            global $current_user;
-            $dateaux = $timedate->to_display_date_time($currentDate);
-            $date = strtotime($dateaux);
-            $valueDue = $time_data->to_display_date_time(date('Y-m-d H:i:s', $returnArray['expected_time']), true, true, $current_user);
-            $valueDue = strtotime($valueDue);
-            $returnArray['expected_time_view'] =date('Y-m-d H:i:s',$valueDue);
-            if ($date > $valueDue){
-//                if($time_data->getNow()->ts > $returnArray['expected_time']) {
-//                $date_friendly = SugarFeed::getTimeLapse($time_data->to_display_date_time(gmdate('Y-m-d H:i:s', $returnArray['expected_time'])));
-//                $pos = strpos(trim($date_friendly), '0');
-//                if ($pos !== false && $pos === 0) {
-//                    $date_friendly = trim(substr($date_friendly, 7));
-//                }
-                $returnArray['expected_time_warning'] = true; //sprintf(translate('LBL_PMSE_LABEL_ERROR_EXPECTED_DUE_DATE'), $date_friendly);
+        if (!empty($expTime) && !empty($expTime->time)) {
+            $expectedTime = PMSEEngineUtils::processExpectedTime($expTime, $caseData);
+            $currentDate = new DateTime($timedate->nowDb());
+            if ($currentDate > $expectedTime){
+                $returnArray['expected_time_warning'] = true;
                 $returnArray['expected_time_message'] = true;
             }
-            $returnArray['expected_time']=$time_data->to_display_date_time(date('Y-m-d H:i:s', $returnArray['expected_time']), true, true, $current_user);
-
+            $returnArray['expected_time'] = $timedate->to_display_date_time($expectedTime->format('Y-m-d H:i:s'), true, true, $current_user);
         }
         return $returnArray;
     }

@@ -1278,7 +1278,10 @@ SE.contextMenus = {
     markEmailCleanup : function() {
         SE.accounts.renderTree();
         SUGAR.hideMessageBox();
-        SE.listView.refreshGrid();
+
+        // Run pagination with the current state
+        var currentState = SE.grid.getState();
+        SE.grid.onPaginatorChangeRequest(currentState.pagination);
     },
 
 	showAssignmentDialog : function() {

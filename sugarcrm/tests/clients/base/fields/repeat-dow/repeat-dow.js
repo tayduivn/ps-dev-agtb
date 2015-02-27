@@ -28,45 +28,6 @@ describe('View.Fields.Base.RepeatDowField', function() {
         app.view.reset();
     });
 
-    it('should transform the keys in the days of week item list and remove blank item', function() {
-        var getAppListStrings = sandbox.stub(app.lang, 'getAppListStrings');
-        getAppListStrings.returns({
-            '0': '',
-            '1': 'Sun',
-            '2': 'Mon',
-            '3': 'Tues',
-            '4': 'Wed',
-            '5': 'Thurs',
-            '6': 'Fri',
-            '7': 'Sat'
-        });
-        field.def.options = 'dom_cal_day_short';
-        field.loadEnumOptions();
-        expect(field.items).toEqual({
-            '0': 'Sun',
-            '1': 'Mon',
-            '2': 'Tues',
-            '3': 'Wed',
-            '4': 'Thurs',
-            '5': 'Fri',
-            '6': 'Sat'
-        });
-    });
-
-    it('should leave custom days of the week lists alone', function() {
-        var getAppListStrings = sandbox.stub(app.lang, 'getAppListStrings');
-        getAppListStrings.returns({
-            '1': 'foo',
-            '2': 'bar'
-        });
-        field.def.options = 'custom_foo_list';
-        field.loadEnumOptions();
-        expect(field.items).toEqual({
-            '1': 'foo',
-            '2': 'bar'
-        });
-    });
-
     it('should default value on edit to current day of week', function() {
         var appDate = sandbox.stub(app, 'date');
         appDate.returns({

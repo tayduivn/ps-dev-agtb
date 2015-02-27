@@ -164,6 +164,7 @@
              * Defines fallback rules for ACL checking.
              */
             viewFallbackMap: {
+                'preview': 'detail',
                 'list': 'detail',
                 'edit': 'detail',
                 'detail': 'noaccess',

@@ -349,7 +349,22 @@ $dictionary['pmse_Inbox'] = array(
     'len' => '12',
     'size' => '20',
   ),
-),
+    'name' => array(
+        'name' => 'name',
+        'vname' => 'LBL_NAME',
+        'type' => 'name',
+        'link' => true, // bug 39288
+        'dbType' => 'varchar',
+        'len' => 255,
+        'unified_search' => false,
+        'full_text_search' => array('enabled' => true, 'boost' => 3),
+        'required' => true,
+        'importable' => 'required',
+        'duplicate_merge' => 'enabled',
+        'merge_filter' => 'selected',
+        'duplicate_on_record_copy' => 'always',
+    ),
+    ),
 	'relationships'=>array (
 ),
     'indices' => array(
