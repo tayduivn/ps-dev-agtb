@@ -51,6 +51,7 @@ $mod_strings = array (
     'LBL_PMSE_BUSINESS_RULES_IMPORT_SUCCESS' => 'Process Business Rule was successfully imported into the system.',
     'LBL_PMSE_BUSINESS_RULES_EMPTY_WARNING' => 'Please select a valid *.pbr file.',
 
+    'LBL_PMSE_MESSAGE_LABEL_UNSUPPORTED_DATA_TYPE' => 'Unsupported data type.',
     'LBL_PMSE_MESSAGE_LABEL_DEFINE_COLUMN_TYPE' => 'Please define first the column type.',
     'LBL_PMSE_MESSAGE_LABEL_EMPTY_RETURN_VALUE' => 'The "Return" conclusion is empty',
     'LBL_PMSE_MESSAGE_LABEL_MISSING_EXPRESSION_OR_OPERATOR' => 'missing expression or operator',
