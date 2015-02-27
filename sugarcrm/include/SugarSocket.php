@@ -34,19 +34,19 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 class SugarSocket
 {
     /**
-     * Constants for types of rooms
+     * Constants for types of recipients
      */
     const RECIPIENT_USER_ID = 'userId';
     const RECIPIENT_TEAM_ID = 'teamId';
     const RECIPIENT_USER_TYPE = 'userType';
 
     /**
-     * Name of room for message, by default message will be send to all sockets
-     * To specify room use SugarSocket::to method with type of room
+     * Name of recipient for message, by default message will be send to all sockets
+     * To specify recipient use SugarSocket->recipient() method with type of recipient
      *
      * @var string
      */
-    protected $room = 'all';
+    protected $to = 'all';
 
     /**
      * The method should be used if we need to send message to specified user, team, or type of user
@@ -57,7 +57,7 @@ class SugarSocket
      */
     public function recipient($type, $id)
     {
-        $this->room = $type . ':' . $id;
+        $this->to = $type . ':' . $id;
         return $this;
     }
 
@@ -98,7 +98,7 @@ class SugarSocket
                     'url' => SugarConfig::getInstance()->get('site_url'),
                     'token' => $token,
                     'data' => array(
-                        'room' => SugarConfig::getInstance()->get('site_url') . ':' . $this->room,
+                        'to' => $this->to,
                         'message' => $message,
                         'args' => $data
                     )
