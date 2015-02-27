@@ -759,7 +759,7 @@ $bwcModules = array(
 );
 
 // this module doesn't need a Bean
-$moduleList[] = 'Feedbacks';
+$modInvisList[] = 'Feedbacks';
 
 // Health Check module
 $beanList['HealthCheck'] = 'HealthCheck';
