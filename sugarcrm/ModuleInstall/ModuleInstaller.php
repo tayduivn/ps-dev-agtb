@@ -3265,7 +3265,7 @@ private function dir_file_count($path){
                     }
                 }
             }
-            $cacheFile = 'custom/application/Ext/DropdownFilters/' . $role->id . '/dropdownfilters.ext.php';
+            $cacheFile = 'custom/application/Ext/DropdownFilters/roles/' . $role->id . '/dropdownfilters.ext.php';
             $this->cacheExtensionFiles($files, $cacheFile);
         }
     }
