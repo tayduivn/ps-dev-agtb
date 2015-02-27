@@ -448,8 +448,20 @@ class PMSEProjectImporter extends PMSEImporter
                             $flowBean->$key = $this->savedElements[$element['flo_element_dest_type']][$value];
                         }
                     } elseif ($key == 'flo_condition') {
-                        $condition = $this->processBusinessRulesData($element['flo_condition']);
-                        $flowBean->$key = (!empty($condition)) ? json_encode($condition) : null;
+                        if (!empty($value) && is_array($value)) {
+                            foreach ($value as $_key => $_value) {
+                                switch ($_value->expType){
+                                    case 'CONTROL':
+                                        if (isset($this->changedUidElements[$_value->expField])) {
+                                            $value[$_key]->expField = $this->changedUidElements[$_value->expField]['new_uid'];
+                                        }
+                                        break;
+                                    case 'BUSINESS_RULES':
+                                        break;
+                                }
+                            }
+                            $flowBean->$key = json_encode($value);
+                        }
                     } elseif ($key == 'flo_is_inmediate') {
                         $flowBean->$key = (!empty($value)) ? $value : null;
                     } else {
@@ -555,27 +567,6 @@ class PMSEProjectImporter extends PMSEImporter
             $elementBean->$defaultFlow['default_flow_field'] = $flowBean->flo_id;
             $elementBean->save();
         }
-    }
-
-    /**
-     * Additional processing the Business rules imported data.
-     * @param array $conditionArray
-     * @return array
-     * @deprecated since version pmse2
-     * @codeCoverageIgnore
-     */
-    public function processBusinessRulesData($conditionArray = array())
-    {
-        if (is_array($conditionArray)) {
-            foreach ($conditionArray as $key => $value) {
-                if (isset($value->expType) && $value->expType == 'BUSINESS_RULES') {
-                    $activityBeam = BeanFactory::getBean('pmse_BpmnActivity');
-                    $activityBeam->retrieve_by_string_fields(array('act_uid' => $value->expField));
-                    $conditionArray[$key]->expField = $activityBeam->act_id;
-                }
-            }
-        }
-        return $conditionArray;
     }
 
     /**
