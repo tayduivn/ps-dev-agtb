@@ -11,9 +11,11 @@
  */
 --}}
 <div class="error-message">
-    <h1>{{str model.attributes.title}}</h1>
-    <p>{{str model.attributes.message}}</p>
-    <p>{{{str model.attributes.link}}}</p>
+    {{#with model.attributes}}
+    <h1>{{str title}}</h1>
+    {{#each messages}}<p>{{str this}}</p>{{/each}}
+    {{#if linkText}}<p><a href="javascript:window.history.back()">{{str linkText}}</a></p>{{/if}}
+    {{/with}}    
 </div>
 <div class="sugar-cube-wrapper">
     {{{subFieldTemplate 'sugar-cube' 'detail' cubeOptions}}}
