@@ -723,7 +723,9 @@ FLEXLIST GENERIC */
         td:first-child,
         th:last-child,
         td:last-child {
-          height: auto;
+          &:not(.alert) {
+            height: auto;
+          }
           > span {
             position: static;
             top: 0;
