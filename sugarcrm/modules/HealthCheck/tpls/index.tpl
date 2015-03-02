@@ -159,7 +159,7 @@
                         for (var i = 0; i < data.length; i++) {
                             var item = data[i];
                             var displayNumber = typeof data[i].displayNumber == 'undefined' ? true : data[i].displayNumber;
-                            var html = ["<h1><i class='", flagToIcon[parseInt(item.flag)], "'></i> "];
+                            var html = ["<h1><i class='fa ", flagToIcon[parseInt(item.flag)], "'></i> "];
                             if (displayNumber) {
                                 html.push(i + 1, ". ");
                             }
