@@ -238,6 +238,20 @@ class HealthCheckScanner
     );
 
     /**
+     * Array of files which will be ignored if missing in 7.x
+     * @var array
+     */
+    protected $ignoreMissingCustomFiles = array(
+        'modules/Connectors/connectors/sources/ext/rest/insideview/InsideViewLogicHook.php',
+        'modules/Connectors/connectors/sources/ext/rest/inbox25/InboxViewLogicHook.php',
+        'modules/Contacts/SugarFeeds/ContactFeed.php',
+        'modules/Leads/SugarFeeds/LeadFeed.php',
+        'modules/SugarFeed/SugarFeed.php',
+        'modules/Cases/SugarFeeds/CaseFeed.php',
+        'modules/Opportunities/SugarFeeds/OppFeed.php',
+    );
+
+    /**
      * If Scanner founds some number of files and is going to report them, it's better to report them in bunches.
      * This field defines an appropriate bunch size.
      * @see CRYS-554
@@ -1742,6 +1756,12 @@ class HealthCheckScanner
      */
     protected function checkFileForOutput($phpfile)
     {
+        if (in_array($phpfile, $this->ignoreMissingCustomFiles)) {
+            list($sugar_version, $sugar_flavor) = $this->getVersionAndFlavor();
+            if (version_compare($sugar_version, '7.0', '>')) {
+                return;
+            }
+        }
         if (!file_exists($phpfile)) {
             $this->updateStatus("missingCustomFile", $phpfile);
             return;
