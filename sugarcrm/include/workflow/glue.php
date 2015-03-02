@@ -121,6 +121,11 @@ class WorkFlowGlue {
                 . "\$GLOBALS['timedate']->{$dateTimeFunction}(\$focus->" . $field . ")";
         }
 
+        // Due to sidecar pushing unchanged fields, we need a check when that happens
+        if (!$is_equal) {
+            $equalityCheck .= " && !(\$focus->fetched_row['" . $field . "'] === null && strlen(\$focus->" . $field . ") === 0)";
+        }
+
         return " (isset(\$focus->" . $field . ") && " .
             "(empty(\$focus->fetched_row) || array_key_exists('" . $field . "', \$focus->fetched_row)) " .
             "&& {$equalityCheck}) ";
