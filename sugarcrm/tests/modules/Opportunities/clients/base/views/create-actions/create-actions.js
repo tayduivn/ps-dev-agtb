@@ -66,6 +66,52 @@ describe('Opportunities.Base.Views.CreateActions', function() {
         });
     });
 
+    describe('_checkForRevenueLineItems', function() {
+        var model, options = {};
+        beforeEach(function() {
+            sinon.sandbox.stub(view, 'showRLIWarningMessage');
+            model = new Backbone.Model();
+            view.listContext = new Backbone.Model();
+        });
+        afterEach(function() {
+            view.listContext = undefined;
+        });
+
+        it('will not call showRLIWarningMessage due to not having access', function() {
+            sinon.sandbox.stub(app.acl, 'hasAccess', function() {
+                return false;
+            });
+            view._checkForRevenueLineItems(model, options);
+            expect(view.showRLIWarningMessage).not.toHaveBeenCalled();
+        });
+        it('will not call showRLIWarningMessage due having added RLIs', function() {
+            sinon.sandbox.stub(app.acl, 'hasAccess', function() {
+                return true;
+            });
+            model.set('revenuelineitems', {create: ['one']});
+            view._checkForRevenueLineItems(model, options);
+
+            expect(view.showRLIWarningMessage).not.toHaveBeenCalled();
+        });
+        it('will not call showRLIWarningMessage when lastSaveAction is equal to saveAndCreate', function() {
+            sinon.sandbox.stub(app.acl, 'hasAccess', function() {
+                return true;
+            });
+            model.set('revenuelineitems', {create: ['one']});
+            view._checkForRevenueLineItems(model, {lastSaveAction: 'saveAndCreate'});
+
+            expect(view.showRLIWarningMessage).not.toHaveBeenCalled();
+        });
+        it('will call showRLIWarningMessage', function() {
+            sinon.sandbox.stub(app.acl, 'hasAccess', function() {
+                return true;
+            });
+            model.set('revenuelineitems', {});
+            view._checkForRevenueLineItems(model, options);
+            expect(view.showRLIWarningMessage).toHaveBeenCalled();
+        });
+    });
+
     describe('createLinkModel', function() {
         var parentModel, createBeanStub, relateFieldStub;
 
