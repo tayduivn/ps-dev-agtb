@@ -243,6 +243,10 @@ class Importer
             {
                 $defaultRowValue = $this->populateDefaultMapValue($field, $_REQUEST[$field], $fieldDef);
 
+                if ($fieldDef['type'] == 'id' && !isset($row[$fieldNum]) && in_array($fieldDef['group'], $this->importColumns)) {
+                    $defaultRowValue = "";
+                }
+
                 if(!empty($fieldDef['custom_type']) && $fieldDef['custom_type'] == 'teamset' && empty($rowValue))
                 {
                     require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
@@ -553,13 +557,8 @@ class Importer
                 if (!$returnValue && !empty($defaultRowValue))
                     $returnValue = $this->ifs->relate($defaultRowValue,$fieldDef, $focus);
                 // Bug 33623 - Set the id value found from the above method call as an importColumn
-                if ($returnValue !== false && !in_array($fieldDef['id_name'], $this->importColumns)) {
+                if ($returnValue !== false && !in_array($fieldDef['id_name'], $this->importColumns))
                     $this->importColumns[] = $fieldDef['id_name'];
-                    // relate field is added to the import file but the default value from $_REQUEST has a different value
-                    if ($rowValue != $_REQUEST[$fieldDef['name']]) {
-                        $_REQUEST[$fieldDef['id_name']] = "";
-                    }
-                }
                 return $rowValue;
                 break;
             case 'teamset':
