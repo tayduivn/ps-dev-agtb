@@ -367,6 +367,7 @@
           }
           .edit-cell[data-type="text"] {
             width: 100px;
+            margin-left: 4px;
           }
         }
         &[data-type="relate"] {
@@ -396,15 +397,6 @@
         &[data-type="currency"] {
           min-width: 168px;
           max-width: 168px !important;
-          .select2-addon {
-            .edit {
-              width: 85px;
-            }
-            input[type="text"] {
-              width: 95%;
-              .calcWidth(~"100% - 100px");
-            }
-          }
         }
         &[data-type="parent"] {
           min-width: 200px;
