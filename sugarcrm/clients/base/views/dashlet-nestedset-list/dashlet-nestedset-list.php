@@ -41,7 +41,7 @@ $viewdefs['base']['view']['dashlet-nestedset-list'] = array(
                     'records',
                 ),
             ),
-        )
+        ),
     ),
     'config' => array (
     ),

@@ -10,8 +10,8 @@
  */
 /**
  * @class View.Views.Base.PrefilteredHeaderpaneView
- * @alias SUGAR.App.view.views.PrefilteredHeaderpaneView
- * @extends View.Views.Base.SelectionHeaderpane
+ * @alias SUGAR.App.view.views.BasePrefilteredHeaderpaneView
+ * @extends View.Views.Base.SelectionHeaderpaneView
  */
 
 ({

@@ -33,12 +33,22 @@ class TreeApi extends FilterApi
                 'path' => array('<module>', '?', 'tree', '?'),
                 'pathVars' => array('module', 'record', '', 'link_name'),
                 'method' => 'filterSubTree',
+                'exception' => array(
+                    'SugarApiExceptionInvalidParameter',
+                    'SugarApiExceptionNotAuthorized',
+                    'SugarApiExceptionNotFound',
+                ),
             ),
             'filterModuleTree' => array(
                 'reqType' => 'GET',
                 'path' => array('<module>', 'tree', '?'),
                 'pathVars' => array('module', '', 'link_name'),
                 'method' => 'filterTree',
+                'exception' => array(
+                    'SugarApiExceptionInvalidParameter',
+                    'SugarApiExceptionNotAuthorized',
+                    'SugarApiExceptionNotFound',
+                ),
             ),
             'roots' => array(
                 'reqType' => 'GET',
@@ -135,6 +145,10 @@ class TreeApi extends FilterApi
                 'method' => 'append',
                 'shortHelp' => 'This method append record to target as last child',
                 'longHelp' => 'include/api/help/tree_post_append_help.html',
+                'exceptions' => array(
+                    'SugarApiExceptionNotFound',
+                    'SugarApiExceptionInvalidParameter',
+                ),
             ),
             'prepend' => array(
                 'reqType' => 'POST',
@@ -143,6 +157,10 @@ class TreeApi extends FilterApi
                 'method' => 'prepend',
                 'shortHelp' => 'This method prepend record to target as first child',
                 'longHelp' => 'include/api/help/tree_post_prepend_help.html',
+                'exceptions' => array(
+                    'SugarApiExceptionNotFound',
+                    'SugarApiExceptionInvalidParameter',
+                ),
             ),
             'insertbefore' => array(
                 'reqType' => 'POST',
@@ -151,6 +169,10 @@ class TreeApi extends FilterApi
                 'method' => 'insertBefore',
                 'shortHelp' => 'This method insert record as previous sibling of target',
                 'longHelp' => 'include/api/help/tree_post_insertbefore_help.html',
+                'exceptions' => array(
+                    'SugarApiExceptionNotFound',
+                    'SugarApiExceptionInvalidParameter',
+                ),
             ),
             'insertafter' => array(
                 'reqType' => 'POST',
@@ -159,14 +181,18 @@ class TreeApi extends FilterApi
                 'method' => 'insertAfter',
                 'shortHelp' => 'This method insert record as next sibling of target',
                 'longHelp' => 'include/api/help/tree_post_insertafter_help.html',
+                'exceptions' => array(
+                    'SugarApiExceptionNotFound',
+                    'SugarApiExceptionInvalidParameter',
+                ),
             ),
         );
     }
     
     /**
      * This method loads and returns bean.
-     * @param string $module
-     * @param string $id bean id
+     * @param string $module Module to retrieve bean.
+     * @param string $id Bean id.
      * @return SugarBean
      * @throws SugarApiExceptionInvalidParameter
      * @throws SugarApiExceptionNotFound
@@ -190,24 +216,24 @@ class TreeApi extends FilterApi
 
     /**
      * This method loads and returns beans that should be bound in the tree.
-     * @param string $module
-     * @param string $subject subject bean id
-     * @param string $target target bean id
+     * @param string $module Module to retrieve bean.
+     * @param string $subject Subject bean id.
+     * @param string $target Target bean id.
      * @return array SugarBean An array of SugarBeans that can bound in tree.
      * @throws SugarApiExceptionInvalidParameter
      * @throws SugarApiExceptionNotFound
-     * @throws SugarApiException
+     * @throws SugarApiException Subject and target beans are not suitable for the operation.
      */
     protected function loadBoundBeans($module, $subject, $target)
     {
         $bean = $this->retrieveBean($module, $subject);
         if (null === $bean) {
-            throw new SugarApiExceptionNotFound('Could not find record: ' . $args['record'] . ' in module: ' . $args['module']);
+            throw new SugarApiExceptionNotFound('Could not find record: ' . $subject . ' in module: ' . $module);
         }
 
         $target = $this->retrieveBean($module, $target);
         if (null === $target) {
-            throw new SugarApiExceptionNotFound('Could not find record: ' . $args['target'] . ' in module: ' . $args['module']);
+            throw new SugarApiExceptionNotFound('Could not find record: ' . $target . ' in module: ' . $module);
         }
 
         if ($bean->id === $target->id) {
@@ -222,12 +248,12 @@ class TreeApi extends FilterApi
     }
 
     /**
-     * This method creates and populate from API new bean
-     * @param array $api
-     * @param array $args
-     * @return SugarBean 
-     * @throws SugarApiExceptionInvalidParameter
-     * @throws SugarApiExceptionEditConflict
+     * This method creates and populate from API new bean.
+     * @param ServiceBase $api Api object.
+     * @param array $args The arguments array passed in from the API.
+     * @return SugarBean Created bean.
+     * @throws SugarApiExceptionInvalidParameter Provided module doesn't implement `NestedBeanInterface`.
+     * @throws SugarApiExceptionEditConflict Server and client timestamps are different.
      */
     protected function createNewBean($api, $args)
     {
@@ -255,10 +281,11 @@ class TreeApi extends FilterApi
 
     /**
      * This method prepends record to target as first child.
-     * @param Object $api api object
-     * @param Array $args arguments passed from api
-     * @return array An array version of the SugarBean with only the requested fields (also filtered by ACL)
+     * @param ServiceBase $api Api object.
+     * @param array $args The arguments array passed in from the API.
+     * @return array An array version of the SugarBean with only the requested fields (also filtered by ACL).
      * @throws SugarApiExceptionNotFound
+     * @throws SugarApiExceptionInvalidParameter
      */
     public function prepend($api, $args)
     {
@@ -273,10 +300,11 @@ class TreeApi extends FilterApi
 
     /**
      * This method appends record to target as last child.
-     * @param Object $api api object
-     * @param Array $args arguments passed from api
-     * @return array An array version of the SugarBean with only the requested fields (also filtered by ACL)
+     * @param ServiceBase $api Api object.
+     * @param array $args The arguments array passed in from the API.
+     * @return array An array version of the SugarBean with only the requested fields (also filtered by ACL).
      * @throws SugarApiExceptionNotFound
+     * @throws SugarApiExceptionInvalidParameter
      */
     public function append($api, $args)
     {
@@ -291,10 +319,11 @@ class TreeApi extends FilterApi
 
     /**
      * This method inserts record as previous sibling of target.
-     * @param Object $api api object
-     * @param Array $args arguments passed from api
-     * @return array An array version of the SugarBean with only the requested fields (also filtered by ACL)
+     * @param ServiceBase $api Api object.
+     * @param array $args The arguments array passed in from the API.
+     * @return array An array version of the SugarBean with only the requested fields (also filtered by ACL).
      * @throws SugarApiExceptionNotFound
+     * @throws SugarApiExceptionInvalidParameter
      */
     public function insertBefore($api, $args)
     {
@@ -309,10 +338,11 @@ class TreeApi extends FilterApi
 
     /**
      * This method inserts record as next sibling of target.
-     * @param Object $api api object
-     * @param Array $args arguments passed from api
-     * @return array An array version of the SugarBean with only the requested fields (also filtered by ACL)
+     * @param ServiceBase $api Api object.
+     * @param array $args The arguments array passed in from the API.
+     * @return array An array version of the SugarBean with only the requested fields (also filtered by ACL).
      * @throws SugarApiExceptionNotFound
+     * @throws SugarApiExceptionInvalidParameter
      */
     public function insertAfter($api, $args)
     {
@@ -327,9 +357,9 @@ class TreeApi extends FilterApi
 
     /**
      * This method moves record as previous sibling of target.
-     * @param Object $api api object
-     * @param Array $args arguments passed from api
-     * @return array An array version of the SugarBean with only the requested fields (also filtered by ACL)
+     * @param ServiceBase $api Api object.
+     * @param array $args The arguments array passed in from the API.
+     * @return array An array version of the SugarBean with only the requested fields (also filtered by ACL).
      */
     public function moveBefore($api, $args)
     {
@@ -341,9 +371,9 @@ class TreeApi extends FilterApi
 
     /**
      * This method moves record as next sibling of target.
-     * @param Object $api api object
-     * @param Array $args arguments passed from api
-     * @return array An array version of the SugarBean with only the requested fields (also filtered by ACL)
+     * @param ServiceBase $api Api object.
+     * @param array $args The arguments array passed in from the API.
+     * @return array An array version of the SugarBean with only the requested fields (also filtered by ACL).
      */
     public function moveAfter($api, $args)
     {
@@ -355,9 +385,9 @@ class TreeApi extends FilterApi
 
     /**
      * This method moves record as first child of target.
-     * @param Object $api api object
-     * @param Array $args arguments passed from api
-     * @return array An array version of the SugarBean with only the requested fields (also filtered by ACL)
+     * @param ServiceBase $api Api object.
+     * @param array $args The arguments array passed in from the API.
+     * @return array An array version of the SugarBean with only the requested fields (also filtered by ACL).
      */
     public function moveFirst($api, $args)
     {
@@ -369,9 +399,9 @@ class TreeApi extends FilterApi
 
     /**
      * This method moves record as last child of target.
-     * @param Object $api api object
-     * @param Array $args arguments passed from api
-     * @return array An array version of the SugarBean
+     * @param ServiceBase $api Api object.
+     * @param array $args The arguments array passed in from the API.
+     * @return array An array version of the SugarBean.
      */
     public function moveLast($api, $args)
     {
@@ -383,9 +413,9 @@ class TreeApi extends FilterApi
     
     /**
      * This method returns all root nodes.
-     * @param Object $api api object
-     * @param Array $args arguments passed from api
-     * @return array list of root nodes
+     * @param ServiceBase $api Api object.
+     * @param array $args The arguments array passed in from the API.
+     * @return array List of root nodes.
      */
     public function roots($api, $args)
     {
@@ -396,9 +426,9 @@ class TreeApi extends FilterApi
 
     /**
      * This method returns formatted tree for selected root.
-     * @param Object $api api object
-     * @param Array $args arguments passed from api
-     * @return array formatted collection
+     * @param ServiceBase $api Api object.
+     * @param array $args The arguments array passed in from the API.
+     * @return array Formatted collection.
      */
     public function tree($api, $args)
     {
@@ -409,10 +439,10 @@ class TreeApi extends FilterApi
 
     /**
      * This method formats tree data to sugar api collection object.
-     * @param ServiceBase $api api object
-     * @param array $args arguments passed from api
-     * @param array $tree hierarchy of nodes
-     * @return array formatted collection
+     * @param ServiceBase $api Api object.
+     * @param array $args The arguments array passed in from the API.
+     * @param array $tree Hierarchy of nodes.
+     * @return array Formatted collection.
      */
     public function formatTree(ServiceBase $api, array $args, array $tree)
     {
@@ -439,9 +469,9 @@ class TreeApi extends FilterApi
 
     /**
      * This method returns children nodes for selected record.
-     * @param Object $api api object
-     * @param Array $args arguments passed from api
-     * @return array list of children nodes
+     * @param ServiceBase $api Api object.
+     * @param array $args The arguments array passed in from the API.
+     * @return array List of children nodes.
      */
     public function children($api, $args)
     {
@@ -452,9 +482,9 @@ class TreeApi extends FilterApi
 
     /**
      * This method returns next sibling of selected record.
-     * @param Object $api api object
-     * @param Array $args arguments passed from api
-     * @return array node data
+     * @param ServiceBase $api Api object.
+     * @param array $args The arguments array passed in from the API.
+     * @return array Node data.
      */
     public function next($api, $args)
     {
@@ -465,9 +495,9 @@ class TreeApi extends FilterApi
 
     /**
      * This method returns previous sibling of selected record.
-     * @param Object $api api object
-     * @param Array $args arguments passed from api
-     * @return array node data
+     * @param ServiceBase $api Api object.
+     * @param array $args The arguments array passed in from the API.
+     * @return array Node data.
      */
     public function prev($api, $args)
     {
@@ -478,9 +508,9 @@ class TreeApi extends FilterApi
 
     /**
      * This method returns parent node of selected record.
-     * @param Object $api api object
-     * @param Array $args arguments passed from api
-     * @return array node data
+     * @param ServiceBase $api Api object.
+     * @param array $args The arguments array passed in from the API.
+     * @return array Node data.
      */
     public function getParent($api, $args)
     {
@@ -491,9 +521,9 @@ class TreeApi extends FilterApi
 
     /**
      * This method returns full path of selected record.
-     * @param Object $api api object
-     * @param Array $args arguments passed from api
-     * @return array list of parent nodes
+     * @param ServiceBase $api Api object.
+     * @param array $args The arguments array passed in from the API.
+     * @return array List of parent nodes.
      */
     public function path($api, $args)
     {
@@ -545,8 +575,8 @@ class TreeApi extends FilterApi
 
     /**
      * Filters tree for provided record.
-     * @param $api
-     * @param $args
+     * @param ServiceBase $api Api object.
+     * @param array $args The arguments array passed in from the API.
      * @return array
      * @throws SugarApiExceptionInvalidParameter
      * @throws SugarApiExceptionNotAuthorized
@@ -560,9 +590,9 @@ class TreeApi extends FilterApi
 
         if (empty($record)) {
             throw new SugarApiExceptionNotFound(
-            sprintf(
+                sprintf(
                     'Could not find parent record %s in module: %s', $args['record'], $args['module']
-            )
+                )
             );
         }
         if (!$record->ACLAccess('view')) {
@@ -618,8 +648,8 @@ class TreeApi extends FilterApi
 
     /**
      * Filters tree for provided module.
-     * @param $api
-     * @param $args
+     * @param ServiceBase $api Api object.
+     * @param array $args The arguments array passed in from the API.
      * @return array
      * @throws SugarApiExceptionInvalidParameter
      * @throws SugarApiExceptionNotAuthorized

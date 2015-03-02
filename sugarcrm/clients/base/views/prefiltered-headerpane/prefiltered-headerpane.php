@@ -20,9 +20,9 @@ $viewdefs['base']['view']['prefiltered-headerpane'] = array(
     ),
     'buttons' => array(
         array(
-            'name'    => 'cancel_button',
-            'type'    => 'button',
-            'label'   => 'LBL_CANCEL_BUTTON_LABEL',
+            'name' => 'cancel_button',
+            'type' => 'button',
+            'label' => 'LBL_CANCEL_BUTTON_LABEL',
             'events' => array(
                 'click' => 'closedrawer:fire',
             ),
@@ -32,5 +32,5 @@ $viewdefs['base']['view']['prefiltered-headerpane'] = array(
             'type' => 'sidebartoggle',
         ),
     ),
-    'template' => 'headerpane'
+    'template' => 'headerpane',
 );

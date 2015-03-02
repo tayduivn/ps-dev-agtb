@@ -9,17 +9,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * @class View.Layouts.Base.PrefilteredListView
- * @alias SUGAR.App.view.layouts.PrefilteredListView
- * @extends View.Layout.Base.RecordlistView
+ * @class View.Views.Base.PrefilteredListView
+ * @alias SUGAR.App.view.views.BasePrefilteredListView
+ * @extends View.Views.Base.RecordlistView
  */
 ({
     /**
      * {@inheritDoc}
      */
-    extendsFrom: 'RecordlistView',
-
-    initialize: function(options) {
-        this._super('initialize', [options]);
-    }
+    extendsFrom: 'RecordlistView'
 })

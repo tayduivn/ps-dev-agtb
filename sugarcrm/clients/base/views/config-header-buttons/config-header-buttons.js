@@ -196,6 +196,7 @@
      * Gets called before the model actually saves
      *
      * @private
+     * @return {Boolean} Always returns `true`
      */
     _beforeSaveConfig: function() {
         return true;
@@ -244,6 +245,7 @@
      * Gets called before the model actually cancels
      *
      * @private
+     * @return {Boolean} Always returns `true`
      */
     _beforeCancelConfig: function() {
         return true;

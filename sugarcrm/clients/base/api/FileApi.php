@@ -441,6 +441,7 @@ class FileApi extends SugarApi {
      * @throws SugarApiExceptionNotFound
      * @throws SugarApiExceptionNotAuthorized
      * @throws SugarApiExceptionMissingParameter
+     * @throws SugarApiExceptionInvalidParameter
      */
     public function getArchive($api, $args)
     {
@@ -473,7 +474,7 @@ class FileApi extends SugarApi {
         $linkModuleName = $record->$linkName->getRelatedModuleName();
         $linkSeed = BeanFactory::getBean($linkModuleName);
 
-        if(empty($linkSeed)) {
+        if (empty($linkSeed)) {
             throw new SugarApiExceptionInvalidParameter("Cannot use condition against $linkName - unknown module");
         }
         if (!$linkSeed->ACLAccess('list')) {
