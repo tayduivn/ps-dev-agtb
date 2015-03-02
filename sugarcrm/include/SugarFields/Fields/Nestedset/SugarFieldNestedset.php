@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/SugarFields/Fields/Relate/SugarFieldRelate.php');
+require_once 'include/SugarFields/Fields/Relate/SugarFieldRelate.php';
 
 /**
  * Class to handle Nested Set field for sugar logic.

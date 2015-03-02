@@ -33,7 +33,8 @@
     },
 
     /**
-     * View name that corresponds to the list of fields API should retrieve
+     * View name that corresponds to the list of fields API should retrieve.
+     * @property {String}
      */
     dataViewName: 'list',
 

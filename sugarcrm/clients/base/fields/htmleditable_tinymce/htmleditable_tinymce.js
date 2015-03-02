@@ -15,6 +15,7 @@
  */
 ({
     plugins: ['Tinymce', 'EllipsisInline'],
+
     fieldSelector: '.htmleditable', //iframe or textarea selector
     _htmleditor: null, // TinyMCE html editor
     _isDirty: false,
@@ -25,16 +26,22 @@
     _saveOnSetContent: true,
 
     /**
+     * {@inheritDoc}
+     * Additional override fieldSelector property from field's meta.
+     */
+    initialize: function(opts) {
+        this._super('initialize', [opts]);
+        if (!_.isUndefined(this.def.fieldSelector)) {
+            this.fieldSelector = '[data-htmleditable=' + this.def.fieldSelector + ']';
+        }
+    },
+
+    /**
      * Render an editor for edit view or an iframe for others
      *
      * @private
      */
     _render: function() {
-
-        // load fieldSelector from field defs
-        if (!_.isUndefined(this.options.def.fieldSelector)) {
-            this.fieldSelector = '[data-htmleditable=' + this.options.def.fieldSelector + ']';
-        }
 
         this.destroyTinyMCEEditor();
 
@@ -73,11 +80,14 @@
             // Strip HTML tags for ListView.
             value = $('<div/>').html(value).text();
         }
-        if (editable && !_.isUndefined(editable.get(0)) && !_.isEmpty(editable.get(0).contentDocument)) {
+        if (!editable) {
+            return;
+        }
+        if (!_.isUndefined(editable.get(0)) && !_.isEmpty(editable.get(0).contentDocument)) {
             if (editable.contents().find('body').length > 0) {
                 editable.contents().find('body').html(value);
             }
-        } else if (editable) {
+        } else {
             editable.html(value);
         }
     },

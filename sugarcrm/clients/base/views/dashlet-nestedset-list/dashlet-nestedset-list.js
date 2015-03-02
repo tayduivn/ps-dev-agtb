@@ -364,7 +364,7 @@
             this.context.get('model').off('change:' + this.extraModule.field, this.changedCallback);
             this.context.get('model').off('data:sync:complete', this.savedCallback);
         }
-        this._super('_dispose', []);
+        this._super('_dispose');
     },
 
     /**

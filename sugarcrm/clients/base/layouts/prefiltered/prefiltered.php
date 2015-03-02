@@ -54,11 +54,11 @@ $viewdefs['base']['layout']['prefiltered'] = array(
                                             ),
                                             array(
                                                 'view' => 'filter-rows',
-                                                "targetEl" => '.filter-options'
+                                                'targetEl' => '.filter-options'
                                             ),
                                             array(
                                                 'view' => 'filter-actions',
-                                                "targetEl" => '.filter-options'
+                                                'targetEl' => '.filter-options'
                                             ),
                                             array(
                                                 'view' => 'prefilteredlist',

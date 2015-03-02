@@ -10,7 +10,7 @@
  */
 /**
  * @class View.Layouts.Base.PrefilteredFilterLayout
- * @alias SUGAR.App.view.layouts.PrefilteredFilterLayout
+ * @alias SUGAR.App.view.layouts.BasePrefilteredFilterLayout
  * @extends View.Layout.Base.FilterLayout
  */
 ({
@@ -20,7 +20,7 @@
     extendsFrom: 'FilterLayout',
 
     /**
-     * Predefeined filter definition.
+     * Predefined filter definition.
      */
     filterDef: null,
 

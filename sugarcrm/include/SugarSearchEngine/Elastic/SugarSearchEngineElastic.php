@@ -743,9 +743,9 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
     /**
      * Construct a Term Filter.
      *
-     * @param object $moduleFilter
-     * @param array $filter
-     * @return object $moduleFilter
+     * @param \Elastica\Filter\AbstractFilter $moduleFilter Filter to add term into.
+     * @param array $filter Values to construct term.
+     * @return \Elastica\Filter\AbstractFilter $moduleFilter
      */
     protected function constructTermFilter($moduleFilter, $filter)
     {

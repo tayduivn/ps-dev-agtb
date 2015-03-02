@@ -12,7 +12,7 @@
 /**
  * @class View.Fields.Base.NestedsetField
  * @alias SUGAR.App.view.fields.BaseNestedsetField
- * @extends View.Field
+ * @extends View.Fields.Base.BaseField
  */
 ({
     /**
@@ -76,14 +76,33 @@
     /**
      * {@inheritDoc}
      */
+    initialize: function(opts) {
+        this._super('initialize', [opts]);
+        var module = this.def.config_provider || this.context.get('module'),
+            config = app.metadata.getModule(module, 'config');
+        this.categoryRoot = this.def.category_root || config.category_root || '';
+        this.moduleRoot = this.def.category_provider || this.def.data_provider || module;
+        this.dropdownCallback = _.bind(this.handleGlobalClick, this);
+        this.emptyLabel = app.lang.get(
+            'LBL_SEARCH_SELECT_MODULE',
+            this.module,
+            {module: app.lang.get(this.options.def.label, this.module)}
+        );
+    },
+
+    /**
+     * {@inheritDoc}
+     */
     _render: function() {
         var treeOptions = {},
+            $ddEl,
             self = this;
-        this._super('_render', []);
-        if (this.$(this.ddEl).length !== 0 && this._dropdownExists()) {
-            this.$(this.ddEl).dropdown();
-            this.$(this.ddEl).data('dropdown').opened = false;
-            this.$(this.ddEl).off('click.bs.dropdown');
+        this._super('_render');
+        $ddEl = this.$(this.ddEl);
+        if ($ddEl.length !== 0 && this._dropdownExists()) {
+            $ddEl.dropdown();
+            $ddEl.data('dropdown').opened = false;
+            $ddEl.off('click.bs.dropdown');
             treeOptions = {
                 settings: {
                     category_root: this.categoryRoot,
@@ -106,23 +125,6 @@
     },
 
     /**
-     * {@inheritDoc}
-     */
-    initialize: function(opts) {
-        this._super('initialize', [opts]);
-        var module = this.def.config_provider || this.context.get('module'),
-            config = app.metadata.getModule(module, 'config');
-        this.categoryRoot = this.def.category_root || config.category_root || '';
-        this.moduleRoot = this.def.category_provider || this.def.data_provider || module;
-        this.dropdownCallback = _.bind(this.handleGlobalClick, this);
-        this.emptyLabel = app.lang.get(
-            'LBL_SEARCH_SELECT_MODULE',
-            this.module,
-            {module: app.lang.get(this.options.def.label, this.module)}
-        );
-    },
-
-    /**
      * Show dropdown.
      * @param {Event} evt Triggered mouse event.
      */
@@ -138,16 +140,17 @@
         evt.stopPropagation();
         evt.preventDefault();
         _.defer(function (dropdown, self) {
+            var $input = self.$('[data-role=secondinput]');
             self.$(self.ddEl).dropdown('toggle');
-            self.$('[data-role=secondinput]').val('');
+            $input.val('');
             dropdown.opened = true;
-            self.$('[data-role=secondinput]').focus();
+            $input.focus();
         }, dropdown, this);
     },
 
     /**
      * Toggle icon in search field while loading tree.
-     * @param {Boolean} hide
+     * @param {Boolean} hide Flag indicates would we show the icon.
      */
     toggleSearchIcon: function(hide) {
         this.$('[data-role=secondinputaddon]')
@@ -181,7 +184,7 @@
     /**
      *  Search in the tree.
      */
-    confirmInput: function() {
+    searchTreeValue: function() {
         var val = this.$('[data-role=secondinput]').val();
         this.searchNode(val);
     },
@@ -220,7 +223,7 @@
             case 13:
                 switch (role) {
                     case 'secondinput':
-                        this.confirmInput(evt);
+                        this.searchTreeValue(evt);
                         break;
                     case 'add-item':
                         this.addNew(evt);
@@ -242,8 +245,8 @@
 
     /**
      * Set value of a model.
-     * @param {String} id
-     * @param {String} val
+     * @param {String} id Related ID value.
+     * @param {String} val Related value.
      */
     setValue: function(id, val) {
         this.model.set(this.def.id_name, id);
@@ -252,9 +255,11 @@
 
     /**
      * {@inheritDoc}
+     *
+     * Set right value in DOM for the field.
      */
     bindDataChange: function() {
-        this._super('bindDataChange', []);
+        this._super('bindDataChange');
         if (this._dropdownExists()) {
             this.$('[name=' + this.def.name + ']').html(this.model.get(this.def.name));
             this.$('[name=' + this.def.id_name + ']').val(this.model.get(this.def.id_name));
@@ -273,7 +278,7 @@
 
     /**
      * Close dropdown.
-     * @return {Boolean}
+     * @return {Boolean} Return `true` if dropdown has been closed, `false` otherwise.
      */
     closeDD: function() {
         var dropdown = this.$(this.ddEl).data('dropdown');
@@ -320,7 +325,7 @@
      */
     showList: function() {
         var filterDef = [{}],
-            moduleName = app.lang.get('LBL_MODULE_NAME', this.module),
+            moduleName = app.lang.getModuleName(this.module),
             title = app.lang.get(
                 'LBL_FILTERED_LIST_BY_FIELD',
                 this.module,
@@ -370,7 +375,7 @@
 
     /**
      * Callback to handle selection of the tree.
-     * @param data
+     * @param data {Object} Data from selected node.
      */
     selectedNode: function(data) {
         if (_.isEmpty(data)) {
