@@ -16,31 +16,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $module_name = 'pmse_Emails_Templates';
 $viewdefs[$module_name ]['base']['view']['recordlist'] = array(
     'favorite' => true,
-    'following' => true,
+    'following' => false,
     'selection' => array(
-        'type' => 'multi',
-        'actions' => array(
-            array(
-                'name' => 'delete_button',
-                'type' => 'button',
-                'label' => 'LBL_DELETE',
-                'acl_action' => 'delete',
-                'primary' => true,
-                'events' => array(
-                    'click' => 'list:massdelete:fire',
-                ),
-            ),
-            array(
-                'name' => 'export_button',
-                'type' => 'button',
-                'label' => 'LBL_EXPORT',
-                'acl_action' => 'export',
-                'primary' => true,
-                'events' => array(
-                    'click' => 'list:massexport:fire',
-                ),
-            ),
-        ),
     ),
     'rowactions' => array(
         'actions' => array(

@@ -53,11 +53,10 @@
                             autoClose: true
                         });
                     },
-                    error: function (data) {
+                    error: function (error) {
                         app.alert.show('process-import-saved', {
                             level: 'error',
-                            messages: app.lang.get(data.responseText, self.module),
-                            autoClose: false
+                            messages: app.lang.get('LBL_PMSE_IMPORT_PROCESS_DEFINITION_FAILURE', self.module, {module: self.module})
                         });
                     }
                 },
@@ -85,27 +84,6 @@
                 var $file = $($files[file]),
                     fileField = $file.attr("name");
                 if (callbacks.success) callbacks.success();
-
-//                model.uploadFile(fileField, $file, {
-//                    field: fileField,
-//                    success: function() {
-//                        filesToUpload--;
-//                        if (filesToUpload===0) {
-//                            app.alert.dismiss('upload');
-//                            if (callbacks.success) callbacks.success();
-//                        }
-//                    },
-//                    error: function(error) {
-//                        filesToUpload--;
-//                        if (filesToUpload===0) {
-//                            app.alert.dismiss('upload');
-//                        }
-//                        var errors = {};
-//                        errors[error.responseText] = {};
-//                        model.trigger('error:validation:' + this.field, errors);
-//                        model.trigger('error:validation');
-//                    }
-//                });
             }
         }
         else {

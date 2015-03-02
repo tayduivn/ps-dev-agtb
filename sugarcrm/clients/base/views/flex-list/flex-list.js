@@ -95,7 +95,7 @@
     // fn to turn off event listeners and reenable tooltips
     resetDropdownDelegate: function(e) {
         var $b = this.$(e.currentTarget).first();
-        $b.parent('.list').removeClass('open');
+        $b.parent().closest('.list').removeClass('open');
         $b.off('resetDropdownDelegate.right-actions');
     },
 
@@ -112,7 +112,7 @@
             };
 
         // add open class to parent list to elevate absolute z-index for iOS
-        $buttonGroup.parent('.list').addClass('open');
+        $buttonGroup.parent().closest('.list').addClass('open');
         // detect window bottom collision
         $buttonGroup.toggleClass('dropup', needsDropupClass($buttonGroup));
         // listen for delegate reset

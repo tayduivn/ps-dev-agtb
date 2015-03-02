@@ -29,14 +29,6 @@ class PMSEEmailsTemplates extends vCardApi
     public function registerApiRest()
     {
         return array(
-//            'fields' => array(
-//                'reqType' => 'GET',
-//                'path' => array('pmse_Emails_Templates','getFields','?'),
-//                'pathVars'=> array('module','customAction','id'),
-//                'method' => 'getFields',
-//                'shortHelp' => 'This method updates a record of the specified type',
-//                'longHelp' => 'include/api/help/module_record_put_help.html',
-//            ),
             'emailTemplateDownload' => array(
                 'reqType' => 'GET',
                 'path' => array('pmse_Emails_Templates', '?', 'etemplate'),
@@ -223,51 +215,23 @@ class PMSEEmailsTemplates extends vCardApi
             ) {
                 try {
                     $importerObject = new PMSEEmailTemplateImporter();
-                    $data = $importerObject->importProject($_FILES[$first_key]['tmp_name']);
-                    $result= array('emailtemplates_import' =>$data);
+                    $name = $_FILES[$first_key]['name'];
+                    $extension = pathinfo($name,  PATHINFO_EXTENSION);
+                    if ($extension == $importerObject->getExtension()) {
+                        $data = $importerObject->importProject($_FILES[$first_key]['tmp_name']);
+                        $result = array('emailtemplates_import' => $data);
+                    } else  {
+                        throw new SugarApiExceptionRequestMethodFailure('ERROR_UPLOAD_FAILED');
+                    }
                 } catch (Exception $e) {
-                    throw new SugarApiExceptionRequestMethodFailure('ERR_VCARD_FILE_PARSE');
+                    throw new SugarApiExceptionRequestMethodFailure('ERROR_UPLOAD_FAILED');
                 }
                 return $result;
             }
         } else {
-            throw new SugarApiExceptionMissingParameter('ERR_VCARD_FILE_MISSING');
+            throw new SugarApiExceptionMissingParameter('ERROR_UPLOAD_FAILED');
         }
     }
-
-//    public function getFields($api, $args)
-//    {
-//        $result = array();
-//        $bean = BeanFactory::getBean($args['module'], $args['id']);
-//
-//        $result['base_module'] = $bean->base_module;
-//        $result['name'] = $bean->name;
-//        $result['description'] = $bean->description;
-//        $result['subject'] = $bean->subject;
-//        $result['body_html'] = $bean->body_html;
-//        $result['body'] = $bean->body;
-//        $result['text_only'] = $bean->text_only == 1 ? "checked" : "";
-//        $result['from_name'] = $bean->from_name;
-//        $result['from_address'] = $bean->from_address;
-//
-//        $fields = $this->crmDataWrapper->retrieveFields($result['base_module']);
-//        if ($fields['success']) {
-//            $result['fields'] = $fields['result'];
-//        } else {
-//            $result['fields'] = array();
-//        }
-//        $related_modules = $this->crmDataWrapper->retrieveRelatedBeans($result['base_module']);
-//        if ($related_modules['success']) {
-//            for ($i = 0; $i < count($related_modules['result']); $i++) {
-//                $fields = $this->crmDataWrapper->retrieveFields($related_modules['result'][$i]['value']);
-//                $related_modules['result'][$i]["fields"] = $fields['result'];
-//            }
-//            $result['related_modules'] = $related_modules['result'];
-//        } else {
-//            $result['related_modules'] = array();
-//        }
-//        return $result;
-//    }
 
     public function emailTemplateDownload ($api, $args)
     {

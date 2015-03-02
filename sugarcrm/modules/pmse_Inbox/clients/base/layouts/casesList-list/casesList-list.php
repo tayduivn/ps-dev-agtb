@@ -21,7 +21,7 @@ $viewdefs['pmse_Inbox']['base']['layout']['casesList-list'] = array(
                 'view' => 'casesList-list',
             ),
             array(
-                'view' => 'casesList-list-bottom',
+                'view' => 'list-bottom',
             ),
         ),
     'type' => 'casesList-list',
