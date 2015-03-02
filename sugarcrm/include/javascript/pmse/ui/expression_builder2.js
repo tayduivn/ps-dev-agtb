@@ -8,7 +8,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-var ExpressionControl = function(settings) {
+var ExpressionControl = function (settings) {
     Element.call(this, settings);
     this._panel = null;
     this._operatorSettings = {};
@@ -37,6 +37,8 @@ var ExpressionControl = function(settings) {
     this._decimalSeparator = null;
     this._numberGroupingSeparator = null;
     this._auxSeparator = "|||";
+    this._currencies = [];
+    this._preferredCurrency = null;
     this.onOpen = null;
     this.onClose = null;
     ExpressionControl.prototype.init.call(this, settings);
@@ -177,7 +179,8 @@ ExpressionControl.prototype.init = function (settings) {
         allowInput: true,
         onOpen: null,
         onClose: null,
-        className: ""
+        className: "",
+        currencies: []
     };
 
     jQuery.extend(true, defaults, settings);
@@ -214,6 +217,7 @@ ExpressionControl.prototype.init = function (settings) {
         .setTimeFormat(defaults.timeFormat)
         .setDecimalSeparator(defaults.decimalSeparator)
         .setNumberGroupingSeparator(defaults.numberGroupingSeparator)
+        .setCurrencies(defaults.currencies)
         .setOwner(defaults.owner)
         .setAppendTo(defaults.appendTo)
         .setOperators(defaults.operators)
@@ -244,6 +248,48 @@ ExpressionControl.prototype.setOnCloseHandler = function (handler) {
 
 ExpressionControl.prototype.getText = function () {
     return this._itemContainer.getText();
+};
+
+ExpressionControl.prototype._createCurrencyObject = function(data) {
+    if (!(data.id && data.name && data.rate && data.symbol)) {
+        throw new Error("_createCurrencyObject(): id, name, rate and symbol properties are required.");
+    }
+    return {
+        id: data.id,
+        iso: data.iso,
+        name: data.name,
+        rate: data.rate,
+        preferred: !!data.preferred,
+        symbol: data.symbol
+    };
+};
+
+ExpressionControl.prototype._updateCurrenciesToCurrenciesForm = function() {
+    var currenciesDropdown;
+    if (this._constantPanels.currency) {
+        currenciesDropdown = this._constantPanels.currency.getItem("currency");
+        currenciesDropdown.setOptions(this._currencies);
+        if (this._preferredCurrency) {
+            currenciesDropdown.setValue(this._preferredCurrency);
+        }
+    }
+    return this;
+};
+
+ExpressionControl.prototype.setCurrencies = function(currencies) {
+    var i = 0;
+    //remove following assignation
+    if (!$.isArray(currencies)) {
+        throw new Error("setCurrencies(): The parameter must be an array.");
+    }
+    this._currencies = [];
+    for (i = 0; i < currencies.length; i++) {
+        this._currencies.push(this._createCurrencyObject(currencies[i]));
+        if (currencies[i].preferred) {
+            this._preferredCurrency = currencies[i].id;
+        }
+    }
+    return this._updateCurrenciesToCurrenciesForm();
 };
 
 ExpressionControl.prototype.setDecimalSeparator = function (decimalSeparator) {
@@ -292,7 +338,7 @@ ExpressionControl.prototype.setTimeFormat = function (timeFormat) {
     return this;
 };
 
-/*ExpressionControl.prototype._parseInputToItem = function (input) {
+ExpressionControl.prototype._parseInputToItem = function (input) {
     var trimmedText = jQuery.trim(input), type;
     if (typeof input !== 'string') {
         throw new Error("_parseInputToItemData(): The parameter must be a string.");
@@ -307,7 +353,7 @@ ExpressionControl.prototype.setTimeFormat = function (timeFormat) {
     }
 
     return this._createItemData(trimmedText, type);
-};*/
+};
 
 ExpressionControl.prototype._onBeforeAddItemByInput = function () {
     var that = this;
@@ -494,7 +540,8 @@ ExpressionControl.prototype.setConstantPanel = function(settings) {
             basic: true,
             date: true,
             datetime: true,
-            timespan: true
+            timespan: true,
+            currency: true
         };
     } else {
         defaults = jQuery.extend(true, defaults, settings);
@@ -506,7 +553,8 @@ ExpressionControl.prototype.setConstantPanel = function(settings) {
         this._createBasicConstantPanel()
             ._createDateConstantPanel()
             ._createDateTimeConstantPanel()
-            ._createTimespanPanel();
+            ._createTimespanPanel()
+            ._createCurrencyPanel();
     }
 
     return this;
@@ -1031,6 +1079,16 @@ ExpressionControl.prototype._onPanelValueGeneration = function () {
                         expSubtype: "timespan",
                         expLabel: data.ammount + data.unittime,
                         expValue: data.ammount + data.unittime
+                    };
+                    break;
+                case 'form-constant-currency':
+                    itemData = {
+                        expType: 'CONSTANT',
+                        expSubtype: 'currency',
+                        expLabel: subpanel.getItem("currency").getSelectedText() + " " +
+                            subpanel.getItem("amount").getFormattedValue(),
+                        expValue: data.amount,
+                        expField: data.currency
                     };
                     break;
                 default:
@@ -1714,40 +1772,40 @@ ExpressionControl.prototype._createTimespanPanel = function() {
     if (!this._constantPanels.timespan) {
         this._constantPanels.timespan = new FormPanel({
             id: "form-constant-timespan",
-            title: translate("LBL_PMSE_EXPCONTROL_USER_EVALUATION_TIMESPAN_TITLE"),
+            title: translate("LBL_PMSE_EXPCONTROL_CONSTANTS_TIMESPAN_TITLE"),
             items: [
                 {
                     type: "text",
                     name: "ammount",
-                    label: translate("LBL_PMSE_EXPCONTROL_USER_EVALUATION_TIMESPAN_AMOUNT"),
+                    label: translate("LBL_PMSE_EXPCONTROL_CONSTANTS_TIMESPAN_AMOUNT"),
                     filter: "integer",
                     width: "40%",
                     required: true,
                     disabled: true
                 }, {
                     type: "dropdown",
-                    label: translate("LBL_PMSE_EXPCONTROL_USER_EVALUATION_TIMESPAN_UNIT"),
+                    label: translate("LBL_PMSE_EXPCONTROL_CONSTANTS_TIMESPAN_UNIT"),
                     name: "unittime",
                     width: "60%",
                     disabled: true,
                     options: [
                         {
-                            label: translate("LBL_PMSE_EXPCONTROL_USER_EVALUATION_TIMESPAN_YEARS"),
+                            label: translate("LBL_PMSE_EXPCONTROL_CONSTANTS_TIMESPAN_YEARS"),
                             value: "y"
                         }, {
-                            label: translate("LBL_PMSE_EXPCONTROL_USER_EVALUATION_TIMESPAN_MONTHS"),
+                            label: translate("LBL_PMSE_EXPCONTROL_CONSTANTS_TIMESPAN_MONTHS"),
                             value: "m"
                         }, {
-                            label: translate("LBL_PMSE_EXPCONTROL_USER_EVALUATION_TIMESPAN_WEEKS"),
+                            label: translate("LBL_PMSE_EXPCONTROL_CONSTANTS_TIMESPAN_WEEKS"),
                             value: "w"
                         }, {
-                            label: translate("LBL_PMSE_EXPCONTROL_USER_EVALUATION_TIMESPAN_DAYS"),
+                            label: translate("LBL_PMSE_EXPCONTROL_CONSTANTS_TIMESPAN_DAYS"),
                             value: "d"
                         }, {
-                            label: translate("LBL_PMSE_EXPCONTROL_USER_EVALUATION_TIMESPAN_HOURS"),
+                            label: translate("LBL_PMSE_EXPCONTROL_CONSTANTS_TIMESPAN_HOURS"),
                             value: "h"
                         }, {
-                            label: translate("LBL_PMSE_EXPCONTROL_USER_EVALUATION_TIMESPAN_MINUTES"),
+                            label: translate("LBL_PMSE_EXPCONTROL_CONSTANTS_TIMESPAN_MINUTES"),
                             value: "min"
                         }
                     ]
@@ -1762,6 +1820,65 @@ ExpressionControl.prototype._createTimespanPanel = function() {
         this._constantPanels.timespan.disable();
     }
 
+    return this;
+};
+
+ExpressionControl.prototype._createCurrencyPanel = function() {
+    var settings = this._constantSettings.currency;
+    if (!this._constantPanels.currency) {
+        this._constantPanels.currency = new FormPanel({
+            id: "form-constant-currency",
+            title: translate("LBL_PMSE_EXPCONTROL_CONSTANTS_CURRENCY"),
+            items: [
+                {
+                    type: "dropdown",
+                    label: translate("LBL_PMSE_EXPCONTROL_CONSTANTS_CURRENCY_CURRENCY"),
+                    name: "currency",
+                    width: "40%",
+                    labelField: function (dropdown, item) {
+                        return item.iso ? item.symbol + " (" + item.iso + ")" : item.name;
+                    },
+                    valueField: 'id',
+                    required: true,
+                    onChange: function (dropdown, newValue, oldValue) {
+                        var form = dropdown.getForm(),
+                            amountField = form.getItem("amount"),
+                            originalAmount = amountField.getValue(),
+                            convertedAmount = originalAmount,
+                            selectedData;
+
+                        origCurrency = dropdown.getOptionData(oldValue);
+                        destCurrency = dropdown.getSelectedData();
+
+                        if (origCurrency.rate === 1) {
+                            convertedAmount = originalAmount * destCurrency.rate;
+                        } else if (destCurrency.rate === 1) {
+                            convertedAmount = originalAmount / origCurrency.rate;
+                        } else if (origCurrency.rate !== destCurrency.rate) {
+                            convertedAmount = originalAmount / origCurrency.rate * destCurrency.rate;
+                        }
+
+                        amountField.setValue(convertedAmount);
+                    }
+                }, {
+                    type: "number",
+                    label: translate("LBL_PMSE_EXPCONTROL_CONSTANTS_CURRENCY_AMOUNT"),
+                    name: "amount",
+                    width: "60%",
+                    decimalSeparator: this._decimalSeparator,
+                    groupingSeparator: this._numberGroupingSeparator,
+                    required: true
+                }
+            ]
+        });
+        this._constantPanel.addItem(this._constantPanels.currency);
+        this._updateCurrenciesToCurrenciesForm();
+    }
+    if (settings) {
+        this._constantPanels.currency.enable();
+    } else {
+        this._constantPanels.currency.disable();
+    }
     return this;
 };
 
@@ -1897,6 +2014,7 @@ ExpressionControl.prototype._createMainPanel = function () {
             this._createDateConstantPanel();
             this._createDateTimeConstantPanel();
             this._createTimespanPanel();
+            this._createCurrencyPanel();
         }
         items.push(this._constantPanel);
         this._constantPanel.setVisible(!!this._constantPanel.getItems().length);

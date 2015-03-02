@@ -59,8 +59,7 @@
 
 	FormPanel.prototype._createField = function (settings) {
 		var defaults = {
-			type: 'text',
-			precision: 2
+			type: 'text'
 		}, field;
 
 		jQuery.extend(true, defaults, settings);
@@ -75,6 +74,12 @@
 				field = new FormPanelNumber(defaults);
 				break;
 			case 'number':
+				defaults.precision = -1;
+				defaults.groupingSeparator = "";
+				field = new FormPanelNumber(defaults);
+				break;
+			case 'currency':
+				defaults.precision = 2;
 				field = new FormPanelNumber(defaults);
 				break;
 			case 'dropdown':
@@ -975,7 +980,7 @@
 		var defaults = {
 			decimalSeparator: ".",
 			groupingSeparator: ",",
-			precision: 2,
+			precision: -1,
 			value: null
 		};
 
@@ -987,13 +992,6 @@
 			.setValue(defaults.value);
 
 		this._initialized = true;
-	};
-
-	FormPanelNumber.prototype._evalRequired = function() {
-		if(this.required && !this._disabled) {
-			return !isNaN(this._value);
-		}
-		return true;
 	};
 
 	FormPanelNumber.prototype._setValueToControl = function (value) {
@@ -1082,8 +1080,8 @@
 	};
 
 	FormPanelNumber.prototype.setPrecision = function (precision) {
-		if (!(typeof precision === 'number' && precision % 1 === 0 && precision >= 0)) {
-			throw new Error("setPrecision(): The parameter must be an integer greater or equal to 0.");
+		if (!(typeof precision === 'number' && precision % 1 === 0)) {
+			throw new Error("setPrecision(): The parameter must be an integer.");
 		}
 		this._precision = precision;
 		//we make sure that the object has already been initialized
@@ -1171,49 +1169,13 @@
 		return label;
 	};
 
-	FormPanelNumber.prototype.getFormattedValue = function() {
-		return this._parseToUserString(this._value || 0);
-	};
-
 	FormPanelNumber.prototype._onKeyDown = function () {
 		var that = this;
 		return function (e) {
-			var numbers, integerPart = "", decimalPart = "", i, j, aux, aux2, printableKey = 0;
-			if ((e.keyCode < 48 || (e.keyCode > 57 && e.keyCode < 96) || e.keyCode >105)
-				&& e.keyCode !== 37 && e.keyCode !== 39 && e.keyCode !== 8 && e.keyCode !== 46 && e.keyCode !==9) {
+			if (that._precision === 0 && (e.keyCode < 48 || (e.keyCode > 57 && e.keyCode < 96) || e.keyCode >105)
+				&& e.keyCode !== 37 && e.keyCode !== 39 && e.keyCode !== 8 && e.keyCode !== 46) {
 				e.preventDefault();
-				return;
 			}
-
-			if (e.keyCode > 47 && e.keyCode < 58) {
-				printableKey = 1;
-			}
-
-			numbers = (parseInt(this.value.replace(/[^0-9]/g, ""), 10) || 0).toString(10);
-			if (that._precision > 0) {
-				for (i = numbers.length - 1; i >= 0 && decimalPart.length < that._precision - printableKey; i -= 1) {
-					decimalPart = numbers[i] + decimalPart;
-				}
-				while (decimalPart.length < that._precision - printableKey) {
-					decimalPart = "0" + decimalPart;
-				}
-				console.log(decimalPart);
-				while (i >= 0) {
-					integerPart = numbers[i] + integerPart;
-					i--;
-				}
-				if (!integerPart.length) {
-					integerPart = "0";
-				} else if (that._groupingSeparator && integerPart.length > 3) {
-					aux = integerPart.length % 3;
-					aux2 = integerPart.substr(aux);
-					integerPart = integerPart.substr(0, aux);
-					aux2 = (aux2.match(/\d{3}/g) || []).join(that._groupingSeparator);
-					integerPart = (integerPart.length ? integerPart + that._groupingSeparator : "") + aux2;
-				}
-				numbers = integerPart + that._decimalSeparator + decimalPart;
-			}
-			this.value = numbers;
 		};
 	};
 
@@ -1554,7 +1516,7 @@
 	};
 
 	FormPanelDropdown.prototype.setLabelField = function (field) {
-		if (typeof field !== 'string' && typeof field !== 'function') {
+		if (typeof field !== 'string' || typeof field === 'function') {
 			throw new Error('setLabelField(): The parameter must be a string.');
 		}
 		this._labelField = field;
@@ -1660,23 +1622,11 @@
 	};
 
 	FormPanelDropdown.prototype.getSelectedText = function () {
-		var optionData = this.getOptionData(this._value);
-		if (typeof this._labelField === 'function') {
-			return this._labelField(this, optionData);
-		}
-		return optionData[this._labelField];
+		return jQuery(this.html).find("option:selected").text();
 	};
 
 	FormPanelDropdown.prototype.getSelectedData = function () {
-		//return jQuery(this.html).find("option:selected").data("data");
-		return this.getOptionData(this._value);
-	};
-
-	FormPanelDropdown.prototype.getOptionData = function(optionValue) {
-		if (this.html) {
-			return jQuery(this.html).find("option[value=\"" + optionValue + "\"]").data("data");
-		}
-		return this._options.find(this._valueField, optionValue);
+		return jQuery(this.html).find("option:selected").data("data");
 	};
 
 	FormPanelDropdown.prototype.setValue = function (value) {

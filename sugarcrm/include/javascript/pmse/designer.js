@@ -132,6 +132,7 @@ var getAutoIncrementName = function (type) {
 };
 
 function renderProject (prjCode) {
+    var pmseCurrencies, currencies, sugarCurrencies, currentCurrency, i;
     adamUID = prjCode;
 
     //RESIZE OPTIONS
@@ -174,6 +175,22 @@ function renderProject (prjCode) {
 
     $('.ui-layout-north').css('overflow', 'hidden');
 
+    sugarCurrencies = SUGAR.App.metadata.getCurrencies();
+    currencies = Object.keys(sugarCurrencies);
+    pmseCurrencies = [];
+    for (i = 0; i < currencies.length; i += 1) {
+        currentCurrency = sugarCurrencies[currencies[i]];
+        if (currentCurrency.status === 'Active') {
+            pmseCurrencies.push({
+                id: currencies[i],
+                iso: currentCurrency.iso4217,
+                name: currentCurrency.name,
+                rate: parseFloat(currentCurrency.conversion_rate),
+                preferred: currencies[i] === SUGAR.App.user.getCurrency().currency_id,
+                symbol: currentCurrency.symbol
+            });
+        }
+    }
 
     project = new AdamProject({
         metadata: [
@@ -201,6 +218,10 @@ function renderProject (prjCode) {
                     url: "pmse_Project/CrmData/fields/{MODULE}",
                     root: "result"
                 }
+            },
+            {
+                name: "currencies",
+                data: pmseCurrencies
             }
         ]
     });
