@@ -324,6 +324,11 @@
         overflow: visible;
         padding: 4px;
         background: @dropdownLinkBackgroundHover;
+        font-size: 0;
+        .ellipsis_inline,
+        .select2-container {
+          font-size: @baseFontSize;
+        }
         &:first-child {
           border-right: 1px solid lighten(@dropdownLinkBackgroundHover,5%);
           .btn {
@@ -448,11 +453,11 @@
         }
         .input-append.date {
           margin-bottom: 0;
-          font-size: @baseFontSize;
         }
         input[type="text"] {
           width: 100%;
           min-width: 82px;
+          font-size: @baseFontSize;
         }
       }
     }
