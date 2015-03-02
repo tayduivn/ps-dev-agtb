@@ -113,10 +113,9 @@
     checkButtons: function() {
         var delBtns = this.$('.deleteBtn'),
             addBtns = this.$('.addBtn');
-        if (delBtns && !$(delBtns[0]).hasClass('disabled')) {
-            // disable the first delete button so you cant
-            // delete the first row
-            $(delBtns[0]).addClass('disabled');
+        if (delBtns && delBtns.length === 1 && !delBtns.hasClass('disabled')) {
+            // if we have only one button, disable it, otherwise leave them all open
+            delBtns.addClass('disabled');
         }
 
         if (addBtns && addBtns.length > 1) {
@@ -125,7 +124,7 @@
                 if (index < addBtns.length - 1) {
                     $(btn).addClass('disabled');
                 }
-            })
+            });
         }
     },
 
