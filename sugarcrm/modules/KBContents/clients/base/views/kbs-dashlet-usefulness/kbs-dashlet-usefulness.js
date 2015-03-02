@@ -57,12 +57,10 @@
             useful = 1;
             notuseful = 1;
         }
-
         var chartData = {
             properties: [
                 {
                     labels: 'value',
-                    legend: 'on',
                     print: '',
                     subtitle: '',
                     thousands: '',
@@ -73,17 +71,28 @@
             values: [
                 {
                     label: [app.lang.get('LBL_USEFUL', 'KBContents')],
-                    values: [useful]
+                    values: [useful],
+                    classes: 'nv-fill-green'
                 },
                 {
                     label: [app.lang.get('LBL_NOT_USEFUL', 'KBContents')],
-                    values: [notuseful]
+                    values: [notuseful],
+                    classes: 'nv-fill-red'
                 }
             ]
+            },
+            chartParams = {
+                donut: true,
+                donutRatio: 0.45,
+                hole: parseInt(useful*100/(notuseful + useful)) +  '%',
+                donutLabelsOutside: true,
+                colorData: 'data',
+                chart_type: 'pie chart',
+                show_legend: false
         };
 
         _.defer(_.bind(function() {
-            this.chartData.set({rawChartData: chartData});
+            this.chartData.set({rawChartData: chartData, rawChartParams: chartParams});
         }, this));
         if (options && _.isFunction(options.complete)) {
             options.complete();
