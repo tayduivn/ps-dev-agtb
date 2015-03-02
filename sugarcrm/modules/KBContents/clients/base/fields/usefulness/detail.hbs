@@ -10,7 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 }}
-<a class="pull-right btn btn-invisible{{#if voted}} disabled{{/if}}{{#if votedNotUseful}} voted{{/if}}"
-   data-action="notuseful"><i class="fa fa-thumbs-down"></i> {{str "LBL_NOT_USEFUL" this.module}}</a>
-<a class="pull-right btn btn-invisible{{#if voted}} disabled{{/if}}{{#if votedUseful}} voted{{/if}}"
-   data-action="useful"><i class="fa fa-thumbs-up"></i> {{str "LBL_USEFUL" this.module}}</a>
+<div class="btn-group pull-right">
+	<a class="btn{{#if voted}} disabled{{/if}}{{#if votedNotUseful}} voted active{{/if}}"
+	   data-action="notuseful"><i class="fa fa-thumbs-o-down"></i> {{str "LBL_NOT_USEFUL" this.module}}</a>
+	<a class="btn{{#if voted}} disabled{{/if}}{{#if votedUseful}} voted active{{/if}}"
+	   data-action="useful"><i class="fa fa-thumbs-o-up"></i> {{str "LBL_USEFUL" this.module}}</a>
+</div>
