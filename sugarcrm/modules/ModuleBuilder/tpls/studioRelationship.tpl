@@ -85,7 +85,7 @@
 				{sugar_translate label='LBL_MODULE'}:
 				</td>
 				<td>{if $rel.readonly}
-					<input name="rhs_module" id="rhs_mod_field" value="{$rel.rhs_module}" disabled>
+					<input name="rhs_module" id="rhs_mod_field" value="{$translated_relatable[$rel.rhs_module]}" disabled>
 					{else}
                     {html_options name="rhs_module" id="rhs_mod_field" output=$translated_relatable values=$relatable selected=$rel.rhs_module onchange='ModuleBuilder.moduleLoadRelationship2(document.relform.relationship_name.value, true);'}
 					{/if}
