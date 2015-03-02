@@ -128,6 +128,13 @@ class OpportunityWithRevenueLineItem extends OpportunitySetup
                 'commit_stage' => false,
             )
         );
+
+        $this->fixFilter(
+            array(
+                'sales_stage' => false,
+                'sales_status' => true,
+            )
+        );
     }
 
     /**
