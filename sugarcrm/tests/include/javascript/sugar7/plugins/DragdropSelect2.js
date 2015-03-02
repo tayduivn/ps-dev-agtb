@@ -13,6 +13,7 @@ describe('DragdropSelect2 Plugin', function() {
             '<option value="A" selected>Apple</option>' +
             '<option value="B" selected>Banana</option>' +
             '<option value="C" selected>Carrot</option>' +
+            '<option value="D" selected>Donut</option>' +
             '</select>');
 
         $select2 = field.$('.select2');
@@ -30,7 +31,21 @@ describe('DragdropSelect2 Plugin', function() {
     });
 
     describe('setSelectable', function() {
-        var $firstItem, $lastItem;
+        var $firstItem, $lastItem, getItemById, getItems;
+
+        getItemById = function(id) {
+            return field.$('[data-id="' + id + '"]').closest('li');
+        };
+
+        getItems = function() {
+            var itemIds = ['A', 'B', 'C', 'D'],
+                items = {};
+
+            _.each(itemIds, function(itemId) {
+                items[itemId] = getItemById(itemId);
+            });
+            return items;
+        };
 
         beforeEach(function() {
             $firstItem = $items.first();
@@ -72,6 +87,50 @@ describe('DragdropSelect2 Plugin', function() {
             $lastItem.trigger(metaClickEvent);
             expect($firstItem.hasClass(field.selectedClass)).toBe(true);
             expect($lastItem.hasClass(field.selectedClass)).toBe(true);
+        });
+
+        using('range selection combinations', [
+            {
+                expectation: 'should select range forward (A through C)',
+                firstItemClick: 'A',
+                shiftItemClick: 'C',
+                expectedSelectedItems: ['A', 'B', 'C']
+            },
+            {
+                expectation: 'should select range backwards (D through B)',
+                firstItemClick: 'D',
+                shiftItemClick: 'B',
+                expectedSelectedItems: ['B', 'C', 'D']
+            },
+            {
+                expectation: 'should select single item range (B)',
+                firstItemClick: 'B',
+                shiftItemClick: 'B',
+                expectedSelectedItems: ['B']
+            }
+        ], function(data) {
+            it(data.expectation, function() {
+                var shiftClickEvent = jQuery.Event('click', {keyCode: 91, shiftKey: true}),
+                    items = getItems();
+
+                items[data.firstItemClick].click();
+                items[data.shiftItemClick].trigger(shiftClickEvent);
+                _.each(items, function(item, id) {
+                    var expectedValue = _.contains(data.expectedSelectedItems, id);
+                    expect(items[id].hasClass(field.selectedClass)).toBe(expectedValue);
+                });
+            });
+        });
+
+        it('should only select item C if no previously selected item on shift click event', function() {
+            var shiftClickEvent = jQuery.Event('click', {keyCode: 91, shiftKey: true}),
+                items = getItems();
+
+            items['C'].trigger(shiftClickEvent);
+            expect(items['A'].hasClass(field.selectedClass)).toBe(false);
+            expect(items['B'].hasClass(field.selectedClass)).toBe(false);
+            expect(items['C'].hasClass(field.selectedClass)).toBe(true);
+            expect(items['D'].hasClass(field.selectedClass)).toBe(false);
         });
 
         it('should deselect when clicking on document', function() {

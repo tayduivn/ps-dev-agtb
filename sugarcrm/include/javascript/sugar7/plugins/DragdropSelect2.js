@@ -27,6 +27,9 @@
             selectedClass: 'drag-drop-selected',
             itemSelector: 'li.select2-search-choice',
             clickEventName: 'click.selectable',
+            multiSelectNone: 'none',
+            multiSelectItem: 'item',
+            multiSelectRange: 'range',
 
             /**
              * @inheritdoc
@@ -67,13 +70,7 @@
 
                 this.$selectableItems = $items;
                 this.$selectableItems.on(this.clickEventName, function(event) {
-                    if (self._isMultiSelectKeyPressed(event)) {
-                        $(this).toggleClass(self.selectedClass);
-                    } else {
-                        self._clearSelected();
-                        $(this).addClass(self.selectedClass);
-                    }
-                    self.view.trigger('dragDropSelect2:selected', self.name);
+                    self.markSelected($(this), self._getMultiSelectType(event));
 
                     //stop select2 from auto-scrolling down to the search item
                     event.stopPropagation();
@@ -82,9 +79,7 @@
                 //only need to set up the document click clear event once
                 if (!this.$clearOnClickDoc) {
                     this.$clearOnClickDoc = $(document);
-                    this.$clearOnClickDoc.on(this.clickEventName, function() {
-                        self._clearSelected();
-                    });
+                    this.$clearOnClickDoc.on(this.clickEventName, _.bind(this._clearSelected, this));
                 }
 
                 //clear out any previous events before setting up new ones
@@ -94,9 +89,38 @@
 
                 this.$clearOnContainerClick = $select2.select2('container');
                 this.$clearOnContainerClick.off(this.clickEventName);
-                this.$clearOnContainerClick.on(this.clickEventName, function() {
-                    self._clearSelected();
-                });
+                this.$clearOnContainerClick.on(this.clickEventName, _.bind(this._clearSelected, this));
+            },
+
+            /**
+             * Mark the given item as selected, taking into account any modifiers
+             * that would cause the selection to be multi-select or range select.
+             *
+             * @param {jQuery} $item
+             * @param {string} multiSelectType Whether we are selecting multiple -
+             *   valid values are: none, item, or range
+             */
+            markSelected: function($item, multiSelectType) {
+                var rangeTraversal, $rangeItems;
+
+                if (multiSelectType === this.multiSelectRange &&
+                    !_.isEmpty(this.$lastSelectedItem) &&
+                    !$item.is(this.$lastSelectedItem)
+                ) {
+                    rangeTraversal = ($item.index() >= this.$lastSelectedItem.index()) ? 'nextUntil' : 'prevUntil';
+                    $rangeItems = this.$lastSelectedItem[rangeTraversal]($item);
+                    $rangeItems.addClass(this.selectedClass);
+                    $item.addClass(this.selectedClass);
+                } else if (multiSelectType === this.multiSelectItem) {
+                    $item.toggleClass(this.selectedClass);
+                } else {
+                    this._clearSelected();
+                    $item.addClass(this.selectedClass);
+                }
+
+                // keep track of last selected to handle range selection
+                this.$lastSelectedItem = ($item.hasClass(this.selectedClass)) ? $item : null;
+                this.view.trigger('dragDropSelect2:selected', this.name);
             },
 
             /**
@@ -195,15 +219,23 @@
             },
 
             /**
-             * Is key pressed that causes a multi-select?
-             * (Cmd for Mac, Ctrl for Win)
+             * Determine if we are multi-selecting and if so, what type.
              *
              * @param {Event} event
-             * @return {boolean}
+             * @return {string} What type of multi-select (if any) - valid values:
+             *   none: no modifier - select one at a time
+             *   item: meta/ctrl modifier - select multiple, one at a time
+             *   range: shift modifier - select a range of items
              * @private
              */
-            _isMultiSelectKeyPressed: function(event) {
-                return (event.metaKey === true || event.ctrlKey === true);
+            _getMultiSelectType: function(event) {
+                if (event.shiftKey === true) {
+                    return this.multiSelectRange;
+                } else if (event.metaKey === true || event.ctrlKey === true) {
+                    return this.multiSelectItem;
+                } else {
+                    return this.multiSelectNone;
+                }
             },
 
             /**
@@ -213,6 +245,7 @@
              */
             _clearSelected: function() {
                 this.$(this.itemSelector).removeClass(this.selectedClass);
+                this.$lastSelectedItem = null;
             },
 
             /**
