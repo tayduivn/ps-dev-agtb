@@ -78,6 +78,15 @@ describe("enum field", function() {
         loadEnumSpy.restore();
     });
 
+    it("should default the value of the field to the first option if undefined", function() {
+        var field = SugarTest.createField('base', fieldName, 'enum', 'edit', {options: "bugs_type_dom"}, module, model);
+        field.items = {'first': 'first', 'second': 'second'};
+        var loadEnumSpy = sinon.spy(field, "loadEnumOptions");
+        field.render();
+        loadEnumSpy.restore();
+        expect(field.model.get(field.name)).toEqual('first');
+    });
+
     it("should not default the value of the field to the first option if multi select", function() {
         var field = SugarTest.createField("base", fieldName, "enum", "edit", {isMultiSelect: true, options: "bugs_type_dom"});
         field.items = {'first': 'first', 'second': 'second'};
@@ -85,51 +94,6 @@ describe("enum field", function() {
         field.render();
         loadEnumSpy.restore();
         expect(field.model.get(field.name)).toBeUndefined();
-    });
-
-    describe('the value is not among the options', function() {
-        var field, sandbox;
-
-        beforeEach(function() {
-            sandbox = sinon.sandbox.create();
-            field = SugarTest.createField('base', fieldName, 'enum', 'edit');
-        });
-
-        afterEach(function() {
-            sandbox.restore();
-        });
-
-        using('the default value is non-empty', [undefined, null, '', 0, 'third'], function(value) {
-            it('should set the field to the default value (the first option)', function() {
-                field.items = {first: 'first', second: 'second'};
-                field.model.set(field.name, value, {silent: true});
-                field.render();
-
-                expect(field.model.get(field.name)).toEqual('first');
-            });
-        });
-
-        using('the default value is an empty string', [undefined, null, '', 0, 'third'], function(value) {
-            it('should set the field to the default value (the first option)', function() {
-                field.items = {'': 'none', first: 'first', second: 'second'};
-                field.model.set(field.name, value, {silent: true});
-                field.render();
-
-                expect(field.model.get(field.name)).toEqual('');
-            });
-        });
-
-        using('there is no default value', [undefined, null, '', 0, 'third'], function(value) {
-            it('should remove the value from the field', function() {
-                sandbox.stub(field, 'loadEnumOptions');
-                field.isFetchingOptions = false;
-                field.items = [];
-                field.model.set(field.name, value, {silent: true});
-                field.render();
-
-                expect(field.model.get(field.name)).toEqual('');
-            });
-        });
     });
 
     describe('enum API', function() {
