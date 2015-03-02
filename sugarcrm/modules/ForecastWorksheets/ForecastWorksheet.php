@@ -57,6 +57,85 @@ class ForecastWorksheet extends SugarBean
     public $total_amount;
 
     /**
+     * The fields we should copy from the Products/RLI Bean
+     *
+     * @var array
+     */
+    public $productFieldMap = array(
+        'name',
+        'account_id',
+        'account_name',
+        'likely_case',
+        'best_case',
+        'base_rate',
+        'worst_case',
+        'currency_id',
+        'date_closed',
+        'date_closed_timestamp',
+        'probability',
+        'commit_stage',
+        'sales_stage',
+        'assigned_user_id',
+        'created_by',
+        'date_entered',
+        'deleted',
+        'team_id',
+        'team_set_id',
+        'opportunity_id',
+        'opportunity_name',
+        'description',
+        'next_step',
+        'lead_source',
+        'product_type',
+        'campaign_id',
+        'campaign_name',
+        'product_template_id',
+        'product_template_name',
+        'category_id',
+        'category_name',
+        'list_price',
+        'cost_price',
+        'discount_price',
+        'discount_amount',
+        'quantity',
+        'total_amount'
+    );
+
+    /**
+     * The field map for when coping from an Opportunity Bean
+     *
+     * @var array
+     */
+    public $opportunityFieldMap = array(
+        'name',
+        'account_id',
+        'account_name',
+        array('likely_case' => 'amount'),
+        'best_case',
+        'base_rate',
+        'worst_case',
+        'currency_id',
+        'date_closed',
+        'date_closed_timestamp',
+        'sales_stage',
+        'probability',
+        'commit_stage',
+        'assigned_user_id',
+        'created_by',
+        'date_entered',
+        'deleted',
+        'team_id',
+        'team_set_id',
+        'sales_status',
+        'description',
+        'next_step',
+        'lead_source',
+        array('product_type' => 'opportunity_type'),
+        'campaign_id',
+        'campaign_name'
+    );
+
+    /**
      * Update the real table with the values when a save happens on the front end
      *
      * @param bool $check_notify        Should we send the notifications
@@ -99,6 +178,7 @@ class ForecastWorksheet extends SugarBean
         }
     }
 
+
     /**
      * Save an Opportunity as a worksheet
      *
@@ -118,41 +198,12 @@ class ForecastWorksheet extends SugarBean
             false
         );
 
-        $fields = array(
-            'name',
-            'account_id',
-            'account_name',
-            array('likely_case' => 'amount'),
-            'best_case',
-            'base_rate',
-            'worst_case',
-            'currency_id',
-            'date_closed',
-            'date_closed_timestamp',
-            'sales_stage',
-            'probability',
-            'commit_stage',
-            'assigned_user_id',
-            'created_by',
-            'date_entered',
-            'deleted',
-            'team_id',
-            'team_set_id',
-            'sales_status',
-            'description',
-            'next_step',
-            'lead_source',
-            array('product_type' => 'opportunity_type'),
-            'campaign_id',
-            'campaign_name'
-        );
-
         // load the account
         if (empty($opp->account_name) && !empty($opp->account_id)) {
             $opp->account_name = $this->getRelatedName('Accounts', $opp->account_id);
         }
 
-        $this->copyValues($fields, $opp);
+        $this->copyValues($this->opportunityFieldMap, $opp);
 
         // set the parent types
         $this->parent_type = 'Opportunities';
@@ -163,10 +214,6 @@ class ForecastWorksheet extends SugarBean
 
         //if this migrated, we need to delete the committed row
         $this->removeMigratedRow($opp);
-
-        //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
-        $this->saveOpportunityProducts($opp, $isCommit);
-        //END SUGARCRM flav=pro && flav!=ent ONLY
     }
 
     /**
@@ -243,46 +290,6 @@ class ForecastWorksheet extends SugarBean
             false
         );
 
-        $fields = array(
-            'name',
-            'account_id',
-            'account_name',
-            'likely_case',
-            'best_case',
-            'base_rate',
-            'worst_case',
-            'currency_id',
-            'date_closed',
-            'date_closed_timestamp',
-            'probability',
-            'commit_stage',
-            'sales_stage',
-            'assigned_user_id',
-            'created_by',
-            'date_entered',
-            'deleted',
-            'team_id',
-            'team_set_id',
-            'opportunity_id',
-            'opportunity_name',
-            'description',
-            'next_step',
-            'lead_source',
-            'product_type',
-            'campaign_id',
-            'campaign_name',
-            'product_template_id',
-            'product_template_name',
-            'category_id',
-            'category_name',
-            'list_price',
-            'cost_price',
-            'discount_price',
-            'discount_amount',
-            'quantity',
-            'total_amount'
-        );
-
         // load the account
         if (empty($rli->account_name) && !empty($rli->account_id)) {
             $rli->account_name = $this->getRelatedName('Accounts', $rli->account_id);
@@ -303,7 +310,7 @@ class ForecastWorksheet extends SugarBean
             $rli->category_name = $this->getRelatedName('ProductCategories', $rli->category_id);
         }
 
-        $this->copyValues($fields, $rli);
+        $this->copyValues($this->productFieldMap, $rli);
 
         // set the parent types
         $this->parent_type = 'RevenueLineItems';
@@ -370,7 +377,7 @@ class ForecastWorksheet extends SugarBean
      * @param array $fields
      * @param SugarBean $seed
      */
-    protected function copyValues($fields, SugarBean $seed)
+    public function copyValues($fields, SugarBean $seed)
     {
         foreach ($fields as $field) {
             $key = $field;
