@@ -192,6 +192,9 @@
             self = this;
         this.loadAdditionalLeaf(id, function() {
             _.defer(function() {
+                if (self.disposed) {
+                    return;
+                }
                 self.selectNode(self.context.get('model').id)
             });
         });

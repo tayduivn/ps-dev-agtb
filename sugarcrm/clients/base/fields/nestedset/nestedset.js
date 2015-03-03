@@ -140,6 +140,9 @@
         evt.stopPropagation();
         evt.preventDefault();
         _.defer(function (dropdown, self) {
+            if (self.disposed) {
+                return;
+            }
             var $input = self.$('[data-role=secondinput]');
             self.$(self.ddEl).dropdown('toggle');
             $input.val('');
