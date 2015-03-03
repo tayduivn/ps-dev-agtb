@@ -329,4 +329,5 @@ $mod_strings = array (
     'LBL_PMSE_MESSAGE_ERROR_GATEWAY_MIXED_OUTGOING' => 'Gateway must have two or more outgoing sequence flows',
     'LBL_PMSE_MESSAGE_ERROR_ANNOTATION' => 'Text Annotation must have an association line',
 
+    'LBL_PMSE_IMPORT_PROCESS_DEFINITION_FAILURE' => 'Failed to create Process Definition from file',
 );

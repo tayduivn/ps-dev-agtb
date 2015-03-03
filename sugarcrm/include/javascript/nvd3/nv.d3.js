@@ -870,9 +870,9 @@ nv.models.axis = function() {
       showMaxMin = true, //TODO: showMaxMin should be disabled on all ordinal scaled axes
       highlightZero = true,
       direction = 'ltr',
-      rotateTicks = 0,//one of (rotateTicks, staggerTicks, wrapTicks)
-      staggerTicks = false,
       wrapTicks = false,
+      staggerTicks = false,
+      rotateTicks = 0, //one of (rotateTicks, staggerTicks, wrapTicks)
       reduceXTicks = false, // if false a tick will show for every data point
       rotateYLabel = true,
       isOrdinal = false,
@@ -914,8 +914,7 @@ nv.models.axis = function() {
           labelThickness = null,
           textAnchorString = '';
 
-      var tickPaddingOriginal = axis.tickPadding(),
-          fmt = axis.tickFormat(),
+      var fmt = axis.tickFormat(),
           w = typeof scale.rangeExtent === 'function' ?
                 scale.rangeExtent()[1] :
                 //scale.range()[scale.range().length - 1] + (scale.range()[1] - scale.range()[0])
@@ -933,9 +932,6 @@ nv.models.axis = function() {
       if (rotateTicks && !isFinite(String(rotateTicks))) {
         rotateTicks = 30;
       }
-      if (rotateTicks % 360 && axis.orient() === 'bottom') {
-        axis.tickPadding(0);
-      }
 
       //TODO: investigate why the ticks are not being removed on data.exit()
       var myTicks = g.selectAll('.tick')
@@ -943,8 +939,6 @@ nv.models.axis = function() {
       myTicks.exit().remove();
 
       g.call(axis);
-
-      axis.tickPadding(tickPaddingOriginal);
 
       scale0 = scale0 || axis.scale();
 
@@ -954,7 +948,7 @@ nv.models.axis = function() {
 
       //------------------------------------------------------------
       //Calculate the longest tick width and height
-      thickness = tickPaddingOriginal + (!!axisLabelText ? axisLabelDistance : 0);
+      thickness = defaultThickness();
 
       var tickText = g.selectAll('g.tick').select('text');
 
@@ -997,16 +991,31 @@ nv.models.axis = function() {
         //Convert to radians before calculating sin. Add 30 to margin for healthy padding.
         var tickAnchor = direction === 'rtl' ? a % 360 > 0 ? 'end' : 'start' : a % 360 > 0 ? 'start' : 'end',
             sin = Math.abs(Math.sin(a * Math.PI / 180));
+        thickness = defaultThickness() + 2;
         thickness += sin ? sin * maxTickWidth : maxTickWidth;
         thickness += sin ? sin * maxTickHeight : 0;
 
         //Rotate all tickText
         tickText
           .attr('transform', function(d, i, j) {
-            return 'translate(0,' + tickPaddingOriginal + ') rotate(' + a + ')';
+            return 'translate(0,' + axis.tickPadding() + ') rotate(' + a + ')';
           })
           .attr('y', '0')
           .style('text-anchor', tickAnchor);
+      }
+
+      function resetTicks() {
+        tickText.selectAll('tspan').remove();
+        tickText
+          .attr('dy', '.71em')
+          .attr('y', axis.tickPadding())
+          .attr('transform', 'translate(0,0)')
+          .text(function(d, i) { return tickValueArray[i]; });
+        calculateMax();
+      }
+
+      function defaultThickness() {
+        return axis.tickPadding() + (!!axisLabelText ? axisLabelDistance : 0);
       }
 
       //------------------------------------------------------------
@@ -1036,83 +1045,95 @@ nv.models.axis = function() {
           break;
 
         case 'bottom':
-          if (rotateTicks % 360) {
 
-            tickRotation(rotateTicks);
 
-          } else {
+          var wrapSucceeded = false,
+              staggerSucceeded = false,
+              rotateSucceeded = false;
 
-            if (wrapTicks || (labelCollision(1.25) && !staggerTicks)) {
+          // if wrap is enabled, try it first
+          if (wrapTicks && labelCollision(1.25)) {
+            tickText.each(function(d) {
 
-              g .selectAll('.tick').select('text').each(function(d) {
+              var textContent = this.textContent,
+                  textNode = d3.select(this),
+                  textArray = textContent.replace('/', '/ ').split(' '),
+                  i = 0,
+                  l = textArray.length,
+                  dy = 0.71,
+                  maxWidth = axis.scale().rangeBand();
 
-                var textContent = this.textContent,
-                    textNode = d3.select(this),
-                    textArray = textContent.replace('/', '/ ').split(' '),
-                    i = 0,
-                    l = textArray.length,
-                    dy = 0.71,
-                    maxWidth = axis.scale().rangeBand();
+              // do wrapping if needed
+              if (this.getBoundingClientRect().width > maxWidth) {
+                this.textContent = '';
 
-                if (this.getBoundingClientRect().width > maxWidth) {
-                  this.textContent = '';
+                do {
+                  var textString,
+                    textSpan = textNode.append('tspan')
+                      .text(textArray[i] + ' ')
+                      .attr('dy', dy + 'em')
+                      .attr('x', 0 + 'px');
 
-                  do {
-                    var textString,
-                      textSpan = textNode.append('tspan')
-                        .text(textArray[i] + ' ')
-                        .attr('dy', dy + 'em')
-                        .attr('x', 0 + 'px');
+                  if (i === 0) {
+                    dy = 1;
+                  }
 
-                    if (i === 0) {
-                      dy = 1;
+                  i += 1;
+
+                  while (i < l) {
+                    textString = textSpan.text();
+                    textSpan.text(textString + ' ' + textArray[i]);
+                    if (this.getBoundingClientRect().width <= maxWidth) {
+                      i += 1;
+                    } else {
+                      textSpan.text(textString);
+                      break;
                     }
+                  }
+                } while (i < l);
+              }
 
-                    i += 1;
+            });
 
-                    while (i < l) {
-                      textString = textSpan.text();
-                      textSpan.text(textString + ' ' + textArray[i]);
-                      if (this.getBoundingClientRect().width <= maxWidth) {
-                        i += 1;
-                      } else {
-                        textSpan.text(textString);
-                        break;
-                      }
-                    }
-                  } while (i < l);
-                }
+            // this resets the maxTickWidth for label collision detction
+            calculateMax();
 
-              });
-
-              calculateMax();
-            }
-
-            if (staggerTicks || labelCollision(1.25)) {
-              tickText.selectAll('tspan').remove();
-
-              tickText
-                .text(function(d, i) { return tickValueArray[i]; });
-
-              calculateMax();
-
-              tickText
-                .attr('transform', function(d, i) { return 'translate(0,' + (i % 2 * maxTickHeight) + ')'; });
-
-              thickness += maxTickHeight - 2;
+            // check to see if we still have collisions
+            if (labelCollision(1.25)) {
+              resetTicks();
             } else {
-              tickText
-                .attr('transform', function(d, i) { return 'translate(0,0)'; });
+              wrapSucceeded = true;
+              thickness = 1;
             }
+          }
 
+          // wrapping failed so fall back to stagger if enabled
+          if (!wrapSucceeded && staggerTicks && labelCollision(1.25)) {
+            tickText
+              .text(function(d, i) { return tickValueArray[i]; });
+
+            // this sets the maxTickWidth for label collision detction
+            calculateMax();
+
+            tickText
+              .attr('transform', function(d, i) { return 'translate(0,' + (i % 2 * (maxTickHeight + 2)) + ')'; });
+
+            // check to see if we still have collisions
             if (labelCollision(2.5)) {
-              thickness = tickPaddingOriginal + (!!axisLabelText ? axisLabelDistance : 0);
-              tickRotation(30);
+              resetTicks();
             } else {
-              thickness += maxTickHeight;
-              textAnchorString = 'middle';
+              staggerSucceeded = true;
+              thickness = maxTickHeight + 2;
             }
+          }
 
+          // if we still have a collision
+          if (!wrapSucceeded && !staggerSucceeded && rotateTicks % 360 && labelCollision(1.25)) {
+            tickRotation(rotateTicks);
+            rotateSucceeded = true;
+          } else {
+            textAnchorString = 'middle';
+            thickness += defaultThickness() + maxTickHeight;
           }
 
           if (axisLabelText) {
@@ -1122,7 +1143,7 @@ nv.models.axis = function() {
           }
 
           if (reduceXTicks) {
-            g .selectAll('.tick')
+            g.selectAll('.tick')
                 .each(function(d, i) {
                   d3.select(this).selectAll('text,line')
                     .style('opacity', i % Math.ceil(data[0].values.length / (w / 100)) !== 0 ? 0 : 1);
@@ -1261,9 +1282,9 @@ nv.models.axis = function() {
           .style('text-anchor', label.a);
 
         axisLabel.each(function(d, i) {
-          labelThickness += orientation === 'horizontal' ?
-            parseInt(this.getBoundingClientRect().height / 1.15, 10) :
-            parseInt(this.getBoundingClientRect().width / 1.15, 10);
+          labelThickness += axis.orient() === 'left' || axis.orient() === 'right' ?
+            parseInt(this.getBoundingClientRect().width / 1.15, 10) :
+            parseInt(this.getBoundingClientRect().height / 1.15, 10);
         });
 
         thickness += labelThickness;
@@ -1297,7 +1318,7 @@ nv.models.axis = function() {
 
       if (showMaxMin && (axis.orient() === 'left' || axis.orient() === 'right')) {
         //check if max and min overlap other values, if so, hide the values that overlap
-        g .selectAll('g.tick') // the g's wrapping each tick
+        g.selectAll('g.tick') // the g's wrapping each tick
             .each(function(d, i) {
               d3.select(this).select('text').style('opacity', 1);
               if (scale(d) > scale.range()[0] - 10 || scale(d) < scale.range()[1] + 10) { // 10 is assuming text height is 16... if d is 0, leave it!
@@ -1354,7 +1375,7 @@ nv.models.axis = function() {
 
       //highlight zero line ... Maybe should not be an option and should just be in CSS?
       if (highlightZero) {
-        g .selectAll('line.tick')
+        g.selectAll('line.tick')
             .filter(function(d) {
               return !parseFloat(Math.round(d * 100000) / 1000000);
             }) //this is because sometimes the 0 tick is a very small fraction, TODO: think of cleaner technique
@@ -1460,8 +1481,6 @@ nv.models.axis = function() {
       return wrapTicks;
     }
     wrapTicks = _;
-    rotateTicks = 0;
-    staggerTicks = false;
     return chart;
   };
 
@@ -1470,8 +1489,6 @@ nv.models.axis = function() {
       return rotateTicks;
     }
     rotateTicks = _;
-    wrapTicks = false;
-    staggerTicks = false;
     return chart;
   };
 
@@ -1480,8 +1497,6 @@ nv.models.axis = function() {
       return staggerTicks;
     }
     staggerTicks = _;
-    wrapTicks = false;
-    rotateTicks = 0;
     return chart;
   };
 
@@ -2274,15 +2289,14 @@ nv.models.scroll = function() {
       };
 
       scroll.pan = function(diff) {
-
-        // don't fire on events other than zoom and drag
-        // we need click for handling legend toggle
         var distance = 0,
             overflowDistance = 0,
             translate = '',
             x = 0,
             y = 0;
 
+        // don't fire on events other than zoom and drag
+        // we need click for handling legend toggle
         if (d3.event) {
           if (d3.event.type === 'zoom') {
             x = d3.event.sourceEvent.deltaX || 0;
@@ -2418,36 +2432,44 @@ nv.models.scroll = function() {
 
         bgpEnter
           .append('stop')
-          .attr('stop-color', 'rgba(0, 0, 0, 0.3)')
+          .attr('stop-color', '#000')
+          .attr('stop-opacity', '0.3')
           .attr('offset', 0);
         bgpEnter
           .append('stop')
-          .attr('stop-color', 'rgba(255, 255, 255, 0)')
+          .attr('stop-color', '#FFF')
+          .attr('stop-opacity', '0')
           .attr('offset', 1);
         bgmEnter
           .append('stop')
-          .attr('stop-color', 'rgba(255, 255, 255, 0)')
+          .attr('stop-color', '#FFF')
+          .attr('stop-opacity', '0')
           .attr('offset', 0);
         bgmEnter
           .append('stop')
-          .attr('stop-color', 'rgba(0, 0, 0, 0.3)')
+          .attr('stop-color', '#000')
+          .attr('stop-opacity', '0.3')
           .attr('offset', 1);
 
         fgpEnter
           .append('stop')
           .attr('stop-color', '#FFF')
+          .attr('stop-opacity', '1')
           .attr('offset', 0);
         fgpEnter
           .append('stop')
-          .attr('stop-color', 'rgba(255, 255, 255, 0)')
+          .attr('stop-color', '#FFF')
+          .attr('stop-opacity', '0')
           .attr('offset', 1);
         fgmEnter
           .append('stop')
-          .attr('stop-color', 'rgba(255, 255, 255, 0)')
+          .attr('stop-color', '#FFF')
+          .attr('stop-opacity', '0')
           .attr('offset', 0);
         fgmEnter
           .append('stop')
           .attr('stop-color', '#FFF')
+          .attr('stop-opacity', '1')
           .attr('offset', 1);
       };
 
@@ -2492,11 +2514,11 @@ nv.models.scroll = function() {
 
           backShadows.select('rect.nv-back-shadow-prev')
             .attr('fill', 'url(#nv-back-gradient-prev-' + id + ')')
-            .attr(dimension, 5);
+            .attr(dimension, 7);
 
           backShadows.select('rect.nv-back-shadow-more')
             .attr('fill', 'url(#nv-back-gradient-more-' + id + ')')
-            .attr(dimension, 5);
+            .attr(dimension, 7);
         } else {
           backShadows.selectAll('rect').attr('fill', 'transparent');
         }
@@ -3331,7 +3353,7 @@ nv.models.bubbleChart = function () {
       xAxis = nv.models.axis()
         .orient('bottom')
         .tickSize(0)
-        .tickPadding(5)
+        .tickPadding(4)
         .highlightZero(false)
         .showMaxMin(false)
         .ticks(d3.time.months, 1)
@@ -3599,7 +3621,7 @@ nv.models.bubbleChart = function () {
               .attr('class', 'nv-title')
               .attr('x', direction === 'rtl' ? availableWidth : 0)
               .attr('y', 0)
-              .attr('dy', '1em')
+              .attr('dy', '.75em')
               .attr('text-anchor', 'start')
               .text(properties.title)
               .attr('stroke', 'none')
@@ -5034,7 +5056,7 @@ nv.models.funnelChart = function() {
             .attr('class', 'nv-title')
             .attr('x', direction === 'rtl' ? availableWidth : 0)
             .attr('y', 0)
-            .attr('dy', '1em')
+            .attr('dy', '.75em')
             .attr('text-anchor', 'start')
             .text(properties.title)
             .attr('stroke', 'none')
@@ -5986,7 +6008,7 @@ nv.models.gaugeChart = function() {
             .attr('class', 'nv-title')
             .attr('x', direction === 'rtl' ? availableWidth : 0)
             .attr('y', 0)
-            .attr('dy', '1em')
+            .attr('dy', '.75em')
             .attr('text-anchor', 'start')
             .text(properties.title)
             .attr('stroke', 'none')
@@ -6578,7 +6600,7 @@ nv.models.lineChart = function() {
         .clipEdge(true),
       xAxis = nv.models.axis()
         .orient('bottom')
-        .tickPadding(7)
+        .tickPadding(4)
         .highlightZero(false)
         .showMaxMin(false)
         .tickFormat(function(d) { return d; }),
@@ -6733,7 +6755,7 @@ nv.models.lineChart = function() {
             .attr('class', 'nv-title')
             .attr('x', direction === 'rtl' ? availableWidth : 0)
             .attr('y', 0)
-            .attr('dy', '1em')
+            .attr('dy', '.75em')
             .attr('text-anchor', 'start')
             .text(properties.title)
             .attr('stroke', 'none')
@@ -7806,18 +7828,18 @@ nv.models.multiBar = function() {
 
       baseDimension = stacked ? vertical ? 72 : 30 : 20;
 
-      var availableWidth = width - margin.left - margin.right,
-          availableHeight = height - margin.top - margin.bottom,
-          container = d3.select(this),
+      var container = d3.select(this),
           orientation = vertical ? 'vertical' : 'horizontal',
+          availableWidth = width - margin.left - margin.right,
+          availableHeight = height - margin.top - margin.bottom,
+          maxX = vertical ? availableWidth : availableHeight,
+          maxY = vertical ? availableHeight : availableWidth,
           dimX = vertical ? 'width' : 'height',
           dimY = vertical ? 'height' : 'width',
           limDimX = 0,
           limDimY = 0,
           valX = vertical ? 'x' : 'y',
           valY = vertical ? 'y' : 'x',
-          maxX = vertical ? availableWidth : availableHeight,
-          maxY = vertical ? availableHeight : availableWidth,
           valuePadding = 0,
           seriesCount = 0,
           groupCount = 0;
@@ -7871,7 +7893,17 @@ nv.models.multiBar = function() {
       groupCount = data[0].values.length;
       seriesCount = data.length;
 
+      chart.resetDimensions = function(w, h) {
+        width = w;
+        height = h;
+        availableWidth = w - margin.left - margin.right;
+        availableHeight = h - margin.top - margin.bottom;
+        maxX = vertical ? availableWidth : availableHeight;
+        maxY = vertical ? availableHeight : availableWidth;
+      };
+
       chart.resetScale = function() {
+
         availableWidth = width - margin.left - margin.right;
         availableHeight = height - margin.top - margin.bottom;
         limDimX = vertical ? availableWidth : availableHeight;
@@ -7896,7 +7928,8 @@ nv.models.multiBar = function() {
                 negOffset = (vertical ? d.y : 0);
             return stacked ? (d.y > 0 ? d.y1 + posOffset : d.y1 + negOffset) : d.y;
           }).concat(forceY)))
-          .range(vertical ? [availableHeight, 0] : [0, availableWidth]);
+          .range(vertical ? [availableHeight, 0] : [0, availableWidth])
+          .nice();
 
         x0 = x0 || x;
         y0 = y0 || y;
@@ -8586,7 +8619,7 @@ nv.models.multiBarChart = function() {
         .stacked(false),
       xAxis = nv.models.axis()
         .tickSize(0)
-        .tickPadding(8)
+        .tickPadding(4)
         .highlightZero(false)
         .showMaxMin(false)
         .tickFormat(function(d) { return d; }),
@@ -8905,7 +8938,7 @@ nv.models.multiBarChart = function() {
             .attr('class', 'nv-title')
             .attr('x', direction === 'rtl' ? availableWidth : 0)
             .attr('y', 0)
-            .attr('dy', '1em')
+            .attr('dy', '.75em')
             .attr('text-anchor', 'start')
             .text(properties.title)
             .attr('stroke', 'none')
@@ -9032,11 +9065,8 @@ nv.models.multiBarChart = function() {
       innerWidth = availableWidth - innerMargin.left - innerMargin.right;
       innerHeight = availableHeight - innerMargin.top - innerMargin.bottom;
 
-      // Recalc chart scales based on new inner dimensions
-      multibar
-        .width(getDimension('width'))
-        .height(getDimension('height'));
-
+      // Recalc chart dimensions and scales based on new inner dimensions
+      multibar.resetDimensions(getDimension('width'), getDimension('height'));
       multibar.resetScale();
 
       // X-Axis
@@ -9047,9 +9077,8 @@ nv.models.multiBarChart = function() {
       innerWidth = availableWidth - innerMargin.left - innerMargin.right;
       innerHeight = availableHeight - innerMargin.top - innerMargin.bottom;
 
-      multibar
-        .width(getDimension('width'))
-        .height(getDimension('height'));
+      multibar.resetDimensions(getDimension('width'), getDimension('height'));
+      multibar.resetScale();
 
       //------------------------------------------------------------
       // Main Chart Components
@@ -9097,8 +9126,10 @@ nv.models.multiBarChart = function() {
       if (scrollEnabled) {
         var diff = (vertical ? innerWidth : innerHeight) - minDimension,
             panMultibar = function() {
-              scrollOffset = scroll.pan(diff);
               dispatch.tooltipHide(d3.event);
+              scrollOffset = scroll.pan(diff);
+              xAxisWrap.select('.nv-axislabel')
+                .attr('x', (vertical ? innerWidth - scrollOffset * 2 : scrollOffset * 2 - innerHeight) / 2);
             };
 
         scroll
@@ -9530,7 +9561,7 @@ nv.models.paretoChart = function() {
         xAxis = nv.models.axis()
             .orient('bottom')
             .tickSize(0)
-            .tickPadding(7)
+            .tickPadding(4)
             .wrapTicks(true)
             .highlightZero(false)
             .showMaxMin(false)
@@ -9783,7 +9814,7 @@ nv.models.paretoChart = function() {
                     .attr('class', 'nv-title')
                     .attr('x', direction === 'rtl' ? availableWidth : 0)
                     .attr('y', 0)
-                    .attr('dy', '1em')
+                    .attr('dy', '.75em')
                     .attr('text-anchor', 'start')
                     .attr('stroke', 'none')
                     .attr('fill', 'black');
@@ -10466,7 +10497,8 @@ nv.models.paretoChart = function() {
     //============================================================
 
     return chart;
-};nv.models.pie = function() {
+};
+nv.models.pie = function() {
 
   //============================================================
   // Public Variables with Default Settings
@@ -11217,7 +11249,7 @@ nv.models.pieChart = function() {
             .attr('class', 'nv-title')
             .attr('x', direction === 'rtl' ? availableWidth : 0)
             .attr('y', 0)
-            .attr('dy', '1em')
+            .attr('dy', '.75em')
             .attr('text-anchor', 'start')
             .text(properties.title)
             .attr('stroke', 'none')
@@ -12437,7 +12469,7 @@ nv.models.stackedAreaChart = function() {
         .clipEdge(true),
       xAxis = nv.models.axis()
         .orient('bottom')
-        .tickPadding(7)
+        .tickPadding(4)
         .highlightZero(false)
         .showMaxMin(false)
         .tickFormat(function (d) { return d; }),
@@ -12590,7 +12622,7 @@ nv.models.stackedAreaChart = function() {
             .attr('class', 'nv-title')
             .attr('x', direction === 'rtl' ? availableWidth : 0)
             .attr('y', 0)
-            .attr('dy', '1em')
+            .attr('dy', '.75em')
             .attr('text-anchor', 'start')
             .text(properties.title)
             .attr('stroke', 'none')

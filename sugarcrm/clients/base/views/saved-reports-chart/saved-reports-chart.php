@@ -117,22 +117,22 @@ $viewdefs['base']['view']['saved-reports-chart'] = array(
                     'css_class' => 'fieldset-wrap',
                     'fields' => array(
                         array(
-                            'name' => 'rotateTicks',
-                            'text' => 'LBL_CHART_CONFIG_TICK_ROTATE',
-                            'type' => 'bool',
-                            'default' => 0,
-                        ),
-                        array(
                             'name' => 'wrapTicks',
                             'text' => 'LBL_CHART_CONFIG_TICK_WRAP',
                             'type' => 'bool',
-                            'default' => 1,
+                            'default' => true,
                         ),
                         array(
                             'name' => 'staggerTicks',
                             'text' => 'LBL_CHART_CONFIG_TICK_STAGGER',
                             'type' => 'bool',
-                            'default' => 1,
+                            'default' => true,
+                        ),
+                        array(
+                            'name' => 'rotateTicks',
+                            'text' => 'LBL_CHART_CONFIG_TICK_ROTATE',
+                            'type' => 'bool',
+                            'default' => true,
                         ),
                     ),
                 ),

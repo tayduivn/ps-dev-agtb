@@ -429,64 +429,51 @@ class AbstractRelationship
         $vardef [ 'table' ] = $this->getTablename( $sourceModule ) ;
         $vardef [ 'module' ] = $sourceModule ;
 
-        require_once 'modules/ModuleBuilder/parsers/relationships/AbstractRelationships.php' ;
-        $parsedModuleName = AbstractRelationships::parseDeployedModuleName( $sourceModule ) ;
+        $module = null;
 
-        // now determine the appropriate 'rname' field for this relate
-        // the 'rname' points to the field in source module that contains the displayable name for the record
-        // usually this is 'name' but sometimes it is not...
-
-        $vardef [ 'rname' ] = 'name' ;
-        if ( isset( $parsedModuleName['packageName'] ) )
-        {
-            require_once 'modules/ModuleBuilder/MB/ModuleBuilder.php' ;
-            $mb = new ModuleBuilder ( ) ;
-            $module = $mb->getPackageModule ( $parsedModuleName['packageName'] , $parsedModuleName['moduleName'] ) ;
-            if (in_array( 'file' , array_keys ( $module->config [ 'templates' ] ) ) ){
-                $vardef [ 'rname' ] = 'document_name' ;
-            }elseif(in_array ( 'person' , array_keys ( $module->config [ 'templates' ] ) ) ){
-            	$vardef [ 'db_concat_fields' ] = array( 0 =>'first_name', 1 =>'last_name') ;
-            }
+        switch (strtolower($sourceModule)) {
+            case 'prospects':
+                $bean = BeanFactory::getBean($this->definition['rhs_module']);
+                $fields = array_keys($bean->field_name_map);
+                if (in_array('name', $fields)) {
+                    $vardef['rname'] = 'name';
+                } else {
+                    $vardef['rname'] = 'account_name';
+                }
+                break;
+            case 'documents':
+                $vardef['rname'] = 'document_name';
+                break;
+            case 'kbdocuments':
+                $vardef['rname'] = 'kbdocument_name';
+                break;
+            default:
+                $module = $sourceModule;
+                break;
         }
-        else
-        {
-            switch ( strtolower( $sourceModule ) )
-            {
-                case 'prospects' :
-                    $bean = BeanFactory::getBean($this->definition['rhs_module']);
-                    $fields = array_keys($bean->field_name_map);
-                    if (in_array('name', $fields)) {
-                        $vardef['rname'] = 'name';
-                    } else {
-                        $vardef['rname'] = 'account_name';
-                    }
-                    break ;
-                case 'documents' :
-                    $vardef [ 'rname' ] = 'document_name' ;
-                    break ;
-                case 'kbdocuments' :
-                    $vardef [ 'rname' ] = 'kbdocument_name' ;
-                    break ;
-                case 'leads' :
-                case 'contacts' :
-                    // special handling as these modules lack a name column in the database; instead 'name' refers to a non-db field that concatenates first_name and last_name
-                    // luckily, the relate field mechanism can handle this with an equivalent additional db_concat_fields entry
-                    $vardef [ 'rname' ] = 'name' ;
-                    $vardef [ 'db_concat_fields' ] = array( 0 =>'first_name', 1 =>'last_name') ;
-                    break ;
-                default :
-                    // now see if we have any module inheriting from the 'file' template - records in file-type modules are named by the document_name field, not the usual 'name' field
-                    $bean = BeanFactory::getBean($sourceModule);
-                    if ( isset ( $GLOBALS [ 'dictionary' ] [ $bean->object_name ] [ 'templates'] )){
-                    	if(in_array ( 'file' , $GLOBALS [ 'dictionary' ] [ $bean->object_name ] [ 'templates'] )){
-                    		$vardef [ 'rname' ] = 'document_name' ;
-                    	}elseif(in_array ( 'person' , $GLOBALS [ 'dictionary' ] [ $bean->object_name ] [ 'templates'] )){
-                    		 $vardef [ 'db_concat_fields' ] = array( 0 =>'first_name', 1 =>'last_name') ;
-                    	}
-                    }
 
+        if ($module) {
+            $class = BeanFactory::getBean($module);
+            $tplconfig = array();
+
+            if (!$class) {
+                $parsedModuleName = AbstractRelationships::parseDeployedModuleName($sourceModule);
+                if (isset($parsedModuleName['packageName'])) { // added relationship to yet non-deployed module
+                    require_once 'modules/ModuleBuilder/MB/ModuleBuilder.php';
+                    $mb = new ModuleBuilder();
+                    $module = $mb->getPackageModule($parsedModuleName['packageName'], $parsedModuleName['moduleName']);
+                    $tplconfig = array_keys($module->config['templates']);
+                } else {
+                    throw new \RuntimeException('Module does not exist as a bean and no template found in its config');
+                }
             }
 
+            if (is_subclass_of($class, 'File') || in_array('file', $tplconfig)) {
+                $vardef['rname'] = 'document_name';
+            } elseif (is_subclass_of($class, 'Person') || in_array('person', $tplconfig)) {
+                $vardef['rname'] = 'full_name';
+                $vardef['db_concat_fields'] = array(0 => 'first_name', 1 => 'last_name');
+            }
         }
 
         return $vardef ;

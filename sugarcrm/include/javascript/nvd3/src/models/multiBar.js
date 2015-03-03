@@ -48,18 +48,18 @@ nv.models.multiBar = function() {
 
       baseDimension = stacked ? vertical ? 72 : 30 : 20;
 
-      var availableWidth = width - margin.left - margin.right,
-          availableHeight = height - margin.top - margin.bottom,
-          container = d3.select(this),
+      var container = d3.select(this),
           orientation = vertical ? 'vertical' : 'horizontal',
+          availableWidth = width - margin.left - margin.right,
+          availableHeight = height - margin.top - margin.bottom,
+          maxX = vertical ? availableWidth : availableHeight,
+          maxY = vertical ? availableHeight : availableWidth,
           dimX = vertical ? 'width' : 'height',
           dimY = vertical ? 'height' : 'width',
           limDimX = 0,
           limDimY = 0,
           valX = vertical ? 'x' : 'y',
           valY = vertical ? 'y' : 'x',
-          maxX = vertical ? availableWidth : availableHeight,
-          maxY = vertical ? availableHeight : availableWidth,
           valuePadding = 0,
           seriesCount = 0,
           groupCount = 0;
@@ -113,7 +113,17 @@ nv.models.multiBar = function() {
       groupCount = data[0].values.length;
       seriesCount = data.length;
 
+      chart.resetDimensions = function(w, h) {
+        width = w;
+        height = h;
+        availableWidth = w - margin.left - margin.right;
+        availableHeight = h - margin.top - margin.bottom;
+        maxX = vertical ? availableWidth : availableHeight;
+        maxY = vertical ? availableHeight : availableWidth;
+      };
+
       chart.resetScale = function() {
+
         availableWidth = width - margin.left - margin.right;
         availableHeight = height - margin.top - margin.bottom;
         limDimX = vertical ? availableWidth : availableHeight;
@@ -138,7 +148,8 @@ nv.models.multiBar = function() {
                 negOffset = (vertical ? d.y : 0);
             return stacked ? (d.y > 0 ? d.y1 + posOffset : d.y1 + negOffset) : d.y;
           }).concat(forceY)))
-          .range(vertical ? [availableHeight, 0] : [0, availableWidth]);
+          .range(vertical ? [availableHeight, 0] : [0, availableWidth])
+          .nice();
 
         x0 = x0 || x;
         y0 = y0 || y;

@@ -15,7 +15,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 $module_name = 'pmse_Inbox';
 $viewdefs[$module_name]['base']['view']['casesList-list'] = array(
-    'template' => 'list',
+    'favorite' => false,
+    'following' => false,
+    'selection' => array(
+    ),
     'rowactions' => array(
         'actions' => array(
             array(
@@ -60,43 +63,9 @@ $viewdefs[$module_name]['base']['view']['casesList-list'] = array(
             ),
         ),
     ),
-//    'selection' =>
-//        array (
-//            'type' => 'multi',
-//            'actions' =>
-//                array (
-//                    0 =>
-//                        array (
-//                            'name' => 'edit_button',
-//                            'type' => 'button',
-//                            'label' => 'LBL_CANCEL_CASE',
-//                            'primary' => true,
-//                            'events' =>
-//                                array (
-//                                    'click' => 'list:cancelCase:fire',
-//                                ),
-//                            'acl_action' => 'massupdate',
-//                        ),
-////                    1 =>
-////                        array (
-////                            'name' => 'execute_cases_button',
-////                            'type' => 'button',
-////                            'label' => 'LBL_EXECUTE_CASE',
-////                            'primary' => true,
-////                            'events' =>
-////                                array (
-////                                    'click' => 'list:executeCase:fire',
-////                                ),
-////                            'acl_action' => 'massupdate',
-////                        ),
-//                ),
-//        ),
     'panels' => array(
         array(
             'label' => 'LBL_PANEL_1',
-            'columns' => 2,
-            'labelsOnTop' => true,
-            'placeholders' => true,
             'fields' => array(
                 array(
                     'name' => 'cas_id',
@@ -104,6 +73,7 @@ $viewdefs[$module_name]['base']['view']['casesList-list'] = array(
                     'default' => true,
                     'enabled' => true,
                     'link' => true,
+//                    'width' => '3%',
                 ),
                 array(
                     'name' => 'pro_title',

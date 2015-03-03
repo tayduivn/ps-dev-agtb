@@ -58,7 +58,7 @@ nv.models.paretoChart = function() {
         xAxis = nv.models.axis()
             .orient('bottom')
             .tickSize(0)
-            .tickPadding(7)
+            .tickPadding(4)
             .wrapTicks(true)
             .highlightZero(false)
             .showMaxMin(false)
@@ -311,7 +311,7 @@ nv.models.paretoChart = function() {
                     .attr('class', 'nv-title')
                     .attr('x', direction === 'rtl' ? availableWidth : 0)
                     .attr('y', 0)
-                    .attr('dy', '1em')
+                    .attr('dy', '.75em')
                     .attr('text-anchor', 'start')
                     .attr('stroke', 'none')
                     .attr('fill', 'black');

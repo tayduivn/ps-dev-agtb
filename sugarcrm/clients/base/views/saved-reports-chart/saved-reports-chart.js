@@ -197,7 +197,7 @@
                 hideEmptyGroups: true,
                 wrapTicks:       true,
                 staggerTicks:    true,
-                rotateTicks:     false
+                rotateTicks:     true
             };
         return _.defaults(settings, defaults);
     },
@@ -524,6 +524,9 @@
                         xOptionsLabel = app.lang.get('LBL_CHART_CONFIG_SHOW_YAXIS_LABEL');
                         yOptionsLabel = app.lang.get('LBL_CHART_CONFIG_SHOW_XAXIS_LABEL');
                         break;
+                    case 'line chart':
+                        showTickOptions = false;
+                        break;
                     default:
                         showTickOptions = true;
                         xOptionsLabel = app.lang.get('LBL_CHART_CONFIG_SHOW_XAXIS_LABEL');
@@ -539,6 +542,7 @@
             if (tickDisplayMethods) {
                 tickDisplayMethods.$el.closest('.record-cell').toggleClass('hide', !showDimensionOptions || !showTickOptions);
             }
+
             if (yOptionsFieldset) {
                 yOptionsFieldset.$el.closest('.record-cell').toggleClass('hide', !showDimensionOptions);
             }
