@@ -239,12 +239,11 @@ class DownloadFile {
      *
      * @param array $beans The list of SugarBean(s) to get the archive for
      * @param string $field The field name to get the file for
-     * @param boolean $forceDownload force to download the file if true.
      * @param string $outputName Output archive name.
      *
      * @throws Exception
      */
-    public function getArchive(array $beans, $field, $forceDownload = true, $outputName = '')
+    public function getArchive(array $beans, $field, $outputName = '')
     {
         $archive = tempnam(sys_get_temp_dir(), 'sug');
 
@@ -268,12 +267,15 @@ class DownloadFile {
             $outputName .= '.zip';
         }
 
-        $this->outputFile($forceDownload, array(
-            'content-type' => $this->getMimeType($archive),
-            'content-length' => filesize($archive),
-            'name' => $outputName,
-            'path' => $archive,
-        ));
+        $this->outputFile(
+            true,
+            array(
+                'content-type' => $this->getMimeType($archive),
+                'content-length' => filesize($archive),
+                'name' => $outputName,
+                'path' => $archive,
+            )
+        );
     }
 
     /**

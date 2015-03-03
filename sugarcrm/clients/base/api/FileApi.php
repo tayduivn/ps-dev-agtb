@@ -487,12 +487,10 @@ class FileApi extends SugarApi {
         $this->verifyFieldAccess($linkSeed, $field);
         //END SUGARCRM flav=pro ONLY
 
-        $forceDownload = isset($args['force_download']) ? (bool) $args['force_download'] : true;
-
         $beans = $record->$linkName->getBeans();
         $download = $this->getDownloadFileApi($api);
         try {
-            $download->getArchive($beans, $field, $forceDownload, empty($record->name) ? $record->id : $record->name);
+            $download->getArchive($beans, $field, empty($record->name) ? $record->id : $record->name);
         } catch (Exception $e) {
             throw new SugarApiExceptionNotFound($e->getMessage(), null, null, 0, $e);
         }

@@ -68,31 +68,26 @@ class RS320Test extends Sugar_PHPUnit_Framework_TestCase
         return array(
             '4 files, force download, name: testarchive' => array(
                 4,
-                true,
                 'testarchive',
                 'testarchive.zip',
             ),
             '2 files, force download, name: someother.zip' => array(
                 2,
-                true,
                 'someother.zip',
                 'someother.zip',
             ),
             '3 files, not force download, name: three.zip' => array(
                 3,
-                false,
                 'three',
                 'three.zip',
             ),
             '4 files, force download, name:empty' => array(
                 4,
-                true,
                 '', // empty
                 'archive.zip',
             ),
             '5 files, not force download, name:empty' => array(
                 5,
-                true,
                 '', // empty
                 'archive.zip',
             ),
@@ -104,7 +99,7 @@ class RS320Test extends Sugar_PHPUnit_Framework_TestCase
      *
      * @dataProvider dataProviderGetArchive
      */
-    public function testGetArchive($fileCounts, $forceDownload, $outputName, $expectedOutputName)
+    public function testGetArchive($fileCounts, $outputName, $expectedOutputName)
     {
         $bean = BeanFactory::getBean('Notes');
         $sfh = new SugarFieldHandler();
@@ -140,14 +135,14 @@ class RS320Test extends Sugar_PHPUnit_Framework_TestCase
         $downloadMock = $this->getMock('DownloadFile', array('outputFile'));
         $downloadMock->expects($this->once())->method('outputFile')
                      ->with(
-                        $this->logicalAnd($this->isType('bool'), $forceDownload? $this->isTrue() : $this->isFalse()),
-                        $this->logicalAnd(
-                            $this->isType('array'),
-                            $this->arrayHasKey('path'),
-                            $this->arrayHasKey('content-type'),
-                            $this->arrayHasKey('content-length'),
-                            $this->arrayHasKey('name')
-                        )
+                         $this->logicalAnd($this->isType('bool'), $this->isTrue()),
+                         $this->logicalAnd(
+                             $this->isType('array'),
+                             $this->arrayHasKey('path'),
+                             $this->arrayHasKey('content-type'),
+                             $this->arrayHasKey('content-length'),
+                             $this->arrayHasKey('name')
+                         )
                      )
                      ->will($this->returnCallback(function ($forceDownload, $info) use ($unit, $expectedOutputName, $fileCounts) {
                             $unit->assertNotEmpty($info['path'], 'File path is empty');
@@ -169,7 +164,7 @@ class RS320Test extends Sugar_PHPUnit_Framework_TestCase
                       }));
 
         // get archived files
-        $downloadMock->getArchive($notes, 'filename', $forceDownload, $outputName);
+        $downloadMock->getArchive($notes, 'filename', $outputName);
     }
 
     /**
@@ -179,6 +174,6 @@ class RS320Test extends Sugar_PHPUnit_Framework_TestCase
     {
         $downloadMock = $this->getMock('DownloadFile', array('outputFile'));
         $this->setExpectedException('Exception', 'Files could not be retrieved for this record');
-        $downloadMock->getArchive(array(), 'filename', true);
+        $downloadMock->getArchive(array(), 'filename');
     }
 }
