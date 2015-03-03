@@ -62,7 +62,6 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
             }
 
             // create some meetings
-
             $meeting = SugarTestMeetingUtilities::createMeeting('UNIT-TEST-' . create_guid_section(10));
             $meeting->name = 'Test Meeting';
             $day = 10 + $i;
@@ -76,7 +75,6 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
         if (!empty($GLOBALS['sugar_config']['max_list_limit'])) {
             self::$oldLimit = $GLOBALS['sugar_config']['max_list_limit'];
         }
-
     }
 
     public function setUp()
@@ -113,6 +111,7 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
             $GLOBALS['db']->query("DELETE FROM opportunities WHERE id IN {$oppIds}");
             $GLOBALS['db']->query("DELETE FROM accounts_opportunities WHERE opportunity_id IN {$oppIds}");
         }
+
         // Notes cleanup
         if (count(self::$notes)) {
             $noteIds = array();
@@ -177,7 +176,6 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
                 'fields' => 'id,name'
             )
         );
-
         $this->assertEquals(1, $reply['record_count'], 'SimpleJoin: Returned too many results');
     }
 
@@ -185,17 +183,16 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $GLOBALS['sugar_config']['max_list_limit'] = 3;
         $reply = $this->filterApi->filterList(
-                $this->serviceMock,
-                array(
-                        'module' => 'Accounts',
-                        'filter' => array(array("name" => array('$starts' => "TEST 1"))),
-                        'fields' => 'id,name',
-                        'max_num' => '5'
-                )
+            $this->serviceMock,
+            array(
+                'module' => 'Accounts',
+                'filter' => array(array('name' => array('$starts' => 'TEST 1'))),
+                'fields' => 'id,name',
+                'max_num' => '5'
+            )
         );
         $this->assertEquals(3, $reply['next_offset'], 'Next offset is not set correctly');
         $this->assertEquals(3, count($reply['records']), 'Returned too many results');
-
     }
 
     public function testSimpleFilterWithOffset()
@@ -204,7 +201,7 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
             $this->serviceMock,
             array(
                 'module' => 'Accounts',
-                'filter' => array(array("name" => array('$starts' => "TEST 1"))),
+                'filter' => array(array('name' => array('$starts' => 'TEST 1'))),
                 'fields' => 'id,name',
                 'max_num' => '5'
             )
@@ -246,7 +243,6 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
                 'fields' => 'id,name',
             )
         );
-
         $this->assertEquals(11, $reply['record_count'], 'SimpleJoin: Returned too many results');
     }
 
@@ -289,7 +285,6 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
                 'order_by' => 'name:ASC'
             )
         );
-
         $this->assertEquals(2, $reply['record_count'], 'SimpleJoin: Returned too many results');
     }
 
@@ -311,7 +306,6 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
                 'order_by' => 'name:ASC'
             )
         );
-
         $this->assertEquals('TEST 17 Account', $reply['records'][0]['name'], 'And: The name is not set correctly');
         $this->assertEquals(-1, $reply['next_offset'], 'And: Next offset is not set correctly');
         $this->assertEquals(1, count($reply['records']), 'And: Returned too many results');
@@ -326,7 +320,55 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertNotEmpty($reply, "Empty filter returned no results.");
         $this->assertEquals(10, $reply['next_offset'], "Empty filter did not return at least 10 results.");
+    }
 
+    public function testBlankFilters()
+    {
+        $field = $this->equalTo('account_type');
+        $bean = new Account();
+        $q = new SugarQuery();
+        $q->from($bean);
+
+        /** @var SugarQuery_Builder_Where|PHPUnit_Framework_MockObject_MockObject $innerWhere */
+        $innerWhere = $this->getMock('SugarQuery_Builder_Where', array('equals', 'isNull'), array($q));
+        $innerWhere->expects($this->once())->method('equals')->with($field, '')->will($this->returnSelf());
+        $innerWhere->expects($this->once())->method('isNull')->with($field);
+
+        /** @var SugarQuery_Builder_Where|PHPUnit_Framework_MockObject_MockObject $where */
+        $where = $this->getMock('SugarQuery_Builder_Where', array('queryOr'), array($q));
+        $where->expects($this->once())->method('queryOr')->will($this->returnValue($innerWhere));
+
+        FilterApiMock::addFilters(array(
+            array(
+                'account_type' => array(
+                    '$blank' => '',
+                ),
+            ),
+        ), $where, $q);
+    }
+
+    public function testNotBlankFilters(){
+        $field = $this->equalTo('account_type');
+        $bean = new Account();
+        $q = new SugarQuery();
+        $q->from($bean);
+
+        /** @var SugarQuery_Builder_Where|PHPUnit_Framework_MockObject_MockObject $innerWhere */
+        $innerWhere = $this->getMock('SugarQuery_Builder_Where', array('notEquals', 'notNull'), array($q));
+        $innerWhere->expects($this->once())->method('notEquals')->with($field, '')->will($this->returnSelf());
+        $innerWhere->expects($this->once())->method('notNull')->with($field);
+
+        /** @var SugarQuery_Builder_Where|PHPUnit_Framework_MockObject_MockObject $where */
+        $where = $this->getMock('SugarQuery_Builder_Where', array('queryAnd'), array($q));
+        $where->expects($this->once())->method('queryAnd')->will($this->returnValue($innerWhere));
+
+        FilterApiMock::addFilters(array(
+            array(
+                'account_type' => array(
+                    '$not_blank' => '',
+                ),
+            ),
+        ), $where, $q);
     }
 
     /**
@@ -348,7 +390,6 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
                 'order_by' => 'name:ASC'
             )
         );
-
         $this->assertNotEmpty($reply['records']);
         $this->assertEquals(1, count($reply['records']));
     }
@@ -407,7 +448,6 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
                 'order_by' => 'name:ASC'
             )
         );
-
         $this->assertEquals('TEST 4 Account', $reply['records'][0]['name'], 'Favorites: The name is not set correctly');
         $this->assertEquals(-1, $reply['next_offset'], 'Favorites: Next offset is not set correctly');
         $this->assertEquals(1, count($reply['records']), 'Favorites: Returned too many results');
@@ -512,7 +552,6 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
         );
         $this->assertEquals(-1, $reply['next_offset'], 'FavMulRelated: Next offset is not set correctly');
 
-
         $reply = $this->filterApi->filterListCount(
             $this->serviceMock,
             array(
@@ -529,9 +568,7 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
             )
         );
 
-
         $this->assertEquals(3, $reply['record_count'], 'FavMulRelated: Returned too many results');
-
     }
 
     public function testOwnerFilter()
@@ -614,12 +651,10 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
             )
         );
 
-
         $this->assertNotEmpty($reply['records']);
 
         // the first one is out of range, so we should only get 19 records back
         $this->assertEquals(19, count($reply['records']));
-
     }
 
     /**

@@ -44,6 +44,7 @@ describe('Base.View.FilterRows', function() {
             populateFilterStub = sinon.collection.stub(view, 'populateFilter');
             filterModel = new Backbone.Model();
         });
+
         it('should render the view and add a row', function() {
             view.openForm(filterModel);
             expect(renderStub).toHaveBeenCalled();
@@ -51,6 +52,7 @@ describe('Base.View.FilterRows', function() {
             expect(populateFilterStub).not.toHaveBeenCalled();
             expect(saveEditStateStub).toHaveBeenCalled();
         });
+
         it('should populate filter', function() {
             filterModel.set('filter_definition', [{ /* ... */ }]);
             view.openForm(filterModel);
@@ -84,7 +86,6 @@ describe('Base.View.FilterRows', function() {
     });
 
     describe('getFilterableFields', function() {
-
         it('should return the list of filterable fields with fields definition', function() {
             sinon.collection.stub(app.metadata, 'getModule').returns(
                 {
@@ -122,9 +123,9 @@ describe('Base.View.FilterRows', function() {
                                 },
                                 filters: [
                                     {
-                                        'id': 'test_filter',
-                                        'name': 'Test Filter',
-                                        'filter_definition': {
+                                        id: 'test_filter',
+                                        name: 'Test Filter',
+                                        filter_definition: {
                                             '$starts': 'Test'
                                         }
                                     }
@@ -161,11 +162,13 @@ describe('Base.View.FilterRows', function() {
 
     describe('createField', function() {
         it('should instanciate a field', function() {
-            var def = { type: 'enum', options: { 'test': '' } };
+            var def = {type: 'enum', options:{test: ''}};
             var field = view.createField(new Backbone.Model(), def);
             expect(field instanceof app.view.Field).toBeTruthy();
             expect(field.type).toEqual('enum');
             expect(field.def).toEqual(def);
+
+            field.dispose();
         });
     });
 
@@ -182,6 +185,7 @@ describe('Base.View.FilterRows', function() {
 
     describe('removeRow', function() {
         var $event;
+
         beforeEach(function() {
             $event = $('<div>');
             sinon.collection.stub(view, 'addRow', function() {
@@ -192,6 +196,7 @@ describe('Base.View.FilterRows', function() {
             $('<div data-filter="row">').appendTo(view.$el);
             $('<div data-filter="row">').appendTo(view.$el);
         });
+
         it('should remove the row from the view', function() {
             $event.appendTo(view.$('[data-filter=row]:last'));
             view.removeRow({currentTarget: $event});
@@ -206,20 +211,20 @@ describe('Base.View.FilterRows', function() {
             view.removeRow({currentTarget: $event});
             expect(_.size(view.$('[data-filter=row]'))).toEqual(1);
         });
+
         it('should dispose fields', function() {
             var disposeStub = sinon.collection.stub(view, '_disposeRowFields');
             view.removeRow({currentTarget: $event});
             expect(disposeStub).toHaveBeenCalled();
             expect(disposeStub.lastCall.args[1]).toEqual([
-                {'field': 'nameField', 'value': 'name'},
-                {'field': 'operatorField', 'value': 'operator'},
-                {'field': 'valueField', 'value': 'value'}
+                {field: 'nameField', value: 'name'},
+                {field: 'operatorField', value: 'operator'},
+                {field: 'valueField', value: 'value'}
             ]);
         });
     });
 
     describe('rows validation', function() {
-
         it('should return true if all rows have a value set', function() {
             var $rows = [
                 $('<div>').data({ name: 'abc', value: 'ABC'}),
@@ -263,22 +268,21 @@ describe('Base.View.FilterRows', function() {
             expected: true
         }, {
             filter: $('<div>').data({ isFlexRelate: true, name: 'abc', operator: '$equals',
-                value: {'parent_id': '', 'parent_type': ''}}),
+                value: {parent_id: '', parent_type: ''}}),
             expected: false
         }, {
             filter: $('<div>').data({ isFlexRelate: true, name: 'abc', operator: '$equals',
-                value: {'parent_id': '', 'parent_type': 'Contacts'}}),
+                value: {parent_id: '', parent_type: 'Contacts'}}),
             expected: false
         }, {
             filter: $('<div>').data({ isFlexRelate: true, name: 'abc', operator: '$equals',
-                value: {'parent_id': '12345', 'parent_type': 'Accounts'}}),
+                value: {parent_id: '12345', parent_type: 'Accounts'}}),
             expected: true
         }], function(value) {
             it('should validate a filter correctly', function() {
                 expect(view.validateRows(value.filter)).toBe(value.expected);
             });
         });
-
     });
 
     describe('populateFilter', function() {
@@ -305,6 +309,7 @@ describe('Base.View.FilterRows', function() {
 
     describe('populateRow', function() {
         var addRowStub, initRowStub, _select2Obj, _rowObj;
+
         beforeEach(function() {
             view.fieldList = {
                 name: {},
@@ -331,6 +336,11 @@ describe('Base.View.FilterRows', function() {
             };
         });
 
+        afterEach(function() {
+            _select2Obj = null;
+            _rowObj = null;
+        });
+
         it('should not populate the row if the field does not exist in the metadata', function() {
 
             view.populateRow({
@@ -340,8 +350,8 @@ describe('Base.View.FilterRows', function() {
             expect(initRowStub).not.toHaveBeenCalled();
             expect(_select2Obj.select2).not.toHaveBeenCalled();
         });
-        it('should not populate the row if the field does not exist in the `fieldList`', function() {
 
+        it('should not populate the row if the field does not exist in the `fieldList`', function() {
             view.populateRow({
                 case_number: '123456'
             });
@@ -352,6 +362,7 @@ describe('Base.View.FilterRows', function() {
 
     describe('initRow', function() {
         var _rowObj, $row;
+
         beforeEach(function() {
             var _select2Obj = {
                 select2: sinon.collection.stub($.fn, 'select2', function(sel) {
@@ -389,8 +400,8 @@ describe('Base.View.FilterRows', function() {
 
             expect(initOperatorFieldSpy).toHaveBeenCalled();
             expect(initValueFieldSpy).toHaveBeenCalled();
-
         });
+
         it('should initialize a row', function() {
             view.filterFields = ['test_field'];
             view.initRow($row);
@@ -399,6 +410,7 @@ describe('Base.View.FilterRows', function() {
             // FIXME (SC-2833): add empty select option to not set the first option as default in filter row
             expect($row.data('nameField').def.options).toEqual(['test_field']);
         });
+
         it('should store both the `id` and the `type` in the row data for flex relate fields', function() {
             sinon.collection.stub(view, 'initOperatorField');
             view.fieldList = {
@@ -414,12 +426,12 @@ describe('Base.View.FilterRows', function() {
 
             expect($row.data().value.parent_id).toEqual('12345');
             expect($row.data().value.parent_type).toEqual('Accounts');
-
         });
     });
 
     describe('handleFieldSelected', function() {
         var $row, $filterField, $operatorField;
+
         beforeEach(function() {
             view.fieldList = {
                 test: {
@@ -445,8 +457,8 @@ describe('Base.View.FilterRows', function() {
             view.handleFieldSelected({currentTarget: $filterField});
             expect(disposeStub).toHaveBeenCalled();
             expect(disposeStub.lastCall.args[1]).toEqual([
-                {'field': 'operatorField', 'value': 'operator'},
-                {'field': 'valueField', 'value': 'value'}
+                {field: 'operatorField', value: 'operator'},
+                {field: 'valueField', value: 'value'}
             ]);
             expect(initOperatorFieldSpy).toHaveBeenCalled();
         });
@@ -454,6 +466,7 @@ describe('Base.View.FilterRows', function() {
 
     describe('initOperatorField', function() {
         var $row, $filterField, $operatorField, model, field;
+
         beforeEach(function() {
             view.fieldList = {
                 test: {
@@ -471,17 +484,21 @@ describe('Base.View.FilterRows', function() {
             $row = $('<div data-filter="row">').appendTo(view.$el);
             $filterField = $('<div data-filter="field">').val('test').appendTo($row);
             $operatorField = $('<div data-filter="operator">').appendTo($row);
-            model = app.data.createBean('Accounts', {'filter_row_name': 'name'});
+            model = app.data.createBean('Accounts', {filter_row_name: 'name'});
             field = view.createField(model, {
                 name: 'filter_row_name',
                 type: 'enum',
                 options: this.filterFields
             });
             $row.data('nameField', field);
-
         });
-        it('should create an enum field for operators', function() {
 
+        afterEach(function() {
+            field.dispose();
+            model = null;
+        });
+
+        it('should create an enum field for operators', function() {
             var createFieldSpy = sinon.collection.spy(view, 'createField');
 
             view.initOperatorField($row);
@@ -517,7 +534,7 @@ describe('Base.View.FilterRows', function() {
         });
 
         it('should hide flex-relate operator', function() {
-            model = app.data.createBean('Accounts', {'filter_row_name': 'relatedTo'});
+            model = app.data.createBean('Accounts', {filter_row_name: 'relatedTo'});
             field = view.createField(model, {
                 name: 'filter_row_name',
                 type: 'enum',
@@ -525,7 +542,7 @@ describe('Base.View.FilterRows', function() {
             });
             $row.data('nameField', field);
             var $valueField = $('<div data-filter="value">').appendTo($row);
-            view.fieldList['relatedTo'] = {'type' : 'parent'};
+            view.fieldList['relatedTo'] = {type : 'parent'};
             view.filterOperatorMap['parent'] = {'$equals': 'is'};
 
             view.initOperatorField($row);
@@ -537,8 +554,8 @@ describe('Base.View.FilterRows', function() {
 
     describe('initValueField', function() {
         var $row, $filterField, $operatorField, $valueField, createFieldSpy, field;
-        beforeEach(function() {
 
+        beforeEach(function() {
             view.fieldList = {
                 case_number: {
                     type: 'int'
@@ -559,12 +576,15 @@ describe('Base.View.FilterRows', function() {
                 },
                 team_name: {
                     type: 'teamset',
-                    'id_name': 'team_id'
+                    id_name: 'team_id'
                 },
                 flex_relate: {
                     type: 'parent',
-                    'id_name': 'parent_id',
-                    'type_name': 'parent_type'
+                    id_name: 'parent_id',
+                    type_name: 'parent_type'
+                },
+                account_type: {
+                    type: 'enum'
                 }
             };
             view.moduleName = 'Cases';
@@ -585,6 +605,10 @@ describe('Base.View.FilterRows', function() {
             $row.data('operatorField', field);
         });
 
+        afterEach(function() {
+            field = null;
+        });
+
         it('should make enum fields multi selectable', function() {
             sinon.collection.stub($.fn, 'select2').returns('status'); //return `status` as field
             view.initValueField($row);
@@ -601,6 +625,7 @@ describe('Base.View.FilterRows', function() {
             expect(_.isEmpty($valueField.html())).toBeFalsy();
             expect($row.data('valueField').action).toEqual('detail');
         });
+
         it('should convert a boolean field into an enum field', function() {
             sinon.collection.stub($.fn, 'select2').returns('priority'); //return `priority` as field
             view.initValueField($row);
@@ -614,6 +639,7 @@ describe('Base.View.FilterRows', function() {
             });
             expect(_.isEmpty($valueField.html())).toBeFalsy();
         });
+
         it('should use filter_checkbox_dom by default for bools', function() {
             sinon.collection.stub($.fn, 'select2').returns('test_bool_field'); //return `test_bool_field` as field
             view.initValueField($row);
@@ -627,6 +653,7 @@ describe('Base.View.FilterRows', function() {
             });
             expect(_.isEmpty($valueField.html())).toBeFalsy();
         });
+
         it('should set auto_increment to false for an integer field', function() {
             field = {
                 model: {
@@ -648,6 +675,7 @@ describe('Base.View.FilterRows', function() {
             });
             expect(_.isEmpty($valueField.html())).toBeFalsy();
         });
+
         it('should convert to varchar and join values for an integer field when operator is $in', function() {
             $operatorField.val('$in');
             $row.data('value', [1, 20, 35]);
@@ -665,6 +693,7 @@ describe('Base.View.FilterRows', function() {
             expect(_.isEmpty($valueField.html())).toBeFalsy();
             expect($row.data('value')).toEqual('1,20,35');
         });
+
         it('should create two inputs if the operator is in between', function() {
             field = {
                 model: {
@@ -700,16 +729,22 @@ describe('Base.View.FilterRows', function() {
 
         describe('teamset, relate, and flex-relate fields', function() {
             var fetchStub, model, field;
+
             beforeEach(function() {
                 //return `team_name` as field
                 fetchStub = sinon.collection.stub(Backbone.Collection.prototype, 'fetch');
 
-                model = app.data.createBean('Accounts', {'filter_row_operator': '$equals'});
+                model = app.data.createBean('Accounts', {filter_row_operator: '$equals'});
                 field = view.createField(model, {
                     name: 'filter_row_operator',
                     type: 'enum'
                 });
                 $row.data('operatorField', field);
+            });
+
+            afterEach(function() {
+                field.dispose();
+                model = null;
             });
 
             it('should convert teamset field to a relate field and fetch name like other relate fields', function() {
@@ -727,6 +762,7 @@ describe('Base.View.FilterRows', function() {
                 expect(_.isEmpty($valueField.html())).toBeFalsy();
                 expect(fetchStub).toHaveBeenCalled();
             });
+
             it('should convert teamset field to a relate field but not fetch because no value set', function() {
                 sinon.collection.stub($.fn, 'select2').returns('team_name');
                 view.initValueField($row);
@@ -741,10 +777,11 @@ describe('Base.View.FilterRows', function() {
                 expect(_.isEmpty($valueField.html())).toBeFalsy();
                 expect(fetchStub).not.toHaveBeenCalled();
             });
+
             it('should use the `parent_type` module when fetching name according to `parent_id`', function() {
                 sinon.collection.stub($.fn, 'select2').returns('flex_relate');
                 sinon.collection.spy(app.data, 'createBeanCollection');
-                $row.data('value', {'parent_type': 'My_Module', 'parent_id': '12345'});
+                $row.data('value', {parent_type: 'My_Module', parent_id: '12345'});
                 view.initValueField($row);
 
                 expect(createFieldSpy).toHaveBeenCalled();
@@ -759,9 +796,10 @@ describe('Base.View.FilterRows', function() {
                 expect(app.data.createBeanCollection).toHaveBeenCalledWith('My_Module');
                 expect(fetchStub).toHaveBeenCalled();
             });
+
             it('should not fetch when `parent_id` is not selected', function() {
                 sinon.collection.stub($.fn, 'select2').returns('flex_relate');
-                $row.data('value', {'parent_type': 'My_Module', 'parent_id': ''});
+                $row.data('value', {parent_type: 'My_Module', 'parent_id': ''});
                 view.initValueField($row);
                 expect(fetchStub).not.toHaveBeenCalled();
             });
@@ -819,6 +857,7 @@ describe('Base.View.FilterRows', function() {
             expect($row.data('operator')).toBeDefined();
             expect($row.data('valueField')).toBeDefined();
         });
+
         it('should trigger filter:apply when value change', function() {
             sinon.collection.stub($.fn, 'select2').returns('case_number'); //return `case_number` as field
             var triggerStub = sinon.collection.stub(view.layout, 'trigger');
@@ -829,6 +868,7 @@ describe('Base.View.FilterRows', function() {
             expect(triggerStub).toHaveBeenCalled();
             expect(triggerStub).toHaveBeenCalledWith('filter:apply');
         });
+
         it('should trigger filter:apply when keyup', function() {
             sinon.collection.stub($.fn, 'select2').returns('case_number'); //return `case_number` as field
             $filterField.val('case_number');
@@ -841,10 +881,46 @@ describe('Base.View.FilterRows', function() {
             expect(triggerStub).toHaveBeenCalled();
             expect(triggerStub).toHaveBeenCalledWith('filter:apply');
         });
+
+        using('different operators', [{
+            operator: '$blank',
+            hasValueField: false
+        },{
+            operator: '$not_blank',
+            hasValueField: false
+        },{
+            operator: '$equals',
+            hasValueField: true
+        }], function(params) {
+            it('should initialize value field properly corresponding to the operator', function() {
+                sinon.collection.stub($.fn, 'select2').returns('account_type'); //returns an 'enum' field
+                sinon.collection.stub(view, '_renderField');
+                var model = app.data.createBean('Accounts', {
+                    filter_row_operator: params.operator
+                });
+                $operatorField = view.createField(model, {
+                    name: 'filter_row_operator',
+                    type: 'enum',
+                    options: {}
+                });
+                $row = $('<div>').data({
+                    name: 'account_type',
+                    operator: params.operator,
+                    operatorField: $operatorField,
+                    value: ''
+                });
+
+                view.initValueField($row);
+
+                var data = $row.data();
+                expect(_.isUndefined((data['valueField']))).not.toEqual(params.hasValueField);
+            });
+        });
     });
 
     describe('handleOperatorSelected', function() {
         var $row, $filterField, $operatorField, $valueField;
+
         beforeEach(function() {
             view.fieldList = {
                 case_number: {
@@ -866,12 +942,12 @@ describe('Base.View.FilterRows', function() {
                 },
                 team_name: {
                     type: 'teamset',
-                    'id_name': 'team_id'
+                    id_name: 'team_id'
                 },
                 flex_relate: {
                     type: 'parent',
-                    'id_name': 'parent_id',
-                    'type_name': 'parent_type'
+                    id_name: 'parent_id',
+                    type_name: 'parent_type'
                 }
             };
             view.moduleName = 'Cases';
@@ -923,6 +999,7 @@ describe('Base.View.FilterRows', function() {
 
     describe('buildRowFilterDef', function() {
         var $row, filter, expected;
+
         beforeEach(function() {
             view.fieldList = {
                 case_number: {
@@ -956,6 +1033,10 @@ describe('Base.View.FilterRows', function() {
             };
         });
 
+        afterEach(function() {
+            filter = expected = null;
+        });
+
         it('should build a simple filter definition', function() {
             $row = $('<div>').data({
                 name: 'description',
@@ -970,6 +1051,7 @@ describe('Base.View.FilterRows', function() {
             };
             expect(filter).toEqual(expected);
         });
+
         it('should build a complex filter definition', function() {
             $row = $('<div>').data({
                 name: 'address_street',
@@ -1125,7 +1207,7 @@ describe('Base.View.FilterRows', function() {
 
         it('should use $and for flex-relate fields', function() {
             var filterModel = new Backbone.Model();
-            filterModel.set({'parent_id': '12345', 'parent_type': 'My_Module'});
+            filterModel.set({parent_id: '12345', parent_type: 'My_Module'});
             var fieldMock = {model: filterModel};
             $row = $('<div>').data({
                 name: 'relatedTo',
@@ -1168,6 +1250,7 @@ describe('Base.View.FilterRows', function() {
     describe('saveFilterEditState', function() {
         var component,
             buildFilterDefStub, saveFilterEditStateStub;
+
         beforeEach(function() {
             component = {
                 '$': function(sel) { return [sel]; },
@@ -1181,33 +1264,39 @@ describe('Base.View.FilterRows', function() {
             sinon.collection.stub(component, 'getFilterName').returns('AwesomeName');
             saveFilterEditStateStub = sinon.collection.stub(component, 'saveFilterEditState');
         });
+
+        afterEach(function() {
+            component = null;
+        });
+
         it('should build filter def when no param', function() {
             view.saveFilterEditState();
             expect(buildFilterDefStub).toHaveBeenCalled();
             expect(saveFilterEditStateStub).toHaveBeenCalled();
             var expectedFilter = {
-                'filter_definition': [
+                filter_definition: [
                     {'$favorites': ''}
                 ],
-                'filter_template': [
+                filter_template: [
                     {'$favorites': ''}
                 ],
-                'name': 'AwesomeName'
+                name: 'AwesomeName'
             };
             expect(saveFilterEditStateStub).toHaveBeenCalledWith(expectedFilter);
         });
+
         it('should get the filter def passed in params', function() {
-            view.saveFilterEditState([{'my_filter': {'is': 'cool'}}], [{'my_filter': {'is': 'cool'}}]);
+            view.saveFilterEditState([{my_filter: {is: 'cool'}}], [{my_filter: {is: 'cool'}}]);
             expect(buildFilterDefStub).not.toHaveBeenCalled();
             expect(saveFilterEditStateStub).toHaveBeenCalled();
             var expectedFilter = {
-                'filter_definition': [
-                    {'my_filter': {'is': 'cool'}}
+                filter_definition: [
+                    {my_filter: {is: 'cool'}}
                 ],
-                'filter_template': [
-                    {'my_filter': {'is': 'cool'}}
+                filter_template: [
+                    {my_filter: {is: 'cool'}}
                 ],
-                'name': 'AwesomeName'
+                name: 'AwesomeName'
             };
             expect(saveFilterEditStateStub).toHaveBeenCalledWith(expectedFilter);
         });
@@ -1224,6 +1313,7 @@ describe('Base.View.FilterRows', function() {
             expect(stubs[0]).toHaveBeenCalled();
             expect(stubs[1]).toHaveBeenCalled();
         });
+
         it('should call clear on each field model if valueField is an array', function() {
             var model1 = new Backbone.Model();
             var model2 = new Backbone.Model();
@@ -1236,5 +1326,4 @@ describe('Base.View.FilterRows', function() {
             expect(stubs[1]).toHaveBeenCalled();
         });
     });
-
 });

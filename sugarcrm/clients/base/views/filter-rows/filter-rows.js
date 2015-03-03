@@ -55,6 +55,16 @@
             operators = {};
         }
         this.filterOperatorMap = operators;
+
+        /**
+         * FIXME: we should consider moving it to metadata instead. (see TY-177).
+         * Storage for operators that have no values associated with them
+         *
+         * @private
+         * @property {Array}
+         * */
+        this._operatorsWithNoValues = ['$blank', '$not_blank'];
+
         app.view.View.prototype.initialize.call(this, opts);
 
         this.listenTo(this.layout, "filterpanel:change:module", this.handleFilterChange);
@@ -304,9 +314,9 @@
     removeRow: function(e) {
         var $row = this.$(e.currentTarget).closest('[data-filter=row]'),
             fieldOpts = [
-                {'field': 'nameField', 'value': 'name'},
-                {'field': 'operatorField', 'value': 'operator'},
-                {'field': 'valueField', 'value': 'value'}
+                {field: 'nameField', value: 'name'},
+                {field: 'operatorField', value: 'operator'},
+                {field: 'valueField', value: 'value'}
             ];
 
         this._disposeRowFields($row, fieldOpts);
@@ -339,6 +349,10 @@
     validateRow: function(row) {
         var $row = $(row),
             data = $row.data();
+
+        if (_.contains(this._operatorsWithNoValues, data.operator)) {
+            return true;
+        }
 
         //For date range and predefined filters there is no value
         if (data.isDateRange || data.isPredefinedFilter) {
@@ -466,9 +480,9 @@
         var $el = this.$(e.currentTarget);
         var $row = $el.parents('[data-filter=row]');
         var fieldOpts = [
-                {'field': 'operatorField', 'value': 'operator'},
-                {'field': 'valueField', 'value': 'value'}
-            ];
+            {field: 'operatorField', value: 'operator'},
+            {field: 'valueField', value: 'value'}
+        ];
         this._disposeRowFields($row, fieldOpts);
         this.initOperatorField($row);
     },
@@ -597,6 +611,11 @@
         // Make sure the data attributes contain the right operator selected.
         data.operator = operation;
         if (!operation) {
+            return;
+        }
+
+        if (_.contains(this._operatorsWithNoValues, operation)) {
+            this.fireSearch();
             return;
         }
 
@@ -990,9 +1009,9 @@
      *
      *     @example of an `opts` object param:
      *      [
-     *       {'field': 'nameField', 'value': 'name'},
-     *       {'field': 'operatorField', 'value': 'operator'},
-     *       {'field': 'valueField', 'value': 'value'}
+     *       {field: 'nameField', value: 'name'},
+     *       {field: 'operatorField', value: 'operator'},
+     *       {field: 'valueField', value: 'value'}
      *      ]
      *
      * @param  {jQuery} $row The row which fields are to be disposed.

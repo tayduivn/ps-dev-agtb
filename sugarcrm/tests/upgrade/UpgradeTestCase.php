@@ -14,8 +14,11 @@ require_once 'modules/UpgradeWizard/TestUpgrader.php';
 
 abstract class UpgradeTestCase extends Sugar_PHPUnit_Framework_TestCase
 {
-
+    /**
+     * @var TestUpgrader
+     */
     protected $upgrader;
+
     /**
      * admin user
      * @var User
@@ -34,13 +37,13 @@ abstract class UpgradeTestCase extends Sugar_PHPUnit_Framework_TestCase
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
 
-	public function setUp()
+    protected function setUp()
 	{
 	    $this->upgrader = new TestUpgrader(self::$admin);
 	    SugarTestHelper::setUp("files");
 	}
 
-	public function tearDown()
+    protected function tearDown()
 	{
 	    $this->upgrader->cleanState();
 	    $this->upgrader->cleanDir($this->upgrader->getTempDir());
