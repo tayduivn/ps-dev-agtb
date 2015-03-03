@@ -512,13 +512,21 @@ require_once('install/createSnipUser.php');
 
 
 //BEGIN SUGARCRM flav=ent ONLY
-installLog("converting Opportunities to use RevenueLineItems");
+installLog("Converting Opportunities to use RevenueLineItems");
 $admin = BeanFactory::getBean('Administration');
 $admin->saveSetting('Opportunities', 'opps_view_by', 'RevenueLineItems', 'base');
 
 require_once 'modules/Opportunities/include/OpportunityWithRevenueLineItem.php';
 $converter = new OpportunityWithRevenueLineItem();
 $converter->doMetadataConvert();
+
+if ($new_report) {
+    installLog("Converting Opportunities Reports to use RevenueLineItems");
+    // convert the stock reports
+    require_once 'modules/Opportunities/include/OpportunityReports.php';
+    $reports = new OpportunityReports();
+    $reports->migrateToRevenueLineItems();
+}
 
 // use the converter to update forecasts, it's protected so we have to get around that for the setup
 installLog("converting Forecasts to use RevenueLineItems");
