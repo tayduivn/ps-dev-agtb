@@ -261,7 +261,7 @@
     bindDataChange: function() {
         this._super('bindDataChange');
         if (this._dropdownExists()) {
-            this.$('[name=' + this.def.name + ']').html(this.model.get(this.def.name));
+            this.$('[name=' + this.def.name + ']').text(this.model.get(this.def.name));
             this.$('[name=' + this.def.id_name + ']').val(this.model.get(this.def.id_name));
         }
     },
