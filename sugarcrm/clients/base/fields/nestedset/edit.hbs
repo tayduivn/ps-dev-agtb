@@ -15,6 +15,9 @@
     <div name="{{name}}" {{#if def.tabindex}} tabindex="{{def.tabindex}}"{{/if}} data-role="treeinput" class="divinput">
         {{#if value}}{{value}}{{/if}}
         {{#unless value}}{{emptyLabel}}{{/unless}}
+        <span class="select-arrow">
+            <b class="fa fa-caret-down" role="presentation"></b>
+        </span>
     </div>
     {{#unless hideHelp}}{{#if def.help}}<p class="help-block">{{str def.help module}}</p>{{/if}}{{/unless}}
     <ul data-menu="dropdown" class="dropdown-menu" role="menu">
