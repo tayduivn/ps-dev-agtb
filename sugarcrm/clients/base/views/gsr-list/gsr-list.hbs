@@ -15,26 +15,33 @@
         <ul class="nav gsr-results">
             {{#each collection.models}}
                 <li class="gsr-result" data-id="{{attributes.id}}">
-                    {{#each ../meta.fields.icon}}
-                        {{field ../../this model=../this}}
-                    {{/each}}
                     <div class="ellipsis_inline primary" data-placement="bottom" title="" data-original-title="">
-                        {{#each attributes.primaryHighlightedFields}}
-                            <a href="{{../attributes.route}}">{{value}}</a>
-                        {{/each}}
-                        {{#each attributes.primaryFields}}
-                            {{field ../../this model=../this}}
+                        {{#each primaryFields}}
+                            {{#notEq type 'avatar'}}<h3>{{/notEq}}
+                            {{#if highlighted}}
+                                {{#if ../link}}
+                                    <span><a href="{{../../route}}">{{../../value}}</a></span>
+                                {{else}}
+                                    <span>{{../../value}}</span>
+                                {{/if}}
+                            {{else}}
+                                {{field ../../../this model=../../this}}
+                            {{/if}}
+
+                            {{#notEq type 'avatar'}}</h3>{{/notEq}}
                         {{/each}}
                     </div>
+
                     <div class="ellipsis_inline secondary" data-placement="bottom" title="" data-original-title="">
-                        {{#each attributes.secondaryHighlightedFields}}
-                            <span>{{str label ../module}}: {{value}}{{#unless @last}}, {{/unless}}{{#if @last}}{{#if ../../attributes.secondaryFields}}, {{/if}}{{/if}}
-                            </span>
-                        {{/each}}
-                        {{#each attributes.secondaryFields}}
-                            {{field ../../this model=../this}}
+                        {{#each secondaryFields}}
+                            {{#if highlighted}}
+                                <span>{{str ../label ../../module}}: </span><span>{{../value}}</span>{{#unless @last}}, {{/unless}}
+                            {{else}}
+                                <span>{{str ../vname ../../module}}: </span>{{field ../../../this model=../../this}}{{#unless @last}}, {{/unless}}
+                            {{/if}}
                         {{/each}}
                     </div>
+
                     {{#each ../meta.rowactions.actions}}
                         {{field ../../this model=../this}}
                     {{/each}}

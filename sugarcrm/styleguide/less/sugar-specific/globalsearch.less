@@ -161,38 +161,31 @@
 }
 
 //CSS required for the results page
-.gsr-results {
+li.gsr-result {
   padding-left: 12px;
-}
-
-.gsr-result {
+  min-height: 45px;
+  line-height: 12px;
   position: relative;
-  border-bottom: 1px solid #e9e9e9;
+  border-bottom: 1px solid darken(@grayLighter, 7%);
   padding-top: 14px;
   padding-right: 50px;
-  clear: both;
   .primary {
-    min-height: 18px;
-    > a {
-    margin-left: 5px;
+    > h3 {
+      margin-left: 42px;
+      font-size: @baseFontSize;
+      margin-top: 0;
+      line-height: 18px;
+      font-weight: normal;
     }
   }
   .secondary {
-    min-height: 18px;
-    margin-bottom: 7px;
-    > span {
-      margin-left: 5px;
-    }
+    position: relative;
+    bottom: 11px;
+    margin-left: 42px;
   }
 }
 
 .gsr-list {
-  > .label.label-module {
-    float: left;
-  }
-  > div > a {
-    margin-left: 5px;
-  }
   > .rowaction {
     float: right;
     position: absolute;

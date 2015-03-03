@@ -40,13 +40,17 @@
      */
     fireSearchRequest: function(term) {
         var self = this;
-        var maxNum = app.config && app.config.maxSearchQueryResult ? app.config.maxSearchQueryResult : 20;
+        var maxNum = app.config && app.config.maxSearchQueryResult ? parseInt(app.config.maxSearchQueryResult, 10) : 20;
         var params = {
             q: term,
             max_num: maxNum
         };
+
         app.api.search(params, {
             success: function(data) {
+                if (self.disposed) {
+                    return;
+                }
                 var formattedRecords = self.formatRecords(data.records);
                 self.collection.reset(formattedRecords);
             },
@@ -66,20 +70,25 @@
     formatRecords: function(records) {
         var formattedRecords = [];
         _.each(records, function(record) {
-            if (!record.data.id) {
-                // Elastic Search may return records without id and record names.
-                return;
-            }
             var module = app.metadata.getModule(record.data._module);
+
             record.highlights = _.map(record.highlights, function(val, key) {
                 return {name: key, value: new Handlebars.SafeString(val), label: module.fields[key].vname};
             });
+            model.set('_highlights', highlights);
+
+            //FIXME: We shouldn't do that because it only applies for person
+            // object, SC-4196 will fix it.
             if (!record.data.name) {
                 record.data.name = record.data.first_name + ' ' + record.data.last_name;
             }
+
             var formattedRecord = {
                 id: record.data.id,
                 name: record.data.name,
+                link: true,
+                first_name: record.data.first_name,
+                last_name: record.data.last_name,
                 module: record.data._module,
                 _module: record.data._module,
                 route: '#' + app.router.buildRoute(record.data._module, record.data.id),
@@ -87,6 +96,7 @@
             };
             formattedRecords.push(formattedRecord);
         });
+
         return formattedRecords;
     }
 })

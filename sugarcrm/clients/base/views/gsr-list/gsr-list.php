@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 $viewdefs['base']['view']['gsr-list'] = array(
-    'template' => 'gsr-list',
     'rowactions' => array(
         'actions' => array(
             array(
@@ -19,38 +18,34 @@ $viewdefs['base']['view']['gsr-list'] = array(
                 'tooltip' => 'LBL_PREVIEW',
                 'event' => 'list:preview:fire',
                 'icon' => 'fa-eye',
-                'acl_action' => 'view'
+                'acl_action' => 'view',
             ),
         ),
     ),
-    'fields' => array(
-        'icon' => array(
-            array(
-                'name' => 'picture',
-                'type' => 'avatar',
-                'align' => 'center',
-                'label' => 'LBL_MODULE_TYPE',
-                'dismiss_label' => true,
-                'readonly' => true,
-                'enabled' => true,
-                'default' => true,
-                'isSortable' => true,
-                'size' => 'medium',
-            )
-        ),
-        'primary' => array(
-            array(
-                'name' => 'name',
-                'label' => 'LBL_SUBJECT',
-                'type' => 'name',
-                'enabled' => true,
-                'default' => true,
-                'link' => true,
-                'isSortable' => true,
-                'width' => 'large',
+    'panels' => array(
+        array(
+            'name' => 'primary',
+            'fields' => array(
+                array(
+                    'name' => 'picture',
+                    'type' => 'avatar',
+                    'size' => 'medium',
+                    'readonly' => true,
+                    'css_class' => 'pull-left',
+                ),
+                array(
+                    'name' => 'name',
+                    'type' => 'name',
+                    'link' => true,
+                    'label' => 'LBL_SUBJECT',
+                ),
             ),
         ),
-        'secondary' => array(
+        array(
+            'name' => 'secondary',
+            'fields' => array(
+            ),
         ),
-    )
+    ),
 );
+

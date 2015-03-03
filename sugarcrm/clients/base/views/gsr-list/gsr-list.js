@@ -19,140 +19,172 @@
 ({
 
     /**
+     * @inheritDoc
+     */
+    initialize: function(options) {
+        this._super('initialize', [options]);
+
+        /**
+         * The fields metadata for this view per module.
+         *
+         * @property
+         * @private
+         */
+        this._fieldsMeta = {};
+    },
+
+    /**
      * Parses models when collection resets and renders the view.
+     *
+     * @override
      */
     bindDataChange: function() {
         this.collection.on('reset', function() {
+            if (this.disposed) {
+                return;
+            }
             this.parseModels(this.collection.models);
             this.render();
         }, this);
     },
 
     /**
-     * Parses models to split them in primary fields and secondary fields. This
-     * will be used to render then properly in the template.
+     * Parses models to generate primary fields and secondary fields based on
+     * the metadata and data sent by the globalsearch API. This is used to
+     * render them properly in the template.
      *
      * @param {Data.Bean[]} models The models to parse.
      */
     parseModels: function(models) {
         _.each(models, function(model) {
-            this.setPrimaryFields(model);
-            this.setSecondaryFields(model);
+            var moduleMeta = this._getFieldsMeta(model.module);
+
+            model.primaryFields = this._highlightFields(model, moduleMeta.primaryFields);
+            model.secondaryFields = this._highlightFields(model, moduleMeta.secondaryFields, true);
+
+            model.primaryFields = this._sortHighlights(model.primaryFields);
+            model.secondaryFields = this._sortHighlights(model.secondaryFields);
+
+            model.rowactions = moduleMeta.rowactions;
         }, this);
     },
 
     /**
-     * Parses the highlighted fields array and the primary fields from the
-     * metadata to separate primary fields in 2 distinct primary fields
-     * arrays : `primaryFields` and `primaryHighlightedFields`. Then, sets
-     * these arrays in the model.
+     * Gets the view metadata from the given module, patches it to distinguish
+     * primary fields from secondary fields and disables the native inline
+     * ellipsis feature of fields.
      *
-     * @param {Data.Bean} model The model on which highlighted fields are parsed.
+     * @param {string} module The module to get the metadata from.
+     * @return {Object} The metadata object.
+     * @private
      */
-    setPrimaryFields: function(model) {
-        var highlights = model.get('highlights');
-        var primaryFields = _.clone(this.meta.fields.primary);
-        var primaryHighlightedFields = [];
-
-        _.each(primaryFields, function(field, index) {
-            if (this._isHighlighted(field, highlights)) {
-                // We remove highlighted fields from `primary fields`.
-                primaryFields.splice(index, 1);
-                var highlightedField = _.find(highlights, function(highlight) {
-                    return highlight.name === field.name;
-                });
-                // Then we add the highlighted field to
-                // `primary highlighted fields`
-                primaryHighlightedFields.push(highlightedField);
+    _getFieldsMeta: function(module) {
+        if (this._fieldsMeta[module]) {
+            return this._fieldsMeta[module];
+        }
+        var fieldsMeta = this._fieldsMeta[module] = {};
+        var meta = _.extend({}, this.meta, app.metadata.getView(module, 'gsr-list'));
+        _.each(meta.panels, function(panel) {
+            if (panel.name === 'primary') {
+                fieldsMeta.primaryFields = this._setFieldsCategory(panel.fields, 'primary');
+            } else if (panel.name === 'secondary') {
+                fieldsMeta.secondaryFields = this._setFieldsCategory(panel.fields, 'secondary');
             }
         }, this);
+        fieldsMeta.rowactions = meta.rowactions;
 
-        model.set('primaryFields', primaryFields);
-        model.set('primaryHighlightedFields', primaryHighlightedFields);
+        return fieldsMeta;
     },
 
     /**
-     * Parses the highlighted fields array and the secondary fields from the
-     * metadata to separate secondary fields in 2 distinct secondary fields
-     * arrays : `secondaryFields` and `secondaryHighlightedFields`. Then, sets
-     * these arrays in the model.
+     * Converts a hash of field names and their definitions into an array of
+     * field definitions sorted such as:
      *
-     * @param {Data.Bean} model The model on which highlighted fields are parsed.
-     */
-    setSecondaryFields: function(model) {
-        var highlights = model.get('highlights');
-        var secondaryFields = _.clone(this.meta.fields.secondary);
-        // First we set `secondary highlighted fields` as all highlighted fields.
-        var secondaryHighlightedFields = highlights;
-
-        _.each(highlights, function(highlight, index) {
-            //Then we remove those which are already `primary fields`.
-            if (this._isPrimary(highlight)) {
-                secondaryHighlightedFields.splice(index, 1);
-            }
-            //Then, we remove from the `secondary fields` the highlighted ones.
-            if (this._isSecondary(highlight)) {
-                secondaryFields.splice(index, 1);
-            }
-        }, this);
-
-        model.set('secondaryFields', secondaryFields);
-        model.set('secondaryHighlightedFields', secondaryHighlightedFields);
-    },
-
-    /**
-     * Checks if a field is one of the primary fields set in the metadata.
+     *  - avatar field(s) is(are) first (in theory there should be only one),
+     *  - highlighted fields are second,
+     *  - non highlighted fields are third.
      *
-     * @param {Object} fieldToCheck The field to check.
-     * @return {boolean} `true` if the field is one of the primary fields,
-     *   `false` otherwise.
+     * @param {Object} fieldsObject The object to transform.
+     * @return {Array} fieldsArray The sorted array of objects.
      * @private
      */
-    _isPrimary: function(fieldToCheck) {
-        var primary = false;
-        _.each(this.meta.fields.primary, function(field) {
-            if (fieldToCheck.name === field.name) {
-                primary = true;
+    _sortHighlights: function(fieldsObject) {
+        var fieldsArray = _.values(fieldsObject);
+        fieldsArray = _.sortBy(fieldsArray, function(field) {
+            if (field.type === 'avatar') {
+                return 0;
             }
+            return field.highlighted ? 1 : 2;
         });
-        return primary;
+        return fieldsArray;
     },
 
     /**
-     * Checks if a field is one of the secondary fields set in the metadata.
+     * Sets `primary` or `secondary` boolean to fields. Also, we set the
+     * `ellipsis` flag to `false` so that the field doesn't render in a div with
+     * the `ellipsis_inline` class.
      *
-     * @param {Object} fieldToCheck The field to check.
-     * @return {boolean} `true` if the field is one of the secondary fields,
-     *   `false` otherwise.
+     * @param {Object} fields The fields.
+     * @param {String} category The field category. It can be `primary` or
+     *   `secondary`.
+     * @return {Object} The enhanced fields object.
      * @private
      */
-    _isSecondary: function(fieldToCheck) {
-        var secondary = false;
-        _.each(this.meta.fields.secondary, function(field) {
-            if (fieldToCheck.name === field.name) {
-                secondary = true;
+    _setFieldsCategory: function(fields, category) {
+        var fieldList = {};
+
+        _.each(fields, function(field) {
+            if (!fieldList[field.name]) {
+                fieldList[field.name] = _.extend({}, fieldList[field.name], field);
             }
+            fieldList[field.name][category] = true;
+            fieldList[field.name].ellipsis = false;
         });
-        return secondary;
+
+        return fieldList;
     },
 
     /**
-     * Checks if a field is one of the highlighted fields returned by
-     * elasticsearch.
+     * Adds `highlighted` attribute to fields sent as `highlights` by the
+     * globalsearch API for a given model.
      *
+     * This method clones viewdefs fields and replace them by
+     * the highlighted fields sent by the API.
+     *
+     * @param {Data.Bean} model The model.
+     * @param {Object} viewDefs The view definitions of the fields.
+     *   Could be definition of primary fields or secondary fields.
+     * @param {boolean} [add=false] `true` to add in the viewdefs the highlighted
+     *   fields if they don't already exist. `false` to skip them if they don't
+     *   exist in the viewdefs.
      * @private
-     * @param {Object} field The field to check.
-     * @param {Object[]} highlights The array of highlighted fields.
-     * @return {boolean} highlighted `true` if the field is one of the
-     *   highlighted fields, `false` otherwise.
      */
-    _isHighlighted: function(field, highlights) {
-        var highlighted = false;
-        _.each(highlights, function(highlight) {
-            if (highlight.name === field.name) {
-                highlighted = true;
+    _highlightFields: function(model, viewDefs, add) {
+        //The array of highlighted fields
+        var highlighted = model.get('_highlights');
+        //The fields vardefs of the model.
+        var varDefs = model.fields;
+        viewDefs = _.clone(viewDefs);
+
+        _.each(highlighted, function(field) {
+            var x = viewDefs[field.name]; // covers patching existing.
+            var y = add; // covers adding in case it doesn't exist.
+            var addOrPatchExisting = (x || y); // shall we proceed.
+
+            // We want to patch the field def only if there is an existing
+            // viewdef for this field or if we want to add it if it doesn't exist
+            // (This is the case for secondary fields).
+            if (!addOrPatchExisting) {
+                return;
             }
+            // Checks if the model has the field in its primary fields, if it
+            // does, we don't patch the field def because we don't want it to
+            // be in both secondary and primary fields.
+            if (!_.isUndefined(model.primaryFields) && model.primaryFields[field.name]) {
+                return;
+            }
+            viewDefs[field.name] = _.extend({}, varDefs[field.name], viewDefs[field.name], field);
         });
-        return highlighted;
+        return viewDefs;
     }
 })
