@@ -482,10 +482,8 @@ class FileApi extends SugarApi {
         }
         $field = $args['field'];
 
-        //BEGIN SUGARCRM flav=pro ONLY
         // Handle ACL
         $this->verifyFieldAccess($linkSeed, $field);
-        //END SUGARCRM flav=pro ONLY
 
         $beans = $record->$linkName->getBeans();
         $download = $this->getDownloadFileApi($api);
