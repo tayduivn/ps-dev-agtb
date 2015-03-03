@@ -310,6 +310,7 @@
                     'include/javascript/sugar7/plugins/SearchForMore.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/EditAllRecurrences.js' => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/AddAsInvitee.js' => 'include/javascript/sugar_sidecar.min.js',
+                    'include/javascript/sugar7/plugins/DragdropSelect2.js' => 'include/javascript/sugar_sidecar.min.js',
                 )
            ),
 
