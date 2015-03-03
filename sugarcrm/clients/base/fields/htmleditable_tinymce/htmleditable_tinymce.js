@@ -49,7 +49,7 @@
 
         this._getHtmlEditableField().attr('name', this.name);
         if (this._isEditView()) {
-            this._renderEdit(this.options.def.tinyConfig || null);
+            this._renderEdit(this.def.tinyConfig || null);
         } else {
             this._renderView();
         }
