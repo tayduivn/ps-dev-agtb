@@ -241,11 +241,13 @@ class Importer
             // If there is an default value then use it instead
             if ( !empty($_REQUEST[$field]) )
             {
-                $defaultRowValue = $this->populateDefaultMapValue($field, $_REQUEST[$field], $fieldDef);
-
-                if ($fieldDef['type'] == 'id' && !isset($row[$fieldNum]) && in_array($fieldDef['group'], $this->importColumns)) {
-                    $defaultRowValue = "";
+                if ($fieldDef['type'] == 'relate' && !empty($row[$fieldNum]) && $row[$fieldNum] != $_REQUEST[$field]) {
+                    if (!empty($fieldDef['id_name']) && empty($row[$fieldDef['id_name']])) {
+                        $focus->$fieldDef['id_name'] = "";
+                    }
                 }
+
+                $defaultRowValue = $this->populateDefaultMapValue($field, $_REQUEST[$field], $fieldDef);
 
                 if(!empty($fieldDef['custom_type']) && $fieldDef['custom_type'] == 'teamset' && empty($rowValue))
                 {
