@@ -12,23 +12,23 @@
 namespace Sugarcrm\Sugarcrm\Socket;
 
 /**
- * Class SugarSocket allows us to send messages to connected clients.
+ * Class Client allows us to send messages to connected clients.
  *
  * By default message will be sent to all connected clients,
- * @see SugarSocket::recipient method to specify recipients.
+ * @see Client::recipient method to specify recipients.
  *
  * Examples:
  * <code>
  * // to all
- * SugarSocket::getInstance()->send('test');
+ * Client::getInstance()->send('test');
  *
  * // with data
- * SugarSocket::getInstance()->send('progress', array('processId' => 123, 'progress' => 80));
+ * Client::getInstance()->send('progress', array('processId' => 123, 'progress' => 80));
  *
  * // to specified group
- * SugarSocket::getInstance()->recipient(SugarSocket::RECIPIENT_USER_ID, $userId)->send('test');
- * SugarSocket::getInstance()->recipient(SugarSocket::RECIPIENT_TEAM_ID, $teamId)->send('test');
- * SugarSocket::getInstance()->recipient(SugarSocket::RECIPIENT_USER_TYPE, 'admin')->send('test');
+ * Client::getInstance()->recipient(Client::RECIPIENT_USER_ID, $userId)->send('test');
+ * Client::getInstance()->recipient(Client::RECIPIENT_TEAM_ID, $teamId)->send('test');
+ * Client::getInstance()->recipient(Client::RECIPIENT_USER_TYPE, 'admin')->send('test');
  * </code>
  */
 class Client
@@ -42,7 +42,7 @@ class Client
 
     /**
      * Name of recipient for message, by default message will be send to all sockets
-     * To specify recipient use SugarSocket->recipient() method with type of recipient
+     * To specify recipient use recipient() method with type of recipient
      *
      * @var string
      */
@@ -51,7 +51,7 @@ class Client
     /**
      * The method should be used if we need to send message to specified user, team, or type of user
      *
-     * @param SugarSocket::RECIPIENT_USER_ID|SugarSocket::RECIPIENT_TEAM_ID|SugarSocket::RECIPIENT_USER_TYPE $type
+     * @param Client::RECIPIENT_USER_ID|Client::RECIPIENT_TEAM_ID|Client::RECIPIENT_USER_TYPE $type
      * @param string $id
      * @return Client|CustomClient
      */
@@ -62,7 +62,7 @@ class Client
     }
 
     /**
-     * Returns object of SugarSocket, customized if it's present
+     * Returns object of Client, customized if it's present
      *
      * @return Client|CustomClient
      */

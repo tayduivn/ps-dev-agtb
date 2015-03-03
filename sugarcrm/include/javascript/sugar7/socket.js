@@ -33,13 +33,10 @@
     });
 
     function initSocket(url) {
-        var regexp = /^(http?):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?$/i;
-        if (regexp.test(url)) {
+        if (!_.isUndefined(url)) {
             var socket = io(url, {
                 autoConnect: false
             });
-
-            console.dir(socket);
 
             var connect = function() {
                 socket.emit('OAuthToken', {
