@@ -413,6 +413,7 @@ class TreeApi extends FilterApi
     
     /**
      * This method returns all root nodes.
+     * @uses TreeApi::formatTree to format output results.
      * @param ServiceBase $api Api object.
      * @param array $args The arguments array passed in from the API.
      * @return array List of root nodes.
@@ -426,6 +427,7 @@ class TreeApi extends FilterApi
 
     /**
      * This method returns formatted tree for selected root.
+     * @uses TreeApi::formatTree to format output results.
      * @param ServiceBase $api Api object.
      * @param array $args The arguments array passed in from the API.
      * @return array Formatted collection.
@@ -469,6 +471,7 @@ class TreeApi extends FilterApi
 
     /**
      * This method returns children nodes for selected record.
+     * @uses TreeApi::formatTree to format output results.
      * @param ServiceBase $api Api object.
      * @param array $args The arguments array passed in from the API.
      * @return array List of children nodes.
