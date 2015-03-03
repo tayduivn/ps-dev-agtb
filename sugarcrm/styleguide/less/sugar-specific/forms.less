@@ -148,6 +148,9 @@ input[type=radio] {
     }
   }
 }
+.dataTable td[data-type*="datetimecombo"] .edit.error input[type="text"].ui-timepicker-input {
+  margin-left: -38px;
+}
 
 #header .control-group label.hide {
   display: none;
@@ -198,7 +201,7 @@ input[type=radio] {
   margin-bottom: 0;
   .add-on {
     top: 3px;
-    left: -28px;
+    left: -24px;
     margin-left: 0;
     height: 16px;
     padding: 3px 3px;
@@ -226,7 +229,7 @@ input[type=radio] {
   &.checkbox .add-on,
   &.radio .add-on{
     padding: 0;
-    top: 0;
+    top: 1px;
     left: 7px;
     display: inline;
   }
@@ -263,7 +266,7 @@ input[type=radio] {
   }
 
   .ui-timepicker-input {
-    margin-left: -24px;
+    margin-left: -14px;
   }
   .ui-timepicker-list {
     margin-left: -24px;
@@ -274,7 +277,7 @@ input[type=radio] {
   }
   &.error {
     .add-on {
-      left: -26px;
+      left: -24px;
       color: @errorText;
       z-index: 1;
       .fa {
@@ -283,7 +286,7 @@ input[type=radio] {
     }
     .ui-timepicker-input,
     .ui-timepicker-list {
-      margin-left: -46px;
+      margin-left: -36px;
     }
     textarea,
     input[type="password"],
@@ -299,7 +302,7 @@ input[type=radio] {
         &.error-tooltip {
           left: -42px;
           & + .add-on {
-            left: -50px;
+            left: -46px;
           }
         }
       }
