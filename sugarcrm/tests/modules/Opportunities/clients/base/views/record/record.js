@@ -61,6 +61,30 @@ describe('Opportunities.Base.Views.Record', function() {
 
     //BEGIN SUGARCRM flav=ent ONLY
 
+    describe('addInitListener', function() {
+        beforeEach(function() {
+            sinonSandbox.stub(view, 'once');
+        });
+        it('should call view.once', function() {
+            sinonSandbox.stub(app.acl, 'hasAccess', function() {
+                return true;
+            });
+
+            view.addInitListener();
+
+            expect(view.once).toHaveBeenCalled();
+        });
+        it('should not call view.once', function() {
+            sinonSandbox.stub(app.acl, 'hasAccess', function() {
+                return false;
+            });
+
+            view.addInitListener();
+
+            expect(view.once).not.toHaveBeenCalled();
+        });
+    });
+
     describe('rliCreateClose', function() {
         afterEach(function() {
             view.context.children = [];
