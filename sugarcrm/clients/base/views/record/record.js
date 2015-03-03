@@ -183,9 +183,7 @@
         if (this.resavingAfterMetadataSync)
             return false;
 
-        changedAttributes = this.model.changedAttributes(
-            _.extend({}, this.model.getDefaultAttributes(), this.model.getSyncedAttributes())
-        );
+        changedAttributes = this.model.changedAttributes(this.model.getSyncedAttributes());
 
         if (_.isEmpty(changedAttributes)) {
             return false;
