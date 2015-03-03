@@ -103,8 +103,12 @@ class Client
                     )
                 )
             );
-            $client = new \Zend_Http_Client(\SugarConfig::getInstance()->get('websockets.server.url') . '/forward');
-            $client->setRawData($params, 'application/json')->request('POST');
+            $client = new \SugarHttpClient();
+            $client->callRest(
+                \SugarConfig::getInstance()->get('websockets.server.url') . '/forward',
+                $params,
+                array(CURLOPT_HTTPHEADER => array("Content-Type: application/json"))
+            );
         } catch (\Exception $exception) {
             return false;
         }
@@ -143,13 +147,25 @@ class Client
         $availability = false;
         $isBalancer = false;
         $type = false;
-        $httpClient = new \Zend_Http_Client();
+        $httpClient = new \SugarHttpClient();
 
         if (filter_var($url, FILTER_VALIDATE_URL) && self::ping($url)) {
-            $fileContent = json_decode($httpClient->setUri($url)->request()->getBody());
+            $fileContent = json_decode(
+                $httpClient->callRest(
+                    $url,
+                    '',
+                    array(CURLOPT_HTTPHEADER => array("Content-Type: application/json"))
+                )
+            );
             if (isset($fileContent->type) && $fileContent->type == 'balancer') {
                 $isBalancer = true;
-                $fileContent = json_decode($httpClient->setUri($fileContent->location)->request()->getBody());
+                $fileContent = json_decode(
+                    $httpClient->callRest(
+                        $fileContent->location,
+                        '',
+                        array(CURLOPT_HTTPHEADER => array("Content-Type: application/json"))
+                    )
+                );
             }
             if (isset($fileContent->type) && in_array($fileContent->type, array('client', 'server'))) {
                 $availability = true;
