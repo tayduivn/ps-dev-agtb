@@ -24,18 +24,21 @@ class TagsRelatedModulesUtilities
     {
         $fields = array();
         foreach ($GLOBALS['beanList'] as $module => $bean) {
-            $object = BeanFactory::getObjectName($module);
-            $relName = strtolower($module) . "_tags";
-            $linkField = VardefManager::getLinkFieldForRelationship($module, $object, $relName);
-            if ($linkField) {
-                $name = strtolower($module) . '_link';
-                $fields[$name] = array(
-                    'name' => $name,
-                    'vname' => $module,
-                    'type' => 'link',
-                    'relationship' => $relName,
-                    'source' => 'non-db',
-                );
+            // Enforce the tag relationship to sidecar modules only
+            if (!isModuleBWC($module)) {
+                $object = BeanFactory::getObjectName($module);
+                $relName = strtolower($module) . "_tags";
+                $linkField = VardefManager::getLinkFieldForRelationship($module, $object, $relName);
+                if ($linkField) {
+                    $name = strtolower($module) . '_link';
+                    $fields[$name] = array(
+                        'name' => $name,
+                        'vname' => $module,
+                        'type' => 'link',
+                        'relationship' => $relName,
+                        'source' => 'non-db',
+                    );
+                }
             }
         }
         return $fields;

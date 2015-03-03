@@ -47,6 +47,18 @@ class Tag extends Basic
      */
     public function getRelatedModuleRecords($focus, $ids)
     {
+        // No ids means nothing to do
+        if (empty($ids)) {
+            return array();
+        }
+
+        // We need to make a reasonable assumption here that ids will either be
+        // an imploded string of ids or an array of ids. If an array, make it a
+        // string of ids.
+        if (is_array($ids)) {
+            $ids = "'" . implode("','", $ids) . "'";
+        }
+
         $sql = "SELECT tags.id, tags.name, {$focus->table_name}.id as {$focus->table_name}_id";
         $sql .= " FROM {$focus->table_name} INNER JOIN tag_bean_rel ON {$focus->table_name}.id=tag_bean_rel.bean_id";
         $sql .= " INNER JOIN tags ON tags.id=tag_bean_rel.tag_id";

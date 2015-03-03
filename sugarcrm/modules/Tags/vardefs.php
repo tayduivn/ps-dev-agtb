@@ -49,7 +49,8 @@ $dictionary['Tag'] = array(
     ),
     'uses' => array(
         'basic',
-        'external_source'
+        'external_source',
+        'assignable',
     ),
     // This can also be a string that maps to a global function. If it's an array
     // it should be static
