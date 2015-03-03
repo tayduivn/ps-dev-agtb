@@ -31,6 +31,7 @@ class SugarUpgradeUpdatePortalMobile extends UpgradeScript
         if(!file_exists('modules/UpgradeWizard/SidecarUpdate/SidecarMetaDataUpgrader.php')) return;
         // TODO: fix uw_utils references in SidecarMetaDataUpgrader
         $smdUpgrader = new SidecarMetaDataUpgrader2($this);
+        $smdUpgrader->setUpgradeCategories(SidecarMetaDataUpgrader::UPGRADE_PORTAL | SidecarMetaDataUpgrader::UPGRADE_MOBILE);
         $smdUpgrader->upgrade();
 
         // Log failures if any
