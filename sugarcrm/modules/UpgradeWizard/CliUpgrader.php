@@ -574,6 +574,7 @@ eoq2;
         if (file_exists(dirname(__FILE__).'/SugarSystemInfo.php') && version_compare($sugar_version, '7.2.2', '<')) {
             require_once 'SugarSystemInfo.php';
         }
+
         require_once 'SugarHeartbeatClient.php';
         require_once 'HealthCheckClient.php';
         require_once 'HealthCheckHelper.php';

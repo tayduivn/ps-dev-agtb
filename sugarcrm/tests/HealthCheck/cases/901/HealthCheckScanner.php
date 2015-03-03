@@ -12,6 +12,9 @@
 
 class S_901_HealthCheckScannerCasesTestMock extends HealthCheckScannerCasesTestMock
 {
+    //Turn this test off, since thee HealthCheck is also run on 7.x for Elastic Search
+    public $skip = true;
+
     public function getVersionAndFlavor()
     {
         return array('100.0.0', 'ent');

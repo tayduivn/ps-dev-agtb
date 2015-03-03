@@ -318,6 +318,10 @@ class HealthCheckScannerMeta
             'bucket' => self::MANUAL,
             'kb'     => 'http://support.sugarcrm.com/04_Knowledge_Base/02Administration/100Install/Troubleshooting_Health_Check_Output/Health_Check_Error_Bad_Vardefs_Table_Name/',
         ),
+        433 => array(
+            'report' => 'foundCustomElastic',
+            'bucket' => self::CUSTOM,
+        ),
 
         // BUCKET F
         501 => array(
