@@ -34,6 +34,7 @@ class FixCustomLabelsForCoreModulesTest extends UpgradeTestCase
                 'test_test'   => 'Test',
                 'test2_test2' => 'Test 2',
             );
+        SugarConfig::getInstance()->clearCache('languages');
 
         // Setup subpanels
         $dataViewdefs = <<<END
