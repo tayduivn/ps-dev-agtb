@@ -86,7 +86,7 @@
         this.emptyLabel = app.lang.get(
             'LBL_SEARCH_SELECT_MODULE',
             this.module,
-            {module: app.lang.get(this.options.def.label, this.module)}
+            {module: app.lang.getModuleName(this.module)}
         );
     },
 
