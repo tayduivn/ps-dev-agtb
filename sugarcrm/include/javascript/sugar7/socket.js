@@ -19,43 +19,47 @@
             return;
         }
 
-        if (!_.isUndefined(app.config.websockets) &&
-            !_.isUndefined(app.config.websockets.client) &&
-            app.config.websockets.client.balancer) {
+        if (app.config.websockets.client.balancer) {
             $.get(app.config.websockets.client.url).done(function(data) {
                 if (!_.isUndefined(data) && !_.isUndefined(data.location)) {
-                    initSocket(data.location);
+                    loadSocket(data.location);
                 }
             });
         } else {
-            initSocket(app.config.websockets.client.url);
+            loadSocket(app.config.websockets.client.url);
         }
     });
 
+    function loadSocket(url) {
+        var scriptUrl = url + (url.substr(-1) == '/' ? '' : '/') + 'socket.io/socket.io.js';
+        $.getScript(scriptUrl, function () {
+            initSocket(url);
+        });
+    }
+
     function initSocket(url) {
-        if (!_.isUndefined(url)) {
-            var socket = io(url, {
-                autoConnect: false
+        var socket = io(url, {
+            autoConnect: false
+        });
+
+        var connect = function() {
+            socket.emit('OAuthToken', {
+                'siteUrl': app.config.siteUrl,
+                'serverUrl': app.config.serverUrl,
+                'publicSecret': app.config.websockets.publicSecret,
+                'token': app.api.getOAuthToken()
             });
+        };
 
-            var connect = function() {
-                socket.emit('OAuthToken', {
-                    'siteUrl': app.config.siteUrl,
-                    'serverUrl': app.config.serverUrl,
-                    'publicSecret': app.config.websockets.publicSecret,
-                    'token': app.api.getOAuthToken()
-                });
-            };
+        socket.on('connect', connect);
+        app.events.on('app:login:success', connect);
+        app.events.on('app:logout', connect);
 
-            socket.on('connect', connect);
-            app.events.on('app:login:success', connect);
-            app.events.on('app:logout', connect);
+        socket.on('message', _.bind(function(data) {
+            app.socket.trigger(data.message, data.args);
+        }, this));
 
-            socket.on('message', _.bind(function(data) {
-                app.socket.trigger(data.message, data.args);
-            }, this));
+        socket.open();
 
-            socket.open();
-        }
     }
 })(SUGAR.App);
