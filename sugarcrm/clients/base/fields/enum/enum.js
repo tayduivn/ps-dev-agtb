@@ -213,7 +213,6 @@
             if (plugin && plugin.focusser) {
                 plugin.focusser.on('select2-focus', _.bind(_.debounce(this.handleFocus, 0), this));
             }
-            $el.select2("container").addClass("tleft");
             $el.on('change', function(ev) {
                 var value = ev.val;
                 if (_.isUndefined(value)) {
