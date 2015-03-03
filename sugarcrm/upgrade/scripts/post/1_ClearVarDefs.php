@@ -381,6 +381,7 @@ class SugarUpgradeClearVarDefs extends UpgradeScript
      * @param array $links
      * @param SugarBean $seed
      * @param DefinitionObject $defs
+     * @return bool Is link updated or not
      */
     protected function updateLinks($links, $seed, $defs)
     {
