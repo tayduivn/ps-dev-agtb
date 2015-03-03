@@ -359,6 +359,12 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
             }
         }
 
+        foreach ($previousViewDef as $key => $fieldDef ) {
+            if (is_array($fieldDef)) {
+                unset($previousViewDef[$key]['span']);
+            }
+        }
+
         $baseSpans = array();
         foreach ($this->baseViewFields as $baseKey => $baseFieldDef) {
             if (is_array($baseFieldDef) && isset($baseFieldDef['span'])) {
