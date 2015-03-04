@@ -395,7 +395,6 @@ describe('Base.View.FilterRows', function() {
                     type: 'text'
                 }
             };
-            view.filterFields = {primary_address_state: 'test'};
             view.initRow($row, {name: 'primary_address_state', operator: '$equals', value: '12'});
 
             expect(initOperatorFieldSpy).toHaveBeenCalled();
