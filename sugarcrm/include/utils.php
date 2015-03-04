@@ -813,11 +813,12 @@ function get_user_name($id)
  * @param String $user_name_filter String value indicating the user_name filter (searches the user_name column of users table) to optionally search with, blank by default
  * @param string $portal_filter String query filter for portal users (defaults to searching non-portal users), change to blank if you wish to search for all users including portal users
  * @param bool $from_cache Boolean value indicating whether or not to use the get_register_value function for caching, true by default
+ * @param array $order_by array of (0 => 'field_name', 1 => 'order_direction')
  * @return array Array of users matching the filter criteria that may be from cache (if similar search was previously run)
  */
-function get_user_array($add_blank=true, $status="Active", $user_id='', $use_real_name=false, $user_name_filter='', $portal_filter=' AND portal_only=0 ', $from_cache = true)
+function get_user_array($add_blank=true, $status="Active", $user_id='', $use_real_name=false, $user_name_filter='', $portal_filter=' AND portal_only=0 ', $from_cache = true, $order_by = array())
 {
-    global $locale;
+    global $locale, $dictionary;
 
     if (empty($locale)) {
         $locale = Localization::getObject();
@@ -847,7 +848,24 @@ function get_user_array($add_blank=true, $status="Active", $user_id='', $use_rea
     if (!empty($user_id)) {
         $query .= " OR id='{$user_id}'";
     }
-    $query .= ' ORDER BY user_name ASC';
+
+    $orderQuery = array();
+    foreach ($order_by as $order) {
+        $field = $order[0];
+        if (empty($field) || empty($dictionary['User']['fields'][$field])) {
+            continue;
+        }
+        $direction = strtoupper($order[1]);
+        if (!in_array($direction, array('ASC', 'DESC'))) {
+            $direction = 'ASC';
+        }
+        $orderQuery[] = "$field $direction";
+    }
+    if (empty($orderQuery)) {
+        $orderQuery[] = 'user_name ASC';
+    }
+
+    $query .= " ORDER BY " . implode(', ', $orderQuery);
 
     if ($from_cache) {
         $key_name = $query . $status . $user_id . $use_real_name . $user_name_filter . $portal_filter;
