@@ -355,13 +355,13 @@
             dateValue = app.date.format(new Date(model.get('date_start')), dateFormat),
             template = app.template.getView('notifications.notifications-alert'),
             message = template({
-                title: app.lang.get('LBL_REMINDER_TITLE', model.module),
+                title: new Handlebars.SafeString(app.lang.get('LBL_REMINDER_TITLE', model.module)),
                 module: model.module,
-                model: model,
-                location: model.get('location'),
+                name: new Handlebars.SafeString(model.get('name')),
+                location: new Handlebars.SafeString(model.get('location')),
                 description: model.get('description'),
                 dateStart: dateValue,
-                parentName: model.get('parent_name')
+                parentName: new Handlebars.SafeString(model.get('parent_name'))
             });
         _.defer(function() {
             if (confirm(message)) {
