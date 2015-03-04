@@ -4340,8 +4340,12 @@ class SugarBean
                 $jtcount++;
                 $nameField = "$joinTableAlias2.name as tag";
                 $ret_array['select'].= ", $nameField";
-                $ret_array['from'].= " LEFT JOIN tag_bean_rel $joinTableAlias ON {$this->table_name}.id=$joinTableAlias.bean_id";
-                $ret_array['from'].= " LEFT JOIN tags $joinTableAlias2 ON $joinTableAlias.tag_id=$joinTableAlias2.id";
+                $ret_array['from'].= " LEFT JOIN tag_bean_rel $joinTableAlias
+                                     ON {$this->table_name}.id=$joinTableAlias.bean_id
+                                     AND $joinTableAlias.deleted=0";
+                $ret_array['from'].= " LEFT JOIN tags $joinTableAlias2
+                                     ON $joinTableAlias.tag_id=$joinTableAlias2.id
+                                     AND $joinTableAlias.deleted=0";
             }
 
             if ($this->is_relate_field($field))

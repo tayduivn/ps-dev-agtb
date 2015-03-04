@@ -50,7 +50,7 @@ class Tag extends Basic
         $sql = "SELECT tags.id, tags.name, {$focus->table_name}.id as {$focus->table_name}_id";
         $sql .= " FROM {$focus->table_name} INNER JOIN tag_bean_rel ON {$focus->table_name}.id=tag_bean_rel.bean_id";
         $sql .= " INNER JOIN tags ON tags.id=tag_bean_rel.tag_id";
-        $sql .= " WHERE {$focus->table_name}.id in ($ids)";
+        $sql .= " WHERE {$focus->table_name}.id in ($ids) AND tag_bean_rel.deleted=0";
         $sql .= " ORDER BY tags.name ASC";
 
         $db = DBManagerFactory::getInstance();
