@@ -32,15 +32,7 @@ if(isset($_COOKIE[session_name()])) {
 	setcookie(session_name(), '', time()-42000, '/');
 }
 
-// Update the tracker_sessions table
-$trackerManager = TrackerManager::getInstance();
-if ($monitor = $trackerManager->getMonitor('tracker_sessions')) {
-    $monitor->closeSession();
-	$trackerManager->saveMonitor($monitor);
-}
-
-// clear out the authenticating flag
-session_destroy();
+SugarApplication::endSession();
 
 LogicHook::initialize();
 $GLOBALS['logic_hook']->call_custom_logic('Users', 'after_logout');

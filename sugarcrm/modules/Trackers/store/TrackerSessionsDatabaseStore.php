@@ -37,6 +37,8 @@ class TrackerSessionsDatabaseStore implements Store
                 $columns[] = 'id';
             }
 
+            $this->cleanSessions($monitor);
+
             $query = "INSERT INTO
                       $monitor->table_name (" . implode(",", array_keys($values)) . ")
                       VALUES (" . implode(",", $values) . ')';
@@ -52,6 +54,32 @@ class TrackerSessionsDatabaseStore implements Store
             $query .= "WHERE session_id = '{$monitor->session_id}'";
 
             $GLOBALS['db']->query($query);
+        }
+    }
+
+    private function cleanSessions($monitor)
+    {
+        $db = DBManagerFactory::getInstance();
+        $query = "SELECT id, date_start, seconds
+                    FROM $monitor->table_name
+                    WHERE user_id = '" . $db->quote($monitor->getValue('user_id')) . "'
+                    AND active = 1 AND deleted = 0";
+        $result = $db->query($query);
+
+        $dateEnd = TimeDate::getInstance()->nowDb();
+
+        while ($row = $db->fetchByAssoc($result)) {
+            $query = "UPDATE $monitor->table_name SET ";
+
+            if (empty($row['seconds'])) {
+                $query .= "date_end = '" . $dateEnd . "',
+                    seconds = '" . (strtotime($dateEnd) - strtotime($row['date_start'])) . "', ";
+            }
+
+            $query .= "active = 0
+                WHERE id = '{$row['id']}'";
+
+            $db->query($query);
         }
     }
 }

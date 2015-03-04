@@ -750,7 +750,7 @@ EOF;
     /**
      * Destroy a session, and update Session Tracker if on
      */
-    function endSession()
+    public static function endSession()
     {
         $trackerManager = TrackerManager::getInstance();
         if ($monitor = $trackerManager->getMonitor('tracker_sessions')) {

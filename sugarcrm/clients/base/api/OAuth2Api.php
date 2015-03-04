@@ -157,11 +157,7 @@ class OAuth2Api extends SugarApi
 
         setcookie(RestService::DOWNLOAD_COOKIE.'_'.$api->platform, false, -1, ini_get('session.cookie_path'), ini_get('session.cookie_domain'), ini_get('session.cookie_secure'), true);
 
-        $trackerManager = TrackerManager::getInstance();
-        if ($monitor = $trackerManager->getMonitor('tracker_sessions')) {
-            $monitor->closeSession();
-            $trackerManager->saveMonitor($monitor);
-        }
+        SugarApplication::endSession();
 
         // The OAuth access token is actually just a session, so we can nuke that here.
         $_SESSION = array();
