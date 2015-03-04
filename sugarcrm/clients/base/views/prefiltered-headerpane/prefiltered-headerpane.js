@@ -25,15 +25,13 @@
         this.meta.fields = _.map(this.meta.fields, function(field) {
             if (field.name === 'title') {
                 field['formatted_value'] = this.context.get('headerPaneTitle')
-                    || this.title
                     || this._formatTitle(field['default_value']);
             }
             return field;
         }, this);
-        this.title = this.context.get('headerPaneTitle') || this.title;
-        this.layout.on('closedrawer:fire', _.once(_.bind(function() {
+        this.layout.once('closedrawer:fire', _.bind(function() {
             this.$el.off();
             app.drawer.close();
-        }, this)));
+        }, this));
     }
 })
