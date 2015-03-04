@@ -220,6 +220,12 @@
             }
             this.favicon.badge(badge);
         }, this);
+
+        this.on('render', function(){
+            if (!app.api.isAuthenticated() || app.config.appStatus === 'offline') {
+                this.favicon.reset();
+            }
+        });
     },
 
     /**
