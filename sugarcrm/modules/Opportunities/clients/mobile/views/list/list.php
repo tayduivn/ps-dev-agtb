@@ -1,6 +1,4 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
-if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -31,17 +29,6 @@ $viewdefs['Opportunities']['mobile']['view']['list'] = array(
                     'default' => true,
                     'enabled' => true
                 ),
-
-// ENT/ULT should have sales status
-//BEGIN SUGARCRM flav=ent ONLY
-                array(
-                    'name' => 'sales_status',
-                    'width' => '10',
-                    'label' => 'LBL_SALES_STAGE',
-                    'default' => false,
-                    'enabled' => true,
-                ),
-//END SUGARCRM flav=ent ONLY
                 array(
                     'name' => 'opportunity_type',
                     'width' => '15',
@@ -58,6 +45,12 @@ $viewdefs['Opportunities']['mobile']['view']['list'] = array(
                     'name' => 'next_step',
                     'width' => '10',
                     'label' => 'LBL_NEXT_STEP',
+                    'default' => false,
+                ),
+                array(
+                    'name' => 'sales_stage',
+                    'width' => '10',
+                    'label' => 'LBL_LIST_SALES_STAGE',
                     'default' => false,
                 ),
                 array(
@@ -87,18 +80,6 @@ $viewdefs['Opportunities']['mobile']['view']['list'] = array(
                     'default' => false,
                     'readonly' => true,
                 ),
-// CORP/PRO should have sales stage
-//BEGIN SUGARCRM flav=pro && flav!=ent && flav!=ult ONLY
-                array(
-                    'name' => 'sales_stage',
-                    'width' => '10',
-                    'label' => 'LBL_SALES_STAGE',
-                    'default' => false,
-                    'enabled' => true,
-                ),
-//END SUGARCRM flav=pro && flav!=ent && flav!=ult ONLY
-
-//BEGIN SUGARCRM flav=pro ONLY
                 array(
                     'name' => 'team_name',
                     'width' => '5',
@@ -106,7 +87,6 @@ $viewdefs['Opportunities']['mobile']['view']['list'] = array(
                     'default' => false,
                     'enabled' => true
                 ),
-//END SUGARCRM flav=pro ONLY
                 array(
                     'name' => 'assigned_user_name',
                     'width' => '5',
@@ -126,4 +106,3 @@ $viewdefs['Opportunities']['mobile']['view']['list'] = array(
     )
 );
 
-?>
