@@ -34,7 +34,7 @@ var LBL_HIDEOPTIONS = '{sugar_translate module="Users" label="LBL_HIDEOPTIONS"}'
 								<table cellpadding="0" cellspacing="2" border="0" align="center" width="100%">
 						    	<td scope="row" colspan="2">
 						    	    <span class="error" id="browser_warning" style="display:none">
-						    	        {sugar_translate label="WARN_BROWSER_VERSION_WARNING"}
+						    	        {sugar_translate label="LBL_ALERT_BROWSER_NOT_SUPPORTED"}
 						    	    </span>
 						    	    <span class="error" id="ie_compatibility_mode_warning" style="display:none">
 						    	        {sugar_translate label="WARN_BROWSER_IE_COMPATIBILITY_MODE_WARNING"}

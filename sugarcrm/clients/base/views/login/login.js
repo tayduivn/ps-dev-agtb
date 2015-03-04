@@ -139,12 +139,17 @@
         this.refreshAdditionalComponents();
 
         if (!this._isSupportedBrowser()) {
+            var linkLabel = Handlebars.Utils.escapeExpression(app.lang.get('LBL_ALERT_SUPPORTED_PLATFORMS_LINK'));
+            var link = '<a href="http://support.sugarcrm.com/05_Resources/03_Supported_Platforms/">' +  linkLabel + '</a>';
+            var safeLink = new Handlebars.SafeString(link);
+            var label = app.lang.get('TPL_ALERT_BROWSER_SUPPORT', null, {link: safeLink});
+
             app.alert.show(this._alertKeys.unsupportedBrowser, {
                 level: 'warning',
                 title: '',
                 messages: [
                     app.lang.get('LBL_ALERT_BROWSER_NOT_SUPPORTED'),
-                    app.lang.get('LBL_ALERT_BROWSER_SUPPORT')
+                    label
                 ]
             });
         }
