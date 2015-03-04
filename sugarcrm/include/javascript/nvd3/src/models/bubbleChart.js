@@ -10,6 +10,7 @@ nv.models.bubbleChart = function () {
       showTitle = false,
       showControls = false,
       showLegend = true,
+      direction = 'ltr',
       getX = function (d) { return d.x; },
       getY = function (d) { return d.y; },
       forceY = [0], // 0 is forced by default.. this makes sense for the majority of bar graphs... user can always do chart.forceY([]) to remove
@@ -52,7 +53,7 @@ nv.models.bubbleChart = function () {
       xAxis = nv.models.axis()
         .orient('bottom')
         .tickSize(0)
-        .tickPadding(5)
+        .tickPadding(4)
         .highlightZero(false)
         .showMaxMin(false)
         .ticks(d3.time.months, 1)
@@ -288,14 +289,14 @@ nv.models.bubbleChart = function () {
         var wrap = container.selectAll('g.nv-wrap.nv-bubbleChart').data([filteredData]),
             gEnter = wrap.enter().append('g').attr('class', 'nvd3 nv-wrap nv-bubbleChart').append('g'),
             g = wrap.select('g').attr('class', 'nv-chartWrap');
-      
+
         gEnter.append('rect').attr('class', 'nv-background')
           .attr('x', -margin.left)
           .attr('y', -margin.top)
           .attr('width', availableWidth + margin.left + margin.right)
           .attr('height', availableHeight + margin.top + margin.bottom)
           .attr('fill', '#FFF');
-          
+
         gEnter.append('g').attr('class', 'nv-titleWrap');
         var titleWrap = g.select('.nv-titleWrap');
         gEnter.append('g').attr('class', 'nv-x nv-axis');
@@ -318,9 +319,9 @@ nv.models.bubbleChart = function () {
           titleWrap
             .append('text')
               .attr('class', 'nv-title')
-              .attr('x', 0)
+              .attr('x', direction === 'rtl' ? availableWidth : 0)
               .attr('y', 0)
-              .attr('dy', '.71em')
+              .attr('dy', '.75em')
               .attr('text-anchor', 'start')
               .text(properties.title)
               .attr('stroke', 'none')
@@ -335,6 +336,8 @@ nv.models.bubbleChart = function () {
           legend
             .id('legend_' + chart.id())
             .strings(chart.strings().legend)
+            .margin({top: 10, right: 10, bottom: 10, left: 10})
+            .align('center')
             .height(availableHeight - innerMargin.top)
             .key(function (d){ return d.key + '%'; });
           legendWrap
@@ -523,45 +526,51 @@ nv.models.bubbleChart = function () {
   d3.rebind(chart, scatter, 'size', 'zScale', 'sizeDomain', 'forceSize', 'interactive', 'clipVoronoi', 'clipRadius');
   d3.rebind(chart, xAxis, 'rotateTicks', 'reduceXTicks', 'staggerTicks', 'wrapTicks');
 
-  chart.colorData = function (_) {
-    var colors = function (d, i) {
-          return nv.utils.defaultColor()(d, d.series);
-        },
-        classes = function (d, i) {
-          return 'nv-group nv-series-' + i;
-        },
-        type = arguments[0],
+  chart.colorData = function(_) {
+    var type = arguments[0],
         params = arguments[1] || {};
+    var color = function(d, i) {
+          return nv.utils.defaultColor()(d, d.series);
+        };
+    var classes = function(d, i) {
+          return 'nv-group nv-series-' + d.series;
+        };
 
     switch (type) {
-    case 'graduated':
-      var c1 = params.c1
-        , c2 = params.c2
-        , l = params.l;
-      colors = function (d, i) {
-        return d3.interpolateHsl(d3.rgb(c1), d3.rgb(c2))(d.series / l);
-      };
-      break;
-    case 'class':
-      colors = function () {
-        return 'inherit';
-      };
-      classes = function (d, i) {
-        var iClass = (d.series*(params.step || 1)) % 14;
-        return 'nv-group nv-series-' + i + ' ' + (d.classes || 'nv-fill' + (iClass > 9 ? '' : '0') + iClass);
-      };
-      break;
+      case 'graduated':
+        color = function(d, i) {
+          return d3.interpolateHsl(d3.rgb(params.c1), d3.rgb(params.c2))(d.series / params.l);
+        };
+        break;
+      case 'class':
+        color = function() {
+          return 'inherit';
+        };
+        classes = function(d, i) {
+          var iClass = (d.series * (params.step || 1)) % 14;
+          iClass = (iClass > 9 ? '' : '0') + iClass;
+          return 'nv-group nv-series-' + d.series + ' nv-fill' + iClass;
+        };
+        break;
+      case 'data':
+        color = function(d, i) {
+          return d.classes ? 'inherit' : d.color || nv.utils.defaultColor()(d, d.series);
+        };
+        classes = function(d, i) {
+          return 'nv-group nv-series-' + d.series + (d.classes ? ' ' + d.classes : '');
+        };
+        break;
     }
 
-    var fill = (!params.gradient) ? colors : function (d,i) {
-      return scatter.gradient(d,d.series);
+    var fill = (!params.gradient) ? color : function(d, i) {
+      return scatter.gradient(d, d.series);
     };
 
-    scatter.color(colors);
+    scatter.color(color);
     scatter.fill(fill);
     scatter.classes(classes);
 
-    legend.color(colors);
+    legend.color(color);
     legend.classes(classes);
 
     return chart;
@@ -688,6 +697,16 @@ nv.models.bubbleChart = function () {
         strings[prop] = _[prop];
       }
     }
+    return chart;
+  };
+
+  chart.direction = function(_) {
+    if (!arguments.length) {
+      return direction;
+    }
+    direction = _;
+    yAxis.direction(_);
+    legend.direction(_);
     return chart;
   };
 

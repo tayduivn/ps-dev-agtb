@@ -154,11 +154,18 @@ nv.models.lineWithFocusChart = function() {
       // Legend
 
       if (showLegend) {
-        legend.width(availableWidth);
+
+        legend
+          .id('legend_' + chart.id())
+          .margin({top: 10, right: 10, bottom: 10, left: 10})
+          .align('right')
+          .height(availableHeight1 - margin.top);
 
         g.select('.nv-legendWrap')
             .datum(data)
             .call(legend);
+
+        legend.arrange(availableWidth);
 
         if ( margin.top != legend.height()) {
           margin.top = legend.height();

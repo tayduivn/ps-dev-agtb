@@ -42,21 +42,47 @@
         }, this);
     },
 
+    overflowHandler: function(distance) {
+        var b = this.view.$el.parents().filter(function() {
+            return $(this).css('overflow-y') === 'auto' || $(this).css('overflow-y') === 'scroll';
+        }).first();
+
+        b.scrollTop(b.scrollTop() + distance);
+    },
+
     /**
      * Generate the D3 Chart Object
      */
     generateD3Chart: function() {
-        var chartId = this.cid,
-            chartConfig = this.getChartConfig(),
+        var self = this,
+            chart,
+            chartId = this.cid,
+            chartData = this.model.get('rawChartData'),
+            chartParams = this.model.get('rawChartParams') || {},
+            chartConfig = this.getChartConfig(chartData.properties[0].type),
+            reportData = this.model.get('rawReportData'),
             params = {
                 contentEl: chartId,
                 minColumnWidth: 120,
-                margin: {top: 0, right: 10, bottom: 10, left: 10}
-            },
-            chart = new loadSugarChart(chartId, this.model.get('rawChartData'), [], chartConfig, params, _.bind(function(chart) {
-                this.chart = chart;
-                this.chart_loaded = _.isFunction(chart.update);
-            }, this));
+                margin: {top: 0, right: 10, bottom: 10, left: 10},
+                allowScroll: true,
+                overflowHandler: _.bind(this.overflowHandler, this)
+            };
+
+        if (!_.isEmpty(chartParams)) {
+            params = _.extend(params, chartParams);
+            chartData.properties[0].title = chartParams.report_title;
+            chartData.properties[0].type = chartParams.chart_type;
+            // allow override of chart type
+            chartConfig = this.getChartConfig(chartData.properties[0].type);
+        }
+
+        chartConfig['direction'] = app.lang.direction;
+
+        chart = new loadSugarChart(chartId, chartData, [], chartConfig, params, _.bind(function(chart) {
+            self.chart = chart;
+            self.chart_loaded = _.isFunction(this.chart.update);
+        }, this));
 
         // This event fires when a preview is closed.
         // We listen to this event to call the chart resize method
