@@ -882,10 +882,10 @@ describe('Base.View.FilterRows', function() {
         });
 
         using('different operators', [{
-            operator: '$blank',
+            operator: '$empty',
             hasValueField: false
         },{
-            operator: '$not_blank',
+            operator: '$not_empty',
             hasValueField: false
         },{
             operator: '$equals',

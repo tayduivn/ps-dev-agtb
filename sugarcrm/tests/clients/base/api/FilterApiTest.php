@@ -322,7 +322,7 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(10, $reply['next_offset'], "Empty filter did not return at least 10 results.");
     }
 
-    public function testBlankFilters()
+    public function testEmptyFilters()
     {
         $field = $this->equalTo('account_type');
         $bean = new Account();
@@ -341,13 +341,13 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
         FilterApiMock::addFilters(array(
             array(
                 'account_type' => array(
-                    '$blank' => '',
+                    '$empty' => '',
                 ),
             ),
         ), $where, $q);
     }
 
-    public function testNotBlankFilters(){
+    public function testNotEmptyFilters(){
         $field = $this->equalTo('account_type');
         $bean = new Account();
         $q = new SugarQuery();
@@ -365,7 +365,7 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
         FilterApiMock::addFilters(array(
             array(
                 'account_type' => array(
-                    '$not_blank' => '',
+                    '$not_empty' => '',
                 ),
             ),
         ), $where, $q);
