@@ -56,8 +56,8 @@ $subpanel_layout = array(
 			'usage'=>'query_only',
 			
 		),
-		'email1'=>array(
-			'name'=>'email1',		
+		'email'=>array(
+			'name'=>'email',
 			'vname' => 'LBL_LIST_EMAIL',
 			'widget_class' => 'SubPanelEmailLink',
 			'width' => '30%',
