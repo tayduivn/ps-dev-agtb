@@ -107,5 +107,6 @@ $mod_strings = array (
     'LBL_ASSIGNED_USER'=>"User Assigned",
     'LBL_PMSE_SETTING_NUMBER_CYCLES' => "Error Number of Cycles",
     'LBL_PMSE_SHOW_PROCESS' => 'Show Process',
+    'LBL_PMSE_FILTER' => 'Filter',
 );
 

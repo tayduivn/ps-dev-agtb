@@ -43,7 +43,23 @@
     initialize: function(options) {
         this.plugins = _.union(this.plugins, ['LinkedModel', 'HistoricalSummary']);
         //BEGIN SUGARCRM flav=ent ONLY
-        if (app.metadata.getModule('Opportunities', 'config').opps_view_by == 'RevenueLineItems') {
+        this.addInitListener();
+        //END SUGARCRM flav=ent ONLY
+
+        this._super('initialize', [options]);
+
+        app.utils.hideForecastCommitStageField(this.meta.panels);
+    },
+    
+    //BEGIN SUGARCRM flav=ent ONLY
+    /**
+     * Add the initListener if RLI's are being used and the current user has Edit access to RLI's
+     */
+    addInitListener: function() {
+        // if we are viewing by RevenueLineItems and we have access to edit/create RLI's then we should
+        // display the warning if no rli's exist
+        if (app.metadata.getModule('Opportunities', 'config').opps_view_by == 'RevenueLineItems' &&
+            app.acl.hasAccess('edit', 'RevenueLineItems')) {
             this.once('init', function() {
                 var rlis = this.model.getRelatedCollection('revenuelineitems');
                 rlis.once('reset', function(collection) {
@@ -56,14 +72,8 @@
                 rlis.fetch({relate: true});
             }, this);
         }
-        //END SUGARCRM flav=ent ONLY
-
-        this._super('initialize', [options]);
-
-        app.utils.hideForecastCommitStageField(this.meta.panels);
     },
-    
-    //BEGIN SUGARCRM flav=ent ONLY
+
     /**
      * Loops through all fields on the model returning only the fields with calculated => true set
      * @returns {Array}

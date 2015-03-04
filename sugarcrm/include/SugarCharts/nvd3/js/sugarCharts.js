@@ -43,7 +43,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
         x_axis_label: '',
         vertical: true,
         wrapTicks: true,
-        staggerTicks: false,
+        staggerTicks: true,
         rotateTicks: 0,
         reduceXTicks: false,
         allowScroll: false,
@@ -150,6 +150,11 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
 
                     var json = SUGAR.charts.translateDataToD3(data, params, chartConfig);
 
+                    if (json.properties && json.properties.labels && json.properties.labels.length > 50) {
+                        SUGAR.charts.renderError(chartId, SUGAR.charts.translateString('LBL_CANNOT_DISPLAY_CHART_MESSAGE', 'Reports'));
+                        return;
+                    }
+
                     params.vertical = chartConfig['orientation'] === 'vertical' ? true : false;
 
                     var barChart = nv.models.multiBarChart()
@@ -165,6 +170,8 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                         .direction(params.direction)
                         .showLegend(params.show_legend)
                         .showControls(params.show_controls)
+                        .wrapTicks(params.wrapTicks)
+                        .staggerTicks(params.staggerTicks)
                         .rotateTicks(params.rotateTicks)
                         .reduceXTicks(params.reduceXTicks)
                         .colorData(params.colorData)
@@ -248,6 +255,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                         .showTitle(params.show_title)
                         .showLegend(params.show_legend)
                         .showControls(params.show_controls)
+                        .rotateTicks(params.rotateTicks)
                         .colorData(params.colorData)
                         .strings({
                             legend: {
@@ -270,7 +278,6 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                     lineChart.xAxis
                         .showMaxMin(false)
                         .highlightZero(false)
-                        .axisLabel(params.show_x_label)
                         .tickFormat(function(d, i) { return xLabels[d]; });
 
                     lineChart.yAxis
@@ -303,6 +310,11 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                 if (SUGAR.charts.isDataEmpty(data)) {
 
                     var json = SUGAR.charts.translateDataToD3(data, params, chartConfig);
+
+                    if (json.properties && json.properties.labels && json.properties.labels.length > 50) {
+                        SUGAR.charts.renderError(chartId, SUGAR.charts.translateString('LBL_CANNOT_DISPLAY_CHART_MESSAGE', 'Reports'));
+                        return;
+                    }
 
                     var pieChart = nv.models.pieChart()
                         .id(d3ChartId)
@@ -351,6 +363,11 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                 if (SUGAR.charts.isDataEmpty(data)) {
 
                     var json = SUGAR.charts.translateDataToD3(data, params, chartConfig);
+
+                    if (json.properties && json.properties.labels && json.properties.labels.length > 16) {
+                        SUGAR.charts.renderError(chartId, SUGAR.charts.translateString('LBL_CANNOT_DISPLAY_CHART_MESSAGE', 'Reports'));
+                        return;
+                    }
 
                     var funnelChart = nv.models.funnelChart()
                         .id(d3ChartId)
@@ -490,6 +507,22 @@ function swapChart(chartId, jsonFilename, css, chartConfig) {
                 .call(chart);
         },
 
+        renderError: function(id, str) {
+            $('#d3_' + id).empty();
+            d3.select('.reportChartContainer')
+                .style('height', 'auto');
+            d3.select('.reportChartContainer .chartContainer')
+                .style('float', 'none')
+                .style('position', 'relative')
+                .style('width', '100%');
+            d3.select('#d3_' + id)
+                .style('height', 'auto')
+                .append('div')
+                    .attr('class', 'nv-data-error')
+                    .attr('align', 'center')
+                    .style('padding', '12px')
+                    .text(str);
+        },
         /**
          * Handle the Legend Generation
          *

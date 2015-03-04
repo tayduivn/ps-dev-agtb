@@ -230,13 +230,17 @@ class ForecastsSeedData
                 'seed_jim_id' // we do jim last since sarah and will will feed up into jim
             );
 
+            $cid = $current_user->id;
             foreach ($managers as $manager) {
                 /* @var $user User */
                 $user = BeanFactory::getBean('Users', $manager);
                 /* @var $worksheet ForecastManagerWorksheet */
                 $worksheet = BeanFactory::getBean('ForecastManagerWorksheets');
+                // set the current_user->id to the manager
+                $current_user->id = $manager;
                 $worksheet->commitManagerForecast($user, $timeperiod_id);
             }
+            $current_user->id = $cid;
         }
 
 

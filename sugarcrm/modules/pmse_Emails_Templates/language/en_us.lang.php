@@ -40,4 +40,5 @@ $mod_strings = array (
     'LBL_PMSE_EMAIL_TEMPLATES_IMPORT_SUCCESS' => 'Process Email Template was successfully imported into the system.',
     'LBL_PMSE_EMAIL_TEMPLATES_EMPTY_WARNING' => 'Please select a valid *.pet file.',
 
+    'LBL_PMSE_IMPORT_EMAIL_TEMPLATES_FAILURE' => 'Failed to create Process Email Template from file',
 );

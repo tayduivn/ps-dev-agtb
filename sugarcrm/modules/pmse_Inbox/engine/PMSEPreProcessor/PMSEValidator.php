@@ -190,7 +190,7 @@ class PMSEValidator
     public function validateRequest(PMSERequest $request)
     {
         $this->logger->info("Start validation process.");
-        $this->logger->debug("Request Data to be validated: " . print_r($request, true));
+        $this->logger->debug(array("Request Data to be validated: ", $request));
         // A default request is always valid, if fails to validate in any validator 
         // the status is set to invalid and no further validation is required
         if (!isset($this->validators[$request->getType()])) {

@@ -710,7 +710,7 @@ $beanFiles['EmbeddedFile'] = 'modules/EmbeddedFiles/EmbeddedFile.php';
 $modInvisList[] = 'EmbeddedFiles';
 
 // this module doesn't need a Bean
-$moduleList[] = 'Feedbacks';
+$modInvisList[] = 'Feedbacks';
 
 // Health Check module
 $beanList['HealthCheck'] = 'HealthCheck';

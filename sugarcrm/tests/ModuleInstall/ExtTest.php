@@ -58,11 +58,25 @@ class ExtTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function getExt()
     {
+        $extensions = array();
         include 'ModuleInstall/extensions.php';
         $params = array();
         foreach($extensions as $name => $ext) {
-            if($name == 'modules' || $name == 'sidecar') continue;
-            $params[] = array($name, $ext['section'], $ext['extdir'], $ext['file'], isset($ext['module'])?$ext['module']:'');
+            switch ($name) {
+                case 'modules':
+                case 'sidecar':
+                case 'dropdown_filters':
+                    break;
+                default:
+                    $params[] = array(
+                        $name,
+                        $ext['section'],
+                        $ext['extdir'],
+                        $ext['file'],
+                        isset($ext['module']) ? $ext['module'] : 'application'
+                    );
+                    break;
+            }
         }
         return $params;
     }
@@ -75,13 +89,10 @@ class ExtTest extends Sugar_PHPUnit_Framework_TestCase
      * @param string $file
      * @param string $module
      */
-    public function testExtFramework($extname, $section, $extdir, $file, $module = '')
+    public function testExtFramework($extname, $section, $extdir, $file, $module)
     {
         if(empty($section)) {
             return;
-        }
-        if(empty($module)) {
-            $module = 'application';
         }
         $this->module_installer->installdefs[$section] = array(
             array("from" => '<basepath>/test.ext.php', 'to_module' => $module)

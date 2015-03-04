@@ -47,15 +47,14 @@ nv.models.scroll = function() {
       };
 
       scroll.pan = function(diff) {
-
-        // don't fire on events other than zoom and drag
-        // we need click for handling legend toggle
         var distance = 0,
             overflowDistance = 0,
             translate = '',
             x = 0,
             y = 0;
 
+        // don't fire on events other than zoom and drag
+        // we need click for handling legend toggle
         if (d3.event) {
           if (d3.event.type === 'zoom') {
             x = d3.event.sourceEvent.deltaX || 0;
@@ -191,36 +190,44 @@ nv.models.scroll = function() {
 
         bgpEnter
           .append('stop')
-          .attr('stop-color', 'rgba(0, 0, 0, 0.3)')
+          .attr('stop-color', '#000')
+          .attr('stop-opacity', '0.3')
           .attr('offset', 0);
         bgpEnter
           .append('stop')
-          .attr('stop-color', 'rgba(255, 255, 255, 0)')
+          .attr('stop-color', '#FFF')
+          .attr('stop-opacity', '0')
           .attr('offset', 1);
         bgmEnter
           .append('stop')
-          .attr('stop-color', 'rgba(255, 255, 255, 0)')
+          .attr('stop-color', '#FFF')
+          .attr('stop-opacity', '0')
           .attr('offset', 0);
         bgmEnter
           .append('stop')
-          .attr('stop-color', 'rgba(0, 0, 0, 0.3)')
+          .attr('stop-color', '#000')
+          .attr('stop-opacity', '0.3')
           .attr('offset', 1);
 
         fgpEnter
           .append('stop')
           .attr('stop-color', '#FFF')
+          .attr('stop-opacity', '1')
           .attr('offset', 0);
         fgpEnter
           .append('stop')
-          .attr('stop-color', 'rgba(255, 255, 255, 0)')
+          .attr('stop-color', '#FFF')
+          .attr('stop-opacity', '0')
           .attr('offset', 1);
         fgmEnter
           .append('stop')
-          .attr('stop-color', 'rgba(255, 255, 255, 0)')
+          .attr('stop-color', '#FFF')
+          .attr('stop-opacity', '0')
           .attr('offset', 0);
         fgmEnter
           .append('stop')
           .attr('stop-color', '#FFF')
+          .attr('stop-opacity', '1')
           .attr('offset', 1);
       };
 
@@ -265,11 +272,11 @@ nv.models.scroll = function() {
 
           backShadows.select('rect.nv-back-shadow-prev')
             .attr('fill', 'url(#nv-back-gradient-prev-' + id + ')')
-            .attr(dimension, 5);
+            .attr(dimension, 7);
 
           backShadows.select('rect.nv-back-shadow-more')
             .attr('fill', 'url(#nv-back-gradient-more-' + id + ')')
-            .attr(dimension, 5);
+            .attr(dimension, 7);
         } else {
           backShadows.selectAll('rect').attr('fill', 'transparent');
         }

@@ -15,19 +15,19 @@
  */
 ({
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      *
      * This field doesn't support `showNoData`.
      */
     showNoData: false,
 
     events: {
-        "click .btn": "_showAddressBook"
+        'click .btn': '_showAddressBook'
     },
 
     fieldTag: 'input.select2',
 
-    plugins: ['Tooltip'],
+    plugins: ['Tooltip', 'DragdropSelect2'],
 
     /**
      * @override
@@ -55,6 +55,9 @@
             this.getFieldElement().select2('data', recipients);
             // rebuild the tooltips
             this.initializeAllPluginTooltips();
+            if (!this.def.readonly) {
+                this.setDragDropPluginEvents(this.getFieldElement());
+            }
         }, this);
         /**
          * Sets up event handlers that allow external forces to manipulate the contents of the collection, while
@@ -91,7 +94,7 @@
         bindCollectionChange();
 
         // handle the value on the model being changed to something other than the initial collection
-        this.model.on("change:" + this.name, function(model, recipients) {
+        this.model.on('change:' + this.name, function(model, recipients) {
             var value = this.model.get(this.name);
             if (!(value instanceof Backbone.Collection)) {
                 // whoa! someone changed the value to be something other than a collection
@@ -135,25 +138,31 @@
 
         if ($recipientsField.length > 0) {
             $recipientsField.select2({
-                allowClear:          true,
-                multiple:            true,
-                width:               'off',
-                containerCssClass:   'select2-choices-pills-close',
-                containerCss:        {'width':'100%'},
-                minimumInputLength:  1,
-                query:               _.bind(function(query) {this.loadOptions(query);}, this),
-                createSearchChoice:  _.bind(this.createOption, this),
-                formatSelection:     _.bind(this.formatSelection, this),
-                formatResult:        _.bind(this.formatResult, this),
-                formatSearching:     _.bind(this.formatSearching, this),
+                allowClear: true,
+                multiple: true,
+                width: 'off',
+                containerCssClass: 'select2-choices-pills-close',
+                containerCss: {'width': '100%'},
+                minimumInputLength: 1,
+                query: _.bind(function(query) {
+                    this.loadOptions(query);
+                }, this),
+                createSearchChoice: _.bind(this.createOption, this),
+                formatSelection: _.bind(this.formatSelection, this),
+                formatResult: _.bind(this.formatResult, this),
+                formatSearching: _.bind(this.formatSearching, this),
                 formatInputTooShort: _.bind(this.formatInputTooShort, this),
-                selectOnBlur:        true
+                selectOnBlur: true
             }).on('select2-removed', _.bind(function() {
                     this.initializeAllPluginTooltips();
                 }, this));
 
             if (!!this.def.disabled) {
                 $recipientsField.select2('disable');
+            }
+
+            if (!this.def.readonly) {
+                this.setDragDropPluginEvents(this.getFieldElement());
             }
         }
     },
@@ -212,7 +221,7 @@
      *
      * @param {String} term
      * @param {Array} data The options in the select2 drop-down after the query callback has been executed.
-     * @returns {Object}
+     * @return {Object}
      */
     createOption: function(term, data) {
         if (data.length === 0) {
@@ -233,6 +242,7 @@
             template = app.template.getField(this.type, 'select2-selection', this.module);
         if (template) {
             return template({
+                id: recipient.id,
                 name: value,
                 email: recipient.email
             });
@@ -265,10 +275,10 @@
      *
      * See [Select2 Documentation](http://ivaynberg.github.io/select2/#documentation).
      *
-     * @returns {String}
+     * @return {string}
      */
     formatSearching: function() {
-        return app.lang.get("LBL_LOADING", this.module);
+        return app.lang.get('LBL_LOADING', this.module);
     },
 
     /**
@@ -276,12 +286,12 @@
      *
      * See [Select2 Documentation](http://ivaynberg.github.io/select2/#documentation).
      *
-     * @param term
-     * @param min
-     * @returns {String}
+     * @param {string} term Search string entered by user.
+     * @param {number} min Minimum required term length.
+     * @return {string}
      */
     formatInputTooShort: function(term, min) {
-        return "";
+        return '';
     },
 
     /**
@@ -290,9 +300,9 @@
      * See {@link #_formatRecipient} for the acceptable/expected attributes to
      * be found on each recipient.
      *
-     * @param {*} data A Backbone collection, a single Backbone model or standard JavaScript object, or an array of
-     *                 Backbone models or standard JavaScript objects.
-     * @returns {Array}
+     * @param {Mixed} data A Backbone collection, a single Backbone model or standard JavaScript object, or an array of
+     *   Backbone models or standard JavaScript objects.
+     * @return {Array}
      */
     format: function(data) {
         var formattedRecipients = [];
@@ -327,7 +337,7 @@
 
     /**
      * Determine whether or not the recipient pills should be locked.
-     * @returns {boolean}
+     * @return {boolean}
      */
     recipientsLocked: function() {
         return this.def.readonly || false;
@@ -339,7 +349,7 @@
     bindDomChange: function() {
         var self = this;
         this.getFieldElement()
-            .on("change", function(event) {
+            .on('change', function(event) {
                 var value = $(this).select2('data');
                 if (event.removed) {
                     value = _.filter(value, function(d) {
@@ -348,17 +358,17 @@
                 }
                 self.model.get(self.name).reset(value);
             })
-            .on("select2-selecting", _.bind(this._handleEventOnSelected, this));
+            .on('select2-selecting', _.bind(this._handleEventOnSelected, this));
     },
 
     /**
      * Event handler for the Select2 "select2-selecting" event.
      *
-     * @param event
-     * @returns {boolean}
+     * @param {Event} event
+     * @return {boolean}
      * @private
      */
-    _handleEventOnSelected: function (event) {
+    _handleEventOnSelected: function(event) {
         // only allow the user to select an option if it is determined to be a valid email address
         // returning true will select the option; false will prevent the option from being selected
         var isValidChoice = false;
@@ -409,10 +419,10 @@
         }, this);
         app.drawer.open(
             {
-                layout:  "compose-addressbook",
+                layout: 'compose-addressbook',
                 context: {
-                    module: "Emails",
-                    mixed:  true
+                    module: 'Emails',
+                    mixed: true
                 }
             },
             function(recipients) {
@@ -425,7 +435,7 @@
      * update ul.select2-choices data attribute which prevents underrun of pills by
      * using a css definition for :before {content:''} set to float right
      *
-     * @param content {String}
+     * @param {string} content
      */
     setContentBefore: function(content) {
         this.$('.select2-choices').attr('data-content-before', content);
@@ -434,7 +444,7 @@
     /**
      * Gets the recipients DOM field
      *
-     * @returns {Object} DOM Element
+     * @return {Object} DOM Element
      */
     getFieldElement: function() {
         return this.$(this.fieldTag);
@@ -451,7 +461,7 @@
      * secondary to the attributes found on its parent model. The bean is a mechanism for collecting additional
      * information about the recipient that may not have been explicitly set when the recipient was passed in.
      * @param {Backbone.Model} recipient
-     * @returns {Object}
+     * @return {Object}
      * @private
      */
     _formatRecipient: function(recipient) {
@@ -466,11 +476,11 @@
             }
             // prioritize any values found on recipient over those already extracted from bean
             formattedRecipient = {
-                id:     recipient.get('id') || formattedRecipient.id || recipient.get('email'),
+                id: recipient.get('id') || formattedRecipient.id || recipient.get('email'),
                 module: recipient.get('module') || recipient.module || recipient.get('_module') || formattedRecipient.module,
-                email:  recipient.get('email') || formattedRecipient.email,
+                email: recipient.get('email') || formattedRecipient.email,
                 locked: this.recipientsLocked(),
-                name:   recipient.get('name') || recipient.get('full_name') || formattedRecipient.name
+                name: recipient.get('name') || recipient.get('full_name') || formattedRecipient.name
             };
             // don't bother with the recipient unless an id is present
             if (!_.isEmpty(formattedRecipient.id)) {
@@ -500,17 +510,17 @@
      * Validates an email address on the server.
      *
      * @param {String} emailAddress
-     * @returns {boolean}
+     * @return {boolean}
      * @private
      */
     _validateEmailAddress: function(emailAddress) {
-        var isValid   = false,
+        var isValid = false,
             callbacks = {},
-            options   = {
+            options = {
                 // execute the api call synchronously so that the method doesn't return before the response is known
                 async: false
             },
-            url       = app.api.buildURL("Mail", "address/validate");
+            url = app.api.buildURL('Mail', 'address/validate');
 
         callbacks.success = function(result) {
             isValid = result[emailAddress];
@@ -518,7 +528,7 @@
         callbacks.error = function() {
             isValid = false;
         };
-        app.api.call("create", url, [emailAddress], callbacks, options);
+        app.api.call('create', url, [emailAddress], callbacks, options);
 
         return isValid;
     }

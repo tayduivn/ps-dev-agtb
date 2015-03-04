@@ -59,6 +59,22 @@ $viewdefs[$module_name ]['base']['view']['create-actions'] = array(
             ),
         ),
         array(
+            'type' => 'actiondropdown',
+            'name' => 'duplicate_dropdown',
+            'primary' => true,
+            'showOn' => 'duplicate',
+            'buttons' => array(
+                array(
+                    'type' => 'rowaction',
+                    'name' => 'save_button',
+                    'label' => 'LBL_IGNORE_DUPLICATE_AND_SAVE',
+                    'events' => array(
+                        'click' => 'button:save_button:click',
+                    ),
+                ),
+            ),
+        ),
+        array(
             'name' => 'sidebar_toggle',
             'type' => 'sidebartoggle',
         ),

@@ -365,7 +365,7 @@ class PMSEProjectApi extends ModuleApi
      */
     public function getCrmData($api, $args)
     {
-        return $this->crmDataWrapper->_get($args, $api, $this);
+        return $this->crmDataWrapper->_get($args, $this);
     }
 
     /**

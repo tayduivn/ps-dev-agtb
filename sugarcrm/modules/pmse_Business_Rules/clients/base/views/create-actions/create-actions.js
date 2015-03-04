@@ -23,6 +23,16 @@
         this.context.on('button:' + this.saveOpenBusinessRulesName + ':click', this.saveOpenBusinessRules, this);
     },
 
+    save: function () {
+        switch (this.context.lastSaveAction) {
+            case this.SAVEACTIONS.SAVE_OPEN_BUSINESRULES:
+                this.saveOpenBusinessRules();
+                break;
+            default:
+                this.saveAndClose();
+        }
+    },
+
     saveOpenBusinessRules: function() {
         this.context.lastSaveAction = this.SAVEACTIONS.SAVE_OPEN_BUSINESRULES;
         this.initiateSave(_.bind(function () {

@@ -30,5 +30,6 @@ class PMSEEmailTemplateImporter extends PMSEImporter
         $this->bean = BeanFactory::getBean('pmse_Emails_Templates'); //new BpmEmailTemplate();
         $this->name = 'name';
         $this->id = 'id';
+        $this->extension = 'pet';
     }
 }

@@ -651,7 +651,7 @@ class PMSECrmDataWrapper implements PMSEObservable
     /**
      * @codeCoverageIgnore
      */
-    public function _get(array $args, ServiceBase $api, ModuleApi $module_api)
+    public function _get(array $args, ModuleApi $moduleApi)
     {
         $output = null;
         $data = $args['data'];
@@ -665,7 +665,7 @@ class PMSECrmDataWrapper implements PMSEObservable
                 $output = $this->retrieveTeams($filter);
                 break;
             case 'fields':
-                $output = $this->retrieveFields($filter, array("api" => $api, 'module_api' => $module_api));
+                $output = $this->retrieveFields($filter, $moduleApi);
                 $outputType = 1;
                 break;
             case 'allFields':
@@ -946,7 +946,7 @@ class PMSECrmDataWrapper implements PMSEObservable
      * @return object
      * @codeCoverageIgnore
      */
-    public function retrieveFields($filter = '', $additionalArgs = array())
+    public function retrieveFields($filter = '', ModuleApi $moduleApi)
     {
         global $beanList;
         if (isset($beanList[$filter])) {
@@ -995,13 +995,16 @@ class PMSECrmDataWrapper implements PMSEObservable
                     )) || stristr($tmpField['value'], 'email') ? 'email' : $tmpField['type'];
                 $tmpField['optionItem'] = 'none';
                 if ($field['type'] == 'enum' || $field['type'] == 'radioenum') {
-                    $module_api = $additionalArgs["module_api"];
-                    $tmpField['optionItem'] = $module_api->getEnumValues(
-                        $additionalArgs["api"],
-                        array(
-                            "module" => $filter,
-                            "field" => $field["name"]
-                        ));
+                    if (!isset($field['options']) || !isset($app_list_strings[$field['options']])) {
+                        $tmpField['optionItem'] = $moduleApi->getEnumValues(
+                            array(),
+                            array(
+                                "module" => $newModuleFilter,
+                                "field" => $field["name"]
+                            ));
+                    } else {
+                        $tmpField['optionItem'] = $app_list_strings[$field['options']];
+                    }
                 }
 
                 if ($field['type'] == 'bool') {

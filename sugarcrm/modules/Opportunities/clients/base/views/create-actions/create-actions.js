@@ -58,20 +58,35 @@
             this.listContext = this.context.parent || this.context;
             this.originalSuccess = options.success;
 
-        var success = _.bind(function(model) {
-            this.originalSuccess(model);
-
-            // check to see if we added RLIs during create
-            var addedRLIs = model.get('revenuelineitems') || false;
-            addedRLIs =  (addedRLIs && addedRLIs.create && addedRLIs.create.length);
-            if (!addedRLIs && options.lastSaveAction != 'saveAndCreate') {
-                this.showRLIWarningMessage(this.listContext.get('module'));
-            }
-        }, this);
+            var success = _.bind(function(model) {
+                this.originalSuccess(model);
+                this._checkForRevenueLineItems(model, options);
+            }, this);
 
             return {
                 success: success
             };
+        }
+    },
+
+    /**
+     * Check for Revenue Line Items, if the user has edit access and non exist, then
+     * display the RLI Warning Message.
+     *
+     * @param {{Data.Bean}} model
+     * @param {{object}} options
+     * @private
+     */
+    _checkForRevenueLineItems: function(model, options) {
+        // lets make sure we have edit/create access to RLI's
+        // if we do, lets make sure that the values where added
+        if (app.acl.hasAccess('edit', 'RevenueLineItems')) {
+            // check to see if we added RLIs during create
+            var addedRLIs = model.get('revenuelineitems') || false;
+            addedRLIs = (addedRLIs && addedRLIs.create && addedRLIs.create.length);
+            if (!addedRLIs && options.lastSaveAction != 'saveAndCreate') {
+                this.showRLIWarningMessage(this.listContext.get('module'));
+            }
         }
     },
 

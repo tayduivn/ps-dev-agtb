@@ -177,7 +177,7 @@ nv.models.pieChart = function() {
             .attr('class', 'nv-title')
             .attr('x', direction === 'rtl' ? availableWidth : 0)
             .attr('y', 0)
-            .attr('dy', '1em')
+            .attr('dy', '.75em')
             .attr('text-anchor', 'start')
             .text(properties.title)
             .attr('stroke', 'none')
