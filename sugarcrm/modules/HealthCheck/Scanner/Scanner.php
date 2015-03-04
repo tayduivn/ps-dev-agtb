@@ -2129,6 +2129,7 @@ ENDP;
      * These fields are allowed to use in stock and non-stock modules.
      */
     protected $templateFields = array(
+        "email" => true,
         "email1" => true,
         "email2" => true,
         "currency_id" => true,
