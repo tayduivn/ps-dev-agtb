@@ -1354,9 +1354,8 @@ class PMSECrmDataWrapper implements PMSEObservable
                 $newModuleFilter = "Project Tasks";
             }
             foreach ($ajaxRelationships as $related) {
-                if (($newModuleFilter == $related['lhs_module'] || strtolower(
-                            $newModuleFilter
-                        ) == $related['lhs_table']) && ($related['relationship_type'] == $filter_11 || $related['relationship_type'] == $filter_1m)
+                if (($newModuleFilter == $related['lhs_module'] || $moduleBean->table_name == $related['lhs_table']) &&
+                    ($related['relationship_type'] == $filter_11 || $related['relationship_type'] == $filter_1m)
                 ) {
                     $tmpField = array();
                     $tmpField['value'] = $related['relationship_name'];
