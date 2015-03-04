@@ -1,6 +1,4 @@
 <?php
-
-if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -29,16 +27,6 @@ $viewdefs['Opportunities']['mobile']['view']['list'] = array(
                     'default' => true,
                     'enabled' => true
                 ),
-
-// ENT/ULT should have sales status
-//BEGIN SUGARCRM flav=ent ONLY
-                array(
-                    'name' => 'sales_status',
-                    'label' => 'LBL_SALES_STAGE',
-                    'default' => false,
-                    'enabled' => true,
-                ),
-//END SUGARCRM flav=ent ONLY
                 array(
                     'name' => 'opportunity_type',
                     'label' => 'LBL_TYPE',
@@ -52,6 +40,12 @@ $viewdefs['Opportunities']['mobile']['view']['list'] = array(
                 array(
                     'name' => 'next_step',
                     'label' => 'LBL_NEXT_STEP',
+                    'default' => false,
+                ),
+                array(
+                    'name' => 'sales_stage',
+                    'width' => '10',
+                    'label' => 'LBL_LIST_SALES_STAGE',
                     'default' => false,
                 ),
                 array(
@@ -77,17 +71,6 @@ $viewdefs['Opportunities']['mobile']['view']['list'] = array(
                     'default' => false,
                     'readonly' => true,
                 ),
-// CORP/PRO should have sales stage
-//BEGIN SUGARCRM flav=pro && flav!=ent && flav!=ult ONLY
-                array(
-                    'name' => 'sales_stage',
-                    'label' => 'LBL_SALES_STAGE',
-                    'default' => false,
-                    'enabled' => true,
-                ),
-//END SUGARCRM flav=pro && flav!=ent && flav!=ult ONLY
-
-
                 array(
                     'name' => 'team_name',
                     'label' => 'LBL_LIST_TEAM',
@@ -111,4 +94,3 @@ $viewdefs['Opportunities']['mobile']['view']['list'] = array(
     )
 );
 
-?>

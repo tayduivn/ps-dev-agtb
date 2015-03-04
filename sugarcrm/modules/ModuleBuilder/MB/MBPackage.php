@@ -860,9 +860,12 @@ function buildInstall($path){
                         // New style pathing
                         $fullpath = $path . '/' . $type;
                         // Right now only views are customizable in studio
-                        $newfiles = glob("$fullpath/*/views/*");
-                        if (!empty($newfiles)) {
-                            $result[$type] = $mod_strings['LBL_EC_CUSTOMLAYOUT'];
+                        $viewDirs = glob("$fullpath/*/views");
+                        foreach ($viewDirs as $viewDir) {
+                            if ($this->isDirectoryExportable($viewDir)) {
+                                $result[$type] = $mod_strings['LBL_EC_CUSTOMLAYOUT'];
+                                break;
+                            }
                         }
                     }
                     break;
@@ -1273,9 +1276,9 @@ function buildInstall($path){
     public function isDirectoryExportable($path)
     {
         if (file_exists($path)) {
-            $list = glob("$path/*");
-            // False/array() means nothing to export
-            return !empty($list);
+            $it = $this->getDirectoryIterator($path);
+            $it->rewind();
+            return $it->valid();
         }
 
         return false;

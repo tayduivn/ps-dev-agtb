@@ -227,9 +227,14 @@ $dictionary['pmse_Business_Rules'] = array(
                 'calculated' => false,
                 'len' => 100,
                 'size' => '20',
-                'options' => 'moduleListSingular',
+                'options' => '',
                 'studio' => 'visible',
                 'dependency' => false,
+                'function' =>
+                    array (
+                        'name' => 'getTargetsModules',
+                        'include' => 'modules/pmse_Project/pmse_ProjectHelper.php',
+                    ),
             ),
         'rst_filename' =>
             array (

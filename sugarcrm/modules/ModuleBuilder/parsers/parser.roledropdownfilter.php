@@ -35,7 +35,7 @@ class ParserRoleDropDownFilter extends ModuleBuilderParser
     {
         $paths = array(
             SugarAutoLoader::existingCustomOne($this->getFilePath($role, $dropdown)),
-            'custom/application/Ext/DropdownFilters/' . $role . '/dropdownfilters.ext.php',
+            'custom/application/Ext/DropdownFilters/roles/' . $role . '/dropdownfilters.ext.php',
         );
 
         foreach ($paths as $path) {
@@ -80,7 +80,7 @@ class ParserRoleDropDownFilter extends ModuleBuilderParser
         return array_merge(
             glob($this->path . '/*/*.php'),
             glob('custom/' . $this->path . '/*/*.php'),
-            glob('custom/application/Ext/DropdownFilters/*/dropdownfilters.ext.php')
+            glob('custom/application/Ext/DropdownFilters/roles/*/dropdownfilters.ext.php')
         );
     }
 
