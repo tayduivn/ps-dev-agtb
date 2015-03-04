@@ -70,7 +70,6 @@
             config.category_root :
             null;
         this.extraModule = this.meta.extra_provider || {};
-
         if (this.context.get('module') === this.extraModule.module &&
             (this.context.get('action') === 'detail' || this.context.get('action') === 'edit')
         ) {
@@ -202,7 +201,9 @@
 
     /**
      * Handle load state of tree.
+     * Always returns true to process the code, which called the method.
      * @param {Object} data Data of loaded tree.
+     * @return {Boolean} Always returns `true`.
      */
     stateLoaded: function(data) {
         var originalUseState = this.useStates,
@@ -217,12 +218,15 @@
             });
             self.useStates = originalUseState;
         });
+        return true;
     },
 
     /**
      * Handle toggle of tree folder.
+     * Always returns true to process the code, which called the method.
      * @param {Object} data Toggled folder.
      * @param {Function} callback Async callback to use with async.js
+     * @return {Boolean} Return `true` to continue execution, `false` otherwise..
      */
     folderToggled: function (data, callback) {
         var triggeredCallback = false,
@@ -241,6 +245,7 @@
                             callback.call();
                         }
                     });
+                    return false;
                 }
             }
         }
@@ -250,6 +255,7 @@
         if (this.useStates) {
             this.saveJSTreeState();
         }
+        return true;
     },
 
     /**

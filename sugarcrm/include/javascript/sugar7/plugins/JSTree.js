@@ -261,7 +261,6 @@
                     };
                 jsTreeOptions = _.extend({}, jsTreeOptions, this.jsTreeOptions);
                 treeData.ctx = this.context;
-
                 _.each(treeData, fn);
 
                 this.jsTree = $container.jstree(jsTreeOptions)

@@ -35,6 +35,15 @@ class KBContent extends SugarBean {
     public $exp_date;
 
     /**
+     * {@inheritDoc}
+     * Add new type 'nestedset' that works like relate field.
+     */
+    public static $relateFieldTypes = array(
+        'relate',
+        'nestedset',
+    );
+
+    /**
      * Return root id for KB categories.
      * @return string for root node of KB categories.
      */
