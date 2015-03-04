@@ -10,6 +10,9 @@
  */
 
 ({
+    /**
+     * {@inheritDoc}
+     */
     initialize: function(options) {
         this._super('initialize', [options]);
         this._initializeCollectionFilterDef(options);

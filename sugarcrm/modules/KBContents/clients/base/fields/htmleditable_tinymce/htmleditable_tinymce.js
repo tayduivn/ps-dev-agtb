@@ -14,6 +14,7 @@
 
     /**
      * {@inheritDoc}
+     *
      * Apply document css style to editor.
      */
     getTinyMCEConfig: function() {

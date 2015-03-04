@@ -13,13 +13,12 @@
 
     /**
      * {@inheritDoc}
+     *
      * Apply select image behaviour to editor.
      */
     getTinyMCEConfig: function() {
         var config = this._super('getTinyMCEConfig');
-
         config.file_browser_callback = _.bind(this.tinyMCEFileBrowseCallback, this);
-
         return config;
     }
 })

@@ -29,7 +29,7 @@
      * Collects server version, language, module, and route and returns an HTML link to be used
      * in the template
      *
-     * @returns {String} The HTML a-tag for the More Help link
+     * @returns {string} The HTML a-tag for the More Help link
      */
     createMoreHelpLink: function () {
         var serverInfo = app.metadata.getServerInfo(),

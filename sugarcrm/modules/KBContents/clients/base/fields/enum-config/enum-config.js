@@ -70,6 +70,7 @@
 
     /**
      * {@inheritDoc}
+     *
      * Filters language items for different modes.
      * Disable edit mode for editing revision and for creating new revision.
      * Displays only available langs for creating localization.

@@ -25,17 +25,17 @@
     $node: null,
 
     /**
-     * @property {String} Selector for `Select2` dropdown.
+     * @property {string} Selector for `Select2` dropdown.
      */
     fieldSelector: '',
 
     /**
-     * @property {String} Unique ID for file input.
+     * @property {string} Unique ID for file input.
      */
     cid: null,
 
     /**
-     * @property {String} Selector for file input.
+     * @property {string} Selector for file input.
      */
     fileInputSelector: '',
 
@@ -294,7 +294,7 @@
     /**
      * Format selection for `Select2` to display.
      * @param {Object} attachment
-     * @return {String}
+     * @return {string}
      */
     formatSelection: function (attachment) {
         return this._select2formatSelectionTemplate(attachment);
@@ -330,6 +330,11 @@
         );
     },
 
+    /**
+     * {@inheritDoc}
+     *
+     * Disposes event listeners on `Select2` object.
+     */
     dispose: function () {
         this.$node.off('change');
         this.$node.off('select2-opening');

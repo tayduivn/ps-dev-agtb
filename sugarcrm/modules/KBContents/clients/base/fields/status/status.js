@@ -67,6 +67,9 @@
         }
     },
 
+    /**
+     * {@inheritDoc}
+     */
     _checkAccessToAction: function(action) {
         var access = this._super('_checkAccessToAction');
         if (access) {

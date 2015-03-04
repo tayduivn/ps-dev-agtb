@@ -23,7 +23,7 @@
 
     /**
      * Root ID of a shown NestedSet.
-     * @property {String}
+     * @property {string}
      */
     categoryRoot: null,
 
@@ -39,6 +39,8 @@
 
     /**
      * {@inheritDoc}
+     *
+     * Init additional properties and events.
      */
     initialize: function(options) {
         this._super('initialize', [options]);

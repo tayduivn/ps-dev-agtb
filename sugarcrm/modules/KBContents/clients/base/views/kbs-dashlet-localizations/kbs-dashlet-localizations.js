@@ -19,7 +19,7 @@
     /**
      * {@inheritDoc}
      *
-     * @property {Number} _defaultSettings.limit Maximum number of records to
+     * @property {number} _defaultSettings.limit Maximum number of records to
      *   load per request, defaults to '5'.
      */
     _defaultSettings: {
@@ -35,6 +35,7 @@
 
     /**
      * {@inheritDoc}
+     *
      * Init collection.
      */
     initDashlet: function () {

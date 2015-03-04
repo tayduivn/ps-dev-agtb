@@ -99,6 +99,11 @@
         }
     },
 
+    /**
+     * {@inheritDocs}
+     *
+     * Dispose listeners for 'change:useful' and 'change:notuseful' events.
+     */
     dispose: function() {
         this.stopListening(app.controller.context.get('model'), 'change:useful', this.refresh);
         this.stopListening(app.controller.context.get('model'), 'change:notuseful', this.refresh);

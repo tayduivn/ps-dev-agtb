@@ -22,8 +22,8 @@
      * Default settings.
      *
      * @property {Object} _defaultSettings
-     * @property {Boolean} _defaultSettings.showMenu Display menu or not.
-     * @property {Number} _defaultSettings.liHeight Height (pixels) of row.
+     * @property {boolean} _defaultSettings.showMenu Display menu or not.
+     * @property {number} _defaultSettings.liHeight Height (pixels) of row.
      */
     _defaultSettings: {
         showMenu: true,
@@ -41,6 +41,42 @@
      * @property {Object} _callbacks
      */
     _callbacks: null,
+
+    /**
+     * {@inheritDoc}
+     *
+     * Add listener for 'search:clear' and 'click:add_node_button' events.
+     * Init settings.
+     * Init callbacks.
+     */
+    initialize: function(options) {
+        this.on('search:clear', function() {
+            var el = this.$el.find('input[data-name=search]');
+            el.val('');
+            this._toggleIconRemove(!_.isEmpty(el.val()));
+            this.searchNodeHandler(el.val());
+        }, this);
+        this._super('initialize', [options]);
+        this._initSettings();
+        this._initCallbacks();
+        this.layout.on('click:add_node_button', this.addNodeHandler, this);
+    },
+
+    /**
+     * {@inheritDoc}
+     *
+     * @example Call _renderTree function with the following parameters.
+     * <pre><code>
+     * this._renderTree($('.tree-block'), this._settings, {
+     *      onToggle: this.jstreeToggle,
+     *      onSelect: this.jstreeSelect
+     * });
+     * </code></pre>
+     */
+    _renderHtml: function(ctx, options) {
+        this._super('_renderHtml', [ctx, options]);
+        this._renderTree($('.tree-block'), this._settings, this._callbacks);
+    },
 
     /**
      * Initialize _settings object.
@@ -71,48 +107,9 @@
     },
 
     /**
-     * {@inheritDoc}
-     */
-    initialize: function(options) {
-        this.on('search:clear', function() {
-            var el = this.$el.find('input[data-name=search]');
-            el.val('');
-            this._toggleIconRemove(!_.isEmpty(el.val()));
-            this.searchNodeHandler(el.val());
-        }, this);
-        this._super('initialize', [options]);
-        this._initSettings();
-        this._initCallbacks();
-        this.layout.on('click:add_node_button', this.addNodeHandler, this);
-    },
-
-    /**
-     * {@inheritDoc}
-     */
-    _dispose: function() {
-        this.off('search:clear');
-        this._super('_dispose');
-    },
-
-    /**
-     * {@inheritDoc}
-     * @example Call _renderTree function with the following parameters.
-     * <pre><code>
-     * this._renderTree($('.tree-block'), this._settings, {
-     *      onToggle: this.jstreeToggle,
-     *      onSelect: this.jstreeSelect
-     * });
-     * </code></pre>
-     */
-    _renderHtml: function(ctx, options) {
-        this._super('_renderHtml', [ctx, options]);
-        this._renderTree($('.tree-block'), this._settings, this._callbacks);
-    },
-
-    /**
      * Handle submit in search field.
      * @param {Event} event
-     * @return {Boolean}
+     * @return {boolean}
      * @private
      */
     _keyHandler: function(event) {
@@ -123,7 +120,7 @@
 
     /**
      * Append or remove an icon to the search input so the user can clear the search easily.
-     * @param {Boolean} addIt TRUE if you want to add it, FALSE to remove
+     * @param {boolean} addIt TRUE if you want to add it, FALSE to remove
      */
     _toggleIconRemove: function(addIt) {
         if (addIt && !this.$('i[data-role=icon-remove]')[0]) {
@@ -142,9 +139,17 @@
 
     /**
      * Custom search handler.
-     * @param {Event} event
+     * @param {Event} event DOM event.
      */
     searchNodeHandler: function(event) {
         this.searchNode($(event.currentTarget).val());
+    },
+
+    /**
+     * {@inheritDoc}
+     */
+    _dispose: function() {
+        this.off('search:clear');
+        this._super('_dispose');
     }
 })
