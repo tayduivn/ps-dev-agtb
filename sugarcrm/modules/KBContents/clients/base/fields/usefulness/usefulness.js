@@ -47,7 +47,7 @@
     /**
      * Build the state key for usefulness vote.
      *
-     * @return {String} hash key.
+     * @return {string} hash key.
      */
     getLastStateKey: function() {
         if (this._lastStateKey) {
@@ -60,7 +60,7 @@
     /**
      * The vote for useful or not useful.
      *
-     * @param {Boolean} isUseful Flag of useful or not useful.
+     * @param {boolean} isUseful Flag of useful or not useful.
      */
     vote: function(isUseful) {
         if (this.isVoted()) {
@@ -92,7 +92,7 @@
     /**
      * Check voted state.
      *
-     * @return {Boolean}
+     * @return {boolean}
      */
     isVoted: function() {
         if (!this.voted) {

@@ -12,6 +12,12 @@
 ({
     extendsFrom: 'SubpanelListView',
 
+    /**
+     * {@inheritDoc}
+     *
+     * Check access to model.
+     * Setup dataView to load correct viewdefs from subpanel-for-localizations
+     */
     initialize: function(options) {
         this._super('initialize', [options]);
 
@@ -19,10 +25,14 @@
             this.context.set('requiredFilter', 'records-noedit');
         }
 
-        // setup dataView to load correct viewdefs from subpanel-for-localizations.php
         this.context.set('dataView', 'subpanel-for-localizations');
     },
 
+    /**
+     * {@inheritDoc}
+     *
+     * Removes 'status' field from options if there is no access to model.
+     */
     parseFieldMetadata: function(options) {
         options = this._super('parseFieldMetadata', [options]);
 

@@ -15,6 +15,7 @@
      * {@inheritDoc}
      *
      * Add KBContent plugin for view.
+     * Create filter defs for current collection.
      */
     initialize: function(options) {
         this.plugins = _.union(this.plugins || [], [

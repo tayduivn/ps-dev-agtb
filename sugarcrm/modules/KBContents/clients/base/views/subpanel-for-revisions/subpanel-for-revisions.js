@@ -12,10 +12,13 @@
 ({
     extendsFrom: 'SubpanelListView',
 
+    /**
+     * {@inheritDoc}
+     *
+     * Setup dataView to load correct viewdefs from subpanel-for-revisions
+     */
     initialize: function(options) {
         this._super('initialize', [options]);
-
-        // setup dataView to load correct viewdefs from subpanel-for-revisions.php
         this.context.set('dataView', 'subpanel-for-revisions');
     }
 })

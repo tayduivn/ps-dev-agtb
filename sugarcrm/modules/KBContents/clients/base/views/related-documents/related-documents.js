@@ -18,7 +18,8 @@
     /**
      * {@inheritDoc}
      *
-     * @property {Number} _defaultSettings.limit Maximum number of records to
+     * @property {Object} _defaultSettings Default settings.
+     * @property {number} _defaultSettings.limit Maximum number of records to
      *   load per request, defaults to '5'.
      */
     _defaultSettings: {
@@ -34,7 +35,8 @@
 
     /**
      * {@inheritDoc}
-     * Init collection.
+     *
+     * Initialize settings and collection.
      */
     initDashlet: function() {
         this._initSettings();
@@ -119,7 +121,9 @@
     },
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
+     * Fetch collection if it was not fetched before.
      */
     loadData: function(options) {
         options = options || {};

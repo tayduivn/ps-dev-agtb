@@ -24,12 +24,18 @@
 
     plugins: ['Tooltip'],
 
+    /**
+     * {@inheritDoc}
+     */
     initialize: function(options) {
         this._super('initialize', [options]);
         this._currentIndex = 0;
         this.model.unset('deleted_languages', {silent: true});
     },
 
+    /**
+     * {@inheritDoc}
+     */
     format: function(value) {
         var result = [],
             numItems = 0;
@@ -82,8 +88,8 @@
 
     /**
      * Set primary item.
-     * @param {Number} index
-     * @return {Bool}
+     * @param {number} index
+     * @return {boolean}
      */
     setPrimary: function(index) {
         var value = this.unformat(this.value);
@@ -153,6 +159,7 @@
 
     /**
      * Add item to list.
+     * @param {Event} evt DOM event.
      */
     addItem: function(evt) {
         var index = $(evt.currentTarget).data('index'),
@@ -166,6 +173,7 @@
 
     /**
      * Remove item from list.
+     * @param {Event} evt DOM event.
      */
     removeItem: function(evt) {
         this._currentTarget = evt.currentTarget;
@@ -224,13 +232,14 @@
 
     /**
      * Predefined function for cancel delete.
-     * @param {Event} evt
+     * @param {Event} evt DOM event.
      */
     cancelDelete: function(evt) {
     },
 
     /**
-     * Set primary item
+     * Set primary item.
+     * @param {Event} evt DOM event.
      */
     setPrimaryItem: function(evt) {
         var index = $(evt.currentTarget).data('index');
