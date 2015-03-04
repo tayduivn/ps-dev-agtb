@@ -45,8 +45,8 @@
                                             {{field ../../../../this model=../../../../this.model template=../../../../this.action}}
                                         </span>
                                         {{#unless ../../../../../case.reclaim}}
-                                            {{#unless ../../../../createMode}}
-                                                {{#notHas name ../../../../../noEditFields}}
+                                        {{#unless ../../../../../createMode}}
+                                            {{#notHas name ../../../../../../noEditFields}}
                                                     <span class="record-edit-link-wrapper" data-name="{{name}}">
                                                     <a class="record-edit-link btn btn-invisible" data-type="{{type}}" data-name="{{name}}"><i class="fa fa-pencil"></i></a>
                                                 </span>
