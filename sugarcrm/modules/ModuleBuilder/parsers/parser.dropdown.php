@@ -79,23 +79,26 @@ class ParserDropDown extends ModuleBuilderParser
             $contents = str_replace("?>", '', $contents);
             if (empty($contents)) $contents = "<?php";
 
-            // Handle special dropdown item removal
-            if (in_array($dropdown_name, getExemptDropdowns())) {
-                foreach ($my_list_strings[$dropdown_name] as $key => $value) {
-                    // If the value is present in the old app_list_strings but not in the new, null it
-                    if (!empty($key) && !isset($dropdown[$key])) {
-                        $dropdown[$key] = null;
+            // Needed when upgrading from version < 7.6
+            if (empty($params['handleSpecialDropdowns'])) {
+                // Handle special dropdown item removal
+                if (in_array($dropdown_name, getExemptDropdowns())) {
+                    foreach ($my_list_strings[$dropdown_name] as $key => $value) {
+                        // If the value is present in the old app_list_strings but not in the new, null it
+                        if (!empty($key) && !isset($dropdown[$key])) {
+                            $dropdown[$key] = null;
+                        }
                     }
-                }
-                // We need to copy the NULLs if they are not set in the new dropdown
-                // because return_app_list_strings_language() removes them from the array
-                $customLanguage = "custom/include/language/$selected_lang.lang.php";
-                if (file_exists($customLanguage)) {
-                    include($customLanguage);
-                    if (isset($app_list_strings[$dropdown_name])) {
-                        foreach ($app_list_strings[$dropdown_name] as $key => $value) {
-                            if ($value === null && !isset($dropdown[$key])) {
-                                $dropdown[$key] = null;
+                    // We need to copy the NULLs if they are not set in the new dropdown
+                    // because return_app_list_strings_language() removes them from the array
+                    $customLanguage = "custom/include/language/$selected_lang.lang.php";
+                    if (file_exists($customLanguage)) {
+                        include($customLanguage);
+                        if (isset($app_list_strings[$dropdown_name])) {
+                            foreach ($app_list_strings[$dropdown_name] as $key => $value) {
+                                if ($value === null && !isset($dropdown[$key])) {
+                                    $dropdown[$key] = null;
+                                }
                             }
                         }
                     }
