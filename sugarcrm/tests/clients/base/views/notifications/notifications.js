@@ -440,7 +440,8 @@ describe('Notifications', function() {
             // Library mock
             Favico = function() {
                 return {
-                    badge: $.noop
+                    badge: $.noop,
+                    reset: $.noop
                 };
             };
 
@@ -473,5 +474,18 @@ describe('Notifications', function() {
                 });
             }
         );
+
+        it('should reset favicon badge if authentication expires or user logout', function() {
+            view._bootstrap();
+
+            var resetStub = sinon.collection.stub(view.favicon, 'reset');
+            sinon.collection.stub(app.api, 'isAuthenticated', function() {
+                return false;
+            });
+
+            view.render();
+
+            expect(resetStub).toHaveBeenCalledOnce();
+        });
     });
 });
