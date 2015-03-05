@@ -59,14 +59,7 @@ class AccountsApi extends ModuleApi
             return;
         }
 
-        // BEGIN SUGARCRM flav!=ent ONLY
-        // in pro versions, we need sales_stage
-        $status_field = 'sales_stage';
-        // END SUGARCRM flav!=ent ONLY
-        // BEGIN SUGARCRM flav=ent ONLY
-        // in ent versions, we need sales_status
-        $status_field = 'sales_status';
-        // END SUGARCRM flav=ent ONLY
+        $status_field = $this->getOpportunityStatusField();
 
         $query = new SugarQuery();
         $query->select(array($status_field, 'amount_usdollar'));
@@ -103,5 +96,24 @@ class AccountsApi extends ModuleApi
             $data[$status]['count']++;
         }
         return $data;
+    }
+
+    /**
+     * Figure out which Opportunity Status Field To Use based on the `opps_view_by` setting
+     *
+     * @return string
+     */
+    protected function getOpportunityStatusField()
+    {
+        $status_field = 'sales_stage';
+        // BEGIN SUGARCRM flav=ent ONLY
+        // get the opp config
+        $opp_config = Opportunity::getSettings();
+        if ($opp_config['opps_view_by'] === 'RevenueLineItems') {
+            $status_field = 'sales_status';
+        }
+        // END SUGARCRM flav=ent ONLY
+
+        return $status_field;
     }
 }
