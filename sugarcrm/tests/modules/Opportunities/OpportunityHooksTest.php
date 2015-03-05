@@ -27,8 +27,8 @@ class OpportunityHooksTest extends Sugar_PHPUnit_Framework_TestCase
             array($count_to_array(2), $count_to_array(0), $count_to_array(2), Opportunity::STATUS_CLOSED_WON),
             // closed won and closed lost
             array($count_to_array(2), $count_to_array(2), $count_to_array(4), Opportunity::STATUS_CLOSED_WON),
-            // all closed log
-            array($count_to_array(0), $count_to_array(2), $count_to_array(2), Opportunity::STAGE_CLOSED_LOST),
+            // all closed lost
+            array($count_to_array(0), $count_to_array(2), $count_to_array(2), Opportunity::STATUS_CLOSED_LOST),
             // only closed lost but higher total
             array($count_to_array(0), $count_to_array(2), $count_to_array(4), Opportunity::STATUS_IN_PROGRESS),
             // only cosed won but higher total
@@ -36,7 +36,7 @@ class OpportunityHooksTest extends Sugar_PHPUnit_Framework_TestCase
             // no closed won or lost but still a total
             array($count_to_array(0), $count_to_array(0), $count_to_array(4), Opportunity::STATUS_IN_PROGRESS),
             // no closed won, closed lost and total
-            array($count_to_array(0), $count_to_array(0), $count_to_array(0), Opportunity::STATUS_IN_PROGRESS),
+            array($count_to_array(0), $count_to_array(0), $count_to_array(0), Opportunity::STATUS_NEW),
         );
     }
 
