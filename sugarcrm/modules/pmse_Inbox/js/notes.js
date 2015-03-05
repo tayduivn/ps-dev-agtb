@@ -23,10 +23,8 @@ showNotes = function (caseId, caseIndex, noEdit) {
     notesTextArea = new TextareaField({
         name: 'notesTextArea',
         label: '',
-        fieldWidth: '80%',
-        value: ''
+        fieldWidth: '80%'
     });
-    notesTextArea.value = '';
 
     _App.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
     np = new NotePanel({
