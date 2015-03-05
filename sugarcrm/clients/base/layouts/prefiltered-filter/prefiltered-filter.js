@@ -28,9 +28,9 @@
      * {@inheritDoc}
      */
     initialize: function(opts) {
+        var filter = app.data.getBeanClass('Filters').prototype;
         this._super('initialize', [opts]);
-        this.filterDef = _.extend(
-            [],
+        this.filterDef = filter.combineFilterDefinitions(
             this.context.get('collection').origFilterDef,
             this.context.get('filterDef')
         );
