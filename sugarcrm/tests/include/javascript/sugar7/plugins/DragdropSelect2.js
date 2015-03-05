@@ -148,6 +148,22 @@ describe('DragdropSelect2 Plugin', function() {
             $select2.select2('container').click();
             expect($firstItem.hasClass(field.selectedClass)).toBe(false);
         });
+
+        it('should select all items when the select all event is fired with target in this field', function() {
+            var event = jQuery.Event('keydown', {target: field.$('.select2-search-field input').get(0)});
+            field.trigger('init');
+            expect(field.$('.' + field.selectedClass).length).toEqual(0);
+            field.context.trigger('dragdropselect2:select:all', event);
+            expect(field.$('.' + field.selectedClass).length).toEqual($items.length);
+        });
+
+        it('should not select all items when the select all event is fired with target not in this field', function() {
+            var event = jQuery.Event('keydown', {target: document});
+            field.trigger('init');
+            expect(field.$('.' + field.selectedClass).length).toEqual(0);
+            field.context.trigger('dragdropselect2:select:all', event);
+            expect(field.$('.' + field.selectedClass).length).toEqual(0);
+        });
     });
 
     describe('setDraggable', function() {

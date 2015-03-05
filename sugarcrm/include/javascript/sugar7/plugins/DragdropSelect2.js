@@ -37,6 +37,20 @@
             onAttach: function() {
                 this.on('init', function() {
                     this.view.on('dragDropSelect2:selected', _.bind(this._handleItemSelected, this));
+
+                    app.shortcuts.register('DragdropSelect2:SelectAll', 'ctrl+a', function(event) {
+                        this.context.trigger('dragdropselect2:select:all', event);
+                    }, this, true);
+
+                    this.context.on('dragdropselect2:select:all', function(event) {
+                        if ($.contains(this.el, event.target) || !_.isEmpty(this.$lastSelectedItem)) {
+                            this._selectAll();
+
+                            //close select2 to allow for an immediate drag of the selected items
+                            //otherwise select2 swallows the click before draggable can catch it
+                            this.$selectablSelect2.select2('close');
+                        }
+                    }, this);
                 });
             },
 
@@ -62,6 +76,7 @@
              */
             setSelectable: function($select2, $items) {
                 var self = this;
+                this.$selectablSelect2 = $select2;
 
                 //clear out any previous events before setting up new ones
                 if (this.$selectableItems) {
@@ -246,6 +261,16 @@
             _clearSelected: function() {
                 this.$(this.itemSelector).removeClass(this.selectedClass);
                 this.$lastSelectedItem = null;
+            },
+
+            /**
+             * Selection all items
+             *
+             * @private
+             */
+            _selectAll: function() {
+                this.$(this.itemSelector).addClass(this.selectedClass);
+                this.view.trigger('dragDropSelect2:selected', this.name);
             },
 
             /**
