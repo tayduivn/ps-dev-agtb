@@ -42,7 +42,6 @@
     applyFilter: function(query, dynamicFilterDef) {
         this.context.get('collection').origFilterDef =
             _.union([], this.filterDef,  this.context.get('collection').origFilterDef);
-        this.context.set('layout', 'records');
         this._super('applyFilter', [query, dynamicFilterDef]);
     }
 })
