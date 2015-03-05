@@ -21,82 +21,49 @@
      */
     initialize: function(options) {
         this._super('initialize', [options]);
-        var collection = this.collection = app.data.createMixedBeanCollection();
-        this.context.set('collection', collection);
+
+        this.collection.query = this.context.get('searchTerm');
+
+        this.context.on('change:searchTerm', function(context, searchTerm) {
+            //TODO: collection.fetch shouldn't need a query to be passed. Will
+            // be fixed by SC-3973.
+            this.context.set('searchTerm', searchTerm);
+            this.collection.fetch({query: searchTerm});
+        }, this);
+
+        this.collection.on('reset', function(collection, data) {
+            this.formatRecords(collection);
+//            collection.facets = data.facets;
+//            this.context.set('facets', data.facets);
+            this.context.set('query_time', data.query_time);
+        }, this);
     },
 
     /**
-     * @inheritDoc
-     */
-    loadData: function() {
-        var searchTerm = this.context.get('searchTerm');
-        this.fireSearchRequest(searchTerm);
-    },
-
-    /**
-     * Fires the search request.
+     * Formats models returned by the globalsearch api.
      *
-     * @param {string} term The string to search for.
+     * @param {Data.BeanCollection} collection The collection of models to format.
      */
-    fireSearchRequest: function(term) {
-        var self = this;
-        var maxNum = app.config && app.config.maxSearchQueryResult ? parseInt(app.config.maxSearchQueryResult, 10) : 20;
-        var params = {
-            q: term,
-            max_num: maxNum
-        };
-
-        app.api.search(params, {
-            success: function(data) {
-                if (self.disposed) {
-                    return;
-                }
-                var formattedRecords = self.formatRecords(data.records);
-                self.collection.reset(formattedRecords);
-            },
-            error: function(error) {
-                app.error.handleHttpError(error);
-                app.logger.error('Failed to fetch search results in search ahead. ' + error);
-            }
-        });
-    },
-
-    /**
-     * Formats records sent by the globalsearch api.
-     *
-     * @param {Object[]} records The records to format.
-     * @return {Object[]} formattedRecords The array of formatted records.
-     */
-    formatRecords: function(records) {
-        var formattedRecords = [];
-        _.each(records, function(record) {
-            var module = app.metadata.getModule(record.data._module);
-
-            record.highlights = _.map(record.highlights, function(val, key) {
-                return {name: key, value: new Handlebars.SafeString(val), label: module.fields[key].vname};
+    formatRecords: function(collection) {
+        collection.each(function(model) {
+            var module = app.metadata.getModule(model.get('_module'));
+            var highlights = _.map(model.get('_highlights'), function(val, key) {
+                return {
+                    name: key,
+                    value: new Handlebars.SafeString(val),
+                    label: module.fields[key].vname,
+                    link: true,
+                    highlighted: true
+                };
             });
             model.set('_highlights', highlights);
 
             //FIXME: We shouldn't do that because it only applies for person
             // object, SC-4196 will fix it.
-            if (!record.data.name) {
-                record.data.name = record.data.first_name + ' ' + record.data.last_name;
+            if (!model.get('name')) {
+                var name = model.get('first_name') + ' ' + model.get('last_name');
+                model.set('name', name);
             }
-
-            var formattedRecord = {
-                id: record.data.id,
-                name: record.data.name,
-                link: true,
-                first_name: record.data.first_name,
-                last_name: record.data.last_name,
-                module: record.data._module,
-                _module: record.data._module,
-                route: '#' + app.router.buildRoute(record.data._module, record.data.id),
-                highlights: record.highlights
-            };
-            formattedRecords.push(formattedRecord);
         });
-
-        return formattedRecords;
     }
 })

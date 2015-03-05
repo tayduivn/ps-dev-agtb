@@ -22,6 +22,12 @@
      */
     initialize: function(options) {
         this._super('initialize', [options]);
+
+        this.context.on('change:searchTerm', function(model, value) {
+            this.searchTerm = value;
+            this.$('[data-term=query]').text(value);
+        }, this);
+
         this.searchTerm = this.context.get('searchTerm');
     }
 })

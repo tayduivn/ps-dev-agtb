@@ -171,7 +171,8 @@
                 callback: function(searchTerm) {
                     app.controller.loadView({
                         layout: 'globalsearch-results',
-                        searchTerm: searchTerm
+                        searchTerm: searchTerm,
+                        mixed: true
                     });
                 }
             },
