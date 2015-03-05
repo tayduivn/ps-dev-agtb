@@ -63,7 +63,7 @@
          * @private
          * @property {Array}
          * */
-        this._operatorsWithNoValues = ['$blank', '$not_blank'];
+        this._operatorsWithNoValues = ['$empty', '$not_empty'];
 
         app.view.View.prototype.initialize.call(this, opts);
 

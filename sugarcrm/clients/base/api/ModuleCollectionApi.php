@@ -45,6 +45,14 @@ class ModuleCollectionApi extends CollectionApi
                 'shortHelp' => 'Lists collection records.',
                 'longHelp' => 'include/api/help/collection_collection_name_get_help.html',
             ),
+            'getCollectionCount' => array(
+                'reqType' => 'GET',
+                'path' => array('collection', '?', 'count'),
+                'pathVars' => array('', 'collection_name', ''),
+                'method' => 'getCollectionCount',
+                'shortHelp' => 'Counts collection records.',
+                'longHelp' => 'include/api/help/collection_collection_name_count_get_help.html',
+            ),
         );
     }
 
@@ -64,6 +72,13 @@ class ModuleCollectionApi extends CollectionApi
     {
         $args['module'] = $source;
         return $this->getFilterApi()->filterList($api, $args);
+    }
+
+    /** {@inheritDoc} */
+    protected function getSourceCount($api, $source, $args)
+    {
+        $args['module'] = $source;
+        return $this->getFilterApi()->filterListCount($api, $args);
     }
 
     /** {@inheritDoc} */

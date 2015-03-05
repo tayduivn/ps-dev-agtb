@@ -101,6 +101,31 @@ abstract class CollectionApi extends SugarApi
     }
 
     /**
+     * API endpoint
+     *
+     * @param ServiceBase $api
+     * @param array $args
+     *
+     * @return array
+     * @throws SugarApiExceptionError
+     * @throws SugarApiExceptionInvalidParameter
+     * @throws SugarApiExceptionMissingParameter
+     * @throws SugarApiExceptionNotAuthorized
+     * @throws SugarApiExceptionNotFound
+     */
+    public function getCollectionCount(ServiceBase $api, array $args)
+    {
+        $definition = $this->getCollectionDefinition($api, $args);
+        $args = $this->normalizeArguments($args, $definition);
+
+        $count = $this->getCount($api, $args, $definition);
+
+        return array(
+            'record_count' => $count,
+        );
+    }
+
+    /**
      * Retrieves records from collection sources
      *
      * Any SugarApiException's that are thrown when retrieving related records are caught and added to the return value.
@@ -146,6 +171,32 @@ abstract class CollectionApi extends SugarApi
     }
 
     /**
+     * Counts records in collection sources
+     *
+     * @param ServiceBase $api
+     * @param array $args API arguments
+     * @param CollectionDefinitionInterface $definition
+     *
+     * @return array
+     * @throws SugarApiExceptionNotAuthorized
+     * @throws SugarApiExceptionNotFound
+     */
+    protected function getCount(
+        ServiceBase $api,
+        array $args,
+        CollectionDefinitionInterface $definition
+    ) {
+        $count = array();
+        foreach ($definition->getSources() as $source) {
+            $sourceArgs = $this->getSourceArguments($api, $args, $definition, $source);
+            $response = $this->getSourceCount($api, $source, $sourceArgs);
+            $count[$source] = $response['record_count'];
+        }
+
+        return $count;
+    }
+
+    /**
      * Creates arguments for RelateApi for specific source
      *
      * @param ServiceBase $api
@@ -161,7 +212,7 @@ abstract class CollectionApi extends SugarApi
         array $args,
         CollectionDefinitionInterface $definition,
         $source,
-        array $sortFields
+        array $sortFields = array()
     ) {
         $args = array_merge($args, array(
             'offset' => $args['offset'][$source],
@@ -220,6 +271,17 @@ abstract class CollectionApi extends SugarApi
      * @return array
      */
     abstract protected function getSourceData($api, $source, $args);
+
+    /**
+     * Counts records from the given collection source
+     *
+     * @param ServiceBase $api
+     * @param string $source Source name
+     * @param array $args API arguments
+     *
+     * @return array
+     */
+    abstract protected function getSourceCount($api, $source, $args);
 
     /**
      * Returns collection definition

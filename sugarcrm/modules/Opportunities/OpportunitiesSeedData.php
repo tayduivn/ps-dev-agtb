@@ -25,6 +25,12 @@ class OpportunitiesSeedData {
     public static $pt_ids = array();
 
     public static $pc_ids = array();
+
+    /**
+     * @var $db DBManager
+     */
+    protected static $db;
+
     /**
      * populateSeedData
      *
@@ -47,23 +53,7 @@ class OpportunitiesSeedData {
         $opp_config = Opportunity::getSettings(true);
         $usingRLIs = ($opp_config['opps_view_by'] === 'RevenueLineItems');
 
-        // BEGIN SUGARCRM flav = ent ONLY
-        if ($usingRLIs) {
-            // load up the product template_ids
-            $sql = 'SELECT id, list_price, cost_price, discount_price FROM product_templates WHERE deleted = 0';
-            /* @var $db DBManager */
-            $db = DBManagerFactory::getInstance();
-            $results = $db->query($sql);
-            while ($row = $db->fetchByAssoc($results)) {
-                static::$pt_ids[$row['id']] = $row;
-            }
-            $sql = 'SELECT id FROM product_categories WHERE deleted = 0';
-            $results = $db->query($sql);
-            while ($row = $db->fetchByAssoc($results)) {
-                static::$pc_ids[] = $row['id'];
-            }
-        }
-        // END SUGARCRM flav = ent ONLY
+        self::$db = DBManagerFactory::getInstance();
 
         $opp_ids = array();
         $timedate = TimeDate::getInstance();
@@ -72,12 +62,57 @@ class OpportunitiesSeedData {
         /* @var $currency Currency */
         $currency = SugarCurrency::getCurrencyByISO('EUR');
 
+        $now = $GLOBALS['timedate']->nowDb();
+        /* @var $opp Opportunity */
+        $opp = BeanFactory::getBean('Opportunities');
+        $oppFieldDefs = $opp->getFieldDefinitions();
+        $oppSql = 'INSERT INTO '. $opp->table_name . ' ('. join(',', array_keys($opp->toArray(true))) . ') VALUES';
+        $oppRows = array();
+        $oppAccRows = array();
+        $oppAccRow = array(
+            'id' => '',
+            'opportunity_id' => '',
+            'account_id' => '',
+            'date_modified' => self::$db->quoted($now),
+            'deleted' => 0
+        );
+        $oppAccSql = 'INSERT INTO accounts_opportunities ('. join(',', array_keys($oppAccRow)) . ') VALUES';
+
+
+
+        // BEGIN SUGARCRM flav = ent ONLY
+        if ($usingRLIs) {
+            // load up the product template_ids
+            $sql = 'SELECT id, list_price, cost_price, discount_price, category_id, mft_part_num,
+                      list_usdollar, cost_usdollar, discount_usdollar, tax_class, weight
+                  FROM product_templates WHERE deleted = 0';
+
+            $results = self::$db->query($sql);
+            while ($row = self::$db->fetchByAssoc($results)) {
+                static::$pt_ids[$row['id']] = $row;
+            }
+            $sql = 'SELECT id FROM product_categories WHERE deleted = 0';
+            $results = self::$db->query($sql);
+            while ($row = self::$db->fetchByAssoc($results)) {
+                static::$pc_ids[] = $row['id'];
+            }
+        }
+        // END SUGARCRM flav = ent ONLY
+
+        /* @var $fw ForecastWorksheet */
+        $fw = BeanFactory::getBean('ForecastWorksheets');
+        $fw->parent_type = 'Opportunities';
+        $fw->draft = 1;
+        $fw->date_entered = $now;
+        $fw->date_modified = $now;
+
+        $fwFieldDefs = $fw->getFieldDefinitions();
+        $fwRows = array();
+        $fwSql = 'INSERT INTO ' . $fw->table_name . '(' . join(',', array_keys($fw->toArray(true))) . ') VALUES';
+
         while ($records-- > 0) {
             $key = array_rand($accounts);
             $account = $accounts[$key];
-
-            /* @var $opp Opportunity */
-            $opp = BeanFactory::getBean('Opportunities');
 
             //Create new opportunities
             $opp->team_id = $account->team_id;
@@ -85,6 +120,9 @@ class OpportunitiesSeedData {
 
             $opp->assigned_user_id = $account->assigned_user_id;
             $opp->assigned_user_name = $account->assigned_user_name;
+
+            $opp->created_by = $account->assigned_user_id;
+            $opp->modified_user_id = $account->assigned_user_id;
 
             // figure out which one to use
             $base_rate = '1.0';
@@ -125,31 +163,60 @@ class OpportunitiesSeedData {
 
             $opp->id = create_guid();
             $opp->new_with_id = true;
-            // set the acccount on the opps, just for saving to the worksheet table
+
+            $opp->date_entered = $now;
+            $opp->date_modified = $now;
+
+            // set the account on the opps, just for saving to the worksheet table
             $opp->account_id = $account->id;
             $opp->account_name = $account->name;
-            $opp->save();
 
+            $oppAccRows[] = '(' . join(',', array_merge($oppAccRow, array(
+                'id' => self::$db->quoted(create_guid()),
+                'account_id' => self::$db->quoted($account->id),
+                'opportunity_id' => self::$db->quoted($opp->id)
+            ))) . ')';
+
+            $return = array();
             // BEGIN SUGARCRM flav=ent ONLY
             if ($usingRLIs) {
-                static::createRevenueLineItems($opp, rand(3, 5), $app_list_strings);
-                // unset the relationship and then resave the opp
-                unset($opp->revenuelineitems);
-                $opp->save();
+                $return = static::createRevenueLineItems($opp, rand(3, 5), $app_list_strings);
             }
             // END SUGARCRM flav=ent ONLY
+            $values = array_merge($opp->toArray(true), $return);
 
-            // save a draft worksheet for the new forecasts stuff
-            /* @var $worksheet ForecastWorksheet */
-            $worksheet = BeanFactory::getBean('ForecastWorksheets');
-            $worksheet->saveRelatedOpportunity($opp);
-            $opp_ids[] = $opp->id;
-
-            //BEGIN SUGARCRM flav=ent ONLY
-            if ($usingRLIs) {
-                $worksheet->saveOpportunityProducts($opp);
+            $sqlValues = array();
+            foreach($values as $key => $value) {
+                $sqlValues[] = self::$db->massageValue($value, $oppFieldDefs[$key]);
             }
-            //END SUGARCRM flav=ent ONLY
+            $oppRows[] = '(' . join(',', $sqlValues) . ')';
+
+            if (!$usingRLIs) {
+                $fw->modified_user_id = $account->assigned_user_id;
+                $fw->created_by = $account->assigned_user_id;
+                $fw->copyValues($fw->opportunityFieldMap, $opp);
+
+                $fw->id = create_guid();
+                $fw->parent_id = $opp->id;
+                $fwValues = $fw->toArray(true);
+
+                $sqlValues = array();
+                foreach ($fwValues as $key => $value) {
+                    $sqlValues[$key] = self::$db->massageValue($value, $fwFieldDefs[$key]);
+                }
+                $fwRows[] = '(' . join(',', $sqlValues) . ')';
+            }
+
+            $opp_ids[] = $opp->id;
+        }
+
+        self::$db->query($oppSql . ' ' . join(',', $oppRows));
+        self::$db->commit();
+        self::$db->query($oppAccSql . ' ' . join(',', $oppAccRows));
+        self::$db->commit();
+        if (!$usingRLIs) {
+            self::$db->query($fwSql . ' ' . join(',', $fwRows));
+            self::$db->commit();
         }
 
         return $opp_ids;
@@ -179,7 +246,33 @@ class OpportunitiesSeedData {
         $opp->total_revenue_line_items = $rlis_to_create;
         $opp->closed_revenue_line_items = 0;
 
-        SugarBean::enterOperation('saving_related');
+        $closedWon = 0;
+        $closedLost = 0;
+
+        $timedate = TimeDate::getInstance();
+        $now = $timedate->nowDb();
+
+        /* @var $rli RevenueLineItem */
+        $rli = BeanFactory::getBean('RevenueLineItems');
+        $rliFieldDefs = $rli->getFieldDefinitions();
+        $rliSql = array();
+        $sqlRli = 'INSERT INTO '. $rli->table_name . '('. join(',', array_keys($rli->toArray(true))) . ') VALUES';
+
+
+        /* @var $fw ForecastWorksheet */
+        $fw = BeanFactory::getBean('ForecastWorksheets');
+        $fw->parent_type = 'RevenueLineItems';
+        $fw->draft = 1;
+        $fw->date_entered = $now;
+        $fw->date_modified = $now;
+        $fw->modified_user_id = $opp->modified_user_id;
+        $fw->created_by = $opp->created_by;
+        $fwFieldDefs = $fw->getFieldDefinitions();
+        $fwRows = array();
+        $fwSql = 'INSERT INTO '. $fw->table_name . '('. join(',', array_keys($fw->toArray(true))) . ') VALUES';
+
+
+        //SugarBean::enterOperation('saving_related');
         while($rlis_created < $rlis_to_create) {
             $amount = rand(1000, 7500);
             $rand_best_worst = rand(100, 900);
@@ -198,8 +291,7 @@ class OpportunitiesSeedData {
                 $amount = $pt['discount_price'];
                 $rand_best_worst = rand(100, $cost_price);
             }
-            /* @var $rli RevenueLineItem */
-            $rli = BeanFactory::getBean('RevenueLineItems');
+
             $rli->team_id = $opp->team_id;
             $rli->team_set_id = $opp->team_set_id;
             $rli->name = $opp->name;
@@ -220,19 +312,34 @@ class OpportunitiesSeedData {
             $isClosed = false;
             if ($rli->sales_stage == Opportunity::STAGE_CLOSED_WON || $rli->sales_stage == Opportunity::STAGE_CLOSED_WON) {
                 $isClosed = true;
+                $rli->best_case = $rli->likely_case;
+                $rli->worst_case = $rli->likely_case;
+                if ($rli->sales_stage == Opportunity::STAGE_CLOSED_WON) {
+                    $closedWon++;
+                } else {
+                    $closedLost++;
+                }
                 $opp->closed_revenue_line_items++;
             }
             $rli->commit_stage = $rli->probability >= 70 ? 'include' : 'exclude';
             $rli->date_closed = ($isClosed) ? self::createPastDate() : self::createDate();
+            $rli->date_closed_timestamp = $timedate->fromDbDate($rli->date_closed)->getTimestamp();
             $rli->assigned_user_id = $opp->assigned_user_id;
             $rli->account_id = $opp->account_id;
+            $rli->account_name = $opp->account_name;
             $rli->opportunity_id = $opp->id;
             $rli->lead_source = array_rand($app_list_strings['lead_source_dom']);
+            $rli->product_type = $opp->opportunity_type;
             // if this is an even number, assign a product template
             if ($doPT) {
                 $rli->product_template_id = $pt_id;
                 $rli->discount_amount = rand(100, $rli->cost_price);
                 $rli->discount_rate_percent = (($rli->discount_amount/$rli->discount_price)*100);
+                foreach($pt as $field => $value) {
+                    if ($field != 'id') {
+                        $rli->$field = $value;
+                    }
+                }
             } else {
                 $rli->discount_amount = 0;
                 $rli->discount_rate_percent = 0;
@@ -240,17 +347,72 @@ class OpportunitiesSeedData {
                 $rli->category_id = static::$pc_ids[array_rand(static::$pc_ids, 1)];
             }
             $rli->total_amount = (($rli->discount_price-$rli->discount_amount)*$rli->quantity);
-            $rli->save();
+            $rli->id = create_guid();
+            $rli->date_entered = $now;
+            $rli->date_modified = $now;
+            $rli->modified_user_id = $opp->modified_user_id;
+            $rli->created_by = $opp->created_by;
+            //$rli->save();
+            $values = $rli->toArray(true);
+
+            $sqlValues = array();
+            foreach($values as $key => $value) {
+                $sqlValues[] = self::$db->massageValue($value, $rliFieldDefs[$key]);
+            }
+
+            $rliSql[] = '(' . join(',', $sqlValues) . ')';
+
+            $fw->copyValues($fw->productFieldMap, $rli);
+
+            $fw->id = create_guid();
+            $fw->parent_id = $rli->id;
+            $fwValues = $fw->toArray(true);
+
+            $sqlValues = array();
+            foreach($fwValues as $key => $value) {
+                $sqlValues[$key] = self::$db->massageValue($value, $fwFieldDefs[$key]);
+            }
+            $fwRows[] = $sqlValues;
 
             $opp_units += $rli->quantity;
             $opp_amount += $amount;
-            $opp_best_case += $amount+$rand_best_worst;
-            $opp_worst_case += $amount-$rand_best_worst;
+            $opp_best_case += $rli->best_case;
+            $opp_worst_case += $rli->worst_case;
             $rlis_created++;
         }
-        SugarBean::leaveOperation('saving_related');
+
+        if ($rlis_to_create > ($closedWon + $closedLost) || $rlis_to_create === 0) {
+            // still in progress
+            $opp->sales_status = Opportunity::STATUS_IN_PROGRESS;
+        } else {
+            // they are equal so if the total lost == total rlis then it's closed lost,
+            // otherwise it's always closed won
+            if ($closedLost == $rlis_to_create) {
+                $opp->sales_status = Opportunity::STATUS_CLOSED_LOST;
+            } else {
+                $opp->sales_status = Opportunity::STATUS_CLOSED_WON;
+            }
+        }
 
         $opp->name .= ' - ' . $opp_units . ' Units';
+        self::$db->query($sqlRli . ' ' . join(',', $rliSql));
+        self::$db->commit();
+
+        // process all the forecast worksheet rows since we have the correct opp name now
+        $tRows = array();
+        foreach($fwRows as $row) {
+            $row['opportunity_name'] = self::$db->quoted($opp->name);
+            $tRows[] = '(' . join(',', $row) . ')';
+        }
+        self::$db->query($fwSql . ' ' . join(',', $tRows));
+        self::$db->commit();
+
+
+        return array(
+            'amount' => $opp_amount,
+            'best_case' => $opp_best_case,
+            'worst_case' => $opp_worst_case
+        );
     }
 
     /**
@@ -338,3 +500,4 @@ class OpportunitiesSeedData {
         return $timedate->asDbDate($now->get_day_begin($day));
     }
 }
+

@@ -42,7 +42,7 @@
 
         _.each(this.componentsList, function(comp) {
             if (_.isFunction(comp.initComponents)) {
-                comp.initComponents(null, context, module);
+                comp.initComponents();
             }
         });
     },

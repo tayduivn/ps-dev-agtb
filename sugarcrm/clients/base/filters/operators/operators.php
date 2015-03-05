@@ -18,8 +18,8 @@ $viewdefs['base']['filter']['operators'] = array(
     'enum' => array(
         '$in' => 'LBL_OPERATOR_CONTAINS',
         '$not_in' => 'LBL_OPERATOR_NOT_CONTAINS',
-        '$blank' => 'LBL_OPERATOR_EMPTY',
-        '$not_blank' => 'LBL_OPERATOR_NOT_EMPTY',
+        '$empty' => 'LBL_OPERATOR_EMPTY',
+        '$not_empty' => 'LBL_OPERATOR_NOT_EMPTY',
     ),
     'varchar' => array(
         '$equals' => 'LBL_OPERATOR_MATCHES',
