@@ -524,7 +524,12 @@ class Importer
 
         if ($do_save)
         {
-            // handleTagsImport() needs to be called before saveImportBean()
+            // Need to ensure the imported record has an ID
+            if ($newRecord && empty($focus->id)) {
+                $focus->id = create_guid();
+                $focus->new_with_id = true;
+            }
+
             $this->handleTagsImport($focus, $row);
             $this->saveImportBean($focus, $newRecord);
             // Update the created/updated counter
