@@ -311,6 +311,19 @@ class ActivityQueueManager
                         } else {
                             if (!empty($def['module'])) {
                                 $referenceModule = $def['module'];
+                            } elseif ($changeInfo['data_type'] === 'id') {
+                                //find module from corresponding relate field
+                                foreach($bean->field_defs as $fieldDef) {
+                                    if (isset($fieldDef['type']) &&
+                                        $fieldDef['type'] === 'relate' &&
+                                        isset($fieldDef['id_name']) &&
+                                        $fieldDef['id_name'] === $fieldName &&
+                                        isset($fieldDef['module'])
+                                    ) {
+                                        $referenceModule = $fieldDef['module'];
+                                        break;
+                                    }
+                                }
                             }
                         }
 
