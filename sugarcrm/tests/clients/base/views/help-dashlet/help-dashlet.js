@@ -13,8 +13,6 @@ describe('Base.View.HelpDashlet', function() {
         view,
         testObj,
         testModule = 'Accounts',
-        testLayout = 'Record',
-        initOptions,
         sandbox;
 
     beforeEach(function() {
@@ -36,10 +34,20 @@ describe('Base.View.HelpDashlet', function() {
             return (obj[label]) ? obj[label] : label;
         });
 
-        var context = app.context.getContext();
-        context.set({
+        var context = app.context.getContext({
+            module: 'help-dashlet',
+            layout: 'dashlet'
+        });
+        context.parent = app.context.getContext({
             module: testModule,
-            layout: testLayout
+            layout: 'record'
+        });
+        context.prepare();
+        context.parent.prepare();
+
+        var layout = app.view.createLayout({
+            name: 'dashlet',
+            context: context
         });
 
         var meta = {
@@ -47,26 +55,19 @@ describe('Base.View.HelpDashlet', function() {
             label: 'LBL_TEST_LBL'
         };
 
-        initOptions = {
-            context: context,
-            meta: meta
-        };
-
-        view = SugarTest.createView('base', null, 'help-dashlet', meta, context, false, null, true);
+        view = SugarTest.createView('base', null, 'help-dashlet', meta, context, false, layout, true);
     });
 
     afterEach(function() {
         sandbox.restore();
-        view = null;
         testObj = null;
         app = null;
-        initOptions = null;
     });
 
-    describe('initialize()', function() {
+    describe('getHelpObject()', function() {
         describe('with proper help values', function() {
             beforeEach(function() {
-                view.initialize(initOptions);
+                view.getHelpObject();
             });
 
             it('should set the helpObject correctly', function() {
@@ -92,7 +93,7 @@ describe('Base.View.HelpDashlet', function() {
         describe('with missing help title', function() {
             it('should use meta.label for helpObject.title', function() {
                 testObj.title = '';
-                view.initialize(initOptions);
+                view.getHelpObject();
                 expect(view.helpObject.title).toEqual('LBL_TEST_LBL');
             });
         });
@@ -107,11 +108,11 @@ describe('Base.View.HelpDashlet', function() {
             });
 
             it('will call app.help.get with preview for layout', function() {
-                initOptions.meta.preview = true;
+                view.meta.preview = true;
                 sinon.collection.stub(view, 'createMoreHelpLink', function() {
                     return '<a>';
                 });
-                view.initialize(initOptions);
+                view.getHelpObject();
                 expect(app.help.get).toHaveBeenCalledWith('Accounts', 'preview', {
                     more_info_url: '<a>',
                     more_info_url_close: '</a>'
