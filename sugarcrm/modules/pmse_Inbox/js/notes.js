@@ -23,8 +23,10 @@ showNotes = function (caseId, caseIndex, noEdit) {
     notesTextArea = new TextareaField({
         name: 'notesTextArea',
         label: '',
-        fieldWidth: '80%'
+        fieldWidth: '80%',
+        value: ''
     });
+    notesTextArea.value = '';
 
     _App.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
     np = new NotePanel({
@@ -42,12 +44,21 @@ showNotes = function (caseId, caseIndex, noEdit) {
                                 id: log.not_user_id,
                                 field: 'picture'
                             });
+
+                            var currentDate = Date.parse(notes.currentDate);
+                            var dateEntered = Date.parse(log.date_entered);
+                            if (isNaN(currentDate)) {
+                                currentDate = Date.parse(notes.currentDate.replace(/\s/g, "T"));
+                            }
+                            if (isNaN(dateEntered)) {
+                                dateEntered = Date.parse(log.date_entered.replace(/\s/g, "T"));
+                            }
                             newLog = {
                                 name: 'log' ,
                                 label: log.not_content,
                                 user:  log.last_name,
                                 picture : pictureUrl,
-                                duration: '<strong> ' + timeElapsedString(Date.parse(notes.currentDate), Date.parse(log.date_entered)) + ' <strong>',
+                                duration: '<strong> ' + timeElapsedString(currentDate, dateEntered, false) + ' </strong>',
                                 //startDate: Date.parse(log.date_entered).toString('MMMM d, yyyy HH:mm'),
                                 startDate: log.date_entered,
                                 logId: log.id

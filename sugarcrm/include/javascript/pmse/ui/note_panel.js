@@ -356,6 +356,7 @@ NotePanel.prototype.attachListeners = function () {
                     };
                     root.addLog(newLog);
                     root.items[0].setValue('');
+                    document.getElementById('notesTextArea').value='';
                     self.app.alert.dismiss('upload');
                 }
             });
