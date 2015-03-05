@@ -565,7 +565,15 @@ eoq2;
      */
     protected function getHelper()
     {
-        require_once 'SugarSystemInfo.php';
+        /*
+         * Loading SugarSystemInfo from health check only if version < 7.2.2
+         * If version 7.2.2 and above SugarSystemInfo also loading in entryPoint.php
+         */
+        $sugar_version = '9.9.9';
+        include "sugar_version.php";
+        if (file_exists(dirname(__FILE__).'/SugarSystemInfo.php') && version_compare($sugar_version, '7.2.2', '<')) {
+            require_once 'SugarSystemInfo.php';
+        }
         require_once 'SugarHeartbeatClient.php';
         require_once 'HealthCheckClient.php';
         require_once 'HealthCheckHelper.php';

@@ -26,10 +26,6 @@ class SugarUpgradeDisableViews extends UpgradeScript
      */
     public function run()
     {
-        if (version_compare($this->from_version, '7.5', '>=')) {
-            return;
-        }
-
         if (empty($this->state['healthcheck'])) {
             return;
         }

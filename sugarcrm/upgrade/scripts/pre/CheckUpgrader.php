@@ -28,7 +28,10 @@ class SugarUpgradeCheckUpgrader extends UpgradeScript
         if (empty($this->context['versionInfo'][0]) ||
             version_compare($this->context['versionInfo'][0], self::ALLOWED_UPGRADER_VERSION, '<')
         ) {
-            return $this->error('Unsupported version of "Upgrade Driver". Install new Upgrader module');
+            return $this->error(
+                'Unsupported Upgrader version. Please install Upgrader SugarUpgradeWizardPrereq-to-' .
+                $this->manifest['version']
+            );
         }
         return true;
     }

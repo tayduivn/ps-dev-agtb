@@ -318,6 +318,7 @@ class WebUpgrader extends UpgradeDriver
     public function displayUpgradePage()
     {
         global $token;
+        $upgraderVesion = $this->context['versionInfo'][0];
         include dirname(__FILE__) . '/upgrade_screen.php';
     }
 

@@ -571,8 +571,12 @@ class HealthCheckScanner
         $manifest = $this->getPackageManifest();
 
         if (version_compare($toVersionInfo[0], HealthCheckScannerMeta::ALLOWED_UPGRADER_VERSION, '<')) {
-            $this->updateStatus('unsupportedUpgrader');
-            $this->log('Unsupported version of "Upgrade Driver". Install new Upgrader module');
+            $versionText =
+                isset($manifest['version']) ? $manifest['version'] : HealthCheckScannerMeta::ALLOWED_UPGRADER_VERSION;
+            $this->updateStatus('unsupportedUpgrader', $versionText);
+            $this->log(
+                'Unsupported Upgrader version. Please install Upgrader SugarUpgradeWizardPrereq-to-' . $versionText
+            );
             return $this->logMeta;
         }
 

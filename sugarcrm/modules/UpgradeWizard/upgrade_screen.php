@@ -17,7 +17,7 @@ $step = isset($_REQUEST['confirm_id']) ? 2 : 0;
 <title>SugarCRM Upgrader</title>
 <meta name="viewport" content="initial-scale=1.0">
 <meta name="viewport" content="user-scalable=no, width=device-width">
-<link rel="stylesheet" href="styleguide/assets/css/upgrade.css?v=1"/>
+<link rel="stylesheet" href="styleguide/assets/css/upgrade.css?v=<?php echo time();?>"/>
 <script src='include/javascript/jquery/jquery-min.js'></script>
 <script src='sidecar/lib/jquery/jquery.iframe.transport.js'></script>
 <script src='include/javascript/phpjs/get_html_translation_table.js'></script>
@@ -455,6 +455,7 @@ $(window).bind("load", function () {
             </div>
         </div>
         <div class="modal-footer">
+          <span class="btn btn-invisible pull-left">Upgrader version <?php echo $upgraderVesion?></span>
           <span sfuuid="25" class="detail">
             <a class="btn btn-invisible btn-link" href="index.php">Cancel</a>
             <a class="btn btn-primary" href="javascript:void(0);" name="next_button">Upload</a>
@@ -486,6 +487,7 @@ $(window).bind("load", function () {
             </div>
         </div>
         <div class="modal-footer">
+          <span class="btn btn-invisible pull-left">Upgrader version <?php echo $upgraderVesion?></span>
           <span sfuuid="25" class="detail">
             <a class="btn btn-invisible btn-link send-logs" href="javascript:void(0);" name="send_to_sugar">Send Log to Sugar</a>
             <a class="btn btn-invisible btn-link" href="javascript:void(0);" name="export_button">Export Log</a>
@@ -498,7 +500,7 @@ $(window).bind("load", function () {
     <div class="modal" data-step="3">
         <div class="modal-header modal-header-upgrade row-fluid">
             <span class="step-circle">
-                <span><?php echo ($step + 2) ?></span>
+                <span>3</span>
             </span>
 
             <div class="upgrade-title span8">
@@ -571,11 +573,12 @@ $(window).bind("load", function () {
             </div>
         </div>
         <div class="modal-footer">
-          <span sfuuid="25" class="detail">
-            <form id="exportForm" class="invisible">
+          <form id="exportForm" class="invisible">
                 <input type="hidden" name="action" value="exportlog">
                 <input type="hidden" name="token" value="<?php echo $token ?>">
-            </form>
+          </form>
+          <span class="btn btn-invisible pull-left">Upgrader version <?php echo $upgraderVesion?></span>
+          <span sfuuid="25" class="detail">
             <a class="btn btn-invisible" href="javascript:void(0);" name="export_button">Export Log</a>
             <a class="btn btn-primary disabled" href="index.php" data-action="gohome">Go to Home Page</a>
           </span>

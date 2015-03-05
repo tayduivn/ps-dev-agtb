@@ -86,11 +86,6 @@ ENDP;
 
     public function run()
     {
-        // run only when upgrade version is less than 7.0.0
-        if (!version_compare($this->from_version, '7.0.0', "<")) {
-            return;
-        }
-
         $healthCheck = array();
         if (!empty($this->state['healthcheck'])) {
             foreach ($this->state['healthcheck'] as $healthMeta) {

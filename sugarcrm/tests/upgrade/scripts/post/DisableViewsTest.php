@@ -38,12 +38,12 @@ class DisableViewsTest extends UpgradeTestCase
 
     public function tearDown()
     {
+        parent::tearDown();
         chdir($this->currentDirectory);
         $this->currentDirectory = '';
         ini_set('include_path', $this->currentPath);
         $this->currentPath = '';
         rmdir_recursive($this->directory);
-        parent::tearDown();
     }
 
     public static function getFiles()
