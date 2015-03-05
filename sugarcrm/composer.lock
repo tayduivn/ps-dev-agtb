@@ -4,15 +4,21 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "c0dab8a35beea011754ae0d3bfe239dc",
+    "hash": "d460f8d9db10e65f4aaf22d1fdfed45e",
     "packages": [
         {
             "name": "onelogin/php-saml",
             "version": "2.1.0.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/sugarcrm/php-saml",
+                "url": "https://github.com/sugarcrm/php-saml.git",
                 "reference": "a8ba9dbb92c6dac3f50dac268764b5d2a56e706e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/sugarcrm/php-saml/zipball/a8ba9dbb92c6dac3f50dac268764b5d2a56e706e",
+                "reference": "a8ba9dbb92c6dac3f50dac268764b5d2a56e706e",
+                "shasum": ""
             },
             "require": {
                 "php": ">=5.3.2"
@@ -95,37 +101,37 @@
         },
         {
             "name": "ruflin/elastica",
-            "version": "dev-sugarcrm-v1.3.4.0",
+            "version": "v1.4.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sugarcrm/Elastica",
-                "reference": "621f88865dca6ad935203e594802b819a8a5b9d4"
+                "reference": "bfa9363bf2aa62af5907135863661c6c78a68ee4"
             },
             "require": {
-                "php": ">=5.3.3"
+                "php": ">=5.3.3",
+                "psr/log": "~1.0"
             },
             "require-dev": {
+                "fabpot/php-cs-fixer": "~1.4",
                 "munkie/elasticsearch-thrift-php": "1.4.*",
-                "phpunit/phpunit": "4.1.*",
-                "psr/log": "~1.0",
-                "satooshi/php-coveralls": "dev-master"
+                "phpunit/phpunit": "4.1.*"
             },
             "suggest": {
-                "guzzlehttp/guzzle": "Allow using guzzle 4.x as the http transport (requires php 5.4)",
+                "egeloen/http-adapter": "Allow using httpadapter transport",
+                "guzzlehttp/guzzle": "Allow using guzzle 4.x as the http transport (Requires php 5.4)",
                 "monolog/monolog": "Logging request",
-                "munkie/elasticsearch-thrift-php": "Allow using thrift transport",
-                "psr/log": "for logging"
+                "munkie/elasticsearch-thrift-php": "Allow using thrift transport"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.3.x-dev"
+                    "dev-master": "1.4.x-dev"
                 }
             },
             "autoload": {
-                "psr-0": {
-                    "Elastica": "lib/",
-                    "Elastica\\Test": "test/lib/"
+                "psr-4": {
+                    "Elastica\\": "lib/Elastica/",
+                    "Elastica\\Test\\": "test/lib/Elastica/Test/"
                 }
             },
             "license": [
@@ -143,7 +149,7 @@
                 "client",
                 "search"
             ],
-            "time": "2014-10-30 07:01:40"
+            "time": "2015-02-17 19:57:36"
         }
     ],
     "packages-dev": [
@@ -1222,17 +1228,9 @@
             "time": "2015-01-03 15:33:07"
         }
     ],
-    "aliases": [
-        {
-            "alias": "v1.3.4.0",
-            "alias_normalized": "1.3.4.0",
-            "version": "dev-sugarcrm-v1.3.4.0",
-            "package": "ruflin/elastica"
-        }
-    ],
+    "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "ruflin/elastica": 20,
         "composer/composer": 15
     },
     "prefer-stable": false,
