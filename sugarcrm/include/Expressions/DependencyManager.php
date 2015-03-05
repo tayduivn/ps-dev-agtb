@@ -27,7 +27,6 @@ class DependencyManager
         "CreateView",
         "RecordlistView",
         "Subpanel-listView",
-        "Create-actionsView",
     );
 
     /**

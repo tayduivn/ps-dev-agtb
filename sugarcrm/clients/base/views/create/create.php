@@ -50,6 +50,14 @@ $viewdefs['base']['view']['create'] = array(
                         'click' => 'button:save_button:click',
                     ),
                 ),
+                array(
+                    'type' => 'rowaction',
+                    'name' => 'save_create_button',
+                    'label' => 'LBL_SAVE_AND_CREATE_ANOTHER',
+                    'events' => array(
+                        'click' => 'button:save_create_button:click',
+                    ),
+                ),
             ),
         ),
         array(

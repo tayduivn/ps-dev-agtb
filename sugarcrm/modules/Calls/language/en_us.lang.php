@@ -177,6 +177,5 @@ To create a {{calls_singular_module}}:
     - Click "Select an Attendee" to add an existing user, contact, or lead to the {{calls_singular_module}}.
     - Click the plus icon to the right of "Select an Attendee" to create a {{calls_singular_module}} attendee as a new Sugar record.
 3. Click "Save" to finalize the new record and return to the previous page.
-    - Choose "Save and view" to open the new {{calls_singular_module}} in record view.
     - Choose "Save and create new" to immediately create another new {{calls_singular_module}}.',
 );

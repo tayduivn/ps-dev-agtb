@@ -8,12 +8,18 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+/**
+ * @class View.Layouts.Base.CreateLayout
+ * @alias SUGAR.App.view.layouts.CreateLayout
+ * @extends View.Layout
+ */
 ({
     plugins: ['ShortcutSession'],
 
     shortcuts: [
         'Sidebar:Toggle',
         'Create:Save',
-        'Create:Cancel'
+        'Create:Cancel',
+        'Dropdown:More'
     ]
 })

@@ -512,7 +512,7 @@
         self.model.trigger('duplicate:before', prefill);
         prefill.unset('id');
         app.drawer.open({
-            layout: 'create-actions',
+            layout: 'create',
             context: {
                 create: true,
                 model: prefill,

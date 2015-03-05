@@ -167,7 +167,7 @@
             this.createRelatedRecord(params.module, params.link);
         } else {
             app.drawer.open({
-                layout: 'create-actions',
+                layout: 'create',
                 context: {
                     create: true,
                     module: params.module

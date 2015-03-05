@@ -198,7 +198,7 @@
                     }
 
                     app.drawer.open({
-                        layout: 'create-actions',
+                        layout: 'create',
                         context: {
                             create: true
                         }
