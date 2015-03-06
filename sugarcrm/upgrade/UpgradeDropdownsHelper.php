@@ -23,7 +23,9 @@ class UpgradeDropdownsHelper
      */
     public function getDropdowns($file)
     {
-        global $app_list_strings;
+        if (!file_exists($file)) {
+            return array();
+        }
 
         //TODO: this list needs to be kept in sync with DropDownBrowser::$restrictedDropdowns
         $restrictedDropdowns = array(
@@ -48,20 +50,11 @@ class UpgradeDropdownsHelper
         );
 
         $dropdowns = array();
-
-        // back up the $app_list_strings so that it's safe to manipulate the global variable
-        $appListStringsBackup = $app_list_strings;
-
-        // clear $app_list_strings so that only the strings found in the file are loaded into the variable
-        $app_list_strings = array();
-
-        if (file_exists($file)) {
-            include $file;
-        }
+        $appListStrings = $this->getAppListStringsFromFile($file);
 
         // checking that it's an array just in case the included file changes the type
-        if (is_array($app_list_strings)) {
-            foreach ($app_list_strings as $key => $value) {
+        if (is_array($appListStrings)) {
+            foreach ($appListStrings as $key => $value) {
                 if (!is_array($value) || array_filter($value, 'is_array')) {
                     // it's only a dropdown list if the value is an array
                     continue;
@@ -72,9 +65,6 @@ class UpgradeDropdownsHelper
                 }
             }
         }
-
-        // restore $app_list_strings
-        $app_list_strings = $appListStringsBackup;
 
         return $dropdowns;
     }
@@ -93,5 +83,36 @@ class UpgradeDropdownsHelper
             'parent_type_display',
             'record_type_display_notes',
         );
+    }
+
+    /**
+     * Returns a copy of the $app_list_strings from the specified file.
+     *
+     * It is assumed that the file exists. Use of the global variable $app_list_strings is required in order to load
+     * the strings into a variable that can be returned. The global variable is returned to its previous state before
+     * returning.
+     *
+     * @param string $file Path to the file.
+     * @return array
+     */
+    protected function getAppListStringsFromFile($file)
+    {
+        global $app_list_strings;
+
+        // back up the $app_list_strings so that it's safe to manipulate the global variable
+        $appListStringsBackup = $app_list_strings;
+
+        // clear $app_list_strings so that only the strings found in the file are loaded into the variable
+        $app_list_strings = array();
+
+        include $file;
+
+        // capture $app_list_strings into a local variable so it can be returned
+        $appListStringsFromFile = $app_list_strings;
+
+        // restore $app_list_strings
+        $app_list_strings = $appListStringsBackup;
+
+        return $appListStringsFromFile;
     }
 }
