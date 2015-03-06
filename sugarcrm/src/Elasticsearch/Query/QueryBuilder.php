@@ -76,6 +76,11 @@ class QueryBuilder
     protected $offset;
 
     /**
+     * @var array
+     */
+    protected $sort = array('_score');
+
+    /**
      * Ctor
      */
     public function __construct(Container $container)
@@ -175,6 +180,17 @@ class QueryBuilder
     }
 
     /**
+     * Set sort
+     * @param array $fields
+     * @return QueryBuilder
+     */
+    public function setSort(array $fields)
+    {
+        $this->sort = $fields;
+        return $this;
+    }
+
+    /**
      * Build query
      * @return \Elastica\Query
      */
@@ -212,6 +228,11 @@ class QueryBuilder
         // Add aggregators
         foreach ($this->aggregators as $agg) {
             $query->addAggregation($agg->build());
+        }
+
+        // Set sort order
+        if ($this->sort) {
+            $query->setSort($this->sort);
         }
 
         return $query;

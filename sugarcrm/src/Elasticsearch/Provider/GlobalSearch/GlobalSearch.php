@@ -243,6 +243,7 @@ class GlobalSearch extends AbstractProvider
             $builder->setQuery($this->getQuery());
         } else {
             $builder->setQuery($this->getMatchAllQuery());
+            $this->highlighter = false;
         }
 
         // Set highlighter
@@ -253,6 +254,11 @@ class GlobalSearch extends AbstractProvider
         // Apply module aggregation
         if ($this->moduleAgg) {
             $builder->addAggregator($this->getModuleAggregator($this->modules));
+        }
+
+        // Set sorting
+        if ($this->sort) {
+            $builder->setSort($this->sort);
         }
 
         return $builder->executeSearch();
@@ -373,6 +379,11 @@ class GlobalSearch extends AbstractProvider
     protected $highlighter = false;
 
     /**
+     * @var array Sort fields
+     */
+    protected $sort = array('_score');
+
+    /**
      * Set search term
      * @param string $term Search term
      * @return GlobalSearch
@@ -435,7 +446,7 @@ class GlobalSearch extends AbstractProvider
     }
 
     /**
-     * Add filter
+     * Add filter (not yet in interface)
      * @return GlobalSearch
      */
     public function filter()
@@ -463,6 +474,35 @@ class GlobalSearch extends AbstractProvider
     public function highlighter($toggle)
     {
         $this->highlighter = (bool) $toggle;
+        return $this;
+    }
+
+    /**
+     * Set order by field
+     * @param string $field
+     * @return GlobalSearch
+     */
+    public function sort(array $fields)
+    {
+        if ($fields === array() || $fields === array('_score')) {
+            $this->sort = array('_score');
+            return $this;
+        }
+
+        // TODO - we need field mapping logic here based on type etc
+        // We probably want a separate sorting class with the required logic
+        $sortFields = array();
+        foreach ($fields as $field => $order) {
+            $sortFields[$field] = array(
+                'order' => $order,
+                'missing' => '_last',
+                'ignore_unmapped' => true,
+            );
+        }
+        $this->sort = $sortFields;
+
+        // when sorting is requested other than the default we dont need boosting
+        $this->fieldBoost = false;
         return $this;
     }
 }

@@ -68,4 +68,11 @@ interface GlobalSearchInterface extends EngineInterface
      * @return GlobalSearchInterface
      */
     public function fieldBoost($toggle);
+
+    /**
+     * Set field sorting (default to relevance)
+     * @param array $fields List of fields and order
+     * @return GlobalSearchInterface
+     */
+    public function sort(array $fields);
 }

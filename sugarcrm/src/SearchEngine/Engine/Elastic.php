@@ -184,6 +184,14 @@ class Elastic implements EngineInterface, GlobalSearchInterface
         return $this->gsProvider()->fieldBoost($toggle);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public function sort(array $fields)
+    {
+        return $this->gsProvider()->sort($fields);
+    }
+
     //// ELASTIC ENGINE SPECIFIC ////
 
     /**
