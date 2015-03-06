@@ -44,7 +44,7 @@ class PMSEEndEvent extends PMSEEvent
     public function run($flowData, $bean = null, $externalAction = '', $arguments = array())
     {
         $count = $this->countNumberOpenThreads($flowData);
-        if ($count <= 0) {
+        if ($count <= 1) {
             //close the whole case, flows and remaining threads included
             $this->caseFlowHandler->closeCase($flowData['cas_id']);
         } else {
