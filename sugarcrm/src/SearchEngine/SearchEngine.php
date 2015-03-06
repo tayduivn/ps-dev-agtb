@@ -42,7 +42,9 @@ class SearchEngine
     /**
      * Get SearchEngine instance based on current system configuration.
      * @param string $capability Optional capability to check for
+     * @throws \RuntimeException
      * @return \Sugarcrm\Sugarcrm\SearchEngine\SearchEngine
+     * TODO: add ES specific exceptions
      */
     public static function getInstance($capability = null)
     {
@@ -62,7 +64,7 @@ class SearchEngine
 
         // Check for capability if requested
         if (!empty($capability) && !$instance->hasCapability($capability)) {
-            return false;
+            throw new \RuntimeException("Capability '{$capability}' unavailable");
         }
 
         return self::$instance;

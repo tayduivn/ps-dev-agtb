@@ -235,16 +235,6 @@ class SugarApiExceptionServiceUnavailable extends SugarApiException
 }
 
 /**
- * SearchEngine is missing required capability
- */
-class SugarApiExceptionSearchUncapable extends SugarApiException
-{
-    public $httpCode = 503;
-    public $errorLabel = 'search_uncapable';
-    public $messageLabel = 'EXCEPTION_SEARCH_UNCAPABLE';
-}
-
-/**
  * SearchEngine is unavailable
  */
 class SugarApiExceptionSearchUnavailable extends SugarApiException

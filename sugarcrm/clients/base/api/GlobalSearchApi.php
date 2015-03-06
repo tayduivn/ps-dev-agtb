@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use Sugarcrm\Sugarcrm\Elasticsearch\Container;
 use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
 use Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\ResultSetInterface;
 use Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\ResultInterface;
@@ -18,17 +17,32 @@ use Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\GlobalSearchInterface
 
 /**
  *
- * GlobalSearch API using Elasticsearch
+ * GlobalSearch API
  *
- * Available URL parameters:
+ * (Note: the usage of /search will be deprecated in favor of /globalsearch)
+ *
+ * Available parameters:
  *  - q = search term
  *  - limit = defaults to 20, how many results to return
  *  - offset = defaults to 0, used for paging
  *  - module_list = comma separated list of modules (*)
+ *  - highlights = true/false (defauls to true)
+ *  - sort = example {"date_modified":"desc", ...} default to relevance
  *
  *  (*) Instead of using the module_list parameter, its possible and encouraged
  *  to use the list of modules directly in the URL instead using a comma
- *  separated list like `/Accounts,Contacts/globalsearch?q=stuff`
+ *  separated list like `/Accounts,Contacts/globalsearch?q=stuff`. If both this
+ *  notation and module_list URL parameter is used at the same time, than the
+ *  URL notation takes precedence over the URL module_filter parameter.
+ *
+ *  The /globalsearch entry point accepts additional parameters in the request
+ *  body using JSON format. In case of duplicate settings, the URL parameters
+ *  take precedence over the settings in the request body. Its encouraged to
+ *  pass the parameters directly in the request body to prevent too long URLs.
+ *
+ *  Its prefered to use the GET method to consume the /globalsearch entry
+ *  point. However for REST clients which do not support GET requests with
+ *  request bodies, the POST method is also supported.
  *
  */
 class GlobalSearchApi extends SugarApi
@@ -64,9 +78,9 @@ class GlobalSearchApi extends SugarApi
     protected $term = '';
 
     /**
-     * @var \Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearchInterface
+     * @var array Sort fields
      */
-    private $engine;
+    protected $sort = array();
 
     /**
      * Register endpoints
@@ -78,10 +92,10 @@ class GlobalSearchApi extends SugarApi
 
             // /globalsearch
             'globalSearch' => array(
-                'reqType' => 'GET',
+                'reqType' => array('GET', 'POST'),
                 'path' => array('globalsearch'),
                 'pathVars' => array(''),
-                'method' => 'globalSearchEntry',
+                'method' => 'globalSearchEntryPoint',
                 'shortHelp' => '',
                 'longHelp' => '',
                 'noLoginRequired' => false,
@@ -89,10 +103,10 @@ class GlobalSearchApi extends SugarApi
 
             // /<module_list>/globalsearch
             'modulesGlobalSearch' => array(
-                'reqType' => 'GET',
+                'reqType' => array('GET', 'POST'),
                 'path' => array('?', 'globalsearch'),
                 'pathVars' => array('module_list', ''),
-                'method' => 'globalSearchEntry',
+                'method' => 'globalSearchEntryPoint',
                 'shortHelp' => '',
                 'longHelp' => '',
                 'noLoginRequired' => false,
@@ -101,20 +115,27 @@ class GlobalSearchApi extends SugarApi
     }
 
     /**
-     * GlobalSearch entrypoint
+     * GlobalSearch entry point
      * @param \RestService $api
      * @param array $args
      * @return array
      */
-    public function globalSearchEntry(\RestService $api, array $args)
+    public function globalSearchEntryPoint(\RestService $api, array $args)
     {
         $api->action = 'list';
 
         // Set properties from arguments
         $this->parseArguments($args);
 
+        // Load global search engine
+        $globalSearch = $this->getSearchEngine()->getEngine();
+
         // Get search results
-        $resultSet = $this->executeGlobalSearch($this->getSearchEngine());
+        try {
+            $resultSet = $this->executeGlobalSearch($globalSearch);
+        } catch (\Exception $e) {
+            throw new SugarApiExceptionSearchRuntime(null, array($e->getMessage()));
+        }
 
         return array(
             'next_offset' => $this->getNextOffset($resultSet->getTotalHits(), $this->limit, $this->offset),
@@ -125,13 +146,13 @@ class GlobalSearchApi extends SugarApi
     }
 
     /**
-     *
+     * Parse arguments
      * @param array $args
      */
     protected function parseArguments(array $args)
     {
         // Modules can be a comma separated list
-        if (!empty($args['module_list'])) {
+        if (!empty($args['module_list']) && !is_array($args['module_list'])) {
             $this->moduleList = explode(',', $args['module_list']);
         }
 
@@ -149,6 +170,16 @@ class GlobalSearchApi extends SugarApi
         if (isset($args['offset'])) {
             $this->offset = (int) $args['offset'];
         }
+
+        // Enable/disable highlights
+        if (isset($args['highlights'])) {
+            $this->highlights = (bool) $args['highlights'];
+        }
+
+        // Set sorting
+        if (isset($args['sort']) && is_array($args['sort'])) {
+            $this->sort = $args['sort'];
+        }
     }
 
     /**
@@ -165,6 +196,7 @@ class GlobalSearchApi extends SugarApi
             ->offset($this->offset)
             ->fieldBoost($this->fieldBoost)
             ->highlighter($this->highlights)
+            ->sort($this->sort)
         ;
 
         return $engine->search();
@@ -172,33 +204,25 @@ class GlobalSearchApi extends SugarApi
 
     /**
      * Get global search provider
-     * @throws SugarApiExceptionSearchUncapable
-     * @throws SugarApiExceptionSearchUnavailable
-     * @return \Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\GlobalSearchInterface
+     * @throws \SugarApiExceptionSearchRuntime
+     * @throws \SugarApiExceptionSearchUnavailable
+     * @return \Sugarcrm\Sugarcrm\SearchEngine\SearchEngine
      */
     protected function getSearchEngine()
     {
-        if ($this->engine === null) {
-
-            // Instantiate search engine with GlobalSearch capability
-            try {
-                $this->engine = SearchEngine::getInstance('GlobalSearch');
-            } catch (\Exception $e) {
-                throw new SugarApiExceptionSearchRuntime(null, array($e->getMessage()));
-            }
-
-            // Check if we have a valid capable engine
-            if (!$this->engine) {
-                throw new SugarApiExceptionSearchUncapable(null, array('GlobalSearch'));
-            }
+        // Instantiate search engine with GlobalSearch capability
+        try {
+            $engine = SearchEngine::getInstance('GlobalSearch');
+        } catch (\Exception $e) {
+            throw new SugarApiExceptionSearchRuntime(null, array($e->getMessage()));
         }
 
-        // Although this check runs implicitly, we can already bail out here if unavailabe
-        if (!$this->engine->isAvailable()) {
+        // Make sure engine is available
+        if (!$engine->isAvailable()) {
             throw new SugarApiExceptionSearchUnavailable();
         }
 
-        return $this->engine->getEngine();
+        return $engine;
     }
 
     /**
@@ -239,8 +263,13 @@ class GlobalSearchApi extends SugarApi
             // add search specific meta info
             $entry = array(
                 'data' => $data,
-                'score' => $result->getScore(),
             );
+
+            // Add score if available
+            $score = $result->getScore();
+            if ($score) {
+                $entry['score'] = $score;
+            }
 
             // Add highlights if requested
             if ($this->highlights) {
