@@ -58,12 +58,12 @@ class SearchEngine
             }
 
             $type = array_pop(array_keys($config));
-            self::$instance = $instance = new self(self::newEngine($type, $config[$type]));
-            $instance->setGlobalConfig($sugarConfig->get('search_engine', array()));
+            self::$instance = new self(self::newEngine($type, $config[$type]));
+            self::$instance->setGlobalConfig($sugarConfig->get('search_engine', array()));
         }
 
         // Check for capability if requested
-        if (!empty($capability) && !$instance->hasCapability($capability)) {
+        if (!empty($capability) && !self::$instance->hasCapability($capability)) {
             throw new \RuntimeException("Capability '{$capability}' unavailable");
         }
 
