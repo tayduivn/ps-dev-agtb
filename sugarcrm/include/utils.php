@@ -798,111 +798,23 @@ function get_user_name($id)
     return (empty($a)) ? '' : $a['user_name'];
 }
 
-
-//TODO Update to use global cache
 /**
- * get_user_array
- *
- * This is a helper function to return an Array of users depending on the parameters passed into the function.
- * This function uses the get_register_value function by default to use a caching layer where supported.
- *
- * @param bool $add_blank Boolean value to add a blank entry to the array results, true by default
- * @param string $status String value indicating the status to filter users by, "Active" by default
- * @param string $user_id String value to specify a particular user id value (searches the id column of users table), blank by default
- * @param bool $use_real_name Boolean value indicating whether or not results should include the full name or just user_name, false by default
- * @param String $user_name_filter String value indicating the user_name filter (searches the user_name column of users table) to optionally search with, blank by default
- * @param string $portal_filter String query filter for portal users (defaults to searching non-portal users), change to blank if you wish to search for all users including portal users
- * @param bool $from_cache Boolean value indicating whether or not to use the get_register_value function for caching, true by default
- * @param array $order_by array of (0 => 'field_name', 1 => 'order_direction')
- * @return array Array of users matching the filter criteria that may be from cache (if similar search was previously run)
+ * @deprecated
+ * @see User::getUserArray()
  */
 function get_user_array($add_blank=true, $status="Active", $user_id='', $use_real_name=false, $user_name_filter='', $portal_filter=' AND portal_only=0 ', $from_cache = true, $order_by = array())
 {
-    global $locale, $dictionary;
-
-    if (empty($locale)) {
-        $locale = Localization::getObject();
-    }
-
-    $db = DBManagerFactory::getInstance();
-
-    // Pre-build query for use as cache key
-    // Including deleted users for now.
-    if (empty($status)) {
-        $query = "SELECT id, first_name, last_name, user_name FROM users ";
-        $where = "1=1" . $portal_filter;
-    } else {
-        $query = "SELECT id, first_name, last_name, user_name FROM users ";
-        $where = "status='$status'" . $portal_filter;
-    }
-
-    $user = BeanFactory::getBean('Users');
-    $user->addVisibilityFrom($query);
-    $query .= " WHERE $where ";
-    $user->addVisibilityWhere($query);
-
-    if (!empty($user_name_filter)) {
-        $user_name_filter = $db->quote($user_name_filter);
-        $query .= " AND user_name LIKE '$user_name_filter%' ";
-    }
-    if (!empty($user_id)) {
-        $query .= " OR id='{$user_id}'";
-    }
-
-    $orderQuery = array();
-    foreach ($order_by as $order) {
-        $field = $order[0];
-        if (empty($field) || empty($dictionary['User']['fields'][$field])) {
-            continue;
-        }
-        $direction = strtoupper($order[1]);
-        if (!in_array($direction, array('ASC', 'DESC'))) {
-            $direction = 'ASC';
-        }
-        $orderQuery[] = "$field $direction";
-    }
-    if (empty($orderQuery)) {
-        $orderQuery[] = 'user_name ASC';
-    }
-
-    $query .= " ORDER BY " . implode(', ', $orderQuery);
-
-    if ($from_cache) {
-        $key_name = $query . $status . $user_id . $use_real_name . $user_name_filter . $portal_filter;
-        $key_name = md5($key_name);
-        $user_array = get_register_value('user_array', $key_name);
-    }
-
-    if (empty($user_array)) {
-        $temp_result = Array();
-
-        $GLOBALS['log']->debug("get_user_array query: $query");
-        $result = $db->query($query, true, "Error filling in user array: ");
-
-		// Get the id and the name.
-		while($row = $db->fetchByAssoc($result)) {
-			if($use_real_name == true || showFullName()) {
-				if(isset($row['last_name'])) { // cn: we will ALWAYS have both first_name and last_name (empty value if blank in db)
-                    $temp_result[$row['id']] = $locale->formatName('Users', $row);
-				} else {
-					$temp_result[$row['id']] = $row['user_name'];
-				}
-			} else {
-				$temp_result[$row['id']] = $row['user_name'];
-			}
-		}
-
-        $user_array = $temp_result;
-        if ($from_cache) {
-            set_register_value('user_array', $key_name, $temp_result);
-        }
-    }
-
-    if ($add_blank) {
-        $user_array[''] = '';
-    }
-
-    return $user_array;
+    $GLOBALS['log']->deprecated('get_user_array() is deprecated');
+    return BeanFactory::getBean('Users')->getUserArray(
+        $add_blank,
+        $status,
+        $user_id,
+        $use_real_name,
+        $user_name_filter,
+        $portal_filter,
+        $from_cache,
+        $order_by
+    );
 }
 
 
