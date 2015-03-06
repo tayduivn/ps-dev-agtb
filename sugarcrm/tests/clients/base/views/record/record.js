@@ -716,6 +716,63 @@ describe("Record View", function () {
         });
     });
 
+    describe('copying nested collections', function() {
+        var collection, sandbox;
+
+        beforeEach(function() {
+            collection = new Backbone.Collection([
+                new Backbone.Model({id: 1, name: 'aaa', status: 'aaa'}),
+                new Backbone.Model({id: 2, name: 'bbb', status: 'bbb'}),
+                new Backbone.Model({id: 3, name: 'ccc', status: 'aaa'}),
+            ]);
+            collection.fieldName = 'foo';
+            collection.fetchAll = function(options) {
+                options.success(this, options);
+            };
+
+            view.model.set(collection.fieldName, collection);
+            view.model.trigger = $.noop;
+
+            sandbox = sinon.sandbox.create();
+            sandbox.stub(app.drawer, 'open');
+            sandbox.stub(view, 'getField').returns({
+                def: {
+                    fields: ['name', 'status']
+                }
+            });
+        });
+
+        afterEach(function() {
+            sandbox.restore();
+        });
+
+        it('should not call `fetchAll` when `getCollectionFieldNames` does not exist', function() {
+            sandbox.spy(collection, 'fetchAll');
+
+            view.duplicateClicked();
+
+            expect(collection.fetchAll).not.toHaveBeenCalled();
+        });
+
+        it('should copy nested collections', function() {
+            var target;
+
+            target = new app.data.createBean(view.model.module, {});
+            target.set(collection.fieldName, new Backbone.Collection());
+            sandbox.stub(target, 'copy');
+            sandbox.stub(target, 'trigger');
+            sandbox.stub(app.data, 'createBean').returns(target);
+
+            view.model.getCollectionFieldNames = function() {
+                return [collection.fieldName];
+            };
+
+            view.duplicateClicked();
+
+            expect(target.get(collection.fieldName).length).toBe(collection.length);
+        });
+    });
+
     describe('Field labels', function () {
         it("should be hidden on view for headerpane fields", function () {
             view.render();
