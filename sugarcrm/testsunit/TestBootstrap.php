@@ -28,6 +28,8 @@ SugarAutoLoader::init(false);
 $classMapDirs = array(
     'include',
     'data',
+    'clients',
+    'vendor/Zend',
 );
 
 $autoLoaderHelper = new Sugarcrm\SugarcrmTestsUnit\AutoLoaderHelper();
