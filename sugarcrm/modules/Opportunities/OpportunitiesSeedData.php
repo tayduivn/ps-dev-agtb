@@ -146,7 +146,7 @@ class OpportunitiesSeedData {
 
             if (!$usingRLIs) {
                 // If the deal is already done, make the date closed occur in the past.
-                $opp->date_closed = ($opp->sales_stage == Opportunity::STAGE_CLOSED_WON || $opp->sales_stage == Opportunity::STAGE_CLOSED_WON)
+                $opp->date_closed = ($opp->sales_stage == Opportunity::STAGE_CLOSED_WON || $opp->sales_stage == Opportunity::STAGE_CLOSED_LOST)
                     ? self::createPastDate()
                     : self::createDate();
                 $opp->date_closed_timestamp = $timedate->fromDbDate($opp->date_closed)->getTimestamp();
@@ -310,7 +310,7 @@ class OpportunitiesSeedData {
             $rli->sales_stage = array_rand($app_list_strings['sales_stage_dom']);
             $rli->probability = $app_list_strings['sales_probability_dom'][$rli->sales_stage];
             $isClosed = false;
-            if ($rli->sales_stage == Opportunity::STAGE_CLOSED_WON || $rli->sales_stage == Opportunity::STAGE_CLOSED_WON) {
+            if ($rli->sales_stage == Opportunity::STAGE_CLOSED_WON || $rli->sales_stage == Opportunity::STAGE_CLOSED_LOST) {
                 $isClosed = true;
                 $rli->best_case = $rli->likely_case;
                 $rli->worst_case = $rli->likely_case;
