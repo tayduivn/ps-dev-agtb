@@ -203,6 +203,8 @@ class ModuleApi extends SugarApi {
         $bean->id = $args['id'];
         $bean->new_with_id = true;
 
+        $additionalProperties['additional_rel_values'] = $this->getRelatedFields($args, $bean);
+
         // register newly created bean so that it could be accessible by related beans before it's saved
         BeanFactory::registerBean($bean);
 
@@ -333,6 +335,25 @@ class ModuleApi extends SugarApi {
         $api->action = 'view';
         $data = $this->formatBean($api, $args, $bean);
         return $data;
+    }
+
+    /**
+     * Gets an array of additional related fields, to be set during bean relationship save
+     *
+     * @param array $args The request arguments.
+     * @param SugarBean $bean The bean associated.
+     * @return array Array of additional related fields
+     */
+    protected function getRelatedFields($args, SugarBean $bean)
+    {
+        $additional_rel_fields = array();
+
+        foreach ($bean->field_defs as $fieldName => $fieldDef) {
+            if (isset($fieldDef['rname_link']) && !empty($args[$fieldDef['name']])) {
+                $additional_rel_fields[$fieldDef['rname_link']] = $args[$fieldDef['name']];
+            }
+        }
+        return $additional_rel_fields;
     }
 
     /**

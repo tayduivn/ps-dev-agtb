@@ -2630,7 +2630,10 @@ class SugarBean
         if (!empty($new_rel_id)) {
 
             if ($this->load_relationship($new_rel_link)) {
-                return $this->$new_rel_link->add($new_rel_id);
+                return $this->$new_rel_link->add(
+                    $new_rel_id,
+                    isset($this->additional_rel_values) ? $this->additional_rel_values : array()
+                );
             } else {
                 $lower_link = strtolower($new_rel_link);
                 if ($this->load_relationship($lower_link)) {
