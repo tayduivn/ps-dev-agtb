@@ -67,6 +67,11 @@ abstract class AbstractHighlighter implements HighlighterInterface
     protected $encoder = 'html';
 
     /**
+     * @var string Order highlights, defaults to score
+     */
+    protected $order = 'score';
+
+    /**
      * Set fields
      * @param array $fields
      * @return AbstractHighlighter
@@ -171,6 +176,7 @@ abstract class AbstractHighlighter implements HighlighterInterface
             'number_of_fragments' => $this->numberOfFrags,
             'fragment_size' => $this->fragSize,
             'encoder' => $this->encoder,
+            'order' => $this->order,
         );
         $properties = array_merge($this->globalProps, $properties);
 
