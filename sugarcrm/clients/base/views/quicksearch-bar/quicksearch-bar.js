@@ -9,8 +9,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * @class View.Views.Base.GlobalsearchbarView
- * @alias SUGAR.App.view.views.BaseGlobalsearchbarView
+ * @class View.Views.Base.QuicksearchbarView
+ * @alias SUGAR.App.view.views.BaseQuicksearchbarView
  * @extends View.View
  */
 ({
@@ -143,7 +143,7 @@
 
         // Search ahead drop down menu stuff
         var self = this,
-            menuTemplate = app.template.getView('globalsearch-quickresults');
+            menuTemplate = app.template.getView('quicksearch-results');
 
         this.$('.search-query').searchahead({
             request: function(term) {

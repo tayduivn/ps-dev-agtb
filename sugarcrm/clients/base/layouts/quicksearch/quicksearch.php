@@ -11,14 +11,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$viewdefs['base']['layout']['globalsearch'] = array(
+$viewdefs['base']['layout']['quicksearch'] = array(
     'components' =>
     array(
         array(
-            'view' => 'globalsearch-bar',
+            'view' => 'quicksearch-bar',
         ),
         array(
-            'view' => 'globalsearch-quickresult',
+            'view' => 'quicksearch-result',
         ),
     )
 );
