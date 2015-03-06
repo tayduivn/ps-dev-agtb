@@ -70,14 +70,17 @@ class VisibilityAction extends AbstractAction
                 if (typeof(context) == 'undefined')
                     context = this.context;
                 try {
+                    var target = context && context.getElement && context.getElement(this.target) || null;
+                    if (target == null) {
+                        return;
+                    }
                     var exp = this.evalExpression(this.expr, context);
                     var hide =  exp == 'none' || exp == 'hidden';
-                    var target = context && context.getElement && context.getElement(this.target) || null;
-                    if (target != null) {
-                        if (SUGAR.App)
-                            this.sidecarExec(context, target, hide);
-                        else
-                            this.legacyExec(context, target, hide);
+                    if (SUGAR.App) {
+                        this.sidecarExec(context, target, hide);
+                    }
+                    else {
+                        this.legacyExec(context, target, hide);
                     }
                 } catch (e) {
                     if (console && console.log) console.log(e);
