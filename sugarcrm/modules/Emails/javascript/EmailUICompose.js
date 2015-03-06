@@ -2121,17 +2121,16 @@ SE.composeLayout = {
             //bug 48179
             //check tinyHTML for closing tags
             var body = tinyHTML.lastIndexOf('</body>');
-            spacing = '<span id="spacing"><br /><br /><br /></span>&nbsp;';
 
             if (body > -1)
             {
                 var part1 = tinyHTML.substr(0, body);
                 var part2 = tinyHTML.substr(body, tinyHTML.length);
-                var newHtml = part1 + spacing + composePackage.body + part2;
+                var newHtml = part1 + composePackage.body + part2;
             }
             else
             {
-                var newHtml = tinyHTML + spacing + composePackage.body;
+                var newHtml = tinyHTML + composePackage.body;
             }
             //end bug 48179
 
