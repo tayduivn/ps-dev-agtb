@@ -30,14 +30,26 @@ class AnnotationListener extends \PHPUnit_Framework_BaseTestListener
 
         // check for @covers or @coversNothing
         if ($this->hasNoCoversAnnotation($test->getAnnotations())) {
-            $e = new \PHPUnit_Framework_AssertionFailedError('Missing @covers annotation');
-            $test->getTestResultObject()->addFailure($test, $e, $time);
+            $this->raiseFailure($test, 'Missing @covers annotation', $time);
         }
 
         // check for @coversDefaultClass
         if ($this->hasNoCoversDefaultClass($test->getAnnotations())) {
-            $e = new \PHPUnit_Framework_AssertionFailedError('Missing @coversDefaultClass annotation');
-            $test->getTestResultObject()->addFailure($test, $e, $time);
+            $this->raiseFailure($test, 'Missing @coversDefaultClass annotation', $time);
+        }
+    }
+
+    /**
+     * Raise failure on given test case
+     * @param \PHPUnit_Framework_TestCase $test
+     * @param string $failure Failure message
+     * @param double $time Elapsed time
+     */
+    protected function raiseFailure(\PHPUnit_Framework_TestCase $test, $failure, $time)
+    {
+        if ($resultObject = $test->getTestResultObject()) {
+            $e = new \PHPUnit_Framework_AssertionFailedError($failure);
+            $resultObject->addFailure($test, $e, $time);
         }
     }
 
