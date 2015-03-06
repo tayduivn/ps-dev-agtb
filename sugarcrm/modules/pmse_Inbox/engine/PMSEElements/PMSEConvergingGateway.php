@@ -53,7 +53,6 @@ class PMSEConvergingGateway extends PMSEGateway
                 $filteredFlows[$element['id']] = $element;
             }
         }
-        $filteredFlows = array_unique($filteredFlows);
         return $filteredFlows;
     }
 }
