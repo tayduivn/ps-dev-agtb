@@ -67,13 +67,12 @@ class MultiLevelAdminTest extends Sugar_PHPUnit_Framework_TestCase
     
     public function testAdminUserIsAdminForTheGivenModule()
     {
-        $this->mlaResetSession();
-
         $user = SugarTestUserUtilities::createAnonymousUser();
         $user->is_admin = 1;
         $module = 'Accounts';
 
         ACLAction::clearACLCache();
+        $this->mlaResetSession();
         
         $this->assertTrue($user->isDeveloperForModule($module));  
         $this->assertTrue($user->isAdminForModule($module));  
@@ -81,8 +80,6 @@ class MultiLevelAdminTest extends Sugar_PHPUnit_Framework_TestCase
     
     public function testCurrentUserIsAdminForTheGivenModuleIfTheyAreAdminAndDev()
     {
-        $this->mlaResetSession();
-
         $user = SugarTestUserUtilities::createAnonymousUser();
         $user->is_admin = 0;
         $mlaRoles = array(
@@ -99,7 +96,8 @@ class MultiLevelAdminTest extends Sugar_PHPUnit_Framework_TestCase
         $module = 'Accounts';
 
         ACLAction::clearACLCache();
-        
+        $this->mlaResetSession();
+
         $this->assertTrue($user->isDeveloperForModule($module));
         $this->assertTrue($user->isAdminForModule($module));
     }
@@ -109,8 +107,6 @@ class MultiLevelAdminTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testCurrentUserIsAdminForTheGivenModuleIfTheyAreOnlyAdmin()
     {
-        $this->mlaResetSession();
-
         $user = SugarTestUserUtilities::createAnonymousUser();
         $user->is_admin = 0;
         $mlaRoles = array(
@@ -127,7 +123,8 @@ class MultiLevelAdminTest extends Sugar_PHPUnit_Framework_TestCase
         $module = 'Accounts';
 
         ACLAction::clearACLCache();
-        
+        $this->mlaResetSession();
+
         $this->assertFalse($user->isDeveloperForModule($module));
         $this->assertTrue($user->isAdminForModule($module));
 
@@ -135,8 +132,6 @@ class MultiLevelAdminTest extends Sugar_PHPUnit_Framework_TestCase
     
     public function testCurrentUserIsAdminForTheGivenModuleIfTheyAreOnlyDev()
     {
-        $this->mlaResetSession();
-
         $user = SugarTestUserUtilities::createAnonymousUser();
         $user->is_admin = 0;
         $mlaRoles = array(
@@ -153,6 +148,7 @@ class MultiLevelAdminTest extends Sugar_PHPUnit_Framework_TestCase
         $module = 'Accounts';
 
         ACLAction::clearACLCache();
+        $this->mlaResetSession();
 
         $this->assertTrue($user->isDeveloperForModule($module));
         $this->assertFalse($user->isAdminForModule($module));
@@ -160,8 +156,6 @@ class MultiLevelAdminTest extends Sugar_PHPUnit_Framework_TestCase
     
     public function testCurrentUserIsDeveloperForAnyModule()
     {
-        $this->mlaResetSession();
-
         $user = SugarTestUserUtilities::createAnonymousUser();
         $user->is_admin = 0;      
         $mlaRoles = array(
@@ -186,14 +180,13 @@ class MultiLevelAdminTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_role_id = $user->role_id;
 
         ACLAction::clearACLCache();
-                
+        $this->mlaResetSession();
+
         $this->assertTrue($user->isDeveloperForAnyModule());
     }
     
     public function testCurrentUserIsNotDeveloperForAnyModule()
     {
-        $this->mlaResetSession();
-
         $user = SugarTestUserUtilities::createAnonymousUser();
         $user->is_admin = 0;       
         $mlaRoles = array(
@@ -218,14 +211,13 @@ class MultiLevelAdminTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_role_id = $user->role_id;
 
         ACLAction::clearACLCache();
-        
+        $this->mlaResetSession();
+
         $this->assertFalse($user->isDeveloperForAnyModule());
     }
     
     public function testGetAdminModulesForCurrentUserIfTheyAreDeveloperOfAModule()
     {
-        $this->mlaResetSession();
-
         $user = SugarTestUserUtilities::createAnonymousUser();
         $user->is_admin = 0;       
         $mlaRoles = array(
@@ -250,14 +242,13 @@ class MultiLevelAdminTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_role_id = $user->role_id;
 
         ACLAction::clearACLCache();
-        
+        $this->mlaResetSession();
+
         $this->assertEquals(count($user->getDeveloperModules()),1);
     }
     
     public function testGetAdminModulesForCurrentUserIfTheyAreNotDeveloperOfAnyModules()
     {
-        $this->mlaResetSession();
-
         $user = SugarTestUserUtilities::createAnonymousUser();
         $user->is_admin = 0;       
         $mlaRoles = array(
@@ -281,14 +272,13 @@ class MultiLevelAdminTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_role_id = $user->role_id;
 
         ACLAction::clearACLCache();
-        
+        $this->mlaResetSession();
+
         $this->assertEquals(count($user->getDeveloperModules()),0);
     }
     
     public function testCanDisplayStudioForCurrentUserThatDoesNotHaveDeveloperAccessToAStudioModule()
     {
-        $this->mlaResetSession();
-
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['current_user']->is_admin = 0;       
         $mlaRoles = array(
@@ -314,14 +304,13 @@ class MultiLevelAdminTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_role_id = $GLOBALS['current_user']->role_id;
 
         ACLAction::clearACLCache();
-        
+        $this->mlaResetSession();
+
         $this->assertFalse(displayStudioForCurrentUser());
     }
     
     public function testCanDisplayStudioForCurrentUserThatDoesHaveDeveloperAccessToAStudioModule()
     {
-        $this->mlaResetSession();
-
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['current_user']->is_admin = 0;       
         $mlaRoles = array(
@@ -347,26 +336,24 @@ class MultiLevelAdminTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_role_id = $GLOBALS['current_user']->role_id;
 
         ACLAction::clearACLCache();
-        
+        $this->mlaResetSession();
+
         $this->assertTrue(displayStudioForCurrentUser());
     }
     
     public function testCanDisplayStudioForCurrentUserIfTheyAreAnAdminUser()
     {
-        $this->mlaResetSession();
-
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['current_user']->is_admin = 1;
 
         ACLAction::clearACLCache();
-        
+        $this->mlaResetSession();
+
         $this->assertTrue(displayStudioForCurrentUser());
     }
     
     public function testCanDisplayStudioForIfSessionVarIsSet()
     {
-        $this->mlaResetSession();
-
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['current_user']->is_admin = 0;
         
@@ -377,7 +364,8 @@ class MultiLevelAdminTest extends Sugar_PHPUnit_Framework_TestCase
         unset($_SESSION['display_studio_for_user']);
 
         ACLAction::clearACLCache();
-        
+        $this->mlaResetSession();
+
         $this->assertTrue($check);
     }
 
@@ -387,7 +375,6 @@ class MultiLevelAdminTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testHideForecastsAdminLinkIfDeveloperRole()
     {
-        $this->mlaResetSession();
         global $sugar_config, $current_language, $current_user;
         $mlaRoles = array(
             'test8'=>array(
@@ -411,6 +398,7 @@ class MultiLevelAdminTest extends Sugar_PHPUnit_Framework_TestCase
         require 'modules/Administration/metadata/adminpaneldefs.php';
 
         ACLAction::clearACLCache();
+        $this->mlaResetSession();
 
         foreach($admin_group_header as $key => $val ) {
             if($val[0] == 'LBL_FORECAST_TITLE') {
