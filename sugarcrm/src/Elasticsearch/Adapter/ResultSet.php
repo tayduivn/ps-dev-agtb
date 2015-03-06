@@ -24,7 +24,7 @@ class ResultSet implements \Iterator, \Countable, ResultSetInterface
     /**
      * @var \Elastica\ResultSet
      */
-    private $resultSet;
+    protected $resultSet;
 
     /**
      * Ctor
@@ -92,6 +92,14 @@ class ResultSet implements \Iterator, \Countable, ResultSetInterface
     public function count()
     {
         return $this->resultSet->count();
+    }
+
+    /**
+     * @return \Elastica\ResultSet
+     */
+    public function getResultSet()
+    {
+        return $this->resultSet;
     }
 
     //// ResultSetInterface ////
