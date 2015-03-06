@@ -14,6 +14,7 @@ use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
 use Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\ResultSetInterface;
 use Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\ResultInterface;
 use Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\GlobalSearchInterface;
+use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Result;
 
 /**
  *
@@ -257,28 +258,34 @@ class GlobalSearchApi extends SugarApi
         foreach ($results as $result) {
 
             // get bean data based on available fields in the result
-            $args = array('fields' => $result->getDataFields());
-            $data = $this->formatBean($api, $args, $result->getBean());
+            $data = $this->formatBeanFromResult($api, $result);
 
-            // add search specific meta info
-            $entry = array(
-                'data' => $data,
-            );
-
-            // Add score if available
-            $score = $result->getScore();
-            if ($score) {
-                $entry['score'] = $score;
+            // set score
+            if ($score = $result->getScore()) {
+                $data['_score'] = $score;
             }
 
-            // Add highlights if requested
-            if ($this->highlights) {
-                $entry['highlights'] = $result->getHighlights();
+            // add highlights if available
+            if ($highlights = $result->getHighlights()) {
+                $data['_highlights'] = $highlights;
             }
 
-            $formatted[] = $entry;
+            $formatted[] = $data;
         }
 
         return $formatted;
+    }
+
+    /**
+     * Wrapper around formatBean based on Result
+     * @param \RestService $api
+     * @param Result $result
+     * @return array
+     */
+    protected function formatBeanFromResult(\RestService $api, Result $result)
+    {
+        // pass in field list from available data fields on result
+        $args = array('fields' => $result->getDataFields());
+        return $this->formatBean($api, $args, $result->getBean());
     }
 }
