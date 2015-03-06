@@ -29,10 +29,18 @@ class Tag extends Basic
      */
     public function save($check_notify = false)
     {
+        global $current_user;
+
         // We need a tag name or really what's the point?
         if (empty($this->name)) {
             return false;
         }
+
+        // Handle setting the assigned user if not already set
+        if (empty($this->assigned_user_id)) {
+            $this->assigned_user_id = $current_user->id;
+        }
+
         // For searching making sure we lowercase the name to name_lower
         $this->name_lower = strtolower($this->name);
         return parent::save($check_notify);
