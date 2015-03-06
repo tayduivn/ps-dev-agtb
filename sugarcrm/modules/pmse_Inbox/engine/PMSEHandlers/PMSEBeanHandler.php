@@ -329,6 +329,9 @@ class PMSEBeanHandler
                     case 'NUMBER':
                         $dataEval[] = (float)$value->expValue;
                         break;
+                    case 'CURRENCY':
+                        $dataEval[] = serialize($value);
+                        break;
                     case 'BOOL':
                         $dataEval[] = $value->expValue == 'TRUE' ? true : false;
                         break;
@@ -338,7 +341,16 @@ class PMSEBeanHandler
                 }
             } else {
                 $fields = $value->expValue;
-                $dataEval[] = $bean->$fields;
+                if (strtolower($value->expSubtype) == 'currency') {
+                    $constantCurrency = new stdClass();
+                    $constantCurrency->expType = 'CONSTANT';
+                    $constantCurrency->expSubtype = 'currency';
+                    $constantCurrency->expValue = $bean->$fields;
+                    $constantCurrency->expField = $bean->currency_id;
+                    $dataEval[] = serialize($constantCurrency);
+                } else {
+                    $dataEval[] = $bean->$fields;
+                }
             }
         }
         if (count($dataEval) > 1) {

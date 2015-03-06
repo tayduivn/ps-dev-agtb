@@ -612,7 +612,10 @@ UpdaterField.prototype.openPanelOnItem = function (field) {
                 });
                 if (field.isCurrency()) {
                     this._datePanel.setConstantPanel({
-                        currency: true
+                        currency: true,
+                        basic: {
+                            number: true
+                        }
                     });
                 } else {
                     this._datePanel.setConstantPanel({

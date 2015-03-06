@@ -1197,7 +1197,6 @@
 				while (decimalPart.length < that._precision - printableKey) {
 					decimalPart = "0" + decimalPart;
 				}
-				console.log(decimalPart);
 				while (i >= 0) {
 					integerPart = numbers[i] + integerPart;
 					i--;
