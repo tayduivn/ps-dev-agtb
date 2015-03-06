@@ -567,26 +567,28 @@ class HealthCheckScanner
         $this->log("Instance version: $sugar_version");
         $this->log("Instance flavor: $sugar_flavor");
 
+        if ($this->upgrader) {
+            $manifest = $this->getPackageManifest();
 
-        $manifest = $this->getPackageManifest();
+            if (version_compare($toVersionInfo[0], HealthCheckScannerMeta::ALLOWED_UPGRADER_VERSION, '<')) {
+                $versionText =
+                    isset($manifest['version']) ? $manifest['version'] :
+                        HealthCheckScannerMeta::ALLOWED_UPGRADER_VERSION;
+                $this->updateStatus('unsupportedUpgrader', $versionText);
+                $this->log(
+                    'Unsupported Upgrader version. Please install Upgrader SugarUpgradeWizardPrereq-to-' . $versionText
+                );
+                return $this->logMeta;
+            }
 
-        if (version_compare($toVersionInfo[0], HealthCheckScannerMeta::ALLOWED_UPGRADER_VERSION, '<')) {
-            $versionText =
-                isset($manifest['version']) ? $manifest['version'] : HealthCheckScannerMeta::ALLOWED_UPGRADER_VERSION;
-            $this->updateStatus('unsupportedUpgrader', $versionText);
-            $this->log(
-                'Unsupported Upgrader version. Please install Upgrader SugarUpgradeWizardPrereq-to-' . $versionText
-            );
-            return $this->logMeta;
-        }
-
-        $manifestFlavor = !empty($manifest['flavor']) ? $manifest['flavor'] : '';
-        if ((!version_compare($sugar_version, $toVersionInfo[0]) && !strcasecmp($sugar_flavor, $manifestFlavor)) ||
-            version_compare($sugar_version, $toVersionInfo[0], '>')
-        ) {
-            $this->updateStatus("alreadyUpgraded");
-            $this->log("Instance already upgraded to " . $toVersionInfo[0]);
-            return $this->logMeta;
+            $manifestFlavor = !empty($manifest['flavor']) ? $manifest['flavor'] : '';
+            if ((!version_compare($sugar_version, $toVersionInfo[0]) && !strcasecmp($sugar_flavor, $manifestFlavor)) ||
+                version_compare($sugar_version, $toVersionInfo[0], '>')
+            ) {
+                $this->updateStatus("alreadyUpgraded");
+                $this->log("Instance already upgraded to " . $toVersionInfo[0]);
+                return $this->logMeta;
+            }
         }
 
         if (!$this->isDBValid($sugar_version)) {

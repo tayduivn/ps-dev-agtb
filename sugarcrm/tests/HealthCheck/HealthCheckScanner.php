@@ -11,6 +11,7 @@
  */
 
 require_once 'modules/HealthCheck/Scanner/Scanner.php';
+require_once 'modules/UpgradeWizard/CliUpgrader.php';
 
 class HealthCheckScannerCasesTestMock extends HealthCheckScanner
 {
@@ -27,6 +28,8 @@ class HealthCheckScannerCasesTestMock extends HealthCheckScanner
     {
         $this->db = DBManagerFactory::getInstance();
         $this->bwcModulesHash = array_flip($this->bwcModules);
+        $upgraderMock = new UpgradeDriverMock();
+        $this->setUpgrader($upgraderMock->getDriver());
         return true;
     }
 
@@ -58,5 +61,13 @@ class HealthCheckScannerCasesTestMock extends HealthCheckScanner
     public function getVersion()
     {
         return array ('7.6.0.0','1000');
+    }
+}
+
+class UpgradeDriverMock extends Sugar_PHPUnit_Framework_TestCase
+{
+    public function getDriver()
+    {
+        return $this->getMock('CliUpgrader', array(), array());
     }
 }
