@@ -185,6 +185,18 @@ class SidecarMetaDataUpgrader
      */
     public $fromInstallation = false;
 
+    const UPGRADE_BASE = 1;
+    const UPGRADE_PORTAL = 2;
+    const UPGRADE_MOBILE = 4;
+    const UPGRADE_SUBPANEL = 8;
+    const UPGRADE_ALL = 15;
+    protected $upgradeCategories = self::UPGRADE_ALL;
+
+    public function setUpgradeCategories($categories)
+    {
+        $this->upgradeCategories = $categories;
+    }
+
     /**
      * Sets the list of files that need to be upgraded. Will look in directories
      * contained in $legacyFilePaths and will also attempt to identify custom
@@ -192,10 +204,18 @@ class SidecarMetaDataUpgrader
      */
     public function setFilesToUpgrade()
     {
-        $this->setBaseFilesToUpgrade();
-        $this->setPortalFilesToUpgrade();
-        $this->setMobileFilesToUpgrade();
-        $this->setSubpanelFilesToUpgrade();
+        if ($this->upgradeCategories & self::UPGRADE_BASE) {
+            $this->setBaseFilesToUpgrade();
+        }
+        if ($this->upgradeCategories & self::UPGRADE_PORTAL) {
+            $this->setPortalFilesToUpgrade();
+        }
+        if ($this->upgradeCategories & self::UPGRADE_MOBILE) {
+            $this->setMobileFilesToUpgrade();
+        }
+        if ($this->upgradeCategories & self::UPGRADE_SUBPANEL) {
+            $this->setSubpanelFilesToUpgrade();
+        }
     }
 
     /**
