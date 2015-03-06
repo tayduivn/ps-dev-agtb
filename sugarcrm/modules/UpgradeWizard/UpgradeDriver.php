@@ -1701,6 +1701,15 @@ abstract class UpgradeDriver
             $this->saveState();
             switch ($stage) {
                 case "healthcheck":
+                    if (($this instanceof CliUpgrader) &&
+                        (empty($this->state['stage']['unpack']) || ($this->state['stage']['unpack'] == 'failed')) &&
+                        !$this->run('unpack')
+                    ) {
+                        return false;
+                    }
+
+                    $this->current_stage = $stage;
+
                     if (!$this->healthcheck()) {
                         return false;
                     }
