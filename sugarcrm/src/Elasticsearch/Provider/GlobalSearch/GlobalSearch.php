@@ -230,6 +230,11 @@ class GlobalSearch extends AbstractProvider
      */
     public function search()
     {
+        // Make sure modules are selected
+        if (empty($this->modules)) {
+            $this->modules = $this->getUserModules();
+        }
+
         $builder = new QueryBuilder($this->container);
         $builder
             ->setUser($this->user)
@@ -401,25 +406,11 @@ class GlobalSearch extends AbstractProvider
      */
     public function from(array $modules = array())
     {
-        if (empty($modules)) {
-            return $this->fromAll();
-        }
-
         foreach ($modules as $module) {
             if ($this->container->metaDataHelper->isModuleAvailableForUser($module, $this->user)) {
                 $this->modules[] = $module;
             }
         }
-        return $this;
-    }
-
-    /**
-     * Query all available modules
-     * @return GlobalSearch
-     */
-    public function fromAll()
-    {
-        $this->modules = $this->getUserModules();
         return $this;
     }
 
