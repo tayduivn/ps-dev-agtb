@@ -166,6 +166,8 @@ $viewdefs['base']['filter']['operators'] = array(
     'parent' => array(
         '$equals' => 'LBL_OPERATOR_IS',
     ),
+    // Used in KBContents module for creation of search filters
+    // @TODO: need ability to override operators in modules, not just use the global one.
     'nestedset' => array(
         '$equals' => 'LBL_OPERATOR_IS',
         '$not_equals' => 'LBL_OPERATOR_IS_NOT',

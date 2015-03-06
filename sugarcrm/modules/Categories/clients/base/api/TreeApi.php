@@ -15,6 +15,10 @@ use Sugarcrm\Sugarcrm\Data\NestedBeanInterface;
 
 require_once 'clients/base/api/FilterApi.php';
 
+/**
+ * Api to work with data in tree-like format.
+ * Class TreeApi
+ */
 class TreeApi extends FilterApi
 {
 
@@ -564,10 +568,14 @@ class TreeApi extends FilterApi
                 $record->loadFromRow($row, true);
 
                 $q = self::getQueryObject($seed, $options);
-                $q->joinSubpanel($record, $args['link_name'], array(
-                    'joinType' => 'INNER',
-                    'ignoreRole' => !empty($args['ignore_role'])
-                ));
+                $q->joinSubpanel(
+                    $record,
+                    $args['link_name'],
+                    array(
+                        'joinType' => 'INNER',
+                        'ignoreRole' => !empty($args['ignore_role'])
+                    )
+                );
                 self::addFilters($args['filter'], $q->where(), $q);
 
                 $data['records'][$i][$args['link_name']] = $this->runQuery($api, $args, $q, $options, $seed);
@@ -594,7 +602,9 @@ class TreeApi extends FilterApi
         if (empty($record)) {
             throw new SugarApiExceptionNotFound(
                 sprintf(
-                    'Could not find parent record %s in module: %s', $args['record'], $args['module']
+                    'Could not find parent record %s in module: %s',
+                    $args['record'],
+                    $args['module']
                 )
             );
         }
@@ -640,10 +650,14 @@ class TreeApi extends FilterApi
         }
 
         $q = self::getQueryObject($linkSeed, $options);
-        $q->joinSubpanel($record, $linkName, array(
-            'joinType' => 'INNER',
-            'ignoreRole' => !empty($args['ignore_role'])
-        ));
+        $q->joinSubpanel(
+            $record,
+            $linkName,
+            array(
+                'joinType' => 'INNER',
+                'ignoreRole' => !empty($args['ignore_role'])
+            )
+        );
         self::addFilters($args['filter'], $q->where(), $q);
 
         return $this->runQuery($api, $args, $q, $options, $linkSeed);
@@ -712,5 +726,4 @@ class TreeApi extends FilterApi
 
         return $this->runQuery($api, $args, $q, $options, $seed);
     }
-
 }

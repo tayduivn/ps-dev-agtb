@@ -9,7 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-$viewdefs['base']['view']['dashlet-nestedset-list'] = array(
+$viewdefs['KBContents']['base']['view']['dashlet-nestedset-list'] = array(
     'dashlets' => array(
         array(
             'label' => 'LBL_DASHLET_CATEGORIES_NAME',

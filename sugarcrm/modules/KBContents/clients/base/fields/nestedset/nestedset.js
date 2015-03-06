@@ -86,7 +86,7 @@
         this.emptyLabel = app.lang.get(
             'LBL_SEARCH_SELECT_MODULE',
             this.module,
-            {module: app.lang.getModuleName(this.module)}
+            {module: app.lang.get(this.def.label, this.module)}
         );
     },
 
@@ -396,6 +396,6 @@
      * @private
      */
     _dropdownExists: function() {
-        return this.action === 'edit' || this.meta.view === 'edit';
+        return this.action === 'edit' || (this.meta && this.meta.view === 'edit');
     }
 })
