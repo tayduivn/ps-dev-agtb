@@ -66,6 +66,7 @@ $(window).bind("load", function () {
             var $bar = $('#' + bar + ' .bar');
             if (percent == 100) {
                 $bar.removeClass('in-progress');
+                $bar.removeClass('error');
                 $('#' + bar + ' h1')
                     .removeClass('color_red')
                     .addClass('color_green')
