@@ -73,6 +73,46 @@ class Client
     }
 
     /**
+     * @return HttpHelper
+     */
+    protected function getHttpHelper()
+    {
+        return new HttpHelper();
+    }
+
+    /**
+     * @return \Administration
+     */
+    protected function getAdministrationBean()
+    {
+        return \BeanFactory::getBean('Administration');
+    }
+
+    /**
+     * @return \SugarConfig
+     */
+    protected function getSugarConfig()
+    {
+        return \SugarConfig::getInstance();
+    }
+
+    /**
+     * @return String
+     */
+    protected function retrieveToken()
+    {
+        $admin = $this->getAdministrationBean();
+        $config = $admin->getConfigForModule('auth');
+        if (empty($config['socket_token'])) {
+            $token = create_guid();
+            $admin->saveSetting('auth', 'socket_token', $token, 'base');
+        } else {
+            $token = $config['socket_token'];
+        }
+        return $token;
+    }
+
+    /**
      * Sending $message with $data to socket
      *
      * @param string $message
@@ -81,95 +121,50 @@ class Client
      */
     public function send($message, $data = null)
     {
-        $admin = \BeanFactory::getBean('Administration');
-        $config = $admin->getConfigForModule('auth');
+        $token = $this->retrieveToken();
 
-        if (empty($config['socket_token'])) {
-            $token = create_guid();
-            $admin->saveSetting('auth', 'socket_token', $token, 'base');
-        } else {
-            $token = $config['socket_token'];
-        }
-
-        try {
-            $params = json_encode(
-                array(
-                    'url' => \SugarConfig::getInstance()->get('site_url'),
-                    'token' => $token,
-                    'data' => array(
-                        'to' => $this->to,
-                        'message' => $message,
-                        'args' => $data
-                    )
+        $params = json_encode(
+            array(
+                'url' => $this->getSugarConfig()->get('site_url'),
+                'token' => $token,
+                'data' => array(
+                    'to' => $this->to,
+                    'message' => $message,
+                    'args' => $data
                 )
-            );
-            $client = new \SugarHttpClient();
-            $client->callRest(
-                \SugarConfig::getInstance()->get('websockets.server.url') . '/forward',
-                $params,
-                array(CURLOPT_HTTPHEADER => array("Content-Type: application/json"))
-            );
-        } catch (\Exception $exception) {
-            return false;
-        }
-        return true;
+            )
+        );
+        $client = $this->getHttpHelper();
+        $url = $this->getSugarConfig()->get('websockets.server.url') . '/forward';
+
+        $client->getRemoteData($url, $params);
+        return $client->isSuccess();
     }
 
-    /**
-     * This function checks site availability.
-     * @param $url
-     * @return bool
-     */
-    public static function ping($url)
-    {
-        $ch = curl_init($url);
-
-        curl_setopt($ch, CURLOPT_NOBODY, true);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-        curl_exec($ch);
-        $retcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
-
-        if (200 == $retcode) {
-            return true;
-        } else {
-            return false;
-        }
-    }
 
     /**
      * Check WebSocket settings.
      * @param $url
      * @return array
      */
-    public static function checkWSSettings($url)
+    public function checkWSSettings($url)
     {
         $availability = false;
         $isBalancer = false;
         $type = false;
-        $httpClient = new \SugarHttpClient();
+        $httpClient = $this->getHttpHelper();
 
-        if (filter_var($url, FILTER_VALIDATE_URL) && self::ping($url)) {
-            $fileContent = json_decode(
-                $httpClient->callRest(
-                    $url,
-                    '',
-                    array(CURLOPT_HTTPHEADER => array("Content-Type: application/json"))
-                )
-            );
-            if (isset($fileContent->type) && $fileContent->type == 'balancer') {
+        if (filter_var($url, FILTER_VALIDATE_URL) && $httpClient->ping($url)) {
+            $fileContent = $httpClient->getRemoteData($url);
+
+            if (isset($fileContent['type']) && $fileContent['type'] == 'balancer') {
                 $isBalancer = true;
-                $fileContent = json_decode(
-                    $httpClient->callRest(
-                        $fileContent->location,
-                        '',
-                        array(CURLOPT_HTTPHEADER => array("Content-Type: application/json"))
-                    )
-                );
+                $fileContent = $httpClient->getRemoteData($fileContent['location']);
             }
-            if (isset($fileContent->type) && in_array($fileContent->type, array('client', 'server'))) {
+
+            if (isset($fileContent['type']) && in_array($fileContent['type'], array('client', 'server'))) {
                 $availability = true;
-                $type = $fileContent->type;
+                $type = $fileContent['type'];
             }
         }
         return array('url' => $url, 'type' => $type, 'available' => $availability, 'isBalancer' => $isBalancer);

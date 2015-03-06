@@ -30,7 +30,7 @@ function checkWSConfiguration($silent = false)
         $errors['ERR_WEB_SOCKET_CLIENT_URL'] = $mod_strings['ERR_WEB_SOCKET_CLIENT_URL'];
         installLog("ERROR::  {$errors['ERR_WEB_SOCKET_CLIENT_URL']}");
     } else {
-        $clientSettings = SugarSocketClient::checkWSSettings($_SESSION['websockets']['client']['url']);
+        $clientSettings = SugarSocketClient::getInstance()->checkWSSettings($_SESSION['websockets']['client']['url']);
         $_SESSION['websockets']['client']['balancer'] = $clientSettings['isBalancer'];
         if (!$clientSettings['available'] || $clientSettings['type'] != 'client') {
             $errors['ERR_WEB_SOCKET_CLIENT_ERROR'] = $mod_strings['ERR_WEB_SOCKET_CLIENT_ERROR'];
@@ -42,7 +42,7 @@ function checkWSConfiguration($silent = false)
         $errors['ERR_WEB_SOCKET_SERVER_URL'] = $mod_strings['ERR_WEB_SOCKET_SERVER_URL'];
         installLog("ERROR::  {$errors['ERR_WEB_SOCKET_CLIENT_URL']}");
     } else {
-        $serverSettings = SugarSocketClient::checkWSSettings($_SESSION['websockets']['server']['url']);
+        $serverSettings = SugarSocketClient::getInstance()->checkWSSettings($_SESSION['websockets']['server']['url']);
         // No need to save server balancer configuration.
         if (!$serverSettings['available'] || $serverSettings['type'] != 'server') {
             $errors['ERR_WEB_SOCKET_SERVER_ERROR'] = $mod_strings['ERR_WEB_SOCKET_SERVER_ERROR'];

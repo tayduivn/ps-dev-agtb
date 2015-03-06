@@ -13,7 +13,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 use Sugarcrm\Sugarcrm\Socket\Client as SugarSocketClient;
 use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
-
 require_once 'include/MetaDataManager/MetaDataManager.php';
 
 class AdministrationController extends SugarController
@@ -209,11 +208,11 @@ class AdministrationController extends SugarController
         $errors = array();
 
         if (!empty($websocket_client_url) && !empty($websocket_server_url)) {
-            $clientSettings = SugarSocketClient::checkWSSettings($websocket_client_url);
+            $clientSettings = SugarSocketClient::getInstance()->checkWSSettings($websocket_client_url);
             if (!$clientSettings['available'] || $clientSettings['type'] != 'client') {
                 $errors['ERR_WEB_SOCKET_CLIENT_ERROR'] = $GLOBALS['mod_strings']['ERR_WEB_SOCKET_CLIENT_ERROR'];
             }
-            $serverSettings = SugarSocketClient::checkWSSettings($websocket_server_url);
+            $serverSettings = SugarSocketClient::getInstance()->checkWSSettings($websocket_server_url);
             if (!$serverSettings['available'] || $serverSettings['type'] != 'server') {
                 $errors['ERR_WEB_SOCKET_SERVER_ERROR'] = $GLOBALS['mod_strings']['ERR_WEB_SOCKET_SERVER_ERROR'];
             }
