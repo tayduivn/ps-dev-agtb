@@ -1,5 +1,4 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -13,7 +12,15 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 /**
  * Search Engines drivers factory class
- * @api
+ *
+ *                      !!! DEPRECATION WARNING !!!
+ *
+ * All code in include/SugarSearchEngine is going to be deprecated in a future
+ * release. Do not use any of its APIs for code customizations as there will be
+ * no guarantee of support and/or functionality for it. Use the new framework
+ * located in the directories src/SearchEngine and src/Elasticsearch.
+ *
+ * @deprecated
  */
 class SugarSearchEngineFactory
 {

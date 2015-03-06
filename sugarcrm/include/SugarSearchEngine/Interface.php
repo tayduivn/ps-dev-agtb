@@ -1,5 +1,4 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -11,14 +10,20 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
-
 /**
  * Generic interface all sublcasses must implement in order to be pluggable with FTS.
- * @api
+ *
+ *                      !!! DEPRECATION WARNING !!!
+ *
+ * All code in include/SugarSearchEngine is going to be deprecated in a future
+ * release. Do not use any of its APIs for code customizations as there will be
+ * no guarantee of support and/or functionality for it. Use the new framework
+ * located in the directories src/SearchEngine and src/Elasticsearch.
+ *
+ * @deprecated
  */
-interface SugarSearchEngineInterface{
-
+interface SugarSearchEngineInterface
+{
     /**
      *
      * Perform a search against the Full Text Search Engine
@@ -98,6 +103,7 @@ interface SugarSearchEngineInterface{
 
 /**
  *  Interface to access results from a FTS search.  Is composed of zero or more SugarSearchEngineResult objects.
+ *  @deprecated
  */
 interface SugarSearchEngineResultSet extends Iterator, Countable
 {
@@ -135,6 +141,7 @@ interface SugarSearchEngineResultSet extends Iterator, Countable
 
 /**
  * Interface for a single FTS result.
+ * @deprecated
  */
 interface SugarSearchEngineResult
 {
@@ -169,7 +176,6 @@ interface SugarSearchEngineResult
      */
     public function getSummaryText();
 
-
     /**
      * Return the highlighted text of a hit with the field name as the key
      *
@@ -186,6 +192,4 @@ interface SugarSearchEngineResult
      *
      */
     public function __toString();
-
-
 }
