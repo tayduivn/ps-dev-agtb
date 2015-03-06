@@ -1,5 +1,4 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -11,9 +10,15 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/api/ServiceDictionary.php');
+require_once 'include/api/ServiceDictionary.php';
 
-class ServiceDictionaryRest extends ServiceDictionary {
+/**
+ *
+ * Service Dictionary for REST API
+ *
+ */
+class ServiceDictionaryRest extends ServiceDictionary
+{
     /**
      * Loads the dictionary so it can be searche
      */
@@ -44,14 +49,14 @@ class ServiceDictionaryRest extends ServiceDictionary {
         if ( isset($this->dict[$pathLength][$platform]) ) {
             $route = $this->lookupChildRoute($this->dict[$pathLength][$platform], $path, $version);
         }
-        
+
         // If we didn't find a route and we are on a non-base platform, see if we find one
         // in base. Using empty here because if platform route wasn't found then $route
         // will not yet be defined.
         if (empty($route) && $platform != 'base' && isset($this->dict[$pathLength]['base']) ) {
             $route = $this->lookupChildRoute($this->dict[$pathLength]['base'], $path, $version);
         }
-        
+
         if ($route == false) {
             throw new SugarApiExceptionNoMethod('Could not find a route with '.$pathLength.' elements');
         }
@@ -74,13 +79,13 @@ class ServiceDictionaryRest extends ServiceDictionary {
 
         // Grab the element of the path we are actually looking at
         $pathElement = array_shift($path);
-        
+
         $bestScore = 0.0;
         $bestRoute = false;
         // Try to match it against all of the options at this level
         foreach ( $routeBase as $routeKey => $subRoute ) {
             $match = false;
-            
+
             if ( substr($routeKey,0,1) == '<' ) {
                 // It's a data-specific function match
                 switch ( $routeKey ) {
@@ -95,7 +100,7 @@ class ServiceDictionaryRest extends ServiceDictionary {
                 // Direct string match
                 $match = true;
             }
-            
+
             if ( $match ) {
                 $route = $this->lookupChildRoute($subRoute, $path, $version);
                 if ( $route != false && $route['score'] > $bestScore ) {
@@ -104,7 +109,7 @@ class ServiceDictionaryRest extends ServiceDictionary {
                 }
             }
         }
-        
+
         return $bestRoute;
     }
 
@@ -119,7 +124,7 @@ class ServiceDictionaryRest extends ServiceDictionary {
     {
         $bestScore = 0.0;
         $bestRoute = false;
-        
+
         foreach ( $routes as $route ) {
             if ( isset($route['minVersion']) && $route['minVersion'] > $version ) {
                 // Min version is too low, look for another route
@@ -134,7 +139,7 @@ class ServiceDictionaryRest extends ServiceDictionary {
                 $bestScore = $route['score'];
             }
         }
-        
+
         return $bestRoute;
     }
 
@@ -142,51 +147,87 @@ class ServiceDictionaryRest extends ServiceDictionary {
         return isset($GLOBALS['beanList'][$pathElement]);
     }
 
-    public function preRegisterEndpoints() {
+    /**
+     * Pre register endpoints, currently initialized empty array
+     */
+    public function preRegisterEndpoints()
+    {
         $this->endpointBuffer = array();
     }
-    
-    public function registerEndpoints($newEndpoints, $file, $fileClass, $platform, $isCustom ) {
-        if ( ! is_array($newEndpoints) ) {
+
+    /**
+     * Register end points
+     * @param array $newEndpoints
+     * @param string $file
+     * @param string $fileClass
+     * @param string $platform
+     * @param boolean $isCustom
+     */
+    public function registerEndpoints($newEndpoints, $file, $fileClass, $platform, $isCustom)
+    {
+        if (!is_array($newEndpoints)) {
             return;
         }
-        
-        foreach ( $newEndpoints as $endpoint ) {
-            // We use the path length, platform, and request type as the first three keys to search by
-            $path = $endpoint['path'];
-            array_unshift($path,count($endpoint['path']),$platform,$endpoint['reqType']);
-            
-            $endpointScore = 0.0;
-            if ( isset($endpoint['extraScore']) ) {
-                $endpointScore += $endpoint['extraScore'];
-            }
-            if ( $isCustom ) {
-                // Give some extra weight to custom endpoints so they can override built in endpoints
-                $endpointScore += 0.5;
-            }
 
-            $endpoint['file'] = $file;
-            $endpoint['className'] = $fileClass;
+        foreach ($newEndpoints as $endpoint) {
 
-            $this->addToPathArray($this->endpointBuffer,$path,$endpoint,$endpointScore);
+            /*
+             * Every endpoint can have one or more request types. This will mostly not be
+             * the case, however in certain situations we wish to perform a GET using a
+             * request body to avoid too long urls. Because not every REST client has the
+             * ability to perform a GET with a request body, in those situation we want to
+             * be able to register the same endpoint for both GET and POST.
+             */
+            $reqTypes = is_array($endpoint['reqType']) ? $endpoint['reqType'] : array($endpoint['reqType']);
+
+            foreach ($reqTypes as $reqType) {
+
+                // We use the path length, platform, and request type as the first three keys to search by
+                $path = $endpoint['path'];
+                array_unshift($path, count($endpoint['path']), $platform, $reqType);
+
+                $endpointScore = 0.0;
+                if (isset($endpoint['extraScore'])) {
+                    $endpointScore += $endpoint['extraScore'];
+                }
+
+                if ($isCustom) {
+                    // Give some extra weight to custom endpoints so they can override built in endpoints
+                    $endpointScore = $endpointScore + 0.5;
+                }
+
+                $endpoint['file'] = $file;
+                $endpoint['className'] = $fileClass;
+                $endpoint['reqType'] = $reqType;
+
+                $this->addToPathArray($this->endpointBuffer, $path, $endpoint, $endpointScore);
+            }
         }
     }
 
-    protected function addToPathArray(&$parent,$path,$endpoint,$score) {
-        if ( !isset($path[0])) {
+    /**
+     * Recursively construct the full endpoint collection.
+     *
+     * @param array $parent
+     * @param array $path
+     * @param array $endpoint
+     * @param float $score
+     */
+    protected function addToPathArray(&$parent, $path, $endpoint, $score)
+    {
+        if (!isset($path[0])) {
             // We are out of elements, no need to go any further
             $endpoint['score'] = $score;
             $parent[] = $endpoint;
-            
             return;
         }
-        
+
         $currPath = array_shift($path);
-        
-        if ( $currPath == '?' ) {
+
+        if ($currPath === '?') {
             // This matches anything
             $myScore = 0.75;
-        } else if ( $currPath[0] == '<' ) {
+        } elseif ($currPath[0] === '<') {
             // This is looking for a specfic data type
             $myScore = 1.0;
         } else {
@@ -195,14 +236,19 @@ class ServiceDictionaryRest extends ServiceDictionary {
         }
 
 
-        if ( ! isset($parent[$currPath]) ) {
+        if (!isset($parent[$currPath])) {
             $parent[$currPath] = array();
         }
-        
-        $this->addToPathArray($parent[$currPath],$path,$endpoint,($score+$myScore));
+
+        $this->addToPathArray($parent[$currPath], $path, $endpoint, ($score + $myScore));
     }
 
-    public function getRegisteredEndpoints() {
+    /**
+     * Get registered end points
+     * @return array
+     */
+    public function getRegisteredEndpoints()
+    {
         return $this->endpointBuffer;
     }
 }
