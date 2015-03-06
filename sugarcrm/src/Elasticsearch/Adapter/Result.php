@@ -24,7 +24,7 @@ class Result implements ResultInterface
     /**
      * @var \Elastica\Result
      */
-    private $result;
+    protected $result;
 
     /**
      * Ctor
