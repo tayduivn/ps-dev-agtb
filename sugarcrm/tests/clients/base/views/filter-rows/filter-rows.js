@@ -28,9 +28,142 @@ describe('Base.View.FilterRows', function() {
     });
 
     describe('handleFilterChange', function() {
-        it('should return undefined if there is no module metadata', function() {
-            view.handleFilterChange('CustomModule');
+        var module = 'Cases';
+
+        beforeEach(function() {
+            sinon.collection.stub(view, 'loadFilterFields');
+            sinon.collection.stub(view, 'loadFilterOperators');
+        });
+
+        it('should update `moduleName` and load filter fields and operators based on supplied module', function() {
+            sinon.collection.stub(app.metadata, 'getModule')
+                .withArgs(module, 'filters').returns({basic: {}});
+
+            view.handleFilterChange(module);
+
+            expect(app.metadata.getModule).toHaveBeenCalledOnce();
+            expect(app.metadata.getModule).toHaveBeenCalledWith(module, 'filters');
+
+            expect(view.moduleName).toEqual(module);
+
+            expect(view.loadFilterFields).toHaveBeenCalledOnce();
+            expect(view.loadFilterFields).toHaveBeenCalledWith(module);
+
+            expect(view.loadFilterOperators).toHaveBeenCalledOnce();
+            expect(view.loadFilterOperators).toHaveBeenCalledWith(module);
+        });
+
+        it('should not update `moduleName` nor load filter fields and operators if no filters defined', function() {
+            sinon.collection.stub(app.metadata, 'getModule')
+                .withArgs(module, 'filters').returns({});
+
+            view.handleFilterChange(module);
+
+            expect(app.metadata.getModule).toHaveBeenCalledOnce();
+            expect(app.metadata.getModule).toHaveBeenCalledWith(module, 'filters');
+
+            expect(view.moduleName).toBeUndefined();
+
+            expect(view.loadFilterFields).not.toHaveBeenCalled();
+            expect(view.loadFilterOperators).not.toHaveBeenCalled();
+        });
+
+        it('should not update `moduleName` nor load filter fields and operators if supplied `module` didn\'t changed', function() {
+            sinon.collection.stub(app.metadata, 'getModule')
+                .withArgs(module, 'filters').returns({basic: {}});
+
+            view.handleFilterChange(module);
+            view.handleFilterChange(module);
+
+            expect(app.metadata.getModule).toHaveBeenCalledTwice();
+            expect(app.metadata.getModule).toHaveBeenCalledWith(module, 'filters');
+
+            expect(view.moduleName).toBe(module);
+
+            expect(view.loadFilterFields).toHaveBeenCalledOnce();
+            expect(view.loadFilterFields).toHaveBeenCalledWith(module);
+
+            expect(view.loadFilterOperators).toHaveBeenCalledOnce();
+            expect(view.loadFilterOperators).toHaveBeenCalledWith(module);
+        });
+    });
+
+    describe('loadFilterFields', function() {
+        var module = 'Cases';
+
+        it('should load filter fields properly', function() {
+            var filterableFields = {status: {vname: 'LBL_STATUS'}};
+            var expectedFilterFields = {status: 'Status'};
+
+            sinon.collection.stub(app.metadata, 'getModule')
+                .withArgs(module, 'filters').returns({basic: {}});
+
+            var beanClass = $.noop;
+            beanClass.prototype.getFilterableFields = $.noop;
+
+            sinon.collection.stub(beanClass.prototype, 'getFilterableFields')
+                .withArgs(module).returns(filterableFields);
+            sinon.collection.stub(app.data, 'getBeanClass')
+                .withArgs('Filters').returns(beanClass);
+
+            sinon.collection.stub(app.lang, 'get')
+                .withArgs('LBL_STATUS').returns('Status');
+
+            view.loadFilterFields(module);
+
+            expect(app.metadata.getModule).toHaveBeenCalledOnce();
+            expect(app.metadata.getModule).toHaveBeenCalledWith(module, 'filters');
+
+            expect(beanClass.prototype.getFilterableFields).toHaveBeenCalledOnce();
+            expect(beanClass.prototype.getFilterableFields).toHaveBeenCalledWith(module);
+
+            expect(view.filterFields).toEqual(expectedFilterFields);
+            expect(view.fieldList).toEqual(filterableFields);
+        });
+
+        it('should not load filter fields if no filters defined', function() {
+            sinon.collection.stub(app.metadata, 'getModule')
+                .withArgs(module, 'filters').returns({});
+
+            var beanClass = $.noop;
+            beanClass.prototype.getFilterableFields = $.noop;
+
+            sinon.collection.stub(beanClass.prototype, 'getFilterableFields');
+
+            view.loadFilterFields(module);
+
+            expect(app.metadata.getModule).toHaveBeenCalledOnce();
+            expect(app.metadata.getModule).toHaveBeenCalledWith(module, 'filters');
+
+            expect(beanClass.prototype.getFilterableFields).not.toHaveBeenCalled();
+
+            expect(view.filterFields).toEqual([]);
             expect(view.fieldList).toBeUndefined();
+        });
+    });
+
+    describe('loadFilterOperators', function() {
+        var module = 'Cases';
+
+        it('should load filter operators properly', function() {
+           var operatorMap = {
+               enum: {
+                   $empty: 'LBL_OPERATOR_EMPTY',
+                   $in: 'LBL_OPERATOR_CONTAINS',
+                   $not_empty: 'LBL_OPERATOR_NOT_EMPTY',
+                   $not_in: 'LBL_OPERATOR_NOT_CONTAINS'
+               }
+           };
+
+           sinon.collection.stub(app.metadata, 'getFilterOperators')
+               .withArgs(module).returns(operatorMap);
+
+            view.loadFilterOperators(module);
+
+            expect(app.metadata.getFilterOperators).toHaveBeenCalledOnce();
+            expect(app.metadata.getFilterOperators).toHaveBeenCalledWith(module);
+
+            expect(view.filterOperatorMap).toEqual(operatorMap);
         });
     });
 
