@@ -35,10 +35,10 @@
                             {{#each grid}}
                                 {{#each this}}
                                     <span class="record-cell" data-type="{{type}}" data-name="{{name}}">
+                                    <span class="table-cell-wrapper">
                                 {{#if ../../this.labels}}
                                     {{#unless dismiss_label}}
-                                        <div class="record-label"
-                                             data-name="{{name}}">{{str label ../../../../../../this.model.module}}</div>
+                                                <span class="record-label" data-name="{{name}}">{{str label ../../../../../../this.model.module}}</span>
                                     {{/unless}}
                                 {{/if}}
                                         <span class="index{{index}}" data-fieldname="{{name}}" data-index="{{index}}">
@@ -54,6 +54,7 @@
                                             {{/notHas}}
                                         {{/unless}}
                                         {{/unless}}
+                                    </span>
                             </span>
                                 {{/each}}
                             {{/each}}

@@ -222,9 +222,14 @@ $dictionary['pmse_Emails_Templates'] = array(
     'calculated' => false,
     'len' => 100,
     'size' => '20',
-    'options' => 'moduleListSingular',
+    'options' => '',
     'studio' => 'visible',
     'dependency' => false,
+    'function' =>
+      array (
+        'name' => 'getTargetsModules',
+        'include' => 'modules/pmse_Project/pmse_ProjectHelper.php',
+      ),
   ),
   'text_only' =>
   array (

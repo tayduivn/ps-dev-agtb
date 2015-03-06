@@ -1,6 +1,5 @@
 <?php
 
-if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -11,51 +10,6 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-/*********************************************************************************
- * $Id$
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
-$fields = array(
-    array(
-        'name' => 'name',
-        'displayParams' => array(
-            'required' => true,
-            'wireless_edit_only' => true,
-        )
-    ),
-    'amount',
-    'account_name',
-    'date_closed',
-    array(
-        'name' => 'sales_status',
-        //BEGIN SUGARCRM flav=ent ONLY
-        'readonly' => true,
-        //END SUGARCRM flav=ent ONLY
-    ),
-    'assigned_user_name',
-    'team_name',
-);
-
-// here we add `sales_stage` for `pro` and `corporate` flavors
-//BEGIN SUGARCRM flav=pro && flav!=ent && flav!=ult ONLY
-$fields = array(
-    array(
-        'name' => 'name',
-        'displayParams' => array(
-            'required' => true,
-            'wireless_edit_only' => true,
-        )
-    ),
-    'amount',
-    'account_name',
-    'date_closed',
-    'sales_stage',
-    'assigned_user_name',
-    'team_name',
-);
-//END SUGARCRM flav=pro && flav!=ent && flav!=ult ONLY
 
 $viewdefs['Opportunities']['mobile']['view']['edit'] = array(
     'templateMeta' => array(
@@ -67,8 +21,22 @@ $viewdefs['Opportunities']['mobile']['view']['edit'] = array(
     'panels' => array(
         array(
             'label' => 'LBL_PANEL_DEFAULT',
-            'fields' => $fields
+            'fields' => array(
+                array(
+                    'name' => 'name',
+                    'displayParams' => array(
+                        'required' => true,
+                        'wireless_edit_only' => true,
+                    )
+                ),
+                'amount',
+                'account_name',
+                'date_closed',
+                'sales_stage',
+                'probability',
+                'assigned_user_name',
+                'team_name',
+            )
         )
     ),
 );
-?>

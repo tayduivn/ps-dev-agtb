@@ -86,7 +86,6 @@ abstract class OpportunitySetup
 
     public function __construct()
     {
-        SugarAutoLoader::load('modules/ModuleBuilder/parsers/ParserFactory.php');
         $this->bean = BeanFactory::getBean('Opportunities');
     }
 
@@ -179,34 +178,10 @@ abstract class OpportunitySetup
      */
     protected function fixRecordView(array $fieldMap)
     {
-        /* @var $gridDefParser SidecarGridLayoutMetaDataParser */
-        $gridDefParser = ParserFactory::getParser(MB_RECORDVIEW, 'Opportunities', null, null, 'base');
-
-        // no matter what we are going to add everything to the first panel at the end, SidecarGridLayoutMetaDataParser
-        // doesn't have position capabilities...grrrr
-
-        $fields = $gridDefParser->getAvailableFields();
-
-        // sort the map first, so the removes get done first
-        asort($fieldMap);
-
-        foreach ($fieldMap as $fieldName => $fieldAction) {
-            if ($fieldAction === true) {
-                // lets make sure the field is Available
-                foreach ($fields as $k => $val) {
-                    if ($val['name'] == $fieldName) {
-                        $gridDefParser->addField($val);
-                        break;
-                    }
-                }
-            } else {
-                if ($fieldAction === false) {
-                    $gridDefParser->removeField($fieldName);
-                }
-            }
-        }
-
-        $gridDefParser->handleSave(false);
+        SugarAutoLoader::load('modules/Opportunities/include/OpportunityViews.php');
+        $view = new OpportunityViews();
+        $view->processBaseRecordLayout($fieldMap);
+        $view->processMobileRecordLayout($fieldMap);
     }
 
     /**
@@ -216,171 +191,13 @@ abstract class OpportunitySetup
      */
     protected function fixListViews(array $fieldMap)
     {
-        // get the views for the module
-        $mm = MetadataManager::getManager();
-        $views = $mm->getModuleViews('Opportunities');
+        SugarAutoLoader::load('modules/Opportunities/include/OpportunityViews.php');
+        $view = new OpportunityViews();
 
-        // fix the selected-list view
-        $this->processSelectedListView($fieldMap);
-
-        // fix the dupecheck-list view
-        $this->processDupeCheckListView($fieldMap);
-
-        // get the generic list view
-        $this->processListView($fieldMap);
-
-        $subpanel_modules = array('Opportunities');
-        // look for anything that starts with 'subpanel-for-' and process it
-        $look_for = 'subpanel-for-';
-        foreach (array_keys($views) as $view) {
-            if (strpos($view, $look_for) === 0) {
-                // split on -
-                $tmp = explode('-', $view);
-                // we need to have at least 3 tiems.
-                if (count($tmp) >= 3) {
-                    // item 3 is the module name
-                    $module = $this->findModuleName($tmp[2]);
-                    // success we found a valid module name with the proper case
-                    if ($module) {
-                        // if we have 4 items, use the fourth as the link name, otherwise default to `opportunities`
-                        $link = (isset($tmp[3])) ? $tmp[3] : 'opportunities';
-                        // process that subpanel list view!
-                        $this->processListView($fieldMap, $module, $link);
-                        $subpanel_modules[] = $module;
-                    }
-                }
-            }
-        }
+        $modules = $view->processListViews($fieldMap);
 
         // run repair and rebuild for all the modules that were touched
-        $this->runRepairAndRebuild($subpanel_modules);
-
-    }
-
-    /**
-     * Since the module name is lowercase, we need to find it in the keys of lowercase
-     *
-     * @param String $moduleToLookFor What module are we trying to find.
-     * @return bool|String
-     */
-    protected function findModuleName($moduleToLookFor)
-    {
-        global $beanList;
-
-        // do this here so we don't have to do it over and over again
-        $moduleToLookFor = strtolower($moduleToLookFor);
-
-        // find the correct bean module name
-        foreach ($beanList as $beanModule => $beanName) {
-            if (strtolower($beanModule) === $moduleToLookFor) {
-                return $beanModule;
-                break;
-            }
-        }
-
-        // module not found;
-        return false;
-    }
-
-    /**
-     * Fix the `selected-list` view
-     *
-     * @param array $fieldMap
-     */
-    protected function processSelectedListView(array $fieldMap)
-    {
-        /* @var $listDefsParser SidecarListLayoutMetaDataParser */
-        $listDefsParser = ParserFactory::getParser(MB_SIDECARPOPUPVIEW, 'Opportunities', null, null, 'base');
-        $this->processList($fieldMap, $listDefsParser->_paneldefs, $listDefsParser);
-    }
-
-    /**
-     * Fix the `dupecheck-list` view
-     *
-     * @param array $fieldMap
-     */
-    protected function processDupeCheckListView(array $fieldMap)
-    {
-        /* @var $listDefsParser SidecarListLayoutMetaDataParser */
-        $listDefsParser = ParserFactory::getParser(MB_SIDECARDUPECHECKVIEW, 'Opportunities', null, null, 'base');
-        $this->processList($fieldMap, $listDefsParser->_paneldefs, $listDefsParser);
-    }
-
-    /**
-     * Fix the normal list view + any subpanels
-     *
-     * @param array $fieldMap
-     * @param string $module
-     * @param null $subpanel_name
-     */
-    protected function processListView(array $fieldMap, $module = 'Opportunities', $subpanel_name = null)
-    {
-        /* @var $listDefsParser SidecarListLayoutMetaDataParser */
-        $listDefsParser = ParserFactory::getParser(MB_LISTVIEW, $module, null, $subpanel_name, 'base');
-        $this->processList($fieldMap, $listDefsParser->_paneldefs, $listDefsParser);
-
-    }
-
-    /**
-     * Process the ListView to set the fields correctly
-     *
-     * @param array $fieldMap
-     * @param $current_fields
-     * @param ListLayoutMetaDataParser $listParser
-     */
-    private function processList(array $fieldMap, $current_fields, ListLayoutMetaDataParser $listParser)
-    {
-        // make sure the list is reset
-        $listParser->resetPanelFields();
-
-        // process the fields
-        foreach ($current_fields as $panel_id => $panel) {
-            if (is_array($panel['fields'])) {
-                foreach ($panel['fields'] as $field) {
-                    $name = $field['name'];
-                    $addField = true;
-                    $additionalDefs = $field;
-                    if (isset($fieldMap[$name])) {
-                        if ($fieldMap[$name] !== false) {
-                            // we have the field, so get it's defs
-                            $defs = $this->bean->getFieldDefinition($fieldMap[$name]);
-                            if ($defs) {
-                                // set the name variable to the new field name.
-                                $name = $fieldMap[$name];
-                                // reset the additionDefs since we have a new field
-                                $additionalDefs = array();
-                            } else {
-                                // we didn't find any defs for the new field, so error on caution and remove the old one
-                                $addField = false;
-                            }
-                        } else {
-                            // instead of a name being passed in, false was, so we should remove that field.
-                            $addField = false;
-                        }
-
-                        unset($fieldMap[$name]);
-                    }
-
-                    if ($addField) {
-                        $listParser->addField($name, $additionalDefs);
-                    }
-                }
-            }
-        }
-
-        // make sure that the field map is empty, if it's not process any remaining fields
-        if (!empty($fieldMap)) {
-            foreach($fieldMap as $field => $trigger) {
-                if($trigger === true) {
-                    $defs = $this->bean->getFieldDefinition($field);
-                    if ($defs) {
-                        $listParser->addField($field, array());
-                    }
-                }
-            }
-        }
-
-        $listParser->handleSave(false);
+        $this->runRepairAndRebuild($modules);
     }
 
     /**

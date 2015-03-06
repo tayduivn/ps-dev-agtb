@@ -21,10 +21,10 @@
                             {{#each grid}}
                                 {{#each this}}
                                     <span class="record-cell" data-type="{{type}}" data-name="{{name}}">
+                                    <span class="table-cell-wrapper">
                                 {{#if ../../this.labels}}
                                     {{#unless dismiss_label}}
-                                        <div class="record-label"
-                                             data-name="{{name}}">{{str label ../../../../../../this.model.module}}</div>
+                                        <span class="record-label" data-name="{{name}}">{{str label ../../../../../../this.model.module}}</span>
                                     {{/unless}}
                                 {{/if}}
                                         <span class="index{{index}}" data-fieldname="{{name}}" data-index="{{index}}">
@@ -39,6 +39,7 @@
                                             {{/notHas}}
                                         {{/unless}}
                             </span>
+                                </span>
                                 {{/each}}
                             {{/each}}
                         {{/if}}
@@ -72,19 +73,33 @@
 
     {{#if meta.useTabsAndPanels}}
     {{! if the first panel uses panels, then the rest use panels, so don't use tabview }}
-        <div class="record{{#if meta.firstPanelIsTab}} tab-layout{{/if}}">
+        <div class="record tab-layout">
         {{#if meta.firstPanelIsTab}}
             <div class="content-tabs">
                 <ul class="nav nav-tabs" id="recordTab">
                     {{#each meta.panels}}
                         {{#unless header}}
                             {{#if newTab}}
-                                <li class="tab {{name}}"><a href="#{{name}}"
-                                                            data-toggle="tab">{{str label ../../../this.module}}</a>
+                                <li class="tab {{name}}">
+                                    <a href="#{{name}}{{../../../cid}}" data-toggle="tab">{{str label ../../../this.module}}</a>
                                 </li>
                             {{/if}}
                         {{/unless}}
                     {{/each}}
+                    <li class="tab dropdown more hidden">
+                        <a class="dropdown-toggle" data-toggle="dropdown"><b class="fa fa-chevron-down"></b></a>
+                        <ul class="dropdown-menu scroll pull-right" role="menu">
+                            {{#each meta.panels}}
+                                {{#unless header}}
+                                    {{#if newTab}}
+                                        <li class="{{name}}">
+                                            <a href="#{{name}}{{../../../cid}}">{{str label ../../../this.module}}</a>
+                                        </li>
+                                    {{/if}}
+                                {{/unless}}
+                            {{/each}}
+                        </ul>
+                    </li>
                 </ul>
             <div id="tabContent" class="tab-content">
         {{/if}}
@@ -94,17 +109,17 @@
                     {{#notEq @index ../../../../meta.firstNonHeaderPanelIndex}}
                         </div>
                     {{/notEq}}
-                    <div class="tab-pane fade" id="{{name}}">
+                    <div class="tab-pane fade" id="{{name}}{{../../../cid}}">
                 {{else}}
                     <div class="row-fluid record-panel" data-panelName = "{{name}}">
-                        <div class="row-fluid record-panel-header">
+                        <div class="row-fluid record-panel-header {{#eq panelState "collapsed"}}panel-inactive{{/eq}}{{#notEq panelState "collapsed"}}panel-active{{/notEq}}">
                             <h4 class="pull-left">
                                 {{str label ../../../this.module}}
                             </h4>
 
                             <div class="pull-right">
-                                <button class="btn-link btn-invisible record-panel-arrow">
-                                    <i class="fa fa-chevron-{{#eq panelState "collapsed"}}down{{/eq}}{{#notEq panelState "collapsed"}}up{{/notEq}}"></i>
+                                <button class="btn btn-invisible record-panel-arrow">
+                                    <i class="fa fa-chevron-{{#eq panelState "collapsed"}}down{{/eq}}{{#notEq panelState "collapsed"}}up{{/notEq}}" rel="tooltip" data-container="body" data-title="Toggle Visibility"></i>
                                 </button>
                             </div>
                         </div>
@@ -187,7 +202,7 @@
                         <div class="form-horizontal">
                             <fieldset class="card2">
                                 {{#each grid}}
-                                    <div class="row-fluid control-group {{../name}}{{#if ../hide}} hide{{/if}}">
+                                    <div class="row-fluid control-group {{../name}}{{#if ../hide}}{{#if ../../../../../hidePanel}} hide{{/if}}{{/if}}">
                                         {{#each this}}
                                             {{#if ../../labels}}
                                                 {{#unless dismiss_label}}

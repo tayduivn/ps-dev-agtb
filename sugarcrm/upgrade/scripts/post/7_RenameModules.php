@@ -23,13 +23,17 @@ class SugarUpgradeRenameModules extends UpgradeScript
         require_once('modules/Studio/wizards/RenameModules.php');
         require_once('include/utils.php');
 
+        $languageDefault = $GLOBALS['sugar_config']['default_language']; // if empty
         $klass = new RenameModules();
         $languages = get_languages();
         $renamedList = array();
 
         foreach ($languages as $langKey => $langName) {
+            $GLOBALS['sugar_config']['default_language'] = $langKey;
             //get list strings for this language
             $strings = return_app_list_strings_language($langKey);
+
+            $GLOBALS['sugar_config']['default_language'] = $languageDefault;
 
             //get base list strings for this language
             if (file_exists("include/language/$langKey.lang.php")) {
@@ -48,7 +52,10 @@ class SugarUpgradeRenameModules extends UpgradeScript
                 }
 
                 foreach ($renamedModules as $moduleId => $moduleName) {
-                    if(isset($app_list_strings['moduleListSingular'][$moduleId])) {
+                    if (isset($app_list_strings['moduleListSingular'][$moduleId])
+                        && (!empty($app_list_strings['moduleList'][$moduleId])
+                        || !empty($app_list_strings['moduleListSingular'][$moduleId]))
+                    ) {
                         if(empty($app_list_strings['moduleList'][$moduleId])) {
                             $app_list_strings['moduleList'][$moduleId] = $app_list_strings['moduleListSingular'][$moduleId];
                         }
