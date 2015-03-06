@@ -9,7 +9,210 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 ({
-    extendsFrom:'GlobalsearchView',
+    // FIXME this needs to be removed so that we can be able to reuse this view
+    id: 'searchForm',
+    preTag: '<strong>',
+    postTag: '</strong>',
+
+    plugins: ['Dropdown'],
+
+    /**
+     * @property {String}
+     * Used by Dropdown plugin to determine which items to select when using the arrow keys
+     */
+    dropdownItemSelector: '[data-action="select-module"]',
+
+    searchModules: [],
+    events: {
+        'click .typeahead a': 'clearSearch',
+        'click [data-action=search]': 'showResults',
+        'click [data-advanced=options]': 'persistMenu',
+        'click [data-action="select-module"]': 'selectModule'
+    },
+    initialize: function(options) {
+        app.view.View.prototype.initialize.call(this, options);
+        app.events.on('app:sync:complete', this.populateModules, this);
+
+        //shortcut keys
+        app.shortcuts.register(app.shortcuts.GLOBAL + 'Search', ['s','ctrl+alt+0'], function() {
+            this.$('input.search-query').focus();
+        }, this);
+    },
+    /**
+     * Handle module 'select/unselect' event.
+     * @param event
+     */
+    selectModule: function(event) {
+        var module = this.$(event.currentTarget).data('module'),
+            searchAll = this.$('input:checkbox[data-module="all"]'),
+            searchAllLabel = searchAll.closest('label'),
+            checkedModules = this.$('input:checkbox:checked[data-module!="all"]');
+
+        if (module === 'all') {
+            searchAll.attr('checked', true);
+            searchAllLabel.addClass('active');
+            checkedModules.removeAttr('checked');
+            checkedModules.closest('label').removeClass('active');
+        } else {
+            var currentTarget = this.$(event.currentTarget),
+                currentTargetLabel = currentTarget.closest('label');
+
+            currentTarget.attr('checked') ? currentTargetLabel.addClass('active') : currentTargetLabel.removeClass('active');
+
+            if (checkedModules.length) {
+                searchAll.removeAttr('checked');
+                searchAllLabel.removeClass('active');
+            }
+            else {
+                searchAll.attr('checked', true);
+                searchAllLabel.addClass('active');
+            }
+        }
+        // This will prevent the module selection dropdown from disappearing.
+        event.stopPropagation();
+    },
+
+    /**
+     * Helper that can be called from here in base, or, from derived globalsearch views. Called internally,
+     * so please ensure that you have passed in any required options or results may be undefined
+     * @param {Object} options An object literal with the following properties:
+     * - modules: our current modules (required)
+     * - acl: app.acl that has the hasAccess function (required) (we DI this for testability)
+     * - moduleNames: displayed modules; an array of white listed string names. If used, only modules within
+     * this white list will be added (optional)
+     * - checkFtsEnabled: whether we should check meta.ftsEnabled (optional defaults to false)
+     * - checkGlobalSearchEnabled: whether we should check meta.globalSearchEnabled (optional defaults to false)
+     * @return {Array} An array of searchable modules
+     */
+    populateSearchableModules: function(options) {
+        var modules = options.modules,
+            moduleNames = options.moduleNames || null,
+            acl = options.acl,
+            searchModules = [];
+
+        _.each(modules, function(meta, module) {
+            var goodToAdd = true;
+            // First check if we have a "white list" of displayed module names (e.g. portal)
+            // If so, check if it contains the current module we're checking
+            if (moduleNames && !_.contains(moduleNames, module)) {
+                goodToAdd = false;
+            }
+            // First check access the, conditionally, check fts and global search enabled properties
+            if (goodToAdd && acl.hasAccess.call(acl, 'view', module)) {
+                // Check global search enabled if relevant to caller
+                if (options.checkGlobalSearchEnabled && !meta.globalSearchEnabled) {
+                    goodToAdd = false;
+                }
+                // Check global search enabled if relevant to caller
+                if (goodToAdd && options.checkFtsEnabled && !meta.ftsEnabled) {
+                    goodToAdd = false;
+                }
+                // If we got here we've passed all checks so push module to search modules
+                if (goodToAdd) {
+                    searchModules.push(module);
+                }
+            }
+        }, this);
+        return searchModules;
+    },
+
+    /**
+     * Escapes the highlighted result from Elasticsearch for any potential XSS.
+     * @param  {String} html
+     * @return {Handlebars.SafeString}
+     */
+    _escapeSearchResults: function(html) {
+        // Change this regex if server-side preTag and postTag change.
+        var highlightedSpanRe = /<strong>.*?<\/strong>/g,
+            higlightSpanTagsRe = /(<strong>)|(<\/strong>)/g,
+            escape = Handlebars.Utils.escapeExpression,
+        // First, all of the HTML is escaped.
+            result = escape(html),
+        // Then, we find all pieces highlighted by the server.
+            highlightedSpan = html.match(highlightedSpanRe),
+            highlightedContent,
+            self = this;
+
+        // For each highlighted part:
+        _.each(highlightedSpan, function(part){
+            highlightedContent = part.replace(higlightSpanTagsRe, '');
+            // We escape the content of each highlight returned from Elastic.
+            highlightedContent = escape(highlightedContent);
+            // And then, we inject the escaped content with our own unescaped
+            // highlighting tags (self.preTag/self.postTag).
+            result = result.replace(escape(part), self.preTag + highlightedContent + self.postTag);
+        });
+
+        return new Handlebars.SafeString(result);
+    },
+
+    /**
+     * Get the modules that current user selected for search.
+     * Empty array for all.
+     * @returns {Array}
+     */
+    _getSearchModuleNames: function() {
+        if (this.$('input:checkbox[data-module="all"]').attr('checked')) {
+            return [];
+        }
+        else {
+            var searchModuleNames = [],
+                checkedModules = this.$('input:checkbox:checked[data-module!="all"]');
+            _.each(checkedModules, function(val,index) {
+                searchModuleNames.push(val.getAttribute('data-module'));
+            }, this);
+            return searchModuleNames;
+        }
+    },
+
+    /**
+     * Show results when the search button is clicked.
+     *
+     * @param {Event} evt The event that triggered the search.
+     */
+    showResults: function(evt) {
+
+        var $searchBox = this.$('[data-provide=typeahead]');
+
+        if (!$searchBox.is(':visible')) {
+            var body = $('body');
+            this.$el.addClass('active');
+            body.on('click.globalsearch.data-api', _.bind(function(event) {
+                if (!$.contains(this.el, event.target)) {
+                    this.$el.removeClass('active');
+                    body.off('click.globalsearch.data-api');
+                }
+            }, this));
+            app.accessibility.run(body, 'click');
+            $searchBox.focus();
+            return;
+        }
+
+        // Simulate 'enter' keyed so we can show searchahead results
+        var e = jQuery.Event('keyup', { keyCode: $.ui.keyCode.ENTER });
+        $searchBox.focus();
+        $searchBox.trigger(e);
+    },
+
+    /**
+     * Clears out search upon user following search result link in menu
+     */
+    clearSearch: function() {
+        this.$('.search-query').val('');
+    },
+
+    /**
+     * This will prevent the dropup menu from closing when clicking anywhere on it
+     */
+    persistMenu: function(e) {
+        e.stopPropagation();
+    },
+
+    unbind: function() {
+        $('body').off('click.globalsearch.data-api');
+        this._super('unbind');
+    },
+
     _renderHtml: function() {
         if (!app.api.isAuthenticated() || app.config.appStatus == 'offline') return;
 
