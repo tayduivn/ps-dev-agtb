@@ -54,7 +54,7 @@ class SugarQuery_Builder_Field_Orderby extends SugarQuery_Builder_Field
         } elseif (!empty($this->def['rname']) && !empty($this->def['table'])) {
             $jta = $this->query->getJoinAlias($this->def['table'], false);
             if (empty($jta)) {
-                $jta = $this->table;
+                $jta = empty($this->jta) ? $this->table : $this->jta;
             }
 
             $fieldsToOrder = empty($this->def['sort_on']) ? array($this->def['rname']) : $this->def['sort_on'];

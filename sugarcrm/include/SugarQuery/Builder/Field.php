@@ -194,7 +194,16 @@ class SugarQuery_Builder_Field
         if(!isset($this->def['source']) || $this->def['source'] == 'db') {
             return false;
         }
-        if (isset($this->def['type']) && $this->def['type'] == 'relate'
+        $related = false;
+        $bean = $this->query->getFromBean();
+        if (isset($this->def['type'])) {
+            if ($bean instanceof SugarBean) {
+                $related = in_array($this->def['type'], $bean::$relateFieldTypes);
+            } else {
+                $related = ($this->def['type'] == 'related');
+            }
+        }
+        if ($related
             || (isset($this->def['source']) && $this->def['source'] == 'non-db'
                 // For some reason the full_name field has 'link' => true
                 && isset($this->def['link']) && $this->def['link'] !== true)
