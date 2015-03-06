@@ -80,7 +80,7 @@ $dictionary['KBContent'] = array(
             'options' => 'kbdocument_status_dom',
             'reportable' => false,
             'audited' => true,
-            'studio' => false,
+            'studio' => true,
             'full_text_search' => array(
                 'enabled' => true,
             ),
@@ -101,7 +101,7 @@ $dictionary['KBContent'] = array(
             'type' => 'int',
             'default' => '0',
             'duplicate_on_record_copy' => 'no',
-            'studio' => false,
+            'studio' => true,
         ),
         'useful' => array(
             'name' => 'useful',
