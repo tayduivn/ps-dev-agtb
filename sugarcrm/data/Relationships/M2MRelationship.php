@@ -545,11 +545,27 @@ class M2MRelationship extends SugarRelationship
             $startingTable = (empty($params['right_join_table_alias']) ? $link->getFocus()->table_name : $params['right_join_table_alias']);
         }
 
+        $self_join = ($this->def['lhs_module'] == $this->def['rhs_module']) ? true : false;
+
         $startingKey = $linkIsLHS ? $this->def['lhs_key'] : $this->def['rhs_key'];
-        $startingJoinKey = $linkIsLHS ? $this->def['join_key_lhs'] : $this->def['join_key_rhs'];
+        // Adding a check for badly defined relationships for self referencing relationship
+        // $this->lhsLinkDef['id_name'] & $this->rhsLinkDef['id_name'] would contain accurate join key in this case
+        if ($self_join && !empty($this->lhsLinkDef['id_name']) && $this->lhsLinkDef['id_name'] != $this->def['join_key_lhs']) {
+            $startingJoinKey = $linkIsLHS ? $this->lhsLinkDef['id_name'] : $this->rhsLinkDef['id_name'];
+        }
+        else {
+            $startingJoinKey = $linkIsLHS ? $this->def['join_key_lhs'] : $this->def['join_key_rhs'];
+        }
         $joinTable = $this->getRelationshipTable();
         $joinTableWithAlias = $joinTable;
-        $joinKey = $linkIsLHS ? $this->def['join_key_rhs'] : $this->def['join_key_lhs'];
+        // Adding a check for badly defined relationships for self referencing relationship
+        // $this->lhsLinkDef['id_name'] & $this->rhsLinkDef['id_name'] would contain accurate join key in this case
+        if ($self_join && !empty($this->lhsLinkDef['id_name']) && $this->lhsLinkDef['id_name'] != $this->def['join_key_lhs']) {
+            $joinKey = $linkIsLHS ? $this->rhsLinkDef['id_name'] : $this->lhsLinkDef['id_name'];
+        }
+        else {
+            $joinKey = $linkIsLHS ? $this->def['join_key_rhs'] : $this->def['join_key_lhs'];
+        }
         $targetTable = $linkIsLHS ? $this->def['rhs_table'] : $this->def['lhs_table'];
         $targetTableWithAlias = $targetTable;
         $targetKey = $linkIsLHS ? $this->def['rhs_key'] : $this->def['lhs_key'];
