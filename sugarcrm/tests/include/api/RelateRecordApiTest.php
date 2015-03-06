@@ -73,6 +73,7 @@ class RelateRecordApiTest extends Sugar_PHPUnit_Framework_TestCase
                 'getModuleApi',
                 'getModuleApiArgs',
                 'formatNearAndFarRecords',
+                'getRelatedRecord',
             ))
             ->getMock();
         $api->expects($this->any())
@@ -89,6 +90,9 @@ class RelateRecordApiTest extends Sugar_PHPUnit_Framework_TestCase
             ->method('getModuleApiArgs')
             ->with($relateApiArgs, 'TestModule')
             ->willReturn($moduleApiArgs);
+        $api->expects($this->any())
+            ->method('getRelatedRecord')
+            ->willReturn(array());
 
         $api->createRelatedRecord($service, $relateApiArgs);
     }
@@ -441,6 +445,31 @@ class RelateRecordApiTest extends Sugar_PHPUnit_Framework_TestCase
         SugarBeanBeforeSaveTestHook::$callCounter = 0;
 
         $this->assertEquals(1, $expectedCount);
+    }
+
+    /**
+     * opportunity_role should be saved when creating related contact
+     * @ticket PAT-1281
+     */
+    public function testCreateRelatedRecordRelateFields()
+    {
+        $opportunity = SugarTestOpportunityUtilities::createOpportunity();
+
+        $api = new RestService();
+        $api->user = $GLOBALS['current_user'];
+
+        $args = array(
+            "opportunity_role" => "Technical Decision Maker",
+            "module" => "Opportunities",
+            "record" => $opportunity->id,
+            "link_name" => "contacts",
+            'assigned_user_id' => $api->user->id,
+        );
+
+        $apiClass = new RelateRecordApi();
+        $result = $apiClass->createRelatedRecord($api, $args);
+
+        $this->assertEquals($result['related_record']['opportunity_role'], "Technical Decision Maker");
     }
 
     /**

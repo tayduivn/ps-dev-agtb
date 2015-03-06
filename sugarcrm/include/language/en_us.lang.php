@@ -5283,6 +5283,7 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_CREATE_CATEGORY' => 'Create a <div class="btn-link" data-action="create-new">category</div>',
     'LBL_SHORTCUT_ALERT_CONFIRM' => 'Confirm',
     'LBL_SHORTCUT_ALERT_CANCEL' => 'Cancel',
+    'LBL_SHORTCUT_DRAGDROPSELECT2_SELECTALL' => 'Select all items in a multi-select field',
 
     // config drawer
     'LBL_CONFIG_TITLE_MODULE_SETTINGS' => '{{module}} Settings',

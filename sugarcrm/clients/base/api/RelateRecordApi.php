@@ -219,17 +219,7 @@ class RelateRecordApi extends SugarApi
 
         $args['remote_id'] = $relatedBean->id;
 
-        // bypass ACL and team security check in order to be able to return the result
-        $relatedBean = $this->loadBean($api, array(
-            'module' => $relatedBean->module_name,
-            'record' => $relatedBean->id,
-        ), 'view', array(
-            'use_cache' => false,
-            'disable_row_level_security' => true,
-        ));
-        $relatedArray = $this->formatBean($api, $args, $relatedBean, array(
-            'display_acl' => true,
-        ));
+        $relatedArray = $this->getRelatedRecord($api, $args);
 
         return $this->formatNearAndFarRecords($api, $args, $primaryBean, $relatedArray);
     }
