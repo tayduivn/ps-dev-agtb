@@ -53,13 +53,19 @@ class PMSETimerEvent extends PMSEIntermediateEvent
      */
     public function run($flowData, $bean, $externalAction = '', $arguments = array())
     {
+        global $timedate;
         if (empty($externalAction)) {
             $eventDefinition = $this->retrieveDefinitionData($flowData['bpmn_id']);
             $flowData['cas_flow_status'] = 'SLEEPING';
             $eventCriteria = json_decode($eventDefinition['evn_criteria']);
             if (!is_array($eventCriteria)) {
-                $duration = $eventDefinition['evn_criteria'] . ' ' . $eventDefinition['evn_params'];
-                $flowData['cas_due_date'] = date('Y-m-d H:i:s', strtotime("+$duration"));
+                if (!empty($eventDefinition['evn_criteria'])) {
+                    $date = TimeDate::getInstance()->getNow();
+                    $date = PMSEEngineUtils::addDateInterval($date, $eventDefinition['evn_criteria'], $eventDefinition['evn_params']);
+                    $flowData['cas_due_date'] = $date->asDb();
+                } else {
+                    throw new PMSEElementException('The TimeEvent probably doesn\'t have any configuration', $flowData, $this);
+                }
                 //$this->bpmLog('INFO', "[$cas_id][$newCasIndex] schedule a timer event for $dueDate");
             } else {
                 $moduleName = $flowData['cas_sugar_module'];
@@ -69,9 +75,10 @@ class PMSETimerEvent extends PMSEIntermediateEvent
                     $eventDefinition['evn_criteria'],
                     $bean
                 );
-                $processedDate = new DateTime($dueDate);
-                $flowData['cas_delegate_date'] = $processedDate->format('Y-m-d H:i:s');
-                $flowData['cas_due_date'] = $processedDate->format('Y-m-d H:i:s');
+                $date = $timedate->fromIso($dueDate);
+                $dateDB = $date->asDb();
+                $flowData['cas_delegate_date'] = $dateDB;
+                $flowData['cas_due_date'] = $dateDB;
                 //$this->bpmLog('INFO', "[$cas_id][$newCasIndex] schedule a timer event for $dueDate");
             }
             $result = $this->prepareResponse($flowData, 'SLEEP', 'CREATE');
