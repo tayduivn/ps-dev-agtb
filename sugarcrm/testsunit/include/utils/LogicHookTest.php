@@ -227,9 +227,9 @@ class LogicHookTest extends \PHPUnit_Framework_TestCase
                     2 => array(
                         0 => 2,
                         1 => 'fts',
-                        2 => 'include/SugarSearchEngine/SugarSearchEngineQueueManager.php',
-                        3 => 'SugarSearchEngineQueueManager',
-                        4 => 'populateIndexQueue',
+                        2 => null,
+                        3 => '\\Sugarcrm\\Sugarcrm\\SearchEngine\\HookHandler',
+                        4 => 'indexBean',
                     ),
                 ),
                 array(
