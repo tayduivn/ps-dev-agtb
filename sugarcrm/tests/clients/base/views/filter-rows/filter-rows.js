@@ -358,6 +358,72 @@ describe('Base.View.FilterRows', function() {
             expect(initRowStub).not.toHaveBeenCalled();
             expect(_select2Obj.select2).not.toHaveBeenCalled();
         });
+
+        describe('rows for currency fields', function() {
+            beforeEach(function() {
+                view.fieldList = {
+                    name: {},
+                    likely_case: {
+                        name: 'likely_case',
+                        type: 'currency'
+                    }
+                };
+            });
+
+            using('different filter definitions', [
+                {
+                    rowObj: {
+                        $and: [
+                            {
+                                likely_case:
+                                {
+                                    $between: ['1000', '4000']
+                                }
+                            },
+                            {
+                                currency_id: 'aaa-bbb-ccc'
+                            }
+                        ]
+                    },
+                    expectedObj: {
+                        name: 'likely_case',
+                        operator: '$between',
+                        value: {
+                            likely_case: ['1000', '4000'],
+                            currency_id: 'aaa-bbb-ccc'
+                        }
+                    }
+                },
+                {
+                    rowObj: {
+                        $and: [
+                        {
+                            likely_case:
+                            {
+                                $gte: '1000'
+                            }
+                        },
+                        {
+                            currency_id: 'aaa-bbb-ccc'
+                        }
+                    ]},
+                    expectedObj: {
+                        name: 'likely_case',
+                        operator: '$gte',
+                        value: {
+                            likely_case: '1000',
+                            currency_id: 'aaa-bbb-ccc'
+                        }
+                    }
+                }
+            ], function(data) {
+                it('should call initRow with the right values to set in the fields', function() {
+                    view.populateRow(data.rowObj);
+                    expect(initRowStub).toHaveBeenCalledOnce();
+                    expect(initRowStub.lastCall.args[1]).toEqual(data.expectedObj);
+                });
+            });
+        });
     });
 
     describe('initRow', function() {
@@ -1202,6 +1268,75 @@ describe('Base.View.FilterRows', function() {
                 assigned_user_id: 'seed_sarah_id'
             };
             expect(filter).toEqual(expected);
+        });
+
+        describe('currency fields', function() {
+            var bean, row;
+            beforeEach(function() {
+                bean = SUGAR.App.data.createBean(
+                    'RevenueLineItems',
+                    {
+                        currency_id: '-99'
+                    });
+            });
+
+            using('valid values', [
+                {
+                    operator: '$gte',
+                    amount: '111',
+                    expected: {
+                        $and: [
+                            {
+                                likely_case:
+                                {
+                                    $gte: '111'
+                                }
+                            },
+                            {
+                                currency_id: '-99'
+                            }
+                        ]
+                    }
+                },
+                {
+                    operator: '$between',
+                    amount: ['1000', '4000'],
+                    expected: {
+                        $and: [
+                            {
+                                likely_case:
+                                {
+                                    $between: ['1000', '4000']
+                                }
+                            },
+                            {
+                                currency_id: '-99'
+                            }
+                        ]
+                    }
+                }
+            ], function(data) {
+                it('should use `$and` for currency fields properly', function() {
+                    bean.set('likely_case', data.amount);
+                    row = $('<div>').data({
+                        name: 'likely_case',
+                        operator: data.operator,
+                        valueField: {
+                            model: bean,
+                            type: 'currency',
+                            getCurrencyField: function() {
+                                return {
+                                    'name': 'currency_id'
+                                };
+                            }
+                        }
+                    });
+                    sinon.collection.stub(view, 'validateRow').returns(true);
+                    view._updateFilterData(row);
+                    var filter = view.buildRowFilterDef(row, true);
+                    expect(filter).toEqual(data.expected);
+                });
+            });
         });
 
         it('should use $and for flex-relate fields', function() {
