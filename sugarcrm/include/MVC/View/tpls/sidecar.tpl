@@ -34,10 +34,11 @@
                 <div id="alerts" class="alert-top">
                     <div class="alert-wrapper">
                         <div class="alert alert-process">
-                            <strong>{$LBL_LOADING}</strong>
-                            <div class="loading">
-                                <i class="l1">&#46;</i><i class="l2">&#46;</i><i class="l3">&#46;</i>
-                            </div>
+                            <strong>
+                                <div class="loading">
+                                    {$LBL_LOADING}<i class="l1">&#46;</i><i class="l2">&#46;</i><i class="l3">&#46;</i>
+                                </div>
+                            </strong>
                         </div>
                     </div>
                     <noscript>
