@@ -10,15 +10,36 @@
  */
 ({
     // FIXME this needs to be removed so that we can be able to reuse this view
+
+    /**
+     * Identifier used by CSS to display the search bar and the searchahead results
+     *
+     * @property {string}
+     */
     id: 'searchForm',
+
+    /**
+     * Used when formatting the search results. It is prepended to the
+     * highlighted string.
+     *
+     * @property {string}
+     */
     preTag: '<strong>',
+
+    /**
+     * Used when formatting the search results. It is appended to the
+     * highlighted string.
+     *
+     * @property {string}
+     */
     postTag: '</strong>',
 
     plugins: ['Dropdown'],
 
     /**
-     * @property {String}
      * Used by Dropdown plugin to determine which items to select when using the arrow keys
+     *
+     * @property{string}
      */
     dropdownItemSelector: '[data-action="select-module"]',
 
@@ -29,12 +50,16 @@
         'click [data-advanced=options]': 'persistMenu',
         'click [data-action="select-module"]': 'selectModule'
     },
+
+    /**
+     * @inheritDoc
+     */
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
         app.events.on('app:sync:complete', this.populateModules, this);
 
         //shortcut keys
-        app.shortcuts.register(app.shortcuts.GLOBAL + 'Search', ['s','ctrl+alt+0'], function() {
+        app.shortcuts.register(app.shortcuts.GLOBAL + 'Search', ['s', 'ctrl+alt+0'], function() {
             this.$('input.search-query').focus();
         }, this);
     },
@@ -75,6 +100,7 @@
     /**
      * Helper that can be called from here in base, or, from derived globalsearch views. Called internally,
      * so please ensure that you have passed in any required options or results may be undefined
+     *
      * @param {Object} options An object literal with the following properties:
      * - modules: our current modules (required)
      * - acl: app.acl that has the hasAccess function (required) (we DI this for testability)
@@ -118,6 +144,7 @@
 
     /**
      * Escapes the highlighted result from Elasticsearch for any potential XSS.
+     *
      * @param  {String} html
      * @return {Handlebars.SafeString}
      */
@@ -149,7 +176,8 @@
     /**
      * Get the modules that current user selected for search.
      * Empty array for all.
-     * @returns {Array}
+     *
+     * @returns {array}
      */
     _getSearchModuleNames: function() {
         if (this.$('input:checkbox[data-module="all"]').attr('checked')) {
@@ -168,7 +196,7 @@
     /**
      * Show results when the search button is clicked.
      *
-     * @param {Event} evt The event that triggered the search.
+     * @param {event} evt The event that triggered the search.
      */
     showResults: function(evt) {
 
@@ -208,11 +236,17 @@
         e.stopPropagation();
     },
 
+    /**
+     * @inheritDoc
+     */
     unbind: function() {
         $('body').off('click.globalsearch.data-api');
         this._super('unbind');
     },
 
+    /**
+     * @override
+     */
     _renderHtml: function() {
         if (!app.api.isAuthenticated() || app.config.appStatus == 'offline') return;
 
@@ -275,21 +309,27 @@
         });
         this.render();
     },
-    // TODO if we are extending this, why are we duplicating almost everything on this code?
-    fireSearchRequest: function (term) {
+
+    /**
+     * Callback for the searchahead plugin .. note that
+     * 'this' points to the plugin (not the header view!)
+     *
+     * @param term
+     */
+    fireSearchRequest: function(term) {
         var self = this,
             searchModuleNames = this._getSearchModuleNames(),
             maxNum = app.config && app.config.maxSearchQueryResult ? app.config.maxSearchQueryResult : 5,
             params = {
                 q: term,
                 fields: 'name, id',
-                module_list: searchModuleNames.join(","),
+                module_list: searchModuleNames.join(','),
                 max_num: maxNum
             };
 
 
         app.api.search(params, {
-            success:function(data) {
+            success: function(data) {
                 var formattedRecords = [],
                     modList = app.metadata.getModuleNames({filter: 'quick_create', action: 'create'}),
                     moduleIntersection = _.intersection(modList, self.searchModules);
@@ -316,9 +356,9 @@
                 });
                 self.$('.search-query').searchahead('provide', {module_list: moduleIntersection, next_offset: data.next_offset, records: formattedRecords});
             },
-            error:function(error) {
+            error: function(error) {
                 app.error.handleHttpError(error, plugin);
-                app.logger.error("Failed to fetch search results in search ahead. " + error);
+                app.logger.error('Failed to fetch search results in search ahead. ' + error);
             }
         });
     },
