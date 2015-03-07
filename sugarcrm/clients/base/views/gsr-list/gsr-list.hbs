@@ -14,34 +14,8 @@
     <div class="block filtered tabbable">
         <ul class="nav gsr-results">
             {{#each collection.models}}
-                <li class="gsr-result" data-id="{{attributes.id}}">
-                    <div class="ellipsis_inline primary" data-placement="bottom" title="" data-original-title="">
-                        {{#each primaryFields}}
-                            {{#notEq type 'avatar'}}<h3>{{/notEq}}
-                            {{#if highlighted}}
-                                {{#if ../link}}
-                                    <span><a href="{{../../route}}">{{../../value}}</a></span>
-                                {{else}}
-                                    <span>{{../../value}}</span>
-                                {{/if}}
-                            {{else}}
-                                {{field ../../../this model=../../this}}
-                            {{/if}}
-
-                            {{#notEq type 'avatar'}}</h3>{{/notEq}}
-                        {{/each}}
-                    </div>
-
-                    <div class="ellipsis_inline secondary" data-placement="bottom" title="" data-original-title="">
-                        {{#each secondaryFields}}
-                            {{#if highlighted}}
-                                <span>{{str ../label ../../module}}: </span><span>{{../value}}</span>{{#unless @last}}, {{/unless}}
-                            {{else}}
-                                <span>{{str ../vname ../../module}}: </span>{{field ../../../this model=../../this}}{{#unless @last}}, {{/unless}}
-                            {{/if}}
-                        {{/each}}
-                    </div>
-
+                <li class="search-result" data-id="{{attributes.id}}">
+                    {{partial 'row' ../this ../this model=this module=module}}
                     {{#each ../meta.rowactions.actions}}
                         {{field ../../this model=../this}}
                     {{/each}}
