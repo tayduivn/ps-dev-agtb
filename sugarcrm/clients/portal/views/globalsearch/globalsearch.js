@@ -8,9 +8,16 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+/**
+ * View that displays a Bar with module name and filter toggles for per module
+ * search and module creation.
+ *
+ * @class View.Views.GlobalsearchView
+ * @alias SUGAR.App.layout.GlobalsearchView
+ * @extends View.View
+ */
 ({
     // FIXME this needs to be removed so that we can be able to reuse this view
-
     /**
      * Identifier used by CSS to display the search bar and the searchahead results
      *
