@@ -101,14 +101,14 @@
      * Helper that can be called from here in base, or, from derived globalsearch views. Called internally,
      * so please ensure that you have passed in any required options or results may be undefined
      *
-     * @param {Object} options An object literal with the following properties:
+     * @param {object} options An object literal with the following properties:
      * - modules: our current modules (required)
      * - acl: app.acl that has the hasAccess function (required) (we DI this for testability)
      * - moduleNames: displayed modules; an array of white listed string names. If used, only modules within
      * this white list will be added (optional)
      * - checkFtsEnabled: whether we should check meta.ftsEnabled (optional defaults to false)
      * - checkGlobalSearchEnabled: whether we should check meta.globalSearchEnabled (optional defaults to false)
-     * @return {Array} An array of searchable modules
+     * @return {array} An array of searchable modules
      */
     populateSearchableModules: function(options) {
         var modules = options.modules,
@@ -145,7 +145,7 @@
     /**
      * Escapes the highlighted result from Elasticsearch for any potential XSS.
      *
-     * @param  {String} html
+     * @param  {string} html
      * @return {Handlebars.SafeString}
      */
     _escapeSearchResults: function(html) {
@@ -264,15 +264,15 @@
             compiler: menuTemplate,
             throttleMillis: (app.config.requiredElapsed || 500),
             throttle: function(callback, millis) {
-                if(!self.debounceFunction) {
-                    self.debounceFunction = _.debounce(function(){
+                if (!self.debounceFunction) {
+                    self.debounceFunction = _.debounce(function() {
                         callback();
                     }, millis || 500);
                 }
                 self.debounceFunction();
             },
             onEnterFn: function(hrefOrTerm, isHref) {
-                if(isHref) {
+                if (isHref) {
                    window.location = hrefOrTerm;
                 } else {
                     // It's the term only (user didn't select from drop down
@@ -374,11 +374,11 @@
         // URI encode search query string so that it can be safely
         // decoded by search handler (bug55572)
         term = encodeURIComponent(this.$('.search-query').val());
-        if(term && term.length) {
+        if (term && term.length) {
             // Bug 57853 Shouldn't show the search result pop up window after click the global search button.
             // This prevents anymore dropdowns (note we re-init if/when _renderHtml gets called again)
             this.$('.search-query').searchahead('disable', 1000);
-            app.router.navigate('#search/'+term, {trigger: true});
+            app.router.navigate('#search/' + term, {trigger: true});
         }
     }
 })
