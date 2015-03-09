@@ -97,11 +97,11 @@
              */
             _preselectModels: function() {
                 this.preselectedModelIds = this.context.get('preselectedModelIds');
-                if (!_.isArray(this.preselectedModelIds)) {
-                    this.preselectedModelIds = [this.preselectedModelIds];
-                }
                 if (_.isEmpty(this.preselectedModelIds)) {
                     return;
+                }
+                if (!_.isArray(this.preselectedModelIds)) {
+                    this.preselectedModelIds = [this.preselectedModelIds];
                 }
 
                 var preselectedCollection = app.data.createBeanCollection(this.module);
