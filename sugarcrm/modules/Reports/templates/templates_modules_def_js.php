@@ -650,6 +650,14 @@ qualifiers[qualifiers.length] = {name:'all',value:'<?php echo $mod_strings['LBL_
 qualifiers[qualifiers.length] = {name:'exact',value:'<?php echo $mod_strings['LBL_EXACT']; ?>'};
 filter_defs['team_set_id'] = qualifiers;
 
+// Dropdown for filtering on basis of tag name in the Tags module
+var qualifiers = new Array();
+qualifiers[qualifiers.length] = {name:'equals',value:'<?php echo $mod_strings['LBL_EQUALS']; ?>'};
+qualifiers[qualifiers.length] = {name:'not_equals_str',value:'<?php echo $mod_strings['LBL_DOES_NOT_EQUAL']; ?>'};
+qualifiers[qualifiers.length] = {name:'contains',value:'<?php echo $mod_strings['LBL_CONTAINS']; ?>'};
+qualifiers[qualifiers.length] = {name:'does_not_contain',value:'<?php echo $mod_strings['LBL_DOES_NOT_CONTAIN']; ?>'};
+filter_defs['Tags:name'] = qualifiers;
+
     filter_defs['file'] = [
         {name:'empty',value:'<?php echo $mod_strings['LBL_IS_EMPTY']; ?>'},
         {name:'not_empty',value:'<?php echo $mod_strings['LBL_IS_NOT_EMPTY']; ?>'}
