@@ -151,7 +151,7 @@
     relatesBlacklistForModule: {
         Accounts: ['revenuelineitems'],
         Opportunities: ['accounts'],
-        Leads: ['oldmeetings', 'oldcalls'],
+        Leads: ['meetings_parent', 'calls_parent'],
         Prospects: ['tasks'],
         Bugs: ['project'],
         RevenueLineItems: ['campaign_revenuelineitems']

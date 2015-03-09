@@ -742,8 +742,8 @@ function buildInstall($path){
     {
         foreach (self::$includes as $type => $varName) {
             $it = $this->getDirectoryIterator('custom/include/' . $type);
-            $$varName = array();
             foreach ($it as $file) {
+                $$varName = array();
                 include $file;
 
                 $values = $this->getCustomOptionsForModules($modules, $$varName);
