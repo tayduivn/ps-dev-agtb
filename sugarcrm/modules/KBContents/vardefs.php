@@ -201,7 +201,7 @@ $dictionary['KBContent'] = array(
         ),
         'is_external' => array(
             'name' => 'is_external',
-            'vname' => 'LBL_INTERNAL_REV',
+            'vname' => 'LBL_IS_EXTERNAL',
             'type' => 'tinyint',
             'isnull' => 'true',
             'comment' => 'Extarnal article flag',
