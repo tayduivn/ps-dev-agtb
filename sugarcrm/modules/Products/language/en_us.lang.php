@@ -171,4 +171,5 @@ To create a {{module_name}}:
  - Choose "Save and create new" to immediately create another new {{module_name}}.',
 
     'LBL_MANUFACTURERS' => 'Manufacturers',
+    'LBL_PRODUCT_POSITION' => 'Product Bundle Position',
 );
