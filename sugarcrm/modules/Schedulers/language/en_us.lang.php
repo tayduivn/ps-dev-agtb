@@ -116,9 +116,6 @@ $mod_strings = array (
 'LNK_LIST_SCHEDULER' => 'Schedulers',
 'LNK_NEW_SCHEDULER' => 'Create Scheduler',
 'LNK_LIST_SCHEDULED' => 'Scheduled Jobs',
-//BEGIN SUGARCRM flav=int ONLY
-'LNK_TEST_SCHEDULER' => 'Test Run Schedulers',
-//END SUGARCRM flav=int ONLY
 // Messages
 'SOCK_GREETING' => "\nThis is the interface for SugarCRM Schedulers Service. \n[ Available daemon commands: start|restart|shutdown|status ]\nTo quit, type 'quit'.  To shutdown the service 'shutdown'.\n",
 'ERR_DELETE_RECORD' => 'You must specify a record number to delete the schedule.',
@@ -158,8 +155,5 @@ $mod_strings = array (
 //BEGIN SUGARCRM flav=ent ONLY
 'LBL_PMSEENGINECRON' => 'Process Author Scheduler',
 //END SUGARCRM flav=ent ONLY
-//BEGIN SUGARCRM flav=int ONLY
-    'LBL_TESTEMAIL' => 'testEmail',
-//END SUGARCRM flav=int ONLY
 );
 

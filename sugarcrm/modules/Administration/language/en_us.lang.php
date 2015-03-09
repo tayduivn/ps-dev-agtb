@@ -848,21 +848,6 @@ $mod_strings = array (
     //END SUGARCRM flav=pro ONLY
     'LBL_HISTORY_CONTACTS_EMAILS' => 'Related Contacts Emails',
     'LBL_HISTORY_CONTACTS_EMAILS_DESC' => 'Enable/Disable emails from related (or linked) contacts to show in Email Subpanel.',
-    //BEGIN SUGARCRM flav=int ONLY
-	'LBL_ER_DIAGRAM_SCHEMA' => 'ER Diagram Schema',
-    'LBL_ER_DIAGRAM' => 'Genearate ER Diagram Schema',
-    'LBL_DB_SCAN' => 'Launch DB Scan',
-    'LBL_DB_SCAN_PROCESS' => 'Scan DB for Schema Integrity Checks',
-    'LBL_DATABASE_AND_SCHEMA_TITLE' =>'Database and Schema',
-    'LBL_DATABASE_AND_SCHEMA_DESC'=>'Sugar Database and Schema Tools',
-    'LBL_CREATE_DB_ER_DIAGRAM'	  => '<b>Creating the database </b> ',
-	'LBL_CREATE_DB_ER_DIAGRAM_2'	=> ' <b> with ER Schema on</b> ',
-	'LBL_CHECK_YOUR_SCHEMA'       => 'Check your Schema',
-	'LBL_CHECK_YOUR_SCHEMA_PROCESS' => 'This is for Schema Integrity check',
-	'LBL_DATABASE_STATS'       => 'DB Stats',
-	'LBL_DATABASE_STATS_PROCESS' => 'This shows DataBase Statistics',
-
-    //END SUGARCRM flav=int ONLY
 
     //BEGIN SUGARCRM flav=com ONLY
     'LBL_USERS_DESC' => 'Create, edit, activate and deactivate users in Sugar.',
