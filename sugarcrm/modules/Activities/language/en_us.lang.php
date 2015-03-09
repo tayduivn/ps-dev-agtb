@@ -94,22 +94,5 @@ $mod_strings = array(
     'LBL_ACCEPT_THIS'                   => 'Accept?',
     'LBL_DEFAULT_SUBPANEL_TITLE'        => 'Open Activities',
     'LBL_LIST_ASSIGNED_TO_NAME'         => 'Assigned User',
-    //BEGIN SUGARCRM flav=int ONLY
-    'LBL_END_DATE'                      => 'End Date',
-    'LBL_FILTER_DATE_RANGE_START'       => 'From',
-    'LBL_FILTER_DATE_RANGE_FINISH'      => ' To',
-    'LBL_SELECT_RECORD'                 => 'Select Record',
-    'LBL_ACTIVITIES_REPORTS'            => 'View Activities Report',
-    'LBL_TYPE'                          => 'Type',
-    'LBL_SUBJECT'                       => 'Subject',
-    'LBL_STATUS'                        => 'Status',
-    'LBL_DATE'                          => 'Date Start',
-    'LBL_RUN_REPORT_BUTTON_LABEL'       => 'Run Report',
-    'LBL_CLEAR'                         => 'Clear',
-    'LBL_EXPORT'                        => 'Export',
-    'LBL_SELECT_MODULE'                 => 'Select Module',
-    'LBL_NONE_STRING'                   => 'None',
-    //END SUGARCRM flav=int ONLY
-
     'LBL_ACCEPT'                        => 'Accept' /*for 508 compliance fix*/,
 );
