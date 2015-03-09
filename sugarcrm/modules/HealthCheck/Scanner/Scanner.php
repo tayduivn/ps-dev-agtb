@@ -2530,6 +2530,18 @@ ENDP;
                     'build' => $sugar_build
                 )
             );
+        } elseif (file_exists('sugar_version.php')) {
+            if (!defined('sugarEntry')) {
+                define('sugarEntry', true);
+            }
+            include 'sugar_version.php';
+            $version = array_merge(
+                $version,
+                array(
+                    'version' => $sugar_version,
+                    'build' => $sugar_build
+                )
+            );
         }
         return array($version['version'], $version['build']);
 
