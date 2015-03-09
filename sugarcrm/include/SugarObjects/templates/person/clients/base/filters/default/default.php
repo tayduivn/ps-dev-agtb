@@ -27,6 +27,7 @@ $viewdefs[$module_name]['base']['filter']['default'] = array(
         'created_by_name' => array(),
         'do_not_call' => array(),
         'email' => array(),
+        'tag' => array(),
         '$owner' => array(
             'predefined_filter' => true,
             'vname' => 'LBL_CURRENT_USER_FILTER',
