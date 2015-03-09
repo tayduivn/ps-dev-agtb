@@ -146,9 +146,14 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
                 'enabled' => true,
             ),
             'inboundEmailCaseSubjectMacro' => '[CASE:%1]',
-            'systemName' => 'SugarCRM'
         );
 
+        $administration = new Administration();
+        $administration->retrieveSettings();
+        if (!empty($administration->settings['system_name'])) {
+            $expectedConfigs['systemName'] = $administration->settings['system_name'];
+        }
+    
         $manager = $this->getMock('MetadataManagerMock', array('getSugarConfig'));
         $manager->expects($this->any())
             ->method('getSugarConfig')

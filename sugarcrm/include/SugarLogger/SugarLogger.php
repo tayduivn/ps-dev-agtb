@@ -165,10 +165,20 @@ class SugarLogger implements LoggerTemplate
 		    $message = print_r($message,true);
 
 		//write out to the file including the time in the dateFormat the process id , the user id , and the log level as well as the message
-		fwrite($this->fp,
-		    strftime($this->dateFormat) . ' [' . getmypid () . '][' . $userID . '][' . strtoupper($level) . '] ' . $message . "\n"
-		    );
-	}
+        $this->write(strftime($this->dateFormat) . ' [' . getmypid () . '][' . $userID . '][' . strtoupper($level) . '] ' . $message . "\n");
+    }
+    
+    /**
+     * Writing log to file
+     * 
+     * @param string $string Message to log
+     */
+    protected function write($string)
+    {
+        if ($this->fp) {
+            fwrite($this->fp, $string);
+        }
+    }
 
 	/**
 	 * rolls the logger file to start using a new file
