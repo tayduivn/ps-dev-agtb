@@ -270,8 +270,8 @@ class PMSEEngineApi extends SugarApi
 
     public function deleteNotes($api, $args)
     {
-        $notesBean = BeanFactory::getBean('pmse_BpmNotes');
-        $notesBean->mark_deleted($args['id']);
+        $notesBean = BeanFactory::getBean('pmse_BpmNotes', $args['id']);
+        $notesBean->mark_deleted($notesBean->id);
         return array('id' => $args['id']);
     }
 

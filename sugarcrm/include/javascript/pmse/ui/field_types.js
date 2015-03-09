@@ -42,10 +42,14 @@ TextField.prototype.type = 'TextField';
  */
 TextField.prototype.initObject = function (options) {
     var defaults = {
-        maxCharacters: 0
+        maxCharacters: 0,
+        value: "",
+        initialValue: ""
     };
     $.extend(true, defaults, options);
-    this.setMaxCharacters(defaults.maxCharacters);
+    this.setMaxCharacters(defaults.maxCharacters)
+        .setInitialValue(defaults.initialValue)
+        .setValue(defaults.value);
 };
 
 /**
@@ -355,10 +359,14 @@ TextareaField.prototype.type = "TextareaField";
 
 TextareaField.prototype.initObject = function (options) {
     var defaults = {
-        fieldHeight: null
+        fieldHeight: null,
+        value: "",
+        initialValue: ""
     };
     $.extend(true, defaults, options);
-    this.setFieldHeight(defaults.fieldHeight);
+    this.setFieldHeight(defaults.fieldHeight)
+        .setInitialValue(defaults.initialValue)
+        .setValue(defaults.value);
 };
 
 TextareaField.prototype.setFieldHeight = function (height) {
