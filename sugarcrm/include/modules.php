@@ -581,9 +581,10 @@ $beanList['Dashboards'] = 'Dashboard';
 $beanFiles['Dashboard'] = 'modules/Dashboards/Dashboard.php';
 $modInvisList[] = 'Dashboards';
 
+// Make Tags a visible module since all should have at least access to it
+$moduleList[] = 'Tags';
 $beanList['Tags'] = 'Tag';
 $beanFiles['Tag'] = 'modules/Tags/Tag.php';
-$modInvisList[] = 'Tags';
 
 //Object list is only here to correct for modules that break
 //the bean class name == dictionary entry/object name convention

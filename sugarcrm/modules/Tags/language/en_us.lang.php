@@ -9,7 +9,13 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-$mod_strings = array (
+$mod_strings = array(
+    'LBL_MODULE_NAME' => 'Tags',
+
     'LBL_GENERIC_LINK' => 'Related objects',
     'LBL_NAME_LOWER' => 'Lowercase Tag Name',
+
+    'LNK_NEW_TAG' => 'Create Tag',
+    'LNK_TAG_LIST' => 'View Tags',
+    'LNK_IMPORT_TAGS' => 'Import Tags',
 );
