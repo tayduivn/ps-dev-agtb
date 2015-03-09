@@ -32,9 +32,13 @@ describe("Portal Signup View", function() {
         });
         SugarTest.testMetadata.set();
         SugarTest.app.data.declareModels();
+
         view = SugarTest.createView('portal','Signup', 'signup');
-        view.render();
         app = SUGAR.App;
+        sinon.collection.stub(app.metadata, 'getLogoUrl', function() {
+            return '#';
+        });
+        view.render();
     });
 
     afterEach(function() {
