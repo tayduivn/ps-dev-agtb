@@ -72,8 +72,9 @@
         });
         var callbacks = app.data.getSyncCallbacks('update', this.model, {
             success: _.bind(function() {
-                var votes = app.user.lastState.get(this.getLastStateKey()) || {};
-                votes[this.model.id] = isUseful ? this.KEY_USEFUL : this.KEY_NOT_USEFUL;
+                var votes = app.user.lastState.get(this.getLastStateKey()) || {},
+                    key = this.model.get('kbdocument_id') + this.model.get('kbarticle_id');
+                votes[key] = isUseful ? this.KEY_USEFUL : this.KEY_NOT_USEFUL;
                 app.user.lastState.set(this.getLastStateKey(), votes);
 
                 this.voted = true;
@@ -96,13 +97,14 @@
      */
     isVoted: function() {
         if (!this.voted) {
-            var votes = app.user.lastState.get(this.getLastStateKey()) || {};
-            if (_.has(votes, this.model.id) &&
-                _.indexOf([this.KEY_USEFUL, this.KEY_NOT_USEFUL], votes[this.model.id]) !== -1
+            var votes = app.user.lastState.get(this.getLastStateKey()) || {},
+                key = this.model.get('kbdocument_id') + this.model.get('kbarticle_id');
+            if (_.has(votes, key) &&
+                _.indexOf([this.KEY_USEFUL, this.KEY_NOT_USEFUL], votes[key]) !== -1
             ) {
                 this.voted = true;
-                this.votedUseful = (votes[this.model.id] == this.KEY_USEFUL);
-                this.votedNotUseful = (votes[this.model.id] == this.KEY_NOT_USEFUL);
+                this.votedUseful = (votes[key] == this.KEY_USEFUL);
+                this.votedNotUseful = (votes[key] == this.KEY_NOT_USEFUL);
             }
         }
         return this.voted;
