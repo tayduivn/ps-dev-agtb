@@ -295,10 +295,6 @@ $mod_strings = array (
     'LBL_FORECAST_TITLE'=> 'Forecast',
     'LBL_FORECAST_DESC'=> 'Configure admin setting for the Forecasts module. The Forecasts Settings will include Time Period, Forecasts Ranges, Worksheet Columns, and Scenarios.',
     'LBL_OPPORTUNITIES_DESC'=> 'Configure admin setting for the Opportunities module. The Opportunities Settings include viewing Opportunities by just the Opportunity, or by Opportunities plus the Revenue Line Items attached to it.',
-    //BEGIN SUGARCRM flav=com ONLY
-    'LBL_GLOBAL_SEARCH_SETTINGS' => 'Global Search',
-	'LBL_GLOBAL_SEARCH_SETTINGS_DESC' => 'Configure the global search options for the system.',
-    //END SUGARCRM flav=com ONLY
     //BEGIN SUGARCRM flav=pro ONLY
     'LBL_GLOBAL_SEARCH_SETTINGS' => 'Search',
     'LBL_GLOBAL_SEARCH_SETTINGS_DESC' => 'Select modules for the Global Search and configure full-text searching.',
@@ -849,10 +845,6 @@ $mod_strings = array (
     'LBL_HISTORY_CONTACTS_EMAILS' => 'Related Contacts Emails',
     'LBL_HISTORY_CONTACTS_EMAILS_DESC' => 'Enable/Disable emails from related (or linked) contacts to show in Email Subpanel.',
 
-    //BEGIN SUGARCRM flav=com ONLY
-    'LBL_USERS_DESC' => 'Create, edit, activate and deactivate users in Sugar.',
-    //END SUGARCRM flav=com ONLY
-
     //BEGIN SUGARCRM flav=pro ONLY
 
     'LBL_USERS_DESC' => 'Create, edit, activate and deactivate users in Sugar. Create and manage teams and roles, including module- and field-level access.',
@@ -1159,9 +1151,6 @@ $mod_strings = array (
    'LBL_SAML_LOGIN_URL' => 'Login URL',
    'LBL_SAML_LOGOUT_URL' => 'SLO URL',
 
-    //BEGIN SUGARCRM flav=com ONLY
-    'LBL_GLOBAL_SEARCH_SETTINGS_TITLE' => 'Select the module(s) that users will be able to search against using the Global Search.',
-    //END SUGARCRM flav=com ONLY
     //BEGIN SUGARCRM flav=pro ONLY
     'LBL_GLOBAL_SEARCH_SETTINGS_TITLE' => 'Select the module(s) that users will be able to search against using the Global Search. Perform a full system index after enabling modules for the Global Search. To enable module fields for full text searching, use <a href="index.php?module=ModuleBuilder&action=index&type=studio">Studio</a>.',
     //END SUGARCRM flav=pro ONLY
