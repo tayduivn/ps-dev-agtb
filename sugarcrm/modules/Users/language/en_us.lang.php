@@ -94,14 +94,6 @@ $mod_strings = array (
 	'LBL_ADDRESS'						=> 'Address',
 	'LBL_ADMIN_USER'					=> 'System Administrator User',
 
-	//BEGIN SUGARCRM flav=com ONLY
-
-	'LBL_ADMIN_DESC'					=> 'User can access the Administration page all records.',
-	'LBL_REGULAR_DESC'					=> 'User can access modules and records based on roles.',
-
-	//END SUGARCRM flav=com ONLY
-
-
 	//BEGIN SUGARCRM flav=pro ONLY
 	'LBL_ADMIN_DESC'					=> 'User can access the Administration page all records, regardless of team security.',
 	'LBL_REGULAR_DESC'					=> 'User can access modules and records based on team security and roles.',
