@@ -1073,6 +1073,11 @@ class Report
         }
 
         $layout_def['type'] = $field_def['type'];
+
+        if (isset($field_def['precision'])) {
+            $layout_def['precision'] = $field_def['precision'];
+        }
+
         if (isset($field_def['rel_field'])) {
             $layout_def['rel_field'] = $field_def['rel_field'];
         }
