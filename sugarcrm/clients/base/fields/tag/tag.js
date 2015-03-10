@@ -8,7 +8,11 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-
+/**
+ * @class View.Fields.Base.TagField
+ * @alias SUGAR.App.view.fields.BaseTagField
+ * @extends View.Field
+ */
 ({
     plugins: ['EllipsisInline'],
 
@@ -65,6 +69,9 @@
             return false;
         }
 
+        // Trim up the term for sanity sake
+        term = $.trim(term);
+
         // Check previously found results to see tag exists with different casing
         if (results && results.length) {
             if (_.find(results, function(tag) {
@@ -102,6 +109,9 @@
     _query: function(query) {
         var self = this,
             shortlist = {results: []};
+
+        // Trim the query term right up front since it needs to be clean
+        query.term = $.trim(query.term);
 
         this.filterResults.filterDef = {
             'filter': [{
@@ -188,6 +198,9 @@
                     return;
                 }
 
+                // Trim the tag
+                val = $.trim(val);
+
                 // Sanitize input
                 if (escapeChars.indexOf(val.charAt(0)) >= 0) {
                     val = '\\\\' + val;
@@ -257,7 +270,7 @@
 
             // Check to see if the tag we're adding has already been added.
             var valFound = _.find(this.value, function(vals) {
-                return (vals.name === e.added.text);
+                return vals.name === e.added.text;
             });
 
             if (!valFound) {

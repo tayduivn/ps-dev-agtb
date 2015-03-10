@@ -96,12 +96,15 @@ class SugarFieldTag extends SugarFieldRelatecollection
             }
         }
 
+        // Normalize the tag name
+        $tagName = trim($record['name']);
+
         // See if this tag exists already. If it does send back the bean for it
         $q = $this->getSugarQuery();
         $q->select(array('id', 'name'));
         $q->from($tagBean);
         // Get the tag from the lowercase version of the name
-        $q->where()->equals('name_lower', strtolower($record['name']));
+        $q->where()->equals('name_lower', strtolower($tagName));
         $result = $q->execute();
 
         // If there is a result for this tag name, send back the bean for it
@@ -112,7 +115,7 @@ class SugarFieldTag extends SugarFieldRelatecollection
         }
 
         // Create a new record and send back THAT bean
-        $tagBean->fromArray(array('name' => $record['name']));
+        $tagBean->fromArray(array('name' => $tagName));
         $tagBean->save();
         return $tagBean;
     }
@@ -196,7 +199,7 @@ class SugarFieldTag extends SugarFieldRelatecollection
         if (!empty($params[$field])) {
             $submittedTags = $params[$field];
             foreach ($submittedTags as $submittedTag) {
-                $changedTags[strtolower($submittedTag['name'])] = $submittedTag['name'];
+                $changedTags[strtolower(trim($submittedTag['name']))] = trim($submittedTag['name']);
             }
         }
         return $changedTags;
@@ -285,7 +288,7 @@ class SugarFieldTag extends SugarFieldRelatecollection
         if (isset($this->options['relTags'][$row["id"]])) {
             foreach ($this->options['relTags'][$row["id"]] as $tag) {
                 if (isset($tag['name'])) {
-                    $exportString .= $tag['name'] . ", ";
+                    $exportString .= trim($tag['name']) . ", ";
                 }
             }
         }

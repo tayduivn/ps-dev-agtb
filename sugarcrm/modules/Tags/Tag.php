@@ -47,6 +47,7 @@ class Tag extends Basic
         global $current_user;
 
         // We need a tag name or really what's the point?
+        $this->name = trim($this->name);
         if (empty($this->name)) {
             return false;
         }
