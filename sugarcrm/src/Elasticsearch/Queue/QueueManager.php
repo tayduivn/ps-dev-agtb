@@ -87,7 +87,8 @@ class QueueManager
     }
 
     /**
-     * Dtor
+     * Make sure all flagged ids are removed from the queue
+     * TODO: do we still need this ?
      */
     public function __destruct()
     {

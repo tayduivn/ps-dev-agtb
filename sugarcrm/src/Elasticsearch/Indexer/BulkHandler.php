@@ -84,10 +84,20 @@ class BulkHandler
      * Its advised for the caller to gracefully finish the batch itself when
      * able as batch handlers are not supposed to be shared which implies that
      * the bulk sending should be nicely contained within the caller.
+     * TODO: do we still need this ?
      */
     public function __destruct()
     {
-        $this->finishBatch();
+        $documents = array_filter($this->documents);
+        if (!empty($documents)) {
+            // As this is a desctructor call, we need to make sure our logger
+            // object is available for the db backend
+            if (empty($GLOBALS['log'])) {
+                $GLOBALS['log'] = \LoggerManager::getLogger();
+            }
+            $GLOBALS['log']->fatal("BulkHandler::__destruct needed");
+            $this->finishBatch();
+        }
     }
 
     /**
