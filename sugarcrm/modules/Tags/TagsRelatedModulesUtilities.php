@@ -24,6 +24,11 @@ class TagsRelatedModulesUtilities
     {
         $fields = array();
         foreach ($GLOBALS['beanList'] as $module => $bean) {
+            // Do not allow tags on the Tags module
+            if ($module === "Tags") {
+                continue;
+            }
+
             // Enforce the tag relationship to sidecar modules only
             if (!isModuleBWC($module)) {
                 $object = BeanFactory::getObjectName($module);

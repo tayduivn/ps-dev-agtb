@@ -39,6 +39,7 @@ $viewdefs['Tags']['base']['view']['record'] = array(
                     'name' => 'edit_button',
                     'label' => 'LBL_EDIT_BUTTON_LABEL',
                     'acl_action' => 'edit',
+                    'acl_module' => 'Tags',
                 ),
                 array(
                     'type' => 'shareaction',
@@ -69,14 +70,6 @@ $viewdefs['Tags']['base']['view']['record'] = array(
                     'name' => 'find_duplicates_button',
                     'label' => 'LBL_DUP_MERGE',
                     'acl_action' => 'edit',
-                ),
-                array(
-                    'type' => 'rowaction',
-                    'event' => 'button:duplicate_button:click',
-                    'name' => 'duplicate_button',
-                    'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
-                    'acl_module' => 'Tags',
-                    'acl_action' => 'create',
                 ),
                 array(
                     'type' => 'rowaction',

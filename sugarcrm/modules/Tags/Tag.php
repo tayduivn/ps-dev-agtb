@@ -21,9 +21,24 @@ class Tag extends Basic
     public $new_schema = true;
     public $importable = false;
     public function __construct()
+
     {
         parent::__construct();
     }
+
+    /**
+     * @inheritDoc
+     */
+    function bean_implements($interface)
+    {
+        switch ($interface) {
+            case 'ACL':
+                return true;
+        }
+
+        return false;
+    }
+
     /**
      * @inheritDoc
      */

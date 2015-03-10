@@ -16,7 +16,7 @@ $dictionary['Tag'] = array(
     'table' => 'tags',
     'audited' => false,
     'activity_enabled' => false,
-    'favorites' => false,
+    'favorites' => true,
     'optimistic_locking' => false,
     'unified_search' => true,
     'full_text_search' => false,
@@ -32,6 +32,7 @@ $dictionary['Tag'] = array(
             'required' => true,
             'reportable' => false,
             'studio' => false,
+            'exportable' => false,
         ),
     ),
     'relationships' => array(),
@@ -58,10 +59,23 @@ $dictionary['Tag'] = array(
         'class' =>'TagsRelatedModulesUtilities',
         'method' => 'getRelatedFields',
     ),
-    // get rid of favorites field as this is set through basic template
-    // regardless if the favorites flag is set to false
+    // Tags should not implement taggable, but since there is no distinction
+    // between basic and default for sugar objects templates yet, we need to
+    // forecefully remove the taggable implementation fields. Once there is a
+    // separation of default and basic templates we can safely remove these as
+    // this module will implement default instead of basic.
     'unset_fields' => array(
-        'user_favorites',
+        'tag',
+        'tag_link',
+        'tags_tags',
+    ),
+    // These ACLs prevent regular users from taking administrative actions on
+    // Tag records. This allows view, list and export only.
+    'acls' => array(
+        'SugarACLDeveloperOrAdmin' => array(
+            'aclModule' => 'Tags',
+            'allowUserRead' => true,
+        ),
     ),
 );
 VardefManager::createVardef(
