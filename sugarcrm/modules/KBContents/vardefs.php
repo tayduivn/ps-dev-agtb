@@ -339,6 +339,7 @@ $dictionary['KBContent'] = array(
             'audited' => true,
             'studio' => false,
             'comment' => 'Related case',
+            'importable' => true,
         ),
         'kbscase_name' => array(
             'name' => 'kbscase_name',
@@ -353,6 +354,7 @@ $dictionary['KBContent'] = array(
             'module' => 'Cases',
             'duplicate_merge' => 'disabled',
             'studio' => false,
+            'importable' => false,
         ),
         'category_id' => array(
             'name' => 'category_id',
