@@ -184,4 +184,6 @@ YAHOO.util.Event.onDOMReady(function()
 
 {$SAVED_SEARCH_SELECTS}
 
+{{if !isset($exclude_default_footer)}}
 {{include file='include/EditView/footer.tpl'}}
+{{/if}}
