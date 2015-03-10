@@ -1,7 +1,7 @@
 describe("htmleditable_tinymce", function() {
 
     describe("edit view", function() {
-        var field, stub;
+        var field, stub, tinymce;
 
         beforeEach(function() {
             var $textarea = $('<textarea class="htmleditable"></textarea>');
@@ -9,11 +9,14 @@ describe("htmleditable_tinymce", function() {
             stub = sinon.stub(field, "_getHtmlEditableField", function(){
                 return $textarea;
             });
+            tinymce = $.fn.tinymce;
+            $.fn.tinymce = $.noop;
         });
 
         afterEach(function() {
             stub.restore();
             field = undefined;
+            tinymce = $.fn.tinymce;
         });
 
         it("should render edit view not readonly view", function() {

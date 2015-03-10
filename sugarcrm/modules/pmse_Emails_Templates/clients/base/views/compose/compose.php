@@ -84,35 +84,10 @@ $viewdefs['pmse_Emails_Templates']['base']['view']['compose'] = array(
                     'dismiss_label' => true,
                     'span'          => 12,
                     'tinyConfig'    => array(
-                        // Location of TinyMCE script
-                        'script_url'                        => 'include/javascript/tiny_mce/tiny_mce.js',
-                        'height'                            => '100%',
-                        'width'                             => '100%',
-                        // General options
-                        'theme'                             => 'advanced',
-                        'skin'                              => 'sugar7',
-                        'plugins'                           => 'style,paste,inlinepopups',
-                        'entity_encoding'                   => 'raw',
-                        'forced_root_block'                 => false,
-                        // Theme options
-                        'theme_advanced_buttons1'           => "code,separator,bold,italic,underline,strikethrough,separator,bullist,numlist,separator,justifyleft,justifycenter,justifyright,justifyfull,separator,forecolor,backcolor,separator,fontsizeselect,mybutton",
-                        'theme_advanced_toolbar_location'   => "top",
-                        'theme_advanced_toolbar_align'      => "left",
-                        'theme_advanced_statusbar_location' => "none",
-                        'theme_advanced_resizing'           => false,
-                        'schema'                            => 'html5',
-                        'template_external_list_url'        => 'lists/template_list.js',
-                        'external_link_list_url'            => 'lists/link_list.js',
-                        'external_image_list_url'           => 'lists/image_list.js',
-                        'media_external_list_url'           => 'lists/media_list.js',
-                        'theme_advanced_path'               => false,
-                        'theme_advanced_source_editor_width'=> 500,
-                        'theme_advanced_source_editor_height'=> 400,
-                        'inlinepopups_skin'                 => 'sugar7modal',
-
-                        //Url options for links
-                        'relative_urls'                     => false,
-                        'remove_script_host'                => false,
+                        'height' => '400',
+                        'toolbar' => 'code | bold italic underline strikethrough | bullist numlist | ' .
+                            'alignleft aligncenter alignright alignjustify | forecolor backcolor | ' .
+                            'fontsizeselect | mybutton',
                     ),
                 ),
             ),

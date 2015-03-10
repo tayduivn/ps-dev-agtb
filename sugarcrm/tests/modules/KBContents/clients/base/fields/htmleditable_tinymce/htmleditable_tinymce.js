@@ -14,6 +14,7 @@ describe('modules.kbcontents.clients.base.fields.htmleditable_tinymce', function
         app.data.declareModels();
         model = app.data.createBean(module);
         field = SugarTest.createField('base', fieldName, fieldType, 'edit', {}, module, model, null, true);
+        field.tinyMCEFileBrowseCallback = sinon.stub();
     });
 
     afterEach(function() {
