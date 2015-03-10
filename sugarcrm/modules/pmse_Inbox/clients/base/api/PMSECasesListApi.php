@@ -148,6 +148,14 @@ class PMSECasesListApi extends FilterApi
                     $q->where()->queryAnd()
                         ->addRaw("last_name LIKE '%" . $args['q'] . "%'");
                     break;
+                case translate("LBL_ACTIVITY_OWNER",'pmse_Inbox'):
+                    $q->where()->queryAnd()
+                        ->addRaw("pr.created_by LIKE '%" . $args['q'] . "%'");
+                    break;
+                case translate("LBL_PROCESS_OWNER",'pmse_Inbox'):
+                    $q->where()->queryAnd()
+                        ->addRaw("pf.cas_user_id LIKE '%" . $args['q'] . "%'");
+                    break;
             }
         } else {
             switch ($args['module_list']) {
@@ -193,11 +201,19 @@ class PMSECasesListApi extends FilterApi
             } else {
                 $list[$key]["cas_status"] = '<data class="label label-important">' . $value["cas_status"] . '</data>';
             }
-//            if($value["flow_error"]!='0')
-//            {
-//                $list[$key]["cas_status"]='<data class="label label-important">ERROR</data>';
-////                $list[$key]["execute"] = 'Execute';
-//            }
+
+            $assignedBean = BeanFactory::getBean($list[$key]['cas_sugar_module'], $list[$key]['cas_sugar_object_id']);
+            $assignedUsersBean = BeanFactory::getBean('Users', $assignedBean->assigned_user_id);
+            $list[$key]['assigned_user_name'] = $assignedUsersBean->full_name;
+
+            $prjUsersBean = BeanFactory::getBean('Users', $list[$key]['prj_created_by']);
+            $list[$key]['prj_user_id_full_name'] = $prjUsersBean->full_name;
+
+            $casUsersBean = BeanFactory::getBean('Users', $list[$key]['cas_user_id']);
+            $list[$key]['cas_user_id_full_name'] = $casUsersBean->full_name;
+            if (empty($casUsersBean->full_name)){
+                $list[$key]['cas_user_id_full_name'] = $list[$key]['cas_user_id'];
+            }
             $count++;
         }
         if ($count == $options['limit']) {

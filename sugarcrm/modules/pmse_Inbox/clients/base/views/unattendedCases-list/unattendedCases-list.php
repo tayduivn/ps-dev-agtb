@@ -77,7 +77,6 @@ $viewdefs[$module_name]['base']['view']['unattendedCases-list'] = array(
                 array(
                     'name' => 'assigned_user_name',
                     'label' => 'LBL_OWNER',
-                    'width' => 9,
                     'default' => true,
                     'enabled' => true,
                     'link' => false,
