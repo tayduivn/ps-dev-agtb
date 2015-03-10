@@ -172,10 +172,10 @@ $error_notice = '';
 $use_current_user_login = false;
 
 // Allow for the session information to be passed via the URL for printing.
-if (!empty($_GET['PHPSESSID'])) {
-    if (!empty($_COOKIE['PHPSESSID']) && strcmp($_GET['PHPSESSID'], $_COOKIE['PHPSESSID']) == 0) {
+if(isset($_GET['PHPSESSID'])){
+    if(!empty($_COOKIE['PHPSESSID']) && strcmp($_GET['PHPSESSID'],$_COOKIE['PHPSESSID']) == 0) {
         session_id($_REQUEST['PHPSESSID']);
-    } else {
+    }else{
         unset($_GET['PHPSESSID']);
     }
 }
