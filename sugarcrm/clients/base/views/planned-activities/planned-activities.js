@@ -73,10 +73,16 @@
                 defaults: {}
             };
         }
-        this.settings.on('change:date', function(model, value) {
-            var specificDateKey = app.user.lastState.key('date', this);
-            app.user.lastState.set(specificDateKey, value);
-        }, this);
+        if (this.meta.config) {
+            this.layout.before('dashletconfig:save', function() {
+                this.saveDate(this.settings.get('date'));
+            }, this);
+        } else {
+            this.settings.on('change:date', function(model, value) {
+                this.saveDate(value);
+            }, this);
+        }
+
         this.settings.set('date', this.getDate());
         this.tbodyTag = 'ul[data-action="pagination-body"]';
     },
@@ -314,6 +320,16 @@
 
         this.settings.set('date', date);
         this.layout.loadData();
+    },
+
+    /**
+     * Saves current date to local storage.
+     *
+     * @param {string} value The date to save.
+     */
+    saveDate: function(value) {
+        var key = app.user.lastState.key('date', this);
+        app.user.lastState.set(key, value);
     },
 
     /**
