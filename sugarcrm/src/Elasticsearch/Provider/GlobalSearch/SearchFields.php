@@ -57,7 +57,7 @@ class SearchFields
     }
 
     /**
-     * Get list of all search fields
+     * Get list of all search fields for given modules
      * @return array
      */
     public function getSearchFields(array $modules)
@@ -100,7 +100,7 @@ class SearchFields
 
         $def = $this->getMappingDefForMappingName($mapName);
         if (!empty($def)) {
-            if (isset($def['type']) && $def['type'] == 'string') {
+            if (isset($def['type']) && $def['type'] === 'string') {
                 return true;
             }
         }
@@ -123,15 +123,18 @@ class SearchFields
 
         foreach ($mappingDefs as $type) {
 
-            if ($this->isStringBased($type)) {
-                $searchField = $module . self::FIELD_SEP . $field . self::FIELD_SEP . $type;
-
-                if ($this->boost) {
-                    $searchField = $this->getBoostedField($searchField, $defs, $type);
-                }
-
-                $list[] = $searchField;
+            // Only allow string based fields for searching
+            if (!$this->isStringBased($type)) {
+                continue;
             }
+
+            $searchField = $module . self::FIELD_SEP . $field . self::FIELD_SEP . $type;
+
+            if ($this->boost) {
+                $searchField = $this->getBoostedField($searchField, $defs, $type);
+            }
+
+            $list[] = $searchField;
         }
 
         return $list;
