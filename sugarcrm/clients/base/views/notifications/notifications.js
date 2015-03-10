@@ -69,6 +69,7 @@
      * Supported options:
      * - delay: How often (minutes) should the pulling mechanism run.
      * - limit: Limit imposed to the number of records pulled.
+     * - enable_favicon: Enables/disables notifications in favicon, enabled by default.
      *
      * @property {Object}
      * @protected
