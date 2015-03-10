@@ -167,7 +167,7 @@
             },
             {
                 name: 'search',
-                route: 'search/:searchTerm',
+                route: 'search/*searchTerm',
                 callback: function(searchTerm) {
                     app.controller.loadView({
                         layout: 'globalsearch-results',

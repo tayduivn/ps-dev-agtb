@@ -38,7 +38,7 @@
      * @override
      */
     bindDataChange: function() {
-        this.collection.on('sync', function() {
+        this.collection.on('reset', function() {
             if (this.disposed) {
                 return;
             }
