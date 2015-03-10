@@ -114,8 +114,15 @@ class PMSECasesListApi extends FilterApi
         );
         $q->select($fields);
         $q->from($inboxBean, array('alias' => 'a'));
-        $q->joinRaw('INNER JOIN users u ON a.created_by=u.id');
+        $q->joinRaw('INNER JOIN users u ON a.created_by=u.id INNER JOIN pmse_bpmn_process pr ON a.pro_id=pr.id INNER JOIN pmse_bpm_flow pf ON a.cas_id=pf.cas_id');
         $q->select->fieldRaw('u.last_name', 'assigned_user_name');
+        $q->select->fieldRaw('pr.prj_id', 'prj_id');
+        $q->select->fieldRaw('pr.created_by', 'prj_created_by');
+        $q->select->fieldRaw('pf.cas_sugar_module', 'cas_sugar_module');
+        $q->select->fieldRaw('pf.cas_sugar_object_id', 'cas_sugar_object_id');
+        $q->select->fieldRaw('pf.cas_user_id', 'cas_user_id');
+
+        $q->where()->queryAnd()->addraw('pf.cas_flow_status != "CLOSED"');
         //Flow query breaks on mssql due to the use of row_number() / count in a subselect which is not supported
         //Doesn't appear to be used.
         //$q->select->fieldRaw('('.$flowQuery->compileSql().')','flow_error');
