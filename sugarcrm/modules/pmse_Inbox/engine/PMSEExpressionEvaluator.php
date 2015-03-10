@@ -399,7 +399,7 @@ class PMSEExpressionEvaluator
                 return 'PT' . $value . 'H';
             break;
             case 'min':
-                return 'PT' . $value . 'S';
+                return 'PT' . $value . 'M';
             break;
         }
     }

@@ -53,7 +53,6 @@ class PMSETimerEvent extends PMSEIntermediateEvent
      */
     public function run($flowData, $bean, $externalAction = '', $arguments = array())
     {
-        global $timedate;
         if (empty($externalAction)) {
             $eventDefinition = $this->retrieveDefinitionData($flowData['bpmn_id']);
             $flowData['cas_flow_status'] = 'SLEEPING';
@@ -75,7 +74,7 @@ class PMSETimerEvent extends PMSEIntermediateEvent
                     $eventDefinition['evn_criteria'],
                     $bean
                 );
-                $date = $timedate->fromIso($dueDate);
+                $date = TimeDate::getInstance()->fromIso($dueDate);
                 $dateDB = $date->asDb();
                 $flowData['cas_delegate_date'] = $dateDB;
                 $flowData['cas_due_date'] = $dateDB;
