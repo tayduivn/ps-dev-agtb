@@ -26,12 +26,12 @@
      * @protected
      */
     _statusClass: {
-        'draft': 'st-draft',
-        'in-review': 'st-review',
-        'approved': 'st-approved',
-        'published-in': 'st-pub-in',
-        'published-ex': 'st-pub-ex',
-        'expired': 'st-expired'
+        'draft': 'label-pending',
+        'in-review': 'label-warning',
+        'approved': 'label-info',
+        'published-in': 'label-published',
+        'published-ex': 'label-success',
+        'expired': 'label'
     },
 
     /**

@@ -4,23 +4,8 @@
     font-weight: bold;
     padding: 3px 4px 3px;
     font-size: @fontSizeSmall;
-    &.st-draft {
-      background-color: @gray;
-    }
-    &.st-expired {
-      background-color: @red;
-    }
-    &.st-review {
-      background-color: @yellow;
-    }
-    &.st-pub-in {
-      background-color: @green;
-    }
-    &.st-pub-ex {
-      background-color: darken(@green, 10%);
-    }
-    &.st-approved {
-      background-color: darken(@blue, 15%);
+    &.label-published {
+      background-color: darken(@success, 10%);
     }
   }
 }
