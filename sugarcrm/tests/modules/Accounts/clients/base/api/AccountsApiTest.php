@@ -43,6 +43,7 @@ class AccountsApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals('sales_stage', $field);
     }
 
+    //BEGIN SUGARCRM flav=ent ONLY
     public function testGetOpportunityStatusFieldReturnsSalesStatus()
     {
         Opportunity::$settings = array(
@@ -52,4 +53,5 @@ class AccountsApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals('sales_status', $field);
     }
+    //END SUGARCRM flav=ent ONLY
 }
