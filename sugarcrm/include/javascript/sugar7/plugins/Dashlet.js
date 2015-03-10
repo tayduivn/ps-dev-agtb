@@ -54,7 +54,6 @@
                     }
                     if (this.meta && this.meta.config) {
                         viewName = 'config';
-                        this.createMode = true;
                         this.action = 'edit';
                         this.model = this.context.parent.get("model");
                         //needed to allow the record hbs to render our settings rather than the context model
@@ -64,7 +63,6 @@
                         this.settings.on("change", function(model) {
                             this.dashModel.set(model.changed);
                         }, this);
-                        this.model.isNotEmpty = true;
 
                         this.meta.panels = this.dashletConfig.panels;
                         var templateName = this.name + '.dashlet-config';
