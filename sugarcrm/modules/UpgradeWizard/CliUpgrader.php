@@ -597,6 +597,39 @@ eoq2;
         }
         return $md5sum;
     }
+
+    /**
+     * Verify and unpack upgrade package
+     * If we found that state file has pre step we clear state file
+     * @param string $zip ZIP filename
+     * @param string $dir Temp dir to use for zip files
+     * @return bool|false
+     */
+    protected function verify($zip, $dir)
+    {
+        if (!empty($this->state['stage']['pre'])) {
+            $this->cleanState();
+        }
+        return parent::verify($zip, $dir);
+    }
+
+    /**
+     * Run given stage
+     * If stage healthcheck and healthcheck doesn't exists we run unpack stage
+     * @inheritdoc
+     */
+    public function run($stage)
+    {
+        if ($stage == 'healthcheck' &&
+            (!file_exists($this->context['health_check_path']) || empty($this->state['stage']['unpack']) ||
+                $this->state['stage']['unpack'] == 'failed') &&
+            !$this->run('unpack')
+        ) {
+            return false;
+        }
+
+        return parent::run($stage);
+    }
 }
 
 if (empty($argv[0]) || basename($argv[0]) != basename(__FILE__)) {
