@@ -18,112 +18,86 @@ require_once 'upgrade/scripts/pre/LoadDropdowns.php';
  */
 class SugarUpgradeLoadDropdownsTest extends UpgradeTestCase
 {
-    protected $corePath = 'include/language/';
-    protected $customPath = 'custom/include/language/';
-    protected $script;
-
-    public function setUp()
-    {
-        parent::setUp();
-
-        $coreFiles = glob("{$this->corePath}*.lang.php");
-        SugarTestLanguageFileUtilities::backup($coreFiles);
-        SugarTestLanguageFileUtilities::remove($coreFiles);
-
-        $customFiles = glob("{$this->customPath}*.lang.php");
-        SugarTestLanguageFileUtilities::backup($customFiles);
-        SugarTestLanguageFileUtilities::remove($customFiles);
-
-        sugar_cache_clear("app_strings.{$GLOBALS['current_language']}");
-        sugar_cache_clear("app_list_strings.{$GLOBALS['current_language']}");
-
-        $this->script = $this->upgrader->getScript('pre', 'LoadDropdowns');
-    }
-
-    public function tearDown()
-    {
-        SugarTestLanguageFileUtilities::clearCache();
-
-        parent::tearDown();
-    }
-
     /**
      * @covers SugarUpgradeLoadDropdowns::run
      */
     public function testRun_IdentifiesCustomizedDropdowns()
     {
-        $core = <<<EOF
-\$app_list_strings = array(
-    'sales_stage_default_key' => 'Prospecting',
-    'activity_dom' => array(
-        'Call' => 'Call',
-        'Meeting' => 'Meeting',
-        'Task' => 'Task',
-        'Email' => 'Email',
-        'Note' => 'Note',
-    ),
-    'meeting_status_dom' => array(
-        'Planned' => 'Planned',
-        'Held' => 'Held',
-        'Not Held' => 'Not Held',
-    ),
-);
+        $mockHelper = $this->getMock('UpgradeDropdownsHelper', array('getDropdowns'));
+        $mockHelper->expects($this->exactly(2))
+            ->method('getDropdowns')
+            ->willReturnOnConsecutiveCalls(
+                // include/language/en_us.lang.php
+                array(
+                    'activity_dom' => array(
+                        'Call' => 'Call',
+                        'Meeting' => 'Meeting',
+                        'Task' => 'Task',
+                        'Email' => 'Email',
+                        'Note' => 'Note',
+                    ),
+                    'meeting_status_dom' => array(
+                        'Planned' => 'Planned',
+                        'Held' => 'Held',
+                        'Not Held' => 'Not Held',
+                    ),
+                ),
+                // custom/include/language/en_us.lang.php
+                array(
+                    'activity_dom' => array(
+                        'Call' => 'Call',
+                        'Meeting' => 'Meeting',
+                        'Task' => 'To Do',
+                        'Email' => 'Email',
+                        'Note' => 'Note',
+                        'SMS' => 'Text Message',
+                    ),
+                )
+            );
 
-EOF;
-
-        $custom = <<<EOF
-\$app_list_strings = array(
-    'activity_dom' => array(
-        'Call' => 'Call',
-        'Meeting' => 'Meeting',
-        'Task' => 'To Do',
-        'Email' => 'Email',
-        'Note' => 'Note',
-        'SMS' => 'Text Message',
-    ),
-);
-
-EOF;
-
-        SugarTestLanguageFileUtilities::write($this->corePath, $GLOBALS['current_language'], $core);
-        SugarTestLanguageFileUtilities::write($this->customPath, $GLOBALS['current_language'], $custom);
-
-        $this->script->run();
-
-        $this->assertArrayHasKey('old', $this->upgrader->state['dropdowns_to_merge'][$GLOBALS['current_language']]);
-        $this->assertArrayHasKey('custom', $this->upgrader->state['dropdowns_to_merge'][$GLOBALS['current_language']]);
-        $this->assertArrayHasKey(
-            'activity_dom',
-            $this->upgrader->state['dropdowns_to_merge'][$GLOBALS['current_language']]['old']
+        $mockLoader = $this->getMock(
+            'SugarUpgradeLoadDropdowns',
+            array('getCustomFile', 'getDropdownHelper', 'geti18nFiles', 'getLanguage'),
+            array($this->upgrader)
         );
-        $this->assertArrayHasKey(
-            'activity_dom',
-            $this->upgrader->state['dropdowns_to_merge'][$GLOBALS['current_language']]['custom']
-        );
+        $mockLoader->expects($this->once())->method('getDropdownHelper')->willReturn($mockHelper);
+        $mockLoader->expects($this->once())
+            ->method('geti18nFiles')
+            ->willReturn(array('include/language/en_us.lang.php'));
+        $mockLoader->expects($this->once())
+            ->method('getCustomFile')
+            ->willReturn('custom/include/language/en_us.lang.php');
+        $mockLoader->expects($this->once())->method('getLanguage')->willReturn('en_us');
+
+        $mockLoader->run();
+
+        $dropdownsToMerge = $this->upgrader->state['dropdowns_to_merge']['en_us'];
+        $this->assertArrayHasKey('old', $dropdownsToMerge);
+        $this->assertArrayHasKey('custom', $dropdownsToMerge);
+        $this->assertArrayHasKey('activity_dom', $dropdownsToMerge['old']);
+        $this->assertArrayHasKey('activity_dom', $dropdownsToMerge['custom']);
+        $this->assertArrayNotHasKey('meeting_status_dom', $dropdownsToMerge['old']);
+        $this->assertArrayNotHasKey('meeting_status_dom', $dropdownsToMerge['custom']);
     }
 
     /**
      * @covers SugarUpgradeLoadDropdowns::run
      */
-    public function testRun_NoCustomizations_NothingToMerge()
+    public function testRun_CustomFileNotFound_NothingToMerge()
     {
-        $core = <<<EOF
-\$app_list_strings = array(
-    'sales_stage_default_key' => 'Prospecting',
-    'activity_dom' => array(
-        'Call' => 'Call',
-        'Meeting' => 'Meeting',
-        'Task' => 'Task',
-        'Email' => 'Email',
-        'Note' => 'Note',
-    ),
-);
+        $mockLoader = $this->getMock(
+            'SugarUpgradeLoadDropdowns',
+            array('getCustomFile', 'geti18nFiles'),
+            array($this->upgrader)
+        );
+        $mockLoader->expects($this->once())
+            ->method('geti18nFiles')
+            ->willReturn(array('include/language/en_us.lang.php'));
+        $mockLoader->expects($this->once())
+            ->method('getCustomFile')
+            ->willReturn(null);
 
-EOF;
-
-        SugarTestLanguageFileUtilities::write($this->corePath, $GLOBALS['current_language'], $core);
-
-        $this->script->run();
+        $mockLoader->run();
 
         $this->assertEmpty($this->upgrader->state['dropdowns_to_merge']);
     }
@@ -131,57 +105,128 @@ EOF;
     /**
      * @covers SugarUpgradeLoadDropdowns::run
      */
+    public function testRun_NoCustomizationsFoundInCustomFile_NothingToMerge()
+    {
+        $mockHelper = $this->getMock('UpgradeDropdownsHelper', array('getDropdowns'));
+        $mockHelper->expects($this->exactly(2))
+            ->method('getDropdowns')
+            ->willReturnOnConsecutiveCalls(
+                // include/language/en_us.lang.php
+                array(
+                    'activity_dom' => array(
+                        'Call' => 'Call',
+                        'Meeting' => 'Meeting',
+                        'Task' => 'Task',
+                        'Email' => 'Email',
+                        'Note' => 'Note',
+                    ),
+                ),
+                // custom/include/language/en_us.lang.php
+                array()
+            );
+
+        $mockLoader = $this->getMock(
+            'SugarUpgradeLoadDropdowns',
+            array('getCustomFile', 'getDropdownHelper', 'geti18nFiles', 'getLanguage'),
+            array($this->upgrader)
+        );
+        $mockLoader->expects($this->once())->method('getDropdownHelper')->willReturn($mockHelper);
+        $mockLoader->expects($this->once())
+            ->method('geti18nFiles')
+            ->willReturn(array('include/language/en_us.lang.php'));
+        $mockLoader->expects($this->once())
+            ->method('getCustomFile')
+            ->willReturn('custom/include/language/en_us.lang.php');
+        $mockLoader->expects($this->once())->method('getLanguage')->willReturn('en_us');
+
+        $mockLoader->run();
+
+        $dropdownsToMerge = $this->upgrader->state['dropdowns_to_merge']['en_us'];
+        $this->assertEmpty($dropdownsToMerge['old']);
+        $this->assertEmpty($dropdownsToMerge['custom']);
+    }
+
+    /**
+     * @covers SugarUpgradeLoadDropdowns::run
+     */
     public function testRun_MultipleLanguagesAreCustomized()
     {
-        $secondLanguage = $GLOBALS['current_language'] === 'es_ES' ? 'en_us' : 'es_ES';
-        $secondLanguageCoreFile = "{$this->corePath}{$secondLanguage}.lang.php";
-        $secondLanguageCustomFile = "{$this->customPath}{$secondLanguage}.lang.php";
+        $firstLanguage = 'en_us';
+        $secondLanguage = 'es_ES';
 
-        if (!isset(SugarTestHelper::$oldFiles[$secondLanguageCoreFile])) {
-            SugarTestHelper::saveFile($secondLanguageCoreFile);
-        }
+        $mockHelper = $this->getMock('UpgradeDropdownsHelper', array('getDropdowns'));
+        $mockHelper->expects($this->exactly(4))
+            ->method('getDropdowns')
+            ->willReturnOnConsecutiveCalls(
+                // include/language/en_us.lang.php
+                array(
+                    'activity_dom' => array(
+                        'Call' => 'Call',
+                        'Meeting' => 'Meeting',
+                        'Task' => 'Task',
+                        'Email' => 'Email',
+                        'Note' => 'Note',
+                    ),
+                ),
+                // custom/include/language/en_us.lang.php
+                array(
+                    'activity_dom' => array(
+                        'Call' => 'Call',
+                        'Meeting' => 'Meeting',
+                        'Task' => 'To Do',
+                        'Email' => 'Email',
+                        'Note' => 'Note',
+                        'SMS' => 'Text Message',
+                    ),
+                ),
+                // include/language/en_ES.lang.php
+                array(
+                    'activity_dom' => array(
+                        'Call' => 'Call',
+                        'Meeting' => 'Meeting',
+                        'Task' => 'Task',
+                        'Email' => 'Email',
+                        'Note' => 'Note',
+                    ),
+                ),
+                // custom/include/language/en_ES.lang.php
+                array(
+                    'activity_dom' => array(
+                        'Call' => 'Call',
+                        'Meeting' => 'Meeting',
+                        'Task' => 'To Do',
+                        'Email' => 'Email',
+                        'Note' => 'Note',
+                        'SMS' => 'Text Message',
+                    ),
+                )
+            );
 
-        if (!isset(SugarTestHelper::$oldFiles[$secondLanguageCustomFile])) {
-            SugarTestHelper::saveFile($secondLanguageCustomFile);
-        }
+        $mockLoader = $this->getMock(
+            'SugarUpgradeLoadDropdowns',
+            array('getCustomFile', 'getDropdownHelper', 'geti18nFiles', 'getLanguage'),
+            array($this->upgrader)
+        );
+        $mockLoader->expects($this->once())->method('getDropdownHelper')->willReturn($mockHelper);
+        $mockLoader->expects($this->once())
+            ->method('geti18nFiles')
+            ->willReturn(array(
+                "include/lanaguage/{$firstLanguage}.lang.php",
+                "include/language/{$secondLanguage}.lang.php",
+            ));
+        $mockLoader->expects($this->exactly(2))
+            ->method('getCustomFile')
+            ->willReturnOnConsecutiveCalls(
+                "custom/include/lanaguage/{$firstLanguage}.lang.php",
+                "custom/include/language/{$secondLanguage}.lang.php"
+            );
+        $mockLoader->expects($this->exactly(2))
+            ->method('getLanguage')
+            ->willReturnOnConsecutiveCalls($firstLanguage, $secondLanguage);
 
-        $core = <<<EOF
-\$app_list_strings = array(
-    'sales_stage_default_key' => 'Prospecting',
-    'activity_dom' => array(
-        'Call' => 'Call',
-        'Meeting' => 'Meeting',
-        'Task' => 'Task',
-        'Email' => 'Email',
-        'Note' => 'Note',
-    ),
-);
+        $mockLoader->run();
 
-EOF;
-
-        $custom = <<<EOF
-\$app_list_strings = array(
-    'activity_dom' => array(
-        'Call' => 'Call',
-        'Meeting' => 'Meeting',
-        'Task' => 'To Do',
-        'Email' => 'Email',
-        'Note' => 'Note',
-        'SMS' => 'Text Message',
-    ),
-);
-
-EOF;
-
-        SugarTestLanguageFileUtilities::write($this->corePath, $GLOBALS['current_language'], $core);
-        SugarTestLanguageFileUtilities::write($this->customPath, $GLOBALS['current_language'], $custom);
-
-        SugarTestLanguageFileUtilities::write($this->corePath, $secondLanguage, $core);
-        SugarTestLanguageFileUtilities::write($this->customPath, $secondLanguage, $custom);
-
-        $this->script->run();
-
-        $this->assertArrayHasKey($GLOBALS['current_language'], $this->upgrader->state['dropdowns_to_merge']);
+        $this->assertArrayHasKey($firstLanguage, $this->upgrader->state['dropdowns_to_merge']);
         $this->assertArrayHasKey($secondLanguage, $this->upgrader->state['dropdowns_to_merge']);
     }
 
@@ -190,85 +235,81 @@ EOF;
      */
     public function testRun_CustomHasDropdownsNotFoundInOld()
     {
-        $core = <<<EOF
-\$app_list_strings = array(
-    'sales_stage_default_key' => 'Prospecting',
-    'activity_dom' => array(
-        'Call' => 'Call',
-        'Meeting' => 'Meeting',
-        'Task' => 'Task',
-        'Email' => 'Email',
-        'Note' => 'Note',
-    ),
-    'meeting_status_dom' => array(
-        'Planned' => 'Planned',
-        'Held' => 'Held',
-        'Not Held' => 'Not Held',
-    ),
-);
+        $mockHelper = $this->getMock('UpgradeDropdownsHelper', array('getDropdowns'));
+        $mockHelper->expects($this->exactly(2))
+            ->method('getDropdowns')
+            ->willReturnOnConsecutiveCalls(
+                // include/language/en_us.lang.php
+                array(
+                    'activity_dom' => array(
+                        'Call' => 'Call',
+                        'Meeting' => 'Meeting',
+                        'Task' => 'Task',
+                        'Email' => 'Email',
+                        'Note' => 'Note',
+                    ),
+                    'meeting_status_dom' => array(
+                        'Planned' => 'Planned',
+                        'Held' => 'Held',
+                        'Not Held' => 'Not Held',
+                    ),
+                ),
+                // custom/include/language/en_us.lang.php
+                array(
+                    'foo_dom' => array(
+                        'Foo' => 'Foo',
+                        'Biz' => 'Biz',
+                        'Baz' => 'Baz',
+                    ),
+                )
+            );
 
-EOF;
-
-        $custom = <<<EOF
-\$app_list_strings = array(
-    'foo_dom' => array(
-        'Foo' => 'Foo',
-        'Biz' => 'Biz',
-        'Baz' => 'Baz',
-    ),
-);
-
-EOF;
-
-        SugarTestLanguageFileUtilities::write($this->corePath, $GLOBALS['current_language'], $core);
-        SugarTestLanguageFileUtilities::write($this->customPath, $GLOBALS['current_language'], $custom);
-
-        $this->script->run();
-
-        $this->assertEmpty($this->upgrader->state['dropdowns_to_merge'][$GLOBALS['current_language']]['old']);
-        $this->assertArrayHasKey(
-            'foo_dom',
-            $this->upgrader->state['dropdowns_to_merge'][$GLOBALS['current_language']]['custom']
+        $mockLoader = $this->getMock(
+            'SugarUpgradeLoadDropdowns',
+            array('getCustomFile', 'getDropdownHelper', 'geti18nFiles', 'getLanguage'),
+            array($this->upgrader)
         );
+        $mockLoader->expects($this->once())->method('getDropdownHelper')->willReturn($mockHelper);
+        $mockLoader->expects($this->once())
+            ->method('geti18nFiles')
+            ->willReturn(array('include/language/en_us.lang.php'));
+        $mockLoader->expects($this->once())
+            ->method('getCustomFile')
+            ->willReturn('custom/include/language/en_us.lang.php');
+        $mockLoader->expects($this->once())->method('getLanguage')->willReturn('en_us');
+
+        $mockLoader->run();
+
+        $dropdownsToMerge = $this->upgrader->state['dropdowns_to_merge']['en_us'];
+        $this->assertEmpty($dropdownsToMerge['old']);
+        $this->assertArrayHasKey('foo_dom', $dropdownsToMerge['custom']);
     }
 
     /**
-     * Note that restricted dropdowns should not be customizable. This test case simply proves that the upgrader won't
-     * attempt to do anything with a dropdown that is restricted.
-     *
      * @covers SugarUpgradeLoadDropdowns::run
      */
-    public function testRun_RestrictedDropdownsAreIgnored()
+    public function testRun_NoDropdownsAreFound()
     {
-        $core = <<<EOF
-\$app_list_strings = array(
-    'eapm_list' => array(
-        'Sugar' => 'Sugar',
-        'WebEx' => 'WebEx',
-        'GoToMeeting' => 'GoToMeeting',
-        'IBMSmartCloud' => 'IBM SmartCloud',
-        'Google' => 'Google',
-        'Box' => 'Box.net',
-        'Facebook' => 'Facebook',
-        'Twitter' => 'Twitter',
-    ),
-);
+        $mockHelper = $this->getMock('UpgradeDropdownsHelper', array('getDropdowns'));
+        $mockHelper->expects($this->exactly(2))
+            ->method('getDropdowns')
+            ->willReturn(array());
 
-EOF;
+        $mockLoader = $this->getMock(
+            'SugarUpgradeLoadDropdowns',
+            array('getCustomFile', 'getDropdownHelper', 'geti18nFiles', 'getLanguage'),
+            array($this->upgrader)
+        );
+        $mockLoader->expects($this->once())->method('getDropdownHelper')->willReturn($mockHelper);
+        $mockLoader->expects($this->once())
+            ->method('geti18nFiles')
+            ->willReturn(array('include/language/en_us.lang.php'));
+        $mockLoader->expects($this->once())
+            ->method('getCustomFile')
+            ->willReturn('custom/include/language/en_us.lang.php');
+        $mockLoader->expects($this->once())->method('getLanguage')->willReturn('en_us');
 
-        $custom = <<<EOF
-\$app_list_strings = array(
-    'eapm_list' => array(
-        'Foo' => 'Bar',
-    ),
-);
-
-EOF;
-
-        SugarTestLanguageFileUtilities::write($this->corePath, $GLOBALS['current_language'], $core);
-        SugarTestLanguageFileUtilities::write($this->customPath, $GLOBALS['current_language'], $custom);
-
-        $this->script->run();
+        $mockLoader->run();
 
         $this->assertEmpty($this->upgrader->state['dropdowns_to_merge']);
     }
