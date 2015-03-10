@@ -470,40 +470,44 @@ class PMSECaseFlowHandlerTest extends Sugar_PHPUnit_Framework_TestCase
                 ->setMethods(array('save'))
                 ->getMock();
 
-        $caseFlowHandlerMock->expects($this->once())
+        $caseFlowHandlerMock->expects($this->atLeastOnce())
                 ->method('retrieveBean')
                 ->will($this->returnValue($threadMock));
 
         $sugarQueryMock = $this->getMockBuilder('SugarQuery')
                 ->disableOriginalConstructor()
-                ->setMethods(array('select', 'from', 'where', 'queryAnd', 'addRaw', 'execute', 'compileSql'))
+                ->setMethods(array('select', 'from', 'where', 'queryAnd', 'addRaw', 'execute', 'compileSql', 'equals'))
                 ->getMock();
 
-        $caseFlowHandlerMock->expects($this->once())
+        $caseFlowHandlerMock->expects($this->atLeastOnce())
                 ->method('retrieveSugarQueryObject')
                 ->will($this->returnValue($sugarQueryMock));
 
-        $sugarQueryMock->expects($this->once())
+        $sugarQueryMock->expects($this->atLeastOnce())
                 ->method('where')
                 ->will($this->returnValue($sugarQueryMock));
 
-        $sugarQueryMock->expects($this->once())
+        $sugarQueryMock->expects($this->atLeastOnce())
+            ->method('equals')
+            ->will($this->returnValue($sugarQueryMock));
+
+        $sugarQueryMock->expects($this->atLeastOnce())
                 ->method('queryAnd')
                 ->will($this->returnValue($sugarQueryMock));
 
         $rowList = array(
-            array('cas_thread_index' => 1),
-            array('cas_thread_index' => 2),
-            array('cas_thread_index' => 3),
-            array('cas_thread_index' => 4),
-            array('cas_thread_index' => 5)
+            array('cas_thread_index' => 1, 'id' => 'abc001'),
+            array('cas_thread_index' => 2, 'id' => 'abc002'),
+            array('cas_thread_index' => 3, 'id' => 'abc003'),
+            array('cas_thread_index' => 4, 'id' => 'abc004'),
+            array('cas_thread_index' => 5, 'id' => 'abc005')
         );
 
-        $sugarQueryMock->expects($this->once())
+        $sugarQueryMock->expects($this->atLeastOnce())
                 ->method('execute')
                 ->will($this->returnValue($rowList));
 
-        $flowData = array('cas_id' => 1, 'cas_index' => 2, 'cas_thread' => 1);
+        $flowData = array('id' => 'abc0123', 'cas_id' => 1, 'cas_index' => 2, 'cas_thread' => 1);
 
         $caseFlowHandlerMock->createThread($flowData);
     }
@@ -557,20 +561,40 @@ class PMSECaseFlowHandlerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testCloseThreadByThreadIndex()
     {
-        global $db;
-        $db = $this->getMockBuilder('DBHandler')
+        $sugarQueryMock = $this->getMockBuilder('SugarQuery')
             ->disableOriginalConstructor()
-            ->setMethods(array('Query', 'fetchByAssoc'))
+            ->setMethods(array('from', 'where', 'equals', 'execute'))
             ->getMock();
 
-        $db->expects($this->once())
-                ->method('fetchByAssoc')
-                ->will($this->returnValue(array()));
+        $sugarQueryMock->expects($this->atLeastOnce())
+            ->method('from')
+            ->will($this->returnValue($sugarQueryMock));
+
+        $sugarQueryMock->expects($this->atLeastOnce())
+            ->method('where')
+            ->will($this->returnValue($sugarQueryMock));
+
+        $sugarQueryMock->expects($this->atLeastOnce())
+            ->method('equals')
+            ->will($this->returnValue($sugarQueryMock));
+
+        $threadMock = $this->getMockBuilder('SugarBean')
+            ->disableOriginalConstructor()
+            ->setMethods(NULL)
+            ->getMock();
 
         $caseFlowHandlerMock = $this->getMockBuilder('PMSECaseFlowHandler')
-                ->disableOriginalConstructor()
-                ->setMethods(array('retrieveBean'))
-                ->getMock();
+            ->disableOriginalConstructor()
+            ->setMethods(array('retrieveBean', 'retrieveSugarQueryObject'))
+            ->getMock();
+
+        $caseFlowHandlerMock->expects($this->atLeastOnce())
+            ->method('retrieveSugarQueryObject')
+            ->will($this->returnValue($sugarQueryMock));
+
+        $caseFlowHandlerMock->expects($this->atLeastOnce())
+            ->method('retrieveBean')
+            ->will($this->returnValue($threadMock));
 
         $casId = 1;
         $casThreadIndex = 2;
@@ -580,20 +604,40 @@ class PMSECaseFlowHandlerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testCloseThreadByThreadIndexInexistent()
     {
-        global $db;
-        $db = $this->getMockBuilder('DBHandler')
-                ->disableOriginalConstructor()
-                ->setMethods(array('Query', 'fetchByAssoc'))
-                ->getMock();
+        $sugarQueryMock = $this->getMockBuilder('SugarQuery')
+            ->disableOriginalConstructor()
+            ->setMethods(array('from', 'where', 'equals', 'execute'))
+            ->getMock();
 
-        $db->expects($this->once())
-                ->method('fetchByAssoc')
-                ->will($this->returnValue(null));
+        $sugarQueryMock->expects($this->atLeastOnce())
+            ->method('from')
+            ->will($this->returnValue($sugarQueryMock));
+
+        $sugarQueryMock->expects($this->atLeastOnce())
+            ->method('where')
+            ->will($this->returnValue($sugarQueryMock));
+
+        $sugarQueryMock->expects($this->atLeastOnce())
+            ->method('equals')
+            ->will($this->returnValue($sugarQueryMock));
+
+        $threadMock = $this->getMockBuilder('SugarBean')
+            ->disableOriginalConstructor()
+            ->setMethods(NULL)
+            ->getMock();
 
         $caseFlowHandlerMock = $this->getMockBuilder('PMSECaseFlowHandler')
-                ->disableOriginalConstructor()
-                ->setMethods(array('retrieveBean'))
-                ->getMock();
+            ->disableOriginalConstructor()
+            ->setMethods(array('retrieveBean', 'retrieveSugarQueryObject'))
+            ->getMock();
+
+        $caseFlowHandlerMock->expects($this->atLeastOnce())
+            ->method('retrieveSugarQueryObject')
+            ->will($this->returnValue($sugarQueryMock));
+
+        $caseFlowHandlerMock->expects($this->atLeastOnce())
+            ->method('retrieveBean')
+            ->will($this->returnValue($threadMock));
 
         $casId = 1;
         $casThreadIndex = 2;

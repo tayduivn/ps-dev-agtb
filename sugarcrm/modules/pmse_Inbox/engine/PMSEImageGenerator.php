@@ -985,6 +985,9 @@ class PMSEImageGenerator
         } else {
             $element = new stdClass();
             $element->in_flow = false;
+            $element->running = false;
+            $element->terminated = false;
+            $element->count = 0;
         }
         return $element;
     }
