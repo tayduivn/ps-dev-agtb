@@ -259,7 +259,32 @@ EOF;
 				SugarApplication::redirect($this->getUnauthenticatedHomeUrl());
 				die();
             } else {
-                $this->trackSession();
+                $trackerManager = TrackerManager::getInstance();
+                $monitor = $trackerManager->getMonitor('tracker_sessions');
+                $active = $monitor->getValue('active');
+                if ($active == 0
+                    && (!isset($GLOBALS['current_user']->portal_only) || $GLOBALS['current_user']->portal_only != 1)
+                ) {
+                    // We are starting a new session
+                    $result = $GLOBALS['db']->query(
+                        "SELECT id FROM " . $monitor->name . " WHERE user_id = '" . $GLOBALS['db']->quote(
+                            $GLOBALS['current_user']->id
+                        ) . "' AND active = 1 AND session_id <> '" . $GLOBALS['db']->quote(
+                            $monitor->getValue('session_id')
+                        ) . "' ORDER BY date_end DESC"
+                    );
+                    $activeCount = 0;
+                    while ($row = $GLOBALS['db']->fetchByAssoc($result)) {
+                        $activeCount++;
+                        if ($activeCount > 1) {
+                            $GLOBALS['db']->query(
+                                "UPDATE " . $monitor->name . " SET active = 0 WHERE id = '" . $GLOBALS['db']->quote(
+                                    $row['id']
+                                ) . "'"
+                            );
+                        }
+                    }
+                }
             }
         }
         $GLOBALS['log']->debug('Current user is: ' . $GLOBALS['current_user']->user_name);
@@ -695,7 +720,7 @@ EOF;
     function startSession()
     {
         $sessionIdCookie = isset($_COOKIE['PHPSESSID']) ? $_COOKIE['PHPSESSID'] : null;
-        if (!empty($_REQUEST['MSID'])) {
+        if (isset($_REQUEST['MSID'])) {
             session_id($_REQUEST['MSID']);
             session_start();
             if (isset($_SESSION['user_id']) && isset($_SESSION['seamless_login'])) {
@@ -722,40 +747,69 @@ EOF;
             }
         }
 
+        self::trackLogin();
+
         LogicHook::initialize()->call_custom_logic('', 'after_session_start');
     }
 
+
     /**
-     * This function writes log entries to the tracker_sessions table to record a login session.
+     * trackLogin
      *
-     * @deprecated use SugarApplication::trackSession() instead
+     * This is a protected function used to separate tracking the login information.  This allows us to better cleanly
+     * separate a PRO feature as well as unit test this block.  This function writes log entries to the tracker_sessions
+     * table to record a login session.
+     *
      */
     public static function trackLogin()
     {
-        $GLOBALS['log']->deprecated('Please use SugarApplication::trackSession() for session logging');
-        self::trackSession();
-    }
-
-    /**
-     * Save Session Tracker info if on
-     */
-    public static function trackSession()
-    {
         $trackerManager = TrackerManager::getInstance();
         if ($monitor = $trackerManager->getMonitor('tracker_sessions')) {
-            $trackerManager->saveMonitor($monitor);
+            $db = DBManagerFactory::getInstance();
+            $session_id = $monitor->getValue('session_id');
+            $query = "SELECT date_start, round_trips, active FROM $monitor->name WHERE session_id = '" . $db->quote(
+                $session_id
+            ) . "'";
+            $result = $db->query($query);
+
+            if (isset($_SERVER['REMOTE_ADDR'])) {
+                $monitor->setValue('client_ip', $_SERVER['REMOTE_ADDR']);
+            }
+
+            if (($row = $db->fetchByAssoc($result))) {
+                if ($row['active'] != 1 && !empty($_SESSION['authenticated_user_id'])) {
+                    $GLOBALS['log']->error(
+                        'User ID: (' . $_SESSION['authenticated_user_id']
+                            . ') has too many active sessions. Calling session_destroy() and sending user to Login page.'
+                    );
+                    session_destroy();
+                    $msg_name = 'TO' . 'O_MANY_' . 'CONCUR' . 'RENT';
+                      SugarApplication::redirect('index.php?action=Login&module=Users&loginErrorMessage=LBL_'.$msg_name);
+                    die();
+                }
+                $monitor->setValue('date_start', $db->fromConvert($row['date_start'], 'datetime'));
+                $monitor->setValue('round_trips', $row['round_trips'] + 1);
+                $monitor->setValue('active', 1);
+            } else {
+                // We are creating a new session
+                // Don't set the session as active until we have made sure it checks out.
+                $monitor->setValue('active', 0);
+                $monitor->setValue('date_start', TimeDate::getInstance()->nowDb());
+                $monitor->setValue('round_trips', 1);
+            }
         }
     }
 
-    /**
-     * Destroy a session, and update Session Tracker if on
-     */
-    public static function endSession()
+
+    function endSession()
     {
+
         $trackerManager = TrackerManager::getInstance();
         if ($monitor = $trackerManager->getMonitor('tracker_sessions')) {
-            $monitor->closeSession();
-            $trackerManager->saveMonitor($monitor);
+            $monitor->setValue('date_end', TimeDate::getInstance()->nowDb());
+            $seconds = strtotime($monitor->date_end) - strtotime($monitor->date_start);
+            $monitor->setValue('seconds', $seconds);
+            $monitor->setValue('active', 0);
         }
         session_destroy();
     }

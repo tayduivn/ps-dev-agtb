@@ -20,18 +20,13 @@ class tracker_queries_monitor extends Monitor implements Trackable {
 
     var $cached_data = array();
     
-    public function __construct($name = '', $monitorId = '', $metadata = '', $store = '') {
+    /**
+     * constructor
+     */
+    function tracker_queries_monitor($name='', $monitorId='', $metadata='', $store='') {
         parent::Monitor($name, $monitorId, $metadata, $store);
     }
-
-    /**
-     * @deprecated
-     */
-    public function tracker_monitor($name = '', $monitorId = '', $metadata = '', $store = '') {
-        $GLOBALS['log']->deprecated('Please use parent::__construct() instead of parent::ClassName()');
-        self::__construct($name, $monitorId, $metadata, $store);
-    }
-
+   
     /**
      * save
      * This method retrieves the Store instances associated with monitor and calls
