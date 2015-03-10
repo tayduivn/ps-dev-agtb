@@ -45,6 +45,15 @@ class SugarUpgradeDisableViews extends UpgradeScript
             }
         }
 
+        if ($files) {
+            $this->renameDisabled($files);
+        }
+
+
+    }
+
+    public function renameDisabled($files)
+    {
         foreach ($files as $fileFrom => $fileTo) {
             sugar_mkdir(dirname($fileTo), null, true);
             sugar_rename($fileFrom, $fileTo);
