@@ -1,4 +1,3 @@
-{{!--
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -9,8 +8,10 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
---}}
-<div class="dashlet empty" data-action="addDashlet">
-    <p>{{fieldOfType 'sugar-dashlet-label' 'LBL_DASHLET_ADD'}}</p>
-    <div class="add-dashlet"><strong><i class="fa fa-plus"></i></strong></div>
-</div>
+/**
+ * @class View.Views.Base.QuicksearchResultsView
+ * @alias SUGAR.App.view.views.BaseQuicksearchResultsView
+ * @extends View.View
+ */
+({
+})

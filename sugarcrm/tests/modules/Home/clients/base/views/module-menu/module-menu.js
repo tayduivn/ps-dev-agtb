@@ -114,6 +114,9 @@ describe('Home Menu', function() {
                 {label: 'foo', route: '#foo'},
                 {label: 'bar', route: '#bar'}
             ]);
+            sinon.collection.stub(Handlebars.helpers, 'buildUrl', function() {
+                return '#';
+            });
         });
 
         describe('focusing the recently viewed toggle after render by calling view.populateRecentlyViewed()', function() {

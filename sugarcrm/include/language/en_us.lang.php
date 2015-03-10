@@ -2786,7 +2786,7 @@ $app_strings = array (
     'TPL_LIST_HEADER_COUNT' => '{{num}}',
     'TPL_LIST_HEADER_COUNT_PARTIAL' => '{{num}}+',
     'TPL_LIST_HEADER_COUNT_TOTAL' => '{{num}} of {{total}}',
-    'TPL_LIST_HEADER_COUNT_TOOLTIP' => 'Click to see the full count',
+    'TPL_LIST_HEADER_COUNT_TOOLTIP' => 'Click for total',
 
     'LBL_LOCALE_NAME_EXAMPLE_FIRST' => 'David',
     'LBL_LOCALE_NAME_EXAMPLE_LAST' => 'Livingstone',

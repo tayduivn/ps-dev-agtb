@@ -15,6 +15,27 @@
  */
 ({
     /**
+     * @override
+     *
+     * No-op function because this field is static.
+     */
+    bindDataChange: $.noop,
+
+    /**
+     * @override
+     *
+     * No-op function because this field is static.
+     */
+    bindDomChange: $.noop,
+
+    /**
+     * @override
+     *
+     * No-op function because this field is static.
+     */
+    unbindDom: $.noop,
+
+    /**
      * @inheritDoc
      */
     format: function(value) {

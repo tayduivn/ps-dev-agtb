@@ -12,8 +12,7 @@ describe('MassCollection plugin:', function() {
         var context = app.context.getContext();
         context.set({
             module: moduleName,
-            layout: layoutName,
-            preselectedModelIds: ['1', '2']
+            layout: layoutName
         });
         context.prepare();
         layout = app.view.createLayout({
