@@ -39,7 +39,7 @@ class Logger extends BaseLogger
         // Sometimes no exceptions are thrown so make sure we are ok.
         if (!$response->isOk()) {
             $msg = sprintf(
-                "ELASTIC FAILURE code %s [%s] %s",
+                "Elasticsearch response failure: code %s [%s] %s",
                 $response->getStatus(),
                 $request->getMethod(),
                 $info['url']
@@ -50,7 +50,7 @@ class Logger extends BaseLogger
             // Dump full request in debug mode
             if ($this->logger->wouldLog(LogLevel::DEBUG)) {
                 $msg = sprintf(
-                    "ELASTIC [%s] %s %s",
+                    "Elasicsearch response debug: [%s] %s %s",
                     $request->getMethod(),
                     $info['url'],
                     $this->encodeData($request->getData())
@@ -65,25 +65,15 @@ class Logger extends BaseLogger
      * @param \Exception $e
      * @return bool
      */
-    public function isFromDeleteIndexRequest(\Exception $e)
+    public function isDeleteMissingIndexRequest(\Exception $e)
     {
         if ($e instanceof \Elastica\Exception\ResponseException) {
-            $request = $e->getRequest();
-
-            //method expected to be "DELETE"
-            $method = $request->getMethod();
-
-            //path expected to contain the index name
-            //example: "0e787f44c65e77fc6ac2c4fac1a01c65_shared/"
-            $path = $request->getPath();
-
-            //exception expected to contain the index name
-            //example: "IndexMissingException[[0e787f44c65e77fc6ac2c4fac1a01c65_shared] missing]"
+            $method = $e->getRequest()->getMethod();
             $expMsg = $e->getMessage();
 
-            if ($method == "DELETE"
-                && substr($path, -8, 7) == "_shared"
-                && substr($expMsg, 0, 21) == "IndexMissingException") {
+            // Method expected to be "DELETE" and contains IndexMissingException
+            // example: "IndexMissingException[[0e787f44c65e77fc6ac2c4fac1a01c65_shared] missing]"
+            if ($method === Request::DELETE && strpos($expMsg, "IndexMissingException") !== false) {
                 return true;
             }
         }
@@ -97,18 +87,13 @@ class Logger extends BaseLogger
     public function onRequestFailure(\Exception $e)
     {
         //If the exception is from index deletion, no critical message is logged.
-        if ($this->isFromDeleteIndexRequest($e)) {
-            if ($this->logger->wouldLog(LogLevel::DEBUG)) {
-                $msg = "ELASTIC : Suppressed response exception of attempting to drop a non-existing index";
-                $this->log(LogLevel::DEBUG, $msg);
-            }
+        if ($this->isDeleteMissingIndexRequest($e)) {
+            $msg = "Elasticsearch request failure: Attempting to drop a non-existing index";
+            $this->log(LogLevel::DEBUG, $msg);
             return;
         }
 
-        $msg = sprintf(
-            "ELASTIC FAILURE ... need more details here"
-        );
-        $this->log(LogLevel::CRITICAL, $msg);
+        $this->log(LogLevel::CRITICAL, "Elasticsearch request failure: " . $e->getMessage());
     }
 
     /**
