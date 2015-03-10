@@ -157,7 +157,7 @@ function make_sugar_config(&$sugar_config)
     'H.i'=>'23.00', 'h.ia'=>'11.00 pm', 'h.iA'=>'11.00PM' ) : $timeFormats,
     'tmp_dir' => $tmp_dir,  // this must be set!!
     'translation_string_prefix' => empty($translation_string_prefix) ? false : $translation_string_prefix,
-    'unique_key' => empty($unique_key) ? md5(create_guid()) : $unique_key,
+    'unique_key' => empty($unique_key) ? get_unique_key() : $unique_key,
     'upload_badext' => empty($upload_badext) ? array (
     'php', 'php3', 'php4', 'php5', 'pl', 'cgi', 'py',
     'asp', 'cfm', 'js', 'vbs', 'html', 'htm' ) : $upload_badext,
@@ -1508,6 +1508,21 @@ function is_guid($guid)
 {
     return strlen($guid) == 36 && preg_match("/\w{8}-\w{4}-\w{4}-\w{4}-\w{12}/i", $guid);
 
+}
+
+/**
+ * Create a unique key and keep it in globals so it can be used by make_sugar_config() and other code during install process 
+ * @return string unique_key
+ */
+function get_unique_key()
+{
+    global $unique_key;
+
+    if (empty($unique_key)) {
+        $unique_key = md5(create_guid());
+    }
+
+    return $unique_key;
 }
 
 /**
