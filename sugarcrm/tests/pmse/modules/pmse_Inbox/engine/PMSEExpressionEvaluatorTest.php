@@ -1528,10 +1528,10 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
                 ->getMock();
 
         $expectedToken = new stdClass();
+        $expectedToken->expType = "CONSTANT";
         $expectedToken->expValue = "2014-10-20T03:15:00-07:00";
         $expectedToken->expLabel = "2014-10-20 03:15:00";
         $expectedToken->expSubtype = "date";
-        $expectedToken->expType = "CONSTANT";
 
         $expectedResult = array($expectedToken);
         $result = $expressionEvaluatorMock->processExpression($expression);
@@ -1626,10 +1626,10 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
                 ->getMock();
 
         $expectedToken = new stdClass();
+        $expectedToken->expType = "CONSTANT";
         $expectedToken->expValue = "2014-10-20T03:15:00-07:00";
         $expectedToken->expLabel = "2014-10-20 03:15:00";
         $expectedToken->expSubtype = "date";
-        $expectedToken->expType = "CONSTANT";
 
         $expectedResult = array($expectedToken);
         $result = $expressionEvaluatorMock->processExpression($expression);
@@ -1898,7 +1898,7 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
                 ->getMock();
 
         $interval = "4d";
-        $expected = "4 days";
+        $expected = "P4D";
 
         $result = $expressionEvaluatorMock->processDateInterval($interval);
         $this->assertEquals($expected, $result);
@@ -1911,7 +1911,7 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
                 ->setMethods(null)
                 ->getMock();
         $interval = "5m";
-        $expected = "5 months";
+        $expected = "P5M";
         $result = $expressionEvaluatorMock->processDateInterval($interval);
         $this->assertEquals($expected, $result);
     }
