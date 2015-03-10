@@ -9,11 +9,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * List view for the {@link View.Layouts.Base.GlobalSearchResultsLayout}
- * GlobalSearch Results layout.
+ * List view for the {@link View.Layouts.Base.SearchLayout
+ * Search layout}.
  *
- * @class View.Views.Base.GsrListView
- * @alias SUGAR.App.view.views.BaseGsrListView
+ * @class View.Views.Base.SearchListView
+ * @alias SUGAR.App.view.views.BaseSearchListView
  * @extends View.View
  */
 ({
@@ -82,7 +82,7 @@
             return this._fieldsMeta[module];
         }
         var fieldsMeta = this._fieldsMeta[module] = {};
-        var meta = _.extend({}, this.meta, app.metadata.getView(module, 'gsr-list'));
+        var meta = _.extend({}, this.meta, app.metadata.getView(module, 'search-list'));
         _.each(meta.panels, function(panel) {
             if (panel.name === 'primary') {
                 fieldsMeta.primaryFields = this._setFieldsCategory(panel.fields, 'primary');

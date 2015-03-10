@@ -11,8 +11,8 @@
 /**
  * Layout for the global search results page.
  *
- * @class View.Layouts.Base.GlobalSearchResultsLayout
- * @alias SUGAR.App.view.layouts.BaseGlobalSearchResultsListLayout
+ * @class View.Layouts.Base.SearchLayout
+ * @alias SUGAR.App.view.layouts.BaseSearchLayout
  * @extends View.Layout
  */
 ({
@@ -35,7 +35,6 @@
             this.formatRecords(collection);
 //            collection.facets = data.facets;
 //            this.context.set('facets', data.facets);
-            this.context.set('query_time', data.query_time);
         }, this);
     },
 

@@ -9,7 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-$viewdefs['base']['view']['gsr-list'] = array(
+$viewdefs['base']['view']['search-list'] = array(
     'rowactions' => array(
         'actions' => array(
             array(

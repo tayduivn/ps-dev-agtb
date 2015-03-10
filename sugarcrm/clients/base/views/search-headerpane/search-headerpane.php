@@ -10,12 +10,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$viewdefs['base']['view']['gsr-headerpane'] = array(
+$viewdefs['base']['view']['search-headerpane'] = array(
+    'template' => 'headerpane',
     'fields' => array(
         array(
             'name' => 'title',
             'type' => 'label',
-            'default_value' => 'LBL_MODULE_NAME',
+            'default_value' => 'TPL_SEARCH_RESULTS_FOR',
         ),
     ),
     'buttons' => array(

@@ -11,7 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$viewdefs['base']['layout']['globalsearch-results'] = array(
+$viewdefs['base']['layout']['search'] = array(
     'components' => array(
         array(
             'layout' => array(
@@ -20,10 +20,10 @@ $viewdefs['base']['layout']['globalsearch-results'] = array(
                         'layout' => array(
                             'components' => array(
                                 array(
-                                    'view' => 'gsr-headerpane',
+                                    'view' => 'search-headerpane',
                                 ),
                                 array(
-                                    'view' => 'gsr-list',
+                                    'view' => 'search-list',
                                     'primary' => true,
                                 ),
                             ),
@@ -48,5 +48,5 @@ $viewdefs['base']['layout']['globalsearch-results'] = array(
             ),
         ),
     ),
-    'name' => 'globalsearch-results',
+    'name' => 'search',
 );

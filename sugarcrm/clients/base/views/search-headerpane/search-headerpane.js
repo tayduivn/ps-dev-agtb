@@ -9,14 +9,16 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * Headerpane view for the {@link View.Layouts.Base.GlobalSearchResultsLayout}
- * GlobalSearch Results layout.
+ * Headerpane view for the {@link View.Layouts.Base.SearchLayout
+ * Search layout}.
  *
- * @class View.Views.Base.GsrHeaderpaneView
- * @alias SUGAR.App.view.views.BaseGsrHeaderpaneView
+ * @class View.Views.Base.SearchHeaderpaneView
+ * @alias SUGAR.App.view.views.BaseSearchHeaderpaneView
  * @extends View.Views.Base.HeaderpaneView
  */
 ({
+    extendsFrom: 'HeaderpaneView',
+
     /**
      * @inheritDoc
      */
@@ -25,9 +27,21 @@
 
         this.context.on('change:searchTerm', function(model, value) {
             this.searchTerm = value;
-            this.$('[data-term=query]').text(value);
+            this.render();
         }, this);
 
         this.searchTerm = this.context.get('searchTerm');
+    },
+
+    /**
+     * Formats the title passing the search term.
+     *
+     * @override
+     */
+    _formatTitle: function(title) {
+        if (!title) {
+            return '';
+        }
+        return app.lang.get(title, this.module, {searchTerm: this.searchTerm});
     }
 })

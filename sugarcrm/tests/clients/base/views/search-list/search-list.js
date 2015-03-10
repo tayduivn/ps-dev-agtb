@@ -1,10 +1,10 @@
-describe('gsr-list View', function() {
+describe('View.Views.Base.SearchListView', function() {
 
     var view, app, model;
 
     beforeEach(function() {
         SugarTest.testMetadata.init();
-        SugarTest.testMetadata.addViewDefinition('gsr-list', {
+        SugarTest.testMetadata.addViewDefinition('search-list', {
             'panels': {
                 1: {
                     name: 'primary',
@@ -17,7 +17,7 @@ describe('gsr-list View', function() {
             }
         });
         SugarTest.testMetadata.set();
-        view = SugarTest.createView('base', 'GlobalSearch', 'gsr-list');
+        view = SugarTest.createView('base', 'GlobalSearch', 'search-list');
         app = SUGAR.App;
         model = app.data.createBean();
     });
