@@ -259,7 +259,7 @@ class Client extends BaseClient
             $response = parent::request($path, $method, $data, $query);
             $this->_logger->onRequestSuccess($this->_lastRequest, $this->_lastResponse);
         } catch (\Exception $e) {
-            $this->_logger->onRequestFailure($e);
+            $this->_logger->onRequestFailure($this->getConnection(), $e, $path, $method, $data);
 
             // On connection issues flag Elasticsearch as unavailable
             if ($e instanceof \Elastica\Exception\ConnectionException) {

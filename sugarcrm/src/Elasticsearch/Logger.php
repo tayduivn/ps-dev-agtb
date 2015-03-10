@@ -82,11 +82,15 @@ class Logger extends BaseLogger
 
     /**
      * Handle request logging on failure.
+     * @param \Elastica\Connection
      * @param \Exception $e
+     * @param  string $path   request path
+     * @param  string $method request method
+     * @param  array  $data   request data
      */
-    public function onRequestFailure(\Exception $e)
+    public function onRequestFailure(Connection $connection, \Exception $e, $path, $method, $data)
     {
-        //If the exception is from index deletion, no critical message is logged.
+        // If the exception is from index deletion, no critical message is logged.
         if ($this->isDeleteMissingIndexRequest($e)) {
             $msg = "Elasticsearch request failure: Attempting to drop a non-existing index";
             $this->log(LogLevel::DEBUG, $msg);
@@ -94,6 +98,21 @@ class Logger extends BaseLogger
         }
 
         $this->log(LogLevel::CRITICAL, "Elasticsearch request failure: " . $e->getMessage());
+
+        // Additional debug logging
+        if ($this->logger->wouldLog(LogLevel::DEBUG)) {
+
+            // Request details
+            $msg = sprintf(
+                "Elasticsearch request failure details: [%s] %s:%s %s %s",
+                $method,
+                $connection->getHost(),
+                $connection->getPort(),
+                $path,
+                $this->encodeData($data)
+            );
+            $this->log(LogLevel::DEBUG, $msg);
+        }
     }
 
     /**
