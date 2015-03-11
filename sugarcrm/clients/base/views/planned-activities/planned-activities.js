@@ -75,11 +75,11 @@
         }
         if (this.meta.config) {
             this.layout.before('dashletconfig:save', function() {
-                this.saveDate(this.settings.get('date'));
+                this._saveSetting('date', this.settings.get('date'));
             }, this);
         } else {
             this.settings.on('change:date', function(model, value) {
-                this.saveDate(value);
+                this._saveSetting('date', value);
             }, this);
         }
 
@@ -323,12 +323,14 @@
     },
 
     /**
-     * Saves current date to local storage.
+     * Saves a setting to local storage.
      *
-     * @param {string} value The date to save.
+     * @param {string} setting The setting name.
+     * @param {string} value The value to save.
+     * @private
      */
-    saveDate: function(value) {
-        var key = app.user.lastState.key('date', this);
+    _saveSetting: function(setting, value) {
+        var key = app.user.lastState.key(setting, this);
         app.user.lastState.set(key, value);
     },
 
