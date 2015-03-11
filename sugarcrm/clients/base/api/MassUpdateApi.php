@@ -68,15 +68,8 @@ class MassUpdateApi extends SugarApi {
         $this->delete = true;
         $args['massupdate_params']['Delete'] = true;
         
-        // SC-1021: add 'creation date' filter if 'delete all'
-        if (!empty($args['massupdate_params']['entire'])) { 
-            unset($args['massupdate_params']['uid']);
-
-            if (empty($args['massupdate_params']['filter'])) {
-                $args['massupdate_params']['filter'] = array();
-            }
-
-            $args['massupdate_params']['filter'][] = array('date_entered' => array('$lt' => TimeDate::getInstance()->getNow(true)));
+        if (empty($args['massupdate_params']['uid'])) {
+            throw new SugarApiExceptionMissingParameter('Missing required parameter uid');
         }
 
         return $this->massUpdate($api, $args);
@@ -95,16 +88,8 @@ class MassUpdateApi extends SugarApi {
         $mu_params = $args['massupdate_params'];
         $mu_params['module'] = $args['module'];
 
-        // should pass success status once uid is empty.
-        if (empty($mu_params['uid']) && empty($mu_params['entire'])) {
-            return array(
-                'status' => 'done',
-                'failed' => 0,
-            );
-        }
-
-        if (isset($mu_params['entire']) && empty($mu_params['entire'])) {
-            unset($mu_params['entire']);
+        if (empty($mu_params['uid'])) {
+            throw new SugarApiExceptionMissingParameter('Missing required parameter uid');
         }
 
         if(isset($mu_params['team_name'])) {
