@@ -175,23 +175,22 @@ function renderProject (prjCode) {
 
     $('.ui-layout-north').css('overflow', 'hidden');
 
-    sugarCurrencies = SUGAR.App.metadata.getCurrencies();
-    currencies = Object.keys(sugarCurrencies);
     pmseCurrencies = [];
-    for (i = 0; i < currencies.length; i += 1) {
-        currentCurrency = sugarCurrencies[currencies[i]];
-        if (currentCurrency.status === 'Active') {
-            pmseCurrencies.push({
-                id: currencies[i],
-                iso: currentCurrency.iso4217,
-                name: currentCurrency.name,
-                rate: parseFloat(currentCurrency.conversion_rate),
-                preferred: currencies[i] === SUGAR.App.user.getCurrency().currency_id,
-                symbol: currentCurrency.symbol
-            });
+    currencies = SUGAR.App.metadata.getCurrencies();
+    for (currID in currencies) {
+        if (currencies.hasOwnProperty(currID)) {
+            if (currencies[currID].status === 'Active') {
+                pmseCurrencies.push({
+                    id: currID,
+                    iso: currencies[currID].iso4217,
+                    name: currencies[currID].name,
+                    rate: parseFloat(currencies[currID].conversion_rate),
+                    preferred: currID === SUGAR.App.user.getCurrency().currency_id,
+                    symbol: currencies[currID].symbol
+                });
+            }
         }
     }
-
     project = new AdamProject({
         metadata: [
             {

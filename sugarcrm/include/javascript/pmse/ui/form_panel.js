@@ -1103,23 +1103,7 @@
 	};
 
 	FormPanelNumber.prototype._isRegExpSpecialChar = function (c) {
-		switch (c) {
-			case "\\":
-			case "^":
-			case "$":
-			case "*":
-			case "+":
-			case "?":
-			case ".":
-			case "(":
-			case ")":
-			case "|":
-			case "{":
-			case "}":
-				return true;
-				break;
-		}
-		return false;
+		return ["\\", "^", "$", "*", "+", "?", ".", "(", ")", "|", "{", "}"].indexOf(c) >= 0;
 	};
 
 	FormPanelNumber.prototype.isValid = function () {
@@ -1139,36 +1123,9 @@
 	};
 
 	FormPanelNumber.prototype._parseToUserString = function (value) {
-		var integer, decimal, label = "", aux, power, i, decimalSeparator;
-		if (value === null) {
-			label = "";
-		} else {
-			if (this._precision >= 0) {
-				power = Math.pow(10, this._precision);
-				value = Math.round(value * power) /power;
-			}
-			decimalSeparator = this._precision === 0 ? "" : this._decimalSeparator;
-			integer = aux = Math.floor(value).toString();
-
-			if (this._precision !== 0) {
-				decimal = "";
-				decimal = value.toString().split(".")[1] || (this._precision < 0 ? "0" : "");
-				for (i = decimal.length; i < this._precision; i += 1) {
-					decimal += "0";
-				}
-			} else {
-				decimal = "";
-			}
-
-			if (this._groupingSeparator) {
-				while (aux.length > 3) {
-					label = this._groupingSeparator + aux.substr(-3) + label;
-					aux = aux.slice(0, -3);
-				}
-			}
-			label = aux + label + decimalSeparator + decimal;
-		}
-		return label;
+		value = isNaN(value) ? 0 : value;
+		return App.utils.formatNumber(value, this._precision, this._precision, this._groupingSeparator, 
+			this._decimalSeparator);
 	};
 
 	FormPanelNumber.prototype.getFormattedValue = function() {
@@ -1178,47 +1135,39 @@
 	FormPanelNumber.prototype._onKeyDown = function () {
 		var that = this;
 		return function (e) {
-			var numbers, integerPart = "", decimalPart = "", i, j, aux, aux2, printableKey = 0;
+			var number, printableKey = "";
 			if ((e.keyCode < 48 || (e.keyCode > 57 && e.keyCode < 96) || e.keyCode >105)
 				&& e.keyCode !== 37 && e.keyCode !== 39 && e.keyCode !== 8 && e.keyCode !== 46 && e.keyCode !==9) {
 				e.preventDefault();
 				return;
 			}
 
-			if (e.keyCode > 47 && e.keyCode < 58) {
-				printableKey = 1;
+			if ((e.keyCode > 47 && e.keyCode < 58) || e.keyCode === 8) {
+				printableKey = String.fromCharCode(e.keyCode);
+				e.preventDefault();
 			}
 
-			numbers = (parseInt(this.value.replace(/[^0-9]/g, ""), 10) || 0).toString(10);
-			if (that._precision > 0) {
-				for (i = numbers.length - 1; i >= 0 && decimalPart.length < that._precision - printableKey; i -= 1) {
-					decimalPart = numbers[i] + decimalPart;
-				}
-				while (decimalPart.length < that._precision - printableKey) {
-					decimalPart = "0" + decimalPart;
-				}
-				while (i >= 0) {
-					integerPart = numbers[i] + integerPart;
-					i--;
-				}
-				if (!integerPart.length) {
-					integerPart = "0";
-				} else if (that._groupingSeparator && integerPart.length > 3) {
-					aux = integerPart.length % 3;
-					aux2 = integerPart.substr(aux);
-					integerPart = integerPart.substr(0, aux);
-					aux2 = (aux2.match(/\d{3}/g) || []).join(that._groupingSeparator);
-					integerPart = (integerPart.length ? integerPart + that._groupingSeparator : "") + aux2;
-				}
-				numbers = integerPart + that._decimalSeparator + decimalPart;
+			if (e.keyCode === 8) {
+				this.value = this.value.slice(0,-1);
 			}
-			this.value = numbers;
+
+			number = parseInt(this.value.replace(/[^0-9]/g, "") + printableKey, 10) / Math.pow(10, that._precision);
+			number = isNaN(number) ? 0 : number;
+			this.value = that._parseToUserString(number);
+		};
+	};
+
+	FormPanelNumber.prototype._onBlur = function () {
+		var that = this;
+		return function () {
+			(that._onChangeHandler())();
 		};
 	};
 
 	FormPanelNumber.prototype._attachListeners = function() {
 		if (this.html) {
-			jQuery(this._htmlControl[0]).on('keydown', this._onKeyDown());
+			jQuery(this._htmlControl[0]).on('keydown', this._onKeyDown())
+				.on('blur', this._onBlur());
 			FormPanelField.prototype._attachListeners.call(this);
 		}
 		return this;
@@ -1667,7 +1616,6 @@
 	};
 
 	FormPanelDropdown.prototype.getSelectedData = function () {
-		//return jQuery(this.html).find("option:selected").data("data");
 		return this.getOptionData(this._value);
 	};
 
