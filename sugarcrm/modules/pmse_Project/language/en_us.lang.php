@@ -161,7 +161,7 @@ $mod_strings = array (
     'LBL_PMSE_FORM_LABEL_OTHER_DERIVATION_OPTIONS' => 'Other Routing Options',
     'LBL_PMSE_FORM_LABEL_RECORD_OWNERSHIP' => 'Change Record Owner',
     'LBL_PMSE_FORM_LABEL_TEAM' => 'Team',
-    'LBL_PMSE_FORM_LABEL_REASSIGN' => 'Reassign Activity',
+    'LBL_PMSE_FORM_LABEL_REASSIGN' => 'Select New Process User',
 
     'LBL_PMSE_FORM_TITLE_USER_DEFINITION' => 'User Definition',
     'LBL_PMSE_FORM_LABEL_ASSIGNMENT_METHOD' => 'Assignment Method',
@@ -179,7 +179,7 @@ $mod_strings = array (
     'LBL_PMSE_LABEL_RULE' => 'Rule',
 
     'LBL_PMSE_FORM_TITLE_ASSIGN_USER' => 'Assign User',
-    'LBL_PMSE_FORM_LABEL_UPDATE_RECORD_OWNER' => 'Change Record Owner',
+    'LBL_PMSE_FORM_LABEL_UPDATE_RECORD_OWNER' => 'Change Assigned To User',
 
     'LBL_PMSE_FORM_TITLE_ADD_RELATED_RECORD' => 'Add Related Record',
     'LBL_PMSE_FORM_LABEL_RELATED_MODULE' => 'Related Module',

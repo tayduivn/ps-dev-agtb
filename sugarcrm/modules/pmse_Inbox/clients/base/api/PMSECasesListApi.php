@@ -229,6 +229,30 @@ class PMSECasesListApi extends FilterApi
         return $data;
     }
 
+    protected function getOrderByFromArgs(array $args, SugarBean $seed = null)
+    {
+        $orderBy = array();
+        if (!isset($args['order_by']) || !is_string($args['order_by'])) {
+            return $orderBy;
+        }
+        $columns = explode(',', $args['order_by']);
+        $parsed = array();
+        foreach ($columns as $column) {
+            $column = explode(':', $column, 2);
+            $field = array_shift($column);
+            // do not override previous value if it exists since it should have higher precedence
+            if (!isset($parsed[$field])) {
+                $direction = array_shift($column);
+                $parsed[$field] = strtolower($direction) !== 'desc';
+            }
+        }
+        $converted = array();
+        foreach ($parsed as $field => $direction) {
+            $converted[] = array($field, $direction ? 'ASC' : 'DESC');
+        }
+        return $converted;
+    }
+
     public function selectLogLoad($api, $args)
     {
         $logger = PMSELogger::getInstance();
