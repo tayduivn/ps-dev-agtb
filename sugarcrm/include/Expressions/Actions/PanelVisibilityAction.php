@@ -244,23 +244,27 @@ EOQ;
 		return "new SUGAR.forms.SetPanelVisibilityAction('{$this->targetPanel}','{$this->expression}')";
 	}
 	
-	/**
-	 * Applies the Action to the target.
-	 *
-	 * @param SugarBean $target
-	 * 
-	 * Should only be fired when saving from an edit view.
-	 */
-	function fire(&$target) {
-		require_once ('modules/ModuleBuilder/parsers/ParserFactory.php') ;
-        require_once 'modules/ModuleBuilder/parsers/constants.php' ;
-        
-        $parser = ParserFactory::getParser ( MB_EDITVIEW, $target->module_dir);
-        $fields = $parser->getFieldsInPanel($this->targetPanel);
-        foreach($fields as $field){
-        	unset($target->$field);
+    /**
+    * Applies the Action to the target.
+    *
+    * @param SugarBean $target
+    *
+    * Should only be fired when saving from an edit view and the expression is false.
+    */
+    public function fire(&$target)
+    {
+        $result = Parser::evaluate($this->expression, $target)->evaluate();
+        if ($result === AbstractExpression::$FALSE) {
+            require_once 'modules/ModuleBuilder/parsers/ParserFactory.php';
+            require_once 'modules/ModuleBuilder/parsers/constants.php';
+            $view = isModuleBWC($target->module_name) ? MB_EDITVIEW : MB_RECORDVIEW;
+            $parser = ParserFactory::getParser($view, $target->module_dir);
+            $fields = $parser->getFieldsInPanel($this->targetPanel);
+            foreach ($fields as $field) {
+                unset($target->$field);
+            }
         }
-	}
+    }
 	
 	static function getActionName() {
 		return "SetPanelVisibility";
