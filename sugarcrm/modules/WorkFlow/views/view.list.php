@@ -22,8 +22,5 @@ class WorkFlowViewList extends ViewList
         $this->lv = new ListViewSmarty();
         $this->lv->export = false;
         $this->lv->showMassupdateFields = false;
-        //BEGIN SUGARCRM flav=ent ONLY
-        displayAdminError(translate('WARN_WORKFLOW_DEPRECATED_ERROR', 'WorkFlow'));
-        //END SUGARCRM flav=ent ONLY
     }
 }

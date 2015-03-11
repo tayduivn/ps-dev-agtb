@@ -26,10 +26,6 @@ if (!is_admin($current_user) && empty($workflow_modules))
    sugar_die("Unauthorized access to WorkFlow.");
 }
 
-//BEGIN SUGARCRM flav=ent ONLY
-displayAdminError(translate('WARN_WORKFLOW_DEPRECATED_ERROR', 'WorkFlow'));
-//END SUGARCRM flav=ent ONLY
-
 $workflow_object = BeanFactory::getBean('WorkFlow');
 global $app_strings;
 global $app_list_strings;
