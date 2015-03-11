@@ -17,7 +17,7 @@ function packUpgradeWizardWeb($zip, $manifest, $installdefs, $params) {
     $defaults = array(
         'version' => '7.5.0.0',
         'build' => '998',
-        'from' => '6.5.17',
+        'from' => array('6.5.17'),
     );
 
     $params = array_merge($defaults, $params);
@@ -46,6 +46,10 @@ function packUpgradeWizardWeb($zip, $manifest, $installdefs, $params) {
         'include/SugarHttpClient.php',
     );
 
+    if (!is_array($params['from'])) {
+        $params['from'] = array($params['from']);
+    }
+
     $manifest = array_merge($manifest, array(
         'author' => 'SugarCRM, Inc.',
         'description' => 'SugarCRM Upgrader '.$params['version'],
@@ -55,7 +59,7 @@ function packUpgradeWizardWeb($zip, $manifest, $installdefs, $params) {
         'published_date' => date("Y-m-d H:i:s"),
         'type' => 'module',
         'version' => $params['version'],
-        'acceptable_sugar_versions' => (array)$params['from']
+        'acceptable_sugar_versions' => $params['from']
     ));
 
     foreach ($files as $file) {
@@ -113,8 +117,8 @@ if(isset($argv[2])) {
 if(isset($argv[3])) {
     $params['build'] = $argv[3];
 }
-if(isset($argv[4])) {
-    $params['from'] = $argv[4];
+if (isset($argv[4])) {
+    $params['from'] = explode(',', $argv[4]);
 }
 
 $zip = new ZipArchive();

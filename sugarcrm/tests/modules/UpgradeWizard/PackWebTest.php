@@ -15,7 +15,7 @@ class PackWebTest extends PHPUnit_Framework_TestCase
                 array(
                     'version' => '1.2.3.4',
                     'build' => '998',
-                    'from' => '6.5.17',
+                    'from' => array('6.5.17'),
                 ),
             ),
             array(
@@ -23,17 +23,17 @@ class PackWebTest extends PHPUnit_Framework_TestCase
                 array(
                     'version' => '7.5.0.0',
                     'build' => '998',
-                    'from' => '6.5.17',
+                    'from' => array('6.5.17'),
                 ),
             ),
             array(
                 array(
-                    'from' => '1.2.3.4'
+                    'from' => array('1.2.3.4', '1.2.3.5')
                 ),
                 array(
                     'version' => '7.5.0.0',
                     'build' => '998',
-                    'from' => '1.2.3.4',
+                    'from' => array('1.2.3.4', '1.2.3.5'),
                 ),
             ),
             array(
@@ -43,9 +43,9 @@ class PackWebTest extends PHPUnit_Framework_TestCase
                 array(
                     'version' => '7.5.0.0',
                     'build' => '1.2.3.4',
-                    'from' => '6.5.17',
+                    'from' => array('6.5.17'),
                 ),
-            )
+            ),
         );
     }
 
@@ -68,7 +68,7 @@ class PackWebTest extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('version', $manifest);
         $this->assertEquals($expect['version'], $manifest['version']);
         $this->assertArrayHasKey('acceptable_sugar_versions', $manifest);
-        $this->assertEquals(array($expect['from']), $manifest['acceptable_sugar_versions']);
+        $this->assertEquals($expect['from'], $manifest['acceptable_sugar_versions']);
         $this->assertArrayHasKey('copy', $installdefs);
         $this->assertArrayHasKey(0, $installdefs['copy']);
         $this->assertEquals('<basepath>/UpgradeWizard.php', $installdefs['copy'][0]['from']);
