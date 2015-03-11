@@ -11,23 +11,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once dirname(__FILE__) . '/Scanner.php';
-
-/**
- *
- * HealthCheck Scanner Web support
- *
- */
-class HealthCheckScannerWeb extends HealthCheckScanner
+class S_903_HealthCheckScannerCasesTestMock extends HealthCheckScannerCasesTestMock
 {
-    /**
-     * @see HealthCheckScanner::run()
-     * @return array
-     */
-    public function scan()
+    public function getVersion()
     {
-        $result = parent::scan();
-        $this->dumpMeta();
-        return $result;
+        return array('6.5.20', '1000');
     }
 }

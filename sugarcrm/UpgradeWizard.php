@@ -54,10 +54,6 @@ if(empty($_REQUEST['action']) || empty($_REQUEST['token'])) {
         }
         die($errmsg);
     }
-    if(!$upg->healthcheck()) {
-        header("Location: index.php?module=HealthCheck&referrer=UpgradeWizard");
-        exit;
-    }
 	$upg->displayUpgradePage();
 	exit(0);
 }
@@ -80,6 +76,16 @@ if($res !== false && $upg->success) {
     // error
     $reply = array("status" => "error", "message" => $upg->error?$upg->error:"Stage {$_REQUEST['action']} failed", 'data' => $res);
 }
+
+if ($_REQUEST['action'] == 'healthcheck') {
+    $upgState = $upg->getState();
+    if (!empty($upgState['healthcheck'])) {
+        $reply['healthcheck'] = $upgState['healthcheck'];
+    } else {
+        $reply['healthcheck'] = array();
+    }
+}
+
 $msg = ob_get_clean();
 
 if(!empty($msg)) {
@@ -89,5 +95,6 @@ if(!empty($msg)) {
         $reply['message'] = $msg;
     }
 }
+
 header("Content-Type: text/plain");
 echo json_encode($reply);
