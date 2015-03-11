@@ -530,7 +530,7 @@ class RestService extends ServiceBase
             $tokenData = $oauthServer->verifyDownloadToken($token);
 
             $GLOBALS['current_user'] = BeanFactory::getBean('Users',$tokenData['user_id']);
-            $valid = $this->userAfterAuthenticate($tokenData['user_id'], $oauthServer, true);
+            $valid = $this->userAfterAuthenticate($tokenData['user_id'],$oauthServer);
         }
 
         return $valid;
@@ -541,7 +541,7 @@ class RestService extends ServiceBase
      *
      * @returns bool Was the login successful
      */
-    protected function userAfterAuthenticate($userId, $oauthServer, $forDownload = false)
+    protected function userAfterAuthenticate($userId,$oauthServer)
     {
         $valid = false;
 
@@ -556,9 +556,7 @@ class RestService extends ServiceBase
         }
 
         if ($valid) {
-            if (!$forDownload) {
-                SugarApplication::trackSession();
-            }
+            SugarApplication::trackLogin();
 
             // Setup visibility where needed
             $oauthServer->setupVisibility();

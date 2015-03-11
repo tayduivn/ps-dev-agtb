@@ -646,6 +646,49 @@
             },
 
             /**
+             * Fetches all records in the collection, one page at a time.
+             *
+             * @param {Object} [options]
+             * @param {Function} [options.success] The callback to call once
+             * all records have been retrieved.
+             */
+            fetchAll: function(options) {
+                var self, success;
+
+                /**
+                 * Paginate through the collection until all records have been
+                 * fetched.
+                 *
+                 * Calls `options.success` when there are no more records to fetch.
+                 */
+                function paginate() {
+                    if (self.hasMore()) {
+                        self.paginate(options);
+                    } else {
+                        if (success) {
+                            success(self, options);
+                        }
+                    }
+                }
+
+                self = this;
+
+                options || (options = {});
+
+                if (options.success) {
+                    success = options.success;
+                    delete options.success;
+                }
+
+                options.success = paginate;
+
+                // increase the limit to reduce the number of requests
+                options.limit = _.max([options.limit, app.config.maxSubpanelResult, app.config.maxQueryResult]);
+
+                paginate();
+            },
+
+            /**
              * @inheritdoc
              *
              * Upon success...

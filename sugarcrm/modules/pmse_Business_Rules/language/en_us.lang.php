@@ -71,4 +71,6 @@ $mod_strings = array (
     'LBL_PMSE_DROP_DOWN_CHECKED' => 'Yes',
     'LBL_PMSE_DROP_DOWN_UNCHECKED' => 'No',
     'LBL_PMSE_IMPORT_BUSINESS_RULES_FAILURE' => 'Failed to create Process Business Rule from file',
+
+    'LBL_PMSE_MESSAGE_REQUIRED_FIELDS_BUSINESSRULES' => 'This Business Rule cannot be displayed because it is associated with fields not available in this instance.',
 );

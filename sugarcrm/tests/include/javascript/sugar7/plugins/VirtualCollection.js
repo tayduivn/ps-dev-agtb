@@ -494,6 +494,99 @@ describe('Plugins.VirtualCollection', function() {
 
                 expect(collection.parent.trigger).toHaveBeenCalledWith('sync:' + attribute);
             });
+
+            describe('fetching all records', function() {
+                var hasMore;
+
+                beforeEach(function() {
+                    app.api.call.restore();
+                    sandbox.stub(app.api, 'call', function(method, url, data, callbacks, options) {
+                        callbacks.success(data);
+                    });
+
+                    hasMore = 3;
+                });
+
+                it('should recursively paginate until all records have been fetched', function() {
+                    sandbox.stub(collection, 'hasMore', function() {
+                        return --hasMore;
+                    });
+
+                    sandbox.stub(collection, 'paginate', function(options) {
+                        options.success({});
+                    });
+
+                    runs(function() {
+                        collection.fetchAll();
+                    });
+
+                    waitsFor(function() {
+                        return hasMore === 0;
+                    }, 'it took too long make requests', 1000);
+
+                    runs(function() {
+                        expect(collection.paginate.callCount).toBe(2);
+                    });
+                });
+
+                it('should call the success callback once all records have been fetched', function() {
+                    var spy = sandbox.spy();
+
+                    sandbox.stub(collection, 'hasMore', function() {
+                        return --hasMore;
+                    });
+
+                    sandbox.stub(collection, 'paginate', function(options) {
+                        options.success({});
+                    });
+
+                    runs(function() {
+                        collection.fetchAll({success: spy});
+                    });
+
+                    waitsFor(function() {
+                        if (hasMore > 0) {
+                            // make sure the spy hasn't been called yet
+                            expect(spy).not.toHaveBeenCalled();
+                        }
+
+                        return hasMore === 0;
+                    }, 'it took too long make requests', 1000);
+
+                    runs(function() {
+                        expect(spy).toHaveBeenCalled();
+                    });
+                });
+
+                using('maximum limits', [[5, 10, 20], [10, 20, 5], [20, 5, 10]], function(limits) {
+                    it('should use the maximum limit possible', function() {
+                        var options, max;
+
+                        options = {limit: limits[0]};
+                        app.config.maxSubpanelResult = limits[1];
+                        app.config.maxQueryResult = limits[2];
+                        max = _.max([options.limit, app.config.maxSubpanelResult, app.config.maxQueryResult]);
+
+                        sandbox.stub(collection, 'hasMore', function() {
+                            return --hasMore;
+                        });
+
+                        sandbox.stub(collection, 'paginate', function(options) {
+                            // every call to paginate should use this limit
+                            expect(options.limit).toBe(max);
+                            options.success({});
+                        });
+
+                        runs(function() {
+                            collection.fetchAll();
+                        });
+
+                        waitsFor(function() {
+                            return hasMore === 0;
+                        }, 'it took too long make requests', 1000);
+                    });
+                });
+            });
         });
 
         it('should specify the offsets', function() {

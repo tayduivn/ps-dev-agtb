@@ -24,6 +24,8 @@ class SugarUpgradeLoadDropdowns extends UpgradeScript
     public $type = self::UPGRADE_CUSTOM;
     public $version = '7.6.0';
 
+    protected $dropdownHelper = null;
+
     /**
      * {@inheritdoc}
      *
@@ -76,23 +78,19 @@ class SugarUpgradeLoadDropdowns extends UpgradeScript
             return;
         }
 
-        // use the version in the new source directory
-        $importFile = "{$this->context['new_source_dir']}/upgrade/UpgradeDropdownsHelper.php";
-        require_once $importFile;
-
         if (!is_array($this->upgrader->state)) {
             $this->upgrader->state = array();
         }
 
         $this->upgrader->state['dropdowns_to_merge'] = array();
 
-        $helper = new UpgradeDropdownsHelper();
+        $helper = $this->getDropdownHelper();
 
         // search each i18n translation file in the application
-        foreach (glob('include/language/*.lang.php') as $coreFile) {
-            $customFile = "custom/{$coreFile}";
+        foreach ($this->geti18nFiles() as $coreFile) {
+            $customFile = $this->getCustomFile($coreFile);
 
-            if (!file_exists($customFile)) {
+            if (!$customFile) {
                 // no custom file means there are no customized dropdown lists
                 continue;
             }
@@ -123,6 +121,23 @@ class SugarUpgradeLoadDropdowns extends UpgradeScript
     }
 
     /**
+     * Returns the path to the custom i18n translation file counterpart to the specified core i18n translation file.
+     *
+     * @param $coreFile
+     * @return null|string Null is returned if the custom i18n translation file does not exist.
+     */
+    protected function getCustomFile($coreFile)
+    {
+        $customFile = "custom/{$coreFile}";
+
+        if (file_exists($customFile)) {
+            return $customFile;
+        }
+
+        return null;
+    }
+
+    /**
      * Extracts the i18n language key from the filename. For example, `en_us` for English-US.
      *
      * @param string $file The path to the i18n translation file.
@@ -138,5 +153,33 @@ class SugarUpgradeLoadDropdowns extends UpgradeScript
         }
 
         return substr($filename, 0, strlen($filename) - $suffixPos);
+    }
+
+    /**
+     * Returns an instance of {@link UpgradeDropdownsHelper}.
+     *
+     * @return UpgradeDropdownsHelper
+     */
+    protected function getDropdownHelper()
+    {
+        if (is_null($this->dropdownHelper)) {
+            if (!class_exists('UpgradeDropdownsHelper')) {
+                // use the version in the new source directory
+                $importFile = "{$this->context['new_source_dir']}/upgrade/UpgradeDropdownsHelper.php";
+                require_once $importFile;
+            }
+            $this->dropdownHelper = new UpgradeDropdownsHelper();
+        }
+        return $this->dropdownHelper;
+    }
+
+    /**
+     * Globs the core language directory and returns an array of paths to any i18n translation files.
+     *
+     * @return array
+     */
+    protected function geti18nFiles()
+    {
+        return glob('include/language/*.lang.php');
     }
 }

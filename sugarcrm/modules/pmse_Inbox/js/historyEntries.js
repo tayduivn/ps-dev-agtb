@@ -51,17 +51,27 @@ function showHistory(caseId, caseIndex) {
                                 items = [];
                                 log = logs.result[i];
 
-//                        console.log('----------LOG-------------');
-//                        console.log('current date: ' + log.current_date);
-//                        console.log('end date: ' + log.end_date);
-//                        console.log('diference :' + timeElapsedString(Date.parse(log.current_date), Date.parse(log.end_date), true));
-//                        console.log('---------Duration--------------');
-//
-//                        console.log('end date :' + log.end_date);
-//                        console.log('delegate date :' + log.delegate_date);
-//                        console.log('diference :' + timeElapsedString(Date.parse(log.end_date), Date.parse(log.delegate_date)));
-                                if (Date.parse(log.end_date)) {
-                                    label = log.data_info + '. <strong> ( ' + timeElapsedString(Date.parse(log.current_date), Date.parse(log.end_date), true) + ' )</strong> ';
+                                var end_date=Date.parse(log.end_date);
+                                var current_date=Date.parse(log.current_date);
+                                var delegate_date=Date.parse(log.delegate_date);
+                                var start_date=Date.parse(log.start_date);
+
+                                //IE, Firefox date fix
+                                if (isNaN(end_date)){
+                                    end_date= Date.parse(log.end_date.replace(/\s/g, "T"));
+                                }
+                                if (isNaN(current_date)){
+                                    current_date= Date.parse(log.current_date.replace(/\s/g, "T"));
+                                }
+                                if (isNaN(delegate_date)){
+                                    delegate_date= Date.parse(log.delegate_date.replace(/\s/g, "T"));
+                                }
+                                if (isNaN(start_date)){
+                                    start_date= Date.parse(log.start_date.replace(/\s/g, "T"));
+                                }
+
+                                if (end_date) {
+                                    label = log.data_info + '. <strong> ( ' + timeElapsedString(current_date, end_date, true) + ' )</strong> ';
                                 } else {
                                     label = log.data_info + '. <strong>' + translate('LBL_PMSE_HISTORY_LOG_NO_YET_STARTED', 'pmse_Inbox') + '</strong> ';
                                 }
@@ -77,8 +87,8 @@ function showHistory(caseId, caseIndex) {
                                     label: label,
                                     user: log.user,
                                     picture : pictureUrl,
-                                    duration: '<strong> ' + timeElapsedString(Date.parse(log.end_date), Date.parse(log.delegate_date)) + ' <strong>',
-                                    startDate: (Date.parse(log.start_date)) ? log.start_date :  translate('LBL_PMSE_HISTORY_LOG_NO_YET_STARTED', 'pmse_Inbox'),
+                                    duration: '<strong> ' + timeElapsedString(end_date, delegate_date) + ' <strong>',
+                                    startDate: (start_date) ? log.start_date :  translate('LBL_PMSE_HISTORY_LOG_NO_YET_STARTED', 'pmse_Inbox'),
                                     //startDate: (Date.parse(log.start_date)) ? Date.parse(log.start_date).toString('MMMM d, yyyy HH:mm') :  translate('LBL_PMSE_MESSAGE_NOYETSTARTED'),
                                     //startDate: translate('LBL_PMSE_MESSAGE_NOYETSTARTED'),
                                     completed: log.completed

@@ -36,7 +36,6 @@ class ParserDropDown extends ModuleBuilderParser
         }
 
         $type = $_REQUEST['view_package'];
-        $dir = '';
         $dropdown_name = $params['dropdown_name'];
         $json = getJSONobj();
 
@@ -97,15 +96,13 @@ class ParserDropDown extends ModuleBuilderParser
                     // Now synch up the keys in other languages to ensure that removed/added
                     // Drop down values work properly under all langs.
                     // If skip_sync, we don't want to sync ALL languages
-                    $this->synchDropDown($dropdown_name, $dropdown, $selected_lang, $dir);
+                    $this->synchDropDown($dropdown_name, $dropdown, $selected_lang);
                 }
 
                 $contents = $this->getNewCustomContents($dropdown_name, $dropdown, $selected_lang);
             }
-            if (!empty($dir) && !is_dir($dir)) {
-                 $continue = mkdir_recursive($dir);
-            }
-            save_custom_app_list_strings_contents($contents, $selected_lang, $dir);
+
+            save_custom_app_list_strings_contents($contents, $selected_lang);
         }
         sugar_cache_reset();
         sugar_cache_reset_full();
@@ -122,9 +119,8 @@ class ParserDropDown extends ModuleBuilderParser
      * @param $dropdown_name The name of the dropdown to be synched
      * @param $dropdown array The dropdown currently being saved
      * @param $selected_lang String the language currently selected in Studio/MB
-     * @param $saveLov String the path to the directory to save the new lang file in.
      */
-    public function synchDropDown($dropdown_name, $dropdown, $selected_lang, $saveLoc)
+    public function synchDropDown($dropdown_name, $dropdown, $selected_lang)
     {
         $allLanguages =  get_languages();
         foreach ($allLanguages as $lang => $langName) {
@@ -138,7 +134,7 @@ class ParserDropDown extends ModuleBuilderParser
                     $langDropDown = $dropdown;
                 }
                 $contents = $this->getNewCustomContents($dropdown_name, $langDropDown, $lang);
-                save_custom_app_list_strings_contents($contents, $lang, $saveLoc);
+                save_custom_app_list_strings_contents($contents, $lang);
             }
         }
     }

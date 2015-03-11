@@ -38,11 +38,11 @@ $layout_defs['Leads'] = array(
 					'subpanel_name' => 'ForActivities',
 					'get_subpanel_data' => 'meetings',
 				),
-				'oldmeetings' => array(
+                'meetings_parent' => array(
 					'module' => 'Meetings',
 					'subpanel_name' => 'ForActivities',
 					'get_subpanel_data' => 'function:get_old_related_meetings',
-					'set_subpanel_data' => 'oldmeetings',
+                    'set_subpanel_data' => 'meetings_parent',
 					'generate_select'=>true,
 				),
 				'tasks' => array(
@@ -55,11 +55,11 @@ $layout_defs['Leads'] = array(
 					'subpanel_name' => 'ForActivities',
 					'get_subpanel_data' => 'calls',
 				),
-                'oldcalls' => array(
+                'calls_parent' => array(
 					'module' => 'Calls',
 					'subpanel_name' => 'ForActivities',
 					'get_subpanel_data' => 'function:get_old_related_calls',
-					'set_subpanel_data' => 'oldcalls',
+                    'set_subpanel_data' => 'calls_parent',
 					'generate_select'=>true,
 				),
 			)
@@ -85,12 +85,12 @@ $layout_defs['Leads'] = array(
 					'subpanel_name' => 'ForHistory',
 					'get_subpanel_data' => 'meetings',
 				),
-				'oldmeetings' => array(
+                'meetings_parent' => array(
 					'module' => 'Meetings',
 					'subpanel_name' => 'ForHistory',
 					'get_subpanel_data' => 'function:get_old_related_meetings',
 					'generate_select'=>true,
-					'set_subpanel_data' => 'oldmeetings',
+                    'set_subpanel_data' => 'meetings_parent',
 				),
 				'tasks' => array(
 					'module' => 'Tasks',
@@ -102,11 +102,11 @@ $layout_defs['Leads'] = array(
 					'subpanel_name' => 'ForHistory',
 					'get_subpanel_data' => 'calls',
 				),
-				'oldcalls' => array(
+                'calls_parent' => array(
 					'module' => 'Calls',
 					'subpanel_name' => 'ForHistory',
 					'get_subpanel_data' => 'function:get_old_related_calls',
-					'set_subpanel_data' => 'oldcalls',
+                    'set_subpanel_data' => 'calls_parent',
 					'generate_select'=>true,
 				),
 				'notes' => array(

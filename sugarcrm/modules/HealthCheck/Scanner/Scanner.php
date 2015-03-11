@@ -238,6 +238,20 @@ class HealthCheckScanner
     );
 
     /**
+     * Array of files which will be ignored if missing in 7.x
+     * @var array
+     */
+    protected $ignoreMissingCustomFiles = array(
+        'modules/Connectors/connectors/sources/ext/rest/insideview/InsideViewLogicHook.php',
+        'modules/Connectors/connectors/sources/ext/rest/inbox25/InboxViewLogicHook.php',
+        'modules/Contacts/SugarFeeds/ContactFeed.php',
+        'modules/Leads/SugarFeeds/LeadFeed.php',
+        'modules/SugarFeed/SugarFeed.php',
+        'modules/Cases/SugarFeeds/CaseFeed.php',
+        'modules/Opportunities/SugarFeeds/OppFeed.php',
+    );
+
+    /**
      * If Scanner founds some number of files and is going to report them, it's better to report them in bunches.
      * This field defines an appropriate bunch size.
      * @see CRYS-554
@@ -1372,6 +1386,7 @@ class HealthCheckScanner
             $allHistoryCode = array();
             foreach ($historyFiles as $file) {
                 //for history files check internal functions and replace them with random names CRYS-498
+                $replacedNames = array();
                 $tmpName = tempnam(sys_get_temp_dir(), $file);
                 if ($tmpName && is_writable($tmpName) && file_exists($file)) {
                     $tmpContents = file_get_contents($file);
@@ -1379,7 +1394,7 @@ class HealthCheckScanner
                     if (preg_match_all('/function\s+(\w+)\s*\(/', $tmpContents, $matches) && isset($matches[1])) {
                         $tmpMatch = array();
                         foreach ($matches[1] as $key => $value) {
-                            $tmpMatch[$key] = $value . md5($tmpName);
+                            $tmpMatch[$key] = $replacedNames[] = $value . md5($tmpName);
                         }
                         $tmpContents = str_replace($matches[1], $tmpMatch, $tmpContents);
 
@@ -1390,6 +1405,8 @@ class HealthCheckScanner
                 }
 
                 $historyDefs = $this->loadFromFile($file, $varname);
+                // Make sure we got initial values, but not replaced with md5 ones
+                $historyDefs = json_decode(str_replace($replacedNames, $matches[1], json_encode($historyDefs)), true);
 
                 if ($tmpName) {
                     @unlink($tmpName);
@@ -1739,6 +1756,12 @@ class HealthCheckScanner
      */
     protected function checkFileForOutput($phpfile)
     {
+        if (in_array($phpfile, $this->ignoreMissingCustomFiles)) {
+            list($sugar_version, $sugar_flavor) = $this->getVersionAndFlavor();
+            if (version_compare($sugar_version, '7.0', '>')) {
+                return;
+            }
+        }
         if (!file_exists($phpfile)) {
             $this->updateStatus("missingCustomFile", $phpfile);
             return;
@@ -2106,6 +2129,7 @@ ENDP;
      * These fields are allowed to use in stock and non-stock modules.
      */
     protected $templateFields = array(
+        "email" => true,
         "email1" => true,
         "email2" => true,
         "currency_id" => true,

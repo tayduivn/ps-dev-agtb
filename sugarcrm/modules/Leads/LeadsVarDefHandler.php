@@ -23,7 +23,7 @@ class LeadsVarDefHandler extends VarDefHandler
     {
         $options_array = parent::get_vardef_array($use_singular, $remove_dups, $use_field_name, $use_field_label);
         if ($this->meta_array_name == 'rel_filter')
-            unset($options_array['oldcalls'], $options_array['oldmeetings']);
+            unset($options_array['calls_parent'], $options_array['meetings_parent']);
         return $options_array;
     }
 }
