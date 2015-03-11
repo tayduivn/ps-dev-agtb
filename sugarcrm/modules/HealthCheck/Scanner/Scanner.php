@@ -2105,6 +2105,7 @@ ENDP;
         'ForecastOpportunities' => array('description'),
         'Quotas' => array('assigned_user_id'),
         'ProductTemplates' => array('assigned_user_link'),
+        'Meetings' => array('contact_id'),
     );
 
     /**
