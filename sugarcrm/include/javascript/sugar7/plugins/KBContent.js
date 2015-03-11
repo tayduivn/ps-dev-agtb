@@ -251,7 +251,7 @@
                     });
                     return;
                 }
-
+                this.context.createAction = this.CONTENT_LOCALIZATION;
                 prefill.set(
                     'related_languages',
                     this.getAvailableLangsForLocalization(parentModel),
@@ -273,6 +273,7 @@
              * @private
              */
             _onCreateRevision: function(prefill, parentModel) {
+                this.context.createAction = this.CONTENT_REVISION;
                 prefill.set('useful', parentModel.get('useful'));
                 prefill.set('notuseful', parentModel.get('notuseful'));
                 prefill.set(
@@ -291,21 +292,30 @@
              * @private
              */
             _openCreateRelatedDrawer: function(prefill, parentModel) {
-                app.drawer.open({
+                var layoutDef = {
                     layout: 'create-actions',
                     context: {
                         create: true,
                         model: prefill,
-                        copiedFromModelId: parentModel.get('id')
+                        copiedFromModelId: parentModel.get('id'),
+                        parent: this.context,
+                        createAction: this.context.createAction
                     }
-                }, function(context, newModel) {
-                    if (newModel && newModel.id) {
-                        app.router.navigate(
-                            app.router.buildRoute('KBContents', newModel.id),
-                            {trigger: true}
-                        );
-                    }
-                });
+                };
+                if (this.context.loadDrawer == true) {
+                    app.drawer.load(layoutDef);
+                } else {
+                    app.drawer.open(layoutDef, function(context, newModel) {
+                            if (newModel && newModel.id) {
+                                app.router.navigate(
+                                    app.router.buildRoute('KBContents', newModel.id),
+                                    {trigger: true}
+                                );
+                            }
+                            context.createAction = null;
+                            context.loadDrawer = null;
+                    });
+                }
 
                 prefill.trigger('duplicate:field', parentModel);
             },
@@ -506,9 +516,49 @@
             onDetach: function() {
                 this.model.removeValidationTask('exp_date_publish');
                 this.model.removeValidationTask('active_date_approve');
+            },
+
+            /**
+             * Need additional data while creating new revision/localization.
+             * @see View.Views.Base.CreateView::saveAndCreate
+             * @override
+             */
+            saveAndCreate: function() {
+                var createAction = this.context.parent.createAction,
+                    callback;
+                if (!createAction) {
+                    Object.getPrototypeOf(this).saveAndCreate.call(this);
+                    return;
+                }
+                switch (createAction) {
+                    case this.CONTENT_LOCALIZATION:
+                        callback = this.createLocalization;
+                        break;
+                    case this.CONTENT_REVISION:
+                        callback = this.createRevision;
+                        break;
+                }
+                if (callback) {
+                    this.initiateSave(_.bind(
+                        function() {
+                            this.context.loadDrawer = true;
+                            if (this.hasSubpanelModels) {
+                                // loop through subpanels and call resetCollection on create subpanels
+                                _.each(this.context.children, function(child) {
+                                    if (child.get('isCreateSubpanel')) {
+                                        this.context.trigger('subpanel:resetCollection:' + child.get('link'), true);
+                                    }
+                                }, this);
+
+                                // reset the hasSubpanelModels flag
+                                this.hasSubpanelModels = false;
+                            }
+                            callback.call(this, this.model);
+                        },
+                        this
+                    ));
+                }
             }
-
         });
-
     });
 })(SUGAR.App);
