@@ -104,6 +104,13 @@ $viewdefs['base']['view']['tutorial'] = array(
                 'vertAdj' => -13,
             ),
             array(
+                'name' => '.subpanel-header',
+                'text' => 'LBL_TOUR_RECORD_SUBPANEL',
+                'full' => true,
+                'horizAdj' => 0,
+                'vertAdj' => 0,
+            ),
+            array(
                 'name' => '[data-view="subpanel"]',
                 'text' => 'LBL_TOUR_RECORD_TOGGLEACTIVITIES',
                 'full' => true,
