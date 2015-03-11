@@ -172,6 +172,28 @@ abstract class OpportunitySetup
     }
 
     /**
+     * Fix the module Filters
+     *
+     * @param array $fieldMap The list of fields to add or remove from the filter.
+     */
+    protected function fixFilter(array $fieldMap)
+    {
+        /* @var $filterDefParser SidecarFilterLayoutMetaDataParser */
+        $filterDefParser = ParserFactory::getParser(MB_BASICSEARCH, 'Opportunities', null, null, 'base');
+
+        foreach($fieldMap as $field => $add) {
+            if ($add === true) {
+                $filterDefParser->addField($field);
+            } else {
+                $filterDefParser->removeField($field);
+            }
+        }
+
+        $filterDefParser->handleSave(false);
+    }
+
+
+    /**
      * Add and Remove fields from the Record View
      *
      * @param array $fieldMap
