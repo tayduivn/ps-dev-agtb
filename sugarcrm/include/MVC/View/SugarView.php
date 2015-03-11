@@ -972,31 +972,23 @@ EOHTML;
 
         if(!$trackerManager->isPaused())
         {
-	        $timeStamp = TimeDate::getInstance()->nowDb();
-	        //Track to tracker_perf
-	        if($monitor2 = $trackerManager->getMonitor('tracker_perf')){
-		        $monitor2->setValue('server_response_time', $this->responseTime);
-		        $dbManager = &DBManagerFactory::getInstance();
-		        $monitor2->db_round_trips = $dbManager->getQueryCount();
-		        $monitor2->setValue('date_modified', $timeStamp);
-		        $monitor2->setValue('db_round_trips', $dbManager->getQueryCount());
-		        $monitor2->setValue('files_opened', $this->fileResources);
-		        if (function_exists('memory_get_usage')) {
-		            $monitor2->setValue('memory_usage', memory_get_usage());
-		        }
-			}
+            // Track performance
+            if ($performanceMonitor = $trackerManager->getMonitor('tracker_perf')) {
+                $performanceMonitor->setValue('server_response_time', $this->responseTime);
+                $dbManager = DBManagerFactory::getInstance();
+                $performanceMonitor->db_round_trips = $dbManager->getQueryCount();
+                $performanceMonitor->setValue('date_modified', TimeDate::getInstance()->nowDb());
+                $performanceMonitor->setValue('db_round_trips', $dbManager->getQueryCount());
+                $performanceMonitor->setValue('files_opened', $this->fileResources);
+                if (function_exists('memory_get_usage')) {
+                    $performanceMonitor->setValue('memory_usage', memory_get_usage());
+                }
 
-			// Track to tracker_sessions
-		    if($monitor3 = $trackerManager->getMonitor('tracker_sessions')){
-		        $monitor3->setValue('date_end', $timeStamp);
-		        if ( !isset($monitor3->date_start) ) $monitor3->setValue('date_start', $timeStamp);
-		        $seconds = strtotime($monitor3->date_end) -strtotime($monitor3->date_start);
-		        $monitor3->setValue('seconds', $seconds);
-		        $monitor3->setValue('user_id', $GLOBALS['current_user']->id);
-			}
+                $trackerManager->saveMonitor($performanceMonitor);
+            }
+
+            SugarApplication::trackSession();
         }
-	    $trackerManager->save();
-
     }
 
     /**
