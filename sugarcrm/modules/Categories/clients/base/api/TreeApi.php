@@ -60,7 +60,7 @@ class TreeApi extends FilterApi
                 'pathVars' => array('module', '', ''),
                 'method' => 'roots',
                 'shortHelp' => 'This method returns all root nodes',
-                'longHelp' => 'include/api/help/tree_get_roots_help.html',
+                'longHelp' => 'modules/Categories/clients/base/api/help/tree_get_roots_help.html',
             ),
             'tree' => array(
                 'reqType' => 'GET',
@@ -68,7 +68,7 @@ class TreeApi extends FilterApi
                 'pathVars' => array('module', 'root', ''),
                 'method' => 'tree',
                 'shortHelp' => 'This method returns formatted tree for selected root',
-                'longHelp' => 'include/api/help/tree_get_tree_help.html',
+                'longHelp' => 'modules/Categories/clients/base/api/help/tree_get_tree_help.html',
             ),
             'children' => array(
                 'reqType' => 'GET',
@@ -76,7 +76,7 @@ class TreeApi extends FilterApi
                 'pathVars' => array('module', 'record', ''),
                 'method' => 'children',
                 'shortHelp' => 'This method returns children categories for selected record',
-                'longHelp' => 'include/api/help/tree_get_children_help.html',
+                'longHelp' => 'modules/Categories/clients/base/api/help/tree_get_children_help.html',
             ),
             'next' => array(
                 'reqType' => 'GET',
@@ -84,7 +84,7 @@ class TreeApi extends FilterApi
                 'pathVars' => array('module', 'record', ''),
                 'method' => 'next',
                 'shortHelp' => 'This method returns next sibling of selected record',
-                'longHelp' => 'include/api/help/tree_get_next_help.html',
+                'longHelp' => 'modules/Categories/clients/base/api/help/tree_get_next_help.html',
             ),
             'prev' => array(
                 'reqType' => 'GET',
@@ -92,7 +92,7 @@ class TreeApi extends FilterApi
                 'pathVars' => array('module', 'record', ''),
                 'method' => 'prev',
                 'shortHelp' => 'This method returns previous sibling of selected record',
-                'longHelp' => 'include/api/help/tree_get_prev_help.html',
+                'longHelp' => 'modules/Categories/clients/base/api/help/tree_get_prev_help.html',
             ),
             'parent' => array(
                 'reqType' => 'GET',
@@ -100,7 +100,7 @@ class TreeApi extends FilterApi
                 'pathVars' => array('module', 'record', ''),
                 'method' => 'getParent',
                 'shortHelp' => 'This method returns parent node of selected record',
-                'longHelp' => 'include/api/help/tree_get_parent_help.html',
+                'longHelp' => 'modules/Categories/clients/base/api/help/tree_get_parent_help.html',
             ),
             'path' => array(
                 'reqType' => 'GET',
@@ -108,7 +108,7 @@ class TreeApi extends FilterApi
                 'pathVars' => array('module', 'record', ''),
                 'method' => 'path',
                 'shortHelp' => 'This method returns full path of selected record',
-                'longHelp' => 'include/api/help/tree_get_path_help.html',
+                'longHelp' => 'modules/Categories/clients/base/api/help/tree_get_path_help.html',
             ),
             'movebefore' => array(
                 'reqType' => 'PUT',
@@ -116,7 +116,7 @@ class TreeApi extends FilterApi
                 'pathVars' => array('module', 'record', 'movebefore', 'target'),
                 'method' => 'moveBefore',
                 'shortHelp' => 'This method record as previous sibling of target',
-                'longHelp' => 'include/api/help/tree_put_movebefore_help.html',
+                'longHelp' => 'modules/Categories/clients/base/api/help/tree_put_movebefore_help.html',
             ),
             'moveafter' => array(
                 'reqType' => 'PUT',
@@ -124,7 +124,7 @@ class TreeApi extends FilterApi
                 'pathVars' => array('module', 'record', 'moveafter', 'target'),
                 'method' => 'moveAfter',
                 'shortHelp' => 'This method record as next sibling of target',
-                'longHelp' => 'include/api/help/tree_put_moveafter_help.html',
+                'longHelp' => 'modules/Categories/clients/base/api/help/tree_put_moveafter_help.html',
             ),
             'movefirst' => array(
                 'reqType' => 'PUT',
@@ -132,7 +132,7 @@ class TreeApi extends FilterApi
                 'pathVars' => array('module', 'record', 'movefirst', 'target'),
                 'method' => 'moveFirst',
                 'shortHelp' => 'This method record as first child of target',
-                'longHelp' => 'include/api/help/tree_put_movefirst_help.html',
+                'longHelp' => 'modules/Categories/clients/base/api/help/tree_put_movefirst_help.html',
             ),
             'movelast' => array(
                 'reqType' => 'PUT',
@@ -140,7 +140,7 @@ class TreeApi extends FilterApi
                 'pathVars' => array('module', 'record', 'movelast', 'target'),
                 'method' => 'moveLast',
                 'shortHelp' => 'This method record as last child of target',
-                'longHelp' => 'include/api/help/tree_put_movelast_help.html',
+                'longHelp' => 'modules/Categories/clients/base/api/help/tree_put_movelast_help.html',
             ),
             'append' => array(
                 'reqType' => 'POST',
@@ -148,7 +148,7 @@ class TreeApi extends FilterApi
                 'pathVars' => array('module', 'append', 'target'),
                 'method' => 'append',
                 'shortHelp' => 'This method append record to target as last child',
-                'longHelp' => 'include/api/help/tree_post_append_help.html',
+                'longHelp' => 'modules/Categories/clients/base/api/help/tree_post_append_help.html',
                 'exceptions' => array(
                     'SugarApiExceptionNotFound',
                     'SugarApiExceptionInvalidParameter',
@@ -160,7 +160,7 @@ class TreeApi extends FilterApi
                 'pathVars' => array('module', 'prepend', 'target'),
                 'method' => 'prepend',
                 'shortHelp' => 'This method prepend record to target as first child',
-                'longHelp' => 'include/api/help/tree_post_prepend_help.html',
+                'longHelp' => 'modules/Categories/clients/base/api/help/tree_post_prepend_help.html',
                 'exceptions' => array(
                     'SugarApiExceptionNotFound',
                     'SugarApiExceptionInvalidParameter',
@@ -172,7 +172,7 @@ class TreeApi extends FilterApi
                 'pathVars' => array('module', 'insertbefore', 'target'),
                 'method' => 'insertBefore',
                 'shortHelp' => 'This method insert record as previous sibling of target',
-                'longHelp' => 'include/api/help/tree_post_insertbefore_help.html',
+                'longHelp' => 'modules/Categories/clients/base/api/help/tree_post_insertbefore_help.html',
                 'exceptions' => array(
                     'SugarApiExceptionNotFound',
                     'SugarApiExceptionInvalidParameter',
@@ -184,7 +184,7 @@ class TreeApi extends FilterApi
                 'pathVars' => array('module', 'insertafter', 'target'),
                 'method' => 'insertAfter',
                 'shortHelp' => 'This method insert record as next sibling of target',
-                'longHelp' => 'include/api/help/tree_post_insertafter_help.html',
+                'longHelp' => 'modules/Categories/clients/base/api/help/tree_post_insertafter_help.html',
                 'exceptions' => array(
                     'SugarApiExceptionNotFound',
                     'SugarApiExceptionInvalidParameter',
