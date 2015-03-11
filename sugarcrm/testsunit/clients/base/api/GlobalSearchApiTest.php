@@ -56,7 +56,7 @@ class GlobalSearchApiTest extends \PHPUnit_Framework_TestCase
                 array(
                     'module_list' => 'Accounts,Contacts',
                     'q' => 'swaffelen',
-                    'limit' => 50,
+                    'max_num' => 50,
                     'offset' => 100,
                 ),
                 array('Accounts', 'Contacts'),
@@ -70,7 +70,7 @@ class GlobalSearchApiTest extends \PHPUnit_Framework_TestCase
                 array(
                     'module_list' => 'Leads',
                     'q' => 'more stuff',
-                    'limit' => "invalid",
+                    'max_num' => "invalid",
                     'offset' => 5.30,
                 ),
                 array('Leads'),

@@ -24,7 +24,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Result;
  *
  * Available parameters:
  *  - q = search term
- *  - limit = defaults to 20, how many results to return
+ *  - max_num = defaults to 20, how many results to return
  *  - offset = defaults to 0, used for paging
  *  - module_list = comma separated list of modules (*)
  *  - highlights = true/false (defauls to true)
@@ -163,8 +163,8 @@ class GlobalSearchApi extends SugarApi
         }
 
         // Set limit
-        if (isset($args['limit'])) {
-            $this->limit = (int) $args['limit'];
+        if (isset($args['max_num'])) {
+            $this->limit = (int) $args['max_num'];
         }
 
         // Set offset
