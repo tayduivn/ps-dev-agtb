@@ -23,6 +23,23 @@
         ]);
 
         this._super('initialize', [options]);
+        this.context.on('kbcontents:category:deleted', this._categoryDeleted, this);
+    },
+
+    /**
+     * Process record on category delete.
+     * @param {Object} node
+     * @private
+     */
+    _categoryDeleted: function(node) {
+        if (this.model.get('category_id') === node.data('id')) {
+            this.model.unset('category_id');
+            this.model.unset('category_name');
+        }
+        if (this.disposed) {
+            return;
+        }
+        this.render();
     }
 
 })

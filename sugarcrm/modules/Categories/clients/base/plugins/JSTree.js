@@ -291,10 +291,18 @@
              * Remove node handler.
              * @param {Event} event
              * @param {Object} data
+             * @return {boolean}
              * @private
              */
             _removeHandler: function(event, data) {
-                /* ToDo: implement action on remove */
+                if (!data) {
+                    return false;
+                }
+                if (this.jsTreeCallbacks.onRemove &&
+                    !this.jsTreeCallbacks.onRemove.apply(this, [data.rslt.obj])) {
+                    return false;
+                }
+                return this._jstreeRemoveNode(data.rslt.obj);
             },
 
             /**
@@ -429,11 +437,7 @@
 
                 app.alert.show('delete_confirmation', {
                     level: 'confirmation',
-                    messages: app.utils.formatString(
-                        app.lang.get('NTC_DELETE_CONFIRMATION_FORMATTED'),
-                        [app.lang.getModuleName(options.model.module).toLowerCase() +
-                            ' ' + app.utils.getRecordName(options.model).trim()]
-                    ),
+                    messages: this.getDeleteMessages(options.model).confirmation,
                     onConfirm: _.bind(function() {
                         this.deleteModel(options);
                     }, this),
@@ -441,6 +445,24 @@
 
                     }
                 });
+            },
+
+            /**
+             * Formats the messages to display in the alerts when deleting a record.
+             *
+             * @param {Data.Bean} model The model concerned.
+             * @return {Object} The list of messages.
+             * @return {string} return.confirmation Confirmation message.
+             * @return {string} return.success Success message.
+             */
+            getDeleteMessages: function(model) {
+                var messages = {};
+                var name = Handlebars.Utils.escapeExpression(app.utils.getRecordName(model)).trim();
+                var context = app.lang.getModuleName(model.module).toLowerCase() + ' ' + name;
+
+                messages.confirmation = app.utils.formatString(app.lang.get('NTC_DELETE_CONFIRMATION_FORMATTED'), [context]);
+                messages.success = app.utils.formatString(app.lang.get('NTC_DELETE_SUCCESS'), [context]);
+                return messages;
             },
 
             /**
@@ -462,11 +484,7 @@
                     showAlerts: {
                         'process': true,
                         'success': {
-                            messages: app.utils.formatString(
-                                app.lang.get('NTC_DELETE_SUCCESS'),
-                                [app.lang.getModuleName(options.model.module).toLowerCase() +
-                                    ' ' + app.utils.getRecordName(options.model).trim()]
-                            )
+                            messages: this.getDeleteMessages(options.model).success
                         }
                     },
                     success: options.success,
@@ -488,7 +506,7 @@
                         separator_before: false,
                         icon: 'jstree-icon',
                         separator_after: false,
-                        label: entry.get('name'),
+                        label: entry.escape('name'),
                         action: function(obj) {
                             self.moveNode(obj.data('id'), entry.id, 'last', function(data, response) {
                                 self.jsTree.jstree(
@@ -675,6 +693,16 @@
                 } else {
                     return selectedNode;
                 }
+            },
+
+            /**
+             * Remove action by default.
+             * @param removedNode
+             * @return {boolean}
+             * @private
+             */
+            _jstreeRemoveNode: function(removedNode) {
+                return false;
             },
 
             /**
