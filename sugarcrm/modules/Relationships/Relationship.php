@@ -214,8 +214,12 @@ class Relationship extends SugarBean
         if (empty($GLOBALS['relationships'])) {
             $this->load_relationship_meta();
         }
-
-//		_ppd($GLOBALS['relationships']);
+        if (!array_key_exists($relationship_name, $GLOBALS['relationships'])) {
+            $def = SugarRelationshipFactory::getInstance()->getRelationshipDef($relationship_name);
+            if (!empty($def)) {
+                $GLOBALS['relationships'][$relationship_name] = $def;
+            }
+        }
 
         if (array_key_exists($relationship_name, $GLOBALS['relationships'])) {
 
