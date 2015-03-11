@@ -525,7 +525,7 @@ eoq2;
      */
     protected function doHealthcheck()
     {
-        $scanner = $this->getHealthCheckScanner();
+        $scanner = $this->getHealthCheckScanner('cli', $this->fp, 0);
         if (!$scanner) {
             return $this->error('Cannot find health check scanner. Skipping health check stage');
         }
@@ -561,48 +561,23 @@ eoq2;
     }
 
     /**
-     *
-     * Get Scanner object
-     * @return HealthCheckScannerCli
-     */
-    protected function  getHealthCheckScanner()
-    {
-        if ($this->isHealthCheckInstalled()) {
-            $scanner = $this->getHelper()->getScanner('cli');
-            $scanner->setVerboseLevel(0);
-            $scanner->setLogFilePointer($this->fp);
-            $scanner->setInstanceDir($this->context['source_dir']);
-            return $scanner;
-        }
-        return false;
-    }
-
-    /**
      * @return HealthCheckHelper
      */
     protected function getHelper()
     {
-        require_once 'SugarSystemInfo.php';
+        /*
+         * Loading SugarSystemInfo from health check only if version < 7.2.2
+         * If version 7.2.2 and above SugarSystemInfo also loading in entryPoint.php
+         */
+        $sugar_version = '9.9.9';
+        include "sugar_version.php";
+        if (file_exists(dirname(__FILE__).'/SugarSystemInfo.php') && version_compare($sugar_version, '7.2.2', '<')) {
+            require_once 'SugarSystemInfo.php';
+        }
         require_once 'SugarHeartbeatClient.php';
         require_once 'HealthCheckClient.php';
         require_once 'HealthCheckHelper.php';
         return HealthCheckHelper::getInstance();
-    }
-
-    /**
-     *
-     * Verify if health check module is available
-     * @return boolean
-     */
-    protected function isHealthCheckInstalled()
-    {
-        set_include_path(
-            dirname(__FILE__) . DIRECTORY_SEPARATOR . realpath(
-                $this->context['health_check_path']
-            ) . PATH_SEPARATOR . get_include_path()
-        );
-        $file = 'Scanner/ScannerCli.php';
-        return stream_resolve_include_path($file);
     }
 
     /**
@@ -624,60 +599,36 @@ eoq2;
     }
 
     /**
-     * {@inheritDoc}
+     * Verify and unpack upgrade package
+     * If we found that state file has pre step we clear state file
+     * @param string $zip ZIP filename
+     * @param string $dir Temp dir to use for zip files
+     * @return bool|false
      */
-    public static function getVersion()
+    protected function verify($zip, $dir)
     {
-        $version = self::$version;
-        $build = self::$build;
-        $vfile = dirname(__FILE__) . "/" . self::VERSION_FILE;
-        if (file_exists($vfile)) {
-            $data = json_decode(file_get_contents($vfile), true);
-            if (!empty($data['version'])) {
-                $version = $data['version'];
-            }
-            if (!empty($data['build'])) {
-                $build = $data['build'];
-            }
-        } elseif (file_exists('sugar_version.php')) {
-            if (!defined('sugarEntry')) {
-                define('sugarEntry', 'upgrader');
-            }
-            include 'sugar_version.php';
-            $version = $sugar_version;
-            $build = $sugar_build;
+        if (!empty($this->state['stage']['pre'])) {
+            $this->cleanState();
         }
-        return array($version, $build);
+        return parent::verify($zip, $dir);
     }
-}
 
-if (!function_exists('stream_resolve_include_path')) {
     /**
-     *
-     * Resolve filename against the include path
-     *
-     * stream_resolve_include_path was introduced in PHP 5.3.2. But this script must work on PHP 5.2.
-     *
-     * @param $filename
-     * @return bool|string
+     * Run given stage
+     * If stage healthcheck and healthcheck doesn't exists we run unpack stage
+     * @inheritdoc
      */
-    function stream_resolve_include_path($filename)
+    public function run($stage)
     {
-        $paths = explode(PATH_SEPARATOR, get_include_path());
-
-        foreach ($paths as $prefix) {
-            $suffix = '';
-            if (substr($prefix, -1) != DIRECTORY_SEPARATOR) {
-                $suffix = DIRECTORY_SEPARATOR;
-            }
-            $file = $prefix . $suffix . $filename;
-
-            if (file_exists($file)) {
-                return $file;
-            }
+        if ($stage == 'healthcheck' &&
+            (!file_exists($this->context['health_check_path']) || empty($this->state['stage']['unpack']) ||
+                $this->state['stage']['unpack'] == 'failed') &&
+            !$this->run('unpack')
+        ) {
+            return false;
         }
 
-        return false;
+        return parent::run($stage);
     }
 }
 

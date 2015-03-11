@@ -83,4 +83,8 @@ require_once "Scanner/ScannerCli.php"; HealthCheckScannerCli::start($argv); __HA
 STUB;
 $phar->setStub($stub);
 
+if (file_exists(dirname(__FILE__) . '/Scanner/version.json')) {
+    unlink(dirname(__FILE__) . '/Scanner/version.json');
+}
+
 exit(0);
