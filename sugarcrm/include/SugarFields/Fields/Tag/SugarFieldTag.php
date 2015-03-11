@@ -348,4 +348,71 @@ class SugarFieldTag extends SugarFieldRelatecollection
         return $return;
     }
 
+    /**
+     * Define custom filters for Tags
+     *
+     * @param $value - the value that needs fixing
+     * @param $fieldName - the field we are fixing
+     * @param SugarBean $bean - the Bean
+     * @param SugarQuery $q - the Query
+     * @param SugarQuery_Builder_Where $where - the Where statement
+     * @param $op - the filter operand
+     * @return bool - true if everything can pass as normal,
+     *                false if new filters needed to be added to override the existing $op
+     */
+    public function fixForFilter(&$value, $fieldName, SugarBean $bean, SugarQuery $q, SugarQuery_Builder_Where $where, $op)
+    {
+        $originalValue = $value;
+        $value = array();
+        foreach ($originalValue as $tag) {
+            $tagName = $tag['name'];
+            if ($op === '$not_in') {
+                $value[] = $bean->db->quoted($tagName);
+            } else {
+                $value[] = $tagName;
+            }
+        }
+        switch($op) {
+            case '$in':
+                if (!is_array($value)) {
+                    throw new SugarApiExceptionInvalidParameter('$in requires an array');
+                }
+                $where->in($fieldName, $value);
+                break;
+            case '$not_in':
+                if (!is_array($value)) {
+                    throw new SugarApiExceptionInvalidParameter('$not_in requires an array');
+                }
+                $implodedValue = implode(', ', $value);
+                $table = $bean->table_name;
+
+                //Run a subquery that to get all the record ids for records that contain the specified tags
+                //Then in main query, get records that are not in the ids from the subquery
+                $where->queryAnd()->addRaw(
+                    " $table.id NOT IN (
+                        SELECT $table.id
+ 	                    FROM $table
+                            LEFT JOIN tag_bean_rel
+                                ON ($table.id = tag_bean_rel.bean_id AND tag_bean_rel.deleted = 0
+                                AND tag_bean_rel.bean_module = '$bean->module_name')
+                            LEFT JOIN tags
+                                ON (tags.id = tag_bean_rel.tag_id AND tags.deleted = 0)
+ 	                    WHERE $table.deleted = 0 AND tags.name IN ($implodedValue))"
+                );
+                break;
+            case '$empty':
+                $where->queryOr()
+                    ->equals($fieldName, '')
+                    ->isNull($fieldName);
+                break;
+            case '$not_empty':
+                $where->queryAnd()
+                    ->notEquals($fieldName, '')
+                    ->notNull($fieldName);
+                break;
+        }
+
+        //return false here because we no longer need to define the where clause in FilterApi::addFilters for tags
+        return false;
+    }
 }

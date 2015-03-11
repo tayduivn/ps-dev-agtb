@@ -219,6 +219,16 @@ class FilterApi extends SugarApi
                 }
             }
         }
+        // set group_by to true if we will be filtering by a relate collection
+        if (isset($args['filter']) && is_array($args['filter'])) {
+            foreach ($args['filter'] as $index => $filter) {
+                if (isset($options['relate_collections'][key($filter)])) {
+                    $options['group_by'] = true;
+                    break;
+                }
+            }
+        }
+
 
         return $options;
     }
@@ -348,8 +358,18 @@ class FilterApi extends SugarApi
             if (isset($seed->field_defs[$field]['type'])) {
                 $sf = SugarFieldHandler::getSugarField($seed->field_defs[$field]['type']);
                 $sf->addFieldToQuery($field, $fields);
+
+                //we need to use a group by if the field is a relate collection
+                if (isset($seed->field_defs[$field]['relate_collection'])) {
+                    $options['group_by'] = true;
+                }
             }
         }
+
+        if (isset($options['group_by'])) {
+            $q->groupBy('id');
+        }
+
         $q->select($fields);
 
         foreach ($options['order_by'] as $orderBy) {

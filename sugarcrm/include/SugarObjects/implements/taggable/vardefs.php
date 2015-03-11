@@ -27,6 +27,7 @@ $vardefs = array(
             'massupdate' => true,
             'exportable' => true,
             'sortable' => false,
+            'rname' => 'name',
         ),
         'tag_link' => array(
             'name' => 'tag_link',

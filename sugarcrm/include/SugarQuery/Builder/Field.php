@@ -198,8 +198,6 @@ class SugarQuery_Builder_Field
             || (isset($this->def['source']) && $this->def['source'] == 'non-db'
                 // For some reason the full_name field has 'link' => true
                 && isset($this->def['link']) && $this->def['link'] !== true)
-                // For relate collections, the table join is handled later
-                && empty($this->def['relate_collection'])
         ) {
             $params = array(
                 'joinType' => 'LEFT',
