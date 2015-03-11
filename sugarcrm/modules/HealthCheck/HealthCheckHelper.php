@@ -40,7 +40,7 @@ class HealthCheckHelper
      */
     protected $registry = array(
         'web' => array(
-            'modules/HealthCheck/Scanner/ScannerWeb.php',
+            'Scanner/ScannerWeb.php',
             'HealthCheckScannerWeb'
         ),
         'cli' => array(
@@ -77,7 +77,7 @@ class HealthCheckHelper
 
         if (!$client->getError()) {
             $data = array_merge($this->getSystemInfo()->getInfo(), $data);
-            $client->sugarHome($this->getSystemInfo()->getLicenseKey(), $data);
+            $client->sugarHome($this->getLicenseKey(), $data);
             return $client->getError() == false;
         } else {
             $GLOBALS['log']->error("HealthCheck: " . $client->getError());
@@ -93,7 +93,7 @@ class HealthCheckHelper
     public function sendLog($file)
     {
         $client = new HealthCheckClient();
-        if ($client->send($this->getSystemInfo()->getLicenseKey(), $file)) {
+        if ($client->send($this->getLicenseKey(), $file)) {
             $GLOBALS['log']->info("HealthCheck: Logs have been successfully sent to HealthCheck server.");
             return true;
         }
@@ -109,5 +109,20 @@ class HealthCheckHelper
         return SugarSystemInfo::getInstance();
     }
 
-
+    /**
+     * if SugarSystemInfo was loaded from instance instead health check,
+     * 7.2.2.x instances method getLicenseKey doesn't exists in SugarSystemInfo
+     * So in this case we have to load getLicenseInfo
+     * @return string License key
+     */
+    protected function getLicenseKey()
+    {
+        if (method_exists('SugarSystemInfo', 'getLicenseKey')) {
+            $licenseKey = $this->getSystemInfo()->getLicenseKey();
+        } else {
+            $licenseInfo = $this->getSystemInfo()->getLicenseInfo();
+            $licenseKey = $licenseInfo['license_key'];
+        }
+        return $licenseKey;
+    }
 }
