@@ -20,7 +20,7 @@ namespace Sugarcrm\SugarcrmTestsUnit\inc\SugarSearchEngine\Elastic;
 class SugarSearchEngineElasticTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @covers :: isTypeFtsEnabled
+     * @covers ::isTypeFtsEnabled
      * @dataProvider providerTestIsTypeFtsEnabled
      */
     public function testIsTypeFtsEnabled($type, $expected)
