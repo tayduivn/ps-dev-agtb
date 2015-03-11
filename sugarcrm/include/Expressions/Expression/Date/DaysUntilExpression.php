@@ -25,7 +25,7 @@ class DaysUntilExpression extends NumericExpression
         if(!$params) {
             return false;
         }
-        $now = TimeDate::getInstance()->getNow();
+        $now = TimeDate::getInstance()->getNow(true);
         //set the time to 0, as we are returning an integer based on the date.
         $params->setTime(0, 0, 0); // this will be the timestamp delimiter of the day.
         $tsdiff = $params->ts - $now->ts;
