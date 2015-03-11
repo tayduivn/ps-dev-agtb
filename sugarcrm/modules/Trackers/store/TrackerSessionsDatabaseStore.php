@@ -33,8 +33,7 @@ class TrackerSessionsDatabaseStore implements Store
 
         if ($monitor->new === true) {
             if ($db->supports("auto_increment_sequence")) {
-                $values[] = $db->getAutoIncrementSQL($monitor->table_name, 'id');
-                $columns[] = 'id';
+                $values['id'] = $db->getAutoIncrementSQL($monitor->table_name, 'id');
             }
 
             $this->cleanSessions($monitor);
