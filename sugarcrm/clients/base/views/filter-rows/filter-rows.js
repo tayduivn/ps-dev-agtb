@@ -49,12 +49,9 @@
         //Load partial
         this.formRowTemplate = app.template.get("filter-rows.filter-row-partial");
 
-        var operators = app.metadata.getFilterOperators();
-        if (_.isEmpty(operators)) {
-            app.logger.error('Filter operators not found.');
-            operators = {};
-        }
-        this.filterOperatorMap = operators;
+        this._super('initialize', [opts]);
+
+        this.loadFilterOperators(this.module);
 
         /**
          * FIXME: we should consider moving it to metadata instead. (see TY-177).
@@ -65,8 +62,6 @@
          * */
         this._operatorsWithNoValues = ['$empty', '$not_empty'];
 
-        app.view.View.prototype.initialize.call(this, opts);
-
         this.listenTo(this.layout, "filterpanel:change:module", this.handleFilterChange);
         this.listenTo(this.layout, "filter:create:open", this.openForm);
         this.listenTo(this.layout, "filter:create:close", this.render);
@@ -75,23 +70,51 @@
     },
 
     /**
-     * Handler for filter:change event
-     * Loads filterable fields for specified module
-     * @param moduleName
+     * Loads filterable fields and operators for supplied module.
+     *
+     * @param {string} module Selected module name.
      */
-    handleFilterChange: function(moduleName) {
-        var moduleMeta = app.metadata.getModule(moduleName);
-        if (!moduleMeta) {
+    handleFilterChange: function(module) {
+        if (_.isEmpty(app.metadata.getModule(module, 'filters')) || this.moduleName === module) {
             return;
         }
-        this.fieldList = app.data.getBeanClass('Filters').prototype.getFilterableFields(moduleName);
-        this.filterFields = {};
-        this.moduleName = moduleName;
 
-        // Translate text for the field list dropdown.
+        /**
+         * Name of the selected module which triggered the filter change.
+         *
+         * @property {string}
+         */
+        this.moduleName = module;
+
+        this.loadFilterFields(module);
+        this.loadFilterOperators(module);
+    },
+
+    /**
+     * Loads the list of filter fields for supplied module.
+     *
+     * @param {string} module The module to load the filter fields for.
+     */
+    loadFilterFields: function(module) {
+        if (_.isEmpty(app.metadata.getModule(module, 'filters'))) {
+            return;
+        }
+
+        this.fieldList = app.data.getBeanClass('Filters').prototype.getFilterableFields(module);
+        this.filterFields = {};
+
         _.each(this.fieldList, function(value, key) {
-            this.filterFields[key] = app.lang.get(value.vname, moduleName);
+            this.filterFields[key] = app.lang.get(value.vname, module);
         }, this);
+    },
+
+    /**
+     * Loads the list of filter operators for supplied module.
+     *
+     * @param {string} [module] The module to load the filters for.
+     */
+    loadFilterOperators: function(module) {
+        this.filterOperatorMap = app.metadata.getFilterOperators(module);
     },
 
     /**
