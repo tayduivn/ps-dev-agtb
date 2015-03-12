@@ -248,6 +248,7 @@ class PMSEFieldParser implements PMSEDataParserInterface
      */
     public function parseTokenValue($token)
     {
+        global $timedate, $current_user;
         $tokenArray = $this->decomposeToken($token);
         $all = array();
 
@@ -299,7 +300,14 @@ class PMSEFieldParser implements PMSEDataParserInterface
         $isAValidBean = (trim($module) == trim($bean->module_name));
         $isBoolean = ('bool' == $bean->field_name_map[$field]['type']);
         if ($isAValidBean) {
-            $value = $bean->$field;
+            $def = $bean->field_defs[$field];
+            if ($def['type'] == 'datetime'){
+                date_default_timezone_set('UTC');
+                $datetime = new Datetime($bean->$field);
+                $value = $timedate->asIso($datetime, $current_user);
+            } else {
+                $value = $bean->$field;
+            }
             if ($isBoolean) {
                 $value = ($value==1)? true : false;
             }

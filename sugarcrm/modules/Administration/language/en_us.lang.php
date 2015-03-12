@@ -295,10 +295,6 @@ $mod_strings = array (
     'LBL_FORECAST_TITLE'=> 'Forecast',
     'LBL_FORECAST_DESC'=> 'Configure admin setting for the Forecasts module. The Forecasts Settings will include Time Period, Forecasts Ranges, Worksheet Columns, and Scenarios.',
     'LBL_OPPORTUNITIES_DESC'=> 'Configure admin setting for the Opportunities module. The Opportunities Settings include viewing Opportunities by just the Opportunity, or by Opportunities plus the Revenue Line Items attached to it.',
-    //BEGIN SUGARCRM flav=com ONLY
-    'LBL_GLOBAL_SEARCH_SETTINGS' => 'Global Search',
-	'LBL_GLOBAL_SEARCH_SETTINGS_DESC' => 'Configure the global search options for the system.',
-    //END SUGARCRM flav=com ONLY
     'LBL_GLOBAL_SEARCH_SETTINGS' => 'Search',
     'LBL_GLOBAL_SEARCH_SETTINGS_DESC' => 'Select modules for the Global Search and configure full-text searching.',
     'LBL_FTS_SETTINGS' => 'Full-Text Search',
@@ -842,26 +838,6 @@ $mod_strings = array (
     'LBL_WIRELESS_URL_HELP' => 'Click to configure Sugar Mobile Plus applications',
     'LBL_HISTORY_CONTACTS_EMAILS' => 'Related Contacts Emails',
     'LBL_HISTORY_CONTACTS_EMAILS_DESC' => 'Enable/Disable emails from related (or linked) contacts to show in Email Subpanel.',
-    //BEGIN SUGARCRM flav=int ONLY
-	'LBL_ER_DIAGRAM_SCHEMA' => 'ER Diagram Schema',
-    'LBL_ER_DIAGRAM' => 'Genearate ER Diagram Schema',
-    'LBL_DB_SCAN' => 'Launch DB Scan',
-    'LBL_DB_SCAN_PROCESS' => 'Scan DB for Schema Integrity Checks',
-    'LBL_DATABASE_AND_SCHEMA_TITLE' =>'Database and Schema',
-    'LBL_DATABASE_AND_SCHEMA_DESC'=>'Sugar Database and Schema Tools',
-    'LBL_CREATE_DB_ER_DIAGRAM'	  => '<b>Creating the database </b> ',
-	'LBL_CREATE_DB_ER_DIAGRAM_2'	=> ' <b> with ER Schema on</b> ',
-	'LBL_CHECK_YOUR_SCHEMA'       => 'Check your Schema',
-	'LBL_CHECK_YOUR_SCHEMA_PROCESS' => 'This is for Schema Integrity check',
-	'LBL_DATABASE_STATS'       => 'DB Stats',
-	'LBL_DATABASE_STATS_PROCESS' => 'This shows DataBase Statistics',
-
-    //END SUGARCRM flav=int ONLY
-
-    //BEGIN SUGARCRM flav=com ONLY
-    'LBL_USERS_DESC' => 'Create, edit, activate and deactivate users in Sugar.',
-    //END SUGARCRM flav=com ONLY
-
 
     'LBL_USERS_DESC' => 'Create, edit, activate and deactivate users in Sugar. Create and manage teams and roles, including module- and field-level access.',
 
@@ -1151,31 +1127,26 @@ $mod_strings = array (
 	'WorkFlowAlertShells'  => 'WorkFlowAlertShell',
 	'WorkFlowTriggerShells'  => 'WorkFlowTriggerShell',
 	'Worksheet'  => 'Worksheet',
-   'LBL_SAML_ENABLE' => 'Enable SAML Authentication',
-   'LBL_SAML_HELP_TXT' => 'When SAML authentication is enabled, passwords can only be handled through SAML. None of the Sugar Password Management feature settings will apply.',
-   'LBL_SAML_TITLE' => 'SAML Authentication',
-   'LBL_SAML_CERT' => 'X509 Certificate',
-   'LBL_SAML_CERT_DESC' => 'Enter X509 Certificate',
-   'LBL_SAML_LOGIN_URL' => 'Login URL',
-   'LBL_SAML_LOGOUT_URL' => 'SLO URL',
-
-    //BEGIN SUGARCRM flav=com ONLY
-    'LBL_GLOBAL_SEARCH_SETTINGS_TITLE' => 'Select the module(s) that users will be able to search against using the Global Search.',
-    //END SUGARCRM flav=com ONLY
-    'LBL_GLOBAL_SEARCH_SETTINGS_TITLE' => 'Select the module(s) that users will be able to search against using the Global Search. Perform a full system index after enabling modules for the Global Search. To enable module fields for full text searching, use <a href="index.php?module=ModuleBuilder&action=index&type=studio">Studio</a>.',
-   'LBL_SELECT_MODULES' => 'Advanced',
-   'LBL_SELECT_MODULES_TITLE' => 'Drag and drop to select modules and to change the display order. Perform a search to apply the changes.',
-   'LBL_SELECT_FTS_MODULES_TITLE' => 'Drag and drop to select modules to be used in the Global Search. Click Save to apply the changes.',
-   'LBL_EAPM_SETTINGS' => 'External Accounts',
-   'LBL_EAPM_SETTINGS_DESC' => 'Select external applications for which users can provide their account information in order to access from within Sugar.',
+    'LBL_SAML_ENABLE' => 'Enable SAML Authentication',
+    'LBL_SAML_HELP_TXT' => 'When SAML authentication is enabled, passwords can only be handled through SAML. None of the Sugar Password Management feature settings will apply.',
+    'LBL_SAML_TITLE' => 'SAML Authentication',
+    'LBL_SAML_CERT' => 'X509 Certificate',
+    'LBL_SAML_CERT_DESC' => 'Enter X509 Certificate',
+    'LBL_SAML_LOGIN_URL' => 'Login URL',
+    'LBL_SAML_LOGOUT_URL' => 'SLO URL', 'LBL_GLOBAL_SEARCH_SETTINGS_TITLE' => 'Select the module(s) that users will be able to search against using the Global Search. Perform a full system index after enabling modules for the Global Search. To enable module fields for full text searching, use <a href="index.php?module=ModuleBuilder&action=index&type=studio">Studio</a>.',
+    'LBL_SELECT_MODULES' => 'Advanced',
+    'LBL_SELECT_MODULES_TITLE' => 'Drag and drop to select modules and to change the display order. Perform a search to apply the changes.',
+    'LBL_SELECT_FTS_MODULES_TITLE' => 'Drag and drop to select modules to be used in the Global Search. Click Save to apply the changes.',
+    'LBL_EAPM_SETTINGS' => 'External Accounts',
+    'LBL_EAPM_SETTINGS_DESC' => 'Select external applications for which users can provide their account information in order to access from within Sugar.',
 	'LBL_LANGUAGE_PACKS' => 'Language Packs' /*for 508 compliance fix*/,
 	'LBL_PATCH_UPGRADES' => 'Patch Upgrades' /*for 508 compliance fix*/,
 	'LBL_ADVANCED_SEARCH' => 'Advanced Search' /*for 508 compliance fix*/,
 	'LBL_BASIC_SEARCH' => 'Basic Search' /*for 508 compliance fix*/,
 	'LBL_PROCESSING' => 'Processing' /*for 508 compliance fix*/,
 
-   'LBL_MI_IN_ACTIONVIEWMAP' => 'Installing Action View Map',
-   'LBL_MI_UN_ACTIONVIEWMAP' => 'Unninstalling Action View Map',
+    'LBL_MI_IN_ACTIONVIEWMAP' => 'Installing Action View Map',
+    'LBL_MI_UN_ACTIONVIEWMAP' => 'Unninstalling Action View Map',
 	// OAuth
     'LBL_OAUTH_TITLE' => "OAuth Keys",
     'LBL_OAUTH' => "OAuth key management",

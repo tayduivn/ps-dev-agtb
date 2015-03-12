@@ -217,9 +217,17 @@ class PMSEFlowRouter
                     $resultData['flow_id']);
                 break;
             case 'CREATE':
-                $resultData['processed_flow'] = $this->caseFlowHandler->saveFlowData($resultData['flow_data'],
-                    $createThread);
-                $resultData['previous_closed_flow'] = $this->caseFlowHandler->closePreviousFlow($previousFlowData);
+                if (isset($resultData['create_thread']) && $resultData['create_thread']) {
+                    $createThread = $resultData['create_thread'];
+                }
+                $resultData['processed_flow'] = $this->caseFlowHandler->saveFlowData($resultData['flow_data'], $createThread);
+                if (!empty($resultData['previous_flows'])) {
+                    foreach ($resultData['previous_flows'] as $flow) {
+                        $resultData['previous_closed_flow'] = $this->caseFlowHandler->closePreviousFlow($flow);
+                    }
+                } else {
+                    $resultData['previous_closed_flow'] = $this->caseFlowHandler->closePreviousFlow($previousFlowData);
+                }
                 break;
             case 'CLOSE':
                 $resultData['processed_flow'] = null;
@@ -227,6 +235,9 @@ class PMSEFlowRouter
                 break;
             case 'NONE':
             default :
+                if (isset($resultData['close_thread']) && $resultData['close_thread']) {
+                    $this->caseFlowHandler->closeThreadByThreadIndex($previousFlowData['cas_id'], $previousFlowData['cas_thread']);
+                }
                 $resultData['processed_flow'] = $resultData['flow_data'];
                 break;
         }

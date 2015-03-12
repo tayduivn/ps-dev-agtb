@@ -39,10 +39,6 @@ if (isset($_REQUEST['offset']) or isset($_REQUEST['record'])) {
 	header("Location: index.php?module=Accounts&action=index");
 }
 
-//BEGIN SUGARCRM flav=ent ONLY
-displayAdminError(translate('WARN_WORKFLOW_DEPRECATED_ERROR', 'WorkFlow'));
-//END SUGARCRM flav=ent ONLY
-
 if(isset($_REQUEST['isDuplicate']) && $_REQUEST['isDuplicate'] == 'true') {
 	$focus->id = "";
 }

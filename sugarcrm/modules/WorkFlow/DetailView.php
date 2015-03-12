@@ -37,9 +37,6 @@ if (isset($_REQUEST['offset']) or isset($_REQUEST['record'])) {
 } else {
 	header("Location: index.php?module=WorkFlow&action=index");
 }
-//BEGIN SUGARCRM flav=ent ONLY
-displayAdminError(translate('WARN_WORKFLOW_DEPRECATED_ERROR', 'WorkFlow'));
-//END SUGARCRM flav=ent ONLY
 
 $access = get_workflow_admin_modules_for_user($current_user);
 if ((!is_admin($current_user) && !is_admin_for_any_module($current_user)) || (!empty($focus->base_module) && empty($access[$focus->base_module])))

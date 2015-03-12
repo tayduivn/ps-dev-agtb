@@ -350,6 +350,27 @@ class pmse_InboxViewShowCase extends SugarView
         }
     }
 
+    protected function setupOriginalEditView () {
+        global $mod_strings;
+        if (isset($this->bean) && isset($this->th->ss)) {
+            $mod_strings = array_merge($mod_strings, return_module_language($GLOBALS['current_language'], $this->bean->module_name));
+            $moduleView = ViewFactory::loadView('edit', $this->bean->module_dir, $this->bean);
+            $moduleView->bean = $this->bean;
+            $moduleView->ss = $this->th->ss;
+            $moduleView->ss->assign("exclude_default_footer", true);
+            //Set the view to use an Empty Sugarview to prevent the display of any data. We only want to populate
+            //the bean and smarty template
+            $mockEv =  new SugarView();
+            $mockEv->isDuplicate = false;
+            $moduleView->ev = $mockEv;
+            $moduleView->display();
+            //Include the JSLanguage for both pmse_Inbox and the target module
+            echo $moduleView->_getModLanguageJS();
+            $moduleView->module = $this->bean->module_dir;
+            echo $moduleView->_getModLanguageJS();
+        }
+    }
+
     public function setupAll($showTitle = false, $ajaxSave = false, $moduleName = '', $readonly = false)
     {
         global $mod_strings, $sugar_config, $app_strings, $app_list_strings, $theme, $current_user;
@@ -362,10 +383,13 @@ class pmse_InboxViewShowCase extends SugarView
             }
         }
 
+        $this->setupOriginalEditView();
+
         $this->th->ss->assign('id', $this->fieldDefs['id']['value']);
         $this->th->ss->assign('offset', $this->offset + 1);
         $this->th->ss->assign('APP', $app_strings);
         $this->th->ss->assign('MOD', $mod_strings);
+        $this->th->ss->assign('footerTpl', isset($this->defs['templateMeta']['form']['footerTpl']) ? $this->defs['templateMeta']['form']['footerTpl'] : null);
         $this->fieldDefs = $this->setDefaultAllFields($this->fieldDefs); // default editview
         if ($readonly) {
             $this->fieldDefs = $this->setReadOnlyAllFields($this->fieldDefs);

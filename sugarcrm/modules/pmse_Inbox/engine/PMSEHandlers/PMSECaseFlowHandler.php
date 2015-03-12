@@ -643,23 +643,25 @@ class PMSECaseFlowHandler
      */
     public function closeThreadByThreadIndex($cas_id, $cas_thread_index)
     {
-        global $db;
-        //get current thread
-        $query = "select * from pmse_bpm_thread where cas_id = $cas_id and cas_thread_index = $cas_thread_index";
-        $result = $db->Query($query);
-        $row = $db->fetchByAssoc($result);
+        $q = $this->retrieveSugarQueryObject();
+        $threadBean = $this->retrieveBean('pmse_BpmThread');
+        $fields = array('id');
+        $q->from($threadBean, array('add_deleted' => true));
+        $q->where()
+            ->equals('cas_id', $cas_id)
+            ->equals('cas_thread_index', $cas_thread_index);
 
-        if (!is_array($row)) {
-            return false;
+        $q->select($fields);
+        $rows = $q->execute();
+
+        if (!is_array($rows)) {
+            return;
         }
-        //$cas_index = $row['cas_index'];
-
-        $query = "update pmse_bpm_thread set " .
-            " cas_thread_status = 'CLOSED' " .
-            " where cas_id = $cas_id and cas_thread_index = $cas_thread_index ";
-
-        $db->query($query, true, "Error updating bpm_thread record ");
-        //$this->bpmLog('DEBUG', "[$cas_id][$cas_index] thread $cas_thread_index closed $query");
+        foreach ($rows as $row) {
+            $threadBean = $this->retrieveBean('pmse_BpmThread', $row['id']);
+            $threadBean->cas_thread_status = 'CLOSED';
+            $threadBean->save();
+        }
     }
 
     /**

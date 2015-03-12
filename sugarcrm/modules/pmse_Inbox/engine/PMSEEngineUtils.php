@@ -851,22 +851,28 @@ class PMSEEngineUtils
         $dateToProcess = (!empty($caseData->cas_task_start_date) && $caseData->cas_task_start_date != '0000-00-00 00:00:00') ? $caseData->cas_task_start_date : $caseData->cas_delegate_date;
         $expectedTime = new DateTime($dateToProcess);
         if (!empty($expectedTimeObject) && !empty($expectedTimeObject->time)) {
-            switch ($expectedTimeObject->unit) {
-                case 'day':
-                    $expectedTime->add(new DateInterval('P' . $expectedTimeObject->time . 'D'));
-                    break;
-                case 'hour':
-                    $expectedTime->add(new DateInterval('PT' . $expectedTimeObject->time . 'H'));
-                    break;
-                case 'minute':
-                    $expectedTime->add(new DateInterval('PT' . $expectedTimeObject->time . 'S'));
-                    break;
-            }
+            self::addDateInterval($expectedTime, $expectedTimeObject->time, $expectedTimeObject->unit);
         }
         //echo '<br>DELEGATE DATE  :' . $caseData['cas_delegate_date'] . '  UNIX: ' . $unixTime;
         //echo '<br>EXPECTED DATE  :' . date("Y-m-d H:i:s", $expectedTime) . '  UNIX: ' . $expectedTime;
         //echo '<br>GLOBAL   DATE  :' . date("Y-m-d H:i:s", $time_data->getNow()->ts) . '  UNIX: ' . $time_data->getNow()->ts;
         return $expectedTime;
+    }
+
+    public static function addDateInterval($dateTime, $interval, $unit)
+    {
+        switch($unit) {
+            case 'day':
+                $dateTime->add(new DateInterval('P' . $interval . 'D'));
+                break;
+            case 'hour':
+                $dateTime->add(new DateInterval('PT' . $interval . 'H'));
+                break;
+            case 'minute':
+                $dateTime->add(new DateInterval('PT' . $interval . 'M'));
+                break;
+        }
+        return $dateTime;
     }
 
     /**

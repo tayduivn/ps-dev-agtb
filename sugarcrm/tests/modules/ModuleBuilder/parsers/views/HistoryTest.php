@@ -27,7 +27,8 @@ class HistoryTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->_path = sys_get_temp_dir() . '/history/' . time();
+        $this->_path = sugar_cached('/history/' . time());
+        sugar_mkdir($this->getHistoryDir());
         $this->_history = new History($this->_path);
     }
 
@@ -38,6 +39,7 @@ class HistoryTest extends PHPUnit_Framework_TestCase
         foreach ($files as $file) {
             @unlink($file);
         }
+        @rmdir($this->getHistoryDir());
     }
 
     public function testConstructor()

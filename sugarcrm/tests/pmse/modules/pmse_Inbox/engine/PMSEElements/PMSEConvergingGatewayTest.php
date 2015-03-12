@@ -57,14 +57,18 @@ class PMSEConvergingGatewayTest extends PHPUnit_Framework_TestCase
             ->getMock();
         
         $sugarQuery = $this->getMockBuilder('SugarQuery')
-            ->setMethods(array('select', 'from', 'where', 'joinRaw', 'queryAnd', 'addRaw', 'execute'))
+            ->setMethods(array('select', 'from', 'where', 'joinRaw', 'queryAnd', 'addRaw', 'execute', 'fieldRaw'))
             ->disableOriginalConstructor()
             ->getMock();
         
         $caseFlowHandler->expects($this->exactly(1))
             ->method('retrieveBean')
             ->will($this->returnValue($sugarBeanMock));
-        
+
+        $sugarQuery->expects($this->atLeastOnce())
+            ->method('select')
+            ->will($this->returnValue($sugarQuery));
+
         $this->convergingGateway->expects($this->exactly(1))
             ->method('retrieveSugarQueryObject')
             ->will($this->returnValue($sugarQuery));
@@ -112,7 +116,7 @@ class PMSEConvergingGatewayTest extends PHPUnit_Framework_TestCase
         
         $sugarQuery = $this->getMockBuilder('SugarQuery')
             ->disableOriginalConstructor()
-            ->setMethods(array('select', 'from', 'where', 'joinRaw', 'queryAnd', 'addRaw', 'execute'))            
+            ->setMethods(array('select', 'from', 'where', 'joinRaw', 'queryAnd', 'addRaw', 'execute', 'fieldRaw'))
             ->getMock();
         
         $this->convergingGateway->expects($this->exactly(1))
@@ -122,6 +126,10 @@ class PMSEConvergingGatewayTest extends PHPUnit_Framework_TestCase
         $caseFlowHandler->expects($this->exactly(1))
             ->method('retrieveBean')
             ->will($this->returnValue($sugarBeanMock));
+
+        $sugarQuery->expects($this->atLeastOnce())
+            ->method('select')
+            ->will($this->returnValue($sugarQuery));
         
         $sugarQuery->expects($this->exactly(1))
             ->method('where')
