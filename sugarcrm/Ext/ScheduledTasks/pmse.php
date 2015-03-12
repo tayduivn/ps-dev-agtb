@@ -41,10 +41,10 @@ if (!function_exists("PMSEJobRun")) {
             $externalAction = 'RESUME_EXECUTION';
             $jobQueueHandler = new PMSEJobQueueHandler();
 
-            return ($jobQueueHandler->executeRequest($flowData, false, null, $externalAction));
+            $jobQueueHandler->executeRequest($flowData, false, null, $externalAction);
         }
 
-        return false;
+        return true;
     }
 }
 
