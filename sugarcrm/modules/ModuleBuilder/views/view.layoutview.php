@@ -323,7 +323,7 @@ class ViewLayoutView extends SugarView
 
         $buttons [] = array(
             'id' => 'historyDefault',
-            'text' => translate('LBL_RESTORE_DEFAULT'),
+            'text' => translate('LBL_RESTORE_DEFAULT_LAYOUT'),
             'actionScript' => "onclick='$action'",
             'disabled' => $disableLayout,
         );
