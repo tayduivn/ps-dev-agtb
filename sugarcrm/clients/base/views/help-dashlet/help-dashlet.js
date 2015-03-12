@@ -35,6 +35,13 @@
     initialize: function(options) {
         this._super('initialize', [options]);
 
+        this.getHelpObject();
+    },
+
+    /**
+     * Method to fetch the help object from the app.help utility
+     */
+    getHelpObject: function() {
         var helpUrl = {
                 more_info_url: this.createMoreHelpLink(),
                 more_info_url_close: '</a>'
