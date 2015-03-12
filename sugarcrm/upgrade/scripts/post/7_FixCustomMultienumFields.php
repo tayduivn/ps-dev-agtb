@@ -17,10 +17,6 @@ class SugarUpgradeFixCustomMultienumFields extends UpgradeScript
 
     public function run()
     {
-        if (!version_compare($this->from_version, '7.5', '<')) {
-            return;
-        }
-
         $customFieldFiles = $this->getCustomFieldFiles();
         foreach ($customFieldFiles as $file) {
             if (is_dir($file)) {
