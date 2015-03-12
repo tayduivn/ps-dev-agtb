@@ -68,6 +68,17 @@ $moduleAssocFieldsArray = array(
             'select_field_name' => 'name',
             'select_field_join' => 'id',
         ),
+        'category_id' => array(
+            'table_name' => 'categories',
+            'select_field_name' => 'name',
+            'select_field_join' => 'id',
+        ),
+        'kbscase_id' => array(
+            'table_name' => 'cases',
+            'select_field_name' => 'name',
+            'select_field_join' => 'id',
+        )
+
     ),
 );
 
