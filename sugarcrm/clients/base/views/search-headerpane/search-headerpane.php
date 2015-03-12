@@ -18,6 +18,10 @@ $viewdefs['base']['view']['search-headerpane'] = array(
             'type' => 'label',
             'default_value' => 'TPL_SEARCH_RESULTS_FOR',
         ),
+        array(
+            'name' => 'collection-count',
+            'type' => 'collection-count',
+        ),
     ),
     'buttons' => array(
         array(
