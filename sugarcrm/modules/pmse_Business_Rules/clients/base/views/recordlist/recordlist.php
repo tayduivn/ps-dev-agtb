@@ -44,18 +44,12 @@ $viewdefs[$module_name ]['base']['view']['recordlist'] = array(
                 'acl_action' => 'edit',
             ),
 //            array(
-//                'type' => 'follow',
-//                'name' => 'follow_button',
-//                'event' => 'list:follow:fire',
+//                'type' => 'rowaction',
+//                'name' => 'export_button',
+//                'label' => 'LBL_PMSE_LABEL_EXPORT',
+//                'event' => 'list:exportbusinessrules:fire',
 //                'acl_action' => 'view',
 //            ),
-            array(
-                'type' => 'rowaction',
-                'name' => 'export_button',
-                'label' => 'LBL_PMSE_LABEL_EXPORT',
-                'event' => 'list:exportbusinessrules:fire',
-                'acl_action' => 'view',
-            ),
             array(
                 'type' => 'rowaction',
                 'name' => 'delete_button',
