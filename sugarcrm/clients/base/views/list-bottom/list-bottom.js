@@ -20,6 +20,17 @@
 
     initialize: function(options) {
         this._super('initialize', [options]);
+
+        /**
+         * Label key used for {@link #showMoreLabel}.
+         *
+         * You can define it in metadata under `label` property. Defaults to
+         * `TPL_SHOW_MORE_MODULE`.
+         *
+         * @type {string}
+         * @private
+         */
+        this._showMoreLabel = this.meta && this.meta.label || 'TPL_SHOW_MORE_MODULE';
         this._initPagination();
     },
 
@@ -65,13 +76,25 @@
      * Label should be "More <module name>...".
      */
     setShowMoreLabel: function() {
-        var model = this.collection.at(0),
-            module = model ? model.module : this.context.get('module');
-        this.showMoreLabel = app.lang.get('TPL_SHOW_MORE_MODULE', module, {
-            module: new Handlebars.SafeString(app.lang.getModuleName(module, {plural: true}).toLowerCase()),
+        var model = this.collection.at(0);
+        var module = model ? model.module : this.context.get('module');
+        var context = {
             count: this.collection.length,
             offset: this.collection.next_offset >= 0
-        });
+        };
+        if (module) {
+            context.module = new Handlebars.SafeString(app.lang.getModuleName(module, {plural: true}).toLowerCase());
+        }
+
+        /**
+         * Label used in the template to display Show more message.
+         *
+         * By default it will display "More {module}...".
+         *
+         * @type {string}
+         * @private
+         */
+        this.showMoreLabel = app.lang.get(this._showMoreLabel, module, context);
     },
 
     /**

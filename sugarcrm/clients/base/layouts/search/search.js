@@ -31,7 +31,7 @@
             this.collection.fetch({query: searchTerm});
         }, this);
 
-        this.collection.on('reset', function(collection, data) {
+        this.collection.on('sync', function(collection, data) {
             this.formatRecords(collection);
 //            collection.facets = data.facets;
 //            this.context.set('facets', data.facets);
@@ -45,6 +45,9 @@
      */
     formatRecords: function(collection) {
         collection.each(function(model) {
+            if (model.formatted) {
+                return;
+            }
             var module = app.metadata.getModule(model.get('_module'));
             var highlights = _.map(model.get('_highlights'), function(val, key) {
                 return {
@@ -63,6 +66,9 @@
                 var name = model.get('first_name') + ' ' + model.get('last_name');
                 model.set('name', name);
             }
+            // We add a flag here so that when the user clicks on
+            // `More results...` we won't reformat the existing ones.
+            model.formatted = true;
         });
     }
 })

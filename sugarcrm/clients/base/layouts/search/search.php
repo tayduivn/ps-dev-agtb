@@ -26,6 +26,13 @@ $viewdefs['base']['layout']['search'] = array(
                                     'view' => 'search-list',
                                     'primary' => true,
                                 ),
+                                array(
+                                    'view' => array(
+                                        'name' => 'list-bottom',
+                                        'label' => 'LBL_SHOW_MORE_RESULTS',
+                                        'css_class' => 'search-more-results',
+                                    ),
+                                ),
                             ),
                             'type' => 'simple',
                             'name' => 'main-pane',

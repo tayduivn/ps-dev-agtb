@@ -17,6 +17,8 @@
  * @extends View.View
  */
 ({
+    plugins: ['Pagination'],
+
     /**
      * @inheritDoc
      */
@@ -38,7 +40,7 @@
      * @override
      */
     bindDataChange: function() {
-        this.collection.on('reset', function() {
+        this.collection.on('sync', function() {
             if (this.disposed) {
                 return;
             }
