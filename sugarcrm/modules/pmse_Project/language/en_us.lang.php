@@ -159,7 +159,7 @@ $mod_strings = array (
     'LBL_PMSE_FORM_OPTION_APPROVE_REJECT' => 'Approve/Reject',
     'LBL_PMSE_FORM_OPTION_ROUTE' => 'Route',
     'LBL_PMSE_FORM_LABEL_OTHER_DERIVATION_OPTIONS' => 'Other Routing Options',
-    'LBL_PMSE_FORM_LABEL_RECORD_OWNERSHIP' => 'Change Record Owner',
+    'LBL_PMSE_FORM_LABEL_RECORD_OWNERSHIP' => 'Change Assigned To User',
     'LBL_PMSE_FORM_LABEL_TEAM' => 'Team',
     'LBL_PMSE_FORM_LABEL_REASSIGN' => 'Select New Process User',
 
