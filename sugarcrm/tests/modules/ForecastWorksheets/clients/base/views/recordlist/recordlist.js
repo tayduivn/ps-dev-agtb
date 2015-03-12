@@ -103,6 +103,10 @@ describe("ForecastWorksheets.View.RecordList", function() {
         expect(_.indexOf(view.plugins, 'ReorderableColumns')).toEqual(-1);
     });
 
+    it('should not have MassCollection plugin', function() {
+        expect(_.indexOf(view.plugins, 'MassCollection')).toEqual(-1);
+    });
+
     describe('beforeRenderCallback', function() {
         describe('when layout hidden', function() {
             var layoutShowStub, layoutVisibleStub;

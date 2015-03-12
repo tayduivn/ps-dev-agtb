@@ -70,12 +70,6 @@ class OpportunityHooks extends AbstractForecastHooks
     public static function setSalesStatus(Opportunity $bean, $event, $args)
     {
         if (static::useRevenueLineItems() && $bean->ACLFieldAccess('sales_status', 'write')) {
-            // we have a new bean so set the value to new and dump out
-            if (empty($bean->fetched_row)) {
-                $bean->sales_status = Opportunity::STATUS_NEW;
-                return;
-            }
-
             // Load forecast config so we have the sales_stage data.
             static::loadForecastSettings();
 
@@ -109,9 +103,11 @@ class OpportunityHooks extends AbstractForecastHooks
 
             $total_rlis = count($bean->get_linked_beans('revenuelineitems', 'RevenueLineItems'));
 
-            if ($total_rlis > ($won_rlis + $lost_rlis) || $total_rlis === 0) {
+            if ($total_rlis > ($won_rlis + $lost_rlis)) {
                 // still in progress
                 $bean->sales_status = Opportunity::STATUS_IN_PROGRESS;
+            } elseif ($total_rlis === 0) {
+                $bean->sales_status = Opportunity::STATUS_NEW;
             } else {
                 // they are equal so if the total lost == total rlis then it's closed lost,
                 // otherwise it's always closed won

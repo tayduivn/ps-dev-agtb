@@ -134,6 +134,13 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
                 'probability' => true,
             )
         );
+
+        $this->fixFilter(
+            array(
+                'sales_stage' => true,
+                'sales_status' => false,
+            )
+        );
     }
 
     /**
