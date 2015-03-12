@@ -13,7 +13,7 @@
  * Copyright (C) 2004-2014 SugarCRM Inc. All rights reserved.
  */
 
-require_once 'clients/base/api/TreeApi.php';
+require_once 'modules/Categories/clients/base/api/TreeApi.php';
 
 /**
  * Test for TreeApi
