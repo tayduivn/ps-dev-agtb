@@ -196,7 +196,12 @@ $dictionary['KBContent'] = array(
                 'enabled' => true,
                 'type' => 'bool',
             ),
-            'studio' => false,
+            'studio' => array(
+                'list' => false,
+                'quickcreate' => false,
+                'basic_search' => false,
+                'advanced_search' => false,
+            ),
             'readonly' => true,
         ),
         'is_external' => array(
