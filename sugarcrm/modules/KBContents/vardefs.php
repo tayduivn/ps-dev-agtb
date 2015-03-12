@@ -496,6 +496,7 @@ VardefManager::createVardef(
     array(
         'basic',
         'team_security',
+        'assignable',
     )
 );
 $dictionary['KBContent']['fields']['name']['audited'] = true;
