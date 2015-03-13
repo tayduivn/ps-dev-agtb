@@ -56,6 +56,24 @@
     },
 
     /**
+     * {@inheritDoc}
+     * Need to strip tags for list and activity stream.
+     */
+    format: function(value) {
+        var result;
+        switch (this.view.action) {
+            case 'list':
+            case 'activitystream':
+                result = $('<div/>').html(value).text();
+                break;
+            default:
+                result = this._super('format', [value]);
+                break;
+        }
+        return result;
+    },
+
+    /**
      * Populate the editor or textarea with the value from the model
      */
     bindDataChange: function() {
@@ -76,10 +94,6 @@
      */
     setViewContent: function(value){
         var editable = this._getHtmlEditableField();
-        if (this.action == 'list') {
-            // Strip HTML tags for ListView.
-            value = $('<div/>').html(value).text();
-        }
         if (!editable) {
             return;
         }
