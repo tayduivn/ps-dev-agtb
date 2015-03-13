@@ -168,29 +168,29 @@ class GlobalSearch extends AbstractProvider
     public function buildProviderAnalysis(AnalysisBuilder $analysisBuilder)
     {
         $analysisBuilder
+
+            // ngram filter
             ->addFilter(
                 'gs_filter_ngram',
                 'nGram',
                 array('min_gram' => 2, 'max_gram' => 15)
             )
+
+            // char filter keeping only numeric values
             ->addCharFilter(
                 'gs_char_num_pattern',
                 'pattern_replace',
                 array('pattern' => '[^\\d]+', 'replacement' => '')
             )
+
             ->addCustomAnalyzer(
                 'gs_analyzer_default',
-                'whitespace',
+                'standard',
                 array('lowercase')
             )
             ->addCustomAnalyzer(
-                'gs_analyzer_standard',
-                'standard',
-                array('standard', 'lowercase')
-            )
-            ->addCustomAnalyzer(
                 'gs_analyzer_ngram',
-                'whitespace',
+                'standard',
                 array('lowercase', 'gs_filter_ngram')
             )
             ->addCustomAnalyzer(
