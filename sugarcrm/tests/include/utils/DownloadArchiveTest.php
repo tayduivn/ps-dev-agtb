@@ -20,7 +20,7 @@ require_once 'include/SugarFields/SugarFieldHandler.php';
 /**
  * Test DownloadFile:getArchive()
  */
-class RS320Test extends Sugar_PHPUnit_Framework_TestCase
+class DownloadArchiveTest extends Sugar_PHPUnit_Framework_TestCase
 {
     /**
      * Notes.
@@ -110,21 +110,21 @@ class RS320Test extends Sugar_PHPUnit_Framework_TestCase
         $notes = array();
 
         for ($i = 0; $i < $fileCounts; $i++) {
-            $tmpFile = tempnam(sys_get_temp_dir(), 'RS320Test' . $i);
+            $tmpFile = tempnam(sys_get_temp_dir(), 'DownloadArchiveTest' . $i);
             file_put_contents($tmpFile, uniqid());
 
             $note = BeanFactory::newBean('Notes');
-            $note->name = 'RS320Test' . uniqid();
+            $note->name = 'DownloadArchiveTest' . uniqid();
 
             $_FILES['uploadfile'] = array(
-                'name' => 'RS320Test' . $i . '.txt',
+                'name' => 'DownloadArchiveTest' . $i . '.txt',
                 'tmp_name' => $tmpFile,
                 'size' => filesize($tmpFile),
                 'error' => 0,
                 '_SUGAR_API_UPLOAD' => true,
             );
 
-            $sf->save($note, array(), 'filename', $def, 'RS320Test_');
+            $sf->save($note, array(), 'filename', $def, 'DownloadArchiveTest_');
 
             $this->notes[] = $note;
             $notes[] = $note;
