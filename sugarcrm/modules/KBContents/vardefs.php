@@ -16,11 +16,6 @@ $dictionary['KBContent'] = array(
     'activity_enabled' => true,
     'unified_search' => true,
     'full_text_search' => true,
-    'full_text_search_filter' => array(
-        'term' => array(
-            'active_rev' => 1,
-        )
-    ),
     'unified_search_default_enabled' => true,
     'comment' => 'A content represents information about document',
     'duplicate_merge' => true,

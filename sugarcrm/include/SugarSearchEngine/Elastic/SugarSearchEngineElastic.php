@@ -655,24 +655,6 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         $seed = BeanFactory::newBean($module);
         $moduleFilter = $seed->addSseVisibilityFilter($this, $moduleFilter);
 
-        if (!empty($GLOBALS['dictionary'][$seed->object_name]['full_text_search_filter'])) {
-            $specificModuleFilter = $GLOBALS['dictionary'][$seed->object_name]['full_text_search_filter'];
-
-            foreach ($specificModuleFilter as $filterType => $filterData) {
-                foreach ($filterData as $fieldName => $fieldValue) {
-                    $data = array(
-                        'fieldName' => $fieldName,
-                        'value' => $fieldValue,
-                    );
-                    if ($filterType == 'term') {
-                        $moduleFilter = $this->constructTermFilter($moduleFilter, $data);
-                    } elseif ($filterType == 'range') {
-                        $moduleFilter = $this->constructRangeFilter($moduleFilter, $data);
-                    }
-                }
-            }
-        }
-
         return $moduleFilter;
     }
 
@@ -735,24 +717,8 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      */
     protected function constructRangeFilter($moduleFilter, $filter)
     {
-        $filter = new \Elastica\Filter\Range($filter['fieldName'], $filter['value']);
+        $filter = new \Elastica\Filter\Range($filter['fieldname'], $filter['range']);
         $moduleFilter->addMust($filter);
-        return $moduleFilter;
-    }
-
-    /**
-     * Construct a Term Filter.
-     *
-     * @param \Elastica\Filter\AbstractFilter $moduleFilter Filter to add term into.
-     * @param array $filter Values to construct term.
-     * @return \Elastica\Filter\AbstractFilter $moduleFilter
-     */
-    protected function constructTermFilter($moduleFilter, $filter)
-    {
-        $termFilter = new \Elastica\Filter\Term();
-        $termFilter->setTerm($filter['fieldName'], $filter['value']);
-        $moduleFilter->addMust($termFilter);
-
         return $moduleFilter;
     }
 
