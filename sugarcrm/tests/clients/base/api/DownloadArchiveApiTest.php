@@ -21,7 +21,7 @@ require_once 'clients/base/api/FileApi.php';
  *
  * @group ApiTests
  */
-class RS320ApiTest extends Sugar_PHPUnit_Framework_TestCase
+class DownloadArchiveApiTest extends Sugar_PHPUnit_Framework_TestCase
 {
     /**
      * @var ServiceBase
@@ -56,21 +56,21 @@ class RS320ApiTest extends Sugar_PHPUnit_Framework_TestCase
         $sf = $sfh->getSugarField($def['type']);
 
         for ($i = 0; $i < 3; $i++) {
-            $tmpFile = tempnam(sys_get_temp_dir(), 'RS320Test' . $i);
+            $tmpFile = tempnam(sys_get_temp_dir(), 'DownloadArchiveTest' . $i);
             file_put_contents($tmpFile, uniqid());
 
             $note = BeanFactory::newBean('Notes');
-            $note->name = 'RS320Test' . uniqid();
+            $note->name = 'DownloadArchiveTest' . uniqid();
 
             $_FILES['uploadfile'] = array(
-                'name' => 'RS320Test' . $i . '.txt',
+                'name' => 'DownloadArchiveTest' . $i . '.txt',
                 'tmp_name' => $tmpFile,
                 'size' => filesize($tmpFile),
                 'error' => 0,
                 '_SUGAR_API_UPLOAD' => true,
             );
 
-            $sf->save($note, array(), 'filename', $def, 'RS320Test_');
+            $sf->save($note, array(), 'filename', $def, 'DownloadArchiveTest_');
 
             $this->account->notes->add($note);
             $this->notes[] = $note;
@@ -119,6 +119,7 @@ class RS320ApiTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * Test get archived files.
+     * Always should force download.
      *
      * @dataProvider dataProviderGetArchive
      */
@@ -128,7 +129,7 @@ class RS320ApiTest extends Sugar_PHPUnit_Framework_TestCase
         $downloadMock = $this->getMock('DownloadFileApi', array('outputFile'), array($this->service));
         $downloadMock->expects($this->once())->method('outputFile')
             ->with(
-                $this->logicalAnd($this->isType('bool'), $forceDownload? $this->isTrue() : $this->isFalse()),
+                $this->logicalAnd($this->isType('bool'), $this->isTrue()),
                 $this->logicalAnd(
                     $this->isType('array'),
                     $this->arrayHasKey('path'),

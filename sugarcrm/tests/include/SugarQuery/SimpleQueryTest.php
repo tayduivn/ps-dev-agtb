@@ -475,7 +475,7 @@ class SimpleQueryTest extends Sugar_PHPUnit_Framework_TestCase
     {
         /** @var KBDocument $kbDocument */
         $kbDocument = BeanFactory::getBean('KBDocuments');
-        $kbDocument->kbdocument_name = 'Test Document';
+        $kbDocument->name = 'Test Document';
         $kbDocument->save();
         $this->kbDocuments[] = $kbDocument;
 
