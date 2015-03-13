@@ -29,6 +29,10 @@ class PlainHighlighter extends AbstractHighlighter
     {
         $this->setFields($fields);
         $this->setRequiredFieldMatch(true);
-        $this->setDefaultFieldArgs(array('type' => 'plain', 'force_source' => true));
+        $this->setDefaultFieldArgs(array(
+            'type' => 'plain',
+            'force_source' => true,
+            'require_field_match' => true,
+        ));
     }
 }
