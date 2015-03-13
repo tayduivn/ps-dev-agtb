@@ -72,10 +72,12 @@
         this.previousDateEntered = app.date.format(dateEntered, app.user.getPreference('datepref') + ' ' + app.user.getPreference('timepref'));
 
         //loop through from oldest to newest to build the log correctly
-        var loopPreviousModel = '';
-        var models = _.clone(this.collection.models).reverse();
+        var loopPreviousModel = '',
+            models = _.clone(this.collection.models).reverse(),
+            selectedUser = this.view.context.get('selectedUser'),
+            forecastType = app.utils.getForecastType(selectedUser.is_manager, selectedUser.showOpps);
         _.each(models, function(model) {
-            this.commitLog.push(app.utils.createHistoryLog(loopPreviousModel, model));
+            this.commitLog.push(app.utils.createHistoryLog(loopPreviousModel, model, forecastType === 'Direct'));
             loopPreviousModel = model;
         }, this);
 
