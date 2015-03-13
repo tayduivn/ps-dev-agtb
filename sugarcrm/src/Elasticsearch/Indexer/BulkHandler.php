@@ -15,6 +15,7 @@ namespace Sugarcrm\Sugarcrm\Elasticsearch\Indexer;
 use Sugarcrm\Sugarcrm\Elasticsearch\Container;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Bulk;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Client;
+use Psr\Log\LogLevel;
 
 /**
  *
@@ -84,20 +85,38 @@ class BulkHandler
      * Its advised for the caller to gracefully finish the batch itself when
      * able as batch handlers are not supposed to be shared which implies that
      * the bulk sending should be nicely contained within the caller.
-     * TODO: do we still need this ?
      */
     public function __destruct()
     {
         $documents = array_filter($this->documents);
         if (!empty($documents)) {
-            // As this is a desctructor call, we need to make sure our logger
-            // object is available for the db backend
+
+            /*
+             * DBManager relies on $GLOBALS['log'] in certain cases instead of
+             * making use of $this->log. Make sure we have it still available
+             * in case we need to use DBManager from here.
+             */
             if (empty($GLOBALS['log'])) {
-                $GLOBALS['log'] = \LoggerManager::getLogger();
+                $GLOBALS['log'] = $this->container->logger->getSugarLogger();
             }
-            $GLOBALS['log']->fatal("BulkHandler::__destruct needed");
+
             $this->finishBatch();
+
+            $msg = sprintf(
+                "BulkHandler::__destruct used to flush out %s document(s)",
+                count($documents)
+            );
+            $this->container->logger->debug($msg);
         }
+    }
+
+    /**
+     * Unset documents in case this object gets unserialized trying
+     * to abuse our dtor.
+     */
+    public function __wakeup()
+    {
+        $this->documents = array();
     }
 
     /**

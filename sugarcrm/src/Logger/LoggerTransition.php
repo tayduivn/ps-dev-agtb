@@ -73,6 +73,13 @@ class LoggerTransition extends AbstractLogger
         return call_user_func($callBack, $message);
     }
 
+    /**
+     * @return LoggerManager
+     */
+    public function getSugarLogger()
+    {
+        return $this->logger;
+    }
 
     /**
      * Get the corresponding PSR-0 level, given a sugar level.

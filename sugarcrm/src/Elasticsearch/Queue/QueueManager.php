@@ -94,13 +94,32 @@ class QueueManager
     {
         // Safeguard to remove ids from queue
         if (!empty($this->deleteFromQueue)) {
-            // As this is a desctructor call, we need to make sure our logger
-            // object is available for the db backend
+
+            /*
+             * DBManager relies on $GLOBALS['log'] in certain cases instead of
+             * making use of $this->log. Make sure we have it still available.
+             */
             if (empty($GLOBALS['log'])) {
-                $GLOBALS['log'] = \LoggerManager::getLogger();
+                $GLOBALS['log'] = $this->container->logger->getSugarLogger();
             }
+
             $this->flushDeleteFromQueue();
+
+            $msg = sprintf(
+                "QueueManager::__destruct used to flush out %s document(s)",
+                count($this->deleteFromQueue)
+            );
+            $this->container->logger->warning($msg);
         }
+    }
+
+    /**
+     * Unset deletions in case this object gets unserialized trying
+     * to abuse our dtor.
+     */
+    public function __wakeup()
+    {
+        $this->deleteFromQueue = array();
     }
 
     /**
