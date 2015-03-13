@@ -206,10 +206,10 @@ $mod_strings = array (
     // FORMS
     'LBL_PMSE_FORM_TITLE_LABEL_EVENT' => 'Event',
     'LBL_PMSE_FORM_LABEL_APPLIES_TO' => 'Applies to',
-    'LBL_PMSE_FORM_OPTION_NEW_RECORDS_ONLY' => 'New records only',
-    'LBL_PMSE_FORM_OPTION_UPDATED_RECORDS_ONLY' => 'Updated records only',
+    'LBL_PMSE_FORM_OPTION_NEW_RECORDS_ONLY' => 'New Records Only',
+    'LBL_PMSE_FORM_OPTION_UPDATED_RECORDS_ONLY' => 'Updated Records Only (First Update - See Help Text)',
 
-    'LBL_PMSE_FORM_TOOLTIP_WHEN_START_EVENT' => 'Select when the event will start',
+    'LBL_PMSE_FORM_TOOLTIP_WHEN_START_EVENT' => 'Select when the process will start.<br><br>New: Run process when new record is created.<br><br>Updated: Process runs only the first time criteria is met for an existing record.',
     'LBL_PMSE_FORM_TOOLTIP_EVENT_MODULE' => 'Select the SugarCRM module to apply the event trigger',
 
     'LBL_PMSE_FORM_LABEL_FIXED_DATE' => 'Fixed Date',
