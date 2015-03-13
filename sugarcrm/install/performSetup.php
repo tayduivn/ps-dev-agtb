@@ -19,6 +19,9 @@ if( !isset( $install_script ) || !$install_script ){
     die($mod_strings['ERR_NO_DIRECT_SCRIPT']);
 }
 
+// Disable zlib compression as this will interfere with live scrolling
+ini_set('zlib.output_compression', 0);
+
 // Give the install ample time to finish
 set_time_limit(3600);
 
