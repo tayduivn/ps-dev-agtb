@@ -200,7 +200,7 @@ class Container
      */
     protected function initIndexer()
     {
-        $this->indexer = new Indexer($this->getConfig('global'), $this);
+        $this->indexer = new Indexer($this->getConfig('global'), $this, \DBManagerFactory::getInstance());
     }
 
     /**

@@ -58,11 +58,18 @@ class Indexer
     protected $maxBulkThreshold = 100;
 
     /**
+     * A instance of DBManager to use.
+     * @var \DBManager instance
+     */
+    protected $db;
+
+    /**
      * Ctor
      * @param array $config
      * @param Container $container
+     * @param \DBManager $db
      */
-    public function __construct(array $config, Container $container)
+    public function __construct(array $config, Container $container, \DBManager $db)
     {
         if (!empty($config['force_async_index'])) {
             $this->async = (bool) $config['force_async_index'];
@@ -72,6 +79,7 @@ class Indexer
         }
 
         $this->container = $container;
+        $this->db = $db;
     }
 
     /**
@@ -257,7 +265,7 @@ class Indexer
         $data = array();
         foreach (array_keys($fields) as $field) {
             if (isset($bean->$field)) {
-                $data[$field] = $bean->$field;
+                $data[$field] = $this->decodeBeanField($bean->$field);
             }
         }
 
@@ -266,5 +274,29 @@ class Indexer
         $document->setId($bean->id);
         $document->setData($data);
         return $document;
+    }
+
+    /**
+     * Decode the bean field if it's encoded before (e.g. from demo data or BWC mode, see \BeanFactory::getBean()).
+     * @param object $fieldValue the field in SugarBean
+     * @return mixed
+     */
+    protected function decodeBeanField($fieldValue)
+    {
+        if ($this->isFromApi()) {
+            //In this case the call is made from our API, the field has not been encoded --> do nothing
+            return $fieldValue;
+        } else {
+            return $this->db->decodeHTML($fieldValue);
+        }
+    }
+
+    /**
+     * Check if we are being called from API
+     * @return boolean
+     */
+    protected function isFromApi()
+    {
+        return (defined('ENTRY_POINT_TYPE') && constant('ENTRY_POINT_TYPE') === 'api');
     }
 }
