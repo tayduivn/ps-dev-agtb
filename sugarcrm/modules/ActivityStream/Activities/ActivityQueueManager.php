@@ -292,7 +292,7 @@ class ActivityQueueManager
 
                 if (isset($changeInfo['data_type']) &&
                     ($changeInfo['data_type'] === 'id' ||
-                        $changeInfo['data_type'] === 'relate' ||
+                        in_array($changeInfo['data_type'], $bean::$relateFieldTypes) ||
                         $changeInfo['data_type'] === 'team_list')
                 ) {
                     if ($fieldName == 'team_set_id') {
@@ -318,7 +318,7 @@ class ActivityQueueManager
                                 //find module from corresponding relate field
                                 foreach($bean->field_defs as $fieldDef) {
                                     if (isset($fieldDef['type']) &&
-                                        $fieldDef['type'] === 'relate' &&
+                                        in_array($fieldDef['type'], $bean::$relateFieldTypes) &&
                                         isset($fieldDef['id_name']) &&
                                         $fieldDef['id_name'] === $fieldName &&
                                         isset($fieldDef['module'])
