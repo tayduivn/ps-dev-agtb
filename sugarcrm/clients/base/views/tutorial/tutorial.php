@@ -100,15 +100,15 @@ $viewdefs['base']['view']['tutorial'] = array(
                 'name' => '.show-hide-toggle',
                 'text' => 'LBL_TOUR_RECORD_SHOWMORE',
                 'full' => true,
-                'horizAdj' => 30,
+                'horizAdj' => 8,
                 'vertAdj' => -13,
             ),
             array(
                 'name' => '.subpanel-header',
                 'text' => 'LBL_TOUR_RECORD_SUBPANEL',
                 'full' => true,
-                'horizAdj' => 0,
-                'vertAdj' => 0,
+                'horizAdj' => -4,
+                'vertAdj' => -4,
             ),
             array(
                 'name' => '[data-view="subpanel"]',
