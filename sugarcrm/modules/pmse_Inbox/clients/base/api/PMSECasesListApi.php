@@ -114,8 +114,15 @@ class PMSECasesListApi extends FilterApi
         );
         $q->select($fields);
         $q->from($inboxBean, array('alias' => 'a'));
-        $q->joinRaw('INNER JOIN users u ON a.created_by=u.id');
+        $q->joinRaw('INNER JOIN users u ON a.created_by=u.id INNER JOIN pmse_bpmn_process pr ON a.pro_id=pr.id INNER JOIN pmse_bpm_flow pf ON a.cas_id=pf.cas_id');
         $q->select->fieldRaw('u.last_name', 'assigned_user_name');
+        $q->select->fieldRaw('pr.prj_id', 'prj_id');
+        $q->select->fieldRaw('pr.created_by', 'prj_created_by');
+        $q->select->fieldRaw('pf.cas_sugar_module', 'cas_sugar_module');
+        $q->select->fieldRaw('pf.cas_sugar_object_id', 'cas_sugar_object_id');
+        $q->select->fieldRaw('pf.cas_user_id', 'cas_user_id');
+
+        $q->where()->queryAnd()->addraw('pf.cas_flow_status != "CLOSED"');
         //Flow query breaks on mssql due to the use of row_number() / count in a subselect which is not supported
         //Doesn't appear to be used.
         //$q->select->fieldRaw('('.$flowQuery->compileSql().')','flow_error');
@@ -140,6 +147,14 @@ class PMSECasesListApi extends FilterApi
                 case translate("LBL_OWNER",'pmse_Inbox'):
                     $q->where()->queryAnd()
                         ->addRaw("last_name LIKE '%" . $args['q'] . "%'");
+                    break;
+                case translate("LBL_ACTIVITY_OWNER",'pmse_Inbox'):
+                    $q->where()->queryAnd()
+                        ->addRaw("pr.created_by LIKE '%" . $args['q'] . "%'");
+                    break;
+                case translate("LBL_PROCESS_OWNER",'pmse_Inbox'):
+                    $q->where()->queryAnd()
+                        ->addRaw("pf.cas_user_id LIKE '%" . $args['q'] . "%'");
                     break;
             }
         } else {
@@ -186,11 +201,19 @@ class PMSECasesListApi extends FilterApi
             } else {
                 $list[$key]["cas_status"] = '<data class="label label-important">' . $value["cas_status"] . '</data>';
             }
-//            if($value["flow_error"]!='0')
-//            {
-//                $list[$key]["cas_status"]='<data class="label label-important">ERROR</data>';
-////                $list[$key]["execute"] = 'Execute';
-//            }
+
+            $assignedBean = BeanFactory::getBean($list[$key]['cas_sugar_module'], $list[$key]['cas_sugar_object_id']);
+            $assignedUsersBean = BeanFactory::getBean('Users', $assignedBean->assigned_user_id);
+            $list[$key]['assigned_user_name'] = $assignedUsersBean->full_name;
+
+            $prjUsersBean = BeanFactory::getBean('Users', $list[$key]['prj_created_by']);
+            $list[$key]['prj_user_id_full_name'] = $prjUsersBean->full_name;
+
+            $casUsersBean = BeanFactory::getBean('Users', $list[$key]['cas_user_id']);
+            $list[$key]['cas_user_id_full_name'] = $casUsersBean->full_name;
+            if (empty($casUsersBean->full_name)){
+                $list[$key]['cas_user_id_full_name'] = $list[$key]['cas_user_id'];
+            }
             $count++;
         }
         if ($count == $options['limit']) {
@@ -204,6 +227,30 @@ class PMSECasesListApi extends FilterApi
         $data['records'] = $list;
         //$data['sql'] = $q->compileSql();
         return $data;
+    }
+
+    protected function getOrderByFromArgs(array $args, SugarBean $seed = null)
+    {
+        $orderBy = array();
+        if (!isset($args['order_by']) || !is_string($args['order_by'])) {
+            return $orderBy;
+        }
+        $columns = explode(',', $args['order_by']);
+        $parsed = array();
+        foreach ($columns as $column) {
+            $column = explode(':', $column, 2);
+            $field = array_shift($column);
+            // do not override previous value if it exists since it should have higher precedence
+            if (!isset($parsed[$field])) {
+                $direction = array_shift($column);
+                $parsed[$field] = strtolower($direction) !== 'desc';
+            }
+        }
+        $converted = array();
+        foreach ($parsed as $field => $direction) {
+            $converted[] = array($field, $direction ? 'ASC' : 'DESC');
+        }
+        return $converted;
     }
 
     public function selectLogLoad($api, $args)

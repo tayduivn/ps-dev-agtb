@@ -49,6 +49,27 @@ $viewdefs[$module_name]['base']['view']['list'] = array(
                     'link' => false,
                 ),
                 array(
+                    'name' => 'assigned_user_name',
+                    'label' => 'LBL_OWNER',
+                    'default' => false,
+                    'enabled' => true,
+                    'link' => false,
+                ),
+                array(
+                    'name' => 'cas_user_id_full_name',
+                    'label' => 'LBL_ACTIVITY_OWNER',
+                    'default' => true,
+                    'enabled' => true,
+                    'link' => false,
+                ),
+                array(
+                    'name' => 'prj_user_id_full_name',
+                    'label' => 'LBL_PROCESS_OWNER',
+                    'default' => true,
+                    'enabled' => true,
+                    'link' => false,
+                ),
+                array(
                     'label' => 'LBL_DATE_ENTERED',
                     'enabled' => true,
                     'default' => true,
