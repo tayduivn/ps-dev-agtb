@@ -259,7 +259,10 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             $files[] = 'modules/Tasks/clients/base/fields/closebutton';
         }
 
-
+        //CRYS-806 Remove Healthcheck
+        if (version_compare($this->from_version, '7.5', '>=') && version_compare($this->from_version, '7.6', '<')) {
+            $files[] = 'modules/HealthCheck';
+        }
 
         $this->fileToDelete($files);
     }
