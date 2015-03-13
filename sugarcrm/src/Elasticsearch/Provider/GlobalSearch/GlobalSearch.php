@@ -57,13 +57,12 @@ class GlobalSearch extends AbstractProvider
      * {@inheritdoc}
      */
     protected $mappingDefs = array(
-        'gs_string_ngram' => array(
-            'type' => 'string',
-            'index' => 'analyzed',
-            'index_analyzer' => 'gs_analyzer_ngram',
-            'search_analyzer' => 'gs_analyzer_default',
-            'store' => false,
-        ),
+
+        /*
+         * Default string analyzer with full word matching base ond
+         * the standard analyzer. This will generate hits on the full
+         * words tokenized by the standard analyzer.
+         */
         'gs_string_default' => array(
             'type' => 'string',
             'index' => 'analyzed',
@@ -71,17 +70,53 @@ class GlobalSearch extends AbstractProvider
             'search_analyzer' => 'gs_analyzer_default',
             'store' => false,
         ),
+
+        /*
+         * String analyzer using ngrams for wildcard matching. The
+         * weighting of the hits on this mapping are less than full
+         * matches using the default string mapping.
+         */
+        'gs_string_ngram' => array(
+            'type' => 'string',
+            'index' => 'analyzed',
+            'index_analyzer' => 'gs_analyzer_ngram',
+            'search_analyzer' => 'gs_analyzer_default',
+            'store' => false,
+        ),
+
+        /*
+         * Date field mapping. Date fields are not searchable but are
+         * needed to be returned as part of the dataset and to be able
+         * to perform facets on.
+         */
         'gs_datetime' => array(
             'type' => 'date',
             'format' => 'YYYY-MM-dd HH:mm:ss',
             'index' => 'no',
             'store' => false,
         ),
+
+        /*
+         * Integer mapping
+         */
         'gs_int_default' => array(
             'type' => 'integer',
             'index' => 'no',
             'store' => false,
         ),
+
+        /*
+         * Phone mapping. The analyzer supports partial matches using
+         * ngrams and transforms every phone number in pure numbers
+         * only to be able to search for different formats and still
+         * get hits. For example the data source for +32 (475)61.64.28
+         * will be stored and analyzed as 32475616428 including ngrams
+         * based on this result. When phone number fields are included
+         * in the search matching will happen when searching for:
+         *      +32 475 61.64.28
+         *      (32)475-61-64-28
+         *      ...
+         */
         'gs_phone' => array(
             'type' => 'string',
             'index' => 'analyzed',
@@ -98,6 +133,7 @@ class GlobalSearch extends AbstractProvider
     protected $weightedBoost = array(
         'gs_string_default' => 1,
         'gs_string_ngram' => 0.35,
+        'gs_phone' => 1,
     );
 
     /**
@@ -358,8 +394,9 @@ class GlobalSearch extends AbstractProvider
     {
         // Just select all eligible global search fields here
         return array(
-            '*.gs_string' => array(),
+            '*.gs_string_default' => array(),
             '*.gs_string_ngram' => array(),
+            '*.gs_phone' => array(),
         );
     }
 
