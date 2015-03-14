@@ -41,18 +41,6 @@ abstract class SugarSearchEngineAbstractBase implements SugarSearchEngineInterfa
     }
 
     /**
-     * This is needed to prevent unserialize vulnerability
-     */
-    public function __wakeup()
-    {
-        // clean all properties
-        foreach(get_object_vars($this) as $k => $v) {
-            $this->$k = null;
-        }
-        throw new Exception("Not a serializable object");
-    }
-
-    /**
      * This function checks config to see if search engine is down.
      *
      * @return Boolean
