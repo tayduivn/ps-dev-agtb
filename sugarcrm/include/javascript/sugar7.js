@@ -166,6 +166,17 @@
                 }
             },
             {
+                name: 'search',
+                route: 'search/*searchTerm',
+                callback: function(searchTerm) {
+                    app.controller.loadView({
+                        layout: 'search',
+                        searchTerm: searchTerm,
+                        mixed: true
+                    });
+                }
+            },
+            {
                 name: "list",
                 route: ":module"
             },
