@@ -183,6 +183,18 @@ li.search-result {
     bottom: 11px;
     margin-left: 42px;
   }
+  &.highlighted {
+    &.current {
+      .btn.preview-list-item,
+      .rowaction.btn:not(.btn-invisible) {
+        background: @gray;
+      }
+      .fa-eye {
+        color: @grayLighter !important;
+      }
+      background: @dropdownLinkBackgroundHover;
+    }
+  }
 }
 
 .search-list {
