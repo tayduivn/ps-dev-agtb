@@ -28,8 +28,16 @@ $viewdefs[$module_name]['base']['view']['dashlet-businessrules'] = array(
             ),
             'filter' => array(
                 'module' => array(
+//                    'Accounts',
+//                    'Bugs',
+//                    'Cases',
+//                    'Contacts',
                     'Home',
+//                    'Leads',
+//                    'Opportunities',
+//                    'Prospects',
                     'pmse_Business_Rules',
+//                    'pmse_BpmProcessDefinition',
                 ),
                 'view' => 'record',
             ),
@@ -53,16 +61,17 @@ $viewdefs[$module_name]['base']['view']['dashlet-businessrules'] = array(
                         'acl_action' => 'create',
                         'acl_module' => 'pmse_Business_Rules',
                     ),
-//                    array(
-//                        'type' => 'dashletaction',
-//                        'action' => 'importRecord',
-//                        'params' => array(
-//                            'module' => 'pmse_Business_Rules',
-//                            'link' => '#pmse_Business_Rules/layout/businessrules-import'
-//                        ),
-//                        'label' => 'LNK_PMSE_BUSINESS_RULES_IMPORT_RECORD',
-//                        'acl_module' => 'pmse_Business_Rules',
-//                    ),
+                    array(
+                        'type' => 'dashletaction',
+                        'action' => 'importRecord',
+                        'params' => array(
+                            'module' => 'pmse_Business_Rules',
+                            'link' => '#pmse_Business_Rules/layout/businessrules-import'
+                        ),
+                        'label' => 'LNK_PMSE_BUSINESS_RULES_IMPORT_RECORD',
+//                        'acl_action' => 'importRecord',
+                        'acl_module' => 'pmse_Business_Rules',
+                    ),
                 ),
             ),
             array(
@@ -77,6 +86,12 @@ $viewdefs[$module_name]['base']['view']['dashlet-businessrules'] = array(
                         'action' => 'refreshClicked',
                         'label' => 'LBL_DASHLET_REFRESH_LABEL',
                     ),
+//                    array(
+//                        'type' => 'dashletaction',
+//                        'action' => 'toggleClicked',
+//                        'label' => 'LBL_DASHLET_MINIMIZE',
+//                        'event' => 'minimize',
+//                    ),
                     array(
                         'type' => 'dashletaction',
                         'action' => 'removeClicked',
@@ -140,15 +155,15 @@ $viewdefs[$module_name]['base']['view']['dashlet-businessrules'] = array(
                     'tooltip' => 'LBL_PMSE_LABEL_DELETE',
                     'acl_action' => 'edit',
                 ),
-//                array(
-//                    'type' => 'rowaction',
-//                    'icon' => 'fa fa-download',
-//                    'css_class' => 'btn btn-mini',
-//                    'event' => 'dashlet-businessrules:download:fire',
-//                    'target' => 'view',
-//                    'tooltip' => 'LBL_PMSE_LABEL_EXPORT',
-//                    'acl_action' => 'edit',
-//                ),
+                array(
+                    'type' => 'rowaction',
+                    'icon' => 'fa fa-download',
+                    'css_class' => 'btn btn-mini',
+                    'event' => 'dashlet-businessrules:download:fire',
+                    'target' => 'view',
+                    'tooltip' => 'LBL_PMSE_LABEL_EXPORT',
+                    'acl_action' => 'edit',
+                ),
                 array(
                     'type' => 'rowaction',
                     'icon' => 'fa-info-circle',
@@ -160,5 +175,54 @@ $viewdefs[$module_name]['base']['view']['dashlet-businessrules'] = array(
                 ),
             ),
         ),
+        /*array(
+            'filters' => array(
+                'rst_type' => array('$not_in' => array('single')),
+            ),
+            //'fields' => array('cas_id','cas_enrique'),
+            'label' => 'LBL_BUSINESS_RULES_DASHLET_MULTIPLE_HIT',
+            'link' => 'pmse_Business_Rules',
+            'module' => 'pmse_Business_Rules',
+            'order_by' => 'date_entered:desc',
+            'record_date' => 'date_entered',
+            'row_actions' => array(
+                array(
+                    'type' => 'rowaction',
+                    'icon' => 'fa-pencil',
+                    'css_class' => 'btn btn-mini',
+                    'event' => 'dashlet-businessrules:businessRulesLayout:fire',
+                    'target' => 'view',
+                    'tooltip' => 'LBL_EDIT_BUTTON',
+                    'acl_action' => 'edit',
+                ),
+                array(
+                    'type' => 'rowaction',
+                    'icon' => 'fa-times',
+                    'css_class' => 'btn btn-mini',
+                    'event' => 'dashlet-businessrules:delete-record:fire',
+                    'target' => 'view',
+                    'tooltip' => 'LBL_BUSINESS_RULES_DASHLET_DELETE',
+                    'acl_action' => 'edit',
+                ),
+                array(
+                    'type' => 'rowaction',
+                    'icon' => 'fa-download',
+                    'css_class' => 'btn btn-mini',
+                    'event' => 'dashlet-businessrules:download:fire',
+                    'target' => 'view',
+                    'tooltip' => 'LBL_PMSE_LABEL_EXPORT',
+                    'acl_action' => 'edit',
+                ),
+                array(
+                    'type' => 'rowaction',
+                    'icon' => 'fa-info-circle',
+                    'css_class' => 'btn btn-mini',
+                    'event' => 'dashlet-businessrules:description-record:fire',
+                    'target' => 'view',
+                    'tooltip' => 'LBL_DESCRIPTION',
+                    'acl_action' => 'edit',
+                ),
+            ),
+        ),*/
     ),
 );
