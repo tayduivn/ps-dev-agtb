@@ -8,6 +8,11 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+/**
+ * @class View.Layouts.Portal.CreateLayout
+ * @alias SUGAR.App.view.layouts.PortalCreateLayout
+ * @extends View.Layouts.Base.CreateLayout
+ */
 ({
     extendsFrom: 'CreateLayout',
 

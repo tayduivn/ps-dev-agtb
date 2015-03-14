@@ -245,7 +245,7 @@
      */
     _loadTemplate: function() {
         this._super('_loadTemplate');
-        if ((this.view.name === 'record' || this.view.name === 'create' || this.view.name === 'create-actions'
+        if ((this.view.name === 'record' || this.view.name === 'create'
             || this.view.name === 'create-nodupecheck') && (this.action === 'edit')) {
             this.template = app.template.getField('fieldset', 'record-detail', this.model.module);
         }

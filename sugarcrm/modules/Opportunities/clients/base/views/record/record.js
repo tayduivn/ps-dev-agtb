@@ -143,7 +143,7 @@
         var model = this.createLinkModel(this.createdModel || this.model, 'revenuelineitems');
 
         app.drawer.open({
-            layout: 'create-actions',
+            layout: 'create',
             context: {
                 create: true,
                 module: model.module,

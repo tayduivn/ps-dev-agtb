@@ -637,7 +637,7 @@ describe("Record View", function () {
             };
             openStub = sinon.stub(SugarTest.app.drawer, "open", function (opts, closeCallback) {
                 expect(opts.context.model).toBeDefined();
-                expect(opts.layout).toEqual("create-actions");
+                expect(opts.layout).toEqual("create");
                 expect(opts.context.model.get("name")).toEqual(view.model.get("name"));
                 expect(opts.context.model.get("description")).toEqual(view.model.get("description"));
                 expect(opts.context.model).toNotBe(view.model);

@@ -29,7 +29,7 @@
 
         prefill.copy(this.model);
         app.drawer.open({
-            layout: 'create-actions',
+            layout: 'create',
             context: {
                 create: true,
                 model: prefill,

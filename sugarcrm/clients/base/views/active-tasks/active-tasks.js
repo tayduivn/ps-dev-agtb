@@ -128,7 +128,7 @@
         } else {
             var self = this;
             app.drawer.open({
-                layout: 'create-actions',
+                layout: 'create',
                 context: {
                     create: true,
                     module: params.module
