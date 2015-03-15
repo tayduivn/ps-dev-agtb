@@ -45,36 +45,6 @@ describe('View.Views.Base.QuicksearchBarView', function() {
         });
     });
 
-    describe('after populateModules is called', function() {
-        beforeEach(function() {
-            sinon.collection.stub(view, 'render');
-            view.populateModules();
-        });
-
-        it('Should return search results', function() {
-
-            sinon.collection.stub(SugarTest.app.metadata, 'getModule', function(module) {
-                return {isBwcEnabled: module === 'bwcModule'};
-            });
-            sinon.collection.stub(SugarTest.app.api, 'search', function(params, cb) {
-                var data = {
-                    next_offset: -1,
-                    records: [
-                        {id: 'id1', name: 'test1', _module: 'Accounts', _search: {}},
-                        {id: 'id2', name: 'test2', _module: 'bwcModule', _search: {}}
-                    ]
-                };
-                cb.success(data);
-            });
-
-            var buildRouteSpy = sinon.collection.spy(SugarTest.app.router, 'buildRoute');
-            var bwcBuildRouteSpy = sinon.collection.stub(SugarTest.app.bwc, 'buildRoute');
-            view.fireSearchRequest('test');
-            expect(buildRouteSpy.calledWith('Accounts', 'id1')).toBe(true);
-            expect(bwcBuildRouteSpy.calledWith('bwcModule', 'id2')).toBe(true);
-        });
-    });
-
     describe('navigation', function() {
         var keyDisposeStub, triggerBeforeStub, triggerStub;
         beforeEach(function() {

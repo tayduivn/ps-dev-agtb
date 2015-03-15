@@ -21,11 +21,12 @@
         this._super('initialize', [options]);
 
         /**
-         * This contains the search results
-         * @{Object} {null}
+         * The collection for executing searches and passing results.
+         * This could be shared and used by other components.
          */
-        //FIXME The results should be passed using the collection or context. See SC-4204
-        this.results = null;
+        // FIXME Sidecar should be modified to allow multiple top level contexts. When this happens, quick search
+        // should use that context instead of layout.collection.
+        this.collection = this.layout.collection || app.data.createMixedBeanCollection();
 
         /**
          * Stores the index of the currently highlighted list element.
@@ -34,10 +35,8 @@
          */
         this.activeIndex = null;
 
-        this.layout.on('quicksearch:results:open', function(results) {
-            this.activeIndex = null;
-            this.results = results;
-            this.render();
+        // If the layout has `quicksearch:results:open` called on it, display the search results
+        this.layout.on('quicksearch:results:open', function() {
             this.open();
         }, this);
 
@@ -59,14 +58,54 @@
             }
             this._highlightActive();
             this.attachKeydownEvent();
-        });
+        }, this);
 
         //Listener for losing focus for up/down arrow navigation:
         this.on('navigate:focus:lost', function() {
             this.activeIndex = null;
             this.$('.active').removeClass('active');
             this.disposeKeydownEvent();
-        });
+        }, this);
+    },
+
+    /**
+     * Parses models when collection resets and renders the view.
+     *
+     * @override
+     */
+    bindDataChange: function() {
+        // On a collection sync, format the search results and display
+        this.collection.on('sync', function() {
+            if (this.disposed) {
+                return;
+            }
+            _.each(this.collection.models, function(model) {
+                model.link = '#' + app.router.buildRoute(model.module, model.id);
+                var name = model.get('name');
+                model.name = name;
+                if (this.layout.v2) {
+                    // To be developed in SC-4090
+                } else {
+                    if (model.searchInfo.highlighted) {
+                        // Get the highlighted field. If one is the name, highlight the name. Also, highlight
+                        // the first non-name field.
+                        _.find(model.searchInfo.highlighted, function(val, key) {
+                            if (key === 'name') {
+                                model.name = new Handlebars.SafeString(val.text);
+                            } else { // found in a related field
+                                model.field_name = app.lang.get(val.label, val.module);
+                                model.field_value = new Handlebars.SafeString(val.text);
+                                return true;
+                            }
+                        });
+                    }
+                    this.collection.module_list_string = this.collection.module_list.join(',');
+                }
+            }, this);
+            this.activeIndex = null;
+            this.render();
+            this.layout.trigger('quicksearch:results:open');
+        }, this);
     },
 
     /**
@@ -87,7 +126,7 @@
      * If we have search results, the view is focusable.
      */
     isFocusable: function() {
-        return !_.isUndefined(this.results) && !_.isUndefined(this.results.records);
+        return this.collection.models.length > 0;
     },
 
     /**
@@ -140,8 +179,8 @@
      */
     countRecordElements: function() {
         // If there is no next_offset, it means there are no "see more" option that we need to include.
-        var hasMore = (this.results.next_offset > -1) ? 1 : 0;
-        return this.results.records.length + hasMore;
+        var hasMore = (this.collection.next_offset > -1) ? 1 : 0;
+        return this.collection.models.length + hasMore;
     },
 
     /**

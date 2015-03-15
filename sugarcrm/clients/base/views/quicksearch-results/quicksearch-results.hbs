@@ -11,20 +11,26 @@
  */
 --}}
 <div class="typeahead-wrapper"><ul class="typeahead dropdown-menu">
-{{#if results.records}}
-    {{#each results.records}}
+{{#if collection.models}}
+    {{#each collection.models}}
     <li>
         <a href="{{link}}">
-            <span class="label label-module label-module-mini label-{{module}}" title="{{getModuleName module plural=true}}">{{moduleIconLabel module}}</span> {{name}}{{#if field_name}}, {{field_name}}: {{field_value}}{{/if}}
+            {{#if ../layout.v2}}
+                {{!-- To be developed in SC-4090 --}}
+            {{else}}
+                <span class="label label-module label-module-mini label-{{module}}"  title="{{getModuleName module plural=true}}">
+                    {{moduleIconLabel module}}
+                </span>{{name}}{{#if field_name}}, {{field_name}}: {{field_value}}{{/if}}
+            {{/if}}
         </a>
     </li>
     {{/each}}
-    {{#notEq results.next_offset "-1"}}
+    {{#notEq next_offset "-1"}}
         <li>
             {{#if ../layout.v2}}
-            <a href="#search/?q={{results.term}}&m={{results.module_list}}">{{str "LNK_SEARCH_FTS_VIEW_ALL"}}</a>
+            <a href="#search/{{collection.query}}">{{str "LNK_SEARCH_FTS_VIEW_ALL"}}</a>
             {{else}}
-            <a href="#bwc/index.php?module=Home&append_wildcard=true&action=spot&full=true&q={{results.term}}&m={{results.module_list}}">{{str "LNK_SEARCH_FTS_VIEW_ALL"}}</a>
+            <a href="#bwc/index.php?module=Home&append_wildcard=true&action=spot&full=true&q={{collection.query}}&m={{collection.module_list_string}}">{{str "LNK_SEARCH_FTS_VIEW_ALL"}}</a>
             {{/if}}
         </li>
     {{/notEq}}

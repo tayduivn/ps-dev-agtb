@@ -14,23 +14,6 @@
  * @extends View.View
 */
 ({
-
-    /**
-     * Used when formatting the search results. It is prepended to the
-     * highlighted string.
-     *
-     * @property {string}
-     */
-    preTag: '<strong>',
-
-    /**
-     * Used when formatting the search results. It is appended to the
-     * highlighted string.
-     *
-     * @property {string}
-     */
-    postTag: '</strong>',
-
     plugins: ['Dropdown'],
 
     /**
@@ -62,6 +45,14 @@
      */
     initialize: function(options) {
         this._super('initialize', [options]);
+
+        /**
+         * The collection for executing searches and passing results.
+         * This could be shared and used by other components.
+         */
+        // FIXME Sidecar should be modified to allow multiple top level contexts. When this happens, quick search
+        // should use that context instead of layout.collection.
+        this.collection = this.layout.collection || app.data.createMixedBeanCollection();
 
         /**
          * Used for keyboard up/down arrow navigation between components of `globalsearch` layout
@@ -99,14 +90,6 @@
          */
         this._currentQueryTerm = '';
 
-        /**
-         * Stores a copy of the search request, in case we need to abort it.
-         * If there is no request in progress, this property is null.
-         * @type {SUGAR.HttpRequest}
-         * @private
-         */
-        this._existingRequest = null;
-
         app.events.on('app:sync:complete', this.populateModules, this);
 
         // shortcut keys
@@ -141,19 +124,10 @@
             this._searchTerm = '';
             this._oldSearchTerm = '';
             this._currentQueryTerm = '';
-            this.abortExistingRequest();
+            this.collection.abortFetchRequest();
             this.disposeKeyEvents();
         }, this);
 
-    },
-
-    /**
-     * Aborts the existing search request.
-     */
-    abortExistingRequest: function() {
-        if (this._existingRequest && this._existingRequest.xhr) {
-            this._existingRequest.xhr.abort();
-        }
     },
 
     /**
@@ -353,7 +327,7 @@
      * First, it checks the search term length, to ensure it meets the minimum length requirements.
      * Second, it checks the search term against the previously typed search term. If the search term hasn't changed
      * (for example, for keyboard shortcuts) then there is no need to rerun the search.
-     * If the above onditions are met, `_validateAndSearch` runs a debounced search.
+     * If the above conditions are met, `_validateAndSearch` runs a debounced search.
      *
      * @private
      */
@@ -392,37 +366,6 @@
     },
 
     /**
-     * Escapes the highlighted result from Elasticsearch for any potential XSS.
-     *
-     * @param  {string} html
-     * @return {Handlebars.SafeString}
-     */
-    _escapeSearchResults: function(html) {
-        // Change this regex if server-side preTag and postTag change.
-        var highlightedSpanRe = /<strong>.*?<\/strong>/g,
-            higlightSpanTagsRe = /(<strong>)|(<\/strong>)/g,
-            escape = Handlebars.Utils.escapeExpression,
-        // First, all of the HTML is escaped.
-            result = escape(html),
-        // Then, we find all pieces highlighted by the server.
-            highlightedSpan = html.match(highlightedSpanRe),
-            highlightedContent,
-            self = this;
-
-        // For each highlighted part:
-        _.each(highlightedSpan, function(part) {
-            highlightedContent = part.replace(higlightSpanTagsRe, '');
-            // We escape the content of each highlight returned from Elastic.
-            highlightedContent = escape(highlightedContent);
-            // And then, we inject the escaped content with our own unescaped
-            // highlighting tags (self.preTag/self.postTag).
-            result = result.replace(escape(part), self.preTag + highlightedContent + self.postTag);
-        });
-
-        return new Handlebars.SafeString(result);
-    },
-
-    /**
      * Get the modules that current user selected for search.
      * Empty array for all.
      *
@@ -444,66 +387,25 @@
     },
     /**
      * Executes a search using `this._searchTerm`.
-     * First, aborts any pre-existing search request. On a successful search, fires `quicksearch:results:open`
-     * event on the `layout` with the formatted results.
      */
     fireSearchRequest: function() {
         var term = this._searchTerm;
-        var searchModuleNames = this._getSearchModuleNames(),
-            moduleList = searchModuleNames.join(','),
-            self = this,
-            maxNum = app.config && app.config.maxSearchQueryResult ? app.config.maxSearchQueryResult : 5,
-            params = {
-                q: term,
-                fields: 'name, id',
-                module_list: moduleList,
-                max_num: maxNum
+        // FIXME: SC-4254 Remove this.layout.v2
+        var moduleList = this._getSearchModuleNames(),
+            defaultMaxNum = this.layout.v2 ? 3 : 5,
+            maxNum = app.config && app.config.maxSearchQueryResult ? app.config.maxSearchQueryResult : defaultMaxNum,
+            options = {
+                query: term,
+                module_list: moduleList
             };
-        this.abortExistingRequest();
-        this._existingRequest = app.api.search(params, {
-            success: function(data) {
-                var formattedRecords = [];
-                _.each(data.records, function(record) {
-                    if (!record.id) {
-                        return; // Elastic Search may return records without id and record names.
-                    }
-                    var formattedRecord = {
-                        id: record.id,
-                        name: record.name,
-                        module: record._module,
-                        link: '#' + app.router.buildRoute(record._module, record.id)
-                    };
-
-                    if ((record._search.highlighted)) { // full text search
-                        _.each(record._search.highlighted, function(val, key) {
-                            var safeString = self._escapeSearchResults(val.text);
-                            if (key !== 'name') { // found in a related field
-                                formattedRecord.field_name = app.lang.get(val.label, val.module);
-                                formattedRecord.field_value = safeString;
-                            } else {
-                                // if it is a name that is found, we need to replace the name with the highlighted text
-                                formattedRecord.name = safeString;
-                            }
-                        });
-                    }
-                    formattedRecords.push(formattedRecord);
-                });
-                var results = {
-                    next_offset: data.next_offset,
-                    records: formattedRecords,
-                    module_list: moduleList,
-                    term: term
-                };
-                self.layout.trigger('quicksearch:results:open', results);
-            },
-            error: function(error) {
-                app.error.handleHttpError(error);
-                app.logger.error('Failed to fetch search results in search ahead. ' + error);
-            },
-            complete: _.bind(function() {
-                this._existingRequest = null;
-            }, this)
-        });
+        // FIXME: SC-4254 Remove this.layout.v2
+        if (this.layout.v2) {
+            options.max_num = maxNum;
+        } else {
+            options.limit = maxNum;
+            options.fields = ['name', 'id'];
+        }
+        this.collection.fetch(options);
     },
 
     /**
