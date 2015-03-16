@@ -1947,7 +1947,7 @@
         // Open prepopulated meeting create form
         prefill.set(prefillAttributes);
         app.drawer.open({
-            layout: 'create-actions',
+            layout: 'create',
             context: {
                 create: true,
                 model: prefill,
@@ -1975,7 +1975,7 @@
         // Open prepopulated meeting create form
         prefill.set(prefillAttributes);
         app.drawer.load({
-            layout: 'create-actions',
+            layout: 'create',
             context: {
                 create: true,
                 model: prefill,

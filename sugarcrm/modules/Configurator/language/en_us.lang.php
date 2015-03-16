@@ -100,6 +100,7 @@ $mod_strings = array (
     'LBL_LOCK_SUBPANELS_DESC' => 'This setting applies to modules in legacy mode.',
     'LIST_ENTRIES_PER_LISTVIEW'=>'Listview items per page',
     'TPL_LIST_ENTRIES_PER_LISTVIEW_HELP'=>'Recommended setting is below {{listEntriesNum}} for acceptable performance levels. As additional fields are added to the listview, this number should be at the lower end of the recommended setting.',
+    'LBL_LIST_ENTRIES_PER_SEARCH_HELP'=>'This setting is also used for the number of search results that display on the global search page.',
 	'LIST_ENTRIES_PER_SUBPANEL'=>'Subpanel items per page',
     'TPL_LIST_ENTRIES_PER_SUBPANEL_HELP'=>'Recommended setting is below {{subpanelEntriesNum}} for acceptable performance levels. As additional fields are added to the listview, this number should be at the lower end of the recommended setting.',
 	'LBL_WIRELESS_LIST_ENTRIES' => 'Listview items per page',

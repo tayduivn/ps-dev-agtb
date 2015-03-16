@@ -141,7 +141,7 @@
                     model = this.createLinkModel(parentModel, link),
                     self = this;
                 app.drawer.open({
-                    layout: 'create-actions',
+                    layout: 'create',
                     context: {
                         create: true,
                         module: model.module,

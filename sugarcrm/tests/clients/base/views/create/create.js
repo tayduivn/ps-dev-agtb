@@ -111,13 +111,6 @@ describe('Base.View.Create', function() {
                             }
                         }, {
                             "type":"rowaction",
-                            "name":"save_view_button",
-                            "label":"LBL_SAVE_AND_VIEW",
-                            events: {
-                                click: 'button:save_view_button:click'
-                            }
-                        }, {
-                            "type":"rowaction",
                             "name":"save_create_button",
                             "label":"LBL_SAVE_AND_CREATE_ANOTHER",
                             events: {
@@ -825,7 +818,7 @@ describe('Base.View.Create', function() {
 
         using(
             'save buttons',
-            ['save_button', 'save_create_button', 'save_view_button'],
+            ['save_button', 'save_create_button'],
             function(buttonName) {
                 it('should save when the save button click event is triggered', function() {
                     var stub = sinonSandbox.stub(view, 'initiateSave');
@@ -953,50 +946,6 @@ describe('Base.View.Create', function() {
                 expect(navigateStub.called).toBeFalsy();
                 expect(alertStub.called).toBeFalsy();
                 expect(view.model.get('quantity')).toEqual(1);
-            });
-        });
-    });
-
-    describe('Save and View', function() {
-        var flag, modelId, saveModelStub, drawerCloseStub, navigateStub, alertStub;
-        beforeEach(function() {
-            flag = false;
-            sinonSandbox.stub(view, 'validateModelWaterfall', function(callback) {
-                callback(null);
-            });
-            sinonSandbox.stub(view, 'checkForDuplicate', function(success, error) {
-                success(app.data.createBeanCollection(moduleName));
-            });
-            saveModelStub = sinonSandbox.stub(view, 'saveModel', function(success) {
-                view.model.id = modelId;
-                success();
-                flag = true;
-            });
-            drawerCloseStub = sinonSandbox.stub(app.drawer, 'close');
-            navigateStub = sinonSandbox.stub(app, 'navigate');
-            alertStub = sinonSandbox.stub(view.alerts, 'showSuccessButDeniedAccess');
-
-            view.render();
-            view.buttons['main_dropdown'].renderDropdown();
-        });
-        it("Should save, close the modal, and navigate to the detail view.", function() {
-            modelId = 123;
-            runs(function() {
-                var saveButton = _.find(view.buttons.main_dropdown.fields, function(f) {
-                    return f.name === this.saveAndViewButtonName;
-                }, view);
-                saveButton.getFieldElement().click();
-            });
-
-            waitsFor(function() {
-                return flag;
-            }, 'navigate should have been called but timeout expired', 1000);
-
-            runs(function() {
-                expect(saveModelStub.calledOnce).toBeTruthy();
-                expect(navigateStub.called).toBeTruthy();
-                expect(drawerCloseStub.called).toBeFalsy();
-                expect(alertStub.called).toBeFalsy();
             });
         });
     });

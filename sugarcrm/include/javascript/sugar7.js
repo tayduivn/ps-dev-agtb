@@ -166,6 +166,17 @@
                 }
             },
             {
+                name: 'search',
+                route: 'search/*searchTerm',
+                callback: function(searchTerm) {
+                    app.controller.loadView({
+                        layout: 'search',
+                        searchTerm: searchTerm,
+                        mixed: true
+                    });
+                }
+            },
+            {
                 name: "list",
                 route: ":module"
             },
@@ -198,7 +209,7 @@
                     }
 
                     app.drawer.open({
-                        layout: 'create-actions',
+                        layout: 'create',
                         context: {
                             create: true
                         }

@@ -2708,6 +2708,7 @@ $app_strings = array (
     'LBL_SHOW_MORE_MODULE' => 'More {{{module}}}...',
     'LBL_SHOW_MORE_RECENTS' => 'More recents...',
     'LBL_SHOW_LESS_RECENTS' => 'Less recents',
+    'LBL_SHOW_MORE_RESULTS' => 'More search results...',
     'TPL_SHOW_MORE_MODULE' => 'More {{module}}...',
     'LBL_SHOW_MORE_GENERIC' => 'More {{name}}...',
     'LBL_TODAYS_ACTIVITIES' => 'Today\'s Activities',
@@ -3998,6 +3999,7 @@ Sincerely, SugarCRM',
     'LBL_PAGE_NAME' => 'Page Name',
 
     'LBL_SEARCH_RESULTS' => 'Search Results',
+    'TPL_SEARCH_RESULTS_FOR' => 'Search Results for "{{searchTerm}}"',
     'LBL_SEARCH_MODULES' => 'Modules',
     'LBL_SEARCH_CHARTS' => 'Charts',
     'LBL_SEARCH_REPORT_CHARTS' => 'Report Charts',
@@ -4975,7 +4977,6 @@ Sincerely, SugarCRM',
     'LBL_MESSAGE_BOX_TITLE' => 'Alert',
     'LBL_IGNORE_DUPLICATE_AND_SAVE' => 'Ignore Duplicate and Save',
     'LBL_SAVE_AND_CREATE_ANOTHER' => 'Save and create new',
-    'LBL_SAVE_AND_VIEW' => 'Save and view',
     'LBL_RESTORE' => 'Reset to Original',
 
     // RSS Feed dashlet
@@ -5216,7 +5217,6 @@ Sincerely, SugarCRM',
  * Fields marked "Required" must be completed prior to saving.
  * Click "Show More" to expose additional fields if necessary.
 2. Click "Save" to finalize the new record and return to the {{plural_module_name}} list view.
- * Choose "Save and view" to open the new {{module_name}} in record view.
  * Choose "Save and create new" to immediately create another new {{module_name}}.',
 
     // duplicate view

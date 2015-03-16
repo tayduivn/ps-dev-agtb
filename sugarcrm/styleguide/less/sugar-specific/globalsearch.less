@@ -159,3 +159,58 @@
 .search-query {
   .border-radius(@baseBorderRadius);
 }
+
+//CSS required for the results page
+ul.search-results {
+  margin-bottom: 0;
+}
+
+li.search-result {
+  padding-left: 12px;
+  min-height: 45px;
+  line-height: 12px;
+  position: relative;
+  border-bottom: 1px solid darken(@grayLighter, 7%);
+  padding-top: 14px;
+  padding-right: 50px;
+  .primary {
+    > h3 {
+      margin-left: 42px;
+      font-size: @baseFontSize;
+      margin-top: 0;
+      line-height: 18px;
+      font-weight: normal;
+    }
+  }
+  .secondary {
+    position: relative;
+    bottom: 11px;
+    margin-left: 42px;
+  }
+  &.highlighted {
+    &.current {
+      .btn.preview-list-item,
+      .rowaction.btn:not(.btn-invisible) {
+        background: @gray;
+      }
+      .fa-eye {
+        color: @grayLighter !important;
+      }
+      background: @dropdownLinkBackgroundHover;
+    }
+  }
+}
+
+.search-list {
+  > .rowaction {
+    float: right;
+    position: absolute;
+    right: 14px;
+    top: 14px;
+  }
+}
+
+.search-more-results {
+  margin-left: 6px;
+}
+

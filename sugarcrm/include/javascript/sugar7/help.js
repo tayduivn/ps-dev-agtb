@@ -79,8 +79,6 @@
                     return 'records';
                 case 'detail':
                     return 'record';
-                case 'create-actions':
-                    return 'create';
                 default:
                     return viewName;
             }

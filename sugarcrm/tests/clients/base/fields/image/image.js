@@ -87,11 +87,6 @@ describe("image field", function() {
             expect(stub).not.toHaveBeenCalled();
             stub.reset();
 
-            field.view.name = 'create-actions';
-            field.bindDataChange();
-            expect(stub).not.toHaveBeenCalled();
-            stub.reset();
-
             field.view.name = 'detail';
             field.view.options = {viewName: 'edit'};
             field.bindDataChange();

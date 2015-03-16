@@ -8,6 +8,14 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+/**
+ * @class View.Layouts.Base.CreateActionsLayout
+ * @alias SUGAR.App.view.layouts.CreateActionsLayout
+ * @extends View.Layouts.Base.CreateLayout
+ *
+ * @deprecated 7.7.0 Will be removed in 7.8.0. Use
+ *   {@link View.Layouts.Base.CreateLayout} instead.
+ */
 ({
     plugins: ['ShortcutSession'],
 
@@ -16,5 +24,14 @@
         'Create:Save',
         'Create:Cancel',
         'Dropdown:More'
-    ]
+    ],
+
+    /**
+     * @inheritDoc
+     */
+    initialize: function(options) {
+        this._super('initialize', [options]);
+        app.logger.warn('Warning: View.Layouts.Base.CreateActionsLayout is deprecated since 7.7.0 and will be ' +
+            'removed in 7.8.0. Use View.Layouts.Base.CreateLayout instead.');
+    }
 })

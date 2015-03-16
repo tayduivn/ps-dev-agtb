@@ -18,8 +18,7 @@
     editAllMode: false,
 
     SAVEACTIONS: {
-        SAVE_AND_CREATE: 'saveAndCreate',
-        SAVE_AND_VIEW: 'saveAndView'
+        SAVE_AND_CREATE: 'saveAndCreate'
     },
 
     enableDuplicateCheck: false,
@@ -28,7 +27,6 @@
     saveButtonName: 'save_button',
     cancelButtonName: 'cancel_button',
     saveAndCreateButtonName: 'save_create_button',
-    saveAndViewButtonName: 'save_view_button',
     restoreButtonName: 'restore_button',
 
     /**
@@ -169,7 +167,6 @@
     delegateButtonEvents: function() {
         this.context.on('button:' + this.saveButtonName + ':click', this.save, this);
         this.context.on('button:' + this.saveAndCreateButtonName + ':click', this.saveAndCreate, this);
-        this.context.on('button:' + this.saveAndViewButtonName + ':click', this.saveAndView, this);
         this.context.on('button:' + this.cancelButtonName + ':click', this.cancel, this);
         this.context.on('button:' + this.restoreButtonName + ':click', this.restoreModel, this);
     },
@@ -199,9 +196,6 @@
         switch (this.context.lastSaveAction) {
             case this.SAVEACTIONS.SAVE_AND_CREATE:
                 this.saveAndCreate();
-                break;
-            case this.SAVEACTIONS.SAVE_AND_VIEW:
-                this.saveAndView();
                 break;
             default:
                 this.saveAndClose();
@@ -256,16 +250,6 @@
                     // reset the hasSubpanelModels flag
                     this.hasSubpanelModels = false;
                 }
-        }, this));
-    },
-
-    /**
-     * Handle click on save and view link
-     */
-    saveAndView: function () {
-        this.context.lastSaveAction = this.SAVEACTIONS.SAVE_AND_VIEW;
-        this.initiateSave(_.bind(function () {
-                app.navigate(this.context, this.model);
         }, this));
     },
 

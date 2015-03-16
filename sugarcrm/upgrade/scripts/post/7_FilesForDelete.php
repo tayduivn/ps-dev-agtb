@@ -261,6 +261,23 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             $files[] = 'clients/base/fields/label/detail.hbs';
             $files[] = 'include/javascript/sugar7/plugins/Timeago.js';
             $files[] = 'sidecar/lib/sugar/sugar.timeago.js';
+            // SC-4189 Deprecate/remove create-actions layouts and views
+            $files[] = 'modules/Accounts/clients/base/layouts/create-actions';
+            $files[] = 'modules/Accounts/clients/base/views/create-actions';
+            $files[] = 'modules/Calls/clients/base/views/create-actions';
+            $files[] = 'modules/Contacts/clients/base/views/create-actions';
+            $files[] = 'modules/Leads/clients/base/views/create-actions';
+            $files[] = 'modules/Meetings/clients/base/views/create-actions';
+            $files[] = 'modules/Opportunities/clients/base/fields/quickcreate';
+            $files[] = 'modules/Opportunities/clients/base/layouts/create-actions';
+            $files[] = 'modules/Opportunities/clients/base/views/create-actions';
+            $files[] = 'modules/Products/clients/base/views/create-actions';
+            $files[] = 'modules/RevenueLineItems/clients/base/views/create-actions';
+            $files[] = 'modules/Styleguide/clients/base/views/create-actions';
+            $files[] = 'modules/Tasks/clients/base/views/create-actions';
+            $files[] = 'modules/pmse_Business_Rules/clients/base/views/create-actions';
+            $files[] = 'modules/pmse_Emails_Templates/clients/base/views/create-actions';
+            $files[] = 'modules/pmse_Project/clients/base/views/create-actions';
         }
 
         $this->fileToDelete($files);

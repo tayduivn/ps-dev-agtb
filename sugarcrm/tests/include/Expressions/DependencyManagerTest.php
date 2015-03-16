@@ -194,7 +194,6 @@ class DependencyManagerTest extends Sugar_PHPUnit_Framework_TestCase {
             array('edit', 'RecordView'),
             array('edit', 'EditView'),
             array('edit', 'CreateView'),
-            array('edit', 'Create-actionsView'),
             array('edit', 'AccountsQuickCreateView')
         );
     }
