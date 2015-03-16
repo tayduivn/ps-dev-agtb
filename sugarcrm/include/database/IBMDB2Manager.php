@@ -395,11 +395,8 @@ class IBMDB2Manager  extends DBManager
 		if ( !$row )
 			return false;
 		if ($this->checkDB2STMTerror($result) == false) {
-			$temp = $row;
-			$row = array();
-			foreach ($temp as $key => $val)
-				// make the column keys as lower case. Trim the val returned
-				$row[strtolower($key)] = is_string($val) ? trim($val) : $val;
+            // make the column keys as lower case
+            $row = array_change_key_case($row, CASE_LOWER);
 		}
 		else
 			return false;
@@ -784,6 +781,7 @@ public function convert($string, $type, array $additional_parameters = array())
 	{
 		// YYYY-MM-DD HH:MM:SS
 		switch($type) {
+            case 'char': return rtrim($string, ' ');
 			case 'date': return substr($string, 0, 10);
             case 'time':
                 if (strlen($string) >= 19) {
