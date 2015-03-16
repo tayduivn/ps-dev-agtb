@@ -179,6 +179,8 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             // BR-1574 Move Elastica library to composer (new path vendor/ruflin/elastica)
             'vendor/Elastica/',
             'modules/EmailMan/Save.php',
+            //CRYS-773 Delete version.json from upgrade wizard directory
+            'modules/UpgradeWizard/version.json',
         );
 
         // must be upgrading from between 710 to 722
@@ -254,8 +256,9 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             $files[] = 'modules/Products/clients/base/api/ProductsPipelineChartApi.php';
             $files[] = 'modules/Opportunities/clients/base/api/OpportunitiesPipelineChartApi.php';
             $files[] = 'modules/ForecastManagerWorksheets/clients/base/fields/rowactions';
+            $files[] = 'modules/Tasks/clients/base/fields/closebutton';
         }
-
+        
         if (version_compare($this->from_version, '7.7', '<')) {
             $files[] = 'clients/base/views/interactionschart';
             $files[] = 'clients/base/fields/label/detail.hbs';

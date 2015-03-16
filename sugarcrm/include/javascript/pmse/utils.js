@@ -25,7 +25,7 @@ var translate = function (label, module, replace) {
     } else {
         language = SUGAR.language.languages;
         arr = language[module];
-        string = (arr[label]) ? arr[label] : label;
+        string = (arr && arr[label]) ? arr[label] : label;
     }
     if (!replace) {
         return string;

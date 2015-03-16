@@ -18,103 +18,43 @@ require_once 'upgrade/scripts/post/7_DisableViews.php';
  */
 class DisableViewsTest extends UpgradeTestCase
 {
-    protected $directory = '';
-
-    protected $currentDirectory = '';
-    protected $currentPath = '';
-
-    public function setUp()
-    {
-        $this->currentDirectory = getcwd();
-        $this->currentPath = ini_get('include_path');
-
-        parent::setUp();
-
-        $this->directory = sugar_cached(__CLASS__);
-        sugar_mkdir($this->directory . '/cache', null, true);
-        ini_set('include_path', getcwd() . PATH_SEPARATOR . ini_get('include_path'));
-        chdir($this->directory);
-    }
-
-    public function tearDown()
-    {
-        chdir($this->currentDirectory);
-        $this->currentDirectory = '';
-        ini_set('include_path', $this->currentPath);
-        $this->currentPath = '';
-        rmdir_recursive($this->directory);
-        parent::tearDown();
-    }
-
     public static function getFiles()
     {
         return array(
             array(
-                array(
-                    'custom/modules/Accounts/views/bad.php',
-                    'custom/modules/Accounts/views/good.php',
-                ),
                 'hasCustomViews',
                 array(
                     'custom/modules/Accounts/views/bad.php',
                 ),
                 array(
-                    'custom/modules/Accounts/views/Disabled/bad.php' => true,
-                    'custom/modules/Accounts/views/good.php' => true,
-                    'custom/modules/Accounts/views/bad.php' => false,
-                    'custom/modules/Accounts/views/Disabled/good.php' => false,
-                    'modules/Accounts/views/Disabled/bad.php' => false,
-                    'modules/Accounts/views/good.php' => false,
-                    'modules/Accounts/views/bad.php' => false,
-                    'modules/Accounts/views/Disabled/good.php' => false,
+                    'custom/modules/Accounts/views/bad.php' => 'custom/modules/Accounts/views/Disabled/bad.php',
                 ),
             ),
             array(
-                array(
-                    'modules/Accounts/views/bad.php',
-                    'modules/Accounts/views/good.php',
-                ),
                 'hasCustomViewsModDir',
                 array(
                     'modules/Accounts/views/bad.php',
+                    'modules/Accounts/views/bad1.php',
                 ),
                 array(
-                    'modules/Accounts/views/Disabled/bad.php' => true,
-                    'modules/Accounts/views/good.php' => true,
-                    'modules/Accounts/views/bad.php' => false,
-                    'modules/Accounts/views/Disabled/good.php' => false,
-                    'custom/modules/Accounts/views/Disabled/bad.php' => false,
-                    'custom/modules/Accounts/views/good.php' => false,
-                    'custom/modules/Accounts/views/bad.php' => false,
-                    'custom/modules/Accounts/views/Disabled/good.php' => false,
+                    'modules/Accounts/views/bad.php' => 'modules/Accounts/views/Disabled/bad.php',
+                    'modules/Accounts/views/bad1.php' => 'modules/Accounts/views/Disabled/bad1.php',
                 ),
             ),
         );
     }
 
     /**
-     * Test creates two files
-     * The first one is bad and should be moved to Disabled directory
-     * The second one is good because of md5strings and shouldn't be moved to Disable directory
+     * Test check how to rename files from healthcheck results
      *
      * @dataProvider getFiles
      *
-     * @param array $filesToCreate of files paths
      * @param string $report name of report of health check
-     * @param array $filesToDetect of files paths
-     * @param array $filesToAssert key is file and value bool (should file exist or not)
+     * @param array $filesToDetect Files to move
+     * @param array $filesToCheck Set of files to check as renameDisabled arguments
      */
-    public function testRun($filesToCreate, $report, $filesToDetect, $filesToAssert)
+    public function testRun($report, $filesToDetect, $filesToCheck)
     {
-        foreach ($filesToAssert as $file => $assertion) {
-            SugarTestHelper::saveFile($file);
-        }
-
-        foreach ($filesToCreate as $file) {
-            sugar_file_put_contents($file, '');
-        }
-
-        $script = new SugarUpgradeDisableViews($this->upgrader);
         $this->upgrader->state['healthcheck'] = array(
             array(
                 'report' => $report,
@@ -125,14 +65,10 @@ class DisableViewsTest extends UpgradeTestCase
             ),
         );
 
-        $script->run();
+        $script = $this->getMock('SugarUpgradeDisableViews', array('renameDisabled'), array($this->upgrader));
 
-        foreach ($filesToAssert as $file => $assertion) {
-            if ($assertion) {
-                $this->assertFileExists($file, 'File is not found');
-            } else {
-                $this->assertFileNotExists($file, 'File should be created');
-            }
-        }
+        $script->expects($this->once())->method('renameDisabled')->with($filesToCheck);
+
+        $script->run();
     }
 }

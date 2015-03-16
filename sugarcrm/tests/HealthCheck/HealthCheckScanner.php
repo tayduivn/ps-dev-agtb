@@ -11,6 +11,7 @@
  */
 
 require_once 'modules/HealthCheck/Scanner/Scanner.php';
+require_once 'modules/UpgradeWizard/UpgradeDriver.php';
 
 class HealthCheckScannerCasesTestMock extends HealthCheckScanner
 {
@@ -27,6 +28,10 @@ class HealthCheckScannerCasesTestMock extends HealthCheckScanner
     {
         $this->db = DBManagerFactory::getInstance();
         $this->bwcModulesHash = array_flip($this->bwcModules);
+        $mockGenerator = new PHPUnit_Framework_MockObject_Generator();
+        /** @var UpgradeDriver $upgrade */
+        $upgrade = $mockGenerator->getMockForAbstractClass('UpgradeDriver');
+        $this->setUpgrader($upgrade);
         return true;
     }
 
@@ -53,5 +58,10 @@ class HealthCheckScannerCasesTestMock extends HealthCheckScanner
     public function isDBValid($sugar_version)
     {
         return true;
+    }
+
+    public function getVersion()
+    {
+        return array ('7.6.0.0','1000');
     }
 }

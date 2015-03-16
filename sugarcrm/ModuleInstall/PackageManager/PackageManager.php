@@ -661,53 +661,64 @@ class PackageManager{
             if(empty($md5_matches))
             {
                 $target_manifest = remove_file_extension( $upgrade_content ) . '-manifest.php';
-                if(file_exists($target_manifest)) {
-	                require_once($target_manifest);
+                if (file_exists($target_manifest)) {
+                    require_once($target_manifest);
 
-	                $name = empty($manifest['name']) ? $upgrade_content : $manifest['name'];
-	                $version = empty($manifest['version']) ? '' : $manifest['version'];
-	                $published_date = empty($manifest['published_date']) ? '' : $manifest['published_date'];
-	                $icon = '';
-	                $description = empty($manifest['description']) ? 'None' : $manifest['description'];
-	                $uninstallable = empty($manifest['is_uninstallable']) ? 'No' : 'Yes';
-	                $type = $this->getUITextForType( $manifest['type'] );
-	                $manifest_type = $manifest['type'];
-	                $dependencies = array();
-	                if( isset( $manifest['dependencies']) ){
-	    				$dependencies    = $manifest['dependencies'];
-					}
+                    $name = empty($manifest['name']) ? $upgrade_content : $manifest['name'];
+                    $version = empty($manifest['version']) ? '' : $manifest['version'];
+                    $published_date = empty($manifest['published_date']) ? '' : $manifest['published_date'];
+                    $icon = '';
+                    $description = empty($manifest['description']) ? 'None' : $manifest['description'];
+                    $uninstallable = empty($manifest['is_uninstallable']) ? 'No' : 'Yes';
+                    $type = $this->getUITextForType($manifest['type']);
+                    $manifest_type = $manifest['type'];
+                    $dependencies = array();
+                    if (isset($manifest['dependencies'])) {
+                        $dependencies = $manifest['dependencies'];
+                    }
+
+                    //check dependencies first
+                    if (!empty($dependencies)) {
+                        $uh = new UpgradeHistory();
+                        $not_found = $uh->checkDependencies($dependencies);
+                        if (!empty($not_found) && count($not_found) > 0) {
+                            $file_install =
+                                'errors_' . $mod_strings['ERR_UW_NO_DEPENDENCY'] . "[" . implode(',', $not_found) . "]";
+                        }
+                    }
+
+                    if ($view == 'default' && $manifest_type != 'patch') {
+                        continue;
+                    }
+
+                    if ($view == 'module'
+                        && $manifest_type != 'module' && $manifest_type != 'theme' && $manifest_type != 'langpack'
+                    ) {
+                        continue;
+                    }
+
+                    if (empty($manifest['icon'])) {
+                        $icon = $this->getImageForType($manifest['type']);
+                    } else {
+                        $path_parts = pathinfo($manifest['icon']);
+                        $icon = "<img src=\"" . remove_file_extension($upgrade_content) . "-icon." .
+                            $path_parts['extension'] . "\">";
+                    }
+
+                    $upgrades_available++;
+
+                    $packages[] = array(
+                        'name' => $name,
+                        'version' => $version,
+                        'published_date' => $published_date,
+                        'description' => $description,
+                        'uninstallable' => $uninstallable,
+                        'type' => $type,
+                        'file' => fileToHash($upgrade_content),
+                        'file_install' => fileToHash($upgrade_content),
+                        'unFile' => fileToHash($upgrade_content)
+                    );
                 }
-
-				//check dependencies first
-				if(!empty($dependencies)) {
-					$uh = new UpgradeHistory();
-					$not_found = $uh->checkDependencies($dependencies);
-					if(!empty($not_found) && count($not_found) > 0){
-							$file_install = 'errors_'.$mod_strings['ERR_UW_NO_DEPENDENCY']."[".implode(',', $not_found)."]";
-					}
-				}
-
-                if($view == 'default' && $manifest_type != 'patch') {
-                    continue;
-                }
-
-                if($view == 'module'
-                    && $manifest_type != 'module' && $manifest_type != 'theme' && $manifest_type != 'langpack') {
-                    continue;
-                }
-
-                if(empty($manifest['icon'])) {
-                    $icon = $this->getImageForType( $manifest['type'] );
-                } else {
-                    $path_parts = pathinfo( $manifest['icon'] );
-                    $icon = "<img src=\"" . remove_file_extension( $upgrade_content ) . "-icon." . $path_parts['extension'] . "\">";
-                }
-
-                $upgrades_available++;
-
-                $packages[] = array('name' => $name, 'version' => $version, 'published_date' => $published_date,
-                	'description' => $description, 'uninstallable' =>$uninstallable, 'type' => $type,
-                	'file' => fileToHash($upgrade_content), 'file_install' => fileToHash($upgrade_content), 'unFile' => fileToHash($upgrade_content));
             }//fi
         }//rof
         return $packages;

@@ -272,7 +272,7 @@ if (!isset($_SESSION['setup_site_log_dir']) || empty($_SESSION['setup_site_log_d
     $_SESSION['setup_site_log_dir'] = (isset($sugar_config['log_dir'])) ? $sugar_config['log_dir'] : '.';
 }
 if (!isset($sugar_config['unique_key'])) {
-    $sugar_config['unique_key'] = md5(create_guid());
+    $sugar_config['unique_key'] = get_unique_key();
 }
 if (!isset($_SESSION['cache_dir']) || empty($_SESSION['cache_dir'])) {
     $_SESSION['cache_dir'] = isset($sugar_config['cache_dir']) ? $sugar_config['cache_dir'] : 'cache/';
@@ -617,7 +617,7 @@ EOQ;
         if (!empty($_SESSION['setup_site_specify_guid']) && !empty($_SESSION['setup_site_guid'])) {
             $sugar_config['unique_key'] = $_SESSION['setup_site_guid'];
         } else {
-            $sugar_config['unique_key'] = md5(create_guid());
+            $sugar_config['unique_key'] = get_unique_key();
         }
 
         $validation_errors = validate_dbConfig('a');

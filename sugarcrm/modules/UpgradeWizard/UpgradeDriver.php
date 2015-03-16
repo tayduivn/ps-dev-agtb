@@ -18,7 +18,7 @@ abstract class UpgradeDriver
 {
     const STATE_FILE = "upgrade_state.php";
 
-    const DEFAULT_HEALTHCHECK_PATH = '/../HealthCheck';
+    const DEFAULT_HEALTHCHECK_PATH = '/HealthCheck';
 
     // Stops upgrade process despite step result.
     const STOP_SIGNAL = 23;
@@ -209,6 +209,15 @@ abstract class UpgradeDriver
     }
 
     /**
+     * Gets upgrader state
+     * @return array
+     */
+    public function getState()
+    {
+        return $this->state;
+    }
+
+    /**
      * Save stored state
      */
     protected function saveState()
@@ -325,6 +334,7 @@ abstract class UpgradeDriver
         $this->context['extract_dir'] = $this->context['temp_dir'];
         $this->ensureDir($this->context['temp_dir']);
         $this->context['state_file'] = $this->cacheDir('upgrades/') . self::STATE_FILE;
+        $this->context['upgrader_dir'] = dirname(__FILE__);
         $this->loadState();
         $this->context['backup_dir'] = $this->config['upload_dir'] . "/upgrades/backup/" . pathinfo(
                 $this->context['zip'],
@@ -334,9 +344,12 @@ abstract class UpgradeDriver
             $this->script_mask &= $this->context['script_mask'];
         }
         if (empty($this->context['health_check_path'])) {
-            $this->context['health_check_path'] = dirname(__FILE__) . self::DEFAULT_HEALTHCHECK_PATH;
+            $this->context['health_check_path'] =
+                realpath($this->context['extract_dir']) . self::DEFAULT_HEALTHCHECK_PATH;
         }
         $this->context['case_insensitive_fs'] = $this->testFilesystemCaseInsensitive();
+        $this->context['versionInfo'] = self::getVersion();
+
         $this->initialized = true;
     }
 
@@ -1052,8 +1065,12 @@ abstract class UpgradeDriver
             return sprintf($this->mod_strings['ERROR_PACKAGE_TYPE'], $manifest['type']);
         }
 
-        if (version_compare($manifest['version'], '7.0', '<')) {
-            return sprintf("Can not upgrade to version %s with 7.x upgrader", $manifest['version']);
+        if (version_compare($manifest['version'], '7.6', '<')) {
+            return sprintf(
+                "Can not upgrade to version %s with %s upgrader",
+                $manifest['version'],
+                $this->context['versionInfo'][0]
+            );
         }
 
         if (isset($manifest['acceptable_sugar_versions'])) {
@@ -1611,7 +1628,7 @@ abstract class UpgradeDriver
         return write_array_to_file("sugar_config", $configs, $this->context['source_dir'] . "/config.php");
     }
 
-    protected $stages = array('healthcheck', 'unpack', 'pre', 'commit', 'post', 'cleanup');
+    protected $stages = array('unpack', 'healthcheck', 'pre', 'commit', 'post', 'cleanup');
 
     /**
      * Run one step in the upgrade
@@ -1804,7 +1821,7 @@ abstract class UpgradeDriver
                 $build = $data['build'];
             }
         } elseif (file_exists('sugar_version.php')) {
-            if(!defined('sugarEntry')) {
+            if (!defined('sugarEntry')) {
                 define('sugarEntry', 'upgrader');
             }
             include 'sugar_version.php';
@@ -1822,10 +1839,45 @@ abstract class UpgradeDriver
     public function healthcheck()
     {
         list($version,) = $this->loadVersion($this->context['source_dir']);
-        if (version_compare($version, '7.0', '<')) {
-            return $this->doHealthcheck();
+        return $this->doHealthcheck();
+    }
+
+    /**
+     * Verify if health check module is available
+     * @param string $scannerType Web or Cli scanner
+     * @return bool|string
+     */
+    protected function isHealthCheckInstalled($scannerType)
+    {
+        set_include_path($this->context['health_check_path'] . PATH_SEPARATOR . get_include_path());
+        $file = 'Scanner/Scanner' . ucfirst($scannerType) . '.php';
+        return stream_resolve_include_path($file);
+    }
+
+    /**
+     * Get Scanner object
+     * @param string    $scannerType                Web or Cli scanner
+     * @param null      $logFilePointer optional    Pointer to log file
+     * @param null      $verbose        optional    Verbose level
+     * @return bool | HealthCheckScanner
+     */
+    protected function getHealthCheckScanner($scannerType, $logFilePointer = null, $verbose = null)
+    {
+        if ($this->isHealthCheckInstalled($scannerType)) {
+
+            $scanner = $this->getHelper()->getScanner($scannerType);
+
+            if (!is_null($verbose)) {
+                $scanner->setVerboseLevel($verbose);
+            }
+            if (!is_null($logFilePointer)) {
+                $scanner->setLogFilePointer($logFilePointer);
+            }
+            $scanner->setInstanceDir($this->context['source_dir']);
+            $scanner->setUpgrader($this);
+            return $scanner;
         }
-        return true;
+        return false;
     }
 
     /**
@@ -1899,5 +1951,35 @@ abstract class UpgradeScript
             return call_user_func_array(array($this->upgrader, $name), $args);
         }
         throw new Exception("Can not call unknown method $name");
+    }
+}
+
+if (!function_exists('stream_resolve_include_path')) {
+    /**
+     *
+     * Resolve filename against the include path
+     *
+     * stream_resolve_include_path was introduced in PHP 5.3.2. But this script must work on PHP 5.2.
+     *
+     * @param $filename
+     * @return bool|string
+     */
+    function stream_resolve_include_path($filename)
+    {
+        $paths = explode(PATH_SEPARATOR, get_include_path());
+
+        foreach ($paths as $prefix) {
+            $suffix = '';
+            if (substr($prefix, -1) != DIRECTORY_SEPARATOR) {
+                $suffix = DIRECTORY_SEPARATOR;
+            }
+            $file = $prefix . $suffix . $filename;
+
+            if (file_exists($file)) {
+                return $file;
+            }
+        }
+
+        return false;
     }
 }

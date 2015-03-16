@@ -1160,10 +1160,11 @@ class OracleManager extends DBManager
      */
     protected function setAutoIncrement($table, $field_name)
     {
-      	$this->deleteAutoIncrement($table, $field_name);
-      	$this->query(
+        $this->deleteAutoIncrement($table, $field_name);
+        $this->query(
             'CREATE SEQUENCE ' . $this->_getSequenceName($table, $field_name, true) .
-                ' START WITH 0 increment by 1 nomaxvalue minvalue 0');
+            ' START WITH 0 increment by 1 nocache nomaxvalue minvalue 0'
+        );
 		$this->query(
             'SELECT ' . $this->_getSequenceName($table, $field_name, true) .
                 '.NEXTVAL FROM DUAL');

@@ -29,6 +29,10 @@ class RS99Test extends Sugar_PHPUnit_Framework_TestCase
         $this->account = SugarTestAccountUtilities::createAccount();
         $this->opportunity = SugarTestOpportunityUtilities::createOpportunity('', $this->account);
 
+        Opportunity::$settings = array(
+            'opps_view_by' => 'RevenueLineItems'
+        );
+
         $this->revenuelineitem = new RevenueLineItem();
         $this->revenuelineitem->name = 'Revenue Line Item ' . __CLASS__;
         $this->revenuelineitem->opportunity_id = $this->opportunity->id;
@@ -42,6 +46,8 @@ class RS99Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
+        Opportunity::$settings = array();
+
         if ($this->revenuelineitem instanceof SugarBean) {
             $this->revenuelineitem->mark_deleted($this->revenuelineitem->id);
         }

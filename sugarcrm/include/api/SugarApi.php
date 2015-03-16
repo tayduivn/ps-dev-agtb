@@ -644,4 +644,22 @@ abstract class SugarApi {
 
         return null;
     }
+
+    /**
+     * Check if list limit passed to API less or greater than allowed predefined value.
+     * If max limit is not defined it returns passed value without changes.
+     *
+     * @param int $limit List limit passed to API
+     * @return int
+     */
+    public function checkMaxListLimit($limit) 
+    {
+        $maxListLimit = SugarConfig::getInstance()->get('max_list_limit');
+                
+        if ($maxListLimit && ($limit < 1 || $limit > $maxListLimit)) {
+            return $maxListLimit;
+        }
+        
+        return $limit;
+    }
 }

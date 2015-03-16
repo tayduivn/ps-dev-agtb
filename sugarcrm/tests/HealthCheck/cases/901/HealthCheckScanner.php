@@ -14,6 +14,6 @@ class S_901_HealthCheckScannerCasesTestMock extends HealthCheckScannerCasesTestM
 {
     public function getVersionAndFlavor()
     {
-        return array('7.0.0', 'ent');
+        return array('100.0.0', 'ent');
     }
 }
