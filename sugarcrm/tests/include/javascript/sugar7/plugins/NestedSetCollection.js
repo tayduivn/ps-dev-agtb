@@ -11,10 +11,10 @@ describe('Plugins.NestedSetCollection', function() {
         sinonSandbox = sinon.sandbox.create();
 
         SugarTest.testMetadata.init();
-        SugarTest.loadComponent('base', 'field', 'nestedset');
+        SugarTest.loadComponent('base', 'field', 'nestedset', module);
         SugarTest.loadPlugin('NestedSetCollection');
         SugarTest.loadPlugin('JSTree');
-        SugarTest.loadHandlebarsTemplate('nestedset', 'field', 'base', 'edit');
+        SugarTest.loadHandlebarsTemplate('nestedset', 'field', 'base', 'edit', module);
 
         SugarTest.testMetadata.set();
         app.data.declareModels();
@@ -32,7 +32,7 @@ describe('Plugins.NestedSetCollection', function() {
 
         treeData = SugarTest.loadFixture('tree', '../tests/modules/Categories/fixtures');
 
-        field = SugarTest.createField('base', 'nestedset', 'nestedset', 'edit', fieldDef, module);
+        field = SugarTest.createField('base', 'nestedset', 'nestedset', 'edit', fieldDef, module, null, null, true);
         renderTreeStub = sinonSandbox.stub(field, '_renderTree');
     });
 
