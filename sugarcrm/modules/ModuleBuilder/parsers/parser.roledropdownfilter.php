@@ -25,21 +25,57 @@ class ParserRoleDropDownFilter extends ModuleBuilderParser
     protected $varName = 'role_dropdown_filters';
 
     /**
-     * Returns array of options by given role name and dropdown name
+     * Checks if there is role specific metadata for the given dropdown field
      *
+     * @param string $fieldName Dropdown field name
      * @param string $role Role ID
-     * @param string $dropdown Dropdown name
+     *
+     * @return boolean
+     */
+    public function hasMetadata($fieldName, $role)
+    {
+        $filter = $this->getRawFilter($fieldName, $role);
+        return count($filter) > 0;
+    }
+
+    /**
+     * Returns filter definition for the given dropdown field and role
+     *
+     * @param string $fieldName Dropdown field name
+     * @param string $role Role ID
      * @return array
      */
-    public function getOne($role, $dropdown)
+    public function getOne($fieldName, $role)
     {
-        $paths = array(
-            SugarAutoLoader::existingCustomOne($this->getFilePath($role, $dropdown)),
-            'custom/application/Ext/DropdownFilters/roles/' . $role . '/dropdownfilters.ext.php',
-        );
+        $filter = $this->getRawFilter($fieldName, $role);
+        $filter = $this->fixFilter($filter, $fieldName);
+
+        return $filter;
+    }
+
+    /**
+     * Returns filter definition for the given dropdown field exactly as it's stored in metadata files, or empty array
+     * in case if the definition is not found
+     *
+     * @param string $fieldName Dropdown field name
+     * @param string $role Role ID
+     * @return array
+     */
+    protected function getRawFilter($fieldName, $role)
+    {
+        $paths = array();
+        $filterPath = $this->getFilePath($fieldName, $role);
+        $filterPath = SugarAutoLoader::existingCustomOne($filterPath);
+        if ($filterPath) {
+            $paths[] = $filterPath;
+        }
+        $extPath = 'custom/application/Ext/DropdownFilters/roles/' . $role . '/dropdownfilters.ext.php';
+        if (SugarAutoLoader::fileExists($extPath)) {
+            $paths[] = $extPath;
+        }
 
         foreach ($paths as $path) {
-            $filter = $this->getFilterFromFile($path, $dropdown);
+            $filter = $this->getFilterFromFile($fieldName, $path);
             if ($filter) {
                 return $filter;
             }
@@ -49,27 +85,61 @@ class ParserRoleDropDownFilter extends ModuleBuilderParser
     }
 
     /**
-     * Checks if there is role specific metadata for the given dropdown field
+     * Returns filter metadata for the given dropdown field defined in the file or empty array in case if the
+     * field doesn't contain metadata for the given field
      *
-     * @param string $name Field name
-     * @param string $role Role ID
-     *
-     * @return boolean
+     * @param string $fieldName Dropdown field name
+     * @param string $file File path
+     * @return array
      */
-    public function hasMetadata($name, $role)
+    protected function getFilterFromFile($fieldName, $file)
     {
-        $filter = $this->getOne($role, $name);
-        return count($filter) > 0;
+        $filters = $this->readFiles(array($file));
+        if (isset($filters[$fieldName])) {
+            return $filters[$fieldName];
+        }
+
+        return array();
     }
 
     /**
-     * Returns an array of all dropdown options for all roles
+     * Fixes filter definition by making sure it contains all options from the default list and doesn't contain
+     * options which are not in the default list
      *
+     * @param array $filter Raw filter definition
+     * @param string $fieldName Dropdown field name
      * @return array
      */
-    public function getAll()
+    protected function fixFilter(array $filter, $fieldName)
     {
-        return $this->getDropDownFiltersFromFiles($this->getAllFiles());
+        global $app_list_strings;
+
+        if (isset($app_list_strings[$fieldName]) && is_array($app_list_strings[$fieldName])) {
+            // by default, all options are available
+            $defaults = array_fill_keys(array_keys($app_list_strings[$fieldName]), true);
+            // remove non-existing options from the filter
+            $filter = array_intersect_key($filter, $defaults);
+            // add default options to the filter and preserve original key order
+            $filter = array_merge($filter, array_diff_key($defaults, $filter));
+        }
+
+        return $filter;
+    }
+
+    /**
+     * Reads medatata files and returns raw filter definition contained in them
+     *
+     * @param array $files
+     * @return array
+     */
+    protected function readFiles(array $files)
+    {
+        ${$this->varName} = array();
+        foreach ($files as $file) {
+            require $file;
+        }
+
+        return ${$this->varName};
     }
 
     /**
@@ -93,58 +163,24 @@ class ParserRoleDropDownFilter extends ModuleBuilderParser
      */
     public function getDropDownFiltersFromFiles(array $files)
     {
-        ${$this->varName} = array();
-        foreach ($files as $file) {
-            if (is_array($file) && isset($file['path'])) {
-                $file = $file['path'];
-            }
-            if (is_string($file)) {
-                if (SugarAutoLoader::fileExists($file)) {
-                    require $file;
-                }
-            }
+        $filters = $this->readFiles($files);
+        foreach ($filters as $fieldName => $filter) {
+            $filters[$fieldName] = $this->fixFilter($filter, $fieldName);
         }
 
-        return $this->validateDropDownFilter(${$this->varName});
-    }
-
-    /**
-     * Returns the filter with no longer valid keys removed from the list.
-     * @param array $filter
-     * @param string $language
-     *
-     * @return array
-     */
-    protected function validateDropDownFilter($filter, $language = 'en_us') {
-        $ret = array();
-        $list_strings = return_app_list_strings_language($language);
-
-        foreach($filter as $dropdownName => $values) {
-            $ret[$dropdownName] = array();
-            if (isset($list_strings[$dropdownName]) && is_array($list_strings[$dropdownName]) &&
-                isset($filter[$dropdownName]) && is_array($filter[$dropdownName])) {
-                $dropdownList = $list_strings[$dropdownName];
-                foreach($values as $key => $visible) {
-                    if (isset($dropdownList[$key])) {
-                        $ret[$dropdownName][$key] = $visible;
-                    }
-                }
-            }
-        }
-
-        return $ret;
+        return $filters;
     }
 
     /**
      * Returns a file path to the file that stores options for a given role and a dropdown name
      *
+     * @param $fieldName
      * @param $role
-     * @param $name
      * @return string
      */
-    protected function getFilePath($role, $name)
+    protected function getFilePath($fieldName, $role)
     {
-        return $this->getFileDir($role) . "/$name.php";
+        return $this->getFileDir($role) . "/$fieldName.php";
     }
 
     /**
@@ -161,13 +197,12 @@ class ParserRoleDropDownFilter extends ModuleBuilderParser
     /**
      * Saves $data to the $name dropdown for the $role name
      *
+     * @param $fieldName
      * @param $role
-     * @param $name
      * @param $data
      * @return boolean
-     * @throws Exception
      */
-    public function handleSave($role, $name, $data)
+    public function handleSave($fieldName, $role, $data)
     {
         $dir = 'custom/' . $this->getFileDir($role);
         if (!SugarAutoLoader::ensureDir($dir)) {
@@ -175,9 +210,9 @@ class ParserRoleDropDownFilter extends ModuleBuilderParser
             return false;
         }
         $result = write_array_to_file(
-            "{$this->varName}['{$name}']",
+            "{$this->varName}['{$fieldName}']",
             $this->convertFormData($data),
-            'custom/' . $this->getFilePath($role, $name)
+            'custom/' . $this->getFilePath($fieldName, $role)
         );
         if ($result) {
             MetaDataManager::refreshSectionCache(MetaDataManager::MM_EDITDDFILTERS, array(), array(
@@ -206,31 +241,5 @@ class ParserRoleDropDownFilter extends ModuleBuilderParser
         }
 
         return $converted;
-    }
-
-    /**
-     * Returns filter metadata for the given dropdown defined in the file
-     *
-     * @param string $path File path
-     * @param string $dropdown Dropdown name
-     *
-     * @return array|null
-     */
-    protected function getFilterFromFile($path, $dropdown)
-    {
-        global $log;
-
-        if (file_exists($path)) {
-            ${$this->varName} = array();
-            require $path;
-            if (isset(${$this->varName}[$dropdown])) {
-                if (is_array(${$this->varName}[$dropdown])) {
-                    return ${$this->varName}[$dropdown];
-                }
-                $log->error("ParserRoleDropDownFilter :: \$$this->varName[$dropdown] is not an array in $path");
-            }
-        }
-
-        return null;
     }
 }
