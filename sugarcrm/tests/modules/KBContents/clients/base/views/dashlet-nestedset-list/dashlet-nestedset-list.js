@@ -14,8 +14,25 @@ describe('modules.KBContents.clients.base.view.DashletNestesetList', function() 
         context.set('module', moduleName);
         context.set('action', 'detail');
         SugarTest.loadPlugin('Dashlet');
-        SugarTest.loadPlugin('NestedSetCollection');
-        SugarTest.loadPlugin('JSTree');
+        SugarTest.loadFile(
+            '../modules/Categories/clients/base/plugins',
+            'JSTree',
+            'js',
+            function(d) {
+                app.events.off('app:init');
+                eval(d);
+                app.events.trigger('app:init');
+            });
+        SugarTest.loadFile(
+            '../modules/Categories/clients/base/plugins',
+            'NestedSetCollection',
+            'js',
+            function(d) {
+                app.events.off('app:init');
+                eval(d);
+                app.events.trigger('app:init');
+            });
+
         SugarTest.loadHandlebarsTemplate('record', 'view', 'base');
         SugarTest.loadComponent('base', 'view', 'dashlet-nestedset-list', moduleName);
         SugarTest.testMetadata.set();

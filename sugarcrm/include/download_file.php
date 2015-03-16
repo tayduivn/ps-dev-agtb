@@ -173,7 +173,7 @@ class DownloadFile {
                     $fileid  = $bean->id;
                     $fileurl = '';
 
-                    // Handle special cases, like Documents and KBOLDDocumentRevisions
+                    // Handle special cases, like Documents
                     if (isset($bean->object_name)) {
                         if ($bean->object_name == 'Document') {
                             // Documents store their file information in DocumentRevisions

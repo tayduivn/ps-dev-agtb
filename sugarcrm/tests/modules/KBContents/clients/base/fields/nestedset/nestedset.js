@@ -12,12 +12,28 @@ describe('modules.KBContents.clients.base.field.nestedset', function() {
 
         SugarTest.testMetadata.init();
         SugarTest.loadComponent('base', 'field', 'nestedset', module);
-        SugarTest.loadPlugin('NestedSetCollection');
+        SugarTest.loadFile(
+            '../modules/Categories/clients/base/plugins',
+            'NestedSetCollection',
+            'js',
+            function(d) {
+                app.events.off('app:init');
+                eval(d);
+                app.events.trigger('app:init');
+            });
         SugarTest.loadHandlebarsTemplate('nestedset', 'field', 'base', 'edit', module);
         SugarTest.testMetadata.set();
 
         app.data.declareModels();
-        SugarTest.loadPlugin('JSTree');
+        SugarTest.loadFile(
+            '../modules/Categories/clients/base/plugins',
+            'JSTree',
+            'js',
+            function(d) {
+                app.events.off('app:init');
+                eval(d);
+                app.events.trigger('app:init');
+            });
 
         sinon.stub(_, 'defer', function() {
             var args = _.toArray(arguments),
