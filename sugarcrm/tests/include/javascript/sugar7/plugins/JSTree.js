@@ -11,17 +11,17 @@ describe('Plugins.JSTree', function() {
         sinonSandbox = sinon.sandbox.create();
 
         SugarTest.testMetadata.init();
-        SugarTest.loadComponent('base', 'field', 'nestedset');
+        SugarTest.loadComponent('base', 'field', 'nestedset', module);
         SugarTest.loadPlugin('JSTree');
         SugarTest.loadPlugin('NestedSetCollection');
-        SugarTest.loadHandlebarsTemplate('nestedset', 'field', 'base', 'edit');
+        SugarTest.loadHandlebarsTemplate('nestedset', 'field', 'base', 'edit', module);
 
         SugarTest.testMetadata.set();
         app.data.declareModels();
 
         treeData = SugarTest.loadFixture('tree', '../tests/modules/Categories/fixtures');
 
-        field = SugarTest.createField('base', 'nestedset', 'nestedset', 'edit', fieldDef, module);
+        field = SugarTest.createField('base', 'nestedset', 'nestedset', 'edit', fieldDef, module, null, null, true);
         renderTreeStub = sinonSandbox.stub(field, '_renderTree');
     });
 
@@ -35,53 +35,6 @@ describe('Plugins.JSTree', function() {
         delete app.plugins.plugins['field']['JSTree'];
         delete app.plugins.plugins['field']['NestedSetCollection'];
         sinonSandbox.restore();
-    });
-
-    // Skipped because JSTree::createTree() uses _recursiveReplaceHTMLChars before the key 'data' exists.
-    xit('Tree should convert special chars.', function() {
-        field.render();
-        sinonSandbox.stub(field, '_toggleVisibility');
-        sinonSandbox.stub(field, '_loadContextMenu', function() {
-            return {};
-        });
-
-        var data = [
-                {
-                    id: 'b452afe6-e6d8-1f7c-5789-543ba51e30f5',
-                    name: '&amp;',
-                    created_by: '1',
-                    deleted: '0',
-                    root: '76c5ad26-21db-1be5-85ee-54258f68dd4a',
-                    lft: '8',
-                    rgt: '9',
-                    level: '1',
-                    children: {next_offset: -1, records: []}
-                },
-                {
-                    id: 'e22900cc-abbc-31b9-bba4-543ba5adeb1d',
-                    name: '&lt;',
-                    created_by: '1',
-                    deleted: '0',
-                    root: '76c5ad26-21db-1be5-85ee-54258f68dd4a',
-                    lft: '10',
-                    rgt: '11',
-                    level: '1',
-                    children: {next_offset: -1, records: []}
-                }
-            ],
-            containerStub = {
-                jstree: function() {
-                    this.on = function() {
-                        return this;
-                    };
-                    return this;
-                }
-            };
-
-        field.createTree(data, containerStub);
-
-        expect(data[0].data).toEqual('&');
-        expect(data[1].data).toEqual('<');
     });
 
     it('Tree add node.', function() {
