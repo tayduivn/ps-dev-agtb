@@ -101,45 +101,6 @@
             },
 
             /**
-             * Recursively step through the tree and for each node representing a tree node,
-             * run the data attribute through the replaceHTMLChars function.
-             * This function supports n-levels of the tree hierarchy.
-             *
-             * @param {Object} data The data structure returned from the REST API.
-             * @param {Object} ctx A reference to the view's context.
-             * @return {Object} object The modified data structure.
-             * @private
-             */
-            _recursiveReplaceHTMLChars: function(data, ctx) {
-
-                _.each(data, function(entry, index) {
-
-                    //Scan for the nodes with the data attribute.  These are the nodes we are interested in
-                    if (entry.data) {
-                        data[index].data = (function(value) {
-                            return value
-                                .replace(/&amp;/gi, '&')
-                                .replace(/&lt;/gi, '<')
-                                .replace(/&gt;/gi, '>')
-                                .replace(/&#039;/gi, '\'')
-                                .replace(/&quot;/gi, '"');
-                        })(entry.data);
-
-                        if (entry.children) {
-                            //For each children found (if any) then call _recursiveReplaceHTMLChars again.
-                            // childEntry to an Array.
-                            // This is crucial so that the beginning _.each loop runs correctly.
-                            _.each(entry.children, function(childEntry, index2) {
-                                entry.children[index2] = ctx._recursiveReplaceHTMLChars([childEntry]);
-                            }, this);
-                        }
-                    }
-                }, this);
-
-                return data;
-            },
-
-            /**
              * Render JSTree.
              * @param {Object} $container
              * @param {Object} settings
@@ -232,7 +193,7 @@
                 if (!_.isArray(data)) {
                     data = [data];
                 }
-                var treeData = this._recursiveReplaceHTMLChars(data, this),
+                var treeData = data,
                     fn = function(el) {
                         if (!_.isEmpty(el.children)) {
                             _.each(el.children.records, fn);
@@ -243,9 +204,6 @@
                         el.attr = {'data-id': el.id, 'data-level': el.level, 'id': el.id};
                     },
                     jsTreeOptions = {
-                        core: {
-                            html_titles: true
-                        },
                         settings: this.jsTreeSettings,
                         plugins: _.isEmpty(plugins) ? this.loadPluginsList() : plugins,
                         json_data: {
