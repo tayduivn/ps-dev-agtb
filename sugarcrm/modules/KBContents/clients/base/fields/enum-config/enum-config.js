@@ -15,6 +15,18 @@
     /**
      * {@inheritDoc}
      */
+    initialize: function(opts) {
+        this._super('initialize', [opts]);
+        if (this.model.isNew() && this.view.action === 'detail') {
+            this.def.readonly = false;
+        } else {
+            this.def.readonly = true;
+        }
+    },
+
+    /**
+     * {@inheritDoc}
+     */
     loadEnumOptions: function(fetch, callback) {
         var module = this.def.module || this.module,
             optKey = this.def.key || this.name,

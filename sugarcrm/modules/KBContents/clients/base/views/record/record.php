@@ -226,6 +226,7 @@ $viewdefs['KBContents']['base']['view']['record'] = array(
                     'name' => 'language',
                     'type' => 'enum-config',
                     'key' => 'languages',
+                    'readonly' => false,
                 ),
                 'revision' => array(
                     'name' => 'revision',
