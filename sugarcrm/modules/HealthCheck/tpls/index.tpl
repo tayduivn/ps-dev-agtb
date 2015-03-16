@@ -179,7 +179,7 @@
                     },
                     error: function () {
                         var html = ["<h1><i class='fa ", flagToIcon[parseInt(3)],
-                            "'></i> Unexpected error occurred!</h1><p>We've encountered an unexpected error during heath check procedure. Please <a href='mailto:support@sugarcrm.com'>contact support</a>.</p>"];
+                            "'></i> Unexpected error occurred!</h1><p>We've encountered an unexpected error during health check procedure. Please <a href='mailto:support@sugarcrm.com'>contact support</a>.</p>"];
                         $healthcheck.html(html.join(""));
                         _displayAlert(3);
                     }
