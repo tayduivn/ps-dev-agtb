@@ -11,15 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$viewdefs['base']['layout']['quicksearch'] = array(
-    'components' =>
-    array(
-        array(
-            'view' => 'quicksearch-bar',
-        ),
-        array(
-            'view' => 'quicksearch-results',
-        ),
-    ),
-    'v2' => true,
+$viewdefs['base']['view']['quicksearch-bar'] = array(
+    'limit' => 3
 );

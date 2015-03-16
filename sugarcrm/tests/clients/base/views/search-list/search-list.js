@@ -20,6 +20,16 @@ describe('View.Views.Base.SearchListView', function() {
         view = SugarTest.createView('base', 'GlobalSearch', 'search-list');
         app = SUGAR.App;
         model = app.data.createBean();
+
+        SugarTest.loadFile('../include/javascript/sugar7', 'utils-search', 'js', function(d) {
+            app.events.off('app:init');
+            eval(d);
+            app.events.trigger('app:init');
+        });
+
+        sinon.collection.stub(app.metadata, 'getModule', function() {
+            return fixtures.search.getModule1_return;
+        });
     });
 
     afterEach(function() {
@@ -28,6 +38,7 @@ describe('View.Views.Base.SearchListView', function() {
         Handlebars.templates = {};
         view = null;
         model = null;
+        sinon.collection.restore();
     });
 
     describe('parseModels', function() {

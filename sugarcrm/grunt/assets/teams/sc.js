@@ -21,6 +21,7 @@
     'include/javascript/sugar7/underscore-mixins.js',
     'include/javascript/sugar7/utils.js',
     'include/javascript/sugar7/utils-filters.js',
+    'include/javascript/sugar7/utils-search.js',
     'include/javascript/sugar7/plugins/*.js',
     'modules/Accounts/clients/**/*.js',
     'modules/Administration/clients/**/*.js',

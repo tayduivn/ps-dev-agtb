@@ -21,6 +21,14 @@
         this._super('initialize', [options]);
 
         /**
+         * The fields metadata for this view per module.
+         *
+         * @property
+         * @private
+         */
+        this._fieldsMeta = {};
+
+        /**
          * The collection for executing searches and passing results.
          * This could be shared and used by other components.
          */
@@ -66,6 +74,16 @@
             this.$('.active').removeClass('active');
             this.disposeKeydownEvent();
         }, this);
+
+        app.events.on('app:sync:complete', this._clearFieldsMeta, this);
+    },
+
+    /**
+     * Clear the cached fields metadata
+     * @private
+     */
+    _clearFieldsMeta: function() {
+        this._fieldsMeta = {};
     },
 
     /**
@@ -75,20 +93,30 @@
      */
     bindDataChange: function() {
         // On a collection sync, format the search results and display
-        this.collection.on('sync', function() {
+        this.collection.on('sync', function(collection) {
             if (this.disposed) {
                 return;
             }
+            var gsUtils = app.utils.GlobalSearch;
+
+            gsUtils.formatRecords(collection, false);
+
             _.each(this.collection.models, function(model) {
+
                 model.link = '#' + app.router.buildRoute(model.module, model.id);
-                var name = model.get('name');
-                model.name = name;
+                // FIXME: SC-4254 Remove this.layout.v2
                 if (this.layout.v2) {
-                    // To be developed in SC-4090
+                    var moduleMeta = this._fieldsMeta[model.module] || gsUtils.getFieldsMeta(model.module, {linkablePrimary: false});
+                    this._fieldsMeta[model.module] = moduleMeta;
+                    model.primaryFields = gsUtils.highlightFields(model, moduleMeta.primaryFields);
+                    model.secondaryFields = gsUtils.highlightFields(model, {}, true);
+
+                    model.primaryFields = _.values(model.primaryFields);
+                    model.secondaryFields = _.values(model.secondaryFields).slice(0, 3);
                 } else {
                     if (model.searchInfo.highlighted) {
-                        // Get the highlighted field. If one is the name, highlight the name. Also, highlight
-                        // the first non-name field.
+                        // Get the highlighted fields. If one is the name, highlight the name. Also, highlight the first
+                        // non-name field. If there are multiple non-name highlighted fields, we only use the first.
                         _.find(model.searchInfo.highlighted, function(val, key) {
                             if (key === 'name') {
                                 model.name = new Handlebars.SafeString(val.text);
@@ -99,9 +127,14 @@
                             }
                         });
                     }
-                    this.collection.module_list_string = this.collection.module_list.join(',');
                 }
             }, this);
+
+            // build the link for View all results
+            this.searchLink = app.router.buildRoute(
+                'search',
+                collection.query + '&m=' + this.collection.module_list.join(',')
+            );
             this.activeIndex = null;
             this.render();
             this.layout.trigger('quicksearch:results:open');

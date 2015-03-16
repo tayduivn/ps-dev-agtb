@@ -91,7 +91,13 @@
       min-width: 120px;
       padding: 0;
     }
-    li > a,
+    li > a {
+      padding: 8px 0 2px 8px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      min-height: 22px;
+    }
     li.no-results {
       padding: 8px 10px;
       overflow: hidden;

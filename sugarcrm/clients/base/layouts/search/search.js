@@ -36,43 +36,9 @@
             if (!isCollection) {
                 return;
             }
-            this.formatRecords(collection);
+            app.utils.GlobalSearch.formatRecords(collection, true);
 //            collection.facets = data.facets;
 //            this.context.set('facets', data.facets);
         }, this);
-    },
-
-    /**
-     * Formats models returned by the globalsearch api.
-     *
-     * @param {Data.BeanCollection} collection The collection of models to format.
-     */
-    formatRecords: function(collection) {
-        collection.each(function(model) {
-            if (model.formatted) {
-                return;
-            }
-            var module = app.metadata.getModule(model.get('_module'));
-            var highlights = _.map(model.get('_highlights'), function(val, key) {
-                return {
-                    name: key,
-                    value: new Handlebars.SafeString(val),
-                    label: module.fields[key].vname,
-                    link: true,
-                    highlighted: true
-                };
-            });
-            model.set('_highlights', highlights);
-
-            //FIXME: We shouldn't do that because it only applies for person
-            // object, SC-4196 will fix it.
-            if (!model.get('name')) {
-                var name = model.get('first_name') + ' ' + model.get('last_name');
-                model.set('name', name);
-            }
-            // We add a flag here so that when the user clicks on
-            // `More results...` we won't reformat the existing ones.
-            model.formatted = true;
-        });
     }
 })
