@@ -1,4 +1,4 @@
-describe('Base.View.DashletNestesetList', function() {
+describe('modules.KBContents.clients.base.view.DashletNestesetList', function() {
     var moduleName = 'KBContents',
         app, view, sandbox, context, layout, treeData;
 
@@ -17,7 +17,7 @@ describe('Base.View.DashletNestesetList', function() {
         SugarTest.loadPlugin('NestedSetCollection');
         SugarTest.loadPlugin('JSTree');
         SugarTest.loadHandlebarsTemplate('record', 'view', 'base');
-        SugarTest.loadComponent('base', 'view', 'dashlet-nestedset-list');
+        SugarTest.loadComponent('base', 'view', 'dashlet-nestedset-list', moduleName);
         SugarTest.testMetadata.set();
 
         sandbox.stub(app.metadata, 'getModule', function(module, type) {
@@ -33,7 +33,7 @@ describe('Base.View.DashletNestesetList', function() {
 
         layout = SugarTest.createLayout('base', moduleName, 'dashboard');
         view = SugarTest.createView(
-            'base', moduleName, 'dashlet-nestedset-list', viewMeta, context, null, layout
+            'base', moduleName, 'dashlet-nestedset-list', viewMeta, context, true, layout
         );
     });
 
