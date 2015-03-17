@@ -8,6 +8,15 @@ describe('KBContents.Base.Views.PanelTopForLocalizations', function() {
         context = app.context.getContext({
             module: moduleName
         });
+        SugarTest.loadFile(
+            '../modules/KBContents/clients/base/plugins',
+            'KBContent',
+            'js',
+            function(d) {
+                app.events.off('app:init');
+                eval(d);
+                app.events.trigger('app:init');
+            });
         context.set('model', new app.Bean());
         context.parent = new Backbone.Model();
 
@@ -47,7 +56,7 @@ describe('KBContents.Base.Views.PanelTopForLocalizations', function() {
         var createRelatedContentStab, contextParentGetStub;
 
         beforeEach(function() {
-            createRelatedContentStab = sandbox.stub(view, 'createRelatedContent');
+            createRelatedContentStab = sandbox.stub(view, 'createRelatedContent', $.noop());
         });
 
         it('should call createRelatedContent() when parentModule exists',

@@ -37,8 +37,8 @@ describe('KBContents.Base.Views.RecordList', function() {
             moduleName,
             'recordlist',
             null,
-            context,
-            moduleName,
+            null,
+            true,
             layout
         );
     });
