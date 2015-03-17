@@ -262,11 +262,25 @@
      * Set right value in DOM for the field.
      */
     bindDataChange: function() {
-        this._super('bindDataChange');
         if (this._dropdownExists()) {
-            this.$('[name=' + this.def.name + ']').text(this.model.get(this.def.name));
-            this.$('[name=' + this.def.id_name + ']').val(this.model.get(this.def.id_name));
+            var id = this.model.get(this.def.id_name),
+                name = this.model.get(this.def.name),
+                child = this.collection.getChild(id);
+            if (!name && child) {
+                name = child.get(this.def.rname);
+            }
+            if (!name) {
+                bean = app.data.createBean(this.moduleRoot, {id: id});
+                bean.fetch({
+                    success: _.bind(function(data) {
+                        this.model.set(this.def.name, data.get(this.def.rname));
+                    }, this)
+                });
+            }
+            this.$('[name=' + this.def.name + ']').text(name);
+            this.$('[name=' + this.def.id_name + ']').val(id);
         }
+        this._super('bindDataChange');
     },
 
     /**
@@ -327,21 +341,27 @@
      * Open drawer with module records.
      */
     showList: function() {
-        var filterDef = [{}],
-            moduleName = app.lang.getModuleName(this.module),
+        var moduleName = app.lang.getModuleName(this.module),
             title = app.lang.get(
                 'LBL_FILTERED_LIST_BY_FIELD',
                 this.module,
                 {module: moduleName, label: this.label, value: this.value}
-            );
-        filterDef[0][this.def.id_name] = this.model.get(this.def.id_name);
+            ),
+            popDef = {},
+            filterOptions;
+        popDef[this.def.id_name] = this.model.get(this.def.id_name);
+        filterOptions = new app.utils.FilterOptions()
+            .config(this.def)
+            .setFilterPopulate(popDef)
+            .format();
+
         app.drawer.open({
             layout: 'prefiltered',
             module: this.module,
             context: {
                 module: this.module,
                 headerPaneTitle: title,
-                filterDef: filterDef
+                filterOptions: filterOptions
             }
         });
     },
@@ -387,7 +407,6 @@
         var id = data.id,
             val = data.name;
         this.setValue(id, val);
-        this.bindDataChange();
         this.closeDD();
     },
 

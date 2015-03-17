@@ -29,7 +29,7 @@
             }
             return field;
         }, this);
-        this.layout.once('closedrawer:fire', _.bind(function() {
+        this.layout.once('selection:closedrawer:fire', _.bind(function() {
             this.$el.off();
             app.drawer.close();
         }, this));
