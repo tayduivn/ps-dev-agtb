@@ -10,17 +10,22 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-{{#if data.records}}
-    {{#each data.records}}
+<div class="typeahead-wrapper"><ul class="typeahead dropdown-menu">
+{{#if results.records}}
+    {{#each results.records}}
     <li>
         <a href="{{link}}">
             <span class="label label-module label-module-mini label-{{module}}" title="{{getModuleName module plural=true}}">{{moduleIconLabel module}}</span> {{name}}{{#if field_name}}, {{field_name}}: {{field_value}}{{/if}}
         </a>
     </li>
     {{/each}}
-    {{#notEq data.next_offset "-1"}}
+    {{#notEq results.next_offset "-1"}}
         <li>
-            <a href="#bwc/index.php?module=Home&append_wildcard=true&action=spot&full=true&q={{term}}&m={{data.module_list}}">{{str "LNK_SEARCH_FTS_VIEW_ALL"}}</a>
+            {{#if ../layout.v2}}
+            <a href="#search/?q={{results.term}}&m={{results.module_list}}">{{str "LNK_SEARCH_FTS_VIEW_ALL"}}</a>
+            {{else}}
+            <a href="#bwc/index.php?module=Home&append_wildcard=true&action=spot&full=true&q={{results.term}}&m={{results.module_list}}">{{str "LNK_SEARCH_FTS_VIEW_ALL"}}</a>
+            {{/if}}
         </li>
     {{/notEq}}
 {{else}}
@@ -28,3 +33,4 @@
     {{str "LNK_SEARCH_NO_RESULTS"}}
     </li>
 {{/if}}
+</ul></div>
