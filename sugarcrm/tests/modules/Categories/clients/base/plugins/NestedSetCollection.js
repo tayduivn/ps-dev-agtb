@@ -12,8 +12,25 @@ describe('Plugins.JSTree', function() {
 
         SugarTest.testMetadata.init();
         SugarTest.loadComponent('base', 'field', 'nestedset', module);
-        SugarTest.loadPlugin('JSTree');
-        SugarTest.loadPlugin('NestedSetCollection');
+        SugarTest.loadFile(
+            '../modules/Categories/clients/base/plugins',
+            'JSTree',
+            'js',
+            function(d) {
+                app.events.off('app:init');
+                eval(d);
+                app.events.trigger('app:init');
+        });
+        SugarTest.loadFile(
+            '../modules/Categories/clients/base/plugins',
+            'NestedSetCollection',
+            'js',
+            function(d) {
+                app.events.off('app:init');
+                eval(d);
+                app.events.trigger('app:init');
+        });
+
         SugarTest.loadHandlebarsTemplate('nestedset', 'field', 'base', 'edit', module);
 
         SugarTest.testMetadata.set();

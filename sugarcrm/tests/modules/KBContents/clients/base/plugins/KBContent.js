@@ -22,7 +22,15 @@ describe('Plugins.KBContents', function() {
         context.set('model', app.data.createBean(moduleName));
         context.parent = new Backbone.Model();
         context.parent.set('module', moduleName);
-        SugarTest.loadPlugin('KBContent');
+        SugarTest.loadFile(
+            '../modules/KBContents/clients/base/plugins',
+            'KBContent',
+            'js',
+            function(d) {
+                app.events.off('app:init');
+                eval(d);
+                app.events.trigger('app:init');
+            });
         SugarTest.loadHandlebarsTemplate('record', 'view', 'base');
         SugarTest.loadComponent('base', 'view', 'list');
         SugarTest.loadComponent('base', 'view', 'flex-list');

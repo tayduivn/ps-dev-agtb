@@ -11,7 +11,15 @@ describe('KBContents.Base.Views.RecordList', function() {
         context.set('model', app.data.createBean(moduleName));
         context.parent = new Backbone.Model();
         context.parent.set('module', moduleName);
-        SugarTest.loadPlugin('KBContent');
+        SugarTest.loadFile(
+            '../modules/KBContents/clients/base/plugins',
+            'KBContent',
+            'js',
+            function(d) {
+                app.events.off('app:init');
+                eval(d);
+                app.events.trigger('app:init');
+            });
         SugarTest.loadComponent('base', 'view', 'list');
         SugarTest.loadComponent('base', 'view', 'flex-list');
         SugarTest.loadComponent('base', 'view', 'recordlist');
