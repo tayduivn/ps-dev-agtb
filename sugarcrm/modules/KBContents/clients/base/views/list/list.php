@@ -51,6 +51,10 @@ $viewdefs['KBContents']['base']['view']['list'] = array(
                     'label' => 'LBL_CATEGORY_NAME',
                     'enabled' => true,
                     'default' => true,
+                    'initial_filter' => 'by_category',
+                    'filter_relate' => array(
+                        'category_id' => 'category_id',
+                    )
                 ),
                 array(
                     'name' => 'date_entered',

@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$viewdefs['base']['view']['prefiltered-headerpane'] = array(
+$viewdefs['KBContents']['base']['view']['prefiltered-headerpane'] = array(
     'fields' => array(
         array(
             'name' => 'title',
@@ -24,7 +24,7 @@ $viewdefs['base']['view']['prefiltered-headerpane'] = array(
             'type' => 'button',
             'label' => 'LBL_CANCEL_BUTTON_LABEL',
             'events' => array(
-                'click' => 'closedrawer:fire',
+                'click' => 'selection:closedrawer:fire',
             ),
         ),
         array(

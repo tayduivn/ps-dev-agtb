@@ -88,5 +88,13 @@ $viewdefs['KBContents']['base']['filter']['basic'] = array(
             ),
             'editable' => false,
         ),
+        array(
+            'id' => 'by_category',
+            'filter_definition' => array(
+                array('category_id' => ''),
+            ),
+            'editable' => true,
+            'is_template' => true,
+        ),
     ),
 );

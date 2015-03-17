@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$viewdefs['base']['layout']['prefiltered'] = array(
+$viewdefs['KBContents']['base']['layout']['prefiltered'] = array(
     'components' => array(
         array(
             'layout' => array(
@@ -47,7 +47,7 @@ $viewdefs['base']['layout']['prefiltered'] = array(
                                                         'layoutType' => 'records',
                                                     ),
                                                     'span' => 12,
-                                                    'type' =>'prefiltered-filter',
+                                                    'type' => 'filter',
                                                 ),
                                                 'targetEl' => '.filter',
                                                 'position' => 'prepend',
