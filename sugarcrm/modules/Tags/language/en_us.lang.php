@@ -18,4 +18,6 @@ $mod_strings = array(
     'LNK_NEW_TAG' => 'Create Tag',
     'LNK_TAG_LIST' => 'View Tags',
     'LNK_IMPORT_TAGS' => 'Import Tags',
+
+    'LBL_DUPLICATES_FOUND' => 'Duplicate tag found. Please select cancel to try again or select existing tag below.',
 );

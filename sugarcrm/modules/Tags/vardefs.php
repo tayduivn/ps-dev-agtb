@@ -77,6 +77,17 @@ $dictionary['Tag'] = array(
             'allowUserRead' => true,
         ),
     ),
+    'duplicate_check' => array(
+        'enabled' => true,
+        'FilterDuplicateCheck' => array(
+            'filter_template' => array(
+                array('name' => array('$equals' => '$name')),
+            ),
+            'ranking_fields' => array(
+                array('in_field_name' => 'name', 'dupe_field_name' => 'name'),
+            )
+        )
+    )
 );
 VardefManager::createVardef(
     'Tags',
