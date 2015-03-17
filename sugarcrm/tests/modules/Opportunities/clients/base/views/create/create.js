@@ -91,15 +91,6 @@ describe('Opportunities.Base.Views.Create', function() {
 
             expect(view.showRLIWarningMessage).not.toHaveBeenCalled();
         });
-        it('will not call showRLIWarningMessage when lastSaveAction is equal to saveAndCreate', function() {
-            sinon.sandbox.stub(app.acl, 'hasAccess', function() {
-                return true;
-            });
-            model.set('revenuelineitems', {create: ['one']});
-            view._checkForRevenueLineItems(model, {lastSaveAction: 'saveAndCreate'});
-
-            expect(view.showRLIWarningMessage).not.toHaveBeenCalled();
-        });
         it('will call showRLIWarningMessage', function() {
             sinon.sandbox.stub(app.acl, 'hasAccess', function() {
                 return true;
@@ -149,7 +140,7 @@ describe('Opportunities.Base.Views.Create', function() {
             expect(newModel.get('account_name')).toBe(parentModel.get('account_name'));
             expect(newModel.get('user_name')).toBe(parentModel.get('assigned_user_name'));
         });
-        it('should store the relate fields in default to keep the values for [Save and create new]', function() {
+        it('should store the relate fields in default to keep the values when creating a new linked model', function() {
             var newModel = view.createLinkModel(parentModel, 'blah');
             expect(newModel.relatedAttributes['product_template_id']).toBe(parentModel.get('id'));
             expect(newModel.relatedAttributes['product_template_name']).toBe(parentModel.get('name'));

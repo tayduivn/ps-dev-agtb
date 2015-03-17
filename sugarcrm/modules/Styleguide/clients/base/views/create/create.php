@@ -39,14 +39,6 @@ $viewdefs['Styleguide']['base']['view']['create'] = array(
                 ),
                 array(
                     'type' => 'rowaction',
-                    'name' => 'save_create_button',
-                    'label' => 'LBL_SAVE_AND_CREATE_ANOTHER',
-                    'events' => array(
-                        'click' => 'button:save_create_button:click',
-                    ),
-                ),
-                array(
-                    'type' => 'rowaction',
                     'name' => 'show_help_text',
                     'label' => 'Toggle help text',
                 ),

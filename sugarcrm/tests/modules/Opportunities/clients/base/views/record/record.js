@@ -145,7 +145,7 @@ describe('Opportunities.Base.Views.Record', function() {
             expect(newModel.get('account_name')).toBe(parentModel.get('account_name'));
             expect(newModel.get('user_name')).toBe(parentModel.get('assigned_user_name'));
         });
-        it('should store the relate fields in default to keep the values for [Save and create new]', function() {
+        it('should store the relate fields in default to keep the values when creating a new linked model', function() {
             var newModel = view.createLinkModel(parentModel, 'blah');
             expect(newModel.relatedAttributes['product_template_id']).toBe(parentModel.get('id'));
             expect(newModel.relatedAttributes['product_template_name']).toBe(parentModel.get('name'));
