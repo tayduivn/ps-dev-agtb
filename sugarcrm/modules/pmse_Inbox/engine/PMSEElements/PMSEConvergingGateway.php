@@ -24,6 +24,10 @@ class PMSEConvergingGateway extends PMSEGateway
         $flowBean = $this->caseFlowHandler->retrieveBean('pmse_BpmnFlow');
         
         $sugarQuery->select(array('a.id'));
+        $sugarQuery->select()->fieldRaw('b.cas_id');
+        $sugarQuery->select()->fieldRaw('b.cas_index');
+        $sugarQuery->select()->fieldRaw('b.cas_thread');
+
         $sugarQuery->from($flowBean, array('alias' => 'a'));
         
         switch ($type){
@@ -45,10 +49,10 @@ class PMSEConvergingGateway extends PMSEGateway
 
         $filteredFlows = array();
         foreach ($flows as $element) {
-            $filteredFlows[] = $element['id'];
+            if (!array_key_exists($element['id'], $filteredFlows)) {
+                $filteredFlows[$element['id']] = $element;
+            }
         }
-        $filteredFlows = array_unique($filteredFlows);
         return $filteredFlows;
     }
-    //put your code here
 }

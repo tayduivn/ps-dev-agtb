@@ -792,7 +792,7 @@ function handleSugarConfig() {
         $sugar_config['unique_key'] = $setup_site_guid;
     }
     if(empty($sugar_config['unique_key'])){
-        $sugar_config['unique_key'] = md5( create_guid() );
+        $sugar_config['unique_key'] = get_unique_key();
     }
 
     // add installed langs to config

@@ -50,7 +50,7 @@ class PMSEEndEventTest extends PHPUnit_Framework_TestCase {
             ->setMethods(array('closeThreadByCaseIndex', 'closeCase'))
             ->getMock();
 
-        $count = 0;
+        $count = 1;
        
         $this->endEvent->expects($this->once())
             ->method('countNumberOpenThreads')
@@ -87,7 +87,7 @@ class PMSEEndEventTest extends PHPUnit_Framework_TestCase {
             ->setMethods(array('closeThreadByCaseIndex', 'closeCase'))
             ->getMock();
 
-        $count = 1;
+        $count = 2;
        
         $this->endEvent->expects($this->once())
             ->method('countNumberOpenThreads')

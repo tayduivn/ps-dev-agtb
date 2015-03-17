@@ -1182,18 +1182,31 @@ class MysqlManager extends DBManager
 
 	public function getDbInfo()
 	{
-		$charsets = $this->getCharsetInfo();
-		$charset_str = array();
-		foreach($charsets as $name => $value) {
-			$charset_str[] = "$name = $value";
-		}
-		return array(
-			"MySQL Version" => @mysql_get_client_info(),
-			"MySQL Host Info" => @mysql_get_host_info($this->database),
-			"MySQL Server Info" => @mysql_get_server_info($this->database),
-			"MySQL Client Encoding" =>  @mysql_client_encoding($this->database),
-			"MySQL Character Set Settings" => join(", ", $charset_str),
-		);
+        $charsets = $this->getCharsetInfo();
+        $charset_str = array();
+        foreach($charsets as $name => $value) {
+            $charset_str[] = "$name = $value";
+        }
+        $return = array(
+            'MySQL Version' => 'info is not present',
+            'MySQL Host Info' => 'info is not present',
+            'MySQL Server Info' => 'info is not present',
+            'MySQL Client Encoding' => 'info is not present',
+            'MySQL Character Set Settings' => implode(', ', $charset_str),
+        );
+        if (function_exists('mysql_get_client_info')) {
+            $return['MySQL Version'] = @mysql_get_client_info();
+        }
+        if (function_exists('mysql_get_host_info')) {
+            $return['MySQL Host Info'] = @mysql_get_host_info($this->database);
+        }
+        if (function_exists('mysql_get_server_info')) {
+            $return['MySQL Server Info'] = @mysql_get_server_info($this->database);
+        }
+        if (function_exists('mysql_client_encoding')) {
+            $return['MySQL Client Encoding'] = @mysql_client_encoding($this->database);
+        }
+        return $return;
 	}
 
 	public function validateQuery($query)

@@ -38,10 +38,6 @@ $mod_strings = array (
                                                 'Deleting a User record cannot be undone.',
 	'LBL_DELETE_GROUP_CONFIRM'          => 'Are you sure you want to delete this Group User? Click OK to delete the User record.<br/>After clicking OK, you will be given the ability to reassign records assigned to the Group User to another user.',
 	'LBL_DELETE_PORTAL_CONFIRM'         => 'Are you sure you want to delete this Portal API User? Click OK to delete the User record.',
-//BEGIN SUGARCRM flav=com ONLY
-    'LBL_DELETE_USER_CONFIRM'           => 'When the User record is deleted, the corresponding Employee record will also be deleted.<br/><br/>'.
-                                                  'Click OK to delete the User record.',
-//END SUGARCRM flav=com ONLY
 
 	'LNK_IMPORT_USERS'                 => 'Import Users',
 	'ERR_DELETE_RECORD'					=> 'A record number must be specified to delete the account.',
@@ -94,14 +90,6 @@ $mod_strings = array (
 	'LBL_ADDRESS_STREET_3'				=> 'Address Street 3',
 	'LBL_ADDRESS'						=> 'Address',
 	'LBL_ADMIN_USER'					=> 'System Administrator User',
-
-	//BEGIN SUGARCRM flav=com ONLY
-
-	'LBL_ADMIN_DESC'					=> 'User can access the Administration page all records.',
-	'LBL_REGULAR_DESC'					=> 'User can access modules and records based on roles.',
-
-	//END SUGARCRM flav=com ONLY
-
 
 	'LBL_ADMIN_DESC'					=> 'User can access the Administration page all records, regardless of team security.',
 	'LBL_REGULAR_DESC'					=> 'User can access modules and records based on team security and roles.',

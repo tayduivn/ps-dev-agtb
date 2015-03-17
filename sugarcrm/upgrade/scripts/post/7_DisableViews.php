@@ -26,10 +26,6 @@ class SugarUpgradeDisableViews extends UpgradeScript
      */
     public function run()
     {
-        if (version_compare($this->from_version, '7.5', '>=')) {
-            return;
-        }
-
         if (empty($this->state['healthcheck'])) {
             return;
         }
@@ -49,6 +45,15 @@ class SugarUpgradeDisableViews extends UpgradeScript
             }
         }
 
+        if ($files) {
+            $this->renameDisabled($files);
+        }
+
+
+    }
+
+    public function renameDisabled($files)
+    {
         foreach ($files as $fileFrom => $fileTo) {
             sugar_mkdir(dirname($fileTo), null, true);
             sugar_rename($fileFrom, $fileTo);

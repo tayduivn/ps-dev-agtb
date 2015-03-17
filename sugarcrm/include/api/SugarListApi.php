@@ -35,9 +35,8 @@ abstract class SugarListApi extends SugarApi {
         if ( isset($args['max_num']) ) {
             $limit = (int)$args['max_num'];
         }
-        if (!empty($GLOBALS['sugar_config']['max_list_limit']) && $limit > $GLOBALS['sugar_config']['max_list_limit']) {
-            $limit = $GLOBALS['sugar_config']['max_list_limit'];
-        }
+
+        $limit = $this->checkMaxListLimit($limit);
 
         $offset = 0;
         if ( isset($args['offset']) ) {

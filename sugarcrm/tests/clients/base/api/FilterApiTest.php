@@ -88,6 +88,7 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['db']->query("DELETE FROM sugarfavorites WHERE created_by = '" . $GLOBALS['current_user']->id . "'");
         $GLOBALS['db']->query("DELETE FROM subscriptions WHERE created_by = '{$GLOBALS['current_user']->id}'");
         $GLOBALS['sugar_config']['max_list_limit'] = self::$oldLimit;
+        SugarConfig::getInstance()->clearCache();
     }
 
     public static function tearDownAfterClass()
@@ -179,20 +180,54 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(1, $reply['record_count'], 'SimpleJoin: Returned too many results');
     }
 
-    public function testMaxNumLimit()
+    /**
+     * @dataProvider providerMaxListAndNumLimit
+     */
+    public function testMaxListAndNumLimit($max_list_limit, $max_num, $expected)
     {
-        $GLOBALS['sugar_config']['max_list_limit'] = 3;
+        $GLOBALS['sugar_config']['max_list_limit'] = $max_list_limit;
         $reply = $this->filterApi->filterList(
-            $this->serviceMock,
-            array(
-                'module' => 'Accounts',
-                'filter' => array(array('name' => array('$starts' => 'TEST 1'))),
-                'fields' => 'id,name',
-                'max_num' => '5'
-            )
+                $this->serviceMock,
+                array(
+                        'module' => 'Accounts',
+                        'filter' => array(array("name" => array('$starts' => "TEST 1"))),
+                        'fields' => 'id,name',
+                        'max_num' => $max_num
+                )
         );
-        $this->assertEquals(3, $reply['next_offset'], 'Next offset is not set correctly');
-        $this->assertEquals(3, count($reply['records']), 'Returned too many results');
+        $this->assertEquals($expected, $reply['next_offset'], 'Next offset is not set correctly');
+        $this->assertEquals($expected, count($reply['records']), 'Returned wrong count of results');
+
+    }
+
+    function providerMaxListAndNumLimit() {
+        return array(
+            array(
+                'max_list_limit' => 5,
+                'max_num' => '',
+                'expected' => 5
+            ),
+            array(
+                'max_list_limit' => 4,
+                'max_num' => 2,
+                'expected' => 2
+            ),
+            array(
+                'max_list_limit' => 3,
+                'max_num' => 10,
+                'expected' => 3
+            ),
+            array(
+                'max_list_limit' => 2,
+                'max_num' => -1,
+                'expected' => 2
+            ),
+            array(
+                'max_list_limit' => 1,
+                'max_num' => -10,
+                'expected' => 1
+            ),
+        );    
     }
 
     public function testSimpleFilterWithOffset()

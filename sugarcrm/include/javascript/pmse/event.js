@@ -1504,7 +1504,7 @@ AdamEvent.prototype.createConfigureAction = function () {
                     arithmetic: ['+', '-']
                 },
                 constant: {
-                    date: true,
+                    datetime: true,
                     timespan: true
                 },
                 variable: {

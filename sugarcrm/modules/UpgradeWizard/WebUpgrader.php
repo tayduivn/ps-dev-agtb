@@ -52,6 +52,7 @@ class WebUpgrader extends UpgradeDriver
     {
         $this->context['source_dir'] = $dir;
         $this->context['log'] = "UpgradeWizard.log";
+        $this->context['HealthCheckLog'] = "HealthCheck.log";
         $this->context['zip'] = ''; // temporary
         parent::__construct();
     }
@@ -186,6 +187,25 @@ class WebUpgrader extends UpgradeDriver
     }
 
     /**
+     * Sending HealthCheck log to sugar server
+     * @return bool|false
+     */
+    protected function sendHealthCheckLog()
+    {
+        $scanner = $this->getHealthCheckScanner('web');
+        if (!$scanner) {
+            return $this->error("Cannot find health check scanner", true);
+        }
+
+        $this->initSugar();
+
+        if ($this->getHelper()->sendLog($this->context['HealthCheckLog'])) {
+            return true;
+        }
+        return $this->error("Unable to send logs to HealthCheck server", true);
+    }
+
+    /**
      * Process upgrade action
      * @param string $action
      * @return next stage name or false on error
@@ -195,6 +215,11 @@ class WebUpgrader extends UpgradeDriver
         if ($action == "status") {
             return $this->getStatus();
         }
+
+        if ($action == 'sendlog') {
+            return $this->sendHealthCheckLog();
+        }
+
         if (!in_array($action, $this->stages)) {
             return $this->error("Unknown stage $action", true);
         }
@@ -293,6 +318,7 @@ class WebUpgrader extends UpgradeDriver
     public function displayUpgradePage()
     {
         global $token;
+        $upgraderVesion = $this->context['versionInfo'][0];
         include dirname(__FILE__) . '/upgrade_screen.php';
     }
 
@@ -306,54 +332,59 @@ class WebUpgrader extends UpgradeDriver
     }
 
     /**
-     *
      * @see UpgradeDriver::doHealthcheck()
      */
     protected function doHealthcheck()
     {
-        $id = $_REQUEST['confirm_id'];
-        if (!isset($id)) {
-            $this->log("No previous health check id set in request");
-            return false;
+        $scanner = $this->getHealthCheckScanner('web');
+        if (!$scanner) {
+            return $this->error("Cannot find health check scanner", true);
         }
+        $scanner->setLogFile($this->context['HealthCheckLog']);
 
-        $bean = BeanFactory::getBean('HealthCheck', $id);
-        if (!$bean) {
-            $this->log("Cannot find health check result by id $id");
-            return false;
-        }
+        $this->initSugar();
 
-        $this->state['healthcheck'] = json_decode($bean->logmeta, true);
+        $scanner->scan();
+
+        $logsInfo = $scanner->getLogMeta();
+        $this->state['healthcheck'] = $logsInfo;
         $this->saveState();
 
-        $this->log("Skipping health check - we have a confirmed id");
+        if ($logsInfo) {
+            $this->log('*** START HEALTHCHECK ISSUES ***');
+            foreach ($scanner->getLogMeta() as $key => $entry) {
+                $issueNo = $key + 1;
+                $this->log(
+                    " => {$entry['bucket']}: [Issue {$issueNo}][{$entry['flag_label']}][{$entry['report']}][{$entry['id']}][{$entry['title']}] {$entry['descr']}"
+                );
+            }
+            $this->log('*** END HEALTHCHECK ISSUES ***');
+        }
+
+        $this->getHelper()->pingHeartbeat(array('bucket' => $scanner->getStatus(), 'flag' => $scanner->getFlag()));
+
+        if ($scanner->isFlagRed()) {
+            $logDetails = array();
+            foreach ($logsInfo as $key => $log) {
+                if ($log['flag'] == HealthCheckScannerMeta::FLAG_RED) {
+                    $logDetails = $log;
+                    break;
+                }
+            }
+            return $this->error("The health check didn't pass: " . $logDetails['log'], true);
+        }
         return true;
     }
 
     /**
-     * {@inheritDoc}
+     * @return HealthCheckHelper
      */
-    public static function getVersion()
+    protected function getHelper()
     {
-        $version = self::$version;
-        $build = self::$build;
-        $vfile = __DIR__ . "/" . self::VERSION_FILE;
-        if (file_exists($vfile)) {
-            $data = json_decode(file_get_contents($vfile), true);
-            if (!empty($data['version'])) {
-                $version = $data['version'];
-            }
-            if (!empty($data['build'])) {
-                $build = $data['build'];
-            }
-        } elseif (file_exists('sugar_version.php')) {
-            if (!defined('sugarEntry')) {
-                define('sugarEntry', 'upgrader');
-            }
-            include 'sugar_version.php';
-            $version = $sugar_version;
-            $build = $sugar_build;
-        }
-        return array($version, $build);
+        require_once 'include/SugarSystemInfo/SugarSystemInfo.php';
+        require_once 'include/SugarHeartbeat/SugarHeartbeatClient.php';
+        require_once 'HealthCheckHelper.php';
+        require_once 'HealthCheckClient.php';
+        return HealthCheckHelper::getInstance();
     }
 }

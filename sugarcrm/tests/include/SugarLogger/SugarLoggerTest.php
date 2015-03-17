@@ -12,12 +12,22 @@
 
 class SugarLoggerTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    public function tearDown()
+    /**
+     * Backup of real loggers
+     */
+    public static function setUpBeforeClass()
     {
-        // reset the logger level
-        $level = SugarConfig::getInstance()->get('logger.level');
-        if (!empty($level))
-            $GLOBALS['log']->setLevel($level);
+        parent::setUpBeforeClass();
+        LoggerManagerSugarLoggerTestMock::backupLoggers();
+    }
+    
+    /**
+     * Restoration of real loggers
+     */
+    public static function tearDownAfterClass()
+    {
+        LoggerManagerSugarLoggerTestMock::restoreLoggers();
+        parent::tearDownAfterClass();
     }
 
     public function providerWriteLogEntries()
@@ -44,54 +54,48 @@ class SugarLoggerTest extends Sugar_PHPUnit_Framework_TestCase
         $messageWritten
         )
     {
-        $GLOBALS['log']->setLevel($currentLevel);
-        $GLOBALS['log']->$logLevel($logMessage);
-
-        $config = SugarConfig::getInstance();
-        $ext = $config->get('logger.file.ext');
-        $logfile = $config->get('logger.file.name');
-        $log_dir = $config->get('log_dir');
-        $log_dir = $log_dir . (empty($log_dir)?'':'/');
-        $file_suffix = $config->get('logger.file.suffix');
-        $date_suffix = "";
-
-        if( !empty($file_suffix) )
-        {
-            $date_suffix = "_" . date(str_replace("%", "", $file_suffix));
+        $logMessages = '';
+        
+        /** @var SugarLogger|PHPUnit_Framework_MockObject_MockObject $log */
+        $logWriter = $this->getMock('SugarLogger', array('write'));
+        $logWriter->expects($this->any())->method('write')->will($this->returnCallback(function($message) use (&$logMessages) {
+            $logMessages .= $message;
+        }));
+        
+        /** @var LoggerManagerSugarLoggerTestMock|PHPUnit_Framework_MockObject_MockObject $logManager */
+        $logManager = $this->getMock('LoggerManagerSugarLoggerTestMock', array('log'), array(), '', false);
+        $logManager->setWriter($logWriter);
+        
+        $logManager->setLevel($currentLevel);
+        $logManager->$logLevel($logMessage);
+        
+        if ($shouldMessageBeWritten) {
+            $this->assertContains($messageWritten, $logMessages);
+        } else {
+            $this->assertNotContains($messageWritten, $logMessages);
         }
-
-
-        $logFile = file_get_contents($log_dir . $logfile . $date_suffix . $ext);
-
-        if ( $shouldMessageBeWritten )
-            $this->assertContains($messageWritten,$logFile);
-        else
-            $this->assertNotContains($messageWritten,$logFile);
     }
 
     public function testAssertLogging()
     {
-        $GLOBALS['log']->setLevel('debug');
-        $GLOBALS['log']->assert('this was asserted true',true);
-        $GLOBALS['log']->assert('this was asserted false',false);
-
-        $config = SugarConfig::getInstance();
-        $ext = $config->get('logger.file.ext');
-        $logfile = $config->get('logger.file.name');
-        $log_dir = $config->get('log_dir');
-        $log_dir = $log_dir . (empty($log_dir)?'':'/');
-        $file_suffix = $config->get('logger.file.suffix');
-        $date_suffix = "";
-
-        if( !empty($file_suffix) )
-        {
-            $date_suffix = "_" . date(str_replace("%", "", $file_suffix));
-        }
-
-        $logFile = file_get_contents($log_dir . $logfile . $date_suffix . $ext);
-
-        $this->assertContains('[DEBUG] this was asserted false',$logFile);
-        $this->assertNotContains('[DEBUG] this was asserted true',$logFile);
+        $logMessages = '';
+        
+        /** @var SugarLogger|PHPUnit_Framework_MockObject_MockObject $log */
+        $logWriter = $this->getMock('SugarLogger', array('write'));
+        $logWriter->expects($this->any())->method('write')->will($this->returnCallback(function($message) use (&$logMessages) {
+            $logMessages .= $message;
+        }));
+        
+        /** @var LoggerManagerSugarLoggerTestMock|PHPUnit_Framework_MockObject_MockObject $logManager */
+        $logManager = $this->getMock('LoggerManagerSugarLoggerTestMock', array('log'), array(), '', false);
+        $logManager->setWriter($logWriter);
+        
+        $logManager->setLevel('debug');
+        $logManager->assert('this was asserted true',true);
+        $logManager->assert('this was asserted false',false);
+        
+        $this->assertContains('[DEBUG] this was asserted false', $logMessages);
+        $this->assertNotContains('[DEBUG] this was asserted true', $logMessages);
     }
 
     /**
@@ -191,8 +195,53 @@ class SugarLoggerTest extends Sugar_PHPUnit_Framework_TestCase
         $messageWritten
         )
     {
-        $GLOBALS['log']->setLevel($currentLevel);
-        $this->assertEquals($shouldMessageBeWritten, $GLOBALS['log']->wouldLog($logLevel));
+        /** @var LoggerManagerSugarLoggerTestMock|PHPUnit_Framework_MockObject_MockObject $logManager */
+        $logManager = $this->getMock('LoggerManagerSugarLoggerTestMock', array('log'), array(), '', false);
+        
+        $logManager ->setLevel($currentLevel);
+        $this->assertEquals($shouldMessageBeWritten, $logManager->wouldLog($logLevel));
+        
+    }
+}
 
+/**
+ * Class LoggerManagerSugarLoggerTestMock
+ * We need that class to override self::$_loggers property to use our mock object
+ */
+class LoggerManagerSugarLoggerTestMock extends LoggerManager
+{
+    /** @var array real loggers */
+    private static $storage = array();
+    
+    /**
+     * Backups loggers
+     * Should be called before test
+     */
+    public static function backupLoggers()
+    {
+        self::$storage = self::$_loggers;
+        self::$_loggers = array();
+    }
+    
+    /**
+     * Restores loggers
+     * Should be called after test
+     */
+    public static function restoreLoggers()
+    {
+        self::$_loggers = self::$storage;
+        self::$storage = array();
+    }
+    
+    /**
+     * Setter for logger
+     *
+     * @param SugarLogger $logWriter
+     */
+    public function setWriter($logWriter)
+    {
+        self::$_loggers = array(
+            'SugarLogger' => $logWriter,
+        );
     }
 }

@@ -104,6 +104,18 @@ class PMSEElement implements PMSERunnable
 
     /**
      *
+     * @param type $module
+     * @param type $beanId
+     * @return type
+     * @codeCoverageIgnore
+     */
+    public function retrieveBean($module, $beanId = null)
+    {
+        return BeanFactory::getBean($module, $beanId);
+    }
+
+    /**
+     *
      * @return string
      * @codeCoverageIgnore
      */

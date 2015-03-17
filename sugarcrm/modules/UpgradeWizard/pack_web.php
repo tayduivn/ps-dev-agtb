@@ -9,19 +9,18 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once __DIR__ . '/../../modules/HealthCheck/pack.php';
+
+include_once dirname(__FILE__).'/UpgradeDriver.php';
 
 function packUpgradeWizardWeb($zip, $manifest, $installdefs, $params) {
 
     $defaults = array(
         'version' => '7.5.0.0',
         'build' => '998',
-        'from' => '6.5.17',
+        'from' => array('6.5.17'),
     );
 
     $params = array_merge($defaults, $params);
-
-    list($zip, $manifest, $installdefs) = packHealthCheck($zip, $manifest, $installdefs, $params);
 
     file_put_contents(__DIR__ . '/version.json', json_encode($params, true));
 
@@ -36,16 +35,31 @@ function packUpgradeWizardWeb($zip, $manifest, $installdefs, $params) {
         "modules/UpgradeWizard/version.json",
         'modules/UpgradeWizard/language/en_us.lang.php',
         "sidecar/lib/jquery/jquery.iframe.transport.js",
+        'styleguide/assets/css/upgrade.css',
+        'styleguide/assets/fonts/fontawesome-webfont.eot',
+        'styleguide/assets/fonts/fontawesome-webfont.svg',
+        'styleguide/assets/fonts/fontawesome-webfont.ttf',
+        'styleguide/assets/fonts/fontawesome-webfont.woff',
+        'styleguide/assets/fonts/FontAwesome.otf',
+        'include/SugarSystemInfo/SugarSystemInfo.php',
+        'include/SugarHeartbeat/SugarHeartbeatClient.php',
+        'include/SugarHttpClient.php',
     );
+
+    if (!is_array($params['from'])) {
+        $params['from'] = array($params['from']);
+    }
 
     $manifest = array_merge($manifest, array(
         'author' => 'SugarCRM, Inc.',
-        'description' => 'SugarCRM Upgrader 2.0',
+        'description' => 'SugarCRM Upgrader '.$params['version'],
         'icon' => '',
         'is_uninstallable' => 'true',
-        'name' => 'SugarCRM Upgrader 2.0',
+        'name' => 'SugarCRM Upgrader '.$params['version'],
         'published_date' => date("Y-m-d H:i:s"),
         'type' => 'module',
+        'version' => $params['version'],
+        'acceptable_sugar_versions' => $params['from']
     ));
 
     foreach ($files as $file) {
@@ -103,8 +117,8 @@ if(isset($argv[2])) {
 if(isset($argv[3])) {
     $params['build'] = $argv[3];
 }
-if(isset($argv[4])) {
-    $params['from'] = $argv[4];
+if (isset($argv[4])) {
+    $params['from'] = explode(',', $argv[4]);
 }
 
 $zip = new ZipArchive();

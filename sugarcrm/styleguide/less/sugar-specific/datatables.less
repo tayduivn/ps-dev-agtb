@@ -517,7 +517,6 @@ FLEXLIST GENERIC */
   .flex-list-view-content {
     overflow-x: auto;
     width: 100%;
-    /*-webkit-overflow-scrolling: touch;*/
   }
 
   //override of bootstrap to fix safari
@@ -945,6 +944,9 @@ FLEXLIST GENERIC */
 }
 
 .touch .flex-list-view {
+  &.no-touch-scrolling .flex-list-view-content {
+    -webkit-overflow-scrolling: auto;
+  }
   /*Fix rendering of scrolled absolute spans on iPad*/
   &.left-actions.scroll-width .dataTable {
     th:first-child,

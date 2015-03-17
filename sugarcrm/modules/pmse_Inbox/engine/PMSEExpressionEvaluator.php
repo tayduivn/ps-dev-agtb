@@ -363,9 +363,12 @@ class PMSEExpressionEvaluator
 
     public function executeDateOp($value1, $operator, $value2)
     {
-        $dateString = $value1. " ".$operator. $this->processDateInterval($value2);
-        $dateObject = new DateTime();
-        $dateObject->setTimestamp(strtotime($dateString));
+        $dateObject = new DateTime($value1);
+        if ($operator == '+') {
+            $dateObject->add(new DateInterval($this->processDateInterval($value2)));
+        } elseif ($operator == '-') {
+            $dateObject->sub(new DateInterval($this->processDateInterval($value2)));
+        }
         return $dateObject;
     }
 
@@ -373,31 +376,30 @@ class PMSEExpressionEvaluator
     {
         $pattern = "/(\d*)(y|min|m|w|d|h)/";
         preg_match($pattern, $interval, $matches);
-        $dateUnit = $this->processDateUnit($matches[2]);
-        $result = $matches[1]." ".$dateUnit;
+        $result= $this->processDateUnit($matches[1], $matches[2]);
         return $result;
     }
 
-    public function processDateUnit($unit)
+    public function processDateUnit($value, $unit)
     {
         switch ($unit) {
             case 'y':
-                return 'days';
+                return 'P' . $value . 'Y';
             break;
             case 'm':
-                return 'months';
+                return 'P' . $value . 'M';
             break;
             case 'w':
-                return 'weeks';
+                return 'P' . $value . 'W';
             break;
             case 'd':
-                return 'days';
+                return 'P' . $value . 'D';
             break;
             case 'h':
-                return 'hours';
+                return 'PT' . $value . 'H';
             break;
             case 'min':
-                return 'minutes';
+                return 'PT' . $value . 'M';
             break;
         }
     }

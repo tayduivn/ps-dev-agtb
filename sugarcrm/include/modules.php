@@ -712,13 +712,6 @@ $modInvisList[] = 'EmbeddedFiles';
 // this module doesn't need a Bean
 $modInvisList[] = 'Feedbacks';
 
-// Health Check module
-$beanList['HealthCheck'] = 'HealthCheck';
-$beanFiles['HealthCheck'] = 'modules/HealthCheck/HealthCheck.php';
-$modInvisList[] = 'HealthCheck';
-$adminOnlyList['HealthCheck'] = array('all' => 1);
-$bwcModules[] = 'HealthCheck';
-
 foreach(SugarAutoLoader::existing('include/modules_override.php', SugarAutoLoader::loadExtension("modules")) as $modExtFile) {
     include $modExtFile;
 }

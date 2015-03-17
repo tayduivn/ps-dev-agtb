@@ -184,7 +184,7 @@ class PMSETimerEventTest extends PHPUnit_Framework_TestCase
         
         $evaluatorMock->expects($this->any())
                 ->method('evaluateExpression')
-                ->will($this->returnValue('2014-05-28 16:26:38'));
+                ->will($this->returnValue('2014-05-28T16:26:38-0000'));
         
         $this->timerEvent->setEvaluator($evaluatorMock);
         

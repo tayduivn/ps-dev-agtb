@@ -195,15 +195,6 @@ $mod_strings = array (
     'LBL_SUGAR_SOURCECODE_DESC' => 'Sales force automation application.',
     'LBL_THIRD_PARTY_SOFTWARE_TITLE' => 'Third Party Software',
     'LBL_THIRD_PARTY_SOURCECODE' => 'Information about third party code used in this product, including related license terms, is available at',
-
-
-
-//BEGIN SUGARCRM flav=com  && dep=os ONLY
-
-  'LBL_ADD_TERM_COM' => '<P>The interactive user interfaces in modified source and object code versions of this program must display Appropriate Legal Notices, as required under Section 5 of the GNU Affero General Public License version 3. In accordance with Section 7(b) of the GNU General Public License version 3, these Appropriate Legal Notices must retain the display of the &quot;Powered by SugarCRM&quot; logo. If the display of the logo is not reasonably feasible for technical reasons, the Appropriate Legal Notices must display the words &quot;Powered by SugarCRM&quot;.</P>',
-
-//END SUGARCRM flav=com  && dep=os ONLY
-
   'LBL_SUGAR_COMMUNITY_EDITION' => 'Sugar Community Edition',
   'LBL_SUGAR_PROFESSIONAL' => "Sugar Professional",
   'LBL_SUGAR_ENTERPRISE' => "Sugar Enterprise",
