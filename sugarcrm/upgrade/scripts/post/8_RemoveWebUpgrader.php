@@ -28,31 +28,29 @@ class SugarUpgradeRemoveWebUpgrader extends UpgradeScript
 
     public function run()
     {
-        if (version_compare($this->from_version, '7.5', '<')) {
-            require_once 'ModuleInstall/PackageManager/PackageManager.php';
-            $pm = new PackageManager();
-            $packages = $pm->getinstalledPackages(array('module'));
-            foreach ($packages as $pack) {
-                if (strpos($pack['name'], 'SugarCRM Upgrader') !== false) {
-                    $uh = new UpgradeHistory();
-                    $uh->name = $pack['name'];
-                    $history = $uh->checkForExisting($uh);
-                    $this->filesToRemove[] = "custom/Extension/application/Ext/Include/{$history->id_name}.php";
-                    $history->delete();
-                    $this->fileToDelete($this->filesToRemove);
-                    $this->log("Useless files of {$pack['name']} v{$pack['version']} removed");
-                }
+        require_once 'ModuleInstall/PackageManager/PackageManager.php';
+        $pm = new PackageManager();
+        $packages = $pm->getinstalledPackages(array('module'));
+        foreach ($packages as $pack) {
+            if (strpos($pack['name'], 'SugarCRM Upgrader') !== false) {
+                $uh = new UpgradeHistory();
+                $uh->name = $pack['name'];
+                $history = $uh->checkForExisting($uh);
+                $this->filesToRemove[] = "custom/Extension/application/Ext/Include/{$history->id_name}.php";
+                $history->delete();
+                $this->fileToDelete($this->filesToRemove);
+                $this->log("Useless files of {$pack['name']} v{$pack['version']} removed");
             }
-            foreach ($pm->getPackagesInStaging() as $pack) {
-                if (strpos($pack['name'], 'SugarCRM Upgrader') !== false) {
-                    $file = UploadStream::getFSPath(hashToFile($pack['file']));
-                    $this->fileToDelete($file);
-                    foreach (array('manifest', 'icon') as $meta) {
-                        $this->fileToDelete(
-                            pathinfo($file, PATHINFO_DIRNAME) . '/' .
-                            pathinfo($file, PATHINFO_FILENAME) . "-$meta.php"
-                        );
-                    }
+        }
+        foreach ($pm->getPackagesInStaging() as $pack) {
+            if (strpos($pack['name'], 'SugarCRM Upgrader') !== false) {
+                $file = UploadStream::getFSPath(hashToFile($pack['file']));
+                $this->fileToDelete($file);
+                foreach (array('manifest', 'icon') as $meta) {
+                    $this->fileToDelete(
+                        pathinfo($file, PATHINFO_DIRNAME) . '/' .
+                        pathinfo($file, PATHINFO_FILENAME) . "-$meta.php"
+                    );
                 }
             }
         }
