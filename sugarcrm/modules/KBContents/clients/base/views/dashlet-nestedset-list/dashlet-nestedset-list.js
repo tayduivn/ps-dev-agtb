@@ -243,14 +243,15 @@
                     }, function() {
                         if (_.isFunction(callback)) {
                             callback.call();
+                            return false;
                         }
                     });
-                    return false;
                 }
             }
         }
         if (triggeredCallback === false && _.isFunction(callback)) {
             callback.call();
+            return false;
         }
         if (this.useStates) {
             this.saveJSTreeState();
