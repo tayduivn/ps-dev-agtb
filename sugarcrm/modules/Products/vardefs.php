@@ -874,11 +874,14 @@ $dictionary['Product'] = array(
             'rel_fields' => array('product_index' => array('type' => 'integer')),
             'vname' => 'LBL_PRODUCTS',
         ),
-        'product_index' => array(
-            'name' => 'product_index',
+        'position' => array(
+            'massupdate' => false,
+            'name' => 'position',
             'type' => 'integer',
+            'studio' => false,
             'source' => 'non-db',
-            'vname' => 'LBL_PRODUCT_INDEX',
+            'vname' => 'LBL_PRODUCT_POSITION',
+            'importable' => false,
             'link' => 'product_bundles',
             'rname_link' => 'product_index',
         ),
