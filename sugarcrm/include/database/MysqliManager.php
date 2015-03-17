@@ -381,18 +381,31 @@ class MysqliManager extends MysqlManager
 
 	public function getDbInfo()
 	{
-		$charsets = $this->getCharsetInfo();
-		$charset_str = array();
-		foreach($charsets as $name => $value) {
-			$charset_str[] = "$name = $value";
-		}
-		return array(
-			"MySQLi Version" => @mysqli_get_client_info(),
-			"MySQLi Host Info" => @mysqli_get_host_info($this->database),
-			"MySQLi Server Info" => @mysqli_get_server_info($this->database),
-			"MySQLi Client Encoding" =>  @mysqli_client_encoding($this->database),
-			"MySQL Character Set Settings" => join(", ", $charset_str),
-		);
+        $charsets = $this->getCharsetInfo();
+        $charset_str = array();
+        foreach($charsets as $name => $value) {
+            $charset_str[] = "$name = $value";
+        }
+        $return = array(
+            'MySQLi Version' => 'info is not present',
+            'MySQLi Host Info' => 'info is not present',
+            'MySQLi Server Info' => 'info is not present',
+            'MySQLi Client Encoding' => 'info is not present',
+            'MySQL Character Set Settings' => implode(', ', $charset_str),
+        );
+        if (function_exists('mysqli_get_client_info')) {
+            $return['MySQLi Version'] = @mysqli_get_client_info();
+        }
+        if (function_exists('mysqli_get_host_info')) {
+            $return['MySQLi Host Info'] = @mysqli_get_host_info($this->database);
+        }
+        if (function_exists('mysqli_get_server_info')) {
+            $return['MySQLi Server Info'] = @mysqli_get_server_info($this->database);
+        }
+        if (function_exists('mysqli_client_encoding')) {
+            $return['MySQLi Client Encoding'] = @mysqli_client_encoding($this->database);
+        }
+        return $return;
 	}
 
 	/**
