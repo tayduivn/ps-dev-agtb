@@ -288,6 +288,12 @@ class UserViewHelper {
             $this->ss->assign('CHANGE_PWD', '0');
         }
 
+        if (User::isTrialDemoUser($this->bean->user_name)) {
+            $this->ss->assign('DISABLED', 'disabled');
+        } else {
+            $this->ss->assign('DISABLED', '');
+        }
+
         // Make sure group users don't get a password change prompt
         if ( $this->usertype == 'GROUP' ) {
             $this->ss->assign('CHANGE_PWD', '0');
