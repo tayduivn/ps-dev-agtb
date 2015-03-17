@@ -122,7 +122,7 @@ class PMSECasesListApi extends FilterApi
         $q->select->fieldRaw('pf.cas_sugar_object_id', 'cas_sugar_object_id');
         $q->select->fieldRaw('pf.cas_user_id', 'cas_user_id');
 
-        $q->where()->queryAnd()->addraw('pf.cas_flow_status != "CLOSED"');
+        $q->where()->queryAnd()->addraw("pf.cas_flow_status <> 'CLOSED'");
         //Flow query breaks on mssql due to the use of row_number() / count in a subselect which is not supported
         //Doesn't appear to be used.
         //$q->select->fieldRaw('('.$flowQuery->compileSql().')','flow_error');
