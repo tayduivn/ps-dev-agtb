@@ -956,6 +956,12 @@ require_once('include/EditView/EditView2.php');
                              }
                          }
 
+                         // Records are not searched using field "File name" in Documents -> Basic search
+                         // For file types it makes sense to add wildcard to be used in query.
+                         if ($type === 'file') {
+                             $field_value = $this->seed->db->sqlLikeString($field_value, $like_char);
+                         }
+
                          if ( preg_match("/favorites_only.*/", $field) ) {
                              if ( $field_value == '1' ) {
                                  $field_value = $GLOBALS['current_user']->id;
