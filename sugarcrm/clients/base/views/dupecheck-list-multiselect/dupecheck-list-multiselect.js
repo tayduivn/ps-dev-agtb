@@ -15,5 +15,13 @@
  */
 ({
     extendsFrom: 'DupecheckListView',
-    additionalTableClasses: 'duplicates-multiselect'
+    additionalTableClasses: 'duplicates-multiselect',
+
+    /**
+     * @inheritdoc
+     */
+    initialize: function(options) {
+        this.plugins = _.union(this.plugins, ['MassCollection']);
+        this._super('initialize', [options]);
+    }
 })
