@@ -203,13 +203,14 @@ class PMSECasesListApi extends FilterApi
             $qA->select->fieldRaw('*');
             $qA->from($flowBean);
             $qA->where()->equals('cas_id', $list[$key]['cas_id']);
-            $qA->where()->queryAnd()->notEquals('cas_flow_status','CLOSED');
 
             $processUsers = $qA->execute();
             $processUsersNames = array();
             foreach($processUsers as $k => $v) {
-                $casUsersBean = BeanFactory::getBean('Users', $processUsers[$k]['cas_user_id']);
-                $processUsersNames[] = (!empty($casUsersBean->full_name))? $casUsersBean->full_name : $list[$key]['cas_user_id'];
+                if ($processUsers[$k]['cas_flow_status'] != 'CLOSED') {
+                    $casUsersBean = BeanFactory::getBean('Users', $processUsers[$k]['cas_user_id']);
+                    $processUsersNames[] = (!empty($casUsersBean->full_name)) ? $casUsersBean->full_name : $list[$key]['cas_user_id'];
+                }
                 $cas_sugar_module = $processUsers[$k]['cas_sugar_module'];
                 $cas_sugar_object_id = $processUsers[$k]['cas_sugar_object_id'];
             }
