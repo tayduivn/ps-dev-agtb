@@ -32,6 +32,10 @@
         }, this);
 
         this.collection.on('sync', function(collection, data) {
+            var isCollection = (collection instanceof App.BeanCollection);
+            if (!isCollection) {
+                return;
+            }
             this.formatRecords(collection);
 //            collection.facets = data.facets;
 //            this.context.set('facets', data.facets);

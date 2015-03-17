@@ -40,11 +40,18 @@
      * @override
      */
     bindDataChange: function() {
-        this.collection.on('sync', function() {
+        this.collection.on('sync', function(collection) {
             if (this.disposed) {
                 return;
             }
+            var isCollection = (collection instanceof App.BeanCollection);
+            if (!isCollection) {
+                return;
+            }
             this.parseModels(this.collection.models);
+            if (this._previewed) {
+                app.events.trigger('preview:close');
+            }
             this.render();
         }, this);
     },
