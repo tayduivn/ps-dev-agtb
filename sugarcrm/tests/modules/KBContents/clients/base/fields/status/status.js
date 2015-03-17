@@ -26,7 +26,7 @@ describe('modules.kbcontents.clients.base.fields.status', function() {
     it('should be initialized with default status', function() {
         field.render();
         expect(model.get('status')).toEqual('draft');
-        expect(field.statusClass).toEqual('st-draft');
+        expect(field.statusClass).toEqual('label-pending');
         expect(field.statusLabel).toEqual('draft');
     });
 
@@ -36,7 +36,7 @@ describe('modules.kbcontents.clients.base.fields.status', function() {
         });
         field.render();
         expect(model.get('status')).toEqual('published-in');
-        expect(field.statusClass).toEqual('st-pub-in');
+        expect(field.statusClass).toEqual('label-published');
         expect(field.statusLabel).toEqual('published-in');
     });
 

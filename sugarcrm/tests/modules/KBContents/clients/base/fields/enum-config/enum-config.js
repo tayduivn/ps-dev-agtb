@@ -38,6 +38,7 @@ describe('modules.kbcontents.clients.base.fields.enum-config', function() {
             related_languages: ['en', 'us'],
             kbarticle_id: 'kb_id'
         });
+        field.def.readonly = false;
         field.setMode('edit');
         expect(field.action).toEqual('disabled');
     });
@@ -68,6 +69,7 @@ describe('modules.kbcontents.clients.base.fields.enum-config', function() {
         field.model.set({
             id: 'test_id'
         });
+        field.def.readonly = false;
         field.setMode('edit');
         expect(field.action).toEqual('disabled');
     });

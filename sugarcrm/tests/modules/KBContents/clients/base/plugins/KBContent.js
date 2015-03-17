@@ -41,9 +41,8 @@ describe('Plugins.KBContents', function() {
         SugarTest.loadComponent('base', 'view', 'create');
         SugarTest.loadComponent('base', 'view', 'create-actions');
         SugarTest.loadComponent('base', 'view', 'create-actions', moduleName);
-
         layout = SugarTest.createLayout('base', moduleName, 'list', null, context.parent);
-        view = SugarTest.createView('base', moduleName, 'create-actions', viewMeta, context, moduleName, layout);
+        view = SugarTest.createView('base', moduleName, 'create-actions', viewMeta, null, moduleName, layout);
     });
 
     afterEach(function() {
@@ -62,7 +61,7 @@ describe('Plugins.KBContents', function() {
     });
 
     it('Validations should be in inline edit.', function() {
-        view = SugarTest.createView('base', moduleName, 'recordlist', viewMeta, context, moduleName, layout);
+        view = SugarTest.createView('base', moduleName, 'recordlist', viewMeta, null, moduleName, layout);
         var validationStub = sandbox.stub(view, '_initValidationHandler');
         sandbox.stub(view, 'toggleRow');
         view.context.trigger('list:editrow:fire', view.model, {def: {}});
