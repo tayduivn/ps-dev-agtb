@@ -404,8 +404,9 @@ class UserPreference extends SugarBean
         }
 
         // we can skip this if we've already upgraded to the user_preferences format.
-        if ( !array_key_exists('user_preferences',$db->getHelper()->get_columns('users')) )
+        if (!array_key_exists('user_preferences', $db->get_columns('users'))) {
             return;
+        }
 
         $result = $db->query("SELECT id, user_preferences, user_name FROM users");
         while ($row = $db->fetchByAssoc($result)) {

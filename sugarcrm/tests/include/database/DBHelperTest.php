@@ -14,6 +14,10 @@ require_once 'include/database/DBManagerFactory.php';
 require_once 'modules/Contacts/Contact.php';
 require_once 'modules/Cases/Case.php';
 
+/**
+ * FIXME this needs to be moved, since DBHelper was moved to DBManager and
+ * specific DB deratives.
+ */
 class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
 {
     /**
