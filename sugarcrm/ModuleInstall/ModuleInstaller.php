@@ -2696,20 +2696,17 @@ class ModuleInstaller{
             if(!empty($this->installdefs['copy'])){
                 foreach($this->installdefs['copy'] as $cp){
                     $cp['to'] = clean_path(str_replace('<basepath>', $this->base_dir, $cp['to']));
-                    $backup_path = clean_path( remove_file_extension(urldecode(hashToFile($_REQUEST['install_file'])))."-restore/".$cp['to'] );
+                    if (file_exists($cp['to'])) {
+                        $backup_path = clean_path(remove_file_extension(urldecode(hashToFile($_REQUEST['install_file'])))."-restore/".$cp['to']);
 
-                    //check if this file exists in the -restore directory
-                    if(file_exists($backup_path)){
-                        //since the file exists, then we want do an md5 of the install version and the file system version
-                        //if(is_file($backup_path) && md5_file($backup_path) == md5_file($cp['to'])){
-                        //since the files are the same then we can safely move back from the -restore
-                        //directory into the file system
-                        $GLOBALS['log']->debug("ENABLE COPY:: FROM: ".$cp['from']. " TO: ".$cp['to']);
-                        $this->copy_path($cp['from'], $cp['to']);
-                        /*}else{
-                            //since they are not equal then we need to prompt the user
-                        }*/
-                    }//fi
+                        $GLOBALS['log']->debug('ENABLE COPY:: CREATING BACKUP OF: ' . $cp['to']);
+                        $this->copy_path($cp['to'], $backup_path);
+
+                        $GLOBALS['log']->debug('ENABLE COPY:: REMOVING: ' . $cp['to']);
+                        rmdir_recursive($cp['to']);
+                    }
+                    $GLOBALS['log']->debug("ENABLE COPY:: FROM: ".$cp['from']. " TO: ".$cp['to']);
+                    $this->copy_path($cp['from'], $cp['to']);
                 }//rof
             }//fi
         }//fi
@@ -2727,6 +2724,10 @@ class ModuleInstaller{
 //				$GLOBALS['log']->debug('ModuleInstaller.php->disable_copy(): installdefs not empty');
                 foreach($this->installdefs['copy'] as $cp){
                     $cp['to'] = clean_path(str_replace('<basepath>', $this->base_dir, $cp['to']));
+                    if (file_exists($cp['to'])) {
+                        $GLOBALS['log']->debug('DISABLE COPY:: REMOVING: ' . $cp['to']);
+                        rmdir_recursive($cp['to']);
+                    }
                     $backup_path = clean_path( remove_file_extension(urldecode(hashToFile($_REQUEST['install_file'])))."-restore/".$cp['to'] ); // bug 16966 tyoung - replaced missing assignment to $backup_path
                     //check if this file exists in the -restore directory
 //					$GLOBALS['log']->debug("ModuleInstaller.php->disable_copy(): backup_path=".$backup_path);
