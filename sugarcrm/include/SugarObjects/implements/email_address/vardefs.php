@@ -39,6 +39,10 @@ $vardefs = array(
             'link' => 'email_addresses_primary',
             'rname' => 'email_address',
             'module' => 'EmailAddresses',
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => true,
+            ),
         ),
         'email1' => array(
 			'name'		=> 'email1',
@@ -55,11 +59,6 @@ $vardefs = array(
             'merge_filter' => 'enabled',
             'module' => 'EmailAddresses',
 		    'studio' => false,
-            'full_text_search' => array(
-                'enabled' => true,
-                'boost' => 3,
-                'type' => 'email',
-            ),
             'duplicate_on_record_copy' => 'always',
         ),
         'email2' => array(
