@@ -836,6 +836,13 @@ EOF;
      */
     public function redirect($url)
     {
+        global $disable_redirects;
+
+        //Dirty hack to enable the inclusion of BWC style scripts that wish to redirect without breaking REST requests.
+        if ($disable_redirects) {
+            return;
+        }
+
         /*
          * Parse the module from the URL first using regular expression.
          * This is faster than parse_url + parse_str in first place and most of
