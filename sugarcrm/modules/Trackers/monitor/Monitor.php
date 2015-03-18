@@ -67,13 +67,6 @@ class Monitor implements Trackable {
 
     	$this->monitor_id = $monitorId;
     	$this->stores = $store;
-
-    	if(isset($this->metrics['session_id'])) {
-	 		//set the value of the session id for 2 reasons:
-	 		//1) it is the same value no matter where it is set
-	 		//2) ensure it follows some filter rules.
-	 		$this->setValue('session_id', $this->getSessionId());
-    	}
     }
 
     /**
@@ -131,8 +124,10 @@ class Monitor implements Trackable {
      * @param $flush boolean parameter indicating whether or not to flush the instance data to store or possibly cache
      */
     public function save($flush=true) {
-    	//If the monitor is not enabled, do not save
-    	if(!$this->isEnabled()&&$this->name!='tracker_sessions')return false;
+
+        if (!$this->isEnabled()) {
+            return false;
+        }
 
     	//if the monitor does not have values set no need to do the work saving.
     	if(!$this->dirty)return false;
@@ -185,14 +180,6 @@ class Monitor implements Trackable {
 		return $s;
 	}
 
- 	public function getSessionId(){
- 		$sessionid = session_id();
-	    if(!empty($sessionid) && strlen($sessionid) > MAX_SESSION_LENGTH) {
-	       $sessionid = md5($sessionid);
-	    }
-	    return $sessionid;
- 	}
-
  	/**
  	 * Returns the monitor's metrics/values as an Array
  	 * @return An Array of data for the monitor's corresponding metrics
@@ -214,5 +201,3 @@ class Monitor implements Trackable {
  		return $this->enabled;
  	}
 }
-
-?>

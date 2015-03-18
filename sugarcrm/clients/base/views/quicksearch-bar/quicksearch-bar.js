@@ -12,18 +12,39 @@
  * @class View.Views.Base.QuicksearchBarView
  * @alias SUGAR.App.view.views.BaseQuicksearchBarView
  * @extends View.View
- */
+*/
 ({
-    // FIXME this needs to be removed so that we can be able to reuse this view
-    id: 'searchForm',
+
+    /**
+     * Used when formatting the search results. It is prepended to the
+     * highlighted string.
+     *
+     * @property {string}
+     */
     preTag: '<strong>',
+
+    /**
+     * Used when formatting the search results. It is appended to the
+     * highlighted string.
+     *
+     * @property {string}
+     */
     postTag: '</strong>',
 
     plugins: ['Dropdown'],
 
     /**
-     * @property {String}
-     * Used by Dropdown plugin to determine which items to select when using the arrow keys
+     * The minimum number of characters before the search bar attempts to
+     * retrieve results.
+     *
+     * @property {number}
+     */
+    minChars: 1,
+
+    /**
+     * Used by Dropdown plugin to determine which items to select when using the arrow keys.
+     *
+     * @property {string}
      */
     dropdownItemSelector: '[data-action="select-module"]',
 
@@ -32,20 +53,138 @@
         'click .typeahead a': 'clearSearch',
         'click [data-action=search]': 'showResults',
         'click [data-advanced=options]': 'persistMenu',
-        'click [data-action="select-module"]': 'selectModule'
+        'click [data-action=select-module]': 'selectModule',
+        'focus input.search-query': 'requestFocus'
     },
+
+    /**
+     * @inheritDoc
+     */
     initialize: function(options) {
-        app.view.View.prototype.initialize.call(this, options);
+        this._super('initialize', [options]);
+
+        /**
+         * Used for keyboard up/down arrow navigation between components of `globalsearch` layout
+         *
+         * @property {string}
+         */
+        this.isFocusable = true;
+
+
+        /**
+         * The current search term.
+         * When a search term is typed, the term is immediately stored to this variable. After the 500ms debounce, the
+         * term is used to execute a search.
+         * @type {string}
+         * @private
+         */
+        this._searchTerm = '';
+
+        /**
+         * The previous search term.
+         * This is stored to check against `this._searchTerm`. If `this._searchTerm === this._oldSearchTerm`, we do
+         * not need to retrieve new results. This protects us against keystrokes that do not change the search term.
+         * @type {string}
+         * @private
+         */
+        this._oldSearchTerm = '';
+
+        /**
+         * The previous query term.
+         * This is the last search term used to get results, and as such, is the term that produced the currently
+         * displayed results. If `this._searchTerm === this._currentQueryTerm` when the search is executed (after
+         * the 500ms debounce), we do not need to execute a new search.
+         * @type {string}
+         * @private
+         */
+        this._currentQueryTerm = '';
+
+        /**
+         * Stores a copy of the search request, in case we need to abort it.
+         * If there is no request in progress, this property is null.
+         * @type {SUGAR.HttpRequest}
+         * @private
+         */
+        this._existingRequest = null;
+
         app.events.on('app:sync:complete', this.populateModules, this);
 
-        //shortcut keys
-        app.shortcuts.register(app.shortcuts.GLOBAL + 'Search', ['s','ctrl+alt+0'], function() {
+        // shortcut keys
+        // Focus the search bar
+        app.shortcuts.register(app.shortcuts.GLOBAL + 'Search', ['s', 'ctrl+alt+0'], function() {
             this.$('input.search-query').focus();
         }, this);
+
+        // Exit the search bar
+        app.shortcuts.register(app.shortcuts.GLOBAL + 'SearchBlur', ['esc', 'ctrl+alt+l'], function() {
+            this.layout.trigger('quicksearch:clear');
+        }, this, true);
+
+        // Listener for receiving focus for up/down arrow navigation:
+        this.on('navigate:focus:receive', function() {
+            // if the input doesn't have focus, give it focus.
+            var inputBox = this.$('input.search-query')[0];
+            if (inputBox !== $(document.activeElement)[0]) {
+                inputBox.focus();
+            }
+            this.attachKeyEvents();
+        }, this);
+
+        // Listener for losing focus for up/down arrow navigation:
+        this.on('navigate:focus:lost', function() {
+            this.disposeKeyEvents();
+        }, this);
+
+        // Listener for `quicksearch:clear`. This clears the old search terms, aborts in progress
+        // searches, and disposes key listeners
+        this.layout.on('quicksearch:clear', function() {
+            this._searchTerm = '';
+            this._oldSearchTerm = '';
+            this._currentQueryTerm = '';
+            this.abortExistingRequest();
+            this.disposeKeyEvents();
+        }, this);
+
     },
+
+    /**
+     * Aborts the existing search request.
+     */
+    abortExistingRequest: function() {
+        if (this._existingRequest && this._existingRequest.xhr) {
+            this._existingRequest.xhr.abort();
+        }
+    },
+
+    /**
+     * Request focus from the layout. This is used primarily for mouse clicks.
+     */
+    requestFocus: function() {
+        this.layout.trigger('navigate:to:component', this.name);
+    },
+
+    /**
+     * Function to attach the keydown and keyup events.
+     */
+    attachKeyEvents: function() {
+        // for arrow key navigation
+        this.$('input.search-query').on('keydown', _.bind(this.keydownHandler, this));
+
+        // for searchbar typeahead
+        this.$('input.search-query').on('keyup', _.bind(this.keyupHandler, this));
+    },
+
+    /**
+     * Function to dispose the keydown and keyup events.
+     */
+    disposeKeyEvents: function() {
+        this.$('input.search-query').off('keydown keyup');
+    },
+
     /**
      * Handle module 'select/unselect' event.
-     * @param event
+     *
+     * @param {Event} event
      */
     selectModule: function(event) {
         var module = this.$(event.currentTarget).data('module'),
@@ -59,10 +198,8 @@
             checkedModules.removeAttr('checked');
             checkedModules.closest('label').removeClass('active');
         } else {
-            var currentTarget = this.$(event.currentTarget),
-                currentTargetLabel = currentTarget.closest('label');
-
-            currentTarget.attr('checked') ? currentTargetLabel.addClass('active') : currentTargetLabel.removeClass('active');
+            var currentTarget = this.$(event.currentTarget);
+            currentTarget.toggleClass('active', currentTarget.attr('checked'));
 
             if (checkedModules.length) {
                 searchAll.removeAttr('checked');
@@ -85,7 +222,7 @@
         }
         this.searchModules = [];
         var modules = app.metadata.getModules() || {};
-        this.searchModules = this.populateSearchableModules({
+        this.searchModules = this._populateSearchableModules({
             modules: modules,
             acl: app.acl,
             checkFtsEnabled: true,
@@ -94,18 +231,20 @@
         this.render();
     },
     /**
-     * Helper that can be called from here in base, or, from derived globalsearch views. Called internally,
+     * Helper that can be called from here in base, or, from derived quicksearch views. Called internally,
      * so please ensure that you have passed in any required options or results may be undefined
-     * @param {Object} options An object literal with the following properties:
+     *
+     * @param {object} options An object literal with the following properties:
      * - modules: our current modules (required)
      * - acl: app.acl that has the hasAccess function (required) (we DI this for testability)
      * - moduleNames: displayed modules; an array of white listed string names. If used, only modules within
      * this white list will be added (optional)
      * - checkFtsEnabled: whether we should check meta.ftsEnabled (optional defaults to false)
      * - checkGlobalSearchEnabled: whether we should check meta.globalSearchEnabled (optional defaults to false)
-     * @return {Array} An array of searchable modules
+     * @return {array} An array of searchable modules
+     * @protected
      */
-    populateSearchableModules: function(options) {
+    _populateSearchableModules: function(options) {
         var modules = options.modules,
             moduleNames = options.moduleNames || null,
             acl = options.acl,
@@ -136,44 +275,115 @@
         }, this);
         return searchModules;
     },
+
+    /**
+     * Handles the keydown event for up, down, and ignores tab.
+     *
+     * @param {Event} e The `keydown` event
+     * @private
+     */
+    keydownHandler: function(e) {
+        switch (e.keyCode) {
+            case 40: // down arrow
+                this.moveForward();
+                e.preventDefault();
+                break;
+            case 38: // up arrow
+                this.moveBackward();
+                e.preventDefault();
+                break;
+            case 9:  // tab
+        }
+    },
+
+    keyupHandler: function(e) {
+        switch (e.keyCode) {
+            case 40: // down arrow
+                break;
+            case 38: // up arrow
+                break;
+            case 9: //tab
+                break;
+            default:
+                this._validateAndSearch();
+        }
+    },
+
+    /**
+     * Navigate to the next component
+     */
+    moveForward: function() {
+        if (this.layout.triggerBefore('navigate:next:component')) {
+            this.disposeKeyEvents();
+            this.layout.trigger('navigate:next:component');
+        }
+    },
+
+    /**
+     * Navigate to the previous component
+     */
+    moveBackward: function() {
+        if (this.layout.triggerBefore('navigate:previous:component')) {
+            this.disposeKeyEvents();
+            this.layout.trigger('navigate:previous:component');
+        }
+    },
+
+    /**
+     * Waits & debounces for 0.5 seconds before firing a search. This is primarily used on the
+     * keydown event for the typeahead functionality.
+     *
+     * @param {string} term The search term.
+     * @private
+     * @method
+     */
+    _debounceSearch: _.debounce(function() {
+        // Check if the search term is falsy (empty string)
+        // or the search term is the same as the previously searched term
+        // If either of those conditions are met, we do not need to execute a new search.
+        if (!this._searchTerm || this._searchTerm === this._currentQueryTerm) {
+            return;
+        }
+        this._currentQueryTerm = this._searchTerm;
+        this.fireSearchRequest();
+    }, 500),
+
+    /**
+     * Collects the search term, validates that a search is appropriate, and executes a debounced search.
+     * First, it checks the search term length, to ensure it meets the minimum length requirements.
+     * Second, it checks the search term against the previously typed search term. If the search term hasn't changed
+     * (for example, for keyboard shortcuts) then there is no need to rerun the search.
+     * If the above onditions are met, `_validateAndSearch` runs a debounced search.
+     *
+     * @private
+     */
+    _validateAndSearch: function() {
+        var term = this.$('input').val();
+        this._searchTerm = term;
+
+        // if the term is too short, close the search
+        if (term.length < this.minChars) {
+            this.layout.trigger('quicksearch:dropdown:close');
+            this._currentQueryTerm = '';
+            this._oldSearchTerm = '';
+            return;
+        }
+
+        // shortcuts might trigger multiple `keydown` events, to do some actions like blurring the input, but since the
+        // input value didn't change we don't want to trigger a new search.
+        var hasInputChanged = (this._searchTerm !== this._oldSearchTerm);
+        if (hasInputChanged) {
+            this._oldSearchTerm = term;
+            this._debounceSearch();
+        }
+    },
+
+    /**
+     * @inheritDoc
+     */
     _renderHtml: function() {
         if (!app.api.isAuthenticated() || app.config.appStatus == 'offline') return;
-
-        app.view.View.prototype._renderHtml.call(this);
-
-        // Search ahead drop down menu stuff
-        var self = this,
-            menuTemplate = app.template.getView('quicksearch-results');
-
-        this.$('.search-query').searchahead({
-            request: function(term) {
-                self.fireSearchRequest.call(self, term, this);
-            },
-            compiler: menuTemplate,
-            throttleMillis: (app.config.requiredElapsed || 500),
-            throttle: function(callback, millis) {
-                if(!self.debounceFunction) {
-                    self.debounceFunction = _.debounce(function(){
-                        callback();
-                    }, millis || 500);
-                }
-                self.debounceFunction();
-            },
-            onEnterFn: function(hrefOrTerm, isHref) {
-                // FIXME there is a bug on searchahead lib that even if the
-                // menu is hidden triggers isHref = true
-                if (isHref && this.$menu.is(':visible')) {
-                    app.router.navigate(hrefOrTerm, {trigger: true});
-                } else {
-                    // It's the term only (user didn't select from drop down
-                    // so this is essentially the term typed
-                    var term = $.trim(self.$('.search-query').attr('value'));
-                    if (!_.isEmpty(term)) {
-                        self.fireSearchRequest.call(self, term, this);
-                    }
-                }
-            }
-        });
+        this._super('_renderHtml', this);
 
         // Prevent the form from being submitted
         this.$('.navbar-search').submit(function() {
@@ -183,7 +393,8 @@
 
     /**
      * Escapes the highlighted result from Elasticsearch for any potential XSS.
-     * @param  {String} html
+     *
+     * @param  {string} html
      * @return {Handlebars.SafeString}
      */
     _escapeSearchResults: function(html) {
@@ -199,7 +410,7 @@
             self = this;
 
         // For each highlighted part:
-        _.each(highlightedSpan, function(part){
+        _.each(highlightedSpan, function(part) {
             highlightedContent = part.replace(higlightSpanTagsRe, '');
             // We escape the content of each highlight returned from Elastic.
             highlightedContent = escape(highlightedContent);
@@ -214,7 +425,9 @@
     /**
      * Get the modules that current user selected for search.
      * Empty array for all.
-     * @returns {Array}
+     *
+     * @return {array}
+     * @private
      */
     _getSearchModuleNames: function() {
         if (this.$('input:checkbox[data-module="all"]').attr('checked')) {
@@ -223,17 +436,19 @@
         else {
             var searchModuleNames = [],
                 checkedModules = this.$('input:checkbox:checked[data-module!="all"]');
-            _.each(checkedModules, function(val,index) {
+            _.each(checkedModules, function(val, index) {
                 searchModuleNames.push(val.getAttribute('data-module'));
             }, this);
             return searchModuleNames;
         }
     },
     /**
-     * Callback for the searchahead plugin .. note that
-     * 'this' points to the plugin (not the header view!)
+     * Executes a search using `this._searchTerm`.
+     * First, aborts any pre-existing search request. On a successful search, fires `quicksearch:results:open`
+     * event on the `layout` with the formatted results.
      */
-    fireSearchRequest: function (term, plugin) {
+    fireSearchRequest: function() {
+        var term = this._searchTerm;
         var searchModuleNames = this._getSearchModuleNames(),
             moduleList = searchModuleNames.join(','),
             self = this,
@@ -244,8 +459,9 @@
                 module_list: moduleList,
                 max_num: maxNum
             };
-        app.api.search(params, {
-            success:function(data) {
+        this.abortExistingRequest();
+        this._existingRequest = app.api.search(params, {
+            success: function(data) {
                 var formattedRecords = [];
                 _.each(data.records, function(record) {
                     if (!record.id) {
@@ -264,49 +480,37 @@
                             if (key !== 'name') { // found in a related field
                                 formattedRecord.field_name = app.lang.get(val.label, val.module);
                                 formattedRecord.field_value = safeString;
-                            } else { // if it is a name that is found, we need to replace the name with the highlighted text
+                            } else {
+                                // if it is a name that is found, we need to replace the name with the highlighted text
                                 formattedRecord.name = safeString;
                             }
                         });
                     }
                     formattedRecords.push(formattedRecord);
                 });
-                plugin.provide({next_offset: data.next_offset, records: formattedRecords, module_list: moduleList});
+                var results = {
+                    next_offset: data.next_offset,
+                    records: formattedRecords,
+                    module_list: moduleList,
+                    term: term
+                };
+                self.layout.trigger('quicksearch:results:open', results);
             },
-            error:function(error) {
-                app.error.handleHttpError(error, plugin);
-                app.logger.error("Failed to fetch search results in search ahead. " + error);
-            }
+            error: function(error) {
+                app.error.handleHttpError(error);
+                app.logger.error('Failed to fetch search results in search ahead. ' + error);
+            },
+            complete: _.bind(function() {
+                this._existingRequest = null;
+            }, this)
         });
     },
 
     /**
      * Show results when the search button is clicked.
-     *
-     * @param {Event} evt The event that triggered the search.
      */
     showResults: function(evt) {
-
-        var $searchBox = this.$('[data-provide=typeahead]');
-
-        if (!$searchBox.is(':visible')) {
-            var body = $('body');
-            this.$el.addClass('active');
-            body.on('click.globalsearch.data-api', _.bind(function(event) {
-                if (!$.contains(this.el, event.target)) {
-                    this.$el.removeClass('active');
-                    body.off('click.globalsearch.data-api');
-                }
-            }, this));
-            app.accessibility.run(body, 'click');
-            $searchBox.focus();
-            return;
-        }
-
-        // Simulate 'enter' keyed so we can show searchahead results
-        var e = jQuery.Event('keyup', { keyCode: $.ui.keyCode.ENTER });
-        $searchBox.focus();
-        $searchBox.trigger(e);
+        this._validateAndSearch();
     },
 
     /**
@@ -322,9 +526,11 @@
     persistMenu: function(e) {
         e.stopPropagation();
     },
-
+    /**
+     * @inheritDoc
+     */
     unbind: function() {
-        $('body').off('click.globalsearch.data-api');
+        this.disposeKeyEvents();
         this._super('unbind');
     }
 })
