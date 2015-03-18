@@ -84,6 +84,25 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
                 }
             }
         }
+        $this->checkMenu();
+    }
+
+    /**
+     * Remove old KB from menu and add new one.
+     */
+    protected function checkMenu()
+    {
+        require_once('modules/MySettings/TabController.php');
+        $tc = new TabController();
+
+        $tabs = $tc->get_system_tabs();
+        if (isset($tabs['KBDocuments'])) {
+            unset($tabs['KBDocuments']);
+        }
+        if (!isset($tabs['KBContents'])) {
+            $tabs['KBContents'] = 'KBContents';
+        }
+        $tc->set_system_tabs($tabs);
     }
 
     /**
@@ -113,6 +132,8 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
             kbdocuments.is_external_article ,
             kbdocuments.modified_user_id ,
             kbdocuments.created_by,
+            kbdocuments.team_id ,
+            kbdocuments.team_set_id ,
             kbdocuments.case_id kbscase_id
         FROM
             kbolddocuments kbdocuments
@@ -179,5 +200,4 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
         }
         return $data;
     }
-
 }
