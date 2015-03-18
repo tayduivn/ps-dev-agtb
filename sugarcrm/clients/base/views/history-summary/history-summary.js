@@ -209,8 +209,8 @@
      * @inheritDoc
      */
     _render: function() {
-        this._super('_render');
         this._sanitizeModels();
+        this._super('_render');
     },
 
     /**
@@ -220,7 +220,7 @@
      * @private
      */
     _sanitizeModels: function() {
-        this.collection.map(function(model) {
+        this.collection.each(function(model) {
             model.module = model.get('_module');
         });
     },

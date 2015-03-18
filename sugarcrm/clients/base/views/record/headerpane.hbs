@@ -12,7 +12,7 @@
 --}}
 <div class="headerpane">
     <h1>
-        {{#each meta.panels}}
+        {{#each view.meta.panels}}
             {{#if header}}
                 {{#each grid}}
                     {{#each this}}
@@ -20,14 +20,14 @@
                             <span class="table-cell-wrapper">
                                 {{#if ../../labels}}
                                     {{#unless dismiss_label}}
-                                        <span class="record-label" data-name="{{name}}">{{str label ../../../../../../model.module}}</span>
+                                        <span class="record-label" data-name="{{name}}">{{str label ../../../../../../view.model.module}}</span>
                                     {{/unless}}
                                 {{/if}}
                                 <span class="index{{index}}" data-fieldname="{{name}}" data-index="{{index}}">
-                                    {{field ../../../../this model=../../../../model template=../../../../action}}
+                                    {{field ../../../../view model=../../../../view.model template=../../../../view.action}}
                                 </span>
-                                {{#unless ../../../../createMode}}
-                                    {{#notHas name ../../../../../noEditFields}}
+                                {{#unless ../../../../view.createMode}}
+                                    {{#notHas name ../../../../../view.noEditFields}}
                                         <span class="record-edit-link-wrapper" data-name="{{name}}">
                                             <a class="record-edit-link btn btn-invisible" data-type="{{type}}" data-name="{{name}}"><i class="fa fa-pencil"></i></a>
                                         </span>
@@ -39,26 +39,26 @@
                 {{/each}}
             {{/if}}
         {{/each}}
-        {{#if enableHeaderButtons}}
+        {{#if view.enableHeaderButtons}}
             <div class="btn-toolbar pull-right">
-                {{#unless createMode}}
-                    {{#if showPrevNextBtnGroup}}
+                {{#unless view.createMode}}
+                    {{#if view.showPrevNextBtnGroup}}
                         <div class="btn-group btn-group-previous-next">
-                            <button class="btn btn-invisible previous-row{{#unless showPrevious}} disabled{{/unless}}"
+                            <button class="btn btn-invisible previous-row{{#unless view.showPrevious}} disabled{{/unless}}"
                                     data-action="scroll" data-action-type="prev"
-                                    data-id="{{fieldValue model "id"}}" rel="tooltip" data-placement="bottom" title="{{str "LNK_LIST_PREVIOUS" model.module}}">
+                                    data-id="{{fieldValue view.model "id"}}" rel="tooltip" data-placement="bottom" title="{{str "LNK_LIST_PREVIOUS" view.model.module}}">
                                 <i class="fa fa-chevron-left"></i>
                             </button>
-                            <button class="btn btn-invisible next-row{{#unless showNext}} disabled{{/unless}}"
+                            <button class="btn btn-invisible next-row{{#unless view.showNext}} disabled{{/unless}}"
                                     data-action="scroll" data-action-type="next"
-                                    data-id="{{fieldValue model "id"}}" rel="tooltip" data-placement="bottom" title="{{str "LNK_LIST_NEXT" model.module}}">
+                                    data-id="{{fieldValue view.model "id"}}" rel="tooltip" data-placement="bottom" title="{{str "LNK_LIST_NEXT" view.model.module}}">
                                 <i class="fa fa-chevron-right"></i>
                             </button>
                         </div>
                     {{/if}}
                 {{/unless}}
-                {{#each meta.buttons}}
-                    {{field ../this}}
+                {{#each view.meta.buttons}}
+                    {{field ../view}}
                 {{/each}}
             </div>
         {{/if}}
