@@ -135,9 +135,9 @@ class PMSESendMessageEvent extends PMSEIntermediateEvent
             $flowData['cas_sugar_object_id'], $addresses, $templateId);
 
         if (!$result['result']) {
-            throw new PMSEElementException($result['ErrorInfo'], $flowData, $this);
+            if (isset($this->logger)) $this->logger->error($result['ErrorInfo']);
         } elseif (!empty($result['ErrorMessage'])) {
-            throw new PMSEElementException($result['ErrorMessage'], $flowData, $this);
+            if (isset($this->logger)) $this->logger->error($result['ErrorMessage']);
         }
     }
 

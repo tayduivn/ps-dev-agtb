@@ -20,6 +20,9 @@ if (!isset($install_script) || !$install_script) {
 }
 ini_set("output_buffering", "0");
 
+// Disable zlib compression as this will interfere with live scrolling
+ini_set('zlib.output_compression', 0);
+
 // Give the install ample time to finish
 set_time_limit(3600);
 

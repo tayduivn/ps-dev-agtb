@@ -32,7 +32,7 @@ class PMSESendMessageEventTest extends PHPUnit_Framework_TestCase
     {
         $this->loggerMock = $this->getMockBuilder('PMSELogger')
             ->disableOriginalConstructor()
-            ->setMethods(array('info', 'debug', 'warning'))
+            ->setMethods(array('info', 'debug', 'warning', 'error'))
             ->getMock();
     }
 
@@ -180,8 +180,8 @@ class PMSESendMessageEventTest extends PHPUnit_Framework_TestCase
             'bpmn_id' => 'aosijdi9qwdj',
             'id' => 'caseidja9823ju89d'
         );
-        
-        $this->setExpectedException('PMSEElementException', 'Some Error happened');
+
+        $this->sendMessageEvent->setLogger($this->loggerMock);
         
         $this->sendMessageEvent->sendEmail($flowData);
     }
@@ -232,10 +232,8 @@ class PMSESendMessageEventTest extends PHPUnit_Framework_TestCase
             'bpmn_id' => 'aosijdi9qwdj',
             'id' => 'caseidja9823ju89d'
         );
-        
-        $this->setExpectedException(
-          'PMSEElementException', 'Some Error happened again'
-        );
+
+        $this->sendMessageEvent->setLogger($this->loggerMock);
         
         $this->sendMessageEvent->sendEmail($flowData);
     }

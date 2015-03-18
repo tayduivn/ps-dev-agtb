@@ -229,6 +229,9 @@ class PMSEEngineFilterApi extends FilterApi
         $fields[] = array("cas_id", 'cas_id');
         $fields[] = array("cas_sugar_module", 'cas_sugar_module');
 
+        $fields[] = array("cas_sugar_object_id", 'cas_sugar_object_id');
+        $fields[] = array("cas_user_id",'cas_user_id');
+
 
         $q->joinTable('pmse_inbox', array('alias' => 'inbox', 'joinType' => 'INNER', 'linkingTable' => true))
             ->on()
@@ -259,6 +262,8 @@ class PMSEEngineFilterApi extends FilterApi
             ->equalsField('process.id', 'inbox.pro_id')
             ->equals('process.deleted', 0);
         $fields[] = array("process.name", 'pro_title');
+        $fields[] = array("process.prj_id", 'prj_id');
+        $fields[] = array("process.created_by", 'prj_created_by');
 
         //INNER JOIN USER_DATA DEFINTION
         $q->joinTable('users', array('alias' => 'user_data', 'joinType' => 'LEFT', 'linkingTable' => true))
@@ -287,6 +292,15 @@ class PMSEEngineFilterApi extends FilterApi
             }
             if ($orderBy[0] == 'cas_title'){
                 $orderBy[0] = 'inbox.cas_title';
+            }
+            if ($orderBy[0] == 'cas_user_id_full_name'){
+                $orderBy[0] = 'cas_user_id';
+            }
+            if ($orderBy[0] == 'prj_user_id_full_name'){
+                $orderBy[0] = 'prj_created_by';
+            }
+            if ($orderBy[0] == 'assigned_user_name'){
+                $orderBy[0] = 'assigned_user_name';
             }
             $q->orderBy($orderBy[0], $orderBy[1]);
         }
@@ -323,8 +337,26 @@ class PMSEEngineFilterApi extends FilterApi
             $arr_aux['cas_status'] = $bean->fetched_row['act_assignment_method'];
             $arr_aux['assigned_user_name'] = $bean->fetched_row['assigned_user_name'];
             $arr_aux['cas_sugar_module'] = $bean->fetched_row['cas_sugar_module'];
+            $arr_aux['cas_sugar_object_id'] = $bean->fetched_row['cas_sugar_object_id'];
+            $arr_aux['prj_id'] = $bean->fetched_row['prj_id'];
             $arr_aux['in_time'] = true;
             $arr_aux['id'] = $bean->fetched_row['inbox_id'];
+
+            $arr_aux['cas_user_id'] = $bean->fetched_row['cas_user_id'];
+            $arr_aux['prj_created_by'] = $bean->fetched_row['prj_created_by'];
+
+            $casUsersBean = BeanFactory::getBean('Users', $bean->fetched_row['cas_user_id']);
+            $arr_aux['cas_user_id_full_name'] = $casUsersBean->full_name;
+            if (empty($casUsersBean->full_name)){
+                $arr_aux['cas_user_id_full_name'] = $arr_aux['cas_user_id'];
+            }
+            $prjUsersBean = BeanFactory::getBean('Users', $bean->fetched_row['prj_created_by']);
+            $arr_aux['prj_user_id_full_name'] = $prjUsersBean->full_name;
+
+            $assignedBean = BeanFactory::getBean($arr_aux['cas_sugar_module'], $arr_aux['cas_sugar_object_id']);
+            $assignedUsersBean = BeanFactory::getBean('Users', $assignedBean->assigned_user_id);
+            $arr_aux['assigned_user_name'] = $assignedUsersBean->full_name;
+
             $ret[] = array_merge($this->formatBean($api, $args, $bean), $arr_aux);
         }
 
