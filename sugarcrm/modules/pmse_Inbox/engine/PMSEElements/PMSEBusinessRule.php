@@ -55,6 +55,15 @@ class PMSEBusinessRule extends PMSEScriptTask
      */
     public function run($flowData, $bean = null, $externalAction = '', $arguments = array())
     {
+        switch ($externalAction) {
+            case 'RESUME_EXECUTION':
+                $flowAction = 'UPDATE';
+                break;
+            default :
+                $flowAction = 'CREATE';
+                break;
+        }
+        
         $logBR = '';
         $bpmnElement = $this->retrieveDefinitionData($flowData['bpmn_id']);
 
@@ -163,7 +172,7 @@ class PMSEBusinessRule extends PMSEScriptTask
             //$this->bpmLog('ERROR', "[$cas_id][$cas_index] case halted!");
             $returnBR = null;
         }
-        return $this->prepareResponse($flowData, 'ROUTE', 'CREATE');
+        return $this->prepareResponse($flowData, 'ROUTE', $flowAction);
     }
 
 }
