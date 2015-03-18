@@ -27,9 +27,9 @@ class CategoriesTest extends Sugar_PHPUnit_Framework_TestCase
     public static $beanIds = array();
 
     /**
-     * Root node 
+     * Root node
      *
-     * @var CategoryMock $root 
+     * @var CategoryMock $root
      */
     public static $root;
 
@@ -50,7 +50,7 @@ class CategoriesTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('current_user', array(true, true));
         $root = new CategoryMock();
         $root->name = 'SugarCategoryRoot' . mt_rand();
-        self::$beanIds[] = $root->makeRoot();
+        self::$beanIds[] = $root->saveAsRoot();
         self::$root = $root;
     }
 
@@ -104,13 +104,13 @@ class CategoriesTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test make new root category data using Category::makeRoot method.
+     * Test make new root category data using Category::saveAsRoot method.
      */
-    public function testMakeRoot()
+    public function testSaveAsRoot()
     {
         $bean = new CategoryMock();
         $bean->name = 'SugarCategoryRoot' . mt_rand();
-        self::$beanIds[] = $bean->makeRoot();
+        self::$beanIds[] = $bean->saveAsRoot();
 
         $this->assertTrue($bean->lft == 1);
         $this->assertTrue($bean->rgt == 2);
@@ -125,7 +125,7 @@ class CategoriesTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $bean = new CategoryMock();
         $bean->name = 'SugarCategoryRoot' . mt_rand();
-        self::$beanIds[] = $bean->makeRoot();
+        self::$beanIds[] = $bean->saveAsRoot();
         $this->assertTrue($bean->isRoot());
     }
 
@@ -136,7 +136,7 @@ class CategoriesTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $bean = new CategoryMock();
         $bean->name = 'SugarCategoryRoot' . mt_rand();
-        self::$beanIds[] = $bean->makeRoot();
+        self::$beanIds[] = $bean->saveAsRoot();
         $bean->shiftLeftRightMock(2, 2);
         $bean = BeanFactory::retrieveBean('Categories', $bean->id, array(
             'use_cache' => false,
@@ -229,12 +229,12 @@ class CategoriesTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test retrieve a valid descendants data using Category::getDescendants method.
+     * Test retrieve a valid children data using Category::getСhildren method.
      */
-    public function testGetDescendants()
+    public function testGetСhildren()
     {
-        $this->assertInternalType('array', self::$root->getDescendants());
-        $this->assertInternalType('array', self::$root->getDescendants(1));
+        $this->assertInternalType('array', self::$root->getСhildren());
+        $this->assertInternalType('array', self::$root->getСhildren(1));
     }
 
     /**
@@ -395,5 +395,4 @@ class CategoryMock extends Category
     {
         return parent::moveNode($target, $key, $levelUp);
     }
-
 }

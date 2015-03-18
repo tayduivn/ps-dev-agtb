@@ -329,7 +329,6 @@ class FileApi extends SugarApi {
      *
      * @param ServiceBase $api The service base
      * @param array $args Arguments array built by the service base
-     * @return void
      * @throws SugarApiExceptionMissingParameter|SugarApiExceptionNotFound|SugarApiExceptionNotAuthorized
      */
     public function getFile($api, $args) {
