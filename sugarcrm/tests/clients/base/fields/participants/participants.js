@@ -424,18 +424,29 @@ describe('View.Fields.Base.ParticipantsField', function() {
         });
 
         it('should request the picture field so that an avatar can be shown upon selection', function() {
-            var collection, query;
+            var collection;
 
             collection = field.getFieldValue();
-            query = {
-                term: 'Jim',
-                callback: sandbox.spy()
-            };
-
             sandbox.stub(collection, 'search');
-            field.search(query);
+
+            field.search({});
 
             expect(collection.search.getCall(0).args[0].fields).toContain('picture');
+        });
+
+        it('should request the fields from the definition as well as the fields to be searched', function() {
+            var calledWithAllFieldsFromFieldDef, collection, fields;
+            collection = field.getFieldValue();
+            sandbox.stub(collection, 'search');
+
+            field.search({});
+            fields = collection.search.getCall(0).args[0].fields;
+            calledWithAllFieldsFromFieldDef = _.every(field.def.fields, function(f) {
+                var name = _.isObject(f) ? f.name : f;
+                return _.contains(fields, name);
+            });
+
+            expect(calledWithAllFieldsFromFieldDef).toBe(true);
         });
     });
 
@@ -954,7 +965,7 @@ describe('View.Fields.Base.ParticipantsField', function() {
         });
 
         it('should paginate when the show more button is clicked', function() {
-            var args, collection;
+            var args, collection, fieldNames;
 
             sandbox.stub(model, 'isNew').returns(false);
 
@@ -966,8 +977,11 @@ describe('View.Fields.Base.ParticipantsField', function() {
             field.$('[data-action=show-more]').click();
             args = collection.paginate.lastCall.args[0];
 
-            expect(args.fields).toEqual(['id', 'full_name', 'email', 'picture', 'accept_status_' + module.toLowerCase()]);
-            expect(args.order_by).toEqual('full_name:asc');
+            fieldNames = _.map(field.def.fields, function (f) {
+                return _.isObject(f) ? f.name : f;
+            });
+            expect(args.fields).toEqual(fieldNames);
+            expect(args.order_by).toEqual('name:asc');
         });
     });
 
