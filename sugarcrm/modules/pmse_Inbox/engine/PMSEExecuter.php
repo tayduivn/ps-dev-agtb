@@ -208,6 +208,9 @@ class PMSEExecuter
             case 'PMSESequenceFlow':
                 require_once $modulePath . '/PMSESequenceFlow.php';
                 return new PMSESequenceFlow();
+            case 'PMSEInvalidElement':
+                require_once $modulePath . '/PMSEInvalidElement.php';
+                return new PMSEInvalidElement();
             default:
                 require_once $modulePath . '/PMSEElement.php';
                 return new PMSEElement();
@@ -272,6 +275,9 @@ class PMSEExecuter
                         break;
                     case 'ADD_RELATED_RECORD':
                         $bpmElement = $this->retrievePMSEElement('PMSEAddRelatedRecord');
+                        break;
+                    default:
+                        $bpmElement = $this->retrievePMSEElement('PMSEInvalidElement');
                         break;
                 }
                 break;
