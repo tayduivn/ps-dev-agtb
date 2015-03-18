@@ -1,8 +1,4 @@
 <?php
-if (!defined('sugarEntry') || !sugarEntry) {
-    die('Not A Valid Entry Point');
-}
-
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -14,46 +10,48 @@ if (!defined('sugarEntry') || !sugarEntry) {
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-/* Third-Party Library Imports */
-
-/**
- * Needs the PHPMailer library to set up the proxy.
- */
-require_once "vendor/PHPMailer/class.phpmailer.php";
-
-/* Internal Module Imports */
-
-require_once "SMTPProxy.php";
+require_once 'vendor/PHPMailer/PHPMailerAutoload.php';
+require_once 'SMTPProxy.php';
 
 class PHPMailerProxy extends PHPMailer
 {
-    public function __construct()
-    {
-        // use PHPMailer with exceptions
-        parent::__construct(true);
+    /**
+     * {@inheritDoc}
+     */
+    public $AllowEmpty = true;
 
-        // allow an "empty" body to be sent
-        $this->AllowEmpty = true;
+    /**
+     * {@inheritDoc}
+     *
+     * Uses PHPMailer with exceptions.
+     */
+    public function __construct($exceptions = false)
+    {
+        parent::__construct(true);
     }
 
-    public function SmtpConnect($options = array())
+    /**
+     * {@inheritDoc}
+     *
+     * @return SMTPProxy
+     */
+    public function getSMTPInstance()
     {
         if (!($this->smtp instanceof SMTPProxy)) {
-            $this->smtp = new SMTPProxy;
+            $this->smtp = new SMTPProxy();
         }
 
-        $result = parent::SmtpConnect($options);
-        if ($result === false) {
-            throw new phpmailerException($this->Lang('smtp_connect_failed'), self::STOP_CRITICAL);
-        }
-        return $result;
+        return $this->smtp;
     }
 
-    public function SetError($msg)
+    /**
+     * {@inheritDoc}
+     */
+    protected function setError($msg)
     {
-        parent::SetError($msg);
+        parent::setError($msg);
 
         $class = get_class($this);
-        $GLOBALS["log"]->fatal("{$class} encountered an error: {$this->ErrorInfo}");
+        $GLOBALS['log']->fatal("{$class} encountered an error: {$this->ErrorInfo}");
     }
 }

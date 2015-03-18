@@ -1,8 +1,4 @@
 <?php
-if (!defined('sugarEntry') || !sugarEntry) {
-    die('Not A Valid Entry Point');
-}
-
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -14,155 +10,113 @@ if (!defined('sugarEntry') || !sugarEntry) {
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-/* Third-Party Library Imports */
-
-/**
- * Required to establish the SMTP connection prior to PHPMailer's send for error handling purposes.
- */
-require_once "vendor/PHPMailer/class.smtp.php";
+require_once 'vendor/PHPMailer/PHPMailerAutoload.php';
 
 class SMTPProxy extends SMTP
 {
-    public function Connect($host, $port = 0, $timeout = 30, $options = array())
+    /**
+     * {@inheritDoc}
+     */
+    public function connect($host, $port = null, $timeout = 30, $options = array())
     {
-        $result = parent::Connect($host, $port, $timeout, $options);
+        $result = parent::connect($host, $port, $timeout, $options);
         $this->handleError();
 
         return $result;
     }
 
-    public function StartTLS()
-    {
-        $result = parent::StartTLS();
-        $this->handleError();
-
-        return $result;
-    }
-
-    public function Authenticate($username, $password, $authtype='LOGIN', $realm='', $workstation='')
-    {
-        $result = false;
-
+    /**
+     * {@inheritDoc}
+     *
+     * No error is handled if the NTLM client fails. Trying to do so would cause each error to be double-handled due to
+     * the way {@link SMTPProxy::sendCommand()} is used. This is an edge case anyway.
+     */
+    public function authenticate(
+        $username,
+        $password,
+        $authtype = 'LOGIN',
+        $realm = '',
+        $workstation = ''
+    ) {
         // check if the resource is valid
         if (!is_resource($this->smtp_conn)) {
-            $this->error = array("error" => "Not a valid SMTP resource supplied");
-        } else {
-            $result = parent::Authenticate($username, $password, $authtype, $realm, $workstation);
+            $this->error = array('error' => 'Not a valid SMTP resource supplied');
+            $this->handleError();
+
+            return false;
         }
 
-        $this->handleError();
-
-        return $result;
+        return parent::authenticate($username, $password, $authtype, $realm, $workstation);
     }
 
-    public function Data($msg_data)
+    /**
+     * {@inheritDoc}
+     */
+    public function turn()
     {
-        $result = parent::Data($msg_data);
+        $result = parent::turn();
         $this->handleError();
 
         return $result;
     }
 
-    public function Hello($host = '')
+    /**
+     * {@inheritDoc}
+     */
+    protected function sendCommand($command, $commandstring, $expect)
     {
-        $result = parent::Hello($host);
+        $result = parent::sendCommand($command, $commandstring, $expect);
+
         $this->handleError();
 
         return $result;
     }
 
-    public function Mail($from)
-    {
-        $result = parent::Mail($from);
-        $this->handleError();
-
-        return $result;
-    }
-
-    public function Quit($close_on_error = true)
-    {
-        $result = parent::Quit($close_on_error);
-        $this->handleError();
-
-        return $result;
-    }
-
-    public function Recipient($to)
-    {
-        $result = parent::Recipient($to);
-        $this->handleError();
-
-        return $result;
-    }
-
-    public function Reset()
-    {
-        $result = parent::Reset();
-        $this->handleError();
-
-        return $result;
-    }
-
-    public function SendAndMail($from)
-    {
-        $result = parent::SendAndMail($from);
-        $this->handleError();
-
-        return $result;
-    }
-
-    public function Turn()
-    {
-        $result = parent::Turn();
-        $this->handleError();
-
-        return $result;
-    }
-
-    public function client_send($data)
-    {
-        $result = parent::client_send($data);
-        $this->handleError();
-
-        return $result;
-    }
-
+    /**
+     * Logs the error if one exists.
+     */
     protected function handleError()
     {
-        if (!is_null($this->error)) {
-            $message = array("SMTP ->");
-            $level   = "warn";
+        if (empty($this->error)) {
+            return;
+        }
 
-            if (is_array($this->error)) {
-                if (array_key_exists("error", $this->error)) {
-                    $message[] = "ERROR: {$this->error["error"]}.";
-                }
+        $message = array('SMTP ->');
+        $level = 'warn';
 
-                $hasErrno    = array_key_exists("errno", $this->error);
-                $hasSmtpCode = array_key_exists("smtp_code", $this->error);
-
-                if ($hasErrno || $hasSmtpCode) {
-                    // the presence of "errno" or "smtp_code" keys seems to indicate that a more serious error occurred
-                    // it was likely a failure when attempting to talk with an SMTP server
-                    $level = "fatal";
-                }
-
-                if ($hasErrno) {
-                    $message[] = "Code: {$this->error["errno"]}";
-                } elseif ($hasSmtpCode) {
-                    $message[] = "Code: {$this->error["smtp_code"]}";
-                }
-
-                if (array_key_exists("errstr", $this->error)) {
-                    $message[] = "Reply: {$this->error["errstr"]}";
-                } elseif (array_key_exists("smtp_msg", $this->error)) {
-                    $message[] = "Reply: {$this->error["smtp_msg"]}";
-                }
-            } else {
-                $message[] = "ERROR: {$this->error}";
+        if (is_array($this->error)) {
+            if (array_key_exists('error', $this->error)) {
+                $message[] = "ERROR: {$this->error['error']}.";
             }
 
-            $GLOBALS["log"]->$level(implode(" ", $message));
+            $hasErrno = array_key_exists('errno', $this->error);
+            $hasSmtpCode = array_key_exists('smtp_code', $this->error);
+
+            if ($hasErrno || $hasSmtpCode) {
+                // the presence of 'errno' or 'smtp_code' keys seems to indicate that a more serious error occurred
+                // it was likely a failure when attempting to talk with an SMTP server
+                $level = 'fatal';
+            }
+
+            if ($hasErrno) {
+                $message[] = "Code: {$this->error['errno']}";
+            } elseif ($hasSmtpCode) {
+                $message[] = "Code: {$this->error['smtp_code']}";
+            }
+
+            if (array_key_exists('errstr', $this->error)) {
+                $message[] = "Reply: {$this->error['errstr']}";
+            } elseif (array_key_exists('detail', $this->error)) {
+                $message[] = "Reply: {$this->error['detail']}";
+            } elseif (array_key_exists('smtp_msg', $this->error)) {
+                // kept around for legacy support
+                // PHPMailer no longer uses 'smtp_msg'; 'detail' is used instead
+                $message[] = "Reply: {$this->error['smtp_msg']}";
+            }
+        } else {
+            $message[] = "ERROR: {$this->error}";
         }
+
+        $GLOBALS['log']->$level(implode(' ', $message));
     }
 }
