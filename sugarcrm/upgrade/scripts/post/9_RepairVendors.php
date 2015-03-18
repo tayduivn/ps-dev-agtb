@@ -47,6 +47,10 @@ class SugarUpgradeRepairVendors extends UpgradeScript
         ),
         'pre75' => array(
             'vendor/Elastica' => 'vendor/ruflin/elastica/lib/Elastica',
+            'vendor/OneLogin' => 'vendor/onelogin/php-saml/lib',
+        ),
+        'pre76' => array(
+            'vendor/OneLogin' => 'vendor/onelogin/php-saml/lib',
         ),
     );
 
@@ -62,6 +66,8 @@ class SugarUpgradeRepairVendors extends UpgradeScript
             $directories = $this->directories['pre7'];
         } elseif (version_compare($this->from_version, '7.0.0', ">=") && version_compare($this->from_version, '7.5.0', "<")) {
             $directories = $this->directories['pre75'];
+        } elseif (version_compare($this->from_version, '7.5.0', ">=") && version_compare($this->from_version, '7.6.0', "<")) {
+            $directories = $this->directories['pre76'];
         } else {
             return;
         }
