@@ -27,8 +27,261 @@ class Category extends SugarBean implements NestedBeanInterface
     public $lvl;
 
     /**
-     * This method creates basic SugarQuery object
-     * @return SugarQuery
+     * {@inheritDoc}
+     */
+    public function getRoots()
+    {
+        $query = $this->getQuery();
+        $query->where()->equals('node.lft', '1');
+        return $query->execute();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isRoot()
+    {
+        return $this->lft == 1;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function saveAsRoot()
+    {
+        if (!empty($this->id)) {
+            throw new Exception('The node cannot be makes root because it is not new.');
+        }
+        $this->lft = 1;
+        $this->rgt = 2;
+        $this->lvl = 0;
+
+        if (empty($this->id)) {
+            $this->new_with_id = true;
+            $this->id = create_guid();
+        }
+
+        $this->root = $this->id;
+        return parent::save();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getTree($depth = null)
+    {
+        $tree = array();
+        $stackLength = 0;
+        $stack = array();
+        $subnodes = $this->getTreeData($this->root);
+
+        foreach ($subnodes as $node) {
+            if ($depth && $node['lvl'] > $depth) {
+                continue;
+            }
+
+            $data = $node;
+            $data['children'] = array();
+            $stackLength = count($stack);
+
+            while ($stackLength > 0 && $stack[$stackLength - 1]['lvl'] >= $data['lvl']) {
+                array_pop($stack);
+                $stackLength--;
+            }
+
+            if ($stackLength == 0) {
+                $i = count($tree);
+                $tree[$i] = $data;
+                $stack[] = & $tree[$i];
+            } else {
+                $i = count($stack[$stackLength - 1]['children']);
+                $stack[$stackLength - 1]['children'][$i] = $data;
+                $stack[] = & $stack[$stackLength - 1]['children'][$i];
+            }
+        }
+
+        return $tree;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getСhildren($depth = 1)
+    {
+        $db = DBManagerFactory::getInstance();
+        $query = $this->getQuery();
+
+        $condition = array(
+            'node.lft > ' . intval($this->lft),
+            'node.rgt < ' . intval($this->rgt),
+            'node.root = ' . $db->quoted($this->root),
+        );
+
+        if ($depth) {
+            $lvl = $this->lvl + $depth;
+            $condition[] = 'node.lvl <= ' . $lvl;
+        }
+
+        $query->whereRaw(implode(' AND ', $condition));
+        $query->orderByRaw('node.lft', 'ASC');
+        return $query->execute();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getNextSibling()
+    {
+        $db = DBManagerFactory::getInstance();
+        $query = $this->getQuery();
+
+        $condition = array(
+            'node.lft = ' . ($this->rgt + 1),
+            'node.root = ' . $db->quoted($this->root),
+        );
+
+        $query->whereRaw(implode(' AND ', $condition));
+        $query->limit = 1;
+        $result = $query->execute();
+        return !empty($result) ? array_shift($result) : null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getPrevSibling()
+    {
+        $db = DBManagerFactory::getInstance();
+        $query = $this->getQuery();
+
+        $condition = array(
+            'node.rgt = ' . ($this->lft - 1),
+            'node.root = ' . $db->quoted($this->root),
+        );
+
+        $query->whereRaw(implode(' AND ', $condition));
+        $query->limit = 1;
+        $result = $query->execute();
+        return !empty($result) ? array_shift($result) : null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getParents($depth = null, $reverseOrder = true)
+    {
+        $db = DBManagerFactory::getInstance();
+        $query = $this->getQuery();
+        $query->joinRaw('INNER JOIN ' . $this->table_name . ' root ON root.id=node.root');
+
+        $condition = array(
+            'node.lft < ' . $this->lft,
+            'node.rgt > ' . $this->rgt,
+            'root.id = ' . $db->quoted($this->root),
+        );
+
+        $query->whereRaw(implode(' AND ', $condition));
+        if ($reverseOrder) {
+            $query->orderByRaw('node.lvl', 'DESC');
+        } else {
+            $query->orderByRaw('node.lvl', 'ASC');
+        }
+
+        $query->limit = $depth;
+        return $query->execute();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getParent()
+    {
+        return array_shift($this->getParents(1));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isDescendantOf(NestedBeanInterface $target)
+    {
+        return $this->lft > $target->lft && $this->rgt < $target->rgt && $this->root === $target->root;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function append(NestedBeanInterface $node)
+    {
+        return $this->addNode($node, $this->rgt, 1);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function prepend(NestedBeanInterface $node)
+    {
+        return $this->addNode($node, $this->lft + 1, 1);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function insertBefore(NestedBeanInterface $target)
+    {
+        return $target->addNode($this, $target->lft, 0);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function insertAfter(NestedBeanInterface $target)
+    {
+        return $target->addNode($this, $target->rgt + 1, 0);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function moveBefore(NestedBeanInterface $target)
+    {
+        $this->moveNode($target, $target->lft, 0);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function moveAfter(NestedBeanInterface $target)
+    {
+        $this->moveNode($target, $target->rgt + 1, 0);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function moveAsFirst(NestedBeanInterface $target)
+    {
+        $this->moveNode($target, $target->lft + 1, 1);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function moveAsLast(NestedBeanInterface $target)
+    {
+        $this->moveNode($target, $target->rgt, 1);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function remove()
+    {
+        $this->mark_deleted($this->id);
+    }
+
+    /**
+     * Creates basic SugarQuery object.
+     * @return \SugarQuery
      */
     protected function getQuery()
     {
@@ -41,40 +294,8 @@ class Category extends SugarBean implements NestedBeanInterface
     }
 
     /**
-     * Add new node to tree.
-     * @param Category $node new child node.
-     * @param int $key.
-     * @param int $levelUp.
-     * @throws Exception
-     */
-    protected function addNode(Category $node, $key, $levelUp)
-    {
-        if (!empty($node->id)) {
-            throw new Exception('The node cannot be added because it is not new.');
-        }
-
-        if ($this->deleted == 1) {
-            throw new Exception('The node cannot be added because category is deleted.');
-        }
-
-        if ($node->deleted == 1) {
-            throw new Exception('The node cannot be added because it is deleted.');
-        }
-
-        if (!$levelUp && $this->isRoot()) {
-            throw new Exception('The node should not be root.');
-        }
-
-        $node->root = $this->root;
-        $node->lft = $key;
-        $node->rgt = $key + 1;
-        $node->lvl = $this->lvl + $levelUp;
-        $node->shiftLeftRight($key, 2);
-    }
-
-    /**
-     * This method loads and return all subnodes related to $root
-     * @param string $root root id
+     * Loads and returns all subnodes related to specified $root node.
+     * @param string $root Id of root node to load data from.
      * @return array
      */
     protected function getTreeData($root)
@@ -85,25 +306,6 @@ class Category extends SugarBean implements NestedBeanInterface
         $query->whereRaw('root.id = ' . $db->quoted($root) . ' AND node.lft > 1');
         $query->orderByRaw('node.lft', 'ASC');
         return $query->execute();
-    }
-
-
-    /**
-     * This method shifting left and right indexes
-     * @param int $key minimal bound of index
-     * @param int $delta value of shifting relative to the current position
-     */
-    protected function shiftLeftRight($key, $delta)
-    {
-        $db = DBManagerFactory::getInstance();
-        foreach (array('lft', 'rgt') AS $attribute) {
-            $this->update(array(
-                $attribute => $attribute . sprintf('%+d', $delta),
-                    ), $attribute . ' >= :key AND (root=:root) ', array(
-                ':key' => $key,
-                ':root' => $this->root,
-            ));
-        }
     }
 
     /**
@@ -141,7 +343,7 @@ class Category extends SugarBean implements NestedBeanInterface
 
             $this->update(array(
                 $attribute => $attribute . sprintf('%+d', $key - $left),
-                    ), $condition, array(
+            ), $condition, array(
                 ':left' => $left,
                 ':right' => $right,
                 ':root' => $this->root,
@@ -151,194 +353,63 @@ class Category extends SugarBean implements NestedBeanInterface
         $this->shiftLeftRight($right + 1, -$delta);
 
         $this->retrieve($this->id);
+        $target->retrieve($target->id);
     }
 
     /**
-     * Build tree and return all hierarchy for root
-     * @return array descendants hierarchy
-     */
-    public function getTree()
-    {
-        $tree = array();
-        $stackLength = 0;
-        $stack = array();
-        $subnodes = $this->getTreeData($this->root);
-
-        foreach ($subnodes as $node) {
-            $data = $node;
-            $data['children'] = array();
-            $stackLength = count($stack);
-
-            while ($stackLength > 0 && $stack[$stackLength - 1]['lvl'] >= $data['lvl']) {
-                array_pop($stack);
-                $stackLength--;
-            }
-
-            if ($stackLength == 0) {
-                $i = count($tree);
-                $tree[$i] = $data;
-                $stack[] = & $tree[$i];
-            } else {
-                $i = count($stack[$stackLength - 1]['children']);
-                $stack[$stackLength - 1]['children'][$i] = $data;
-                $stack[] = & $stack[$stackLength - 1]['children'][$i];
-            }
-        }
-
-        return $tree;
-    }
-
-    /**
-     * Gets root nodes.
-     * @return array list of root nodes.
-     */
-    public function getRoots()
-    {
-        $query = $this->getQuery();
-        $query->where()->equals('node.lft', '1');
-        return $query->execute();
-    }
-
-    public function getСhildren()
-    {
-        return $this->getDescendants(1);
-    }
-
-    /**
-     * Gets descendants for node.
-     * @param int $depth the depth.
-     * @return array list of descendants.
-     */
-    public function getDescendants($depth = null)
-    {
-        $db = DBManagerFactory::getInstance();
-        $query = $this->getQuery();
-
-        $condition = array(
-            'node.lft > ' . intval($this->lft),
-            'node.rgt < ' . intval($this->rgt),
-            'node.root = ' . $db->quoted($this->root),
-        );
-
-        if ($depth) {
-            $lvl = $this->lvl + $depth;
-            $condition[] = 'node.lvl <= ' . $lvl;
-        }
-
-        $query->whereRaw(implode(' AND ', $condition));
-        $query->orderByRaw('node.lft', 'ASC');
-        return $query->execute();
-    }
-
-    /**
-     * Gets next sibling of node.
-     * @return array|null the next sibling node.
-     */
-    public function getNextSibling()
-    {
-        $db = DBManagerFactory::getInstance();
-        $query = $this->getQuery();
-
-        $condition = array(
-            'node.lft = ' . ($this->rgt + 1),
-            'node.root = ' . $db->quoted($this->root),
-        );
-
-        $query->whereRaw(implode(' AND ', $condition));
-        $query->limit = 1;
-        $result = $query->execute();
-        return !empty($result) ? array_shift($result) : null;
-    }
-
-    /**
-     * Gets previous sibling of node.
-     * @return array|null the prev sibling node.
-     */
-    public function getPrevSibling()
-    {
-        $db = DBManagerFactory::getInstance();
-        $query = $this->getQuery();
-
-        $condition = array(
-            'node.rgt = ' . ($this->lft - 1),
-            'node.root = ' . $db->quoted($this->root),
-        );
-
-        $query->whereRaw(implode(' AND ', $condition));
-        $query->limit = 1;
-        $result = $query->execute();
-        return !empty($result) ? array_shift($result) : null;
-    }
-
-    /**
-     * Gets parent of node.
-     * @return array the parent node.
-     */
-    public function getParent()
-    {
-        return array_shift($this->getParents(1));
-    }
-
-    /**
-     * Gets parents of node.
-     * @return array the parent nodes.
-     */
-    public function getParents($depth = null)
-    {
-        $db = DBManagerFactory::getInstance();
-        $query = $this->getQuery();
-        $query->joinRaw('INNER JOIN ' . $this->table_name . ' root ON root.id=node.root');
-
-        $condition = array(
-            'node.lft < ' . $this->lft,
-            'node.rgt > ' . $this->rgt,
-            'root.id = ' . $db->quoted($this->root),
-        );
-
-        $query->whereRaw(implode(' AND ', $condition));
-        $query->orderByRaw('node.rgt', 'ASC');
-        $query->limit = $depth;
-        return $query->execute();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function isDescendantOf(NestedBeanInterface $target)
-    {
-        return $this->lft > $target->lft && $this->rgt < $target->rgt && $this->root === $target->root;
-    }
-
-    /**
-     * Determines if node is root.
-     * @return boolean whether the node is root.
-     */
-    public function isRoot()
-    {
-        return $this->lft == 1;
-    }
-
-    /**
-     * The method makes a current bean as root node.
-     * @return string id of current bean.
+     * Add new node to tree.
+     * @param Category $node new child node.
+     * @param int $key.
+     * @param int $levelUp.
      * @throws Exception
      */
-    public function makeRoot()
+    protected function addNode(Category $node, $key, $levelUp)
     {
-        if (!empty($this->id)) {
-            throw new Exception('The node cannot be makes root because it is not new.');
-        }
-        $this->lft = 1;
-        $this->rgt = 2;
-        $this->lvl = 0;
-
-        if (empty($this->id)) {
-            $this->new_with_id = true;
-            $this->id = create_guid();
+        if (!empty($node->id)) {
+            throw new Exception('The node cannot be added because it is not new.');
         }
 
-        $this->root = $this->id;
-        return parent::save();
+        if ($this->deleted == 1) {
+            throw new Exception('The node cannot be added because category is deleted.');
+        }
+
+        if ($node->deleted == 1) {
+            throw new Exception('The node cannot be added because it is deleted.');
+        }
+
+        if (!$levelUp && $this->isRoot()) {
+            throw new Exception('The node should not be root.');
+        }
+
+        $node->root = $this->root;
+        $node->lft = $key;
+        $node->rgt = $key + 1;
+        $node->lvl = $this->lvl + $levelUp;
+        $node->shiftLeftRight($key, 2);
+
+        $node->save();
+        $this->retrieve($this->id);
+        $node->retrieve($node->id);
+
+        return $node->id;
+    }
+
+    /**
+     * This method shifting left and right indexes
+     * @param int $key minimal bound of index
+     * @param int $delta value of shifting relative to the current position
+     */
+    protected function shiftLeftRight($key, $delta)
+    {
+        $db = DBManagerFactory::getInstance();
+        foreach (array('lft', 'rgt') AS $attribute) {
+            $this->update(array(
+                $attribute => $attribute . sprintf('%+d', $delta),
+            ), $attribute . ' >= :key AND (root=:root) ', array(
+                ':key' => $key,
+                ':root' => $this->root,
+            ));
+        }
     }
 
     /**
@@ -358,8 +429,8 @@ class Category extends SugarBean implements NestedBeanInterface
         }
 
         $sql = 'UPDATE ' . $this->table_name . ''
-                . ' SET ' . implode(', ', $fieldSet)
-                . ' WHERE ' . strtr($condition, array_map(array($db, 'quoted'), $params));
+            . ' SET ' . implode(', ', $fieldSet)
+            . ' WHERE ' . strtr($condition, array_map(array($db, 'quoted'), $params));
 
         return $db->query($sql, true, 'Error updating table:' . $this->table_name . ':');
     }
@@ -373,7 +444,7 @@ class Category extends SugarBean implements NestedBeanInterface
         $this->retrieve($id);
         $hasChild = ($this->rgt - $this->lft) !== 1;
         if ($hasChild) {
-            $descendants = $this->getDescendants();
+            $descendants = $this->getСhildren();
             while ($record = array_shift($descendants)) {
                 parent::mark_deleted($record['id']);
             }
@@ -382,69 +453,4 @@ class Category extends SugarBean implements NestedBeanInterface
         parent::mark_deleted($id);
         $this->shiftLeftRight($this->rgt + 1, ($this->lft - $this->rgt) - 1);
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function append(NestedBeanInterface $node)
-    {
-        $this->addNode($node, $this->rgt, 1);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function prepend(NestedBeanInterface $node)
-    {
-        $this->addNode($node, $this->lft + 1, 1);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function insertBefore(NestedBeanInterface $target)
-    {
-        $target->addNode($this, $target->lft, 0);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function insertAfter(NestedBeanInterface $target)
-    {
-        $target->addNode($this, $target->rgt + 1, 0);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function moveAsFirst(NestedBeanInterface $target)
-    {
-        $this->moveNode($target, $target->lft + 1, 1);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function moveAsLast(NestedBeanInterface $target)
-    {
-        $this->moveNode($target, $target->rgt, 1);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function moveAfter(NestedBeanInterface $target)
-    {
-        $this->moveNode($target, $target->rgt + 1, 0);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function moveBefore(NestedBeanInterface $target)
-    {
-        $this->moveNode($target, $target->lft, 0);
-    }
-
 }

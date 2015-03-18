@@ -39,14 +39,14 @@ class TreeApiTest extends Sugar_PHPUnit_Framework_TestCase
     public static $beanIds = array();
 
     /**
-     * Root node 
+     * Root node
      *
-     * @var CategoryMock $root 
+     * @var CategoryMock $root
      */
     public static $root;
 
     /**
-     * Nested set test data 
+     * Nested set test data
      * @var array
      */
     public static $testData = array(
@@ -87,7 +87,7 @@ class TreeApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->serviceMock = SugarTestRestUtilities::getRestServiceMock();
         $root = new Category();
         $root->name = 'SugarCategoryRoot' . mt_rand();
-        self::$beanIds[] = $root->makeRoot();
+        self::$beanIds[] = $root->saveAsRoot();
         $root->rgt = (count(self::$testData) + $root->lft) * 2;
         $root->save();
         self::$root = $root;

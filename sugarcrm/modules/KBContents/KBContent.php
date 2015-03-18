@@ -1,6 +1,6 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry)
-	die('Not A Valid Entry Point');
+    die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -81,7 +81,7 @@ class KBContent extends SugarBean {
         $client->configSave(
             $api,
             array(
-                'category_root' => $categoryRoot->makeRoot(),
+                'category_root' => $categoryRoot->saveAsRoot(),
                 'module' => 'KBContents',
             )
         );
