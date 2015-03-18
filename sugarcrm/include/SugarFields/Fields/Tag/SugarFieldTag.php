@@ -101,17 +101,18 @@ class SugarFieldTag extends SugarFieldRelatecollection
 
         // See if this tag exists already. If it does send back the bean for it
         $q = $this->getSugarQuery();
-        $q->select(array('id', 'name'));
-        $q->from($tagBean);
-        // Get the tag from the lowercase version of the name
-        $q->where()->equals('name_lower', strtolower($tagName));
+        // Get the tag from the lowercase version of the name, selecting all
+        // fields so that we can load the bean from these fields if found
+        $q->select(array('id', 'name', 'name_lower'));
+        $q->from($tagBean)
+          ->where()
+          ->equals('name_lower', strtolower($tagName));
         $result = $q->execute();
 
         // If there is a result for this tag name, send back the bean for it
         if (!empty($result[0]['id'])) {
-            if ($tagBean->retrieve($result[0]['id'])) {
-                return $tagBean;
-            }
+            $tagBean->fromArray($result[0]);
+            return $tagBean;
         }
 
         // Create a new record and send back THAT bean
