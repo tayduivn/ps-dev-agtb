@@ -339,6 +339,16 @@ div.fa-expand[data-action=full-screen] {
               color: @textColor !important;
             }
           }
+          &.jstree-leaf {
+            ins {
+              & + a:hover {
+                cursor: default;
+              }
+              &.leaf + a:hover {
+                cursor: pointer;
+              }
+            }
+          }
         }
       }
       > ul > li {
