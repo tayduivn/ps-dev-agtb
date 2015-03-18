@@ -100,6 +100,12 @@ class MetaDataManager
     protected static $managers = array();
 
     /**
+     * In memory cache of module ACLs that are record independent
+     * @var array
+     */
+    protected static $aclForModules = array();
+
+    /**
      * The requested platform, or collection of platforms
      *
      * @var array
@@ -866,6 +872,15 @@ class MetaDataManager
      */
     public function getAclForModule($module, $userObject, $bean = false, $showYes = false)
     {
+        //Cache ACL per user/module
+        if (empty($bean->id)) {
+            $cacheKey = "$module-{$userObject->id}";
+            if ($showYes)
+                $cacheKey .= "-yes";
+            if (isset(static::$aclForModules[$cacheKey])) {
+                return static::$aclForModules[$cacheKey];
+            }
+        }
         $outputAcl = array('fields' => array());
         $outputAcl['admin'] = ($userObject->isAdminForModule($module)) ? 'yes' : 'no';
         $outputAcl['developer'] = ($userObject->isDeveloperForModule($module)) ? 'yes' : 'no';
@@ -955,6 +970,10 @@ class MetaDataManager
             }
         }
         $outputAcl['_hash'] = $this->hashChunk($outputAcl);
+
+        if (!empty($cacheKey)){
+            static::$aclForModules[$cacheKey] = $outputAcl;
+        }
 
         return $outputAcl;
     }

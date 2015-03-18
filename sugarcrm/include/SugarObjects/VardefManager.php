@@ -729,6 +729,29 @@ class VardefManager{
     }
 
     /**
+     * Used to retrieve the field defs for a given module
+     * (and optionally a specific object if a module has multiple)
+     * @param string $module
+     * @param bool $object
+     *
+     * @return null
+     */
+    public static function getFieldDefs($module, $object = false) {
+        if (!$object) {
+            $object = BeanFactory::getObjectName($module);
+        }
+        if (empty($object)) {
+            return null;
+        }
+        if (!isset($GLOBALS['dictionary'][$object])) {
+            static::loadVardef($module, $object);
+        }
+        if (isset($GLOBALS['dictionary'][$object]['fields'])) {
+            return $GLOBALS['dictionary'][$object]['fields'];
+        }
+    }
+
+    /**
      * Gets the cache file name
      * @param string $module the given module we want to load the vardefs for
      * @param string $object the given object we wish to load the vardefs for
