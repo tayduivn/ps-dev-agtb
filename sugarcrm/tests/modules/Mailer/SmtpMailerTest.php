@@ -66,10 +66,10 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testSend_PHPMailerSmtpConnectThrowsException_ConnectToHostCatchesAndThrowsMailerException()
     {
-        $mockPhpMailerProxy = self::getMock("PHPMailerProxy", array("SmtpConnect"));
+        $mockPhpMailerProxy = self::getMock("PHPMailerProxy", array("smtpConnect"));
 
         $mockPhpMailerProxy->expects(self::once())
-            ->method("SmtpConnect")
+            ->method("smtpConnect")
             ->will(self::throwException(new phpmailerException()));
 
         $mockMailer = self::getMock(
@@ -125,10 +125,10 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
             ->method("packageHeaders")
             ->will(self::returnValue($packagedEmailHeaders));
 
-        $mockPhpMailerProxy = self::getMock("PHPMailerProxy", array("SetFrom"));
+        $mockPhpMailerProxy = self::getMock("PHPMailerProxy", array("setFrom"));
 
         $mockPhpMailerProxy->expects(self::once())
-            ->method("SetFrom")
+            ->method("setFrom")
             ->will(self::throwException(new phpmailerException()));
 
         $mockMailer = self::getMock(
@@ -187,10 +187,10 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
             ->method("packageHeaders")
             ->will(self::returnValue($packagedEmailHeaders));
 
-        $mockPhpMailerProxy = self::getMock("PHPMailerProxy", array("AddReplyTo"));
+        $mockPhpMailerProxy = self::getMock("PHPMailerProxy", array("addReplyTo"));
 
         $mockPhpMailerProxy->expects(self::once())
-            ->method("AddReplyTo")
+            ->method("addReplyTo")
             ->will(self::returnValue(false));
 
         $mockMailer = self::getMock(
@@ -245,10 +245,10 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
         $mailerConfiguration = new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]);
         $mailerConfiguration->setLocale($mockLocale);
 
-        $mockPhpMailerProxy = self::getMock("PHPMailerProxy", array("AddAttachment"));
+        $mockPhpMailerProxy = self::getMock("PHPMailerProxy", array("addAttachment"));
 
         $mockPhpMailerProxy->expects(self::once())
-            ->method("AddAttachment")
+            ->method("addAttachment")
             ->will(self::throwException(new phpmailerException()));
 
         $mockMailer = self::getMock(
@@ -303,10 +303,10 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
         $mailerConfiguration = new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]);
         $mailerConfiguration->setLocale($mockLocale);
 
-        $mockPhpMailerProxy = self::getMock("PHPMailerProxy", array("AddEmbeddedImage"));
+        $mockPhpMailerProxy = self::getMock("PHPMailerProxy", array("addEmbeddedImage"));
 
         $mockPhpMailerProxy->expects(self::once())
-            ->method("AddEmbeddedImage")
+            ->method("addEmbeddedImage")
             ->will(self::returnValue(false));
 
         $mockMailer = self::getMock(
@@ -353,10 +353,10 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testSend_PHPMailerSendThrowsException_SendCatchesItAndThrowsMailerException()
     {
-        $mockPhpMailerProxy = self::getMock("PHPMailerProxy", array("Send"));
+        $mockPhpMailerProxy = self::getMock("PHPMailerProxy", array("send"));
 
         $mockPhpMailerProxy->expects(self::once())
-            ->method("Send")
+            ->method("send")
             ->will(self::throwException(new phpmailerException()));
 
         $mockMailer = self::getMock(
@@ -407,10 +407,10 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testSend_AllMethodCallsAreSuccessful_NoExceptionsThrown()
     {
-        $mockPhpMailerProxy = self::getMock("PHPMailerProxy", array("Send"));
+        $mockPhpMailerProxy = self::getMock("PHPMailerProxy", array("send"));
 
         $mockPhpMailerProxy->expects(self::once())
-            ->method("Send")
+            ->method("send")
             ->will(self::returnValue(true));
 
         $mockMailer = self::getMock(
