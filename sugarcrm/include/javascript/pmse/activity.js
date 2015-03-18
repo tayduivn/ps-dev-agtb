@@ -1580,7 +1580,7 @@ AdamActivity.prototype.createConfigurateAction = function () {
         items = [/*formsField,*/ responseButtons,
             labelAssigment,
             reassignCheck, combo_teams,
-            adhocCheck, combo_teams_1,
+            //adhocCheck, combo_teams_1,
             actTypeField
         ];
 
