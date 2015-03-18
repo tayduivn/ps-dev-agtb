@@ -67,9 +67,7 @@ $mod_strings = array (
     'LBL_CREATE_LOCALIZATION_BUTTON_LABEL' => 'Create Localization',
     'LBL_CREATE_REVISION_BUTTON_LABEL' => 'Create Revision',
     'LBL_CANNOT_CREATE_LOCALIZATION' =>
-        'Cannot create new localization. ' .
-        'There are no available languages for new localization. ' .
-        'Please add them first.',
+        'Unable to create a new localization as a localization version exists for all available languages.',
     'LBL_KBSTATUS_DRAFT' => 'Draft',
     'LBL_KBSTATUS_EXPIRED' => 'Expired',
     'LBL_KBSTATUS_INREVIEW' => 'In Review',
