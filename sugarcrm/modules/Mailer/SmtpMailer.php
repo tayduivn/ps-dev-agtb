@@ -139,15 +139,13 @@ class SmtpMailer extends BaseMailer
             // have PHPMailer attempt to connect to the SMTP server
             $mailer->smtpConnect();
         } catch (Exception $e) {
-            //TODO: need to tell the class what error messages to use, so the following is for reference only
-//            global $app_strings;
-//            if(isset($this->oe) && $this->oe->type == "system") {
-//                $this->SetError($app_strings['LBL_EMAIL_INVALID_SYSTEM_OUTBOUND']);
-//            } else {
-//                $this->SetError($app_strings['LBL_EMAIL_INVALID_PERSONAL_OUTBOUND']);
-//            }
+            //TODO: it would be better if the caller added the details to the message so that the mailer has no
+            // knowledge of what it means to be a system or personal configuration
+            $message = ($this->config->getConfigType() === 'system')
+                ? $GLOBALS['app_strings']['LBL_EMAIL_INVALID_SYSTEM_OUTBOUND']
+                : $GLOBALS['app_strings']['LBL_EMAIL_INVALID_PERSONAL_OUTBOUND'];
             throw new MailerException(
-                "Failed to connect to outbound SMTP Mail Server",
+                "Failed to connect to outbound SMTP Mail Server: {$message}",
                 MailerException::FailedToConnectToRemoteServer
             );
         }
