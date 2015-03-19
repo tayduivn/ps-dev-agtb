@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$viewdefs['KBContents']['base']['view']['create-actions'] = array(
+$viewdefs['KBContents']['base']['view']['create'] = array(
     'template' => 'record',
     'buttons' => array(
         array(
