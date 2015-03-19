@@ -4887,6 +4887,12 @@ Sincerely, SugarCRM',
     'ERR_HTTP_DEFAULT_TEXT' => 'Unknown error.',
     'ERR_HTTP_DEFAULT_ACTION' => 'Go back to previous page.',
 
+    'ERR_HTTP_400_TYPE' => '400',
+    'ERR_HTTP_400_TITLE' => 'Error: Invalid Request',
+    'ERR_HTTP_400_TEXT_LINE1' => 'Your browser sent a request that the server could not understand.',
+    'ERR_HTTP_400_TEXT_LINE2' => 'Please contact your Sugar Administrator for more details.',
+    'ERR_HTTP_400_ACTION' => 'Go back to previous page.',
+
     'ERR_HTTP_404_TYPE' => '404',
     'ERR_HTTP_404_TITLE' => 'Data not available',
     'ERR_HTTP_404_TEXT' => 'Page does not exist or you do not have permission to access this page.',

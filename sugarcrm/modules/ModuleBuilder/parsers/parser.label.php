@@ -255,6 +255,10 @@ class ParserLabel extends ModuleBuilderParser
             self::$moduleInstaller->silent = true;
         }
 
+        if (!empty($moduleName)) {
+            self::$moduleInstaller->modules = array($moduleName => $moduleName);
+        }
+
         self::$moduleInstaller->rebuild_extensions();
         
         // While this *is* called from rebuild_extensions, it doesn't do anything
