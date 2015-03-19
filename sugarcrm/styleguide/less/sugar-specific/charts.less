@@ -167,6 +167,16 @@ span.count {
   }
 }
 
+.nv-chart.nv-chart-donut.dnb-meter {
+  min-width: 118px;
+  min-height: 50px;
+  display: inline-block;
+}
+.sidebar-content .thumbnail.dashlet:not(.collapsed) .nv-chart.nv-chart-donut.dnb-meter {
+  height: 118px;
+  .calcWidth(~"50% - 2px");
+  margin: 0;
+}
 // org chart zoom control
 .btn-slider {
   display: inline-block;

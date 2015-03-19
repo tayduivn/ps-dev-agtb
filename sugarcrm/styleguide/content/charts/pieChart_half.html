@@ -30,8 +30,8 @@
       <div>
         <span>Data File</span><br>
         <select id="chartData">
-          <option value="pie_data" selected="selected">All Opportunities by Lead Source</option>
-          <option value="pie_data_quarters">Test Quarter Labels</option>
+          <option value="pie_data">All Opportunities by Lead Source</option>
+          <option value="pie_data_quarters" selected="selected">Test Quarter Labels</option>
         </select>
       </div>
       <div>
@@ -52,9 +52,14 @@
         <label><input type="radio" name="direction" value="ltr" checked="checked"> LTR</label>
         <label><input type="radio" name="direction" value="rtl"> RTL</label>
       </div>
+      <div>
+        <span>Half Round</span><br>
+        <label><input type="radio" name="half" value="0" checked="checked"> No</label>
+        <label><input type="radio" name="half" value="1"> Yes</label>
+      </div>
     </div>
 
-    <div id="chart1" class="nv-chart nv-chart-pie" style="height:600px">
+    <div id="chart1" class="nv-chart nv-chart-pie" style="height:400px">
       <svg></svg>
     </div>
 
@@ -92,11 +97,17 @@
     if (direction) {
       selectedDirection.val([direction[2]]);
     }
+    var half = window.location.href.match(/(\?|&)half=([0-9a-z]+)(&|$)/),
+        selectedHalf = $('input[type="radio"][name="half"]');
+    if (half) {
+      selectedHalf.val([half[2]]);
+    }
 
     jsonFile = selectedFile.val();
     color = selectedColor.filter(':checked').val() || 'default',
     showValues = parseInt(selectedShowValues.val(), 10) ? true : false;
     direction = selectedDirection.filter(':checked').val() || 'ltr';
+    half = selectedHalf.filter(':checked').val() || '0';
     $('html').css('direction', direction);
 
     var chartData = [];
@@ -109,9 +120,28 @@
           .showTitle(true)
           .showLegend(true)
           .donut(true)
+          .startAngle(function(d) { return (d.startAngle - Math.PI) / 2; })
+          .endAngle(function(d) { return (d.endAngle - Math.PI) / 2; })
           .pieLabelsOutside(true)
-          .donutRatio(0.447)
-          .hole(10)
+          .donutRatio(0.618)
+          .hole(function(d, node) {
+            var text = d3.select(node),
+                wrap = d3.select(node.parentNode),
+                total = d3.sum(d.map(function(d, i) {
+                    return d.value;
+                  }));
+            text
+              .attr('dy', '-.35em')
+              .classed('nv-pie-hole-value', true);
+            wrap.append('text')
+              .text('Total Records')
+              .attr('text-anchor', 'middle')
+              .attr('class', 'nv-pie-hole-label')
+              .attr('dy', '.35em')
+              .style('fill', '#333')
+              .style('font-size', '14px');
+            return total;
+          })
           .tooltipContent(function(key, x, y, e, graph) {
             return '<p>Stage: <b>' + key + '</b></p>' +
                    '<p>Amount: <b>$' + parseInt(y) + 'K</b></p>' +

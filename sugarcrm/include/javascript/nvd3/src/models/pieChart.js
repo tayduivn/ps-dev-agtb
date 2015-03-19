@@ -159,8 +159,6 @@ nv.models.pieChart = function() {
       var titleWrap = g.select('.nv-titleWrap');
       gEnter.append('g').attr('class', 'nv-pieWrap');
       var pieWrap = g.select('.nv-pieWrap');
-      gEnter.append('g').attr('class', 'nv-holeWrap');
-      var holeWrap = g.select('.nv-holeWrap');
       gEnter.append('g').attr('class', 'nv-legendWrap');
       var legendWrap = g.select('.nv-legendWrap');
 
@@ -203,12 +201,13 @@ nv.models.pieChart = function() {
           .arrange(availableWidth);
         legendWrap
           .attr('transform', 'translate(0,' + innerMargin.top + ')');
+
+        innerMargin.top += legend.height() + 4;
       }
 
       //------------------------------------------------------------
       // Recalc inner margins
 
-      innerMargin.top += legend.height() + 4;
       innerHeight = availableHeight - innerMargin.top - innerMargin.bottom;
       innerWidth = availableWidth - innerMargin.left - innerMargin.right;
 
@@ -224,20 +223,6 @@ nv.models.pieChart = function() {
         .attr('transform', 'translate(' + innerMargin.left + ',' + innerMargin.top + ')')
         .transition().duration(durationMs)
           .call(pie);
-
-      if (hole && pie.donut()) {
-        holeWrap.select('text').remove();
-        holeWrap.append('text')
-          .text(hole)
-          .attr('text-anchor', 'middle')
-          .attr('class', 'nv-pie-hole')
-          .attr('dy', '.35em')
-          .style('fill', '#333')
-          .style('font-size', '32px')
-          .style('font-weight', 'bold');
-        holeWrap
-          .attr('transform', 'translate(' + (innerWidth / 2 + innerMargin.left) + ',' + (innerHeight / 2 + innerMargin.top) + ')');
-      }
 
       function displayNoData() {
         container.select('.nvd3.nv-wrap').remove();
@@ -348,7 +333,7 @@ nv.models.pieChart = function() {
   chart.legend = legend;
 
   d3.rebind(chart, pie, 'id', 'x', 'y', 'color', 'fill', 'classes', 'gradient');
-  d3.rebind(chart, pie, 'valueFormat', 'values', 'description', 'showLabels', 'showLeaders', 'donutLabelsOutside', 'pieLabelsOutside', 'donut', 'donutRatio', 'labelThreshold');
+  d3.rebind(chart, pie, 'valueFormat', 'values', 'description', 'showLabels', 'showLeaders', 'donutLabelsOutside', 'pieLabelsOutside', 'startAngle', 'endAngle', 'donut', 'hole', 'donutRatio', 'labelThreshold');
 
   chart.colorData = function(_) {
     var type = arguments[0],
@@ -473,14 +458,6 @@ nv.models.pieChart = function() {
       return state;
     }
     state = _;
-    return chart;
-  };
-
-  chart.hole = function(_) {
-    if (!arguments.length) {
-      return hole;
-    }
-    hole = _;
     return chart;
   };
 
