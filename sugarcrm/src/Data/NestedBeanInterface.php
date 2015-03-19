@@ -23,10 +23,16 @@ namespace Sugarcrm\Sugarcrm\Data;
  * it isn't displayed in UI for end user.
  *
  * Example:
+ *
+ * // The tree node is stucture with attrigutes:
+ *
  * $node = array(
- *     'id' => '...',
- *     'name' => '...',
- *     'root' => '...',
+ *     'id' => '...',       // node uid
+ *     'name' => '...',     // readable node name
+ *     'root' => '...',     // uid of root node
+ *     'lft' => '...',      // left index of node in tree
+ *     'rgt' => '...',      // right index of node in tree
+ *     'lvl' => '...',      // level of node in tree
  *
  *     ... other properties ...
  * );
