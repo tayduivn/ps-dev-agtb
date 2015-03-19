@@ -191,11 +191,8 @@ class SearchForm {
      */
     function generateSearchWhere($add_custom_fields = false, $module='') {
         global $timedate;
-        $values = $this->searchFields;
 
         $where_clauses = array();
-        //$like_char = '%';
-        $table_name = $this->bean->object_name;
 
         foreach($this->searchFields as $field=>$parms) {
 			$customField = false;
@@ -267,7 +264,7 @@ class SearchForm {
                     }
                 }
                 else {
-                    $field_value = $GLOBALS['db']->quote($parms['value']);
+                    $field_value = $parms['value'];
                 }
 
                 //set db_fields array.
@@ -277,7 +274,7 @@ class SearchForm {
 
                 if(isset($parms['my_items']) and $parms['my_items'] == true) {
                     global $current_user;
-                    $field_value = $GLOBALS['db']->quote($current_user->id);
+                    $field_value = $current_user->id;
                     $operator = '=';
                 }
 
