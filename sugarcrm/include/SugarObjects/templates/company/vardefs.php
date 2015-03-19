@@ -22,7 +22,10 @@ $vardefs= array (
     'len' => 150,
     'comment' => 'Name of the Company',
     'unified_search' => true,
-    'full_text_search' => array('enabled' => true, 'boost' => 3),
+    'full_text_search' => array(
+        'enabled' => true,
+        'searchable' => true,
+    ),
     'audited' => true,
 	'required'=>true,
     'importable' => 'required',
