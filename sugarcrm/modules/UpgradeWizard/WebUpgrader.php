@@ -319,6 +319,8 @@ class WebUpgrader extends UpgradeDriver
     {
         global $token;
         $upgraderVesion = $this->context['versionInfo'][0];
+        $upgraderBuild = $this->context['versionInfo'][1];
+        $this->log("WebUpgrader v." . $upgraderVesion . " (build " . $upgraderBuild . ") starting");
         include dirname(__FILE__) . '/upgrade_screen.php';
     }
 

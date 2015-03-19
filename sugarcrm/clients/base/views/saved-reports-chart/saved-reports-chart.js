@@ -210,7 +210,7 @@
      */
     setChartParams: function(serverData, update) {
         // only called by bindDataChange when the report id is changed in config panel
-        if (_.isUndefined(serverData.reportData)) {
+        if (!serverData.reportData || !serverData.chartData) {
             if (!this.meta.config && this.chartField) {
                 this.chartField.displayNoData(true);
             }

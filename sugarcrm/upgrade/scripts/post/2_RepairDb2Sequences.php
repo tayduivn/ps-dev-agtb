@@ -24,7 +24,7 @@ class SugarUpgradeRepairDb2Sequences extends UpgradeScript
     public function run()
     {
         // this only applies for DB2 below 7.5.0
-        if (!$this->db instanceof IBMDB2Manager || !version_compare($this->from_version, '7.5.0', '<')) {
+        if (!$this->db instanceof IBMDB2Manager || !version_compare($this->from_version, '7.6.0', '<')) {
             return;
         }
 

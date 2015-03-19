@@ -258,6 +258,11 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             $files[] = 'modules/ForecastManagerWorksheets/clients/base/fields/rowactions';
             $files[] = 'modules/Tasks/clients/base/fields/closebutton';
         }
+
+        //CRYS-806 Remove Healthcheck
+        if (version_compare($this->from_version, '7.5', '>=') && version_compare($this->from_version, '7.6', '<')) {
+            $files[] = 'modules/HealthCheck';
+        }
         
         if (version_compare($this->from_version, '7.7', '<')) {
             $files[] = 'clients/base/views/interactionschart';

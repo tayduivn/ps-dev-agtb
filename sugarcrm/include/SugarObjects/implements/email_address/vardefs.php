@@ -23,7 +23,12 @@ $vardefs = array(
                 'id',
             ),
             'vname' =>'LBL_ANY_EMAIL',
-            'studio' => array('visible'=>true, 'searchview'=>true),
+            'studio' => array(
+                'visible' => true,
+                'searchview' => true,
+                'editview' => true,
+                'editField' => true,
+            ),
             'duplicate_on_record_copy' => 'always',
             'len' => 100,
             'importable' => false,

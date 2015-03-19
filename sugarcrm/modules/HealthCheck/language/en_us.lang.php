@@ -103,7 +103,7 @@ $mod_strings = array(
 
     'LBL_SCAN_901_LOG' => 'Instance already upgraded to Sugar 7',
     'LBL_SCAN_902_LOG' => 'Can\'t upgrade version %s on non-Mysql database',
-    'LBL_SCAN_903_LOG' => 'Unsupported Upgrader version. Please install Upgrader SugarUpgradeWizardPrereq-to-%s',
+    'LBL_SCAN_903_LOG' => 'Unsupported Upgrader version. Please install the appropriate SugarUpgradeWizardPrereq package',
     'LBL_SCAN_999_LOG' => 'Unknown failure, please consult support',
 
     'LBL_SCAN_101_TITLE' => '%s has studio history',
@@ -267,6 +267,6 @@ $mod_strings = array(
 
     'LBL_SCAN_901_DESCR' => 'Instance already upgraded to Sugar 7',
     'LBL_SCAN_902_DESCR' => 'Can\'t upgrade version %s on non-Mysql database',
-    'LBL_SCAN_903_DESCR' => 'Unsupported Upgrader version. Please install Upgrader SugarUpgradeWizardPrereq-to-%s',
+    'LBL_SCAN_903_DESCR' => 'Unsupported Upgrader version. Please install the appropriate SugarUpgradeWizardPrereq package',
     'LBL_SCAN_999_DESCR' => 'Unknown failure, please consult support',
 );

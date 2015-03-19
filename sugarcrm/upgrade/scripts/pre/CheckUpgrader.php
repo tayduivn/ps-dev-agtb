@@ -29,8 +29,7 @@ class SugarUpgradeCheckUpgrader extends UpgradeScript
             version_compare($this->context['versionInfo'][0], self::ALLOWED_UPGRADER_VERSION, '<')
         ) {
             return $this->error(
-                'Unsupported Upgrader version. Please install Upgrader SugarUpgradeWizardPrereq-to-' .
-                $this->manifest['version']
+                'Unsupported Upgrader version. Please install the appropriate SugarUpgradeWizardPrereq package'
             );
         }
         return true;

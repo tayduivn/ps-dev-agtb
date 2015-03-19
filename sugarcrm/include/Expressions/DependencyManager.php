@@ -26,6 +26,7 @@ class DependencyManager
         "EditView",
         "CreateView",
         "RecordlistView",
+        "ListView",
         "Subpanel-listView",
     );
 

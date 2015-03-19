@@ -53,17 +53,17 @@ $viewdefs['pmse_Emails_Templates']['base']['view']['dashlet-email'] = array(
                         'acl_action' => 'create',
                         'acl_module' => 'pmse_Emails_Templates',
                     ),
-                    array(
-                        'type' => 'dashletaction',
-                        'action' => 'importRecord',
-                        'params' => array(
-                            'module' => 'pmse_Emails_Templates',
-                            'link' => '#pmse_Emails_Templates/layout/emailtemplates-import'
-                        ),
-                        'label' => 'LNK_PMSE_EMAIL_TEMPLATES_IMPORT_RECORD',
-                        'acl_action' => 'importRecord',
-                        'acl_module' => 'pmse_Emails_Templates',
-                    ),
+//                    array(
+//                        'type' => 'dashletaction',
+//                        'action' => 'importRecord',
+//                        'params' => array(
+//                            'module' => 'pmse_Emails_Templates',
+//                            'link' => '#pmse_Emails_Templates/layout/emailtemplates-import'
+//                        ),
+//                        'label' => 'LNK_PMSE_EMAIL_TEMPLATES_IMPORT_RECORD',
+//                        'acl_action' => 'importRecord',
+//                        'acl_module' => 'pmse_Emails_Templates',
+//                    ),
                 ),
             ),
             array(
@@ -145,15 +145,15 @@ $viewdefs['pmse_Emails_Templates']['base']['view']['dashlet-email'] = array(
                     'tooltip' => 'LBL_PMSE_LABEL_DELETE',
                     'acl_action' => 'edit',
                 ),
-                array(
-                    'type' => 'rowaction',
-                    'icon' => 'fa fa-download',
-                    'css_class' => 'btn btn-mini',
-                    'event' => 'dashlet-email:download:fire',
-                    'target' => 'view',
-                    'tooltip' => 'LBL_PMSE_LABEL_EXPORT',
-                    'acl_action' => 'edit',
-                ),
+//                array(
+//                    'type' => 'rowaction',
+//                    'icon' => 'fa fa-download',
+//                    'css_class' => 'btn btn-mini',
+//                    'event' => 'dashlet-email:download:fire',
+//                    'target' => 'view',
+//                    'tooltip' => 'LBL_PMSE_LABEL_EXPORT',
+//                    'acl_action' => 'edit',
+//                ),
                 array(
                     'type' => 'rowaction',
                     'icon' => 'fa-info-circle',
