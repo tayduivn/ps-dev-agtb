@@ -137,6 +137,58 @@ module.exports = function(grunt) {
                     'warnings': ['-all:sugarcrm/sidecar/src', '-all:sugarcrm/sidecar/lib']
                 }
             }
+        },
+        phpunit: {
+            unit: {
+                cmd: 'php',
+                args: [
+                    'vendor/bin/phpunit',
+                    '--configuration=testsunit/phpunit.xml.dist',
+                    '--bootstrap=testsunit/TestBootstrap.php',
+                    '--log-junit=' + path + 'unit/testunit.xml',
+                    '--testdox-text=' + path + 'unit/testdox.txt',
+                    'testsunit/src'
+                ]
+            },
+            'unit-coverage': {
+                cmd: 'php',
+                args: [
+                    'vendor/bin/phpunit',
+                    '--configuration=testsunit/phpunit.xml.dist',
+                    '--coverage-clover=' + path + 'unit/coverage/coverage.xml',
+                    '--coverage-html=' + path + 'unit/coverage/report',
+                    '--coverage-php=' + path + 'unit/coverage/coverage.serialized',
+                    '--bootstrap=' + 'testsunit/TestBootstrap.php',
+                    '--log-junit=' + path + 'unit/testunit.xml',
+                    '--testdox-text=' + path + 'unit/testdox.txt',
+                    'testsunit/src'
+                ]
+            },
+            functional: {
+                cmd: 'php',
+                args: [
+                    'vendor/bin/phpunit',
+                    '--configuration=tests/phpunit.xml.dist',
+                    '--bootstrap=tests/SugarTestHelper.php',
+                    '--log-junit=' + path + 'functional/testunit.xml',
+                    '--testdox-text=' + path + 'functional/testdox.txt',
+                    'tests'
+                ]
+            },
+            'functional-coverage': {
+                cmd: 'php',
+                args: [
+                    'vendor/bin/phpunit',
+                    '--configuration=tests/phpunit.xml.dist',
+                    '--coverage-clover=' + path + 'functional/coverage/coverage.xml',
+                    '--coverage-html=' + path + 'functional/coverage/report',
+                    '--coverage-php=' + path + 'functional/coverage/coverage.serialized',
+                    '--bootstrap=tests/SugarTestHelper.php',
+                    '--log-junit=' + path + 'functional/testunit.xml',
+                    '--testdox-text=' + path + 'functional/testdox.txt',
+                    'tests'
+                ]
+            }
         }
     });
 };
