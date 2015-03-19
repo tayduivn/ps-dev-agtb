@@ -254,7 +254,7 @@ describe('Notifications', function() {
             var meta = {
                 remindersFilterDef: {
                     reminder_time: { $gte: 0},
-                    status: { $equals: 'Planned'}
+                    status: {$equals: 'Planned'}
                 },
                 remindersLimit: 100
             };
@@ -431,6 +431,61 @@ describe('Notifications', function() {
 
             expect(message).not.toContain(app.lang.get('LBL_RELATED_TO', model.module));
             expect(message).not.toContain(parentName);
+        });
+    });
+
+    describe('Notification favicon badge', function() {
+        beforeEach(function() {
+
+            // Library mock
+            Favico = function() {
+                return {
+                    badge: $.noop,
+                    reset: $.noop
+                };
+            };
+
+            view = SugarTest.createView('base', moduleName, viewName);
+        });
+
+        afterEach(function() {
+            sinon.collection.restore();
+            SugarTest.app.view.reset();
+            view.dispose();
+            view = null;
+
+            // remove Libarary mock
+            delete Favico;
+        });
+
+        using('different counts', [
+                [23, -1, 23],
+                [7, 7, '7+']
+            ], function(length, offset, expected) {
+                it('should update favicon badge with the correct unread notifications', function() {
+                    view._bootstrap();
+
+                    var badge = sinon.collection.stub(view.favicon, 'badge');
+                    view.collection.length = length;
+                    view.collection.next_offset = offset;
+                    view.collection.trigger('reset');
+
+                    expect(badge).toHaveBeenCalledWith(expected);
+                });
+            }
+        );
+
+        it('should reset favicon badge if authentication expires or user logout', function() {
+            view._bootstrap();
+
+            var resetStub = sinon.collection.stub(view.favicon, 'reset');
+            sinon.collection.stub(app.api, 'isAuthenticated', function() {
+                return false;
+            });
+
+            view.render();
+
+            expect(resetStub).toHaveBeenCalledOnce();
         });
     });
 });
