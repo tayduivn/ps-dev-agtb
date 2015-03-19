@@ -35,6 +35,10 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
         // Relationships for KBContents are not loaded yet.
         SugarRelationshipFactory::rebuildCache();
 
+        //Setup category root
+        $KBContent = BeanFactory::getBean('KBContents');
+        $KBContent->setupCategoryRoot();
+
         while ($documents = $this->getOldDocuments()) {
             foreach ($documents as $row) {
                 $this->log("Convert the KBOLDDocument {$row['id']} to a KBContent.");
