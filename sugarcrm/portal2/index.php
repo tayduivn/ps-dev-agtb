@@ -58,9 +58,10 @@ $versionToken = getVersionedPath(null);
         <script src="../cache/include/javascript/sugar_sidecar.min.js?v=<?php echo $versionToken;?>"></script>
 
         <!-- Portal specific JS -->
-        <script src="../cache/portal2/sugar_portal.min.js?v=<?php echo $versionToken;?>"></script>
+        <script src="../cache/portal2/portal.min.js?v=<?php echo $versionToken;?>"></script>
         <script src="../cache/Expressions/functions_cache<?php if (!shouldResourcesBeMinified()): ?>_debug<?php endif; ?>.js?v=<?php echo $versionToken;?>"></script>
         <script src="config.js?v=<?php echo $versionToken;?>"></script>
+        <script src="../cache/portal2/sugar_portal.min.js?v=<?php echo $versionToken;?>"></script>
 
         <script>
             var syncResult, view, layout, html;

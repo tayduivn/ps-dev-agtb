@@ -332,10 +332,13 @@
             ),
 
             //BEGIN SUGARCRM flav=ent ONLY
-            $sugar_grp_sugar7_portal2 = array(
+            $sugar_grp_portal2 = array(
                 'portal2/error.js' => 'portal2/portal.min.js',
                 'portal2/user.js' => 'portal2/portal.min.js',
                 'portal2/portal.js' => 'portal2/portal.min.js',
+            ),
+
+            $sugar_grp_sugar7_portal2 = array(
                 'include/javascript/sugar7/bwc.js' => 'portal2/sugar_portal.min.js',
                 'include/javascript/sugar7/utils.js' => 'portal2/sugar_portal.min.js',
                 'include/javascript/sugar7/utils-filters.js' => 'portal2/sugar_portal.min.js',
@@ -343,7 +346,7 @@
                 'include/javascript/sugar7/hacks.js' => 'portal2/sugar_portal.min.js',
                 'include/javascript/sugar7/alert.js' => 'portal2/sugar_portal.min.js',
                 'include/javascript/sugar7/hbs-helpers.js' => 'portal2/sugar_portal.min.js',
-                'include/javascript/sugar7/language.js' => 'portal2/portal.min.js',
+                'include/javascript/sugar7/language.js' => 'portal2/sugar_portal.min.js',
                 'custom/include/javascript/voodoo.js' => 'portal2/sugar_portal.min.js',
             ),
 
