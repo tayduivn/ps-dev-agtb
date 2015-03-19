@@ -78,6 +78,12 @@ class ParserDropDown extends ModuleBuilderParser
             //write to contents
             $contents = str_replace("?>", '', $contents);
             if (empty($contents)) $contents = "<?php";
+
+            // Needed when upgrading from version < 7.6
+            if (empty($params['handleSpecialDropdowns'])) {
+                $dropdown = $this->saveExemptDropdowns($dropdown, $dropdown_name, $my_list_strings, $selected_lang);
+            }
+
             //add new drop down to the bottom
             if (!empty($params['use_push'])) {
                 //this is for handling moduleList and such where nothing should be deleted or anything but they can be renamed
@@ -205,5 +211,43 @@ class ParserDropDown extends ModuleBuilderParser
         $contents = preg_replace($this->getPatternMatch($dropdown_name), "\n\n", $contents);
         $contents .= "\n\n\$app_list_strings['$dropdown_name']=" . var_export_helper($dropdown) . ";";
         return $contents;
+    }
+
+    /**
+     * Save dropdowns in which we use 'null' to remove a value
+     *
+     * @param $dropdown - Dropdown values
+     * @param $dropdownName - Dropdown name
+     * @param $myListStrings - Current app_list_strings
+     * @param $selectedLang - Selected language
+     *
+     * @see getExemptDropdowns()
+     */
+    private function saveExemptDropdowns($dropdown, $dropdownName, $myListStrings, $selectedLang)
+    {
+        // Handle special dropdown item removal
+        if (in_array($dropdownName, getExemptDropdowns())) {
+            foreach ($myListStrings[$dropdownName] as $key => $value) {
+                // If the value is present in the old app_list_strings but not in the new, null it
+                if (!empty($key) && !isset($dropdown[$key])) {
+                    $dropdown[$key] = null;
+                }
+            }
+            // We need to copy the NULLs if they are not set in the new dropdown
+            // because return_app_list_strings_language() removes them from the array
+            $customLanguage = "custom/include/language/$selectedLang.lang.php";
+            if (file_exists($customLanguage)) {
+                include($customLanguage);
+                if (isset($app_list_strings[$dropdownName])) {
+                    foreach ($app_list_strings[$dropdownName] as $key => $value) {
+                        if ($value === null && !isset($dropdown[$key])) {
+                            $dropdown[$key] = null;
+                        }
+                    }
+                }
+            }
+        }
+
+        return $dropdown;
     }
 }
