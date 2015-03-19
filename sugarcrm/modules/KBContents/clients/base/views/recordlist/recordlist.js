@@ -27,6 +27,10 @@
             this.refreshCollection();
         }, this);
 
+        this.context.on('kbcontents:category:deleted', function(node) {
+            this.refreshCollection();
+        }, this);
+
         if (!app.acl.hasAccessToModel('edit', this.model)) {
             this.context.set('requiredFilter', 'records-noedit');
         }

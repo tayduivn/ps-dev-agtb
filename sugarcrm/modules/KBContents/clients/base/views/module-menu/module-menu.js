@@ -69,7 +69,14 @@
         };
 
         var treeCallbacks = {
-            onSelect: function() { return; }
+                'onSelect': function() {
+                    return;
+                },
+                'onRemove': function(node) {
+                    if (this.context.parent) {
+                        this.context.parent.trigger('kbcontents:category:deleted', node);
+                    }
+                }
             },
         // @TODO: Find out why params from context for drawer don't pass to our view tree::_initSettings
             context = _.extend({}, this.context, {treeoptions: treeOptions, treecallbacks: treeCallbacks});

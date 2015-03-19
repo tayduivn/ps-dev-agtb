@@ -325,14 +325,22 @@
             plugins: ['dnd', 'contextmenu'],
             isDrawer: true
             },
+            treeCallbacks = {
+                'onRemove': function(node) {
+                    if (this.context.parent) {
+                        this.context.parent.trigger('kbcontents:category:deleted', node);
+                    }
+                }
+            },
         // @TODO: Find out why params from context for drawer don't pass to our view tree::_initSettings
-            context = _.extend({}, this.context, {treeoptions: treeOptions});
+            context = _.extend({}, this.context, {treeoptions: treeOptions, treecallbacks: treeCallbacks});
         app.drawer.open({
             layout: 'nested-set-list',
             context: {
                 module: 'Categories',
                 parent: context,
-                treeoptions: treeOptions
+                treeoptions: treeOptions,
+                treecallbacks: treeCallbacks
             }
         }, _.bind(this.selectedNode, this));
     },
