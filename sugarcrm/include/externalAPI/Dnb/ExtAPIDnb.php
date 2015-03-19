@@ -46,6 +46,7 @@ class ExtAPIDnb extends ExternalAPIBase
     private $dnbIndustryConversionURL = "V4.0/industries?IndustryCode-1=%s&ReturnOnlyPremiumIndustryIndicator=true&IndustryCodeTypeCode-1=%s&findindustry=true";
     private $dnbRefreshCheckURL = "V4.0/organizations?refresh=refresh&DunsNumber-1=%s";
     private $dnbContactsBALURL = "V6.0/organizations?CandidateMaximumQuantity=1000&findcontact=true&SearchModeDescription=Advanced";
+    private $dnbMeterURL = "V3.0/meterinformation";
     private $dnbApplicationId;
     private $dnbUsername;
     private $dnbPassword;
@@ -193,6 +194,21 @@ class ExtAPIDnb extends ExternalAPIBase
         $dnbendpoint = $this->dnbBaseURL[$this->dnbEnv] . sprintf($this->dnbFinancialURL, $duns_num);
         //check if result exists in cache
         $reply = $this->dnbServiceRequest($cache_key, $dnbendpoint, 'GET');
+        return $reply['responseJSON'];
+    }
+
+    /**
+     * Gets D&B API Usage
+     * @return jsonarray
+     */
+    public function dnbMeterInfo()
+    {
+        $dnbendpoint = $this->dnbBaseURL[$this->dnbEnv] . $this->dnbMeterURL;
+        $reply = $this->makeRequest('GET', $dnbendpoint);
+        if (!$reply['success']) {
+            $this->logger->error('DNB failed, reply said: ' . print_r($reply, true));
+            return array('error' => 'ERROR_DNB_CONFIG');
+        }
         return $reply['responseJSON'];
     }
 
