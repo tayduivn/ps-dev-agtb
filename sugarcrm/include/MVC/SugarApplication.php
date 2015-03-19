@@ -652,7 +652,7 @@ EOF;
      *
      * Checks a request to ensure the request is coming from a valid source or it is for one of the white listed actions
      */
-    protected function checkHTTPReferer($dieIfInvalid = true)
+    public function checkHTTPReferer($dieIfInvalid = true)
     {
         global $sugar_config;
         if (!empty($sugar_config['http_referer']['actions'])) {
