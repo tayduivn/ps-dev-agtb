@@ -292,7 +292,21 @@
                 break;
             case 38: // up arrow
                 break;
-            case 9: //tab
+            case 9: // tab
+                break;
+            case 13: // enter
+                // navigate to the search results page
+                var term = this.$('input').val();
+                var route = '';
+                if (this.layout.v2) {
+                    route = app.router.buildRoute('search', term);
+                } else {
+                    var moduleString = this._getSearchModuleNames().join(',');
+                    route = 'bwc/index.php?module=Home&append_wildcard=true&action=spot&full=true' +
+                    '&q=' + term +
+                    '&m=' + moduleString;
+                }
+                app.router.navigate(route, {trigger: true});
                 break;
             default:
                 this._validateAndSearch();
