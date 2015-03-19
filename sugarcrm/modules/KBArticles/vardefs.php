@@ -80,14 +80,17 @@ $dictionary['KBArticle'] = array(
             'relationship_type' => 'one-to-many',
         ),
     ),
+    'uses' => array(
+        'basic',
+        'team_security',
+        'assignable',
+    ),
+    'ignore_templates' => array(
+        'taggable',
+    ),
 );
 
 VardefManager::createVardef(
     'KBArticles',
-    'KBArticle',
-    array(
-        'basic',
-        'team_security',
-        'assignable',
-    )
+    'KBArticle'
 );

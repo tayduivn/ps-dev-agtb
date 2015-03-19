@@ -1188,6 +1188,12 @@ class MetaDataFiles
             }
         }
 
+        // Allow modules that set their subpanels dynamically to flow down to
+        // the client
+        if (isset($mergeDefs['dynamic'])) {
+            $currentDefs['dynamic'] = $mergeDefs['dynamic'];
+        }
+
         return $currentDefs;
     }
 

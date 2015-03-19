@@ -50,6 +50,13 @@ class VardefManager{
             $templates = array_unique($templates);
         }
 
+        // If a vardef specifies templates to ignore then remove those from the
+        // templates array here
+        if (isset($GLOBALS['dictionary'][$object]['ignore_templates'])) {
+            $ignore = (array) $GLOBALS['dictionary'][$object]['ignore_templates'];
+            $templates = array_diff($templates, $ignore);
+        }
+
         // Load up fields if there is a need for that. Introduced with the taggable
         // template
         if (isset($GLOBALS['dictionary'][$object]['load_fields'])) {
@@ -150,6 +157,27 @@ class VardefManager{
         return isModuleBWC($module) && !empty(self::$ignoreBWCTemplates[$template]);
     }
 
+    /**
+     * Checks the ignore_templates vardef directive to see if a module should not
+     * implement a template that is implemented by a parent module.
+     *
+     * @param string $object The name of the object
+     * @param string $template The name of the template
+     * @return boolean
+     */
+    public static function ignoreTemplate($object, $template)
+    {
+        if (isset($GLOBALS['dictionary'][$object]['ignore_templates'])) {
+            if (is_array($GLOBALS['dictionary'][$object]['ignore_templates'])) {
+                return in_array($template, $GLOBALS['dictionary'][$object]['ignore_templates']);
+            } else {
+                return $template === $GLOBALS['dictionary'][$object]['ignore_templates'];
+            }
+        }
+
+        return false;
+    }
+
     static function addTemplate($module, $object, $template, $object_name=false){
         // Normalize the template name
         if ($template == 'default') {
@@ -165,6 +193,11 @@ class VardefManager{
 
         // Verify that we should use this template for BWC modules
         if (self::ignoreBWCTemplate($module, $template)) {
+            return;
+        }
+
+        // Verify that we should use this template in general
+        if (self::ignoreTemplate($object, $template)) {
             return;
         }
 

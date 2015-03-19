@@ -69,13 +69,16 @@ $dictionary['Category'] = array(
     'duplicate_check' => array(
         'enabled' => false,
     ),
+    'uses' => array(
+        'basic',
+        'external_source',
+    ),
+    'ignore_templates' => array(
+        'taggable',
+    ),
 );
 
 VardefManager::createVardef(
     'Categories',
-    'Category',
-    array(
-        'basic',
-        'external_source',
-    )
+    'Category'
 );

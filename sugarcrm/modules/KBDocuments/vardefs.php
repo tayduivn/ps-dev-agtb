@@ -27,14 +27,17 @@ $dictionary['KBDocument'] = array(
             'reportable' => false,
         ),
     ),
+    'uses' => array(
+        'basic',
+        'team_security',
+        'assignable',
+    ),
+    'ignore_templates' => array(
+        'taggable',
+    ),
 );
 VardefManager::createVardef(
     'KBDocuments',
-    'KBDocument',
-    array(
-        'basic',
-        'team_security',
-        'assignable'
-    )
+    'KBDocument'
 );
 
