@@ -132,7 +132,7 @@ $dictionary['Document'] = array('table' => 'documents',
         'status_id' =>
         array(
             'name' => 'status_id',
-            'vname' => 'LBL_DOC_STATUS_ID',
+            'vname' => 'LBL_DOC_STATUS',
             'type' => 'enum',
             'len' => 100,
             'options' => 'document_status_dom',
