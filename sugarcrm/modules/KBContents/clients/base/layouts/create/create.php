@@ -9,7 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-$viewdefs['KBContents']['base']['layout']['create-actions'] = array(
+$viewdefs['KBContents']['base']['layout']['create'] = array(
     'components' => array(
         array(
             'layout' => array(
@@ -18,7 +18,7 @@ $viewdefs['KBContents']['base']['layout']['create-actions'] = array(
                         'layout' => array(
                             'components' => array(
                                 array(
-                                    'view' => 'create-actions',
+                                    'view' => 'create',
                                 ),
                             ),
                             'type' => 'simple',
