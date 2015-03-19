@@ -1117,12 +1117,17 @@ function handleWebConfig()
 
     $xmldoc = new XMLWriter();
     $xmldoc->openURI('web.config');
+    echo "<p>Begin rebuilding web.config</p>\n";
     $xmldoc->setIndent(true);
     $xmldoc->setIndentString(' ');
     $xmldoc->startDocument('1.0','UTF-8');
+    echo "<p>Rebuilding UTF-8 document</p>\n";
     $xmldoc->startElement('configuration');
+    echo "<p>Rebuilding configuration element</p>\n";
         $xmldoc->startElement('system.webServer');
+        echo "<p>Rebuilding system.webServer element</p>\n";
             $xmldoc->startElement('rewrite');
+            echo "<p>Rebuilding rewrite element</p>\n";
                 $xmldoc->startElement('rules');
                 for ($i = 0; $i < count($redirect_config_array); $i++) {
                     $xmldoc->startElement('rule');
@@ -1180,6 +1185,7 @@ function handleWebConfig()
                 $xmldoc->endElement();
             $xmldoc->endElement();
             $xmldoc->startElement('caching');
+            echo "<p>Rebuilding caching element</p>\n";
                 $xmldoc->startElement('profiles');
                     $xmldoc->startElement('remove');
                         $xmldoc->writeAttribute('extension', ".php");
@@ -1187,6 +1193,7 @@ function handleWebConfig()
                 $xmldoc->endElement();
             $xmldoc->endElement();
             $xmldoc->startElement('staticContent');
+            echo "<p>Rebuilding staticContent element</p>\n";
                 $xmldoc->startElement("clientCache");
                     $xmldoc->writeAttribute('cacheControlMode', 'UseMaxAge');
                     $xmldoc->writeAttribute('cacheControlMaxAge', '30.00:00:00');
@@ -1196,6 +1203,7 @@ function handleWebConfig()
     $xmldoc->endElement();
     $xmldoc->endDocument();
     $xmldoc->flush();
+    echo "<p>web.config is rebuilt</p>\n";
 }
 
 /**
