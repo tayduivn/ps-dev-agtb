@@ -73,6 +73,7 @@ $dictionary['KBContent'] = array(
             'type' => 'enum',
             'len' => 100,
             'options' => 'kbdocument_status_dom',
+            'default' => KBContent::ST_DRAFT,
             'reportable' => true,
             'audited' => true,
             'studio' => true,
