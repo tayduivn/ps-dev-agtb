@@ -38,7 +38,9 @@ $viewdefs['Quotes']['EditView'] = array(
 	      'payment_terms',
 	      'original_po_date',
 	    ),
-	   
+	    array(
+	      'description',
+	    ),
 	  ),
 	
 	'lbl_bill_to' => array (

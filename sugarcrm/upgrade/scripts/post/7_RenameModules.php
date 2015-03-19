@@ -50,7 +50,6 @@ class SugarUpgradeRenameModules extends UpgradeScript
                 if (count($renamedModules) > 0) {
                     $renamedList[$langKey] = array();
                 }
-
                 foreach ($renamedModules as $moduleId => $moduleName) {
                     if (isset($app_list_strings['moduleListSingular'][$moduleId])
                         && (!empty($app_list_strings['moduleList'][$moduleId])
@@ -75,9 +74,11 @@ class SugarUpgradeRenameModules extends UpgradeScript
                             'key_singular' => $klass->getModuleSingularKey($moduleId)
                         );
 
-                        $klass->changeModuleModStrings($moduleId, $replacementLabels);
-                        $klass->setChangedModules(array($moduleId => $replacementLabels));
-                        $klass->changeStringsInRelatedModules();
+                        $changed = $klass->changeModuleModStrings($moduleId, $replacementLabels);
+                        if ($changed) {
+                            $klass->setChangedModules(array($moduleId => $replacementLabels));
+                            $klass->changeStringsInRelatedModules();
+                        }
 
                         $renamedModules = $klass->getRenamedModules();
                         $renamedList[$langKey] = array_merge($renamedList[$langKey], $renamedModules);

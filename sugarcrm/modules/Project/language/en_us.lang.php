@@ -188,6 +188,7 @@ $mod_strings = array (
     'ERR_PREDECESSORS_OUT_OF_RANGE' => 'The value specified for the Predecessor field is larger than the number of rows.',   
     'ERR_PREDECESSOR_CYCLE_FAIL' => 'The specified predecessor causes a dependency cycle.',
     'ERR_PREDECESSOR_IS_PARENT_OR_CHILD_FAIL' => 'The specified predecessor is either a parent task or a subtask.', 
+    'ERR_TASK_VIEW_DETAILS' => 'You cannot view the details of a task not yet saved.',
     'NTC_DELETE_TASK_AND_SUBTASKS' => 'Are you sure you want to delete this task and all its subtasks?',
     'NTC_NO_ACTIVE_PROJECTS' => 'You do not have any active projects or project tasks.',
     'NTC_ASSIGN_RIGHT_TEAM' => 'Make sure that all project resources are members of this team.',

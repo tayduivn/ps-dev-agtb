@@ -75,9 +75,9 @@
         backToLogin(true);
         alertUser("invalid_client_error","LBL_AUTH_FAILED_TITLE","LBL_AUTH_FAILED");
     };
-    
+
     /**
-     * Invalid request handler. 
+     * Invalid request handler for OAuth 
      */
     app.error.handleInvalidRequestError = function(error) {
         backToLogin(true);
@@ -85,6 +85,13 @@
     };
 
     /**
+     * 400 Invalid request handler to be used for all non-OAuth 400 errors.
+     */
+    app.error.handleUnspecified400Error = function(error) {
+        showErrorPage('400');
+    };
+
+    /**    
      * 0 Timeout error handler. If server doesn't respond within timeout.
      */
     app.error.handleTimeoutError = function(error) {

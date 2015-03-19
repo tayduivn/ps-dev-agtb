@@ -202,8 +202,9 @@ for ($i = 0; $i < $product_count; $i++) {
                 $product->team_set_id = $focus->team_set_id;
                 //END SUGARCRM flav=pro ONLY
 
-                $product->assigned_user_name = $focus->assigned_user_name;
                 $product->assigned_user_id = $focus->assigned_user_id;
+                $product->assigned_user_name = $focus->assigned_user_name;
+
                 $product->quote_id = $focus->id;
                 $product->account_id = $focus->billing_account_id;
                 $product->contact_id = $focus->billing_contact_id;
