@@ -83,7 +83,7 @@ $viewdefs['KBContents']['base']['filter']['basic'] = array(
             'name' => 'LBL_NEW_RECORDS',
             'filter_definition' => array(
                 'date_entered' => array(
-                    '$dateRange' => 'last_7_days',
+                    '$dateRange' => 'today',
                 ),
             ),
             'editable' => false,
