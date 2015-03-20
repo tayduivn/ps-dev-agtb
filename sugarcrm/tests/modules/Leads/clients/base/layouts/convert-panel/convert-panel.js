@@ -85,6 +85,17 @@ describe('Leads.Base.Layout.ConvertPanel', function() {
         expect(layout.currentToggle).toEqual(layout.TOGGLE_DUPECHECK);
     });
 
+    it('should display dupecheck view after an initial search with results followed by a search with no results', function() {
+        layout.duplicateView.collection.length = 2;
+        layout.dupeCheckComplete();
+
+        layout.duplicateView.collection.length = 0;
+        layout.dupeCheckComplete();
+
+        expect(layout.currentToggle).toEqual(layout.TOGGLE_DUPECHECK);
+        expect(layout.currentState.dupeCount).toEqual(0);
+    });
+
     it('should select first duplicate if module is required and duplicates were found', function() {
         var duplicate1 = app.data.createBean('Contacts', {id: '123'}),
             duplicate2 = app.data.createBean('Contacts', {id: '456'}),

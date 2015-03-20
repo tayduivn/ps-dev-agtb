@@ -206,8 +206,9 @@
             }
         } else if (!this.toggledOffDupes) {
             this.showComponent(this.TOGGLE_CREATE);
-            this.toggledOffDupes = true; //flag so we only toggle once
         }
+
+        this.toggledOffDupes = true; //flag so we only toggle once
         this.trigger('lead:convert-dupecheck:complete', this.currentState.dupeCount);
     },
 
@@ -218,6 +219,11 @@
      * the create form passes validation.
      */
     runAutoCompleteCheck: function() {
+        //Bail out if we've already completed the check
+        if (this.autoCompleteCheckComplete) {
+            return;
+        }
+
         if (this.autoCompleteEnabled && this.meta.required && this.currentState.dupeCount === 0) {
             this.createView.once('render', this.runAutoCompleteValidation, this);
         } else {
