@@ -20,9 +20,11 @@
  */
 ({
     className: 'row-fluid',
+    //FIXME We need to remove this. SC-4210 will address it.
     dashboardLayouts: {
         'record': 'record-dashboard',
-        'records': 'list-dashboard'
+        'records': 'list-dashboard',
+        'search': 'search-dashboard'
     },
     events: {
         'click [data-action=create]': 'createClicked'
@@ -59,14 +61,48 @@
             context.set('create', true);
         }
 
-        var model = this._getNewDashboardObject('model', context);
-        if (context.get('modelId')) {
-            model.set('id', context.get('modelId'), {silent: true});
+        var hasDashboardModels;
+
+        // The dashboard can be used to display facets on the search page.
+        // This is a special use case for dashboards.
+        // This checks to see if we're in the search context (i.e. the search page).
+        if (context.parent && context.parent.get('search')) {
+            // Note that dashboard.js is initialized twice because `navigateLayout` will call initComponents directly,
+            // which creates a new context for each dashboard.
+            // See `navigateLayout` for more details.
+            // Also note that the module for the facets dashboard is set to `Home` in the search layout metadata.
+            // Therefore, we have two brother contexts, both of which are in the `Home` module.
+            // One is the initial dashboard that is created when the search layout is created.
+            // The other is instantiated by the dashboard's `navigateLayout` method.
+            var contextBro = context.parent.getChildContext({module: 'Home'});
+            hasDashboardModels = contextBro.get('collection') && contextBro.get('collection').length;
+            if (hasDashboardModels) {
+                context.set({
+                    // currentDashboardIndex is the index of the dashboard that is currently being displayed.
+                    // For the search page, we hardcode the dashboard indexes.
+                    // This is possible because in search, we only allow the
+                    //   help and facets dashboards.
+                    // index 1 is for the search help dashboard
+                    // index 2 is for the search facets dashboard
+                    // 'currentDashboardIndex' is 1-based to be in sync with `model.id`.
+                    // See `loadData` for more details.
+                    model: contextBro.get('collection').at(contextBro.get('currentDashboardIndex') - 1),
+                    collection: this._getNewDashboardObject('collection', context),
+                    skipFetch: true
+                });
+            }
         }
-        context.set({
-            model: model,
-            collection: this._getNewDashboardObject('collection', context)
-        });
+
+        if (!hasDashboardModels) {
+            var model = this._getNewDashboardObject('model', context);
+            if (context.get('modelId')) {
+                model.set('id', context.get('modelId'), {silent: true});
+            }
+            context.set({
+                model: model,
+                collection: this._getNewDashboardObject('collection', context)
+            });
+        }
 
         this._super('initialize', [options]);
 
@@ -106,8 +142,6 @@
         // listen to the model sync event to figure out if we need to highlight the help button in the footer
         this.model.on('sync', function() {
             if (this.dashboardVisibleState === 'open' && this.isHelpDashboard()) {
-                app.events.trigger('app:help:shown');
-
                 // when on the home page and the dashboard is a help dashboard, we need to hide the edit button
                 // which means we need to re-render the dashboard-headerpane to contain the meta from
                 // the help-dashboard-headerpane view
@@ -144,6 +178,35 @@
     },
 
     /**
+     * Overrides {@link View.Layout#initComponents} to trigger `change:metadata`
+     * event if we are in the search results page.
+     *
+     * For other dashboards than the facet dashboard, `change:metadata` is
+     * triggered by {@link View.Fields.Base.Home.LayoutbuttonField} but we don't
+     * use this field in the facets dashboard so we need to trigger it here.
+     *
+     * @override
+     */
+    initComponents: function(components, context, module) {
+        this._super('initComponents', [components, context, module]);
+        if (this.isSearchContext()) {
+            // For non-search dashboards, `change:metadata` is triggered by the
+            // `layoutbutton.js`. We don't use this field in the facets
+            // dashboard, so we need to trigger it here.
+            this.model.trigger('change:metadata');
+        }
+    },
+
+    /**
+     * Indicates if we are in the search page or not.
+     *
+     * @return {boolean} `true` means we are in the search page.
+     */
+    isSearchContext: function() {
+        return this.context.parent && this.context.parent.get('search');
+    },
+
+    /**
      * Method to open the help dashboard if it's not already loaded
      *
      * This will also toggle the sidebar to open if it's collapsed
@@ -156,11 +219,20 @@
             }
         }
         if (!this.isHelpDashboard()) {
-            // if the help dashboard is already visible, just leave it
-            this.collection.fetch({
-                silent: true,
-                success: _.bind(this.showHelpDashboard, this)
-            });
+            if (this.isSearchContext()) {
+                var contextBro = this.getContextBro(this.context.get('module'));
+                // Index 1 is the help dashboard.
+                // See comments in `initialize` for more details.
+                contextBro.set('currentDashboardIndex', 1);
+                this.showHelpDashboard(contextBro.get('collection'));
+                return;
+            } else {
+                // if the help dashboard is already visible, just leave it
+                this.collection.fetch({
+                    silent: true,
+                    success: _.bind(this.showHelpDashboard, this)
+                });
+            }
         }
     },
 
@@ -168,8 +240,16 @@
      * Method to close the help dashbaord, if the help dashboard is visible
      */
     closeHelpDashboard: function() {
-        // the active one is not a help dashboard, don't bother refreshing the page
         if (this.isHelpDashboard()) {
+            if (this.isSearchContext()) {
+                var contextBro = this.getContextBro(this.context.get('module'));
+                // Index 2 is the facet dashboard.
+                // See comments in `initialize` for more details.
+                contextBro.set('currentDashboardIndex', 2);
+                this.hideHelpDashboard(contextBro.get('collection'));
+                return;
+            }
+            // the active one is not a help dashboard, don't bother refreshing the page
             this.collection.fetch({
                 silent: true,
                 success: _.bind(this.hideHelpDashboard, this)
@@ -187,8 +267,8 @@
         var dashboard = _.find(collection.models, function(model) {
             return (model.get('dashboard_type') === 'help-dashboard');
         });
-
         this._navigate(dashboard);
+        app.events.trigger('app:help:shown');
     },
 
     /**
@@ -216,9 +296,40 @@
     },
 
     /**
-     * {@inheritdoc}
+     * Gets the brother context.
+     *
+     * @param {string} module The module to get the brother context from.
+     * @return {Core.Context} The brother context.
+     */
+    getContextBro: function(module) {
+        return this.context.parent.getChildContext({module: module});
+    },
+
+    /**
+     * @inheritdoc
      */
     loadData: function(options, setFields) {
+        // Dashboards store their own metadata as part of their model.
+        // For search facet dashboard, we do not want to load the dashboard
+        // metadata from the database. Instead, we build the metadata below.
+        if (this.isSearchContext()) {
+            // The model does not have metadata the first time this function
+            // is called. In subsequent calls, the model should have metadata
+            // so we do not need to fetch it.
+            if (this.model.has('metadata')) {
+                return;
+            }
+
+            this._loadSearchDashboards();
+
+            this.context.set('skipFetch', true);
+            // Index 2 is the facet dashboard. We display it by default in the
+            // search page.
+            this.context.set('currentDashboardIndex', 2);
+            this.navigateLayout(null, 'search-dashboard');
+            return;
+        }
+
         if (this.context.parent && !this.context.parent.isDataFetched()) {
             var parent = this.context.parent.get('modelId') ?
                 this.context.parent.get('model') : this.context.parent.get('collection');
@@ -231,6 +342,26 @@
         } else {
             this._super('loadData', [options, setFields]);
         }
+    },
+
+    /**
+     * Loads the facet and help dashboards for the search page, and add them in
+     * the collection.
+     *
+     * @private
+     */
+    _loadSearchDashboards: function() {
+        var dashboardsMeta = this._getInitialDashboardMetadata();
+        _.each(dashboardsMeta, function(dashMeta, index) {
+            var model = this._getNewDashboardObject('model', this.context);
+            // The `id` has to be 1-based, otherwise `data-id` has no value
+            // in dashboardtitle/detail.hbs because 0 is falsy.
+            model.set('id', ++index);
+            // In `dashMeta`, we have a `metadata` property which contains all
+            // the metadata needed for the dashboard.
+            model.set(dashMeta);
+            this.collection.add(model);
+        }, this);
     },
 
     /**
@@ -277,8 +408,14 @@
      * it will trigger set default dashboard to create default metadata
      */
     bindDataChange: function() {
+        if (this.isSearchContext()) {
+            return;
+        }
         var modelId = this.context.get('modelId');
         if (!(modelId && this.context.get('create')) && this.collection) {
+            // On the search page, we don't want to save the facets dashboard
+            // in the database, so we don't need to listen to changes on the
+            // collection nor do we need to call `setDefaultDashboard`.
             this.collection.on('reset', this.setDefaultDashboard, this);
         }
     },
@@ -504,13 +641,32 @@
      * @param {String} [type] what type of dashboard are we dealing with, default: `dashboard`
      */
     navigateLayout: function(id, type) {
-        var layout = this.layout,
-            lastVisitedStateKey = this.getLastStateKey(),
-            type = (_.isUndefined(type)) ? 'dashboard' : type;
+        var layout = this.layout;
+        var lastVisitedStateKey = this.getLastStateKey();
+        var type = !_.isUndefined(type) ? type : 'dashboard';
+
+        // Default to using dashboard-headerpane for the header.
+        var headerPaneView = 'dashboard-headerpane';
+
+        // In the search page, we can't use the standard help dashboard
+        // headerpane for the help dashboard because we don't want the
+        // action buttons.
+        // Also, we can't use the same as the facets dashboard headerpane
+        // because that headerpane contains a search specific cog button.
+        // Therefore, we created a special headerpane for the help dashboard in
+        // the search page.
+        if (this.isSearchContext() && type === 'help-dashboard') {
+            headerPaneView = 'search-help-dashboard-headerpane';
+        } else if (app.metadata.getView('Home', type + '-headerpane')) {
+            headerPaneView = type + '-headerpane';
+        }
+
         this.dispose();
 
-        if (!_.contains(['dashboard', 'help-dashboard'], type)) {
-            type = 'dashboard';
+        if (type === 'help-dashboard') {
+            app.events.trigger('app:help:shown');
+        } else {
+            app.events.trigger('app:help:hidden');
         }
 
         //if dashboard layout navigates to the different dashboard,
@@ -530,11 +686,12 @@
 
         layout.initComponents([
             {
+                // Note that we reinitialize the dashboard layout itself, creating a new context (forceNew: true)
                 layout: {
                     type: 'dashboard',
                     components: (id === 'list') ? [] : [
                         {
-                            view: type + '-headerpane'
+                            view: headerPaneView
                         },
                         {
                             layout: 'dashlet-main'

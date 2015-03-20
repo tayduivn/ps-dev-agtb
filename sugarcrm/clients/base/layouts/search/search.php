@@ -42,6 +42,28 @@ $viewdefs['base']['layout']['search'] = array(
                         'layout' => array(
                             'components' => array(
                                 array(
+                                    'layout' => array(
+                                        'name' => 'search-dashboard',
+                                        'type' => 'dashboard',
+                                        'drag_and_drop' => false,
+                                        'last_state' => array(
+                                            'id' => 'last-visit',
+                                        ),
+                                    ),
+                                    'context' => array(
+                                        'forceNew' => true,
+                                        'module' => 'Home',
+                                    ),
+                                ),
+                            ),
+                            'type' => 'simple',
+                            'name' => 'dashboard-pane',
+                        ),
+                    ),
+                    array(
+                        'layout' => array(
+                            'components' => array(
+                                array(
                                     'layout' => 'preview',
                                 ),
                             ),
