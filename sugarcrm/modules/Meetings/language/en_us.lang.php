@@ -16,6 +16,7 @@ $mod_strings = array (
 	'LBL_ADD_INVITEE' => 'Add Invitees',
 	'LBL_COLON' => ':',
 	'LBL_CONTACT_NAME' => 'Contact:',
+    'LBL_CONTACT_ID'   => 'Contact Id',
 	'LBL_CONTACTS_SUBPANEL_TITLE' => 'Contacts',
 	'LBL_CREATED_BY'=>'Created by',
 	'LBL_DATE_END'=>'End Date',
