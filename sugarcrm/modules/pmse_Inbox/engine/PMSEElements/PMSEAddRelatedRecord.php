@@ -41,6 +41,15 @@ class PMSEAddRelatedRecord extends PMSEScriptTask
      */
     public function run($flowData, $bean = null, $externalAction = '', $arguments = array())
     {
+         switch ($externalAction) {
+            case 'RESUME_EXECUTION':
+                $flowAction = 'UPDATE';
+                break;
+            default :
+                $flowAction = 'CREATE';
+                break;
+        }
+        
         global $timedate;
         $bpmnElement = $this->retrieveDefinitionData($flowData['bpmn_id']);
         $definitionBean = $this->caseFlowHandler->retrieveBean('pmse_BpmActivityDefinition', $bpmnElement['id']);
@@ -137,7 +146,7 @@ class PMSEAddRelatedRecord extends PMSEScriptTask
             $scriptTaskExecuted = true;
         }
         $this->logger->debug("Script executed");
-        return $this->prepareResponse($flowData, 'ROUTE', 'CREATE');
+        return $this->prepareResponse($flowData, 'ROUTE', $flowAction);
     }
 
 }
