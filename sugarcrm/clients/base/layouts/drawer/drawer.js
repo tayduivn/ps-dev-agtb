@@ -741,7 +741,8 @@
      * @private
      */
     _preventScroll: function($scrollable) {
-        if (app.drawer.count() > 0) {
+        // Preventing scrolls in iOS 7 causes AJAX calls to be paused (MAR-2768). No problems in iOS 8.
+        if (!Modernizr.touch && (app.drawer.count() > 0)) {
             $scrollable.scrollTop(0);
         }
     },
