@@ -20,4 +20,5 @@ $mod_strings = array(
     'LNK_IMPORT_TAGS' => 'Import Tags',
 
     'LBL_DUPLICATES_FOUND' => 'Duplicate tag found. Please select cancel to try again or select existing tag below.',
+    'LBL_EDIT_DUPLICATE_FOUND' => 'Duplicate tag found. Please rename tag and try again.',
 );
