@@ -39,10 +39,9 @@ describe('Plugins.KBContents', function() {
         SugarTest.loadComponent('base', 'view', 'record');
         SugarTest.loadComponent('base', 'view', 'record', moduleName);
         SugarTest.loadComponent('base', 'view', 'create');
-        SugarTest.loadComponent('base', 'view', 'create-actions');
-        SugarTest.loadComponent('base', 'view', 'create-actions', moduleName);
+        SugarTest.loadComponent('base', 'view', 'create', moduleName);
         layout = SugarTest.createLayout('base', moduleName, 'list', null, context.parent);
-        view = SugarTest.createView('base', moduleName, 'create-actions', viewMeta, null, moduleName, layout);
+        view = SugarTest.createView('base', moduleName, 'create', viewMeta, null, moduleName, layout);
     });
 
     afterEach(function() {
@@ -136,7 +135,7 @@ describe('Plugins.KBContents', function() {
                 {name: 'check_duplicate'}
             ]
         };
-        view = SugarTest.createView('base', moduleName, 'create-actions', viewMeta, context, moduleName);
+        view = SugarTest.createView('base', moduleName, 'create', viewMeta, context, moduleName);
         var renderDupeCheckListStub = sandbox.stub(view, 'renderDupeCheckList');
         view._render();
         expect(renderDupeCheckListStub).toHaveBeenCalled();
