@@ -372,7 +372,6 @@ class Rome
     {
         $type = strtolower($results['state']);
         if ($type === 'file') {
-            $setActive = array();
             foreach ($this->active as $build => $a) {
                 if (empty($this->onlyOutput[$build])) {
                     $this->onlyOutput[$build] = $this->evalComment($results, $build);
@@ -383,9 +382,6 @@ class Rome
             if ($this->depth < 1) {
                 $this->throwException("END TAG BEFORE BEGIN TAG", true);
             }
-            //if (empty($this->currentTags[$flavor])) {
-            //  $this->throwException("FLAVORS DO NOT MATCH Current Flavor: {$this->currentTags} New Flavor: $flavor", true);
-            // }
             $this->depth--;
 
             array_pop($this->tagStack);
@@ -414,9 +410,6 @@ class Rome
     {
         //echo $line;
         $results = array();
-        $cur = '';
-        $token = '';
-        $newToken = false;
         preg_match($this->buildTagRegex, $line, $match);
         if (empty($match[2])) {
             return $results;
@@ -457,15 +450,12 @@ class Rome
             if (!empty($startPath)) {
                 $this->startPath = $startPath;
             }
-            //echo $path . "\n";
             $fp = fopen($path, 'r');
-            $out = '';
             $this->clearOutput();
             while ($line = fgets($fp)) {
                 $this->lineCount++;
-                //not a comment keep moving along
-
                 if (substr_count($line, '//') == 0) {
+                    //not a comment keep moving along
                     $this->addToOutput($line);
                 } else {
                     $result = $this->parseComment($line);
@@ -485,7 +475,7 @@ class Rome
     }
 
     /**
-     * Check if the file contains and SugarCRM Build Tags
+     * Check if the file contains any SugarCRM Build Tags
      *
      * @param string $file
      * @return bool
@@ -518,6 +508,7 @@ class Rome
     protected function saveSymlink($path, $link, $skipBuilds = array())
     {
         $path = $this->cleanPath($path);
+        $this->clearOutput();
         $blackListPath = $this->getBlacklistPath($path);
 
         foreach ($this->output as $f => $o) {
@@ -558,8 +549,6 @@ class Rome
 
     protected function writeFiles($path, $skipBuilds = array())
     {
-        //global  $SugarVersion;
-        //global  $flavor;
         $path = $this->cleanPath($path);
         $blackListPath = $this->getBlacklistPath($path);
 
@@ -610,7 +599,6 @@ class Rome
     protected function quickCopy($orig_path, $skipBuilds)
     {
         $path = $this->cleanPath($orig_path);
-        //$c = file_get_contents($orig_path);
         $this->clearOutput();
         foreach ($this->active as $f => $a) {
             if (!empty($this->config['blackList'][$f][$path]) || !empty($skipBuilds[$f]) || !empty($this->config['skipBuilds'][$f])) {
@@ -619,9 +607,7 @@ class Rome
             $this->makeDirs(dirname($path), $f);
             $b_path = $this->buildPath . DIRECTORY_SEPARATOR . $f . DIRECTORY_SEPARATOR . $path;
             copy($orig_path, $b_path);
-
         }
-
     }
 
     public function setStartPath($path)
