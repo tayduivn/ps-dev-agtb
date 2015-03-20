@@ -66,7 +66,8 @@ nv.models.bubbleChart = function () {
         .highlightZero(false)
         .showMaxMin(false),
       legend = nv.models.legend()
-        .align('center');
+        .align('center')
+        .key(function(d) { return d.key + '%'; });
 
   var showTooltip = function (e, offsetElement, properties) {
     var left = e.pos[0],
@@ -293,9 +294,11 @@ nv.models.bubbleChart = function () {
         gEnter.append('rect').attr('class', 'nv-background')
           .attr('x', -margin.left)
           .attr('y', -margin.top)
-          .attr('width', availableWidth + margin.left + margin.right)
-          .attr('height', availableHeight + margin.top + margin.bottom)
           .attr('fill', '#FFF');
+
+        g.select('.nv-background')
+          .attr('width', availableWidth + margin.left + margin.right)
+          .attr('height', availableHeight + margin.top + margin.bottom);
 
         gEnter.append('g').attr('class', 'nv-titleWrap');
         var titleWrap = g.select('.nv-titleWrap');
@@ -313,9 +316,10 @@ nv.models.bubbleChart = function () {
         //------------------------------------------------------------
         // Title & Legend
 
-        if (showTitle && properties.title) {
-          titleWrap.select('.nv-title').remove();
+        var titleBBox = {width: 0, height: 0};
+        titleWrap.select('.nv-title').remove();
 
+        if (showTitle && properties.title) {
           titleWrap
             .append('text')
               .attr('class', 'nv-title')
@@ -327,37 +331,48 @@ nv.models.bubbleChart = function () {
               .attr('stroke', 'none')
               .attr('fill', 'black');
 
-          innerMargin.top += parseInt(g.select('.nv-title').node().getBBox().height / 1.15, 10) +
-            parseInt(g.select('.nv-title').style('margin-top'), 10) +
-            parseInt(g.select('.nv-title').style('margin-bottom'), 10);
+          titleBBox = nv.utils.getTextBBox(g.select('.nv-title'));
+
+          innerMargin.top += titleBBox.height + 12;
         }
 
         if (showLegend) {
           legend
             .id('legend_' + chart.id())
             .strings(chart.strings().legend)
-            .margin({top: 10, right: 10, bottom: 10, left: 10})
             .align('center')
-            .height(availableHeight - innerMargin.top)
-            .key(function (d){ return d.key + '%'; });
+            .height(availableHeight - innerMargin.top);
           legendWrap
             .datum(filteredData)
             .call(legend);
 
           legend
             .arrange(availableWidth);
+
+          var legendLinkBBox = nv.utils.getTextBBox(legendWrap.select('.nv-legend-link')),
+              legendSpace = availableWidth - titleBBox.width - 6,
+              legendTop = showTitle && legend.collapsed() && legendSpace > legendLinkBBox.width ? true : false,
+              xpos = direction === 'rtl' || !legend.collapsed() ? 0 : availableWidth - legend.width(),
+              ypos = titleBBox.height;
+          if (legendTop) {
+            ypos = titleBBox.height - legend.height() / 2 - legendLinkBBox.height / 2;
+          } else if (!showTitle) {
+            ypos = - legend.margin().top;
+          }
+
           legendWrap
-            .attr('transform', 'translate(0,' + innerMargin.top + ')');
+            .attr('transform', 'translate(' + xpos + ',' + ypos + ')');
+
+          innerMargin.top += legendTop ? 0 : legend.height() - 12;
         }
 
         // Recalc inner margins
-        innerMargin.top += legend.height();
         innerHeight = availableHeight - innerMargin.top - innerMargin.bottom;
 
         //------------------------------------------------------------
-        // Setup Axes
+        // Main Chart Components
+        // Initial calls
 
-        //------------------------------------------------------------
         // X-Axis
 
         xAxis
@@ -370,7 +385,6 @@ nv.models.bubbleChart = function () {
         innerMargin.top += maxBubbleSize;
         innerHeight = availableHeight - innerMargin.top - innerMargin.bottom;
 
-        //------------------------------------------------------------
         // Y-Axis
         yAxis
           .ticks(yValues.length)
@@ -387,10 +401,6 @@ nv.models.bubbleChart = function () {
         innerMargin[yAxis.orient()] += yAxis.width();
         innerWidth = availableWidth - innerMargin.left - innerMargin.right;
 
-        //------------------------------------------------------------
-        // Main Chart Components
-        // Recall to set final size
-
         scatter
           .xDomain(xD)
           .yDomain(yD)
@@ -405,6 +415,10 @@ nv.models.bubbleChart = function () {
           .attr('transform', 'translate(' + innerMargin.left + ',' + innerMargin.top + ')')
           .transition().duration(chart.delay())
             .call(scatter);
+
+        //------------------------------------------------------------
+        // Main Chart Components
+        // Recall to set final sizes
 
         xAxisWrap
           .attr('transform', 'translate(' + innerMargin.left + ',' + (xAxis.orient() === 'bottom' ? innerHeight + innerMargin.top : innerMargin.top) + ')')

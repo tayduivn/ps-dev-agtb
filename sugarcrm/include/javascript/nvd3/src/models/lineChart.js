@@ -76,7 +76,9 @@ nv.models.lineChart = function() {
           innerMargin = {top: 0, right: 0, bottom: 0, left: 0},
           maxControlsWidth = 0,
           maxLegendWidth = 0,
-          widthRatio = 0;
+          widthRatio = 0,
+          controlsHeight = 0,
+          legendHeight = 0;
 
       chart.update = function() {
         container.transition().duration(chart.delay()).call(chart);
@@ -160,9 +162,11 @@ nv.models.lineChart = function() {
       gEnter.append('rect').attr('class', 'nv-background')
         .attr('x', -margin.left)
         .attr('y', -margin.top)
-        .attr('width', availableWidth + margin.left + margin.right)
-        .attr('height', availableHeight + margin.top + margin.bottom)
         .attr('fill', '#FFF');
+
+      g.select('.nv-background')
+        .attr('width', availableWidth + margin.left + margin.right)
+        .attr('height', availableHeight + margin.top + margin.bottom);
 
       gEnter.append('g').attr('class', 'nv-titleWrap');
       var titleWrap = g.select('.nv-titleWrap');
@@ -182,9 +186,10 @@ nv.models.lineChart = function() {
       //------------------------------------------------------------
       // Title & Legend & Controls
 
-      if (showTitle && properties.title) {
-        titleWrap.select('.nv-title').remove();
+      var titleBBox = {width: 0, height: 0};
+      titleWrap.select('.nv-title').remove();
 
+      if (showTitle && properties.title) {
         titleWrap
           .append('text')
             .attr('class', 'nv-title')
@@ -196,16 +201,15 @@ nv.models.lineChart = function() {
             .attr('stroke', 'none')
             .attr('fill', 'black');
 
-        innerMargin.top += parseInt(g.select('.nv-title').node().getBBox().height / 1.15, 10) +
-          parseInt(g.select('.nv-title').style('margin-top'), 10) +
-          parseInt(g.select('.nv-title').style('margin-bottom'), 10);
+        titleBBox = nv.utils.getTextBBox(g.select('.nv-title'));
+
+        innerMargin.top += titleBBox.height + 12;
       }
 
       if (showControls) {
         controls
           .id('controls_' + chart.id())
           .strings(chart.strings().controls)
-          .margin({top: 10, right: 10, bottom: 10, left: 10})
           .align('left')
           .height(availableHeight - innerMargin.top);
         controlsWrap
@@ -219,7 +223,6 @@ nv.models.lineChart = function() {
         legend
           .id('legend_' + chart.id())
           .strings(chart.strings().legend)
-          .margin({top: 10, right: 10, bottom: 10, left: 10})
           .align('right')
           .height(availableHeight - innerMargin.top);
         legendWrap
@@ -246,17 +249,31 @@ nv.models.lineChart = function() {
       }
 
       if (showControls) {
+        var xpos = direction === 'rtl' ? availableWidth - controls.width() : 0,
+            ypos = showTitle ? titleBBox.height : - legend.margin().top;
         controlsWrap
-          .attr('transform', 'translate(' + (direction === 'rtl' ? availableWidth - controls.width() : 0) + ',' + innerMargin.top + ')');
+          .attr('transform', 'translate(' + xpos + ',' + ypos + ')');
+        controlsHeight = controls.height();
       }
 
       if (showLegend) {
+        var legendLinkBBox = nv.utils.getTextBBox(legendWrap.select('.nv-legend-link')),
+            legendSpace = availableWidth - titleBBox.width - 6,
+            legendTop = showTitle && !showControls && legend.collapsed() && legendSpace > legendLinkBBox.width ? true : false,
+            xpos = direction === 'rtl' ? 0 : availableWidth - legend.width(),
+            ypos = titleBBox.height;
+        if (legendTop) {
+          ypos = titleBBox.height - legend.height() / 2 - legendLinkBBox.height / 2;
+        } else if (!showTitle) {
+          ypos = - legend.margin().top;
+        }
         legendWrap
-          .attr('transform', 'translate(' + (direction === 'rtl' ? 0 : availableWidth - legend.width()) + ',' + innerMargin.top + ')');
+          .attr('transform', 'translate(' + xpos + ',' + ypos + ')');
+        legendHeight = legendTop ? 0 : legend.height() - 12;
       }
 
       // Recalc inner margins based on legend and control height
-      innerMargin.top += Math.max(legend.height(), controls.height()) + 4;
+      innerMargin.top += Math.max(controlsHeight, legendHeight);
       innerHeight = availableHeight - innerMargin.top - innerMargin.bottom;
 
       //------------------------------------------------------------

@@ -104,9 +104,11 @@ nv.models.gaugeChart = function() {
       gEnter.append('rect').attr('class', 'nv-background')
         .attr('x', -margin.left)
         .attr('y', -margin.top)
-        .attr('width', availableWidth + margin.left + margin.right)
-        .attr('height', availableHeight + margin.top + margin.bottom)
         .attr('fill', '#FFF');
+
+      g.select('.nv-background')
+        .attr('width', availableWidth + margin.left + margin.right)
+        .attr('height', availableHeight + margin.top + margin.bottom);
 
       gEnter.append('g').attr('class', 'nv-titleWrap');
       var titleWrap = g.select('.nv-titleWrap');
@@ -120,9 +122,10 @@ nv.models.gaugeChart = function() {
       //------------------------------------------------------------
       // Title & Legend
 
-      if (showTitle && properties.title) {
-        titleWrap.select('.nv-title').remove();
+      var titleBBox = {width: 0, height: 0};
+      titleWrap.select('.nv-title').remove();
 
+      if (showTitle && properties.title) {
         titleWrap
           .append('text')
             .attr('class', 'nv-title')
@@ -134,16 +137,17 @@ nv.models.gaugeChart = function() {
             .attr('stroke', 'none')
             .attr('fill', 'black');
 
-        innerMargin.top += parseInt(g.select('.nv-title').node().getBBox().height / 1.15, 10) +
-          parseInt(g.select('.nv-title').style('margin-top'), 10) +
-          parseInt(g.select('.nv-title').style('margin-bottom'), 10);
+        titleBBox = nv.utils.getTextBBox(g.select('.nv-title'));
+
+        innerMargin.top += titleBBox.height + 12;
       }
+
+      var legendLinkBBox = {width: 0, height: 0};
 
       if (showLegend) {
         legend
           .id('legend_' + chart.id())
           .strings(chart.strings().legend)
-          .margin({top: 10, right: 10, bottom: 10, left: 10})
           .align('center')
           .height(availableHeight - innerMargin.top);
         legendWrap
@@ -152,14 +156,25 @@ nv.models.gaugeChart = function() {
 
         legend
           .arrange(availableWidth);
+
+        var legendLinkBBox = nv.utils.getTextBBox(legendWrap.select('.nv-legend-link')),
+            legendSpace = availableWidth - titleBBox.width - 6,
+            legendTop = showTitle && legend.collapsed() && legendSpace > legendLinkBBox.width ? true : false,
+            xpos = direction === 'rtl' || !legend.collapsed() ? 0 : availableWidth - legend.width(),
+            ypos = titleBBox.height;
+        if (legendTop) {
+          ypos = titleBBox.height - legend.height() / 2 - legendLinkBBox.height / 2;
+        } else if (!showTitle) {
+          ypos = - legend.margin().top;
+        }
+
         legendWrap
-          .attr('transform', 'translate(0,' + innerMargin.top + ')');
+          .attr('transform', 'translate(' + xpos + ',' + ypos + ')');
+
+        innerMargin.top += legendTop ? 0 : legend.height() - 12;
       }
 
-      //------------------------------------------------------------
       // Recalc inner margins
-
-      innerMargin.top += legend.height() + 4;
       innerHeight = availableHeight - innerMargin.top - innerMargin.bottom;
 
       //------------------------------------------------------------

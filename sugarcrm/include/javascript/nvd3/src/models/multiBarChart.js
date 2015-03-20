@@ -105,7 +105,9 @@ nv.models.multiBarChart = function() {
       // Legend variables
       var maxControlsWidth = 0,
           maxLegendWidth = 0,
-          widthRatio = 0;
+          widthRatio = 0,
+          controlsHeight = 0,
+          legendHeight = 0;
 
       // Scroll variables
       var minDimension = 0,
@@ -350,8 +352,10 @@ nv.models.multiBarChart = function() {
       //------------------------------------------------------------
       // Title & Legend & Controls
 
+      var titleBBox = {width: 0, height: 0};
+      titleWrap.select('.nv-title').remove();
+
       if (showTitle) {
-        titleWrap.select('.nv-title').remove();
 
         titleWrap
           .append('text')
@@ -364,16 +368,15 @@ nv.models.multiBarChart = function() {
             .attr('stroke', 'none')
             .attr('fill', 'black');
 
-        innerMargin.top += parseInt(g.select('.nv-title').node().getBBox().height / 1.15, 10) +
-          parseInt(g.select('.nv-title').style('margin-top'), 10) +
-          parseInt(g.select('.nv-title').style('margin-bottom'), 10);
+        titleBBox = nv.utils.getTextBBox(g.select('.nv-title'));
+
+        innerMargin.top += titleBBox.height + 12;
       }
 
       if (showControls) {
         controls
           .id('controls_' + chart.id())
           .strings(chart.strings().controls)
-          .margin({top: 10, right: 10, bottom: 10, left: 10})
           .align('left')
           .height(availableHeight - innerMargin.top);
         controlsWrap
@@ -393,7 +396,6 @@ nv.models.multiBarChart = function() {
         legend
           .id('legend_' + chart.id())
           .strings(chart.strings().legend)
-          .margin({top: 10, right: 10, bottom: 10, left: 10})
           .align('right')
           .height(availableHeight - innerMargin.top);
         legendWrap
@@ -420,17 +422,33 @@ nv.models.multiBarChart = function() {
       }
 
       if (showControls) {
+        var xpos = direction === 'rtl' ? availableWidth - controls.width() : 0,
+            ypos = showTitle ? titleBBox.height : - legend.margin().top;
         controlsWrap
-          .attr('transform', 'translate(' + (direction === 'rtl' ? availableWidth - controls.width() : 0) + ',' + innerMargin.top + ')');
+          .attr('transform', 'translate(' + xpos + ',' + ypos + ')');
+        controlsHeight = controls.height();
       }
 
       if (showLegend) {
+        var legendLinkBBox = nv.utils.getTextBBox(legendWrap.select('.nv-legend-link')),
+            legendSpace = availableWidth - titleBBox.width - 6,
+            legendTop = showTitle && !showControls && legend.collapsed() && legendSpace > legendLinkBBox.width ? true : false,
+            xpos = direction === 'rtl' ? 0 : availableWidth - legend.width(),
+            ypos = titleBBox.height;
+        if (legendTop) {
+          ypos = titleBBox.height - legend.height() / 2 - legendLinkBBox.height / 2;
+        } else if (!showTitle) {
+          ypos = - legend.margin().top;
+        }
+
         legendWrap
-          .attr('transform', 'translate(' + (direction === 'rtl' ? 0 : availableWidth - legend.width()) + ',' + innerMargin.top + ')');
+          .attr('transform', 'translate(' + xpos + ',' + ypos + ')');
+
+        legendHeight = legendTop ? 0 : legend.height() - 12;
       }
 
       // Recalc inner margins based on legend and control height
-      innerMargin.top += Math.max(legend.height(), controls.height()) + 4;
+      innerMargin.top += Math.max(controlsHeight, legendHeight);
       innerHeight = availableHeight - innerMargin.top - innerMargin.bottom;
 
       //------------------------------------------------------------
@@ -502,7 +520,7 @@ nv.models.multiBarChart = function() {
 
       //------------------------------------------------------------
       // Main Chart Components
-      // Recall to set final size
+      // Recall to set final sizes
 
       scrollWrap
         .attr('transform', 'translate(' + innerMargin.left + ',' + innerMargin.top + ')');

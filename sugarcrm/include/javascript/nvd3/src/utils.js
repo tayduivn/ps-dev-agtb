@@ -283,28 +283,29 @@ nv.utils.dropShadow = function (id, defs, options) {
     , o = opt.offset || 2
     , b = opt.blur || 1;
 
-  var filter = defs.append('filter')
-        .attr('id',id)
-        .attr('height',h);
-  var offset = filter.append('feOffset')
-        .attr('in','SourceGraphic')
-        .attr('result','offsetBlur')
-        .attr('dx',o)
-        .attr('dy',o); //how much to offset
-  var color = filter.append('feColorMatrix')
-        .attr('in','offsetBlur')
-        .attr('result','matrixOut')
-        .attr('type','matrix')
-        .attr('values','1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0');
-  var blur = filter.append('feGaussianBlur')
-        .attr('in','matrixOut')
-        .attr('result','blurOut')
-        .attr('stdDeviation',b); //stdDeviation is how much to blur
-  var merge = filter.append('feMerge');
-      merge.append('feMergeNode'); //this contains the offset blurred image
-      merge.append('feMergeNode')
-        .attr('in','SourceGraphic'); //this contains the element that the filter is applied to
-
+  if (defs.select('#' + id).empty()) {
+    var filter = defs.append('filter')
+          .attr('id',id)
+          .attr('height',h);
+    var offset = filter.append('feOffset')
+          .attr('in','SourceGraphic')
+          .attr('result','offsetBlur')
+          .attr('dx',o)
+          .attr('dy',o); //how much to offset
+    var color = filter.append('feColorMatrix')
+          .attr('in','offsetBlur')
+          .attr('result','matrixOut')
+          .attr('type','matrix')
+          .attr('values','1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0');
+    var blur = filter.append('feGaussianBlur')
+          .attr('in','matrixOut')
+          .attr('result','blurOut')
+          .attr('stdDeviation',b); //stdDeviation is how much to blur
+    var merge = filter.append('feMerge');
+        merge.append('feMergeNode'); //this contains the offset blurred image
+        merge.append('feMergeNode')
+          .attr('in','SourceGraphic'); //this contains the element that the filter is applied to
+  }
   return 'url(#' + id + ')';
 };
 // <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
@@ -351,6 +352,29 @@ nv.utils.maxStringSetLength = function (_data, _container, _format) {
   return maxLength;
 };
 
+nv.utils.stringEllipsify = function(_string, _container, _length) {
+  var txt = _container.select('.tmp-text-strings').select('text'),
+      str = _string,
+      len = 0,
+      ell = 0;
+  if (txt.empty()) {
+    txt = _container.append('g').attr('class', 'tmp-text-strings').append('text');
+  }
+  txt.text('...');
+  ell = txt.node().getBBox().width;
+  txt.text(str);
+  len = txt.node().getBBox().width;
+  strLen = len;
+  while (len > _length && len > 30) {
+    str = str.slice(0, -1);
+    txt.text(str);
+    len = txt.node().getBBox().width + ell;
+  }
+  txt.text('');
+  //_container.selectAll('.tmp-text-strings').remove();
+  return str + (strLen > _length ? '...' : '');
+};
+
 nv.utils.getTextContrast = function(c, i, callback) {
   var back = c,
       backLab = d3.lab(back),
@@ -377,4 +401,13 @@ nv.utils.polarToCartesian = function(centerX, centerY, radius, angleInDegrees) {
   var x = centerX + radius * Math.cos(angleInRadians);
   var y = centerY + radius * Math.sin(angleInRadians);
   return [x, y];
+};
+
+nv.utils.getTextBBox = function(text, float) {
+  var bbox = text.node().getBBox();
+  if (!float) {
+    bbox.width = parseInt(bbox.width, 10);
+    bbox.height = parseInt(bbox.height, 10);
+  }
+  return bbox;
 };
