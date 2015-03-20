@@ -20,6 +20,7 @@ $mod_strings = array (
     'LBL_ADMIN_LABEL_LANGUAGES' => 'Available languages',
     'LBL_CONFIG_LANGUAGES_TITLE' => 'Available languages',
     'LBL_CONFIG_LANGUAGES_TEXT' => 'Conﬁgure languages that will be used in the Knowledge Base module.',
+    'ERR_CONFIG_LANGUAGES_DUPLICATE' => 'It is not allowed to add language with the key that duplicates existing one.',
     'LBL_SET_ITEM_PRIMARY' => 'Set Value as Primary',
     'LBL_ITEM_REMOVE' => 'Remove Item',
     'LBL_ITEM_ADD' => 'Add Item',
