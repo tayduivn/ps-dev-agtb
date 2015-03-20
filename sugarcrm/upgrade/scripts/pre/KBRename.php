@@ -24,6 +24,11 @@ class SugarUpgradeKBRename extends UpgradeScript
             $converter = new ConvertKBDocument($this->context['source_dir'], array($this, 'log'));
             $converter->run();
         }
+        //Should remove KB from BWC modules to prevent layouts convert,
+        $this->upgrader->state['bwc_modules'] = array_diff(
+            $this->upgrader->state['bwc_modules'],
+            array('KBContents', 'KBDocuments')
+        );
     }
 }
 
