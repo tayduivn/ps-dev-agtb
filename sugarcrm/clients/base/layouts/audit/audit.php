@@ -39,18 +39,6 @@ $viewdefs['base']['layout']['audit'] = array(
                         'layout' => array(
                             'components' => array(
                                 array(
-                                    'layout' => 'audit-sidebar',
-                                ),
-                            ),
-                            'type' => 'simple',
-                            'name' => 'side-pane',
-                            'span' => 4,
-                        ),
-                    ),
-                    array(
-                        'layout' => array(
-                            'components' => array(
-                                array(
                                     'layout' => 'preview',
                                 ),
                             ),

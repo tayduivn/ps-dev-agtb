@@ -286,6 +286,17 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             $files[] = 'modules/pmse_Emails_Templates/clients/base/views/create-actions';
             $files[] = 'modules/pmse_Project/clients/base/views/create-actions';
             $files[] = 'clients/base/views/globalsearch';
+            $files[] = 'clients/base/layouts/list-sidebar/list-sidebar.php';
+            $files[] = 'modules/Accounts/clients/base/layouts/list-sidebar/list-sidebar.php';
+            $files[] = 'modules/Bugs/clients/base/layouts/list-sidebar/list-sidebar.php';
+            $files[] = 'modules/Cases/clients/base/layouts/list-sidebar/list-sidebar.php';
+            $files[] = 'modules/Leads/clients/base/layouts/convert-sidebar/convert-sidebar.php';
+            $files[] = 'modules/Accounts/clients/base/layouts/new-sidebar/new-sidebar.php';
+            $files[] = 'modules/Accounts/clients/base/layouts/sidebar/sidebar.php';
+            $files[] = 'modules/Bugs/clients/base/layouts/new-sidebar/new-sidebar.php';
+            $files[] = 'modules/Bugs/clients/base/layouts/sidebar/sidebar.php';
+            $files[] = 'modules/Cases/clients/base/layouts/new-sidebar/new-sidebar.php';
+            $files[] = 'modules/Cases/clients/base/layouts/sidebar/sidebar.php';
         }
 
         $this->fileToDelete($files);

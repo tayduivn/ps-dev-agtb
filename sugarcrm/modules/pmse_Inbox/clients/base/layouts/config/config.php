@@ -34,18 +34,6 @@ $viewdefs[$module_name]['base']['layout']['config'] = array(
                         ),
                     ),
                     array(
-                        'layout' => array(
-                            'components' => array(
-                                array(
-                                    'layout' => 'list-sidebar',
-                                ),
-                            ),
-                            'type' => 'simple',
-                            'name' => 'side-pane',
-                            'span' => 4,
-                        ),
-                    ),
-                    array(
                         'layout' =>
                             array(
                                 'components' =>

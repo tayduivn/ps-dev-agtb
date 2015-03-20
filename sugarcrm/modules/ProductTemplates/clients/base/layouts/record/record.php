@@ -89,18 +89,6 @@ $viewdefs['ProductTemplates']['base']['layout']['record'] = array(
                         'layout' => array(
                             'components' => array(
                                 array(
-                                    'layout' => 'sidebar',
-                                ),
-                            ),
-                            'type' => 'simple',
-                            'name' => 'side-pane',
-                            'span' => 4,
-                        ),
-                    ),
-                    array(
-                        'layout' => array(
-                            'components' => array(
-                                array(
                                     'layout' => array(
                                         'type' => 'dashboard',
                                         'last_state' => array(
