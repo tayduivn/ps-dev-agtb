@@ -210,7 +210,20 @@ class PMSEUserTask extends PMSEActivity
                 $historyData->savePostdata($key, $value);
             }
         }
-        $beanObject->save();
+        //If a module includes custom save/editview logic in Save.php, use that instead of a direct save.
+        if (isModuleBWC($beanObject->module_dir) &&
+            SugarAutoLoader::fileExists("modules/{$beanObject->module_dir}/Save.php")
+        ) {
+            global $disable_redirects;
+            $disable_redirects = true;
+
+            $_REQUEST['record'] = $beanObject->id;
+            include "modules/{$beanObject->module_dir}/Save.php";
+
+            $disable_redirects = false;
+        } else {
+            $beanObject->save();
+        }
 
         $fields['log_data'] = $historyData->getLog();
         $this->caseFlowHandler->saveFormAction($fields);
