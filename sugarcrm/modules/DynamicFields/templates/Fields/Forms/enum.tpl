@@ -71,6 +71,7 @@
         <input type="hidden" id="customTypeValidate" onchange="return ModuleBuilder.validateDD()" />
     </td>
 </tr>
+    {php}$this->_tpl_vars['visibility_grid'] = !is_array($this->_tpl_vars['vardef']['visibility_grid']) ? array() : $this->_tpl_vars['vardef']['visibility_grid'];{/php}
 <tr id='visGridRow' {if empty($vardef.visibility_grid)}style="display:none"{/if} class="toggleDep">
     <td class='mbLBL'>{sugar_translate module="DynamicFields" label="LBL_PARENT_DROPDOWN"}:</td>
 	<td>
