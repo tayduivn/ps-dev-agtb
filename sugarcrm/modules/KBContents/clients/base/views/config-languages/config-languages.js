@@ -39,7 +39,7 @@
         errors = {};
 
         _.each(languages, function(lang) {
-            languagesToSave.push(_.first(_.keys(_.omit(lang, 'primary'))));
+            languagesToSave.push(_.first(_.keys(_.omit(lang, 'primary'))).toLowerCase());
         }, this);
 
         if (languagesToSave.length != _.uniq(languagesToSave).length) {
