@@ -43,9 +43,6 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
             }
         }
 
-        $portalConfig['publicKnowledgeBase'] = (!empty($settings['publicKnowledgeBase']) &&
-            $settings['publicKnowledgeBase'] == 'true') ? 'yes' : 'no';
-
         $portalConfig['appStatus'] = 'online';
         $portalConfig['on'] = 1;
 
@@ -91,7 +88,6 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
             'logFormatter' => 'SimpleFormatter',
             'metadataTypes' => array(),
             'defaultModule' => 'Cases',
-            'publicKnowledgeBase' => 'no',
             'orderByDefaults' => array(
                 'Cases' => array(
                     'field' => 'case_number',

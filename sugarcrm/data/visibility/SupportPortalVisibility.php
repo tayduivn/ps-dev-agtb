@@ -115,13 +115,8 @@ class SupportPortalVisibility extends SugarVisibility
             case 'Bugs':
                 // Bugs: Any bug that has the portal_viewable flag set to true
                 if ( $queryType == 'where' ) {
-                    if (empty($_SESSION['contact_id'])) {
-                        $queryPart = ' 1=0 ';
-                    }
                     //BEGIN SUGARCRM flav=ent ONLY
-                    else {
-                        $queryPart = " $table_alias.portal_viewable = 1 ";    
-                    }
+                        $queryPart = " $table_alias.portal_viewable = 1 ";
                     //END SUGARCRM flav=ent ONLY
                 }
 

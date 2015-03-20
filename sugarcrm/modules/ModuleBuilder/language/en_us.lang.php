@@ -615,7 +615,6 @@ $mod_strings = array(
     'LBL_PORTAL_DETAIL_NUMBER' => 'Number of fields to display on Detail View',
     'LBL_PORTAL_SEARCH_RESULT_NUMBER' => 'Number of results to display on Global Search',
     'LBL_PORTAL_DEFAULT_ASSIGN_USER' => 'Default assigned for new portal registrations',
-    'LBL_PORTAL_PUBLIC_KNOWLEDGE_BASE' => 'Public Knowledge Base',
 
 'LBL_PORTAL'=>'Portal',
 'LBL_PORTAL_LAYOUTS'=>'Portal Layouts',
