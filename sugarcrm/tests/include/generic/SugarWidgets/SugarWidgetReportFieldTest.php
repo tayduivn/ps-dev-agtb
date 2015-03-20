@@ -11,6 +11,7 @@
  */
 
 require_once 'include/generic/LayoutManager.php';
+require_once 'modules/Reports/Report.php';
 
 /**
  * Test for SugarWidgetReportField.
@@ -92,6 +93,142 @@ class SugarWidgetReportFieldTest extends Sugar_PHPUnit_Framework_TestCase
         $result = $query->execute();
 
         $this->assertCount(1, $result);
+    }
+
+    /**
+     * Check if queryOrderBy attaches the order direction properly
+     *
+     * @param $layoutDef
+     * @param $reportDef
+     * @param $expected
+     *
+     * @dataProvider queryOrderByDataProvider
+     * @covers SugarWidgetReportField::queryOrderBy
+     */
+    public function testQueryOrderBy($layoutDef, $reportDef, $expected)
+    {
+        $layoutManager = new LayoutManager();
+        $layoutManager->setAttributePtr('reporter', new Report(json_encode($reportDef)));
+
+        $sugarWidget = new SugarWidgetReportField($layoutManager);
+
+        $output = $sugarWidget->queryOrderBy($layoutDef);
+
+        $this->assertContains($expected, $output, 'Order by generated improperly');
+    }
+
+    public static function queryOrderByDataProvider()
+    {
+        $reportDef = array(
+            'display_columns' =>
+                array(
+                    0 =>
+                        array(
+                            'name' => 'full_name',
+                            'label' => 'Full Name',
+                            'table_key' => 'Accounts:assigned_user_link',
+                        ),
+                    1 =>
+                        array(
+                            'name' => 'name',
+                            'label' => 'Name',
+                            'table_key' => 'self',
+                        ),
+                ),
+            'module' => 'Accounts',
+            'group_defs' =>
+                array(
+                ),
+            'summary_columns' =>
+                array(
+                ),
+            'order_by' =>
+                array(
+                    0 =>
+                        array(
+                            'name' => 'full_name',
+                            'label' => 'Full Name',
+                            'table_key' => 'Accounts:assigned_user_link',
+                            'sort_dir' => 'd',
+                        ),
+                ),
+            'report_name' => 'Test',
+            'do_round' => 1,
+            'numerical_chart_column' => '',
+            'numerical_chart_column_type' => '',
+            'assigned_user_id' => '1',
+            'report_type' => 'tabular',
+            'full_table_list' =>
+                array(
+                    'self' =>
+                        array(
+                            'value' => 'Accounts',
+                            'module' => 'Accounts',
+                            'label' => 'Accounts',
+                            'dependents' =>
+                                array(
+                                ),
+                        ),
+                    'Accounts:assigned_user_link' =>
+                        array(
+                            'name' => 'Accounts  >  Assigned to User',
+                            'parent' => 'self',
+                            'link_def' =>
+                                array(
+                                    'name' => 'assigned_user_link',
+                                    'relationship_name' => 'accounts_assigned_user',
+                                    'bean_is_lhs' => false,
+                                    'link_type' => 'one',
+                                    'label' => 'Assigned to User',
+                                    'module' => 'Users',
+                                    'table_key' => 'Accounts:assigned_user_link',
+                                ),
+                            'dependents' =>
+                                array(
+                                    0 => 'display_cols_row_1',
+                                ),
+                            'module' => 'Users',
+                            'label' => 'Assigned to User',
+                        ),
+                ),
+            'filters_def' =>
+                array(
+                    'Filter_1' =>
+                        array(
+                            'operator' => 'AND',
+                        ),
+                ),
+            'chart_type' => 'none',
+        );
+
+        return array(
+            array(
+                array(
+                    'name' => 'full_name',
+                    'label' => 'Full Name',
+                    'table_key' => 'Accounts:assigned_user_link',
+                    'sort_dir' => 'd',
+                    'table_alias' => 'l1',
+                    'column_key' => 'Accounts:assigned_user_link:full_name',
+                    'type' => 'fullname',
+                ),
+                $reportDef,
+                'l1.last_name DESC, l1.first_name DESC',
+            ),
+            array(
+                array(
+                    'name' => 'name',
+                    'label' => 'Name',
+                    'table_key' => 'self',
+                    'sort_dir' => 'a',
+                    'table_alias' => 'accounts',
+                    'column_key' => 'self:name',
+                    'type' => 'name',
+                ),
+                $reportDef,
+                'accounts_name ASC',
+            ),
+        );
     }
 
     /**
