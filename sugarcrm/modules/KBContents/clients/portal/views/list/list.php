@@ -26,6 +26,10 @@ $viewdefs['KBContents']['portal']['view']['list'] = array(
                     ),
                 ),
                 array(
+                    'name' => 'category_name',
+                    'label' => 'LBL_CATEGORY_NAME',
+                ),
+                array(
                     'name' => 'language',
                     'label' => 'LBL_LANG',
                     'default' => true,
