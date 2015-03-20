@@ -83,49 +83,57 @@ describe("Login View", function() {
             expect(view._isSupportedBrowser()).toBeTruthy();
         });
         //Mozilla Firefox
-        it("should deem Firefox 17 as an unsupported browser", function() {
+        it("should deem Firefox 34 as an unsupported browser", function() {
             $.browser = {
-                'version': '17',
+                'version': '34',
                 'mozilla': true
             };
             expect(view._isSupportedBrowser()).toBeFalsy();
         });
-        it("should deem Firefox 18 as a supported browser", function() {
+        it("should deem Firefox 35 as a supported browser", function() {
             $.browser = {
-                'version': '18',
+                'version': '35',
                 'mozilla': true
             };
             expect(view._isSupportedBrowser()).toBeTruthy();
         });
         //Safari
-        it("should deem Safari 5 as an unsupported browser", function() {
+        it("should deem Safari 6 as an unsupported browser", function() {
             $.browser = {
-                'version': '533',
+                'version': '536',
                 'safari': true,
                 'webkit': true
             };
             expect(view._isSupportedBrowser()).toBeFalsy();
         });
-        it("should deem Safari 6 as a supported browser", function() {
+        it("should deem Safari 7 as a supported browser", function() {
             $.browser = {
-                'version': '536',
+                'version': '537',
                 'safari': true,
                 'webkit': true
             };
             expect(view._isSupportedBrowser()).toBeTruthy();
         });
         //Chrome
-        it("should deem Chrome 21 as an unsupported browser", function() {
+        it("should deem Chrome 26 as an unsupported browser", function() {
             $.browser = {
-                'version': '536',
+                'version': '537.31',
                 'chrome': true,
                 'webkit': true
             };
             expect(view._isSupportedBrowser()).toBeFalsy();
         });
-        it("should deem Chrome 25 as a supported browser", function() {
+        it("should deem Chrome 27 as a supported browser", function() {
             $.browser = {
-                'version': '537.22',
+                'version': '537.36',
+                'chrome': true,
+                'webkit': true
+            };
+            expect(view._isSupportedBrowser()).toBeTruthy();
+        });
+        it("should deem Chrome 41 as a supported browser", function() {
+            $.browser = {
+                'version': '537.36',
                 'chrome': true,
                 'webkit': true
             };

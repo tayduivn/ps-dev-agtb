@@ -262,13 +262,13 @@
      */
     _isSupportedBrowser: function() {
         var supportedBrowsers = {
-            msie: {min: 9},
-            mozilla: {min: 18},
             // For Safari & Chrome jQuery.Browser returns the webkit revision
             // instead of the browser version and it's hard to determine this
             // number.
-            safari: {min: 536},
-            chrome: {min: 537}
+            msie : {min:9, max:11}, // IE 9, 10, 11
+            safari : {min:537}, // Safari 7.1
+            mozilla : {min:35}, // Firefox 35
+            chrome : {min:537.36} // Chrome 41
         };
 
         var current = parseInt($.browser.version);
