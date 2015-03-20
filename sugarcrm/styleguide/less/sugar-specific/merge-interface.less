@@ -319,14 +319,16 @@ h4.merge-interface-header {
       }
     }
     &.merge-row-field-teamset {
-      height: auto;
-      padding-bottom: 2px;
-      .controls label {
-        height: auto;
-      }
-      button {
-        left: 61px;
-        position: relative;
+      .controls {
+        label {
+          position: relative;
+          width: auto;
+          display: inline;
+          padding-right: .25em;
+        }
+        .btn {
+          margin-left: 0;
+        }
       }
     }
     .flex-relate-module,
