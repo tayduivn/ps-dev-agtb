@@ -53,17 +53,9 @@ $viewdefs[$module_name]['base']['view']['reassignCases-list'] = array(
                     'enabled' => true,
                     'link' => false,
                 ),
-//                array(
-//                    'name' => 'assigned_user',
-//                    'label' => 'LBL_ASSIGNED_USER',
-//                    'default' => true,
-//                    'enabled' => true,
-//                    'link' => false,
-//                ),
                 array(
                     'name' => 'assigned_user',
-//                    'label' => 'LBL_NEW_ASSIGNED_USER',
-                    'label' => 'LBL_ASSIGNED_USER',
+                    'label' => 'LBL_ACTIVITY_OWNER',
                     'link' => 'assigned_user_link',
                     'vname' => 'LBL_ASSIGNED_TO',
                     'rname' => 'full_name',
@@ -81,14 +73,7 @@ $viewdefs[$module_name]['base']['view']['reassignCases-list'] = array(
                         ),
                     'view' => 'edit',
                 ),
-//                array(
-//                    'name' => 'cas_reassign_user_combo_box',
-//                    'label' => 'New User',
-//                    'default' => true,
-//                    'enabled' => true,
-//                    'link' => false,
-//                    'combo_user'=> true,
-//                )
+
             ),
         ),
     ),

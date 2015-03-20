@@ -29,11 +29,11 @@ $viewdefs[$moduleName]['base']['menu']['header'] = array(
         'acl_module' => $moduleName,
         'icon' => 'fa-bars',
     ),
-    array(
-        'route'=>'#'.$moduleName.'/layout/businessrules-import',
-        'label' =>'LNK_PMSE_BUSINESS_RULES_IMPORT_RECORD',
-        'acl_action'=>'upload',
-        'acl_module'=>$moduleName,
-        'icon' => 'fa-arrow-circle-o-up',
-    ),
+//    array(
+//        'route'=>'#'.$moduleName.'/layout/businessrules-import',
+//        'label' =>'LNK_PMSE_BUSINESS_RULES_IMPORT_RECORD',
+//        'acl_action'=>'upload',
+//        'acl_module'=>$moduleName,
+//        'icon' => 'fa-arrow-circle-o-up',
+//    ),
 );

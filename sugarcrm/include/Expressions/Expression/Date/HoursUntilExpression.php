@@ -29,7 +29,7 @@ class HoursUntilExpression extends NumericExpression
             return false;
         }
 
-        $now = TimeDate::getInstance()->getNow();
+        $now = TimeDate::getInstance()->getNow(true);
         $tsdiff = $params->ts - $now->ts;
 
         return (int) ($tsdiff / 3600);

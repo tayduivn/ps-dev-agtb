@@ -434,7 +434,6 @@ class PMSEExecuter
             $this->logger->warning($e->getMessage());
             $element = $e->getElement();
             $executionData = $element->prepareResponse($e->getFlowData(), 'ERROR', 'CREATE');
-            $this->logErrorActivity($flowData, $bean);
             // If the status is put into error then the Inbox record should be updated as well
             $this->caseFlowHandler->changeCaseStatus($executionData['flow_data']['cas_id'], 'ERROR');
             $routeData = $this->flowRouter->routeFlow($executionData, $flowData, $createThread);
@@ -446,7 +445,6 @@ class PMSEExecuter
             $executionData = $element->prepareResponse($preparedData, $status, 'CREATE');
             // If the status is put into error then the Inbox record should be updated as well
             if ($status == 'ERROR') {
-                $this->logErrorActivity($flowData, $bean);
                 $this->caseFlowHandler->changeCaseStatus($executionData['flow_data']['cas_id'], 'ERROR');
             }
             $routeData = $this->flowRouter->routeFlow($executionData, $flowData, $createThread);

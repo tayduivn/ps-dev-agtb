@@ -69,13 +69,15 @@
      * Supported options:
      * - delay: How often (minutes) should the pulling mechanism run.
      * - limit: Limit imposed to the number of records pulled.
+     * - enable_favicon: Enables/disables notifications in favicon, enabled by default.
      *
      * @property {Object}
      * @protected
      */
     _defaultOptions: {
         delay: 5,
-        limit: 4
+        limit: 4,
+        enable_favicon: true
     },
 
     events: {
@@ -103,10 +105,10 @@
         this._initOptions();
         this._initCollection();
         this._initReminders();
+        this._initFavicon();
         this.startPulling();
 
         this.collection.on('change:is_read', this.render, this);
-
         return this;
     },
 
@@ -118,10 +120,11 @@
      * @protected
      */
     _initOptions: function() {
-        var options = _.extend(this._defaultOptions, this.meta || {});
+        var options = _.extend({}, this._defaultOptions, this.meta || {});
 
         this.delay = options.delay * 60 * 1000;
         this.limit = options.limit;
+        this.enableFavicon = options.enable_favicon;
 
         return this;
     },
@@ -188,12 +191,42 @@
         _.each(['Calls', 'Meetings'], function(module) {
             this._alertsCollections[module] = app.data.createBeanCollection(module);
             this._alertsCollections[module].options = {
-                limit: this.meta.remindersLimit,
+                limit: this.meta && parseInt(this.meta.remindersLimit, 10) || 100,
                 fields: ['date_start', 'id', 'name', 'reminder_time', 'location', 'parent_name']
             };
         }, this);
 
         return this;
+    },
+
+    /**
+     * Initializes the favicon using the Favico library.
+     *
+     * This will listen to the collection reset and update the favicon badge to
+     * match the value of the notification element.
+     *
+     * @private
+     */
+    _initFavicon: function() {
+
+        if (!this.enableFavicon) {
+            return;
+        }
+
+        this.favicon = new Favico({animation: 'none'});
+        this.collection.on('reset', function() {
+            var badge = this.collection.length;
+            if (this.collection.next_offset > 0) {
+                badge = badge + '+';
+            }
+            this.favicon.badge(badge);
+        }, this);
+
+        this.on('render', function(){
+            if (!app.api.isAuthenticated() || app.config.appStatus === 'offline') {
+                this.favicon.reset();
+            }
+        });
     },
 
     /**

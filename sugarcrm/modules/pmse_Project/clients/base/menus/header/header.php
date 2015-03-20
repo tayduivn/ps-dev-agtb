@@ -30,11 +30,11 @@ $viewdefs[$moduleName]['base']['menu']['header'] = array(
         'acl_module' => $moduleName,
         'icon' => 'fa-bars',
     ),
-    array(
-        'route'=>'#'.$moduleName.'/layout/project-import',
-        'label' =>'LNK_PMSE_PROCESS_DEFINITIONS_IMPORT_RECORD',
-        'acl_action'=>'import',
-        'acl_module'=>$moduleName,
-        'icon' => 'fa-arrow-circle-o-up',
-    ),
+//    array(
+//        'route'=>'#'.$moduleName.'/layout/project-import',
+//        'label' =>'LNK_PMSE_PROCESS_DEFINITIONS_IMPORT_RECORD',
+//        'acl_action'=>'import',
+//        'acl_module'=>$moduleName,
+//        'icon' => 'fa-arrow-circle-o-up',
+//    ),
 );

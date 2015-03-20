@@ -251,6 +251,7 @@
                    'include/javascript/nprogress/nprogress.js' => 'include/javascript/sugar_sidecar.min.js',
 
                    'sidecar/lib/momentjs/min/langs.min.js' => 'include/javascript/sugar_sidecar.min.js',
+                   'include/javascript/favicon.js' => 'include/javascript/sugar_sidecar.min.js',
 
                    //Expression Engine
                    'sidecar/lib/sugarlogic/expressions.js'              => 'include/javascript/sugar_sidecar.min.js',

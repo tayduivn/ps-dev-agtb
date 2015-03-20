@@ -113,28 +113,40 @@ class DateExpressionTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function daysUntilGenerator()
     {
-        return array(
+        $test_cases = array(
             array("+5 days",5),
-            array("yesterday",-1),
-            array("yesterday -1 minute",-2), // corner case - trigger a day change
-            array("tomorrow",1),
-            array("tomorrow -1 minute",0), // corner case - trigger a day change
+            array("-1 day",-1),
+            array("yesterday",-1), // trigger a 1 day change and set the time to be midnight yesterday
+            array("yesterday -1 minute",-2), // corner case - trigger a 2 day change to be 11:59:00
+            array("+1 day",1),
+            array("tomorrow",1), // trigger a 1 day change and set the time to be midnight tomorrow
+            array("tomorrow -1 minute",0), // corner case - trigger a day change back to today
             array("-5 days",-5),
         );
+
+        $hours = range(0, 23, 1);
+
+        $results = array();
+
+        foreach($hours as $hour) {
+            foreach($test_cases as $test) {
+                $results[] = array_merge($test, array('hour' => $hour));
+            }
+        }
+
+        return $results;
     }
 
     /**
      * @dataProvider daysUntilGenerator
      */
-    public function testDaysUntil($input, $expected)
+    public function testDaysUntil($input, $expected, $hour)
 	{
         $task = new Task();
         $timedate = TimeDate::getInstance();
 
-        $date = $timedate->asUser($timedate->getNow(true)->get($input));
-
+        $date = $timedate->asUser($timedate->getNow(true)->setTime($hour, 0, 0)->get($input));
         $task->date_due = $date;
-        //echo $task->date_due . "\n";
 
         $expr = 'daysUntil($date_due)';
         $result = Parser::evaluate($expr, $task)->evaluate();

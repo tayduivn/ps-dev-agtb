@@ -43,13 +43,13 @@ $viewdefs[$module_name ]['base']['view']['recordlist'] = array(
                 'event' => 'list:editrow:fire',
                 'acl_action' => 'edit',
             ),
-            array(
-                'type' => 'rowaction',
-                'name' => 'export_button',
-                'label' => 'LBL_PMSE_LABEL_EXPORT',
-                'event' => 'list:exportemailstemplates:fire',
-                'acl_action' => 'view',
-            ),
+//            array(
+//                'type' => 'rowaction',
+//                'name' => 'export_button',
+//                'label' => 'LBL_PMSE_LABEL_EXPORT',
+//                'event' => 'list:exportemailstemplates:fire',
+//                'acl_action' => 'view',
+//            ),
             array(
                 'type' => 'rowaction',
                 'name' => 'delete_button',

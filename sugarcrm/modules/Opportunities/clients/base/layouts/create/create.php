@@ -37,14 +37,6 @@ $viewdefs['Opportunities']['base']['layout']['create'] = array(
                         'layout' => array(
                             'components' => array(),
                             'type' => 'simple',
-                            'name' => 'side-pane',
-                            'span' => 4,
-                        ),
-                    ),
-                    array(
-                        'layout' => array(
-                            'components' => array(),
-                            'type' => 'simple',
                             'name' => 'dashboard-pane',
                             'span' => 4,
                         ),

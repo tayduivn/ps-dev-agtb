@@ -659,7 +659,7 @@ $dictionary['User'] = array(
             'group'=>'email1',
             'required' => true,
             'merge_filter' => 'enabled',
-            'studio' => array('editField' => true, 'searchview' => false, 'popupsearch' => false), // bug 46859
+            'studio' => false,
             'full_text_search' => array('enabled' => true, 'boost' => 3, 'index' => 'not_analyzed'), //bug 54567
             'exportable'=>true,
         ),
@@ -678,7 +678,11 @@ $dictionary['User'] = array(
                 'id',
             ),
             'vname' =>'LBL_ANY_EMAIL',
-            'studio' => array('visible'=>false, 'searchview'=>true),
+            'studio' => array(
+                'visible' => false,
+                'searchview' => true,
+                'editField' => true,
+            ),
             'sort_on' => 'email_addresses',
         ),
         'email_addresses' => array(

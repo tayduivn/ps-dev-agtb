@@ -37,16 +37,6 @@ $viewdefs['Accounts']['base']['layout']['create'] = array(
                         'layout' =>
                         array(
                             'components' =>
-                            array(),
-                            'type' => 'simple',
-                            'name' => 'side-pane',
-                            'span' => 4,
-                        ),
-                    ),
-                    array(
-                        'layout' =>
-                        array(
-                            'components' =>
                             array(
 									array(
                                       'view' => 

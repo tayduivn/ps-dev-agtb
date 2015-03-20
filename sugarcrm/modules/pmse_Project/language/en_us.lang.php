@@ -159,9 +159,9 @@ $mod_strings = array (
     'LBL_PMSE_FORM_OPTION_APPROVE_REJECT' => 'Approve/Reject',
     'LBL_PMSE_FORM_OPTION_ROUTE' => 'Route',
     'LBL_PMSE_FORM_LABEL_OTHER_DERIVATION_OPTIONS' => 'Other Routing Options',
-    'LBL_PMSE_FORM_LABEL_RECORD_OWNERSHIP' => 'Change Record Owner',
+    'LBL_PMSE_FORM_LABEL_RECORD_OWNERSHIP' => 'Change Assigned To User',
     'LBL_PMSE_FORM_LABEL_TEAM' => 'Team',
-    'LBL_PMSE_FORM_LABEL_REASSIGN' => 'Reassign Activity',
+    'LBL_PMSE_FORM_LABEL_REASSIGN' => 'Select New Process User',
 
     'LBL_PMSE_FORM_TITLE_USER_DEFINITION' => 'User Definition',
     'LBL_PMSE_FORM_LABEL_ASSIGNMENT_METHOD' => 'Assignment Method',
@@ -179,7 +179,7 @@ $mod_strings = array (
     'LBL_PMSE_LABEL_RULE' => 'Rule',
 
     'LBL_PMSE_FORM_TITLE_ASSIGN_USER' => 'Assign User',
-    'LBL_PMSE_FORM_LABEL_UPDATE_RECORD_OWNER' => 'Change Record Owner',
+    'LBL_PMSE_FORM_LABEL_UPDATE_RECORD_OWNER' => 'Change Assigned To User',
 
     'LBL_PMSE_FORM_TITLE_ADD_RELATED_RECORD' => 'Add Related Record',
     'LBL_PMSE_FORM_LABEL_RELATED_MODULE' => 'Related Module',
@@ -206,10 +206,10 @@ $mod_strings = array (
     // FORMS
     'LBL_PMSE_FORM_TITLE_LABEL_EVENT' => 'Event',
     'LBL_PMSE_FORM_LABEL_APPLIES_TO' => 'Applies to',
-    'LBL_PMSE_FORM_OPTION_NEW_RECORDS_ONLY' => 'New records only',
-    'LBL_PMSE_FORM_OPTION_UPDATED_RECORDS_ONLY' => 'Updated records only',
+    'LBL_PMSE_FORM_OPTION_NEW_RECORDS_ONLY' => 'New Records Only',
+    'LBL_PMSE_FORM_OPTION_UPDATED_RECORDS_ONLY' => 'Updated Records Only (First Update - See Help Text)',
 
-    'LBL_PMSE_FORM_TOOLTIP_WHEN_START_EVENT' => 'Select when the event will start',
+    'LBL_PMSE_FORM_TOOLTIP_WHEN_START_EVENT' => 'Select when the process will start.<br><br>New: Run process when new record is created.<br><br>Updated: Process runs only the first time criteria is met for an existing record.',
     'LBL_PMSE_FORM_TOOLTIP_EVENT_MODULE' => 'Select the SugarCRM module to apply the event trigger',
 
     'LBL_PMSE_FORM_LABEL_FIXED_DATE' => 'Fixed Date',

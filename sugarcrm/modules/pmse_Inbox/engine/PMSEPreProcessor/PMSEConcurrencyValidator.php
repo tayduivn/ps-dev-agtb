@@ -73,7 +73,7 @@ class PMSEConcurrencyValidator implements PMSEValidate
         $this->logger->debug(array("Request data:", $request));
 
         $args = $request->getArguments();
-        $flowId = isset($args['idFlow']) ? $args['idFlow'] : $args['flow_id'];
+        $flowId = isset($args['idFlow']) ? $args['idFlow'] : (isset($args['flow_id']) ? $args['flow_id'] : '0');
         if (!isset($_SESSION['locked_flows']) || !in_array($flowId, $_SESSION['locked_flows'])) {
             $request->validate();
         } else {
