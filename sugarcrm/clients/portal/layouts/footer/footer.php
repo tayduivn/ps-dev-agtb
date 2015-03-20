@@ -15,9 +15,6 @@ $viewdefs['portal']['layout']['footer'] = array(
     'type' => 'footer',
     'components' => array(
         array(
-            'view' => 'kbs-contents-action',
-        ),
-        array(
             'view' => 'language-actions',
         ),
         array(

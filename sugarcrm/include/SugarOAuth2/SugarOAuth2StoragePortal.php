@@ -240,22 +240,8 @@ class SugarOAuth2StoragePortal extends SugarOAuth2StoragePlatform {
             throw new SugarApiExceptionPortalNotConfigured();
         }
 
-        $isGuestAccess = false;
-        $settings = Administration::getSettings();
-        $portalConfig = $settings->getConfigForModule('portal','support', true);
-        
-        if (isset($portalConfig['publicKnowledgeBase']) && $portalConfig['publicKnowledgeBase'] == 'yes') {
-            $isGuestAccess = $portalApiUser->user_name == $username;    
-        }
-
-        if ($isGuestAccess) {
-            $contact = BeanFactory::newBean('Contacts');
-            $contact->disable_row_level_security = true;
-        } else {
-            $contact = $this->loadUserFromName($username);
-        }
-        
-        if (!empty($contact) && !$isGuestAccess && !User::checkPassword($password, $contact->portal_password)) {
+        $contact = $this->loadUserFromName($username);
+        if ( !empty($contact) && !User::checkPassword($password, $contact->portal_password) ) {
            $contact = null;
         }
 

@@ -43,14 +43,6 @@
         </tr>
         <tr>
             <td colspan='1' nowrap>
-                {$mod.LBL_PORTAL_PUBLIC_KNOWLEDGE_BASE}:
-            </td>
-            <td colspan='1' nowrap>
-                <input type="checkbox" name="publicKnowledgeBase" {if $publicKnowledgeBase eq 'yes'}checked{/if} class="portalField">
-            </td>
-        </tr>
-        <tr>
-            <td colspan='1' nowrap>
                 {$mod.LBL_PORTAL_LIST_NUMBER}:<span class="required">*</span>
             </td>
             <td colspan='1' nowrap>

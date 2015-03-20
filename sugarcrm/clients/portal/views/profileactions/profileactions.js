@@ -38,10 +38,6 @@
      * @inheritDoc
      */
     _renderHtml: function(){
-        if (!app.api.isAuthenticated() || app.config.appStatus == 'offline') {
-            return;
-        }
-            
         this._super('_renderHtml');
         if (app.controller.context.get('module') === 'Contacts') {
             this.$(this._profileActionsTag).addClass('active');
