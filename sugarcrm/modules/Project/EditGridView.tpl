@@ -59,7 +59,8 @@ var resources = new Array();
 <table width="100%" cellpadding="0" cellspacing="0" border="0" >
 <tr>
 <td>
-<form name="EditView" id="EditView" method="post" action="index.php" data-disablebwchaschanged="true">
+
+<form name="EditViewGrid" id="EditViewGrid" method="post" action="index.php" data-disablebwchaschanged="true">
 <input type="hidden" name="module" value="Project" />
 <input type="hidden" name="record" value="{$ID}" />
 <input type="hidden" name="team_id" value="{$TEAM}" />
@@ -140,7 +141,7 @@ var resources = new Array();
 	{/if}
 	<span id="view_filter_button_span"></span>
 	{if $SELECTED_VIEW == 5 || $SELECTED_VIEW == 6}
-		<input class="button" type=button id="view_filter_button" value="{$MOD.LBL_FILTER_VIEW}" onclick="document.forms['EditView'].action.value='EditGridView';document.forms['EditView'].to_pdf.value	= '0';document.getElementById('EditView').submit();" />
+		<input class="button" type=button id="view_filter_button" value="{$MOD.LBL_FILTER_VIEW}" onclick="document.forms['EditViewGrid'].action.value='EditGridView';document.forms['EditViewGrid'].to_pdf.value	= '0';document.getElementById('EditViewGrid').submit();" />
 	{/if}
 	<span id="exportToPDFSpan">
 		<input class="button" type="button" name="button" value="{$MOD.LBL_EXPORT_TO_PDF}" onclick="SUGAR.grid.exportToPDF();"/>
@@ -297,8 +298,6 @@ var resources = new Array();
 <div id="task_detail_area_div" name="task_detail_area_div" width="100%" style="display:none;border:1px">
 {sugar_getimage name="img_loading" ext=".gif" other_attributes='border="0" '}
 </div>
-<iframe id="task_detail_area_iframe" name="task_detail_area_iframe" title="task_detail_area_iframe" width="100%" style="display:none;border:0px">
-</iframe>
 <script type="text/javascript">
 {foreach from=$RESOURCES item="RESOURCE"}
 	var resourceObj = new Object();
@@ -341,8 +340,6 @@ SUGAR.gantt.createTable('biweek', document.getElementById('calendar_start').valu
 for (i = 0; i < 2; i++)
 	SUGAR.grid.insertRow();
 {/if}
-
-
 
 </script>
 {$JAVASCRIPT}

@@ -44,33 +44,36 @@ class ClearHooksTest extends Sugar_PHPUnit_Framework_TestCase
      *
      * @dataProvider provider
      */
-    public function testRun($hooks, $result, $rewrite)
+    public function testRun($hooks, $result)
     {
         $path = sugar_cached(__CLASS__);
         SugarAutoLoader::ensureDir($path);
         $upgradeDriver = $this->getMockForAbstractClass('UpgradeDriver');
         $upgradeDriver->context = array(
-            'source_dir' => $path
+            'source_dir' => $path,
+            'backup_dir'=> $path.'/backup',
         );
         $fname = $path . DIRECTORY_SEPARATOR . 'testHooks.php';
-        file_put_contents($fname, "<?php \$hooks_array=" . var_export($hooks, true) . ";");
+        file_put_contents($fname, "<?php \$hook_array=" . var_export($hooks, true) . ";");
         $script = $this->getMock(
             'SugarUpgradeClearHooks',
             array('findHookFiles'),
             array($upgradeDriver)
         );
+        if (isset($hooks['before_save'][0][2]) && $hooks['before_save'][0][2] == 'clearHooksTestcheckToken.php') {
+            $checkTokenFile = $path . DIRECTORY_SEPARATOR . $hooks['before_save'][0][2];
+            file_put_contents($checkTokenFile, '<?php class ' . $hooks['before_save'][0][3] . ' { function one(){ global $x; $this->${$x};$this->{$x};} function two(){echo "1";} function three(){ echo "1";}}');
+            $checkToken = SugarTestReflection::callProtectedMethod($script, 'checkClassMethodInFile', array($checkTokenFile, $hooks['before_save'][0][3], $hooks['before_save'][0][4]));
+            $this->assertEquals($result, $checkToken);
+            $this->assertFileExists($checkTokenFile);
+        } else {
+            $checkToken = SugarTestReflection::callProtectedMethod($script, 'checkClassMethodInFile', array($hooks['before_save'][0][2], $hooks['before_save'][0][3], $hooks['before_save'][0][4]));
+            $this->assertEquals($result, $checkToken);
+            $this->assertFileExists($hooks['before_save'][0][2]);
+        }
         $script->expects($this->any())
             ->method('findHookFiles')
             ->will($this->returnValue(array('ext' => array(), 'hooks' => array($fname))));
-
-        if ($rewrite) {
-            $script->expects($this->any())
-                ->method('rewriteHookFile')
-                ->with('', $result);
-        } else {
-            $script->expects($this->never())
-                ->method('rewriteHookFile');
-        }
         $script->run();
     }
 
@@ -85,25 +88,19 @@ class ClearHooksTest extends Sugar_PHPUnit_Framework_TestCase
                 array(
                     'before_save' => array(
                         array(1, '', 'data/SugarBean.php', 'SugarBean', 'retrieve'),
-                        array(2, '', 'data/SugarBean.php', 'SugarBean', 'save')
+                        array(2, '', 'data/SugarBean.php', 'SugarBean', 'save'),
                     )
                 ),
-                array(),
-                false,
+                true,
             ),
             'BadHook' => array(
                 array(
                     'before_save' => array(
-                        array(1, '', 'data/SugarBean.php', 'SugarBean', 'retrieve'),
-                        array(2, '', 'data/SugarBean.php', 'SugarBean', 'SomeStrangeMethod')
+                        array(1, '', 'data/SugarBean.php', 'SugarBean', 'retrieve2'),
+                        array(2, '', 'data/SugarBean.php', 'SugarBean', 'SomeStrangeMethod2'),
                     ),
                 ),
-                array(
-                    'before_save' => array(
-                        array(1, '', 'data/SugarBean.php', 'SugarBean', 'retrieve'),
-                    ),
-                ),
-                true,
+                false,
             ),
             'BadHooks' => array(
                 array(
@@ -114,8 +111,23 @@ class ClearHooksTest extends Sugar_PHPUnit_Framework_TestCase
                         array(4, ''),
                     ),
                 ),
-                array(),
+                false,
+            ),
+            'checkTokenHooks' => array(
+                array(
+                    'before_save' => array(
+                        Array(1, 'checkTokenHooks', 'clearHooksTestcheckToken.php', 'test_class_one', 'three'),
+                    ),
+                ),
                 true,
+            ),
+            'checkTokenHooksFalse' => array(
+                array(
+                    'before_save' => array(
+                        Array(1, 'checkTokenHooksFalse', 'clearHooksTestcheckToken.php', 'test_class_two', 'noneMethod')
+                    ),
+                ),
+                false,
             )
         );
     }

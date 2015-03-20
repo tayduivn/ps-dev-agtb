@@ -150,6 +150,11 @@ class SugarUpgradeClearHooks extends UpgradeScript
                             $classes[$current]['methods'][] = $this->findName($tokens, $ind, T_STRING);
                         }
                         break;
+                    case T_CURLY_OPEN:
+                    case T_DOLLAR_OPEN_CURLY_BRACES:
+                    case T_STRING_VARNAME:
+                        $level++;
+                        break;
                 }
             } else {
                 switch($token) {

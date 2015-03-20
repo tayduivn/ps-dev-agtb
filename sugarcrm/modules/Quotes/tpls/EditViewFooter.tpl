@@ -93,16 +93,6 @@
 <input type='hidden' id='product_count' name='product_count' value='0'>
 <input type="hidden" name="quote_type" value="Quotes">
 
-
-<table width="100%" border="0" cellspacing="0" cellpadding="0" class="edit view">
-<tr><td>
-	<table width="100%" border="0" cellspacing="0" cellpadding="0">
-		<tr><th align="left" scope="row" colspan="2" scope="row"><h4>{$MOD.LBL_DESCRIPTION_INFORMATION}</h4></th></tr>
-		<tr><td width="15%" valign="top" scope="row">{$MOD.LBL_DESCRIPTION}</td><td width="85%" ><textarea name='description' id='description' cols="60" rows="8">{$fields.description.value}</textarea></td></tr>
-    </table>
-</td></tr>
-</table>
-
 <script type="text/javascript">
 Calendar.setup ({literal} { {/literal}
 	inputField : "jscal_field", daFormat : "{$CALENDAR_DATEFORMAT}", ifFormat : "{$CALENDAR_DATEFORMAT}", showsTime : false, button : "jscal_trigger", singleClick : true, step : 1, weekNumbers:false

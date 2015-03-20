@@ -92,6 +92,13 @@
     };
 
     /**
+     * 400 Invalid request handler to be used for all non-OAuth 400 errors.
+     */
+    app.error.handleUnspecified400Error = function(error) {
+        showErrorPage('400');
+    };
+
+    /**    
      * 0 Timeout error handler. If server doesn't respond within timeout.
      */
     app.error.handleTimeoutError = function(error) {
