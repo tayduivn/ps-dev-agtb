@@ -11,7 +11,7 @@
 /**
  * @class View.Fields.Base.NameField
  * @alias SUGAR.App.view.fields.BaseNameField
- * @extends View.Field
+ * @extends View.Fields.Base.BaseField
  */
 ({
     plugins: ['EllipsisInline', 'MetadataEventDriven'],
