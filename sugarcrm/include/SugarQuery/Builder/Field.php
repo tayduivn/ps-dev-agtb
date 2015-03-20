@@ -160,15 +160,17 @@ class SugarQuery_Builder_Field
      */
     public function checkCustomField($bean = null)
     {
-        $defs = empty($bean->field_defs) ? VardefManager::getFieldDefs($this->moduleName) : $bean->field_defs;
-        if (!empty($defs)) {
+        if (empty($bean)) {
+            $bean = BeanFactory::getBean($this->moduleName);
+        }
+        if (!empty($bean)) {
             // Initialize def for now, in case $this->field isn't in field_defs
             $def = array();
-            if (isset($defs[$this->field])) {
-                $def = $defs[$this->field];
+            if (isset($bean->field_defs[$this->field])) {
+                $def = $bean->field_defs[$this->field];
             }
+
             if ((isset($def['source']) && $def['source'] == 'custom_fields') || $this->field == 'id_c') {
-                $bean = empty($bean) ? BeanFactory::getBean($this->moduleName) : $bean;
                 $this->custom = true;
                 $this->custom_bean_table = $bean->get_custom_table_name();
                 $this->bean_table = $bean->getTableName();
