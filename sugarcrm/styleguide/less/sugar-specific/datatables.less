@@ -545,6 +545,7 @@ FLEXLIST GENERIC */
       }
       .btn.checkall {
         padding: 4px 7px;
+        margin-left: 0;
       }
     }
     td:first-child {
@@ -740,6 +741,11 @@ FLEXLIST GENERIC */
     th {
       background-color: @warningBackground;
       border-right-color: @warningBorder;
+      &:first-child {
+        .btn.checkall:only-child {
+          margin-left: 0;
+        }
+      }
     }
 
     tbody > tr:not(.current):nth-child(odd) > td {
@@ -795,24 +801,9 @@ FLEXLIST GENERIC */
     }
     /*record view find duplicates*/
     &.duplicates-multiselect {
-      th:first-child {
-        //hack fix for messed up button group
-        .btn.checkall {
-          .border-radius(3px);
-          margin-left: 0;
-        }
-        .btn-group span,
-        .dropdown-menu {
-          display: none;
-        }
-      }
     }
     &.duplicates-singleselect,
     &.duplicates-multiselect {
-      td:last-child > .list > .list {
-        width: 28px;
-        right: 22px;
-      }
     }
   }
 
