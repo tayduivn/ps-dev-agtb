@@ -28,6 +28,11 @@ $dictionary['KBContent'] = array(
             'comment' => 'Article body',
             'full_text_search' => array(
                 'enabled' => true,
+                'type' => 'text',
+                'elastic' => array(
+                    'term_vector' => 'yes',
+                    'store' => 'yes',
+                ),
             ),
             'audited' => true,
         ),
@@ -497,3 +502,10 @@ VardefManager::createVardef(
 );
 $dictionary['KBContent']['fields']['name']['audited'] = true;
 $dictionary['KBContent']['fields']['name']['importable'] = 'required';
+$dictionary['KBContent']['fields']['name']['full_text_search'] = array(
+    'enabled' => true,
+    'elastic' => array(
+        'term_vector' => 'yes',
+        'store' => 'yes',
+    ),
+);
