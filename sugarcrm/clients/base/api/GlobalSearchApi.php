@@ -286,6 +286,15 @@ class GlobalSearchApi extends SugarApi
     {
         // pass in field list from available data fields on result
         $args = array('fields' => $result->getDataFields());
-        return $this->formatBean($api, $args, $result->getBean());
+        $bean = $result->getBean();
+
+        // Load email information directly from search backend if available
+        // to avoid additional database retrievals.
+        if (!empty($bean->emailAddress) && isset($bean->email)) {
+            $bean->emailAddress->addresses = $bean->email;
+            $bean->emailAddress->hasFetched = true;
+        }
+
+        return $this->formatBean($api, $args, $bean);
     }
 }
