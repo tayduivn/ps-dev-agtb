@@ -15,8 +15,6 @@ namespace Sugarcrm\Sugarcrm\Elasticsearch\Queue;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Document;
 use Sugarcrm\Sugarcrm\Elasticsearch\Container;
 
-require_once 'modules/Schedulers/Scheduler.php';
-
 /**
  *
  * Queue Manager
@@ -84,42 +82,6 @@ class QueueManager
 
         $this->container = $container;
         $this->db = $db ?: \DBManagerFactory::getInstance();
-    }
-
-    /**
-     * Make sure all flagged ids are removed from the queue
-     * TODO: do we still need this ?
-     */
-    public function __destruct()
-    {
-        // Safeguard to remove ids from queue
-        if (!empty($this->deleteFromQueue)) {
-
-            /*
-             * DBManager relies on $GLOBALS['log'] in certain cases instead of
-             * making use of $this->log. Make sure we have it still available.
-             */
-            if (empty($GLOBALS['log'])) {
-                $GLOBALS['log'] = $this->container->logger->getSugarLogger();
-            }
-
-            $this->flushDeleteFromQueue();
-
-            $msg = sprintf(
-                "QueueManager::__destruct used to flush out %s document(s)",
-                count($this->deleteFromQueue)
-            );
-            $this->container->logger->warning($msg);
-        }
-    }
-
-    /**
-     * Unset deletions in case this object gets unserialized trying
-     * to abuse our dtor.
-     */
-    public function __wakeup()
-    {
-        $this->deleteFromQueue = array();
     }
 
     /**
@@ -354,17 +316,16 @@ class QueueManager
         $success = true;
         $processed = 0;
 
-        $bean = $this->getNewBean($module);
-
-        $sql = $this->generateQueryModuleFromQueue($bean);
+        $sql = $this->generateQueryModuleFromQueue($this->getNewBean($module));
         $result = $this->db->query($sql);
         while ($row = $this->db->fetchByAssoc($result)) {
 
             // Don't perform a full bean retrieve, rely on the generated query.
-            // Related fields will be handled separately.
+            // Related fields need to be handled separately.
+            $bean = $this->getNewBean($module);
             $bean->populateFromRow($bean->convertRow($row));
 
-            // Index the bean and flag for removal when appropriate
+            // Index the bean and flag for removal when successful
             if ($status = $this->container->indexer->indexBean($bean, true, true)) {
                 $this->batchDeleteFromQueue($row['fts_id'], $module);
             }
@@ -486,8 +447,9 @@ class QueueManager
      */
     protected function generateQueryModuleFromQueue(\SugarBean $bean)
     {
+        // Get all bean fields
         $beanFields = array_keys(
-            $this->container->indexer->getBeanIndexFields($bean->module_name)
+            $this->container->indexer->getBeanIndexFields($bean->module_name, true)
         );
 
         $beanFields[] = 'id';
