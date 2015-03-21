@@ -14,9 +14,9 @@ namespace Sugarcrm\Sugarcrm\Elasticsearch\Exception;
 
 /**
  *
- * IndexPool Strategy Exception
+ * Container Exception
  *
  */
-class IndexPoolStrategyException extends \RuntimeException implements ExceptionInterface
+class ContainerException extends \RuntimeException implements ExceptionInterface
 {
 }

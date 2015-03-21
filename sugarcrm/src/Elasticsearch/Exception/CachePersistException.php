@@ -17,6 +17,6 @@ namespace Sugarcrm\Sugarcrm\Elasticsearch\Exception;
  * Cache Exception
  *
  */
-class CachePersistException extends \LogicException
+class CachePersistException extends \LogicException implements ExceptionInterface
 {
 }

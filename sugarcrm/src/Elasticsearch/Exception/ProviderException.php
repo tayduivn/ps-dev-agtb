@@ -17,6 +17,6 @@ namespace Sugarcrm\Sugarcrm\Elasticsearch\Exception;
  * Provider Exception
  *
  */
-class ProviderException extends \RuntimeException
+class ProviderException extends \RuntimeException implements ExceptionInterface
 {
 }

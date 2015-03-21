@@ -17,6 +17,6 @@ namespace Sugarcrm\Sugarcrm\Elasticsearch\Exception;
  * Invalid Mapping Exception
  *
  */
-class InvalidMappingException extends \RuntimeException
+class InvalidMappingException extends \RuntimeException implements ExceptionInterface
 {
 }

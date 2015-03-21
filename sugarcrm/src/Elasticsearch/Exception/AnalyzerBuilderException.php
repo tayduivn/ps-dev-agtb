@@ -17,6 +17,6 @@ namespace Sugarcrm\Sugarcrm\Elasticsearch\Exception;
  * AnalyzerBuilder Exception
  *
  */
-class AnalyzerBuilderException extends \LogicException
+class AnalyzerBuilderException extends \LogicException implements ExceptionInterface
 {
 }

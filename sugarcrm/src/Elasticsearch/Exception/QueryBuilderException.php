@@ -17,6 +17,6 @@ namespace Sugarcrm\Sugarcrm\Elasticsearch\Exception;
  * QueryBuilder Exception
  *
  */
-class QueryBuilderException extends \RuntimeException
+class QueryBuilderException extends \RuntimeException implements ExceptionInterface
 {
 }

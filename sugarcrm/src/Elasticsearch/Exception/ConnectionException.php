@@ -17,6 +17,6 @@ namespace Sugarcrm\Sugarcrm\Elasticsearch\Exception;
  * Request Exception
  *
  */
-class ConnectionException extends \RuntimeException
+class ConnectionException extends \RuntimeException implements ExceptionInterface
 {
 }
