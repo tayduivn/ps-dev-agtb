@@ -106,22 +106,26 @@ describe('Base.View.Create', function() {
                         click: 'button:save_button:click'
                     }
                 }, {
-                    'type': 'actiondropdown',
-                    'name': 'duplicate_dropdown',
-                    'primary': true,
-                    'switch_on_click': true,
-                    'showOn': 'duplicate',
-                    'buttons': [{
-                        'type': 'rowaction',
-                        'name': 'save_button',
-                        'label': 'LBL_IGNORE_DUPLICATE_AND_SAVE',
-                        events: {
-                            click: 'button:save_button:click'
-                        }
-                    }]
+                    "name":"duplicate_button",
+                    "type":"button",
+                    "label":"LBL_IGNORE_DUPLICATE_AND_SAVE",
+                    "primary":true,
+                    "showOn":"duplicate",
+                    events: {
+                        click: 'button:save_button:click'
+                    }
+                }, {
+                    "name":"select_button",
+                    "type":"button",
+                    "label":"LBL_SAVE_BUTTON_LABEL",
+                    "primary":true,
+                    "showOn":"select",
+                    events: {
+                        click: 'button:save_button:click'
+                    }
                 }, {
                     'type': 'actiondropdown',
-                    'name': 'select_dropdown',
+                    'name': 'dropdown_button',
                     'primary': true,
                     'switch_on_click': true,
                     'showOn': 'select',
@@ -385,7 +389,7 @@ describe('Base.View.Create', function() {
             });
 
             expect(fields).toBe(5);
-            expect(_.values(view.buttons).length).toBe(5);
+            expect(_.values(view.buttons).length).toBe(6);
         });
     });
 
@@ -405,8 +409,9 @@ describe('Base.View.Create', function() {
 
             expect(view.buttons[view.cancelButtonName].isHidden).toBeFalsy();
             expect(view.buttons['save_button'].isHidden).toBeFalsy();
-            expect(view.buttons['duplicate_dropdown'].isHidden).toBeTruthy();
-            expect(view.buttons['select_dropdown'].isHidden).toBeTruthy();
+            expect(view.buttons['duplicate_button'].isHidden).toBeTruthy();
+            expect(view.buttons['select_button'].isHidden).toBeTruthy();
+            expect(view.buttons['dropdown_button'].isHidden).toBeTruthy();
             expect(view.buttons[view.restoreButtonName].isHidden).toBeTruthy();
         });
 
@@ -437,8 +442,9 @@ describe('Base.View.Create', function() {
 
             expect(view.buttons[view.cancelButtonName].isHidden).toBeFalsy();
             expect(view.buttons['save_button'].isHidden).toBeTruthy();
-            expect(view.buttons['duplicate_dropdown'].isHidden).toBeTruthy();
-            expect(view.buttons['select_dropdown'].isHidden).toBeFalsy();
+            expect(view.buttons['duplicate_button'].isHidden).toBeTruthy();
+            expect(view.buttons['select_button'].isHidden).toBeFalsy();
+            expect(view.buttons['dropdown_button'].isHidden).toBeFalsy();
             expect(view.buttons[view.restoreButtonName].isHidden).toBeFalsy();
         });
 
