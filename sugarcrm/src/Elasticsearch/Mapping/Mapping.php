@@ -13,12 +13,17 @@
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Mapping;
 
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\ProviderCollection;
-use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\PropertyInterface;
 use Sugarcrm\Sugarcrm\Elasticsearch\Exception\MappingException;
+use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\MultiFieldProperty;
+use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\MultiFieldBaseProperty;
+use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\RawProperty;
+use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\PropertyInterface;
+use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\ObjectProperty;
 
 /**
  *
- * Mapping handler for a specific module
+ * This class builds the mapping per module (type) based on the available
+ * providers.
  *
  */
 class Mapping
@@ -34,13 +39,10 @@ class Mapping
     protected $properties = array();
 
     /**
-     * Every field which is added to the index will automatically be available
-     * in its raw format. Additional provider mapping are added in multi field
-     * notation.
-     *
-     * @var array Default property map
+     * Base mapping used for all multi fields
+     * @var array
      */
-    protected $defaultMapping = array(
+    protected $multiFieldBase = array(
         'type' => 'string',
         'index' => 'not_analyzed',
         'include_in_all' => false,
@@ -63,8 +65,6 @@ class Mapping
         foreach ($providers as $provider) {
             $provider->buildMapping($this);
         }
-
-        // TODO: add visibility
     }
 
     /**
@@ -78,55 +78,108 @@ class Mapping
 
     /**
      * Compile mapping properties
+     *
      * @return array
      */
     public function compile()
     {
-        return $this->properties;
+        // TODO: add dynamic update property handling here
+        $compiled = array();
+        foreach ($this->properties as $field => $property) {
+            $compiled[$field] = $property->getMapping();
+        }
+        return $compiled;
     }
 
     /**
-     * Add property to mapping
+     * Add a not_analyzed string field to the mapping. As every multi field
+     * has a not_analyzed base definition we can just add this as is. Other
+     * providers can still register additional multi fields on top of this
+     * not analyzed field.
+     *
      * @param string $field Field name
-     * @param string $name Name of the multi field
-     * @param array $mapping
-     * @throws \Sugarcrm\Sugarcrm\Elasticsearch\Exception\MappingException
      */
-    public function addProperty($field, $name, array $mapping)
+    public function addNotAnalyzedField($field)
     {
-        $this->initProperty($field);
-        if (!isset($this->properties[$field]['fields'])) {
-            $msg = sprintf(
-                'Using addProperty on a raw field is not allowed for %s/%s',
-                $field,
-                $name
-            );
-            throw new MappingException($msg);
-        }
-        $this->properties[$field]['fields'][$name] = $mapping;
+        $this->createMultiFieldBase($field);
     }
 
     /**
-     * Add raw property to mapping. Raw fields will not receive any default
-     * mapping definition and cannot be altered later on by different
-     * providers.
-     * @param string $field
-     * @param array $mapping
+     * Add multi field mapping. This should be the primary method to be used
+     * to build the mapping as most fields are string based. Multi fields
+     * have the ability to define different analyzers for every sub field.
+     * During indexing the value for each multi field only has to be send once
+     * instead of being duplicated.
+     *
+     * @param string $baseField Base field name
+     * @param string $field Name of the multi field
+     * @param MultiFieldProperty $property
      */
-    public function addRawProperty($field, array $mapping)
+    public function addMultiField($baseField, $field, MultiFieldProperty $property)
     {
-        $this->properties[$field] = $mapping;
+        $this->createMultiFieldBase($baseField)->addField($field, $property);
     }
 
     /**
-     * Initialize base property mapping
+     * Add object (or nested) property mapping.
+     *
      * @param string $field
+     * @param ObjectProperty $property
      */
-    public function initProperty($field)
+    public function addObjectProperty($field, ObjectProperty $property)
     {
+        $this->addProperty($field, $property);
+    }
+
+    /**
+     * Add raw property mapping. It is encouraged to use higher level property
+     * objects instead and the respective methods on this class to configure
+     * them instead of using a raw property. Use this method with caution.
+     *
+     * @param string $field
+     * @param RawProperty $property
+     */
+    public function addRawProperty($field, RawProperty $property)
+    {
+        $this->addProperty($field, $property);
+    }
+
+    /**
+     * Create base multi field object for given field.
+     *
+     * @param string $field
+     * @return MultiFieldBaseProperty
+     * @throws MappingException
+     */
+    protected function createMultiFieldBase($field)
+    {
+        // create multi field base if not set yet
         if (!isset($this->properties[$field])) {
-            $this->properties[$field] = $this->defaultMapping;
-            $this->properties[$field]['fields'] = array();
+            $property = new MultiFieldBaseProperty();
+            $property->setMapping($this->multiFieldBase);
+            $this->addProperty($field, $property);
         }
+
+        // make sure we have a base multi field
+        if (!$this->properties[$field] instanceof MultiFieldBaseProperty) {
+            throw new MappingException("Field '{$field}' is not a multi field");
+        }
+
+        return $this->properties[$field];
+    }
+
+    /**
+     * Low level wrapper to add mapping properties
+     *
+     * @param string $field
+     * @param PropertyInterface $property
+     * @throws MappingException
+     */
+    protected function addProperty($field, PropertyInterface $property)
+    {
+        if (isset($this->properties[$field])) {
+            throw new MappingException("Cannot redeclare field '{$field}' for module '{$this->module}'");
+        }
+        $this->properties[$field] = $property;
     }
 }

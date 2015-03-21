@@ -13,7 +13,6 @@
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Mapping;
 
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\ProviderCollection;
-use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\PropertyInterface;
 
 /**
  *
@@ -27,26 +26,15 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\PropertyInterface;
 class MappingManager
 {
     /**
-     * List of loaded property objects
-     * @var \Sugarcrm\Sugarcrm\Elasticsearch\Provider\AbstractProvider[]
-     */
-    protected $loadedProperties = array();
-
-    /**
-     * Ctor
-     */
-    public function __construct()
-    {
-    }
-
-    /**
-     * Build mapping
+     * Build mapping for given provider collection.
+     *
      * @param ProviderCollection $providers
      * @param array $modules List of modules
      * @return \Sugarcrm\Sugarcrm\Sugarcrm\Elasticsearch\Mapping\MappingCollection
      */
     public function buildMapping(ProviderCollection $providers, array $modules)
     {
+        // Create mapping iterator for requested modules
         $collection = new MappingCollection($modules);
 
         foreach ($collection as $mapping) {
@@ -56,24 +44,13 @@ class MappingManager
         return $collection;
     }
 
-    /**
-     * Get mapping for given module
-     * @param string $module
-     * @param \Sugarcrm\Sugarcrm\Elasticsearch\Provider\AbstractProvider[] $providers
-     * @return \Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping
-     */
-    protected function getMappingForModule($module, array $providers)
+    public function loadMapping(array $modules)
     {
-        // TODO - do we still need this ?
-        // load data from MetaDataHelper
-        //$metaDataHelper = $this->container->metaDataHelper;
-        //$ftsFields = $metaDataHelper->getFtsFields($module);
-        //$fieldDefs = $metaDataHelper->getFieldDefs($module);
 
-        // build mapping per module
-        $mapping = new Mapping($module);
-        $mapping->buildMapping($providers);
+    }
 
-        return $mapping;
+    public function compareMapping()
+    {
+
     }
 }

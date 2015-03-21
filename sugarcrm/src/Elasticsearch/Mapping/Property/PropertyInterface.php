@@ -10,30 +10,18 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\Sugarcrm\Elasticsearch\Mapping;
+namespace Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property;
 
 /**
  *
- * Mapping collection iterator
+ * Low level mapping property interface
  *
  */
-class MappingCollection implements \IteratorAggregate
+interface PropertyInterface
 {
     /**
-     * @param array $modules Module list
+     * Get property mapping definition
+     * @return array
      */
-    public function __construct(array $modules)
-    {
-        foreach ($modules as $module) {
-             $this->$module = new Mapping($module);
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getIterator()
-    {
-        return new \ArrayIterator($this);
-    }
+    public function getMapping();
 }

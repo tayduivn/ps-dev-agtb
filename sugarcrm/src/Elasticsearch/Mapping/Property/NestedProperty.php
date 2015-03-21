@@ -10,30 +10,20 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\Sugarcrm\Elasticsearch\Mapping;
+namespace Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property;
 
 /**
  *
- * Mapping collection iterator
+ * This mapping property defines a nested object property. This object
+ * extends from the ObjectProperty and the same rules apply that such
+ * objects cannot be stacked on top as a regular MultiFieldProperty
+ * and need to be created on a dedicated field.
  *
  */
-class MappingCollection implements \IteratorAggregate
+class NestedProperty extends ObjectProperty implements PropertyInterface
 {
     /**
-     * @param array $modules Module list
+     * @var string
      */
-    public function __construct(array $modules)
-    {
-        foreach ($modules as $module) {
-             $this->$module = new Mapping($module);
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getIterator()
-    {
-        return new \ArrayIterator($this);
-    }
+    protected $type = 'nested';
 }
