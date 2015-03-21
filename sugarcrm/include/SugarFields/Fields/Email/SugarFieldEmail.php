@@ -193,15 +193,11 @@ class SugarFieldEmail extends SugarFieldBase
             } else {
                 $row['primary_address'] = false;
             }
-            $bean->emailAddress->addAddress(
-                $row['email_address'],
-                $row['primary_address'],
-                false,
-                $row['invalid_email'],
-                $row['opt_out'],
-                null,
-                false
-            );
+            $bean->emailAddress->addAddress($row['email_address'],
+                                            $row['primary_address'],
+                                            false,
+                                            $row['invalid_email'],
+                                            $row['opt_out']);
         }
     }
 }

@@ -172,7 +172,11 @@ class LegacyJsonServer
 
                     // match enum vals to text vals in language pack for return
                     if (!empty($app_list_strings[$list_return[$i]->field_name_map[$field]['options']])) {
-                        $list_return[$i]->$field = $app_list_strings[$list_return[$i]->field_name_map[$field]['options']][$list_return[$i]->$field];
+                        if (!empty($app_list_strings[$list_return[$i]->field_name_map[$field]['options']][$list_return[$i]->$field])) {
+                            $list_return[$i]->$field = $app_list_strings[$list_return[$i]->field_name_map[$field]['options']][$list_return[$i]->$field];
+                        } else {
+                            $list_return[$i]->$field = '';
+                        }
                     }
                 }
 

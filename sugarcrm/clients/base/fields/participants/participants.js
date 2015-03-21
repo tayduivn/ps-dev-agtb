@@ -807,8 +807,8 @@
         var options;
 
         options = {
-            fields: ['id', 'full_name', 'email', 'picture', 'accept_status_' + this.module.toLowerCase()],
-            order_by: 'full_name:asc'
+            fields: this._getRelatedFieldNames(),
+            order_by: 'name:asc'
         };
 
         try {
@@ -848,7 +848,7 @@
      * passed once it has been loaded
      */
     search: function(query) {
-        var data, participants, success;
+        var data, fields, participants, success;
 
         data = {
             results: [],
@@ -869,12 +869,19 @@
         };
 
         try {
+            fields = _.union(
+                // fields that are needed for the detail, edit, and preview templates
+                this._getRelatedFieldNames(),
+                // fields for which there may be a match to show
+                ['full_name', 'first_name', 'last_name', 'email', 'account_name']
+            );
+
             participants = this.getFieldValue();
             participants.search({
                 query: query.term,
                 success: success,
                 search_fields: ['full_name', 'email', 'account_name'],
-                fields: ['id', 'full_name', 'first_name', 'last_name', 'email', 'account_name', 'picture'],
+                fields: fields,
                 complete: function() {
                     query.callback(data);
                 }
@@ -883,6 +890,27 @@
             app.logger.warn(e);
             query.callback(data);
         }
+    },
+
+    /**
+     * Returns an array of strings representing the names of related fields.
+     *
+     * The related fields are defined under `this.def.fields`. Some of these
+     * fields may be objects, while others strings.
+     *
+     * @return {Array}
+     * @private
+     */
+    _getRelatedFieldNames: function() {
+        var fields = this.def.fields || [];
+
+        if (fields.length === 0) {
+            return [];
+        }
+
+        return _.map(fields, function(field) {
+            return _.isObject(field) ? field.name : field;
+        });
     },
 
     /**

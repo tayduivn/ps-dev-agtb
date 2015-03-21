@@ -3398,9 +3398,10 @@ class SugarBean
 
             // check if relate field refers field of "fullname" type
             if (isset($field_value['type'], $field_value['module']) && $field_value['type'] == 'relate') {
-                $rel_mod_defs = VardefManager::getFieldDefs($field_value['module']);
-                if ($rel_mod_defs) {
+                $rel_bean = BeanFactory::getBean($field_value['module']);
+                if ($rel_bean) {
                     $rname = isset($field_value['rname']) ? $field_value['rname'] : 'name';
+                    $rel_mod_defs = $rel_bean->field_defs;
                     if (isset($rel_mod_defs[$rname])) {
                         $rname_field_def = $rel_mod_defs[$rname];
                         if (isset($rname_field_def['type']) && $rname_field_def['type'] == 'fullname') {
@@ -3418,7 +3419,7 @@ class SugarBean
                                 }
                             }
 
-                            $this->$field = $locale->formatName($field_value['module'], $data);
+                            $this->$field = $locale->formatName($rel_bean, $data);
                         }
                     }
                 }

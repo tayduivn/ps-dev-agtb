@@ -788,14 +788,12 @@ class MetaDataFiles
             return null;
         }
         $clientCache = array();
-        if ($context != null && $context->getHash()) {
-            $contextHash = $context->getHash();
-            $cacheFile = sugar_cached("modules/{$module}/clients/{$platforms[0]}/$contextHash/{$type}.php");
-        } else {
-            $cacheFile = sugar_cached("modules/{$module}/clients/{$platforms[0]}/{$type}.php");
-        }
-
-        if (!file_exists($cacheFile)) {
+        $cacheFile = sugar_cached('modules/'.$module.'/clients/'.$platforms[0].'/'.$type.'.php');
+        if (!file_exists($cacheFile)
+// BEGIN SUGARCRM flav=ent ONLY
+            || !empty($GLOBALS['sugar_config']['roleBasedViews'])
+// END SUGARCRM flav=ent ONLY
+        ) {
             self::buildModuleClientCache($platforms, $type, $module, $context);
         }
         $clientCache[$module][$platforms[0]][$type] = array();
@@ -858,10 +856,7 @@ class MetaDataFiles
 
 
             $basePath = sugar_cached('modules/'.$module.'/clients/'.$platforms[0]);
-            if ($context != null && $context->getHash()) {
-                $basePath .= '/' . $context->getHash();
-            }
-            sugar_mkdir($basePath, null, true);
+            sugar_mkdir($basePath,null,true);
 
             $output = "<?php\n\$clientCache['".$module."']['".$platforms[0]."']['".$type."'] = ".var_export($moduleResults,true).";\n\n";
             sugar_file_put_contents_atomic($basePath.'/'.$type.'.php', $output);
