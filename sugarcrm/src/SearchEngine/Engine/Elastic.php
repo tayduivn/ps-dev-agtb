@@ -32,7 +32,7 @@ class Elastic implements EngineInterface, GlobalSearchInterface
      */
     public function __construct(Container $container = null)
     {
-        $this->container = $container ?: Container::create();
+        $this->container = $container ?: Container::getInstance();
     }
 
     //// BASE INTERFACE ////
@@ -141,7 +141,8 @@ class Elastic implements EngineInterface, GlobalSearchInterface
      */
     public function term($term)
     {
-        return $this->gsProvider()->term($term);
+        $this->gsProvider()->term($term);
+        return $this;
     }
 
     /**
@@ -149,7 +150,8 @@ class Elastic implements EngineInterface, GlobalSearchInterface
      */
     public function from(array $modules = array())
     {
-        return $this->gsProvider()->from($modules);
+        $this->gsProvider()->from($modules);
+        return $this;
     }
 
     /**
@@ -157,7 +159,8 @@ class Elastic implements EngineInterface, GlobalSearchInterface
      */
     public function limit($limit)
     {
-        return $this->gsProvider()->limit($limit);
+        $this->gsProvider()->limit($limit);
+        return $this;
     }
 
     /**
@@ -165,7 +168,8 @@ class Elastic implements EngineInterface, GlobalSearchInterface
      */
     public function offset($offset)
     {
-        return $this->gsProvider()->offset($offset);
+        $this->gsProvider()->offset($offset);
+        return $this;
     }
 
     /**
@@ -173,7 +177,8 @@ class Elastic implements EngineInterface, GlobalSearchInterface
      */
     public function highlighter($toggle)
     {
-        return $this->gsProvider()->highlighter($toggle);
+        $this->gsProvider()->useHighlighter($toggle);
+        return $this;
     }
 
     /**
@@ -181,7 +186,8 @@ class Elastic implements EngineInterface, GlobalSearchInterface
      */
     public function fieldBoost($toggle)
     {
-        return $this->gsProvider()->fieldBoost($toggle);
+        $this->gsProvider()->fieldBoost($toggle);
+        return $this;
     }
 
     /**
@@ -189,7 +195,8 @@ class Elastic implements EngineInterface, GlobalSearchInterface
      */
     public function sort(array $fields)
     {
-        return $this->gsProvider()->sort($fields);
+        $this->gsProvider()->sort($fields);
+        return $this;
     }
 
     //// ELASTIC ENGINE SPECIFIC ////

@@ -73,8 +73,14 @@ class MetaDataHelper
         $ftsFields = array();
         $vardefs = $this->getModuleVardefs($module);
         foreach ($vardefs['fields'] as $field => $defs) {
+
+            // skip field if no type has been defined
+            if (empty($defs['type'])) {
+                continue;
+            }
+
             if (isset($defs['full_text_search']) && !empty($defs['full_text_search']['enabled'])) {
-                //the type in 'full_text_search' overrides the type in the field
+                // the type in 'full_text_search' overrides the type in the field
                 if (!empty($defs['full_text_search']['type'])) {
                     $defs['type'] = $defs['full_text_search']['type'];
                 }
@@ -144,19 +150,17 @@ class MetaDataHelper
 
     /**
      * Get the auto-incremented fields of a given module.
-     * @param string $module : the name of module
+     * @param string $module Module name
      * @return array
      */
     public function getFtsAutoIncrementFields($module)
     {
         $incFields = array();
-        $vardefs = $this->getModuleVardefs($module);
-        foreach ($vardefs['fields'] as $field => $defs) {
+        foreach ($this->getFtsFields($module) as $field => $defs) {
             if (!empty($defs['auto_increment'])) {
                 $incFields[] = $defs['name'];
             }
         }
         return $incFields;
     }
-
 }

@@ -127,7 +127,7 @@ class SearchEngine
     public function hasCapability($capability)
     {
         $interface = sprintf(
-            'Sugarcrm\\Sugarcrm\\SearchEngine\\Capability\\%s\\%sInterface',
+            'Sugarcrm\Sugarcrm\SearchEngine\Capability\%s\%sInterface',
             $capability,
             $capability
         );

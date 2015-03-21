@@ -34,18 +34,17 @@ class IndexManager
     /**
      * @var \Sugarcrm\Sugarcrm\Elasticsearch\Container
      */
-    private $container;
+    protected $container;
 
     /**
      * @var array Configuration index_settings
      */
-    private $config = array();
+    protected $config = array();
 
     /**
      * @var array Default index settings
-     * TODO: make this configurable ?
      */
-    private $defaultSettings = array(
+    protected $defaultSettings = array(
         // Ignore malformed fields when index a document
         'index.mapping.ignore_malformed' => true,
         // Coerce numeric values
@@ -54,9 +53,8 @@ class IndexManager
 
     /**
      * @var array Default type mapping
-     * TODO: make this configurable ?
      */
-    private $defaultMapping = array(
+    protected $defaultMapping = array(
         // Avoid wasting space on _all field which we don't need
         '_all' => array('enabled' => false),
         // Disable inclusion of fields by default for _all
@@ -173,7 +171,7 @@ class IndexManager
      * Sync new index settings to Elasticsearch backend
      * @param array $modules List of modules to sync
      */
-    private function syncIndices(array $modules)
+    protected function syncIndices(array $modules)
     {
         // Get registered providers
         $providerCollection = new ProviderCollection($this->container, $this->getRegisteredProviders());
@@ -203,20 +201,18 @@ class IndexManager
      * @param AnalysisBuilder $analysisBuilder
      * @param ProviderCollection $providers
      */
-    private function buildAnalysis(AnalysisBuilder $analysisBuilder, ProviderCollection $providerCollection)
+    protected function buildAnalysis(AnalysisBuilder $analysisBuilder, ProviderCollection $providerCollection)
     {
         foreach ($providerCollection as $provider) {
             $provider->buildAnalysis($analysisBuilder);
         }
-
-        // TODO: add visibility
     }
 
     /**
      * Get list of all registered provider names
      * @return array
      */
-    private function getRegisteredProviders()
+    protected function getRegisteredProviders()
     {
         return $this->container->getRegisteredProviders();
     }
@@ -226,7 +222,7 @@ class IndexManager
      * @param ProviderCollection $providerCollection
      * @return MappingCollection
      */
-    private function buildMapping(ProviderCollection $providerCollection)
+    protected function buildMapping(ProviderCollection $providerCollection)
     {
         return $this->container->mappingManager->buildMapping($providerCollection, $this->getAllEnabledModules());
     }
@@ -235,7 +231,7 @@ class IndexManager
      * Get list of all enabled modules
      * @return array
      */
-    private function getAllEnabledModules()
+    protected function getAllEnabledModules()
     {
         return $this->container->metaDataHelper->getAllEnabledModules();
     }
@@ -245,7 +241,7 @@ class IndexManager
      * @param MappingCollection $mappingCollection
      * @return IndexCollection
      */
-    private function getIndexCollection(MappingCollection $mappingCollection)
+    protected function getIndexCollection(MappingCollection $mappingCollection)
     {
         return $this->container->indexPool->buildIndexCollection($mappingCollection);
     }
@@ -256,7 +252,7 @@ class IndexManager
      * @param AnalysisBuilder $analysisBuilder
      * @return array
      */
-    private function buildIndexSettings($index, AnalysisBuilder $analysisBuilder)
+    protected function buildIndexSettings($index, AnalysisBuilder $analysisBuilder)
     {
         $config = $this->getIndexSettingsFromConfig($index);
         return array_merge($this->defaultSettings, $config, $analysisBuilder->compile());
@@ -267,7 +263,7 @@ class IndexManager
      * @param string $index Index name
      * @return array
      */
-    private function getIndexSettingsFromConfig($index)
+    protected function getIndexSettingsFromConfig($index)
     {
         $settings = array();
         if (isset($this->config[$index])) {
@@ -290,7 +286,7 @@ class IndexManager
      * @param AnalysisBuilder $analysisBuilder
      * @param MappingCollection $mappingCollection
      */
-    private function createIndices(
+    protected function createIndices(
         IndexCollection $indexCollection,
         AnalysisBuilder $analysisBuilder,
         MappingCollection $mappingCollection
@@ -322,7 +318,7 @@ class IndexManager
      * Send type mapping to backend applying default mapping
      * @param \Elastica\Type\Mapping $mapping
      */
-    private function sendMapping(\Elastica\Type\Mapping $mapping)
+    protected function sendMapping(\Elastica\Type\Mapping $mapping)
     {
         // Apply default mapping settings
         foreach ($this->defaultMapping as $key => $value) {
