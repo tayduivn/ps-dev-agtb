@@ -16,7 +16,6 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Container;
 use Sugarcrm\Sugarcrm\Elasticsearch\Query\Highlighter\HighlighterInterface;
 use Sugarcrm\Sugarcrm\Elasticsearch\Query\Aggregation\AggregationInterface;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\ResultSet;
-use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Search;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Client;
 use Sugarcrm\Sugarcrm\Elasticsearch\Exception\QueryBuilderException;
 
@@ -261,7 +260,7 @@ class QueryBuilder
         $search->addIndices($this->getReadIndices($this->modules, $this->user));
         $search->addTypes($this->modules);
 
-        return new ResultSet($search->search());
+        return new ResultSet($search->search(), $this->highLighter);
     }
 
     /**

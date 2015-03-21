@@ -54,7 +54,7 @@ abstract class AbstractHighlighter implements HighlighterInterface
     /**
      * @var integer Fragment size
      */
-    protected $fragSize = 100;
+    protected $fragSize = 20;
 
     /**
      * @var boolean Require field match
@@ -72,27 +72,18 @@ abstract class AbstractHighlighter implements HighlighterInterface
     protected $order = 'score';
 
     /**
+     * @var array Remapped fields
+     */
+    protected $fieldRemap = array();
+
+    /**
      * Set fields
      * @param array $fields
      * @return AbstractHighlighter
      */
     public function setFields(array $fields)
     {
-        foreach ($fields as $field => $args) {
-            $this->addField($field, $args);
-        }
-        return $this;
-    }
-
-    /**
-     * Add field
-     * @param string $field
-     * @param array $args
-     * @return AbstractHighlighter
-     */
-    public function addField($field, array $args)
-    {
-        $this->fields[$field] = $args;
+        $this->fields = array_merge($this->fields, $fields);
         return $this;
     }
 
@@ -163,8 +154,18 @@ abstract class AbstractHighlighter implements HighlighterInterface
     }
 
     /**
-     * Build highlighter
-     * @return array
+     * Set field remapping
+     * @param array $remap
+     * @return AbstractHighlighter
+     */
+    public function setFieldRemap(array $remap)
+    {
+        $this->fieldRemap = array_merge($this->fieldRemap, $remap);
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function build()
     {
@@ -189,5 +190,39 @@ abstract class AbstractHighlighter implements HighlighterInterface
         $properties['fields'] = $fields;
 
         return $properties;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function parseResults(array $highlights)
+    {
+        $parsed = array();
+        foreach ($highlights as $field => $value) {
+
+            // Normalize the field name
+            $normField = $this->normalizeFieldName($field);
+
+            // Multiple highlights can be returned for the same field, if so we
+            // add them and filter out any duplicates.
+            if (isset($parsed[$normField])) {
+                $parsed[$normField] = array_unique(array_merge($parsed[$normField], $value), SORT_STRING);
+            } else {
+                $parsed[$normField] = $value;
+            }
+        }
+        return $parsed;
+    }
+
+    /**
+     * Normalize field name, removes multi field notation and applies
+     * the field remapping if defined for given field.
+     * @param string $field
+     * @return string
+     */
+    public function normalizeFieldName($field)
+    {
+        $norm = array_shift(explode('.', $field));
+        return isset($this->fieldRemap[$norm]) ? $this->fieldRemap[$norm] : $norm;
     }
 }

@@ -13,6 +13,7 @@
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Adapter;
 
 use Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\ResultSetInterface;
+use Sugarcrm\Sugarcrm\Elasticsearch\Query\Highlighter\HighlighterInterface;
 
 /**
  *
@@ -27,12 +28,19 @@ class ResultSet implements \Iterator, \Countable, ResultSetInterface
     protected $resultSet;
 
     /**
+     * @var HighlighterInterface
+     */
+    protected $highlighter;
+
+    /**
      * Ctor
      * @param \Elastica\ResultSet $resultSet
+     * @param HighlighterInterface $highlighter
      */
-    public function __construct(\Elastica\ResultSet $resultSet)
+    public function __construct(\Elastica\ResultSet $resultSet, HighlighterInterface $highlighter = null)
     {
         $this->resultSet = $resultSet;
+        $this->highlighter = $highlighter;
     }
 
     /**
@@ -51,7 +59,7 @@ class ResultSet implements \Iterator, \Countable, ResultSetInterface
      */
     public function current()
     {
-        return new Result($this->resultSet->current());
+        return new Result($this->resultSet->current(), $this->highlighter);
     }
 
     /**

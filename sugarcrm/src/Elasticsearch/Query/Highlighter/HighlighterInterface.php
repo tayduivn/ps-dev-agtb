@@ -20,8 +20,15 @@ namespace Sugarcrm\Sugarcrm\Elasticsearch\Query\Highlighter;
 interface HighlighterInterface
 {
     /**
-     * Build highlighter
+     * Build highlighter properties
      * @return array
      */
     public function build();
+
+    /**
+     * Parse highlighter results
+     * @param array $highlights
+     * @return array
+     */
+    public function parseResults(array $highlights);
 }

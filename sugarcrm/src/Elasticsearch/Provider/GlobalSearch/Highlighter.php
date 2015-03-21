@@ -16,23 +16,27 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Query\Highlighter\AbstractHighlighter;
 
 /**
  *
- * Plain Highlighter implementation
+ * GlobalSearch Highlighter
  *
  */
-class PlainHighlighter extends AbstractHighlighter
+class Highlighter extends AbstractHighlighter
 {
     /**
      * Ctor
-     * @param array $fields
      */
-    public function __construct(array $fields = array())
+    public function __construct()
     {
-        $this->setFields($fields);
+        // always require a field match by default
         $this->setRequiredFieldMatch(true);
+
+        // default fragments
+        $this->setNumberOfFrags(3);
+        $this->setFragSize(20);
+
+        // use _source and plain highlighter
         $this->setDefaultFieldArgs(array(
             'type' => 'plain',
             'force_source' => true,
-            'require_field_match' => true,
         ));
     }
 }

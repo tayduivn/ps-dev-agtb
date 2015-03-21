@@ -13,6 +13,7 @@
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Adapter;
 
 use Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\ResultInterface;
+use Sugarcrm\Sugarcrm\Elasticsearch\Query\Highlighter\HighlighterInterface;
 
 /**
  *
@@ -27,12 +28,19 @@ class Result implements ResultInterface
     protected $result;
 
     /**
+     * @var HighlighterInterface
+     */
+    protected $highlighter;
+
+    /**
      * Ctor
      * @param \Elastica\Result $result
+     * @param HighlighterInterface $highlighter
      */
-    public function __construct(\Elastica\Result $result)
+    public function __construct(\Elastica\Result $result, HighlighterInterface $highlighter = null)
     {
         $this->result = $result;
+        $this->highlighter = $highlighter;
     }
 
     /**
@@ -47,13 +55,12 @@ class Result implements ResultInterface
     }
 
     /**
-     * Normalize field name, removes multi field notation
-     * @param string $field
-     * @return string
+     * Set highlight remap fields
+     * @param array $remap
      */
-    protected function normalizeFieldName($field)
+    public function setHighlightRemap(array $remap)
     {
-        return array_shift(explode('.', $field));
+        $this->highlightRemap = $remap;
     }
 
     //// ResultInterface ////
@@ -103,11 +110,11 @@ class Result implements ResultInterface
      */
     public function getHighlights()
     {
-        $result = array();
-        foreach ($this->result->getHighlights() as $field => $value) {
-            $result[$this->normalizeFieldName($field)] = $value;
+        if (!$this->highlighter) {
+            return array();
         }
-        return $result;
+
+        return $this->highlighter->parseResults($this->result->getHighlights());
     }
 
     /**
@@ -126,7 +133,7 @@ class Result implements ResultInterface
         }
 
         // Dispatch event for logic hook framework
-        $this->dispatchEvent($bean, 'populate_from_elastic', array('data' => $this->getData()));
+        $this->dispatchEvent($bean, 'after_retrieve_elastic', array('data' => $this->getData()));
 
         return $bean;
     }
