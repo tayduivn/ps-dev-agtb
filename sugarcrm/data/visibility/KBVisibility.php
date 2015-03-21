@@ -60,4 +60,39 @@ class KBVisibility extends SugarVisibility
             return $query;
         }
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function addSseVisibilityFilter(SugarSearchEngineInterface $engine, $filter)
+    {
+        $module = $this->bean->module_name;
+        $currentUser = $GLOBALS['current_user'];
+        if (!method_exists($this->bean, 'getPublishedStatuses') ||
+            $currentUser->isAdminForModule($module) ||
+            $currentUser->isDeveloperForModule($module)
+        ) {
+            return $filter;
+        }
+
+        if ($engine instanceof SugarSearchEngineElastic) {
+            $statusFilterOr = new \Elastica\Filter\BoolOr();
+            foreach ($this->bean->getPublishedStatuses() as $status) {
+                $statusFilterOr->addFilter(new \Elastica\Filter\Term(array('status' => $status)));
+            }
+
+            /**
+             * It's better to use `OwnerVisibility`, but it doesn't implement `addSseVisibilityFilter`
+             *
+             * $ow = new OwnerVisibility($this->bean, $this->params);
+             * $owFilter = new \Elastica\Filter\Bool();
+             * $owFilter = $ow->addSseVisibilityFilter($engine, $owFilter);
+             *
+             * @see OwnerVisibility::addSseVisibilityFilter
+             */
+            $statusFilterOr->addFilter($engine->getOwnerTermFilter());
+            $filter->addMust($statusFilterOr);
+        }
+        return $filter;
+    }
 }
