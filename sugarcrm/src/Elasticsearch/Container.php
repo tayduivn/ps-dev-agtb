@@ -18,9 +18,8 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Index\IndexPool;
 use Sugarcrm\Sugarcrm\Elasticsearch\Index\IndexManager;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\MappingManager;
 use Sugarcrm\Sugarcrm\Elasticsearch\Indexer\Indexer;
-use Sugarcrm\Sugarcrm\Elasticsearch\Exception\ProviderException;
 use Sugarcrm\Sugarcrm\Elasticsearch\Queue\QueueManager;
-use Sugarcrm\Sugarcrm\Elasticsearch\Provider\AbstractProvider;
+use Sugarcrm\Sugarcrm\Elasticsearch\Exception\ContainerException;
 
 /**
  *
@@ -40,6 +39,11 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Provider\AbstractProvider;
  */
 class Container
 {
+    /**
+     * @var Container
+     */
+    protected static $instance;
+
     /**
      * @var \Sugarcrm\Sugarcrm\Elasticsearch\Logger
      */
@@ -107,13 +111,43 @@ class Container
     }
 
     /**
-     * Create container object
+     * Create new container object. Use self::getInstance unless you know
+     * what you are doing.
+     *
      * @return \Sugarcrm\Sugarcrm\Elasticsearch\Container
      */
     public static function create()
     {
+        /*
+         * Until system wide bundle support is possible in the framework we
+         * rely on the ability of using the /custom framework to customize
+         * this service container. See `self::getInstance`.
+         */
         $class = \SugarAutoLoader::customClass('Sugarcrm\\Sugarcrm\\Elasticsearch\\Container');
         return new $class();
+    }
+
+    /**
+     * Factory getting the service container instance.
+     *
+     * Until we have bundle support in the framework, this service container
+     * can be customized by deploying the following class:
+     *
+     *      \Sugarcrm\Sugarcrm\custom\src\Elasticsearch\Container
+     *
+     * The main purpose of extending this service container is to be able to
+     * register additional custom providers on the stack. Overriding the
+     * initialization methods is also possible but care should be taken to
+     * understand the implication when doing so as those methods can change.
+     *
+     * @return \Sugarcrm\Sugarcrm\Elasticsearch\Container
+     */
+    public static function getInstance()
+    {
+        if (empty(self::$instance)) {
+            self::$instance = self::create();
+        }
+        return self::$instance;
     }
 
     /**
@@ -231,26 +265,30 @@ class Container
      */
     public function registerProviders()
     {
-        $this->registerProvider('GlobalSearch');
+        $this->registerProvider(
+            'GlobalSearch',
+            'Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\GlobalSearch'
+        );
     }
 
     /**
      * Register a new provider on the stack
-     * @param string $name Provider name
+     * @param string $identifier Provider identifier
+     * @param string $class Classname
      */
-    public function registerProvider($name)
+    public function registerProvider($identifier, $class)
     {
-        $this->providers[$name] = true;
+        $this->providers[$identifier] = $class;
     }
 
     /**
      * Unregister a provider
-     * @param string $name Provider name
+     * @param string $identifier Provider identifier
      */
-    public function unregisterProvider($name)
+    public function unregisterProvider($identifier)
     {
-        if (isset($this->providers[$name])) {
-            unset($this->providers[$name]);
+        if (isset($this->providers[$identifier])) {
+            unset($this->providers[$identifier]);
         }
     }
 
@@ -265,49 +303,51 @@ class Container
 
     /**
      * Check if given provider is available
-     * @param string $name Provider name
+     * @param string $identifier Provider identifier
      * @return boolean
      */
-    public function isProviderAvailable($name)
+    public function isProviderAvailable($identifier)
     {
-        return isset($this->providers[$name]);
+        return isset($this->providers[$identifier]);
     }
 
     /**
-     * Create new provider object
-     * @param string $name Provider name
-     * @throws \Sugarcrm\Sugarcrm\Elasticsearch\Exception\ProviderException
-     * @return \Sugarcrm\Sugarcrm\Elasticsearch\Provider\AbstractProvider
+     * Lazy load provider object
+     * @param string $identifier Provider identifier
+     * @throws ContainerException
+     * @return ProviderInterface
      */
-    public function getProvider($name)
+    public function getProvider($identifier)
     {
-        if (!isset($this->providers[$name])) {
-            throw new ProviderException("Unknown Elastic provider '{$name}'");
+        if (!isset($this->providers[$identifier])) {
+            throw new ContainerException("Unknown Elasticsearch provider '{$identifier}'");
         }
 
-        if ($this->providers[$name] instanceof AbstractProvider) {
-            return $this->providers[$name];
+        if (!is_object($this->providers[$identifier])) {
+            $className = $this->providers[$identifier];
+            $this->providers[$identifier] = $provider = new $className();
+
+            $provider->setIdentifier($identifier);
+            $provider->setUser($this->getCurrentUser());
+
+            if ($provider instanceof ContainerAwareInterface) {
+                $provider->setContainer($this);
+            }
         }
 
-        $providerClassName = \SugarAutoLoader::customClass(
-            sprintf('\\Sugarcrm\\Sugarcrm\\Elasticsearch\\Provider\\%s\\%s', $name, $name)
-        );
-
-        if (class_exists($providerClassName)) {
-            $this->providers[$name] = $this->newProvider($providerClassName);
-            return $this->providers[$name];
-        }
-
-        throw new ProviderException("Invalid provider class '{$providerClassName}' for '{$name}'");
+        return $this->providers[$identifier];
     }
 
     /**
-     *
-     * @param unknown $providerClass
-     * @return unknown
+     * Get current user
+     * @throws ContainerException
+     * @return \User
      */
-    protected function newProvider($providerClass)
+    protected function getCurrentUser()
     {
-        return new $providerClass($this);
+        if (empty($GLOBALS['current_user'])) {
+            throw new ContainerException('Current user not available');
+        }
+        return $GLOBALS['current_user'];
     }
 }

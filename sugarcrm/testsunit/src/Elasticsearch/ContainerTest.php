@@ -91,7 +91,7 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
 
         // Register/unregister new provider
         $this->assertFalse($container->isProviderAvailable('new'));
-        $container->registerProvider('new');
+        $container->registerProvider('new', 'class');
         $this->assertTrue($container->isProviderAvailable('new'));
         $container->unregisterProvider('new');
         $this->assertFalse($container->isProviderAvailable('new'));
@@ -106,13 +106,21 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetProvider($provider, $class)
     {
-        $container = $this->getContainerMock(array('newProvider'));
+        $user = $this->getMockBuilder('User')
+            ->disableOriginalConstructor()
+            ->setMethods(array())
+            ->getMock();
+
+        $container = $this->getContainerMock(array('getCurrentUser'));
+
         $container->expects($this->once())
-            ->method('newProvider')
-            ->with($this->equalTo($class));
+            ->method('getCurrentUser')
+            ->will($this->returnValue($user));
 
         $container->registerProviders();
-        $container->getProvider($provider);
+
+        $provider = $container->getProvider($provider);
+        $this->assertInstanceOf($class, $provider);
     }
 
     public function dataProviderTestGetProvider()

@@ -32,7 +32,7 @@ class ProviderCollection implements \IteratorAggregate
     public function __construct(Container $container, array $providers = array())
     {
         foreach ($providers as $provider) {
-            if (!$provider instanceof AbstractProvider) {
+            if (!$provider instanceof ProviderInterface) {
                 $provider = $container->getProvider($provider);
             }
             $this->addProvider($provider);
