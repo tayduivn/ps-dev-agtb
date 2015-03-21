@@ -101,7 +101,7 @@ class Indexer
             return false;
         }
 
-        // Skip bean if module not enabled.
+        // Skip bean if module not enabled
         if (!$this->container->metaDataHelper->isModuleEnabled($bean->module_name)) {
             return true;
         }
@@ -112,21 +112,26 @@ class Indexer
             return false;
         }
 
-        //Process the bean before indexing
-        $this->processBeanPreIndex($bean);
+        // Convert bean into an Elatica Document
+        $document = $this->getDocumentFromBean($bean);
 
-        $this->indexDocument($this->getDocumentFromBean($bean), $batch);
-        return true;
+        // Process the document before indexing. We also pass the bean as a
+        // reference in case the logic needs this.
+        $this->processDocumentPreIndex($document, $bean);
+
+        return $this->indexDocument($document, $batch);
     }
 
     /**
-     * Pass beans to all the providers before indexing.
-     * @param \SugarBean $bean : the bean of the module
+     * Pass document to all the providers before indexing.
+     *
+     * @param Document $document Document being indexed
+     * @param \SugarBean $bean Bean reference
      */
-    public function processBeanPreIndex(\SugarBean $bean)
+    public function processDocumentPreIndex(Document $document, \SugarBean $bean)
     {
         foreach ($this->getRegisteredProviders() as $provider) {
-            $provider->processBeanPreIndex($bean);
+            $provider->processDocumentPreIndex($document, $bean);
         }
     }
 
@@ -148,12 +153,13 @@ class Indexer
      *
      * @param \Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Document $document
      * @param string $batch
+     * @return boolean
      */
     protected function indexDocument(Document $document, $batch = true)
     {
         // Safeguard avoid sending documents without data, exception for deletes
         if (!$document->hasData() && $document->getOpType() !== \Elastica\Bulk\Action::OP_TYPE_DELETE) {
-            return;
+            return false;
         }
 
         if ($batch) {
@@ -165,6 +171,7 @@ class Indexer
             $bulk->batchDocument($document);
             $bulk->finishBatch();
         }
+        return true;
     }
 
     /**
@@ -222,20 +229,20 @@ class Indexer
     /**
      * Get field list to be indexed for given module.
      * @param string $module
+     * @param boolean $fromQueue
      * @return array
      */
-    public function getBeanIndexFields($module)
+    public function getBeanIndexFields($module, $fromQueue = false)
     {
         $fields = array();
 
         foreach ($this->getRegisteredProviders() as $provider) {
             /* @var $provider ProviderInterace */
-            $fields = array_merge($fields, $provider->getBeanIndexFields($module));
+            $fields = array_merge(
+                $fields,
+                $provider->getBeanIndexFields($module, $fromQueue)
+            );
         }
-
-        // TODO: needs to be extended with additional fields from provider
-        // TODO: add visibility
-
         return $fields;
     }
 
@@ -260,16 +267,16 @@ class Indexer
         // Ensure we have an explicit action set for graceful handling further down the line
         $document->setOpType(\Elastica\Bulk\Action::OP_TYPE_INDEX);
 
-        // Populate field data
+        // Get list of fields which are expected to be populated populated
         $fields = $this->getBeanIndexFields($module);
+
+        // Populate field data from bean for bean index fields
         $data = array();
         foreach (array_keys($fields) as $field) {
             if (isset($bean->$field)) {
                 $data[$field] = $this->decodeBeanField($bean->$field);
             }
         }
-
-        // TODO: add additional fields/data for diff providers and visibility
 
         $document->setId($bean->id);
         $document->setData($data);
