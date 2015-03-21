@@ -1,8 +1,7 @@
 describe('View.Views.Base.QuicksearchResultsView', function() {
     var viewName = 'quicksearch-results',
-        elementCount = 5,
         view, layout, attachKeyDownStub, disposeKeydownStub,
-        triggerBeforeStub, triggerSpy, countRecordElementsStub;
+        triggerBeforeStub, triggerSpy;
 
     beforeEach(function() {
         SugarTest.testMetadata.init();
@@ -13,13 +12,13 @@ describe('View.Views.Base.QuicksearchResultsView', function() {
 
         attachKeyDownStub = sinon.collection.stub(view, 'attachKeydownEvent');
         disposeKeydownStub = sinon.collection.stub(view, 'disposeKeydownEvent');
-        countRecordElementsStub = sinon.collection.stub(view, 'countRecordElements', function() {
-            return elementCount;
-        });
         triggerBeforeStub = sinon.collection.stub(view.layout, 'triggerBefore', function() {
             return true;
         });
         triggerSpy = sinon.collection.spy(view.layout, 'trigger');
+        var app = SUGAR.App;
+        view.collection = app.data.createMixedBeanCollection();
+        view.collection.models = [0, 1, 2, 3, 4];
     });
 
     afterEach(function() {
@@ -30,28 +29,27 @@ describe('View.Views.Base.QuicksearchResultsView', function() {
         view = null;
     });
 
-    describe('quicksearch:dropdown:close', function() {
+    describe('quicksearch:close', function() {
         var closeStub;
         beforeEach(function() {
             closeStub = sinon.collection.stub(view, 'close');
         });
 
         it('should call disposeKeydownEvent and close', function() {
-            view.layout.trigger('quicksearch:dropdown:close');
-            expect(disposeKeydownStub).toHaveBeenCalled();
+            view.layout.trigger('quicksearch:close');
             expect(closeStub).toHaveBeenCalled();
         });
     });
 
-    describe('quicksearch:results:open', function() {
-        var openStub;
+    describe('quicksearch:results:close', function() {
+        var closeStub;
         beforeEach(function() {
-            openStub = sinon.collection.stub(view, 'open');
+            closeStub = sinon.collection.stub(view, 'close');
         });
-        it('should call render and open', function() {
-            view.layout.trigger('quicksearch:results:open', function() {
-                expect(openStub).toHaveBeenCalled();
-            });
+
+        it('should call disposeKeydownEvent and close', function() {
+            view.layout.trigger('quicksearch:results:close');
+            expect(closeStub).toHaveBeenCalled();
         });
     });
 
@@ -79,9 +77,6 @@ describe('View.Views.Base.QuicksearchResultsView', function() {
 
     describe('isFocusable', function() {
         it('should be focusable with results and records', function() {
-            view.results = {
-                records: []
-            };
             var isFocusable = view.isFocusable();
             expect(isFocusable).toBeTruthy();
         });

@@ -22,6 +22,7 @@
     initialize: function(options) {
         this._super('initialize', [options]);
 
+        this.context.set('search', true);
         this.collection.query = this.context.get('searchTerm') || '';
         this.collection.module_list = [];
 

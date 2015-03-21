@@ -33,11 +33,9 @@
 
     searchModules: [],
     events: {
-        'click .typeahead a': 'clearSearch',
-        'click [data-action=search]': 'showResults',
-        'click [data-advanced=options]': 'persistMenu',
-        'click [data-action=select-module]': 'selectModule',
-        'focus input.search-query': 'requestFocus'
+        'click [data-action=search_icon]' : 'searchIconClickHandler',
+        'focus input[data-action=search_bar]': 'requestFocus',
+        'click input[data-action=search_bar]': 'searchBarClickHandler'
     },
 
     /**
@@ -68,7 +66,7 @@
         /**
          * Used for keyboard up/down arrow navigation between components of `globalsearch` layout
          *
-         * @property {string}
+         * @property {boolean}
          */
         this.isFocusable = true;
 
@@ -101,27 +99,33 @@
          */
         this._currentQueryTerm = '';
 
+        /**
+         * Indicates if the search bar is expanded
+         * @type {boolean}
+         */
+        this.expanded = false;
+
+        /**
+         * Indicates the state of the search button icon:
+         *
+         * - `true` means magnifying glass.
+         * - `false` means X icon.
+         *
+         * @type {boolean}
+         */
+        this.searchButtonIcon = true;
+
         app.events.on('app:sync:complete', this.populateModules, this);
-
-        // shortcut keys
-        // Focus the search bar
-        app.shortcuts.register(app.shortcuts.GLOBAL + 'Search', ['s', 'ctrl+alt+0'], function() {
-            this.$('input.search-query').focus();
-        }, this);
-
-        // Exit the search bar
-        app.shortcuts.register(app.shortcuts.GLOBAL + 'SearchBlur', ['esc', 'ctrl+alt+l'], function() {
-            this.layout.trigger('quicksearch:clear');
-        }, this, true);
 
         // Listener for receiving focus for up/down arrow navigation:
         this.on('navigate:focus:receive', function() {
             // if the input doesn't have focus, give it focus.
-            var inputBox = this.$('input.search-query')[0];
+            var inputBox = this.$('input[data-action=search_bar]')[0];
             if (inputBox !== $(document.activeElement)[0]) {
                 inputBox.focus();
+            } else {
+                this.attachKeyEvents();
             }
-            this.attachKeyEvents();
         }, this);
 
         // Listener for losing focus for up/down arrow navigation:
@@ -129,16 +133,29 @@
             this.disposeKeyEvents();
         }, this);
 
-        // Listener for `quicksearch:clear`. This clears the old search terms, aborts in progress
-        // searches, and disposes key listeners
-        this.layout.on('quicksearch:clear', function() {
-            this._searchTerm = '';
-            this._oldSearchTerm = '';
-            this._currentQueryTerm = '';
+        // Listener for `quicksearch:close`. This aborts in progress
+        // searches
+        this.layout.on('quicksearch:close', function() {
+            if (!this.expanded) {
+                return;
+            }
             this.collection.abortFetchRequest();
-            this.disposeKeyEvents();
+            // Don't collapse on the search page
+            if (!this.context.get('search')) {
+                this.collapse();
+            }
+            this.searchButtonIcon = true;
+            this.toggleSearchIcon();
         }, this);
 
+        // Listener for app:view:change to expand or collapse the search bar
+        app.events.on('app:view:change', function() {
+            if (this.context.get('search')) {
+                _.defer(_.bind(this.expand, this, true));
+            } else {
+                _.bind(this.collapse, this);
+            }
+        }, this);
     },
 
     /**
@@ -152,18 +169,19 @@
      * Function to attach the keydown and keyup events.
      */
     attachKeyEvents: function() {
+        var searchBarEl = this.$('input[data-action=search_bar]');
         // for arrow key navigation
-        this.$('input.search-query').on('keydown', _.bind(this.keydownHandler, this));
+        searchBarEl.on('keydown', _.bind(this.keydownHandler, this));
 
         // for searchbar typeahead
-        this.$('input.search-query').on('keyup', _.bind(this.keyupHandler, this));
+        searchBarEl.on('keyup', _.bind(this.keyupHandler, this));
     },
 
     /**
      * Function to dispose the keydown and keyup events.
      */
     disposeKeyEvents: function() {
-        this.$('input.search-query').off('keydown keyup');
+        this.$('input[data-action=search_bar]').off('keydown keyup');
     },
 
     /**
@@ -215,6 +233,160 @@
         });
         this.render();
     },
+
+    /**
+     * Expands the search input box.
+     *
+     * @param {boolean} update `true` means the expansion is to update the width.
+     *                  `false` means the expansion is new and needs animation.
+     */
+    expand: function(update) {
+        // if the search bar is already expanded and it is not an update,
+        // do nothing.
+        if (this.expanded && !update) {
+            return;
+        }
+
+        // Calculate the target searchbox width
+        var newWidth = this._calculateExpansion();
+
+        // if the newWidth is not defined, then the menu hasn't completely
+        // loaded, and we should do nothing.
+        if (_.isUndefined(newWidth)) {
+            return;
+        }
+
+        // For new expansions, we need to clear out the modules.
+        var headerLayout = this.layout.closestComponent('header');
+        headerLayout.trigger('view:resize', headerLayout.getModuleListMinWidth());
+
+        // Now that there is space for the search bar to expand, animate the
+        // expansion.
+        var $inputEl = this.$('input[data-action=search_bar]');
+        if (update) {
+            $inputEl.width(newWidth);
+            $inputEl.val(this._searchTerm);
+            this.expanded = true;
+        } else {
+            $inputEl.animate({width: newWidth},
+                {
+                    duration: 100,
+                    complete: _.bind(function() {
+                        this.expanded = true;
+                    }, this)
+                }
+            );
+        }
+
+        // On route, call the router handler.
+        app.router
+            .off('route', this.routerHandler)
+            .on('route', this.routerHandler, this);
+
+        // Turn off the default header resize listener
+        this.layout.closestComponent('header').setModuleListResize(false);
+
+        // On window resize, if expanded, recalculate expansion
+        $(window)
+            .off('resize.quicksearch')
+            .on('resize.quicksearch', _.debounce(_.bind(this.resizeHandler, this), 10));
+    },
+
+    /**
+     * Resizes the expanded search bar when the window is resized.
+     * @private
+     */
+    resizeHandler: function() {
+        if (this.expanded) {
+            _.defer(_.bind(this.expand, this, true));
+        }
+    },
+
+    /**
+     * Handles the route event on the router.
+     *
+     * This simple function allows us to reuse a function pointer to the router
+     * handler. The router does not allow namespaced events such as
+     * `route.quicksearch`. So, this function pointer is necessary to
+     * properly dispose the event handler.
+     */
+    routerHandler: function() {
+        this.layout.trigger('quicksearch:close');
+        this.$('input[data-action=search_bar]').blur();
+        this.toggleSearchIcon();
+    },
+
+    /**
+     * Calculates the target width for the search bar expansion based off the current state of the megamenu.
+     *
+     * @return {number} The target width for expansion.
+     * @private
+     */
+    _calculateExpansion: function() {
+        var headerLayout = this.layout.closestComponent('header');
+
+        // The starting width of the input box
+        var searchbarStartingWidth = this.$('input[data-action=search_bar]').outerWidth();
+
+        // The total width of the module list header
+        var totalModuleWidth = headerLayout.getModuleListWidth();
+
+        // The minimum width necessary for module list header
+        var minimumModuleWidth = headerLayout.getModuleListMinWidth();
+
+        // The target width is most of the module list, saving room for the
+        // minimum module list width.
+        return searchbarStartingWidth +
+               totalModuleWidth -
+               minimumModuleWidth;
+    },
+
+    /**
+     * Collapses the search input box.
+     */
+    collapse: function() {
+        // if on the search page
+        if (this.context.get('search')) {
+            return;
+        }
+
+        this.expanded = false;
+
+        // Turn off the quicksearch resize listener
+        $(window).off('resize.quicksearch');
+
+        // Turn on the default header resize listener
+        this.layout.closestComponent('header').setModuleListResize(true);
+
+        // jQuery `width` function with no arguments (or null arguments) only
+        // returns the current width. Calling `width('')` with the empty string
+        // sets the width to an empty value, which the browser ignores and
+        // uses the css width.
+        this.$('input[data-action=search_bar]').width('');
+        var headerLayout = this.layout.closestComponent('header');
+        headerLayout.resize();
+    },
+
+    /**
+     * Toggles the search icon between the magnifying glass and x.
+     */
+    toggleSearchIcon: function() {
+        var iconEl = this.$('[data-action="search_icon"] .fa').first();
+        // In the search context, the icon needs special handling.
+        // he icon is an 'x' if there is text in the input.
+        // Otherwise, show a magnifying glass.
+        if (this.context.get('search')) {
+            this.searchButtonIcon = !this.$('input[data-action=search_bar]').val();
+        }
+        if (this.searchButtonIcon) {
+            iconEl.removeClass('fa-times');
+            iconEl.addClass('fa-search');
+        } else {
+            iconEl.removeClass('fa-search');
+            iconEl.addClass('fa-times');
+        }
+    },
+
     /**
      * Helper that can be called from here in base, or, from derived quicksearch views. Called internally,
      * so please ensure that you have passed in any required options or results may be undefined
@@ -295,22 +467,58 @@
             case 9: // tab
                 break;
             case 13: // enter
-                // navigate to the search results page
-                var term = this.$('input').val();
-                var route = '';
-                if (this.layout.v2) {
-                    route = app.router.buildRoute('search', term);
-                } else {
-                    var moduleString = this._getSearchModuleNames().join(',');
-                    route = 'bwc/index.php?module=Home&append_wildcard=true&action=spot&full=true' +
-                    '&q=' + term +
-                    '&m=' + moduleString;
-                }
-                app.router.navigate(route, {trigger: true});
+                this.goToSearchPage();
                 break;
             default:
                 this._validateAndSearch();
         }
+    },
+
+    /**
+     * Handler for clicks on the search icon (or x, depending on state).
+     *
+     * If the search bar is expanded, collapse. If the search bar is collapsed,
+     * expand.
+     */
+    searchIconClickHandler: function() {
+        if (this.expanded) {
+            this.clearSearch();
+            this.layout.trigger('quicksearch:close');
+        } else {
+            this.goToSearchPage();
+        }
+    },
+
+    /**
+     * Goes to the search page and displays results.
+     */
+    goToSearchPage: function() {
+        // navigate to the search results page
+        var term = this.$('input[data-action=search_bar]').val();
+        var route = '';
+        var moduleString = this._getSearchModuleNames().join(',');
+        this._searchTerm === this._currentQueryTerm;
+        this._currentQueryTerm = term;
+        if (this.layout.v2) {
+            route = app.router.buildRoute('search', term + '&m=' + moduleString);
+        } else {
+            route = 'bwc/index.php?module=Home&append_wildcard=true&action=spot&full=true' +
+                '&q=' + term +
+                '&m=' + moduleString;
+        }
+        this.collection.abortFetchRequest();
+        app.router.navigate(route, {trigger: true});
+    },
+    /**
+     * Handler for clicks on the search bar.
+     *
+     * Expands the bar and toggles the search icon.
+     */
+    searchBarClickHandler: function() {
+        this.requestFocus();
+        _.defer(_.bind(this.expand, this));
+        this.searchButtonIcon = false;
+        this.toggleSearchIcon();
     },
 
     /**
@@ -362,21 +570,28 @@
      * @private
      */
     _validateAndSearch: function() {
-        var term = this.$('input').val();
+        var term = this.$('input[data-action=search_bar]').val();
         this._searchTerm = term;
 
-        // if the term is too short, close the search
+        // if the term is too short, don't search
         if (term.length < this.minChars) {
-            this.layout.trigger('quicksearch:dropdown:close');
             this._currentQueryTerm = '';
             this._oldSearchTerm = '';
-            return;
+            // We trigger `quicksearch:results:close` instead of
+            // `quicksearch:close` because we only want to close the dropdown
+            // and keep the bar expanded. That means we only want the listener
+            // in `quicksearch-results.js` to be called, not the other ones.
+            this.layout.trigger('quicksearch:results:close');
+            this.toggleSearchIcon();
         }
 
         // shortcuts might trigger multiple `keydown` events, to do some actions like blurring the input, but since the
         // input value didn't change we don't want to trigger a new search.
         var hasInputChanged = (this._searchTerm !== this._oldSearchTerm);
         if (hasInputChanged) {
+            this.expand();
+            this.searchButtonIcon = false;
+            this.toggleSearchIcon();
             this._oldSearchTerm = term;
             this._debounceSearch();
         }
@@ -393,6 +608,13 @@
         this.$('.navbar-search').submit(function() {
             return false;
         });
+
+        this._searchTerm = this.context.get('searchTerm');
+        // if on search page, expand
+        if (this.context.get('search')) {
+            this.expand(true);
+            this.toggleSearchIcon();
+        }
     },
 
     /**
@@ -438,25 +660,16 @@
     },
 
     /**
-     * Show results when the search button is clicked.
-     */
-    showResults: function(evt) {
-        this._validateAndSearch();
-    },
-
-    /**
      * Clears out search upon user following search result link in menu
      */
     clearSearch: function() {
         this.$('.search-query').val('');
+        this._searchTerm = '';
+        this._oldSearchTerm = '';
+        this._currentQueryTerm = '';
+        this.disposeKeyEvents();
     },
 
-    /**
-     * This will prevent the dropup menu from closing when clicking anywhere on it
-     */
-    persistMenu: function(e) {
-        e.stopPropagation();
-    },
     /**
      * @inheritDoc
      */

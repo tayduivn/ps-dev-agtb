@@ -70,6 +70,18 @@
         this._super('initialize', [options]);
 
         if (this.layout) {
+            this.toggleResize(true);
+        }
+    },
+
+    /**
+     * Toggles the resize listener on or off.
+     * Pass `true` to turn the listener on, or `false` to turn the listener off.
+     * @param {boolean} resize
+     */
+    toggleResize: function(resize) {
+        this.layout.off('view:resize');
+        if (resize) {
             this.layout.on('view:resize', this.resize, this);
         }
     },
@@ -231,6 +243,33 @@
             this.addModulesToList($moduleList, width);
         }
         this._$moreModulesDD.toggleClass('hidden', $dropdown.children('li').not('.hidden').length === 0);
+    },
+
+    /**
+     * Computes the minimum width required for the module list.
+     * This includes: the cube, the current module, and the more modules drop down.
+     * @return {number}
+     */
+    computeMinWidth: function() {
+        var minWidth = 0;
+        var $moduleChildren = this.$('[data-container=module-list]').children();
+
+        // The cube
+        var $first = $moduleChildren.first();
+        minWidth += $first.outerWidth() + 1;
+
+        // The current active module
+        var firstModule = $moduleChildren.filter('.active').not($first);
+        if (firstModule.length) {
+            minWidth += firstModule.outerWidth() + 1;
+        } else {
+            // or the first module
+            minWidth += $moduleChildren.eq(2).outerWidth() + 1;
+        }
+
+        // More Modules dropdown
+        minWidth += $moduleChildren.last().outerWidth() + 1;
+        return minWidth;
     },
 
     /**

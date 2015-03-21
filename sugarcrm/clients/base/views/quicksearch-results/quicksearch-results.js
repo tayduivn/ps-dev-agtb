@@ -43,17 +43,7 @@
          */
         this.activeIndex = null;
 
-        // If the layout has `quicksearch:results:open` called on it, display the search results
-        this.layout.on('quicksearch:results:open', function() {
-            this.open();
-        }, this);
-
-        // If the layout has `quicksearch:dropdown:close` called on it, that means the
-        // whole thing is hidden
-        this.layout.on('quicksearch:dropdown:close', function() {
-            this.activeIndex = null;
-            this.$('.active').removeClass('active');
-            this.disposeKeydownEvent();
+        this.layout.on('quicksearch:close quicksearch:results:close', function() {
             this.close();
         }, this);
 
@@ -137,7 +127,7 @@
             );
             this.activeIndex = null;
             this.render();
-            this.layout.trigger('quicksearch:results:open');
+            this.open();
         }, this);
     },
 
@@ -152,7 +142,18 @@
      * Hide the quickresults dropdown
      */
     close: function() {
+        this.clearActive();
+        this.collection.reset();
         this.$('.typeahead').hide();
+    },
+
+    /**
+     * Clear the active element and dispose key events
+     */
+    clearActive: function() {
+        this.activeIndex = null;
+        this.$('.active').removeClass('active');
+        this.disposeKeydownEvent();
     },
 
     /**
@@ -228,9 +229,7 @@
             event = 'navigate:previous:component';
         }
         if (this.layout.triggerBefore(event)) {
-            this.activeIndex = null;
-            this.disposeKeydownEvent();
-            this.$('.active').removeClass('active');
+            this.clearActive();
             this.layout.trigger(event);
         }
     },

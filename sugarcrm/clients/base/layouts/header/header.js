@@ -20,16 +20,16 @@
      */
     initialize: function(options) {
         app.view.Layout.prototype.initialize.call(this, options);
-        this.on("header:update:route", this.resize, this);
-        app.events.on("app:view:change", this.resize, this);
+        this.on('header:update:route', this.resize, this);
+        app.events.on('app:view:change', this.resize, this);
         // Event listeners for showing and hiding the megamenu on auth expiration
-        app.events.on("router:reauth:load", this.hideMenu, this);
-        app.events.on("router:reauth:success", this.showMenu, this);
+        app.events.on('router:reauth:load', this.hideMenu, this);
+        app.events.on('router:reauth:success', this.showMenu, this);
 
         var resize = _.bind(this.resize, this);
         $(window)
-            .off("resize", resize)
-            .on("resize", resize);
+            .off('resize.header')
+            .on('resize.header', resize);
     },
 
     /**
@@ -46,6 +46,15 @@
      * that tells the module list to resize
      */
     resize: function() {
+        var resizeWidth = this.getModuleListWidth();
+        this.trigger('view:resize', resizeWidth);
+    },
+
+    /**
+     * Returns the calculated module list width.
+     * @return {number}
+     */
+    getModuleListWidth: function() {
         var totalWidth = 0,
             modulelist, maxMenuWidth, componentElement,
             container = this.$('.navbar-inner');
@@ -63,8 +72,26 @@
         });
 
         maxMenuWidth = container.parent('.navbar-fixed-top').width();
+        return maxMenuWidth - totalWidth;
+    },
 
-        this.trigger('view:resize', maxMenuWidth - totalWidth);
+    /**
+     * Returns the minimum module list width.
+     * @return {number}
+     */
+    getModuleListMinWidth: function() {
+        var moduleListView = this.getComponent('module-list');
+        if (moduleListView) {
+            return moduleListView.computeMinWidth();
+        }
+    },
+
+    /**
+     * Sets whether or not the module-list should listen to the window resize.
+     * @param {boolean} resize
+     */
+    setModuleListResize: function(resize) {
+        this.getComponent('module-list').toggleResize(resize);
     },
 
     /**
