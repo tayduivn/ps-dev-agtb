@@ -1,0 +1,237 @@
+<?php
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+
+namespace Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler;
+
+use Sugarcrm\Sugarcrm\Elasticsearch\Analysis\AnalysisBuilder;
+use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
+use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\ObjectProperty;
+use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\MultiFieldBaseProperty;
+use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\MultiFieldProperty;
+use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Document;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\SearchFields;
+
+/**
+ *
+ * Email Address Handler
+ *
+ */
+class EmailAddressHandler extends AbstractHandler implements
+    AnalysisHandlerInterface,
+    MappingHandlerInterface,
+    SearchFieldsHandlerInterface,
+    ProcessDocumentHandlerInterface
+{
+    /**
+     * Multi field definitions
+     * @var array
+     */
+    protected $multiFieldDefs = array(
+        'gs_email_default' => array(
+            'type' => 'string',
+            'index' => 'analyzed',
+            'index_analyzer' => 'gs_analyzer_email_default',
+            'search_analyzer' => 'gs_analyzer_email_default',
+        ),
+        'gs_email_ngram' => array(
+            'type' => 'string',
+            'index' => 'analyzed',
+            'index_analyzer' => 'gs_analyzer_email_ngram',
+            'search_analyzer' => 'gs_analyzer_email_default',
+        ),
+    );
+
+    /**
+     * Weighted boost definition
+     * @var array
+     */
+    protected $weightedBoost = array(
+        'gs_email_ngram_primary' => 0.35,
+        'gs_email_default_secondary' => 0.75,
+        'gs_email_ngram_secondary' => 0.25,
+    );
+
+    /**
+     * Highlighter field definitions
+     * @var array
+     */
+    protected $highlighterFields = array(
+        '*.gs_email_default' => array(
+            'number_of_frags' => 0,
+        ),
+        '*.gs_email_ngram' => array(
+            'number_of_frags' => 0,
+        ),
+    );
+
+    /**
+     * Field name to use for email search
+     * @var string
+     */
+    protected $searchField = 'email_search';
+
+    /**
+     * {@inheritdoc}
+     */
+    public function initialize()
+    {
+        $this->provider->addSupportedTypes(array('email'));
+        $this->provider->addHighlighterFields($this->highlighterFields);
+        $this->provider->addWeightedBoosts($this->weightedBoost);
+
+        // As we are searching against email_search field, we want to remap the
+        // highlights from that field back to the original email field.
+        $this->provider->addFieldRemap(array($this->searchField => 'email'));
+
+        // We don't want to add the email field to the queuemanager query
+        // because we will populate the emails seperately.
+        $this->provider->addSkipTypesFromQueue(array('email'));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildAnalysis(AnalysisBuilder $analysisBuilder)
+    {
+        $analysisBuilder
+            ->addCustomAnalyzer(
+                'gs_analyzer_email_default',
+                'uax_url_email',
+                array('lowercase')
+            )
+            ->addCustomAnalyzer(
+                'gs_analyzer_email_ngram',
+                'whitespace', // not using standard here to avoid splitting on punctuation
+                array('lowercase', 'gs_filter_ngram')
+            )
+        ;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildMapping(Mapping $mapping, $field, array $defs)
+    {
+        // We only handle 'email' fields of 'email' type
+        if ($defs['name'] !== 'email' || $defs['type'] !== 'email') {
+            return;
+        }
+
+        // Use original field to store the raw json content
+        $baseObject = new ObjectProperty();
+        $baseObject->setEnabled(false);
+        $mapping->addObjectProperty($field, $baseObject);
+
+        // Prepare multifield
+        $email = new MultiFieldBaseProperty();
+        foreach ($this->multiFieldDefs as $multiField => $defs) {
+            $multiFieldProp = new MultiFieldProperty();
+            $multiFieldProp->setMapping($defs);
+            $email->addField($multiField, $multiFieldProp);
+        }
+
+        // Additional field holding both primary/secondary addresses
+        $searchField = new ObjectProperty();
+        $searchField->addProperty('primary', $email);
+        $searchField->addProperty('secondary', $email);
+
+        $mapping->addObjectProperty('email_search', $searchField);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildSearchFields(SearchFields $sf, $module, $field, array $defs)
+    {
+        // We only handle 'email' fields of 'email' type
+        if ($defs['name'] !== 'email' || $defs['type'] !== 'email') {
+            return;
+        }
+
+        $emailFields = array('primary', 'secondary');
+        $multiFields = array('gs_email_default', 'gs_email_ngram');
+
+        foreach ($emailFields as $emailField) {
+            foreach ($multiFields as $multiField) {
+                $path = array($this->searchField, $emailField, $multiField);
+                $weightId = $multiField . '_' . $emailField;
+                $sf->addSearchField($module, $path, $defs, $weightId);
+            }
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function processDocumentPreIndex(Document $document, \SugarBean $bean)
+    {
+        // skip if there is no email field
+        if (!isset($bean->field_defs['email'])) {
+            return;
+        }
+
+        // Load raw email addresses in email field to store in ES
+        $emails = $this->getEmailAddressesForBean($bean);
+        $document->setDataField('email', $emails);
+
+        // Format data for email search fields
+        $value = array(
+            'primary' => '',
+            'secondary' => array(),
+        );
+
+        foreach ($emails as $emailAddress) {
+            if (!empty($emailAddress['primary_address'])) {
+                $value['primary'] = $emailAddress['email_address'];
+            } else {
+                $value['secondary'][] = $emailAddress['email_address'];
+            }
+        }
+
+        // Set formatted value in special email search field
+        $document->setDataField($this->searchField, $value);
+    }
+
+    /**
+     * Get list of email address for given bean
+     * @param \SugarBean $bean
+     * @return array
+     */
+    protected function getEmailAddressesForBean(\SugarBean $bean)
+    {
+        /*
+         * Beans extending Person or Company template should have this
+         * set automatically. Beans using email addresses without extending
+         * from those templates are not supported.
+         */
+        if (!isset($bean->emailAddress) || !$bean->emailAddress instanceof \SugarEmailAddress) {
+            return array();
+        }
+
+        // Fetch email addresses from database if needed
+        if (empty($bean->emailAddress->dontLegacySave) && empty($bean->emailAddress->hasFetched)) {
+            return $this->fetchEmailAddressesFromDatabase($bean);
+        }
+
+        return $bean->emailAddress->addresses;
+    }
+
+    /**
+     * Fetch email addresses from database
+     * @param \SugarBean $bean
+     * @return array
+     */
+    protected function fetchEmailAddressesFromDatabase(\SugarBean $bean)
+    {
+        return \BeanFactory::getBean('EmailAddresses')->getAddressesByGUID($bean->id, $bean->module_name);
+    }
+}
