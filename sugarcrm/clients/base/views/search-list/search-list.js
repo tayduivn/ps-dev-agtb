@@ -147,6 +147,12 @@
             }
             fieldList[field.name][category] = true;
             fieldList[field.name].ellipsis = false;
+            if (category === 'secondary') {
+                fieldList[field.name].link = false;
+                if (field.type === 'email') {
+                    fieldList[field.name].emailLink = false;
+                }
+            }
         });
 
         return fieldList;

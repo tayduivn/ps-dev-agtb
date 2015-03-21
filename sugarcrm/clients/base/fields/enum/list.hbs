@@ -10,21 +10,29 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-{{#if this.def.isMultiSelect}}
+{{~#if this.def.isMultiSelect~}}
     {{#if value}}
-        <div class="ellipsis_inline" data-placement="bottom"
-             title="{{#each value}}{{#eachOptions ../items}}{{#eq key ../this}}{{#notEq @index 0}}, {{/notEq}}{{value}}{{/eq}}{{/eachOptions}}{{/each}}">
-            {{#each value}}{{#eachOptions ../items}}{{#eq key ../this}}{{#notEq @index 0}}, {{/notEq}}{{value}}{{/eq}}{{/eachOptions}}{{/each}}
-        </div>
+        {{#if ellipsis}}
+            <div class="ellipsis_inline" data-placement="bottom"
+                 title="{{#each value}}{{#eachOptions ../items}}{{#eq key ../this}}{{#notEq @index 0}}, {{/notEq}}{{value}}{{/eq}}{{/eachOptions}}{{/each}}">
+        {{/if}}
+        {{#each value}}{{#eachOptions ../items}}{{#eq key ../this}}{{#notEq @index 0}}, {{/notEq}}{{value}}{{/eq}}{{/eachOptions}}{{/each}}
+        {{#if ellipsis}}
+            </div>
+        {{/if}}
     {{/if}}
-{{else}}
-    {{#if value}}
-        {{#eachOptions items}}
-            {{#eq this.key ../value}}
-                <div class="ellipsis_inline" data-placement="bottom" title="{{value}}">
-                    {{value}}
-                </div>
-            {{/eq}}
-        {{/eachOptions}}
-    {{/if}}
-{{/if}}
+{{else~}}
+    {{#if value~}}
+        {{#eachOptions items~}}
+            {{#eq this.key ../value~}}
+                {{#if ../../ellipsis~}}
+                    <div class="ellipsis_inline" data-placement="bottom" title="{{value}}">
+                {{/if~}}
+                {{value~}}
+                {{#if ../ellipsis~}}
+                    </div>
+                {{/if~}}
+            {{/eq~}}
+        {{/eachOptions~}}
+    {{/if~}}
+{{/if~}}

@@ -53,6 +53,7 @@ describe('View.Views.Base.SearchListView', function() {
                         secondary: true,
                         ellipsis: false,
                         highlighted: true,
+                        link: false,
                         value: 'This is the description.'
                     }
                 ]
@@ -80,6 +81,7 @@ describe('View.Views.Base.SearchListView', function() {
                         name: 'description',
                         secondary: true,
                         ellipsis: false,
+                        link: false,
                         value: 'This is the description.'
                     }
                 ]
@@ -97,7 +99,8 @@ describe('View.Views.Base.SearchListView', function() {
                     {
                         name: 'description',
                         secondary: true,
-                        ellipsis: false
+                        ellipsis: false,
+                        link: false
                     }
                 ]
             }
