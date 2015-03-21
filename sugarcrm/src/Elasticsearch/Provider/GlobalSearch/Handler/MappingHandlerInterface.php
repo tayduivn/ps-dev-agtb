@@ -10,33 +10,22 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\Sugarcrm\Elasticsearch\Adapter;
+namespace Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler;
 
-use Elastica\Document as BaseDocument;
+use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
 
 /**
  *
- * Adapter class for \Elastica\Document
+ * Mapping builder capable interface
  *
  */
-class Document extends BaseDocument
+interface MappingHandlerInterface extends HandlerInterface
 {
     /**
-     * Check whether the document has data
-     * @return boolean
-     */
-    public function hasData()
-    {
-        return (!empty($this->_data));
-    }
-
-    /**
-     * Set data field value
+     * Build mapping
+     * @param Mapping $mapping
      * @param string $field Field name
-     * @param mixed $value
+     * @param array $defs Field definitions
      */
-    public function setDataField($field, $value)
-    {
-        $this->_data[$field] = $value;
-    }
+    public function buildMapping(Mapping $mapping, $field, array $defs);
 }

@@ -10,33 +10,24 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\Sugarcrm\Elasticsearch\Adapter;
+namespace Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler;
 
-use Elastica\Document as BaseDocument;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\SearchFields;
 
 /**
  *
- * Adapter class for \Elastica\Document
+ * Search Fields Handler interface
  *
  */
-class Document extends BaseDocument
+interface SearchFieldsHandlerInterface extends HandlerInterface
 {
     /**
-     * Check whether the document has data
-     * @return boolean
-     */
-    public function hasData()
-    {
-        return (!empty($this->_data));
-    }
-
-    /**
-     * Set data field value
+     * Build search fields
+     * @param SearchFields $sf
+     * @param string $module Module name
      * @param string $field Field name
-     * @param mixed $value
+     * @param array $defs Field definitions
+     * @return array
      */
-    public function setDataField($field, $value)
-    {
-        $this->_data[$field] = $value;
-    }
+    public function buildSearchFields(SearchFields $sf, $module, $field, array $defs);
 }

@@ -10,33 +10,34 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\Sugarcrm\Elasticsearch\Adapter;
+namespace Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler;
 
-use Elastica\Document as BaseDocument;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\GlobalSearch;
 
 /**
  *
- * Adapter class for \Elastica\Document
+ * Abstract Handler
  *
  */
-class Document extends BaseDocument
+abstract class AbstractHandler implements HandlerInterface
 {
     /**
-     * Check whether the document has data
-     * @return boolean
+     * @var GlobalSearch
      */
-    public function hasData()
+    protected $provider;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setProvider(GlobalSearch $provider)
     {
-        return (!empty($this->_data));
+        $this->provider = $provider;
     }
 
     /**
-     * Set data field value
-     * @param string $field Field name
-     * @param mixed $value
+     * {@inheritdoc}
      */
-    public function setDataField($field, $value)
+    public function initialize()
     {
-        $this->_data[$field] = $value;
     }
 }
