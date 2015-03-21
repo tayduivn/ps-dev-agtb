@@ -12,14 +12,14 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Provider\GlobalSearch;
 
-use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\BoostHandler;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Booster;
 
 /**
  *
- * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\BoostHandler
+ * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Booster
  *
  */
-class BoostHandlerTest extends \PHPUnit_Framework_TestCase
+class BoosterTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @covers ::setWeighted
@@ -37,9 +37,8 @@ class BoostHandlerTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetBoostedField(array $weighted, $field, array $defs, $type, $expected)
     {
-        $bh = new BoostHandler();
+        $bh = new Booster();
         $bh->setWeighted($weighted);
-
         $this->assertEquals($expected, $bh->getBoostedField($field, $defs, $type));
     }
 

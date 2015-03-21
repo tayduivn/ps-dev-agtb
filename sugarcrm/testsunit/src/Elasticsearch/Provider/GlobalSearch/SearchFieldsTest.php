@@ -12,7 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Provider\GlobalSearch;
 
-use Sugarcrm\SugarcrmTestsUnit\TestReflection;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Booster;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\SearchFields;
 
 /**
@@ -26,14 +26,13 @@ class SearchFieldsTest extends \PHPUnit_Framework_TestCase
      * @covers ::isFieldSearchable
      * @dataProvider dataProviderIsFieldSearchable
      *
-     * @param array $params
+     * @param array $defs
      * @param boolean $isSearchable
      */
-    public function testIsFieldSearchable(array $params, $isSearchable)
+    public function testIsFieldSearchable(array $defs, $isSearchable)
     {
         $sf = $this->getSearchFieldsMock();
-        $result = TestReflection::callProtectedMethod($sf, 'isFieldSearchable', array($params));
-        $this->assertSame($isSearchable, $result);
+        $this->assertSame($isSearchable, $sf->isFieldSearchable($defs));
     }
 
     public function dataProviderIsFieldSearchable()
@@ -78,167 +77,56 @@ class SearchFieldsTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers ::addSearchField
      * @covers ::getSearchFields
-     * @covers ::getModuleSearchFields
-     * @covers ::getMultiFieldSearchFields
-     * @dataProvider dataProviderGetSearchFields
-     *
-     * @param array $modules
-     * @param array $vardef
-     * @param array $mappingDefs
-     * @param integer $boost
-     * @param array $expected
+     * @covers ::__construct
+     * @dataProvider providerTestAddSearchField
      */
-    public function testGetSearchFields(array $modules, array $vardef, array $mappingDefs, $boost, array $expected)
+    public function testAddSearchField($module, array $path, array $defs, $weightId, $expected, Booster $booster = null)
     {
-        $sf = $this->getSearchFieldsMock(
-            array(
-                'getFtsFields',
-                'getMappingDefsForSugarType',
-                'getBoostedField',
-                'isStringBased',
-            )
-        );
-
-        $sf->expects($this->any())
-            ->method('getFtsFields')
-            ->will($this->returnValue($vardef));
-
-        $sf->expects($this->any())
-            ->method('getMappingDefsForSugarType')
-            ->will($this->returnValue($mappingDefs));
-
-        $sf->expects($this->exactly($boost))
-            ->method('getBoostedField')
-            ->will($this->returnCallback(array($this, 'getBoostedField')));
-
-        $sf->expects($this->any())
-            ->method('isStringBased')
-            ->will($this->returnValue(true));
-
-        $sf->setBoost((bool) $boost);
-
-        $fields = TestReflection::callProtectedMethod($sf, 'getSearchFields', array($modules));
-        $this->assertEquals($expected, $fields);
+        $sut = new SearchFields($booster);
+        $sut->addSearchField($module, $path, $defs, $weightId);
+        $this->assertEquals(array($expected), $sut->getSearchFields());
     }
 
-    public function dataProviderGetSearchFields()
+    public function providerTestAddSearchField()
     {
         return array(
+            // one level
             array(
-                array('Tasks', 'Accounts'),
-                array(
-                    'name' => array(
-                        'name' => 'name',
-                        'type' => 'name',
-                        'full_text_search' => array('enabled' => true, 'searchable' => true),
-                    ),
-                    'description' => array(
-                        'name' => 'description',
-                        'type' => 'text',
-                        'full_text_search' => array('enabled' => true, 'boost' => 3, 'searchable' => true),
-                    ),
-                    'date_modified' => array(
-                        'name' => 'date_modified',
-                        'type' => 'datetime',
-                        'full_text_search' => array('enabled' => true, 'searchable' => false),
-                    ),
-                    'date_entered' => array(
-                        'name' => 'date_entered',
-                        'type' => 'datetime',
-                        'full_text_search' => array('enabled' => true),
-                    ),
-                ),
-                array(
-                    'gs_string',
-                    'gs_strong',
-                ),
-                8,
-                array(
-                    'Tasks.name.gs_string^69',
-                    'Tasks.name.gs_strong^69',
-                    'Tasks.description.gs_string^69',
-                    'Tasks.description.gs_strong^69',
-                    'Accounts.name.gs_string^69',
-                    'Accounts.name.gs_strong^69',
-                    'Accounts.description.gs_string^69',
-                    'Accounts.description.gs_strong^69',
-                ),
+                'Contacts',
+                array('first_name'),
+                array(),
+                'test_ngram',
+                'Contacts.first_name',
+                null,
             ),
+            // two levels
             array(
-                array('Contacts'),
-                array(
-                    'first_name' => array(
-                        'name' => 'first_name',
-                        'type' => 'name',
-                        'full_text_search' => array('enabled' => true, 'searchable' => true),
-                    ),
-                ),
-                array('gs_default'),
-                0,
-                array(
-                    'Contacts.first_name.gs_default',
-                ),
+                'Contacts',
+                array('first_name', 'test_ngram'),
+                array(),
+                'test_ngram',
+                'Contacts.first_name.test_ngram',
+                null,
             ),
-        );
-    }
-
-    /**
-     * Used as callback for testGetSearchFields
-     * @return string
-     */
-    public function getBoostedField()
-    {
-        $args = func_get_args();
-        return $args[0] . '^69';
-    }
-
-    /**
-     * @covers \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\SearchFields::isStringBased
-     * @dataProvider dataProviderIsStringBased
-     */
-    public function testIsStringBased($mappingName, $mappingDef, $output)
-    {
-        $sf = $this->getSearchFieldsMock(
+            // three levels
             array(
-                'getMappingDefForMappingName'
-            )
-        );
-
-        $sf->expects($this->any())
-            ->method('getMappingDefForMappingName')
-            ->will($this->returnValue($mappingDef));
-
-        $result = $sf->isStringBased($mappingName);
-        $this->assertSame($output, $result);
-    }
-
-    public function dataProviderIsStringBased()
-    {
-        return array(
-            array(
-                'gs_string_default',
-                array(
-                    'type' => 'string',
-                    'index' => 'analyzed',
-                ),
-                true,
+                'Contacts',
+                array('email_search', 'primary', 'test_default'),
+                array(),
+                'test_ngram',
+                'Contacts.email_search.primary.test_default',
+                null,
             ),
+            // three levels with boost
             array(
-                'gs_string_ngram',
-                array(
-                    'type' => 'string',
-                    'index' => 'analyzed',
-                ),
-                true,
-            ),
-            array(
-                'gs_int_default',
-                array(
-                    'type' => 'integer',
-                    'index' => 'analyzed',
-                ),
-                false,
+                'Contacts',
+                array('email_search', 'primary', 'test_default'),
+                array(),
+                'test_ngram',
+                'Contacts.email_search.primary.test_default^1',
+                $this->getBoosterMock('Contacts.email_search.primary.test_default'),
             ),
         );
     }
@@ -254,5 +142,24 @@ class SearchFieldsTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->setMethods($methods)
             ->getMock();
+    }
+
+    /**
+     * Get Booster mock
+     * @return \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Booster
+     */
+    protected function getBoosterMock($expected)
+    {
+        $booster = $this->getMockBuilder('Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Booster')
+            ->disableOriginalConstructor()
+            ->setMethods(array())
+            ->getMock();
+
+        $booster->expects($this->once())
+            ->method('getBoostedField')
+            ->with($this->equalTo($expected))
+            ->will($this->returnValue($expected . '^1'));
+
+        return $booster;
     }
 }

@@ -14,130 +14,43 @@ namespace Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch;
 
 /**
  *
- * SearchFields handler
+ * SearchFields builder
  *
  */
 class SearchFields
 {
+    /**
+     * Field separator
+     */
     const FIELD_SEP = '.';
 
     /**
-     * @var GlobalSearch
+     * @var Booster
      */
-    protected $provider;
+    protected $booster;
 
     /**
-     * @var boolean Apply boosts
+     * List of search fields
+     * @var array
      */
-    protected $boost = false;
-
-    /**
-     * @var BoostHandler
-     */
-    protected $boostHandler;
+    protected $searchFields = array();
 
     /**
      * Ctor
-     * @param GlobalSearch $provider
-     * @param BoostHandler $boostHandler
+     * @param Booster $booster
      */
-    public function __construct(GlobalSearch $provider, BoostHandler $boostHandler)
+    public function __construct(Booster $booster = null)
     {
-        $this->provider = $provider;
-        $this->boostHandler = $boostHandler;
+        $this->booster = $booster;
     }
 
     /**
-     * Set boost flag
-     * @param boolean $toggle
-     */
-    public function setBoost($toggle)
-    {
-        $this->boost = (bool) $toggle;
-    }
-
-    /**
-     * Get list of all search fields for given modules
+     * Return search fields
      * @return array
      */
-    public function getSearchFields(array $modules)
+    public function getSearchFields()
     {
-        $list = array();
-        foreach ($modules as $module) {
-            $list = array_merge($list, $this->getModuleSearchFields($module));
-        }
-        return $list;
-    }
-
-    /**
-     * Get search fields for given module
-     * @param string $module
-     * @return array
-     */
-    public function getModuleSearchFields($module)
-    {
-        $list = array();
-        foreach ($this->getFtsFields($module) as $field => $defs) {
-
-            if (!$this->isFieldSearchable($defs)) {
-                continue;
-            }
-
-            $list = array_merge($list, $this->getMultiFieldSearchFields($module, $field, $defs));
-        }
-        return $list;
-    }
-
-    /**
-     * Test if the mapping def is string-based
-     * @param string $mapName : the name of the mapping
-     * @return bool
-     */
-    public function isStringBased($mapName)
-    {
-        //Expected the mapping's definition has the type 'string'
-        //Example:  Both 'gs_string_default' and 'gs_string_ngram' have the type 'string'.
-
-        $def = $this->getMappingDefForMappingName($mapName);
-        if (!empty($def)) {
-            if (isset($def['type']) && $def['type'] === 'string') {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Get search fields for given sugar field
-     * @param string $module
-     * @param string $field
-     * @param array $defs
-     * @return array
-     */
-    public function getMultiFieldSearchFields($module, $field, array $defs)
-    {
-        $list = array();
-
-        // Get list of mapping definitions
-        $mappingDefs = $this->getMappingDefsForSugarType($defs['type']);
-
-        foreach ($mappingDefs as $type) {
-
-            // Only allow string based fields for searching
-            if (!$this->isStringBased($type)) {
-                continue;
-            }
-
-            $searchField = $module . self::FIELD_SEP . $field . self::FIELD_SEP . $type;
-
-            if ($this->boost) {
-                $searchField = $this->getBoostedField($searchField, $defs, $type);
-            }
-
-            $list[] = $searchField;
-        }
-
-        return $list;
+        return $this->searchFields;
     }
 
     /**
@@ -150,8 +63,11 @@ class SearchFields
         $isSearchable = false;
 
         // Decide to include the field in the query or not, given the conditions:
-        // 1. searchable is not null and is set to true;
-        // 2. searchable is null and boost is not null;
+        // 1. searchable is is set to true
+        // 2. searchable is empty and boost is set (*)
+        //
+        // This will be deprecated after 7.7 as this was the old behavior.
+
         if (isset($defs['full_text_search']['searchable'])) {
             if ($defs['full_text_search']['searchable'] == true) {
                 $isSearchable = true;
@@ -165,44 +81,18 @@ class SearchFields
     }
 
     /**
-     * Get FTS fields wrapper
-     * @param string $module
-     * @return array
+     * Add search field to the stack
+     * @param string $module Module name
+     * @param array $path Field path
+     * @param array $defs Field definitions
+     * @param string $weightId Identifier to apply weighted boost
      */
-    protected function getFtsFields($module)
+    public function addSearchField($module, array $path, array $defs, $weightId)
     {
-        return $this->provider->getContainer()->metaDataHelper->getFtsFields($module);
-    }
-
-    /**
-     * Get mapping defs wrapper
-     * @param string $sugarType
-     * @return array
-     */
-    protected function getMappingDefsForSugarType($sugarType)
-    {
-        return $this->provider->getMappingDefsForSugarType($sugarType);
-    }
-
-    /**
-     * Get the mapping def for a given mapping name
-     * @param string $mapName
-     * @return array
-     */
-    protected function getMappingDefForMappingName($mapName)
-    {
-        return $this->provider->getMappingDefForMappingName($mapName);
-    }
-
-    /**
-     * Get boosted field wrapper
-     * @param string $searchField
-     * @param array $defs
-     * @param string $type
-     * @return array
-     */
-    protected function getBoostedField($field, array $defs, $type)
-    {
-        return $this->boostHandler->getBoostedField($field, $defs, $type);
+        $searchField = $module . self::FIELD_SEP . implode(self::FIELD_SEP, $path);
+        if ($this->booster) {
+            $searchField = $this->booster->getBoostedField($searchField, $defs, $weightId);
+        }
+        $this->searchFields[] = $searchField;
     }
 }

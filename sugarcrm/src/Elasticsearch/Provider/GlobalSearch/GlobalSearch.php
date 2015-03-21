@@ -12,129 +12,272 @@
 
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch;
 
-use Sugarcrm\Sugarcrm\Elasticsearch\Analysis\AnalysisBuilder;
-use Sugarcrm\Sugarcrm\Elasticsearch\Query\QueryBuilder;
-use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\AbstractProvider;
+use Sugarcrm\Sugarcrm\Elasticsearch\Container;
+use Sugarcrm\Sugarcrm\Elasticsearch\ContainerAwareInterface;
+use Sugarcrm\Sugarcrm\Elasticsearch\Analysis\AnalysisBuilder;
+use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
+use Sugarcrm\Sugarcrm\Elasticsearch\Query\QueryBuilder;
+use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Document;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\HandlerCollection;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\HandlerIterator;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\MultiFieldHandler;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\AutoIncrementHandler;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\EmailAddressHandler;
 
 /**
  *
- * Elasticsearch GlobalSearch Provider
+ * GlobalSearch Provider
  *
  */
-class GlobalSearch extends AbstractProvider
+class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
 {
+    // Awaiting PHP 5.4+ support
+    //use ContainerAwareTrait;
+
+    ///// Start trait
+
     /**
-     * {@inheritdoc}
+     * @var \Sugarcrm\Sugarcrm\Elasticsearch\Container
      */
-    protected $sugarTypes = array(
-        'varchar' => array(
-            'gs_string_default',
-            'gs_string_ngram'
-        ),
-        'name' => array(
-            'gs_string_default',
-            'gs_string_ngram'
-        ),
-        'text' => array(
-            'gs_string_default',
-            'gs_string_ngram'
-        ),
-        'datetime' => array(
-            'gs_datetime',
-        ),
-        'int' => array(
-            'gs_string_default',
-            'gs_string_ngram',
-            //'gs_int_default',
-        ),
-        'phone' => array(
-            'gs_phone',
-        ),
-    );
+    protected $container;
 
     /**
      * {@inheritdoc}
      */
-    protected $mappingDefs = array(
-
-        /*
-         * Default string analyzer with full word matching base ond
-         * the standard analyzer. This will generate hits on the full
-         * words tokenized by the standard analyzer.
-         */
-        'gs_string_default' => array(
-            'type' => 'string',
-            'index' => 'analyzed',
-            'index_analyzer' => 'gs_analyzer_default',
-            'search_analyzer' => 'gs_analyzer_default',
-            'store' => false,
-        ),
-
-        /*
-         * String analyzer using ngrams for wildcard matching. The
-         * weighting of the hits on this mapping are less than full
-         * matches using the default string mapping.
-         */
-        'gs_string_ngram' => array(
-            'type' => 'string',
-            'index' => 'analyzed',
-            'index_analyzer' => 'gs_analyzer_ngram',
-            'search_analyzer' => 'gs_analyzer_default',
-            'store' => false,
-        ),
-
-        /*
-         * Date field mapping. Date fields are not searchable but are
-         * needed to be returned as part of the dataset and to be able
-         * to perform facets on.
-         */
-        'gs_datetime' => array(
-            'type' => 'date',
-            'format' => 'YYYY-MM-dd HH:mm:ss',
-            'index' => 'no',
-            'store' => false,
-        ),
-
-        /*
-         * Integer mapping
-         */
-        'gs_int_default' => array(
-            'type' => 'integer',
-            'index' => 'no',
-            'store' => false,
-        ),
-
-        /*
-         * Phone mapping. The analyzer supports partial matches using
-         * ngrams and transforms every phone number in pure numbers
-         * only to be able to search for different formats and still
-         * get hits. For example the data source for +32 (475)61.64.28
-         * will be stored and analyzed as 32475616428 including ngrams
-         * based on this result. When phone number fields are included
-         * in the search matching will happen when searching for:
-         *      +32 475 61.64.28
-         *      (32)475-61-64-28
-         *      ...
-         */
-        'gs_phone' => array(
-            'type' => 'string',
-            'index' => 'analyzed',
-            'index_analyzer' => 'gs_analyzer_phone_ngram',
-            'search_analyzer' => 'gs_analyzer_phone_full',
-            'store' => false,
-        ),
-    );
+    public function setContainer(Container $container)
+    {
+        $this->container = $container;
+    }
 
     /**
-     * List of mapping defs which will be weighted during boost time
+     * {@inheritdoc}
+     */
+    public function getContainer()
+    {
+        return $this->container;
+    }
+
+    //// End trait
+
+    /**
+     * @var HandlerCollection
+     */
+    protected $handlers;
+
+    /**
+     * @var Highlighter
+     */
+    protected $highlighter;
+
+    /**
+     * @var Booster
+     */
+    protected $booster;
+
+    /**
+     * List of supported sugar types
      * @var array
      */
-    protected $weightedBoost = array(
-        'gs_string_default' => 1,
-        'gs_string_ngram' => 0.35,
-        'gs_phone' => 1,
-    );
+    protected $supportedTypes = array();
+
+    /**
+     * List of types which should be skipped by getBeanIndexFields
+     * when being called from QueueManager.
+     * @var array
+     */
+    protected $skipTypesFromQueue = array();
+
+    /**
+     * Ctor
+     */
+    public function __construct()
+    {
+        $this->highlighter = new Highlighter();
+        $this->booster = new Booster();
+        $this->registerHandlers();
+    }
+
+    /**
+     * Register handlers
+     */
+    protected function registerHandlers()
+    {
+        $this->handlers = new HandlerCollection($this);
+        $this->handlers->addHandler(new MultiFieldHandler());
+        $this->handlers->addHandler(new AutoIncrementHandler());
+        $this->handlers->addHandler(new EmailAddressHandler());
+    }
+
+    /**
+     * Get handlers filtered by interface. If no interface is given an
+     * iterator of all available handlers is returned.
+     *
+     * @param string $interface Filter iterator by given interface
+     * @return HandlerInterface[]
+     */
+    public function getHandlers($interface = null)
+    {
+        return new HandlerIterator($this->handlers->getIterator(), $interface);
+    }
+
+    /**
+     * Add supported field types
+     * @param array $types
+     */
+    public function addSupportedTypes(array $types)
+    {
+        $this->supportedTypes = array_merge(
+            $this->supportedTypes,
+            array_flip($types)
+        );
+    }
+
+    /**
+     * Check if given field type is supported
+     * @param string $type Field type
+     * @return boolean
+     */
+    public function isSupportedType($type)
+    {
+        return isset($this->supportedTypes[$type]);
+    }
+
+    /**
+     * Add types to be skipped in queue query
+     * @param array $fields
+     */
+    public function addSkipTypesFromQueue(array $fields)
+    {
+        $this->skipTypesFromQueue = array_merge(
+            $this->skipTypesFromQueue,
+            array_flip($fields)
+        );
+    }
+
+    /**
+     * Check if given field type needs to be skipped
+     * @param string $type Field type
+     * @return boolean
+     */
+    public function isSkippedType($type)
+    {
+        return isset($this->skipTypesFromQueue[$type]);
+    }
+
+    /**
+     * Add highlighter field definitions
+     * @param array $fields
+     */
+    public function addHighlighterFields(array $fields)
+    {
+        $this->highlighter->setFields($fields);
+    }
+
+    /**
+     * Add highlighter field remaps
+     * @param array $remap
+     */
+    public function addFieldRemap(array $remap)
+    {
+        $this->highlighter->setFieldRemap($remap);
+    }
+
+    /**
+     * Add weighted definition for booster
+     * @param array $weighted
+     */
+    public function addWeightedBoosts(array $weighted)
+    {
+        $this->booster->setWeighted($weighted);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildAnalysis(AnalysisBuilder $analysisBuilder)
+    {
+        foreach ($this->getHandlers('Analysis') as $analysis) {
+            $analysis->buildAnalysis($analysisBuilder);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildMapping(Mapping $mapping)
+    {
+        foreach ($this->getFtsFields($mapping->getModule()) as $field => $defs) {
+            foreach ($this->getHandlers('Mapping') as $handler) {
+                $handler->buildMapping($mapping, $field, $defs);
+            }
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function processDocumentPreIndex(Document $document, \SugarBean $bean)
+    {
+        foreach ($this->getHandlers('ProcessDocument') as $handler) {
+            $handler->processDocumentPreIndex($document, $bean);
+        }
+    }
+
+    /**
+     * Get search field wrapper
+     * @param array $modules List of modules
+     * @return array
+     */
+    protected function getSearchFields(array $modules)
+    {
+        $sf = new SearchFields($this->fieldBoost ? $this->booster : null);
+
+        foreach ($modules as $module) {
+            foreach ($this->getFtsFields($module) as $field => $defs) {
+
+                // skip fields which are not searchable
+                if (!$sf->isFieldSearchable($defs)) {
+                    continue;
+                }
+
+                foreach ($this->getHandlers('SearchFields') as $handler) {
+                    $handler->buildSearchFields($sf, $module, $field, $defs);
+                }
+            }
+        }
+
+        // TODO: add cache per user ?
+        return $sf->getSearchFields();
+    }
+
+    /**
+     * {inheritdoc}
+     */
+    public function getBeanIndexFields($module, $fromQueue = false)
+    {
+        $indexFields = array();
+
+        foreach ($this->getFtsFields($module) as $field => $defs) {
+
+            $type = $defs['type'];
+
+            // skip unsupported fields
+            if (!$this->isSupportedType($type)) {
+                $this->container->logger->warning("GS: Skipping unsupported type '{$type}' on {$module}.{$field}");
+                continue;
+            }
+
+            // filter fields which need to be skipped when called from queue
+            if ($fromQueue && $this->isSkippedType($type)) {
+                continue;
+            }
+
+            $indexFields[$field] = $type;
+        }
+
+        return $indexFields;
+    }
 
     /**
      * @var boolean Module aggregation
@@ -153,254 +296,6 @@ class GlobalSearch extends AbstractProvider
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function buildProviderMapping(Mapping $mapping)
-    {
-        $module = $mapping->getModule();
-        $indexFields = $this->getBeanIndexFields($module);
-        $this->buildMappingFromSugarType($mapping, $indexFields);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function buildProviderAnalysis(AnalysisBuilder $analysisBuilder)
-    {
-        $analysisBuilder
-
-            // ngram filter
-            ->addFilter(
-                'gs_filter_ngram',
-                'nGram',
-                array('min_gram' => 2, 'max_gram' => 15)
-            )
-
-            // char filter keeping only numeric values
-            ->addCharFilter(
-                'gs_char_num_pattern',
-                'pattern_replace',
-                array('pattern' => '[^\\d]+', 'replacement' => '')
-            )
-
-            ->addCustomAnalyzer(
-                'gs_analyzer_default',
-                'standard',
-                array('lowercase')
-            )
-            ->addCustomAnalyzer(
-                'gs_analyzer_ngram',
-                'standard',
-                array('lowercase', 'gs_filter_ngram')
-            )
-            ->addCustomAnalyzer(
-                'gs_analyzer_phone_ngram',
-                'standard',
-                array('gs_filter_ngram'),
-                array('gs_char_num_pattern')
-            )
-            ->addCustomAnalyzer(
-                'gs_analyzer_phone_full',
-                'standard',
-                array(),
-                array('gs_char_num_pattern')
-            )
-        ;
-    }
-
-    /**
-     * {inheritdoc}
-     */
-    public function getBeanIndexFields($module)
-    {
-        $indexFields = array();
-        foreach ($this->getFtsFields($module) as $field => $defs) {
-
-            // ensure a type has been defined
-            if (empty($defs['type'])) {
-                $this->container->logger->warning("GS: No sugar type defined for {$module}.{$field}");
-                continue;
-            }
-
-            // skip unsupported fields
-            if (!$this->isSupportedSugarType($defs['type'])) {
-                $this->container->logger
-                    ->warning("GS: Skipping unsupported type '{$defs['type']}' on {$module}.{$field}");
-                continue;
-            }
-
-            $indexFields[$field] = $defs['type'];
-        }
-        return $indexFields;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function processBeanPreIndex(\SugarBean $bean)
-    {
-        $this->setAutoIncrementValues($bean);
-    }
-
-    /**
-     * Update a bean's auto-increment fields' values from database,
-     * since they are not available before saving to database.
-     * @param \SugarBean $bean
-     */
-    public function setAutoIncrementValues(\SugarBean $bean)
-    {
-        //retrieve the auto-incremented fields' names for a module
-        $incFields = $this->getFtsAutoIncrementFields($bean->module_name);
-
-        if (!empty($incFields)) {
-            foreach ($incFields as $fieldName) {
-                //If the field is empty, retrieve its value from database
-                if (!isset($bean->$fieldName)) {
-                    $fieldValue = $this->retrieveFieldByQuery($bean, $fieldName);
-                    if (isset($fieldValue)) {
-                        $bean->$fieldName = $fieldValue;
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Retrieve the value of a given field.
-     * @param \SugarBean $bean
-     * @param $fieldName : the name of the field
-     * @return $string
-     */
-    public function retrieveFieldByQuery(\SugarBean $bean, $fieldName)
-    {
-        $sq = new \SugarQuery();
-        $sq->select(array($fieldName));
-        $sq->from($bean);
-        $sq->where()->equals("id", $bean->id);
-        $result = $sq->execute();
-
-        // expect only one record
-        if (!empty($result)) {
-            return $result[0][$fieldName];
-        } else {
-            return null;
-        }
-    }
-
-
-    /**
-     * {@inheritdoc}
-     */
-    public function search()
-    {
-        // Make sure modules are selected
-        if (empty($this->modules)) {
-            $this->modules = $this->getUserModules();
-        }
-
-        $builder = new QueryBuilder($this->container);
-        $builder
-            ->setUser($this->user)
-            ->setModules($this->modules)
-            ->setLimit($this->limit)
-            ->setOffset($this->offset)
-        ;
-
-        // Use MultiMatch if we are actually searching or fallback to MatchAll
-        if (!empty($this->term)) {
-            $builder->setQuery($this->getQuery());
-        } else {
-            $builder->setQuery($this->getMatchAllQuery());
-            $this->highlighter = false;
-        }
-
-        // Set highlighter
-        if ($this->highlighter) {
-            $builder->setHighLighter($this->getHighlighter());
-        }
-
-        // Apply module aggregation
-        if ($this->moduleAgg) {
-            $builder->addAggregator($this->getModuleAggregator($this->modules));
-        }
-
-        // Set sorting
-        if ($this->sort) {
-            $builder->setSort($this->sort);
-        }
-
-        return $builder->executeSearch();
-    }
-
-    /**
-     * Get query object
-     * @return \Elastica\Query\MultiMatch
-     */
-    protected function getQuery()
-    {
-        $query = new \Elastica\Query\MultiMatch();
-        $query->setType(\Elastica\Query\MultiMatch::TYPE_CROSS_FIELDS);
-        $query->setQuery($this->term);
-        $query->setFields($this->getSearchFields($this->fieldBoost));
-        $query->setTieBreaker(1.0); // TODO make configurable
-        return $query;
-    }
-
-    /**
-     * Get search field wrapper
-     * @return array
-     */
-    protected function getSearchFields()
-    {
-        $sf = new SearchFields($this, $this->newBoostHandler());
-        $sf->setBoost($this->fieldBoost);
-        return $sf->getSearchFields($this->modules);
-    }
-
-    /**
-     * Instantiate boost handler
-     * @return \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\BoostHandler
-     */
-    protected function newBoostHandler()
-    {
-        $boost = new BoostHandler();
-        $boost->setWeighted($this->weightedBoost);
-        return $boost;
-    }
-
-    /**
-     * Get match all query
-     * @return \Elastica\Query\MatchAll
-     */
-    protected function getMatchAllQuery()
-    {
-        return new \Elastica\Query\MatchAll();
-    }
-
-    /**
-     * Get highlighter object
-     * @return PlainHighLighter
-     */
-    protected function getHighlighter()
-    {
-        return new PlainHighlighter($this->getHighlighterFields());
-    }
-
-    /**
-     * Get highlighter fields
-     * @return array
-     */
-    protected function getHighlighterFields()
-    {
-        // Just select all eligible global search fields here
-        return array(
-            '*.gs_string_default' => array(),
-            '*.gs_string_ngram' => array(),
-            '*.gs_phone' => array(),
-        );
-    }
-
-    /**
      * Get module aggregator
      * @param array $modules
      * @return ModuleAggregation
@@ -411,6 +306,8 @@ class GlobalSearch extends AbstractProvider
         $agg->setSize(count($modules));
         return $agg;
     }
+
+    //// Search interface
 
     /**
      * @var string Search term
@@ -445,7 +342,7 @@ class GlobalSearch extends AbstractProvider
     /**
      * @var boolean Apply highlighter
      */
-    protected $highlighter = false;
+    protected $useHighlighter = false;
 
     /**
      * @var array Sort fields
@@ -526,9 +423,9 @@ class GlobalSearch extends AbstractProvider
      * @param boolean $toggle
      * @return GlobalSearch
      */
-    public function highlighter($toggle)
+    public function useHighlighter($toggle)
     {
-        $this->highlighter = (bool) $toggle;
+        $this->useHighlighter = (bool) $toggle;
         return $this;
     }
 
@@ -559,5 +456,74 @@ class GlobalSearch extends AbstractProvider
         // when sorting is requested other than the default we dont need boosting
         $this->fieldBoost = false;
         return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function search()
+    {
+        // Make sure modules are selected
+        if (empty($this->modules)) {
+            $this->modules = $this->getUserModules();
+        }
+
+        $builder = new QueryBuilder($this->container);
+        $builder
+            ->setUser($this->user)
+            ->setModules($this->modules)
+            ->setLimit($this->limit)
+            ->setOffset($this->offset)
+        ;
+
+        // Use MultiMatch if we are actually searching or fallback to MatchAll
+        if (!empty($this->term)) {
+            $builder->setQuery($this->getQuery($this->term, $this->modules));
+        } else {
+            $builder->setQuery($this->getMatchAllQuery());
+            $this->highlighter = false;
+        }
+
+        // Set highlighter
+        if ($this->useHighlighter) {
+            $builder->setHighLighter($this->highlighter);
+        }
+
+        // Apply module aggregation
+        if ($this->moduleAgg) {
+            $builder->addAggregator($this->getModuleAggregator($this->modules));
+        }
+
+        // Set sorting
+        if ($this->sort) {
+            $builder->setSort($this->sort);
+        }
+
+        return $builder->executeSearch();
+    }
+
+    /**
+     * Get query object
+     * @param string $term Search term
+     * @param array $modules List of modules
+     * @return \Elastica\Query\MultiMatch
+     */
+    protected function getQuery($term, array $modules)
+    {
+        $query = new \Elastica\Query\MultiMatch();
+        $query->setType(\Elastica\Query\MultiMatch::TYPE_CROSS_FIELDS);
+        $query->setQuery($term);
+        $query->setFields($this->getSearchFields($modules));
+        $query->setTieBreaker(1.0); // TODO make configurable
+        return $query;
+    }
+
+    /**
+     * Get match all query
+     * @return \Elastica\Query\MatchAll
+     */
+    protected function getMatchAllQuery()
+    {
+        return new \Elastica\Query\MatchAll();
     }
 }

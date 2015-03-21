@@ -14,10 +14,11 @@ namespace Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch;
 
 /**
  *
- * BoostHandler
+ * This class is used to apply the different boost values on the fields
+ * being queried by the GlobalSearch provider.
  *
  */
-class BoostHandler
+class Booster
 {
     const BOOST_SEP = '^';
 
@@ -45,58 +46,58 @@ class BoostHandler
      */
     public function setWeighted(array $weighted)
     {
-        $this->weighted = $weighted;
+        $this->weighted = array_merge($this->weighted, $weighted);
     }
 
     /**
      * Get boosted field definition
      * @param string $field Field name
      * @param array $defs Field vardefs
-     * @param string $type Mapping type
+     * @param string $weightId Identifier to apply weighted boost
      * @return string
      */
-    public function getBoostedField($field, array $defs, $type)
+    public function getBoostedField($field, array $defs, $weightId)
     {
-        return $field . self::BOOST_SEP . $this->getBoostValue($defs, $type);
+        return $field . self::BOOST_SEP . $this->getBoostValue($defs, $weightId);
     }
 
     /**
      * Get boost value from defs or use default
      * @param array $defs Field vardefs
-     * @param string $type Mapping type
+     * @param string $weightId Identifier to apply weighted boost
      * @return float
      */
-    public function getBoostValue(array $defs, $type)
+    public function getBoostValue(array $defs, $weightId)
     {
         if (isset($defs['full_text_search']['boost'])) {
             $boost = (float) $defs['full_text_search']['boost'];
         } else {
             $boost = $this->defaultBoost;
         }
-        return $this->normalizeBoost($boost, $type);
+        return $this->normalizeBoost($boost, $weightId);
     }
 
     /**
      * Normalize boost value
      * @param float $boost
-     * @param string $type Mapping type
+     * @param string $weightId Identifier to apply weighted boost
      * @return float
      */
-    public function normalizeBoost($boost, $type)
+    public function normalizeBoost($boost, $weightId)
     {
-        $boost = $this->weight($boost, $type);
-        return round($boost, $this->precision);
+        return round($this->weight($boost, $weightId), $this->precision);
     }
 
     /**
      * Weight the boost
      * @param float $boost
-     * @param string $type Mapping type
+     * @param string $weightId Identifier to apply weighted boost
+     * @return float
      */
-    public function weight($boost, $type)
+    public function weight($boost, $weightId)
     {
-        if (isset($this->weighted[$type])) {
-            $boost = $boost * $this->weighted[$type];
+        if (isset($this->weighted[$weightId])) {
+            $boost = $boost * $this->weighted[$weightId];
         }
         return $boost;
     }
