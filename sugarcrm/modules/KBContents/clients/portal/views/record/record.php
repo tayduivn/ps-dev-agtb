@@ -29,6 +29,11 @@ $viewdefs['KBContents']['portal']['view']['record'] = array(
                     'readonly' => true,
                 ),
                 'name',
+                'language' => array(
+                    'name' => 'language',
+                    'type' => 'enum-config',
+                    'key' => 'languages',
+                ),
             ),
         ),
         array(
@@ -54,20 +59,14 @@ $viewdefs['KBContents']['portal']['view']['record'] = array(
                     'bIcon' => 'fa-paperclip',
                     'span' => 12,
                 ),
-                'category_name' => array(
-                    'name' => 'category_name',
-                    'label' => 'LBL_CATEGORY_NAME',
-                ),
-                'language' => array(
-                    'name' => 'language',
-                    'type' => 'enum-config',
-                    'key' => 'languages',
-                ),
-                'date_entered' => array(
-                    'name' => 'date_entered',
-                ),
-                'active_date' => array(
-                    'name' => 'active_date',
+                'usefulness' => array(
+                    'name' => 'usefulness',
+                    'type' => 'usefulness',
+                    'span' => 12,
+                    'fields' => array(
+                        'useful',
+                        'notuseful',
+                    ),
                 ),
             ),
         ),
