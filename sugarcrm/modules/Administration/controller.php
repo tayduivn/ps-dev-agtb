@@ -150,8 +150,7 @@ class AdministrationController extends SugarController
     }
 
     /**
-     * Save the FTS settings for the system and any modules that may be enabled/disabled
-     * by the administrator.
+     * Save FTS configuration and schedule FTS (re)index
      */
     public function action_ScheduleFTSIndex()
     {
@@ -163,9 +162,18 @@ class AdministrationController extends SugarController
         $clearData = !empty($_REQUEST['clearData']) ? true : false;
         $modules = !empty($_REQUEST['modules']) ? explode(",", $_REQUEST['modules']) : array();
 
+        try {
+            $result = SearchEngine::getInstance()->scheduleIndexing($modules, $clearData);
+        } catch (Exception $e) {
+            $result = false;
+        }
+
         // TODO: add visual feedback in UI if this returns false
-        $result = SearchEngine::getInstance()->scheduleIndexing($modules, $clearData);
         echo json_encode(array('success' => $result));
+
+        if (!empty($e)) {
+            throw $e;
+        }
     }
 
     /**
