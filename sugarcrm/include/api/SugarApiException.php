@@ -237,19 +237,17 @@ class SugarApiExceptionServiceUnavailable extends SugarApiException
 /**
  * SearchEngine is unavailable
  */
-class SugarApiExceptionSearchUnavailable extends SugarApiException
+class SugarApiExceptionSearchUnavailable extends SugarApiExceptionServiceUnavailable
 {
-    public $httpCode = 503;
-    public $errorLabal = 'search_unavailable';
+    public $errorLabel = 'search_unavailable';
     public $messageLabel = 'EXCEPTION_SEARCH_UNAVAILABLE';
 }
 
 /**
  * SearchEngine runtime error
  */
-class SugarApiExceptionSearchRuntime extends SugarApiException
+class SugarApiExceptionSearchRuntime extends SugarApiExceptionError
 {
-    public $httpCode = 500;
     public $errorLabel = 'search_runtime';
     public $messageLabel = 'EXCEPTION_SEARCH_RUNTIME';
 }

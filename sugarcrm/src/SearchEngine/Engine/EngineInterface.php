@@ -20,6 +20,12 @@ namespace Sugarcrm\Sugarcrm\SearchEngine\Engine;
 interface EngineInterface
 {
     /**
+     * Get MetaDataHelper
+     * @return \Sugarcrm\Sugarcrm\SearchEngine\MetaDataHelper
+     */
+    public function getMetaDataHelper();
+
+    /**
      * Set engine configuration parameters which are defined
      * in `$sugar_config['full_text_search']['engine']`
      *
@@ -67,7 +73,7 @@ interface EngineInterface
      *      cached availability based on the outcome of this test.
      * @return integer Connection status, 1 => success, < 0 => error
      */
-    public function verifyConnectivity($updateAvailabiilty = true);
+    public function verifyConnectivity($updateAvailability = true);
 
     /**
      * Schedule indexing

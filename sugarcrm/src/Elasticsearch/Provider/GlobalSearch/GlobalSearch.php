@@ -237,10 +237,11 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
             foreach ($this->getFtsFields($module) as $field => $defs) {
 
                 // skip fields which are not searchable
-                if (!$sf->isFieldSearchable($defs)) {
+                if (!$this->container->metaDataHelper->isFieldSearchable($defs)) {
                     continue;
                 }
 
+                // pass through handlers
                 foreach ($this->getHandlers('SearchFields') as $handler) {
                     $handler->buildSearchFields($sf, $module, $field, $defs);
                 }

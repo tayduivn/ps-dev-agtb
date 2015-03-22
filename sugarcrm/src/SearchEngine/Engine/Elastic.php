@@ -38,6 +38,14 @@ class Elastic implements EngineInterface, GlobalSearchInterface
     //// BASE INTERFACE ////
 
     /**
+     * {@inheritdoc}
+     */
+    public function getMetaDataHelper()
+    {
+        return $this->container->metaDataHelper;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function setEngineConfig(array $config)

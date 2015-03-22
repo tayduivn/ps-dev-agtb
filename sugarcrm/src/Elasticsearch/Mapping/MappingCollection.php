@@ -31,6 +31,7 @@ class MappingCollection implements \IteratorAggregate
 
     /**
      * {@inheritdoc}
+     * @return Mapping[]
      */
     public function getIterator()
     {

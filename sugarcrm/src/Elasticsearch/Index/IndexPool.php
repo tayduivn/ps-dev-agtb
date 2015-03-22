@@ -106,7 +106,7 @@ class IndexPool
      * @throws \Sugarcrm\Sugarcrm\Elasticsearch\Exception\IndexPoolStrategyException
      * @return \Sugarcrm\Sugarcrm\Elasticsearch\Index\Strategy\StrategyInterface
      */
-    protected function getStrategy($module)
+    public function getStrategy($module)
     {
         if (empty($this->config[$module]) || empty($this->config[$module]['strategy'])) {
             $this->config[$module] = array('strategy' => self::DEFAULT_STRATEGY);
@@ -115,6 +115,8 @@ class IndexPool
         $strategy = $this->config[$module]['strategy'];
 
         if (!isset($this->strategies[$strategy])) {
+
+            // TODO: use registry instead
             $className = \SugarAutoLoader::customClass(
                 sprintf('\\Sugarcrm\\Sugarcrm\\Elasticsearch\\Index\\Strategy\\%sStrategy', $strategy)
             );

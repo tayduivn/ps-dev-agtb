@@ -41,6 +41,7 @@ class IndexCollection implements \IteratorAggregate
 
     /**
      * {@inheritdoc}
+     * @return Index[]
      */
     public function getIterator()
     {

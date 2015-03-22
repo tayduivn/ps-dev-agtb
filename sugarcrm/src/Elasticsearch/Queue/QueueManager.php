@@ -352,7 +352,7 @@ class QueueManager
         $sql = sprintf(
             'SELECT DISTINCT bean_module FROM %s WHERE processed = %s ORDER BY date_modified ASC',
             self::FTS_QUEUE,
-            $this->db->quoted(self::PROCESSED_NEW)
+            self::PROCESSED_NEW
         );
         $result = $this->db->query($sql);
         while ($row = $this->db->fetchByAssoc($result)) {
@@ -365,6 +365,25 @@ class QueueManager
             }
         }
         return $modules;
+    }
+
+    /**
+     * Get count for given module
+     * @param string $module Module name
+     * @return integer
+     */
+    public function getQueueCountModule($module)
+    {
+        $sql = sprintf(
+            "SELECT count(bean_id) FROM %s WHERE processed = %s AND bean_module = %s",
+            self::FTS_QUEUE,
+            self::PROCESSED_NEW,
+            $this->db->quoted($module)
+        );
+        if ($result = $this->db->getOne($sql)) {
+            return $result;
+        }
+        return 0;
     }
 
     /**

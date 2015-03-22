@@ -41,6 +41,7 @@ class ProviderCollection implements \IteratorAggregate
 
     /**
      * {@inheritdoc}
+     * @return ProviderInterface[]
      */
     public function getIterator()
     {
