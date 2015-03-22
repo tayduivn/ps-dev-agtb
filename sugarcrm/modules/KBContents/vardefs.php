@@ -94,7 +94,7 @@ $dictionary['KBContent'] = array(
             'default' => 0,
             'sortable' => true,
             'duplicate_on_record_copy' => 'no',
-            'studio' => false,
+            'studio' => true,
         ),
         'revision' => array(
             'name' => 'revision',
