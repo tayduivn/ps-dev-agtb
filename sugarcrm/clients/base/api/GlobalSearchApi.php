@@ -11,9 +11,9 @@
  */
 
 use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
+use Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\GlobalSearchInterface;
 use Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\ResultSetInterface;
 use Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\ResultInterface;
-use Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\GlobalSearchInterface;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Result;
 
 /**
@@ -22,24 +22,16 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Result;
  *
  * (Note: the usage of /search will be deprecated in favor of /globalsearch)
  *
- * Available parameters:
- *  - q = search term
- *  - max_num = defaults to 20, how many results to return
- *  - offset = defaults to 0, used for paging
- *  - module_list = comma separated list of modules (*)
- *  - highlights = true/false (defauls to true)
- *  - sort = example {"date_modified":"desc", ...} default to relevance
- *
- *  (*) Instead of using the module_list parameter, its possible and encouraged
+ *  Instead of using the module_list parameter, its possible and encouraged
  *  to use the list of modules directly in the URL instead using a comma
  *  separated list like `/Accounts,Contacts/globalsearch?q=stuff`. If both this
  *  notation and module_list URL parameter is used at the same time, than the
- *  URL notation takes precedence over the URL module_filter parameter.
+ *  URL notation takes precedence over the URL module_filter argument.
  *
- *  The /globalsearch entry point accepts additional parameters in the request
+ *  The /globalsearch entry point is able to accept arguments  in the request
  *  body using JSON format. In case of duplicate settings, the URL parameters
  *  take precedence over the settings in the request body. Its encouraged to
- *  pass the parameters directly in the request body to prevent too long URLs.
+ *  pass the arguments directly in the request body to prevent too long URLs.
  *
  *  Its prefered to use the GET method to consume the /globalsearch entry
  *  point. However for REST clients which do not support GET requests with
@@ -96,10 +88,14 @@ class GlobalSearchApi extends SugarApi
                 'reqType' => array('GET', 'POST'),
                 'path' => array('globalsearch'),
                 'pathVars' => array(''),
-                'method' => 'globalSearchEntryPoint',
-                'shortHelp' => '',
-                'longHelp' => '',
-                'noLoginRequired' => false,
+                'method' => 'globalSearch',
+                'shortHelp' => 'Global search',
+                'longHelp' => 'include/api/help/globalsearch_get_help.html',
+                'exceptions' => array(
+                    'SugarApiExceptionNotAuthorized',
+                    'SugarApiExceptionSearchUnavailable',
+                    'SugarApiExceptionSearchRuntime',
+                ),
             ),
 
             // /<module_list>/globalsearch
@@ -107,21 +103,25 @@ class GlobalSearchApi extends SugarApi
                 'reqType' => array('GET', 'POST'),
                 'path' => array('?', 'globalsearch'),
                 'pathVars' => array('module_list', ''),
-                'method' => 'globalSearchEntryPoint',
-                'shortHelp' => '',
-                'longHelp' => '',
-                'noLoginRequired' => false,
+                'method' => 'globalSearch',
+                'shortHelp' => 'Global search',
+                'longHelp' => 'include/api/help/globalsearch_get_help.html',
+                'exceptions' => array(
+                    'SugarApiExceptionNotAuthorized',
+                    'SugarApiExceptionSearchUnavailable',
+                    'SugarApiExceptionSearchRuntime',
+                ),
             ),
         );
     }
 
     /**
-     * GlobalSearch entry point
+     * GlobalSearch endpoint
      * @param \RestService $api
      * @param array $args
      * @return array
      */
-    public function globalSearchEntryPoint(\RestService $api, array $args)
+    public function globalSearch(\RestService $api, array $args)
     {
         $api->action = 'list';
 
