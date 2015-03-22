@@ -65,7 +65,6 @@
 
         this._super('initialize', [opts]);
         this._select2formatSelectionTemplate = app.template.get('f.attachments.KBContents.selection-partial');
-
         /**
          * Selects attachments related module.
          */
@@ -81,11 +80,6 @@
                 }
             });
         }
-
-        /**
-         * Override handling on drop attachment.
-         */
-        this.before('attachments:drop', this._onAttachmentDrop, this);
     },
 
     /**
@@ -259,12 +253,12 @@
     },
 
     /**
-     * Handler for 'attachments:drop' event.
-     * This event is triggered when user drop file on the file field.
+     * {@inheritDoc}
+     * Handles drop event.
      *
      * @param {Event} event Drop event.
      */
-    _onAttachmentDrop: function(event) {
+    dropAttachment: function(event) {
         event.preventDefault();
         var self = this,
             data = new FormData(),
@@ -302,8 +296,6 @@
                 }
             });
         }, this);
-
-        return false;
     },
 
     /**

@@ -60,9 +60,9 @@
              *
              * config.file_browser_callback = _.bind(this.tinyMCEFileBrowseCallback, this);
              *
-             * @param {string} fieldName The name (and ID) of the dialogue window's input field.
-             * @param {string} url Carries the existing link URL if you modify a link.
-             * @param {string} type Either 'image', 'media' or 'file'.
+             * @param {String} fieldName The name (and ID) of the dialogue window's input field.
+             * @param {String} url Carries the existing link URL if you modify a link.
+             * @param {String} type Either 'image', 'media' or 'file'.
              * (called respectively from image plugin, media plugin and link plugin insert/edit dialogs).
              * @param {Object} win A reference to the dialogue window itself.
              */
@@ -105,6 +105,8 @@
                     return;
                 }
 
+                attributes.target = $target;
+
                 var embeddedFile = app.data.createBean('EmbeddedFiles');
                 embeddedFile.save({name: fileObj.name}, {
                     success: _.bind(this._saveEmbededFile, this, attributes)
@@ -116,6 +118,8 @@
              *
              * @param {Object} attributes
              * @param {string} attributes.fieldName The name (and ID) of the dialogue window's input field.
+             * @param {string} attributes.url Carries the existing link URL if you modify a link.
+             * @param {string} attributes.type Either 'image', 'media' or 'file'
              * @param {string} attributes.win A reference to the dialogue window itself.
              * @param {EmbeddedFile} model Model to save.
              * @private
@@ -123,7 +127,7 @@
             _saveEmbededFile: function(attributes, model) {
                 model.uploadFile(
                     this.fileFieldName,
-                    this.$embeddedInput,
+                    attributes.target,
                     {
                         success: _.bind(function(rsp) {
                             var forceDownload = !(rsp[this.fileFieldName]['content-type'].indexOf('image') !== -1);
@@ -153,14 +157,14 @@
                                 }
                             }
 
-                            this.clearFileInput(this.$embeddedInput);
+                            this.clearFileInput(attributes.target);
                         }, this),
                         error: _.bind(function() {
                             app.alert.show('upload-error', {
                                 level: 'error',
                                 messages: 'ERROR_UPLOAD_FAILED'
                             });
-                            this.clearFileInput(this.$embeddedInput);
+                            this.clearFileInput(attributes.target);
                         }, this)
                     }
                 );

@@ -195,6 +195,22 @@ class CategoriesTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test retrieve a valid roots data using Category::getRoots method.
+     */
+    public function testGetRoots()
+    {
+        $roots = self::$root->getRoots();
+        $this->assertNotEmpty($roots);
+        $this->assertInternalType('array', $roots);
+
+        foreach ($roots as $root) {
+            $this->assertEquals($root['id'], $root['root']);
+            $this->assertEquals($root['lft'], '1');
+            $this->assertEquals($root['lvl'], '0');
+        }
+    }
+
+    /**
      * Test retrieve a valid tree data using Category::getTree method.
      */
     public function testGetTree()

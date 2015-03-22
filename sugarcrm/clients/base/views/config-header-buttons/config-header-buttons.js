@@ -192,13 +192,11 @@
     },
 
     /**
-     * Noop for use if model needs updating before save.
-     * Gets called before the model actually saves.
-     *
-     * Override this method to provide custom logic.
+     * Noop for use if model needs updating before save
+     * Gets called before the model actually saves
      *
      * @private
-     * @return {boolean} The default implementation returns `true` allowing the save.
+     * @return {Boolean} Always returns `true`
      */
     _beforeSaveConfig: function() {
         return true;
@@ -246,10 +244,8 @@
      * Noop for use if model needs updating before cancel
      * Gets called before the model actually cancels
      *
-     * Override this method to provide custom logic.
-     *
      * @private
-     * @return {boolean} The default implementation returns `true` allowing the cancel.
+     * @return {Boolean} Always returns `true`
      */
     _beforeCancelConfig: function() {
         return true;
