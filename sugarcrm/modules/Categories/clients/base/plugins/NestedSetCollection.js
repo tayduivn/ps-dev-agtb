@@ -441,22 +441,6 @@
             },
 
             /**
-             * Load a nestedset data collection as all root nodes.
-             * @param {Object} options
-             * @param {Function} options.success (optional) Callback function on success.
-             * @param {Function} options.complete (optional) Callback function on complete.
-             * @param {Function} options.error (optional) Callback function on error.
-             */
-            roots: function(options) {
-                this.url = app.api.buildURL(
-                    this.module,
-                    ['tree', 'roots'].join('/')
-                );
-
-                this.fetch(options);
-            },
-
-            /**
              * Setup options for insert actions.
              * @param {Object} options
              * @return {Object} options
