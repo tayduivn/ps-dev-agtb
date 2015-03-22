@@ -329,7 +329,9 @@ class FileApi extends SugarApi {
      *
      * @param ServiceBase $api The service base
      * @param array $args Arguments array built by the service base
-     * @throws SugarApiExceptionMissingParameter|SugarApiExceptionNotFound|SugarApiExceptionNotAuthorized
+     * @throws SugarApiExceptionMissingParameter When field name is missing.
+     * @throws SugarApiExceptionNotFound When file cannot be found.
+     * @throws SugarApiExceptionNotAuthorized When there is no access to record in module.
      */
     public function getFile($api, $args) {
         // if exists link_name param then get archive
@@ -437,10 +439,10 @@ class FileApi extends SugarApi {
      *
      * @return string
      *
-     * @throws SugarApiExceptionNotFound
-     * @throws SugarApiExceptionNotAuthorized
-     * @throws SugarApiExceptionMissingParameter
-     * @throws SugarApiExceptionInvalidParameter
+     * @throws SugarApiExceptionNotFound When record, name of relationship or file cannot be found.
+     * @throws SugarApiExceptionNotAuthorized When there is no access to record.
+     * @throws SugarApiExceptionMissingParameter When field name is missing.
+     * @throws SugarApiExceptionInvalidParameter When relationship name is incorrect.
      */
     public function getArchive($api, $args)
     {

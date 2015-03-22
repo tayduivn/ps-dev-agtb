@@ -27,25 +27,8 @@ class Category extends SugarBean implements NestedBeanInterface
     public $lvl;
 
     /**
-     * {@inheritDoc}
-     */
-    public function getRoots()
-    {
-        $query = $this->getQuery();
-        $query->where()->equals('node.lft', '1');
-        return $query->execute();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function isRoot()
-    {
-        return $this->lft == 1;
-    }
-
-    /**
-     * {@inheritDoc}
+     * Save current node as new root.
+     * @return String Id of new created bean.
      */
     public function saveAsRoot()
     {
@@ -63,6 +46,14 @@ class Category extends SugarBean implements NestedBeanInterface
 
         $this->root = $this->id;
         return parent::save();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isRoot()
+    {
+        return $this->lft == 1;
     }
 
     /**
