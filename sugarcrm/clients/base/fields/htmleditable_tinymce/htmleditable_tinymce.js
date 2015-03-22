@@ -61,7 +61,8 @@
      */
     format: function(value) {
         var result;
-        switch (this.view.action) {
+        switch (this.view.tplName) {
+            case 'audit':
             case 'list':
             case 'activitystream':
                 result = $('<div/>').html(value).text();
