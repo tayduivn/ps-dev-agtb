@@ -341,23 +341,6 @@ class TreeApiTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test get tree root nodes API method.
-     */
-    public function testRoots()
-    {
-        $result = $this->treeApi->roots($this->serviceMock, array(
-            'module' => self::$root->module_dir,
-        ));
-
-        $this->assertNotEmpty($result);
-        $this->assertInternalType('array', $result);
-
-        foreach ($result['records'] as $item) {
-            $this->assertEquals('1', $item['lft']);
-        }
-    }
-
-    /**
      * Test get node parent API method.
      */
     public function testParent()
