@@ -77,7 +77,7 @@
             /**
              * Apply required filters.
              * @param {Array|string} filterDef Preselected filters defs.
-             * @param {Core.Context} context Context object.
+             * @param {Context} context Context object.
              * @return {Array} Filter defs.
              */
             applyRequiredFilters: function(filterDef, context) {

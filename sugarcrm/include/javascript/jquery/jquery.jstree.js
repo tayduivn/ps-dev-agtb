@@ -153,7 +153,7 @@
 				s.plugins = t;
 
 				// extra settings
-				s.settings = b.settings || $.jstree.settings;
+				s.settings = b.settings ? b.settings : $.jstree.settings;
 
 				// push the new object to the instances array (at the same time set the default classes to the container) and init
 				instances[instance_id] = new $.jstree._instance(instance_id, $(this).addClass("jstree jstree-" + instance_id), s); 
@@ -169,7 +169,7 @@
 	};
 	// object to store exposed functions and objects
 	$.jstree = {
-		settings: {},
+		settings : {},
 		defaults : {
 			plugins : []
 		},
@@ -183,7 +183,7 @@
 			if(!o.length) { return null; }
 			return instances[o.closest(".jstree").data("jstree_instance_id")] || null; 
 		},
-		_instance : function (index, container, settings) { 
+		_instance : function (index, container, settings) {
 			// for plugins to store data in
 			this.data = { core : {} };
 			this.get_settings	= function () { return $.extend(true, {}, settings); };
@@ -204,7 +204,6 @@
 				defaults	: false
 			}, pdata);
 			plugins[pname] = pdata;
-
 			$.jstree.defaults[pname] = pdata.defaults;
 			$.each(pdata._fn, function (i, val) {
 				val.plugin		= pname;
@@ -236,7 +235,7 @@
 
 						rslt = func.apply(
 							$.extend({}, this, { 
-								__callback : function (data) { 
+								__callback : function (data) {
 									this.get_container().triggerHandler( i + '.jstree', { "inst" : this, "args" : args, "rslt" : data, "rlbk" : rlbk });
 								},
 								__rollback : function () { 
@@ -342,9 +341,9 @@
 			rtl			: false,
 			load_open	: false,
 			strings		: {
-                // REMOVED loading : "Loading ..." so users whose trees are hidden
-                // never knew there was a tree to begin with, aka confusing message if you have no tree
-                loading		: " ",
+				// REMOVED loading : "Loading ..." so users whose trees are hidden
+				// never knew there was a tree to begin with, aka confusing message if you have no tree
+				loading		: " ",
 				new_node	: "New node",
 				multiple_selection : "Multiple selection"
 			}
@@ -355,21 +354,21 @@
 				if(this._get_settings().core.rtl) {
 					this.get_container().addClass("jstree-rtl").css("direction", "rtl");
 				}
-				this.get_container().html("<ul><li class='jstree-last jstree-leaf'><ins>&#160;</ins><a class='jstree-loading' href='#'><ins class='jstree-icon'>&#160;</ins>" + this._get_string("loading") + "</a></li></ul>");
-				this.data.core.li_height = this._get_settings().settings.liHeight ||
-					this.get_container_ul().find("li.jstree-closed, li.jstree-leaf").eq(0).height() ||
-					18;
+                this.get_container().html("<ul><li class='jstree-last jstree-leaf'><ins>&#160;</ins><a class='jstree-loading' href='#'><ins class='jstree-icon'>&#160;</ins>" + this._get_string("loading") + "</a></li></ul>");
+                this.data.core.li_height = this._get_settings().settings.liHeight ||
+                    this.get_container_ul().find("li.jstree-closed, li.jstree-leaf").eq(0).height() ||
+                    18;
 
 				this.get_container()
-                    .delegate("li > ins", "click.jstree", $.proxy(function (event) {
-                        // CUSTOM CODE -- thubbard -- sugarcrm
-                        // had to add this code in here to toggle the node when an icon is selected
-                        event.preventDefault();
-                        event.currentTarget.blur();
-                        if(!$(event.currentTarget).hasClass("jstree-loading")) {
-                            this.select_node(event.currentTarget, true, event);
-                        }
-                    }, this))
+					.delegate("li > ins", "click.jstree", $.proxy(function (event) {
+						// CUSTOM CODE -- thubbard -- sugarcrm
+						// had to add this code in here to toggle the node when an icon is selected
+						event.preventDefault();
+						event.currentTarget.blur();
+						if(!$(event.currentTarget).hasClass("jstree-loading")) {
+							this.select_node(event.currentTarget, true, event);
+						}
+					}, this))
 					.bind("mousedown.jstree", $.proxy(function () { 
 							this.set_focus(); // This used to be setTimeout(set_focus,0) - why?
 						}, this))
@@ -777,12 +776,8 @@
 					 */
 					if (p.settings.showMenu === true) {
 						var optmp = '<div class="btn-group btn-group-justified pull-right">' +
-							'<a class="btn jstree-addnode" href="javascript:void(0);" title="" data-original-title="Add" data-action="jstree-addnode">' +
-							'	<span class="fa fa-plus"></span>' +
-							'</a>' +
-							'<a class="btn jstree-contextmenu" href="javascript:void(0);" title="" data-original-title="Actions" data-action="jstree-contextmenu">' +
-							'	<span class="fa fa-caret-down"></span>' +
-							'</a>' +
+							'<a class="btn jstree-addnode" href="javascript:void(0);" title="" data-original-title="Add" data-action="jstree-addnode"><span class="fa fa-plus"></span></a>' +
+							'<a class="btn jstree-contextmenu" href="javascript:void(0);" title="" data-original-title="Actions" data-action="jstree-contextmenu"><span class="fa fa-caret-down"></span></a>' +
 							'</div>';
 						d.append(optmp);
 					}
@@ -1298,7 +1293,7 @@
 					h2 = obj.css("position","relative").append(
 					$("<input />", { 
 						"value" : t,
-						'rel' : mode || 'add',
+						"rel" : mode || "add",
 						"class" : "jstree-rename-input",
 						// "size" : t.length,
 						"css" : {
@@ -1377,7 +1372,7 @@
 					if(callback) { callback.call(this, t); }
 					if(p.length && p.hasClass("jstree-closed")) { this.open_node(p, false, true); }
 					if(!skip_rename) { 
-						this._show_input(t, 'add', function (obj, new_name, old_name) { 
+						this._show_input(t, 'add', function (obj, new_name, old_name) {
 							_this.__callback({ "obj" : obj, "name" : new_name, "parent" : p, "position" : pos });
 						});
 					}
@@ -1453,13 +1448,13 @@
 	$.jstree.plugin("themes", {
 		__init : function () { 
 			this.get_container()
-                .bind("init.jstree", $.proxy(function () {
-                		var s = this._get_settings().themes;
-                		this.data.themes.dots = s.dots;
-                		this.data.themes.icons = s.icons;
-                        // REMOVED so jsTree does not try to load its own CSS over our styleguide css
-                		//this.set_theme(s.theme, s.url);
-                	}, this))
+				.bind("init.jstree", $.proxy(function () {
+						var s = this._get_settings().themes;
+						this.data.themes.dots = s.dots;
+						this.data.themes.icons = s.icons;
+						// REMOVED so jsTree does not try to load its own CSS over our styleguide css
+						//this.set_theme(s.theme, s.url);
+					}, this))
 				.bind("loaded.jstree", $.proxy(function () {
 						// bound here too, as simple HTML tree's won't honor dots & icons otherwise
 						if(!this.data.themes.dots) { this.hide_dots(); }
@@ -1844,7 +1839,9 @@
 					$.each(js.data, function (i, m) {
 						tmp = $("<a />");
 						if($.isFunction(m)) { m = m.call(this, js); }
-						if(typeof m == "string") { tmp.attr('href','#')[ t ? "html" : "text" ](m); }
+						if(typeof m == "string") {
+							tmp.attr('href','#')[ t ? "html" : "text" ](m); 
+						}
 						else {
 							if(!m.attr) { m.attr = {}; }
 							if(!m.attr.href) { m.attr.href = '#'; }
@@ -1864,13 +1861,9 @@
 						 */
 						if (p.settings.showMenu === true) {
 							var optmp = '<div class="btn-group btn-group-justified pull-right">' +
-							'<a class="btn jstree-addnode" href="javascript:void(0);" title="" data-original-title="Add" data-action="jstree-addnode">' +
-							'	<span class="fa fa-plus"></span>' +
-							'</a>' +
-						    '<a class="btn jstree-contextmenu" href="javascript:void(0);" title="" data-original-title="Actions" data-action="jstree-contextmenu">' +
-						    '	<span class="fa fa-caret-down"></span>' +
-						    '</a>' +
-						    '</div>';
+									'<a class="btn jstree-addnode" href="javascript:void(0);" title="" data-original-title="Add" data-action="jstree-addnode"><span class="fa fa-plus"></span></a>' +
+									'<a class="btn jstree-contextmenu" href="javascript:void(0);" title="" data-original-title="Actions" data-action="jstree-contextmenu"><span class="fa fa-caret-down"></span></a>' +
+									'</div>';
 							d.append(optmp);
 						}
 					});
@@ -3668,15 +3661,15 @@
 			'#vakata-contextmenu { display:block; visibility:hidden; left:0; top:-200px; position:absolute; margin:0; padding:0; min-width:180px; background:#ffffff; border:1px solid silver; z-index:10000; *width:180px; } ' + 
 			'#vakata-contextmenu ul { min-width:180px; *width:180px; } ' + 
 			'#vakata-contextmenu ul, #vakata-contextmenu li { margin:0; padding:0; list-style-type:none; display:block; } ' + 
-			'#vakata-contextmenu li { line-height:20px; min-height:20px; position:relative; padding:0px; } ' + 
+			'#vakata-contextmenu li { line-height:20px; min-height:20px; position:relative; padding:0px; } ' +
 			'#vakata-contextmenu li:hover { background: #e4f0fa; } ' +
-			'#vakata-contextmenu li a { padding: 6px; line-height:17px; display:block; text-decoration:none; margin: 0px; } ' + 
+			'#vakata-contextmenu li a { padding:6px; line-height:17px; display:block; text-decoration:none; margin:0px; } ' + 
 			'#vakata-contextmenu li ins { float:left; width:16px; height:16px; text-decoration:none; margin-right:2px; } ' + 
 			'#vakata-contextmenu li a:hover, #vakata-contextmenu li.vakata-hover > a { /*background:gray; color:white;*/ } ' + 
 			'#vakata-contextmenu li ul { display:none; position:absolute; top:-2px; left:100%; /*background:#ebebeb;*/ border:1px solid silver; } ' + 
 			'#vakata-contextmenu .right { right:100%; left:auto; } ' + 
 			'#vakata-contextmenu .bottom { bottom:-1px; top:auto; } ' + 
-			'#vakata-contextmenu li.vakata-separator, #vakata-contextmenu li ul li.vakata-separator { min-height:0; height:1px; line-height:1px; font-size:1px; overflow:hidden; margin: 0px; background: #eeeeee; /* border-top:1px solid #fefefe; */ padding:0; } ';
+			'#vakata-contextmenu li.vakata-separator, #vakata-contextmenu li ul li.vakata-separator { min-height:0; height:1px; line-height:1px; font-size:1px; overflow:hidden; margin:0px; background:#eeeeee; /* border-top:1px solid #fefefe; */ padding:0; } ';
 		$.vakata.css.add_sheet({ str : css_string, title : "vakata" });
 		$.vakata.context.cnt
 			.delegate("a","click", function (e) { e.preventDefault(); })
@@ -3745,73 +3738,72 @@
 							this.show_contextmenu(e.currentTarget, e.pageX, e.pageY);
 						}
 					}, this))
-				.delegate("a", "click.jstree", $.proxy(function (e) {
-						if(this.data.contextmenu) {
-							$.vakata.context.hide();
-						}
-					}, this))
 				.bind("destroy.jstree", $.proxy(function () {
-						// TODO: move this to descruct method
+					// TODO: move this to descruct method
+					if(this.data.contextmenu) {
+						$.vakata.context.hide();
+					}
+				}, this));
+				/*.delegate("a", "click.jstree", $.proxy(function (e) {
 						if(this.data.contextmenu) {
 							$.vakata.context.hide();
 						}
-					}, this));
+					}, this))*/
 			$(document).bind("context_hide.vakata", $.proxy(function () { this.data.contextmenu = false; }, this));
 		},
 		defaults : { 
 			select_node : false, // requires UI plugin
 			show_at_node : true,
-			// Could be a function that should return an object like this one
-			items : function (o, cb) { 
+			items : function (o, cb) { // Could be a function that should return an object like this one
 				return {
-				"create" : {
-					"separator_before"	: false,
-					"separator_after"	: true,
-					"label"				: "Create",
-					"action"			: function (obj) { this.create(obj); }
-				},
-				"rename" : {
-					"separator_before"	: false,
-					"separator_after"	: false,
-					"label"				: "Rename",
-					"action"			: function (obj) { this.rename(obj); }
-				},
-				"remove" : {
-					"separator_before"	: false,
-					"icon"				: false,
-					"separator_after"	: false,
-					"label"				: "Delete",
-					"action"			: function (obj) { if(this.is_selected(obj)) { this.remove(); } else { this.remove(obj); } }
-				},
-				"ccp" : {
-					"separator_before"	: true,
-					"icon"				: false,
-					"separator_after"	: false,
-					"label"				: "Edit",
-					"action"			: false,
-					"submenu" : { 
-						"cut" : {
-							"separator_before"	: false,
-							"separator_after"	: false,
-							"label"				: "Cut",
-							"action"			: function (obj) { this.cut(obj); }
-						},
-						"copy" : {
-							"separator_before"	: false,
-							"icon"				: false,
-							"separator_after"	: false,
-							"label"				: "Copy",
-							"action"			: function (obj) { this.copy(obj); }
-						},
-						"paste" : {
-							"separator_before"	: false,
-							"icon"				: false,
-							"separator_after"	: false,
-							"label"				: "Paste",
-							"action"			: function (obj) { this.paste(obj); }
+					"create" : {
+						"separator_before"	: false,
+						"separator_after"	: true,
+						"label"				: "Create",
+						"action"			: function (obj) { this.create(obj); }
+					},
+					"rename" : {
+						"separator_before"	: false,
+						"separator_after"	: false,
+						"label"				: "Rename",
+						"action"			: function (obj) { this.rename(obj); }
+					},
+					"remove" : {
+						"separator_before"	: false,
+						"icon"				: false,
+						"separator_after"	: false,
+						"label"				: "Delete",
+						"action"			: function (obj) { if(this.is_selected(obj)) { this.remove(); } else { this.remove(obj); } }
+					},
+					"ccp" : {
+						"separator_before"	: true,
+						"icon"				: false,
+						"separator_after"	: false,
+						"label"				: "Edit",
+						"action"			: false,
+						"submenu" : { 
+							"cut" : {
+								"separator_before"	: false,
+								"separator_after"	: false,
+								"label"				: "Cut",
+								"action"			: function (obj) { this.cut(obj); }
+							},
+							"copy" : {
+								"separator_before"	: false,
+								"icon"				: false,
+								"separator_after"	: false,
+								"label"				: "Copy",
+								"action"			: function (obj) { this.copy(obj); }
+							},
+							"paste" : {
+								"separator_before"	: false,
+								"icon"				: false,
+								"separator_after"	: false,
+								"label"				: "Paste",
+								"action"			: function (obj) { this.paste(obj); }
+							}
 						}
 					}
-				}
 				};
 			}
 		},

@@ -24,21 +24,17 @@ namespace Sugarcrm\Sugarcrm\Data;
  *
  * Example:
  *
- * // The tree node (each item in tree) has next attrigutes:
+ * // The tree node is stucture with attrigutes:
  *
  * $node = array(
- *     'id'                 => '...',   // node uid
- *     'name'               => '...',   // readable node name
- *     'root'               => '...',   // uid of root node
- *     'lft'                => '...',   // left index of node in tree
- *     'rgt'                => '...',   // right index of node in tree
- *     'lvl'                => '...',   // level of node in tree
- *     'date_entered'       => '...',
- *     'date_modified'      => '...',
- *     'modified_user_id'   => '...',
- *     'created_by'         => '...',
- *     'description'        => '...',
- *     'deleted'            => '...',
+ *     'id' => '...',       // node uid
+ *     'name' => '...',     // readable node name
+ *     'root' => '...',     // uid of root node
+ *     'lft' => '...',      // left index of node in tree
+ *     'rgt' => '...',      // right index of node in tree
+ *     'lvl' => '...',      // level of node in tree
+ *
+ *     ... other properties ...
  * );
  *
  * @package Sugarcrm\Sugarcrm\Data
@@ -47,10 +43,22 @@ namespace Sugarcrm\Sugarcrm\Data;
 interface NestedBeanInterface
 {
     /**
+     * Gets root nodes.
+     * @return array List of root nodes.
+     */
+    public function getRoots();
+
+    /**
      * Determines if node is root.
      * @return boolean whether the node is root.
      */
     public function isRoot();
+
+    /**
+     * Save current node as new root.
+     * @return string Id of new created bean.
+     */
+    public function saveAsRoot();
 
     /**
      * Builds from 'flat' tree the hierarchical tree for root node
@@ -250,8 +258,8 @@ interface NestedBeanInterface
      * @param Sugarcrm\Sugarcrm\Data\NestedBeanInterface $node.
      * @return string Id of new created bean;
      *
-     * @throws Exception When current bean isn't new bean (existing in Db bean).
-     * @throws Exception When current bean is deleted.
+     * @throw Exception When current bean isn't new bean (existing in Db bean).
+     * @throw Exception When current bean is deleted.
      */
     public function prepend(NestedBeanInterface $node);
 
@@ -284,8 +292,8 @@ interface NestedBeanInterface
      * @param Sugarcrm\Sugarcrm\Data\NestedBeanInterface $node.
      * @return string Id of new created bean;
      *
-     * @throws Exception When current bean isn't new bean (existing in Db bean).
-     * @throws Exception When current bean is deleted.
+     * @throw Exception When current bean isn't new bean (existing in Db bean).
+     * @throw Exception When current bean is deleted.
      */
     public function append(NestedBeanInterface $node);
 
@@ -322,8 +330,8 @@ interface NestedBeanInterface
      * @param Sugarcrm\Sugarcrm\Data\NestedBeanInterface $target.
      * @return string Id of new created bean;
      *
-     * @throws Exception When current bean isn't new bean (existing in Db bean).
-     * @throws Exception When current bean is deleted.
+     * @throw Exception When current bean isn't new bean (existing in Db bean).
+     * @throw Exception When current bean is deleted.
      */
     public function insertBefore(NestedBeanInterface $target);
 
@@ -360,8 +368,8 @@ interface NestedBeanInterface
      * @param Sugarcrm\Sugarcrm\Data\NestedBeanInterface $target.
      * @return string Id of new created bean;
      *
-     * @throws Exception When current bean isn't new bean (existing in Db bean).
-     * @throws Exception When current bean is deleted.
+     * @throw Exception When current bean isn't new bean (existing in Db bean).
+     * @throw Exception When current bean is deleted.
      */
     public function insertAfter(NestedBeanInterface $target);
 
@@ -506,8 +514,10 @@ interface NestedBeanInterface
      */
     public function moveAsLast(NestedBeanInterface $target);
 
+
     /**
      * Removes current node from tree with all children.
+     * @return mixed
      */
     public function remove();
 }

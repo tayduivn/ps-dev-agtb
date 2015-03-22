@@ -54,6 +54,14 @@ class TreeApi extends FilterApi
                     'SugarApiExceptionNotFound',
                 ),
             ),
+            'roots' => array(
+                'reqType' => 'GET',
+                'path' => array('<module>', 'tree', 'roots'),
+                'pathVars' => array('module', '', ''),
+                'method' => 'roots',
+                'shortHelp' => 'This method returns all root nodes',
+                'longHelp' => 'modules/Categories/clients/base/api/help/tree_get_roots_help.html',
+            ),
             'tree' => array(
                 'reqType' => 'GET',
                 'path' => array('<module>', '?', 'tree'),
@@ -405,6 +413,20 @@ class TreeApi extends FilterApi
         list ($bean, $target) = $this->loadBoundBeans($args['module'], $args['record'], $args['target']);
         $bean->moveAsLast($target);
         return $this->formatBean($api, $args, $bean);
+    }
+    
+    /**
+     * This method returns all root nodes.
+     * @uses TreeApi::formatTree to format output results.
+     * @param ServiceBase $api Api object.
+     * @param array $args The arguments array passed in from the API.
+     * @return array List of root nodes.
+     */
+    public function roots($api, $args)
+    {
+        $this->requireArgs($args, array('module'));
+        $seed = $this->retrieveBean($args['module']);
+        return $this->formatTree($api, $args, $seed->getRoots());
     }
 
     /**
