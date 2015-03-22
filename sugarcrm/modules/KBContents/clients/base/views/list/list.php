@@ -46,7 +46,7 @@ $viewdefs['KBContents']['base']['view']['list'] = array(
                         'exp_date',
                     ),
                 ),
-                array (
+                array(
                     'name' => 'category_name',
                     'label' => 'LBL_CATEGORY_NAME',
                     'enabled' => true,
@@ -55,6 +55,12 @@ $viewdefs['KBContents']['base']['view']['list'] = array(
                     'filter_relate' => array(
                         'category_id' => 'category_id',
                     )
+                ),
+                array(
+                    'name' => 'viewcount',
+                    'label' => 'LBL_VIEWED_COUNT',
+                    'enabled' => true,
+                    'default' => true,
                 ),
                 array(
                     'name' => 'date_entered',

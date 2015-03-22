@@ -240,6 +240,9 @@ $viewdefs['KBContents']['base']['view']['record'] = array(
                     'name' => 'active_rev',
                     'type' => 'bool',
                 ),
+                'viewcount' => array(
+                    'name' => 'viewcount',
+                ),
                 'team_name' => array(
                     'name' => 'team_name',
                 ),

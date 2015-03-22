@@ -58,6 +58,7 @@ $viewdefs['KBContents']['base']['view']['preview'] = array(
             'hide' => true,
             'fields' => array(
                 'revision',
+                'viewcount',
                 'created_by_name',
                 'date_entered',
                 'date_modified',
