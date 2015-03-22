@@ -29,10 +29,7 @@ class MetaDataHelperTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetFtsFields($module, array $vardef, array $result)
     {
-        $helper = $this->getMockBuilder('Sugarcrm\Sugarcrm\SearchEngine\MetaDataHelper')
-            ->disableOriginalConstructor()
-            ->setMethods(array('getModuleVardefs'))
-            ->getMock();
+        $helper = $this->getMetaDataHelperMock(array('getModuleVardefs'));
 
         $helper->expects($this->any())
             ->method('getModuleVardefs')
@@ -86,5 +83,72 @@ class MetaDataHelperTest extends \PHPUnit_Framework_TestCase
                 ),
             ),
         );
+    }
+
+    /**
+     * @covers ::isFieldSearchable
+     * @dataProvider dataProviderIsFieldSearchable
+     *
+     * @param array $defs
+     * @param boolean $isSearchable
+     */
+    public function testIsFieldSearchable(array $defs, $isSearchable)
+    {
+        $sut = $this->getMetaDataHelperMock();
+        $this->assertSame($isSearchable, $sut->isFieldSearchable($defs));
+    }
+
+    public function dataProviderIsFieldSearchable()
+    {
+        return array(
+            array(
+                array(
+                    'name' => 'foo1',
+                    'full_text_search' => array('enabled' => true, 'searchable' => false),
+                ),
+                false,
+            ),
+            array(
+                array(
+                    'name' => 'foo2',
+                    'full_text_search' => array('enabled' => true, 'searchable' => true),
+                ),
+                true,
+            ),
+            array(
+                array(
+                    'name' => 'foo3',
+                    'full_text_search' => array('enabled' => true, 'boost' => 1),
+                ),
+                true,
+            ),
+            array(
+                array(
+                    'name' => 'foo4',
+                    'full_text_search' => array('enabled' => true, 'boost' => 3, 'searchable' => true),
+                ),
+                true,
+            ),
+            array(
+                array(
+                    'name' => 'foo5',
+                    'full_text_search' => array('enabled' => true),
+                ),
+                false,
+            ),
+        );
+    }
+
+    /**
+     * Get MetaDataHelper mock
+     * @param array $methods
+     * @return \Sugarcrm\Sugarcrm\SearchEngine\MetaDataHelper
+     */
+    protected function getMetaDataHelperMock(array $methods = null)
+    {
+        return $this->getMockBuilder('Sugarcrm\Sugarcrm\SearchEngine\MetaDataHelper')
+            ->disableOriginalConstructor()
+            ->setMethods($methods)
+            ->getMock();
     }
 }
