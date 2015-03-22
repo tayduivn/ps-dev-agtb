@@ -34,12 +34,54 @@
                 return false;
             },
 
+            /**
+             * Handler that called when user drop file on the file field.
+             *
+             * To overrade behavior of this handler you need create new handler and bind it to
+             * before 'attachments:drop' event.
+             *
+             * Example:
+             *
+             * // in view to overrdie
+             * this.before('attachments:drop', this._onAttachmentDrop, this);
+             *
+             * // this handler should return 'false' to prevent handling in main file.
+             * _onAttachmentDrop: function(event) {
+             *     ...
+             * }
+             *
+             * @param {Event} event Drop event.
+             */
             dropAttachment: function(event) {
-
-                var proto = Object.getPrototypeOf(this);
-                if (_.isFunction(proto.dropAttachment)) {
-                    return proto.dropAttachment.call(this, event);
+                if (!this.triggerBefore('attachments:drop', event)) {
+                    return;
                 }
+
+                this.trigger('attachments:drop', event);
+            },
+
+            /**
+             * Default handler for 'attachments:drop' event.
+             * This event is triggered when user drop file on the file field.
+             *
+             * To overrade behavior of this handler you need create new handler and bind it to
+             * before 'attachments:drop' event.
+             *
+             * Example:
+             *
+             * // in view to overrdie
+             * this.before('attachments:drop', this._onAttachmentDrop, this);
+             *
+             * // this handler should return 'false' to prevent handling in main file.
+             * _onAttachmentDrop: function(event) {
+             *     ...
+             * }
+             *
+             * @param {Event} event Drop event.
+             * @private
+             */
+            _onAttachmentDropDefault: function(event) {
+
                 // Use originalEvent to access the dataTransfer property since it may not exist on the jQuery event
                 // see http://bugs.jquery.com/ticket/7808 for more information
                 var text = $.trim(event.originalEvent.dataTransfer.getData('text')),
@@ -225,6 +267,8 @@
                         });
                     });
                 });
+
+                this.on('attachments:drop', this._onAttachmentDropDefault, this);
             },
 
             /**

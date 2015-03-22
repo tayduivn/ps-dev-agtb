@@ -283,7 +283,6 @@ class DownloadFile {
      * @param array $beans
      * @param string $field
      * @return array File name and path.
-     * @throws Exception
      */
     public function getFileNamesForArchive($beans, $field)
     {
