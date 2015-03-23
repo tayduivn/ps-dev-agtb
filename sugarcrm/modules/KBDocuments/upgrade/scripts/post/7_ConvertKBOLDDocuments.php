@@ -26,6 +26,12 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
      */
     protected $newTags = array();
 
+    /**
+     * Converted tags to categories.
+     * @var array
+     */
+    protected $convertedTagsCategories = array();
+
     public function run()
     {
         if (!version_compare($this->from_version, '7.7.0', '<=')) {
@@ -88,7 +94,18 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
                 }
             }
         }
+        $this->convertTags();
         $this->checkMenu();
+    }
+
+    /**
+     * Convert all old tags to new categories.
+     */
+    protected function convertTags()
+    {
+        foreach ($this->getOldTags() as $tag) {
+            $this->convertTagsToCategoriesRecursive($tag);
+        }
     }
 
     /**
@@ -203,5 +220,73 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
             array_push($data, $note);
         }
         return $data;
+    }
+
+    /**
+     * Return tags by document ID.
+     * Written because the KBOLDDocument's functions get_tags() and get_kbdoc_tags() return only one tag.
+     *
+     * @return array
+     */
+    protected function getOldTags()
+    {
+        $data = array();
+        $query = "SELECT tags.*
+        FROM kboldtags tags
+        WHERE tags.deleted = 0";
+        $result = $this->db->query($query);
+        while ($row = $this->db->fetchByAssoc($result)) {
+            array_push($data, $row);
+        }
+        return $data;
+    }
+
+    /**
+     * Return data for old KBTag.
+     * @param string $id
+     * @return mixed
+     */
+    protected function getOldTag($id)
+    {
+        $query = "SELECT tags.*
+          FROM kboldtags tags
+          WHERE tags.id = {$this->db->quoted($id)}
+            AND tags.deleted = 0";
+        return $this->db->fetchOne($query);
+    }
+
+    /**
+     * Recursively converts old tags to categories.
+     *
+     * @param array $tag
+     * @return string Associated category ID.
+     */
+    protected function convertTagsToCategoriesRecursive($tag)
+    {
+        if (isset($this->convertedTagsCategories[$tag['id']])) {
+            return $this->convertedTagsCategories[$tag['id']];
+        }
+        $category = BeanFactory::newBean('Categories');
+        $category->name = $tag['tag_name'];
+
+        if ($tag['parent_tag_id']) {
+            $parentTag = $this->getOldTag($tag['parent_tag_id']);
+            $parentCategoryId = $this->convertTagsToCategoriesRecursive($parentTag);
+            $parentCategory = BeanFactory::getBean('Categories', $parentCategoryId, array('use_cache' => false));
+            $parentCategory->append($category);
+        } else {
+            $KBContent = BeanFactory::getBean('KBContents');
+            $rootCategory = BeanFactory::getBean(
+                'Categories',
+                $KBContent->getCategoryRoot(),
+                array('use_cache' => false)
+            );
+            $rootCategory->append($category);
+        }
+
+        $categoryID = $category->save();
+        $this->convertedTagsCategories[$tag['id']] = $categoryID;
+
+        return $categoryID;
     }
 }
