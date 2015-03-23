@@ -149,6 +149,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
     'Comment' => 'Document status for Meta-Data framework',
   ),
  ),
+ 'uses' => array(
+     'taggable',
+ ),
  'duplicate_check' => array(
      'enabled' => true,
      'FilterDuplicateCheck' => array(

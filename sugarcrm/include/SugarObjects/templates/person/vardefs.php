@@ -400,6 +400,7 @@ $vardefs =array(
     ),
 'uses' => array(
     'email_address',
+    'taggable',
 ),
 'relationships'=>array(
 ),

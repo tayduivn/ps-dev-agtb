@@ -200,6 +200,10 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                 'do_not_call',
                 'account_name',
                 'email',
+                array(
+                    'name' => 'tag',
+                    'span' => 12,
+                ),
             ),
         ),
         array(

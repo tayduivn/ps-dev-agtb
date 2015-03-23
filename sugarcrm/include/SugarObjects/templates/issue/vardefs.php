@@ -120,6 +120,9 @@ $vardefs = array (
 	'indices'=>array(
 		 'number'=>array('name' =>strtolower($module).'numk', 'type' =>'unique', 'fields'=>array($_object_name . '_number'))
 	),
+        'uses' => array(
+            'taggable',
+        ),
     'duplicate_check' => array(
         'enabled' => true,
         'FilterDuplicateCheck' => array(

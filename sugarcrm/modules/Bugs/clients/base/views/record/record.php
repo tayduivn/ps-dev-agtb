@@ -178,6 +178,10 @@ $viewdefs['Bugs']['base']['view']['record'] = array(
                     'nl2br' => true,
                     'span' => 12,
                 ),
+                array(
+                    'name' => 'tag',
+                    'span' => 12,
+                ),
             ),
         ),
         array(

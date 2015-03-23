@@ -233,7 +233,13 @@ function exportFromApi($args, $sample=false) {
         $result = $db->query($query, true, $app_strings['ERR_EXPORT_TYPE'].$type.": <BR>.".$query);
     }
 
-    $content = getExportContentFromResult($focus, $result, $members, $remove_from_members, $sample);
+    $tagBean = BeanFactory::getBean("Tags");
+    $relTags = $tagBean->getRelatedModuleRecords($focus, $records);
+    if (isset($relTags)) {
+        $options['relTags'] = $relTags;
+    }
+
+    $content = getExportContentFromResult($focus, $result, $members, $remove_from_members, $sample, $options);
     return $content;
 }
 
@@ -370,14 +376,16 @@ function getExportContentFromFilter($args, $remove_from_members, $focus, $member
  * @param bool $members used to indicate whether or not to apply filtering for header rows; false by default
  * @param array $remove_from_members Array of header columns to filter out; empty by default
  * @param bool $populate boolean used to indicate whether or not to populate with test data; false by default
+ * @param array $options holds additional information including tags
  * @return string
  */
 function getExportContentFromResult(
     $focus,
     $result,
-    $members=false,
-    $remove_from_members=array(),
-    $populate=false
+    $members = false,
+    $remove_from_members = array(),
+    $populate = false,
+    $options = array()
 ) {
 
     global $current_user, $locale, $app_strings;
@@ -480,7 +488,12 @@ function getExportContentFromResult(
                 if (isset($focus->field_name_map[$fieldNameMapKey])  && $focus->field_name_map[$fieldNameMapKey]['type'])
                 {
                     $sfh = SugarFieldHandler::getSugarField($focus->field_name_map[$fieldNameMapKey]['type']);
+                    $sfh->setOptions($options);
                     $value = $sfh->exportSanitize($value, $focus->field_defs[$key], $focus, $val);
+                }
+
+                if ($key === 'tag' && $pre_id) {
+                    $options[$pre_id] = $value;
                 }
 
                 if(isset($focus->field_name_map[$fields_array[$key]]['custom_type']) && $focus->field_name_map[$fields_array[$key]]['custom_type'] == 'teamset'){

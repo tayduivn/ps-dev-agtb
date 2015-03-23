@@ -146,6 +146,10 @@ $viewdefs[$module_name]['base']['view']['record'] = array(
             'fields' => array(
                 'assigned_user_name',
                 'team_name',
+                array(
+                    'name' => 'tag',
+                    'span' => 12,
+                ),
             ),
         ),
         array(

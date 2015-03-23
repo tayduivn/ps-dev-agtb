@@ -4345,6 +4345,20 @@ class SugarBean
                     $jtcount++;
                 }
             }
+            if ($data['type'] === 'tag') {
+                $joinTableAlias = 'jt' . $jtcount;
+                $jtcount++;
+                $joinTableAlias2 = 'jt' . $jtcount;
+                $jtcount++;
+                $nameField = "$joinTableAlias2.name as tag";
+                $ret_array['select'].= ", $nameField";
+                $ret_array['from'].= " LEFT JOIN tag_bean_rel $joinTableAlias
+                                     ON {$this->table_name}.id=$joinTableAlias.bean_id
+                                     AND $joinTableAlias.deleted=0";
+                $ret_array['from'].= " LEFT JOIN tags $joinTableAlias2
+                                     ON $joinTableAlias.tag_id=$joinTableAlias2.id
+                                     AND $joinTableAlias.deleted=0";
+            }
 
             if ($this->is_relate_field($field))
             {
@@ -7760,4 +7774,31 @@ class SugarBean
         self::$recursivelyResavedLinks = array();
         self::$recursivelyResavedManyBeans = false;
     }
+
+    /**
+     * Checks to see if a bean implements taggable
+     *
+     * @return boolean True if tags are enabled for this bean
+     */
+    public function isTaggable()
+    {
+        return $this->getTagField() !== null;
+    }
+
+    /**
+     * Gets the field_defs key for the tag field of a bean
+     *
+     * @return string
+     */
+    public function getTagField()
+    {
+        foreach ($this->field_defs as $name => $def) {
+            if (isset($def['type']) && $def['type'] === 'tag') {
+                return $name;
+            }
+        }
+
+        return null;
+    }
+
 }

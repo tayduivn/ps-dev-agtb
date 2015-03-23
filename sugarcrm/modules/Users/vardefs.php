@@ -681,6 +681,7 @@ $dictionary['User'] = array(
             'studio' => array(
                 'visible' => false,
                 'searchview' => true,
+                'editview' => true,
                 'editField' => true,
             ),
             'sort_on' => 'email_addresses',

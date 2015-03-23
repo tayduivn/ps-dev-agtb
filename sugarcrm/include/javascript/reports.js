@@ -2301,10 +2301,15 @@ SUGAR.reports = function() {
 			select_html_info['select'] = select_info;
 		
 			field_type = field.type;
-		
+
 			if ( typeof(field.custom_type) != 'undefined' && typeof(filter_defs[field.custom_type]) != 'undefined') {
-				field_type = field.custom_type;
-			}
+                            field_type = field.custom_type;
+                        } else if (typeof(filter_defs[module + ':' + field_type]) != 'undefined') {
+                            // if we want to customize the dropdown for a specific module and field
+                            // then use 'module:field' format. For example 'Tags:name' to customize
+                            // the dropdown for tag names only.
+                            field_type = module + ':' + field_type;
+                        }
 		
 			var qualifiers = filter_defs[field_type];
 			var selected = false;

@@ -99,7 +99,8 @@ class Dashboard extends Basic
     public function getDashboardsForUser(User $user, array $options = array())
     {
         $order = !empty($options['order_by']) ? $options['order_by'] : 'date_entered desc';
-        $from = "assigned_user_id = '".$this->db->quote($user->id)."' and dashboard_module ='".$this->db->quote($options['dashboard_module'])."'";
+        $from = "{$this->table_name}.assigned_user_id = '".$this->db->quote($user->id)."'
+                 AND {$this->table_name}.dashboard_module ='".$this->db->quote($options['dashboard_module'])."'";
         if (isset($options['view']) && !isset($options['view_name'])) {
             $options['view_name'] = $options['view'];
         }

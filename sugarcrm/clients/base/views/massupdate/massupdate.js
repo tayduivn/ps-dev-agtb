@@ -790,6 +790,8 @@
                 attributes.push('parent_id', 'parent_type');
             } else if (value.name === 'team_name') {
                 attributes.push('team_name_type');
+            } else if (value.name === 'tag') {
+                attributes.push('tag_type');
             } else if (value.isMultiSelect) {
                 attributes.push(value.name + '_replace');
             }
@@ -816,11 +818,15 @@
                 validator[field.name] = field;
                 field.required = (_.isBoolean(field.required) && field.required) || (field.required && field.required == 'true') || false;
                 var value = this.model.get(field.name);
-                if (!_.isBoolean(value) && !value) {
+                // check if value represents emptiness
+                if ((!_.isBoolean(value) && !value) || (_.isArray(value) && value.length === 0)) {
                     emptyValues.push(app.lang.get(field.label, this.model.module));
-                    this.model.set(field.name, '', {silent: true});
-                    if (field.id_name) {
-                        this.model.set(field.id_name, '', {silent: true});
+                    //don't set model if field is a relate collection
+                    if (!field.relate_collection) {
+                        this.model.set(field.name, '', {silent: true});
+                        if (field.id_name) {
+                            this.model.set(field.id_name, '', {silent: true});
+                        }
                     }
                 }
                 this.model._doValidate(validator, errors, function(didItFail, fields, errors, callback) {

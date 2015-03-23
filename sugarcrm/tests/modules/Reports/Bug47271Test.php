@@ -17,29 +17,32 @@ require_once('modules/Reports//SavedReport.php');
 
 class Bug47271Test extends Sugar_PHPUnit_Framework_TestCase
 {
-    var $orig_name;
+    private $origName;
 
     public function setUp()
     {
-        global $current_user, $app_strings, $mod_strings, $app_list_strings;
-        $current_user = SugarTestUserUtilities::createAnonymousUser();
-        $app_strings = return_application_language($GLOBALS['current_language']);
-        $mod_strings  = return_module_language($GLOBALS['current_language'], 'Reports');
-        $app_list_strings = return_app_list_strings_language($GLOBALS['current_language']);
-        $this->orig_name = $app_list_strings['moduleList']['Contacts'];
+        SugarTestHelper::setUp('moduleList');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('dictionary');
+        SugarTestHelper::setUp('app_strings');
+        SugarTestHelper::setUp('app_list_strings');
+        SugarTestHelper::setUp('mod_strings', array('Reports'));
+        SugarTestHelper::setUp('current_user');
+
+        $this->origName = $GLOBALS['app_list_strings']['moduleList']['Contacts'];
     }
 
     public function tearDown()
     {
-        global $app_list_strings;
-        $app_list_strings['moduleList']['Contacts'] = $this->orig_name;
-
+        $GLOBALS['app_list_strings']['moduleList']['Contacts'] = $this->origName;
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($_REQUEST['report_module']);
         unset($_REQUEST['page']);
         unset($_REQUEST['module']);
         unset($GLOBALS['module']);
         unset($_REQUEST['action']);
+        SugarTestHelper::tearDown();
     }
 
     public function testUserListView()
@@ -65,4 +68,3 @@ class Bug47271Test extends Sugar_PHPUnit_Framework_TestCase
         $this->expectOutputRegex('/.*'.$pattern.'.*/');
     }
 }
-?>

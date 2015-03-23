@@ -987,20 +987,20 @@ function return_app_list_strings_language($language, $useCache = true)
             $app_list_strings = sugarArrayIntersectMerge($app_list_strings, $app_list_strings_array[$lang]);
         }
 
-        // Custom language file overrides default
-        foreach(SugarAutoLoader::existing(
-            "custom/include/language/$lang.lang.php"
-        ) as $file) {
-            include($file);
-            $GLOBALS['log']->info("Found custom language file: $file");
-        }
-
         // Merge custom Extensions with loaded language file
         foreach(SugarAutoLoader::existing(
             "custom/application/Ext/Language/$lang.lang.ext.php"
         ) as $file) {
-            $app_list_strings = _mergeCustomAppListStrings($file , $app_list_strings);
+            $app_list_strings = _mergeCustomAppListStrings($file, $app_list_strings);
             $GLOBALS['log']->info("Found extended language file: $file");
+        }
+
+        // Custom language file overrides default
+        foreach(SugarAutoLoader::existing(
+            "custom/include/language/$lang.lang.php"
+        ) as $file) {
+            $app_list_strings = _mergeCustomAppListStrings($file, $app_list_strings);
+            $GLOBALS['log']->info("Found custom language file: $file");
         }
     }
 
@@ -1041,10 +1041,6 @@ function _mergeCustomAppListStrings($file , $appListStrings)
     global $app_list_strings;
     $app_list_strings_original = $appListStrings;
 
-    // FG - bug 45525 - $exemptDropdown array is defined (once) here, not inside the foreach
-    //                  This way, language file can add items to save specific standard codelist from being overwritten
-    $exemptDropdowns = array();
-
     // Include the language file. With $app_list_strings globalized above it should
     // make no difference if the content of the file is $app_list_strings or
     // $GLOBALS['app_list_strings'] or a mixture of the two, even if indexes overlap.
@@ -1056,9 +1052,7 @@ function _mergeCustomAppListStrings($file , $appListStrings)
     }
     //Bug 25347: We should not merge custom dropdown fields unless they relate to parent fields or the module list.
     // FG - bug 45525 - Specific codelists must NOT be overwritten
-    $exemptDropdowns[] = "moduleList";
-    $exemptDropdowns[] = "moduleListSingular";
-    $exemptDropdowns = array_merge($exemptDropdowns, getTypeDisplayList());
+    $exemptDropdowns = getExemptDropdowns();
 
     foreach ($app_list_strings as $key=>$value) {
         if (!in_array($key, $exemptDropdowns) && array_key_exists($key, $app_list_strings_original)) {
@@ -1066,6 +1060,17 @@ function _mergeCustomAppListStrings($file , $appListStrings)
         }
     }
     $app_list_strings = sugarArrayMergeRecursive($app_list_strings_original , $app_list_strings);
+
+    foreach ($exemptDropdowns as $exemptDropdown) {
+        if (isset($app_list_strings[$exemptDropdown])) {
+            $app_list_strings[$exemptDropdown] = array_filter(
+                $app_list_strings[$exemptDropdown],
+                function ($value) {
+                    return $value !== null;
+                }
+            );
+        }
+    }
 
     return $app_list_strings;
 }
@@ -5927,4 +5932,17 @@ function replace_sugar_vars($subject, $fields, $use_curly = false)
         }
     }
     return $subject;
+}
+
+/**
+ * Returns an array of dropdown keys which are to be merged if custom language files or extensions are present
+ *
+ * @return array
+ */
+function getExemptDropdowns()
+{
+    return array_merge(
+        array('moduleList', 'moduleListSingular'),
+        getTypeDisplayList()
+    );
 }

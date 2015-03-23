@@ -689,7 +689,6 @@ $dictionary['Lead'] = array(
     ),
     //This enables optimistic locking for Saves From EditView
     'optimistic_locking' => true,
-
 );
 
 VardefManager::createVardef(

@@ -36,8 +36,9 @@ require_once('data/SugarBean.php');
 //check to see if the script files need to be rebuilt, add needed variables to request array
 $_REQUEST['root_directory'] = getcwd();
 $_REQUEST['js_rebuild_concat'] = 'rebuild';
-if(isset($_REQUEST['goto']) && $_REQUEST['goto'] != 'SilentInstall') {
+if (isset($_REQUEST['goto']) && $_REQUEST['goto'] != 'SilentInstall' && empty($_SESSION['js_minified'])) {    
     require_once('jssource/minify.php');
+    $_SESSION['js_minified'] = true;
 }
 
 $timedate = TimeDate::getInstance();

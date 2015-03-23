@@ -20,6 +20,7 @@ $viewdefs[$module_name]['base']['filter']['default'] = array(
         'resolution' => array(),
         'status' => array(),
         'priority' => array(),
+        'tag' => array(),
         'assigned_user_name' => array(),
         '$owner' => array(
             'predefined_filter' => true,

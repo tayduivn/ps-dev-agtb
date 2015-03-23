@@ -45,7 +45,7 @@ class Bug62969Test extends Sugar_PHPUnit_Framework_TestCase
   'Leads' => 'Lead',
   'Project' => 'Project',
   'ProjectTask' => 'Project Task',
-  //'Prospects' => 'Target',
+  'Prospects' => null,
 );
 EOQ;
         $dirName = dirname($this->customFile);

@@ -15,5 +15,6 @@ $viewdefs['ProductCategories']['base']['filter']['default'] = array(
         'name' => array(),
         'parent_name' => array(),
         'description' => array(),
+        'tag' => array(),
     ),
 );

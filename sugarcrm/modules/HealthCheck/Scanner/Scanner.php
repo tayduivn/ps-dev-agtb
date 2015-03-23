@@ -153,7 +153,10 @@ class HealthCheckScanner
             array('version' => '2.7.0-8-g74f8c47'),
         ),
         'inetMAPS' => array(
-            array('version' => '*', 'path' => 'modules/inetMAPS/classes/')
+            array('version' => '*', 'path' => 'modules/inetMAPS/classes/'),
+        ),
+        'tagMe' => array(
+            array('version' => '*'),
         )
     );
 

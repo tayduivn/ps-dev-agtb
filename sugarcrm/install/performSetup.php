@@ -486,6 +486,7 @@ $enabled_tabs[] = 'Forecasts';
 $enabled_tabs[] = 'Cases';
 $enabled_tabs[] = 'Prospects';
 $enabled_tabs[] = 'ProspectLists';
+$enabled_tabs[] = 'Tags';
 //BEGIN SUGARCRM flav=ent ONLY
 $enabled_tabs[] = 'pmse_Project';
 $enabled_tabs[] = 'pmse_Inbox';

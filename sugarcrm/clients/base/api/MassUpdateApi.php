@@ -57,6 +57,11 @@ class MassUpdateApi extends SugarApi {
     protected $jobId = null;
 
     /**
+     * @var if we are dealing with these mass update vars then need to check for _type vars to determine add/replace
+     */
+    protected $massUpdateVars = array('team_name','tag');
+
+    /**
      * To perform mass delete
      * @param $api ServiceBase The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
      * @param $args array The arguments array passed in from the API
@@ -107,13 +112,10 @@ class MassUpdateApi extends SugarApi {
             unset($mu_params['entire']);
         }
 
-        if(isset($mu_params['team_name'])) {
-            if(isset($mu_params['team_name_type']) && $mu_params['team_name_type'] === '1') {
-                $mu_params['team_name_type'] = "add";
-            } else {
-                $mu_params['team_name_type'] = "replace";
-            }
-        }
+        // In some cases, a field will be sent with a *_type arg that maps to it
+        // This is used in cases like team_name and tag, where the user might want
+        // to override OR append values on the request
+        $mu_params = $this->handleTypeAdjustments($mu_params);
 
         // check ACL
         $bean = BeanFactory::newBean($mu_params['module']);
@@ -143,4 +145,29 @@ class MassUpdateApi extends SugarApi {
         return $this->jobId;
     }
 
+    /**
+     * Handles modifying values of *_type fields to strings from boolean int
+     * values. This is used by team_name and tag primarily
+     *
+     * @param array $params The params sent in the request
+     * @return array
+     */
+    protected function handleTypeAdjustments($params)
+    {
+        foreach ($this->massUpdateVars as $massUpdateVar) {
+            if (isset($params[$massUpdateVar])) {
+                // check if there is an _type variable
+                $typeVar = $massUpdateVar . '_type';
+                if (isset($params[$typeVar]) && ($params[$typeVar] == '1')) {
+                    // its an add operation
+                    $params[$typeVar] = 'add';
+                } else {
+                    // its a replace operation
+                    $params[$typeVar] = 'replace';
+                }
+            }
+        }
+
+        return $params;
+    }
 }

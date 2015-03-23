@@ -25,7 +25,9 @@ class VardefManager{
      *
      * @var array
      */
-    public static $ignoreBWCTemplates = array();
+    public static $ignoreBWCTemplates = array(
+        'taggable' => true,
+    );
 
     /**
      * this method is called within a vardefs.php file which extends from a SugarObject.

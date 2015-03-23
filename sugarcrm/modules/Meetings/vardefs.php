@@ -651,7 +651,7 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
     'duplicate_check' => array(
         'enabled' => false
     ),
-                            );
+);
 
 VardefManager::createVardef('Meetings','Meeting', array('default', 'assignable',
 'team_security',

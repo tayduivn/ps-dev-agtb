@@ -97,11 +97,32 @@ $viewdefs['base']['view']['tutorial'] = array(
                 'vertAdj' => -13,
             ),
             array(
+                'name' => '[data-type="tag"]',
+                'text' => 'LBL_TOUR_TAGS_ADD',
+                'full' => true,
+                'horizAdj' => -5,
+                'vertAdj' => 1,
+            ),
+            array(
+                'name' => '.select2-container.select2-container-multi.select2-choices-pills-close.select2field',
+                'text' => 'LBL_TOUR_TAGS_DELETE',
+                'full' => true,
+                'horizAdj' => 1,
+                'vertAdj' => -11,
+            ),
+            array(
                 'name' => '.show-hide-toggle',
                 'text' => 'LBL_TOUR_RECORD_SHOWMORE',
                 'full' => true,
                 'horizAdj' => 8,
                 'vertAdj' => -13,
+            ),
+            array(
+                'name' => '[name="save_button"]',
+                'text' => 'LBL_TOUR_RECORD_SAVE',
+                'full' => true,
+                'horizAdj' => -5,
+                'vertAdj' => -11,
             ),
             array(
                 'name' => '.subpanel-header',

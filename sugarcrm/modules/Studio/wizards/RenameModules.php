@@ -790,6 +790,7 @@ class RenameModules
         //Save all entries
         ParserLabel::addLabels($this->selectedLanguage, $replacedLabels, $moduleName);
         $this->renamedModules[$moduleName] = true;
+        return $replacedLabels;
     }
 
     /**

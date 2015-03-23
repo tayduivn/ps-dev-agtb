@@ -229,7 +229,7 @@ $vardefs = array(
         'date_entered' => array(
             'name' => 'idx_' . strtolower($table_name) . '_date_entered',
             'type' => 'index',
-            'fields' => array('date_entered')
+            'fields' => array('id', 'date_entered')
         ),
     ),
     'relationships' => array(
@@ -272,6 +272,7 @@ $vardefs = array(
     'uses' => array(
         'following',
         'favorite',
+        'taggable',
     ),
     'duplicate_check' => array(
         'enabled' => true,

@@ -2494,18 +2494,14 @@ SUGAR.grid = function() {
 				return;
 			var row = selectedRows[0];
 			var record = document.getElementById("obj_id_" + row).value;
+			if (record.length < 1) {
+				document.getElementById("task_detail_area_div").style.display = "none";
+				alert(SUGAR.language.get('Project', 'ERR_TASK_VIEW_DETAILS'));
+				return;
+			}
 			document.getElementById("task_detail_area_div").style.display = "";
-			frames["task_detail_area_iframe"].location.href = "index.php?module=ProjectTask&fromGrid=1&show_js=1&action=EditView&record=" + record;
-			window.setTimeout('SUGAR.grid.loadTaskDetailsDiv()', 2000);
-		},
-
-		/**
-		 * loadTaskDetailsDiv: after the task detail hidden iframe is loaded, this function is called to
-		 * load the visible div.
-		 */
-		loadTaskDetailsDiv: function() {
-			document.getElementById("task_detail_area_div").innerHTML = frames["task_detail_area_iframe"].document.body.innerHTML;
-			SUGAR.grid.unSelectRow(selectedRows[0]);
+            $("#task_detail_area_div").load("index.php?module=ProjectTask&fromGrid=1&show_js=1&action=EditView&record=" + record);
+            SUGAR.grid.unSelectRow(selectedRows[0]);
 		},
 
 		closeTaskDetails: function(){
@@ -2693,10 +2689,10 @@ SUGAR.grid = function() {
 		save: function() {
 			if (SUGAR.grid.validateGridForSave()) {
 				document.getElementById("numRowsToSave").value = totalRowsInGrid;
-				document.getElementById('EditView').action.value='SaveGrid';
+				document.getElementById('EditViewGrid').action.value='SaveGrid';
 				document.getElementById("saveGridLink").style.visibility="hidden";
 				ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_SAVING'));
-				YAHOO.util.Connect.setForm(document.getElementById("EditView"));
+				YAHOO.util.Connect.setForm(document.getElementById("EditViewGrid"));
 				openConnection = YAHOO.util.Connect.asyncRequest('POST', 'index.php', {success: SUGAR.grid.success, failure: SUGAR.grid.failure});
 			}
 		},
@@ -2707,11 +2703,11 @@ SUGAR.grid = function() {
 		exportToPDF: function() {
 			document.getElementById("numRowsToSave").value = totalRowsInGrid;
 			if(document.getElementById("pdfclass").value == "EZPDF"){
-			    document.getElementById('EditView').action.value='Layouts';
+			    document.getElementById('EditViewGrid').action.value='Layouts';
 			}else{
-				document.getElementById('EditView').action.value='sugarpdf';
+				document.getElementById('EditViewGrid').action.value='sugarpdf';
 			}
-			document.getElementById('EditView').submit();
+			document.getElementById('EditViewGrid').submit();
 
 		},
 
@@ -2739,8 +2735,8 @@ SUGAR.grid = function() {
 		 */
 		changeView: function() {
 			document.getElementById("selected_view").value = document.getElementById("gridViewSelect").value;
-			document.forms['EditView'].action.value	= "EditGridView";
-			document.forms['EditView'].to_pdf.value	= "0";
+			document.forms['EditViewGrid'].action.value	= "EditGridView";
+			document.forms['EditViewGrid'].to_pdf.value	= "0";
 
 			if (parseInt(document.getElementById("gridViewSelect").value) == 5) {
 				document.getElementById("view_filter_resource").style.display = "";
@@ -2755,7 +2751,7 @@ SUGAR.grid = function() {
 					button.setAttribute('id', 'view_filter_button');
 					//button.setAttribute('class', 'button');
 					button.setAttribute('value', SUGAR.language.get('Project', 'LBL_FILTER_VIEW'));
-					button.onclick = function() {document.getElementById("EditView").submit();};
+					button.onclick = function() {document.getElementById("EditViewGrid").submit();};
 					filterDiv.appendChild(button);
 				}
 				document.getElementById('view_filter_button').className = "button";
@@ -2773,7 +2769,7 @@ SUGAR.grid = function() {
 					//button.setAttribute('class', 'button');
 					button.setAttribute('id', 'view_filter_button');
 					button.setAttribute('value', SUGAR.language.get('Project', 'LBL_FILTER_VIEW'));
-					button.onclick = function() {document.getElementById("EditView").submit();};
+					button.onclick = function() {document.getElementById("EditViewGrid").submit();};
 					filterDiv.appendChild(button);
 				}
 				document.getElementById('view_filter_button').className = "button";
@@ -2781,7 +2777,7 @@ SUGAR.grid = function() {
 				Calendar.setup ({inputField : "view_filter_date_finish", ifFormat : calendar_dateformat, showsTime : false, button : "view_filter_date_finish", singleClick : true, step : 1, weekNumbers:false});
 			}
 			else
-				document.getElementById("EditView").submit();
+				document.getElementById("EditViewGrid").submit();
 
 		},
 
