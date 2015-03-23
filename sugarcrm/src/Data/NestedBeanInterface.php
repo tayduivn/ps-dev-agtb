@@ -35,7 +35,7 @@ namespace Sugarcrm\Sugarcrm\Data;
  *     'lvl'                => '...',   // level of node in tree
  *     'date_entered'       => '...',
  *     'date_modified'      => '...',
-*     'modified_user_id'   => '...',
+ *     'modified_user_id'   => '...',
  *     'created_by'         => '...',
  *     'description'        => '...',
  *     'deleted'            => '...',
