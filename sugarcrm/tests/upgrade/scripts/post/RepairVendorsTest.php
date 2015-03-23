@@ -205,11 +205,22 @@ EOC;
                 "<?php \n include_once 'vendor/onelogin/php-saml/lib/Saml/AuthRequest.php';\n?>",
                 "7.2.1",
             ),
-
             array(
                 "<?php \n include_once 'vendor/OneLogin/Saml/AuthRequest.php';\n?>",
                 "<?php \n include_once 'vendor/onelogin/php-saml/lib/Saml/AuthRequest.php';\n?>",
                 "7.5.0",
+            ),
+            // PHPMailer path change before 7.0.0
+            array(
+                "<?php \n include_once 'include/phpmailer/class.phpmailer.php';\n?>",
+                "<?php \n include_once 'vendor/phpmailer/phpmailer/class.phpmailer.php';\n?>",
+                '6.1.1',
+            ),
+            // PHPMailer path change from 7.x to 7.5.0
+            array(
+                "<?php \n include_once 'vendor/phpmailer/class.phpmailer.php';\n?>",
+                "<?php \n include_once 'vendor/phpmailer/phpmailer/class.phpmailer.php';\n?>",
+                '7.2.1',
             ),
         );
     }

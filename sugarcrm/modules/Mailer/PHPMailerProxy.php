@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'vendor/PHPMailer/PHPMailerAutoload.php';
 require_once 'SMTPProxy.php';
 
 class PHPMailerProxy extends PHPMailer
