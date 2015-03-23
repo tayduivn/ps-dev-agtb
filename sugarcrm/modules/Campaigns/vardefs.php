@@ -64,10 +64,6 @@ $dictionary['Campaign'] = array (
         'description' => array (
             'name' => 'description',
             'type' => 'none',
-            'full_text_search' => array(
-                'enabled' => true,
-                'searchable' => true,
-            ),
             'comment' => 'inhertied but not used',
             'source' => 'non-db'
         ),
@@ -175,6 +171,10 @@ $dictionary['Campaign'] = array (
             'name' => 'content',
             'vname' => 'LBL_CAMPAIGN_CONTENT',
             'type' => 'text',
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => true,
+            ),
             'comment' => 'The campaign description'
         ),
         'prospectlists' => array (
