@@ -48,6 +48,10 @@ $dictionary['Prospect'] = array(
             'vname' => 'LBL_ACCOUNT_NAME',
             'type' => 'varchar',
             'len' => '150',
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => true,
+            ),
         ),
         'campaign_id' => array(
         'name' => 'campaign_id',
@@ -164,6 +168,26 @@ $dictionary['Prospect'] = array(
             'module' => 'Leads',
             'source' => 'non-db',
             'vname' => 'LBL_LEAD',
+        ),
+        'assistant' => array(
+            'name' => 'assistant',
+            'type' => 'varchar',
+            'len' => 75,
+            'vname' => 'LBL_ASSISTANT',
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => true,
+            ),
+        ),
+        'assistant_phone' => array(
+            'name' => 'assistant_phone',
+            'type' => 'varchar',
+            'len' => 100,
+            'vname' => 'LBL_ASSISTANT_PHONE',
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => true,
+            ),
         ),
     ),
     'indices' => array(
