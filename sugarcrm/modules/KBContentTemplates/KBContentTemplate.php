@@ -40,4 +40,12 @@ class KBContentTemplate extends SugarBean
         }
         return false;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function get_summary_text()
+    {
+        return $this->name;
+    }
 }
