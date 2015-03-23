@@ -97,6 +97,10 @@ $viewdefs['Calls']['base']['view']['preview'] = array(
                 ),
                 'assigned_user_name',
                 'team_name',
+                array(
+                    'name' => 'tag',
+                    'span' => 12,
+                ),
             ),
         ),
         array(

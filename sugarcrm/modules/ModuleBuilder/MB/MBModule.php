@@ -22,6 +22,7 @@ class MBModule
     public $config = array(
         'team_security' => 1,
         'assignable' => 1,
+        'taggable' => 1,
         'acl' => 1,
         'has_tab' => 1,
         'studio' => 1,
@@ -35,9 +36,11 @@ class MBModule
     'team_security' => 'Team Security' ,
     'has_tab' => 'Navigation Tab' ) ;
     public $always_implement = array ( 'assignable' => 'Assignable' , 'acl' => 'Access Controls' , 'studio' => 'Studio Support' , 'audit' => 'Audit Table' ) ;
-    public $iTemplate = array (
-    'team_security' ,
-    'assignable' ) ;
+    public $iTemplate = array(
+        'team_security',
+        'assignable',
+        'taggable',
+    );
 
     public $config_md5 = null ;
 

@@ -38,9 +38,25 @@ class SugarFieldBase {
      */
     protected $module;
 
+    /**
+     * Field options
+     *
+     * @var array
+     */
+    protected $options = array();
+
     function SugarFieldBase($type) {
     	$this->type = $type;
         $this->ss = new Sugar_Smarty();
+    }
+
+    /**
+     * Sets the field options
+     *
+     * @param $options
+     */
+    public function setOptions($options) {
+        $this->options = $options;
     }
 
     /**

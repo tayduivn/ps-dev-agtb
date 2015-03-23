@@ -69,6 +69,7 @@ $viewdefs['Prospects']['base']['filter']['default'] = array(
             'vname' => 'LBL_COUNTRY',
             'type' => 'text',
         ),
+        'tag' => array(),
         '$owner' => array(
             'predefined_filter' => true,
             'vname' => 'LBL_CURRENT_USER_FILTER',

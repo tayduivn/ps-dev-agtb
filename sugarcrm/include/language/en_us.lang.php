@@ -110,6 +110,7 @@ $app_list_strings = array (
     'Shippers' => 'Shipping Providers',
     'Styleguide' => 'Styleguide',
     'Feedbacks' => 'Feedbacks',
+    'Tags' => 'Tags',
   ),
 
     'moduleIconList' =>
@@ -222,7 +223,8 @@ $app_list_strings = array (
     'Subscriptions' => 'Subscription',
     'UserSignatures' => 'User Signature',
     'Feedbacks' => 'Feedback',
-),
+    'Tags' => 'Tag',
+  ),
 
 /*
  * @deprecated as of 7.2.0 since it is only used on massupdate in BWC mode.
@@ -2939,6 +2941,7 @@ $app_strings = array (
     'LBL_SELECT_TEAMS_TITLE' => 'Add Teams(s)',
     'LBL_SELECT_APPEND_TEAMS' => 'Append Team(s)',
     'LBL_SELECT_APPEND_VALUES' => 'Append value(s)',
+    'LBL_SELECT_APPEND_TAGS' => 'Append Tag(s)',
     'LBL_BROWSE_DOCUMENTS_BUTTON_KEY' => 'B',
     'LBL_BROWSE_DOCUMENTS_BUTTON_LABEL' => 'Browse Documents',
     'LBL_BROWSE_DOCUMENTS_BUTTON_TITLE' => 'Browse Documents',
@@ -4516,6 +4519,9 @@ Sincerely, SugarCRM',
     'LBL_TOUR_FORECASTS_PROGRESS' =>'Review distance to Quota',
     'LBL_TOUR_FORECASTS_CHART' =>'Review Forecast distribution',
     'LBL_TOUR_TOUR' => 'Access Tour at any time',
+    'LBL_TOUR_TAGS_ADD' => 'Click the tags field to add and remove tags',
+    'LBL_TOUR_TAGS_DELETE' => 'To delete a tag, use backspace or click the [X] button on each tag',
+    'LBL_TOUR_RECORD_SAVE' => 'Once you are ready, click Save',
 
 
 
@@ -5358,6 +5364,10 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_PRO_DISABLE' => 'Updating',
     'LBL_PA_PRODEF_HAS_PENDING_PROCESSES' => 'You cannot delete this Process Definition because have pending processes running.',
 //END SUGARCRM flav=ent ONLY
+
+    //Tag Strings
+    'LBL_TAG_NEW_TAG' => '(New Tag)',
+    'LBL_TAG_FETCH_ERROR' => 'An error has occurred while retrieving tags.',
 
     // Javascript enable string
     'LBL_ENABLE_JAVASCRIPT' => 'Sugar 7 requires javascript. Please enable Javascript in your browser to use Sugar 7.',

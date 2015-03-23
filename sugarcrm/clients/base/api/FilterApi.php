@@ -214,8 +214,21 @@ class FilterApi extends SugarApi
                         }
                     }
                 }
+                if (!empty($def['relate_collection'])) {
+                    $options['relate_collections'][$def['name']] = $def;
+                }
             }
         }
+        // set group_by to true if we will be filtering by a relate collection
+        if (isset($args['filter']) && is_array($args['filter'])) {
+            foreach ($args['filter'] as $index => $filter) {
+                if (isset($options['relate_collections'][key($filter)])) {
+                    $options['group_by'] = true;
+                    break;
+                }
+            }
+        }
+
 
         return $options;
     }
@@ -345,8 +358,18 @@ class FilterApi extends SugarApi
             if (isset($seed->field_defs[$field]['type'])) {
                 $sf = SugarFieldHandler::getSugarField($seed->field_defs[$field]['type']);
                 $sf->addFieldToQuery($field, $fields);
+
+                //we need to use a group by if the field is a relate collection
+                if (isset($seed->field_defs[$field]['relate_collection'])) {
+                    $options['group_by'] = true;
+                }
             }
         }
+
+        if (isset($options['group_by'])) {
+            $q->groupBy('id');
+        }
+
         $q->select($fields);
 
         foreach ($options['order_by'] as $orderBy) {
@@ -467,6 +490,11 @@ class FilterApi extends SugarApi
         $data = array();
         $data['next_offset'] = -1;
 
+        // Get the related bean options to be able to handle related collections, like
+        // in tags. Do this early, before beans in the collection are mutated
+        $rcOptions = $this->getRelatedCollectionOptions($beans);
+        $rcBeans = $this->runRelateCollectionQuery($beans, $rcOptions);
+
         $i = $distinctCompensation;
         foreach ($beans as $bean_id => $bean) {
             if ($i == $options['limit']) {
@@ -482,9 +510,61 @@ class FilterApi extends SugarApi
 
         }
 
-        $data['records'] = $this->formatBeans($api, $args, $beans);
+        if (!empty($options['relate_collections'])) {
+            // If there is no module set in the options array set the options
+            // module to the args module
+            if (!isset($options['module'])) {
+                $options['module'] = $args['module'];
+            }
+
+            // Put all relate collection beans together so that parent beans and
+            // relate beans all have a chance to load their relate collections
+            // from memory
+            $options['rc_beans'] = array_merge(
+                $this->runRelateCollectionQuery($beans, $options),
+                $rcBeans
+            );
+        }
+
+        $data['records'] = $this->formatBeans($api, $args, $beans, $options);
 
         return $data;
+    }
+
+    /**
+     * Run additional queries to find all the related records pointed to by relate_collection fields.
+     *
+     * @param array $beans
+     * @param array $options
+     * @return array
+     */
+    protected function runRelateCollectionQuery(array $beans, array $options) {
+        $rc_beans = array();
+
+        // Sanity check, just to make sure things are kosher
+        if (empty($beans) || empty($options['relate_collections'])) {
+            return $rc_beans;
+        }
+
+        // Grab the string of bean_ids for use in the IN clause
+        $bean_ids = "'" . implode("','", array_keys($beans)) . "'";
+        foreach($options['relate_collections'] as $name => $def) {
+            // Parent bean
+            $bean = BeanFactory::getBean($options['module']);
+
+            // Related bean
+            $relate_bean = BeanFactory::getBean($def['module']);
+
+            // If the related bean has the necessary method to get related records
+            // then call it
+            if (is_callable(array($relate_bean, 'getRelatedModuleRecords'))) {
+                $rc_beans[$name] = $relate_bean->getRelatedModuleRecords($bean, $bean_ids);
+            } else {
+                $GLOBALS['log']->fatal("Field is a relate collection, but associated module does not have function getRelatedModuleRecords");
+            }
+        }
+
+        return $rc_beans;
     }
 
     /**
@@ -867,5 +947,39 @@ class FilterApi extends SugarApi
     public function getDefaultOrderBy()
     {
         return $this->defaultOrderBy;
+    }
+
+    /**
+     * Gets relate collection information from a collection of beans
+     *
+     * @param array $beans Collection of beans to get relate collections from
+     * @return array
+     */
+    protected function getRelatedCollectionOptions(array $beans)
+    {
+        $options = array();
+        if (empty($beans) || !is_array($beans)) {
+            return $options;
+        }
+
+        // Get the first member of the beans array since we only need to test
+        // one bean for a relate_collection field
+        reset($beans);
+        $bean = $beans[key($beans)];
+
+        // Do some sanity checking, since some tests might send this array as a
+        // simple array of values
+        if ($bean instanceof SugarBean) {
+            foreach ($bean->field_defs as $def) {
+                if (!empty($def['relate_collection'])) {
+                    $options['relate_collections'][$def['name']] = $def;
+                    if (!isset($options['module'])) {
+                        $options['module'] = $bean->module_dir;
+                    }
+                }
+            }
+        }
+
+        return $options;
     }
 }

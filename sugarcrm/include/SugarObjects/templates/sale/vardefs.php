@@ -147,6 +147,9 @@ $vardefs = array(
             'merge_filter' => 'enabled',
         )
     ),
+    'uses' => array(
+        'taggable',
+    ),
     'duplicate_check' => array(
         'enabled' => true,
         'FilterDuplicateCheck' => array(

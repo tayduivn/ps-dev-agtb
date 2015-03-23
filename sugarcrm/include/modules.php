@@ -505,6 +505,7 @@ $report_include_modules['Contracts']='Contract';
 //add Tracker modules
 
 $report_include_modules['Trackers']         = 'Tracker';
+$report_include_modules['Tags']         = 'Tag';
 
 $report_include_modules['TrackerPerfs']     = 'TrackerPerf';
 $report_include_modules['TrackerSessions']  = 'TrackerSession';
@@ -579,6 +580,11 @@ $modInvisList[] = 'Filters';
 $beanList['Dashboards'] = 'Dashboard';
 $beanFiles['Dashboard'] = 'modules/Dashboards/Dashboard.php';
 $modInvisList[] = 'Dashboards';
+
+// Make Tags a visible module since all should have at least access to it
+$moduleList[] = 'Tags';
+$beanList['Tags'] = 'Tag';
+$beanFiles['Tag'] = 'modules/Tags/Tag.php';
 
 //Object list is only here to correct for modules that break
 //the bean class name == dictionary entry/object name convention
