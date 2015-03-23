@@ -72,44 +72,6 @@
 
                 var filtersBeanPrototype = app.data.getBeanClass('Filters').prototype;
                 return filtersBeanPrototype.buildSearchTermFilter(searchModule, searchTerm);
-            },
-
-            /**
-             * Apply required filters.
-             * @param {Array|string} filterDef Preselected filters defs.
-             * @param {Core.Context} context Context object.
-             * @return {Array} Filter defs.
-             */
-            applyRequiredFilters: function(filterDef, context) {
-                var specialField = /^\$/,
-                    meta = app.metadata.getModule(context.get('module')),
-                    filtersMeta = meta.filters || null,
-                    filtersMetaSection = context.get('layout') || context.get('link') || this.name;
-
-                if (context.has('requiredFilter')) {
-                    filtersMetaSection = context.get('requiredFilter');
-                }
-
-                if (!filtersMetaSection || !filtersMeta) {
-                    return filterDef;
-                }
-
-                filtersMeta = filtersMeta.required && filtersMeta.required.meta;
-
-                if (filtersMeta && filtersMeta[filtersMetaSection]) {
-                    filterDef = _.isArray(filterDef) ? filterDef : [filterDef];
-
-                    filtersMeta = _.filter(filtersMeta[filtersMetaSection], function(def) {
-                        var fieldName = _.keys(def).pop();
-                        return specialField.test(fieldName) || meta.fields[fieldName];
-                    }, this);
-
-                    _.each(filtersMeta, function(filter) {
-                        filterDef.push(filter);
-                    });
-                }
-
-                return filterDef;
             }
         });
     });
