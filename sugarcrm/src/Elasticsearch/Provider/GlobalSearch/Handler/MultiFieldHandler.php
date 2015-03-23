@@ -34,26 +34,32 @@ class MultiFieldHandler extends AbstractHandler implements
      */
     protected $typesMultiField = array(
         'varchar' => array(
-            'gs_string_default',
-            'gs_string_ngram',
+            'gs_string',
+            'gs_string_wildcard',
         ),
         'name' => array(
-            'gs_string_default',
-            'gs_string_ngram',
+            'gs_string',
+            'gs_string_wildcard',
         ),
         'text' => array(
-            'gs_string_default',
-            'gs_string_ngram',
+            'gs_string',
+            'gs_text_wildcard',
         ),
         'datetime' => array(
             'gs_datetime',
         ),
         'int' => array(
-            'gs_string_default',
-            'gs_string_ngram',
+            'gs_integer',
+            'gs_string',
+            'gs_string_wildcard',
         ),
         'phone' => array(
-            'gs_phone',
+            'not_analyzed',
+            'gs_phone_wildcard',
+        ),
+        'url' => array(
+            'gs_url',
+            'gs_url_wildcard',
         ),
     );
 
@@ -66,7 +72,7 @@ class MultiFieldHandler extends AbstractHandler implements
         /*
          * This is a special analyzer to be able to use fields with
          * not_analyzed values only. This is part of the multi field
-         * definition every multi field is not_analyzed by default.
+         * definition as every multi field is not_analyzed by default.
          */
         'not_analyzed' => array(),
 
@@ -75,11 +81,11 @@ class MultiFieldHandler extends AbstractHandler implements
          * the standard analyzer. This will generate hits on the full
          * words tokenized by the standard analyzer.
          */
-        'gs_string_default' => array(
+        'gs_string' => array(
             'type' => 'string',
             'index' => 'analyzed',
-            'index_analyzer' => 'gs_analyzer_default',
-            'search_analyzer' => 'gs_analyzer_default',
+            'index_analyzer' => 'gs_analyzer_string',
+            'search_analyzer' => 'gs_analyzer_string',
             'store' => false,
         ),
 
@@ -88,11 +94,23 @@ class MultiFieldHandler extends AbstractHandler implements
          * weighting of the hits on this mapping are less than full
          * matches using the default string mapping.
          */
-        'gs_string_ngram' => array(
+        'gs_string_wildcard' => array(
             'type' => 'string',
             'index' => 'analyzed',
-            'index_analyzer' => 'gs_analyzer_ngram',
-            'search_analyzer' => 'gs_analyzer_default',
+            'index_analyzer' => 'gs_analyzer_string_ngram',
+            'search_analyzer' => 'gs_analyzer_string',
+            'store' => false,
+        ),
+
+        /*
+         * Wildcard analyzer for text fields. Because they can become
+         * big we use a text_ngram definition.
+         */
+        'gs_text_wildcard' => array(
+            'type' => 'string',
+            'index' => 'analyzed',
+            'index_analyzer' => 'gs_analyzer_text_ngram',
+            'search_analyzer' => 'gs_analyzer_string',
             'store' => false,
         ),
 
@@ -109,7 +127,7 @@ class MultiFieldHandler extends AbstractHandler implements
         ),
 
         /*
-         * Integer mapping
+         * Integer mapping.
          */
         'gs_integer' => array(
             'type' => 'integer',
@@ -129,11 +147,33 @@ class MultiFieldHandler extends AbstractHandler implements
          *      (32)475-61-64-28
          *      ...
          */
-        'gs_phone' => array(
+        'gs_phone_wildcard' => array(
             'type' => 'string',
             'index' => 'analyzed',
             'index_analyzer' => 'gs_analyzer_phone_ngram',
-            'search_analyzer' => 'gs_analyzer_phone_full',
+            'search_analyzer' => 'gs_analyzer_phone',
+            'store' => false,
+        ),
+
+        /*
+         * URL analyzer
+         */
+        'gs_url' => array(
+            'type' => 'string',
+            'index' => 'analyzed',
+            'index_analyzer' => 'gs_analyzer_url',
+            'search_analyzer' => 'gs_analyzer_url',
+            'store' => false,
+        ),
+
+        /*
+         * Wildcard matching for URLs.
+         */
+        'gs_url_wildcard' => array(
+            'type' => 'string',
+            'index' => 'analyzed',
+            'index_analyzer' => 'gs_analyzer_url_ngram',
+            'search_analyzer' => 'gs_analyzer_url',
             'store' => false,
         ),
     );
@@ -143,8 +183,10 @@ class MultiFieldHandler extends AbstractHandler implements
      * @var array
      */
     protected $weightedBoost = array(
-        'gs_string_ngram' => 0.35,
-        'gs_phone' => 0.20,
+        'gs_string_wildcard' => 0.45,
+        'gs_text_wildcard' => 0.35,
+        'gs_phone_wildcard' => 0.20,
+        'gs_url_wildcard' => 0.35,
     );
 
     /**
@@ -152,9 +194,16 @@ class MultiFieldHandler extends AbstractHandler implements
      * @var array
      */
     protected $highlighterFields = array(
-        '*.gs_string_default' => array(),
-        '*.gs_string_ngram' => array(),
-        '*.gs_phone' => array(
+        '*.gs_string' => array(),
+        '*.gs_string_wildcard' => array(),
+        '*.gs_text_wildcard' => array(),
+        '*.gs_phone_wildcard' => array(
+            'number_of_frags' => 0,
+        ),
+        '*.gs_url' => array(
+            'number_of_frags' => 0,
+        ),
+        '*.gs_url_wildcard' => array(
             'number_of_frags' => 0,
         ),
     );
@@ -176,41 +225,83 @@ class MultiFieldHandler extends AbstractHandler implements
     {
         $analysisBuilder
 
-            // base ngram filter - TODO: make configurable
+            // ngram filter using 1/15
             ->addFilter(
-                'gs_filter_ngram',
+                'gs_filter_ngram_1_15',
+                'nGram',
+                array('min_gram' => 1, 'max_gram' => 15)
+            )
+
+            // ngram filter using 2_15
+            ->addFilter(
+                'gs_filter_ngram_2_15',
                 'nGram',
                 array('min_gram' => 2, 'max_gram' => 15)
             )
 
-            // char filter keeping only numeric values
+            // ngram filter using 3_15
+            ->addFilter(
+                'gs_filter_ngram_3_15',
+                'nGram',
+                array('min_gram' => 3, 'max_gram' => 15)
+            )
+
+            // char filter keeping only numeric values and spaces
             ->addCharFilter(
                 'gs_char_num_pattern',
                 'pattern_replace',
-                array('pattern' => '[^\\d]+', 'replacement' => '')
+                array('pattern' => '[^\\d\\s]+', 'replacement' => '')
             )
 
+            // base analyzer using standard tokenizer
             ->addCustomAnalyzer(
-                'gs_analyzer_default',
+                'gs_analyzer_string',
                 'standard',
                 array('lowercase')
             )
+
+            // base ngram analyzer
             ->addCustomAnalyzer(
-                'gs_analyzer_ngram',
+                'gs_analyzer_string_ngram',
                 'standard',
-                array('lowercase', 'gs_filter_ngram')
+                array('lowercase', 'gs_filter_ngram_1_15')
             )
+
+            // phone analyzer
             ->addCustomAnalyzer(
-                'gs_analyzer_phone_ngram',
-                'standard',
-                array('gs_filter_ngram'),
-                array('gs_char_num_pattern')
-            )
-            ->addCustomAnalyzer(
-                'gs_analyzer_phone_full',
-                'standard',
+                'gs_analyzer_phone',
+                'whitespace',
                 array(),
                 array('gs_char_num_pattern')
+            )
+
+            // phone ngram analyzer
+            ->addCustomAnalyzer(
+                'gs_analyzer_phone_ngram',
+                'whitespace',
+                array('gs_filter_ngram_3_15'),
+                array('gs_char_num_pattern')
+            )
+
+            // analyzer for text fields with lower tokens
+            ->addCustomAnalyzer(
+                'gs_analyzer_text_ngram',
+                'standard',
+                array('lowercase', 'gs_filter_ngram_2_15')
+            )
+
+            // url analyzer
+            ->addCustomAnalyzer(
+                'gs_analyzer_url',
+                'uax_url_email',
+                array('lowercase')
+            )
+
+            // url ngram analyzer
+            ->addCustomAnalyzer(
+                'gs_analyzer_url_ngram',
+                'uax_url_email',
+                array('lowercase', 'gs_filter_ngram_2_15')
             )
         ;
     }

@@ -177,6 +177,11 @@ $dictionary['Contact'] = array(
                 'portallistview' => false,
             ),
             'duplicate_on_record_copy' => 'no',
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => true,
+                'type' => 'name',
+            ),
         ),
         'portal_active' => array(
             'name' => 'portal_active',

@@ -120,50 +120,83 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
         $expected = array(
             'analysis' => array(
                 'analyzer' => array(
-                    'gs_analyzer_default' => array(
+                    'gs_analyzer_string' => array(
                         'tokenizer' => 'standard',
                         'filter' => array(
                             'lowercase',
                         ),
                         'type' => 'custom',
                     ),
-                    'gs_analyzer_ngram' => array(
+                    'gs_analyzer_string_ngram' => array(
                         'tokenizer' => 'standard',
                         'filter' => array(
                             'lowercase',
-                            'gs_filter_ngram',
+                            'gs_filter_ngram_1_15',
                         ),
                         'type' => 'custom',
                     ),
                     'gs_analyzer_phone_ngram' => array(
-                        'tokenizer' => 'standard',
+                        'tokenizer' => 'whitespace',
                         'filter' => array(
-                            'gs_filter_ngram',
+                            'gs_filter_ngram_3_15',
                         ),
                         'char_filter' => array(
                             'gs_char_num_pattern',
                         ),
                         'type' => 'custom',
                     ),
-                    'gs_analyzer_phone_full' => array(
-                        'tokenizer' => 'standard',
+                    'gs_analyzer_phone' => array(
+                        'tokenizer' => 'whitespace',
                         'char_filter' => array(
                             'gs_char_num_pattern',
+                        ),
+                        'type' => 'custom',
+                    ),
+                    'gs_analyzer_text_ngram' => array(
+                        'tokenizer' => 'standard',
+                        'filter' => array(
+                            'lowercase',
+                            'gs_filter_ngram_2_15',
+                        ),
+                        'type' => 'custom',
+                    ),
+                    'gs_analyzer_url' => array(
+                        'tokenizer' => 'uax_url_email',
+                        'filter' => array(
+                            'lowercase',
+                        ),
+                        'type' => 'custom',
+                    ),
+                    'gs_analyzer_url_ngram' => array(
+                        'tokenizer' => 'uax_url_email',
+                        'filter' => array(
+                            'lowercase',
+                            'gs_filter_ngram_2_15',
                         ),
                         'type' => 'custom',
                     ),
                 ),
                 'tokenizer' => array(),
                 'filter' => array(
-                    'gs_filter_ngram' => array(
+                    'gs_filter_ngram_1_15' => array(
+                        'min_gram' => 1,
+                        'max_gram' => 15,
+                        'type' => 'nGram',
+                    ),
+                    'gs_filter_ngram_2_15' => array(
                         'min_gram' => 2,
+                        'max_gram' => 15,
+                        'type' => 'nGram',
+                    ),
+                    'gs_filter_ngram_3_15' => array(
+                        'min_gram' => 3,
                         'max_gram' => 15,
                         'type' => 'nGram',
                     ),
                 ),
                 'char_filter' => array(
                     'gs_char_num_pattern' => array(
-                        'pattern' => '[^\\d]+',
+                        'pattern' => '[^\\d\\s]+',
                         'replacement' => '',
                         'type' => 'pattern_replace',
                     ),
@@ -202,18 +235,18 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                         'index' => 'not_analyzed',
                         'include_in_all' => false,
                         'fields' => array(
-                            'gs_string_default' =>  array(
+                            'gs_string' =>  array(
                                 'type' => 'string',
                                 'index' => 'analyzed',
-                                'index_analyzer' => 'gs_analyzer_default',
-                                'search_analyzer' => 'gs_analyzer_default',
+                                'index_analyzer' => 'gs_analyzer_string',
+                                'search_analyzer' => 'gs_analyzer_string',
                                 'store' => false,
                             ),
-                            'gs_string_ngram' => array(
+                            'gs_string_wildcard' => array(
                                 'type' => 'string',
                                 'index' => 'analyzed',
-                                'index_analyzer' => 'gs_analyzer_ngram',
-                                'search_analyzer' => 'gs_analyzer_default',
+                                'index_analyzer' => 'gs_analyzer_string_ngram',
+                                'search_analyzer' => 'gs_analyzer_string',
                                 'store' => false,
                             ),
                         ),
@@ -232,18 +265,18 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                         'index' => 'not_analyzed',
                         'include_in_all' => false,
                         'fields' => array(
-                            'gs_string_default' =>  array(
+                            'gs_string' =>  array(
                                 'type' => 'string',
                                 'index' => 'analyzed',
-                                'index_analyzer' => 'gs_analyzer_default',
-                                'search_analyzer' => 'gs_analyzer_default',
+                                'index_analyzer' => 'gs_analyzer_string',
+                                'search_analyzer' => 'gs_analyzer_string',
                                 'store' => false,
                             ),
-                            'gs_string_ngram' => array(
+                            'gs_string_wildcard' => array(
                                 'type' => 'string',
                                 'index' => 'analyzed',
-                                'index_analyzer' => 'gs_analyzer_ngram',
-                                'search_analyzer' => 'gs_analyzer_default',
+                                'index_analyzer' => 'gs_analyzer_string_ngram',
+                                'search_analyzer' => 'gs_analyzer_string',
                                 'store' => false,
                             ),
                         ),
@@ -262,18 +295,18 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                         'index' => 'not_analyzed',
                         'include_in_all' => false,
                         'fields' => array(
-                            'gs_string_default' =>  array(
+                            'gs_string' =>  array(
                                 'type' => 'string',
                                 'index' => 'analyzed',
-                                'index_analyzer' => 'gs_analyzer_default',
-                                'search_analyzer' => 'gs_analyzer_default',
+                                'index_analyzer' => 'gs_analyzer_string',
+                                'search_analyzer' => 'gs_analyzer_string',
                                 'store' => false,
                             ),
-                            'gs_string_ngram' => array(
+                            'gs_text_wildcard' => array(
                                 'type' => 'string',
                                 'index' => 'analyzed',
-                                'index_analyzer' => 'gs_analyzer_ngram',
-                                'search_analyzer' => 'gs_analyzer_default',
+                                'index_analyzer' => 'gs_analyzer_text_ngram',
+                                'search_analyzer' => 'gs_analyzer_string',
                                 'store' => false,
                             ),
                         ),
@@ -314,18 +347,23 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                         'index' => 'not_analyzed',
                         'include_in_all' => false,
                         'fields' => array(
-                            'gs_string_default' =>  array(
+                            'gs_string' =>  array(
                                 'type' => 'string',
                                 'index' => 'analyzed',
-                                'index_analyzer' => 'gs_analyzer_default',
-                                'search_analyzer' => 'gs_analyzer_default',
+                                'index_analyzer' => 'gs_analyzer_string',
+                                'search_analyzer' => 'gs_analyzer_string',
                                 'store' => false,
                             ),
-                            'gs_string_ngram' => array(
+                            'gs_string_wildcard' => array(
                                 'type' => 'string',
                                 'index' => 'analyzed',
-                                'index_analyzer' => 'gs_analyzer_ngram',
-                                'search_analyzer' => 'gs_analyzer_default',
+                                'index_analyzer' => 'gs_analyzer_string_ngram',
+                                'search_analyzer' => 'gs_analyzer_string',
+                                'store' => false,
+                            ),
+                            'gs_integer' => array(
+                                'type' => 'integer',
+                                'index' => 'no',
                                 'store' => false,
                             ),
                         ),
@@ -344,11 +382,41 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                         'index' => 'not_analyzed',
                         'include_in_all' => false,
                         'fields' => array(
-                            'gs_phone' =>  array(
+                            'gs_phone_wildcard' =>  array(
                                 'type' => 'string',
                                 'index' => 'analyzed',
                                 'index_analyzer' => 'gs_analyzer_phone_ngram',
-                                'search_analyzer' => 'gs_analyzer_phone_full',
+                                'search_analyzer' => 'gs_analyzer_phone',
+                                'store' => false,
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+            // test 'url' type
+            array(
+                'website',
+                array(
+                    'type' => 'url',
+                ),
+                array(
+                    'website' => array(
+                        'type' => 'string',
+                        'index' => 'not_analyzed',
+                        'include_in_all' => false,
+                        'fields' => array(
+                            'gs_url' =>  array(
+                                'type' => 'string',
+                                'index' => 'analyzed',
+                                'index_analyzer' => 'gs_analyzer_url',
+                                'search_analyzer' => 'gs_analyzer_url',
+                                'store' => false,
+                            ),
+                            'gs_url_wildcard' => array(
+                                'type' => 'string',
+                                'index' => 'analyzed',
+                                'index_analyzer' => 'gs_analyzer_url_ngram',
+                                'search_analyzer' => 'gs_analyzer_url',
                                 'store' => false,
                             ),
                         ),

@@ -36,17 +36,17 @@ class EmailAddressHandler extends AbstractHandler implements
      * @var array
      */
     protected $multiFieldDefs = array(
-        'gs_email_default' => array(
+        'gs_email' => array(
             'type' => 'string',
             'index' => 'analyzed',
-            'index_analyzer' => 'gs_analyzer_email_default',
-            'search_analyzer' => 'gs_analyzer_email_default',
+            'index_analyzer' => 'gs_analyzer_email',
+            'search_analyzer' => 'gs_analyzer_email',
         ),
-        'gs_email_ngram' => array(
+        'gs_email_wildcard' => array(
             'type' => 'string',
             'index' => 'analyzed',
             'index_analyzer' => 'gs_analyzer_email_ngram',
-            'search_analyzer' => 'gs_analyzer_email_default',
+            'search_analyzer' => 'gs_analyzer_email',
         ),
     );
 
@@ -55,9 +55,10 @@ class EmailAddressHandler extends AbstractHandler implements
      * @var array
      */
     protected $weightedBoost = array(
-        'gs_email_ngram_primary' => 0.35,
-        'gs_email_default_secondary' => 0.75,
-        'gs_email_ngram_secondary' => 0.25,
+        // we dont need to specify gs_email_primary
+        'gs_email_wildcard_primary' => 0.45,
+        'gs_email_secondary' => 0.75,
+        'gs_email_wildcard_secondary' => 0.25,
     );
 
     /**
@@ -65,10 +66,10 @@ class EmailAddressHandler extends AbstractHandler implements
      * @var array
      */
     protected $highlighterFields = array(
-        '*.gs_email_default' => array(
+        '*.gs_email' => array(
             'number_of_frags' => 0,
         ),
-        '*.gs_email_ngram' => array(
+        '*.gs_email_wildcard' => array(
             'number_of_frags' => 0,
         ),
     );
@@ -104,14 +105,14 @@ class EmailAddressHandler extends AbstractHandler implements
     {
         $analysisBuilder
             ->addCustomAnalyzer(
-                'gs_analyzer_email_default',
+                'gs_analyzer_email',
                 'uax_url_email',
                 array('lowercase')
             )
             ->addCustomAnalyzer(
                 'gs_analyzer_email_ngram',
                 'whitespace', // not using standard here to avoid splitting on punctuation
-                array('lowercase', 'gs_filter_ngram')
+                array('lowercase', 'gs_filter_ngram_1_15')
             )
         ;
     }
@@ -158,7 +159,7 @@ class EmailAddressHandler extends AbstractHandler implements
         }
 
         $emailFields = array('primary', 'secondary');
-        $multiFields = array('gs_email_default', 'gs_email_ngram');
+        $multiFields = array('gs_email', 'gs_email_wildcard');
 
         foreach ($emailFields as $emailField) {
             foreach ($multiFields as $multiField) {

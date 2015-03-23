@@ -114,7 +114,7 @@ class EmailAddressHandlerTest extends \PHPUnit_Framework_TestCase
         $expected = array(
             'analysis' => array(
                 'analyzer' => array(
-                    'gs_analyzer_email_default' => array(
+                    'gs_analyzer_email' => array(
                         'tokenizer' => 'uax_url_email',
                         'filter' => array(
                             'lowercase',
@@ -125,7 +125,7 @@ class EmailAddressHandlerTest extends \PHPUnit_Framework_TestCase
                         'tokenizer' => 'whitespace',
                         'filter' => array(
                             'lowercase',
-                            'gs_filter_ngram',
+                            'gs_filter_ngram_1_15',
                         ),
                         'type' => 'custom',
                     ),
@@ -179,17 +179,17 @@ class EmailAddressHandlerTest extends \PHPUnit_Framework_TestCase
                                 'type' => 'string',
                                 'index' => 'not_analyzed',
                                 'fields' => array(
-                                    'gs_email_default' => array(
+                                    'gs_email' => array(
                                         'type' => 'string',
                                         'index' => 'analyzed',
-                                        'index_analyzer' => 'gs_analyzer_email_default',
-                                        'search_analyzer' => 'gs_analyzer_email_default',
+                                        'index_analyzer' => 'gs_analyzer_email',
+                                        'search_analyzer' => 'gs_analyzer_email',
                                     ),
-                                    'gs_email_ngram' => array(
+                                    'gs_email_wildcard' => array(
                                         'type' => 'string',
                                         'index' => 'analyzed',
                                         'index_analyzer' => 'gs_analyzer_email_ngram',
-                                        'search_analyzer' => 'gs_analyzer_email_default',
+                                        'search_analyzer' => 'gs_analyzer_email',
                                     ),
                                 ),
                             ),
@@ -197,17 +197,17 @@ class EmailAddressHandlerTest extends \PHPUnit_Framework_TestCase
                                 'type' => 'string',
                                 'index' => 'not_analyzed',
                                 'fields' => array(
-                                    'gs_email_default' => array(
+                                    'gs_email' => array(
                                         'type' => 'string',
                                         'index' => 'analyzed',
-                                        'index_analyzer' => 'gs_analyzer_email_default',
-                                        'search_analyzer' => 'gs_analyzer_email_default',
+                                        'index_analyzer' => 'gs_analyzer_email',
+                                        'search_analyzer' => 'gs_analyzer_email',
                                     ),
-                                    'gs_email_ngram' => array(
+                                    'gs_email_wildcard' => array(
                                         'type' => 'string',
                                         'index' => 'analyzed',
                                         'index_analyzer' => 'gs_analyzer_email_ngram',
-                                        'search_analyzer' => 'gs_analyzer_email_default',
+                                        'search_analyzer' => 'gs_analyzer_email',
                                     ),
                                 ),
                             ),
@@ -269,10 +269,10 @@ class EmailAddressHandlerTest extends \PHPUnit_Framework_TestCase
                     'type' => 'email',
                 ),
                 array(
-                    'Contacts.email_search.primary.gs_email_default',
-                    'Contacts.email_search.primary.gs_email_ngram',
-                    'Contacts.email_search.secondary.gs_email_default',
-                    'Contacts.email_search.secondary.gs_email_ngram',
+                    'Contacts.email_search.primary.gs_email',
+                    'Contacts.email_search.primary.gs_email_wildcard',
+                    'Contacts.email_search.secondary.gs_email',
+                    'Contacts.email_search.secondary.gs_email_wildcard',
                 ),
             ),
             // non email type/field
