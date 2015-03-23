@@ -22,12 +22,14 @@ class SugarUpgradeUpgradeBwcLayouts extends UpgradeScript
 {
     public $order = 7000;
     public $type = self::UPGRADE_CUSTOM;
+    public $sidecarMetaDataUpgraderBwcUpgrader;
 
     public function run()
     {
         if (empty($this->upgrader->state['bwc_modules'])) {
             $this->log('BWC modules are not registered by pre-upgrade script.');
-            return;
+
+            return null;
         }
 
         $oldBwcModules = $this->upgrader->state['bwc_modules'];
@@ -36,10 +38,22 @@ class SugarUpgradeUpgradeBwcLayouts extends UpgradeScript
         $modulesToUpgrade = array_diff($oldBwcModules, $newBwcModules);
         if (!$modulesToUpgrade) {
             $this->log('Nothing to upgrade. Exiting.');
+
+            return null;
         }
 
-        $upgrader = new SidecarMetaDataUpgraderBwc($modulesToUpgrade);
-        $upgrader->upgrade();
+        $this->prepareBwcUpgraderModules($modulesToUpgrade);
+        $this->runBwcUpgraderModules();
+    }
+
+    protected function prepareBwcUpgraderModules($modulesToUpgrade)
+    {
+        $this->sidecarMetaDataUpgraderBwcUpgrader = new SidecarMetaDataUpgraderBwc($modulesToUpgrade);
+    }
+
+    protected function runBwcUpgraderModules()
+    {
+        $this->sidecarMetaDataUpgraderBwcUpgrader->upgrade();
     }
 
     protected function getBwcModules()
@@ -49,6 +63,7 @@ class SugarUpgradeUpgradeBwcLayouts extends UpgradeScript
 
         return $bwcModules;
     }
+
 }
 
 /**
@@ -65,6 +80,30 @@ class SidecarMetaDataUpgraderBwc extends SidecarMetaDataUpgrader
 
     public function getMBModules()
     {
-        return $this->modules;
+        return array();
+    }
+
+    public function setQuickCreateFiles()
+    {
+    }
+
+    public function upgrade()
+    {
+        if ($this->modules) {
+            foreach ($this->modules as $module) {
+                $this->prepareUpgradeOneModule($module);
+                $this->upgradeOneModule();
+            }
+        }
+    }
+
+    public function prepareUpgradeOneModule($module)
+    {
+        $this->setModule($module);
+    }
+
+    public function upgradeOneModule()
+    {
+        parent::upgrade();
     }
 }
