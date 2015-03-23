@@ -13,6 +13,7 @@
 $dictionary['Prospect'] = array(
     'table' => 'prospects',
     'unified_search' => true,
+    'full_text_search' => true,
     'fields' => array(
         'tracker_key' => array(
             'name' => 'tracker_key',
@@ -174,20 +175,12 @@ $dictionary['Prospect'] = array(
             'type' => 'varchar',
             'len' => 75,
             'vname' => 'LBL_ASSISTANT',
-            'full_text_search' => array(
-                'enabled' => true,
-                'searchable' => true,
-            ),
         ),
         'assistant_phone' => array(
             'name' => 'assistant_phone',
             'type' => 'varchar',
             'len' => 100,
             'vname' => 'LBL_ASSISTANT_PHONE',
-            'full_text_search' => array(
-                'enabled' => true,
-                'searchable' => true,
-            ),
         ),
     ),
     'indices' => array(
