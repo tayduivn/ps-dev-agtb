@@ -113,6 +113,10 @@ class SugarUpgradeMergeDropdowns extends UpgradeScript
                     'use_push' => in_array($name, $helper->getDropdownsToPush()),
                 );
 
+                if (version_compare($this->from_version, '7.6', "<")) {
+                    $params['handleSpecialDropdowns'] = true;
+                }
+
                 $parser->saveDropDown($params);
                 $this->log("{$name} has been merged for {$language}");
             }

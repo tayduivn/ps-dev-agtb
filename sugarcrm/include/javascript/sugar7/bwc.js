@@ -130,6 +130,15 @@
                 return_name: parentModel.get('name') || parentModel.get('full_name')
             };
 
+            // find relationship name
+            var linkField = _.find(parentModel.fields, function(field) {
+                return (field.type == 'link' && field.name == link)
+            });
+
+            if (linkField) {
+                params['return_relationship'] = linkField.relationship;
+            }
+
             //Handle special cases
             params = this._handleRelatedRecordSpecialCases(params, parentModel, link);
 

@@ -114,18 +114,11 @@ class PMSECasesListApi extends FilterApi
         );
         $q->select($fields);
         $q->from($inboxBean, array('alias' => 'a'));
-        $q->joinRaw('INNER JOIN users u ON a.created_by=u.id INNER JOIN pmse_bpmn_process pr ON a.pro_id=pr.id INNER JOIN pmse_bpm_flow pf ON a.cas_id=pf.cas_id');
+        $q->joinRaw('INNER JOIN users u ON a.created_by=u.id INNER JOIN pmse_bpmn_process pr ON a.pro_id=pr.id INNER JOIN pmse_project prj ON pr.prj_id=prj.id');
         $q->select->fieldRaw('u.last_name', 'assigned_user_name');
         $q->select->fieldRaw('pr.prj_id', 'prj_id');
-        $q->select->fieldRaw('pr.created_by', 'prj_created_by');
-        $q->select->fieldRaw('pf.cas_sugar_module', 'cas_sugar_module');
-        $q->select->fieldRaw('pf.cas_sugar_object_id', 'cas_sugar_object_id');
-        $q->select->fieldRaw('pf.cas_user_id', 'cas_user_id');
+        $q->select->fieldRaw('prj.assigned_user_id', 'prj_created_by');
 
-        $q->where()->queryAnd()->addraw('pf.cas_flow_status != "CLOSED"');
-        //Flow query breaks on mssql due to the use of row_number() / count in a subselect which is not supported
-        //Doesn't appear to be used.
-        //$q->select->fieldRaw('('.$flowQuery->compileSql().')','flow_error');
         if (!empty($args['q'])) {
             switch ($args['module_list']) {
                 case 'all':
@@ -202,18 +195,36 @@ class PMSECasesListApi extends FilterApi
                 $list[$key]["cas_status"] = '<data class="label label-important">' . $value["cas_status"] . '</data>';
             }
 
-            $assignedBean = BeanFactory::getBean($list[$key]['cas_sugar_module'], $list[$key]['cas_sugar_object_id']);
-            $assignedUsersBean = BeanFactory::getBean('Users', $assignedBean->assigned_user_id);
-            $list[$key]['assigned_user_name'] = $assignedUsersBean->full_name;
-
             $prjUsersBean = BeanFactory::getBean('Users', $list[$key]['prj_created_by']);
             $list[$key]['prj_user_id_full_name'] = $prjUsersBean->full_name;
 
-            $casUsersBean = BeanFactory::getBean('Users', $list[$key]['cas_user_id']);
-            $list[$key]['cas_user_id_full_name'] = $casUsersBean->full_name;
-            if (empty($casUsersBean->full_name)){
-                $list[$key]['cas_user_id_full_name'] = $list[$key]['cas_user_id'];
+            $qA = new SugarQuery();
+            $flowBean = BeanFactory::getBean('pmse_BpmFlow');
+            $qA->select->fieldRaw('*');
+            $qA->from($flowBean);
+            $qA->where()->equals('cas_id', $list[$key]['cas_id']);
+
+            $processUsers = $qA->execute();
+            $processUsersNames = array();
+            foreach($processUsers as $k => $v) {
+                if ($processUsers[$k]['cas_flow_status'] != 'CLOSED') {
+                    $casUsersBean = BeanFactory::getBean('Users', $processUsers[$k]['cas_user_id']);
+                    $processUsersNames[] = (!empty($casUsersBean->full_name)) ? $casUsersBean->full_name : $list[$key]['cas_user_id'];
+                }
+                $cas_sugar_module = $processUsers[$k]['cas_sugar_module'];
+                $cas_sugar_object_id = $processUsers[$k]['cas_sugar_object_id'];
             }
+            if (empty($processUsersNames)) {
+                $userNames = '';
+            } else {
+                $userNames = implode(',',$processUsersNames);
+            }
+            $list[$key]['cas_user_id_full_name'] = $userNames;
+
+            $assignedBean = BeanFactory::getBean($cas_sugar_module, $cas_sugar_object_id);
+            $assignedUsersBean = BeanFactory::getBean('Users', $assignedBean->assigned_user_id);
+            $list[$key]['assigned_user_name'] = $assignedUsersBean->full_name;
+
             $count++;
         }
         if ($count == $options['limit']) {
@@ -225,7 +236,6 @@ class PMSECasesListApi extends FilterApi
         $data = array();
         $data['next_offset'] = $offset;
         $data['records'] = $list;
-        //$data['sql'] = $q->compileSql();
         return $data;
     }
 
