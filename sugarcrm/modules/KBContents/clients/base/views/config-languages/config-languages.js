@@ -42,12 +42,20 @@
             languagesToSave.push(_.first(_.keys(_.omit(lang, 'primary'))).toLowerCase());
         }, this);
 
-        if (languagesToSave.length != _.uniq(languagesToSave).length) {
+        if (_.indexOf(languagesToSave, '') !== -1) {
+            message = app.lang.get('ERR_CONFIG_LANGUAGES_EMPTY', 'KBContents');
+            errors['lang'] = {'required': true};
+        }
+        if (languagesToSave.length !== _.uniq(languagesToSave).length) {
+            message = app.lang.get('ERR_CONFIG_LANGUAGES_DUPLICATE', 'KBContents');
+            errors['lang'] = {'required': true};
+        }
+
+        if (!_.isEmpty(errors)) {
             app.alert.show('languages', {
                 level: 'error',
-                messages: app.lang.get('ERR_CONFIG_LANGUAGES_DUPLICATE', 'KBContents')
+                messages: message
             });
-            errors['lang'] = {'required': true};
         }
 
         callback(null, fields, errors);
