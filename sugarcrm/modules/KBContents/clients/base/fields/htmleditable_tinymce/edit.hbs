@@ -10,4 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-<iframe class="htmleditable" frameborder="0"></iframe>
+<textarea data-htmleditable="{{def.fieldSelector}}"
+          class="htmleditable"
+    {{#if def.tabindex}} tabindex="{{this.def.tabindex}}"{{/if}}>
+</textarea>
+
