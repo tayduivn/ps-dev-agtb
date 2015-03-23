@@ -10,19 +10,24 @@
  */
 /**
  * jsTree state plugin (Copied from `cookies` plugin and simple to `state` plugin of new version)
- * Stores the currently opened/selected nodes in a cookie/localStorage and then restores them
+ * Stores the currently opened/selected nodes in a cookie/localStorage and then restores them.
+ * @see http://johntang.github.io/JsTree/_docs/cookies.html as example
  */
 (function ($) {
     $.jstree.plugin('state', {
+        /**
+         * Initialize plugin.
+         * @private
+         */
         __init: function() {
             this.get_container()
                 .one(
-                ( this.data.ui ? 'reselect' : 'reopen' ) + '.jstree',
+                (this.data.ui ? 'reselect' : 'reopen') + '.jstree',
                 $.proxy(function() {
                         this.get_container()
                             .bind(
                             'open_node.jstree close_node.jstree select_node.jstree deselect_node.jstree',
-                            $.proxy(function (e) {
+                            $.proxy(function(e) {
                                     if (this._get_settings().state.auto_save) {
                                         this.save_state(
                                             (e.handleObj.namespace + e.handleObj.type).replace('jstree', '')
@@ -35,7 +40,20 @@
                     this)
             );
         },
-        defaults : {
+        /**
+         * Default parameters.
+         * @property {Object} defaults
+         * @property {string} defaults.save_loaded
+         * @property {string} defaults.save_opened The name of the cookie to save opened nodes in.
+         *                                         If set to false - opened nodes won't be saved.
+         * @property {string} defaults.save_selected The name of the cookie to save selected nodes in.
+         *                                         If set to false - selected nodes won't be saved.
+         * @property {boolean} defaults.auto_save If set to true jstree will automatically update
+         *                                        the cookies every time a change in the state occurs.
+         * @property {Object} defaults.options The options accepted by the jQuery.cookie plugin.
+         * @property {Object} defaults.storage jQuery.cookie plugint.
+         */
+        defaults: {
             save_loaded: 'jstree_load',
             save_opened: 'jstree_open',
             save_selected: 'jstree_select',
@@ -43,13 +61,18 @@
             options: {},
             storage: $.cookie
         },
-        _fn : {
-            save_state: function(c) {
+        _fn: {
+            /**
+             * Save the current state.
+             * Used internally with the auto_save option. Do not set this manually.
+             * @param {Event} event Dom event.
+             */
+            save_state: function(event) {
                 if (this.data.core.refreshing) {
                     return;
                 }
                 var s = this._get_settings().state;
-                if (!c) { // if called manually and not by event
+                if (!event) { // if called manually and not by event
                     if (s.save_loaded) {
                         this.save_loaded();
                         s.storage(s.save_loaded, this.data.core.to_load.join(','), s.options);
@@ -64,7 +87,7 @@
                     }
                     return;
                 }
-                switch(c) {
+                switch (event) {
                     case 'open_node':
                     case 'close_node':
                         if (!!s.save_opened) {
@@ -85,6 +108,9 @@
                         break;
                 }
             },
+            /**
+             * Loads state.
+             */
             load_state: function() {
                 var s = this._get_settings().state,
                     tmp,
@@ -118,9 +144,9 @@
                     }
                 }
                 $.each(rslt, function(rsltInd, rsltValue) {
-                    $.each(rsltValue, function (ind, value) {
+                    $.each(rsltValue, function(ind, value) {
                         rslt[rsltInd][ind] = value.replace('#', '');
-                    })
+                    });
                 });
                 this.__callback(rslt);
             }
