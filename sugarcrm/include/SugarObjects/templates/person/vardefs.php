@@ -30,7 +30,10 @@ $vardefs =array(
 			'len' => '100',
 			'unified_search' => true,
             'duplicate_on_record_copy' => 'always',
-			'full_text_search' => array('enabled' => true, 'boost' => 3),
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => true,
+            ),
 			'comment' => 'First name of the contact',
             'merge_filter' => 'selected',
 
@@ -43,7 +46,10 @@ $vardefs =array(
 			'len' => '100',
 			'unified_search' => true,
             'duplicate_on_record_copy' => 'always',
-			'full_text_search' => array('enabled' => true, 'boost' => 3),
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => true,
+            ),
 			'comment' => 'Last name of the contact',
             'merge_filter' => 'selected',
             'required'=>true,
@@ -212,6 +218,10 @@ $vardefs =array(
 			'group' => 'primary_address',
 			'merge_filter' => 'enabled',
 			'duplicate_on_record_copy' => 'always',
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => true,
+            ),
 		),
 	'primary_address_street_2' =>
 		array (
@@ -286,6 +296,10 @@ $vardefs =array(
 			'comment' => 'Street address for alternate address',
             'merge_filter' => 'enabled',
             'duplicate_on_record_copy' => 'always',
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => true,
+            ),
 		),
 	'alt_address_street_2' =>
 		array (
