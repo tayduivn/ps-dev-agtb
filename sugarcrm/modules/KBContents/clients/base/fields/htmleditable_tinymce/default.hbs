@@ -10,4 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-<iframe class="htmleditable" frameborder="0"></iframe>
+<iframe data-htmleditable="{{def.fieldSelector}}"
+        class="htmleditable{{#if def.span}} span{{def.span}}{{/if}}"
+        frameborder="0">
+</iframe>
+

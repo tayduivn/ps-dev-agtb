@@ -26,17 +26,6 @@
     _saveOnSetContent: true,
 
     /**
-     * {@inheritDoc}
-     * Additional override fieldSelector property from field's meta.
-     */
-    initialize: function(opts) {
-        this._super('initialize', [opts]);
-        if (!_.isUndefined(this.def.fieldSelector)) {
-            this.fieldSelector = '[data-htmleditable=' + this.def.fieldSelector + ']';
-        }
-    },
-
-    /**
      * Render an editor for edit view or an iframe for others
      *
      * @private
@@ -53,25 +42,6 @@
         } else {
             this._renderView();
         }
-    },
-
-    /**
-     * {@inheritDoc}
-     * Need to strip tags for list and activity stream.
-     */
-    format: function(value) {
-        var result;
-        switch (this.view.tplName) {
-            case 'audit':
-            case 'list':
-            case 'activitystream':
-                result = $('<div/>').html(value).text();
-                break;
-            default:
-                result = this._super('format', [value]);
-                break;
-        }
-        return result;
     },
 
     /**
