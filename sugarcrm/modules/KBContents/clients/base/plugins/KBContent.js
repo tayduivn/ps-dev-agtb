@@ -413,7 +413,7 @@
 
                 model.addValidationTask('exp_date_publish', _.bind(_doValidateExpDateFieldPartial, this));
                 model.addValidationTask('active_date_approve', _.bind(_doValidateActiveDateFieldPartial, this));
-                model.on('validation:complete', _.bind(_validationCompletePartial, this));
+                model.on('validation:complete', _validationCompletePartial, this);
             },
 
             /**
