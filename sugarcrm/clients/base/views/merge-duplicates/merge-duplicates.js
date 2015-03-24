@@ -200,7 +200,8 @@
         { type: 'parent' },
         { type: 'image' },
         { type: 'teamset' },
-        { type: 'email' }
+        { type: 'email' },
+        { type: 'tag' }
     ],
 
     /**
