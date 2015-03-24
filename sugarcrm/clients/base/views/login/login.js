@@ -271,7 +271,7 @@
             chrome : {min:537.36} // Chrome 41
         };
 
-        var current = parseInt($.browser.version);
+        var current = parseFloat($.browser.version);
 
         // For IE11, navigator behaves differently in order to conform to HTML5
         // standards. This changes the behavior of jQuery.Browser and so IE11
