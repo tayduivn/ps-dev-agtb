@@ -55,7 +55,7 @@
     /**
      * The plugins used by this view.
      */
-    plugins: ['Dashlet', 'Pagination', 'QuickSearchFilter'],
+    plugins: ['Dashlet', 'Pagination'],
 
     /**
      * We want to load field `list` templates
@@ -601,7 +601,6 @@
         this.context.set('fields', this.getFieldNames());
 
         if (filterDef) {
-            filterDef = this.applyRequiredFilters(app.utils.deepCopy(filterDef), this.context);
             this._applyFilterDef(filterDef);
             this.context.reloadData({'recursive': false});
         }

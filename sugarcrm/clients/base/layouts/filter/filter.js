@@ -454,8 +454,6 @@
                 }
             };
 
-            filterDef = self.applyRequiredFilters(filterDef, ctx);
-
             ctxCollection.filterDef = filterDef;
             ctxCollection.origFilterDef = origFilterDef;
             ctxCollection.resetPagination();
