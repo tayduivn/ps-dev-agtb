@@ -55,7 +55,7 @@
             case 'audit':
             case 'list':
             case 'activitystream':
-                result = $('<div/>').html(value).text();
+                result = this.stripTags(value);
                 break;
             default:
                 result = this._super('format', [value]);
@@ -64,4 +64,24 @@
         return result;
     },
 
+    /**
+     * Strip HTML tags from text.
+     * @param {string} value Value to strip tags from.
+     * @return {string} Plain text.
+     */
+    stripTags: function(value) {
+        var $el = $('<div/>').html(value),
+            texts = $el.contents()
+            .map(function() {
+                if (this.nodeType === 1 && this.nodeName != 'STYLE' && this.nodeName != 'SCRIPT') {
+                    return this.textContent.replace(/ +?\r?\n/g, ' ').trim();
+                }
+                if (this.nodeType === 3) {
+                    return this.textContent.replace(/ +?\r?\n/g, ' ').trim();
+                }
+            });
+        return _.filter(texts, function(value) {
+            return (value.length > 0);
+        }).join(' ');
+    }
 })
