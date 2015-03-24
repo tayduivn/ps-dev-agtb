@@ -50,7 +50,7 @@ class ViewRoleDropdownFilter extends ViewDropdown
      */
     protected function getRoleOptions($params)
     {
-        $parser = new ParserRoleDropDownFilter();
-        return $parser->getOne($params['dropdown_name'], $params['dropdown_role']);
+        $manager = MetaDataManager::getManager();
+        return $manager->getEditableDropdownFilter($params['dropdown_name'], $params['dropdown_role']);
     }
 }

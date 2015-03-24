@@ -35,14 +35,20 @@ class MBPackage{
     );
 
     /**
-     * Exportable customizations in "include/" directory. Key is variable name, value is root directory.
+     * Exportable application level customizations. Key is type for manifest, value is root directory and variable name.
      *
      * @var array
      */
-    protected static $includes = array(
-        'language' => 'app_list_strings',
+    protected static $appExtensions = array(
+        'language' => array(
+            'dir' => 'include/language',
+            'varName' => 'app_list_strings',
+        ),
 // BEGIN SUGARCRM flav=ent ONLY
-        'dropdown_filters' => 'role_dropdown_filters',
+        'dropdown_filters' => array(
+            'dir' => 'Extension/application/Ext/DropdownFilters',
+            'varName' => 'role_dropdown_filters',
+        ),
 // END SUGARCRM flav=ent ONLY
     );
 
@@ -381,13 +387,13 @@ function buildInstall($path){
         //creation of the installdefs[] array for the manifest when exporting customizations
     function customBuildInstall($modules, $path, $extensions = array()){
         $installdefs = array ('id' => $this->name, 'relationships' => array());
-        foreach (self::$includes as $type => $varName) {
-            $include_path = $path . '/SugarModules/include/' . $type;
+        foreach (self::$appExtensions as $type => $spec) {
+            $include_path = $path . '/SugarModules/' . $spec['dir'];
             $it = $this->getDirectoryIterator($include_path);
             foreach ($it as $file) {
                 $subPathName = $it->getSubPathname();
                 $def = array(
-                    'from'=> '<basepath>/SugarModules/include/' . $type . '/' . $subPathName,
+                    'from'=> '<basepath>/SugarModules/' . $spec['dir'] . '/' . $subPathName,
                     'to_module'=> 'application',
                 );
                 $baseName = $file->getBasename();
@@ -750,8 +756,9 @@ function buildInstall($path){
     }
     private function copyCustomIncludesForModules($modules, $path)
     {
-        foreach (self::$includes as $type => $varName) {
-            $it = $this->getDirectoryIterator('custom/include/' . $type);
+        foreach (self::$appExtensions as $spec) {
+            $varName = $spec['varName'];
+            $it = $this->getDirectoryIterator('custom/' . $spec['dir']);
             foreach ($it as $file) {
                 $$varName = array();
                 include $file;
@@ -765,7 +772,7 @@ function buildInstall($path){
                     $subPathName = $it->getSubPathname();
                     $subPathName = str_replace('.lang', '', $subPathName);
                     $subPathName = substr($subPathName, 0, -4) . '.' . $this->name . substr($subPathName, -4);
-                    $destination = $path . '/SugarModules/include/' . $type . '/' . $subPathName;
+                    $destination = $path . '/SugarModules/' . $spec['dir'] . '/' . $subPathName;
                     mkdir_recursive(dirname($destination));
                     sugar_file_put_contents($destination, $contents);
                 }
@@ -823,7 +830,7 @@ function buildInstall($path){
         global $mod_strings;
         global $modInvisList;
 
-        $modulesWithCustomDropdowns = $this->getModulesWithCustomIncludes();
+        $modulesWithCustomDropdowns = $this->getModulesWithApplicationExtensions();
         $modules = array_merge($this->getSubdirectories('custom/modules/'), $modulesWithCustomDropdowns);
         $modules = array_unique($modules);
 
@@ -929,11 +936,11 @@ function buildInstall($path){
     }
 
     /**
-     * Returns array of module names that use customizations in include/ directory
+     * Returns array of module names that use application level extensions
      * 
      * @return array
      */
-    protected function getModulesWithCustomIncludes()
+    protected function getModulesWithApplicationExtensions()
     {
         global $beanList;
 
@@ -941,8 +948,8 @@ function buildInstall($path){
 // BEGIN SUGARCRM flav=ent ONLY
         $role_dropdown_filters = array();
 // END SUGARCRM flav=ent ONLY
-        foreach (self::$includes as $type => $varName) {
-            $it = $this->getDirectoryIterator('custom/include/' . $type);
+        foreach (self::$appExtensions as $spec) {
+            $it = $this->getDirectoryIterator('custom/' . $spec['dir']);
             foreach ($it as $file) {
                 include $file;
             }
@@ -962,7 +969,8 @@ function buildInstall($path){
 
                 foreach ($bean->field_defs as $field => $def) {
                     if (isset($def['options'])) {
-                        foreach (self::$includes as $varName) {
+                        foreach (self::$appExtensions as $spec) {
+                            $varName = $spec['varName'];
                             if (isset(${$varName}[$def['options']])) {
                                 $modules[] = $module;
                                 continue 3;
