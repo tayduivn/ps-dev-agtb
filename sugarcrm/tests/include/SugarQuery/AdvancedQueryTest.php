@@ -112,6 +112,9 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
             }
         }
 
+        if (!empty($GLOBALS['dictionary']['Contact_Mock_Bug62961'])) {
+            unset($GLOBALS['dictionary']['Contact_Mock_Bug62961']);
+        }
 
     }
 
@@ -402,6 +405,7 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         // custom field
         BeanFactory::setBeanClass('Contacts', 'Contact_Mock_Bug62961');
         $contact = BeanFactory::getBean("Contacts");
+        $GLOBALS['dictionary']['Contact_Mock_Bug62961']['fields'] = $contact->field_defs;
         $this->assertArrayHasKey("report_to_bigname", $contact->field_defs);
         $this->assertTrue($contact->hasCustomFields());
 

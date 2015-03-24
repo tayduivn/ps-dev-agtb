@@ -628,9 +628,9 @@ class SugarEmailAddress extends SugarBean
      * @param bool $replyTo Default false
      */
 
-    function addAddress($addr, $primary=false, $replyTo=false, $invalid=false, $optOut=false, $email_id = null) {
+    function addAddress($addr, $primary=false, $replyTo=false, $invalid=false, $optOut=false, $email_id = null, $validate = true) {
         $addr = trim(html_entity_decode($addr, ENT_QUOTES));
-        if (SugarEmailAddress::isValidEmail($addr)) {
+        if (!$validate || SugarEmailAddress::isValidEmail($addr)) {
             $primaryFlag = ($primary) ? '1' : '0';
             $replyToFlag = ($replyTo) ? '1' : '0';
             $invalidFlag = ($invalid) ? '1' : '0';
