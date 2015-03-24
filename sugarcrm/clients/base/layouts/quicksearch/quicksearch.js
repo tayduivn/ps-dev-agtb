@@ -23,10 +23,19 @@
         this._super('initialize', [options]);
 
         /**
+         * The collection for executing searches and passing results.
+         * This is to be shared and used by components.
+         */
+        // FIXME Sidecar should be modified to allow multiple top level contexts. When this happens, quick search
+        // should use that context instead of this.collection.
+        this.collection = app.data.createMixedBeanCollection();
+
+        /**
          * Key to indicate version 2 search (new global search). This is used by the component views to determine
          * what version of the API to use. Default is false.
          * @type {boolean}
          */
+        // FIXME SC-4254 Remove this.v2
         this.v2 = this.meta.v2 || false;
 
         /**
@@ -34,6 +43,12 @@
          * @type {number}
          */
         this.compOnFocusIndex = 0;
+
+        /**
+         * Tracks the display state of the search dropdown.
+         * @type {boolean}
+         */
+        this.dropdownOpen = false;
 
         // When a component is trying to navigate from its last element to the next component,
         // Check to make sure there is a next navigable component. If it exists, set it to the component to focus
@@ -93,31 +108,47 @@
             this.trigger('quicksearch:dropdown:close');
             this.removeFocus();
             app.router.off('route', null, this);
+        }, this);
+
+        // close the quicksearch dropdown
+        this.on('quicksearch:dropdown:close', function() {
             $(document).off('click.globalsearch.data-api', '.navbar .search');
             $(document).off('click.globalsearch.data-api');
+            this.dropdownOpen = false;
         }, this);
 
         // Open the quicksearch results
-        var self = this;
         this.on('quicksearch:results:open', function() {
-            // When we click away from the results, close the results
-            $(document)
-                .on('click.globalsearch.data-api', function() {
-                    self.trigger('quicksearch:clear');
-                })
-                .on('click.globalsearch.data-api', '.navbar .search', function(e) { e.stopPropagation() });
-
-            // When we navigate away from the current page, close the results.
-            app.router.on('route', function() {
-                self.trigger('quicksearch:clear');
-            });
-        });
+            this.createDropdownListeners();
+        }, this);
     },
 
     /**
-     * Hides the views in this template.
-     * First calls `navigate:focus:lost` on the focused view. Then calls `quicksearch:results:close` on itself.
-     * Finally, it resets the component on focus.
+     * Create listeners for document and navigation when the dropdown is open.
+     */
+    createDropdownListeners: function() {
+        if (this.dropdownOpen) {
+            return;
+        }
+
+        // When we click away from the results, close the results
+        var self = this;
+        $(document)
+            .on('click.globalsearch.data-api', function() {
+                self.trigger('quicksearch:clear');
+            })
+            .on('click.globalsearch.data-api', '.navbar .search', function(e) { e.stopPropagation() });
+
+        // When we navigate away from the current page, close the results.
+        app.router.on('route', function() {
+            self.trigger('quicksearch:clear');
+        });
+
+        this.dropdownOpen = true;
+    },
+
+    /**
+     * Removes the current focus and resets the focused index
      */
     removeFocus: function() {
         this._components[this.compOnFocusIndex].trigger('navigate:focus:lost');
