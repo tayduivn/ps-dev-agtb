@@ -647,6 +647,61 @@ describe('Base.Fields.Currency', function() {
             expect(field.render).not.toHaveBeenCalled();
             expect(field.setCurrencyValue).toHaveBeenCalled();
         });
+    });
 
+    describe('bindDataChange', function() {
+        var sandbox, field;
+        beforeEach(function() {
+            sandbox = sinon.sandbox.create();
+            field = SugarTest.createField(
+                'base',
+                'amount',
+                'currency',
+                'edit',
+                {
+                    related_fields: ['currency_id', 'base_rate'],
+                    currency_field: 'currency_id',
+                    base_rate_field: 'base_rate'
+                },
+                moduleName,
+                model
+            );
+            field._loadTemplate();
+        });
+        afterEach(function() {
+            sandbox.restore();
+            field.dispose();
+            field = null;
+        });
+
+        describe('when hasEditAccess is false', function() {
+            beforeEach(function() {
+                sandbox.stub(field.model, 'on');
+                field.hasEditAccess = false;
+            });
+
+            it('should not add handlers for base_rate or currency_id', function() {
+                field.bindDataChange();
+                expect(field.model.on.callCount).toEqual(2);
+                expect(field.model.on.getCall(0).calledWith('change:amount')).toBeTruthy();
+                expect(field.model.on.getCall(1).calledWith('duplicate:field:amount')).toBeTruthy();
+            });
+        });
+
+        describe('when hasEditAccess is true', function() {
+            beforeEach(function() {
+                sandbox.stub(field.model, 'on');
+                field.hasEditAccess = true;
+            });
+
+            it('should add handlers for base_rate or currency_id', function() {
+                field.bindDataChange();
+                expect(field.model.on.callCount).toEqual(4);
+                expect(field.model.on.getCall(0).calledWith('change:amount')).toBeTruthy();
+                expect(field.model.on.getCall(1).calledWith('duplicate:field:amount')).toBeTruthy();
+                expect(field.model.on.getCall(2).calledWith('change:base_rate')).toBeTruthy();
+                expect(field.model.on.getCall(3).calledWith('change:currency_id')).toBeTruthy();
+            });
+        });
     });
 });
