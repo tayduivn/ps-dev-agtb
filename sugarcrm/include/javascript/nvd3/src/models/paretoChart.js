@@ -48,13 +48,16 @@ nv.models.paretoChart = function() {
     var multibar = nv.models.multiBar()
             .stacked(true)
             .clipEdge(false)
-            .withLine(true),
+            .withLine(true)
+            .nice(true),
         lines1 = nv.models.line()
             .color(function(d, i) { return '#FFF'; })
             .fill(function(d, i) { return '#FFF'; })
-            .useVoronoi(false),
+            .useVoronoi(false)
+            .nice(true),
         lines2 = nv.models.line()
-            .useVoronoi(false),
+            .useVoronoi(false)
+            .nice(true),
         xAxis = nv.models.axis()
             .orient('bottom')
             .tickSize(0)
@@ -385,7 +388,7 @@ nv.models.paretoChart = function() {
 
             var lx = x.domain(d3.merge(seriesX)).rangeBands([0, availableWidth - margin.left - margin.right], 0.3),
                 ly = Math.max(d3.max(d3.merge(seriesY)), quotaValue, targetQuotaValue || 0),
-                forceY = Math.round(ly * 0.1) * 10,
+                forceY = Math.ceil(ly * 0.1) * 10,
                 lOffset = lx(1) + lx.rangeBand() / (multibar.stacked() || dataLines.length === 1 ? 2 : 4);
 
             // Main Bar Chart
@@ -740,7 +743,7 @@ nv.models.paretoChart = function() {
     chart.yAxis = yAxis;
 
     d3.rebind(chart, multibar, 'id', 'x', 'y', 'xScale', 'yScale', 'xDomain', 'yDomain', 'forceX', 'forceY', 'clipEdge', 'color', 'fill', 'classes', 'gradient');
-    d3.rebind(chart, multibar, 'stacked', 'showValues', 'valueFormat');
+    d3.rebind(chart, multibar, 'stacked', 'showValues', 'valueFormat', 'nice');
     d3.rebind(chart, xAxis, 'rotateTicks', 'reduceXTicks', 'staggerTicks', 'wrapTicks');
 
     chart.colorData = function(_) {

@@ -2672,6 +2672,7 @@ nv.models.scatter = function() {
     , singlePoint  = false
     , dispatch     = d3.dispatch('elementClick', 'elementMouseover', 'elementMouseout', 'elementMousemove')
     , useVoronoi   = true
+    , nice = false
     ;
 
   //============================================================
@@ -2739,6 +2740,9 @@ nv.models.scatter = function() {
 
       y   .domain(yDomain || d3.extent(seriesData.map(function(d) { return d.y }).concat(forceY)))
           .range([availableHeight, 0]);
+      if (nice) {
+        y.nice();
+      }
 
       z   .domain(sizeDomain || d3.extent(seriesData.map(function(d) { return d.size }).concat(forceSize)))
           .range(sizeRange);
@@ -2754,7 +2758,6 @@ nv.models.scatter = function() {
         y.domain()[0] ?
             y.domain([y.domain()[0] + y.domain()[0] * 0.01, y.domain()[1] - y.domain()[1] * 0.01])
           : y.domain([-1,1]);
-
 
       x0 = x0 || x;
       y0 = y0 || y;
@@ -3290,6 +3293,14 @@ nv.models.scatter = function() {
   chart.singlePoint = function(_) {
     if (!arguments.length) return singlePoint;
     singlePoint = _;
+    return chart;
+  };
+
+  chart.nice = function(_) {
+    if (!arguments.length) {
+      return nice;
+    }
+    nice = _;
     return chart;
   };
 
@@ -6467,7 +6478,7 @@ nv.models.line = function() {
   chart.dispatch = scatter.dispatch;
   chart.scatter = scatter;
 
-  d3.rebind(chart, scatter, 'id', 'interactive', 'size', 'xScale', 'yScale', 'zScale', 'xDomain', 'yDomain', 'sizeDomain', 'forceX', 'forceY', 'forceSize', 'useVoronoi', 'clipVoronoi', 'clipRadius', 'padData');
+  d3.rebind(chart, scatter, 'id', 'interactive', 'size', 'xScale', 'yScale', 'zScale', 'xDomain', 'yDomain', 'sizeDomain', 'forceX', 'forceY', 'forceSize', 'useVoronoi', 'clipVoronoi', 'clipRadius', 'padData', 'nice');
 
   chart.color = function(_) {
     if (!arguments.length) { return color; }
@@ -7046,7 +7057,7 @@ nv.models.lineChart = function() {
   chart.yAxis = yAxis;
 
   d3.rebind(chart, lines, 'id', 'x', 'y', 'xScale', 'yScale', 'xDomain', 'yDomain', 'forceX', 'forceY', 'clipEdge', 'delay', 'color', 'fill', 'classes', 'gradient');
-  d3.rebind(chart, lines, 'defined', 'isArea', 'interpolate', 'size', 'clipVoronoi', 'useVoronoi', 'interactive');
+  d3.rebind(chart, lines, 'defined', 'isArea', 'interpolate', 'size', 'clipVoronoi', 'useVoronoi', 'interactive', 'nice');
   d3.rebind(chart, xAxis, 'rotateTicks', 'reduceXTicks', 'staggerTicks', 'wrapTicks');
 
   chart.colorData = function(_) {
@@ -7806,6 +7817,7 @@ nv.models.multiBar = function() {
       delay = 200,
       xDomain,
       yDomain,
+      nice = false,
       color = function(d, i) { return nv.utils.defaultColor()(d, d.series); },
       fill = color,
       barColor = null, // adding the ability to set the color for each rather than the whole group
@@ -7928,8 +7940,10 @@ nv.models.multiBar = function() {
                 negOffset = (vertical ? d.y : 0);
             return stacked ? (d.y > 0 ? d.y1 + posOffset : d.y1 + negOffset) : d.y;
           }).concat(forceY)))
-          .range(vertical ? [availableHeight, 0] : [0, availableWidth])
-          .nice();
+          .range(vertical ? [availableHeight, 0] : [0, availableWidth]);
+        if (nice) {
+          y.nice();
+        }
 
         x0 = x0 || x;
         y0 = y0 || y;
@@ -8571,6 +8585,14 @@ nv.models.multiBar = function() {
       return direction;
     }
     direction = _;
+    return chart;
+  };
+
+  chart.nice = function(_) {
+    if (!arguments.length) {
+      return nice;
+    }
+    nice = _;
     return chart;
   };
 
@@ -9293,7 +9315,7 @@ nv.models.multiBarChart = function() {
   chart.yAxis = yAxis;
 
   d3.rebind(chart, multibar, 'id', 'x', 'y', 'xScale', 'yScale', 'xDomain', 'yDomain', 'forceX', 'forceY', 'clipEdge', 'delay', 'color', 'fill', 'classes', 'gradient');
-  d3.rebind(chart, multibar, 'stacked', 'showValues', 'valueFormat');
+  d3.rebind(chart, multibar, 'stacked', 'showValues', 'valueFormat', 'nice');
   d3.rebind(chart, xAxis, 'rotateTicks', 'reduceXTicks', 'staggerTicks', 'wrapTicks');
 
   chart.colorData = function(_) {
@@ -9551,13 +9573,16 @@ nv.models.paretoChart = function() {
     var multibar = nv.models.multiBar()
             .stacked(true)
             .clipEdge(false)
-            .withLine(true),
+            .withLine(true)
+            .nice(true),
         lines1 = nv.models.line()
             .color(function(d, i) { return '#FFF'; })
             .fill(function(d, i) { return '#FFF'; })
-            .useVoronoi(false),
+            .useVoronoi(false)
+            .nice(true),
         lines2 = nv.models.line()
-            .useVoronoi(false),
+            .useVoronoi(false)
+            .nice(true),
         xAxis = nv.models.axis()
             .orient('bottom')
             .tickSize(0)
@@ -9888,7 +9913,7 @@ nv.models.paretoChart = function() {
 
             var lx = x.domain(d3.merge(seriesX)).rangeBands([0, availableWidth - margin.left - margin.right], 0.3),
                 ly = Math.max(d3.max(d3.merge(seriesY)), quotaValue, targetQuotaValue || 0),
-                forceY = Math.round(ly * 0.1) * 10,
+                forceY = Math.ceil(ly * 0.1) * 10,
                 lOffset = lx(1) + lx.rangeBand() / (multibar.stacked() || dataLines.length === 1 ? 2 : 4);
 
             // Main Bar Chart
@@ -10243,7 +10268,7 @@ nv.models.paretoChart = function() {
     chart.yAxis = yAxis;
 
     d3.rebind(chart, multibar, 'id', 'x', 'y', 'xScale', 'yScale', 'xDomain', 'yDomain', 'forceX', 'forceY', 'clipEdge', 'color', 'fill', 'classes', 'gradient');
-    d3.rebind(chart, multibar, 'stacked', 'showValues', 'valueFormat');
+    d3.rebind(chart, multibar, 'stacked', 'showValues', 'valueFormat', 'nice');
     d3.rebind(chart, xAxis, 'rotateTicks', 'reduceXTicks', 'staggerTicks', 'wrapTicks');
 
     chart.colorData = function(_) {
