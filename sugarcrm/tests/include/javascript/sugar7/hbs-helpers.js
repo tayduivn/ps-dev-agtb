@@ -102,4 +102,38 @@ describe('Sugar7.View.Handlebars.helpers', function() {
             });
         });
     });
+
+    describe('loading', function() {
+
+        it('should translate the string passed and escape it if needed', function() {
+            sinon.collection.stub(app.lang, 'get').withArgs('LBL_LOADING').returns('Loading Text');
+
+            var tpl = Handlebars.compile('{{loading "LBL_LOADING"}}');
+            var result = tpl();
+
+            expect($(result).text()).toEqual('Loading Text...');
+        });
+
+        it('should escape the string passed', function() {
+            sinon.collection.stub(app.lang, 'get').withArgs('LBL_HTML').returns('<script>alert()</script>');
+
+            var tpl = Handlebars.compile('{{loading "LBL_HTML"}}');
+            var result = tpl();
+
+            expect($(result).text()).toEqual('<script>alert()</script>...');
+        });
+
+        it('should allow classes to be passed to the helper', function() {
+            sinon.collection.stub(app.lang, 'get').withArgs('LBL_LOADING').returns('Loading Text');
+
+            var tpl = Handlebars.compile('{{loading "LBL_HTML" cssClass="my-class other-class"}}');
+            var result = tpl();
+
+            var $el = $(result);
+            expect($el).toHaveClass('my-class');
+            expect($el).toHaveClass('other-class');
+        });
+
+    });
+
 });

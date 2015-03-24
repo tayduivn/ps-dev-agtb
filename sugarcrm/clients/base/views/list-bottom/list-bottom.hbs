@@ -28,9 +28,7 @@
 {{else}}
     {{#if showLoadMsg}}
         <div class="{{#unless ../collection.dataFetched}}block-footer{{/unless}}">
-            <div class="loading{{#if ../collection.dataFetched}} padded{{/if}}">
-                {{str "LBL_ALERT_TITLE_LOADING"}}<i class="l1">&#46;</i><i class="l2">&#46;</i><i class="l3">&#46;</i>
-            </div>
+            {{loading 'LBL_ALERT_TITLE_LOADING' cssClass='padded'}}
         </div>
     {{/if}}
 {{/if}}
