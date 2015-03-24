@@ -437,14 +437,12 @@ class FileApi extends SugarApi {
      * @param ServiceBase $api The service base
      * @param array $args Arguments array built by the service base
      *
-     * @return string
-     *
      * @throws SugarApiExceptionNotFound When record, name of relationship or file cannot be found.
      * @throws SugarApiExceptionNotAuthorized When there is no access to record.
      * @throws SugarApiExceptionMissingParameter When field name is missing.
      * @throws SugarApiExceptionInvalidParameter When relationship name is incorrect.
      */
-    public function getArchive($api, $args)
+    public function getArchive(ServiceBase $api, $args)
     {
         // Get the field
         if (empty($args['field'])) {

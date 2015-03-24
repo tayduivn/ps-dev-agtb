@@ -11,9 +11,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use Sugarcrm\Sugarcrm\Data\NestedBeanInterface;
-
 require_once 'clients/base/api/FilterApi.php';
+require_once 'modules/Categories/NestedBeanInterface.php';
 
 /**
  * Api to work with data in tree-like format.
@@ -199,7 +198,7 @@ class TreeApi extends FilterApi
         
         if (false === ($bean instanceof NestedBeanInterface)) {
             throw new SugarApiExceptionInvalidParameter(
-                'Requested module "' . $module . '" should be instance of Sugarcrm\Sugarcrm\Data\NestedBeanInterface'
+                'Requested module "' . $module . '" should be instance of NestedBeanInterface'
             );
         }
         
@@ -258,7 +257,7 @@ class TreeApi extends FilterApi
         if (false === ($bean instanceof NestedBeanInterface)) {
             throw new SugarApiExceptionInvalidParameter(
                 'Requested module "' . $args['module'] . '" should be ' .
-                'instance of Sugarcrm\Sugarcrm\Data\NestedBeanInterface'
+                'instance of NestedBeanInterface'
             );
         }
 
@@ -514,7 +513,7 @@ class TreeApi extends FilterApi
     {
         $this->requireArgs($args, array('module', 'record'));
         $record = $this->retrieveBean($args['module'], $args['record']);
-        return array_reverse($record->getParents());
+        return $record->getParents();
     }
 
     /**

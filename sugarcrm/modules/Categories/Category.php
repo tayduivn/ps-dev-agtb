@@ -11,7 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use Sugarcrm\Sugarcrm\Data\NestedBeanInterface;
+require_once 'modules/Categories/NestedBeanInterface.php';
 
 class Category extends SugarBean implements NestedBeanInterface
 {
@@ -159,7 +159,7 @@ class Category extends SugarBean implements NestedBeanInterface
     /**
      * {@inheritDoc}
      */
-    public function getParents($depth = null, $reverseOrder = true)
+    public function getParents($depth = null, $reverseOrder = false)
     {
         $db = DBManagerFactory::getInstance();
         $query = $this->getQuery();
@@ -187,7 +187,7 @@ class Category extends SugarBean implements NestedBeanInterface
      */
     public function getParent()
     {
-        return array_shift($this->getParents(1));
+        return array_shift($this->getParents(1, true));
     }
 
     /**

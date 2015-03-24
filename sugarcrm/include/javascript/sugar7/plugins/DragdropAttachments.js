@@ -35,7 +35,7 @@
             },
 
             /**
-             * Handler that called when user drops file on the file field.
+             * Handler that is called when user drops file on the file field.
              *
              * To override behavior of this handler you need to create new handler and bind it to
              * before 'attachments:drop' event.
@@ -57,7 +57,7 @@
                     return;
                 }
 
-                this.trigger('attachments:drop', event);
+                this._onAttachmentDropDefault(event);
             },
 
             /**
@@ -267,8 +267,6 @@
                         });
                     });
                 });
-
-                this.on('attachments:drop', this._onAttachmentDropDefault, this);
             },
 
             /**
