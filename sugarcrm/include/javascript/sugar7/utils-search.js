@@ -160,7 +160,7 @@
                     var highlighted = model.get('_highlights');
                     //The fields vardefs of the model.
                     var varDefs = model.fields;
-                    viewDefs = _.clone(viewDefs);
+                    viewDefs = _.clone(viewDefs) || {};
 
                     _.each(highlighted, function(field) {
                         var hasViewDefs = viewDefs[field.name]; // covers patching existing.
