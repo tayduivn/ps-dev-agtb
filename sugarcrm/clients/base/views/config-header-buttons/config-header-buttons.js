@@ -198,6 +198,7 @@
      * Override this method to provide custom logic.
      *
      * @private
+     * @template
      * @return {boolean} The default implementation returns `true` allowing the save.
      */
     _beforeSaveConfig: function() {
@@ -249,6 +250,7 @@
      * Override this method to provide custom logic.
      *
      * @private
+     * @template
      * @return {boolean} The default implementation returns `true` allowing the cancel.
      */
     _beforeCancelConfig: function() {

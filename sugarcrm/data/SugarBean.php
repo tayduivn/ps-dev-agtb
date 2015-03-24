@@ -412,7 +412,7 @@ class SugarBean
 
     /**
      * Field's type which are behavior like related.
-     * Can be override in specific module that have relate-like fields e.g. KBContent.
+     * Can be overridden in specific module that have relate-like fields e.g. KBContent.
      * //TODO: override is useless because of ACLField::getAvailableFields, where we can't load bean of a module
      * //TODO: it causes recursive call. so we just use SugarBean::$relateFieldTypes.
      * @var array

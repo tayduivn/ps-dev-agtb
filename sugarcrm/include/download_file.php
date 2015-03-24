@@ -17,6 +17,8 @@ if (!in_array('upload', stream_get_wrappers())) {
     UploadStream::register();
 }
 
+require_once 'include/utils/file_utils.php';
+
 /**
  * Class to handle downloading of files. Should eventually replace download.php
  */
@@ -263,7 +265,7 @@ class DownloadFile {
         $outputName = trim($outputName);
         if (empty($outputName)) {
             $outputName = 'archive.zip';
-        } else if (substr($outputName, strlen($outputName) - 4) != '.zip') {
+        } else if (get_file_extension($outputName) != 'zip') {
             $outputName .= '.zip';
         }
 
@@ -397,10 +399,10 @@ class DownloadFileApi extends DownloadFile
             }
         } else {
             $this->api->setHeader("Content-Type", "application/force-download");
-            if(!empty($info['content-type'])) {
-                $this->api->setHeader("Content-Type", $info['content-type']);
+            if (!empty($info['content-type'])) {
+                $this->api->setHeader('Content-Type', $info['content-type']);
             } else {
-                $this->api->setHeader("Content-Type", "application/octet-stream");
+                $this->api->setHeader('Content-Type', 'application/octet-stream');
             }
             if(empty($info['name'])) {
                 $info['name'] = pathinfo($info['path'], PATHINFO_BASENAME);

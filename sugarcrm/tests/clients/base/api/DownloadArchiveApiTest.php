@@ -42,8 +42,8 @@ class DownloadArchiveApiTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        SugarTestHelper::setUp("current_user");
-        SugarTestHelper::setUp("ACLStatic");
+        SugarTestHelper::setUp('current_user');
+        SugarTestHelper::setUp('ACLStatic');
 
         $this->service = SugarTestRestUtilities::getRestServiceMock();
         $this->account = SugarTestAccountUtilities::createAccount();

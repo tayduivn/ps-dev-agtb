@@ -49,12 +49,11 @@
             /**
              * Handle embedded file upload process.
              *
-             * This callaback creates new EmbeddedFile object, so this module should present in SugarCRM.
+             * This callaback creates new EmbeddedFile object, so this module should be present in SugarCRM.
              * If there is no EmbeddedFile module, this method does nothing.
              *
-             * To activate possibility usage of embeded files in tinymce you need specify 'file_browser_callback'.
-             * @see modules/KBContents/clients/base/fields/htmleditable_tinymce/htmleditable_tinymce.js
-             * @see http://www.tinymce.com/wiki.php/Configuration:file_browser_callback
+             * To enable the usage of embeded files in tinymce you need to specify 'file_browser_callback'.
+             * See [TinyMCE documentation](http://www.tinymce.com/wiki.php/Configuration:file_browser_callback)
              *
              * Example:
              *
@@ -74,7 +73,6 @@
 
                 var attributes = {
                     fieldName: fieldName,
-                    url: url,
                     type: type,
                     win: win
                 };
@@ -84,11 +82,10 @@
             },
 
             /**
-             * Handler called when user choose file to upload.
+             * Handler called when user chooses file to upload.
              *
              * @param {Object} attributes
              * @param {string} attributes.fieldName The name (and ID) of the dialogue window's input field.
-             * @param {string} attributes.url Carries the existing link URL if you modify a link.
              * @param {string} attributes.type Either 'image', 'media' or 'file'
              * @param {string} attributes.win A reference to the dialogue window itself.
              * @param {Event} event Dom event.
@@ -96,8 +93,7 @@
              */
             _onEmbededFile: function(attributes, event) {
                 var $target = $(event.target),
-                    fileObj = $target[0].files[0],
-                    url = '';
+                    fileObj = $target[0].files[0];
 
                 if (attributes.type === 'image' && fileObj.type.indexOf('image') === -1) {
                     this.clearFileInput($target);
@@ -127,7 +123,7 @@
                     {
                         success: _.bind(function(rsp) {
                             var forceDownload = !(rsp[this.fileFieldName]['content-type'].indexOf('image') !== -1);
-                            url = app.api.buildFileURL(
+                            var url = app.api.buildFileURL(
                                 {
                                     module: 'EmbeddedFiles',
                                     id: rsp.record.id,

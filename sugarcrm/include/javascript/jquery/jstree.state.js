@@ -45,11 +45,11 @@
          * @property {Object} defaults
          * @property {string} defaults.save_loaded
          * @property {string} defaults.save_opened The name of the cookie to save opened nodes in.
-         *                                         If set to false - opened nodes won't be saved.
+         * If set to false - opened nodes won't be saved.
          * @property {string} defaults.save_selected The name of the cookie to save selected nodes in.
-         *                                         If set to false - selected nodes won't be saved.
+         * If set to false - selected nodes won't be saved.
          * @property {boolean} defaults.auto_save If set to true jstree will automatically update
-         *                                        the cookies every time a change in the state occurs.
+         * the cookies every time a change in the state occurs.
          * @property {Object} defaults.options The options accepted by the jQuery.cookie plugin.
          * @property {Object} defaults.storage jQuery.cookie plugint.
          */

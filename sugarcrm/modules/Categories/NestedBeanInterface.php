@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\Sugarcrm\Data;
-
 /**
  * NestedBeanInterface
  *
@@ -24,7 +22,7 @@ namespace Sugarcrm\Sugarcrm\Data;
  *
  * Example:
  *
- * // The tree node (each item in tree) has next attributes:
+ * // The tree node (each item in tree) has the following attributes:
  *
  * $node = array(
  *     'id'                 => '...',   // node uid
@@ -54,7 +52,7 @@ interface NestedBeanInterface
 
     /**
      * Builds from 'flat' tree the hierarchical tree for root node
-     *     of current node and returns it as array of arrays.
+     * of current node and returns it as array of arrays.
      *
      * Example:
      *
@@ -86,8 +84,6 @@ interface NestedBeanInterface
      *
      * @param int $depth Max depth to load, null by default (without limitation).
      * @return array[] descendants hierarchy
-     *
-     * @see modules/Categories/clients/base/api/help/tree_get_tree_help.html
      */
     public function getTree($depth = null);
 
@@ -116,9 +112,7 @@ interface NestedBeanInterface
      * );
      *
      * @param int $depth Max depth to load for children, by default direct children only.
-     * @return array|null List of descendants.
-     *
-     * @see modules/Categories/clients/base/api/help/tree_get_children_help.html
+     * @return array List of descendants.
      */
     public function getСhildren($depth = 1);
 
@@ -137,8 +131,6 @@ interface NestedBeanInterface
      * );
      *
      * @return array|null The next sibling node.
-     *
-     * @see modules/Categories/clients/base/api/help/tree_get_next_help.html
      */
     public function getNextSibling();
 
@@ -157,8 +149,6 @@ interface NestedBeanInterface
      * );
      *
      * @return array The prev sibling node.
-     *
-     * @see modules/Categories/clients/base/api/help/tree_get_prev_help.html
      */
     public function getPrevSibling();
 
@@ -188,10 +178,10 @@ interface NestedBeanInterface
      * );
      *
      * @param int $depth The max depth to looking parents.
-     * @param boolean $reverseOrder Use reverse order or not, true by default.
+     * @param boolean $reverseOrder Use reverse order or not, false by default.
      * @return array the parent nodes.
      */
-    public function getParents($depth = null, $reverseOrder = true);
+    public function getParents($depth = null, $reverseOrder = false);
 
     /**
      * Gets parent of current node.
@@ -216,7 +206,7 @@ interface NestedBeanInterface
      * It looks at all levels of parents for current node.
      * Current node is descendant of target if target is parent of current node (direct or not).
      *
-     * @param Sugarcrm\Sugarcrm\Data\NestedBeanInterface $target The parent node to check.
+     * @param NestedBeanInterface $target The parent node to check.
      * @return boolean Whether the node is descendant of target node.
      */
     public function isDescendantOf(NestedBeanInterface $target);
@@ -247,7 +237,7 @@ interface NestedBeanInterface
      *    |
      *    + - subNode1
      *
-     * @param Sugarcrm\Sugarcrm\Data\NestedBeanInterface $node.
+     * @param NestedBeanInterface $node.
      * @return string Id of new created bean;
      *
      * @throws Exception When current bean isn't new bean (existing in Db bean).
@@ -281,7 +271,7 @@ interface NestedBeanInterface
      *    |
      *    + - $newNode
      *
-     * @param Sugarcrm\Sugarcrm\Data\NestedBeanInterface $node.
+     * @param NestedBeanInterface $node.
      * @return string Id of new created bean;
      *
      * @throws Exception When current bean isn't new bean (existing in Db bean).
@@ -319,7 +309,7 @@ interface NestedBeanInterface
      *    |
      *    + - $targetNode
      *
-     * @param Sugarcrm\Sugarcrm\Data\NestedBeanInterface $target.
+     * @param NestedBeanInterface $target.
      * @return string Id of new created bean;
      *
      * @throws Exception When current bean isn't new bean (existing in Db bean).
@@ -357,7 +347,7 @@ interface NestedBeanInterface
      *    |
      *    + - subNode1
      *
-     * @param Sugarcrm\Sugarcrm\Data\NestedBeanInterface $target.
+     * @param NestedBeanInterface $target.
      * @return string Id of new created bean;
      *
      * @throws Exception When current bean isn't new bean (existing in Db bean).
@@ -397,7 +387,7 @@ interface NestedBeanInterface
      *    |
      *    + - subNode1
      *
-     * @param Sugarcrm\Sugarcrm\Data\NestedBeanInterface $target The target node move current node before.
+     * @param NestedBeanInterface $target The target node move current node before.
      */
     public function moveBefore(NestedBeanInterface $target);
 
@@ -432,7 +422,7 @@ interface NestedBeanInterface
      *    |
      *    + - $currentNode
      *
-     * @param Sugarcrm\Sugarcrm\Data\NestedBeanInterface $target The target node move current node after.
+     * @param NestedBeanInterface $target The target node move current node after.
      */
     public function moveAfter(NestedBeanInterface $target);
 
@@ -467,7 +457,7 @@ interface NestedBeanInterface
      *    |
      *    + - subNode2
      *
-     * @param Sugarcrm\Sugarcrm\Data\NestedBeanInterface $target the target.
+     * @param NestedBeanInterface $target the target.
      */
     public function moveAsFirst(NestedBeanInterface $target);
 
@@ -502,7 +492,7 @@ interface NestedBeanInterface
      *    |
      *    + - $currentNode
      *
-     * @param Sugarcrm\Sugarcrm\Data\NestedBeanInterface $target the target.
+     * @param NestedBeanInterface $target the target.
      */
     public function moveAsLast(NestedBeanInterface $target);
 
