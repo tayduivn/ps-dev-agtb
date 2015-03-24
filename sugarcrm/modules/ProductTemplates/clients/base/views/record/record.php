@@ -110,7 +110,6 @@ $viewdefs['ProductTemplates']['base']['view']['record'] = array(
                 ),
                 array(
                     'name' => 'name',
-                    'link' => false,
                 )
             )
         ),
