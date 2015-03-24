@@ -32,7 +32,6 @@ $vardefs = array (
 			'name' => 'name',
 			'vname' => 'LBL_SUBJECT',
 			'type' => 'name',
-			'link' => true, // bug 39288
 			'dbType' => 'varchar',
 			'len' => 255,
 			'audited' => true,

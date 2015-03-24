@@ -25,7 +25,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
     'name' => 'document_name',
     'vname' => 'LBL_NAME',
     'type' => 'name',
-  	'link' => true, // bug 39288
 	'dbType' => 'varchar',
     'len' => '255',
     'required'=>true,

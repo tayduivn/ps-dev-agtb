@@ -58,10 +58,8 @@ $vardefs =array(
 	'name' =>
 		array (
 			'name' => 'name',
-			'rname' => 'name',
 			'vname' => 'LBL_NAME',
 			'type' => 'fullname',
-			'link' => true, // bug 39288
 			'fields' => array('first_name', 'last_name', 'salutation', 'title'),
 			'sort_on' => 'last_name',
 			'source' => 'non-db',
@@ -73,10 +71,8 @@ $vardefs =array(
 	'full_name' =>
 		array (
 			'name' => 'full_name',
-			'rname' => 'full_name',
 			'vname' => 'LBL_NAME',
 			'type' => 'fullname',
-		    'link' => true, // bug 39288
 			'fields' => array('first_name', 'last_name', 'salutation', 'title'),
 			'sort_on' => 'last_name',
 			'source' => 'non-db',

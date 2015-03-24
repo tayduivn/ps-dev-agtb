@@ -353,7 +353,6 @@ $dictionary['pmse_Inbox'] = array(
         'name' => 'name',
         'vname' => 'LBL_NAME',
         'type' => 'name',
-        'link' => true, // bug 39288
         'dbType' => 'varchar',
         'len' => 255,
         'unified_search' => false,
