@@ -217,6 +217,13 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
             return;
         } // if
 
+        if ($module_name == 'Users' && !$seed->verify_data()) {
+            $GLOBALS['log']->info('End: SugarWebServiceImpl->set_entry');
+            $error->set_error('invalid_data_format');
+            self::$helperObject->setFaultObject($error);
+            return;
+        }
+
         $seed->save(self::$helperObject->checkSaveOnNotify());
 
         $return_entry_list = self::$helperObject->get_name_value_list_for_fields($seed, $return_fields );
