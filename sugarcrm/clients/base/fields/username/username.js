@@ -11,7 +11,7 @@
 /**
  * @class View.Fields.Base.UsernameField
  * @alias SUGAR.App.view.fields.BaseUsernameField
- * @extends View.Field
+ * @extends View.Fields.Base.BaseField
  */
 ({
     //FIXME: SC-3447 this field should have bidirectional input

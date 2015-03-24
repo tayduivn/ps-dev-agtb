@@ -11,7 +11,7 @@
 /**
  * @class View.Fields.Base.AttachmentsField
  * @alias SUGAR.App.view.fields.BaseAttachmentsField
- * @extends View.Field
+ * @extends View.Fields.Base.BaseField
  */
 ({
     fieldSelector: '.attachments',

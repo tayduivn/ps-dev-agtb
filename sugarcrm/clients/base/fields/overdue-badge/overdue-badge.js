@@ -15,7 +15,7 @@
  *
  * @class View.Fields.Base.OverdueBadgeField
  * @alias SUGAR.App.view.fields.BaseOverdueBadgeField
- * @extends View.Field
+ * @extends View.Fields.Base.BaseField
  */
 ({
     _render: function() {

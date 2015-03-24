@@ -11,7 +11,7 @@
 /**
  * @class View.Fields.Base.ChartField
  * @alias SUGAR.App.view.fields.BaseChartField
- * @extends View.Field
+ * @extends View.Fields.Base.BaseField
  */
 ({
     /**

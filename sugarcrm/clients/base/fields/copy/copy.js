@@ -11,7 +11,7 @@
 /**
  * @class View.Fields.Base.CopyField
  * @alias SUGAR.App.view.fields.BaseCopyField
- * @extends View.Field
+ * @extends View.Fields.Base.BaseField
  */
 ({
     'events': {

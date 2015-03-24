@@ -11,7 +11,7 @@
 /**
  * @class View.Fields.Base.BadgeField
  * @alias SUGAR.App.view.fields.BaseBadgeField
- * @extends View.Field
+ * @extends View.Fields.Base.BaseField
  */
 ({
     /**

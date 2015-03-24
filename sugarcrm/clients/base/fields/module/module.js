@@ -11,7 +11,7 @@
 /**
  * @class View.Fields.Base.ModuleField
  * @alias SUGAR.App.view.fields.BaseModuleField
- * @extends View.Field
+ * @extends View.Fields.Base.BaseField
  */
 ({
     format: function(value){

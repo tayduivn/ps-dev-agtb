@@ -28,7 +28,7 @@
  *
  * @class View.Fields.Base.Feedbacks.RatingField
  * @alias SUGAR.App.view.fields.BaseFeedbacksRatingField
- * @extends View.Field
+ * @extends View.Fields.Base.BaseField
  */
 ({
 

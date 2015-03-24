@@ -11,7 +11,7 @@
 /**
  * @class View.Fields.Base.Audit.FieldtypeField
  * @alias SUGAR.App.view.fields.BaseAuditFieldtypeField
- * @extends View.Field
+ * @extends View.Fields.Base.BaseField
  */
 ({
     /**

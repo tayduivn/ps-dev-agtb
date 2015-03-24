@@ -11,7 +11,7 @@
 /**
  * @class View.Fields.Base.TagField
  * @alias SUGAR.App.view.fields.BaseTagField
- * @extends View.Field
+ * @extends View.Fields.Base.BaseField
  */
 ({
     plugins: ['EllipsisInline'],

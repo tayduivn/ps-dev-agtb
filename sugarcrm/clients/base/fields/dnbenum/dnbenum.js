@@ -11,7 +11,7 @@
 /**
  * @class View.Fields.Base.EnumField
  * @alias SUGAR.App.view.fields.BaseEnumField
- * @extends View.Field
+ * @extends View.Fields.Base.BaseField
  */
 ({
     extendsFrom: 'EnumField',

@@ -11,7 +11,7 @@
 /**
  * @class View.Fields.Base.FileField
  * @alias SUGAR.App.view.fields.BaseFileField
- * @extends View.Field
+ * @extends View.Fields.Base.BaseField
  */
 ({
     fieldTag: 'input[type=file]',

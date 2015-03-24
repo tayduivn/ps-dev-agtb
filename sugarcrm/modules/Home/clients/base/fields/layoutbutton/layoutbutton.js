@@ -11,7 +11,7 @@
 /**
  * @class View.Fields.Base.Home.LayoutbuttonField
  * @alias SUGAR.App.view.fields.BaseHomeLayoutbuttonField
- * @extends View.Field
+ * @extends View.Fields.Base.BaseField
  */
 ({
     events: {

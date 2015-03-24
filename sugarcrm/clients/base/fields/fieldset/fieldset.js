@@ -48,7 +48,7 @@
  *
  * @class View.Fields.Base.FieldsetField
  * @alias SUGAR.App.view.fields.BaseFieldsetField
- * @extends View.Field
+ * @extends View.Fields.Base.BaseField
  */
 ({
     /**

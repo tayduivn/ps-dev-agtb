@@ -15,7 +15,7 @@
  *
  * @class View.Fields.Base.ChangePasswordField
  * @alias SUGAR.App.view.fields.BaseChangePasswordField
- * @extends View.Field
+ * @extends View.Fields.Base.BaseField
  */
 ({
     fieldTag: 'input:not(:disabled)',
