@@ -11,7 +11,7 @@
 /**
  * @class View.Fields.Base.ForecastParetoChartField
  * @alias SUGAR.App.view.fields.BaseForecastParetoChartField
- * @extends View.Field
+ * @extends View.Fields.Base.BaseField
  */
 ({
     /**

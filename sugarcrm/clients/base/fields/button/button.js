@@ -11,7 +11,7 @@
 /**
  * @class View.Fields.Base.ButtonField
  * @alias SUGAR.App.view.fields.BaseButtonField
- * @extends View.Field
+ * @extends View.Fields.Base.BaseField
  */
 ({
     tagName: "span",

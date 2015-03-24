@@ -11,7 +11,7 @@
 /**
  * @class View.Fields.Base.IframeField
  * @alias SUGAR.App.view.fields.BaseIframeField
- * @extends View.Field
+ * @extends View.Fields.Base.BaseField
  */
 ({
     /**

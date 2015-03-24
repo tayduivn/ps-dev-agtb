@@ -11,7 +11,7 @@
 /**
  * @class View.Fields.Base.UrlField
  * @alias SUGAR.App.view.fields.BaseUrlField
- * @extends View.Field
+ * @extends View.Fields.Base.BaseField
  */
 ({
     /**

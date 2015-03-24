@@ -11,7 +11,7 @@
 /**
  * @class View.Fields.Base.CollectionCountField
  * @alias SUGAR.App.view.fields.BaseCollectionCountField
- * @extends View.Field
+ * @extends View.Fields.Base.BaseField
  */
 ({
     plugins: ['Tooltip'],

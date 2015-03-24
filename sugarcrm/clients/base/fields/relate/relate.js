@@ -65,7 +65,7 @@
  *
  * @class View.Fields.Base.RelateField
  * @alias SUGAR.App.view.fields.BaseRelateField
- * @extends View.Field
+ * @extends View.Fields.Base.BaseField
  */
 ({
     fieldTag: 'input.select2',

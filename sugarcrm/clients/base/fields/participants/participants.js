@@ -15,7 +15,7 @@
  *
  * @class View.Fields.Base.ParticipantsField
  * @alias SUGAR.App.view.fields.BaseParticipantsField
- * @extends View.Field
+ * @extends View.Fields.Base.BaseField
  */
 ({
     fieldTag: 'input.select2',

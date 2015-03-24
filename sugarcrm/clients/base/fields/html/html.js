@@ -11,7 +11,7 @@
 /**
  * @class View.Fields.Base.HtmlField
  * @alias SUGAR.App.view.fields.BaseHtmlField
- * @extends View.Field
+ * @extends View.Fields.Base.BaseField
  */
 ({
     fieldSelector: '.htmlareafield', //iframe selector

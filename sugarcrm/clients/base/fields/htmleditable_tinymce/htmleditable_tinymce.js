@@ -11,7 +11,7 @@
 /**
  * @class View.Fields.Base.Htmleditable_tinymceField
  * @alias SUGAR.App.view.fields.BaseHtmleditable_tinymceField
- * @extends View.Field
+ * @extends View.Fields.Base.BaseField
  */
 ({
     fieldSelector: '.htmleditable', //iframe or textarea selector

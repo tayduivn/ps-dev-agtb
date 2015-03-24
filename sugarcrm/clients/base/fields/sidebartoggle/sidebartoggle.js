@@ -31,7 +31,7 @@
  *
  * @class View.Fields.Base.SidebartoggleField
  * @alias SUGAR.App.view.fields.BaseSidebartoggleField
- * @extends View.Field
+ * @extends View.Fields.Base.BaseField
  */
 ({
     events: {

@@ -11,7 +11,7 @@
 /**
  * @class View.Fields.Base.Forecasts.CommitlogField
  * @alias SUGAR.App.view.fields.BaseForecastsCommitlogField
- * @extends View.Field
+ * @extends View.Fields.Base.BaseField
  */
 ({
     /**
