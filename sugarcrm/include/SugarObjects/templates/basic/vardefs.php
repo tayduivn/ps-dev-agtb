@@ -231,7 +231,7 @@ $vardefs = array(
         'date_entered' => array(
             'name' => 'idx_' . strtolower($table_name) . '_date_entered',
             'type' => 'index',
-            'fields' => array('id', 'date_entered')
+            'fields' => array('date_entered')
         ),
     ),
     'relationships' => array(

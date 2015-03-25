@@ -423,7 +423,9 @@ class Email extends SugarBean {
             $this->type = 'archived';
         } else {
             $archived = false;
-            $this->type = 'out';
+            if (!empty($request['MAIL_RECORD_STATUS']) && $request['MAIL_RECORD_STATUS'] === 'ready') {
+                $this->type = 'out';
+            }
         }
 
 		/**********************************************************************
@@ -511,8 +513,7 @@ class Email extends SugarBean {
 	        $this->description = html_entity_decode($this->description,ENT_COMPAT,'UTF-8');
 
             if ($this->type != 'draft' && $this->status != 'draft' &&
-                $this->type != 'archived' && $this->status != 'archived' &&
-                !($this->type == 'out' && $this->status == 'sent')
+                $this->type != 'archived' && $this->status != 'archived'
             ) {
                 $this->id = create_guid();
                 $this->date_entered = "";
