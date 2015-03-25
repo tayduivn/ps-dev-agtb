@@ -137,6 +137,7 @@ $dictionary['Document'] = array('table' => 'documents',
             'len' => 100,
             'options' => 'document_status_dom',
             'reportable' => false,
+            'studio' => 'false',
         ),
 
         'status' =>
