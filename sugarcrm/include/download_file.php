@@ -236,7 +236,7 @@ class DownloadFile {
     }
 
     /**
-     * Gets a archive of files and returns an HTTP response with the contents
+     * Gets an archive of files and returns an HTTP response with the contents
      * of the request file for download archive.
      *
      * @param array $beans The list of SugarBean(s) to get the archive for
@@ -311,10 +311,10 @@ class DownloadFile {
             } else {
                 $count = 0;
                 $fparts = explode('.', $fname);
-                $ind =  count($fparts) > 1 ? count($fparts) - 2 : 0;
+                $ind = count($fparts) > 1 ? count($fparts) - 2 : 0;
                 $tmp = $fparts[$ind];
                 foreach ($paths as $path) {
-                    $fparts[$ind] .= "_{$count}";
+                    $fparts[$ind] .= '_{$count}';
                     $count ++;
                     $result[implode('.', $fparts)] = $path;
                     $fparts[$ind] = $tmp;

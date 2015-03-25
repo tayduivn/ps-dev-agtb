@@ -37,18 +37,18 @@
             /**
              * Handler that is called when user drops file on the file field.
              *
-             * To override behavior of this handler you need to create new handler and bind it to
-             * before 'attachments:drop' event.
+             * Example to override the default behavior in the view:
              *
-             * Example:
+             *     this.before('attachments:drop', this._onAttachmentDrop, this);
              *
-             * // in view to override
-             * this.before('attachments:drop', this._onAttachmentDrop, this);
+             *     _onAttachmentDrop: function(event) {
+             *         // the override code
+             *         // return false to make sure we won't execute the default behavior
+             *         return false;
+             *     }
              *
-             * // this handler should return 'false' to prevent handling in main file.
-             * _onAttachmentDrop: function(event) {
-             *     ...
-             * }
+             * The override cannot trigger the `attachments:drop` event (because it would trigger the
+             * event while the before event is happening).
              *
              * @param {Event} event Drop event.
              */
@@ -56,26 +56,13 @@
                 if (!this.triggerBefore('attachments:drop', event)) {
                     return;
                 }
-
                 this._onAttachmentDropDefault(event);
+                this.trigger('attachments:drop', event);
             },
 
             /**
              * Default handler for 'attachments:drop' event.
              * This event is triggered when user drops file on the file field.
-             *
-             * To override behavior of this handler you need to create new handler and bind it to
-             * before 'attachments:drop' event.
-             *
-             * Example:
-             *
-             * // in view to override
-             * this.before('attachments:drop', this._onAttachmentDrop, this);
-             *
-             * // this handler should return 'false' to prevent handling in main file.
-             * _onAttachmentDrop: function(event) {
-             *     ...
-             * }
              *
              * @param {Event} event Drop event.
              * @private
