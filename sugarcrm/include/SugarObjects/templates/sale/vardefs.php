@@ -116,6 +116,10 @@ $vardefs = array(
             'enable_range_search' => true,
             'options' => 'date_range_search_dom',
             'duplicate_on_record_copy' => 'always',
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => false,
+            ),
         ),
         'next_step' =>
         array(
