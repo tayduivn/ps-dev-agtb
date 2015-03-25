@@ -145,24 +145,34 @@ class WorkFlowGlue {
 	//end function glue_normal_compare_change
 	}
 
-	function glue_normal_compare_any_time(& $shell_object){
+    /**
+     * Generate the clauses for 'field does not change for ...'
+     *
+     * @param WorkFlowActionShell $shellObject
+     * @return string
+     */
+    public function glue_normal_compare_any_time($shellObject)
+    {
 
-		if(empty($this->temp_eval)) $this->temp_eval = "";
+        if (empty($this->temp_eval)) {
+            $this->temp_eval = "";
+        }
 
-		$this->temp_eval .= " ( ";
-        $this->temp_eval .= $this->getCompareText($shell_object, true) . " || ( \$focus->fetched_row['".$shell_object->field."'] == null && !isset(\$focus->".$shell_object->field.") )";
-		$this->temp_eval .= " ) ";
-		$this->temp_eval .= " || ";
-		$this->temp_eval .= " ( ";
+        $this->temp_eval .= " ( ";
+        $this->temp_eval .= $this->getCompareText($shellObject, true);
+        $this->temp_eval .= " || ( \$focus->fetched_row['" . $shellObject->field . "'] == null
+            && !isset(\$focus->" . $shellObject->field . ") )";
+        $this->temp_eval .= " ) || ( ";
 
-		$this->temp_eval .= " isset(\$focus->".$shell_object->field.") && isset(\$_SESSION['workflow_parameters']['$shell_object->parent_id']) && \$_SESSION['workflow_parameters']['$shell_object->parent_id'] == \$focus->".$shell_object->field." \n";
+        $this->temp_eval .= " isset(\$focus->" . $shellObject->field . ")
+		    && isset(\$_SESSION['workflow_parameters']['$shellObject->parent_id'])
+		    && \$_SESSION['workflow_parameters']['$shellObject->parent_id'] == \$focus->" . $shellObject->field . " \n";
 
-		$this->temp_eval .= " && !empty(\$_SESSION['workflow_cron']) && \$_SESSION['workflow_cron']==\"Yes\"";
-		$this->temp_eval .= " ) ";
-		return $this->temp_eval;
+        $this->temp_eval .= " && !empty(\$_SESSION['workflow_cron']) && \$_SESSION['workflow_cron']==\"Yes\"";
+        $this->temp_eval .= " ) ";
 
-	//end function glue_normal_compare_change
-	}
+        return $this->temp_eval;
+    }
 
 	function glue_normal_type(& $shell_object, & $past_object, & $future_object){
 		$this->shell_object = $shell_object;
