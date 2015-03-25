@@ -314,7 +314,7 @@ class DownloadFile {
                 $ind = count($fparts) > 1 ? count($fparts) - 2 : 0;
                 $tmp = $fparts[$ind];
                 foreach ($paths as $path) {
-                    $fparts[$ind] .= '_{$count}';
+                    $fparts[$ind] .= "_{$count}";
                     $count ++;
                     $result[implode('.', $fparts)] = $path;
                     $fparts[$ind] = $tmp;
