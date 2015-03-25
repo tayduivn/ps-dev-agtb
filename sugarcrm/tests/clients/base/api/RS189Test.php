@@ -59,13 +59,15 @@ class RS189Test extends Sugar_PHPUnit_Framework_TestCase
         $this->api->massDelete(self::$rest, array());
     }
 
+    /**
+     * @expectedException SugarApiExceptionMissingParameter
+     */
     public function testEmptyDelete()
     {
-        $result = $this->api->massDelete(
+        $this->api->massDelete(
             self::$rest,
             array('massupdate_params' => array(), 'module' => 'Accounts')
         );
-        $this->assertEquals('done', $result['status']);
     }
 
     public function testDelete()
