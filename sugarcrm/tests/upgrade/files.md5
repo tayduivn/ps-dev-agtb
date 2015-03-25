@@ -109,6 +109,7 @@ $md5_string = array (
   './modules/KBArticles/KBArticle.php' => '263a9b3a98ac168758e9c5596bc86455',
   './modules/KBContents/KBContent.php' => '07a79c8daa7a1a3b56ad699d6afd95de',
   './modules/KBDocuments/KBDocument.php' => '6f23ab08569549ff503bbf4046341a1b',
+  './modules/Categories/Category.php' => '71392f33fdef4a1b8c87b351595730e6',
   './modules/ContractTypes/ContractType.php' => '56473683401c3d674000f2f7d6cca9eb',
   './modules/ProjectResources/ProjectResource.php' => 'b5b57f44b11d60b7380ea08b7323e233',
   './modules/Holidays/Holiday.php' => '8b5bec7bb136a3b70fd1372561b8667b',
