@@ -167,9 +167,6 @@
     send: function() {
 
         this.model.set({
-            name: app.user.get('full_name'),
-            username: app.user.get('user_name'),
-            phone: 'n/a',
             timezone: app.user.getPreference('timezone'),
             account_type: app.user.get('type'),
             role: app.user.get('roles').join(', ') || 'n/a',
@@ -186,9 +183,6 @@
             url: post_url,
             type: 'POST',
             data: {
-                'entry.720195324': this.model.get('name'),
-                'entry.99686462': this.model.get('phone'),
-                'entry.860101942': this.model.get('username'),
                 'entry.98009013': this.model.get('account_type'),
                 'entry.1589366838': this.model.get('timezone'),
                 'entry.762467312': this.model.get('role'),
