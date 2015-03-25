@@ -10,9 +10,6 @@
  */
 
 ({
-    events:{
-        'click [name=log_refresh_button]': 'logRefreshClick'
-    },
     /**
      * {@inheritdocs}
      *
@@ -23,35 +20,6 @@
      */
     _renderField: function(field) {
         app.view.View.prototype._renderField.call(this, field);
-    },
-    logRefreshClick : function() {
-        app.alert.show('getLog', {level: 'process', title: 'Loading', autoclose: false});
-        var self = this;
-        var logModel=$('#logPmseId').text();
-        switch(logModel)
-        {
-            case app.lang.get('LBL_PMSE_BUTTON_PROCESS_AUTHOR_LOG', self.module):
-                var pmseInboxUrl = app.api.buildURL(this.module + '/getLog/pmse');
-                app.api.call('READ', pmseInboxUrl, {},{
-                    success: function(data)
-                    {
-                        self.getLogRefresh(data);
-                    }
-                });
-                break;
-            case app.lang.get('LBL_PMSE_BUTTON_SUGARCRM_LOG', self.module):
-                var pmseInboxUrl = app.api.buildURL(this.module + '/getLog/sugar');
-                app.api.call('READ', pmseInboxUrl, {},{
-                    success: function(data)
-                    {
-                        self.getLogRefresh(data);
-                    }
-                });
-                break;
-        }
-    },
-    getLogRefresh: function(data) {
-        $("textarea").html(data);
-        app.alert.dismiss('getLog');
+        field.$el.children().css('width','100%');
     }
 })
