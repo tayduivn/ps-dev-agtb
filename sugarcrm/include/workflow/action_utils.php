@@ -242,9 +242,17 @@ function process_action_new($focus, $action_array){
     $target_module->not_use_rel_in_req = true;
     $target_module->new_rel_relname = $seed_object->rel_name;
     $target_module->new_rel_id = $focus->id;
-    if (!empty($focus->assigned_user_id) && empty($target_module->assigned_user_id)) {
-        $target_module->assigned_user_id = $focus->assigned_user_id;
+
+    // If the assigned_user_id isn't set by the workflow
+    if (empty($target_module->assigned_user_id)) {
+        // Assign current_user to the newly created record
+        $target_module->assigned_user_id = $GLOBALS['current_user']->id;
+        // If there is no current_user for some reason, use the assigned_user_id of the related record
+        if (empty($target_module->assigned_user_id) && !empty($focus->assigned_user_id)) {
+            $target_module->assigned_user_id = $focus->assigned_user_id;
+        }
     }
+
 	$target_module->save($check_notify);
 
 //end function_action_new
