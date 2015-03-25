@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+require_once 'include/download_file.php';
+
 /**
  * Test for DownloadFile class.
  *
