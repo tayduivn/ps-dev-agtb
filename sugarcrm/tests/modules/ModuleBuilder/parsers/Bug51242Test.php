@@ -45,8 +45,6 @@ class Bug51242Test extends Sugar_PHPUnit_Framework_TestCase
             array('portallayoutview','Leads', null, null, MB_PORTAL),
             array(MB_PORTALLISTVIEW, 'Bugs', null, null, MB_PORTAL),
             array('portallayoutview','Bugs', null, null, MB_PORTAL),
-            array(MB_PORTALLISTVIEW, 'KBDocuments', null, null, MB_PORTAL),
-            array('portallayoutview','KBDocuments', null, null, MB_PORTAL),
         );
     }
 

@@ -78,7 +78,7 @@ class RestMetadataModuleListPortalTest extends RestTestPortalBase {
         $restReply = $this->_restCall('me');
 
         $this->assertTrue(isset($restReply['reply']['current_user']['module_list']),'There is no portal module list');
-        // There should only be the following modules by default: Bugs, Cases, KBDocuments, Leads
+        // There should only be the following modules by default: Bugs, Cases, KBOLDDocuments, Leads
         $enabledPortal = array('Cases','Contacts');
         $restModules = $restReply['reply']['current_user']['module_list'];
 
@@ -86,13 +86,9 @@ class RestMetadataModuleListPortalTest extends RestTestPortalBase {
         foreach ( $enabledPortal as $module ) {
             $this->assertTrue(in_array($module,$restModules),'Module '.$module.' missing from the portal module list.');
         }
-        // Bugs and KBDocuments are sometimes enabled, and they are fine, just not in the normal list
+        // Bugs and KBOLDDocuments are sometimes enabled, and they are fine, just not in the normal list
         $idx = array_search('Bugs',$restModules);
         if ( is_int($idx) ) {
-            unset($restModules[$idx]);
-        }
-        $idx = array_search('KBDocuments',$restModules);
-        if ( is_int($idx)) {
             unset($restModules[$idx]);
         }
         // Although there are 4 OOTB portal modules, only 2 are enabled by default
@@ -109,7 +105,7 @@ class RestMetadataModuleListPortalTest extends RestTestPortalBase {
         $restReply = $this->_restCall('me');
 
         $this->assertTrue(isset($restReply['reply']['current_user']['module_list']),'There is no portal module list');
-        // There should only be the following modules by default: Bugs, Cases, KBDocuments, Contacts
+        // There should only be the following modules by default: Bugs, Cases, KBOLDDocuments, Contacts
         // And now 3 are enabled
         $enabledPortal = array('Cases','Contacts', 'Bugs');
         $restModules = $restReply['reply']['current_user']['module_list'];

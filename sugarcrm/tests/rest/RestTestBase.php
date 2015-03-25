@@ -27,7 +27,6 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
     protected $cases = array();
     protected $bugs = array();
     protected $notes = array();
-    protected $kbdocs = array();
 
     public function setUp()
     {
@@ -140,20 +139,6 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
                 $GLOBALS['db']->query("DELETE FROM notes_cstm WHERE id_c IN {$noteIds}");
             }
         }
-
-        // KBDocs cleanup
-        if (count($this->kbdocs)) {
-            $kbdocIds = array();
-            foreach ($this->kbdocs as $kbdoc) {
-                $kbdocIds[] = $kbdoc->id;
-            }
-            $kbdocIds = "('".implode("','",$kbdocIds)."')";
-            $GLOBALS['db']->query("DELETE FROM kbdocuments WHERE id IN {$kbdocIds}");
-            if ($GLOBALS['db']->tableExists('kbdocuments_cstm')) {
-                $GLOBALS['db']->query("DELETE FROM kbdocuments_cstm WHERE id_c IN {$kbdocIds}");
-            }
-        }
-
     }
 
     protected function _restLogin($username = '', $password = '', $platform = 'base')

@@ -798,6 +798,41 @@ tmpMetadata = {
                     }
                 }
             }
+        },
+        "Categories": {
+            "_hash": "12345678910Categories",
+            "fields": {
+                "id": {
+                    "name": "id",
+                    "type": "id",
+                    "required": true
+                },
+                "root": {
+                    "name": "root",
+                    "type": "id",
+                    "required": true
+                },
+                "lft": {
+                    "name": "lft",
+                    "type": "int",
+                    "required": true
+                },
+                "rgt": {
+                    "name": "rgt",
+                    "type": "int",
+                    "required": true
+                },
+                "level": {
+                    "name": "level",
+                    "type": "int",
+                    "required": true
+                },
+                "name": {
+                    "name": "name",
+                    "type": "name",
+                    "required": true
+                }
+            }
         }
     },
     'fields': {

@@ -70,7 +70,7 @@ class ACLField  extends ACLAction
                             (
                                 empty($def['source']) && $def['type'] != 'id' &&
                                 (empty($def['dbType']) || ($def['dbType'] != 'id'))
-                            ) || !empty($def['link']) || $def['type'] == 'relate'
+                            ) || !empty($def['link']) || in_array($def['type'], SugarBean::$relateFieldTypes)
                         )
                     )
                 ) {

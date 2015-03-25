@@ -122,7 +122,6 @@ class CurrentUserPortalApi extends CurrentUserApi {
         return null;
     }
 
-
     /**
      * Manipulates the ACLs for portal
      * 
@@ -150,6 +149,7 @@ class CurrentUserPortalApi extends CurrentUserApi {
         $apiPerson = $this->getPortalContact();
         // This is a change in the ACL's for users without Accounts
         $vis = new SupportPortalVisibility($apiPerson);
+
         $accounts = $vis->getAccountIds();
         if (count($accounts)==0) {
             // This user has no accounts, modify their ACL's so that they match up with enforcement
@@ -158,6 +158,7 @@ class CurrentUserPortalApi extends CurrentUserApi {
         }
         foreach ($acls as $modName => $modAcls) {
             if ($modName === 'Contacts') continue;
+
             $acls[$modName]['edit'] = 'no';
         }
         

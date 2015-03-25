@@ -77,13 +77,6 @@ $viewdefs['Cases']['base']['layout']['subpanels'] = array (
               'link' => 'archived_emails',
           ),
       ),
-      array(
-          'layout' => 'subpanel',
-          'label' => 'LBL_KBDOCUMENTS_SUBPANEL_TITLE',
-          'context' => array (
-              'link' => 'kbdocuments',
-          ),
-      ),
   ),
   'type' => 'subpanels',
   'span' => 12,

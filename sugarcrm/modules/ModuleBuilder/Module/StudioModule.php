@@ -24,7 +24,7 @@ class StudioModule
         'Bugs', // Bug Tracker
         'Campaigns',
         'Contracts',
-        'KBDocuments', // Knowledge Base
+        'KBContents', // Knowledge Base
         'ProductTemplates', // Product Catalog
         'Prospects', // Targets
         'pmse_Business_Rules', // Process Business Rules
@@ -38,7 +38,6 @@ class StudioModule
      * @var array
      */
     static $quickCreateNotSupportedModules = array(
-        'kbdocuments',
         'projecttask',
         'campaigns',
         'quotes',

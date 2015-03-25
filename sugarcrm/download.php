@@ -109,13 +109,7 @@ else {
                 $focus->add_team_security_where_clause($query);
 			}
 			$query .= "WHERE document_revisions.id = '".$db->quote($_REQUEST['id'])."' ";
-		} elseif($file_type == 'kbdocuments') {
-				$query="SELECT document_revisions.filename name	FROM document_revisions INNER JOIN kbdocument_revisions ON document_revisions.id = kbdocument_revisions.document_revision_id INNER JOIN kbdocuments ON kbdocument_revisions.kbdocument_id = kbdocuments.id ";
-            if(!$focus->disable_row_level_security){
-                $focus->add_team_security_where_clause($query);
-            }
-            $query .= "WHERE document_revisions.id = '" . $db->quote($_REQUEST['id']) ."'";
-		}  elseif($file_type == 'notes') {
+		} elseif($file_type == 'notes') {
 			$query = "SELECT filename name FROM notes ";
             if(!$focus->disable_row_level_security){
                 $focus->add_team_security_where_clause($query);

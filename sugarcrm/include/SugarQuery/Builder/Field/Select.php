@@ -53,7 +53,10 @@ class SugarQuery_Builder_Field_Select extends SugarQuery_Builder_Field
             $this->moduleName = empty($this->moduleName) ? $this->query->getFromBean()->module_name : $this->moduleName;
             $bean = BeanFactory::getBean($this->moduleName);
             foreach ($bean->field_defs AS $field => $def) {
-                if (!isset($def['source']) || $def['source'] == 'db' || ($def['source'] == 'custom_fields' && $def['type'] != 'relate')) {
+                if (!isset($def['source'])
+                    || $def['source'] == 'db'
+                    || ($def['source'] == 'custom_fields' && !in_array($def['type'], $bean::$relateFieldTypes))
+                ) {
                     $this->addToSelect("{$this->table}.{$field}");
                 }
             }

@@ -30,7 +30,16 @@ class FileApiTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp("current_user");
         SugarTestHelper::setUp("ACLStatic");
         // load up the unifiedSearchApi for good times ahead
-        $this->fileApi = new FileApiMockUp();
+        $this->fileApi = $this->getMock('FileApiMockUp', array('getDownloadFileApi'));
+        $this->fileApi
+            ->expects($this->any())
+            ->method('getDownloadFileApi')
+            ->with($this->isInstanceOf('ServiceBase'))
+            ->will($this->returnCallback(function ($service) {
+                return new DownloadFileApi($service);
+            }));
+
+
         $document = BeanFactory::newBean('Documents');
         $document->name = "RelateApi setUp Documents";
         $document->save();
@@ -118,6 +127,21 @@ class FileApiTest extends Sugar_PHPUnit_Framework_TestCase
         $createdContents = file_get_contents($this->tempFileTo);
         $encodedContents = file_get_contents($this->tempFileFrom);
         $this->assertEquals($createdContents, $encodedContents, "Creating temp file from encoded file failed");
+    }
+
+    /**
+     * Test protected method getDownloadFileApi
+     */
+    public function testGetDownloadFileApi()
+    {
+        $method = new ReflectionMethod('FileApi', 'getDownloadFileApi');
+        $method->setAccessible(true);
+
+        $api = new FileApi();
+        $result = $method->invoke($api, new FileApiServiceMockUp());
+
+        $this->assertNotEmpty($result);
+        $this->assertInstanceOf('DownloadFileApi', $result);
     }
 }
 

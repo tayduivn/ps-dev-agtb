@@ -164,7 +164,6 @@ class ViewLabels extends ViewModulefields
             );
             
             $hideQuickCreateForModules = array(
-                'KBDocuments',
                 'Campaigns',
                 'Quotes',
                 'ProductTemplates',
@@ -177,9 +176,6 @@ class ViewLabels extends ViewModulefields
                 }
             }
 
-            if ($module == 'KBDocuments') {
-                $variableMap  = array();
-            }
         } else {
             $variableMap = array(
                 MB_RECORDVIEW => 'record',

@@ -59,12 +59,12 @@
             return app.api.call(method, url, model, options);
         };
 
-        model.fetch = function (options) {
+        model.fetch = function(options) {
             options = options ? _.clone(options) : {};
             if (options.parse === void 0) options.parse = true;
             var model = this,
                 success = options.success;
-            options.success = function (resp) {
+            options.success = function(resp) {
                 if (!model.set(model.parse(resp, options), options)) {
                     return false;
                 }
@@ -74,7 +74,7 @@
                 model.trigger('sync', model, resp, options);
             };
             var error = options.error;
-            options.error = function (resp) {
+            options.error = function(resp) {
                 if (error) {
                     error(model, resp, options);
                 }
@@ -146,7 +146,7 @@
             }
 
             return xhr;
-        }
+        };
 
         // push the model back to the context model
         this.context.set({model: model});
@@ -155,6 +155,7 @@
          */
 
         this.before('save', this._beforeSaveConfig, this);
+        this.before('cancel', this._beforeCancelConfig, this);
     },
 
     /**
@@ -191,12 +192,17 @@
     },
 
     /**
-     * Noop for use if model needs updating before save
-     * Gets called before the model actually saves
+     * Noop for use if model needs updating before save.
+     * Gets called before the model actually saves.
+     *
+     * Override this method to provide custom logic.
      *
      * @private
+     * @template
+     * @return {boolean} The default implementation returns `true` allowing the save.
      */
     _beforeSaveConfig: function() {
+        return true;
     },
 
     /**
@@ -226,13 +232,29 @@
      * Cancels the config setup process and redirects back
      */
     cancelConfig: function() {
-        // If we're inside a drawer
-        if (app.drawer) {
-            // close the drawer
-            app.drawer.close(this.context, this.context.get('model'));
-        }
+        if (this.triggerBefore('cancel')) {
+            // If we're inside a drawer
+            if (app.drawer) {
+                // close the drawer
+                app.drawer.close(this.context, this.context.get('model'));
+            }
 
-        this._handleCancelRedirect();
+            this._handleCancelRedirect();
+        }
+    },
+
+    /**
+     * Noop for use if model needs updating before cancel
+     * Gets called before the model actually cancels
+     *
+     * Override this method to provide custom logic.
+     *
+     * @private
+     * @template
+     * @return {boolean} The default implementation returns `true` allowing the cancel.
+     */
+    _beforeCancelConfig: function() {
+        return true;
     },
 
     /**

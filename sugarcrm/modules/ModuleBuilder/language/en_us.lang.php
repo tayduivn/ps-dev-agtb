@@ -615,6 +615,7 @@ $mod_strings = array(
     'LBL_PORTAL_DETAIL_NUMBER' => 'Number of fields to display on Detail View',
     'LBL_PORTAL_SEARCH_RESULT_NUMBER' => 'Number of results to display on Global Search',
     'LBL_PORTAL_DEFAULT_ASSIGN_USER' => 'Default assigned for new portal registrations',
+
 'LBL_PORTAL'=>'Portal',
 'LBL_PORTAL_LAYOUTS'=>'Portal Layouts',
 'LBL_SYNCP_WELCOME'=>'Please enter the URL of the portal instance you wish to update.',

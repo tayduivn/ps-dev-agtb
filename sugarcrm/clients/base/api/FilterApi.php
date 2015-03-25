@@ -404,7 +404,9 @@ class FilterApi extends SugarApi
         }
 
         foreach ($bean->field_defs as $field => $fieldDef) {
-            if ($fieldDef['type'] == 'relate' && (!empty($fieldDef['link']) || !empty($fieldDef['module']))) {
+
+            if (in_array($fieldDef['type'], $bean::$relateFieldTypes)
+                && (!empty($fieldDef['link']) || !empty($fieldDef['module']))) {
                 if (empty($data[$field]) && empty($relates[$field])) {
                     continue;
                 }

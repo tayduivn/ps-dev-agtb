@@ -35,7 +35,6 @@ $moduleList[] = 'Quotes';
 $moduleList[] = 'Products';
 $moduleList[] = 'Forecasts';
 $moduleList[] = 'Contracts';
-$moduleList[] = 'KBDocuments';
 //BEGIN SUGARCRM flav=ent ONLY
 $moduleList[] = 'pmse_Project';
 $moduleList[] = 'pmse_Inbox';
@@ -160,11 +159,6 @@ $beanList['WorkFlowActionShells']  = 'WorkFlowActionShell';
 $beanList['WorkFlowActions']  = 'WorkFlowAction';
 $beanList['Expressions']  = 'Expression';
 $beanList['Contracts']  = 'Contract';
-$beanList['KBDocuments'] = 'KBDocument';
-$beanList['KBDocumentRevisions'] = 'KBDocumentRevision';
-$beanList['KBTags'] = 'KBTag';
-$beanList['KBDocumentKBTags'] = 'KBDocumentKBTag';
-$beanList['KBContents'] = 'KBContent';
 $beanList['ContractTypes']  = 'ContractType';
 $beanList['Holidays'] = 'Holiday';
 $beanList['ProjectResources'] = 'ProjectResource';
@@ -331,11 +325,6 @@ $beanFiles['WorkFlowAction']  = 'modules/WorkFlowActions/WorkFlowAction.php';
 $beanFiles['Expression']  = 'modules/Expressions/Expression.php';
 $beanFiles['System']      = 'modules/Administration/System.php';
 $beanFiles['SessionManager']      = 'modules/Administration/SessionManager.php';
-$beanFiles['KBDocument'] = 'modules/KBDocuments/KBDocument.php';
-$beanFiles['KBDocumentRevision'] = 'modules/KBDocumentRevisions/KBDocumentRevision.php';
-$beanFiles['KBTag'] = 'modules/KBTags/KBTag.php';
-$beanFiles['KBDocumentKBTag'] = 'modules/KBDocumentKBTags/KBDocumentKBTag.php';
-$beanFiles['KBContent'] = 'modules/KBContents/KBContent.php';
 $beanFiles['ContractType']  = 'modules/ContractTypes/ContractType.php';
 $beanFiles['ProjectResource'] = 'modules/ProjectResources/ProjectResource.php';
 $beanFiles['Holiday'] = 'modules/Holidays/Holiday.php';
@@ -392,7 +381,7 @@ $modInvisList = array('Administration', 'Currencies', 'CustomFields', 'Connector
     'UpgradeWizard', 'Trackers', 'Connectors', 'Employees', 'Calendar',
     'Manufacturers', 'ProductBundles', 'ProductBundleNotes', 'ProductCategories', 'ProductTemplates', 'ProductTypes',
     'Shippers', 'TaxRates', 'TeamNotices', 'Teams', 'TimePeriods', 'ForecastOpportunities', 'Quotas',
-    'KBDocumentRevisions', 'KBDocumentKBTags', 'KBTags', 'KBContents', 'ContractTypes',
+    'ContractTypes',
     'ACLFields', 'Holidays', 'SNIP', 'ForecastDirectReports', 'System',
     'Releases','Sync',
     'Users',  'Versions', 'LabelEditor','Roles','EmailMarketing'
@@ -520,6 +509,9 @@ $modInvisList[] = 'Notifications';
 // Be sure to also add the modules to $modInvisList, otherwise their tab will still appear
 $GLOBALS['moduleTabMap'] = array(
     'UpgradeWizard' => 'Administration',
+    'KBDocuments' => 'KBContents',
+    'KBArticles' => 'KBContents',
+    'KBContentTemplates' => 'KBContents',
     'EmailMan' => 'Administration',
     'ModuleBuilder' => 'Administration',
     'Configurator' => 'Administration',
@@ -586,6 +578,10 @@ $moduleList[] = 'Tags';
 $beanList['Tags'] = 'Tag';
 $beanFiles['Tag'] = 'modules/Tags/Tag.php';
 
+$beanList['Categories'] = 'Category';
+$beanFiles['Category'] = 'modules/Categories/Category.php';
+$modInvisList[] = 'Categories';
+
 //Object list is only here to correct for modules that break
 //the bean class name == dictionary entry/object name convention
 //No future module should need an entry here.
@@ -642,12 +638,6 @@ $bwcModules = array(
     'iCals',
     'Import',
     'InboundEmail',
-    'KBContents',
-    'KBDocuments',
-    'KBDocumentRevisions',
-    'KBTags',
-    'KBDocumentKBTags',
-    'KBContents',
     'Manufacturers',
     'MergeRecords',
     'ModuleBuilder',
@@ -704,6 +694,26 @@ $bwcModules = array(
     'WorkFlowAlertShells',
     'WorkFlowTriggerShells'
 );
+
+$beanList['KBDocuments'] = 'KBDocument';
+$beanFiles['KBDocument'] = 'modules/KBDocuments/KBDocument.php';
+$modInvisList[] = 'KBDocument';
+
+$beanList['KBContents'] = 'KBContent';
+$beanFiles['KBContent'] = 'modules/KBContents/KBContent.php';
+$moduleList[] = 'KBContents';
+
+$beanList['KBArticles'] = 'KBArticle';
+$beanFiles['KBArticle'] = 'modules/KBArticles/KBArticle.php';
+$modInvisList[] = 'KBArticles';
+
+$beanList['KBContentTemplates'] = 'KBContentTemplate';
+$beanFiles['KBContentTemplate'] = 'modules/KBContentTemplates/KBContentTemplate.php';
+$modInvisList[] = 'KBContentTemplates';
+
+$beanList['EmbeddedFiles'] = 'EmbeddedFile';
+$beanFiles['EmbeddedFile'] = 'modules/EmbeddedFiles/EmbeddedFile.php';
+$modInvisList[] = 'EmbeddedFiles';
 
 // this module doesn't need a Bean
 $modInvisList[] = 'Feedbacks';

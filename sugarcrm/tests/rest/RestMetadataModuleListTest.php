@@ -96,19 +96,16 @@ class RestMetadataModuleListTest extends RestTestBase {
         $this->_clearMetadataCache();
 
         $this->assertTrue(isset($restReply['reply']['module_list']['_hash']),'There is no portal module list');
-        // There should only be the following modules by default: Bugs, Cases, KBDocuments, Leads
+        // There should only be the following modules by default: Bugs, Cases, KBOLDDocuments, Leads
         $enabledPortal = array('Cases','Contacts');
         $restModules = $restReply['reply']['module_list'];
         unset($restModules['_hash']);
         foreach ( $enabledPortal as $module ) {
             $this->assertTrue(in_array($module,$restModules),'Module '.$module.' missing from the portal module list.');
         }
-        // Bugs and KBDocuments are sometimes enabled, and they are fine, just not in the normal list
+        // Bugs and KBOLDDocuments are sometimes enabled, and they are fine, just not in the normal list
         if ( isset($restModules['Bugs']) ) {
             unset($restModules['Bugs']);
-        }
-        if ( isset($restModules['KBDocuments']) ) {
-            unset($restModules['KBDocuments']);
         }
         // Although there are 4 OOTB portal modules, only 2 are enabled by default
         $this->assertEquals(2,count($restModules),'There are extra modules in the portal module list');
@@ -126,7 +123,7 @@ class RestMetadataModuleListTest extends RestTestBase {
         $this->_clearMetadataCache();
 
         $this->assertTrue(isset($restReply['reply']['module_list']['_hash']),'There is no portal module list');
-        // There should only be the following modules by default: Bugs, Cases, KBDocuments, Contacts
+        // There should only be the following modules by default: Bugs, Cases, KBOLDDocuments, Contacts
         // And now 3 are enabled
         $enabledPortal = array('Cases','Contacts', 'Bugs');
         $restModules = $restReply['reply']['module_list'];
@@ -374,9 +371,5 @@ class RestMetadataModuleListTest extends RestTestBase {
         $this->assertEquals(true, $restReply['reply']['modules']['Cases']['fields']['priority']['sortable'], "Cases 'priority' field should be sortable");
         $this->assertEquals(true, $restReply['reply']['modules']['Cases']['fields']['type']['sortable'], "Cases 'type' field should be sortable");
 
-        $this->assertArrayHasKey('KBDocuments', $restReply['reply']['modules'], 'Bugs was not returned in module metadata as expected');
-        $this->assertEquals(true, $restReply['reply']['modules']['KBDocuments']['fields']['active_date']['sortable'], "KBDocuments 'active_date' field should be sortable");
-        $this->assertEquals(true, $restReply['reply']['modules']['KBDocuments']['fields']['exp_date']['sortable'], "KBDocuments 'exp_date' field should be sortable");
-    }
     //END SUGARCRM flav=ent ONLY
 }

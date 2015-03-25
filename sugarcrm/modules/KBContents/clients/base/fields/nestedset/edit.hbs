@@ -1,0 +1,41 @@
+{{!--
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+--}}
+<div data-role="parent" class="parenttree">
+    <input type="hidden" data-toggle="dropdown" data-role="toggle" name="{{def.id_name}}"/>
+    <div name="{{name}}" {{#if def.tabindex}} tabindex="{{def.tabindex}}"{{/if}} data-role="treeinput" class="divinput">
+        {{#if value}}{{value}}{{/if}}
+        {{#unless value}}{{emptyLabel}}{{/unless}}
+        <span class="select-arrow">
+            <b class="fa fa-caret-down" role="presentation"></b>
+        </span>
+    </div>
+    {{#unless hideHelp}}{{#if def.help}}<p class="help-block">{{str def.help module}}</p>{{/if}}{{/unless}}
+    <ul data-menu="dropdown" class="dropdown-menu" role="menu">
+    <li class="st">
+        <div class="input-append">
+            <input type="text" data-role="secondinput"/>
+            <span class="add-on fa" data-role="secondinputaddon">&nbsp;</span>
+        </div>
+    </li>
+    <li class="tree">
+        <div class="list" data-place="tree">
+        </div>
+    </li>
+     <li class="st">
+        <div data-place="bottom">
+            <div class="span4" data-action="create-label-cover">{{{str "LBL_CREATE_CATEGORY"}}}</div>
+            <div class="offset4 fa fa-expand pull-right" data-action="full-screen">&nbsp;</div>
+        </div>
+    </li>
+    </ul>
+<div>

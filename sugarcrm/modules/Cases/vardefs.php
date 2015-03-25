@@ -164,13 +164,6 @@ $dictionary['Case'] = array('table' => 'cases','audited'=>true, 'activity_enable
       'source' => 'non-db',
       'vname' => 'LBL_DOCUMENTS_SUBPANEL_TITLE',
   ),
-    'kbdocuments' => array(
-        'name'          => 'kbdocuments',
-        'type'          => 'link',
-        'relationship'  => 'case_kbdocuments',
-        'source'        => 'non-db',
-        'vname'         => 'LBL_KBDOCUMENTS_SUBPANEL_TITLE',
-    ),
   'calls' =>
   array (
   	'name' => 'calls',

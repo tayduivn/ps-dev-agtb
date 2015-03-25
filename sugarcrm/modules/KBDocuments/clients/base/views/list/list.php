@@ -1,5 +1,4 @@
 <?php
-if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -10,62 +9,33 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-
 $viewdefs['KBDocuments']['base']['view']['list'] = array(
     'panels' => array(
         array(
-            'label' => 'LBL_PANEL_DEFAULT',
+            'name'   => 'panel_header',
+            'label'  => 'LBL_PANEL_1',
             'fields' => array(
                 array(
-                    'name' => 'kbdocument_name',
-                    'label' => 'LBL_ARTICLE_TITLE',
-                    'link' => true,
-                    'bwcLink' => false,
+                    'label'   => 'LBL_LIST_NAME',
                     'enabled' => true,
                     'default' => true,
+                    'link'    => true,
+                    'name'    => 'name',
                 ),
                 array(
-                    'name' => 'views_number',
-                    'label' => 'LBL_LIST_VIEWING_FREQUENCY',
+                    'label'   => 'LBL_STATUS',
                     'enabled' => true,
                     'default' => true,
+                    'name'    => 'status',
                 ),
                 array(
-                    'name' => 'kbdoc_approver_name',
-                    'label' => 'LBL_LIST_KBDOC_APPROVER_NAME',
-                    'enabled' => true,
-                    'default' => true,
-                ),
-                array(
-                    'name' => 'assigned_user_name',
-                    'label' => 'LBL_ARTICLE_AUTHOR_LIST',
-                    'enabled' => true,
-                    'default' => true,
-                ),
-                array(
-                    'name' => 'active_date',
-                    'label' => 'LBL_DOC_ACTIVE_DATE',
-                    'enabled' => true,
-                    'default' => true,
-                ),
-                array(
-                    'name' => 'exp_date',
-                    'label' => 'LBL_DOC_EXP_DATE',
-                    'enabled' => true,
-                    'default' => true,
-                ),
-                array(
-                    'name' => 'date_entered',
-                    'label' => 'LBL_DATE_ENTERED',
-                    'enabled' => true,
-                    'default' => true,
-                    'readonly' => true,
-                ),
-                array(
-                    'name' => 'kbdocument_revision_number',
-                    'label' => 'LBL_KBDOCUMENT_REVISION_NUMBER',
-                    'enabled' => true,
-                    'default' => true,
+                    'name'              => 'assigned_user_name',
+                    'target_record_key' => 'assigned_user_id',
+                    'target_module'     => 'Employees',
+                    'label'             => 'LBL_ASSIGNED_TO_NAME',
+                    'enabled'           => true,
+                    'default'           => true,
+                    'sortable'          => false,
                 ),
             ),
         ),

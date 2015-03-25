@@ -494,11 +494,6 @@ $renamedefs = array(
             array('name' => 'LBL_FORECAST', 'type' => 'singular', 'source' => 'Forecasts'),
             array('name' => 'LBL_QUOTA_ID', 'type' => 'singular', 'source' => 'Quotas'),
         ),
-        'KBDocuments' => array(
-            array('name' => 'LBL_CASES', 'type' => 'plural', 'source' => 'Cases'),
-            array('name' => 'LBL_CONTRACTS', 'type' => 'plural', 'source' => 'Contracts'),
-            array('name' => 'LBL_CONTRACT_NAME', 'type' => 'plural', 'source' => 'Contracts'),
-        ),
         'Leads' => array(
             array('name' => 'LNK_SELECT_###MODULE_PLURAL###', 'type' => 'singular', 'source' => 'Leads'),
             array('name' => 'LNK_SELECT_###MODULE_SINGULAR###', 'type' => 'singular', 'source' => 'Leads'),

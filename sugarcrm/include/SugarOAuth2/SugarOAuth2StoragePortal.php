@@ -239,7 +239,7 @@ class SugarOAuth2StoragePortal extends SugarOAuth2StoragePlatform {
            // Can't login as a portal user if there is no API user
             throw new SugarApiExceptionPortalNotConfigured();
         }
-        
+
         $contact = $this->loadUserFromName($username);
         if ( !empty($contact) && !User::checkPassword($password, $contact->portal_password) ) {
            $contact = null;

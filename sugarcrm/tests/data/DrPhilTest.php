@@ -124,7 +124,7 @@ class DrPhilTest extends Sugar_PHPUnit_Framework_TestCase
                 continue;
             }
 
-            if ($def['type'] == 'relate'
+            if (in_array($def['type'], $bean::$relateFieldTypes)
                 || (isset($def['source'])
                     && $def['source'] == 'non-db'
                     && !empty($def['link'])) ) {

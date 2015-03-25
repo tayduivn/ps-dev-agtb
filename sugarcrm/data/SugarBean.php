@@ -411,6 +411,18 @@ class SugarBean
     protected static $recursivelyResavedManyBeans = false;
 
     /**
+     * Field's type which are behavior like related.
+     * Can be overridden in specific module that have relate-like fields e.g. KBContent.
+     * //TODO: override is useless because of ACLField::getAvailableFields, where we can't load bean of a module
+     * //TODO: it causes recursive call. so we just use SugarBean::$relateFieldTypes.
+     * @var array
+     */
+    public static $relateFieldTypes = array(
+        'relate',
+        'nestedset',
+    );
+
+    /**
      * This method has been moved into the __construct() method to follow php standards
      *
      * Please start using __construct() as this method will be removed in a future version
@@ -5478,8 +5490,7 @@ class SugarBean
 
         foreach($this->field_defs as $field)
         {
-            if($field['type'] == 'relate' && !empty($field['module']))
-            {
+            if (in_array($field['type'], static::$relateFieldTypes) && !empty($field['module'])) {
                 $name = $field['name'];
                 if(empty($this->$name))
                 {

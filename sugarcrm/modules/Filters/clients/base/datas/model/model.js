@@ -154,7 +154,7 @@
      */
     getFilterableFields: function(moduleName) {
         var moduleMeta = app.metadata.getModule(moduleName),
-            operatorMap = app.metadata.getFilterOperators(),
+            operatorMap = app.metadata.getFilterOperators(moduleName),
             fieldMeta = moduleMeta.fields,
             fields = {};
 

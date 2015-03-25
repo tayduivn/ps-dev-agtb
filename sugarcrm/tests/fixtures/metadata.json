@@ -119,11 +119,6 @@
         "Calls": {
             "fields": {}
         },
-        "KBDocuments": {
-            "fields": {
-                "attachment_list": {}
-            }
-        },
         "Opportunities": {
             "config": {
                 "opps_view_by": "Opportunities"

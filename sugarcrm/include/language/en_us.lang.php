@@ -99,7 +99,6 @@ $app_list_strings = array (
     'TrackerQueries' => 'Tracker Queries',
     'FAQ' => 'FAQ',
     'Newsletters' => 'Newsletters',
-    'KBDocuments' => 'Knowledge Base',
   	'SugarFavorites'=>'Favorites',
 	'PdfManager' => 'PDF Manager',
 
@@ -111,6 +110,7 @@ $app_list_strings = array (
     'Styleguide' => 'Styleguide',
     'Feedbacks' => 'Feedbacks',
     'Tags' => 'Tags',
+    'Categories' => 'Categories',
   ),
 
     'moduleIconList' =>
@@ -119,6 +119,8 @@ $app_list_strings = array (
         'Cases' => 'Cs',
         'Campaigns' => 'Ca',
         'Notes' => 'Nt',
+        'KBLocalizations' => 'Lo',
+        'KBRevisions' => 'Re',
         'Quotas' => 'Fo',
         'Tasks' => 'Ts'
     ),
@@ -157,7 +159,6 @@ $app_list_strings = array (
     'Activities' => 'Activity',
     'ActivityStream' => 'Activity Stream',
     'Bugs' => 'Bug',
-    'KBDocuments' => 'Knowledge Base Document',
     'Feeds' => 'RSS',
     'iFrames'=>'My Sites',
     'TimePeriods'=>'Time Period',
@@ -223,7 +224,8 @@ $app_list_strings = array (
     'Subscriptions' => 'Subscription',
     'UserSignatures' => 'User Signature',
     'Feedbacks' => 'Feedback',
-    'Tags' => 'Tag',
+    'Tags' => 'Tag', 
+    'Categories' => 'Category',
   ),
 
 /*
@@ -3193,6 +3195,8 @@ Sincerely, SugarCRM',
     'ERROR_ACCESS_MODULE' => 'You do not have access to this module.',
     'ERROR_MAX_FILESIZE_EXCEEDED' => 'The attachment is too large.',
     'ERROR_UPLOAD_FAILED' => 'Error. The file failed to upload.',
+    'ERROR_EXP_DATE_LOW' => 'Error. The expiration date can not be before date of publishing.',
+    'ERROR_ACTIVE_DATE_APPROVE_REQUIRED' => 'Error. The Approved status requires publishing date.',
     'LBL_DUP_MERGE'=>'Find Duplicates',
     'LBL_MANAGE_SUBSCRIPTIONS'=>'Manage Subscriptions',
     'LBL_MANAGE_SUBSCRIPTIONS_FOR'=>'Manage Subscriptions for ',
@@ -3974,6 +3978,24 @@ Sincerely, SugarCRM',
     'LBL_DASHLET_COUNTRY_CHART_NAME' => 'Sales by Country',
     'LBL_DASHLET_COUNTRY_CHART_DESCRIPTION' => 'Displays the sales chart by country map.',
 
+    /* Knowledge base category tree dashlet */
+    'LBL_DASHLET_CATEGORIES_NAME' => 'Knowledge Base Categories',
+    'LBL_DASHLET_CATEGORIES_DESCRIPTION' => 'A tree view of the Knowledge Base Categories',
+
+    /* Knowledge base localizations dashlet */
+    'LBL_DASHLET_LOCALIZATIONS_NAME' => 'Other Languages',
+    'LBL_DASHLET_LOCALIZATIONS_DESCRIPTION' => 'A list of localized Knowledge Base Articles',
+
+    // Most Useful Knowledge Base Articles dashlet
+    'LBL_DASHLET_MOST_USEFUL_NAME' => 'Most Useful Knowledge Base Articles',
+    'LBL_DASHLET_MOST_USEFUL_DESC' => 'A list of Knowledge Base Articles liked most by users',
+
+    'LBL_FILTERED_LIST_BY_FIELD' => '{{module}} filtered by {{label}} "{{value}}"',
+
+    // Usefulness for Articles dashlet
+    'LBL_DASHLET_USEFULNESS_NAME' => 'Usefulness for Articles',
+    'LBL_DASHLET_USEFULNESS_DESC' => 'A chart showing how useful the Knowledge Base article is',
+
     // MySugar Menu Options
     'LBL_ADD_PAGE' => 'Add Page',
     'LBL_DELETE_PAGE' => 'Delete Page',
@@ -4320,8 +4342,8 @@ Sincerely, SugarCRM',
 
     // Share feature on record
     'LBL_RECORD_SHARE_BUTTON' => 'Share',
-    'TPL_RECORD_SHARE_SUBJECT' => 'Shared {{module}} {{name}} from {{appId}}',
-    'TPL_RECORD_SHARE_BODY' => 'Please checkout {{module}} {{name}} from {{appId}}',
+    'TPL_RECORD_SHARE_SUBJECT' => 'Shared {{module}} {{name}} from {{appId}}',
+    'TPL_RECORD_SHARE_BODY' => 'Please checkout {{module}} {{name}} from {{appId}}',
 
     'ERR_CONNECTOR_NOT_ARRAY' => 'connector array in {0} been defined incorrectly or is empty and could not be used.',
     'LBL_PDF_VIEW' => 'Download PDF',
@@ -4364,6 +4386,7 @@ Sincerely, SugarCRM',
     'LBL_PREVIEW_DISABLED_DELETED_OR_NO_ACCESS' => 'Preview disabled: Record removed or no access to record',
     'LBL_STREAM_NO_RECORDS' => 'This record has no notes at this time. Please add a note by clicking on the add note link.',
     'LBL_DUPLICATES_FOUND' => '{{duplicateCount}} duplicates found.',
+    'LBL_NO_DUPLICATES_FOUND' => 'No duplicates found.',
     'LBL_RESET_DEFAULT_VIEW' => 'Reset default view',
     'LBL_RESET_DEFAULT_WIDTHS' => 'Reset default widths',
 
@@ -5148,6 +5171,9 @@ Sincerely, SugarCRM',
     'LBL_DASHLET_SAVED_REPORTS_CHART_DESC' => 'Displays any chart from a saved report.',
     'LBL_QUESTION_MARK' => '?',
 
+    'LBL_DASHLET_RELATED_DOCUMENTS' => 'Related Articles',
+    'LBL_DASHLET_RELATED_DOCUMENTS_DESC' => 'A list of related Knowledge Base articles',
+
     // Historical Summary
     'LBL_HISTORICAL_SUMMARY' => 'Historical Summary',
     'TPL_HISTORICAL_SUMMARY' => 'Historical Summary for {{name}}',
@@ -5273,6 +5299,7 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_SHORTCUT_MASS_UPDATE_REMOVE' => 'Remove row',
     'LBL_SHORTCUT_MASS_UPDATE_CANCEL' => 'Close mass update',
     'LBL_SHORTCUT_MASS_UPDATE_SAVE' => 'Update records',
+    'LBL_CREATE_CATEGORY' => 'Create a <div class="btn-link" data-action="create-new">category</div>',
     'LBL_SHORTCUT_ALERT_CONFIRM' => 'Confirm',
     'LBL_SHORTCUT_ALERT_CANCEL' => 'Cancel',
     'LBL_SHORTCUT_DRAGDROPSELECT2_SELECTALL' => 'Select all items in a multi-select field',
@@ -5479,9 +5506,16 @@ $app_list_strings['project_priority_options'] = array (
 );
 $app_list_strings['moduleListSingular']['EmailAddresses'] = 'Email Address';
 
+$app_list_strings['kbdocument_status_dom'] = array(
+    'draft' => 'Draft',
+    'in-review' => 'In Review',
+    'approved' => 'Approved',
+    'published-in' => 'Published (Internal)',
+    'published-ex' => 'Published (External)',
+    'expired' => 'Expired',
+);
 
-
-$app_list_strings['kbdocument_status_dom'] = array (
+$app_list_strings['kbolddocument_status_dom'] = array (
     'Draft' => 'Draft',
     'Expired' => 'Expired',
     'In Review' => 'In Review',
@@ -5500,7 +5534,7 @@ $app_list_strings['kbdocument_status_dom'] = array (
   );
 
 
-  $app_list_strings['kbdocument_attachment_option_dom'] =
+  $app_list_strings['kbolddocument_attachment_option_dom'] =
     array(
         ''=>'',
         'some' => 'Has Attachments',
@@ -5512,7 +5546,7 @@ $app_list_strings['kbdocument_status_dom'] = array (
   $app_list_strings['moduleList']['Words'] = 'Words';
   $app_list_strings['moduleListSingular']['Words'] = 'Word';
   $app_strings['LBL_CREATE_KB_DOCUMENT'] = 'Create Article';
-  $app_list_strings['kbdocument_viewing_frequency_dom'] =
+  $app_list_strings['kbolddocument_viewing_frequency_dom'] =
   array(
     ''=>'',
     'Top_5'  => 'Top 5',
@@ -5523,7 +5557,7 @@ $app_list_strings['kbdocument_status_dom'] = array (
     'Bot_20' => 'Bottom 20',
   );
 
-   $app_list_strings['kbdocument_canned_search'] =
+   $app_list_strings['kbolddocument_canned_search'] =
     array(
         'all'=>'All',
         'added' => 'Added Last 30 days',
@@ -5531,7 +5565,7 @@ $app_list_strings['kbdocument_status_dom'] = array (
         'updated' =>'Updated Last 30 days',
         'faqs' => 'FAQs',
     );
-    $app_list_strings['kbdocument_date_filter_options'] =
+    $app_list_strings['kbolddocument_date_filter_options'] =
         array(
     '' => '',
     'on' => 'On',
@@ -6417,6 +6451,17 @@ $app_list_strings['dnb_bal_cntct_type'] = array(
     "prem" => "Premium Only"
 );
 
+$app_list_strings['moduleList']['KBDocuments'] = 'Knowledge Base Document';
+$app_list_strings['moduleListSingular']['KBDocuments'] = 'Knowledge Base Document';
+$app_list_strings['moduleList']['KBContents'] = 'Knowledge Base';
+$app_list_strings['moduleListSingular']['KBContents'] = 'Knowledge Base';
+$app_list_strings['moduleList']['KBArticles'] = 'Knowledge Base Article';
+$app_list_strings['moduleListSingular']['KBArticles'] = 'Knowledge Base Article';
+$app_list_strings['moduleList']['KBContentTemplates'] = 'Knowledge Base Template';
+$app_list_strings['moduleListSingular']['KBContentTemplates'] = 'Knowledge Base Template';
+$app_list_strings['moduleList']['EmbeddedFiles'] = 'Embedded Files';
+$app_list_strings['moduleListSingular']['EmbeddedFiles'] = 'Embedded File';
+
 $app_list_strings['dnb_contact_types'] = array(
     'Contacts' => 'Contacts',
     'Leads' => 'Leads',
@@ -6433,3 +6478,4 @@ $app_list_strings['business_rule_type_list'] = array(
     'single' => 'Single-Hit',
 );
 //END SUGARCRM flav=ent ONLY
+

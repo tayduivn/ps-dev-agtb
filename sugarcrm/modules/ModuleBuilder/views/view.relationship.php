@@ -165,7 +165,7 @@ class ViewRelationship extends SugarView
         if (empty($_REQUEST['relationship_name'])) {
             // tidy up the options for the view based on the modules participating 
             // in the relationship and the cardinality some modules 
-            // (e.g., Knowledge Base/KBDocuments) lack subpanels. That means they 
+            // (e.g., Knowledge Base/KBOLDDocuments) lack subpanels. That means they 
             // can't be the lhs of a 1-many or many-many, or the rhs of a 
             // many-many for example
 
@@ -223,7 +223,6 @@ class ViewRelationship extends SugarView
             // Clean up the relatable module name
             $relatable[$name] = $this->getModuleName($name);
         }
-        unset($relatable['KBDocuments']);
         natcasesort($relatable);
         $this->smarty->assign('relatable', array_keys($relatable));
         $this->smarty->assign('translated_relatable', $relatable);

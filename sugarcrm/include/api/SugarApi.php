@@ -377,7 +377,11 @@ abstract class SugarApi {
             $fieldDefs = $bean->field_defs;
             foreach ($fields as $field) {
                 if (!empty($fieldDefs[$field]) && isset($fieldDefs[$field]['type'])) {
-                    switch ($fieldDefs[$field]['type']) {
+                    $type = $fieldDefs[$field]['type'];
+                    if (in_array($type, $bean::$relateFieldTypes)) {
+                        $type = 'relate';
+                    }
+                    switch ($type) {
                         case 'relate':
                             if (!empty($fieldDefs[$field]['id_name'])) {
                                 $fields[] = $fieldDefs[$field]['id_name'];

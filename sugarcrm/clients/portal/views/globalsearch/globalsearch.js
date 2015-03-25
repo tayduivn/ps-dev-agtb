@@ -255,7 +255,9 @@
      * @override
      */
     _renderHtml: function() {
-        if (!app.api.isAuthenticated() || app.config.appStatus == 'offline') return;
+        if (!app.api.isAuthenticated() || app.config.appStatus == 'offline') {
+            return;
+        }
 
         app.view.View.prototype._renderHtml.call(this);
 

@@ -10,12 +10,12 @@
  */
 (function (app) {
     app.events.on('app:init', function () {
-        app.plugins.register('DragdropAttachments', ['view'], {
+        app.plugins.register('DragdropAttachments', ['view', 'field'], {
             events: {
-                'dragenter .attachable': 'expandNewPost',
-                'dragover .attachable': 'dragoverNewPost',
-                'dragleave .attachable': 'shrinkNewPost',
-                'drop .attachable': 'dropAttachment'
+                'dragenter [data-attachable=true]': 'expandNewPost',
+                'dragover [data-attachable=true]': 'dragoverNewPost',
+                'dragleave [data-attachable=true]': 'shrinkNewPost',
+                'drop [data-attachable=true]': 'dropAttachment'
             },
 
             expandNewPost: function(event) {
@@ -34,7 +34,41 @@
                 return false;
             },
 
+            /**
+             * Handler that is called when user drops file on the file field.
+             *
+             * Example to override the default behavior in the view:
+             *
+             *     this.before('attachments:drop', this._onAttachmentDrop, this);
+             *
+             *     _onAttachmentDrop: function(event) {
+             *         // the override code
+             *         // return false to make sure we won't execute the default behavior
+             *         return false;
+             *     }
+             *
+             * The override cannot trigger the `attachments:drop` event (because it would trigger the
+             * event while the before event is happening).
+             *
+             * @param {Event} event Drop event.
+             */
             dropAttachment: function(event) {
+                if (!this.triggerBefore('attachments:drop', event)) {
+                    return;
+                }
+                this._onAttachmentDropDefault(event);
+                this.trigger('attachments:drop', event);
+            },
+
+            /**
+             * Default handler for 'attachments:drop' event.
+             * This event is triggered when user drops file on the file field.
+             *
+             * @param {Event} event Drop event.
+             * @private
+             */
+            _onAttachmentDropDefault: function(event) {
+
                 // Use originalEvent to access the dataTransfer property since it may not exist on the jQuery event
                 // see http://bugs.jquery.com/ticket/7808 for more information
                 var text = $.trim(event.originalEvent.dataTransfer.getData('text')),
@@ -121,7 +155,7 @@
 
             onAttach: function(component, plugin) {
                 component.on('render', function() {
-                    this.$('.attachable').attr('dropzone', 'copy');
+                    this.$('[data-attachable=true]').attr('dropzone', 'copy');
                 });
 
                 component.on('attachments:process', function() {

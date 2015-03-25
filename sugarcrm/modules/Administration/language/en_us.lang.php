@@ -1093,10 +1093,6 @@ $mod_strings = array (
 	'Import_2'       => 'UsersLastImport',
 	'InboundEmail' => 'InboundEmail',
 
-	'KBContents' => 'KBContent',
-	'KBDocumentKBTags' => 'KBDocumentKBTag',
-	'KBDocumentRevisions' => 'KBDocumentRevision',
-	'KBTags' => 'KBTag',
 	'Manufacturers'  => 'Manufacturer',
 	'ProductBundleNotes' => 'ProductBundleNote',
 	'ProductBundles'   => 'ProductBundle',
