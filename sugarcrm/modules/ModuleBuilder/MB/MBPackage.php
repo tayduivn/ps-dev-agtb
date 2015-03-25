@@ -685,7 +685,17 @@ function buildInstall($path){
                 $trimmedPath = ltrim($fileInfo->getPath(), 'custom');
 
                 sugar_mkdir($path . $trimmedPath, NULL, true);
-                copy($file, $path . $trimmedPath . '/' . $fileInfo->getFilename());
+
+                // append package name to the language file name in order to make the package have its own unique
+                // language files and thus avoid collisions between package and instance customizations
+                if (strpos($trimmedPath, '/Ext/Language') !== false) {
+                    $baseName = $fileInfo->getBasename('.lang.php');
+                    $fileName = $baseName . '.' . $this->name . '.lang.php';
+                } else {
+                    $fileName = $fileInfo->getFilename();
+                }
+
+                copy($file, $path . $trimmedPath . '/' . $fileName);
             }
         }
 
