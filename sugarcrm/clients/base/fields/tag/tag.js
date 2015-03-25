@@ -81,16 +81,9 @@
             }
         }
 
-        // Check tags that were just created but not saved yet for casing mismatches
-        if (this.$select2 && _.isFunction(this.$select2.val)) {
-            var currentSelections = this.$select2.val().split(',');
-        }
-        if (currentSelections && currentSelections.length) {
-            if (_.find(currentSelections, function(tag) {
-                return tag.toLowerCase() === term.toLowerCase();
-            })) {
-                return false;
-            }
+        // Check for existence amongst tags that exist but haven't been saved yet
+        if (this.checkExistingTags(term)) {
+            return false;
         }
 
         return {
@@ -99,6 +92,26 @@
             locked: false,
             newTag: true
         };
+    },
+
+    /**
+     * Check tag select2's currently selected tags for term to see if it already exists (case insensitive)
+     * @param term term to be checked
+     * @return boolean - true if tag exists already
+     */
+    checkExistingTags: function(term) {
+        if (this.$select2 && _.isFunction(this.$select2.val)) {
+            var currentSelections = this.$select2.val().split(',');
+        }
+        if (currentSelections && currentSelections.length) {
+            if (_.find(currentSelections, function(tag) {
+                return tag.toLowerCase() === term.toLowerCase();
+            })) {
+                return true;
+            }
+        }
+
+        return false;
     },
 
     /**
@@ -112,6 +125,12 @@
 
         // Trim the query term right up front since it needs to be clean
         query.term = $.trim(query.term);
+
+        // If tag already exists, no need to query db
+        if (this.checkExistingTags(query.term)) {
+            query.callback(shortlist);
+            return;
+        }
 
         this.filterResults.filterDef = {
             'filter': [{
