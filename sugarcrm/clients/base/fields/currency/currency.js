@@ -11,7 +11,7 @@
 /**
  * @class View.Fields.Base.CurrencyField
  * @alias SUGAR.App.view.fields.BaseCurrencyField
- * @extends View.Field
+ * @extends View.Fields.Base.BaseField
  */
 ({
     /**
@@ -56,6 +56,11 @@
     direction: 'ltr',
 
     /**
+     * Do we have edit access to this field?
+     */
+    hasEditAccess: true,
+
+    /**
      * @inheritDoc
      */
     initialize: function(options) {
@@ -82,6 +87,7 @@
                 this.model.setDefault(defaults);
             }
         }
+        this.hasEditAccess = app.acl.hasAccess('edit', this.model.module, undefined, this.name);
         // hide currency dropdown on list views
         this.hideCurrencyDropdown = this.view.action === 'list';
         // track the last currency id to convert the value on change
@@ -104,7 +110,7 @@
             this._currencyField.dispose();
             this._currencyField = null;
         }
-        app.view.Field.prototype._render.call(this);
+        this._super('_render');
         if (this.hideCurrencyDropdown === false && this.tplName === 'edit') {
             this.getCurrencyField().setElement(this.$('span[sfuuid="' + this.currencySfId + '"]'));
             this.$el.find('div.select2-container').css('min-width', '8px');
@@ -131,48 +137,59 @@
 
         var currencyField = this.def.currency_field || 'currency_id';
         var baseRateField = this.def.base_rate_field || 'base_rate';
-        // if the base rate changes, it should trigger a field re-render
-        this.model.on('change:' + baseRateField, function(model, baseRate, options) {
-            var self = this;
-            _.defer(function() {
-                self.model.trigger('change:' + self.name, self.model, self.model.get(self.name));
-            });
-        }, this);
-        this.model.on('change:' + currencyField, function(model, currencyId, options) {
-            //When model is reset, it should not be called
-            if (!currencyId || !this._lastCurrencyId) {
-                this._lastCurrencyId = currencyId;
-                return;
-            }
-            // update the base rate in the model, set it silently since we are already going to do a re-render
-            this.model.set(baseRateField, app.metadata.getCurrency(currencyId).conversion_rate, {silent: true});
-            // convert the value to new currency on the model
-            if (model.has(this.name)) {
-                var val = model.get(this.name);
-                if (val) {
-                    this.model.set(
-                        this.name,
-                        app.currency.convertAmount(
-                            val,
-                            this._lastCurrencyId,
-                            currencyId
-                        ),
-                        // we don't want to affect other bindings like sugar logic
-                        // when updating a value upon a currency_id change,
-                        // so set the model silently, then update the field value
-                        // directly (see next func call)
-                        { silent: true }
-                    );
+        // if the current_user doesn't have edit access to the field
+        // don't add these listeners
+        if (this.hasEditAccess) {
+            // if the base rate changes, it should trigger a field re-render
+            this.model.on('change:' + baseRateField, function(model, baseRate, options) {
+                this._deferModelChange();
+            }, this);
+            this.model.on('change:' + currencyField, function(model, currencyId, options) {
+                //When model is reset, it should not be called
+                if (!currencyId || !this._lastCurrencyId) {
+                    this._lastCurrencyId = currencyId;
+                    return;
                 }
-                // now defer changes to the end of the thread to avoid conflicts
-                // with other events (from SugarLogic, etc.)
-                var self = this;
-                _.defer(function() {
-                    self.model.trigger('change:' + self.name, self.model, self.model.get(self.name));
-                });
-            }
-            this._lastCurrencyId = currencyId;
-        }, this);
+                // update the base rate in the model, set it silently since we are already going to do a re-render
+                this.model.set(baseRateField, app.metadata.getCurrency(currencyId).conversion_rate, {silent: true});
+                // convert the value to new currency on the model
+                if (model.has(this.name)) {
+                    var val = model.get(this.name);
+                    if (val) {
+                        this.model.set(
+                            this.name,
+                            app.currency.convertAmount(
+                                val,
+                                this._lastCurrencyId,
+                                currencyId
+                            ),
+                            // we don't want to affect other bindings like sugar logic
+                            // when updating a value upon a currency_id change,
+                            // so set the model silently, then update the field value
+                            // directly (see next func call)
+                            {silent: true}
+                        );
+                    }
+                    // now defer changes to the end of the thread to avoid conflicts
+                    // with other events (from SugarLogic, etc.)
+                    this._deferModelChange();
+                }
+                this._lastCurrencyId = currencyId;
+            }, this);
+        }
+    },
+
+    /**
+     * Trigger the model change, but only if the current user has edit access to it.
+     *
+     * @private
+     */
+    _deferModelChange: function() {
+        if (this.hasEditAccess) {
+            _.defer(_.bind(function() {
+                this.model.trigger('change:' + this.name, this.model, this.model.get(this.name));
+            }, this));
+        }
     },
 
     /**
@@ -363,6 +380,6 @@
             this._currencyField.dispose();
             this._currencyField = null;
         }
-        app.view.Field.prototype.dispose.call(this);
+        this._super('dispose');
     }
 })

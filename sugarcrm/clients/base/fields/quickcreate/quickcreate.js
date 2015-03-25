@@ -11,7 +11,7 @@
 /**
  * @class View.Fields.Base.QuickcreateField
  * @alias SUGAR.App.view.fields.BaseQuickcreateField
- * @extends View.Field
+ * @extends View.Fields.Base.BaseField
  */
 ({
     events: {

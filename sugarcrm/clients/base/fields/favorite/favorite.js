@@ -11,7 +11,7 @@
 /**
  * @class View.Fields.Base.FavoriteField
  * @alias SUGAR.App.view.fields.BaseFavoriteField
- * @extends View.Field
+ * @extends View.Fields.Base.BaseField
  */
 ({
 

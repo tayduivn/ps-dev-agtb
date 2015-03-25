@@ -482,7 +482,7 @@
 
                 //  We want to get the operator from our values object only for currency fields
                 if (def && !_.isString(values[def.name]) && def.type === 'currency') {
-                    operator = _.keys(values[def.name])[0]
+                    operator = _.keys(values[def.name])[0];
                     values[key] = values[key][operator];
                 }
                 value = {};
@@ -499,10 +499,19 @@
                     return;
                 }
                 key = relate.name;
+                // for relate fields in version < 7.7 we used `$equals` and `$not_equals` operator so for version
+                // compatibility & as per TY-159 needed to fix this since 7.7 & onwards we will be using `$in` &
+                // `$not_in` operators for relate fields
+                if (_.isString(value) || _.isNumber(value)) {
+                    value = {$in: [value]};
+                } else if (_.keys(value)[0] === '$not_equals') {
+                    var val = _.values([value])[0];
+                    value = {$not_in: val};
+                }
             }
 
             if (_.isString(value) || _.isNumber(value)) {
-                value = {'$equals': value};
+                value = {$equals: value};
             }
             _.each(value, function(value, operator) {
                 this.initRow(null, {name: key, operator: operator, value: value});

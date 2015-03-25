@@ -30,21 +30,7 @@ describe('View.Views.Base.QuicksearchResultsView', function() {
         view = null;
     });
 
-    describe('quicksearch:results:open', function() {
-        var renderStub, openStub;
-        beforeEach(function() {
-            renderStub = sinon.collection.stub(view, 'render');
-            openStub = sinon.collection.stub(view, 'open');
-        });
-
-        it('should call render and open', function() {
-            view.layout.trigger('quicksearch:results:open');
-            expect(renderStub).toHaveBeenCalled();
-            expect(openStub).toHaveBeenCalled();
-        });
-    });
-
-    describe('quicksearch:dropdown:clear', function() {
+    describe('quicksearch:dropdown:close', function() {
         var closeStub;
         beforeEach(function() {
             closeStub = sinon.collection.stub(view, 'close');
@@ -54,6 +40,18 @@ describe('View.Views.Base.QuicksearchResultsView', function() {
             view.layout.trigger('quicksearch:dropdown:close');
             expect(disposeKeydownStub).toHaveBeenCalled();
             expect(closeStub).toHaveBeenCalled();
+        });
+    });
+
+    describe('quicksearch:results:open', function() {
+        var openStub;
+        beforeEach(function() {
+            openStub = sinon.collection.stub(view, 'open');
+        });
+        it('should call render and open', function() {
+            view.layout.trigger('quicksearch:results:open', function() {
+                expect(openStub).toHaveBeenCalled();
+            });
         });
     });
 

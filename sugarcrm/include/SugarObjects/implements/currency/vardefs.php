@@ -25,7 +25,8 @@ $vardefs = array(
         'base_rate' => array(
             'name' => 'base_rate',
             'vname' => 'LBL_CURRENCY_RATE',
-            'type' => 'decimal',
+            'type' => 'string',
+            'dbType' => 'decimal',
             'len' => '26,6'
         ),
         'currency_name' => array(

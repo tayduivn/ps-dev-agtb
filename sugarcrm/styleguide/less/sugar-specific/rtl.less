@@ -726,6 +726,15 @@ html.rtl {
         th:last-child {
             border-left: none;
         }
+        td {
+            &[data-type="currency"] {
+                span.error {
+                    input {
+                        padding-left: 26px;
+                    }
+                }
+            }
+        }
     }
     .table-striped {
         th,

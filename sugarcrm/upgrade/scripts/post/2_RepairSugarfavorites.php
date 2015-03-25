@@ -1,4 +1,4 @@
-{{!--
+<?php
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -9,11 +9,18 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
---}}
-{{#if dataFetched}}
-    <button data-action="show-more" class="btn btn-link btn-invisible more">{{showMoreLabel}}</button>
-{{else}}
-    {{#if showLoadMsg}}
-        {{loading 'LBL_ALERT_TITLE_LOADING'}}
-    {{/if}}
-{{/if}}
+
+/**
+ * Attempt to fix sugarfavorites table
+ */
+class SugarUpgradeRepairSugarfavorites extends UpgradeScript
+{
+    public $order = 2050;
+    public $type = self::UPGRADE_DB;
+
+    public function run()
+    {
+        // run for any Sugar version
+        $this->db->query("UPDATE sugarfavorites SET created_by = modified_user_id WHERE created_by IS NULL");
+    }
+}

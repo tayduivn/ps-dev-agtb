@@ -34,14 +34,13 @@
      */
     initialize: function(options) {
         this.plugins = _.union(this.plugins, ['MassCollection']);
-        this._super('initialize', [options]);
 
         /**
          * Maximum number of records a user can select.
          *
          * @property {number}
          */
-        this.maxSelectedRecords = this.context.get('maxSelectedRecords');
+        this.maxSelectedRecords = options.context.get('maxSelectedRecords');
 
         /**
          * Boolean to know whether the selected records called `mass collection`
@@ -54,7 +53,8 @@
          * @property {boolean} `true` for an independent mass collection. `false`
          *   for the mass collection to be tied to the view collection.
          */
-        this.independentMassCollection = this.context.get('independentMassCollection') || true;
+        this.independentMassCollection = options.context.get('independentMassCollection') || true;
+        this._super('initialize', [options]);
     },
 
     /**
@@ -64,7 +64,8 @@
     setSelectionMeta: function(options) {
         options.meta.selection = {
             type: 'multi',
-            isSearchAndSelectAction: true
+            isSearchAndSelectAction: true,
+            disable_select_all_alert: !!this.maxSelectedRecords
         };
     },
 
