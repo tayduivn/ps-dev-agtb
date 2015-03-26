@@ -189,7 +189,7 @@ class PMSECasesListApi extends FilterApi
             foreach($processUsers as $k => $v) {
                 if ($processUsers[$k]['cas_flow_status'] != 'CLOSED') {
                     $casUsersBean = BeanFactory::getBean('Users', $processUsers[$k]['cas_user_id']);
-                    $processUsersNames[] = (!empty($casUsersBean->full_name)) ? $casUsersBean->full_name : $list[$key]['cas_user_id'];
+                    $processUsersNames[] = (!empty($casUsersBean->full_name)) ? $casUsersBean->full_name : '';
                 }
                 $cas_sugar_module = $processUsers[$k]['cas_sugar_module'];
                 $cas_sugar_object_id = $processUsers[$k]['cas_sugar_object_id'];
