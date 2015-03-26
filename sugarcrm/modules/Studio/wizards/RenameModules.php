@@ -750,7 +750,7 @@ class RenameModules
      *
      * @param  string $moduleName The name of the module to be renamed.
      * @param  $replacementLabels
-     * @return void
+     * @return array
      */
     public function changeModuleModStrings($moduleName, $replacementLabels)
     {

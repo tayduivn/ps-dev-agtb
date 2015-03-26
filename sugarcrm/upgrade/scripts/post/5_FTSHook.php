@@ -10,19 +10,131 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
 /**
  * Install FTS logic hook
  */
+require_once 'include/utils/file_utils.php';
+
 class SugarUpgradeFTSHook extends UpgradeScript
 {
     public $order = 5000;
     public $type = self::UPGRADE_CUSTOM;
+    const HOOK_GROUP = 'fts';
+    const HOOK_METHOD = 'populateIndexQueue';
+    const HOOK_CLASS = 'SugarSearchEngineQueueManager';
+    protected $possibleHookDefs = array(
+        'Ext/LogicHooks/fts.php',
+        'application/Ext/LogicHooks/logichooks.ext.php',
+        'Extension/application/Ext/LogicHooks/SugarFTSHooks.php',
+    );
 
     public function run()
     {
-        if(file_exists('Extension/application/Ext/LogicHooks/SugarFTSHooks.php')) return;
+        $hooks = $this->getHooks();
+        $hooks = array_filter($hooks, array($this, 'isFTSHook'));
 
-        $hook = array(1, 'fts', 'include/SugarSearchEngine/SugarSearchEngineQueueManager.php', 'SugarSearchEngineQueueManager', 'populateIndexQueue');
-        check_logic_hook_file('application', 'after_save', $hook);
+        switch (count($hooks)) {
+            case 1:
+                return;
+                break;
+            case 0:
+                $this->create();
+                break;
+            default:
+                $this->removeDublicates();
+                break;
+        }
+    }
+
+    /**
+     * Is needed logic hook
+     *
+     * @param array $hook
+     * @return bool
+     */
+    protected function isFTSHook($hook)
+    {
+        return
+            self::HOOK_GROUP == $hook[1]
+            && self::HOOK_METHOD == $hook[4]
+            && $this->getHookClass() == $hook[3];
+    }
+
+    /**
+     * Get custom class name if that exists or original one if not for logic hook
+     *
+     * @return string
+     */
+    protected function getHookClass()
+    {
+        return SugarAutoLoader::customClass(self::HOOK_CLASS);
+    }
+
+    /**
+     * Creating FTS logic hook
+     */
+    protected function create()
+    {
+        createFTSLogicHook();
+    }
+
+    /**
+     * Removing dublicates fts logic hook
+     */
+    protected function removeDublicates()
+    {
+        foreach ($this->possibleHookDefs AS $defPath) {
+            if ($defPath != $this->getMainDefFile()) {
+                $this->unlink($defPath);
+            }
+        }
+    }
+
+    /**
+     * Unlink file
+     *
+     * @param $file
+     */
+    protected function unlink($file)
+    {
+        if ($this->fileExists($file)){
+            SugarAutoLoader::unlink($file);
+        }
+    }
+
+    /**
+     * Return main logic hook definition file
+     *
+     * @return string
+     */
+    protected function getMainDefFile()
+    {
+        foreach ($this->possibleHookDefs AS $defPath) {
+            if ($this->fileExists($defPath)) {
+                return $defPath;
+            }
+        }
+    }
+
+    /**
+     * Returning all after_save logic hook
+     *
+     * @return array
+     */
+    protected function getHooks()
+    {
+        $hooks = LogicHook::initialize()->getHooks('application');
+
+        return $hooks['after_save'];
+    }
+
+    /**
+     * @param $defPath
+     * @return bool
+     */
+    protected function fileExists($defPath)
+    {
+        return SugarAutoLoader::fileExists($defPath);
     }
 }
