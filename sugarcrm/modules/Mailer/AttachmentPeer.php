@@ -60,7 +60,7 @@ class AttachmentPeer
         switch ($beanName) {
             case "Note":
             case "DocumentRevision":
-                $filePath = "upload/{$bean->id}";
+                $filePath = rtrim(SugarConfig::getInstance()->get('upload_dir', 'upload'), '/\\') . '/' . $bean->id;
                 $fileName = empty($bean->filename) ? $bean->name : $bean->filename;
                 $mimeType = empty($bean->file_mime_type) ? $mimeType : $bean->file_mime_type;
                 break;
@@ -104,7 +104,7 @@ class AttachmentPeer
 
         switch ($beanName) {
             case "Note":
-                $filePath = "upload/{$bean->id}";
+                $filePath = rtrim(SugarConfig::getInstance()->get('upload_dir', 'upload'), '/\\') . '/' . $bean->id;
                 $fileName = empty($bean->filename) ? $bean->name : $bean->filename;
                 $mimeType = empty($bean->file_mime_type) ? $mimeType : $bean->file_mime_type;
                 break;
