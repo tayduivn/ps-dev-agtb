@@ -36,6 +36,7 @@ $vardefs = array(
             'relationship' => strtolower($module).'_tags',
             'source' => 'non-db',
             'exportable' => false,
+            'duplicate_merge' => 'disabled',
         ),
     ),
     'relationships' => array(
