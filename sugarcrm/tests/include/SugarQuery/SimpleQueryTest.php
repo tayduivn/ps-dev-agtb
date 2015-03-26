@@ -30,6 +30,7 @@ class SimpleQueryTest extends Sugar_PHPUnit_Framework_TestCase
     protected $accounts = array();
     protected $notes = array();
     protected $kbDocuments = array();
+    protected $users = array();
 
     public static function setupBeforeClass()
     {
@@ -89,6 +90,16 @@ class SimpleQueryTest extends Sugar_PHPUnit_Framework_TestCase
             }
             $this->db->query(
                 "DELETE FROM kbdocuments WHERE id IN (" . implode(",", $kbDocumentsList) . ")"
+            );
+        }
+
+        if (!empty($this->users)) {
+            $usersList = array();
+            foreach ($this->users as $user) {
+                $usersList[] = $this->db->quoted($user->id);
+            }
+            $this->db->query(
+                "DELETE FROM users WHERE id IN (" . implode(",", $usersList) . ")"
             );
         }
     }
@@ -490,5 +501,26 @@ class SimpleQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $row = array_shift($data);
         $this->assertArrayHasKey('name', $row);
         $this->assertEquals('Test Document', $row['name']);
+    }
+
+    public function testOrderBySortOn()
+    {
+        /** @var User $user */
+        $user = BeanFactory::getBean('Users');
+        $user->save();
+        $this->users[] = $user;
+
+        $sq = new SugarQuery();
+        $sq->from($user);
+        $sq->select('id');
+        $sq->where()->equals('id', $user->id);
+        $sq->orderBy('name');
+
+        $data = $sq->execute();
+        $this->assertCount(1, $data);
+
+        $row = array_shift($data);
+        $this->assertArrayHasKey('id', $row);
+        $this->assertEquals($user->id, $row['id']);
     }
 }

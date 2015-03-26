@@ -87,6 +87,7 @@ class SugarQuery_Builder_Field_Orderby extends SugarQuery_Builder_Field
                         $this->query->select->addField("{$table}.{$field}", array('alias' => DBManagerFactory::getInstance()->getValidDBName("{$this->table}__{$this->field}", false, 'alias')));
                     }
                 }
+                $this->markNonDb();
             } else {
                 if (!$this->query->select->checkField($this->field, $this->table)) {
                     $this->query->select->addField("{$this->table}.{$this->field}", array('alias' => DBManagerFactory::getInstance()->getValidDBName("{$this->table}__{$this->field}", false, 'alias')));
