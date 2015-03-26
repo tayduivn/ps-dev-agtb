@@ -755,9 +755,7 @@
                         .data('type', type || 'folder')
                         .attr('data-id', data.id)
                         .find('ins:first').addClass('leaf');
-                    obj.hide();
-                }, true);
-                this.jsTree.jstree('toggle_node', selectedNode);
+                }, true, true);
             },
 
             /**
@@ -786,6 +784,17 @@
                 var selectedNode = this.jsTree.find('[data-id=' + id +']');
                 if (selectedNode.hasClass('jstree-closed')) {
                     this.jsTree.jstree('open_node', selectedNode);
+                }
+            },
+
+            /**
+             * Close required node.
+             * @param {String} id
+             */
+            closeNode: function(id) {
+                var selectedNode = this.jsTree.find('[data-id=' + id +']');
+                if (selectedNode.hasClass('jstree-open')) {
+                    this.jsTree.jstree('close_node', selectedNode);
                 }
             },
 

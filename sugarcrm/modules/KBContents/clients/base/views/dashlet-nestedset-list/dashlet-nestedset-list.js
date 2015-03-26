@@ -165,15 +165,19 @@
      */
     treeLoaded: function() {
         var self = this;
-        async.forEach(this.collection.models, function(model, callback) {
-            self.loadAdditionalLeaf(model.id, callback);
-        }, function() {
-            if (self.useStates) {
-                self.loadJSTreeState();
-            } else {
-                self.openCurrentParent();
+        async.forEach(
+            this.collection.models,
+            function(model, callback) {
+                self.loadAdditionalLeaf(model.id, callback);
+            },
+            function() {
+                if (self.useStates) {
+                    self.loadJSTreeState();
+                } else {
+                    self.openCurrentParent();
+                }
             }
-        });
+        );
         return true;
     },
 
@@ -208,16 +212,20 @@
     stateLoaded: function(data) {
         var originalUseState = this.useStates,
             self = this;
-        async.forEach(data.open, function(value, callback) {
-            self.useStates = false;
-            value.open = true;
-            self.folderToggled(value, callback);
-        }, function() {
-            _.each(data.open, function(value) {
-                self.openNode(value.id);
-            });
-            self.useStates = originalUseState;
-        });
+        async.forEach(
+            data.open,
+            function(value, callback) {
+                self.useStates = false;
+                value.open = true;
+                self.folderToggled(value, callback);
+            },
+            function() {
+                _.each(data.open, function(value) {
+                    self.openNode(value.id);
+                });
+                self.useStates = originalUseState;
+            }
+        );
         return true;
     },
 
@@ -238,14 +246,18 @@
                 items = model.children.models;
                 if (items.length !== 0) {
                     triggeredCallback = true;
-                    async.forEach(items, function(item, c) {
-                        self.loadAdditionalLeaf(item.id, c);
-                    }, function() {
-                        if (_.isFunction(callback)) {
-                            callback.call();
-                            return false;
+                    async.forEach(
+                        items,
+                        function(item, c) {
+                            self.loadAdditionalLeaf(item.id, c);
+                        },
+                        function() {
+                            if (_.isFunction(callback)) {
+                                callback.call();
+                                return false;
+                            }
                         }
-                    });
+                    );
                 }
             }
         }
@@ -383,9 +395,8 @@
      * @param {String} id ID of category leaf to insert documents in.
      */
     addLeafs: function(models, id) {
-        this.removeChildrens(id, 'document');
         if (models.length !== 0) {
-            this.hideChildNodes(id);
+            this.removeChildrens(id, 'document');
             _.each(models, function(value) {
                 var insData = {
                     id: value.id,
@@ -393,11 +404,10 @@
                 };
                 this.insertNode(insData, id, 'document');
             }, this);
-            this.showChildNodes(id);
+            this.loadedLeafs[id] = {
+                timestamp: Date.now(),
+                models: models
+            };
         }
-        this.loadedLeafs[id] = {
-            timestamp: Date.now(),
-            models: models
-        };
     }
 })
