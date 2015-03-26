@@ -706,7 +706,7 @@ class ModuleBuilderController extends SugarController
             return;
         }
         $parser = new ParserRoleDropDownFilter();
-        $parser->handleSave($params['dropdown_role'], $params['dropdown_name'], $params['dropdown_keys']);
+        $parser->handleSave($params['dropdown_name'], $params['dropdown_role'], $params['dropdown_keys']);
         $this->view = 'dropdowns';
     }
 // END SUGARCRM flav=ent ONLY

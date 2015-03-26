@@ -120,37 +120,17 @@ class PMSECasesListApi extends FilterApi
         $q->select->fieldRaw('prj.assigned_user_id', 'prj_created_by');
 
         if (!empty($args['q'])) {
-            switch ($args['module_list']) {
-                case 'all':
-                    $q->where()->queryAnd()
-                        ->addRaw("a.cas_title LIKE '%" . $args['q'] . "%' OR a.pro_title LIKE '%" . $args['q'] . "%' OR a.cas_status LIKE '%" . $args['q'] . "%' OR last_name LIKE '%" . $args['q'] . "%'");
-                    break;
-                case translate("LBL_PROCESS_DEFINITION_NAME",'pmse_Inbox'):
-                    $q->where()->queryAnd()
-                        ->addRaw("a.cas_title LIKE '%" . $args['q'] . "%'");
-                    break;
-                case translate("LBL_RECORD_NAME",'pmse_Inbox'):
-                    $q->where()->queryAnd()
-                        ->addRaw("a.pro_title LIKE '%" . $args['q'] . "%'");
-                    break;
-                case translate("LBL_PMSE_LABEL_STATUS",'pmse_Inbox'):
-                    $q->where()->queryAnd()
-                        ->addRaw("a.cas_status LIKE '%" . $args['q'] . "%'");
-                    break;
-                case translate("LBL_OWNER",'pmse_Inbox'):
-                    $q->where()->queryAnd()
-                        ->addRaw("last_name LIKE '%" . $args['q'] . "%'");
-                    break;
-                case translate("LBL_ACTIVITY_OWNER",'pmse_Inbox'):
-                    $q->where()->queryAnd()
-                        ->addRaw("pr.created_by LIKE '%" . $args['q'] . "%'");
-                    break;
-                case translate("LBL_PROCESS_OWNER",'pmse_Inbox'):
-                    $q->where()->queryAnd()
-                        ->addRaw("pf.cas_user_id LIKE '%" . $args['q'] . "%'");
-                    break;
-            }
-        } else {
+            $q->where()->queryAnd()
+                ->addRaw(
+                    "a.cas_title LIKE '%" . $args['q'] .
+                    "%' OR a.pro_title LIKE '%" . $args['q'] .
+                    "%' OR a.cas_status LIKE '%" . $args['q'] .
+                    "%' OR prj.assigned_user_id LIKE '%" . $args['q'] .
+                    "%' OR pr.prj_id LIKE '%" . $args['q'] .
+                    "%' OR last_name LIKE '%" . $args['q'] . "%'"
+                );
+        }
+        if (!empty($args['module_list'])){
             switch ($args['module_list']) {
                 case translate('LBL_STATUS_COMPLETED', 'pmse_Inbox'):
                     $q->where()->queryAnd()
@@ -217,7 +197,7 @@ class PMSECasesListApi extends FilterApi
             if (empty($processUsersNames)) {
                 $userNames = '';
             } else {
-                $userNames = implode(',',$processUsersNames);
+                $userNames = implode(', ',$processUsersNames);
             }
             $list[$key]['cas_user_id_full_name'] = $userNames;
 

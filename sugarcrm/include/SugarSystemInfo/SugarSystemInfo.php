@@ -136,11 +136,11 @@ class SugarSystemInfo
     {
         $info = $this->getAppInfo();
         if(version_compare($info['sugar_version'], '7.2', '>')) {
-            $query = "SELECT COUNT(id) AS user_count FROM users WHERE last_login >= %s AND %s";
+            $query = "SELECT COUNT(users.id) AS user_count FROM users WHERE users.last_login >= %s AND %s";
         } else {
             $query = "SELECT COUNT(DISTINCT users.id) AS user_count FROM tracker, users WHERE users.id = tracker.user_id AND tracker.date_modified >= %s AND %s";
         }
-        $query = sprintf($query, $this->getLastXDays($days), $this->getActiveUsersWhere());
+        $query = sprintf($query, $this->getLastXDays($days), $this->getActiveUsersWhere('users'));
         return $this->db->getOne($query, false, 'fetching last 30 users count');
     }
 
@@ -375,29 +375,39 @@ class SugarSystemInfo
     {
         return BeanFactory::getBean('Administration')->retrieveSettings()->settings;
     }
-
+    
     /**
      * Returns where clause
      * This is a copy-paste from User::getSystemUsersWhere because that method is not available in 6.5
      *
+     * @param string $alias for user table
      * @return string
      */
-    protected function getExcludeSystemUsersWhere()
+    protected function getExcludeSystemUsersWhere($alias = 'users')
     {
-        return " deleted != 1 AND user_name NOT IN('SugarCRMSupport','SugarCRMUpgradeUser')";
+        $aliasQuery = '';
+        if (!empty($alias)) {
+            $aliasQuery = $alias . '.';
+        }
+        return ' ' . $aliasQuery . 'deleted = 0 AND ' . $aliasQuery . 'user_name NOT IN(\'SugarCRMSupport\', \'SugarCRMUpgradeUser\')';
     }
-
+    
     /**
      * Returns where clause for active users
-     * 
+     *
+     * @param string $alias for user table
      * @return string
      */
-    protected function getActiveUsersWhere()
+    protected function getActiveUsersWhere($alias = 'users')
     {
+        $aliasQuery = '';
+        if (!empty($alias)) {
+            $aliasQuery = $alias . '.';
+        }
         $query = sprintf(
-            " status = %s AND is_group != 1 AND portal_only != 1 AND %s",
+            ' ' . $aliasQuery . 'status = %s AND ' . $aliasQuery . 'is_group = 0 AND ' . $aliasQuery . 'portal_only = 0 AND %s',
             $this->db->quoted('Active'),
-            $this->getExcludeSystemUsersWhere()
+            $this->getExcludeSystemUsersWhere($alias)
         );
 
         return $query;

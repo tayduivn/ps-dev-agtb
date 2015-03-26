@@ -3691,6 +3691,10 @@ class MetaDataManager
             return $context->compare($a, $b);
         });
 
+        $files = array_map(function (array $file) {
+            return $file['path'];
+        }, $files);
+
         $values = $parser->getDropDownFiltersFromFiles($files);
 
         return $values;

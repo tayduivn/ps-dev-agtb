@@ -46,26 +46,11 @@ class ViewRoleDropdownFilter extends ViewDropdown
 
     /**
      * @param $params
-     * @return mixed
-     * @throws Exception
+     * @return array
      */
     protected function getRoleOptions($params)
     {
         $parser = new ParserRoleDropDownFilter();
-        $options = $parser->getOne($params['dropdown_role'], $params['dropdown_name']);
-        if (!$options) {
-            $options = $this->getDefaultRoleOptions($params);
-        }
-        return $options;
-    }
-
-    /**
-     * @param $params
-     * @return array
-     */
-    protected function getDefaultRoleOptions($params)
-    {
-        $app_list_strings = return_app_list_strings_language($params['dropdown_lang']);
-        return array_fill_keys(array_keys($app_list_strings[$params['dropdown_name']]), true);
+        return $parser->getOne($params['dropdown_name'], $params['dropdown_role']);
     }
 }

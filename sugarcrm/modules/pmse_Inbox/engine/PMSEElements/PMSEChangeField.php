@@ -100,6 +100,15 @@ class PMSEChangeField extends PMSEScriptTask
      */
     public function run($flowData, $bean = null, $externalAction = '', $arguments = array())
     {
+        switch ($externalAction) {
+            case 'RESUME_EXECUTION':
+                $flowAction = 'UPDATE';
+                break;
+            default :
+                $flowAction = 'CREATE';
+                break;
+        }
+        
         $isRelated = false;
         $bpmnElement = $this->retrieveDefinitionData($flowData['bpmn_id']);
         $act_field_module = $bpmnElement['act_field_module'];
@@ -247,7 +256,7 @@ class PMSEChangeField extends PMSEScriptTask
                 . "Fields cannot be changed, none Module was set."
             );
         }
-        return $this->prepareResponse($flowData, 'ROUTE', 'CREATE');
+        return $this->prepareResponse($flowData, 'ROUTE', $flowAction);
     }
     
     public function postProcessValue($value, $fieldType)

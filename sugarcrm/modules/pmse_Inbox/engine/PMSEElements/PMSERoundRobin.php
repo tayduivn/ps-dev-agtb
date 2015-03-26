@@ -41,6 +41,15 @@ class PMSERoundRobin extends PMSEScriptTask
      */
     public function run($flowData, $bean = null, $externalAction = '', $arguments = array())
     {
+        switch ($externalAction) {
+            case 'RESUME_EXECUTION':
+                $flowAction = 'UPDATE';
+                break;
+            default :
+                $flowAction = 'CREATE';
+                break;
+        }
+        
         $bpmnElement = $this->retrieveDefinitionData($flowData['bpmn_id']);
         $act_assign_team = $bpmnElement['act_assign_team'];
         //$objTeamBean = $this->beanFactory->getBean('Teams');
@@ -102,6 +111,7 @@ class PMSERoundRobin extends PMSEScriptTask
             $params['log_data'] = $historyData->getLog();
             $this->caseFlowHandler->saveFormAction($params);
         }
-        return parent::run($flowData, $bean);
+        return $this->prepareResponse($flowData, 'ROUTE', $flowAction);
+        
     }
 }

@@ -270,6 +270,7 @@ class WorkFlowSchedule extends SugarBean {
             $tempBean = BeanFactory::getBean($bean['module'], $bean['id']);
 
             if ($tempBean->fetched_row['deleted'] == '0') {
+                $tempBean->update_date_modified = false;
                 $tempBean->save();
             }
 
