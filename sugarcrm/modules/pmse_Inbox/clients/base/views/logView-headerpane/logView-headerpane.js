@@ -13,7 +13,7 @@
     extendsFrom: 'HeaderpaneView',
     events:{
         'click [name=log_pmse_button]': 'getLogPmse',
-        'click [name=log_sugarcrm_button]': 'getLogSugarcrm',
+        'click [name=log_clear_button]': 'logClearClick',
         'click [name=log_cron_button]': 'getLogCron'
     },
     initialize: function(options) {
@@ -22,30 +22,51 @@
         this.context.on('list:cancelCase:fire', this.cancelCases, this);
         //this.context.on('configLog:fire', this.getLogConfig, this);
     },
+
+    logClearClick: function () {
+        var self = this;
+        app.alert.show('clear_confirmation', {
+            level: 'confirmation',
+            messages: app.lang.get('LBL_PMSE_WARNING_CLEAR', this.module),
+            onConfirm: function () {
+                app.alert.show('getLog', {
+                    level: 'process',
+                    title: app.lang.get('LBL_LOADING'),
+                    autoClose: false
+                });
+                self.clearLog();
+            },
+            onCancel: $.noop
+
+        });
+    },
+
+    clearLog: function () {
+        var self = this;
+        var pmseInboxUrl = app.api.buildURL(this.module + '/clearLog/pmse');
+        app.api.call('update', pmseInboxUrl, {}, {
+            success: function () {
+                self.getLog();
+            }
+        });
+
+    },
+
     getLogPmse: function() {
-        app.alert.show('getLog', {level: 'process', title: 'Loading', autoclose: false});
+        app.alert.show('getLog', {
+            level: 'process',
+            title: app.lang.get('LBL_LOADING'),
+            autoClose: false});
         var self = this;
-        var pmseInboxUrl = app.api.buildURL(this.module + '/getLog/pmse');
+        var pmseInboxUrl = app.api.buildURL(this.module + '/getLog');
         app.api.call('READ', pmseInboxUrl, {},{
             success: function(data)
             {
-                $('#logPmseId').html(app.lang.get('LBL_PMSE_BUTTON_PROCESS_AUTHOR_LOG', self.module));
                 self.getLog(data)
             }
         });
     },
-    getLogSugarcrm: function() {
-        app.alert.show('getLog', {level: 'process', title: 'Loading', autoclose: false});
-        var self = this;
-        var pmseInboxUrl = app.api.buildURL(this.module + '/getLog/sugar');
-        app.api.call('READ', pmseInboxUrl, {},{
-            success: function(data)
-            {
-                $('#logPmseId').html(app.lang.get('LBL_PMSE_BUTTON_SUGARCRM_LOG', self.module));
-                self.getLog(data)
-            }
-        });
-    },
+
     getLogCron : function() {
         app.alert.show('getLog', {level: 'process', title: 'Loading', autoclose: false});
         var self = this;
@@ -74,7 +95,7 @@
         );
     },*/
     getLog: function(data) {
-        $("textarea").html(data);
+        $("textarea").val(data);
         app.alert.dismiss('getLog');
     }
 })

@@ -60,9 +60,9 @@ $mod_strings = array (
     'LBL_PMSE_BUTTON_SAVE' => 'Save',
     'LBL_PMSE_BUTTON_CLOSE' => 'Close',
     'LBL_PMSE_BUTTON_CANCEL' => 'Cancel',
-    'LBL_PMSE_BUTTON_PROCESS_AUTHOR_LOG' => 'Process Author Log',
-    'LBL_PMSE_BUTTON_SUGARCRM_LOG' => 'SugarCRM Log',
     'LBL_PMSE_BUTTON_REFRESH' => 'Refresh',
+    'LBL_PMSE_BUTTON_CLEAR' => 'Clear',
+    'LBL_PMSE_WARNING_CLEAR' => 'Are you sure you want to clear log data? This cannot be undone.',
 
     'LBL_PMSE_FORM_TOOLTIP_SELECT_USER' => 'Select the user to assign the process',
 
