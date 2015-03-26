@@ -283,6 +283,36 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                     ),
                 ),
             ),
+            // test 'username' type
+            array(
+                'name',
+                array(
+                    'type' => 'username',
+                ),
+                array(
+                    'name' => array(
+                        'type' => 'string',
+                        'index' => 'not_analyzed',
+                        'include_in_all' => false,
+                        'fields' => array(
+                            'gs_string' =>  array(
+                                'type' => 'string',
+                                'index' => 'analyzed',
+                                'index_analyzer' => 'gs_analyzer_string',
+                                'search_analyzer' => 'gs_analyzer_string',
+                                'store' => false,
+                            ),
+                            'gs_string_wildcard' => array(
+                                'type' => 'string',
+                                'index' => 'analyzed',
+                                'index_analyzer' => 'gs_analyzer_string_ngram',
+                                'search_analyzer' => 'gs_analyzer_string',
+                                'store' => false,
+                            ),
+                        ),
+                    ),
+                ),
+            ),
             // test 'text' type
             array(
                 'description',

@@ -207,6 +207,14 @@ class Elastic implements EngineInterface, GlobalSearchInterface
         return $this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public function getSupportedTypes()
+    {
+        return $this->gsProvider()->getSupportedTypes();
+    }
+
     //// ELASTIC ENGINE SPECIFIC ////
 
     /**

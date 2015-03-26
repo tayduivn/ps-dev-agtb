@@ -71,13 +71,6 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         $this->engine->highlighter(true);
         $this->engine->fieldBoost(true);
 
-        // TODO - pass highlighter settings ?
-        // $options['preTags']
-        // $options['postTags']
-        // $options['fragmentSize']
-        // $options['fragmentNumber']
-
-
         // set module filter
         if (!empty($options['moduleFilter'])) {
             $this->engine->from($options['moduleFilter']);
@@ -119,7 +112,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      */
     public function indexBean($bean, $batch = true)
     {
-        $this->logger->fatal('SugarSearchEngineElastic::indexBean is deprecated and no longer available');
+        $this->logger->deprecated('SugarSearchEngineElastic::indexBean is deprecated and no longer available');
     }
 
     /**
@@ -127,7 +120,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      */
     public function delete(SugarBean $bean)
     {
-        $this->logger->fatal('SugarSearchEngineElastic::delete is deprecated and no longer available');
+        $this->logger->deprecated('SugarSearchEngineElastic::delete is deprecated and no longer available');
     }
 
     /**
@@ -135,7 +128,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      */
     public function bulkInsert(array $docs)
     {
-        $this->logger->fatal('SugarSearchEngineElastic::bulkInsert is deprecated and no longer available');
+        $this->logger->deprecated('SugarSearchEngineElastic::bulkInsert is deprecated and no longer available');
     }
 
     /**
@@ -143,7 +136,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      */
     public function createIndexDocument($bean, $searchFields = null)
     {
-        $this->logger->fatal('SugarSearchEngineElastic::createIndexDocument is deprecated and no longer available');
+        $this->logger->deprecated('SugarSearchEngineElastic::createIndexDocument is deprecated and no longer available');
     }
 
     /**
@@ -162,7 +155,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      */
     public function createIndex($recreate = false, $modules = array())
     {
-        $this->logger->fatal('SugarSearchEngineElastic::createIndex is deprecated and no longer available');
+        $this->logger->deprecated('SugarSearchEngineElastic::createIndex is deprecated and no longer available');
     }
 
     /**
@@ -170,8 +163,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      */
     public function isTypeFtsEnabled($type)
     {
-        // TODO: move over to new framework, used by Studio i.e.
-        $supported = array('name', 'user_name', 'varchar', 'decimal', 'float', 'int', 'phone', 'text', 'url');
-        return in_array($type, $supported);
+        $this->logger->deprecated('SugarSearchEngineElastic::isTypeFtsEnabled is deprecated');
+        return in_array($type, $this->engine->getSupportedTypes());
     }
 }

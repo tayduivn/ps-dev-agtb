@@ -20,36 +20,6 @@ namespace Sugarcrm\SugarcrmTestsUnit\inc\SugarSearchEngine\Elastic;
 class SugarSearchEngineElasticTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @covers ::isTypeFtsEnabled
-     * @dataProvider providerTestIsTypeFtsEnabled
-     */
-    public function testIsTypeFtsEnabled($type, $expected)
-    {
-        $sut = $this->getElasticMock();
-        $this->assertEquals($expected, $sut->isTypeFtsEnabled($type));
-    }
-
-    public function providerTestIsTypeFtsEnabled()
-    {
-        return array(
-            array('name', true),
-            array('user_name', true),
-            array('varchar', true),
-            array('decimal', true),
-            array('float', true),
-            array('int', true),
-            array('phone', true),
-            array('text', true),
-            array('url', true),
-            array('relate', false),
-            array('enum', false),
-            array('iframe', false),
-            array('bool', false),
-            array('invalid', false),
-        );
-    }
-
-    /**
      * @covers ::search
      * @dataProvider providerTestSearch
      */

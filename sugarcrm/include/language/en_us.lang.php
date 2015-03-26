@@ -1628,11 +1628,10 @@ $app_list_strings = array (
     'required'=>'Required',
   ),
 
-    'Elastic_boost_options' => array (
-        '0' =>'Disabled',
-        '1'=>'Low Boost',
-        '2'=>'Medium Boost',
-        '3'=>'High Boost',
+    'fts_field_config' => array(
+        '0' => 'Disabled',
+        '1' => 'Store only',
+        '2' => 'Searchable',
     ),
 
   'custom_fields_merge_dup_dom'=> array (

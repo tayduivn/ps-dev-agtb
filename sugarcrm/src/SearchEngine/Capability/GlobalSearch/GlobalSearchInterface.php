@@ -75,4 +75,10 @@ interface GlobalSearchInterface extends EngineInterface
      * @return GlobalSearchInterface
      */
     public function sort(array $fields);
+
+    /**
+     * Return a list of sugar types which are searchable
+     * @return array
+     */
+    public function getSupportedTypes();
 }

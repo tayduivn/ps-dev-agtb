@@ -34,6 +34,26 @@ class GlobalSearchTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers ::getSupportedTypes
+     */
+    public function testGetSupportedTypes()
+    {
+        $supported = array(
+            'varchar',
+            'name',
+            'username',
+            'text',
+            'datetime',
+            'int',
+            'phone',
+            'url',
+            'email',
+        );
+        $sut = new GlobalSearch();
+        $this->assertEquals($supported, $sut->getSupportedTypes());
+    }
+
+    /**
      * @return \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\GlobalSearch
      */
     protected function getGlobalSearchMock(array $methods = null)

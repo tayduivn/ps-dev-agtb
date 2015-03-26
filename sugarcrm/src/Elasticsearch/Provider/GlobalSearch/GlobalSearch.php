@@ -225,6 +225,19 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
     }
 
     /**
+     * Return all supported searchable types
+     * @return array
+     */
+    public function getSupportedTypes()
+    {
+        $supported = array();
+        foreach ($this->getHandlers('SearchFields') as $handler) {
+            $supported = array_merge($supported, $handler->getSupportedTypes());
+        }
+        return $supported;
+    }
+
+    /**
      * Get search field wrapper
      * @param array $modules List of modules
      * @return array

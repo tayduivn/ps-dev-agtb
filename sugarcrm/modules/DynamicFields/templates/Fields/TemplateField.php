@@ -547,9 +547,26 @@ class TemplateField{
             $this->duplicate_merge_dom_value = 0;
         }
 
-        if(!empty($this->full_text_search))
-        {
-            $this->full_text_search['enabled'] = ($this->full_text_search['boost'] != 0);
+        // Handle full_text_search configuration
+        if (!empty($this->full_text_search)) {
+
+            // configure correct enabled/searchable flags
+            switch ($this->full_text_search['enabled']) {
+                case '2':
+                    $ftsEnabled = true;
+                    $ftsSearchable = true;
+                    break;
+                case '1':
+                    $ftsEnabled = true;
+                    $ftsSearchable = false;
+                    break;
+                default:
+                    $ftsEnabled = false;
+                    $ftsSearchable = false;
+            }
+
+            $this->full_text_search['enabled'] = $ftsEnabled;
+            $this->full_text_search['searchable'] = $ftsSearchable;
         }
     }
 

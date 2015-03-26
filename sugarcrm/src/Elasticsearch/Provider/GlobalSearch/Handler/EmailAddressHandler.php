@@ -173,6 +173,14 @@ class EmailAddressHandler extends AbstractHandler implements
     /**
      * {@inheritdoc}
      */
+    public function getSupportedTypes()
+    {
+        return array('email');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function processDocumentPreIndex(Document $document, \SugarBean $bean)
     {
         // skip if there is no email field

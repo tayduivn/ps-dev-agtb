@@ -41,6 +41,10 @@ class MultiFieldHandler extends AbstractHandler implements
             'gs_string',
             'gs_string_wildcard',
         ),
+        'username' => array(
+            'gs_string',
+            'gs_string_wildcard',
+        ),
         'text' => array(
             'gs_string',
             'gs_text_wildcard',
@@ -61,6 +65,10 @@ class MultiFieldHandler extends AbstractHandler implements
             'gs_url',
             'gs_url_wildcard',
         ),
+
+        // TODO: add following types:
+        // decimal
+        // float
     );
 
     /**
@@ -341,12 +349,23 @@ class MultiFieldHandler extends AbstractHandler implements
             if ($searchField === 'not_analyzed') {
                 $path = array($field);
                 $weightId = $field;
+                // add explicit field to highlighter
+                $highlightField = $module . '.' . $field;
+                $this->provider->addHighlighterFields(array($highlightField => array('number_of_frags' => 0)));
             } else {
                 $path = array($field, $searchField);
                 $weightId = $searchField;
             }
             $sf->addSearchField($module, $path, $defs, $weightId);
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSupportedTypes()
+    {
+        return array_keys($this->typesMultiField);
     }
 
     /**

@@ -30,4 +30,10 @@ interface SearchFieldsHandlerInterface extends HandlerInterface
      * @return array
      */
     public function buildSearchFields(SearchFields $sf, $module, $field, array $defs);
+
+    /**
+     * Return a list of support searchable
+     * @return array
+     */
+    public function getSupportedTypes();
 }

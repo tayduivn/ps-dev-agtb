@@ -180,7 +180,6 @@ $dictionary['Contact'] = array(
             'full_text_search' => array(
                 'enabled' => true,
                 'searchable' => true,
-                'type' => 'name',
             ),
         ),
         'portal_active' => array(
