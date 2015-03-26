@@ -56,7 +56,7 @@ class AutoLoaderHelper
     /**
      * Merge generated class map with given class map
      * @param array $classMap
-     * @return arry
+     * @return array
      */
     public function mergeClassMap(array $classMap)
     {

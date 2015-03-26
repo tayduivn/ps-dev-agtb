@@ -13,566 +13,259 @@
 namespace Sugarcrm\SugarcrmTestsUnit\Util\Arrays\OrderedHash;
 
 use Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash;
-use Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\Element;
 
 /**
  * @coversDefaultClass Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash
- * @coversDefaultClass Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\Element
  */
 class OrderedHashTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var OrderedHash
+     * @return array
      */
-    protected $hash;
-
-    public function setUp()
+    public function hashProvider()
     {
-        parent::setUp();
+        return array(
+            array(
+                array()
+            ),
+            array(
+                array(
+                    'susan' => 'Susan',
+                    'suzy' => 'Suzy',
+                )
+            ),
+        );
+    }
 
-        $hash = array(
+    /**
+     * Invalid hash keys provider.
+     * @return array
+     */
+    public function invalidHashKeys() {
+        return array(
+            array(false),
+            array(6.53),
+            array(new \stdClass()),
+            array(array('invalid')),
+        );
+    }
+
+    /**
+     * Tests that a new OrderedHash respects the order given to constructor.
+     * @covers ::__construct
+     * @covers ::toArray
+     * @dataProvider hashProvider
+     */
+    public function testHashGivenIsTheSameReturned($data)
+    {
+        $hash = new OrderedHash($data);
+        $this->assertSame($data, $hash->toArray());
+    }
+
+    /**
+     * Tests that a new OrderedHash respects the order given to constructor.
+     * @covers ::__construct
+     * @covers ::toArray
+     */
+    public function testToArrayWhenEmpty()
+    {
+        $hash = new OrderedHash();
+        $this->assertSame(array(), $hash->toArray());
+    }
+
+    /**
+     * @covers ::add
+     * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\Element
+     */
+    public function testAdd()
+    {
+        $hash = new OrderedHash();
+        $hash->add(null, 'susan', 'Susan');
+
+        $this->assertSame('susan', $hash->bottom()->getKey());
+        $this->assertSame('susan', $hash->top()->getKey());
+
+        $susan = $hash->top();
+        $this->assertSame('Susan', $susan->getValue());
+        $this->assertNull($susan->getBefore());
+        $this->assertNull($susan->getAfter());
+
+        $hash->add(null, 'sally', 'Sally');
+        $this->assertSame('sally', $hash->bottom()->getKey());
+        $this->assertSame('susan', $hash->top()->getKey());
+
+        $before = $hash->bottom();
+        $after = $before->getAfter();
+        $hash->add($before, 'suzy', 'Suzy');
+
+        $this->assertSame('suzy', $before->getAfter()->getKey());
+        $this->assertSame('suzy', $after->getBefore()->getKey());
+
+        $expected = array(
+            'sally' => 'Sally',
+            'suzy' => 'Suzy',
+            'susan' => 'Susan',
+        );
+        $this->assertSame($expected, $hash->toArray());
+    }
+
+    /**
+     * @covers ::add
+     * @dataProvider invalidHashKeys
+     * @expectedException \OutOfRangeException
+     */
+    public function testAddInvalidKey($key)
+    {
+        $hash = new OrderedHash();
+        $hash->add(null, $key, 'Foo');
+    }
+
+    /**
+     * @covers ::add
+     * @expectedException \RuntimeException
+     */
+    public function testAddDuplicateKey()
+    {
+        $hash = new OrderedHash(array(
+            'sally' => 'Sally',
+        ));
+        $hash->add($hash->top(), 'sally', 'Foo');
+    }
+
+    /**
+     * @covers ::bottom
+     */
+    public function testBottom()
+    {
+        $hash = new OrderedHash(array(
             'susan' => 'Susan',
             'suzy' => 'Suzy',
             'sally' => 'Sally',
             'stephanie' => 'Stephanie',
             'sara' => 'Sara',
             'sue' => 'Sue',
-        );
-        $this->hash = new OrderedHash($hash);
+        ));
+        $head = $hash->bottom();
+
+        $this->assertSame('susan', $head->getKey());
+        $this->assertSame('Susan', $head->getValue());
     }
 
     /**
-     * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash::add
+     * @covers ::bottom
+     * @expectedException \RuntimeException
      */
-    public function testAdd_HashIsEmpty_BeforeIsNull_ElementIsInsertedAsBothTheHeadAndTheTail()
+    public function testBottomOnEmpty()
     {
-        $key = 'stacy';
         $hash = new OrderedHash();
-        $hash->add(null, $key, 'Stacy');
-
-        $this->assertEquals($key, $hash->bottom()->getKey(), 'Stacy should be the head');
-        $this->assertEquals($key, $hash->top()->getKey(), 'Stacy should be the tail');
+        $hash->bottom();
     }
 
     /**
-     * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash::add
+     * @covers ::count
      */
-    public function testAdd_BeforeIsAnElement_ElementIsInsertedAfterBefore()
+    public function testCount()
     {
-        $key = 'stacy';
-        $before = $this->hash->bottom();
-        $after = $before->getAfter();
-        $this->hash->add($before, $key, 'Stacy');
-
-        $this->assertEquals($key, $before->getAfter()->getKey(), 'Stacy should come after the head');
-        $this->assertEquals(
-            $key,
-            $after->getBefore()->getKey(),
-            'Stacy should come between the head and the element that used to follow the head'
-        );
+        $hash = new OrderedHash(array(
+            'susan' => 'Susan',
+            'suzy' => 'Suzy',
+            'sally' => 'Sally',
+            'stephanie' => 'Stephanie',
+            'sara' => 'Sara',
+            'sue' => 'Sue',
+        ));
+        $this->assertCount(6, $hash);
     }
 
     /**
-     * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash::add
-     * @expectedException OutOfRangeException
+     * @covers ::current
+     * @covers ::next
+     * @covers ::prev
+     * @covers ::rewind
+     * @covers ::valid
+     * @covers ::fastForward
      */
-    public function testAdd_KeyIsNotAStringOrInteger_ThrowsException()
+    public function testIterator()
     {
-        $this->hash->add($this->hash->top(), false, 'Foo');
+        $hash = new OrderedHash(array(
+            'susan' => 'Susan',
+            'suzy' => 'Suzy',
+            'sally' => 'Sally',
+            'stephanie' => 'Stephanie',
+            'sara' => 'Sara',
+            'sue' => 'Sue',
+        ));
+        $hash->rewind();
+        $this->assertSame('susan', $hash->current()->getKey());
+
+        $hash->next();
+        $this->assertSame('suzy', $hash->current()->getKey());
+
+        $hash->rewind();
+        $this->assertSame('susan', $hash->current()->getKey());
+
+        while ($hash->valid()) {
+            $hash->next();
+        }
+        $this->assertNull($hash->current());
+
+        $hash->fastForward();
+        $this->assertSame('sue', $hash->current()->getKey());
+
+        while ($hash->valid()) {
+            $hash->prev();
+        }
+        $this->assertNull($hash->current());
     }
 
     /**
-     * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash::add
-     * @expectedException RuntimeException
+     * @covers ::isEmpty
      */
-    public function testAdd_KeyIsNotUnique_ThrowsException()
-    {
-        $this->hash->add($this->hash->top(), 'sally', 'Foo');
-    }
-
-    /**
-     * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash::bottom
-     */
-    public function testBottom_ReturnsTheFirstElementInTheHash()
-    {
-        $hash = $this->hash->toArray();
-        $key = array_shift(array_keys($hash));
-        $value = array_shift(array_values($hash));
-        $head = $this->hash->bottom();
-
-        $this->assertEquals($key, $head->getKey());
-        $this->assertEquals($value, $head->getValue());
-    }
-
-    /**
-     * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash::count
-     */
-    public function testCount_ReturnsTheNumberOfElementsInTheHash()
-    {
-        $this->assertCount(6, $this->hash, 'OrderedHash should implement the Countable interface');
-    }
-
-    /**
-     * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash::isEmpty
-     */
-    public function testIsEmpty_ReturnsTrue()
+    public function testIsEmpty()
     {
         $hash = new OrderedHash();
 
         $this->assertTrue($hash->isEmpty());
+        $this->assertEmpty($hash);
+
+        $hash = new OrderedHash(array());
+
+        $this->assertTrue($hash->isEmpty());
+        $this->assertEmpty($hash);
+
+        $hash = new OrderedHash(array(
+            'susan' => 'Susan',
+            'suzy' => 'Suzy',
+        ));
+
+        $this->assertFalse($hash->isEmpty());
+        $this->assertNotEmpty($hash);
     }
 
     /**
-     * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash::isEmpty
-     */
-    public function testIsEmpty_ReturnsFalse()
-    {
-        $this->assertFalse($this->hash->isEmpty());
-    }
-
-    /**
-     * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash::key
+     * @covers ::key
      */
     public function testKey_CurrentIsTheHead_ReturnsTheValueOfHead()
     {
-        $this->hash->rewind();
+        $hash = new OrderedHash(array(
+            'susan' => 'Susan',
+            'suzy' => 'Suzy',
+        ));
 
-        $this->assertEquals($this->hash->bottom()->getKey(), $this->hash->key());
+        $hash->rewind();
+        $this->assertSame('susan', $hash->key());
+
+        $hash->next();
+        $this->assertSame('suzy', $hash->key());
+
+        $hash->next();
+        $this->assertNull($hash->key());
     }
 
     /**
-     * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash::key
+     * @covers ::move
      */
-    public function testKey_CurrentIsNull_ReturnsNull()
-    {
-        $this->hash->rewind();
-        $this->hash->prev();
-
-        $this->assertNull($this->hash->key());
-    }
-
-    /**
-     * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash::move
-     */
-    public function testMove_KeyIsNotFound_NoChangesAreMade()
-    {
-        $expected = json_encode($this->hash->toArray());
-
-        $this->hash->move('foo', $this->hash->bottom());
-
-        $actual = json_encode($this->hash->toArray());
-        $this->assertEquals($expected, $actual);
-    }
-
-    /**
-     * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash::move
-     */
-    public function testMove_MovesTheHeadToTheMiddle()
-    {
-        $element = $this->hash->bottom();
-        $before = $this->hash['stephanie'];
-        $this->hash->move($element->getKey(), $before);
-
-        $this->assertEquals($element->getKey(), $before->getAfter()->getKey());
-    }
-
-    /**
-     * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash::move
-     */
-    public function testMove_MovesTheHeadToTheEnd()
-    {
-        $element = $this->hash->bottom();
-        $after = $element->getAfter();
-        $this->hash->move($element->getKey(), $this->hash->top());
-
-        $this->assertEquals($this->hash->top()->getKey(), $element->getKey(), 'The former head should be the tail');
-        $this->assertEquals(
-            $after->getKey(),
-            $this->hash->bottom()->getKey(),
-            'The element following the former head should be the head'
-        );
-    }
-
-    /**
-     * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash::move
-     */
-    public function testMove_MovesTheTailToTheMiddle()
-    {
-        $element = $this->hash->top();
-        $before = $this->hash['sally'];
-        $this->hash->move($element->getKey(), $before);
-
-        $this->assertEquals($element->getKey(), $before->getAfter()->getKey());
-    }
-
-    /**
-     * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash::move
-     */
-    public function testMove_MovesTheTailToTheBeginning()
-    {
-        $element = $this->hash->top();
-        $before = $element->getBefore();
-        $this->hash->move($element->getKey(), null);
-
-        $this->assertEquals($this->hash->bottom()->getKey(), $element->getKey(), 'The former tail should be the head');
-        $this->assertEquals(
-            $before->getKey(),
-            $this->hash->top()->getKey(),
-            'The element preceding the former tail should be the tail'
-        );
-    }
-
-    /**
-     * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash::move
-     */
-    public function testMove_MovesAnInteriorElementToTheBeginning()
-    {
-        $key = 'sally';
-        $this->hash->move($key, null);
-
-        $this->assertEquals($key, $this->hash->bottom()->getKey());
-    }
-
-    /**
-     * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash::move
-     */
-    public function testMove_MovesAnInteriorElementToAnotherInteriorLocation()
-    {
-        $key = 'sara';
-        $before = $this->hash['suzy'];
-        $this->hash->move($key, $before);
-
-        $this->assertEquals($key, $before->getAfter()->getKey());
-    }
-
-    /**
-     * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash::move
-     */
-    public function testMove_MovesAnInteriorElementToTheEnd()
-    {
-        $key = 'sally';
-        $this->hash->move($key, $this->hash->top());
-
-        $this->assertEquals($key, $this->hash->top()->getKey());
-    }
-
-    /**
-     * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash::move
-     */
-    public function testMove_BeforeIsAnElementNotFoundInTheHashButItsKeyIsFoundInTheHash_ElementIsMovedToFollowTheElementWithThatKey()
-    {
-        $key = 'sally';
-        $element = $this->hash->top();
-        $before = new Element($key, 'Sally In A Different Hash');
-        $this->hash->move($element->getKey(), $before);
-
-        $this->assertEquals($element->getKey(), $this->hash[$key]->getAfter()->getKey());
-    }
-
-    /**
-     * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash::move
-     * @expectedException OutOfRangeException
-     */
-    public function testMove_KeyIsNotAStringOrInteger_ThrowsException()
-    {
-        $this->hash->move(true, $this->hash->top());
-    }
-
-    /**
-     * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash::rewind
-     * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash::valid
-     * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash::current
-     * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash::next
-     */
-    public function testNext_IteratesFromHeadToTail()
-    {
-        $hash = $this->hash->toArray();
-        $keys = array_keys($hash);
-        $values = array_values($hash);
-
-        $this->hash->rewind();
-
-        while ($this->hash->valid()) {
-            $key = array_shift($keys);
-            $value = array_shift($values);
-            $current = $this->hash->current();
-
-            $this->assertEquals($key, $current->getKey());
-            $this->assertEquals($value, $current->getValue());
-
-            $this->hash->next();
-        }
-
-        $this->assertNull($this->hash->current(), 'Null should be returned when there are no more elements');
-    }
-
-    /**
-     * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash::offsetExists
-     */
-    public function testOffsetExists_ReturnsFalse()
-    {
-        $this->assertFalse(isset($this->hash['foo']));
-    }
-
-    /**
-     * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash::offsetExists
-     */
-    public function testOffsetExists_ReturnsTrue()
-    {
-        $this->assertTrue(isset($this->hash['suzy']));
-    }
-
-    /**
-     * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash::offsetGet
-     * @expectedException OutOfRangeException
-     */
-    public function testOffsetGet_KeyIsNotAStringOrInteger_ThrowsException()
-    {
-        $element = $this->hash[5.5];
-    }
-
-    /**
-     * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash::offsetGet
-     */
-    public function testOffsetGet_KeyIsNotInTheHash_ReturnsNull()
-    {
-        $this->assertNull($this->hash['foo']);
-    }
-
-    /**
-     * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash::offsetGet
-     */
-    public function testOffsetGet_KeyIsInTheHash_ReturnsTheElement()
-    {
-        $this->assertNotNull($this->hash['suzy']);
-    }
-
-    /**
-     * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash::offsetSet
-     * @expectedException OutOfRangeException
-     */
-    public function testOffsetSet_KeyIsNotAStringOrInteger_ThrowsException()
-    {
-        $this->hash[5.5] = 'Foo';
-    }
-
-    /**
-     * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash::offsetSet
-     */
-    public function testOffsetSet_KeyIsNotInTheHash_ElementIsInsertedAtTheEnd()
-    {
-        $key = 'stacy';
-        $this->hash[$key] = 'Stacy';
-
-        $this->assertEquals($key, $this->hash->top()->getKey());
-    }
-
-    /**
-     * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash::offsetSet
-     */
-    public function testOffsetSet_KeyIsInTheHash_UpdatesTheValueForTheElement()
-    {
-        $key = 'suzy';
-        $this->hash[$key] = 'Suzanne';
-
-        $this->assertEquals('Suzanne', $this->hash[$key]->getValue(), 'Suzy should have become Suzanne');
-        $this->assertNotEquals($key, $this->hash->top()->getKey(), 'Suzy should not have moved to the end');
-    }
-
-    /**
-     * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash::offsetUnset
-     * @expectedException OutOfRangeException
-     */
-    public function testOffsetUnset_KeyIsNotAStringOrInteger_ThrowsException()
-    {
-        unset($this->hash[5.5]);
-    }
-
-    /**
-     * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash::offsetUnset
-     */
-    public function testOffsetUnset_KeyIsNotFound_NothingIsRemoved()
-    {
-        $expected = json_encode($this->hash->toArray());
-
-        unset($this->hash['foo']);
-
-        $actual = json_encode($this->hash->toArray());
-        $this->assertEquals($expected, $actual);
-    }
-
-    /**
-     * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash::offsetUnset
-     */
-    public function testOffsetUnset_RemovesAnInteriorElement()
-    {
-        $key = 'sally';
-        $element = $this->hash[$key];
-        $before = $element->getBefore();
-        $after = $element->getAfter();
-        unset($this->hash[$key]);
-
-        $this->assertNull($this->hash[$key], 'The removed element should not be found');
-        $this->assertEquals(
-            $before->getKey(),
-            $after->getBefore()->getKey(),
-            'The element that followed the removed element should be linked to the element that preceded the removed element'
-        );
-        $this->assertEquals(
-            $after->getKey(),
-            $before->getAfter()->getKey(),
-            'The element that preceded the removed element should be linked to the element that followed the removed element'
-        );
-    }
-
-    /**
-     * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash::offsetUnset
-     */
-    public function testOffsetUnset_OnlyOneElementExistsAndItIsRemoved_TheHashIsEmpty()
-    {
-        $key = 'stacy';
-        $hash = new OrderedHash();
-        $hash->push($key, 'Stacy');
-        unset($hash[$key]);
-
-        $this->assertTrue($hash->isEmpty(), 'There should not be any elements in the hash');
-    }
-
-    /**
-     * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash::offsetUnset
-     */
-    public function testOffsetUnset_TheCurrentElementIsRemoved_CurrentBecomesTheNextElement()
-    {
-        $key = 'sally';
-        $element = $this->hash[$key];
-        $after = $element->getAfter();
-
-        $this->hash->rewind();
-
-        while ($this->hash->valid()) {
-            $current = $this->hash->current();
-
-            if ($current->getKey() === $key) {
-                // stop when sally is reached
-                break;
-            }
-
-            $this->hash->next();
-        }
-
-        unset($this->hash[$key]);
-
-        $this->assertEquals($after->getKey(), $this->hash->current()->getKey());
-    }
-
-    /**
-     * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash::pop
-     * @expectedException RuntimeException
-     */
-    public function testPop_TheHashIsEmpty_ThrowsException()
-    {
-        $hash = new OrderedHash();
-
-        $element = $hash->pop();
-    }
-
-    /**
-     * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash::pop
-     * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash::offsetUnset
-     */
-    public function testPop_RemovesTheTail()
-    {
-        $tail = $this->hash->top();
-        $key = $tail->getKey();
-        $before = $tail->getBefore();
-        $element = $this->hash->pop();
-
-        $this->assertNull($this->hash[$key], 'The popped element should not be found');
-        $this->assertEquals(
-            $before->getKey(),
-            $this->hash->top()->getKey(),
-            'The element that preceded the former tail should be the tail'
-        );
-        $this->assertEquals($key, $element->getKey(), 'The popped element should have been returned');
-    }
-
-    /**
-     * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash::fastForward
-     * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash::valid
-     * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash::current
-     * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash::prev
-     */
-    public function testPrev_IteratesFromTailToHead()
-    {
-        $hash = $this->hash->toArray();
-        $keys = array_reverse(array_keys($hash));
-        $values = array_reverse(array_values($hash));
-
-        $this->hash->fastForward();
-
-        while ($this->hash->valid()) {
-            $key = array_shift($keys);
-            $value = array_shift($values);
-            $current = $this->hash->current();
-
-            $this->assertEquals($key, $current->getKey());
-            $this->assertEquals($value, $current->getValue());
-
-            $this->hash->prev();
-        }
-
-        $this->assertNull($this->hash->current(), 'Null should be returned when there are no more elements');
-    }
-
-    /**
-     * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash::push
-     * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash::add
-     */
-    public function testPush_ElementIsInsertedAtTheEnd()
-    {
-        $key = 'stacy';
-        $before = $this->hash->top();
-        $this->hash->push($key, 'Stacy');
-
-        $this->assertEquals($key, $before->getAfter()->getKey(), 'Stacy should come after the former tail');
-        $this->assertEquals($key, $this->hash->top()->getKey(), 'Stacy should be the tail');
-    }
-
-    /**
-     * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash::shift
-     * @expectedException RuntimeException
-     */
-    public function testShift_TheHashIsEmpty_ThrowsException()
-    {
-        $hash = new OrderedHash();
-
-        $element = $hash->shift();
-    }
-
-    /**
-     * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash::shift
-     * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash::offsetUnset
-     */
-    public function testShift_RemovesTheHead()
-    {
-        $head = $this->hash->bottom();
-        $key = $head->getKey();
-        $after = $head->getAfter();
-        $element = $this->hash->shift();
-
-        $this->assertNull($this->hash[$key], 'The unshifted element should not be found');
-        $this->assertEquals(
-            $after->getKey(),
-            $this->hash->bottom()->getKey(),
-            'The element that followed the former head should be the head'
-        );
-        $this->assertEquals($key, $element->getKey(), 'The unshifted element should have been returned');
-    }
-
-    /**
-     * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash::toArray
-     */
-    public function testToArray_ReturnsAnArrayOfKeyValuePairsInTheOrderPrescribedByTheLinkedList()
+    public function testMove()
     {
         $expected = array(
             'susan' => 'Susan',
@@ -582,35 +275,311 @@ class OrderedHashTest extends \PHPUnit_Framework_TestCase
             'sara' => 'Sara',
             'sue' => 'Sue',
         );
-        $actual = $this->hash->toArray();
-        $this->assertEquals(json_encode($expected), json_encode($actual));
+        $hash = new OrderedHash($expected);
+        $hash->move('invalid', $hash->bottom());
+        $this->assertSame($expected, $hash->toArray());
+
+        $middle = $hash['stephanie'];
+        $hash->move('susan', $middle);
+        $this->assertSame('susan', $middle->getAfter()->getKey());
+
+        $hash->move('susan', $hash->top());
+        $this->assertSame('susan', $hash->top()->getKey());
+        $this->assertSame('suzy', $hash->bottom()->getKey());
+
+        $hash->move('susan', $middle);
+        $this->assertSame('susan', $middle->getAfter()->getKey());
+
+        $hash->move('susan', null);
+        $this->assertSame($expected, $hash->toArray());
     }
 
     /**
-     * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash::top
+     * @covers ::move
+     * @dataProvider invalidHashKeys
+     * @expectedException \OutOfRangeException
      */
-    public function testTop_ReturnsTheLastElementInTheHash()
+    public function testMoveInvalidKey($key)
     {
-        $hash = $this->hash->toArray();
-        $key = array_pop(array_keys($hash));
-        $value = array_pop(array_values($hash));
-        $tail = $this->hash->top();
-
-        $this->assertEquals($key, $tail->getKey());
-        $this->assertEquals($value, $tail->getValue());
+        $hash = new OrderedHash();
+        $hash->move($key, null);
     }
 
     /**
-     * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash::unshift
-     * @covers Sugarcrm\Sugarcrm\Util\Arrays\OrderedHash\OrderedHash::add
+     * @covers ::offsetExists
+     * @covers ::offsetGet
      */
-    public function testUnshift_ElementIsInsertedAtTheBeginning()
+    public function testOffsetExistsAndGet()
     {
-        $key = 'stacy';
-        $after = $this->hash->bottom();
-        $this->hash->unshift($key, 'Stacy');
+        $hash = new OrderedHash(array(
+            'susan' => 'Susan',
+            'suzy' => 'Suzy',
+            'sally' => 'Sally',
+        ));
 
-        $this->assertEquals($key, $after->getBefore()->getKey(), 'Stacy should come before the former head');
-        $this->assertEquals($key, $this->hash->bottom()->getKey(), 'Stacy should be the head');
+        $this->assertArrayNotHasKey('missing', $hash);
+        $this->assertArrayHasKey('sally', $hash);
+        $this->assertArrayHasKey('suzy', $hash);
+        $this->assertArrayHasKey('susan', $hash);
+
+        $this->assertNull($hash['missing']);
+        $this->assertNotNull($hash['sally']);
+        $this->assertNotNull($hash['suzy']);
+        $this->assertNotNull($hash['susan']);
+
+        $this->assertInstanceOf('Sugarcrm\\Sugarcrm\\Util\\Arrays\\OrderedHash\\Element', $hash['sally']);
+        $this->assertInstanceOf('Sugarcrm\\Sugarcrm\\Util\\Arrays\\OrderedHash\\Element', $hash['suzy']);
+        $this->assertInstanceOf('Sugarcrm\\Sugarcrm\\Util\\Arrays\\OrderedHash\\Element', $hash['susan']);
+    }
+
+    /**
+     * @covers ::offsetGet
+     * @dataProvider invalidHashKeys
+     * @expectedException \OutOfRangeException
+     */
+    public function testOffsetGetInvalid($key)
+    {
+        $hash = new OrderedHash(array(
+            'susan' => 'Susan',
+            'suzy' => 'Suzy',
+            'sally' => 'Sally',
+        ));
+        $hash[$key];
+    }
+
+    /**
+     * @covers ::offsetSet
+     * @dataProvider invalidHashKeys
+     * @expectedException \OutOfRangeException
+     */
+    public function testOffsetSetInvalid($key)
+    {
+        $hash = new OrderedHash(array(
+            'susan' => 'Susan',
+            'suzy' => 'Suzy',
+            'sally' => 'Sally',
+        ));
+        $hash[$key] = 'Foo';
+    }
+
+    /**
+     * @covers ::offsetSet
+     */
+    public function testOffsetSet()
+    {
+        $hash = new OrderedHash();
+
+        $hash['suzy'] = 'Suzy';
+        $this->assertSame('suzy', $hash->top()->getKey());
+
+        $hash['sally'] = 'Sally';
+        $this->assertSame('sally', $hash->top()->getKey());
+
+        $this->assertSame('Suzy', $hash['suzy']->getValue());
+        $hash['suzy'] = 'Suzanne';
+        $this->assertSame('Suzanne', $hash['suzy']->getValue());
+        $this->assertSame('sally', $hash->top()->getKey());
+    }
+
+    /**
+     * @covers ::offsetUnset
+     * @dataProvider invalidHashKeys
+     * @expectedException \OutOfRangeException
+     */
+    public function testOffsetUnsetInvalid($key)
+    {
+        $hash = new OrderedHash(array(
+            'susan' => 'Susan',
+            'suzy' => 'Suzy',
+            'sally' => 'Sally',
+        ));
+        unset($hash[$key]);
+    }
+
+    /**
+     * @covers ::offsetUnset
+     */
+    public function testOffsetUnset()
+    {
+        $expected = array(
+            'susan' => 'Susan',
+            'suzy' => 'Suzy',
+            'sally' => 'Sally',
+        );
+        $hash = new OrderedHash($expected);
+
+        unset($hash['missing']);
+        $this->assertSame($expected, $hash->toArray());
+
+        $element = $hash['suzy'];
+        $before = $element->getBefore();
+        $after = $element->getAfter();
+        unset($hash['suzy']);
+        $this->assertNull($hash['suzy']);
+        $this->assertArrayNotHasKey('suzy', $hash);
+
+        $this->assertSame('susan', $hash->bottom()->getKey());
+        $this->assertSame('sally', $hash->top()->getKey());
+        $this->assertSame('susan', $after->getBefore()->getKey());
+        $this->assertSame('sally', $before->getAfter()->getKey());
+
+        unset($hash['sally']);
+        unset($hash['susan']);
+        $this->assertTrue($hash->isEmpty());
+        $this->assertEmpty($hash);
+    }
+
+    /**
+     * @covers ::offsetUnset
+     */
+    public function testOffsetUnsetCurrent()
+    {
+        $hash = new OrderedHash(array(
+            'susan' => 'Susan',
+            'suzy' => 'Suzy',
+            'sally' => 'Sally',
+        ));
+        $hash->rewind();
+
+        while ($hash->valid()) {
+            if ($hash->current()->getKey() === 'suzy') {
+                break;
+            }
+            $hash->next();
+        }
+
+        unset($hash['suzy']);
+        $this->assertSame('sally', $hash->current()->getKey());
+        unset($hash['sally']);
+        $this->assertNull($hash->current());
+        unset($hash['susan']);
+        $this->assertNull($hash->current());
+    }
+
+    /**
+     * @covers ::pop
+     * @expectedException \RuntimeException
+     */
+    public function testPopOnEmpty()
+    {
+        $hash = new OrderedHash();
+        $hash->pop();
+    }
+
+    /**
+     * @covers ::pop
+     */
+    public function testPop()
+    {
+        $hash = new OrderedHash(array(
+            'susan' => 'Susan',
+            'suzy' => 'Suzy',
+            'sally' => 'Sally',
+        ));
+
+        $element = $hash->pop();
+        $this->assertNotNull($element);
+        $this->assertInstanceOf('Sugarcrm\\Sugarcrm\\Util\\Arrays\\OrderedHash\\Element', $element);
+        $this->assertNotNull($element->getBefore());
+        $this->assertNull($element->getAfter());
+        $this->assertSame('sally', $element->getKey());
+
+        $this->assertNull($hash['sally']);
+        $this->assertSame('suzy', $hash->top()->getKey());
+        $this->assertSame('susan', $hash->bottom()->getKey());
+    }
+
+    /**
+     * @covers ::push
+     */
+    public function testPush()
+    {
+        $hash = new OrderedHash();
+        $hash->push('stacy', 'Stacy');
+
+        $this->assertSame('stacy', $hash->top()->getKey());
+        $this->assertSame('stacy', $hash->bottom()->getKey());
+
+        $hash->push('sally', 'Sally');
+        $this->assertSame('sally', $hash->top()->getKey());
+        $this->assertSame('stacy', $hash->bottom()->getKey());
+    }
+
+    /**
+     * @covers ::shift
+     * @expectedException \RuntimeException
+     */
+    public function testShiftOnEmpty()
+    {
+        $hash = new OrderedHash();
+        $hash->shift();
+    }
+
+    /**
+     * @covers ::shift
+     */
+    public function testShift()
+    {
+        $hash = new OrderedHash(array(
+            'susan' => 'Susan',
+            'suzy' => 'Suzy',
+            'sally' => 'Sally',
+        ));
+
+        $element = $hash->shift();
+        $this->assertNotNull($element);
+        $this->assertInstanceOf('Sugarcrm\\Sugarcrm\\Util\\Arrays\\OrderedHash\\Element', $element);
+        $this->assertNull($element->getBefore());
+        $this->assertNotNull($element->getAfter());
+        $this->assertSame('susan', $element->getKey());
+
+        $this->assertNull($hash['susan']);
+        $this->assertSame('suzy', $hash->bottom()->getKey());
+        $this->assertSame('sally', $hash->top()->getKey());
+    }
+
+    /**
+     * @covers ::top
+     */
+    public function testTop()
+    {
+        $hash = new OrderedHash(array(
+            'susan' => 'Susan',
+            'suzy' => 'Suzy',
+            'sally' => 'Sally',
+            'stephanie' => 'Stephanie',
+            'sara' => 'Sara',
+            'sue' => 'Sue',
+        ));
+        $head = $hash->top();
+
+        $this->assertSame('sue', $head->getKey());
+        $this->assertSame('Sue', $head->getValue());
+    }
+
+    /**
+     * @covers ::top
+     * @expectedException \RuntimeException
+     */
+    public function testTopOnEmpty()
+    {
+        $hash = new OrderedHash();
+        $hash->top();
+    }
+
+    /**
+     * @covers ::unshift
+     */
+    public function testUnshift()
+    {
+        $hash = new OrderedHash();
+        $hash->unshift('stacy', 'Stacy');
+
+        $this->assertSame('stacy', $hash->top()->getKey());
+        $this->assertSame('stacy', $hash->bottom()->getKey());
+
+        $hash->unshift('sally', 'Sally');
+        $this->assertSame('sally', $hash->bottom()->getKey());
+        $this->assertSame('stacy', $hash->top()->getKey());
     }
 }
