@@ -13,8 +13,7 @@
 <div data-role="parent" class="parenttree">
     <input type="hidden" data-toggle="dropdown" data-role="toggle" name="{{def.id_name}}"/>
     <div name="{{name}}" {{#if def.tabindex}} tabindex="{{def.tabindex}}"{{/if}} data-role="treeinput" class="divinput">
-        {{#if value}}{{value}}{{/if}}
-        {{#unless value}}{{emptyLabel}}{{/unless}}
+        <span data-role="treevalue">{{#if value}}{{value}}{{/if}}{{#unless value}}{{emptyLabel}}{{/unless}}</span>
         <span class="select-arrow">
             <b class="fa fa-caret-down" role="presentation"></b>
         </span>
