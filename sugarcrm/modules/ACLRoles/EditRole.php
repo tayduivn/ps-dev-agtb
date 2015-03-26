@@ -47,6 +47,17 @@ if(!empty($_REQUEST['record'])){
 }else{
 	$categories = ACLRole::getRoleActions('');
 }
+
+// Skipping modules that have 'hidden_to_role_assignment' property
+foreach ($categories as $name => $category) {
+	if (isset($dictionary[$name]) &&
+		isset($dictionary[$name]['hidden_to_role_assignment']) &&
+		$dictionary[$name]['hidden_to_role_assignment']
+	) {
+		unset($categories[$name]);
+	}
+}
+
 if (in_array('Project', $modInvisList)) {
     unset($categories['Project']);
     unset($categories['ProjectTask']);
