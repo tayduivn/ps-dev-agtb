@@ -19,7 +19,7 @@ class Tag extends Basic
     public $object_name = 'Tag';
     public $table_name = 'tags';
     public $new_schema = true;
-    public $importable = false;
+    public $importable = true;
     public function __construct()
 
     {

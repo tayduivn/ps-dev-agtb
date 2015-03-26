@@ -21,6 +21,7 @@ $dictionary['Tag'] = array(
     'unified_search' => true,
     'full_text_search' => false,
     'unified_search_default_enabled' => true,
+    'required_import_indexes' => array('idx_tag_name::name'),
     'fields' => array(
         'name_lower' => array(
             'name' => 'name_lower',
