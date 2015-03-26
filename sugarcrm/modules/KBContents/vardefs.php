@@ -490,6 +490,9 @@ $dictionary['KBContent'] = array(
         'KBVisibility' => true,
         'TeamSecurity' => true,
     ),
+    'uses' => array(
+        'taggable',
+    ),
 );
 
 VardefManager::createVardef(

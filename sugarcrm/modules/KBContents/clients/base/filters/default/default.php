@@ -25,6 +25,7 @@ $viewdefs['KBContents']['base']['filter']['default'] = array(
             'vname' => 'LBL_CURRENT_USER_FILTER',
         ),
         'assigned_user_name' => array(),
+        'tag' => array(),
         '$favorite' => array(
             'predefined_filter' => true,
             'vname' => 'LBL_FAVORITES_FILTER',
