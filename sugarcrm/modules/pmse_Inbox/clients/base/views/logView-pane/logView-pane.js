@@ -21,5 +21,6 @@
     _renderField: function(field) {
         app.view.View.prototype._renderField.call(this, field);
         field.$el.children().css('width','100%');
+        field.$el.children().attr('readonly','readonly');
     }
 })
