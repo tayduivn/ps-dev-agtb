@@ -519,11 +519,12 @@ class PMSEUserAssignmentHandler
                 $membersList = $member->get_full_list("", "team_id='$teamId'");
             }
         }
-
-        foreach ($membersList as $member) {
-            if (!in_array($member->user_id, $reassignedUsers)) {
-                $user = $this->retrieveBean('Users', $member->user_id);
-                $assignableUsers[] = $user;
+        if (!empty($membersList)) {
+            foreach ($membersList as $member) {
+                if (!in_array($member->user_id, $reassignedUsers)) {
+                    $user = $this->retrieveBean('Users', $member->user_id);
+                    $assignableUsers[] = $user;
+                }
             }
         }
         return $assignableUsers;
