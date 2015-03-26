@@ -210,13 +210,10 @@ class OpportunitiesSeedData {
             $opp_ids[] = $opp->id;
         }
 
-        self::$db->query($oppSql . ' ' . join(',', $oppRows));
-        self::$db->commit();
-        self::$db->query($oppAccSql . ' ' . join(',', $oppAccRows));
-        self::$db->commit();
+        self::insertAndCommit($oppSql, $oppRows);
+        self::insertAndCommit($oppAccSql, $oppAccRows);
         if (!$usingRLIs) {
-            self::$db->query($fwSql . ' ' . join(',', $fwRows));
-            self::$db->commit();
+            self::insertAndCommit($fwSql, $fwRows);
         }
 
         return $opp_ids;
@@ -395,8 +392,7 @@ class OpportunitiesSeedData {
         }
 
         $opp->name .= ' - ' . $opp_units . ' Units';
-        self::$db->query($sqlRli . ' ' . join(',', $rliSql));
-        self::$db->commit();
+        self::insertAndCommit($sqlRli, $rliSql);
 
         // process all the forecast worksheet rows since we have the correct opp name now
         $tRows = array();
@@ -404,8 +400,7 @@ class OpportunitiesSeedData {
             $row['opportunity_name'] = self::$db->quoted($opp->name);
             $tRows[] = '(' . join(',', $row) . ')';
         }
-        self::$db->query($fwSql . ' ' . join(',', $tRows));
-        self::$db->commit();
+        self::insertAndCommit($fwSql, $tRows);
 
 
         return array(
@@ -413,6 +408,20 @@ class OpportunitiesSeedData {
             'best_case' => $opp_best_case,
             'worst_case' => $opp_worst_case
         );
+    }
+
+    protected static function insertAndCommit($sql, array $rows, $table = '')
+    {
+        if (self::$db->dbType !== 'oci8') {
+            self::$db->query($sql . ' ' . join(',', $rows));
+            self::$db->commit();
+        } else {
+            $sql = substr($sql, 7);
+            self::$db->query("INSERT ALL\n\t" . $sql . ' ' . join("\n\t" . $sql . ' ', $rows) .
+                "\nSELECT * FROM dual\n");
+
+            self::$db->commit();
+        }
     }
 
     /**
