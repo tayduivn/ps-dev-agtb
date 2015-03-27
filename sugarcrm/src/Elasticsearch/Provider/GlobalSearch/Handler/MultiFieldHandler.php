@@ -197,7 +197,7 @@ class MultiFieldHandler extends AbstractHandler implements
          */
         'gs_string_exact' => array(
             'type' => 'string',
-            'index' => 'not_analyzed',
+            'index' => 'analyzed',
             'index_analyzer' => 'gs_analyzer_string_exact',
             'search_analyzer' => 'gs_analyzer_string_exact',
             'store' => false,

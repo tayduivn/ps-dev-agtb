@@ -208,16 +208,9 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
      */
     public function buildMapping(Mapping $mapping)
     {
+        // TODO: distinguish between store only and searchable mapping.
+        // Aggregation mapping should go in a separate handler too.
         foreach ($this->getFtsFields($mapping->getModule()) as $field => $defs) {
-
-            // We only create mapping for fields which are searchable. The
-            // "store only" fields are still send to Elasticsearch but and
-            // will still be part of the _source field when retrieving the
-            // data from Elastic regardless of a mapping being present.
-            if (!$this->isFieldSearchable($defs)) {
-                continue;
-            }
-
             foreach ($this->getHandlers('Mapping') as $handler) {
                 $handler->buildMapping($mapping, $field, $defs);
             }
