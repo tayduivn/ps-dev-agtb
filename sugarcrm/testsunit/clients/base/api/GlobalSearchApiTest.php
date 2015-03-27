@@ -90,6 +90,7 @@ class GlobalSearchApiTest extends \PHPUnit_Framework_TestCase
 
         $expectedCalls = array(
             'from',
+            'setAggFilters',
             'term',
             'limit',
             'offset',

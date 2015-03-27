@@ -127,4 +127,12 @@ class ResultSet implements \Iterator, \Countable, ResultSetInterface
     {
         return $this->resultSet->getTotalTime();
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAggregations()
+    {
+        return $this->resultSet->getAggregations();
+    }
 }

@@ -42,6 +42,13 @@ interface GlobalSearchInterface extends EngineInterface
     public function from(array $modules = array());
 
     /**
+     * Set aggregation filters to search for
+     * @param array $aggFilters
+     * @return GlobalSearchInterface
+     */
+    public function setAggFilters(array $aggFilters = array());
+
+    /**
      * Set limit (query size)
      * @param integer $limit
      * @return GlobalSearchInterface

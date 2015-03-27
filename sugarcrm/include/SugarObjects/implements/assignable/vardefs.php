@@ -25,6 +25,14 @@ $vardefs = array(
             'duplicate_merge'=>'disabled',
             'mandatory_fetch' => true,
             'massupdate' => false,
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => true,
+                'aggregation' => array(
+                    'type' => 'terms',
+                    'cross_module' => true,
+                )
+            ),
 		),
 	 'assigned_user_name' =>
 	 array (

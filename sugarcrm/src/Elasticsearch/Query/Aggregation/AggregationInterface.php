@@ -22,5 +22,23 @@ interface AggregationInterface
     /**
      * @return \Elastica\Aggregation\AbstractAggregation
      */
-    public function build();
+    public function getAgg();
+
+    /**
+     *
+     * Returns an Elastica Aggregation object
+     * @param  string                          $fieldName
+     * @param  \Elastica\Filter\Bool $filter
+     * @return \Elastica\Aggregation\AbstractAggregation
+     */
+    public function buildAgg($fieldName, \Elastica\Filter\Bool $filter);
+
+    /**
+     *
+     * Returns an Elastica Filter object
+     * @param  string $fieldName
+     * @param  array  $values
+     * @return \Elastica\Filter\AbstractFilter
+     */
+    public function buildFilter($fieldName, array $values);
 }

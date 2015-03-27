@@ -19,4 +19,45 @@ namespace Sugarcrm\Sugarcrm\Elasticsearch\Query\Aggregation;
  */
 abstract class AbstractAggregation implements AggregationInterface
 {
+    /**
+     *
+     * Options passed in from AggregationHandler
+     * @var array
+     */
+    protected $options;
+
+    /**
+     *
+     * Default options as defined by the implement class
+     * @var array
+     */
+    protected $defaultOpts;
+
+    /**
+     *
+     * Ctor
+     * @param array $defaultOpts
+     */
+    public function __construct($defaultOpts = array())
+    {
+        $this->defaultOpts = $defaultOpts;
+        $this->options     = $defaultOpts;
+    }
+
+    /**
+     *
+     * Set options to be consumed
+     * @param array $options
+     * @return array
+     */
+    final public function setOptions($options)
+    {
+        foreach ($options as $key => $value) {
+            if (isset($this->defaultOpts[$key])) {
+                $this->options[$key] = $value;
+            }
+        }
+        return $this->options;
+    }
+
 }

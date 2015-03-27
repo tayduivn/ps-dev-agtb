@@ -25,6 +25,18 @@ class MetaDataHelper
     private $mdm;
 
     /**
+     * Aggregation definitions for modules
+     * @var array
+     */
+    protected $aggDefs = array();
+
+    /**
+     * Cross-module aggregation definitions
+     * @var array
+     */
+    protected $crossModuleAggDefs = array();
+
+    /**
      * @param \MetaDataManager $mdm
      */
     public function __construct(\MetaDataManager $mdm = null)
@@ -189,5 +201,66 @@ class MetaDataHelper
             }
         }
         return $isSearchable;
+    }
+
+    /**
+     * Get the aggregation definitions of a given module.
+     * @param string $module : the name of module
+     * @return array
+     */
+    public function getModuleAggregations($module)
+    {
+        //expected format
+        //'full_text_search' : {
+        //   "agg" : {
+        //      "type" : "term",
+        //      "options : [],
+        //      "cross_modules" : true
+        //    }
+        //}
+
+        //use the cached version
+        if (isset($this->aggDefs[$module])) {
+            return $this->aggDefs[$module];
+        }
+        $this->aggDefs[$module] = array();
+        $fieldDefs = $this->getFtsFields($module);
+        foreach ($fieldDefs as $fieldName => $fieldDef) {
+            // skip the field without aggregation defs
+            if (empty($fieldDef['full_text_search']['aggregation'])) {
+                continue;
+            }
+            $aggDef = $fieldDef['full_text_search']['aggregation'];
+            // the type must be defined
+            if (is_array($aggDef) && !empty($aggDef['type'])) {
+                // set empty options array if nothing specified
+                if (empty($aggDef['options']) || !is_array($aggDef['options'])) {
+                    $aggDef['options'] = array();
+                }
+                //skip the cross_module agg for the module's aggDefs
+                if (!empty($aggDef['cross_module']) && $aggDef['cross_module'] == true) {
+                    //include the cross_module agg for the crossModuleAggDefs
+                    if (!isset($this->crossModuleAggDefs[$fieldName])) {
+                        $this->crossModuleAggDefs[$fieldName] = $aggDef;
+                    }
+                } else {
+                    $this->aggDefs[$module][$module . '.' . $fieldName] = $aggDef;
+                }
+            }
+        }
+        return $this->aggDefs[$module];
+    }
+
+    /**
+     * Get the aggregations definitions shared by multiple modules.
+     * @return array
+     */
+    public function getCrossModuleAggregations()
+    {
+        $modules = $this->getAllEnabledModules();
+        foreach ($modules as $module) {
+            $this->getModuleAggregations($module);
+        }
+        return $this->crossModuleAggDefs;
     }
 }

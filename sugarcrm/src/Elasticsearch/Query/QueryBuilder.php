@@ -49,7 +49,7 @@ class QueryBuilder
 
     /**
      * List of aggregators
-     * @var AggregationInterface[]
+     * @var \Elastica\Aggregation\AbstractAggregation[]
      */
     protected $aggregators = array();
 
@@ -58,6 +58,12 @@ class QueryBuilder
      * @var \Elastica\Filter\AbstractFilter[]
      */
     protected $filters = array();
+
+    /**
+     * List of post filters
+     * @var \Elastica\Filter\AbstractFilter[]
+     */
+    protected $postFilters = array();
 
     /**
      * @var HighlighterInterface
@@ -136,10 +142,10 @@ class QueryBuilder
 
     /**
      * Add aggregator
-     * @param AggregationInterface $agg
+     * @param \Elastica\Aggregation\AbstractAggregation $agg
      * @return QueryBuilder
      */
-    public function addAggregator(AggregationInterface $agg)
+    public function addAggregator(\Elastica\Aggregation\AbstractAggregation $agg)
     {
         $this->aggregators[] = $agg;
         return $this;
@@ -153,6 +159,17 @@ class QueryBuilder
     public function addFilter(\Elastica\Filter\AbstractFilter $filter)
     {
         $this->filters[] = $filter;
+        return $this;
+    }
+
+    /**
+     * Add query filter
+     * @param \Elastica\Filter\AbstractFilter $postFilter
+     * @return QueryBuilder
+     */
+    public function addPostFilter(\Elastica\Filter\AbstractFilter $postFilter)
+    {
+        $this->postFilters[] = $postFilter;
         return $this;
     }
 
@@ -226,13 +243,16 @@ class QueryBuilder
 
         // Add aggregators
         foreach ($this->aggregators as $agg) {
-            $query->addAggregation($agg->build());
+            $query->addAggregation($agg);
         }
 
         // Set sort order
         if ($this->sort) {
             $query->setSort($this->sort);
         }
+
+        // Set post filter
+        $query->setPostFilter($this->buildPostFilters($this->postFilters));
 
         return $query;
     }
@@ -285,6 +305,21 @@ class QueryBuilder
 
         foreach ($filters as $filter) {
             $result->addMust($filter);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Build post filters
+     * @return \Elastica\Filter\Bool
+     */
+    protected function buildPostFilters(array $postFilters)
+    {
+        $result = new \Elastica\Filter\Bool();
+
+        foreach ($postFilters as $postFilter) {
+            $result->addMust($postFilter);
         }
 
         return $result;

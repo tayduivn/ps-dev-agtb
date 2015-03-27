@@ -24,6 +24,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\HandlerIterato
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\MultiFieldHandler;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\AutoIncrementHandler;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\EmailAddressHandler;
+use Sugarcrm\Sugarcrm\Elasticsearch\Query\Aggregation\AggregationHandler;
 
 /**
  *
@@ -238,6 +239,39 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
     }
 
     /**
+     * Add the aggregations to the query.
+     * @param QueryBuilder $builder the query builder
+     * @param array $moduleList the list of selected modules
+     * @return array
+     */
+    protected function handleAggregations($builder, $moduleList)
+    {
+        $handler = new AggregationHandler($this);
+
+        //Build the filters and aggregations
+        $handler->buildAggFilters();
+        $handler->buildAggregations($moduleList);
+
+        // Apply module aggregation
+        $moduleAggFilter = $handler->composeFiltersForAgg('_type');
+        if ($this->moduleAgg) {
+            $builder->addAggregator($this->getModuleAggregator($this->modules, $moduleAggFilter));
+        }
+
+        //Apply aggregations
+        $aggs = $handler->getAggs();
+        foreach ($aggs as $name => $agg) {
+            $builder->addAggregator($agg);
+        }
+
+        //Apply all the filters to post_filters
+        $filters = $handler->getAggFilters();
+        foreach ($filters as $name => $filter) {
+            $builder->addPostFilter($filter);
+        }
+    }
+
+    /**
      * Get search field wrapper
      * @param array $modules List of modules
      * @return array
@@ -296,7 +330,7 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
     /**
      * @var boolean Module aggregation
      */
-    protected $moduleAgg = false;
+    protected $moduleAgg = true;
 
     /**
      * Enable/disable module aggregation facet
@@ -312,16 +346,25 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
     /**
      * Get module aggregator
      * @param array $modules
-     * @return ModuleAggregation
+     * @param \Elastica\Filter\Bool $filter the filter for the module aggregation
+     * @return \Elastica\Aggregation\AbstractAggregation
      */
-    protected function getModuleAggregator(array $modules)
+    protected function getModuleAggregator(array $modules, $filter)
     {
-        $agg = new ModuleAggregation();
-        $agg->setSize(count($modules));
-        return $agg;
+        $agg = new ModuleAggregation(count($modules), $filter);
+        return $agg->getAgg();
     }
 
     //// Search interface
+
+    /**
+     * Get aggregation filters
+     * @return array
+     */
+    public function getAggFilters()
+    {
+        return $this->aggFilters;
+    }
 
     /**
      * @var string Search term
@@ -347,6 +390,11 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
      * @var array Filter list
      */
     protected $filters = array();
+
+    /**
+     * @var array Aggregation Filter list
+     */
+    protected $aggFilters = array();
 
     /**
      * @var boolean Apply field level boosts
@@ -418,6 +466,18 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
     public function filter()
     {
         // TODO
+        return $this;
+    }
+
+    /**
+     * Add aggregation filters
+     * @return GlobalSearch
+     */
+    public function setAggFilters(array $aggFilters = array())
+    {
+        if (!empty($aggFilters)) {
+            $this->aggFilters = $aggFilters;
+        }
         return $this;
     }
 
@@ -503,15 +563,13 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
             $builder->setHighLighter($this->highlighter);
         }
 
-        // Apply module aggregation
-        if ($this->moduleAgg) {
-            $builder->addAggregator($this->getModuleAggregator($this->modules));
-        }
-
         // Set sorting
         if ($this->sort) {
             $builder->setSort($this->sort);
         }
+
+        // Apply aggregations and post filters from aggregations
+        $this->handleAggregations($builder, $this->modules);
 
         return $builder->executeSearch();
     }

@@ -65,10 +65,10 @@ class MultiFieldHandler extends AbstractHandler implements
             'gs_url',
             'gs_url_wildcard',
         ),
-
-        // TODO: add following types:
-        // decimal
-        // float
+        'id' => array(
+            'gs_string',
+            'gs_string_wildcard',
+        ),
     );
 
     /**
@@ -125,12 +125,12 @@ class MultiFieldHandler extends AbstractHandler implements
         /*
          * Date field mapping. Date fields are not searchable but are
          * needed to be returned as part of the dataset and to be able
-         * to perform facets on.
+         * to perform facets on. Note that the index cannot be 'no' to
+         * return the fields of 'gs_datetime' type in the facets.
          */
         'gs_datetime' => array(
             'type' => 'date',
             'format' => 'YYYY-MM-dd HH:mm:ss',
-            'index' => 'no',
             'store' => false,
         ),
 

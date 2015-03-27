@@ -12,44 +12,23 @@
 
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch;
 
-use Sugarcrm\Sugarcrm\Elasticsearch\Query\Aggregation\AbstractAggregation;
+use Sugarcrm\Sugarcrm\Elasticsearch\Query\Aggregation\TermsAggregation;
 
 /**
  *
  * Simple module aggregation replacing module facets
  *
  */
-class ModuleAggregation extends AbstractAggregation
+class ModuleAggregation extends TermsAggregation
 {
     /**
-     * @var \Elastica\Aggregation\Terms
-     */
-    protected $agg;
-
-    /**
      * Ctor
+     * @param int $size the size of the module list
+     * @param \Elastica\Filter\Bool $filter the filter for the module aggregation
      */
-    public function __construct()
+    public function __construct($size, \Elastica\Filter\Bool $filter)
     {
-        $this->agg = $agg = new \Elastica\Aggregation\Terms('module_aggregation');
-        $agg->setField('_type');
-        $agg->setOrder('_count', 'desc');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function build()
-    {
-        return $this->agg;
-    }
-
-    /**
-     * Set size
-     * @param integer $size
-     */
-    public function setSize($size)
-    {
-        $this->agg->setSize($size);
+        parent::__construct($size);
+        parent::buildAgg('_type', $filter);
     }
 }

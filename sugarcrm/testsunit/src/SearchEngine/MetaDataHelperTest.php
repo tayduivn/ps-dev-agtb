@@ -139,6 +139,93 @@ class MetaDataHelperTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+
+    /**
+     * @covers ::getModuleAggregations
+     * @dataProvider providerGetModuleAggregations
+     *
+     * @param string $module
+     * @param array $vardef
+     * @param array $result
+     */
+    public function testGetModuleAggregations($module, array $vardef, array $result)
+    {
+        $helper = $this->getMetaDataHelperMock(
+            array('getFtsFields')
+        );
+
+        $helper->expects($this->any())
+            ->method('getFtsFields')
+            ->will($this->returnValue($vardef));
+
+        $fields = $helper->getModuleAggregations($module);
+        $this->assertEquals($result, $fields);
+    }
+
+    public function providerGetModuleAggregations()
+    {
+        return array(
+            array(
+                'Tasks',
+                array(
+                        'name' => array(
+                            'name' => 'name',
+                            'type' => 'name',
+                            'full_text_search' => array('enabled' => true, 'searchable' => true),
+                        ),
+                        'description' => array(
+                            'name' => 'description',
+                            'type' => 'text',
+                            'full_text_search' => array(
+                                'enabled' => true,
+                                'searchable' => true,
+                                'aggregation' => array(
+                                    'type' => 'term'
+                                )
+                            ),
+                        ),
+                        'work_log' => array(
+                            'name' => 'work_log',
+                            'type' => 'text',
+                            'full_text_search' => array(
+                                'enabled' => true,
+                                'searchable' => true,
+                                'aggregation' => array(
+                                    'type' => 'term',
+                                    'options' => array('size' => 21, 'order' => 'desc'),
+                                    'cross_module' => false,
+                                ),
+                            ),
+                        ),
+                        'date_modified' => array(
+                            'name' => 'date_modified',
+                            'type' => 'datetime',
+                            'full_text_search' => array(
+                                'enabled' => true,
+                                'searchable' => true,
+                                'aggregation' => array(
+                                    'type' => 'date_range',
+                                    'options' => array('from' => 'foo', 'to' => 'bar'),
+                                    'cross_module' => true,
+                                ),
+                            ),
+                        ),
+                ),
+                array(
+                    'Tasks.description' => array(
+                        'type' => 'term',
+                        'options' => array()
+                    ),
+                    'Tasks.work_log' => array(
+                        'type' => 'term',
+                        'options' => array('size' => 21, 'order' => 'desc'),
+                        'cross_module' => false,
+                    ),
+                ),
+            ),
+        );
+    }
+
     /**
      * Get MetaDataHelper mock
      * @param array $methods

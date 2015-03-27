@@ -66,6 +66,11 @@ class GlobalSearchApi extends SugarApi
     protected $moduleList = array();
 
     /**
+     * @var array List of aggregation filters to query
+     */
+    protected $aggFilters = array();
+
+    /**
      * @var string Search term
      */
     protected $term = '';
@@ -143,6 +148,7 @@ class GlobalSearchApi extends SugarApi
             'total' => $resultSet->getTotalHits(),
             'query_time' => $resultSet->getQueryTime(),
             'records' => $this->formatResults($api, $resultSet),
+            'aggregations' => $resultSet->getAggregations(),
         );
     }
 
@@ -155,6 +161,11 @@ class GlobalSearchApi extends SugarApi
         // Modules can be a comma separated list
         if (!empty($args['module_list']) && !is_array($args['module_list'])) {
             $this->moduleList = explode(',', $args['module_list']);
+        }
+
+        //Set aggregation filters
+        if (!empty($args['agg_filters'])) {
+            $this->aggFilters = $this->parseAggFilters($args['agg_filters']);
         }
 
         // Set search term
@@ -184,6 +195,33 @@ class GlobalSearchApi extends SugarApi
     }
 
     /**
+     * Parse the list of aggregation filters from the arguments
+     * @param string $aggFilterArgs
+     * @return array
+     */
+    protected function parseAggFilters($aggFilterArgs)
+    {
+        $filters = array();
+
+        //Expected format of the input argument (TBD):
+        //agg1,bucket_1a,bucket_1c;agg2,bucket_2b,bucket_2c,bucket_2d
+        //Example: assigned_user_id,seed_will_id,seed_sally_id;_type,Leads,Contacts
+
+        //Expected returned format
+        //array("agg1" => array("bucket_1a", "bucket_1c"), "agg2" => array("bucket_2b", "bucket_2c", "bucket_2d"), ...)
+
+        //exzTODO: parse the arguments based on the formats
+        $aggFilterStrs= explode(";", $aggFilterArgs);
+        foreach ($aggFilterStrs as $aggFilterStr) {
+            $values = explode(",", $aggFilterStr);
+            if (count($values)>0) {
+                $filters[$values[0]] = array_slice($values, 1);
+            }
+        }
+        return $filters;
+    }
+
+    /**
      * Execute search
      * @param GlobalSearchInterface $engine
      * @return \Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\ResultSetInterface
@@ -192,6 +230,7 @@ class GlobalSearchApi extends SugarApi
     {
         $engine
             ->from($this->moduleList)
+            ->setAggFilters($this->aggFilters)
             ->term($this->term)
             ->limit($this->limit)
             ->offset($this->offset)

@@ -358,7 +358,6 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                             'gs_datetime' =>  array(
                                 'type' => 'date',
                                 'format' => 'YYYY-MM-dd HH:mm:ss',
-                                'index' => 'no',
                                 'store' => false,
                             ),
                         ),

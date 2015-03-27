@@ -165,6 +165,15 @@ class Elastic implements EngineInterface, GlobalSearchInterface
     /**
      * {@inheritDoc}
      */
+    public function setAggFilters(array $aggFilters = array())
+    {
+        $this->gsProvider()->setAggFilters($aggFilters);
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function limit($limit)
     {
         $this->gsProvider()->limit($limit);
