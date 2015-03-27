@@ -1747,7 +1747,7 @@ EOQ;
     public function isDatabaseNameValid($name)
     {
         // No funny chars
-        return preg_match('/[\#\"\'\*\/\\?\:\\<\>\-\ \&\!\(\)\[\]\{\}\;\,\.\`\~\|\\\\]+/', $name)==0;
+        return preg_match('/[\#\"\'\*\\?\\<\>\-\ \&\!\(\)\[\]\{\}\;\,\`\~\|\\\\]+/', $name)==0;
     }
 
     /**

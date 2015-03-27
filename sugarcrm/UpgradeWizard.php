@@ -35,8 +35,6 @@ if (!empty($_REQUEST['action']) && $_REQUEST['action'] == 'exportlog') {
         header('Content-Type: application/text');
         header('Content-Disposition: attachment; filename=' . basename($file));
         header('Content-Length: ' . filesize($file));
-        ob_clean();
-        flush();
         readfile($file);
     } else {
         die('Bad token. You can not export log file');

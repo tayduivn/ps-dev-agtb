@@ -537,20 +537,20 @@ class PMSEUserAssignmentHandler
      */
     public function getNextUserUsingRoundRobin($act_id)
     {
-        //TODO REWRITE THE CODE
-        global $db;
         //getting record from bpm_activity_definition
-        $query = "select act_assign_team, act_last_user_assigned from pmse_bpm_activity_definition where id = '$act_id' ";
-        $result = $db->Query($query);
-        $row = $db->fetchByAssoc($result);
-        $assign_team = $row['act_assign_team'];
-        $last_assigned = $row['act_last_user_assigned'];
-        //TODO rewrite code to teams and round robin
-        //$beanFactory = new ADAMBeanFactory();
-        //$team = $beanFactory->getBean('Teams');
+        $beanBpmActivity = $this->retrieveBean('pmse_BpmActivityDefinition', $act_id);
+        $assign_team = $beanBpmActivity->act_assign_team;
+        $last_assigned = $beanBpmActivity->act_last_user_assigned;
+
+        if (empty($assign_team)) {
+            //set default team to global
+            $assign_team = '1';
+        }
+
+        //getting all members of a team
         $team = $this->retrieveBean('Teams', $assign_team);
-        //$team->getById($assign_team);
         $members = $team->get_team_members();
+
         $users = array();
         foreach ($members as $user) {
             $users[] = $user->id;
@@ -558,7 +558,6 @@ class PMSEUserAssignmentHandler
         sort($users);
 
         $newCurrent = "";
-
         $current = $last_assigned;
         foreach ($users as $user) {
             if ($current < $user) {
@@ -566,17 +565,14 @@ class PMSEUserAssignmentHandler
                 break;
             }
         }
-
         if (empty($newCurrent)) {
             $newCurrent = $users[0];
         }
 
-        $query = "update pmse_bpm_activity_definition set " .
-            " act_last_user_assigned = '$newCurrent' " .
-            " where id = '$act_id' ";
-        if ($db->query($query, true, "Error updating bpm_thread record ")) {
-            //TODO: Log error here
-        }
+        //updating last user selected
+        $beanBpmActivity->act_last_user_assigned = $newCurrent;
+        $beanBpmActivity->save();
+
         return $newCurrent;
     }
 

@@ -667,7 +667,7 @@ function buildInstall($path){
             $pathmod = "$path/SugarModules/modules/$module";
             // create module directory only if customizations that belong directly to the module exist
             if (file_exists("custom/modules/$module") && mkdir_recursive($pathmod)) {
-                copy_recursive("custom/modules/$module", "$pathmod");
+                $this->export("custom/modules/$module", $pathmod);
                 //Don't include cached extension files
                 if (is_dir("$pathmod/Ext")) {
                     rmdir_recursive("$pathmod/Ext");
@@ -685,7 +685,17 @@ function buildInstall($path){
                 $trimmedPath = ltrim($fileInfo->getPath(), 'custom');
 
                 sugar_mkdir($path . $trimmedPath, NULL, true);
-                copy($file, $path . $trimmedPath . '/' . $fileInfo->getFilename());
+
+                // append package name to the language file name in order to make the package have its own unique
+                // language files and thus avoid collisions between package and instance customizations
+                if (strpos($trimmedPath, '/Ext/Language') !== false) {
+                    $baseName = $fileInfo->getBasename('.lang.php');
+                    $fileName = $baseName . '.' . $this->name . '.lang.php';
+                } else {
+                    $fileName = $fileInfo->getFilename();
+                }
+
+                copy($file, $path . $trimmedPath . '/' . $fileName);
             }
         }
 
@@ -764,7 +774,7 @@ function buildInstall($path){
     }
 
     /**
-     * Returns iterator over *.php files in the given directory and subdirectories
+     * Returns iterator over exportable files in the given directory and subdirectories
      *
      * @param string $dir Directory path
      * @return RecursiveDirectoryIterator|SplFileInfo[]
@@ -774,6 +784,8 @@ function buildInstall($path){
         if (file_exists($dir)) {
             $it = new RecursiveDirectoryIterator($dir, FilesystemIterator::SKIP_DOTS);
             $it = new RecursiveIteratorIterator($it);
+            // ignore role based metadata for BR-2707
+            $it = new RegexIterator($it, '/^((?!\/roles\/).)*$/');
             $it = new RegexIterator($it, '/\.php$/');
             return $it;
         }
@@ -1284,5 +1296,23 @@ function buildInstall($path){
         return false;
     }
 
+    /**
+     * Exports source directory to the destination directory
+     *
+     * @param string $src Source directory
+     * @param string $dst Destination directory
+     */
+    protected function export($src, $dst)
+    {
+        $it = $this->getDirectoryIterator($src);
+        foreach ($it as $file) {
+            $subPathName = $it->getSubPathname();
+            $dstPath = $dst . '/' . $subPathName;
+            $dirName = dirname($dstPath);
+            if (!is_dir($dirName)) {
+                mkdir_recursive($dirName);
+            }
+            copy($file, $dstPath);
+        }
+    }
 }
-

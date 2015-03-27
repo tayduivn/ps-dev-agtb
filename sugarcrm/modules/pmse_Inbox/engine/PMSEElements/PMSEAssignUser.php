@@ -41,6 +41,15 @@ class PMSEAssignUser extends PMSEScriptTask
      */
     public function run($flowData, $bean = null, $externalAction = '', $arguments = array())
     {
+         switch ($externalAction) {
+            case 'RESUME_EXECUTION':
+                $flowAction = 'UPDATE';
+                break;
+            default :
+                $flowAction = 'CREATE';
+                break;
+        }
+
         $bpmnElement = $this->retrieveDefinitionData($flowData['bpmn_id']);
         $act_assign_user = $bpmnElement['act_assign_user'];
         $userData = $this->retrieveUserData($act_assign_user);
@@ -77,6 +86,6 @@ class PMSEAssignUser extends PMSEScriptTask
             //$bean->db->query($query);
         }
 
-        return $this->prepareResponse($flowData, 'ROUTE', 'CREATE');
+        return $this->prepareResponse($flowData, 'ROUTE', $flowAction);
     }
 }
