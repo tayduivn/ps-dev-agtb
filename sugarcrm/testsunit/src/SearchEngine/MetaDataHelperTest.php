@@ -12,6 +12,8 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\SearchEngine\MetaDataHelper;
 
+use Sugarcrm\SugarcrmTestsUnit\TestReflection;
+
 /**
  *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\SearchEngine\MetaDataHelper
@@ -31,6 +33,7 @@ class MetaDataHelperTest extends \PHPUnit_Framework_TestCase
     public function testGetFtsFields($module, array $vardef, $override, array $result)
     {
         $helper = $this->getMetaDataHelperMock(array('getModuleVardefs'));
+        $helper->disableCache(true);
 
         $helper->expects($this->any())
             ->method('getModuleVardefs')
@@ -131,24 +134,25 @@ class MetaDataHelperTest extends \PHPUnit_Framework_TestCase
 
 
     /**
-     * @covers ::getModuleAggregations
+     * @covers ::getAllAggDefsModule
      * @dataProvider providerGetModuleAggregations
      *
      * @param string $module
      * @param array $vardef
      * @param array $result
      */
-    public function testGetModuleAggregations($module, array $vardef, array $result)
+    public function testGetAllAggDefsModule($module, array $vardef, array $result)
     {
         $helper = $this->getMetaDataHelperMock(
             array('getFtsFields')
         );
+        $helper->disableCache(true);
 
         $helper->expects($this->any())
             ->method('getFtsFields')
             ->will($this->returnValue($vardef));
 
-        $fields = $helper->getModuleAggregations($module);
+        $fields = TestReflection::callProtectedMethod($helper, 'getAllAggDefsModule', array($module));
         $this->assertEquals($result, $fields);
     }
 
@@ -158,58 +162,67 @@ class MetaDataHelperTest extends \PHPUnit_Framework_TestCase
             array(
                 'Tasks',
                 array(
-                        'name' => array(
-                            'name' => 'name',
-                            'type' => 'name',
-                            'full_text_search' => array('enabled' => true, 'searchable' => true),
+                    'name' => array(
+                        'name' => 'name',
+                        'type' => 'name',
+                        'full_text_search' => array('enabled' => true, 'searchable' => true),
+                    ),
+                    'description' => array(
+                        'name' => 'description',
+                        'type' => 'text',
+                        'full_text_search' => array(
+                            'enabled' => true,
+                            'searchable' => true,
+                            'aggregation' => array(
+                                'type' => 'term'
+                            )
                         ),
-                        'description' => array(
-                            'name' => 'description',
-                            'type' => 'text',
-                            'full_text_search' => array(
-                                'enabled' => true,
-                                'searchable' => true,
-                                'aggregation' => array(
-                                    'type' => 'term'
-                                )
+                    ),
+                    'work_log' => array(
+                        'name' => 'work_log',
+                        'type' => 'text',
+                        'full_text_search' => array(
+                            'enabled' => true,
+                            'searchable' => true,
+                            'aggregation' => array(
+                                'type' => 'term',
+                                'options' => array('size' => 21, 'order' => 'desc'),
+                                'cross_module' => false,
                             ),
                         ),
-                        'work_log' => array(
-                            'name' => 'work_log',
-                            'type' => 'text',
-                            'full_text_search' => array(
-                                'enabled' => true,
-                                'searchable' => true,
-                                'aggregation' => array(
-                                    'type' => 'term',
-                                    'options' => array('size' => 21, 'order' => 'desc'),
-                                    'cross_module' => false,
-                                ),
+                    ),
+                    'date_modified' => array(
+                        'name' => 'date_modified',
+                        'type' => 'datetime',
+                        'full_text_search' => array(
+                            'enabled' => true,
+                            'searchable' => true,
+                            'aggregation' => array(
+                                'type' => 'date_range',
+                                'options' => array('from' => 'foo', 'to' => 'bar'),
+                                'cross_module' => true,
                             ),
                         ),
-                        'date_modified' => array(
-                            'name' => 'date_modified',
-                            'type' => 'datetime',
-                            'full_text_search' => array(
-                                'enabled' => true,
-                                'searchable' => true,
-                                'aggregation' => array(
-                                    'type' => 'date_range',
-                                    'options' => array('from' => 'foo', 'to' => 'bar'),
-                                    'cross_module' => true,
-                                ),
-                            ),
-                        ),
+                    ),
                 ),
                 array(
-                    'Tasks.description' => array(
-                        'type' => 'term',
-                        'options' => array()
+                    'cross' => array(
+                        'date_modified' => array(
+                            'type' => 'date_range',
+                            'options' => array('from' => 'foo', 'to' => 'bar'),
+                            'cross_module' => true,
+                        ),
                     ),
-                    'Tasks.work_log' => array(
-                        'type' => 'term',
-                        'options' => array('size' => 21, 'order' => 'desc'),
-                        'cross_module' => false,
+                    'module' => array(
+                        'Tasks.description' => array(
+                            'type' => 'term',
+                            'options' => array()
+                        ),
+                        'Tasks.work_log' => array(
+                            'type' => 'term',
+                            'options' => array('size' => 21, 'order' => 'desc'),
+                            'cross_module' => false,
+                        ),
                     ),
                 ),
             ),
@@ -223,9 +236,15 @@ class MetaDataHelperTest extends \PHPUnit_Framework_TestCase
      */
     protected function getMetaDataHelperMock(array $methods = null)
     {
-        return $this->getMockBuilder('Sugarcrm\Sugarcrm\SearchEngine\MetaDataHelper')
+        $mock = $this->getMockBuilder('Sugarcrm\Sugarcrm\SearchEngine\MetaDataHelper')
             ->disableOriginalConstructor()
             ->setMethods($methods)
             ->getMock();
+
+        // stub out our logger
+        $logger = $this->getMock('Psr\Log\LoggerInterface');
+        TestReflection::setProtectedValue($mock, 'logger', $logger);
+
+        return $mock;
     }
 }

@@ -182,7 +182,8 @@ class Container
      */
     protected function initMetaDataHelper()
     {
-        $this->metaDataHelper = new MetaDataHelper();
+        $this->initLogger();
+        $this->metaDataHelper = new MetaDataHelper($this->logger);
     }
 
     /**

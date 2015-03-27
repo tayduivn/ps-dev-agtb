@@ -12,6 +12,9 @@
 
 namespace Sugarcrm\Sugarcrm\SearchEngine;
 
+use Sugarcrm\Sugarcrm\Logger\LoggerTransition;
+use Psr\Log\LoggerInterface;
+
 /**
  *
  * Helper class around MetaDataManager for SearchEngine
@@ -25,13 +28,28 @@ class MetaDataHelper
     protected $mdm;
 
     /**
-     * Aggregation definitions for modules
-     * @var array
+     * @var string Metadata hash
      */
-    protected $aggDefs = array();
+    protected $mdmHash;
 
     /**
-     * Cross-module aggregation definitions
+     * @var \SugarCacheAbstract
+     */
+    protected $sugarCache;
+
+    /**
+     * @var LoggerTransition
+     */
+    protected $logger;
+
+    /**
+     * Disable caching
+     * @var boolean
+     */
+    protected $disableCache = false;
+
+    /**
+     * Cross module aggregations definitions
      * @var array
      */
     protected $crossModuleAggDefs = array();
@@ -39,30 +57,66 @@ class MetaDataHelper
     /**
      * @param \MetaDataManager $mdm
      */
-    public function __construct(\MetaDataManager $mdm = null)
+    public function __construct(LoggerInterface $logger)
     {
-        $this->mdm = $mdm ?: \MetaDataManager::getManager();
+        $this->logger = $logger;
+        $this->mdm = \MetaDataManager::getManager();
+        $this->sugarCache = \SugarCache::instance();
+        $this->updateHash();
+    }
+
+    /**
+     * Enable/disable cache
+     * @param boolean $toggle
+     */
+    public function disableCache($toggle)
+    {
+        $this->disableCache = (bool) $toggle;
+        if ($toggle) {
+            $this->logger->critical("MetaDataHelper: Performance degradation, cache disabled.");
+        }
+    }
+
+    /**
+     * Refresh cache. All keys from MetaDataHepler are prefixed with the hash
+     * from MetaDataManager. Calling this method will get the current hash
+     * and will automatically invalidate previous cache entries if anything
+     * changed for MetaDataManager.
+     */
+    public function updateHash()
+    {
+        $this->mdmHash = $this->mdm->getCachedMetadataHash(new \MetaDataContextDefault());
+
+        // Make sure we have a hash available, if not lets temporarily disable
+        // our cache backend.
+        if (empty($this->mdmHash)) {
+            $this->disableCache(true);
+            $this->logger->warning("MetaDataHelper: No MetaDataHelper hash value available.");
+        } else {
+            $this->logger->debug("MetaDataHelper: Using hash " . $this->mdmHash);
+        }
     }
 
     /**
      * Return system wide enabled FTS modules.
-     *
-     * TODO: cleanup unified_search_display_modules mess
-     *
      * @return array
      */
     public function getAllEnabledModules()
     {
+        $cacheKey = 'enabled_modules';
+        if ($list = $this->getCache($cacheKey)) {
+            return $list;
+        }
+
         $list = array();
         $modules = $this->mdm->getModuleList();
         foreach ($modules as $module) {
             $vardefs = $this->getModuleVardefs($module);
             if (!empty($vardefs['full_text_search'])) {
                 $list[] = $module;
-                // TODO - do we need to check for at least one FTS field ?
             }
         }
-        return $list;
+        return $this->setCache($cacheKey, $list);
     }
 
     /**
@@ -72,7 +126,11 @@ class MetaDataHelper
      */
     public function getModuleVardefs($module)
     {
-        return $this->mdm->getVarDef($module);
+        $cacheKey = 'vardefs_' . $module;
+        if ($vardefs = $this->getCache($cacheKey)) {
+            return $vardefs;
+        }
+        return $this->setCache($cacheKey, $this->mdm->getVarDef($module));
     }
 
     /**
@@ -83,6 +141,15 @@ class MetaDataHelper
      */
     public function getFtsFields($module, $allowTypeOverride = true)
     {
+        $cacheKey = 'ftsfields_' . $module;
+        if ($allowTypeOverride) {
+            $cacheKey .= '_override';
+        }
+
+        if ($ftsFields = $this->getCache($cacheKey)) {
+            return $ftsFields;
+        }
+
         $ftsFields = array();
         $vardefs = $this->getModuleVardefs($module);
         foreach ($vardefs['fields'] as $field => $defs) {
@@ -100,19 +167,21 @@ class MetaDataHelper
                 $ftsFields[$field] = $defs;
             }
         }
-        return $ftsFields;
+        return $this->setCache($cacheKey, $ftsFields);
     }
 
     /**
      * Return list of modules which are available for a given user.
-     *
-     * TODO: Today users can alter the modules they search against in user
-     * preferences. Not sure what the use case is, however this functionality
-     * should move into the Provider classes itself as there is more than just
-     * global search.
+     * @param \User $user
+     * @return array
      */
     public function getAvailableModulesForUser(\User $user)
     {
+        $cacheKey = 'modules_user_' . $user->id;
+        if ($list = $this->getCache($cacheKey)) {
+            return $list;
+        }
+
         $list = array();
         foreach ($this->getAllEnabledModules() as $module) {
             $seed = \BeanFactory::getBean($module);
@@ -120,7 +189,7 @@ class MetaDataHelper
                 $list[] = $module;
             }
         }
-        return $list;
+        return $this->setCache($cacheKey, $list);
     }
 
     /**
@@ -134,7 +203,7 @@ class MetaDataHelper
     }
 
     /**
-     * Verify if a module is available for givem user
+     * Verify if a module is available for given user
      * @param string $module
      * @param \User $user
      * @return boolean
@@ -145,36 +214,66 @@ class MetaDataHelper
     }
 
     /**
-     * Filter module list for given user
-     * @param array $modules
-     * @param \User $user
-     * @return array
-     */
-    public function filterModulesAvailableForUser(array $modules, \User $user)
-    {
-        $filtered = array();
-        foreach ($modules as $module) {
-            if ($this->isModuleAvailableForUser($module, $user)) {
-                $filtered[] = $module;
-            }
-        }
-        return $filtered;
-    }
-
-    /**
-     * Get the auto-incremented fields of a given module.
-     * @param string $module Module name
+     * Get auto increment fields for module.
+     * @param string $module
      * @return array
      */
     public function getFtsAutoIncrementFields($module)
     {
+        $cacheKey = 'autoincr_' . $module;
+        if ($incFields = $this->getCache($cacheKey)) {
+            return $incFields;
+        }
+
         $incFields = array();
         foreach ($this->getFtsFields($module) as $field => $defs) {
             if (!empty($defs['auto_increment'])) {
                 $incFields[] = $defs['name'];
             }
         }
-        return $incFields;
+        return $this->setCache($cacheKey, $incFields);
+    }
+
+
+    /**
+     * Get cached content
+     * @param string $key Cache key
+     * @param null|mixed
+     */
+    protected function getCache($key)
+    {
+        if ($this->disableCache) {
+            return null;
+        }
+        $key = $this->getRealCacheKey($key);
+        return $this->sugarCache->$key;
+    }
+
+    /**
+     * Set value in cache
+     * @param string $key
+     * @param mixed $value
+     * @return mixed
+     */
+    protected function setCache($key, $value)
+    {
+        if (!$this->disableCache) {
+            $key = $this->getRealCacheKey($key);
+            $this->sugarCache->set($key, $value);
+        }
+        return $value;
+    }
+
+    /**
+     * Get cache key. This method is not supposed to be called directly.
+     * Use `$this->getCache` or `$this->setCache` as both implicitly use
+     * this method.
+     * @param string $key
+     * @return string
+     */
+    protected function getRealCacheKey($key)
+    {
+        return "mdmhelper_" . $this->mdmHash . "_" . $key;
     }
 
     /**
@@ -184,45 +283,11 @@ class MetaDataHelper
      */
     public function getModuleAggregations($module)
     {
-        //expected format
-        //'full_text_search' : {
-        //   "agg" : {
-        //      "type" : "term",
-        //      "options : [],
-        //      "cross_modules" : true
-        //    }
-        //}
-
-        //use the cached version
-        if (isset($this->aggDefs[$module])) {
-            return $this->aggDefs[$module];
+        $aggDefs = $this->getAllAggDefs();
+        if (isset($aggDefs['modules'][$module])) {
+            return $aggDefs['modules'][$module];
         }
-        $this->aggDefs[$module] = array();
-        $fieldDefs = $this->getFtsFields($module);
-        foreach ($fieldDefs as $fieldName => $fieldDef) {
-            // skip the field without aggregation defs
-            if (empty($fieldDef['full_text_search']['aggregation'])) {
-                continue;
-            }
-            $aggDef = $fieldDef['full_text_search']['aggregation'];
-            // the type must be defined
-            if (is_array($aggDef) && !empty($aggDef['type'])) {
-                // set empty options array if nothing specified
-                if (empty($aggDef['options']) || !is_array($aggDef['options'])) {
-                    $aggDef['options'] = array();
-                }
-                //skip the cross_module agg for the module's aggDefs
-                if (!empty($aggDef['cross_module']) && $aggDef['cross_module'] == true) {
-                    //include the cross_module agg for the crossModuleAggDefs
-                    if (!isset($this->crossModuleAggDefs[$fieldName])) {
-                        $this->crossModuleAggDefs[$fieldName] = $aggDef;
-                    }
-                } else {
-                    $this->aggDefs[$module][$module . '.' . $fieldName] = $aggDef;
-                }
-            }
-        }
-        return $this->aggDefs[$module];
+        return array();
     }
 
     /**
@@ -231,10 +296,71 @@ class MetaDataHelper
      */
     public function getCrossModuleAggregations()
     {
-        $modules = $this->getAllEnabledModules();
-        foreach ($modules as $module) {
-            $this->getModuleAggregations($module);
+        $aggDefs = $this->getAllAggDefs();
+        return $aggDefs['cross'];
+    }
+
+    /**
+     * Get all aggregation definitions
+     * @return array
+     */
+    protected function getAllAggDefs()
+    {
+        $cacheKey = 'aggdefs';
+        if ($list = $this->getCache($cacheKey)) {
+            return $list;
         }
-        return $this->crossModuleAggDefs;
+
+        $allAggDefs = array(
+            'cross' => array(),
+            'modules' => array(),
+        );
+        foreach ($this->getAllEnabledModules() as $module) {
+            $aggDefs = $this->getAllAggDefsModule($module);
+            $allAggDefs['cross'] = array_merge($allAggDefs['cross'], $aggDefs['cross']);
+            $allAggDefs['modules'][$module] = $aggDefs['module'];
+        }
+        return $this->setCache($cacheKey, $aggDefs);
+    }
+
+    /**
+     * Get all aggregation definitions for given module
+     * @param string $module Module name
+     * @return array
+     */
+    protected function getAllAggDefsModule($module)
+    {
+        $aggDefs = array(
+            'cross' => array(),
+            'module' => array(),
+        );
+
+        $fieldDefs = $this->getFtsFields($module);
+        foreach ($fieldDefs as $fieldName => $fieldDef) {
+
+            // skip the field without aggregation defs
+            if (empty($fieldDef['full_text_search']['aggregation'])) {
+                continue;
+            }
+
+            $aggDef = $fieldDef['full_text_search']['aggregation'];
+
+            // the type must be defined
+            if (is_array($aggDef) && !empty($aggDef['type'])) {
+
+                // set empty options array if nothing specified
+                if (empty($aggDef['options']) || !is_array($aggDef['options'])) {
+                    $aggDef['options'] = array();
+                }
+
+                // split module vs cross module aggregations
+                if (!empty($aggDef['cross_module'])) {
+                    $aggDefs['cross'][$fieldName] = $aggDef;
+                } else {
+                    $aggDefs['module'][$module . '.' . $fieldName] = $aggDef;
+                }
+            }
+        }
+        return $aggDefs;
     }
 }
