@@ -179,10 +179,13 @@ class PrepareKBDocument
             $newFiles = $this->getFiles($this->newpath . $path, $newFiles);
         }
 
-        foreach (array_keys($newFiles) as $value) {
-            $key = str_replace($this->newpath, $this->path, $value);
-            $tmpFiles[$key] = $key;
+        $currentRealPath = realpath($this->path);
+        $newRealPath = realpath($this->newpath);
+
+        foreach ($newFiles as $key => $value) {
+            $tmpFiles[$key] = str_replace($newRealPath, $currentRealPath, $value);
         }
+
         $files = array_diff($oldFiles, $tmpFiles);
         $files[$this->path . '/KBDocumentKBTags'] = $this->path . '/KBDocumentKBTags';
         $files[$this->path . '/KBDocumentRevisions'] = $this->path . '/KBDocumentRevisions';

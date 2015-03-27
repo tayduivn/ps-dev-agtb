@@ -239,7 +239,7 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
         } else {
             $query .= " from prepKBDoc";
         }
-        $query .= " ORDER BY prepKBDoc.date_entered";
+        $query .= " WHERE 1=1 ORDER BY prepKBDoc.date_entered";
         $query = $this->db->limitQuery($query, $count * 100, 100, false, '', false);
         $result = $this->db->query($query);
         while ($row = $this->db->fetchByAssoc($result)) {
