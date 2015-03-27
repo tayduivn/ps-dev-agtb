@@ -37,80 +37,112 @@ class SMTPProxyTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['log'] = static::$logger;
     }
 
-    public function testSendCommand_NotConnected_WarningIsLogged()
+    public function noErrorProvider()
     {
-        $GLOBALS['log'] = $this->getMock('SugarMockLogger', array('__call'));
-        $GLOBALS['log']->expects($this->any())->method('__call')->with($this->equalTo('warn'));
-
-        $smtpMock = $this->getMock('SMTPProxy', array('connected'));
-        $smtpMock->expects($this->any())->method('connected')->willReturn(false);
-
-        $this->assertFalse($smtpMock->hello(), 'Hello should have returned false');
+        return array(
+            array(array()),
+            array(null),
+            array(''),
+        );
     }
 
-    public function testSendCommand_IsConnected_NothingIsLogged()
+    public function hasErrorProvider()
     {
-        $GLOBALS['log'] = new SugarMockLogger();
-
-        $smtpMock = $this->getMock('SMTPProxy', array('connected', 'client_send', 'get_lines'));
-        $smtpMock->expects($this->any())->method('connected')->willReturn(true);
-        $smtpMock->expects($this->any())->method('client_send')->willReturn(50);
-        $smtpMock->expects($this->any())
-            ->method('get_lines')
-            ->willReturn('250 Hello relay.example.org, I am glad to meet you');
-
-        $this->assertTrue($smtpMock->hello(), 'Hello should have returned true');
-        $this->assertEquals(0, $GLOBALS['log']->getMessageCount(), 'The logger should not have any errors to log');
+        return array(
+            array(
+                'warn',
+                array('error' => 'Error occurred'),
+            ),
+            array(
+                'warn',
+                'Error occurred',
+            ),
+            array(
+                'fatal',
+                array(
+                    'error' => 'Error occurred',
+                    'errno' => '421',
+                ),
+            ),
+            array(
+                'fatal',
+                array(
+                    'error' => 'Error occurred',
+                    'smtp_code' => '421',
+                ),
+            ),
+            array(
+                'fatal',
+                array(
+                    'error' => 'Error occurred',
+                    'errno' => '421',
+                    'smtp_code' => '421',
+                ),
+            ),
+        );
     }
 
-    public function testSendCommand_RespondsWithError_FatalIsLogged()
+    public function proxiedMethodValue()
     {
-        $GLOBALS['log'] = $this->getMock('SugarMockLogger', array('__call'));
-        $GLOBALS['log']->expects($this->any())->method('__call')->with($this->equalTo('fatal'));
-
-        $smtpMock = $this->getMock('SMTPProxy', array('connected', 'client_send', 'get_lines'));
-        $smtpMock->expects($this->any())->method('connected')->willReturn(true);
-        $smtpMock->expects($this->any())->method('client_send')->willReturn(50);
-        $smtpMock->expects($this->any())
-            ->method('get_lines')
-            ->willReturn('421 relay.example.org Service not available, closing transmission channel');
-
-        $this->assertFalse($smtpMock->hello(), 'Hello should have returned false');
+        return array(
+            array(true),
+            array(false),
+            array(50),
+            array('some value'),
+        );
     }
 
     /**
-     * TRUE is returned by {@link SMTP::connected()} because that will immediately short-circuit the call to
-     * {@link SMTP::connect()}, avoiding anything to do with socket streams, etc. No matter the result of the call to
-     * {@link SMTP::connect()}, {@link SMTPProxy::connect()} should call {@link SMTPProxy::handleError()}.
+     * @dataProvider noErrorProvider
+     * @param $error
      */
-    public function testConnect_CallsHandleError()
+    public function testHandleError_NothingIsLogged($error)
     {
-        $smtpMock = $this->getMock('SMTPProxy', array('connected', 'handleError'));
-        $smtpMock->expects($this->any())->method('connected')->willReturn(true);
-        $smtpMock->expects($this->once())->method('handleError');
+        $GLOBALS['log'] = $this->getMock('SugarMockLogger', array('__call'));
+        $GLOBALS['log']->expects($this->never())->method('__call');
 
-        $smtpMock->connect('localhost', 25);
+        SugarTestReflection::callProtectedMethod(new SMTPProxy(), 'handleError', array($error));
     }
 
     /**
-     * {@link SMTPProxy::authenticate()} calls {@link SMTPProxy::handleError()} when {@link SMTP::smtp_conn} is not a
-     * resource, which is the case in this test. {@link SMTPProxy::handleError()} would be called by
-     * {@link SMTPProxy::sendCommand()} when {@link SMTP::smtp_conn} is a valid resource and the call is allowed to
-     * {@link SMTP::authenticate()}.
+     * @dataProvider hasErrorProvider
+     * @param $level
+     * @param $error
      */
-    public function testAuthenticate_CallsHandleError()
+    public function testHandleError_ErrorIsLogged($level, $error)
     {
-        $smtpMock = $this->getMock('SMTPProxy', array('handleError'));
-        $smtpMock->expects($this->once())->method('handleError');
+        $GLOBALS['log'] = $this->getMock('SugarMockLogger', array('__call'));
+        $GLOBALS['log']->expects($this->any())->method('__call')->with($this->equalTo($level));
 
-        $smtpMock->authenticate('foo', 'bar');
+        SugarTestReflection::callProtectedMethod(new SMTPProxy(), 'handleError', array($error));
     }
 
-    public function testTurn_CallsHandleError()
+    public function testCall_CallsHandleError()
     {
-        $smtpMock = $this->getMock('SMTPProxy', array('handleError'));
-        $smtpMock->expects($this->once())->method('handleError');
+        $smtp = $this->getMock('SMTP', array('connect'));
+        $smtp->expects($this->once())->method('connect');
 
-        $smtpMock->turn();
+        $proxy = $this->getMock('SMTPProxy', array('handleError'));
+        $proxy->expects($this->once())->method('handleError');
+        SugarTestReflection::setProtectedValue($proxy, 'smtp', $smtp);
+
+        $proxy->connect('localhost');
+    }
+
+    /**
+     * @dataProvider proxiedMethodValue
+     * @param $value
+     */
+    public function testCall_ReturnsTheValueFromTheProxiedMethod($value)
+    {
+        $smtp = $this->getMock('SMTP', array('connect'));
+        $smtp->expects($this->once())->method('connect')->willReturn($value);
+
+        $proxy = $this->getMock('SMTPProxy', array('handleError'));
+        $proxy->expects($this->once())->method('handleError');
+        SugarTestReflection::setProtectedValue($proxy, 'smtp', $smtp);
+
+        $actual = $proxy->connect('localhost');
+        $this->assertEquals($value, $actual);
     }
 }
