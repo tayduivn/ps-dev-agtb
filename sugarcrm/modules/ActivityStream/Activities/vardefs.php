@@ -174,6 +174,13 @@ $dictionary['Activity'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_KBCONTENTS',
         ),
+        'kbtemplates' => array(
+            'name' => 'kbtemplates',
+            'type' => 'link',
+            'relationship' => 'kbcontenttemplate_activities',
+            'source' => 'non-db',
+            'vname' => 'LBL_KBTEMPLATES',
+        ),
 
         //BEGIN SUGARCRM flav=ent ONLY
         'pmse_Project' => array(
