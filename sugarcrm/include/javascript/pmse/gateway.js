@@ -532,6 +532,7 @@ AdamGateway.prototype.createConfigureAction = function () {
         modal: true,
         title: translate('LBL_PMSE_FORM_TITLE_GATEWAY') + ': ' + this.getName()
     });
+    root.canvas.project.save();
     for (i = 0; i < this.getPorts().getSize(); i += 1) {
         connection = this.getPorts().get(i).connection;
         if (this.gat_default_flow !== connection.getID()
