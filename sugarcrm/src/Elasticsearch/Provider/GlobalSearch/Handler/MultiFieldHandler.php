@@ -71,6 +71,9 @@ class MultiFieldHandler extends AbstractHandler implements
         'exact' => array(
             'gs_string_exact',
         ),
+        'longtext' => array(
+            'gs_html_default',
+        ),
     );
 
     /**
@@ -197,6 +200,17 @@ class MultiFieldHandler extends AbstractHandler implements
             'index' => 'not_analyzed',
             'index_analyzer' => 'gs_analyzer_string_exact',
             'search_analyzer' => 'gs_analyzer_string_exact',
+            'store' => false,
+        ),
+
+        /*
+         * Analyzer for html
+         */
+        'gs_html_default' => array(
+            'type' => 'string',
+            'index' => 'analyzed',
+            'index_analyzer' => 'gs_analyzer_html_default',
+            'search_analyzer' => 'gs_analyzer_html_default',
             'store' => false,
         ),
     );
@@ -333,6 +347,14 @@ class MultiFieldHandler extends AbstractHandler implements
                 'gs_analyzer_string_exact',
                 'whitespace',
                 array('lowercase')
+            )
+
+            // html analyzer
+            ->addCustomAnalyzer(
+                'gs_analyzer_html_default',
+                'standard',
+                array('lowercase'),
+                array('html_strip')
             )
         ;
     }

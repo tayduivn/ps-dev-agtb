@@ -182,6 +182,16 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                         ),
                         'type' => 'custom',
                     ),
+                    'gs_analyzer_html_default' => array(
+                        'tokenizer' => 'standard',
+                        'filter' => array(
+                            'lowercase',
+                        ),
+                        'char_filter' => array(
+                            'html_strip',
+                        ),
+                        'type' => 'custom',
+                    ),
                 ),
                 'tokenizer' => array(),
                 'filter' => array(
@@ -500,6 +510,30 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                                 'index' => 'not_analyzed',
                                 'index_analyzer' => 'gs_analyzer_string_exact',
                                 'search_analyzer' => 'gs_analyzer_string_exact',
+                                'store' => false,
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+            // test 'longtext' type
+            array(
+                'KBContents',
+                'body',
+                array(
+                    'type' => 'longtext',
+                ),
+                array(
+                    'KBContents__body' => array(
+                        'type' => 'string',
+                        'index' => 'not_analyzed',
+                        'include_in_all' => false,
+                        'fields' => array(
+                            'gs_html_default' => array(
+                                'type' => 'string',
+                                'index' => 'analyzed',
+                                'index_analyzer' => 'gs_analyzer_html_default',
+                                'search_analyzer' => 'gs_analyzer_html_default',
                                 'store' => false,
                             ),
                         ),

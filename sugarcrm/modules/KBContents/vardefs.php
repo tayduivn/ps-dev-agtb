@@ -28,11 +28,7 @@ $dictionary['KBContent'] = array(
             'comment' => 'Article body',
             'full_text_search' => array(
                 'enabled' => true,
-                'type' => 'text',
-                'elastic' => array(
-                    'term_vector' => 'yes',
-                    'store' => 'yes',
-                ),
+                'searchable' => true,
             ),
             'audited' => true,
         ),
@@ -44,9 +40,6 @@ $dictionary['KBContent'] = array(
             'vname' => 'LBL_LANG',
             'audited' => false,
             'studio' => false,
-            'full_text_search' => array(
-                'enabled' => true,
-            ),
         ),
         'active_date' => array(
             'name' => 'active_date',
@@ -82,9 +75,6 @@ $dictionary['KBContent'] = array(
             'reportable' => true,
             'audited' => true,
             'studio' => true,
-            'full_text_search' => array(
-                'enabled' => true,
-            ),
         ),
         'viewcount' => array(
             'name' => 'viewcount',
@@ -194,10 +184,6 @@ $dictionary['KBContent'] = array(
             'comment' => 'Active revision flag',
             'default' => 0,
             'duplicate_on_record_copy' => 'no',
-            'full_text_search' => array(
-                'enabled' => true,
-                'type' => 'bool',
-            ),
             'studio' => array(
                 'list' => false,
                 'quickcreate' => false,
@@ -503,10 +489,4 @@ VardefManager::createVardef(
 );
 $dictionary['KBContent']['fields']['name']['audited'] = true;
 $dictionary['KBContent']['fields']['name']['importable'] = 'required';
-$dictionary['KBContent']['fields']['name']['full_text_search'] = array(
-    'enabled' => true,
-    'elastic' => array(
-        'term_vector' => 'yes',
-        'store' => 'yes',
-    ),
-);
+
