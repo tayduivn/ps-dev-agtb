@@ -202,8 +202,9 @@ UpdaterField.prototype.setOptions = function (settings) {
         case 'Checkbox':
             newOption =  new CheckboxUpdaterItem(currentSetting);
             break;
-        case 'Integer':
         case 'Currency':
+            currentSetting.currency = true;
+        case 'Integer':
         case 'Decimal':
         case 'Float':
             newOption =  new NumberUpdaterItem(currentSetting);
@@ -577,6 +578,7 @@ UpdaterField.prototype.openPanelOnItem = function (field) {
                 numberGroupingSeparator: this._numberGroupingSeparator,
                 dateFormat: SUGAR.App.date.convertFormat(SUGAR.App.user.getPreference("datepref")),
                 timeFormat: SUGAR.App.user.getPreference("timepref"),
+                currencies: project.getMetadata("currencies"),
                 onOpen: function () {
                     jQuery(that.currentField.html).addClass("opened");
                 },
@@ -587,7 +589,8 @@ UpdaterField.prototype.openPanelOnItem = function (field) {
         }
         //Check if the panel is already configured for the current field's type
         //in order to do it, we verify if the current field class is the same that the previous field's.
-        if (!this.currentField || (this.currentField.constructor !== field.constructor)) {
+        if (!this.currentField || ((this.currentField.constructor !== field.constructor) ||
+            (field instanceof NumberUpdaterItem && (field.isCurrency() !== this.currentField.isCurrency())))) {
             if (field instanceof DateUpdaterItem) {
                 if (fieldType === 'Date') {
                     constantPanelCfg = {
@@ -606,11 +609,21 @@ UpdaterField.prototype.openPanelOnItem = function (field) {
             } else {
                 this._datePanel.setOperators({
                     arithmetic: true
-                }).setConstantPanel({
-                    basic: {
-                        number: true
-                    }
                 });
+                if (field.isCurrency()) {
+                    this._datePanel.setConstantPanel({
+                        currency: true,
+                        basic: {
+                            number: true
+                        }
+                    });
+                } else {
+                    this._datePanel.setConstantPanel({
+                        basic: {
+                            number: true
+                        }
+                    });
+                }
             }
             this._datePanel.setVariablePanel({
                 data: [{
@@ -893,7 +906,7 @@ UpdaterField.prototype.setVariables = function (variables) {
 
     UpdaterItem.prototype._createControl = function () {
         if (!this._control) {
-            throw new Error("_createControl(): This method must be called from anUpdaterItem's subclass.");
+            throw new Error("_createControl(): This method must be called from an UpdaterItem's subclass.");
         }
         jQuery(this._control).addClass("updateritem-control");
         return this._control;
@@ -1245,6 +1258,7 @@ UpdaterField.prototype.setVariables = function (variables) {
 //NumberUpdaterItem
     var NumberUpdaterItem = function (settings) {
         UpdaterItem.call(this, settings);
+        this._currency = null;
         NumberUpdaterItem.prototype.init.call(this, settings);
     };
 
@@ -1254,10 +1268,16 @@ UpdaterField.prototype.setVariables = function (variables) {
 
     NumberUpdaterItem.prototype.init = function (settings) {
         var defaults = {
-            value: "[]"
+            value: "[]",
+            currency: false
         };
         jQuery.extend(true, defaults, settings);
+        this._currency = !!defaults.currency;
         this.setValue(defaults.value);
+    };
+
+    NumberUpdaterItem.prototype.isCurrency = function() {
+        return this._currency;
     };
 
     NumberUpdaterItem.prototype._setValueToControl = function (value) {
@@ -1289,6 +1309,7 @@ UpdaterField.prototype.setVariables = function (variables) {
         this._control = control;
         return UpdaterItem.prototype._createControl.call(this);
     };
+
 //DropdownUpdaterItem
     var DropdownUpdaterItem = function (settings) {
         UpdaterItem.call(this, settings);

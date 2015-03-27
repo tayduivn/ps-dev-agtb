@@ -9,7 +9,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 //FormPanel
-	var FormPanel = function(settings) {
+	var FormPanel = function (settings) {
 		CollapsiblePanel.call(this, settings);
 		this._htmlSubmit = null;
 		this._submitCaption = null;
@@ -59,7 +59,8 @@
 
 	FormPanel.prototype._createField = function (settings) {
 		var defaults = {
-			type: 'text'
+			type: 'text',
+			precision: 2
 		}, field;
 
 		jQuery.extend(true, defaults, settings);
@@ -74,12 +75,6 @@
 				field = new FormPanelNumber(defaults);
 				break;
 			case 'number':
-				defaults.precision = -1;
-				defaults.groupingSeparator = "";
-				field = new FormPanelNumber(defaults);
-				break;
-			case 'currency':
-				defaults.precision = 2;
 				field = new FormPanelNumber(defaults);
 				break;
 			case 'dropdown':
@@ -358,10 +353,10 @@
 			throw new Error("setHeight(): invalid parameter.");
 		}
 		this.height = h;
-	    if (this.html) {
-	        this.style.addProperties({height: this.height});
-	    }
-	    return this;
+		if (this.html) {
+			this.style.addProperties({height: this.height});
+		}
+		return this;
 	};
 
 	FormPanelItem.prototype.setName = function (name) {
@@ -422,28 +417,28 @@
 
 	FormPanelItem.prototype.setVisible = function (value) {
 		if (_.isBoolean(value)) {
-	        this.visible = value;
-	        if (this.html) {
-	            if (value) {
-	                this.style.removeProperties(["display"]);
-	            } else {
-	                this.style.addProperties({display: "none"});
-	            }
-	        }
-	    }
-	    return this;
+			this.visible = value;
+			if (this.html) {
+				if (value) {
+					this.style.removeProperties(["display"]);
+				} else {
+					this.style.addProperties({display: "none"});
+				}
+			}
+		}
+		return this;
 	};
 
 	FormPanelItem.prototype._postCreateHTML = function () {
 		this._attachListeners();
 		this.style.applyStyle();
 
-        this.style.addProperties({
-            width: this.width,
-            height: this.height
-        });
+		this.style.addProperties({
+			width: this.width,
+			height: this.height
+		});
 
-        if (this._disabled) {
+		if (this._disabled) {
 			this.disable();
 		} else {
 			this.enable();
@@ -534,7 +529,7 @@
 
 	FormPanelButton.prototype.createHTML = function () {
 		var html, button;
-		if (!this.html)	{
+		if (!this.html) {
 			html = FormPanelItem.prototype.createHTML.call(this);
 			html.className += " form-panel-button";
 			button = this.createHTMLElement("input");
@@ -819,7 +814,7 @@
 		if (!this.html) {
 			html = FormPanelItem.prototype.createHTML.call(this);
 			html.className += ' adam form-panel-field record-cell';
-			html.className += '	adam-' + this.type.toLowerCase();
+			html.className += ' adam-' + this.type.toLowerCase();
 			htmlLabelContainer = this.createHTMLElement("div");
 			htmlLabelContainer.className = 'adam form-panel-label record-label';
 			span = this.createHTMLElement("span");
@@ -980,7 +975,7 @@
 		var defaults = {
 			decimalSeparator: ".",
 			groupingSeparator: ",",
-			precision: -1,
+			precision: 2,
 			value: null
 		};
 
@@ -992,6 +987,13 @@
 			.setValue(defaults.value);
 
 		this._initialized = true;
+	};
+
+	FormPanelNumber.prototype._evalRequired = function() {
+		if(this.required && !this._disabled) {
+			return !isNaN(this._value);
+		}
+		return true;
 	};
 
 	FormPanelNumber.prototype._setValueToControl = function (value) {
@@ -1080,8 +1082,8 @@
 	};
 
 	FormPanelNumber.prototype.setPrecision = function (precision) {
-		if (!(typeof precision === 'number' && precision % 1 === 0)) {
-			throw new Error("setPrecision(): The parameter must be an integer.");
+		if (!(typeof precision === 'number' && precision % 1 === 0 && precision >= 0)) {
+			throw new Error("setPrecision(): The parameter must be an integer greater or equal to 0.");
 		}
 		this._precision = precision;
 		//we make sure that the object has already been initialized
@@ -1101,23 +1103,7 @@
 	};
 
 	FormPanelNumber.prototype._isRegExpSpecialChar = function (c) {
-		switch (c) {
-		    case "\\":
-		    case "^":
-		    case "$":
-		    case "*":
-		    case "+":
-		    case "?":
-		    case ".":
-		    case "(":
-		    case ")":
-		    case "|":
-		    case "{":
-		    case "}":
-		        return true;
-		        break;
-	    }
-	    return false;
+		return ["\\", "^", "$", "*", "+", "?", ".", "(", ")", "|", "{", "}"].indexOf(c) >= 0;
 	};
 
 	FormPanelNumber.prototype.isValid = function () {
@@ -1137,51 +1123,51 @@
 	};
 
 	FormPanelNumber.prototype._parseToUserString = function (value) {
-		var integer, decimal, label = "", aux, power, i, decimalSeparator;
-		if (value === null) {
-			label = "";
-		} else {
-			if (this._precision >= 0) {
-				power = Math.pow(10, this._precision);
-				value = Math.round(value * power) /power;
-			}
-			decimalSeparator = this._precision === 0 ? "" : this._decimalSeparator;
-			integer = aux = Math.floor(value).toString();
+		value = isNaN(value) ? 0 : value;
+		return App.utils.formatNumber(value, this._precision, this._precision, this._groupingSeparator, 
+			this._decimalSeparator);
+	};
 
-			if (this._precision !== 0) {
-				decimal = "";
-				decimal = value.toString().split(".")[1] || (this._precision < 0 ? "0" : "");
-				for (i = decimal.length; i < this._precision; i += 1) {
-					decimal += "0";
-				}
-			} else {
-				decimal = "";
-			}
-
-			if (this._groupingSeparator) {
-				while (aux.length > 3) {
-					label = this._groupingSeparator + aux.substr(-3) + label;
-					aux = aux.slice(0, -3);
-				}
-			}
-			label = aux + label + decimalSeparator + decimal;
-		}
-		return label;
+	FormPanelNumber.prototype.getFormattedValue = function() {
+		return this._parseToUserString(this._value || 0);
 	};
 
 	FormPanelNumber.prototype._onKeyDown = function () {
 		var that = this;
 		return function (e) {
-			if (that._precision === 0 && (e.keyCode < 48 || (e.keyCode > 57 && e.keyCode < 96) || e.keyCode >105)
-				&& e.keyCode !== 37 && e.keyCode !== 39 && e.keyCode !== 8 && e.keyCode !== 46) {
+			var number, printableKey = "";
+			if ((e.keyCode < 48 || (e.keyCode > 57 && e.keyCode < 96) || e.keyCode >105)
+				&& e.keyCode !== 37 && e.keyCode !== 39 && e.keyCode !== 8 && e.keyCode !== 46 && e.keyCode !==9) {
+				e.preventDefault();
+				return;
+			}
+
+			if ((e.keyCode > 47 && e.keyCode < 58) || e.keyCode === 8) {
+				printableKey = String.fromCharCode(e.keyCode);
 				e.preventDefault();
 			}
+
+			if (e.keyCode === 8) {
+				this.value = this.value.slice(0,-1);
+			}
+
+			number = parseInt(this.value.replace(/[^0-9]/g, "") + printableKey, 10) / Math.pow(10, that._precision);
+			number = isNaN(number) ? 0 : number;
+			this.value = that._parseToUserString(number);
+		};
+	};
+
+	FormPanelNumber.prototype._onBlur = function () {
+		var that = this;
+		return function () {
+			(that._onChangeHandler())();
 		};
 	};
 
 	FormPanelNumber.prototype._attachListeners = function() {
 		if (this.html) {
-			jQuery(this._htmlControl[0]).on('keydown', this._onKeyDown());
+			jQuery(this._htmlControl[0]).on('keydown', this._onKeyDown())
+				.on('blur', this._onBlur());
 			FormPanelField.prototype._attachListeners.call(this);
 		}
 		return this;
@@ -1341,10 +1327,10 @@
 		return this;
 	};
 
-    FormPanelDatetime.prototype._unformat = function (value) {
-        value = App.date(value, this._dateFormat.toUpperCase(), true);
-        return value.isValid() ? value.format() : null;
-    };
+	FormPanelDatetime.prototype._unformat = function (value) {
+		value = App.date(value, this._dateFormat.toUpperCase(), true);
+		return value.isValid() ? value.format() : null;
+	};
 
 	FormPanelDatetime.prototype._getValueFromControl = function () {
 		var value = "", date, time, isValid = false, aux;
@@ -1452,7 +1438,7 @@
 		return value.format(this._dateFormat.toUpperCase()) + " " + this._htmlControl[1].value;
 	};
 
-	FormPanelDatetime.prototype._attachListeners = function	() {
+	FormPanelDatetime.prototype._attachListeners = function () {
 		if (this.html) {
 			FormPanelDate.prototype._attachListeners.call(this);
 			jQuery(this._htmlControl[1]).on('change', this._onChangeHandler());
@@ -1516,7 +1502,7 @@
 	};
 
 	FormPanelDropdown.prototype.setLabelField = function (field) {
-		if (typeof field !== 'string') {
+		if (typeof field !== 'string' && typeof field !== 'function') {
 			throw new Error('setLabelField(): The parameter must be a string.');
 		}
 		this._labelField = field;
@@ -1622,11 +1608,22 @@
 	};
 
 	FormPanelDropdown.prototype.getSelectedText = function () {
-		return jQuery(this.html).find("option:selected").text();
+		var optionData = this.getOptionData(this._value);
+		if (typeof this._labelField === 'function') {
+			return this._labelField(this, optionData);
+		}
+		return optionData[this._labelField];
 	};
 
 	FormPanelDropdown.prototype.getSelectedData = function () {
-		return jQuery(this.html).find("option:selected").data("data");
+		return this.getOptionData(this._value);
+	};
+
+	FormPanelDropdown.prototype.getOptionData = function(optionValue) {
+		if (this.html) {
+			return jQuery(this.html).find("option[value=\"" + optionValue + "\"]").data("data");
+		}
+		return this._options.find(this._valueField, optionValue);
 	};
 
 	FormPanelDropdown.prototype.setValue = function (value) {
@@ -1656,7 +1653,8 @@
 
 	FormPanelDropdown.prototype._paintOption = function (item) {
 		var option = this.createHTMLElement('option');
-		option.label = option.textContent = item[this._labelField];
+		option.label = option.textContent
+			= typeof this._labelField === 'function' ? this._labelField(this, item) : item[this._labelField];
 		option.value = typeof this._valueField === 'function' ? this._valueField(this, item) : item[this._valueField];
 		jQuery(option).data("data", item);
 		this._htmlControl[0].appendChild(option);

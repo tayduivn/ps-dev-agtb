@@ -51,99 +51,109 @@ class PMSEAddRelatedRecord extends PMSEScriptTask
         }
         
         global $timedate;
-        $bpmnElement = $this->retrieveDefinitionData($flowData['bpmn_id']);
-        $definitionBean = $this->caseFlowHandler->retrieveBean('pmse_BpmActivityDefinition', $bpmnElement['id']);
-        $processDefinitionBean = $this->caseFlowHandler->retrieveBean('pmse_BpmProcessDefinition', $definitionBean->pro_id);
 
-        if ((isset($definitionBean->act_field_module) && !empty($definitionBean->act_field_module)) &&
-            (isset($definitionBean->act_fields) && !empty($definitionBean->act_fields))
-        ) {
+        try {
+            $bpmnElement = $this->retrieveDefinitionData($flowData['bpmn_id']);
+            $definitionBean = $this->caseFlowHandler->retrieveBean('pmse_BpmActivityDefinition', $bpmnElement['id']);
+            $processDefinitionBean = $this->caseFlowHandler->retrieveBean('pmse_BpmProcessDefinition', $definitionBean->pro_id);
 
-            $arr_module = $definitionBean->act_field_module;
-            $arr_fields = json_decode(htmlspecialchars_decode($definitionBean->act_fields));
+            if ((isset($definitionBean->act_field_module) && !empty($definitionBean->act_field_module)) &&
+                (isset($definitionBean->act_fields) && !empty($definitionBean->act_fields))
+            ) {
 
-            // TODO: Probably the act_module field should be used instead of pro_module
-            $sugarModule = $processDefinitionBean->pro_module;
+                $arr_module = $definitionBean->act_field_module;
+                $arr_fields = json_decode(htmlspecialchars_decode($definitionBean->act_fields));
 
-            //Get module from RelationShips
-            $relationships = $this->beanHandler->getDeployedRelationships($sugarModule);
-            $rel_module = $relationships->get($arr_module)->getDefinition();
+                // TODO: Probably the act_module field should be used instead of pro_module
+                $sugarModule = $processDefinitionBean->pro_module;
 
-            //$this->bpmLog('INFO', "Arr_module: $arr_module, Sugar_module: $sugarModule, RelModule: " .  $rel_module['rhs_module'] . " NOTE id: " . $beanFactory->id .
-            //      " ModuleName: $moduleName, ObjectId: $object_id");
-            //Add Relationship
-            if ($rel_module['is_custom']) {
-                $rel_name = $rel_module['relationship_name'];
-            } else {
-                $rel_name = strtolower($rel_module['rhs_module']);
-            }
+                //Get module from RelationShips
+                $relationships = $this->beanHandler->getDeployedRelationships($sugarModule);
+                $rel_module = $relationships->get($arr_module)->getDefinition();
 
-            if ($bean->load_relationship($rel_name)) {
-                $relatedModule = $this->caseFlowHandler->retrieveBean($rel_module['rhs_module']);
-                if (count($arr_fields) > 0) {
-                    foreach ($arr_fields as $value) {
-                        if (!empty($value->field) && !empty($value->value)) {
-                            $key = $value->field;
-                            $newValue = '';
-                            if ($value->type == 'Datetime') {
-                                $finishDate = $this->beanHandler->processValueExpression($value->value, $bean);
-                                $date = $timedate->fromIso($finishDate);
-                                $newValue = $date->asDb();
-                            } elseif ($value->type == 'Date') {
-                                $finishDate = $this->beanHandler->processValueExpression($value->value, $bean);
-                                $date = $timedate->fromIsoDate($finishDate);
-                                $newValue = $date->asDbDate();
-                            } elseif ($key == 'assigned_user_id') {
-                                switch ($value->value) {
-                                    case 'currentuser':
-                                        $newValue = $this->beanHandler->mergeBeanInTemplate($bean,
-                                            $this->userAssignmentHandler->getCurrentUserId());
-                                        break;
-                                    case 'supervisor':
-                                        $newValue = $this->beanHandler->mergeBeanInTemplate($bean,
-                                            $this->userAssignmentHandler->getSupervisorId($this->getCurrentUserId()));
-                                        break;
-                                    case 'owner':
-                                        $newValue = $this->beanHandler->mergeBeanInTemplate($bean,
-                                            $this->userAssignmentHandler->getRecordOwnerId($bean->id, $sugarModule));
-                                        break;
-                                    default:
-                                        $newValue = $this->beanHandler->mergeBeanInTemplate($bean, $value->value);
-                                        break;
+                //$this->bpmLog('INFO', "Arr_module: $arr_module, Sugar_module: $sugarModule, RelModule: " .  $rel_module['rhs_module'] . " NOTE id: " . $beanFactory->id .
+                //      " ModuleName: $moduleName, ObjectId: $object_id");
+                //Add Relationship
+                if ($rel_module['is_custom']) {
+                    $rel_name = $rel_module['relationship_name'];
+                } else {
+                    $rel_name = strtolower($rel_module['rhs_module']);
+                }
+
+                if ($bean->load_relationship($rel_name)) {
+                    $relatedModule = $this->caseFlowHandler->retrieveBean($rel_module['rhs_module']);
+                    if (count($arr_fields) > 0) {
+                        foreach ($arr_fields as $value) {
+                            if (!empty($value->field) && !empty($value->value)) {
+                                $key = $value->field;
+                                $newValue = '';
+                                if ($value->type == 'Datetime') {
+                                    $finishDate = $this->beanHandler->processValueExpression($value->value, $bean);
+                                    $date = $timedate->fromIso($finishDate);
+                                    $newValue = $date->asDb();
+                                } elseif ($value->type == 'Date') {
+                                    $finishDate = $this->beanHandler->processValueExpression($value->value, $bean);
+                                    $date = $timedate->fromIsoDate($finishDate);
+                                    $newValue = $date->asDbDate();
+                                } elseif ($key == 'assigned_user_id') {
+                                    switch ($value->value) {
+                                        case 'currentuser':
+                                            $newValue = $this->beanHandler->mergeBeanInTemplate($bean,
+                                                $this->userAssignmentHandler->getCurrentUserId());
+                                            break;
+                                        case 'supervisor':
+                                            $newValue = $this->beanHandler->mergeBeanInTemplate($bean,
+                                                $this->userAssignmentHandler->getSupervisorId($this->getCurrentUserId()));
+                                            break;
+                                        case 'owner':
+                                            $newValue = $this->beanHandler->mergeBeanInTemplate($bean,
+                                                $this->userAssignmentHandler->getRecordOwnerId($bean->id, $sugarModule));
+                                            break;
+                                        default:
+                                            $newValue = $this->beanHandler->mergeBeanInTemplate($bean, $value->value);
+                                            break;
+                                    }
+                                } elseif ($value->type == 'Integer' || $value->type == 'Float' ||
+                                    $value->type == 'Decimal') {
+                                    $newValue = $this->beanHandler->processValueExpression($value->value, $bean);
+                                } elseif ($value->type == 'Currency') {
+                                    $newValue = $this->beanHandler->processValueExpression($value->value, $bean);
+                                    $newValue = unserialize($newValue);
+                                    $relatedModule->currency_id = $newValue->expField;
+                                    $newValue = $newValue->expValue;
+                                } else {
+                                    $newValue = $this->beanHandler->mergeBeanInTemplate($bean, $value->value);
                                 }
-                            } elseif ($value->type == 'Integer' || $value->type == 'Float' ||
-                                $value->type == 'Decimal' || $value->type == 'Currency'
-                            ) {
-                                $newValue = $this->beanHandler->processValueExpression($value->value, $bean);
-                            } else {
-                                $newValue = $this->beanHandler->mergeBeanInTemplate($bean, $value->value);
+                                $relatedModule->$key = $newValue;
+                                $this->logger->info("Data generated $newValue for $key");
                             }
-                            $relatedModule->$key = $newValue;
-                            $this->logger->info("Data generated $newValue for $key");
+                        }
+                        if (isset($relatedModule->field_defs['parent_type'], $relatedModule->field_defs['parent_id'])) {
+                            $relatedModule->parent_type = $bean->module_dir;
+                            $relatedModule->parent_id = $bean->id;
+                        }
+                        $relatedModule->save();
+                        if (!$relatedModule->in_save) {
+                            $rel_id = $relatedModule->id;
+                            $this->logger->debug("Create related record " . $rel_module['rhs_module'] . " ID: $rel_id");
+                            $bean->$rel_name->add($rel_id); //Note use of $rel_name
+                            $this->logger->debug("Add relationship $rel_name of $sugarModule");
+
+                            $scriptTaskExecuted = true;
+                        } else {
+                            $this->logger->info("Not created related record!!!");
                         }
                     }
-                    if (isset($relatedModule->field_defs['parent_type'], $relatedModule->field_defs['parent_id'])) {
-                        $relatedModule->parent_type = $bean->module_dir;
-                        $relatedModule->parent_id = $bean->id;
-                    }
-                    $relatedModule->save();
-                    if (!$relatedModule->in_save) {
-                        $rel_id = $relatedModule->id;
-                        $this->logger->debug("Create related record " . $rel_module['rhs_module'] . " ID: $rel_id");
-                        $bean->$rel_name->add($rel_id); //Note use of $rel_name
-                        $this->logger->debug("Add relationship $rel_name of $sugarModule");
-
-                        $scriptTaskExecuted = true;
-                    } else {
-                        $this->logger->info("Not created related record!!!");
-                    }
+                } else {
+                    $this->logger->info("Not load relationship $rel_name of $sugarModule");
                 }
             } else {
-                $this->logger->info("Not load relationship $rel_name of $sugarModule");
+                $this->logger->info("Not configure related record script task");
+                $scriptTaskExecuted = true;
             }
-        } else {
-            $this->logger->info("Not configure related record script task");
-            $scriptTaskExecuted = true;
+            $this->logger->debug("Script executed");
+        } catch (PMSEExpressionEvaluationException $e) {
+            throw new PMSEElementException("AddRelatedRecord: ".$e, $flowData, $this);
         }
         $this->logger->debug("Script executed");
         return $this->prepareResponse($flowData, 'ROUTE', $flowAction);

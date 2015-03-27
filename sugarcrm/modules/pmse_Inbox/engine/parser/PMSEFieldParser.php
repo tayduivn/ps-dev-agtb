@@ -121,7 +121,7 @@ class PMSEFieldParser implements PMSEDataParserInterface
         }
         return $criteriaToken;
     }
-    
+
     /**
      * parse the token ussing the old function
      * @global object $current_user
@@ -162,7 +162,7 @@ class PMSEFieldParser implements PMSEDataParserInterface
         }
 
         //$tokenValueArray = explode($delimiter, $criteriaToken->expLabel);
-        $tokenDelimiter = '::';        
+        $tokenDelimiter = '::';
         $newTokenArray = array('{', 'future', $criteriaToken->expModule, $criteriaToken->expField, '}');
         $assembledTokenString = implode($tokenDelimiter, $newTokenArray);
         $tokenValue = $this->parseTokenValue($assembledTokenString);
@@ -230,7 +230,13 @@ class PMSEFieldParser implements PMSEDataParserInterface
         $assembledTokenString = implode($tokenDelimiter, $newTokenArray);
         $tokenValue = $this->parseTokenValue($assembledTokenString);
         $criteriaToken->expToken = $assembledTokenString;
-        $criteriaToken->currentValue = $tokenValue;
+        if ($criteriaToken->expSubtype == 'Currency') {
+            $unserialized = unserialize($tokenValue);
+            $criteriaToken->expField = $unserialized["currency_id"];
+            $criteriaToken->currentValue = $unserialized["amount"];
+        } else {
+            $criteriaToken->currentValue = $tokenValue;
+        }
         if ($this->evaluatedBean->field_name_map[$criteriaToken->expValue]['type']=='date') {
             $criteriaToken->expSubtype = 'date';
         } elseif ($this->evaluatedBean->field_name_map[$criteriaToken->expValue]['type']=='datetime'
@@ -244,7 +250,8 @@ class PMSEFieldParser implements PMSEDataParserInterface
     /**
      * parser a token for a field element, is this: bool or custom fields
      * @param string $token field contains a parser
-     * @return string field value
+     * @return string field value, in the case of a currency type it returns a serialized array with the amount and
+     * the currency id.
      */
     public function parseTokenValue($token)
     {
@@ -298,18 +305,18 @@ class PMSEFieldParser implements PMSEDataParserInterface
             $field = $tokenArray[2];
         }
         $isAValidBean = (trim($module) == trim($bean->module_name));
-        $isBoolean = ('bool' == $bean->field_name_map[$field]['type']);
         if ($isAValidBean) {
-            $def = $bean->field_defs[$field];
-            if ($def['type'] == 'datetime'){
+            $def = $bean->field_name_map[$field];
+            if ($def['type'] == 'datetime') {
                 date_default_timezone_set('UTC');
                 $datetime = new Datetime($bean->$field);
                 $value = $timedate->asIso($datetime, $current_user);
+            } else if ($def['type'] == 'currency') {
+                $value = serialize(array("amount" => $bean->$field, "currency_id" => $bean->currency_id));
+            } else if ($def['type'] == 'bool') {
+                $value = ($value==1)? true : false;
             } else {
                 $value = $bean->$field;
-            }
-            if ($isBoolean) {
-                $value = ($value==1)? true : false;
             }
         } else {
             $value = !empty($all)?array_pop($all)->$tokenArray[2]:null;
