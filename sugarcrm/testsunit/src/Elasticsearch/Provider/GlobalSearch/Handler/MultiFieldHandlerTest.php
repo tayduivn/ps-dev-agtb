@@ -452,6 +452,21 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                     ),
                 ),
             ),
+            // test 'id' type
+            array(
+                'id',
+                array(
+                    'type' => 'id',
+                ),
+                array(
+                    'id' => array(
+                        'type' => 'string',
+                        'index' => 'not_analyzed',
+                        'include_in_all' => false,
+                        'fields' => array(),
+                    ),
+                ),
+            ),
         );
     }
 
@@ -614,12 +629,15 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
      */
     public function testBuildSearchFields(array $types, array $multi, $module, $field, array $defs, array $expected)
     {
-        $sf = new SearchFields();
-        $sut = $this->getMultiFieldHandlerMock();
+
+        $sut = $this->getMultiFieldHandlerMock(array('addHighlighterField'));
 
         // set multi field types and definitions
         TestReflection::setProtectedValue($sut, 'typesMultiField', $types);
         TestReflection::setProtectedValue($sut, 'multiFieldDefs', $multi);
+
+        // mock SearchFields
+        $sf = new SearchFields();
 
         $sut->buildSearchFields($sf, $module, $field, $defs);
         $this->assertEquals($expected, $sf->getSearchFields());

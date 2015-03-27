@@ -66,8 +66,7 @@ class MultiFieldHandler extends AbstractHandler implements
             'gs_url_wildcard',
         ),
         'id' => array(
-            'gs_string',
-            'gs_string_wildcard',
+            'not_analyzed',
         ),
     );
 
@@ -351,7 +350,7 @@ class MultiFieldHandler extends AbstractHandler implements
                 $weightId = $field;
                 // add explicit field to highlighter
                 $highlightField = $module . '.' . $field;
-                $this->provider->addHighlighterFields(array($highlightField => array('number_of_frags' => 0)));
+                $this->addHighlighterField($module, $field, array('number_of_frags' => 0));
             } else {
                 $path = array($field, $searchField);
                 $weightId = $searchField;
@@ -366,6 +365,18 @@ class MultiFieldHandler extends AbstractHandler implements
     public function getSupportedTypes()
     {
         return array_keys($this->typesMultiField);
+    }
+
+    /**
+     * Add additional field to the highlighter
+     * @param string $module Module name
+     * @param string $field Field name
+     * @param array $settings Highlighter settings
+     */
+    protected function addHighlighterField($module, $field, array $settings = array())
+    {
+        $highlightField = $module . '.' . $field;
+        $this->provider->addHighlighterFields(array($highlightField => $settings));
     }
 
     /**
