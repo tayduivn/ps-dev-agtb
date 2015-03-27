@@ -51,7 +51,6 @@
 .record .record-cell {
   .record-label {
     &[data-name="attachment_list"] {
-      padding-bottom: 6px !important;
     }
     &[data-name="kbdocument_body_set"] {
       margin-top: 12px;
@@ -60,9 +59,52 @@
   }
   &.edit {
     span[data-fieldname="attachment_list"] {
-      > span.edit{
+      > span.edit {
         margin-left: -6px;
+        .select2-search-choice a {
+          margin-top: 2px;
+        }
+        .select2-container {
+          &.with-padding {
+            margin-left: 5px !important;
+            width: 99.6%;
+            .select2-choices {
+              padding-left: 66px !important;
+              padding-top: 2px;
+              padding-bottom: 2px;
+              .select2-search-choice {
+                div {
+                  float: left;
+                }
+                a {
+                  float: right;
+                  padding-left: 5px;
+                }
+              }
+            }
+          }
+        }
+        label.kb-attach-btn {
+          line-height: 12px;
+          margin-top: -7px;
+        }
       }
+    }
+  }
+  .normal {
+    &[data-fieldname="attachment_list"] {
+      .detail {
+        padding-top: 0;
+        padding-left: 0;
+        .select2-container {
+          .select2-choices {
+            border: none;
+            button.btn-kb-download-all {
+              margin-top: 2px;
+            }
+          }
+        }
+      }  
     }
   }
 }
@@ -84,6 +126,7 @@ div.kb-attachmentlist-details-view {
       span.select2-choice-type {
         margin: 0 !important;
         a.kb-attachment-link {
+          margin-top: 2px;
           padding: 2px 4px !important;
         }
       }
@@ -158,27 +201,6 @@ label.kb-attach-btn {
   margin: -5px 0px 0px -7px;
 }
 
-.select2-container {
-  &.with-padding {
-    margin-left: 5px !important;
-    width: 99.6%;
-    .select2-choices {
-      padding-left: 66px !important;
-      padding-top: 7px;
-      padding-bottom: 7px;
-      .select2-search-choice {
-        div {
-          float: left;
-        }
-        a {
-          float: right;
-          padding-left: 5px;
-        }
-      }
-    }
-  }
-}
-
 .select2field-tags {
   .select2-choices {
     .select2-search-choice {
@@ -243,5 +265,20 @@ body.kbdocument-body {
   }
   .fontSizeMini {
     font-size: @fontSizeMini;
+  }
+}
+
+.preview-pane {
+  .row-fluid {
+    [data-type="attachments"] {
+      padding-top: 0;
+      padding-left: 0;
+      .detail {
+        .select2-choices {
+          border: none;
+          background-color: transparent;
+        }
+      }
+    }
   }
 }
