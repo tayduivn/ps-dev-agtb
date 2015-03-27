@@ -37,7 +37,7 @@ class PMSESettings
         'logger_level' => array(
             'name' => 'logger_level',
             'description' => 'Logger Level',
-            'value' => 'info',
+            'value' => 'critical',
             'type' => 'combobox',
             'items' => array(
                 'emergency' => 'EMERGENCY',
