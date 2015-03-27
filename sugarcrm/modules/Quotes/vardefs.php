@@ -165,6 +165,7 @@ $dictionary['Quote'] = array(
             'full_text_search' => array(
                 'enabled' => true,
                 'searchable' => true,
+                'type' => 'exact',
             ),
         ),
         'quote_num' => array(
@@ -178,6 +179,7 @@ $dictionary['Quote'] = array(
             'full_text_search' => array(
                 'enabled' => true,
                 'searchable' => true,
+                'type' => 'exact',
             ),
             'disable_num_format' => true,
             'enable_range_search' => true,

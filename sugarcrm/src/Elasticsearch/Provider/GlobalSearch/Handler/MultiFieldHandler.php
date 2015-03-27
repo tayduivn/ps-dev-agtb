@@ -68,6 +68,9 @@ class MultiFieldHandler extends AbstractHandler implements
         'id' => array(
             'not_analyzed',
         ),
+        'exact' => array(
+            'gs_string_exact',
+        ),
     );
 
     /**
@@ -183,6 +186,19 @@ class MultiFieldHandler extends AbstractHandler implements
             'search_analyzer' => 'gs_analyzer_url',
             'store' => false,
         ),
+
+        /*
+         * String analyzer with full word matching base ond
+         * the whitespace analyzer. This will generate hits on the full
+         * words tokenized by the whitespace analyzer.
+         */
+        'gs_string_exact' => array(
+            'type' => 'string',
+            'index' => 'not_analyzed',
+            'index_analyzer' => 'gs_analyzer_string_exact',
+            'search_analyzer' => 'gs_analyzer_string_exact',
+            'store' => false,
+        ),
     );
 
     /**
@@ -202,6 +218,7 @@ class MultiFieldHandler extends AbstractHandler implements
      */
     protected $highlighterFields = array(
         '*.gs_string' => array(),
+        '*.gs_string_exact' => array(),
         '*.gs_string_wildcard' => array(),
         '*.gs_text_wildcard' => array(),
         '*.gs_phone_wildcard' => array(
@@ -309,6 +326,13 @@ class MultiFieldHandler extends AbstractHandler implements
                 'gs_analyzer_url_ngram',
                 'uax_url_email',
                 array('lowercase', 'gs_filter_ngram_2_15')
+            )
+
+            // String Analyzer using whitespace tokenizer for exact matching
+            ->addCustomAnalyzer(
+                'gs_analyzer_string_exact',
+                'whitespace',
+                array('lowercase')
             )
         ;
     }

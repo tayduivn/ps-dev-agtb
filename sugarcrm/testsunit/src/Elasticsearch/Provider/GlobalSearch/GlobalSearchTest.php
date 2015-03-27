@@ -48,6 +48,7 @@ class GlobalSearchTest extends \PHPUnit_Framework_TestCase
             'phone',
             'url',
             'id',
+            'exact',
             'email',
         );
         $sut = new GlobalSearch();

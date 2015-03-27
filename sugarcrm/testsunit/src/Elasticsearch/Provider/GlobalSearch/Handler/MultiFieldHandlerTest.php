@@ -175,6 +175,13 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                         ),
                         'type' => 'custom',
                     ),
+                    'gs_analyzer_string_exact' => array(
+                        'tokenizer' => 'whitespace',
+                        'filter' => array(
+                            'lowercase',
+                        ),
+                        'type' => 'custom',
+                    ),
                 ),
                 'tokenizer' => array(),
                 'filter' => array(
@@ -472,6 +479,30 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                         'type' => 'string',
                         'index' => 'not_analyzed',
                         'include_in_all' => false,
+                    ),
+                ),
+            ),
+            // test 'exact' type
+            array(
+                'Accounts',
+                'stuff',
+                array(
+                    'type' => 'exact',
+                ),
+                array(
+                    'Accounts__stuff' => array(
+                        'type' => 'string',
+                        'index' => 'not_analyzed',
+                        'include_in_all' => false,
+                        'fields' => array(
+                            'gs_string_exact' => array(
+                                'type' => 'string',
+                                'index' => 'not_analyzed',
+                                'index_analyzer' => 'gs_analyzer_string_exact',
+                                'search_analyzer' => 'gs_analyzer_string_exact',
+                                'store' => false,
+                            ),
+                        ),
                     ),
                 ),
             ),
