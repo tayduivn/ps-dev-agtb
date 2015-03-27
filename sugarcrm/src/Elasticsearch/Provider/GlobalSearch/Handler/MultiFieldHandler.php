@@ -349,7 +349,6 @@ class MultiFieldHandler extends AbstractHandler implements
                 $path = array($field);
                 $weightId = $field;
                 // add explicit field to highlighter
-                $highlightField = $module . '.' . $field;
                 $this->addHighlighterField($module, $field, array('number_of_frags' => 0));
             } else {
                 $path = array($field, $searchField);
@@ -375,7 +374,7 @@ class MultiFieldHandler extends AbstractHandler implements
      */
     protected function addHighlighterField($module, $field, array $settings = array())
     {
-        $highlightField = $module . '.' . $field;
+        $highlightField = $module . Mapping::PREFIX_SEP . $field;
         $this->provider->addHighlighterFields(array($highlightField => $settings));
     }
 

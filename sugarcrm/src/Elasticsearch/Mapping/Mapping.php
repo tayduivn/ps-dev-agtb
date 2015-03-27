@@ -29,6 +29,12 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\ObjectProperty;
 class Mapping
 {
     /**
+     * Module name prefix separator
+     * @var string
+     */
+    const PREFIX_SEP = '__';
+
+    /**
      * @var string Module name
      */
     protected $module;
@@ -83,10 +89,9 @@ class Mapping
      */
     public function compile()
     {
-        // TODO: add dynamic update property handling here
         $compiled = array();
         foreach ($this->properties as $field => $property) {
-            $compiled[$field] = $property->getMapping();
+            $compiled[$this->normalizeFieldName($field)] = $property->getMapping();
         }
         return $compiled;
     }
@@ -181,5 +186,19 @@ class Mapping
             throw new MappingException("Cannot redeclare field '{$field}' for module '{$this->module}'");
         }
         $this->properties[$field] = $property;
+    }
+
+    /**
+     * Prefix field name using module name. In certain cases Elasticsearch
+     * has problems using disambigious field names when a given field exists
+     * across multiple modules (i.e. multi_match has this behavior). Therefor
+     * we prefix all main fields with the module name to mitigate this problem.
+     *
+     * @param string $field
+     * @return string
+     */
+    protected function normalizeFieldName($field)
+    {
+        return $this->module . self::PREFIX_SEP . $field;
     }
 }

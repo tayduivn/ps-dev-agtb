@@ -143,9 +143,9 @@ class EmailAddressHandlerTest extends \PHPUnit_Framework_TestCase
      * @covers ::buildMapping
      * @dataProvider providerTestBuildMapping
      */
-    public function testBuildMapping($field, array $defs, array $expected)
+    public function testBuildMapping($module, $field, array $defs, array $expected)
     {
-        $mapping = new Mapping('foobar');
+        $mapping = new Mapping($module);
         $sut = $this->getEmailAddressHandlerMock();
         $sut->buildMapping($mapping, $field, $defs);
         $this->assertEquals($expected, $mapping->compile());
@@ -156,20 +156,21 @@ class EmailAddressHandlerTest extends \PHPUnit_Framework_TestCase
         return array(
             // test 'email' type for 'email' field
             array(
+                'testModule',
                 'email',
                 array(
                     'name' => 'email',
                     'type' => 'email',
                 ),
                 array(
-                    'email' => array(
+                    'testModule__email' => array(
                         'type' => 'object',
                         'include_in_all' => false,
                         'dynamic' => false,
                         'enabled' => false,
                         'properties' => array(),
                     ),
-                    'email_search' => array(
+                    'testModule__email_search' => array(
                         'type' => 'object',
                         'dynamic' => false,
                         'enabled' => true,
@@ -217,6 +218,7 @@ class EmailAddressHandlerTest extends \PHPUnit_Framework_TestCase
             ),
             // test 'email' type for non 'email' field
             array(
+                'Accounts',
                 'other_email',
                 array(
                     'name' => 'other_email',
@@ -226,6 +228,7 @@ class EmailAddressHandlerTest extends \PHPUnit_Framework_TestCase
             ),
             // test non 'email' type for 'email' field
             array(
+                'Contacts',
                 'email',
                 array(
                     'name' => 'email',
@@ -235,6 +238,7 @@ class EmailAddressHandlerTest extends \PHPUnit_Framework_TestCase
             ),
             // test non 'email' type for non 'email' field
             array(
+                'Leads',
                 'other_email',
                 array(
                     'name' => 'other_email',
@@ -269,10 +273,10 @@ class EmailAddressHandlerTest extends \PHPUnit_Framework_TestCase
                     'type' => 'email',
                 ),
                 array(
-                    'Contacts.email_search.primary.gs_email',
-                    'Contacts.email_search.primary.gs_email_wildcard',
-                    'Contacts.email_search.secondary.gs_email',
-                    'Contacts.email_search.secondary.gs_email_wildcard',
+                    'Contacts__email_search.primary.gs_email',
+                    'Contacts__email_search.primary.gs_email_wildcard',
+                    'Contacts__email_search.secondary.gs_email',
+                    'Contacts__email_search.secondary.gs_email_wildcard',
                 ),
             ),
             // non email type/field

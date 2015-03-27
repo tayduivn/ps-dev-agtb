@@ -44,7 +44,7 @@ class SearchFieldsTest extends \PHPUnit_Framework_TestCase
                 array('first_name'),
                 array(),
                 'test_ngram',
-                'Contacts.first_name',
+                'Contacts__first_name',
                 null,
             ),
             // two levels
@@ -53,7 +53,7 @@ class SearchFieldsTest extends \PHPUnit_Framework_TestCase
                 array('first_name', 'test_ngram'),
                 array(),
                 'test_ngram',
-                'Contacts.first_name.test_ngram',
+                'Contacts__first_name.test_ngram',
                 null,
             ),
             // three levels
@@ -62,7 +62,7 @@ class SearchFieldsTest extends \PHPUnit_Framework_TestCase
                 array('email_search', 'primary', 'test_default'),
                 array(),
                 'test_ngram',
-                'Contacts.email_search.primary.test_default',
+                'Contacts__email_search.primary.test_default',
                 null,
             ),
             // three levels with boost
@@ -71,8 +71,8 @@ class SearchFieldsTest extends \PHPUnit_Framework_TestCase
                 array('email_search', 'primary', 'test_default'),
                 array(),
                 'test_ngram',
-                'Contacts.email_search.primary.test_default^1',
-                $this->getBoosterMock('Contacts.email_search.primary.test_default'),
+                'Contacts__email_search.primary.test_default^1',
+                $this->getBoosterMock('Contacts__email_search.primary.test_default'),
             ),
         );
     }

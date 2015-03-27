@@ -13,6 +13,7 @@
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Adapter;
 
 use Elastica\Document as BaseDocument;
+use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
 
 /**
  *
@@ -38,5 +39,18 @@ class Document extends BaseDocument
     public function setDataField($field, $value)
     {
         $this->_data[$field] = $value;
+    }
+
+    /**
+     * Normalize field names prefixing it with module name
+     */
+    public function normalizeDataFieldNames()
+    {
+        $prefixed = array();
+        foreach ($this->_data as $field => $data) {
+            $field = $this->getType() . Mapping::PREFIX_SEP . $field;
+            $prefixed[$field] = $data;
+        }
+        $this->setData($prefixed);
     }
 }

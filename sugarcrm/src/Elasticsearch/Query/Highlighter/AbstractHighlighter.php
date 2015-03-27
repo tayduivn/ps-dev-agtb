@@ -12,6 +12,8 @@
 
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Query\Highlighter;
 
+use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
+
 /**
  *
  * Abstract Highlighter
@@ -222,7 +224,13 @@ abstract class AbstractHighlighter implements HighlighterInterface
      */
     public function normalizeFieldName($field)
     {
-        $norm = array_shift(explode('.', $field));
-        return isset($this->fieldRemap[$norm]) ? $this->fieldRemap[$norm] : $norm;
+        // Strip of the module name and keep the main field only. If no match
+        // is found we continue with the field value as is.
+        if (preg_match('/^.*' . Mapping::PREFIX_SEP . '([^.]*).*$/', $field, $matches)) {
+            $field = $matches[1];
+        }
+
+        // apply remap if any defined
+        return isset($this->fieldRemap[$field]) ? $this->fieldRemap[$field] : $field;
     }
 }

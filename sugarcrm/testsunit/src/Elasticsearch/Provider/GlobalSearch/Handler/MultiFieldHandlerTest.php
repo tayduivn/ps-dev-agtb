@@ -212,9 +212,9 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
      * @coversNothing
      * @dataProvider providerTestBuildMappingValidation
      */
-    public function testBuildMappingValidation($field, array $defs, array $expected)
+    public function testBuildMappingValidation($module, $field, array $defs, array $expected)
     {
-        $mapping = new Mapping('foobar');
+        $mapping = new Mapping($module);
         $sut = $this->getMultiFieldHandlerMock();
         $sut->buildMapping($mapping, $field, $defs);
         $this->assertEquals($expected, $mapping->compile());
@@ -225,12 +225,13 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
         return array(
             // test 'varchar' type
             array(
+                'Accounts',
                 'billing_street',
                 array(
                     'type' => 'varchar',
                 ),
                 array(
-                    'billing_street' => array(
+                    'Accounts__billing_street' => array(
                         'type' => 'string',
                         'index' => 'not_analyzed',
                         'include_in_all' => false,
@@ -255,12 +256,13 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
             ),
             // test 'name' type
             array(
+                'Opporunities',
                 'name',
                 array(
                     'type' => 'name',
                 ),
                 array(
-                    'name' => array(
+                    'Opporunities__name' => array(
                         'type' => 'string',
                         'index' => 'not_analyzed',
                         'include_in_all' => false,
@@ -285,12 +287,13 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
             ),
             // test 'username' type
             array(
+                'Contacts',
                 'name',
                 array(
                     'type' => 'username',
                 ),
                 array(
-                    'name' => array(
+                    'Contacts__name' => array(
                         'type' => 'string',
                         'index' => 'not_analyzed',
                         'include_in_all' => false,
@@ -315,12 +318,13 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
             ),
             // test 'text' type
             array(
+                'Accounts',
                 'description',
                 array(
                     'type' => 'text',
                 ),
                 array(
-                    'description' => array(
+                    'Accounts__description' => array(
                         'type' => 'string',
                         'index' => 'not_analyzed',
                         'include_in_all' => false,
@@ -345,12 +349,13 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
             ),
             // test 'datetime' type
             array(
+                'Accounts',
                 'date_modified',
                 array(
                     'type' => 'datetime',
                 ),
                 array(
-                    'date_modified' => array(
+                    'Accounts__date_modified' => array(
                         'type' => 'string',
                         'index' => 'not_analyzed',
                         'include_in_all' => false,
@@ -366,12 +371,13 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
             ),
             // test 'int' type
             array(
+                'Cases',
                 'case_number',
                 array(
                     'type' => 'int',
                 ),
                 array(
-                    'case_number' => array(
+                    'Cases__case_number' => array(
                         'type' => 'string',
                         'index' => 'not_analyzed',
                         'include_in_all' => false,
@@ -401,12 +407,13 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
             ),
             // test 'phone' type
             array(
+                'Contacts',
                 'mobile',
                 array(
                     'type' => 'phone',
                 ),
                 array(
-                    'mobile' => array(
+                    'Contacts__mobile' => array(
                         'type' => 'string',
                         'index' => 'not_analyzed',
                         'include_in_all' => false,
@@ -424,12 +431,13 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
             ),
             // test 'url' type
             array(
+                'Accounts',
                 'website',
                 array(
                     'type' => 'url',
                 ),
                 array(
-                    'website' => array(
+                    'Accounts__website' => array(
                         'type' => 'string',
                         'index' => 'not_analyzed',
                         'include_in_all' => false,
@@ -454,12 +462,13 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
             ),
             // test 'id' type
             array(
+                'Accounts',
                 'id',
                 array(
                     'type' => 'id',
                 ),
                 array(
-                    'id' => array(
+                    'Accounts__id' => array(
                         'type' => 'string',
                         'index' => 'not_analyzed',
                         'include_in_all' => false,
@@ -475,9 +484,9 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
      * @covers ::getMultiFieldProperty
      * @dataProvider providerTestBuildMapping
      */
-    public function testBuildMapping(array $types, array $multi, $field, array $defs, array $expected)
+    public function testBuildMapping($module, array $types, array $multi, $field, array $defs, array $expected)
     {
-        $mapping = new Mapping('foobar');
+        $mapping = new Mapping($module);
         $sut = $this->getMultiFieldHandlerMock();
 
         // set multi field types and definitions
@@ -493,6 +502,7 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
         return array(
             // missing field type
             array(
+                'FooBar',
                 array(),
                 array(),
                 'first_name',
@@ -503,6 +513,7 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
             ),
             // missing mapping definition
             array(
+                'FooBar',
                 array(),
                 array(),
                 'first_name',
@@ -514,6 +525,7 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
             ),
             // single definition
             array(
+                'custom_Module',
                 array(
                     'type1' => array('mapping1'),
                 ),
@@ -525,7 +537,7 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                     'type' => 'type1',
                 ),
                 array(
-                    'field1' => array(
+                    'custom_Module__field1' => array(
                         'type' => 'string',
                         'index' => 'not_analyzed',
                         'include_in_all' => false,
@@ -539,6 +551,7 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
             ),
             // multi definition
             array(
+                'Accounts',
                 array(
                     'type1' => array('mapping1', 'mapping2'),
                 ),
@@ -551,7 +564,7 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                     'type' => 'type1',
                 ),
                 array(
-                    'field1' => array(
+                    'Accounts__field1' => array(
                         'type' => 'string',
                         'index' => 'not_analyzed',
                         'include_in_all' => false,
@@ -568,6 +581,7 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
             ),
             // not_analyzed type
             array(
+                'test_New_Module',
                 array(
                     'type1' => array('not_analyzed'),
                 ),
@@ -579,7 +593,7 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                     'type' => 'type1',
                 ),
                 array(
-                    'field1' => array(
+                    'test_New_Module__field1' => array(
                         'type' => 'string',
                         'index' => 'not_analyzed',
                         'include_in_all' => false,
@@ -589,6 +603,7 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
             ),
             // multi definition with not_analyzed
             array(
+                'Opportunities',
                 array(
                     'type1' => array('mapping1', 'not_analyzed', 'mapping2'),
                 ),
@@ -602,7 +617,7 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                     'type' => 'type1',
                 ),
                 array(
-                    'field1' => array(
+                    'Opportunities__field1' => array(
                         'type' => 'string',
                         'index' => 'not_analyzed',
                         'include_in_all' => false,
@@ -629,7 +644,6 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
      */
     public function testBuildSearchFields(array $types, array $multi, $module, $field, array $defs, array $expected)
     {
-
         $sut = $this->getMultiFieldHandlerMock(array('addHighlighterField'));
 
         // set multi field types and definitions
@@ -688,8 +702,8 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                     'type' => 'varchar',
                 ),
                 array(
-                    'Contacts.first_name.test_default',
-                    'Contacts.first_name.test_ngram',
+                    'Contacts__first_name.test_default',
+                    'Contacts__first_name.test_ngram',
                 ),
             ),
             // test not_analyzed field
@@ -702,14 +716,14 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                 array(
                     'not_analyzed' => array(),
                 ),
-                'CustomModule',
+                'test_CustomModule',
                 'custom_field',
                 array(
                     'name' => 'custom_field',
                     'type' => 'custom_type',
                 ),
                 array(
-                    'CustomModule.custom_field',
+                    'test_CustomModule__custom_field',
                 ),
             ),
             // test not_analyzed field combined with other multifields
@@ -733,9 +747,9 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                     'type' => 'custom_type',
                 ),
                 array(
-                    'CustomModule.custom_field',
-                    'CustomModule.custom_field.test_default',
-                    'CustomModule.custom_field.test_ngram',
+                    'CustomModule__custom_field',
+                    'CustomModule__custom_field.test_default',
+                    'CustomModule__custom_field.test_ngram',
                 ),
             ),
             // test mix string and non-string fields
@@ -757,7 +771,7 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                     'type' => 'custom_type',
                 ),
                 array(
-                    'CustomModule.custom_field.test_default',
+                    'CustomModule__custom_field.test_default',
                 ),
             ),
             // test mix string and non-string fields with not_analyzed
@@ -781,8 +795,8 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                     'type' => 'custom_type',
                 ),
                 array(
-                    'CustomModule.custom_field.test_default',
-                    'CustomModule.custom_field',
+                    'CustomModule__custom_field.test_default',
+                    'CustomModule__custom_field',
                 ),
             ),
         );

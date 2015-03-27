@@ -12,6 +12,8 @@
 
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch;
 
+use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
+
 /**
  *
  * SearchFields builder
@@ -62,7 +64,7 @@ class SearchFields
      */
     public function addSearchField($module, array $path, array $defs, $weightId)
     {
-        $searchField = $module . self::FIELD_SEP . implode(self::FIELD_SEP, $path);
+        $searchField = $module . Mapping::PREFIX_SEP . implode(self::FIELD_SEP, $path);
         if ($this->booster) {
             $searchField = $this->booster->getBoostedField($searchField, $defs, $weightId);
         }
