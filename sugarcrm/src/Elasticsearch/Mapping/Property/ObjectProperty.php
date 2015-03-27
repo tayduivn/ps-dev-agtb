@@ -55,16 +55,22 @@ class ObjectProperty extends RawProperty implements PropertyInterface
      */
     public function getMapping()
     {
-        return array_merge(
+        $mapping = array_merge(
             $this->mapping,
             array(
                 'type' => $this->type,
                 'dynamic' => $this->dynamic,
                 'enabled' => $this->enabled,
                 'include_in_all' => $this->includeInall,
-                'properties' => $this->properties,
             )
         );
+
+        // Only add properties if any are set
+        if (!empty($this->properties)) {
+            $mapping['properties'] = $this->properties;
+        }
+
+        return $mapping;
     }
 
     /**

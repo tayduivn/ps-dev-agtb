@@ -43,10 +43,14 @@ class MultiFieldBaseProperty extends RawProperty implements PropertyInterface
      */
     public function getMapping()
     {
-        return array_merge(
-            $this->mapping,
-            array('fields' => $this->fields)
-        );
+        $mapping = $this->mapping;
+
+        // Only add fields if any are set
+        if (!empty($this->fields)) {
+            $mapping['fields'] = $this->fields;
+        }
+
+        return $mapping;
     }
 
     /**

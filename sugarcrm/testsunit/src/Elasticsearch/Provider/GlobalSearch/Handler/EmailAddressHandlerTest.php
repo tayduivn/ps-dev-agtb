@@ -168,7 +168,6 @@ class EmailAddressHandlerTest extends \PHPUnit_Framework_TestCase
                         'include_in_all' => false,
                         'dynamic' => false,
                         'enabled' => false,
-                        'properties' => array(),
                     ),
                     'testModule__email_search' => array(
                         'type' => 'object',
