@@ -1,6 +1,7 @@
 (function(){
 
-var underscoreDelayFunctions = ["throttle", "debounce"];
+var underscoreDelayFunctions = ['throttle', 'debounce'];
+var underscoreSetTimeoutFunctions = ['delay', 'defer'];
 
 beforeEach(function(){
     if (!(SugarTest.clock && SugarTest.clock.restore))
@@ -29,6 +30,18 @@ beforeEach(function(){
                 };
             });
         }
+    });
+
+    //mock delay and defer to prevent the need to actually wait.
+    //we want to invoke the stubbed method right away
+    _.each(underscoreSetTimeoutFunctions, function(func) {
+        if (_[func].restore) {
+            return;
+        }
+
+        sinon.stub(_, func, function(f, t) {
+            f(t);
+        });
     });
 
     // stub out the icon helper so that tests calling templates don't bomb...
