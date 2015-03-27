@@ -33,6 +33,10 @@ class SugarQuery_Builder_Field_Orderby extends SugarQuery_Builder_Field
             $this->def['sort_on'] = !is_array($this->def['sort_on']) ? array($this->def['sort_on']) : $this->def['sort_on'];
         }
 
+        if (!empty($this->def['source']) && $this->def['source'] === 'non-db') {
+            $this->markNonDb();
+        }
+
         if (!empty($this->def['rname']) && !empty($this->def['link'])) {
             $jta = $this->query->getJoinAlias($this->def['link']);
             if (empty($jta)) {
