@@ -887,7 +887,11 @@ class ModuleInstaller{
         foreach ($this->extensions as $extname => $ext) {
             if (empty($filter) || in_array($extname, $filter)) {
                 $func = "rebuild_$extname";
-                if (method_exists($this, $func)) {
+                //Special case for languages since it breaks the $modules as first argument interface.
+                //TODO: Refactor rebuilding helper into proper interfaces and out of the "Installer" class.
+                if ($func == "rebuild_languages") {
+                    $this->rebuild_languages(null, $modules);
+                } elseif (method_exists($this, $func)) {
                     // non-standard function
                     $this->$func($modules);
                 } else {

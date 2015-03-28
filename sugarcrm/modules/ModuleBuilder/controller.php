@@ -469,12 +469,11 @@ class ModuleBuilderController extends SugarController
                 global $mod_strings;
                 $mod_strings['LBL_ALL_MODULES'] = 'all_modules';
                 $repair = new RepairAndClear();
-                $class_name = $GLOBALS ['beanList'] [$module];
 
                 // Set up an array for repairing modules
-                $repairModules = array($class_name);
+                $repairModules = array($module);
                 if ($module === 'Users') {
-                    $repairModules[] = 'Employee';
+                    $repairModules[] = 'Employees';
                 }
                 $repair->repairAndClearAll(array('rebuildExtensions', 'clearVardefs', 'clearTpls', 'clearSearchCache'), $repairModules, true, false);
                 //Ensure the vardefs are up to date for this module before we rebuild the cache now.
@@ -575,7 +574,7 @@ class ModuleBuilderController extends SugarController
         if (!empty($field->formula))
             $relatedMods = array_merge($relatedMods, VardefManager::getLinkedModulesFromFormula($mod, $field->formula));
         foreach ($relatedMods as $mName => $oName) {
-            $repair->repairAndClearAll(array('clearVardefs', 'clearTpls'), array($oName), true, false);
+            $repair->repairAndClearAll(array('clearVardefs', 'clearTpls'), array($mName), true, false);
             VardefManager::clearVardef($mName, $oName);
         }
         //END SUGARCRM flav=pro ONLY
