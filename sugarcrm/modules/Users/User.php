@@ -2489,7 +2489,7 @@ EOQ;
         $from_cache = true,
         $order_by = array()
     ) {
-        global $locale, $dictionary;
+        global $locale, $dictionary, $current_user;
 
         if (empty($locale)) {
             $locale = Localization::getObject();
@@ -2532,8 +2532,27 @@ EOQ;
             }
             $orderQuery[] = "$field $direction";
         }
+
         if (empty($orderQuery)) {
-            $orderQuery[] = 'user_name ASC';
+            // get the user preference for name formatting, to be used in order by
+            if (!empty($current_user) && !empty($current_user->id)) {
+                $formatString = $current_user->getPreference('default_locale_name_format');
+
+                // create the order by string based on position of first and last name in format string
+                $firstNamePos = strpos($formatString, 'f');
+                $lastNamePos = strpos($formatString, 'l');
+                if ($firstNamePos !== false || $lastNamePos !== false) {
+                    // it is possible for first name to be skipped, check for this
+                    if ($firstNamePos === false) {
+                        $orderQuery[] =  'last_name ASC';
+                    } else {
+                        $orderQuery[] =  ($lastNamePos < $firstNamePos) ?
+                            'last_name, first_name ASC' : 'first_name, last_name ASC';
+                    }
+                }
+            } else {
+                $orderQuery[] = 'user_name ASC';
+            }
         }
 
         $query .= " ORDER BY " . implode(', ', $orderQuery);
