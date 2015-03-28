@@ -104,9 +104,34 @@ abstract class OpportunitySetup
             $field_defs = $this->bean->getFieldDefinition($field);
             // load the field type up
             $f = get_widget($field_defs['type']);
+    
+            $diff = array();
+            foreach ($new_defs as $k => $v) {
+                if (!isset($field_defs[$k])) {
+                    switch ($k) {
+                        case 'massupdate' :
+                        case 'studio' :
+                        case 'reportable' :
+                        case 'workflow' :
+                            if (!$v) {
+                                $diff[$k] = $v;
+                            }
+                            break;
+                        default :
+                            if ($v) {
+                                $diff[$k] = $v;
+                            }
+                    }
+                } elseif ($field_defs[$k] != $v) {
+                    $diff[$k] = $v;
+                }
+            }
+            if (empty($diff)) {
+                continue;
+            }
 
             // populate the row from the vardefs that were loaded and the new_defs
-            $f->populateFromRow(array_merge($field_defs, $new_defs));
+            $f->populateFromRow(array_merge($field_defs, $diff));
 
             // now lets save, since these are OOB field, we use StandardField
             $df = new StandardField($this->bean->module_name);
@@ -350,6 +375,9 @@ abstract class OpportunitySetup
             } elseif (!$add && $hasRLI) {
                 unset($GLOBALS['app_list_strings'][$list_key][$rli->module_name]);
                 unset($list[$rli->module_name]);
+            } else {
+                // nothing changed, we can continue
+                continue;
             }
 
             // the parser need all the values to be in their own array with the key first then the value
@@ -392,6 +420,8 @@ abstract class OpportunitySetup
             $enModules['RevenueLineItems'] = count($enModules);
         } elseif ($enable === false && $hasRLI === true) {
             unset($enModules['RevenueLineItems']);
+        } else {
+            return;
         }
 
         $cscb->saveChangesToQuickCreateMetadata($modules['enabled'], $modules['disabled'], $enModules);

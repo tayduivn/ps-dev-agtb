@@ -98,7 +98,7 @@ END;
 
         // Do it also for bwcModules since some of them may not have Menu.php and we need it
         // Also some non-MB modules marked as BWC in post scripts and should have valid menu as well.
-        foreach ($GLOBALS['bwcModules'] as $moduleName) {
+        foreach ($this->getNotCoreBwcModules() as $moduleName) {
             if (!file_exists("modules/$moduleName")) {
                 continue;
             }
@@ -120,5 +120,29 @@ END;
                 $this->addMenu($moduleName);
             }
         }
+    }
+
+    /**
+     * Search for bwc modules which are not related to core bwc modules
+     *
+     * @return array
+     */
+    protected function getNotCoreBwcModules()
+    {
+        // Because of 6_ScanModules.php we should find core BWC modules in some specific way.
+        $bwcModules = array();
+        include 'include/modules.php';
+        $coreBwcModules = $bwcModules;
+        foreach (SugarAutoLoader::existing('include/modules_override.php', SugarAutoLoader::loadExtension("modules")) as $modExtFile) {
+            $bwcModules = array();
+            include $modExtFile;
+            foreach ($bwcModules as $module) {
+                $key = array_search($module, $coreBwcModules);
+                if ($key !== false) {
+                    unset($coreBwcModules[$key]);
+                }
+            }
+        }
+        return array_diff($GLOBALS['bwcModules'], $coreBwcModules);
     }
 }

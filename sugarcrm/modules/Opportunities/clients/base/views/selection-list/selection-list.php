@@ -40,6 +40,11 @@ $viewdefs['Opportunities']['base']['view']['selection-list'] = array(
                     'readonly' => true,
                 ),
                 array(
+                    'name' => 'probability',
+                    'enabled' => true,
+                    'default' => true,
+                ),
+                array(
                     'name' => 'amount',
                     'type' => 'currency',
                     'label' => 'LBL_LIKELY',

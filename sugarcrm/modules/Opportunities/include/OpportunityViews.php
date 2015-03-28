@@ -68,24 +68,25 @@ class OpportunityViews
         // doesn't have position capabilities...grrrr
 
         $fields = $parser->getAvailableFields();
-
+        $handleSave = false;
         foreach ($fieldMap as $fieldName => $fieldAction) {
             if ($fieldAction === true) {
                 // lets make sure the field is Available
                 foreach ($fields as $k => $val) {
                     if ($val['name'] == $fieldName) {
-                        $parser->addField($val);
+                        $handleSave = $handleSave | $parser->addField($val);
                         break;
                     }
                 }
             } else {
                 if ($fieldAction === false) {
-                    $parser->removeField($fieldName);
+                    $handleSave = $handleSave | $parser->removeField($fieldName);
                 }
             }
         }
-
-        $parser->handleSave(false);
+        if ($handleSave) {
+            $parser->handleSave(false);
+        }
     }
 
     /**
@@ -224,9 +225,8 @@ class OpportunityViews
      */
     private function processList(array $fieldMap, $current_fields, ListLayoutMetaDataParser $listParser)
     {
-        // make sure the list is reset
-        $listParser->resetPanelFields();
-
+        $handleSave = false;
+        $saveFields = array();
         // process the fields
         foreach ($current_fields as $panel_id => $panel) {
             if (is_array($panel['fields'])) {
@@ -235,7 +235,9 @@ class OpportunityViews
                     $addField = true;
                     $additionalDefs = $field;
                     if (isset($fieldMap[$name])) {
-                        if ($fieldMap[$name] !== false) {
+                        if ($fieldMap[$name] === true) {
+                            // nothing to do, field is present
+                        } elseif ($fieldMap[$name] !== false) {
                             // we have the field, so get it's defs
                             $defs = $this->bean->getFieldDefinition($fieldMap[$name]);
                             if ($defs) {
@@ -247,16 +249,18 @@ class OpportunityViews
                                 // we didn't find any defs for the new field, so error on caution and remove the old one
                                 $addField = false;
                             }
+                            $handleSave = true;
                         } else {
                             // instead of a name being passed in, false was, so we should remove that field.
                             $addField = false;
+                            $handleSave = true;
                         }
 
                         unset($fieldMap[$name]);
                     }
 
                     if ($addField) {
-                        $listParser->addField($name, $additionalDefs);
+                        $saveFields[] = array($name, $additionalDefs);
                     }
                 }
             }
@@ -268,12 +272,19 @@ class OpportunityViews
                 if($trigger === true) {
                     $defs = $this->bean->getFieldDefinition($field);
                     if ($defs) {
-                        $listParser->addField($field, array());
+                        $saveFields[] = array($field, array());
+                        $handleSave = true;
                     }
                 }
             }
         }
-
-        $listParser->handleSave(false);
+        if ($handleSave) {
+            // make sure the list is reset
+            $listParser->resetPanelFields();
+            foreach ($saveFields as $params) {
+                $listParser->addField($params[0], $params[1]);
+            }
+            $listParser->handleSave(false);
+        }
     }
 }

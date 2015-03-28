@@ -120,4 +120,86 @@ class UpgradeRenameModuleTest extends UpgradeTestCase
         $this->assertEquals($app_list_strings['moduleList']['Contacts'], 'New Contacts');
         $this->assertEquals($mod_strings['LBL_NEW_FORM_TITLE'], 'New New Contact');
     }
+
+    /**
+     * If module in some non us language has untranslated labels which are not changed after upgrade
+     * then we should not process them through RenameModules object
+     *
+     * Problem was that moduleList uses english label is language does not have it.
+     * Because of that process of renaming of labels is executed but should not.
+     *
+     * @dataProvider getAppListStringsSets
+     *
+     * @param array $appListStringLang
+     * @param array $appListStringLangCore
+     * @param array $appListStringDefault
+     */
+    public function testNonUsLangWithUntranslatedModuleNameShouldNotBeProcessed(array $appListStringLang, array $appListStringLangCore, array $appListStringDefault)
+    {
+        /** @var PHPUnit_Framework_MockObject_MockObject|RenameModules $renameModules */
+        $renameModules = $this->getMock('RenameModules');
+        $renameModules->expects($this->never())->method('getModuleSingularKey');
+        $renameModules->expects($this->never())->method('changeModuleModStrings');
+        $renameModules->expects($this->never())->method('setChangedModules');
+        $renameModules->expects($this->never())->method('changeStringsInRelatedModules');
+        $renameModules->expects($this->never())->method('getRenamedModules');
+
+        /** @var PHPUnit_Framework_MockObject_MockObject|SugarUpgradeRenameModules $script */
+        $script = $this->getMock('SugarUpgradeRenameModules', array(
+            'getLanguages',
+            'getDefaultAppListStrings',
+            'getAppListStrings',
+            'getCoreAppListStrings',
+            'getRenameModulesInstance',
+        ), array($this->getMockForAbstractClass('UpgradeDriver')));
+        $script->expects($this->once())->method('getLanguages')->will($this->returnValue(array('lang_LANG' => 'Language')));
+        $script->expects($this->once())->method('getDefaultAppListStrings')->will($this->returnValue($appListStringDefault));
+        $script->expects($this->atLeastOnce())->method('getAppListStrings')->with($this->equalTo('lang_LANG'))->will($this->returnValue($appListStringLang));
+        $script->expects($this->atLeastOnce())->method('getCoreAppListStrings')->with($this->equalTo('lang_LANG'))->will($this->returnValue($appListStringLangCore));
+        $script->expects($this->once())->method('getRenameModulesInstance')->will($this->returnValue($renameModules));
+
+        $actual = $script->run();
+        $this->assertArrayHasKey('lang_LANG', $actual, 'Language was not checked');
+        $this->assertEmpty($actual['lang_LANG'], 'Language should not have changed labels');
+    }
+
+    /**
+     * Data provider
+     *
+     * @see UpgradeRenameModuleTest::testNonUsLangWithUntranslatedModuleNameShouldNotBeProcessed
+     *
+     * @return array
+     */
+    public static function getAppListStringsSets()
+    {
+        return array(
+            'moduleListIsNotTranslatedInNonUsLanguage' => array(
+                array(
+                    'moduleListSingular' => array(
+                        'test' => 'Translated Singular String',
+                    ),
+                    'moduleList' => array(
+                        'test' => 'English Plural String', // means it wasn't translated and loaded from english lang
+                    ),
+                ),
+                array(
+                    'moduleListSingular' => array(
+                        'test' => 'Translated Singular String',
+                    ),
+                    'moduleList' => array(
+                        'test' => '', // we don't have translation for module
+                    ),
+                ),
+                array(
+                    'moduleListSingular' => array(
+                        'test' => 'English Singular String',
+                    ),
+                    'moduleList' => array(
+                        'test' => 'English Plural String',
+                    ),
+                ),
+
+            ),
+        );
+    }
 }
