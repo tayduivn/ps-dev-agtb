@@ -96,6 +96,7 @@ class WebLogicHook extends SugarBean implements RunnableSchedulerJob
         $job->status = SchedulersJob::JOB_STATUS_QUEUED;
         $job->target = 'class::' . get_class($this);
         $job->data = serialize($jobData);
+        $job->execute_time = $GLOBALS['timedate']->nowDb();
         $job->save();
     }
 
