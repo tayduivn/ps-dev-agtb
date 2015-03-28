@@ -21,9 +21,9 @@ $viewdefs['Home']['base']['layout']['search-dashboard'] = array(
                             'view' =>
                                 array(
                                     'type' => 'search-facet',
-                                    'label' => 'LBL_FACET_MODULES',
-                                    'name' => 'module-facet',
-                                    'facet-type' => 'modules',
+                                    'facet_type' => 'assigned_to_me',
+                                    'custom_toolbar' => 'no',
+                                    'label' => 'LBL_ASSIGNED_TO_SELF',
                                 ),
                             'width' => 12,
                         ),
@@ -31,9 +31,38 @@ $viewdefs['Home']['base']['layout']['search-dashboard'] = array(
                             'view' =>
                                 array(
                                     'type' => 'search-facet',
-                                    'label' => 'LBL_FACET_MODULES2',
-                                    'name' => 'module-facet',
-                                    'facet-type' => 'modules',
+                                    'facet_type' => 'my_favorites',
+                                    'custom_toolbar' => 'no',
+                                    'label' => 'LBL_FAVORITES',
+                                ),
+                            'width' => 12,
+                        ),
+                        array(
+                            'view' =>
+                                array(
+                                    'type' => 'search-facet',
+                                    'facet_type' => 'created_by_me',
+                                    'custom_toolbar' => 'no',
+                                    'label' => 'LBL_CREATED_BY_ME',
+                                ),
+                            'width' => 12,
+                        ),
+                        array(
+                            'view' =>
+                                array(
+                                    'type' => 'search-facet',
+                                    'facet_type' => 'modified_by_me',
+                                    'custom_toolbar' => 'no',
+                                    'label' => 'LBL_MODIFIED_BY_ME',
+                                ),
+                            'width' => 12,
+                        ),
+                        array(
+                            'view' =>
+                                array(
+                                    'type' => 'search-facet',
+                                    'label' => 'LBL_FACET_MODULES',
+                                    'facet_type' => 'modules',
                                 ),
                             'width' => 12,
                         ),

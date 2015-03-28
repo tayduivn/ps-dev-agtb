@@ -328,3 +328,44 @@ li.search-result {
   margin-left: 6px;
 }
 
+.sidebar-content {
+  .facets-dashboard {
+    .dashboard .well .dashlet-container + .dashlet-container {
+      padding-top: 10px;
+    }
+    .dashlet:not(.collapsed):not(.empty) {
+      min-height: 0;
+    }
+    .dashlet-content {
+      > div {
+        max-height: 170px !important;
+        overflow: auto;
+      }
+    }
+    .facet-item {
+      cursor: pointer;
+      height: 18px;
+      padding: 12px;
+      font-size: 13px;
+      border-bottom: 1px solid #e4e4e4;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      .fa.fa-check{
+        visibility: hidden;
+        font-size: 15px;
+        margin-right: 10px;
+      }
+      &.selected {
+        font-weight: bold;
+        .fa.fa-check {
+          visibility: visible;
+        }
+      }
+    }
+  }
+}
+
+

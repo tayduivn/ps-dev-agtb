@@ -75,6 +75,16 @@
     },
 
     /**
+     * @inheritDoc
+     * @override
+     */
+    _render: function() {
+        this._super('_render');
+        if (this.model.get('dashboard_type') === 'search-dashboard') {
+            this.$el.addClass('facets-dashboard');
+        }
+    },
+    /**
      * Set all appended dashlets drag-and-droppable
      */
     applyDragAndDrop: function() {

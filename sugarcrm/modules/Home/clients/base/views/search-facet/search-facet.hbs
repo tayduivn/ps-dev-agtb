@@ -10,4 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-{{!-- Here we will add facet content. It's empty on purpose for now--}}
+<div class="row-fluid">
+    <ul class="nav facet-results">
+        {{#if facetItems}}
+            {{#each facetItems}}
+                <li class="facet-item selected" data-facet="{{key}}"><i class="fa fa-check"></i><span>{{label}} ({{count}})</span></li>
+            {{/each}}
+        {{else}}
+           <li class="facet-item"><span>No data for this facet.</span></li>
+        {{/if}}
+    </ul>
+</div>

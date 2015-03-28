@@ -33,14 +33,72 @@
             this.collection.fetch({query: searchTerm, module_list: moduleList});
         }, this);
 
+        this.context.on('change:facets', function(model) {
+            //Here we'll trigger the search passing the updated facets in the query.
+        }, this);
         this.collection.on('sync', function(collection, data) {
             var isCollection = (collection instanceof App.BeanCollection);
             if (!isCollection) {
                 return;
             }
             app.utils.GlobalSearch.formatRecords(collection, true);
-//            collection.facets = data.facets;
-//            this.context.set('facets', data.facets);
+            //Fake aggregations.
+            data.aggregations = {
+                modules: {
+                    type: 'terms_modules',
+                    results:
+                    {
+                        Contacts: 5,
+                        Leads: 5
+                    }
+                },
+                assigned_to_me: {
+                    type: 'my_items',
+                    results: {
+                        count: 10
+                    }
+                },
+                created_by_me: {
+                    type: 'my_items',
+                    results: {
+                        count: 10
+                    }
+                },
+                modified_by_me: {
+                    type: 'my_items',
+                    results: {
+                        count: 12
+                    }
+                },
+                my_favorites: {
+                    type: 'my_items',
+                    results: {
+                        count: 12
+                    }
+                },
+                date_modified: {
+                    type: 'date_range',
+                    'results':
+                    {
+                        last_year: 4,
+                        this_year: 13,
+                        this_month: 1
+                    }
+                },
+                date_closed: {
+                    type: 'date_range',
+                    'results':
+                    {
+                        last_quarter: 5,
+                        this_quarter: 10,
+                        next_quarter: 8
+                    }
+                }
+            };
+
+            collection.facets = data.aggregations;
+            this.context.set('facets', data.aggregations, {silent: true});
+            this.context.trigger('facets:added', this.context);
         }, this);
     },
 
