@@ -199,7 +199,6 @@ To create an {{module_name}}:
  - Fields marked "Required" must be completed prior to saving.
  - Click "Show More" to expose additional fields if necessary.
 2. Click "Save" to finalize the new record and return to the previous page.
- - Choose "Save and create new" to immediately create another new {{module_name}}.
 3. After saving, use the {{revenuelineitems_module}} subpanel to add line items to the {{module_name}}.',
 
 // END ENT/ULT
@@ -225,8 +224,7 @@ To create an {{module_name}}:
 1. Provide values for the fields as desired.
  - Fields marked "Required" must be completed prior to saving.
  - Click "Show More" to expose additional fields if necessary.
-2. Click "Save" to finalize the new record and return to the previous page.
- - Choose "Save and create new" to immediately create another new {{module_name}}.',
+2. Click "Save" to finalize the new record and return to the previous page.',
 
 // END PRO/CORP
 // END SUGARCRM flav!=ent ONLY

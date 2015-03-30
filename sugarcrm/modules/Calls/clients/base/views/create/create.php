@@ -54,46 +54,26 @@ $viewdefs['Calls']['base']['view']['create'] = array(
                         'click' => 'button:save_button:click',
                     ),
                 ),
-                array(
-                    'type' => 'rowaction',
-                    'name' => 'save_create_button',
-                    'label' => 'LBL_SAVE_AND_CREATE_ANOTHER',
-                    'events' => array(
-                        'click' => 'button:save_create_button:click',
-                    ),
-                ),
             ),
         ),
         array(
-            'type' => 'actiondropdown',
-            'name' => 'duplicate_dropdown',
+            'name' => 'duplicate_button',
+            'type' => 'button',
+            'label' => 'LBL_IGNORE_DUPLICATE_AND_SAVE',
             'primary' => true,
             'showOn' => 'duplicate',
-            'buttons' => array(
-                array(
-                    'type' => 'rowaction',
-                    'name' => 'save_button',
-                    'label' => 'LBL_IGNORE_DUPLICATE_AND_SAVE',
-                    'events' => array(
-                        'click' => 'button:save_button:click',
-                    ),
-                ),
+            'events' => array(
+                'click' => 'button:save_button:click',
             ),
         ),
         array(
-            'type' => 'actiondropdown',
-            'name' => 'select_dropdown',
+            'name' => 'select_button',
+            'type' => 'button',
+            'label' => 'LBL_SAVE_BUTTON_LABEL',
             'primary' => true,
             'showOn' => 'select',
-            'buttons' => array(
-                array(
-                    'type' => 'rowaction',
-                    'name' => 'save_button',
-                    'label' => 'LBL_SAVE_BUTTON_LABEL',
-                    'events' => array(
-                        'click' => 'button:save_button:click',
-                    ),
-                ),
+            'events' => array(
+                'click' => 'button:save_button:click',
             ),
         ),
         array(

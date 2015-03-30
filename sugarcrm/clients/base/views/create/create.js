@@ -17,16 +17,11 @@
     extendsFrom: 'RecordView',
     editAllMode: false,
 
-    SAVEACTIONS: {
-        SAVE_AND_CREATE: 'saveAndCreate'
-    },
-
     enableDuplicateCheck: false,
     dupecheckList: null, //duplicate list layout
 
     saveButtonName: 'save_button',
     cancelButtonName: 'cancel_button',
-    saveAndCreateButtonName: 'save_create_button',
     restoreButtonName: 'restore_button',
 
     /**
@@ -166,7 +161,6 @@
      */
     delegateButtonEvents: function() {
         this.context.on('button:' + this.saveButtonName + ':click', this.save, this);
-        this.context.on('button:' + this.saveAndCreateButtonName + ':click', this.saveAndCreate, this);
         this.context.on('button:' + this.cancelButtonName + ':click', this.cancel, this);
         this.context.on('button:' + this.restoreButtonName + ':click', this.restoreModel, this);
     },
@@ -189,17 +183,10 @@
     },
 
     /**
-     * Determine appropriate save action and execute it
-     * Default to saveAndClose
+     * Defaults to {@link #saveAndClose}.
      */
-    save: function () {
-        switch (this.context.lastSaveAction) {
-            case this.SAVEACTIONS.SAVE_AND_CREATE:
-                this.saveAndCreate();
-                break;
-            default:
-                this.saveAndClose();
-        }
+    save: function() {
+        this.saveAndClose();
     },
 
     /**
@@ -224,33 +211,6 @@
             app.drawer.close(this.context);
             this._dismissAllAlerts();
         }
-    },
-
-    /**
-     * Handle click on save and create another link
-     */
-    saveAndCreate: function() {
-        this.context.lastSaveAction = this.SAVEACTIONS.SAVE_AND_CREATE;
-        this.initiateSave(_.bind(
-            function() {
-                this.clear();
-                // set the default attributes and the relatedAttributes back
-                // on the model since it's been cleared out
-                this.model.set(_.extend(this.model.getDefault(), this.model.relatedAttributes));
-                this.resetDuplicateState();
-
-                if (this.hasSubpanelModels) {
-                    // loop through subpanels and call resetCollection on create subpanels
-                    _.each(this.context.children, function(child) {
-                        if (child.get('isCreateSubpanel')) {
-                            this.context.trigger('subpanel:resetCollection:' + child.get('link'), true);
-                        }
-                    }, this);
-
-                    // reset the hasSubpanelModels flag
-                    this.hasSubpanelModels = false;
-                }
-        }, this));
     },
 
     /**

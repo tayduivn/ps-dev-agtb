@@ -298,8 +298,7 @@ To create a {{module_name}}:
 1. Provide values for the fields as desired.
  - Fields marked "Required" must be completed prior to saving.
  - Click "Show More" to expose additional fields if necessary.
-2. Click "Save" to finalize the new record and return to the previous page.
- - Choose "Save and create new" to immediately create another new {{module_name}}.',
+2. Click "Save" to finalize the new record and return to the previous page.',
 
     // Convert View Help Text
     'LBL_HELP_CONVERT' => 'Sugar enables you to convert {{plural_module_name}} into {{contacts_module}}, {{accounts_module}}, and other modules once the {{module_name}} meets your qualification criteria.

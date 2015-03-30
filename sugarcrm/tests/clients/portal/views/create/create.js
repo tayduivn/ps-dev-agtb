@@ -28,22 +28,10 @@ describe("PortalCreateView", function() {
                     "showOn": "select"
                 },
                 {
-                    "type": "actiondropdown",
-                    "name": "main_dropdown",
-                    "primary": true,
-                    "buttons": [
-                        {
-                            "type": "rowaction",
-                            "name": "save_button",
-                            "label": "LBL_SAVE_BUTTON_LABEL"
-                        },
-                        {
-                            "type": "rowaction",
-                            "name": "save_create_button",
-                            "label": "LBL_SAVE_AND_CREATE_ANOTHER",
-                            "showOn": "create"
-                        }
-                    ]
+                    "name": "save_button",
+                    "type": "rowaction",
+                    "label": "LBL_SAVE_BUTTON_LABEL",
+                    "primary": true
                 }
             ]
         }, moduleName);

@@ -989,6 +989,8 @@
                 field.hide();
             }
         }, this);
+
+        this.toggleButtons(true);
     },
 
     /**

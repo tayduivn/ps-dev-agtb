@@ -210,6 +210,5 @@ To create a {{meetings_singular_module}}:
 2. Add invitees to the {{meetings_singular_module}}.
     - Click "Select an Attendee" to add an existing user, contact, or lead to the {{meetings_singular_module}}.
     - Click the plus icon to the right of "Select an Attendee" to create a {{meetings_singular_module}} attendee as a new Sugar record.
-3. Click "Save" to finalize the new record and return to the previous page.
-    - Choose "Save and create new" to immediately create another new {{meetings_singular_module}}.',
+3. Click "Save" to finalize the new record and return to the previous page.',
 );
