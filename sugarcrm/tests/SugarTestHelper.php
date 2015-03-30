@@ -452,7 +452,7 @@ class SugarTestHelper
 
         //Backup everything that could have been loaded in modules.php
         include 'include/modules.php';
-        foreach(array('moduleList', 'beanList', 'beanFiles', 'modInvisList',
+        foreach(array('moduleList', 'beanList', 'beanFiles', 'bwcModules', 'modInvisList',
                       'objectList', 'modules_exempt_from_availability_check', 'adminOnlyList'
                      ) as $globVar)
         {
@@ -608,6 +608,23 @@ class SugarTestHelper
             self::$registeredVars['beanFiles'] = true;
         }
         global $beanFiles;
+        require 'include/modules.php';
+
+        return true;
+    }
+
+    /**
+     * Registration of $bwcModules in global scope
+     *
+     * @static
+     * @return bool is variable setuped or not
+     */
+    protected static function setUp_bwcModules($params = array(), $register = true)
+    {
+        if ($register) {
+            self::$registeredVars['bwcModules'] = true;
+        }
+        global $bwcModules;
         require 'include/modules.php';
 
         return true;
