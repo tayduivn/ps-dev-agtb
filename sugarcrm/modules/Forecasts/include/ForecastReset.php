@@ -284,7 +284,7 @@ class ForecastReset
      *
      * @param String $forecast_by The Module that we are currently forecasting by
      */
-    protected function updateConfigWorksheetColumnsMetadata($forecast_by)
+    public function updateConfigWorksheetColumnsMetadata($forecast_by)
     {
         if ($forecast_by === 'RevenueLineItems') {
             $contents = "<?php\n\n";
