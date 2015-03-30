@@ -67,10 +67,26 @@ class KBContentsUsefulnessApi extends ModuleApi
             );
         }
 
+        $bean->load_relationship('usefulness');
+        $bean->usefulness->vote($isUseful);
+
+        //user set `useful`
         if ($isUseful) {
-            $bean->useful++;
+            //we need to correct `notuseful` if user voted `not useful` before
+            if ($bean->usefulness_user_vote == -1) {
+                $bean->notuseful--;
+            }
+            if ($bean->usefulness_user_vote != 1) {
+                $bean->useful++;
+            }
         } else {
-            $bean->notuseful++;
+            //we need to correct `useful` if user voted `useful` before
+            if ($bean->usefulness_user_vote != -1) {
+                $bean->useful--;
+            }
+            if ($bean->usefulness_user_vote == 1) {
+                $bean->notuseful++;
+            }
         }
         $bean->save();
 

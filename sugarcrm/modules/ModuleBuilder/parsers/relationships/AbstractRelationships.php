@@ -63,6 +63,7 @@ class AbstractRelationships
                                              'queues_beans',
                                              'queues_queue',
                                              'tracker_sessions',
+        'kbusefulness',
                                              'activities_users'             // needed because of `activities_teams`
                                           );
     /*

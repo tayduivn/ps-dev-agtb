@@ -1,10 +1,9 @@
-describe('modules.kbcontents.clients.base.fields.usefulness', function() {
+ddescribe('modules.kbcontents.clients.base.fields.usefulness', function() {
     var sandbox, app, field,
         module = 'KBContents',
         fieldName = 'usefulness',
         fieldType = 'usefulness',
-        model,
-        apiCallStub;
+        model;
 
     beforeEach(function() {
         sandbox = sinon.sandbox.create();
@@ -17,9 +16,6 @@ describe('modules.kbcontents.clients.base.fields.usefulness', function() {
         app = SugarTest.app;
         app.data.declareModels();
         model = app.data.createBean(module);
-        apiCallStub = sandbox.stub(app.api, 'call', function(method, url, data, callbacks) {
-            callbacks.success({});
-        });
         field = SugarTest.createField('base', fieldName, fieldType, 'detail', {}, module, model, null, true);
     });
 
@@ -39,33 +35,43 @@ describe('modules.kbcontents.clients.base.fields.usefulness', function() {
     });
 
     it('should be able vote and set useful when useful button clicked', function() {
-        var voteSpy = sinon.spy(field, 'vote');
-        var getLastStateKeySpy = sandbox.spy(field, 'getLastStateKey');
-        model.set({
-            id: 'test_model_id'
-        });
-
+        var voteSpy = sinon.spy(field, 'vote'),
+            urlRegExp = new RegExp('.*rest/v10/' + module + '/.*');
+            server = sandbox.useFakeServer();
+        server.respondWith(
+            'PUT',
+            urlRegExp,
+            [200, {'Content-Type': 'application/json'}, JSON.stringify({
+                'id': 'id',
+                'usefulness_user_vote': '1'
+            })]
+        );
         field.render();
         field.$('[data-action="useful"]').click();
+        server.respond();
+
         expect(voteSpy).toHaveBeenCalledWith(true);
-        expect(getLastStateKeySpy).toHaveBeenCalled();
-        expect(field.voted).toEqual(true);
         expect(field.votedUseful).toEqual(true);
         expect(field.votedNotUseful).toEqual(false);
     });
 
     it('should be able vote and set notuseful when notuseful button clicked', function() {
-        var voteSpy = sandbox.spy(field, 'vote');
-        var getLastStateKeySpy = sandbox.spy(field, 'getLastStateKey');
-        model.set({
-            id: 'test_model_id'
-        });
-
+        var voteSpy = sandbox.spy(field, 'vote'),
+            urlRegExp = new RegExp('.*rest/v10/' + module + '/.*');
+            server = sandbox.useFakeServer();
+        server.respondWith(
+            'PUT',
+            urlRegExp,
+            [200, {'Content-Type': 'application/json'}, JSON.stringify({
+                'id': 'id',
+                'usefulness_user_vote': '-1'
+            })]
+        );
         field.render();
         field.$('[data-action="notuseful"]').click();
+        server.respond();
+
         expect(voteSpy).toHaveBeenCalledWith(false);
-        expect(getLastStateKeySpy).toHaveBeenCalled();
-        expect(field.voted).toEqual(true);
         expect(field.votedUseful).toEqual(false);
         expect(field.votedNotUseful).toEqual(true);
     });

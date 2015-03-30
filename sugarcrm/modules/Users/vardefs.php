@@ -592,6 +592,15 @@ $dictionary['User'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_CALLS'
         ) ,
+        'kbusefulness' => array(
+            'name' => 'kbusefulness',
+            'type' => 'link',
+            'relationship' => 'usefulness',
+            'link_file' => 'modules/KBContents/UsefulnessLink.php',
+            'link_class' => 'UsefulnessLink',
+            'source' => 'non-db',
+            'vname' => 'LBL_USEFULNESS'
+        ) ,
         'meetings' => array(
             'name' => 'meetings',
             'type' => 'link',
