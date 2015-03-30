@@ -13,7 +13,7 @@ describe('modules.kbcontents.clients.base.fields.enum-config', function() {
         app = SugarTest.app;
         app.data.declareModels();
         model = app.data.createBean(module);
-        field = SugarTest.createField('base', fieldName, fieldType, 'edit', {}, module, model, null, true);
+        field = SugarTest.createField('base', fieldName, fieldType, 'detail', {}, module, model, null, true);
     });
 
     afterEach(function() {
