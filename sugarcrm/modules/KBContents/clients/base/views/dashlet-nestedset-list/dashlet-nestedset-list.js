@@ -155,6 +155,11 @@
                 app.router.navigate(route, {trigger: true});
                 break;
             case 'folder':
+                if (this.$el.find('[data-id=' + data.id +']').hasClass('jstree-closed')) {
+                    this.openNode(data.id);
+                } else {
+                    this.closeNode(data.id);
+                }
                 break;
         }
     },
@@ -277,6 +282,11 @@
      */
     leafClicked: function (data) {
         if (data.type !== 'folder') {
+            if (_.isEmpty(this.extraModule.module)) {
+                return;
+            }
+            var route = app.router.buildRoute(this.extraModule.module, data.id);
+            app.router.navigate(route, {trigger: true});
             return;
         }
         this.loadAdditionalLeaf(data.id);

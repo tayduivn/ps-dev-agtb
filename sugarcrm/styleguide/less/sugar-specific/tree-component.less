@@ -323,17 +323,19 @@ div.fa-expand[data-action=full-screen] {
             }
             &:before {
               font-size: @smallTreeFont + 2;
+              color: @linkColor;
             }
           }
           > a {
             .smallTreeA;
             color: @blue !important;
-            &.jstree-clicked {
-              font-weight: bold;
-              color: @textColor !important;
-            }
           }
           &.jstree-open {
+            > ins {
+              &:before {
+                color: @textColor !important;
+              }
+            }
             > a {
               font-weight: bold;
               color: @textColor !important;
@@ -344,7 +346,10 @@ div.fa-expand[data-action=full-screen] {
               & + a:hover {
                 cursor: default;
               }
-              &.leaf + a:hover {
+              &.leaf {
+                + a:hover {
+                  cursor: pointer;
+                }
                 cursor: pointer;
               }
             }
