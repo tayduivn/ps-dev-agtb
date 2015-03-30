@@ -532,7 +532,6 @@ AdamGateway.prototype.createConfigureAction = function () {
         modal: true,
         title: translate('LBL_PMSE_FORM_TITLE_GATEWAY') + ': ' + this.getName()
     });
-    root.canvas.project.save();
     for (i = 0; i < this.getPorts().getSize(); i += 1) {
         connection = this.getPorts().get(i).connection;
         if (this.gat_default_flow !== connection.getID()
@@ -611,104 +610,102 @@ AdamGateway.prototype.createConfigureAction = function () {
                 w.close();
             },
             loaded: function (data) {
-                if (!root.canvas.project.isDirty) {
-                    root.canvas.emptyCurrentSelection();
+                root.canvas.emptyCurrentSelection();
 
-                    //make criteria fields sortable
-                    $(f.body).sortable({
-                        connectWith: ".adam-field",
-                        stop: function (event, ui) {
+                //make criteria fields sortable
+                $(f.body).sortable({
+                    connectWith: ".adam-field",
+                    stop: function (event, ui) {
 
-                            root.reorderItem(f, ui.item.attr('id'));
-                        },
-                        start: function (event, ui) {
-                            var fields, i;
-                            fields = f.items;
-                            for (i = 0; i < fields.length; i += 1) {
-                                fields[i].closePanel();
+                        root.reorderItem(f, ui.item.attr('id'));
+                    },
+                    start: function (event, ui) {
+                        var fields, i;
+                        fields = f.items;
+                        for (i = 0; i < fields.length; i += 1) {
+                            fields[i].closePanel();
+                        }
+                        $('.multiple-item-panel').hide();
+                        $(f.body).css('cursor', 'move');
+                    }
+                });
+                $(f.body).on("mouseover", '.adam-field', function (e) {
+                    $(f.body).sortable("enable");
+                    $(f.body).css('cursor', 'row-resize');
+                    e.stopPropagation();
+                });
+                $(f.body).on("mouseover", '.multiple-item-container', function (e) {
+                    $(f.body).sortable("disable");
+                    $(f.body).css('cursor', 'default');
+                    e.stopPropagation();
+                });
+
+                flows = data.data;
+                if (data && data.data) {
+                    for (i = 0; i < flows.length; i += 1) {
+                        connection = root.canvas.getConnections().find('id', flows[i].flo_uid);
+                        criteriaName = (connection.getName()
+                            && connection.getName() !== '')
+                            ? connection.getName() : connection.getDestPort().parent.getName();
+                        criteriaLabel = translate('LBL_PMSE_FORM_LABEL_CRITERIA') + ' (' + criteriaName + ')';
+                        criteriaItems.push(
+                            {
+                                jtype: 'criteria',
+                                name: 'condition-' + connection.getID(),
+                                label: criteriaLabel,
+                                required: false,
+                                value: connection.getFlowCondition(),
+                                fieldWidth: 420,
+                                fieldHeight: 128,
+                                decimalSeparator: SUGAR.App.config.defaultDecimalSeparator,
+                                numberGroupingSeparator: SUGAR.App.config.defaultNumberGroupingSeparator,
+                                operators: {
+                                    logic: true,
+                                    group: true,
+                                    aritmetic: false,
+                                    comparison: false
+                                },
+                                evaluation: {
+                                    module: {
+                                        dataURL: 'pmse_Project/CrmData/related/' + project.process_definition.pro_module,
+                                        dataRoot: 'result',
+                                        fieldDataURL: 'pmse_Project/CrmData/fields/{{MODULE}}',
+                                        fieldDataRoot: "result",
+                                        fieldTypeField: "type"
+                                    },
+                                    form: {
+                                        dataURL: "pmse_Project/CrmData/activities/" + project.uid,
+                                        dataRoot: 'result'
+                                    },
+                                    business_rule: {
+                                        dataURL: 'pmse_Project/CrmData/businessrules/' + project.uid,
+                                        dataRoot: 'result'
+                                    },
+                                    user: {
+                                        defaultUsersDataURL: "pmse_Project/CrmData/defaultUsersList",
+                                        defaultUsersDataRoot: "result",
+                                        userRolesDataURL: "pmse_Project/CrmData/rolesList",
+                                        userRolesDataRoot: "result",
+                                        usersDataURL: "pmse_Project/CrmData/users",
+                                        usersDataRoot: "result"
+                                    }
+                                },
+                                constant: false
                             }
-                            $('.multiple-item-panel').hide();
-                            $(f.body).css('cursor', 'move');
-                        }
-                    });
-                    $(f.body).on("mouseover", '.adam-field', function (e) {
-                        $(f.body).sortable("enable");
-                        $(f.body).css('cursor', 'row-resize');
-                        e.stopPropagation();
-                    });
-                    $(f.body).on("mouseover", '.multiple-item-container', function (e) {
-                        $(f.body).sortable("disable");
-                        $(f.body).css('cursor', 'default');
-                        e.stopPropagation();
-                    });
-
-                    flows = data.data;
-                    if (data && data.data) {
-                        for (i = 0; i < flows.length; i += 1) {
-                            connection = root.canvas.getConnections().find('id', flows[i].flo_uid);
-                            criteriaName = (connection.getName()
-                                && connection.getName() !== '')
-                                ? connection.getName() : connection.getDestPort().parent.getName();
-                            criteriaLabel = translate('LBL_PMSE_FORM_LABEL_CRITERIA') + ' (' + criteriaName + ')';
-                            criteriaItems.push(
-                                {
-                                    jtype: 'criteria',
-                                    name: 'condition-' + connection.getID(),
-                                    label: criteriaLabel,
-                                    required: false,
-                                    value: connection.getFlowCondition(),
-                                    fieldWidth: 420,
-                                    fieldHeight: 128,
-                                    decimalSeparator: SUGAR.App.config.defaultDecimalSeparator,
-                                    numberGroupingSeparator: SUGAR.App.config.defaultNumberGroupingSeparator,
-                                    operators: {
-                                        logic: true,
-                                        group: true,
-                                        aritmetic: false,
-                                        comparison: false
-                                    },
-                                    evaluation: {
-                                        module: {
-                                            dataURL: 'pmse_Project/CrmData/related/' + project.process_definition.pro_module,
-                                            dataRoot: 'result',
-                                            fieldDataURL: 'pmse_Project/CrmData/fields/{{MODULE}}',
-                                            fieldDataRoot: "result",
-                                            fieldTypeField: "type"
-                                        },
-                                        form: {
-                                            dataURL: "pmse_Project/CrmData/activities/" + project.uid,
-                                            dataRoot: 'result'
-                                        },
-                                        business_rule: {
-                                            dataURL: 'pmse_Project/CrmData/businessrules/' + project.uid,
-                                            dataRoot: 'result'
-                                        },
-                                        user: {
-                                            defaultUsersDataURL: "pmse_Project/CrmData/defaultUsersList",
-                                            defaultUsersDataRoot: "result",
-                                            userRolesDataURL: "pmse_Project/CrmData/rolesList",
-                                            userRolesDataRoot: "result",
-                                            usersDataURL: "pmse_Project/CrmData/users",
-                                            usersDataRoot: "result"
-                                        }
-                                    },
-                                    constant: false
-                                }
-                            );
-                        }
+                        );
                     }
-                    f.setItems(criteriaItems);
-                    for (i = 0; i < f.items.length; i += 1) {
-                        html = f.items[i].getHTML();
-                        $(html).find("select, input, textarea").focus(f.onEnterFieldHandler(f.items[i]));
-                        f.body.appendChild(html);
-                    }
-                    ///end sortable field implementation
-
-                    f.proxy = null;
-                    App.alert.dismiss('upload');
-                    w.html.style.display = 'inline';
                 }
+                f.setItems(criteriaItems);
+                for (i = 0; i < f.items.length; i += 1) {
+                    html = f.items[i].getHTML();
+                    $(html).find("select, input, textarea").focus(f.onEnterFieldHandler(f.items[i]));
+                    f.body.appendChild(html);
+                }
+                ///end sortable field implementation
+
+                f.proxy = null;
+                App.alert.dismiss('upload');
+                w.html.style.display = 'inline';
 
             }
         },
@@ -721,12 +718,17 @@ AdamGateway.prototype.createConfigureAction = function () {
 
     action = new Action({
         text: translate('LBL_PMSE_CONTEXT_MENU_SETTINGS'),
-        cssStyle : 'adam-menu-icon-configure',
+        cssStyle: 'adam-menu-icon-configure',
         handler: function () {
-            w.show();
-            w.html.style.display = 'none';
-            App.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
-
+            root.canvas.showModal();
+            App.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoClose: false});
+            root.canvas.project.save({
+                success: function () {
+                    root.canvas.hideModal();
+                    w.show();
+                    w.html.style.display = 'none';
+                }
+            });
         },
         disabled: disabled
     });

@@ -267,25 +267,29 @@ AdamProject.prototype.init = function () {
 /**
  * Save project if is dirty and is not waiting response
  */
-AdamProject.prototype.save = function () {
+AdamProject.prototype.save = function (callback) {
     var self = this,
         url,
         attributes = {};
+    callback = callback || {};
     if (this.isDirty && !this.isWaitingResponse) {
         this.isWaitingResponse = true;
         url = App.api.buildURL("pmse_Project/project/" + this.uid, null, null);
         //console.log(url);
         attributes = {
             data: this.getDirtyObject(),
-            id:this.uid,
-            operation : "update",
+            id: this.uid,
+            operation: "update",
             wrapper: "Project"
-    };
+        };
         App.api.call('update', url, attributes, {
             success: function (data) {
                 self.isWaitingResponse = false;
                 if (data.success) {
                     self.updateDirtyProject();
+                    if (typeof callback.success === 'function') {
+                        callback.success();
+                    }
                 } else {
                     self.mergeDirtyElements();
                     //TODO Process HERE the failure at saving time
@@ -296,8 +300,15 @@ AdamProject.prototype.save = function () {
                 self.mergeDirtyElements();
                 self.isDirty = false;
                 //TODO Process HERE the failure at saving time
+                if (typeof callback.error === 'function') {
+                    callback.error();
+                }
             }
         });
+    } else {
+        if (typeof callback.success === 'function') {
+            callback.success();
+        }
     }
 };
 
