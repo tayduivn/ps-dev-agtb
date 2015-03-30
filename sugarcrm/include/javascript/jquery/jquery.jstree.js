@@ -1366,8 +1366,8 @@
 					f.call(this, { "obj" : obj, "new_name" : new_name, "old_name" : old_name });
 				});
 			},
-			create : function (obj, position, js, callback, skip_rename) {
-				var t, _this = this;
+			create : function (obj, position, js, callback, skip_rename, silent) {
+				var t, _this = this, silent = silent || false;
 				obj = this._get_node(obj);
 				if(!obj) { obj = -1; }
 				this.__rollback();
@@ -1375,7 +1375,7 @@
 					var p = this._get_parent(t),
 						pos = $(t).index();
 					if(callback) { callback.call(this, t); }
-					if(p.length && p.hasClass("jstree-closed")) { this.open_node(p, false, true); }
+					if(p.length && p.hasClass("jstree-closed") && !silent) { this.open_node(p, false, true); }
 					if(!skip_rename) { 
 						this._show_input(t, 'add', function (obj, new_name, old_name) { 
 							_this.__callback({ "obj" : obj, "name" : new_name, "parent" : p, "position" : pos });
