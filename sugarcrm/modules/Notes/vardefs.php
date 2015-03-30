@@ -360,6 +360,13 @@ $dictionary['Note'] = array(
     'source'=>'non-db',
     'vname'=>'LBL_TASKS',
   ),
+  'schedulersjobs' => array(
+      'name' => 'schedulersjobs',
+      'type' => 'link',
+      'relationship' => 'schedulersjob_notes',
+      'source' => 'non-db',
+      'vname' => 'LBL_SCHEDULERS_JOBS',
+  ),
   'description' =>
       array (
         'name' => 'description',
