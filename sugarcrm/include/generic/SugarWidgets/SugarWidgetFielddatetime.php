@@ -49,7 +49,7 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
         $hasTime = $this->hasTime($begin);
         if(!$hasTime)
         {
-            return $this->queryDay($layout_def, $timedate->fromDbDate($begin));
+            return $this->queryDay($layout_def, $timedate->fromString($begin));
         }
         return $this->queryDateOp($this->_get_column_select($layout_def), $begin, '=', "datetime");
 	}
