@@ -53,7 +53,7 @@ $dictionary['KBContent'] = array(
             'vname' => 'LBL_PUBLISH_DATE',
             'type' => 'date',
             'sortable' => true,
-            'studio' => false,
+            'studio' => true,
             'massupdate' => false,
         ),
         'exp_date' => array(
@@ -61,7 +61,7 @@ $dictionary['KBContent'] = array(
             'vname' => 'LBL_EXP_DATE',
             'type' => 'date',
             'sortable' => true,
-            'studio' => false,
+            'studio' => true,
         ),
         'approved' => array(
             'name' => 'approved',
@@ -183,7 +183,7 @@ $dictionary['KBContent'] = array(
             'link' => 'kbdocuments_kbcontents',
             'module' => 'KBDocuments',
             'duplicate_merge' => 'disabled',
-            'studio' => false,
+            'studio' => true,
             'massupdate' => false,
         ),
         'active_rev' => array(
@@ -209,12 +209,12 @@ $dictionary['KBContent'] = array(
         'is_external' => array(
             'name' => 'is_external',
             'vname' => 'LBL_IS_EXTERNAL',
-            'type' => 'tinyint',
+            'type' => 'bool',
             'isnull' => 'true',
             'comment' => 'External article flag',
             'default' => 0,
             'duplicate_on_record_copy' => 'no',
-            'studio' => false,
+            'studio' => true,
         ),
         'kbarticles_kbcontents' => array(
             'name' => 'kbarticles_kbcontents',
@@ -321,7 +321,7 @@ $dictionary['KBContent'] = array(
             'link' => 'kbsapprovers_kbcontents',
             'module' => 'Users',
             'duplicate_merge' => 'disabled',
-            'studio' => false,
+            'studio' => true,
         ),
 
         'relcases_kbcontents' => array(
@@ -360,7 +360,7 @@ $dictionary['KBContent'] = array(
             'link' => 'relcases_kbcontents',
             'module' => 'Cases',
             'duplicate_merge' => 'disabled',
-            'studio' => false,
+            'studio' => true,
             'importable' => false,
         ),
         'category_id' => array(
