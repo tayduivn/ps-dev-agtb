@@ -161,7 +161,19 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
             ->method('getSugarConfig')
             ->will($this->returnValue($sugarConfig));
 
-        $this->assertEquals($expectedConfigs, $manager->getConfigs());
+        // Get the configs from metadata manager
+        $actualConfigs = $manager->getConfigs();
+
+        // Test that connectors are part of the config array
+        $this->assertArrayHasKey('connectors', $actualConfigs);
+        $this->assertNotEmpty($actualConfigs['connectors']);
+
+        // Remove connectors from the configs now, since testing data that could
+        // change seems sorta not proper
+        unset($actualConfigs['connectors']);
+
+        // Run the actual config test
+        $this->assertEquals($expectedConfigs, $actualConfigs);
     }
 
     public function testNormalizeMetadata()

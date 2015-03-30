@@ -309,16 +309,20 @@ class ConnectorUtils
                       $end = strrpos($file, '/') - $start;
                       $source = array();
                       $source['id'] = str_replace('/', '_', substr($file, $start, $end));
-                      $source['name'] = !empty($config['name']) ? $config['name'] : $source['id'];
-                      $source['enabled'] = true;
-                      $source['directory'] = $directory . '/' . str_replace('_', '/', $source['id']);
-                      $order = isset($config['order']) ? $config['order'] : 99; //default to end using 99 if no order set
-
                       $instance = ConnectorFactory::getInstance($source['id']);
                       if(empty($instance)) {
                           $GLOBALS['log']->fatal("Failed to load source {$source['id']}");
                           continue;
                       }
+
+                      // Determine if this connector is configured
+                      $source['configured'] = $instance->isConfigured();
+
+                      $source['name'] = !empty($config['name']) ? $config['name'] : $source['id'];
+                      $source['enabled'] = true;
+                      $source['directory'] = $directory . '/' . str_replace('_', '/', $source['id']);
+                      $order = isset($config['order']) ? $config['order'] : 99; //default to end using 99 if no order set
+
                       $source['eapm'] = empty($config['eapm'])?false:$config['eapm'];
                       $mapping = $instance->getMapping();
                       $modules = array();
@@ -444,9 +448,6 @@ class ConnectorUtils
 
         $insertConnectorButton = true;
 
-
-
-
         if(!empty($viewdefs)) {
             $buttons = !empty($viewdefs[$module]['DetailView']['templateMeta']['form']['buttons']) ? $viewdefs[$module]['DetailView']['templateMeta']['form']['buttons'] : array();
         }
@@ -518,9 +519,6 @@ class ConnectorUtils
                         require($metadata_file);
 
                      $insertConnectorButton = true;
-
-
-
 
                      if(!empty($viewdefs)) {
                         $buttons = !empty($viewdefs[$module]['DetailView']['templateMeta']['form']['buttons']) ? $viewdefs[$module]['DetailView']['templateMeta']['form']['buttons'] : array();
@@ -943,9 +941,6 @@ class ConnectorUtils
            $GLOBALS['log']->fatal("Cannot write \$modules_sources to " . CONNECTOR_DISPLAY_CONFIG_FILE);
            return false;
         }
-
-
-
 
         //Remove from searchdefs
         $searchdefs = ConnectorUtils::getSearchDefs();

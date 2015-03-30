@@ -357,6 +357,19 @@ class MetaDataManager
     protected static $isCacheEnabled = true;
 
     /**
+     * List of connector properties needed by the client
+     *
+     * @var array
+     */
+    protected $connectorProperties = array(
+        'id',
+        'name',
+        'enabled',
+        'configured',
+        'modules',
+    );
+
+    /**
      * The constructor for the class. Sets the visibility flag, the visibility
      * string indicator and loads the appropriate metadata section list.
      *
@@ -1938,7 +1951,44 @@ class MetaDataManager
             $configs['systemName'] = $administration->settings['system_name'];
         }
 
+        // Handle connectors
+        $connectors = ConnectorUtils::getConnectors();
+        $configs['connectors'] = $this->getFilteredConnectorList($connectors);
+
         return $configs;
+    }
+
+    /**
+     * Gets the current connector list, filtered for consumption by the client
+     * and normalized.
+     *
+     * @param array $connectors The current connector list
+     * @return array
+     */
+    protected function getFilteredConnectorList($connectors)
+    {
+        // Declare the return
+        $return = array();
+
+        // Loop over the connectors, cleaning up the name and parsing the known
+        // properties that the client needs
+        foreach ($connectors as $id => $connector) {
+            // The client doesn't need to know ext_eapm_googleapis, and besides,
+            // it's in the name property anyway
+            preg_match_all('#ext_(.*)_(.*)#', $id, $m, PREG_SET_ORDER);
+            if (isset($m[0][2])) {
+                $clientName = $m[0][2];
+
+                // Loop the required client properties and set from that
+                foreach ($this->connectorProperties as $prop) {
+                    if (isset($connector[$prop])) {
+                        $return[$clientName][$prop] = $connector[$prop];
+                    }
+                }
+            }
+        }
+
+        return $return;
     }
 
     /**
