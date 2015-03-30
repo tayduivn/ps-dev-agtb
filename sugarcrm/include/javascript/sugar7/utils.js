@@ -307,26 +307,148 @@
             /**
              * Returns the subpanel list with link module name and corresponding LBL_
              *
-             * @param module
+             * @param {module} string
              * @return {Object} The subpanel list
              */
             getSubpanelList: function(module) {
                 var list = {},
-                    subpanels = app.metadata.getModule(module);
+                    subpanels = app.metadata.getModule(module),
+                    comps;
+
+                // Get the subpanel metadata for layouts...
                 if (subpanels && subpanels.layouts) {
                     subpanels = subpanels.layouts.subpanels;
-                    if (subpanels && subpanels.meta && subpanels.meta.components) {
-                        _.each(subpanels.meta.components, function(comp) {
-                            if (comp.context && comp.context.link) {
-                                list[comp.label] = comp.context.link;
-                            } else {
-                                app.logger.warning("Subpanel's subpanels.meta.components "
-                                    + "has component with no context or context.link");
+                    if (subpanels && subpanels.meta) {
+                        // If this module defines itself as using dynamic
+                        // subpanels then let it do it's thing
+                        if (subpanels.meta.dynamic) {
+                            comps = this.getDynamicSubpanelList(module);
+                            if (comps && comps.meta) {
+                                comps = comps.meta.components || [];
                             }
-                        });
+                        } else {
+                            // Otherwise use what we have in metadata
+                            comps = subpanels.meta.components || [];
+                        }
                     }
                 }
+
+                // If there are components, traverse them and get what is needed
+                if (comps) {
+                    _.each(comps, function(comp) {
+                        if (comp.context && comp.context.link) {
+                            list[comp.label] = comp.context.link;
+                        } else {
+                            app.logger.warning("Subpanel's subpanels.meta.components "
+                                + "has component with no context or context.link");
+                        }
+                    });
+                }
+
                 return list;
+            },
+
+            /**
+             * Gets a list of subpanel metadata for a module.
+             * @return {object}
+             */
+            getDynamicSubpanelList: function(module) {
+                var dSubpanels = this.getDynamicSubpanelMetadata(module);
+                return {meta: dSubpanels};
+            },
+
+            /**
+             * Gets dynamic subpanel metadata for a module from the relationships
+             * for that module that are marked as dynamic subpanels
+             * @return {object}
+             */
+            getDynamicSubpanelMetadata: function(module) {
+                // Get our relationship metadata for validation
+                var rels = app.metadata.get().relationships,
+                    // Get the fields for the tags module to get the links from
+                    fields = app.metadata.getModule(module).fields,
+                    // Need the modules for validation as well
+                    modules = app.metadata.getModules(),
+                    // Declaring the components array for return
+                    comps = [],
+                    // Because javascript
+                    self = this;
+
+                // Loop over each field and get the link fields from the field def
+                _.each(fields, function(fDefs, fName) {
+                    var relModule,
+                        relDefName,
+                        spLabel;
+
+                    // If this field is a link type and there is a relationship for it...
+                    if (fDefs.type && fDefs.type === 'link' && fDefs.relationship) {
+                        relDefName = fDefs.relationship;
+                        // If the relationship exists and supports dynamic subpanels...
+                        if (self.hasDynamicSubpanelDef(rels, relDefName, module)) {
+                            relModule = rels[relDefName].lhs_module;
+                            // And the left side module is in the module list...
+                            if (modules[relModule]) {
+                                // Add it to the components array
+                                comps.push({
+                                    context: {link: fDefs.name},
+                                    label: self.getDynamicSubpanelLabel(module, relModule),
+                                    layout: 'subpanel'
+                                });
+                            }
+                        }
+                    }
+                });
+
+                return {components: comps};
+            },
+
+            /**
+             * Gets the label for the Subpanel from the module or related module
+             *
+             * @param {[string]} module The parent module
+             * @param {[string]} relModule The relate module
+             * @return {[type]} The label for the subpanel
+             */
+            getDynamicSubpanelLabel: function(module, relModule) {
+                // Start with the parent module first
+                var lIndex = 'LBL_' + relModule.toUpperCase() + '_SUBPANEL_TITLE',
+                    label = app.lang.getModString(lIndex, module);
+
+                // If the parent label check worked, send that back
+                if (label) {
+                    return label;
+                }
+
+                // Try getting the label from the related module
+                label = app.lang.getModString(lIndex, relModule);
+                if (label) {
+                    return label;
+                }
+
+                // Lastly, try getting the label from the related module name
+                label = app.lang.getModString('LBL_MODULE_NAME', relModule);
+                if (label) {
+                    return label;
+                }
+
+                // If all else fails, send back the related module value
+                return relModule;
+            },
+
+            /**
+             * Checks if a relationship def supports dynamic subpanel loading
+             *
+             * @param {object} rels The relationship collection
+             * @param {string} relDefName The name of the current relationship
+             * @param {string} module The module to check against
+             * @return {Boolean}
+             */
+            hasDynamicSubpanelDef: function(rels, relDefName, module) {
+                return rels[relDefName]
+                       && rels[relDefName].dynamic_subpanel
+                       && rels[relDefName].lhs_module
+                       && rels[relDefName].rhs_module
+                       && rels[relDefName].rhs_module === module;
             },
 
             /**

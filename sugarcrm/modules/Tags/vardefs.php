@@ -65,10 +65,8 @@ $dictionary['Tag'] = array(
     // forecefully remove the taggable implementation fields. Once there is a
     // separation of default and basic templates we can safely remove these as
     // this module will implement default instead of basic.
-    'unset_fields' => array(
-        'tag',
-        'tag_link',
-        'tags_tags',
+    'ignore_templates' => array(
+        'taggable',
     ),
     // These ACLs prevent regular users from taking administrative actions on
     // Tag records. This allows view, list and export only.

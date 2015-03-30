@@ -38,12 +38,15 @@ $dictionary['EmbeddedFile'] = array(
     'duplicate_check' => array(
         'enabled' => false,
     ),
+    'uses' => array(
+        'basic',
+    ),
+    'ignore_templates' => array(
+        'taggable',
+    ),
 );
 
 VardefManager::createVardef(
     'EmbeddedFiles',
-    'EmbeddedFile',
-    array(
-        'basic',
-    )
+    'EmbeddedFile'
 );

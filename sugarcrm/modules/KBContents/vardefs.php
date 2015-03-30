@@ -491,18 +491,15 @@ $dictionary['KBContent'] = array(
         'TeamSecurity' => true,
     ),
     'uses' => array(
-        'taggable',
+        'basic',
+        'team_security',
+        'assignable',
     ),
 );
 
 VardefManager::createVardef(
     'KBContents',
-    'KBContent',
-    array(
-        'basic',
-        'team_security',
-        'assignable',
-    )
+    'KBContent'
 );
 $dictionary['KBContent']['fields']['name']['audited'] = true;
 $dictionary['KBContent']['fields']['name']['importable'] = 'required';

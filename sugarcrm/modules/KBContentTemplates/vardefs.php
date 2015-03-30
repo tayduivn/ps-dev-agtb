@@ -28,14 +28,17 @@ $dictionary['KBContentTemplate'] = array(
     'duplicate_check' => array(
         'enabled' => false,
     ),
+    'uses' => array(
+        'basic',
+        'team_security',
+    ),
+    'ignore_templates' => array(
+        'taggable',
+    ),
 );
 
 VardefManager::createVardef(
     'KBContentTemplates',
-    'KBContentTemplate',
-    array(
-        'basic',
-        'team_security',
-    )
+    'KBContentTemplate'
 );
 $dictionary['KBContentTemplate']['fields']['name']['audited'] = true;

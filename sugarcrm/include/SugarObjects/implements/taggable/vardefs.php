@@ -42,7 +42,7 @@ $vardefs = array(
     'relationships' => array(
         strtolower($module).'_tags' => array(
             'lhs_module' => $module,
-            'lhs_table' => strtolower($module),
+            'lhs_table' => $table_name,
             'lhs_key' => 'id',
             'rhs_module' => 'Tags',
             'rhs_table' => 'tags',
@@ -53,6 +53,7 @@ $vardefs = array(
             'join_key_rhs' => 'tag_id',
             'relationship_role_column' => 'bean_module',
             'relationship_role_column_value' => $module,
+            'dynamic_subpanel' => true,
         ),
     ),
 );
