@@ -131,7 +131,7 @@ nv.models.gauge = function() {
               dispatch.elementMouseover({
                   point: d,
                   pointIndex: i,
-                  pos: [d3.event.pageX, d3.event.pageY],
+                  pos: [d3.event.offsetX, d3.event.offsetY],
                   id: id
               });
             })
@@ -147,7 +147,7 @@ nv.models.gauge = function() {
               dispatch.elementMousemove({
                 point: d,
                 pointIndex: i,
-                pos: [d3.event.pageX, d3.event.pageY],
+                pos: [d3.event.offsetX, d3.event.offsetY],
                 id: id
               });
             })
