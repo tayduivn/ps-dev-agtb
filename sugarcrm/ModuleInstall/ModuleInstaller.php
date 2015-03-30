@@ -890,7 +890,7 @@ class ModuleInstaller{
                 //Special case for languages since it breaks the $modules as first argument interface.
                 //TODO: Refactor rebuilding helper into proper interfaces and out of the "Installer" class.
                 if ($func == "rebuild_languages") {
-                    $this->rebuild_languages(null, $modules);
+                    $this->rebuild_languages(array(), $modules);
                 } elseif (method_exists($this, $func)) {
                     // non-standard function
                     $this->$func($modules);
