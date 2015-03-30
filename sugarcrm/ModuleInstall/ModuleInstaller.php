@@ -1926,9 +1926,9 @@ class ModuleInstaller{
         $this->silent = $silent;
         global $sugar_config;
 
-        $this->rebuild_languages($sugar_config['languages']);
+        $this->rebuild_languages($sugar_config['languages'], $modules);
         $this->rebuild_extensions($modules);
-        $this->rebuild_dashletcontainers();
+        $this->rebuild_dashletcontainers($modules);
         // This will be a time consuming process, particularly if $modules is empty
         $this->rebuild_relationships(array_flip($modules));
         $this->rebuild_tabledictionary();
