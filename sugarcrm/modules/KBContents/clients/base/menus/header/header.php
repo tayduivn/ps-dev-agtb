@@ -23,7 +23,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
     array(
         'route' => "#KBContentTemplates/create",
         'label' => 'LNK_NEW_KBCONTENT_TEMPLATE',
-        'acl_action' => 'admin',
+        'acl_action' => 'create',
         'acl_module' => 'KBContentTemplates',
         'icon' => 'fa-plus',
     ),
