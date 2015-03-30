@@ -67,9 +67,6 @@ describe('ForecastWorksheets.Base.Fields.Currency', function() {
         model.isCopy = function() {
             return (model.isCopied === true);
         };
-
-        sinon.stub(_, 'defer', function() {
-        });
     });
 
     afterEach(function() {
@@ -77,7 +74,6 @@ describe('ForecastWorksheets.Base.Fields.Currency', function() {
         delete app.plugins.plugins['view']['CteTabbing'];
         app.cache.cutAll();
         app.view.reset();
-        _.defer.restore();
         Handlebars.templates = {};
         model = null;
 

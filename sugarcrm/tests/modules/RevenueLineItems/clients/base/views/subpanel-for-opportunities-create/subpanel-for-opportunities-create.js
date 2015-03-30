@@ -44,7 +44,6 @@ describe('RevenueLineItems.Base.View.SubpanelForOpportunitiesCreate', function()
         sinon.sandbox.stub(app.utils, 'generateUUID', function() {
             return 'testUUID'
         });
-        sinon.sandbox.stub(_, 'defer', function() {});
 
         sinon.sandbox.stub(app.metadata, 'getCurrency', function() {
             return {

@@ -76,14 +76,11 @@ describe('Base.Fields.Currency', function() {
         model.isCopy = function() {
             return (model.isCopied === true);
         };
-
-        sinon.stub(_, 'defer', function() {});
     });
 
     afterEach(function() {
         app.cache.cutAll();
         app.view.reset();
-        _.defer.restore();
         Handlebars.templates = {};
         model = null;
 

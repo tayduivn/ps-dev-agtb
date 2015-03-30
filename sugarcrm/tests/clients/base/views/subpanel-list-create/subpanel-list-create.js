@@ -39,7 +39,6 @@ describe('Base.View.SubpanelListCreate', function() {
         sinon.sandbox.stub(app.utils, 'generateUUID', function() {
             return 'testUUID'
         });
-        sinon.sandbox.stub(_, 'defer', function() {});
 
         view = SugarTest.createView('base', null, 'subpanel-list-create', {}, context, false, layout, true);
     });

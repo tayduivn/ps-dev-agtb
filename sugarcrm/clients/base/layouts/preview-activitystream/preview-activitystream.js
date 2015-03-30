@@ -92,6 +92,7 @@
                 });
             }
         } else {
+            //FIXME: MAR-2798 prevent the possibility of an infinite loop
             _.delay(function(){
                 self.renderActivities(collection);
             }, 500);

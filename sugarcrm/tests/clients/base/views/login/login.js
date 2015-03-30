@@ -273,9 +273,6 @@ describe("Login View", function() {
 
             it('should handle post login events once successfully logged in', function() {
                 sinon.collection.stub(view, 'postLogin');
-                sinon.collection.stub(_, 'defer', function(func) {
-                    return func.apply(this);
-                });
                 view.login();
                 app.events.trigger('app:sync:complete');
                 expect(view.postLogin).toHaveBeenCalled();
