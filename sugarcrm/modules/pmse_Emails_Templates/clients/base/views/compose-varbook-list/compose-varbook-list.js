@@ -16,7 +16,7 @@
      * @extends View.FlexListView
      */
     extendsFrom: 'FlexListView',
-    plugins: ['ListColumnEllipsis', 'ListRemoveLinks', 'Pagination'],
+    plugins: ['ListColumnEllipsis', 'ListRemoveLinks', 'Pagination', 'MassCollection'],
     /**
      * Removes the event listeners that were added to the mass collection.
      */
