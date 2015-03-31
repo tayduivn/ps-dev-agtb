@@ -1512,6 +1512,19 @@ EOQ;
 		$EditView->view = 'EmailQCView';
 		$EditView->defs['templateMeta']['form']['headerTpl'] = 'include/EditView/header.tpl';
 		$EditView->defs['templateMeta']['form']['footerTpl'] = 'include/EditView/footer.tpl';
+
+        $json = new JSON(JSON_LOOSE_TYPE);
+        $prefillData = $json->encode($emailAddress);
+        $EditView->assignVar('prefillData', $prefillData);
+        $EditView->assignVar('prefillEmailAddresses', 'false');
+        
+        if ($module == 'Users') {
+            $EditView->assignVar('useReplyTo', true);
+        } else {
+            $EditView->assignVar('useOptOut', true);
+            $EditView->assignVar('useInvalid', true);
+        }
+
 		$meta = array();
 		$meta['html'] = $jsLanguage . $EditView->display(false, true);
 		$meta['html'] = str_replace("src='".getVersionedPath('include/SugarEmailAddress/SugarEmailAddress.js')."'", '', $meta['html']);
