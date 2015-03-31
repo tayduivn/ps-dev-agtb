@@ -674,6 +674,10 @@ class HealthCheckScanner
                 $this->checkFileForOutput($hook_data[2]);
             }
         }
+
+        // Check the Elastic Search Customization
+        $this->checkCustomElastic();
+
         // TODO: custom dashlets
         $this->log("VERDICT: {$this->status}", 'STATUS');
         if ($GLOBALS['sugar_config']['site_url']) {
@@ -1361,6 +1365,35 @@ class HealthCheckScanner
             $this->updateStatus("thisUsage", $deffile);
         }
         return $res;
+    }
+
+    /**
+     * Check if files of Elastic customization exist.
+     * Files include:
+     * custom/include/SugarSearchEngine/Elastic/SugarSearchEngineElastic.php
+     * custom/include/SugarSearchEngine/Elastic/SugarSearchEngineElasticMapping.php
+     * custom/include/SugarSearchEngine/Elastic/SugarSearchEngineElasticIndexStrategyXXX.php
+     * custom/include/SugarSearchEngine/Elastic/Facets/FacetYYY.php
+     * custom/include/SugarSearchEngine/SugarSearchEngineQueueManager.php
+     */
+    protected function checkCustomElastic()
+    {
+        $this->log("Checking the files of Elastic Search customization");
+        $baseDir = "custom/include/SugarSearchEngine/";
+        $fileNames = array(
+            "Elastic/SugarSearchEngineElastic.php",
+            "Elastic/SugarSearchEngineElasticMapping.php",
+            "Elastic/SugarSearchEngineElasticIndexStrategy*.php",
+            "Elastic/Facets/Facet*.php",
+            "SugarSearchEngineQueueManager.php"
+        );
+        $files = array();
+        foreach ($fileNames as $fileName) {
+            $files = array_merge($files, glob($baseDir.$fileName));
+        }
+        if (!empty($files)) {
+            $this->updateStatus("foundCustomElastic", $files);
+        }
     }
 
     /**

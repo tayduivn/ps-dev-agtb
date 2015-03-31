@@ -10,6 +10,7 @@ describe('Base.View.FilterRows', function() {
         SugarTest.loadComponent('base', 'layout', 'filterpanel');
         SugarTest.loadComponent('base', 'view', 'filter-rows');
         SugarTest.testMetadata.set();
+        SugarTest.app.data.declareModels();
 
         layout = SugarTest.createLayout('base', "Cases", "filterpanel", {}, null, null, { layout: new Backbone.View() });
         layout._components.push(SugarTest.createLayout('base', "Cases", "filter", {}, null, null, { layout: new Backbone.View() }));
@@ -839,6 +840,10 @@ describe('Base.View.FilterRows', function() {
         });
 
         it('should use filter_checkbox_dom by default for bools', function() {
+            // Note that `test_bool_field` is not an actual field of Cases
+            // module, so does not have vardefs. It would be cleaner to test
+            // only fields that exist or to patch the module metadata and add
+            // `test_bool_field` as a valid field.
             sinon.collection.stub($.fn, 'select2').returns('test_bool_field'); //return `test_bool_field` as field
             view.initValueField($row);
             expect(createFieldSpy).toHaveBeenCalled();

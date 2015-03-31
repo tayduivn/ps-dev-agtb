@@ -181,6 +181,7 @@
         <blacklist>
             <file>./../config.php</file>
             <file>./../modules/*/vardefs.php</file>
+            <directory>./src</directory>
             <directory>./cache</directory>
             <directory>../cache</directory>
             <directory>../clients/*/</directory>

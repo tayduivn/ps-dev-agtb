@@ -28,7 +28,7 @@ class SugarSearchEngineMetadataHelperTest extends Sugar_PHPUnit_Framework_TestCa
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('moduleList');
-        SugarTestHelper::setUp('app_list_strings');        
+        SugarTestHelper::setUp('app_list_strings');
 
         $this->_cacheFile = sugar_cached('modules/ftsModulesCache.php');
         $this->_backupCacheFile = sugar_cached('modules/ftsModulesCache.php').'.save';
@@ -99,23 +99,6 @@ class SugarSearchEngineMetadataHelperTest extends Sugar_PHPUnit_Framework_TestCa
         $this->assertEquals($expected, $actualResult);
     }
 
-    public function testIsModuleFtsDisabled()
-    {
-        $this->markTestIncomplete("Need to rewrite after we completely change the admin FTS implementation");
-        $disabledModules = array('Contacts', 'Cases');
-        write_array_to_file(SugarSearchEngineMetadataHelper::DISABLED_MODULE_CACHE_KEY,
-            $disabledModules, sugar_cached('modules/ftsModulesCache.php'));
-
-        $ret = SugarSearchEngineMetadataHelper::isModuleFtsEnabled('Accounts');
-        $this->assertTrue($ret, 'Accounts should be enabled');
-
-        $ret = SugarSearchEngineMetadataHelper::isModuleFtsEnabled('Cases');
-        $this->assertFalse($ret, 'Cases should be disabled');
-
-        $ret = SugarSearchEngineMetadataHelper::isModuleFtsEnabled('Contacts');
-        $this->assertFalse($ret, 'Contacts should be disabled');
-    }
-
     public function testClearCache()
     {
         // testing clearCache() is dangerous because various UnifiedSearchAdvanced
@@ -133,9 +116,9 @@ class SugarSearchEngineMetadataHelperTest extends Sugar_PHPUnit_Framework_TestCa
                 $preTestCacheValues[$cacheKey] = sugar_cache_retrieve($cacheKey);
             }
         }
-        
+
         SugarSearchEngineMetadataHelper::clearCache();
-        
+
         foreach ($list as $modules) {
             foreach ($modules as $module) {
                 $cacheKey = SugarSearchEngineMetadataHelper::FTS_FIELDS_CACHE_KEY_PREFIX . $module['module'];
@@ -144,7 +127,7 @@ class SugarSearchEngineMetadataHelperTest extends Sugar_PHPUnit_Framework_TestCa
                 $this->assertTrue(empty($cacheValue), $errorMsg);
             }
         }
-        
+
         foreach ($preTestCacheValues as $key => $value) {
             sugar_cache_put($key, $value);
         }

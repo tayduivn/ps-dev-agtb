@@ -48,11 +48,10 @@ $dictionary['Campaign'] = array (
             'importable' => 'required',
             'required' => true,
             'unified_search' => true,
-            'full_text_search' => array (
+            'full_text_search' => array(
                 'enabled' => true,
-                'boost' => 3,
+                'searchable' => true,
             ),
-            
         ),
         'refer_url' => array (
             'name' => 'refer_url',
@@ -162,12 +161,20 @@ $dictionary['Campaign'] = array (
             'name' => 'objective',
             'vname' => 'LBL_CAMPAIGN_OBJECTIVE',
             'type' => 'text',
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => true,
+            ),
             'comment' => 'The objective of the campaign'
         ),
         'content' => array (
             'name' => 'content',
             'vname' => 'LBL_CAMPAIGN_CONTENT',
             'type' => 'text',
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => true,
+            ),
             'comment' => 'The campaign description'
         ),
         'prospectlists' => array (

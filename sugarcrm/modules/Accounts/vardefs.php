@@ -34,6 +34,10 @@ $dictionary['Account'] = array(
             'vname' => 'LBL_SIC_CODE',
             'type' => 'varchar',
             'len' => 10,
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => true,
+            ),
             'comment' => 'SIC code of the account',
             'merge_filter' => 'enabled',
         ),
@@ -43,6 +47,10 @@ $dictionary['Account'] = array(
             'vname' => 'LBL_DUNS_NUM',
             'type' => 'varchar',
             'len' => 15,
+             'full_text_search' => array(
+                 'enabled' => true,
+                 'searchable' => true,
+             ),
             'comment' => 'DUNS number of the account',
           ),
         'parent_name' => array(

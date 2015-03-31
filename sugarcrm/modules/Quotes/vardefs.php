@@ -79,7 +79,10 @@ $dictionary['Quote'] = array(
             'type' => 'name',
             'len' => '50',
             'unified_search' => true,
-            'full_text_search' => array('enabled' => true, 'boost' => 3),
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => true,
+            ),
             'importable' => 'required',
             'required' => true,
         ),
@@ -88,6 +91,10 @@ $dictionary['Quote'] = array(
             'vname' => 'LBL_QUOTE_TYPE',
             'type' => 'varchar',
             'len' => 100,
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => true,
+            ),
         ),
         'date_quote_expected_closed' => array(
             'name' => 'date_quote_expected_closed',
@@ -155,6 +162,11 @@ $dictionary['Quote'] = array(
             'vname' => 'LBL_PURCHASE_ORDER_NUM',
             'type' => 'varchar',
             'len' => '50',
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => true,
+                'type' => 'exact',
+            ),
         ),
         'quote_num' => array(
             'name' => 'quote_num',
@@ -164,7 +176,11 @@ $dictionary['Quote'] = array(
             'readonly' => true,
             'required' => true,
             'unified_search' => true,
-            'full_text_search' => array('enabled' => true, 'boost' => 3),
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => true,
+                'type' => 'exact',
+            ),
             'disable_num_format' => true,
             'enable_range_search' => true,
             'options' => 'numeric_range_search_dom',
@@ -410,6 +426,10 @@ $dictionary['Quote'] = array(
             'dbType' => 'varchar',
             'group' => 'billing_address',
             'len' => '150',
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => true,
+            ),
         ),
         'billing_address_city' => array(
             'name' => 'billing_address_city',
@@ -446,6 +466,10 @@ $dictionary['Quote'] = array(
             'dbType' => 'varchar',
             'group' => 'shipping_address',
             'len' => '150',
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => true,
+            ),
         ),
         'shipping_address_city' => array(
             'name' => 'shipping_address_city',

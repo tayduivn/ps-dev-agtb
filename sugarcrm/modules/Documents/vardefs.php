@@ -25,7 +25,7 @@ $dictionary['Document'] = array('table' => 'documents',
             'required' => true,
             'importable' => 'required',
             'unified_search' => true,
-            'full_text_search' => array('enabled' => true, 'boost' => 3),
+            'full_text_search' => array('enabled' => true, 'searchable' => true),
         ),
         'name' => array(
             'name' => 'name',

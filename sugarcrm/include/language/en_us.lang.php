@@ -1628,11 +1628,10 @@ $app_list_strings = array (
     'required'=>'Required',
   ),
 
-    'Elastic_boost_options' => array (
-        '0' =>'Disabled',
-        '1'=>'Low Boost',
-        '2'=>'Medium Boost',
-        '3'=>'High Boost',
+    'fts_field_config' => array(
+        '0' => 'Disabled',
+        '1' => 'Store only',
+        '2' => 'Searchable',
     ),
 
   'custom_fields_merge_dup_dom'=> array (
@@ -2509,6 +2508,8 @@ $app_strings = array (
     'EXCEPTION_CONNECTOR_RESPONSE'      => 'A connector or an integration request resulted in a failed response.',
     'EXCEPTION_MAINTENANCE'             => 'SugarCRM is in maintenance mode. Only admins can login. Please contact your administrator for details.',
     'EXCEPTION_SERVICE_UNAVAILABLE'     => 'The server cannot process your request because it is busy or unavailable at this time.',
+    'EXCEPTION_SEARCH_UNAVAILABLE'      => 'Search engine is temporarily unavailable.',
+    'EXCEPTION_SEARCH_RUNTIME'          => 'A search engine runtime error occurred: {0}',
 
     // Default SugarApiException descriptions, used in the exceptions help endpoint
     'EXCEPTION_UNKNOWN_EXCEPTION_DESC'     => 'A condition was encountered because of a general failure or error. The reasons for this exception range but generally fall outside the scope of a more specific API exception.',
@@ -2531,6 +2532,8 @@ $app_strings = array (
     'EXCEPTION_CONNECTOR_RESPONSE_DESC'    => 'Indicates that a request made through the API to another service, endpoint or URI  has failed or could not be handled by the server.',
     'EXCEPTION_MAINTENANCE_DESC'           => 'The instance of SugarCRM that is serving the API is in maintenance mode. Access to the API is restricted to administrators only.',
     'EXCEPTION_SERVICE_UNAVAILABLE_DESC'   => 'Indicates that the server is busy, overloaded or down.',
+    'EXCEPTION_SEARCH_UNAVAILABLE_DESC'    => 'The search engine backend is currently unavailable due to a connection issue. Verify connectivity and configuration in Admin->search->test.',
+    'EXCEPTION_SEARCH_RUNTIME_DESC'        => 'A runtime exception occured in SearchEngine. See sugarcrm.log for more details.',
 
     //Lotus Live specific error messages
     'ERR_EXTERNAL_API_LOTUS_LIVE_CONFLICT' => 'A file with the same name already exists in the system.',

@@ -22,7 +22,10 @@ $vardefs= array (
     'len' => 150,
     'comment' => 'Name of the Company',
     'unified_search' => true,
-    'full_text_search' => array('enabled' => true, 'boost' => 3),
+    'full_text_search' => array(
+        'enabled' => true,
+        'searchable' => true,
+    ),
     'audited' => true,
 	'required'=>true,
     'importable' => 'required',
@@ -97,7 +100,7 @@ $vardefs= array (
     'len' => 100,
     'unified_search' => true,
     'duplicate_on_record_copy' => 'always',
-    'full_text_search' => array('enabled' => true, 'boost' => 1),
+    'full_text_search' => array('enabled' => true, 'searchable' => true),
     'comment' => 'The fax phone number of this company',
   ),
 
@@ -112,6 +115,10 @@ $vardefs= array (
     'group'=>'billing_address',
     'merge_filter' => 'enabled',
     'duplicate_on_record_copy' => 'always',
+    'full_text_search' => array(
+        'enabled' => true,
+        'searchable' => true,
+    ),
   ),
   'billing_address_street_2' =>
   array (
@@ -202,7 +209,7 @@ $vardefs= array (
     'audited'=>true,
     'unified_search' => true,
     'duplicate_on_record_copy' => 'always',
-    'full_text_search' => array('enabled' => true, 'boost' => 1),
+    'full_text_search' => array('enabled' => true, 'searchable' => true),
     'comment' => 'The office phone number',
     'merge_filter' => 'enabled',
   ),
@@ -216,7 +223,7 @@ $vardefs= array (
     'len' => 100,
     'unified_search' => true,
     'duplicate_on_record_copy' => 'always',
-    'full_text_search' => array('enabled' => true, 'boost' => 1),
+    'full_text_search' => array('enabled' => true, 'searchable' => true),
     'comment' => 'An alternate phone number',
     'merge_filter' => 'enabled',
   ),
@@ -228,6 +235,10 @@ $vardefs= array (
     'dbType' => 'varchar',
     'len' => 255,
     'duplicate_on_record_copy' => 'always',
+    'full_text_search' => array(
+        'enabled' => true,
+        'searchable' => true,
+    ),
     'comment' => 'URL of website for the company',
   ),
    'ownership' =>
@@ -255,6 +266,10 @@ $vardefs= array (
     'type' => 'varchar',
     'len' => 10,
     'duplicate_on_record_copy' => 'always',
+    'full_text_search' => array(
+        'enabled' => true,
+        'searchable' => true,
+    ),
     'comment' => 'The stock trading (ticker) symbol for the company',
     'merge_filter' => 'enabled',
   ),
@@ -267,6 +282,10 @@ $vardefs= array (
     'len' => 150,
     'group'=>'shipping_address',
     'duplicate_on_record_copy' => 'always',
+    'full_text_search' => array(
+        'enabled' => true,
+        'searchable' => true,
+    ),
     'comment' => 'The street address used for for shipping purposes',
     'merge_filter' => 'enabled',
   ),

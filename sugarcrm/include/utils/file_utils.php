@@ -1,5 +1,4 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -455,28 +454,6 @@ function get_mime_content_type_from_filename($filename)
 	}
 
     return '';
-}
-
-function createFTSLogicHook($filePath = 'application/Ext/LogicHooks/logichooks.ext.php')
-{
-    $customFileLoc = create_custom_directory($filePath);
-    $fp = sugar_fopen($customFileLoc, 'wb');
-    $contents = <<<CIA
-<?php
-if (!isset(\$hook_array) || !is_array(\$hook_array)) {
-    \$hook_array = array();
-}
-if (!isset(\$hook_array['after_save']) || !is_array(\$hook_array['after_save'])) {
-    \$hook_array['after_save'] = array();
-}
-\$managerClassPath = SugarAutoLoader::requireWithCustom('include/SugarSearchEngine/SugarSearchEngineQueueManager.php');
-\$managerClassName = SugarAutoLoader::customClass('SugarSearchEngineQueueManager');
-\$hook_array['after_save'][] = array(1, 'fts', \$managerClassPath, \$managerClassName, 'populateIndexQueue');
-CIA;
-
-    fwrite($fp,$contents);
-    fclose($fp);
-
 }
 
 function cleanFileName($name)

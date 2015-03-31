@@ -1527,6 +1527,13 @@ if (typeof(ModuleBuilder) == 'undefined') {
                 Dom.get('has_parent').value = enable;
             }
         },
+        toggleBoost: function() {
+            var display = "";
+            if (Dom.get("fts_field_config").value < 2) {
+                display = "none";
+            }
+            Dom.setStyle("ftsFieldBoostRow", "display", display);
+        },
 		toggleCF: function(enable) {
             if (typeof(enable) == 'undefined') {
                 enable = Dom.get('calculated').checked;

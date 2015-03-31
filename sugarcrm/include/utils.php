@@ -5270,9 +5270,11 @@ function sanitize($input, $quotes = ENT_QUOTES, $charset = 'UTF-8', $remove = fa
 
 /**
  * @return string - the full text search engine name
+ * @deprecated
  */
 function getFTSEngineType()
 {
+    $GLOBALS['log']->deprecated('The usage of getFTSEngineType is deprecated');
     if (isset($GLOBALS['sugar_config']['full_text_engine']) && is_array($GLOBALS['sugar_config']['full_text_engine'])) {
         foreach ($GLOBALS['sugar_config']['full_text_engine'] as $name => $defs) {
             return $name;
@@ -5285,9 +5287,11 @@ function getFTSEngineType()
 /**
  * @param string $optionName - name of the option to be retrieved from app_list_strings
  * @return array - the array to be used in option element
+ * @deprecated
  */
 function getFTSBoostOptions($optionName)
 {
+    $GLOBALS['log']->deprecated('The usage of getFTSBoostOptions is deprecated');
     if (isset($GLOBALS['app_list_strings'][$optionName])) {
         return $GLOBALS['app_list_strings'][$optionName];
     } else {

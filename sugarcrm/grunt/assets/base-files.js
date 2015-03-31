@@ -34,6 +34,7 @@
     'include/javascript/sugar7/help.js',
     'include/javascript/sugar7/underscore-mixins.js',
     'include/javascript/sugar7/utils-filters.js',
+    'include/javascript/sugar7/utils-search.js',
     'include/javascript/sugar7/error.js',
     'include/javascript/sugar7.js',
 
@@ -74,6 +75,7 @@
     'sidecar/tests/fixtures/metadata.js',
     'sidecar/tests/fixtures/language.js',
     'tests/fixtures/metadata.js',
+    'tests/fixtures/search.js',
     'tests/modules/**/fixtures/*.js',
 
     // FIXME: this should be included by the tests, not here

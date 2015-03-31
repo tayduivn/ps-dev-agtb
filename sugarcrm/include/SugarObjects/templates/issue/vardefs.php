@@ -20,7 +20,7 @@ $vardefs = array (
 			'required' => true,
 			'auto_increment' => true,
 			'unified_search' => true,
-			'full_text_search' => array('enabled' => true, 'boost' => 3),
+            'full_text_search' => array('enabled' => true, 'searchable' => true),
 			'comment' => 'Visual unique identifier',
 			'duplicate_merge' => 'disabled',
 			'disable_num_format' => true,
@@ -37,7 +37,10 @@ $vardefs = array (
 			'len' => 255,
 			'audited' => true,
 			'unified_search' => true,
-			'full_text_search' => array('enabled' => true, 'boost' => 3),
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => true,
+            ),
 			'comment' => 'The short description of the bug',
 			'merge_filter' => 'selected',
 			'required'=>true,
@@ -111,6 +114,7 @@ $vardefs = array (
 			'name' => 'work_log',
 			'vname' => 'LBL_WORK_LOG',
 			'type' => 'text',
+            'full_text_search' => array('enabled' => true, 'searchable' => true),
             'duplicate_on_record_copy' => 'always',
 			'comment' => 'Free-form text used to denote activities of interest'
 		),

@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
 
 // $Id: performSetup.php 55505 2010-03-22 15:20:57Z clee $
 // This file will load the configuration settings from session data,
@@ -542,16 +543,16 @@ $rm->invokeArgs($converter, array('RevenueLineItems'));
 ////    START DEMO DATA
 
 /*
- * Enable asynchronous index mode before adding demo data. At this point
- * the ES idex has not been initialized yet. The demo data loader uses
+ * Disable indexing in general to avoid any Elasticsearch operations. At this
+ * point the ES idex has not been initialized yet. The demo data loader uses
  * SugarBean->save() which automatically triggers an inline index of each
  * object. This is pointless as we want to take care of this in bulk
  * during the intial full indexer run. This will also speed up the install
  * process significantly and avoids ES errors when dyamic update is
  * disabled on the ES cluster itself.
  */
-$sse = SugarSearchEngineFactory::getInstance();
-$sse->setForceAsyncIndex(true);
+$engine = SearchEngine::getInstance();
+$engine->setDisableIndexing(true);
 
 // populating the db with seed data
 installLog("populating the db with seed data");
@@ -577,9 +578,8 @@ if ((!empty($_SESSION['fts_type']) || !empty($_SESSION['setup_fts_type'])) &&
     (empty($_SESSION['setup_fts_skip']))
 ) {
     installLog('running full indexer');
-    require_once('include/SugarSearchEngine/SugarSearchEngineFullIndexer.php');
-    $indexer = new SugarSearchEngineFullIndexer();
-    $results = $indexer->performFullSystemIndex(array(), true, true);
+    $engine->setDisableIndexing(false);
+    $engine->runFullReindex(true);
 }
 
 $endTime = microtime(true);

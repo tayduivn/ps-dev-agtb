@@ -55,7 +55,10 @@ $dictionary['ProjectTask'] = array('audited'=>true,
             'required' => false,
             'type' => 'int',
             'reportable' => false,
-
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => true,
+            ),
         ),
         'name' => array(
             'name' => 'name',
@@ -65,7 +68,10 @@ $dictionary['ProjectTask'] = array('audited'=>true,
             'type' => 'name',
             'len' => 50,
             'unified_search' => true,
-            'full_text_search' => array('enabled' => true, 'boost' => 3),
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => true,
+            ),
             'importable' => 'required',
             'required' => true,
         ),
@@ -82,6 +88,10 @@ $dictionary['ProjectTask'] = array('audited'=>true,
             'vname' => 'LBL_DESCRIPTION',
             'required' => false,
             'type' => 'text',
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => true,
+            ),
         ),
         'resource_id' => array(
             'name' => 'resource_id',
@@ -266,6 +276,10 @@ $dictionary['ProjectTask'] = array('audited'=>true,
 			'vname' => 'LBL_TASK_NUMBER',
 			'required' => false,
 			'type' => 'int',
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => true,
+            ),
 		),
 		'estimated_effort' => array(
 			'name' => 'estimated_effort',
@@ -472,4 +486,3 @@ array (
 VardefManager::createVardef('ProjectTask','ProjectTask', array(
 'team_security',
 ));
-?>

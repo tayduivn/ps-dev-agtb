@@ -10,25 +10,25 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-<div class="typeahead-wrapper"><ul class="typeahead dropdown-menu">
+<div class="typeahead-wrapper"><ul class="typeahead dropdown-menu search-results">
 {{#if collection.models}}
     {{#each collection.models}}
-    <li>
-        <a href="{{link}}">
-            {{#if ../layout.v2}}
-                {{!-- To be developed in SC-4090 --}}
-            {{else}}
-                <span class="label label-module label-module-mini label-{{module}}"  title="{{getModuleName module plural=true}}">
-                    {{moduleIconLabel module}}
-                </span>{{name}}{{#if field_name}}, {{field_name}}: {{field_value}}{{/if}}
-            {{/if}}
-        </a>
-    </li>
+        <li class="search-result">
+            <a href="{{link}}">
+                {{#if ../layout.v2}}
+                    {{partial 'row' ../../this ../this model=this module=module}}
+                {{else}}
+                    <span class="label label-module label-module-mini label-{{module}}"  title="{{getModuleName module plural=true}}">
+                        {{moduleIconLabel module}}
+                    </span>{{name}}{{#if field_name}}, {{field_name}}: {{field_value}}{{/if}}
+                {{/if}}
+            </a>
+        </li>
     {{/each}}
-    {{#notEq next_offset "-1"}}
-        <li>
+    {{#notEq collection.next_offset "-1"}}
+        <li class="view-all-results">
             {{#if ../layout.v2}}
-            <a href="#search/{{collection.query}}">{{str "LNK_SEARCH_FTS_VIEW_ALL"}}</a>
+            <a href="#{{searchLink}}">{{str "LNK_SEARCH_FTS_VIEW_ALL"}}</a>
             {{else}}
             <a href="#bwc/index.php?module=Home&append_wildcard=true&action=spot&full=true&q={{collection.query}}&m={{collection.module_list_string}}">{{str "LNK_SEARCH_FTS_VIEW_ALL"}}</a>
             {{/if}}

@@ -325,6 +325,7 @@
                 'include/javascript/sugar7/bwc.js' => 'include/javascript/sugar_grp7.min.js',
                 'include/javascript/sugar7/utils.js' => 'include/javascript/sugar_grp7.min.js',
                 'include/javascript/sugar7/utils-filters.js' => 'include/javascript/sugar_grp7.min.js',
+                'include/javascript/sugar7/utils-search.js' => 'include/javascript/sugar_grp7.min.js',
                 'include/javascript/sugar7/field.js' => 'include/javascript/sugar_grp7.min.js',
                 'include/javascript/sugar7/hacks.js' => 'include/javascript/sugar_grp7.min.js',
                 'include/javascript/sugar7/alert.js' => 'include/javascript/sugar_grp7.min.js',

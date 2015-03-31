@@ -31,7 +31,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
     'required'=>true,
     'unified_search' => true,
     'duplicate_on_record_copy' => 'always',
-    'full_text_search' => array('enabled' => true, 'boost' => 3),
+    'full_text_search' => array(
+        'enabled' => true,
+        'searchable' => true,
+    ),
   ),
 
 'name'=>

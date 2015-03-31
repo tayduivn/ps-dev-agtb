@@ -31,7 +31,7 @@ $vardefs = array(
                 'dbType' => 'varchar',
                 'len' => 255,
                 'unified_search' => true,
-                'full_text_search' => array('enabled' => true, 'boost' => 3),
+                'full_text_search' => array('enabled' => true, 'searchable' => true),
                 'required' => true,
                 'importable' => 'required',
                 'duplicate_merge' => 'enabled',
@@ -53,6 +53,10 @@ $vardefs = array(
                 'duplicate_on_record_copy' => 'no',
                 'readonly' => true,
                 'massupdate' => false,
+                'full_text_search' => array(
+                    'enabled' => true,
+                    'searchable' => false,
+                ),
             ),
         'date_modified' => array(
                 'name' => 'date_modified',
@@ -61,6 +65,10 @@ $vardefs = array(
                 'group' => 'modified_by_name',
                 'comment' => 'Date record last modified',
                 'enable_range_search' => true,
+                'full_text_search' => array(
+                    'enabled' => true,
+                    'searchable' => false,
+                ),
                 'studio' => array(
                     'portaleditview' => false, // Bug58408 - hide from Portal edit layout
                 ),
@@ -164,6 +172,7 @@ $vardefs = array(
                 'vname' => 'LBL_DESCRIPTION',
                 'type' => 'text',
                 'comment' => 'Full text of the note',
+                'full_text_search' => array('enabled' => true, 'searchable' => true),
                 'rows' => 6,
                 'cols' => 80,
                 'duplicate_on_record_copy' => 'always',

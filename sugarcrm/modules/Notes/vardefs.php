@@ -31,7 +31,7 @@ $dictionary['Note'] = array(
     'type' => 'name',
     'len' => '255',
 	'unified_search' => true,
-	'full_text_search' => array('enabled' => true, 'boost' => 3),
+    'full_text_search' => array('enabled' => true, 'searchable' => true),
     'comment' => 'Name of the note',
     'importable' => 'required',
     'required' => true,
@@ -117,7 +117,8 @@ $dictionary['Note'] = array(
     'name' => 'description',
     'vname' => 'LBL_NOTE_STATUS',
     'type' => 'text',
-    'comment' => 'Full text of the note'
+    'comment' => 'Full text of the note',
+    'full_text_search' => array('enabled' => true, 'searchable' => true),
   ),
 
  'parent_name'=>
@@ -367,6 +368,7 @@ $dictionary['Note'] = array(
         'comment' => 'Full text of the note',
         'rows' => 30,
         'cols' => 90,
+        'full_text_search' => array('enabled' => true, 'searchable' => true),
       ),
     'contact_parent' => array(
         'name' => 'contact_parent',

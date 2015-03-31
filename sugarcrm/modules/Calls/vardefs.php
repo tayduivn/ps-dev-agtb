@@ -22,7 +22,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'len' => '50',
     'comment' => 'Brief description of the call',
     'unified_search' => true,
-    'full_text_search' => array('enabled' => true, 'boost' => 3),
+    'full_text_search' => array('enabled' => true, 'searchable' => true),
 	'required'=>true,
     'importable' => 'required',
   ),

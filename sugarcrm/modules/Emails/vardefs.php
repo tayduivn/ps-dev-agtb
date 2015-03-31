@@ -13,6 +13,7 @@
 $dictionary['Email'] = array(
     'table' => 'emails',
     'acl_fields' => false,
+    'full_text_search' => true,
     'activity_enabled' => true,
     'comment' => 'Contains a record of emails sent to and from the Sugar application',
     'fields' => array(
@@ -162,6 +163,7 @@ $dictionary['Email'] = array(
             'type' => 'varchar',
             'vname' => 'description',
             'source' => 'non-db',
+            'full_text_search' => array('enabled' => true, 'searchable' => true),
         ),
         'date_sent' => array(
             'name' => 'date_sent',
@@ -192,6 +194,7 @@ $dictionary['Email'] = array(
             'required' => false,
             'len' => '255',
             'comment' => 'The subject of the email',
+            'full_text_search' => array('enabled' => true, 'searchable' => true),
         ),
         'type' => array(
             'name' => 'type',

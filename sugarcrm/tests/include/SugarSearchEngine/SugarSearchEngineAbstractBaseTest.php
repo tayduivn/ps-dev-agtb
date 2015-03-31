@@ -1,5 +1,4 @@
 <?php
-
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -11,12 +10,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-//require_once 'include/SugarSearchEngine/SugarSearchEngineFactory.php';
-require_once('include/SugarSearchEngine/SugarSearchEngineAbstractBase.php');
+require_once 'include/SugarSearchEngine/SugarSearchEngineAbstractBase.php';
 
 class SugarSearchEngineAbstractBaseTest extends Sugar_PHPUnit_Framework_TestCase
 {
-
     public function testSearchEngineDown()
     {
         SugarSearchEngineAbstractBase::markSearchEngineStatus(true);

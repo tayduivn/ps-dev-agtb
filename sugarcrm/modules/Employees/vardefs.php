@@ -15,6 +15,12 @@ if(empty($dictionary['User'])){
 	include('modules/Users/vardefs.php');
 }
 $dictionary['Employee']=$dictionary['User'];
+//Enable the employee module for full text search
+$dictionary['Employee']['full_text_search']=true;
+//Enable the searchable fields for full text search
+$dictionary['Employee']['fields']['first_name']['full_text_search']=array('enabled' => true, 'searchable' => true);
+$dictionary['Employee']['fields']['last_name']['full_text_search']=array('enabled' => true, 'searchable' => true);
+
 //users of employees modules are not allowed to change the employee/user status.
 $dictionary['Employee']['fields']['status']['massupdate']=false;
 $dictionary['Employee']['fields']['is_admin']['massupdate']=false;

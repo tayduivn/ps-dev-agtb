@@ -22,7 +22,7 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
     'type' => 'name',
     'dbType' => 'varchar',
 	'unified_search' => true,
-	'full_text_search' => array('enabled' => true, 'boost' => 3),
+    'full_text_search' => array('enabled' => true, 'searchable' => true),
     'len' => '50',
     'comment' => 'Meeting name',
     'importable' => 'required',
@@ -50,7 +50,8 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
     'vname' => 'LBL_LOCATION',
     'type' => 'varchar',
     'len' => '50',
-    'comment' => 'Meeting location'
+    'comment' => 'Meeting location',
+    'full_text_search' => array('enabled' => true, 'searchable' => true),
   ),
   'password' =>
   array (

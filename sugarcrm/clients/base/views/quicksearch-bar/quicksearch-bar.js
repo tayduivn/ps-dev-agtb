@@ -55,6 +55,17 @@
         this.collection = this.layout.collection || app.data.createMixedBeanCollection();
 
         /**
+         * The default number of maximum results to display.
+         *
+         * @type {number}
+         * @property
+         */
+        this.limit = 3;
+        if (this.meta && this.meta.limit) {
+            this.limit = this.meta.limit;
+        }
+
+        /**
          * Used for keyboard up/down arrow navigation between components of `globalsearch` layout
          *
          * @property {string}
@@ -270,13 +281,32 @@
         }
     },
 
+    /**
+     * Handles the keyup event for typing, and ignores tab
+     *
+     * @param {Event} e The `keyup event
+     */
     keyupHandler: function(e) {
         switch (e.keyCode) {
             case 40: // down arrow
                 break;
             case 38: // up arrow
                 break;
-            case 9: //tab
+            case 9: // tab
+                break;
+            case 13: // enter
+                // navigate to the search results page
+                var term = this.$('input').val();
+                var route = '';
+                if (this.layout.v2) {
+                    route = app.router.buildRoute('search', term);
+                } else {
+                    var moduleString = this._getSearchModuleNames().join(',');
+                    route = 'bwc/index.php?module=Home&append_wildcard=true&action=spot&full=true' +
+                    '&q=' + term +
+                    '&m=' + moduleString;
+                }
+                app.router.navigate(route, {trigger: true});
                 break;
             default:
                 this._validateAndSearch();
@@ -391,20 +421,19 @@
     fireSearchRequest: function() {
         var term = this._searchTerm;
         // FIXME: SC-4254 Remove this.layout.v2
-        var moduleList = this._getSearchModuleNames(),
-            defaultMaxNum = this.layout.v2 ? 3 : 5,
-            maxNum = app.config && app.config.maxSearchQueryResult ? app.config.maxSearchQueryResult : defaultMaxNum,
-            options = {
-                query: term,
-                module_list: moduleList
-            };
+        var moduleList = this._getSearchModuleNames();
+        var limit = this.layout.v2 ? this.limit : 5;
+        limit = app.config && app.config.maxSearchQueryResult || limit;
+        var options = {
+            query: term,
+            module_list: moduleList,
+            limit: limit
+        };
         // FIXME: SC-4254 Remove this.layout.v2
-        if (this.layout.v2) {
-            options.max_num = maxNum;
-        } else {
-            options.limit = maxNum;
+        if (!this.layout.v2) {
             options.fields = ['name', 'id'];
         }
+        this.collection.query = term;
         this.collection.fetch(options);
     },
 

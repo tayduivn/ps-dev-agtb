@@ -21,5 +21,5 @@ $viewdefs['base']['layout']['quicksearch'] = array(
             'view' => 'quicksearch-results',
         ),
     ),
-    'v2' => false,
+    'v2' => true,
 );

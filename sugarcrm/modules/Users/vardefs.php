@@ -660,7 +660,6 @@ $dictionary['User'] = array(
             'required' => true,
             'merge_filter' => 'enabled',
             'studio' => false,
-            'full_text_search' => array('enabled' => true, 'boost' => 3, 'index' => 'not_analyzed'), //bug 54567
             'exportable'=>true,
         ),
         'email'=> array(
@@ -685,6 +684,10 @@ $dictionary['User'] = array(
                 'editField' => true,
             ),
             'sort_on' => 'email_addresses',
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => true,
+            ),
         ),
         'email_addresses' => array(
             'name' => 'email_addresses',

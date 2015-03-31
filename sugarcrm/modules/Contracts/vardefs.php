@@ -15,6 +15,7 @@ $dictionary['Contract'] = array(
     'audited' => true,
     'activity_enabled' => true,
     'unified_search' => true,
+    'full_text_search' => true,
     'comment' => 'A contract collects information about important legal and contractural obligations',
     'fields' => array(
         'name' => array(
@@ -27,6 +28,7 @@ $dictionary['Contract'] = array(
             'comment' => 'The name of the contract',
             'importable' => 'required',
             'unified_search' => true,
+            'full_text_search' => array('enabled' => true, 'searchable' => true),
         ),
         'reference_code' => array(
             'name' => 'reference_code',
@@ -34,7 +36,8 @@ $dictionary['Contract'] = array(
             'type' => 'varchar',
             'len' => '255',
             'required' => false,
-            'comment' => 'The reference code used by the organization to refer to this contract'
+            'comment' => 'The reference code used by the organization to refer to this contract',
+            'full_text_search' => array('enabled' => true, 'searchable' => true),
         ),
         'quotes' => array(
             'name' => 'quotes',
