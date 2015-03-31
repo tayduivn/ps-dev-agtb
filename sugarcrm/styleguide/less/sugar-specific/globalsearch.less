@@ -227,45 +227,47 @@
       }
     }
   }
-  .advanced {
-    position: absolute;
-    right: 0;
-    top: -4px;
+}
 
-    .btn-toolbar {
-      margin: 0;
-      padding: 0;
-    }
-    .btn-group {
-      margin: 0;
-      > .btn .fa-search {
-        display: inline-block;
-        color: @grayLight;
-        text-shadow: none;
-      }
-      &:hover > .btn .fa-search {
-        color: @grayDark;
-        text-decoration: none;
-      }
-      &.open > .btn .fa-search,
-      &.open:hover > .btn .fa-search {
-        color: @white;
-      }
-      > .btn .fa-times {
-        display: inline-block;
-        color: @grayLight;
-        text-shadow: none;
-      }
-      &:hover > .btn .fa-times {
-        color: @grayDark;
-        text-decoration: none;
-      }
-      &.open > .btn .fa-times,
-      &.open:hover > .btn .fa-times {
-        color: @white;
-      }
-    }
+.quicksearch-button-wrapper{
+  position: absolute;
+  top: 2px;
+  right: 4px;
+  .btn:focus{
+    outline-offset: -2px;
+    outline-width: 1px;
+    outline-style: dotted;
+    outline-color: rgb(85, 85, 85);
+    outline-color: -moz-mac-focusring;
+    outline-color: -webkit-focus-ring-color;
   }
+  > .btn .fa-search {
+    display: inline-block;
+    color: @grayLight;
+    text-shadow: none;
+  }
+  &:hover > .btn .fa-search {
+    color: @grayDark;
+    text-decoration: none;
+  }
+  &.open > .btn .fa-search,
+  &.open:hover > .btn .fa-search {
+    color: @white;
+  }
+  > .btn .fa-times {
+    display: inline-block;
+    color: @grayLight;
+    text-shadow: none;
+  }
+  &:hover > .btn .fa-times {
+    color: @grayDark;
+    text-decoration: none;
+  }
+  &.open > .btn .fa-times,
+  &.open:hover > .btn .fa-times {
+    color: @white;
+  }
+
 }
 
 //CSS required for the results page

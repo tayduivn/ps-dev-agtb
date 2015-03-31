@@ -14,7 +14,7 @@
 {{#if collection.models}}
     {{#each collection.models}}
         <li class="search-result">
-            <a href="{{link}}">
+            <a href="{{link}}" tabindex="-1">
                 {{#if ../layout.v2}}
                     {{partial 'row' ../../this ../this model=this module=module}}
                 {{else}}
@@ -28,9 +28,9 @@
     {{#notEq collection.next_offset "-1"}}
         <li class="view-all-results">
             {{#if ../layout.v2}}
-            <a href="#{{searchLink}}">{{str 'LNK_SEARCH_FTS_VIEW_ALL'}}</a>
+            <a href="#{{searchLink}}" tabindex="-1">{{str "LNK_SEARCH_FTS_VIEW_ALL"}}</a>
             {{else}}
-            <a href="#bwc/index.php?module=Home&append_wildcard=true&action=spot&full=true&q={{collection.query}}&m={{collection.module_list_string}}">{{str "LNK_SEARCH_FTS_VIEW_ALL"}}</a>
+            <a href="#bwc/index.php?module=Home&append_wildcard=true&action=spot&full=true&q={{collection.query}}&m={{collection.module_list_string}}" tabindex="-1">{{str "LNK_SEARCH_FTS_VIEW_ALL"}}</a>
             {{/if}}
         </li>
     {{/notEq}}
