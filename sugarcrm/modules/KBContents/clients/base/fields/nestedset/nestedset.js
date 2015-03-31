@@ -262,6 +262,13 @@
      * Set right value in DOM for the field.
      */
     bindDataChange: function() {
+        this.model.on("change:" + this.name, this.dataChangeUpdate, this);
+    },
+
+    /**
+     * Update field data.
+     */
+    dataChangeUpdate: function() {
         if (this._dropdownExists()) {
             var id = this.model.get(this.def.id_name),
                 name = this.model.get(this.def.name),
@@ -277,10 +284,12 @@
                     }, this)
                 });
             }
-            this.$('[name=' + this.def.name + ']').text(name);
+            this.$('[data-role="treevalue"]','[name=' + this.def.name + ']').text(name);
             this.$('[name=' + this.def.id_name + ']').val(id);
         }
-        this._super('bindDataChange');
+        if (this.action !== 'edit') {
+            this.render();
+        }
     },
 
     /**
