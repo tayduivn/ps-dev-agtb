@@ -219,7 +219,7 @@
             $el.select2(select2Options);
             var plugin = $el.data('select2');
 
-            if (this.dir) {
+            if (plugin && this.dir) {
                 plugin.container.attr('dir', this.dir);
                 plugin.results.attr('dir', this.dir);
             }
