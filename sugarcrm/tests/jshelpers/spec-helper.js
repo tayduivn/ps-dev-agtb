@@ -19,17 +19,16 @@ beforeEach(function(){
 
     //Mock throttle and debounce to prevent the need to actually wait.
     //(underscore throttle uses dates to enforce waits outside of the normal setTimeout function
-    _.each(underscoreDelayFunctions, function(func){
-        if (!_[func].restore)
-        {
-            sinon.stub(_, func, function(f, t) {
-                return function(){
-                    var self = this,
-                        args = arguments;
-                    f.apply(self, args);
-                };
-            });
+    _.each(underscoreDelayFunctions, function(func) {
+        if (_[func].restore) {
+            return;
         }
+
+        sinon.stub(_, func, function(f) {
+            return function() {
+                f.apply(this, arguments);
+            };
+        });
     });
 
     //mock delay and defer to prevent the need to actually wait.
@@ -39,8 +38,9 @@ beforeEach(function(){
             return;
         }
 
-        sinon.stub(_, func, function(f, t) {
-            f(t);
+        sinon.stub(_, func, function(f) {
+            var args = Array.prototype.slice.call(arguments, 1);
+            f.apply(null, args);
         });
     });
 
@@ -114,9 +114,15 @@ afterEach(function() {
     delete Handlebars.helpers.moduleIconLabel;
 
     SugarTest.clock.restore();
-    _.each(underscoreDelayFunctions, function(func){
-        if(_[func].restore)
+    _.each(underscoreDelayFunctions, function(func) {
+        if (_[func].restore) {
             _[func].restore();
+        }
+    });
+    _.each(underscoreSetTimeoutFunctions, function(func) {
+        if (_[func].restore) {
+            _[func].restore();
+        }
     });
 });
 

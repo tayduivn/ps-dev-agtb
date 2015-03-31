@@ -125,12 +125,6 @@ describe('KBContents.Base.Views.KBSDashletUsefulness', function() {
 
     describe('loadData()', function() {
 
-        beforeEach(function() {
-            sandbox.stub(_, 'defer', function(callback) {
-                callback();
-            });
-        });
-
         it('should load data when called loadData()', function() {
             model.set('useful', 33);
             model.set('notuseful', 44);

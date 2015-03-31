@@ -35,18 +35,12 @@ describe('modules.KBContents.clients.base.field.nestedset', function() {
                 app.events.trigger('app:init');
             });
 
-        sinon.stub(_, 'defer', function() {
-            var args = _.toArray(arguments),
-                callback = args.shift();
-            callback.apply(this, args);
-        });
         field = SugarTest.createField('base', 'nestedset', 'nestedset', 'edit', fieldDef, module, null, null, true);
     });
 
     afterEach(function() {
         app.cache.cutAll();
         app.view.reset();
-        _.defer.restore();
         field.dispose();
         Handlebars.templates = {};
         SugarTest.testMetadata.dispose();
