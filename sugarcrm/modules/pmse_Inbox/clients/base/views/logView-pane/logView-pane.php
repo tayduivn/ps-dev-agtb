@@ -21,7 +21,7 @@ $viewdefs[$module_name]['base']['view']['logView-pane'] = array(
                 array(
                     'name' => 'composeLogViewPane',
                     'type' => 'textarea',
-                    'rows'=>'10',
+                    'rows'=>'20',
                     'cols'=>'15',
                     'view' => 'edit',
                 )

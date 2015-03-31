@@ -123,6 +123,8 @@ class PMSE
      */
     public function clearLogFile($file)
     {
-//        file_put_contents($file, "log cleared\n");
+        if ($file == "./PMSE.log") {
+            file_put_contents($file, "");
+        }
     }
 }

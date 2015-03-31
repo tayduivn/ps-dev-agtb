@@ -240,40 +240,41 @@ var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,task
                 caption: translate('LBL_PMSE_BUTTON_SAVE', 'pmse_Inbox'),
                 cssClasses: ['btn', 'btn-primary'],
                 handler: function () {
-                    var cbDate=$("#reassign_user option:selected").html();
-                    if(cbDate){
-                        items[6].setValue(cbDate);
-                    }else{
-                        items[7].setValue($("#adhoc_user option:selected").html());
-                    }
-                    var urlIni = _App.api.buildURL(url, null, null);
-                    attributes = {
-                        data: f.getData()
-                    };
-                    _App.api.call('update', urlIni, attributes, {
-                        success: function (response) {
-                            if (wtype == 'reassign')
-                            {
-                                w.close();
-                                _App.router.redirect('Home');
-                            }
-                            else if(wtype == 'adhoc')
-                            {
-                                if ($('#assigned_user_name').length)
-                                {
-                                    $("#assigned_user_name").val(cbDate);
+                    if ($("#reassign_user option:selected").val()) {
+                        var cbDate = $("#reassign_user option:selected").html();
+                        if (cbDate) {
+                            items[6].setValue(cbDate);
+                        } else {
+                            items[7].setValue($("#adhoc_user option:selected").html());
+                        }
+                        var urlIni = _App.api.buildURL(url, null, null);
+                        attributes = {
+                            data: f.getData()
+                        };
+                        _App.api.call('update', urlIni, attributes, {
+                            success: function (response) {
+                                if (wtype == 'reassign') {
                                     w.close();
+                                    _App.router.redirect('Home');
                                 }
-                                else
-                                {
-                                    w.close();
-                                    if(!_App.router.refresh()){
-                                        window.location.reload();
+                                else if (wtype == 'adhoc') {
+                                    if ($('#assigned_user_name').length) {
+                                        $("#assigned_user_name").val(cbDate);
+                                        w.close();
+                                    }
+                                    else {
+                                        w.close();
+                                        if (!_App.router.refresh()) {
+                                            window.location.reload();
+                                        }
                                     }
                                 }
                             }
-                        }
-                    });
+                        });
+                    }
+                    else {
+                        $("#reassign_user").addClass('required');
+                    }
                 }
             },
             {

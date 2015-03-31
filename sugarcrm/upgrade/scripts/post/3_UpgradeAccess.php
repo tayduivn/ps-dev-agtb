@@ -122,33 +122,5 @@ EOQ;
             return;
         }
 
-        if (empty($GLOBALS['sugar_config']['upload_dir'])) {
-            $GLOBALS['sugar_config']['upload_dir']='upload/';
-        }
-
-        $uploadHta = "upload://.htaccess";
-
-        $denyAll =<<<eoq
-        	Order Deny,Allow
-        	Deny from all
-eoq;
-
-        if(file_exists($uploadHta) && filesize($uploadHta)) {
-        	// file exists, parse to make sure it is current
-            $oldHtaccess = file_get_contents($uploadHta);
-        	// use a different regex boundary b/c .htaccess uses the typicals
-        	if(strstr($oldHtaccess, $denyAll) === false) {
-                $oldHtaccess .= "\n";
-        		$oldHtaccess .= $denyAll;
-        	}
-        	if(!file_put_contents($uploadHta, $oldHtaccess)) {
-                $this->fail(sprintf($this->mod_strings['ERROR_HT_NO_WRITE'], $uploadHta));
-        	}
-        } else {
-        	// no .htaccess yet, create a fill
-        	if(!file_put_contents($uploadHta, $denyAll)) {
-        		$this->fail(sprintf($this->mod_strings['ERROR_HT_NO_WRITE'], $uploadHta));
-        	}
-        }
     }
 }

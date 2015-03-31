@@ -262,6 +262,11 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
         //CRYS-806 Remove Healthcheck
         if (version_compare($this->from_version, '7.5', '>=') && version_compare($this->from_version, '7.6', '<')) {
             $files[] = 'modules/HealthCheck';
+            if (!$this->upgrader->context['case_insensitive_fs']) {
+                $files[] = 'vendor/OneLogin';
+            } else {
+                $files[] = 'vendor/OneLogin/Saml';
+            }
         }
         
         if (version_compare($this->from_version, '7.7', '<')) {

@@ -112,6 +112,7 @@ class PMSEProcessObserver implements PMSEObserver
 
             $fields = array(
                 'id',
+                'rel_element_type',
             );
 
             $relatedDependency = $this->getRelatedDependencyBean();

@@ -30,6 +30,12 @@ $viewdefs['Opportunities']['base']['view']['subpanel-for-accounts'] = array(
                     'default' => true,
                 ),
                 array(
+                    'name' => 'probability',
+                    'label' => 'LBL_PROBABILITY',
+                    'enabled' => true,
+                    'default' => true,
+                ),
+                array(
                     'name' => 'date_closed',
                     'label' => 'LBL_DATE_CLOSED',
                     'enabled' => true,

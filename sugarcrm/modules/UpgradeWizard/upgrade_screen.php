@@ -130,6 +130,7 @@ $(window).bind("load", function () {
         uploader.executeStage = function () {
             uploader.hideError();
             $('[data-step="2"] a[name="next_button"]').hide();
+            $('[data-step="2"] a[name="export_button"]').hide();
             $.ajax({
                 type: 'POST',
                 url: 'UpgradeWizard.php',
@@ -201,6 +202,9 @@ $(window).bind("load", function () {
                 }
             }
             data = data.sort(uploader._sortByBucket);
+
+            $('[data-step="2"] a[name="export_button"]').show();
+
             var hcResult = $("#hc-result-data");
             var flagToIcon = [, 'fa-check-circle color_green', 'fa-ellipsis-h color_yellow', 'fa-exclamation-circle color_red'];
             var flag = -1;
