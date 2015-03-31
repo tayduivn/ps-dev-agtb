@@ -70,7 +70,8 @@
         'click [data-action=full-screen]': 'fullScreen',
         'click [data-action=create-new]': 'switchCreate',
         'keydown [data-role=add-item]': 'handleKeyDown',
-        'click [data-action=show-list]': 'showList'
+        'click [data-action=show-list]': 'showList',
+        'click [data-action=clear-field]': 'clearField'
     },
 
     /**
@@ -121,6 +122,7 @@
                 }
             );
             this.toggleSearchIcon(true);
+            this.toggleClearIcon();
         }
     },
 
@@ -160,6 +162,17 @@
             .toggleClass('fa-search', !hide)
             .toggleClass('fa-spinner', hide)
             .toggleClass('fa-spin', hide);
+    },
+
+    /**
+     * Toggle clear icon in field.
+     */
+    toggleClearIcon: function() {
+        if (_.isEmpty(this.model.get(this.def.name))) {
+            this.$el.find('[data-action=clear-field]').hide();
+        } else {
+            this.$el.find('[data-action=clear-field]').show();
+        }
     },
 
     /**
@@ -414,6 +427,18 @@
     },
 
     /**
+     * Clear input element.
+     */
+    clearField: function(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        this.setValue('', '');
+        this.$('[data-role="treevalue"]','[name=' + this.def.name + ']').text(this.emptyLabel);
+        this.$('[name=' + this.def.id_name + ']').val();
+        this.toggleClearIcon();
+    },
+
+    /**
      * Callback to handle selection of the tree.
      * @param data {Object} Data from selected node.
      */
@@ -425,6 +450,7 @@
             val = data.name;
         this.setValue(id, val);
         this.closeDD();
+        this.toggleClearIcon();
     },
 
     /**

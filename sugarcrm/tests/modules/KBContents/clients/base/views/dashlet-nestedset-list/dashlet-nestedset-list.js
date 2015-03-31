@@ -80,6 +80,9 @@ describe('modules.KBContents.clients.base.view.DashletNestesetList', function() 
     it('Open record should navigate to the extra module.', function() {
         var navigateStub = sandbox.stub(app.router, 'navigate');
 
+        sandbox.stub(view, 'openNode');
+        sandbox.stub(view, 'closeNode');
+
         view.openRecord({type: 'folder'});
         expect(navigateStub).not.toHaveBeenCalled();
 
