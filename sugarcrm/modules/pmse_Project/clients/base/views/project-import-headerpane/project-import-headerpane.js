@@ -16,7 +16,17 @@
     },
 
     initiateFinish: function() {
-        this.context.trigger('project:import:finish');
+        var that = this;
+        App.alert.show('project-import-confirmation',  {
+            level: 'confirmation',
+            messages: translate('LBL_PMSE_IMPORT_CONFIRMATION'),
+            onConfirm: function () {
+                that.context.trigger('project:import:finish');
+            },
+            onCancel: function () {
+                app.router.goBack();
+            }
+        });
     },
 
     initiateCancel : function() {
