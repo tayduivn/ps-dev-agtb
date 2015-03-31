@@ -22,7 +22,7 @@ $viewdefs['Users']['base']['view']['panel-top-for-prospectlists'] = array(
                     'type' => 'sticky-rowaction',
                     'icon' => 'fa-plus',
                     'name' => 'create_button',
-                    'label' => ' ',
+                    'label' => 'Create',
                     'acl_action' => 'create',
                     'css_class' => 'disabled',
                 ),
