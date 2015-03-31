@@ -581,7 +581,7 @@ class User extends Person {
 
 		//if this is an import, make sure the related teams get added
 		//properly to the team membership
-		if($this->in_import){
+        if($this->in_import){
             $this->load_relationship('teams');
             $relatedTeams = $this->teams->get();
             $teamBean = null;
@@ -590,7 +590,7 @@ class User extends Person {
                 $teamBean =  BeanFactory::getBean('Teams', $team_id);
                 $teamBean->add_user_to_team($this->id);
             }
-		}
+        }
 
 		$GLOBALS['sugar_config']['disable_team_access_check'] = true;
         if($this->status != 'Reserved' && !$this->portal_only) {
