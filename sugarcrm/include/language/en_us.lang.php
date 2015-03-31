@@ -3216,6 +3216,7 @@ Sincerely, SugarCRM',
     // Ajax status strings
     'LBL_LOADING' => 'Loading...',
     'LBL_SEARCHING' => 'Searching...',
+    'LBL_SEARCH_UNDERWAY' => 'Searching',
     'LBL_SAVING_LAYOUT' => 'Saving Layout...',
     'LBL_SAVED_LAYOUT' => 'Layout has been saved.',
     'LBL_SAVED' => 'Saved',

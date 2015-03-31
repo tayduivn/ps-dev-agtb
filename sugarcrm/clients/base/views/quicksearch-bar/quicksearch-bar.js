@@ -581,6 +581,7 @@
             // `quicksearch:close` because we only want to close the dropdown
             // and keep the bar expanded. That means we only want the listener
             // in `quicksearch-results.js` to be called, not the other ones.
+            this.collection.abortFetchRequest();
             this.layout.trigger('quicksearch:results:close');
             this.toggleSearchIcon();
         }
@@ -589,6 +590,7 @@
         // input value didn't change we don't want to trigger a new search.
         var hasInputChanged = (this._searchTerm !== this._oldSearchTerm);
         if (hasInputChanged) {
+            this.layout.trigger('quicksearch:search:underway');
             this.expand();
             this.searchButtonIcon = false;
             this.toggleSearchIcon();
