@@ -13,14 +13,20 @@
 <div class="row-fluid">
     <div class="block filtered tabbable">
         <ul class="nav search-results">
-            {{#each collection.models}}
-                <li class="search-result" data-id="{{attributes.id}}">
-                    {{partial 'row' ../this ../this model=this module=module}}
-                    {{#each ../meta.rowactions.actions}}
-                        {{field ../../this model=../this}}
+            {{#if collection.dataFetched}}
+                {{#if collection.models}}
+                    {{#each collection.models}}
+                        <li class="search-result" data-id="{{attributes.id}}">
+                            {{partial 'row' ../this ../this model=this module=module}}
+                            {{#each ../meta.rowactions.actions}}
+                                {{field ../../this model=../this}}
+                            {{/each}}
+                        </li>
                     {{/each}}
-                </li>
-            {{/each}}
+                {{else}}
+                    <li class="no-results">{{str "LNK_SEARCH_NO_RESULTS"}}</li>
+                {{/if}}
+            {{/if}}
         </ul>
     </div>
 </div>
