@@ -45,12 +45,20 @@ class PMSECasesListApi extends FilterApi
             ),
             'getLoadLogs' => array(
                 'reqType' => 'GET',
-                'path' => array('pmse_Inbox', 'getLog', '?'),
-                'pathVars' => array('module', 'getLog', 'typelog'),
+                'path' => array('pmse_Inbox', 'getLog'),
+                'pathVars' => array('module', 'getLog'),
                 'method' => 'selectLogLoad',
                 'jsonParams' => array(),
                 'shortHelp' => 'This method updates a record of the specified type',
                 'longHelp' => 'include/api/help/module_record_put_help.html',
+            ),
+            'clearLogs' => array(
+                'reqType' => 'PUT',
+                'path' => array('pmse_Inbox', 'clearLog', '?'),
+                'pathVars' => array('module', 'clearLog', 'typelog'),
+                'method' => 'clearLog',
+                'jsonParams' => array(),
+                'shortHelp' => 'This method clears a log of the specified type',
             ),
             'getConfigLogs' => array(
                 'reqType' => 'GET',
@@ -189,7 +197,7 @@ class PMSECasesListApi extends FilterApi
             foreach($processUsers as $k => $v) {
                 if ($processUsers[$k]['cas_flow_status'] != 'CLOSED') {
                     $casUsersBean = BeanFactory::getBean('Users', $processUsers[$k]['cas_user_id']);
-                    $processUsersNames[] = (!empty($casUsersBean->full_name)) ? $casUsersBean->full_name : $list[$key]['cas_user_id'];
+                    $processUsersNames[] = (!empty($casUsersBean->full_name)) ? $casUsersBean->full_name : '';
                 }
                 $cas_sugar_module = $processUsers[$k]['cas_sugar_module'];
                 $cas_sugar_object_id = $processUsers[$k]['cas_sugar_object_id'];
@@ -247,19 +255,20 @@ class PMSECasesListApi extends FilterApi
     {
         $logger = PMSELogger::getInstance();
         $pmse = PMSE::getInstance();
-
-        $showSugarCrm = false;
-
-        if ($args['typelog'] == 'sugar') {
-            $showSugarCrm = true;
-        }
-
-        if ($showSugarCrm) {
-            $log = $pmse->getLogFile('sugarcrm.log');
-        } else {
-            $log = $pmse->getLogFile($logger->getLogFileNameWithPath());
-        }
+        $log = $pmse->getLogFile($logger->getLogFileNameWithPath());
         return $log;
+        }
+    public function clearLog($api, $args)
+    {
+        $logger = PMSELogger::getInstance();
+        $pmse = PMSE::getInstance();
+        global $current_user;
+        if ($current_user->isDeveloperForModule('pmse_Inbox') || $current_user->isAdminForModule('pmse_Inbox')) {
+            $pmse->clearLogFile($logger->getLogFileNameWithPath());
+        } else {
+            return false;
+        }
+        return true;
     }
 
     public function configLogLoad($api, $args)

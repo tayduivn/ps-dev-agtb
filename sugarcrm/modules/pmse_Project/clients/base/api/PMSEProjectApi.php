@@ -307,6 +307,8 @@ class PMSEProjectApi extends ModuleApi
         $observer = new PMSEProcessObserver();
         $this->projectWrapper->attach($observer);
         $this->projectWrapper->updateProcessDefinition($args);
+
+        return array('success' => true);
     }
 
     public function deleteRecord($api, $args)

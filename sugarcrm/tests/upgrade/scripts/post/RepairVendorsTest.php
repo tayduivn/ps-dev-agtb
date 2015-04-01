@@ -199,6 +199,18 @@ EOC;
                 "<?php \n require_once 'include/nusoap/nusoap.php';\n?>",
                 "7.2.1",
             ),
+            // OneLogin folder change (from version 7.2.x and 7.5.x)
+            array(
+                "<?php \n include_once 'vendor/OneLogin/Saml/AuthRequest.php';\n?>",
+                "<?php \n include_once 'vendor/onelogin/php-saml/lib/Saml/AuthRequest.php';\n?>",
+                "7.2.1",
+            ),
+
+            array(
+                "<?php \n include_once 'vendor/OneLogin/Saml/AuthRequest.php';\n?>",
+                "<?php \n include_once 'vendor/onelogin/php-saml/lib/Saml/AuthRequest.php';\n?>",
+                "7.5.0",
+            ),
         );
     }
 }

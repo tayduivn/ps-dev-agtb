@@ -21,7 +21,7 @@ class SugarUpgradeMoveActivityStreamCustomMetaData extends UpgradeScript
     {
         $originalPath = 'custom/modules/Activities/clients';
         $newPath = 'custom/modules/ActivityStream/Activities/clients';
-        if (!(version_compare($this->from_version, '7.0.0', ">=") && version_compare($this->from_version, '7.5.0', "<"))) {
+        if (!version_compare($this->from_version, '7.0.0', ">=")) {
             return;
         }
 

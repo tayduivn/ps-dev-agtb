@@ -28,11 +28,9 @@ class SugarUpgradePortalSettings extends UpgradeScript
         $query = "SELECT value FROM config WHERE category='portal' AND name='on'";
         $portalEnabled = (bool) $this->db->getOne($query);
 
-        if (version_compare($this->from_version, '7.6', '<')) {
-            // Remove `portal_on` with platform equals to NULL or platform equals to empty string
-            $query = "DELETE FROM config WHERE category='portal' AND name='on' AND (platform IS NULL OR platform='')";
-            $this->db->query($query);
-        }
+        // Remove `portal_on` with platform equals to NULL or platform equals to empty string
+        $query = "DELETE FROM config WHERE category='portal' AND name='on' AND (platform IS NULL OR platform='')";
+        $this->db->query($query);
 
         // only run this when coming from a version lower than 7.1.5
         if (version_compare($this->from_version, '7.1.5', '>=')) {
