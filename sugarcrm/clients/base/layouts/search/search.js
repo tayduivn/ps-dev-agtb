@@ -23,6 +23,7 @@
         this._super('initialize', [options]);
 
         this.collection.query = this.context.get('searchTerm') || '';
+        this.collection.module_list = [];
 
         this.context.on('change:searchTerm', function(context, searchTerm) {
             //TODO: collection.fetch shouldn't need a query to be passed. Will
