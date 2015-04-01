@@ -22,7 +22,10 @@ $dictionary['Task'] = array(
             'type' => 'name',
             'len' => '50',
             'unified_search' => true,
-            'full_text_search' => array('enabled' => true, 'boost' => 3),
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => true,
+            ),
             'importable' => 'required',
             'required' => true,
         ),
@@ -35,6 +38,10 @@ $dictionary['Task'] = array(
             'required' => true,
             'default' => 'Not Started',
             'duplicate_on_record_copy' => 'no',
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => false,
+            ),
         ),
         'date_due_flag' => array(
             'name' => 'date_due_flag',
@@ -54,6 +61,11 @@ $dictionary['Task'] = array(
             'studio' => array('required' => true, 'no_duplicate' => true),
             'enable_range_search' => true,
             'options' => 'date_range_search_dom',
+            'full_text_search' => array(
+                'type' => 'datetime',
+                'enabled' => true,
+                'searchable' => false,
+            ),
         ),
         'time_due' => array(
             'name' => 'time_due',

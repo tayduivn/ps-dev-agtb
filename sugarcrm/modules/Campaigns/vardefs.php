@@ -111,7 +111,10 @@ $dictionary['Campaign'] = array (
             'comment' => 'Status of the campaign',
             'importable' => 'required',
             'required' => true,
-            
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => false,
+            ),
         ),
         'impressions' => array (
             'name' => 'impressions',

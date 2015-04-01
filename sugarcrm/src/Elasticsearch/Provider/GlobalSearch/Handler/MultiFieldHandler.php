@@ -52,6 +52,9 @@ class MultiFieldHandler extends AbstractHandler implements
         'datetime' => array(
             'gs_datetime',
         ),
+        'date' => array(
+            'gs_date',
+        ),
         'int' => array(
             'gs_integer',
             'gs_string',
@@ -73,6 +76,9 @@ class MultiFieldHandler extends AbstractHandler implements
         ),
         'longtext' => array(
             'gs_html_default',
+        ),
+        'enum' => array(
+            'not_analyzed',
         ),
     );
 
@@ -136,6 +142,11 @@ class MultiFieldHandler extends AbstractHandler implements
         'gs_datetime' => array(
             'type' => 'date',
             'format' => 'YYYY-MM-dd HH:mm:ss',
+            'store' => false,
+        ),
+        'gs_date' => array(
+            'type' => 'date',
+            'format' => 'YYYY-MM-dd',
             'store' => false,
         ),
 
