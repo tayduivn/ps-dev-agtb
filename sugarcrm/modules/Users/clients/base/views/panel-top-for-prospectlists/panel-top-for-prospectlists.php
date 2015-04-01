@@ -23,6 +23,7 @@ $viewdefs['Users']['base']['view']['panel-top-for-prospectlists'] = array(
                     'icon' => 'fa-plus',
                     'name' => 'create_button',
                     'label' => ' ',
+                    'tooltip' => 'LBL_CREATE_BUTTON_LABEL',
                     'acl_action' => 'create',
                     'css_class' => 'disabled',
                 ),
