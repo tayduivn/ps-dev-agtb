@@ -15,7 +15,11 @@
     <div class="tags">
         {{#each value}}
             <span class="tag-wrapper">
-                <span class="tag-name ellipsis_inline" rel="tooltip" data-placement="bottom" title="{{name}}">{{name}}</span>
+                <span class="tag-name ellipsis_inline" rel="tooltip" data-placement="bottom" title="{{name}}">
+                <a class="tag-name ellipsis-inline" href="javascript:void(0);" data-action="tag-search" data-tag="{{name}}" data-tag-id="{{this.id}}">
+                    {{name}}
+                </a>
+                </span>
             </span>
         {{/each}}
     </div>
