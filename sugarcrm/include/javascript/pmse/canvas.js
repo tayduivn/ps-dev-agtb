@@ -42,6 +42,8 @@ var AdamCanvas = function (options) {
 
     this.currentMenu = null;
 
+    this.modal = null;
+
     this.isClicked = false;
 
     /**
@@ -384,9 +386,18 @@ AdamCanvas.prototype.initObject = function (options) {
     var defaultOptions = {
         projectUid : null
     };
+    this.modal = new Modal();
     $.extend(true, defaultOptions, options);
     this.setProjectUid(defaultOptions.projectUid)
         .setDiaUid(defaultOptions.dia_id);
+};
+AdamCanvas.prototype.showModal = function () {
+    this.modal.show();
+    return this;
+};
+AdamCanvas.prototype.hideModal = function () {
+    this.modal.hide();
+    return this;
 };
 /**
  * Extends the JCoreObject property to configure the context menus
