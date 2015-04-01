@@ -86,8 +86,7 @@ class SugarJobCreateRevenueLineItemNotes extends JobNotification implements Runn
 
         Activity::disable();
         // disable the fts index as well
-        /* @var $ftsSearch SugarSearchEngineElastic */
-        $ftsSearch = SugarSearchEngineFactory::getInstance();
+        $ftsSearch = \Sugarcrm\Sugarcrm\SearchEngine\SearchEngine::getInstance();
         $ftsSearch->setForceAsyncIndex(true);
 
         foreach ($data as $opp_id => $rli_data) {

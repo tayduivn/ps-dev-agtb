@@ -348,8 +348,7 @@ EOL;
     {
         Activity::disable();
         // disable the fts index as well
-        /* @var $ftsSearch SugarSearchEngineElastic */
-        $ftsSearch = SugarSearchEngineFactory::getInstance();
+        $ftsSearch = \Sugarcrm\Sugarcrm\SearchEngine\SearchEngine::getInstance();
         $ftsSearch->setForceAsyncIndex(true);
 
         foreach ($data as $db_opp) {
