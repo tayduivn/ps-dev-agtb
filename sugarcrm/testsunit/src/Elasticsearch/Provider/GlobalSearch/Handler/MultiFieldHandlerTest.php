@@ -386,6 +386,28 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                     ),
                 ),
             ),
+            // test 'date' type
+            array(
+                'Opportunities',
+                'date_closed',
+                array(
+                    'type' => 'date',
+                ),
+                array(
+                    'Opportunities__date_closed' => array(
+                        'type' => 'string',
+                        'index' => 'not_analyzed',
+                        'include_in_all' => false,
+                        'fields' => array(
+                            'gs_date' =>  array(
+                                'type' => 'date',
+                                'format' => 'YYYY-MM-dd',
+                                'store' => false,
+                            ),
+                        ),
+                    ),
+                ),
+            ),
             // test 'int' type
             array(
                 'Cases',
@@ -537,6 +559,21 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                                 'store' => false,
                             ),
                         ),
+                    ),
+                ),
+            ),
+            // test 'enum' type
+            array(
+                'Bugs',
+                'status',
+                array(
+                    'type' => 'enum',
+                ),
+                array(
+                    'Bugs__status' => array(
+                        'type' => 'string',
+                        'index' => 'not_analyzed',
+                        'include_in_all' => false,
                     ),
                 ),
             ),

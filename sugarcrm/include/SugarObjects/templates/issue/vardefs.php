@@ -71,6 +71,10 @@ $vardefs = array (
             'merge_filter' => 'enabled',
             'sortable' => true,
             'duplicate_on_record_copy' => 'always',
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => false,
+            ),
 		),
 
         'priority' => array (
