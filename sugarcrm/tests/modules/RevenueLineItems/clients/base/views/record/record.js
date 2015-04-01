@@ -77,33 +77,4 @@ describe("RevenueLineItems.Base.View.Record", function() {
             expect(new_model.attributes.quote_name).toBeUndefined();
         });
     });
-
-    describe('_handleLikelyChange', function() {
-        var model;
-        beforeEach(function() {
-            model = new app.data.beanModel({'quantity': 2});
-        });
-
-        afterEach(function() {
-            delete model;
-        });
-
-        it('discount_price should not be NaN', function() {
-            view._handleLikelyChange(model, '');
-
-            var da = model.get('discount_price');
-            expect(_.isNaN(da)).toBeFalsy();
-            expect(da).toEqual('');
-        });
-
-        it('should not overwrite discount_price', function() {
-            model.set('discount_price', '100.00');
-
-            view._handleLikelyChange(model, '200.00');
-
-            var da = model.get('discount_price');
-            expect(da).toEqual('100.00');
-        });
-    });
-
 })

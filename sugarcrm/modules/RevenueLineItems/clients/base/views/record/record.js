@@ -23,7 +23,7 @@
     /**
      * @inheritdoc
      */
-    cancelClicked: function () {
+    cancelClicked: function() {
         /**
          * todo: this is a sad way to work around some problems with sugarlogic and revertAttributes
          * but it makes things work now. Probability listens for Sales Stage to change and then by
@@ -73,32 +73,7 @@
      */
     bindDataChange: function() {
         this.model.on('duplicate:before', this._handleDuplicateBefore, this);
-        this.model.on('change:likely_case', this._handleLikelyChange, this);
         this._super('bindDataChange');
-    },
-
-    /**
-     * Handle a change to likely value (requiring copy to unit price when empty).
-     */
-    _handleLikelyChange: function(new_model, val, options) {
-        if (
-            _.isEmpty(options) &&
-            _.isEmpty(new_model.get('product_template_id')) &&
-            !_.isFinite(new_model.get('discount_price'))
-        ) {
-            var quantity = new_model.get('quantity'),
-                new_value = '';
-
-            if (!_.isFinite(quantity) || parseFloat(quantity) === 0) {
-                quantity = 1;
-            }
-
-            if (!_.isEmpty(val)) {
-                new_value = app.math.div(val, quantity);
-            }
-
-            new_model.set({discount_price: new_value});
-        }
     },
 
     /**
