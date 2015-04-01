@@ -527,10 +527,10 @@ class Team extends SugarBean
             }
             $manager = BeanFactory::getBean('Users');
             $manager->reports_to_id = $focus->reports_to_id;
-            while(!empty($manager->reports_to_id) && $manager->id != $manager->reports_to_id)
-            {
-                $manager->retrieve($manager->reports_to_id);
-
+            while (!empty($manager->reports_to_id)
+                && $manager->reports_to_id != $manager->id
+                && $manager->retrieve($manager->reports_to_id)
+            ) {
                 $result = $membership->retrieve_by_user_and_team($manager->id, $this->id);
                 if($result)
                 {
