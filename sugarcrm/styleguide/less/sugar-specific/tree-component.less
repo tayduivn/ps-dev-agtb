@@ -261,18 +261,27 @@ div.fa-expand[data-action=full-screen] {
     border-radius: 3px 3px 0px 0px;
     border-bottom: none;
   }
-  .select-arrow {
+  .select-arrow, .clear-field {
     display: inline-block;
     width: 18px;
     height: 100%;
     position: absolute;
     right: 0;
-    top: 0;
     filter: none;
     .border-radius(0);
     top: 0;
     padding-left: 4px;
     .box-sizing(border-box);
+    .fa {
+      color: #555555;
+      font-size: @smallTreeFont;
+    }
+  }
+  .clear-field {
+    right: 18px;
+    .fa {
+      cursor: pointer;
+    }
   }
 }
 
@@ -323,20 +332,35 @@ div.fa-expand[data-action=full-screen] {
             }
             &:before {
               font-size: @smallTreeFont + 2;
+              color: @linkColor;
             }
           }
           > a {
             .smallTreeA;
             color: @blue !important;
-            &.jstree-clicked {
+          }
+          &.jstree-open {
+            > ins {
+              &:before {
+                color: @textColor !important;
+              }
+            }
+            > a {
               font-weight: bold;
               color: @textColor !important;
             }
           }
-          &.jstree-open {
-            > a {
-              font-weight: bold;
-              color: @textColor !important;
+          &.jstree-leaf {
+            ins {
+              & + a:hover {
+                cursor: default;
+              }
+              &.leaf {
+                + a:hover {
+                  cursor: pointer;
+                }
+                cursor: pointer;
+              }
             }
           }
         }
@@ -358,8 +382,18 @@ tr.tr-inline-edit {
   .parenttree {
     top: -14px;
     cursor: pointer;
-    .select-arrow, span[data-role="treevalue"] {
+    .select-arrow, span[data-role="treevalue"], .clear-field {
       font-size: @smallTreeFont;
+    }
+    span[data-role="treevalue"] {
+      margin-right: 36px;
+      display: block;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    .clear-field .fa {
+      top: 6px;
     }
   }
 }

@@ -14,6 +14,7 @@
     <input type="hidden" data-toggle="dropdown" data-role="toggle" name="{{def.id_name}}"/>
     <div name="{{name}}" {{#if def.tabindex}} tabindex="{{def.tabindex}}"{{/if}} data-role="treeinput" class="divinput">
         <span data-role="treevalue">{{#if value}}{{value}}{{/if}}{{#unless value}}{{emptyLabel}}{{/unless}}</span>
+        <abbr class="clear-field"><i class="fa fa-times" data-action="clear-field"></i></abbr>
         <span class="select-arrow">
             <b class="fa fa-caret-down" role="presentation"></b>
         </span>
