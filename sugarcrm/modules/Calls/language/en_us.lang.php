@@ -28,6 +28,7 @@ $mod_strings = array (
     'LBL_LIST_DIRECTION' => 'Direction',
     'LBL_SUBJECT' => 'Subject:',
     'LBL_CONTACT_NAME' => 'Contact:',
+    'LBL_CONTACT_ID'   => 'Contact Id',
     'LBL_DESCRIPTION_INFORMATION' => 'Description Information',
     'LBL_DESCRIPTION' => 'Description:',
     'LBL_STATUS' => 'Status:',
