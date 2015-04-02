@@ -546,24 +546,6 @@ $dictionary['Lead'] = array(
             'reportable' => true,
             'importable' => 'true',
         ),
-        'all_calls' => array(
-            'name' => 'all_calls',
-            'type' => 'link',
-            'link_file' => 'data/Link/FlexRelateChildrenLink.php',
-            'link_class' => 'FlexRelateChildrenLink',
-            'relationship' => 'lead_calls',
-            'source' => 'non-db',
-            'vname' => 'LBL_CALLS',
-        ),
-        'all_meetings' => array(
-            'name' => 'all_meetings',
-            'type' => 'link',
-            'link_file' => 'data/Link/FlexRelateChildrenLink.php',
-            'link_class' => 'FlexRelateChildrenLink',
-            'relationship' => 'lead_meetings',
-            'source' => 'non-db',
-            'vname' => 'LBL_MEETINGS',
-        ),
     ),
     'indices' => array(
         array('name' => 'idx_lead_acct_name_first', 'type' => 'index', 'fields' => array('account_name', 'deleted')),
@@ -667,7 +649,8 @@ $dictionary['Lead'] = array(
             'rhs_table' => 'campaign_log',
             'rhs_key' => 'target_id',
             'relationship_type' => 'one-to-many'
-        ),
+        )
+
     ),
     'duplicate_check' => array(
         'enabled' => true,

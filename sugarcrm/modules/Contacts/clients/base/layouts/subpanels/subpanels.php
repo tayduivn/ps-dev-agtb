@@ -16,14 +16,14 @@ $viewdefs['Contacts']['base']['layout']['subpanels'] = array (
           'layout' => 'subpanel',
           'label' => 'LBL_CALLS_SUBPANEL_TITLE',
           'context' => array(
-              'link' => 'all_calls',
+              'link' => 'calls',
           ),
       ),
       array(
           'layout' => 'subpanel',
           'label' => 'LBL_MEETINGS_SUBPANEL_TITLE',
           'context' => array(
-              'link' => 'all_meetings',
+              'link' => 'meetings',
           ),
       ),
       array(
