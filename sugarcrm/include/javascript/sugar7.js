@@ -167,11 +167,33 @@
             },
             {
                 name: 'search',
-                route: 'search/*searchTerm',
-                callback: function(searchTerm) {
+                route: 'search/:searchTermAndParams',
+                callback: function(searchTermAndParams) {
+                    // For search, we may have query params for the module list
+                    var uriSplit = searchTermAndParams.split('?');
+                    var searchTerm = uriSplit[0];
+                    var params = {modules: []};
+                    // We have parameters. Parse them.
+                    if (uriSplit.length > 1) {
+                        var paramsArray = uriSplit[1].split('&');
+                        _.each(paramsArray, function(paramPair) {
+                            var keyValueArray = paramPair.split('=');
+                            if (keyValueArray.length > 1) {
+                                params[keyValueArray[0]] = keyValueArray[1].split(',');
+                            }
+                        });
+                    }
+
+                    if (params.modules.length === 0) {
+                        var moduleStateKey = app.user.lastState.buildKey(
+                            'quicksearch', 'modulelist', 'quicksearch-modulelist');
+                        params.modules = app.user.lastState.get(moduleStateKey) || [];
+                    }
+
                     app.controller.loadView({
                         layout: 'search',
                         searchTerm: searchTerm,
+                        module_list: params.modules,
                         mixed: true
                     });
                 }

@@ -1,0 +1,241 @@
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+/**
+ * @class View.Views.Base.QuicksearchModuleListView
+ * @alias SUGAR.App.view.views.BaseQuicksearchModuleListView
+ * @extends View.View
+ */
+({
+    className: 'table-cell quicksearch-modulelist-wrapper',
+    plugins: ['Dropdown', 'EllipsisInline'],
+    dropdownItemSelector: '[data-action=select-module]',
+
+    events: {
+        'click [data-action=select-all]': 'selectAllModules',
+        'click [data-action=select-module]': 'selectModule',
+        'click [data-toggle=dropdown]': 'moduleDropdownClick'
+    },
+
+    /**
+     * @inheritDoc
+     */
+    initialize: function(options) {
+        this._super('initialize', [options]);
+        this.hide();
+
+        this.collection = this.layout.collection || app.data.createMixedBeanCollection();
+
+        /**
+         * A collection of the available modules.
+         *
+         * @type {Backbone.Collection}
+         */
+        this.searchModuleFilter = new Backbone.Collection();
+
+        /**
+         * The lastState key for local storage.
+         *
+         * @type {String}
+         */
+        this.stateKey = app.user.lastState.buildKey('quicksearch', 'modulelist', this.name);
+
+        /**
+         * Template for the module icons in the search bar.
+         *
+         * @type {Handlebars.Template}
+         * @private
+         */
+        this._moduleIconTemplate = app.template.getView(this.name + '.module-avatar');
+
+        /**
+         * Data structure for the display of the module icons.
+         *
+         * @type {Object}
+         */
+        this.moduileIcons = {};
+
+        // When the app is ready, fetch the searchable modules and put them in
+        // the module list dropdown.
+        app.events.on('app:sync:complete', function() {
+            this.populateModules();
+            // If there is a module preference stored in local storage,
+            // default selection to those modules.
+            var previousModuleSelection = app.user.lastState.get(this.stateKey);
+            if (_.isEmpty(previousModuleSelection)) {
+                this.searchModuleFilter.allSelected = true;
+            } else {
+                _.each(previousModuleSelection, function(module) {
+                    this.searchModuleFilter.get(module).set('selected', true);
+                }, this);
+            }
+            this._setSelectedModules();
+            // Prepare the module icons for display
+            var moduleIconObj = this._buildModuleIconList();
+            this.moduleIcons = {icon: moduleIconObj};
+            this.render();
+        }, this);
+
+        // On expansion of quicksearch, show the module dropdown & buttons.
+        this.layout.on('quicksearch:expand', this.show, this);
+
+        // On collapse of quicksearch, hide the module dropdown & buttons.
+        this.layout.on('quicksearch:collapse', this.hide, this);
+
+        // Whenever anything happens within the quicksearch layout navigation,
+        // close the module list dropdown.
+        this.layout.on('navigate:next:component navigate:previous:component navigate:to:component', function() {
+            this.$('.module-dropdown').removeClass('open');
+        });
+    },
+
+    /**
+     * Handle module 'select/unselect' event.
+     *
+     * @param {Event} event
+     */
+    selectModule: function(event) {
+        var $li = $(event.currentTarget);
+        var module = $li.data('module');
+        var moduleModel = this.searchModuleFilter.get(module);
+
+        // If all the modules were selected, we unselect all of them first.
+        if (this.searchModuleFilter.allSelected) {
+            this.$('[data-action=select-all]').removeClass('selected', false);
+            this.searchModuleFilter.allSelected = false;
+        }
+
+        // Then we select the clicked module.
+        var checkModule = !moduleModel.get('selected');
+        moduleModel.set('selected', checkModule);
+        $li.toggleClass('selected', checkModule);
+
+        // Check to see if all the modules are now all selected or unselected.
+        var selectedLength = this.searchModuleFilter.where({'selected': true}).length;
+
+        // All modules are selected, set them all to unselected.
+        if (selectedLength === this.searchModuleFilter.length) {
+            this.searchModuleFilter.invoke('set', {selected: false});
+            selectedLength = 0;
+        }
+
+        // If all modules are now unselected, update checkboxes and set the
+        // `allSelected` property of the filter.
+        if (selectedLength === 0) {
+            this.searchModuleFilter.allSelected = true;
+            this.$('[data-action=select-all]').addClass('selected');
+            this.$('[data-action=select-module]').removeClass('selected');
+        }
+
+        this._setSelectedModules();
+        this._updateModuleIcons();
+    },
+
+    /**
+     * Handle clicks on the "Search all" list item.
+     * @param {event} event
+     */
+    selectAllModules: function(event) {
+        if (event) {
+            event.stopImmediatePropagation();
+        }
+
+        // Selects all modules.
+        this.$('[data-action=select-all]').addClass('selected');
+        this.$('[data-action=select-module]').removeClass('selected');
+        this.searchModuleFilter.invoke('set', {selected: false});
+        this.searchModuleFilter.allSelected = true;
+
+        this._setSelectedModules();
+        this._updateModuleIcons();
+    },
+
+    /**
+     * Trigger `quicksearch:results:close` when the module dropdown is clicked.
+     */
+    moduleDropdownClick: function() {
+        this.layout.trigger('quicksearch:results:close');
+    },
+
+    /**
+     * Updates the modules icons in the search bar, based on the currently
+     * selected modules.
+     *
+     * @private
+     */
+    _updateModuleIcons: function() {
+        // Update the module icons in the search bar.
+        var $moduleIconContainer = this.$('[data-label=module-icons]');
+        $moduleIconContainer.empty();
+        var moduleIconObj = this._buildModuleIconList();
+
+        $moduleIconContainer.append(this._moduleIconTemplate({icon: moduleIconObj}));
+    },
+
+    /**
+     * Builds an array of objects for displaying the module icons.
+     * @return {Array}
+     * @private
+     */
+    _buildModuleIconList: function() {
+        var moduleIconObj = [];
+        // If all modules are selected, display "all" icon.
+        if (this.collection.selectedModules.length === 0) {
+            moduleIconObj.push({});
+            // If 3 or fewer selected, display the module icons that are selected.
+        } else if (this.collection.selectedModules.length <= 3) {
+            _.each(this.collection.selectedModules, function(module) {
+                moduleIconObj.push({module: module});
+            }, this);
+            // If there are more than 3 modules selected, display the
+            // "Multiple Modules" icon
+        } else {
+            moduleIconObj.push({multiple: true});
+        }
+        return moduleIconObj;
+    },
+
+    /**
+     * Populate `this.searchModuleFilter` with the searchable modules, using
+     * acls and the metadata attribute `checkGlobalSearchEnabled`.
+     */
+    populateModules: function() {
+        if (this.disposed) {
+            return;
+        }
+        var modules = app.metadata.getModules() || {};
+        _.each(modules, function(meta, module) {
+            // Check that the module is searchable and accessible.
+            if (meta.globalSearchEnabled && app.acl.hasAccess.call(app.acl, 'view', module)) {
+                var moduleModel = new Backbone.Model({id: module, selected: false});
+                this.searchModuleFilter.add(moduleModel);
+            }
+        }, this);
+    },
+
+    /**
+     * Store the selected modules on the collection and in local storage.
+     *
+     * @private
+     */
+    _setSelectedModules: function() {
+        var selectedModules = [];
+        if (!this.searchModuleFilter.allSelected) {
+            this.searchModuleFilter.each(function(model) {
+                if (model.get('selected')) {
+                    selectedModules.push(model.id);
+                }
+            });
+        }
+
+        this.collection.selectedModules = selectedModules;
+        app.user.lastState.set(this.stateKey, this.collection.selectedModules);
+    }
+})

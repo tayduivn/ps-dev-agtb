@@ -44,6 +44,12 @@
          */
         this.compOnFocusIndex = 0;
 
+        /**
+         * Indicates if the search bar is expanded
+         * @type {boolean}
+         */
+        this.expanded = false;
+
         // shortcut keys
         // Focus the search bar
         app.shortcuts.register(app.shortcuts.GLOBAL + 'Search', ['s', 'ctrl+alt+0'], function() {
@@ -111,6 +117,14 @@
         // Reset navigation
         this.on('quicksearch:close', function() {
             this.removeFocus();
+            if (!this.expanded) {
+                return;
+            }
+            this.collection.abortFetchRequest();
+            // Don't collapse on the search page
+            if (!this.context.get('search')) {
+                this.collapse();
+            }
         }, this);
 
         var boundTrigger = _.bind(this.trigger, this);
@@ -119,6 +133,29 @@
                 boundTrigger('quicksearch:close');
             })
             .on('click.quicksearch', '.navbar .search', function(e) { e.stopPropagation() });
+
+
+        // Listener for app:view:change to expand or collapse the search bar
+        app.events.on('app:view:change', function() {
+            if (this.context.get('search')) {
+                _.defer(_.bind(this.expand, this));
+            } else {
+                _.bind(this.collapse, this);
+            }
+        }, this);
+    },
+
+    /**
+     * @inheritDoc
+     */
+    _placeComponent: function(component) {
+        if (component.name === 'quicksearch-modulelist' ||
+            component.name === 'quicksearch-bar'
+        ) {
+            this.$('[data-component=searchbar]').append(component.el);
+        } else {
+            this._super('_placeComponent', [component]);
+        }
     },
 
     /**
@@ -127,6 +164,137 @@
     removeFocus: function() {
         this._components[this.compOnFocusIndex].trigger('navigate:focus:lost');
         this.compOnFocusIndex = 0;
+    },
+
+
+    /**
+     * Expands the quicksearch.
+     *
+     * @param {boolean} update `true` means the expansion is to update the width.
+     *                  `false` means the expansion is new and needs animation.
+     */
+    expand: function(update) {
+        // if the search bar is already expanded and it is not an update,
+        // do nothing.
+        if (this.expanded && !update) {
+            return;
+        }
+
+        this.expanded = true;
+
+        // Calculate the target searchbox width
+        var newWidth = this._calculateExpansion();
+
+        // if the newWidth is not defined, then the menu hasn't completely
+        // loaded, and we should do nothing.
+        if (_.isUndefined(newWidth)) {
+            return;
+        }
+
+        // For new expansions, we need to clear out the modules.
+        var headerLayout = this.closestComponent('header');
+        headerLayout.trigger('view:resize', headerLayout.getModuleListMinWidth());
+
+        // Now that there is space for the search bar to expand, animate the
+        // expansion.
+        if (update) {
+            this.$('[data-component=searchbar]').width(newWidth);
+        } else {
+            this.$('[data-component=searchbar]').animate({width: newWidth}, {duration: 100});
+        }
+
+        // On route, call the router handler.
+        app.router
+            .off('route', this.routerHandler)
+            .on('route', this.routerHandler, this);
+
+        // Turn off the default header resize listener
+        headerLayout.setModuleListResize(false);
+
+        // On window resize, if expanded, recalculate expansion
+        $(window)
+            .off('resize.quicksearch')
+            .on('resize.quicksearch', _.debounce(_.bind(this.resizeHandler, this), 10));
+
+
+        this.trigger('quicksearch:expand');
+
+    },
+
+    /**
+     * Resizes the expanded search bar when the window is resized.
+     * @private
+     */
+    resizeHandler: function() {
+        if (this.expanded) {
+            _.defer(_.bind(this.expand, this, true));
+        }
+    },
+
+    /**
+     * Handles the route event on the router.
+     *
+     * This simple function allows us to reuse a function pointer to the router
+     * handler. The router does not allow namespaced events such as
+     * `route.quicksearch`. So, this function pointer is necessary to
+     * properly dispose the event handler.
+     */
+    routerHandler: function() {
+        this.trigger('quicksearch:close');
+    },
+
+    /**
+     * Calculates the target width for the search bar expansion based off the current state of the megamenu.
+     *
+     * @return {number} The target width for expansion.
+     * @private
+     */
+    _calculateExpansion: function() {
+        var headerLayout = this.closestComponent('header');
+
+        // The starting width of the input box
+        var searchbarStartingWidth = this.$('[data-component=searchbar]').outerWidth();
+
+        // The total width of the module list header
+        var totalModuleWidth = headerLayout.getModuleListWidth();
+
+        // The minimum width necessary for module list header
+        var minimumModuleWidth = headerLayout.getModuleListMinWidth();
+
+        // The target width is most of the module list, saving room for the
+        // minimum module list width.
+        return searchbarStartingWidth +
+            totalModuleWidth -
+            minimumModuleWidth;
+    },
+
+    /**
+     * Collapses the quicksearch.
+     */
+    collapse: function() {
+        // if on the search page
+        if (this.context.get('search')) {
+            return;
+        }
+
+        this.expanded = false;
+
+        this.trigger('quicksearch:collapse');
+        // Turn off the quicksearch resize listener
+        $(window).off('resize.quicksearch');
+
+        // Turn on the default header resize listener
+        this.closestComponent('header').setModuleListResize(true);
+
+        // jQuery `width` function with no arguments (or null arguments) only
+        // returns the current width. Calling `width('')` with the empty string
+        // sets the width to an empty value, which the browser ignores and
+        // uses the css width.
+        this.$('[data-component=searchbar]').width('');
+        var headerLayout = this.closestComponent('header');
+        headerLayout.resize();
+
+        app.router.off('route', this.routerHandler);
     },
 
     /**

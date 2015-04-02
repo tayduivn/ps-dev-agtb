@@ -33,18 +33,6 @@ describe('View.Views.Base.QuicksearchBarView', function() {
         view = null;
     });
 
-    describe('populateModules', function() {
-        it('Should show searchable modules only', function() {
-            sinon.collection.stub(view, 'render');
-            view.populateModules();
-            expect(view.searchModules).toContain('Accounts');
-            expect(view.searchModules).toContain('Contacts');
-            expect(view.searchModules).not.toContain('ftsDisabled');
-            expect(view.searchModules).not.toContain('ftsNotSet');
-            expect(view.searchModules).not.toContain('NoAccess');
-        });
-    });
-
     describe('navigation', function() {
         var keyDisposeStub, triggerBeforeStub, triggerStub;
         beforeEach(function() {

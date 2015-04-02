@@ -192,6 +192,27 @@
                         viewDefs[field.name] = _.extend({}, varDefs[field.name], viewDefs[field.name], field);
                     });
                     return viewDefs;
+                },
+
+                /**
+                 * Builds a url for the full search page for the given search
+                 *
+                 * @param {String} term The term to search
+                 * @param {Object} [options]
+                 * @param {Array} [options.modules] An array of modules to
+                 *    search
+                 * @return {String} The route to the full search page.
+                 */
+                buildSearchRoute: function(term, options) {
+                    options = options || {};
+                    // Ensure that the term is defined.
+                    term = term || '';
+                    var paramString = '';
+                    var modules = options.modules;
+                    if (modules && modules.length > 0) {
+                        paramString = '?modules=' + modules.join(',');
+                    }
+                    return app.router.buildRoute('search', term + paramString);
                 }
             }
         });
