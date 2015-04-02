@@ -71,6 +71,30 @@ class User extends Person {
 	var $user_preferences;
 
 	var $importable = true;
+
+    static protected $demoUsers = array(
+        'jim',
+        'jane',
+        'charles',
+        'chris',
+        'sarah',
+        'regina',
+        'admin',
+    );
+
+    /**
+     * @param $userName
+     * @return bool
+     */
+    static public function isTrialDemoUser($userName)
+    {
+        if (!empty($GLOBALS['sugar_config']['disable_password_change']) && !empty($userName) && in_array($userName, self::$demoUsers)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     /**
      * @var UserPreference
      */
@@ -2595,4 +2619,30 @@ EOQ;
 
         return $user_array;
     }
+
+    /**
+     * Filter list of fields and remove/blank fields that we can not access
+     * Modifies the list directly.
+     * @param array $list list of fields, keys are field names
+     * @param array $context
+     * @param array options Filtering options:
+     * - blank_value (bool) - instead of removing inaccessible field put '' there
+     * - add_acl (bool) - instead of removing fields add 'acl' value with access level
+     * - suffix (string) - strip suffix from field names
+     * - min_access (int) - require this level of access for field
+     * - use_value (bool) - look for field name in value, not in key of the list
+     */
+    public function ACLFilterFieldList(&$list, $context = array(), $options = array())
+    {
+        global $current_user;
+
+        parent::ACLFilterFieldList($list, $context, $options);
+        if (self::isTrialDemoUser($this->user_name)) {
+            if (isset($list['user_name']['acl']) && $list['user_name']['acl'] > 1) {
+                // make it read only for demo users
+                $list['user_name']['acl'] = 1;
+            }
+        }
+    }
+
 }
