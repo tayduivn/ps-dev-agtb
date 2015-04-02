@@ -23,6 +23,7 @@
         this._super('initialize', [options]);
 
         this.collection.query = this.context.get('searchTerm') || '';
+        this.collection.module_list = [];
 
         this.context.on('change:searchTerm', function(context, searchTerm) {
             //TODO: collection.fetch shouldn't need a query to be passed. Will
@@ -40,5 +41,19 @@
 //            collection.facets = data.facets;
 //            this.context.set('facets', data.facets);
         }, this);
+    },
+
+    /**
+     * We override `loadData` to not send the `fields` param in the
+     * request, so it's consistent with the request sent by
+     * {@link View.Views.Base.QuicksearchBarView#fireSearchRequest fireSearchRequest}
+     * method in the quicksearch bar.
+     * Note that the `fields` param is not used anymore by the globalsearch API.
+     *
+     * @inheritDoc
+     */
+    loadData: function(options, setFields) {
+        setFields = false;
+        this._super('loadData', [options, setFields]);
     }
 })
