@@ -82,6 +82,10 @@ $dictionary['ProjectTask'] = array('audited'=>true,
 			'required' => false,
 			'options' => 'project_task_status_options',
 			'audited'=>true,
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => false,
+            ),
 		),
         'description' => array(
             'name' => 'description',

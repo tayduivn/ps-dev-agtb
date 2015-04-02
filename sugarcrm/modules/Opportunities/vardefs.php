@@ -184,7 +184,11 @@ $dictionary['Opportunity'] = array(
             'options' => 'date_range_search_dom',
             'related_fields' => array(
                 'date_closed_timestamp'
-            )
+            ),
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => false,
+            ),
         ),
         'date_closed_timestamp' => array(
             'name' => 'date_closed_timestamp',
