@@ -218,14 +218,36 @@ class PMSEElementValidator implements PMSEValidate
     /**
      *
      * @param type $bean
+     * @return boolean
+     */
+    public function isPMSEEdit($bean)
+    {
+        if (isModuleBWC($_REQUEST['moduleName'])) {
+            $url = $_REQUEST['module'];
+        } else {
+            $url = $_REQUEST['__sugar_url'];
+        }
+
+        if (strpos($url, 'pmse') === false) {
+            return false;
+        } else {
+            $this->logger->debug("Start Event {$bean->id} can not be triggered by PMSE modules.");
+            return true;
+        }
+    }
+
+    /**
+     *
+     * @param type $bean
      * @param type $flowData
      * @return boolean
      */
     public function validateStartEvent($bean, $flowData, $request)
     {
-        if (($this->isNewRecord($bean) && $flowData['evn_params'] == 'new' ||
+        if ((($this->isNewRecord($bean) && $flowData['evn_params'] == 'new' ||
                 !$this->isNewRecord($bean) && $flowData['evn_params'] == 'updated')
-            && !$this->isCaseDuplicated($bean, $flowData)
+                 && !$this->isCaseDuplicated($bean, $flowData)) ||
+            !$this->isNewRecord($bean) && $flowData['evn_params'] == 'allupdates' && !$this->isPMSEEdit($bean)
         ) {
             $request->validate();
         } else {
