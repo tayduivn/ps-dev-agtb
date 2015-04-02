@@ -323,17 +323,18 @@ nv.utils.dropShadow = function (id, defs, options) {
 // </svg>
 
 nv.utils.stringSetLengths = function (_data, _container, _format) {
-  var lengths = [];
-  _container.append('g').attr('class', 'tmp-text-strings');
-  var calcContainers = _container.select('.tmp-text-strings').selectAll('text')
-      .data(_data).enter()
-        .append('text')
-        .text(_format);
-  calcContainers
-    .each(function (d,i) {
+  var lengths = [],
+      tempContainer = _container.append('g').attr('class', 'tmp-text-strings'),
+      textStrings = tempContainer.selectAll('text')
+        .data(_data).enter()
+          .append('text')
+          .text(_format);
+  textStrings
+    .each(function(d, i) {
       lengths.push(this.getBBox().width);
     });
-  _container.select('.tmp-text-strings').remove();
+  tempContainer.data([]);
+  tempContainer.remove();
   return lengths;
 };
 

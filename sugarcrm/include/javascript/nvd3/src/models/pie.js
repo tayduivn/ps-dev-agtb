@@ -20,12 +20,32 @@ nv.models.pie = function() {
       labelThreshold = 0.01, //if slice percentage is under this, don't show label
       donut = false,
       hole = false,
+      holeFormat = function(holeWrap, data) {
+        var wrap = holeWrap.selectAll('.nv-hole-container').data(data),
+            wrapEnter = wrap.enter().append('g').attr('class', 'nv-hole-container');
+        wrapEnter.append('text')
+          .text(data)
+          .attr('class', 'nv-pie-hole-value')
+          .attr('dy', '.35em')
+          .attr('text-anchor', 'middle')
+          .style('font-size', '50px');
+        wrap.exit().remove();
+      },
       labelSunbeamLayout = false,
       leaderLength = 20,
       textOffset = 5,
-      startAngle = function(d) { return d.startAngle; },
-      endAngle = function(d) { return d.endAngle; },
+      arcDegrees = 360,
+      rotateDegrees = 0,
+      startAngle = function(d) {
+        // DNR (Math): simplify d.startAngle - ((rotateDegrees * Math.PI / 180) * (360 / arcDegrees)) * (arcDegrees / 360);
+        return d.startAngle * arcDegrees / 360 - rotateDegrees * Math.PI / 180;
+      },
+      endAngle = function(d) {
+        return d.endAngle * arcDegrees / 360 - rotateDegrees * Math.PI / 180;
+      },
       donutRatio = 0.447,
+      minRadius = 75,
+      maxRadius = 250,
       durationMs = 0,
       direction = 'ltr',
       color = function(d, i) { return nv.utils.defaultColor()(d, d.series); },
@@ -50,8 +70,9 @@ nv.models.pie = function() {
 
       //------------------------------------------------------------
       // recalculate width and height based on label length
-      var labelLengths = [];
-      if (showLabels && pieLabelsOutside) {
+      var labelLengths = [],
+          doLabels = showLabels && pieLabelsOutside ? true : false;
+      if (doLabels) {
         labelLengths = nv.utils.stringSetLengths(
             data.map(function(d) { return d.key; }),
             container,
@@ -79,7 +100,7 @@ nv.models.pie = function() {
       var holeWrap = g.select('.nv-holeWrap');
 
       wrap.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
-      pieWrap.attr('transform', 'translate(' + availableWidth / 2 + ',' + availableHeight / 2 + ')');
+      pieWrap.attr('transform', 'translate(' + (availableWidth / 2) + ',' + (availableHeight / 2) + ')');
 
       //------------------------------------------------------------
 
@@ -97,18 +118,6 @@ nv.models.pie = function() {
             .data(pie);
 
       slices.exit().remove();
-
-      function buildEventObject(e, d, i) {
-        return {
-            label: getX(d.data),
-            value: getY(d.data),
-            point: d.data,
-            pointIndex: i,
-            pos: [e.offsetX, e.offsetY],
-            id: id,
-            e: e
-          };
-      }
 
       var ae = slices.enter().append('g')
             .on('mouseover', function(d, i) {
@@ -137,7 +146,7 @@ nv.models.pie = function() {
 
           ae.append('path')
               .style('stroke', '#ffffff')
-              .style('stroke-width', 3)
+              .style('stroke-width', 2)
               .style('stroke-opacity', 0)
               .each(function(d, i) {
                 this._current = d;
@@ -159,103 +168,63 @@ nv.models.pie = function() {
               .attr('class', 'nv-label-leader')
               .style('stroke-opacity', 0);
 
-      // Donut Hole Text
-      //------------------------------------------------------------
-
-      if (hole && donut) {
-        holeWrap.selectAll('text').remove();
-        holeWrap.append('text')
-          .attr('text-anchor', 'middle')
-          .attr('class', 'nv-pie-hole-value')
-          .attr('dy', '.35em')
-          .style('fill', '#333')
-          .style('font-size', '32px')
-          .style('font-weight', 'bold');
-        holeWrap.select('text')
-          .text(function(d) { return hole(d, this); });
-        var holeBBox = holeWrap.node().getBBox();
-        availableHeight -= holeBBox.height + holeBBox.y;
-      }
 
       // UPDATE
       //------------------------------------------------------------
 
       var maxWidthRadius = availableWidth / 2,
           maxHeightRadius = availableHeight / 2,
-          extHeight = [];
+          extWidths = [],
+          extHeights = [],
+          verticalShift = 0,
+          verticalReduction = doLabels ? 5 : 0,
+          horizontalShift = 0,
+          horizontalReduction = leaderLength + textOffset,
+          verticalDifferential = 0,
+          horizontalDifferential = 0;
 
-      // adjust max height radius for start/end angles
-      slices.select('path')
-        .each(function(d, i) {
-          var start = startAngle(d),
-              end = endAngle(d),
-              N = start <= 0 && end >= 0,
-              S = start <= Math.PI && end >= Math.PI,
-              cosStart = Math.cos(start),
-              cosEnd = Math.cos(end);
-          if (N) {
-            extHeight.push(1);
-          }
-          if (S) {
-            extHeight.push(-1);
-          }
-          extHeight.push(cosStart);
-          extHeight.push(cosEnd);
-        });
-      extHeight = d3.extent(extHeight);
+      slices.select('path').call(calcScalars, maxWidthRadius, maxHeightRadius);
 
-      // scale up height radius to fill extents
-      maxHeightRadius *= 2 / (Math.abs(extHeight[0]) + Math.abs(extHeight[1]));
+      // Donut Hole Text
+      holeWrap.call(holeFormat, hole ? [hole] : []);
 
-      // reduce width radius for width of labels
-      if (showLabels && pieLabelsOutside) {
-        var widthRadii = [maxWidthRadius],
-            heightRadii = [maxHeightRadius];
+      if (hole) {
+        var heightHoleHalf = holeWrap.node().getBBox().height * 0.30,
+            heightPieHalf = Math.abs(maxHeightRadius * d3.min(extHeights)),
+            holeOffset = Math.round(heightHoleHalf - heightPieHalf);
 
-        slices.select('path')
-          .each(function(d, i) {
-            if (!labelOpacity(d)) {
-              return;
-            }
-            var theta = (startAngle(d) + endAngle(d)) / 2,
-                sin = Math.abs(Math.sin(theta)),
-                cos = Math.abs(Math.cos(theta)),
-                bW = maxWidthRadius - leaderLength - textOffset - labelLengths[i],
-                bH = maxHeightRadius - 7,
-                rW = sin ? bW / sin : bW, //don't divide by zero, fool
-                rH = cos ? bH / cos : bH;
-            widthRadii.push(rW);
-            heightRadii.push(rH);
-          });
-
-        maxWidthRadius = d3.min(widthRadii);
-        maxHeightRadius = d3.min(heightRadii);
+        if (holeOffset > 0) {
+          verticalReduction += holeOffset;
+          verticalShift -= holeOffset / 2;
+        }
       }
 
-      var labelRadius = Math.min(maxWidthRadius, maxHeightRadius),
-          pieRadius = labelRadius - (showLabels && pieLabelsOutside ? leaderLength : 0),
+      var offsetHorizontal = availableWidth / 2,
           offsetVertical = availableHeight / 2;
 
-      if (maxHeightRadius > availableHeight / 2) {
-          offsetVertical += labelRadius - labelRadius / 2;
+      //first adjust the leaderLength to be proportional to radius
+      if (doLabels) {
+        leaderLength = Math.max(Math.min(Math.min(calcMaxRadius()) / 12, 20), 10);
       }
 
-      pieWrap.attr('transform', 'translate(' + availableWidth / 2 + ',' + offsetVertical + ')');
+      var labelRadius = Math.min(Math.max(calcMaxRadius(), minRadius), maxRadius),
+          pieRadius = labelRadius - (doLabels ? leaderLength : 0);
 
-      if (hole && donut) {
-        holeWrap
-          .attr('transform', 'translate(' + availableWidth / 2 + ',' + offsetVertical + ')');
-      }
+      offsetVertical += ((d3.max(extHeights) - d3.min(extHeights)) / 2 + d3.min(extHeights)) * ((labelRadius + verticalShift) / offsetVertical);
+      offsetHorizontal += ((d3.max(extWidths) - d3.min(extWidths)) / 2 - d3.max(extWidths)) * (labelRadius / offsetHorizontal);
+
+      offsetVertical += verticalShift / 2;
+
+      pieWrap
+        .attr('transform', 'translate(' + offsetHorizontal + ',' + offsetVertical + ')');
+      holeWrap
+        .attr('transform', 'translate(' + offsetHorizontal + ',' + offsetVertical + ')');
 
       var pieArc = d3.svg.arc()
-            .innerRadius(0)
+            .innerRadius(donut ? pieRadius * donutRatio : 0)
             .outerRadius(pieRadius)
             .startAngle(startAngle)
             .endAngle(endAngle);
-
-      if (donut) {
-        pieArc.innerRadius(pieRadius * donutRatio);
-      }
 
       var labelArc = d3.svg.arc()
             .innerRadius(0)
@@ -321,12 +290,29 @@ nv.models.pie = function() {
           .style('text-anchor', function(d) {
             //center the text on it's origin or begin/end if orthogonal aligned
             //labelSunbeamLayout ? ((d.startAngle + d.endAngle) / 2 < Math.PI ? 'start' : 'end') : 'middle'
-            var anchor = alignedRight(d, labelArc) === 1 ? 'start' : 'end';
             if (!pieLabelsOutside) {
-              anchor = 'middle';
+              return 'middle';
             }
-            anchor = direction === 'rtl' ? anchor === 'start' ? 'end' : 'start' : anchor;
+            var anchor = alignedRight(d, labelArc) === 1 ? 'start' : 'end';
+            if (direction === 'rtl') {
+              anchor === 'start' ? 'end' : 'start';
+            }
             return anchor;
+          });
+
+        slices
+          .each(function(d, i) {
+            if (labelLengths[i] > minRadius || labelRadius === minRadius) {
+              var theta = (startAngle(d) + endAngle(d)) / 2,
+                  sin = Math.abs(Math.sin(theta)),
+                  bW = labelRadius * sin + leaderLength + textOffset + labelLengths[i],
+                  rW = (availableWidth / 2 - offsetHorizontal) + availableWidth / 2 - bW;
+
+              if (rW < 0) {
+                var label = nv.utils.stringEllipsify(d.data.key, container, labelLengths[i] + rW);
+                d3.select(this).select('text').text(label);
+              }
+            }
           });
 
         if (!pieLabelsOutside) {
@@ -377,6 +363,119 @@ nv.models.pie = function() {
 
       // Utility Methods
       //------------------------------------------------------------
+
+      function buildEventObject(e, d, i) {
+        return {
+            label: getX(d.data),
+            value: getY(d.data),
+            point: d.data,
+            pointIndex: i,
+            pos: [e.offsetX, e.offsetY],
+            id: id,
+            e: e
+          };
+      }
+
+      // calculate max and min height of slice vertices
+      function calcScalars(slices, maxWidth, maxHeight) {
+        var widths = [],
+            heights = [],
+            Pi = Math.PI;
+
+        slices.each(function(d, i) {
+          var aStart = (startAngle(d) + 2 * Pi) % (2 * Pi),
+              aEnd = (endAngle(d) + 2 * Pi) % (2 * Pi),
+
+              wStart = Math.round(Math.sin(aStart) * 10000) / 10000,
+              wEnd = Math.round(Math.sin(aEnd) * 10000) / 10000,
+              hStart = Math.round(Math.cos(aStart) * 10000) / 10000,
+              hEnd = Math.round(Math.cos(aEnd) * 10000) / 10000;
+
+          // North
+          if (startAngle(d) <= 0 && endAngle(d) >= 0) {
+            heights.push(maxHeight);
+            if (donut) {
+              heights.push(maxHeight * donutRatio);
+            }
+          }
+          // East
+          if (aStart <= Pi / 2 && (aEnd >= Pi / 2 || aEnd === 0)) {
+            widths.push(maxWidth);
+            if (donut) {
+              widths.push(maxWidth * donutRatio);
+            }
+          }
+          // South
+          if (aStart <= Pi && (aEnd >= Pi || aEnd === 0)) {
+            heights.push(-maxHeight);
+            if (donut) {
+              heights.push(-maxHeight * donutRatio);
+            }
+          }
+          // West
+          if (aStart <= 3 * Pi / 2 && (aEnd >= 3 * Pi / 2 || aEnd === 0)) {
+            widths.push(-maxWidth);
+            if (donut) {
+              widths.push(-maxWidth * donutRatio);
+            }
+          }
+
+          widths.push(maxWidth * wStart);
+          widths.push(maxWidth * wEnd);
+          if (donut) {
+            widths.push(maxWidth * donutRatio * wStart);
+            widths.push(maxWidth * donutRatio * wEnd);
+          } else {
+            widths.push(0);
+          }
+
+          heights.push(maxHeight * hStart);
+          heights.push(maxHeight * hEnd);
+          if (donut) {
+            heights.push(maxHeight * donutRatio * hStart);
+            heights.push(maxHeight * donutRatio * hEnd);
+          } else {
+            heights.push(0);
+          }
+        });
+
+        extWidths = d3.extent(widths);
+        extHeights = d3.extent(heights);
+
+        // scale up height radius to fill extents
+        maxWidthRadius *= availableWidth / (d3.max(extWidths) - d3.min(extWidths));
+        maxHeightRadius *= availableHeight / (d3.max(extHeights) - d3.min(extHeights));
+      }
+
+      // reduce width radius for width of labels
+      function calcMaxRadius() {
+        var widthRadius = [maxWidthRadius],
+            heightRadius = [maxHeightRadius + leaderLength];
+
+        slices.select('path').each(function(d, i) {
+          if (!labelOpacity(d)) {
+            return;
+          }
+
+          var theta = (startAngle(d) + endAngle(d)) / 2,
+              sin = d3.round(Math.sin(theta), 5),
+              cos = d3.round(Math.cos(theta), 5),
+              bW = maxWidthRadius - horizontalReduction - labelLengths[i],
+              bH = maxHeightRadius - verticalReduction,
+              rW = sin ? bW / sin : bW, //don't divide by zero, fool
+              rH = cos ? bH / cos : bH;
+
+          widthRadius.push(rW);
+          heightRadius.push(rH);
+        });
+
+        verticalDifferential = d3.max(heightRadius) + d3.min(heightRadius);
+        horizontalDifferential = d3.max(widthRadius) + d3.min(widthRadius);
+
+        var radius = d3.min(widthRadius.concat(heightRadius).concat([]), function(d) { return Math.abs(d); });
+
+        return radius;
+      }
 
       function labelOpacity(d) {
         var percent = (endAngle(d) - startAngle(d)) / (2 * Math.PI);
@@ -562,7 +661,15 @@ nv.models.pie = function() {
     if (!arguments.length) {
       return hole;
     }
-    hole = d3.functor(_);
+    hole = _;
+    return chart;
+  };
+
+  chart.holeFormat = function(_) {
+    if (!arguments.length) {
+      return holeFormat;
+    }
+    holeFormat = d3.functor(_);
     return chart;
   };
 
@@ -619,6 +726,38 @@ nv.models.pie = function() {
       return direction;
     }
     direction = _;
+    return chart;
+  };
+
+  chart.arcDegrees = function(_) {
+    if (!arguments.length) {
+      return arcDegrees;
+    }
+    arcDegrees = Math.max(Math.min(_, 360), 1);
+    return chart;
+  };
+
+  chart.rotateDegrees = function(_) {
+    if (!arguments.length) {
+      return rotateDegrees;
+    }
+    rotateDegrees = _ % 360;
+    return chart;
+  };
+
+  chart.minRadius = function(_) {
+    if (!arguments.length) {
+      return minRadius;
+    }
+    minRadius = _;
+    return chart;
+  };
+
+  chart.maxRadius = function(_) {
+    if (!arguments.length) {
+      return maxRadius;
+    }
+    maxRadius = _;
     return chart;
   };
 

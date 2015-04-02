@@ -20,7 +20,7 @@ svg {
 }
 
 svg text {
-  font: normal @chartTextSize @sansFontFamily;
+  font: normal @chartTextSize 'Helvetica Neue', Arial, sans-serif;
   fill: @textColor;
   stroke: none;
 }
@@ -302,6 +302,17 @@ svg .title {
   .nv-inactive:hover path {
     fill-opacity: 0.75;
   }
+}
+
+.nv-holeWrap text{
+  text-anchor: middle;
+}
+text.nv-pie-hole-value {
+  font-size: 32px;
+  font-weight: bold;
+}
+text.nv-pie-hole-label {
+  font-size: 11px;
 }
 
 /**********
