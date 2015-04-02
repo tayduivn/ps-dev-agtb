@@ -30,6 +30,7 @@ $vardefs = array(
             'relationship' => strtolower($module).'_following',
             'source' => 'non-db',
             'vname' => 'LBL_FOLLOWING',
+            'reportable' => false,
         ),
     ),
     'relationships' => array(

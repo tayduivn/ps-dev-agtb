@@ -34,6 +34,7 @@ $vardefs = array(
             'relationship' => strtolower($module).'_favorite',
             'source' => 'non-db',
             'vname' => 'LBL_FAVORITE',
+            'reportable' => false,
         ),
     ),
     'relationships' => array(
