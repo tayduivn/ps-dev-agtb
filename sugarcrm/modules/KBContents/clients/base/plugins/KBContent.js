@@ -410,6 +410,7 @@
                 // TODO: This needs an API instead. Will be fixed by SC-3369.
                 app.error.errorName2Keys['expDateLow'] = 'ERROR_EXP_DATE_LOW';
                 app.error.errorName2Keys['activeDateApproveRequired'] = 'ERROR_ACTIVE_DATE_APPROVE_REQUIRED';
+                app.error.errorName2Keys['activeDateLow'] = 'ERROR_ACTIVE_DATE_LOW';
 
                 model.addValidationTask('exp_date_publish', _.bind(_doValidateExpDateFieldPartial, this));
                 model.addValidationTask('active_date_approve', _.bind(_doValidateActiveDateFieldPartial, this));
@@ -463,7 +464,8 @@
             _doValidateActiveDateField: function(model, fields, errors, callback) {
                 var fieldName = 'active_date',
                     status = model.get('status'),
-                    publishingDate = model.get(fieldName);
+                    publishingDate = model.get(fieldName),
+                    pubDateObject = new Date(publishingDate);
 
                 if (!publishingDate && status == 'approved') {
                     // If the field is hidden.
@@ -472,6 +474,11 @@
                     }
                     errors[fieldName] = errors[fieldName] || {};
                     errors[fieldName].activeDateApproveRequired = true;
+                }
+
+                if (publishingDate && pubDateObject && pubDateObject.getTime() < Date.now()) {
+                    errors[fieldName] = errors[fieldName] || {};
+                    errors[fieldName].activeDateLow = true;
                 }
 
                 callback(null, fields, errors);
