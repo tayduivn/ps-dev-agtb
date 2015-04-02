@@ -312,7 +312,10 @@ if(!$current_user->is_admin && !$GLOBALS['current_user']->isAdminForModule('User
     }
 
     if (!$focus->verify_data()) {
-        header("Location: index.php?action=Error&module=Users&error_string=".urlencode($focus->error_string));
+        header(
+            "Location: index.php?action=EditView&module=Users&isDuplicate=true&record=".$_REQUEST['return_id'].
+            "&error_string=".urlencode($focus->error_string)
+        );
         exit;
     } else {
         // Handle setting of the metadata change for this user
