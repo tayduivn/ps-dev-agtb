@@ -1,5 +1,4 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -34,14 +33,15 @@ $viewdefs['base']['layout']['first-login-wizard'] = array(
         ),
     ),
     'components' => array(
-        0 => array(
-            'view' => 'user-wizard-page'
+        array(
+            'view' => 'user-wizard-page',
+            'primary' => true,
         ),
-        1 => array(
-            'view' => "user-locale-wizard-page"
+        array(
+            'view' => "user-locale-wizard-page",
         ),
-        2 => array(
-            'view' => 'setup-complete-wizard-page'
+        array(
+            'view' => 'setup-complete-wizard-page',
         )
     ),
 );
