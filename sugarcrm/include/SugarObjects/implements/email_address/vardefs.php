@@ -32,10 +32,6 @@ $vardefs = array(
             'duplicate_on_record_copy' => 'always',
             'len' => 100,
             'importable' => false,
-            'function' => array(
-                'name' => 'getEmailAddressWidget',
-                'returns' => 'html',
-            ),
             'link' => 'email_addresses_primary',
             'rname' => 'email_address',
             'module' => 'EmailAddresses',
