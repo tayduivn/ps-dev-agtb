@@ -1677,7 +1677,7 @@ AdamActivity.prototype.createConfigurateAction = function () {
                                 responseButtons.setValue(data.act_response_buttons);
                             }
                             if (data.act_reassign) {
-                                if (data.act_reassign === '1') {
+                                if (App.utils.isTruthy(data.act_reassign)) {
                                     reassignCheck.setValue(true);
                                     $(reassignCheck.html).children('input').prop('checked', true);
                                     combo_teams.setReadOnly(false);
@@ -1689,7 +1689,7 @@ AdamActivity.prototype.createConfigurateAction = function () {
                                 }
                             }
                             if (data.act_adhoc) {
-                                if (data.act_adhoc === '1') {
+                                if (App.utils.isTruthy(data.act_adhoc)) {
                                     adhocCheck.setValue(true);
                                     $(adhocCheck.html).children('input').prop('checked', true);
                                     combo_teams_1.setReadOnly(false);
