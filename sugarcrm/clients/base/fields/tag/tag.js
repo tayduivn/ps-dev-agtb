@@ -80,6 +80,11 @@
                 return false;
             }
         }
+        
+        // Check if input is empty after trim
+        if (term === '') {
+            return false;
+        }
 
         // Check for existence amongst tags that exist but haven't been saved yet
         if (this.checkExistingTags(term)) {
@@ -213,12 +218,14 @@
         this.$('.select2-search-field > input.select2-input').on('keyup', function(e) {
             if (e.keyCode === 13) {
                 var val = self.$('input.select2-input').val();
-                if (val === '') {
-                    return;
-                }
 
                 // Trim the tag
                 val = $.trim(val);
+
+                // Prevent blank tags
+                if (val === '') {
+                    return;
+                }
 
                 // Sanitize input
                 if (escapeChars.indexOf(val.charAt(0)) >= 0) {
