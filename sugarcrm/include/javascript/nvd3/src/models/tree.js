@@ -27,7 +27,7 @@ nv.models.tree = function() {
     horizontal = false;
 
   var id = Math.floor(Math.random() * 10000), //Create semi-unique ID in case user doesn't select one,
-    color = nv.utils.defaultColor(),
+    color = function (d, i) { return nv.utils.defaultColor()(d, i); },
     fill = function(d, i) { return color(d,i); },
     gradient = function(d, i) { return color(d,i); },
 

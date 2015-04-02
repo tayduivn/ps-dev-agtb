@@ -10,6 +10,7 @@ nv.models.funnelChart = function() {
       height = null,
       showTitle = false,
       showLegend = true,
+      direction = 'ltr',
       tooltip = null,
       tooltips = true,
       tooltipContent = function(key, x, y, e, graph) {
@@ -25,18 +26,13 @@ nv.models.funnelChart = function() {
         controls: {close: 'Hide controls', open: 'Show controls'},
         noData: 'No Data Available.'
       },
-      dispatch = d3.dispatch('chartClick', 'tooltipShow', 'tooltipHide', 'tooltipMove', 'stateChange', 'changeState');
+      dispatch = d3.dispatch('chartClick', 'elementClick', 'tooltipShow', 'tooltipHide', 'tooltipMove', 'stateChange', 'changeState');
 
   //============================================================
   // Private Variables
   //------------------------------------------------------------
 
   var funnel = nv.models.funnel(),
-      yAxis = nv.models.axis()
-        .orient('left')
-        .tickFormat(function(d) {
-          return '';
-        }),
       legend = nv.models.legend()
         .align('center'),
       yScale = d3.scale.linear();
@@ -97,7 +93,7 @@ nv.models.funnelChart = function() {
           });
         }
 
-        // if there are no active data series, activate them all
+        // if there are no active data series, inactivate them all
         if (!data.filter(function(d) {
           return d.active === 'active';
         }).length) {
@@ -117,46 +113,62 @@ nv.models.funnelChart = function() {
       //------------------------------------------------------------
       // Display No Data message if there's nothing to show.
 
-      if (!data || !data.length || !data.filter(function(d) {
-        return d.values.length;
-      }).length) {
-        var noDataText = container.selectAll('.nv-noData').data([chart.strings().noData]);
-
-        noDataText.enter().append('text')
-          .attr('class', 'nvd3 nv-noData')
-          .attr('dy', '-.7em')
-          .style('text-anchor', 'start');
-
-        noDataText
-          .attr('x', margin.left + availableWidth / 2)
-          .attr('y', margin.top + availableHeight / 2)
-          .text(function(d) {
-            return d;
-          });
-
+      if (!data || !data.length || !data.filter(function(d) {return d.values.length; }).length) {
+        displayNoData();
         return chart;
-      } else {
-        container.selectAll('.nv-noData').remove();
       }
 
       //------------------------------------------------------------
       // Process data
-      //add series index to each data point for reference
-      var funnelData = data.map(function(d, i) {
-          d.series = i;
-          d.values.map(function(v) {
-            v.series = d.series;
-          });
-          return d;
+      // add series index to each data point for reference
+      data.map(function(d, i) {
+        d.series = i;
+        d.values.map(function(v) {
+          v.series = d.series;
         });
+        d.total = d3.sum(d.values, function(d, i) {
+          return funnel.y()(d, i);
+        });
+        if (!d.total) {
+          d.disabled = true;
+        }
+        return d;
+      });
+
+      // only sum enabled series
+      var funnelData = data
+            .filter(function(d, i) {
+              return !d.disabled;
+            });
+
+      if (!funnelData.length) {
+        funnelData = [{values: []}];
+      }
+
+      var totalAmount = d3.sum(funnelData, function(d) {
+              return d.total;
+            });
+      var totalCount = d3.sum(funnelData, function(d) {
+              return d.count;
+            });
 
       //set state.disabled
-      state.disabled = funnelData.map(function(d) { return !!d.disabled; });
+      state.disabled = data.map(function(d) { return !!d.disabled; });
 
       //------------------------------------------------------------
       // Setup Scales
 
       y = funnel.yScale(); //see below
+
+      //------------------------------------------------------------
+      // Display No Data message if there's nothing to show.
+
+      if (!totalAmount) {
+        displayNoData();
+        return chart;
+      } else {
+        container.selectAll('.nv-noData').remove();
+      }
 
       //------------------------------------------------------------
       // Setup containers and skeleton of chart
@@ -168,14 +180,14 @@ nv.models.funnelChart = function() {
       gEnter.append('rect').attr('class', 'nv-background')
         .attr('x', -margin.left)
         .attr('y', -margin.top)
-        .attr('width', availableWidth + margin.left + margin.right)
-        .attr('height', availableHeight + margin.top + margin.bottom)
         .attr('fill', '#FFF');
+
+      g.select('.nv-background')
+        .attr('width', availableWidth + margin.left + margin.right)
+        .attr('height', availableHeight + margin.top + margin.bottom);
 
       gEnter.append('g').attr('class', 'nv-titleWrap');
       var titleWrap = g.select('.nv-titleWrap');
-      gEnter.append('g').attr('class', 'nv-y nv-axis');
-      var yAxisWrap = g.select('.nv-y.nv-axis');
       gEnter.append('g').attr('class', 'nv-funnelWrap');
       var funnelWrap = g.select('.nv-funnelWrap');
       gEnter.append('g').attr('class', 'nv-legendWrap');
@@ -192,9 +204,9 @@ nv.models.funnelChart = function() {
         titleWrap
           .append('text')
             .attr('class', 'nv-title')
-            .attr('x', 0)
+            .attr('x', direction === 'rtl' ? availableWidth : 0)
             .attr('y', 0)
-            .attr('dy', '.71em')
+            .attr('dy', '.75em')
             .attr('text-anchor', 'start')
             .text(properties.title)
             .attr('stroke', 'none')
@@ -203,27 +215,35 @@ nv.models.funnelChart = function() {
         innerMargin.top += parseInt(g.select('.nv-title').node().getBBox().height / 1.15, 10) +
           parseInt(g.select('.nv-title').style('margin-top'), 10) +
           parseInt(g.select('.nv-title').style('margin-bottom'), 10);
+
+        if (!showLegend) {
+          innerMargin.top += 4;
+        }
       }
 
       if (showLegend) {
         legend
           .id('legend_' + chart.id())
           .strings(chart.strings().legend)
+          .margin({top: 10, right: 10, bottom: 10, left: 10})
+          .align('center')
           .height(availableHeight - innerMargin.top);
         legendWrap
-          .datum(funnelData)
+          .datum(data)
           .call(legend);
 
         legend
           .arrange(availableWidth);
+
         legendWrap
-          .attr('transform', 'translate(0,' + innerMargin.top + ')');
+          .attr('transform', 'translate(' + (direction === 'rtl' || !legend.collapsed() ? 0 : availableWidth - legend.width()) + ',' + innerMargin.top + ')');
+
+        innerMargin.top += legend.height() + 4;
       }
 
       //------------------------------------------------------------
       // Recalc inner margins
 
-      innerMargin.top += legend.height() + 4;
       innerHeight = availableHeight - innerMargin.top - innerMargin.bottom;
 
       //------------------------------------------------------------
@@ -234,7 +254,7 @@ nv.models.funnelChart = function() {
         .height(innerHeight);
 
       funnelWrap
-        .datum(funnelData.filter(function(d) { return !d.disabled; }))
+        .datum(funnelData)
         .attr('transform', 'translate(' + innerMargin.left + ',' + innerMargin.top + ')')
           .call(funnel);
 
@@ -242,214 +262,6 @@ nv.models.funnelChart = function() {
       // Setup Scales (again, not sure why it has to be here and not above?)
 
       var tickValues = resetScale(yScale, funnelData);
-
-      //------------------------------------------------------------
-      // Main Chart Components
-
-      yAxis
-        .tickSize(-innerWidth, 0)
-        .scale(yScale)
-        .highlightZero(true)
-        .showMaxMin(false)
-        .tickValues(tickValues)
-        .textAnchor('start')
-        .tickFormat(function(d, i) {
-          return i === 0 ? '' : funnelData[i - 1].key;
-        });
-
-      yAxisWrap
-        .attr('transform', 'translate(' + (yAxis.orient() === 'left' ? innerMargin.left : innerWidth) + ',' + innerMargin.top + ')')
-          .call(yAxis);
-
-      yAxisWrap.selectAll('.tick.major text')
-        .style('font-size', innerWidth < 500 ? '11px' : '15px')
-        .each(fmtAxisLabel);
-
-
-      // Build array of tick label dimensions
-      var tickDimensions = yAxisWrap.selectAll('.tick.major text')[0].map(function(d, i) {
-            var bbox = d.getBoundingClientRect(),
-                w = parseInt(bbox.width, 10),
-                h = Math.round(parseInt(bbox.height, 10) + 4);
-            return {
-              key: funnelData[i - 1] ? funnelData[i - 1].key : 'Base',
-              width: w,
-              height: h,
-              widthOffset: w,
-              textOffset: 0,
-              lineOffset: 0,
-              thickness: 0,
-              showLabel: false,
-              ends: false
-            };
-          });
-
-      var minimumOffset = recalcDimensions(tickValues, tickDimensions);
-
-
-      // Recall to set final size
-      funnel
-        .offset(minimumOffset);
-
-      funnelWrap
-        .transition().duration(durationMs)
-          .call(funnel);
-
-      tickValues = resetScale(yScale, funnelData);
-
-      yAxis
-        .tickValues(tickValues);
-
-      yAxisWrap
-        .transition().duration(durationMs)
-          .call(yAxis);
-
-      minimumOffset = recalcDimensions(tickValues, tickDimensions);
-
-
-      // Reposition main funnel
-      funnelWrap.selectAll('g.nv-wrap.nv-funnel')
-        .attr('transform', 'translate(' + (minimumOffset / 2) + ',0)');
-
-      // Reposition tick elements and update label
-      yAxisWrap.selectAll('.tick.major text')
-        // .attr('x', function(d, i) {
-        //   var t = tickDimensions[i];
-        //   return t.widthOffset / 2 + t.height + 'px';
-        // })
-        .attr('dy', function(d, i) {
-          var t = tickDimensions[i]
-              y = t.textOffset;
-          return y + 'px';
-        })
-        .each(fmtAxisLabel);
-
-      // Set leaders
-      yAxisWrap.selectAll('.tick.major line')
-        .attr('x1', function(d, i) {
-          var t = tickDimensions[i];
-          return t.widthOffset + t.lineOffset / 2;
-        })
-        .attr('x2', function(d, i) {
-          var t = tickDimensions[i];
-          return (innerWidth - t.widthOffset) / 2 + t.widthOffset;
-        })
-        .style('opacity', function(d, i) {
-          var t = tickDimensions[i];
-          return !t.previousLabel ? 0 : 1;
-        });
-
-      yAxisWrap.selectAll('.tick.major polyline').remove();
-      yAxisWrap.selectAll('.tick.major')
-        .insert('polyline', 'text').attr('class', 'nv-label-leader')
-          .attr('points', function(d, i) {
-            var t = tickDimensions[i],
-                h = t.lineOffset,
-                w = t.widthOffset;
-            return '0,' + h + ' ' + w + ',' + h + ' ' + (w + h / 2) + ',0';
-          })
-          .style('opacity', function(d, i) {
-            var t = tickDimensions[i];
-            return !t.previousLabel ? 0 : 1;
-          });
-
-
-      function recalcDimensions(values, dimensions) {
-        values.reverse();
-        dimensions.reverse();
-
-        dimensions.map(function(d, i, t) {
-          var p;
-          if (!i) {
-            d.ends = true;
-            p = {
-                  key: 'Previous',
-                  width: 0,
-                  height: 32,
-                  widthOffset: 0,
-                  textOffset: 12,
-                  lineOffset: 0,
-                  thickness: 33,
-                  showLabel: false,
-                  ends: true
-                };
-          } else {
-            p = t[i - 1]; //previous tick
-          }
-          if (i === t.length - 1) {
-            d.ends = true;
-          } else {
-            d.thickness = Math.round(values[i] - values[i + 1]);
-          }
-
-          var previousOverflow = p.textOffset + (p.showLabel ? p.height : 0) - p.thickness;
-
-          d.showLabel = d.thickness <= d.height;
-          d.previousLabel = p.showLabel;
-          d.textOffset = Math.max(previousOverflow, 12);
-          d.lineOffset = Math.max(previousOverflow - 12, 0);
-
-          if (d.width > p.width && d.lineOffset) {
-            d.widthOffset = Math.max(p.width, p.widthOffset);
-          } else if (d.previousLabel) {
-            d.widthOffset = Math.max(p.width, p.widthOffset, d.width);
-          }
-
-          if (i === t.length - 1 && (p.showLabel || previousOverflow > 12)) {
-            innerMargin.bottom += Math.max(0, d.height - d.thickness, previousOverflow - 12);
-            innerHeight = availableHeight - innerMargin.top - innerMargin.bottom;
-            funnel
-              .height(innerHeight);
-          }
-
-        });
-
-        var minimumOffset = d3.max(
-          dimensions.map(function(d, i) {
-            if (!i) {
-              return 0;
-            }
-            return d.widthOffset + d.lineOffset / 2 - y(values[i - 1]) * 0.3 + 10;
-          })
-        );
-
-        values.reverse();
-        dimensions.reverse();
-
-        return Math.round(minimumOffset);
-      }
-
-      function fmtAxisLabel(d, i) {
-        var data, tick, node, count;
-
-        node = d3.select(this);
-        node.text('');
-
-        if (!i) {
-          return;
-        }
-        if (tickDimensions) {
-          tick = tickDimensions[i];
-          if (tick.thickness > tick.height) {
-            return;
-          }
-        }
-
-        data = funnelData[i - 1];
-
-        count = isNaN(data.count) ? '' : ' (' + data.count + ')';
-
-        node.append('tspan')
-          .attr('x', 0)
-          .style('font-size', '11px')
-          .text(data.key + count);
-
-        node.append('tspan')
-          .attr('x', 0)
-          .attr('dy', '1em')
-          .style('font-size', '15px')
-          .text(funnel.fmtValueLabel()(data.values[0]));
-      }
 
       function resetScale(scale, data) {
         var series1 = [0];
@@ -468,6 +280,23 @@ nv.models.funnelChart = function() {
           .range(tickValues.map(function(d) { return y(d); }));
 
         return tickValues;
+      }
+
+      function displayNoData() {
+        container.select('.nvd3.nv-wrap').remove();
+        var noDataText = container.selectAll('.nv-noData').data([chart.strings().noData]);
+
+        noDataText.enter().append('text')
+          .attr('class', 'nvd3 nv-noData')
+          .attr('dy', '-.7em')
+          .style('text-anchor', 'middle');
+
+        noDataText
+          .attr('x', margin.left + availableWidth / 2)
+          .attr('y', margin.top + availableHeight / 2)
+          .text(function(d) {
+            return d;
+          });
       }
 
       //============================================================
@@ -552,6 +381,7 @@ nv.models.funnelChart = function() {
     dispatch.tooltipMove(e);
   });
 
+
   //============================================================
   // Expose Public Variables
   //------------------------------------------------------------
@@ -560,51 +390,56 @@ nv.models.funnelChart = function() {
   chart.dispatch = dispatch;
   chart.funnel = funnel;
   chart.legend = legend;
-  chart.yAxis = yAxis;
 
   d3.rebind(chart, funnel, 'id', 'x', 'y', 'xDomain', 'yDomain', 'forceX', 'forceY', 'color', 'fill', 'classes', 'gradient');
   d3.rebind(chart, funnel, 'fmtValueLabel', 'clipEdge', 'delay');
 
   chart.colorData = function(_) {
-    var colors = function(d, i) {
-          return nv.utils.defaultColor()(d, i);
-        },
-        classes = function(d, i) {
-          return 'nv-group nv-series-' + i;
-        },
-        type = arguments[0],
+    var type = arguments[0],
         params = arguments[1] || {};
+    var color = function(d, i) {
+          return nv.utils.defaultColor()(d, d.series);
+        };
+    var classes = function(d, i) {
+          return 'nv-group nv-series-' + d.series;
+        };
 
     switch (type) {
       case 'graduated':
-        var c1 = params.c1,
-            c2 = params.c2,
-            l = params.l;
-        colors = function(d, i) {
-          return d3.interpolateHsl(d3.rgb(c1), d3.rgb(c2))(i / l);
+        color = function(d, i) {
+          return d3.interpolateHsl(d3.rgb(params.c1), d3.rgb(params.c2))(d.series / params.l);
         };
         break;
       case 'class':
-        colors = function() {
+        color = function() {
           return 'inherit';
         };
         classes = function(d, i) {
-          var iClass = (i * (params.step || 1)) % 14;
-          return 'nv-group nv-series-' + i + ' ' + (d.classes || 'nv-fill' + (iClass > 9 ? '' : '0') + iClass);
+          var iClass = (d.series * (params.step || 1)) % 14;
+          iClass = (iClass > 9 ? '' : '0') + iClass;
+          return 'nv-group nv-series-' + d.series + ' nv-fill' + iClass;
+        };
+        break;
+      case 'data':
+        color = function(d, i) {
+          return d.classes ? 'inherit' : d.color || nv.utils.defaultColor()(d, d.series);
+        };
+        classes = function(d, i) {
+          return 'nv-group nv-series-' + d.series + (d.classes ? ' ' + d.classes : '');
         };
         break;
     }
 
-    var fill = (!params.gradient) ? colors : function(d, i) {
+    var fill = (!params.gradient) ? color : function(d, i) {
       var p = {orientation: params.orientation || 'vertical', position: params.position || 'middle'};
-      return funnel.gradient(d, i, p);
+      return funnel.gradient(d, d.series, p);
     };
 
-    funnel.color(colors);
+    funnel.color(color);
     funnel.fill(fill);
     funnel.classes(classes);
 
-    legend.color(colors);
+    legend.color(color);
     legend.classes(classes);
 
     return chart;
@@ -717,6 +552,15 @@ nv.models.funnelChart = function() {
       return seriesClick;
     }
     seriesClick = _;
+    return chart;
+  };
+
+  chart.direction = function(_) {
+    if (!arguments.length) {
+      return direction;
+    }
+    direction = _;
+    legend.direction(_);
     return chart;
   };
 
