@@ -90,7 +90,7 @@ class ConfigModuleApi extends ModuleApi
         }
 
         if (!empty($args['module'])) {
-            return $adminBean->getConfigForModule($args['module'], $api->platform);
+            return $adminBean->getConfigForModule($args['module'], $this->getPlatform($api->platform));
         }
         return;
     }
@@ -132,11 +132,13 @@ class ConfigModuleApi extends ModuleApi
 
         $admin = BeanFactory::getBean('Administration');
 
+        $platform = $this->getPlatform($api->platform);
+
         foreach ($args as $name => $value) {
             if (is_array($value)) {
-                $admin->saveSetting($module, $name, json_encode($value), $api->platform);
+                $admin->saveSetting($module, $name, json_encode($value), $platform);
             } else {
-                $admin->saveSetting($module, $name, $value, $api->platform);
+                $admin->saveSetting($module, $name, $value, $platform);
             }
         }
 
@@ -144,6 +146,26 @@ class ConfigModuleApi extends ModuleApi
             MetaDataManager::refreshModulesCache(array($module));
         }
 
-        return $admin->getConfigForModule($module, $api->platform, true);
+        return $admin->getConfigForModule($module, $platform, true);
+    }
+
+    /**
+     * In using the config, the only values that should be stored are one that are for registered platforms.
+     *
+     * As such if the passed in platform is not registered, then it will return `base`
+     *
+     * @param string $platform The Platfrom from $api->platform
+     * @return string
+     */
+    protected function getPlatform($platform)
+    {
+        // if the platform is not a valid registered platform, default it back to base
+        $platforms = MetadataManager::getPlatformList();
+
+        if (!in_array($platform, $platforms)) {
+            $platform = 'base';
+        }
+
+        return $platform;
     }
 }

@@ -175,4 +175,40 @@ class ConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('testSetting', $config);
         $this->assertEquals($value, $config['testSetting']);
     }
+
+    /**
+     * @dataProvider dataProviderGetPlatform
+     * @param string $platform The value to test
+     * @param string $expected What should be returned
+     */
+    public function testGetPlatform($platform, $expected)
+    {
+        $apiClass = new ConfigModuleApi();
+
+        $actual = SugarTestReflection::callProtectedMethod($apiClass, 'getPlatform', array($platform));
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    public static function dataProviderGetPlatform()
+    {
+        return array(
+            array(
+                'base',
+                'base',
+            ),
+            array(
+                'mobile',
+                'mobile',
+            ),
+            array(
+                'portal',
+                'portal',
+            ),
+            array(
+                'my_test_platform',
+                'base',
+            ),
+        );
+    }
 }
