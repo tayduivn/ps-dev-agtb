@@ -524,6 +524,7 @@ $GLOBALS['moduleTabMap'] = array(
     'CustomQueries' => 'ReportMaker',
 //END SUGARCRM flav=ent ONLY
     'EmailMarketing' => 'Campaigns',
+    'CampaignTrackers' => 'Campaigns',
     'Quotas' => 'Forecasts',
     'TeamNotices' => 'Teams',
     'Activities' => 'Home',
