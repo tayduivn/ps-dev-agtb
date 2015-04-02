@@ -51,7 +51,6 @@ class tracker_sessions_monitor extends Monitor
 
         if (($row = $db->fetchByAssoc($result))) {
             $this->setValue('date_start', $row['date_start']);
-            $this->setValue('round_trips', $row['round_trips'] + 1);
             $this->new = false;
         } else {
             $this->setValue('date_start', TimeDate::getInstance()->nowDb());

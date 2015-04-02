@@ -41,6 +41,8 @@ class Bug41051Test extends Sugar_PHPUnit_Framework_TestCase {
         $trackerManager = TrackerManager::getInstance();
         if ($monitor = $trackerManager->getMonitor('tracker_sessions')) {
             $monitor->setValue('session_id', 'Bug41051Test');
+            // Must set date_end for the Tracker to save
+            $monitor->setValue('date_end', TimeDate::getInstance()->nowDb());
             $monitor->setValue('seconds', 10);
             $trackerManager->saveMonitor($monitor, true, true);
 
@@ -52,6 +54,8 @@ class Bug41051Test extends Sugar_PHPUnit_Framework_TestCase {
             if ($monitor = $trackerManager->getMonitor('tracker_sessions')) {
                 $monitor->new = false;
                 $monitor->setValue('session_id', 'Bug41051Test');
+                // Must set date_end for the Tracker to save
+                $monitor->setValue('date_end', TimeDate::getInstance()->nowDb());
                 $monitor->setValue('seconds', 0);
                 $trackerManager->saveMonitor($monitor, true, true);
 
