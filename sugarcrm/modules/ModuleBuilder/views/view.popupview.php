@@ -90,13 +90,18 @@ class ViewPopupview extends ViewListView
             $ajax->addCrumb ( translate('LBL_LAYOUTS', 'ModuleBuilder'), 'ModuleBuilder.getContent("module=ModuleBuilder&action=wizard&layouts=1&MB=1&view_package='.$this->editPackage.'&view_module=' . $this->editModule . '")');
             $ajax->addCrumb ( translate('LBL_POPUP', 'ModuleBuilder'), 'ModuleBuilder.getContent("module=ModuleBuilder&action=wizard&view=popup&MB=1&view_package='.$this->editPackage.'&view_module=' . $this->editModule . '")' );
 
-            $ViewLabel = ($this->editLayout == MB_POPUPLIST) ? 'LBL_POPUPLISTVIEW' : 'LBL_POPUPSEARCH';
+            // MB_POPUPLIST is editLayout name for popups coming from BWC module, and MB_SIDECARPOPUPVIEW is sidecar one.
+            // There is possibility that MB_POPUPLIST can safely be removed here.
+            $ViewLabel = ($this->editLayout == MB_POPUPLIST || $this->editLayout == MB_SIDECARPOPUPVIEW) ? 'LBL_POPUPLISTVIEW' : 'LBL_POPUPSEARCH';
             $ajax->addCrumb ( translate ($ViewLabel, 'ModuleBuilder' ), '' ) ;
         }else{
             $ajax->addCrumb ( translate($this->editModule), 'ModuleBuilder.getContent("module=ModuleBuilder&action=wizard&view_module=' . $this->editModule . '")' ) ;
             $ajax->addCrumb ( translate('LBL_LAYOUTS', 'ModuleBuilder'), 'ModuleBuilder.getContent("module=ModuleBuilder&action=wizard&layouts=1&view_module=' . $this->editModule . '")');
             $ajax->addCrumb ( translate('LBL_POPUP', 'ModuleBuilder'), 'ModuleBuilder.getContent("module=ModuleBuilder&action=wizard&view=popup&view_module=' . $this->editModule . '")' );
-            $ViewLabel = ($this->editLayout == MB_POPUPLIST) ? 'LBL_POPUPLISTVIEW' : 'LBL_POPUPSEARCH';
+
+            // MB_POPUPLIST is editLayout name for popups coming from BWC module, and MB_SIDECARPOPUPVIEW is sidecar one.
+            // There is possibility that MB_POPUPLIST can safely be removed here.
+            $ViewLabel = ($this->editLayout == MB_POPUPLIST || $this->editLayout == MB_SIDECARPOPUPVIEW) ? 'LBL_POPUPLISTVIEW' : 'LBL_POPUPSEARCH';
             $ajax->addCrumb ( translate ($ViewLabel, 'ModuleBuilder' ), '' ) ;
         }
         return $ajax ;
