@@ -291,7 +291,13 @@ function verify_data(form)
 			}
 		}
 	}
-    if (window.parent.SUGAR && window.parent.SUGAR.App) {
+
+    // If this is Duplicate option we are saving new User entry which should
+    // not affect current user. This way we are not emitting avatar removed event on a current user
+    if (window.parent.SUGAR &&
+        window.parent.SUGAR.App &&
+        (!document.EditView.isDuplicate ||
+         !document.EditView.isDuplicate.value)) {
         var field = document.getElementById('picture');
         // make sure field exists first, when adding a group user there is no picture field
         if (field) {
