@@ -477,6 +477,76 @@ class IBMDB2Manager  extends DBManager
         return true;
     }
 
+    /**
+     * Create conversion function to convert 10M blob to clob
+     */
+    public function createConversionFunctions()
+    {
+        $functionQuery = "
+        CREATE OR REPLACE PROCEDURE Blob2Clob (IN tableName VARCHAR (64), IN sourceColumn VARCHAR (64), IN tmpColumn VARCHAR (64))
+            LANGUAGE SQL
+            BEGIN
+                DECLARE SQLSTATE CHAR(5);
+
+                DECLARE sourceBlob BLOB (41943040);
+                DECLARE destClob CLOB (41943040) DEFAULT '';
+
+                DECLARE destOffset INTEGER DEFAULT 1;
+                DECLARE sourceOffset INTEGER DEFAULT 1;
+                DECLARE langContext INTEGER DEFAULT 0;
+                DECLARE warningCode INTEGER DEFAULT 0;
+
+                DECLARE selectQuery VARCHAR(512);
+                DECLARE updateQuery VARCHAR(512);
+
+                DECLARE selectStatement STATEMENT;
+                DECLARE updateStatement STATEMENT;
+
+                DECLARE updateCursor CURSOR FOR selectStatement;
+
+                SET selectQuery = 'SELECT ' || sourceColumn || ', ' || tmpColumn || ' FROM ' || tableName ||' FOR UPDATE OF ' || tmpColumn;
+                SET updateQuery = 'UPDATE ' || tableName || ' SET ' || tmpColumn || ' = ? WHERE CURRENT OF updateCursor';
+
+                PREPARE selectStatement FROM selectQuery;
+
+                OPEN updateCursor;
+
+                FETCH FROM updateCursor INTO sourceBlob, destClob;
+
+                WHILE (SQLSTATE = '00000') DO
+
+                    SET destOffset = 1;
+                    SET sourceOffset = 1;
+
+                    IF LENGTH(sourceBlob) > 0 THEN
+                        CALL DBMS_LOB.CONVERTTOCLOB(destClob,
+                                                    sourceBlob,
+                                                    dbms_lob.lobmaxsize,
+                                                    destOffset,
+                                                    sourceOffset,
+                                                    dbms_lob.default_csid,
+                                                    langContext,
+                                                    warningCode);
+
+                        PREPARE updateStatement FROM updateQuery;
+                        EXECUTE updateStatement USING destClob;
+                    END IF;
+
+                    FETCH FROM updateCursor INTO sourceBlob, destClob;
+
+                END WHILE;
+
+                CLOSE updateCursor;
+
+            END";
+        $this->query($functionQuery);
+    }
+
+    public function preInstall()
+    {
+        $this->createConversionFunctions();
+    }
+
 	/**+
 	 * @see DBManager::tableExists()
 	 */
@@ -801,6 +871,27 @@ public function convert($string, $type, array $additional_parameters = array())
 		return "$action COLUMN $columnspec";
 	}
 
+    /**
+     * Generate sets of SQL Queries to convert Blob field to Clob field
+     * @param string $tablename Name of the table
+     * @param array $oldColumn Old column definition
+     * @param array $newColumn New column definition
+     * @param bool $ignoreRequired
+     * @return array
+     */
+    protected function alterBlobToClob($tablename, $oldColumn, $newColumn, $ignoreRequired)
+    {
+        $newColumn['name'] = 'tmp_' . mt_rand();
+        $sql = array();
+        $sql[] = $this->alterTableSQL($tablename,
+            $this->changeOneColumnSQL($tablename, $newColumn, 'ADD', $ignoreRequired));
+        $sql[] = "CALL Blob2Clob('" . $tablename . "','" . $oldColumn['name'] . "','" . $newColumn['name'] . "')";
+        $sql[] = $this->alterTableSQL($tablename,
+            $this->changeOneColumnSQL($tablename, $oldColumn, 'DROP', $ignoreRequired));
+        $sql[] = $this->renameColumnSQL($tablename, $newColumn['name'], $oldColumn['name']);
+        return $sql;
+    }
+
 	/**+
 	 *
 	 * Generates a sequence of SQL statements to accomplish the required column alterations
@@ -819,6 +910,17 @@ public function convert($string, $type, array $additional_parameters = array())
 		$req = $this->oneColumnSQLRep($def, $ignoreRequired, $tablename, true);
 		$alter = $this->alterTableSQL($tablename, $this->alterTableColumnSQL('ALTER', $req['name']));
 
+        $cols = $this->get_columns($tablename);
+
+        $oldType = $cols[$def['name']]['type'];
+        $newType = $def['type'];
+
+        $alterMethod = 'alter' . ucfirst($oldType) . 'To' . ucfirst($newType);
+
+        if (method_exists($this, $alterMethod)) {
+            return $this->$alterMethod($tablename, $cols[$def['name']], $def, $ignoreRequired);
+        }
+
 		switch($req['required']) {
 			case 'NULL':        $sql[]= "$alter DROP NOT NULL";   break;
 			case 'NOT NULL':    $sql[]= "$alter SET NOT NULL";    break;
@@ -833,7 +935,6 @@ public function convert($string, $type, array $additional_parameters = array())
 			//       As a result we need to check if there is a default. We could use this verification also for
 			//       setting the DEFAULT. However for performance reasons we will always update the default if
 			//       there is a new one without making an extra call to the database.
-			$cols = $this->get_columns($tablename);
 			$olddef = isset($cols[$req['name']]['default'])? trim($cols[$req['name']]['default']) : '';
 			if($olddef != ''){
 				$this->log->info("IBMDB2Manager.alterOneColumnSQL: dropping old default $olddef as new one is empty");
@@ -1322,7 +1423,7 @@ EOQ;
 	 */
 	public function renameColumnSQL($tablename, $column, $newname)
 	{
-		return "ALTER TABLE $tablename RENAME COLUMN '$column' TO '$newname'";
+        return "ALTER TABLE $tablename RENAME COLUMN $column TO $newname";
 	}
 
 	public function emptyValue($type)
