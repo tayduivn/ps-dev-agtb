@@ -419,7 +419,9 @@
 
                     if (this.type === "enum") {
                         this.model.once('change:' + this.name, function() {
-                            this.setMode('list');
+                            _.defer(_.bind(function() {
+                                this.setMode('list');
+                            }, this));
                         }, this);
                     }
 
