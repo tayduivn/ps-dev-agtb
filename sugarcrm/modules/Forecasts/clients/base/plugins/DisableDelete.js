@@ -9,45 +9,48 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 (function(app) {
-    app.events.on("app:init", function() {
+    app.events.on('app:init', function() {
 
         /**
          * This plugin disables the delete button for closed won/lost items (for use in Opps and Products)
          */
-        app.plugins.register('DisableDelete', ["field"], {
+        app.plugins.register('DisableDelete', ['field'], {
 
             /**
              * Attach code for when the plugin is registered on a view
              *
-             * @param component
-             * @param plugin
+             * @param {object} component
+             * @param {object} plugin
              */
             onAttach: function(component, plugin) {
-                this.on("render", this.removeDelete, this);
+                this.once('init', function() {
+                    if (_.contains(['list:deleterow:fire', 'button:delete_button:click'], this.def.event)) {
+                        this.on('render', this.removeDelete, this);
+                        this.model.on('change:' + this._getFieldName(), this.removeDelete, this);
+                    }
+                }, this);
+
             },
-            
+
             /**
              * Marks delete option as disabled and adds tooltip for listview items that are closed lost/won
-             * 
-             * @return string message that was set
+             *
+             * @return {string} message that was set
              */
             removeDelete: function() {
-                var sales_stage_won = null,
-                    sales_stage_lost = null,
+                var sales_stage_won = app.metadata.getModule('Forecasts', 'config').sales_stage_won,
+                    sales_stage_lost = app.metadata.getModule('Forecasts', 'config').sales_stage_lost,
                     label_key = '_STAGE',
                     closed_RLI_count = 0,
                     message = null,
                     status = null,
-                    button = null;
+                    button = this.getFieldElement(),
+                    field = this._getFieldName();
 
-                if (_.contains(["list:deleterow:fire", "button:delete_button:click"], this.def.event)) {
-                    sales_stage_won = app.metadata.getModule('Forecasts', 'config').sales_stage_won;
-                    sales_stage_lost = app.metadata.getModule('Forecasts', 'config').sales_stage_lost;
+                if (button.length) {
+
                     //BEGIN SUGARCRM flav=ent ONLY
                     if (app.metadata.getModule('Opportunities', 'config').opps_view_by === 'RevenueLineItems') {
-                        //ENT allows sales_status, so we need to check to see if this module has it and use it
-                        status = this.model.get('sales_status');
-
                         //grab the closed RLI count (when on opps)
                         closed_RLI_count = this.model.get('closed_revenue_line_items');
                         if (_.isNull(closed_RLI_count)) {
@@ -56,9 +59,7 @@
                         label_key = '_STATUS';
                     }
                     //END SUGARCRM flav=ent ONLY
-                    if (_.isEmpty(status)) {
-                        status = this.model.get('sales_stage');
-                    }
+                    status = this.model.get(field);
 
                     //if we have closed RLIs, set the message here
                     if (closed_RLI_count > 0) {
@@ -72,13 +73,25 @@
 
                     //if we have a message, disable the button.
                     if (!_.isEmpty(message)) {
-                        button = this.getFieldElement();
                         button.addClass('disabled');
                         button.attr('data-event', '');
                         button.tooltip({title: message});
+                    } else {
+                        button.removeClass('disabled');
+                        button.attr('data-event', this.def.event);
+                        button.tooltip('destroy');
                     }
                 }
                 return message;
+            },
+
+            _getFieldName: function() {
+                if (this.model.module == 'Opportunities' &&
+                    app.metadata.getModule('Opportunities', 'config').opps_view_by === 'RevenueLineItems') {
+                    return 'sales_status';
+                }
+
+                return 'sales_stage';
             }
         });
     });

@@ -11,7 +11,7 @@
 
 describe('Forecasts.Base.Plugins.DisableDelete', function() {
 
-    var app, field, moduleName = 'Opportunities', context, def, model;
+    var app, field, moduleName = 'Opportunities', context, def, model, getField;
 
     beforeEach(function() {
         app = SUGAR.App;
@@ -43,9 +43,28 @@ describe('Forecasts.Base.Plugins.DisableDelete', function() {
         SugarTest.loadComponent('base', 'field', 'button');
         SugarTest.loadComponent('base', 'field', 'rowaction');
 
+        getField = function() {
+            var field = SugarTest.createField({
+                name: 'delete_button',
+                client: 'base',
+                type: 'rowaction',
+                viewName: 'detail',
+                fieldDef: def,
+                module: moduleName,
+                model: model,
+                context: context,
+                loadFromModule: true
+            });
+            sinon.collection.stub(field, 'getFieldElement', function() {
+                return $('<a></a>');
+            });
+            return field;
+        };
+
     });
 
     afterEach(function() {
+        sinon.collection.restore();
         delete app.plugins.plugins['field']['DisableDelete'];
         field = null;
         app = null;
@@ -54,10 +73,66 @@ describe('Forecasts.Base.Plugins.DisableDelete', function() {
         model = null;
     });
 
+    describe('_getFieldName', function() {
+        describe('when using opps with rlis', function() {
+            beforeEach(function() {
+                app.metadata.getModule('Opportunities', 'config').opps_view_by = 'RevenueLineItems';
+            });
+            describe('and on opps module', function() {
+                beforeEach(function() {
+                    model.module = 'Opportunities';
+                    field = getField();
+                });
+
+                it('should return sales_status', function() {
+                    expect(field._getFieldName()).toEqual('sales_status');
+                });
+            });
+
+            describe('and on rli module', function() {
+                beforeEach(function() {
+                    model.module = 'RevenueLineItems';
+                    field = getField();
+                });
+
+                it('should return sales_stage', function() {
+                    expect(field._getFieldName()).toEqual('sales_stage');
+                });
+            });
+        });
+
+        describe('when using opps without rlis', function() {
+            beforeEach(function() {
+                app.metadata.getModule('Opportunities', 'config').opps_view_by = 'Opportunities';
+            });
+            describe('and on opps module', function() {
+                beforeEach(function() {
+                    model.module = 'Opportunities';
+                    field = getField();
+                });
+
+                it('should return sales_stage', function() {
+                    expect(field._getFieldName()).toEqual('sales_stage');
+                });
+            });
+        });
+    });
+
     //BEGIN SUGARCRM flav = ent ONLY
     describe('using sales_status: with closed items', function() {
         var sales_field = 'sales_status',
             label_key = '_STATUS';
+
+        beforeEach(function() {
+            // testing when view_by is RevenueLineItems
+            model.module = 'Opportunities';
+            app.metadata.getModule('Opportunities', 'config').opps_view_by = 'RevenueLineItems';
+        });
+
+        afterEach(function() {
+            // testing when view_by is RevenueLineItems
+            delete model.module;
+        });
 
         describe('when there are no closed RLIs', function() {
 
@@ -68,7 +143,7 @@ describe('Forecasts.Base.Plugins.DisableDelete', function() {
             describe('when status is Closed Won', function() {
                 it('message should contain NOTICE_NO_DELETE_CLOSED', function() {
                     model.set(sales_field, 'Closed Won');
-                    field = SugarTest.createField('base', 'delete_button', 'rowaction', 'detail', def, moduleName, model, context, true);
+                    field = getField();
                     var message = field.removeDelete();
                     expect(message).toEqual('NOTICE_NO_DELETE_CLOSED' + label_key);
                 });
@@ -77,7 +152,7 @@ describe('Forecasts.Base.Plugins.DisableDelete', function() {
             describe('when status is not closed', function() {
                 it('message should contain nothing', function() {
                     model.set(sales_field, 'In Progress');
-                    field = SugarTest.createField('base', 'delete_button', 'rowaction', 'detail', def, moduleName, model, context, true);
+                    field = getField();
                     var message = field.removeDelete();
                     expect(message).toEqual(null);
                 });
@@ -92,7 +167,7 @@ describe('Forecasts.Base.Plugins.DisableDelete', function() {
             describe('when status is Closed Won', function() {
                 it('message should contain NOTICE_NO_DELETE_CLOSED', function() {
                     model.set(sales_field, 'Closed Won');
-                    field = SugarTest.createField('base', 'delete_button', 'rowaction', 'detail', def, moduleName, model, context, true);
+                    field = getField();
                     var message = field.removeDelete();
                     expect(message).toEqual('NOTICE_NO_DELETE_CLOSED' + label_key);
                 });
@@ -101,31 +176,10 @@ describe('Forecasts.Base.Plugins.DisableDelete', function() {
             describe('when status is not closed', function() {
                 it('message should contain NOTICE_NO_DELETE_CLOSED_RLIS', function() {
                     model.set(sales_field, 'In Progress');
-                    field = SugarTest.createField('base', 'delete_button', 'rowaction', 'detail', def, moduleName, model, context, true);
+                    field = getField();
                     var message = field.removeDelete();
                     expect(message).toEqual('NOTICE_NO_DELETE_CLOSED_RLIS');
                 });
-            });
-        });
-
-        describe('when sales_stage is used', function() {
-            it('message should contain NOTICE_NO_DELETE_CLOSED', function() {
-                model.set('closed_revenue_line_items', 0);
-                model.set('sales_stage', 'Closed Won');
-                field = SugarTest.createField('base', 'delete_button', 'rowaction', 'detail', def, moduleName, model, context, true);
-                var message = field.removeDelete();
-                expect(message).toEqual('NOTICE_NO_DELETE_CLOSED' + label_key);
-            });
-        });
-
-        describe('when the button event is list:deleterow:fire', function() {
-            it('message should contain NOTICE_NO_DELETE_CLOSED', function() {
-                model.set('closed_revenue_line_items', 0);
-                model.set('sales_stage', 'Closed Won');
-                field = SugarTest.createField('base', 'delete_button', 'rowaction', 'detail', def, moduleName, model, context, true);
-                field.def.event = 'list:deleterow:fire';
-                var message = field.removeDelete();
-                expect(message).toEqual('NOTICE_NO_DELETE_CLOSED' + label_key);
             });
         });
     });
@@ -144,11 +198,34 @@ describe('Forecasts.Base.Plugins.DisableDelete', function() {
             app.metadata.getModule('Opportunities', 'config').opps_view_by = 'RevenueLineItems';
         });
 
+        //BEGIN SUGARCRM flav = ent ONLY
+        describe('when sales_stage is used', function() {
+            it('message should contain NOTICE_NO_DELETE_CLOSED', function() {
+                model.set('closed_revenue_line_items', 0);
+                model.set('sales_stage', 'Closed Won');
+                field = getField();
+                var message = field.removeDelete();
+                expect(message).toEqual('NOTICE_NO_DELETE_CLOSED' + label_key);
+            });
+        });
+
+        describe('when the button event is list:deleterow:fire', function() {
+            it('message should contain NOTICE_NO_DELETE_CLOSED', function() {
+                model.set('closed_revenue_line_items', 0);
+                model.set('sales_stage', 'Closed Won');
+                field = getField();
+                field.def.event = 'list:deleterow:fire';
+                var message = field.removeDelete();
+                expect(message).toEqual('NOTICE_NO_DELETE_CLOSED' + label_key);
+            });
+        });
+        //END SUGARCRM flav = ent ONLY
+
         describe('when sales_stage is used', function() {
             it('message should contain NOTICE_NO_DELETE_CLOSED', function() {
                 model.set('closed_revenue_line_items', 0);
                 model.set(sales_field, 'Closed Won');
-                field = SugarTest.createField('base', 'delete_button', 'rowaction', 'detail', def, moduleName, model, context, true);
+                field = getField();
                 var message = field.removeDelete();
                 expect(message).toEqual('NOTICE_NO_DELETE_CLOSED' + label_key);
             });
@@ -158,7 +235,7 @@ describe('Forecasts.Base.Plugins.DisableDelete', function() {
             it('message should contain NOTICE_NO_DELETE_CLOSED', function() {
                 model.set('closed_revenue_line_items', 0);
                 model.set(sales_field, 'Closed Won');
-                field = SugarTest.createField('base', 'delete_button', 'rowaction', 'detail', def, moduleName, model, context, true);
+                field = getField();
                 field.def.event = 'list:deleterow:fire';
                 var message = field.removeDelete();
                 expect(message).toEqual('NOTICE_NO_DELETE_CLOSED' + label_key);
