@@ -2546,6 +2546,19 @@ protected function checkQuery($sql, $object_name = false)
 		return '';
 	}
 
+    /**
+     * Called in SearchForm and QuickSearch and overriden in OracleManager to 
+     * support case insensitive search.
+     *
+     * @param  string $name column name
+     * @param  string $value search string
+     * @return string
+     */
+    public function getLikeSQL($name, $value)
+    {
+        return $name . ' LIKE ' . $this->quoted($value);
+    }
+
 	/**
 	 * This method returns a complete where clause built from the
 	 * where values specified.

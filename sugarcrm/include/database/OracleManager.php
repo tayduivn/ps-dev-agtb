@@ -649,7 +649,7 @@ class OracleManager extends DBManager
                 $session_query .= "
             	NLS_COMP=LINGUISTIC
 				NLS_SORT=$collation";
-            } else if(!empty($GLOBALS['sugar_config']['oracle_enable_ci']) || $this->getOption('enable_ci')) {
+            } else if($this->getOption('enable_ci')) {
             	$session_query .= "
             	NLS_COMP=LINGUISTIC
 				NLS_SORT=BINARY_CI";
@@ -1853,5 +1853,35 @@ EOQ;
     {
         $guidStart = create_guid_section(3);
       	return "'$guidStart-' || sys_guid()";
+    }
+
+    /**
+     * Converts both column name and search string to upper case for case insensitive search.
+     *
+     * @param  string $name column name
+     * @param  string $value search string
+     * @return string
+     */
+    public function getLikeSQL($name, $value)
+    {
+        if (!empty($GLOBALS['sugar_config']['oracle_enable_ci'])) {
+            $name = 'UPPER('.$name.')';
+            $value = strtoupper($value);
+        }
+        return parent::getLikeSQL($name, $value);
+    }
+    
+    /**
+     * Check if this DB supports certain capability
+     * See $this->capabilities for the list
+     * @param string $cap
+     * @return bool
+     */
+    public function supports($cap)
+    {
+        if ($cap == 'case_insensitive') {
+            return !empty($GLOBALS['sugar_config']['oracle_enable_ci']);
+        }
+        return parent::supports($cap);
     }
 }
