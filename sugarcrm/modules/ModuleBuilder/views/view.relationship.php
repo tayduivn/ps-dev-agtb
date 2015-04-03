@@ -107,12 +107,13 @@ class ViewRelationship extends SugarView
             unset($cardinality[MB_MANYTOONE]);
         }
 
-        $relationships = $module->getRelationships();
+        $relationshipName = isset($_REQUEST['relationship_name']) ? $_REQUEST['relationship_name'] : null;
+        $relationships = $module->getRelationships($relationshipName);
 
         // if a description for this relationship already exists, then load it so it can be modified
-        if (!empty($_REQUEST['relationship_name'])) {
-            $relationship = $relationships->get($_REQUEST['relationship_name']);
-            $relationship->setName($_REQUEST['relationship_name']);
+        if (!empty($relationshipName)) {
+            $relationship = $relationships->get($relationshipName);
+            $relationship->setName($relationshipName);
             $definition = $relationship->getDefinition();
             if (!$this->fromModuleBuilder) {
                 $modStrings = return_module_language($selected_lang, $relationship->rhs_module, true);
@@ -162,7 +163,7 @@ class ViewRelationship extends SugarView
         // list, then sort, and finally array_unshift it back on.
         natcasesort($rhs_subpanels);
 
-        if (empty($_REQUEST['relationship_name'])) {
+        if (empty($relationshipName)) {
             // tidy up the options for the view based on the modules participating 
             // in the relationship and the cardinality some modules 
             // (e.g., Knowledge Base/KBOLDDocuments) lack subpanels. That means they 
