@@ -23,6 +23,8 @@ $vardefs = array(
                 // This field is on sidecar list and record views by default
                 'list' => false,
                 'recordview' => false,
+                'basic_search' => false,
+                'advanced_search' => false,
             ),
             'link' => 'favorite_link',
             'rname' => 'id',

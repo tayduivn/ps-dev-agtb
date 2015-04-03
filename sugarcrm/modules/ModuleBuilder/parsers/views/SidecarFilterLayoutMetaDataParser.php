@@ -51,6 +51,7 @@ class SidecarFilterLayoutMetaDataParser extends SidecarListLayoutMetaDataParser
         $this->_viewdefs = $this->implementation->getViewdefs();
         $this->_paneldefs = $this->_viewdefs;
         $this->_fielddefs = $this->implementation->getFieldDefs();
+
         $this->columns = array('LBL_DEFAULT' => 'getDefaultFields', 'LBL_HIDDEN' => 'getAvailableFields');
 
         $filterBeanClass = BeanFactory::getBeanName('Filters');
@@ -231,8 +232,10 @@ class SidecarFilterLayoutMetaDataParser extends SidecarListLayoutMetaDataParser
                 //Check if the field was previously on the layout
                 if (!empty($this->_viewdefs['fields'][$fieldname])) {
                     $newPaneldefs[$fieldname] = $this->_viewdefs['fields'][$fieldname];
-                } else if (!empty($comboFieldDefs[$fieldname]) && isset($comboFieldDefs[$fieldname]['dbFields'])) {
+                } else if ((!empty($comboFieldDefs[$fieldname]) && isset($comboFieldDefs[$fieldname]['dbFields']))
+                    || in_array($fieldname, array('$favorite', '$owner'))) {
                     // combo fields such as address_street
+                    // Or condition is for special field found that should be added too
                     $newPaneldefs[$fieldname] = $comboFieldDefs[$fieldname];
                 } else {
                     $newPaneldefs[$fieldname] = array();
