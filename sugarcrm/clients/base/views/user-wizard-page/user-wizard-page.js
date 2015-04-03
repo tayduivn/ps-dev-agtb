@@ -17,15 +17,24 @@
  */
 ({
     extendsFrom: "WizardPageView",
+
+    /**
+     * Always show the page at start.
+     *
+     * @inheritDoc
+     */
+    showPage: true,
+
     /**
      * @override
      * @param options
      */
-    initialize: function(options){
+    initialize: function(options) {
         //Load the default wizard page template, if you want to.
-        options.template = app.template.getView("wizard-page");
-        this._super("initialize", [options]);
-        this.fieldsToValidate = this._fieldsToValidate(this.options.meta);
+        options.template = app.template.getView('wizard-page');
+        this._super('initialize', [options]);
+        this.fieldsToValidate = this._fieldsToValidate(options.meta);
+        this.action = 'edit';
     },
     /**
      * @override
@@ -34,6 +43,25 @@
     isPageComplete: function(){
         return this.areAllRequiredFieldsNonEmpty;
     },
+
+    /**
+     * @inheritDoc
+     */
+    bindDataChange: function() {
+        this._super('bindDataChange');
+        this.listenTo(this.model, 'sync', this.render);
+    },
+
+    /**
+     * @inheritDoc
+     */
+    _render: function() {
+        if (!this.model.dataFetched) {
+            return this;
+        }
+        this._super('_render');
+    },
+
     /**
      * Prepares HTTP payload
      * @return {Object} Payload with fields we want to update

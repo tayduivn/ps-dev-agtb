@@ -63,7 +63,7 @@
      */
     addComponent: function(component, def) {
         component = this._addButtonsForComponent(component);
-        if (component.showPage()) {
+        if (_.result(component, 'showPage')) {
             this._super('addComponent', [component, def]);
         }
     },
@@ -121,12 +121,13 @@
         }
         return this.getProgress();
     },
+
     /**
      * Only render the current component (WizardPageView) instead of each component in layout
      * @override
      * @private
      */
-    _render: function(){
+    _renderHtml: function() {
         if (Modernizr.touch) {
             app.$contentEl.addClass('content-overflow-visible');
         }
@@ -134,6 +135,7 @@
             this._components[this._currentIndex].render();
         }
     },
+
     /**
      * Returns current progress through wizard
      * @returns {{page: number, lastPage: number}} Current page number and the
