@@ -32,6 +32,16 @@ $viewdefs['portal']['view']['create'] = array(
             ),
         ),
         array(
+            'name' => 'duplicate_button',
+            'type' => 'button',
+            'label' => 'LBL_IGNORE_DUPLICATE_AND_SAVE',
+            'primary' => true,
+            'showOn' => 'duplicate',
+            'events' => array(
+                'click' => 'button:save_button:click',
+            ),
+        ),
+        array(
             'name' => 'save_button',
             'type' => 'button',
             'label' => 'LBL_SAVE_BUTTON_LABEL',
