@@ -11,13 +11,17 @@
  */
 --}}
 <div class="row-fluid">
-    <ul class="nav facet-results">
-        {{#if facetItems}}
-            {{#each facetItems}}
-                <li class="facet-item selected" data-facet="{{key}}"><i class="fa fa-check"></i><span>{{label}} ({{count}})</span></li>
-            {{/each}}
+    <ul class="nav facet-results{{#unless collection.dataFetched}} loading{{/unless}}">
+        {{#if collection.dataFetched}}
+            {{#if facetItems}}
+                {{#each facetItems}}
+                    <li class="facet-item selected" data-facet="{{key}}"><i class="fa fa-check"></i><span>{{label}} ({{count}})</span></li>
+                {{/each}}
+            {{else}}
+                <li class="facet-item"><span>No data for this facet.</span></li>
+            {{/if}}
         {{else}}
-           <li class="facet-item"><span>No data for this facet.</span></li>
+            <li class="facet-item"><span>Loading<i class="l1">&period;</i><i class="l2">&period;</i><i class="l3">&period;</i></span></li>
         {{/if}}
     </ul>
 </div>
