@@ -117,6 +117,7 @@ class SugarFieldTag extends SugarFieldRelatecollection
 
         // Create a new record and send back THAT bean
         $tagBean->fromArray(array('name' => $tagName));
+        $tagBean->verifiedUnique = true;
         $tagBean->save();
         return $tagBean;
     }

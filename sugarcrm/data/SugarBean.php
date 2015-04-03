@@ -1657,6 +1657,21 @@ class SugarBean
     }
 
     /**
+     * Checks to see if this bean is in update mode
+     *
+     * @return boolean
+     */
+    public function isUpdate()
+    {
+        $isUpdate = true;
+        if (empty($this->id) || !empty($this->new_with_id)) {
+            $isUpdate = false;
+        }
+
+        return $isUpdate;
+    }
+
+    /**
     * Implements a generic insert and update logic for any SugarBean
     * This method only works for subclasses that implement the same variable names.
     * This method uses the presence of an id field that is not null to signify and update.
@@ -1675,10 +1690,7 @@ class SugarBean
         global $timedate;
         global $current_user, $action;
 
-        $isUpdate = true;
-        if(empty($this->id) || !empty($this->new_with_id)) {
-            $isUpdate = false;
-        }
+        $isUpdate = $this->isUpdate();
 
 		if(empty($this->date_modified) || $this->update_date_modified)
 		{
@@ -1900,7 +1912,7 @@ class SugarBean
     public function updateRelatedCalcFields($linkName = "")
     {
         // we don't have an id, lets not run this code.
-        if (empty($this->id) || !empty($this->new_with_id)) {
+        if (!$this->isUpdate()) {
             return;
         }
 
