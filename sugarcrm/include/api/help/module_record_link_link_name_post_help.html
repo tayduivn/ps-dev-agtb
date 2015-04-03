@@ -12,7 +12,7 @@
 -->
 <h2>Overview</h2>
 <span class="lead">
-    Creates a related record with any additional relationship role information specified.
+    Creates a related record.
 </span>
 
 <h2>Request Arguments</h2>
@@ -34,7 +34,7 @@
             &lt;record field type&gt;
         </td>
         <td>
-            The name value list of fields to populate. You can also specify relationship field values such as the contact_role field on Opportunities and Contacts.
+            The name value list of fields to populate.
         </td>
         <td>
             True
@@ -46,7 +46,6 @@
 <h3>Request</h3>
 <pre class="pre-scrollable">
 {
-    "contact_role":"Primary Decision Maker",
     "first_name":"Bill",
     "last_name":"Edwards"
 }
@@ -214,7 +213,7 @@
       "account_id":"",
       "opportunity_role_fields":"",
       "opportunity_role_id":"",
-      "opportunity_role":"Primary Decision Maker",
+      "opportunity_role":"",
       "reports_to_id":"",
       "report_to_name":"",
       "portal_name":"",
