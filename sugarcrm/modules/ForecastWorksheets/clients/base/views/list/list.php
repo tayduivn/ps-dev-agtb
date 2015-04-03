@@ -119,8 +119,7 @@ $viewdefs['ForecastWorksheets']['base']['view']['list'] = array(
                     'click_to_edit' => true,
                     'related_fields' => array(
                         'base_rate',
-                        'currency_id',
-                        'likely_case',
+                        'currency_id'
                     ),
                 )
             )
