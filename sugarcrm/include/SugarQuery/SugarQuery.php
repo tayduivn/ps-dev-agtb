@@ -834,7 +834,7 @@ class SugarQuery
 
         if ($joined->hasCustomFields()) {
             $table_cstm = $joined->get_custom_table_name();
-            $alias_cstm = "{$alias}_cstm";
+            $alias_cstm = $this->db->getValidDBName($alias . '_cstm', false, 'alias');
             $this->joinTable($table_cstm, array('alias' => $alias_cstm, 'joinType' => "LEFT", "linkingTable" => true))
                 ->on()->equalsField("$alias_cstm.id_c", "{$alias}.id");
         }
