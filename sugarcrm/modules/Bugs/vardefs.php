@@ -374,4 +374,10 @@ VardefManager::createVardef('Bugs','Bug', array('default', 'assignable',
 //defined in the field_arrays.php file
 $dictionary['Bug']['fields']['name']['importable'] = 'required';
 
+//boost value for full text search
+$dictionary['Bugs']['fields']['name']['full_text_search']['boost'] = 1.55;
+$dictionary['Bugs']['fields']['bug_number']['full_text_search']['boost'] = 1.27;
+$dictionary['Bugs']['fields']['description']['full_text_search']['boost'] = 0.68;
+$dictionary['Bugs']['fields']['work_log']['full_text_search']['boost'] = 0.67;
+
 ?>

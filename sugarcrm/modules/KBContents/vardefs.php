@@ -29,6 +29,7 @@ $dictionary['KBContent'] = array(
             'full_text_search' => array(
                 'enabled' => true,
                 'searchable' => true,
+                'boost' => 0.60,
             ),
             'audited' => true,
         ),

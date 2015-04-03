@@ -252,6 +252,7 @@ $dictionary['Product'] = array(
             'full_text_search' => array(
                 'enabled' => true,
                 'searchable' => true,
+                'boost' => 0.80,
             ),
             'comment' => 'Name of the product',
             'reportable' => true,
@@ -268,6 +269,7 @@ $dictionary['Product'] = array(
             'full_text_search' => array(
                 'enabled' => true,
                 'searchable' => true,
+                'boost' => 1.15,
             ),
             'comment' => 'Manufacturer part number'
         ),
@@ -1093,3 +1095,6 @@ VardefManager::createVardef(
         'currency'
     )
 );
+
+//boost value for full text search
+$dictionary['Products']['fields']['description']['full_text_search']['boost'] = 0.40;

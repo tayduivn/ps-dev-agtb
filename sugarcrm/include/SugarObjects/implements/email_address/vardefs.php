@@ -38,6 +38,7 @@ $vardefs = array(
             'full_text_search' => array(
                 'enabled' => true,
                 'searchable' => true,
+                'boost' => 1.50,
             ),
         ),
         'email1' => array(

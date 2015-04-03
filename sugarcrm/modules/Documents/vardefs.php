@@ -25,7 +25,7 @@ $dictionary['Document'] = array('table' => 'documents',
             'required' => true,
             'importable' => 'required',
             'unified_search' => true,
-            'full_text_search' => array('enabled' => true, 'searchable' => true),
+            'full_text_search' => array('enabled' => true, 'searchable' => true, 'boost' => 0.82),
         ),
         'name' => array(
             'name' => 'name',
@@ -486,4 +486,8 @@ $dictionary['Document'] = array('table' => 'documents',
 VardefManager::createVardef('Documents', 'Document', array('default', 'assignable',
     'team_security',
 ));
+
+//boost value for full text search
+$dictionary['Documents']['fields']['description']['full_text_search']['boost'] = 0.61;
+
 ?>

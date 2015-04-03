@@ -27,7 +27,7 @@ $dictionary['Opportunity'] = array(
             'dbType' => 'varchar',
             'len' => '50',
             'unified_search' => true,
-            'full_text_search' => array('enabled' => true, 'searchable' => true),
+            'full_text_search' => array('enabled' => true, 'searchable' => true, 'boost' => 1.65),
             'comment' => 'Name of the opportunity',
             'merge_filter' => 'selected',
             'importable' => 'required',
@@ -207,7 +207,7 @@ $dictionary['Opportunity'] = array(
             'vname' => 'LBL_NEXT_STEP',
             'type' => 'varchar',
             'len' => '100',
-            'full_text_search' => array('enabled' => true, 'searchable' => true),
+            'full_text_search' => array('enabled' => true, 'searchable' => true, 'boost' => 0.74),
             'comment' => 'The next step in the sales process',
             'merge_filter' => 'enabled',
             'massupdate' => true,
@@ -667,3 +667,7 @@ VardefManager::createVardef(
         'currency'
     )
 );
+
+
+//boost value for full text search
+$dictionary['Opportunities']['fields']['description']['full_text_search']['boost'] = 0.59;

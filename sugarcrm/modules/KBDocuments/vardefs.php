@@ -41,3 +41,5 @@ VardefManager::createVardef(
     'KBDocument'
 );
 
+//boost value for full text search
+$dictionary['KBDocuments']['fields']['name']['full_text_search']['boost'] = 1.49;

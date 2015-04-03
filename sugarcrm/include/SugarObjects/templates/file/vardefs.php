@@ -34,6 +34,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
     'full_text_search' => array(
         'enabled' => true,
         'searchable' => true,
+        'boost' => 0.82,
     ),
   ),
 

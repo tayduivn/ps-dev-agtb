@@ -25,6 +25,7 @@ $dictionary['Task'] = array(
             'full_text_search' => array(
                 'enabled' => true,
                 'searchable' => true,
+                'boost' => 1.45,
             ),
             'importable' => 'required',
             'required' => true,
@@ -394,3 +395,6 @@ VardefManager::createVardef(
         'team_security',
     )
 );
+
+//boost value for full text search
+$dictionary['Tasks']['fields']['description']['full_text_search']['boost'] = 0.56;

@@ -187,6 +187,7 @@ $dictionary['RevenueLineItem'] = array(
             'full_text_search' => array(
                 'enabled' => true,
                 'searchable' => true,
+                'boost' => 1.57,
             ),
             'comment' => 'Name of the product',
             'reportable' => true,
@@ -666,6 +667,7 @@ $dictionary['RevenueLineItem'] = array(
             'full_text_search' => array(
                 'enabled' => true,
                 'searchable' => true,
+                'boost' => 0.49,
             ),
             'comment' => 'The next step in the sales process',
             'merge_filter' => 'enabled',
@@ -1130,3 +1132,6 @@ VardefManager::createVardef(
         'currency'
     )
 );
+
+//boost value for full text search
+$dictionary['RevenueLineItems']['fields']['description']['full_text_search']['boost'] = 0.47;

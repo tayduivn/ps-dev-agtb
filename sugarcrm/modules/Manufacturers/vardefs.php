@@ -91,6 +91,7 @@ $dictionary['Manufacturer'] = array(
       'full_text_search' => array(
           'enabled' => true,
           'searchable' => true,
+          'boost' => 0.78,
       ),
   ),
   'list_order' =>

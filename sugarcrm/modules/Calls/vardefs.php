@@ -22,7 +22,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'len' => '50',
     'comment' => 'Brief description of the call',
     'unified_search' => true,
-    'full_text_search' => array('enabled' => true, 'searchable' => true),
+    'full_text_search' => array('enabled' => true, 'searchable' => true, 'boost' => 1.41),
 	'required'=>true,
     'importable' => 'required',
   ),
@@ -643,4 +643,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
 VardefManager::createVardef('Calls','Call', array('default', 'assignable',
 'team_security',
 ));
+
+$dictionary['Calls']['fields']['description']['full_text_search']['boost'] = 0.54;
+
 ?>

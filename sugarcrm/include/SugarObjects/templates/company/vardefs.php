@@ -25,6 +25,7 @@ $vardefs= array (
     'full_text_search' => array(
         'enabled' => true,
         'searchable' => true,
+        'boost' => 1.75,
     ),
     'audited' => true,
 	'required'=>true,
@@ -100,7 +101,7 @@ $vardefs= array (
     'len' => 100,
     'unified_search' => true,
     'duplicate_on_record_copy' => 'always',
-    'full_text_search' => array('enabled' => true, 'searchable' => true),
+    'full_text_search' => array('enabled' => true, 'searchable' => true, 'boost' => 0.92),
     'comment' => 'The fax phone number of this company',
   ),
 
@@ -118,6 +119,7 @@ $vardefs= array (
     'full_text_search' => array(
         'enabled' => true,
         'searchable' => true,
+        'boost' => 0.26,
     ),
   ),
   'billing_address_street_2' =>
@@ -209,7 +211,7 @@ $vardefs= array (
     'audited'=>true,
     'unified_search' => true,
     'duplicate_on_record_copy' => 'always',
-    'full_text_search' => array('enabled' => true, 'searchable' => true),
+    'full_text_search' => array('enabled' => true, 'searchable' => true,  'boost' => 0.91),
     'comment' => 'The office phone number',
     'merge_filter' => 'enabled',
   ),
@@ -223,7 +225,7 @@ $vardefs= array (
     'len' => 100,
     'unified_search' => true,
     'duplicate_on_record_copy' => 'always',
-    'full_text_search' => array('enabled' => true, 'searchable' => true),
+    'full_text_search' => array('enabled' => true, 'searchable' => true,  'boost' => 0.90),
     'comment' => 'An alternate phone number',
     'merge_filter' => 'enabled',
   ),
@@ -277,6 +279,7 @@ $vardefs= array (
     'full_text_search' => array(
         'enabled' => true,
         'searchable' => true,
+        'boost' => 0.25,
     ),
     'comment' => 'The street address used for for shipping purposes',
     'merge_filter' => 'enabled',

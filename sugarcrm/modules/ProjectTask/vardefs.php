@@ -67,6 +67,7 @@ $dictionary['ProjectTask'] = array('audited'=>true,
             'full_text_search' => array(
                 'enabled' => true,
                 'searchable' => true,
+                'boost' => 0.81,
             ),
             'importable' => 'required',
             'required' => true,
@@ -91,6 +92,7 @@ $dictionary['ProjectTask'] = array('audited'=>true,
             'full_text_search' => array(
                 'enabled' => true,
                 'searchable' => true,
+                'boost' => 0.45,
             ),
         ),
         'resource_id' => array(

@@ -117,6 +117,7 @@ $dictionary['Project'] = array(
             'full_text_search' => array(
                 'enabled' => true,
                 'searchable' => true,
+                'boost' => 0.84,
             ),
 			'comment' => 'Project name',
 			'importable' => 'required',
@@ -130,6 +131,7 @@ $dictionary['Project'] = array(
             'full_text_search' => array(
                 'enabled' => true,
                 'searchable' => true,
+                'boost' => 0.46,
             ),
 			'comment' => 'Project description'
 		),

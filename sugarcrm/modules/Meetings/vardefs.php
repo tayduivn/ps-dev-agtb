@@ -22,7 +22,7 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
     'type' => 'name',
     'dbType' => 'varchar',
 	'unified_search' => true,
-    'full_text_search' => array('enabled' => true, 'searchable' => true),
+    'full_text_search' => array('enabled' => true, 'searchable' => true, 'boost' => 1.43),
     'len' => '50',
     'comment' => 'Meeting name',
     'importable' => 'required',
@@ -51,7 +51,7 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
     'type' => 'varchar',
     'len' => '50',
     'comment' => 'Meeting location',
-    'full_text_search' => array('enabled' => true, 'searchable' => true),
+    'full_text_search' => array('enabled' => true, 'searchable' => true, 'boost' => 0.36),
   ),
   'password' =>
   array (
@@ -661,4 +661,8 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
 VardefManager::createVardef('Meetings','Meeting', array('default', 'assignable',
 'team_security',
 ));
+
+//boost value for full text search
+$dictionary['Meetings']['fields']['description']['full_text_search']['boost'] = 0.55;
+
 ?>
