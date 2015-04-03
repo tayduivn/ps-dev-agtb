@@ -171,6 +171,10 @@ $dictionary['Project'] = array(
             'vname' => 'LBL_STATUS',
             'type' => 'enum',
             'options' => 'project_status_dom',
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => false,
+            ),
         ),
 
         'priority' =>
@@ -179,6 +183,10 @@ $dictionary['Project'] = array(
             'vname' => 'LBL_PRIORITY',
             'type' => 'enum',
             'options' => 'projects_priority_options',
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => false,
+            ),
         ),
         'is_template' => array(
             'name' => 'is_template',

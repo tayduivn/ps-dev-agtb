@@ -199,10 +199,6 @@ $dictionary['RevenueLineItem'] = array(
             'vname' => 'LBL_MFT_PART_NUM',
             'type' => 'varchar',
             'len' => '50',
-            'full_text_search' => array(
-                'enabled' => true,
-                'searchable' => true,
-            ),
             'comment' => 'Manufacturer part number'
         ),
         'vendor_part_num' => array(
@@ -210,10 +206,6 @@ $dictionary['RevenueLineItem'] = array(
             'vname' => 'LBL_VENDOR_PART_NUM',
             'type' => 'varchar',
             'len' => '50',
-            'full_text_search' => array(
-                'enabled' => true,
-                'searchable' => true,
-            ),
             'comment' => 'Vendor part number'
         ),
         'date_purchased' => array(
@@ -433,10 +425,6 @@ $dictionary['RevenueLineItem'] = array(
             'vname' => 'LBL_URL',
             'type' => 'varchar',
             'len' => '255',
-            'full_text_search' => array(
-                'enabled' => true,
-                'searchable' => true,
-            ),
             'comment' => 'Product URL'
         ),
         'weight' =>  array(
@@ -462,10 +450,6 @@ $dictionary['RevenueLineItem'] = array(
             'vname' => 'LBL_SUPPORT_NAME',
             'type' => 'varchar',
             'len' => '50',
-            'full_text_search' => array(
-                'enabled' => true,
-                'searchable' => true,
-            ),
             'comment' => 'Name of product for support purposes'
         ),
         'support_description' => array(
@@ -473,10 +457,6 @@ $dictionary['RevenueLineItem'] = array(
             'vname' => 'LBL_SUPPORT_DESCRIPTION',
             'type' => 'varchar',
             'len' => '255',
-            'full_text_search' => array(
-                'enabled' => true,
-                'searchable' => true,
-            ),
             'comment' => 'Description of product for support purposes'
         ),
         'support_contact' => array(
@@ -484,10 +464,6 @@ $dictionary['RevenueLineItem'] = array(
             'vname' => 'LBL_SUPPORT_CONTACT',
             'type' => 'varchar',
             'len' => '50',
-            'full_text_search' => array(
-                'enabled' => true,
-                'searchable' => true,
-            ),
             'comment' => 'Contact for support purposes'
         ),
         'support_term' => array(
@@ -499,10 +475,6 @@ $dictionary['RevenueLineItem'] = array(
                 'name' => 'getSupportTerms',
                 'returns' => 'html',
                 'include' => 'modules/ProductTemplates/ProductTemplate.php'
-            ),
-            'full_text_search' => array(
-                'enabled' => true,
-                'searchable' => true,
             ),
             'comment' => 'Term (length) of support contract'
         ),
@@ -538,10 +510,6 @@ $dictionary['RevenueLineItem'] = array(
             'vname' => 'LBL_SERIAL_NUMBER',
             'type' => 'varchar',
             'len' => '50',
-            'full_text_search' => array(
-                'enabled' => true,
-                'searchable' => true,
-            ),
             'comment' => 'Serial number of product in use'
         ),
         'asset_number' => array(
@@ -549,10 +517,6 @@ $dictionary['RevenueLineItem'] = array(
             'vname' => 'LBL_ASSET_NUMBER',
             'type' => 'varchar',
             'len' => '50',
-            'full_text_search' => array(
-                'enabled' => true,
-                'searchable' => true,
-            ),
             'comment' => 'Asset tag number of product in use'
         ),
         'book_value' => array(

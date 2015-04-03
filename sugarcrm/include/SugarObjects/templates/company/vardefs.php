@@ -235,10 +235,6 @@ $vardefs= array (
     'dbType' => 'varchar',
     'len' => 255,
     'duplicate_on_record_copy' => 'always',
-    'full_text_search' => array(
-        'enabled' => true,
-        'searchable' => true,
-    ),
     'comment' => 'URL of website for the company',
   ),
    'ownership' =>
@@ -266,10 +262,6 @@ $vardefs= array (
     'type' => 'varchar',
     'len' => 10,
     'duplicate_on_record_copy' => 'always',
-    'full_text_search' => array(
-        'enabled' => true,
-        'searchable' => true,
-    ),
     'comment' => 'The stock trading (ticker) symbol for the company',
     'merge_filter' => 'enabled',
   ),

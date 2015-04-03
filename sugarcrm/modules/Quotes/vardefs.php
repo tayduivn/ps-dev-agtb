@@ -156,6 +156,10 @@ $dictionary['Quote'] = array(
             'audited' => true,
             'importable' => 'required',
             'required' => true,
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => false,
+            ),
         ),
         'purchase_order_num' => array(
             'name' => 'purchase_order_num',

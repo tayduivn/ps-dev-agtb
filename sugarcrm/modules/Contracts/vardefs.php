@@ -180,6 +180,7 @@ $dictionary['Contract'] = array(
             'audited' => true,
             'comment' => 'The contract status',
             'importable' => 'required',
+            'full_text_search' => array('enabled' => true, 'searchable' => false),
         ),
         'customer_signed_date' => array(
             'name' => 'customer_signed_date',

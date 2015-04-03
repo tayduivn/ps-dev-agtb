@@ -369,10 +369,6 @@ $vardefs =array(
 			'type' => 'varchar',
 			'len' => '75',
 			'unified_search' => true,
-            'full_text_search' => array(
-                'enabled' => true,
-                'searchable' => true,
-            ),
 			'comment' => 'Name of the assistant of the contact',
             'merge_filter' => 'enabled',
             'duplicate_on_record_copy' => 'always',
@@ -386,7 +382,6 @@ $vardefs =array(
 			'len' => 100,
 			'group'=>'assistant',
 			'unified_search' => true,
-            'full_text_search' => array('enabled' => true, 'searchable' => true),
 			'comment' => 'Phone number of the assistant of the contact',
             'merge_filter' => 'enabled',
             'duplicate_on_record_copy' => 'always',

@@ -49,10 +49,6 @@ $dictionary['Prospect'] = array(
             'vname' => 'LBL_ACCOUNT_NAME',
             'type' => 'varchar',
             'len' => '150',
-            'full_text_search' => array(
-                'enabled' => true,
-                'searchable' => true,
-            ),
         ),
         'campaign_id' => array(
         'name' => 'campaign_id',

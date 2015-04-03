@@ -55,10 +55,6 @@ $dictionary['ProjectTask'] = array('audited'=>true,
             'required' => false,
             'type' => 'int',
             'reportable' => false,
-            'full_text_search' => array(
-                'enabled' => true,
-                'searchable' => true,
-            ),
         ),
         'name' => array(
             'name' => 'name',
@@ -280,10 +276,6 @@ $dictionary['ProjectTask'] = array('audited'=>true,
 			'vname' => 'LBL_TASK_NUMBER',
 			'required' => false,
 			'type' => 'int',
-            'full_text_search' => array(
-                'enabled' => true,
-                'searchable' => true,
-            ),
 		),
 		'estimated_effort' => array(
 			'name' => 'estimated_effort',

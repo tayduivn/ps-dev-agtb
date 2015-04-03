@@ -146,7 +146,6 @@ $dictionary['Lead'] = array(
             'type' => 'varchar',
             'len' => '255',
             'unified_search' => true,
-            'full_text_search' => array('enabled' => true, 'boost' => 3),
             'comment' => 'Account name for lead',
         ),
         'accounts' => array(
@@ -164,7 +163,6 @@ $dictionary['Lead'] = array(
             'type' => 'text',
             'group' => 'account_name',
             'unified_search' => true,
-            'full_text_search' => array('enabled' => true, 'boost' => 1),
             'comment' => 'Description of lead account'
         ),
         'contact_id' => array(
