@@ -1538,7 +1538,7 @@ class MetaDataManager
         $deleted = $this->deletePlatformVisibilityCaches($context);
 
         // Rebuild the cache if there was a deleted cache or if we are forced to
-        if ($force || $deleted) {
+        if (($force || $deleted) && static::$isCacheEnabled) {
             // Clear the module client cache first
             MetaDataFiles::clearModuleClientCache(array(), '', array($this->platforms[0]));
 
@@ -1573,12 +1573,15 @@ class MetaDataManager
         // Make sure the LanguageManager created modules cache is clear
         LanguageManager::resetCreatedModules();
 
-        foreach ((array) $platforms as $platform) {
-            foreach (array(true, false) as $public) {
-                $mm = static::getManager($platform, $public, true);
-                $contexts = static::getAllMetadataContexts($public);
-                foreach ($contexts as $context) {
-                    $mm->rebuildCache($force, $context);
+        //No need to actually build the cache if we can't store it.
+        if (static::$isCacheEnabled) {
+            foreach ((array) $platforms as $platform) {
+                foreach (array(true, false) as $public) {
+                    $mm = static::getManager($platform, $public, true);
+                    $contexts = static::getAllMetadataContexts($public);
+                    foreach ($contexts as $context) {
+                        $mm->rebuildCache($force, $context);
+                    }
                 }
             }
         }
@@ -1665,23 +1668,26 @@ class MetaDataManager
         // Make sure the LanguageManager created modules cache is clear
         LanguageManager::resetCreatedModules();
 
-        // Handle refreshing based on the cache part
-        $method = 'rebuild' . ucfirst(strtolower($part)) . 'Cache';
-        foreach ((array) $platforms as $platform) {
-            foreach (array(true, false) as $public) {
-                $mm = MetaDataManager::getManager($platform, $public, true);
-                if (method_exists($mm, $method)) {
-                    //When a change occurs in the base metadata, we need to clear the cache for all contexts
-                    if (empty($params)) {
-                        $allContexts = static::getAllMetadataContexts($public);
-                        foreach($allContexts as $context) {
-                            $mm->deletePlatformVisibilityCaches($context);
+        //No need to build the cache if we can't store it
+        if (static::$isCacheEnabled) {
+            // Handle refreshing based on the cache part
+            $method = 'rebuild' . ucfirst(strtolower($part)) . 'Cache';
+            foreach ((array) $platforms as $platform) {
+                foreach (array(true, false) as $public) {
+                    $mm = MetaDataManager::getManager($platform, $public, true);
+                    if (method_exists($mm, $method)) {
+                        //When a change occurs in the base metadata, we need to clear the cache for all contexts
+                        if (empty($params)) {
+                            $allContexts = static::getAllMetadataContexts($public);
+                            foreach($allContexts as $context) {
+                                $mm->deletePlatformVisibilityCaches($context);
+                            }
                         }
-                    }
 
-                    $contexts = static::getMetadataContexts($public, $params);
-                    foreach ($contexts as $context) {
-                        $mm->$method($args, $context);
+                        $contexts = static::getMetadataContexts($public, $params);
+                        foreach ($contexts as $context) {
+                            $mm->$method($args, $context);
+                        }
                     }
                 }
             }
