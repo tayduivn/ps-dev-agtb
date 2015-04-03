@@ -30,9 +30,9 @@
       <div>
         <span>Data File</span><br>
         <select id="chartData">
-          <option value="pareto_data_salesrep_probability" data-manager="false" selected="selected">Sales Rep Worksheet by Probability</option>
+          <option value="pareto_data_salesrep_probability" data-manager="true">Sales Rep Worksheet by Probability</option>
           <option value="pareto_data_salesrep" data-manager="false">Sales Rep Worksheet</option>
-          <option value="pareto_data_manager" data-manager="true">Manager Worksheet</option>
+          <option value="pareto_data_manager" data-manager="true" selected="selected">Manager Worksheet</option>
         </select>
       </div>
       <div>
@@ -123,11 +123,11 @@
           })
           .tooltipBar(function(key, x, y, e, graph) {
             return '<p><b>' + key + '</b></p>' +
-              '<p><b>$' + y + '</b></p>' +
+              '<p><b>' + y + '</b></p>' +
               '<p><b>' + x + '%</b></p>';
           })
           .tooltipLine(function(key, x, y, e, graph) {
-            return '<p><p>' + key + ': <b>$' + y + '</b></p>';
+            return '<p><p>' + key + ': <b>' + y + '</b></p>';
           })
           .tooltipQuota(function(key, x, y, e, graph) {
             return '<p>' + e.key + ': <b>$' + y + '</b></p>';

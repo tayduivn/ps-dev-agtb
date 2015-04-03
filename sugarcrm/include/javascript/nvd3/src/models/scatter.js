@@ -37,6 +37,7 @@ nv.models.scatter = function() {
     , singlePoint  = false
     , dispatch     = d3.dispatch('elementClick', 'elementMouseover', 'elementMouseout', 'elementMousemove')
     , useVoronoi   = true
+    , nice = false
     ;
 
   //============================================================
@@ -104,6 +105,9 @@ nv.models.scatter = function() {
 
       y   .domain(yDomain || d3.extent(seriesData.map(function(d) { return d.y }).concat(forceY)))
           .range([availableHeight, 0]);
+      if (nice) {
+        y.nice();
+      }
 
       z   .domain(sizeDomain || d3.extent(seriesData.map(function(d) { return d.size }).concat(forceSize)))
           .range(sizeRange);
@@ -119,7 +123,6 @@ nv.models.scatter = function() {
         y.domain()[0] ?
             y.domain([y.domain()[0] + y.domain()[0] * 0.01, y.domain()[1] - y.domain()[1] * 0.01])
           : y.domain([-1,1]);
-
 
       x0 = x0 || x;
       y0 = y0 || y;
@@ -655,6 +658,14 @@ nv.models.scatter = function() {
   chart.singlePoint = function(_) {
     if (!arguments.length) return singlePoint;
     singlePoint = _;
+    return chart;
+  };
+
+  chart.nice = function(_) {
+    if (!arguments.length) {
+      return nice;
+    }
+    nice = _;
     return chart;
   };
 

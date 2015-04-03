@@ -26,6 +26,7 @@ nv.models.multiBar = function() {
       delay = 200,
       xDomain,
       yDomain,
+      nice = false,
       color = function(d, i) { return nv.utils.defaultColor()(d, d.series); },
       fill = color,
       barColor = null, // adding the ability to set the color for each rather than the whole group
@@ -148,8 +149,10 @@ nv.models.multiBar = function() {
                 negOffset = (vertical ? d.y : 0);
             return stacked ? (d.y > 0 ? d.y1 + posOffset : d.y1 + negOffset) : d.y;
           }).concat(forceY)))
-          .range(vertical ? [availableHeight, 0] : [0, availableWidth])
-          .nice();
+          .range(vertical ? [availableHeight, 0] : [0, availableWidth]);
+        if (nice) {
+          y.nice();
+        }
 
         x0 = x0 || x;
         y0 = y0 || y;
@@ -791,6 +794,14 @@ nv.models.multiBar = function() {
       return direction;
     }
     direction = _;
+    return chart;
+  };
+
+  chart.nice = function(_) {
+    if (!arguments.length) {
+      return nice;
+    }
+    nice = _;
     return chart;
   };
 
