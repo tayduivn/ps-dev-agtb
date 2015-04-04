@@ -41,14 +41,14 @@
          *  `false` otherwise.
          */
         var hasAccessToAction = function(module, action) {
-            if(module && action.acl_action) {
-                if(!app.acl.hasAccess(action.acl_action, module)) {
+            if (module && action.acl_action) {
+                if (!app.acl.hasAccess(action.acl_action, module)) {
                     return false;
                 }
                 return action;
             }
 
-            if(action.acl_action === 'admin' && action['label'] === 'LBL_ADMIN') {
+            if (action.acl_action === 'admin' && action['label'] === 'LBL_ADMIN') {
                 //Edge case for admin link. We only show the Admin link when
                 //user has the "Admin & Developer" or "Developer" (so developer
                 //in either case; see SP-1827)
@@ -79,13 +79,13 @@
 
                     var name;
                     var jsFunc = 'push';
-                    var weight;;
-                    if (action.route === '#'+module) {
+                    var weight;
+                    if (action.route === '#' + module) {
                         jsFunc = 'unshift';
                         name = app.lang.getModuleName(module, {plural: true});
                         weight = 10;
                     }
-                    else if (action.route === '#'+module+'/create') {
+                    else if (action.route === '#' + module + '/create') {
                         weight = 20;
                         name = app.lang.get(action.label, module)
                     } else {

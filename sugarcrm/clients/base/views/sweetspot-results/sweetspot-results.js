@@ -27,7 +27,7 @@
         this._super('initialize', [options]);
 
         this.layout.on('sweetspot:results', function(results) {
-            this.results = results;
+            this.results = this._formatResults(results);
             this.render();
         }, this);
 
@@ -40,6 +40,25 @@
     _render: function() {
         this._super('_render');
         this.$('li:first').addClass('hover');
+    },
+
+    /**
+     * Formats the {@link #results} to:
+     * -include labels if none are present by default.
+     *
+     * @param {Array} results The list of actions/commands.
+     * @return {Array} The formatted list of actions/commands.
+     */
+    _formatResults: function(results) {
+        if (_.isEmpty(results)) {
+            return results;
+        }
+        _.each(results, function(item) {
+            if (!item.label) {
+                item.label = item.name.substr(0, 2);
+            }
+        });
+        return results;
     },
 
     toggleCallback: function(isOpen) {

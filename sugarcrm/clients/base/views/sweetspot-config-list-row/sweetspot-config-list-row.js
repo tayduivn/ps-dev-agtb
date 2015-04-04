@@ -21,6 +21,9 @@
         'click [data-sweetspot=remove]': 'removeRow'
     },
 
+    /**
+     * @inheritDoc
+     */
     initialize: function(options) {
         options.model = app.data.createBean();
         this._super('initialize', [options]);

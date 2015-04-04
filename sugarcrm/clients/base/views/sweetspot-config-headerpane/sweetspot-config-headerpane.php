@@ -9,7 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-$viewdefs['base']['view']['sweetspot-headerpane'] = array(
+$viewdefs['base']['view']['sweetspot-config-headerpane'] = array(
     'template' => 'headerpane',
     'fields' => array(
         array(
@@ -24,12 +24,18 @@ $viewdefs['base']['view']['sweetspot-headerpane'] = array(
             'type' => 'button',
             'label' => 'LBL_CANCEL_BUTTON_LABEL',
             'css_class' => 'btn-invisible btn-link',
+            'events' => array(
+                'click' => 'button:cancel_button:click',
+            ),
         ),
         array(
             'name' => 'save_button',
             'type' => 'button',
             'label' => 'LBL_SAVE_BUTTON_LABEL',
-            'css_class' => 'btn-primary',
+            'primary' => true,
+            'events' => array(
+                'click' => 'button:save_button:click',
+            ),
         ),
     ),
 );

@@ -65,7 +65,7 @@
     },
 
     /**
-     * Focus on the input.
+     * Focuses on the Sweet Spot input.
      */
     focusInput: function() {
         this.$('input').focus();

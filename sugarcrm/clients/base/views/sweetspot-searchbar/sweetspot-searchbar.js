@@ -61,8 +61,17 @@
 
         this.addToInternalLibrary(this.getSweetspotActions());
 
-        // Parse the library to remove duplicate
-        this.internalLibrary = _.chain(this.internalLibrary)
+        this.internalLibrary = this._formatInternalLib();
+    },
+
+    /**
+     * Formats the {@link #internalLibrary internal library} by parsing it to
+     * remove duplicate results.
+     *
+     * @return {Array} The formatted library of actions/commands.
+     */
+    _formatInternalLib: function() {
+        var lib = _.chain(this.internalLibrary)
             .map(function(item) {
                 return JSON.stringify(item);
             })
@@ -71,6 +80,8 @@
                 return JSON.parse(item)
             })
             .value();
+
+        return lib;
     },
 
     getSweetspotActions: function() {

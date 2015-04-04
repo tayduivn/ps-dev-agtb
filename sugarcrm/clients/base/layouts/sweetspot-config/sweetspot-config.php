@@ -15,7 +15,7 @@ $viewdefs['base']['layout']['sweetspot-config'] = array(
     'css_class' => 'main-pane row-fluid',
     'components' => array(
         array(
-            'view' => 'sweetspot-headerpane',
+            'view' => 'sweetspot-config-headerpane',
         ),
         array(
             'layout' => 'sweetspot-config-list',
