@@ -76,6 +76,8 @@
      * to configure the Sweet Spot.
      */
     openConfigPanel: function() {
+        // TODO: This is bad and there should be an option in drawer.js to
+        // prevent opening an already-open drawer of the same type.
         var activeDrawerLayout = app.drawer.getActiveDrawerLayout();
         if (activeDrawerLayout.type === 'sweetspot-config') {
             return;
@@ -87,23 +89,7 @@
                 skipFetch: true,
                 forceNew: true
             }
-        }, this.saveConfig);
-    },
-
-    /**
-     * Saves the Sweet Spot settings when the drawer closes.
-     *
-     * @param {Data.BeanCollection} collection The Sweet Spot configuration
-     *   collection.
-     */
-    saveConfig: function(collection) {
-        if (collection.cancel) {
-            return;
-        }
-        var json = collection.toJSON();
-        var key = app.user.lastState.buildKey('sweetspot', 'config');
-        app.user.lastState.set(key, json);
-        app.events.trigger('sweetspot:reset');
+        });
     },
 
     /**

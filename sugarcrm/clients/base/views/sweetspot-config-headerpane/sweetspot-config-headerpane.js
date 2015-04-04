@@ -17,9 +17,20 @@
     /**
      * @inheritDoc
      */
-    _renderHtml: function() {
-        this._super('_renderHtml');
+    _render: function() {
+        this._super('_render');
+        this.createShortcutSession();
         this.registerShortcuts();
+    },
+
+    /**
+     * Create new shortcut session.
+     */
+    createShortcutSession: function() {
+        app.shortcuts.createSession([
+            'SweetSpot:Config:Save',
+            'SweetSpot:Config:Cancel'
+        ], this);
     },
 
     /**
@@ -30,6 +41,13 @@
             var $saveButton = this.$('a[name=save_button]');
             if ($saveButton.is(':visible') && !$saveButton.hasClass('disabled')) {
                 $saveButton.click();
+            }
+        }, this, true);
+
+        app.shortcuts.register('SweetSpot:Config:Cancel', ['esc','ctrl+alt+l'], function() {
+            var $cancelButton = this.$('a[name=cancel_button]');
+            if ($cancelButton.is(':visible') && !$cancelButton.hasClass('disabled')) {
+                $cancelButton.get(0).click();
             }
         }, this, true);
     }

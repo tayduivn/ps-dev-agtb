@@ -31,6 +31,10 @@
         this.collection.add(options.model);
     },
 
+    /**
+     * This method adds all possible Sweet Spot actions to the `action` enum
+     * field, so they can be configured by the user.
+     */
     prepareActionDropdown: function() {
         var field = _.find(this.meta.fields, function(field) {
             return field.name === 'action';
@@ -44,10 +48,11 @@
     },
 
     /**
-     * @inheritDoc
+     * Removes and disposes this row view from the
+     * {@link View.Views.Base.SweetspotConfigListLayout list layout}
      */
     removeRow: function() {
-        this.model.collection.remove(this.model.id);
+        this.collection.remove(this.model);
         this.dispose();
         if (this.layout) {
             this.layout.removeComponent(this);

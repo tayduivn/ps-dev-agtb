@@ -86,9 +86,7 @@
 
     getSweetspotActions: function() {
         var actionsById = app.metadata.getSweetspotActions();
-
-        var key = app.user.lastState.buildKey('sweetspot', 'config');
-        var data = app.user.lastState.get(key);
+        var data = app.user.getPreference('sweetspot');
 
         _.each(data, function(customSetting) {
             if (!actionsById[customSetting.action]) {
