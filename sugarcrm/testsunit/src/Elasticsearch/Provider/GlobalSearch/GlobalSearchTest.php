@@ -41,7 +41,6 @@ class GlobalSearchTest extends \PHPUnit_Framework_TestCase
         $supported = array(
             'varchar',
             'name',
-            'username',
             'text',
             'datetime',
             'date',
@@ -51,6 +50,7 @@ class GlobalSearchTest extends \PHPUnit_Framework_TestCase
             'id',
             'exact',
             'longtext',
+            'htmleditable_tinymce',
             'enum',
             'email',
         );

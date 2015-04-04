@@ -181,6 +181,7 @@ $dictionary['Contact'] = array(
                 'enabled' => true,
                 'searchable' => true,
                 'boost' => 1.93,
+                'type' => 'exact',
             ),
         ),
         'portal_active' => array(

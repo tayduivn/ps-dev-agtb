@@ -41,10 +41,6 @@ class MultiFieldHandler extends AbstractHandler implements
             'gs_string',
             'gs_string_wildcard',
         ),
-        'username' => array(
-            'gs_string',
-            'gs_string_wildcard',
-        ),
         'text' => array(
             'gs_string',
             'gs_text_wildcard',
@@ -75,6 +71,10 @@ class MultiFieldHandler extends AbstractHandler implements
             'gs_string_exact',
         ),
         'longtext' => array(
+            'gs_string',
+            'gs_text_wildcard',
+        ),
+        'htmleditable_tinymce' => array(
             'gs_html_default',
         ),
         'enum' => array(
