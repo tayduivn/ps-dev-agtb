@@ -52,6 +52,7 @@ class DrPhilTest extends Sugar_PHPUnit_Framework_TestCase
                 'Empty',
                 'Audit',
                 'MergeRecords',
+                'Relationships',
             );
 
 
