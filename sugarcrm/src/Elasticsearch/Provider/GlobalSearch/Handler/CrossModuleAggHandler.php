@@ -35,7 +35,7 @@ class CrossModuleAggHandler extends AbstractHandler implements
 
         $field = Mapping::PREFIX_SEP . $field;
         $type = ucfirst($aggDef['type']);
-        if ($type == 'Terms') {
+        if ($type == 'Terms' || $type == 'MyItems') {
             $mapping->addNotAnalyzedField($field, true, true);
         } elseif ($type == 'DateRange') {
             $mHandler = new MultiFieldHandler();
