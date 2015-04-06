@@ -19,9 +19,12 @@ require_once 'modules/Tags/Tag.php';
 class SugarTestTagUtilities
 {
     private static $createdTagIds = array();
+    private static $newTagNames = array();
+
     private function __construct()
     {
     }
+
     /**
      * Create a Tag for use in a Unit Test
      *
@@ -42,6 +45,18 @@ class SugarTestTagUtilities
         self::$createdTagIds[] = $tag->save();
         return $tag;
     }
+
+    /*
+     * Create a new tag name without creating the actual tag record
+     */
+    public static function createNewTagName()
+    {
+        $num = mt_rand();
+        $newTagName = 'SugarNameTag' . $num;
+        self::$newTagNames[] = $newTagName;
+        return $newTagName;
+    }
+
     /**
      * Remove all Tags for use in a Unit Test
      *
@@ -50,8 +65,13 @@ class SugarTestTagUtilities
     public static function removeAllCreatedTags()
     {
         $tagIds = self::$createdTagIds;
-        $GLOBALS['db']->query('DELETE FROM tags WHERE id IN (\'' . implode("', '", $tagIds) . '\')');
+        $tagNames = self::$newTagNames;
+        $GLOBALS['db']->query(
+            'DELETE FROM tags WHERE id IN (\'' . implode("', '", $tagIds) . '\')' .
+            ' OR name IN (\'' . implode("', '", $tagNames) . '\')'
+        );
     }
+
     /**
      * Delete tags M2M relationship data
      *
