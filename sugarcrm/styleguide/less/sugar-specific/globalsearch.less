@@ -72,6 +72,43 @@
     }
   }
 
+  .quicksearch-tags {
+    &.hide {
+      display: none;
+    }
+    font-size: 0;
+    position: relative;
+    height: 26px;
+    border: 1px solid @grayLighter;
+    box-shadow: 0 2px 1px rgba(0,0,0,0.1);
+    background: #fff;
+    .qs-tag-icon > .fa{
+      color: @grayDark;
+    }
+    .qs-tags-row {
+      font-size: 12px;
+      display: inline-block;
+      border-right: 2px solid @grayLighter;
+      position: relative;
+      padding: 5px 10px 0px 10px;
+      &.active {
+        background: @dropdownLinkBackgroundHover;
+      }
+      a {
+        color: #555;
+      }
+    }
+  }
+
+  .tag-wrapper {
+    position: relative;
+    display: inline;
+
+    &.highlight {
+      background: yellow;
+    }
+  }
+
   // Needed by firefox because of navbar table-layout
   .typeahead-wrapper {
     position: relative;

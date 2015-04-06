@@ -18,7 +18,13 @@ $viewdefs['base']['layout']['quicksearch'] = array(
             'view' => 'quicksearch-modulelist',
         ),
         array(
+            'view' => 'quicksearch-taglist',
+        ),
+        array(
             'view' => 'quicksearch-bar',
+        ),
+        array(
+            'view' => 'quicksearch-tags',
         ),
         array(
             'view' => 'quicksearch-results',

@@ -44,6 +44,8 @@
         // should use that context instead of layout.collection.
         this.collection = this.layout.collection || app.data.createMixedBeanCollection();
 
+        this.selectedTags = this.layout.selectedTags || [];
+
         /**
          * The default number of maximum results to display.
          *
@@ -124,6 +126,14 @@
         this.layout.on('quicksearch:bar:search', this.goToSearchPage, this);
 
         this.layout.on('route:search', this.populateSearchTerm, this);
+
+        this.layout.on('quicksearch:fire:search', function() {
+            // In case we are already in the middle of a search
+            this.collection.abortFetchRequest();
+            this._oldSearchTerm = null;
+            this._currentQueryTerm = null;
+            this._validateAndSearch();
+        }, this);
     },
 
     /**
@@ -189,10 +199,22 @@
             case 40: // down arrow
                 this.moveForward();
                 e.preventDefault();
+                e.stopPropagation();
                 break;
             case 38: // up arrow
-                this.moveBackward();
                 e.preventDefault();
+                e.stopPropagation();
+                break;
+            case 37: // left arrow
+            case 8:  //backspace
+                // If there's text in the input bar, don't add any special handling
+                var term = this.$('input[data-action=search_bar]').val();
+                if (term === '') {
+                    this.moveBackward();
+                    // Prevent double event calling when element to the left attaches its keydown handler
+                    e.stopPropagation();
+                    e.preventDefault();
+                }
                 break;
         }
     },
@@ -240,6 +262,8 @@
                 '&m=' + moduleString;
         }
         this.collection.abortFetchRequest();
+
+        this.layout.trigger('navigate:to:searchpage');
         app.router.navigate(route, {trigger: true});
     },
     /**
@@ -285,12 +309,14 @@
         // Check if the search term is falsy (empty string)
         // or the search term is the same as the previously searched term
         // If either of those conditions are met, we do not need to execute a new search.
-        if (!this._searchTerm || this._searchTerm === this._currentQueryTerm) {
+        if ((!this._searchTerm && this.selectedTags.length === 0)
+            || this._searchTerm === this._currentQueryTerm) {
             return;
         }
         this._currentQueryTerm = this._searchTerm;
         this.fireSearchRequest();
     }, 500),
+
 
     /**
      * Collects the search term, validates that a search is appropriate, and executes a debounced search.
@@ -306,7 +332,7 @@
         this._searchTerm = term;
 
         // if the term is too short, don't search
-        if (term.length < this.minChars) {
+        if (term.length < this.minChars && this.selectedTags.length === 0) {
             this._searchTerm = '';
             this._currentQueryTerm = '';
             this._oldSearchTerm = '';
@@ -337,6 +363,7 @@
 
     /**
      * Executes a search using `this._searchTerm`.
+     * TODO: Move this function into the layout so that we can sandbox out tags from the bar
      */
     fireSearchRequest: function() {
         var term = this._searchTerm;
@@ -346,8 +373,23 @@
         var options = {
             query: term,
             module_list: this.collection.selectedModules,
-            limit: limit
+            limit: limit,
+            params: {
+                tags: true
+            }
         };
+
+        if (this.selectedTags.length > 0) {
+            _.extend(options, options, {
+                apiOptions: {
+                    data: {
+                        tag_filters: _.pluck(this.selectedTags, 'id')
+                    },
+                    fetchWithPost: true
+                }
+            });
+        }
+
         // FIXME: SC-4254 Remove this.layout.v2
         if (!this.layout.v2) {
             options.fields = ['name', 'id'];
@@ -364,6 +406,7 @@
         this._searchTerm = '';
         this._oldSearchTerm = '';
         this._currentQueryTerm = '';
+        this.layout.trigger('quicksearch:tags:remove');
         this.disposeKeyEvents();
 
         if (this.context.get('search')) {
