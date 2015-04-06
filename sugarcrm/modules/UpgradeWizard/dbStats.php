@@ -348,11 +348,8 @@ function checkSchema($execute=false,$return=false){
 	);
     $_SESSION['dbScanError'] = array();
     $dbScanSuccess = '';
-    $que = "select * from relationships";
-    $query = $db->query($que);
-    $sql_fk = '';
-   	while($rel_def = $db->fetchByAssoc($query))
-	   	    {
+    $relationships = SugarRelationshipFactory::getInstance()->getRelationshipDefs();
+    foreach($relationships as $rel_def) {
           if($rel_def['relationship_type']== 'one-to-many'){
               $rhs_col_data_type='';
 			  $lhs_col_data_type='';
@@ -577,12 +574,6 @@ function getDbStats(){
     		//$indices_count =$row['count(index_name)'];
     	}
 
-    	mysqli_select_db($link,$db_name);
-		$qu="SELECT count(*) FROM relationships";
-		$ct =mysqli_query($link,$qu);
-    	while($row=mysqli_fetch_assoc($ct)){
-    		$relationships_count =$row['count(*)'];
-    	}
     }
     else{
     	$link = @mysql_connect($setup_db_host_name, $setup_db_admin_user_name, $setup_db_admin_password);
@@ -592,11 +583,6 @@ function getDbStats(){
 		while($row=mysql_fetch_assoc($ct)){
 			$tables_count=$row['count(*)'];
 		}
-		$qu="SELECT count(*) FROM relationships";
-		$ct =mysql_query($link,$qu);
-    	while($row=mysqli_fetch_assoc($ct)){
-    		$relationships_count =$row['count(*)'];
-    	}
     	$qu="SELECT count(*) FROM information_schema.columns WHERE table_schema = '".$db_name."'";
 		$ct =mysqli_query($link,$qu);
     	while($row=mysqli_fetch_assoc($ct)){
@@ -612,7 +598,6 @@ function getDbStats(){
 //echo $strL;
     echo '<b>Tables ****************  '.$tables_count.'</br>';
     echo 'Columns *************  '.$columns_count.'</br>';
-    echo 'Relationships ******  '.$relationships_count.'</br>';
     echo 'Indices ***************  '.$indices_count.'</b>';
 	//return $tables;
 }
@@ -657,35 +642,7 @@ function getAllTables(){
 
 
 function getAllRelationShips(){
-	global $sugar_config;
-    global $setup_db_host_name;
-    global $setup_db_host_instance;
-    global $setup_db_admin_user_name;
-    global $setup_db_admin_password;
-	$db_name= $sugar_config['dbconfig']['db_name'];
-	$setup_db_host_name = $sugar_config['dbconfig']['db_host_name'];
-  	$setup_db_admin_user_name = $sugar_config['dbconfig']['db_user_name'];
-    $setup_db_host_instance = $sugar_config['dbconfig']['db_host_instance'];
-    $setup_db_admin_password = $sugar_config['dbconfig']['db_password'];
-    if(function_exists("mysqli_connect")){
-		$link = @mysqli_connect($setup_db_host_name, $setup_db_admin_user_name, $setup_db_admin_password);
-	    mysqli_select_db($link,$db_name);
-    	$qu="SELECT relationship_name FROM relationships";
-		$ct =mysqli_query($link,$qu);
-    	while($row=mysqli_fetch_assoc($ct)){
-    		$relsDrop[] =$row['relationship_name'];
-    	}
-    }
-     else{
-    	$link = @mysql_connect($setup_db_host_name, $setup_db_admin_user_name, $setup_db_admin_password);
-	    mysql_select_db($db_name);
-	    $qu="SELECT relationship_name FROM relationships";
-		$ct =mysql_query($qu,$link);
-		while($row=mysql_fetch_assoc($ct)){
-			$relsDrop[] =$row['relationship_name'];
-		}
-    }
-    return $relsDrop;
+	return SugarRelationshipFactory::getInstance()->getRelationshipDefs();
 }
 
 function tableColumns(&$colsDrop,$table_name){

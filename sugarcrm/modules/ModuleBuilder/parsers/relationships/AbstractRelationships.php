@@ -248,21 +248,15 @@ class AbstractRelationships
      * relationship (products-products) uses it (and there it makes no difference from our POV) and we don't use it when creating new ones
      * @return array Array of $relationshipName => $relationshipDefinition as an array
      */
-    protected function getDeployedRelationships ()
+    protected function getDeployedRelationships()
     {
 
-        $relationships = array();
-        $db = DBManagerFactory::getInstance () ;
-        $query = "SELECT * FROM relationships WHERE deleted = 0" ;
-        $result = $db->query ( $query ) ;
-        while ( $row = $db->fetchByAssoc ( $result ) )
-        {
-            // set this relationship to readonly
-            $row [ 'readonly' ] = true ;
-            $relationships [ $row [ 'relationship_name' ] ] = $row ;
-        }
+        $relationships = SugarRelationshipFactory::getInstance()->getRelationshipDefs();
+        array_walk($relationships, function (&$def) {
+            $def['readonly'] = true;
+        });
 
-        return $relationships ;
+        return $relationships;
     }
 
     /*

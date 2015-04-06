@@ -164,10 +164,7 @@ class PMSEBeanHandler
      */
     public function getRelationshipData($relationName, $db)
     {
-        $query = "select * from relationships where relationship_name='" . $relationName . "'";
-        $result = $db->Query($query);
-        $row = $db->fetchByAssoc($result);
-        return $row;
+        return SugarRelationshipFactory::getInstance()->getRelationshipDef($relationName);
     }
 
     /**

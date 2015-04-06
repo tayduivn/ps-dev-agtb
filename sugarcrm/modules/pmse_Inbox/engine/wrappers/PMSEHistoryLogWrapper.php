@@ -318,11 +318,7 @@ class PMSEHistoryLogWrapper
      */
     private function getRelationshipData($relationName)
     {
-//        global $db;
-        $query = "select * from relationships where relationship_name='" . $relationName . "'";
-        $result = $this->db->Query($query);
-        $row = $this->db->fetchByAssoc($result);
-        return $row;
+        return SugarRelationshipFactory::getInstance()->getRelationshipDef($relationName);
     }
 
     /**
