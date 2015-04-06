@@ -404,15 +404,6 @@ class GlobalSearchApi extends SugarApi
             $data['id'] = $result->getId();
             $data['name'] = $fields['name'];
 
-            // set score
-            if ($score = $result->getScore()) {
-                $data['_score'] = $score;
-            }
-
-            // add highlights if available
-            if ($highlights = $result->getHighlights()) {
-                $data['_highlights'] = $highlights;
-            }
             $formatted[] = $data;
         }
         return $formatted;

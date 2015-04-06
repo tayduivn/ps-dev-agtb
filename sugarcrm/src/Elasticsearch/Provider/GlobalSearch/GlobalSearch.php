@@ -560,11 +560,6 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
             $this->highlighter = false;
         }
 
-        // Set highlighter
-        if ($this->useHighlighter) {
-            $builder->setHighLighter($this->highlighter);
-        }
-
         // Set sorting
         if ($this->sort) {
             $builder->setSort($this->sort);
