@@ -88,6 +88,9 @@
                     }
                 });
                 App.api.debug = App.config.debugSugarApi;
+                App.events.on("app:login:success", function () {
+                    App.cache.set("show_import_warning", true);
+                });
             }
         </script>
         {/literal}

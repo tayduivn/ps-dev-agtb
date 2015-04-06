@@ -17,16 +17,21 @@
 
     initiateFinish: function() {
         var that = this;
-        App.alert.show('project-import-confirmation',  {
-            level: 'confirmation',
-            messages: translate('LBL_PMSE_IMPORT_CONFIRMATION'),
-            onConfirm: function () {
-                that.context.trigger('project:import:finish');
-            },
-            onCancel: function () {
-                app.router.goBack();
-            }
-        });
+        if (App.cache.get("show_import_warning")) {
+            App.alert.show('project-import-confirmation',  {
+                level: 'confirmation',
+                messages: translate('LBL_PMSE_IMPORT_CONFIRMATION'),
+                onConfirm: function () {
+                    App.cache.set("show_import_warning", false);
+                    that.context.trigger('project:import:finish');
+                },
+                onCancel: function () {
+                    app.router.goBack();
+                }
+            });
+        } else {
+            that.context.trigger('project:import:finish');
+        }
     },
 
     initiateCancel : function() {
