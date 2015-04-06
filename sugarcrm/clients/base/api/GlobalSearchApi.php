@@ -66,6 +66,16 @@ class GlobalSearchApi extends SugarApi
     protected $aggFilters = array();
 
     /**
+     * @var boolean a flag to get tags in the response;
+     */
+    protected $getTags = false;
+
+    /**
+     * @var integer the maximum number of tags returned in the response
+     */
+    protected $tagLimit = 5;
+
+    /**
      * @var string Search term
      */
     protected $term = '';
@@ -145,11 +155,13 @@ class GlobalSearchApi extends SugarApi
 
         // Get search results
         try {
-            $resultSet = $this->executeGlobalSearch($globalSearch);
+            $resultSets = $this->executeGlobalSearch($globalSearch);
         } catch (\Exception $e) {
             throw new SugarApiExceptionSearchRuntime(null, array($e->getMessage()));
         }
 
+        // Handle the regular result set
+        $resultSet = $resultSets[0];
         $response = array(
             'next_offset' => $this->getNextOffset($resultSet->getTotalHits(), $this->limit, $this->offset),
             'total' => $resultSet->getTotalHits(),
@@ -167,6 +179,9 @@ class GlobalSearchApi extends SugarApi
             $response['mod_aggs'] = array();
         }
 
+        if ($this->getTags == true) {
+            $response['tags'] = $this->formatTagResults($resultSets[1]);
+        }
         return $response;
     }
 
@@ -189,6 +204,11 @@ class GlobalSearchApi extends SugarApi
         // Set aggregation filters
         if (!empty($args['agg_filters'])) {
             $this->aggFilters = $this->parseAggFilters($args['agg_filters']);
+        }
+
+        // Get tags related parameters
+        if (!empty($args['getTags'])) {
+            $this->getTags = $args['getTags'];
         }
 
         // Set search term
@@ -255,13 +275,15 @@ class GlobalSearchApi extends SugarApi
 
     /**
      * Execute search
-     * @param GlobalSearchCapable $engine
-     * @return \Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\ResultSetInterface
+     * @param GlobalSearchInterface $engine
+     * @return array of \Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\ResultSetInterface
      */
     protected function executeGlobalSearch(GlobalSearchCapable $engine)
     {
         $engine
             ->from($this->moduleList)
+            ->getTags($this->getTags)
+            ->setTagLimit($this->tagLimit)
             ->term($this->term)
             ->limit($this->limit)
             ->offset($this->offset)
@@ -279,7 +301,15 @@ class GlobalSearchApi extends SugarApi
             ;
         }
 
-        return $engine->search();
+        // Regular search
+        $resArray = array();
+        array_push($resArray, $engine->search());
+
+        // Additional search for the tags
+        if ($this->getTags == true) {
+            array_push($resArray, $engine->searchTags());
+        }
+        return $resArray;
     }
 
     /**
@@ -352,6 +382,39 @@ class GlobalSearchApi extends SugarApi
             $formatted[] = $data;
         }
 
+        return $formatted;
+    }
+
+
+    /**
+     * Format the result set for tags
+     * @param ResultSetInterface $results
+     * @return array
+     */
+    protected function formatTagResults(ResultSetInterface $results)
+    {
+        $formatted = array();
+
+        /* @var $result ResultInterface */
+        foreach ($results as $result) {
+            $data = array();
+
+            // Retrieve tags' id & name
+            $fields = $result->getData();
+            $data['id'] = $result->getId();
+            $data['name'] = $fields['name'];
+
+            // set score
+            if ($score = $result->getScore()) {
+                $data['_score'] = $score;
+            }
+
+            // add highlights if available
+            if ($highlights = $result->getHighlights()) {
+                $data['_highlights'] = $highlights;
+            }
+            $formatted[] = $data;
+        }
         return $formatted;
     }
 

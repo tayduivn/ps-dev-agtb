@@ -322,6 +322,21 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
     protected $offset = 0;
 
     /**
+     * @var boolean the flag of getting tags.
+     */
+    protected $getTags = array();
+
+    /**
+     * @var array the name of the "Tags" Module
+     */
+    protected $tagModule = 'Tags';
+
+    /**
+     * @var integer
+     */
+    protected $tagLimit = 5;
+
+    /**
      * @var boolean Apply field level boosts
     */
     protected $fieldBoost = false;
@@ -385,6 +400,28 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
     }
 
     /**
+     * Set the flag of getting tags.
+     * @return GlobalSearch
+     */
+    public function getTags($getTags)
+    {
+        if (!empty($getTags)) {
+            $this->getTags = $getTags;
+        }
+        return $this;
+    }
+
+    /**
+     * Set the size of tags in the response.
+     * @return GlobalSearch
+     */
+    public function setTagLimit($tagLimit)
+    {
+        $this->tagLimit = (int) $tagLimit;
+        return $this;
+    }
+
+    /**
      * Enable field boosts (disabled by default)
      * @param boolean $toggle
      * @return GlobalSearch
@@ -436,6 +473,23 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
     }
 
     /**
+     * Exclude the module 'Tags' for search.
+     * @param array $modules the list of modules
+     * @return array
+     */
+    protected function excludeTagModule(array $modules, $tagModule)
+    {
+        // If the module 'Tags' exist, remove it from the list;
+        // Otherwise, return the original module list.
+        $key = array_search($tagModule, $modules);
+        if ($key != false) {
+            unset($modules[$key]);
+            return array_values($modules);
+        }
+        return $modules;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function search()
@@ -444,6 +498,9 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
         if (empty($this->modules)) {
             $this->modules = $this->getUserModules();
         }
+
+        // Exclude the module 'Tags' for the normal search
+        $this->modules = $this->excludeTagModule($this->modules, $this->tagModule);
 
         $builder = new QueryBuilder($this->container);
         $builder
@@ -479,6 +536,42 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
 
         return $builder->executeSearch();
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function searchTags()
+    {
+        //create a module list including the tag module only
+        $modules = array($this->tagModule);
+
+        $builder = new QueryBuilder($this->container);
+        $builder
+            ->setUser($this->user)
+            ->setModules($modules)
+            ->setLimit($this->tagLimit)
+        ;
+
+        // Use MultiMatch if we are actually searching or fallback to MatchAll
+        if (!empty($this->term)) {
+            $builder->setQuery($this->getQuery($this->term, $modules));
+        } else {
+            $builder->setQuery($this->getMatchAllQuery());
+            $this->highlighter = false;
+        }
+
+        // Set highlighter
+        if ($this->useHighlighter) {
+            $builder->setHighLighter($this->highlighter);
+        }
+
+        // Set sorting
+        if ($this->sort) {
+            $builder->setSort($this->sort);
+        }
+        return $builder->executeSearch();
+    }
+
 
     /**
      * Get query object
