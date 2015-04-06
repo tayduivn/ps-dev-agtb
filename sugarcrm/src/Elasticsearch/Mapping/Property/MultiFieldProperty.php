@@ -52,6 +52,8 @@ class MultiFieldProperty extends RawProperty implements PropertyInterface
      */
     public function getMapping()
     {
+        $this->mapping = $this->setCopyToProperty($this->mapping);
+
         return array_merge(
             $this->mapping,
             array('type' => $this->type)

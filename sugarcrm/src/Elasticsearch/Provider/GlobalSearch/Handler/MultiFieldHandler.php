@@ -380,12 +380,19 @@ class MultiFieldHandler extends AbstractHandler implements
             return;
         }
 
+        $isCrossModuleDefined = $this->isCrossModuleDefined($defs);
         foreach ($this->typesMultiField[$defs['type']] as $multiField) {
             if ($multiField === 'not_analyzed') {
-                $mapping->addNotAnalyzedField($field);
+                $mapping->addNotAnalyzedField($field, false, $isCrossModuleDefined);
             } else {
                 $multiFieldProperty = $this->getMultiFieldProperty($multiField);
-                $mapping->addMultiField($field, $multiField, $multiFieldProperty);
+                $mapping->addMultiField(
+                    $field,
+                    $multiField,
+                    $multiFieldProperty,
+                    $this->crossModuleEnabled,
+                    $isCrossModuleDefined
+                );
             }
         }
     }
@@ -488,9 +495,24 @@ class MultiFieldHandler extends AbstractHandler implements
         }
 
         $multiField = new MultiFieldProperty();
+        $multiField->setCrossModuleEnabled($this->crossModuleEnabled);
         $multiField->setType($this->multiFieldDefs[$name]['type']);
         $multiField->setMapping($this->multiFieldDefs[$name]);
 
         return $multiField;
+    }
+
+    /**
+     * @var boolean the flag to enable or disable adding cross_module fields
+     */
+    protected $crossModuleEnabled = false;
+
+    /**
+     * Set the flag crossModuleEnabled.
+     * @param boolean $value TRUE or FALSE
+     */
+    public function setCrossModuleEnabled($value)
+    {
+        $this->crossModuleEnabled = $value;
     }
 }

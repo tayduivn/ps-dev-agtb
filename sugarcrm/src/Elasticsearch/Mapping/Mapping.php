@@ -91,7 +91,13 @@ class Mapping
     {
         $compiled = array();
         foreach ($this->properties as $field => $property) {
-            $compiled[$this->normalizeFieldName($field)] = $property->getMapping();
+            $fieldName = $field;
+            if ($property->isCrossModuleEnabled() === false) {
+                $fieldName = $this->normalizeFieldName($field);
+            } else {
+                $fieldName = $this->deNormalizeFieldName($fieldName);
+            }
+            $compiled[$fieldName] = $property->getMapping();
         }
         return $compiled;
     }
@@ -103,10 +109,12 @@ class Mapping
      * not analyzed field.
      *
      * @param string $field Field name
+     * @param boolean $crossModuleEnabled a flag to enable cross_module
+     * @param boolean $crossModuleDefined a flag to indicate cross_module defined
      */
-    public function addNotAnalyzedField($field)
+    public function addNotAnalyzedField($field, $crossModuleEnabled, $crossModuleDefined)
     {
-        $this->createMultiFieldBase($field);
+        $this->createMultiFieldBase($field, $crossModuleDefined, $crossModuleEnabled);
     }
 
     /**
@@ -118,11 +126,18 @@ class Mapping
      *
      * @param string $baseField Base field name
      * @param string $field Name of the multi field
+     * @param boolean $crossModuleEnabled a flag to enable cross_module
+     * @param boolean $crossModuleDefined a flag to indicate cross_module defined
      * @param MultiFieldProperty $property
      */
-    public function addMultiField($baseField, $field, MultiFieldProperty $property)
-    {
-        $this->createMultiFieldBase($baseField)->addField($field, $property);
+    public function addMultiField(
+        $baseField,
+        $field,
+        MultiFieldProperty $property,
+        $crossModuleEnabled,
+        $crossModuleDefined
+    ) {
+        $this->createMultiFieldBase($baseField, $crossModuleDefined, $crossModuleEnabled)->addField($field, $property);
     }
 
     /**
@@ -153,15 +168,21 @@ class Mapping
      * Create base multi field object for given field.
      *
      * @param string $field
+     * @param boolean $crossModuleDefined a flag to indicate cross_module defined
+     * @param boolean $crossModuleEnabled a flag to enable cross_module
      * @return MultiFieldBaseProperty
      * @throws MappingException
      */
-    protected function createMultiFieldBase($field)
+    protected function createMultiFieldBase($field, $crossModuleDefined, $crossModuleEnabled = false)
     {
         // create multi field base if not set yet
-        if (!isset($this->properties[$field])) {
+        if (!isset($this->properties[$field]) || $crossModuleEnabled == true) {
             $property = new MultiFieldBaseProperty();
             $property->setMapping($this->multiFieldBase);
+            $property->setCrossModuleEnabled($crossModuleEnabled);
+            if ($crossModuleEnabled == false && $crossModuleDefined == true) {
+                $property->setCopyToFieldName($field);
+            }
             $this->addProperty($field, $property);
         }
 
@@ -200,5 +221,15 @@ class Mapping
     protected function normalizeFieldName($field)
     {
         return $this->module . self::PREFIX_SEP . $field;
+    }
+
+    /**
+     * Remove the prefix added for cross_module aggregation names.
+     * @param string $field
+     * @return string
+     */
+    protected function deNormalizeFieldName($field)
+    {
+        return substr($field, strlen(self::PREFIX_SEP));
     }
 }

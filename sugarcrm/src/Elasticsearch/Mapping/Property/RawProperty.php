@@ -26,6 +26,17 @@ class RawProperty implements PropertyInterface
      */
     protected $mapping = array();
 
+
+    /**
+     * @var boolean the flag to enable or disable adding cross_module fields
+     */
+    protected $crossModuleEnabled = false;
+
+    /**
+     * @var string the name of the field for copy_to.
+     */
+    protected $copyToFieldName;
+
     /**
      * {@inheritdoc}
      */
@@ -41,5 +52,48 @@ class RawProperty implements PropertyInterface
     public function setMapping(array $mapping)
     {
         $this->mapping = $mapping;
+    }
+
+    /**
+     * Set the flag crossModuleEnabled.
+     * @param boolean $value TRUE or FALSE
+     */
+    public function setCrossModuleEnabled($value)
+    {
+        $this->crossModuleEnabled = $value;
+    }
+
+    /**
+     * Check the flag crossModuleEnabled.
+     * @return boolean
+     */
+    public function isCrossModuleEnabled()
+    {
+        return $this->crossModuleEnabled;
+    }
+
+    /**
+     * Set the field name for copy_to.
+     * @param string $fieldName the name of the field for 'copy_to' property
+     */
+    public function setCopyToFieldName($fieldName)
+    {
+        $this->copyToFieldName = $fieldName;
+    }
+
+    /**
+     * Add the copy_to property to the field.
+     * @param array $mapping the mapping to be modified
+     * @return array
+     */
+    public function setCopyToProperty(array $mapping)
+    {
+        if (isset($this->copyToFieldName)) {
+            return array_merge(
+                $mapping,
+                array('copy_to' => $this->copyToFieldName)
+            );
+        }
+        return $mapping;
     }
 }

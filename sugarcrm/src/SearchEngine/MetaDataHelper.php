@@ -14,6 +14,7 @@ namespace Sugarcrm\Sugarcrm\SearchEngine;
 
 use Sugarcrm\Sugarcrm\Logger\LoggerTransition;
 use Psr\Log\LoggerInterface;
+use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
 
 /**
  *
@@ -401,7 +402,7 @@ class MetaDataHelper
                 if ($aggId === $fieldName) {
                     $allAggDefs['cross'][$fieldName] = $aggDef;
                 } else {
-                    $aggId = $module . '.' . $fieldName . '.' . $aggId;
+                    $aggId = $module . Mapping::PREFIX_SEP . $fieldName . '.'  . $aggId;
                     $allAggDefs['module'][$aggId] = $aggDef;
                 }
             }

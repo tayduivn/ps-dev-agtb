@@ -12,6 +12,8 @@
 
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Query\Aggregation;
 
+use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
+
 /**
  *
  * The implementation class for Range Aggregation.
@@ -75,7 +77,7 @@ class RangeAggregation extends AbstractAggregation
         $agg = new \Elastica\Aggregation\Range($fieldName);
 
         //extract the field due to the difference of cross_module and per_module fields
-        $names = explode(".", $fieldName);
+        $names = explode(Mapping::PREFIX_SEP, $fieldName);
         if (sizeof($names)==2) {
             $field = $names[1];
         } else {

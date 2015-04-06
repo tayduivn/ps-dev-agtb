@@ -40,4 +40,24 @@ abstract class AbstractHandler implements HandlerInterface
     public function initialize()
     {
     }
+
+
+    /**
+     * Test if the field is defined as cross_module
+     * @param array $defs Field definitions
+     * @return bool
+     */
+    public function isCrossModuleDefined($defs)
+    {
+        //check if it contains aggregation
+        if (empty($defs['full_text_search']['aggregation'])) {
+            return false;
+        }
+
+        if (empty($defs['full_text_search']['aggregation']['cross_module'])) {
+            return false;
+        }
+
+        return true;
+    }
 }

@@ -24,6 +24,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\HandlerIterato
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\MultiFieldHandler;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\AutoIncrementHandler;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\EmailAddressHandler;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\CrossModuleAggHandler;
 use Sugarcrm\Sugarcrm\Elasticsearch\Query\Aggregation\AggregationHandler;
 
 /**
@@ -108,6 +109,7 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
         $this->handlers->addHandler(new MultiFieldHandler());
         $this->handlers->addHandler(new AutoIncrementHandler());
         $this->handlers->addHandler(new EmailAddressHandler());
+        $this->handlers->addHandler(new CrossModuleAggHandler());
     }
 
     /**

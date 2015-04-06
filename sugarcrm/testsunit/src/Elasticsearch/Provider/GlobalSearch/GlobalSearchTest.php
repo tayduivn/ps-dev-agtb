@@ -30,7 +30,7 @@ class GlobalSearchTest extends \PHPUnit_Framework_TestCase
     {
         $sut = new GlobalSearch();
         $this->assertInstanceOf('Iterator', $sut->getHandlers());
-        $this->assertCount(3, $sut->getHandlers());
+        $this->assertCount(4, $sut->getHandlers());
     }
 
     /**

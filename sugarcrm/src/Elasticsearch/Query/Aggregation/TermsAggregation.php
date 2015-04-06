@@ -12,6 +12,8 @@
 
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Query\Aggregation;
 
+use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
+
 /**
  *
  * The implementation class for Terms Aggregation.
@@ -54,7 +56,7 @@ class TermsAggregation extends AbstractAggregation
         $agg = new \Elastica\Aggregation\Terms($fieldName);
 
         //extract the field due to the difference of cross_module and per_module fields
-        $names = explode(".", $fieldName);
+        $names = explode(Mapping::PREFIX_SEP, $fieldName);
         if (sizeof($names)==2) {
             $field = $names[1];
         } else {
