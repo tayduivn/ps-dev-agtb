@@ -207,6 +207,9 @@ class ForecastReset
         $views = $mm->getModuleViews('Forecasts');
         $fields = $views['config-worksheet-columns']['meta']['panels'][0]['fields'];
 
+        /* @var $forecastWorksheet ForecastWorksheet */
+        $forecastWorksheet = BeanFactory::getBean('ForecastWorksheets');
+
         // sort the fields correctly
         usort(
             $fields,
@@ -270,6 +273,13 @@ class ForecastReset
                     )
                 );
             }
+
+            // make sure sortable matches what is in the vardefs
+            $fieldVarDefs = $forecastWorksheet->getFieldDefinition($column);
+            if (isset($fieldVarDefs['sortable'])) {
+                $additionalDefs['sortable'] = $fieldVarDefs['sortable'];
+            }
+
             $listDefsParser->addField($column, $additionalDefs);
         }
 
@@ -284,7 +294,7 @@ class ForecastReset
      *
      * @param String $forecast_by The Module that we are currently forecasting by
      */
-    protected function updateConfigWorksheetColumnsMetadata($forecast_by)
+    public function updateConfigWorksheetColumnsMetadata($forecast_by)
     {
         if ($forecast_by === 'RevenueLineItems') {
             $contents = "<?php\n\n";

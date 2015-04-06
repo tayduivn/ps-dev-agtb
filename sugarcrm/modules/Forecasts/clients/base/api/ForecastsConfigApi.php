@@ -231,6 +231,9 @@ class ForecastsConfigApi extends ConfigModuleApi
         SugarAutoLoader::load('modules/Forecasts/include/ForecastReset.php');
 
         $fr = new ForecastReset();
+        // BEGIN SUGARCRM flav=ent ONLY
+        $fr->updateConfigWorksheetColumnsMetadata($forecastBy);
+        // END SUGARCRM flav=ent ONLY
         $fr->setWorksheetColumns($api->platform, $worksheetColumns, $forecastBy);
     }
 }
