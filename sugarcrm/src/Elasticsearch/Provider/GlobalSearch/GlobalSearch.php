@@ -286,7 +286,7 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
             foreach ($this->getFtsFields($module) as $field => $defs) {
 
                 // skip fields which are not searchable
-                if (!$this->isFieldSearchable($defs)) {
+                if (!$this->container->metaDataHelper->isFieldSearchable($defs)) {
                     continue;
                 }
 
@@ -599,32 +599,5 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
     protected function getMatchAllQuery()
     {
         return new \Elastica\Query\MatchAll();
-    }
-
-    /**
-     * Check if a field is searchable or not.
-     * @param array $defs Field vardefs
-     * @return boolean
-     */
-    public function isFieldSearchable(array $defs)
-    {
-        $isSearchable = false;
-
-        // Determine if a field is considered as searchable:
-        // 1. searchable is is set to true
-        // 2. searchable is empty and boost is set (*)
-        //
-        // (*) This will be deprecated after 7.7 as this was the old behavior.
-
-        if (isset($defs['full_text_search']['searchable'])) {
-            if ($defs['full_text_search']['searchable'] == true) {
-                $isSearchable = true;
-            }
-        } else {
-            if (!empty($defs['full_text_search']['boost'])) {
-                $isSearchable = true;
-            }
-        }
-        return $isSearchable;
     }
 }
