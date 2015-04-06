@@ -511,17 +511,19 @@ class ModuleInstaller{
 
     /**
      * Rebuild generic extension
+     *
      * @param string $ext Extension directory
      * @param string $filename Target filename
+     * @param array  $modules
      */
-    public function rebuildExt($ext, $filename)
+    public function rebuildExt($ext, $filename, $modules = array())
     {
         if (stristr($ext, '__PH_SUBTYPE__')) {
             $this->log(translate('LBL_MI_REBUILDING') . " " . translate('LBL_MI_REBUILDING_CLIENT_METADATA'));
         } else {
             $this->log(translate('LBL_MI_REBUILDING') . " $ext...");
         }
-        $this->merge_files("Ext/$ext/", $filename);
+        $this->merge_files("Ext/$ext/", $filename, null, null, $modules);
     }
 
     /**
@@ -880,15 +882,21 @@ class ModuleInstaller{
         $this->rebuild_extensions();
     }
 
-    public function rebuild_extensions()
+    public function rebuild_extensions($modules = array(), $filter = array())
     {
-        foreach($this->extensions as $extname => $ext) {
-            $func = "rebuild_$extname";
-            if(method_exists($this, $func)) {
-                // non-standard function
-                $this->$func();
-            } else {
-                $this->rebuildExt($ext["extdir"], $ext["file"]);
+        foreach ($this->extensions as $extname => $ext) {
+            if (empty($filter) || in_array($extname, $filter)) {
+                $func = "rebuild_$extname";
+                //Special case for languages since it breaks the $modules as first argument interface.
+                //TODO: Refactor rebuilding helper into proper interfaces and out of the "Installer" class.
+                if ($func == "rebuild_languages") {
+                    $this->rebuild_languages(array(), $modules);
+                } elseif (method_exists($this, $func)) {
+                    // non-standard function
+                    $this->$func($modules);
+                } else {
+                    $this->rebuildExt($ext["extdir"], $ext["file"], $modules);
+                }
             }
         }
     }
@@ -1832,14 +1840,14 @@ class ModuleInstaller{
         }
     }
 
-    function rebuild_languages($languages = array(), $modules = "")
+    function rebuild_languages($languages = array(), $modules = array())
     {
         global $current_language, $app_list_strings, $app_strings;
 
         foreach ($languages as $language => $value) {
             $this->log(translate('LBL_MI_REBUILDING') . " Language...$language");
-            $this->merge_files('Ext/Language/', $language . '.lang.ext.php', $language);
-            if ($modules != "") {
+            $this->merge_files('Ext/Language/', $language . '.lang.ext.php', $language, false, $modules);
+            if (is_array($modules) && !empty($modules)) {
                 foreach ($modules as $module) {
                     LanguageManager::clearLanguageCache($module, $language);
                 }
@@ -1855,16 +1863,23 @@ class ModuleInstaller{
         $app_list_strings = return_app_list_strings_language($current_language);
     }
 
-    function rebuild_vardefs()
+    function rebuild_vardefs($modules = array())
     {
-        $this->rebuildExt("Vardefs", 'vardefs.ext.php');
-        VardefManager::clearVardef();
+        $this->rebuildExt("Vardefs", 'vardefs.ext.php', null, null, $modules);
+        if (!empty($modules)) {
+            foreach ($modules as $module) {
+                VardefManager::clearVardef($module);
+            }
+        } else {
+            VardefManager::clearVardef();
+        }
         sugar_cache_reset();
     }
 
-    function rebuild_dashletcontainers(){
+    function rebuild_dashletcontainers($modules = array())
+    {
         $this->log(translate('LBL_MI_REBUILDING') . " DC Actions...");
-        $this->merge_files('Ext/DashletContainer/Containers/', 'dcactions.ext.php');
+        $this->merge_files('Ext/DashletContainer/Containers/', 'dcactions.ext.php', null, null, $modules);
     }
 
     function rebuild_tabledictionary()
@@ -1899,18 +1914,23 @@ class ModuleInstaller{
 
     /**
      * Rebuilds the extension files found in custom/Extension
+     *
      * @param boolean $silent
+     * @param array   $modules optional list of modules to update. If $modules is empty, all modules are rebuilt
      */
-    function rebuild_all($silent=false, $modules = array()){
-        if(defined('TEMPLATE_URL'))SugarTemplateUtilities::disableCache();
-        $this->silent=$silent;
+    function rebuild_all($silent = false, $modules = array())
+    {
+        if (defined('TEMPLATE_URL')) {
+            SugarTemplateUtilities::disableCache();
+        }
+        $this->silent = $silent;
         global $sugar_config;
 
-        $this->rebuild_languages($sugar_config['languages']);
-        $this->rebuild_extensions();
-        $this->rebuild_dashletcontainers();
+        $this->rebuild_languages($sugar_config['languages'], $modules);
+        $this->rebuild_extensions($modules);
+        $this->rebuild_dashletcontainers($modules);
         // This will be a time consuming process, particularly if $modules is empty
-        $this->rebuild_relationships($modules);
+        $this->rebuild_relationships(array_flip($modules));
         $this->rebuild_tabledictionary();
         $this->reset_opcodes();
         sugar_cache_reset();
@@ -2101,16 +2121,22 @@ class ModuleInstaller{
      * within custom/Extension/modules/<module>/$path, reading files that end
      * with "_override" last. It then concatenates those files, copying the
      * result to custom/application/<path>/<file>.
-     * @param  string  $path        Path for extension.
-     * @param  string  $name        Filename for extension.
-     * @param  string  $filter      Filter extension file name. Useful for lang.
+     *
+     * @param  string  $path Path for extension.
+     * @param  string  $name Filename for extension.
+     * @param  string  $filter Filter extension file name. Useful for lang.
      * @param  boolean $application If true, process only application wide exts.
+     * @param  array   $modules optional list of list of modules to rebuild files for.
+     *                 If no list is specified, all modules are rebuilt.
      */
-    public function merge_files($path, $name, $filter = '', $application = false)
+    public function merge_files($path, $name, $filter = '', $application = false, $modules = array())
     {
         if (!$application) {
             $GLOBALS['log']->debug(__METHOD__ . ": merging module extensions in custom/Extension/modules/<module>/$path to custom/modules/<module>/$path$name");
-            foreach ($this->modules as $module) {
+            if (empty($modules)) {
+                $modules = $this->modules;
+            }
+            foreach ($modules as $module) {
                 $module_path = "modules/" . $module;
                 $this->mergeModuleFiles($module_path, $path, $name, $filter);
             }
