@@ -70,13 +70,6 @@ $dictionary['tracker_sessions'] = array(
             'type' => 'bool',
             'default' => '1',
         ),
-        'round_trips'=>array(
-            'name' => 'round_trips',
-            'vname' => 'LBL_ROUNDTRIPS',
-            'type' => 'int',
-            'len' => '5',
-            'isnull' => 'false',
-        ),
 	    'deleted' =>array (
 		    'name' => 'deleted',
 		    'vname' => 'LBL_DELETED',

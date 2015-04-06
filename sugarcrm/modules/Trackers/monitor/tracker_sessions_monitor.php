@@ -35,7 +35,7 @@ class tracker_sessions_monitor extends Monitor
     private function populateMonitor()
     {
         $db = DBManagerFactory::getInstance();
-        $query = "SELECT date_start, round_trips, active
+        $query = "SELECT date_start, active
                     FROM $this->name
                     WHERE session_id = '" . $db->quote($this->session_id) . "'
                     AND deleted = 0";
@@ -54,7 +54,6 @@ class tracker_sessions_monitor extends Monitor
             $this->new = false;
         } else {
             $this->setValue('date_start', TimeDate::getInstance()->nowDb());
-            $this->setValue('round_trips', 1);
         }
 
         $this->setValue('seconds', 0);
