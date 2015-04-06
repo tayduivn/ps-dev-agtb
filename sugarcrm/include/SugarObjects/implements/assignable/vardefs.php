@@ -29,7 +29,7 @@ $vardefs = array(
                 'enabled' => true,
                 'searchable' => false,
                 'aggregation' => array(
-                    'type' => 'terms',
+                    'type' => 'myItems',
                     'cross_module' => true,
                 )
             ),

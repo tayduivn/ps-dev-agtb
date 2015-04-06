@@ -80,6 +80,9 @@ class MultiFieldHandler extends AbstractHandler implements
         'enum' => array(
             'not_analyzed',
         ),
+        'assigned_user_name' => array(
+            'not_analyzed',
+        )
     );
 
     /**

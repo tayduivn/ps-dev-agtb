@@ -251,6 +251,7 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
     protected function handleAggregations($builder, $moduleList)
     {
         $handler = new AggregationHandler($this);
+        $handler->setUser($this->user->id);
 
         //Build the filters and aggregations
         $handler->buildAggFilters();

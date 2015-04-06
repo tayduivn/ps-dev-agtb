@@ -39,12 +39,27 @@ class AggregationHandler
     protected $aggFilters;
 
     /**
+     * the id of the user
+     * @var string
+     */
+    protected $userId;
+
+    /**
      * Constructor
      * @param GlobalSearch $provider
      */
     public function __construct(GlobalSearch $provider)
     {
         $this->provider = $provider;
+    }
+
+    /**
+     * Set the user id
+     * @param string $userId
+     */
+    public function setUser($userId)
+    {
+        $this->userId = $userId;
     }
 
     /**
@@ -83,6 +98,7 @@ class AggregationHandler
             if (isset($agg)) {
                 // set options from aggregation definition
                 $agg->setOptions($def['options']);
+                $agg->setUser($this->userId);
 
                 // get Elastica filter object and add it to the module filter
                 if ($eFilter = $agg->buildFilter($field, $values)) {
@@ -128,6 +144,7 @@ class AggregationHandler
             if ($agg = AggregationFactory::get($def['type'])) {
                 // set options from aggregation definition
                 $agg->setOptions($def['options']);
+                $agg->setUser($this->userId);
 
                 //compose the filter for the aggregation
                 $filter = $this->composeFiltersForAgg($field);

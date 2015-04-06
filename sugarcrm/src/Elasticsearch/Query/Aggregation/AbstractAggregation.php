@@ -34,6 +34,12 @@ abstract class AbstractAggregation implements AggregationInterface
     protected $defaultOpts;
 
     /**
+     * the id of the user
+     * @var string
+     */
+    protected $userId;
+
+    /**
      *
      * Ctor
      * @param array $defaultOpts
@@ -60,4 +66,12 @@ abstract class AbstractAggregation implements AggregationInterface
         return $this->options;
     }
 
+    /**
+     * Set the user id
+     * @param string $userId
+     */
+    final public function setUser($userId)
+    {
+        $this->userId = $userId;
+    }
 }
