@@ -160,10 +160,11 @@
     /**
      * Gets the HTML string for alert given options.
      *
-     * @param {Object} The options object passed to the alert object when it was
-     * created. See {@link #initialize} documentation to know the available
-     * options.
-     *
+     * @param {Object} options The options object passed to the alert object when it was
+     *   created. See {@link #initialize} documentation to know the available
+     *   options.
+     * @param {Object} [templateOptions] Optional template options to be passed
+     *   to the template.
      * @return {string} The generated template.
      * @private
      */
