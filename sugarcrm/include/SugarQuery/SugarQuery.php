@@ -503,6 +503,8 @@ class SugarQuery
                 $results = $this->runQuery($this);
                 $return = array();
                 while ($row = $this->db->fetchByAssoc($results, $encode)) {
+                    //Apply any post data cleanup/db abstraction
+                    $row = $this->formatRow($row);
                     $return[] = $row;
                 }
                 if ($type == 'json') {
@@ -545,6 +547,27 @@ class SugarQuery
         } else {
             return $this->db->query($sql);
         }
+    }
+
+    /**
+     * Applies any cleanup or formatting required on the raw DB data result.
+     *
+     * @param array $row
+     *
+     * @return array updated $row
+     */
+    protected function formatRow(array $row)
+    {
+        //remap long aliases to thier correct output key
+        if (!empty($this->select)) {
+            foreach ($this->select->select as $field) {
+                if (!empty($field->original_alias) && isset($row[$field->alias])) {
+                    $row[$field->original_alias] = $row[$field->alias];
+                    unset($row[$field->alias]);
+                }
+            }
+        }
+        return $row;
     }
 
 
