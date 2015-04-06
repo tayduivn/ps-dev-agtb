@@ -167,61 +167,119 @@ class MetaDataHelperTest extends \PHPUnit_Framework_TestCase
                         'type' => 'name',
                         'full_text_search' => array('enabled' => true, 'searchable' => true),
                     ),
+                    // module specific aggregation, no options
                     'description' => array(
                         'name' => 'description',
                         'type' => 'text',
                         'full_text_search' => array(
                             'enabled' => true,
                             'searchable' => true,
-                            'aggregation' => array(
-                                'type' => 'term'
+                            'aggregations' => array(
+                                'agg1' => array(
+                                    'type' => 'term'
+                                ),
                             )
                         ),
                     ),
+                    // module specific aggregation, with options
                     'work_log' => array(
                         'name' => 'work_log',
                         'type' => 'text',
                         'full_text_search' => array(
                             'enabled' => true,
                             'searchable' => true,
-                            'aggregation' => array(
-                                'type' => 'term',
-                                'options' => array('size' => 21, 'order' => 'desc'),
-                                'cross_module' => false,
+                            'aggregations' => array(
+                                'agg2' => array(
+                                    'type' => 'term',
+                                    'options' => array('size' => 21, 'order' => 'desc'),
+                                ),
                             ),
                         ),
                     ),
+                    // cross module aggregation, no options
+                    'date_entered' => array(
+                        'name' => 'date_entered',
+                        'type' => 'datetime',
+                        'full_text_search' => array(
+                            'enabled' => true,
+                            'searchable' => true,
+                            'aggregations' => array(
+                                'date_entered' => array(
+                                    'type' => 'date_range',
+                                ),
+                            ),
+                        ),
+                    ),
+                    // cross module aggregation, with options
                     'date_modified' => array(
                         'name' => 'date_modified',
                         'type' => 'datetime',
                         'full_text_search' => array(
                             'enabled' => true,
                             'searchable' => true,
-                            'aggregation' => array(
-                                'type' => 'date_range',
-                                'options' => array('from' => 'foo', 'to' => 'bar'),
-                                'cross_module' => true,
+                            'aggregations' => array(
+                                'date_modified' => array(
+                                    'type' => 'date_range',
+                                    'options' => array('from' => 'foo', 'to' => 'bar'),
+                                ),
+                            ),
+                        ),
+                    ),
+                    // mix of cross and module specific aggregations
+                    'status' => array(
+                        'name' => 'status',
+                        'type' => 'enum',
+                        'full_text_search' => array(
+                            'enabled' => true,
+                            'searchable' => true,
+                            'aggregations' => array(
+                                'status_types' => array(
+                                    'type' => 'term',
+                                    'options' => array('foo' => 'bar1'),
+                                ),
+                                'status' => array(
+                                    'type' => 'dropdown',
+                                    'options' => array('foo' => 'bar2'),
+                                ),
+                                'status_something' => array(
+                                    'type' => 'myStatus',
+                                    'options' => array('foo' => 'bar3'),
+                                ),
                             ),
                         ),
                     ),
                 ),
                 array(
                     'cross' => array(
+                        'date_entered' => array(
+                            'type' => 'date_range',
+                            'options' => array(),
+                        ),
                         'date_modified' => array(
                             'type' => 'date_range',
                             'options' => array('from' => 'foo', 'to' => 'bar'),
-                            'cross_module' => true,
+                        ),
+                        'status' => array(
+                            'type' => 'dropdown',
+                            'options' => array('foo' => 'bar2'),
                         ),
                     ),
                     'module' => array(
-                        'Tasks.description' => array(
+                        'Tasks.description.agg1' => array(
                             'type' => 'term',
                             'options' => array()
                         ),
-                        'Tasks.work_log' => array(
+                        'Tasks.work_log.agg2' => array(
                             'type' => 'term',
                             'options' => array('size' => 21, 'order' => 'desc'),
-                            'cross_module' => false,
+                        ),
+                        'Tasks.status.status_types' => array(
+                            'type' => 'term',
+                            'options' => array('foo' => 'bar1'),
+                        ),
+                        'Tasks.status.status_something' => array(
+                            'type' => 'myStatus',
+                            'options' => array('foo' => 'bar3'),
                         ),
                     ),
                 ),

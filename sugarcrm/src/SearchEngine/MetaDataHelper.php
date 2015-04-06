@@ -73,7 +73,7 @@ class MetaDataHelper
     {
         $this->disableCache = (bool) $toggle;
         if ($toggle) {
-            $this->logger->critical("MetaDataHelper: Performance degradation, cache disabled.");
+            $this->logger->warning("MetaDataHelper: Performance degradation, cache disabled.");
         }
     }
 
@@ -320,17 +320,55 @@ class MetaDataHelper
             $allAggDefs['cross'] = array_merge($allAggDefs['cross'], $aggDefs['cross']);
             $allAggDefs['modules'][$module] = $aggDefs['module'];
         }
-        return $this->setCache($cacheKey, $aggDefs);
+        return $this->setCache($cacheKey, $allAggDefs);
     }
 
     /**
-     * Get all aggregation definitions for given module
+     * Get all aggregation definitions for given module split between cross
+     * module aggregations and module specific aggregations. A field may have
+     * more than one aggregation defined. Every aggregation requires an
+     * aggregation id which is the key of the array definition. When this key
+     * equals to the field name then we consider that aggregation as a cross
+     * module one.
+     *
+     * Example definition for the field "date_entered":
+     *
+     *  'name' => 'date_entered',
+     *  'type' => 'dateTime',
+     *  'full_text_search' => array(
+     *      'enabled' => true,
+     *      'searchable' => true,
+     *      'aggregations' => array(
+     *          'date_entered' => array(
+     *              'type' => 'date_range',
+     *              'options' => array(..),
+     *          ),
+     *          'agg1' => array(
+     *              'type' => 'my_date_range',
+     *              'options' => array(..),
+     *          ),
+     *      ),
+     *  ),
+     *
+     * The above field has two aggregations defined:
+     *  1. The first one is a cross module aggregation because the id being
+     *  used "date_entered" matches the field name.
+     *  2. The second aggregation is module specific. The id can be choosen
+     *  at will as long as it's different from the field name.
+     *
+     * Note that it's encouraged to only use cross module aggregation defs
+     * in the SugarObject templates although not required. When cross module
+     * aggregations are defined/overriden on a per module base ensure that
+     * all those definitions match exactly. Having two different cross module
+     * aggregations on the field "date_entered" with different settings will
+     * have unpredictable results.
+     *
      * @param string $module Module name
      * @return array
      */
     protected function getAllAggDefsModule($module)
     {
-        $aggDefs = array(
+        $allAggDefs = array(
             'cross' => array(),
             'module' => array(),
         );
@@ -338,15 +376,21 @@ class MetaDataHelper
         $fieldDefs = $this->getFtsFields($module);
         foreach ($fieldDefs as $fieldName => $fieldDef) {
 
-            // skip the field without aggregation defs
-            if (empty($fieldDef['full_text_search']['aggregation'])) {
+            // skip the field without aggregations defs
+            if (empty($fieldDef['full_text_search']['aggregations'])) {
                 continue;
             }
 
-            $aggDef = $fieldDef['full_text_search']['aggregation'];
+            $aggDefs = $fieldDef['full_text_search']['aggregations'];
+            if (!is_array($aggDefs)) {
+                continue;
+            }
 
-            // the type must be defined
-            if (is_array($aggDef) && !empty($aggDef['type'])) {
+            foreach ($aggDefs as $aggId => $aggDef) {
+                // type is required
+                if (empty($aggDef['type'])) {
+                    continue;
+                }
 
                 // set empty options array if nothing specified
                 if (empty($aggDef['options']) || !is_array($aggDef['options'])) {
@@ -354,14 +398,15 @@ class MetaDataHelper
                 }
 
                 // split module vs cross module aggregations
-                if (!empty($aggDef['cross_module'])) {
-                    $aggDefs['cross'][$fieldName] = $aggDef;
+                if ($aggId === $fieldName) {
+                    $allAggDefs['cross'][$fieldName] = $aggDef;
                 } else {
-                    $aggDefs['module'][$module . '.' . $fieldName] = $aggDef;
+                    $aggId = $module . '.' . $fieldName . '.' . $aggId;
+                    $allAggDefs['module'][$aggId] = $aggDef;
                 }
             }
         }
-        return $aggDefs;
+        return $allAggDefs;
     }
 
     /**
