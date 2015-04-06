@@ -19,7 +19,7 @@ $dictionary['Tag'] = array(
     'favorites' => true,
     'optimistic_locking' => false,
     'unified_search' => true,
-    'full_text_search' => false,
+    'full_text_search' => true,
     'unified_search_default_enabled' => true,
     'required_import_indexes' => array('idx_tag_name::name'),
     'fields' => array(
@@ -29,7 +29,7 @@ $dictionary['Tag'] = array(
             'type' => 'varchar',
             'len' => 255,
             'unified_search' => true,
-            'full_text_search' => array('enabled' => true, 'boost' => 3),
+            'full_text_search' => array('enabled' => true, 'searchable' => true),
             'required' => true,
             'reportable' => false,
             'studio' => false,
