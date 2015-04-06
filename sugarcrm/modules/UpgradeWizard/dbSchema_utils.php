@@ -179,26 +179,20 @@ function checkSchema($execute=false,$return=false,$checkThisRel){
     $_SESSION['dbScanError'] = array();
     $dbScanSuccess = '';
     $currcheckThisRel = '';
-    if($checkThisRel != null){
-    	$currcheckThisRel = $checkThisRel;
-    	$que = "select * from relationships where relationship_name = '".$checkThisRel."'";
-    	if(is_array($checkThisRel)){
-    		$que = "select * from relationships where relationship_name in (";
-    		foreach($checkThisRel as $rel_name=>$rel){
-    			$que .="'".$rel_name."',";
-    		}
-    		$que .=")";
-    		$que = str_replace(",)",")",$que);
-    	}
+    if ($checkThisRel != null) {
+        if (is_array($checkThisRel)) {
+            foreach ($checkThisRel as $rel_name => $rel) {
+                $relationships[] = SugarRelationshipFactory::getInstance()->getRelationshipDef($rel_name);
+            }
+        } else {
+            $relationships[] = SugarRelationshipFactory::getInstance()->getRelationshipDef($checkThisRel);
+        }
+
+    } else {
+        $relationships = SugarRelationshipFactory::getInstance()->getRelationshipDefs();
     }
-    else{
-    	$que = "select * from relationships";
-    }
-    $query = $db->query($que);
-    $sql_fk = '';
-   	while($rel_def = $db->fetchByAssoc($query))
-	   	    {
-          if($rel_def['relationship_type']== 'one-to-many'){
+    foreach($relationships as $rel_def) {
+        if($rel_def['relationship_type']== 'one-to-many'){
               $rhs_col_data_type='';
 			  $lhs_col_data_type='';
 			  $is_rhs_col_PK =false;

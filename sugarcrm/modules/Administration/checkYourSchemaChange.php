@@ -309,12 +309,9 @@ function checkSchema($execute=false,$return=false){
 	);
     $_SESSION['dbScanError'] = array();
     $dbScanSuccess = '';
-    $que = "select * from relationships";
-    $query = $db->query($que);
-    $sql_fk = '';
-   	while($rel_def = $db->fetchByAssoc($query))
-	   	    {
-          if($rel_def['relationship_type']== 'one-to-many'){
+    $relationships = SugarRelationshipFactory::getInstance()->getRelationshipDefs();
+    foreach ($relationships as $rel_def) {
+        if($rel_def['relationship_type']== 'one-to-many'){
               $rhs_col_data_type='';
 			  $lhs_col_data_type='';
 			  $is_rhs_col_PK =false;

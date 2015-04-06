@@ -932,11 +932,7 @@ class PMSECrmDataWrapper implements PMSEObservable
      */
     public function getRelationshipData($relationName)
     {
-        global $db;
-        $query = "select * from relationships where relationship_name='" . $relationName . "'";
-        $result = $db->Query($query);
-        $row = $db->fetchByAssoc($result);
-        return $row;
+        return SugarRelationshipFactory::getInstance()->getRelationshipDef($relationName);
     }
 
     /**

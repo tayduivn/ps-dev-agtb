@@ -165,25 +165,15 @@ function checkSchema($execute=false,$return=false,$checkThisRel=''){
 	);
     $_SESSION['dbScanError'] = array();
     $dbScanSuccess = '';
+    $relationships = array();
     if($checkThisRel != null){
-    	$que = "select * from relationships where relationship_name = '".$checkThisRel."'";
-    	if(is_array($checkThisRel)){
-    		$que = "select * from relationships where relationship_name in (";
-    		foreach($checkThisRel as $rel_name=>$rel){
-    			$que .=$rel_name.",";
-    		}
-    		$que .=")";
-    		$que = str_replace(",)",")",$que);
-    	}
+        $relationships[] = SugarRelationshipFactory::getInstance()->getRelationshipDef($checkThisRel);
     }
     else{
-    	$que = "select * from relationships";
+        $relationships = SugarRelationshipFactory::getInstance()->getRelationshipDefs();
     }
-    $query = $db->query($que);
-    $sql_fk = '';
-   	while($rel_def = $db->fetchByAssoc($query))
-	   	    {
-          if($rel_def['relationship_type']== 'one-to-many'){
+    foreach($relationships as $rel_def) {
+        if($rel_def['relationship_type']== 'one-to-many'){
               $rhs_col_data_type='';
 			  $lhs_col_data_type='';
 			  $is_rhs_col_PK =false;
