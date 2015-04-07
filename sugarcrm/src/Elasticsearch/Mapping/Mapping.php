@@ -85,7 +85,11 @@ class Mapping
     {
         $compiled = array();
         foreach ($this->properties as $field => $property) {
-            $compiled[$field] = $property->getMapping();
+            $fieldName = $field;
+            if ($property->getIsGenetic() == true) {
+                $fieldName = $this->normalizeFieldName($field);
+            }
+            $compiled[$fieldName] = $property->getMapping();
         }
         return $compiled;
     }

@@ -40,4 +40,20 @@ class Document extends BaseDocument
     {
         $this->_data[$field] = $value;
     }
+
+    /**
+     * Normalize field names prefixing it with module name
+     */
+    public function normalizeDataFieldNames()
+    {
+        $prefixed = array();
+        foreach ($this->_data as $field => $data) {
+            // Hard-coded for now, will refactor later
+            if ($field != 'tagIds') {
+                $field = $this->getType() . Mapping::PREFIX_SEP . $field;
+            }
+            $prefixed[$field] = $data;
+        }
+        $this->setData($prefixed);
+    }
 }
