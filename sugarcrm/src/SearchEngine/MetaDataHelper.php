@@ -247,7 +247,10 @@ class MetaDataHelper
             return null;
         }
         $key = $this->getRealCacheKey($key);
-        return $this->sugarCache->$key;
+        if (!$cached = $this->sugarCache->$key) {
+            $this->logger->debug("MetaDataHelper: cache miss for '{$key}'");
+        }
+        return $cached;
     }
 
     /**
