@@ -36,7 +36,7 @@ require_once('data/SugarBean.php');
 //check to see if the script files need to be rebuilt, add needed variables to request array
 $_REQUEST['root_directory'] = getcwd();
 $_REQUEST['js_rebuild_concat'] = 'rebuild';
-if (isset($_REQUEST['goto']) && $_REQUEST['goto'] != 'SilentInstall' && empty($_SESSION['js_minified'])) {    
+if (isset($_REQUEST['goto']) && $_REQUEST['goto'] != 'SilentInstall' && empty($_SESSION['js_minified'])) {
     require_once('jssource/minify.php');
     $_SESSION['js_minified'] = true;
 }
@@ -194,13 +194,6 @@ if(isset($_REQUEST['checkDBSettings']) && ($_REQUEST['checkDBSettings'])){
 }
 }
 
-// this is a WebSocket Configuration check
-if (isset($_REQUEST['checkWSConfiguration']) && ($_REQUEST['checkWSConfiguration'])) {
-    require_once('install/checkWSConfiguration.php');
-    echo checkWSConfiguration();
-    return;
-}
-
 //maintaining the install_type if earlier set to custom
 if(isset($_REQUEST['install_type']) && $_REQUEST['install_type'] == 'custom'){
 	$_SESSION['install_type'] = $_REQUEST['install_type'];
@@ -231,8 +224,6 @@ $workflow = array(  'welcome.php',
 $workflow[] =  'systemOptions.php';
 $workflow[] = 'dbConfig_a.php';
 //$workflow[] = 'dbConfig_b.php';
-
-$workflow[] = 'websocketConfig.php';
 
 if (!isset($_SESSION['oc_install']) || $_SESSION['oc_install'] == false) {
     $workflow[] = 'siteConfig_a.php';
@@ -630,8 +621,8 @@ EOQ;
             $sugar_config['unique_key'] = get_unique_key();
         }
 
-        $validation_errors = validate_dbConfig('a');
-        if(count($validation_errors) > 0) {
+        $db_errors = validate_dbConfig('a');
+        if(count($db_errors) > 0) {
             $the_file = 'dbConfig_a.php';
             $si_errors = true;
         }
@@ -643,11 +634,6 @@ EOQ;
         $validation_errors = validate_siteConfig('b');
         if(count($validation_errors) > 0) {
             $the_file = 'siteConfig_b.php';
-            $si_errors = true;
-        }
-        $validation_errors = validate_wsConfig();
-        if(count($validation_errors) > 0) {
-            $the_file = 'websocketConfig.php';
             $si_errors = true;
         }
 

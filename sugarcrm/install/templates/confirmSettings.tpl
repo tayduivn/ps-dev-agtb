@@ -82,7 +82,7 @@
                             </td>
                         </tr>
                     {/if}
-                    {if $smarty.session.websockets}
+                    {if $smarty.session.websockets_server_url && $smarty.session.websockets_client_url}
                         <tr><td colspan="3" align="left"></td></tr>
                         <tr>
                             <td></td>

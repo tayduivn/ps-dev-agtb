@@ -12,6 +12,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
+use Sugarcrm\Sugarcrm\Socket\Client as SugarSocketClient;
 
 function checkFTSSettings()
 {
@@ -21,6 +22,60 @@ function checkFTSSettings()
     installLog("FTS connection results: $status");
     $success = $status > 0 ? true : false;
     return $success;
+}
+
+/**
+ * Check WebSocket configuration.
+ * @param bool $silent
+ */
+function checkWSConfiguration($silent = false)
+{
+    installLog("Begin WebSocket Configuration Check Process *************");
+
+    global $mod_strings;
+    $errors = array();
+
+    $serverUrl = (isset($_SESSION['websockets_server_url'])) ? trim($_SESSION['websockets_server_url']) : ''; 
+    $clientUrl = (isset($_SESSION['websockets_client_url'])) ? trim($_SESSION['websockets_client_url']) : '';
+
+    if (!empty($serverUrl) || !empty($clientUrl)) {
+        if (empty($clientUrl)) {
+            $errors['ERR_WEB_SOCKET_CLIENT_URL'] = $mod_strings['ERR_WEB_SOCKET_CLIENT_URL'];
+            installLog("ERROR::  {$errors['ERR_WEB_SOCKET_CLIENT_URL']}");
+        } elseif (!filter_var($clientUrl, FILTER_VALIDATE_URL)) {
+            $errors['ERR_WEB_SOCKET_CLIENT_URL_INVALID'] = $mod_strings['ERR_WEB_SOCKET_CLIENT_URL_INVALID'];
+            installLog("ERROR::  {$errors['ERR_WEB_SOCKET_CLIENT_URL_INVALID']}");
+        } else {
+            $clientSettings = SugarSocketClient::getInstance()->checkWSSettings($clientUrl);
+            $_SESSION['websockets_client_balancer'] = $clientSettings['isBalancer'];
+            if (!$clientSettings['available'] || $clientSettings['type'] != 'client') {
+                $errors['ERR_WEB_SOCKET_CLIENT_ERROR'] = $mod_strings['ERR_WEB_SOCKET_CLIENT_ERROR'];
+                installLog("ERROR::  {$errors['ERR_WEB_SOCKET_CLIENT_ERROR']}");
+            }
+        }
+
+        if (empty($serverUrl)) {
+            $errors['ERR_WEB_SOCKET_SERVER_URL'] = $mod_strings['ERR_WEB_SOCKET_SERVER_URL'];
+            installLog("ERROR::  {$errors['ERR_WEB_SOCKET_SERVER_URL']}");
+        } elseif (!filter_var($serverUrl, FILTER_VALIDATE_URL)) {
+            $errors['ERR_WEB_SOCKET_SERVER_URL_INVALID'] = $mod_strings['ERR_WEB_SOCKET_SERVER_URL_INVALID'];
+            installLog("ERROR::  {$errors['ERR_WEB_SOCKET_SERVER_URL_INVALID']}");
+        } else {
+            $serverSettings = SugarSocketClient::getInstance()->checkWSSettings($serverUrl);
+            // No need to save server balancer configuration.
+            if (!$serverSettings['available'] || $serverSettings['type'] != 'server') {
+                $errors['ERR_WEB_SOCKET_SERVER_ERROR'] = $mod_strings['ERR_WEB_SOCKET_SERVER_ERROR'];
+                installLog("ERROR::  {$errors['ERR_WEB_SOCKET_SERVER_ERROR']}");
+            }
+        }
+    }
+    if ($silent) {
+        return $errors;
+    } else {
+        printErrorsWS($errors);
+    }
+
+    installLog("End WebSocket Configuration Check Process *************");
 }
 
 function checkDBSettings($silent=false) {
@@ -67,7 +122,11 @@ function checkDBSettings($silent=false) {
         // bail if the basic info isn't valid
         if( count($errors) > 0 ){
                 installLog("Basic form info is INVALID, exit Process.");
-            return printErrors($errors);
+            if ($silent) {
+                return $errors;
+            } else {
+                printErrors($errors);
+            }
         } else {
             installLog("Basic form info is valid, continuing Process.");
         }
@@ -188,12 +247,16 @@ function checkDBSettings($silent=false) {
             }
         }
 
-        if($silent){
-            return $errors;
-        }else{
-            printErrors($errors);
-        }
-        installLog("End DB Check Process *************");
+    //Test websocket settings
+    $WSErrors = checkWSConfiguration(true);
+    $errors = array_merge($errors, $WSErrors);
+
+    if ($silent) {
+        return $errors;
+    } else {
+        printErrors($errors);
+    }
+    installLog("End DB Check Process *************");
 }
 
 function printErrors($errors ){
@@ -238,6 +301,15 @@ function copyInputsIntoSession(){
             if(isset($_REQUEST['setup_db_admin_password'])){$_SESSION['setup_db_admin_password']    = $_REQUEST['setup_db_admin_password'];}
             if(isset($_REQUEST['setup_db_database_name'])){$_SESSION['setup_db_database_name']      = $_REQUEST['setup_db_database_name'];}
             if(isset($_REQUEST['setup_db_host_name'])){$_SESSION['setup_db_host_name']              = $_REQUEST['setup_db_host_name'];}
+
+
+            //WebSockets config
+            if (isset($_REQUEST['websockets_client_url'])) {
+                $_SESSION['websockets_client_url'] = $_REQUEST['websockets_client_url'];
+            }
+            if (isset($_REQUEST['websockets_server_url'])) {
+                $_SESSION['websockets_server_url'] = $_REQUEST['websockets_server_url'];
+            }
 
             //FTS Support
             if (isset($_REQUEST['setup_fts_type'])) {

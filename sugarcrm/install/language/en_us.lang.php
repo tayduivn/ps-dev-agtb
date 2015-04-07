@@ -182,6 +182,8 @@ $mod_strings = array(
 	'ERROR_VERSION_INCOMPATIBLE'		=> 'The uploaded file is not compatible with this version of Sugar: ',
 	'ERR_WEB_SOCKET_CLIENT_URL'         => 'WebSocket Client URL required',
 	'ERR_WEB_SOCKET_SERVER_URL'         => 'WebSocket Server URL required',
+    'ERR_WEB_SOCKET_CLIENT_URL_INVALID' => 'Please provide correct WebSocket Client URL',
+    'ERR_WEB_SOCKET_SERVER_URL_INVALID' => 'Please provide correct WebSocket Server URL',
 	'ERR_WEB_SOCKET_CLIENT_ERROR'       => 'Unable to connect to WebSocket Client URL.',
 	'ERR_WEB_SOCKET_SERVER_ERROR'       => 'Unable to connect to WebSocket Server URL.',
 
@@ -319,7 +321,7 @@ $mod_strings = array(
 	'LBL_LICENSE_ACCEPTANCE'			=> 'License Acceptance',
     'LBL_LICENSE_CHECKING'              => 'Checking system for compatibility.',
     'LBL_LICENSE_CHKENV_HEADER'         => 'Checking Environment',
-    'LBL_LICENSE_CHKDB_HEADER'          => 'Verifying DB Credentials.',
+    'LBL_LICENSE_CHKDB_HEADER'          => 'Verifying DB, FTS and Socket Server Credentials.',
     'LBL_LICENSE_CHECK_PASSED'          => 'System passed check for compatibility.',
     'LBL_LICENSE_REDIRECT'              => 'Redirecting in ',
 	'LBL_LICENSE_DIRECTIONS'			=> 'If you have your license information, please enter it in the fields below.',

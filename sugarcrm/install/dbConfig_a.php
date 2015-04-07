@@ -92,11 +92,27 @@ $out2 =<<<EOQ2
 </tr>
 <tr>
 	<td colspan="2">
-<div id="errorMsgs" style="display:none"></div>
+EOQ2;
+
+if ( !empty($si_errors) && sizeof($db_errors) > 0 )
+{
+    $out2 .= '<div id="errorMsgs"><ul>';
+    foreach ($db_errors as $error)
+    {
+        $out2 .= '<li class="error">' . $error . '</li>';
+    }
+    $out2 .= '</ul></div>';
+}
+else
+{
+    $out2 .= '<div id="errorMsgs" style="display:none"></div>';
+}
+
+$out2 .=<<<EOQ2
+
 <div class="required">{$mod_strings['LBL_REQUIRED']}</div>
 <table width="100%" cellpadding="0" cellpadding="0" border="0" class="StyleDottedHr">
 <tr><th colspan="3" align="left" >{$mod_strings['LBL_DBCONF_TITLE_NAME']} </td></tr>
-
 EOQ2;
 
 $config_params = $db->installConfig();
@@ -401,6 +417,11 @@ $out4 .= <<<FTSTEST
     postData += "&setup_fts_port=" + $('#setup_fts_port').val();
 FTSTEST;
 
+$out4 .= <<<WSTEST
+    postData += "&websockets_client_url=" + $('#websockets_client_url').val();
+    postData += "&websockets_server_url=" + $('#websockets_server_url').val();
+WSTEST;
+
 $out_dd = 'postData += "&demoData="+document.setConfig.demoData.value;';
 $out5 =<<<EOQ5
                 postData += "&to_pdf=1&sugar_body_only=1";
@@ -475,7 +496,13 @@ EOQ5;
 ////	END PAGE OUTPUT
 ///////////////////////////////////////////////////////////////////////////////
 
+$sugar_smarty = new Sugar_Smarty();
 
+$sugar_smarty->assign('icon', $icon);
+$sugar_smarty->assign('css', $css);
+$sugar_smarty->assign('loginImage', $loginImage);
+$sugar_smarty->assign('APP', $app_strings);
+$sugar_smarty->assign('MOD', $mod_strings);
 
 echo $out;
 echo $out2;
@@ -485,6 +512,7 @@ if(!isset($_SESSION['oc_install']) || $_SESSION['oc_install'] == false){
 
     echo $outFTS;
 }
+$sugar_smarty->display("install/templates/websocketConfig.tpl");
 echo $out4;
 
 if(!isset($_SESSION['oc_install']) || $_SESSION['oc_install'] == false){
