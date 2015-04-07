@@ -26,6 +26,21 @@
     initialize: function(options) {
         this._super('initialize', [options]);
 
+        /**
+         * The list of results displayed.
+         *
+         * @type {Array}
+         */
+        this.results = [];
+
+        /**
+         * Stores the index of the currently highlighted list element.
+         * This is used for keyboard navigation.
+         *
+         * @property {number}
+         */
+        this.activeIndex = null;
+
         this.layout.on('sweetspot:results', function(results) {
             this.results = this._formatResults(results);
             this.render();
@@ -39,7 +54,8 @@
      */
     _render: function() {
         this._super('_render');
-        this.$('li:first').addClass('hover');
+        this.activeIndex = 0;
+        this._highlightActive();
     },
 
     /**
@@ -63,49 +79,85 @@
 
     toggleCallback: function(isOpen) {
         if (isOpen) {
-            $(window).on('keydown.' + this.cid, _.bind(this.focus, this));
+            $(window).on('keydown.' + this.cid, _.bind(this.keydownHandler, this));
         } else {
             $(window).off('keydown.' + this.cid);
         }
     },
 
     /**
-     * Highlights an item in the list.
+     * Handle the keydown events.
+     * @param {event} e The `keydown` event.
      */
-    focus: function(e) {
-        var $li = this.$('li.hover');
-        // enter?
-        if (e.keyCode == 13) {
-            this.layout[this.$('li.hover').data('action')];
-            this.layout.toggle();
-            if (this.$('li.hover').data('route')) {
-                app.router.navigate(this.$('li.hover').data('route'), {trigger: true});
-            }
-            var action = this.$('li.hover').data('callback');
+    keydownHandler: function(e) {
+        switch (e.keyCode) {
+            case 13: // enter
+                this.triggerAction();
+                break;
+            case 40: // down arrow
+                this.moveForward();
+                break;
+            case 38: // up arrow
+                this.moveBackward();
+                break;
+        }
+    },
+
+    /**
+     * Triggers the action linked to the active element.
+     *
+     * Navigates to the view or calls the callback method.
+     */
+    triggerAction: function() {
+        this.layout.toggle();
+        var route = this.$('li.active > a').attr('href');
+        if (route) {
+            app.router.navigate(route, {trigger: true});
+        }
+        var action = this.$('a.hover').data('callback');
+        if (action) {
             this.layout.triggerSystemAction(action);
-            return;
         }
-        $li.removeClass('hover')
-        var $next;
+    },
 
-        // up arrow?
-        if (e.keyCode == 40) {
-            $next = $li.next();
-            if ($next.length === 0) {
-                $next = this.$('li:first');
-            }
-            $next.addClass('hover');
-            e.preventDefault();
+    /**
+     * Highlight the active element and unhighlight the rest of the elements.
+     */
+    _highlightActive: function() {
+        this.$('.active').removeClass('active');
+        var nthChild = this.activeIndex + 1;
+        this.$('li:nth-child(' + nthChild + ')')
+            .addClass('active');
+    },
+
+    /**
+     * Moves to the next the active element.
+     */
+    moveForward: function() {
+        // check to make sure we will be in bounds.
+        this.activeIndex++;
+        if (this.activeIndex < this.results.length) {
+            // We're in bounds, just go to the next element in this view.
+            this._highlightActive();
+        } else {
+            this.activeIndex = 0;
+            this._highlightActive();
+
         }
+    },
 
-        // down arrow?
-        if (e.keyCode == 38) {
-            $next = $li.prev();
-            if ($next.length === 0) {
-                $next = this.$('li:last');
-            }
-            $next.addClass('hover');
-            e.preventDefault();
+    /**
+     * Moves to the previous the active element.
+     */
+    moveBackward: function() {
+        // check to make sure we will be in bounds.
+        if (this.activeIndex > 0) {
+            // We're in bounds, just go to the previous element in this view
+            this.activeIndex--;
+            this._highlightActive();
+        } else {
+            this.activeIndex = this.results.length-1;
+            this._highlightActive();
         }
     },
 

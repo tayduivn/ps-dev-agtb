@@ -217,13 +217,11 @@
      * @param {string} term The search term.
      */
     fireSearchRequest: function(term) {
-        // FIXME this should not perform an empty search. WTF UnifiedSearchApi!
-        term = '';
         var self = this;
         var params = {
             q: term,
             fields: 'name, id',
-            max_num: 50
+            max_num: 5
         };
         app.api.search(params, {
             success: function(data) {
@@ -243,17 +241,6 @@
                         weight: 40
                     };
 
-                    if ((record._search.highlighted)) { // full text search
-                        _.each(record._search.highlighted, function(val, key) {
-                            var safeString = self._escapeSearchResults(val.text);
-                            if (key !== 'name') { // found in a related field
-                                formattedRecord.field_name = app.lang.get(val.label, val.module);
-                                formattedRecord.field_value = safeString;
-                            } else { // if it is a name that is found, we need to replace the name with the highlighted text
-                                formattedRecord.name = safeString;
-                            }
-                        });
-                    }
                     formattedRecords.push(formattedRecord);
                 });
                 self.addToTemporaryLibrary(formattedRecords);
