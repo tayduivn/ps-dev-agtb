@@ -11,7 +11,7 @@
 /**
  * @class View.Views.Base.QuicksearchLayout
  * @alias SUGAR.App.view.views.BaseQuicksearchLayout
- * @extends View.View
+ * @extends View.Layout
  */
 ({
     className: 'navbar search',
@@ -44,11 +44,16 @@
          */
         this.compOnFocusIndex = 0;
 
-        /**
-         * Tracks the display state of the search dropdown.
-         * @type {boolean}
-         */
-        this.dropdownOpen = false;
+        // shortcut keys
+        // Focus the search bar
+        app.shortcuts.register(app.shortcuts.GLOBAL + 'Search', ['s', 'ctrl+alt+0'], function() {
+            this.trigger('navigate:to:component', 'quicksearch-bar');
+        }, this);
+
+        // Exit the search bar
+        app.shortcuts.register(app.shortcuts.GLOBAL + 'SearchBlur', ['esc', 'ctrl+alt+l'], function() {
+            this.trigger('quicksearch:close');
+        }, this, true);
 
         // When a component is trying to navigate from its last element to the next component,
         // Check to make sure there is a next navigable component. If it exists, set it to the component to focus
@@ -104,47 +109,16 @@
         }, this);
 
         // Reset navigation
-        this.on('quicksearch:clear', function() {
-            this.trigger('quicksearch:dropdown:close');
+        this.on('quicksearch:close', function() {
             this.removeFocus();
-            app.router.off('route', null, this);
         }, this);
 
-        // close the quicksearch dropdown
-        this.on('quicksearch:dropdown:close', function() {
-            $(document).off('click.globalsearch.data-api', '.navbar .search');
-            $(document).off('click.globalsearch.data-api');
-            this.dropdownOpen = false;
-        }, this);
-
-        // Open the quicksearch results
-        this.on('quicksearch:results:open', function() {
-            this.createDropdownListeners();
-        }, this);
-    },
-
-    /**
-     * Create listeners for document and navigation when the dropdown is open.
-     */
-    createDropdownListeners: function() {
-        if (this.dropdownOpen) {
-            return;
-        }
-
-        // When we click away from the results, close the results
-        var self = this;
+        var boundTrigger = _.bind(this.trigger, this);
         $(document)
-            .on('click.globalsearch.data-api', function() {
-                self.trigger('quicksearch:clear');
+            .on('click.quicksearch', function() {
+                boundTrigger('quicksearch:close');
             })
-            .on('click.globalsearch.data-api', '.navbar .search', function(e) { e.stopPropagation() });
-
-        // When we navigate away from the current page, close the results.
-        app.router.on('route', function() {
-            self.trigger('quicksearch:clear');
-        });
-
-        this.dropdownOpen = true;
+            .on('click.quicksearch', '.navbar .search', function(e) { e.stopPropagation() });
     },
 
     /**
@@ -159,7 +133,7 @@
      * @inheritDoc
      */
     unbind: function() {
-        $(document).off('click.globalsearch.data-api');
+        $(document).off('click.quicksearch');
         app.router.off('route', null, this);
         this._super('unbind');
     }

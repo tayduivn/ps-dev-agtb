@@ -85,7 +85,6 @@
     left: 0;
     top: 40px;
     height: auto;
-    width: 350px;
     max-height: 333px;
     li {
       min-width: 120px;
@@ -120,8 +119,9 @@
     margin-bottom: 0;
     padding: 4px 54px 4px 9px;
     min-height: 28px;
-    min-width: 220px;
+    min-width: 206px;
     border: 1px solid darken(@navbarBackground, 5%);
+    text-overflow: ellipsis;
     .border-radius(@baseBorderRadius);
     .box-sizing(border-box);
     .transition(none);
@@ -131,7 +131,7 @@
   .advanced {
     position: absolute;
     right: 0;
-    top: 0;
+    top: -4px;
 
     .btn-toolbar {
       margin: 0;
@@ -139,75 +139,32 @@
     }
     .btn-group {
       margin: 0;
-      > .btn .fa-caret-down {
+      > .btn .fa-search {
         display: inline-block;
         color: @grayLight;
         text-shadow: none;
       }
-      &:not(.open) {
-        .btn {
-          margin: 0;
-          &:focus {
-            .tab-focus-light();
-            &:active {
-              outline: none;
-            }
-          }
-        }
-      }
-      &:hover > .btn .fa-caret-down {
+      &:hover > .btn .fa-search {
         color: @grayDark;
         text-decoration: none;
       }
-      &.open > .btn .fa-caret-down,
-      &.open:hover > .btn .fa-caret-down {
+      &.open > .btn .fa-search,
+      &.open:hover > .btn .fa-search {
         color: @white;
       }
-    }
-
-    .dropdown-menu.globalsearch-adv-wrap {
-      margin-top: 6px;
-      border: 1px solid @dropdownBorder;
-      .border-radius(@baseBorderRadius);
-      *border-right-width: 2px;
-      *border-bottom-width: 2px;
-      .box-shadow(0 5px 10px rgba(0,0,0,.2));
-      .globalsearch-adv {
-        z-index: @zindexDropdown;
-        background-color: @dropdownBackground;
-        -webkit-background-clip: padding-box;
-        -moz-background-clip: padding;
-        background-clip: padding-box;
-        padding: 4px;
+      > .btn .fa-times {
+        display: inline-block;
+        color: @grayLight;
+        text-shadow: none;
       }
-    }
-    //fix advanced drop down position
-    .dropdown-menu {
-      top: 36px;
-      right: 29px;
-      left: auto;
-      padding: 0;
-      background: none;
-      .border-radius(0);
-      .box-shadow(none);
-      border: 0;
-      li {
-        padding: 5px 10px;
-        min-width: 120px;
-        &.divider {
-          padding: 0;
-        }
+      &:hover > .btn .fa-times {
+        color: @grayDark;
+        text-decoration: none;
       }
-      &:before,
-      &:after {
-        display: none !important;
+      &.open > .btn .fa-times,
+      &.open:hover > .btn .fa-times {
+        color: @white;
       }
-    }
-    &.dropdown-toggle {
-      position: absolute;
-      right: 27px;
-      box-shadow: none;
-      .border-radius(0);
     }
   }
 }

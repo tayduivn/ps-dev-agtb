@@ -132,7 +132,6 @@ describe('Sugar7 search utils', function() {
 
             });
             it('should convert to using just a `name` field', function() {
-                debugger;
                 app.utils.GlobalSearch.formatRecords(collection, false);
                 var fieldsMeta = app.utils.GlobalSearch.getFieldsMeta('fakeModule');
                 var primaryFields = app.utils.GlobalSearch.highlightFields(model, fieldsMeta.primaryFields);

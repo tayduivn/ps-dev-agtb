@@ -1,5 +1,5 @@
 describe('View.Layouts.Base.QuicksearchLayout', function() {
-    var layout, viewA, viewB, viewC,
+    var app, layout, viewA, viewB, viewC,
         viewAisFocusable, viewBisFocusable, viewCisFocusable;
 
 
@@ -14,6 +14,7 @@ describe('View.Layouts.Base.QuicksearchLayout', function() {
     };
 
     beforeEach(function() {
+        app = SugarTest.app;
         SugarTest.testMetadata.init();
         viewA = createMockView('view-a');
         viewB = createMockView('view-b');
@@ -41,6 +42,9 @@ describe('View.Layouts.Base.QuicksearchLayout', function() {
         SugarTest.testMetadata.dispose();
         layout.dispose();
         sinon.collection.restore();
+        app.shortcuts._activeSession = null;
+        app.shortcuts._savedSessions = [];
+        app.shortcuts._globalShortcuts = {};
         layout = viewA = viewB = viewC = viewAisFocusable = viewBisFocusable = viewCisFocusable = null;
     });
 
@@ -121,13 +125,13 @@ describe('View.Layouts.Base.QuicksearchLayout', function() {
             expect(layout.compOnFocusIndex).toEqual(1);
         });
     });
-    describe('quicksearch:clear', function() {
+    describe('quicksearch:close', function() {
         beforeEach(function() {
             viewAisFocusable = true;
             layout.compOnFocusIndex = 0;
         });
         it('should lose focus', function() {
-            layout.trigger('quicksearch:clear');
+            layout.trigger('quicksearch:close');
             expect(viewA.trigger).toHaveBeenCalledWith('navigate:focus:lost');
         });
     });
