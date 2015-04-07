@@ -42,7 +42,7 @@ FieldPanel.prototype.init = function (settings) {
 	};
 
 	jQuery.extend(true, defaults, settings);
-	
+
 	this.setOwner(defaults.owner)
 		.setAppendTo(defaults.appendTo)
 		.setMatchOwnerWidth(defaults.matchOwnerWidth)
@@ -180,7 +180,7 @@ FieldPanel.prototype._append = function () {
 		aux = jQuery(siblings[i]).zIndex();
 		if (aux > zIndex) {
 			zIndex = aux;
-		} 
+		}
 	}
 
 	this.setZOrder(zIndex + 1);
