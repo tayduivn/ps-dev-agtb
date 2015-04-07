@@ -36,7 +36,7 @@ class Logger extends BaseLogger
         // This is needed in either case
         $info = $response->getTransferInfo();
 
-        // Sometimes no exceptions are thrown so make sure we are ok.
+        // Sometimes no exceptions are thrown, log failure here in this case.
         if (!$response->isOk()) {
             $msg = sprintf(
                 "Elasticsearch response failure: code %s [%s] %s",
@@ -45,18 +45,24 @@ class Logger extends BaseLogger
                 $info['url']
             );
             $this->log(LogLevel::CRITICAL, $msg);
-        } else {
+        }
 
-            // Dump full request in debug mode
-            if ($this->logger->wouldLog(LogLevel::DEBUG)) {
-                $msg = sprintf(
-                    "Elasicsearch response debug: [%s] %s %s",
-                    $request->getMethod(),
-                    $info['url'],
-                    $this->encodeData($request->getData())
-                );
-                $this->log(LogLevel::DEBUG, $msg);
-            }
+        // Dump full request/response in debug mode
+        if ($this->logger->wouldLog(LogLevel::DEBUG)) {
+
+            $msg = sprintf(
+                "Elasticsearch request debug: [%s] %s %s",
+                $request->getMethod(),
+                $info['url'],
+                $this->encodeData($request->getData())
+            );
+            $this->log(LogLevel::DEBUG, $msg);
+
+            $msg = sprintf(
+                "Elasticsearch response debug: %s",
+                $this->encodeData($response->getData())
+            );
+            $this->log(LogLevel::DEBUG, $msg);
         }
     }
 
@@ -92,7 +98,11 @@ class Logger extends BaseLogger
     {
         // If the exception is from index deletion, no critical message is logged.
         if ($this->isDeleteMissingIndexRequest($e)) {
-            $msg = "Elasticsearch request failure: Attempting to drop a non-existing index";
+            $msg = sprintf(
+                "Elasticsearch request failure (non-critical): [%s] %s",
+                $e->getRequest()->getMethod(),
+                $e->getMessage()
+            );
             $this->log(LogLevel::DEBUG, $msg);
             return;
         }
