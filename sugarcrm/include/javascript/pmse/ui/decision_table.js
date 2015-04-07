@@ -2081,7 +2081,7 @@
     DecisionTableValueEvaluation.prototype.fillOperators = function(select, type) {
         var i, option, enabledOperators;
 
-        switch (type) {
+        switch (type.toLowerCase()) {
             case 'date':
             case 'datetime':
             case 'decimal':
