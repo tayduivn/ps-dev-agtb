@@ -21,6 +21,13 @@ class VardefManager{
     protected static $ignoreRelationshipsForModule = array();
 
     /**
+     * List of templates that have already been fetched
+     *
+     * @var array
+     */
+    protected static $fetchedTemplates = array();
+
+    /**
      * List of templates to ignore for BWC modules when adding templates. This
      * should be a key value pair like 'template_name' => true.
      *
@@ -28,6 +35,20 @@ class VardefManager{
      */
     public static $ignoreBWCTemplates = array(
         'taggable' => true,
+    );
+
+    /**
+     * List of merge types used in addTemplate()
+     *
+     * @var array
+     */
+    public static $mergeTypes = array(
+        'fields',
+        'relationships',
+        'indices',
+        'name_format_map',
+        'visibility',
+        'acls',
     );
 
     /**
@@ -86,16 +107,24 @@ class VardefManager{
             }
         }
 
-        //reverse the sort order so priority goes highest to lowest;
-        $templates = array_reverse($templates);
-        foreach ($templates as $template)
-        {
-            VardefManager::addTemplate($module, $object, $template, $object_name);
+        // Get all of the templates that would be needed, with the core templates
+        // up front in reverse order followed by the implementations
+        $templates = self::getLoadableTemplates($templates, $module, $object, $object_name);
+
+        // Skip over uses in the addTemplate method because we've already gotten
+        // all templates gathered.
+        foreach ($templates as $template) {
+            VardefManager::addTemplate($module, $object, $template, $object_name, true);
         }
+
         // Some of the templates might have loaded templates
         if (isset($GLOBALS['dictionary'][$object]['templates'])) {
-            $templates = $GLOBALS['dictionary'][$object]['templates'];
+            $tDiff = array_diff($GLOBALS['dictionary'][$object]['templates'], $templates);
+            if ($tDiff) {
+                $templates = $GLOBALS['dictionary'][$object]['templates'];
+            }
         }
+
         LanguageManager::createLanguageFile($module, $templates);
 
         if (isset(VardefManager::$custom_disabled_modules[$module]))
@@ -128,6 +157,219 @@ class VardefManager{
                 }
             }
         }
+    }
+
+    /**
+     * Gets all templates for an object in a format consistent with consumption
+     * by createVardef().
+     *
+     * @param array $templates The current stack of templates for a module
+     * @param string $module The name of the module
+     * @param string $object The name of the object
+     * @param boolean $objectName The name of the object if different than $object
+     * @return array
+     */
+    public static function getLoadableTemplates($templates, $module, $object, $objectName = false)
+    {
+        // Grab a cleaned up version of all templates, grouped by core and
+        // implementations
+        list($core, $impl) = self::getAllTemplates($templates, $module, $object, $objectName);
+
+        // Now send back the list with the core templates reversed and up front,
+        // followed by the added templates
+        return array_merge(array_reverse($core), $impl);
+    }
+
+    /**
+     * Gets all templates for an object from a list of templates
+     *
+     * @param array $templates The current stack of templates for a module
+     * @param string $module The name of the module
+     * @param string $object The name of the object
+     * @param boolean $objectName The name of the object if different than $object
+     * @return array
+     */
+    public static function getAllTemplates($templates, $module, $object, $objectName = false)
+    {
+        // Clear the placeholders for loaded templates in getTemplates
+        self::clearFetchedTemplates();
+
+        // Get all of the loadable templates
+        $all = array();
+        foreach ((array) $templates as $template) {
+            $get = self::getTemplates($module, $object, $template, $objectName);
+            $all = array_merge($all, $get);
+        }
+
+        // Clear the placeholders AGAIN now that we're done
+        self::clearFetchedTemplates();
+
+        // Handle getting core and added templates, starting with OOTB templates
+        $coreTemplates = self::getCoreTemplates();
+
+        // This extracts just the core templates from all templates
+        $core = array_intersect($all, $coreTemplates);
+
+        // This extracts the implementations from all templates
+        $impl = array_diff($all, $core);
+
+        // Send back the return as an array
+        return array($core, $impl);
+    }
+
+    /**
+     * Clears the stack of fetched templates used in collecting templates
+     *
+     * @param string $object The object name that the templates are keyed on
+     * @return void
+     */
+    public static function clearFetchedTemplates($object = '')
+    {
+        // If there is an object name passed, unset just that object name
+        if (!empty($object)) {
+            unset(self::$fetchedTemplates[$object]);
+        } else {
+            // Otherwise, clear them all
+            self::$fetchedTemplates = array();
+        }
+    }
+
+    /**
+     * Gets all loadable templates for an object
+     *
+     * @param string $module The name of the module
+     * @param string $object The name of the object
+     * @param array $template The template to get
+     * @param boolean $object_name The name of the object if different than $object
+     * @return array
+     */
+    public static function getTemplates($module, $object, $template, $object_name = false)
+    {
+        // Normalize the template name
+        $template = self::getTemplateName($template);
+
+        // Don't fetch again if fetched already
+        if (isset(self::$fetchedTemplates[$object][$template])) {
+            return array();
+        }
+
+        // Add to the fetched stack so we don't get stuff more than once
+        self::$fetchedTemplates[$object][$template] = $template;
+
+        // Stack it
+        $templates = array($template);
+
+        // Needed for vardef templates
+        $_object_name = self::getObjectName($object, $object_name);
+        $table_name = self::getTableName($module, $object);
+
+        // Get the loadable paths for this template
+        $paths = self::getTemplatePaths($template);
+
+        // Loop the paths and get what we need if there is anything
+        foreach($paths as $path) {
+            $vardefs = array();
+            require $path;
+
+            // Handle recursing into the uses stack
+            if (!empty($vardefs['uses'])) {
+                foreach ($vardefs['uses'] as $uses) {
+                    $templates = array_merge($templates, self::getTemplates($module, $object, $uses, $object_name));
+                }
+            }
+        }
+
+        return $templates;
+    }
+
+    /**
+     * Normalizes the template name
+     *
+     * @param string $template The name of the template to normalize
+     * @return string
+     */
+    public static function getTemplateName($template)
+    {
+        // Normalize the template name
+        return $template == 'default' ? 'basic' : $template;
+    }
+
+    /**
+     * Gets the object name property needed for vardef templates
+     *
+     * @param string $object The object name
+     * @param string $objectName The object name if different than $object
+     * @param bool $nameOnly Flag to decide if we want just the object name or the
+     *                       the lowercase value of it
+     * @return string The lowercased object name needed by vardef templates
+     */
+    public static function getObjectName($object, $objectName, $nameOnly = false)
+    {
+        if (empty($objectName)) {
+            $objectName = $object;
+        }
+
+        return $nameOnly ? $objectName : strtolower($objectName);
+    }
+
+    /**
+     * Gets the name of a table for the vardef templates
+     *
+     * @param string $module The name of the module
+     * @param string $object The name of the object
+     * @return string The table name for this object
+     */
+    public static function getTableName($module, $object)
+    {
+        if (!empty($GLOBALS['dictionary'][$object]['table'])) {
+            $table = $GLOBALS['dictionary'][$object]['table'];
+        } else {
+            $table = strtolower($module);
+        }
+
+        return $table;
+    }
+
+    /**
+     * Gets a list of paths that might contain vardefs for a template.
+     *
+     * @param string $template The template name
+     * @return array Paths that might contain vardefs for this template
+     */
+    public static function getTemplatePaths($template)
+    {
+        return SugarAutoLoader::existingCustom(
+            'include/SugarObjects/templates/' . $template . '/vardefs.php',
+            'include/SugarObjects/implements/' . $template . '/vardefs.php'
+        );
+    }
+
+    /**
+     * Gets the list of core templates use in building modules off of
+     *
+     * @return array
+     */
+    public static function getCoreTemplates()
+    {
+        // We will search in base and custom SugarObjects templates
+        $paths = array(
+            'include/SugarObjects/templates/',
+            'custom/include/SugarObjects/templates/',
+        );
+
+        // Grab all top level directories from there, and add in default
+        $dirs = array('default');
+        foreach ($paths as $path) {
+            if (file_exists($path)) {
+                $dirs = array_merge($dirs, scandir($path));
+            }
+        }
+
+        // Get rid of all dot and double dot dirs, and reorder indexes
+        $dirs = array_values(array_diff($dirs, array('.', '..')));
+
+        // Send back the uniqued array of these dirs
+        return array_unique($dirs);
     }
 
     /**
@@ -179,11 +421,20 @@ class VardefManager{
         return false;
     }
 
-    static function addTemplate($module, $object, $template, $object_name=false){
+    /**
+     * Adds a template for a module and object. Will recurse into the 'uses'
+     * property of the vardef unless $skipUses is false.
+     *
+     * @param string $module The bean module name
+     * @param string $object The bean object name
+     * @param string $template The name of the template to add
+     * @param boolean $object_name Name of the object as used in Module Builder
+     * @param boolean $skipUses If true, will not recurse into templates in 'uses'
+     */
+    public static function addTemplate($module, $object, $template, $object_name = false, $skipUses = false)
+    {
         // Normalize the template name
-        if ($template == 'default') {
-            $template = 'basic';
-        }
+        $template = self::getTemplateName($template);
 
         // The ActivityStream has subdirectories but this code doesn't expect it
         // let's fix it up here
@@ -204,43 +455,47 @@ class VardefManager{
 
         $templates = array();
         $fields = array();
-        if(empty($object_name))$object_name = $object;
-        $_object_name = strtolower($object_name);
-        if(!empty($GLOBALS['dictionary'][$object]['table'])){
-            $table_name = $GLOBALS['dictionary'][$object]['table'];
-        }else{
-            $table_name = strtolower($module);
-        }
+        $object_name = self::getObjectName($object, $object_name, true);
+        $_object_name = self::getObjectName($object, $object_name);
+        $table_name = self::getTableName($module, $object);
 
-        if(empty($templates[$template])){
-            foreach(SugarAutoLoader::existingCustom(
-                'include/SugarObjects/templates/' . $template . '/vardefs.php',
-                'include/SugarObjects/implements/' . $template . '/vardefs.php'
-            ) as $path) {
-                require($path);
+        if (empty($templates[$template])) {
+            $paths = self::getTemplatePaths($template);
+            foreach ($paths as $path) {
+                require $path;
                 $templates[$template] = $vardefs;
+                // Implementations have to be loaded after core templates. This
+                // makes sure that happens properly.
+                $templates[$template]['_implementation'] = strpos($path, 'implements/') !== false;
             }
         }
 
-        if(!empty($templates[$template])){
-            static $merge_types = array(
-                'fields',
-                'relationships',
-                'indices',
-                'name_format_map',
-                'visibility',
-                'acls',
-            );
-
-            foreach ($merge_types as $merge_type) {
+        if (!empty($templates[$template])) {
+            foreach (self::$mergeTypes as $merge_type) {
                 if (empty($GLOBALS['dictionary'][$object][$merge_type])) {
                     $GLOBALS['dictionary'][$object][$merge_type] = array();
                 }
-                if (!empty($templates[$template][$merge_type])
-                    && is_array($templates[$template][$merge_type])) {
-                    $GLOBALS['dictionary'][$object][$merge_type] =
-                        array_merge($templates[$template][$merge_type],
-                                    $GLOBALS['dictionary'][$object][$merge_type]);
+
+                // Only handle merging if the merge type of the template is not
+                // empty and it is an array. Also? I think PHP really needs an
+                // empty_type() function for things like this.
+                $handleMerge = !empty($templates[$template][$merge_type])
+                               && is_array($templates[$template][$merge_type]);
+                if ($handleMerge) {
+                    // If this template is an implementation, merge it into existing
+                    if ($templates[$template]['_implementation']) {
+                        $merged = array_merge(
+                            $GLOBALS['dictionary'][$object][$merge_type],
+                            $templates[$template][$merge_type]
+                        );
+                    } else {
+                        // Otherwise merge what we have onto the template
+                        $merged = array_merge(
+                            $templates[$template][$merge_type],
+                            $GLOBALS['dictionary'][$object][$merge_type]
+                        );
+                    }
+                    $GLOBALS['dictionary'][$object][$merge_type] = $merged;
                 }
             }
 
@@ -256,14 +511,14 @@ class VardefManager{
             // maintain a record of this objects inheritance from the SugarObject templates...
             $GLOBALS['dictionary'][$object]['templates'][ $template ] = $template ;
 
-            if (!empty($templates[$template]['uses'])) {
+            // Only load consumed templates if we were not told not to
+            if (!empty($templates[$template]['uses']) && !$skipUses) {
                 foreach ($templates[$template]['uses'] as $extraTemplate) {
                     VardefManager::addTemplate($module, $object, $extraTemplate, $object_name);
                 }
             }
         }
     }
-
 
     /**
      * Remove invalid field definitions
@@ -476,11 +731,14 @@ class VardefManager{
         }
 
         //Cache link fields for this call in a static variable
-        if (!isset(self::$linkFields))
+        if (!isset(self::$linkFields)) {
             self::$linkFields = array();
+        }
 
-        if (isset(self::$linkFields[$object]))
+        // But make sure that the cache is not empty before moving on
+        if (!empty(self::$linkFields[$object])) {
             return self::$linkFields[$object];
+        }
 
         $vardef = $dictionary[$object];
         $links = array();
