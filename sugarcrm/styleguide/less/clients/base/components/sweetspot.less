@@ -95,14 +95,23 @@
         left: 0;
         display: block;
         height: 100%;
+
+        p {
+          position: absolute;
+          white-space: nowrap;
+          left: 50px;
+          font-size: 24px;
+          top: 9px;
+          line-height: 36px;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          bottom: 9px;
+          right: 50px;
+          padding: 0;
+          margin: 0;
+        }
       }
 
-      .sweetspot-text {
-        position: absolute;
-        left: 50px;
-        font-size: 24px;
-        top: 19px;
-      }
       &.active, &:hover {
         background-color: @sweetspotGrey;
 
