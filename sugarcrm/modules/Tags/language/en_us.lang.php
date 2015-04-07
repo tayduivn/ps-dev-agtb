@@ -35,4 +35,5 @@ $mod_strings = array(
     'LBL_PRODUCTS_SUBPANEL_TITLE' => 'Quoted Line Items',
     'LBL_PRODUCTTEMPLATES_SUBPANEL_TITLE' => 'Product Catalog',
     'LBL_PRODUCTCATEGORIES_SUBPANEL_TITLE' => 'Product Categories',
+    'EXCEPTION_DUPLICATE_TAG_FOUND' => 'Duplicate tag found. Tags are case insensitive and must be unique.',
 );

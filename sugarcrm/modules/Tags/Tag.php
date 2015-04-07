@@ -20,6 +20,15 @@ class Tag extends Basic
     public $table_name = 'tags';
     public $new_schema = true;
     public $importable = true;
+
+    /**
+     * Flag that indicates of a secondary uniqueness check needs to be done
+     * during save
+     *
+     * @var boolean
+     */
+    public $verifiedUnique = false;
+
     public function __construct()
 
     {
@@ -52,14 +61,58 @@ class Tag extends Basic
             return false;
         }
 
+        // Get the lowercase tag name, as we will need this no matter what
+        $nameLower = strtolower($this->name);
+
+        // Verify uniqueness of the tag if needed
+        $this->verifyUniqueness($nameLower);
+
         // Handle setting the assigned user if not already set
         if (empty($this->assigned_user_id)) {
             $this->assigned_user_id = $current_user->id;
         }
 
         // For searching making sure we lowercase the name to name_lower
-        $this->name_lower = strtolower($this->name);
+        $this->name_lower = $nameLower;
         return parent::save($check_notify);
+    }
+
+    /**
+     * Verifies the uniqueness of the tag
+     *
+     * @param string $nameLower The lowercased tag name
+     * @return void
+     * @throws SugarApiExceptionNotAuthorized
+     */
+    public function verifyUniqueness($nameLower)
+    {
+        // Handle uniqueness checking early
+        if (!$this->verifiedUnique) {
+            // Handle check return value defaults
+            $result = array();
+
+            // Uniqueness needs to be checked for two cases...
+            // 1. New tags must be unique
+            // 2. Existing tags cannot be edited to an existing tag
+            if (!$this->isUpdate() || $nameLower != $this->name_lower) {
+                // Grab any tag records that might have this same name that are
+                // not deleted
+                $q = new SugarQuery();
+
+                // We really only need to check to see if there is a single row
+                $q->select(array('id'));
+                $q->from($this)
+                  ->where()
+                  ->equals('name_lower', $nameLower);
+                $result = $q->execute();
+            }
+
+            // If there is an id property of the result then we have existing records
+            // and need to bomb out now
+            if (!empty($result[0]['id'])) {
+                throw new SugarApiExceptionNotAuthorized('EXCEPTION_DUPLICATE_TAG_FOUND', null, $this->module_dir);
+            }
+        }
     }
 
     /**
