@@ -14,13 +14,17 @@ namespace Sugarcrm\Sugarcrm\SearchEngine\Engine;
 
 use Sugarcrm\Sugarcrm\Elasticsearch\Container;
 use Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\GlobalSearchInterface;
+use Sugarcrm\Sugarcrm\SearchEngine\Capability\Aggregation\AggregationInterface;
 
 /**
  *
  * Elasticsearch engine
  *
  */
-class Elastic implements EngineInterface, GlobalSearchInterface
+class Elastic implements
+    EngineInterface,
+    GlobalSearchInterface,
+    AggregationInterface
 {
     /**
      * @var \Sugarcrm\Sugarcrm\Elasticsearch\Container
@@ -222,6 +226,22 @@ class Elastic implements EngineInterface, GlobalSearchInterface
     public function getSupportedTypes()
     {
         return $this->gsProvider()->getSupportedTypes();
+    }
+
+    //// AGGREGATION CAPABILITY ////
+
+    /**
+     * {@inheritdoc}
+     */
+    public function crossModuleAgg($toggle)
+    {
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function moduleAggs(array $list)
+    {
     }
 
     //// ELASTIC ENGINE SPECIFIC ////

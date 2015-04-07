@@ -15,6 +15,7 @@ use Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\GlobalSearchInterface
 use Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\ResultSetInterface;
 use Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\ResultInterface;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Result;
+use Sugarcrm\Sugarcrm\SearchEngine\Capability\Aggregation\AggregationInterface;
 
 /**
  *
@@ -73,6 +74,18 @@ class GlobalSearchApi extends SugarApi
      * @var array Sort fields
      */
     protected $sort = array();
+
+    /**
+     * Get cross module aggregation results
+     * @var boolean
+     */
+    protected $crossModuleAgg = false;
+
+    /**
+     * List of modules for which to collect aggregations results
+     * @var array
+     */
+    protected $moduleAggs = array();
 
     /**
      * Register endpoints
@@ -191,6 +204,17 @@ class GlobalSearchApi extends SugarApi
         if (isset($args['sort']) && is_array($args['sort'])) {
             $this->sort = $args['sort'];
         }
+
+        // Set cross module aggregations
+        if (!empty($args['xmod_agg'])) {
+            $this->crossModuleAgg = true;
+        }
+
+        // Set module aggregations
+        if (isset($args['mod_aggs'])) {
+            $this->moduleAggs = explode(',', $args['mod_aggs']);
+        }
+
     }
 
     /**
@@ -237,6 +261,12 @@ class GlobalSearchApi extends SugarApi
             ->highlighter($this->highlights)
             ->sort($this->sort)
         ;
+
+        // pass aggregation query settings
+        if ($engine instanceof AggregationInterface) {
+            $engine->crossModuleAgg($this->crossModuleAgg);
+            $engine->moduleAggs($this->moduleAggs);
+        }
 
         return $engine->search();
     }
