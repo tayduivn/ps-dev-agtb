@@ -22,12 +22,6 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Result;
  *
  * (Note: the usage of /search will be deprecated in favor of /globalsearch)
  *
- *  Instead of using the module_list parameter, its possible and encouraged
- *  to use the list of modules directly in the URL instead using a comma
- *  separated list like `/Accounts,Contacts/globalsearch?q=stuff`. If both this
- *  notation and module_list URL parameter is used at the same time, than the
- *  URL notation takes precedence over the URL module_filter argument.
- *
  *  The /globalsearch entry point is able to accept arguments  in the request
  *  body using JSON format. In case of duplicate settings, the URL parameters
  *  take precedence over the settings in the request body. Its encouraged to
@@ -103,11 +97,11 @@ class GlobalSearchApi extends SugarApi
                 ),
             ),
 
-            // /<module_list>/globalsearch
+            // /<module>/globalsearch
             'modulesGlobalSearch' => array(
                 'reqType' => array('GET', 'POST'),
-                'path' => array('?', 'globalsearch'),
-                'pathVars' => array('module_list', ''),
+                'path' => array('<module>', 'globalsearch'),
+                'pathVars' => array('module', ''),
                 'method' => 'globalSearch',
                 'shortHelp' => 'Global search',
                 'longHelp' => 'include/api/help/globalsearch_get_help.html',
@@ -163,7 +157,12 @@ class GlobalSearchApi extends SugarApi
             $this->moduleList = explode(',', $args['module_list']);
         }
 
-        //Set aggregation filters
+        // If specific module is selected, this overrules the list
+        if (!empty($args['module'])) {
+            $this->moduleList = array($args['module']);
+        }
+
+        // Set aggregation filters
         if (!empty($args['agg_filters'])) {
             $this->aggFilters = $this->parseAggFilters($args['agg_filters']);
         }

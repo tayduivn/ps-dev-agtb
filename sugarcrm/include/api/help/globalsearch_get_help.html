@@ -61,7 +61,8 @@
             String
         </td>
         <td>
-            Comma delimited list of modules to search. If omitted, all search enabled modules will be queried.
+            Comma delimited list of modules to search. If omitted, all search enabled modules will be queried. Note that
+            when consuming the endpoint <code>/:module/globalsearch</code> that this parameter is ignored.
             <br>
             Example: <code>Accounts,Contacts</code>
         </td>
@@ -199,7 +200,7 @@
             v10
         </td>
         <td>
-            Added <code>/:module_list/globalsearch</code> GET/POST endpoint.
+            Added <code>/:module/globalsearch</code> GET/POST endpoint.
         </td>
     </tr>
 </table>
