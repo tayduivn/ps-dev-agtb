@@ -75,12 +75,12 @@ class Bug46246Test extends Sugar_PHPUnit_Framework_TestCase
             SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         }
     }
-    
+
     public function testRelationCreating()
     {
-        include_once 'modules/Cases/Case.php';
-        $focus = new aCase();
+        $focus = BeanFactory::newBean('Cases');
         $focus->id = $this->case_id;
+        $focus->save();
 
         $action_array = array(
             'action_type' => 'new',
@@ -102,6 +102,6 @@ class Bug46246Test extends Sugar_PHPUnit_Framework_TestCase
         $this->doc_id = $GLOBALS['db']->getOne("SELECT document_id FROM `documents_cases` WHERE case_id='{$this->case_id}'", true);
 
         // check for relation existing
-        $this->assertTrue($this->doc_id ? true : false, true);
+        $this->assertNotEmpty($this->doc_id);
     }
 }
