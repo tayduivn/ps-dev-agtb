@@ -92,6 +92,14 @@ $vardefs = array(
                 'massupdate' => false,
                 'duplicate_on_record_copy' => 'no',
                 'readonly' => true,
+                'full_text_search' => array(
+                    'enabled' => true,
+                    'searchable' => false,
+                    'aggregation' => array(
+                        'type' => 'myItems',
+                        'cross_module' => true,
+                    )
+                ),
             ),
         'modified_by_name' => array(
                 'name' => 'modified_by_name',
@@ -124,6 +132,14 @@ $vardefs = array(
                 'massupdate' => false,
                 'duplicate_on_record_copy' => 'no',
                 'readonly' => true,
+                'full_text_search' => array(
+                    'enabled' => true,
+                    'searchable' => false,
+                    'aggregation' => array(
+                        'type' => 'myItems',
+                        'cross_module' => true,
+                    )
+                ),
             ),
         'created_by_name' => array(
                 'name' => 'created_by_name',
