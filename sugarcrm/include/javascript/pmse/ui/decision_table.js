@@ -675,10 +675,12 @@
                 headerPosition = getRelativePosition(column.html, headerContainer),
                 headerWidth = $(column.html).innerWidth();
 
+            that.globalCBControl.setAlignWithOwner("left");
             if (headerPosition.left < 0) {
                 that._isApplyingColumnScrolling = true;
                 tableContainer.scrollLeft += headerPosition.left;
             } else if (headerPosition.left + headerWidth > $(headerContainer).innerWidth()) {
+                that.globalCBControl.setAlignWithOwner("right");
                 that._isApplyingColumnScrolling = true;
                 tableContainer.scrollLeft = headerPosition.left + headerWidth + headerContainer.scrollLeft
                     - $(headerContainer).innerWidth();
