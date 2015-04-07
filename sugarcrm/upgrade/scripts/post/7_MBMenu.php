@@ -35,7 +35,8 @@ class SugarUpgradeMBMenu extends UpgradeScript
         );
 
         // Handle link to vCard
-        if (is_subclass_of(BeanFactory::getBean($moduleName), 'Person')) {
+        $bean = BeanFactory::getBean($moduleName);
+        if (is_subclass_of($bean, 'Person')) {
             $vCardRoute = (in_array($moduleName, $GLOBALS['bwcModules']))
                 ? '#bwc/index.php?' . http_build_query(array('module' => $moduleName, 'action' => 'ImportVCard'))
                 : "#$moduleName/vcard-import";
@@ -55,19 +56,21 @@ class SugarUpgradeMBMenu extends UpgradeScript
                 'acl_module' => $moduleName,
                 'icon' => 'fa-bars',
         );
-        $menu[] = array(
+        if ($bean instanceof SugarBean && $bean->importable) {
+            $menu[] = array(
                 'route' => '#bwc/index.php?' . http_build_query(
-                        array(
-                                'module' => 'Import',
-                                'action' => 'Step1',
-                                'import_module' => $moduleName,
-                        )
+                    array(
+                        'module' => 'Import',
+                        'action' => 'Step1',
+                        'import_module' => $moduleName,
+                    )
                 ),
                 'label' => 'LNK_IMPORT_'.strtoupper($moduleName),
                 'acl_action' => 'import',
                 'acl_module' => $moduleName,
                 'icon' => 'fa-arrow-circle-o-up',
-        );
+            );
+        }
         $content = <<<END
 <?php
 /* Created by SugarUpgrader for module $moduleName */

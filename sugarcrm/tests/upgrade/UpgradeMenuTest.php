@@ -7,29 +7,30 @@ class UpgradeMenuTest extends UpgradeTestCase
     public function setUp()
     {
         parent::setUp();
-        SugarTestHelper::setUp('files');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('bwcModules');
         sugar_mkdir('modules/menutest');
         mkdir_recursive('modules/menutest2/clients/base/menus/header');
         mkdir_recursive('modules/menutest3/clients/base/menus/header');
         sugar_mkdir('modules/menutestBWC');
         mkdir_recursive('custom/modules/menutest3/clients/base/menus/header');
 
+        SugarTestHelper::saveFile('modules/menutest2/clients/base/menus/header/header.php');
         file_put_contents('modules/menutest2/clients/base/menus/header/header.php', "<?php echo 'Hello world!'; ");
+        SugarTestHelper::saveFile('custom/modules/menutest3/clients/base/menus/header/header.php');
         file_put_contents('custom/modules/menutest3/clients/base/menus/header/header.php', "<?php echo 'Hello world!'; ");
-        $this->bwc = $GLOBALS['bwcModules'];
     }
 
     public function tearDown()
     {
         parent::tearDown();
-        SugarTestHelper::tearDown();
         rmdir_recursive("modules/menutest");
         rmdir_recursive("modules/menutest2");
         rmdir_recursive("modules/menutest3");
         rmdir_recursive("modules/menutestBWC");
         rmdir_recursive("custom/modules/menutest2");
         rmdir_recursive("custom/modules/menutest3");
-        $GLOBALS['bwcModules'] = $this->bwc;
     }
 
     /**
@@ -47,8 +48,40 @@ class UpgradeMenuTest extends UpgradeTestCase
         $this->assertFileNotExists('modules/menutest3/clients/base/menus/header/header.php');
         $this->assertFileExists('modules/menutestBWC/clients/base/menus/header/header.php');
 
+        $viewdefs = array();
         include 'modules/menutest/clients/base/menus/header/header.php';
         $this->assertEquals('LNK_NEW_RECORD', $viewdefs['menutest']['base']['menu']['header'][0]['label']);
         $this->assertEquals('#menutest', $viewdefs['menutest']['base']['menu']['header'][1]['route']);
+    }
+
+    /**
+     * Test asserts that core bwc modules aren't returned
+     */
+    public function testGetNotCoreBwcModules()
+    {
+        $GLOBALS['bwcModules'][] = __FUNCTION__;
+        $script = new SugarUpgradeMBMenu($this->getMockForAbstractClass('UpgradeDriver'));
+        $actual = SugarTestReflection::callProtectedMethod($script, 'getNotCoreBwcModules');
+        $this->assertCount(1, $actual, 'Too many modules were returned');
+        $this->assertEquals(__FUNCTION__, current($actual), 'Incorrect module was returned');
+    }
+
+    /**
+     * Test asserts that only result of getNotCoreBwcModules method will be updated by addMenu method
+     */
+    public function testRunAndGetNotCoreBwcModules()
+    {
+        /** @var UpgradeDriver|PHPUnit_Framework_MockObject_MockObject $driver */
+        $driver = $this->getMockForAbstractClass('UpgradeDriver');
+        /** @var SugarUpgradeMBMenu|PHPUnit_Framework_MockObject_MockObject $script */
+        $script = $this->getMock('SugarUpgradeMBMenu', array('getNotCoreBwcModules', 'addMenu'), array($driver));
+
+        $expectedModule = 'menutest';
+
+        $script->expects($this->once())->method('getNotCoreBwcModules')->willReturn(array($expectedModule));
+        $script->expects($this->exactly(1))->method('addMenu');
+        $script->expects($this->at(1))->method('addMenu')->with($this->equalTo($expectedModule));
+
+        $script->run();
     }
 }
