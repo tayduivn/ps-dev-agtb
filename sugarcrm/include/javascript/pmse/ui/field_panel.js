@@ -17,6 +17,7 @@ var FieldPanel = function (settings) {
 	this._open = false;
 	this._owner = null;
 	this._matchOwnerWidth = true;
+	this._alignWithOwner = null;
 	this._appendTo = null;
 	this._attachedListeners = false;
 	this._className = null;
@@ -35,6 +36,7 @@ FieldPanel.prototype.init = function (settings) {
 		open: false,
 		owner: null,
 		matchOwnerWidth: true,
+		alignWithOwner: "left",
 		appendTo: document.body,
 		className: "",
 		onOpen: null,
@@ -48,6 +50,7 @@ FieldPanel.prototype.init = function (settings) {
 		.setMatchOwnerWidth(defaults.matchOwnerWidth)
 		.setItems(defaults.items)
 		.setOnItemValueActionHandler(defaults.onItemValueAction)
+		.setAlignWithOwner(defaults.alignWithOwner)
 		.setClassName(defaults.className);
 
 	if (defaults.open) {
@@ -58,6 +61,18 @@ FieldPanel.prototype.init = function (settings) {
 
 	this.setOnOpenHandler(defaults.onOpen)
 		.setOnCloseHandler(defaults.onClose);
+};
+
+FieldPanel.prototype.setAlignWithOwner = function (alignment) {
+	alignment = typeof alignment === 'string' ? alignment.toLowerCase() : null;
+	if (!(alignment === "left" || alignment === "right")) {
+		throw new Error("setAlignWithOwner(): The parameter must be \"left\" or \"right\".");
+	}
+	this._alignWithOwner = alignment;
+	if (this.isOpen()) {
+		this._append();
+	}
+	return this;
 };
 
 FieldPanel.prototype.setClassName = function (cName) {
@@ -191,6 +206,9 @@ FieldPanel.prototype._append = function () {
 	if (owner) {
 		this.setWidth(this._matchOwnerWidth ? owner.offsetWidth : this.width);
 		position = getRelativePosition(owner, appendTo);
+		if (this._alignWithOwner === 'right') {
+			position.left -= this.width - owner.offsetWidth;
+		}
 	} else {
 		this.setWidth(this.width);
 		position = {left: 0, top: 0};
