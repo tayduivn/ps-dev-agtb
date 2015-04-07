@@ -14,23 +14,24 @@
  * @extends View.Layout
  */
 ({
-    events: {
-        'keyup': 'escape'
-    },
-
     /**
      * @inheritDoc
      */
     initialize: function(options) {
         this._super('initialize', [options]);
-        this.isOpen = false;
+
         app.shortcuts.register(app.shortcuts.GLOBAL + 'Sweetspot', 'shift+space', this.toggle, this, true);
+        app.events.on('app:logout', this.hide, this);
+
         this.on('sweetspot:config', this.openConfigPanel, this);
-        app.events.on('app:logout', function() {
-            if (this.isOpen) {
-                this.toggle();
-            }
-        }, this);
+
+        /**
+         * Flag to indicate the visible state of the sweet spot.
+         *
+         * @type {boolean}
+         * @private
+         */
+        this._isVisible = false;
     },
 
     /**
@@ -44,24 +45,72 @@
     },
 
     /**
-     * Closes the Sweet Spot when you press `Esc`.
-     *
-     * @param {Event} evt The `keyup` event.
+     * Binds the `esc` keydown event.
      */
-    escape: function(evt) {
-        if (evt.keyCode === 27) {
-            this.toggle();
-        }
+    bindEsc: function() {
+        $(document).on('keydown.' + this.cid, _.bind(function(evt) {
+            if (evt.keyCode == 27) {
+                this.hide();
+            }
+        }, this));
     },
 
+    /**
+     * Unbinds the `esc` keydown event.
+     */
+    unbindEsc: function() {
+        $(document).off('keydown.' + this.cid);
+    },
+
+    /**
+     * @override
+     */
+    isVisible: function() {
+        return this._isVisible;
+    },
+
+    /**
+     * @override
+     */
+    show: function() {
+        if (this.isVisible()) {
+            return;
+        }
+        if (!this.triggerBefore('show')) {
+            return false;
+        }
+        this._isVisible = true;
+        this.$('input').val('');
+        this.$el.fadeToggle(50, 'linear', _.bind(this.focusInput, this));
+        this.trigger('show');
+        this.bindEsc();
+    },
+
+    /**
+     * @override
+     */
+    hide: function() {
+        if (!this.isVisible()) {
+            return;
+        }
+        if (!this.triggerBefore('hide')) {
+            return false;
+        }
+
+        this._isVisible = false;
+        this.unbindEsc();
+        this.$el.fadeToggle(50, 'linear');
+        this.trigger('hide');
+},
     /**
      * Toggles the Sweet Spot.
      */
     toggle: function() {
-        this.isOpen = !this.isOpen;
-        this.$('input').val('');
-        this.$el.fadeToggle(50, 'linear', _.bind(this.focusInput, this));
-        this.trigger('sweetspot:status', this.isOpen);
+        if (this.isVisible()) {
+            this.hide();
+        } else {
+            this.show();
+        }
     },
 
     /**
@@ -113,5 +162,13 @@
         toggleHelp: function() {
             app.events.trigger('app:help');
         }
+    },
+
+    /**
+     * @inheritDoc
+     */
+    _dispose: function() {
+        this.unbindEsc();
+        this._super('_dispose');
     }
 })

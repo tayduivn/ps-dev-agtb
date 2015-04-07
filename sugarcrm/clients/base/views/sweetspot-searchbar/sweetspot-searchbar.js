@@ -16,7 +16,7 @@
 ({
     className: 'sweetspot-searchbar',
     events: {
-        'keyup input': 'throttledSearch',
+        'keyup input': 'keyUpHandler',
         'click [data-action=configure]': 'initConfig'
     },
 
@@ -27,6 +27,10 @@
         this._super('initialize', [options]);
         app.events.on('app:sync:complete sweetspot:reset', this.initLibrary, this);
         this.lastTerm = '';
+
+        this.layout.on('hide', function() {
+            this.lastTerm = '';
+        }, this);
     },
 
     initConfig: function(evt) {
@@ -201,9 +205,21 @@
     },
 
     /**
+     * Handles the keyup events.
+     *
+     * @param {event} evt The `keyup` event.
+     */
+    keyUpHandler: function(evt) {
+        if (!this.layout.isVisible()) {
+            return;
+        }
+        this.debouncedSearch(evt);
+    },
+
+    /**
      * Calls {@link #applyQuickSearch} with a debounce of 200ms.
      */
-    throttledSearch: _.debounce(function(event) {
+    debouncedSearch: _.debounce(function(event) {
         this.applyQuickSearch();
     }, 200),
 

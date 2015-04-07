@@ -46,7 +46,16 @@
             this.render();
         }, this);
 
-        this.layout.on('sweetspot:status', this.toggleCallback, this);
+
+        this.layout.on('show', function() {
+            this.results = [];
+            $(window).on('keydown.' + this.cid, _.bind(this.keydownHandler, this));
+            this.render();
+        }, this);
+
+        this.layout.on('hide', function() {
+            $(window).off('keydown.' + this.cid);
+        }, this);
     },
 
     /**
@@ -75,14 +84,6 @@
             }
         });
         return results;
-    },
-
-    toggleCallback: function(isOpen) {
-        if (isOpen) {
-            $(window).on('keydown.' + this.cid, _.bind(this.keydownHandler, this));
-        } else {
-            $(window).off('keydown.' + this.cid);
-        }
     },
 
     /**
