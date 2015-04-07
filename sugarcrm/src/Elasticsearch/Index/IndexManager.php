@@ -29,6 +29,10 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\MappingCollection;
  */
 class IndexManager
 {
+    /**
+     * Key for `$this->config` containing the default configuration settings
+     * which apply to all indices.
+     */
     const DEFAULT_INDEX_SETTINGS_KEY = 'default';
 
     /**
@@ -73,6 +77,19 @@ class IndexManager
     }
 
     /**
+     * Verify if the system is ready to create/change indices.
+     * @return boolean
+     */
+    protected function readyForIndexChanges()
+    {
+        // force connectivity check
+        if (!$this->container->client->isAvailable(true)) {
+            return false;
+        }
+        return $this->container->queueManager->pauseQueue();
+    }
+
+    /**
      * Schedule reindex:
      * 1. Create indices (drop existing one's on $recreateIndices)
      * 2. Queue all records for given modules
@@ -90,25 +107,12 @@ class IndexManager
         }
 
         if ($recreateIndices) {
-            $this->syncIndices($modules);
+            $this->syncIndices($modules, $recreateIndices);
         }
 
         $this->container->queueManager->reindexModules($modules);
 
         return true;
-    }
-
-    /**
-     * Verify if the system is ready to create/change indices.
-     * @return boolean
-     */
-    protected function readyForIndexChanges()
-    {
-        // force connectivity check
-        if (!$this->container->client->isAvailable(true)) {
-            return false;
-        }
-        return $this->container->queueManager->pauseQueue();
     }
 
     /**
@@ -162,16 +166,13 @@ class IndexManager
      * regardless if aliases are implemnted or not.
      *
      */
-    public function smartReindex()
-    {
-        // To be implemented
-    }
 
     /**
      * Sync new index settings to Elasticsearch backend
      * @param array $modules List of modules to sync
+     * @param boolean $dropExist
      */
-    protected function syncIndices(array $modules)
+    protected function syncIndices(array $modules, $dropExist = false)
     {
         // Get registered providers
         $providerCollection = new ProviderCollection($this->container, $this->getRegisteredProviders());
@@ -193,7 +194,7 @@ class IndexManager
          * indices if any. This will allow for an incremental update when
          * possible.
          */
-        $this->createIndices($indexCollection, $analysisBuilder, $mappingCollection);
+        $this->createIndices($indexCollection, $analysisBuilder, $mappingCollection, $dropExist);
     }
 
     /**
@@ -209,15 +210,6 @@ class IndexManager
     }
 
     /**
-     * Get list of all registered provider names
-     * @return array
-     */
-    protected function getRegisteredProviders()
-    {
-        return $this->container->getRegisteredProviders();
-    }
-
-    /**
      * Build mapping for available providers
      * @param ProviderCollection $providerCollection
      * @return MappingCollection
@@ -225,25 +217,6 @@ class IndexManager
     protected function buildMapping(ProviderCollection $providerCollection)
     {
         return $this->container->mappingManager->buildMapping($providerCollection, $this->getAllEnabledModules());
-    }
-
-    /**
-     * Get list of all enabled modules
-     * @return array
-     */
-    protected function getAllEnabledModules()
-    {
-        return $this->container->metaDataHelper->getAllEnabledModules();
-    }
-
-    /**
-     * Get index collection for given mapping
-     * @param MappingCollection $mappingCollection
-     * @return IndexCollection
-     */
-    protected function getIndexCollection(MappingCollection $mappingCollection)
-    {
-        return $this->container->indexPool->buildIndexCollection($mappingCollection);
     }
 
     /**
@@ -281,21 +254,21 @@ class IndexManager
     }
 
     /**
-     * Create indices, recreates already existing indices
+     * Create list of indices
      * @param IndexCollection $indexCollection
      * @param AnalysisBuilder $analysisBuilder
      * @param MappingCollection $mappingCollection
+     * @param boolean $dropExist Drop indices if already they already exist
      */
-    protected function createIndices(
+    public function createIndices(
         IndexCollection $indexCollection,
         AnalysisBuilder $analysisBuilder,
-        MappingCollection $mappingCollection
+        MappingCollection $mappingCollection,
+        $dropExist = false
     ) {
-        foreach ($indexCollection as $indexName => $index) {
+        foreach ($indexCollection as $index) {
 
-            /* @var $index Index */
-            $indexSettings = $this->buildIndexSettings($indexName, $analysisBuilder);
-            $index->create($indexSettings, true);
+            $this->createIndex($index, $analysisBuilder, $dropExist);
 
             // Set mapping for all available types on this index
             $types = $index->getTypes();
@@ -315,6 +288,21 @@ class IndexManager
     }
 
     /**
+     * Create index
+     * @param Index $index
+     * @param AnalysisBuilder $analysisBuilder
+     * @param boolean $dropExist Drop index if already exists
+     * @return \Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Index
+     */
+    public function createIndex(Index $index, AnalysisBuilder $analysisBuilder, $dropExist = false)
+    {
+        // TODO: add error handling
+        $settings = $this->buildIndexSettings($index->getBaseName(), $analysisBuilder);
+        $result = $index->create($settings, $dropExist);
+        return $index;
+    }
+
+    /**
      * Send type mapping to backend applying default mapping
      * @param \Elastica\Type\Mapping $mapping
      */
@@ -325,5 +313,33 @@ class IndexManager
             $mapping->setParam($key, $value);
         }
         $mapping->send();
+    }
+
+    /**
+     * Get list of all enabled modules
+     * @return array
+     */
+    protected function getAllEnabledModules()
+    {
+        return $this->container->metaDataHelper->getAllEnabledModules();
+    }
+
+    /**
+     * Wrapper listing all registered providers
+     * @return array
+     */
+    protected function getRegisteredProviders()
+    {
+        return $this->container->getRegisteredProviders();
+    }
+
+    /**
+     * Get index collection for given mapping
+     * @param MappingCollection $mappingCollection
+     * @return IndexCollection
+     */
+    protected function getIndexCollection(MappingCollection $mappingCollection)
+    {
+        return $this->container->indexPool->buildIndexCollection($mappingCollection);
     }
 }
