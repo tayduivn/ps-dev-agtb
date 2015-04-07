@@ -13,7 +13,6 @@
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Index;
 
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\MappingCollection;
-use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Index;
 use Sugarcrm\Sugarcrm\Elasticsearch\Exception\IndexPoolStrategyException;
 use Sugarcrm\Sugarcrm\Elasticsearch\Container;
@@ -29,10 +28,9 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Client;
  */
 class IndexPool
 {
-    const DEFAULT_STRATEGY = 'Shared';
+    const DEFAULT_STRATEGY = 'static';
 
     /**
-     * TODO make the usage of the prefix configurable
      * @var string Prefix for every index
      */
     protected $prefix;
@@ -48,7 +46,14 @@ class IndexPool
     protected $container;
 
     /**
+     * Loaded strategies
      * @var \Sugarcrm\Sugarcrm\Elasticsearch\Index\Strategy\StrategyInterface[]
+     */
+    protected $loaded = array();
+
+    /**
+     * Registered strategies
+     * @var array
      */
     protected $strategies = array();
 
@@ -61,6 +66,7 @@ class IndexPool
         $this->prefix = $prefix;
         $this->config = $config;
         $this->container = $container;
+        $this->registerStrategies();
     }
 
     /**
@@ -108,28 +114,31 @@ class IndexPool
      */
     public function getStrategy($module)
     {
-        if (empty($this->config[$module]) || empty($this->config[$module]['strategy'])) {
-            $this->config[$module] = array('strategy' => self::DEFAULT_STRATEGY);
+        // take strategy identifier from config or use default if not available
+        if (!empty($this->config[$module]) && !empty($this->config[$module]['strategy'])) {
+            $id = $this->config[$module]['strategy'];
+        } else {
+            $id = self::DEFAULT_STRATEGY;
         }
 
-        $strategy = $this->config[$module]['strategy'];
+        if (!isset($this->loaded[$id])) {
 
-        if (!isset($this->strategies[$strategy])) {
+            if (!isset($this->strategies[$id])) {
+                throw new IndexPoolStrategyException("Unknown strategy identifier '$id'");
+            }
 
-            // TODO: use registry instead
-            $className = \SugarAutoLoader::customClass(
-                sprintf('\\Sugarcrm\\Sugarcrm\\Elasticsearch\\Index\\Strategy\\%sStrategy', $strategy)
-            );
-
+            $className = $this->strategies[$id];
             if (!class_exists($className)) {
-                throw new IndexPoolStrategyException("Invalid strategy $strategy for module $module");
+                throw new IndexPoolStrategyException("Invalid strategy '$id' for module '$module'");
             }
 
             // create strategy object and pass index_strategy config
-            $this->strategies[$strategy] = new $className($this->config);
+            $this->loaded[$id] = $strategy = new $className();
+            $strategy->setConfig($this->config);
+            $strategy->setIdentifier($id);
         }
 
-        return $this->strategies[$strategy];
+        return $this->loaded[$id];
     }
 
     /**
@@ -160,6 +169,26 @@ class IndexPool
         $index = $this->getStrategy($module)->getWriteIndex($module, $context);
         $normalized = $this->normalizeIndexName($index);
         return $this->newIndexObject($normalized);
+    }
+
+    /**
+     * Add strategy to registry
+     * @param string $identifier
+     * @param string $className Class implementing StrategyInterface
+     */
+    public function addStrategy($identifier, $className)
+    {
+        $this->strategies[$identifier] = $className;
+    }
+
+    /**
+     * Register available strategies
+     */
+    protected function registerStrategies()
+    {
+        $nsPrefix = '\Sugarcrm\Sugarcrm\Elasticsearch\Index\Strategy';
+        $this->addStrategy('static', $nsPrefix . '\StaticStrategy');
+        $this->addStrategy('archive', $nsPrefix . '\ArchiveStrategy');
     }
 
     /**

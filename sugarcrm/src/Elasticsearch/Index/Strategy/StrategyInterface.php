@@ -21,9 +21,10 @@ interface StrategyInterface
 {
     /**
      * Get list of all managed indices. This methods is only used during index
-     * (re)initialization and should never be used through for query building
-     * or document indexing. A managed index is not necessarily equal to the
-     * read indices as there is no context involved.
+     * (re)initialization and should never be used for query building or
+     * document indexing. The list of managed indices for a given modules is
+     * not necessarily equal to the read indices list as there is never context
+     * involved.
      *
      * @param string $module
      * return array
@@ -58,4 +59,22 @@ interface StrategyInterface
      * @return string
      */
     public function getWriteIndex($module, array $context = array());
+
+    /**
+     * Set configuration parameters
+     * @param array $config
+     */
+    public function setConfig(array $config);
+
+    /**
+     * Set identifier
+     * @param string $identifier
+     */
+    public function setIdentifier($identifier);
+
+    /**
+     * Get identifier
+     * @return string
+     */
+    public function getIdentifier();
 }

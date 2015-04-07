@@ -25,22 +25,42 @@ abstract class AbstractStrategy implements StrategyInterface
     protected $config = array();
 
     /**
-     * Ctor
-     * @param array $config
+     * @var string Identifier
      */
-    public function __construct(array $config = array())
+    protected $identifier;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setConfig(array $config)
     {
         $this->config = $config;
     }
 
     /**
-     * Get module specific configuration
+     * {@inheritdoc}
+     */
+    public function setIdentifier($identifier)
+    {
+        $this->identifier = $identifier;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getIdentifier()
+    {
+        return $this->identifier;
+    }
+
+    /**
+     * Helper to get module specific configuration
      * @param string $module
      * @param string $key Config key to retrieve
      * @param mixed $default Default value if config key is not found
      * @return mixed
      */
-    protected function getConfig($module, $key, $default = null)
+    protected function getModuleConfig($module, $key, $default = null)
     {
         return (isset($this->config[$module][$key])) ? $this->config[$module][$key] : $default;
     }

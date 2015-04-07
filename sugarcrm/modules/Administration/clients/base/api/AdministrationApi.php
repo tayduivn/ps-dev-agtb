@@ -39,6 +39,7 @@ class AdministrationApi extends SugarApi
                 'longHelp' => 'include/api/help/administration_search_reindex_post_help.html',
                 'exceptions' => array(
                     'SugarApiExceptionNotAuthorized',
+                    'SugarApiExceptionSearchUnavailable',
                 ),
             ),
             'searchStatus' => array(
@@ -302,11 +303,8 @@ class AdministrationApi extends SugarApi
                 $read[] = $index->getName();
             }
 
-            // TODO: cleanup once strategy registry is in place
-            $refl = new ReflectionClass($indexPool->getStrategy($module));
-
             $result[$module] = array(
-                'strategy' => $refl->getShortName(),
+                'strategy' => $indexPool->getStrategy($module)->getIdentifier(),
                 'routing' => array(
                     'write_index' => $indexPool->getWriteIndex($module)->getName(),
                     'read_indices' => $read,
