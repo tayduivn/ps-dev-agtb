@@ -194,12 +194,8 @@ class Team extends SugarBean
 		//do not overwrite the existing teamset during import
 		if ($su->in_import) {
 
-			//get the current list of teams
-			$su->load_relationship('teams');
-			$user_team_ids = $su->teams->get();
-
 			//add the global team to the teamset
-			$user_team_ids[] = $team->id;
+			$user_team_ids = array($team->id);
 			$teamSet = BeanFactory::getBean('TeamSets');
 			$su->team_set_id = $teamSet->addTeams($user_team_ids);
 
