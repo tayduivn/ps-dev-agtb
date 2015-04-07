@@ -753,27 +753,7 @@ class MetaDataManager
      */
     public function getGlobalSearchEnabled($seed, $vardefs, $platform = null)
     {
-        if (empty($platform)) {
-            $platform = $this->platforms[0];
-        }
-        // Is the argument set for this module
-        if (isset($vardefs['globalSearchEnabled'])) {
-            // Is it an array of platforms or a simple boolean
-            if (is_array($vardefs['globalSearchEnabled'])) {
-                // if the platform is set use that value; otherwise check if set in 'base'; lastly, fallback to true
-                if (isset($vardefs['globalSearchEnabled'][$platform])) {
-                    return $vardefs['globalSearchEnabled'][$platform];
-                } else {
-                    // Check if global search enabled set on the base platform. If so, and not set for platform at all, we've decided that we should fall back to base's value
-                    return isset($vardefs['globalSearchEnabled']['base']) ? $vardefs['globalSearchEnabled']['base'] : true;
-                }
-            } else {
-                // If a simple boolean we return that as it defines whether search enabled globally across all platforms
-                return $vardefs['globalSearchEnabled'];
-            }
-        }
-        // If globalSearchEnabled property not set, we check if valid bean (all "real" beans are, by default, global search enabled)
-        return !empty($seed);
+        return !empty($vardefs['full_text_search']);
     }
 
     /**
