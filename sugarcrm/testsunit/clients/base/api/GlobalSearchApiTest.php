@@ -92,6 +92,7 @@ class GlobalSearchApiTest extends \PHPUnit_Framework_TestCase
             'from',
             'getTags',
             'setTagLimit',
+            'setTagFilters',
             'term',
             'limit',
             'offset',

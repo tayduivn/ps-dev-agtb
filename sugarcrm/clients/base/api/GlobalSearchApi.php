@@ -71,6 +71,11 @@ class GlobalSearchApi extends SugarApi
     protected $getTags = false;
 
     /**
+     * @var array List of tag ids for filtering;
+     */
+    protected $tagFilters = array();
+
+    /**
      * @var integer the maximum number of tags returned in the response
      */
     protected $tagLimit = 5;
@@ -211,6 +216,10 @@ class GlobalSearchApi extends SugarApi
             $this->getTags = $args['getTags'];
         }
 
+        if (!empty($args['tag_filters'])) {
+            $this->tagFilters = explode(',', $args['tag_filters']);
+        }
+
         // Set search term
         if (!empty($args['q'])) {
             $this->term = $args['q'];
@@ -284,6 +293,7 @@ class GlobalSearchApi extends SugarApi
             ->from($this->moduleList)
             ->getTags($this->getTags)
             ->setTagLimit($this->tagLimit)
+            ->setTagFilters($this->tagFilters)
             ->term($this->term)
             ->limit($this->limit)
             ->offset($this->offset)

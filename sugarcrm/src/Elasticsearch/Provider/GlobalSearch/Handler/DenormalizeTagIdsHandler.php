@@ -31,7 +31,7 @@ class DenormalizeTagIdsHandler extends AbstractHandler implements
      * Field name to use for tag Ids
      * @var string
      */
-    protected $tagIdsField = 'tagIds';
+    const TAGIDS_FIELD = 'tagIds';
 
     /**
      * {@inheritdoc}
@@ -39,7 +39,7 @@ class DenormalizeTagIdsHandler extends AbstractHandler implements
     public function processDocumentPreIndex(Document $document, \SugarBean $bean)
     {
         $tagIds = $this->retrieveTagIdsByQuery($bean->id);
-        $document->setDataField($this->tagIdsField, $tagIds);
+        $document->setDataField(self::TAGIDS_FIELD, $tagIds);
     }
 
     /**
@@ -71,6 +71,6 @@ class DenormalizeTagIdsHandler extends AbstractHandler implements
             'type' => 'string',
             'index' => 'not_analyzed',
         ));
-        $mapping->addRawProperty($this->tagIdsField, $tagIdsProperty);
+        $mapping->addRawProperty(self::TAGIDS_FIELD, $tagIdsProperty);
     }
 }

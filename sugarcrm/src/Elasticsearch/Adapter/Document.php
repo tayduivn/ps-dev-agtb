@@ -15,6 +15,8 @@ namespace Sugarcrm\Sugarcrm\Elasticsearch\Adapter;
 use Elastica\Document as BaseDocument;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
 
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\DenormalizeTagIdsHandler;
+
 /**
  *
  * Adapter class for \Elastica\Document
@@ -49,7 +51,7 @@ class Document extends BaseDocument
         $prefixed = array();
         foreach ($this->_data as $field => $data) {
             // Hard-coded for now, will refactor later
-            if ($field != 'tagIds') {
+            if ($field != DenormalizeTagIdsHandler::TAGIDS_FIELD) {
                 $field = $this->getType() . Mapping::PREFIX_SEP . $field;
             }
             $prefixed[$field] = $data;

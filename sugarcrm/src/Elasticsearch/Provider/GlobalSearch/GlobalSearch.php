@@ -249,8 +249,22 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
     }
 
     /**
+     * Add the tag filters to the query.
+     * @param QueryBuilder $builder the query builder
+     * @param array $tagFilters the list of tag filters
+     */
+    protected function handleTagFilters($builder, array $tagFilters)
+    {
+        // Compose term filter for the tags
+        $filter = new \Elastica\Filter\Terms(DenormalizeTagIdsHandler::TAGIDS_FIELD, $tagFilters);
+
+        // Apply the tag filters to post_filters
+        $builder->addPostFilter($filter);
+    }
+
+    /**
      * Get search field wrapper
-     * @param array $modules List of modules
+     * @param array $modules List of moduless
      * @return array
      */
     protected function getSearchFields(array $modules)
@@ -340,6 +354,11 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
     protected $tagLimit = 5;
 
     /**
+     * @var array Tag Filter list
+     */
+    protected $tagFilters = array();
+
+    /**
      * @var boolean Apply field level boosts
     */
     protected $fieldBoost = false;
@@ -404,6 +423,7 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
 
     /**
      * Set the flag of getting tags.
+     * @param boolean $getTags
      * @return GlobalSearch
      */
     public function getTags($getTags)
@@ -416,6 +436,7 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
 
     /**
      * Set the size of tags in the response.
+     * @param integer $tagLimit
      * @return GlobalSearch
      */
     public function setTagLimit($tagLimit)
@@ -423,6 +444,21 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
         $this->tagLimit = (int) $tagLimit;
         return $this;
     }
+
+
+    /**
+     * Set the list of tag ids for filtering.
+     * @param array $tagFilters
+     * @return GlobalSearch
+     */
+    public function setTagFilters(array $tagFilters = array())
+    {
+        if (!empty($tagFilters)) {
+            $this->tagFilters = $tagFilters;
+        }
+        return $this;
+    }
+
 
     /**
      * Enable field boosts (disabled by default)
@@ -521,7 +557,7 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
             // order by date_modified
             $builder->setQuery($this->getMatchAllQuery());
             $this->sort = array('date_modified' => 'desc');
-            $this->highlighter = false;
+            $this->useHighlighter = false;
         }
 
         // Set highlighter
@@ -536,6 +572,9 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
 
         // Apply aggregations and post filters from aggregations
         $this->addAggregations($builder, $this->aggFilters);
+
+        // Add the filter for the tags
+        $this->handleTagFilters($builder, $this->tagFilters);
 
         return $builder->executeSearch();
     }

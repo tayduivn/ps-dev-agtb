@@ -62,6 +62,13 @@ interface GlobalSearchCapable extends EngineInterface
     public function setTagLimit($tagLimit);
 
     /**
+     * Set the list of tag ids for filtering.
+     * @param array $tagFilters
+     * @return GlobalSearchInterface
+     */
+    public function setTagFilters($tagFilters);
+
+    /**
      * Set limit (query size)
      * @param integer $limit
      * @return GlobalSearchInterface
