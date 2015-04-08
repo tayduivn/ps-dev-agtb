@@ -43,6 +43,15 @@
          */
         this.activeIndex = null;
 
+        // Listener for when a search is triggered. Show "Searching..."
+        this.layout.on('quicksearch:search:underway', function() {
+            this.close();
+            this.render();
+            this.open();
+        }, this);
+
+        // If the layout has `quicksearch:results:close` called on it, we
+        // need to hide just the quicksearch results
         this.layout.on('quicksearch:close quicksearch:results:close', function() {
             this.close();
         }, this);

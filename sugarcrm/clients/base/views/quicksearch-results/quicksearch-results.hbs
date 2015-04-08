@@ -28,15 +28,21 @@
     {{#notEq collection.next_offset "-1"}}
         <li class="view-all-results">
             {{#if ../layout.v2}}
-            <a href="#{{searchLink}}">{{str "LNK_SEARCH_FTS_VIEW_ALL"}}</a>
+            <a href="#{{searchLink}}">{{str 'LNK_SEARCH_FTS_VIEW_ALL'}}</a>
             {{else}}
             <a href="#bwc/index.php?module=Home&append_wildcard=true&action=spot&full=true&q={{collection.query}}&m={{collection.module_list_string}}">{{str "LNK_SEARCH_FTS_VIEW_ALL"}}</a>
             {{/if}}
         </li>
     {{/notEq}}
 {{else}}
-    <li class="no-results">
-    {{str "LNK_SEARCH_NO_RESULTS"}}
-    </li>
+    {{#if collection.dataFetched}}
+        <li class="no-results">
+            {{str 'LNK_SEARCH_NO_RESULTS'}}
+        </li>
+    {{else}}
+        <li class="no-results loading">
+            {{loading 'LBL_SEARCH_UNDERWAY'}}
+        </li>
+    {{/if}}
 {{/if}}
 </ul></div>
