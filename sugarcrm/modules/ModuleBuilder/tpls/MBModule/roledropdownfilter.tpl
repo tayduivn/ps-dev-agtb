@@ -108,7 +108,7 @@
                                             {if $is_blank}
                                                 {$val}
                                             {else}
-                                                <b>{$val}</b>
+                                                <b>{$id}</b>
                                             {/if}
                                             <span class='fieldValue' id='span_{$id}'>[{$val}]</span>
                                         </td>
