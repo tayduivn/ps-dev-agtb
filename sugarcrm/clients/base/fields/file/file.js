@@ -358,6 +358,10 @@
             if (_.isUndefined(this.options.viewName) || this.options.viewName !== 'edit') {
                 this.render();
             }
+            //populate document name field with upload name if document_name field exists and is empty
+            if (this.$('document_name') && !(this.model.get('document_name'))) {
+                this.model.set('document_name', this.unformat(this.model.get(this.name)));
+            }            
         }, this);
     },
 
