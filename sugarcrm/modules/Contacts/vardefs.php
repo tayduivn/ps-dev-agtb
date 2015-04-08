@@ -180,6 +180,8 @@ $dictionary['Contact'] = array(
             'full_text_search' => array(
                 'enabled' => true,
                 'searchable' => true,
+                'boost' => 1.93,
+                'type' => 'exact',
             ),
         ),
         'portal_active' => array(
@@ -891,3 +893,16 @@ VardefManager::createVardef(
     'Contacts',
     'Contact'
 );
+
+//boost value for full text search
+$dictionary['Contact']['fields']['first_name']['full_text_search']['boost'] = 1.99;
+$dictionary['Contact']['fields']['last_name']['full_text_search']['boost'] = 1.97;
+$dictionary['Contact']['fields']['email']['full_text_search']['boost'] = 1.95;
+$dictionary['Contact']['fields']['phone_home']['full_text_search']['boost'] = 1.10;
+$dictionary['Contact']['fields']['phone_mobile']['full_text_search']['boost'] = 1.09;
+$dictionary['Contact']['fields']['phone_work']['full_text_search']['boost'] = 1.08;
+$dictionary['Contact']['fields']['phone_other']['full_text_search']['boost'] = 1.07;
+$dictionary['Contact']['fields']['phone_fax']['full_text_search']['boost'] = 1.06;
+$dictionary['Contact']['fields']['description']['full_text_search']['boost'] = 0.71;
+$dictionary['Contact']['fields']['primary_address_street']['full_text_search']['boost'] = 0.33;
+$dictionary['Contact']['fields']['alt_address_street']['full_text_search']['boost'] = 0.32;

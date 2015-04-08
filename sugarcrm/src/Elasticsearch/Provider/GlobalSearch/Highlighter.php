@@ -36,7 +36,20 @@ class Highlighter extends AbstractHighlighter
         // use _source and plain highlighter
         $this->setDefaultFieldArgs(array(
             'type' => 'plain',
-            'force_source' => true,
+            'force_source' => false,
         ));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function normalizeFieldName($field)
+    {
+        // Strip of the module name and keep the main field only. If no match
+        // is found we continue with the field value as is.
+        if (preg_match('/^.*' . SearchFields::PREFIX_SEP . '([^.]*).*$/', $field, $matches)) {
+            $field = $matches[1];
+        }
+        return parent::normalizeFieldName($field);
     }
 }

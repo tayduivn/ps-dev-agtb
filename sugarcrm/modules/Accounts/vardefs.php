@@ -37,6 +37,8 @@ $dictionary['Account'] = array(
             'full_text_search' => array(
                 'enabled' => true,
                 'searchable' => true,
+                'boost' => 1.21,
+                'type' => 'exact',
             ),
             'comment' => 'SIC code of the account',
             'merge_filter' => 'enabled',
@@ -50,6 +52,8 @@ $dictionary['Account'] = array(
              'full_text_search' => array(
                  'enabled' => true,
                  'searchable' => true,
+                 'boost' => 1.23,
+                 'type' => 'exact',
              ),
             'comment' => 'DUNS number of the account',
           ),
@@ -497,3 +501,14 @@ VardefManager::createVardef(
 //jc - adding for refactor for import to not use the required_fields array
 //defined in the field_arrays.php file
 $dictionary['Account']['fields']['name']['importable'] = 'required';
+
+//boost value for full text search
+$dictionary['Account']['fields']['name']['full_text_search']['boost'] = 1.91;
+$dictionary['Account']['fields']['email']['full_text_search']['boost'] = 1.89;
+$dictionary['Account']['fields']['phone_office']['full_text_search']['boost'] = 1.05;
+$dictionary['Account']['fields']['phone_fax']['full_text_search']['boost'] = 1.04;
+$dictionary['Account']['fields']['phone_alternate']['full_text_search']['boost'] = 1.03;
+$dictionary['Account']['fields']['description']['full_text_search']['boost'] = 0.72;
+$dictionary['Account']['fields']['billing_address_street']['full_text_search']['boost'] = 0.35;
+$dictionary['Account']['fields']['shipping_address_street']['full_text_search']['boost'] = 0.34;
+

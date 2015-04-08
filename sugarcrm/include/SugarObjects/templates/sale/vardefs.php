@@ -25,6 +25,7 @@ $vardefs = array(
             'full_text_search' => array(
                 'enabled' => true,
                 'searchable' => true,
+                'boost' => 1.63,
             ),
             'audited' => true,
             'merge_filter' => 'selected',
@@ -54,6 +55,7 @@ $vardefs = array(
             'full_text_search' => array(
                 'enabled' => true,
                 'searchable' => true,
+                'boost' => 0.58,
             ),
         ),
         'lead_source' =>
@@ -133,6 +135,7 @@ $vardefs = array(
             'full_text_search' => array(
                 'enabled' => true,
                 'searchable' => true,
+                'boost' => 0.73,
             ),
         ),
         'sales_stage' =>

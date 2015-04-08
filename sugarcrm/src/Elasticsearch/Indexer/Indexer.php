@@ -162,10 +162,6 @@ class Indexer
             return false;
         }
 
-        // Normalize field names at this point. We don't do this earlier as
-        // we don't want any other logic to cope with those module prefixes.
-        $document->normalizeDataFieldNames();
-
         if ($batch) {
             // Use in memory queue
             $this->getBulkHandler()->batchDocument($document);

@@ -58,6 +58,7 @@ class IndexCollection implements \IteratorAggregate
         if (!isset($this->$index)) {
             $normalized = $this->container->indexPool->normalizeIndexName($index);
             $this->$index = $this->newIndexObject($normalized);
+            $this->$index->setBaseName($index);
         }
         return $this->$index;
     }

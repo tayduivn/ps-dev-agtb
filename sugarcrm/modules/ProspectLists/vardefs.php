@@ -30,7 +30,7 @@ $dictionary['ProspectList'] = array(
             'len'              => '50',
             'importable'       => 'required',
             'unified_search'   => true,
-            'full_text_search' => array('enabled' => true, 'searchable' => true),
+            'full_text_search' => array('enabled' => true, 'searchable' => true, 'boost' => 1.33),
             'required'         => true,
         ),
         'list_type'        => array(
@@ -107,7 +107,7 @@ $dictionary['ProspectList'] = array(
             'name'  => 'description',
             'vname' => 'LBL_DESCRIPTION',
             'type'  => 'text',
-            'full_text_search' => array('enabled' => true, 'searchable' => true),
+            'full_text_search' => array('enabled' => true, 'searchable' => true, 'boost' => 0.39),
         ),
         'domain_name'      => array(
             'name'  => 'domain_name',

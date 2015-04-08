@@ -12,6 +12,8 @@
 
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Query\Aggregation;
 
+use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
+
 /**
  *
  * Aggregation builder interface
@@ -20,25 +22,42 @@ namespace Sugarcrm\Sugarcrm\Elasticsearch\Query\Aggregation;
 interface AggregationInterface
 {
     /**
-     * @return \Elastica\Aggregation\AbstractAggregation
+     * Set user context
+     * @param \User $user
      */
-    public function getAgg();
+    public function setUser(\User $user);
 
     /**
-     *
-     * Returns an Elastica Aggregation object
-     * @param  string                          $fieldName
-     * @param  \Elastica\Filter\Bool $filter
-     * @return \Elastica\Aggregation\AbstractAggregation
+     * Set options
+     * @param array $options
      */
-    public function buildAgg($fieldName, \Elastica\Filter\Bool $filter);
+    public function setOptions(array $options);
 
     /**
-     *
-     * Returns an Elastica Filter object
-     * @param  string $fieldName
-     * @param  array  $values
-     * @return \Elastica\Filter\AbstractFilter
+     * Set option
+     * @param string $option
+     * @param mixed $value
      */
-    public function buildFilter($fieldName, array $values);
+    public function setOption($option, $value);
+
+    /**
+     * Build mapping
+     * @param array $defs
+     */
+    public function buildMapping(Mapping $mapping, $field, array $defs);
+
+    /**
+     * Build aggregation for query purposes
+     * @param string $id Aggregation identifier
+     * @param array $filters
+     * @return \Elastica\Aggregation\AbstractAggregation
+     */
+    public function build($id, array $filters);
+
+    /**
+     * Parse raw aggregation results
+     * @param array $results
+     * @return array
+     */
+    public function parseResults(array $results);
 }

@@ -29,12 +29,6 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\ObjectProperty;
 class Mapping
 {
     /**
-     * Module name prefix separator
-     * @var string
-     */
-    const PREFIX_SEP = '__';
-
-    /**
      * @var string Module name
      */
     protected $module;
@@ -91,7 +85,7 @@ class Mapping
     {
         $compiled = array();
         foreach ($this->properties as $field => $property) {
-            $compiled[$this->normalizeFieldName($field)] = $property->getMapping();
+            $compiled[$field] = $property->getMapping();
         }
         return $compiled;
     }
@@ -103,10 +97,11 @@ class Mapping
      * not analyzed field.
      *
      * @param string $field Field name
+     * @param array $copyTo Optional copy_to definition
      */
-    public function addNotAnalyzedField($field)
+    public function addNotAnalyzedField($field, array $copyTo = array())
     {
-        $this->createMultiFieldBase($field);
+        $this->createMultiFieldBase($field, $copyTo);
     }
 
     /**
@@ -119,10 +114,11 @@ class Mapping
      * @param string $baseField Base field name
      * @param string $field Name of the multi field
      * @param MultiFieldProperty $property
+     * @param array $copyTo Optional copy_to definition
      */
-    public function addMultiField($baseField, $field, MultiFieldProperty $property)
+    public function addMultiField($baseField, $field, MultiFieldProperty $property, array $copyTo = array())
     {
-        $this->createMultiFieldBase($baseField)->addField($field, $property);
+        $this->createMultiFieldBase($baseField, $copyTo)->addField($field, $property);
     }
 
     /**
@@ -153,10 +149,11 @@ class Mapping
      * Create base multi field object for given field.
      *
      * @param string $field
+     * @param array $copyTo Optional copy_to definition
      * @return MultiFieldBaseProperty
      * @throws MappingException
      */
-    protected function createMultiFieldBase($field)
+    protected function createMultiFieldBase($field, array $copyTo = array())
     {
         // create multi field base if not set yet
         if (!isset($this->properties[$field])) {
@@ -166,11 +163,17 @@ class Mapping
         }
 
         // make sure we have a base multi field
-        if (!$this->properties[$field] instanceof MultiFieldBaseProperty) {
+        $property = $this->properties[$field];
+        if (!$property instanceof MultiFieldBaseProperty) {
             throw new MappingException("Field '{$field}' is not a multi field");
         }
 
-        return $this->properties[$field];
+        // append copy_to definitions
+        foreach ($copyTo as $copyToField) {
+            $property->addCopyTo($copyToField);
+        }
+
+        return $property;
     }
 
     /**
@@ -186,19 +189,5 @@ class Mapping
             throw new MappingException("Cannot redeclare field '{$field}' for module '{$this->module}'");
         }
         $this->properties[$field] = $property;
-    }
-
-    /**
-     * Prefix field name using module name. In certain cases Elasticsearch
-     * has problems using disambigious field names when a given field exists
-     * across multiple modules (i.e. multi_match has this behavior). Therefor
-     * we prefix all main fields with the module name to mitigate this problem.
-     *
-     * @param string $field
-     * @return string
-     */
-    protected function normalizeFieldName($field)
-    {
-        return $this->module . self::PREFIX_SEP . $field;
     }
 }

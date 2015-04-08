@@ -17,6 +17,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\MultiFieldProperty;
 use Sugarcrm\Sugarcrm\Elasticsearch\Exception\MappingException;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\SearchFields;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\GlobalSearch;
 
 /**
  *
@@ -38,10 +39,6 @@ class MultiFieldHandler extends AbstractHandler implements
             'gs_string_wildcard',
         ),
         'name' => array(
-            'gs_string',
-            'gs_string_wildcard',
-        ),
-        'username' => array(
             'gs_string',
             'gs_string_wildcard',
         ),
@@ -75,7 +72,11 @@ class MultiFieldHandler extends AbstractHandler implements
             'gs_string_exact',
         ),
         'longtext' => array(
-            'gs_html_default',
+            'gs_string',
+            'gs_text_wildcard',
+        ),
+        'htmleditable_tinymce' => array(
+            'gs_string_html',
         ),
         'enum' => array(
             'not_analyzed',
@@ -105,7 +106,7 @@ class MultiFieldHandler extends AbstractHandler implements
             'index' => 'analyzed',
             'index_analyzer' => 'gs_analyzer_string',
             'search_analyzer' => 'gs_analyzer_string',
-            'store' => false,
+            'store' => true,
         ),
 
         /*
@@ -118,7 +119,7 @@ class MultiFieldHandler extends AbstractHandler implements
             'index' => 'analyzed',
             'index_analyzer' => 'gs_analyzer_string_ngram',
             'search_analyzer' => 'gs_analyzer_string',
-            'store' => false,
+            'store' => true,
         ),
 
         /*
@@ -130,7 +131,7 @@ class MultiFieldHandler extends AbstractHandler implements
             'index' => 'analyzed',
             'index_analyzer' => 'gs_analyzer_text_ngram',
             'search_analyzer' => 'gs_analyzer_string',
-            'store' => false,
+            'store' => true,
         ),
 
         /*
@@ -176,7 +177,7 @@ class MultiFieldHandler extends AbstractHandler implements
             'index' => 'analyzed',
             'index_analyzer' => 'gs_analyzer_phone_ngram',
             'search_analyzer' => 'gs_analyzer_phone',
-            'store' => false,
+            'store' => true,
         ),
 
         /*
@@ -211,18 +212,18 @@ class MultiFieldHandler extends AbstractHandler implements
             'index' => 'analyzed',
             'index_analyzer' => 'gs_analyzer_string_exact',
             'search_analyzer' => 'gs_analyzer_string_exact',
-            'store' => false,
+            'store' => true,
         ),
 
         /*
          * Analyzer for html
          */
-        'gs_html_default' => array(
+        'gs_string_html' => array(
             'type' => 'string',
             'index' => 'analyzed',
-            'index_analyzer' => 'gs_analyzer_html_default',
-            'search_analyzer' => 'gs_analyzer_html_default',
-            'store' => false,
+            'index_analyzer' => 'gs_analyzer_string_html',
+            'search_analyzer' => 'gs_analyzer_string_html',
+            'store' => true,
         ),
     );
 
@@ -244,27 +245,22 @@ class MultiFieldHandler extends AbstractHandler implements
     protected $highlighterFields = array(
         '*.gs_string' => array(),
         '*.gs_string_exact' => array(),
+        '*.gs_string_html' => array(),
         '*.gs_string_wildcard' => array(),
         '*.gs_text_wildcard' => array(),
-        '*.gs_phone_wildcard' => array(
-            'number_of_frags' => 0,
-        ),
-        '*.gs_url' => array(
-            'number_of_frags' => 0,
-        ),
-        '*.gs_url_wildcard' => array(
-            'number_of_frags' => 0,
-        ),
+        '*.gs_phone_wildcard' => array(),
     );
 
     /**
      * {@inheritdoc}
      */
-    public function initialize()
+    public function setProvider(GlobalSearch $provider)
     {
-        $this->provider->addSupportedTypes(array_keys($this->typesMultiField));
-        $this->provider->addWeightedBoosts($this->weightedBoost);
-        $this->provider->addHighlighterFields($this->highlighterFields);
+        parent::setProvider($provider);
+
+        $provider->addSupportedTypes(array_keys($this->typesMultiField));
+        $provider->addWeightedBoosts($this->weightedBoost);
+        $provider->addHighlighterFields($this->highlighterFields);
     }
 
     /**
@@ -336,7 +332,7 @@ class MultiFieldHandler extends AbstractHandler implements
             ->addCustomAnalyzer(
                 'gs_analyzer_text_ngram',
                 'standard',
-                array('lowercase', 'gs_filter_ngram_2_15')
+                array('lowercase', 'gs_filter_ngram_3_15')
             )
 
             // url analyzer
@@ -350,7 +346,7 @@ class MultiFieldHandler extends AbstractHandler implements
             ->addCustomAnalyzer(
                 'gs_analyzer_url_ngram',
                 'uax_url_email',
-                array('lowercase', 'gs_filter_ngram_2_15')
+                array('lowercase', 'gs_filter_ngram_3_15')
             )
 
             // String Analyzer using whitespace tokenizer for exact matching
@@ -362,7 +358,7 @@ class MultiFieldHandler extends AbstractHandler implements
 
             // html analyzer
             ->addCustomAnalyzer(
-                'gs_analyzer_html_default',
+                'gs_analyzer_string_html',
                 'standard',
                 array('lowercase'),
                 array('html_strip')
@@ -381,11 +377,33 @@ class MultiFieldHandler extends AbstractHandler implements
         }
 
         foreach ($this->typesMultiField[$defs['type']] as $multiField) {
+
+            /*
+             * When a field is searchable we want to add a module prefix to the
+             * field name to ensure disambigious field names during query time.
+             * In certain case (i.e. MultiMatch query) Elasticsearch does not
+             * properly resolve qualified field names removing the type prefix.
+             * Because of this we can get hits on fields we didn't ask for and
+             * hence we want to ensure the searchable field names are unique.
+             *
+             * 1. Create a not analyzed field for the regular field name with
+             * an additional copy_to to the unique field name.
+             * 2. Create the actual mapping on the new unique field. Because of
+             * the copy_to functionality there is no need to add additional
+             * logic during indexing.
+             */
+            if ($this->isFieldSearchable($defs)) {
+                $realField = $mapping->getModule() . SearchFields::PREFIX_SEP . $field;
+                $mapping->addNotAnalyzedField($field, array($realField));
+            } else {
+                $realField = $field;
+            }
+
             if ($multiField === 'not_analyzed') {
-                $mapping->addNotAnalyzedField($field);
+                $mapping->addNotAnalyzedField($realField);
             } else {
                 $multiFieldProperty = $this->getMultiFieldProperty($multiField);
-                $mapping->addMultiField($field, $multiField, $multiFieldProperty);
+                $mapping->addMultiField($realField, $multiField, $multiFieldProperty);
             }
         }
     }
@@ -399,6 +417,9 @@ class MultiFieldHandler extends AbstractHandler implements
         if (!isset($defs['type']) || !isset($this->typesMultiField[$defs['type']])) {
             return;
         }
+
+        // Use prefixed field name
+        $field = $module . SearchFields::PREFIX_SEP . $field;
 
         // Add fields which are based on strings
         foreach ($this->getStringFieldsForType($defs['type']) as $searchField) {
@@ -431,14 +452,14 @@ class MultiFieldHandler extends AbstractHandler implements
      */
     protected function addHighlighterField($module, $field, array $settings = array())
     {
-        $highlightField = $module . Mapping::PREFIX_SEP . $field;
-        $this->provider->addHighlighterFields(array($highlightField => $settings));
+        //$highlightField = $module . SearchFields::PREFIX_SEP . $field;
+        $this->provider->addHighlighterFields(array($field => $settings));
     }
 
     /**
      * Get search field list for given field type
-     * @param unknown $type
-     * @return multitype:unknown
+     * @param string $type
+     * @return array
      */
     protected function getStringFieldsForType($type)
     {
@@ -492,5 +513,15 @@ class MultiFieldHandler extends AbstractHandler implements
         $multiField->setMapping($this->multiFieldDefs[$name]);
 
         return $multiField;
+    }
+
+    /**
+     * Wrapper for field searchable check
+     * @param array $defs
+     * @return boolean
+     */
+    protected function isFieldSearchable(array $defs)
+    {
+        return $this->provider->getContainer()->metaDataHelper->isFieldSearchable($defs);
     }
 }

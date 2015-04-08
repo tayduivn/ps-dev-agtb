@@ -88,7 +88,11 @@ $dictionary['Manufacturer'] = array(
     'comment' => 'Manufacturer name',
     'importable' => 'required',
     'unified_search' => true,
-    'full_text_search' => array('enabled' => true, 'boost' => 3),
+      'full_text_search' => array(
+          'enabled' => true,
+          'searchable' => true,
+          'boost' => 0.78,
+      ),
   ),
   'list_order' =>
   array (

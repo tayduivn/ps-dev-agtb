@@ -12,15 +12,15 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Provider\GlobalSearch\Handler;
 
-use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\HandlerIterator;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\HandlerFilterIterator;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\HandlerCollection;
 
 /**
  *
- * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\HandlerIterator
+ * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\HandlerFilterIterator
  *
  */
-class HandlerIteratorTest extends \PHPUnit_Framework_TestCase
+class HandlerFilterIteratorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @covers ::__construct
@@ -30,7 +30,7 @@ class HandlerIteratorTest extends \PHPUnit_Framework_TestCase
      */
     public function testIterator(HandlerCollection $collection, $filter, $expected)
     {
-        $iterator = new HandlerIterator($collection->getIterator(), $filter);
+        $iterator = new HandlerFilterIterator($collection->getIterator(), $filter);
         $this->assertCount(count($expected), $iterator);
         foreach ($iterator as $key => $item) {
             $this->assertInstanceOf($expected[$key], $item);

@@ -22,7 +22,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'len' => '50',
     'comment' => 'Brief description of the call',
     'unified_search' => true,
-    'full_text_search' => array('enabled' => true, 'searchable' => true),
+    'full_text_search' => array('enabled' => true, 'searchable' => true, 'boost' => 1.41),
 	'required'=>true,
     'importable' => 'required',
   ),
@@ -67,6 +67,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'options' => 'date_range_search_dom',
     'validation' => array('type' => 'isbefore', 'compareto' => 'date_end', 'blank' => false),
     'studio' => array('recordview' => false),
+    'full_text_search' => array('enabled' => true, 'searchable' => false),
   ),
 
   'date_end' =>
@@ -81,6 +82,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'options' => 'date_range_search_dom',
     'studio' => array('recordview' => false, 'wirelesseditview'=>false), // date_end is computed by the server from date_start and duration
     'readonly' => true,
+    'full_text_search' => array('enabled' => true, 'searchable' => false),
   ),
 
  'parent_type'=>
@@ -122,7 +124,8 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
 	'importable' => 'required',
     'default' => 'Planned',
     'duplicate_on_record_copy' => 'no',
-	'studio' => array('detailview'=>false)
+	'studio' => array('detailview'=>false),
+    'full_text_search' => array('enabled' => true, 'searchable' => false),
   ),
   'direction' =>
   array (
@@ -640,4 +643,6 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
 VardefManager::createVardef('Calls','Call', array('default', 'assignable',
 'team_security',
 ));
-?>
+
+$dictionary['Call']['fields']['description']['full_text_search']['boost'] = 0.54;
+

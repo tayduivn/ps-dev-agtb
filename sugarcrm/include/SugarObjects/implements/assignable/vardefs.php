@@ -27,11 +27,13 @@ $vardefs = array(
             'massupdate' => false,
             'full_text_search' => array(
                 'enabled' => true,
-                'searchable' => true,
-                'aggregation' => array(
-                    'type' => 'terms',
-                    'cross_module' => true,
-                )
+                'searchable' => false,
+                'aggregations' => array(
+                    'assigned_user_id' => array(
+                        'type' => 'MyItems',
+                        'label' => 'LBL_AGG_ASSIGNED_TO_ME',
+                    ),
+                ),
             ),
 		),
 	 'assigned_user_name' =>

@@ -51,6 +51,7 @@ $dictionary['Campaign'] = array (
             'full_text_search' => array(
                 'enabled' => true,
                 'searchable' => true,
+                'boost' => 1.39,
             ),
         ),
         'refer_url' => array (
@@ -111,10 +112,6 @@ $dictionary['Campaign'] = array (
             'comment' => 'Status of the campaign',
             'importable' => 'required',
             'required' => true,
-            'full_text_search' => array(
-                'enabled' => true,
-                'searchable' => false,
-            ),
         ),
         'impressions' => array (
             'name' => 'impressions',
@@ -158,6 +155,10 @@ $dictionary['Campaign'] = array (
             'comment' => 'The type of campaign',
             'importable' => 'required',
             'required' => true,
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => false,
+            ),
             
         ),
         'objective' => array (
@@ -167,6 +168,7 @@ $dictionary['Campaign'] = array (
             'full_text_search' => array(
                 'enabled' => true,
                 'searchable' => true,
+                'boost' => 0.42,
             ),
             'comment' => 'The objective of the campaign'
         ),
@@ -177,6 +179,7 @@ $dictionary['Campaign'] = array (
             'full_text_search' => array(
                 'enabled' => true,
                 'searchable' => true,
+                'boost' => 0.41,
             ),
             'comment' => 'The campaign description'
         ),

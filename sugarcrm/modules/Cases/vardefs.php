@@ -95,7 +95,7 @@ $dictionary['Case'] = array('table' => 'cases','audited'=>true, 'activity_enable
     'name' => 'resolution',
     'vname' => 'LBL_RESOLUTION',
     'type' => 'text',
-    'full_text_search' => array('enabled' => true, 'searchable' => true),
+    'full_text_search' => array('enabled' => true, 'searchable' => true, 'boost' => 0.65),
     'comment' => 'The resolution of the case'
   ),
 
@@ -292,4 +292,9 @@ VardefManager::createVardef('Cases','Case', array('default', 'assignable',
 //jc - adding for refactor for import to not use the required_fields array
 //defined in the field_arrays.php file
 $dictionary['Case']['fields']['name']['importable'] = 'required';
-?>
+
+//boost value for full text search
+$dictionary['Case']['fields']['name']['full_text_search']['boost'] = 1.53;
+$dictionary['Case']['fields']['case_number']['full_text_search']['boost'] = 1.29;
+$dictionary['Case']['fields']['description']['full_text_search']['boost'] = 0.66;
+$dictionary['Case']['fields']['work_log']['full_text_search']['boost'] = 0.64;

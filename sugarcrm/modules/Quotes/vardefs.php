@@ -82,6 +82,7 @@ $dictionary['Quote'] = array(
             'full_text_search' => array(
                 'enabled' => true,
                 'searchable' => true,
+                'boost' => 1.61,
             ),
             'importable' => 'required',
             'required' => true,
@@ -91,10 +92,6 @@ $dictionary['Quote'] = array(
             'vname' => 'LBL_QUOTE_TYPE',
             'type' => 'varchar',
             'len' => 100,
-            'full_text_search' => array(
-                'enabled' => true,
-                'searchable' => true,
-            ),
         ),
         'date_quote_expected_closed' => array(
             'name' => 'date_quote_expected_closed',
@@ -156,6 +153,10 @@ $dictionary['Quote'] = array(
             'audited' => true,
             'importable' => 'required',
             'required' => true,
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => false,
+            ),
         ),
         'purchase_order_num' => array(
             'name' => 'purchase_order_num',
@@ -166,6 +167,7 @@ $dictionary['Quote'] = array(
                 'enabled' => true,
                 'searchable' => true,
                 'type' => 'exact',
+                'boost' => 1.19,
             ),
         ),
         'quote_num' => array(
@@ -180,6 +182,7 @@ $dictionary['Quote'] = array(
                 'enabled' => true,
                 'searchable' => true,
                 'type' => 'exact',
+                'boost' => 1.17,
             ),
             'disable_num_format' => true,
             'enable_range_search' => true,
@@ -429,6 +432,7 @@ $dictionary['Quote'] = array(
             'full_text_search' => array(
                 'enabled' => true,
                 'searchable' => true,
+                'boost' => 0.24,
             ),
         ),
         'billing_address_city' => array(
@@ -469,6 +473,7 @@ $dictionary['Quote'] = array(
             'full_text_search' => array(
                 'enabled' => true,
                 'searchable' => true,
+                'boost' => 0.23,
             ),
         ),
         'shipping_address_city' => array(
@@ -950,3 +955,6 @@ VardefManager::createVardef(
         'currency'
     )
 );
+
+//boost value for full text search
+$dictionary['Quote']['fields']['description']['full_text_search']['boost'] = 0.57;

@@ -86,11 +86,10 @@ class GlobalSearchApiTest extends \PHPUnit_Framework_TestCase
      */
     public function testExecuteGlobalSearch()
     {
-        $engine = $this->getMock('Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\GlobalSearchInterface');
+        $engine = $this->getMock('Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\GlobalSearchCapable');
 
         $expectedCalls = array(
             'from',
-            'setAggFilters',
             'term',
             'limit',
             'offset',
@@ -309,6 +308,8 @@ class GlobalSearchApiTest extends \PHPUnit_Framework_TestCase
         $highlighter = $this->getMockBuilder('Sugarcrm\Sugarcrm\Elasticsearch\Query\Highlighter\AbstractHighlighter')
             ->getMockForAbstractClass();
 
-        return new ResultSet($elasticaResultSet, $highlighter);
+        $resultSet = new ResultSet($elasticaResultSet);
+        $resultSet->setHighlighter($highlighter);
+        return $resultSet;
     }
 }

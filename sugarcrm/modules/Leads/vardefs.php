@@ -146,7 +146,6 @@ $dictionary['Lead'] = array(
             'type' => 'varchar',
             'len' => '255',
             'unified_search' => true,
-            'full_text_search' => array('enabled' => true, 'boost' => 3),
             'comment' => 'Account name for lead',
         ),
         'accounts' => array(
@@ -164,7 +163,6 @@ $dictionary['Lead'] = array(
             'type' => 'text',
             'group' => 'account_name',
             'unified_search' => true,
-            'full_text_search' => array('enabled' => true, 'boost' => 1),
             'comment' => 'Description of lead account'
         ),
         'contact_id' => array(
@@ -702,3 +700,15 @@ VardefManager::createVardef(
     )
 );
 
+//boost value for full text search
+$dictionary['Lead']['fields']['first_name']['full_text_search']['boost'] = 1.87;
+$dictionary['Lead']['fields']['last_name']['full_text_search']['boost'] = 1.85;
+$dictionary['Lead']['fields']['email']['full_text_search']['boost'] = 1.83;
+$dictionary['Lead']['fields']['phone_home']['full_text_search']['boost'] = 1.02;
+$dictionary['Lead']['fields']['phone_mobile']['full_text_search']['boost'] = 1.01;
+$dictionary['Lead']['fields']['phone_work']['full_text_search']['boost'] = 1.00;
+$dictionary['Lead']['fields']['phone_other']['full_text_search']['boost'] = 0.99;
+$dictionary['Lead']['fields']['phone_fax']['full_text_search']['boost'] = 0.98;
+$dictionary['Lead']['fields']['description']['full_text_search']['boost'] = 0.70;
+$dictionary['Lead']['fields']['primary_address_street']['full_text_search']['boost'] = 0.31;
+$dictionary['Lead']['fields']['alt_address_street']['full_text_search']['boost'] = 0.30;

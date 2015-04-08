@@ -28,7 +28,7 @@ $dictionary['Contract'] = array(
             'comment' => 'The name of the contract',
             'importable' => 'required',
             'unified_search' => true,
-            'full_text_search' => array('enabled' => true, 'searchable' => true),
+            'full_text_search' => array('enabled' => true, 'searchable' => true, 'boost' => 1.59),
         ),
         'reference_code' => array(
             'name' => 'reference_code',
@@ -37,7 +37,7 @@ $dictionary['Contract'] = array(
             'len' => '255',
             'required' => false,
             'comment' => 'The reference code used by the organization to refer to this contract',
-            'full_text_search' => array('enabled' => true, 'searchable' => true),
+            'full_text_search' => array('enabled' => true, 'searchable' => true, 'boost' => 0.62),
         ),
         'quotes' => array(
             'name' => 'quotes',
@@ -180,6 +180,7 @@ $dictionary['Contract'] = array(
             'audited' => true,
             'comment' => 'The contract status',
             'importable' => 'required',
+            'full_text_search' => array('enabled' => true, 'searchable' => false),
         ),
         'customer_signed_date' => array(
             'name' => 'customer_signed_date',
@@ -372,3 +373,6 @@ VardefManager::createVardef(
         'currency'
     )
 );
+
+//boost value for full text search
+$dictionary['Contract']['fields']['description']['full_text_search']['boost'] = 0.63;

@@ -19,6 +19,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\MultiFieldBaseProperty;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\MultiFieldProperty;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Document;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\SearchFields;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\GlobalSearch;
 
 /**
  *
@@ -83,19 +84,21 @@ class EmailAddressHandler extends AbstractHandler implements
     /**
      * {@inheritdoc}
      */
-    public function initialize()
+    public function setProvider(GlobalSearch $provider)
     {
-        $this->provider->addSupportedTypes(array('email'));
-        $this->provider->addHighlighterFields($this->highlighterFields);
-        $this->provider->addWeightedBoosts($this->weightedBoost);
+        parent::setProvider($provider);
+
+        $provider->addSupportedTypes(array('email'));
+        $provider->addHighlighterFields($this->highlighterFields);
+        $provider->addWeightedBoosts($this->weightedBoost);
 
         // As we are searching against email_search field, we want to remap the
         // highlights from that field back to the original email field.
-        $this->provider->addFieldRemap(array($this->searchField => 'email'));
+        $provider->addFieldRemap(array($this->searchField => 'email'));
 
         // We don't want to add the email field to the queuemanager query
         // because we will populate the emails seperately.
-        $this->provider->addSkipTypesFromQueue(array('email'));
+        $provider->addSkipTypesFromQueue(array('email'));
     }
 
     /**
@@ -145,7 +148,8 @@ class EmailAddressHandler extends AbstractHandler implements
         $searchField->addProperty('primary', $email);
         $searchField->addProperty('secondary', $email);
 
-        $mapping->addObjectProperty('email_search', $searchField);
+        $searchFieldName = $mapping->getModule() . SearchFields::PREFIX_SEP . $this->searchField;
+        $mapping->addObjectProperty($searchFieldName, $searchField);
     }
 
     /**
@@ -163,7 +167,8 @@ class EmailAddressHandler extends AbstractHandler implements
 
         foreach ($emailFields as $emailField) {
             foreach ($multiFields as $multiField) {
-                $path = array($this->searchField, $emailField, $multiField);
+                $searchFieldName = $module . SearchFields::PREFIX_SEP . $this->searchField;
+                $path = array($searchFieldName, $emailField, $multiField);
                 $weightId = $multiField . '_' . $emailField;
                 $sf->addSearchField($module, $path, $defs, $weightId);
             }
@@ -207,7 +212,8 @@ class EmailAddressHandler extends AbstractHandler implements
         }
 
         // Set formatted value in special email search field
-        $document->setDataField($this->searchField, $value);
+        $searchField = $document->getType() . SearchFields::PREFIX_SEP . $this->searchField;
+        $document->setDataField($searchField, $value);
     }
 
     /**

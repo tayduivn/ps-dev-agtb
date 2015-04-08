@@ -17,7 +17,7 @@ namespace Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler;
  * Handler filter iterator
  *
  */
-class HandlerIterator extends \FilterIterator
+class HandlerFilterIterator extends \FilterIterator
 {
     /**
      * @var string
@@ -29,7 +29,7 @@ class HandlerIterator extends \FilterIterator
      * @param HandlerCollection $collection
      * @param string $interface
      */
-    public function __construct(\Iterator $collection, $interface = null)
+    public function __construct(\Iterator $collection, $interface)
     {
         $this->setInterface($interface);
         parent::__construct($collection);
@@ -40,26 +40,23 @@ class HandlerIterator extends \FilterIterator
      */
     public function accept()
     {
-        if (!empty($this->interface)) {
-            return in_array($this->interface, class_implements(parent::current()));
-        }
-
-        return true;
+        return in_array($this->interface, class_implements($this->current()));
     }
 
     /**
      * Set interface to filter by
      * @param string $interface
      */
-    public function setInterface($interface = null)
+    protected function setInterface($interface)
     {
-        if (empty($interface)) {
-            $this->interface = null;
-        } else {
-            $this->interface = sprintf(
-                'Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\%sHandlerInterface',
-                $interface
-            );
+        $this->interface = sprintf(
+            'Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\%sHandlerInterface',
+            $interface
+        );
+
+        // ensure interface is valid
+        if (!interface_exists($this->interface)) {
+            throw new \LogicException("Handler interface '{$this->interface}' does not exist");
         }
     }
 }

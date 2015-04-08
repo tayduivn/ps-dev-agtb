@@ -11,7 +11,7 @@
  */
 
 use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
-use Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\GlobalSearchInterface;
+use Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\GlobalSearchCapable;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\ResultSet;
 
 require_once 'include/SugarSearchEngine/SugarSearchEngineAbstractBase.php';
@@ -33,7 +33,7 @@ require_once 'include/SugarSearchEngine/Elastic/SugarSearchEngineElasticResultSe
 class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
 {
     /**
-     * @var GlobalSearchInterface
+     * @var GlobalSearchCapable
      */
     protected $engine;
 
@@ -45,10 +45,10 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
     /**
      * Ctor
      * @param array $options
-     * @param EngineInterface $engine
+     * @param GlobalSearchCapable $engine
      * @param LoggerManager $logger
      */
-    public function __construct($options = array(), GlobalSearchInterface $engine = null, LoggerManager $logger = null)
+    public function __construct($options = array(), GlobalSearchCapable $engine = null, LoggerManager $logger = null)
     {
         $this->options = $options;
         $this->engine = $engine ?: SearchEngine::getInstance('GlobalSearch')->getEngine();

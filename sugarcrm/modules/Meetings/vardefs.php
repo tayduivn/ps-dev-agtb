@@ -22,7 +22,7 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
     'type' => 'name',
     'dbType' => 'varchar',
 	'unified_search' => true,
-    'full_text_search' => array('enabled' => true, 'searchable' => true),
+    'full_text_search' => array('enabled' => true, 'searchable' => true, 'boost' => 1.43),
     'len' => '50',
     'comment' => 'Meeting name',
     'importable' => 'required',
@@ -51,7 +51,7 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
     'type' => 'varchar',
     'len' => '50',
     'comment' => 'Meeting location',
-    'full_text_search' => array('enabled' => true, 'searchable' => true),
+    'full_text_search' => array('enabled' => true, 'searchable' => true, 'boost' => 0.36),
   ),
   'password' =>
   array (
@@ -160,6 +160,7 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
     'options' => 'date_range_search_dom',
     'validation' => array('type' => 'isbefore', 'compareto' => 'date_end', 'blank' => false),
     'studio' => array('recordview' => false),
+    'full_text_search' => array('enabled' => true, 'searchable' => false),
   ),
 
   'date_end' =>
@@ -174,6 +175,7 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
     'options' => 'date_range_search_dom',
     'studio' => array('recordview' => false, 'wirelesseditview'=>false), // date_end is computed by the server from date_start and duration
 	'readonly' => true,
+    'full_text_search' => array('enabled' => true, 'searchable' => false),
   ),
   'parent_type' =>
   array (
@@ -197,6 +199,7 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
     'comment' => 'Meeting status (ex: Planned, Held, Not held)',
     'default' => 'Planned',
     'duplicate_on_record_copy' => 'no',
+    'full_text_search' => array('enabled' => true, 'searchable' => false),
   ),
   'type' =>
    array (
@@ -658,4 +661,7 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
 VardefManager::createVardef('Meetings','Meeting', array('default', 'assignable',
 'team_security',
 ));
-?>
+
+//boost value for full text search
+$dictionary['Meeting']['fields']['description']['full_text_search']['boost'] = 0.55;
+

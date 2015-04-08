@@ -55,7 +55,6 @@ class HandlerCollection implements \IteratorAggregate
     public function addHandler(HandlerInterface $handler)
     {
         $handler->setProvider($this->provider);
-        $handler->initialize();
         $this->handlers[] = $handler;
     }
 }

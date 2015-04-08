@@ -26,9 +26,4 @@ interface HandlerInterface
      * @param GlobalSearch $provider
      */
     public function setProvider(GlobalSearch $provider);
-
-    /**
-     * Initialize the handler
-     */
-    public function initialize();
 }

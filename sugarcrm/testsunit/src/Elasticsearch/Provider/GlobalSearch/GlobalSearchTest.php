@@ -30,7 +30,7 @@ class GlobalSearchTest extends \PHPUnit_Framework_TestCase
     {
         $sut = new GlobalSearch();
         $this->assertInstanceOf('Iterator', $sut->getHandlers());
-        $this->assertCount(3, $sut->getHandlers());
+        $this->assertCount(4, $sut->getHandlers());
     }
 
     /**
@@ -41,7 +41,6 @@ class GlobalSearchTest extends \PHPUnit_Framework_TestCase
         $supported = array(
             'varchar',
             'name',
-            'username',
             'text',
             'datetime',
             'date',
@@ -51,65 +50,12 @@ class GlobalSearchTest extends \PHPUnit_Framework_TestCase
             'id',
             'exact',
             'longtext',
+            'htmleditable_tinymce',
             'enum',
             'email',
         );
         $sut = new GlobalSearch();
         $this->assertEquals($supported, $sut->getSupportedTypes());
-    }
-
-    /**
-     * @covers ::isFieldSearchable
-     * @dataProvider dataProviderIsFieldSearchable
-     *
-     * @param array $defs
-     * @param boolean $isSearchable
-     */
-    public function testIsFieldSearchable(array $defs, $isSearchable)
-    {
-        $sut = $this->getGlobalSearchMock();
-        $this->assertSame($isSearchable, $sut->isFieldSearchable($defs));
-    }
-
-    public function dataProviderIsFieldSearchable()
-    {
-        return array(
-            array(
-                array(
-                    'name' => 'foo1',
-                    'full_text_search' => array('enabled' => true, 'searchable' => false),
-                ),
-                false,
-            ),
-            array(
-                array(
-                    'name' => 'foo2',
-                    'full_text_search' => array('enabled' => true, 'searchable' => true),
-                ),
-                true,
-            ),
-            array(
-                array(
-                    'name' => 'foo3',
-                    'full_text_search' => array('enabled' => true, 'boost' => 1),
-                ),
-                true,
-            ),
-            array(
-                array(
-                    'name' => 'foo4',
-                    'full_text_search' => array('enabled' => true, 'boost' => 3, 'searchable' => true),
-                ),
-                true,
-            ),
-            array(
-                array(
-                    'name' => 'foo5',
-                    'full_text_search' => array('enabled' => true),
-                ),
-                false,
-            ),
-        );
     }
 
     /**

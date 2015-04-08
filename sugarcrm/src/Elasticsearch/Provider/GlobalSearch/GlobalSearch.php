@@ -20,11 +20,11 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
 use Sugarcrm\Sugarcrm\Elasticsearch\Query\QueryBuilder;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Document;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\HandlerCollection;
-use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\HandlerIterator;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\HandlerFilterIterator;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\MultiFieldHandler;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\AutoIncrementHandler;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\EmailAddressHandler;
-use Sugarcrm\Sugarcrm\Elasticsearch\Query\Aggregation\AggregationHandler;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\CrossModuleAggHandler;
 
 /**
  *
@@ -85,6 +85,7 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
     /**
      * List of types which should be skipped by getBeanIndexFields
      * when being called from QueueManager.
+     * TODO: cleanup
      * @var array
      */
     protected $skipTypesFromQueue = array();
@@ -108,6 +109,7 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
         $this->handlers->addHandler(new MultiFieldHandler());
         $this->handlers->addHandler(new AutoIncrementHandler());
         $this->handlers->addHandler(new EmailAddressHandler());
+        $this->handlers->addHandler(new CrossModuleAggHandler());
     }
 
     /**
@@ -119,7 +121,10 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
      */
     public function getHandlers($interface = null)
     {
-        return new HandlerIterator($this->handlers->getIterator(), $interface);
+        if (empty($interface)) {
+            return $this->handlers->getIterator();
+        }
+        return new HandlerFilterIterator($this->handlers->getIterator(), $interface);
     }
 
     /**
@@ -241,39 +246,6 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
     }
 
     /**
-     * Add the aggregations to the query.
-     * @param QueryBuilder $builder the query builder
-     * @param array $moduleList the list of selected modules
-     * @return array
-     */
-    protected function handleAggregations($builder, $moduleList)
-    {
-        $handler = new AggregationHandler($this);
-
-        //Build the filters and aggregations
-        $handler->buildAggFilters();
-        $handler->buildAggregations($moduleList);
-
-        // Apply module aggregation
-        $moduleAggFilter = $handler->composeFiltersForAgg('_type');
-        if ($this->moduleAgg) {
-            $builder->addAggregator($this->getModuleAggregator($this->modules, $moduleAggFilter));
-        }
-
-        //Apply aggregations
-        $aggs = $handler->getAggs();
-        foreach ($aggs as $name => $agg) {
-            $builder->addAggregator($agg);
-        }
-
-        //Apply all the filters to post_filters
-        $filters = $handler->getAggFilters();
-        foreach ($filters as $name => $filter) {
-            $builder->addPostFilter($filter);
-        }
-    }
-
-    /**
      * Get search field wrapper
      * @param array $modules List of modules
      * @return array
@@ -286,7 +258,7 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
             foreach ($this->getFtsFields($module) as $field => $defs) {
 
                 // skip fields which are not searchable
-                if (!$this->isFieldSearchable($defs)) {
+                if (!$this->container->metaDataHelper->isFieldSearchable($defs)) {
                     continue;
                 }
 
@@ -296,8 +268,6 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
                 }
             }
         }
-
-        // TODO: add cache per user ?
         return $sf->getSearchFields();
     }
 
@@ -329,44 +299,7 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
         return $indexFields;
     }
 
-    /**
-     * @var boolean Module aggregation
-     */
-    protected $moduleAgg = true;
-
-    /**
-     * Enable/disable module aggregation facet
-     * @param boolean $toggle
-     * @return GlobalSearch
-     */
-    public function moduleAgg($toggle)
-    {
-        $this->moduleAgg = (bool) $toggle;
-        return $this;
-    }
-
-    /**
-     * Get module aggregator
-     * @param array $modules
-     * @param \Elastica\Filter\Bool $filter the filter for the module aggregation
-     * @return \Elastica\Aggregation\AbstractAggregation
-     */
-    protected function getModuleAggregator(array $modules, $filter)
-    {
-        $agg = new ModuleAggregation(count($modules), $filter);
-        return $agg->getAgg();
-    }
-
     //// Search interface
-
-    /**
-     * Get aggregation filters
-     * @return array
-     */
-    public function getAggFilters()
-    {
-        return $this->aggFilters;
-    }
 
     /**
      * @var string Search term
@@ -387,16 +320,6 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
      * @var integer
      */
     protected $offset = 0;
-
-    /**
-     * @var array Filter list
-     */
-    protected $filters = array();
-
-    /**
-     * @var array Aggregation Filter list
-     */
-    protected $aggFilters = array();
 
     /**
      * @var boolean Apply field level boosts
@@ -458,28 +381,6 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
     public function offset($offset)
     {
         $this->offset = (int) $offset;
-        return $this;
-    }
-
-    /**
-     * Add filter (not yet in interface)
-     * @return GlobalSearch
-     */
-    public function filter()
-    {
-        // TODO
-        return $this;
-    }
-
-    /**
-     * Add aggregation filters
-     * @return GlobalSearch
-     */
-    public function setAggFilters(array $aggFilters = array())
-    {
-        if (!empty($aggFilters)) {
-            $this->aggFilters = $aggFilters;
-        }
         return $this;
     }
 
@@ -552,11 +453,14 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
             ->setOffset($this->offset)
         ;
 
-        // Use MultiMatch if we are actually searching or fallback to MatchAll
         if (!empty($this->term)) {
             $builder->setQuery($this->getQuery($this->term, $this->modules));
         } else {
+
+            // If no query term is passed in we use a MatchAll and try to
+            // order by date_modified
             $builder->setQuery($this->getMatchAllQuery());
+            $this->sort = array('date_modified' => 'desc');
             $this->highlighter = false;
         }
 
@@ -571,7 +475,7 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
         }
 
         // Apply aggregations and post filters from aggregations
-        $this->handleAggregations($builder, $this->modules);
+        $this->addAggregations($builder, $this->aggFilters);
 
         return $builder->executeSearch();
     }
@@ -601,30 +505,79 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
         return new \Elastica\Query\MatchAll();
     }
 
+    //// Aggregations
+
     /**
-     * Check if a field is searchable or not.
-     * @param array $defs Field vardefs
+     * Get cross module aggregations
+     * @var boolean
+     */
+    protected $queryCrossModuleAggs = false;
+
+    /**
+     * List of aggregation filters
+     * @var array
+     */
+    protected $aggFilters = array();
+
+    /**
+     * List of modules for which to get the aggregations
+     * @var array
+     */
+    protected $queryModuleAggs = array();
+
+    /**
+     * Enable/disable cross module aggregations
+     * @param boolean $toggle
+     */
+    public function queryCrossModuleAggs($toggle)
+    {
+        $this->queryCrossModuleAggs = (bool) $toggle;
+    }
+
+    /**
+     * Set modules to get aggregations for
+     * @param array $modules
+     */
+    public function queryModuleAggs(array $modules)
+    {
+        $this->queryModuleAggs = $modules;
+    }
+
+    /**
+     * Get cross module aggregation flag
      * @return boolean
      */
-    public function isFieldSearchable(array $defs)
+    public function getQueryCrossModuleAggs()
     {
-        $isSearchable = false;
+        return $this->queryCrossModuleAggs;
+    }
 
-        // Determine if a field is considered as searchable:
-        // 1. searchable is is set to true
-        // 2. searchable is empty and boost is set (*)
-        //
-        // (*) This will be deprecated after 7.7 as this was the old behavior.
+    /**
+     * Get list of modules to generate aggregations for
+     * @return array
+     */
+    public function getQueryModuleAggs()
+    {
+        return $this->queryModuleAggs;
+    }
 
-        if (isset($defs['full_text_search']['searchable'])) {
-            if ($defs['full_text_search']['searchable'] == true) {
-                $isSearchable = true;
-            }
-        } else {
-            if (!empty($defs['full_text_search']['boost'])) {
-                $isSearchable = true;
-            }
+    /**
+     * Set aggregation filters
+     * @param array $filters
+     */
+    public function aggFilters(array $filters)
+    {
+        $this->aggFilters = $filters;
+    }
+
+    /**
+     * Add aggregations through available handlers
+     * @param QueryBuilder $builder
+     */
+    protected function addAggregations(QueryBuilder $builder)
+    {
+        foreach ($this->getHandlers('Aggregation') as $handler) {
+            $handler->addAggregations($builder);
         }
-        return $isSearchable;
     }
 }

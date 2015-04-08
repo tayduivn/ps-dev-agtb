@@ -13,12 +13,9 @@
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Adapter;
 
 use Sugarcrm\Sugarcrm\Elasticsearch\Exception\ConnectionException;
-use Sugarcrm\Sugarcrm\Elasticsearch\Logger;
 use Elastica\Client as BaseClient;
 use Elastica\Connection;
 use Elastica\Request;
-use Elastica\Response;
-use Psr\Log\LogLevel;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -121,22 +118,22 @@ class Client extends BaseClient
                 $data = $result->getData();
                 if (empty($data['version']['number'])) {
                     $status = self::CONN_NO_VERSION_AVAILABLE;
-                    $this->_logger->critical("No valid version string available");
+                    $this->_logger->critical("Elasticsearch verify conn: No valid version string available");
                 } else {
                     if ($this->isVersionCompatible($data['version']['number'])) {
                         $status = self::CONN_SUCCESS;
                     } else {
                         $status = self::CONN_VERSION_NOT_SUPPORTED;
-                        $this->_logger->critical("Unsupported Elasticsearch version");
+                        $this->_logger->critical("Elasticsearch verify conn: Unsupported Elasticsearch version");
                     }
                 }
             } else {
                 $status = self::CONN_ERROR;
-                $this->_logger->critical("No valid return  code");
+                $this->_logger->critical("Elasticsearch verify conn: No valid return code ({$result->getStatus()})");
             }
         } catch (\Exception $e) {
             $status = self::CONN_FAILURE;
-            $this->_logger->critical("Elasticsearch connection failure");
+            $this->_logger->critical("Elasticsearch verify conn: failure");
         }
 
         if ($updateAvailability) {
@@ -148,16 +145,25 @@ class Client extends BaseClient
     }
 
     /**
-     * Handle connection pool failures. Will be more useful when we support
-     * multiple connection to Elastichsearc backend.
+     * Handle connection pool failures. At this point we don't flag the backend
+     * as unavailable as there may be multiple connections. In case all
+     * connections from the pool are exhausted a ConnectionException will be
+     * thrown further down the pipe triggering the backend as unavailable.
+     *
+     * Will be more useful when we support multiple connection to the backend.
+     *
      * @param \Elastica\Connection $conn
      * @param \Exception $e
      * @param \Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Client $client
      */
     public function onConnectionFailure(Connection $conn, \Exception $e, Client $client)
     {
-        // TODO add better logging which server has connection issues ...
-        $this->_logger->log(LogLevel::CRITICAL, 'Elastichsearch connection went away ...');
+        $msg = sprintf(
+            "Elasticsearch: connection went away to %s:%s",
+            $conn->getHost(),
+            $conn->getPort()
+        );
+        $this->_logger->critical($msg);
     }
 
     /**
@@ -189,15 +195,14 @@ class Client extends BaseClient
      */
     protected function updateAvailability($status)
     {
+        $currentStatus = $this->loadAvailability();
 
-        $this->loadAvailability();
-
-        if ($status !== $this->available) {
+        if ($status !== $currentStatus) {
             $admin = \BeanFactory::getBean('Administration');
             $admin->saveSetting(self::STATUS_CATEGORY, self::STATUS_KEY, ($status ? 0 : 1));
             $this->available = $status;
             if ($status) {
-                $this->_logger->critical("Elasticsearch promoted as available");
+                $this->_logger->info("Elasticsearch promoted as available");
             } else {
                 $this->_logger->critical("Elasticsearch no longer available");
             }
@@ -257,7 +262,25 @@ class Client extends BaseClient
 
         try {
             $response = parent::request($path, $method, $data, $query);
+
+            // Handle HTTP 502 Bad Gateway
+
+            // In case a reverse proxy is sitting in between sugar and Elastic
+            // it must generate an HTTP 502 in case Elastic goes down. If this
+            // happens we declare the backend as unavailable as well just like
+            // we do if we encouter a connection failure.
+            // Note that this handling should be directly handled by Elastica
+            // instead as we are escaping from the ConnectionPool here and not
+            // retrying any other connections. For the current implementation
+            // this is okay as SugarCRM only supports one single connection at
+            // the moment.
+
+            if ($response->getStatus() === 502) {
+                throw new \Elastica\Exception\ConnectionException('HTTP 502 Bad gateway');
+            }
+
             $this->_logger->onRequestSuccess($this->_lastRequest, $this->_lastResponse);
+
         } catch (\Exception $e) {
             $this->_logger->onRequestFailure($this->getConnection(), $e, $path, $method, $data);
 
@@ -270,6 +293,7 @@ class Client extends BaseClient
             // Let is pass
             throw $e;
         }
+
         return $response;
     }
 

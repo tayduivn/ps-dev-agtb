@@ -39,9 +39,6 @@ class HandlerCollectionTest extends \PHPUnit_Framework_TestCase
             ->method('setProvider')
             ->with($this->equalTo($provider));
 
-        $handler->expects($this->once())
-            ->method('initialize');
-
         $collection = new HandlerCollection($provider);
         $collection->addHandler($handler);
 

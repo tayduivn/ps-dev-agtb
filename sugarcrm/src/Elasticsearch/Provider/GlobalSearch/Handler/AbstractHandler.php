@@ -33,11 +33,4 @@ abstract class AbstractHandler implements HandlerInterface
     {
         $this->provider = $provider;
     }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function initialize()
-    {
-    }
 }

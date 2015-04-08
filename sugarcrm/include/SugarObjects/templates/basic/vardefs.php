@@ -31,7 +31,7 @@ $vardefs = array(
                 'dbType' => 'varchar',
                 'len' => 255,
                 'unified_search' => true,
-                'full_text_search' => array('enabled' => true, 'searchable' => true),
+                'full_text_search' => array('enabled' => true, 'searchable' => true, 'boost' => 1.55),
                 'required' => true,
                 'importable' => 'required',
                 'duplicate_merge' => 'enabled',
@@ -68,6 +68,10 @@ $vardefs = array(
                 'full_text_search' => array(
                     'enabled' => true,
                     'searchable' => false,
+                    'aggregation' => array(
+                        'type' => 'dateRange',
+                        'cross_module' => true,
+                    ),
                 ),
                 'studio' => array(
                     'portaleditview' => false, // Bug58408 - hide from Portal edit layout
@@ -92,6 +96,17 @@ $vardefs = array(
                 'massupdate' => false,
                 'duplicate_on_record_copy' => 'no',
                 'readonly' => true,
+                'full_text_search' => array(
+                    'enabled' => true,
+                    'searchable' => false,
+                    'type' => 'id',
+                    'aggregations' => array(
+                        'modified_user_id' => array(
+                            'type' => 'MyItems',
+                            'label' => 'LBL_AGG_MODIFIED_BY_ME',
+                        ),
+                    ),
+                ),
             ),
         'modified_by_name' => array(
                 'name' => 'modified_by_name',
@@ -124,6 +139,17 @@ $vardefs = array(
                 'massupdate' => false,
                 'duplicate_on_record_copy' => 'no',
                 'readonly' => true,
+                'full_text_search' => array(
+                    'enabled' => true,
+                    'searchable' => false,
+                    'type' => 'id',
+                    'aggregations' => array(
+                        'created_by' => array(
+                            'type' => 'MyItems',
+                            'label' => 'LBL_AGG_CREATED_BY_ME',
+                        ),
+                    ),
+                ),
             ),
         'created_by_name' => array(
                 'name' => 'created_by_name',
@@ -172,7 +198,7 @@ $vardefs = array(
                 'vname' => 'LBL_DESCRIPTION',
                 'type' => 'text',
                 'comment' => 'Full text of the note',
-                'full_text_search' => array('enabled' => true, 'searchable' => true),
+                'full_text_search' => array('enabled' => true, 'searchable' => true, 'boost' => 0.5),
                 'rows' => 6,
                 'cols' => 80,
                 'duplicate_on_record_copy' => 'always',

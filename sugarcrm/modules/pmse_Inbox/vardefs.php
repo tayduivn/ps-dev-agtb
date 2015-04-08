@@ -38,10 +38,6 @@ $dictionary['pmse_Inbox'] = array(
     'reportable' => true,
     'unified_search' => false,
     'merge_filter' => 'disabled',
-    'full_text_search' => 
-    array (
-      'boost' => '0',
-    ),
     'calculated' => false,
     'len' => '255',
     'size' => '20',
@@ -67,10 +63,6 @@ $dictionary['pmse_Inbox'] = array(
     'reportable' => true,
     'unified_search' => false,
     'merge_filter' => 'disabled',
-    'full_text_search' => 
-    array (
-      'boost' => '0',
-    ),
     'calculated' => false,
     'len' => '255',
     'size' => '20',
@@ -97,10 +89,6 @@ $dictionary['pmse_Inbox'] = array(
     'reportable' => true,
     'unified_search' => false,
     'merge_filter' => 'disabled',
-    'full_text_search' => 
-    array (
-      'boost' => '0',
-    ),
     'calculated' => false,
     'len' => '32',
     'size' => '20',
@@ -122,10 +110,6 @@ $dictionary['pmse_Inbox'] = array(
     'reportable' => true,
     'unified_search' => false,
     'merge_filter' => 'disabled',
-    'full_text_search' => 
-    array (
-      'boost' => '0',
-    ),
     'calculated' => false,
     'len' => '36',
     'size' => '20',
@@ -147,10 +131,6 @@ $dictionary['pmse_Inbox'] = array(
     'reportable' => true,
     'unified_search' => false,
     'merge_filter' => 'disabled',
-    'full_text_search' => 
-    array (
-      'boost' => '0',
-    ),
     'calculated' => false,
     'len' => '255',
     'size' => '20',
@@ -172,10 +152,6 @@ $dictionary['pmse_Inbox'] = array(
     'reportable' => true,
     'unified_search' => false,
     'merge_filter' => 'disabled',
-    'full_text_search' => 
-    array (
-      'boost' => '0',
-    ),
     'calculated' => false,
     'len' => '255',
     'size' => '20',
@@ -197,10 +173,6 @@ $dictionary['pmse_Inbox'] = array(
     'reportable' => true,
     'unified_search' => false,
     'merge_filter' => 'disabled',
-    'full_text_search' => 
-    array (
-      'boost' => '0',
-    ),
     'calculated' => false,
     'len' => '32',
     'size' => '20',
@@ -222,10 +194,6 @@ $dictionary['pmse_Inbox'] = array(
     'reportable' => true,
     'unified_search' => false,
     'merge_filter' => 'disabled',
-    'full_text_search' => 
-    array (
-      'boost' => '0',
-    ),
     'calculated' => false,
     'len' => '36',
     'size' => '20',
@@ -315,10 +283,6 @@ $dictionary['pmse_Inbox'] = array(
     'reportable' => true,
     'unified_search' => false,
     'merge_filter' => 'disabled',
-    'full_text_search' => 
-    array (
-      'boost' => '0',
-    ),
     'calculated' => false,
     'len' => '10',
     'size' => '20',
@@ -341,10 +305,6 @@ $dictionary['pmse_Inbox'] = array(
     'reportable' => true,
     'unified_search' => false,
     'merge_filter' => 'disabled',
-    'full_text_search' => 
-    array (
-      'boost' => '0',
-    ),
     'calculated' => false,
     'len' => '12',
     'size' => '20',
@@ -357,7 +317,6 @@ $dictionary['pmse_Inbox'] = array(
         'dbType' => 'varchar',
         'len' => 255,
         'unified_search' => false,
-        'full_text_search' => array('enabled' => true, 'boost' => 3),
         'required' => true,
         'importable' => 'required',
         'duplicate_merge' => 'enabled',

@@ -27,7 +27,7 @@
 <pre class="pre-scrollable">
 {
     "Contacts":{
-        "strategy":"SingleStrategy",
+        "strategy":"static",
         "routing":{
             "write_index":"autobr2583_contacts",
             "read_indices":[
@@ -36,7 +36,7 @@
         }
     },
     "Accounts":{
-        "strategy":"SharedStrategy",
+        "strategy":"static",
         "routing":{
             "write_index":"autobr2583_shared",
             "read_indices":[
@@ -45,7 +45,7 @@
         }
     },
     "Emails":{
-        "strategy":"RollingStrategy",
+        "strategy":"rolling",
         "routing":{
             "write_index":"autobr2583_emails_201503",
             "read_indices":[
