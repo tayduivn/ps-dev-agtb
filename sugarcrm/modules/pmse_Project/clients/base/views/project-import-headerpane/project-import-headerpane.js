@@ -17,13 +17,13 @@
 
     initiateFinish: function() {
         var that = this;
-        if (App.cache.get("show_project_import_warning")) {
-            App.alert.show('project-import-confirmation',  {
+        if (app.cache.get("show_project_import_warning")) {
+            app.alert.show('project-import-confirmation',  {
                 level: 'confirmation',
-                messages: translate('LBL_PMSE_PROJECT_IMPORT_EXPORT_WARNING') + "<br/><br/>"
-                    + translate('LBL_PMSE_PROJECT_IMPORT_CONFIRMATION'),
+                messages: app.lang.get('LBL_PMSE_IMPORT_EXPORT_WARNING') + "<br/><br/>"
+                    + app.lang.get('LBL_PMSE_IMPORT_CONFIRMATION'),
                 onConfirm: function () {
-                    App.cache.set("show_project_import_warning", false);
+                    app.cache.set("show_project_import_warning", false);
                     that.context.trigger('project:import:finish');
                 },
                 onCancel: function () {

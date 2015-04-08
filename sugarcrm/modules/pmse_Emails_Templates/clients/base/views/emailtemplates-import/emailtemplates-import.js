@@ -32,16 +32,17 @@
 
     warnImportEmailTemplates: function () {
         var that = this;
-        if (App.cache.get("show_emailtpl_import_warning")) {
-            App.alert.show('emailtpl-import-confirmation', {
+        if (app.cache.get("show_emailtpl_import_warning")) {
+            app.alert.show('emailtpl-import-confirmation', {
                 level: 'confirmation',
-                messages: translate('LBL_PMSE_EMAILTPL_IMPORT_EXPORT_WARNING'),
+                messages: app.lang.get('LBL_PMSE_IMPORT_EXPORT_WARNING') + "<br/><br/>"
+                    + app.lang.get('LBL_PMSE_IMPORT_CONFIRMATION'),
                 onConfirm: function () {
-                    App.cache.set("show_emailtpl_import_warning", false);
+                    app.cache.set("show_emailtpl_import_warning", false);
                     that.importEmailTemplates();
                 },
                 onCancel: function () {
-                    App.router.goBack();
+                    app.router.goBack();
                 }
             });
         } else {

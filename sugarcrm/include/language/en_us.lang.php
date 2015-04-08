@@ -5325,6 +5325,11 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LNK_PMSE_EMAIL_TEMPLATES_NEW_RECORD' => 'Create Process Email Template',
     'LNK_PMSE_EMAIL_TEMPLATES_IMPORT_RECORD' => 'Import Process Email Templates',
 
+    //PMSE Modules Export/Import
+    'LBL_PMSE_IMPORT_EXPORT_WARNING' => 'When developing processes/business rules/email templates in another instance of Sugar, we strongly recommend that the instance is an exact clone of your production system. Processes/business rules/email templates built in an independent instance of Sugar may not function as desired after importing completes. Processes/business rules/email templates may rely on specific Studio or application-level changes including but not limited to custom field names, dropdown values, database IDs, etc. If these values are not identical from the instance where the process/business rule/email template was built, you may need to manually rebuild the process/business rule/email template in your target instance.',
+    'LBL_PMSE_IMPORT_CONFIRMATION' => 'Would you still like to proceed with this import?',
+    'LBL_PMSE_EXPORT_CONFIRMATION' => 'Would you still like to proceed with this export?',
+
     //DASHBOARDS
     'LBL_PMSE_PROCESS_USERS_CHART_NAME' => 'Pending Activities by Process',
     'LBL_PMSE_PROCESS_USERS_CHART_NAME_RECORD' => 'Pending Activities',

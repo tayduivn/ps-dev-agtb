@@ -32,16 +32,17 @@
 
     warnImportBusinessRules: function () {
         var that = this;
-        if (App.cache.get('show_br_import_warning')) {
-            App.alert.show('br-import-confirmation', {
+        if (app.cache.get('show_br_import_warning')) {
+            app.alert.show('br-import-confirmation', {
                 level: 'confirmation',
-                messages: translate('LBL_PMSE_BR_IMPORT_EXPORT_WARNING'),
+                messages: app.lang.get('LBL_PMSE_IMPORT_EXPORT_WARNING') + "<br/><br/>"
+                    + app.lang.get('LBL_PMSE_IMPORT_CONFIRMATION'),
                 onConfirm: function () {
-                    App.cache.set('show_br_import_warning', false);
+                    app.cache.set('show_br_import_warning', false);
                     that.importBusinessRules();
                 },
                 onCancel: function () {
-                    App.router.goBack();
+                    app.router.goBack();
                 }
             });
         } else {

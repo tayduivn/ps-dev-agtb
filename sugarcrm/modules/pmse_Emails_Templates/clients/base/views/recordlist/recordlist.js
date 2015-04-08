@@ -28,14 +28,14 @@
     },
 
     warnExportEmailsTemplates: function (model) {
-        var that = this, lang;
-        if (App.cache.get("show_emailtpl_export_warning")) {
-            lang = App.lang.get("pmse_Emails_Templates");
-            App.alert.show('emailtpl-export-confirmation', {
+        var that = this;
+        if (app.cache.get("show_emailtpl_export_warning")) {
+            app.alert.show('emailtpl-export-confirmation', {
                 level: 'confirmation',
-                message: lang['LBL_PMSE_EMAILTPL_IMPORT_EXPORT_WARNING'],
+                messages: app.lang.get('LBL_PMSE_IMPORT_EXPORT_WARNING') + "<br/><br/>"
+                    + app.lang.get("LBL_PMSE_EXPORT_CONFIRMATION"),
                 onConfirm: function () {
-                    App.cache.set('show_emailtpl_export_warning', false);
+                    app.cache.set('show_emailtpl_export_warning', false);
                     that.exportEmailsTemplates(model);
                 },
                 onCancel: $.noop

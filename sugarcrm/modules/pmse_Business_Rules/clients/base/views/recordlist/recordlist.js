@@ -28,14 +28,14 @@
     },
 
     warnExportBusinessRules: function (model) {
-        var that = this, lang;
-        if (App.cache.get("show_br_export_warning")) {
-            lang = App.lang.get("pmse_Business_Rules");
-            App.alert.show('show-br-export-confirmation', {
+        var that = this;
+        if (app.cache.get("show_br_export_warning")) {
+            app.alert.show('show-br-export-confirmation', {
                 level: 'confirmation',
-                messages: lang['LBL_PMSE_BR_IMPORT_EXPORT_WARNING'],
+                messages: app.lang.get('LBL_PMSE_IMPORT_EXPORT_WARNING') + "<br/><br/>"
+                    + app.lang.get('LBL_PMSE_EXPORT_CONFIRMATION'),
                 onConfirm: function() {
-                    App.cache.set("show_br_export_warning");
+                    app.cache.set("show_br_export_warning", false);
                     that.exportBusinessRules(model);
                 },
                 onCancel: $.noop

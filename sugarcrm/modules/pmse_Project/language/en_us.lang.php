@@ -37,9 +37,6 @@ $mod_strings = array (
 
     'LBL_PMSE_SAVE_DESIGN_BUTTON_LABEL' => 'Save & Design',
     'LBL_PMSE_IMPORT_BUTTON_LABEL' => 'Import',
-    'LBL_PMSE_PROJECT_IMPORT_EXPORT_WARNING' => 'When developing processes in another instance of Sugar, we strongly recommend that the instance is an exact clone of your production system. Processes built in an independent instance of Sugar may not function as desired after importing completes. Processes may rely on specific Studio or application-level changes including but not limited to custom field names, dropdown values, database IDs, etc. If these values are not identical from the instance where the process was built, you may need to manually rebuild the process in your target instance.',
-    'LBL_PMSE_PROJECT_IMPORT_CONFIRMATION' => 'Would you still like to proceed with this import?',
-    'LBL_PMSE_PROJECT_EXPORT_CONFIRMATION' => 'Would you still like to proceed with this export?',
 
     'LBL_PMSE_MY_PROCESS_DEFINITIONS' => 'My Process Definitions',
     'LBL_PMSE_ALL_PROCESS_DEFINITIONS' => 'All Process Definitions',
