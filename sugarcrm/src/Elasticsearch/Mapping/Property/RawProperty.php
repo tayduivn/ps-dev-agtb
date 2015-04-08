@@ -28,11 +28,6 @@ class RawProperty implements PropertyInterface
     protected $mapping = array();
 
     /**
-     * @var boolean the flag to indicate if this field is genetic
-     */
-    protected $isGenetic = false;
-
-    /**
      * {@inheritdoc}
      */
     public function getMapping()
@@ -64,23 +59,5 @@ class RawProperty implements PropertyInterface
         if (!in_array($field, $this->mapping['copy_to'])) {
             $this->mapping['copy_to'][] = $field;
         }
-    }
-
-    /**
-     * Set the flag of isGenetic to the given value.
-     * @param $isGenetic boolean flag value
-     */
-    public function setIsGenetic($isGenetic)
-    {
-        $this->isGenetic = $isGenetic;
-    }
-
-    /**
-     * Get the value of the isGenetic flag.
-     * @return boolean
-     */
-    public function getIsGenetic()
-    {
-        return $this->isGenetic;
     }
 }

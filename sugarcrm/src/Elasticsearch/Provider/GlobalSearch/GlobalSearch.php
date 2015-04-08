@@ -26,7 +26,6 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\AutoIncrementH
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\EmailAddressHandler;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\CrossModuleAggHandler;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\DenormalizeTagIdsHandler;
-use Sugarcrm\Sugarcrm\Elasticsearch\Query\Aggregation\AggregationHandler;
 
 /**
  *
@@ -574,7 +573,9 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
         $this->addAggregations($builder, $this->aggFilters);
 
         // Add the filter for the tags
-        $this->handleTagFilters($builder, $this->tagFilters);
+        if (!empty($this->tagFilters)) {
+            $this->handleTagFilters($builder, $this->tagFilters);
+        }
 
         return $builder->executeSearch();
     }
@@ -599,7 +600,8 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
             $builder->setQuery($this->getQuery($this->term, $modules));
         } else {
             $builder->setQuery($this->getMatchAllQuery());
-            $this->highlighter = false;
+            $this->sort = array('_score');
+            $this->useHighlighter = false;
         }
 
         // Set sorting

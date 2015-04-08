@@ -66,7 +66,6 @@ class DenormalizeTagIdsHandler extends AbstractHandler implements
         }
 
         $tagIdsProperty = new RawProperty();
-        $tagIdsProperty->setIsGenetic(true);
         $tagIdsProperty->setMapping(array(
             'type' => 'string',
             'index' => 'not_analyzed',

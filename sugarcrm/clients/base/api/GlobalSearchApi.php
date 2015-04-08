@@ -217,7 +217,7 @@ class GlobalSearchApi extends SugarApi
         }
 
         if (!empty($args['tag_filters'])) {
-            $this->tagFilters = explode(',', $args['tag_filters']);
+            $this->tagFilters = $this->parseTagFilters($args['tag_filters']);
         }
 
         // Set search term
@@ -280,6 +280,19 @@ class GlobalSearchApi extends SugarApi
 
         }
         return $parsed;
+    }
+
+    /**
+     * Parse the list of tag filters from the arguments
+     * @param string $tagFilterArgs
+     * @return array
+     */
+    protected function parseTagFilters($tagFilterArgs)
+    {
+        if (!is_array($tagFilterArgs)) {
+            return array();
+        }
+        return $tagFilterArgs;
     }
 
     /**
