@@ -72,6 +72,9 @@
             model.primaryFields = gsUtils.highlightFields(model, moduleMeta.primaryFields);
             model.secondaryFields = gsUtils.highlightFields(model, moduleMeta.secondaryFields, true);
 
+            this._rejectEmptyFields(model, model.primaryFields);
+            this._rejectEmptyFields(model, model.secondaryFields);
+
             model.primaryFields = this._sortHighlights(model.primaryFields);
             model.secondaryFields = this._sortHighlights(model.secondaryFields);
 
@@ -100,6 +103,25 @@
             return field.highlighted ? 1 : 2;
         });
         return fieldsArray;
+    },
+
+    /**
+     * Removes fields that have an empty value.
+     *
+     * @param {Data.Bean} model The model.
+     * @param {Object} viewDefs The viewDefs of the fields.
+     * @private
+     */
+    _rejectEmptyFields: function(model, viewDefs) {
+        _.each(viewDefs, function(field) {
+            if (field.type === 'avatar') {
+                return;
+            }
+            var fieldValue = model.get(field.name);
+            if (_.isEmpty(fieldValue) && fieldValue !== 0) {
+                delete viewDefs[field.name];
+            }
+        });
     },
 
     /**
