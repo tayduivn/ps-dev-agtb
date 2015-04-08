@@ -213,7 +213,7 @@ class GlobalSearchApi extends SugarApi
 
         // Get tags related parameters
         if (!empty($args['getTags'])) {
-            $this->getTags = $args['getTags'];
+            $this->getTags = ($args['getTags'] === 'true')? true: false;
         }
 
         if (!empty($args['tag_filters'])) {
