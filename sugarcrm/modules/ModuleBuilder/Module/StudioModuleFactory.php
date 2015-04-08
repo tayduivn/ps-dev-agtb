@@ -39,5 +39,23 @@ class StudioModuleFactory
         self::$loadedMods[$module] = $sm;
         return $sm;
 	}
+
+    /**
+     * Ability to clean out the studio module cache.
+     *
+     * @param string $module
+     * @return bool
+     */
+    public static function clearModuleCache($module = '') {
+
+        if (empty($module)) {
+            self::$loadedMods = array();
+            return true;
+        } else if(isset(self::$loadedMods[$module]))  {
+            unset(self::$loadedMods[$module]);
+            return true;
+        }
+
+        return false;
+    }
 }
-?>

@@ -492,6 +492,14 @@ class SidecarMetaDataUpgrader
                 !file_exists('custom/' . $quickcreatedefsPath) && !file_exists($quickcreatedefsPath)) {
                 continue;
             }
+
+            //[CRYS-697] If module in BWC and don't have any customization not needed to upgrade it
+            $isCustomized =
+                file_exists('custom/' . $sidecarMetadataPath) || file_exists('custom/' . $quickcreatedefsPath);
+            if (isModuleBWC($module) && !$isCustomized) {
+                continue;
+            }
+
             $file = $this->getUpgradeFileParams(
                 'modules/' . $module . '/clients/base/menus/quickcreate/quickcreate.php',
                 $module, 'base', 'custom', null, true, false, true
@@ -514,6 +522,14 @@ class SidecarMetaDataUpgrader
                 !file_exists('custom/' . $quickcreatedefsPath) && !file_exists($quickcreatedefsPath)) {
                 continue;
             }
+
+            //[CRYS-697] If module in BWC and don't have any customization not needed to upgrade it
+            $isCustomized =
+                file_exists('custom/' . $sidecarMetadataPath) || file_exists('custom/' . $quickcreatedefsPath);
+            if (isModuleBWC($module) && !$isCustomized) {
+                continue;
+            }
+
             $file = $this->getUpgradeFileParams(
                 'modules/' . $module . '/clients/base/menus/quickcreate/quickcreate.php',
                 $module, 'base', 'custom', null, true, false, true

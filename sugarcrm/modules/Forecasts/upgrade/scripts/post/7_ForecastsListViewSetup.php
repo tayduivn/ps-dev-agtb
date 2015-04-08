@@ -50,9 +50,8 @@ class SugarUpgradeForecastsListViewSetup extends UpgradeScript
         if ($this->from_flavor == $this->to_flavor) {
             if (version_compare($this->from_version, '7', '<') && version_compare($this->to_version, '7', '>=')) {
                 $this->handle6to7($config);
+                return;
             }
-
-            return;
         }
 
         // figure out the columns that we need to store

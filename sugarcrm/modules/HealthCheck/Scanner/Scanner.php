@@ -74,6 +74,12 @@ class HealthCheckScanner
      * @var array List of packages with compatible versions to check.
      */
     protected $packages = array(
+        'Process Author' => array(
+            array('version' => '*', '__MetaSuffix' => 'DataReset'),
+        ),
+        'ProcessMaker' => array(
+            array('version' => '*', '__MetaSuffix' => 'DataReset'),
+        ),
         'SugarSMS' => array(
             array('version' => '*'),
         ),
@@ -758,7 +764,7 @@ class HealthCheckScanner
                     }
                 }
                 if ($incompatible) {
-                    $this->updateStatus("incompatIntegration", $pack['name'], $pack['version']);
+                    $this->updateStatus("incompatIntegration" . (!empty($req['__MetaSuffix']) ? $req['__MetaSuffix'] : ''), $pack['name'], $pack['version']);
                 }
             }
         }

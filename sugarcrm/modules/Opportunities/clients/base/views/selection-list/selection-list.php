@@ -82,7 +82,10 @@ $viewdefs['Opportunities']['base']['view']['selection-list'] = array(
                     'label' => 'LBL_DATE_CLOSED',
                     'enabled' => true,
                     'default' => false,
-                    'readonly' => true
+                    'readonly' => true,
+                    'related_fields' => array(
+                        'date_closed_timestamp'
+                    )
                 ),
                 array(
                     'name' => 'created_by_name',

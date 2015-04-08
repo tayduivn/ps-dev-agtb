@@ -413,7 +413,11 @@ class HealthCheckScannerMeta
             'report' => 'vardefIncorrectDisplayDefault',
             'bucket' => self::MANUAL,
         ),
-
+        540 => array(
+            'report' => 'incompatIntegrationDataReset',
+            'bucket' => self::MANUAL,
+            'kb'     => 'http://support.sugarcrm.com/04_Knowledge_Base/02Administration/100Install/Troubleshooting_Health_Check_Output/Health_Check_Error_Incompatible_Integration_Data_Reset/',
+        ),
 
         // Bucket G
         901 => array(
