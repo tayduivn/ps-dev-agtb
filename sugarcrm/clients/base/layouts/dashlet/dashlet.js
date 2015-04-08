@@ -96,6 +96,8 @@
                         skipFetch: true
                     }
                 });
+            } else {
+                this.noToolBar = true;
             }
         }
         if (this.meta.empty) {
@@ -393,6 +395,9 @@
      * @param {Boolean} true if it needs to be collapsed
      */
     collapse: function(collapsed) {
+        if (this.noToolBar) {
+            return;
+        }
         this.$(".dashlet-toggle > i").toggleClass("fa-chevron-down", collapsed);
         this.$(".dashlet-toggle > i").toggleClass("fa-chevron-up", !collapsed);
         this.$(".thumbnail").toggleClass("collapsed", collapsed);

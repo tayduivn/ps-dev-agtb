@@ -2643,6 +2643,7 @@ $app_strings = array (
     'LBL_CONTACTS'=>'Contacts',
     'LBL_CONTRACTS'=>'Contracts',
     'LBL_COUNTRY' => 'Country:',
+    'LBL_RESET_BUTTON_LABEL' => 'Reset',
     'LBL_CREATE_BUTTON_LABEL' => 'Create',
     'LBL_CREATED_BY_USER'=>'Created by User',
     'LBL_CREATED_USER'=>'Created by User',
