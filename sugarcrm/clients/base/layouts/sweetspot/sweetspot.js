@@ -45,6 +45,44 @@
     },
 
     /**
+     * Binds events that this layout uses.
+     *
+     * @protected
+     */
+    _bindEvents: function() {
+        this.bindEsc();
+        this.bindOutsideClick();
+    },
+
+    /**
+     * Unbinds events that this layout uses.
+     *
+     * @protected
+     */
+    _unbindEvents: function() {
+        this.unbindEsc();
+        this.unbindOutsideClick();
+    },
+
+    /**
+     * Binds the outside `click` event.
+     */
+    bindOutsideClick: function() {
+        $('body').bind('click.' + this.cid, _.bind(function(e) {
+            if ($(e.target).closest('#sweetspot').length === 0) {
+                this.hide();
+            }
+        }, this));
+    },
+
+    /**
+     * Unbinds the outside `click` event.
+     */
+    unbindOutsideClick: function() {
+        $('body').unbind('click.' + this.cid);
+    },
+
+    /**
      * Binds the `esc` keydown event.
      */
     bindEsc: function() {
@@ -83,7 +121,7 @@
         this.$('input').val('');
         this.$el.fadeToggle(50, 'linear', _.bind(this.focusInput, this));
         this.trigger('show');
-        this.bindEsc();
+        this._bindEvents();
     },
 
     /**
@@ -98,7 +136,7 @@
         }
 
         this._isVisible = false;
-        this.unbindEsc();
+        this._unbindEvents();
         this.$el.fadeToggle(50, 'linear');
         this.trigger('hide');
 },
@@ -168,7 +206,7 @@
      * @inheritDoc
      */
     _dispose: function() {
-        this.unbindEsc();
+        this._unbindEvents();
         this._super('_dispose');
     }
 })
