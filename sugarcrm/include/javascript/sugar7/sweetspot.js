@@ -69,10 +69,15 @@
         var getModuleLinks = function() {
             var actions = [];
             var moduleList = app.metadata.getModuleNames({filter: 'display_tab'});
+            if (app.metadata.getModule('Administration')) {
+                moduleList.push('Administration');
+                moduleList = _.uniq(moduleList);
+            }
             _.each(moduleList, function(module) {
                 var menuMeta = app.metadata.getModule(module).menu;
-                var headerMeta = menuMeta && menuMeta.header && menuMeta.header.meta;
-                _.each(headerMeta, function(action) {
+                var headerMeta = menuMeta && menuMeta.header && menuMeta.header.meta || [];
+                var sweetspotMeta = menuMeta && menuMeta.sweetspot && menuMeta.sweetspot.meta || [];
+                _.each(headerMeta.concat(sweetspotMeta), function(action) {
                     if (hasAccessToAction(action.acl_module || module, action) === false) {
                         return;
                     }
@@ -102,35 +107,6 @@
                     })
                 });
             });
-            var studio = {
-                module: 'Administration',
-                label: 'Ad',
-                name: app.lang.get('LBL_STUDIO', 'Administration'),
-                acl_action: 'admin',
-                route: '#bwc/index.php?module=ModuleBuilder&action=index&type=studio',
-                icon: 'fa-cogs'
-            };
-            var systemSettings = {
-                module: 'Administration',
-                label: 'Ad',
-                name: app.lang.get('LBL_CONFIGURE_SETTINGS_TITLE', 'Administration'),
-                acl_action: 'admin',
-                route: '#bwc/index.php?module=Configurator&action=EditView',
-                icon: 'fa-cogs'
-            };
-            var styleguide = {
-                module: 'Administration',
-                label: 'Ad',
-                name: app.lang.get('LBL_MANAGE_STYLEGUIDE', 'Administration'),
-                acl_action: 'admin',
-                route: '#Styleguide',
-                icon: 'fa-cogs'
-            };
-            if (hasAccessToAction('Administration', studio) !== false) {
-                actions.push(studio);
-                actions.push(systemSettings);
-                actions.push(styleguide);
-            }
             actions.push({
                 name: app.lang.getModuleName('Forecasts', {plural: true}),
                 module: 'Forecasts',
