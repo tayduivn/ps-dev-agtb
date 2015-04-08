@@ -265,19 +265,19 @@ class MetaDataHelperTest extends \PHPUnit_Framework_TestCase
                         ),
                     ),
                     'module' => array(
-                        'Tasks__description.agg1' => array(
+                        'description.agg1' => array(
                             'type' => 'term',
                             'options' => array()
                         ),
-                        'Tasks__work_log.agg2' => array(
+                        'work_log.agg2' => array(
                             'type' => 'term',
                             'options' => array('size' => 21, 'order' => 'desc'),
                         ),
-                        'Tasks__status.status_types' => array(
+                        'status.status_types' => array(
                             'type' => 'term',
                             'options' => array('foo' => 'bar1'),
                         ),
-                        'Tasks__status.status_something' => array(
+                        'status.status_something' => array(
                             'type' => 'myStatus',
                             'options' => array('foo' => 'bar3'),
                         ),

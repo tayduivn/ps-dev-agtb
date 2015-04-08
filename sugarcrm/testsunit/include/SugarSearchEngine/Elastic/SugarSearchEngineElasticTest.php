@@ -31,7 +31,7 @@ class SugarSearchEngineElasticTest extends \PHPUnit_Framework_TestCase
             'term',
         );
 
-        $engine = $this->getMockBuilder('Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\GlobalSearchInterface')
+        $engine = $this->getMockBuilder('Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\GlobalSearchCapable')
             ->setMethods($engineMethods)
             ->getMockForAbstractClass();
 

@@ -45,12 +45,12 @@ class SearchEngineTest extends \PHPUnit_Framework_TestCase
                 false,
             ),
             array(
-                'Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\GlobalSearchInterface',
+                'Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\GlobalSearchCapable',
                 'FakeCapability',
                 false,
             ),
             array(
-                'Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\GlobalSearchInterface',
+                'Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\GlobalSearchCapable',
                 'GlobalSearch',
                 true,
             )
@@ -73,7 +73,7 @@ class SearchEngineTest extends \PHPUnit_Framework_TestCase
     {
         return array(
             array($this->getMock('Sugarcrm\Sugarcrm\SearchEngine\Engine\EngineInterface')),
-            array($this->getMock('Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\GlobalSearchInterface')),
+            array($this->getMock('Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\GlobalSearchCapable')),
         );
     }
 

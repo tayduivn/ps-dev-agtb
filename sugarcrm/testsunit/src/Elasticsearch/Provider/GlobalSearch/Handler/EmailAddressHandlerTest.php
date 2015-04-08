@@ -42,10 +42,10 @@ class EmailAddressHandlerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers ::initialize
-     * @dataProvider providerTestInitialize
+     * @covers ::setProvider
+     * @dataProvider providerTestSetProvider
      */
-    public function testInitialize($property, array $value, $method, array $expected)
+    public function testSetProvider($property, array $value, $method, array $expected)
     {
         $provider = $this->getMockBuilder('\Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\GlobalSearch')
             ->disableOriginalConstructor()
@@ -56,16 +56,15 @@ class EmailAddressHandlerTest extends \PHPUnit_Framework_TestCase
             ->with($this->equalTo($expected));
 
         $sut = $this->getEmailAddressHandlerMock();
-        $sut->setProvider($provider);
 
         if ($property !== null) {
             TestReflection::setProtectedValue($sut, $property, $value);
         }
 
-        $sut->initialize();
+        $sut->setProvider($provider);
     }
 
-    public function providerTestInitialize()
+    public function providerTestSetProvider()
     {
         return array(
             array(
@@ -163,12 +162,6 @@ class EmailAddressHandlerTest extends \PHPUnit_Framework_TestCase
                     'type' => 'email',
                 ),
                 array(
-                    'testModule__email' => array(
-                        'type' => 'object',
-                        'include_in_all' => false,
-                        'dynamic' => false,
-                        'enabled' => false,
-                    ),
                     'testModule__email_search' => array(
                         'type' => 'object',
                         'dynamic' => false,
@@ -212,6 +205,12 @@ class EmailAddressHandlerTest extends \PHPUnit_Framework_TestCase
                                 ),
                             ),
                         ),
+                    ),
+                    'email' => array(
+                        'type' => 'object',
+                        'include_in_all' => false,
+                        'dynamic' => false,
+                        'enabled' => false,
                     ),
                 ),
             ),
@@ -316,7 +315,7 @@ class EmailAddressHandlerTest extends \PHPUnit_Framework_TestCase
      * @covers ::getEmailAddressesForBean
      * @dataProvider providerTestProcessDocumentPreIndex
      */
-    public function testProcessDocumentPreIndex(array $beanFields, $fetch, array $expected)
+    public function testProcessDocumentPreIndex($module, array $beanFields, $fetch, array $expected)
     {
         $bean = $this->getSugarBeanMock($beanFields);
         $sut = $this->getEmailAddressHandlerMock(array('fetchEmailAddressesFromDatabase'));
@@ -332,6 +331,7 @@ class EmailAddressHandlerTest extends \PHPUnit_Framework_TestCase
         }
 
         $document = new Document();
+        $document->setType($module);
 
         $sut->processDocumentPreIndex($document, $bean);
         $this->assertEquals($expected, $document->getData());
@@ -342,6 +342,7 @@ class EmailAddressHandlerTest extends \PHPUnit_Framework_TestCase
         return array(
             // missing email field in bean field_defs
             array(
+                'Contacts',
                 array(
                     'first_name' => 'Jelle',
                     'last_name' => 'Vink',
@@ -354,6 +355,7 @@ class EmailAddressHandlerTest extends \PHPUnit_Framework_TestCase
             ),
             // no emailAddress object means no fetch and empty result
             array(
+                'Accounts',
                 array(
                     'name' => 'SugarCRM',
                     'email' => 'foobar',
@@ -364,7 +366,7 @@ class EmailAddressHandlerTest extends \PHPUnit_Framework_TestCase
                 null,
                 array(
                     'email' => array(),
-                    'email_search' => array(
+                    'Accounts__email_search' => array(
                         'primary' => '',
                         'secondary' => array(),
                     ),
@@ -372,6 +374,7 @@ class EmailAddressHandlerTest extends \PHPUnit_Framework_TestCase
             ),
             // emailAddress present but not correct object
             array(
+                'Accounts',
                 array(
                     'name' => 'SugarCRM',
                     'email' => 'foobar',
@@ -383,7 +386,7 @@ class EmailAddressHandlerTest extends \PHPUnit_Framework_TestCase
                 null,
                 array(
                     'email' => array(),
-                    'email_search' => array(
+                    'Accounts__email_search' => array(
                         'primary' => '',
                         'secondary' => array(),
                     ),
@@ -391,6 +394,7 @@ class EmailAddressHandlerTest extends \PHPUnit_Framework_TestCase
             ),
             // emailAddress present and fetched
             array(
+                'Leads',
                 array(
                     'name' => 'SugarCRM',
                     'email' => 'foobar',
@@ -428,7 +432,7 @@ class EmailAddressHandlerTest extends \PHPUnit_Framework_TestCase
                             'opt_out' => false,
                         ),
                     ),
-                    'email_search' => array(
+                    'Leads__email_search' => array(
                         'primary' => 'first@gmail.com',
                         'secondary' => array('second@sugarcrm.com', 'ok@more.co.uk'),
                     ),
@@ -436,6 +440,7 @@ class EmailAddressHandlerTest extends \PHPUnit_Framework_TestCase
             ),
             // emailAddress present and dontLegacySave
             array(
+                'Leads',
                 array(
                     'name' => 'SugarCRM',
                     'email' => 'foobar',
@@ -466,7 +471,7 @@ class EmailAddressHandlerTest extends \PHPUnit_Framework_TestCase
                             'opt_out' => false,
                         ),
                     ),
-                    'email_search' => array(
+                    'Leads__email_search' => array(
                         'primary' => 'first@gmail.com',
                         'secondary' => array('second@sugarcrm.com'),
                     ),
@@ -474,6 +479,7 @@ class EmailAddressHandlerTest extends \PHPUnit_Framework_TestCase
             ),
             // emailAddress present with fetched and dontLegacySave
             array(
+                'Accounts',
                 array(
                     'name' => 'SugarCRM',
                     'email' => 'foobar',
@@ -497,7 +503,7 @@ class EmailAddressHandlerTest extends \PHPUnit_Framework_TestCase
                             'opt_out' => false,
                         ),
                     ),
-                    'email_search' => array(
+                    'Accounts__email_search' => array(
                         'primary' => 'first@gmail.com',
                         'secondary' => array(),
                     ),
@@ -505,6 +511,7 @@ class EmailAddressHandlerTest extends \PHPUnit_Framework_TestCase
             ),
             // emailAddress present with fetch from database
             array(
+                'Leads',
                 array(
                     'name' => 'SugarCRM',
                     'email' => 'foobar',
@@ -538,7 +545,7 @@ class EmailAddressHandlerTest extends \PHPUnit_Framework_TestCase
                             'opt_out' => false,
                         ),
                     ),
-                    'email_search' => array(
+                    'Leads__email_search' => array(
                         'primary' => 'first@gmail.com',
                         'secondary' => array('second@sugarcrm.com', 'ok@more.co.uk'),
                     ),

@@ -52,7 +52,6 @@ class GlobalSearchTest extends \PHPUnit_Framework_TestCase
             'longtext',
             'htmleditable_tinymce',
             'enum',
-            'assigned_user_name',
             'email',
         );
         $sut = new GlobalSearch();
