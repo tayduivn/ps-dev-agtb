@@ -12,26 +12,18 @@
 
 namespace Sugarcrm\Sugarcrm\SearchEngine\Capability\Aggregation;
 
-use Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\GlobalSearchInterface;
+use Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\ResultSetInterface as BaseInterface;
 
 /**
  *
- * Aggregation (facet) support interface
+ * ResultSet interface for Aggregation capability
  *
  */
-interface AggregationInterface extends GlobalSearchInterface
+interface ResultSetInterface extends BaseInterface
 {
     /**
-     * Query cross module aggregations, default false
-     * @param boolean $toggle
-     * @return AggregationInterface
+     * Get aggregations.
+     * @return array
      */
-    public function crossModuleAgg($toggle);
-
-    /**
-     * Query module specific aggregations, default empty
-     * @param array $list
-     * @return AggregationInterface
-     */
-    public function moduleAggs(array $list);
+    public function getAggregations();
 }

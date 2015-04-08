@@ -10,27 +10,15 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler;
+namespace Sugarcrm\Sugarcrm\SearchEngine\Capability\Aggregation;
 
-use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\GlobalSearch;
+use Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\ResultInterface as BaseInterface;
 
 /**
  *
- * Abstract Handler
+ * Result interface for Aggregation capability
  *
  */
-abstract class AbstractHandler implements HandlerInterface
+interface ResultInterface extends BaseInterface
 {
-    /**
-     * @var GlobalSearch
-     */
-    protected $provider;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setProvider(GlobalSearch $provider)
-    {
-        $this->provider = $provider;
-    }
 }

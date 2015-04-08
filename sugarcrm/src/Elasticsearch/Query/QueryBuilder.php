@@ -18,6 +18,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Query\Aggregation\AggregationInterface;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\ResultSet;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Client;
 use Sugarcrm\Sugarcrm\Elasticsearch\Exception\QueryBuilderException;
+use Sugarcrm\Sugarcrm\Elasticsearch\Query\Aggregation\AggregationStack;
 
 /**
  *
@@ -43,15 +44,15 @@ class QueryBuilder
     protected $query;
 
     /**
-     * @var array Modules being queried
+     * Modules being queried
+     * @var array
      */
     protected $modules = array();
 
     /**
-     * List of aggregators
-     * @var \Elastica\Aggregation\AbstractAggregation[]
+     * @var AggregationStack
      */
-    protected $aggregators = array();
+    protected $aggregationStack = array();
 
     /**
      * List of query filters
@@ -68,7 +69,7 @@ class QueryBuilder
     /**
      * @var HighlighterInterface
      */
-    protected $highLighter;
+    protected $highlighter;
 
     /**
      * @var integer
@@ -105,6 +106,15 @@ class QueryBuilder
     }
 
     /**
+     * Get user context
+     * @return User
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    /**
      * Set query
      * @param \Elastica\Query $query
      * @return QueryBuilder
@@ -130,24 +140,40 @@ class QueryBuilder
     }
 
     /**
+     * Get selected modules
+     * @return array
+     */
+    public function getModules()
+    {
+        return $this->modules;
+    }
+
+
+    /**
      * Set highlighter
      * @param HighlighterInterface $highLighter
      * @return QueryBuilder
      */
-    public function setHighLighter(HighlighterInterface $highLighter)
+    public function setHighLighter(HighlighterInterface $highlighter)
     {
-        $this->highLighter = $highLighter;
+        $this->highlighter = $highlighter;
         return $this;
     }
 
     /**
-     * Add aggregator
-     * @param \Elastica\Aggregation\AbstractAggregation $agg
+     * Add aggregation
+     * @param string $id
+     * @param AggregationInterface
      * @return QueryBuilder
      */
-    public function addAggregator(\Elastica\Aggregation\AbstractAggregation $agg)
+    public function addAggregation($id, AggregationInterface $agg)
     {
-        $this->aggregators[] = $agg;
+        // initialize stack
+        if (empty($this->aggregationStack)) {
+            $this->aggregationStack = new AggregationStack();
+        }
+
+        $this->aggregationStack->addAggregation($id, $agg);
         return $this;
     }
 
@@ -237,13 +263,13 @@ class QueryBuilder
         }
 
         // Add highlighter
-        if ($this->highLighter) {
-            $query->setHighlight($this->highLighter->build());
+        if ($this->highlighter) {
+            $query->setHighlight($this->highlighter->build());
         }
 
-        // Add aggregators
-        foreach ($this->aggregators as $agg) {
-            $query->addAggregation($agg);
+        // Add aggregations
+        foreach ($this->aggregationStack as $id => $agg) {
+            $query->addAggregation($agg->build($id, $this->filters));
         }
 
         // Set sort order
@@ -280,7 +306,29 @@ class QueryBuilder
         $search->addIndices($this->getReadIndices($this->modules, $this->user));
         $search->addTypes($this->modules);
 
-        return new ResultSet($search->search(), $this->highLighter);
+        return $this->createResultSet($search->search());
+    }
+
+    /**
+     * Prepare result set
+     * @param \Elastica\ResultSet $resultSet
+     * @return ResultSet
+     */
+    protected function createResultSet(\Elastica\ResultSet $resultSet)
+    {
+        $resultSet = new ResultSet($resultSet);
+
+        // attach highlighter to resultset
+        if ($this->highlighter) {
+            $resultSet->setHighlighter($this->highlighter);
+        }
+
+        // attach aggregation stack
+        if ($this->aggregationStack) {
+            $resultSet->setAggregationStack($this->aggregationStack);
+        }
+
+        return $resultSet;
     }
 
     /**
@@ -333,16 +381,6 @@ class QueryBuilder
     protected function buildQuery(\Elastica\Query\AbstractQuery $query)
     {
         return new \Elastica\Query($query);
-    }
-
-    /**
-     * Build module filter
-     * @param string $module
-     * @return \Elastica\Filter\Type
-     */
-    protected function buildModuleFilter($module)
-    {
-        return new \Elastica\Filter\Type($module);
     }
 
     /**

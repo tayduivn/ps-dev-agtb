@@ -12,21 +12,34 @@
 
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Query\Aggregation;
 
+use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
+
 /**
  *
- * The implementation class for MyItems Aggregation based on
- * on current user context.
+ * Module aggregation
  *
  */
-class MyItemsAggregation extends FilterAggregation
+class ModuleAggregation extends TermsAggregation
 {
+    /**
+     * Ctor
+     * @param integer $size
+     */
+    public function __construct($size = 5)
+    {
+        $this->setOptions(array(
+            'field' => '_type',
+            'size' => $size,
+            'order' => array('_count', 'desc'),
+        ));
+    }
+
     /**
      * {@inheritdoc}
      */
-    protected function getAggFilter($field)
+    public function buildMapping(Mapping $mapping, $field, array $defs)
     {
-        $termFilter = new \Elastica\Filter\Terms();
-        $termFilter->setTerms($field, array($this->user->id));
-        return $termFilter;
+        // Nothing to do here as _type field is already implied in the mapping.
     }
+
 }

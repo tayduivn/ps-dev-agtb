@@ -12,6 +12,8 @@
 
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Query\Aggregation;
 
+use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
+
 /**
  *
  * Abstract aggregation builder
@@ -20,58 +22,75 @@ namespace Sugarcrm\Sugarcrm\Elasticsearch\Query\Aggregation;
 abstract class AbstractAggregation implements AggregationInterface
 {
     /**
-     *
-     * Options passed in from AggregationHandler
+     * User context
+     * @var \User
+     */
+    protected $user;
+
+    /**
+     * List of possible configuration
      * @var array
      */
-    protected $options;
+    protected $acceptedOptions = array();
 
     /**
-     *
-     * Default options as defined by the implement class
+     * Aggregation configuration options
      * @var array
      */
-    protected $defaultOpts;
+    protected $options = array();
 
     /**
-     * the id of the user
-     * @var string
+     * {@inheritdoc}
      */
-    protected $userId;
-
-    /**
-     *
-     * Ctor
-     * @param array $defaultOpts
-     */
-    public function __construct($defaultOpts = array())
+    public function setUser(\User $user)
     {
-        $this->defaultOpts = $defaultOpts;
-        $this->options     = $defaultOpts;
+        $this->user = $user;
     }
 
     /**
-     *
-     * Set options to be consumed
-     * @param array $options
-     * @return array
+     * {@inheritdoc}
      */
-    final public function setOptions($options)
+    public function setOptions(array $options)
     {
-        foreach ($options as $key => $value) {
-            if (isset($this->defaultOpts[$key])) {
-                $this->options[$key] = $value;
+        foreach ($options as $option => $value) {
+            $this->setOption($option, $value);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setOption($option, $value)
+    {
+        if (in_array($option, $this->acceptedOptions)) {
+            $this->options[$option] = $value;
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildMapping(Mapping $mapping, $field, array $defs)
+    {
+        // apply not analyzed value by default
+        $mapping->addNotAnalyzedField($field);
+    }
+
+    /**
+     * Apply configuration options through callbacks on the aggregation
+     * object being passed in. This needs to be explicitly called from
+     * the build phase by the implementing class if needed.
+     *
+     * @param \Elastica\Aggregation\AbstractAggregation $agg
+     */
+    protected function applyOptions(\Elastica\Aggregation\AbstractAggregation $agg)
+    {
+        foreach ($this->options as $option => $value) {
+            $method = 'set' . ucfirst($option);
+            if (method_exists($agg, $method)) {
+                $value = is_array($value) ? $value : array($value);
+                call_user_func_array(array($agg, $method), $value);
             }
         }
-        return $this->options;
-    }
-
-    /**
-     * Set the user id
-     * @param string $userId
-     */
-    final public function setUser($userId)
-    {
-        $this->userId = $userId;
     }
 }

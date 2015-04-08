@@ -12,8 +12,9 @@
 
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Adapter;
 
-use Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\ResultSetInterface;
+use Sugarcrm\Sugarcrm\SearchEngine\Capability\Aggregation\ResultSetInterface;
 use Sugarcrm\Sugarcrm\Elasticsearch\Query\Highlighter\HighlighterInterface;
+use Sugarcrm\Sugarcrm\Elasticsearch\Query\Aggregation\AggregationStack;
 
 /**
  *
@@ -33,14 +34,35 @@ class ResultSet implements \Iterator, \Countable, ResultSetInterface
     protected $highlighter;
 
     /**
+     * @var AggregationStack
+     */
+    protected $aggregationStack;
+
+    /**
      * Ctor
      * @param \Elastica\ResultSet $resultSet
-     * @param HighlighterInterface $highlighter
      */
-    public function __construct(\Elastica\ResultSet $resultSet, HighlighterInterface $highlighter = null)
+    public function __construct(\Elastica\ResultSet $resultSet)
     {
         $this->resultSet = $resultSet;
+    }
+
+    /**
+     * Set highlighter
+     * @param HighlighterInterface $highlighter
+     */
+    public function setHighlighter(HighlighterInterface $highlighter)
+    {
         $this->highlighter = $highlighter;
+    }
+
+    /**
+     * Set aggregation stack
+     * @param AggregationStack $aggregations
+     */
+    public function setAggregationStack(AggregationStack $stack)
+    {
+        $this->aggregationStack = $stack;
     }
 
     /**
@@ -59,7 +81,11 @@ class ResultSet implements \Iterator, \Countable, ResultSetInterface
      */
     public function current()
     {
-        return new Result($this->resultSet->current(), $this->highlighter);
+        $current = new Result($this->resultSet->current());
+        if ($this->highlighter) {
+            $current->setHighlighter($this->highlighter);
+        }
+        return $current;
     }
 
     /**
@@ -133,6 +159,29 @@ class ResultSet implements \Iterator, \Countable, ResultSetInterface
      */
     public function getAggregations()
     {
-        return $this->resultSet->getAggregations();
+        $aggs = array();
+
+        if (empty($this->aggregationStack)) {
+            return $aggs;
+        }
+
+        // iterate raw results and use the stack to parse them
+        foreach ($this->resultSet->getAggregations() as $id => $results) {
+
+            if (!is_array($results)) {
+                continue;
+            }
+
+            // try to get the aggregation from the stack
+            if (!$agg = $this->aggregationStack->getById($id)) {
+                continue;
+            }
+
+            $aggs[$id] = array(
+                'type' => 'xxx',
+                'results' => $agg->parseResults($results),
+            );
+        }
+        return $aggs;
     }
 }

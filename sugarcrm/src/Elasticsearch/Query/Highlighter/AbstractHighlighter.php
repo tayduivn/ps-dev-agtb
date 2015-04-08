@@ -217,20 +217,12 @@ abstract class AbstractHighlighter implements HighlighterInterface
     }
 
     /**
-     * Normalize field name, removes multi field notation and applies
-     * the field remapping if defined for given field.
+     * Normalize field name applying remap if any defined
      * @param string $field
      * @return string
      */
     public function normalizeFieldName($field)
     {
-        // Strip of the module name and keep the main field only. If no match
-        // is found we continue with the field value as is.
-        if (preg_match('/^.*' . Mapping::PREFIX_SEP . '([^.]*).*$/', $field, $matches)) {
-            $field = $matches[1];
-        }
-
-        // apply remap if any defined
         return isset($this->fieldRemap[$field]) ? $this->fieldRemap[$field] : $field;
     }
 }

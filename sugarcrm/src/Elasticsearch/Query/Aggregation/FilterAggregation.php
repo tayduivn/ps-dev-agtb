@@ -12,82 +12,56 @@
 
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Query\Aggregation;
 
-use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
-
 /**
  *
- * The implementation class for Filter Aggregation.
+ * Abstract class for Filter Aggregation.
  *
  */
 abstract class FilterAggregation extends AbstractAggregation
 {
     /**
-     * @var \Elastica\Aggregation\Filter
+     * {@inheritdoc}
      */
-    protected $agg;
-
-    /**
-     * Constructor.
-     */
-    public function __construct()
-    {
-        $defaultOpts =  array();
-        parent::__construct($defaultOpts);
-    }
+    protected $acceptedOptions = array(
+        'field',
+    );
 
     /**
      * {@inheritdoc}
      */
-    public function getAgg()
-    {
-        return $this->agg;
-    }
+    protected $options = array(
+    );
 
     /**
      * {@inheritdoc}
-     */
-    public function buildAgg($fieldName, \Elastica\Filter\Bool $filter)
+    */
+    public function build($id, array $filters)
     {
+        $agg = new \Elastica\Aggregation\Filter($id);
 
-        $agg = new \Elastica\Aggregation\Filter($fieldName);
-
-        //extract the field due to the difference of cross_module and per_module fields
-        $names = explode(Mapping::PREFIX_SEP, $fieldName);
-        if (sizeof($names)==2) {
-            $field = $names[1];
-        } else {
-            $field = $fieldName;
-        }
-        $agg->setFilter($this->getFilter($field));
-
-        //If the filter is set, create the filter for the aggregation
-        $filterArray = $filter->toArray();
-        if (!empty($filterArray['bool'])) {
-            $filterAgg = new \Elastica\Aggregation\Filter($fieldName);
-            $filterAgg->setFilter($filter);
-            $filterAgg->addAggregation($agg);
-            $this->agg=$filterAgg;
-            return $filterAgg;
+        // use id if field is not set at this point
+        if (empty($this->options['field'])) {
+            $this->options['field'] = $id;
         }
 
-        //Otherwise, just return the Filter aggregation
-        $this->agg=$agg;
+        $agg->setFilter($this->getAggFilter($this->options['field']));
         return $agg;
-
     }
 
     /**
      * {@inheritdoc}
      */
-    public function buildFilter($fieldName, array $values)
+    public function parseResults(array $results)
     {
-        return $this->getFilter($fieldName);
+        return array(
+            'count' => empty($results['doc_count']) ? 0 : $results['doc_count'],
+        );
     }
 
     /**
-     * To be defined by the derived class
-     * @param string $field the name of the field
+     * Get aggregation filter definition
+     * @param string $field
      * @return \Elastica\Filter\AbstractFilter
      */
-    abstract protected function getFilter($field);
+    abstract protected function getAggFilter($field);
 }

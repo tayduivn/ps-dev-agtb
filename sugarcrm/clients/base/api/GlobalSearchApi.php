@@ -11,11 +11,11 @@
  */
 
 use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
-use Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\GlobalSearchInterface;
+use Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\GlobalSearchCapable;
 use Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\ResultSetInterface;
 use Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\ResultInterface;
+use Sugarcrm\Sugarcrm\SearchEngine\Capability\Aggregation\AggregationCapable;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Result;
-use Sugarcrm\Sugarcrm\SearchEngine\Capability\Aggregation\AggregationInterface;
 
 /**
  *
@@ -79,7 +79,7 @@ class GlobalSearchApi extends SugarApi
      * Get cross module aggregation results
      * @var boolean
      */
-    protected $crossModuleAgg = false;
+    protected $crossModuleAggs = false;
 
     /**
      * List of modules for which to collect aggregations results
@@ -150,13 +150,24 @@ class GlobalSearchApi extends SugarApi
             throw new SugarApiExceptionSearchRuntime(null, array($e->getMessage()));
         }
 
-        return array(
+        $response = array(
             'next_offset' => $this->getNextOffset($resultSet->getTotalHits(), $this->limit, $this->offset),
             'total' => $resultSet->getTotalHits(),
             'query_time' => $resultSet->getQueryTime(),
             'records' => $this->formatResults($api, $resultSet),
-            'aggregations' => $resultSet->getAggregations(),
         );
+
+        // cross module aggregation results
+        if ($this->crossModuleAggs) {
+            $response['xmod_aggs'] = $resultSet->getAggregations();
+        }
+
+        // per module aggregation results
+        if ($this->moduleAggs) {
+            $response['mod_aggs'] = array();
+        }
+
+        return $response;
     }
 
     /**
@@ -206,15 +217,14 @@ class GlobalSearchApi extends SugarApi
         }
 
         // Set cross module aggregations
-        if (!empty($args['xmod_agg'])) {
-            $this->crossModuleAgg = true;
+        if (!empty($args['xmod_aggs'])) {
+            $this->crossModuleAggs = true;
         }
 
         // Set module aggregations
         if (isset($args['mod_aggs'])) {
             $this->moduleAggs = explode(',', $args['mod_aggs']);
         }
-
     }
 
     /**
@@ -224,36 +234,34 @@ class GlobalSearchApi extends SugarApi
      */
     protected function parseAggFilters($aggFilterArgs)
     {
-        $filters = array();
-
-        //Expected format of the input argument (TBD):
-        //agg1,bucket_1a,bucket_1c;agg2,bucket_2b,bucket_2c,bucket_2d
-        //Example: assigned_user_id,seed_will_id,seed_sally_id;_type,Leads,Contacts
-
-        //Expected returned format
-        //array("agg1" => array("bucket_1a", "bucket_1c"), "agg2" => array("bucket_2b", "bucket_2c", "bucket_2d"), ...)
-
-        //exzTODO: parse the arguments based on the formats
-        $aggFilterStrs= explode(";", $aggFilterArgs);
-        foreach ($aggFilterStrs as $aggFilterStr) {
-            $values = explode(",", $aggFilterStr);
-            if (count($values)>0) {
-                $filters[$values[0]] = array_slice($values, 1);
-            }
+        if (!is_array($aggFilterArgs)) {
+            return array();
         }
-        return $filters;
+
+        $parsed = array();
+        foreach ($aggFilterArgs as $id => $filter) {
+            /*
+             * We accept either an array of selected items or just a boolean.
+             * Further down the road the aggregation handler will further
+             * validate.
+             */
+            if (is_array($filter) || is_boolean($filter)) {
+                $parsed[$id] = $filter;
+            }
+
+        }
+        return $parsed;
     }
 
     /**
      * Execute search
-     * @param GlobalSearchInterface $engine
+     * @param GlobalSearchCapable $engine
      * @return \Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\ResultSetInterface
      */
-    protected function executeGlobalSearch(GlobalSearchInterface $engine)
+    protected function executeGlobalSearch(GlobalSearchCapable $engine)
     {
         $engine
             ->from($this->moduleList)
-            ->setAggFilters($this->aggFilters)
             ->term($this->term)
             ->limit($this->limit)
             ->offset($this->offset)
@@ -263,9 +271,12 @@ class GlobalSearchApi extends SugarApi
         ;
 
         // pass aggregation query settings
-        if ($engine instanceof AggregationInterface) {
-            $engine->crossModuleAgg($this->crossModuleAgg);
-            $engine->moduleAggs($this->moduleAggs);
+        if ($engine instanceof AggregationCapable) {
+            $engine
+                ->queryCrossModuleAggs($this->crossModuleAggs)
+                ->queryModuleAggs($this->moduleAggs)
+                ->aggFilters($this->aggFilters)
+            ;
         }
 
         return $engine->search();

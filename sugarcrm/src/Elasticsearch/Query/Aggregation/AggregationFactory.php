@@ -20,30 +20,35 @@ namespace Sugarcrm\Sugarcrm\Elasticsearch\Query\Aggregation;
 class AggregationFactory
 {
     /**
-     *
      * Local cache
      * @var array
      */
     protected static $loaded = array();
 
     /**
-     *
-     * Aggregation object loader
+     * Load aggregation object. Be careful as this is a cached factory.
      * @param string $type
-     * @return AbstractAggregation
+     * @return AggregationInterface
      */
     public static function get($type)
     {
-        if (isset(self::$loaded[$type])) {
-            return self::$loaded[$type];
+        if (!isset(self::$loaded[$type])) {
+            self::$loaded[$type] = self::create($type);
         }
-
-        self::$loaded[$type] = false;
-
-        //Example class: TermAggregation, RangeAggregation, FilterAggregation, etc.
-        $className = ucfirst($type)."Aggregation";
-        $classFullName = "Sugarcrm\\Sugarcrm\\Elasticsearch\\Query\\Aggregation\\{$className}";
-        self::$loaded[$type] = new $classFullName();
         return self::$loaded[$type];
+    }
+
+    /**
+     * Create new aggregation object
+     * @param string $type
+     * @return AggregationInterface
+     */
+    public static function create($type)
+    {
+        $className = \SugarAutoLoader::customClass(sprintf(
+            'Sugarcrm\Sugarcrm\Elasticsearch\Query\Aggregation\%sAggregation',
+            ucfirst($type)
+        ));
+        return new $className();
     }
 }

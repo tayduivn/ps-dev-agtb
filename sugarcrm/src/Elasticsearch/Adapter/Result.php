@@ -12,9 +12,9 @@
 
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Adapter;
 
-use Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\ResultInterface;
+use Sugarcrm\Sugarcrm\SearchEngine\Capability\Aggregation\ResultInterface;
 use Sugarcrm\Sugarcrm\Elasticsearch\Query\Highlighter\HighlighterInterface;
-use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\SearchFields;
 
 /**
  *
@@ -34,21 +34,21 @@ class Result implements ResultInterface
     protected $highlighter;
 
     /**
-     * Normalized _source data
-     * @var array
-     */
-    protected $source = array();
-
-    /**
      * Ctor
      * @param \Elastica\Result $result
-     * @param HighlighterInterface $highlighter
      */
-    public function __construct(\Elastica\Result $result, HighlighterInterface $highlighter = null)
+    public function __construct(\Elastica\Result $result)
     {
         $this->result = $result;
+    }
+
+    /**
+     * Set highlighter
+     * @param HighlighterInterface $highlighter
+     */
+    public function setHighlighter(HighlighterInterface $highlighter)
+    {
         $this->highlighter = $highlighter;
-        $this->source = $this->normalizeSource($result->getSource());
     }
 
     /**
@@ -94,7 +94,7 @@ class Result implements ResultInterface
      */
     public function getData()
     {
-        return $this->source;
+        return $this->result->getSource();
     }
 
    /**
@@ -102,7 +102,7 @@ class Result implements ResultInterface
      */
     public function getDataFields()
     {
-        return array_keys($this->source);
+        return array_keys($this->result->getSource());
     }
 
     /**
@@ -155,23 +155,5 @@ class Result implements ResultInterface
     protected function dispatchEvent(\SugarBean $bean, $event, array $args = array())
     {
         $bean->call_custom_logic($event, $args);
-    }
-
-    /**
-     * Normalize source values as the fields are prefixed by the module name.
-     * @param array $source
-     * @return array
-     */
-    protected function normalizeSource(array $source)
-    {
-        $normalized = array();
-        foreach ($source as $field => $data) {
-            if (strpos($field, Mapping::PREFIX_SEP)) {
-                $fieldArray = explode(Mapping::PREFIX_SEP, $field);
-                $field = $fieldArray[1];
-            }
-            $normalized[$field] = $data;
-        }
-        return $normalized;
     }
 }

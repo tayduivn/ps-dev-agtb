@@ -16,7 +16,8 @@ namespace Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property;
  *
  * Raw properties are possible but are very exceptional. Use this object
  * with caution when needed. Mostly other higher level mapping objects are
- * more appropriate to use.
+ * more appropriate to use. Use this as a last resort if nothing of the
+ * other mapping properties fit your use case.
  *
  */
 class RawProperty implements PropertyInterface
@@ -25,17 +26,6 @@ class RawProperty implements PropertyInterface
      * @var array Mapping definition
      */
     protected $mapping = array();
-
-
-    /**
-     * @var boolean the flag to enable or disable adding cross_module fields
-     */
-    protected $crossModuleEnabled = false;
-
-    /**
-     * @var string the name of the field for copy_to.
-     */
-    protected $copyToFieldName;
 
     /**
      * {@inheritdoc}
@@ -55,45 +45,19 @@ class RawProperty implements PropertyInterface
     }
 
     /**
-     * Set the flag crossModuleEnabled.
-     * @param boolean $value TRUE or FALSE
+     * Add copy_to field definition
+     * @param string $field Field name to copy to
      */
-    public function setCrossModuleEnabled($value)
+    public function addCopyTo($field)
     {
-        $this->crossModuleEnabled = $value;
-    }
-
-    /**
-     * Check the flag crossModuleEnabled.
-     * @return boolean
-     */
-    public function isCrossModuleEnabled()
-    {
-        return $this->crossModuleEnabled;
-    }
-
-    /**
-     * Set the field name for copy_to.
-     * @param string $fieldName the name of the field for 'copy_to' property
-     */
-    public function setCopyToFieldName($fieldName)
-    {
-        $this->copyToFieldName = $fieldName;
-    }
-
-    /**
-     * Add the copy_to property to the field.
-     * @param array $mapping the mapping to be modified
-     * @return array
-     */
-    public function setCopyToProperty(array $mapping)
-    {
-        if (isset($this->copyToFieldName)) {
-            return array_merge(
-                $mapping,
-                array('copy_to' => $this->copyToFieldName)
-            );
+        // initialize copy_to parameter if not set
+        if (!isset($this->mapping['copy_to'])) {
+            $this->mapping['copy_to'] = array();
         }
-        return $mapping;
+
+        // avoid duplicates just in case
+        if (!in_array($field, $this->mapping['copy_to'])) {
+            $this->mapping['copy_to'][] = $field;
+        }
     }
 }

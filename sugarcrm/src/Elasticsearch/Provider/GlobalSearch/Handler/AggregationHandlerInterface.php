@@ -12,25 +12,18 @@
 
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler;
 
-use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\GlobalSearch;
+use Sugarcrm\Sugarcrm\Elasticsearch\Query\QueryBuilder;
 
 /**
  *
- * Abstract Handler
+ * Aggregation handler interface
  *
  */
-abstract class AbstractHandler implements HandlerInterface
+interface AggregationHandlerInterface extends HandlerInterface
 {
     /**
-     * @var GlobalSearch
+     * Add aggregations to query builder
+     * @param QueryBuilder $builder
      */
-    protected $provider;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setProvider(GlobalSearch $provider)
-    {
-        $this->provider = $provider;
-    }
+    public function addAggregations(QueryBuilder $builder);
 }

@@ -19,7 +19,7 @@ use Sugarcrm\Sugarcrm\SearchEngine\Engine\EngineInterface;
  * GlobalSearch capability
  *
  */
-interface GlobalSearchInterface extends EngineInterface
+interface GlobalSearchCapable extends EngineInterface
 {
     /**
      * Execute search
@@ -40,13 +40,6 @@ interface GlobalSearchInterface extends EngineInterface
      * @return GlobalSearchInterface
      */
     public function from(array $modules = array());
-
-    /**
-     * Set aggregation filters to search for
-     * @param array $aggFilters
-     * @return GlobalSearchInterface
-     */
-    public function setAggFilters(array $aggFilters = array());
 
     /**
      * Set limit (query size)
@@ -84,7 +77,7 @@ interface GlobalSearchInterface extends EngineInterface
     public function sort(array $fields);
 
     /**
-     * Return a list of sugar types which are searchable
+     * Return a list of supported sugar types for this provider
      * @return array
      */
     public function getSupportedTypes();

@@ -30,10 +30,4 @@ interface ResultSetInterface
      * @return integer
      */
     public function getQueryTime();
-
-    /**
-     * Get aggregations.
-     * @return array
-     */
-    public function getAggregations();
 }

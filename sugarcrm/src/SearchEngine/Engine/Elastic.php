@@ -13,8 +13,8 @@
 namespace Sugarcrm\Sugarcrm\SearchEngine\Engine;
 
 use Sugarcrm\Sugarcrm\Elasticsearch\Container;
-use Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\GlobalSearchInterface;
-use Sugarcrm\Sugarcrm\SearchEngine\Capability\Aggregation\AggregationInterface;
+use Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\GlobalSearchCapable;
+use Sugarcrm\Sugarcrm\SearchEngine\Capability\Aggregation\AggregationCapable;
 
 /**
  *
@@ -23,8 +23,8 @@ use Sugarcrm\Sugarcrm\SearchEngine\Capability\Aggregation\AggregationInterface;
  */
 class Elastic implements
     EngineInterface,
-    GlobalSearchInterface,
-    AggregationInterface
+    GlobalSearchCapable,
+    AggregationCapable
 {
     /**
      * @var \Sugarcrm\Sugarcrm\Elasticsearch\Container
@@ -169,15 +169,6 @@ class Elastic implements
     /**
      * {@inheritDoc}
      */
-    public function setAggFilters(array $aggFilters = array())
-    {
-        $this->gsProvider()->setAggFilters($aggFilters);
-        return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public function limit($limit)
     {
         $this->gsProvider()->limit($limit);
@@ -233,15 +224,27 @@ class Elastic implements
     /**
      * {@inheritdoc}
      */
-    public function crossModuleAgg($toggle)
+    public function queryCrossModuleAggs($toggle)
     {
+        $this->gsProvider()->queryCrossModuleAggs($toggle);
+        return $this;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function moduleAggs(array $list)
+    public function queryModuleAggs(array $modules)
     {
+        $this->gsProvider()->queryModuleAggs($modules);
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function aggFilters(array $filters)
+    {
+        $this->gsProvider()->aggFilters($filters);
     }
 
     //// ELASTIC ENGINE SPECIFIC ////

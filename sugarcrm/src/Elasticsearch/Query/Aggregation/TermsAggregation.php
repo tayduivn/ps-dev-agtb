@@ -12,82 +12,60 @@
 
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Query\Aggregation;
 
-use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
-
 /**
  *
- * The implementation class for Terms Aggregation.
+ * Generic terms aggregation
  *
  */
 class TermsAggregation extends AbstractAggregation
 {
     /**
-     * @var \Elastica\Aggregation\Filter or \Elastica\Aggregation\Filter
+     * {@inheritdoc}
      */
-    protected $agg;
-
-    /**
-     * Constructor.
-     * @param int $size : the size of term buckets
-     */
-    public function __construct($size = 21)
-    {
-        $defaultOpts =  array(
-            'order' => array('_count', 'desc'),
-            'size' => $size,
-        );
-        parent::__construct($defaultOpts);
-    }
+    protected $acceptedOptions = array(
+        'field',
+        'size',
+        'order',
+    );
 
     /**
      * {@inheritdoc}
      */
-    public function getAgg()
-    {
-        return $this->agg;
-    }
+    protected $options = array(
+        'size' => 5,
+        'order' => array('_count', 'desc'),
+    );
 
     /**
      * {@inheritdoc}
      */
-    public function buildAgg($fieldName, \Elastica\Filter\Bool $filter)
+    public function build($id, array $filters)
     {
+        $terms = new \Elastica\Aggregation\Terms($id);
 
-        $agg = new \Elastica\Aggregation\Terms($fieldName);
-
-        //extract the field due to the difference of cross_module and per_module fields
-        $names = explode(Mapping::PREFIX_SEP, $fieldName);
-        if (sizeof($names)==2) {
-            $field = $names[1];
-        } else {
-            $field = $fieldName;
-        }
-        $agg->setField($field);
-        $agg->setOrder($this->options['order'][0], $this->options['order'][1]);
-        $agg->setSize($this->options['size']);
-
-        //If the filter is set, create the filter for the aggregation
-        $filterArray = $filter->toArray();
-        if (!empty($filterArray['bool'])) {
-            $filterAgg = new \Elastica\Aggregation\Filter($fieldName);
-            $filterAgg->setFilter($filter);
-            $filterAgg->addAggregation($agg);
-            $this->agg=$filterAgg;
-            return $filterAgg;
+        // use id if field is not set at this point
+        if (empty($this->options['field'])) {
+            $this->options['field'] = $id;
         }
 
-        //Otherwise, just return the term aggregation
-        $this->agg=$agg;
-        return $agg;
-
+        $this->applyOptions($terms, $this->options);
+        return $terms;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function buildFilter($fieldName, array $values)
+    public function parseResults(array $results)
     {
-        $filter = new \Elastica\Filter\Terms($fieldName, $values);
-        return $filter;
+        if (!isset($results['buckets'])) {
+            return array();
+        }
+
+        $parsed = array();
+        foreach ($results['buckets'] as $bucket) {
+            $parsed[$bucket['key']] = $bucket['doc_count'];
+        }
+
+        return $parsed;
     }
 }

@@ -14,7 +14,6 @@ namespace Sugarcrm\Sugarcrm\SearchEngine;
 
 use Sugarcrm\Sugarcrm\Logger\LoggerTransition;
 use Psr\Log\LoggerInterface;
-use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
 
 /**
  *
@@ -308,7 +307,7 @@ class MetaDataHelper
      * Get all aggregation definitions
      * @return array
      */
-    protected function getAllAggDefs()
+    public function getAllAggDefs()
     {
         $cacheKey = 'aggdefs';
         if ($list = $this->getCache($cacheKey)) {
@@ -405,7 +404,7 @@ class MetaDataHelper
                 if ($aggId === $fieldName) {
                     $allAggDefs['cross'][$fieldName] = $aggDef;
                 } else {
-                    $aggId = $module . Mapping::PREFIX_SEP . $fieldName . '.'  . $aggId;
+                    $aggId = $fieldName . '.' . $aggId;
                     $allAggDefs['module'][$aggId] = $aggDef;
                 }
             }
@@ -429,7 +428,7 @@ class MetaDataHelper
         // (*) This will be deprecated after 7.7 as this was the old behavior.
 
         if (isset($defs['full_text_search']['searchable'])) {
-            if ($defs['full_text_search']['searchable'] == true) {
+            if ($defs['full_text_search']['searchable'] === true) {
                 $isSearchable = true;
             }
         } else {
