@@ -49,10 +49,32 @@
         }
 
         _.each(data, function(row) {
-            var rowComponent = this.addRow();
-            rowComponent.model.set('action', row.action);
-            rowComponent.model.set('keyword', row.keyword);
+            if (_.isArray(row.keyword)) {
+                _.each(row.keyword, function(word) {
+                    this._initRow(row, word);
+                }, this);
+            } else {
+                this._initRow(row);
+            }
         }, this);
+    },
+
+    /**
+     * Adds a {@link View.Views.Base.SweetspotConfigListRowView row view} to the
+     * layout, and sets the `keyword` and `action` attributes on the model of
+     * the added row component.
+     *
+     * @param {Object} row The object containing row attributes.
+     * @param {string} keyword The `keyword` attribute of the row.
+     * @param {string} action The `action` attribute of the row.
+     */
+    _initRow: function(row, keyword, action) {
+        action = action || row.action;
+        keyword = keyword || row.keyword;
+
+        var rowComponent = this.addRow();
+        rowComponent.model.set('action', action);
+        rowComponent.model.set('keyword', keyword);
     },
 
     /**
@@ -75,10 +97,8 @@
     /**
      * Adds a {@link View.Views.Base.SweetspotConfigListRowView row view} to the
      * layout.
-     *
-     * @param {Event} [evt] The `click` event.
      */
-    addRow: function(evt) {
+    addRow: function() {
         var def = _.extend(
                 {view: 'sweetspot-config-list-row'},
                 app.metadata.getView(null, 'sweetspot-config-list-row')
@@ -98,18 +118,20 @@
         var data = this.collection.toJSON();
         data = this._formatData(data);
 
-        app.alert.show('sweetspot', {
-            level: 'process',
-            title: app.lang.get('LBL_SAVING'),
-            autoClose: false
-        });
+        if (!_.isEmpty(data.sweetspot)) {
+            app.alert.show('sweetspot', {
+                level: 'process',
+                title: app.lang.get('LBL_SAVING'),
+                autoClose: false
+            });
 
-        app.user.updatePreferences(data, function(err) {
-            app.alert.dismiss('sweetspot');
-            if (err) {
-                app.logger.error('Sweet Spot failed to update configuration preferences: ' + err);
-            }
-        });
+            app.user.updatePreferences(data, function(err) {
+                app.alert.dismiss('sweetspot');
+                if (err) {
+                    app.logger.error('Sweet Spot failed to update configuration preferences: ' + err);
+                }
+            });
+        }
 
         app.drawer.close(this.collection);
         app.events.trigger('sweetspot:reset');
@@ -133,11 +155,57 @@
      */
     _formatData: function(data) {
         var result = this._sanitizeConfig(data);
+        result = this._joinMultipleKeywordConfigs(result);
         result = this._formatForUserPrefs(result);
 
-        // TODO: multiple hotkey association.
-
         return result;
+    },
+
+    /**
+     * This is a helper function that takes in the sanitized configuration data
+     * and analyzes if there are actions being assigned to multiple keywords.
+     *
+     * If there are actions with more than one keyword, the corresponding
+     * keywords are joined together in an array. For example:
+     *
+     *     [{action: '#Bugs', keyword: 'b1'}, {action: '#Bugs', keyword: 'b2'}]
+     *
+     * would be transformed to:
+     *
+     *     [{action: '#Bugs', keyword: ['b1', 'b2']}]
+     *
+     * This function assumes that the possible multiple keywords are all unique,
+     * as handled by the {@link #_sanitizeConfig} method.
+     *
+     * @private
+     * @param {Array} data The sanitized configuration data.
+     * @return {Array} The configuration data, with multiple keywords per action
+     *   stored in an array.
+     */
+    _joinMultipleKeywordConfigs: function(data) {
+        var visited = {};
+
+        _.each(data, function(obj, idx) {
+            var action = obj.action;
+            var visitedAt = visited[action];
+
+            if (!_.isUndefined(visitedAt)) {
+                // If we've visited this action before, merge the keywords.
+                var originalKeyword = data[visitedAt].keyword;
+                if (!_.isArray(originalKeyword)) {
+                    if (originalKeyword !== obj.keyword) {
+                        data[visitedAt].keyword = [originalKeyword, obj.keyword];
+                    }
+                } else {
+                    data[visitedAt].keyword = _.uniq(data[visitedAt].keyword.concat(obj.keyword));
+                }
+                data.splice(idx, 1);
+            } else {
+                // Otherwise, store it in the frequency hash.
+                visited[action] = idx;
+            }
+        });
+        return data;
     },
 
     /**
@@ -148,7 +216,6 @@
      * @return {Array} The sanitized configuration data.
      */
     _sanitizeConfig: function(data) {
-        // Throw out empty values.
         data = _.reject(data, function(row) {
             return !row.keyword || !row.action;
         });
