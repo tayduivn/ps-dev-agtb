@@ -35,6 +35,9 @@ $dictionary['KBContentTemplate'] = array(
     'ignore_templates' => array(
         'taggable',
     ),
+    'acls' => array(
+        'SugarACLKB' => true,
+    ),
 );
 
 VardefManager::createVardef(
