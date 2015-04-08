@@ -107,13 +107,6 @@
                     })
                 });
             });
-            actions.push({
-                name: app.lang.getModuleName('Forecasts', {plural: true}),
-                module: 'Forecasts',
-                label: 'Fo',
-                route: '#Forecasts',
-                icon: 'fa-bars'
-            });
             var profileActions = app.metadata.getView(null, 'profileactions');
             _.each(profileActions, function(action) {
                 if (hasAccessToAction(action.acl_module, action) === false) {
