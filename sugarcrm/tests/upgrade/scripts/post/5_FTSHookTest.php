@@ -16,172 +16,62 @@ require_once 'upgrade/scripts/post/5_FTSHook.php';
 
 class SugarUpgradeFTSHookTest extends UpgradeTestCase
 {
-
-    private $hookDef = array(
-        1,
-        'fts',
-        'include/SugarSearchEngine/SugarSearchEngineQueueManager.php',
-        'SugarSearchEngineQueueManager',
-        'populateIndexQueue'
-    );
-
-    private $possibleHookDefs = array(
-        'Ext/LogicHooks/fts.php',
+    private $oldHookDefs = array(
         'application/Ext/LogicHooks/logichooks.ext.php',
         'Extension/application/Ext/LogicHooks/SugarFTSHooks.php',
     );
 
-    public function dataProviderRun()
+    public function fileExistsProvider()
     {
         return array(
-            array(null, array($this->hookDef)),                                 // one definition no actions
-            array('create', array()),                                           // no definitions no create
-            array('removeDublicates', array($this->hookDef, $this->hookDef)),   // no definitions no create
+            array(true),
+            array(false),
         );
     }
 
     /**
-     * @param $needCall
-     * @param $hookDefs
-     * @covers       SugarUpgradeFTSHook::run
-     * @dataProvider dataProviderRun
+     * @param $fileExists string  mainHookFile exists or not
+     * @dataProvider fileExistsProvider
      */
-    public function testRun($needCall, $hookDefs)
+    public function testRun($fileExists)
     {
-        $mockInstaller = $this->getMock('SugarUpgradeFTSHook',
-            array('create', 'removeDublicates', 'getHooks', 'isFTSHook'),
-            array($this->upgrader)
+        $upgraderMock = $this->getMockForAbstractClass('UpgradeDriver');
+
+        $mockInstaller = $this->getMock(
+            'SugarUpgradeFTSHook',
+            array('removeDuplicates', 'fileExists'),
+            array($upgraderMock)
         );
 
-        $mockInstaller->expects($this->once())->method('getHooks')->willReturn($hookDefs);
-        $mockInstaller->expects($this->exactly(count($hookDefs)))->method('isFTSHook')->willReturn(true);
+        $mockInstaller->expects($this->once())->method('fileExists')->willReturn($fileExists);
 
-        foreach (array('create', 'removeDublicates') as $method) {
-            if ($needCall == $method) {
-                $mockInstaller->expects($this->once())->method($method);
-            } else {
-                $mockInstaller->expects($this->never())->method($method);
-            }
+        if ($fileExists) {
+            $mockInstaller->expects($this->once())->method('removeDuplicates');
+        } else {
+            $mockInstaller->expects($this->never())->method('removeDuplicates');
         }
 
         $mockInstaller->run();
     }
 
-    public function dataProviderIsFTSHook()
+    public function testRemoveDuplicates()
     {
-        return array(
-            array(false, array(1, 'invalidGroup'), SugarUpgradeFTSHook::HOOK_CLASS),
-            array(
-                false,
-                array(
-                    1,
-                    SugarUpgradeFTSHook::HOOK_GROUP,
-                    '',
-                    'invalidClass',
-                    SugarUpgradeFTSHook::HOOK_METHOD
-                ),
-                SugarUpgradeFTSHook::HOOK_CLASS
-            ),
-            array(
-                false,
-                array(1, SugarUpgradeFTSHook::HOOK_GROUP, '', SugarUpgradeFTSHook::HOOK_CLASS, 'invalidMethod'),
-                SugarUpgradeFTSHook::HOOK_CLASS
-            ),
-            array(
-                true,
-                array(
-                    1,
-                    SugarUpgradeFTSHook::HOOK_GROUP,
-                    '',
-                    SugarUpgradeFTSHook::HOOK_CLASS,
-                    SugarUpgradeFTSHook::HOOK_METHOD
-                ),
-                SugarUpgradeFTSHook::HOOK_CLASS
-            ),
-        );
+        $upgraderMock =
+            $this->getMockForAbstractClass('UpgradeDriver', array(), '', true, true, true, array('fileToDelete'));
+
+        $upgraderMock->expects($this->exactly(2))
+                     ->method('fileToDelete')
+                     ->with(
+                         $this->logicalOr(
+                             $this->equalTo($this->oldHookDefs[0]),
+                             $this->equalTo($this->oldHookDefs[1])
+                         )
+                     );
+
+        $mockInstaller = $this->getMock('SugarUpgradeFTSHook', null, array($upgraderMock));
+
+        SugarTestReflection::setProtectedValue($mockInstaller, 'oldHookDefs', $this->oldHookDefs);
+
+        SugarTestReflection::callProtectedMethod($mockInstaller, 'removeDuplicates');
     }
-
-    /**
-     * @param $expected
-     * @param $hook
-     * @param $hookClass
-     * @covers       SugarUpgradeFTSHook::isFTSHook
-     * @dataProvider dataProviderIsFTSHook
-     */
-    public function testIsFTSHook($expected, $hook, $hookClass)
-    {
-        $mockInstaller = $this->getMock('SugarUpgradeFTSHook',
-            array('getHookClass'),
-            array($this->upgrader)
-        );
-
-        $mockInstaller->expects($this->any())->method('getHookClass')->willReturn($hookClass);
-
-        $actualRes = SugarTestReflection::callProtectedMethod($mockInstaller, 'isFTSHook', array($hook));
-
-        $this->assertEquals($expected, $actualRes);
-    }
-
-    /**
-     * @param $fileThatExists
-     * @covers       SugarUpgradeFTSHook::getMainDefFile
-     * @dataProvider dataProviderMainDefFile
-     */
-    public function testGetMainDefFile($fileThatExists)
-    {
-        $mockInstaller = $this->getMock('SugarUpgradeFTSHook',
-            array('fileExists'),
-            array($this->upgrader)
-        );
-
-        foreach ($this->possibleHookDefs as $key => $file) {
-            $mockInstaller->expects($this->at($key))
-                ->method('fileExists')
-                ->with($file)
-                ->willReturn($file == $fileThatExists);
-            if ($file == $fileThatExists) {
-                break;
-            }
-        }
-
-        SugarTestReflection::setProtectedValue($mockInstaller, 'possibleHookDefs', $this->possibleHookDefs);
-
-        $actualRes = SugarTestReflection::callProtectedMethod($mockInstaller, 'getMainDefFile');
-
-        $this->assertEquals($fileThatExists, $actualRes);
-    }
-
-    public function dataProviderMainDefFile()
-    {
-        $res = array();
-        foreach ($this->possibleHookDefs as $file) {
-            $res[] = array($file);
-        }
-
-        return $res;
-    }
-
-    public function testRemoveDublicates()
-    {
-        $mockInstaller = $this->getMock('SugarUpgradeFTSHook',
-            array('unlink', 'getMainDefFile'),
-            array($this->upgrader)
-        );
-
-        $mockInstaller->expects($this->exactly(2))
-            ->method('unlink')
-            ->with($this->logicalOr(
-                $this->equalTo($this->possibleHookDefs[0]),
-                $this->equalTo($this->possibleHookDefs[2])));
-
-        $mockInstaller->expects($this->any())
-            ->method('getMainDefFile')
-            ->willReturn($this->possibleHookDefs[1]);
-
-
-        SugarTestReflection::setProtectedValue($mockInstaller, 'possibleHookDefs', $this->possibleHookDefs);
-
-        SugarTestReflection::callProtectedMethod($mockInstaller, 'removeDublicates');
-    }
-
 }
