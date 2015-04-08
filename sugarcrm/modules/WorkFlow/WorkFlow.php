@@ -1261,6 +1261,8 @@ function get_rel_module($var_rel_name, $get_rel_name = false){
         && $module_bean->field_defs[$var_rel_name]['type'] == "link"
         && $module_bean->load_relationship($var_rel_name)
     ) {
+        //Have to set the relationshpip name for this workflow object
+        $this->rel_name = $module_bean->$var_rel_name->getRelationshipObject()->name;
         return $module_bean->$var_rel_name->getRelatedModuleName();
     }
 

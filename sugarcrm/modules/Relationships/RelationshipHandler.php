@@ -241,12 +241,22 @@ function get_relationship_information(& $target_bean, $get_upstream_rel_field_na
 
 	//Look for downstream connection
 	$rel_array = $this->retrieve_by_sides($current_module_name, $target_module_name, $this->db);
+    $flip_sides = false;
+    if (empty($rel_array)) {
+        $rel_array = $this->retrieve_by_sides($target_module_name, $current_module_name, $this->db);
+        $flip_sides = true;
+    }
+    //No relationship found, abort
+    if (empty($rel_array)) {
+        return;
+    }
 
 
 	//Does a downstream relationship exist
 	if($rel_array!=null){
 		if($rel_array['relationship_type']=="many-to-many"){
-			$target_bean->$rel_array['join_key_lhs'] = $this->base_bean->id;
+            $join_key = $flip_sides ? 'join_key_rhs' : 'join_key_lhs';
+			$target_bean->$rel_array[$join_key] = $this->base_bean->id;
 			foreach ($this->getRoleColumns($rel_array) as $column => $value) {
 			    $target_bean->$column = $value;
 			}
@@ -254,7 +264,8 @@ function get_relationship_information(& $target_bean, $get_upstream_rel_field_na
 		}
 
 		if($rel_array['relationship_type']=="one-to-many"){
-			$target_bean->$rel_array['rhs_key'] = $this->base_bean->id;
+            $rel_key = $flip_sides ? 'lhs_key' : 'rhs_key';
+			$target_bean->$rel_array[$rel_key] = $this->base_bean->id;
 			foreach ($this->getRoleColumns($rel_array) as $column => $value) {
 			    $target_bean->$column = $value;
 			}
@@ -273,7 +284,8 @@ function get_relationship_information(& $target_bean, $get_upstream_rel_field_na
 	//Does an upstream relationship exist
 	if($rel_array!=null){
 		if($rel_array['relationship_type']=="many-to-many"){
-			$target_bean->$rel_array['join_key_rhs'] = $this->base_bean->id;
+            $join_key = $flip_sides ? 'join_key_lhs' : 'join_key_rhs';
+			$target_bean->$rel_array[$join_key] = $this->base_bean->id;
 			if(!empty($rel_array['relationship_role_column'])){
 				$target_bean->$rel_array['relationship_role_column'] = $rel_array['relationship_role_column_value'];
 			}
@@ -281,7 +293,8 @@ function get_relationship_information(& $target_bean, $get_upstream_rel_field_na
 		}
 
 		if($rel_array['relationship_type']=="one-to-many"){
-			$this->$rel_array['rhs_key'] = $this->base_bean->id;
+            $rel_key = $flip_sides ? 'lhs_key' : 'rhs_key';
+			$this->$rel_array[$rel_key] = $this->base_bean->id;
 			if(!empty($rel_array['relationship_role_column'])){
 				$this->$rel_array['relationship_role_column'] = $rel_array['relationship_role_column_value'];
 			}
