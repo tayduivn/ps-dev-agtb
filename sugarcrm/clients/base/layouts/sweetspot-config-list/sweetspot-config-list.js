@@ -118,23 +118,25 @@
         var data = this.collection.toJSON();
         data = this._formatData(data);
 
-        if (!_.isEmpty(data.sweetspot)) {
-            app.alert.show('sweetspot', {
-                level: 'process',
-                title: app.lang.get('LBL_SAVING'),
-                autoClose: false
-            });
-
-            app.user.updatePreferences(data, function(err) {
-                app.alert.dismiss('sweetspot');
-                if (err) {
-                    app.logger.error('Sweet Spot failed to update configuration preferences: ' + err);
-                }
-            });
+        if (_.isEmpty(data.sweetspot)) {
+            this.cancelConfig();
+            return;
         }
 
-        app.drawer.close(this.collection);
-        app.events.trigger('sweetspot:reset');
+        app.alert.show('sweetspot', {
+            level: 'process',
+            title: app.lang.get('LBL_SAVING'),
+            autoClose: false
+        });
+
+        app.user.updatePreferences(data, function(err) {
+            app.alert.dismiss('sweetspot');
+            if (err) {
+                app.logger.error('Sweet Spot failed to update configuration preferences: ' + err);
+            }
+            app.drawer.close(this.collection);
+            app.events.trigger('sweetspot:reset');
+        });
     },
 
     /**
