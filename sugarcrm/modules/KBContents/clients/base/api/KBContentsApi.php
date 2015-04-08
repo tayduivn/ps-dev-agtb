@@ -10,6 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use \Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
+use \Sugarcrm\Sugarcrm\Elasticsearch\Query\QueryBuilder;
+
 require_once 'include/api/SugarListApi.php';
 require_once 'data/BeanFactory.php';
 
@@ -39,20 +42,23 @@ class KBContentsApi extends SugarListApi
      */
     public function relatedDocuments($api, $args)
     {
+        global $current_user;
+
         $targetBean = BeanFactory::getBean($args['module'], $args['record']);
         if (!$targetBean->ACLAccess('view')) {
             return;
         }
         $options = $this->parseArguments($api, $args);
 
-        $searchEngine = SugarSearchEngineFactory::getInstance();
+        $builder = new QueryBuilder(SearchEngine::getInstance()->getEngine()->getContainer());
+        $builder
+            ->setUser($current_user)
+            ->setModules(array($args['module']))
+            ->setOffset($options['offset'])
+            ->setLimit($options['limit']);
 
         // TODO: Current sugar search interface doesn't allow using any query except "query string".
         // Construct it manually.
-        $searchObj = new \Elastica\Search($searchEngine->getClient());
-        $searchObj->addType($args['module']);
-        $searchObj->addIndex($searchEngine->getReadIndexName(array($args['module'])));
-
         $mltName = new \Elastica\Query\MoreLikeThis();
         $mltName->setFields(array('name'));
         $mltName->setLikeText($targetBean->name);
@@ -87,12 +93,10 @@ class KBContentsApi extends SugarListApi
         }
         $mainFilter->addMust($statusFilterOr);
 
-        $query = new \Elastica\Query($boolQuery);
-        $query->setFilter($mainFilter);
-        $query->setParam('from', $options['offset']);
-        $query->setSize($options['limit']);
+        $builder->setQuery($boolQuery);
+        $builder->addFilter($mainFilter);
 
-        $resultSet = $searchObj->search($query);
+        $resultSet = $builder->executeSearch();
 
         $returnedRecords = array();
 
