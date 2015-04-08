@@ -18,13 +18,31 @@
     initialize: function(options) {
         this.contextEvents = _.extend({}, this.contextEvents, {
             "list:editbusinessrules:fire": "openBusinessRules",
-            "list:exportbusinessrules:fire": "exportBusinessRules"
+            "list:exportbusinessrules:fire": "warnExportBusinessRules"
         });
         app.view.invokeParent(this, {type: 'view', name: 'recordlist', method: 'initialize', args:[options]});
     },
 
     openBusinessRules: function(model) {
         app.navigate(this.context, model, 'layout/businessrules');
+    },
+
+    warnExportBusinessRules: function (model) {
+        var that = this, lang;
+        if (App.cache.get("show_br_export_warning")) {
+            lang = App.lang.get("pmse_Business_Rules");
+            App.alert.show('show-br-export-confirmation', {
+                level: 'confirmation',
+                messages: lang['LBL_PMSE_BR_IMPORT_EXPORT_WARNING'],
+                onConfirm: function() {
+                    App.cache.set("show_br_export_warning");
+                    that.exportBusinessRules(model);
+                },
+                onCancel: $.noop
+            });
+        } else {
+            that.exportBusinessRules(model);
+        }
     },
 
     exportBusinessRules: function(model) {
