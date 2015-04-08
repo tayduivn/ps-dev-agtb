@@ -275,13 +275,11 @@ div.fa-expand[data-action=full-screen] {
     .fa {
       color: #555555;
       font-size: @smallTreeFont;
+      cursor: pointer;
     }
   }
   .clear-field {
     right: 18px;
-    .fa {
-      cursor: pointer;
-    }
   }
 }
 
@@ -382,6 +380,9 @@ tr.tr-inline-edit {
   .parenttree {
     top: -14px;
     cursor: pointer;
+    .dropdown-menu {
+      border-top: 1px solid @linkColor;
+    }
     .select-arrow, span[data-role="treevalue"], .clear-field {
       font-size: @smallTreeFont;
     }
