@@ -105,6 +105,12 @@
         app.shortcuts.register(app.shortcuts.GLOBAL + 'Help', '?', this.shortcuts, this);
 
         app.user.lastState.preserve(app.user.lastState.key('toggle-show-tutorial', this));
+
+        this.before('render', function() {
+            if (this._feedbackView) {
+                this._feedbackView.dispose();
+            }
+        }, this);
     },
 
     /**
