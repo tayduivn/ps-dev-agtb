@@ -3036,8 +3036,9 @@ class SugarBean
         }
 
         if(isset($this->module_name) && !empty($this->module_name) && !empty($GLOBALS['current_user']) && $this->isActivityEnabled()) {
-            $query_select .= ', case when sub.id IS NOT NULL then 1 else 0 end following';
-            $query_from .= " LEFT JOIN subscriptions sub ON sub.deleted = 0 AND sub.parent_type = '{$this->module_name}' AND sub.parent_id = {$this->db->quoted($id)} AND sub.modified_user_id = '{$GLOBALS['current_user']->id}'";
+            $query_select .= ", case when sub.id IS NOT NULL then 1 else 0 end following";
+            $query_from .= " LEFT JOIN subscriptions sub ON sub.deleted = 0 AND sub.parent_type = '{$this->module_name}'
+            AND sub.parent_id = {$this->db->quoted($id)} AND sub.created_by = '{$GLOBALS['current_user']->id}'";
         }
 
         $query = "SELECT $query_select FROM $query_from ";
