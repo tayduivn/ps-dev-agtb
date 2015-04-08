@@ -62,6 +62,13 @@ class HealthCheckScannerCasesTestMock extends HealthCheckScanner
     {
         return array ('7.6.0.0','1000');
     }
+
+    public function getPackageManifest()
+    {
+        return array(
+            'version' => '7.6.0.1',
+        );
+    }
 }
 
 class UpgradeDriverMock extends Sugar_PHPUnit_Framework_TestCase
