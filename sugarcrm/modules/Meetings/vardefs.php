@@ -663,6 +663,5 @@ VardefManager::createVardef('Meetings','Meeting', array('default', 'assignable',
 ));
 
 //boost value for full text search
-$dictionary['Meetings']['fields']['description']['full_text_search']['boost'] = 0.55;
+$dictionary['Meeting']['fields']['description']['full_text_search']['boost'] = 0.55;
 
-?>

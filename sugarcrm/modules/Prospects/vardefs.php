@@ -311,16 +311,16 @@ VardefManager::createVardef(
 );
 
 //boost value for full text search
-$dictionary['Prospects']['fields']['first_name']['full_text_search']['boost'] = 1.37;
-$dictionary['Prospects']['fields']['last_name']['full_text_search']['boost'] = 1.36;
-$dictionary['Prospects']['fields']['email']['full_text_search']['boost'] = 1.35;
-$dictionary['Prospects']['fields']['phone_home']['full_text_search']['boost'] = 0.89;
-$dictionary['Prospects']['fields']['phone_mobile']['full_text_search']['boost'] = 0.88;
-$dictionary['Prospects']['fields']['phone_work']['full_text_search']['boost'] = 0.87;
-$dictionary['Prospects']['fields']['phone_other']['full_text_search']['boost'] = 0.86;
-$dictionary['Prospects']['fields']['phone_fax']['full_text_search']['boost'] = 0.85;
-$dictionary['Prospects']['fields']['description']['full_text_search']['boost'] = 0.43;
-$dictionary['Prospects']['fields']['primary_address_street']['full_text_search']['boost'] = 0.22;
-$dictionary['Prospects']['fields']['alt_address_street']['full_text_search']['boost'] = 0.21;
+$dictionary['Prospect']['fields']['first_name']['full_text_search']['boost'] = 1.37;
+$dictionary['Prospect']['fields']['last_name']['full_text_search']['boost'] = 1.36;
+$dictionary['Prospect']['fields']['email']['full_text_search']['boost'] = 1.35;
+$dictionary['Prospect']['fields']['phone_home']['full_text_search']['boost'] = 0.89;
+$dictionary['Prospect']['fields']['phone_mobile']['full_text_search']['boost'] = 0.88;
+$dictionary['Prospect']['fields']['phone_work']['full_text_search']['boost'] = 0.87;
+$dictionary['Prospect']['fields']['phone_other']['full_text_search']['boost'] = 0.86;
+$dictionary['Prospect']['fields']['phone_fax']['full_text_search']['boost'] = 0.85;
+$dictionary['Prospect']['fields']['description']['full_text_search']['boost'] = 0.43;
+$dictionary['Prospect']['fields']['primary_address_street']['full_text_search']['boost'] = 0.22;
+$dictionary['Prospect']['fields']['alt_address_street']['full_text_search']['boost'] = 0.21;
 
 

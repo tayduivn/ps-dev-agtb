@@ -701,14 +701,14 @@ VardefManager::createVardef(
 );
 
 //boost value for full text search
-$dictionary['Leads']['fields']['first_name']['full_text_search']['boost'] = 1.87;
-$dictionary['Leads']['fields']['last_name']['full_text_search']['boost'] = 1.85;
-$dictionary['Leads']['fields']['email']['full_text_search']['boost'] = 1.83;
-$dictionary['Leads']['fields']['phone_home']['full_text_search']['boost'] = 1.02;
-$dictionary['Leads']['fields']['phone_mobile']['full_text_search']['boost'] = 1.01;
-$dictionary['Leads']['fields']['phone_work']['full_text_search']['boost'] = 1.00;
-$dictionary['Leads']['fields']['phone_other']['full_text_search']['boost'] = 0.99;
-$dictionary['Leads']['fields']['phone_fax']['full_text_search']['boost'] = 0.98;
-$dictionary['Leads']['fields']['description']['full_text_search']['boost'] = 0.70;
-$dictionary['Leads']['fields']['primary_address_street']['full_text_search']['boost'] = 0.31;
-$dictionary['Leads']['fields']['alt_address_street']['full_text_search']['boost'] = 0.30;
+$dictionary['Lead']['fields']['first_name']['full_text_search']['boost'] = 1.87;
+$dictionary['Lead']['fields']['last_name']['full_text_search']['boost'] = 1.85;
+$dictionary['Lead']['fields']['email']['full_text_search']['boost'] = 1.83;
+$dictionary['Lead']['fields']['phone_home']['full_text_search']['boost'] = 1.02;
+$dictionary['Lead']['fields']['phone_mobile']['full_text_search']['boost'] = 1.01;
+$dictionary['Lead']['fields']['phone_work']['full_text_search']['boost'] = 1.00;
+$dictionary['Lead']['fields']['phone_other']['full_text_search']['boost'] = 0.99;
+$dictionary['Lead']['fields']['phone_fax']['full_text_search']['boost'] = 0.98;
+$dictionary['Lead']['fields']['description']['full_text_search']['boost'] = 0.70;
+$dictionary['Lead']['fields']['primary_address_street']['full_text_search']['boost'] = 0.31;
+$dictionary['Lead']['fields']['alt_address_street']['full_text_search']['boost'] = 0.30;

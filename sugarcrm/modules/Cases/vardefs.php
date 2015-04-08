@@ -298,4 +298,3 @@ $dictionary['Case']['fields']['name']['full_text_search']['boost'] = 1.53;
 $dictionary['Case']['fields']['case_number']['full_text_search']['boost'] = 1.29;
 $dictionary['Case']['fields']['description']['full_text_search']['boost'] = 0.66;
 $dictionary['Case']['fields']['work_log']['full_text_search']['boost'] = 0.64;
-?>

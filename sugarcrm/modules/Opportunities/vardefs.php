@@ -670,4 +670,4 @@ VardefManager::createVardef(
 
 
 //boost value for full text search
-$dictionary['Opportunities']['fields']['description']['full_text_search']['boost'] = 0.59;
+$dictionary['Opportunity']['fields']['description']['full_text_search']['boost'] = 0.59;

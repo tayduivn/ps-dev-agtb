@@ -29,7 +29,6 @@ $dictionary['Tag'] = array(
             'type' => 'varchar',
             'len' => 255,
             'unified_search' => true,
-            'full_text_search' => array('enabled' => true, 'searchable' => true),
             'required' => true,
             'reportable' => false,
             'studio' => false,
@@ -92,3 +91,13 @@ VardefManager::createVardef(
     'Tags',
     'Tag'
 );
+
+// disable full text search on template fields
+$dictionary['Tag']['fields']['assigned_user_id']['full_text_search'] = array();
+$dictionary['Tag']['fields']['created_by']['full_text_search'] = array();
+$dictionary['Tag']['fields']['date_entered']['full_text_search'] = array();
+$dictionary['Tag']['fields']['date_modified']['full_text_search'] = array();
+$dictionary['Tag']['fields']['description']['full_text_search'] = array();
+$dictionary['Tag']['fields']['modified_user_id']['full_text_search'] = array();
+
+

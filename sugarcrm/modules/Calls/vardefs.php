@@ -644,6 +644,5 @@ VardefManager::createVardef('Calls','Call', array('default', 'assignable',
 'team_security',
 ));
 
-$dictionary['Calls']['fields']['description']['full_text_search']['boost'] = 0.54;
+$dictionary['Call']['fields']['description']['full_text_search']['boost'] = 0.54;
 
-?>

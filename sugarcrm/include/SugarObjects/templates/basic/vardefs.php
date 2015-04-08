@@ -99,10 +99,13 @@ $vardefs = array(
                 'full_text_search' => array(
                     'enabled' => true,
                     'searchable' => false,
-                    'aggregation' => array(
-                        'type' => 'myItems',
-                        'cross_module' => true,
-                    )
+                    'type' => 'id',
+                    'aggregations' => array(
+                        'modified_user_id' => array(
+                            'type' => 'MyItems',
+                            'label' => 'LBL_AGG_MODIFIED_BY_ME',
+                        ),
+                    ),
                 ),
             ),
         'modified_by_name' => array(
@@ -139,10 +142,13 @@ $vardefs = array(
                 'full_text_search' => array(
                     'enabled' => true,
                     'searchable' => false,
-                    'aggregation' => array(
-                        'type' => 'myItems',
-                        'cross_module' => true,
-                    )
+                    'type' => 'id',
+                    'aggregations' => array(
+                        'created_by' => array(
+                            'type' => 'MyItems',
+                            'label' => 'LBL_AGG_CREATED_BY_ME',
+                        ),
+                    ),
                 ),
             ),
         'created_by_name' => array(

@@ -488,6 +488,5 @@ VardefManager::createVardef('Documents', 'Document', array('default', 'assignabl
 ));
 
 //boost value for full text search
-$dictionary['Documents']['fields']['description']['full_text_search']['boost'] = 0.61;
+$dictionary['Document']['fields']['description']['full_text_search']['boost'] = 0.61;
 
-?>

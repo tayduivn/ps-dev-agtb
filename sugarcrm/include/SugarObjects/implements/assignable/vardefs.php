@@ -28,10 +28,12 @@ $vardefs = array(
             'full_text_search' => array(
                 'enabled' => true,
                 'searchable' => false,
-                'aggregation' => array(
-                    'type' => 'myItems',
-                    'cross_module' => true,
-                )
+                'aggregations' => array(
+                    'assigned_user_id' => array(
+                        'type' => 'MyItems',
+                        'label' => 'LBL_AGG_ASSIGNED_TO_ME',
+                    ),
+                ),
             ),
 		),
 	 'assigned_user_name' =>
