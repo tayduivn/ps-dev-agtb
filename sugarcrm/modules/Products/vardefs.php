@@ -477,7 +477,11 @@ $dictionary['Product'] = array(
             'default' => '',
             'len' => 100,
             'audited' => true,
-            'comment' => 'Product status (ex: Quoted, Ordered, Shipped)'
+            'comment' => 'Product status (ex: Quoted, Ordered, Shipped)',
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => false,
+            ),
         ),
         'tax_class' => array(
             'name' => 'tax_class',
