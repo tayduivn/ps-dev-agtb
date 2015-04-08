@@ -3443,6 +3443,7 @@ function remove_logic_hook($module_name, $event, $action_array)
             $new_contents = replace_or_add_logic_type($hook_array);
             write_logic_file($module_name, $new_contents);
 
+            LogicHook::refreshHooks();
         }
     }
 }
