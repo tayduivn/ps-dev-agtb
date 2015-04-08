@@ -31,14 +31,14 @@
 
     showExportingWarning: function (model) {
         var that = this, lang;
-        if (App.cache.get("show_export_warning")) {
+        if (App.cache.get("show_project_export_warning")) {
             lang = App.lang.get("pmse_Project");
             App.alert.show('project-export-confirmation',  {
                 level: 'confirmation',
-                messages: lang['LBL_PMSE_IMPORT_EXPORT_WARNING'] + "<br/><br/>"
-                    + lang['LBL_PMSE_EXPORT_CONFIRMATION'],
+                messages: lang['LBL_PMSE_PROJECT_IMPORT_EXPORT_WARNING'] + "<br/><br/>"
+                    + lang['LBL_PMSE_PROJECT_EXPORT_CONFIRMATION'],
                 onConfirm: function () {
-                    App.cache.set("show_export_warning", false);
+                    App.cache.set("show_project_export_warning", false);
                     that.exportProcess(model);
                 },
                 onCancel: $.noop
