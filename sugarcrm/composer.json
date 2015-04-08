@@ -51,6 +51,7 @@
         "psr/log": "1.0",
         "ruflin/elastica" : "v1.4.3.0",
         "onelogin/php-saml" : "2.1.0.1",
+        "aws/aws-sdk-php": "2.7.7",
         "php": ">=5.3.0"
     },
     "require-dev": {
