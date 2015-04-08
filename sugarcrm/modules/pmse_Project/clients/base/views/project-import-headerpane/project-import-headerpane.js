@@ -20,7 +20,8 @@
         if (App.cache.get("show_import_warning")) {
             App.alert.show('project-import-confirmation',  {
                 level: 'confirmation',
-                messages: translate('LBL_PMSE_IMPORT_CONFIRMATION'),
+                messages: translate('LBL_PMSE_IMPORT_EXPORT_WARNING') + "<br/><br/>"
+                    + translate('LBL_PMSE_IMPORT_CONFIRMATION'),
                 onConfirm: function () {
                     App.cache.set("show_import_warning", false);
                     that.context.trigger('project:import:finish');
