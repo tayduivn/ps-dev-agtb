@@ -504,14 +504,16 @@ class SugarQuery_Compiler_SQL
                     break;
                 case 'NOT IN':
                     $valArray = array();
+                    $sql .= "({$field} IS NULL OR {$field} NOT IN ";
                     if ($condition->values instanceof SugarQuery) {
-                        $sql .= "{$field} NOT IN (" . $condition->values->compileSql($this->sugar_query) . ")";
+                        $sql .= '(' . $condition->values->compileSql($this->sugar_query) . ')';
                     } else {
                         foreach ($condition->values as $val) {
                             $valArray[] = $this->prepareValue($val, $condition);
                         }
-                        $sql .= "{$field} NOT IN (" . implode(',', $valArray) . ")";
+                        $sql .= '(' . implode(',', $valArray) . ')';
                     }
+                    $sql .= ')';
                     break;
                 case 'BETWEEN':
                     $value['min'] = $this->prepareValue($condition->values['min'], $condition);

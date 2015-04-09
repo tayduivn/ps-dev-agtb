@@ -27,14 +27,14 @@ $viewdefs['pmse_Inbox']['base']['filter']['basic'] = array(
             'filter_definition' => array(),
             'editable'          => false
         ),
-        array(
-            'id'                => 'assigned_to_me',
-            'name'              => 'LBL_ASSIGNED_TO_ME',
-            'filter_definition' => array(
-                '$owner' => '',
-            ),
-            'editable'          => false
-        ),
+//        array(
+//            'id'                => 'assigned_to_me',
+//            'name'              => 'LBL_ASSIGNED_TO_ME',
+//            'filter_definition' => array(
+//                '$owner' => '',
+//            ),
+//            'editable'          => false
+//        ),
         array(
             'id'                => 'favorites',
             'name'              => 'LBL_FAVORITES',

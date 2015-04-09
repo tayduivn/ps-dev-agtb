@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class S_901_HealthCheckScannerCasesTestMock extends HealthCheckScannerCasesTestMock
+class S_901_1_HealthCheckScannerCasesTestMock extends HealthCheckScannerCasesTestMock
 {
     //Turn this test off, since thee HealthCheck is also run on 7.x for Elastic Search
     public $skip = true;

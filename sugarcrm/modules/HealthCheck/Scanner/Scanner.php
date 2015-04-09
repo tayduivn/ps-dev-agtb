@@ -566,8 +566,8 @@ class HealthCheckScanner
             $flags = $flags & ~E_DEPRECATED;
         }
         set_error_handler(array($this, 'scriptErrorHandler'), $flags);
-        $toVersionInfo = $this->getVersion();
-        $this->log(vsprintf("HealthCheck v.%s (build %s) starting scanning $this->instance", $toVersionInfo));
+        $upgraderVersionInfo = $this->getVersion();
+        $this->log(vsprintf("HealthCheck v.%s (build %s) starting scanning $this->instance", $upgraderVersionInfo));
         if (!$this->init()) {
             return $this->logMeta;
         }
@@ -579,7 +579,7 @@ class HealthCheckScanner
         if ($this->upgrader) {
             $manifest = $this->getPackageManifest();
 
-            if (version_compare($toVersionInfo[0], HealthCheckScannerMeta::ALLOWED_UPGRADER_VERSION, '<')) {
+            if (version_compare($upgraderVersionInfo[0], HealthCheckScannerMeta::ALLOWED_UPGRADER_VERSION, '<')) {
                 $this->updateStatus('unsupportedUpgrader');
                 $this->log(
                     'Unsupported Upgrader version. Please install the appropriate SugarUpgradeWizardPrereq package'
@@ -588,11 +588,12 @@ class HealthCheckScanner
             }
 
             $manifestFlavor = !empty($manifest['flavor']) ? $manifest['flavor'] : '';
-            if ((!version_compare($sugar_version, $toVersionInfo[0]) && !strcasecmp($sugar_flavor, $manifestFlavor)) ||
-                version_compare($sugar_version, $toVersionInfo[0], '>')
+            $manifestVersion = $manifest['version'];
+            if ((!version_compare($sugar_version, $manifestVersion) && !strcasecmp($sugar_flavor, $manifestFlavor)) ||
+                version_compare($sugar_version, $manifestVersion, '>')
             ) {
                 $this->updateStatus("alreadyUpgraded");
-                $this->log("Instance already upgraded to " . $toVersionInfo[0]);
+                $this->log("Instance already upgraded to " . $manifestVersion);
                 return $this->logMeta;
             }
         }

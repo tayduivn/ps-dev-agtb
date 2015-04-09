@@ -247,12 +247,14 @@ ExpressionContainer.prototype.handleCriteriaBuilder = function (globalParent, pa
             }
             switch (parentVariable.fieldType) {
                 case 'Date':
+                case 'Datetime':
                     config = {
                         operators: {
                             arithmetic: ["+","-"]
                         },
                         constants: {
-                            date: true,
+                            date: parentVariable.fieldType === 'Date' ? true : false,
+                            datetime: parentVariable.fieldType === 'Datetime' ? true : false,
                             timespan: true
                         },
                         variables: {
