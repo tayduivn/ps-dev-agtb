@@ -24,82 +24,81 @@
 
         this.context.set('search', true);
         this.collection.query = this.context.get('searchTerm') || '';
+        this.collection.neededResponseProperties = ['xmod_aggs'];
 
         this.context.on('change:searchTerm change:module_list', function(context) {
             //TODO: collection.fetch shouldn't need a query to be passed. Will
             // be fixed by SC-3973.
             var searchTerm = this.context.get('searchTerm');
             var moduleList = this.context.get('module_list') || [];
-            this.collection.fetch({query: searchTerm, module_list: moduleList});
+            this.collection.fetch({query: searchTerm, module_list: moduleList, params: {xmod_aggs: true}});
         }, this);
 
-        this.context.on('change:facets', function(model) {
-            //Here we'll trigger the search passing the updated facets in the query.
+        this.context.on('facet:apply', function(facetType, facetCriteriaId, isSingleItem) {
+            this.applyFacetChange(facetType, facetCriteriaId, isSingleItem);
+            //Here we'll trigger the search passing the facetFilters object in the query.
+            var searchTerm = this.context.get('searchTerm');
+            var moduleList = this.context.get('module_list') || [];
+            this.collection.fetch({query: searchTerm, module_list: moduleList, params: {xmod_aggs: true},
+                apiOptions:
+                {
+                    data: {agg_filters: this.facetFilters},
+                    fetchWithPost: true
+                }
+            });
         }, this);
-        this.collection.on('sync', function(collection, data) {
+        this.collection.on('sync', function(collection, data, options) {
             var isCollection = (collection instanceof App.BeanCollection);
             if (!isCollection) {
                 return;
             }
             app.utils.GlobalSearch.formatRecords(collection, true);
-            //Fake aggregations.
-            data.aggregations = {
-                modules: {
-                    type: 'terms_modules',
-                    results:
-                    {
-                        Contacts: 5,
-                        Leads: 5
-                    }
-                },
-                assigned_to_me: {
-                    type: 'my_items',
-                    results: {
-                        count: 10
-                    }
-                },
-                created_by_me: {
-                    type: 'my_items',
-                    results: {
-                        count: 10
-                    }
-                },
-                modified_by_me: {
-                    type: 'my_items',
-                    results: {
-                        count: 12
-                    }
-                },
-                my_favorites: {
-                    type: 'my_items',
-                    results: {
-                        count: 12
-                    }
-                },
-                date_modified: {
-                    type: 'date_range',
-                    'results':
-                    {
-                        last_year: 4,
-                        this_year: 13,
-                        this_month: 1
-                    }
-                },
-                date_closed: {
-                    type: 'date_range',
-                    'results':
-                    {
-                        last_quarter: 5,
-                        this_quarter: 10,
-                        next_quarter: 8
-                    }
-                }
-            };
 
-            collection.facets = data.aggregations;
-            this.context.set('facets', data.aggregations, {silent: true});
-            this.context.trigger('facets:added', this.context);
+            if (!_.isEmpty(options.xmod_aggs)) {
+                this.facetFilters = this._buildFiltersObject(options.xmod_aggs);
+                this.context.set('facets', options.xmod_aggs);
+            }
+
         }, this);
+    },
+
+    /**
+     * Builds the filter object to be sent to the server.
+     *
+     * @param {Object} facets The facets object that comes from the server.
+     * @return {Object} facetFilters The formatted object to send to the server.
+     * @private
+     */
+    _buildFiltersObject: function(facets) {
+        var facetFilters = {};
+        _.each(facets, function(facet, key) {
+            if (key === 'modules') {
+                facetFilters[key] = Object.keys(facet.results);
+            } else {
+                facetFilters[key] = true;
+            }
+        }, this);
+        return facetFilters;
+    },
+
+    /**
+     * Updates {@link #facetFilters} with the facet change.
+     *
+     * @param {String} facetType The facet type.
+     * @param facetCriteriaId The id of the facet criteria.
+     * @param isSingleItem `true` if it's a single item facet.
+     */
+    applyFacetChange: function(facetType, facetCriteriaId, isSingleItem) {
+        if (isSingleItem) {
+            this.facetFilters[facetType] = !this.facetFilters[facetType];
+        } else {
+            var index = this.facetFilters[facetType].indexOf(facetCriteriaId);
+            if (index === -1) {
+                this.facetFilters[facetType].splice(0, 0, facetCriteriaId);
+            } else {
+                this.facetFilters[facetType].splice(index, 1);
+            }
+        }
     },
 
     /**
@@ -113,6 +112,9 @@
      */
     loadData: function(options, setFields) {
         setFields = false;
+        options = options || {};
+        options.params = {};
+        options.params.xmod_aggs = true;
         this._super('loadData', [options, setFields]);
     }
 })

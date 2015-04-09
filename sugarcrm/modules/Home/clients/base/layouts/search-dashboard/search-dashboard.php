@@ -21,9 +21,10 @@ $viewdefs['Home']['base']['layout']['search-dashboard'] = array(
                             'view' =>
                                 array(
                                     'type' => 'search-facet',
-                                    'facet_type' => 'assigned_to_me',
+                                    'facet_type' => 'assigned_user_id',
                                     'custom_toolbar' => 'no',
                                     'label' => 'LBL_ASSIGNED_TO_SELF',
+                                    'ui_type' => 'single',
                                 ),
                             'width' => 12,
                         ),
@@ -34,6 +35,7 @@ $viewdefs['Home']['base']['layout']['search-dashboard'] = array(
                                     'facet_type' => 'my_favorites',
                                     'custom_toolbar' => 'no',
                                     'label' => 'LBL_FAVORITES',
+                                    'ui_type' => 'single',
                                 ),
                             'width' => 12,
                         ),
@@ -41,9 +43,10 @@ $viewdefs['Home']['base']['layout']['search-dashboard'] = array(
                             'view' =>
                                 array(
                                     'type' => 'search-facet',
-                                    'facet_type' => 'created_by_me',
+                                    'facet_type' => 'created_by',
                                     'custom_toolbar' => 'no',
                                     'label' => 'LBL_CREATED_BY_ME',
+                                    'ui_type' => 'single',
                                 ),
                             'width' => 12,
                         ),
@@ -51,9 +54,10 @@ $viewdefs['Home']['base']['layout']['search-dashboard'] = array(
                             'view' =>
                                 array(
                                     'type' => 'search-facet',
-                                    'facet_type' => 'modified_by_me',
+                                    'facet_type' => 'modified_user_id',
                                     'custom_toolbar' => 'no',
                                     'label' => 'LBL_MODIFIED_BY_ME',
+                                    'ui_type' => 'single',
                                 ),
                             'width' => 12,
                         ),
@@ -63,6 +67,7 @@ $viewdefs['Home']['base']['layout']['search-dashboard'] = array(
                                     'type' => 'search-facet',
                                     'label' => 'LBL_FACET_MODULES',
                                     'facet_type' => 'modules',
+                                    'ui_type' => 'multi',
                                     'custom_toolbar' => array(
                                         "buttons" => array(
                                             array(

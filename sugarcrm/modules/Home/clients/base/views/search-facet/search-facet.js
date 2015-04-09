@@ -15,7 +15,7 @@
  */
 ({
     events: {
-        'click [data-facet]': 'itemClicked'
+        'click [data-facet-criteria]': 'itemClicked'
     },
 
     /**
@@ -25,6 +25,7 @@
         this._super('initialize', [options]);
 
         this.facetType = this.meta.facet_type;
+        this.isSingleItem = this.meta.ui_type === 'single';
         this.facetItems = [];
 
         if (this.context.get('facets') && this.context.get('facets')[this.facetType]) {
@@ -38,7 +39,7 @@
      * Binds context events related to facets changes.
      */
     bindFacetsEvents: function() {
-        this.context.on('facets:added', this.parseFacetsData, this);
+        this.context.on('change:facets', this.parseFacetsData, this);
     },
 
     /**
@@ -54,11 +55,10 @@
             return;
         }
         var results = currentFacet.results;
-        // If no buckets are defined we are in the case of `Assigned to me`,
-        // `Created by me`, `Modified by me` or `My favorites` facet.
-        if (currentFacet.type === 'my_items') {
+
+        if (this.isSingleItem) {
             this.facetItems = [{
-                key: Object.keys(currentFacet)[0],
+                key: this.facetType,
                 label: app.lang.get(this.meta.label, 'Filters'),
                 count: currentFacet.results.count
             }];
@@ -83,21 +83,11 @@
      * @param {Event} event The `click` event.
      */
     itemClicked: function(event) {
+        var facetCriteriaId = this.$(event.currentTarget).data('facet-criteria');
+
         this.$(event.currentTarget).toggleClass('selected');
-        var contextFacets = this.context.get('facets');
 
-        // Here we need to remove or add facet items from the context. Then in
-        // search.js we'll listen to `change:facets` and then trigger a new search.
-        var facetItemToToggle = this.$(event.currentTarget).data('facet');
-        if (!_.isUndefined(contextFacets[this.facetType].buckets)) {
-            facetItemToToggle = _.find(contextFacets[this.facetType].buckets, function(bucket) {
-                return bucket.key === facetItemToToggle;
-            });
-        }
-        facetItemToToggle.disabled = true;
-
-        this.context.set('facets', contextFacets);
-        this.context.trigger('change:facets', facetItemToToggle);
+        this.context.trigger('facet:apply', this.facetType, facetCriteriaId, this.isSingleItem);
     },
 
     /**
