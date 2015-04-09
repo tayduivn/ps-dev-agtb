@@ -25,7 +25,6 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\MultiFieldHand
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\AutoIncrementHandler;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\EmailAddressHandler;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\CrossModuleAggHandler;
-use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\DenormalizeTagIdsHandler;
 
 /**
  *
@@ -111,7 +110,6 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
         $this->handlers->addHandler(new AutoIncrementHandler());
         $this->handlers->addHandler(new EmailAddressHandler());
         $this->handlers->addHandler(new CrossModuleAggHandler());
-        $this->handlers->addHandler(new DenormalizeTagIdsHandler());
     }
 
     /**
@@ -248,22 +246,8 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
     }
 
     /**
-     * Add the tag filters to the query.
-     * @param QueryBuilder $builder the query builder
-     * @param array $tagFilters the list of tag filters
-     */
-    protected function handleTagFilters($builder, array $tagFilters)
-    {
-        // Compose term filter for the tags
-        $filter = new \Elastica\Filter\Terms(DenormalizeTagIdsHandler::TAGIDS_FIELD, $tagFilters);
-
-        // Apply the tag filters to post_filters
-        $builder->addPostFilter($filter);
-    }
-
-    /**
      * Get search field wrapper
-     * @param array $modules List of moduless
+     * @param array $modules List of modules
      * @return array
      */
     protected function getSearchFields(array $modules)
@@ -338,26 +322,6 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
     protected $offset = 0;
 
     /**
-     * @var boolean the flag of getting tags.
-     */
-    protected $getTags = array();
-
-    /**
-     * @var array the name of the "Tags" Module
-     */
-    protected $tagModule = 'Tags';
-
-    /**
-     * @var integer
-     */
-    protected $tagLimit = 5;
-
-    /**
-     * @var array Tag Filter list
-     */
-    protected $tagFilters = array();
-
-    /**
      * @var boolean Apply field level boosts
     */
     protected $fieldBoost = false;
@@ -421,45 +385,6 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
     }
 
     /**
-     * Set the flag of getting tags.
-     * @param boolean $getTags
-     * @return GlobalSearch
-     */
-    public function getTags($getTags)
-    {
-        if (!empty($getTags)) {
-            $this->getTags = $getTags;
-        }
-        return $this;
-    }
-
-    /**
-     * Set the size of tags in the response.
-     * @param integer $tagLimit
-     * @return GlobalSearch
-     */
-    public function setTagLimit($tagLimit)
-    {
-        $this->tagLimit = (int) $tagLimit;
-        return $this;
-    }
-
-
-    /**
-     * Set the list of tag ids for filtering.
-     * @param array $tagFilters
-     * @return GlobalSearch
-     */
-    public function setTagFilters(array $tagFilters = array())
-    {
-        if (!empty($tagFilters)) {
-            $this->tagFilters = $tagFilters;
-        }
-        return $this;
-    }
-
-
-    /**
      * Enable field boosts (disabled by default)
      * @param boolean $toggle
      * @return GlobalSearch
@@ -511,23 +436,6 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
     }
 
     /**
-     * Exclude the module 'Tags' for search.
-     * @param array $modules the list of modules
-     * @return array
-     */
-    protected function excludeTagModule(array $modules, $tagModule)
-    {
-        // If the module 'Tags' exist, remove it from the list;
-        // Otherwise, return the original module list.
-        $key = array_search($tagModule, $modules);
-        if ($key != false) {
-            unset($modules[$key]);
-            return array_values($modules);
-        }
-        return $modules;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function search()
@@ -536,9 +444,6 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
         if (empty($this->modules)) {
             $this->modules = $this->getUserModules();
         }
-
-        // Exclude the module 'Tags' for the normal search
-        $this->modules = $this->excludeTagModule($this->modules, $this->tagModule);
 
         $builder = new QueryBuilder($this->container);
         $builder
@@ -556,7 +461,7 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
             // order by date_modified
             $builder->setQuery($this->getMatchAllQuery());
             $this->sort = array('date_modified' => 'desc');
-            $this->useHighlighter = false;
+            $this->highlighter = false;
         }
 
         // Set highlighter
@@ -572,45 +477,8 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
         // Apply aggregations and post filters from aggregations
         $this->addAggregations($builder, $this->aggFilters);
 
-        // Add the filter for the tags
-        if (!empty($this->tagFilters)) {
-            $this->handleTagFilters($builder, $this->tagFilters);
-        }
-
         return $builder->executeSearch();
     }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function searchTags()
-    {
-        //create a module list including the tag module only
-        $modules = array($this->tagModule);
-
-        $builder = new QueryBuilder($this->container);
-        $builder
-            ->setUser($this->user)
-            ->setModules($modules)
-            ->setLimit($this->tagLimit)
-        ;
-
-        // Use MultiMatch if we are actually searching or fallback to MatchAll
-        if (!empty($this->term)) {
-            $builder->setQuery($this->getQuery($this->term, $modules));
-        } else {
-            $builder->setQuery($this->getMatchAllQuery());
-            $this->sort = array('_score');
-            $this->useHighlighter = false;
-        }
-
-        // Set sorting
-        if ($this->sort) {
-            $builder->setSort($this->sort);
-        }
-        return $builder->executeSearch();
-    }
-
 
     /**
      * Get query object

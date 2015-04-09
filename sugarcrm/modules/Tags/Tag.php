@@ -152,27 +152,6 @@ class Tag extends Basic
     }
 
     /**
-     * Retrieve the list of related tags from the database, given the SugarBean id.
-     * @param string $beanId the id of the associated bean
-     * @return array
-     */
-    public function getTagIdsByBeanId($beanId)
-    {
-        $sql = "SELECT tag_id";
-        $sql .= " FROM tag_bean_rel";
-        $sql .= " WHERE bean_id=\"{$beanId}\" AND deleted=0";
-        $sql .= " ORDER BY tag_id ASC";
-
-        $db = DBManagerFactory::getInstance();
-        $result = $db->query($sql);
-        $returnArray = array();
-        while ($data = $db->fetchByAssoc($result)) {
-            $returnArray[] = $data["tag_id"];
-        }
-        return $returnArray;
-    }
-
-    /**
      * @inheritDoc
      */
     public function mark_deleted($id) {
