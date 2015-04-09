@@ -16,7 +16,7 @@
             <li>
                 <h4><a href="#{{buildRoute model=this action="detail"}}">{{getFieldValue this "name"}}</a></h4>
                 <div class="details">
-                    {{relativeTime attributes.date_modified class='date'}}
+                    {{str "LBL_CREATED" this.module}} {{getFieldValue this "created_by_name"}} {{relativeTime attributes.date_entered class='date'}}
                 </div>
             </li>
         {{/each}}
