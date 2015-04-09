@@ -590,6 +590,7 @@
         // input value didn't change we don't want to trigger a new search.
         var hasInputChanged = (this._searchTerm !== this._oldSearchTerm);
         if (hasInputChanged) {
+            this.collection.dataFetched = false;
             this.layout.trigger('quicksearch:search:underway');
             this.expand();
             this.searchButtonIcon = false;
