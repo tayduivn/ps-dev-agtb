@@ -32,7 +32,18 @@
   <li class="li-group">
       {{str 'LBL_SWEETSPOT_RECORDS_SECTION'}}
   </li>
+  {{#each records}}
+      {{partial 'result' this component=../this}}
+  {{/each}}
+  {{#if showMore}}
+  <li data-sweetaction="true">
+    <a href{{#if term}}="#bwc/index.php?module=Home&append_wildcard=true&action=spot&full=true&q={{term}}&m="{{/if}} data-showmore="true">
+      <div class="result-text">
+        <div class="result-name">{{str 'LNK_SEARCH_FTS_VIEW_ALL'}}&hellip;</div>
+      </div>
+      <i class="fa fa-bars sweetspot-icon result-icon"></i>
+      <i class="fa fa-mail-forward sweetspot-icon"></i>
+    </a>
+  </li>
+  {{/if}}
 {{/if}}
-{{#each records}}
-    {{partial 'result' this component=../this}}
-{{/each}}

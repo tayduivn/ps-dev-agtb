@@ -17,6 +17,10 @@
     className: 'sweetspot-results',
     tagName: 'ul',
 
+    events: {
+        'click a[href]': 'triggerHide'
+    },
+
     /**
      * @inheritDoc
      *
@@ -49,6 +53,8 @@
             this.records = this._formatResults(results.records);
             this.keywords = this._formatResults(results.keywords);
             this.results = this.keywords.concat(this.actions).concat(this.records);
+            this.showMore = results.showMore;
+            this.term = results.term;
             this.render();
         }, this);
 
@@ -114,13 +120,17 @@
         }
     },
 
+    triggerHide: function() {
+        this.layout.hide();
+    },
+
     /**
      * Triggers the action linked to the active element.
      *
      * Navigates to the view or calls the callback method.
      */
     triggerAction: function() {
-        this.layout.toggle();
+        this.triggerHide();
         var route = this.$('.active > a').attr('href');
         if (route) {
             app.router.navigate(route, {trigger: true});
@@ -149,7 +159,8 @@
     moveForward: function() {
         // check to make sure we will be in bounds.
         this.activeIndex++;
-        if (this.activeIndex < this.results.length) {
+        var upperBound = this.showMore ? this.results.length + 1 : this.results.length;
+        if (this.activeIndex < upperBound) {
             // We're in bounds, just go to the next element in this view.
             this._highlightActive();
         } else {
@@ -169,7 +180,8 @@
             this.activeIndex--;
             this._highlightActive();
         } else {
-            this.activeIndex = this.results.length-1;
+            var lastIndex = this.showMore ? this.results.length : this.results.length - 1;
+            this.activeIndex = lastIndex;
             this._highlightActive();
         }
     },

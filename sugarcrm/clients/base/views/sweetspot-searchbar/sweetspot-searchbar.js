@@ -206,7 +206,8 @@
             actions: actions,
             keywords: keywords,
             records: records,
-            showMore: showMore
+            showMore: showMore,
+            term: term
         };
     },
 
@@ -252,7 +253,7 @@
         var params = {
             q: term,
             fields: 'name, id',
-            max_num: 3
+            max_num: 4
         };
         app.api.search(params, {
             success: function(data) {
