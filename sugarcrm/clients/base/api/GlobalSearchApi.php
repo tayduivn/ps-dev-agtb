@@ -16,6 +16,7 @@ use Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\ResultSetInterface;
 use Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\ResultInterface;
 use Sugarcrm\Sugarcrm\SearchEngine\Capability\Aggregation\AggregationCapable;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Result;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\DenormalizeTagIdsHandler;
 
 /**
  *
@@ -64,6 +65,26 @@ class GlobalSearchApi extends SugarApi
      * @var array List of aggregation filters to query
      */
     protected $aggFilters = array();
+
+    /**
+     * @var boolean a flag to get tags in the response;
+     */
+    protected $getTags = false;
+
+    /**
+     * @var array List of tag ids for filtering;
+     */
+    protected $tagFilters = array();
+
+    /**
+     * @var array the list of filters to be added to globalsearch;
+     */
+    protected $filters = array();
+
+    /**
+     * @var integer the maximum number of tags returned in the response
+     */
+    protected $tagLimit = 5;
 
     /**
      * @var string Search term
@@ -150,6 +171,7 @@ class GlobalSearchApi extends SugarApi
             throw new SugarApiExceptionSearchRuntime(null, array($e->getMessage()));
         }
 
+        // Handle the regular result set
         $response = array(
             'next_offset' => $this->getNextOffset($resultSet->getTotalHits(), $this->limit, $this->offset),
             'total' => $resultSet->getTotalHits(),
@@ -167,6 +189,11 @@ class GlobalSearchApi extends SugarApi
             $response['mod_aggs'] = array();
         }
 
+        // Search the tag module
+        if ($this->getTags == true && !empty($this->term)) {
+            $resultSet = $globalSearch->searchTags();
+            $response['tags'] = $this->formatTagResults($resultSet);
+        }
         return $response;
     }
 
@@ -189,6 +216,15 @@ class GlobalSearchApi extends SugarApi
         // Set aggregation filters
         if (!empty($args['agg_filters'])) {
             $this->aggFilters = $this->parseAggFilters($args['agg_filters']);
+        }
+
+        // Get tags related parameters
+        if (!empty($args['getTags'])) {
+            $this->getTags = (bool) $args['getTags'];
+        }
+
+        if (!empty($args['tag_filters'])) {
+            $this->tagFilters = $this->parseTagFilters($args['tag_filters']);
         }
 
         // Set search term
@@ -254,14 +290,50 @@ class GlobalSearchApi extends SugarApi
     }
 
     /**
+     * Parse the list of tag filters from the arguments
+     * @param string $tagFilterArgs
+     * @return array
+     */
+    protected function parseTagFilters($tagFilterArgs)
+    {
+        if (!is_array($tagFilterArgs)) {
+            return array();
+        }
+        return $tagFilterArgs;
+
+    }
+
+    /**
+     * Compose a list of filters to be used in global search
+     */
+    protected function composeFilters()
+    {
+        // Compose the term filter for the tags
+        if (!empty($this->tagFilters)) {
+            $this->filters[] = new \Elastica\Filter\Terms(DenormalizeTagIdsHandler::TAGIDS_FIELD, $this->tagFilters);
+        }
+
+        // Compose the bool and term filter to exclude the tag module
+        $tagFilter = new \Elastica\Filter\Terms("_type", array("Tags"));
+        $boolFilter = new \Elastica\Filter\Bool();
+        $boolFilter->addMustNot($tagFilter);
+        $this->filters[] = $boolFilter;
+    }
+
+    /**
      * Execute search
-     * @param GlobalSearchCapable $engine
+     * @param GlobalSearchInterface $engine
      * @return \Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\ResultSetInterface
      */
     protected function executeGlobalSearch(GlobalSearchCapable $engine)
     {
+        $this->composeFilters();
+
         $engine
             ->from($this->moduleList)
+            ->getTags($this->getTags)
+            ->setTagLimit($this->tagLimit)
+            ->setFilters($this->filters)
             ->term($this->term)
             ->limit($this->limit)
             ->offset($this->offset)

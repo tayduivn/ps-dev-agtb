@@ -169,6 +169,33 @@ class Elastic implements
     /**
      * {@inheritDoc}
      */
+    public function getTags($getTags)
+    {
+        $this->gsProvider()->getTags($getTags);
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setTagLimit($tagLimit)
+    {
+        $this->gsProvider()->setTagLimit($tagLimit);
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setFilters($filters)
+    {
+        $this->gsProvider()->setFilters($filters);
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function limit($limit)
     {
         $this->gsProvider()->limit($limit);
