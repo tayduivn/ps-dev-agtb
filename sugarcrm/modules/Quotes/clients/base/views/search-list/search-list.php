@@ -10,18 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 $viewdefs['Quotes']['base']['view']['search-list'] = array(
-    'rowactions' => array(
-        'actions' => array(
-            array(
-                'type' => 'preview-button',
-                'css_class' => 'btn',
-                'tooltip' => 'LBL_PREVIEW',
-                'event' => 'list:preview:fire',
-                'icon' => 'fa-eye',
-                'acl_action' => 'view'
-            ),
-        ),
-    ),
     'panels' => array(
         array(
             'name' => 'primary',
