@@ -56,7 +56,7 @@ abstract class AbstractHighlighter implements HighlighterInterface
     /**
      * @var integer Fragment size
      */
-    protected $fragSize = 20;
+    protected $fragSize = 100;
 
     /**
      * @var boolean Require field match

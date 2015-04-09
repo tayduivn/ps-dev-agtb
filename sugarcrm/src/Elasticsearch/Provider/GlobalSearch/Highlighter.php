@@ -31,7 +31,7 @@ class Highlighter extends AbstractHighlighter
 
         // default fragments
         $this->setNumberOfFrags(3);
-        $this->setFragSize(20);
+        $this->setFragSize(255);
 
         // use _source and plain highlighter
         $this->setDefaultFieldArgs(array(
