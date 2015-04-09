@@ -12,56 +12,27 @@
 --}}
 {{#if keywords.length}}
   <li class="li-group">
-    Favorites
+      {{str 'LBL_SWEETSPOT_KEYWORDS_SECTION'}}
   </li>
 {{/if}}
 {{#each keywords}}
-  <li data-sweetaction="true">
-    <a{{#if route}} href="{{route}}"{{/if}}{{#if callback}} data-callback="{{callback}}"{{/if}}>
-        {{#if label}}<span class="label label-module label-module-md label-{{module}}"
-                           rel="tooltip" data-title="{{module}}">{{label}}</span>{{/if}}
-      <div class="result-text">
-        <div class="result-keyword label">{{keyword}}</div>
-        <div class="result-name">{{name}}</div>
-      </div>
-        {{#if icon}}<i class="fa {{icon}} sweetspot-icon result-icon"></i>{{/if}}
-      <i class="fa fa-mail-forward sweetspot-icon"></i>
-    </a>
-  </li>
+    {{partial 'result' this component=../this}}
 {{/each}}
+
 {{#if actions.length}}
-    <li class="li-group">
-      Actions
-    </li>
+  <li class="li-group">
+      {{str 'LBL_SWEETSPOT_ACTIONS_SECTION'}}
+  </li>
 {{/if}}
 {{#each actions}}
-  <li data-sweetaction="true">
-    <a{{#if route}} href="{{route}}"{{/if}}{{#if callback}} data-callback="{{callback}}"{{/if}}>
-        {{#if label}}<span class="label label-module label-module-md label-{{module}}"
-                           rel="tooltip" data-title="{{module}}">{{label}}</span>{{/if}}
-      <div class="result-text">
-        <div class="result-name">{{name}}</div>
-      </div>
-        {{#if icon}}<i class="fa {{icon}} sweetspot-icon result-icon"></i>{{/if}}
-      <i class="fa fa-mail-forward sweetspot-icon"></i>
-    </a>
-  </li>
+    {{partial 'result' this component=../this}}
 {{/each}}
+
 {{#if records.length}}
   <li class="li-group">
-    Records
+      {{str 'LBL_SWEETSPOT_RECORDS_SECTION'}}
   </li>
 {{/if}}
 {{#each records}}
-  <li data-sweetaction="true">
-    <a{{#if route}} href="{{route}}"{{/if}}{{#if callback}} data-callback="{{callback}}"{{/if}}>
-        {{#if label}}<span class="label label-module label-module-md label-{{module}}"
-                           rel="tooltip" data-title="{{module}}">{{label}}</span>{{/if}}
-      <div class="result-text">
-        <div class="result-name">{{name}}</div>
-      </div>
-        {{#if icon}}<i class="fa {{icon}} sweetspot-icon result-icon"></i>{{/if}}
-      <i class="fa fa-mail-forward sweetspot-icon"></i>
-    </a>
-  </li>
+    {{partial 'result' this component=../this}}
 {{/each}}

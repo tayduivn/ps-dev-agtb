@@ -2897,6 +2897,9 @@ $app_strings = array (
     'LBL_SWEETSPOT_KEY' => 'Keyword',
     'LBL_SWEETSPOT_ADD' => 'Add a Sweet Spot action',
     'LBL_SWEETSPOT_REMOVE' => 'Remove action',
+    'LBL_SWEETSPOT_KEYWORDS_SECTION' => 'Favorites',
+    'LBL_SWEETSPOT_ACTIONS_SECTION' => 'Actions',
+    'LBL_SWEETSPOT_RECORDS_SECTION' => 'Records',
 
     'LBL_RELATED' => 'Related',
     'LBL_RELATED_INFORMATION' => 'Related Information',
