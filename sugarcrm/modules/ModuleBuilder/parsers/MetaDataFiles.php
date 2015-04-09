@@ -1162,29 +1162,32 @@ class MetaDataFiles
     public static function mergeSubpanels(array $mergeDefs, array $currentDefs)
     {
         $mergeComponents = $mergeDefs['components'];
-        $currentComponents = &$currentDefs['components'];
 
         foreach($mergeComponents as $mergeComponent) {
             // if it is the only thing in the array its an override and it needs to be added to an existing component
-            if(isset($mergeComponent['override_subpanel_list_view']) && count($mergeComponent) == 1) {
+            if (isset($currentDefs['components'], $mergeComponent['override_subpanel_list_view'])
+                && count($mergeComponent) == 1
+            ) {
                 $overrideView = $mergeComponent['override_subpanel_list_view']['view'];
                 $mergeContext = $mergeComponent['override_subpanel_list_view']['link'];
-                foreach($currentComponents as $key => $currentComponent) {
+                foreach ($currentDefs['components'] as $key => $currentComponent) {
                     if(!empty($currentComponent['context']['link']) && $currentComponent['context']['link'] == $mergeContext) {
                         $currentDefs['components'][$key]['override_subpanel_list_view'] = $overrideView;
                         continue;
                     }
                 }
             } else {
-                $linkName = isset($mergeComponent['context']['link']) ? $mergeComponent['context']['link'] : '';
                 $linkExists = false;
-                foreach($currentComponents as $key => $currentComponent) {
-                    if(!empty($currentComponent['context']['link']) && $currentComponent['context']['link'] == $linkName) {
-                        $linkExists = true;
+                if (isset($currentDefs['components'], $mergeComponent['context']['link'])) {
+                    foreach ($currentDefs['components'] as $currentComponent) {
+                        if ($currentComponent['context']['link'] == $mergeComponent['context']['link']) {
+                            $linkExists = true;
+                            break;
+                        }
                     }
                 }
                 if(!$linkExists) {
-                    $currentComponents[] = $mergeComponent;
+                    $currentDefs['components'][] = $mergeComponent;
                 }
             }
         }
