@@ -27,11 +27,14 @@
         this._super('initialize', [options]);
 
         /**
-         * The list of results displayed.
+         * The list of results returned by Sweet Spot, split by category.
          *
          * @type {Array}
          */
         this.results = [];
+        this.records = [];
+        this.actions = [];
+        this.keywords = [];
 
         /**
          * Stores the index of the currently highlighted list element.
@@ -42,13 +45,16 @@
         this.activeIndex = null;
 
         this.layout.on('sweetspot:results', function(results) {
-            this.results = this._formatResults(results);
+            this.actions = this._formatResults(results.actions);
+            this.records = this._formatResults(results.records);
+            this.keywords = this._formatResults(results.keywords);
+            this.results = this.keywords.concat(this.actions).concat(this.records);
             this.render();
         }, this);
 
 
         this.layout.on('show', function() {
-            this.results = [];
+            this.results = this.actions = this.records = this.keywords = [];
             $(window).on('keydown.' + this.cid, _.bind(this.keydownHandler, this));
             this.render();
         }, this);
@@ -64,7 +70,9 @@
     _render: function() {
         this._super('_render');
         this.activeIndex = 0;
-        this._highlightActive();
+        if (this.results.length) {
+            this._highlightActive();
+        }
     },
 
     /**
@@ -76,7 +84,7 @@
      */
     _formatResults: function(results) {
         if (_.isEmpty(results)) {
-            return results;
+            return [];
         }
         _.each(results, function(item) {
             if (!item.label) {
@@ -97,9 +105,11 @@
                 break;
             case 40: // down arrow
                 this.moveForward();
+                e.preventDefault();
                 break;
             case 38: // up arrow
                 this.moveBackward();
+                e.preventDefault();
                 break;
         }
     },
@@ -111,7 +121,7 @@
      */
     triggerAction: function() {
         this.layout.toggle();
-        var route = this.$('li.active > a').attr('href');
+        var route = this.$('.active > a').attr('href');
         if (route) {
             app.router.navigate(route, {trigger: true});
         }
@@ -126,9 +136,11 @@
      */
     _highlightActive: function() {
         this.$('.active').removeClass('active');
-        var nthChild = this.activeIndex + 1;
-        this.$('li:nth-child(' + nthChild + ')')
-            .addClass('active');
+        var nth = this.activeIndex;
+        var $active = this.$('[data-sweetaction="true"]:nth(' + nth + ')');
+        $active.addClass('active');
+        $active.find('a').focus();
+        this.$el.prev().find('input').focus();
     },
 
     /**

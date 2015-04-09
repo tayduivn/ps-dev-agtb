@@ -70,6 +70,9 @@
     width: 100%;
     padding: 0;
     margin: 0;
+    max-height: 460px;
+    overflow-y: scroll;
+
     list-style-type: none;
 
     &::-webkit-scrollbar {
@@ -93,7 +96,19 @@
       border-radius: 3px;
       position: relative;
 
-      .label {
+      &.li-group {
+        height: 18px;
+        margin: 0;
+        /* font-weight: bold; */
+        padding: 2px 10px 0px;
+        background-color: rgba(0,0,0,0.5);
+        color: #dbdbdb;
+        border-radius: 0px;
+        font-size: 11px;
+        font-variant: small-caps;
+      }
+
+      span.label {
         position: absolute;
         top: 9px;
         left: 6px;
@@ -108,8 +123,22 @@
         left: 0;
         display: block;
         height: 100%;
+        outline: 0;
 
-        p {
+        > div.result-text {
+
+          div.result-keyword.label {
+            display: block;
+            float: right;
+            margin-top: 6px;
+          }
+
+          div.result-name {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            display: block;
+          }
           position: absolute;
           white-space: nowrap;
           left: 50px;
@@ -125,7 +154,7 @@
         }
       }
 
-      &.active, &:hover {
+      &.active, &:not(.li-group):hover {
         background-color: @sweetspotGrey;
 
         .fa-mail-forward {
@@ -145,7 +174,7 @@
       .sweetspot-icon {
         position: absolute;
         right: 20px;
-        top: 15px;
+        top: 12px;
         font-size: 20px;
         color: rgba(0,0,0,.2);
       }

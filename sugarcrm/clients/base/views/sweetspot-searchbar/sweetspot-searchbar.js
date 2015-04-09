@@ -166,7 +166,7 @@
         if (!later && term === this.lastTerm) {
             return;
         }
-        var results = [];
+        var results = {};
         if (!later && !_.isEmpty(term)) {
             this.fireSearchRequest(term);
         }
@@ -185,14 +185,29 @@
      */
     doSearch: function(term) {
         var options = {
-            keys: ['keyword', 'module', 'name'],
+            keys: ['module', 'name'],
             threshold: '0.1'
         };
-        this.fuse = new Fuse(this.getLibrary(), options);
-        var results = this.fuse.search(term);
-        results = results.slice(0, 6);
-        results = _.sortBy(results, 'weight');
-        return results;
+        var keywordFuse = new Fuse(this.internalLibrary, {keys: ['keyword'], threshold: '0.0'});
+        var keywords = keywordFuse.search(term);
+        keywords = keywords.slice(0, 5);
+
+        var actionsFuse = new Fuse(_.difference(this.internalLibrary, keywords), options);
+        var actions = actionsFuse.search(term);
+        actions = actions.slice(0, 6);
+        actions = _.sortBy(actions, 'weight');
+
+        var recordsFuse = new Fuse(_.toArray(this.temporaryLibrary), options);
+        var records = recordsFuse.search(term);
+        var showMore = records.length > 3;
+
+        records = records.slice(0, 3);
+        return {
+            actions: actions,
+            keywords: keywords,
+            records: records,
+            showMore: showMore
+        };
     },
 
     /**
@@ -237,7 +252,7 @@
         var params = {
             q: term,
             fields: 'name, id',
-            max_num: 5
+            max_num: 3
         };
         app.api.search(params, {
             success: function(data) {
