@@ -685,6 +685,10 @@
                 tableContainer.scrollLeft = headerPosition.left + headerWidth + headerContainer.scrollLeft
                     - $(headerContainer).innerWidth();
             }
+            if (getRelativePosition(this.html, decisionTable.html).left + that.globalCBControl.width
+                > $(decisionTable.html).outerWidth()) {
+                that.globalCBControl.setAlignWithOwner("right");
+            }
         };
     }
 
