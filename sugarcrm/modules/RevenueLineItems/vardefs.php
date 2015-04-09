@@ -233,7 +233,20 @@ $dictionary['RevenueLineItem'] = array(
             'related_fields' => array(
                 'currency_id',
                 'base_rate'
-            )
+            ),
+            'formula' => '
+            ifElse(
+                and(
+                    equal($product_template_id, ""),
+                    not(isNumeric($discount_price))
+                ),
+                divide($likely_case,
+                    ifElse(greaterThan($quantity, 0), $quantity, 1)
+                ),
+                $discount_price
+            )',
+            'enforced' => false,
+            'calculated' => true,
         ),
         'discount_amount' => array(
             'name' => 'discount_amount',
