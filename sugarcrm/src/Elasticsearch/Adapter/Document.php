@@ -15,6 +15,8 @@ namespace Sugarcrm\Sugarcrm\Elasticsearch\Adapter;
 use Elastica\Document as BaseDocument;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
 
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\DenormalizeTagIdsHandler;
+
 /**
  *
  * Adapter class for \Elastica\Document
