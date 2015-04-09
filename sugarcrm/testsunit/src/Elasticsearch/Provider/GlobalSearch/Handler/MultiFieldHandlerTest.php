@@ -387,6 +387,29 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                     ),
                 ),
             ),
+            // test 'datetimecombo' type
+            array(
+                'Meetings',
+                'date_start',
+                array(
+                    'type' => 'datetimecombo',
+                ),
+                false,
+                array(
+                    'date_start' => array(
+                        'type' => 'string',
+                        'index' => 'not_analyzed',
+                        'include_in_all' => false,
+                        'fields' => array(
+                            'gs_datetime' =>  array(
+                                'type' => 'date',
+                                'format' => 'YYYY-MM-dd HH:mm:ss',
+                                'store' => false,
+                            ),
+                        ),
+                    ),
+                ),
+            ),
             // test 'date' type
             array(
                 'Opportunities',

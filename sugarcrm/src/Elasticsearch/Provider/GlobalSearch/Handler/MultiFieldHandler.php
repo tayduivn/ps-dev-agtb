@@ -49,6 +49,9 @@ class MultiFieldHandler extends AbstractHandler implements
         'datetime' => array(
             'gs_datetime',
         ),
+        'datetimecombo' => array(
+            'gs_datetime',
+        ),
         'date' => array(
             'gs_date',
         ),
