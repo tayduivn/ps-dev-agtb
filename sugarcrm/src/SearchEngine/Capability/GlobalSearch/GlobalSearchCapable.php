@@ -28,6 +28,12 @@ interface GlobalSearchCapable extends EngineInterface
     public function search();
 
     /**
+     * Execute search tags
+     * @return ResultSetInterface
+     */
+    public function searchTags();
+
+    /**
      * Set search term string
      * @param string $term Search term
      * @return GlobalSearchInterface

@@ -28,6 +28,10 @@ $vardefs = array(
             'exportable' => true,
             'sortable' => false,
             'rname' => 'name',
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => false,
+            ),
         ),
         'tag_link' => array(
             'name' => 'tag_link',

@@ -356,6 +356,29 @@ class GlobalSearchApi extends SugarApi
     }
 
     /**
+     * Format the result set for tags
+     * @param ResultSetInterface $results
+     * @return array
+     */
+    protected function formatTagResults(ResultSetInterface $results)
+    {
+        $formatted = array();
+
+        /* @var $result ResultInterface */
+        foreach ($results as $result) {
+            $data = array();
+
+            // Retrieve tags' id & name
+            $fields = $result->getData();
+            $data['id'] = $result->getId();
+            $data['name'] = $fields['name'];
+
+            $formatted[] = $data;
+        }
+        return $formatted;
+    }
+
+    /**
      * Wrapper around formatBean based on Result
      * @param \RestService $api
      * @param Result $result

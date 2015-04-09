@@ -151,6 +151,14 @@ class Elastic implements
     /**
      * {@inheritDoc}
      */
+    public function searchTags()
+    {
+        return $this->gsProvider()->searchTags();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function term($term)
     {
         $this->gsProvider()->term($term);
