@@ -461,7 +461,7 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
             // order by date_modified
             $builder->setQuery($this->getMatchAllQuery());
             $this->sort = array('date_modified' => 'desc');
-            $this->highlighter = false;
+            $this->useHighlighter = false;
         }
 
         // Set highlighter

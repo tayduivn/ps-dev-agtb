@@ -43,6 +43,7 @@ class GlobalSearchTest extends \PHPUnit_Framework_TestCase
             'name',
             'text',
             'datetime',
+            'datetimecombo',
             'date',
             'int',
             'phone',
