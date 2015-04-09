@@ -25,6 +25,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\MultiFieldHand
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\AutoIncrementHandler;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\EmailAddressHandler;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\CrossModuleAggHandler;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\DenormalizeTagIdsHandler;
 
 /**
  *
@@ -110,6 +111,7 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
         $this->handlers->addHandler(new AutoIncrementHandler());
         $this->handlers->addHandler(new EmailAddressHandler());
         $this->handlers->addHandler(new CrossModuleAggHandler());
+        $this->handlers->addHandler(new DenormalizeTagIdsHandler());
     }
 
     /**
@@ -533,7 +535,7 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
             // order by date_modified
             $builder->setQuery($this->getMatchAllQuery());
             $this->sort = array('date_modified' => 'desc');
-            $this->highlighter = false;
+            $this->useHighlighter = false;
         }
 
         // Set highlighter
