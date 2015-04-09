@@ -1451,6 +1451,14 @@ class SugarAutoLoader
      */
     public static function normalizeFilePath($filename)
     {
+        static $baseDirs;
+        if (!isset($baseDirs)) {
+            $baseDirs = array(SUGAR_BASE_DIR);
+            if (defined('SHADOW_INSTANCE_DIR')) {
+                $baseDirs[] = SHADOW_INSTANCE_DIR;
+            }
+        }
+
         // Normalize directory separators
         if(DIRECTORY_SEPARATOR != '/') {
             $filename = str_replace(DIRECTORY_SEPARATOR, "/", $filename);
@@ -1460,7 +1468,12 @@ class SugarAutoLoader
         $filename = preg_replace('#(/)(\1+)#', '/', $filename);
 
         // Remove base dir - Composer always has absolute paths.
-        $filename = str_replace(SUGAR_BASE_DIR . "/", "", $filename);
+        foreach ($baseDirs as $baseDir) {
+            $filename = str_replace($baseDir . '/', '', $filename, $count);
+            if ($count > 0) {
+                break;
+            }
+        }
 
         return $filename;
     }

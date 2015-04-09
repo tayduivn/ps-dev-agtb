@@ -60,6 +60,13 @@ if (!defined('SUGAR_BASE_DIR')) {
     define('SUGAR_BASE_DIR', str_replace('\\', '/', realpath(dirname(__FILE__) . '/..')));
 }
 
+if (!defined('SHADOW_INSTANCE_DIR') && extension_loaded('shadow') && ini_get('shadow.enabled')) {
+    $shadowConfig = shadow_get_config();
+    if ($shadowConfig['instance']) {
+        define('SHADOW_INSTANCE_DIR', $shadowConfig['instance']);
+    }
+}
+
 set_include_path(
     SUGAR_BASE_DIR . PATH_SEPARATOR .
     SUGAR_BASE_DIR . '/vendor' . PATH_SEPARATOR .
