@@ -16,11 +16,13 @@
 ({
     className: 'table-cell quicksearch-modulelist-wrapper',
     plugins: ['Dropdown', 'EllipsisInline'],
-    dropdownItemSelector: '[data-action=select-module]',
+    dropdownItemSelector: '[data-action=select-module], [data-action=select-all]',
 
     events: {
         'click [data-action=select-all]': 'selectAllModules',
         'click [data-action=select-module]': 'selectModule',
+        'keydown [data-action=select-all]': 'allModulesKeydownHandler',
+        'keydown [data-action=select-module]': 'moduleKeydownHandler',
         'click [data-toggle=dropdown]': 'moduleDropdownClick'
     },
 
@@ -155,6 +157,32 @@
 
         this._setSelectedModules();
         this._updateModuleIcons();
+    },
+
+    /**
+     * Handles the keydown events on the "All Modules" checkbox.
+     * On spacebar, trigger the same functionality as a click.
+     *
+     * @param {Event} event The `keydown` event
+     */
+    allModulesKeydownHandler: function(event) {
+        if (event.keyCode === 32) { // space bar
+            this.selectAllModules(event);
+            event.preventDefault();
+        }
+    },
+
+    /**
+     * Handles the keydown events on the module list items.
+     * On spacebar, trigger the same functionality as a click.
+     *
+     * @param {Event} event The `keydown` event
+     */
+    moduleKeydownHandler: function(event) {
+        if (event.keyCode === 32) { // space bar
+            this.selectModule(event);
+            event.preventDefault();
+        }
     },
 
     /**
