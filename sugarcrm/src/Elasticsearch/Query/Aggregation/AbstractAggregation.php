@@ -93,4 +93,18 @@ abstract class AbstractAggregation implements AggregationInterface
             }
         }
     }
+
+    /**
+     * Build boolean filter for given filters
+     * @param \Elastica\Filter\AbstractFilter[] $filters
+     * @return \Elastica\Filter\Bool
+     */
+    protected function buildFilters(array $filters)
+    {
+        $result = new \Elastica\Filter\Bool();
+        foreach ($filters as $filter) {
+            $result->addMust($filter);
+        }
+        return $result;
+    }
 }

@@ -245,7 +245,7 @@ class GlobalSearchApi extends SugarApi
              * Further down the road the aggregation handler will further
              * validate.
              */
-            if (is_array($filter) || is_boolean($filter)) {
+            if (is_array($filter) || is_bool($filter)) {
                 $parsed[$id] = $filter;
             }
 

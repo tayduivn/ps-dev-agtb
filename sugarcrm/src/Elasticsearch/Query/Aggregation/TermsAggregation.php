@@ -37,32 +37,59 @@ class TermsAggregation extends AbstractAggregation
     );
 
     /**
+     * Flag to indicate we use a filtered query
+     * @var boolean
+     */
+    protected $filtered = false;
+
+    /**
      * {@inheritdoc}
      */
     public function build($id, array $filters)
     {
         $terms = new \Elastica\Aggregation\Terms($id);
+        $this->applyOptions($terms, $this->options);
 
-        // use id if field is not set at this point
-        if (empty($this->options['field'])) {
-            $this->options['field'] = $id;
+        if (empty($filters)) {
+            return $terms;
         }
 
-        $this->applyOptions($terms, $this->options);
-        return $terms;
+        // if filters are present we need to wrap it in a filtered agg
+        $this->filtered = true;
+        $agg = new \Elastica\Aggregation\Filter($id);
+        $agg->setFilter($this->buildFilters($filters));
+        $agg->addAggregation($terms);
+        return $agg;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function parseResults(array $results)
+    public function buildFilter($filterDefs)
     {
-        if (!isset($results['buckets'])) {
-            return array();
+        if (!is_array($filterDefs)) {
+            return false;
+        }
+
+        $filter = new \Elastica\Filter\Term();
+        $filter->setTerm($this->options['field'], $filterDefs);
+        return $filter;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function parseResults($id, array $results)
+    {
+        // When we wrapped in a filte we need to go one level deeper
+        if ($this->filtered) {
+            $buckets = $results[$id]['buckets'];
+        } else {
+            $buckets = $results['buckets'];
         }
 
         $parsed = array();
-        foreach ($results['buckets'] as $bucket) {
+        foreach ($buckets as $bucket) {
             $parsed[$bucket['key']] = $bucket['doc_count'];
         }
 

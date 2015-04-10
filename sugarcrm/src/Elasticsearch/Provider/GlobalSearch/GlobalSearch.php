@@ -476,8 +476,11 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
             $builder->setSort($this->sort);
         }
 
-        // Apply aggregations and post filters from aggregations
-        $this->addAggregations($builder, $this->aggFilters);
+        // Add aggregations
+        if ($this->queryCrossModuleAggs || $this->queryModuleAggs) {
+            $builder->setAggFilterDefs($this->aggFilters);
+            $this->addAggregations($builder);
+        }
 
         return $builder->executeSearch();
     }
