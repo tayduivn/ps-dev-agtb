@@ -58,6 +58,8 @@
             module: this.currentModule
         };
 
+        this._super('initialize', [options]);
+
         if (this.checkAccess()) {
             // get the context model
             var ctxModel = options.context.get('model'),
@@ -71,18 +73,27 @@
             }
 
             this.loadConfig(options);
+        }
+    },
+
+    /**
+     * @inheritdoc
+     * @private
+     */
+    _render: function() {
+        if (this.checkAccess()) {
+            this._super('_render');
         } else {
-            this.blockModule()
+            this.blockModule();
         }
     },
 
     /**
      * Continues initializing Config and loads data
      *
-     * @param {Object} options The `options` param passed in to initialize
+     * @param {Object} [options] The `options` param passed in to initialize
      */
     loadConfig: function(options) {
-        this._super('initialize', [options]);
         this._super('loadData');
     },
 
@@ -181,6 +192,8 @@
             app.router.navigate('#Home', {trigger: true});
         });
         app.accessibility.run($close, 'click');
+
+        app.drawer.close(this.context, this.module);
     },
 
     /**

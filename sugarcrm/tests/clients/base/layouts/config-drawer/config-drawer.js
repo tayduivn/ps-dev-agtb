@@ -18,6 +18,7 @@ describe('Base.Layout.ConfigDrawer', function() {
         app = SugarTest.app;
         context = app.context.getContext();
         context.set('model', new Backbone.Model());
+        context.prepare();
 
         sinon.collection.stub(app.controller.context, 'get', function() {
             return 'Opportunities'
@@ -41,7 +42,7 @@ describe('Base.Layout.ConfigDrawer', function() {
             context: context
         };
 
-        layout = SugarTest.createLayout('base', null, 'config-drawer', {}, context);
+        layout = SugarTest.createLayout('base', 'Opportunities', 'config-drawer', {}, context);
     });
 
     afterEach(function() {
@@ -87,7 +88,17 @@ describe('Base.Layout.ConfigDrawer', function() {
                 expect(blockModuleSpy).not.toHaveBeenCalled('blockModule should not have been called');
             });
         });
+    });
 
+    describe('_render', function() {
+        var blockModuleSpy;
+        beforeEach(function() {
+            blockModuleSpy = sinon.collection.spy(layout, 'blockModule');
+        });
+
+        afterEach(function() {
+            options = null;
+        });
         describe('checkAccess false', function() {
             it('should call blockModule', function() {
                 sinon.collection.stub(layout, 'checkAccess', function() {
@@ -95,9 +106,20 @@ describe('Base.Layout.ConfigDrawer', function() {
                 });
                 sinon.collection.stub(layout, 'displayNoAccessAlert', function() {});
 
-                layout.initialize(options);
-                expect(loadConfigSpy).not.toHaveBeenCalled('loadConfig should not have been called');
+                layout._render();
                 expect(blockModuleSpy).toHaveBeenCalled('blockModule should have been called');
+            });
+        });
+
+        describe('checkAccess false', function() {
+            it('should call blockModule', function() {
+                sinon.collection.stub(layout, 'checkAccess', function() {
+                    return true;
+                });
+                sinon.collection.stub(layout, '_super', function() {});
+
+                layout._render();
+                expect(layout._super).toHaveBeenCalledWith('_render');
             });
         });
     });
@@ -111,7 +133,6 @@ describe('Base.Layout.ConfigDrawer', function() {
 
         it('should call initialize() and loadData()', function() {
             layout.loadConfig(options);
-            expect(superSpy).toHaveBeenCalledWith('initialize');
             expect(superSpy).toHaveBeenCalledWith('loadData');
         });
     });
@@ -238,13 +259,20 @@ describe('Base.Layout.ConfigDrawer', function() {
                     getCloseSelector: function() {
                         return {
                             on: function() {}
-                        }
+                        };
                     }
-                }
+                };
             });
+            app.drawer = {
+                close: function() {}
+            };
+            sinon.collection.stub(app.drawer, 'close');
             sinon.collection.stub(app.accessibility, 'run', function() {});
             layout.displayNoAccessAlert('test', 'test');
             expect(alertShowStub).toHaveBeenCalled();
+            expect(app.drawer.close).toHaveBeenCalled();
+
+            app.drawer = undefined;
         });
     });
 });
