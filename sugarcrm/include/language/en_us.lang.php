@@ -5405,14 +5405,8 @@ $app_list_strings['generic_timeperiod_options'] = array (
 
 // see sugarcrm/clients/base/views/bubblechart/bubblechart.php
 $app_list_strings['top10_opportunities_visibility_options'] = array (
-    //BEGIN SUGARCRM flav=ent ONLY
-    'user' => 'My Revenue Line Items',
-    'group' => 'Group Revenue Line Items',
-    //END SUGARCRM flav=ent ONLY
-    //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
-    'user' => 'My Opportunities',
-    'group' => 'Group Opportunities',
-    //END SUGARCRM flav=pro && flav!=ent ONLY
+    'user' => 'My Records',
+    'group' => 'Group Records'
 );
 $app_list_strings['forecast_pipeline_visibility_options'] = array (
     'user' => 'My Pipeline',
