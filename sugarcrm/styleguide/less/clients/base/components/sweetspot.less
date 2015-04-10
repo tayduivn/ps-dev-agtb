@@ -75,6 +75,109 @@
 
     list-style-type: none;
 
+    > li {
+      margin: 0;
+    }
+
+    ul {
+      margin: 0;
+      padding: 0;
+      list-style-type: none;
+
+      li {
+          height: 50px;
+          margin: 5px 5px;
+          background-color: transparent;
+          border-radius: 3px;
+          position: relative;
+
+          span.label {
+            position: absolute;
+            top: 9px;
+            left: 6px;
+          }
+
+          a {
+            color: @grayDark;
+            position: relative;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            display: block;
+            height: 100%;
+            outline: 0;
+
+            > div.result-text {
+
+              div.result-keyword.label {
+                display: block;
+                float: right;
+                margin-top: 6px;
+              }
+
+              div.result-name {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                display: block;
+              }
+              position: absolute;
+              white-space: nowrap;
+              left: 50px;
+              font-size: 24px;
+              top: 9px;
+              line-height: 36px;
+              text-overflow: ellipsis;
+              overflow: hidden;
+              bottom: 9px;
+              right: 50px;
+              padding: 0;
+              margin: 0;
+            }
+          }
+
+          &.active, &:not(.li-group):hover {
+            background-color: @sweetspotGrey;
+
+            .fa-mail-forward {
+              display: block;
+              color: rgba(0,0,0,.7);
+            }
+
+            .result-icon {
+              display: none;
+            }
+          }
+
+          .fa-mail-forward {
+            display: none;
+          }
+
+          .sweetspot-icon {
+            position: absolute;
+            right: 20px;
+            top: 12px;
+            font-size: 20px;
+            color: rgba(0,0,0,.2);
+          }
+        }
+      }
+
+    h1 {
+
+      height: 18px;
+      margin: 0;
+      padding: 2px 10px 0px;
+      background-color: rgba(0, 0, 0, 0.5);
+      color: #dbdbdb;
+      border-radius: 0px;
+      font-size: 11px;
+      font-variant: small-caps;
+    }
+
+
+    // custom scrollbar
     &::-webkit-scrollbar {
       width: 4px;
 
@@ -86,97 +189,6 @@
             background-color: rgba(0, 0, 0, 0.4);
           }
         }
-      }
-    }
-
-    li {
-      height: 50px;
-      margin: 5px 5px;
-      background-color: transparent;
-      border-radius: 3px;
-      position: relative;
-
-      &.li-group {
-        height: 18px;
-        margin: 0;
-        /* font-weight: bold; */
-        padding: 2px 10px 0px;
-        background-color: rgba(0,0,0,0.5);
-        color: #dbdbdb;
-        border-radius: 0px;
-        font-size: 11px;
-        font-variant: small-caps;
-      }
-
-      span.label {
-        position: absolute;
-        top: 9px;
-        left: 6px;
-      }
-
-      a {
-        color: @grayDark;
-        position: relative;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        display: block;
-        height: 100%;
-        outline: 0;
-
-        > div.result-text {
-
-          div.result-keyword.label {
-            display: block;
-            float: right;
-            margin-top: 6px;
-          }
-
-          div.result-name {
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            display: block;
-          }
-          position: absolute;
-          white-space: nowrap;
-          left: 50px;
-          font-size: 24px;
-          top: 9px;
-          line-height: 36px;
-          text-overflow: ellipsis;
-          overflow: hidden;
-          bottom: 9px;
-          right: 50px;
-          padding: 0;
-          margin: 0;
-        }
-      }
-
-      &.active, &:not(.li-group):hover {
-        background-color: @sweetspotGrey;
-
-        .fa-mail-forward {
-          display: block;
-          color: rgba(0,0,0,.7);
-        }
-
-        .result-icon {
-          display: none;
-        }
-      }
-
-      .fa-mail-forward {
-          display: none;
-      }
-
-      .sweetspot-icon {
-        position: absolute;
-        right: 20px;
-        top: 12px;
-        font-size: 20px;
-        color: rgba(0,0,0,.2);
       }
     }
   }

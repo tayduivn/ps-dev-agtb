@@ -10,40 +10,44 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-{{#if keywords.length}}
-  <li class="li-group">
+<li data-section="keywords"{{#unless keywords.length}} class="hide"{{/unless}}>
+  <h1>
       {{str 'LBL_SWEETSPOT_KEYWORDS_SECTION'}}
-  </li>
-{{/if}}
-{{#each keywords}}
-    {{partial 'result' this component=../this}}
-{{/each}}
-
-{{#if actions.length}}
-  <li class="li-group">
+  </h1>
+  <ul>
+      {{#each keywords}}
+          {{partial 'result' this component=../this}}
+      {{/each}}
+  </ul>
+</li>
+<li data-section="actions"{{#unless actions.length}} class="hide"{{/unless}}>
+  <h1>
       {{str 'LBL_SWEETSPOT_ACTIONS_SECTION'}}
-  </li>
-{{/if}}
-{{#each actions}}
-    {{partial 'result' this component=../this}}
-{{/each}}
-
-{{#if records.length}}
-  <li class="li-group">
+  </h1>
+  <ul>
+      {{#each actions}}
+          {{partial 'result' this component=../this}}
+      {{/each}}
+  </ul>
+</li>
+<li data-section="records"{{#unless records.length}} class="hide"{{/unless}}>
+  <h1>
       {{str 'LBL_SWEETSPOT_RECORDS_SECTION'}}
-  </li>
-  {{#each records}}
-      {{partial 'result' this component=../this}}
-  {{/each}}
-  {{#if showMore}}
-  <li data-sweetaction="true">
-    <a href{{#if term}}="#bwc/index.php?module=Home&append_wildcard=true&action=spot&full=true&q={{term}}&m="{{/if}} data-showmore="true">
-      <div class="result-text">
-        <div class="result-name">{{str 'LNK_SEARCH_FTS_VIEW_ALL'}}&hellip;</div>
-      </div>
-      <i class="fa fa-bars sweetspot-icon result-icon"></i>
-      <i class="fa fa-mail-forward sweetspot-icon"></i>
-    </a>
-  </li>
-  {{/if}}
-{{/if}}
+  </h1>
+  <ul>
+      {{#each records}}
+          {{partial 'result' this component=../this}}
+      {{/each}}
+      {{#if showMore}}
+        <li data-sweetaction="true">
+          <a href{{#if term}}="#bwc/index.php?module=Home&append_wildcard=true&action=spot&full=true&q={{term}}&m="{{/if}} data-showmore="true">
+            <div class="result-text">
+              <div class="result-name">{{str 'LNK_SEARCH_FTS_VIEW_ALL'}}&hellip;</div>
+            </div>
+            <i class="fa fa-bars sweetspot-icon result-icon"></i>
+            <i class="fa fa-mail-forward sweetspot-icon"></i>
+          </a>
+        </li>
+      {{/if}}
+  </ul>
+</li>
