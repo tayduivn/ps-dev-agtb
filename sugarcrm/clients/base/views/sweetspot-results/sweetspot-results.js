@@ -77,6 +77,13 @@
         this._resultPartial = app.template.get(this.name + '.result');
 
         /**
+         * Template for rendering the show more link.
+         *
+         * @property {Function}
+         */
+        this._showMoreTpl = app.template.get(this.name + '.showmore');
+
+        /**
          * Stores the index of the currently highlighted list element.
          * This is used for keyboard navigation.
          *
@@ -89,15 +96,21 @@
             // We want to highlight the same item that was highlighted before,
             // so first we get the result that was highlighted.
             var oldHighlighted = this.results[this.activeIndex];
+            var options = _.pick(results, 'showMore', 'term');
 
             // Rendering different sections
             this.renderSection('actions', this._formatResults(results.actions));
-            this.renderSection('records', this._formatResults(results.records));
+            this.renderSection('records', this._formatResults(results.records), options);
             this.renderSection('keywords', this._formatResults(results.keywords));
+
+            if (options.showMore) {
+                // This is so we get the moveForward/moveBackward working
+                // properly.
+                this.records.push(options);
+            }
 
             // Update with the new list of records.
             this.results = this.keywords.concat(this.actions).concat(this.records);
-            this.showMore = results.showMore;
 
             var newActiveIndex;
             if (oldHighlighted) {
@@ -146,9 +159,11 @@
      *
      * @param {string} section The section name (can be `actions`, `keywords`
      *   or `records`).
-     * @param {Array} results The list of results for that section
+     * @param {Array} results The list of results for that section.
+     * @param {Object} [options] Custom rendering options per section.
      */
-    renderSection: function(section, results) {
+    renderSection: function(section, results, options) {
+        options = options || {};
         var allowed = ['actions', 'keywords', 'records'];
         if (!_.contains(allowed, section)) {
             return;
@@ -157,16 +172,20 @@
             return;
         }
         var $section = this.$('[data-section="' + section + '"]');
-        $section.find('ul').empty();
+        var $list = $section.find('ul');
+        $list.empty();
         this[section] = results;
         if (results.length === 0) {
             $section.addClass('hide');
-            $section.find('ul').empty();
+            $list.empty();
         } else {
             $section.removeClass('hide');
             _.each(results, function(result) {
-                $section.find('ul').append(this._resultPartial(result));
+                $list.append(this._resultPartial(result));
             }, this);
+            if (options.showMore) {
+                $list.append(this._showMoreTpl(options));
+            }
         }
     },
 
@@ -260,14 +279,12 @@
     moveForward: function() {
         // check to make sure we will be in bounds.
         this.activeIndex++;
-        var upperBound = this.showMore ? this.results.length + 1 : this.results.length;
-        if (this.activeIndex < upperBound) {
+        if (this.activeIndex < this.results.length) {
             // We're in bounds, just go to the next element in this view.
             this._highlightActive();
         } else {
             this.activeIndex = 0;
             this._highlightActive();
-
         }
     },
 
@@ -281,8 +298,7 @@
             this.activeIndex--;
             this._highlightActive();
         } else {
-            var lastIndex = this.showMore ? this.results.length : this.results.length - 1;
-            this.activeIndex = lastIndex;
+            this.activeIndex = this.results.length - 1;
             this._highlightActive();
         }
     },

@@ -1,53 +1,43 @@
 {{!--
 /*
- * Your installation or use of this SugarCRM file is subject to the applicable
- * terms available at
- * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
- * If you do not agree to all of the applicable terms or do not have the
- * authority to bind the entity as an authorized representative, then do not
- * install or use this SugarCRM file.
- *
- * Copyright (C) SugarCRM Inc. All rights reserved.
- */
+* Your installation or use of this SugarCRM file is subject to the applicable
+* terms available at
+* http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
+* If you do not agree to all of the applicable terms or do not have the
+* authority to bind the entity as an authorized representative, then do not
+* install or use this SugarCRM file.
+*
+* Copyright (C) SugarCRM Inc. All rights reserved.
+*/
 --}}
 <li data-section="keywords"{{#unless keywords.length}} class="hide"{{/unless}}>
-  <h1>
-      {{str 'LBL_SWEETSPOT_KEYWORDS_SECTION'}}
-  </h1>
-  <ul>
-      {{#each keywords}}
-          {{partial 'result' this component=../this}}
-      {{/each}}
-  </ul>
+    <p>
+    {{str 'LBL_SWEETSPOT_KEYWORDS_SECTION'}}
+    </p>
+    <ul>
+        {{#each keywords}}
+        {{partial 'result' this component=../this}}
+        {{/each}}
+    </ul>
 </li>
 <li data-section="actions"{{#unless actions.length}} class="hide"{{/unless}}>
-  <h1>
-      {{str 'LBL_SWEETSPOT_ACTIONS_SECTION'}}
-  </h1>
-  <ul>
-      {{#each actions}}
-          {{partial 'result' this component=../this}}
-      {{/each}}
-  </ul>
+    <p>
+    {{str 'LBL_SWEETSPOT_ACTIONS_SECTION'}}
+    </p>
+    <ul>
+        {{#each actions}}
+        {{partial 'result' this component=../this}}
+        {{/each}}
+    </ul>
 </li>
 <li data-section="records"{{#unless records.length}} class="hide"{{/unless}}>
-  <h1>
-      {{str 'LBL_SWEETSPOT_RECORDS_SECTION'}}
-  </h1>
-  <ul>
-      {{#each records}}
-          {{partial 'result' this component=../this}}
-      {{/each}}
-      {{#if showMore}}
-        <li data-sweetaction="true">
-          <a href{{#if term}}="#bwc/index.php?module=Home&append_wildcard=true&action=spot&full=true&q={{term}}&m="{{/if}} data-showmore="true">
-            <div class="result-text">
-              <div class="result-name">{{str 'LNK_SEARCH_FTS_VIEW_ALL'}}&hellip;</div>
-            </div>
-            <i class="fa fa-bars sweetspot-icon result-icon"></i>
-            <i class="fa fa-mail-forward sweetspot-icon"></i>
-          </a>
-        </li>
-      {{/if}}
-  </ul>
+    <p>
+    {{str 'LBL_SWEETSPOT_RECORDS_SECTION'}}
+    </p>
+    <ul>
+        {{#each records}}
+        {{partial 'result' this component=../this}}
+        {{/each}}
+        {{partial 'showmore' this component=../this}}
+    </ul>
 </li>
