@@ -168,6 +168,7 @@ ExpressionControl.prototype.init = function (settings) {
         owner: null,
         itemContainer: null,
         appendTo: document.body,
+        alignWithOwner: "left",
         matchOwnerWidth: true,
         expressionVisualizer: true,
         dateFormat: "yyyy-mm-dd",
@@ -221,6 +222,7 @@ ExpressionControl.prototype.init = function (settings) {
         .setVariablePanel(defaults.variable)
         .setConstantPanel(defaults.constant)
         .setOnChangeHandler(defaults.onChange)
+        .setAlignWithOwner(defaults.alignWithOwner)
         .setMatchOwnerWidth(defaults.matchOwnerWidth)
         .setOnOpenHandler(defaults.onOpen)
         .setOnCloseHandler(defaults.onClose);
@@ -230,6 +232,11 @@ ExpressionControl.prototype.init = function (settings) {
     } else {
         this.hideExpressionVisualizer();
     }
+};
+
+ExpressionControl.prototype.setAlignWithOwner = function (alignment) {
+    this._panel.setAlignWithOwner(alignment);
+    return this;
 };
 
 ExpressionControl.prototype.setOnOpenHandler = function (handler) {
