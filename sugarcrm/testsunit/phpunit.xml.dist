@@ -25,6 +25,7 @@
          beStrictAboutOutputDuringTests="true"
          beStrictAboutTestsThatDoNotTestAnything="true"
          beStrictAboutTestSize="true"
+         checkForUnintentionallyCoveredCode="false"
 >
     <php>
         <ini name="intl.default_locale" value="en"/>
@@ -42,10 +43,11 @@
         <whitelist processUncoveredFilesFromWhitelist="false">
             <directory suffix=".php">../src/</directory>
             <directory suffix=".php">../include/</directory>
-            <directory suffix=".php">../clients/</directory>
+            <directory suffix=".php">../clients/*/api</directory>
         </whitelist>
     </filter>
     <listeners>
         <listener class="Sugarcrm\SugarcrmTestsUnit\AnnotationListener"/>
+        <listener class="Sugarcrm\SugarcrmTestsUnit\ResultListener"/>
     </listeners>
 </phpunit>

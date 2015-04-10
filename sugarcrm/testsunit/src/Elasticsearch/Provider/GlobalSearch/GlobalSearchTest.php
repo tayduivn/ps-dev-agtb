@@ -17,7 +17,6 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\GlobalSearch;
 /**
  *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\GlobalSearch
- *
  */
 class GlobalSearchTest extends \PHPUnit_Framework_TestCase
 {

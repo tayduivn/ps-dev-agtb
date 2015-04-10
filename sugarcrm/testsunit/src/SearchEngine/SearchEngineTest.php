@@ -18,7 +18,6 @@ use Sugarcrm\Sugarcrm\SearchEngine\Engine\EngineInterface;
 /**
  *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\SearchEngine\SearchEngine
- *
  */
 class SearchEngineTest extends \PHPUnit_Framework_TestCase
 {
@@ -61,7 +60,7 @@ class SearchEngineTest extends \PHPUnit_Framework_TestCase
      * @covers ::getEngine
      * @dataProvider dataProviderTestGetEngine
      *
-     * @param EngineInterface $implement
+     * @param EngineInterface $engineObject
      */
     public function testGetEngine(EngineInterface $engineObject)
     {
@@ -89,6 +88,7 @@ class SearchEngineTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers ::newEngine
      * @dataProvider dataProviderTestNewEngine
+     *
      *
      * @param string $type
      * @param array $config

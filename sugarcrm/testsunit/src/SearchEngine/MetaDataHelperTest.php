@@ -25,6 +25,7 @@ class MetaDataHelperTest extends \PHPUnit_Framework_TestCase
      * @covers ::getFtsFields
      * @dataProvider providerGetFtsFields
      *
+     *
      * @param string $module
      * @param array $vardef
      * @param boolean $override
@@ -136,6 +137,7 @@ class MetaDataHelperTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers ::getAllAggDefsModule
      * @dataProvider providerGetModuleAggregations
+     *
      *
      * @param string $module
      * @param array $vardef

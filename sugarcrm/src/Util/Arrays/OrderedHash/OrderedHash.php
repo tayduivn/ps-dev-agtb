@@ -75,11 +75,11 @@ class OrderedHash implements \Iterator, \ArrayAccess, \Countable
     public function add($before, $key, $value)
     {
         if (!(is_string($key) || is_int($key))) {
-            throw new \OutOfRangeException("{$key} must be a string or an integer");
+            throw new \OutOfRangeException('Offset invalid or out of range');
         }
 
         if ($this->offsetExists($key)) {
-            throw new \RuntimeException("{$key} must be unique");
+            throw new \RuntimeException("$key must be unique");
         }
 
         $after = null;
@@ -229,7 +229,7 @@ class OrderedHash implements \Iterator, \ArrayAccess, \Countable
     public function offsetGet($key)
     {
         if (!(is_string($key) || is_int($key))) {
-            throw new \OutOfRangeException("{$key} must be a string or an integer");
+            throw new \OutOfRangeException('Offset invalid or out of range');
         }
 
         return $this->offsetExists($key) ? $this->elements[$key] : null;
@@ -247,7 +247,7 @@ class OrderedHash implements \Iterator, \ArrayAccess, \Countable
     public function offsetSet($key, $value)
     {
         if (!(is_string($key) || is_int($key))) {
-            throw new \OutOfRangeException("{$key} must be a string or an integer");
+            throw new \OutOfRangeException('Offset invalid or out of range');
         }
 
         if ($this->offsetExists($key)) {
@@ -366,10 +366,14 @@ class OrderedHash implements \Iterator, \ArrayAccess, \Countable
     /**
      * Returns the list as an associative array.
      *
-     * @return Array
+     * @return array
      */
     public function toArray()
     {
+        if ($this->isEmpty()) {
+            return array();
+        }
+
         $imploded = array();
         $current = $this->bottom();
 

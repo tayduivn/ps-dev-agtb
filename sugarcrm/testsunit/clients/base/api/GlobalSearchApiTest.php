@@ -17,9 +17,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Result;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\ResultSet;
 
 /**
- *
  * @coversDefaultClass \GlobalSearchApi
- *
  */
 class GlobalSearchApiTest extends \PHPUnit_Framework_TestCase
 {

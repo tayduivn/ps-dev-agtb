@@ -17,7 +17,6 @@ use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 /**
  *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Indexer\Indexer
- *
  */
 class IndexerTest extends \PHPUnit_Framework_TestCase
 {

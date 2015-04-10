@@ -16,6 +16,7 @@ use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
  *
+ * LogicHook tests
  * @coversDefaultClass \LogicHook
  *
  */
@@ -25,6 +26,11 @@ class LogicHookTest extends \PHPUnit_Framework_TestCase
      * @var array List of files/directories to cleanup
      */
     protected $toDelete = array();
+
+    public static function setupBeforeClass()
+    {
+        require_once 'include/utils/LogicHook.php';
+    }
 
     /**
      * {@inheritDoc}
