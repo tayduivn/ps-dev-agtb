@@ -30,6 +30,6 @@
     },
 
     resetClicked: function() {
-        this.context.parent.trigger('facets:reset');
+        this.context.parent.trigger('facets:reset', true);
     }
 })

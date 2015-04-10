@@ -32,7 +32,7 @@ $viewdefs['Home']['base']['layout']['search-dashboard'] = array(
                             'view' =>
                                 array(
                                     'type' => 'search-facet',
-                                    'facet_id' => 'my_favorites',
+                                    'facet_id' => 'favorite_link',
                                     'custom_toolbar' => 'no',
                                     'label' => 'LBL_FAVORITES',
                                     'ui_type' => 'single',

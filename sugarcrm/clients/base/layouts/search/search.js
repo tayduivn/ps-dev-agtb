@@ -25,10 +25,9 @@
         this.context.set('search', true);
         this.collection.query = this.context.get('searchTerm') || '';
         this.collection.neededResponseProperties = ['xmod_aggs'];
+        this.filteredSearch = false;
 
-        this.context.on('change:searchTerm change:module_list', function(context) {
-            //TODO: collection.fetch shouldn't need a query to be passed. Will
-            // be fixed by SC-3973.
+        this.context.on('change:searchTerm change:module_list', function() {
             this.search();
         }, this);
 
@@ -42,8 +41,13 @@
             app.utils.GlobalSearch.formatRecords(collection, true);
 
             if (!_.isEmpty(options.xmod_aggs)) {
-                this.facetFilters = this._buildFiltersObject(options.xmod_aggs);
-                this.context.set('facets', options.xmod_aggs);
+                if (!this.filteredSearch) {
+                    this.selectedFacets = this._buildFiltersObject(options.xmod_aggs);
+                }
+
+                this.context.set('selectedFacets', this.selectedFacets);
+                this.context.set('facets', options.xmod_aggs, {silent: true});
+                this.context.trigger('facets:change', options.xmod_aggs);
             }
 
         }, this);
@@ -62,9 +66,9 @@
         var facetFilters = {};
         _.each(facets, function(facet, key) {
             if (key === 'modules') {
-                facetFilters[key] = Object.keys(facet.results);
+                facetFilters[key] = [];
             } else {
-                facetFilters[key] = true;
+                facetFilters[key] = false;
             }
         }, this);
         return facetFilters;
@@ -78,25 +82,43 @@
      * @param isSingleItem `true` if it's a single item facet.
      * @private
      */
-    _updateFilters: function(facetId, facetCriteriaId, isSingleItem) {
+    _updateFilters: function(facetsObject, facetId, facetCriteriaId, isSingleItem) {
         if (isSingleItem) {
-            this.facetFilters[facetId] = !this.facetFilters[facetId];
+            facetsObject[facetId] = !facetsObject[facetId];
         } else {
-            var index = this.facetFilters[facetId].indexOf(facetCriteriaId);
-            if (index === -1) {
-                this.facetFilters[facetId].splice(0, 0, facetCriteriaId);
+            var index;
+            if (!facetsObject[facetId]) {
+                facetsObject[facetId] = [];
             } else {
-                this.facetFilters[facetId].splice(index, 1);
+                index = facetsObject[facetId].indexOf(facetCriteriaId);
+            }
+            if (_.isUndefined(index) || index === -1) {
+                facetsObject[facetId].splice(0, 0, facetCriteriaId);
+            } else {
+                facetsObject[facetId].splice(index, 1);
+                if (facetsObject[facetId].length === 0) {
+                    delete facetsObject[facetId];
+                }
             }
         }
     },
 
     /**
      * Searches on a term and a module list.
+     *
+     * @param {boolean} reset `true` if we reset the filters.
      */
-    search: function() {
+    search: function(reset) {
+        // Prevents to trigger a new fetch if the user clicks on
+        if (reset && !this.filteredSearch) {
+            return;
+        }
         var searchTerm = this.context.get('searchTerm');
         var moduleList = this.context.get('module_list') || [];
+        this.filteredSearch = false;
+
+        //TODO: collection.fetch shouldn't need a query to be passed. Will
+        // be fixed by SC-3973.
         this.collection.fetch({query: searchTerm, module_list: moduleList, params: {xmod_aggs: true}});
     },
 
@@ -108,21 +130,18 @@
      * @param isSingleItem `true` if it's a single criteria facet.
      */
     filter: function(facetId, facetCriteriaId, isSingleItem) {
-            this._updateFilters(facetId, facetCriteriaId, isSingleItem);
+        this._updateFilters(this.selectedFacets, facetId, facetCriteriaId, isSingleItem);
 
-            if (!this.facetFilters) {
-                this.search();
-            } else {
-//                var searchTerm = this.context.get('searchTerm');
-//                var moduleList = this.context.get('module_list') || [];
-//            this.collection.fetch({query: searchTerm, module_list: moduleList, params: {xmod_aggs: true},
-//                apiOptions:
-//                {
-//                    data: {agg_filters: this.facetFilters},
-//                    fetchWithPost: true
-//                }
-//            });
+        var searchTerm = this.context.get('searchTerm');
+        var moduleList = this.context.get('module_list') || [];
+        this.filteredSearch = true;
+        this.collection.fetch({query: searchTerm, module_list: moduleList, params: {xmod_aggs: true},
+            apiOptions:
+            {
+                data: {agg_filters: this.selectedFacets},
+                fetchWithPost: true
             }
+        });
     },
 
     /**
