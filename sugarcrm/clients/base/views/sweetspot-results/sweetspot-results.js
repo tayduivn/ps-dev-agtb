@@ -30,6 +30,10 @@
     initialize: function(options) {
         this._super('initialize', [options]);
 
+        // FIXME Sidecar should be modified to allow multiple top level contexts. When this happens, quick search
+        // should use that context instead of layout.collection.
+        this.collection = this.layout.collection || app.data.createMixedBeanCollection();
+
         /**
          * The list of results returned by Sweet Spot, split by category.
          *

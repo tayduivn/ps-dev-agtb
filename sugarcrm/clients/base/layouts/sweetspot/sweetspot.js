@@ -20,6 +20,10 @@
     initialize: function(options) {
         this._super('initialize', [options]);
 
+        // FIXME Sidecar should be modified to allow multiple top level contexts. When this happens, quick search
+        // should use that context instead of layout.collection.
+        this.collection = app.data.createMixedBeanCollection();
+
         app.shortcuts.register(app.shortcuts.GLOBAL + 'Sweetspot', 'shift+space', this.toggle, this, true);
         app.events.on('app:logout', this.hide, this);
 

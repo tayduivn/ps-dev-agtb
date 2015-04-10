@@ -25,6 +25,11 @@
      */
     initialize: function(options) {
         this._super('initialize', [options]);
+
+        // FIXME Sidecar should be modified to allow multiple top level contexts. When this happens, quick search
+        // should use that context instead of layout.collection.
+        this.collection = this.layout.collection || app.data.createMixedBeanCollection();
+
         app.events.on('app:sync:complete sweetspot:reset', this.initLibrary, this);
         this.lastTerm = '';
 
@@ -250,16 +255,16 @@
      */
     fireSearchRequest: function(term) {
         var self = this;
-        var params = {
-            q: term,
-            fields: 'name, id',
-            max_num: 4
-        };
-        app.api.search(params, {
-            success: function(data) {
+        this.collection.query = term;
+        this.collection.fetch({
+            query: term,
+            fields: ['name', 'id'],
+            module_list: [],
+            limit: 4,
+            success: function(collection) {
                 var now = new Date().getTime();
                 var formattedRecords = [];
-                _.each(data.records, function(record) {
+                _.each(collection.toJSON(), function(record) {
                     if (!record.id) {
                         return; // Elastic Search may return records without id and record names.
                     }
@@ -277,9 +282,6 @@
                 });
                 self.addToTemporaryLibrary(formattedRecords);
                 self.applyQuickSearch(true);
-            },
-            error: function(error) {
-                app.logger.error("Failed to fetch search results in search ahead. " + error);
             }
         });
     }
