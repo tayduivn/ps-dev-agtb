@@ -76,6 +76,10 @@ $dictionary['KBContent'] = array(
             'reportable' => true,
             'audited' => true,
             'studio' => true,
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => true,
+            ),
         ),
         'viewcount' => array(
             'name' => 'viewcount',
@@ -192,6 +196,11 @@ $dictionary['KBContent'] = array(
                 'advanced_search' => false,
             ),
             'readonly' => true,
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => true,
+                'type' => 'int',
+            ),
         ),
         'is_external' => array(
             'name' => 'is_external',
