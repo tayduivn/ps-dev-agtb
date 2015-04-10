@@ -14,9 +14,11 @@
  * @extends View.View
  */
 ({
+    className: 'search-dashboard-headerpane',
     events: {
         'click a[name=collapse_button]' : 'collapseClicked',
-        'click a[name=expand_button]' : 'expandClicked'
+        'click a[name=expand_button]' : 'expandClicked',
+        'click a[name=reset_button]' : 'resetClicked'
     },
 
     collapseClicked: function() {
@@ -25,5 +27,9 @@
 
     expandClicked: function() {
         this.context.trigger('dashboard:collapse:fire', false);
+    },
+
+    resetClicked: function() {
+        this.context.parent.trigger('facets:reset');
     }
 })

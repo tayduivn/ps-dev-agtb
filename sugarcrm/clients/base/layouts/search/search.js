@@ -29,24 +29,11 @@
         this.context.on('change:searchTerm change:module_list', function(context) {
             //TODO: collection.fetch shouldn't need a query to be passed. Will
             // be fixed by SC-3973.
-            var searchTerm = this.context.get('searchTerm');
-            var moduleList = this.context.get('module_list') || [];
-            this.collection.fetch({query: searchTerm, module_list: moduleList, params: {xmod_aggs: true}});
+            this.search();
         }, this);
 
-        this.context.on('facet:apply', function(facetType, facetCriteriaId, isSingleItem) {
-            this.applyFacetChange(facetType, facetCriteriaId, isSingleItem);
-            //Here we'll trigger the search passing the facetFilters object in the query.
-            var searchTerm = this.context.get('searchTerm');
-            var moduleList = this.context.get('module_list') || [];
-            this.collection.fetch({query: searchTerm, module_list: moduleList, params: {xmod_aggs: true},
-                apiOptions:
-                {
-                    data: {agg_filters: this.facetFilters},
-                    fetchWithPost: true
-                }
-            });
-        }, this);
+        this.context.on('facet:apply', this.filter, this);
+
         this.collection.on('sync', function(collection, data, options) {
             var isCollection = (collection instanceof App.BeanCollection);
             if (!isCollection) {
@@ -60,6 +47,8 @@
             }
 
         }, this);
+
+        this.context.on('facets:reset', this.search, this);
     },
 
     /**
@@ -84,21 +73,56 @@
     /**
      * Updates {@link #facetFilters} with the facet change.
      *
-     * @param {String} facetType The facet type.
+     * @param {String} facetId The facet type.
      * @param facetCriteriaId The id of the facet criteria.
      * @param isSingleItem `true` if it's a single item facet.
+     * @private
      */
-    applyFacetChange: function(facetType, facetCriteriaId, isSingleItem) {
+    _updateFilters: function(facetId, facetCriteriaId, isSingleItem) {
         if (isSingleItem) {
-            this.facetFilters[facetType] = !this.facetFilters[facetType];
+            this.facetFilters[facetId] = !this.facetFilters[facetId];
         } else {
-            var index = this.facetFilters[facetType].indexOf(facetCriteriaId);
+            var index = this.facetFilters[facetId].indexOf(facetCriteriaId);
             if (index === -1) {
-                this.facetFilters[facetType].splice(0, 0, facetCriteriaId);
+                this.facetFilters[facetId].splice(0, 0, facetCriteriaId);
             } else {
-                this.facetFilters[facetType].splice(index, 1);
+                this.facetFilters[facetId].splice(index, 1);
             }
         }
+    },
+
+    /**
+     * Searches on a term and a module list.
+     */
+    search: function() {
+        var searchTerm = this.context.get('searchTerm');
+        var moduleList = this.context.get('module_list') || [];
+        this.collection.fetch({query: searchTerm, module_list: moduleList, params: {xmod_aggs: true}});
+    },
+
+    /**
+     * Refines the search applying a facet change.
+     *
+     * @param facetId The facet id.
+     * @param facetCriteriaId The facet criteria id.
+     * @param isSingleItem `true` if it's a single criteria facet.
+     */
+    filter: function(facetId, facetCriteriaId, isSingleItem) {
+            this._updateFilters(facetId, facetCriteriaId, isSingleItem);
+
+            if (!this.facetFilters) {
+                this.search();
+            } else {
+//                var searchTerm = this.context.get('searchTerm');
+//                var moduleList = this.context.get('module_list') || [];
+//            this.collection.fetch({query: searchTerm, module_list: moduleList, params: {xmod_aggs: true},
+//                apiOptions:
+//                {
+//                    data: {agg_filters: this.facetFilters},
+//                    fetchWithPost: true
+//                }
+//            });
+            }
     },
 
     /**

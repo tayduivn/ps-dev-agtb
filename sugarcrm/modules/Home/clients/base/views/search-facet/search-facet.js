@@ -24,11 +24,11 @@
     initialize: function(options) {
         this._super('initialize', [options]);
 
-        this.facetType = this.meta.facet_type;
+        this.facetId = this.meta.facet_id;
         this.isSingleItem = this.meta.ui_type === 'single';
         this.facetItems = [];
 
-        if (this.context.get('facets') && this.context.get('facets')[this.facetType]) {
+        if (this.context.get('facets') && this.context.get('facets')[this.facetId]) {
             this.parseFacetsData(this.context);
         }
 
@@ -48,9 +48,9 @@
      * @param {Data.Bean} context The context.
      */
     parseFacetsData: function(context) {
-        var currentFacet = context.get('facets')[this.facetType];
+        var currentFacet = context.get('facets')[this.facetId];
         if (_.isUndefined(currentFacet)) {
-            app.logger.warn('The facet type : ' + this.facetType + 'is not returned by the server.' +
+            app.logger.warn('The facet type : ' + this.facetId + 'is not returned by the server.' +
                 ' Therefore, the facet dashlet will have no data.');
             return;
         }
@@ -58,7 +58,7 @@
 
         if (this.isSingleItem) {
             this.facetItems = [{
-                key: this.facetType,
+                key: this.facetId,
                 label: app.lang.get(this.meta.label, 'Filters'),
                 count: currentFacet.results.count
             }];
@@ -87,7 +87,7 @@
 
         this.$(event.currentTarget).toggleClass('selected');
 
-        this.context.trigger('facet:apply', this.facetType, facetCriteriaId, this.isSingleItem);
+        this.context.trigger('facet:apply', this.facetId, facetCriteriaId, this.isSingleItem);
     },
 
     /**
