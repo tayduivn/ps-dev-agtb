@@ -547,7 +547,12 @@
      * @returns {String} The default value
      */
     _getDefaultOption: function (optionsKeys) {
-        return _.first(optionsKeys);
+        //  Return the default if it's available in the definition.
+        if (this.def && !_.isEmpty(this.def.default)) {
+            return this.def.default;
+        } else {
+            return _.first(optionsKeys);
+        }
     },
 
     /**
