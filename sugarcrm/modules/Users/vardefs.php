@@ -926,6 +926,7 @@ $dictionary['User'] = array(
             'name' => 'acl_role_set_id',
             'type' => 'id',
             'link' => 'acl_role_sets',
+            'reportable' => false,
         ),
         'acl_role_sets' => array (
             'name' => 'acl_role_sets',
