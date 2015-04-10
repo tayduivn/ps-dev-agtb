@@ -640,7 +640,8 @@ EOF;
             'index', 'ListView', 'DetailView', 'EditView', 'oauth', 'authorize', 'Authenticate', 'Login',
             'SupportPortal',
             'LogView',
-            "SugarpdfSettings", "saveftsmodules", 'SaveSequence'
+            "SugarpdfSettings", "saveftsmodules", 'SaveSequence',
+            'GlobalSearchSettings', 'Upgrade', 'repair', 'PasswordManager', 'LicenseSettings', 'Updater', 'Backups', 'Diagnostic',
         );
 
     /**
