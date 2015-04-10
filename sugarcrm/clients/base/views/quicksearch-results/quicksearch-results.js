@@ -130,10 +130,9 @@
             }, this);
 
             // build the link for View all results
-            this.searchLink = app.router.buildRoute(
-                'search',
-                collection.query + '&m=' + this.collection.module_list.join(',')
-            );
+            this.searchLink = app.utils.GlobalSearch.buildSearchRoute(collection.query, {
+                modules: this.collection.selectedModules
+            });
             this.activeIndex = null;
             this.render();
             this.open();
