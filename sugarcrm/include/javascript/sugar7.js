@@ -167,21 +167,25 @@
             },
             {
                 name: 'search',
-                route: 'search/:searchTermAndParams',
+                route: 'search(/)(:searchTermAndParams)',
                 callback: function(searchTermAndParams) {
-                    // For search, we may have query params for the module list
-                    var uriSplit = searchTermAndParams.split('?');
-                    var searchTerm = uriSplit[0];
+                    var searchTerm = '';
                     var params = {modules: []};
-                    // We have parameters. Parse them.
-                    if (uriSplit.length > 1) {
-                        var paramsArray = uriSplit[1].split('&');
-                        _.each(paramsArray, function(paramPair) {
-                            var keyValueArray = paramPair.split('=');
-                            if (keyValueArray.length > 1) {
-                                params[keyValueArray[0]] = keyValueArray[1].split(',');
-                            }
-                        });
+                    if (searchTermAndParams) {
+                        // For search, we may have query params for the module list
+                        var uriSplit = searchTermAndParams.split('?');
+                        searchTerm = uriSplit[0];
+
+                        // We have parameters. Parse them.
+                        if (uriSplit.length > 1) {
+                            var paramsArray = uriSplit[1].split('&');
+                            _.each(paramsArray, function(paramPair) {
+                                var keyValueArray = paramPair.split('=');
+                                if (keyValueArray.length > 1) {
+                                    params[keyValueArray[0]] = keyValueArray[1].split(',');
+                                }
+                            });
+                        }
                     }
 
                     if (params.modules.length === 0) {
