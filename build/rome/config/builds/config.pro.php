@@ -53,6 +53,7 @@ $config['builds']['pro']['languages']= array(
 'es_LA',
 'fi_FI',
 'ar_SA',
+'uk_UA',
 );
 $config['builds']['pro']['lic'] = array('sub');
 $config['blackList']['pro'] = array(
