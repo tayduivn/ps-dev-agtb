@@ -190,6 +190,37 @@
                         params.modules = app.user.lastState.get(moduleStateKey) || [];
                     }
 
+                    var appContext = app.controller.context;
+                    // If we are on the search page, we prevent the routing, and
+                    // set the new search term in the context instead. The
+                    // listener on `change:searchTerm` in the layout will trigger
+                    // the new search.
+                    if (appContext && appContext.get('search')) {
+                        var termHasChanged = appContext.get('searchTerm') !== searchTerm;
+                        var modulesHaveChanged = appContext.get('module_list') !== params.modules;
+
+                        if (termHasChanged && modulesHaveChanged) {
+                            // If both term and module_list have changed,
+                            // we set the module_list silently so the `change`
+                            // callback is triggered only once (searchTerm
+                            // and module_list share the same change callback
+                            // in the layout).
+                            appContext.set('module_list', params.modules, {silent: true});
+                            appContext.set('searchTerm', searchTerm);
+                            return;
+                        }
+
+                        if (modulesHaveChanged) {
+                            appContext.set('module_list', params.modules);
+                            return;
+                        }
+
+                        if (termHasChanged) {
+                            appContext.set('searchTerm', searchTerm);
+                            return;
+                        }
+                    }
+
                     app.controller.loadView({
                         layout: 'search',
                         searchTerm: searchTerm,

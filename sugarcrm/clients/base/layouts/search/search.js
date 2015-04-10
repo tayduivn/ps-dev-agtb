@@ -24,13 +24,13 @@
 
         this.context.set('search', true);
         this.collection.query = this.context.get('searchTerm') || '';
-        this.moduleList = this.context.get('module_list') || [];
 
-        this.context.on('change:searchTerm', function(context, searchTerm) {
+        this.context.on('change:searchTerm change:module_list', function(context) {
             //TODO: collection.fetch shouldn't need a query to be passed. Will
             // be fixed by SC-3973.
-            this.context.set('searchTerm', searchTerm);
-            this.collection.fetch({query: searchTerm, module_list: this.moduleList});
+            var searchTerm = this.context.get('searchTerm');
+            var moduleList = this.context.get('module_list') || [];
+            this.collection.fetch({query: searchTerm, module_list: moduleList});
         }, this);
 
         this.collection.on('sync', function(collection, data) {
