@@ -3994,7 +3994,7 @@ Sincerely, SugarCRM',
     'LBL_DASHLET_LOCALIZATIONS_DESCRIPTION' => 'A list of localized Knowledge Base Articles',
 
     // Most Useful Knowledge Base Articles dashlet
-    'LBL_DASHLET_MOST_USEFUL_NAME' => 'Most Useful Knowledge Base Articles',
+    'LBL_DASHLET_MOST_USEFUL_NAME' => 'Most Useful Published Knowledge Base Articles',
     'LBL_DASHLET_MOST_USEFUL_DESC' => 'A list of Knowledge Base Articles liked most by users',
 
     'LBL_FILTERED_LIST_BY_FIELD' => '{{module}} filtered by {{label}} "{{value}}"',
