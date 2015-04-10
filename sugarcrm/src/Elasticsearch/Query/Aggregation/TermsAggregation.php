@@ -67,12 +67,12 @@ class TermsAggregation extends AbstractAggregation
      */
     public function buildFilter($filterDefs)
     {
-        if (!is_array($filterDefs)) {
+        if (!is_array($filterDefs) || empty($filterDefs)) {
             return false;
         }
 
-        $filter = new \Elastica\Filter\Term();
-        $filter->setTerm($this->options['field'], $filterDefs);
+        $filter = new \Elastica\Filter\Terms();
+        $filter->setTerms($this->options['field'], $filterDefs);
         return $filter;
     }
 

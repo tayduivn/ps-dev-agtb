@@ -701,7 +701,7 @@ class SugarBean
     public function beforeSseIndexing()
     {
         $this->updateDocOwner();
-        $this->updateUserFavorites();
+        //$this->updateUserFavorites();
     	$this->loadVisibility()->beforeSseIndexing();
     }
 
@@ -6673,13 +6673,11 @@ class SugarBean
      * Updates the user_favorites property if it exists
      * By default it is as it is part of the Basic vardefs.
      * However it may have been removed from the vardefs for a particular module.
+     * @deprecated
      */
     protected function updateUserFavorites()
     {
-        if(isset($this->user_favorites))
-        {
-            $this->user_favorites = SugarFavorites::getUserIdsForFavoriteRecordByModuleRecord($this->module_dir, $this->id);
-        }
+        $GLOBALS['log']->fatal("SugarBean::updateUserFavorites is deprecated !");
     }
 
     /**

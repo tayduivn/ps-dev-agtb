@@ -26,6 +26,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\AutoIncrementH
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\EmailAddressHandler;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\CrossModuleAggHandler;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\DenormalizeTagIdsHandler;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\FavoritesHandler;
 
 /**
  *
@@ -112,6 +113,7 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
         $this->handlers->addHandler(new EmailAddressHandler());
         $this->handlers->addHandler(new CrossModuleAggHandler());
         $this->handlers->addHandler(new DenormalizeTagIdsHandler());
+        $this->handlers->addHandler(new FavoritesHandler());
     }
 
     /**

@@ -28,9 +28,16 @@ class HookHandler
      */
     public function indexBean($bean, $event, $arguments)
     {
+        // no cookies if you are not a real bean
         if (!$bean instanceof \SugarBean) {
-            $this->getLogger()->fatal("Not bean ->" . var_export(get_class($bean), true));
+            $this->getLogger()->fatal("Indexbean: Not bean ->" . var_export(get_class($bean), true));
             return;
+        }
+
+        // favorites handling - index the actual bean
+        if ($bean instanceof \SugarFavorites) {
+            $newBean = \BeanFactory::getBean($bean->module, $bean->record_id);
+            $this->getSearchEngine()->indexBean($newBean);
         }
 
         $engine = $this->getSearchEngine()->indexBean($bean);
