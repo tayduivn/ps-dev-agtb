@@ -22,7 +22,7 @@ class SugarUpgradeAccountUpdateDeletedRelationships extends UpgradeScript
                 SET    deleted = 1
                 WHERE
                        deleted = 0 AND
-                       account_id IN ( SELECT id FROM accounts WHERE deleted = 1 );";
+                       account_id IN ( SELECT id FROM accounts WHERE deleted = 1 )";
         $this->db->query($sql);
 
         $this->log('Done Updating accounts_opportunities Deleted Status on Deleted Accounts');

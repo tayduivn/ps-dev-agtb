@@ -23,6 +23,11 @@ class SugarUpgradeSwitchWebUpgrader extends UpgradeScript
         if (empty($_SESSION['upgrade_dir']) || empty($this->manifest['copy_files']['from_dir'])) {
             return;
         }
+
+        if (!is_file($_SESSION['upgrade_dir'] . 'modules/UpgradeWizard/UpgradeDriver.php'))
+        {
+            return;
+        }
         $this->log('Switch to WebUpgrader from the package.');
         // The UpgradeWizard closes session, session_status() check should be added when no instances
         // with PHP less 5.4 exist to avoid an error notice when session_start is called twice.

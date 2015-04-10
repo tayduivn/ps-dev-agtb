@@ -291,8 +291,7 @@ class RepairAndClear
 
 		global $mod_strings;
 		if($this->show_output) echo $mod_strings['LBL_QR_REBUILDEXT'];
-		global $current_user;
-		
+
 		$mi = new ModuleInstaller();
 		$mi->rebuild_all(!$this->show_output, $modules);
 
@@ -380,8 +379,9 @@ class RepairAndClear
 		if($this->show_output) echo "<h3>{$mod_strings['LBL_QR_CLEARTEMPLATE']}</h3>";
 		if(!in_array( translate('LBL_ALL_MODULES'),$this->module_list) && !empty($this->module_list))
 		{
-			foreach($this->module_list as $module_name_singular )
-				$this->_clearCache(sugar_cached('modules/').$this->_getModuleNamePlural($module_name_singular), '.tpl');
+            foreach ($this->module_list as $module_name) {
+                $this->_clearCache(sugar_cached('modules/' . $module_name), '.tpl');
+            }
 		}
 		else
 			$this->_clearCache(sugar_cached('modules/'), '.tpl');
@@ -392,8 +392,9 @@ class RepairAndClear
 		if($this->show_output) echo "<h3>{$mod_strings['LBL_QR_CLEARVADEFS']}</h3>";
 		if(!empty($this->module_list) && is_array($this->module_list) && !in_array( translate('LBL_ALL_MODULES'),$this->module_list))
 		{
-			foreach($this->module_list as $module_name_singular )
-				$this->_clearCache(sugar_cached('modules/').$this->_getModuleNamePlural($module_name_singular), 'vardefs.php');
+            foreach ($this->module_list as $module_name) {
+                $this->_clearCache(sugar_cached('modules/' . $module_name), 'vardefs.php');
+            }
 		}
 		else
 			$this->_clearCache(sugar_cached('modules/'), 'vardefs.php');
@@ -406,8 +407,9 @@ class RepairAndClear
 
 		if(!in_array( translate('LBL_ALL_MODULES'),$this->module_list) && !empty($this->module_list))
 		{
-			foreach($this->module_list as $module_name_singular )
-				$this->_clearCache(sugar_cached('modules/').$this->_getModuleNamePlural($module_name_singular), '.js');
+            foreach ($this->module_list as $module_name) {
+                $this->_clearCache(sugar_cached('modules/' . $module_name), '.js');
+            }
 		}
 		else {
             $this->_clearCache(sugar_cached('modules/'), '.js');
@@ -421,8 +423,9 @@ class RepairAndClear
 		if($this->show_output) echo "<h3>{$mod_strings['LBL_QR_CLEARJSLANG']}</h3>";
 		if(!in_array(translate('LBL_ALL_MODULES'),$this->module_list ) && !empty($this->module_list))
 		{
-			foreach($this->module_list as $module_name_singular )
-				$this->_clearCache(sugar_cached('jsLanguage/').$this->_getModuleNamePlural($module_name_singular), '.js');
+            foreach ($this->module_list as $module_name) {
+                $this->_clearCache(sugar_cached('jsLanguage/' . $module_name), '.js');
+            }
 		}
 		else
 			$this->_clearCache(sugar_cached('jsLanguage'), '.js');
@@ -520,8 +523,9 @@ class RepairAndClear
         if (empty($this->module_list)) {
             return;
         }
-        foreach($this->module_list as $module_name_singular ) {
-            $this->_clearCache(sugar_cached('modules/').$this->_getModuleNamePlural($module_name_singular).'/clients', '.php');
+
+        foreach ($this->module_list as $module_name) {
+            $this->_clearCache(sugar_cached('modules/' . $module_name . '/clients'), '.php');
         }
     }
 
@@ -560,8 +564,8 @@ class RepairAndClear
 
 		if(!in_array( translate('LBL_ALL_MODULES'), $this->module_list) && !empty($this->module_list))
 		{
-			foreach ($this->module_list as $bean_name){
-			    $bean = BeanFactory::getBean($bean_name);
+            foreach ($this->module_list as $module_name) {
+                $bean = BeanFactory::getBean($module_name);
 				if(!empty($bean)) {
 				    $this->_rebuildAuditTablesHelper($bean);
 				}
@@ -620,18 +624,6 @@ class RepairAndClear
                 }
             }
         }
-	}
-	/////////////////////////////////////////////////////////////
-	////////
-	private function _getModuleNamePlural($module_name_singular)
-	{
-		global $beanList;
-		while ($curr_module = current($beanList))
-		{
-			if ($curr_module == $module_name_singular)
-				return key($beanList); //name of the module, plural.
-			next($beanList);
-		}
 	}
 
     /**

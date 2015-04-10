@@ -887,9 +887,13 @@ class ModuleInstaller{
         foreach ($this->extensions as $extname => $ext) {
             if (empty($filter) || in_array($extname, $filter)) {
                 $func = "rebuild_$extname";
-                if (method_exists($this, $func)) {
+                //Special case for languages since it breaks the $modules as first argument interface.
+                //TODO: Refactor rebuilding helper into proper interfaces and out of the "Installer" class.
+                if ($func == "rebuild_languages") {
+                    $this->rebuild_languages(array(), $modules);
+                } elseif (method_exists($this, $func)) {
                     // non-standard function
-                    $this->$func();
+                    $this->$func($modules);
                 } else {
                     $this->rebuildExt($ext["extdir"], $ext["file"], $modules);
                 }
@@ -1869,7 +1873,8 @@ class ModuleInstaller{
         sugar_cache_reset();
     }
 
-	function rebuild_dashletcontainers($modules = array()){
+    function rebuild_dashletcontainers($modules = array())
+    {
         $this->log(translate('LBL_MI_REBUILDING') . " DC Actions...");
         $this->merge_files('Ext/DashletContainer/Containers/', 'dcactions.ext.php', null, null, $modules);
     }
@@ -1915,11 +1920,11 @@ class ModuleInstaller{
         $this->silent = $silent;
         global $sugar_config;
 
-        $this->rebuild_languages($sugar_config['languages']);
+        $this->rebuild_languages($sugar_config['languages'], $modules);
         $this->rebuild_extensions($modules);
-        $this->rebuild_dashletcontainers();
+        $this->rebuild_dashletcontainers($modules);
         // This will be a time consuming process, particularly if $modules is empty
-        $this->rebuild_relationships($modules);
+        $this->rebuild_relationships(array_flip($modules));
         $this->rebuild_tabledictionary();
         $this->reset_opcodes();
         sugar_cache_reset();
