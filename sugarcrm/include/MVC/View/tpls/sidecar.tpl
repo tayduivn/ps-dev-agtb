@@ -88,14 +88,6 @@
                     }
                 });
                 App.api.debug = App.config.debugSugarApi;
-                App.events.on("app:login:success", function () {
-                    App.cache.set("show_project_import_warning", true);
-                    App.cache.set("show_project_export_warning", true);
-                    App.cache.set("show_br_import_warning", true);
-                    App.cache.set("show_br_export_warning", true);
-                    App.cache.set("show_emailtpl_import_warning", true);
-                    App.cache.set("show_emailtpl_export_warning", true);
-                });
             }
         </script>
         {/literal}
