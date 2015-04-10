@@ -831,11 +831,7 @@ class Report
     {
         // FIXME: needs DB-independent code here
         if ($limit) {
-            $start_offset = $this->report_offset;
-            if (!$this->db->supports('select_rows')) {
-                if ($start_offset > 0) $start_offset++;
-            }
-            $this->$result_name = $this->db->limitQuery($this->$query_name, $start_offset, $this->report_max, true,
+            $this->$result_name = $this->db->limitQuery($this->$query_name, $this->report_offset, $this->report_max, true,
                                                         "Error executing query ");
         } else {
             $this->$result_name = $this->db->query($this->$query_name, true, "Error executing query ");
