@@ -266,6 +266,7 @@ function handleSave($prefix,$redirect=true, $useRequired=false) {
             //need to process user invitees, just save the current values.
     		$focus->save(true);
 	    }else{	    	
+            $relate_to = $this->getRelatedModuleName($focus);
             $userInvitees = array();
             $contactInvitees = array();
             $leadInvitees = array();
@@ -290,7 +291,7 @@ function handleSave($prefix,$redirect=true, $useRequired=false) {
 	        if (!empty($_POST['parent_id']) && $_POST['parent_type'] == 'Contacts') {
                 $contactInvitees[] = $_POST['parent_id'];
             }                  
-            if (!empty($_REQUEST['relate_to']) && $_REQUEST['relate_to'] == 'Contacts') {
+            if ($relate_to == 'Contacts') {
                 if (!empty($_REQUEST['relate_id']) && !in_array($_REQUEST['relate_id'], $contactInvitees)) {
                     $contactInvitees[] = $_REQUEST['relate_id'];
                 } 
@@ -305,7 +306,7 @@ function handleSave($prefix,$redirect=true, $useRequired=false) {
 	        if (!empty($_POST['parent_id']) && $_POST['parent_type'] == 'Leads') {
                 $leadInvitees[] = $_POST['parent_id'];
             }
-            if (!empty($_REQUEST['relate_to']) && $_REQUEST['relate_to'] == 'Leads') {
+            if ($relate_to == 'Leads') {
                 if (!empty($_REQUEST['relate_id']) && !in_array($_REQUEST['relate_id'], $leadInvitees)) {
                     $leadInvitees[] = $_REQUEST['relate_id'];
                 } 
