@@ -171,43 +171,55 @@ describe("Base.Layout.Dashboard", function() {
             });
 
             it('will not call fetch when help is visible', function() {
-                sandbox.stub(layout, 'isHelpDashboard', function() {
-                    return true;
-                });
+                sandbox.stub(layout, 'isHelpDashboard').returns(true);
                 layout.openHelpDashboard();
                 expect(layout.collection.fetch).not.toHaveBeenCalled();
             });
 
             it('will call fetch help is not visible', function() {
-                sandbox.stub(layout, 'isHelpDashboard', function() {
-                    return false;
-                });
+                sandbox.stub(layout, 'isHelpDashboard').returns(false);
                 layout.openHelpDashboard();
                 expect(layout.collection.fetch).toHaveBeenCalled();
+            });
+
+            it('will only call "showHelpDashboard" if we are in the search results page', function() {
+                sandbox.stub(layout, 'isHelpDashboard').returns(false);
+                sandbox.stub(layout, 'isSearchContext').returns(true);
+                sandbox.stub(layout, 'showHelpDashboard');
+                layout.openHelpDashboard();
+
+                expect(layout.showHelpDashboard).toHaveBeenCalled();
+                expect(layout.collection.fetch).not.toHaveBeenCalled();
             });
         });
 
         describe('closeHelpDashboard', function() {
             beforeEach(function() {
                 sandbox.stub(layout.collection, 'fetch');
+                sandbox.stub(layout, 'hideHelpDashboard');
             });
 
             afterEach(function() {
                 sandbox.restore();
             });
 
+            it('will call "hideHelpDashboard" if we are in the search page', function() {
+                sandbox.stub(layout, 'isHelpDashboard').returns(true);
+                sandbox.stub(layout, 'isSearchContext').returns(true);
+                layout.closeHelpDashboard();
+                expect(layout.hideHelpDashboard).toHaveBeenCalled();
+            });
+
             it('will call fetch when help is visible', function() {
-                sandbox.stub(layout, 'isHelpDashboard', function() {
-                    return true;
-                });
+                sandbox.stub(layout, 'isHelpDashboard').returns(true);
+
                 layout.closeHelpDashboard();
                 expect(layout.collection.fetch).toHaveBeenCalled();
             });
 
             it('will not call fetch help is not visible', function() {
-                sandbox.stub(layout, 'isHelpDashboard', function() {
-                    return false;
-                });
+                sandbox.stub(layout, 'isHelpDashboard').returns(false);
+
                 layout.closeHelpDashboard();
                 expect(layout.collection.fetch).not.toHaveBeenCalled();
             });
@@ -218,6 +230,7 @@ describe("Base.Layout.Dashboard", function() {
             beforeEach(function() {
                 sandbox.stub(layout, 'navigateLayout');
                 sandbox.stub(app, 'navigate');
+                sandbox.spy(app.events, 'trigger');
                 collection = new SUGAR.App.BeanCollection([
                     {'dashboard_type': 'help-dashboard', id: 'help-dash'},
                     {'dashboard_type': 'dashboard', id: 'normal-dash'}
@@ -229,9 +242,10 @@ describe("Base.Layout.Dashboard", function() {
                 sandbox.restore();
             });
 
-            it('will call navigateLayout', function() {
+            it('will call navigateLayout and trigger "app:help:shown"', function() {
                 layout.showHelpDashboard(collection);
                 expect(layout.navigateLayout).toHaveBeenCalledWith('help-dash');
+                expect(app.events.trigger).toHaveBeenCalledWith('app:help:shown');
             });
 
             describe('when context does not have parent', function() {
@@ -321,9 +335,7 @@ describe("Base.Layout.Dashboard", function() {
                 var _renderCalled = false;
                 beforeEach(function() {
                     layout.module = 'Home';
-                    sandbox.stub(layout, 'isHelpDashboard', function() {
-                        return true;
-                    });
+                    sandbox.stub(layout, 'isHelpDashboard').returns(true);
 
                     sandbox.stub(layout, 'getComponent', function() {
                         return {
@@ -368,19 +380,14 @@ describe("Base.Layout.Dashboard", function() {
                 });
 
                 it('will trigger event when dashboard is help', function() {
-                    isHelpStub = sandbox.stub(layout, 'isHelpDashboard', function() {
-                        return true;
-                    });
+                    isHelpStub = sandbox.stub(layout, 'isHelpDashboard').returns(true);
                     layout.model.trigger('sync');
 
                     expect(isHelpStub).toHaveBeenCalled();
-                    expect(app.events.trigger).toHaveBeenCalledWith('app:help:shown');
                 });
 
                 it('will not trigger event when dashboard is not help', function() {
-                    isHelpStub = sandbox.stub(layout, 'isHelpDashboard', function() {
-                        return false;
-                    });
+                    isHelpStub = sandbox.stub(layout, 'isHelpDashboard').returns(false);
                     layout.model.trigger('sync');
 
                     expect(isHelpStub).toHaveBeenCalled();
@@ -401,9 +408,7 @@ describe("Base.Layout.Dashboard", function() {
                 });
 
                 it('will not trigger event when dashboard is help', function() {
-                    isHelpStub = sandbox.stub(layout, 'isHelpDashboard', function() {
-                        return true;
-                    });
+                    isHelpStub = sandbox.stub(layout, 'isHelpDashboard').returns(true);
                     layout.model.trigger('sync');
 
                     expect(isHelpStub).not.toHaveBeenCalled();
@@ -411,9 +416,7 @@ describe("Base.Layout.Dashboard", function() {
                 });
 
                 it('will not trigger event when dashboard is not help', function() {
-                    isHelpStub = sandbox.stub(layout, 'isHelpDashboard', function() {
-                        return false;
-                    });
+                    isHelpStub = sandbox.stub(layout, 'isHelpDashboard').returns(false);
                     layout.model.trigger('sync');
 
                     expect(isHelpStub).not.toHaveBeenCalled();
@@ -427,9 +430,7 @@ describe("Base.Layout.Dashboard", function() {
                 expectedApiUrl;
             expect(model.apiModule).toBe("Dashboards");
             expect(model.dashboardModule).toBe(parentModule);
-            sinon.collection.stub(layout.context.parent, 'isDataFetched', function() {
-                return true;
-            });
+            sinon.collection.stub(layout.context.parent, 'isDataFetched').returns(true);
             var syncStub = sinon.stub(app.api, 'records');
             layout.loadData();
 
@@ -454,9 +455,7 @@ describe("Base.Layout.Dashboard", function() {
 
         it("should navigate RHS panel without replacing document URL", function() {
             var syncStub, expectedApiUrl;
-            sinon.collection.stub(layout.context.parent, 'isDataFetched', function() {
-                return true;
-            });
+            sinon.collection.stub(layout.context.parent, 'isDataFetched').returns(true);
             syncStub = sinon.stub(app.api, 'records');
             layout.navigateLayout('new-fake-id-value');
             expectedApiUrl = "Dashboards";
@@ -543,9 +542,56 @@ describe("Base.Layout.Dashboard", function() {
             expect(_componentDef[0].layout.components[0].view).toEqual('dashboard-headerpane');
         });
 
-        it('will set headerpane to help-dashboard when type is help-dashboard', function() {
+        it('will set headerpane to "help-dashboard-headerpane" when type is "help-dashboard"', function() {
+            sinon.collection.stub(app.metadata, 'getView').returns(true);
             layout.navigateLayout('hello-world', 'help-dashboard');
             expect(_componentDef[0].layout.components[0].view).toEqual('help-dashboard-headerpane');
+        });
+
+        it('will set headerpane to "search-help-dashboard-headerpane" when type is "help-dashboard" and we are in the search results page.', function() {
+            sinon.collection.stub(app.metadata, 'getView').returns(true);
+            sinon.collection.stub(layout, 'isSearchContext').returns(true);
+
+            layout.navigateLayout('hello-world', 'help-dashboard');
+            expect(_componentDef[0].layout.components[0].view).toEqual('search-help-dashboard-headerpane');
+        });
+    });
+
+    describe('initComponents', function() {
+        beforeEach(function() {
+            layout = SugarTest.createLayout('base', 'Home', 'dashboard');
+            sinon.collection.spy(layout.model, 'trigger');
+            sinon.collection.stub(layout, 'isSearchContext').returns(true);
+            sinon.collection.stub(layout, '_super');
+        });
+
+        it('should trigger "change:metadata" on the model if we are in the search results page', function() {
+            layout.initComponents('hello-world');
+
+            expect(layout.model.trigger).toHaveBeenCalledWith('change:metadata');
+        });
+    });
+
+    describe('loadData in search results page', function() {
+        beforeEach(function() {
+            layout = SugarTest.createLayout('base', 'Home', 'dashboard');
+            sinon.collection.spy(layout.model, 'trigger');
+            sinon.collection.stub(layout, 'isSearchContext').returns(true);
+            sinon.collection.stub(layout, '_getInitialDashboardMetadata');
+            sinon.collection.stub(layout, 'navigateLayout');
+        });
+
+        it('should return if the model already has the metadata property', function() {
+            layout.model.set('metadata', '');
+            layout.loadData();
+            expect(layout.navigateLayout).not.toHaveBeenCalled();
+        });
+
+        it('should set "skipFetch" and "currentDashboardIndex" in the context, and call "navigateLayout"', function() {
+            layout.loadData();
+            expect(layout.navigateLayout).toHaveBeenCalled();
+            expect(layout.context.get('skipFetch')).toBe(true);
+            expect(layout.context.get('currentDashboardIndex')).toEqual(2);
         });
     });
 });
