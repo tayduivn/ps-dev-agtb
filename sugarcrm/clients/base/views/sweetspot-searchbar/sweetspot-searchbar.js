@@ -95,7 +95,8 @@
 
     getSweetspotActions: function() {
         var actionsById = app.metadata.getSweetspotActions();
-        var data = app.user.getPreference('sweetspot');
+        var prefs = app.user.getPreference('sweetspot');
+        var data = prefs && prefs.hotkeys;
 
         _.each(data, function(customSetting) {
             if (!actionsById[customSetting.action]) {

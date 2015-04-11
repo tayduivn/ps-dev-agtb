@@ -30,7 +30,7 @@ describe('Base.Layout.SweetspotConfigList', function() {
                     {action: '#Accounts/create', keyword: 'b3'},
                 ],
                 expectedConfig: {
-                    'sweetspot': [
+                    'hotkeys': [
                         {action: '#Bugs', keyword: 'b1'},
                         {action: '#bwc/index.php?module=Reports', keyword: 'b2'},
                         {action: '#Accounts/create', keyword: 'b3'},
@@ -48,7 +48,7 @@ describe('Base.Layout.SweetspotConfigList', function() {
                     {action: '#Bugs', keyword: 'b2'},
                 ],
                 expectedConfig: {
-                    'sweetspot': [
+                    'hotkeys': [
                         {action: '#Accounts/create', keyword: 'b1'},
                         {action: '#Bugs', keyword: ['b1', 'b2']},
                         {action: '#Leads/create', keyword: 'b1'},
@@ -66,7 +66,7 @@ describe('Base.Layout.SweetspotConfigList', function() {
                     {action: '#Tasks/create', keyword: 'b5'}
                 ],
                 expectedConfig: {
-                    'sweetspot': [
+                    'hotkeys': [
                         {action: '#Accounts', keyword: 'b2'},
                         {action: '#Tasks/create', keyword: 'b5'}
                     ]
@@ -80,7 +80,7 @@ describe('Base.Layout.SweetspotConfigList', function() {
                     {action: '#Bugs', keyword: 'b1'}
                 ],
                 expectedConfig: {
-                    'sweetspot': [
+                    'hotkeys': [
                         {action: '#Bugs', keyword: 'b1'},
                         {action: '#Accounts', keyword: 'b2'}
                     ]

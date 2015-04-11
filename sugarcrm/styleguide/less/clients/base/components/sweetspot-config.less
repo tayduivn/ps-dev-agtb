@@ -1,44 +1,62 @@
-.main-pane {
-  .container-fluid {
-    margin-top: 80px;
-  }
-}
+.sweetspot-config {
+  .sweetspot-themes {
+    .radio {
+      margin-top: 10px;
+    }
 
-table {
-  thead {
-    th:first-child {
-      width: 30px;
+    label.theme {
+      position: absolute;
+      display: block;
+      white-space: nowrap;
+
+      span {
+        margin-left: 4px;
+      }
+
+      input[type=radio] {
+        &:checked + span {
+          font-weight: bold;
+        }
+      }
     }
   }
-  tbody {
-    tr {
-      td.remove {
-        min-width: 30px;
-        text-align: center;
-        vertical-align: middle;
-        i {
-          font-size: 16px;
+  table {
+    thead {
+      th:first-child {
+        width: 30px;
+      }
+    }
+    tbody {
+      tr {
+        td.remove {
+          min-width: 30px;
+          text-align: center;
+          vertical-align: middle;
+          i {
+            font-size: 16px;
+            &:hover {
+              cursor: pointer;
+              color: #333;
+            }
+          }
+        }
+      }
+    }
+    tfoot {
+      tr {
+        &:hover {
+          background-color: #EDEDED;
+        }
+        &[data-sweetspot=add] {
+          td {
+            text-align: center;
+          }
           &:hover {
             cursor: pointer;
-            color: #333;
           }
         }
       }
     }
   }
-  tfoot {
-    tr {
-      &:hover {
-        background-color: #EDEDED;
-      }
-      &[data-sweetspot=add] {
-        td {
-          text-align: center;
-        }
-        &:hover {
-          cursor: pointer;
-        }
-      }
-    }
-  }
 }
+

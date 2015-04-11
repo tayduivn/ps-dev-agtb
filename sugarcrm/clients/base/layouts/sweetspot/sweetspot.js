@@ -26,6 +26,7 @@
 
         app.shortcuts.register(app.shortcuts.GLOBAL + 'Sweetspot', 'shift+space', this.toggle, this, true);
         app.events.on('app:logout', this.hide, this);
+        app.events.on('app:sync:complete sweetspot:reset', this._setTheme, this);
 
         this.on('sweetspot:config', this.openConfigPanel, this);
 
@@ -46,6 +47,22 @@
             return;
         }
         this._super('_render');
+        this._setTheme();
+    },
+
+    /**
+     * Sets the theme for sweetspot.
+     *
+     * @protected
+     */
+    _setTheme: function() {
+        var prefs = app.user.getPreference('sweetspot');
+        var theme = prefs && prefs.theme;
+
+        this.$el.removeAttr('data-theme');
+        if (theme) {
+            this.$el.attr('data-theme', theme);
+        }
     },
 
     /**

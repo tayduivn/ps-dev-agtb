@@ -9,19 +9,23 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-$viewdefs['base']['layout']['sweetspot-config'] = array(
-    'type' => 'sweetspot-config',
-    'name' => 'sweetspot-config',
-    'css_class' => 'sweetspot-config',
-    'components' => array(
+$viewdefs['base']['view']['sweetspot-config-theme'] = array(
+    'themes' => array(
         array(
-            'view' => 'sweetspot-config-headerpane',
+            'value' => 'default',
+            'img' => '',
+            'label' => 'LBL_SWEETSPOT_THEME_DEFAULT',
         ),
         array(
-            'view' => 'sweetspot-config-theme',
+            'value' => 'light',
+            'img' => '',
+            'label' => 'LBL_SWEETSPOT_THEME_LIGHT',
         ),
         array(
-            'layout' => 'sweetspot-config-list',
+            'value' => 'dark',
+            'img' => '',
+            'label' => 'LBL_SWEETSPOT_THEME_DARK',
         ),
     ),
 );
+

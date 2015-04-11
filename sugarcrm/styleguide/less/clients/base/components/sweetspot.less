@@ -2,6 +2,7 @@
 @sweetspotHalfWidth: 50px;
 @sweetspotHeight: 60px;
 @sweetspotGrey: #DBDBDB;
+@sweetspotDarkText: #E5E5E5;
 
 .noselect {
   -webkit-touch-callout: none;
@@ -27,14 +28,14 @@
   border-radius: 10px;
   border: 6px solid rgba(0,0,0,.5);
 
-  &.light {
+  &[data-theme=light] {
     border-radius: 2px;
     border: 1px solid #DDDDDD;
     box-shadow: 2px 5px 15px rgba(0, 0, 0, 0.5);
 
     input[type=text] {
       color: #333333;
-      background-color: #F6F6F6;
+      background-color: transparent;
     }
 
     .sweetspot-results {
@@ -54,6 +55,67 @@
 
         &:hover {
           background-color: rgba(0, 0, 0, 0.07);
+        }
+      }
+    }
+  }
+
+  &[data-theme=dark] {
+    border-radius: 2px;
+    border: 1px solid @grayDark;
+    box-shadow: 2px 5px 15px rgba(0, 0, 0, 0.5);
+    background-color: #343433;
+
+    input[type=text] {
+      color: @sweetspotDarkText;
+      background-color: transparent;
+    }
+
+    img {
+      opacity: 1;
+    }
+
+    i {
+      color: rgba(255, 255, 255, 0.8);
+      &:hover {
+        color: @sweetspotDarkText;
+        cursor: pointer;
+      }
+    }
+
+    .sweetspot-results {
+      p {
+        margin: 0 10px;
+        padding: 2px 0px 0px;
+        background-color: transparent;
+        color: @sweetspotDarkText;
+        border-bottom: 1px solid #6C6C6C;
+      }
+
+      li[data-sweetaction] {
+        border-radius: 0;
+
+        a {
+          color: @sweetspotDarkText;
+        }
+
+        .sweetspot-icon {
+          color: rgba(255, 255, 255, 0.8);
+        }
+
+        .fa-mail-forward {
+          color: rgba(255, 255, 255, 0.8);
+        }
+
+        &.active {
+          background-color: rgba(255, 255, 255, 0.07);
+          .fa-mail-forward {
+            color: rgba(255, 255, 255, 0.8);
+          }
+        }
+
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.07);
         }
       }
     }

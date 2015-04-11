@@ -14,6 +14,8 @@
   * @extends View.Layout
   */
 ({
+    className: 'container-fluid',
+
     events: {
         'click [data-sweetspot=add]': 'addRow'
     },
@@ -42,6 +44,7 @@
      */
     _initRows: function() {
         var data = app.user.getPreference('sweetspot');
+        data = data && data.hotkeys;
         if (_.isEmpty(data)) {
             // Always add an empty row if we don't have anything configured.
             this.addRow();
@@ -83,8 +86,7 @@
      * @protected
      */
     _bindEvents: function() {
-        this.context.on('button:save_button:click', this.saveConfig, this);
-        this.context.on('button:cancel_button:click', this.cancelConfig, this);
+        this.context.on('sweetspot:ask:configs', this.generateConfig, this);
     },
 
     /**
@@ -110,46 +112,17 @@
         return rowComponent;
     },
 
-    /**
-     * Saves the sanitized Sweet Spot settings in user preferences and closes
-     * the drawer.
-     */
-    saveConfig: function() {
+    generateConfig: function() {
         var data = this.collection.toJSON();
         data = this._formatData(data);
 
-        if (_.isEmpty(data.sweetspot)) {
-            this.cancelConfig();
-            return;
-        }
-
-        app.alert.show('sweetspot', {
-            level: 'process',
-            title: app.lang.get('LBL_SAVING'),
-            autoClose: false
-        });
-
-        app.user.updatePreferences(data, function(err) {
-            app.alert.dismiss('sweetspot');
-            if (err) {
-                app.logger.error('Sweet Spot failed to update configuration preferences: ' + err);
-            }
-            app.drawer.close(this.collection);
-            app.events.trigger('sweetspot:reset');
-        });
-    },
-
-    /**
-     * Closes the config drawer without saving changes.
-     */
-    cancelConfig: function() {
-        app.drawer.close();
+        this.context.trigger('sweetspot:receive:configs', data);
     },
 
     /**
      * Formatter method that sanitizes and prepares the data to be used by
-     * {@link #saveConfig}. Also allows for multiple hotkeys to be associated
-     * with a single action.
+     * {@link View.Layouts.Base.SweetspotConfigLayout#saveConfig}. Also allows
+     * for multiple hotkeys to be associated with a single action.
      *
      * @protected
      * @param {Array} data The unsanitized configuration data.
@@ -231,10 +204,10 @@
      *
      * @protected
      * @param {Array} data The unprepared configuration data.
-     * @return {Array} The prepared configuration data.
+     * @return {Object} The prepared configuration data.
      */
     _formatForUserPrefs: function(data) {
-        return {'sweetspot': data};
+        return {hotkeys: data};
     },
 
     /**
