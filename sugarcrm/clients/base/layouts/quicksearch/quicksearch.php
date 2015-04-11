@@ -23,6 +23,9 @@ $viewdefs['base']['layout']['quicksearch'] = array(
         array(
             'view' => 'quicksearch-results',
         ),
+        array(
+            'view' => 'quicksearch-button'
+        ),
     ),
     'v2' => true,
 );

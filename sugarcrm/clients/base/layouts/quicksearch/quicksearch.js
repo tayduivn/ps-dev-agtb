@@ -127,14 +127,6 @@
             }
         }, this);
 
-        var boundTrigger = _.bind(this.trigger, this);
-        $(document)
-            .on('click.quicksearch', function() {
-                boundTrigger('quicksearch:close');
-            })
-            .on('click.quicksearch', '.navbar .search', function(e) { e.stopPropagation() });
-
-
         // Listener for app:view:change to expand or collapse the search bar
         app.events.on('app:view:change', function() {
             if (this.context.get('search')) {
@@ -143,6 +135,19 @@
                 _.bind(this.collapse, this);
             }
         }, this);
+
+        this.$el.focusin(_.bind(function() {
+            this.$el.focusout(_.bind(function() {
+                this.$el.off('focusout');
+                _.defer(_.bind(function() {
+                    // We use `has(':focus')` instead of `is(':focus')` to check
+                    // if the focused element is or is inside `this.$el`.
+                    if (this.$el.has(':focus').length === 0) {
+                        this.trigger('quicksearch:close');
+                    }
+                }, this));
+            }, this));
+        }, this));
     },
 
     /**
@@ -301,8 +306,8 @@
      * @inheritDoc
      */
     unbind: function() {
-        $(document).off('click.quicksearch');
         app.router.off('route', null, this);
+        this.$el.off();
         this._super('unbind');
     }
 })

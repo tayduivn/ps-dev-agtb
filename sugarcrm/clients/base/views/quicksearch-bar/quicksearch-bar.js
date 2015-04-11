@@ -26,7 +26,6 @@
 
     searchModules: [],
     events: {
-        'click [data-action=search_icon]' : 'searchIconClickHandler',
         'focus input[data-action=search_bar]': 'requestFocus',
         'click input[data-action=search_bar]': 'searchBarClickHandler'
     },
@@ -92,22 +91,6 @@
          */
         this._currentQueryTerm = '';
 
-        /**
-         * Indicates if the search bar is expanded
-         * @type {boolean}
-         */
-        this.expanded = false;
-
-        /**
-         * Indicates the state of the search button icon:
-         *
-         * - `true` means magnifying glass.
-         * - `false` means X icon.
-         *
-         * @type {boolean}
-         */
-        this.searchButtonIcon = true;
-
         app.events.on('app:sync:complete', this.populateModules, this);
 
         // Listener for receiving focus for up/down arrow navigation:
@@ -129,12 +112,16 @@
         // Listener for `quicksearch:close`. This aborts in progress
         // searches
         this.layout.on('quicksearch:close', function() {
+            this._searchTerm = '';
+            this._currentQueryTerm = '';
+            this._oldSearchTerm = '';
             this.collection.abortFetchRequest();
-            this.searchButtonIcon = true;
-            this.toggleSearchIcon();
             this.$('input[data-action=search_bar]').blur();
         }, this);
 
+        this.layout.on('quicksearch:bar:clear', this.clearSearch, this);
+
+        this.layout.on('quicksearch:bar:search', this.goToSearchPage, this);
     },
 
     /**
@@ -164,23 +151,17 @@
     },
 
     /**
-     * Toggles the search icon between the magnifying glass and x.
+     * Toggles the search icon between the magnifying glass and x, if available.
+     *
+     * @param {boolean} searchButtonIcon Indicates the state of the search button icon
+     * - `true` means set to magnifying glass.
+     * - `false` means set to X icon.
      */
-    toggleSearchIcon: function() {
-        var iconEl = this.$('[data-action="search_icon"] .fa').first();
-        // In the search context, the icon needs special handling.
-        // he icon is an 'x' if there is text in the input.
-        // Otherwise, show a magnifying glass.
+    toggleSearchIcon: function(searchButtonIcon) {
         if (this.context.get('search')) {
-            this.searchButtonIcon = !this.$('input[data-action=search_bar]').val();
+            searchButtonIcon = !this.$('input[data-action=search_bar]').val();
         }
-        if (this.searchButtonIcon) {
-            iconEl.removeClass('fa-times');
-            iconEl.addClass('fa-search');
-        } else {
-            iconEl.removeClass('fa-search');
-            iconEl.addClass('fa-times');
-        }
+        this.layout.trigger('quicksearch:button:toggle', searchButtonIcon);
     },
 
     /**
@@ -199,7 +180,6 @@
                 this.moveBackward();
                 e.preventDefault();
                 break;
-            case 9:  // tab
         }
     },
 
@@ -216,26 +196,13 @@
                 break;
             case 9: // tab
                 break;
+            case 16: // shift
+                break;
             case 13: // enter
                 this.goToSearchPage();
                 break;
             default:
                 this._validateAndSearch();
-        }
-    },
-
-    /**
-     * Handler for clicks on the search icon (or x, depending on state).
-     *
-     * If the search bar is expanded, collapse. If the search bar is collapsed,
-     * expand.
-     */
-    searchIconClickHandler: function() {
-        if (this.layout.expanded) {
-            this.clearSearch();
-            this.layout.trigger('quicksearch:close');
-        } else {
-            this.goToSearchPage();
         }
     },
 
@@ -269,8 +236,7 @@
     searchBarClickHandler: function() {
         this.requestFocus();
         _.defer(_.bind(this.layout.expand, this.layout));
-        this.searchButtonIcon = false;
-        this.toggleSearchIcon();
+        this.toggleSearchIcon(false);
     },
 
     /**
@@ -337,7 +303,8 @@
             this.collection.abortFetchRequest();
             this.layout.trigger('quicksearch:results:close');
             this.collection.abortFetchRequest();
-            this.toggleSearchIcon();
+            // If on the search page, reset the search button.
+            this.toggleSearchIcon(!term);
             return;
         }
 
@@ -348,8 +315,7 @@
             this.collection.dataFetched = false;
             this.layout.trigger('quicksearch:search:underway');
             this.layout.expand();
-            this.searchButtonIcon = false;
-            this.toggleSearchIcon();
+            this.toggleSearchIcon(false);
             this._oldSearchTerm = term;
             this._debounceSearch();
         }
@@ -385,6 +351,10 @@
         this._oldSearchTerm = '';
         this._currentQueryTerm = '';
         this.disposeKeyEvents();
+
+        if (this.context.get('search')) {
+            this.toggleSearchIcon(true);
+        }
     },
 
     /**

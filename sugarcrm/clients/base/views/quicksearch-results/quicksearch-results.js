@@ -268,6 +268,9 @@
             case 38: // up arrow
                 this.moveBackward();
                 break;
+            case 9: // tab
+                this.close();
+                this.trigger('navigate:focus:lost');
         }
     },
 

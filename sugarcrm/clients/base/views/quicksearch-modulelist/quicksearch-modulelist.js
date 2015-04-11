@@ -104,6 +104,12 @@
      * @param {Event} event
      */
     selectModule: function(event) {
+        // We need to stop propagation for two reasons:
+        // 1) Stop scrolling when using the spacebar.
+        // 2) Prevent collapse of the `quicksearch` layout. The module list is
+        // considered inside the dropdown plugin, and not in the layout. Clicks
+        // outside the layout normally collapse the layout.
+        event.stopImmediatePropagation();
         var $li = $(event.currentTarget);
         var module = $li.data('module');
         var moduleModel = this.searchModuleFilter.get(module);
@@ -145,9 +151,12 @@
      * @param {event} event
      */
     selectAllModules: function(event) {
-        if (event) {
-            event.stopImmediatePropagation();
-        }
+        // We need to stop propagation for two reasons:
+        // 1) Stop scrolling when using the spacebar.
+        // 2) Prevent collapse of the `quicksearch` layout. The module list is
+        // considered inside the dropdown plugin, and not in the layout. Clicks
+        // outside the layout normally collapse the layout.
+        event.stopImmediatePropagation();
 
         // Selects all modules.
         this.$('[data-action=select-all]').addClass('selected');
