@@ -56,6 +56,11 @@ $vardefs = array(
                 'full_text_search' => array(
                     'enabled' => true,
                     'searchable' => false,
+                    'aggregations' => array(
+                        'date_entered' => array(
+                            'type' => 'DateRange',
+                        ),
+                    ),
                 ),
             ),
         'date_modified' => array(
@@ -68,9 +73,10 @@ $vardefs = array(
                 'full_text_search' => array(
                     'enabled' => true,
                     'searchable' => false,
-                    'aggregation' => array(
-                        'type' => 'dateRange',
-                        'cross_module' => true,
+                    'aggregations' => array(
+                        'date_modified' => array(
+                            'type' => 'DateRange',
+                        ),
                     ),
                 ),
                 'studio' => array(

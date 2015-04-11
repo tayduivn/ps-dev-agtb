@@ -37,12 +37,6 @@ class TermsAggregation extends AbstractAggregation
     );
 
     /**
-     * Flag to indicate we use a filtered query
-     * @var boolean
-     */
-    protected $filtered = false;
-
-    /**
      * {@inheritdoc}
      */
     public function build($id, array $filters)
@@ -54,12 +48,7 @@ class TermsAggregation extends AbstractAggregation
             return $terms;
         }
 
-        // if filters are present we need to wrap it in a filtered agg
-        $this->filtered = true;
-        $agg = new \Elastica\Aggregation\Filter($id);
-        $agg->setFilter($this->buildFilters($filters));
-        $agg->addAggregation($terms);
-        return $agg;
+        return $this->wrapFilter($id, $terms, $filters);
     }
 
     /**
@@ -74,25 +63,5 @@ class TermsAggregation extends AbstractAggregation
         $filter = new \Elastica\Filter\Terms();
         $filter->setTerms($this->options['field'], $filterDefs);
         return $filter;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function parseResults($id, array $results)
-    {
-        // When we wrapped in a filte we need to go one level deeper
-        if ($this->filtered) {
-            $buckets = $results[$id]['buckets'];
-        } else {
-            $buckets = $results['buckets'];
-        }
-
-        $parsed = array();
-        foreach ($buckets as $bucket) {
-            $parsed[$bucket['key']] = $bucket['doc_count'];
-        }
-
-        return $parsed;
     }
 }

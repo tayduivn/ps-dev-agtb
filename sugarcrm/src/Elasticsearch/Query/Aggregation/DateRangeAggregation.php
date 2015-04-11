@@ -12,35 +12,82 @@
 
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Query\Aggregation;
 
+use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
+
 /**
- * Class DateRangeAggregation
- * Covers date range Today, Yesterday, Tomorrow, Last 7 days, Next 7 days, Last 30 Days, Next 30 Days,
- * Last Month, This month, Next Month, Last Year, Next Year, This Year.
+ *
+ * Class DateRangeAggregation covering default list view date range:
+ *  - Today
+ *  - Yesterday
+ *  - Tomorrow
+ *  - Last 7 days
+ *  - Next 7 days
+ *  - Last 30 Days
+ *  - Next 30 Days
+ *  - Last Month
+ *  - This month
+ *  - Next Month
+ *  - Last Year
+ *  - Next Year
+ *  - This Year
  */
 class DateRangeAggregation extends RangeAggregation
 {
     const ELASTIC_DATETIME_FORMAT = 'Y-m-d H:i:s';
 
     /**
+     * {@inheritdoc}
+     */
+    protected $acceptedOptions = array(
+        'field',
+    );
+
+    /**
      * The list of pre-defined dates to be used for the aggregation
      * @var array
      */
     protected $dateNames = array(
-        'today', 'yesterday', 'tomorrow', 'last_7_days', 'next_7_days', 'last_30_days', 'next_30_days',
-        'last_month', 'this_month', 'next_month', 'last_year', 'this_year', 'next_year'
+        'today',
+        'yesterday',
+        'tomorrow',
+        'last_7_days',
+        'next_7_days',
+        'last_30_days',
+        'next_30_days',
+        'last_month',
+        'this_month',
+        'next_month',
+        'last_year',
+        'this_year',
+        'next_year',
     );
 
     /**
-     * Aggregation for date created constructor
-     * @see AggregationRange::__construct()
+     * Ctor
      */
     public function __construct()
     {
-        $defaultOpts = array(
-            'ranges' => $this->initRanges(),
-            'typeExt' => ".gs_datetime",
-        );
-        parent::__construct($defaultOpts);
+        // fixed ranges
+        $this->options['ranges'] = $this->initRanges();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildMapping(Mapping $mapping, $field, array $defs)
+    {
+        // TODO: abstract out date handling from MultiFieldHandler
+        // We rely for now on MultiFieldHandler to set the mappings for us
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function build($id, array $filters)
+    {
+        // awaiting mapping abstraction from MultiField
+        $this->setOption('field', $id . '.gs_datetime');
+        return parent::build($id, $filters);
     }
 
     /**
@@ -51,7 +98,7 @@ class DateRangeAggregation extends RangeAggregation
     {
         $ranges = array();
         foreach ($this->dateNames as $dateName) {
-            $date = \TimeDate::getInstance()->parseDateRange($dateName);
+            $date = $this->parseDateRange($dateName);
             if (!empty($date)) {
                 $from = $this->timestampToDate($date[0]->getTimestamp());
                 $to =  $this->timestampToDate($date[1]->getTimestamp());
@@ -67,6 +114,15 @@ class DateRangeAggregation extends RangeAggregation
         return $ranges;
     }
 
+    /**
+     * Parse date/time range into date based on user context
+     * @param string $dateName
+     * @return \SugarDateTime
+     */
+    protected function parseDateRange($dateName)
+    {
+        return \TimeDate::getInstance()->parseDateRange($dateName, $this->user);
+    }
 
     /**
      * Convert timestamp to Datetime string
