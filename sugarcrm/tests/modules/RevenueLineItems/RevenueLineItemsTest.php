@@ -251,81 +251,86 @@ class RevenueLineItemsTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @group revenuelineitems
+     * @covers setBestWorstFromLikely
      */
-    public function testBestCaseAutofillEmpty()
+    public function testSetBestWorstFromLikelyDoesNotChangeBecauseOfAcl()
     {
-        $revenuelineitem = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
-        $revenuelineitem->likely_case = 10000;
-        $revenuelineitem->best_case = '';
-        $revenuelineitem->save();
+        $rli = $this->getMockBuilder('RevenueLineItem')
+            ->setMethods(array('ACLFieldAccess'))
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $this->assertEquals($revenuelineitem->likely_case, $revenuelineitem->best_case);
+        $rli->expects($this->atLeast(2))
+            ->method('ACLFieldAccess')
+            ->willReturn(false);
+
+        /* @var $rli RevenueLineItem */
+        $rli->likely_case = 500;
+        $rli->best_case = '';
+        $rli->worst_case = 0;
+
+        SugarTestReflection::callProtectedMethod($rli, 'setBestWorstFromLikely');
+
+        $this->assertEquals(500, $rli->likely_case);
+        $this->assertEquals('', $rli->best_case);
+        $this->assertEquals(0, $rli->worst_case);
     }
 
     /**
-     * @group revenuelineitems
+     * @dataProvider dataProviderBestWorstAutoFill
+     * @covers setBestWorstFromLikely
      */
-    public function testBestCaseAutofillNull()
+    public function testBestWorstAutoFill($value, $likely, $expected)
     {
-        $revenuelineitem = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
-        $revenuelineitem->likely_case = 10000;
-        $revenuelineitem->best_case = null;
-        $revenuelineitem->save();
+        $rli = $this->getMockBuilder('RevenueLineItem')
+            ->setMethods(array('ACLFieldAccess'))
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $this->assertEquals($revenuelineitem->likely_case, $revenuelineitem->best_case);
+        $rli->expects($this->atLeast(2))
+            ->method('ACLFieldAccess')
+            ->willReturn(true);
+
+        /* @var $rli RevenueLineItem */
+        $rli->likely_case = $likely;
+        $rli->best_case = $value;
+        $rli->worst_case = $value;
+
+        SugarTestReflection::callProtectedMethod($rli, 'setBestWorstFromLikely');
+
+        $this->assertSame($expected, $rli->best_case);
+        $this->assertSame($expected, $rli->worst_case);
     }
 
-    /**
-     * @group revenuelineitems
-     */
-    public function testBestCaseAutoRegression()
+    public function dataProviderBestWorstAutoFill()
     {
-        $revenuelineitem = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
-        $revenuelineitem->likely_case = 10000;
-        $revenuelineitem->best_case = 42;
-        $revenuelineitem->save();
-
-        $this->assertEquals(42, $revenuelineitem->best_case);
-    }
-
-    /**
-     * @group revenuelineitems
-     */
-    public function testWorstCaseAutofillEmpty()
-    {
-        $revenuelineitem = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
-        $revenuelineitem->likely_case = 10000;
-        $revenuelineitem->worst_case = '';
-        $revenuelineitem->save();
-
-        $this->assertEquals($revenuelineitem->likely_case, $revenuelineitem->worst_case);
-    }
-
-    /**
-     * @group revenuelineitems
-     */
-    public function testWorstCaseAutofillNull()
-    {
-        $revenuelineitem = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
-        $revenuelineitem->likely_case = 10000;
-        $revenuelineitem->worst_case = null;
-        $revenuelineitem->save();
-
-        $this->assertEquals($revenuelineitem->likely_case, $revenuelineitem->worst_case);
-    }
-
-    /**
-     * @group revenuelineitems
-     */
-    public function testWorstCaseAutofillRegression()
-    {
-        $revenuelineitem = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
-        $revenuelineitem->likely_case = 10000;
-        $revenuelineitem->worst_case = 42;
-        $revenuelineitem->save();
-
-        $this->assertEquals(42, $revenuelineitem->worst_case);
+        return array(
+            array(
+                '',
+                '100',
+                '100'
+            ),
+            array(
+                null,
+                '100',
+                '100'
+            ),
+            array(
+                '42',
+                '100',
+                '42'
+            ),
+            array(
+                '0',
+                '100',
+                '0'
+            ),
+            array(
+                '0',
+                100,
+                '0'
+            )
+        );
     }
 
     /**

@@ -146,7 +146,6 @@ class ForecastWorksheet extends SugarBean
         /* @var $bean Opportunity|Product */
         $bean = BeanFactory::getBean($this->parent_type, $this->parent_id);
         $bean->probability = $this->probability;
-        $bean->best_case = $this->best_case;
         if ($bean instanceof RevenueLineItem) {
             $bean->likely_case = $this->likely_case;
             $bean->date_closed = $this->date_closed;
@@ -158,7 +157,12 @@ class ForecastWorksheet extends SugarBean
         }
         $bean->sales_stage = $this->sales_stage;
         $bean->commit_stage = $this->commit_stage;
-        $bean->worst_case = $this->worst_case;
+        if ($this->ACLFieldAccess('best_case', 'write')) {
+            $bean->best_case = $this->best_case;
+        }
+        if ($this->ACLFieldAccess('worst_case', 'write')) {
+            $bean->worst_case = $this->worst_case;
+        }
         $bean->save($check_notify);
     }
 

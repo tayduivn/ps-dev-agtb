@@ -151,6 +151,25 @@ class RevenueLineItem extends SugarBean
     }
 
     /**
+     * Utility Method to make sure the best/worst case values are set
+     */
+    protected function setBestWorstFromLikely()
+    {
+        if ($this->ACLFieldAccess('best_case', 'write') &&
+            empty($this->best_case) &&
+            (string) $this->best_case !== '0'
+        ) {
+            $this->best_case = $this->likely_case;
+        }
+        if ($this->ACLFieldAccess('worst_case', 'write') &&
+            empty($this->worst_case) &&
+            (string) $this->worst_case !== '0'
+        ) {
+            $this->worst_case = $this->likely_case;
+        }
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function save($check_notify = false)
@@ -160,16 +179,7 @@ class RevenueLineItem extends SugarBean
             $this->setAccountIdForOpportunity($this->opportunity_id);
         }
 
-        /* @var $currency Currency */
-        $currency = BeanFactory::getBean('Currencies', $this->currency_id);
-        // RPS - begin - decimals cant be null in sql server
-
-        if (empty($this->best_case) && (string) $this->best_case !== '0') {
-            $this->best_case = $this->likely_case;
-        }
-        if (empty($this->worst_case) && (string) $this->worst_case !== '0') {
-            $this->worst_case = $this->likely_case;
-        }
+        $this->setBestWorstFromLikely();
 
         if ($this->quantity === '' || is_null($this->quantity)) {
             $this->quantity = 1;
