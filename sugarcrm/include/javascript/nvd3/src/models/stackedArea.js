@@ -19,9 +19,9 @@ nv.models.stackedArea = function () {
     , y //can be accessed via chart.yScale()
     , delay = 200
     , scatter = nv.models.scatter()
-    , color = function (d, i) { return nv.utils.defaultColor()(d, d.series); }
+    , color = nv.utils.defaultColor()
     , fill = color
-    , classes = function (d,i) { return 'nv-area nv-area-' + d.series; }
+    , classes = function (d,i) { return 'nv-area nv-area-'+ i; }
     , dispatch =  d3.dispatch('tooltipShow', 'tooltipHide', 'tooltipMove', 'areaClick', 'areaMouseover', 'areaMouseout', 'areaMousemove')
     ;
 
@@ -193,9 +193,9 @@ nv.models.stackedArea = function () {
           .attr('d', function (d,i) { return zeroArea(d.values,i); })
           .remove();
       path
-          .attr('class', classes)
-          .attr('fill', color)
-          .attr('stroke', color);
+          .attr('class', function (d,i) { return this.getAttribute('class') || classes(d,i); })
+          .attr('fill', function (d,i){ return d.color || fill(d,i); })
+          .attr('stroke', function (d,i){ return d.color || fill(d,i); });
       //d3.transition(path)
       path
           .attr('d', function (d,i) { return area(d.values,i); });
@@ -245,7 +245,7 @@ nv.models.stackedArea = function () {
   chart.dispatch = dispatch;
   chart.scatter = scatter;
 
-  d3.rebind(chart, scatter, 'interactive', 'size', 'id', 'xScale', 'yScale', 'zScale', 'xDomain', 'yDomain', 'sizeDomain', 'forceX', 'forceY', 'forceSize', 'clipVoronoi', 'useVoronoi', 'clipRadius');
+  d3.rebind(chart, scatter, 'interactive', 'size', 'id', 'xScale', 'yScale', 'zScale', 'xDomain', 'yDomain', 'sizeDomain', 'forceX', 'forceY', 'forceSize', 'clipVoronoi', 'clipRadius');
 
   chart.color = function (_) {
     if (!arguments.length) { return color; }
