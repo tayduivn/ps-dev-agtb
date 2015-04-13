@@ -2306,7 +2306,7 @@ AdamActivity.prototype.actionFactory = function (type) {
                                 });
                                 updater_field.proxy.uid = PROJECT_MODULE;
                                 updater_field.proxy.url = 'pmse_Project/CrmData/fields/' + initialModule;
-                                updater_field.proxy.getData(null, {
+                                updater_field.proxy.getData({call_type:'RR'}, {
                                     success: function(fields) {
                                         if (fields) {
                                             updater_field.setOptions(fields.result, true);

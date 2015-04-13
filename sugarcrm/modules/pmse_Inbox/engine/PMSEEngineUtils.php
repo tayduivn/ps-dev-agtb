@@ -588,39 +588,8 @@ class PMSEEngineUtils
     }
 
     /**
-     * Method that checks if a field required, visible and editField
-     * @param array $def
-     * @return boolean
-     */
-    public static function isValidStudioField($def)
-    {
-        if (isset($def['studio'])) {
-            if (is_array($def ['studio'])) {
-                if (isset($def['studio']['editField']) && $def['studio']['editField'] == true) {
-                    return true;
-                }
-                if (isset($def['studio']['required']) && $def['studio']['required']) {
-                    return true;
-                }
-            } else {
-                if ($def['studio'] == 'visible') {
-                    return true;
-                }
-                if ($def['studio'] == 'hidden' || $def['studio'] == 'false' || !$def['studio']) {
-                    return false;
-                }
-            }
-        }
-        if (empty($def ['source']) || $def ['source'] == 'db' || $def ['source'] == 'custom_fields') {
-            if ($def ['type'] != 'id' && (empty($def ['dbType']) || $def ['dbType'] != 'id')) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
      * Method verifying invisible fields should always be hidden
+     * @deprecated deprecated since version 7.6.1
      * @param array $def
      * @param string $view
      * @return boolean
@@ -821,25 +790,6 @@ class PMSEEngineUtils
         }
     }
 
-//    static public function doesPrimaryEmailExists($field, $bean, $historyData)
-//    {
-//        if ($field->field == 'email_addresses_primary') {
-//            $preEmail = $bean->emailAddress->getPrimaryAddress('', $bean->id, $bean->module_dir);
-//            if (empty($preEmail)) {
-//                //is a new record, it hasn't any email in DB yet
-//                $emailKey = $this->getPrimaryEmailKeyFromREQUEST($bean);
-//                $historyData->savePredata($field->field, $_REQUEST[$emailKey]);
-//                $_REQUEST[$emailKey] = $field->value;
-//            } else {
-//                //the record exist in db
-//                $historyData->savePredata($field->field, $preEmail);
-//                self::updateEmails($bean, $field->value);
-//            }
-//            return true;
-//        }
-//        return false;
-//    }
-
     /**
      * Method that calculates the day, hour and minute of a case
      * @param object $expectedTimeObject
@@ -974,11 +924,59 @@ class PMSEEngineUtils
         }
     }
 
-//    public static function convertArrayToObject($array) {
-//        $object = new stdClass();
-//        foreach ($array as $key => $value) {
-//            $object->$key = $value;
-//        }
-//        return $object;
-//    }
+    public static function isValidField($def, $params = '')
+    {
+        $result = self::isValidStudioField($def);
+        if ($params == 'RR') {
+            if (isset($def['readonly']) && $def['readonly']) {
+                $result = $result && false;
+            }
+        }
+        if (isset($def['type']) && $def['type'] == 'image'){
+            $result = $result && false;
+        }
+        if (isset($def['source']) && $def['source'] == 'non-db') {
+            $result = $result && false;
+        }
+        $result = $result && self::blackListFields($def);
+        return $result;
+    }
+
+    public static function blackListFields($def) {
+        $blackList = array('deleted');
+        if (in_array($def['name'], $blackList)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public static function isValidStudioField($def)
+    {
+        if (isset($def['studio'])) {
+            if (is_array($def ['studio'])) {
+                if (isset($def['studio']['editField']) && $def['studio']['editField'] == true) {
+                    return true;
+                }
+                if (isset($def['studio']['required']) && $def['studio']['required']) {
+                    return true;
+                }
+            } else {
+                if ($def['studio'] == 'visible') {
+                    return true;
+                }
+                if ($def['studio'] == 'hidden' || $def['studio'] == 'false' || !$def['studio']) {
+                    return false;
+                }
+            }
+        }
+        if (empty($def ['source']) || $def ['source'] == 'db' || $def ['source'] == 'custom_fields') {
+            if ($def ['type'] != 'id' && (empty($def ['dbType']) || $def ['dbType'] != 'id')) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
