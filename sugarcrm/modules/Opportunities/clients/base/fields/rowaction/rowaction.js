@@ -18,17 +18,5 @@
         this.plugins = _.clone(this.plugins) || [];
         this.plugins.push('DisableDelete');
         this._super("initialize", [options]);
-
-        //Redraw dropdown on change
-        this.model.on("change:closed_revenue_line_items", function(){
-            this.render();
-            //clean up visible buttons
-            if(_.isFunction(this.view.initButtons)) {
-                this.view.initButtons();
-            }
-            if(_.isFunction(this.view.setButtonStates)) {
-                this.view.setButtonStates(this.view.STATE.VIEW);
-            }
-        }, this);
     }
 })

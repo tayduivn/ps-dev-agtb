@@ -2360,6 +2360,20 @@ class Report
                         $display = "";
                     }
                 } // if
+                
+                $module_bean = BeanFactory::getBean($this->module);
+                if (is_array($module_bean->field_defs)) {
+                    if (isset($module_bean->field_defs[$display_column['type']])) {
+                        if (isset($module_bean->field_defs[$display_column['type']]['options'])) {
+                            
+                            $trans_options = translate($module_bean->field_defs[$display_column['type']]['options']);
+                                                        
+                            if (isset($trans_options[$display_column['fields'][$field_name]])) {
+                                $display = $trans_options[$display_column['fields'][$field_name]];
+                            }
+                        }
+                    }
+                }
             } // if
 
             //  for charts

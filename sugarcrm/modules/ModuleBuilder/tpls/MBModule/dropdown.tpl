@@ -108,7 +108,7 @@
                                             {if $is_blank}
                                                 {$val}
                                             {else}
-                                                <b>{$val}</b>
+                                                <b>{$name}</b>
                                             {/if}
                                             <input id='value_{$name}' value='{$val|escape}' type='hidden'>
 			               <span class='fieldValue' id='span_{$name}'>[{$val}]</span>

@@ -12,13 +12,18 @@
 --}}
 
 {{#each meta.panels}}
-    <div class="container">
-    <p><b>{{str "LBL_PMSE_EMAIL_TEMPLATES_IMPORT_TEXT" ../module}}</b></p>
-    {{#each fields}}
-    <div class="span10 controls">
-        {{field ../../this}}
+    <div class="padded">
+
+	    <p><b>{{str "LBL_PMSE_EMAIL_TEMPLATES_IMPORT_TEXT" ../module}}</b></p>
+
+	    {{#each fields}}
+	    <div class="span10 controls">
+	        {{field ../../this}}
+	    </div>
+
+	    {{/each}}
+
     </div>
-    {{/each}}
-    </div>
+
 {{/each}}
 
