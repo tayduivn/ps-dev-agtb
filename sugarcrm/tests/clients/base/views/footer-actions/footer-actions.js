@@ -4,11 +4,15 @@ describe('Base.View.FooterActions', function () {
         app = SUGAR.App;
 
     beforeEach(function () {
+        sandbox = sinon.sandbox.create();
+        // doWhen needs to be stubed out so it doesn't continue to run
+        // and possibly fail
+        sandbox.stub(app.utils, 'doWhen');
         SugarTest.testMetadata.init();
         SugarTest.loadHandlebarsTemplate('footer-actions', 'view', 'base');
         SugarTest.testMetadata.set();
         view = SugarTest.createView('base', 'Contacts', 'footer-actions');
-        sandbox = sinon.sandbox.create();
+
     });
 
     afterEach(function () {
