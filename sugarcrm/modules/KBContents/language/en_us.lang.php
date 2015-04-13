@@ -66,6 +66,7 @@ $mod_strings = array (
     'LBL_KBSREVISIONS' => 'Revisions',
     'LBL_REVISIONS_SUBPANEL_TITLE' => 'Revisions',
     'LBL_LISTVIEW_FILTER_ALL' => 'All Articles',
+    'LBL_LISTVIEW_FILTER_MY' => 'My Articles',
     'LBL_CREATE_LOCALIZATION_BUTTON_LABEL' => 'Create Localization',
     'LBL_CREATE_REVISION_BUTTON_LABEL' => 'Create Revision',
     'LBL_CANNOT_CREATE_LOCALIZATION' =>
