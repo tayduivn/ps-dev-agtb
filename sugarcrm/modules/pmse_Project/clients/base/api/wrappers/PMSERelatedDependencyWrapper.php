@@ -238,6 +238,29 @@ class PMSERelatedDependencyWrapper
     }
 
     /**
+     * This method removes all pending event flows that are 'sleeping' and are
+     * associated this this event.
+     *
+     * @param $eventData Object Event
+     */
+    public function removeActiveTimerEvents($eventData)
+    {
+        $this->logger->debug("Removing sleeping timer events for the event: " . print_r($eventData, true));
+
+        $bpmFlowBean = BeanFactory::newBean('pmse_BpmFlow');
+        $sq = new SugarQuery();
+        $sq->from($bpmFlowBean);
+        $sq->where()->equals('bpmn_id', $eventData['id'])->equals('cas_flow_status','SLEEPING');
+        $result = $sq->execute();
+
+        foreach ($result as $row) {
+            $e = BeanFactory::getBean('pmse_BpmFlow', $row['id']);
+            $e->cas_flow_status = 'DELETED';
+            $e->save();
+        }
+    }
+
+    /**
      * That method creates all dependencies related to this event and save them
      * @param array resultArray
      */

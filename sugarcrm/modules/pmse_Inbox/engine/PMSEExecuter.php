@@ -424,6 +424,12 @@ class PMSEExecuter
         // like for example: a timer event execution.
         if (is_null($bean)) {
             $bean = BeanFactory::retrieveBean($flowData['cas_sugar_module'], $flowData['cas_sugar_object_id']);
+
+            // Validating unreferenced elements when cron jobs are executed, after MACAROON-518 shouldn't have
+            // unreferenced elements. This is for validated previous records created before this fix.
+            if (!isset($bean) && $externalAction == 'WAKE_UP') {
+                return true;
+            }
         }
         
         $preparedData = $this->caseFlowHandler->prepareFlowData($flowData, $createThread);
