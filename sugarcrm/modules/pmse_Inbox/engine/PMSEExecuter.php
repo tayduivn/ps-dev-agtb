@@ -431,6 +431,17 @@ class PMSEExecuter
         if ($externalAction == 'WAKE_UP') {
             $elementBean = BeanFactory::getBean('pmse_BpmnEvent', $flowData['bpmn_id']);
             if (!isset($elementBean->id)) {
+
+                // Setting active flow to deleted
+                $fd = BeanFactory::getBean('pmse_BpmFlow', $flowData['id']);
+                $fd->cas_flow_status = 'DELETED';
+                $fd->save();
+
+                // Updating process to error
+                $cf = new PMSECaseFlowHandler();
+                $cf->changeCaseStatus($flowData['cas_id'], 'TERMINATED');
+
+                // Exiting without errors
                 return true;
             }
         }

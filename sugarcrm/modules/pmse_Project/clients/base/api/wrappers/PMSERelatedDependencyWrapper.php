@@ -262,7 +262,7 @@ class PMSERelatedDependencyWrapper
             // Update 'Process' to ERROR status
             $cas_id = $e->cas_id;
             $cf = new PMSECaseFlowHandler();
-            $cf->changeCaseStatus($cas_id, 'ERROR');
+            $cf->changeCaseStatus($cas_id, 'TERMINATED');
         }
     }
 
