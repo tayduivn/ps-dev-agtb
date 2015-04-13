@@ -1831,22 +1831,6 @@ $app_list_strings = array (
     'next_year' => 'Next Year',
     'between' => 'Is Between',
   ),
-    'date_range_facets_labels' =>
-    array(
-        'last_year' => 'Last Year',
-        'last_month' => 'Last Month',
-        'last_30_days' => 'Last 30 Days',
-        'last_7_days' => 'Last 7 Days',
-        'this_month' => 'This Month',
-        'this_year' => 'This Year',
-        'next_7_days' => 'Next 7 Days',
-        'next_30_days' => 'Next 30 Days',
-        'next_month' => 'Next Month',
-        'next_year' => 'Next Year',
-        'today' => 'Today',
-        'tomorrow' => 'Tomorrow',
-        'yesterday' => 'Yesterday',
-    ),
     'date_range_operator_dom' =>
     array(
         'last_year' => 'Last Year',
@@ -3233,6 +3217,7 @@ Sincerely, SugarCRM',
     'ERROR_EMPTY_LINK_MODULE' => 'Please select the relationship first.',
     // Ajax status strings
     'LBL_LOADING' => 'Loading...',
+    'LBL_LOADING_NO_DOTS' => 'Loading',
     'LBL_SEARCHING' => 'Searching...',
     'LBL_SEARCH_UNDERWAY' => 'Searching',
     'LBL_SAVING_LAYOUT' => 'Saving Layout...',
@@ -3365,8 +3350,11 @@ Sincerely, SugarCRM',
 
     /* Sugar7 search facets */
     'LBL_FACET_MODULES' => 'Modules',
-    'LBL_FACET_ASSIGNED_USER' => 'Assigned users',
-    'LBL_FACET_DATE_MODIFIED' => 'Date modified',
+    'LBL_FACET_MODIFIED_BY_ME' => 'Modified by Me',
+    'LBL_FACET_CREATED_BY_ME' => 'Created by Me',
+    'LBL_FACET_MY_FAVORITES' => 'My Favorites',
+    'LBL_FACET_ASSIGNED_TO_ME' => 'Assigned to Me',
+    'LBL_FACET_NO_DATA' => 'No data for this facet.',
 
     'LBL_DASHLET_LISTVIEW_NAME' => 'List View',
     'LBL_DASHLET_LISTVIEW_DESCRIPTION' => 'Lists records from a particular module according to criteria you define.',

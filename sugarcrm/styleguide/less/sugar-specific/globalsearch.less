@@ -329,9 +329,12 @@ li.search-result {
 }
 
 .sidebar-content {
-  .facets-dashboard {
-    .dashlet-container {
-      padding-top: 10px !important;
+  .dashboard .facets-dashboard {
+    .well .dashlet-container + .dashlet-container {
+      padding-top: 10px;
+    }
+    .dashlet-title {
+      cursor: default;
     }
     .dashlet:not(.collapsed):not(.empty) {
       min-height: 0;

@@ -18,10 +18,10 @@
                     <li class="facet-item{{#if selected}} selected{{/if}}" data-facet-criteria="{{key}}"><i class="fa fa-check"></i><span>{{label}} ({{count}})</span></li>
                 {{/each}}
             {{else}}
-                <li class="facet-item"><span>No data for this facet.</span></li>
+                <li class="facet-item"><span>{{str 'LBL_FACET_NO_DATA' }}</span></li>
             {{/if}}
         {{else}}
-            <li class="facet-item"><span>Loading<i class="l1">&period;</i><i class="l2">&period;</i><i class="l3">&period;</i></span></li>
+            <li class="facet-item">{{loading 'LBL_LOADING_NO_DOTS'}}</li>
         {{/if}}
     </ul>
 </div>

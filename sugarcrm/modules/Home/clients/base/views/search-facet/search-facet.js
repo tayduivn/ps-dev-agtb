@@ -24,8 +24,24 @@
     initialize: function(options) {
         this._super('initialize', [options]);
 
+        /**
+         * The facet id.
+         *
+         * @property {String}
+         */
         this.facetId = this.meta.facet_id;
+        /**
+         * Boolean to indicate if the facet is a single criteria facet or a multi
+         * criterias facet. `true` is a single criteria facet.
+         *
+         * @type {boolean}
+         */
         this.isSingleItem = this.meta.ui_type === 'single';
+        /**
+         * The array of facets criterias to be displayed.
+         *
+         * @property {Array} facetItems
+         */
         this.facetItems = [];
 
         if (this.context.get('facets') && this.context.get('facets')[this.facetId]) {
@@ -44,12 +60,15 @@
 
     /**
      * Parses facets data and renders the view.
-     *
-     * @param {Data.Bean} context The context.
      */
     parseFacetsData: function() {
         var currentFacet = this.context.get('facets')[this.facetId];
         var selectedFacets = this.context.get('selectedFacets');
+
+        if (_.isUndefined(currentFacet)) {
+            this.render();
+            return;
+        }
 
         if (this.isSingleItem && currentFacet.results.count === 0) {
             this.$el.addClass('disabled');
@@ -72,7 +91,7 @@
         this.facetItems = [];
 
         if (this.isSingleItem) {
-                this.facetItems = [{
+            this.facetItems = [{
                 key: this.facetId,
                 label: app.lang.get(this.meta.label, 'Filters'),
                 count: results.count,
@@ -85,8 +104,8 @@
         var labelFunction = this._getDefaultLabel;
 
         _.each(results, function(val, key) {
-                var selected = _.contains(selectedFacets[this.facetId], key);
-                this.facetItems.push({key: key, label: labelFunction(key), count: val, selected: selected});
+            var selected = _.contains(selectedFacets[this.facetId], key);
+            this.facetItems.push({key: key, label: labelFunction(key), count: val, selected: selected});
         }, this);
 
         if (_.isEmpty(this.facetItems)) {
@@ -108,6 +127,10 @@
         if (this.$el.data('action') === 'disabled') {
             return;
         }
+        if (!this.clickedFacet && !this.collection.dataFetched) {
+            return;
+        }
+
         var facetCriteriaId = currentTarget.data('facet-criteria');
 
         currentTarget.toggleClass('selected');
@@ -116,7 +139,7 @@
     },
 
     /**
-     * Gets the bucket key to use it as a label.
+     * Gets the facet criteria id to use it as a label.
      *
      * @param {Object} bucket The facet item.
      * @return {string} The label for this item.

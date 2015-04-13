@@ -97,7 +97,7 @@
                     }
                 });
             } else {
-                this.noToolBar = true;
+                this.hasToolbar = false;
             }
         }
         if (this.meta.empty) {
@@ -395,7 +395,7 @@
      * @param {Boolean} true if it needs to be collapsed
      */
     collapse: function(collapsed) {
-        if (this.noToolBar) {
+        if (this.hasToolbar === false) {
             return;
         }
         this.$(".dashlet-toggle > i").toggleClass("fa-chevron-down", collapsed);

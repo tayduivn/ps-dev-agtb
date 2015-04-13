@@ -24,8 +24,20 @@
 
         this.context.set('search', true);
         this.collection.query = this.context.get('searchTerm') || '';
-        this.collection.neededResponseProperties = ['xmod_aggs'];
+
+        /**
+         * Flag to indicate if the search has been filtered using facets or not.
+         *
+         * @property {boolean} `true` if the search has been filtered.
+         */
         this.filteredSearch = false;
+        /**
+         * Object containing the selected facets in the current search.
+         *
+         * @property {Object} selectedFacets
+         */
+        this.selectedFacets = {};
+
 
         this.context.on('change:searchTerm change:module_list', function() {
             this.search();
@@ -33,21 +45,21 @@
 
         this.context.on('facet:apply', this.filter, this);
 
-        this.collection.on('sync', function(collection, data, options) {
+        this.collection.on('sync', function(collection) {
             var isCollection = (collection instanceof App.BeanCollection);
             if (!isCollection) {
                 return;
             }
             app.utils.GlobalSearch.formatRecords(collection, true);
 
-            if (!_.isEmpty(options.xmod_aggs)) {
+            if (!_.isEmpty(collection.xmod_aggs)) {
                 if (!this.filteredSearch) {
-                    this.selectedFacets = this._buildFiltersObject(options.xmod_aggs);
+                    this._initializeSelectedFacets(collection.xmod_aggs);
                 }
 
                 this.context.set('selectedFacets', this.selectedFacets);
-                this.context.set('facets', options.xmod_aggs, {silent: true});
-                this.context.trigger('facets:change', options.xmod_aggs);
+                this.context.set('facets', collection.xmod_aggs, {silent: true});
+                this.context.trigger('facets:change', collection.xmod_aggs);
             }
 
         }, this);
@@ -56,49 +68,46 @@
     },
 
     /**
-     * Builds the filter object to be sent to the server.
+     * Builds the selected facets object to be sent to the server.
      *
      * @param {Object} facets The facets object that comes from the server.
-     * @return {Object} facetFilters The formatted object to send to the server.
      * @private
      */
-    _buildFiltersObject: function(facets) {
-        var facetFilters = {};
+    _initializeSelectedFacets: function(facets) {
         _.each(facets, function(facet, key) {
             if (key === 'modules') {
-                facetFilters[key] = [];
+                this.selectedFacets[key] = [];
             } else {
-                facetFilters[key] = false;
+                this.selectedFacets[key] = false;
             }
         }, this);
-        return facetFilters;
     },
 
     /**
-     * Updates {@link #facetFilters} with the facet change.
+     * Updates {@link #selectedFacets} with the facet change.
      *
      * @param {String} facetId The facet type.
-     * @param facetCriteriaId The id of the facet criteria.
-     * @param isSingleItem `true` if it's a single item facet.
+     * @param {String} facetCriteriaId The id of the facet criteria.
+     * @param {boolean} isSingleItem `true` if it's a single item facet.
      * @private
      */
-    _updateFilters: function(facetsObject, facetId, facetCriteriaId, isSingleItem) {
+    _updateSelectedFacets: function(facetId, facetCriteriaId, isSingleItem) {
         if (isSingleItem) {
-            facetsObject[facetId] = !facetsObject[facetId];
+            this.selectedFacets[facetId] = !this.selectedFacets[facetId];
+            return;
+        }
+        var index;
+        if (this.selectedFacets[facetId]) {
+            index = this.selectedFacets[facetId].indexOf(facetCriteriaId);
         } else {
-            var index;
-            if (!facetsObject[facetId]) {
-                facetsObject[facetId] = [];
-            } else {
-                index = facetsObject[facetId].indexOf(facetCriteriaId);
-            }
-            if (_.isUndefined(index) || index === -1) {
-                facetsObject[facetId].splice(0, 0, facetCriteriaId);
-            } else {
-                facetsObject[facetId].splice(index, 1);
-                if (facetsObject[facetId].length === 0) {
-                    delete facetsObject[facetId];
-                }
+            this.selectedFacets[facetId] = [];
+        }
+        if (_.isUndefined(index) || index === -1) {
+            this.selectedFacets[facetId].splice(0, 0, facetCriteriaId);
+        } else {
+            this.selectedFacets[facetId].splice(index, 1);
+            if (this.selectedFacets[facetId].length === 0) {
+                delete this.selectedFacets[facetId];
             }
         }
     },
@@ -130,7 +139,7 @@
      * @param isSingleItem `true` if it's a single criteria facet.
      */
     filter: function(facetId, facetCriteriaId, isSingleItem) {
-        this._updateFilters(this.selectedFacets, facetId, facetCriteriaId, isSingleItem);
+        this._updateSelectedFacets(facetId, facetCriteriaId, isSingleItem);
 
         var searchTerm = this.context.get('searchTerm');
         var moduleList = this.context.get('module_list') || [];
