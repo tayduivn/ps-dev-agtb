@@ -74,7 +74,7 @@ $vardefs = array(
                     'enabled' => true,
                     'searchable' => false,
                     'aggregations' => array(
-                        'date_modified' => array(
+                        'date_entered' => array(
                             'type' => 'DateRange',
                         ),
                     ),

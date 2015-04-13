@@ -19,27 +19,26 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\RawProperty;
 
 /**
  *
- * Auto increment field handler
+ * Tags handler
  *
  */
-class DenormalizeTagIdsHandler extends AbstractHandler implements
+class TagsHandler extends AbstractHandler implements
     MappingHandlerInterface,
     ProcessDocumentHandlerInterface
 {
-
     /**
      * Field name to use for tag Ids
      * @var string
      */
-    const TAGIDS_FIELD = 'tagIds';
+    const TAGS_FIELD = 'tags';
 
     /**
      * {@inheritdoc}
      */
     public function processDocumentPreIndex(Document $document, \SugarBean $bean)
     {
-        $tagIds = $this->retrieveTagIdsByQuery($bean->id);
-        $document->setDataField(self::TAGIDS_FIELD, $tagIds);
+        $tags = $this->retrieveTagIdsByQuery($bean->id);
+        $document->setDataField(self::TAGS_FIELD, $tags);
     }
 
     /**
@@ -51,8 +50,8 @@ class DenormalizeTagIdsHandler extends AbstractHandler implements
     {
         //Use SugarBean
         $tagBean = \BeanFactory::getBean("Tags");
-        $tagIds = $tagBean->getTagIdsByBeanId($beanId);
-        return $tagIds;
+        $tags = $tagBean->getTagIdsByBeanId($beanId);
+        return $tags;
     }
 
     /**
@@ -65,11 +64,7 @@ class DenormalizeTagIdsHandler extends AbstractHandler implements
             return;
         }
 
-        $tagIdsProperty = new RawProperty();
-        $tagIdsProperty->setMapping(array(
-            'type' => 'string',
-            'index' => 'not_analyzed',
-        ));
-        $mapping->addRawProperty(self::TAGIDS_FIELD, $tagIdsProperty);
+        // we just need an not_analyzed field here
+        $mapping->addNotAnalyzedField($field);
     }
 }

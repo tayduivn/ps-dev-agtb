@@ -48,6 +48,27 @@ interface GlobalSearchCapable extends EngineInterface
     public function from(array $modules = array());
 
     /**
+     * Set the flag of getting tags
+     * @param boolean $getTags
+     * @return GlobalSearchInterface
+     */
+    public function getTags($getTags);
+
+    /**
+     * Set the size of tags in the response
+     * @param integer $tagLimit
+     * @return GlobalSearchInterface
+     */
+    public function setTagLimit($tagLimit);
+
+    /**
+     * Set the list of filters for filtering.
+     * @param array $filters
+     * @return GlobalSearchInterface
+     */
+    public function setFilters($filters);
+
+    /**
      * Set limit (query size)
      * @param integer $limit
      * @return GlobalSearchInterface
