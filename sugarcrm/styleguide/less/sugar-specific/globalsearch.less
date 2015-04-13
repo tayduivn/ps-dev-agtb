@@ -123,10 +123,6 @@
   .quicksearch-bar-wrapper {
     width: 100%
   }
-  .quicksearch-modulelist-wrapper {
-    padding-left: 4px;
-    vertical-align: top;
-  }
   // Input field
   .search-query {
     border: none;
@@ -143,9 +139,13 @@
     .transition(none);
     .placeholder(@grayLight);
   }
-  .module-dropdown {
+  .quicksearch-modulelist-wrapper {
+    padding-left: 4px;
+    vertical-align: top;
+    cursor: pointer;
     .label {
       border: none;
+      cursor: inherit;
       .non-module-label {
         font-weight: 400;
         position: relative;
