@@ -214,7 +214,7 @@ class ModuleApi extends SugarApi {
         $id = $this->updateBean($bean, $api, $args);
 
         $relateArgs = $this->getRelatedRecordArguments($bean, $args, 'add');
-        $this->linkRelatedRecords($api, $bean, $relateArgs);
+        $this->linkRelatedRecords($api, $bean, $relateArgs, 'create', 'view');
 
         $relateArgs = $this->getRelatedRecordArguments($bean, $args, 'create');
         $this->createRelatedRecords($api, $bean, $relateArgs);
@@ -535,12 +535,19 @@ class ModuleApi extends SugarApi {
      * @param ServiceBase $service
      * @param SugarBean $bean Primary bean
      * @param array $ids Related record IDs
+     * @param string $securityTypeLocal What ACL to check on the near side of the link
+     * @param string $securityTypeRemote What ACL to check on the far side of the link
      *
      * @throws SugarApiExceptionInvalidParameter
      * @throws SugarApiExceptionNotFound
      */
-    protected function linkRelatedRecords(ServiceBase $service, SugarBean $bean, array $ids)
-    {
+    protected function linkRelatedRecords(
+        ServiceBase $service,
+        SugarBean $bean,
+        array $ids,
+        $securityTypeLocal = 'view',
+        $securityTypeRemote = 'view'
+    ) {
         $api = $this->getRelateRecordApi();
         foreach ($ids as $linkName => $items) {
             $api->createRelatedLinks($service, array(
@@ -548,7 +555,7 @@ class ModuleApi extends SugarApi {
                 'record' => $bean->id,
                 'link_name' => $linkName,
                 'ids' => $items,
-            ));
+            ), $securityTypeLocal, $securityTypeRemote);
         }
     }
 
