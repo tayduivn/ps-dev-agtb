@@ -216,6 +216,7 @@ class PMSEElementValidator implements PMSEValidate
     }
 
     /**
+     * Checks if the user updated the bean from PMSE_Inbox
      *
      * @param type $bean
      * @return boolean
@@ -239,6 +240,23 @@ class PMSEElementValidator implements PMSEValidate
     /**
      *
      * @param type $bean
+     * @return boolean
+     */
+    public function already_triggered($bean, $flowData)
+    {
+        //Validate if start event was already processed
+        foreach ($_SESSION['triggeredFlows'] as $flow) {
+            if ($flowData['pro_id']== $flow){
+                $this->logger->debug("Start Event {$bean->id} was already triggered in after save hook.");
+                return true;
+            }
+        }
+        $_SESSION['triggeredFlows'][]=$flowData['pro_id'];
+        return false;
+    }
+    /**
+     *
+     * @param type $bean
      * @param type $flowData
      * @return boolean
      */
@@ -247,7 +265,8 @@ class PMSEElementValidator implements PMSEValidate
         if ((($this->isNewRecord($bean) && $flowData['evn_params'] == 'new' ||
                 !$this->isNewRecord($bean) && $flowData['evn_params'] == 'updated')
                  && !$this->isCaseDuplicated($bean, $flowData)) ||
-            !$this->isNewRecord($bean) && $flowData['evn_params'] == 'allupdates' && !$this->isPMSEEdit($bean)
+                    !$this->isNewRecord($bean) && $flowData['evn_params'] == 'allupdates'
+                &&  !$this->isPMSEEdit($bean) && !$this->already_triggered($bean, $flowData)
         ) {
             $request->validate();
         } else {
