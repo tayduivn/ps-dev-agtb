@@ -151,6 +151,14 @@ class Elastic implements
     /**
      * {@inheritDoc}
      */
+    public function searchTags()
+    {
+        return $this->gsProvider()->searchTags();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function term($term)
     {
         $this->gsProvider()->term($term);
@@ -163,6 +171,33 @@ class Elastic implements
     public function from(array $modules = array())
     {
         $this->gsProvider()->from($modules);
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getTags($getTags)
+    {
+        $this->gsProvider()->getTags($getTags);
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setTagLimit($tagLimit)
+    {
+        $this->gsProvider()->setTagLimit($tagLimit);
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setFilters($filters)
+    {
+        $this->gsProvider()->setFilters($filters);
         return $this;
     }
 
