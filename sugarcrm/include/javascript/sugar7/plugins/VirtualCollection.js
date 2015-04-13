@@ -954,8 +954,38 @@
          * without any models.
          */
         BeanOverrides.prototype.set = function(attr, options) {
+            var isEqual = function(previous, current) {
+                var previousFiltered,
+                    currentFiltered,
+                    filter = function(collection) {
+                        return _.map(collection.toJSON(), function(model) {
+                            var result = {};
+                            _.each(model, function(value, key) {
+                                if (key.indexOf('_') !== 0) {
+                                    result[key] = value;
+                                }
+                            });
+                            return result;
+                        });
+                    };
+
+                if (previous) {
+                    previousFiltered = filter(previous);
+                }
+
+                if (current) {
+                    currentFiltered = filter(current);
+                }
+
+                return _.isEqual(previousFiltered, currentFiltered);
+            };
+
+            if (!this.model._changing) {
+                this.model.changed = {}; //attributes that have changed
+            }
+
             _.each(attr, function(models, key) {
-                var collection;
+                var collection, previous;
 
                 options = _.extend({}, options, {
                     parent: this,
@@ -983,8 +1013,17 @@
 
                 collection = new VirtualCollection(models, options);
 
+                previous = this.get(key);
                 this.attributes[key] = collection;
                 this.setDefault(key, collection);
+
+                // Has the attribute changed since the last time it has been set?
+                if (!isEqual(previous, this.get(key))) {
+                    this.changed[key] = collection;
+                    if (!options.silent) {
+                        this.trigger('change:' + key, collection);
+                    }
+                }
             }, this.model);
 
             return this.model;
@@ -1169,7 +1208,9 @@
                  * and {@link Data.Bean#set} to handle the others.
                  */
                 this.set = _.wrap(this.set, function(_super, key, val, options) {
-                    var attrs, collections;
+                    var attrs, collections,
+                        hasChanged,
+                        changedAttributes;
 
                     if (key == null) {
                         return this;
@@ -1188,8 +1229,19 @@
                     attrs = _.omit(attrs, _.keys(collections));
 
                     overrides.set(collections, options);
+                    changedAttributes = this.changed; //any collection attributes changed since the last set()?
 
-                    return _super.call(this, attrs, options);
+                    _super.call(this, attrs, options);
+
+                    // If non-collection attributes haven't changed but collection attributes have,
+                    // fire the change event.
+                    hasChanged = this.hasChanged();
+                    _.extend(this.changed, changedAttributes);
+                    if (!options.silent && !hasChanged && !_.isEmpty(changedAttributes)) {
+                        this.trigger('change', this, options);
+                    }
+
+                    return this;
                 });
 
                 /**

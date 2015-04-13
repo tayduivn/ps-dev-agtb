@@ -72,6 +72,10 @@ describe('Plugins.VirtualCollection', function() {
                 name: 'cases',
                 type: 'link',
                 source: 'non-db'
+            },
+            name: {
+                name: 'name',
+                type: 'varchar'
             }
         };
         attribute = model.fields.invitees.name;
@@ -143,7 +147,7 @@ describe('Plugins.VirtualCollection', function() {
         });
     });
 
-    describe('triggering change events', function() {
+    describe('change events on the parent model', function() {
         var fieldSpy, modelSpy;
 
         beforeEach(function() {
@@ -161,14 +165,47 @@ describe('Plugins.VirtualCollection', function() {
             });
         });
 
-        it('should trigger a change on the parent model', function() {
-            collection.add(_.rest(contacts, 4));
+        it('should trigger when data set is different from what is currently in the model', function() {
+            model.set(attribute, _.first(contacts, 3));
 
-            expect(fieldSpy).toHaveBeenCalled();
-            expect(modelSpy).toHaveBeenCalled();
+            expect(fieldSpy.calledOnce).toBe(true);
+            expect(modelSpy.calledOnce).toBe(true);
         });
 
-        it('should not trigger a change on the parent model', function() {
+        it('should not trigger when data set is the same as what is currently in the model', function() {
+            model.set(attribute, _.first(contacts, 4));
+
+            expect(fieldSpy).not.toHaveBeenCalled();
+            expect(modelSpy).not.toHaveBeenCalled();
+        });
+
+        it('should trigger when both collection and non-collection fields update', function() {
+            var data = {};
+            data[attribute] = _.first(contacts, 3);
+            data.name = 'foo';
+            model.set(data);
+
+            expect(fieldSpy.calledOnce).toBe(true);
+            expect(modelSpy.calledOnce).toBe(true);
+        });
+
+        it('should still trigger when only non-collection fields update', function() {
+            model.set({
+                name: 'foo'
+            });
+
+            expect(fieldSpy).not.toHaveBeenCalled();
+            expect(modelSpy.calledOnce).toBe(true);
+        });
+
+        it('should trigger when the virtual collection changes', function() {
+            collection.add(_.rest(contacts, 4));
+
+            expect(fieldSpy.calledOnce).toBe(true);
+            expect(modelSpy.calledOnce).toBe(true);
+        });
+
+        it('should not trigger when the virtual collection changes with silent option set to true', function() {
             collection.add(_.rest(contacts, 4), {silent: true});
 
             expect(fieldSpy).not.toHaveBeenCalled();
