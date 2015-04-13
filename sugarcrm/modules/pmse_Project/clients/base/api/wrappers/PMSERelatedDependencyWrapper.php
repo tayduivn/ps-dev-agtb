@@ -249,6 +249,7 @@ class PMSERelatedDependencyWrapper
 
         $bpmFlowBean = BeanFactory::newBean('pmse_BpmFlow');
         $sq = new SugarQuery();
+        $sq->select(array('id'));
         $sq->from($bpmFlowBean);
         $sq->where()->equals('bpmn_id', $eventData['id'])->equals('cas_flow_status','SLEEPING');
         $result = $sq->execute();
@@ -257,6 +258,11 @@ class PMSERelatedDependencyWrapper
             $e = BeanFactory::getBean('pmse_BpmFlow', $row['id']);
             $e->cas_flow_status = 'DELETED';
             $e->save();
+
+            // Update 'Process' to ERROR status
+            $cas_id = $e->cas_id;
+            $cf = new PMSECaseFlowHandler();
+            $cf->changeCaseStatus($cas_id, 'ERROR');
         }
     }
 
