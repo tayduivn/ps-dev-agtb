@@ -55,9 +55,17 @@ interface AggregationInterface
     public function build($id, array $filters);
 
     /**
+     * Build aggregation filter
+     * @param array|boolean $options
+     * @return \Elastica\Filter\AbstractFilter
+     */
+    public function buildFilter($filterDefs);
+
+    /**
      * Parse raw aggregation results
+     * @param string $id
      * @param array $results
      * @return array
      */
-    public function parseResults(array $results);
+    public function parseResults($id, array $results);
 }

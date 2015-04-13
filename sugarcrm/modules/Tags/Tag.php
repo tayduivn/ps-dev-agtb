@@ -152,6 +152,39 @@ class Tag extends Basic
     }
 
     /**
+     * Retrieve the list of related tags from the database, given the SugarBean id.
+     * @param string $beanId The id of the bean
+     * @param string $beanModule The module name
+     * @return array
+     */
+    public function getTagIdsByBeanId($beanId, $beanModule)
+    {
+        $tags = array();
+        $sql = sprintf(
+            "SELECT tag_id FROM tag_bean_rel " .
+            "WHERE bean_id = %s AND bean_module = %s AND deleted = 0 ",
+            $this->db->quoted($beanId),
+            $this->db->quoted($beanModule)
+        );
+
+        $result = $this->db->query($sql);
+        while ($data = $this->db->fetchByAssoc($result)) {
+            $tags[] = $data["tag_id"];
+        }
+        return $tags;
+    }
+
+    /**
+     * Retrieve the list of related tags from the database, given a SugarBean.
+     * @param Sugarbean $bean
+     * @return array
+     */
+    public function getTagIdsByBean(SugarBean $bean)
+    {
+        return $this->getTagIdsByBeanId($bean->id, $bean->module_name);
+    }
+
+    /**
      * @inheritDoc
      */
     public function mark_deleted($id) {

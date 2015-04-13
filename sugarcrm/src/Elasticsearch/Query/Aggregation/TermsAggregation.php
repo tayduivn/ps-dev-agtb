@@ -42,30 +42,26 @@ class TermsAggregation extends AbstractAggregation
     public function build($id, array $filters)
     {
         $terms = new \Elastica\Aggregation\Terms($id);
+        $this->applyOptions($terms, $this->options);
 
-        // use id if field is not set at this point
-        if (empty($this->options['field'])) {
-            $this->options['field'] = $id;
+        if (empty($filters)) {
+            return $terms;
         }
 
-        $this->applyOptions($terms, $this->options);
-        return $terms;
+        return $this->wrapFilter($id, $terms, $filters);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function parseResults(array $results)
+    public function buildFilter($filterDefs)
     {
-        if (!isset($results['buckets'])) {
-            return array();
+        if (!is_array($filterDefs) || empty($filterDefs)) {
+            return false;
         }
 
-        $parsed = array();
-        foreach ($results['buckets'] as $bucket) {
-            $parsed[$bucket['key']] = $bucket['doc_count'];
-        }
-
-        return $parsed;
+        $filter = new \Elastica\Filter\Terms();
+        $filter->setTerms($this->options['field'], $filterDefs);
+        return $filter;
     }
 }

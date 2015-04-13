@@ -56,6 +56,11 @@ $vardefs = array(
                 'full_text_search' => array(
                     'enabled' => true,
                     'searchable' => false,
+                    'aggregations' => array(
+                        'date_entered' => array(
+                            'type' => 'DateRange',
+                        ),
+                    ),
                 ),
             ),
         'date_modified' => array(
@@ -68,9 +73,10 @@ $vardefs = array(
                 'full_text_search' => array(
                     'enabled' => true,
                     'searchable' => false,
-                    'aggregation' => array(
-                        'type' => 'dateRange',
-                        'cross_module' => true,
+                    'aggregations' => array(
+                        'date_entered' => array(
+                            'type' => 'DateRange',
+                        ),
                     ),
                 ),
                 'studio' => array(
@@ -172,18 +178,6 @@ $vardefs = array(
         'doc_owner' => array(
                 'name' => 'doc_owner',
                 'vname' => 'LBL_DOC_OWNER',
-                'type' => 'id',
-                'reportable'=>false,
-                'source'=>'non-db',
-                'duplicate_merge'=>'disabled',
-                'importable' => 'false',
-                'massupdate' => false,
-                'full_text_search' => array('enabled' => true),
-                'default' => '', // Force attribute to be set for fts indexer reevaluation
-            ),
-        'user_favorites' => array(
-                'name' => 'user_favorites',
-                'vname' => 'LBL_USER_FAVORITES',
                 'type' => 'id',
                 'reportable'=>false,
                 'source'=>'non-db',

@@ -350,7 +350,7 @@ class QueueManager
     {
         $modules = array();
         $sql = sprintf(
-            'SELECT DISTINCT bean_module FROM %s WHERE processed = %s ORDER BY date_modified ASC',
+            'SELECT DISTINCT bean_module FROM %s WHERE processed = %s',
             self::FTS_QUEUE,
             self::PROCESSED_NEW
         );

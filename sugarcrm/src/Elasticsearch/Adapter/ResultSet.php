@@ -178,8 +178,7 @@ class ResultSet implements \Iterator, \Countable, ResultSetInterface
             }
 
             $aggs[$id] = array(
-                'type' => 'xxx',
-                'results' => $agg->parseResults($results),
+                'results' => $agg->parseResults($id, $results),
             );
         }
         return $aggs;

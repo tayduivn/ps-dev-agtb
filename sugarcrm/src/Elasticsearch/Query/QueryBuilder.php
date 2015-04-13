@@ -55,6 +55,12 @@ class QueryBuilder
     protected $aggregationStack = array();
 
     /**
+     * Aggregation filter definitions
+     * @var array
+     */
+    protected $aggFilterDefs = array();
+
+    /**
      * List of query filters
      * @var \Elastica\Filter\AbstractFilter[]
      */
@@ -126,10 +132,7 @@ class QueryBuilder
     }
 
     /**
-     * Set modules. Note that the consumer class is responsible to register
-     * modules based on user access. No additional checks are run within this
-     * query builder.
-     *
+     * Set modules
      * @param array $modules
      * @return QueryBuilder
      */
@@ -233,24 +236,30 @@ class QueryBuilder
     }
 
     /**
+     * Set aggregation filter definitions
+     * @param array $aggFilterDefs
+     */
+    public function setAggFilterDefs(array $aggFilterDefs)
+    {
+        $this->aggFilterDefs = $aggFilterDefs;
+    }
+
+    /**
      * Build query
      * @return \Elastica\Query
      */
     public function build()
     {
-        // Create a filtered query object
-        $filteredQuery = new \Elastica\Query\Filtered();
-
-        // If no query is set, a fallback to MatchAll will happen
-        if ($this->query) {
-            $filteredQuery->setQuery($this->query);
-        }
+        // Wrap query in a filtered query
+        $query = new \Elastica\Query\Filtered();
+        $query->setQuery($this->query);
 
         // Add filters
-        $filteredQuery->setFilter($this->buildFilters($this->filters));
+        $this->filters[] = $this->buildModuleFilter($this->modules);
+        $query->setFilter($this->buildFilters($this->filters));
 
-        // Build main query object from filtered query
-        $query = $this->buildQuery($filteredQuery);
+        // Wrap again in our main query object
+        $query = $this->buildQuery($query);
 
         // Set limit
         if (isset($this->limit)) {
@@ -267,14 +276,14 @@ class QueryBuilder
             $query->setHighlight($this->highlighter->build());
         }
 
-        // Add aggregations
-        foreach ($this->aggregationStack as $id => $agg) {
-            $query->addAggregation($agg->build($id, $this->filters));
-        }
-
         // Set sort order
         if ($this->sort) {
             $query->setSort($this->sort);
+        }
+
+        // Add aggregations, needs to happen before post filter
+        if (!empty($this->aggregationStack)) {
+            $this->buildAggregations($query, $this->aggregationStack, $this->aggFilterDefs);
         }
 
         // Set post filter
@@ -307,6 +316,22 @@ class QueryBuilder
         $search->addTypes($this->modules);
 
         return $this->createResultSet($search->search());
+    }
+
+    /**
+     * Build module filter
+     * @param array $modules
+     * @return \Elastica\Filter\Bool
+     */
+    protected function buildModuleFilter(array $modules)
+    {
+        $modules = new \Elastica\Filter\Bool();
+        foreach ($this->modules as $module) {
+            $filter = new \Elastica\Filter\Term();
+            $filter->setTerm('_type', $module);
+            $modules->addShould($filter);
+        }
+        return $modules;
     }
 
     /**
@@ -349,12 +374,9 @@ class QueryBuilder
     protected function buildFilters(array $filters)
     {
         $result = new \Elastica\Filter\Bool();
-        // TODO: add visibility
-
         foreach ($filters as $filter) {
             $result->addMust($filter);
         }
-
         return $result;
     }
 
@@ -365,12 +387,29 @@ class QueryBuilder
     protected function buildPostFilters(array $postFilters)
     {
         $result = new \Elastica\Filter\Bool();
-
         foreach ($postFilters as $postFilter) {
             $result->addMust($postFilter);
         }
-
         return $result;
+    }
+
+    /**
+     * Build aggregations
+     * @param \Elastica\Query $query
+     * @param AggregationStack $stack
+     * @param array $filterDefs
+     */
+    protected function buildAggregations(\Elastica\Query $query, AggregationStack $stack, array $filterDefs)
+    {
+        // build the aggregations from the stack
+        foreach ($stack->buildAggregations($filterDefs) as $agg) {
+            $query->addAggregation($agg);
+        }
+
+        // attach all filters as post filter
+        foreach ($stack->getFilters() as $filter) {
+            $this->addPostFilter($filter);
+        }
     }
 
     /**

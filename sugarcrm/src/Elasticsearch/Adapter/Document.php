@@ -13,7 +13,6 @@
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Adapter;
 
 use Elastica\Document as BaseDocument;
-use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
 
 /**
  *

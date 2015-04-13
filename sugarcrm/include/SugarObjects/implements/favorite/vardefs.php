@@ -37,6 +37,19 @@ $vardefs = array(
             'source' => 'non-db',
             'vname' => 'LBL_FAVORITE',
             'reportable' => false,
+            'full_text_search' => array(
+                'type' => 'favorites',
+                'enabled' => true,
+                'searchable' => false,
+                'aggregations' => array(
+                    'favorite_link' => array(
+                        'type' => 'MyItems',
+                        'options' => array(
+                            'field' => 'user_favorites',
+                        ),
+                    ),
+                ),
+            ),
         ),
     ),
     'relationships' => array(

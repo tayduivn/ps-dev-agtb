@@ -25,6 +25,11 @@ class AggregationStack implements \IteratorAggregate
     protected $stack = array();
 
     /**
+     * @var \Elastica\Filter\AbstractFilter[]
+     */
+    protected $filters = array();
+
+    /**
      * {@inheritdoc}
      */
     public function getIterator()
@@ -50,5 +55,67 @@ class AggregationStack implements \IteratorAggregate
     public function getById($id)
     {
         return (isset($this->stack[$id])) ? $this->stack[$id] : false;
+    }
+
+    /**
+     * Get filters
+     * @return \Elastica\Filter\AbstractFilter[]
+     */
+    public function getFilters()
+    {
+        return $this->filters;
+    }
+
+    /**
+     * Build aggregations
+     * @param array $filterDefs
+     * @return \Elastica\Aggregation\AbstractAggregation[]
+     */
+    public function buildAggregations(array $filterDefs)
+    {
+        // create filters first
+        $this->filters = $filters = $this->buildFilters($filterDefs);
+
+        // now build each aggregation and apply all filters except for its own
+        // to each aggregation and register them on the query object
+        $aggs = array();
+        foreach ($this->stack as $id => $agg) {
+            $aggFilters = $this->getAggFiltersForAggId($id, $filters);
+            $aggs[] = $agg->build($id, $aggFilters);
+        }
+        return $aggs;
+    }
+
+    /**
+     * Build filters for all aggregations
+     * @param array $filterDefs
+     * @return array
+     */
+    protected function buildFilters(array $filterDefs)
+    {
+        $filters = array();
+        foreach ($this->stack as $id => $agg) {
+            if (isset($filterDefs[$id])) {
+                if ($filter = $agg->buildFilter($filterDefs[$id])) {
+                    $filters[$id] = $filter;
+                }
+            }
+        }
+        return $filters;
+    }
+
+    /**
+     * Get aggregation filter for given id. This basically means that we take
+     * the full list of created filters and filter them by id.
+     * @param unknown $id
+     * @param array $filters
+     * @return unknown
+     */
+    protected function getAggFiltersForAggId($id, array $filters)
+    {
+        if (isset($filters[$id])) {
+            unset($filters[$id]);
+        }
+        return $filters;
     }
 }

@@ -37,21 +37,30 @@ abstract class FilterAggregation extends AbstractAggregation
     */
     public function build($id, array $filters)
     {
+        // Add our own filter to the stack
+        $filters[] = $this->getAggFilter($this->options['field']);
+
         $agg = new \Elastica\Aggregation\Filter($id);
-
-        // use id if field is not set at this point
-        if (empty($this->options['field'])) {
-            $this->options['field'] = $id;
-        }
-
-        $agg->setFilter($this->getAggFilter($this->options['field']));
+        $agg->setFilter($this->buildFilters($filters));
         return $agg;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function parseResults(array $results)
+    public function buildFilter($filterDefs)
+    {
+        if (!is_bool($filterDefs)) {
+            return false;
+        }
+
+        return $filterDefs ? $this->getAggFilter($this->options['field']) : false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function parseResults($id, array $results)
     {
         return array(
             'count' => empty($results['doc_count']) ? 0 : $results['doc_count'],

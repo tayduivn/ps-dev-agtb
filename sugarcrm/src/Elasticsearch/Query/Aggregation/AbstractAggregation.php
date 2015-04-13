@@ -40,6 +40,12 @@ abstract class AbstractAggregation implements AggregationInterface
     protected $options = array();
 
     /**
+     * Flag to indicate we use a filtered query
+     * @var boolean
+     */
+    protected $filtered = false;
+
+    /**
      * {@inheritdoc}
      */
     public function setUser(\User $user)
@@ -77,6 +83,26 @@ abstract class AbstractAggregation implements AggregationInterface
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function parseResults($id, array $results)
+    {
+        // When we wrapped in a filter we need to go one level deeper
+        if ($this->filtered) {
+            $buckets = $results[$id]['buckets'];
+        } else {
+            $buckets = $results['buckets'];
+        }
+
+        $parsed = array();
+        foreach ($buckets as $bucket) {
+            $parsed[$bucket['key']] = $bucket['doc_count'];
+        }
+
+        return $parsed;
+    }
+
+    /**
      * Apply configuration options through callbacks on the aggregation
      * object being passed in. This needs to be explicitly called from
      * the build phase by the implementing class if needed.
@@ -92,5 +118,35 @@ abstract class AbstractAggregation implements AggregationInterface
                 call_user_func_array(array($agg, $method), $value);
             }
         }
+    }
+
+    /**
+     * Build boolean filter for given filters
+     * @param \Elastica\Filter\AbstractFilter[] $filters
+     * @return \Elastica\Filter\Bool
+     */
+    protected function buildFilters(array $filters)
+    {
+        $result = new \Elastica\Filter\Bool();
+        foreach ($filters as $filter) {
+            $result->addMust($filter);
+        }
+        return $result;
+    }
+
+    /**
+     * Wrap aggregation into filter
+     * @param string $id
+     * @param \Elastica\Aggregation\AbstractAggregation $agg
+     * @param array $filters
+     * @return \Elastica\Aggregation\Filter
+     */
+    protected function wrapFilter($id, \Elastica\Aggregation\AbstractAggregation $agg, array $filters)
+    {
+        $this->filtered = true;
+        $filterAgg = new \Elastica\Aggregation\Filter($id);
+        $filterAgg->setFilter($this->buildFilters($filters));
+        $filterAgg->addAggregation($agg);
+        return $filterAgg;
     }
 }
