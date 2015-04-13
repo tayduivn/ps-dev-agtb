@@ -14,7 +14,6 @@ namespace Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler;
 
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Document;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
-use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\RawProperty;
 
 
 /**
@@ -33,12 +32,16 @@ class TagsHandler extends AbstractHandler implements
     const TAGS_FIELD = 'tags';
 
     /**
+     * @var \Tag
+     */
+    protected $tagSeed;
+
+    /**
      * {@inheritdoc}
      */
     public function processDocumentPreIndex(Document $document, \SugarBean $bean)
     {
-        $tags = $this->retrieveTagIdsByQuery($bean->id);
-        $document->setDataField(self::TAGS_FIELD, $tags);
+        $document->setDataField(self::TAGS_FIELD, $this->retrieveTagIds($bean));
     }
 
     /**
@@ -46,12 +49,14 @@ class TagsHandler extends AbstractHandler implements
      * @param string $beanId the id of the associated bean
      * @return array
      */
-    protected function retrieveTagIdsByQuery($beanId)
+    protected function retrieveTagIds(\SugarBean $bean)
     {
-        //Use SugarBean
-        $tagBean = \BeanFactory::getBean("Tags");
-        $tags = $tagBean->getTagIdsByBeanId($beanId);
-        return $tags;
+        // setup seed bean once
+        if (empty($this->tagSeed)) {
+            $this->tagSeed = \BeanFactory::getBean("Tags");
+        }
+
+        return $this->tagSeed->getTagIdsByBean($bean);
     }
 
     /**
@@ -65,6 +70,6 @@ class TagsHandler extends AbstractHandler implements
         }
 
         // we just need an not_analyzed field here
-        $mapping->addNotAnalyzedField($field);
+        $mapping->addNotAnalyzedField(self::TAGS_FIELD);
     }
 }

@@ -153,23 +153,35 @@ class Tag extends Basic
 
     /**
      * Retrieve the list of related tags from the database, given the SugarBean id.
-     * @param string $beanId the id of the associated bean
+     * @param string $beanId The id of the bean
+     * @param string $beanModule The module name
      * @return array
      */
-    public function getTagIdsByBeanId($beanId)
+    public function getTagIdsByBeanId($beanId, $beanModule)
     {
-        $sql = "SELECT tag_id";
-        $sql .= " FROM tag_bean_rel";
-        $sql .= " WHERE bean_id=" . $this->db->quoted($beanId);
-        $sql .= " AND deleted=0";
-        $sql .= " ORDER BY tag_id ASC";
+        $tags = array();
+        $sql = sprintf(
+            "SELECT tag_id FROM tag_bean_rel " .
+            "WHERE bean_id = %s AND bean_module = %s AND deleted = 0 ",
+            $this->db->quoted($beanId),
+            $this->db->quoted($beanModule)
+        );
 
         $result = $this->db->query($sql);
-        $returnArray = array();
         while ($data = $this->db->fetchByAssoc($result)) {
-            $returnArray[] = $data["tag_id"];
+            $tags[] = $data["tag_id"];
         }
-        return $returnArray;
+        return $tags;
+    }
+
+    /**
+     * Retrieve the list of related tags from the database, given a SugarBean.
+     * @param Sugarbean $bean
+     * @return array
+     */
+    public function getTagIdsByBean(SugarBean $bean)
+    {
+        return $this->getTagIdsByBeanId($bean->id, $bean->module_name);
     }
 
     /**

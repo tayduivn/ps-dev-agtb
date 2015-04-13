@@ -36,8 +36,9 @@ class HookHandler
 
         // favorites handling - index the actual bean
         if ($bean instanceof \SugarFavorites) {
-            $newBean = \BeanFactory::getBean($bean->module, $bean->record_id);
-            $this->getSearchEngine()->indexBean($newBean);
+            if ($newBean = \BeanFactory::getBean($bean->module, $bean->record_id)) {
+                $this->getSearchEngine()->indexBean($newBean);
+            }
         }
 
         $engine = $this->getSearchEngine()->indexBean($bean);

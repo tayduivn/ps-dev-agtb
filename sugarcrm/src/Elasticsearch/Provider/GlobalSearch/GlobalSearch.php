@@ -301,7 +301,6 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
 
             // skip unsupported fields
             if (!$this->isSupportedType($type)) {
-                $this->container->logger->warning("GS: Skipping unsupported type '{$type}' on {$module}.{$field}");
                 continue;
             }
 
