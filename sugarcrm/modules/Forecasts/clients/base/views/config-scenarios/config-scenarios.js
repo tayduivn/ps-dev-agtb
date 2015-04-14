@@ -56,7 +56,7 @@
         this._super('initialize', [options]);
 
         this.selectedOptions = [];
-        this.defaultOption = {};
+        this.defaultOption = [];
         this.scenarioOptions = [];
 
         // set up scenarioOptions
@@ -69,7 +69,7 @@
             // Check if this field is the one we don't want users to delete
             if(field.name == this.defaultForecastedAmountKey) {
                 obj['locked'] = true;
-                this.defaultOption = obj;
+                this.defaultOption.push(obj);
             } else {
                 // Push fields to all other scenario options
                 this.scenarioOptions.push(obj);

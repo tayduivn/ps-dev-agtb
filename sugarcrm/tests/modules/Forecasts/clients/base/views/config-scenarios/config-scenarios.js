@@ -85,12 +85,12 @@ describe('Forecasts.View.ConfigScenarios', function() {
     describe('initialize()', function() {
         it('should set the defaultOption to be Likely', function() {
             view.initialize(options);
-            expect(view.defaultOption.id).toEqual('show_worksheet_likely');
+            expect(view.defaultOption[0].id).toEqual('show_worksheet_likely');
         });
 
         it('should set the defaultOption Likely to be locked', function() {
             view.initialize(options);
-            expect(view.defaultOption.locked).toBeTruthy();
+            expect(view.defaultOption[0].locked).toBeTruthy();
         });
 
         it('should set the scenarioOptions to Best and Worst', function() {
