@@ -75,9 +75,27 @@
     },
 
     /**
+     * @inheritDoc
+     *
+     * Resets the original css classes, and adds the dashboard classes if
+     * defined.
+     */
+    _render: function() {
+        this.$el.removeClass();
+        this.$el.addClass(this.className);
+        this._super('_render');
+        if (this.model.has('css_class')) {
+            this.$el.addClass(this.model.get('css_class'));
+        }
+    },
+
+    /**
      * Set all appended dashlets drag-and-droppable
      */
     applyDragAndDrop: function() {
+        if (this.model.get('drag_and_drop') === false) {
+            return;
+        }
         var self = this;
         this.$('.dashlet:not(.empty)').draggable({
             revert: 'invalid',

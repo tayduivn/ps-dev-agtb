@@ -10,4 +10,18 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-{{!-- Here we will add facet content. It's empty on purpose for now--}}
+<div class="row-fluid">
+    <ul class="nav facet-results{{#unless collection.dataFetched}} loading{{/unless}}">
+        {{#if collection.dataFetched}}
+            {{#if facetItems}}
+                {{#each facetItems}}
+                    <li class="facet-item{{#if selected}} selected{{/if}}" data-facet-criteria="{{key}}"><i class="fa fa-check"></i><span>{{label}} ({{count}})</span></li>
+                {{/each}}
+            {{else}}
+                <li class="facet-item"><span>{{str 'LBL_FACET_NO_DATA' }}</span></li>
+            {{/if}}
+        {{else}}
+            <li class="facet-item">{{loading 'LBL_LOADING_NO_DOTS'}}</li>
+        {{/if}}
+    </ul>
+</div>

@@ -293,6 +293,5 @@ $mod_strings = array (
 
 The Help Dashboard is available for all Sugar 7 modules and can be toggled "open" and "closed" by clicking the Help icon in the application footer.',
 
-    'LBL_FACETS_DASHBOARD_TITLE' => 'Facets',
-
+    'LBL_FACETS_DASHBOARD_TITLE' => 'Filter',
 );

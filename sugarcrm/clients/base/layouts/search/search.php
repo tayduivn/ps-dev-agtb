@@ -45,7 +45,6 @@ $viewdefs['base']['layout']['search'] = array(
                                     'layout' => array(
                                         'name' => 'search-dashboard',
                                         'type' => 'dashboard',
-                                        'drag_and_drop' => false,
                                         'last_state' => array(
                                             'id' => 'last-visit',
                                         ),

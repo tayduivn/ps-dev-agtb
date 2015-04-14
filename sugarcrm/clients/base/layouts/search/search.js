@@ -25,23 +25,132 @@
         this.context.set('search', true);
         this.collection.query = this.context.get('searchTerm') || '';
 
-        this.context.on('change:searchTerm change:module_list', function(context) {
-            //TODO: collection.fetch shouldn't need a query to be passed. Will
-            // be fixed by SC-3973.
-            var searchTerm = this.context.get('searchTerm');
-            var moduleList = this.context.get('module_list') || [];
-            this.collection.fetch({query: searchTerm, module_list: moduleList});
+        /**
+         * Flag to indicate if the search has been filtered using facets or not.
+         *
+         * @property {boolean} `true` if the search has been filtered.
+         */
+        this.filteredSearch = false;
+        /**
+         * Object containing the selected facets in the current search.
+         *
+         * @property {Object} selectedFacets
+         */
+        this.selectedFacets = {};
+
+
+        this.context.on('change:searchTerm change:module_list', function() {
+            this.search();
         }, this);
 
-        this.collection.on('sync', function(collection, data) {
+        this.context.on('facet:apply', this.filter, this);
+
+        this.collection.on('sync', function(collection) {
             var isCollection = (collection instanceof App.BeanCollection);
             if (!isCollection) {
                 return;
             }
             app.utils.GlobalSearch.formatRecords(collection, true);
-//            collection.facets = data.facets;
-//            this.context.set('facets', data.facets);
+
+            if (!_.isEmpty(collection.xmod_aggs)) {
+                if (!this.filteredSearch) {
+                    this._initializeSelectedFacets(collection.xmod_aggs);
+                }
+
+                this.context.set('selectedFacets', this.selectedFacets);
+                this.context.set('facets', collection.xmod_aggs, {silent: true});
+                this.context.trigger('facets:change', collection.xmod_aggs);
+            }
+
         }, this);
+
+        this.context.on('facets:reset', this.search, this);
+    },
+
+    /**
+     * Builds the selected facets object to be sent to the server.
+     *
+     * @param {Object} facets The facets object that comes from the server.
+     * @private
+     */
+    _initializeSelectedFacets: function(facets) {
+        _.each(facets, function(facet, key) {
+            if (key === 'modules') {
+                this.selectedFacets[key] = [];
+            } else {
+                this.selectedFacets[key] = false;
+            }
+        }, this);
+    },
+
+    /**
+     * Updates {@link #selectedFacets} with the facet change.
+     *
+     * @param {String} facetId The facet type.
+     * @param {String} facetCriteriaId The id of the facet criteria.
+     * @param {boolean} isSingleItem `true` if it's a single item facet.
+     * @private
+     */
+    _updateSelectedFacets: function(facetId, facetCriteriaId, isSingleItem) {
+        if (isSingleItem) {
+            this.selectedFacets[facetId] = !this.selectedFacets[facetId];
+            return;
+        }
+        var index;
+        if (this.selectedFacets[facetId]) {
+            index = this.selectedFacets[facetId].indexOf(facetCriteriaId);
+        } else {
+            this.selectedFacets[facetId] = [];
+        }
+        if (_.isUndefined(index) || index === -1) {
+            this.selectedFacets[facetId].splice(0, 0, facetCriteriaId);
+        } else {
+            this.selectedFacets[facetId].splice(index, 1);
+            if (this.selectedFacets[facetId].length === 0) {
+                delete this.selectedFacets[facetId];
+            }
+        }
+    },
+
+    /**
+     * Searches on a term and a module list.
+     *
+     * @param {boolean} reset `true` if we reset the filters.
+     */
+    search: function(reset) {
+        // Prevents to trigger a new fetch if the user clicks on
+        if (reset && !this.filteredSearch) {
+            return;
+        }
+        var searchTerm = this.context.get('searchTerm');
+        var moduleList = this.context.get('module_list') || [];
+        this.filteredSearch = false;
+
+        //TODO: collection.fetch shouldn't need a query to be passed. Will
+        // be fixed by SC-3973.
+        this.collection.fetch({query: searchTerm, module_list: moduleList, params: {xmod_aggs: true}});
+    },
+
+    /**
+     * Refines the search applying a facet change.
+     *
+     * @param facetId The facet id.
+     * @param facetCriteriaId The facet criteria id.
+     * @param isSingleItem `true` if it's a single criteria facet.
+     */
+    filter: function(facetId, facetCriteriaId, isSingleItem) {
+        this._updateSelectedFacets(facetId, facetCriteriaId, isSingleItem);
+
+        var searchTerm = this.context.get('searchTerm');
+        var moduleList = this.context.get('module_list') || [];
+        this.filteredSearch = true;
+        this.collection.fetch({query: searchTerm, module_list: moduleList, params: {xmod_aggs: true},
+            apiOptions:
+            {
+                data: {agg_filters: this.selectedFacets},
+                fetchWithPost: true
+            }
+        });
     },
 
     /**
@@ -55,6 +164,9 @@
      */
     loadData: function(options, setFields) {
         setFields = false;
+        options = options || {};
+        options.params = {};
+        options.params.xmod_aggs = true;
         this._super('loadData', [options, setFields]);
     }
 })
