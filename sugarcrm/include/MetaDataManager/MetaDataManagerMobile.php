@@ -38,7 +38,7 @@ class MetaDataManagerMobile extends MetaDataManager
      */
     protected function getModules() {
         // Get the current user module list
-        $modules = $this->getTabList();
+        $modules = array_intersect(parent::getModules(), $this->getTabList());
         $defaultEnabledModules = $this->getDefaultEnabledModuleList();
 
         // Add default enabled modules to the list
