@@ -29,7 +29,6 @@ describe('Base.Layout.Default', function() {
         var toggleSidePaneStub;
 
         beforeEach(function() {
-            sinon.collection.stub(layout, 'processDef');
             toggleSidePaneStub = sinon.collection.stub(layout, 'toggleSidePane');
             layout.initialize({ meta: def });
         });
