@@ -107,19 +107,84 @@
             }
         });
     },
+    getDeleteMessages: function(model) {
+        var messages = {};
+        var name = Handlebars.Utils.escapeExpression(app.utils.getRecordName(model)).trim();
+        var context = app.lang.getModuleName(model.module).toLowerCase() + ' ' + name;
+
+        messages.confirmation = app.utils.formatString(app.lang.get('NTC_DELETE_CONFIRMATION_FORMATTED'), [context]);
+        messages.success = app.utils.formatString(app.lang.get('NTC_DELETE_SUCCESS'), [context]);
+        return messages;
+    },
+    deleteModel: function() {
+        var self = this,
+            model = this._modelToDelete;
+
+        model.destroy({
+
+            //Show alerts for this request
+            showAlerts: {
+                'process': true,
+                'success': {
+                    messages: self.getDeleteMessages(model).success
+                }
+            },
+            success: function() {
+                var redirect = self._targetUrl !== self._currentUrl;
+                self._modelToDelete = null;
+                self.collection.remove(model, { silent: redirect });
+                if (redirect) {
+                    self.unbindBeforeRouteDelete();
+                    //Replace the url hash back to the current staying page
+                    app.router.navigate(self._targetUrl, {trigger: true});
+                    return;
+                }
+                app.events.trigger("preview:close");
+                if (!self.disposed) {
+                    self.render();
+                }
+
+                self.layout.trigger("list:record:deleted", model);
+            }
+        });
+    },
     warnDelete: function(model) {
         var verifyURL = app.api.buildURL(
-            this.module,
-            'verify',
-            {
-                id : model.get('id')
-            }
-        ),
+                this.module,
+                'verify',
+                {
+                    id : model.get('id')
+                }
+            ),
             self = this;
+        this._modelToDelete = model;
         app.api.call('read', verifyURL, null, {
             success: function(data) {
                 if (!data) {
-                    self._super('warnDelete', [model]);
+                    namePd = Handlebars.Utils.escapeExpression(app.utils.getRecordName(model)).trim();
+                    if ( (namePd !== '') && (app.lastNamePdDel !== namePd) ) {
+                        self._targetUrl = Backbone.history.getFragment();
+                        //Replace the url hash back to the current staying page
+                        if (self._targetUrl !== self._currentUrl) {
+                            app.router.navigate(self._currentUrl, {trigger: false, replace: true});
+                        }
+                        app.alert.show('delete_confirmation', {
+                            level: 'confirmation',
+                            messages: self.getDeleteMessages(model).confirmation,
+                            onConfirm: function() {
+                                self.deleteModel();
+                                app.lastNamePdDel = namePd;
+                            },
+                            onCancel: function() {
+                                self._modelToDelete = null;
+                                app.lastNamePdDel = '';
+                            }
+                        });
+                    }
+                    else {
+                        self._modelToDelete = null;
+                        app.lastNamePdDel = '';
+                    }
                 } else {
                     app.alert.show('message-id', {
                         level: 'warning',
