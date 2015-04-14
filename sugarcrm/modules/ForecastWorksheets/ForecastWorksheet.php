@@ -148,13 +148,10 @@ class ForecastWorksheet extends SugarBean
         $bean->probability = $this->probability;
         if ($bean instanceof RevenueLineItem) {
             $bean->likely_case = $this->likely_case;
-            $bean->date_closed = $this->date_closed;
         } else {
             $bean->amount = $this->likely_case;
-            // BEGIN SUGARCRM flav=pro && flav!=ent ONLY
-            $bean->date_closed = $this->date_closed;
-            // END SUGARCRM flav=pro && flav!=ent ONLY
         }
+        $bean->date_closed = $this->date_closed;
         $bean->sales_stage = $this->sales_stage;
         $bean->commit_stage = $this->commit_stage;
         if ($this->ACLFieldAccess('best_case', 'write')) {

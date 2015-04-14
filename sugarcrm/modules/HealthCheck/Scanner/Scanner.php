@@ -75,9 +75,11 @@ class HealthCheckScanner
      */
     protected $packages = array(
         'Process Author' => array(
+            'checkDisabled' => true,
             array('version' => '*', '__MetaSuffix' => 'DataReset'),
         ),
         'ProcessMaker' => array(
+            'checkDisabled' => true,
             array('version' => '*', '__MetaSuffix' => 'DataReset'),
         ),
         'SugarSMS' => array(
@@ -728,14 +730,23 @@ class HealthCheckScanner
         $pm = $this->getPackageManager();
         $packages = $pm->getinstalledPackages(array('module'));
         foreach ($packages as $pack) {
+
             if ($pack['enabled'] == 'DISABLED') {
-                $this->log("Disabled package {$pack['name']} (version {$pack['version']}) detected");
-                continue;
+                if (isset($this->packages[$pack['name']]['checkDisabled']) &&
+                    $this->packages[$pack['name']]['checkDisabled'] === false
+                ) {
+                    $this->log("Disabled package {$pack['name']} (version {$pack['version']}) detected");
+                    continue;
+                }
             }
+
             $this->log("Package {$pack['name']} (version {$pack['version']}) detected");
             if (array_key_exists($pack['name'], $this->packages)) {
                 $incompatible = false;
                 foreach ($this->packages[$pack['name']] as $req) {
+                    if (!is_array($req)) {
+                        continue;
+                    }
                     if (empty($req['version'])) {
                         $incompatible = true;
                     } elseif ($req['version'] == '*' || version_compare($pack['version'], $req['version'], '<')) {

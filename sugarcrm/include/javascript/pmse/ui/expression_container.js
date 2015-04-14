@@ -17,6 +17,7 @@ var ExpressionContainer = function (options, parent) {
     this.value = null;
     this.parent = null;
     this.onChange = null;
+    this.onBeforeOpenPanel = null;
     ExpressionContainer.prototype.init.call(this, options, parent);
 };
 
@@ -27,7 +28,7 @@ ExpressionContainer.prototype.type = 'ExpressionContainer';
 ExpressionContainer.prototype.family = 'ExpressionContainer';
 
 ExpressionContainer.prototype.unsupportedDataTypes = [
-    'Encrypt', 
+    'Encrypt',
     'IFrame',
     'Image',
     'MultiSelect',
@@ -38,6 +39,7 @@ ExpressionContainer.prototype.unsupportedDataTypes = [
 ExpressionContainer.prototype.init = function (options, parent) {
     var defaults = {
         expression: [],
+        onBeforeOpenPanel: null,
         onChange: null
     };
     $.extend(true, defaults, options);
@@ -45,7 +47,16 @@ ExpressionContainer.prototype.init = function (options, parent) {
         //.setIsCBOpen(defaults.isCBOpen)
         //.setIsDDOpen(defaults.isDDOpen)
         .setParent(parent)
+        .setOnBeforeOpenPanel(defaults.onBeforeOpenPanel)
         .setOnChangeHandler(defaults.onChange);
+};
+
+ExpressionContainer.prototype.setOnBeforeOpenPanel = function (handler) {
+    if (!(handler === null || typeof handler === 'function')) {
+        throw new Error("setOnBeforeOpenPanel(): The parameter must be a function or null.");
+    }
+    this.onBeforeOpenPanel = handler;
+    return this;
 };
 
 ExpressionContainer.prototype.setOnChangeHandler = function(handler) {
@@ -183,8 +194,8 @@ ExpressionContainer.prototype.handleClick = function (element) {
     var globalParent,
         parentVariable;
 
-    globalParent = this.parent.parentElement.parent;
-    parentVariable = this.parent.parentElement;
+    globalParent = this.parent.parent.parent;
+    parentVariable = this.parent.parent;
 
     if (parentVariable.fieldType || parentVariable.isReturnType) {
         if (parentVariable.fieldType === 'DropDown' || parentVariable.fieldType === 'Checkbox') {
@@ -351,6 +362,9 @@ ExpressionContainer.prototype.handleCriteriaBuilder = function (globalParent, pa
             .setVariablePanel(defaults.variables)
             .setConstantPanel(defaults.constants);
         globalParent.globalCBControl.setValue(this.expression);
+        if (typeof this.onBeforeOpenPanel === 'function') {
+            this.onBeforeOpenPanel(this);
+        }
         globalParent.globalCBControl.open();
         //this.setIsCBOpen(true);
     }
@@ -387,6 +401,9 @@ ExpressionContainer.prototype.handleDropDownBuilder = function (globalParent, pa
         globalParent.globalDDSelector.setValues(parentVariable.combos[parentVariable.module + globalParent.moduleFieldSeparator
             + parentVariable.field]);
         globalParent.globalDDSelector.setValue(this.expression);
+        if (typeof this.onBeforeOpenPanel === 'function') {
+            this.onBeforeOpenPanel(this);
+        }
         globalParent.globalDDSelector.open();
         //this.setIsDDOpen(true);
     }

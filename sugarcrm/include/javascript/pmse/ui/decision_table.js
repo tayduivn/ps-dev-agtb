@@ -38,6 +38,7 @@
         this.moduleFieldSeparator = "|||";
         this._dateFormat = null;
         this._timeFormat = null;
+        this._isApplyingColumnScrolling = null;
         DecisionTable.prototype.initObject.call(this, options || {});
     };
 
@@ -663,6 +664,34 @@
         return this;
     };
 
+    DecisionTable.prototype.onBeforeVariableOpenPanelHandler = function () {
+        var that = this;
+        return function (column, decisionTableValue) {
+            var decisionTable = that,
+                headerContainer = decisionTableValue instanceof DecisionTableValueEvaluation ? decisionTable.dom.conditionsHeaderContainer
+                    : decisionTable.dom.conclusionsHeaderContainer,
+                tableContainer = decisionTableValue instanceof DecisionTableValueEvaluation ? decisionTable.dom.conditionsTableContainer
+                    : decisionTable.dom.conclusionsTableContainer,
+                headerPosition = getRelativePosition(column.html, headerContainer),
+                headerWidth = $(column.html).innerWidth();
+
+            that.globalCBControl.setAlignWithOwner("left");
+            if (headerPosition.left < 0) {
+                that._isApplyingColumnScrolling = true;
+                tableContainer.scrollLeft += headerPosition.left;
+            } else if (headerPosition.left + headerWidth > $(headerContainer).innerWidth()) {
+                that.globalCBControl.setAlignWithOwner("right");
+                that._isApplyingColumnScrolling = true;
+                tableContainer.scrollLeft = headerPosition.left + headerWidth + headerContainer.scrollLeft
+                    - $(headerContainer).innerWidth();
+            }
+            if (getRelativePosition(this.html, decisionTable.html).left + that.globalCBControl.width
+                > $(decisionTable.html).outerWidth()) {
+                that.globalCBControl.setAlignWithOwner("right");
+            }
+        };
+    }
+
     DecisionTable.prototype.onRemoveVariableHandler = function(array) {
         var that = this, variablesArray = array, valid;
         return function() {
@@ -696,7 +725,7 @@
             language: this.language
         }), i, html;
 
-
+        condition.onBeforeValueOpenPanel = this.onBeforeVariableOpenPanelHandler();
         condition.onRemove = this.onRemoveVariableHandler(this.conditions);
         condition.onChangeValue = this.onChangeValueHandler();
         condition.onChange = this.onChangeVariableHandler();
@@ -734,6 +763,7 @@
             language: this.language
         }), i;
 
+        conclusion.onBeforeValueOpenPanel = this.onBeforeVariableOpenPanelHandler();
         conclusion.onRemove = this.onRemoveVariableHandler(this.conclusions);
         conclusion.onChangeValue = this.onChangeValueHandler();
         conclusion.onChange = this.onChangeVariableHandler();
@@ -936,8 +966,12 @@
     DecisionTable.prototype.attachListeners = function() {
         var that = this;
         $(this.dom.conditionsTableContainer).on('scroll', function(){
-            that.globalCBControl.close();
-            that.globalDDSelector.close();
+            if (that._isApplyingColumnScrolling) {
+                that._isApplyingColumnScrolling = false;
+            } else {
+                that.globalCBControl.close();
+                that.globalDDSelector.close();
+            }
             that.dom.conditionsHeaderContainer.scrollLeft = this.scrollLeft;
             that.dom.conclusionsTableContainer.scrollTop = this.scrollTop;
         });
@@ -946,10 +980,18 @@
             that.dom.conditionsTableContainer.scrollLeft = this.scrollLeft;
         });
 
-        $(this.dom.conclusionsTableContainer).add(this.dom.conclusionsHeaderContainer).on('scroll', function(){
-            that.globalCBControl.close();
-            that.globalDDSelector.close();
-            that.dom.conclusionsHeaderContainer.scrollLeft = that.dom.conclusionsTableContainer.scrollLeft = this.scrollLeft;
+        $(this.dom.conclusionsHeaderContainer).on('scroll', function () {
+            that.dom.conclusionsTableContainer.scrollLeft = this.scrollLeft;
+        });
+
+        $(this.dom.conclusionsTableContainer).on('scroll', function(){
+            if (that._isApplyingColumnScrolling) {
+                that._isApplyingColumnScrolling = false;
+            } else {
+                that.globalCBControl.close();
+                that.globalDDSelector.close();
+            }
+            that.dom.conclusionsHeaderContainer.scrollLeft = this.scrollLeft;
             that.dom.indexTableContainer.scrollTop = that.dom.conditionsTableContainer.scrollTop = this.scrollTop;
         });
 
@@ -1378,6 +1420,7 @@
 
         this.select = null;
 
+        this.onBeforeValueOpenPanel = null;
         this.onRemove = null;
         this.onChange = null;
         this.onChangeValue = null;
@@ -1400,6 +1443,7 @@
             variableMode: "condition",
             isReturnType: false,
 
+            onBeforeValueOpenPanel: null,
             onRemove: null,
             onChange: null,
             onChangeValue: null,
@@ -1422,10 +1466,10 @@
             this.setValues(defaults.values);
         }
 
+        this.onBeforeValueOpenPanel = defaults.onBeforeValueOpenPanel;
         this.onRemove = defaults.onRemove;
         this.onChange = defaults.onChange;
         this.onChangeValue = defaults.onChangeValue;
-
     };
 
     DecisionTableVariable.prototype.setField = function (newField) {
@@ -1725,9 +1769,18 @@
         return n;
     };
 
+    DecisionTableVariable.prototype.onBeforeValueOpenPanelHandler = function () {
+        var that = this;
+        return function (decisionTableValue) {
+            if (typeof that.onBeforeValueOpenPanel === 'function') {
+                that.onBeforeValueOpenPanel(that, decisionTableValue);
+            }
+        };
+    };
+
     DecisionTableVariable.prototype.onRemoveValueHandler = function() {
         var that = this;
-        return function() {
+        return function () {
             var i;
             for(i = 0; i < that.values.length; i+=1) {
                 if(that.values[i] === this) {
@@ -1754,6 +1807,7 @@
         } else {
             value = new DecisionTableValueEvaluation({value: value, operator: operator, parent: this, fields: this.fields, language: this.language});
         }
+        value.onBeforeOpenPanel = this.onBeforeValueOpenPanelHandler();
         value.onRemove = this.onRemoveValueHandler();
         value.onChange = this.onChangeValueHandler();
         this.values.push(value);
@@ -1846,6 +1900,7 @@
         Element.call(this, settings);
         this.value = null;
         this.expression = null;
+        this.onBeforeOpenPanel = null;
         this.onRemove = null;
         this.onChange = null;
         this.parent = null;
@@ -1858,6 +1913,7 @@
     DecisionTableValue.prototype.initObject = function(settings) {
         var defaults = {
             value: [],
+            onBeforeOpenPanel: null,
             onRemove: null,
             onChange: null,
             parent: null,
@@ -1866,15 +1922,26 @@
         };
         $.extend(true, defaults, settings || {});
         this.language = defaults.language;
-        this.parentElement = defaults.parent;
+        this.parent = defaults.parent;
         this.expression = new ExpressionContainer({
             variables: defaults.fields,
+            onBeforeOpenPanel: this.onBeforeOpenPanelHandler(),
             onChange: this.onChangeExpressionHandler(),
             language: this.language
         }, this);
         this.setValue(defaults.value);
+        this.onBeforeOpenPanel = defaults.onBeforeOpenPanel;
         this.onRemove = defaults.onRemove;
         this.onChange = defaults.onChange;
+    };
+
+    DecisionTableValue.prototype.onBeforeOpenPanelHandler = function () {
+        var that = this;
+        return function (expressionContainer) {
+            if (typeof that.onBeforeOpenPanel === 'function') {
+                that.onBeforeOpenPanel(that);
+            }
+        };
     };
 
     DecisionTableValue.prototype.onChangeExpressionHandler = function() {
@@ -2120,7 +2187,7 @@
     DecisionTableValueEvaluation.prototype.createOperatorControl = function() {
         var that = this;
         return function() {
-            var select = document.createElement('select'), parent = that.parentElement, type = parent.fieldType;
+            var select = document.createElement('select'), parent = that.parent, type = parent.fieldType;
             if (typeof type !== 'string') {
                 App.alert.show(null, {
                     level: 'warning',
