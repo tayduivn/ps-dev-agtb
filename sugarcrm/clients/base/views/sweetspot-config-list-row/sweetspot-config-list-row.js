@@ -8,17 +8,19 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- /**
-  * @class View.Views.Base.SweetspotConfigListRowView
-  * @alias SUGAR.App.view.views.BaseSweetspotConfigListRowView
-  * @extends View.View
-  */
+/**
+ * @class View.Views.Base.SweetspotConfigListRowView
+ * @alias SUGAR.App.view.views.BaseSweetspotConfigListRowView
+ * @extends View.View
+ */
 ({
     tagName: 'tr',
+
     className: 'config-list-row',
-    plugins: ['Tooltip'],
+
     events: {
-        'click [data-sweetspot=remove]': 'removeRow'
+        'click [data-action=add]': 'addRow',
+        'click [data-action=remove]': 'removeRow'
     },
 
     /**
@@ -48,14 +50,18 @@
     },
 
     /**
+     * Adds a {@link View.Views.Base.SweetspotConfigListRowView row view} to the
+     * layout.
+     */
+    addRow: function() {
+        this.context.trigger('sweetspot:config:addRow', this);
+    },
+
+    /**
      * Removes and disposes this row view from the
      * {@link View.Views.Base.SweetspotConfigListLayout list layout}
      */
     removeRow: function() {
-        this.collection.remove(this.model);
-        this.dispose();
-        if (this.layout) {
-            this.layout.removeComponent(this);
-        }
+        this.context.trigger('sweetspot:config:removeRow', this);
     }
 })

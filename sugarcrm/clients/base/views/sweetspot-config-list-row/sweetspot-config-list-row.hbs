@@ -10,7 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-<td class="span1 remove"><i data-sweetspot="remove" rel="tooltip" title="{{str 'LBL_SWEETSPOT_REMOVE'}}" data-placement="bottom" class="fa fa-trash"></i></td>
 {{#each meta.fields}}
-    <td class="span5">{{field ../this model=../model template=../action}}</td>
+<td class="span5">{{field ../this model=../model template=../action}}</td>
 {{/each}}
+<td class="span1 hotkey-controls">
+    <div class="btn-group">
+        <button data-action="remove" class="btn btn-invisible btn-dark"><i class="fa fa-minus"></i></button>
+        <button data-action="add" class="btn btn-invisible btn-dark"><i class="fa fa-plus"></i></button>
+    </div>
+</td>

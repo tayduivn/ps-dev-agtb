@@ -16,10 +16,6 @@
 ({
     className: 'container-fluid',
 
-    events: {
-        'click [data-sweetspot=add]': 'addRow'
-    },
-
     // FIXME: Change this to 'UnsavedChanges' when SC-4167 gets merged. It won't
     // work until then, because 'Editable' can only be attached to a view.
     plugins: ['Editable'],
@@ -82,7 +78,12 @@
      * @protected
      */
     _bindEvents: function() {
+        // Config data events
         this.context.on('sweetspot:ask:configs', this.generateConfig, this);
+
+        // Config list row events
+        this.context.on('sweetspot:config:addRow', this.addRow, this);
+        this.context.on('sweetspot:config:removeRow', this.removeRow, this);
     },
 
     /**
@@ -95,17 +96,40 @@
     /**
      * Adds a {@link View.Views.Base.SweetspotConfigListRowView row view} to the
      * layout.
+     *
+     * @param {View.View} component The component that triggered this event.
      */
-    addRow: function() {
+    addRow: function(component) {
         var def = _.extend(
                 {view: 'sweetspot-config-list-row'},
                 app.metadata.getView(null, 'sweetspot-config-list-row')
             );
         var rowComponent = this.createComponentFromDef(def, this.context, this.module);
 
-        this.addComponent(rowComponent, def);
+        if (component) {
+            // Add the row after the row where the user clicked the '+' sign.
+            component.$el.after(rowComponent.el);
+        } else {
+            this.addComponent(rowComponent, def);
+        }
         rowComponent.render();
         return rowComponent;
+    },
+
+    /**
+     * Removes and disposes this row view from the
+     * {@link View.Views.Base.SweetspotConfigListLayout list layout}
+     *
+     * @param {View.View} component The component that triggered this event.
+     */
+    removeRow: function(component) {
+        this.collection.remove(component.model);
+        component.dispose();
+        this.removeComponent(component);
+
+        if (this.$('[data-sweetspot=actions]').children().length === 0) {
+            this.addRow();
+        }
     },
 
     /**
