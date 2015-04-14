@@ -52,7 +52,7 @@ $viewdefs['KBContents']['base']['view']['list'] = array(
                     'enabled' => true,
                     'default' => true,
                     'initial_filter' => 'by_category',
-                    'initial_filter_label' => 'LBL_CATEGORY_NAME',
+                    'initial_filter_label' => 'LBL_FILTER_CREATE_NEW',
                     'filter_relate' => array(
                         'category_id' => 'category_id',
                     ),

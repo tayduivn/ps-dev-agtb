@@ -12,7 +12,7 @@
 
 $viewdefs['KBContents']['base']['filter']['operators'] = array(
     'nestedset' => array(
-        '$equals' => 'LBL_OPERATOR_IS',
-        '$not_equals' => 'LBL_OPERATOR_IS_NOT',
+        '$in' => 'LBL_OPERATOR_IS',
+        '$not_in' => 'LBL_OPERATOR_IS_NOT',
     ),
 );

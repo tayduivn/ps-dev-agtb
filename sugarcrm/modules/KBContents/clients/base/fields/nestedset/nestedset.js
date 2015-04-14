@@ -373,13 +373,7 @@
      * Open drawer with module records.
      */
     showList: function() {
-        var moduleName = app.lang.getModuleName(this.module),
-            title = app.lang.get(
-                'LBL_FILTERED_LIST_BY_FIELD',
-                this.module,
-                {module: moduleName, label: this.label, value: this.value}
-            ),
-            popDef = {},
+        var popDef = {},
             filterOptions;
         popDef[this.def.id_name] = this.model.get(this.def.id_name);
         filterOptions = new app.utils.FilterOptions()
@@ -392,8 +386,7 @@
             module: this.module,
             context: {
                 module: this.module,
-                headerPaneTitle: title,
-                filterOptions: filterOptions
+                filterOptions: filterOptions,
             }
         });
     },
