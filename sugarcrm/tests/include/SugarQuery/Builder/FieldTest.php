@@ -14,6 +14,10 @@ class FieldTest extends Sugar_PHPUnit_Framework_TestCase
 {
     protected function tearDown()
     {
+        SugarTestAccountUtilities::removeAllCreatedAccounts();
+        SugarTestCaseUtilities::removeAllCreatedCases();
+
+        SugarBean::clearLoadedDef('Case');
         SugarBean::clearLoadedDef('Contact');
         SugarBean::clearLoadedDef('Account');
         parent::tearDown();
@@ -33,6 +37,44 @@ class FieldTest extends Sugar_PHPUnit_Framework_TestCase
         $alias = $field->getJoin();
 
         $this->assertFalse($alias, 'Field with invalid vardefs should not produce JOIN');
+    }
+
+    public function testGetJoinRelatedFieldWithoutLink()
+    {
+        // Create account
+        $account = BeanFactory::newBean('Accounts');
+        $account->name = 'Awesome account';
+        $account->save();
+
+        SugarTestAccountUtilities::setCreatedAccount(array($account->id));
+
+        // Create case
+        $cases = BeanFactory::newBean('Cases');
+        $cases->name = 'Awesome contact!';
+        $cases->account_id = $account->id;
+        $cases->save();
+
+        SugarTestCaseUtilities::setCreatedCase(array($cases->id));
+
+        // Set link field to null
+        $cases->field_defs['account_name']['link'] = null;
+
+        $query = new SugarQuery();
+        $query->select('account_name');
+        $query->from($cases, array('team_security' => false));
+        $query->where()->in('account_id', array($account->id));
+        $result = $query->execute();
+
+        $this->assertNotEmpty($result, 'Account should be selected');
+
+        // mark account as deleted and try to select again
+        $account->mark_deleted($account->id);
+
+        $queryDeleted = new SugarQuery();
+        $queryDeleted->from($cases, array('team_security' => false));
+        $queryDeleted->where()->in('account_id', array($account->id));
+        $result = $queryDeleted->execute();
+        $this->assertEmpty($result, 'Deleted account should not be selected');
     }
 
     public function testGetFieldDef()
