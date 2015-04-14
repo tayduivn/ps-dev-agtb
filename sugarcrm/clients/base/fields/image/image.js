@@ -131,7 +131,9 @@
         //Keep empty for edit because you cannot set a value of an input type `file`
         var viewType = this.view.name || this.options.viewName;
         var ignoreViewType = ["edit", "create"];
-        if (_.indexOf(ignoreViewType, viewType) < 0 && this.view.action !== "edit") {
+        if ((_.indexOf(ignoreViewType, viewType) < 0)
+            && (this.view.action !== "edit")
+            && (this.view.name !== 'merge-duplicates')) {
             app.view.Field.prototype.bindDataChange.call(this);
         }
     },
