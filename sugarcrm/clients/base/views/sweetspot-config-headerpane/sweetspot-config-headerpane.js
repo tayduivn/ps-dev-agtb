@@ -17,10 +17,44 @@
     /**
      * @inheritDoc
      */
+    initialize: function(options) {
+        this._super('initialize', [options]);
+        this._bindEvents();
+    },
+
+    /**
+     * Binds events that this view uses.
+     */
+    _bindEvents: function() {
+        this.context.on('sweetspot:config:enableButtons', this.toggleButtons, this);
+    },
+
+    /**
+     * @inheritDoc
+     */
     _render: function() {
         this._super('_render');
         this.createShortcutSession();
         this.registerShortcuts();
+    },
+
+    /**
+     * Toggles the buttons in this view between enabled/disabled states.
+     *
+     * FIXME: This method should be updated to use `this.buttons` instead of
+     * looping over all the fields. Update this when SC-3909 is merged.
+     *
+     * @param {boolean} [enable=false] Whether to enable or disable the action
+     *   buttons. Defaults to `false`.
+     */
+    toggleButtons: function(enable) {
+        var state = !_.isUndefined(enable) ? !enable : false;
+
+        _.each(this.fields, function(field) {
+            if (field instanceof app.view.fields.BaseButtonField) {
+                field.setDisabled(state);
+            }
+        });
     },
 
     /**

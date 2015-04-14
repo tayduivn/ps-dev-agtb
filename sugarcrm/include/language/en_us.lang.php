@@ -2892,8 +2892,10 @@ $app_strings = array (
     // Strings for Opportunity Metrics dashlet
     'LBL_OPPORTUNITY_METRICS' => 'Opportunity Metrics',
 
+    'LBL_SWEETSPOT' => 'Sweet Spot',
     'LBL_SWEETSPOT_CONFIG' => 'Sweet Spot Configuration Panel',
     'LBL_SWEETSPOT_CONFIG_HOTKEYS' => 'Hotkeys',
+    'LBL_SWEETSPOT_CONFIG_ERR' => 'Failed to update configuration preferences: {{errorMsg}}',
     'LBL_SWEETSPOT_ACTION' => 'Sweet Spot Action',
     'LBL_SWEETSPOT_KEY' => 'Keyword',
     'LBL_SWEETSPOT_ADD' => 'Add a Sweet Spot action',

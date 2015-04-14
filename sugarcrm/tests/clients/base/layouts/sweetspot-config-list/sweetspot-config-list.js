@@ -31,9 +31,9 @@ describe('Base.Layout.SweetspotConfigList', function() {
                 ],
                 expectedConfig: {
                     'hotkeys': [
-                        {action: '#Bugs', keyword: 'b1'},
-                        {action: '#bwc/index.php?module=Reports', keyword: 'b2'},
-                        {action: '#Accounts/create', keyword: 'b3'},
+                        {action: '#Bugs', keyword: ['b1']},
+                        {action: '#bwc/index.php?module=Reports', keyword: ['b2']},
+                        {action: '#Accounts/create', keyword: ['b3']},
                     ],
                 }
             },
@@ -49,10 +49,10 @@ describe('Base.Layout.SweetspotConfigList', function() {
                 ],
                 expectedConfig: {
                     'hotkeys': [
-                        {action: '#Accounts/create', keyword: 'b1'},
+                        {action: '#Accounts/create', keyword: ['b1']},
                         {action: '#Bugs', keyword: ['b1', 'b2']},
-                        {action: '#Leads/create', keyword: 'b1'},
-                        {action: '#bwc/index.php?module=Reports', keyword: 'b1'},
+                        {action: '#Leads/create', keyword: ['b1']},
+                        {action: '#bwc/index.php?module=Reports', keyword: ['b1']},
                     ]
                 }
             },
@@ -67,8 +67,8 @@ describe('Base.Layout.SweetspotConfigList', function() {
                 ],
                 expectedConfig: {
                     'hotkeys': [
-                        {action: '#Accounts', keyword: 'b2'},
-                        {action: '#Tasks/create', keyword: 'b5'}
+                        {action: '#Accounts', keyword: ['b2']},
+                        {action: '#Tasks/create', keyword: ['b5']}
                     ]
                 }
             },
@@ -81,8 +81,8 @@ describe('Base.Layout.SweetspotConfigList', function() {
                 ],
                 expectedConfig: {
                     'hotkeys': [
-                        {action: '#Bugs', keyword: 'b1'},
-                        {action: '#Accounts', keyword: 'b2'}
+                        {action: '#Bugs', keyword: ['b1']},
+                        {action: '#Accounts', keyword: ['b2']}
                     ]
                 }
             }

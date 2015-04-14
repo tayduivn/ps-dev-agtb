@@ -8,11 +8,11 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- /**
-  * @class View.Layouts.Base.SweetspotConfigListLayout
-  * @alias SUGAR.App.view.layouts.BaseSweetspotConfigListLayout
-  * @extends View.Layout
-  */
+/**
+ * @class View.Layouts.Base.SweetspotConfigListLayout
+ * @alias SUGAR.App.view.layouts.BaseSweetspotConfigListLayout
+ * @extends View.Layout
+ */
 ({
     className: 'container-fluid',
 
@@ -52,13 +52,9 @@
         }
 
         _.each(data, function(row) {
-            if (_.isArray(row.keyword)) {
-                _.each(row.keyword, function(word) {
-                    this._initRow(row, word);
-                }, this);
-            } else {
-                this._initRow(row);
-            }
+            _.each(row.keyword, function(word) {
+                this._initRow(row, word);
+            }, this);
         }, this);
     },
 
@@ -112,6 +108,11 @@
         return rowComponent;
     },
 
+    /**
+     * Generates an object that the
+     * {@link View.Layouts.Base.SweetspotConfigLayout config layout} uses to
+     * save configurations to the user preferences.
+     */
     generateConfig: function() {
         var data = this.collection.toJSON();
         data = this._formatData(data);
@@ -130,7 +131,7 @@
      */
     _formatData: function(data) {
         var result = this._sanitizeConfig(data);
-        result = this._joinMultipleKeywordConfigs(result);
+        result = this._joinKeywordConfigs(result);
         result = this._formatForUserPrefs(result);
 
         return result;
@@ -149,38 +150,29 @@
      *
      *     [{action: '#Bugs', keyword: ['b1', 'b2']}]
      *
-     * This function assumes that the possible multiple keywords are all unique,
-     * as handled by the {@link #_sanitizeConfig} method.
+     * By default, this function transforms the keyword attribute to an array.
+     * For example:
+     *
+     *    [{action: '#Bugs', keyword: 'b1'}]
+     *
+     * would be transformed to:
+     *
+     *    [{action: '#Bugs', keyword: ['b1']}]
      *
      * @private
      * @param {Array} data The sanitized configuration data.
-     * @return {Array} The configuration data, with multiple keywords per action
-     *   stored in an array.
+     * @return {Array} The configuration data, with single/multiple keywords per
+     *   action stored in an array.
      */
-    _joinMultipleKeywordConfigs: function(data) {
-        var visited = {};
+    _joinKeywordConfigs: function(data) {
+        var result = {};
 
-        _.each(data, function(obj, idx) {
-            var action = obj.action;
-            var visitedAt = visited[action];
-
-            if (!_.isUndefined(visitedAt)) {
-                // If we've visited this action before, merge the keywords.
-                var originalKeyword = data[visitedAt].keyword;
-                if (!_.isArray(originalKeyword)) {
-                    if (originalKeyword !== obj.keyword) {
-                        data[visitedAt].keyword = [originalKeyword, obj.keyword];
-                    }
-                } else {
-                    data[visitedAt].keyword = _.uniq(data[visitedAt].keyword.concat(obj.keyword));
-                }
-                data.splice(idx, 1);
-            } else {
-                // Otherwise, store it in the frequency hash.
-                visited[action] = idx;
-            }
+        _.each(data, function(obj) {
+            result[obj.action] = result[obj.action] || obj;
+            var keyword = _.isArray(obj.keyword) ? obj.keyword : [obj.keyword];
+            result[obj.action].keyword = _.union(result[obj.action].keyword, keyword);
         });
-        return data;
+        return _.toArray(result);
     },
 
     /**
@@ -220,7 +212,8 @@
      *   `false` otherwise.
      */
     hasUnsavedChanges: function() {
-        var oldConfig = app.user.getPreference('sweetspot');
+        var prefs = app.user.getPreference('sweetspot');
+        var oldConfig = prefs && prefs.hotkeys;
         var newConfig = this.collection.toJSON();
         var isChanged = !_.isEqual(oldConfig, newConfig);
 

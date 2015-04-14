@@ -8,11 +8,11 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- /**
-  * @class View.Layouts.Base.SweetspotConfigLayout
-  * @alias SUGAR.App.view.layouts.BaseSweetspotConfigLayout
-  * @extends View.Layout
-  */
+/**
+ * @class View.Layouts.Base.SweetspotConfigLayout
+ * @alias SUGAR.App.view.layouts.BaseSweetspotConfigLayout
+ * @extends View.Layout
+ */
 ({
     /**
      * @inheritDoc
@@ -35,9 +35,9 @@
      * @protected
      */
     _bindEvents: function() {
-        // this.context.on('sweetspot:receive:configs', this.saveConfig, this);
         this.context.on('sweetspot:cancel:config', this.cancelConfig, this);
 
+        // Button events
         this.context.on('button:save_button:click', this.saveConfig, this);
         this.context.on('button:cancel_button:click', this.cancelConfig, this);
     },
@@ -77,14 +77,9 @@
      */
     saveConfig: function() {
         var data = this._getAllConfigs();
-
-        if (_.isEmpty(data)) {
-            this.cancelConfig();
-            return;
-        }
-
         data = this._formatForUserPrefs(data);
 
+        this.context.trigger('sweetspot:config:enableButtons', false);
         app.alert.show('sweetspot', {
             level: 'process',
             title: app.lang.get('LBL_SAVING'),
@@ -94,10 +89,22 @@
         app.user.updatePreferences(data, _.bind(this._saveConfigCallback, this));
     },
 
+    /**
+     * Callback for the call to {@link Core.User#updatePreferences}.
+     *
+     * @param {string} err Error message returned by the server.
+     */
     _saveConfigCallback: function(err) {
         app.alert.dismiss('sweetspot');
         if (err) {
-            app.logger.error('Sweet Spot failed to update configuration preferences: ' + err);
+            var errorMsg = app.lang.get('LBL_SWEETSPOT_CONFIG_ERR', this.module, {errorMsg: err});
+            this.context.trigger('sweetspot:config:enableButtons', true);
+            app.alert.show('config-failed', {
+                level: 'error',
+                title: 'LBL_SWEETSPOT',
+                messages: errorMsg
+            });
+            return;
         }
         app.drawer.close(this.collection);
         app.events.trigger('sweetspot:reset');
@@ -110,6 +117,9 @@
         app.drawer.close();
     },
 
+    /**
+     * @inheritDoc
+     */
     _dispose: function() {
         this.context.off('sweetspot:receive:configs');
         this._super('_dispose');

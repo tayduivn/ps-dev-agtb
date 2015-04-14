@@ -255,7 +255,7 @@
         if (route) {
             app.router.navigate(route, {trigger: true});
         }
-        var action = this.$('a.hover').data('callback');
+        var action = this.$('li.active a').data('callback');
         if (action) {
             this.layout.triggerSystemAction(action);
         }
@@ -267,7 +267,7 @@
     _highlightActive: function() {
         this.$('.active').removeClass('active');
         var nth = this.activeIndex;
-        var $active = this.$('[data-sweetaction="true"]:nth(' + nth + ')');
+        var $active = this.$('[data-sweetaction=true]:nth(' + nth + ')');
         $active.addClass('active');
         $active.find('a').focus();
         this.$el.prev().find('input').focus();

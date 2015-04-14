@@ -27,6 +27,13 @@
                     action: 'help',
                     name: app.lang.get('LBL_HELP'),
                     icon: 'fa-exclamation-circle'
+                },
+                {
+                    callback: 'openConfig',
+                    action: 'config',
+                    module: 'Configuration',
+                    name: app.lang.get('LBL_SWEETSPOT_CONFIG'),
+                    icon: 'fa-cog'
                 }
             ];
             return actions;

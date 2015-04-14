@@ -220,6 +220,9 @@
     _systemActions: {
         toggleHelp: function() {
             app.events.trigger('app:help');
+        },
+        openConfig: function() {
+            this.openConfigPanel();
         }
     },
 

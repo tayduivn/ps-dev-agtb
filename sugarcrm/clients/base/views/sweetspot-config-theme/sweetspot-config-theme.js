@@ -20,6 +20,9 @@
         'click .theme': 'checkTheme'
     },
 
+    // FIXME: Change this to 'UnsavedChanges' when SC-4167 gets merged.
+    plugins: ['Editable'],
+
     /**
      * @inheritDoc
      */
@@ -43,16 +46,30 @@
      */
     _renderHtml: function() {
         this._super('_renderHtml');
-        this.initTheme();
+        this._initTheme();
     },
 
-    initTheme: function() {
+    /**
+     * Initializer function that ensures the correct theme is checked when the
+     * view is rendered.
+     *
+     * @protected
+     */
+    _initTheme: function() {
         var prefs = app.user.getPreference('sweetspot');
         var theme = prefs && prefs.theme;
 
         this.checkTheme(null, theme);
     },
 
+    /**
+     * Click handler for the theme chooser radio buttons.
+     *
+     * @param {Event} evt The `click` event.
+     * @param {string} theme The theme to be checked.
+     * @return {undefined} Returns `undefined` if the theme being checked is the
+     *  currently selected theme.
+     */
     checkTheme: function(evt, theme) {
         var $newTheme;
         if (evt) {
@@ -76,13 +93,17 @@
     },
 
     /**
-     * Saves the selected theme into user preferences.
+     * Generates an object that the
+     * {@link View.Layouts.Base.SweetspotConfigLayout config layout} uses to
+     * save configurations to the user preferences.
+     *
+     * @return {undefined} Returns `undefined` if the default theme is selected.
      */
     generateConfig: function() {
-        var $checked = this.$('[checked=checked]');
-        var theme = $checked.val();
+        var theme = this._getSelectedTheme();
 
-        if (theme === 'default') {
+        // The default configuration should not be defined in user prefs.
+        if (!theme) {
             return;
         }
         var data = this._formatForUserPrefs(theme);
@@ -99,5 +120,42 @@
      */
     _formatForUserPrefs: function(theme) {
         return {theme: theme};
+    },
+
+    /**
+     * Returns the currently selected theme from this view.
+     *
+     * @private
+     * @return {string|undefined} The currently selected theme. Returns
+     *   `undefined` if the default theme is selected.
+     */
+    _getSelectedTheme: function() {
+        var $checked = this.$('[checked=checked]');
+        var theme = $checked.val();
+
+        // The default configuration should be empty in user prefs.
+        if (theme === 'default') {
+            return;
+        }
+
+        return theme;
+    },
+
+    /**
+     * Compare with the user preferences and return true if the checkbox
+     * contains changes.
+     *
+     * This method is called by {@link app.plugins.Editable}.
+     *
+     * @return {boolean} `true` if current collection contains unsaved changes,
+     *   `false` otherwise.
+     */
+    hasUnsavedChanges: function() {
+        var prefs = app.user.getPreference('sweetspot');
+        var oldConfig = prefs && prefs.theme;
+        var newConfig = this._getSelectedTheme();
+        var isChanged = !_.isEqual(oldConfig, newConfig);
+
+        return isChanged;
     }
 })

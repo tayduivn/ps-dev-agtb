@@ -5,7 +5,7 @@
           class="label label-module label-module-md label-{{module}}"
           rel="tooltip" data-title="{{module}}">{{label}}</span>{{/if}}
     <div class="result-text">
-        {{#if keyword}}<div class="result-keyword label">{{keyword}}</div>{{/if}}
+        {{#each keyword}}<div class="result-keyword label">{{this}}</div>{{/each}}
       <div class="result-name">{{name}}</div>
     </div>
       {{#if icon}}<i class="fa {{icon}} sweetspot-icon result-icon"></i>{{/if}}

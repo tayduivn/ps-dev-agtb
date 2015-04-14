@@ -97,6 +97,13 @@
 
         a {
           color: @sweetspotDarkText;
+          > div.result-text {
+            div.result-keyword.label {
+              background-color: rgba(255, 255, 255, 0.8);
+              color: #343433;
+              border: none;
+            }
+          }
         }
 
         .sweetspot-icon {
@@ -116,6 +123,21 @@
 
         &:hover {
           background-color: rgba(255, 255, 255, 0.07);
+        }
+      }
+
+      // custom scrollbar
+      &::-webkit-scrollbar {
+        width: 4px;
+
+        &-thumb {
+          &:vertical {
+            background-color: rgba(255, 255, 255, 0.6);
+            -webkit-border-radius: 4px;
+            &:hover {
+              background-color: rgba(255, 255, 255, 0.8);
+            }
+          }
         }
       }
     }
@@ -206,7 +228,7 @@
               div.result-keyword.label {
                 display: block;
                 float: right;
-                margin-top: 6px;
+                margin: 6px 0 0 3px;
               }
 
               div.result-name {
