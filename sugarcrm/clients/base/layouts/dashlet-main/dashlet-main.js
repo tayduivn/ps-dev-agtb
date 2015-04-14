@@ -176,68 +176,67 @@
         var metadata = this.model.get('metadata'),
             targetComponent = this.getCurrentComponent(metadata, target),
             sourceComponent = this.getCurrentComponent(metadata, source);
-        if (!this.layout.isSearchContext()) {
 
-            //Swap the metadata except 'width' property since it's previous size
-            var cloneMeta = app.utils.deepCopy(targetComponent.metadata);
-            _.each(targetComponent.metadata, function(value, key) {
-                if (key !== 'width') {
-                    delete targetComponent.metadata[key];
-                }
-            }, this);
-            _.each(sourceComponent.metadata, function(value, key) {
-                if (key !== 'width') {
-                    targetComponent.metadata[key] = value;
-                    delete sourceComponent.metadata[key];
-                }
-            }, this);
-            _.each(cloneMeta, function(value, key) {
-                if (key !== 'width') {
-                    sourceComponent.metadata[key] = value;
-                }
-            }, this);
-
-            this.model.set('metadata', app.utils.deepCopy(metadata), {silent: true});
-            this.model.trigger('change:layout');
-            if (this.model._previousMode === 'view') {
-                //Autosave for view mode
-                this.model.save(null, {
-                    //Show alerts for this request
-                    showAlerts: true
-                });
+        //Swap the metadata except 'width' property since it's previous size
+        var cloneMeta = app.utils.deepCopy(targetComponent.metadata);
+        _.each(targetComponent.metadata, function(value, key) {
+            if (key !== 'width') {
+                delete targetComponent.metadata[key];
             }
-            //Swap the view components
-            var targetDashlet = targetComponent.layout._components.splice(0);
-            var sourceDashlet = sourceComponent.layout._components.splice(0);
-
-            //switch the metadata
-            var targetMeta = app.utils.deepCopy(targetComponent.layout.meta);
-            var sourceMeta = app.utils.deepCopy(sourceComponent.layout.meta);
-            targetComponent.layout.meta = sourceMeta;
-            sourceComponent.layout.meta = targetMeta;
-
-            _.each(targetDashlet, function(comp) {
-                sourceComponent.layout._components.push(comp);
-                comp.layout = sourceComponent.layout;
-            }, this);
-            _.each(sourceDashlet, function(comp) {
-                targetComponent.layout._components.push(comp);
-                comp.layout = targetComponent.layout;
-            }, this);
-            //switch invisibility
-            var targetInvisible = targetComponent.layout._invisible;
-            var sourceInvisible = sourceComponent.layout._invisible;
-            if (targetInvisible) {
-                sourceComponent.layout.setInvisible();
-            } else {
-                sourceComponent.layout.unsetInvisible();
+        }, this);
+        _.each(sourceComponent.metadata, function(value, key) {
+            if (key !== 'width') {
+                targetComponent.metadata[key] = value;
+                delete sourceComponent.metadata[key];
             }
-            if (sourceInvisible) {
-                targetComponent.layout.setInvisible();
-            } else {
-                targetComponent.layout.unsetInvisible();
+        }, this);
+        _.each(cloneMeta, function(value, key) {
+            if (key !== 'width') {
+                sourceComponent.metadata[key] = value;
             }
+        }, this);
+
+        this.model.set('metadata', app.utils.deepCopy(metadata), {silent: true});
+        this.model.trigger('change:layout');
+        if (this.model._previousMode === 'view') {
+            //Autosave for view mode
+            this.model.save(null, {
+                //Show alerts for this request
+                showAlerts: true
+            });
         }
+        //Swap the view components
+        var targetDashlet = targetComponent.layout._components.splice(0);
+        var sourceDashlet = sourceComponent.layout._components.splice(0);
+
+        //switch the metadata
+        var targetMeta = app.utils.deepCopy(targetComponent.layout.meta);
+        var sourceMeta = app.utils.deepCopy(sourceComponent.layout.meta);
+        targetComponent.layout.meta = sourceMeta;
+        sourceComponent.layout.meta = targetMeta;
+
+        _.each(targetDashlet, function(comp) {
+            sourceComponent.layout._components.push(comp);
+            comp.layout = sourceComponent.layout;
+        }, this);
+        _.each(sourceDashlet, function(comp) {
+            targetComponent.layout._components.push(comp);
+            comp.layout = targetComponent.layout;
+        }, this);
+        //switch invisibility
+        var targetInvisible = targetComponent.layout._invisible;
+        var sourceInvisible = sourceComponent.layout._invisible;
+        if (targetInvisible) {
+            sourceComponent.layout.setInvisible();
+        } else {
+            sourceComponent.layout.unsetInvisible();
+        }
+        if (sourceInvisible) {
+            targetComponent.layout.setInvisible();
+        } else {
+            targetComponent.layout.unsetInvisible();
+        }
+
         //Swap the DOM
         var cloneEl = targetComponent.layout.$el.children(':first').get(0);
         targetComponent.layout.$el.append(sourceComponent.layout.$el.children(':not(.helper)').get(0));
