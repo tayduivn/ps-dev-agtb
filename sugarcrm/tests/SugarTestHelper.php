@@ -534,7 +534,7 @@ class SugarTestHelper
         // Restoring of system variables
         foreach (self::$initVars as $scope => $vars) {
             foreach ($vars as $name => $value) {
-                $GLOBALS[$scope][$name] = $value;
+                $GLOBALS[$name] = $value;
             }
         }
 
@@ -786,6 +786,7 @@ class SugarTestHelper
     {
         self::setUp('beanFiles');
         self::setUp('beanList');
+        self::setUp('bwcModules');
         self::$registeredVars['dictionary'] = true;
 
         global $dictionary;
