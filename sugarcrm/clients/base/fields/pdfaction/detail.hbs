@@ -29,17 +29,5 @@
                 </li>
             {{/each}}
         </ul>
-    {{else}}
-        <ul class="dropdown-inset">
-            <li>
-                {{#if templateCollection.dataFetched}}
-                    <a href="javascript:void(0);" class="disabled"><em>{{str "LBL_NO_PDF_TEMPLATE" this.module}}</em></a>
-                {{else}}
-                    <div class="alert-process">
-                      <strong>{{loading 'LBL_ALERT_TITLE_LOADING'}}</strong>
-                    </div>
-                {{/if}}
-            </li>
-        </ul>
     {{/if}}
 {{/if}}
