@@ -641,7 +641,9 @@ EOF;
             'SupportPortal',
             'LogView',
             "SugarpdfSettings", "saveftsmodules", 'SaveSequence',
-            'GlobalSearchSettings', 'Upgrade', 'repair', 'PasswordManager', 'LicenseSettings', 'Updater', 'Backups', 'Diagnostic',
+            'PasswordManager', 'LicenseSettings', 'Updater', 'Backups',
+            'Languages', 'Locale', 'Upgrade', 'repair', 'GlobalSearchSettings', 'Diagnostic',
+            'EnableWirelessModules', 'ConfigureTabs', 'UpgradeWizard', 'ConfigureShortcutBar',
         );
 
     /**
