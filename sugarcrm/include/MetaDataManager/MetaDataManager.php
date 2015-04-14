@@ -3637,9 +3637,18 @@ class MetaDataManager
             return array();
         }
 
-        $file = array_shift($files);
+        $filters = array();
+        foreach ($files as $file) {
+            $fileFilters = $this->readDropdownFilterFile($file['path']);
+            foreach ($fileFilters as $fieldName => $filter) {
+                // make sure first file wins and its metadata doesn't get overridden
+                if (!isset($filters[$fieldName])) {
+                    $filters[$fieldName] = $this->fixDropdownFilter($filter, $fieldName);
+                }
+            }
+        }
 
-        return $this->readDropdownFilterFile($file['path']);
+        return $filters;
     }
 
     /**
