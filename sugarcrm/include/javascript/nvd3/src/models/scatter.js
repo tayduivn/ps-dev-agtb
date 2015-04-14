@@ -8,9 +8,9 @@ nv.models.scatter = function() {
   var margin       = {top: 0, right: 0, bottom: 0, left: 0}
     , width        = 960
     , height       = 500
-    , color        = function(d, i) { return nv.utils.defaultColor()(d, d.series); } // chooses color
+    , color        = nv.utils.defaultColor() // chooses color
     , fill         = color
-    , classes      = function (d,i) { return 'nv-group nv-series-' + d.series; }
+    , classes      = function (d,i) { return 'nv-group nv-series-' + i; }
     , id           = Math.floor(Math.random() * 100000) //Create semi-unique ID incase user doesn't select one
     , x            = d3.scale.linear()
     , y            = d3.scale.linear()
@@ -361,9 +361,9 @@ nv.models.scatter = function() {
           .style('fill-opacity', 1e-6)
           .remove();
       groups
-          .attr('class', function(d,i) { return classes(d,d.series); })
-          .attr('fill', function(d,i) { return fill(d,d.series); })
-          .attr('stroke', function(d,i) { return fill(d, d.series); })
+          .attr('class', function(d,i) { return this.getAttribute('class') || classes(d,d.series); })
+          .attr('fill', function(d,i) { return this.getAttribute('fill') || fill(d,d.series); })
+          .attr('stroke', function(d,i) { return this.getAttribute('stroke') || fill(d, d.series); })
           .classed('hover', function(d) { return d.hover; });
       d3.transition(groups)
           .style('stroke-opacity', 1)

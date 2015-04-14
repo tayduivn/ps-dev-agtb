@@ -110,9 +110,7 @@ nv.utils.getColor = function (color) {
 // Default color chooser uses the index of an object as before.
 nv.utils.defaultColor = function () {
     var colors = d3.scale.category20().range();
-    return function (d, i) {
-      return d.color || colors[i % colors.length];
-    };
+    return function (d, i) { return d.color || colors[i % colors.length]; };
 };
 
 
@@ -321,20 +319,6 @@ nv.utils.dropShadow = function (id, defs, options) {
 //   fill="yellow" filter="url(#f1)" />
 // </svg>
 
-nv.utils.stringSetLengths = function (_data, _container, _format) {
-  var lengths = [];
-  _container.append('g').attr('class', 'tmp-text-strings');
-  var calcContainers = _container.select('.tmp-text-strings').selectAll('text')
-      .data(_data).enter()
-        .append('text')
-        .text(_format);
-  calcContainers
-    .each(function (d,i) {
-      lengths.push(this.getBBox().width);
-    });
-  _container.select('.tmp-text-strings').remove();
-  return lengths;
-};
 
 nv.utils.maxStringSetLength = function (_data, _container, _format) {
   var maxLength = 0;
@@ -352,29 +336,18 @@ nv.utils.maxStringSetLength = function (_data, _container, _format) {
 };
 
 nv.utils.getTextContrast = function(c, i, callback) {
-  var back = c,
-      backLab = d3.lab(back),
-      backLumen = backLab.l,
-      textLumen = backLumen > 50 ?
-        backLab.darker(4 + (backLumen - 75) / 25).l : // (50..100)[1 to 3.5]
-        backLab.brighter(4 + (25 - backLumen) / 25).l, // (0..50)[3.5..1]
-      textLab = d3.lab(textLumen, 0, 0),
-      text = textLab.toString();
-  if (callback) {
-    callback(backLab, textLab);
-  }
-  return text;
-};
+    var back = c,
+        backLab = d3.lab(back),
+        backLumen = backLab.l,
+        textLumen = backLumen > 50 ?
+          backLab.darker(4 + (backLumen - 75) / 25).l : // (50..100)[1 to 3.5]
+          backLab.brighter(4 + (25 - backLumen) / 25).l, // (0..50)[3.5..1]
+        textLab = d3.lab(textLumen, 0, 0),
+        text = textLab.toString();
 
-nv.utils.isRTLChar = function(c) {
-  var rtlChars_ = '\u0591-\u07FF\uFB1D-\uFDFF\uFE70-\uFEFC',
-      rtlCharReg_ = new RegExp('[' + rtlChars_ + ']');
-  return rtlCharReg_.test(c);
-};
+    if (callback) {
+      callback(backLab, textLab);
+    }
 
-nv.utils.polarToCartesian = function(centerX, centerY, radius, angleInDegrees) {
-  var angleInRadians = angleInDegrees * Math.PI / 180.0;
-  var x = centerX + radius * Math.cos(angleInRadians);
-  var y = centerY + radius * Math.sin(angleInRadians);
-  return [x, y];
+    return text;
 };

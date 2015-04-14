@@ -16,6 +16,31 @@
 ({
     plugins: ['Dashlet'],
 
+    /**
+     * Holds report data from the server's endpoint once we fetch it
+     */
+    reportData: undefined,
+
+    /**
+     * Holds a reference to the Chart field
+     */
+    chartField: undefined,
+
+    /**
+     * Holds all report ID's and titles
+     */
+    reportOptions: undefined,
+
+    /**
+     * Holds acls for all reports
+     */
+    reportAcls: undefined,
+
+    /**
+     * ID for the autorefresh timer
+     */
+    timerId: undefined,
+
     events: {
         'click a[name=editReport]': 'editSavedReport'
     },
@@ -23,13 +48,13 @@
     /**
      * {@inheritDocs}
      */
-    initDashlet: function(view) {
+    initDashlet: function (view) {
         // check if we're on the config screen
-        if (this.meta.config) {
+        if(this.meta.config) {
             this.meta.panels = this.dashletConfig.dashlet_config_panels;
             this.getAllSavedReports();
         } else {
-            var autoRefresh = this.settings.get('auto_refresh');
+            var autoRefresh = this.settings.get("auto_refresh");
             if (autoRefresh > 0) {
                 if (this.timerId) {
                     clearTimeout(this.timerId);
@@ -46,11 +71,11 @@
      * @param {Number} delay Number of milliseconds which the reload should be delayed for
      * @private
      */
-    _scheduleReload: function(delay) {
-        this.timerId = setTimeout(_.bind(function() {
+    _scheduleReload: function (delay) {
+        this.timerId = setTimeout(_.bind(function () {
             this.context.resetLoadFlag();
             this.loadData({
-                success: function() {
+                success: function () {
                     this._scheduleReload(delay);
                 }
             });
@@ -58,13 +83,11 @@
     },
 
     /**
-     * @inheritdoc
+     * {@inheritDocs}
      */
     initialize: function(options) {
-        // Holds report data from the server's endpoint once we fetch it
         this.reportData = new Backbone.Model();
-        this.reportOptions = [];
-        this._super('initialize', [options]);
+        app.view.View.prototype.initialize.call(this, options);
     },
 
     /**
@@ -128,30 +151,20 @@
     },
 
     /**
-     * @inheritdoc
+     * {@inheritDocs}
      */
     bindDataChange: function() {
-        if (this.meta.config) {
+        if(this.meta.config) {
             this.settings.on('change:saved_report_id', function(model) {
-                var reportId = model.get('saved_report_id');
+                var reportTitle = this.reportOptions[model.get('saved_report_id')];
 
-                if (_.isEmpty(reportId)) {
-                    return;
-                }
+                this.settings.set({label: reportTitle});
 
-                this.getSavedReportById(reportId, {
-                    success: _.bind(function(data) {
-                        this.setChartParams(data, true);
-                    }, this)
-                });
-
+                // set the title of the dashlet to the report title
+                $('[name="label"]').val(reportTitle);
+                
                 // show or hide 'Edit Selected Report' link
-                this.updateEditLink(reportId);
-            }, this);
-
-            this.settings.on('change:chart_type', function(model) {
-                // toggle display of chart display option controls based on chart type
-                this._toggleChartFields();
+                this.updateEditLink(model.get('saved_report_id'));
             }, this);
         }
     },
@@ -160,166 +173,21 @@
      * Check acls to show/hide 'Edit Selected Report' link
      */
     updateEditLink: function(reportId) {
-        var acls = this.reportAcls[reportId || this.settings.get('saved_report_id')],
-            showEditLink = !acls || acls['edit'] !== 'no';
-        this.$('[name="editReport"]').toggle(showEditLink);
+        var acls = this.reportAcls[reportId || this.settings.get('saved_report_id')];
+        if (acls && acls['edit'] === 'no') {
+            $('[name="editReport"]').hide();
+        }
+        else {
+            $('[name="editReport"]').show();
+        }
     },
 
     /**
-     * {@inheritdoc}
+     * {@inheritDocs}
      */
     loadData: function(options) {
         options = options || {};
-        if (!_.isEmpty(this.settings.get('saved_report_id'))) {
-            _.extend(options, {
-                success: _.bind(function(data) {
-                    this.setChartParams(data, false);
-                }, this)
-            });
-            this.getSavedReportById(this.settings.get('saved_report_id'), options);
-        }
-    },
-
-    getDefaultSettings: function() {
-        // By default, settings only has: label, type, config, module
-        // Module is normally null so we want to rehit that
-        var settings = _.clone(this.settings.attributes),
-            defaults = {
-                module:          this.layout.module,
-                auto_refresh:    0,
-                show_title:      false,
-                show_y_label:    false,
-                y_axis_label:    '',
-                show_x_label:    false,
-                x_axis_label:    '',
-                allowScroll:     true,
-                showValues:      0,
-                hideEmptyGroups: true,
-                wrapTicks:       true,
-                staggerTicks:    true,
-                rotateTicks:     true
-            };
-        return _.defaults(settings, defaults);
-    },
-
-    /**
-     * Process the chart data from the server
-     *
-     * @param {Object|String} serverData The Report Data from the server
-     * @param {Boolean} [update] Is this an update to the report?
-     */
-    setChartParams: function(serverData, update) {
-        // only called by bindDataChange when the report id is changed in config panel
-        if (_.isUndefined(serverData.reportData)) {
-            if (!this.meta.config && this.chartField) {
-                this.chartField.displayNoData(true);
-            }
-            return;
-        }
-        update = _.isUndefined(update) ? false : update;
-
-        var data = serverData.reportData,
-            properties = serverData.chartData.properties[0],
-            params = this.getDefaultSettings(),
-            barType = this._getBarType(properties.type),
-            defaults = {
-                label: data.name,
-                chart_type: properties.type,
-                report_title: properties.title,
-                show_legend: properties.legend === 'on' ? true : false,
-                stacked: barType === 'stacked' || barType === 'basic' ? true : false,
-                x_axis_label: this._getXaxisLabel(data),
-                y_axis_label: this._getYaxisLabel(data)
-            };
-
-        // override settings when new report is selected
-        if (update) {
-            _.extend(params, defaults);
-        } else {
-            _.defaults(params, defaults);
-        }
-
-        // persist the chart settings for use by SugarCharts
-        this.reportData.set({
-            rawChartParams: params
-        });
-
-        // update the settings model for use by chart field
-        this.settings.set(params);
-
-        // toggle display of chart display option controls based on chart type
-        this._toggleChartFields();
-
-        // set the title of the dashlet to the report title
-        this.$('[name="label"]').val(this.settings.get('label'));
-    },
-
-    /**
-     * Returns the x-axis label based on report data
-     * @return {String}
-     */
-    _getXaxisLabel: function(data) {
-        var label = '';
-        if (data && data.group_defs) {
-            label = _.first(data.group_defs).label;
-        }
-        return label;
-    },
-
-    /**
-     * Returns the y-axis label based on report data
-     * @return {String}
-     */
-    _getYaxisLabel: function(data) {
-        var label = '';
-        if (data && data.summary_columns) {
-            _.each(data.summary_columns, function(column) {
-                if (!_.isUndefined(column.group_function)) {
-                    label = column.label;
-                }
-            });
-        }
-        return label;
-    },
-
-    /**
-     * Returns the barType chart property based on the type of chart
-     * @return {String}
-     */
-    _getBarType: function(type) {
-        var barType;
-
-        switch (type) {
-            case 'pie chart':
-            case 'line chart':
-            case 'gauge chart':
-            case 'funnel chart 3D':
-                barType = 'disabled';
-                break;
-
-            case 'stacked group by chart':
-            case 'horizontal group by chart':
-                barType = 'stacked';
-                break;
-
-            case 'group by chart':
-                barType = 'grouped';
-                break;
-
-            case 'vertical bar chart':
-            case 'vertical':
-            case 'horizontal bar chart':
-            case 'horizontal':
-            case 'bar chart':
-                barType = 'basic';
-                break;
-
-            default:
-                barType = 'disabled';
-                break;
-        }
-
-        return barType;
+        this.getSavedReportById(this.settings.get('saved_report_id'), options);
     },
 
     /**
@@ -356,12 +224,14 @@
             return field.name == 'saved_report_id';
         });
 
-        if (reportsField) {
+        if(reportsField) {
             // set the initial saved_report_id to the first report in the list
             // if there are reports to show and we have not already saved this
             // dashlet yet with a report ID
-            if (reports && (!this.settings.has('saved_report_id') || _.isEmpty(this.settings.get('saved_report_id')))) {
-                this.settings.set('saved_report_id', _.first(reports).id);
+            if(reports && !this.settings.has('saved_report_id')) {
+                this.settings.set({
+                    saved_report_id: _.first(reports).id
+                });
             }
 
             // set field options and render
@@ -380,173 +250,45 @@
      */
     getSavedReportById: function(reportId, options) {
         var dt = this.layout.getComponent('dashlet-toolbar');
-        if (dt) {
+        if(dt) {
             // manually set the icon class to spiny
-            this.$('[data-action=loading]').removeClass(dt.cssIconDefault).addClass(dt.cssIconRefresh);
+            this.$("[data-action=loading]").removeClass(dt.cssIconDefault).addClass(dt.cssIconRefresh);
         }
 
         app.api.call('create', app.api.buildURL('Reports/chart/' + reportId), null, {
             success: _.bind(function(serverData) {
+                // set reportData's rawChartData to the chartData from the server
+                // this will trigger chart.js' change:rawChartData and the chart will update
+                this.reportData.set({rawChartData: serverData.chartData});
+
                 if (options && options.success) {
                     options.success.apply(this, arguments);
                 }
-
-                // set reportData's rawChartData to the chartData from the server
-                // this will trigger chart.js' change:rawChartData and the chart will update
-                this.reportData.set({
-                    rawReportData: serverData.reportData,
-                    rawChartData: serverData.chartData
-                });
             }, this),
             complete: options ? options.complete : null
         });
     },
 
     /**
-     * @inheritdoc
+     * {@inheritDocs}
      */
     _render: function() {
         // if we're in config, or if the chartField doesn't exist yet... render
         // otherwise do not render again as this destroys and re-draws the chart and looks awful
-        if (this.meta.config || _.isUndefined(this.chartField)) {
-            this._super('_render');
+        if(this.meta.config || _.isUndefined(this.chartField)) {
+            app.view.View.prototype._render.call(this);
         }
     },
 
     /**
-     * Handle the display of the chart display option controls based on chart type
-     *
-     * @private
-     */
-    _toggleChartFields: function() {
-        if (this.meta.config) {
-            var xOptionsFieldset = this.getField('x_label_options'),
-                tickDisplayMethods = this.getField('tickDisplayMethods'),
-                yOptionsFieldset = this.getField('y_label_options'),
-                showValuesField = this.getField('showValues'),
-                groupDisplayOptions = this.getField('groupDisplayOptions'),
-                stackedField = this.getField('stacked'),
-                showDimensionOptions = false,
-                showBarOptions = false,
-                showTickOptions = false,
-                showStacked = false;
-
-            switch (this.settings.get('chart_type')) {
-                case 'pie chart':
-                case 'gauge chart':
-                case 'funnel chart 3D':
-                    showDimensionOptions = false;
-                    showBarOptions = false;
-                    break;
-
-                case 'line chart':
-                    showDimensionOptions = true;
-                    showBarOptions = false;
-                    break;
-
-                case 'stacked group by chart':
-                case 'horizontal group by chart':
-                case 'group by chart':
-                    showDimensionOptions = true;
-                    showBarOptions = true;
-                    showStacked = true;
-                    break;
-
-                case 'vertical bar chart':
-                case 'vertical':
-                case 'horizontal bar chart':
-                case 'horizontal':
-                case 'bar chart':
-                    showDimensionOptions = true;
-                    showBarOptions = true;
-                    showStacked = false;
-                    break;
-
-                default:
-                    showDimensionOptions = false;
-                    showBarOptions = false;
-            }
-
-            if (showDimensionOptions) {
-                switch (this.settings.get('chart_type')) {
-                    case 'horizontal group by chart':
-                    case 'horizontal bar chart':
-                    case 'horizontal':
-                    case 'line chart':
-                        showTickOptions = false;
-                        break;
-
-                    default:
-                        showTickOptions = true;
-                }
-            }
-
-            if (xOptionsFieldset) {
-                xOptionsFieldset.$el.closest('.record-cell').toggleClass('hide', !showDimensionOptions);
-            }
-            if (tickDisplayMethods) {
-                tickDisplayMethods.$el.closest('.record-cell').toggleClass('hide', !showDimensionOptions || !showTickOptions);
-            }
-
-            if (yOptionsFieldset) {
-                yOptionsFieldset.$el.closest('.record-cell').toggleClass('hide', !showDimensionOptions);
-            }
-
-            if (showValuesField) {
-                showValuesField.$el.closest('.record-cell').toggleClass('hide', !showBarOptions);
-            }
-            if (groupDisplayOptions) {
-                groupDisplayOptions.$el.closest('.record-cell').toggleClass('hide', !showBarOptions);
-                if (stackedField) {
-                    stackedField.$el.toggleClass('hide', !showStacked);
-                }
-            }
-        }
-    },
-
-    /**
-     * Handle the conditional display of settings input field based on checkbox toggle state
-     *
-     * @param {Object} toggle a checkbox control that determines display state of field
-     * @param {Object} dependent the input field that holds the setting value
-     * @private
-     */
-    _toggleDepedent: function(toggle, dependent) {
-        var inputField = dependent.$el.find(dependent.fieldTag),
-            enabled = this.settings.get(toggle.name),
-            value = enabled ? this.settings.get(dependent.name) : '';
-        inputField
-            .prop('disabled', !enabled)
-            .val(value);
-    },
-
-    /**
-     * @inheritdoc
+     * {@inheritDocs}
      * When rendering fields, get a reference to the chart field if we don't have one yet
      */
     _renderField: function(field) {
-        this._super('_renderField', [field]);
-
-        // Manage display state of fieldsets with toggle
-        if (this.meta.config) {
-
-            if (!_.isUndefined(field.def.toggle)) {
-                var toggle = this.getField(field.def.toggle),
-                    dependent = this.getField(field.def.dependent);
-
-                this._toggleDepedent(toggle, dependent);
-
-                this.settings.on('change:' + toggle.name, _.bind(function(event) {
-                    this._toggleDepedent(toggle, dependent);
-                }, this));
-                this.settings.on('change:' + dependent.name, _.bind(function(event) {
-                    this._toggleDepedent(toggle, dependent);
-                }, this));
-            }
-        }
+        app.view.View.prototype._renderField.call(this, field);
 
         // hang on to a reference to the chart field
-        if (_.isUndefined(this.chartField) && field.name === 'chart') {
+        if(_.isUndefined(this.chartField) && field.name == 'chart') {
             this.chartField = field;
         }
     }

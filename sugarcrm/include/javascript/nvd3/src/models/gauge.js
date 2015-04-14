@@ -16,10 +16,9 @@ nv.models.gauge = function() {
     , labelFormat = d3.format(',g')
     , valueFormat = d3.format(',.f')
     , showLabels = true
-    , showPointer = true
-    , color = function (d, i) { return nv.utils.defaultColor()(d, d.series); }
+    , color = nv.utils.defaultColor()
     , fill = color
-    , classes = function (d,i) { return 'nv-arc-path nv-series-' + d.series; }
+    , classes = function (d,i) { return 'nv-group nv-series-' + i; }
     , dispatch = d3.dispatch('chartClick', 'elementClick', 'elementDblClick', 'elementMouseover', 'elementMouseout', 'elementMousemove')
   ;
 
@@ -58,7 +57,6 @@ nv.models.gauge = function() {
           , arcData = data.map( function(d,i){
               var rtn = {
                   key:d.key
-                , series:d.series
                 , y0:previousTick
                 , y1:d.y
                 , color:d.color
@@ -119,10 +117,16 @@ nv.models.gauge = function() {
         var ag = g.select('.nv-arc-group')
             .attr('transform', centerTx);
 
+        ag.selectAll('.nv-arc-path').transition().duration(10)
+            .attr('fill', function(d,i){ return fill(d,i); } )
+            .attr('d', arc);
+
         ag.selectAll('.nv-arc-path')
             .data(arcData)
           .enter().append('path')
-            .attr('class', 'nv-arc-path')
+            //.attr('class', 'nv-arc-path')
+            .attr('class', function(d,i) { return this.getAttribute('class') || classes(d,i); })
+            .attr('fill', function(d,i){ return fill(d,i); } )
             .attr('stroke', '#ffffff')
             .attr('stroke-width', 3)
             .attr('d', arc)
@@ -170,11 +174,6 @@ nv.models.gauge = function() {
               d3.event.stopPropagation();
             });
 
-        ag.selectAll('.nv-arc-path').transition().duration(10)
-            .attr('class', classes)
-            .attr('fill', fill)
-            .attr('d', arc);
-
         //------------------------------------------------------------
         // Gauge labels
         var lg = g.select('.nv-labels')
@@ -196,74 +195,68 @@ nv.models.gauge = function() {
             .style('text-anchor', 'middle')
             .style('font-size', prop(0.6)+'em');
 
-        if (showPointer) {
-          //------------------------------------------------------------
-          // Gauge pointer
-          var pointerData = [
-                [ Math.round(prop(pointerWidth)/2),    0 ],
-                [ 0, -Math.round(prop(pointerHeadLength))],
-                [ -(Math.round(prop(pointerWidth)/2)), 0 ],
-                [ 0, Math.round(prop(pointerWidth)) ],
-                [ Math.round(prop(pointerWidth)/2),    0 ]
-              ];
+        //------------------------------------------------------------
+        // Gauge pointer
+        var pointerData = [
+              [ Math.round(prop(pointerWidth)/2),    0 ],
+              [ 0, -Math.round(prop(pointerHeadLength))],
+              [ -(Math.round(prop(pointerWidth)/2)), 0 ],
+              [ 0, Math.round(prop(pointerWidth)) ],
+              [ Math.round(prop(pointerWidth)/2),    0 ]
+            ];
 
-          var pg = g.select('.nv-pointer')
-              .attr('transform', centerTx);
+        var pg = g.select('.nv-pointer')
+            .attr('transform', centerTx);
 
-          pg.selectAll('path').transition().duration(120)
-            .attr('d', d3.svg.line().interpolate('monotone'));
+        pg.selectAll('path').transition().duration(120)
+          .attr('d', d3.svg.line().interpolate('monotone'));
 
-          var pointer = pg.selectAll('path')
-              .data([pointerData])
-            .enter().append('path')
-              .attr('d', d3.svg.line().interpolate('monotone')/*function(d) { return pointerLine(d) +'Z';}*/ )
-              .attr('transform', 'rotate('+ minAngle +')');
+        var pointer = pg.selectAll('path')
+            .data([pointerData])
+          .enter().append('path')
+            .attr('d', d3.svg.line().interpolate('monotone')/*function(d) { return pointerLine(d) +'Z';}*/ )
+            .attr('transform', 'rotate('+ minAngle +')');
 
-          setGaugePointer(pointerValue);
+        setGaugePointer(pointerValue);
 
-          //------------------------------------------------------------
-          // Odometer readout
-          g.selectAll('.nv-odom').remove();
+        //------------------------------------------------------------
+        // Odometer readout
+        g.selectAll('.nv-odom').remove();
 
-          g.select('.nv-odomText').transition().duration(0)
-              .style('font-size', prop(0.7)+'em');
+        g.select('.nv-odomText').transition().duration(0)
+            .style('font-size', prop(0.7)+'em');
 
-          g.select('.nv-odometer')
-            .append('text')
-              .attr('class', 'nv-odom nv-odomText')
-              .attr('x', 0)
-              .attr('y', 0 )
-              .attr('text-anchor', 'middle')
-              .text( valueFormat(pointerValue) )
-              .style('stroke', 'none')
-              .style('fill', 'black')
-              .style('font-size', prop(0.7)+'em')
-            ;
-
-          var bbox = g.select('.nv-odomText').node().getBBox();
-
-          g.select('.nv-odometer')
-            .insert('path','.nv-odomText')
-            .attr('class', 'nv-odom nv-odomBox')
-            .attr("d",
-              nv.utils.roundedRectangle(
-                -bbox.width/2, -bbox.height+prop(1.5), bbox.width+prop(4), bbox.height+prop(2), prop(2)
-              )
-            )
-            .attr('fill', '#eeffff')
-            .attr('stroke','black')
-            .attr('stroke-width','2px')
-            .attr('opacity',0.8)
+        g.select('.nv-odometer')
+          .append('text')
+            .attr('class', 'nv-odom nv-odomText')
+            .attr('x', 0)
+            .attr('y', 0 )
+            .attr('text-anchor', 'middle')
+            .text( valueFormat(pointerValue) )
+            .style('stroke', 'none')
+            .style('fill', 'black')
+            .style('font-size', prop(0.7)+'em')
           ;
 
-          g.select('.nv-odometer')
-              .attr('transform', 'translate('+ radius +','+ ( margin.top + prop(70) + bbox.width ) +')');
+        var bbox = g.select('.nv-odomText').node().getBBox();
 
-        } else {
-          g.select('.nv-odometer').select('.nv-odomText').remove();
-          g.select('.nv-odometer').select('.nv-odomBox').remove();
-          g.select('.nv-pointer').selectAll('path').remove();
-        }
+        g.select('.nv-odometer')
+          .insert('path','.nv-odomText')
+          .attr('class', 'nv-odom nv-odomBox')
+          .attr("d",
+            nv.utils.roundedRectangle(
+              -bbox.width/2, -bbox.height+prop(1.5), bbox.width+prop(4), bbox.height+prop(2), prop(2)
+            )
+          )
+          .attr('fill', '#eeffff')
+          .attr('stroke','black')
+          .attr('stroke-width','2px')
+          .attr('opacity',0.8)
+        ;
+
+        g.select('.nv-odometer')
+            .attr('transform', 'translate('+ radius +','+ ( margin.top + prop(70) + bbox.width ) +')');
+
 
         //------------------------------------------------------------
         // private functions
@@ -448,11 +441,7 @@ nv.models.gauge = function() {
   chart.isRendered = function(_) {
     return (svg !== undefined);
   };
-  chart.showPointer = function(_) {
-    if (!arguments.length) return showPointer;
-    showPointer = _;
-    return chart;
-  };
+
 
   //============================================================
 

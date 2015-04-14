@@ -1,11 +1,3 @@
-##SugarCRM License
-
-Modifications made by SugarCRM Inc. © 2014. These modifications are subject
-to the same terms as the Apache License, Version 2.0.
-For information on the full license terms or related notices, go to
-http://www.sugarcrm.com/third-party-software.
-
-
 
 ##nvd3.js License
 

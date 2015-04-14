@@ -5,22 +5,22 @@ nv.models.treemap = function() {
   // Public Variables with Default Settings
   //------------------------------------------------------------
 
-  var margin = {top: 20, right: 0, bottom: 0, left: 0},
-      width = 0,
-      height = 0,
-      x, //can be accessed via chart.xScale()
-      y, //can be accessed via chart.yScale()
-      id = Math.floor(Math.random() * 10000), //Create semi-unique ID incase user doesn't select one
-      getSize = function(d) { return d.size; }, // accessor to get the size value from a data point
-      groupBy = function(d) { return d.name; }, // accessor to get the name value from a data point
-      clipEdge = true, // if true, masks lines within x and y scale
-      groups = [],
-      leafClick = function() { return false; },
-      color = function(d, i) { return nv.utils.defaultColor()(d, i); },
-      fill = color,
-      classes = function(d, i) { return 'nv-child'; },
-      direction = 'ltr',
-      dispatch = d3.dispatch('chartClick', 'elementClick', 'elementDblClick', 'elementMouseover', 'elementMouseout', 'elementMousemove');
+  var margin = {top: 20, right: 0, bottom: 0, left: 0}
+    , width = 0
+    , height = 0
+    , x //can be accessed via chart.xScale()
+    , y //can be accessed via chart.yScale()
+    , id = Math.floor(Math.random() * 10000) //Create semi-unique ID incase user doesn't select one
+    , getSize = function(d) { return d.size; } // accessor to get the size value from a data point
+    , groupBy = function(d) { return d.name; } // accessor to get the name value from a data point
+    , clipEdge = true // if true, masks lines within x and y scale
+    , groups = []
+    , leafClick = function () { return false; }
+    , color = nv.utils.defaultColor()
+    , fill = color
+    , classes = function (d,i) { return 'nv-child'; }
+    , dispatch = d3.dispatch('chartClick', 'elementClick', 'elementDblClick', 'elementMouseover', 'elementMouseout', 'elementMousemove')
+    ;
 
   //============================================================
 
@@ -29,9 +29,8 @@ nv.models.treemap = function() {
   // Private Variables
   //------------------------------------------------------------
 
-  //used to store previous scales
-  var x0,
-      y0;
+  var x0, y0 //used to store previous scales
+      ;
 
   //============================================================
 
@@ -45,7 +44,8 @@ nv.models.treemap = function() {
       //excludes leaves
       function reduceGroups(d) {
         var i, l;
-        if (d.children && groupBy(d) && groups.indexOf(groupBy(d)) === -1) {
+        if ( d.children && groupBy(d) && groups.indexOf(groupBy(d)) === -1 )
+        {
           groups.push(groupBy(d));
           l = d.children.length;
           for (i = 0; i < l; i += 1) {
@@ -55,10 +55,11 @@ nv.models.treemap = function() {
       }
       reduceGroups(data);
 
-      var availableWidth = width - margin.left - margin.right,
-          availableHeight = height - margin.top - margin.bottom,
-          container = d3.select(this),
-          transitioning;
+      var availableWidth = width - margin.left - margin.right
+        , availableHeight = height - margin.top - margin.bottom
+        , container = d3.select(this)
+        , transitioning
+        ;
 
       x = d3.scale.linear()
             .domain([0, data.dx])
@@ -84,9 +85,9 @@ nv.models.treemap = function() {
       var g = wrap.select('g');
 
       //set up the gradient constructor function
-      chart.gradient = function(d, i, p) {
-        var iColor = (d.parent.colorIndex || groups.indexOf(groupBy(d.parent)) || i);
-        return nv.utils.colorLinearGradient(d, id + '-' + i, p, color(d, iColor, groups.length), wrap.select('defs'));
+      chart.gradient = function(d,i,p) {
+        var iColor = (d.parent.colorIndex||groups.indexOf(groupBy(d.parent))||i);
+        return nv.utils.colorLinearGradient( d, id +'-'+ i, p, color(d, iColor, groups.length), wrap.select('defs') );
       };
 
       //wrap.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
@@ -114,7 +115,7 @@ nv.models.treemap = function() {
         .attr('height', margin.top);
 
       grandparent.append('text')
-        .attr('x', direction === 'rtl' ? width - 6 : 6)
+        .attr('x', 6)
         .attr('y', 6)
         .attr('dy', '.75em');
 
@@ -147,7 +148,7 @@ nv.models.treemap = function() {
         g.filter(function(d) { return !(d.children); })
           .on('click', leafClick);
 
-        g.on('mouseover', function(d, i) {
+        g.on('mouseover', function(d,i){
             d3.select(this).classed('hover', true);
             dispatch.elementMouseover({
               point: d,
@@ -156,11 +157,11 @@ nv.models.treemap = function() {
               id: id
             });
           })
-          .on('mouseout', function(d, i) {
+          .on('mouseout', function(d,i){
             d3.select(this).classed('hover', false);
             dispatch.elementMouseout();
           })
-          .on('mousemove', function(d, i) {
+          .on('mousemove', function(d,i){
             dispatch.elementMousemove({
               point: d,
               pointIndex: i,
@@ -173,13 +174,13 @@ nv.models.treemap = function() {
             return d.children || [d];
           }).enter().append('rect')
               .attr('class', classes)
-              .attr('fill', function(d, i) {
-                var iColor = (d.parent.colorIndex || groups.indexOf(groupBy(d.parent)) || i);
+              .attr('fill', function(d,i){
+                var iColor = (d.parent.colorIndex||groups.indexOf(groupBy(d.parent))||i);
                 return this.getAttribute('fill') || fill(d, iColor, groups.length); })
               .call(rect);
 
         child_rects
-          .on('mouseover', function(d, i) {
+          .on('mouseover', function(d,i){
             d3.select(this).classed('hover', true);
             dispatch.elementMouseover({
                 label: groupBy(d),
@@ -190,7 +191,7 @@ nv.models.treemap = function() {
                 id: id
             });
           })
-          .on('mouseout', function(d, i) {
+          .on('mouseout', function(d,i){
             d3.select(this).classed('hover', false);
             dispatch.elementMouseout();
           });
@@ -240,7 +241,7 @@ nv.models.treemap = function() {
         }
 
         function layout(d) {
-          if (d.children) {
+          if(d.children) {
             treemap.nodes({children: d.children});
             d.children.forEach(function(c) {
               c.x = d.x + c.x * d.dx;
@@ -254,10 +255,7 @@ nv.models.treemap = function() {
         }
 
         function text(t) {
-          t.attr('x', function(d) {
-              var xpos = direction === 'rtl' ? x(d.x + d.dx) - x(d.x) - 6 : 6;
-              return x(d.x) + xpos;
-            })
+          t.attr('x', function(d) { return x(d.x) + 6; })
             .attr('y', function(d) { return y(d.y) + 6; });
         }
 
@@ -269,7 +267,7 @@ nv.models.treemap = function() {
         }
 
         function name(d) {
-          if (d.parent) {
+          if(d.parent) {
             return name(d.parent) + ' / ' + groupBy(d);
           }
           return groupBy(d);
@@ -395,14 +393,6 @@ nv.models.treemap = function() {
   chart.id = function(_) {
     if (!arguments.length) { return id; }
     id = _;
-    return chart;
-  };
-
-  chart.direction = function(_) {
-    if (!arguments.length) {
-      return direction;
-    }
-    direction = _;
     return chart;
   };
 
