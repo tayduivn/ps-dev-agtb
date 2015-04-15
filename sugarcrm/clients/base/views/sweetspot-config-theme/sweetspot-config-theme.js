@@ -16,10 +16,6 @@
 ({
     className: 'container-fluid',
 
-    events: {
-        'click .theme': 'checkTheme'
-    },
-
     // FIXME: Change this to 'UnsavedChanges' when SC-4167 gets merged.
     plugins: ['Editable'],
 
@@ -59,37 +55,7 @@
         var prefs = app.user.getPreference('sweetspot');
         var theme = prefs && prefs.theme;
 
-        this.checkTheme(null, theme);
-    },
-
-    /**
-     * Click handler for the theme chooser radio buttons.
-     *
-     * @param {Event} evt The `click` event.
-     * @param {string} theme The theme to be checked.
-     * @return {undefined} Returns `undefined` if the theme being checked is the
-     *  currently selected theme.
-     */
-    checkTheme: function(evt, theme) {
-        var $newTheme;
-        if (evt) {
-            var $label = this.$(evt.currentTarget);
-            $newTheme = $label.find('input');
-        } else {
-            var themeId = theme ? '#' + theme : '#default';
-            $newTheme = this.$(themeId);
-        }
-
-        // If it's already checked, exit.
-        if ($newTheme.is(':checked')) {
-            return;
-        }
-
-        // Clear checked state from radio inputs.
-        var $radios = this.$('[type=radio]');
-        $radios.removeAttr('checked');
-
-        $newTheme.attr('checked', true);
+        this.model.set('theme', theme);
     },
 
     /**
@@ -125,13 +91,12 @@
     /**
      * Returns the currently selected theme from this view.
      *
-     * @private
+     * @protected
      * @return {string|undefined} The currently selected theme. Returns
      *   `undefined` if the default theme is selected.
      */
     _getSelectedTheme: function() {
-        var $checked = this.$('[checked=checked]');
-        var theme = $checked.val();
+        var theme = this.model.get('theme');
 
         // The default configuration should be empty in user prefs.
         if (theme === 'default') {

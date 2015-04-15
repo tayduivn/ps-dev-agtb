@@ -11,15 +11,8 @@
  */
 --}}
 <h1>{{str 'LBL_SWEETSPOT_THEME'}}</h1>
-<div class="well sweetspot-themes">
-    <form class="form-horizontal">
-        {{#each meta.themes}}
-        <div class="radio">
-            <label class="theme">
-                <input type="radio" id="{{value}}" name="theme-chooser" value="{{value}}">
-                <span>{{str label}}</span>
-            </label>
-        </div>
-        {{/each}}
-    </form>
+<div>
+    {{#each meta.fields}}
+    {{field ../this model=../model template=../action}}
+    {{/each}}
 </div>

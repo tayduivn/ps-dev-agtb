@@ -1862,6 +1862,12 @@ $app_list_strings = array (
       'active' => 'Active',
   ),
 
+  'sweetspot_theme_options' => array(
+      'default' => 'Default',
+      'light' => 'Light',
+      'dark' => 'Dark',
+  ),
+
   'lead_conv_activity_opt' =>
   array(
         'copy' => 'Copy',
@@ -2903,9 +2909,7 @@ $app_strings = array (
     'LBL_SWEETSPOT_ACTIONS_SECTION' => 'Actions',
     'LBL_SWEETSPOT_RECORDS_SECTION' => 'Records',
     'LBL_SWEETSPOT_THEME' => 'Theme',
-    'LBL_SWEETSPOT_THEME_DEFAULT' => 'Default',
-    'LBL_SWEETSPOT_THEME_LIGHT' => 'Light',
-    'LBL_SWEETSPOT_THEME_DARK' => 'Dark',
+    'LBL_SWEETSPOT_THEME_SELECT' => 'Select theme',
 
     'LBL_RELATED' => 'Related',
     'LBL_RELATED_INFORMATION' => 'Related Information',
