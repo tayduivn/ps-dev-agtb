@@ -745,7 +745,8 @@ class PMSECrmDataWrapper implements PMSEObservable
                 $outputType = 1;
                 break;
             case 'addRelatedRecord':
-                $output = $this->addRelatedRecord($filter);
+                $output = $this->retrieveFields($filter, $moduleApi, 'AC');
+                //$output = $this->addRelatedRecord($filter);
                 $outputType = 1;
                 break;
             case 'allRelated':
@@ -1608,8 +1609,13 @@ class PMSECrmDataWrapper implements PMSEObservable
         $moduleBean = $this->getModuleFilter($newModuleFilter);
         $fieldsData = isset($moduleBean->field_defs) ? $moduleBean->field_defs : array();
         foreach ($fieldsData as $field) {
-            $retrieveId = isset($additionalArgs['retrieveId']) && !empty($additionalArgs['retrieveId']) && $field['name'] == 'id' ? $additionalArgs['retrieveId'] : false;
-            if (isset($field['vname']) && (PMSEEngineUtils::isValidField($field, $type) || $retrieveId)) {
+            //$retrieveId = isset($additionalArgs['retrieveId']) && !empty($additionalArgs['retrieveId']) && $field['name'] == 'id' ? $additionalArgs['retrieveId'] : false;
+            if (isset($field['vname']) && (PMSEEngineUtils::isValidField($field, $type))) {
+                if ($type == 'AC' && $field['name'] == 'assigned_user_id') {
+                    $field['method'] = 'assignedUsers';
+                    $field['type'] = 'enum';
+                    $field['vname'] = 'LBL_ASSIGNED_TO';
+                }
                 $tmpField = array();
                 $tmpField['value'] = $field['name'];
                 $tmpField['text'] = str_replace(':', '', translate($field['vname'], $newModuleFilter));
@@ -1623,12 +1629,16 @@ class PMSECrmDataWrapper implements PMSEObservable
                 $tmpField['optionItem'] = 'none';
                 if ($field['type'] == 'enum' || $field['type'] == 'radioenum') {
                     if (!isset($field['options']) || !isset($app_list_strings[$field['options']])) {
-                        $tmpField['optionItem'] = $moduleApi->getEnumValues(
-                            array(),
-                            array(
-                                "module" => $newModuleFilter,
-                                "field" => $field["name"]
-                            ));
+                        if ($type == 'AC' && $field['name'] == 'assigned_user_id') {
+                            $tmpField['optionItem'] = $this->gatewayModulesMethod($field['method']);
+                        } else {
+                            $tmpField['optionItem'] = $moduleApi->getEnumValues(
+                                array(),
+                                array(
+                                    "module" => $newModuleFilter,
+                                    "field" => $field["name"]
+                                ));
+                        }
                     } else {
                         $tmpField['optionItem'] = $app_list_strings[$field['options']];
                     }
@@ -1696,7 +1706,7 @@ class PMSECrmDataWrapper implements PMSEObservable
         $fieldsData = isset($moduleBean->field_defs) ? $moduleBean->field_defs : array();
         foreach ($fieldsData as $field) {
             $retrieveId = isset($additionalArgs['retrieveId']) && !empty($additionalArgs['retrieveId']) && $field['name'] == 'id' ? $additionalArgs['retrieveId'] : false;
-            if (isset($field['vname']) && (PMSEEngineUtils::isValidField($field, 'RR') || $retrieveId)) {
+            if (isset($field['vname']) && (PMSEEngineUtils::isValidField($field, 'AC') || $retrieveId)) {
                 $tmpField = array();
                 $tmpField['value'] = $field['name'];
                 $tmpField['text'] = str_replace(':', '', translate($field['vname'], $newModuleFilter));
@@ -1722,7 +1732,47 @@ class PMSECrmDataWrapper implements PMSEObservable
                 $output[] = $tmpField;
             }
         }
-
+        $arrayModules = $this->returnArrayModules($newModuleFilter);
+        $customfields = false;
+        if (count($arrayModules) > 0) {
+            $output = array();
+            $customfields = true;
+        } else {
+            $arrayModules = $this->returnArrayModules('All');
+        }
+        if (count($arrayModules) > 0) {
+            foreach ($fieldsData as $field) {
+                $newfield = $this->dataFieldPersonalized($field, $arrayModules, $customfields);
+                if (isset($field['vname']) && isset($newfield)) {
+                    $tmpField = array();
+                    $tmpField['value'] = isset($newfield['value']) ? $newfield['value'] : $field['name'];
+                    $tmpField['text'] = isset($newfield['text']) ? $newfield['text'] : str_replace(
+                        ':',
+                        '',
+                        translate($field['vname'], $newModuleFilter)
+                    );
+                    $tmpField['type'] = isset($fieldTypes[$newfield['type']]) ? $fieldTypes[$newfield['type']] : ucfirst(
+                        $newfield['type']
+                    );
+                    $tmpField['optionItem'] = 'none';
+                    if ($newfield['type'] == 'enum') {
+                        $tmpField['optionItem'] = null;
+                        if (isset($newfield['method']) && $newfield['method'] != 'default') {
+                            $tmpField['optionItem'] = $this->gatewayModulesMethod($newfield['method']);
+                        } elseif (isset($newfield['method']) && $newfield['method'] == 'default') {
+                            $tmpField['optionItem'] = $app_list_strings[$field['options']];
+                        }
+                    }
+                    if (isset($field['required']) || isset($newfield['required'])) {
+                        $tmpField['required'] = isset($newfield['required']) ? $newfield['required'] : $field['required'];
+                    }
+                    if (isset($field['len'])) {
+                        $tmpField['len'] = $field['len'];
+                    }
+                    $output[] = $tmpField;
+                }
+            }
+        }
         $text = array();
         foreach ($output as $key => $row) {
             $text[$key] = strtolower($row['text']);
