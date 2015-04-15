@@ -391,9 +391,12 @@ Exclusive tests are source based, which means that you have to edit the source c
 
 Beware that `iit` has precedence over `ddescribe`, so it’s important to understand that this is level independent. It doesn't matter what “hierarchy” of ddescribes you might have, if an `iit` is defined that is the spec that is going to run.
 
+## Translation Changes
+If you make changes involving translatable strings, there is a special procedure to follow. See [Making Translation Changes][Making Translation Changes] for details.
 
 [SugarCRM Mango repo]: https://github.com/sugarcrm/Mango
 [SugarCRM bug tracker]: http://www.sugarcrm.com/support/bugs.html
+[Making Translation Changes]: https://github.com/sugarcrm/translations
 
 [ProGit]: http://git-scm.com/book
 
