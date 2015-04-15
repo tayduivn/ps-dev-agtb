@@ -962,8 +962,30 @@ function check_form(formname) {
 	return validate_form(formname, '');
 }
 
+var REQUIRED_VALIDATION_MESSAGE_CLASS = 'required validation-message';
+
+function remove_error_style(formName, input) {
+    try
+    {
+        inputHandle = typeof input === "object" ? input : document.forms[formname][input];
+
+        //  Find and remove all child error elements.
+        var errorElements = $(inputHandle).parent().children().filter(function() {
+            var $el = $(this);
+            if ($el.hasClass(REQUIRED_VALIDATION_MESSAGE_CLASS)) {
+                return $el;
+            }
+        });
+        errorElements.each(function() {
+            $(this).remove();
+        });
+    } catch(e)
+    {
+        // Catch errors here just as add_error_style doesn't leak any exceptions.
+    }
+}
+
 function add_error_style(formname, input, txt, flash) {
-    var raiseFlag = false;
 	if (typeof flash == "undefined")
 		flash = true;
 	try {
@@ -971,37 +993,28 @@ function add_error_style(formname, input, txt, flash) {
 	style = get_current_bgcolor(inputHandle);
 
 	// strip off the colon at the end of the warning strings
-	if ( txt.substring(txt.length-1) == ':' )
-	    txt = txt.substring(0,txt.length-1)
+    if (txt.substring(txt.length - 1) === ':') {
+        txt = txt.substring(0, txt.length - 1)
+    }
 
-	// Bug 28249 - To help avoid duplicate messages for an element, strip off extra messages and
-	// match on the field name itself
-	requiredTxt = SUGAR.language.get('app_strings', 'ERR_MISSING_REQUIRED_FIELDS');
-    invalidTxt = SUGAR.language.get('app_strings', 'ERR_INVALID_VALUE');
-    nomatchTxt = SUGAR.language.get('app_strings', 'ERR_SQS_NO_MATCH_FIELD');
-    matchTxt = txt.replace(requiredTxt,'').replace(invalidTxt,'').replace(nomatchTxt,'');
+    //  Remove all the error message elements to avoid both duplication of error messages
+    //  and having more than one error message on a single element.
+    remove_error_style(formname, input);
 
-        $(inputHandle).parent().children().each(function() {
-            var $el = $(this);
-            if($el.hasClass('required validation-message') && $el.text().indexOf(matchTxt) > 0) {
-                raiseFlag = true;
-            }
-        });
+    errorTextNode = document.createElement('div');
+    errorTextNode.className = REQUIRED_VALIDATION_MESSAGE_CLASS;
+    errorTextNode.innerHTML = txt;
+    if ( inputHandle.parentNode.className.indexOf('x-form-field-wrap') != -1 ) {
+        inputHandle.parentNode.parentNode.appendChild(errorTextNode);
+    }
+    else {
+        inputHandle.parentNode.appendChild(errorTextNode);
+    }
+    if (flash) {
+    	inputHandle.style.backgroundColor = "#FF0000";
+    }
+    inputsWithErrors.push(inputHandle);
 
-    if(!raiseFlag) {
-        errorTextNode = document.createElement('div');
-        errorTextNode.className = 'required validation-message';
-        errorTextNode.innerHTML = txt;
-        if ( inputHandle.parentNode.className.indexOf('x-form-field-wrap') != -1 ) {
-            inputHandle.parentNode.parentNode.appendChild(errorTextNode);
-        }
-        else {
-            inputHandle.parentNode.appendChild(errorTextNode);
-        }
-        if (flash)
-        	inputHandle.style.backgroundColor = "#FF0000";
-        inputsWithErrors.push(inputHandle);
-	}
     if (flash)
     {
 		// We only need to setup the flashy-flashy on the first entry, it loops through all fields automatically
