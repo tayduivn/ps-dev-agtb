@@ -57,6 +57,7 @@ $viewdefs['Leads']['base']['view']['subpanel-list'] = array(
           'label' => 'LBL_LIST_LEAD_SOURCE_DESCRIPTION',
           'enabled' => true,
           'default' => true,
+          'sortable' => false,
         ),
         array(
           'name' => 'assigned_user_name',
