@@ -1696,7 +1696,7 @@ class PMSECrmDataWrapper implements PMSEObservable
         $fieldsData = isset($moduleBean->field_defs) ? $moduleBean->field_defs : array();
         foreach ($fieldsData as $field) {
             $retrieveId = isset($additionalArgs['retrieveId']) && !empty($additionalArgs['retrieveId']) && $field['name'] == 'id' ? $additionalArgs['retrieveId'] : false;
-            if (isset($field['vname']) && (PMSEEngineUtils::isValidField($field, false) || $retrieveId)) {
+            if (isset($field['vname']) && (PMSEEngineUtils::isValidField($field, 'RR') || $retrieveId)) {
                 $tmpField = array();
                 $tmpField['value'] = $field['name'];
                 $tmpField['text'] = str_replace(':', '', translate($field['vname'], $newModuleFilter));
@@ -1722,47 +1722,7 @@ class PMSECrmDataWrapper implements PMSEObservable
                 $output[] = $tmpField;
             }
         }
-        $arrayModules = $this->returnArrayModules($newModuleFilter);
-        $customfields = false;
-        if (count($arrayModules) > 0) {
-            $output = array();
-            $customfields = true;
-        } else {
-            $arrayModules = $this->returnArrayModules('All');
-        }
-        if (count($arrayModules) > 0) {
-            foreach ($fieldsData as $field) {
-                $newfield = $this->dataFieldPersonalized($field, $arrayModules, $customfields);
-                if (isset($field['vname']) && isset($newfield)) {
-                    $tmpField = array();
-                    $tmpField['value'] = isset($newfield['value']) ? $newfield['value'] : $field['name'];
-                    $tmpField['text'] = isset($newfield['text']) ? $newfield['text'] : str_replace(
-                        ':',
-                        '',
-                        translate($field['vname'], $newModuleFilter)
-                    );
-                    $tmpField['type'] = isset($fieldTypes[$newfield['type']]) ? $fieldTypes[$newfield['type']] : ucfirst(
-                        $newfield['type']
-                    );
-                    $tmpField['optionItem'] = 'none';
-                    if ($newfield['type'] == 'enum') {
-                        $tmpField['optionItem'] = null;
-                        if (isset($newfield['method']) && $newfield['method'] != 'default') {
-                            $tmpField['optionItem'] = $this->gatewayModulesMethod($newfield['method']);
-                        } elseif (isset($newfield['method']) && $newfield['method'] == 'default') {
-                            $tmpField['optionItem'] = $app_list_strings[$field['options']];
-                        }
-                    }
-                    if (isset($field['required']) || isset($newfield['required'])) {
-                        $tmpField['required'] = isset($newfield['required']) ? $newfield['required'] : $field['required'];
-                    }
-                    if (isset($field['len'])) {
-                        $tmpField['len'] = $field['len'];
-                    }
-                    $output[] = $tmpField;
-                }
-            }
-        }
+
         $text = array();
         foreach ($output as $key => $row) {
             $text[$key] = strtolower($row['text']);

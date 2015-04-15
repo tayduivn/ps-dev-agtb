@@ -932,6 +932,14 @@ class PMSEEngineUtils
                 $result = $result && false;
             }
         }
+        if ($params == 'CF') {
+            //if (isset($def['name']) && $def['name'] == 'assigned_user_id') {
+            //    $result = true;
+            //}
+            if (isset($def['readonly']) && $def['readonly']) {
+                $result = $result && false;
+            }
+        }
         if (isset($def['type']) && $def['type'] == 'image'){
             $result = $result && false;
         }
@@ -943,7 +951,7 @@ class PMSEEngineUtils
     }
 
     public static function blackListFields($def) {
-        $blackList = array('deleted');
+        $blackList = array('deleted', 'system_id', 'mkto_sync', 'mkto_id', 'mkto_lead_score');
         if (in_array($def['name'], $blackList)) {
             return false;
         }
