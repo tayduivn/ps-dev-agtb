@@ -411,5 +411,3 @@ If you make changes involving translatable strings, there is a special procedure
 [Jasmine]: http://jasmine.github.io/
 [Karma test runner]: http://karma-runner.github.io/
 [NodeJS]: http://nodejs.org/
-
-
