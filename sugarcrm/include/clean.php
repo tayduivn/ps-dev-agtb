@@ -89,7 +89,7 @@ class SugarCleaner
         $config->set('Filter.Custom',  array(new HTMLPurifier_Filter_Xmp()));
         // for link
         $config->set('HTML.DefinitionID', 'Sugar HTML Def');
-        $config->set('HTML.DefinitionRev', 2);
+        $config->set('HTML.DefinitionRev', 3);
         $config->set('Cache.SerializerPath', sugar_cached('htmlclean/'));
         // IDs are namespaced
         $config->set('Attr.EnableID', true);
