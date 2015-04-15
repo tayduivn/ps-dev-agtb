@@ -122,6 +122,20 @@
         this.layout.on('quicksearch:bar:clear', this.clearSearch, this);
 
         this.layout.on('quicksearch:bar:search', this.goToSearchPage, this);
+
+        this.layout.on('route:search', this.populateSearchTerm, this);
+    },
+
+    /**
+     * Checks to see if we're in the search context. If we are, populate the search
+     * bar with the search term.
+     */
+    populateSearchTerm: function() {
+        var inputBar = this.$('input[data-action=search_bar]');
+        var searchTerm = this.context.get('searchTerm');
+        if (inputBar.val() !== searchTerm) {
+            inputBar.val(searchTerm);
+        }
     },
 
     /**

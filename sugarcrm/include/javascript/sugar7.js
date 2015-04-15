@@ -195,34 +195,38 @@
                     }
 
                     var appContext = app.controller.context;
-                    // If we are on the search page, we prevent the routing, and
-                    // set the new search term in the context instead. The
+
+                    // Set the new search term and module list in the context, if necessary.
+                    var termHasChanged = appContext.get('searchTerm') !== searchTerm;
+                    var modulesHaveChanged = !_.isEqual(appContext.get('module_list'), params.modules);
+                    if (termHasChanged && modulesHaveChanged) {
+                        // If both term and module_list have changed,
+                        // we set the module_list silently so the `change`
+                        // callback is triggered only once (searchTerm
+                        // and module_list share the same change callback
+                        // in the layout).
+                        appContext.set('module_list', params.modules, {silent: true});
+                        appContext.set('searchTerm', searchTerm);
+                    } else if (modulesHaveChanged) {
+                        appContext.set('module_list', params.modules);
+                    } else if (termHasChanged) {
+                        appContext.set('searchTerm', searchTerm);
+                    }
+
+                    // Trigger an event on the quicksearch in the header. The
+                    // header cannot rely on the context, since it is
+                    // initialized once for the whole app.
+                    var header = app.additionalComponents.header;
+                    var quicksearch = header && header.getComponent('quicksearch');
+                    if (quicksearch) {
+                        quicksearch.trigger('route:search');
+                    }
+
+                    // If we are on the search page, we prevent the routing. The
                     // listener on `change:searchTerm` in the layout will trigger
                     // the new search.
                     if (appContext && appContext.get('search')) {
-                        var termHasChanged = appContext.get('searchTerm') !== searchTerm;
-                        var modulesHaveChanged = appContext.get('module_list') !== params.modules;
-
-                        if (termHasChanged && modulesHaveChanged) {
-                            // If both term and module_list have changed,
-                            // we set the module_list silently so the `change`
-                            // callback is triggered only once (searchTerm
-                            // and module_list share the same change callback
-                            // in the layout).
-                            appContext.set('module_list', params.modules, {silent: true});
-                            appContext.set('searchTerm', searchTerm);
-                            return;
-                        }
-
-                        if (modulesHaveChanged) {
-                            appContext.set('module_list', params.modules);
-                            return;
-                        }
-
-                        if (termHasChanged) {
-                            appContext.set('searchTerm', searchTerm);
-                            return;
-                        }
+                        return;
                     }
 
                     app.controller.loadView({
