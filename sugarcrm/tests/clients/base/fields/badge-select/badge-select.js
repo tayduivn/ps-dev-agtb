@@ -38,7 +38,7 @@ describe('View.Fields.Base.BadgeSelectField', function() {
         using('detail modes', ['detail', 'list'], function(mode) {
             it('should be a boostrap label', function() {
                 field.action = mode;
-                field.model.set('status', 'foo');
+                field.model.set(field.name, _.keys(field.items)[0]);
                 field.render();
                 expect(field.$('.label').length).toBe(1);
             });

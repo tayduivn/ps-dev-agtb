@@ -239,11 +239,13 @@ class RelateRecordApi extends SugarApi
      *
      * @param ServiceBase $api The API class of the request.
      * @param array $args The arguments array passed in from the API.
+     * @param string $securityTypeLocal What ACL to check on the near side of the link
+     * @param string $securityTypeRemote What ACL to check on the far side of the link
      * @return array Array of formatted fields.
      * @throws SugarApiExceptionInvalidParameter If wrong arguments are passed
      * @throws SugarApiExceptionNotFound If bean can't be retrieved.
      */
-    public function createRelatedLinks($api, $args)
+    public function createRelatedLinks($api, $args, $securityTypeLocal = 'view', $securityTypeRemote = 'view')
     {
         $this->requireArgs($args, array('ids'));
         $ids = $this->normalizeLinkIds($args['ids']);
@@ -254,7 +256,13 @@ class RelateRecordApi extends SugarApi
 
         $primaryBean = $this->loadBean($api, $args);
 
-        list($linkName) = $this->checkRelatedSecurity($api, $args, $primaryBean, 'view', 'view');
+        list($linkName) = $this->checkRelatedSecurity(
+            $api,
+            $args,
+            $primaryBean,
+            $securityTypeLocal,
+            $securityTypeRemote
+        );
         $relatedModuleName = $primaryBean->$linkName->getRelatedModuleName();
 
         foreach ($ids as $id => $additionalValues) {

@@ -563,6 +563,24 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertcontains("contact_id = 'test'", $sql);
     }
 
+
+    public function testLongAlias()
+    {
+        $contact = BeanFactory::getBean('Contacts');
+        $contact->first_name = 'Test';
+        $contact->last_name = 'McTester';
+        $contact->save();
+        $this->contacts[] = $contact;
+        $longAlias = "alias_longer_than_128_characters_that_should_normally_fail_on_not_mysql_stacks_" .
+            "alias_longer_than_128_characters_that_should_normally_fail_on_not_mysql_stacks";
+        $sq = new SugarQuery();
+        $sq->select(array("id", array("last_name", $longAlias)));
+        $sq->from(BeanFactory::getBean('Contacts'));
+        $sq->where()->equals("last_name", "McTester");
+        $data = $sq->execute();
+        $this->assertEquals($contact->last_name, $data[0][$longAlias]);
+    }
+
 }
 
 class Contact_Mock_Bug62961 extends Contact

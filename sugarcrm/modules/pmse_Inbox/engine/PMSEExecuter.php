@@ -425,6 +425,26 @@ class PMSEExecuter
         if (is_null($bean)) {
             $bean = BeanFactory::retrieveBean($flowData['cas_sugar_module'], $flowData['cas_sugar_object_id']);
         }
+
+        // Validating unreferenced elements when cron jobs are executed, after MACAROON-518 shouldn't have
+        // unreferenced elements. This will validate previous records created before this fix.
+        if ($externalAction == 'WAKE_UP') {
+            $elementBean = BeanFactory::getBean('pmse_BpmnEvent', $flowData['bpmn_id']);
+            if (!isset($elementBean->id)) {
+
+                // Setting active flow to deleted
+                $fd = BeanFactory::getBean('pmse_BpmFlow', $flowData['id']);
+                $fd->cas_flow_status = 'DELETED';
+                $fd->save();
+
+                // Updating process to error
+                $cf = new PMSECaseFlowHandler();
+                $cf->changeCaseStatus($flowData['cas_id'], 'TERMINATED');
+
+                // Exiting without errors
+                return true;
+            }
+        }
         
         $preparedData = $this->caseFlowHandler->prepareFlowData($flowData, $createThread);
         $this->logger->debug("Begin process Element {$flowData['bpmn_type']}");

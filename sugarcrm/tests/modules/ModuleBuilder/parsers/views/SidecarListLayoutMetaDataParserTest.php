@@ -393,6 +393,12 @@ class SidecarListLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCa
                 ),
                 false,
             ),
+            'studio-with-visible-value' => array(
+                array(
+                    'studio' => 'visible',
+                ),
+                true,
+            ),
         );
     }
 
