@@ -931,6 +931,9 @@ class PMSEEngineUtils
             if (isset($def['name']) && $def['name'] == 'assigned_user_id') {
                 $result = true;
             }
+            if (isset($def['formula'])) {
+                $result = $result && false;
+            }
         }
         if ($params == 'RR' || $params == 'AC') {
             if (isset($def['readonly']) && $def['readonly']) {
