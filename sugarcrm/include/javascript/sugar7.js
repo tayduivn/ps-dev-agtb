@@ -374,7 +374,8 @@
     var titles = {
             'records': 'TPL_BROWSER_SUGAR7_RECORDS_TITLE',
             'record': 'TPL_BROWSER_SUGAR7_RECORD_TITLE',
-            'about': 'TPL_BROWSER_SUGAR7_ABOUT_TITLE'
+            'about': 'TPL_BROWSER_SUGAR7_ABOUT_TITLE',
+            'activities': 'TPL_BROWSER_SUGAR7_RECORD_TITLE'
         };
     // FIXME: This should have unit test coverage, e.g. on `app:view:change`
     // ensure `document.title` is updated. Will be addressed in SC-2761.
