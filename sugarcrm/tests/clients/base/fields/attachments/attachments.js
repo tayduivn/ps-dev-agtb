@@ -17,12 +17,12 @@ describe("Base.Field.Attachments", function() {
         apiCallStub.restore();
         app.cache.cutAll();
         app.view.reset();
-        field = null;
+        field.dispose();
     });
 
-    describe("_render", function() {
+    describe("render", function() {
         it("should wrap the hidden field in select2 with empty data by default", function() {
-            field._render();
+            field.render();
             expect(field.$node.select2('data')).toEqual([]);
         });
 
@@ -32,14 +32,14 @@ describe("Base.Field.Attachments", function() {
                 {id:'456',nameForDisplay:'bar'}
             ];
             field.model.set('attachments', expectedAttachments);
-            field._render();
+            field.render();
             expect(field.$node.select2('data')).toEqual(expectedAttachments);
         });
     });
 
     describe("Adding Attachments", function() {
         beforeEach(function() {
-            field._render();
+            field.render();
         });
 
         it("attachment:add should add attachment to select2 and model", function() {
@@ -72,7 +72,7 @@ describe("Base.Field.Attachments", function() {
         beforeEach(function() {
             attachment1 = {id:'123', type:'foo', nameForDisplay:'bar', tag:'baz'};
             attachment2 = {id:'456', type:'bar', nameForDisplay:'foo'};
-            field._render();
+            field.render();
             field.addAttachment(attachment1);
             field.addAttachment(attachment2);
             triggerStub = sinon.stub(field.context, 'trigger');
@@ -122,7 +122,7 @@ describe("Base.Field.Attachments", function() {
         var getFileInputValStub, alertStub, loggerStub, attachmentsBefore, expectedAttachmentsBefore;
 
         beforeEach(function() {
-            field._render();
+            field.render();
             expectedAttachmentsBefore = [{id:'upload1', nameForDisplay:'foo.txt', showProgress:true}];
             getFileInputValStub = sinon.stub(field, 'getFileInputVal', function() {return 'C:\\fakepath\\foo.txt'});
             alertStub = sinon.stub(app.alert, 'show');
