@@ -65,10 +65,10 @@ class Relationship extends SugarBean
     /**
      * @deprecated Please use SugarRelationshipFactory
      */
-    function get_other_module($relationship_name, $base_module, &$db)
+    function get_other_module($relationship_name, $base_module)
     {
         $rel = SugarRelationshipFactory::getInstance()->getRelationship($relationship_name);
-       return $base_module == $rel->getLHSModule() ? $rel->getRHSModule() : $rel->getLHSModule();
+        return $base_module == $rel->getLHSModule() ? $rel->getRHSModule() : $rel->getLHSModule();
     }
 
 
