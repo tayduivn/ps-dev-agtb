@@ -626,6 +626,11 @@ class Report
             {
                 $tmp[$table_data['module']] = array();
             }
+
+            if (!isset($this->full_bean_list[$table_key])) {
+                continue;
+            }
+
             foreach ($this->full_bean_list[$table_key]->field_defs as $field_def)
             {
                 $tmp[$table_data['module']][$field_def['name']] = 0;
