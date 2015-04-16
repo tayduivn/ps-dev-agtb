@@ -10,6 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use \Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
+use \Sugarcrm\Sugarcrm\Elasticsearch\Query\QueryBuilder;
+use \Sugarcrm\Sugarcrm\SearchEngine\MetaDataHelper;
+use \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\SearchFields;
+use \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\MultiFieldHandler;
+
 require_once 'include/api/SugarListApi.php';
 require_once 'data/BeanFactory.php';
 
@@ -39,29 +45,51 @@ class KBContentsApi extends SugarListApi
      */
     public function relatedDocuments($api, $args)
     {
+        global $current_user;
+
         $targetBean = BeanFactory::getBean($args['module'], $args['record']);
         if (!$targetBean->ACLAccess('view')) {
             return;
         }
         $options = $this->parseArguments($api, $args);
 
-        $searchEngine = SugarSearchEngineFactory::getInstance();
+        $engineContainer = SearchEngine::getInstance()->getEngine()->getContainer();
+        $builder = new QueryBuilder($engineContainer);
+        $builder
+            ->setUser($current_user)
+            ->setModules(array($args['module']))
+            ->setOffset($options['offset'])
+            ->setLimit($options['limit']);
+
+        // Get special field's name used for search.
+        $metaDataHelper = new MetaDataHelper($engineContainer->logger);
+        $fields = $metaDataHelper->getFtsFields($args['module']);
+        $sf = new SearchFields();
+        $fieldHandler = new MultiFieldHandler();
+        $fieldHandler->buildSearchFields($sf, $args['module'], 'kbdocument_body', $fields['kbdocument_body']);
+        $fieldHandler->buildSearchFields($sf, $args['module'], 'name', $fields['name']);
+        $searchFields = $sf->getSearchFields();
+        $kbNameSearchFields = array();
+        $kbBodySearchFields = array();
+        foreach ($searchFields as $field) {
+            if (strpos($field, 'name') !== false) {
+                $kbNameSearchFields[] = $field;
+            } elseif (strpos($field, 'kbdocument_body') !== false) {
+                $kbBodySearchFields[] = $field;
+            }
+        }
 
         // TODO: Current sugar search interface doesn't allow using any query except "query string".
         // Construct it manually.
-        $searchObj = new \Elastica\Search($searchEngine->getClient());
-        $searchObj->addType($args['module']);
-        $searchObj->addIndex($searchEngine->getReadIndexName(array($args['module'])));
-
         $mltName = new \Elastica\Query\MoreLikeThis();
-        $mltName->setFields(array('name'));
+        $mltName->setFields($kbNameSearchFields);
         $mltName->setLikeText($targetBean->name);
         // TODO: Configure after demo.
         $mltName->setMinTermFrequency(1);
         $mltName->setMinDocFrequency(1);
 
         $mltBody = new \Elastica\Query\MoreLikeThis();
-        $mltBody->setFields(array('kbdocument_body'));
+        $mltBody->setFields($kbBodySearchFields);
         $mltBody->setLikeText($targetBean->kbdocument_body);
         // TODO: Configure after demo.
         $mltBody->setMinTermFrequency(1);
@@ -87,12 +115,10 @@ class KBContentsApi extends SugarListApi
         }
         $mainFilter->addMust($statusFilterOr);
 
-        $query = new \Elastica\Query($boolQuery);
-        $query->setFilter($mainFilter);
-        $query->setParam('from', $options['offset']);
-        $query->setSize($options['limit']);
+        $builder->setQuery($boolQuery);
+        $builder->addFilter($mainFilter);
 
-        $resultSet = $searchObj->search($query);
+        $resultSet = $builder->executeSearch();
 
         $returnedRecords = array();
 
