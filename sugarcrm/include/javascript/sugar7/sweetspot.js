@@ -92,12 +92,20 @@
                     var name;
                     var jsFunc = 'push';
                     var weight;
-                    if (action.route === '#' + module) {
+                    var bwcModuleRoute = '#' + app.bwc.buildRoute(module);
+                    var sidecarModuleRoute = '#' + module;
+
+                    // FIXME: We need to try both because some BWC header meta
+                    // returns sidecar routes. See Quotes header.php vs Reports,
+                    // for example.
+                    var isIndexRoute = action.route === sidecarModuleRoute || action.route === bwcModuleRoute;
+                    var isCreateRoute = (action.route === '#' + module + '/create');
+
+                    if (isIndexRoute) {
                         jsFunc = 'unshift';
                         name = app.lang.getModuleName(module, {plural: true});
                         weight = 10;
-                    }
-                    else if (action.route === '#' + module + '/create') {
+                    } else if (isCreateRoute) {
                         weight = 20;
                         name = app.lang.get(action.label, module)
                     } else {
@@ -123,7 +131,8 @@
                 actions.push({
                     name: app.lang.get(action.label),
                     route: action.route,
-                    icon: action.icon
+                    icon: action.icon,
+                    weight: 10
                 });
             });
             return actions;

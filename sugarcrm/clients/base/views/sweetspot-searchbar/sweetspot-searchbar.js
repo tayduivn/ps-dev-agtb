@@ -192,7 +192,8 @@
     doSearch: function(term) {
         var options = {
             keys: ['module', 'name'],
-            threshold: '0.1'
+            threshold: '0.3',
+            includeScore: true
         };
         var keywordFuse = new Fuse(this.internalLibrary, {keys: ['keyword'], threshold: '0.0'});
         var keywords = keywordFuse.search(term);
@@ -200,8 +201,10 @@
 
         var actionsFuse = new Fuse(_.difference(this.internalLibrary, keywords), options);
         var actions = actionsFuse.search(term);
+        actions = _.sortBy(actions, function(obj) {
+            return [obj.score, obj.item.weight];
+        });
         actions = actions.slice(0, 6);
-        actions = _.sortBy(actions, 'weight');
 
         var recordsFuse = new Fuse(_.toArray(this.temporaryLibrary), options);
         var records = recordsFuse.search(term);
@@ -209,9 +212,9 @@
 
         records = records.slice(0, 3);
         return {
-            actions: actions,
+            actions: _.compact(_.pluck(actions, 'item')),
             keywords: keywords,
-            records: records,
+            records: _.compact(_.pluck(records, 'item')),
             showMore: showMore,
             term: term
         };
