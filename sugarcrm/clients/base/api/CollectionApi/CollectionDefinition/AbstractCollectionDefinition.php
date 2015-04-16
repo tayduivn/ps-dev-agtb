@@ -44,6 +44,13 @@ abstract class AbstractCollectionDefinition implements CollectionDefinitionInter
     protected $sources;
 
     /**
+     * Stored filter definitions
+     *
+     * @return array
+     */
+    protected $storedFilters = array();
+
+    /**
      * ORDER BY definition
      *
      * @return string|null
@@ -86,6 +93,38 @@ abstract class AbstractCollectionDefinition implements CollectionDefinitionInter
     }
 
     /** {@inheritDoc} */
+    public function hasSourceFilter($source)
+    {
+        return isset($this->sources[$source]['filter']);
+    }
+
+    /** {@inheritDoc} */
+    public function getSourceFilter($source)
+    {
+        if ($this->hasSourceFilter($source)) {
+            return $this->sources[$source]['filter'];
+        }
+
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    public function hasStoredFilter($id)
+    {
+        return isset($this->storedFilters[$id]);
+    }
+
+    /** {@inheritDoc} */
+    public function getStoredFilter($id)
+    {
+        if ($this->hasStoredFilter($id)) {
+            return $this->storedFilters[$id];
+        }
+
+        return null;
+    }
+
+    /** {@inheritDoc} */
     public function getOrderBy()
     {
         return $this->orderBy;
@@ -117,6 +156,17 @@ abstract class AbstractCollectionDefinition implements CollectionDefinitionInter
 
         if (isset($definition['order_by'])) {
             $this->orderBy = $definition['order_by'];
+        }
+
+        if (isset($definition['filters'])) {
+            foreach ($definition['filters'] as $i => $filter) {
+                if (!isset($filter['id'], $filter['filter_definition'])) {
+                    throw new SugarApiExceptionError(
+                        sprintf('Incorrect filter #%d definition are collection %s', $i, $this->name)
+                    );
+                }
+                $this->storedFilters[$filter['id']] = $filter['filter_definition'];
+            }
         }
     }
 
