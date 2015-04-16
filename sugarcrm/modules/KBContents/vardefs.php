@@ -374,6 +374,25 @@ $dictionary['KBContent'] = array(
             'source' => 'non-db',
             'studio' => 'visible',
         ),
+        'usefulness' => array(
+            'name' => 'usefulness',
+            'type' => 'link',
+            'module' => 'Users',
+            'bean_name' => 'User',
+            'link_file' => 'modules/KBContents/UsefulnessLink.php',
+            'link_class' => 'UsefulnessLink',
+            'source' => 'non-db',
+            'vname' => 'LBL_USEFULNESS',
+            'relationship' => 'usefulness',
+            'studio' => false,
+            'massupdate' => false,
+            'side' => 'right'
+        ),
+        'usefulness_user_vote' => array(
+            'name' => 'usefulness_user_vote',
+            'type' => 'tinyint',
+            'source' => 'non-db',
+        ),
     ),
     'relationships' => array(
         'kbcontent_notes' => array(

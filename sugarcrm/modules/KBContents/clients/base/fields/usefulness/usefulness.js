@@ -24,8 +24,8 @@
 
     plugins: [],
 
-    KEY_USEFUL: 'u',
-    KEY_NOT_USEFUL: 'n',
+    KEY_USEFUL: '1',
+    KEY_NOT_USEFUL: '-1',
 
     voted: false,
     votedUseful: false,
@@ -42,19 +42,18 @@
         if (!this.model.has('notuseful')) {
             this.model.set('notuseful', 0);
         }
+        this.checkVotes();
     },
 
     /**
-     * Build the state key for usefulness vote.
-     *
-     * @return {string} hash key.
+     * Check votes state,
+     * Set values for votedUseful, if user voted `useful` and
+     * votedNotUseful if user voted `not useful`.
      */
-    getLastStateKey: function() {
-        if (this._lastStateKey) {
-            return this._lastStateKey;
-        }
-        this._lastStateKey = app.user.lastState.key('usefulness', this.view);
-        return this._lastStateKey;
+    checkVotes: function() {
+        var vote = this.model.get('usefulness_user_vote');
+        this.votedUseful = (vote == this.KEY_USEFUL);
+        this.votedNotUseful = (vote == this.KEY_NOT_USEFUL);
     },
 
     /**
@@ -63,51 +62,27 @@
      * @param {boolean} isUseful Flag of useful or not useful.
      */
     vote: function(isUseful) {
-        if (this.isVoted()) {
+        if (
+            (isUseful && this.model.get('usefulness_user_vote') == this.KEY_USEFUL)
+            || (!isUseful && this.model.get('usefulness_user_vote') == this.KEY_NOT_USEFUL)
+        ) {
             return;
         }
         var action = isUseful ? 'useful' : 'notuseful';
         var url = app.api.buildURL(this.model.module, action, {
             id: this.model.id
         });
-        var callbacks = app.data.getSyncCallbacks('update', this.model, {
-            success: _.bind(function() {
-                var votes = app.user.lastState.get(this.getLastStateKey()) || {},
-                    key = this.model.get('kbdocument_id') + this.model.get('kbarticle_id');
-                votes[key] = isUseful ? this.KEY_USEFUL : this.KEY_NOT_USEFUL;
-                app.user.lastState.set(this.getLastStateKey(), votes);
-
-                this.voted = true;
-                this.votedUseful = isUseful;
-                this.votedNotUseful = !isUseful;
-
+        var callbacks = {
+            success: _.bind(function(data) {
+                this.model.set({'usefulness_user_vote': data.usefulness_user_vote}, {silent: true});
                 if (!this.disposed) {
                     this.render();
                 }
-            }, this)
-        });
+            }, this),
+            error: function() {}
+        };
 
         app.api.call('update', url, null, callbacks);
-    },
-
-    /**
-     * Check voted state.
-     *
-     * @return {boolean}
-     */
-    isVoted: function() {
-        if (!this.voted) {
-            var votes = app.user.lastState.get(this.getLastStateKey()) || {},
-                key = this.model.get('kbdocument_id') + this.model.get('kbarticle_id');
-            if (_.has(votes, key) &&
-                _.indexOf([this.KEY_USEFUL, this.KEY_NOT_USEFUL], votes[key]) !== -1
-            ) {
-                this.voted = true;
-                this.votedUseful = (votes[key] == this.KEY_USEFUL);
-                this.votedNotUseful = (votes[key] == this.KEY_NOT_USEFUL);
-            }
-        }
-        return this.voted;
     },
 
     /**
@@ -128,7 +103,7 @@
      * {@inheritDoc}
      */
     _render: function() {
-        this.isVoted();
+        this.checkVotes();
         this._super('_render');
         return this;
     }

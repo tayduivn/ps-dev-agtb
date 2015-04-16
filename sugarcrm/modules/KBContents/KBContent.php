@@ -407,4 +407,25 @@ class KBContent extends SugarBean {
     {
         return $this->name;
     }
+
+    /**
+     * Need to load votes for usefulness relationship.
+     * {@inheritdoc}
+     */
+    public function fill_in_relationship_fields()
+    {
+        parent::fill_in_relationship_fields();
+        $user = $GLOBALS['current_user'];
+        $this->usefulness_user_vote = 0;
+        $ssid = session_id();
+        $this->load_relationship('usefulness');
+        $validUser = $this->usefulness->isValidSugarUser($user);
+        foreach ($this->usefulness->rows as $row) {
+            if ($validUser && $row['id'] == $user->id) {
+                $this->usefulness_user_vote = $row['vote'];
+            } elseif (!$validUser && $row['ssid'] == $ssid) {
+                $this->usefulness_user_vote = $row['vote'];
+            }
+        }
+    }
 }

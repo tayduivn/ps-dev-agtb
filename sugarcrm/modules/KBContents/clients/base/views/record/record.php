@@ -289,6 +289,7 @@ $viewdefs['KBContents']['base']['view']['record'] = array(
             'cell_css_class' => 'pull-right usefulness',
             'readonly' => true,
             'fields' => array(
+                'usefulness_user_vote',
                 'useful',
                 'notuseful',
             ),
