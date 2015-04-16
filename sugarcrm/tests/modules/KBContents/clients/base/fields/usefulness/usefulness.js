@@ -1,4 +1,4 @@
-ddescribe('modules.kbcontents.clients.base.fields.usefulness', function() {
+describe('modules.kbcontents.clients.base.fields.usefulness', function() {
     var sandbox, app, field,
         module = 'KBContents',
         fieldName = 'usefulness',
