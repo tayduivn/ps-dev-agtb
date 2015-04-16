@@ -97,6 +97,22 @@ $viewdefs['KBContents']['base']['filter']['basic'] = array(
             'is_template' => true,
         ),
         array(
+            'id' => 'assigned_to_me',
+            'name' => 'LBL_LISTVIEW_FILTER_MY',
+            'filter_definition' => array(
+                '$owner' => '',
+            ),
+            'editable' => false,
+        ),
+        array(
+            'id' => 'favorites',
+            'name'  => 'LBL_FAVORITES',
+            'filter_definition' => array(
+                '$favorite' => '',
+            ),
+            'editable' => false,
+        ),
+        array(
             'id' => 'active_date',
             'name' => 'LBL_PUBLISH_DATE',
             'filter_definition' => array(
