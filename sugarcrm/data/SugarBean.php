@@ -2843,9 +2843,12 @@ class SugarBean
                         continue;
                     }
                     // always want string for currency/decimal values
-                    if(!is_string($this->$field) || !is_numeric($this->$field)) {
+                    if(!is_numeric($this->$field)) {
                         $this->$field = (string)unformat_number($this->$field);
                         $reformatted = true;
+                    }
+                    if (!is_string($this->$field)) {
+                        $this->$field = (string)$this->$field;
                     }
                     break;
                 case 'double':
