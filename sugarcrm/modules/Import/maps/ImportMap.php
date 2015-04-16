@@ -366,7 +366,7 @@ class ImportMap extends SugarBean
         $stream = fopen('data://text/plain,', 'w+');
         fputcsv($stream, $output, $this->delimiter, $this->enclosure);
         rewind($stream);
-        $source = stream_get_contents($stream);
+        $source = trim(stream_get_contents($stream));
         fclose($stream);
         return $source;
     }
