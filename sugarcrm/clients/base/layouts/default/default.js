@@ -102,8 +102,6 @@
             this.HIDE_KEY = this.meta.hide_key;
         }
 
-        this.processDef();
-
         this.on('sidebar:toggle', this.toggleSidePane, this);
 
         this.meta.last_state = this.meta.last_state || { id: 'default' };
@@ -171,14 +169,6 @@
         $(window).trigger('resize');
 
         this.trigger('sidebar:state:changed', visible ? 'open' : 'close');
-    },
-
-    /**
-     * Read the metadata and set the size of each pane.
-     */
-    processDef: function() {
-        this.$('.main-pane').addClass('span' + this.meta.components[0]['layout'].span);
-        this.$('.side').addClass('span' + this.meta.components[1]['layout'].span);
     },
 
     /**
