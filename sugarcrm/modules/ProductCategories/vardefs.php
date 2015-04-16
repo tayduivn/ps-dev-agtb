@@ -94,15 +94,18 @@ $dictionary['ProductCategory'] = array(
             'relationship_type' => 'one-to-many'
         ),
     ),
+    'uses' => array(
+        'default',
+        'assignable',
+    ),
+    'ignore_templates' => array(
+        'taggable',
+    ),
 );
 
 VardefManager::createVardef(
     'ProductCategories',
-    'ProductCategory',
-    array(
-        'default',
-        'assignable',
-    )
+    'ProductCategory'
 );
 
 //boost value for full text search
