@@ -1026,12 +1026,41 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
 
 	function queryGroupByQuarter($layout_def)
 	{
-		$this->getReporter();
         $column = $this->_get_column_select($layout_def);
 	    return $this->reporter->db->convert($this->reporter->db->convert($column, "date_format", array('%Y')),
 	        	'CONCAT',
 	            array("'-'", $this->reporter->db->convert($column, "quarter")));
 	}
+
+    public function querySelectweek($layout_def)
+    {
+        $column = $this->_get_column_select($layout_def);
+
+        return $this->reporter->db->convert(
+            $this->reporter->db->convert($column, "date_format", array('%Y')),
+            'CONCAT',
+            array("'-'", $this->reporter->db->convert($column, "date_format", array('%v')))
+        ) . " " . $this->_get_column_alias($layout_def) . "\n";
+    }
+
+    public function displayListweek(& $layout_def)
+    {
+        $match = array();
+        if (preg_match('/(\d{4})-(\d+)/', $this->displayListPlain($layout_def), $match)) {
+            return "W" . $match[2] . " " . $match[1];
+        }
+        return '';
+    }
+
+    public function queryGroupByWeek($layout_def)
+    {
+        $column = $this->_get_column_select($layout_def);
+        return $this->reporter->db->convert(
+            $this->reporter->db->convert($column, "date_format", array('%Y')),
+            'CONCAT',
+            array("'-'", $this->reporter->db->convert($column, "date_format", array('%v')))
+        );
+    }
 
     /**
      * For oracle we have to return order by string like group by string instead of return field alias

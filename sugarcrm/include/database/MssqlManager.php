@@ -1172,6 +1172,7 @@ class MssqlManager extends DBManager
         '%Y-%m-%d' => 10,
         '%Y-%m' => 7,
         '%Y' => 4,
+        '%v' => array('isoww', 'datepart'),
     );
 
     /**
@@ -1202,8 +1203,14 @@ class MssqlManager extends DBManager
                     $additional_parameters[0] = trim($additional_parameters[0], "'");
                 }
                 if(!empty($additional_parameters) && isset($this->date_formats[$additional_parameters[0]])) {
-                    $len = $this->date_formats[$additional_parameters[0]];
-                    return "LEFT(CONVERT(varchar($len),". $string . ",120),$len)";
+                    $parameters = $this->date_formats[$additional_parameters[0]];
+                    if (is_array($parameters)) {
+                        $format = $parameters[0];
+                        $function = $parameters[1];
+                        return "$function($format, $string)";
+                    } else {
+                        return "LEFT(CONVERT(varchar($parameters)," . $string . ",120),$parameters)";
+                    }
                 } else {
                    return "LEFT(CONVERT(varchar(10),". $string . ",120),10)";
                 }
