@@ -641,6 +641,14 @@ function get_display_text($temp_module, $field, $field_value, $adv_type=null, $e
         return $currency->name;
     }
 
+    // display team name for team_id field
+    if ($field == 'team_id' && !empty($field_value)) {
+        $team = BeanFactory::getBean('Teams', $field_value, array('strict_retrieve'=>true));
+        if ($team) {
+            return Team::getDisplayName($team->name, $team->name_2);
+        }
+    }
+
 	if($target_type == "assigned_user_name"){
 
 		if($adv_type==null){
