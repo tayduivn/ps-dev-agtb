@@ -30,8 +30,10 @@ if(!empty($_POST['meridiem'])){
 }
 
 if(empty($_REQUEST['time_start'])) {
-  $_REQUEST['date_start'] = $_REQUEST['date_start'] . ' 00:00'; 
-   $_POST['date_start'] = $_POST['date_start'] . ' 00:00';
+  $time_to_fix = date($timedate->get_date_time_format(), strtotime($_POST['date_start']));
+    
+  $_REQUEST['date_start'] = $time_to_fix;
+  $_POST['date_start'] = $time_to_fix;
 } else {
   $_REQUEST['date_start'] = $_REQUEST['date_start'] . ' ' . $_REQUEST['time_start'];
   $_POST['date_start'] = $_POST['date_start'] . ' ' . $_POST['time_start'];

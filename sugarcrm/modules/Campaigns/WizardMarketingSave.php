@@ -72,7 +72,7 @@ if(!empty($_REQUEST['meridiem'])){
 }
 
 if(empty($_REQUEST['time_start'])) {
-  $_REQUEST['date_start'] = $_REQUEST['date_start'] . ' 00:00';
+  $_REQUEST['date_start'] = date($timedate->get_date_time_format(), strtotime($_REQUEST['date_start']));
 } else {
   $_REQUEST['date_start'] = $_REQUEST['date_start'] . ' ' . $_REQUEST['time_start'];
 }
