@@ -13,7 +13,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 $config = array (
-  'name' => 'IBM SmartCloud&#169;',
+  'name' => 'IBM SmartCloud',
   'eapm' => array(
     'enabled' => true,
     'only' => true,

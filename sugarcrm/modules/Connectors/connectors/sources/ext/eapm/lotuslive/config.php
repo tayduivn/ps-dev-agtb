@@ -13,7 +13,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 $config = array (
-  'name' => 'LotusLive&#169;',
+  'name' => 'LotusLive',
   'eapm' => array(
     'enabled' => true,
     'only' => true,
