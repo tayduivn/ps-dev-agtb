@@ -158,7 +158,7 @@ class PMSEUserTask extends PMSEActivity
             case $this->userAssignmentHandler->isRoundTrip($flowData):
                 $action = 'ROUND_TRIP';
                 break;
-            case $this->userAssignmentHandler->isOneWay($flowData):
+            case ($this->userAssignmentHandler->isOneWay($flowData) && !$this->userAssignmentHandler->previousIsNormal($flowData)):
                 $action = 'ONE_WAY';
                 break;
             default:

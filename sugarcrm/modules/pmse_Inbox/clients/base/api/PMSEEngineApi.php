@@ -999,14 +999,13 @@ class PMSEEngineApi extends SugarApi
         }
         if ($reclaimCaseByUser) {
             $listButtons = array('claim', 'cancel');
-        } elseif (isset($bpmFlow->cas_adhoc_type) && ($bpmFlow->cas_adhoc_type === '') && ($activity->act_response_buttons == '' || $activity->act_response_buttons == 'APPROVE')) {
+        } elseif (isset($bpmFlow->cas_adhoc_type) && ($bpmFlow->cas_adhoc_type === '' || $bpmFlow->cas_adhoc_type === 'ONE_WAY') && ($activity->act_response_buttons == '' || $activity->act_response_buttons == 'APPROVE')) {
             $listButtons = array('link_cancel', 'approve', 'reject', 'edit');
         } else {
             $listButtons = array('link_cancel', 'route', 'edit');
         }
         $returnArray['case']['reclaim'] = $reclaimCaseByUser;
         $returnArray['case']['buttons'] = $this->getButtons($listButtons, $activity);
-
         $returnArray['case']['readonly'] = json_decode(base64_decode($activity->act_readonly_fields));
         $returnArray['case']['required'] = json_decode(base64_decode($activity->act_required_fields));
 

@@ -224,6 +224,12 @@ class PMSEUserAssignmentHandler
         $newFlowRow->cas_task_start_date = !isset($flowRow->cas_task_start_date) ? $flowRow->cas_delegate_date : $flowRow->cas_task_start_date;
         $newFlowRow->cas_delegate_date = $today;
 
+        if ($newFlowRow->cas_adhoc_type != $flowRow->cas_adhoc_type) {
+            $newFlowRow->cas_adhoc_parent_id = $flowRow->id;
+        } else {
+            $newFlowRow->cas_adhoc_parent_id = $flowRow->cas_adhoc_parent_id;
+        }
+        
         if ($isRoundTripReassign) {
             $newFlowRow->cas_reassign_level--;
         } else {
@@ -252,12 +258,7 @@ class PMSEUserAssignmentHandler
     public function originReassign($caseData, $userId)
     {
         $caseBean = $this->retrieveBean('pmse_BpmFlow'); //new BpmFlow();
-
         $caseData['cas_user_id'] = $userId;
-//        if (!Validator::CheckValues($caseData, $caseBean)) {
-//            $this->bpmLog('INFO', "validation error: " . Validator::getLastValidateError());
-//            return false;
-//        }
 
         $where = 'cas_id=' . $caseData['cas_id'] . ' AND cas_index=' . $caseData['cas_index'];
 
@@ -274,15 +275,13 @@ class PMSEUserAssignmentHandler
             ));
         $newFlowRow->id = null;
         $newFlowRow->cas_index = $maxIndexFlow['rowList'][0]['max_index'] + 1;
-        //$this->setCloseStatusInCaseFlow($caseData['cas_id'], $caseData['cas_index']);
         $newFlowRow->cas_previous = $caseData['cas_index'];
-        $newFlowRow->cas_adhoc_type = "";
+        $newFlowRow->cas_adhoc_type = $caseData['cas_adhoc_type'];
+        $newFlowRow->cas_adhoc_parent_id = $caseData['cas_adhoc_parent_id'];
         $newFlowRow->cas_task_start_date = isset($flowRow->cas_task_start_date) ? $flowRow->cas_delegate_date : $flowRow->cas_task_start_date;
-        $newFlowRow->cas_reassign_level = 0;
+        $newFlowRow->cas_reassign_level = $caseData['cas_reassign_level'];
 
         $caseData['cas_index'] = $newFlowRow->cas_index;
-//        $caseBean->new_with_id = true;
-        //$caseBean->create($flowRow);
         $newFlowRow->save();
         return $this->reassignCaseToUser($caseData, $userId);
     }
@@ -348,11 +347,11 @@ class PMSEUserAssignmentHandler
                 'cas_id' => $caseData['cas_id'],
                 'cas_index' => $caseData['cas_index']
             ));
-        $originalFlow = $this->retrieveBean('pmse_BpmFlow'); //new BpmFlow();
-        $where = 'bpmn_id=\'' . $caseBean->bpmn_id . '\' AND bpmn_type=\'' . $caseBean->bpmn_type . '\' AND cas_id=' . $caseData['cas_id'] . ' AND cas_reassign_level=0 AND cas_index=(SELECT min(cas_index) FROM pmse_bpm_flow WHERE cas_id=' . $caseData['cas_id'] . ' AND cas_thread=' . $caseData['cas_thread'] . ' AND cas_reassign_level=0 AND bpmn_id=\'' . $caseBean->bpmn_id . '\' AND bpmn_type=\'' . $caseBean->bpmn_type . '\')';
-        $originalFlowRecord = $this->wrapper->getSelectRows($originalFlow, '', $where);
-        $originalFlowRecord = $originalFlowRecord['rowList'][0];
-        $this->originReassign($caseData, $originalFlowRecord['cas_user_id']);
+        $originalFlow = $this->retrieveBean('pmse_BpmFlow', $caseBean->cas_adhoc_parent_id); //new BpmFlow();
+        $caseData['cas_adhoc_type'] = $originalFlow->cas_adhoc_type;
+        $caseData['cas_adhoc_parent_id'] = $originalFlow->cas_adhoc_parent_id;
+        $caseData['cas_reassign_level'] = $originalFlow->cas_reassign_level;
+        $this->originReassign($caseData, $originalFlow->cas_user_id);
     }
 
     /**
@@ -369,6 +368,29 @@ class PMSEUserAssignmentHandler
                 'cas_index' => $caseData['cas_index']
             ));
         if ($caseBean->bpmn_type == 'bpmnActivity' && $caseBean->cas_adhoc_type == 'ONE_WAY') {
+            $result = true;
+        }
+        return $result;
+    }
+    
+    /**
+     * Check if the reassignment task is one way
+     * @param type $caseData
+     * @return boolean
+     */
+    public function previousIsNormal($caseData)
+    {
+        $result = false;
+        $caseBean = $this->retrieveBean('pmse_BpmFlow'); //new BpmFlow();
+        $caseBean->retrieve_by_string_fields(array(
+                'cas_id' => $caseData['cas_id'],
+                'cas_index' => $caseData['cas_index']
+            ));
+        $caseBean->retrieve_by_string_fields(array(
+                'cas_id' => $caseBean->cas_id,
+                'cas_index' => $caseBean->cas_previous
+            ));
+        if ($caseBean->bpmn_type == 'bpmnActivity' && $caseBean->cas_adhoc_type == '') {
             $result = true;
         }
         return $result;
