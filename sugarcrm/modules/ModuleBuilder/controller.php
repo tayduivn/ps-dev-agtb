@@ -981,24 +981,25 @@ class ModuleBuilderController extends SugarController
     public function action_popupSave()
     {
         $this->view = 'popupview';
-        $packageName = (isset ($_REQUEST ['view_package']) && (strtolower($_REQUEST['view_package']) != 'studio')) ? $_REQUEST ['view_package'] : null;
-        $parser = ParserFactory::getParser($_REQUEST ['view'], $_REQUEST ['view_module'], $packageName);
+        $packageName = (isset($_REQUEST['view_package']) && (strtolower($_REQUEST['view_package']) != 'studio')) ? $_REQUEST['view_package'] : null;
+        $parser = ParserFactory::getParser($_REQUEST['view'], $_REQUEST['view_module'], $packageName);
         $parser->handleSave();
 
-        // Save popupdefs too because it's used on BWC pages (related fields).
-        $parser = ParserFactory::getParser(MB_POPUPLIST, $_REQUEST['view_module'], $packageName);
-        $parser->handleSave();
+        if ($_REQUEST['view'] != MB_POPUPSEARCH) {
+            $parser = ParserFactory::getParser(MB_POPUPLIST, $_REQUEST['view_module'], $packageName);
+            $parser->handleSave();
+        }
+
         if (empty($packageName)) {
             include_once 'modules/Administration/QuickRepairAndRebuild.php';
             global $mod_strings;
             $mod_strings['LBL_ALL_MODULES'] = 'all_modules';
             $repair = new RepairAndClear();
             $repair->show_output = false;
-            $class_name = $GLOBALS ['beanList'] [$_REQUEST ['view_module']];
+            $class_name = $GLOBALS['beanList'][$_REQUEST['view_module']];
             $repair->module_list = array($class_name);
             $repair->clearTpls();
         }
-
     }
 
     public function action_searchViewSave()
