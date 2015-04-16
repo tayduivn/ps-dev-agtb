@@ -12,7 +12,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 $config = array (
-  'name' => 'InsideView&#169;',
+  'name' => 'InsideView',
   'order' => 65,
   'properties' => array (
       ),

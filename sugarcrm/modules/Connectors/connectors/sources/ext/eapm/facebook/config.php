@@ -13,7 +13,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 $config = array (
-  'name' => 'Facebook&#169;',
+  'name' => 'Facebook',
   'eapm' => array(
     'enabled' => true,
     'only' => true,

@@ -11,7 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 $config = array (
-  'name' => 'Zoominfo&#169; - Company',
+  'name' => 'Zoominfo - Company',
   'order' => 3,
   'properties' => 
   array (
