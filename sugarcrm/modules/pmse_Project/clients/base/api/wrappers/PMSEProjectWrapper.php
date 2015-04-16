@@ -1054,6 +1054,7 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
                     if (!empty($tmpDefinition->fetched_row)) {
                         $relDepWrapper = new PMSERelatedDependencyWrapper();
                         $relDepWrapper->removeRelatedDependencies($tmpDefinition->fetched_row);
+                        $relDepWrapper->removeActiveTimerEvents($tmpDefinition->fetched_row);
                     }                    
                 }
 

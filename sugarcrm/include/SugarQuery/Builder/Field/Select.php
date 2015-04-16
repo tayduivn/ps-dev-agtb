@@ -42,9 +42,10 @@ class SugarQuery_Builder_Field_Select extends SugarQuery_Builder_Field
         }
 
         if (!empty($this->alias)) {
-            $newAlias = $GLOBALS['db']->getValidDBName($this->alias, false, 'alias');
-            if (strtolower($this->alias) != $newAlias) {
-                throw new SugarQueryException("Alias is more than the max allowed length for an alias");
+            $dbAlias = DBManagerFactory::getInstance()->getValidDBName($this->alias, false, 'alias');
+            if (strtolower($this->alias) != $dbAlias) {
+                $this->original_alias = $this->alias;
+                $this->alias = $dbAlias;
             }
         }
 
@@ -68,8 +69,12 @@ class SugarQuery_Builder_Field_Select extends SugarQuery_Builder_Field
             $nameFields = Localization::getObject()->getNameFormatFields($this->moduleName);
             foreach ($nameFields as $partOfName) {
                 $alias = !empty($this->alias) ? "{$this->alias}__{$partOfName}" : "{$this->def['name']}__{$partOfName}";
-                $alias = DBManagerFactory::getInstance()->getValidDBName($alias, false, 'alias');
-                $this->addToSelect(array(array("{$this->table}.{$partOfName}", $alias)));
+                $dbAlias = DBManagerFactory::getInstance()->getValidDBName($alias, false, 'alias');
+                if ($dbAlias != strtolower($alias)) {
+                    $this->addToSelect(array(array("{$this->table}.{$partOfName}", $dbAlias, $alias)));
+                } else {
+                    $this->addToSelect(array(array("{$this->table}.{$partOfName}", $alias)));
+                }
             }
             $this->markNonDb();
             return;
