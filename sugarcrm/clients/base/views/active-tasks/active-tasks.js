@@ -63,6 +63,7 @@
     _initEvents: function() {
         this._super('_initEvents');
         this.on('active-tasks:close-task:fire', this.closeTask, this);
+        this.on('render:rows', this._renderAvatars, this);
         return this;
     },
 
@@ -186,7 +187,16 @@
 
         this._super('_renderHtml');
 
-        // Handle Avatar display, in case image doesn't exist
+        this._renderAvatars();
+    },
+
+    /**
+     *  Handle Avatar display, in case image doesn't exist.
+     *
+     *  FIXME: render avatar should happen when rendering each row, after pagination.(SC-2605)
+     *  @private
+     */
+    _renderAvatars: function() {
         this.$('img.avatar').load(function() {
             $(this).removeClass('hide');
         })
