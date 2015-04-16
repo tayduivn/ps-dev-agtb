@@ -5914,7 +5914,7 @@ nv.models.gaugeChart = function() {
         controls: {close: 'Hide controls', open: 'Show controls'},
         noData: 'No Data Available.'
       },
-      dispatch = d3.dispatch('tooltipShow', 'tooltipHide', 'tooltipMove');
+      dispatch = d3.dispatch('chartClick', 'tooltipShow', 'tooltipHide', 'tooltipMove');
 
   //============================================================
   // Private Variables
@@ -6098,6 +6098,13 @@ nv.models.gaugeChart = function() {
   //============================================================
   // Event Handling/Dispatching (out of chart's scope)
   //------------------------------------------------------------
+
+  dispatch.on('chartClick', function(e) {
+    dispatch.tooltipHide();
+    if (legend.enabled()) {
+      legend.dispatch.closeMenu(e);
+    }
+  });
 
   gauge.dispatch.on('elementMouseover.tooltip', function(e) {
     dispatch.tooltipShow(e);
