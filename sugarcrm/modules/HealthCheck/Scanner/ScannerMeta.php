@@ -258,6 +258,11 @@ class HealthCheckScannerMeta
             'bucket' => self::CUSTOM,
             'kb'     => 'http://support.sugarcrm.com/04_Knowledge_Base/02Administration/100Install/Troubleshooting_Health_Check_Output/Health_Check_Error_Bad_Vardefs_Link/',
         ),
+        422 => array(
+            'report' => 'foundOtherModuleVardefs',
+            'bucket' => self::MANUAL,
+            'kb'     => 'http://support.sugarcrm.com/04_Knowledge_Base/02Administration/100Install/Troubleshooting_Health_Check_Output/Health_Check_Error_Module_Has_Definition_Of_Another_Module',
+        ),
         525 => array(
             'report' => 'vardefHtmlFunctionCustom',
             'bucket' => self::MANUAL,
