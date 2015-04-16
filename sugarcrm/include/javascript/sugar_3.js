@@ -875,8 +875,14 @@ function isValidEmail(emailStr) {
 	for (var i = 0; i < emailArr.length; i++) {
 		var emailAddress = emailArr[i];
 		if (trim(emailAddress) != '') {
-			if(!/^\s*[\w.%+\-&'#!\$\*=\?\^_`\{\}~\/]+@([A-Z0-9-]+\.)*[A-Z0-9-]+\.[\w-]{2,}\s*$/i.test(emailAddress) &&
-			   !/^.*<[A-Z0-9._%+\-&'#!\$\*=\?\^_`\{\}~]+?@([A-Z0-9-]+\.)*[A-Z0-9-]+\.[\w-]{2,}>\s*$/i.test(emailAddress)) {
+            // extract the email address from between <> if applicable
+            var matches = /^.*<(.*)>\s*$/.exec(emailAddress);
+
+            if (matches !== null) {
+                emailAddress = matches[1];
+            }
+
+			if (!/^\s*[\w.%+\-&'#!\$\*=\?\^_`\{\}~\/]+@[^@]+\s*$/i.test(emailAddress)) {
 
 			   return false;
 			} // if
