@@ -124,6 +124,18 @@ class SugarQuery_Compiler_SQLTest extends Sugar_PHPUnit_Framework_TestCase
                 },
                 "(t.foo NOT LIKE 'bar' AND t.foo NOT LIKE 'baz' OR t.foo IS NULL)"
             ),
+            array(
+                function (SugarQuery_Builder_Where $where) {
+                    $where->equals('foo', 'bar');
+                },
+                "t.foo = 'bar'"
+            ),
+            array(
+                function (SugarQuery_Builder_Where $where) {
+                    $where->gt('foo', array('$field' => 'bar'));
+                },
+                "t.foo > t.bar"
+            ),
         );
     }
 

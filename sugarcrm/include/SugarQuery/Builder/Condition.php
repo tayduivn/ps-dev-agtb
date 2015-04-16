@@ -65,6 +65,9 @@ class SugarQuery_Builder_Condition
     {
         $this->values = $values;
         $this->field->verifyCondition($values, $this->query);
+        if (is_array($values) && count($values) == 1 && key($values) === '$field') {
+            $this->field->setFieldCompare(current($values));
+        }
         return $this;
     }
 

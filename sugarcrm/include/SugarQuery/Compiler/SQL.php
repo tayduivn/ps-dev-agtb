@@ -315,10 +315,15 @@ class SugarQuery_Compiler_SQL
 
     }
 
-    protected function compileField($field)
+    /**
+     * @param $field
+     * @param bool $compare Points that field is compared with another field.
+     * @return string
+     */
+    protected function compileField($field, $compare = false)
     {
-        if (!is_object($field)) {
-            return $field;
+        if ($compare) {
+            $field->field = $field->getFieldCompare();
         }
 
         if ($field instanceof SugarQuery_Builder_Field_Raw) {
@@ -563,9 +568,14 @@ class SugarQuery_Compiler_SQL
                 default:
                     if ($condition->values instanceof SugarQuery) {
                         $sql .= "{$field} {$condition->operator} (" . $condition->values->compileSql($this->sugar_query) . ")";
-                    } else {
-                        $value = $this->prepareValue($condition->values, $condition);
-                        $sql .= "{$field} {$condition->operator} {$value}";
+                    }
+                    else {
+                        if ($condition->field->isFieldCompare()) {
+                            $sql .= "{$field} {$condition->operator} " . $this->compileField($condition->field, true);
+                        } else {
+                            $value = $this->prepareValue($condition->values, $condition);
+                            $sql .= "{$field} {$condition->operator} {$value}";
+                        }
                     }
                     break;
             }
