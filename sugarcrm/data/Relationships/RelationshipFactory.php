@@ -202,6 +202,12 @@ class SugarRelationshipFactory {
         $buildingRelCache = true;
         $relationships = $this->getRelationshipData($modules);
 
+        // if there is a list of modules, it needs to merge it with the already loaded list
+        // so it doesn't have a partial list of relationships
+        if (!empty($modules) && is_array($this->relationships) && is_array($relationships)) {
+            $relationships = array_merge($this->relationships, $relationships);
+        }
+
         //Save it out
         sugar_mkdir(dirname($this->getCacheFile()), null, true);
         $out = "<?php \n \$relationships = " . var_export($relationships, true) . ";";

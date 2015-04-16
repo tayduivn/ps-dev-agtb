@@ -193,6 +193,7 @@ abstract class OpportunitySetup
         $rac->show_output = false;
         $rac->module_list = $modules;
         $rac->clearVardefs();
+        $rac->clearMetadataAPICache();
         $rac->rebuildExtensions($modules);
     }
 
