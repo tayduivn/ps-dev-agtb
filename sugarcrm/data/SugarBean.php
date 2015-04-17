@@ -20,13 +20,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * All Rights Reserved.
  *******************************************************************************/
 
-require_once('modules/DynamicFields/DynamicField.php');
+require_once 'modules/DynamicFields/DynamicField.php';
 require_once 'data/BeanVisibility.php';
 require_once 'data/BeanDuplicateCheck.php';
 require_once 'data/SugarACL.php';
-require_once "modules/Mailer/MailerFactory.php"; // imports all of the Mailer classes that are needed
-require_once('include/utils.php');
-require_once('include/Expressions/Expression/Parser/Parser.php');
+require_once 'modules/Mailer/MailerFactory.php'; // imports all of the Mailer classes that are needed
+require_once 'include/utils.php';
+require_once 'include/Expressions/Expression/Parser/Parser.php';
 
 /**
  * SugarBean is the base class for all business objects in Sugar.  It implements
@@ -696,18 +696,21 @@ class SugarBean
     }
 
     /**
-     *  Called before the bean is indexed so that any calculated attributes can updated
+     * Called before the bean is indexed so that any calculated attributes can updated
+     * @deprecated
      */
     public function beforeSseIndexing()
     {
-        $this->updateDocOwner();
-        //$this->updateUserFavorites();
-    	$this->loadVisibility()->beforeSseIndexing();
+        $GLOBALS['log']->deprecated("SugarBean::beforeSseIndexing is deprecated !");
     }
 
+    /**
+     * Add search engine visibility filter
+     * @deprecated
+     */
     public function addSseVisibilityFilter($engine, $filter)
     {
-    	return $this->loadVisibility()->addSseVisibilityFilter($engine, $filter);
+        $GLOBALS['log']->deprecated("SugarBean::addSseVisibilityFilter is deprecated !");
     }
 
     /**
@@ -6582,22 +6585,11 @@ class SugarBean
      * Updates the doc_owner property if it exists
      * By default it is as it is part of the Basic vardefs.
      * However it may have been removed from the vardefs for a particular module.
+     * @deprecated
      */
     protected function updateDocOwner()
     {
-        if(isset($this->doc_owner))
-        {
-            if (isset($this->field_defs['assigned_user_id']))
-            {
-                $this->doc_owner = $this->assigned_user_id;
-            }
-            elseif(isset($this->field_defs['created_by']))
-            {
-                $this->doc_owner = $this->created_by;
-            } else {
-                $this->doc_owner = '';
-            }
-        }
+        $GLOBALS['log']->deprecated("SugarBean::updateDocOwner is deprecated !");
     }
 
     /**
@@ -6677,7 +6669,7 @@ class SugarBean
      */
     protected function updateUserFavorites()
     {
-        $GLOBALS['log']->fatal("SugarBean::updateUserFavorites is deprecated !");
+        $GLOBALS['log']->deprecated("SugarBean::updateUserFavorites is deprecated !");
     }
 
     /**

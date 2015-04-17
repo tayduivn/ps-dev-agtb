@@ -10,11 +10,17 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\Visibility\StrategyInterface;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\Visibility\Visibility;
+use Sugarcrm\Sugarcrm\Elasticsearch\Analysis\AnalysisBuilder;
+use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
+use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Document;
+
 /**
  * Class KBVisibility
  * Addidional visibility check for KB.
  */
-class KBVisibility extends SugarVisibility
+class KBVisibility extends SugarVisibility implements StrategyInterface
 {
     /**
      * {@inheritDoc}
@@ -62,37 +68,73 @@ class KBVisibility extends SugarVisibility
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
-    public function addSseVisibilityFilter(SugarSearchEngineInterface $engine, $filter)
+    public function elasticBuildAnalysis(AnalysisBuilder $analysisBuilder, Visibility $provider)
+    {
+        // no special analyzers needed
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function elasticBuildMapping(Mapping $mapping, Visibility $provider)
+    {
+        $mapping->addNotAnalyzedField('status');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function elasticProcessDocumentPreIndex(Document $document, SugarBean $bean, Visibility $provider)
+    {
+        // nothing to do here
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function elasticGetBeanIndexFields($module, Visibility $provider)
+    {
+        return array('status' => 'id');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function elasticAddFilters(\User $user, \Elastica\Filter\Bool $filter, Visibility $provider)
     {
         $module = $this->bean->module_name;
-        $currentUser = $GLOBALS['current_user'];
-        if (!method_exists($this->bean, 'getPublishedStatuses') ||
-            $currentUser->isAdminForModule($module) ||
-            $currentUser->isDeveloperForModule($module)
-        ) {
-            return $filter;
+        if ($user->isAdminForModule($module) || $user->isDeveloperForModule($module)) {
+            return;
         }
 
-        if ($engine instanceof SugarSearchEngineElastic) {
-            $statusFilterOr = new \Elastica\Filter\BoolOr();
-            foreach ($this->bean->getPublishedStatuses() as $status) {
-                $statusFilterOr->addFilter(new \Elastica\Filter\Term(array('status' => $status)));
-            }
+        // create owner filter
+        $options = array(
+            'bean' => $this->bean,
+            'user' => $user,
+        );
+        $ownerFilter = $provider->createFilter('Owner', $options);
 
-            /**
-             * It's better to use `OwnerVisibility`, but it doesn't implement `addSseVisibilityFilter`
-             *
-             * $ow = new OwnerVisibility($this->bean, $this->params);
-             * $owFilter = new \Elastica\Filter\Bool();
-             * $owFilter = $ow->addSseVisibilityFilter($engine, $owFilter);
-             *
-             * @see OwnerVisibility::addSseVisibilityFilter
-             */
-            $statusFilterOr->addFilter($engine->getOwnerTermFilter());
-            $filter->addMust($statusFilterOr);
+        if ($statuses = $this->getPublishedStatuses()) {
+            $combo = new \Elastica\Filter\Bool();
+            $combo->addShould($provider->createFilter('KBStatus', array('published_statuses' => $statuses)));
+            $combo->addShould($ownerFilter);
+            $filter->addMust($combo);
+        } else {
+            $filter->addMust($ownerFilter);
         }
-        return $filter;
+    }
+
+    /**
+     * Get published statuses
+     * @return array
+     */
+    protected function getPublishedStatuses()
+    {
+        if (!method_exists($this->bean, 'getPublishedStatuses')) {
+            return array();
+        }
+        return $this->bean->getPublishedStatuses();
     }
 }
