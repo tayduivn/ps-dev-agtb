@@ -51,21 +51,11 @@ $viewdefs['KBContents']['base']['filter']['basic'] = array(
             'editable' => false,
         ),
         array(
-            'id' => 'published-in',
-            'name' => 'LBL_KBSTATUS_PUBLISHED_IN',
+            'id' => 'published',
+            'name' => 'LBL_KBSTATUS_PUBLISHED',
             'filter_definition' => array(
                 array(
-                    'status' => array('$equals' => KBContent::ST_PUBLISHED_IN),
-                ),
-            ),
-            'editable' => false,
-        ),
-        array(
-            'id' => 'published-ex',
-            'name' => 'LBL_KBSTATUS_PUBLISHED_EX',
-            'filter_definition' => array(
-                array(
-                    'status' => array('$equals' => KBContent::ST_PUBLISHED_EX),
+                    'status' => array('$equals' => KBContent::ST_PUBLISHED),
                 ),
             ),
             'editable' => false,

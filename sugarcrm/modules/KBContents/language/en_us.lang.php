@@ -73,6 +73,7 @@ $mod_strings = array (
     'LBL_CREATE_REVISION_BUTTON_LABEL' => 'Create Revision',
     'LBL_CANNOT_CREATE_LOCALIZATION' =>
         'Unable to create a new localization as a localization version exists for all available languages.',
+    'LBL_SPECIFY_PUBLISH_DATE' => 'Schedule this article to be published by specifying the Publish Date. Do you wish to continue without entering a Publish Date?',
     'LBL_KBSTATUS_DRAFT' => 'Draft',
     'LBL_KBSTATUS_EXPIRED' => 'Expired',
     'LBL_KBSTATUS_INREVIEW' => 'In Review',
