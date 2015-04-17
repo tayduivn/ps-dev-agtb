@@ -14,6 +14,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once 'PMSEDynaForm.php';
 require_once 'PMSEObservers/PMSEObservable.php';
+require_once('modules/pmse_Inbox/engine/PMSEEngineUtils.php');
 
 /**
  * Class PMSEWrapperCrmData
@@ -656,6 +657,7 @@ class PMSECrmDataWrapper implements PMSEObservable
         $output = null;
         $data = $args['data'];
         $filter = isset($args['filter']) ? $args['filter'] : '';
+        $type = isset($args['call_type']) ? $args['call_type'] : '';
         $outputType = 0;
         switch ($data) {
             case 'emails':
@@ -665,7 +667,7 @@ class PMSECrmDataWrapper implements PMSEObservable
                 $output = $this->retrieveTeams($filter);
                 break;
             case 'fields':
-                $output = $this->retrieveFields($filter, $moduleApi);
+                $output = $this->retrieveFields($filter, $moduleApi, $type);
                 $outputType = 1;
                 break;
             case 'allFields':
@@ -743,7 +745,8 @@ class PMSECrmDataWrapper implements PMSEObservable
                 $outputType = 1;
                 break;
             case 'addRelatedRecord':
-                $output = $this->addRelatedRecord($filter);
+                $output = $this->retrieveFields($filter, $moduleApi, 'AC');
+                //$output = $this->addRelatedRecord($filter);
                 $outputType = 1;
                 break;
             case 'allRelated':
@@ -937,98 +940,6 @@ class PMSECrmDataWrapper implements PMSEObservable
         $result = $db->Query($query);
         $row = $db->fetchByAssoc($result);
         return $row;
-    }
-
-    /**
-     * Retrieve list of Fieds
-     * @param string $filter
-     * @param array $additionalArgs
-     * @return object
-     * @codeCoverageIgnore
-     */
-    public function retrieveFields($filter = '', ModuleApi $moduleApi)
-    {
-        global $beanList;
-        if (isset($beanList[$filter])) {
-            $newModuleFilter = $filter;
-        } else {
-            $related = $this->getRelationshipData($filter);
-            $newModuleFilter = $related['rhs_module'];
-        }
-
-        $res = array();
-        new stdClass();
-
-        $res['name'] = $newModuleFilter;
-
-        //$module = explode('_', $filter);// pull the related module out.
-        //$filter = ucfirst(isset($module[1])?$module[1]:$module[0]);
-        //$primal_module = ucfirst(isset($module[0])?$module[0]:'');
-        $res['search'] = $filter;
-        $res['success'] = true;
-        global $current_language;
-        $module_strings = return_module_language($current_language, 'ModuleBuilder');
-
-        $fieldTypes = $module_strings['fieldTypes'];
-        //add datetimecombo type field from the vardef overrides to point to Datetime type
-        $fieldTypes['datetime'] = $fieldTypes['datetimecombo'];
-
-        global $app_list_strings;
-        $output = array();
-        $moduleBean = $this->getModuleFilter($newModuleFilter);
-        $fieldsData = isset($moduleBean->field_defs) ? $moduleBean->field_defs : array();
-        foreach ($fieldsData as $field) {
-            $retrieveId = isset($additionalArgs['retrieveId']) && !empty($additionalArgs['retrieveId']) && $field['name'] == 'id' ? $additionalArgs['retrieveId'] : false;
-            if (isset($field['vname']) && (($this->isValidStudioField($field) && !$this->fieldTodo(
-                            $field
-                        )) || $retrieveId)
-            ) {
-                $tmpField = array();
-                $tmpField['value'] = $field['name'];
-                $tmpField['text'] = str_replace(':', '', translate($field['vname'], $newModuleFilter));
-                $tmpField['type'] = isset($fieldTypes[$field['type']]) ? $fieldTypes[$field['type']] : ucfirst(
-                    $field['type']
-                );
-                $tmpField['type'] = (isset($tmpField['relationship']) && stristr(
-                        $tmpField['relationship'],
-                        'email'
-                    )) || stristr($tmpField['value'], 'email') ? 'email' : $tmpField['type'];
-                $tmpField['optionItem'] = 'none';
-                if ($field['type'] == 'enum' || $field['type'] == 'radioenum') {
-                    if (!isset($field['options']) || !isset($app_list_strings[$field['options']])) {
-                        $tmpField['optionItem'] = $moduleApi->getEnumValues(
-                            array(),
-                            array(
-                                "module" => $newModuleFilter,
-                                "field" => $field["name"]
-                            ));
-                    } else {
-                        $tmpField['optionItem'] = $app_list_strings[$field['options']];
-                    }
-                }
-
-                if ($field['type'] == 'bool') {
-                    $tmpField['optionItem'] = array("TRUE" =>true, "FALSE" => false);
-                }
-
-                if (isset($field['required'])) {
-                    $tmpField['required'] = $field['required'];
-                }
-                if (isset($field['len'])) {
-                    $tmpField['len'] = $field['len'];
-                }
-                $output[] = $tmpField;
-            }
-        }
-
-        $text = array();
-        foreach ($output as $key => $row) {
-            $text[$key] = strtolower($row['text']);
-        }
-        array_multisort($text, SORT_ASC, $output);
-
-        $res['result'] = $output;
-        return $res;
     }
 
     /**
@@ -1660,68 +1571,255 @@ class PMSECrmDataWrapper implements PMSEObservable
     }
 
     /**
+     * Retrieve list of Fieds
+     * @param string $filter
+     * @param array $additionalArgs
+     * @return object
      * @codeCoverageIgnore
      */
-    public function isValidStudioField($def)
+    public function retrieveFields($filter = '', ModuleApi $moduleApi, $type = '')
     {
-        if (strtolower($def['type']) == 'relate' || strtolower($def['type'] == 'link')) {
-            return false;
+        global $beanList;
+        if (isset($beanList[$filter])) {
+            $newModuleFilter = $filter;
+        } else {
+            $related = $this->getRelationshipData($filter);
+            $newModuleFilter = $related['rhs_module'];
         }
-        if ($def['vname'] == 'LBL_EMAIL_ADDRESS_PRIMARY') {
-            //Later, this should be treat as a list of email typed as link according the related tables.
-            return true;
-        }
-        if (isset($def['studio'])) {
-            if (isset($def['source']) && $def['source'] == 'non-db') {
-                return false;
-            }
-            if (is_array($def ['studio'])) {
-                if (isset($def['studio']['editField']) && $def['studio']['editField'] == true) {
-                    return true;
+
+        $res = array();
+        new stdClass();
+
+        $res['name'] = $newModuleFilter;
+
+        //$module = explode('_', $filter);// pull the related module out.
+        //$filter = ucfirst(isset($module[1])?$module[1]:$module[0]);
+        //$primal_module = ucfirst(isset($module[0])?$module[0]:'');
+        $res['search'] = $filter;
+        $res['success'] = true;
+        global $current_language;
+        $module_strings = return_module_language($current_language, 'ModuleBuilder');
+
+        $fieldTypes = $module_strings['fieldTypes'];
+        //add datetimecombo type field from the vardef overrides to point to Datetime type
+        $fieldTypes['datetime'] = $fieldTypes['datetimecombo'];
+
+        global $app_list_strings;
+        $output = array();
+        $moduleBean = $this->getModuleFilter($newModuleFilter);
+        $fieldsData = isset($moduleBean->field_defs) ? $moduleBean->field_defs : array();
+        foreach ($fieldsData as $field) {
+            //$retrieveId = isset($additionalArgs['retrieveId']) && !empty($additionalArgs['retrieveId']) && $field['name'] == 'id' ? $additionalArgs['retrieveId'] : false;
+            if (isset($field['vname']) && (PMSEEngineUtils::isValidField($field, $type))) {
+                if ($type == 'AC' && $field['name'] == 'assigned_user_id') {
+                    $field['method'] = 'assignedUsers';
+                    $field['type'] = 'enum';
+                    $field['vname'] = 'LBL_ASSIGNED_TO';
                 }
-                if (isset($def['studio']['required']) && $def['studio']['required']) {
-                    return true;
+                $tmpField = array();
+                $tmpField['value'] = $field['name'];
+                $tmpField['text'] = str_replace(':', '', translate($field['vname'], $newModuleFilter));
+                $tmpField['type'] = isset($fieldTypes[$field['type']]) ? $fieldTypes[$field['type']] : ucfirst(
+                    $field['type']
+                );
+                $tmpField['type'] = (isset($tmpField['relationship']) && stristr(
+                        $tmpField['relationship'],
+                        'email'
+                    )) || stristr($tmpField['value'], 'email') ? 'email' : $tmpField['type'];
+                $tmpField['optionItem'] = 'none';
+                if ($field['type'] == 'enum' || $field['type'] == 'radioenum') {
+                    if (!isset($field['options']) || !isset($app_list_strings[$field['options']])) {
+                        if ($type == 'AC' && $field['name'] == 'assigned_user_id') {
+                            $tmpField['optionItem'] = $this->gatewayModulesMethod($field['method']);
+                        } else {
+                            $tmpField['optionItem'] = $moduleApi->getEnumValues(
+                                array(),
+                                array(
+                                    "module" => $newModuleFilter,
+                                    "field" => $field["name"]
+                                ));
+                        }
+                    } else {
+                        $tmpField['optionItem'] = $app_list_strings[$field['options']];
+                    }
                 }
-                if (isset($def['studio']['editView']) == false) {
-                    return true;
+
+                if ($field['type'] == 'bool') {
+                    $tmpField['optionItem'] = array("TRUE" =>true, "FALSE" => false);
                 }
-            } else {
-                if ($def['studio'] == 'visible') {
-                    return true;
+
+                if (isset($field['required'])) {
+                    $tmpField['required'] = $field['required'];
                 }
-                if ($def['studio'] == 'hidden' || $def['studio'] == 'false' || !$def['studio']) {
-                    return false;
+                if (isset($field['len'])) {
+                    $tmpField['len'] = $field['len'];
                 }
+                $output[] = $tmpField;
             }
         }
 
-        if (empty($def ['source']) || $def ['source'] == 'db' || $def ['source'] == 'custom_fields') {
-            if ($def ['type'] != 'id' && (empty($def ['dbType']) || $def ['dbType'] != 'id')) {
-                return true;
-            }
+        $text = array();
+        foreach ($output as $key => $row) {
+            $text[$key] = strtolower($row['text']);
         }
-        return false;
+        array_multisort($text, SORT_ASC, $output);
+
+        $res['result'] = $output;
+        return $res;
     }
 
     /**
-     * @codeCoverageIgnore
+     * Method to display related modules fields
+     * @param string $filter
+     * @param array $additionalArgs
+     * @return object
      */
-    private function isCustomField($field)
+    public function addRelatedRecord($filter = '', $additionalArgs = array())
     {
-        return isset($field['source']) && $field['source'] == 'custom_fields';
+        global $beanList;
+        if (isset($beanList[$filter])) {
+            $newModuleFilter = $filter;
+        } else {
+            $related = $this->getRelationshipData($filter);
+            $newModuleFilter = $related['rhs_module'];
+        }
+
+        $res = array(); //new stdClass();
+
+        $res['name'] = $newModuleFilter;
+
+        //$module = explode('_', $filter);// pull the related module out.
+        //$filter = ucfirst(isset($module[1])?$module[1]:$module[0]);
+        //$primal_module = ucfirst(isset($module[0])?$module[0]:'');
+        $res['search'] = $filter;
+        $res['success'] = true;
+        global $current_language;
+        $module_strings = return_module_language($current_language, 'ModuleBuilder');
+
+        $fieldTypes = $module_strings['fieldTypes'];
+        //add datetimecombo type field from the vardef overrides to point to Datetime type
+        $fieldTypes['datetime'] = $fieldTypes['datetimecombo'];
+
+        global $app_list_strings;
+        $output = array();
+        $moduleBean = $this->getModuleFilter($newModuleFilter);
+        $fieldsData = isset($moduleBean->field_defs) ? $moduleBean->field_defs : array();
+        foreach ($fieldsData as $field) {
+            $retrieveId = isset($additionalArgs['retrieveId']) && !empty($additionalArgs['retrieveId']) && $field['name'] == 'id' ? $additionalArgs['retrieveId'] : false;
+            if (isset($field['vname']) && (PMSEEngineUtils::isValidField($field, 'AC') || $retrieveId)) {
+                $tmpField = array();
+                $tmpField['value'] = $field['name'];
+                $tmpField['text'] = str_replace(':', '', translate($field['vname'], $newModuleFilter));
+                $tmpField['type'] = isset($fieldTypes[$field['type']]) ? $fieldTypes[$field['type']] : ucfirst(
+                    $field['type']
+                );
+                $tmpField['type'] = (isset($tmpField['relationship']) && stristr($tmpField['relationship'], 'email'))
+                || stristr($tmpField['value'], 'email') ? 'email' : $tmpField['type'];
+                $tmpField['optionItem'] = 'none';
+                if ($field['type'] == 'enum') {
+                    if (!isset($field['options']) || !isset($app_list_strings[$field['options']])) {
+                        $tmpField['optionItem'] = null;
+                    } else {
+                        $tmpField['optionItem'] = $app_list_strings[$field['options']];
+                    }
+                }
+                if (isset($field['required'])) {
+                    $tmpField['required'] = $field['required'];
+                }
+                if (isset($field['len'])) {
+                    $tmpField['len'] = $field['len'];
+                }
+                $output[] = $tmpField;
+            }
+        }
+        $arrayModules = $this->returnArrayModules($newModuleFilter);
+        $customfields = false;
+        if (count($arrayModules) > 0) {
+            $output = array();
+            $customfields = true;
+        } else {
+            $arrayModules = $this->returnArrayModules('All');
+        }
+        if (count($arrayModules) > 0) {
+            foreach ($fieldsData as $field) {
+                $newfield = $this->dataFieldPersonalized($field, $arrayModules, $customfields);
+                if (isset($field['vname']) && isset($newfield)) {
+                    $tmpField = array();
+                    $tmpField['value'] = isset($newfield['value']) ? $newfield['value'] : $field['name'];
+                    $tmpField['text'] = isset($newfield['text']) ? $newfield['text'] : str_replace(
+                        ':',
+                        '',
+                        translate($field['vname'], $newModuleFilter)
+                    );
+                    $tmpField['type'] = isset($fieldTypes[$newfield['type']]) ? $fieldTypes[$newfield['type']] : ucfirst(
+                        $newfield['type']
+                    );
+                    $tmpField['optionItem'] = 'none';
+                    if ($newfield['type'] == 'enum') {
+                        $tmpField['optionItem'] = null;
+                        if (isset($newfield['method']) && $newfield['method'] != 'default') {
+                            $tmpField['optionItem'] = $this->gatewayModulesMethod($newfield['method']);
+                        } elseif (isset($newfield['method']) && $newfield['method'] == 'default') {
+                            $tmpField['optionItem'] = $app_list_strings[$field['options']];
+                        }
+                    }
+                    if (isset($field['required']) || isset($newfield['required'])) {
+                        $tmpField['required'] = isset($newfield['required']) ? $newfield['required'] : $field['required'];
+                    }
+                    if (isset($field['len'])) {
+                        $tmpField['len'] = $field['len'];
+                    }
+                    $output[] = $tmpField;
+                }
+            }
+        }
+        $text = array();
+        foreach ($output as $key => $row) {
+            $text[$key] = strtolower($row['text']);
+        }
+        array_multisort($text, SORT_ASC, $output);
+
+        $res['result'] = $output;
+        return $res;
     }
 
     /**
-     * @codeCoverageIgnore
+     * Method that returns a list of type date fields
+     * @param $filter
+     * @return object
      */
-    public function fieldTodo($field)
+    public function retrieveDateFields($filter)
     {
-        if ($field['type'] == 'file' || ($field['type'] == 'id' && !$this->isCustomField($field)) ||
-            $field['type'] == 'image' || $field['name'] == 'id' || $field['vname'] == 'LBL_DELETED'
-        ) {
-            return true;
+        if (isset($this->beanList[$filter])) {
+            $newModuleFilter = $filter;
+        } else {
+            $related = $this->getRelationshipData($filter);
+            $newModuleFilter = $related['rhs_module'];
         }
-        return false;
+        $res = array(); //new stdClass();
+        $res['name'] = $newModuleFilter;
+        $res['search'] = $filter;
+        $res['success'] = true;
+
+        $output = array();
+        $moduleBean = $this->getModuleFilter($newModuleFilter);
+        $fieldsData = isset($moduleBean->field_defs) ? $moduleBean->field_defs : array();
+        foreach ($fieldsData as $field) {
+            if (isset($field['vname']) && PMSEEngineUtils::isValidField($field)) {
+                if ($field['type'] == 'date' || $field['type'] == 'datetimecombo' || $field['type'] == 'datetime') {
+                    $tmpField = array();
+                    $tmpField['value'] = $field['name'];
+                    $tmpField['text'] = str_replace(':', '', translate($field['vname'], $newModuleFilter));
+                    $output[] = $tmpField;
+                }
+            }
+        }
+        $arr_Now = array();
+        $arr_Now['value'] = 'current_date_time';
+        $arr_Now['text'] = 'Current Date Time';
+        array_unshift($output, $arr_Now);
+        $res['result'] = $output;
+        return $res;
     }
 
     /**
@@ -1945,45 +2043,6 @@ class PMSECrmDataWrapper implements PMSEObservable
     }
 
     /**
-     * Method that returns a list of type date fields
-     * @param $filter
-     * @return object
-     */
-    public function retrieveDateFields($filter)
-    {
-        if (isset($this->beanList[$filter])) {
-            $newModuleFilter = $filter;
-        } else {
-            $related = $this->getRelationshipData($filter);
-            $newModuleFilter = $related['rhs_module'];
-        }
-        $res = array(); //new stdClass();
-        $res['name'] = $newModuleFilter;
-        $res['search'] = $filter;
-        $res['success'] = true;
-
-        $output = array();
-        $moduleBean = $this->getModuleFilter($newModuleFilter);
-        $fieldsData = isset($moduleBean->field_defs) ? $moduleBean->field_defs : array();
-        foreach ($fieldsData as $field) {
-            if (isset($field['vname']) && ($this->isValidStudioField($field) && !$this->fieldTodo($field))) {
-                if ($field['type'] == 'date' || $field['type'] == 'datetimecombo' || $field['type'] == 'datetime') {
-                    $tmpField = array();
-                    $tmpField['value'] = $field['name'];
-                    $tmpField['text'] = str_replace(':', '', translate($field['vname'], $newModuleFilter));
-                    $output[] = $tmpField;
-                }
-            }
-        }
-        $arr_Now = array();
-        $arr_Now['value'] = 'current_date_time';
-        $arr_Now['text'] = 'Current Date Time';
-        array_unshift($output, $arr_Now);
-        $res['result'] = $output;
-        return $res;
-    }
-
-    /**
      * Method to validate whether a case been claimed
      * @param $casID
      * @param $casIndex
@@ -2011,124 +2070,6 @@ class PMSECrmDataWrapper implements PMSEObservable
             $res['result'] = true;
         }
 
-        return $res;
-    }
-
-    /**
-     * Method to display related modules fields
-     * @param string $filter
-     * @param array $additionalArgs
-     * @return object
-     */
-    public function addRelatedRecord($filter = '', $additionalArgs = array())
-    {
-        global $beanList;
-        if (isset($beanList[$filter])) {
-            $newModuleFilter = $filter;
-        } else {
-            $related = $this->getRelationshipData($filter);
-            $newModuleFilter = $related['rhs_module'];
-        }
-
-        $res = array(); //new stdClass();
-
-        $res['name'] = $newModuleFilter;
-
-        //$module = explode('_', $filter);// pull the related module out.
-        //$filter = ucfirst(isset($module[1])?$module[1]:$module[0]);
-        //$primal_module = ucfirst(isset($module[0])?$module[0]:'');
-        $res['search'] = $filter;
-        $res['success'] = true;
-        global $current_language;
-        $module_strings = return_module_language($current_language, 'ModuleBuilder');
-
-        $fieldTypes = $module_strings['fieldTypes'];
-        //add datetimecombo type field from the vardef overrides to point to Datetime type
-        $fieldTypes['datetime'] = $fieldTypes['datetimecombo'];
-
-        global $app_list_strings;
-        $output = array();
-        $moduleBean = $this->getModuleFilter($newModuleFilter);
-        $fieldsData = isset($moduleBean->field_defs) ? $moduleBean->field_defs : array();
-        foreach ($fieldsData as $field) {
-            $retrieveId = isset($additionalArgs['retrieveId']) && !empty($additionalArgs['retrieveId']) && $field['name'] == 'id' ? $additionalArgs['retrieveId'] : false;
-            if (isset($field['vname']) && (($this->isValidStudioField($field) && !$this->fieldTodo(
-                            $field
-                        )) || $retrieveId)
-            ) {
-                $tmpField = array();
-                $tmpField['value'] = $field['name'];
-                $tmpField['text'] = str_replace(':', '', translate($field['vname'], $newModuleFilter));
-                $tmpField['type'] = isset($fieldTypes[$field['type']]) ? $fieldTypes[$field['type']] : ucfirst(
-                    $field['type']
-                );
-                $tmpField['type'] = (isset($tmpField['relationship']) && stristr($tmpField['relationship'], 'email'))
-                || stristr($tmpField['value'], 'email') ? 'email' : $tmpField['type'];
-                $tmpField['optionItem'] = 'none';
-                if ($field['type'] == 'enum') {
-                    if (!isset($field['options']) || !isset($app_list_strings[$field['options']])) {
-                        $tmpField['optionItem'] = null;
-                    } else {
-                        $tmpField['optionItem'] = $app_list_strings[$field['options']];
-                    }
-                }
-                if (isset($field['required'])) {
-                    $tmpField['required'] = $field['required'];
-                }
-                if (isset($field['len'])) {
-                    $tmpField['len'] = $field['len'];
-                }
-                $output[] = $tmpField;
-            }
-        }
-        $arrayModules = $this->returnArrayModules($newModuleFilter);
-        $customfields = false;
-        if (count($arrayModules) > 0) {
-            $output = array();
-            $customfields = true;
-        } else {
-            $arrayModules = $this->returnArrayModules('All');
-        }
-        if (count($arrayModules) > 0) {
-            foreach ($fieldsData as $field) {
-                $newfield = $this->dataFieldPersonalized($field, $arrayModules, $customfields);
-                if (isset($field['vname']) && isset($newfield)) {
-                    $tmpField = array();
-                    $tmpField['value'] = isset($newfield['value']) ? $newfield['value'] : $field['name'];
-                    $tmpField['text'] = isset($newfield['text']) ? $newfield['text'] : str_replace(
-                        ':',
-                        '',
-                        translate($field['vname'], $newModuleFilter)
-                    );
-                    $tmpField['type'] = isset($fieldTypes[$newfield['type']]) ? $fieldTypes[$newfield['type']] : ucfirst(
-                        $newfield['type']
-                    );
-                    $tmpField['optionItem'] = 'none';
-                    if ($newfield['type'] == 'enum') {
-                        $tmpField['optionItem'] = null;
-                        if (isset($newfield['method']) && $newfield['method'] != 'default') {
-                            $tmpField['optionItem'] = $this->gatewayModulesMethod($newfield['method']);
-                        } elseif (isset($newfield['method']) && $newfield['method'] == 'default') {
-                            $tmpField['optionItem'] = $app_list_strings[$field['options']];
-                        }
-                    }
-                    if (isset($field['required']) || isset($newfield['required'])) {
-                        $tmpField['required'] = isset($newfield['required']) ? $newfield['required'] : $field['required'];
-                    }
-                    if (isset($field['len'])) {
-                        $tmpField['len'] = $field['len'];
-                    }
-                    $output[] = $tmpField;
-                }
-            }
-        }
-        $text = array();
-        foreach ($output as $key => $row) {
-            $text[$key] = strtolower($row['text']);
-        }
-        array_multisort($text, SORT_ASC, $output);
-
-        $res['result'] = $output;
         return $res;
     }
 
