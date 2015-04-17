@@ -2891,6 +2891,10 @@ class ModuleInstaller{
                     'target' => '#drawers',
                     'layout' => 'drawer'
                 ),
+                'sweetspot' => array(
+                    'target' => '#sweetspot',
+                    'layout' => 'sweetspot'
+                ),
             ),
             'alertsEl' => '#alerts',
             'alertAutoCloseDelay' => 2500,
