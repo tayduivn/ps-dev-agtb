@@ -215,6 +215,8 @@
                         prefill.copy(parentModel);
                         prefill.unset('id');
                         prefill.set('status', 'draft');
+                        prefill.set('assigned_user_id', app.user.get('id'));
+                        prefill.set('assigned_user_name', app.user.get('full_name'));
 
                         if (type === self.CONTENT_LOCALIZATION) {
                             self._onCreateLocalization(prefill, parentModel);
