@@ -86,7 +86,7 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
     {
         // test if default providers are properly registered
         $container = new Container();
-        $this->assertEquals(array('GlobalSearch'), $container->getRegisteredProviders());
+        $this->assertEquals(array('GlobalSearch', 'Visibility'), $container->getRegisteredProviders());
 
         // Register/unregister new provider
         $this->assertFalse($container->isProviderAvailable('new'));
