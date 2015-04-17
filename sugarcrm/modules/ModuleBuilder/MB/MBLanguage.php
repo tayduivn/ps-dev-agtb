@@ -13,6 +13,11 @@ class MBLanguage{
 		var $iTemplates = array();
 		var $templates = array();
 
+    /**
+     * @var string[][]
+     */
+    public $appListStrings = array();
+
     public function __construct($name, $path, $label, $key_name, $label_singular)
     {
         $this->path = $path;
@@ -196,6 +201,34 @@ class MBLanguage{
                 }
             }
             sugar_file_put_contents_atomic($app_save_path . '/' . $lang, $appFile);
+        }
+    }
+
+    /**
+     * Deletes the given module data from the package $app_list_strings
+     *
+     * @param string $module Module name
+     */
+    public function delete($module)
+    {
+        $header = file_get_contents('modules/ModuleBuilder/MB/header.php');
+        $app_save_path = $this->path . '/../../language/application';
+        foreach ($this->appListStrings as $lang => $values) {
+            $file = $app_save_path . '/' . $lang;
+            if (file_exists($file)) {
+                $app_list_strings = array();
+                include $file;
+                unset(
+                    $app_list_strings['moduleList'][$module],
+                    $app_list_strings['moduleListSingular'][$module]
+                );
+
+                $contents = $header;
+                foreach ($app_list_strings as $key => $array) {
+                    $contents .= override_value_to_string_recursive2('app_list_strings', $key, $array);
+                }
+                sugar_file_put_contents_atomic($file, $contents);
+            }
         }
     }
 
