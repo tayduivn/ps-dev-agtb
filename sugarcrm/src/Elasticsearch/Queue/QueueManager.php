@@ -156,7 +156,7 @@ class QueueManager
         $sq->select('id');
         $sq->from($job)->where()
             ->equals('target', $jobExec)
-            ->equals('data', $module)
+            ->starts('data', $module)
             ->equals('status', \SchedulersJob::JOB_STATUS_QUEUED);
 
         $result = $job->fetchFromQuery($sq);
