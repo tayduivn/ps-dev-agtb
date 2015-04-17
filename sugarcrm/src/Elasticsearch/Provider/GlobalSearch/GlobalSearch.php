@@ -217,8 +217,6 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
      */
     public function buildMapping(Mapping $mapping)
     {
-        // TODO: distinguish between store only and searchable mapping.
-        // Aggregation mapping should go in a separate handler too.
         foreach ($this->getFtsFields($mapping->getModule()) as $field => $defs) {
             foreach ($this->getHandlers('Mapping') as $handler) {
                 $handler->buildMapping($mapping, $field, $defs);
@@ -247,6 +245,25 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
             $supported = array_merge($supported, $handler->getSupportedTypes());
         }
         return $supported;
+    }
+
+    /**
+     * Get fts field defs
+     * @param string $module
+     * @return array
+     */
+    protected function getFtsFields($module)
+    {
+        return $this->container->metaDataHelper->getFtsFields($module);
+    }
+
+    /**
+     * Get module list for user
+     * @return array
+     */
+    protected function getUserModules()
+    {
+        return $this->container->metaDataHelper->getAvailableModulesForUser($this->user);
     }
 
     /**
@@ -388,13 +405,9 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
      * @param array $modules
      * @return GlobalSearch
      */
-    public function from(array $modules = array())
+    public function from(array $modules)
     {
-        foreach ($modules as $module) {
-            if ($this->container->metaDataHelper->isModuleAvailableForUser($module, $this->user)) {
-                $this->modules[] = $module;
-            }
-        }
+        $this->modules = $modules;
         return $this;
     }
 

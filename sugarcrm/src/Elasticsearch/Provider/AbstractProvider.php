@@ -54,23 +54,4 @@ abstract class AbstractProvider implements ProviderInterface
     {
         $this->user = $user;
     }
-
-    /**
-     * Get fts field defs
-     * @param string $module
-     * @return array
-     */
-    protected function getFtsFields($module)
-    {
-        return $this->container->metaDataHelper->getFtsFields($module);
-    }
-
-    /**
-     * Get module list for user
-     * @return array
-     */
-    protected function getUserModules()
-    {
-        return $this->container->metaDataHelper->getAvailableModulesForUser($this->user);
-    }
 }
