@@ -112,53 +112,5 @@ $viewdefs['KBContents']['base']['filter']['basic'] = array(
             ),
             'editable' => false,
         ),
-        array(
-            'id' => 'active_date',
-            'name' => 'LBL_PUBLISH_DATE',
-            'filter_definition' => array(
-                'active_date' => array(
-                    '$dateRange' => 'today',
-                ),
-            ),
-            'editable' => false,
-        ),
-        array(
-            'id' => 'exp_date',
-            'name' => 'LBL_EXP_DATE',
-            'filter_definition' => array(
-                'exp_date' => array(
-                    '$dateRange' => 'today',
-                ),
-            ),
-            'editable' => false,
-        ),
-        array(
-            'id' => 'is_external',
-            'name' => 'LBL_IS_EXTERNAL',
-            'filter_definition' => array(
-                'is_external' => array(
-                        '$equals' => '1'
-                    ),
-            ),
-            'editable' => false,
-        ),
-        array(
-            'id' => 'kbsapprover_name',
-            'name' => 'LBL_KBSAPPROVER',
-            'filter_definition' => array(
-                'kbsapprover_id' => array(
-                    '$not_equals' => ''
-                ),
-            ),
-            'editable' => false,
-        ),
-        array(
-            'id' => 'assigned_user_name',
-            'name' => 'LBL_ASSIGNED_TO',
-            'filter_definition' => array(
-                '$owner' => '',
-            ),
-            'editable' => false,
-        ),
     ),
 );

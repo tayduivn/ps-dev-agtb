@@ -30,5 +30,9 @@ $viewdefs['KBContents']['base']['filter']['default'] = array(
             'predefined_filter' => true,
             'vname' => 'LBL_FAVORITES_FILTER',
         ),
+        'active_date' => array(),
+        'exp_date' => array(),
+        'is_external' => array(),
+        'kbsapprover_name' => array(),
     ),
 );
