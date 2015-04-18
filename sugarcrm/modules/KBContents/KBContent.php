@@ -210,7 +210,7 @@ class KBContent extends SugarBean {
                 if (!empty($this->kbdocument_id) && !empty($this->kbarticle_id)) {
                     $query = new SugarQuery();
                     $query->from(BeanFactory::getBean('KBContents'));
-                    $query->select(array('id'))->fieldRaw('MAX(revision)', 'max_revision');
+                    $query->select()->fieldRaw('MAX(revision)', 'max_revision');
                     $query->where()
                         ->equals('kbdocument_id', $this->kbdocument_id)
                         ->equals('kbarticle_id', $this->kbarticle_id);
