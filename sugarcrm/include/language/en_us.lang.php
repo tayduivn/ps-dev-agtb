@@ -4365,7 +4365,6 @@ Sincerely, SugarCRM',
     'ERR_CONNECTOR_NOT_ARRAY' => 'connector array in {0} been defined incorrectly or is empty and could not be used.',
     'LBL_PDF_VIEW' => 'Download PDF',
     'LBL_PDF_EMAIL' => 'Email PDF',
-    'LBL_NO_PDF_TEMPLATE' => 'No PDF template found.',
 
     'ERR_SUHOSIN' => 'Upload stream is blocked by Suhosin, please add &quot;upload&quot; to suhosin.executor.include.whitelist (See sugarcrm.log for more information)',
 
