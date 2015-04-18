@@ -270,6 +270,11 @@ class Container
             'GlobalSearch',
             'Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\GlobalSearch'
         );
+
+        $this->registerProvider(
+            'Visibility',
+            'Sugarcrm\Sugarcrm\Elasticsearch\Provider\Visibility\Visibility'
+        );
     }
 
     /**

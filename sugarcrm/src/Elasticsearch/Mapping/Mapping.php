@@ -34,6 +34,11 @@ class Mapping
     protected $module;
 
     /**
+     * @var \SugarBean
+     */
+    protected $bean;
+
+    /**
      * @var array Elasticsearch mapping properties
      */
     protected $properties = array();
@@ -74,6 +79,19 @@ class Mapping
     public function getModule()
     {
         return $this->module;
+    }
+
+    /**
+     * Get seed bean
+     * @return \SugarBean
+     */
+    public function getBean()
+    {
+        // lazy load bean
+        if ($this->bean === null) {
+            $this->bean = \BeanFactory::getBean($this->module);
+        }
+        return $this->bean;
     }
 
     /**

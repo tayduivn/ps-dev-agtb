@@ -39,6 +39,12 @@ class QueryBuilder
     protected $user;
 
     /**
+     * Apply visibility filters
+     * @var boolean
+     */
+    protected $applyVisibility = true;
+
+    /**
      * @var \Elastica\Query
      */
     protected $query;
@@ -121,6 +127,14 @@ class QueryBuilder
     }
 
     /**
+     * Disable visibility filter, not recommended !
+     */
+    public function disableVisibility()
+    {
+        $this->applyVisibility = false;
+    }
+
+    /**
      * Set query
      * @param \Elastica\Query $query
      * @return QueryBuilder
@@ -138,6 +152,9 @@ class QueryBuilder
      */
     public function setModules(array $modules)
     {
+        if ($this->applyVisibility) {
+            $modules = $this->getAllowedModules($modules);
+        }
         $this->modules = $modules;
         return $this;
     }
@@ -254,8 +271,12 @@ class QueryBuilder
         $query = new \Elastica\Query\Filtered();
         $query->setQuery($this->query);
 
-        // Add filters
-        $this->filters[] = $this->buildModuleFilter($this->modules);
+        // Apply visibility filtering
+        if ($this->applyVisibility) {
+            $this->buildVisibilityFilters($this->modules);
+        }
+
+        // Add all filters to query
         $query->setFilter($this->buildFilters($this->filters));
 
         // Wrap again in our main query object
@@ -293,7 +314,7 @@ class QueryBuilder
     }
 
     /**
-     * Execute query against search AP
+     * Execute query against search API
      * @return \Sugarcrm\Sugarcrm\Elasticsearch\Adapter\ResultSet
      */
     public function executeSearch()
@@ -303,7 +324,7 @@ class QueryBuilder
         }
 
         if (empty($this->modules)) {
-            throw new QueryBuilderException('QueryBuilder executeSearch failed - no modules avialable');
+            throw new QueryBuilderException('QueryBuilder executeSearch failed - no modules selected');
         }
 
         // Build query
@@ -436,5 +457,26 @@ class QueryBuilder
         $context = empty($user) ? array() : array('user' => $user);
         $collection = $this->container->indexPool->getReadIndices($modules, $context);
         return iterator_to_array($collection);
+    }
+
+    /**
+     * Filter list of modules based on user context ACL
+     * @param array $modules
+     * @return array
+     */
+    protected function getAllowedModules(array $modules)
+    {
+        $userModules = $this->container->metaDataHelper->getAvailableModulesForUser($this->user);
+        return array_intersect($modules, $userModules);
+    }
+
+    /**
+     * Build visibility filter
+     * @param array $modules
+     */
+    protected function buildVisibilityFilters(array $modules)
+    {
+        $visibility = $this->container->getProvider('Visibility');
+        $visibility->buildVisibilityFilters($this, $modules);
     }
 }
