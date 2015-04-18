@@ -476,7 +476,7 @@
                     errors[fieldName].activeDateApproveRequired = true;
                 }
 
-                if (publishingDate && pubDateObject && pubDateObject.getTime() < Date.now()) {
+                if (status == 'approved' && publishingDate && pubDateObject && pubDateObject.getTime() < Date.now()) {
                     errors[fieldName] = errors[fieldName] || {};
                     errors[fieldName].activeDateLow = true;
                 }
