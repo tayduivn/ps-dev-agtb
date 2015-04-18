@@ -181,6 +181,8 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             'modules/EmailMan/Save.php',
             //CRYS-773 Delete version.json from upgrade wizard directory
             'modules/UpgradeWizard/version.json',
+            // jira:MAR-2706 Move PHPMailer library to composer (new path vendor/phpmailer/phpmailer)
+            'vendor/PHPMailer/',
         );
 
         // must be upgrading from between 710 to 722
