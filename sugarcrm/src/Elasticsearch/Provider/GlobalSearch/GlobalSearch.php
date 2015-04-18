@@ -273,9 +273,9 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
      */
     protected function handleFilters($builder, array $filters)
     {
-        // Apply the filters to post_filters
+        // Apply the filters so both the query results and facets/aggregation results are filtered
         foreach ($filters as $filter) {
-            $builder->addPostFilter($filter);
+            $builder->addFilter($filter);
         }
     }
 
