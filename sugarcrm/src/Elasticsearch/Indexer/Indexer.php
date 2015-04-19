@@ -58,8 +58,7 @@ class Indexer
     protected $maxBulkThreshold = 100;
 
     /**
-     * A instance of DBManager to use.
-     * @var \DBManager instance
+     * @var \DBManager
      */
     protected $db;
 
@@ -107,12 +106,12 @@ class Indexer
         }
 
         // Send to database queue when Elastic is unavailable or in async mode
-        if (!$this->container->client->isAvailable() || ($this->async && !$fromQueue)) {
+        if ($this->useQueue($bean, $fromQueue)) {
             $this->container->queueManager->queueBean($bean);
             return false;
         }
 
-        // Convert bean into an Elatica Document
+        // Convert bean into an Elastica Document
         $document = $this->getDocumentFromBean($bean);
 
         // Process the document before indexing. We also pass the bean as a
@@ -120,6 +119,41 @@ class Indexer
         $this->processDocumentPreIndex($document, $bean);
 
         return $this->indexDocument($document, $batch);
+    }
+
+    /**
+     * Verify whether or not to use the queue
+     * @param \SugarBean $bean
+     * @param boolean $fromQueue
+     * @return boolean
+     */
+    protected function useQueue(\SugarBean $bean, $fromQueue)
+    {
+        // connection should be available
+        if (!$this->container->client->isAvailable()) {
+            return true;
+        }
+
+        // avoid loops when coming from queue already
+        if ($fromQueue) {
+            return false;
+        }
+
+        // in async mode use queue only if not coming from the queue already
+        if ($this->async || $this->isModuleAsync($bean->module_name)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if given module is configured for async indexing only
+     * @param string $module
+     */
+    protected function isModuleAsync($module)
+    {
+        return in_array($module, $this->container->metaDataHelper->getAsyncModules());
     }
 
     /**

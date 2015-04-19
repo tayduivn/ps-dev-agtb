@@ -120,6 +120,27 @@ class MetaDataHelper
     }
 
     /**
+     * Return FTS enabled modules configured for asynchronous indexing.
+     * @return array
+     */
+    public function getAsyncModules()
+    {
+        $cacheKey = 'async_modules';
+        if ($list = $this->getCache($cacheKey)) {
+            return $list;
+        }
+
+        $list = array();
+        foreach ($this->getAllEnabledModules() as $module) {
+            $vardefs = $this->getModuleVardefs($module);
+            if (!empty($vardefs['full_text_search_async'])) {
+                $list[] = $module;
+            }
+        }
+        return $this->setCache($cacheKey, $list);
+    }
+
+    /**
      * Get vardefs for given module
      * @param string $module
      * @return array
