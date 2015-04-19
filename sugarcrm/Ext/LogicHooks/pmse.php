@@ -18,21 +18,21 @@ $pmseHookClassPath = SugarAutoLoader::requireWithCustom('modules/pmse_Inbox/engi
 $pmseHookClassName = SugarAutoLoader::customClass('PMSELogicHook');
 $hook_array['before_save'][] = array(
     100,
-    'fts',
+    'pmse',
     $pmseHookClassPath,
     $pmseHookClassName,
     'before_save'
 );
 $hook_array['after_save'][] = array(
     100,
-    'fts',
+    'pmse',
     $pmseHookClassPath,
     $pmseHookClassName,
     'after_save'
 );
 $hook_array['after_delete'][] = array(
     100,
-    'fts',
+    'pmse',
     $pmseHookClassPath,
     $pmseHookClassName,
     'after_delete'
