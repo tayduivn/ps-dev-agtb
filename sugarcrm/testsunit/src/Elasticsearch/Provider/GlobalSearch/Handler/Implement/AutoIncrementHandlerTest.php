@@ -10,13 +10,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Provider\GlobalSearch\Handler;
+namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Provider\GlobalSearch\Handler\Implement;
 
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Document;
 
 /**
  *
- * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\AutoIncrementHandler
+ * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\AutoIncrementHandler
  *
  */
 class AutoIncrementHandlerTest extends \PHPUnit_Framework_TestCase
@@ -30,7 +30,7 @@ class AutoIncrementHandlerTest extends \PHPUnit_Framework_TestCase
         $interfaces = array(
             $nsPrefix . '\ProcessDocumentHandlerInterface',
         );
-        $implements = class_implements($nsPrefix . '\AutoIncrementHandler');
+        $implements = class_implements($nsPrefix . '\Implement\AutoIncrementHandler');
         $this->assertEquals($interfaces, array_values(array_intersect($implements, $interfaces)));
     }
 
@@ -42,7 +42,7 @@ class AutoIncrementHandlerTest extends \PHPUnit_Framework_TestCase
     {
         $bean = $this->getSugarBeanMock($beanFields);
 
-        $sut = $this->getMockBuilder('Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\AutoIncrementHandler')
+        $sut = $this->getMockBuilder('Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\AutoIncrementHandler')
             ->disableOriginalConstructor()
             ->setMethods(array('getFtsAutoIncrementFields', 'retrieveFieldByQuery'))
             ->getMock();

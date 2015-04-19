@@ -21,12 +21,13 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Query\QueryBuilder;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Document;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\HandlerCollection;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\HandlerFilterIterator;
-use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\MultiFieldHandler;
-use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\AutoIncrementHandler;
-use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\EmailAddressHandler;
-use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\CrossModuleAggHandler;
-use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\FavoritesHandler;
-use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\TagsHandler;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\HandlerInterface;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\MultiFieldHandler;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\AutoIncrementHandler;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\EmailAddressHandler;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\CrossModuleAggHandler;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\TagsHandler;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\FavoritesHandler;
 
 /**
  *
@@ -99,6 +100,7 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
     {
         $this->highlighter = new Highlighter();
         $this->booster = new Booster();
+        $this->handlers = new HandlerCollection($this);
         $this->registerHandlers();
     }
 
@@ -107,13 +109,21 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
      */
     protected function registerHandlers()
     {
-        $this->handlers = new HandlerCollection($this);
-        $this->handlers->addHandler(new MultiFieldHandler());
-        $this->handlers->addHandler(new AutoIncrementHandler());
-        $this->handlers->addHandler(new EmailAddressHandler());
-        $this->handlers->addHandler(new CrossModuleAggHandler());
-        $this->handlers->addHandler(new TagsHandler());
-        $this->handlers->addHandler(new FavoritesHandler());
+        $this->addHandler(new MultiFieldHandler());
+        $this->addHandler(new AutoIncrementHandler());
+        $this->addHandler(new EmailAddressHandler());
+        $this->addHandler(new CrossModuleAggHandler());
+        $this->addHandler(new TagsHandler());
+        $this->addHandler(new FavoritesHandler());
+    }
+
+    /**
+     * Add handler
+     * @param HandlerInterface $handler
+     */
+    public function addHandler(HandlerInterface $handler)
+    {
+        $this->handlers->addHandler($handler);
     }
 
     /**
