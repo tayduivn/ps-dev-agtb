@@ -18,6 +18,7 @@ class VardefManager{
     static $custom_disabled_modules = array();
     static $linkFields;
     public static $inReload = array();
+    protected static $ignoreRelationshipsForModule = array();
 
     /**
      * List of templates to ignore for BWC modules when adding templates. This
@@ -383,17 +384,14 @@ class VardefManager{
         if(!empty($params['bean'])) {
             $bean = $params['bean'];
         } else {
-            if(!empty($dictionary[$object])) {
-                // to avoid extra refresh - we'll fill it in later
-                if(!isset($GLOBALS['dictionary'][$object]['related_calc_fields'])) {
-                    $GLOBALS['dictionary'][$object]['related_calc_fields'] = array();
-                }
-            }
+            // to avoid extra refresh - we'll fill it in later
+            static::$ignoreRelationshipsForModule[$module] = true;
             // we will instantiate here even though dictionary may not be there,
             // since in case somebody calls us with wrong module name we need bean
             // to get $module_dir. This may cause a loop but since the second call will
             // have the right module name the loop should be short.
             $bean = BeanFactory::newBean($module);
+            static::$ignoreRelationshipsForModule[$module] = false;
         }
         //Some modules have multiple beans, we need to see if this object has a module_dir that is different from its module_name
         if(!$found){
@@ -427,7 +425,9 @@ class VardefManager{
         // as it will fail when trying to look up relationships as they my have not been loaded into the
         // cache yet
         $rebuildingRelationships = (isset($GLOBALS['buildingRelCache']) && $GLOBALS['buildingRelCache'] === true);
-        if (empty($params['ignore_rel_calc_fields']) && $rebuildingRelationships === false) {
+        if (empty($params['ignore_rel_calc_fields']) && $rebuildingRelationships === false
+            && empty(static::$ignoreRelationshipsForModule[$module])
+        ) {
             self::updateRelCFModules($module, $object);
         }
 
