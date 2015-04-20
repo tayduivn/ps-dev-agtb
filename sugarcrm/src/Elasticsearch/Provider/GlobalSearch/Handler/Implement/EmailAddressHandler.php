@@ -155,6 +155,7 @@ class EmailAddressHandler extends AbstractHandler implements
 
         $searchFieldName = $mapping->getModule() . SearchFields::PREFIX_SEP . $this->searchField;
         $mapping->addObjectProperty($searchFieldName, $searchField);
+        $mapping->excludeFromSource($searchFieldName);
     }
 
     /**

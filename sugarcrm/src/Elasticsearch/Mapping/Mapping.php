@@ -54,11 +54,35 @@ class Mapping
     );
 
     /**
+     * Excluded fields from _source
+     * @var array
+     */
+    protected $sourceExcludes = array();
+
+    /**
      * @param string $module
      */
     public function __construct($module)
     {
         $this->module = $module;
+    }
+
+    /**
+     * Add field to be excluded from _source
+     * @param string $fieldDef
+     */
+    public function excludeFromSource($fieldDef)
+    {
+        $this->sourceExcludes[] = $fieldDef;
+    }
+
+    /**
+     * Get excluded fields from _source
+     * @return multitype:
+     */
+    public function getSourceExcludes()
+    {
+        return $this->sourceExcludes;
     }
 
     /**

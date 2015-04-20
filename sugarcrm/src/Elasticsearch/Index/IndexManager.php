@@ -282,9 +282,29 @@ class IndexManager
                 $mapping = new \Elastica\Type\Mapping();
                 $mapping->setType($type);
                 $mapping->setProperties($properties);
+
+                // Configure _source
+                $mapping->setParam('_source', $this->getSourceSettings($fieldMappings));
+
+                // Send mapping
                 $this->sendMapping($mapping);
             }
         }
+    }
+
+    protected function getSourceSettings(Mapping $mapping)
+    {
+        // base settings
+        $source = array(
+            'enabled' => true,
+        );
+
+        // add excludes
+        if ($excludes = $mapping->getSourceExcludes()) {
+            $source['excludes'] = $excludes;
+        }
+
+        return $source;
     }
 
     /**
