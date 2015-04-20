@@ -62,9 +62,9 @@
         // Check for valid date range on edit. If not valid, show a validation error.
         // In detail mode, re-render the field if either start or end date changes.
         this.model.on('change:date_start change:date_end', function(model) {
-            var dateStartField,
-                dateEndField,
-                errors;
+            var dateStartField;
+            var dateEndField;
+            var errors;
 
             this.updateDurationHoursAndMinutes();
 
@@ -135,9 +135,10 @@
             duration = app.date.duration(endDate - startDate);
             durationString = duration.format() || ('0 ' + app.lang.get('LBL_DURATION_MINUTES'));
 
-            if ((startDate.date() === endDate.date())
-                && (startDate.month() === endDate.month())
-                && (startDate.year() === endDate.year())) {
+            if ((startDate.date() === endDate.date()) &&
+                (startDate.month() === endDate.month()) &&
+                (startDate.year() === endDate.year())
+            ) {
                 // Should not display the date twice when the start and the end dates are the same.
                 displayString = app.lang.get('LBL_START_AND_END_DATE_SAME_DAY', this.module, {
                     date: startDate.formatUser(true),
@@ -227,8 +228,8 @@
     },
 
     /**
-     * Is this date range valid? It returns true when start date is before end date.
-     * @return {boolean}
+     * Is this date range valid?
+     * @return {boolean} `true` when start date is before end date, `false` otherwise
      */
     isDateRangeValid: function() {
         var start = this.model.get('date_start'),

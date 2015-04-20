@@ -105,16 +105,16 @@
     /**
      * Return user time format.
      *
-     * @return {String} User time format.
+     * @return {string} User time format.
      */
     getUserTimeFormat: function() {
         return app.user.getPreference('timepref');
     },
 
     /**
-     * Return user time format.
+     * Return user datetime format.
      *
-     * @return {String} User time format.
+     * @return {string} User datetime format.
      */
     getUserDateTimeFormat: function() {
         return this.getUserDateFormat() + ' ' + this.getUserTimeFormat();
@@ -205,7 +205,10 @@
                 startDate = app.date(dateStartString);
                 endDate = app.date(dateEndString);
 
-                if ((startDate.year() === endDate.year()) && (startDate.month() === endDate.month()) && (startDate.days() === endDate.days())) {
+                if ((startDate.year() === endDate.year()) &&
+                    (startDate.month() === endDate.month()) &&
+                    (startDate.day() === endDate.day())
+                ) {
                     this.minTime = app.date.duration({
                         hours: startDate.hours(),
                         minutes: startDate.minutes()
@@ -354,7 +357,7 @@
             if (this.disposed) {
                 return;
             }
-            
+
             if (this._inDetailMode()) {
                 this.render();
                 return;
@@ -432,7 +435,7 @@
      *
      * @override
      */
-    decorateError: function (errors) {
+    decorateError: function(errors) {
         var ftag = this.fieldTag || '',
             $ftag = this.$(ftag),
             errorMessages = [],
@@ -447,7 +450,7 @@
             errorMessages.push(errors);
         } else {
             // For each error add to error help block
-            _.each(errors, function (errorContext, errorName) {
+            _.each(errors, function(errorContext, errorName) {
                 errorMessages.push(app.error.getErrorString(errorName, errorContext));
             });
         }
