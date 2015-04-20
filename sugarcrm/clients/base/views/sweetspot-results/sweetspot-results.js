@@ -18,7 +18,8 @@
     tagName: 'ul',
 
     events: {
-        'click a[href]': 'triggerHide'
+        'click a[href]': 'triggerHide',
+        'click a[data-callback]': 'triggerAction'
     },
 
     /**
@@ -240,6 +241,9 @@
         }
     },
 
+    /**
+     * Hides the {@link View.Layouts.Base.SweetspotLayout sweet spot layout}.
+     */
     triggerHide: function() {
         this.layout.hide();
     },
@@ -248,14 +252,27 @@
      * Triggers the action linked to the active element.
      *
      * Navigates to the view or calls the callback method.
+     *
+     * @param {Event} [evt] The `click` event.
      */
-    triggerAction: function() {
+    triggerAction: function(evt) {
         this.triggerHide();
-        var route = this.$('.active > a').attr('href');
+
+        var $action = this.$('.active > a');
+        var route = $action.attr('href');
         if (route) {
             app.router.navigate(route, {trigger: true});
         }
-        var action = this.$('li.active a').data('callback');
+
+        var action;
+        if (evt) {
+            // When the user clicks on an action, we need to select that action
+            // instead of the active one.
+            action = this.$(evt.currentTarget).data('callback');
+        } else {
+            action = $action.data('callback');
+        }
+
         if (action) {
             this.layout.triggerSystemAction(action);
         }
