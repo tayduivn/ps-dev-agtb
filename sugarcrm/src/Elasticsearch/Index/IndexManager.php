@@ -292,6 +292,11 @@ class IndexManager
         }
     }
 
+    /**
+     * Get _source field settings
+     * @param Mapping $mapping
+     * @return array
+     */
     protected function getSourceSettings(Mapping $mapping)
     {
         // base settings

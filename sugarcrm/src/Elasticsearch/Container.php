@@ -106,6 +106,12 @@ class Container
     protected $providerInit = array();
 
     /**
+     * Resource initialization callbacks
+     * @var array
+     */
+    protected $resourceInit = array();
+
+    /**
      * To instantiate this container self::create() should be used instead
      * of using this ctor directly unless you know what your are doing. This
      * ctor is not made private for testing purposes and edge cases where
@@ -170,7 +176,18 @@ class Container
         // Lazy load resources when accessed
         $init = 'init' . ucfirst($resource);
         if (property_exists($this, $resource) && method_exists($this, $init)) {
+
+            // instantiate resource
             $this->$init();
+
+            // apply resource initialization callbacks
+            if (isset($this->resourceInit[$resource])) {
+                foreach ($this->resourceInit[$resource] as $callback) {
+                    $callback($this->$resource);
+                }
+            }
+
+            // return resource
             return $this->$resource;
         }
     }
@@ -183,6 +200,16 @@ class Container
     public function addProviderInit($identifier, $callback)
     {
         $this->providerInit[$identifier][] = $callback;
+    }
+
+    /**
+     * Add resource initialization callback
+     * @param string $resource
+     * @param callable $callback
+     */
+    public function addResourceInit($resource, $callback)
+    {
+        $this->resourceInit[$resource][] = $callback;
     }
 
     /**
