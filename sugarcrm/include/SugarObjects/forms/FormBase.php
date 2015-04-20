@@ -52,6 +52,33 @@ protected function isEmptyReturnModuleAndAction()
     return empty($_POST['return_module']) && empty($_POST['return_action']);
 }
 
+/**
+ * Gets related module name from a rel link
+ * @param SugarBean $focus
+ * @return string
+ */
+protected function getRelatedModuleName($focus)
+{
+    $relate_to = null;
+    if (!empty($_REQUEST['relate_to'])) {
+        $rel_link = $_REQUEST['relate_to'];
+        if (!$focus->load_relationship($rel_link)) {
+            //Try to find the link in this bean based on the relationship
+            foreach ($focus->field_defs as $key => $def) {
+                if (isset($def['type']) && $def['type'] == 'link' && isset($def['relationship']) && $def['relationship'] == $rel_link) {
+                    $rel_link = $key;
+                    if ($focus->load_relationship($rel_link)) {
+                        break;
+                    }
+                }
+            }
+        }
+        if ($focus->$rel_link) {
+            $relate_to = $focus->$rel_link->getRelatedModuleName();
+        }
+    }
+    return $relate_to;
+}
 
 }
  
