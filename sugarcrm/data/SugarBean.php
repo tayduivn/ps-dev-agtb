@@ -2899,7 +2899,7 @@ class SugarBean
                     if ( $this->$field === '' || $this->$field == null || $this->$field == 'NULL') {
                         continue;
                     }
-                    if ( is_string($this->$field) ) {
+                    if (is_string($this->$field) && !is_numeric($this->$field)) {
                         $this->$field = (float)unformat_number($this->$field);
                         $reformatted = true;
                     }
