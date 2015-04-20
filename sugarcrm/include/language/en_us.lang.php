@@ -1866,6 +1866,12 @@ $app_list_strings = array (
       'active' => 'Active',
   ),
 
+  'sweetspot_theme_options' => array(
+      'default' => 'Default',
+      'light' => 'Light',
+      'dark' => 'Dark',
+  ),
+
   'lead_conv_activity_opt' =>
   array(
         'copy' => 'Copy',
@@ -2911,6 +2917,19 @@ $app_strings = array (
 
     // Strings for Opportunity Metrics dashlet
     'LBL_OPPORTUNITY_METRICS' => 'Opportunity Metrics',
+
+    'LBL_SWEETSPOT' => 'Sweet Spot',
+    'LBL_SWEETSPOT_CONFIG' => 'Sweet Spot Configuration Panel',
+    'LBL_SWEETSPOT_CONFIG_HOTKEYS' => 'Hotkeys',
+    'LBL_SWEETSPOT_CONFIG_ERR' => 'Failed to update configuration preferences: {{errorMsg}}',
+    'LBL_SWEETSPOT_ACTION' => 'Sweet Spot Action',
+    'LBL_SWEETSPOT_KEY' => 'Keyword',
+    'LBL_SWEETSPOT_REMOVE' => 'Remove action',
+    'LBL_SWEETSPOT_KEYWORDS_SECTION' => 'Hotkeys',
+    'LBL_SWEETSPOT_ACTIONS_SECTION' => 'Actions',
+    'LBL_SWEETSPOT_RECORDS_SECTION' => 'Records',
+    'LBL_SWEETSPOT_THEME' => 'Theme',
+    'LBL_SWEETSPOT_THEME_SELECT' => 'Select theme',
 
     'LBL_RELATED' => 'Related',
     'LBL_RELATED_INFORMATION' => 'Related Information',
@@ -5318,6 +5337,7 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_SHORTCUT_ALERT_CONFIRM' => 'Confirm',
     'LBL_SHORTCUT_ALERT_CANCEL' => 'Cancel',
     'LBL_SHORTCUT_DRAGDROPSELECT2_SELECTALL' => 'Select all items in a multi-select field',
+    'LBL_SHORTCUT_SWEETSPOT' => 'Toggle the Sweet Spot bar',
 
     // config drawer
     'LBL_CONFIG_TITLE_MODULE_SETTINGS' => '{{module}} Settings',

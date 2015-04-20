@@ -239,13 +239,13 @@ class PMSEActivityDefinitionWrapper
      */
     public function getDefaultReadOnlyFields()
     {
-        $this->processDefinition->retrieve_by_string_fields(array('id' => $this->activityDefinition->pro_id));
+        $this->processDefinition->retrieve($this->activityDefinition->pro_id);
         $bean = $this->factory->getBean($this->processDefinition->pro_module);
         $fieldsData = isset($bean->field_defs) ? $bean->field_defs : array();
 
         $output = array();
         foreach ($fieldsData as $field) {
-            if (isset($field['vname']) && (PMSEEngineUtils::isValidDefinitionField($field) || $field['name'] == 'id') && $field['vname'] != 'LBL_DELETED') {
+            if (isset($field['vname']) && PMSEEngineUtils::isValidField($field, 'RR')) {
                 $tmpField = array();
                 $tmpField['name'] = $field['name'];
                 $tmpField['label'] = str_replace(':', '',
@@ -276,7 +276,7 @@ class PMSEActivityDefinitionWrapper
 
         $output = array();
         foreach ($fieldsData as $field) {
-            if (isset($field['vname']) && (PMSEEngineUtils::isValidDefinitionField($field) || $field['name'] == 'id') && $field['vname'] != 'LBL_DELETED') {
+            if (isset($field['vname']) && PMSEEngineUtils::isValidField($field, 'RR')) {
                 if ($field['type'] != 'bool' && $field['type'] != 'radioenum' ) {
                     if (!(isset($field['required']) && $field['required'])) {
                         $tmpField = array();

@@ -65,8 +65,11 @@ foreach ($tabs as $tabModuleKey=>$tabModuleKeyValue)
 */
 // Add the remaining modules.
 foreach ($ACLAllowedModules as $module=>$singular) {
-	//if (!isset($ACLAllowedModulesAdded[$module])) {
-	    if($module == 'Currencies') continue;
+    $fullModuleList = array_merge($GLOBALS['moduleList'], $GLOBALS['modInvisList']);
+    if ($module == 'Currencies' ||
+    (!isset($app_list_strings['moduleList'][$module]) && !in_array($module, $fullModuleList))) {
+        continue;
+    }
         $icon_name = _getIcon($module."_32");
         if (empty($icon_name)){
             $icon_name = _getIcon($module);
@@ -75,7 +78,6 @@ foreach ($ACLAllowedModules as $module=>$singular) {
             $icon_name = "icon_A1_newmod.gif";
         }
         $buttons[] = array('name'=>$app_list_strings['moduleList'][$module], 'img'=> $icon_name, 'key'=>$module);
-	//}
 }
 
 $user_array = get_user_array(FALSE);

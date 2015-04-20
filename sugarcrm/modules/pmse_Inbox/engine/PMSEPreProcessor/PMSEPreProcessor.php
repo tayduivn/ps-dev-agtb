@@ -189,7 +189,8 @@ class PMSEPreProcessor
         if ($request->getExternalAction() == 'TERMINATE_CASE') {
             $this->terminateCaseByBeanAndProcess($request->getBean());
         }
-
+        if (!isset($_SESSION['triggeredFlows']))
+            $_SESSION['triggeredFlows']=array();
         foreach ($flowDataList as $flowData) {
             // Process the flow data and also the bean object data
             $request->setFlowData($this->processFlowData($flowData));

@@ -1136,11 +1136,12 @@ a.adam-tooltip-error-off {
 }
 
 .adam-itemupdater-label {
-  width: 30%;
-  box-sizing: border-box;
-  white-space: nowrap;
-  float: left;
-  margin: 2px 0 0 2px;
+    width: 30%;
+    box-sizing: border-box;
+    padding: 0.3em 0.5em 0 0.5em;
+    position: relative;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .adam-itemupdater-controlcontainer {
@@ -1172,4 +1173,9 @@ a.adam-tooltip-error-off {
 
 .updaterfield-item .updateritem-control[readonly] {
   background-color: inherit;
+}
+
+.adam-itemupdater-required {
+    position: absolute;
+    right: 5px;
 }
