@@ -5,6 +5,7 @@ describe('Base.Field.Duration', function() {
     beforeEach(function () {
         app = SugarTest.app;
         SugarTest.testMetadata.init();
+        SugarTest.loadComponent('base', 'field', 'fieldset');
         field = SugarTest.createField('base', 'duration', 'duration');
         SugarTest.testMetadata.set();
         data = field.model.get(field.name);
