@@ -100,6 +100,12 @@ class Container
     );
 
     /**
+     * Provider initialization callbacks
+     * @var array
+     */
+    protected $providerInit = array();
+
+    /**
      * To instantiate this container self::create() should be used instead
      * of using this ctor directly unless you know what your are doing. This
      * ctor is not made private for testing purposes and edge cases where
@@ -167,6 +173,16 @@ class Container
             $this->$init();
             return $this->$resource;
         }
+    }
+
+    /**
+     * Add provider initialization callback
+     * @param string $identifier Provider identifier
+     * @param callable $callback
+     */
+    public function addProviderInit($identifier, $callback)
+    {
+        $this->providerInit[$identifier][] = $callback;
     }
 
     /**
@@ -338,6 +354,13 @@ class Container
 
             if ($provider instanceof ContainerAwareInterface) {
                 $provider->setContainer($this);
+            }
+
+            // execute initialization callbacks
+            if (isset($this->providerInit[$identifier])) {
+                foreach ($this->providerInit[$identifier] as $callback) {
+                    $callback($provider);
+                }
             }
         }
 
