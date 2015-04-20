@@ -658,6 +658,8 @@ class PMSECrmDataWrapper implements PMSEObservable
         $data = $args['data'];
         $filter = isset($args['filter']) ? $args['filter'] : '';
         $type = isset($args['call_type']) ? $args['call_type'] : '';
+
+
         $outputType = 0;
         switch ($data) {
             case 'emails':
@@ -668,6 +670,12 @@ class PMSECrmDataWrapper implements PMSEObservable
                 break;
             case 'fields':
                 $output = $this->retrieveFields($filter, $moduleApi, $type);
+                $outputType = 1;
+                break;
+            case 'relatedfields':
+                $base_module = isset($args['base_module']) ? $args['base_module'] : $filter;
+                $filterModule = $this->getRelatedModule($filter, $base_module);
+                $output = $this->retrieveFields($filterModule, $moduleApi, $type);
                 $outputType = 1;
                 break;
             case 'allFields':
@@ -704,7 +712,8 @@ class PMSECrmDataWrapper implements PMSEObservable
                 $output = $this->retrieveProcessDefinition($filter);
                 break;
             case 'related':
-                $output = $this->retrieveRelatedBeans($filter);
+                $cardinality = isset($args['cardinality']) ? $args['cardinality'] : 'all';
+                $output = $this->retrieveRelatedBeans($filter, $cardinality);
                 $outputType = 1;
                 break;
             case 'oneToOneRelatedModules':
@@ -857,6 +866,22 @@ class PMSECrmDataWrapper implements PMSEObservable
         }
 
         return $out;
+    }
+
+    /**
+     * Returns the name of the module related to the target module based on the relationship
+     * @param $linkField Relationship Key
+     * @param $targetModule Target Module
+     */
+    public function getRelatedModule($linkField, $targetModule) {
+        $baseModule = BeanFactory::newBean($targetModule);
+        $baseModule->load_relationships();
+        if (isset($baseModule->$linkField)) {
+            $moduleName = $baseModule->$linkField->getRelatedModuleName();
+        } else {
+            $moduleName = $targetModule;
+        }
+        return $moduleName;
     }
 
     /**
@@ -1238,68 +1263,71 @@ class PMSECrmDataWrapper implements PMSEObservable
      */
     public function retrieveRelatedBeans($filter, $relationship = 'all')
     {
-//        $res = new stdClass();
-//        $res->search = $filter;
-//        $res->success = true;
-        $res['search'] = $filter;
-        $res['success'] = true;
+
+
+
         global $beanList;
         if (isset($beanList[$filter])) {
             $newModuleFilter = $filter;
         } else {
             $newModuleFilter = array_search($filter, $beanList);
         }
-        $output_11 = array();
-        $output_1m = array();
+        $output_11 = array(); // Logic container for one-to-one and many-to-one
+        $output_1m = array(); // Logic container for one-to-many and many-to-many(not implemented yet)
         $output = array();
         $moduleBean = $this->getModuleFilter($newModuleFilter);
-        //$relatedModules = is_object($moduleBean) ? $moduleBean->get_linked_fields() : array();
-        $filter_11 = 'one-to-one';
-        $filter_1m = 'one-to-many';
-        $ajaxRelationships = '';
-        if (is_object($moduleBean)) {
-            $relationships = new DeployedRelationships($newModuleFilter);
-            $ajaxRelationships = $this->getAjaxRelationships($relationships);
-            if ("ProjectTask" == $newModuleFilter) {
-                //special case
-                $newModuleFilter = "Project Tasks";
-            }
-            foreach ($ajaxRelationships as $related) {
-                if (($newModuleFilter == $related['lhs_module'] || $moduleBean->table_name == $related['lhs_table']) &&
-                    ($related['relationship_type'] == $filter_11 || $related['relationship_type'] == $filter_1m)
-                ) {
-                    $tmpField = array();
-                    $tmpField['value'] = $related['relationship_name'];
-                    $tmpField['text'] = $related['rhs_module'] . " (" . $related['name'] . " - " . $related['relationship_type'] . ")";
-                    if ($related['relationship_type'] == $filter_11) {
-                        $output_11[] = $tmpField;
-                    } else {
-                        if ($related['relationship_type'] == $filter_1m) {
-                            $output_1m[] = $tmpField;
-                        }
-                    }
+
+
+        foreach($moduleBean->get_linked_fields() as $link => $def) {
+            if (!empty($def['type']) && $def['type'] == 'link' && $moduleBean->load_relationship($link)) {
+                $relatedModule = $moduleBean->$link->getRelatedModuleName();
+                if (in_array($relatedModule, array("Emails", "Teams", "Activities", "EmailAddresses"))) {
+                    continue;
+                }
+                $relType = $moduleBean->$link->getType(); //returns 'one' or 'many' for the cardinality of the link
+                $label = empty($def['vname']) ? $link : translate($def['vname'], $filter);
+                $moduleLabel = translate("LBL_MODULE_NAME", $relatedModule);
+                if ($moduleLabel == "LBL_MODULE_NAME") {
+                    $moduleLabel = translate($relatedModule);
+                }
+                $relationshipName = $moduleBean->$link->getRelationshipObject()->name;
+                $ret = array(
+                    'value' => $link,
+                    'text' => "$moduleLabel ($label - $relType) : $relationshipName",
+                    'module' => $moduleLabel
+                );
+                if ($relType == 'one') {
+                    $output_11[] = $ret;
+                } else {
+                    $output_1m[] = $ret;
                 }
             }
-            switch ($relationship) {
-                case 'one-to-one':
-                    $output = $output_11;
-                break;
-                case 'one-to-many':
-                    $output = $output_1m;
-                break;
-                case 'all':
-                default:
-                    $output = array_merge($output_11, $output_1m);
-                break;
-            }
-
         }
 
-        $filterArray = array('value' => $filter, 'text' => '<' . $filter . '>');
+        switch ($relationship) {
+
+            case 'one-to-one':
+            case 'one':
+                $output = $output_11;
+            break;
+            case 'one-to-many':
+            case 'many':
+                $output = $output_1m;
+            break;
+            case 'all':
+            default:
+                $output = array_merge($output_11, $output_1m);
+            break;
+        }
+
+
+        $filterArray = array('value' => $filter, 'text' => '<' . $filter . '>', 'module' => $filter);
         array_unshift($output, $filterArray);
 
+        $res['search'] = $filter;
+        $res['success'] = true;
         $res['result'] = $output;
-        //$res->result = $output;
+
         return $res;
     }
 
