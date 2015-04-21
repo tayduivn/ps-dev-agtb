@@ -123,14 +123,14 @@ function compare_bool_values(& $target_object, $lhs_field, $operator, $rhs_value
 
 //rrs - bug 10466
 function convert_bool($value, $type="", $dbType = ''){
-	if($value=="bool_true"){
+	if ($value === "bool_true") {
 		if($type=="relate" || ($type == 'bool' && empty($dbType))){
 			return "1";
 		} else {	
 			return "on";
 		}
 	}
-	if($value=="bool_false"){
+	if ($value === "bool_false") {
 		if($type=="relate" || ($type == 'bool' && empty($dbType))){
 			return "0";
 		} else {	
