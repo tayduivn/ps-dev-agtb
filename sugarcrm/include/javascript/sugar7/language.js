@@ -32,6 +32,39 @@
                         module;
 
                 return moduleSingular;
+            },
+
+            /**
+             * Gets the letters used for the icons shown in various headers for
+             * each module, based on the translated singular module name.
+             *
+             * This does not always match the name of the module in the model,
+             * e.g. "Product" maps to "Quoted Line Item".
+             *
+             * If the module has an icon string defined, use it, otherwise
+             * fallback to the module's translated name.
+             *
+             * If there are spaces in the name, (e.g. Revenue Line Items or
+             * Product Catalog), it takes the initials from the first two words,
+             * instead of the first two letters (e.g. RL and PC, instead of Re
+             * and Pr).
+             *
+             * @param {string} module Module to which the icon belongs.
+             */
+            getModuleIconLabel: function(module) {
+                var name = app.lang.getAppListStrings('moduleIconList')[module] ||
+                        app.lang.getModuleName(module);
+                var space = name.indexOf(' ');
+                var hasSpace = space !== -1;
+                var result;
+
+                if (hasSpace) {
+                    result = name.substring(0, 1) + name.substring(space + 1, space + 2);
+                } else {
+                    result = name.substring(0, 2);
+                }
+
+                return result;
             }
         });
 
