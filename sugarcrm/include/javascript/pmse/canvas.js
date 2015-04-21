@@ -491,7 +491,7 @@ AdamCanvas.prototype.getContextMenu = function () {
             callback: null
         }),
             modulesFields;
-         val.getData(null, {
+         val.getData({call_type:'RR'}, {
             success: function (modulesFields) {
                 hiddenNameModule.setValue(value);
                 //if (typeof initial !== "undefined") {

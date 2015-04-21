@@ -20,8 +20,7 @@ $step = isset($_REQUEST['confirm_id']) ? 2 : 0;
 <link rel="stylesheet" href="styleguide/assets/css/upgrade.css?v=<?php echo time();?>"/>
 <script src='include/javascript/jquery/jquery-min.js'></script>
 <script src='sidecar/lib/jquery/jquery.iframe.transport.js'></script>
-<script src='include/javascript/phpjs/get_html_translation_table.js'></script>
-<script src='include/javascript/phpjs/htmlentities.js'></script>
+<script type="text/javascript" src="<?php echo getJSPath('cache/include/javascript/sugar_grp1.js'); ?>"></script>
 
 <script>
 if (top !== self) {

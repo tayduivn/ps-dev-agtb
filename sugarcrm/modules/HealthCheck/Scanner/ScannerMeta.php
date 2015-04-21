@@ -19,7 +19,7 @@
 class HealthCheckScannerMeta
 {
     // Minimum allowed upgrader version
-    const ALLOWED_UPGRADER_VERSION = '7.6.0.0RC3';
+    const ALLOWED_UPGRADER_VERSION = '7.6.0.0';
 
     const FLAG_GREEN = 1;
     const FLAG_YELLOW = 2;

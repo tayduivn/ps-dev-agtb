@@ -987,20 +987,19 @@ function return_app_list_strings_language($language, $useCache = true)
             $app_list_strings = sugarArrayIntersectMerge($app_list_strings, $app_list_strings_array[$lang]);
         }
 
-        // Merge custom Extensions with loaded language file
-        foreach(SugarAutoLoader::existing(
-            "custom/application/Ext/Language/$lang.lang.ext.php"
-        ) as $file) {
-            $app_list_strings = _mergeCustomAppListStrings($file, $app_list_strings);
-            $GLOBALS['log']->info("Found extended language file: $file");
-        }
-
-        // Custom language file overrides default
-        foreach(SugarAutoLoader::existing(
+        $files = SugarAutoLoader::existing(
+            "custom/application/Ext/Language/$lang.lang.ext.php",
             "custom/include/language/$lang.lang.php"
-        ) as $file) {
+        );
+
+        // sort files by mtime (see ModuleInstaller::sortExtensionFiles)
+        usort($files, function ($a, $b) {
+            return filemtime($a) - filemtime($b);
+        });
+
+        foreach ($files as $file) {
             $app_list_strings = _mergeCustomAppListStrings($file, $app_list_strings);
-            $GLOBALS['log']->info("Found custom language file: $file");
+            $GLOBALS['log']->info("Found language file: $file");
         }
     }
 

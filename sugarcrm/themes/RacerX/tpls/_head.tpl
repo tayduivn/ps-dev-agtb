@@ -22,6 +22,9 @@
 <link rel='stylesheet' href='{sugar_getjspath file="styleguide/assets/css/nvd3.css"}'/>
 {/if}
 {$SUGAR_JS}
+
+{sugar_getscript file="sidecar/lib/mousetrap/mousetrap.js"}
+
 {literal}
 <script type="text/javascript">
 <!--
@@ -35,5 +38,23 @@ if ( YAHOO.env.ua )
 
 
 </script>
+
+
+    <script type="text/javascript">
+        if (window.parent && typeof(window.parent.SUGAR) !== 'undefined' && typeof(window.parent.SUGAR.App) !== 'undefined') {
+            // update bwc context
+            var app = window.parent.SUGAR.App;
+            if (app.additionalComponents.sweetspot) {
+                Mousetrap.bind('esc', function(e) {
+                    app.additionalComponents.sweetspot.hide()
+                    return false;
+                });
+                Mousetrap.bind('shift+space', function(e) {
+                    app.additionalComponents.sweetspot.show()
+                    return false;
+                });
+            }
+        }
+    </script>
 {/literal}
 </head>

@@ -183,9 +183,9 @@ class ViewDropdown extends SugarView
      */
     protected function getAvailableRoleList($name)
     {
-        $parser = new ParserRoleDropDownFilter();
-        return MBHelper::getAvailableRoleList(function (array $params) use ($parser, $name) {
-            return $parser->hasMetadata($name, $params['role']);
+        $manager = MetaDataManager::getManager();
+        return MBHelper::getAvailableRoleList(function (array $params) use ($manager, $name) {
+            return $manager->hasEditableDropdownFilter($name, $params['role']);
         });
     }
 // END SUGARCRM flav=ent ONLY

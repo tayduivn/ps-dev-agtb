@@ -2885,6 +2885,10 @@ class ModuleInstaller{
                     'target' => '#drawers',
                     'layout' => 'drawer'
                 ),
+                'sweetspot' => array(
+                    'target' => '#sweetspot',
+                    'layout' => 'sweetspot'
+                ),
             ),
             'alertsEl' => '#alerts',
             'alertAutoCloseDelay' => 2500,
@@ -3271,22 +3275,32 @@ class ModuleInstaller{
      */
     protected function rebuild_dropdown_filters()
     {
-        $baseDir = 'custom/Extension/application/Ext/DropdownFilters/roles';
         $roles = ACLRole::getAllRoles();
         foreach ($roles as $role) {
-            $roleDir = $baseDir . '/' . $role->id;
-            $files = array();
-            if (is_dir($roleDir)) {
-                $it = new FilesystemIterator($roleDir);
-                foreach ($it as $file) {
-                    if ($file->isFile()) {
-                        $files[] = $file->getPathname();
-                    }
+            $this->rebuild_role_dropdown_filters($role->id);
+        }
+    }
+
+    /**
+     * Rebuilds cache files for dropdown filters extension for the given role
+     *
+     * @param string $role Role ID
+     */
+    public function rebuild_role_dropdown_filters($role)
+    {
+        $baseDir = 'custom/Extension/application/Ext/DropdownFilters/roles';
+        $roleDir = $baseDir . '/' . $role;
+        $files = array();
+        if (is_dir($roleDir)) {
+            $it = new FilesystemIterator($roleDir);
+            foreach ($it as $file) {
+                if ($file->isFile()) {
+                    $files[] = $file->getPathname();
                 }
             }
-            $cacheFile = 'custom/application/Ext/DropdownFilters/roles/' . $role->id . '/dropdownfilters.ext.php';
-            $this->cacheExtensionFiles($files, $cacheFile);
         }
+        $cacheFile = 'custom/application/Ext/DropdownFilters/roles/' . $role . '/dropdownfilters.ext.php';
+        $this->cacheExtensionFiles($files, $cacheFile);
     }
 
     /**
@@ -3299,11 +3313,11 @@ class ModuleInstaller{
      */
     protected function getDropdownFilterPath($item, $isDisabled = false)
     {
-        $path = 'custom/Extension/application/Ext/DropdownFilters';
+        $basePath = 'custom';
         if ($isDisabled) {
-            $path .= '/' . DISABLED_PATH;
+            $basePath .= '/' . DISABLED_PATH;
         }
-        $path .= '/' . str_replace('<basepath>/SugarModules/include/dropdown_filters/', '', $item['from']);
+        $path = str_replace('<basepath>/SugarModules', $basePath, $item['from']);
         $path = $this->patchPath($path);
 
         return $path;

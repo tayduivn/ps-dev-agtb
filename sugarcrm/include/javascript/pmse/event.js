@@ -934,6 +934,10 @@ AdamEvent.prototype.createConfigureAction = function () {
                     {
                         text: translate('LBL_PMSE_FORM_OPTION_UPDATED_RECORDS_ONLY'),
                         value: 'updated'
+                    },
+                    {
+                        text: translate('LBL_PMSE_FORM_OPTION_UPDATED_RECORDS_ONLY_AU'),
+                        value: 'allupdates'
                     }
                 ],
                 required: true,

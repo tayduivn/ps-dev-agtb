@@ -51,6 +51,7 @@
                 </div>
                 <div id="header"></div>
                 <div id="content"></div>
+                <div id="sweetspot"></div>
                 <div id="drawers"></div>
                 <div id="footer"></div>
             </div>

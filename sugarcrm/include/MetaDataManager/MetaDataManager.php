@@ -3642,6 +3642,20 @@ class MetaDataManager
         return $fields;
     }
 
+    public function hasEditableDropdownFilter($fieldName, $role)
+    {
+        $filter = $this->getRawFilter($fieldName, $role);
+        return count($filter) > 0;
+    }
+
+    public function getEditableDropdownFilter($fieldName, $role)
+    {
+        $filter = $this->getRawFilter($fieldName, $role);
+        $filter = $this->fixDropdownFilter($filter, $fieldName);
+
+        return $filter;
+    }
+
     /**
      * Return list of fields from view def field set and populate $displayParams with display parameters
      * of link and collection fields
@@ -3702,9 +3716,6 @@ class MetaDataManager
             $context = $this->getCurrentUserContext();
         }
 
-        require_once 'modules/ModuleBuilder/parsers/parser.roledropdownfilter.php';
-
-        $parser = new ParserRoleDropDownFilter();
         $platform = $this->platforms[0];
         $files = array_map(
             function ($file) use ($platform) {
@@ -3717,8 +3728,9 @@ class MetaDataManager
                     'params' => MetaDataFiles::getClientFileParams($file),
                );
             },
-            $parser->getAllFiles()
+            glob('custom/application/Ext/DropdownFilters/roles/*/dropdownfilters.ext.php')
         );
+
         $files = array_filter($files, function (array $file) use ($context) {
             return $context->isValid($file);
         });
@@ -3727,13 +3739,81 @@ class MetaDataManager
             return $context->compare($a, $b);
         });
 
-        $files = array_map(function (array $file) {
-            return $file['path'];
-        }, $files);
+        if (!count($files)) {
+            return array();
+        }
 
-        $values = $parser->getDropDownFiltersFromFiles($files);
+        $filters = array();
+        foreach ($files as $file) {
+            $fileFilters = $this->readDropdownFilterFile($file['path']);
+            foreach ($fileFilters as $fieldName => $filter) {
+                // make sure first file wins and its metadata doesn't get overridden
+                if (!isset($filters[$fieldName])) {
+                    $filters[$fieldName] = $this->fixDropdownFilter($filter, $fieldName);
+                }
+            }
+        }
 
-        return $values;
+        return $filters;
+    }
+
+    /**
+     * Reads medatata file and returns raw data contained in it
+     *
+     * @param string $path File path
+     * @return array
+     */
+    protected function readDropdownFilterFile($path)
+    {
+        $role_dropdown_filters = array();
+        require $path;
+
+        return $role_dropdown_filters;
+    }
+
+    /**
+     * Returns filter definition for the given dropdown field exactly as it's stored in metadata files, or empty array
+     * in case if the definition is not found
+     *
+     * @param string $fieldName Dropdown field name
+     * @param string $role Role ID
+     * @return array
+     */
+    protected function getRawFilter($fieldName, $role)
+    {
+        $path = 'custom/application/Ext/DropdownFilters/roles/' . $role . '/dropdownfilters.ext.php';
+        if (SugarAutoLoader::fileExists($path)) {
+            $filters = $this->readDropdownFilterFile($path);
+            if (isset($filters[$fieldName])) {
+                return $filters[$fieldName];
+            }
+        }
+
+        return array();
+    }
+
+    /**
+     * Fixes filter definition by making sure it contains all options from the default list and doesn't contain
+     * options which are not in the default list
+     *
+     * @param array $filter Raw filter definition
+     * @param string $fieldName Dropdown field name
+     * @return array
+     */
+    protected function fixDropdownFilter(array $filter, $fieldName)
+    {
+        global $app_list_strings;
+
+        if (isset($app_list_strings[$fieldName]) && is_array($app_list_strings[$fieldName])) {
+            // by default, all options are available
+            $defaults = array_fill_keys(array_keys($app_list_strings[$fieldName]), true);
+            // remove non-existing options from the filter
+            $filter = array_intersect_key($filter, $defaults);
+            // add default options to the filter and preserve original key order
+            $filter = array_merge($filter, array_diff_key($defaults, $filter));
+        }
+
+        return $filter;
     }
 // END SUGARCRM flav=ent ONLY
 

@@ -58,7 +58,7 @@ class CheckUpgraderTest extends UpgradeTestCase
                 false,
             ),
             array(
-                '7.6.0.0RC3',
+                '7.6.0.0',
                 true,
             ),
             array(

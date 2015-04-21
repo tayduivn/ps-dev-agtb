@@ -17,6 +17,7 @@ $viewdefs['base']['layout']['shortcuts'] = array(
         'Global:Help' => 'LBL_SHORTCUT_HELP',
         'Global:Create' => 'LBL_SHORTCUT_QUICK_CREATE',
         'Global:Search' => 'LBL_SHORTCUT_SEARCH',
+        'Global:Sweetspot' => 'LBL_SHORTCUT_SWEETSPOT',
         'Sidebar:Toggle' => 'LBL_SHORTCUT_SIDEBAR_TOGGLE',
         'List:Headerpane:Create' => 'LBL_SHORTCUT_CREATE_RECORD',
         'List:Select:Down' => 'LBL_SHORTCUT_NAVIGATE_DOWN',
