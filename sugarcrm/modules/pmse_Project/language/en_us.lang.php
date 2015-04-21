@@ -307,12 +307,15 @@ $mod_strings = array (
     'LBL_PMSE_FORMPANEL_SUBMIT' => 'Submit',
 
     'LBL_PMSE_EMAILPICKER_TEAMS' => 'Teams',
-    'LBL_PMSE_EMAILPICKER_SUGGESTIONS' => 'Suggestions',
-    'LBL_PMSE_EMAILPICKER_CURRENT_USER' => 'Current User',
-    'LBL_PMSE_EMAILPICKER_RECORD_OWNER' => 'Record Owner',
-    'LBL_PMSE_EMAILPICKER_SUPERVISOR' => 'Supervisor',
-    'LBL_PMSE_EMAILPICKER_SUGGESTIONS' => 'Suggestions',
-    'LBL_PMSE_EMAILPICKER_RESULTS_TITLE' => '%NUMBER% suggestion(s) for "%TEXT%"',
+    'LBL_PMSE_EMAILPICKER_USER_CREATED' => 'User in %MODULE% who created the record',
+    'LBL_PMSE_EMAILPICKER_USER_LAST_MODIFIED' => 'User in %MODULE% who last modified the record',
+    'LBL_PMSE_EMAILPICKER_USER_IS_ASSIGNED' => 'User in %MODULE% who is assigned to the record',
+    'LBL_PMSE_EMAILPICKER_USER_WAS_ASSIGNED' => 'User in %MODULE% who was assigned to the record',
+    'LBL_PMSE_EMAILPICKER_MANAGER_CREATED' => 'User in %MODULE% who is manager of who created the record',
+    'LBL_PMSE_EMAILPICKER_MANAGER_LAST_MODIFIED' => 'User in %MODULE% who is manager of who last modified the record',
+    'LBL_PMSE_EMAILPICKER_MANAGER_IS_ASSIGNED' => 'User in %MODULE% who is manager of who is assigned to the record',
+    'LBL_PMSE_EMAILPICKER_MANAGER_WAS_ASSIGNED' => 'User in %MODULE% who is manager of who was assigned to the record',
+    'LBL_PMSE_EMAILPICKER_TEAM_ITEM' => '%TEAM% team',
 
     'LBL_PMSE_UPDATERFIELD_VARIABLES_LIST_TITLE' => '%MODULE% fields',
 
