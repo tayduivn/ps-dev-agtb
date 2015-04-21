@@ -23,7 +23,7 @@ MultipleItemField.prototype.type = "MultipleItemField";
 /**
  * The function which processes the text for the items to be added to the field.
  * @abstract
- * @return {Function|null} The function which must return a string or an HTML Element to be used as the text for the 
+ * @return {Function|null} The function which must return a string or an HTML Element to be used as the text for the
  * items to be added.
  */
 MultipleItemField.prototype._onItemSetText = function () {
@@ -155,7 +155,7 @@ MultipleItemField.prototype._createPanel = function () {
 };
 
 MultipleItemField.prototype.scrollTo = function () {
-    var fieldsDiv = this.html.parentNode, 
+    var fieldsDiv = this.html.parentNode,
     	scrollForControlObject = getRelativePosition(this.controlObject.html, fieldsDiv).top + $(this.controlObject.html).outerHeight() + fieldsDiv.scrollTop,
     	that = this;
     if (fieldsDiv.scrollTop + $(fieldsDiv).outerHeight() < scrollForControlObject) {
@@ -208,11 +208,11 @@ MultipleItemField.prototype.clear = function () {
 	return this;
 };
 
-MultipleItemField.prototype._createItemContainer = function () {
-	var itemsContainer, that = this;
+MultipleItemField.prototype._createItemContainer = function (settings) {
+	var itemsContainer, that = this, defaults;
 	if (!this.controlObject) {
-		itemsContainer = new ItemContainer({
-	    	className: "adam-field-control",
+		defaults = {
+			className: "adam-field-control",
 	    	onAddItem: this._onChange(),
 	    	onRemoveItem: this._onChange(),
 	    	width: this.fieldWidth || 200,
@@ -233,7 +233,9 @@ MultipleItemField.prototype._createItemContainer = function () {
 	    			that.openPanel();
 	    		}
 	    	}
-	    });
+		};
+		jQuery.extend(true, defaults, settings);
+		itemsContainer = new ItemContainer(defaults);
 	    this.controlObject = itemsContainer;
 	    this._setValueToControl(this.value);
 	}
