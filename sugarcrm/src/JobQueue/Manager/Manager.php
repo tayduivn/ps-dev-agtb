@@ -224,8 +224,9 @@ class Manager implements ClientInterface, RunnerInterface
         }
         $this->observer = new \SplObjectStorage();
         $this->observer->attach(new Reflection());
-        $this->observer->attach(new State());
-
+        if (!($this->getClient() instanceof ImmediateClient)) {
+            $this->observer->attach(new State());
+        }
         return $this->observer;
     }
 

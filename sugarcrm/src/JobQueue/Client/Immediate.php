@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\Sugarcrm\JobQueue\Client;
 
+use Sugarcrm\Sugarcrm\JobQueue\Observer\State;
 use Sugarcrm\Sugarcrm\JobQueue\Workload\WorkloadInterface;
 
 /**
@@ -41,6 +42,7 @@ class Immediate implements ClientInterface
      */
     public function addJob(WorkloadInterface $workload)
     {
-        call_user_func($this->function, $workload);
+        $stateObserver = new State();
+        $stateObserver->onResolve($workload, call_user_func($this->function, $workload));
     }
 }
