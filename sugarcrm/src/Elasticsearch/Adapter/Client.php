@@ -102,6 +102,27 @@ class Client extends BaseClient
     }
 
     /**
+     * Check the data response to determine status.
+     * @param $data string the data response
+     * @return string
+     */
+    protected function processDataResponse($data)
+    {
+        if (empty($data['version']['number'])) {
+            $status = self::CONN_NO_VERSION_AVAILABLE;
+            $this->_logger->critical("Elasticsearch verify conn: No valid version string available");
+        } else {
+            if ($this->isVersionCompatible($data['version']['number'])) {
+                $status = self::CONN_SUCCESS;
+            } else {
+                $status = self::CONN_VERSION_NOT_SUPPORTED;
+                $this->_logger->critical("Elasticsearch verify conn: Unsupported Elasticsearch version");
+            }
+        }
+        return $status;
+    }
+
+    /**
      * This call will *always* try to create a connection to the Elasticsearch
      * backend to determine its availability. This should basically only be
      * called during install/upgrade and the search admin section. The usage
@@ -116,17 +137,7 @@ class Client extends BaseClient
             $result = $this->ping();
             if ($result->isOk()) {
                 $data = $result->getData();
-                if (empty($data['version']['number'])) {
-                    $status = self::CONN_NO_VERSION_AVAILABLE;
-                    $this->_logger->critical("Elasticsearch verify conn: No valid version string available");
-                } else {
-                    if ($this->isVersionCompatible($data['version']['number'])) {
-                        $status = self::CONN_SUCCESS;
-                    } else {
-                        $status = self::CONN_VERSION_NOT_SUPPORTED;
-                        $this->_logger->critical("Elasticsearch verify conn: Unsupported Elasticsearch version");
-                    }
-                }
+                $status = $this->processDataResponse($data);
             } else {
                 $status = self::CONN_ERROR;
                 $this->_logger->critical("Elasticsearch verify conn: No valid return code ({$result->getStatus()})");

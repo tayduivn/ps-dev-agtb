@@ -33,7 +33,6 @@ class IndexPoolTest extends \PHPUnit_Framework_TestCase
 
         $strategies = TestReflection::getProtectedValue($indexPool, 'strategies');
         $this->assertEquals($strategies['static'], '\Sugarcrm\Sugarcrm\Elasticsearch\Index\Strategy\StaticStrategy');
-        $this->assertEquals($strategies['archive'], '\Sugarcrm\Sugarcrm\Elasticsearch\Index\Strategy\ArchiveStrategy');
     }
 
     /**
