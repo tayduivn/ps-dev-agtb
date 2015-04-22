@@ -23,7 +23,7 @@ class TemplateCurrencyId extends TemplateId
         $def['type'] = $this->type;
         $def['vname'] = 'LBL_CURRENCY_ID';
         $def['dbType'] = 'id';
-        $def['studio'] = 'visible';
+        $def['studio'] = false;
         $def['function'] = 'getCurrencies';
         $def['function_bean'] = 'Currencies';
         return $def;
