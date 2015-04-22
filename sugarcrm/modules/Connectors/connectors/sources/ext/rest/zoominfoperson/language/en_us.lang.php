@@ -22,9 +22,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $connector_strings = array (
     //licensing information shown in config screen
     'LBL_LICENSING_INFO' => '<table border="0" cellspacing="1"><tr><td valign="top" width="35%" class="dataLabel"><image src="' . getWebPath('modules/Connectors/connectors/sources/ext/rest/zoominfoperson/images/zoominfo.gif') . '" border="0"></td><td width="65%" valign="top" class="dataLabel">' .
-                            'ZoomInfo&#169; provides deep information on over 45 million business people at over 5 million companies.  Learn more.  <a target="_blank" href="http://www.zoominfo.com/about">http://www.zoominfo.com/about</a></td></tr></table>',    
+                            'ZoomInfo provides deep information on over 45 million business people at over 5 million companies.  Learn more.  <a target="_blank" href="http://www.zoominfo.com/about">http://www.zoominfo.com/about</a></td></tr></table>',    
     
-    'LBL_SEARCH_FIELDS_INFO' => 'The following fields are supported by the Zoominfo&#169 Person; API: First Name, Last Name and Email Address.',    
+    'LBL_SEARCH_FIELDS_INFO' => 'The following fields are supported by the Zoominfo Person; API: First Name, Last Name and Email Address.',    
     
     //vardef labels
 	'LBL_ID' => 'ID',

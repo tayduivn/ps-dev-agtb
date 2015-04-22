@@ -13,7 +13,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 $config = array (
-  'name' => 'Google&#169;',
+  'name' => 'Google',
   'eapm' => array(
     'enabled' => true,
     'only' => true,
