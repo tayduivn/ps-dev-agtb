@@ -243,7 +243,7 @@ MultipleItemField.prototype._createItemContainer = function (settings) {
 };
 
 MultipleItemField.prototype.createHTML = function () {
-	var fieldLabel, required = '', readAtt, that = this;
+	var fieldLabel, required = '', readAtt, that = this, divControlObjectContainer;
 	if (!this.html) {
 	    Field.prototype.createHTML.call(this);
 
@@ -261,7 +261,11 @@ MultipleItemField.prototype.createHTML = function () {
 	    if (this.readOnly) {
 	        //TODO: implement readOnly!!!!!
 	    }
-	    this._createItemContainer().html.appendChild(this.controlObject.getHTML());
+	    divControlObjectContainer = this.createHTMLElement('div');
+	    divControlObjectContainer.className = "control-object-container";
+	    this._createItemContainer();
+	    this.html.appendChild(divControlObjectContainer);
+	    divControlObjectContainer.appendChild(this.controlObject.getHTML());
 
 	    this._createPanel();
 

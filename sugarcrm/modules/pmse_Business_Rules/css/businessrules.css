@@ -425,7 +425,7 @@ table.decision-table-index span {
   -ms-user-select: none;
   -o-user-select: none;
   user-select: none;
-  display: inline-block;
+  display: block;
   overflow: auto;
   padding: 2px;
   position: static;

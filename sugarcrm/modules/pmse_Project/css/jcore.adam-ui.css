@@ -298,6 +298,10 @@ a.adam-button:hover {
   background-color: rgba(50, 168, 236, 0.1);
 }
 
+.adam-field .control-object-container {
+  display: inline-block;
+}
+
 .adam-field .adam-field-control:focus,
 .adam-field .adam-field-control.focused {
   border-color: rgba(82, 168, 236, 0.8);
@@ -745,7 +749,7 @@ a.adam-tooltip-error-off {
   -ms-user-select: none;
   -o-user-select: none;
   user-select: none;
-  display: inline-block;
+  display: block;
   overflow: auto;
   padding: 2px;
   position: static;
