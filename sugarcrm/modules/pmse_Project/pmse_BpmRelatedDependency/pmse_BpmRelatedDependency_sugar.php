@@ -90,13 +90,4 @@ class pmse_BpmRelatedDependency_sugar extends Basic {
 	public function __construct(){
 		parent::__construct();
 	}
-
-	public function bean_implements($interface){
-		switch($interface){
-			case 'ACL': return true;
-		}
-		return false;
 }
-
-}
-?>
