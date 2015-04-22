@@ -17,6 +17,7 @@ $step = isset($_REQUEST['confirm_id']) ? 2 : 0;
 <title>SugarCRM Upgrader</title>
 <meta name="viewport" content="initial-scale=1.0">
 <meta name="viewport" content="user-scalable=no, width=device-width">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <link rel="stylesheet" href="styleguide/assets/css/upgrade.css?v=<?php echo time();?>"/>
 <script src='include/javascript/jquery/jquery-min.js'></script>
 <script src='sidecar/lib/jquery/jquery.iframe.transport.js'></script>
