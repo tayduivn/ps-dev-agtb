@@ -209,6 +209,9 @@
      */
     getTotalRecords: function() {
         var massCollection = this.context && this.context.get('mass_collection'),
+            attributes = null,
+            action = null,
+            module = this.module,
             filterDef,
             max_num,
             order,
@@ -245,6 +248,17 @@
             max_num: max_num
         };
 
+        // If we're using action menu in subpanel
+        if (this.context.get('isSubpanel')) {
+            attributes = {
+                id: this.context.parent.get('modelId'),
+                link: this.context.get('link')
+            };
+
+            action = attributes['link'];
+            module = this.context.parent.get('module');
+        }
+
         if (order && order.field) {
             params.order_by = order.field + ':' + order.direction;
         }
@@ -253,7 +267,7 @@
             params.filter = filterDef;
         }
 
-        url = app.api.buildURL(this.module, null, null, params);
+        url = app.api.buildURL(module, action, attributes, params);
 
         app.alert.show('totalrecord', {
             level: 'process',
