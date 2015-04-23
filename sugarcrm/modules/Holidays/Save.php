@@ -22,13 +22,14 @@ $focus->retrieve($_POST['record']);
 
 $focus = populateFromPost('', $focus);
 
-if ($_REQUEST['return_module'] != 'Project'){
-	$focus->person_id = $_REQUEST['relate_id'];
-	$focus->person_type = "Users";
-}
-else if ($_REQUEST['return_module'] == 'Project'){
-	$focus->related_module = 'Project';
-	$focus->related_module_id = $_REQUEST['relate_id'];
+if ($focus->id != $_REQUEST['relate_id']) {
+    if ($_REQUEST['return_module'] != 'Project') {
+        $focus->person_id = $_REQUEST['relate_id'];
+        $focus->person_type = "Users";
+    } elseif ($_REQUEST['return_module'] == 'Project') {
+        $focus->related_module = 'Project';
+        $focus->related_module_id = $_REQUEST['relate_id'];
+    }
 }
 
 $check_notify = FALSE;
