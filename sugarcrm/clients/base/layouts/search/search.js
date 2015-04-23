@@ -127,6 +127,7 @@
         this.filteredSearch = false;
 
         var tagFilters = _.pluck(this.context.get('tags'), 'id');
+        this.collection.resetPagination();
 
         //TODO: collection.fetch shouldn't need a query to be passed. Will
         // be fixed by SC-3973.
@@ -155,6 +156,7 @@
         var moduleList = this.context.get('module_list') || [];
         this.filteredSearch = true;
         var tagFilters = _.pluck(this.context.get('tags'), 'id');
+        this.collection.resetPagination();
         this.collection.fetch({query: searchTerm, module_list: moduleList, params: {xmod_aggs: true},
             apiOptions:
             {
