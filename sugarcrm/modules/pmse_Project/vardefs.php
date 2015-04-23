@@ -272,32 +272,17 @@ $dictionary['pmse_Project'] = array(
     'calculated' => false,
     'size' => '20',
   ),
-  'prj_status' => 
-  array (
-    'required' => true,
-    'name' => 'prj_status',
-    'vname' => 'LBL_PRJ_STATUS',
-    'type' => 'varchar',
-    'massupdate' => false,
-    'default' => 'ACTIVE',
-    'no_default' => false,
-    'comments' => '',
-    'help' => '',
-    'importable' => 'true',
-    'duplicate_merge' => 'disabled',
-    'duplicate_merge_dom_value' => '0',
-    'audited' => false,
-    'reportable' => true,
-    'unified_search' => false,
-    'merge_filter' => 'disabled',
-    'full_text_search' => 
-    array (
-      'boost' => '0',
-    ),
-    'calculated' => false,
-    'len' => '10',
-    'size' => '20',
-  ),
+  'prj_status' =>
+      array (
+        'name' => 'prj_status',
+        'vname' => 'LBL_PRJ_STATUS',
+        'type' => 'enum',
+        'len' => 10,
+        'options' => 'process_definition_status_dom',
+        'comment' => 'Process Definition status (ex: Enabled, Disabled)',
+        'default' => 'INACTIVE',
+        'duplicate_on_record_copy' => 'no',
+      ),
   'prj_module' => 
   array (
     'required' => true,
