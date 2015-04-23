@@ -11,15 +11,38 @@
 var MultipleItemField = function (settings, parent) {
 	Field.call(this, settings, parent);
 	this._panel = null;
+	this._fieldHeight = null;
 	this._onValueAction = null;
 	this._panelAppended = false;
 	this._panelSemaphore = false;
 	this._proxy = new SugarProxy();
+	MultipleItemField.prototype.init.call(this, settings);
 };
 
 MultipleItemField.prototype = new Field();
 MultipleItemField.prototype.constructor = MultipleItemField;
 MultipleItemField.prototype.type = "MultipleItemField";
+
+MultipleItemField.prototype.init = function (settings) {
+	var defaults = {
+		fieldHeight: 100
+	};
+
+	jQuery.extend(true, defaults, settings);
+
+	this.setFieldHeight(defaults.fieldHeight);
+};
+
+MultipleItemField.prototype.setFieldHeight = function (height) {
+	if(isNaN(height)) {
+        throw new Error("setFieldHeight(): The parameter must be a number.");
+    }
+    this._fieldHeight = height;
+    if (this.controlObject) {
+    	this.controlObject.setHeight(height);
+    }
+    return this;
+};
 /**
  * The function which processes the text for the items to be added to the field.
  * @abstract
@@ -237,6 +260,7 @@ MultipleItemField.prototype._createItemContainer = function (settings) {
 		jQuery.extend(true, defaults, settings);
 		itemsContainer = new ItemContainer(defaults);
 	    this.controlObject = itemsContainer;
+	    this.setFieldHeight(this._fieldHeight);
 	    this._setValueToControl(this.value);
 	}
 	return this;
