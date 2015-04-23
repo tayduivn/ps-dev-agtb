@@ -25,6 +25,7 @@ var Proxy = function (options) {
      */
     this.url = null;
     this.callback = null;
+    this.attributes = null;
     Proxy.prototype.initObject.call(this, options);
 };
 Proxy.prototype = new Base();
@@ -48,11 +49,13 @@ Proxy.prototype.family = 'Proxy';
 Proxy.prototype.initObject = function (options) {
     var defaults = {
         url: null,
-        callback: null
+        callback: null,
+        attributes: null
     };
     $.extend(true, defaults, options);
     this.setUrl(defaults.url)
-        .setCallback(defaults.callback);
+        .setCallback(defaults.callback)
+        .setAttributes(defaults.attributes);
 };
 
 /**
@@ -67,6 +70,11 @@ Proxy.prototype.setUrl = function (url) {
 
 Proxy.prototype.setCallback = function (callback) {
     this.callback = callback;
+    return this;
+};
+
+Proxy.prototype.setAttributes = function(attributes) {
+    this.attributes = attributes;
     return this;
 };
 

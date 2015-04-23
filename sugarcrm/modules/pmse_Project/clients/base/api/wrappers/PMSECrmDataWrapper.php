@@ -14,7 +14,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once 'PMSEDynaForm.php';
 require_once 'PMSEObservers/PMSEObservable.php';
-require_once('modules/pmse_Inbox/engine/PMSEEngineUtils.php');
+require_once 'modules/pmse_Inbox/engine/PMSEEngineUtils.php';
+require_once 'modules/pmse_Inbox/engine/PMSERelatedModule.php';
 
 /**
  * Class PMSEWrapperCrmData
@@ -154,6 +155,8 @@ class PMSECrmDataWrapper implements PMSEObservable
      */
     protected $observers;
 
+    protected $pmseRelatedModule;
+
     /**
      *
      * @global type $beanList
@@ -181,6 +184,7 @@ class PMSECrmDataWrapper implements PMSEObservable
         $this->teamsBean = BeanFactory::getBean('Teams');
         $this->usersBean = BeanFactory::getBean('Users');
         $this->sugarQueryObject = new SugarQuery();
+        $this->pmseRelatedModule = new PMSERelatedModule();
 
 
         $this->beanList = $beanList;
@@ -658,7 +662,7 @@ class PMSECrmDataWrapper implements PMSEObservable
         $data = $args['data'];
         $filter = isset($args['filter']) ? $args['filter'] : '';
         $type = isset($args['call_type']) ? $args['call_type'] : '';
-
+        $baseModule = isset($args['base_module']) ? $args['base_module'] : '';
 
         $outputType = 0;
         switch ($data) {
@@ -669,13 +673,11 @@ class PMSECrmDataWrapper implements PMSEObservable
                 $output = $this->retrieveTeams($filter);
                 break;
             case 'fields':
-                $output = $this->retrieveFields($filter, $moduleApi, $type);
+                $output = $this->retrieveFields($filter, $moduleApi, $type, $baseModule);
                 $outputType = 1;
                 break;
             case 'relatedfields':
-                $base_module = isset($args['base_module']) ? $args['base_module'] : $filter;
-                $filterModule = $this->getRelatedModule($filter, $base_module);
-                $output = $this->retrieveFields($filterModule, $moduleApi, $type);
+                $output = $this->retrieveFields($filter, $moduleApi, $type, $baseModule);
                 $outputType = 1;
                 break;
             case 'allFields':
@@ -754,20 +756,20 @@ class PMSECrmDataWrapper implements PMSEObservable
                 $outputType = 1;
                 break;
             case 'addRelatedRecord':
-                $output = $this->retrieveFields($filter, $moduleApi, 'AC');
+                $output = $this->retrieveFields($filter, $moduleApi, 'AC', $baseModule);
                 //$output = $this->addRelatedRecord($filter);
                 $outputType = 1;
                 break;
             case 'allRelated':
-                $output = $this->getAllRelated($filter);
+                $output = $this->getAllRelated($filter, $moduleApi, 'all', $baseModule);
                 $outputType = 1;
                 break;
             case 'oneToOneRelated':
-                $output = $this->getAllRelated($filter, 'one-to-one');
+                $output = $this->getAllRelated($filter, $moduleApi, 'one-to-one', $baseModule);
                 $outputType = 1;
                 break;
             case 'oneToManyRelated':
-                $output = $this->getAllRelated($filter, 'one-to-many');
+                $output = $this->getAllRelated($filter, $moduleApi, 'one-to-many', $baseModule);
                 $outputType = 1;
                 break;
             //case 'Log':
@@ -1263,72 +1265,7 @@ class PMSECrmDataWrapper implements PMSEObservable
      */
     public function retrieveRelatedBeans($filter, $relationship = 'all')
     {
-
-
-
-        global $beanList;
-        if (isset($beanList[$filter])) {
-            $newModuleFilter = $filter;
-        } else {
-            $newModuleFilter = array_search($filter, $beanList);
-        }
-        $output_11 = array(); // Logic container for one-to-one and many-to-one
-        $output_1m = array(); // Logic container for one-to-many and many-to-many(not implemented yet)
-        $output = array();
-        $moduleBean = $this->getModuleFilter($newModuleFilter);
-
-
-        foreach($moduleBean->get_linked_fields() as $link => $def) {
-            if (!empty($def['type']) && $def['type'] == 'link' && $moduleBean->load_relationship($link)) {
-                $relatedModule = $moduleBean->$link->getRelatedModuleName();
-                if (in_array($relatedModule, array("Emails", "Teams", "Activities", "EmailAddresses"))) {
-                    continue;
-                }
-                $relType = $moduleBean->$link->getType(); //returns 'one' or 'many' for the cardinality of the link
-                $label = empty($def['vname']) ? $link : translate($def['vname'], $filter);
-                $moduleLabel = translate("LBL_MODULE_NAME", $relatedModule);
-                if ($moduleLabel == "LBL_MODULE_NAME") {
-                    $moduleLabel = translate($relatedModule);
-                }
-                $relationshipName = $moduleBean->$link->getRelationshipObject()->name;
-                $ret = array(
-                    'value' => $link,
-                    'text' => "$moduleLabel ($label - $relType) : $relationshipName",
-                    'module' => $moduleLabel
-                );
-                if ($relType == 'one') {
-                    $output_11[] = $ret;
-                } else {
-                    $output_1m[] = $ret;
-                }
-            }
-        }
-
-        switch ($relationship) {
-
-            case 'one-to-one':
-            case 'one':
-                $output = $output_11;
-            break;
-            case 'one-to-many':
-            case 'many':
-                $output = $output_1m;
-            break;
-            case 'all':
-            default:
-                $output = array_merge($output_11, $output_1m);
-            break;
-        }
-
-
-        $filterArray = array('value' => $filter, 'text' => '<' . $filter . '>', 'module' => $filter);
-        array_unshift($output, $filterArray);
-
-        $res['search'] = $filter;
-        $res['success'] = true;
-        $res['result'] = $output;
-
-        return $res;
+        return $this->pmseRelatedModule->getRelatedBeans($filter, $relationship);
     }
 
     /**
@@ -1605,14 +1542,13 @@ class PMSECrmDataWrapper implements PMSEObservable
      * @return object
      * @codeCoverageIgnore
      */
-    public function retrieveFields($filter = '', ModuleApi $moduleApi, $type = '')
+    public function retrieveFields($filter = '', ModuleApi $moduleApi, $type = '', $baseModule='')
     {
         global $beanList;
         if (isset($beanList[$filter])) {
             $newModuleFilter = $filter;
         } else {
-            $related = $this->getRelationshipData($filter);
-            $newModuleFilter = $related['rhs_module'];
+            $newModuleFilter = $this->pmseRelatedModule->getRelatedModuleName($baseModule, $filter);
         }
 
         $res = array();
@@ -2305,7 +2241,7 @@ class PMSECrmDataWrapper implements PMSEObservable
      * @param $filter
      * @return array
      */
-    private function getAllRelated($filter, $relationship = 'all')
+    private function getAllRelated($filter, ModuleApi $moduleApi, $relationship = 'all', $baseModule)
     {
         $result = array();
         $result['success'] = true;
@@ -2313,7 +2249,8 @@ class PMSECrmDataWrapper implements PMSEObservable
         $arr = array();
         if (is_array($res['result']) && !empty($res['result'])) {
             foreach ($res['result'] as $key => $value) {
-                $aux = $this->addRelatedRecord($value['value']);
+                //$aux = $this->addRelatedRecord($value['value']);
+                $aux = $this->retrieveFields($filter, $moduleApi, '', $baseModule);
                 $value['fields'] = $aux['result'];
                 $arr[] = $value;
             }
