@@ -265,6 +265,7 @@ EmailPickerField.prototype._createPanel = function () {
 					type: "multiple",
 					headerVisible: false,
 					collapsed: false,
+					bodyHeight: 117,
 					items: [
 						{
 							id: this.id + "-user-form",
