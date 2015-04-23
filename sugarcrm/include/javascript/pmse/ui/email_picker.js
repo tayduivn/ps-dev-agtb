@@ -24,6 +24,15 @@ var EmailPickerField = function (settings, parent) {
 	this._moduleValueField = null;
 	this._userModules = null;
 	this._recipientModules = null;
+	this._suggestPanel = null;
+	this._suggestTimer = null;
+	this._delaySuggestTime = null;
+	this._suggestionDataURL = null;
+	this._suggestionDataRoot = null;
+	this._suggestionItemName = null;
+	this._suggestionItemAddress = null;
+	this._suggestionVisible = false;
+	this._timer = null;
 	EmailPickerField.prototype.init.call(this, settings);
 };
 
@@ -41,7 +50,12 @@ EmailPickerField.prototype.init = function (settings) {
 		roleTextField: "text",
 		roleValueField: "value",
 		moduleTextField: "text",
-		moduleValueField: "value"
+		moduleValueField: "value",
+		delaySuggestTime: 500,
+		suggestionDataURL: null,
+		suggestionDataRoot: null,
+		suggestionItemName: null,
+		suggestionItemAddress: "email"
 	};
 
 	jQuery.extend(true, defaults, settings);
@@ -56,7 +70,52 @@ EmailPickerField.prototype.init = function (settings) {
 		.setRoles(defaults.roles)
 		.setModuleTextField(defaults.moduleTextField)
 		.setModuleValueField(defaults.moduleValueField)
-		.setModules(defaults.modules);
+		.setModules(defaults.modules)
+		.setSuggestionDataURL(defaults.suggestionDataURL)
+		.setSuggestionDataRoot(defaults.suggestionDataRoot)
+		.setDelaySuggestTime(defaults.delaySuggestTime)
+		.setSuggestionItemName(defaults.suggestionItemName)
+		.setSuggestionItemAddress(defaults.suggestionItemAddress);
+};
+
+EmailPickerField.prototype.setSuggestionItemName = function(text) {
+	if(!(text === null || typeof text === 'string')) {
+		throw new Error("setSuggestionItemName(): The parameter must be a string or null.");
+	}
+	this._suggestionItemName = text;
+	return this;
+};
+
+EmailPickerField.prototype.setSuggestionItemAddress = function(text) {
+	if(!(text === null || (typeof text === 'string' && text !== ""))) {
+		throw new Error("setSuggestionItemAddress(): The parameter must be a string different than an empty string.");
+	}
+	this._suggestionItemAddress = text;
+	return this;
+};
+
+EmailPickerField.prototype.setSuggestionDataURL = function (url) {
+	if (!(url === null || typeof url === "string")) {
+		throw new Error("setSuggestionDataURL(): The parameter must be a string or null.");
+	}
+	this._suggestionDataURL = url;
+	return this;
+};
+
+EmailPickerField.prototype.setSuggestionDataRoot = function(root) {
+	if (!(root === null || typeof root === "string")) {
+		throw new Error("setSuggestionDataRoot(): The parameter must be a string or root.");
+	}
+	this._suggestionDataRoot = root;
+	return this;
+};
+
+EmailPickerField.prototype.setDelaySuggestTime = function (milliseconds) {
+	if (typeof milliseconds !== "number") {
+		throw new Error("setDelaySuggestTime(): The parameter must be a number.");
+	}
+	this._delaySuggestTime = milliseconds;
+	return this;
 };
 
 EmailPickerField.prototype.setModuleTextField = function (field) {
@@ -204,6 +263,11 @@ EmailPickerField.prototype._onPanelValueGeneration = function () {
 				newEmailItem.label = translate('LBL_PMSE_EMAILPICKER_ROLE_ITEM').replace(/%\w+%/g,
 					fieldPanelItem.getItem("role").getSelectedText());
 				break;
+			case parentPanelID + 'list-suggest':
+				newEmailItem.type = 'email';
+				newEmailItem.value = data['emailAddress'];
+				newEmailItem.label = data['fullName'];
+				break;
 			default:
 				throw new Error('_onPanelValueGeneration(): invalid fieldPanelItem\'s id.');
 		}
@@ -212,10 +276,33 @@ EmailPickerField.prototype._onPanelValueGeneration = function () {
 	};
 };
 
+EmailPickerField.prototype._onLoadSuggestions = function () {
+	var that = this;
+	return function (listPanel, data) {
+		var replacementText = {
+			"%NUMBER%": listPanel.getItems().length,
+			"%TEXT%": that._lastQuery.query
+		};
+		//listPanel.setTitle(listPanel.getItems().length + " suggestion(s) for \"" + that._lastQuery.query + "\"");
+		listPanel.setTitle(translate("LBL_PMSE_EMAILPICKER_RESULTS_TITLE").replace(/%\w+%/g, function(wildcard) {
+		   return replacementText[wildcard] || wildcard;
+		}));
+	};
+};
+
 EmailPickerField.prototype._createPanel = function () {
 	var that = this;
 
 	if (!this._panel) {
+		this._suggestPanel = new ListPanel({
+			id: this.id + "list-suggest",
+			title: translate('LBL_PMSE_EMAILPICKER_SUGGESTIONS'),
+			itemsContent: this._suggestionItemContent(),
+			visible: false,
+			bodyHeight: 150,
+			onLoad: this._onLoadSuggestions()
+		});
+
 		this._teamsDropdown = new FormPanelDropdown({
 			name: 'team',
 			label: 'Team',
@@ -371,7 +458,8 @@ EmailPickerField.prototype._createPanel = function () {
 							]
 						}
 					]
-				}
+				},
+				this._suggestPanel
 			]
 		});
 		MultipleItemField.prototype._createPanel.call(this);
@@ -380,14 +468,126 @@ EmailPickerField.prototype._createPanel = function () {
 	return this;
 };
 
-EmailPickerField.prototype._isValidInput = function () {
-	return function (itemContainer, text) {
-		return false;
+EmailPickerField.prototype._showSuggestionPanel = function () {
+	var panelItems = this._panel.getItems(), i;
+
+	if (!this._suggestionVisible) {
+		for (i = 0; i < panelItems.length; i += 1) {
+			if (panelItems[i] !== this._suggestPanel) {
+				panelItems[i].setVisible(false);
+			} else {
+				panelItems[i].setVisible(true);
+			}
+		}
+	}
+	this._suggestionVisible = true;
+	return this;
+};
+
+EmailPickerField.prototype._hideSuggestionPanel = function () {
+	var panelItems = this._panel.getItems(), i;
+
+	if (this._suggestionVisible) {
+		for (i = 0; i < panelItems.length; i += 1) {
+			if (panelItems[i] !== this._suggestPanel) {
+				panelItems[i].setVisible(true);
+			} else {
+				panelItems[i].setVisible(false);
+			}
+		}
+	}
+	this._suggestionVisible = false;
+	return this;
+};
+
+EmailPickerField.prototype._suggestionItemContent = function() {
+	var that = this;
+	return function (item, data) {
+		var name = that.createHTMLElement('strong'),
+			address = that.createHTMLElement('small'),
+			container = that.createHTMLElement('a');
+
+		container.href = "#";
+		container.className = "adam email-picker-suggest";
+		if(that._suggestionItemName) {
+			name.className = "adam email-picker-suggest-name";
+			name.textContent = data[that._suggestionItemName];
+			container.appendChild(name);
+		}
+		address.className = "adam email-picker-suggest-address";
+		address.textContent = data[that._suggestionItemAddress];
+		container.appendChild(address);
+
+		return container;
 	};
 };
 
-EmailPickerField.prototype._createItemContainer = function () {
-	return MultipleItemField.prototype._createItemContainer.call(this, {
-		textInputMode: ItemContainer.prototype.textInputMode.END
-	});
+EmailPickerField.prototype._onBeforeAddItemByInput = function () {
+	var that = this;
+	return function (itemContainer, singleItem, text, index) {
+		return that._createItem({
+			value: text,
+			type: "email",
+			label: text
+		}, singleItem);
+	}
+};
+
+EmailPickerField.prototype._isValidInput = function () {
+	var that = this;
+	return function (itemContainer, text) {
+		return /^\s*[\w\-\+_]+(\.[\w\-\+_]+)*\@[\w\-\+_]+\.[\w\-\+_]+(\.[\w\-\+_]+)*\s*$/.test(text);
+	};
+};
+
+EmailPickerField.prototype._loadSuggestions = function (c) {
+	var that = this;
+	return function	() {
+		var url;
+		clearInterval(that._timer);
+		if(that._suggestionDataURL) {
+			that._lastQuery = {
+				query: c,
+				dataRoot: that._suggestionDataRoot,
+				dataURL: that._suggestionDataURL
+			};
+			url = that._suggestionDataURL.replace(/\{\$\d+\}/g, encodeURIComponent(c));
+			that._suggestPanel.setDataURL(url)
+				.setDataRoot(that._suggestionDataRoot);
+			that._suggestPanel.load();
+		}
+	};
+};
+
+EmailPickerField.prototype._onInputChar = function () {
+	var that = this;
+	return function (itemContainer, theChar, completeText, keyCode) {
+		var trimmedText = jQuery.trim(completeText);
+		clearInterval(that._timer);
+		if (trimmedText) {
+			if (that._suggestionDataURL) {
+				//Vefify if the current query is identical than the last one
+				if (!(that._lastQuery.query === trimmedText && that._lastQuery.dataURL === that._suggestionDataURL
+					&& that._lastQuery.dataRoot === that._suggestionDataRoot)) {
+					that._timer = setInterval(that._loadSuggestions(trimmedText), that._delaySuggestTime);
+					that._suggestPanel.clearItems()
+						._showLoadingMessage()
+						.setTitle(translate("LBL_PMSE_EMAILPICKER_SUGGESTIONS"));
+				}
+				that._showSuggestionPanel();
+				that.openPanel(true);
+				that._suggestPanel.expand();
+			}
+		} else {
+			that._hideSuggestionPanel();
+		}
+	};
+};
+
+EmailPickerField.prototype.createHTML = function () {
+	if(!this.html) {
+		MultipleItemField.prototype.createHTML.call(this);
+		this.controlObject.setOnInputCharHandler(this._onInputChar());
+	}
+	return this;
 };
