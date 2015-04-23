@@ -1001,9 +1001,9 @@ class PMSEEngineApi extends SugarApi
         } else {
             $listButtons = array('link_cancel', 'route', 'edit');
         }
+        $listButtons = $this->overrideButtons($bpmFlow, $listButtons);
         $returnArray['case']['reclaim'] = $reclaimCaseByUser;
         $returnArray['case']['buttons'] = $this->getButtons($listButtons, $activity);
-
         $returnArray['case']['readonly'] = json_decode(base64_decode($activity->act_readonly_fields));
         $returnArray['case']['required'] = json_decode(base64_decode($activity->act_required_fields));
 
@@ -1021,6 +1021,27 @@ class PMSEEngineApi extends SugarApi
         $returnArray['case']['flowId'] = $args['idflow'];
         $returnArray['case']['inboxId'] = $args['id'];
         return $returnArray;
+    }
+    
+    public function overrideButtons($flow, $listButtons)
+    {
+        if($flow->cas_adhoc_type == 'ONE_WAY') {
+            $flowBean = BeanFactory::retrieveBean('pmse_BpmFlow');
+            $q = new SugarQuery();
+            $q->select(array('cas_adhoc_type'));
+            $q->from($flowBean);
+            $q->where()
+                ->queryAnd()
+                ->equals('cas_id', $flow->cas_id)
+                ->equals('cas_index', $flow->cas_previous);
+            $result = $q->execute("array");
+            if ($result[0]['cas_adhoc_type'] == 'ROUND_TRIP') {
+                $listButtons = array('link_cancel', 'route', 'edit');
+            } else {
+                $listButtons = array('link_cancel', 'approve', 'reject', 'edit');
+            }
+        }
+        return $listButtons;
     }
 
     public function getButtons($listButtons, $activity)

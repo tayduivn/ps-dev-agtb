@@ -324,7 +324,7 @@ class PMSEUserTaskTest extends PHPUnit_Framework_TestCase
         
         $userAssignment = $this->getMockBuilder('PMSEUserAssignmentHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('isRoundTrip', 'isOneWay'))
+            ->setMethods(array('isRoundTrip', 'isOneWay', 'previousIsNormal'))
             ->getMock();
         
         $paramFlowData = array(
@@ -342,6 +342,11 @@ class PMSEUserTaskTest extends PHPUnit_Framework_TestCase
             ->method('isOneWay')
             ->with($paramFlowData)
             ->will($this->returnValue(true));
+        
+        $userAssignment->expects($this->exactly(1))
+            ->method('previousIsNormal')
+            ->with($paramFlowData)
+            ->will($this->returnValue(false));
                 
         $expectedAction = 'ONE_WAY';
         $this->userTask->setUserAssignmentHandler($userAssignment);
@@ -366,7 +371,7 @@ class PMSEUserTaskTest extends PHPUnit_Framework_TestCase
         
         $userAssignment = $this->getMockBuilder('PMSEUserAssignmentHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('isRoundTrip', 'isOneWay'))
+            ->setMethods(array('isRoundTrip', 'isOneWay', 'previousIsNormal'))
             ->getMock();
         
         $paramFlowData = array(
@@ -382,6 +387,11 @@ class PMSEUserTaskTest extends PHPUnit_Framework_TestCase
         
         $userAssignment->expects($this->exactly(1))
             ->method('isOneWay')
+            ->with($paramFlowData)
+            ->will($this->returnValue(false));
+        
+        $userAssignment->expects($this->exactly(0))
+            ->method('previousIsNormal')
             ->with($paramFlowData)
             ->will($this->returnValue(false));
                 

@@ -53,6 +53,7 @@ class pmse_BpmFlow_sugar extends Basic {
     var $cas_sugar_object_id;
     var $cas_sugar_action;
     var $cas_adhoc_type;
+    var $cas_adhoc_parent_id;
     var $cas_task_start_date;
     var $cas_delegate_date;
     var $cas_start_date;
