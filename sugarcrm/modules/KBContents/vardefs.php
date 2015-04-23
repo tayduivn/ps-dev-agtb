@@ -401,6 +401,7 @@ $dictionary['KBContent'] = array(
             'name' => 'usefulness_user_vote',
             'type' => 'tinyint',
             'source' => 'non-db',
+            'studio' => false,
         ),
     ),
     'relationships' => array(
