@@ -49,7 +49,7 @@
         this.on('dashlet-businessrules:delete-record:fire', this.deleteRecord, this);
 //        this.on('dashlet-businessrules:disable-record:fire', this.disableRecord, this);
 //        this.on('dashlet-businessrules:enable-record:fire', this.enableRecord, this);
-        this.on('dashlet-businessrules:download:fire', this.downloadRecord, this);
+        this.on('dashlet-businessrules:download:fire', this.warnExportBusinessRules, this);
         this.on('dashlet-businessrules:description-record:fire', this.descriptionRecord, this);
         return this;
     },
@@ -271,9 +271,30 @@
     },
 
     /**
+     * Show warning of pmse_bussiness_rules
+     */
+    warnExportBusinessRules: function (model) {
+        var that = this;
+        if (app.cache.get("show_br_export_warning")) {
+            app.alert.show('show-br-export-confirmation', {
+                level: 'confirmation',
+                messages: app.lang.get('LBL_PMSE_IMPORT_EXPORT_WARNING') + "<br/><br/>"
+                + app.lang.get('LBL_PMSE_EXPORT_CONFIRMATION'),
+                onConfirm: function() {
+                    app.cache.set("show_br_export_warning", false);
+                    that.exportBusinessRules(model);
+                },
+                onCancel: $.noop
+            });
+        } else {
+            that.exportBusinessRules(model);
+        }
+    },
+
+    /**
      * Download record of table pmse_business_rules
      */
-    downloadRecord: function (model) {
+    exportBusinessRules: function (model) {
         var url = app.api.buildURL(model.module, 'brules', {id: model.id}, {platform: app.config.platform});
 
         if (_.isEmpty(url)) {

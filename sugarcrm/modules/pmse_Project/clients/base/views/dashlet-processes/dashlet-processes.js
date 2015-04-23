@@ -48,7 +48,7 @@
         this.on('dashlet-processes:delete-record:fire', this.deleteRecord, this);
         this.on('dashlet-processes:enable-record:fire', this.enableRecord, this);
         this.on('dashlet-processes:disable-record:fire', this.disableRecord, this);
-        this.on('dashlet-processes:download:fire', this.downloadRecord, this);
+        this.on('dashlet-processes:download:fire', this.showExportingWarning, this);
         this.on('dashlet-processes:description-record:fire', this.descriptionRecord, this);
         return this;
     },
@@ -62,9 +62,30 @@
     },
 
     /**
-     * Download record of table pmse_emails_templates
+     * Show warning of pmse_Process_Definition
      */
-    downloadRecord: function (model) {
+    showExportingWarning: function (model) {
+        var that = this;
+        if (app.cache.get("show_project_export_warning")) {
+            app.alert.show('project-export-confirmation',  {
+                level: 'confirmation',
+                messages: App.lang.get('LBL_PMSE_IMPORT_EXPORT_WARNING') + "<br/><br/>"
+                + app.lang.get('LBL_PMSE_EXPORT_CONFIRMATION'),
+                onConfirm: function () {
+                    app.cache.set("show_project_export_warning", false);
+                    that.exportProcess(model);
+                },
+                onCancel: $.noop
+            });
+        } else {
+            that.exportProcess(model);
+        }
+    },
+
+    /**
+     * Download record of table pmse_Process_Definition
+     */
+    exportProcess: function (model) {
         var url = app.api.buildURL(model.module, 'dproject', {id: model.id}, {platform: app.config.platform});
 
         if (_.isEmpty(url)) {
