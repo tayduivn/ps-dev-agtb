@@ -1032,8 +1032,10 @@ NumberField.prototype.createHTML = function () {
     this.html.appendChild(fieldLabel);
 
     textInput = this.createHTMLElement('input');
+    textInput.type = "number";
     textInput.id = this.name;
     textInput.value = this.value || "";
+    textInput.min = "0";
     if (this.fieldWidth) {
         textInput.style.width = this.fieldWidth;
     }
