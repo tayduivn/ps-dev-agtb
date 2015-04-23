@@ -391,6 +391,19 @@
     },
 
     /**
+     * Need to call `decorateError` after all email fields are rendered.
+     * @inheritDoc
+     *
+     * FIXME This is a temporary fix due to time constraints, a proper solution will be implemented in SC-4358
+     */
+    handleValidationError: function(errors) {
+        this._super('handleValidationError', [errors]);
+        _.defer(function (field) {
+            field.decorateError(errors);
+        }, this);
+    },
+
+    /**
      * Custom error styling for the e-mail field
      * @param {Object} errors
      * @override BaseField

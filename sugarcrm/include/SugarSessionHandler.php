@@ -14,31 +14,90 @@
  */
 class SugarSessionHandler extends SessionHandler
 {
-    protected $max_session;
-    protected $session_start;
+    /**
+     * Session start time
+     */
+    protected $session_start = null;
+
+    /**
+     * Total session time
+     */
+    protected $session_time = null;
+
+    /**
+     * Maximum session time
+     */
+    protected $max_session_time = null;
+
+    /**
+     * Log management
+     * @var LoggerManager
+     */
+    protected $log;
 
     public function __construct()
     {
-        if (!empty($GLOBALS['sugar_config']['max_session_time'])) {
-            $this->max_session = $GLOBALS['sugar_config']['max_session_time'];
-        }
+        $this->max_session_time = SugarConfig::getInstance()->get('max_session_time');
+        $this->log = LoggerManager::getLogger('SugarCRM');
     }
 
-    public function open($save_path,$session_id)
+    public function open($save_path, $session_id)
     {
-        if (parent::open($save_path, $session_id) && !empty($this->max_session)) {
-            $this->session_start = time();
-        }
+        parent::open($save_path, $session_id);
+        $this->session_start = time();
     }
 
     public function close()
     {
         parent::close();
-        if (!empty($this->max_session) && !empty($this->session_start)) {
-            $length = time() - $this->session_start;
-            if($length > $GLOBALS['sugar_config']['max_session_time'] && !empty($GLOBALS['log'])) {
-                $GLOBALS['log']->error("[SessionLock] Session time too long: $length seconds");
-            }
+                
+        if ($this->isCurrentSessionExceeded()) {
+            $this->log->error(sprintf("[SessionLock] Session lock was held for %s seconds which is longer than the maximum of %s seconds. Request details: 
+                SERVER_NAME     | %s 
+                SERVER_ADDR     | %s 
+                SCRIPT_FILENAME | %s 
+                REQUEST_METHOD  | %s 
+                SCRIPT_NAME     | %s 
+                REQUEST_URI     | %s 
+                QUERY_STRING    | %s ",
+                $this->session_time,
+                $this->max_session_time,
+                $_SERVER['SERVER_NAME'],
+                $_SERVER['SERVER_ADDR'],
+                $_SERVER['SCRIPT_FILENAME'],
+                $_SERVER['REQUEST_METHOD'],
+                $_SERVER['SCRIPT_NAME'],
+                $_SERVER['REQUEST_URI'],
+                $_SERVER['QUERY_STRING']
+            ));           
         }
+    }
+
+    /**
+     * Calculate session time
+     * @return int
+     */
+    public function getCurrentSessionTime()
+    {
+        if (!$this->session_start) {
+            return false;
+        }
+
+        return time() - $this->session_start;
+    }
+
+    /**
+     * Check if session time more than defined treshhold
+     * @return bool
+     */
+    public function isCurrentSessionExceeded() 
+    {
+        $this->session_time = $this->getCurrentSessionTime();
+
+        if ($this->max_session_time && $this->session_time) {
+            return $this->session_time > $this->max_session_time;
+        }
+        
+        return false;
     }
 }
