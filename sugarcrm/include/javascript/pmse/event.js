@@ -1265,7 +1265,7 @@ AdamEvent.prototype.createConfigureAction = function () {
                             success: function (data) {
                                 var i;
                                 data = data.result;
-                                data.unshift({value: "", text: ""});
+                                data.unshift({value: "", text: "Select..."});
                                 if (emailPickerFields.length) {
                                     for (i = 0; i < emailPickerFields.length; i += 1) {
                                         f.items[emailPickerFields[i]].setModules(data);

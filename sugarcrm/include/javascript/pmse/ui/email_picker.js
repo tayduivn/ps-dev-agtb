@@ -195,14 +195,14 @@ EmailPickerField.prototype._onPanelValueGeneration = function () {
 			case parentPanelID + '-team-form':
 				newEmailItem.type = 'team';
 				newEmailItem.value = data['team'];
-				i18nID = 'LBL_PMSE_EMAILPICKER_TEAM_ITEM';
-				newEmailItem.label = translate(i18nID).replace(/%\w+%/g,
+				newEmailItem.label = translate('LBL_PMSE_EMAILPICKER_TEAM_ITEM').replace(/%\w+%/g,
 					fieldPanelItem.getItem("team").getSelectedText());
 				break;
 			case parentPanelID + '-role-form':
 				newEmailItem.type = 'role';
 				newEmailItem.value = data['role'];
-				newEmailItem.label = fieldPanelItem.getItem("role").getSelectedText();
+				newEmailItem.label = translate('LBL_PMSE_EMAILPICKER_ROLE_ITEM').replace(/%\w+%/g,
+					fieldPanelItem.getItem("role").getSelectedText());
 				break;
 			default:
 				throw new Error('_onPanelValueGeneration(): invalid fieldPanelItem\'s id.');
