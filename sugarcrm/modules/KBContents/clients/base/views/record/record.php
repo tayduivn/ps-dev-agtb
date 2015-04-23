@@ -239,6 +239,11 @@ $viewdefs['KBContents']['base']['view']['record'] = array(
                 'category_name' => array(
                     'name' => 'category_name',
                     'label' => 'LBL_CATEGORY_NAME',
+                    'initial_filter' => 'by_category',
+                    'initial_filter_label' => 'LBL_CATEGORY_NAME',
+                    'filter_relate' => array(
+                        'category_id' => 'category_id',
+                    ),
                 ),
                 'active_rev' => array(
                     'name' => 'active_rev',

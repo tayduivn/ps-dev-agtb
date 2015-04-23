@@ -293,7 +293,9 @@
                 bean = app.data.createBean(this.moduleRoot, {id: id});
                 bean.fetch({
                     success: _.bind(function(data) {
-                        this.model.set(this.def.name, data.get(this.def.rname));
+                        if (this.model) {
+                            this.model.set(this.def.name, data.get(this.def.rname));
+                        }
                     }, this)
                 });
             }
