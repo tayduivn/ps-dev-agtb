@@ -317,6 +317,8 @@ $mod_strings = array (
     'LBL_PMSE_EMAILPICKER_MANAGER_WAS_ASSIGNED' => 'User in %MODULE% who is manager of who was assigned to the record',
     'LBL_PMSE_EMAILPICKER_ROLE_ITEM' => 'role: %ROLE%',
     'LBL_PMSE_EMAILPICKER_TEAM_ITEM' => 'team: %TEAM%',
+    'LBL_PMSE_EMAILPICKER_SUGGESTIONS' => 'Suggestions',
+    'LBL_PMSE_EMAILPICKER_RESULTS_TITLE' => '%NUMBER% suggestion(s) for "%TEXT%"',
 
     'LBL_PMSE_UPDATERFIELD_VARIABLES_LIST_TITLE' => '%MODULE% fields',
 

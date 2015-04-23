@@ -1119,6 +1119,10 @@ AdamEvent.prototype.createConfigureAction = function () {
                         submit: false,
                         fieldWidth: 350,
                         change: hiddenFn,
+                        suggestionItemName: 'fullName',
+                        suggestionItemAddress: 'emailAddress',
+                        suggestionDataURL: "pmse_Project/CrmData/emails/{$0}",
+                        suggestionDataRoot: "result",
                         teams: project.getMetadata('teams') || []
                     },
                     {
