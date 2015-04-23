@@ -366,8 +366,10 @@ class DeployedRelationships extends AbstractRelationships implements Relationshi
         $rac->clearJsLangFiles();
         $rac->clearLanguageCache();
         $rac->rebuildExtensions(array_keys($modulesToBuild));
-        
-        unset($GLOBALS['dictionary']);
+
+        foreach (array_keys($modulesToBuild) as $module) {
+            unset($GLOBALS['dictionary'][BeanFactory::getObjectName($module)]);
+        }
         MetaDataManager::refreshLanguagesCache(array($GLOBALS['current_language']));
         MetaDataManager::refreshSectionCache(array(MetaDataManager::MM_RELATIONSHIPS));
         MetaDataManager::refreshModulesCache(array_keys($modulesToBuild));
