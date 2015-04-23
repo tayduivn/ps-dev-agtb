@@ -74,7 +74,11 @@
         });
         var callbacks = {
             success: _.bind(function(data) {
-                this.model.set({'usefulness_user_vote': data.usefulness_user_vote}, {silent: true});
+                this.model.set({
+                    'usefulness_user_vote': data.usefulness_user_vote,
+                    'useful': data.useful,
+                    'notuseful': data.notuseful
+                });
                 if (!this.disposed) {
                     this.render();
                 }
