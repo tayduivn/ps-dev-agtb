@@ -84,7 +84,15 @@ else {
 		$local_location = sugar_cached("modules/Emails/{$_REQUEST['ieId']}/attachments/{$_REQUEST['id']}");
     } elseif(isset($_REQUEST['isTempFile']) && $file_type == "import") {
     	$local_location = "upload://import/{$_REQUEST['tempName']}";
-    } else {
+    } else if ($file_type == 'notes') {
+        $note = BeanFactory::newBean('Notes');
+        if (!$note->ACLAccess('view')) {
+            die($mod_strings['LBL_NO_ACCESS']);
+        } // if
+        $note->retrieve($_REQUEST['id']);
+        $local_location = "upload://".$note->getUploadId();
+    }
+    else {
 		$local_location = "upload://{$_REQUEST['id']}";
     }
 
@@ -140,7 +148,7 @@ else {
 				die($app_strings['ERROR_NO_RECORD']);
 			}
 			$name = $row['name'];
-			$download_location = "upload://{$_REQUEST['id']}";
+			$download_location = $file_type == 'notes' ? $local_location : "upload://{$_REQUEST['id']}";
 		} else if(isset(  $_REQUEST['tempName'] ) && isset($_REQUEST['isTempFile']) ){
 			// downloading a temp file (email 2.0)
 			$download_location = $local_location;
