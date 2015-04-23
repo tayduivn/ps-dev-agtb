@@ -1,5 +1,7 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
+if (!defined('sugarEntry') || !sugarEntry)
+    die('Not A Valid Entry Point');
 
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
@@ -16,6 +18,7 @@ require_once 'PMSEBeanHandler.php';
 
 class PMSEEmailHandler
 {
+
     /**
      *
      * @var PMSEBeanHandler
@@ -52,7 +55,6 @@ class PMSEEmailHandler
         $this->beanUtils = new PMSEBeanHandler();
         $this->logger = PMSELogger::getInstance();
         $this->admin = new Administration();
-
     }
 
     /**
@@ -195,106 +197,162 @@ class PMSEEmailHandler
         $moduleName = $flowData['cas_sugar_module'];
         $object_id = $flowData['cas_sugar_object_id'];
 
-        foreach ($to as $line) {
-            switch ($line->emailAddress) {
-                case 'Current User':
-                    if (isset($flowData['cas_user_id']) && $flowData['cas_user_id'] != '') {
-                        //$userBean = new User();
-                        $userBean = $this->retrieveBean("Users", $flowData['cas_user_id']);
-                        if (isset($userBean->full_name) && isset($userBean->email1)) {
-                            $item = new StdClass();
-                            $item->name = $userBean->full_name;
-                            $item->address = $userBean->email1;
-                            $res[] = $item;
-                        }
-                    }
+        foreach ($to as $entry) {
+            switch (strtoupper($entry->type)) {
+                case 'USER':
+                    $res = array_merge(
+                        $res, $this->processUserEmails($bean, $entry, $flowData)
+                    );
                     break;
-                //case 'Current Record':
-                //    if (isset($bean->email1) && $bean->email1 != '') {
-                //        $item = new StdClass();
-                //        $item->name = $bean->email1;
-                //        $item->address = $bean->email1;
-                //        $res[] = $item;
-                //    }
-                //    break;
-                case 'Supervisor':
-                    if (isset($bean->assigned_user_id) && $bean->assigned_user_id != '') {
-                        //$userBean = new User();
-                        $userBean = $this->retrieveBean("Users", $bean->assigned_user_id);
-                        if (isset($userBean->reports_to_id) && $userBean->reports_to_id != '') {
-                            $userBean = $this->retrieveBean("Users", $userBean->reports_to_id);
-                            if (isset($userBean->full_name) && !empty($userBean->full_name) && isset($userBean->email1) && !empty($userBean->email1)) {
-                                $item = new StdClass();
-                                $item->name = $userBean->full_name;
-                                $item->address = $userBean->email1;
-                                $res[] = $item;
-                            } else {
-//                                $this->bpmLog('DEBUG', "[][] The user by id: " . $bean->assigned_user_id . " has not a supervisor.");
-                            }
-                        } else {
-//                            $this->bpmLog('INFO', "[][] The user by id: " . $bean->assigned_user_id . " has not a supervisor.");
-                        }
-                    } else {
-//                        $this->bpmLog('ERROR', "[][] The Assign user have not been set to send it the email");
-                    }
+                case 'TEAM':
+                    $res = array_merge(
+                        $res, $this->processTeamEmails($bean, $entry, $flowData)
+                    );
                     break;
-                case 'Record Owner':
-                    if (isset($bean->assigned_user_id) && $bean->assigned_user_id != '') {
-                        $userBean = $this->retrieveBean("Users", $bean->assigned_user_id);
-                        if (isset($userBean->full_name) && isset($userBean->email1)) {
-                            $item = new StdClass();
-                            $item->name = $userBean->full_name;
-                            $item->address = $userBean->email1;
-                            $res[] = $item;
-                        } else {
-//                            $this->bpmLog('DEBUG', "[][] The user by id: " . $bean->assigned_user_id . " has not a name or email");
-                        }
-                    } else {
-//                        $this->bpmLog('ERROR', "[][] The Assign user have not been set to send it the email");
-                    }
+                case 'ROLE':
+                    $res = array_merge(
+                        $res, $this->processRoleEmails($bean, $entry, $flowData)
+                    );
+
                     break;
-                case 'Team':
-                    //$beanFactory = new ADAMBeanFactory();
-                    $team = $this->retrieveBean('Teams'); //$beanFactory->getBean('Teams');
-                    $response = $team->getById($line->name);
-                    $members = $team->getMembers();
-                    $users = array();
-                    foreach ($members as $user) {
-                        $userBean = $this->retrieveBean("Users", $user->id);
-                        if (isset($userBean->full_name) && isset($userBean->email1)) {
-                            $item = new stdClass();
-                            $item->name = $userBean->full_name;
-                            $item->address = $userBean->email1;
-                            $res[] = $item;
-                        }
-                    }
-                    break;
-                default:
-                    if (empty($line->module) && filter_var($line->emailAddress, FILTER_VALIDATE_EMAIL)) {
-                        $item = new StdClass();
-                        $item->name = $line->name;
-                        $item->address = $line->emailAddress;
-                        $res[] = $item;
-                    } else {
-                        if (!empty($line->module) && $line->module != $moduleName) {
-                            $nBean = $this->beanUtils->getRelatedModule($bean, $flowData, $line->module);
-                        } else {
-                            $nBean = $bean;
-                        }
-                        if (isset($nBean) && is_object($nBean)) {
-                            $_email = $this->beanUtils->mergeBeanInTemplate($nBean, $line->emailAddress);
-                        } else {
-                            $_email = $line->emailAddress;
-                        }
-                        $item = new StdClass();
-                        $item->name = $_email; //$line->name;
-                        $item->address = filter_var($_email, FILTER_VALIDATE_EMAIL) ? $_email : '';
-                        $res[] = $item;
-                    }
+                case 'RECIPIENT':
+                    $res = array_merge(
+                        $res, $this->processRecipientEmails($bean, $entry, $flowData)
+                    );
                     break;
             }
         }
         return $res;
+    }
+
+    public function processUserEmails($bean, $entry, $flowData)
+    {
+        $res = array();
+        $users = array();
+        switch ($entry->value) {
+            case 'last_modifier':
+                $users = $this->getLastModifier($bean);
+                break;
+            case 'record_creator':
+                $users = $this->getRecordCreator($bean);
+                break;
+            case 'is_assignee':
+                $users = $this->getCurrentAssignee($bean);
+                break;
+            case 'was_assignee':
+                $users = $this->getPreviousAssignees($bean);
+                break;
+        }
+        foreach ($users as $user) {
+            $res = array_merge($res, $this->getUserEmails($user, $entry));
+        }
+        return $res;
+    }
+    
+    public function getCurrentAssignee($bean)
+    {
+        $userBean = $this->retrieveBean("Users", $bean->assigned_user_id);
+        return array($userBean);
+    }
+    
+    public function getRecordCreator($bean)
+    {
+        $userBean = $this->retrieveBean("Users", $bean->created_by);
+        return array($userBean);
+    }
+    
+    public function getLastModifier($bean)
+    {
+        $auditBean = $this->retrieveBean("Audit");
+        $logs = $auditBean->getAuditLog($bean);
+        $lastEntry = reset($logs);
+        $userBean = $this->retrieveBean("Users", $lastEntry->created_by);
+        return array($userBean);
+    }
+    
+    public function getPreviousAssignees($bean)
+    {
+        $users = array();
+        $registeredUsers = array();
+        $auditBean = $this->retrieveBean("Audit");
+        $logs = $auditBean->getAuditLog($bean);
+        foreach ($logs as $log) {
+            if (!in_array($log->created_by, $registeredUsers)){
+                $users[] = $this->retrieveBean("Users", $log->created_by);
+                $registeredUsers[] = $log->created_by;
+            }
+        }
+        return array($users);
+    }
+
+    public function getUserEmails($userBean, $entry)
+    {
+        $res = array();
+        if ($entry->user === 'manager_of') {
+            $userBean = $this->getSupervisor($userBean);
+        }
+        
+        if (isset($userBean->full_name) && isset($userBean->email1)) {
+            $item = new StdClass();
+            $item->name = $userBean->full_name;
+            $item->address = $userBean->email1;
+            $res[] = $item;
+        }
+        return $res;
+    }
+    
+    public function getSupervisor($user)
+    {
+        if (isset($user->reports_to_id) && $user->reports_to_id != '') {
+            $user = $this->retrieveBean("Users", $user->reports_to_id);
+            if (isset($user->full_name) && !empty($user->full_name) && isset($user->email1) && !empty($user->email1)) {
+                return $user;
+            } else {
+                return '';
+            }
+        }
+    }
+    
+    public function processTeamEmails($bean, $entry, $flowData)
+    {
+        $res = array();
+        $team = $this->retrieveBean('Teams'); //$beanFactory->getBean('Teams');
+        $response = $team->getById($entry->value);
+        $members = $team->getMembers();
+        $users = array();
+        foreach ($members as $user) {
+            $userBean = $this->retrieveBean("Users", $user->id);
+            if (isset($userBean->full_name) && isset($userBean->email1)) {
+                $item = new stdClass();
+                $item->name = $userBean->full_name;
+                $item->address = $userBean->email1;
+                $res[] = $item;
+            }
+        }
+        return $res;
+    }
+
+    public function processRoleEmails($bean, $entry, $flowData)
+    {
+        $res = array();
+        $role = $this->retrieveBean('Roles', $entry->value); //$beanFactory->getBean('Teams');
+        $members = $role->get_users();
+        $users = array();
+        foreach ($members as $user) {
+            $userBean = $this->retrieveBean("Users", $user->id);
+            if (isset($userBean->full_name) && isset($userBean->email1)) {
+                $item = new stdClass();
+                $item->name = $userBean->full_name;
+                $item->address = $userBean->email1;
+                $res[] = $item;
+            }
+        }
+        return $res;
+    }
+
+    public function processRecipientEmails($bean, $entry, $flowData)
+    {
+        return array();
     }
 
     /**
@@ -355,8 +413,7 @@ class PMSEEmailHandler
 
         if (isset($addresses->to)) {
             foreach ($addresses->to as $key => $email) {
-                $mailObject->AddAddress($email->address,
-                    $this->locale->translateCharsetMIME(trim($email->name), 'UTF-8', $OBCharset));
+                $mailObject->AddAddress($email->address, $this->locale->translateCharsetMIME(trim($email->name), 'UTF-8', $OBCharset));
             }
         } else {
             $msgError = 'addresses field \'TO\' is not defined';
@@ -364,8 +421,7 @@ class PMSEEmailHandler
 
         if (isset($addresses->cc)) {
             foreach ($addresses->cc as $key => $email) {
-                $mailObject->AddCC($email->address,
-                    $this->locale->translateCharsetMIME(trim($email->name), 'UTF-8', $OBCharset));
+                $mailObject->AddCC($email->address, $this->locale->translateCharsetMIME(trim($email->name), 'UTF-8', $OBCharset));
             }
         } else {
             $this->logger->info('addresses field \'CC\' is not defined');
@@ -373,8 +429,7 @@ class PMSEEmailHandler
 
         if (isset($addresses->bcc)) {
             foreach ($addresses->bcc as $key => $email) {
-                $mailObject->AddBCC($email->address,
-                    $this->locale->translateCharsetMIME(trim($email->name), 'UTF-8', $OBCharset));
+                $mailObject->AddBCC($email->address, $this->locale->translateCharsetMIME(trim($email->name), 'UTF-8', $OBCharset));
             }
         } else {
             $this->logger->info('addresses field \'BCC\' is not defined');
@@ -543,4 +598,5 @@ class PMSEEmailHandler
             //$this->bpmLog('INFO',  $upd_query . ' result :  ' . print_r($upd_res,true));
         }
     }
+
 }
