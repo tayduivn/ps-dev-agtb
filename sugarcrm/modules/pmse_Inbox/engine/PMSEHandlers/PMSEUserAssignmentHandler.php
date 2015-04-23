@@ -347,7 +347,8 @@ class PMSEUserAssignmentHandler
                 'cas_id' => $caseData['cas_id'],
                 'cas_index' => $caseData['cas_index']
             ));
-        $originalFlow = $this->retrieveBean('pmse_BpmFlow', $caseBean->cas_adhoc_parent_id); //new BpmFlow();
+        $firstDerivatedFlow = $this->retrieveBean('pmse_BpmFlow', $caseBean->cas_adhoc_parent_id); //new BpmFlow();
+        $originalFlow = $this->retrieveBean('pmse_BpmFlow', $firstDerivatedFlow->cas_adhoc_parent_id); //new BpmFlow();
         $caseData['cas_adhoc_type'] = $originalFlow->cas_adhoc_type;
         $caseData['cas_adhoc_parent_id'] = $originalFlow->cas_adhoc_parent_id;
         $caseData['cas_reassign_level'] = $originalFlow->cas_reassign_level;
