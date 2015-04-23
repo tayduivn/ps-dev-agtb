@@ -877,7 +877,7 @@ class PMSECrmDataWrapper implements PMSEObservable
      */
     public function getRelatedModule($linkField, $targetModule) {
         $baseModule = BeanFactory::newBean($targetModule);
-        $baseModule->load_relationships();
+        $baseModule->load_relationship($linkField);
         if (isset($baseModule->$linkField)) {
             $moduleName = $baseModule->$linkField->getRelatedModuleName();
         } else {

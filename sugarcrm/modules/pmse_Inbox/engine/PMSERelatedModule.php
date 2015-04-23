@@ -48,15 +48,7 @@ class PMSERelatedModule {
         if(!$moduleBean->load_relationship($fieldName))
             throw new Exception("Unable to load relationship $fieldName");
 
-        if(empty($moduleBean->$fieldName))
-            throw new Exception("Relationship $fieldName was not set");
-
-        $rModule = $moduleBean->$fieldName->getRelatedModuleName();
-
-        //now we need a seed of the related module to load.
-        $seed = $this->getBean($rModule);
-
-        $relatedBean = $moduleBean->$fieldName->getBeans($seed);
+        $relatedBean = $moduleBean->$fieldName->getBeans(array('limit' => 1));
 
         if (!empty($relatedBean)) {
             return current($relatedBean);
@@ -68,7 +60,10 @@ class PMSERelatedModule {
     public function getRelatedModuleName($moduleBeanName, $linkField)
     {
         $moduleBean = $this->newBean($moduleBeanName);
-        $moduleBean->load_relationships();
+
+        if (!$moduleBean->load_relationship($linkField))
+            throw new Exception("Unable to load relationship $linkField");
+
         if (!empty($moduleBean->field_defs[$linkField])) {
             $moduleName = $moduleBean->$linkField->getRelatedModuleName();
         } else {
@@ -103,10 +98,9 @@ class PMSERelatedModule {
                 if ($moduleLabel == "LBL_MODULE_NAME") {
                     $moduleLabel = translate($relatedModule);
                 }
-                $relationshipName = $moduleBean->$link->getRelationshipObject()->name;
                 $ret = array(
                     'value' => $link,
-                    'text' => "$moduleLabel ($label - $relType) : $relationshipName",
+                    'text' => "$moduleLabel ($label)",
                     'module' => $moduleLabel
                 );
                 if ($relType == 'one') {
@@ -152,9 +146,6 @@ class PMSERelatedModule {
 
         if(!$moduleBean->load_relationship($fieldName))
             throw new Exception("Unable to load relationship $fieldName");
-
-        if(empty($moduleBean->$fieldName))
-            throw new Exception("Relationship $fieldName was not set");
 
         $rModule = $moduleBean->$fieldName->getRelatedModuleName();
 
