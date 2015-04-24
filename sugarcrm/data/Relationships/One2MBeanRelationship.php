@@ -453,10 +453,10 @@ class One2MBeanRelationship extends One2MRelationship
      */
     public function relationship_exists($lhs, $rhs)
     {
-        // we need the key that is stored on the rhs to compare tok
         $lhsIDName = $this->def['rhs_key'];
+        $rhsIDName = $this->def['lhs_key'];
 
-        return (isset($rhs->fetched_row[$lhsIDName]) && $rhs->$lhsIDName == $rhs->fetched_row[$lhsIDName] && $rhs->$lhsIDName == $lhs->id);
+        return (isset($rhs->fetched_row[$lhsIDName]) && $rhs->$lhsIDName == $rhs->fetched_row[$lhsIDName] && $rhs->$lhsIDName == $lhs->$rhsIDName);
     }
 
     public function getRelationshipTable()
