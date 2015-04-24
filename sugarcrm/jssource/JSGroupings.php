@@ -434,7 +434,6 @@
 
             $pmse_libraries = array(
                 'include/javascript/pmse/lib/jquery.layout-latest.js' => 'include/javascript/pmse.libraries.min.js',
-                'include/javascript/pmse/lib/date.js' => 'include/javascript/pmse.libraries.min.js',
             ),
 
             $pmse_jcore = array(
