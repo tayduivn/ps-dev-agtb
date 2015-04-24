@@ -213,15 +213,20 @@ class PMSEEmailHandler
                     $res = array_merge(
                         $res, $this->processRoleEmails($bean, $entry, $flowData)
                     );
-
                     break;
                 case 'RECIPIENT':
                     $res = array_merge(
                         $res, $this->processRecipientEmails($bean, $entry, $flowData)
                     );
                     break;
+                case 'EMAIL':
+                    $res = array_merge(
+                        $res, $this->processDirectEmails($bean, $entry, $flowData)
+                    );
+                    break;
             }
         }
+        
         return $res;
     }
 
@@ -231,7 +236,8 @@ class PMSEEmailHandler
         $users = array();
         switch ($entry->value) {
             case 'last_modifier':
-                $users = $this->getLastModifier($bean);
+                //$users = $this->getLastModifier($bean);
+                $users = array();
                 break;
             case 'record_creator':
                 $users = $this->getRecordCreator($bean);
@@ -240,12 +246,16 @@ class PMSEEmailHandler
                 $users = $this->getCurrentAssignee($bean);
                 break;
             case 'was_assignee':
-                $users = $this->getPreviousAssignees($bean);
+                //$users = $this->getPreviousAssignees($bean);
+                $users = array();
                 break;
         }
         foreach ($users as $user) {
             $res = array_merge($res, $this->getUserEmails($user, $entry));
         }
+        echo "------USER-----\n";
+        var_dump($res);
+        echo "-----------\n";
         return $res;
     }
     
@@ -289,13 +299,13 @@ class PMSEEmailHandler
     {
         $res = array();
         if ($entry->user === 'manager_of') {
-            $userBean = $this->getSupervisor($userBean);
+            $user = $this->getSupervisor($userBean);
         }
         
-        if (isset($userBean->full_name) && isset($userBean->email1)) {
+        if (isset($user->full_name) && isset($user->email1)) {
             $item = new StdClass();
-            $item->name = $userBean->full_name;
-            $item->address = $userBean->email1;
+            $item->name = $user->full_name;
+            $item->address = $user->email1;
             $res[] = $item;
         }
         return $res;
@@ -304,9 +314,14 @@ class PMSEEmailHandler
     public function getSupervisor($user)
     {
         if (isset($user->reports_to_id) && $user->reports_to_id != '') {
-            $user = $this->retrieveBean("Users", $user->reports_to_id);
-            if (isset($user->full_name) && !empty($user->full_name) && isset($user->email1) && !empty($user->email1)) {
-                return $user;
+            $supervisor = $this->retrieveBean("Users", $user->reports_to_id);
+            if (
+                isset($supervisor->full_name) && 
+                !empty($supervisor->full_name) && 
+                isset($supervisor->email1) && 
+                !empty($supervisor->email1)
+            ) {
+                return $supervisor;
             } else {
                 return '';
             }
@@ -316,10 +331,9 @@ class PMSEEmailHandler
     public function processTeamEmails($bean, $entry, $flowData)
     {
         $res = array();
-        $team = $this->retrieveBean('Teams'); //$beanFactory->getBean('Teams');
-        $response = $team->getById($entry->value);
-        $members = $team->getMembers();
-        $users = array();
+        $team = $this->retrieveBean('Teams',$entry->value); //$beanFactory->getBean('Teams');
+        //$response = $team->getById();
+        $members = $team->get_team_members();
         foreach ($members as $user) {
             $userBean = $this->retrieveBean("Users", $user->id);
             if (isset($userBean->full_name) && isset($userBean->email1)) {
@@ -335,9 +349,10 @@ class PMSEEmailHandler
     public function processRoleEmails($bean, $entry, $flowData)
     {
         $res = array();
-        $role = $this->retrieveBean('Roles', $entry->value); //$beanFactory->getBean('Teams');
+        $role = $this->retrieveBean('ACLRoles', $entry->value);
+        $role->retrieve_relationships();
+        // $beanFactory->getBean('Teams');
         $members = $role->get_users();
-        $users = array();
         foreach ($members as $user) {
             $userBean = $this->retrieveBean("Users", $user->id);
             if (isset($userBean->full_name) && isset($userBean->email1)) {
@@ -347,14 +362,40 @@ class PMSEEmailHandler
                 $res[] = $item;
             }
         }
+        //echo "------ROLE-----\n";
+        //var_dump($members);
+        //echo "-----------\n";
         return $res;
     }
 
     public function processRecipientEmails($bean, $entry, $flowData)
     {
-        return array();
+        $res = array();
+        $bean->load_relationship($entry->module);
+        $field = $entry->value;
+        $item = new stdClass();
+        $item->name = $bean->$field;
+        $item->address = $bean->$field;
+        $res[] = $item;
+        echo "------RECIPIENT-----\n";
+        var_dump($res);
+        echo "-----------\n";
+        return $res;
     }
 
+    public function processDirectEmails($bean, $entry, $flowData)
+    {
+        $res = array();
+        $item = new stdClass();
+        $item->name = $entry->value;
+        $item->address = $entry->value;
+        $res[] = $item;
+        echo "------DIRECT-----\n";
+        var_dump($res);
+        echo "-----------\n";
+        return $res;
+    }
+    
     /**
      * filling the mail object with all the administrative settings and configurations
      * @global type $sugar_version
@@ -366,12 +407,10 @@ class PMSEEmailHandler
     public function setupMailObject($mailObject)
     {
         $this->admin->retrieveSettings();
-
         if ($this->admin->settings['mail_sendtype'] == "SMTP") {
             $mailObject->Mailer = "smtp";
             $mailObject->Host = $this->admin->settings['mail_smtpserver'];
             $mailObject->Port = $this->admin->settings['mail_smtpport'];
-
             $mailObject->SMTPSecure = '';
             if ($this->admin->settings['mail_smtpssl'] == 1) {
                 $mailObject->SMTPSecure = 'ssl';
@@ -379,7 +418,6 @@ class PMSEEmailHandler
             if ($this->admin->settings['mail_smtpssl'] == 2) {
                 $mailObject->SMTPSecure = 'tls';
             }
-
             if ($this->admin->settings['mail_smtpauth_req']) {
                 $mailObject->SMTPAuth = true;
                 $mailObject->Username = $this->admin->settings['mail_smtpuser'];
@@ -388,7 +426,6 @@ class PMSEEmailHandler
         } else {
             $mailObject->Mailer = 'sendmail';
         }
-
         $mailObject->From = $this->admin->settings['notify_fromaddress'];
         $mailObject->FromName = (empty($this->admin->settings['notify_fromname'])) ? "" : $this->admin->settings['notify_fromname'];
     }
