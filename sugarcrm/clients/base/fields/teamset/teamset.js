@@ -207,7 +207,7 @@
         }
 
         // If we're loading edit template on List view switch to detail template instead
-        if (!template && this.view.action === 'list' && this.tplName === 'edit') {
+        if (!template && this.view.action === 'list' && _.contains(['edit','detail'], this.tplName)) {
             this.template = app.template.getField(
                 this.type,
                 'list',
