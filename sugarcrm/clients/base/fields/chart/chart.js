@@ -71,7 +71,6 @@
 
         if (!_.isEmpty(chartParams)) {
             params = _.extend(params, chartParams);
-            chartData.properties[0].title = chartParams.report_title;
             chartData.properties[0].type = chartParams.chart_type;
             // allow override of chart type
             chartConfig = this.getChartConfig(chartData);
