@@ -23,6 +23,9 @@ $vardefs = array(
             'studio' => array(
                 'mobile' => false,
                 'portal' => false,
+                'base' => array(
+                    'popuplist' => false,
+                ),
             ),
             'massupdate' => true,
             'exportable' => true,
