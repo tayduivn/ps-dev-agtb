@@ -46,7 +46,6 @@
             socket.emit('OAuthToken', {
                 'siteUrl': app.config.siteUrl,
                 'serverUrl': app.config.serverUrl,
-                'publicSecret': app.config.websockets.publicSecret,
                 'token': app.api.getOAuthToken()
             });
         };
