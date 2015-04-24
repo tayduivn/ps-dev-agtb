@@ -13,6 +13,9 @@
 
 {{#if tagList}}
     <div class="ellipsis_inline" data-placement="bottom" data-container="body" title="{{tagList}}" rel="tooltip">
-        {{tagList}}
+        {{#each value}}
+        <a class="ellipsis-inline" href="javascript:void(0);" data-action="tag-search" data-tag="{{this.name}}" data-tag-id="{{this.id}}">
+            {{this.name}}</a>{{#unless @last}}, {{/unless}}
+        {{/each}}
     </div>
 {{/if}}

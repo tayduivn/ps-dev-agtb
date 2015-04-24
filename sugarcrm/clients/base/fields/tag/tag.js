@@ -23,6 +23,10 @@
      */
     appendTagInput: 'input[name=append_tag]',
 
+    events: {
+        'click [data-action=tag-search]': 'linkToSearch'
+    },
+
     /**
      * {@inheritDoc}
      */
@@ -341,5 +345,21 @@
         this.$(this.appendTagInput).off();
         this.$('.select2field').select2('destroy');
         this._super('unbindDom');
+    },
+
+    /**
+     * Link to globalsearch page
+     *
+     * @param {Event} e
+     */
+    linkToSearch: function(e) {
+        var tagName = e.currentTarget.dataset['tag'];
+        var tagId = e.currentTarget.dataset['tagId'];
+        var route = app.router.buildRoute('search');
+
+        // add the tag name and tag id to the context so they can be used while searching
+        app.controller.context.set('tags',[{name: tagName, id: tagId}]);
+        app.router.navigate(route, {trigger: true});
     }
+
 })

@@ -161,5 +161,33 @@
             var curr = this.$('[data-id="' + model.id + '"]');
             curr.addClass('current highlighted');
         }
+    },
+
+    /**
+     * Add the tags and facets options to the paginate query.
+     * Please see the {@link Pagination#getNextPagination} for detail.
+     *
+     * @return {Object} Pagination fetch options.
+     */
+    getPaginationOptions: function() {
+        var selectedFacets = this.context.get('selectedFacets');
+        var tagFilters = _.pluck(this.context.get('tags'), 'id');
+        var options = null;
+        if (selectedFacets || tagFilters) {
+            options = {
+                apiOptions: {
+                    data: {},
+                    fetchWithPost: true
+                }
+            };
+        }
+        if (selectedFacets) {
+            options.apiOptions.data.agg_filters = selectedFacets;
+        }
+        if (tagFilters) {
+            options.apiOptions.data.tag_filters = tagFilters;
+        }
+
+        return options;
     }
 })

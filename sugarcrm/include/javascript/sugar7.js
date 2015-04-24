@@ -229,6 +229,7 @@
                         layout: 'search',
                         searchTerm: searchTerm,
                         module_list: params.modules,
+                        tags: appContext.get('tags'),
                         mixed: true
                     });
                 }

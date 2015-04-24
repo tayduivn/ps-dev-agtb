@@ -25,12 +25,18 @@
     initialize: function(options) {
         this._super('initialize', [options]);
 
-        this.context.on('change:searchTerm', function(model, value) {
-            this.searchTerm = value;
+        this.context.on('change:searchTerm change:tags', function(model, value) {
+            if (_.isString(value) && value) {
+                this.searchTerm = value
+            } else {
+                this.searchTerm = _.pluck(this.context.get('tags'), 'name').join(', ');
+            }
             this.render();
         }, this);
 
-        this.searchTerm = this.context.get('searchTerm');
+        // use the searchTerm for the title of search, unless we are doing a tag related search
+        // then we use the tag name
+        this.searchTerm = this.context.get('searchTerm') || _.pluck(this.context.get('tags'), 'name').join(', ');
     },
 
     /**
