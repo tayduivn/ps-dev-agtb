@@ -37,6 +37,7 @@ var ExpressionControl = function(settings) {
     this._decimalSeparator = null;
     this._numberGroupingSeparator = null;
     this._auxSeparator = "|||";
+    this._itemValueWildcard = '%VALUE%';
     this.onOpen = null;
     this.onClose = null;
     ExpressionControl.prototype.init.call(this, settings);
@@ -855,7 +856,10 @@ ExpressionControl.prototype.setOperators = function (operators) {
 };
 
 ExpressionControl.prototype._getStringOrNumber = function (value) {
-    var aux, wildcard = "@" + (Math.random(1) * 10).toString().replace(".", "") + "@", isNum = false;
+    var aux, wildcard, isNum = false;
+
+    wildcard = "@" + (Math.random(1) * 10).toString().replace(".", "") + "@";
+
     value = jQuery.trim(value);
     if (this._decimalSeparator !== ".") {
         isNum = value.indexOf(".") < 0;
@@ -878,7 +882,7 @@ ExpressionControl.prototype._getStringOrNumber = function (value) {
 };
 
 ExpressionControl.prototype._createItem = function (data, usableItem) {
-    var newItem, aux;
+    var newItem, aux, label, that = this;
 
     if(usableItem instanceof SingleItem) {
         newItem = usableItem;
@@ -886,7 +890,23 @@ ExpressionControl.prototype._createItem = function (data, usableItem) {
         newItem = new SingleItem();
     }
     newItem.setFullData(data);
-    newItem.setText("{{expLabel}}");
+    if (data.expType === 'MODULE' || (data.expType === 'CONSTANT'
+        && (data.expSubtype === 'date' || data.expSubtype === 'datetime') )) {
+        aux = data.expSubtype.toLowerCase();
+
+        label = data.expLabel.replace(new RegExp(this._itemValueWildcard, "g"), function () {
+            if (aux === "date") {
+                return FormPanelDate.format(data.expValue, that._dateFormat);
+            } else if (aux === "datetime") {
+                return FormPanelDatetime.format(data.expValue, that._dateFormat, that._timeFormat);
+            } else {
+                return "{{expLabel}}";
+            }
+        });
+        newItem.setText(label);
+    } else {
+        newItem.setText("{{expLabel}}");
+    }
     return newItem;
 };
 //THIS METHOD MUST BE REPLACED FOR ANOTHER ONE WITH BETTER PERFORMANCE!!!!
@@ -937,10 +957,8 @@ ExpressionControl.prototype._onPanelValueGeneration = function () {
                     label = subpanel.getItem("field").getSelectedText() + " " +
                             subpanel.getItem("operator").getSelectedText() + " ";
                     valueField = subpanel.getItem("value");
-                    if (aux[1] === "Date") {
-                        label += valueField.getFormattedDate();
-                    } else if (aux[1] === 'Datetime') {
-                        label += valueField.getFormattedDate() + " " + valueField._htmlControl[1].value;
+                    if (aux[1] === "Date" || aux[1] === 'Datetime') {
+                        label += '%VALUE%';
                     } else {
                         label += (valueType === "string" ? "\"" + value + "\"" : data.value);
                     }
@@ -1020,7 +1038,7 @@ ExpressionControl.prototype._onPanelValueGeneration = function () {
                     itemData = {
                         expType: 'CONSTANT',
                         expSubtype: "date",
-                        expLabel: subpanel.getItem("date").getFormattedDate(),
+                        expLabel: '%VALUE%',
                         expValue: data.date
                     };
                     break;
@@ -1028,7 +1046,7 @@ ExpressionControl.prototype._onPanelValueGeneration = function () {
                     itemData = {
                         expType: 'CONSTANT',
                         expSubtype: "datetime",
-                        expLabel: subpanel.getItem("datetime").getFormattedDate(),
+                        expLabel: '%VALUE%',
                         expValue: data.datetime
                     };
                     break;
@@ -1343,13 +1361,11 @@ ExpressionControl.prototype._createModulePanel = function () {
                                 case 'float':
                                 case 'integer':
                                     operators = that.OPERATORS.comparison;
-                                    if (type !== 'date' && type !== 'datetime') {
-                                        newFieldSettings.precision =
-                                            (type === 'integer' ? 0 : (type === 'currency' ? 2 : -1));
-                                        newFieldSettings.groupingSeparator =
-                                            (type === 'currency' ? that._numberGroupingSeparator : "");
-                                        newFieldSettings.decimalSeparator = that._decimalSeparator;
-                                    }
+                                    newFieldSettings.precision =
+                                        (type === 'integer' ? 0 : (type === 'currency' ? 2 : -1));
+                                    newFieldSettings.groupingSeparator =
+                                        (type === 'currency' ? that._numberGroupingSeparator : "");
+                                    newFieldSettings.decimalSeparator = that._decimalSeparator;
                                     break;
                                 default:
                                     if (type !== "dropdown" && type !== "checkbox") {

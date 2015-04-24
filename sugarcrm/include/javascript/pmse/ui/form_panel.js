@@ -1199,6 +1199,16 @@
 	FormPanelDate.prototype.constructor = FormPanelDate;
 	FormPanelDate.prototype.type = "FormPanelDate";
 
+	//Returns a date in user format.
+	FormPanelDate.format = function (value, format) {
+		//based on format function in components_4ffa9804da5d932ba4c9ac5834421ed5.js line 3844
+		if (!value) {
+			return value;
+		}
+		value = App.date(value);
+		return value.isValid() ? value.format(format.toUpperCase()) : null;
+	};
+
 	FormPanelDate.prototype.init = function (settings) {
 		var defaults = {
 			dateFormat: "yyyy-mm-dd"
@@ -1226,7 +1236,7 @@
 	};
 
 	FormPanelDate.prototype._setValueToControl = function (value) {
-		return FormPanelField.prototype._setValueToControl.call(this, this._format(value));
+		return FormPanelField.prototype._setValueToControl.call(this, FormPanelDate.format(value, this._dateFormat));
 	};
 	FormPanelDate.prototype._getValueFromControl = function () {
 		return this._unformat(this._htmlControl[0].value);
@@ -1237,17 +1247,9 @@
 		value = App.date(value, this._dateFormat.toUpperCase(), true);
 		return value.isValid() ? value.format("YYYY-MM-DD") : null;
 	};
-	//Returns a date in user format.
-	FormPanelDate.prototype._format = function (value) {
-		//based on format function in components_4ffa9804da5d932ba4c9ac5834421ed5.js line 3844
-		if (!value) {
-			return value;
-		}
-		value = App.date(value);
-		return value.isValid() ? value.format(this._dateFormat.toUpperCase()) : null;
-	};
+
 	FormPanelDate.prototype.getFormattedDate = function () {
-		return this._format(this._value);
+		return FormPanelDate.format(this._value, this._dateFormat);
 	};
 
 	FormPanelDate.prototype._attachListeners = function() {
@@ -1295,6 +1297,17 @@
 	FormPanelDatetime.prototype = new FormPanelDate();
 	FormPanelDatetime.prototype.constructor = FormPanelDatetime;
 	FormPanelDatetime.prototype.type = "FormPanelDatetime";
+
+	//Returns a date in user format.
+	FormPanelDatetime.format = function (value, dateFormat, timeFormat) {
+		//based on format function in components_4ffa9804da5d932ba4c9ac5834421ed5.js line 3844
+		if (!value) {
+			return value;
+		}
+		value = App.date(value);
+		return value.isValid() ? value.format(dateFormat.toUpperCase() + " " + App.date.convertFormat(timeFormat))
+			: null;
+	};
 
 	FormPanelDatetime.prototype.init = function (settings) {
 		var defaults = {
@@ -1440,16 +1453,8 @@
 		return this;
 	};
 
-	FormPanelDatetime.prototype._format = function (value) {
-		if (!value) {
-			return value;
-		}
-		value = App.date(value);
-		if (!value.isValid()) {
-			return null;
-		}
-
-		return value.format(this._dateFormat.toUpperCase()) + " " + this._htmlControl[1].value;
+	FormPanelDatetime.prototype.getFormattedDate = function () {
+		return FormPanelDatetime.format(this._value, this._dateFormat, this._timeFormat);
 	};
 
 	FormPanelDatetime.prototype._attachListeners = function	() {
