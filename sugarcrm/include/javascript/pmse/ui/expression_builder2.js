@@ -1331,10 +1331,12 @@ ExpressionControl.prototype._createModulePanel = function () {
                             operatorField = form.getItem("operator");
 
                             switch (type) {
-                                case 'date':
                                 case 'datetime':
+                                    newFieldSettings.timeFormat = that._timeFormat;
+                                case 'date':
                                     labelField = "datefield";
                                     operators = [that.OPERATORS.comparison[2], that.OPERATORS.comparison[0], that.OPERATORS.comparison[4]];
+                                    newFieldSettings.dateFormat = that._dateFormat;
                                     break;
                                 case 'decimal':
                                 case 'currency':
