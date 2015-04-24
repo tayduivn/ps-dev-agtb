@@ -2250,7 +2250,7 @@ class PMSECrmDataWrapper implements PMSEObservable
         if (is_array($res['result']) && !empty($res['result'])) {
             foreach ($res['result'] as $key => $value) {
                 //$aux = $this->addRelatedRecord($value['value']);
-                $aux = $this->retrieveFields($filter, $moduleApi, '', $baseModule);
+                $aux = $this->retrieveFields($value['value'], $moduleApi, '', $baseModule);
                 $value['fields'] = $aux['result'];
                 $arr[] = $value;
             }
