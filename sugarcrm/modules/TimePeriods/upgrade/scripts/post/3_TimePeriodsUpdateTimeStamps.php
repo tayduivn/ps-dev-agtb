@@ -30,8 +30,8 @@ class SugarUpgradeTimePeriodsUpdateTimeStamps extends UpgradeScript
             $this->db->query(
                 sprintf(
                     $updateSql,
-                    strtotime($row['start_date'] . ' 00:00:00'),
-                    strtotime($row['end_date'] . ' 23:59:59'),
+                    strtotime(substr($row['start_date'], 0, 10) . ' 00:00:00'),
+                    strtotime(substr($row['end_date'], 0, 10) . ' 23:59:59'),
                     $row['id']
                 )
             );

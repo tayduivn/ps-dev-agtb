@@ -25,6 +25,9 @@ class IndexValueExpression extends GenericExpression
 		$array  = $params[1]->evaluate();
 		$index  = $params[0]->evaluate();
 
+		if (is_numeric($index))
+			$index = intval($index);
+
 		if ( $index >= sizeof($array) || $index < 0 )
 			throw new Exception( $this->getOperationName() . ": Attempt to access an index out of bounds" );
 
@@ -40,6 +43,9 @@ class IndexValueExpression extends GenericExpression
 			var params = this.getParameters();
 			var array  = params[1].evaluate();
 			var index  = params[0].evaluate();
+
+			if (typeof index == 'string' && !isNaN(index))
+				index = Number(index);
 
 			if ( index >= array.length || index < 0 )
 				throw ("value_at: Attempt to access an index out of bounds");
