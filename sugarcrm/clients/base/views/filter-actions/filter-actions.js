@@ -129,7 +129,7 @@
             input.placeholder();
         }
         // We have this.context.editingFilter if we're setting the name.
-        this.toggleDelete(!_.isEmpty(name));
+        this.toggleDelete(!_.isUndefined(this.context.get('currentFilterId')));
     },
 
     /**
