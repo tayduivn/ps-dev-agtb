@@ -89,7 +89,7 @@ class PMSERelatedModule {
         foreach($moduleBean->get_linked_fields() as $link => $def) {
             if (!empty($def['type']) && $def['type'] == 'link' && $moduleBean->load_relationship($link)) {
                 $relatedModule = $moduleBean->$link->getRelatedModuleName();
-                if (in_array($relatedModule, array("Emails", "Teams", "Activities", "EmailAddresses"))) {
+                if (in_array($relatedModule, array("Emails", "Teams", "Activities", "EmailAddresses", "Shippers"))) {
                     continue;
                 }
                 $relType = $moduleBean->$link->getType(); //returns 'one' or 'many' for the cardinality of the link
