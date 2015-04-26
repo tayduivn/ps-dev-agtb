@@ -4,16 +4,20 @@ nv.models.legend = function() {
   // Public Variables with Default Settings
   //------------------------------------------------------------
 
-  var margin = {top: 0, right: 0, bottom: 0, left: 0},
+  var margin = {top: 10, right: 10, bottom: 15, left: 10},
       width = 0,
       height = 0,
       align = 'right',
       direction = 'ltr',
       position = 'start',
-      radius = 5,
-      gutter = 10,
+      radius = 6, // size of dot
+      diameter = radius * 2, // diamter of dot plus stroke
+      gutter = 10, // horizontal gap between keys
+      spacing = 12, // vertical gap between keys
+      textGap = 5, // gap between dot and label accounting for dot stroke
       equalColumns = true,
       showAll = false,
+      showMenu = false,
       collapsed = false,
       rowsCount = 3, //number of rows to display if showAll = false
       enabled = false,
@@ -31,6 +35,11 @@ nv.models.legend = function() {
 
   var legendOpen = 0;
 
+  var useScroll = false,
+      scrollEnabled = true,
+      scrollOffset = 0,
+      overflowHandler = function(d) { return; };
+
   //============================================================
 
   function legend(selection) {
@@ -43,7 +52,9 @@ nv.models.legend = function() {
           keyWidths = [],
           legendHeight = 0,
           dropdownHeight = 0,
-          type = '';
+          type = '',
+          inline = position === 'start' ? true : false,
+          rtl = direction === 'rtl' ? true : false;
 
       if (!data || !data.length || !data.filter(function(d) { return !d.values || d.values.length; }).length) {
         return legend;
@@ -52,14 +63,7 @@ nv.models.legend = function() {
       enabled = true;
 
       type = !data[0].type || data[0].type === 'bar' ? 'bar' : 'line';
-
-      if (direction === 'rtl') {
-        if (align === 'left') {
-          align = 'right';
-        } else if (align === 'right') {
-          align = 'left';
-        }
-      }
+      align = rtl ? align === 'left' ? 'right' : 'left' : align;
 
       //------------------------------------------------------------
       // Setup containers and skeleton of legend
@@ -70,41 +74,31 @@ nv.models.legend = function() {
       wrapEnter.append('defs')
         .append('clipPath').attr('id', 'nv-edge-clip-' + id)
         .append('rect');
+
       var defs = wrap.select('defs');
       var clip = wrap.select('#nv-edge-clip-' + id + ' rect');
 
       wrapEnter
-        .append('rect').attr('class', 'nv-legend-background');
-      var back = container.select('.nv-legend-background');
+        .append('rect')
+          .attr('class', 'nv-legend-background');
+      var back = wrap.select('.nv-legend-background');
+      var backFilter = nv.utils.dropShadow('legend_back_' + id, defs, {blur: 2});
 
       wrapEnter
         .append('text').attr('class', 'nv-legend-link');
-      var link = container.select('.nv-legend-link');
+      var link = wrap.select('.nv-legend-link');
 
       wrapEnter
         .append('g').attr('class', 'nv-legend-mask')
         .append('g').attr('class', 'nv-legend');
-      var mask = container.select('.nv-legend-mask');
-      var g = container.select('g.nv-legend');
+      var mask = wrap.select('.nv-legend-mask');
+      var g = wrap.select('g.nv-legend');
       g .attr('transform', 'translate(0,0)');
 
       var series = g.selectAll('.nv-series')
             .data(function(d) { return d; }, function(d) { return d.key; });
       var seriesEnter = series.enter().append('g').attr('class', 'nv-series');
       series.exit().remove();
-
-      var zoom = d3.behavior.zoom();
-
-      function zoomLegend(d) {
-        var trans = d3.transform(g.attr('transform')).translate,
-          transX = trans[0],
-          transY = trans[1] + d3.event.sourceEvent.wheelDelta / 4,
-          diffY = dropdownHeight - legendHeight,
-          upMax = Math.max(transY, diffY); //should not go beyond diff
-        if (upMax) {
-          g .attr('transform', 'translate(' + transX + ',' + Math.min(upMax, 0) + ')');
-        }
-      }
 
       clip
         .attr('x', 0.5)
@@ -118,12 +112,15 @@ nv.models.legend = function() {
         .attr('width', 0)
         .attr('height', 0)
         .style('opacity', 0)
-        .style('pointer-events', 'all');
+        .style('pointer-events', 'all')
+        .on('click', function(d, i) {
+          d3.event.stopPropagation();
+        });
 
       link
         .text(legendOpen === 1 ? legend.strings().close : legend.strings().open)
-        .attr('text-anchor', align === 'left' ? direction === 'rtl' ? 'end' : 'start' : direction === 'rtl' ? 'start' : 'end')
-        .attr('dy', '.32em')
+        .attr('text-anchor', align === 'left' ? rtl ? 'end' : 'start' : rtl ? 'start' : 'end')
+        .attr('dy', '.36em')
         .attr('dx', 0)
         .style('opacity', 0)
         .on('click', function(d, i) {
@@ -140,9 +137,18 @@ nv.models.legend = function() {
         .on('click', function(d, i) {
           dispatch.legendClick(d, i);
           d3.event.stopPropagation();
+          d3.event.preventDefault();
         });
 
       if (type === 'bar') {
+
+        seriesEnter.append('rect')
+          .attr('x', -radius - 2)
+          .attr('y', -radius - 2)
+          .attr('width', radius * 2 + 4)
+          .attr('height', radius * 2 + 4)
+          .style('fill', '#FFE')
+          .style('opacity', 0.1);
 
         seriesEnter.append('circle')
           .attr('r', radius)
@@ -160,21 +166,27 @@ nv.models.legend = function() {
           });
 
         seriesEnter.append('text')
-          .attr('dy', '.36em');
+          .attr('dy', inline ? '.36em' : '.71em');
         series.select('text')
           .text(getKey);
 
       } else {
 
         seriesEnter.append('circle')
-          .style('stroke-width', 0);
+          .attr('r', function(d, i) {
+            return d.type === 'dash' ? 0 : radius;
+          })
+          .style('stroke-width', 2);
         seriesEnter.append('line')
           .attr('x0', 0)
           .attr('y0', 0)
           .attr('y1', 0)
           .style('stroke-width', '4px');
         seriesEnter.append('circle')
-          .style('stroke-width', 0);
+          .attr('r', function(d, i) {
+            return d.type === 'dash' ? 0 : radius;
+          })
+          .style('stroke-width', 2);
 
         series.select('line')
           .attr('class', function(d, i) {
@@ -185,18 +197,18 @@ nv.models.legend = function() {
           });
 
         series.selectAll('circle')
-          .attr('r', function(d, i) {
-            return d.type === 'dash' ? 0 : radius;
-          })
           .attr('class', function(d, i) {
             return classes(d, d.hasOwnProperty('series') ? d.series : i);
           })
           .attr('fill', function(d, i) {
             return color(d, d.hasOwnProperty('series') ? d.series : i);
+          })
+          .attr('stroke', function(d, i) {
+            return color(d, d.hasOwnProperty('series') ? d.series : i);
           });
 
         seriesEnter.append('text')
-          .attr('dy', '.32em')
+          .attr('dy', inline ? '.36em' : '.71em')
           .attr('dx', 0);
         series.select('text')
           .text(getKey)
@@ -216,7 +228,7 @@ nv.models.legend = function() {
       // store legend label widths
       legend.calculateWidth = function() {
 
-        var padding = gutter + (position === 'start' ? 2 * radius + 3 : 0);
+        var padding = gutter + (inline ? diameter + textGap : 0);
         keyWidths = [];
 
         g.style('display', 'inline');
@@ -251,15 +263,15 @@ nv.models.legend = function() {
             maxWidth = containerWidth - margin.left - margin.right,
             maxRowWidth = 0,
             minRowWidth = 0,
-            lineSpacing = position === 'start' ? 10 : 6,
+            lineSpacing = spacing * (inline ? 1 : 0.6),
             textHeight = this.getLineHeight(),
-            lineHeight = lineSpacing + radius * 2 + (position === 'start' ? 0 : textHeight),
+            lineHeight = diameter + (inline ? 0 : textHeight) + lineSpacing,
+            menuMargin = {top: 7, right: 7, bottom: 7, left: 7}, // account for stroke width
             xpos = 0,
             ypos = 0,
             i,
             mod,
-            shift,
-            padding = radius + radius * 2;
+            shift;
 
         if (equalColumns) {
 
@@ -287,17 +299,17 @@ nv.models.legend = function() {
           for (i = 0; i < keys; i += 1) {
             mod = i % cols;
 
-            if (position === 'start') {
+            if (inline) {
               if (mod === 0) {
-                xpos = direction === 'rtl' ? maxRowWidth : 0;
+                xpos = rtl ? maxRowWidth : 0;
               } else {
-                xpos += columnWidths[mod - 1] * (direction === 'rtl' ? -1 : 1);
+                xpos += columnWidths[mod - 1] * (rtl ? -1 : 1);
               }
             } else {
               if (mod === 0) {
-                xpos = (direction === 'rtl' ? maxRowWidth : 0) + (columnWidths[mod] - gutter) / 2 * (direction === 'rtl' ? -1 : 1);
+                xpos = (rtl ? maxRowWidth : 0) + (columnWidths[mod] - gutter) / 2 * (rtl ? -1 : 1);
               } else {
-                xpos += (columnWidths[mod - 1] + columnWidths[mod]) / 2 * (direction === 'rtl' ? -1 : 1);
+                xpos += (columnWidths[mod - 1] + columnWidths[mod]) / 2 * (rtl ? -1 : 1);
               }
             }
 
@@ -307,7 +319,7 @@ nv.models.legend = function() {
 
         } else {
 
-          if (direction === 'rtl') {
+          if (rtl) {
 
             xpos = maxWidth;
 
@@ -322,7 +334,7 @@ nv.models.legend = function() {
               if (xpos - keyWidths[i] + gutter > maxRowWidth) {
                 maxRowWidth = xpos - keyWidths[i] + gutter;
               }
-              keyPositions[i] = {x: xpos, y: (rows - 1) * (lineSpacing + radius * 2)};
+              keyPositions[i] = {x: xpos, y: (rows - 1) * (lineSpacing + diameter)};
               xpos -= keyWidths[i];
             }
 
@@ -338,7 +350,7 @@ nv.models.legend = function() {
               if (xpos + keyWidths[i] - gutter > maxRowWidth) {
                 maxRowWidth = xpos + keyWidths[i] - gutter;
               }
-              keyPositions[i] = {x: xpos, y: (rows - 1) * (lineSpacing + radius * 2)};
+              keyPositions[i] = {x: xpos, y: (rows - 1) * (lineSpacing + diameter)};
               xpos += keyWidths[i];
             }
 
@@ -346,29 +358,27 @@ nv.models.legend = function() {
 
         }
 
-        if (showAll || rows < rowsCount + 1) {
+        if (!showMenu && (showAll || rows <= rowsCount)) {
 
           legendOpen = 0;
           collapsed = false;
+          useScroll = false;
 
           legend
             .width(margin.left + maxRowWidth + margin.right)
-            .height(margin.top + rows * lineHeight - lineSpacing + margin.bottom + 1);
+            .height(margin.top + rows * lineHeight - lineSpacing + margin.bottom);
 
           switch (align) {
             case 'left':
-              shift = 0; //legend.width() - containerWidth;
+              shift = 0;
               break;
             case 'center':
               shift = (containerWidth - legend.width()) / 2;
               break;
             case 'right':
-              shift = 0; //containerWidth - legend.width();// * (direction === 'rtl' ? -1 : 1);
+              shift = 0;
               break;
           }
-
-          zoom
-            .on('zoom', null);
 
           clip
             .attr('y', 0)
@@ -388,8 +398,9 @@ nv.models.legend = function() {
           mask
             .attr('clip-path', 'none')
             .attr('transform', function(d, i) {
-              var xpos = shift + margin.left + (position === 'start' ? (direction === 'rtl' ? -5 : 5) : 0);
-              return 'translate(' + xpos + ',' + (1 + margin.top + radius) + ')';
+              var xpos = shift + margin.left + (inline ? radius * (rtl ? -1 : 1) : 0),
+                  ypos = margin.top + menuMargin.top;
+              return 'translate(' + xpos + ',' + ypos + ')';
             });
 
           g
@@ -402,49 +413,54 @@ nv.models.legend = function() {
               return 'translate(' + pos.x + ',' + pos.y + ')';
             });
 
-          series
-            .selectAll('text')
-              .attr('text-anchor', position)
-              .attr('transform', function(d, i) {
-                var xpos = position === 'start' ? direction === 'rtl' ? -8 : 8 : 0,
-                    ypos = position === 'start' ? 0 : textHeight;
-                return 'translate(' + xpos + ',' + ypos + ')';
-              });
-          series
-            .selectAll('circle')
-              .attr('transform', function(d, i) {
-                var xpos = position === 'start' || type === 'bar' ? 0 : (i ? 15 : -15);
-                return 'translate(' + xpos + ',0)';
-              });
-          series
-            .selectAll('line')
-              .attr('x1', function(d, i) {
-                return d.type === 'dash' ? 40 : 30;
-              })
-              .attr('transform', function(d, i) {
-                return d.type === 'dash' ? 'translate(-20,0)' : 'translate(-15,0)';
-              })
-              .style('stroke-dasharray', function(d, i) {
-                return d.type === 'dash' ? '8, 8' : '0,0';
-              });
+          series.selectAll('rect')
+            .attr('x', -radius - gutter / 2)
+            .attr('y', -radius - lineSpacing / 2)
+            .attr('width', function(d, i) {
+              // var index = d.series % columnWidths.length;
+              // return columnWidths[index];
+              return keyWidths[d.series];
+            })
+            .attr('height', radius * 2 + lineSpacing);
+          series.selectAll('text')
+            .attr('text-anchor', position)
+            .attr('transform', function(d, i) {
+              var xpos = inline ? (radius + textGap) * (rtl ? -1 : 1) : 0,
+                  ypos = inline ? 0 : radius + 3;
+              return 'translate(' + xpos + ',' + ypos + ')';
+            });
+          series.selectAll('circle')
+            .attr('transform', function(d, i) {
+              var xpos = inline || type === 'bar' ? 0 : radius * 3 * (i ? 1 : -1);
+              return 'translate(' + xpos + ',0)';
+            });
+          series.selectAll('line')
+            .attr('x1', function(d, i) {
+              return d.type === 'dash' ? radius * 8 : radius * 6;
+            })
+            .attr('transform', function(d, i) {
+              var xpos = radius * (d.type === 'dash' ? -4 : -3);
+              return 'translate(' + xpos + ',0)';
+            })
+            .style('stroke-dasharray', function(d, i) {
+              return d.type === 'dash' ? '8, 8' : '0,0';
+            });
 
         } else {
 
           collapsed = true;
+          useScroll = true;
 
           legend
-            .width(radius * 2 + d3.max(keyWidths) - gutter + (position === 'start' ? 0 : radius * 2 + 3) + radius * 2)
-            .height(radius * 2 + radius * 2 + radius * 2);
+            .width(menuMargin.left + d3.max(keyWidths) - gutter + menuMargin.right)
+            .height(margin.top + diameter + margin.top); //don't use bottom here because we want vertical centering
 
-          legendHeight = radius * 2 + radius * 2 * keys + (keys - 1) * 10 + radius * 2;//TODO: why is this 10 hardcoded?
+          legendHeight = menuMargin.top + diameter * keys + spacing * (keys - 1) + menuMargin.bottom;
           dropdownHeight = Math.min(containerHeight - legend.height(), legendHeight);
 
-          zoom
-            .on('zoom', zoomLegend);
-
           clip
-            .attr('x', 0.5 - padding)
-            .attr('y', 0.5 - padding)
+            .attr('x', 0.5 - menuMargin.top - radius)
+            .attr('y', 0.5 - menuMargin.top - radius)
             .attr('width', legend.width())
             .attr('height', dropdownHeight);
 
@@ -455,10 +471,9 @@ nv.models.legend = function() {
             .attr('height', dropdownHeight)
             .attr('rx', 2)
             .attr('ry', 2)
-            .attr('filter', nv.utils.dropShadow('legend_back_' + id, defs, {blur: 2}))
+            .attr('filter', backFilter)
             .style('opacity', legendOpen * 0.9)
-            .style('display', legendOpen ? 'inline' : 'none')
-            .call(zoom);
+            .style('display', legendOpen ? 'inline' : 'none');
 
           link
             .attr('transform', function(d, i) {
@@ -471,8 +486,8 @@ nv.models.legend = function() {
           mask
             .attr('clip-path', 'url(#nv-edge-clip-' + id + ')')
             .attr('transform', function(d, i) {
-              var xpos = padding,
-                  ypos = 0.5 + legend.height() + margin.top + radius;
+              var xpos = menuMargin.left + radius,
+                  ypos = legend.height() + menuMargin.top + radius;
               return 'translate(' + xpos + ',' + ypos + ')';
             });
 
@@ -480,14 +495,14 @@ nv.models.legend = function() {
             .style('opacity', legendOpen)
             .style('display', legendOpen ? 'inline' : 'none')
             .attr('transform', function(d, i) {
-              var xpos = direction === 'rtl' ? legend.width() - padding * 2 : 0;
+              var xpos = rtl ? d3.max(keyWidths) - gutter - diameter : 0;
               return 'translate(' + xpos + ',0)';
-            })
-            .call(zoom);
+            });
 
           series
             .attr('transform', function(d, i) {
-              return 'translate(0,' + (i * (10 + radius * 2)) + ')';//TODO: why is this 10 hardcoded?
+              var ypos = i * (diameter + spacing);
+              return 'translate(0,' + ypos + ')';
             });
           series
             .selectAll('circle')
@@ -495,16 +510,73 @@ nv.models.legend = function() {
           series
             .selectAll('line')
               .attr('x1', 16)
-              .attr('transform', 'translate(-8,0)')
+              .attr('transform', 'translate(-8,0)') //TODO: why is this hard coded?
               .style('stroke-dasharray', 'inherit');
           series
             .selectAll('text')
               .attr('text-anchor', 'start')
               .attr('transform', function(d, i) {
-                var xpos = direction === 'rtl' ? -8 : 8;
-                return 'translate(' + xpos + ',0)'; //TODO: why are these hardcoded?
+                var xpos = (radius + textGap) * (rtl ? -1 : 1);
+                return 'translate(' + xpos + ',0)';
             });
 
+        }
+        //------------------------------------------------------------
+        // Enable scrolling
+        if (scrollEnabled) {
+          var diff = dropdownHeight - legendHeight;
+
+          var assignScrollEvents = function(enable) {
+            var pan = enable ? panLegend : null;
+            var zoom = d3.behavior.zoom()
+                  .on('zoom', pan);
+            var drag = d3.behavior.drag()
+                  .origin(function(d) { return d; })
+                  .on('drag', pan);
+
+            back.call(zoom);
+            g.call(zoom);
+
+            back.call(drag);
+            g.call(drag);
+          };
+
+          var panLegend = function() {
+            var distance = 0,
+                overflowDistance = 0,
+                translate = '',
+                x = 0,
+                y = 0;
+
+            // don't fire on events other than zoom and drag
+            // we need click for handling legend toggle
+            if (d3.event) {
+              if (d3.event.type === 'zoom') {
+                x = d3.event.sourceEvent.deltaX || 0;
+                y = d3.event.sourceEvent.deltaY || 0;
+                distance = (Math.abs(x) > Math.abs(y) ? x : y) * -1;
+              } else if (d3.event.type === 'drag') {
+                x = d3.event.dx || 0;
+                y = d3.event.dy || 0;
+                distance = y;
+              } else if (d3.event.type !== 'click') {
+                return 0;
+              }
+              overflowDistance = (Math.abs(y) > Math.abs(x) ? y : 0);
+            }
+
+            // reset value defined in panMultibar();
+            scrollOffset = Math.min(Math.max(scrollOffset + distance, diff), -1);
+            translate = 'translate(0,' + scrollOffset + ')';
+
+            if (scrollOffset + distance > 0 || scrollOffset + distance < diff) {
+              overflowHandler(overflowDistance);
+            }
+
+            g.attr('transform', translate);
+          };
+
+          assignScrollEvents(useScroll);
         }
 
       };
@@ -628,6 +700,12 @@ nv.models.legend = function() {
     return legend;
   };
 
+  legend.showMenu = function(_) {
+    if (!arguments.length) { return showMenu; }
+    showMenu = _;
+    return legend;
+  };
+
   legend.collapsed = function(_) {
     return collapsed;
   };
@@ -640,11 +718,27 @@ nv.models.legend = function() {
     return legend;
   };
 
-  legend.lineSpacing = function(_) {
+  legend.spacing = function(_) {
     if (!arguments.length) {
-      return lineSpacing;
+      return spacing;
     }
-    lineSpacing = _;
+    spacing = _;
+    return legend;
+  };
+
+  legend.gutter = function(_) {
+    if (!arguments.length) {
+      return gutter;
+    }
+    gutter = _;
+    return legend;
+  };
+
+  legend.radius = function(_) {
+    if (!arguments.length) {
+      return radius;
+    }
+    radius = _;
     return legend;
   };
 

@@ -330,7 +330,6 @@ nv.models.paretoChart = function() {
                 barLegend
                     .id('barlegend_' + chart.id())
                     .strings(chart.strings().barlegend)
-                    .margin({top: 10, right: 10, bottom: 10, left: 10})
                     .align('left')
                     .height(availableHeight - innerMargin.top);
                 barLegendWrap
@@ -347,7 +346,6 @@ nv.models.paretoChart = function() {
                 lineLegend
                     .id('linelegend_' + chart.id())
                     .strings(chart.strings().linelegend)
-                    .margin({top: 10, right: 10, bottom: 10, left: 10})
                     .align('right')
                     .height(availableHeight - innerMargin.top);
                 lineLegendWrap

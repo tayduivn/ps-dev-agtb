@@ -124,6 +124,10 @@ nv.models.scatter = function() {
             y.domain([y.domain()[0] + y.domain()[0] * 0.01, y.domain()[1] - y.domain()[1] * 0.01])
           : y.domain([-1,1]);
 
+      if (z.domain().length < 2) {
+        z.domain([0, z.domain()]);
+      }
+
       x0 = x0 || x;
       y0 = y0 || y;
       z0 = z0 || z;

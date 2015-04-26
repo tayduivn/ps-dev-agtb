@@ -198,9 +198,10 @@ nv.models.funnelChart = function() {
       //------------------------------------------------------------
       // Title & Legend
 
-      if (showTitle && properties.title) {
-        titleWrap.select('.nv-title').remove();
+      var titleBBox = {width: 0, height: 0};
+      titleWrap.select('.nv-title').remove();
 
+      if (showTitle && properties.title) {
         titleWrap
           .append('text')
             .attr('class', 'nv-title')
@@ -212,38 +213,41 @@ nv.models.funnelChart = function() {
             .attr('stroke', 'none')
             .attr('fill', 'black');
 
-        innerMargin.top += parseInt(g.select('.nv-title').node().getBBox().height / 1.15, 10) +
-          parseInt(g.select('.nv-title').style('margin-top'), 10) +
-          parseInt(g.select('.nv-title').style('margin-bottom'), 10);
+        titleBBox = nv.utils.getTextBBox(g.select('.nv-title'));
 
-        if (!showLegend) {
-          innerMargin.top += 4;
-        }
+        innerMargin.top += titleBBox.height + 12;
       }
 
       if (showLegend) {
         legend
           .id('legend_' + chart.id())
           .strings(chart.strings().legend)
-          .margin({top: 10, right: 10, bottom: 10, left: 10})
           .align('center')
           .height(availableHeight - innerMargin.top);
         legendWrap
           .datum(data)
           .call(legend);
-
         legend
           .arrange(availableWidth);
 
-        legendWrap
-          .attr('transform', 'translate(' + (direction === 'rtl' || !legend.collapsed() ? 0 : availableWidth - legend.width()) + ',' + innerMargin.top + ')');
+        var legendLinkBBox = nv.utils.getTextBBox(legendWrap.select('.nv-legend-link')),
+            legendSpace = availableWidth - titleBBox.width - 6,
+            legendTop = showTitle && legend.collapsed() && legendSpace > legendLinkBBox.width ? true : false,
+            xpos = direction === 'rtl' || !legend.collapsed() ? 0 : availableWidth - legend.width(),
+            ypos = titleBBox.height;
+        if (legendTop) {
+          ypos = titleBBox.height - legend.height() / 2 - legendLinkBBox.height / 2;
+        } else if (!showTitle) {
+          ypos = - legend.margin().top;
+        }
 
-        innerMargin.top += legend.height() + 4;
+        legendWrap
+          .attr('transform', 'translate(' + xpos + ',' + ypos + ')');
+
+        innerMargin.top += legendTop ? 0 : legend.height() - 12;
       }
 
-      //------------------------------------------------------------
       // Recalc inner margins
-
       innerHeight = availableHeight - innerMargin.top - innerMargin.bottom;
 
       //------------------------------------------------------------
