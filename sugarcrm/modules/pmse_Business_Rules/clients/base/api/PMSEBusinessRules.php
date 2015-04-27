@@ -34,8 +34,8 @@ class PMSEBusinessRules extends vCardApi
                 'method' => 'businessRuleDownload',
                 'rawReply' => true,
                 'allowDownloadCookie' => true,
-                'shortHelp' => 'An API to download a contact as a vCard.',
-                'longHelp' => 'include/api/help/module_businessruledownload_get_help.html',
+                'acl' => 'view',
+//                'shortHelp' => 'Exports a .pbr file with a Process Business Rules definition',
             ),
             'businessRulesImportPost' => array(
                 'reqType' => 'POST',
@@ -43,10 +43,30 @@ class PMSEBusinessRules extends vCardApi
                 'pathVars' => array('module', '', ''),
                 'method' => 'businessRulesImport',
                 'rawPostContents' => true,
-                'shortHelp' => 'Imports a business rules record from a pbr file',
-                'longHelp' => 'include/api/help/module_file_business_rules_import_post_help.html',
+                'acl' => 'create',
+//                'shortHelp' => 'Imports a Process Business Rules record from a .pbr file',
             ),
         );
+    }
+
+    /**
+     * This method check acl access in custom APIs
+     * @param $api
+     * @param $args
+     * @throws SugarApiExceptionNotAuthorized
+     */
+    private function checkACL($api, $args)
+    {
+        $route = $api->getRequest()->getRoute();
+        if (isset($route['acl'])) {
+            $acl = $route['acl'];
+
+            $seed = BeanFactory::newBean($args['module']);
+
+            if (!$seed->ACLAccess($acl)) {
+                throw new SugarApiExceptionNotAuthorized('No access to view/edit records for module: ' . $args['module']);
+            }
+        }
     }
 
     /**
@@ -59,6 +79,7 @@ class PMSEBusinessRules extends vCardApi
      */
     public function businessRulesImport($api, $args)
     {
+        $this->checkACL($api, $args);
         $this->requireArgs($args, array('module'));
 
         $bean = BeanFactory::getBean($args['module']);
@@ -101,6 +122,7 @@ class PMSEBusinessRules extends vCardApi
      */
     public function businessRuleDownload($api, $args)
     {
+        $this->checkACL($api, $args);
         $emailTemplate = new PMSEBusinessRuleExporter();
         $requiredFields = array('record', 'module');
         foreach ($requiredFields as $fieldName) {

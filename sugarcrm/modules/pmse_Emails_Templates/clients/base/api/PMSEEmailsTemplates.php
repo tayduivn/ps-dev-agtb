@@ -38,8 +38,8 @@ class PMSEEmailsTemplates extends vCardApi
                 'method' => 'emailTemplateDownload',
                 'rawReply' => true,
                 'allowDownloadCookie' => true,
-                'shortHelp' => 'An API to download a contact as a vCard.',
-                'longHelp' => 'include/api/help/module_emailtemplatedownload_get_help.html',
+                'acl' => 'view',
+//                'shortHelp' => 'Exports a .pet file with a Process Email Template definition',
             ),
             'emailTemplatesImportPost' => array(
                 'reqType' => 'POST',
@@ -47,26 +47,46 @@ class PMSEEmailsTemplates extends vCardApi
                 'pathVars' => array('module', '', ''),
                 'method' => 'emailTemplatesImport',
                 'rawPostContents' => true,
-                'shortHelp' => 'Imports a Email Templates record from a pet file',
-                'longHelp' => 'include/api/help/module_file_email_templates_import_post_help.html',
+                'acl' => 'create',
+//                'shortHelp' => 'Imports a Process Email Template from a .pet file',
             ),
             'listVariables' => array(
                 'reqType' => 'GET',
                 'path' => array('pmse_Emails_Templates', 'variables', 'find'),
                 'pathVars' => array('module', '', ''),
                 'method' => 'findVariables',
-                'shortHelp' => 'Search For Variables of related Modules',
-                'longHelp' => 'modules/Emails/clients/base/api/help/variables_related_modules_find_get_help.html',
+                'acl' => 'view',
+//                'shortHelp' => 'Search for variables in a related module',
             ),
             'listModulesRelated' => array(
                 'reqType' => 'GET',
                 'path' => array('pmse_Emails_Templates', '?', 'find_modules'),
                 'pathVars' => array('module', '', ''),
                 'method' => 'retrieveRelatedBeans',
-                'shortHelp' => 'Search For Variables of related Modules',
-                'longHelp' => 'modules/Emails/clients/base/api/help/variables_related_modules_find_get_help.html',
+                'acl' => 'view',
+//                'shortHelp' => 'Retrieve a list of related modules',
             ),
         );
+    }
+
+    /**
+     * This method check acl access in custom APIs
+     * @param $api
+     * @param $args
+     * @throws SugarApiExceptionNotAuthorized
+     */
+    private function checkACL($api, $args)
+    {
+        $route = $api->getRequest()->getRoute();
+        if (isset($route['acl'])) {
+            $acl = $route['acl'];
+
+            $seed = BeanFactory::newBean($args['module']);
+
+            if (!$seed->ACLAccess($acl)) {
+                throw new SugarApiExceptionNotAuthorized('No access to view/edit records for module: ' . $args['module']);
+            }
+        }
     }
 
     /**
@@ -86,7 +106,7 @@ class PMSEEmailsTemplates extends vCardApi
      */
     public function findVariables($api, $args)
     {
-        //ini_set("max_execution_time", 300);
+        $this->checkACL($api, $args);
         $offset = 0;
         $limit = (!empty($args["max_num"])) ? (int)$args["max_num"] : 20;
         $orderBy = array();
@@ -195,12 +215,14 @@ class PMSEEmailsTemplates extends vCardApi
 
     public function retrieveRelatedBeans($api, $args)
     {
+        $this->checkACL($api, $args);
         $related_modules = $this->crmDataWrapper->retrieveRelatedBeans($args['module_list'],'one-to-one');
         return $related_modules;
     }
 
     public function emailTemplatesImport($api, $args)
     {
+        $this->checkACL($api, $args);
         $this->requireArgs($args, array('module'));
 
         $bean = BeanFactory::getBean($args['module']);
@@ -237,6 +259,7 @@ class PMSEEmailsTemplates extends vCardApi
 
     public function emailTemplateDownload ($api, $args)
     {
+        $this->checkACL($api, $args);
         $emailTemplate = new PMSEEmailTemplateExporter();
         $requiredFields  = array('record', 'module');
         foreach ( $requiredFields as $fieldName ) {
