@@ -432,6 +432,7 @@ EmailPickerField.prototype._createPanel = function () {
 											.setDataRoot('result')
 											.setLabelField('text')
 											.setValueField('value')
+                                            .setAttributes({base_moule: PROJECT_MODULE, call_type: 'ET'})
 											.load();
 									},
 									optionsFilter: function (item) {

@@ -946,6 +946,11 @@ class PMSEEngineUtils
         if (isset($def['source']) && $def['source'] == 'non-db') {
             $result = $result && false;
         }
+        if ($params == 'ET') {
+            if (isset($def['type']) && $def['type'] == 'email') {
+                $result = true;
+            }
+        }
         $result = $result && self::blackListFields($def);
         return $result;
     }
