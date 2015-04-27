@@ -1167,7 +1167,7 @@ class PMSEFieldParserTest extends PHPUnit_Framework_TestCase
             )
         );
         $token = "{::future::Leads::do_not_call::}";
-        $expectedToken = false;
+        $expectedToken = "true";
         $this->dataParser->setEvaluatedBean($beanObject);
         $this->dataParser->setBeanList($beanList);
         $processedToken = $this->dataParser->parseTokenValue($token);
@@ -1214,7 +1214,7 @@ class PMSEFieldParserTest extends PHPUnit_Framework_TestCase
             )
         );
         $token = "{::future::Leads::do_not_call::}";
-        $expectedToken = "";
+        $expectedToken = "true";
         $this->dataParser->setEvaluatedBean($beanObject);
         $this->dataParser->setBeanList($beanList);
         $processedToken = $this->dataParser->parseTokenValue($token);

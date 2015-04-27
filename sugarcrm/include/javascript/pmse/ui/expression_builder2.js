@@ -1268,6 +1268,7 @@ ExpressionControl.prototype._createModulePanel = function () {
                             url = settings.fieldDataURL.replace("{{MODULE}}", value);
                         if (value) {
                             dependantField.setDataURL(url)
+                                .setAttributes({base_module: PROJECT_MODULE})
                                 .setDataRoot(settings.fieldDataRoot)
                                 .setLabelField(settings.fieldTextField)
                                 .setValueField(function (field, data) {

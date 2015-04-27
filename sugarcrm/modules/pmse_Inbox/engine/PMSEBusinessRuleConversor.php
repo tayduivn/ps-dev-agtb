@@ -12,7 +12,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
+require_once 'modules/pmse_Inbox/engine/PMSERelatedModule.php';
 /**
  * Parses a condition of a business rule to a standard criterion to the value of the condition
  * one json is entered as a parameter to parser and get the new value of each case
@@ -32,6 +32,13 @@ class PMSEBusinessRuleConversor
      * @var type string
      */
     protected $baseModule;
+
+    protected $pmseRelatedModule;
+
+    public function __construct()
+    {
+        $this->pmseRelatedModule = new PMSERelatedModule();
+    }
 
     /**
      * Gets the module case
@@ -139,6 +146,7 @@ class PMSEBusinessRuleConversor
      */
     public function processValueExpression($businessRuleValueToken)
     {
+        global $timedate, $current_user;
         $response = new stdClass();
         $dataEval = array();
         foreach ($businessRuleValueToken as $token) {
@@ -162,8 +170,28 @@ class PMSEBusinessRuleConversor
                         break;
                 }
             } else {
-                $fields = $token->expValue;
-                $dataEval[] = $this->evaluatedBean->$fields;
+                $field = $token->expValue;
+                if (isset($this->beanList[$token->expModule])) {
+                    $bean = $this->evaluatedBean;
+                } else {
+                    $bean = $this->pmseRelatedModule->getRelatedModule($this->evaluatedBean, $token->expModule);
+                }
+                if (!empty($relatedBean) && is_object($relatedBean)) {
+                    $def = $bean->field_defs[$field];
+                    if ($def['type'] == 'datetime'){
+                        date_default_timezone_set('UTC');
+                        $datetime = new Datetime($bean->$field);
+                        $value = $timedate->asIso($datetime, $current_user);
+                    } else {
+                        $value = $bean->$field;
+                    }
+                    if ($def['type'] == 'bool') {
+                        $value = ($value==1)? true : false;
+                    }
+                } else {
+                    $value = '';
+                }
+                $dataEval[] = $value;
             }
         }
         if (count($dataEval) > 1) {
