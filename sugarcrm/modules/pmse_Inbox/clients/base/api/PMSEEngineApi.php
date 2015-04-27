@@ -1,6 +1,4 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -16,17 +14,16 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-require_once('include/api/SugarApi.php');
-require_once('modules/pmse_Inbox/engine/PMSE.php');
-//require_once('modules/pmse_Inbox/engine/PMSEEngine.php');
-require_once('modules/pmse_Inbox/engine/PMSEHistoryData.php');
-require_once('modules/pmse_Inbox/engine/wrappers/PMSEHistoryLogWrapper.php');
-require_once('modules/pmse_Inbox/engine/PMSEHandlers/PMSEDirectRequestHandler.php');
-require_once('modules/pmse_Inbox/engine/PMSEHandlers/PMSEEngineRequestHandler.php');
-require_once('modules/pmse_Inbox/engine/PMSEHandlers/PMSECaseFlowHandler.php');
-require_once('modules/pmse_Inbox/engine/PMSEHandlers/PMSEUserAssignmentHandler.php');
-require_once('modules/pmse_Inbox/engine/wrappers/PMSECaseWrapper.php');
-require_once('modules/pmse_Project/clients/base/api/wrappers/PMSEWrapper.php');
+require_once 'include/api/SugarApi.php';
+require_once 'modules/pmse_Inbox/engine/PMSE.php';
+require_once 'modules/pmse_Inbox/engine/PMSEHistoryData.php';
+require_once 'modules/pmse_Inbox/engine/wrappers/PMSEHistoryLogWrapper.php';
+require_once 'modules/pmse_Inbox/engine/PMSEHandlers/PMSEDirectRequestHandler.php';
+require_once 'modules/pmse_Inbox/engine/PMSEHandlers/PMSEEngineRequestHandler.php';
+require_once 'modules/pmse_Inbox/engine/PMSEHandlers/PMSECaseFlowHandler.php';
+require_once 'modules/pmse_Inbox/engine/PMSEHandlers/PMSEUserAssignmentHandler.php';
+require_once 'modules/pmse_Inbox/engine/wrappers/PMSECaseWrapper.php';
+require_once 'modules/pmse_Project/clients/base/api/wrappers/PMSEWrapper.php';
 
 /*
  * Record List API implementation
@@ -1004,9 +1001,9 @@ class PMSEEngineApi extends SugarApi
         } else {
             $listButtons = array('link_cancel', 'route', 'edit');
         }
+        $listButtons = $this->overrideButtons($bpmFlow, $listButtons);
         $returnArray['case']['reclaim'] = $reclaimCaseByUser;
         $returnArray['case']['buttons'] = $this->getButtons($listButtons, $activity);
-
         $returnArray['case']['readonly'] = json_decode(base64_decode($activity->act_readonly_fields));
         $returnArray['case']['required'] = json_decode(base64_decode($activity->act_required_fields));
 
@@ -1024,6 +1021,27 @@ class PMSEEngineApi extends SugarApi
         $returnArray['case']['flowId'] = $args['idflow'];
         $returnArray['case']['inboxId'] = $args['id'];
         return $returnArray;
+    }
+    
+    public function overrideButtons($flow, $listButtons)
+    {
+        if($flow->cas_adhoc_type == 'ONE_WAY') {
+            $flowBean = BeanFactory::retrieveBean('pmse_BpmFlow');
+            $q = new SugarQuery();
+            $q->select(array('cas_adhoc_type'));
+            $q->from($flowBean);
+            $q->where()
+                ->queryAnd()
+                ->equals('cas_id', $flow->cas_id)
+                ->equals('cas_index', $flow->cas_previous);
+            $result = $q->execute("array");
+            if ($result[0]['cas_adhoc_type'] == 'ROUND_TRIP') {
+                $listButtons = array('link_cancel', 'route', 'edit');
+            } else {
+                $listButtons = array('link_cancel', 'approve', 'reject', 'edit');
+            }
+        }
+        return $listButtons;
     }
 
     public function getButtons($listButtons, $activity)
@@ -1166,19 +1184,32 @@ class PMSEEngineApi extends SugarApi
 
     public function getSettingsEngine($api, $args)
     {
-        require_once 'modules/pmse_Inbox/engine/PMSESettings.php';
-        $settings = PMSESettings::getInstance();
-        list($settings, $settingsHtml) = $settings->getSettingsDB();
+        global $sugar_config;
+        $settings = array();
+
+        // If fields is specified then just retrieve a limited set
+        if (isset($args['fields'])) {
+            $fields = explode(",", $args['fields']);
+            foreach ($fields as $field) {
+                if (isset($sugar_config['pmse_settings_default'][$field])) {
+                    $settings[$field] = $sugar_config['pmse_settings_default'][$field];
+                }
+            }
+        } else {
+            // else retrieve everything
+            $settings = $sugar_config['pmse_settings_default'];
+        }
+
         return $settings;
     }
 
     public function putSettingsEngine($api, $args)
     {
-        require_once 'modules/pmse_Inbox/engine/PMSESettings.php';
-        $settings = PMSESettings::getInstance();
-        if (isset($args['data']) && !empty($args['data'])) {
-            $settings->putSettings($args['data']);
+        if (!empty($args['data'])) {
+            $cfg = new Configurator();
+            $cfg->config['pmse_settings_default'] = $args['data'];
+            $cfg->handleOverride();
         }
-        return array('success' => true, 'data' => $args['data'], 'data_1' => $settings->getSettings());
+        return array('success' => true, 'data' => $args['data']);
     }
 }

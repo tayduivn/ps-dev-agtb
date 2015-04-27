@@ -1307,7 +1307,7 @@ AdamEvent.prototype.createConfigureAction = function () {
         if (this.evn_marker === 'TIMER') {
             actiontimerType = new HiddenField({name: 'evn_timer_type'});
 
-            durationTextField  = new TextField(
+            durationTextField  = new NumberField(
                 {
                     jtype: 'text',
                     //validators: [

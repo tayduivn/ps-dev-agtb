@@ -14,7 +14,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once 'psr/Log/AbstractLogger.php';
 require_once 'PMSELoggerWriter.php';
-require_once 'PMSESettings.php';
 
 class PMSELogger extends AbstractLogger
 {
@@ -63,12 +62,12 @@ class PMSELogger extends AbstractLogger
      * @codeCoverageIgnore
      * @param string $logLevel
      */
-    private function __construct(/*$logLevel = LogLevel::DEBUG*/)
+    private function __construct()
     {
+        global $sugar_config;
         $this->logWriter = new PMSELoggerWriter();
-        $settings = PMSESettings::getInstance();
-        $logger_level = $settings->getSettings();
-        $this->logLevel = $logger_level['logger_level'];
+        $settings = $sugar_config['pmse_settings_default'];
+        $this->logLevel = $settings['logger_level'];
     }
 
     /**

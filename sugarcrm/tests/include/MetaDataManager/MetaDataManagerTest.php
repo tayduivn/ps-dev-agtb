@@ -569,6 +569,7 @@ PLATFORMS;
     {
         return array(
             array('clearCacheTable', array(), 'query'),
+            array('getPlatformsWithCachesInDatabase', array('some-key'), 'query'),
         );
     }
 

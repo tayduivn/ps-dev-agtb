@@ -1190,6 +1190,10 @@ class MetaDataManager
     {
         $platforms = array();
 
+        if (!static::$isCacheEnabled) {
+            return $platforms;
+        }
+
         // Get the listing of files in the cache directory
         $db = DBManagerFactory::getInstance();
         $sql = 'SELECT type FROM ' . static::$cacheTable;
