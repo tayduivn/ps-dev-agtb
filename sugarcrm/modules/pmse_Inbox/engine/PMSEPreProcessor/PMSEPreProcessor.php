@@ -185,42 +185,44 @@ class PMSEPreProcessor
      */
     public function processRequest(PMSERequest $request)
     {
-        $flowDataList = $this->getFlowDataList($request);
         if ($request->getExternalAction() == 'TERMINATE_CASE') {
             $this->terminateCaseByBeanAndProcess($request->getBean());
-        }
-        if (!isset($_SESSION['triggeredFlows']))
-            $_SESSION['triggeredFlows']=array();
-        foreach ($flowDataList as $flowData) {
-            // Process the flow data and also the bean object data
-            $request->setFlowData($this->processFlowData($flowData));
-            $request->setBean($this->processBean($request->getBean(), $request->getFlowData()));
-            $request->getBean()->load_relationships();
-            // is essential that the request should be initialized as valid for the next flow
-            $request->validate();
-            // validatind the request with the initial Data
-            $validatedRequest = $this->validator->validateRequest($request);
-
-            if ($validatedRequest->isValid()) {
-                $data = $validatedRequest->getFlowData();
-                if (!(isset($data['evn_type']) && $data['evn_type'] == 'GLOBAL_TERMINATE')) {
-                    $this->logger->info('Request validated for element: ' . $data['bpmn_type'] . ' with id: ' . $data['bpmn_id']);
-                    $_SESSION['pmse_start_time'] = microtime(true);
-
-                    $result = $this->executer->runEngine(
-                        $validatedRequest->getFlowData(), $validatedRequest->getCreateThread(),
-                        $validatedRequest->getBean(), $validatedRequest->getExternalAction(),
-                        $validatedRequest->getArguments()
-                    );
-                    $this->logger->info('Execution of case: #' . $data['cas_id'] . ' completed');
-                }
-            } else {
-                $data = $request->getFlowData();
-                $this->logger->info('Request not validated for element: ' . $data['bpmn_type'] . ' with id: ' . $data['bpmn_id']);
+        } else {
+            if (!isset($_SESSION['triggeredFlows'])) {
+                $_SESSION['triggeredFlows'] = array();
             }
+            $flowDataList = $this->getFlowDataList($request);
+            foreach ($flowDataList as $flowData) {
+                // Process the flow data and also the bean object data
+                $request->setFlowData($this->processFlowData($flowData));
+                $request->setBean($this->processBean($request->getBean(), $request->getFlowData()));
+                $request->getBean()->load_relationships();
+                // is essential that the request should be initialized as valid for the next flow
+                $request->validate();
+                // validatind the request with the initial Data
+                $validatedRequest = $this->validator->validateRequest($request);
 
-            if ($request->getResult() == 'TERMINATE_CASE') {
-                $this->terminateCaseByBeanAndProcess($request->getBean(), $data);
+                if ($validatedRequest->isValid()) {
+                    $data = $validatedRequest->getFlowData();
+                    if (!(isset($data['evn_type']) && $data['evn_type'] == 'GLOBAL_TERMINATE')) {
+                        $this->logger->info('Request validated for element: ' . $data['bpmn_type'] . ' with id: ' . $data['bpmn_id']);
+                        $_SESSION['pmse_start_time'] = microtime(true);
+
+                        $result = $this->executer->runEngine(
+                            $validatedRequest->getFlowData(), $validatedRequest->getCreateThread(),
+                            $validatedRequest->getBean(), $validatedRequest->getExternalAction(),
+                            $validatedRequest->getArguments()
+                        );
+                        $this->logger->info('Execution of case: #' . $data['cas_id'] . ' completed');
+                    }
+                } else {
+                    $data = $request->getFlowData();
+                    $this->logger->info('Request not validated for element: ' . $data['bpmn_type'] . ' with id: ' . $data['bpmn_id']);
+                }
+
+                if ($request->getResult() == 'TERMINATE_CASE') {
+                    $this->terminateCaseByBeanAndProcess($request->getBean(), $data);
+                }
             }
         }
     }

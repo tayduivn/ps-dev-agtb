@@ -223,7 +223,7 @@ class PMSEElementValidator implements PMSEValidate
      */
     public function isPMSEEdit($bean)
     {
-        if (isModuleBWC($_REQUEST['moduleName'])) {
+        if (isset($_REQUEST['moduleName']) && isModuleBWC($_REQUEST['moduleName'])) {
             $url = $_REQUEST['module'];
         } else {
             $url = $_REQUEST['__sugar_url'];
