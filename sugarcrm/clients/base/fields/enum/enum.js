@@ -474,18 +474,18 @@
      * @private
      */
     _query: function(query){
-        var options = _.isString(this.items) ? app.lang.getAppListStrings(this.items) : this.items;
+        var options = app.metadata.getStrings('app_list_strings')[this.def.options] || {};
         var data = {
             results: [],
             // only show one "page" of results
             more: false
         };
         if (_.isObject(options)) {
-            _.each(options, function(element, index) {
-                var text = "" + element;
+            _.each(options, function(element) {
+                var text = "" + element[1];
                 //additionally filter results based on query term
                 if(query.matcher(query.term, text)){
-                    data.results.push({id: index, text: text});
+                    data.results.push({id: element[0], text: text});
                 }
             });
         } else {
