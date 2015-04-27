@@ -21,12 +21,13 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Query\QueryBuilder;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Document;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\HandlerCollection;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\HandlerFilterIterator;
-use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\MultiFieldHandler;
-use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\AutoIncrementHandler;
-use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\EmailAddressHandler;
-use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\CrossModuleAggHandler;
-use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\FavoritesHandler;
-use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\TagsHandler;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\HandlerInterface;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\MultiFieldHandler;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\AutoIncrementHandler;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\EmailAddressHandler;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\CrossModuleAggHandler;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\TagsHandler;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\FavoritesHandler;
 
 /**
  *
@@ -99,6 +100,7 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
     {
         $this->highlighter = new Highlighter();
         $this->booster = new Booster();
+        $this->handlers = new HandlerCollection($this);
         $this->registerHandlers();
     }
 
@@ -107,13 +109,21 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
      */
     protected function registerHandlers()
     {
-        $this->handlers = new HandlerCollection($this);
-        $this->handlers->addHandler(new MultiFieldHandler());
-        $this->handlers->addHandler(new AutoIncrementHandler());
-        $this->handlers->addHandler(new EmailAddressHandler());
-        $this->handlers->addHandler(new CrossModuleAggHandler());
-        $this->handlers->addHandler(new TagsHandler());
-        $this->handlers->addHandler(new FavoritesHandler());
+        $this->addHandler(new MultiFieldHandler());
+        $this->addHandler(new AutoIncrementHandler());
+        $this->addHandler(new EmailAddressHandler());
+        $this->addHandler(new CrossModuleAggHandler());
+        $this->addHandler(new TagsHandler());
+        $this->addHandler(new FavoritesHandler());
+    }
+
+    /**
+     * Add handler
+     * @param HandlerInterface $handler
+     */
+    public function addHandler(HandlerInterface $handler)
+    {
+        $this->handlers->addHandler($handler);
     }
 
     /**
@@ -269,13 +279,34 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
     /**
      * Add the filters to the query.
      * @param QueryBuilder $builder the query builder
-     * @param array $filters the list of filters
      */
-    protected function handleFilters($builder, array $filters)
+    protected function handleSearchFilters($builder)
     {
-        // Apply the filters so both the query results and facets/aggregation results are filtered
-        foreach ($filters as $filter) {
-            $builder->addFilter($filter);
+        if (!empty($this->filters)) {
+            // Apply the filters so both the query results and facets/aggregation results are filtered
+            foreach ($this->filters as $filter) {
+                $builder->addFilter($filter);
+            }
+        }
+    }
+
+    /**
+     * Get search fields per module
+     * @param $sf object the search field object
+     * @param $module string the name of the module
+     */
+    protected function getSearchFieldsPerModule($sf, $module)
+    {
+        foreach ($this->getFtsFields($module) as $field => $defs) {
+            // skip fields which are not searchable
+            if (!$this->container->metaDataHelper->isFieldSearchable($defs)) {
+                continue;
+            }
+
+            // pass through handlers
+            foreach ($this->getHandlers('SearchFields') as $handler) {
+                $handler->buildSearchFields($sf, $module, $field, $defs);
+            }
         }
     }
 
@@ -289,20 +320,30 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
         $sf = new SearchFields($this->fieldBoost ? $this->booster : null);
 
         foreach ($modules as $module) {
-            foreach ($this->getFtsFields($module) as $field => $defs) {
-
-                // skip fields which are not searchable
-                if (!$this->container->metaDataHelper->isFieldSearchable($defs)) {
-                    continue;
-                }
-
-                // pass through handlers
-                foreach ($this->getHandlers('SearchFields') as $handler) {
-                    $handler->buildSearchFields($sf, $module, $field, $defs);
-                }
-            }
+            $this->getSearchFieldsPerModule($sf, $module);
         }
         return $sf->getSearchFields();
+    }
+
+    /**
+     * Check if the field's type is valid for indexing
+     * @param $type string the type of the field
+     * @param $fromQueue boolean an indicator of being from queue or not
+     * @return bool
+     */
+    public function isValidTypeField($type, $fromQueue)
+    {
+        // skip unsupported fields
+        if (!$this->isSupportedType($type)) {
+            return false;
+        }
+
+        // filter fields which need to be skipped when called from queue
+        if ($fromQueue && $this->isSkippedType($type)) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -313,16 +354,9 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
         $indexFields = array();
 
         foreach ($this->getFtsFields($module) as $field => $defs) {
-
             $type = $defs['type'];
 
-            // skip unsupported fields
-            if (!$this->isSupportedType($type)) {
-                continue;
-            }
-
-            // filter fields which need to be skipped when called from queue
-            if ($fromQueue && $this->isSkippedType($type)) {
+            if (!$this->isValidTypeField($type, $fromQueue)) {
                 continue;
             }
 
@@ -523,6 +557,28 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
         return $this;
     }
 
+    protected function handleSearchTerms($builder)
+    {
+        if (!empty($this->term)) {
+            $builder->setQuery($this->getQuery($this->term, $this->modules));
+        } else {
+
+            // If no query term is passed in we use a MatchAll and try to
+            // order by date_modified
+            $builder->setQuery($this->getMatchAllQuery());
+            $this->sort = array('date_modified' => 'desc');
+            $this->useHighlighter = false;
+        }
+    }
+
+    protected function handleSearchAggregations($builder)
+    {
+        if ($this->queryCrossModuleAggs || $this->queryModuleAggs) {
+            $builder->setAggFilterDefs($this->aggFilters);
+            $this->addAggregations($builder);
+        }
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -541,16 +597,7 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
             ->setOffset($this->offset)
         ;
 
-        if (!empty($this->term)) {
-            $builder->setQuery($this->getQuery($this->term, $this->modules));
-        } else {
-
-            // If no query term is passed in we use a MatchAll and try to
-            // order by date_modified
-            $builder->setQuery($this->getMatchAllQuery());
-            $this->sort = array('date_modified' => 'desc');
-            $this->useHighlighter = false;
-        }
+        $this->handleSearchTerms($builder);
 
         // Set highlighter
         if ($this->useHighlighter) {
@@ -563,15 +610,11 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
         }
 
         // Add aggregations
-        if ($this->queryCrossModuleAggs || $this->queryModuleAggs) {
-            $builder->setAggFilterDefs($this->aggFilters);
-            $this->addAggregations($builder);
-        }
+        $this->handleSearchAggregations($builder);
 
         // Add the filters
-        if (!empty($this->filters)) {
-            $this->handleFilters($builder, $this->filters);
-        }
+        $this->handleSearchFilters($builder, $this->filters);
+
 
         return $builder->executeSearch();
     }

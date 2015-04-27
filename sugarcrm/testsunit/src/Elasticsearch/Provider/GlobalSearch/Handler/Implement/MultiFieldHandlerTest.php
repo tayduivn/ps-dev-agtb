@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Provider\GlobalSearch\Handler;
+namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Provider\GlobalSearch\Handler\Implement;
 
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 use Sugarcrm\Sugarcrm\Elasticsearch\Analysis\AnalysisBuilder;
@@ -19,7 +19,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\SearchFields;
 
 /**
  *
- * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\MultiFieldHandler
+ * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\MultiFieldHandler
  *
  */
 class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
@@ -35,7 +35,7 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
             $nsPrefix . '\MappingHandlerInterface',
             $nsPrefix . '\SearchFieldsHandlerInterface',
         );
-        $implements = class_implements($nsPrefix . '\MultiFieldHandler');
+        $implements = class_implements($nsPrefix . '\Implement\MultiFieldHandler');
         $this->assertEquals($interfaces, array_values(array_intersect($implements, $interfaces)));
     }
 
@@ -1043,11 +1043,11 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
     /**
      * Get MultiFieldHandler Mock
      * @param array $methods
-     * @return \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\MultiFieldHandler
+     * @return \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\MultiFieldHandler
      */
     protected function getMultiFieldHandlerMock(array $methods = null)
     {
-        return $this->getMockBuilder('Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\MultiFieldHandler')
+        return $this->getMockBuilder('Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\MultiFieldHandler')
             ->disableOriginalConstructor()
             ->setMethods($methods)
             ->getMock();

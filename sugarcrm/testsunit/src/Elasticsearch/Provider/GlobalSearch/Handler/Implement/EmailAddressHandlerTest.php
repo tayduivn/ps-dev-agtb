@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Provider\GlobalSearch\Handler;
+namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Provider\GlobalSearch\Handler\Implement;
 
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 use Sugarcrm\Sugarcrm\Elasticsearch\Analysis\AnalysisBuilder;
@@ -20,7 +20,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Document;
 
 /**
  *
- * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\EmailAddressHandler
+ * @coversDefaultClass \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\EmailAddressHandler
  *
  */
 class EmailAddressHandlerTest extends \PHPUnit_Framework_TestCase
@@ -37,7 +37,7 @@ class EmailAddressHandlerTest extends \PHPUnit_Framework_TestCase
             $nsPrefix . '\SearchFieldsHandlerInterface',
             $nsPrefix . '\ProcessDocumentHandlerInterface',
         );
-        $implements = class_implements($nsPrefix . '\EmailAddressHandler');
+        $implements = class_implements($nsPrefix . '\Implement\EmailAddressHandler');
         $this->assertEquals($interfaces, array_values(array_intersect($implements, $interfaces)));
     }
 
@@ -561,7 +561,7 @@ class EmailAddressHandlerTest extends \PHPUnit_Framework_TestCase
      */
     protected function getEmailAddressHandlerMock(array $methods = null)
     {
-        return $this->getMockBuilder('Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\EmailAddressHandler')
+        return $this->getMockBuilder('Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\EmailAddressHandler')
             ->disableOriginalConstructor()
             ->setMethods($methods)
             ->getMock();

@@ -287,11 +287,12 @@ class QueueManager
         $sql = sprintf('SELECT DISTINCT bean_module FROM %s', self::FTS_QUEUE);
         $result = $this->db->query($sql);
         while ($row = $this->db->fetchByAssoc($result)) {
-            if (empty($row['bean_module'])) {
+            $data = $row['bean_module'];
+            if (empty($data)) {
                 continue;
             }
-            if (!$this->container->metaDataHelper->isModuleEnabled($row['bean_module'])) {
-                $remove[] = $row['bean_module'];
+            if (!$this->container->metaDataHelper->isModuleEnabled($data)) {
+                $remove[] = $data;
             }
         }
 
@@ -301,8 +302,27 @@ class QueueManager
     }
 
     /**
+     * Parse the data from the query.
+     * @param $module string the name of the module
+     * @param $row array the row returned from Query
+     */
+    protected function processQueryRow($module, $row)
+    {
+        // Don't perform a full bean retrieve, rely on the generated query.
+        // Related fields need to be handled separately.
+        $bean = $this->getNewBean($module);
+        $bean->populateFromRow($bean->convertRow($row));
+
+        // Index the bean and flag for removal when successful
+        if ($status = $this->container->indexer->indexBean($bean, true, true)) {
+            $this->batchDeleteFromQueue($row['fts_id'], $module);
+        }
+    }
+
+    /**
      * Consume records from database queue for given module
      * @param string $module
+     * @return array
      */
     public function consumeModuleFromQueue($module)
     {
@@ -319,17 +339,7 @@ class QueueManager
         $sql = $this->generateQueryModuleFromQueue($this->getNewBean($module));
         $result = $this->db->query($sql);
         while ($row = $this->db->fetchByAssoc($result)) {
-
-            // Don't perform a full bean retrieve, rely on the generated query.
-            // Related fields need to be handled separately.
-            $bean = $this->getNewBean($module);
-            $bean->populateFromRow($bean->convertRow($row));
-
-            // Index the bean and flag for removal when successful
-            if ($status = $this->container->indexer->indexBean($bean, true, true)) {
-                $this->batchDeleteFromQueue($row['fts_id'], $module);
-            }
-
+            $this->processQueryRow($module, $row);
             $processed++;
         }
 

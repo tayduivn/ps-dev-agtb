@@ -13,9 +13,7 @@
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Indexer;
 
 use Sugarcrm\Sugarcrm\Elasticsearch\Container;
-use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Bulk;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Client;
-use Psr\Log\LogLevel;
 
 /**
  *

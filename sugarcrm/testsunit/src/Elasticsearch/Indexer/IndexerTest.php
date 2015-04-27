@@ -13,6 +13,7 @@
 namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Indexer;
 
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\ProviderCollection;
 
 /**
  *
@@ -30,9 +31,7 @@ class IndexerTest extends \PHPUnit_Framework_TestCase
      */
     public function testDecodeBeanField($fieldValue, $fromApi, $expected)
     {
-        $container = $this->getMockBuilder('Sugarcrm\Sugarcrm\Elasticsearch\Container')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $container = $this->getContainerMock();
 
         $dbManager = $this->getMockBuilder('\DBManager')
             ->disableOriginalConstructor()
@@ -119,5 +118,100 @@ class IndexerTest extends \PHPUnit_Framework_TestCase
                 $date,
             ),
         );
+    }
+
+
+    /**
+     * @covers ::getBeanIndexFields
+     * @dataProvider providerTestGetBeanIndexFields
+     */
+    public function testGetBeanIndexFields($module, $fields1, $fields2, $output)
+    {
+        $provider1 = $this->getProviderMock(array('getBeanIndexFields'));
+        $provider1->expects($this->once())
+            ->method('getBeanIndexFields')
+            ->will($this->returnValue($fields1));
+
+        $provider2 = $this->getProviderMock(array('getBeanIndexFields'));
+        $provider2->expects($this->once())
+            ->method('getBeanIndexFields')
+            ->will($this->returnValue($fields2));
+
+        $collection = new ProviderCollection($this->getContainerMock(), array($provider1, $provider2));
+
+        $indexer = $this->getIndexerMock(array('getRegisteredProviders'));
+        $indexer->expects($this->once())
+            ->method('getRegisteredProviders')
+            ->will($this->returnValue($collection));
+
+        $fields = $indexer->getBeanIndexFields($module);
+        $this->assertEquals($fields, $output);
+    }
+
+    public function providerTestGetBeanIndexFields()
+    {
+        return array(
+            array(
+                'Contacts',
+                array('first_name' => 'John', 'last_name' => 'Smith'),
+                array('title' => 'sales rep'),
+                array('first_name' => 'John', 'last_name' => 'Smith', 'title' => 'sales rep'),
+            ),
+            array(
+                'Contacts',
+                array('first_name' => 'John', 'last_name' => 'Smith'),
+                array('last_name' => 'Joe', 'title' => 'sales rep'),
+                array('first_name' => 'John', 'last_name' => 'Joe', 'title' => 'sales rep'),
+            ),
+            array(
+                'Contacts',
+                array('first_name' => 'John', 'last_name' => 'Smith', 'description' => 'new member'),
+                array('last_name' => 'Joe', 'title' => 'sales rep'),
+                array(
+                    'first_name' => 'John',
+                    'last_name' => 'Joe',
+                    'title' => 'sales rep',
+                    'description' => 'new member'),
+            ),
+        );
+    }
+
+    /**
+     * Get IndexerTest Mock
+     * @param array $methods
+     * @return \Sugarcrm\Sugarcrm\Elasticsearch\Indexer\Indexer
+     */
+    protected function getIndexerMock(array $methods = null)
+    {
+        return $this->getMockBuilder('Sugarcrm\Sugarcrm\Elasticsearch\Indexer\Indexer')
+            ->disableOriginalConstructor()
+            ->setMethods($methods)
+            ->getMock();
+    }
+
+    /**
+     * Get Provider Mock
+     * @param array $methods
+     * @return \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\GlobalSearch
+     */
+    protected function getProviderMock(array $methods = null)
+    {
+        return $this->getMockBuilder('Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\GlobalSearch')
+            ->disableOriginalConstructor()
+            ->setMethods($methods)
+            ->getMock();
+    }
+
+    /**
+     * Get Container Mock
+     * @param array $methods
+     * @return \Sugarcrm\Sugarcrm\Elasticsearch\Container
+     */
+    protected function getContainerMock(array $methods = null)
+    {
+        return $this->getMockBuilder('Sugarcrm\Sugarcrm\Elasticsearch\Container')
+            ->disableOriginalConstructor()
+            ->setMethods($methods)
+            ->getMock();
     }
 }

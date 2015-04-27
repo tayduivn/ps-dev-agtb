@@ -188,7 +188,6 @@ class IndexPool
     {
         $nsPrefix = '\Sugarcrm\Sugarcrm\Elasticsearch\Index\Strategy';
         $this->addStrategy('static', $nsPrefix . '\StaticStrategy');
-        $this->addStrategy('archive', $nsPrefix . '\ArchiveStrategy');
     }
 
     /**

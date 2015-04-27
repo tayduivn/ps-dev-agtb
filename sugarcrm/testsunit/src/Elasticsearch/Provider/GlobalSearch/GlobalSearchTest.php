@@ -59,6 +59,66 @@ class GlobalSearchTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers ::isValidTypeField
+     * @dataProvider providerTestIsValidTypeField
+     */
+    public function testIsValidTypeField($type, $fromQueue, $isSupported, $isSkipped, $expected)
+    {
+        $globalSearch = $this->getGlobalSearchMock(
+            array(
+                'isSupportedType',
+                'isSkippedType'
+            )
+        );
+
+        $globalSearch->expects($this->any())
+            ->method('isSupportedType')
+            ->will($this->returnValue($isSupported));
+
+        $globalSearch->expects($this->any())
+            ->method('isSkippedType')
+            ->will($this->returnValue($isSkipped));
+
+        $res = $globalSearch->isValidTypeField($type, $fromQueue);
+        $this->assertEquals($expected, $res);
+    }
+
+    public function providerTestIsValidTypeField()
+    {
+        return array(
+            array(
+                'string',
+                false,
+                true,
+                false,
+                true
+            ),
+            array(
+                'datetimecombo',
+                false,
+                false,
+                false,
+                false
+            ),
+            array(
+                'string',
+                true,
+                false,
+                false,
+                false
+            ),
+            array(
+                'email',
+                true,
+                true,
+                true,
+                false
+            ),
+        );
+    }
+
+
+    /**
      * @return \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\GlobalSearch
      */
     protected function getGlobalSearchMock(array $methods = null)

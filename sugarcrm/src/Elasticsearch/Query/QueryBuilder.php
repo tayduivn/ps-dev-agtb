@@ -262,26 +262,11 @@ class QueryBuilder
     }
 
     /**
-     * Build query
-     * @return \Elastica\Query
+     * Add settings after building query.
+     * @param $query object the query object
      */
-    public function build()
+    protected function addSettingsAfterBuild($query)
     {
-        // Wrap query in a filtered query
-        $query = new \Elastica\Query\Filtered();
-        $query->setQuery($this->query);
-
-        // Apply visibility filtering
-        if ($this->applyVisibility) {
-            $this->buildVisibilityFilters($this->modules);
-        }
-
-        // Add all filters to query
-        $query->setFilter($this->buildFilters($this->filters));
-
-        // Wrap again in our main query object
-        $query = $this->buildQuery($query);
-
         // Set limit
         if (isset($this->limit)) {
             $query->setSize($this->limit);
@@ -309,6 +294,31 @@ class QueryBuilder
 
         // Set post filter
         $query->setPostFilter($this->buildPostFilters($this->postFilters));
+    }
+
+    /**
+     * Build query
+     * @return \Elastica\Query
+     */
+    public function build()
+    {
+        // Wrap query in a filtered query
+        $query = new \Elastica\Query\Filtered();
+        $query->setQuery($this->query);
+
+        // Apply visibility filtering
+        if ($this->applyVisibility) {
+            $this->buildVisibilityFilters($this->modules);
+        }
+
+        // Add all filters to query
+        $query->setFilter($this->buildFilters($this->filters));
+
+        // Wrap again in our main query object
+        $query = $this->buildQuery($query);
+
+        // Apply settings afterwards
+        $this->addSettingsAfterBuild($query);
 
         return $query;
     }
