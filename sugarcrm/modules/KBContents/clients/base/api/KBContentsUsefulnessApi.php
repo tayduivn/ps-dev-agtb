@@ -81,10 +81,10 @@ class KBContentsUsefulnessApi extends ModuleApi
             }
         } else {
             //we need to correct `useful` if user voted `useful` before
-            if ($bean->usefulness_user_vote != -1) {
+            if ($bean->usefulness_user_vote == 1) {
                 $bean->useful--;
             }
-            if ($bean->usefulness_user_vote == 1) {
+            if ($bean->usefulness_user_vote != -1) {
                 $bean->notuseful++;
             }
         }
