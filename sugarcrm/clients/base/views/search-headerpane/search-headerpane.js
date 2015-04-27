@@ -27,7 +27,7 @@
 
         this.context.on('change:searchTerm change:tags', function(model, value) {
             if (_.isString(value) && value) {
-                this.searchTerm = value
+                this.searchTerm = value;
             } else {
                 this.searchTerm = _.pluck(this.context.get('tags'), 'name').join(', ');
             }
@@ -51,5 +51,14 @@
         return app.lang.get(title, this.module, {
             searchTerm: new Handlebars.SafeString(this.searchTerm)
         });
+    },
+
+    /**
+     * @inheritDoc
+     */
+    unbind: function() {
+        this._super('unbind');
+        $(window).off('resize.searchheader');
+        this.layout.off('headerpane:adjust_fields', this.adjustTitle);
     }
 })
