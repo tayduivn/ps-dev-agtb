@@ -449,29 +449,23 @@ Form.prototype.reset = function () {
  */
 Form.prototype.submit = function () {
     var data;
-    if (this.testRequired()) {
-        if (this.validate()) {
-            data = this.getData();
-            if (this.proxy) {
-                this.proxy.sendData(data, this.callback);
-            } else {
-                if (this.callback.submit) {
-                    this.callback.submit(data);
-                }
-            }
-            if (this.closeContainerOnSubmit) {
-                if (this.parent && this.parent.close) {
-                    this.parent.close();
-                }
-            }
+    if (this.validate()) {
+        data = this.getData();
+        if (this.proxy) {
+            this.proxy.sendData(data, this.callback);
         } else {
-            if (this.callback.failed) {
-                this.callback.failed();
+            if (this.callback.submit) {
+                this.callback.submit(data);
+            }
+        }
+        if (this.closeContainerOnSubmit) {
+            if (this.parent && this.parent.close) {
+                this.parent.close();
             }
         }
     } else {
-        if (this.callback.required) {
-            this.callback.required();
+        if (this.callback.failed) {
+            this.callback.failed();
         }
     }
 };
@@ -512,12 +506,19 @@ Form.prototype.isDirty = function () {
  */
 Form.prototype.validate = function () {
     var i, valid = true, current;
-    for (i = 0; i < this.items.length; i += 1) {
-        current = this.items[i].isValid();
-        valid = valid && current;
-        if (!current && this.items[i].errorTooltip) {
-            $(this.items[i].errorTooltip.html).removeClass('adam-tooltip-error-off');
-            $(this.items[i].errorTooltip.html).addClass('adam-tooltip-error-on');
+    if (this.testRequired()) {
+        for (i = 0; i < this.items.length; i += 1) {
+            current = this.items[i].isValid();
+            valid = valid && current;
+            if (!current && this.items[i].errorTooltip) {
+                $(this.items[i].errorTooltip.html).removeClass('adam-tooltip-error-off');
+                $(this.items[i].errorTooltip.html).addClass('adam-tooltip-error-on');
+            }
+        }
+    } else {
+        valid = false;
+        if (this.callback.required) {
+            this.callback.required();
         }
     }
     return valid;
