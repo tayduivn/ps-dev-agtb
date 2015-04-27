@@ -15,6 +15,8 @@ if (!defined('sugarEntry') || !sugarEntry)
  */
 
 require_once 'PMSEBeanHandler.php';
+require_once 'include/workflow/alert_utils.php';
+
 
 class PMSEEmailHandler
 {
@@ -189,6 +191,7 @@ class PMSEEmailHandler
      * @param type $to
      * @param type $flowData
      * @return \StdClass
+     * @codeCoverageIgnore
      */
     public function processEmailsAndExpand($bean, $to, $flowData)
     {
@@ -236,68 +239,43 @@ class PMSEEmailHandler
         $users = array();
         switch ($entry->value) {
             case 'last_modifier':
-                //$users = $this->getLastModifier($bean);
-                $users = array();
+                $users[] = $this->getLastModifier($bean);
                 break;
             case 'record_creator':
-                $users = $this->getRecordCreator($bean);
+                $users[] = $this->getRecordCreator($bean);
                 break;
             case 'is_assignee':
-                $users = $this->getCurrentAssignee($bean);
+                $users[] = $this->getCurrentAssignee($bean);
                 break;
-            case 'was_assignee':
-                //$users = $this->getPreviousAssignees($bean);
-                $users = array();
-                break;
-        }
+        }        
         foreach ($users as $user) {
             $res = array_merge($res, $this->getUserEmails($user, $entry));
         }
-        echo "------USER-----\n";
-        var_dump($res);
-        echo "-----------\n";
         return $res;
     }
     
     public function getCurrentAssignee($bean)
     {
         $userBean = $this->retrieveBean("Users", $bean->assigned_user_id);
-        return array($userBean);
+        return $userBean;
     }
     
     public function getRecordCreator($bean)
     {
         $userBean = $this->retrieveBean("Users", $bean->created_by);
-        return array($userBean);
+        return $userBean;
     }
     
     public function getLastModifier($bean)
     {
-        $auditBean = $this->retrieveBean("Audit");
-        $logs = $auditBean->getAuditLog($bean);
-        $lastEntry = reset($logs);
-        $userBean = $this->retrieveBean("Users", $lastEntry->created_by);
-        return array($userBean);
-    }
-    
-    public function getPreviousAssignees($bean)
-    {
-        $users = array();
-        $registeredUsers = array();
-        $auditBean = $this->retrieveBean("Audit");
-        $logs = $auditBean->getAuditLog($bean);
-        foreach ($logs as $log) {
-            if (!in_array($log->created_by, $registeredUsers)){
-                $users[] = $this->retrieveBean("Users", $log->created_by);
-                $registeredUsers[] = $log->created_by;
-            }
-        }
-        return array($users);
+        $userBean = $this->retrieveBean("Users", $bean->modified_user_id);
+        return $userBean;
     }
 
     public function getUserEmails($userBean, $entry)
     {
         $res = array();
+        $user = $userBean;
         if ($entry->user === 'manager_of') {
             $user = $this->getSupervisor($userBean);
         }
@@ -350,36 +328,27 @@ class PMSEEmailHandler
     {
         $res = array();
         $role = $this->retrieveBean('ACLRoles', $entry->value);
-        $role->retrieve_relationships();
-        // $beanFactory->getBean('Teams');
-        $members = $role->get_users();
-        foreach ($members as $user) {
-            $userBean = $this->retrieveBean("Users", $user->id);
-            if (isset($userBean->full_name) && isset($userBean->email1)) {
+        $userList = $role->get_linked_beans('users','User');
+        foreach ($userList as $user) {
+            if (isset($user->full_name) && isset($user->email1)) {
                 $item = new stdClass();
-                $item->name = $userBean->full_name;
-                $item->address = $userBean->email1;
+                $item->name = $user->full_name;
+                $item->address = $user->email1;
                 $res[] = $item;
             }
         }
-        //echo "------ROLE-----\n";
-        //var_dump($members);
-        //echo "-----------\n";
         return $res;
     }
 
     public function processRecipientEmails($bean, $entry, $flowData)
     {
         $res = array();
-        $bean->load_relationship($entry->module);
+        $bean->load_relationships();
         $field = $entry->value;
         $item = new stdClass();
         $item->name = $bean->$field;
         $item->address = $bean->$field;
         $res[] = $item;
-        echo "------RECIPIENT-----\n";
-        var_dump($res);
-        echo "-----------\n";
         return $res;
     }
 
@@ -390,9 +359,6 @@ class PMSEEmailHandler
         $item->name = $entry->value;
         $item->address = $entry->value;
         $res[] = $item;
-        echo "------DIRECT-----\n";
-        var_dump($res);
-        echo "-----------\n";
         return $res;
     }
     
