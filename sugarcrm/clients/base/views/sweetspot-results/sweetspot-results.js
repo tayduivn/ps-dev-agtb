@@ -256,6 +256,10 @@
      * @param {Event} [evt] The `click` event.
      */
     triggerAction: function(evt) {
+        if (_.isEmpty(this.results)) {
+            return;
+        }
+
         this.triggerHide();
 
         var $action = this.$('.active > a');
