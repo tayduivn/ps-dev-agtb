@@ -102,6 +102,16 @@ class OpportunityWithRevenueLineItem extends OpportunitySetup
     );
 
     /**
+     * Which reports should be shown and hidden.
+     *
+     * @var array
+     */
+    protected $reportchange = array(
+        'show' => array(),
+        'hide' => array('Current Quarter Forecast', 'Detailed Forecast')
+    );
+
+    /**
      * Handle The Metadata Conversion
      *
      * @return mixed|void
@@ -218,7 +228,7 @@ EOL;
         $this->cleanupUnifiedSearchCache();
 
         SugarAutoLoader::ensureDir($this->appExtFolder . '/Include');
-        
+
         // we need to run the code we are putting in the custom file
         $GLOBALS['moduleList'][] = 'RevenueLineItems';
         if (isset($GLOBALS['modInvisList']) && is_array($GLOBALS['modInvisList'])) {

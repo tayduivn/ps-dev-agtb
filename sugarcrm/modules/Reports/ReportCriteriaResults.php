@@ -34,6 +34,7 @@ if (isset($_REQUEST['id']) && !isset($_REQUEST['record'])) {
 	$saved_report_seed = BeanFactory::getBean('Reports');
 	$saved_report_seed->disable_row_level_security = true;
 	$saved_report_seed->retrieve($_REQUEST['id'], false);
+
 	// do this to go through the transformation
 	$reportObj = new Report($saved_report_seed->content);
 	$saved_report_seed->content = $reportObj->report_def_str;
@@ -86,6 +87,7 @@ else if (isset($_REQUEST['record'])){
     $saved_report_seed = BeanFactory::getBean('Reports');
     $saved_report_seed->disable_row_level_security = true;
     $saved_report_seed->retrieve($_REQUEST['record'], false);
+
     // do this to go through the transformation
     $reportObj = new Report($saved_report_seed->content);
     $saved_report_seed->content = $reportObj->report_def_str;
