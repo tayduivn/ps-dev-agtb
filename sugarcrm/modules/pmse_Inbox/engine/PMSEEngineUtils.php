@@ -947,7 +947,7 @@ class PMSEEngineUtils
             $result = $result && false;
         }
         if ($params == 'ET') {
-            if (isset($def['type']) && $def['type'] == 'email') {
+            if (isset($def['name']) && $def['name'] == 'email1') {
                 $result = true;
             }
         }

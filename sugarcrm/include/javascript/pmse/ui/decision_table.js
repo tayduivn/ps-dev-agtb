@@ -587,7 +587,7 @@
         this.proxy.setUrl('pmse_Project/CrmData/oneToOneRelated/' + this.base_module);
         //this.proxy.setUrl('pmse_Project/CrmData/allRelated/' + this.base_module);
         //this.proxy.setUrl('pmse_Project/CrmData/fields/' + this.base_module);
-        this.proxy.getData( {base_module: this.base_module}, {
+        this.proxy.getData({base_module: this.base_module, call_type: 'ET'}, {
             success: function(data) {
                 var i, j, fields, combos, module;
                 if(data && data.success) {
