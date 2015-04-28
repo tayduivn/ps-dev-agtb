@@ -881,15 +881,8 @@ ExpressionControl.prototype._getStringOrNumber = function (value) {
     return value;
 };
 
-ExpressionControl.prototype._createItem = function (data, usableItem) {
-    var newItem, aux, label, that = this;
-
-    if(usableItem instanceof SingleItem) {
-        newItem = usableItem;
-    } else {
-        newItem = new SingleItem();
-    }
-    newItem.setFullData(data);
+ExpressionControl.prototype.getLabel = function (data) {
+    var label, aux, that = this;
     if (data.expType === 'MODULE' || (data.expType === 'CONSTANT'
         && (data.expSubtype === 'date' || data.expSubtype === 'datetime') )) {
         aux = data.expSubtype.toLowerCase();
@@ -900,13 +893,26 @@ ExpressionControl.prototype._createItem = function (data, usableItem) {
             } else if (aux === "datetime") {
                 return FormPanelDatetime.format(data.expValue, that._dateFormat, that._timeFormat);
             } else {
-                return "{{expLabel}}";
+                return data.expLabel;
             }
         });
-        newItem.setText(label);
     } else {
-        newItem.setText("{{expLabel}}");
+        label = data.expLabel;
     }
+
+    return label;
+};
+
+ExpressionControl.prototype._createItem = function (data, usableItem) {
+    var newItem, aux, label, that = this;
+
+    if(usableItem instanceof SingleItem) {
+        newItem = usableItem;
+    } else {
+        newItem = new SingleItem();
+    }
+    newItem.setFullData(data);
+    newItem.setText(this.getLabel(data));
     return newItem;
 };
 //THIS METHOD MUST BE REPLACED FOR ANOTHER ONE WITH BETTER PERFORMANCE!!!!
