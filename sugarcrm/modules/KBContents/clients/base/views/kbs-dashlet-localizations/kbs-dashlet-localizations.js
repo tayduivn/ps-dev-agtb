@@ -64,33 +64,21 @@
      * Initialize feature collection.
      */
     _initCollection: function () {
+        var self = this;
         this.collection = app.data.createBeanCollection(this.module);
-        this.collection.options = {
-            limit: this.settings.get('limit'),
-            fields: [
-                'id',
-                'name',
-                'date_modified'
-            ],
-            filter: {
-                'kbdocument_id' : {
-                    '$equals': this.model.get('kbdocument_id')
-                },
-                'id' : {
-                    '$not_equals': this.model.get('id')
-                },
-                'status': {
-                    '$in': ['published-in', 'published-ex']
-                },
-                'active_rev': {
-                    '$equals': 1
-                }
-            }
-        };
         this.collection.sync = _.wrap(
             this.collection.sync,
             function (sync, method, model, options) {
                 options = options || {};
+                if (!options.error) {
+                    options.error = function(error) {
+                        if (error.status == 412) {
+                            app.once('app:sync:complete', function() {
+                                self.loadData(options);
+                            });
+                        }
+                    }
+                }
                 options.endpoint = function (method, model, options, callbacks) {
                     var url = app.api.buildURL(model.module, null, {}, options.params);
                     return app.api.call('read', url, {}, callbacks);
@@ -136,6 +124,30 @@
         if (this.collection.dataFetched) {
             return;
         }
+        this.collection.options = {
+            limit: this.settings.get('limit'),
+            fields: [
+                'id',
+                'name',
+                'date_entered',
+                'created_by',
+                'created_by_name'
+            ],
+            filter: {
+                'kbdocument_id' : {
+                    '$equals': this.model.get('kbdocument_id')
+                },
+                'id' : {
+                    '$not_equals': this.model.get('id')
+                },
+                'status': {
+                    '$in': ['published-in', 'published-ex']
+                },
+                'active_rev': {
+                    '$equals': 1
+                }
+            }
+        };
         this.collection.fetch(options);
     }
 })
