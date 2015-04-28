@@ -21,10 +21,17 @@ $vardefs = array(
             'module' => 'Tags',
             'relate_collection' => true,
             'studio' => array(
-                'mobile' => false,
+                // Tags are not supported on portal yet
                 'portal' => false,
+                // Tags should not be allowed on popuplist since it is BWC
                 'base' => array(
                     'popuplist' => false,
+                ),
+                // Force the tag field to be exposed to mobile edit and detail view
+                // Mobile list, OOTB, will allow tags
+                'mobile' => array(
+                    'wirelesseditview' => true,
+                    'wirelessdetailview' => true,
                 ),
             ),
             'massupdate' => true,
