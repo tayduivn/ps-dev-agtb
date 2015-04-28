@@ -1313,7 +1313,12 @@ ExpressionControl.prototype._createModulePanel = function () {
                             };
 
                             if (type === 'dropdown') {
-                                itemsObj = parentField.getSelectedData()["optionItem"];
+                                if (parentField.getSelectedData()) {
+                                    itemsObj = parentField.getSelectedData()["optionItem"];
+                                }
+                                else {
+                                    itemsObj = parentField._getFirstAvailableOption()["optionItem"];
+                                }
                                 keys = Object.keys(itemsObj);
                                 keys.forEach(function (item, index, arr) {
                                     items.push({
