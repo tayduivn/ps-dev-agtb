@@ -553,8 +553,6 @@
 //FormPanelField
 	var FormPanelField = function (settings) {
 		FormPanelItem.call(this, settings);
-		/*this._name = null;
-		this._label = null;*/
 		this._value = null;
 		this.onChange = null;
 		this._htmlControl = [];
@@ -575,15 +573,12 @@
 
 	FormPanelField.prototype.init = function (settings) {
 		var defaults = {
-			/*form: null,*/
-			/*name: this.id,*/
 			label: "[field]",
 			onChange: null,
 			dependantFields: [],
 			dependencyHandler: null,
 			value: "",
-			required: false/*,
-			disabled: false*/
+			required: false
 		};
 
 		jQuery.extend(true, defaults, settings);
@@ -1264,11 +1259,10 @@
 		if (typeof dateFormat !== 'string') {
 			throw new Error("setFormat(): The parameter must be a string.");
 		}
-		this._dateFormat = dateFormat.toLowerCase();
+		this._dateFormat = dateFormat;
 		if (this._htmlControl[0]) {
 			$(this._htmlControl[0]).datepicker({
-				format: this._dateFormat/*,
-				id: "xxx"*/
+				format: this._dateFormat.toLowerCase()
 			});
 		}
 		return this;
