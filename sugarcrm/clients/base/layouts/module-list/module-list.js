@@ -307,8 +307,7 @@
 
         var $toHide = this._$moreModulesDD.prev();
 
-        while ($modules.outerWidth(true) >= width && $toHide.length > 0) {
-
+        while ($modules.outerWidth(true) > width && $toHide.length > 0) {
             if (!this.isRemovableModule($toHide.data('module'))) {
                 $toHide = $toHide.prev();
                 continue;
