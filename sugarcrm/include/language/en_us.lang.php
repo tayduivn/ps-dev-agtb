@@ -1897,6 +1897,10 @@ $app_list_strings = array (
         'after_logout' => 'After Logout',
         'after_login_failed' => 'After Login Failed',
     ),
+    'process_definition_status_dom' => array(
+        'ACTIVE' => 'Enabled',
+        'INACTIVE' => 'Disabled',
+    ),
 );
 
 $app_strings = array (

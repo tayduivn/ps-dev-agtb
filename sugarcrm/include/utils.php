@@ -485,6 +485,11 @@ function get_sugar_config_defaults()
         'diagnostic_file_max_lifetime' => 604800,
         'pdf_file_max_lifetime' => 86400,
         'roleBasedViews' => true,
+        'pmse_settings_default' => array(
+            'logger_level' => 'critical',
+            'error_number_of_cycles' =>  '10',
+            'error_timeout' => '40',
+        ),
     );
 
     if (empty($locale)) {

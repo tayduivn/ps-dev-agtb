@@ -425,6 +425,7 @@ $viewdefs[$moduleName]['base']['menu']['sweetspot'] = array(
         'route' => '#bwc/index.php?module=ContractTypes&action=index',
     ),
 
+    //BEGIN SUGARCRM flav=ent ONLY
     // Process Management
     array(
         'label' => 'LBL_PMSE_ADMIN_TITLE_CASESLIST',
@@ -433,4 +434,5 @@ $viewdefs[$moduleName]['base']['menu']['sweetspot'] = array(
         'icon' => 'fa-cogs',
         'route' => '#pmse_Inbox/layout/casesList',
     ),
+    //END SUGARCRM flav=ent ONLY
 );

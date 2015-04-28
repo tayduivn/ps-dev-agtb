@@ -61,12 +61,4 @@ class pmse_BpmAccessManagement_sugar extends Basic {
 		parent::__construct();
 	}
 
-	public function bean_implements($interface){
-		switch($interface){
-			case 'ACL': return true;
-		}
-		return false;
 }
-
-}
-?>

@@ -13,7 +13,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 require_once 'PMSELogger.php';
-require_once 'PMSESettings.php';
 require_once 'PMSEHandlers/PMSECaseFlowHandler.php';
 require_once 'PMSEFlowRouter.php';
 require_once 'PMSEExceptions/PMSEElementException.php';
@@ -40,13 +39,13 @@ class PMSEExecuter
 
     /**
      *
-     * @var PMSESettings
+     * @var int
      */
     protected $maxExecutionTimeout;
 
     /**
      *
-     * @var PMSESettings
+     * @var int
      */
     protected $maxExecutionCycleNumber;
 
@@ -68,10 +67,12 @@ class PMSEExecuter
      */
     public function __construct()
     {
+        global $sugar_config;
         $this->caseFlowHandler = new PMSECaseFlowHandler();
         $this->flowRouter = new PMSEFlowRouter();
         $this->logger = PMSELogger::getInstance();
-        $settings = PMSESettings::getInstance()->getSettings();
+
+        $settings = $sugar_config['pmse_settings_default'];
         $this->maxExecutionCycleNumber = (int)$settings['error_number_of_cycles'];
         $this->maxExecutionTimeout = (int)$settings['error_timeout'];
         $this->executedElements = array();

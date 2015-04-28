@@ -35,10 +35,13 @@ $viewdefs[$module_name]['base']['view']['list'] = array(
                 ),
                 array(
                     'name' => 'prj_status',
+                    'type' => 'process-status',
                     'label' => 'LBL_PRJ_STATUS',
+                    'link' => false,
                     'default' => true,
                     'enabled' => true,
                     'readonly' => true,
+                    'css_class' => 'full-width',
                 ),
                 array(
                     'name' => 'team_name',
