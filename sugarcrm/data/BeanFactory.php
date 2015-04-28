@@ -24,6 +24,7 @@ class BeanFactory {
     protected static $loadOrder = array();
     protected static $touched = array();
     protected static $flipBeans;
+    protected static $flipObjects;
     public static $hits = 0;
     /**
      * Bean class overrides
@@ -213,6 +214,12 @@ class BeanFactory {
             self::$flipBeans = array_flip($GLOBALS['beanList']);
         }
         if(empty(self::$flipBeans[$name])) {
+            if (empty(self::$flipObjects)) {
+                self::$flipObjects = array_flip($GLOBALS['objectList']);
+            }
+            if (!empty(self::$flipObjects[$name])) {
+                return self::getBean(self::$flipObjects[$name]);
+            }
             return null;
         }
         return self::getBean(self::$flipBeans[$name]);
