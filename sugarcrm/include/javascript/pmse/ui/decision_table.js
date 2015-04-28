@@ -1556,6 +1556,9 @@
             currentGroup = {};
 
             for(i = 0; i < this.fields.length; i += 1) {
+                if (this.variableMode === 'conclusion' && !this.isReturnType && this.fields[i].value === 'email1') {
+                    continue;
+                }
                 if (this.fields[i].moduleText !== currentGroup.label) {
                     if (this.variableMode === 'conclusion' && this.fields[i].moduleValue !== this.parent.base_module) {
                         break;
