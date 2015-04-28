@@ -1724,7 +1724,7 @@ ExpressionControl.prototype._createTimespanPanel = function() {
             title: translate("LBL_PMSE_EXPCONTROL_USER_EVALUATION_TIMESPAN_TITLE"),
             items: [
                 {
-                    type: "text",
+                    type: "integer",
                     name: "ammount",
                     label: translate("LBL_PMSE_EXPCONTROL_USER_EVALUATION_TIMESPAN_AMOUNT"),
                     filter: "integer",
