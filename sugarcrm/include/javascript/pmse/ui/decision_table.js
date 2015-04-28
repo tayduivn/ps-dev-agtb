@@ -65,7 +65,7 @@
             onRemoveColumn: null,
             onChange: null,
             showDirtyIndicator: true,
-            dateFormat: "yyyy-mm-dd",
+            dateFormat: "YYYY-MM-DD",
             timeFormat: "H:i",
             language: {
                 SINGLE_HIT: 'Single Hit',

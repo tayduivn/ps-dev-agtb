@@ -1199,19 +1199,18 @@
 	FormPanelDate.prototype.constructor = FormPanelDate;
 	FormPanelDate.prototype.type = "FormPanelDate";
 
-	//Returns a date in user format.
+	//Returns a date in the specified format.
 	FormPanelDate.format = function (value, format) {
-		//based on format function in components_4ffa9804da5d932ba4c9ac5834421ed5.js line 3844
 		if (!value) {
 			return value;
 		}
 		value = App.date(value);
-		return value.isValid() ? value.format(format.toUpperCase()) : null;
+		return value.isValid() ? value.format(format) : null;
 	};
 
 	FormPanelDate.prototype.init = function (settings) {
 		var defaults = {
-			dateFormat: "yyyy-mm-dd"
+			dateFormat: "YYYY-MM-DD"
 		};
 
 		jQuery.extend(true, defaults, settings);
@@ -1243,8 +1242,7 @@
 	};
 	//Returns a date value in ISO format
 	FormPanelDate.prototype._unformat = function (value) {
-		//based on unformat function in components_4ffa9804da5d932ba4c9ac5834421ed5.js line 3876
-		value = App.date(value, this._dateFormat.toUpperCase(), true);
+		value = App.date(value, this._dateFormat, true);
 		return value.isValid() ? value.format("YYYY-MM-DD") : null;
 	};
 
@@ -1298,14 +1296,14 @@
 	FormPanelDatetime.prototype.constructor = FormPanelDatetime;
 	FormPanelDatetime.prototype.type = "FormPanelDatetime";
 
-	//Returns a date in user format.
+	//Returns a date time in the specified format.
 	FormPanelDatetime.format = function (value, dateFormat, timeFormat) {
 		//based on format function in components_4ffa9804da5d932ba4c9ac5834421ed5.js line 3844
 		if (!value) {
 			return value;
 		}
 		value = App.date(value);
-		return value.isValid() ? value.format(dateFormat.toUpperCase() + " " + App.date.convertFormat(timeFormat))
+		return value.isValid() ? value.format(dateFormat + " " + App.date.convertFormat(timeFormat))
 			: null;
 	};
 
@@ -1355,7 +1353,7 @@
 	};
 
     FormPanelDatetime.prototype._unformat = function (value) {
-        value = App.date(value, this._dateFormat.toUpperCase(), true);
+        value = App.date(value, this._dateFormat, true);
         return value.isValid() ? value.format() : null;
     };
 
@@ -1366,7 +1364,7 @@
 			date = this._htmlControl[0].value;
 			time = this._htmlControl[1].value;
 			if (date && time) {
-				value = SUGAR.App.date(date + " " + time, this._dateFormat.toUpperCase() + " " + SUGAR.App.date.convertFormat(this._timeFormat), true);
+				value = SUGAR.App.date(date + " " + time, this._dateFormat + " " + SUGAR.App.date.convertFormat(this._timeFormat), true);
 				isValid = value.isValid();
 			}
 			if (!isValid) {

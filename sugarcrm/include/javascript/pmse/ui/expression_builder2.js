@@ -172,7 +172,7 @@ ExpressionControl.prototype.init = function (settings) {
         alignWithOwner: "left",
         matchOwnerWidth: true,
         expressionVisualizer: true,
-        dateFormat: "yyyy-mm-dd",
+        dateFormat: "YYYY-MM-DD",
         timeFormat: "H:i",
         decimalSeparator: settings.numberGroupingSeparator === "." ? "," : ".",
         numberGroupingSeparator: settings.decimalSeparator === "," ? "." : ",",
