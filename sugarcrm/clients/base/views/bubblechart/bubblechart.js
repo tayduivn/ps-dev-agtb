@@ -113,7 +113,7 @@
             .margin({top: 0})
             .tooltipContent(function(key, x, y, e, graph) {
                 e.point.close_date = d3.time.format('%x')(d3.time.format('%Y-%m-%d').parse(e.point.x));
-                e.point.amount = app.currency.formatAmountLocale(e.point.base_amount, app.currency.getBaseCurrencyId());
+                e.point.amount = app.currency.formatAmountLocale(e.point.base_amount, e.point.currency_id);
                 return self.tooltiptemplate(e.point).replace(/(\r\n|\n|\r)/gm, '');
             })
             .showTitle(false)
@@ -238,7 +238,8 @@
                     sales_stage_short: sales_stage,
                     probability: parseInt(d.probability, 10),
                     base_amount: d[this.likelyField],
-                    currency_symbol: app.currency.getCurrencySymbol(d.currency_id)
+                    currency_symbol: app.currency.getCurrencySymbol(d.currency_id),
+                    currency_id: d.currency_id
                 };
             }, this),
             properties: {
