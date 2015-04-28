@@ -178,7 +178,7 @@ $dictionary['KBContent'] = array(
             'link' => 'kbdocuments_kbcontents',
             'module' => 'KBDocuments',
             'duplicate_merge' => 'disabled',
-            'studio' => true,
+            'studio' => false,
             'massupdate' => false,
         ),
         'active_rev' => array(
