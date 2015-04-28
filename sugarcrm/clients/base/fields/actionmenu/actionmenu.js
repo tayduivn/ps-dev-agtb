@@ -275,10 +275,13 @@
     _render: function() {
         this._super('_render');
 
-        if (!this.def.disable_select_all_alert) {
-            this.context.trigger('toggleSelectAllAlert');
+        if (this.tplName === 'list-header' && !this.def.disable_select_all_alert) {
             this.setButtonsDisabled(this.dropdownFields);
             this.setDropdownDisabled(this.massCollection.length === 0);
+        }
+
+        if (this.action === 'edit') {
+            this.context.trigger('mass_collection:clear');
         }
     },
 
