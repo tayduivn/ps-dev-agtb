@@ -307,6 +307,7 @@ class OpportunitiesSeedData {
             $rli->sales_stage = array_rand($app_list_strings['sales_stage_dom']);
             $rli->probability = $app_list_strings['sales_probability_dom'][$rli->sales_stage];
             $isClosed = false;
+            $isClosedLost = false;
             if ($rli->sales_stage == Opportunity::STAGE_CLOSED_WON || $rli->sales_stage == Opportunity::STAGE_CLOSED_LOST) {
                 $isClosed = true;
                 $rli->best_case = $rli->likely_case;
@@ -314,6 +315,8 @@ class OpportunitiesSeedData {
                 if ($rli->sales_stage == Opportunity::STAGE_CLOSED_WON) {
                     $closedWon++;
                 } else {
+                    // closedLost shouldn't be added to the opp totals
+                    $isClosedLost = true;
                     $closedLost++;
                 }
                 $opp->closed_revenue_line_items++;
@@ -372,9 +375,17 @@ class OpportunitiesSeedData {
             $fwRows[] = $sqlValues;
 
             $opp_units += $rli->quantity;
-            $opp_amount += $amount;
-            $opp_best_case += $rli->best_case;
-            $opp_worst_case += $rli->worst_case;
+            if (!$isClosedLost) {
+                $opp_amount = SugarMath::init($opp_amount)
+                                ->add(SugarCurrency::convertWithRate($rli->likely_case, $base_rate, $opp->base_rate))
+                                ->result();
+                $opp_best_case = SugarMath::init($opp_best_case)
+                                ->add(SugarCurrency::convertWithRate($rli->best_case, $base_rate, $opp->base_rate))
+                                ->result();
+                $opp_worst_case = SugarMath::init($opp_worst_case)
+                                ->add(SugarCurrency::convertWithRate($rli->worst_case, $base_rate, $opp->base_rate))
+                                ->result();
+            }
             $rlis_created++;
         }
 

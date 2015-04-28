@@ -63,7 +63,7 @@ class ForecastSalesStageExpression extends EnumExpression
 			    params = this.getParameters(),
 			    includeWon = params[0].evaluate(),
 			    includeClosed = params[1].evaluate(),
-			    array = App.lang.getAppListStrings('sales_stage_dom'),
+			    array = _.values(App.lang.getAppListStrings('sales_stage_dom')),
 			    keysToRemove = [];
 
             if (!SEE.isTruthy(includeWon)) {
@@ -74,7 +74,7 @@ class ForecastSalesStageExpression extends EnumExpression
                 keysToRemove = _.union(keysToRemove, config.sales_stage_lost);
             }
 
-			return _.without(array, keysToRemove);
+			return _.difference(array, keysToRemove);
 JS;
     }
 

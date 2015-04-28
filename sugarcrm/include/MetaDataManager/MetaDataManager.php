@@ -2779,7 +2779,8 @@ class MetaDataManager
                 $currency['iso4217'] = $current->iso4217;
                 $currency['status'] = $current->status;
                 $currency['symbol'] = $current->symbol;
-                $currency['conversion_rate'] = $current->conversion_rate;
+                // format just like we do on the models
+                $currency['conversion_rate'] = SugarMath::init($current->conversion_rate)->result();
                 $currency['name'] = $current->name;
                 $currency['date_entered'] = $current->date_entered;
                 $currency['date_modified'] = $current->date_modified;

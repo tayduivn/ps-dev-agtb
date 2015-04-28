@@ -43,6 +43,9 @@ class SetValueAction extends AbstractAction{
 				    context = this.context;
 
 				try {
+				    // set the target for rollup expressions
+				    context.target = this.target;
+
 				    var val = this.evalExpression(this.expr, context),
 				        cVal = context.getValue(this.target).evaluate();
                     // only set the value if the two numbers are different
