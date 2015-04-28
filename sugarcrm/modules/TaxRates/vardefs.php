@@ -74,7 +74,7 @@ $dictionary['TaxRate'] = array(
             'vname' => 'LBL_VALUE',
             'type' => 'decimal',
             'dbType' => 'decimal2',
-            'len' => '7,5',
+            'len' => '26,6',
             'importable' => 'required',
             'required' => true,
         ),
