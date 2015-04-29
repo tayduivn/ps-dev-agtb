@@ -43,7 +43,6 @@
     _lastCurrencyId: null,
 
     plugins: [
-        'FieldDuplicate',
         'EllipsisInline',
         'Tooltip'
     ],
@@ -121,8 +120,6 @@
         // we do not call the parent which re-renders,
         // but instead update the value on the field directly
         this.model.on('change:' + this.name, this._valueChangeHandler, this);
-
-        this.model.on('duplicate:field:' + this.name, this._valueChangeHandler, this);
 
         if (this.def.is_base_currency) {
             // do not add change handler to _usdollar fields
