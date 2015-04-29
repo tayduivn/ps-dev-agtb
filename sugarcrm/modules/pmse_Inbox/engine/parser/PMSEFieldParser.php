@@ -272,7 +272,7 @@ class PMSEFieldParser implements PMSEDataParserInterface
         $isAValidBean = (!empty($bean) && is_object($bean));
         if ($isAValidBean) {
             $def = $bean->field_defs[$field];
-            if ($def['type'] == 'datetime'){
+            if ($def['type'] == 'datetime' || $def['type'] == 'datetimecombo'){
                 date_default_timezone_set('UTC');
                 $datetime = new Datetime($bean->$field);
                 $value = $timedate->asIso($datetime, $current_user);
