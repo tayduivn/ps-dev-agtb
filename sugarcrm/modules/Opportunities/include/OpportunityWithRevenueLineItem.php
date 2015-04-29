@@ -274,7 +274,6 @@ EOL;
         $opps = $sq->execute();
 
         if (empty($opps)) {
-            $GLOBALS['log']->fatal('No Opportunities found for query: ' . $sq->compileSql());
             return false;
         }
 
