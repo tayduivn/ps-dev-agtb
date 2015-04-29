@@ -47,7 +47,7 @@
         this.on('dashlet-email:edit:fire', this.editRecord, this);
         this.on('dashlet-email:delete-record:fire', this.deleteRecord, this);
         this.on('dashlet-email:enable-record:fire', this.enableRecord, this);
-        this.on('dashlet-email:download:fire', this.downloadRecord, this);
+        this.on('dashlet-email:download:fire', this.warnExportEmailsTemplates, this);
         this.on('dashlet-email:description-record:fire', this.descriptionRecord, this);
         return this;
     },
@@ -61,9 +61,29 @@
     },
 
     /**
+     * Show warning of pmse_email_templates
+     */
+    warnExportEmailsTemplates: function (model) {
+        var that = this;
+        if (app.cache.get("show_emailtpl_export_warning")) {
+            app.alert.show('emailtpl-export-confirmation', {
+                level: 'confirmation',
+                messages: app.lang.get('LBL_PMSE_IMPORT_EXPORT_WARNING') + "<br/><br/>"
+                + app.lang.get("LBL_PMSE_EXPORT_CONFIRMATION"),
+                onConfirm: function () {
+                    app.cache.set('show_emailtpl_export_warning', false);
+                    that.exportEmailsTemplates(model);
+                },
+                onCancel: $.noop
+            });
+        } else {
+            that.exportEmailsTemplates(model);
+        }
+    },
+    /**
      * Download record of table pmse_emails_templates
      */
-    downloadRecord: function (model) {
+    exportEmailsTemplates: function (model) {
         var url = app.api.buildURL(model.module, 'etemplate', {id: model.id}, {platform: app.config.platform});
 
         if (_.isEmpty(url)) {

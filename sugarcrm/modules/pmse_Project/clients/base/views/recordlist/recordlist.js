@@ -18,7 +18,7 @@
     initialize: function(options) {
         this.contextEvents = _.extend({}, this.contextEvents, {
             "list:opendesigner:fire": "openDesigner",
-            "list:exportprocess:fire": "exportProcess",
+            "list:exportprocess:fire": "showExportingWarning",
             "list:enabledRow:fire": "enabledProcess",
             "list:disabledRow:fire": "disabledProcess"
         });
@@ -27,6 +27,24 @@
 
     openDesigner: function(model) {
         app.navigate(this.context, model, 'layout/designer');
+    },
+
+    showExportingWarning: function (model) {
+        var that = this;
+        if (app.cache.get("show_project_export_warning")) {
+            app.alert.show('project-export-confirmation',  {
+                level: 'confirmation',
+                messages: App.lang.get('LBL_PMSE_IMPORT_EXPORT_WARNING') + "<br/><br/>"
+                    + app.lang.get('LBL_PMSE_EXPORT_CONFIRMATION'),
+                onConfirm: function () {
+                    app.cache.set("show_project_export_warning", false);
+                    that.exportProcess(model);
+                },
+                onCancel: $.noop
+            });
+        } else {
+            that.exportProcess(model);
+        }
     },
 
     exportProcess: function(model) {

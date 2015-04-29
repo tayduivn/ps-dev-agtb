@@ -14,11 +14,29 @@
     initialize: function (options) {
         app.view.invokeParent(this, {type: 'view', name: 'record', method: 'initialize', args:[options]});
         this.context.on('button:open_designer:click', this.openDesigner, this);
-        this.context.on('button:export_process:click', this.exportProcess, this);
+        this.context.on('button:export_process:click', this.showExportingWarning, this);
     },
 
     openDesigner: function(model) {
         app.navigate(this.context, model, 'layout/designer');
+    },
+
+    showExportingWarning: function (model) {
+        var that = this;
+        if (app.cache.get("show_project_export_warning")) {
+            app.alert.show('project-export-confirmation',  {
+                level: 'confirmation',
+                messages: App.lang.get('LBL_PMSE_IMPORT_EXPORT_WARNING') + "<br/><br/>"
+                + app.lang.get('LBL_PMSE_EXPORT_CONFIRMATION'),
+                onConfirm: function () {
+                    app.cache.set("show_project_export_warning", false);
+                    that.exportProcess(model);
+                },
+                onCancel: $.noop
+            });
+        } else {
+            that.exportProcess(model);
+        }
     },
 
     exportProcess: function(model) {
