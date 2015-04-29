@@ -11,8 +11,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-
-
+require_once 'include/SugarQuery/SugarQuery.php';
+require_once 'modules/pmse_Inbox/engine/PMSEEngineUtils.php';
 /**
  * CRUD Wrapper to manage records related to History Logs
  *
@@ -168,58 +168,92 @@ class PMSEHistoryLogWrapper
     public function assemblyEntries()
     {
         $entries = array();
+        $queryOptions = array('add_deleted' => true);
+        $beanFlow = BeanFactory::getBean('pmse_BpmFlow');
+        $fields = array(
+            'id',
+            'date_entered',
+            'date_modified',
+            'cas_id',
+            'cas_index',
+            'pro_id',
+            'cas_previous',
+            'cas_reassign_level',
+            'bpmn_id',
+            'bpmn_type',
+            'cas_user_id',
+            'cas_thread',
+            'cas_flow_status',
+            'cas_sugar_module',
+            'cas_sugar_object_id',
+            'cas_sugar_action',
+            'cas_adhoc_type',
+            'cas_adhoc_parent_id',
+            'cas_task_start_date',
+            'cas_delegate_date',
+            'cas_start_date',
+            'cas_finish_date',
+            'cas_due_date',
+            'cas_queue_duration',
+            'cas_duration',
+            'cas_delay_duration',
+            'cas_started',
+            'cas_finished',
+            'cas_delayed',
+        );
 
-        $where = 'pmse_bpm_flow.cas_id=' . $this->case_id;
-        //$caseDerivations = $this->flow->getSelectRows('', $where);
-        //$caseDerivations = $this->getSelectRows($this->flow,'cas_index asc', $where);
-        $caseDerivations = $this->flow->get_full_list('cas_index asc', $where);
-        //$caseDerivations = $caseDerivations['rowList'];
+        $q = new SugarQuery();
+        $q->from($beanFlow, $queryOptions);
+        $q->distinct(false);
+        $q->where()
+            ->equals('cas_id', $this->case_id);
+        $q->orderBy('cas_index', 'ASC');
+
+        $q->select($fields);
+
+        $caseDerivations = $q->execute();
 
         foreach ($caseDerivations as $key => $caseData) {
             $entry = $this->fetchUserType($caseData);
 
             $currentDate = new DateTime();
-            $startDate = new DateTime($caseData->cas_start_date);
-            $delegateDate = new DateTime($caseData->cas_delegate_date);
-            $endDate = new DateTime($caseData->cas_finish_date);
-            $dueDate = new DateTime($caseData->cas_due_date);
 
-            $entry['due_date'] = $dueDate->format('Y-m-d H:i:s');
-            $entry['end_date'] = $endDate->format('Y-m-d H:i:s');
-            $entry['current_date'] = $currentDate->format('Y-m-d H:i:s');
-            $entry['delegate_date'] = $delegateDate->format('Y-m-d H:i:s');
-            $entry['start_date'] = $startDate->format('Y-m-d H:i:s');
+            $entry['due_date'] = !empty($caseData['cas_due_date']) ? PMSEEngineUtils::getDateToFE($caseData['cas_due_date'], 'datetime'): '';
+            $entry['end_date'] = !empty($caseData['cas_finish_date']) ? PMSEEngineUtils::getDateToFE($caseData['cas_finish_date'], 'datetime'): '';
+            $entry['current_date'] =  PMSEEngineUtils::getDateToFE(TimeDate::getInstance()->nowDb(), 'datetime');
+            $entry['delegate_date'] = !empty($caseData['cas_delegate_date']) ? PMSEEngineUtils::getDateToFE($caseData['cas_delegate_date'], 'datetime'): '';
+            $entry['start_date'] = !empty($caseData['cas_start_date']) ? PMSEEngineUtils::getDateToFE($caseData['cas_start_date'], 'datetime'): '';
             $entry['var_values'] = '';
             $entry['completed'] = true;
-            $entry['cas_user_id'] = $caseData->cas_user_id;
+            $entry['cas_user_id'] = $caseData['cas_user_id'];
 
-            if ($caseData->cas_previous == 0) {
+            if ($caseData['cas_previous'] == 0) {
                 //cas_flow_status field should set something instead be empty.
-                $dataString = sprintf(translate('LBL_PMSE_HISTORY_LOG_CREATED_CASE', 'pmse_Inbox'), $caseData->cas_id);
+                $dataString = sprintf(translate('LBL_PMSE_HISTORY_LOG_CREATED_CASE', 'pmse_Inbox'), $caseData['cas_id']);
             } else {
-                if ($caseData->cas_flow_status == 'CLOSED') {
+                if ($caseData['cas_flow_status'] == 'CLOSED') {
                     $dataString = sprintf(translate('LBL_PMSE_HISTORY_LOG_DERIVATED_CASE', 'pmse_Inbox'),
-                        $caseData->bpmn_id);
+                        $caseData['bpmn_id']);
                 } else {
                     $dataString = sprintf(translate('LBL_PMSE_HISTORY_LOG_CURRENTLY_HAS_CASE', 'pmse_Inbox'),
-                        $caseData->bpmn_id);
+                        $caseData['bpmn_id']);
                 }
             }
 
             $action = '';
-            if ($caseData->bpmn_type == 'bpmnActivity') {
-                $currentCaseState = $this->getActionStatusAndAction($caseData->cas_flow_status,
-                    $caseData->cas_sugar_action);
+            if ($caseData['bpmn_type'] == 'bpmnActivity') {
+                $currentCaseState = $this->getActionStatusAndAction($caseData['cas_flow_status'],
+                    $caseData['cas_sugar_action']);
                 $dataString .= sprintf(translate('LBL_PMSE_HISTORY_LOG_ACTIVITY_NAME', 'pmse_Inbox'),
-                    $this->getActivityName($caseData->bpmn_id));
-                if ($caseData->cas_flow_status != 'FORM') {
+                    $this->getActivityName($caseData['bpmn_id']));
+                if ($caseData['cas_flow_status'] != 'FORM') {
                     $dataString .= sprintf(translate('LBL_PMSE_HISTORY_LOG_MODULE_ACTION', 'pmse_Inbox'),
                         $this->getActivityModule($caseData), $currentCaseState);
                     $res = $this->formAction->retrieve_by_string_fields(array(
-                            'cas_id' => $caseData->cas_id,
-                            'act_id' => $caseData->bpmn_id,
-                            'user_id' => $caseData->cas_user_id
-                        ));
+                        'cas_id' => $caseData['cas_id'],
+                        'act_id' => $caseData['bpmn_id'],
+                        'user_id' => $caseData['cas_user_id']
+                    ));
                     if (isset($this->formAction->frm_action) && !empty($this->formAction->frm_action)) {
                         $action = strtoupper($this->formAction->frm_action);
                     } else {
@@ -235,16 +269,16 @@ class PMSEHistoryLogWrapper
                     $entry['completed'] = false;
                 }
             } else {
-                if ($caseData->bpmn_type == 'bpmnEvent') {
+                if ($caseData['bpmn_type'] == 'bpmnEvent') {
                     $name = sprintf(translate('LBL_PMSE_HISTORY_LOG_ACTIVITY_NAME', 'pmse_Inbox'),
-                        $this->getEventName($caseData->bpmn_id));
+                        $this->getEventName($caseData['bpmn_id']));
                     $currentCaseState = sprintf(translate('LBL_PMSE_HISTORY_LOG_WITH_EVENT', 'pmse_Inbox'), $name);
                     $dataString .= sprintf(translate('LBL_PMSE_HISTORY_LOG_MODULE_ACTION', 'pmse_Inbox'),
                         $this->getActivityModule($caseData), $currentCaseState);
                 } else {
-                    if ($caseData->bpmn_type == 'bpmnGateway') {
+                    if ($caseData['bpmn_type'] == 'bpmnGateway') {
                         $name = sprintf(translate('LBL_PMSE_HISTORY_LOG_ACTIVITY_NAME', 'pmse_Inbox'),
-                            $this->getEventName($caseData->bpmn_id));
+                            $this->getEventName($caseData['bpmn_id']));
                         $currentCaseState = sprintf(translate('LBL_PMSE_HISTORY_LOG_WITH_GATEWAY', 'pmse_Inbox'),
                             $name);
                         $dataString .= sprintf(translate('LBL_PMSE_HISTORY_LOG_MODULE_ACTION', 'pmse_Inbox'),
@@ -295,12 +329,12 @@ class PMSEHistoryLogWrapper
     {
         global $beanList;
         //global $db;
-        $activityDefinitionBean = BeanFactory::getBean('pmse_BpmActivityDefinition', $caseData->bpmn_id);
+        $activityDefinitionBean = BeanFactory::getBean('pmse_BpmActivityDefinition', $caseData['bpmn_id']);
         //$query = "select act_field_module from bpm_activity_definition where act_id = " . $caseData->bpmn_id;
         //$result = $this->db->Query($query);
         //$row = $this->db->fetchByAssoc($result);
         if (empty($activityDefinitionBean) || empty($activityDefinitionBean->act_field_module)) {
-            return $beanList[$caseData->cas_sugar_module];
+            return $beanList[$caseData['cas_sugar_module']];
         }
 
         $related_module_data = $this->getRelationshipData($activityDefinitionBean->act_field_module);
@@ -334,15 +368,16 @@ class PMSEHistoryLogWrapper
     {
         $entry = array();
 
-        $this->currentUser->retrieve($caseData->cas_user_id);
-        if ($caseData->cas_sugar_action == 'SCRIPTTASK') {
-            $entry['image'] = 'modules/pmse_Project/img/icon_processmaker_32.png';
-            $entry['user'] = 'modules/pmse_Project';
+        $this->currentUser->retrieve($caseData['cas_user_id']);
+        if ($caseData['cas_sugar_action'] == 'SCRIPTTASK') {
+            $entry['image'] = "label label-module label-pmse_Inbox pull-left";
+            $entry['user'] = translate('LBL_PMSE_LABEL_PROCESS_AUTHOR', 'pmse_Inbox');
+            $entry['script'] = true;
         } else {
-            if ($caseData->bpmn_type == 'bpmnActivity' ||
-                $caseData->cas_sugar_action == 'DetailView' ||
-                $caseData->cas_sugar_action == 'EditView' ||
-                $caseData->cas_previous == 0
+            if ($caseData['bpmn_type'] == 'bpmnActivity' ||
+                $caseData['cas_sugar_action'] == 'DetailView' ||
+                $caseData['cas_sugar_action'] == 'EditView' ||
+                $caseData['cas_previous'] == 0
             ) {
                 if (isset($this->currentUser->picture)) {
                     if ($this->currentUser->picture == '' || $this->currentUser->picture == null) {
@@ -358,15 +393,15 @@ class PMSEHistoryLogWrapper
                 $entry['current_user'] = $current_user->full_name;
             } else {
                 //TODO check if there is other conditions to set.
-                $entry['image'] = 'modules/pmse_Project/img/icon_processmaker_32.png';
-                $entry['user'] = 'modules/pmse_Project';
+                $entry['image'] = "label label-module label-pmse_Inbox pull-left";
+                $entry['user'] = translate('LBL_PMSE_LABEL_PROCESS_AUTHOR', 'pmse_Inbox');
+                $entry['script'] = true;
             }
         }
         // @codeCoverageIgnoreStart
         if (trim($entry['user']) == '') {
-
             $entry['user'] = sprintf(translate('LBL_PMSE_HISTORY_LOG_NOTFOUND_USER', 'pmse_Inbox'),
-                $caseData->cas_user_id);
+                $caseData['cas_user_id']);
 
         }
         // @codeCoverageIgnoreEnd

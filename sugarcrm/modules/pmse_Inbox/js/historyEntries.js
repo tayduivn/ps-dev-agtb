@@ -49,7 +49,7 @@ function showHistory(caseId, caseIndex) {
                                 afterArray = [];
                                 fieldArray = [];
                                 items = [];
-                                log = logs.result[i];
+                                var log = logs.result[i];
 
                                 var end_date=Date.parse(log.end_date);
                                 var current_date=Date.parse(log.current_date);
@@ -86,12 +86,13 @@ function showHistory(caseId, caseIndex) {
                                     name: 'log' + i,
                                     label: label,
                                     user: log.user,
-                                    picture : pictureUrl,
+                                    picture : (log.script) ? log.image : pictureUrl,
                                     duration: '<strong> ' + timeElapsedString(end_date, delegate_date) + ' <strong>',
                                     startDate: (start_date) ? log.start_date :  translate('LBL_PMSE_HISTORY_LOG_NO_YET_STARTED', 'pmse_Inbox'),
                                     //startDate: (Date.parse(log.start_date)) ? Date.parse(log.start_date).toString('MMMM d, yyyy HH:mm') :  translate('LBL_PMSE_MESSAGE_NOYETSTARTED'),
                                     //startDate: translate('LBL_PMSE_MESSAGE_NOYETSTARTED'),
-                                    completed: log.completed
+                                    completed: log.completed,
+                                    script: (log.script) ? log.script : false
                                 };
                                 //parse all log var_values collected
                                 if (log.var_values && log.var_values !== '') {

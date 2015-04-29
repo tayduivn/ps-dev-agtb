@@ -24,7 +24,7 @@ require_once 'modules/pmse_Inbox/engine/PMSEHandlers/PMSECaseFlowHandler.php';
 require_once 'modules/pmse_Inbox/engine/PMSEHandlers/PMSEUserAssignmentHandler.php';
 require_once 'modules/pmse_Inbox/engine/wrappers/PMSECaseWrapper.php';
 require_once 'modules/pmse_Project/clients/base/api/wrappers/PMSEWrapper.php';
-
+require_once 'modules/pmse_Inbox/engine/PMSEEngineUtils.php';
 /*
  * Record List API implementation
  */
@@ -943,6 +943,7 @@ class PMSEEngineApi extends SugarApi
                 $assignedBean = BeanFactory::getBean($row['cas_sugar_module'], $row['cas_sugar_object_id']);
                 $assignedUsersBean = BeanFactory::getBean('Users', $assignedBean->assigned_user_id);
                 $row['assigned_user_name'] = $assignedUsersBean->full_name;
+                $row['date_entered'] = PMSEEngineUtils::getDateToFE($row['date_entered'], 'datetime');
                 $rows_aux[] = $row;
             }
         }
