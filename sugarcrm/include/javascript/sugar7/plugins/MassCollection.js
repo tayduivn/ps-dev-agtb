@@ -212,10 +212,7 @@
              */
             toggleSelectAllAlert: function() {
                 var alert;
-                // FIXME check if this makes sense still
-                if (!this.collection.length) {
-                    return;
-                }
+
                 var selectedRecordsInPage = _.intersection(this.massCollection.models, this.collection.models);
                 if (selectedRecordsInPage.length === this.collection.length) {
                     if (this.collection.next_offset > 0) {
@@ -309,8 +306,7 @@
                     limit: limit,
                     // use the last filterDef applied to the collection
                     filter: this.context.get('collection').filterDef,
-                    context: this.context,
-                    relate: true
+                    context: this.context
                 });
 
                 this.massCollection.fetch(options);
