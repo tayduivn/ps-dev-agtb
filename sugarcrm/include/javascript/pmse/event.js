@@ -1265,7 +1265,7 @@ AdamEvent.prototype.createConfigureAction = function () {
                         auxProxy = new SugarProxy({
                             url: 'pmse_Project/CrmData/related/' + PROJECT_MODULE
                         });
-                        auxProxy.getData(null, {
+                        auxProxy.getData({cardinality: 'one'}, {
                             success: function (data) {
                                 var i;
                                 data = data.result;
