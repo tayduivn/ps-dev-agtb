@@ -855,10 +855,14 @@ class RenameModules
         // Get the mod_strings key from metadata
         $modKey = $this->formatModuleLanguageKey($replacementMetaData['name'], $replacementLabels);
 
+        // If the replacement string is a substring of the original,
+        // then it's impossible to say if the old value is already updated.
         // If oldStringValue is already updated, don't re-update it.
         // Also handle the corner case where we actually DO want a repeat in the string.
-        if ((strpos($oldStringValue, $replace) === false) || $this->checkDefaultsForSubstring($modKey, $replace))
-        {
+        if (strpos($search, $replace) !== false
+            || strpos($oldStringValue, $replace) === false
+            || $this->checkDefaultsForSubstring($modKey, $replace)
+        ) {
             // Handle resetting routes in strings, since some modules like Forecasting
             // include links in their strings.
             $oldStringValue = str_replace("#{$search}/", "____TEMP_ROUTER_HOLDER____", $oldStringValue);
