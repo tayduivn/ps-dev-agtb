@@ -109,7 +109,7 @@
         var value = this;
         app.alert.show( 'confirm_approve', {
             level: 'confirmation',
-            messages: app.lang.get('LBL_PA_PROCESS_APPROVAL_QUESTION'),
+            messages: app.lang.get('LBL_PA_PROCESS_APPROVAL_QUESTION', 'pmse_Inbox'),
             onConfirm: function() {
                 value.model.doValidate(value.getFields(value.module), _.bind(value.validationCompleteApprove, value));
             },
@@ -136,7 +136,7 @@
                 success: function (){
                     app.alert.show('success_approve', {
                         level: 'success',
-                        messages: app.lang.get('LBL_PA_PROCESS_APPROVED_SUCCESS'),
+                        messages: app.lang.get('LBL_PA_PROCESS_APPROVED_SUCCESS', 'pmse_Inbox'),
                         autoClose: true
                     });
                     self.redirectCase();
@@ -149,7 +149,7 @@
         var value = this;
         app.alert.show( 'confirm_reject', {
             level: 'confirmation',
-            messages: app.lang.get('LBL_PA_PROCESS_REJECT_QUESTION'),
+            messages: app.lang.get('LBL_PA_PROCESS_REJECT_QUESTION', 'pmse_Inbox'),
             onConfirm: function() {
                 app.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
                 value.model.doValidate(value.getFields(value.module), _.bind(value.validationCompleteReject, value));
@@ -176,7 +176,7 @@
                 success: function (){
                     app.alert.show('success_reject', {
                         level: 'success',
-                        messages: app.lang.get('LBL_PA_PROCESS_REJECTED_SUCCESS'),
+                        messages: app.lang.get('LBL_PA_PROCESS_REJECTED_SUCCESS', 'pmse_Inbox'),
                         autoClose: true
                     });
                     self.redirectCase();
@@ -189,7 +189,7 @@
         var value = this;
         app.alert.show( 'confirm_route', {
             level: 'confirmation',
-            messages: app.lang.get('LBL_PA_PROCESS_ROUTE_QUESTION'),
+            messages: app.lang.get('LBL_PA_PROCESS_ROUTE_QUESTION', 'pmse_Inbox'),
             onConfirm: function() {
                 value.model.doValidate(value.getFields(value.module), _.bind(value.validationCompleteRoute, value));
             },
@@ -217,7 +217,7 @@
                 success: function () {
                     app.alert.show('success_route', {
                         level: 'success',
-                        messages: app.lang.get('LBL_PA_PROCESS_ROUTED_SUCCESS'),
+                        messages: app.lang.get('LBL_PA_PROCESS_ROUTED_SUCCESS', 'pmse_Inbox'),
                         autoClose: true
                     });
                     self.redirectCase();
