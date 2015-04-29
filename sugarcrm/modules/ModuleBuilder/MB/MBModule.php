@@ -52,6 +52,11 @@ class MBModule
      */
     public $mdc;
 
+    /**
+     * @var MBLanguage
+     */
+    public $mblanguage;
+
     function __construct ($name , $path , $package , $package_key)
     {
         global $mod_strings;
@@ -853,7 +858,27 @@ class MBModule
 
     function delete ()
     {
-        return rmdir_recursive ( $this->getModuleDir () ) ;
+        $this->load();
+
+        // remove module language data from the package
+        $this->mblanguage->delete($this->key_name) ;
+
+        // remove module icons from the package
+        $icons = array(
+            'icon_' . ucfirst($this->key_name) . '_32.png',
+            $this->key_name . '.gif',
+            'Create' . $this->key_name . '.gif',
+            'icon_' . $this->key_name . '_bar_32.png',
+        );
+        foreach ($icons as $icon) {
+            $file = $this->package_path . '/icons/' . $icon;
+            if (file_exists($file)) {
+                unlink($file);
+            }
+        }
+
+        // remove the module itself
+        return rmdir_recursive($this->getModuleDir());
     }
 
     function populateFromPost ()

@@ -1094,19 +1094,18 @@ class ModuleInstaller{
         $languages = array();
         if(isset($this->installdefs['language']))
         {
+            $modules = array();
             $this->log(translate('LBL_MI_IN_LANG') );
             foreach($this->installdefs['language'] as $packs)
             {
-                // Prevent multiple modules from being sent to rebuild_languages
-                $modules[$packs['to_module']] = $packs['to_module'];
                 $languages[$packs['language']] = $packs['language'];
                 $packs['from'] = str_replace('<basepath>', $this->base_dir, $packs['from']);
                 $GLOBALS['log']->debug("Installing Language Pack ..." . $packs['from']  .  " for " .$packs['to_module']);
-                $path = 'custom/Extension/modules/' . $packs['to_module']. '/Ext/Language';
                 if($packs['to_module'] == 'application'){
-                    // Unset the 'application' module
-                    unset($modules[$packs['to_module']]);
                     $path ='custom/Extension/' . $packs['to_module']. '/Ext/Language';
+                } else {
+                    $modules[$packs['to_module']] = true;
+                    $path = 'custom/Extension/modules/' . $packs['to_module'] . '/Ext/Language';
                 }
 
                 if(!file_exists($path)){
@@ -1114,8 +1113,7 @@ class ModuleInstaller{
                 }
                 copy_recursive($packs['from'] , $path.'/'.$packs['language'].'.'. $this->id_name . '.php');
             }
-            $this->rebuild_languages($languages, $modules);
-
+            $this->rebuild_languages($languages, array_keys($modules));
         }
     }
 
@@ -1123,15 +1121,17 @@ class ModuleInstaller{
     function uninstall_languages(){
         $languages = array();
         if(isset($this->installdefs['language'])){
+            $modules = array();
             $this->log(translate('LBL_MI_UN_LANG') );
             foreach($this->installdefs['language'] as $packs){
-                $modules[]=$packs['to_module'];
                 $languages[$packs['language']] = $packs['language'];
                 $packs['from'] = str_replace('<basepath>', $this->base_dir, $packs['from']);
                 $GLOBALS['log']->debug("Uninstalling Language Pack ..." . $packs['from']  .  " for " .$packs['to_module']);
-                $path = 'custom/Extension/modules/' . $packs['to_module']. '/Ext/Language';
                 if($packs['to_module'] == 'application'){
                     $path ='custom/Extension/' . $packs['to_module']. '/Ext/Language';
+                } else {
+                    $modules[$packs['to_module']] = true;
+                    $path = 'custom/Extension/modules/' . $packs['to_module'] . '/Ext/Language';
                 }
                 if (sugar_is_file($path.'/'.$packs['language'].'.'. $this->id_name . '.php', 'w')) {
                     rmdir_recursive( $path.'/'.$packs['language'].'.'. $this->id_name . '.php');
@@ -1139,8 +1139,7 @@ class ModuleInstaller{
                     rmdir_recursive($path.'/'.DISABLED_PATH.'/'.$packs['language'].'.'. $this->id_name . '.php', 'w');
                 }
             }
-            $this->rebuild_languages($languages, $modules);
-
+            $this->rebuild_languages($languages, array_keys($modules));
         }
     }
 
