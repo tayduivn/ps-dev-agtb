@@ -466,7 +466,7 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
                             if (isset($lastFieldSpan['span'])) {
                                 $newField['span'] = $lastFieldSpan['span'];
                             }
-                            else if (isset($newField['span']) && isset($newField['span'])) {
+                            else if (isset($newField['span'])) {
                                 unset($newField['span']);
                             }
                         }
