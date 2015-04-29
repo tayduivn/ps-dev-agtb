@@ -106,7 +106,16 @@
         });
     },
     caseApprove: function () {
-        this.model.doValidate(this.getFields(this.module), _.bind(this.validationCompleteApprove, this));
+        var value = this;
+        app.alert.show( 'confirm_approve', {
+            level: 'confirmation',
+            messages: 'Are you sure to approve this case?',
+            onConfirm: function() {
+                value.model.doValidate(value.getFields(value.module), _.bind(value.validationCompleteApprove, value));
+            },
+            onCancel: function() {
+            }
+        });
     },
 
     validationCompleteApprove: function(isValid) {
@@ -125,6 +134,11 @@
             var pmseInboxUrl = app.api.buildURL('pmse_Inbox/engine_route','',{},{});
             app.api.call('update', pmseInboxUrl, value,{
                 success: function (){
+                    app.alert.show('success_approve', {
+                        level: 'success',
+                        messages: 'You successfully Approve this case.',
+                        autoClose: true
+                    });
                     self.redirectCase();
                 }
             });
@@ -132,8 +146,17 @@
     },
 
     caseReject: function () {
-        app.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
-        this.model.doValidate(this.getFields(this.module), _.bind(this.validationCompleteReject, this));
+        var value = this;
+        app.alert.show( 'confirm_reject', {
+            level: 'confirmation',
+            messages: 'Are you sure to reject this case?',
+            onConfirm: function() {
+                app.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
+                value.model.doValidate(value.getFields(value.module), _.bind(value.validationCompleteReject, value));
+            },
+            onCancel: function() {
+            }
+        });
     },
 
     validationCompleteReject: function(isValid) {
@@ -151,6 +174,11 @@
             var pmseInboxUrl = app.api.buildURL('pmse_Inbox/engine_route','',{},{});
             app.api.call('update', pmseInboxUrl, value,{
                 success: function (){
+                    app.alert.show('success_reject', {
+                        level: 'success',
+                        messages: 'You successfully Reject this case.',
+                        autoClose: true
+                    });
                     self.redirectCase();
                 }
             });
@@ -158,7 +186,18 @@
     },
 
     caseRoute: function () {
-        this.model.doValidate(this.getFields(this.module), _.bind(this.validationCompleteRoute, this));
+        var value = this;
+        app.alert.show( 'confirm_route', {
+            level: 'confirmation',
+            messages: 'Are you sure to route this case?',
+            onConfirm: function() {
+                value.model.doValidate(value.getFields(value.module), _.bind(value.validationCompleteRoute, value));
+            },
+            onCancel: function() {
+            }
+        });
+
+
     },
 
     validationCompleteRoute: function(isValid) {
@@ -176,6 +215,11 @@
             var pmseInboxUrl = app.api.buildURL('pmse_Inbox/engine_route','',{},{});
             app.api.call('update', pmseInboxUrl, value,{
                 success: function (){
+                    app.alert.show('success_route', {
+                        level: 'success',
+                        messages: 'You successfully Route this case.',
+                        autoClose: true
+                    });
                     self.redirectCase();
                 }
             });
