@@ -12,7 +12,7 @@
 
 $viewdefs['base']['view']['profileactions'] = array(
     array(
-        'route' => '#bwc/index.php?module=Users&action=DetailView&record=',
+        'route' => '#profile',
         'label' => 'LBL_PROFILE',
         'css_class' => 'profileactions-profile',
         'acl_action' => 'view',
