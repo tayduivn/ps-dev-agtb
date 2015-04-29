@@ -109,7 +109,7 @@
         var value = this;
         app.alert.show( 'confirm_approve', {
             level: 'confirmation',
-            messages: 'Are you sure to approve this case?',
+            messages: app.lang.get('LBL_PA_PROCESS_APPROVAL_QUESTION'),
             onConfirm: function() {
                 value.model.doValidate(value.getFields(value.module), _.bind(value.validationCompleteApprove, value));
             },
@@ -136,7 +136,7 @@
                 success: function (){
                     app.alert.show('success_approve', {
                         level: 'success',
-                        messages: 'You successfully Approve this case.',
+                        messages: app.lang.get('LBL_PA_PROCESS_APPROVED_SUCCESS'),
                         autoClose: true
                     });
                     self.redirectCase();
@@ -149,7 +149,7 @@
         var value = this;
         app.alert.show( 'confirm_reject', {
             level: 'confirmation',
-            messages: 'Are you sure to reject this case?',
+            messages: app.lang.get('LBL_PA_PROCESS_REJECT_QUESTION'),
             onConfirm: function() {
                 app.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
                 value.model.doValidate(value.getFields(value.module), _.bind(value.validationCompleteReject, value));
@@ -176,7 +176,7 @@
                 success: function (){
                     app.alert.show('success_reject', {
                         level: 'success',
-                        messages: 'You successfully Reject this case.',
+                        messages: app.lang.get('LBL_PA_PROCESS_REJECTED_SUCCESS'),
                         autoClose: true
                     });
                     self.redirectCase();
@@ -189,7 +189,7 @@
         var value = this;
         app.alert.show( 'confirm_route', {
             level: 'confirmation',
-            messages: 'Are you sure to route this case?',
+            messages: app.lang.get('LBL_PA_PROCESS_ROUTE_QUESTION'),
             onConfirm: function() {
                 value.model.doValidate(value.getFields(value.module), _.bind(value.validationCompleteRoute, value));
             },
@@ -214,10 +214,10 @@
             var self = this;
             var pmseInboxUrl = app.api.buildURL('pmse_Inbox/engine_route','',{},{});
             app.api.call('update', pmseInboxUrl, value,{
-                success: function (){
+                success: function () {
                     app.alert.show('success_route', {
                         level: 'success',
-                        messages: 'You successfully Route this case.',
+                        messages: app.lang.get('LBL_PA_PROCESS_ROUTED_SUCCESS'),
                         autoClose: true
                     });
                     self.redirectCase();

@@ -110,5 +110,13 @@ $mod_strings = array (
     'LBL_PMSE_SETTING_NUMBER_CYCLES' => "Error Number of Cycles",
     'LBL_PMSE_SHOW_PROCESS' => 'Show Process',
     'LBL_PMSE_FILTER' => 'Filter',
+
+    'LBL_PA_PROCESS_APPROVE_QUESTION' => 'Are you sure you want to approve this process?',
+    'LBL_PA_PROCESS_REJECT_QUESTION' => 'Are you sure you want to reject this process?',
+    'LBL_PA_PROCESS_ROUTE_QUESTION' => 'Are you sure you want to route this process?',
+    'LBL_PA_PROCESS_APPROVED_SUCCESS' => 'Process has been approved successfully',
+    'LBL_PA_PROCESS_REJECTED_SUCCESS' => 'Process has been rejected successfully',
+    'LBL_PA_PROCESS_ROUTED_SUCCESS' => 'Process has been routed successfully',
+
 );
 
