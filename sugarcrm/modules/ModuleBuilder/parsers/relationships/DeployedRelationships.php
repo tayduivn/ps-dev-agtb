@@ -394,8 +394,11 @@ class DeployedRelationships extends AbstractRelationships implements Relationshi
             $bean = BeanFactory::newBean($moduleName);
             VardefManager::loadVardef($bean->module_dir, $bean->object_name, true, array('bean' => $bean));
         }
-        
-        unset($GLOBALS['dictionary']);
+
+        foreach (array_keys($modulesToBuild) as $module) {
+            unset($GLOBALS['dictionary'][BeanFactory::getObjectName($module)]);
+        }
+
         SugarRelationshipFactory::rebuildCache();
         MetaDataManager::refreshLanguagesCache(array($GLOBALS['current_language']));
         MetaDataManager::refreshSectionCache(array(MetaDataManager::MM_RELATIONSHIPS));

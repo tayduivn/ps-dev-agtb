@@ -1420,14 +1420,14 @@ class MetaDataManager
 
         // Only process if there are modules to work on
         if (!empty($modules) && $this->isValidSection('modules')) {
+            // Module files should be rebuilt despite data existence.
+            MetaDataFiles::clearModuleClientCache($modules);
+
             // Same as with section caching, we only want to rebuild the
             // modules metadata if there are modules metadata already.
             $data = $this->getMetadataCache(true, $context);
 
             if (!empty($data)) {
-                // Now clear the module client cache for these modules so that
-                // getModuleData is fresh
-                MetaDataFiles::clearModuleClientCache($modules);
 
                 // Handle the module(s)
                 foreach ((array) $modules as $module) {
