@@ -242,6 +242,10 @@ class SqlsrvManager extends MssqlManager
             return false;
         }
 
+        foreach($row as $key => $column) {
+            $row[$key] = is_string($column) ? trim($column) : $column;
+        }
+
         return $row;
 	}
 

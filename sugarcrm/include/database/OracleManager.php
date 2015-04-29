@@ -345,8 +345,11 @@ class OracleManager extends DBManager
         if ( !$row )
             return false;
         if (!$this->checkError("Fetch error", false, $result)) {
-            // make the column keys as lower case
-            $row = array_change_key_case($row, CASE_LOWER);
+            $temp = $row;
+            $row = array();
+            foreach ($temp as $key => $val)
+                // make the column keys as lower case. Trim the val returned
+                $row[strtolower($key)] = is_string($val) ? trim($val) : $val;
         }
         else
             return false;
@@ -800,7 +803,6 @@ class OracleManager extends DBManager
     {
         // YYYY-MM-DD HH:MM:SS
         switch($type) {
-            case 'char': return rtrim($string, ' ');
             case 'date': return substr($string, 0, 10);
             case 'time': return substr($string, 11);
 		}
