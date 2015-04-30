@@ -18,6 +18,8 @@ require_once 'clients/base/api/vCardApi.php';
 require_once 'modules/pmse_Project/clients/base/api/wrappers/PMSECrmDataWrapper.php';
 require_once 'modules/pmse_Inbox/engine/PMSEEmailTemplateExporter.php';
 require_once 'modules/pmse_Inbox/engine/PMSEEmailTemplateImporter.php';
+require_once 'modules/pmse_Inbox/engine/PMSEEngineUtils.php';
+require_once 'modules/pmse_Inbox/engine/PMSERelatedModule.php';
 
 class PMSEEmailsTemplates extends vCardApi
 {
@@ -128,7 +130,7 @@ class PMSEEmailsTemplates extends vCardApi
         if ($offset !== "end") {
             //$records = $this->crmDataWrapper->retrieveFields($args["module_list"]);
             //$records = $this->crmDataWrapper->retrieveFields($args["module_list"], $direction, $limit, $offset);
-            $records = $this->retrieveFields($args["module_list"], $direction, $limit, $offset);
+            $records = $this->retrieveFields($args["module_list"], $direction, $limit, $offset, $args["base_module"]);
             $totalRecords = $records['totalRecords'];
             $trueOffset = $offset + $limit;
 
@@ -142,14 +144,14 @@ class PMSEEmailsTemplates extends vCardApi
             "records" => $records['records'],
         );
 }
-    public function retrieveFields($module, $orderBy, $limit, $offset)
+    public function retrieveFields($filter, $orderBy, $limit, $offset, $baseModule)
     {
         global $beanList;
-        if (isset($beanList[$module])) {
-            $newModuleFilter = $module;
+        $pmseRelatedModule = new PMSERelatedModule();
+        if (isset($beanList[$filter])) {
+            $newModuleFilter = $filter;
         } else {
-            $related = $this->crmDataWrapper->getRelationshipData($module);
-            $newModuleFilter = $related['rhs_module'];
+            $newModuleFilter = $pmseRelatedModule->getRelatedModuleName($baseModule, $filter);
         }
 
         $output = array();
@@ -157,12 +159,12 @@ class PMSEEmailsTemplates extends vCardApi
         $fieldsData = isset($moduleBean->field_defs) ? $moduleBean->field_defs : array();
         foreach ($fieldsData as $field) {
             //$retrieveId = isset($additionalArgs['retrieveId']) && !empty($additionalArgs['retrieveId']) && $field['name'] == 'id' ? $additionalArgs['retrieveId'] : false;
-            if (isset($field['vname']) && (($this->crmDataWrapper->isValidStudioField($field) && !$this->crmDataWrapper->fieldTodo($field)))){ // || $retrieveId)) {
+            if (isset($field['vname']) && PMSEEngineUtils::isValidField($field, 'ET')) {
                 $tmpField = array();
                 $tmpField['id'] = $field['name'];
                 $tmpField['_module'] = $newModuleFilter;
                 $tmpField['name'] = str_replace(':', '', translate($field['vname'], $newModuleFilter));
-                $tmpField['rhs_module'] = $module;
+                $tmpField['rhs_module'] = $filter;
                 $output[] = $tmpField;
             }
         }
