@@ -22,14 +22,6 @@ function showHistory(caseId, caseIndex) {
         _App = parent.SUGAR.App;
     }
 
-    /*proxy = new SugarProxy({
-        //url: SUGAR_URL + '/rest/v10/Log/',
-        url: 'pmse_Inbox/historyLog/' + caseId,
-        restClient: restClient,
-        uid : caseId,
-        callback: null
-    });*/
-
     var pmseHistoryUrl = _App.api.buildURL('pmse_Inbox/historyLog', null, {id:caseId});
 
     logPanel = new HistoryPanel({
@@ -37,29 +29,26 @@ function showHistory(caseId, caseIndex) {
         items: [ ],
         callback :{
             'loaded': function (data) {
-                var logs, beforeArray = [], afterArray = [], fieldArray = [],
-                    i, items, log, newLog, j;
-                //proxy.getData(null, {
-                    //success: function(logs) {
+                var i, newLog;
+
                 _App.api.call('read', pmseHistoryUrl, {}, {
                     success: function (logs) {
                         if (logs) {
                             for (i = 0; i < logs.result.length; i += 1) {
-                                beforeArray = [];
-                                afterArray = [];
-                                fieldArray = [];
-                                items = [];
                                 var log = logs.result[i];
 
                                 var end_date=log.end_date;
-                                var current_date=log.current_date;
                                 var delegate_date=log.delegate_date;
-                                var start_date=log.start_date;
 
-                                if (end_date) {
-                                    label = log.data_info + '. <strong> ( ' + App.date(end_date).fromNow() + ' )</strong> ';
+                                label = log.data_info;
+                                if (log.completed) {
+                                    if (end_date) {
+                                        duration = '<strong>( ' + App.date(end_date).fromNow() + ' )</strong>';
+                                    } else {
+                                        duration = '<strong>( ' + App.date(delegate_date).fromNow() + ' )</strong>';
+                                    }
                                 } else {
-                                    label = log.data_info + '. <strong>' + translate('LBL_PMSE_HISTORY_LOG_NO_YET_STARTED', 'pmse_Inbox') + '</strong> ';
+                                    duration = '<strong>' + translate('LBL_PMSE_HISTORY_LOG_NO_YET_STARTED', 'pmse_Inbox') + '</strong>';
                                 }
 
                                 var pictureUrl = _App.api.buildFileURL({
@@ -72,37 +61,13 @@ function showHistory(caseId, caseIndex) {
                                     name: 'log' + i,
                                     label: label,
                                     user: log.user,
+                                    startDate: App.date(delegate_date).formatUser(),
                                     picture : (log.script) ? log.image : pictureUrl,
-                                    duration: '<strong> ' + (end_date ? (end_date === delegate_date ? 0 : App.date(end_date).from(delegate_date, true)) : "...") + ' <strong>',
-                                    startDate: (start_date) ? log.start_date :  translate('LBL_PMSE_HISTORY_LOG_NO_YET_STARTED', 'pmse_Inbox'),
-                                    //startDate: (Date.parse(log.start_date)) ? Date.parse(log.start_date).toString('MMMM d, yyyy HH:mm') :  translate('LBL_PMSE_MESSAGE_NOYETSTARTED'),
-                                    //startDate: translate('LBL_PMSE_MESSAGE_NOYETSTARTED'),
+                                    duration: duration,
                                     completed: log.completed,
                                     script: (log.script) ? log.script : false
                                 };
-                                //parse all log var_values collected
-                                if (log.var_values && log.var_values !== '') {
-                                    $.each(log.var_values.before_data, function(a, obj) {
-                                        fieldArray.push(a);
-                                        beforeArray.push(obj);
 
-                                    });
-                                    $.each(log.var_values.after_data, function(a, obj) {
-                                        afterArray.push(obj);
-                                    });
-                                }
-
-                                for (j = 0; j < afterArray.length; j += 1) {
-                                    items.push({
-                                        field: fieldArray[j],
-                                        before: beforeArray[j],
-                                        after: afterArray[j]
-                                    });
-
-                                }
-                                if (items) {
-                                    $.extend(true, newLog, {items: items});
-                                }
                                 logPanel.addLog(newLog);
                             }
                         }
@@ -128,4 +93,3 @@ function showHistory(caseId, caseIndex) {
     w2.html.style.display = 'none';
     _App.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
 }
-//@ sourceURL=historyEntries.js

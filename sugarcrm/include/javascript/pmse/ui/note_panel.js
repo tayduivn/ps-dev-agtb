@@ -348,9 +348,8 @@ NotePanel.prototype.attachListeners = function () {
                         label: root.items[0].value,
                         user: self.app.user.attributes.full_name,
                         picture : pictureUrl,
-                        duration : '5 Second',
-                        //startDate: Date.parse(result.date_entered).toString('MMMM d, yyyy HH:mm'),
-                        startDate: result.date_entered,
+                        duration : '<strong> ' +  App.date(result.date_entered).fromNow() + ' </strong>',
+                        startDate: App.date(result.date_entered).formatUser(),
                         deleteBtn : true,
                         logId  : result.id
                     };
