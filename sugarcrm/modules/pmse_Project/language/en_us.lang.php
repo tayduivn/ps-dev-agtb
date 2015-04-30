@@ -168,8 +168,8 @@ $mod_strings = array (
     'LBL_PMSE_FORM_OPTION_ROUND_ROBIN' => 'Round Robin',
     'LBL_PMSE_FORM_OPTION_SELF_SERVICE' => 'Self Service',
     'LBL_PMSE_FORM_OPTION_STATIC_ASSIGNMENT' => 'Static Assignment',
-    'LBL_PMSE_FORM_LABEL_ASSIGN_TO_TEAM' => 'Assign to Team',
-    'LBL_PMSE_FORM_LABEL_ASSIGN_TO_USER' => 'Assign to User',
+    'LBL_PA_FORM_LABEL_ASSIGN_TO_TEAM' => 'Select Process User from Team',
+    'LBL_PA_FORM_LABEL_ASSIGN_TO_USER' => 'Set Process User',
     'LBL_PMSE_FORM_OPTION_CURRENT_USER' => 'Current user',
     'LBL_PMSE_FORM_OPTION_RECORD_OWNER' => 'Record owner',
     'LBL_PMSE_FORM_OPTION_SUPERVISOR' => 'Supervisor',
@@ -179,7 +179,7 @@ $mod_strings = array (
     'LBL_PMSE_LABEL_RULE' => 'Rule',
 
     'LBL_PMSE_FORM_TITLE_ASSIGN_USER' => 'Assign User',
-    'LBL_PMSE_FORM_LABEL_UPDATE_RECORD_OWNER' => 'Change Assigned To User',
+    'LBL_PA_FORM_LABEL_UPDATE_RECORD_OWNER' => 'Update "Assigned To" on record',
 
     'LBL_PMSE_FORM_TITLE_ADD_RELATED_RECORD' => 'Add Related Record',
     'LBL_PMSE_FORM_LABEL_RELATED_MODULE' => 'Related Module',
