@@ -94,6 +94,7 @@
 
         // Listens to new set of results and updates the different sections.
         this.layout.on('sweetspot:results', function(results) {
+//            this.layout.trigger('sweetspot:results:changed', results);
             // We want to highlight the same item that was highlighted before,
             // so first we get the result that was highlighted.
             var oldHighlighted = this.results[this.activeIndex];
@@ -135,6 +136,7 @@
             this.activeIndex = newActiveIndex || 0;
             if (this.results.length) {
                 this._highlightActive();
+                this.layout.trigger('sweetspot:calc:resultsHeight');
             }
         }, this);
 
@@ -149,6 +151,14 @@
         this.layout.on('hide', function() {
             $(window).off('keydown.' + this.cid);
         }, this);
+
+        this.layout.on('sweetspot:results:adjustMaxHeight', this.adjustMaxHeight, this);
+    },
+
+    adjustMaxHeight: function(maxHeight) {
+        if (this.results.length) {
+            this.$el.css('maxHeight', maxHeight);
+        }
     },
 
     /**

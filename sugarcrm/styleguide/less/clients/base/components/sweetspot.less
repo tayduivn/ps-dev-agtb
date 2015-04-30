@@ -13,6 +13,7 @@
 }
 
 #sweetspot {
+  max-height: 520px;
   .noselect();
   display: none;
   position: fixed;
@@ -185,7 +186,6 @@
     width: 100%;
     padding: 0;
     margin: 0;
-    max-height: 460px;
     overflow-y: auto;
 
     list-style-type: none;
@@ -320,12 +320,12 @@
   }
 }
 @media (max-height: 665px) {
-  #sweetspot {
+  #sweetspot.has-results {
     bottom: 80px;
+    min-height: 142px;
     .sweetspot-results {
       position: absolute;
       top: 60px;
-      max-height: 435px;
     }
   }
 }

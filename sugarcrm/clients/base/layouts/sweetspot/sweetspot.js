@@ -29,6 +29,20 @@
         app.events.on('app:sync:complete sweetspot:reset', this._setTheme, this);
 
         this.on('sweetspot:config', this.openConfigPanel, this);
+        this.on('sweetspot:calc:resultsHeight', this.calculateResultsHeight, this);
+//        this.on('sweetspot:results:changed', function(results) {
+        this.before('sweetspot:results', function(results) {
+            var hasResults = true;
+            if (_.isEmpty(results) ||
+                (!results.actions.length && !results.keywords.length && !results.records.length)
+            ) {
+                hasResults = false;
+            }
+            this.$el.toggleClass('has-results', hasResults);
+            return true;
+        });
+
+        this.bindResize();
 
         /**
          * Flag to indicate the visible state of the sweet spot.
@@ -179,6 +193,7 @@
         this._isVisible = false;
         this._unbindEvents();
         this.$el.fadeToggle(50, 'linear');
+        this.$el.removeClass('has-results');
         this.trigger('hide');
 },
     /**
@@ -244,6 +259,35 @@
         openConfig: function() {
             this.openConfigPanel();
         }
+    },
+
+    /**
+     *
+     * @param section
+     * @param results
+     * @param options
+     */
+    bindResize: function() {
+        $(window).on('resize.sweetspot-' + this.cid, _.bind(this.calculateResultsHeight, this));
+    },
+
+    /**
+     *
+     */
+    calculateResultsHeight: function() {
+        var searchbar = this.getComponent('sweetspot-searchbar');
+        var results = this.getComponent('sweetspot-results');
+
+        results.$el.css('maxHeight', 'none');
+
+        var resultsMaxHeight = this.$el.height() - searchbar.$el.height();
+
+        this.trigger('sweetspot:results:adjustMaxHeight', resultsMaxHeight);
+    },
+
+    unbind: function() {
+        $(window).off('resize.sweetspot-' + this.cid);
+        this._super('unbind');
     },
 
     /**
