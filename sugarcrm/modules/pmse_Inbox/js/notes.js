@@ -56,7 +56,7 @@ showNotes = function (caseId, caseIndex, noEdit) {
                                 label: log.not_content,
                                 user:  log.last_name,
                                 picture : pictureUrl,
-                                duration: '<strong> ' + timeElapsedString(currentDate, dateEntered, false) + ' </strong>',
+                                duration: '<strong> ' +  App.date(log.date_entered).from(notes.currentDate) + ' </strong>',
                                 //startDate: Date.parse(log.date_entered).toString('MMMM d, yyyy HH:mm'),
                                 startDate: log.date_entered,
                                 logId: log.id
@@ -206,3 +206,4 @@ deleteRow =  function (id) {
         console.log(e);
     }
 };
+//@ sourceURL=note.js

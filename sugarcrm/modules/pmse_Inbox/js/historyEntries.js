@@ -51,27 +51,13 @@ function showHistory(caseId, caseIndex) {
                                 items = [];
                                 var log = logs.result[i];
 
-                                var end_date=Date.parse(log.end_date);
-                                var current_date=Date.parse(log.current_date);
-                                var delegate_date=Date.parse(log.delegate_date);
-                                var start_date=Date.parse(log.start_date);
-
-                                //IE, Firefox date fix
-                                if (isNaN(end_date)){
-                                    end_date= Date.parse(log.end_date.replace(/\s/g, "T"));
-                                }
-                                if (isNaN(current_date)){
-                                    current_date= Date.parse(log.current_date.replace(/\s/g, "T"));
-                                }
-                                if (isNaN(delegate_date)){
-                                    delegate_date= Date.parse(log.delegate_date.replace(/\s/g, "T"));
-                                }
-                                if (isNaN(start_date)){
-                                    start_date= Date.parse(log.start_date.replace(/\s/g, "T"));
-                                }
+                                var end_date=log.end_date;
+                                var current_date=log.current_date;
+                                var delegate_date=log.delegate_date;
+                                var start_date=log.start_date;
 
                                 if (end_date) {
-                                    label = log.data_info + '. <strong> ( ' + timeElapsedString(current_date, end_date, true) + ' )</strong> ';
+                                    label = log.data_info + '. <strong> ( ' + App.date(end_date).fromNow() + ' )</strong> ';
                                 } else {
                                     label = log.data_info + '. <strong>' + translate('LBL_PMSE_HISTORY_LOG_NO_YET_STARTED', 'pmse_Inbox') + '</strong> ';
                                 }
@@ -87,7 +73,7 @@ function showHistory(caseId, caseIndex) {
                                     label: label,
                                     user: log.user,
                                     picture : (log.script) ? log.image : pictureUrl,
-                                    duration: '<strong> ' + timeElapsedString(end_date, delegate_date) + ' <strong>',
+                                    duration: '<strong> ' + (end_date ? (end_date === delegate_date ? 0 : App.date(end_date).from(delegate_date, true)) : "...") + ' <strong>',
                                     startDate: (start_date) ? log.start_date :  translate('LBL_PMSE_HISTORY_LOG_NO_YET_STARTED', 'pmse_Inbox'),
                                     //startDate: (Date.parse(log.start_date)) ? Date.parse(log.start_date).toString('MMMM d, yyyy HH:mm') :  translate('LBL_PMSE_MESSAGE_NOYETSTARTED'),
                                     //startDate: translate('LBL_PMSE_MESSAGE_NOYETSTARTED'),
@@ -142,3 +128,4 @@ function showHistory(caseId, caseIndex) {
     w2.html.style.display = 'none';
     _App.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
 }
+//@ sourceURL=historyEntries.js
