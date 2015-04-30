@@ -157,7 +157,7 @@ LogField.prototype.createHTML = function () {
     this.html.appendChild(detailDiv);
     if (this.duration) {
         durationDiv = this.createHTMLElement('div');
-        durationDiv.style.width = '10%';
+        durationDiv.style.width = '15%';
         durationDiv.style.paddingLeft = '15px';
         durationDiv.style.display = 'table-cell';
         //durationDiv.style.height = '100%';
