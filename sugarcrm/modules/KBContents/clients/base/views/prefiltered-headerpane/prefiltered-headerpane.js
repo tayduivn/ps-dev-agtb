@@ -15,7 +15,7 @@
  */
 
 ({
-    extendsFrom: 'SelectionHeaderpane',
+    extendsFrom: 'SelectionHeaderpaneView',
 
     /**
      * {@inheritDoc}
@@ -25,13 +25,11 @@
         this.meta.fields = _.map(this.meta.fields, function(field) {
             if (field.name === 'title') {
                 field['formatted_value'] = this.context.get('headerPaneTitle')
-                    || this._formatTitle(field['default_value']);
+                    || this._formatTitle(field['default_value'])
+                    || app.lang.get(field['value'], this.module);
+                this.title = field['formatted_value'];
             }
             return field;
         }, this);
-        this.layout.once('selection:closedrawer:fire', _.bind(function() {
-            this.$el.off();
-            app.drawer.close();
-        }, this));
     }
 })
