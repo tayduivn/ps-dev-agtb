@@ -387,17 +387,17 @@ EmailPickerField.prototype._createPanel = function () {
 									width: '60%',
 									options: [
 										{
-											label: 'created the record',
+											label: translate('LBL_PMSE_EMAILPICKER_USER_RECORD_CREATOR'),
 											value: 'record_creator',
 											i18n: 'CREATED'
 										},
 										{
-											label: 'last modified the record',
+											label: translate('LBL_PMSE_EMAILPICKER_USER_LAST_MODIFIER'),
 											value: 'last_modifier',
 											i18n: 'LAST_MODIFIED'
 										},
 										{
-											label: 'is assigned to the record',
+											label: translate('LBL_PMSE_EMAILPICKER_USER_IS_ASIGNEE'),
 											value: 'is_assignee',
 											i18n: 'IS_ASSIGNED'
 										}
