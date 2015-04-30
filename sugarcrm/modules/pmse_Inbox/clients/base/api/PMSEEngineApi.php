@@ -229,18 +229,51 @@ class PMSEEngineApi extends SugarApi
 
     public function getNotes($api, $args)
     {
-        $notesBean = BeanFactory::newBean('pmse_BpmNotes'); // new BpmNotes();
-
-        $where = 'cas_id = ' . $args['cas_id'] . ' AND pmse_bpm_notes.deleted = 0';
-
-        $joinTables = array(
-            array('INNER', 'users', 'pmse_bpm_notes.not_user_id = users.id')
+        $notesBean = BeanFactory::getBean('pmse_BpmNotes');
+        $queryOptions = array('add_deleted' => true);
+        $fields = array(
+            'id',
+            'date_entered',
+            'date_modified',
+            'cas_id',
+            'cas_index',
+            'not_user_id',
+            'not_user_recipient_id',
+            'not_type',
+            'not_date',
+            'not_status',
+            'not_availability',
+            'not_content',
+            'not_recipients',
         );
 
-        $selects = array('pmse_bpm_notes.*', 'users.first_name', 'users.last_name', 'users.picture');
+        $q = new SugarQuery();
+        $q->from($notesBean, $queryOptions);
+        $q->distinct(false);
+        $q->where()
+            ->equals('cas_id', $args['cas_id']);
+        $q->orderBy('date_entered', 'ASC');
 
-        $records = $this->wrapper->getSelectRows($notesBean, 'date_entered ASC', $where, 0, -1, -1, $selects,
-            $joinTables);
+        $q->joinTable('users', array('alias' => 'users', 'joinType' => 'INNER', 'linkingTable' => true))
+            ->on()
+            ->equalsField('users.id', 'not_user_id')
+            ->equals('users.deleted', 0);
+        $fields[] = array("users.first_name", 'first_name');
+        $fields[] = array("users.last_name", 'last_name');
+        $fields[] = array("users.picture", 'picture');
+
+        $q->select($fields);
+
+        $rows = $q->execute();
+
+        foreach($rows as $key => $value) {
+            $rows[$key]['date_entered'] = PMSEEngineUtils::getDateToFE($value['date_entered'], 'datetime');
+            $rows[$key]['date_modified'] = PMSEEngineUtils::getDateToFE($value['date_modified'], 'datetime');
+        }
+
+        $records['rowList'] = $rows;
+        $records['totalRows'] = count($rows);
+        $records['currentOffset'] = 0;
         $records['currentDate'] = TimeDate::getInstance()->nowDb();
         return $records;
     }
@@ -262,8 +295,7 @@ class PMSEEngineApi extends SugarApi
         $notes->not_content = $data['not_content'];
         $notes->not_recipients = '';
         $notes->save();
-        return array('success' => true, 'id' => $notes->id, 'date_entered' => $notes->date_entered);
-    }
+        return array('success' => true, 'id' => $notes->id, 'date_entered' => PMSEEngineUtils::getDateToFE($notes->date_entered,'datetime'));    }
 
     public function deleteNotes($api, $args)
     {
