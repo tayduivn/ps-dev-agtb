@@ -911,16 +911,16 @@ public function convert($string, $type, array $additional_parameters = array())
 		$alter = $this->alterTableSQL($tablename, $this->alterTableColumnSQL('ALTER', $req['name']));
 
         $cols = $this->get_columns($tablename);
+        if (isset($cols[$def['name']])) {
+            $oldType = $cols[$def['name']]['type'];
+            $newType = $def['type'];
 
-        $oldType = $cols[$def['name']]['type'];
-        $newType = $def['type'];
+            $alterMethod = 'alter' . ucfirst($oldType) . 'To' . ucfirst($newType);
 
-        $alterMethod = 'alter' . ucfirst($oldType) . 'To' . ucfirst($newType);
-
-        if (method_exists($this, $alterMethod)) {
-            return $this->$alterMethod($tablename, $cols[$def['name']], $def, $ignoreRequired);
+            if (method_exists($this, $alterMethod)) {
+                return $this->$alterMethod($tablename, $cols[$def['name']], $def, $ignoreRequired);
+            }
         }
-
 		switch($req['required']) {
 			case 'NULL':        $sql[]= "$alter DROP NOT NULL";   break;
 			case 'NOT NULL':    $sql[]= "$alter SET NOT NULL";    break;
