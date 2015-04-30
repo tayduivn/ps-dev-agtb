@@ -54,6 +54,14 @@ class MetaDataHelper
      */
     protected $crossModuleAggDefs = array();
 
+
+    /**
+     * Force an in memory cache of enabled module to be used when
+     * both SugarCache and MetadataCache are disabled
+     * @var array
+     */
+    protected $enabledModules = array();
+
     /**
      * @param \MetaDataManager $mdm
      */
@@ -109,13 +117,17 @@ class MetaDataHelper
         }
 
         $list = array();
-        $modules = $this->mdm->getModuleList();
-        foreach ($modules as $module) {
-            $vardefs = $this->getModuleVardefs($module);
-            if (!empty($vardefs['full_text_search'])) {
-                $list[] = $module;
+        if ($this->mdm->cacheEnabled() || empty($this->enabledModules)) {
+            $modules = $this->mdm->getModuleList();
+            foreach ($modules as $module) {
+                $vardefs = $this->getModuleVardefs($module);
+                if (!empty($vardefs['full_text_search'])) {
+                    $list[] = $module;
+                }
             }
         }
+        $this->enabledModules = $list;
+
         return $this->setCache($cacheKey, $list);
     }
 
