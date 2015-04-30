@@ -1,6 +1,6 @@
 describe('Plugins.KBContents', function() {
     var moduleName = 'KBContents',
-        app, view, viewMeta, sandbox, context;
+        app, view, viewMeta, sandbox, context, copiedUser;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -42,6 +42,7 @@ describe('Plugins.KBContents', function() {
         SugarTest.loadComponent('base', 'view', 'create', moduleName);
         layout = SugarTest.createLayout('base', moduleName, 'list', null, context.parent);
         view = SugarTest.createView('base', moduleName, 'create', viewMeta, null, moduleName, layout);
+        copiedUser = app.user.toJSON();
     });
 
     afterEach(function() {
@@ -57,6 +58,7 @@ describe('Plugins.KBContents', function() {
         delete app.plugins.plugins['view']['KBContent'];
         view = null;
         layout = null;
+        app.user.set(copiedUser);
     });
 
     it('Validations should be in inline edit.', function() {
@@ -183,6 +185,36 @@ describe('Plugins.KBContents', function() {
         view.createRevision(fakeModel);
         expect(createRevStub).toHaveBeenCalled();
         expect(createRevStub.args[0][0].get('status')).toEqual('draft');
+    });
+
+    it('Created localizations and revisions should change authorship to a current user.', function() {
+        sandbox.stub(app.data, 'createBean', function() {
+            var prefillModel = new Backbone.Model();
+            prefillModel.copy = function() {};
+            return prefillModel;
+        });
+        var fakeModel = new Backbone.Model({
+            module: moduleName,
+            name: 'fakeName'
+        });
+        sandbox.stub(fakeModel, 'fetch', function(options) {
+            options.success();
+        });
+        var createLocStub = sandbox.stub(view, '_onCreateLocalization');
+        var createRevStub = sandbox.stub(view, '_onCreateRevision');
+
+        // Change current system's user.
+        app.user.set({id: 'user2Id', full_name: 'user2Name'});
+
+        view.createLocalization(fakeModel);
+        expect(createLocStub).toHaveBeenCalled();
+        expect(createLocStub.args[0][0].get('assigned_user_id')).toEqual('user2Id');
+        expect(createLocStub.args[0][0].get('assigned_user_name')).toEqual('user2Name');
+
+        view.createRevision(fakeModel);
+        expect(createRevStub).toHaveBeenCalled();
+        expect(createRevStub.args[0][0].get('assigned_user_id')).toEqual('user2Id');
+        expect(createRevStub.args[0][0].get('assigned_user_name')).toEqual('user2Name');
     });
 
     it('Check possibility to create a localization.', function() {
