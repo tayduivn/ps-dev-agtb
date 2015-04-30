@@ -13,7 +13,7 @@
  */
 
 /**
- * Converts KBOLDDocuments to KBContents.
+ * Converts old KB module.
  */
 class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
 {
@@ -96,6 +96,18 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
         }
         $this->convertTags();
         $this->checkMenu();
+
+        $tables = array(
+            'prepKBDoc',
+            'prepKBAtt',
+            'prepKBTag',
+        );
+
+        foreach ($tables as $table) {
+            if ($this->db->tableExists($table)) {
+                $this->db->dropTableName($table);
+            }
+        }
     }
 
     /**
@@ -135,44 +147,7 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
     {
         static $count = 0;
         $data = array();
-        $query = "SELECT
-            jt0.id assigned_user_id ,
-            jt0.user_name assigned_user_name ,
-            jt1.id kbdoc_approver_id ,
-            jt1.user_name kbdoc_approver_name ,
-            cont.kbolddocument_body body ,
-            kvr.views_number views_number ,
-            kbdocuments.id ,
-            kbdocuments.kbolddocument_name name,
-            kbdocuments.active_date ,
-            kbdocuments.exp_date ,
-            kbdocuments.status_id ,
-            kbdocuments.date_entered date_entered ,
-            kbdocuments.date_modified ,
-            kbdocuments.deleted ,
-            kbdocuments.is_external_article ,
-            kbdocuments.modified_user_id ,
-            kbdocuments.created_by,
-            kbdocuments.team_id ,
-            kbdocuments.team_set_id ,
-            kbdocuments.case_id kbscase_id
-        FROM
-            kbolddocuments kbdocuments
-            LEFT JOIN kbolddocuments_views_ratings kvr
-                ON kbdocuments.id = kvr.kbolddocument_id
-            LEFT JOIN users jt0
-                ON jt0.id = kbdocuments.assigned_user_id
-                AND jt0.deleted = 0
-            LEFT JOIN users jt1
-                ON jt1.id = kbdocuments.kbdoc_approver_id
-                AND jt1.deleted = 0
-            LEFT JOIN kbolddocument_revisions rev
-                ON rev.kbolddocument_id = kbdocuments.id
-                AND rev.latest = 1
-                AND rev.deleted = 0
-            LEFT JOIN kboldcontents cont on rev.kboldcontent_id = cont.id
-        ORDER BY
-            kbdocuments.date_entered";
+        $query = "SELECT * from prepKBDoc ORDER BY date_entered";
         $query = $this->db->limitQuery($query, $count * 100, 100, false, '', false);
         $result = $this->db->query($query);
         while ($row = $this->db->fetchByAssoc($result)) {
@@ -190,21 +165,10 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
     protected function getAttachments($docId)
     {
         $data = array();
-        $query = "SELECT id, filename, file_mime_type
-        FROM
-          document_revisions
-        WHERE
-            id IN (
-                SELECT
-                    document_revision_id
-                FROM
-                    kbolddocument_revisions
-                WHERE
-                    kbolddocument_id = {$this->db->quoted($docId)}
-                    AND deleted = 0
-            )
-            AND file_mime_type IS NOT NULL
-            AND deleted = 0";
+        $query = "SELECT
+            id, filename, file_mime_type
+            FROM prepKBAtt
+            WHERE kbdocument_id = {$this->db->quoted($docId)}";
         $result = $this->db->query($query);
         while ($row = $this->db->fetchByAssoc($result)) {
             $fileLocation = "upload://{$row['id']}";
@@ -231,9 +195,7 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
     protected function getOldTags()
     {
         $data = array();
-        $query = "SELECT tags.*
-        FROM kboldtags tags
-        WHERE tags.deleted = 0";
+        $query = "SELECT * FROM prepKBTag";
         $result = $this->db->query($query);
         while ($row = $this->db->fetchByAssoc($result)) {
             array_push($data, $row);
@@ -248,10 +210,7 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
      */
     protected function getOldTag($id)
     {
-        $query = "SELECT tags.*
-          FROM kboldtags tags
-          WHERE tags.id = {$this->db->quoted($id)}
-            AND tags.deleted = 0";
+        $query = "SELECT * FROM prepKBTag WHERE id = {$this->db->quoted($id)}";
         return $this->db->fetchOne($query);
     }
 
