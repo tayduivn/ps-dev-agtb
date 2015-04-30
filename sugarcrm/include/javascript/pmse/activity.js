@@ -1906,7 +1906,7 @@ AdamActivity.prototype.createAssignUsersAction = function () {
 
     combo_users = new ComboboxField({
         jtype: 'combobox',
-        label: translate('LBL_PA_FORM_LABEL_ASSIGN_TO_USER'),
+        label: translate('LBL_PMSE_FORM_LABEL_ASSIGN_TO_USER'),
         name: 'combo_users',
         submit: false,
         change: hiddenUpdateFn,
