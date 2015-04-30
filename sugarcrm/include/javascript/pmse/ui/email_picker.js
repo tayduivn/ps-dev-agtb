@@ -431,7 +431,7 @@ EmailPickerField.prototype._createPanel = function () {
 											.load();
 									},
 									optionsFilter: function (item) {
-										return item.type === "email";
+										return item.type === "email" || item.type === "TextField";
 									}
 								}
 							]
