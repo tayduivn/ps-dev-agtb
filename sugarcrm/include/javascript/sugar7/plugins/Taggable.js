@@ -470,18 +470,23 @@
 
                     // Append search results to the dropdown list
                     collection.each(function(model, index) {
-                        var htmlName = model.get('name').replace(new RegExp('(' + searchTerm + ')', 'ig'), function($1, match) {
-                                return '<strong>' + match + '</strong>';
-                            }),
-                            data = {
-                                module: model.get('_module'),
-                                id: model.get('id'),
-                                name: model.get('name'),
-                                htmlName: htmlName,
-                                noAccess: (model.get('has_access') === false) //only if false, undefined does not mean no access
-                            },
-                            $tagListOption = $(tagListOptionTemplate(data)).data(data);
+                        var $tagListOption, data, name, htmlName;
 
+                        name = app.utils.getRecordName(model);
+                        htmlName = name.replace(new RegExp('(' + searchTerm + ')', 'ig'), function($1, match) {
+                            return '<strong>' + match + '</strong>';
+                        });
+
+                        data = {
+                            module: model.get('_module'),
+                            id: model.get('id'),
+                            name: name,
+                            htmlName: htmlName,
+                            // only if false, undefined does not mean no access
+                            noAccess: (model.get('has_access') === false)
+                        };
+
+                        $tagListOption = $(tagListOptionTemplate(data)).data(data);
                         $tagList.append($tagListOption);
                     }, this);
 
