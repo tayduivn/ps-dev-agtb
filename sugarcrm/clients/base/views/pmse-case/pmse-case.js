@@ -109,7 +109,7 @@
         var value = this;
         app.alert.show( 'confirm_approve', {
             level: 'confirmation',
-            messages: app.lang.get('LBL_PA_PROCESS_APPROVAL_QUESTION', 'pmse_Inbox'),
+            messages: app.lang.get('LBL_PA_PROCESS_APPROVE_QUESTION', 'pmse_Inbox'),
             onConfirm: function() {
                 value.model.doValidate(value.getFields(value.module), _.bind(value.validationCompleteApprove, value));
             },
