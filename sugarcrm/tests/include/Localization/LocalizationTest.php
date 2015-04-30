@@ -345,6 +345,12 @@ class LocalizationTest extends Sugar_PHPUnit_Framework_TestCase
         $contact2->first_name = 'Aaron';
         $contact2->last_name = 'Brown';
 
+        $contact3 = new Contact();
+        $contact3->first_name = 'David';
+
+        $contact4 = new Contact();
+        $contact4->last_name = 'Livingstone';
+
         return array(
             'invalid-bean-type' => array(null, null, null, false),
             'invalid-module'    => array(null, 'Apples', null, false),
@@ -365,6 +371,8 @@ class LocalizationTest extends Sugar_PHPUnit_Framework_TestCase
             'custom-field'       => array('l, f (p)', $user1, null, 'Doe, John (Engineer)'),
             'enum-is-localized'  => array(null, $contact1, null, 'Frau Barbara Schulz'),
             'enum-not-found'     => array(null, $contact2, null, 'Sir Aaron Brown'),
+            'trim-left'          => array('l, f', $contact3, null, 'David'),
+            'trim-right'         => array('l, f', $contact4, null, 'Livingstone'),
         );
     }
 
