@@ -94,7 +94,6 @@
 
         // Listens to new set of results and updates the different sections.
         this.layout.on('sweetspot:results', function(results) {
-//            this.layout.trigger('sweetspot:results:changed', results);
             // We want to highlight the same item that was highlighted before,
             // so first we get the result that was highlighted.
             var oldHighlighted = this.results[this.activeIndex];
@@ -152,10 +151,15 @@
             $(window).off('keydown.' + this.cid);
         }, this);
 
-        this.layout.on('sweetspot:results:adjustMaxHeight', this.adjustMaxHeight, this);
+        this.layout.on('sweetspot:results:adjustMaxHeight', this.setMaxHeight, this);
     },
 
-    adjustMaxHeight: function(maxHeight) {
+    /**
+     * Sets the max-height of the element.
+     *
+     * @param {number} maxHeight The max-height value.
+     */
+    setMaxHeight: function(maxHeight) {
         if (this.results.length) {
             this.$el.css('maxHeight', maxHeight);
         }

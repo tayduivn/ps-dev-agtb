@@ -30,8 +30,7 @@
 
         this.on('sweetspot:config', this.openConfigPanel, this);
         this.on('sweetspot:calc:resultsHeight', this.calculateResultsHeight, this);
-//        this.on('sweetspot:results:changed', function(results) {
-        this.before('sweetspot:results', function(results) {
+        this.on('sweetspot:has:results', function(results) {
             var hasResults = true;
             if (_.isEmpty(results) ||
                 (!results.actions.length && !results.keywords.length && !results.records.length)
@@ -39,10 +38,9 @@
                 hasResults = false;
             }
             this.$el.toggleClass('has-results', hasResults);
-            return true;
         });
 
-        this.bindResize();
+        $(window).on('resize.sweetspot-' + this.cid, _.bind(this.calculateResultsHeight, this));
 
         /**
          * Flag to indicate the visible state of the sweet spot.
@@ -176,6 +174,7 @@
         this.$('input').val('');
         this.$el.fadeToggle(50, 'linear', _.bind(this.focusInput, this));
         this.trigger('show');
+        this.calculateResultsHeight();
         this._bindEvents();
     },
 
@@ -262,29 +261,21 @@
     },
 
     /**
-     *
-     * @param section
-     * @param results
-     * @param options
-     */
-    bindResize: function() {
-        $(window).on('resize.sweetspot-' + this.cid, _.bind(this.calculateResultsHeight, this));
-    },
-
-    /**
-     *
+     * Calculates the results dropdown height based on the window height and
+     * triggers 'sweetspot:results:adjustMaxHeight' passing the value.
      */
     calculateResultsHeight: function() {
-        var searchbar = this.getComponent('sweetspot-searchbar');
-        var results = this.getComponent('sweetspot-results');
-
-        results.$el.css('maxHeight', 'none');
-
-        var resultsMaxHeight = this.$el.height() - searchbar.$el.height();
-
+        var distanceToFooter = 80;
+        var resultsMaxHeight = $(window).height() - this.$el.offset().top - $('footer').height() - distanceToFooter;
+        if (resultsMaxHeight > 460) {
+            resultsMaxHeight = 460;
+        }
         this.trigger('sweetspot:results:adjustMaxHeight', resultsMaxHeight);
     },
 
+    /**
+     * @inheritDoc
+     */
     unbind: function() {
         $(window).off('resize.sweetspot-' + this.cid);
         this._super('unbind');

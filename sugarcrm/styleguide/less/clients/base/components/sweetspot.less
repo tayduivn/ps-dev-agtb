@@ -29,6 +29,15 @@
   border-radius: 10px;
   border: 6px solid rgba(0,0,0,.5);
 
+  &.has-results {
+    min-height: 142px;
+    ul {
+      background-color: @grayLighter;
+      min-height: 85px;
+      max-height: 460px;
+    }
+  }
+
   &[data-theme=light] {
     border-radius: 2px;
     border: 1px solid #DDDDDD;
@@ -36,6 +45,10 @@
 
     input[type=text] {
       color: #333333;
+      background-color: transparent;
+    }
+
+    ul {
       background-color: transparent;
     }
 
@@ -70,6 +83,10 @@
     input[type=text] {
       color: @sweetspotDarkText;
       background-color: transparent;
+    }
+
+    ul {
+      background-color: #343433;
     }
 
     img {
@@ -317,15 +334,5 @@
     width: 97%;
     left: auto;
     right: auto;
-  }
-}
-@media (max-height: 665px) {
-  #sweetspot.has-results {
-    bottom: 80px;
-    min-height: 142px;
-    .sweetspot-results {
-      position: absolute;
-      top: 60px;
-    }
   }
 }
