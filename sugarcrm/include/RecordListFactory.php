@@ -74,7 +74,10 @@ class RecordListFactory
                     'module_name' => $module,
                     'records' => json_encode($recordList),
                     'date_modified' => $currentTime,
-                )
+                ),
+                null,
+                true,
+                true
             );
         } else {
             $db->updateParams(
@@ -84,7 +87,10 @@ class RecordListFactory
                     'records' => json_encode($recordList),
                     'date_modified' => $currentTime,
                 ),
-                array('id' => $id)
+                array('id' => $id),
+                null,
+                true,
+                true
             );
         }
 
