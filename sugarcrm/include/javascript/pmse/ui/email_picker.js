@@ -400,11 +400,6 @@ EmailPickerField.prototype._createPanel = function () {
 											label: 'is assigned to the record',
 											value: 'is_assignee',
 											i18n: 'IS_ASSIGNED'
-										},
-										{
-											label: 'was assigned to the record',
-											value: 'was_assignee',
-											i18n: 'WAS_ASSIGNED'
 										}
 									]
 								}
@@ -432,7 +427,7 @@ EmailPickerField.prototype._createPanel = function () {
 											.setDataRoot('result')
 											.setLabelField('text')
 											.setValueField('value')
-                                            .setAttributes({base_moule: PROJECT_MODULE, call_type: 'ET'})
+                                            .setAttributes({base_module: PROJECT_MODULE, call_type: 'ET'})
 											.load();
 									},
 									optionsFilter: function (item) {
