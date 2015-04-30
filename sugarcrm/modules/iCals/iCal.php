@@ -23,8 +23,6 @@ class iCal extends vCal {
 
     const UTC_FORMAT = 'Ymd\THi00\Z';
 
-    public $lineEnding = "\r\n";
-
     /**
      * This is a depreciated method, please start using __construct() as this method will be removed in a future version
      *
@@ -42,26 +40,6 @@ class iCal extends vCal {
     public function __construct()
     {
         parent::__construct();
-    }
-
-    /**
-    * Escapes special chars for iCal in the given string.
-    *
-    * @param string $text the original text
-    * @return string the string with new lines properly escaped
-    */
-    protected function escapeText($text)
-    {
-        $replace = array(
-            '"' => '\"',
-            "\\" => "\\\\",
-            "," => "\,",
-            ":" => "\:",
-            ";" => "\;",
-            "\n" => "\\n",
-        );
-        $text = str_replace(array_keys($replace), array_values($replace), $text);
-        return $text;
     }
 
     /**
@@ -116,8 +94,8 @@ class iCal extends vCal {
     protected function createSugarIcalTodo($user_bean, $task, $moduleName, $dtstamp)
     {
         global $sugar_config;
-        $str = "";
-        $str .= "BEGIN:VTODO$this->lineEnding";
+        $ical_array = array();
+        $ical_array[] = array("BEGIN", "VTODO");
         $validDueDate = (isset($task->date_due) && $task->date_due != "" && $task->date_due != "0000-00-00");
         $validDueTime = (isset($task->time_due) && $task->time_due != "");
         $dueYear = 1970;
@@ -146,42 +124,48 @@ class iCal extends vCal {
         $due_date_time = new SugarDateTime();
         $due_date_time->setDate($dueYear, $dueMonth, $dueDay);
         $due_date_time->setTime($dueHour, $dueMin);
-        $str .= "DTSTART;TZID=" . $user_bean->getPreference('timezone') . ":" .
-                    str_replace("Z", "", $this->getUtcDateTime($due_date_time)) . $this->lineEnding;
-        $str .= "DTSTAMP:" . $dtstamp . $this->lineEnding;
-        $str .= "SUMMARY:" . $this->escapeText($task->name) . $this->lineEnding;
-        $str .= "UID:" . $task->id . $this->lineEnding;
+        $ical_array[] = array(
+            "DTSTART;TZID=" . $user_bean->getPreference('timezone'),
+            str_replace("Z", "", $this->getUtcDateTime($due_date_time))
+        );
+        $ical_array[] = array("DTSTAMP", $dtstamp);
+        $ical_array[] = array("SUMMARY", $task->name);
+        $ical_array[] = array("UID", $task->id);
         if ($validDueDate) {
             $iCalDueDate = str_replace("-", "", $task->date_due);
             if (strlen($iCalDueDate) > 8) {
                 $iCalDueDate = substr($iCalDueDate, 0, 8);
             }
-            $str .= "DUE;VALUE=DATE:" . $iCalDueDate . $this->lineEnding;
+            $ical_array[] = array("DUE;VALUE=DATE", $iCalDueDate);
         }
         if ($moduleName == "ProjectTask") {
-            $str .= "DESCRIPTION:Project: " . $task->project_name. "\\n\\n" .
-                $this->escapeText($task->description). $this->lineEnding;
+            $ical_array[] = array(
+                "DESCRIPTION:Project",
+                $task->project_name . vCal::EOL . vCal::EOL . $task->description
+            );
         } else {
-            $str .= "DESCRIPTION:" . $this->escapeText($task->description). $this->lineEnding;
+            $ical_array[] = array("DESCRIPTION", $task->description);
         }
-        $str .= "URL;VALUE=URI:" . $sugar_config['site_url'].
-            "/index.php?module=".$moduleName."&action=DetailView&record=". $task->id. $this->lineEnding;
+        $ical_array[] = array(
+            "URL;VALUE=URI",
+            $sugar_config['site_url']."/index.php?module=".$moduleName."&action=DetailView&record=".$task->id
+        );
         if ($task->status == 'Completed') {
-            $str .= "STATUS:COMPLETED$this->lineEnding";
-            $str .= "PERCENT-COMPLETE:100$this->lineEnding";
-            $str .= "COMPLETED:" . $this->getUtcDateTime($due_date_time) . $this->lineEnding;
+            $ical_array[] = array("STATUS", "COMPLETED");
+            $ical_array[] = array("PERCENT-COMPLETE", "100");
+            $ical_array[] = array("COMPLETED", $this->getUtcDateTime($due_date_time));
         } else if (!empty($task->percent_complete)) {
-            $str .= "PERCENT-COMPLETE:" . $task->percent_complete . $this->lineEnding;
+            $ical_array[] = array("PERCENT-COMPLETE", $task->percent_complete);
         }
         if ($task->priority == "Low") {
-            $str .= "PRIORITY:9$this->lineEnding";
+            $ical_array[] = array("PRIORITY", "9");
         } else if ($task->priority == "Medium") {
-                $str .= "PRIORITY:5$this->lineEnding";
+                $ical_array[] = array("PRIORITY", "5");
         } else if ($task->priority == "High") {
-                $str .= "PRIORITY:1$this->lineEnding";
+                $ical_array[] = array("PRIORITY", "1");
         }
-        $str .= "END:VTODO$this->lineEnding";
-        return $str;
+        $ical_array[] = array("END", "VTODO");
+        return vCal::create_ical_string_from_array($ical_array);
     }
 
     /**
@@ -196,7 +180,7 @@ class iCal extends vCal {
     */
     protected function createSugarIcal(&$user_bean,&$start_date_time,&$end_date_time, $dtstamp)
     {
-        $str = '';
+        $ical_array = array();
         global $DO_USER_TIME_OFFSET, $sugar_config, $current_user, $timedate;
 
         $hide_calls = false;
@@ -226,19 +210,35 @@ class iCal extends vCal {
             $event = $act->sugar_bean;
             if (!$hide_calls || ($hide_calls && $event->object_name != "Call"))
             {
-                $str .= "BEGIN:VEVENT$this->lineEnding";
-                $str .= "SUMMARY:" . $this->escapeText($event->name) . $this->lineEnding;
-                $str .= "DTSTART;TZID=" . $user_bean->getPreference('timezone') . ":" .
-                        str_replace("Z", "", $timedate->tzUser($act->start_time, $current_user)->format(self::UTC_FORMAT)) . $this->lineEnding;
-                $str .= "DTEND;TZID=" . $user_bean->getPreference('timezone') . ":" .
-                        str_replace("Z", "", $timedate->tzUser($act->end_time, $current_user)->format(self::UTC_FORMAT)) . $this->lineEnding;
-                $str .= "DTSTAMP:" . $dtstamp . $this->lineEnding;
-                $str .= "DESCRIPTION:" . $this->escapeText($event->description) . $this->lineEnding;
-                $str .= "URL;VALUE=URI:" . $sugar_config['site_url'].
-                    "/index.php?module=".$event->module_dir."&action=DetailView&record=". $event->id. $this->lineEnding;
-                $str .= "UID:" . $event->id . $this->lineEnding;
-                if ($event->object_name == "Meeting") {
-                    $str .= "LOCATION:" . $this->escapeText($event->location) . $this->lineEnding;
+                $ical_array[] = array("BEGIN", "VEVENT");
+                $ical_array[] = array("SUMMARY", $event->name);
+                $ical_array[] = array(
+                    "DTSTART;TZID=" . $user_bean->getPreference('timezone'),
+                    str_replace(
+                        "Z",
+                        "",
+                        $timedate->tzUser($act->start_time, $current_user)->format(self::UTC_FORMAT)
+                    )
+                );
+                $ical_array[] = array(
+                    "DTEND;TZID=" . $user_bean->getPreference('timezone'),
+                    str_replace(
+                        "Z",
+                        "",
+                        $timedate->tzUser($act->end_time, $current_user)->format(self::UTC_FORMAT)
+                    )
+                );
+                $ical_array[] = array("DTSTAMP", $dtstamp);
+                $ical_array[] = array("DESCRIPTION", $event->description);
+                $ical_array[] = array(
+                    "URL;VALUE=URI",
+                    $sugar_config['site_url']."/index.php?module=".
+                    $event->module_dir."&action=DetailView&record=". $event->id
+                );
+                $ical_array[] = array("UID", $event->id);
+                if ($event->object_name == "Meeting")
+                {
+                    $ical_array[] = array("LOCATION", $event->location);
                     $eventUsers = $event->get_meeting_users();
                     $query = "SELECT contact_id as id from meetings_contacts where meeting_id='$event->id' AND deleted=0";
                     $eventContacts = $event->build_related_list($query, BeanFactory::getBean('Contacts'));
@@ -264,7 +264,10 @@ class iCal extends vCal {
                                             break;
                                     }
                                 }
-                                $str .= 'ATTENDEE'.$participant_status.';CN="'.$attendee->get_summary_text().'":mailto:'. $attendee->email1 . $this->lineEnding;
+                                $ical_array[] = array(
+                                    'ATTENDEE'.$participant_status.';CN="'.$attendee->get_summary_text().'"',
+                                    'mailto:'.(!empty($attendee->email1) ? $attendee->email1:'none@none.tld')
+                                );
                             }
                         }
                     }
@@ -295,23 +298,28 @@ class iCal extends vCal {
                                             break;
                                     }
                                 }
-                                $str .= 'ATTENDEE'.$participant_status.';CN="'.$attendee->get_summary_text().'":mailto:'. $attendee->email1 . $this->lineEnding;
+                                $ical_array[] = array(
+                                    'ATTENDEE'.$participant_status.';CN="'.$attendee->get_summary_text().'"',
+                                    'mailto:'.(!empty($attendee->email1) ? $attendee->email1:'none@none.tld')
+                                );
                             }
                         }
                     }
                 }
                 if (isset($event->reminder_time) && $event->reminder_time > 0 && $event->status != "Held")
                 {
-                    $str .= "BEGIN:VALARM$this->lineEnding";
-                    $str .= "TRIGGER:-PT" . $event->reminder_time/60 . "M$this->lineEnding";
-                    $str .= "ACTION:DISPLAY$this->lineEnding";
-                    $str .= "DESCRIPTION:" . $event->name . "$this->lineEnding";
-                    $str .= "END:VALARM$this->lineEnding";
+                    $ical_array[] = array("BEGIN", "VALARM");
+                    $ical_array[] = array("TRIGGER", "-PT");
+                    $ical_array[] = array("ACTION", "DISPLAY");
+                    $ical_array[] = array("DESCRIPTION", $event->name);
+                    $ical_array[] = array("END", "VALARM");
                 }
-                $str .= "END:VEVENT$this->lineEnding";
+                $ical_array[] = array("END", "VEVENT");
             }
 
         }
+
+        $str = vCal::create_ical_string_from_array($ical_array);
 
         require_once('include/TimeDate.php');
         $timedate = new TimeDate();
@@ -441,20 +449,21 @@ class iCal extends vCal {
         $dstOffset = 0;
         $gmtOffset = 0;
 
-        $timezoneString = "BEGIN:VTIMEZONE$this->lineEnding";
-        $timezoneString .= "TZID:" . $timezoneName . $this->lineEnding;
-        $timezoneString .= "X-LIC-LOCATION:" . $timezoneName . $this->lineEnding;
+        $ical_array = array();
+        $ical_array[] = array("BEGIN", "VTIMEZONE");
+        $ical_array[] = array("TZID", $timezoneName);
+        $ical_array[] = array("X-LIC-LOCATION", $timezoneName);
 
         if (array_key_exists('start', $dstRange))
         {
             $dstOffset = ($dstRange['start']['offset'] / 60);
             $startDate = new DateTime("@" . $dstRange["start"]["ts"], $gmtTZ);
             $startstamp = strtotime($timedate->asDb($startDate));
-            $timezoneString .= "BEGIN:DAYLIGHT$this->lineEnding";
-            $timezoneString .= "TZOFFSETFROM:" . $this->convertMinsToHoursAndMins($gmtOffset) . $this->lineEnding;
-            $timezoneString .= "TZOFFSETTO:" . $this->convertMinsToHoursAndMins($dstOffset) . $this->lineEnding;
-            $timezoneString .= "DTSTART:" . str_replace("Z", "", $this->getUtcTime($startstamp)) . $this->lineEnding;
-            $timezoneString .= "END:DAYLIGHT$this->lineEnding";
+            $ical_array[] = array("BEGIN", "DAYLIGHT");
+            $ical_array[] = array("TZOFFSETFROM", $this->convertMinsToHoursAndMins($gmtOffset));
+            $ical_array[] = array("TZOFFSETTO", $this->convertMinsToHoursAndMins($dstOffset));
+            $ical_array[] = array("DTSTART", str_replace("Z", "", $this->getUtcTime($startstamp)));
+            $ical_array[] = array("END", "DAYLIGHT");
         }
 
         if (array_key_exists('end', $dstRange))
@@ -462,16 +471,16 @@ class iCal extends vCal {
             $gmtOffset = ($dstRange['end']['offset'] / 60);
             $endDate = new DateTime("@" . $dstRange["end"]["ts"], $gmtTZ);
             $endstamp = strtotime($timedate->asDb($endDate));
-            $timezoneString .= "BEGIN:STANDARD$this->lineEnding";
-            $timezoneString .= "TZOFFSETFROM:" . $this->convertMinsToHoursAndMins($dstOffset) . $this->lineEnding;
-            $timezoneString .= "TZOFFSETTO:" . $this->convertMinsToHoursAndMins($gmtOffset) . $this->lineEnding;
-            $timezoneString .= "DTSTART:" . str_replace("Z", "", $this->getUtcTime($endstamp)) . $this->lineEnding;
-            $timezoneString .= "END:STANDARD$this->lineEnding";
+            $ical_array[] = array("BEGIN", "STANDARD");
+            $ical_array[] = array("TZOFFSETFROM", $this->convertMinsToHoursAndMins($dstOffset));
+            $ical_array[] = array("TZOFFSETTO", $this->convertMinsToHoursAndMins($gmtOffset));
+            $ical_array[] = array("DTSTART", str_replace("Z", "", $this->getUtcTime($endstamp)));
+            $ical_array[] = array("END", "STANDARD");
         }
 
-        $timezoneString .= "END:VTIMEZONE$this->lineEnding";
+        $ical_array[] = array("END", "VTIMEZONE");
 
-        return $timezoneString;
+        return vCal::create_ical_string_from_array($ical_array);
     }
 
     /**
@@ -488,13 +497,15 @@ class iCal extends vCal {
 
         $cal_name = $user_focus->first_name. " ". $user_focus->last_name;
 
-        $str = "BEGIN:VCALENDAR$this->lineEnding";
-        $str .= "VERSION:2.0$this->lineEnding";
-        $str .= "METHOD:PUBLISH$this->lineEnding";
-        $str .= "X-WR-CALNAME:$cal_name (SugarCRM)$this->lineEnding";
-        $str .= "PRODID:-//SugarCRM//SugarCRM Calendar//EN$this->lineEnding";
-        $str .= $this->getTimezoneString();
-        $str .= "CALSCALE:GREGORIAN$this->lineEnding";
+        $ical_array = array();
+        $ical_array[] = array("BEGIN", "VCALENDAR");
+        $ical_array[] = array("VERSION", "2.0");
+        $ical_array[] = array("METHOD", "PUBLISH");
+        $ical_array[] = array("X-WR-CALNAME", "$cal_name (SugarCRM)");
+        $ical_array[] = array("PRODID", "-//SugarCRM//SugarCRM Calendar//EN");
+        $timezonestr = explode(":", $this->getTimezoneString(), 2);
+        $ical_array[] = array($timezonestr[0], $timezonestr[1]);
+        $ical_array[] = array("CALSCALE", "GREGORIAN");
 
         $now_date_time = $timedate->getNow(true);
 
@@ -513,10 +524,16 @@ class iCal extends vCal {
 
         $utc_now_time = $this->getUtcDateTime($now_date_time);
 
+        $str = vCal::create_ical_string_from_array($ical_array);
+
         $str .= $this->createSugarIcal($user_focus,$start_date_time,$end_date_time,$utc_now_time);
 
-        $str .= "DTSTAMP:" . $utc_now_time . $this->lineEnding;
-        $str .= "END:VCALENDAR$this->lineEnding";
+        $ical_array = array(
+            array("DTSTAMP", $utc_now_time)
+        );
+        $ical_array[] = array("END", "VCALENDAR");
+
+        $str .= vCal::create_ical_string_from_array($ical_array);
 
         return $str;
     }
