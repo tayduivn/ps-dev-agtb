@@ -19,10 +19,10 @@ $supportedExtensions = array('jpg', 'png', 'jpeg');
 $json = getJSONobj();
 $rmdir=true;
 $returnArray = array();
-if($json->decode(html_entity_decode($_REQUEST['forQuotes']))){
-    $returnArray['forQuotes']="quotes";
-}else{
-    $returnArray['forQuotes']="company";
+if (isset($_REQUEST['forQuotes']) && $json->decode(html_entity_decode($_REQUEST['forQuotes']))) {
+    $returnArray['forQuotes'] = "quotes";
+} else {
+    $returnArray['forQuotes'] = "company";
 }
 $upload_ok = false;
 $upload_path = 'tmp_logo_' . $returnArray['forQuotes'] . '_upload';
