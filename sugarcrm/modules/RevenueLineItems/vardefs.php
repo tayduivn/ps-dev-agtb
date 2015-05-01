@@ -18,6 +18,7 @@ $dictionary['RevenueLineItem'] = array(
     'unified_search' => false,
     'full_text_search' => true,
     'unified_search_default_enabled' => true,
+    'dynamic_subpanel_name' => 'subpanel-with-massupdate',
     //END SUGARCRM flav=ent ONLY
     'comment' => 'The user (not Admin)) view of a RevenueLineItem definition; an instance of a product used in the worksheets and opportunities',
     'fields' => array(

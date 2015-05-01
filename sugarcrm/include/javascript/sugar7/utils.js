@@ -388,11 +388,17 @@
                             relModule = rels[relDefName].lhs_module;
                             // And the left side module is in the module list...
                             if (modules[relModule]) {
+                                // Add handling for modules whose subpanel layouts are not just 'subpanel'
+                                var layoutName = 'subpanel';
+                                if (modules[relModule].additionalProperties
+                                    && modules[relModule].additionalProperties.dynamic_subpanel_name) {
+                                    layoutName = modules[relModule].additionalProperties.dynamic_subpanel_name;
+                                }
                                 // Add it to the components array
                                 comps.push({
                                     context: {link: fDefs.name},
                                     label: self.getDynamicSubpanelLabel(module, relModule),
-                                    layout: 'subpanel'
+                                    layout: layoutName
                                 });
                             }
                         }

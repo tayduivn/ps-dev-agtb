@@ -370,6 +370,14 @@ class MetaDataManager
     );
 
     /**
+     * Additional vardefs that the front end may need to know about
+     * @var array
+     */
+    protected $additionalVardefProps = array(
+        'dynamic_subpanel_name',
+    );
+
+    /**
      * The constructor for the class. Sets the visibility flag, the visibility
      * string indicator and loads the appropriate metadata section list.
      *
@@ -738,6 +746,13 @@ class MetaDataManager
         // Currently no way to disable following
         // But this flag is here in case we add that feature in the future
         $data['followingEnabled'] = true;
+
+        // Check if module's vardefs contains any of the properties found in the additional vardef properties array
+        foreach($this->additionalVardefProps as $prop) {
+            if (isset($vardefs[$prop])) {
+                $data['additionalProperties'][$prop] = $vardefs[$prop];
+            }
+        }
 
         $data["_hash"] = $this->hashChunk($data);
 
