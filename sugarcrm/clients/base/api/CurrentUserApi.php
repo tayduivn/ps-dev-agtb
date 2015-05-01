@@ -57,6 +57,7 @@ class CurrentUserApi extends SugarApi
                 'longHelp' => 'include/api/help/me_get_help.html',
                 'ignoreMetaHash' => true,
                 'ignoreSystemStatusError' => true,
+                'noEtag' => true,
             ),
             'update' => array(
                 'reqType' => 'PUT',
@@ -162,61 +163,12 @@ class CurrentUserApi extends SugarApi
     {
         $current_user = $this->getUserBean();
 
-        // Get the basics
-        $category = isset($args['category']) ? $args['category'] : 'global';
-        $user_data = $this->getBasicUserInfo($api->platform, $category);
-
-        // Fill in the rest
-        $user_data['type'] = self::TYPE_USER;
-        if ($current_user->isAdmin()) {
-            $user_data['type'] = self::TYPE_ADMIN;
-        }
-        $user_data['show_wizard'] = $this->shouldShowWizard($category);
-        $user_data['id'] = $current_user->id;
-        $current_user->_create_proper_name_field();
-        $user_data['full_name'] = $current_user->full_name;
-        $user_data['user_name'] = $current_user->user_name;
-        $user_data['roles'] = ACLRole::getUserRoles($current_user->id);
-        $user_data = $this->setExpiredPassword($user_data);
-        $user_data['picture'] = $current_user->picture;
-        $user_data['acl'] = $this->getAcls($api->platform);
-        $user_data['is_manager'] = User::isManager($current_user->id);
-        $user_data['is_top_level_manager'] = false;
-        $user_data['reports_to_id'] = $current_user->reports_to_id;
-        $user_data['reports_to_name'] = $current_user->reports_to_name;
-        if($user_data['is_manager']) {
-            $user_data['is_top_level_manager'] = User::isTopLevelManager($current_user->id);
+        $hash = $current_user->getUserMDHash();
+        if ($hash && $api->generateETagHeader($hash)) {
+            return;
         }
 
-        // Address information
-        $user_data['address_street'] = $current_user->address_street;
-        $user_data['address_city'] = $current_user->address_city;
-        $user_data['address_state'] = $current_user->address_state;
-        $user_data['address_country'] = $current_user->address_country;
-        $user_data['address_postalcode'] = $current_user->address_postalcode;
-
-        require_once 'modules/Teams/TeamSetManager.php';
-
-        $teams = $current_user->get_my_teams();
-        $my_teams = array();
-        foreach ($teams as $id => $name) {
-            $my_teams[] = array("id" => $id, "name" => $name,);
-        }
-        $user_data['my_teams'] = $my_teams;
-
-        $defaultTeams = TeamSetManager::getTeamsFromSet($current_user->team_set_id);
-        foreach ($defaultTeams as $id => $team) {
-            $defaultTeams[$id]['primary'] = false;
-            if ($team['id'] == $current_user->team_id) {
-                $defaultTeams[$id]['primary'] = true;
-            }
-        }
-        $user_data['preferences']['default_teams'] = $defaultTeams;
-
-        // Send back a hash of this data for use by the client
-        $user_data['_hash'] = $current_user->getUserMDHash();
-
-        return array('current_user' => $user_data);
+        return $this->getUserData($api->platform, $args);
     }
 
     /**
@@ -305,9 +257,9 @@ class CurrentUserApi extends SugarApi
         $args['module'] = $bean->module_name;
         $args['record'] = $bean->id;
 
-        $id = $this->updateBean($bean, $api, $args);
+        $this->updateBean($bean, $api, $args);
 
-        return $this->retrieveCurrentUser($api, $args);
+        return $this->getUserData($api->platform, $args);
     }
 
     /**
@@ -611,6 +563,79 @@ class CurrentUserApi extends SugarApi
         }
         
         return array('language' => $language);
+    }
+
+    /**
+     * Returns all the user data to be sent in the REST API call for a normal
+     * `/me` call.
+     *
+     * This data is dependent on the platform used. Each own platform has a
+     * different data set to be sent in the response.
+     *
+     * @param string $platform The platform of the request.
+     * @param array $options A list of options like `category` to retrieve the
+     *   basic user info. Will use `global` if no `category` is supplied.
+     * @return array The user's data to be used in a `/me` request.
+     */
+    protected function getUserData($platform, array $options) {
+
+        $current_user = $this->getUserBean();
+
+        // Get the basics
+        $category = isset($options['category']) ? $options['category'] : 'global';
+        $user_data = $this->getBasicUserInfo($platform, $category);
+
+        // Fill in the rest
+        $user_data['type'] = self::TYPE_USER;
+        if ($current_user->isAdmin()) {
+            $user_data['type'] = self::TYPE_ADMIN;
+        }
+        $user_data['show_wizard'] = $this->shouldShowWizard($category);
+        $user_data['id'] = $current_user->id;
+        $current_user->_create_proper_name_field();
+        $user_data['full_name'] = $current_user->full_name;
+        $user_data['user_name'] = $current_user->user_name;
+        $user_data['roles'] = ACLRole::getUserRoles($current_user->id);
+        $user_data = $this->setExpiredPassword($user_data);
+        $user_data['picture'] = $current_user->picture;
+        $user_data['acl'] = $this->getAcls($platform);
+        $user_data['is_manager'] = User::isManager($current_user->id);
+        $user_data['is_top_level_manager'] = false;
+        $user_data['reports_to_id'] = $current_user->reports_to_id;
+        $user_data['reports_to_name'] = $current_user->reports_to_name;
+        if($user_data['is_manager']) {
+            $user_data['is_top_level_manager'] = User::isTopLevelManager($current_user->id);
+        }
+
+        // Address information
+        $user_data['address_street'] = $current_user->address_street;
+        $user_data['address_city'] = $current_user->address_city;
+        $user_data['address_state'] = $current_user->address_state;
+        $user_data['address_country'] = $current_user->address_country;
+        $user_data['address_postalcode'] = $current_user->address_postalcode;
+
+        require_once 'modules/Teams/TeamSetManager.php';
+
+        $teams = $current_user->get_my_teams();
+        $my_teams = array();
+        foreach ($teams as $id => $name) {
+            $my_teams[] = array('id' => $id, 'name' => $name,);
+        }
+        $user_data['my_teams'] = $my_teams;
+
+        $defaultTeams = TeamSetManager::getTeamsFromSet($current_user->team_set_id);
+        foreach ($defaultTeams as $id => $team) {
+            $defaultTeams[$id]['primary'] = false;
+            if ($team['id'] == $current_user->team_id) {
+                $defaultTeams[$id]['primary'] = true;
+            }
+        }
+        $user_data['preferences']['default_teams'] = $defaultTeams;
+
+        // Send back a hash of this data for use by the client
+        $user_data['_hash'] = $current_user->getUserMDHash();
+
+        return array('current_user' => $user_data);
     }
 
     /**
