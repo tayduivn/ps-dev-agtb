@@ -78,11 +78,23 @@ class FilterApi extends SugarApi
                     'SugarApiExceptionNotAuthorized',
                 ),
             ),
+            'filterModulePostCount' => array(
+                'reqType' => 'POST',
+                'path' => array('<module>', 'filter', 'count'),
+                'pathVars' => array('module', '', ''),
+                'method' => 'filterListCount',
+                'shortHelp' => 'Lists filtered records.',
+                'longHelp' => 'include/api/help/module_filter_post_help.html',
+                'exceptions' => array(
+                    // Thrown in filterListSetup
+                    'SugarApiExceptionNotAuthorized',
+                ),
+            ),
             'filterModuleCount' => array(
                 'reqType' => 'GET',
                 'path' => array('<module>', 'filter', 'count'),
                 'pathVars' => array('module', '', ''),
-                'method' => 'filterListCount',
+                'method' => 'getFilterListCount',
                 'shortHelp' => 'Lists filtered records.',
                 'longHelp' => 'include/api/help/module_filter_post_help.html',
                 'exceptions' => array(
@@ -310,8 +322,18 @@ class FilterApi extends SugarApi
         return $this->runQuery($api, $args, $q, $options, $seed);
     }
 
-
-    public function filterListCount(ServiceBase $api, array $args)
+    /**
+     * Returns the number of records for the module and filter provided:
+     *
+     * Example:
+     *     {'record_count': '50'}
+     *
+     * @param ServiceBase $api
+     * @param array $args
+     * @return Object The number of filtered/unfiltered records for the module
+     *   provided.
+     */
+    public function getFilterListCount(ServiceBase $api, array $args)
     {
         list($args, $q, $options, $seed) = $this->filterListSetup($api, $args);
         $api->action = 'list';
@@ -323,8 +345,27 @@ class FilterApi extends SugarApi
         return reset($q->execute());
     }
 
+    /**
+     * Returns the number of records for the module and filter provided:
+     *
+     * Example:
+     *     {'record_count': '50'}
+     *
+     * This method is now deprecated. Use getFilterListCount instead.
+     *
+     * @deprecated Since 7.7.0. Will be removed in 7.8.0.
+     * @param ServiceBase $api
+     * @param array $args
+     * @return Object The number of filtered/unfiltered records for the module
+     *   provided.
+     */
+    public function filterListCount(ServiceBase $api, array $args)
+    {
+        $GLOBALS['log']->fatal('This endpoint has been deprecated as of 7.7.0. ' .
+            'Please use the equivalent GET endpoint instead.');
 
-
+        return $this->getFilterListCount($api, $args);
+    }
 
     protected static function getQueryObject(SugarBean $seed, array $options)
     {
