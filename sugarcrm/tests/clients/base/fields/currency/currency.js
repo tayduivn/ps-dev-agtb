@@ -679,9 +679,8 @@ describe('Base.Fields.Currency', function() {
 
             it('should not add handlers for base_rate or currency_id', function() {
                 field.bindDataChange();
-                expect(field.model.on.callCount).toEqual(2);
+                expect(field.model.on.callCount).toEqual(1);
                 expect(field.model.on.getCall(0).calledWith('change:amount')).toBeTruthy();
-                expect(field.model.on.getCall(1).calledWith('duplicate:field:amount')).toBeTruthy();
             });
         });
 
@@ -693,11 +692,10 @@ describe('Base.Fields.Currency', function() {
 
             it('should add handlers for base_rate or currency_id', function() {
                 field.bindDataChange();
-                expect(field.model.on.callCount).toEqual(4);
+                expect(field.model.on.callCount).toEqual(3);
                 expect(field.model.on.getCall(0).calledWith('change:amount')).toBeTruthy();
-                expect(field.model.on.getCall(1).calledWith('duplicate:field:amount')).toBeTruthy();
-                expect(field.model.on.getCall(2).calledWith('change:base_rate')).toBeTruthy();
-                expect(field.model.on.getCall(3).calledWith('change:currency_id')).toBeTruthy();
+                expect(field.model.on.getCall(1).calledWith('change:base_rate')).toBeTruthy();
+                expect(field.model.on.getCall(2).calledWith('change:currency_id')).toBeTruthy();
             });
         });
     });

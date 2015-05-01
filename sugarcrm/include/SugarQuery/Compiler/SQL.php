@@ -537,9 +537,16 @@ class SugarQuery_Compiler_SQL
                         $chainWith = 'AND';
                     }
 
+                    if ($this->db->supports('case_insensitive')) {
+                        $field = "UPPER($field)";
+                    }
+
                     if (is_array($condition->values)) {
                         $conditions = array();
                         foreach ($condition->values as $value) {
+                            if ($this->db->supports('case_insensitive')) {
+                                $value = strtoupper($value);
+                            }
                             $val = $this->prepareValue($value, $condition);
                             $conditions[] = "{$field} {$comparitor} {$val}";
                         }
@@ -549,7 +556,8 @@ class SugarQuery_Compiler_SQL
                         }
                         $sql .= ') ';
                     } else {
-                        $value = $this->prepareValue($condition->values, $condition);
+                        $value = $this->db->supports('case_insensitive') ? strtoupper($condition->values) : $condition->values;
+                        $value = $this->prepareValue($value, $condition);
                         $sql .= "{$field} {$comparitor} {$value}";
                     }
                     break;

@@ -67,20 +67,14 @@ class PMSEBusinessRule extends PMSEScriptTask
         $logBR = '';
         $bpmnElement = $this->retrieveDefinitionData($flowData['bpmn_id']);
 
-        $definitionBean = $this->caseFlowHandler->retrieveBean('pmse_BpmActivityDefinition'); //new BpmActivityDefinition();
-        $processDefinitionBean = $this->caseFlowHandler->retrieveBean('pmse_BpmProcessDefinition'); //new BpmProcessDefinition();
-        $definitionBean->retrieve_by_string_fields(array('id' => $bpmnElement['id']));
-        $processDefinitionBean->retrieve_by_string_fields(array('id' => $definitionBean->pro_id));
+        $definitionBean = $this->caseFlowHandler->retrieveBean('pmse_BpmActivityDefinition', $bpmnElement['id']);
+        $processDefinitionBean = $this->caseFlowHandler->retrieveBean('pmse_BpmProcessDefinition', $definitionBean->pro_id);
+
 
         $rst_id = $definitionBean->act_fields;
         $rst_module = $definitionBean->act_field_module;
         // TODO: Probably the act_module field will be used instead pro_module
         $sugarModule = $processDefinitionBean->pro_module;
-
-        //get the sugar record id, in order to get the Bean loaded
-        //$query = "select * from pmse_bpm_flow where cas_id = $cas_id and cas_sugar_module = '$sugarModule'";
-        //$result = $bean->db->Query($query);
-        //$row = $bean->db->fetchByAssoc($result);
 
         $sugarRecord = $flowData['cas_sugar_object_id'];
 

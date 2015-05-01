@@ -382,6 +382,9 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
 		$this->_saveToFile($filename, $defs);
 
 		// now clear the cache so that the results are immediately visible
+        MetaDataFiles::clearModuleClientCache($this->_moduleName, 'view');
+        MetaDataFiles::clearModuleClientCache($this->_moduleName, 'layout');
+
 		include_once ('include/TemplateHandler/TemplateHandler.php') ;
 		TemplateHandler::clearCache($this->_moduleName);
 	}

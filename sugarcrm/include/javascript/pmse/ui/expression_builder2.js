@@ -1326,6 +1326,7 @@ ExpressionControl.prototype._createModulePanel = function () {
                             url = settings.fieldDataURL.replace("{{MODULE}}", value);
                         if (value) {
                             dependantField.setDataURL(url)
+                                .setAttributes({base_module: PROJECT_MODULE})
                                 .setDataRoot(settings.fieldDataRoot)
                                 .setLabelField(settings.fieldTextField)
                                 .setValueField(function (field, data) {
@@ -1370,7 +1371,12 @@ ExpressionControl.prototype._createModulePanel = function () {
                             };
 
                             if (type === 'dropdown') {
-                                itemsObj = parentField.getSelectedData()["optionItem"];
+                                if (parentField.getSelectedData()) {
+                                    itemsObj = parentField.getSelectedData()["optionItem"];
+                                }
+                                else {
+                                    itemsObj = parentField._getFirstAvailableOption()["optionItem"];
+                                }
                                 keys = Object.keys(itemsObj);
                                 keys.forEach(function (item, index, arr) {
                                     items.push({
@@ -1782,7 +1788,7 @@ ExpressionControl.prototype._createTimespanPanel = function() {
             title: translate("LBL_PMSE_EXPCONTROL_CONSTANTS_TIMESPAN_TITLE"),
             items: [
                 {
-                    type: "text",
+                    type: "integer",
                     name: "ammount",
                     label: translate("LBL_PMSE_EXPCONTROL_CONSTANTS_TIMESPAN_AMOUNT"),
                     filter: "integer",

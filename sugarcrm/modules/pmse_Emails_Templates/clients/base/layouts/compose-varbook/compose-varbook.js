@@ -61,7 +61,7 @@
 
         callbacks = app.data.getSyncCallbacks(method, model, options);
         this.trigger('data:sync:start', method, model, options);
-
+        _.extend(options.params, {base_module: model.baseModule});
         url = app.api.buildURL('pmse_Emails_Templates', 'variables/find', null, options.params);
         app.api.call('read', url, null, callbacks);
     },

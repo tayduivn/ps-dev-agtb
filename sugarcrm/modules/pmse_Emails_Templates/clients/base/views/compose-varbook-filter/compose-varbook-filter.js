@@ -44,7 +44,8 @@
             {id: this._allModulesId, text: app.lang.get('Target Module')}
         ];
 
-        url = app.api.buildURL('pmse_Emails_Templates', this.collection.baseModule +  '/find_modules?module_list='+this.collection.baseModule);
+        url = app.api.buildURL('pmse_Emails_Templates', this.collection.baseModule +  '/find_modules',null,{module_list: this.collection.baseModule});
+        //url = api.buildURL('pmse_Project', 'CrmData/fields/' + this.collection.baseModule, null, {base_module: 'Leads'});
         app.api.call('read', url, null, {
             success:function (result){
                 if (result.success) {

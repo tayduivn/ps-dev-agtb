@@ -472,11 +472,11 @@ $dictionary['Email'] = array(
             'relationship_type' => 'one-to-many'
         ),
         'emails_notes_rel' => array(
-            'lhs_module' => 'Emails',
-            'lhs_table' => 'emails',
+            'lhs_module' => 'Notes',
+            'lhs_table' => 'notes',
             'lhs_key' => 'id',
-            'rhs_module' => 'Notes',
-            'rhs_table' => 'notes',
+            'rhs_module' => 'Emails',
+            'rhs_table' => 'emails',
             'rhs_key' => 'parent_id',
             'relationship_type' => 'one-to-many',
         ),
@@ -552,11 +552,11 @@ $dictionary['Email'] = array(
         ),
         // SNIP
         'emails_meetings_rel' => array(
-            'lhs_module' => 'Emails',
-            'lhs_table' => 'emails',
+            'lhs_module' => 'Meetings',
+            'lhs_table' => 'meetings',
             'lhs_key' => 'id',
-            'rhs_module' => 'Meetings',
-            'rhs_table' => 'meetings',
+            'rhs_module' => 'Emails',
+            'rhs_table' => 'emails',
             'rhs_key' => 'parent_id',
             'relationship_type' => 'one-to-many',
         ),

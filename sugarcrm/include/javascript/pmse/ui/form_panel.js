@@ -1465,6 +1465,7 @@
 		this._massiveAction = false;
 		this._labelField = null;
 		this._valueField = null;
+        this._attributes = null;
 		FormPanelDropdown.prototype.init.call(this, settings);
 	};
 
@@ -1561,7 +1562,7 @@
 		this._proxy.url = this._dataURL;
 		this.clearOptions();
 		this._showLoadingMessage();
-		this._proxy.getData(null, {
+		this._proxy.getData(this._attributes, {
 			success: this._onLoadDataSuccess()
 		});
 		return this;
@@ -1582,6 +1583,14 @@
 		this._dataURL = url;
 		return this;
 	};
+
+    FormPanelDropdown.prototype.setAttributes = function(attributes) {
+        if (!(attributes === null || typeof attributes === 'object')) {
+            throw new Error("setAttributes(): The parameter must be a object or null.");
+        }
+        this._attributes = attributes;
+        return this;
+    };
 
 	FormPanelDropdown.prototype.existsValueInOptions = function (value) {
 		var i, options = this._options.asArray();

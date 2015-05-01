@@ -134,7 +134,11 @@ class DeployedSubpanelImplementation extends AbstractMetaDataImplementation impl
         $subpanel = new SubPanel ( $this->_moduleName, 'fab4', $this->_subpanelName , $this->_aSubPanelObject ) ;
 
         $subpanel->saveSubPanelDefOverride ( $this->_aSubPanelObject, 'list_fields', $defs ) ;
+
         // now clear the cache so that the results are immediately visible
+        MetaDataFiles::clearModuleClientCache($this->_aSubPanelObject->template_instance->module_name, 'view');
+        MetaDataFiles::clearModuleClientCache($this->_moduleName, 'layout');
+
         include_once ('include/TemplateHandler/TemplateHandler.php') ;
         TemplateHandler::clearCache ( $this->_moduleName ) ;
 

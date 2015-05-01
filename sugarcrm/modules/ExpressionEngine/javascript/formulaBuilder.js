@@ -112,6 +112,15 @@ SUGAR.expressions.setReturnTypes = function(t, vMap)
 				break;
 			}
 		}
+
+		// For the conditional function, if both argument return types are same, set the conditional type
+		if (t.name == "ifElse") {
+			var args = t.args;
+			if (args[1].returnType == args[2].returnType) {
+				t.returnType = args[1].returnType;
+			}
+		}
+
 		if(!t.returnType)
 			throw (t.name + ": No known return type!");
 	}
@@ -229,8 +238,7 @@ SUGAR.expressions.validateCurrExpression = function(silent, matchType)
 		SUGAR.expressions.setReturnTypes(tokens, varTypeMap);
 		SUGAR.expressions.validateReturnTypes(tokens);
         SUGAR.expressions.validateRelateFunctions(tokens);
-		if (matchType && tokens.returnType != 'generic' && matchType != tokens.returnType)
-		{
+		if (matchType && matchType != tokens.returnType) {
 			Msg.show({
                 type: "alert",
                 title: SUGAR.language.get("ModuleBuilder", "LBL_FORMULA_INVALID"),

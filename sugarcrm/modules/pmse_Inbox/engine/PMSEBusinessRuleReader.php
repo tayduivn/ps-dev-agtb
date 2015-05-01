@@ -128,7 +128,6 @@ class PMSEBusinessRuleReader
             $evaluationResult = $this->evaluator->evaluateExpression($transformedCondition, $evaluatedBean);
             if ($evaluationResult) {
                 $successReturn = $this->businessRuleConversor->getReturnValue($rule->conclusions);
-//                $newAppData = $this->businessRuleConversor->processAppData($rule->conclusions, $appData);
                 $newAppData = array_merge($newAppData,
                     $this->businessRuleConversor->processAppData($rule->conclusions, $appData));
                 $res .= $this->businessRuleConversor->processConditionResult($rule->conclusions, $appData);

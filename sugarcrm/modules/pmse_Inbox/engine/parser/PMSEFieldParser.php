@@ -12,7 +12,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
+require_once 'modules/pmse_Inbox/engine/PMSERelatedModule.php';
 /**
  * Class that analyzes the data type of a bean
  * getting the value of this field according to the data type
@@ -33,6 +33,7 @@ class PMSEFieldParser implements PMSEDataParserInterface
      */
     private $beanList;
     private $currentUser;
+    private $pmseRelatedModule;
 
     /**
      * gets the bean list
@@ -256,6 +257,7 @@ class PMSEFieldParser implements PMSEDataParserInterface
     public function parseTokenValue($token)
     {
         global $timedate, $current_user;
+        $this->pmseRelatedModule = new PMSERelatedModule();
         $tokenArray = $this->decomposeToken($token);
         $all = array();
 
@@ -269,45 +271,15 @@ class PMSEFieldParser implements PMSEDataParserInterface
         $value = '';
         $isAValidBean = true;
         if (!empty($tokenArray)) {
-            $status = $tokenArray[0];
-            $module = isset($this->beanList[$tokenArray[1]]) ? $tokenArray[1] : '';
-            if ($module == '') {// @codeCoverageIgnoreStart
-                $relationships = new DeployedRelationships($bean->module_name);
-                $rel_module = $relationships->get($tokenArray[1])->getDefinition();
-                $conditionModule = strtolower($rel_module['rhs_module']);
-                $join_key_b = strtolower($rel_module['join_key_rhs']);
-
-                if (!$rel_module['is_custom']) {
-                    //Normal Related
-                    $bean->load_relationship($conditionModule);
-                    $relatedField = $rel_module['rhs_table'];
-                    $relationship = $bean->$relatedField;
-                    reset($relationship->rows);
-                    $id = key($relationship->rows);
-                    if (isset($id) && !empty($id)) {
-                        $all = array(BeanFactory::retrieveBean($rel_module['rhs_module'], $id));
-                    } else {
-                        $all = array();
-                    }
-                } else {
-                    //Custom related
-                    global $db;
-                    $join_key_a = strtolower($rel_module['join_key_lhs']);
-                    $query = "select * from "
-                            . "$tokenArray[1]_c where $join_key_a = '" .
-                            $bean->id . "' AND deleted=0 ORDER BY date_modified DESC";
-                    $result = $db->Query($query);
-                    $row = $db->fetchByAssoc($result);
-                    $moduleBean = BeanFactory::getBean($rel_module['rhs_module'], $row[$join_key_b]);
-                    $all = array($moduleBean);
-                }
-            }// @codeCoverageIgnoreEnd
+            if (!isset($this->beanList[$tokenArray[1]])) {
+                $bean = $this->pmseRelatedModule->getRelatedModule($bean, $tokenArray[1]);
+            }
             $field = $tokenArray[2];
         }
-        $isAValidBean = (trim($module) == trim($bean->module_name));
+        $isAValidBean = (!empty($bean) && is_object($bean));
         if ($isAValidBean) {
-            $def = $bean->field_name_map[$field];
-            if ($def['type'] == 'datetime') {
+            $def = $bean->field_defs[$field];
+            if ($def['type'] == 'datetime' || $def['type'] == 'datetimecombo') {
                 date_default_timezone_set('UTC');
                 $datetime = new Datetime($bean->$field);
                 $value = $timedate->asIso($datetime, $current_user);
@@ -319,7 +291,7 @@ class PMSEFieldParser implements PMSEDataParserInterface
                 $value = $bean->$field;
             }
         } else {
-            $value = !empty($all)?array_pop($all)->$tokenArray[2]:null;
+            $value = !empty($bean)?array_pop($bean)->$tokenArray[2]:null;
         }
         return $value;
     }

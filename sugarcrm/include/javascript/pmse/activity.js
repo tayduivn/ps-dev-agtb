@@ -2097,7 +2097,7 @@ AdamActivity.prototype.actionFactory = function (type) {
         case 'ASSIGN_USER':
             combo_users = new ComboboxField({
                 jtype: 'combobox',
-                label: translate('LBL_PMSE_FORM_LABEL_ASSIGN_TO_USER'),
+                label: translate('LBL_PA_FORM_LABEL_ASSIGN_TO_USER'),
                 name: 'act_assign_user',
                 submit: true,
                 //change: hiddenUpdateFn,
@@ -2111,7 +2111,7 @@ AdamActivity.prototype.actionFactory = function (type) {
             //here add checkbox
             updateRecordOwner = new CheckboxField({
                 name: 'act_update_record_owner',
-                label: translate('LBL_PMSE_FORM_LABEL_UPDATE_RECORD_OWNER'),
+                label: translate('LBL_PA_FORM_LABEL_UPDATE_RECORD_OWNER'),
                 required: false,
                 value: false,
                 options: {
@@ -2127,8 +2127,9 @@ AdamActivity.prototype.actionFactory = function (type) {
                 callback: null
             });
             items = [combo_users, updateRecordOwner];
-            wWidth = 500;
+            wWidth = 550;
             wHeight = 160;
+            labelWidth = '40%';
             actionText = translate('LBL_PMSE_CONTEXT_MENU_SETTINGS');
             actionCSS = 'adam-menu-icon-configure';
             callback = {
@@ -2159,7 +2160,7 @@ AdamActivity.prototype.actionFactory = function (type) {
         case 'ASSIGN_TEAM':
             combo_teams = new ComboboxField({
                 jtype: 'combobox',
-                label: translate('LBL_PMSE_FORM_LABEL_ASSIGN_TO_TEAM'),
+                label: translate('LBL_PA_FORM_LABEL_ASSIGN_TO_TEAM'),
                 name: 'act_assign_team',
                 submit: true,
                 proxy: new SugarProxy({
@@ -2172,12 +2173,12 @@ AdamActivity.prototype.actionFactory = function (type) {
             //here add checkbox
             updateRecordOwner = new CheckboxField({
                 name: 'act_update_record_owner',
-                label: translate('LBL_PMSE_FORM_LABEL_UPDATE_RECORD_OWNER'),
+                label: translate('LBL_PA_FORM_LABEL_UPDATE_RECORD_OWNER'),
                 required: false,
                 value: false,
                 options: {
                     labelAlign: 'right',
-                    marginLeft: 80
+                    marginLeft: 200
                 }
             });
             combo_method = new ComboboxField({
@@ -2203,8 +2204,9 @@ AdamActivity.prototype.actionFactory = function (type) {
             });
 
             items = [combo_teams, updateRecordOwner, hidden_method];
-            wWidth = 500;
+            wWidth = 550;
             wHeight = 160;
+            labelWidth = '40%';
             actionText = translate('LBL_PMSE_CONTEXT_MENU_SETTINGS');
             actionCSS = 'adam-menu-icon-configure';
             callback = {
@@ -2234,8 +2236,9 @@ AdamActivity.prototype.actionFactory = function (type) {
             navigableData = { 'edit': true };
             changeFieldsFn = function () {
                 App.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
-                updater_field.proxy.url = 'pmse_Project/CrmData/fields/'+ combo_modules.value;
-                data = updater_field.proxy.getData({call_type:'AC'}, {
+
+                updater_field.proxy.url = 'pmse_Project/CrmData/relatedfields/'+ combo_modules.value;
+                data = updater_field.proxy.getData({call_type:'AC', base_module: PROJECT_MODULE}, {
                     success: function(data) {
                         App.alert.dismiss('upload');
                         if (data) {
@@ -2244,8 +2247,6 @@ AdamActivity.prototype.actionFactory = function (type) {
 
                     }
                 });
-
-
 
             };
             combo_modules = new ComboboxField({
@@ -2292,7 +2293,9 @@ AdamActivity.prototype.actionFactory = function (type) {
                     var modules, opt = [], listProxy;
                     root.canvas.emptyCurrentSelection();
 
-                    combo_modules.proxy.getData(null, {
+                    combo_modules.proxy.getData({
+                        cardinality: 'one'
+                    }, {
                         success: function(modules) {
                             if (modules && modules.success) {
                                 combo_modules.setOptions(modules.result);
@@ -2305,8 +2308,8 @@ AdamActivity.prototype.actionFactory = function (type) {
                                     }
                                 });
                                 updater_field.proxy.uid = PROJECT_MODULE;
-                                updater_field.proxy.url = 'pmse_Project/CrmData/fields/' + initialModule;
-                                updater_field.proxy.getData({call_type:'AC'}, {
+                                updater_field.proxy.url = 'pmse_Project/CrmData/relatedfields/' + initialModule;
+                                updater_field.proxy.getData({call_type:'AC', base_module: PROJECT_MODULE}, {
                                     success: function(fields) {
                                         if (fields) {
                                             updater_field.setOptions(fields.result, true);
@@ -2330,7 +2333,7 @@ AdamActivity.prototype.actionFactory = function (type) {
                 App.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
                 updater_field.proxy.uid = combo_modules.value;
                 updater_field.proxy.url = 'pmse_Project/CrmData/addRelatedRecord/' + combo_modules.value;
-                updater_field.proxy.getData(null, {
+                updater_field.proxy.getData({base_module: PROJECT_MODULE}, {
                     success: function(data) {
                         App.alert.dismiss('upload');
                         if (data) {
@@ -2381,7 +2384,7 @@ AdamActivity.prototype.actionFactory = function (type) {
                 'loaded' : function (data) {
                     var modules, opt = [], listProxy;
                     root.canvas.emptyCurrentSelection();
-                    combo_modules.proxy.getData(null, {
+                    combo_modules.proxy.getData({cardinality: 'one-to-many'}, {
                        success: function(modules) {
                            if (modules && modules.success) {
                                combo_modules.setOptions(modules.result);
@@ -2395,7 +2398,7 @@ AdamActivity.prototype.actionFactory = function (type) {
                                         updater_field.setVariables(data);
                                     }
                                 });
-                               updater_field.proxy.getData(null,{
+                               updater_field.proxy.getData({base_module: PROJECT_MODULE},{
                                    success: function(fields) {
                                        updater_field.setOptions(fields.result);
                                        updater_field.setValue(data.act_fields || null);

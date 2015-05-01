@@ -18,13 +18,31 @@
     initialize: function(options) {
         this.contextEvents = _.extend({}, this.contextEvents, {
             "list:editemailstemplates:fire": "openEmailsTemplates",
-            "list:exportemailstemplates:fire": "exportEmailsTemplates"
+            "list:exportemailstemplates:fire": "warnExportEmailsTemplates"
         });
         app.view.invokeParent(this, {type: 'view', name: 'recordlist', method: 'initialize', args:[options]});
     },
 
     openEmailsTemplates: function(model) {
         app.navigate(this.context, model, 'layout/emailtemplates');
+    },
+
+    warnExportEmailsTemplates: function (model) {
+        var that = this;
+        if (app.cache.get("show_emailtpl_export_warning")) {
+            app.alert.show('emailtpl-export-confirmation', {
+                level: 'confirmation',
+                messages: app.lang.get('LBL_PMSE_IMPORT_EXPORT_WARNING') + "<br/><br/>"
+                    + app.lang.get("LBL_PMSE_EXPORT_CONFIRMATION"),
+                onConfirm: function () {
+                    app.cache.set('show_emailtpl_export_warning', false);
+                    that.exportEmailsTemplates(model);
+                },
+                onCancel: $.noop
+            });
+        } else {
+            that.exportEmailsTemplates(model);
+        }
     },
 
     exportEmailsTemplates: function(model) {
