@@ -12,7 +12,7 @@
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
         this.context.off("businessrules:import:finish", null, this);
-        this.context.on("businessrules:import:finish", this.importBusinessRules, this);
+        this.context.on("businessrules:import:finish", this.warnImportBusinessRules, this);
     },
 
     /**
@@ -27,6 +27,26 @@
         app.view.View.prototype._renderField.call(this, field);
         if (field.name === 'businessrules_import') {
             field.setMode('edit');
+        }
+    },
+
+    warnImportBusinessRules: function () {
+        var that = this;
+        if (app.cache.get('show_br_import_warning')) {
+            app.alert.show('br-import-confirmation', {
+                level: 'confirmation',
+                messages: app.lang.get('LBL_PMSE_IMPORT_EXPORT_WARNING') + "<br/><br/>"
+                    + app.lang.get('LBL_PMSE_IMPORT_CONFIRMATION'),
+                onConfirm: function () {
+                    app.cache.set('show_br_import_warning', false);
+                    that.importBusinessRules();
+                },
+                onCancel: function () {
+                    app.router.goBack();
+                }
+            });
+        } else {
+            this.importBusinessRules();
         }
     },
 

@@ -26,21 +26,6 @@
     /**
      * @inheritDoc
      *
-     * Add `FieldDuplicate` plugin to the list of required plugins.
-     */
-    _initPlugins: function() {
-        this._super('_initPlugins');
-
-        this.plugins = _.union(this.plugins, [
-            'FieldDuplicate'
-        ]);
-
-        return this;
-    },
-
-    /**
-     * @inheritDoc
-     *
      * Add `show-timepicker` on click listener.
      */
     _initEvents: function() {

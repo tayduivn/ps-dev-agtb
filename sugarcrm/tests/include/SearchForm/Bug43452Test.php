@@ -39,7 +39,7 @@ class Bug43452Test extends Sugar_PHPUnit_Framework_TestCase
         //     1) From SearchForm2->generateSearchWhere, in case of 'bool' (they surround "converted = '0' or converted IS NULL")
         //     2) From PopupSmarty->_get_where_clause, when items of where's array are imploded.
 
-        $tGoodWhere = "( leads.first_name like 'Fabio%' and (leads.converted = 0 OR leads.converted IS NULL) )";
+        $tGoodWhere = "( leads.first_name LIKE 'Fabio%' and (leads.converted = 0 OR leads.converted IS NULL) )";
 
         $_searchFields['Leads'] = array ('first_name'=> array('value' => 'Fabio', 'query_type'=>'default'),
                                          'converted'=> array('type'=> 'bool', 'value' => '0', 'query_type'=>'default'),

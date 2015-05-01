@@ -736,7 +736,7 @@ class VardefManager{
 
         // Some of the vardefs do not correctly define dictionary as global.  Declare it first.
         global $dictionary;
-        if(empty($GLOBALS['dictionary'][$object]) || $refresh){
+        if (empty($GLOBALS['dictionary'][$object]) || $refresh || !isset($GLOBALS['dictionary'][$object]['fields'])) {
             //if the consumer has demanded a refresh or the cache/modules... file
             //does not exist, then we should do out and try to reload things
 

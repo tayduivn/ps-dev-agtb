@@ -195,19 +195,19 @@ class quicksearchQuery
                         if (strpos($nameFormat,'l') > strpos($nameFormat,'f')) {
                             array_push(
                                 $conditionArray,
-                                $db->concat($table, array('first_name','last_name')) . " like '$like'"
+                                $db->getLikeSQL($db->concat($table, array('first_name','last_name')), $like)
                             );
                         } else {
                             array_push(
                                 $conditionArray,
-                                $db->concat($table, array('last_name','first_name')) . " like '$like'"
+                                $db->getLikeSQL($db->concat($table, array('last_name','first_name')), $like)
                             );
                         }
                     }
                     elseif ($focus instanceof Team) {
                         array_push(
                             $conditionArray,
-                            '(' . $table_prefix . $db->getValidDBName($condition['name']) . sprintf(" like '%s%%'", $db->quote($condition['value'])) . ' or ' . $table_prefix . 'name_2' . sprintf(" like '%s%%'", $db->quote($condition['value'])) . ')'
+                            '(' . $db->getLikeSQL($table_prefix . $db->getValidDBName($condition['name']), sprintf("%s%%", $db->quote($condition['value']))) . ' or ' . $db->getLikeSQL($table_prefix . 'name_2', sprintf("%s%%", $db->quote($condition['value']))) . ')'
                         );
 
                         $condition['exclude_private_teams'] = true;
@@ -215,7 +215,7 @@ class quicksearchQuery
                     else {
                         array_push(
                             $conditionArray,
-                            $table_prefix . $db->getValidDBName($condition['name']) . sprintf(" like '%s'", $like)
+                            $db->getLikeSQL($table_prefix . $db->getValidDBName($condition['name']), $like)
                         );
                     }
                     break;
@@ -232,7 +232,7 @@ class quicksearchQuery
                 default:
                     array_push(
                         $conditionArray,
-                        $table_prefix.$db->getValidDBName($condition['name']) . sprintf(" like '%s%%'", $db->quote($condition['value']))
+                        $db->getLikeSQL($table_prefix.$db->getValidDBName($condition['name']), sprintf("%s%%", $db->quote($condition['value'])))
                     );
             }
         }

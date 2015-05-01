@@ -13,12 +13,14 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 require_once 'PMSEScriptTask.php';
+require_once 'modules/pmse_Inbox/engine/PMSERelatedModule.php';
 
 class PMSEChangeField extends PMSEScriptTask
 {
     protected $beanList;
     protected $currentUser;
     protected $evaluator;
+    protected $pmseRelatedModule;
 
     /**
      *
@@ -31,6 +33,7 @@ class PMSEChangeField extends PMSEScriptTask
         $this->beanList = $beanList;
         $this->currentUser = $current_user;
         $this->evaluator = new PMSEEvaluator();
+        $this->pmseRelatedModule = new PMSERelatedModule();
         parent::__construct();
     }
 
@@ -100,6 +103,7 @@ class PMSEChangeField extends PMSEScriptTask
      */
     public function run($flowData, $bean = null, $externalAction = '', $arguments = array())
     {
+        global $beanList;
         switch ($externalAction) {
             case 'RESUME_EXECUTION':
                 $flowAction = 'UPDATE';
@@ -126,83 +130,16 @@ class PMSEChangeField extends PMSEScriptTask
         //Save original bean of project definition
         $beanModule = $bean;
 
-        if ($act_field_module != $moduleName) {
-            $relationships = new DeployedRelationships($bean->module_name);
-            $relatedNew = $relationships->get($act_field_module)->getDefinition();
-            //$relatedNew = $this->beanHandler->getRelationshipData($act_field_module, $bean->db);
-            $left = $relatedNew['lhs_module'];
-            $act_field_module = $related = $relatedNew['rhs_module'];
-
-            if (!isset($this->beanList[$act_field_module])) {
-                $this->logger->warning(
-                    "[{$flowData['cas_id']}][{$flowData['cas_index']}] "
-                    . "$act_field_module module is not related to $moduleName, "
-                    . "ain't appear in the bean list"
-                );
-            } else {
-                $this->logger->debug(
-                    "[{$flowData['cas_id']}][{$flowData['cas_index']}] "
-                    . "$moduleName got a related module named: [$act_field_module]"
-                );
-                // Get Relationship Bean
-                $beanRelations = $this->caseFlowHandler->retrieveBean("Relationships");
-                $relation = $beanRelations->retrieve_by_sides($left, $related, $bean->db);
-                if ($relatedNew['is_custom']) {
-                    global $db;
-                    $join_key_a = strtolower($relatedNew['join_key_lhs']);
-                    $query = "select * from {$relatedNew['join_table']} "
-                        . "where $join_key_a = '" . $bean->id
-                        . "' AND deleted=0 ORDER BY date_modified DESC";
-                    $result = $db->Query($query);
-                    $row = $db->fetchByAssoc($result);
-                    $moduleBean = BeanFactory::getBean($relatedNew['rhs_module'], $row[$relatedNew['join_key_rhs']]);
-                    $list_bean_related = array($moduleBean);
-                } else {
-                    $ID_Related = $relation['rhs_key'];
-                    $beanRelated = $this->caseFlowHandler->retrieveBean("$related");
-                    $singleCondition = $ID_Related . "='" . $idMainModule . "'";
-                    $list_bean_related = $beanRelated->get_full_list('', $singleCondition);
-                }
-                $this->logger->warning(
-                    "[{$flowData['cas_id']}][{$flowData['cas_index']}] "
-                    . "$related $ID_Related field found."
-                );
-
-                // Get Related Bean by
-
-                $len = sizeof($list_bean_related);
-                if (isset($list_bean_related[$len - 1])) {
-                    $this->logger->info(
-                        "[{$flowData['cas_id']}][{$flowData['cas_index']}] "
-                        . "Getting the last related record of $len records."
-                    );
-                    $beanRelated = $list_bean_related[$len - 1];
-                } else {
-                    $beanRelated->retrieve_by_string_fields(array($ID_Related => $idMainModule), true);
-                }
-                if (!isset($beanRelated->id)) {
-                    $this->logger->info(
-                        "[{$flowData['cas_id']}][{$flowData['cas_index']}] "
-                        . "There is not a data relationship beetween "
-                        . "$act_field_module and {$flowData['cas_sugar_module']}"
-                    );
-                    unset($bean);
-                } else {
-                    $isRelated = true;
-                    $bean = $beanRelated;
-                    $this->logger->info(
-                        "[{$flowData['cas_id']}][{$flowData['cas_index']}] Related "
-                        . "$act_field_module loaded using id: $beanRelated->id"
-                    );
-                }
-            }
+        if (!isset($beanList[$act_field_module])) {
+            $bean = $this->pmseRelatedModule->getRelatedModule($bean, $act_field_module);
+            $isRelated = true;
         }
 
         if (isset($bean) && is_object($bean)) {
             $historyData = $this->retrieveHistoryData($moduleName);
             if ($act_field_module == $moduleName || $isRelated) {
                 foreach ($fields as $field) {
-                    if (isset($bean->field_name_map[$field->field])) {
+                    if (isset($bean->field_defs[$field->field])) {
                         if (!$this->emailHandler->doesPrimaryEmailExists($field, $bean, $historyData)) {
                             $historyData->savePredata($field->field, $bean->{$field->field});
                             $newValue = '';
