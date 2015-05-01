@@ -90,14 +90,6 @@ $viewdefs[$moduleName]['base']['menu']['sweetspot'] = array(
         'icon' => 'fa-cogs',
         'route' => $adminRoute . 'Locale&view=default',
     ),
-    // Upgrade Wizard
-    array(
-        'label' => 'LBL_UPGRADE_WIZARD_TITLE',
-        'acl_action' => 'studio',
-        'module' => $moduleName,
-        'icon' => 'fa-cogs',
-        'route' => 'UpgradeWizard.php',
-    ),
 
     // Currencies
     array(
