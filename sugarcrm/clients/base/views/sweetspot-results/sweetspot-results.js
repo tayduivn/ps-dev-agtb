@@ -202,9 +202,7 @@
     },
 
     /**
-     * Formats the {@link #results} to:
-     *
-     * - include labels if none are present by default.
+     * Formatter function for the list of results.
      *
      * @param {Array} results The list of actions/commands.
      * @return {Array} The formatted list of actions/commands.
@@ -213,11 +211,7 @@
         if (_.isEmpty(results)) {
             return [];
         }
-        _.each(results, function(item) {
-            if (!item.label) {
-                item.label = item.name.substr(0, 2);
-            }
-        });
+
         return results;
     },
 
