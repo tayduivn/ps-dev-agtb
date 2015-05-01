@@ -255,6 +255,7 @@ class EmailAddressHandlerTest extends \PHPUnit_Framework_TestCase
     {
         $sf = new SearchFields();
         $sut = $this->getEmailAddressHandlerMock();
+        $GLOBALS['log'] = \LoggerManager::getLogger('SugarCRM');
         $sut->buildSearchFields($sf, $module, $field, $defs);
         $this->assertEquals($expected, $sf->getSearchFields());
     }

@@ -890,7 +890,7 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
 
         // mock SearchFields
         $sf = new SearchFields();
-
+        $GLOBALS['log'] = \LoggerManager::getLogger('SugarCRM');
         $sut->buildSearchFields($sf, $module, $field, $defs);
         $this->assertEquals($expected, $sf->getSearchFields());
     }
