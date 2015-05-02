@@ -5101,6 +5101,7 @@ Sincerely, SugarCRM',
     //common chart config field labels
     'LBL_CHART_CONFIG_CHART_TYPE' => 'Chart type',
     'LBL_CHART_CONFIG_SHOW_TITLE' => 'Show title',
+    'LBL_CHART_CONFIG_SHOW_TOTAL' => 'Show total',
     'LBL_CHART_CONFIG_SHOW_XAXIS_LABEL' => 'Show x-axis label',
     'LBL_CHART_CONFIG_SHOW_YAXIS_LABEL' => 'Show y-axis label',
     'LBL_CHART_CONFIG_TICK_DISPLAY' => 'Tick display methods',

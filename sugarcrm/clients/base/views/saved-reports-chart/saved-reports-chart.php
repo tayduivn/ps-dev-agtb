@@ -61,24 +61,10 @@ $viewdefs['base']['view']['saved-reports-chart'] = array(
                 ),
 
                 array(
-                    'name' => 'title_options',
-                    'type' => 'fieldset',
-                    'inline' => true,
-                    'show_child_labels' => false,
-                    'label' => 'LBL_CHART_CONFIG_SHOW_TITLE',
-                    'toggle' => 'show_title',
-                    'dependent' => 'report_title',
-                    'fields' => array(
-                        array(
-                            'name' => 'show_title',
-                            'type' => 'bool',
-                            'default' => 0,
-                            'css_class' => 'align-top',
-                        ),
-                        array(
-                            'name' => 'report_title',
-                        ),
-                    ),
+                    'name' => 'show_title',
+                    'label' => 'LBL_CHART_CONFIG_SHOW_TOTAL',
+                    'type' => 'bool',
+                    'default' => 0,
                 ),
 
                 array(
