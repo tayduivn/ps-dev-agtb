@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch;
 
+use Sugarcrm\Sugarcrm\Elasticsearch\Query\MultiMatch\MultiMatchQuery;
 
 /**
  *
@@ -68,16 +69,8 @@ class SearchFields
      */
     public function addSearchField($module, array $path, array $defs, $weightId)
     {
-        //Check ACL access
-        if (is_array($path) && !empty($path)) {
-            $names = explode(self::PREFIX_SEP, $path[0]);
-            if (sizeof($names) === 2) {
-                $field = $names[1];
-                $accessLevel = \SugarACL::getFieldAccess($module, $field);
-                if ($accessLevel === \SugarACL::ACL_NO_ACCESS) {
-                    return;
-                }
-            }
+        if (MultiMatchQuery::isFieldAccessible($module, $path) === false) {
+            return;
         }
 
         $searchField = implode(self::FIELD_SEP, $path);
