@@ -106,16 +106,6 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
     );
 
     /**
-     * Which reports should be shown and hidden.
-     *
-     * @var array
-     */
-    protected $reportchange = array(
-        'show' => array('Current Quarter Forecast', 'Detailed Forecast'),
-        'hide' => array()
-    );
-
-    /**
      * Put any custom Convert Logic Here
      *
      * @return mixed|void
@@ -149,6 +139,7 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
             array(
                 'sales_stage' => true,
                 'sales_status' => false,
+                'probability' => true,
             )
         );
     }
@@ -237,7 +228,7 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
     public function doDataConvert()
     {
         $this->resetForecastData('Opportunities');
-
+        
         // fix the reports
         SugarAutoLoader::load('modules/Opportunities/include/OpportunityReports.php');
         $reports = new OpportunityReports();
