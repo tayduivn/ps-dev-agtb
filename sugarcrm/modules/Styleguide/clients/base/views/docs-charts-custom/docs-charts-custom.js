@@ -21,14 +21,12 @@
         var chart = nv.models.funnelChart()
               .showTitle(false)
               .direction(app.lang.direction)
+              .fmtValueLabel(function(d) { return '$' + (d.label || d.value || d) + 'K'; })
               .tooltipContent(function(key, x, y, e, graph) {
                 return '<p>Stage: <b>' + key + '</b></p>' +
                        '<p>Amount: <b>$' + parseInt(y, 10) + 'K</b></p>' +
                        '<p>Percent: <b>' + x + '%</b></p>';
               });
-
-        chart.yAxis
-            .tickFormat(d3.format(',.1f'));
 
         d3.select('#funnel1 svg')
             .datum(data)
