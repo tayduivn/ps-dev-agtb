@@ -72,7 +72,10 @@
 
                     //if we have a message, disable the button.
                     if (!_.isEmpty(message)) {
+                        this.setDisabled(true);
                         button = this.getFieldElement();
+                        // this is still needed because of SFA-3225 which is in 7.7, this can be and should be removed
+                        // in 7.7
                         button.addClass('disabled');
                         button.attr('data-event', '');
                         button.tooltip({title: message});
