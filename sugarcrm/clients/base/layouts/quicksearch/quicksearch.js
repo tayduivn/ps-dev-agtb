@@ -30,6 +30,8 @@
         // should use that context instead of this.collection.
         this.collection = app.data.createMixedBeanCollection();
 
+        this.selectedTags = [];
+
         /**
          * Key to indicate version 2 search (new global search). This is used by the component views to determine
          * what version of the API to use. Default is false.
@@ -155,6 +157,7 @@
      */
     _placeComponent: function(component) {
         if (component.name === 'quicksearch-modulelist' ||
+            component.name === 'quicksearch-taglist' ||
             component.name === 'quicksearch-bar'
         ) {
             this.$('[data-component=searchbar]').append(component.el);
