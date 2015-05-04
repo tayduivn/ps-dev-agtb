@@ -104,7 +104,7 @@ abstract class OpportunitySetup
             $field_defs = $this->bean->getFieldDefinition($field);
             // load the field type up
             $f = get_widget($field_defs['type']);
-    
+
             $diff = array();
             foreach ($new_defs as $k => $v) {
                 if (!isset($field_defs[$k])) {
@@ -171,6 +171,9 @@ abstract class OpportunitySetup
 
         $rnr_modules = $this->fixRevenueLineItemModule();
         SugarBean::clearLoadedDef('RevenueLineItem');
+
+        // hide/show reports
+        $this->handleReports();
 
         // lets fix the workflows module
         $this->processWorkFlows();
@@ -636,6 +639,31 @@ EOL;
         $file = 'custom/modules/unified_search_modules_display.php';
         if (SugarAutoLoader::fileExists($file)) {
             SugarAutoLoader::unlink($file);
+        }
+    }
+
+    /**
+     * Show/hide reports based on mode.
+     */
+    protected function handleReports()
+    {
+        require_once('modules/Reports/SeedReports.php');
+
+        $db = DBManagerFactory::getInstance();
+
+        $func = function($item) use ($db) {
+            return($db->quoted($item));
+        };
+
+        $hide = !empty($this->reportchange['hide']) ? array_map($func, $this->reportchange['hide']): array();
+
+        if (!empty($hide)) {
+            $sql = 'UPDATE saved_reports SET deleted = 1 WHERE name IN (' . implode(',', $hide) . ') AND deleted = 0';
+            $db->query($sql);
+        }
+
+        if (!empty($this->reportchange['show'])) {
+            create_default_reports(false, $this->reportchange['show']);
         }
     }
 

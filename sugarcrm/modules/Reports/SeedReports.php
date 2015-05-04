@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-function create_default_reports($is_upgrade=false) {
+function create_default_reports($is_upgrade=false, $reportlist=array()) {
     global $current_language;
 
     $lang_strings = return_module_language($current_language, 'Reports');
@@ -122,6 +122,10 @@ function create_default_reports($is_upgrade=false) {
     $default_reports[] = array('TrackerSessions', $lang_strings['DEFAULT_REPORT_TITLE_42'], '{"display_columns":[],"module":"TrackerSessions","group_defs":[{"name":"user_id","label":"User Id","table_key":"self","type":"varchar"}],"summary_columns":[{"name":"user_id","label":"User Id","table_key":"self"},{"name":"count","label":"Count","field_type":"","group_function":"count","table_key":"self"},{"name":"round_trips","label":"SUM: Session Roundtrips","field_type":"int","group_function":"sum","table_key":"self"},{"name":"seconds","label":"SUM: Seconds","field_type":"int","group_function":"sum","table_key":"self"}],"report_name":"'. $lang_strings['DEFAULT_REPORT_TITLE_42'] .'","chart_type":"none","chart_description":"","numerical_chart_column":"self:round_trips:sum","numerical_chart_column_type":"","assigned_user_id":"1","report_type":"summary","full_table_list":{"self":{"value":"TrackerSessions","module":"TrackerSessions","label":"TrackerSessions"}},"filters_def":{"Filter_1":{"operator":"AND","0":{"name":"date_end","table_key":"self","qualifier_name":"tp_last_7_days","input_name0":"tp_last_7_days","input_name1":"on"}}}}', 'summary', 'none');
  
     foreach ($default_reports as $report) {
+        if (!empty($reportlist) && !in_array($report[1], $reportlist)) {
+            continue;
+        }
+
         $saved_report = BeanFactory::getBean('Reports');
 		if ($is_upgrade) {
 			$report_id = $saved_report->retrieveReportIdByName($report[1]);
