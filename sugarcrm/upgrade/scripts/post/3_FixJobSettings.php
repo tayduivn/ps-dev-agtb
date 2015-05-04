@@ -20,16 +20,15 @@ class SugarUpgradeFixJobSettings extends UpgradeScript
 
     public function run()
     {
-        if (version_compare($this->from_version, '7.5', ">=")) {
-            return;
-        }
-
         if (isset($this->upgrader->config['jobs']['timeout']) && $this->upgrader->config['jobs']['timeout'] == 86400) {
             $this->upgrader->config['jobs']['timeout'] = 3600;
         }
 
         if (isset($this->upgrader->config['cron']['max_cron_runtime'])
-            && ($this->upgrader->config['cron']['max_cron_runtime'] == 60 || $this->upgrader->config['cron']['max_cron_runtime'] == 30)) {
+            && (
+                $this->upgrader->config['cron']['max_cron_runtime'] == 60 ||
+                $this->upgrader->config['cron']['max_cron_runtime'] == 30
+            )) {
             $this->upgrader->config['cron']['max_cron_runtime'] = 1800;
         }
 
