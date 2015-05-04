@@ -56,8 +56,8 @@ showNotes = function (caseId, caseIndex, noEdit) {
                                 label: log.not_content,
                                 user:  log.last_name,
                                 picture : pictureUrl,
-                                duration: '<strong> ' +  App.date(log.date_entered).fromNow() + ' </strong>',
-                                startDate: App.date(log.date_entered).formatUser(),
+                                duration: '<strong> ' +  _App.date(log.date_entered).fromNow() + ' </strong>',
+                                startDate: _App.date(log.date_entered).formatUser(),
                                 logId: log.id
                             };
                             np.addLog(newLog);
@@ -142,7 +142,7 @@ addRow = function (args) {
         col1,
         pic,
         html;
-
+    if(App){ _App = App; } else { _App = parent.SUGAR.App; }
     if (rowCount == 0) {
         row.className = 'oddListRowS1';
     } else {
@@ -169,10 +169,10 @@ addRow = function (args) {
     html += '<div style="float: left; margin-right: 3px;">';
     html += '<strong>' + args.user_name + '</strong><br>';
     html += args.not_content + '<br>';
-    html += '<span style="font-size: 11px; color: #7e7e7e;">' + App.date(args.date).formatUser() + '</span>';
+    html += '<span style="font-size: 11px; color: #7e7e7e;">' + _App.date(args.date).formatUser() + '</span>';
     html += '</div>';
     html += '<div style="float: right; text-align: right;">';
-    html += App.date(args.date).fromNow() + '<br>';
+    html += _App.date(args.date).fromNow() + '<br>';
     html += '<a href="javascript:deleteRow(\'' + args.not_id + '\');">' + translate('LBL_PMSE_LABEL_DELETE') + '</a>';
     html += '</div>';
     html += '<div class="clear"></div>';

@@ -43,9 +43,9 @@ function showHistory(caseId, caseIndex) {
                                 label = log.data_info;
                                 if (log.completed) {
                                     if (end_date) {
-                                        duration = '<strong>( ' + App.date(end_date).fromNow() + ' )</strong>';
+                                        duration = '<strong>( ' + _App.date(end_date).fromNow() + ' )</strong>';
                                     } else {
-                                        duration = '<strong>( ' + App.date(delegate_date).fromNow() + ' )</strong>';
+                                        duration = '<strong>( ' + _App.date(delegate_date).fromNow() + ' )</strong>';
                                     }
                                 } else {
                                     duration = '<strong>' + translate('LBL_PMSE_HISTORY_LOG_NO_YET_STARTED', 'pmse_Inbox') + '</strong>';
@@ -61,7 +61,7 @@ function showHistory(caseId, caseIndex) {
                                     name: 'log' + i,
                                     label: label,
                                     user: log.user,
-                                    startDate: App.date(delegate_date).formatUser(),
+                                    startDate: _App.date(delegate_date).formatUser(),
                                     picture : (log.script) ? log.image : pictureUrl,
                                     duration: duration,
                                     completed: log.completed,
