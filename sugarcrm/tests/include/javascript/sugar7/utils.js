@@ -137,6 +137,12 @@ describe("Sugar7 utils", function() {
             });
             expect(app.utils.getRecordName(model)).toEqual('Simple Name');
         });
+
+        it('should return the last name', function() {
+            model.module = 'Contacts';
+            model.set('last_name', 'Name');
+            expect(app.utils.getRecordName(model)).toEqual('Name');
+        });
     });
 
     var name = 'module';

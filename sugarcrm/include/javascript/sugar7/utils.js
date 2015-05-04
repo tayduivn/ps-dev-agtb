@@ -721,6 +721,10 @@
                 } else if (model.has('first_name') && model.has('last_name')) {
                     return model.get('first_name') + ' ' + model.get('last_name');
 
+                // Special case for `Person` type modules
+                } else if (model.has('last_name')) {
+                    return model.get('last_name');
+
                 // Default behavior
                 } else {
                     return model.get('name') || '';
