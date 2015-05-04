@@ -12,11 +12,10 @@
     extendsFrom: "MassupdateView",
     
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     initialize: function(options) {
-        this.plugins = _.clone(this.plugins) || [];
-        this.plugins.push('DisableMassDelete');
+        this.plugins = _.union(this.plugins || [], ['DisableMassDelete', 'CommittedDeleteWarning']);
         this._super("initialize", [options]);
     }
 })

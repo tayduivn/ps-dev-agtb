@@ -239,6 +239,11 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
         $this->queueRevenueLineItemsForNotesOnOpportunities();
         $this->setOpportunityDataFromRevenueLineItems();
         $this->deleteRevenueLineItems();
+
+        if ($this->isForecastSetup()) {
+            SugarAutoLoader::load('include/SugarQueue/jobs/SugarJobUpdateOpportunities.php');
+            SugarJobUpdateOpportunities::updateOpportunitiesForForecasting();
+        }
     }
 
     /**
@@ -417,16 +422,12 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
             $sql = 'UPDATE opportunities SET date_closed = ' . $db->quoted((!empty($result['dc_open']) ? $result['dc_open'] : $result['dc_closed'])) . ',
                 date_closed_timestamp = ' . $db->quoted((!empty($result['dct_open']) ? $result['dct_open'] : $result['dct_closed'])) . ',
                 sales_stage = ' . $db->quoted($list_value[$result['sales_stage']]) . ',
+                included_revenue_line_items = 0, total_revenue_line_items = 0, closed_revenue_line_items = 0,
                 probability = ' . $db->quoted($app_list_strings['sales_probability_dom'][$list_value[$result['sales_stage']]]) . ',
                 sales_status = ' . $db->quoted('') . ', commit_stage = ' . $db->quoted('') . '
                 WHERE id = ' . $db->quoted($result['opportunity_id']);
 
             $db->query($sql);
-        }
-
-        if ($this->isForecastSetup()) {
-            SugarAutoLoader::load('include/SugarQueue/jobs/SugarJobUpdateOpportunities.php');
-            SugarJobUpdateOpportunities::updateOpportunitiesForForecasting();
         }
     }
 

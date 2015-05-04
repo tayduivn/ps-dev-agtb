@@ -413,6 +413,8 @@ $mod_strings = array (
     'LBL_QUOTA_ASSIGNED' => 'Quotas have been successfully assigned.',
     'LBL_FORECASTS_NO_ACCESS_TO_CFG_TITLE' => 'Forecasts Access Error',
     'LBL_FORECASTS_NO_ACCESS_TO_CFG_MSG' => 'You do not have access to configure Forecasts. Please contact your Administrator.',
+    'WARNING_DELETED_RECORD_RECOMMIT_1' => 'This record was included in a ',
+    'WARNING_DELETED_RECORD_RECOMMIT_2' => 'It will be removed and you will need to re-commit your ',
 
     'LBL_DASHLET_MY_FORECAST' => 'My Forecast',
     'LBL_DASHLET_MY_TEAMS_FORECAST' => "My Team's Forecast",

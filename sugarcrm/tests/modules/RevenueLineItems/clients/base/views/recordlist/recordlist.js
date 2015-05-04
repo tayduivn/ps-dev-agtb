@@ -1,4 +1,3 @@
-
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -10,7 +9,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 describe("RevenueLineItems.Base.Views.RecordList", function() {
-    var app, view, options, context, layout, message;
+    var app,
+        view,
+        options,
+        context,
+        layout;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -19,7 +22,7 @@ describe("RevenueLineItems.Base.Views.RecordList", function() {
             module: 'RevenueLineItems'
         });
         context.prepare();
-        
+
         options = {
             meta: {
                 panels: [{
@@ -35,8 +38,6 @@ describe("RevenueLineItems.Base.Views.RecordList", function() {
                 }]
             }
         };
-
-        
         SugarTest.testMetadata.init();
         SugarTest.loadComponent('base', 'view', 'list');
         SugarTest.loadComponent('base', 'view', 'flex-list');
@@ -46,7 +47,6 @@ describe("RevenueLineItems.Base.Views.RecordList", function() {
         SugarTest.seedMetadata(true);
         app.metadata.getModule("Forecasts", "config").is_setup = 1;
         layout = SugarTest.createLayout("base", "RevenueLineItems", "list", null, null);
-        
     });
     
     afterEach(function() {
@@ -70,35 +70,6 @@ describe("RevenueLineItems.Base.Views.RecordList", function() {
         expect(view._fields.visible.length).toEqual(3);
         _.each(view._fields.visible, function(field) {
             expect(field.name).not.toEqual('commit_stage');
-        });
-    });
-    
-    describe("when deleteCommitWarning is called", function() {
-        var model;
-        beforeEach(function() {
-            message = null;
-            model = new Backbone.Model({
-                id: "aaa",
-                name: "boo",
-                module: "RevenueLineItems"
-            });
-            view = SugarTest.createView('base', 'RevenueLineItems', 'recordlist', options.meta, context, true, layout);
-        });
-        
-        afterEach(function() {
-            model = null;
-        });
-        
-        it("should should return WARNING_DELETED_RECORD_RECOMMIT_1 and _2 combined when commit_stage = include", function() {
-            model.set("commit_stage", "include");
-            message = view.deleteCommitWarning(model);
-            expect(message).toEqual('WARNING_DELETED_RECORD_RECOMMIT_1<a href="#Forecasts">Forecasts</a>.  WARNING_DELETED_RECORD_RECOMMIT_2<a href="#Forecasts">Forecasts</a>.');
-        });
-        
-        it("should should return NULL when commit_stage != include", function() {
-            model.commit_stage = "exclude";
-            message = view.deleteCommitWarning(model);
-            expect(message).toEqual(null);
         });
     });
 

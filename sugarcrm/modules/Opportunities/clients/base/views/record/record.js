@@ -41,7 +41,7 @@
      * @param {Object} options
      */
     initialize: function(options) {
-        this.plugins = _.union(this.plugins, ['LinkedModel', 'HistoricalSummary']);
+        this.plugins = _.union(this.plugins, ['LinkedModel', 'HistoricalSummary', 'CommittedDeleteWarning']);
         //BEGIN SUGARCRM flav=ent ONLY
         this.addInitListener();
         //END SUGARCRM flav=ent ONLY
