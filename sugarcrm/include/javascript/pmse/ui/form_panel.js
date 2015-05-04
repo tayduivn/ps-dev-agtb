@@ -1292,7 +1292,6 @@
 
 	//Returns a date time in the specified format.
 	FormPanelDatetime.format = function (value, dateFormat, timeFormat) {
-		//based on format function in components_4ffa9804da5d932ba4c9ac5834421ed5.js line 3844
 		if (!value) {
 			return value;
 		}
