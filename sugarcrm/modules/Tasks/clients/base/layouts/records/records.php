@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$viewdefs['base']['layout']['records'] = array(
+$viewdefs['Tasks']['base']['layout']['records'] = array(
     'components' => array(
         array(
             'layout' => array(
@@ -31,6 +31,12 @@ $viewdefs['base']['layout']['records'] = array(
                                                 'toggle-view' => 'list',
                                             ),
                                         ),
+                                        // This is the only customization made
+                                        // to the core `records` metadata.
+                                        'filter_options' => array(
+                                            'initial_filter' => 'assigned_to_me',
+                                        ),
+                                        // End
                                         'availableToggles' => array(
                                             array(
                                                 'name' => 'list',

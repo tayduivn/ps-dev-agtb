@@ -276,7 +276,7 @@
                         id: record.id,
                         name: record.name,
                         module: record._module,
-                        label: record._module.substr(0, 2),
+                        label: app.lang.getModuleIconLabel(record._module),
                         route: '#' + app.router.buildRoute(record._module, record.id),
                         timestamp: now,
                         weight: 40
