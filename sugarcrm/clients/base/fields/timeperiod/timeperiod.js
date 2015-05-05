@@ -62,7 +62,12 @@
             this.tooltipDir = 'left';
         }
 
-        var collectionParams = {limit: 100, params: {}};
+
+        var collectionParams = {
+            limit: 100,
+            params: {}
+        };
+
         this._super('initialize', [options]);
 
         if (this.def.use_generic_timeperiods) {
@@ -72,6 +77,7 @@
         // get timeperiods list
         this.tpCollection = app.data.createBeanCollection('TimePeriods');
         this.tpCollection.once('reset', this.formatTooltips, this);
+        this.tpCollection.on('sync', this.render, this);
         this.tpCollection.fetch(collectionParams);
 
         // load the tooltip template
