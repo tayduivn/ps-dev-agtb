@@ -933,7 +933,8 @@ class PMSECrmDataWrapper implements PMSEObservable
         $res->success = true;
         $output = array();
         $where = 'users.deleted = 0 ';
-        $where .= ' AND users.employee_status = \'Active\' ';
+        $where .= ' AND users.status = \'Active\' ';
+        $where .= ' AND NOT (users.is_group = 1 OR users.portal_only = 1)';
 
         if (!empty($filter)) {
             $where .= ' AND (users.first_name LIKE \'%' . $filter . '%\' ';
