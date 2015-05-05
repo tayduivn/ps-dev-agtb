@@ -320,6 +320,15 @@
      * @override
      */
     bindDataChange: function() {
+        if (this.model) {
+            this.model.on('change:' + this.name, function() {
+                // only re-render the field if we are on merge-duplicates view
+                // it allows tags to copy over when choosing primaryRecord's tags
+                if (this.context.get('selectedDuplicates')) {
+                    this.render();
+                }
+            }, this);
+        }
     },
 
     /**
