@@ -236,7 +236,7 @@ class RestResponse extends Zend_Http_Response
      * @param string $etag ETag to use for this content.
      * @return bool Did we have a match?
      */
-    public function generateETagHeader($etag = null, $cache_age = 0)
+    public function generateETagHeader($etag = null, $cache_age = 10)
     {
         if (is_null($etag)) {
             if (is_array($this->body)) {
