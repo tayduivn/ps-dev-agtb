@@ -122,6 +122,7 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
 					$this->_mergeFielddefs ( $fielddefs , $loaded ) ;
 					break;
 
+                case MB_SIDECARLISTVIEW:
                 case MB_RECORDVIEW:
                 case MB_SIDECARPOPUPVIEW:
 				case MB_SIDECARDUPECHECKVIEW:
@@ -135,7 +136,8 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
                 case MB_WIRELESSADVANCEDSEARCH:
                 case MB_WIRELESSLISTVIEW:
                     $_viewtype = 'mobile';
-                if (in_array($view, array(MB_RECORDVIEW, MB_SIDECARPOPUPVIEW, MB_SIDECARDUPECHECKVIEW))) {
+                if (in_array($view,
+                    array(MB_RECORDVIEW, MB_SIDECARPOPUPVIEW, MB_SIDECARDUPECHECKVIEW, MB_SIDECARLISTVIEW))) {
                     $_viewtype = 'base';
                 }
 

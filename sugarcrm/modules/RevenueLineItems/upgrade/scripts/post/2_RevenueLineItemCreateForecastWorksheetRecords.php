@@ -37,7 +37,7 @@ class SugarUpgradeRevenueLineItemCreateForecastWorksheetRecords extends UpgradeS
                      rli.id as parent_id,
                      'RevenueLineItems' as parent_type,
                      1 as draft
-                FROM revenue_line_items as rli
+                FROM revenue_line_items rli
                 LEFT JOIN forecast_worksheets fw
                 ON rli.id = fw.parent_id AND fw.parent_type = 'RevenueLineItems'
                 WHERE fw.id IS NULL";

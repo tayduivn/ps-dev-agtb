@@ -31,7 +31,6 @@
                 {
                     callback: 'openConfig',
                     action: 'config',
-                    module: 'Configuration',
                     name: app.lang.get('LBL_SWEETSPOT_CONFIG'),
                     icon: 'fa-cog'
                 }
@@ -114,12 +113,12 @@
                     }
                     actions[jsFunc]({
                         module: module,
-                        label: module.substr(0, 2),
+                        label: app.lang.getModuleIconLabel(module),
                         name: name,
                         route: action.route,
                         icon: action.icon,
                         weight: weight
-                    })
+                    });
                 });
             });
             var profileActions = app.metadata.getView(null, 'profileactions');
@@ -147,6 +146,11 @@
             var collection = {};
             var actions = getModuleLinks().concat(getSystemActions());
             _.each(actions, function(action) {
+                if (!action.label) {
+                    // If there isn't a label, that means this action doesn't
+                    // have a module, so use the action name instead.
+                    action.label = app.lang.getModuleIconLabel(action.name);
+                }
                 collection[action.route || action.callback] = action;
             });
             return collection;

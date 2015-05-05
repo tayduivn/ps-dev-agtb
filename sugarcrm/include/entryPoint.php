@@ -91,7 +91,7 @@ if(is_file('config.php')) {
 
 // load up the config_override.php file.  This is used to provide default user settings
 if(is_file('config_override.php')) {
-    require_once('config_override.php');
+    require 'config_override.php';
 }
 
 
