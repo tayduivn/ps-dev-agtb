@@ -150,7 +150,7 @@
                     selectedClassSelector = '.' + self.selectedClass;
 
                 //clear out any previous draggable before setting up new ones
-                if (this.$draggableItems) {
+                if (this.$draggableItems && !_.isUndefined(this.$draggableItems.draggable('instance'))) {
                     this.$draggableItems.draggable('destroy');
                 }
 
