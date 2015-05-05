@@ -942,6 +942,13 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
             array($data, $spec, $offset, $limit, &$nextOffset)
         );
 
+        // remove the "_source" key from the records since it's a desired side effect of sorting but not what we
+        // want to test here (the order of records and limit). also its value is undetermined in case of duplicates
+        $records = array_map(function($record) {
+            unset($record['_source']);
+            return $record;
+        }, $records);
+
         $this->assertEquals($expectedRecords, $records);
         $this->assertEquals($expectedNextOffset, $nextOffset);
     }
@@ -954,9 +961,13 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
                     's1' => array(
                         'records' => array(
                             array(
+                                '_module' => 'm1',
+                                'id' => 'm1-x',
                                 'a' => 'x',
                             ),
                             array(
+                                '_module' => 'm1',
+                                'id' => 'm1-z',
                                 'a' => 'z',
                             ),
                         ),
@@ -965,6 +976,8 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
                     's2' => array(
                         'records' => array(
                             array(
+                                '_module' => 'm2',
+                                'id' => 'm2-y',
                                 'a' => 'Y',
                             ),
                         ),
@@ -988,16 +1001,19 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
                 ),
                 array(
                     array(
+                        '_module' => 'm1',
+                        'id' => 'm1-x',
                         'a' => 'x',
-                        '_source' => 's1',
                     ),
                     array(
+                        '_module' => 'm2',
+                        'id' => 'm2-y',
                         'a' => 'Y',
-                        '_source' => 's2',
                     ),
                     array(
+                        '_module' => 'm1',
+                        'id' => 'm1-z',
                         'a' => 'z',
-                        '_source' => 's1',
                     ),
                 ),
                 array(
@@ -1011,9 +1027,13 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
                         'records' => array(
                             array(
                                 'a' => '10',
+                                '_module' => 'm1',
+                                'id' => 'r-10',
                             ),
                             array(
                                 'a' => '100',
+                                '_module' => 'm1',
+                                'id' => 'r-100',
                             ),
                         ),
                         'next_offset' => -1,
@@ -1022,6 +1042,8 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
                         'records' => array(
                             array(
                                 'a' => '11',
+                                'id' => 'r-11',
+                                '_module' => 'm2',
                             ),
                         ),
                         'next_offset' => -1,
@@ -1045,15 +1067,18 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
                 array(
                     array(
                         'a' => '10',
-                        '_source' => 's1',
+                        '_module' => 'm1',
+                        'id' => 'r-10',
                     ),
                     array(
                         'a' => '11',
-                        '_source' => 's2',
+                        '_module' => 'm2',
+                        'id' => 'r-11',
                     ),
                     array(
                         'a' => '100',
-                        '_source' => 's1',
+                        '_module' => 'm1',
+                        'id' => 'r-100',
                     ),
                 ),
                 array(
@@ -1066,9 +1091,13 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
                     's1' => array(
                         'records' => array(
                             array(
+                                '_module' => 'm1',
+                                'id' => 'm1-z',
                                 'a' => 'z',
                             ),
                             array(
+                                '_module' => 'm1',
+                                'id' => 'm1-x',
                                 'a' => 'x',
                             ),
                         ),
@@ -1077,6 +1106,8 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
                     's2' => array(
                         'records' => array(
                             array(
+                                '_module' => 'm2',
+                                'id' => 'm2-x',
                                 'a' => 'Y',
                             ),
                         ),
@@ -1100,16 +1131,19 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
                 ),
                 array(
                     array(
+                        '_module' => 'm1',
+                        'id' => 'm1-z',
                         'a' => 'z',
-                        '_source' => 's1',
                     ),
                     array(
+                        '_module' => 'm2',
+                        'id' => 'm2-x',
                         'a' => 'Y',
-                        '_source' => 's2',
                     ),
                     array(
+                        '_module' => 'm1',
+                        'id' => 'm1-x',
                         'a' => 'x',
-                        '_source' => 's1',
                     ),
                 ),
                 array(
@@ -1122,6 +1156,8 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
                     's1' => array(
                         'records' => array(
                             array(
+                                '_module' => 'm1',
+                                'id' => 'm1-x',
                                 'a' => 'x',
                             ),
                         ),
@@ -1130,6 +1166,8 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
                     's2' => array(
                         'records' => array(
                             array(
+                                '_module' => 'm2',
+                                'id' => 'm2-z',
                                 'b' => 'z',
                             ),
                         ),
@@ -1138,6 +1176,8 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
                     's3' => array(
                         'records' => array(
                             array(
+                                '_module' => 'm3',
+                                'id' => 'm3-y',
                                 'c' => 'y',
                             ),
                         ),
@@ -1163,16 +1203,19 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
                 ),
                 array(
                     array(
+                        '_module' => 'm1',
+                        'id' => 'm1-x',
                         'a' => 'x',
-                        '_source' => 's1',
                     ),
                     array(
+                        '_module' => 'm3',
+                        'id' => 'm3-y',
                         'c' => 'y',
-                        '_source' => 's3',
                     ),
                     array(
+                        '_module' => 'm2',
+                        'id' => 'm2-z',
                         'b' => 'z',
-                        '_source' => 's2',
                     ),
                 ),
                 array(
@@ -1186,10 +1229,14 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
                     's1' => array(
                         'records' => array(
                             array(
+                                '_module' => 'm1',
+                                'id' => 'm1-xx',
                                 'a' => 'x',
                                 'b' => 'x',
                             ),
                             array(
+                                '_module' => 'm1',
+                                'id' => 'm1-yy',
                                 'a' => 'y',
                                 'b' => 'y',
                             ),
@@ -1199,6 +1246,8 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
                     's2' => array(
                         'records' => array(
                             array(
+                                '_module' => 'm2',
+                                'id' => 'm2-xy',
                                 'a' => 'x',
                                 'b' => 'y',
                             ),
@@ -1231,19 +1280,22 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
                 ),
                 array(
                     array(
+                        '_module' => 'm1',
+                        'id' => 'm1-xx',
                         'a' => 'x',
                         'b' => 'x',
-                        '_source' => 's1',
                     ),
                     array(
+                        '_module' => 'm2',
+                        'id' => 'm2-xy',
                         'a' => 'x',
                         'b' => 'y',
-                        '_source' => 's2',
                     ),
                     array(
+                        '_module' => 'm1',
+                        'id' => 'm1-yy',
                         'a' => 'y',
                         'b' => 'y',
-                        '_source' => 's1',
                     ),
                 ),
                 array(
@@ -1256,9 +1308,13 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
                     'accounts' => array(
                         'records' => array(
                             array(
+                                '_module' => 'accounts',
+                                'id' => 'alpha-bank',
                                 'name' => 'Alpha Bank',
                             ),
                             array(
+                                '_module' => 'accounts',
+                                'id' => 'general-electric',
                                 'name' => 'General Electric',
                             ),
                         ),
@@ -1267,6 +1323,8 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
                     'contacts' => array(
                         'records' => array(
                             array(
+                                '_module' => 'contacts',
+                                'id' => 'john-doe',
                                 'first_name' => 'John',
                                 'last_name' => 'Doe',
                             ),
@@ -1291,17 +1349,20 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
                 ),
                 array(
                     array(
+                        '_module' => 'accounts',
+                        'id' => 'alpha-bank',
                         'name' => 'Alpha Bank',
-                        '_source' => 'accounts',
                     ),
                     array(
+                        '_module' => 'contacts',
+                        'id' => 'john-doe',
                         'first_name' => 'John',
                         'last_name' => 'Doe',
-                        '_source' => 'contacts',
                     ),
                     array(
+                        '_module' => 'accounts',
+                        'id' => 'general-electric',
                         'name' => 'General Electric',
-                        '_source' => 'accounts',
                     ),
                 ),
                 array(
@@ -1314,9 +1375,13 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
                     's1' => array(
                         'records' => array(
                             array(
+                                '_module' => 'm1',
+                                'id' => 'm1-a',
                                 'a' => 'a',
                             ),
                             array(
+                                '_module' => 'm1',
+                                'id' => 'm1-c',
                                 'a' => 'c',
                             ),
                         ),
@@ -1325,9 +1390,13 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
                     's2' => array(
                         'records' => array(
                             array(
+                                '_module' => 'm2',
+                                'id' => 'm2-b',
                                 'a' => 'b',
                             ),
                             array(
+                                '_module' => 'm2',
+                                'id' => 'm2-d',
                                 'a' => 'd',
                             ),
                         ),
@@ -1336,9 +1405,13 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
                     's3' => array(
                         'records' => array(
                             array(
+                                '_module' => 'm3',
+                                'id' => 'm3-e',
                                 'a' => 'e',
                             ),
                             array(
+                                '_module' => 'm3',
+                                'id' => 'm3-f',
                                 'a' => 'f',
                             ),
                         ),
@@ -1365,12 +1438,14 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
                 ),
                 array(
                     array(
+                        '_module' => 'm1',
+                        'id' => 'm1-a',
                         'a' => 'a',
-                        '_source' => 's1',
                     ),
                     array(
+                        '_module' => 'm2',
+                        'id' => 'm2-b',
                         'a' => 'b',
-                        '_source' => 's2',
                     ),
                 ),
                 array(
@@ -1385,9 +1460,13 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
                     's1' => array(
                         'records' => array(
                             array(
+                                '_module' => 'm1',
+                                'id' => 'm1-a-uml',
                                 'a' => 'ä',
                             ),
                             array(
+                                '_module' => 'm1',
+                                'id' => 'm1-a',
                                 'a' => 'a',
                             ),
                         ),
@@ -1396,9 +1475,13 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
                     's2' => array(
                         'records' => array(
                             array(
+                                '_module' => 'm2',
+                                'id' => 'm2-u-uml',
                                 'a' => 'ü',
                             ),
                             array(
+                                '_module' => 'm2',
+                                'id' => 'm2-u',
                                 'a' => 'u',
                             ),
                         ),
@@ -1422,25 +1505,84 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
                 ),
                 array(
                     array(
+                        '_module' => 'm1',
+                        'id' => 'm1-a-uml',
                         'a' => 'ä',
-                        '_source' => 's1',
                     ),
                     array(
+                        '_module' => 'm1',
+                        'id' => 'm1-a',
                         'a' => 'a',
-                        '_source' => 's1',
                     ),
                     array(
+                        '_module' => 'm2',
+                        'id' => 'm2-u-uml',
                         'a' => 'ü',
-                        '_source' => 's2',
                     ),
                     array(
+                        '_module' => 'm2',
+                        'id' => 'm2-u',
                         'a' => 'u',
-                        '_source' => 's2',
                     ),
                 ),
                 array(
                     's1' => -1,
                     's2' => -1,
+                ),
+            ),
+            'duplicates-removed' => array(
+                array(
+                    's1' => array(
+                        'records' => array(
+                            array(
+                                '_module' => 'm',
+                                'id' => 'm-r1',
+                            ),
+                            array(
+                                '_module' => 'm',
+                                'id' => 'm-r2',
+                            ),
+                        ),
+                        'next_offset' => -1,
+                    ),
+                    's2' => array(
+                        'records' => array(
+                            array(
+                                '_module' => 'm',
+                                'id' => 'm-r1',
+                            ),
+                            array(
+                                '_module' => 'm',
+                                'id' => 'm-r2',
+                            ),
+                        ),
+                        'next_offset' => -1,
+                    ),
+                ),
+                array(
+                    array(
+                        'map' => array(
+                            's1' => array('id'),
+                            's2' => array('id'),
+                        ),
+                        'is_numeric' => false,
+                        'direction' => true,
+                    )
+                ),
+                1,
+                array(
+                    's1' => 0,
+                    's2' => 0,
+                ),
+                array(
+                    array(
+                        '_module' => 'm',
+                        'id' => 'm-r1',
+                    ),
+                ),
+                array(
+                    's1' => 1,
+                    's2' => 1,
                 ),
             ),
         );

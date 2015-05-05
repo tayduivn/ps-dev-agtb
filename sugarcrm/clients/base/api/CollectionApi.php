@@ -474,28 +474,38 @@ abstract class CollectionApi extends SugarApi
     {
         $comparator = $this->getSourceDataComparator($spec);
 
+        $sourceRecords = $returnedBySource = array();
+
         // put source name into every record
-        $sourceRecords = array();
         foreach ($data as $source => $sourceData) {
             $sourceRecords[$source] = $sourceData['records'];
+            $returnedBySource[$source] = 0;
             foreach ($sourceRecords[$source] as $i => $_) {
                 $sourceRecords[$source][$i][static::$sourceKey] = $source;
             }
             $nextOffset[$source] = $sourceData['next_offset'];
         }
 
-        $records = array();
-        while (count($records) < $limit) {
+        $records = $index = array();
+        while (true) {
             uasort($sourceRecords, $comparator);
             $source = key($sourceRecords);
             $record = array_shift($sourceRecords[$source]);
             if (!$record) {
                 break;
             }
-            $records[] = $record;
+            if (!isset($index[$record['_module']][$record['id']])) {
+                if (count($records) >= $limit) {
+                    array_unshift($sourceRecords[$source], $record);
+                    break;
+                }
+                $records[] = $record;
+                $index[$record['_module']][$record['id']] = true;
+            }
+            $returnedBySource[$record[static::$sourceKey]]++;
         }
 
-        $nextOffset = $this->getNextOffset($offset, $records, $nextOffset, $sourceRecords);
+        $nextOffset = $this->getNextOffset($offset, $returnedBySource, $nextOffset, $sourceRecords);
 
         return $records;
     }
@@ -710,23 +720,15 @@ abstract class CollectionApi extends SugarApi
      * and the set of records being returned
      *
      * @param array $offset Initial value of offset
-     * @param array $records Returned records
+     * @param array $returned Count of returned records by source
      * @param array $nextOffset Collection of offsets returned by Relate API
      * @param array $remainder Not returned records
      *
      * @return array New value of offset
      */
-    protected function getNextOffset(array $offset, array $records, array $nextOffset, array $remainder)
+    protected function getNextOffset(array $offset, array $returned, array $nextOffset, array $remainder)
     {
-        $returned = $truncated = array();
-
-        foreach ($nextOffset as $source => $_) {
-            $returned[$source] = 0;
-        }
-
-        foreach ($records as $record) {
-            $returned[$record[static::$sourceKey]]++;
-        }
+        $truncated = array();
 
         foreach ($remainder as $source => $records) {
             $truncated[$source] = count($records) > 0;
