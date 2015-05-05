@@ -43,7 +43,7 @@
      * @inheritDoc
      */
     _render: function() {
-        if (!app.api.isAuthenticated()) {
+        if (!this.isReady()) {
             return;
         }
         this._super('_render');
@@ -122,6 +122,22 @@
     },
 
     /**
+     * Checks if this layout is ready to be {@link #show displayed}, or
+     * {@link #_render rendered}.
+     *
+     * FIXME SC-2761: Checking `isVisible` on the header component is necessary
+     * for disabling this layout on full-page modal views like the first login
+     * wizard. However, hiding additionalComponents should be event driven,
+     * see https://github.com/sugarcrm/Mango/pull/18722#discussion_r11782561.
+     *
+     * @return {boolean} `true` if this layout is OK to render/show, `false`
+     *   otherwise.
+     */
+    isReady: function() {
+        return app.api.isAuthenticated() && app.isSynced && app.additionalComponents.header.isVisible();
+    },
+
+    /**
      * @override
      */
     isVisible: function() {
@@ -138,6 +154,10 @@
         if (!this.triggerBefore('show')) {
             return false;
         }
+        if (!this.isReady()) {
+            return;
+        }
+
         this._isVisible = true;
         this.$('input').val('');
         this.$el.fadeToggle(50, 'linear', _.bind(this.focusInput, this));
