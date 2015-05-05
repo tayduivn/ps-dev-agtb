@@ -2236,6 +2236,7 @@ class MetaDataManager
 
         // Get our metadata
         $data = $this->getMetadataCache(false, $context);
+        $oldHash = !empty($data['_hash']) ? $data['_hash'] : null;
 
         //If we failed to load the metadata from cache, load it now the hard way.
         if (empty($data) || !$this->verifyJSSource($data)) {
@@ -2248,7 +2249,7 @@ class MetaDataManager
 
         // Cache the data so long as the current cache is different from the data
         // hash
-        if ($data['_hash'] != $this->getMetadataHash()) {
+        if ($data['_hash'] != $oldHash) {
             $this->putMetadataCache($data, $context);
         }
 
