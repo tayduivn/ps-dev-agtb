@@ -409,7 +409,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
 		'name' => 'contact_id',
 		'rname' => 'id',
         'vname' => 'LBL_CONTACT_ID',
-        'type' => 'id',
+        'type' => 'relate',
         'link' => 'contacts',
 		'source' => 'non-db',
 	),
