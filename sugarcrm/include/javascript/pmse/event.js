@@ -870,6 +870,8 @@ AdamEvent.prototype.createConfigureAction = function () {
             required: false,
             fieldWidth: 414,
             fieldHeight: 80,
+            dateFormat: App.date.getUserDateFormat(),
+            timeFormat: App.user.getPreference("timepref"),
             decimalSeparator: SUGAR.App.config.defaultDecimalSeparator,
             numberGroupingSeparator: SUGAR.App.config.defaultNumberGroupingSeparator,
             operators: {
@@ -1290,7 +1292,9 @@ AdamEvent.prototype.createConfigureAction = function () {
                           }
                         },
                         decimalSeparator: SUGAR.App.config.defaultDecimalSeparator,
-                        numberGroupingSeparator: SUGAR.App.config.defaultNumberGroupingSeparator
+                        numberGroupingSeparator: SUGAR.App.config.defaultNumberGroupingSeparator,
+                        dateFormat: App.date.getUserDateFormat(),
+                        timeFormat: App.user.getPreference("timepref")
                     }
                 ];
                 wHeight = 185;
@@ -1523,7 +1527,8 @@ AdamEvent.prototype.createConfigureAction = function () {
                     moduleTextField: "text",
                     moduleValueField: "value"
                 },
-                dateFormat: project.getMetadata("datePickerFormat")
+                dateFormat: App.date.getUserDateFormat(),
+                timeFormat: App.user.getPreference("timepref")
             });
 
             cyclicRadio = new RadiobuttonField({
