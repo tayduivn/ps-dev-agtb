@@ -89,6 +89,17 @@ describe("tag field", function() {
         expect(resultTags[1].locked).toBe(false);
     });
 
+    it('adds tag name and id to context on click', function(){
+        field = SugarTest.createField('base', fieldName, 'tag', 'list');
+        var sampleTag = [{name: 'tag1', id: '1234'}];
+        field.model.set(fieldName, sampleTag);
+        field.render();
+
+        field.$('.ellipsis-inline').click();
+
+        expect(app.controller.context.get('tags')).toEqual(sampleTag);
+    });
+
     describe('storeValues', function() {
         var name0 = 'asdf', name1 = 'zxcv', name2 = 'qwer';
         var initialTags = [{id: name0, name: name0}, {id: name1, name: name1}];
