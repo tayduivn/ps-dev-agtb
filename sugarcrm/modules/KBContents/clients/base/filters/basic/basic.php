@@ -9,6 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
 $viewdefs['KBContents']['base']['filter']['basic'] = array(
     'create' => true,
     'quicksearch_field' => array('name'),
@@ -21,29 +22,20 @@ $viewdefs['KBContents']['base']['filter']['basic'] = array(
             'editable' => false,
         ),
         array(
-            'id' => 'draft',
-            'name' => 'LBL_KBSTATUS_DRAFT',
+            'id' => 'assigned_to_me',
+            'name' => 'LBL_LISTVIEW_FILTER_MY',
             'filter_definition' => array(
-                array(
-                    'status' => array('$equals' => KBContent::ST_DRAFT),
-                ),
+                '$owner' => '',
             ),
             'editable' => false,
         ),
         array(
-            'id' => 'expired',
-            'name' => 'LBL_KBSTATUS_EXPIRED',
+            'id' => 'pending-my-approval',
+            'name' => 'LBL_KBSTATUS_PENDING_APPROVAL',
             'filter_definition' => array(
                 array(
-                    'status' => array('$equals' => KBContent::ST_EXPIRED),
+                    '$owner' => '',
                 ),
-            ),
-            'editable' => false,
-        ),
-        array(
-            'id' => 'in-review',
-            'name' => 'LBL_KBSTATUS_INREVIEW',
-            'filter_definition' => array(
                 array(
                     'status' => array('$equals' => KBContent::ST_IN_REVIEW),
                 ),
@@ -51,20 +43,10 @@ $viewdefs['KBContents']['base']['filter']['basic'] = array(
             'editable' => false,
         ),
         array(
-            'id' => 'published',
-            'name' => 'LBL_KBSTATUS_PUBLISHED',
+            'id' => 'favorites',
+            'name' => 'LBL_FAVORITES',
             'filter_definition' => array(
-                array(
-                    'status' => array('$equals' => KBContent::ST_PUBLISHED),
-                ),
-            ),
-            'editable' => false,
-        ),
-        array(
-            'id' => 'recently_viewed',
-            'name' => 'LBL_RECENTLY_VIEWED',
-            'filter_definition' => array(
-                '$tracker' => '-7 day',
+                '$favorite' => '',
             ),
             'editable' => false,
         ),
@@ -79,26 +61,10 @@ $viewdefs['KBContents']['base']['filter']['basic'] = array(
             'editable' => false,
         ),
         array(
-            'id' => 'by_category',
+            'id' => 'recently_viewed',
+            'name' => 'LBL_RECENTLY_VIEWED',
             'filter_definition' => array(
-                array('category_id' => ''),
-            ),
-            'editable' => true,
-            'is_template' => true,
-        ),
-        array(
-            'id' => 'assigned_to_me',
-            'name' => 'LBL_LISTVIEW_FILTER_MY',
-            'filter_definition' => array(
-                '$owner' => '',
-            ),
-            'editable' => false,
-        ),
-        array(
-            'id' => 'favorites',
-            'name'  => 'LBL_FAVORITES',
-            'filter_definition' => array(
-                '$favorite' => '',
+                '$tracker' => '-7 day',
             ),
             'editable' => false,
         ),
