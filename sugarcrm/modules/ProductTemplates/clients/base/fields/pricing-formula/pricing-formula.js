@@ -155,6 +155,9 @@
                 case 'IsList':
                     this._setupIsListFormula();
                     break;
+                default:
+                    this.model.set('discount_price', '');
+                    break;
             }
         }
     },
