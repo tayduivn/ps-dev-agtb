@@ -22,14 +22,6 @@ function showHistory(caseId, caseIndex) {
         _App = parent.SUGAR.App;
     }
 
-    /*proxy = new SugarProxy({
-        //url: SUGAR_URL + '/rest/v10/Log/',
-        url: 'pmse_Inbox/historyLog/' + caseId,
-        restClient: restClient,
-        uid : caseId,
-        callback: null
-    });*/
-
     var pmseHistoryUrl = _App.api.buildURL('pmse_Inbox/historyLog', null, {id:caseId});
 
     logPanel = new HistoryPanel({
@@ -37,43 +29,26 @@ function showHistory(caseId, caseIndex) {
         items: [ ],
         callback :{
             'loaded': function (data) {
-                var logs, beforeArray = [], afterArray = [], fieldArray = [],
-                    i, items, log, newLog, j;
-                //proxy.getData(null, {
-                    //success: function(logs) {
+                var i, newLog;
+
                 _App.api.call('read', pmseHistoryUrl, {}, {
                     success: function (logs) {
                         if (logs) {
                             for (i = 0; i < logs.result.length; i += 1) {
-                                beforeArray = [];
-                                afterArray = [];
-                                fieldArray = [];
-                                items = [];
-                                log = logs.result[i];
+                                var log = logs.result[i];
 
-                                var end_date=Date.parse(log.end_date);
-                                var current_date=Date.parse(log.current_date);
-                                var delegate_date=Date.parse(log.delegate_date);
-                                var start_date=Date.parse(log.start_date);
+                                var end_date=log.end_date;
+                                var delegate_date=log.delegate_date;
 
-                                //IE, Firefox date fix
-                                if (isNaN(end_date)){
-                                    end_date= Date.parse(log.end_date.replace(/\s/g, "T"));
-                                }
-                                if (isNaN(current_date)){
-                                    current_date= Date.parse(log.current_date.replace(/\s/g, "T"));
-                                }
-                                if (isNaN(delegate_date)){
-                                    delegate_date= Date.parse(log.delegate_date.replace(/\s/g, "T"));
-                                }
-                                if (isNaN(start_date)){
-                                    start_date= Date.parse(log.start_date.replace(/\s/g, "T"));
-                                }
-
-                                if (end_date) {
-                                    label = log.data_info + '. <strong> ( ' + timeElapsedString(current_date, end_date, true) + ' )</strong> ';
+                                label = log.data_info;
+                                if (log.completed) {
+                                    if (end_date) {
+                                        duration = '<strong>( ' + _App.date(end_date).fromNow() + ' )</strong>';
+                                    } else {
+                                        duration = '<strong>( ' + _App.date(delegate_date).fromNow() + ' )</strong>';
+                                    }
                                 } else {
-                                    label = log.data_info + '. <strong>' + translate('LBL_PMSE_HISTORY_LOG_NO_YET_STARTED', 'pmse_Inbox') + '</strong> ';
+                                    duration = '<strong>' + translate('LBL_PMSE_HISTORY_LOG_NO_YET_STARTED', 'pmse_Inbox') + '</strong>';
                                 }
 
                                 var pictureUrl = _App.api.buildFileURL({
@@ -86,36 +61,13 @@ function showHistory(caseId, caseIndex) {
                                     name: 'log' + i,
                                     label: label,
                                     user: log.user,
-                                    picture : pictureUrl,
-                                    duration: '<strong> ' + timeElapsedString(end_date, delegate_date) + ' <strong>',
-                                    startDate: (start_date) ? log.start_date :  translate('LBL_PMSE_HISTORY_LOG_NO_YET_STARTED', 'pmse_Inbox'),
-                                    //startDate: (Date.parse(log.start_date)) ? Date.parse(log.start_date).toString('MMMM d, yyyy HH:mm') :  translate('LBL_PMSE_MESSAGE_NOYETSTARTED'),
-                                    //startDate: translate('LBL_PMSE_MESSAGE_NOYETSTARTED'),
-                                    completed: log.completed
+                                    startDate: _App.date(delegate_date).formatUser(),
+                                    picture : (log.script) ? log.image : pictureUrl,
+                                    duration: duration,
+                                    completed: log.completed,
+                                    script: (log.script) ? log.script : false
                                 };
-                                //parse all log var_values collected
-                                if (log.var_values && log.var_values !== '') {
-                                    $.each(log.var_values.before_data, function(a, obj) {
-                                        fieldArray.push(a);
-                                        beforeArray.push(obj);
 
-                                    });
-                                    $.each(log.var_values.after_data, function(a, obj) {
-                                        afterArray.push(obj);
-                                    });
-                                }
-
-                                for (j = 0; j < afterArray.length; j += 1) {
-                                    items.push({
-                                        field: fieldArray[j],
-                                        before: beforeArray[j],
-                                        after: afterArray[j]
-                                    });
-
-                                }
-                                if (items) {
-                                    $.extend(true, newLog, {items: items});
-                                }
                                 logPanel.addLog(newLog);
                             }
                         }
