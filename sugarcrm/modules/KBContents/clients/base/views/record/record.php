@@ -126,6 +126,7 @@ $viewdefs['KBContents']['base']['view']['record'] = array(
                     'related_fields' => array(
                         'useful',
                         'notuseful',
+                        'usefulness_user_vote',
                     ),
                 ),
                 array(
