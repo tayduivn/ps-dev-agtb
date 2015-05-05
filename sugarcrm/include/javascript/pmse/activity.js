@@ -2097,7 +2097,7 @@ AdamActivity.prototype.actionFactory = function (type) {
         case 'ASSIGN_USER':
             combo_users = new ComboboxField({
                 jtype: 'combobox',
-                label: translate('LBL_PMSE_FORM_LABEL_ASSIGN_TO_USER'),
+                label: translate('LBL_PA_FORM_LABEL_ASSIGN_TO_USER'),
                 name: 'act_assign_user',
                 submit: true,
                 //change: hiddenUpdateFn,
@@ -2111,7 +2111,7 @@ AdamActivity.prototype.actionFactory = function (type) {
             //here add checkbox
             updateRecordOwner = new CheckboxField({
                 name: 'act_update_record_owner',
-                label: translate('LBL_PMSE_FORM_LABEL_UPDATE_RECORD_OWNER'),
+                label: translate('LBL_PA_FORM_LABEL_UPDATE_RECORD_OWNER'),
                 required: false,
                 value: false,
                 options: {
@@ -2127,8 +2127,9 @@ AdamActivity.prototype.actionFactory = function (type) {
                 callback: null
             });
             items = [combo_users, updateRecordOwner];
-            wWidth = 500;
+            wWidth = 550;
             wHeight = 160;
+            labelWidth = '40%';
             actionText = translate('LBL_PMSE_CONTEXT_MENU_SETTINGS');
             actionCSS = 'adam-menu-icon-configure';
             callback = {
@@ -2159,7 +2160,7 @@ AdamActivity.prototype.actionFactory = function (type) {
         case 'ASSIGN_TEAM':
             combo_teams = new ComboboxField({
                 jtype: 'combobox',
-                label: translate('LBL_PMSE_FORM_LABEL_ASSIGN_TO_TEAM'),
+                label: translate('LBL_PA_FORM_LABEL_ASSIGN_TO_TEAM'),
                 name: 'act_assign_team',
                 submit: true,
                 proxy: new SugarProxy({
@@ -2172,12 +2173,12 @@ AdamActivity.prototype.actionFactory = function (type) {
             //here add checkbox
             updateRecordOwner = new CheckboxField({
                 name: 'act_update_record_owner',
-                label: translate('LBL_PMSE_FORM_LABEL_UPDATE_RECORD_OWNER'),
+                label: translate('LBL_PA_FORM_LABEL_UPDATE_RECORD_OWNER'),
                 required: false,
                 value: false,
                 options: {
                     labelAlign: 'right',
-                    marginLeft: 80
+                    marginLeft: 200
                 }
             });
             combo_method = new ComboboxField({
@@ -2203,8 +2204,9 @@ AdamActivity.prototype.actionFactory = function (type) {
             });
 
             items = [combo_teams, updateRecordOwner, hidden_method];
-            wWidth = 500;
+            wWidth = 550;
             wHeight = 160;
+            labelWidth = '40%';
             actionText = translate('LBL_PMSE_CONTEXT_MENU_SETTINGS');
             actionCSS = 'adam-menu-icon-configure';
             callback = {

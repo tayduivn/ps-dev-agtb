@@ -347,6 +347,7 @@
                 'include/javascript/sugar7/filter-analytics.js' => 'include/javascript/sugar_grp7.min.js',
                 'include/javascript/sugar7/metadata-manager.js' => 'include/javascript/sugar_grp7.min.js',
                 'include/javascript/sugar7/sweetspot.js' => 'include/javascript/sugar_grp7.min.js',
+                'include/javascript/sugar7/import-export-warnings.js' => 'include/javascript/sugar_grp7.min.js',
             ),
 
             $sugar_grp_sugar7_portal2 = array(
@@ -434,7 +435,6 @@
 
             $pmse_libraries = array(
                 'include/javascript/pmse/lib/jquery.layout-latest.js' => 'include/javascript/pmse.libraries.min.js',
-                'include/javascript/pmse/lib/date.js' => 'include/javascript/pmse.libraries.min.js',
             ),
 
             $pmse_jcore = array(

@@ -659,6 +659,8 @@ AdamGateway.prototype.createConfigureAction = function () {
                                 fieldHeight: 128,
                                 decimalSeparator: SUGAR.App.config.defaultDecimalSeparator,
                                 numberGroupingSeparator: SUGAR.App.config.defaultNumberGroupingSeparator,
+                                dateFormat: App.date.getUserDateFormat(),
+                                timeFormat: App.user.getPreference("timepref"),
                                 operators: {
                                     logic: true,
                                     group: true,

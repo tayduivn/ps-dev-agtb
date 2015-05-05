@@ -122,6 +122,7 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
 					$this->_mergeFielddefs ( $fielddefs , $loaded ) ;
 					break;
 
+                case MB_SIDECARLISTVIEW:
                 case MB_RECORDVIEW:
                 case MB_SIDECARPOPUPVIEW:
 				case MB_SIDECARDUPECHECKVIEW:
@@ -137,7 +138,8 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
                 case MB_WIRELESSLISTVIEW:
                     $_viewtype = 'mobile';
                 //END SUGARCRM flav=pro ONLY
-                if (in_array($view, array(MB_RECORDVIEW, MB_SIDECARPOPUPVIEW, MB_SIDECARDUPECHECKVIEW))) {
+                if (in_array($view,
+                    array(MB_RECORDVIEW, MB_SIDECARPOPUPVIEW, MB_SIDECARDUPECHECKVIEW, MB_SIDECARLISTVIEW))) {
                     $_viewtype = 'base';
                 }
 
@@ -386,6 +388,9 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
 		$this->_saveToFile($filename, $defs);
 
 		// now clear the cache so that the results are immediately visible
+        MetaDataFiles::clearModuleClientCache($this->_moduleName, 'view');
+        MetaDataFiles::clearModuleClientCache($this->_moduleName, 'layout');
+
 		include_once ('include/TemplateHandler/TemplateHandler.php') ;
 		TemplateHandler::clearCache($this->_moduleName);
 	}

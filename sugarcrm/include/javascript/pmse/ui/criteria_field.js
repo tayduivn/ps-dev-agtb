@@ -31,7 +31,7 @@ CriteriaField.prototype.init = function(settings) {
 		fieldHeight: 88,
 		fieldWidth: 200,
 		disabled: false,
-		dateFormat: "yyyy-mm-dd",
+		dateFormat: "YYYY-MM-DD",
 		timeFormat: "H:i",
 		decimalSeparator: ".",
 		numberGroupingSeparator: ","

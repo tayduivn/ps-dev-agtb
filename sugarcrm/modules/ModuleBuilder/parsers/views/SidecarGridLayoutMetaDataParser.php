@@ -367,12 +367,6 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
             }
         }
 
-        foreach ($previousViewDef as $key => $fieldDef ) {
-            if (is_array($fieldDef)) {
-                unset($previousViewDef[$key]['span']);
-            }
-        }
-
         $baseSpans = array();
         foreach ($this->baseViewFields as $baseKey => $baseFieldDef) {
             if (is_array($baseFieldDef) && isset($baseFieldDef['span'])) {
@@ -465,7 +459,18 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
                         }
 
                         // If the field defs is empty it needs to be an array
-                        $lastField = $this->getNewRowItem($source, (empty($fielddefs[$fieldName]) ? array() : $fielddefs[$fieldName]));
+                        $newField = $this->getNewRowItem($source, (empty($fielddefs[$fieldName]) ? array() : $fielddefs[$fieldName]));
+                        // Adjust span for end column
+                        if ($panelColumns - $offset === 1 && is_array($newField)) {
+                            $lastFieldSpan = $this->getLastFieldSpan($lastField, $singleSpanUnit, $fieldCount);
+                            if (isset($lastFieldSpan['span'])) {
+                                $newField['span'] = $lastFieldSpan['span'];
+                            }
+                            else if (isset($newField['span'])) {
+                                unset($newField['span']);
+                            }
+                        }
+                        $lastField = $newField;
                     }
                 }
 

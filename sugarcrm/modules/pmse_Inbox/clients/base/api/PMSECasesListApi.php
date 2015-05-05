@@ -19,6 +19,7 @@ require_once 'clients/base/api/FilterApi.php';
 require_once 'include/SugarQuery/SugarQuery.php';
 require_once 'modules/pmse_Inbox/engine/PMSE.php';
 require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
+require_once 'modules/pmse_Inbox/engine/PMSEEngineUtils.php';
 
 class PMSECasesListApi extends FilterApi
 {
@@ -182,6 +183,10 @@ class PMSECasesListApi extends FilterApi
             } else {
                 $list[$key]["cas_status"] = '<data class="label label-important">' . $value["cas_status"] . '</data>';
             }
+
+            $list[$key]['cas_create_date'] = PMSEEngineUtils::getDateToFE($value['cas_create_date'],'datetime');
+            $list[$key]['date_entered'] = PMSEEngineUtils::getDateToFE($value['date_entered'],'datetime');
+            $list[$key]['date_modified'] = PMSEEngineUtils::getDateToFE($value['date_modified'],'datetime');
 
             $prjUsersBean = BeanFactory::getBean('Users', $list[$key]['prj_created_by']);
             $list[$key]['prj_user_id_full_name'] = $prjUsersBean->full_name;

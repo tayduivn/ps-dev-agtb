@@ -13,6 +13,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 require_once 'clients/base/api/FilterApi.php';
+require_once 'modules/pmse_Inbox/engine/PMSEEngineUtils.php';
 
 class PMSEEngineFilterApi extends FilterApi
 {
@@ -328,9 +329,9 @@ class PMSEEngineFilterApi extends FilterApi
             $arr_aux['act_assignment_method'] = $bean->fetched_row['act_assignment_method'];
             $arr_aux['cas_title'] = $bean->fetched_row['cas_title'];
             $arr_aux['pro_title'] = $bean->fetched_row['pro_title'];
-            $arr_aux['date_entered'] = $bean->fetched_row['date_entered'];
+            $arr_aux['date_entered'] = PMSEEngineUtils::getDateToFE($bean->fetched_row['date_entered'], 'datetime');
             $arr_aux['name'] = $bean->fetched_row['cas_title'];
-            $arr_aux['cas_create_date'] = $bean->fetched_row['date_entered'];
+            $arr_aux['cas_create_date'] = PMSEEngineUtils::getDateToFE($bean->fetched_row['date_entered'], 'datetime');
             $arr_aux['flow_id'] = $bean->fetched_row['id'];
             $arr_aux['id2'] = $bean->fetched_row['inbox_id'];
             $arr_aux['task_name'] = $bean->fetched_row['act_name'];

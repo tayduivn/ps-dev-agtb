@@ -30,6 +30,7 @@ $viewdefs[$module_name]['base']['view']['dashlet-businessrules'] = array(
                 'module' => array(
                     'Home',
                     'pmse_Business_Rules',
+
                 ),
                 'view' => 'record',
             ),
@@ -53,16 +54,16 @@ $viewdefs[$module_name]['base']['view']['dashlet-businessrules'] = array(
                         'acl_action' => 'create',
                         'acl_module' => 'pmse_Business_Rules',
                     ),
-//                    array(
-//                        'type' => 'dashletaction',
-//                        'action' => 'importRecord',
-//                        'params' => array(
-//                            'module' => 'pmse_Business_Rules',
-//                            'link' => '#pmse_Business_Rules/layout/businessrules-import'
-//                        ),
-//                        'label' => 'LNK_PMSE_BUSINESS_RULES_IMPORT_RECORD',
-//                        'acl_module' => 'pmse_Business_Rules',
-//                    ),
+                    array(
+                        'type' => 'dashletaction',
+                        'action' => 'importRecord',
+                        'params' => array(
+                            'module' => 'pmse_Business_Rules',
+                            'link' => '#pmse_Business_Rules/layout/businessrules-import'
+                        ),
+                        'label' => 'LNK_PMSE_BUSINESS_RULES_IMPORT_RECORD',
+                        'acl_module' => 'pmse_Business_Rules',
+                    ),
                 ),
             ),
             array(
@@ -140,15 +141,15 @@ $viewdefs[$module_name]['base']['view']['dashlet-businessrules'] = array(
                     'tooltip' => 'LBL_PMSE_LABEL_DELETE',
                     'acl_action' => 'edit',
                 ),
-//                array(
-//                    'type' => 'rowaction',
-//                    'icon' => 'fa fa-download',
-//                    'css_class' => 'btn btn-mini',
-//                    'event' => 'dashlet-businessrules:download:fire',
-//                    'target' => 'view',
-//                    'tooltip' => 'LBL_PMSE_LABEL_EXPORT',
-//                    'acl_action' => 'edit',
-//                ),
+                array(
+                    'type' => 'rowaction',
+                    'icon' => 'fa fa-download',
+                    'css_class' => 'btn btn-mini',
+                    'event' => 'dashlet-businessrules:download:fire',
+                    'target' => 'view',
+                    'tooltip' => 'LBL_PMSE_LABEL_EXPORT',
+                    'acl_action' => 'edit',
+                ),
                 array(
                     'type' => 'rowaction',
                     'icon' => 'fa-info-circle',

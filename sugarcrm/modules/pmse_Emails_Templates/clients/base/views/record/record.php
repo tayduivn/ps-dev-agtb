@@ -58,13 +58,13 @@ $viewdefs[$module_name] =
                                                 'label' => 'LBL_PMSE_LABEL_DESIGN',
                                                 'acl_action' => 'view',
                                             ),
-//                                            array(
-//                                                'type' => 'rowaction',
-//                                                'event' => 'button:export_emailtemplates:click',
-//                                                'name' => 'export_emailtemplates',
-//                                                'label' => 'LBL_PMSE_LABEL_EXPORT',
-//                                                'acl_action' => 'view',
-//                                            ),
+                                            array(
+                                                'type' => 'rowaction',
+                                                'event' => 'button:export_emailtemplates:click',
+                                                'name' => 'export_emailtemplates',
+                                                'label' => 'LBL_PMSE_LABEL_EXPORT',
+                                                'acl_action' => 'view',
+                                            ),
                                             array(
                                                 'type' => 'shareaction',
                                                 'name' => 'share',

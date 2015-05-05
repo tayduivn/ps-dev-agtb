@@ -624,6 +624,21 @@ require_once('include/EditView/EditView2.php');
         return "($db_field >= $start AND $db_field <= $end)";
     }
 
+    /**
+     * Converts column name and value to upper case for case insensitive search if needed.
+     * @param string $subquery eg, 'select * from t where c like'
+     * @param string $value
+     * @return string
+     */
+    protected function getLikeSubquery($subquery, $value, $likechar = '%') {
+        if ($this->seed->db->supports('case_insensitive') && preg_match('/(.*\S)\s+(\S+)\s+like$/i', trim($subquery), $matches)) {
+            return $matches[1]. ' ' . $this->seed->db->getLikeSQL($matches[2], "$value$likechar");
+        }
+        else {
+            return "$subquery ".$this->seed->db->quoted("$value$likechar");
+        }
+    }
+
      /**
       * generateSearchWhere
       *
@@ -977,11 +992,6 @@ require_once('include/EditView/EditView2.php');
                          }
                          //END SUGARCRM flav=pro ONLY
 
-                         if($db->supports("case_sensitive") && isset($parms['query_type']) && $parms['query_type'] == 'case_insensitive') {
-                               $db_field = 'upper(' . $db_field . ")";
-                               $field_value = strtoupper($field_value);
-                         }
-
                          $itr++;
                          if(!empty($where)) {
                              $where .= " OR ";
@@ -1016,7 +1026,7 @@ require_once('include/EditView/EditView2.php');
                                          if(!$first){
                                              $where .= $and_or;
                                          }
-                                         $where .= " {$db_field} $in ({$q} ".$this->seed->db->quoted($field_value.'%').") ";
+                                         $where .= " {$db_field} $in (".$this->getLikeSubquery($q, $field_value).") ";
                                          $first = false;
                                      }
                                  }elseif(!empty($parms['query_type']) && $parms['query_type'] == 'format'){
@@ -1033,7 +1043,7 @@ require_once('include/EditView/EditView2.php');
                                  } else {
                                      //Bug#37087: Re-write our sub-query to it is executed first and contents stored in a derived table to avoid mysql executing the query
                                      //outside in. Additional details: http://bugs.mysql.com/bug.php?id=9021
-                                     $where .= "{$db_field} $in (select * from ({$parms['subquery']} ".$this->seed->db->quoted($field_value.'%').") {$field}_derived)";
+                                     $where .= "{$db_field} $in (select $selectCol from (".$this->getLikeSubquery($parms['subquery'] , $field_value).") {$field}_derived)";
                                  }
 
                                  break;
@@ -1073,8 +1083,8 @@ require_once('include/EditView/EditView2.php');
                                          }
 
                                          // Concat the fields and search for the value
-                                         $where .= $this->seed->db->concat($concat_table, $concat_fields) . " LIKE " . $this->seed->db->quoted($field_value . $like_char);
-                                         $where .= ' OR ' . $this->seed->db->concat($concat_table, array_reverse($concat_fields)) . " LIKE " . $this->seed->db->quoted($field_value . $like_char);
+                                         $where .= $this->seed->db->getLikeSQL($this->seed->db->concat($concat_table, $concat_fields), $field_value . $like_char);
+                                         $where .= ' OR ' . $this->seed->db->getLikeSQL($this->seed->db->concat($concat_table, array_reverse($concat_fields)), $field_value . $like_char);
                                      }
                                      else
                                      {
@@ -1100,7 +1110,7 @@ require_once('include/EditView/EditView2.php');
 
                                          //field is not last name or this is not from global unified search, so do normal where clause
                                          $like_string = $this->seed->db->sqlLikeString($field_value, $like_char);
-                                         $where .=  $db_field . " like ".$this->seed->db->quoted($like_string);
+                                         $where .=  $this->seed->db->getLikeSQL($db_field, sql_like_string($field_value, $like_char));
                                      }
                                  }
                                  break;

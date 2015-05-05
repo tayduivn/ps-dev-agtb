@@ -12,7 +12,7 @@
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
         this.context.off("emailtemplates:import:finish", null, this);
-        this.context.on("emailtemplates:import:finish", this.importEmailTemplates, this);
+        this.context.on("emailtemplates:import:finish", this.warnImportEmailTemplates, this);
     },
 
     /**
@@ -27,6 +27,26 @@
         app.view.View.prototype._renderField.call(this, field);
         if (field.name === 'emailtemplates_import') {
             field.setMode('edit');
+        }
+    },
+
+    warnImportEmailTemplates: function () {
+        var that = this;
+        if (app.cache.get("show_emailtpl_import_warning")) {
+            app.alert.show('emailtpl-import-confirmation', {
+                level: 'confirmation',
+                messages: app.lang.get('LBL_PMSE_IMPORT_EXPORT_WARNING') + "<br/><br/>"
+                    + app.lang.get('LBL_PMSE_IMPORT_CONFIRMATION'),
+                onConfirm: function () {
+                    app.cache.set("show_emailtpl_import_warning", false);
+                    that.importEmailTemplates();
+                },
+                onCancel: function () {
+                    app.router.goBack();
+                }
+            });
+        } else {
+            that.importEmailTemplates();
         }
     },
 

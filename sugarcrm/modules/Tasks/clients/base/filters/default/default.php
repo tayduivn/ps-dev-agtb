@@ -12,7 +12,7 @@
  */
 
 $viewdefs['Tasks']['base']['filter']['default'] = array(
-    'default_filter' => 'assigned_to_me',
+    'default_filter' => 'all_records',
     'fields' => array(
         'name' => array(),
         'contact_name' => array(),

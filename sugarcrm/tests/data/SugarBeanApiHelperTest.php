@@ -254,50 +254,6 @@ class SugarBeanApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
         return $role;
     }
 
-    /**
-     * Checks that bean copy field values during merge-duplicate.
-     * Works with fields:
-     * 1. Currency.
-     * TODO: Added cases for File and Image fields when possible to mock UploadFile::duplicate_file().
-     *
-     * @dataProvider mergingFields
-     */
-    public function testMergeDuplicateFields($name, $defs, $value)
-    {
-        // The Bean copy from. Create an regular Bean because of BeanFactory.
-        $account = SugarTestAccountUtilities::createAccount();
-        $account->$name = $value;
-
-        $this->bean->field_defs = array($name => $defs);
-        $this->bean->module_name = 'Accounts';
-
-        // A part of merge-duplicate view.
-        $submittedData = array(
-            $name => $value,
-            $name . '_duplicateBeanId' => $account->id,
-        );
-        $this->beanApiHelper->populateFromApi($this->bean, $submittedData);
-
-        SugarTestAccountUtilities::removeAllCreatedAccounts();
-
-        // Assert that the value has been copied correctly.
-        $this->assertEquals($value, $this->bean->$name);
-    }
-
-    public function mergingFields()
-    {
-        return array(
-            array(
-                'currency',
-                array(
-                    'name' => 'currency',
-                    'type' => 'currency',
-                ),
-                100,
-            ),
-        );
-    }
-
     public function testCheckNotify()
     {
         $GLOBALS['sugar_config']['exclude_notifications'][$this->bean->module_dir] = true;
