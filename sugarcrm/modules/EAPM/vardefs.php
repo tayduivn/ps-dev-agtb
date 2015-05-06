@@ -170,6 +170,7 @@ $dictionary['EAPM'] = array(
         array('name' => 'idx_eapm_name', 'type' => 'index', 'fields' => array('name')),
 ),
 	'optimistic_locking'=>true,
+    'visibility' => array('OwnerOrAdminVisibility' => true),
 );
 if (!class_exists('VardefManager')){
         require_once('include/SugarObjects/VardefManager.php');
