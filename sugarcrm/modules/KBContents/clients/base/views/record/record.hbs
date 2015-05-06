@@ -242,9 +242,9 @@
                 {{/unless}}
             {{/each}}
         </div>
-        <div class="row-fluid{{#unless hiddenPanelExists}} hide{{/unless}} show-hide-toggle">
+        <div class="row-fluid show-hide-toggle">
             <div class="record-cell">
-                <div class="pull-left span2">
+                <div class="pull-left span2{{#unless hiddenPanelExists}} hide{{/unless}}">
                     <button class="btn-link btn-invisible more{{#if hideMoreButton}} hide{{/if}}"
                             data-moreless="more"
                             data-target=".panel_hidden">{{str "LBL_SHOW_MORE"}}...</button>
@@ -252,7 +252,8 @@
                             data-moreless="less"
                             data-target=".panel_hidden">{{str "LBL_SHOW_LESS"}}</button>
                 </div>
-                <div class="pull-left span10 more-less-fields">
+                {{#unless hiddenPanelExists}}<div class="pull-left span12 hide"></div>{{/unless}}
+                <div class="pull-left span10{{#unless hiddenPanelExists}} offset2{{/unless}} more-less-fields">
                     {{#each meta.moreLessInlineFields}}
                         <div class="span{{span}} record-cell{{#if cell_css_class}} {{cell_css_class}}{{/if}}" data-type="{{type}}" data-name="{{name}}">
                             {{#if name}}

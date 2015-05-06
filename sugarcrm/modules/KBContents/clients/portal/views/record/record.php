@@ -28,7 +28,14 @@ $viewdefs['KBContents']['portal']['view']['record'] = array(
                     'dismiss_label' => true,
                     'readonly' => true,
                 ),
-                'name',
+                array(
+                    'name' => 'name',
+                    'related_fields' => array(
+                        'useful',
+                        'notuseful',
+                        'usefulness_user_vote',
+                    ),
+                ),
             ),
         ),
         array(
@@ -69,6 +76,20 @@ $viewdefs['KBContents']['portal']['view']['record'] = array(
                 'active_date' => array(
                     'name' => 'active_date',
                 ),
+            ),
+        ),
+    ),
+    'moreLessInlineFields' => array(
+        'usefulness' => array(
+            'name' => 'usefulness',
+            'type' => 'usefulness',
+            'span' => 6,
+            'cell_css_class' => 'pull-right usefulness',
+            'readonly' => true,
+            'fields' => array(
+                'usefulness_user_vote',
+                'useful',
+                'notuseful',
             ),
         ),
     ),
