@@ -594,7 +594,7 @@
                 _.each(this.context.children, function(child) {
                     if (!_.isUndefined(child.attributes) && !_.isUndefined(child.attributes.isSubpanel)) {
                         if (child.attributes.isSubpanel && !child.attributes.hidden) {
-                            child.attributes.collection.fetch();
+                            child.reloadData({recursive: false});
                         }
                     }
                 });
