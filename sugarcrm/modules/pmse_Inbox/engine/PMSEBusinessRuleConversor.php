@@ -146,7 +146,7 @@ class PMSEBusinessRuleConversor
      */
     public function processValueExpression($businessRuleValueToken)
     {
-        global $timedate, $current_user;
+        global $beanList;
         $response = new stdClass();
         $dataEval = array();
         foreach ($businessRuleValueToken as $token) {
@@ -171,23 +171,13 @@ class PMSEBusinessRuleConversor
                 }
             } else {
                 $field = $token->expValue;
-                if (isset($this->beanList[$token->expModule])) {
-                    $bean = $this->evaluatedBean;
+                if (isset($beanList[$token->expModule])) {
+                    $newBean = $this->evaluatedBean;
                 } else {
-                    $bean = $this->pmseRelatedModule->getRelatedModule($this->evaluatedBean, $token->expModule);
+                    $newBean = $this->pmseRelatedModule->getRelatedModule($this->evaluatedBean, $token->expModule);
                 }
-                if (!empty($relatedBean) && is_object($relatedBean)) {
-                    $def = $bean->field_defs[$field];
-                    if ($def['type'] == 'datetime' || $def['type'] == 'datetimecombo'){
-                        date_default_timezone_set('UTC');
-                        $datetime = new Datetime($bean->$field);
-                        $value = $timedate->asIso($datetime, $current_user);
-                    } else {
-                        $value = $bean->$field;
-                    }
-                    if ($def['type'] == 'bool') {
-                        $value = ($value==1)? true : false;
-                    }
+                if (!empty($newBean) && is_object($newBean)) {
+                    $value = $this->pmseRelatedModule->getFieldValue($newBean, $field);
                 } else {
                     $value = '';
                 }

@@ -16,7 +16,7 @@ if (!defined('sugarEntry') || !sugarEntry)
 
 require_once 'PMSEBeanHandler.php';
 require_once 'include/workflow/alert_utils.php';
-
+require_once 'modules/pmse_Inbox/engine/PMSERelatedModule.php';
 
 class PMSEEmailHandler
 {
@@ -46,6 +46,11 @@ class PMSEEmailHandler
     private $logger;
 
     /**
+     * @var PMSERelatedModule
+     */
+    private $pmseRelatedModule;
+
+    /**
      *
      * @global type $locale
      * @codeCoverageIgnore
@@ -57,6 +62,7 @@ class PMSEEmailHandler
         $this->beanUtils = new PMSEBeanHandler();
         $this->logger = PMSELogger::getInstance();
         $this->admin = new Administration();
+        $this->pmseRelatedModule = new PMSERelatedModule();
     }
 
     /**
@@ -342,12 +348,23 @@ class PMSEEmailHandler
 
     public function processRecipientEmails($bean, $entry, $flowData)
     {
+        global $beanList;
         $res = array();
-        $bean->load_relationships();
         $field = $entry->value;
+        $module = $entry->module;
+
+        if (!isset($beanList[$module])) {
+            $bean = $this->pmseRelatedModule->getRelatedModule($bean, $module);
+        }
+        if (!empty($bean) && is_object($bean)) {
+            $value = $bean->$field;
+        } else {
+            $value = '';
+        }
+
         $item = new stdClass();
-        $item->name = $bean->$field;
-        $item->address = $bean->$field;
+        $item->name = $value;
+        $item->address = $value;
         $res[] = $item;
         return $res;
     }
