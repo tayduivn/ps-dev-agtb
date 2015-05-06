@@ -69,80 +69,6 @@ describe('Plugins.KBContents', function() {
         expect(validationStub).toHaveBeenCalledOnce();
     });
 
-    it('Force duplicate should be true is a check duplicate button exists.', function() {
-        viewMeta = {
-            buttons: [
-                {name: 'check_duplicate'}
-            ]
-        };
-        view = SugarTest.createView('base', moduleName, 'record', viewMeta, context, moduleName);
-        expect(view.forceDuplicate).toBe(true);
-    });
-
-    it('Force duplicate should be true is a check duplicate is a subbutton.', function() {
-        viewMeta = {
-            buttons: [
-                {name: 'button2', buttons: [{name: 'check_duplicate'}]}
-            ]
-        };
-        view = SugarTest.createView('base', moduleName, 'record', viewMeta, context, moduleName);
-        expect(view.forceDuplicate).toBe(true);
-    });
-
-    it('Overridden validate should not be called if no duplicate check button.', function() {
-        var modelDoValidateStub = sandbox.stub(view.model, 'doValidate');
-        var proto = Object.getPrototypeOf(view);
-        proto.editExisting = sandbox.stub();
-        view.editExisting(view.model);
-        expect(modelDoValidateStub).not.toHaveBeenCalled();
-    });
-
-    it('Duplicate check should contain additional data.', function() {
-        viewMeta = {
-            buttons: [
-                {name: 'check_duplicate'}
-            ]
-        };
-        view = SugarTest.createView('base', moduleName, 'record', viewMeta, context, moduleName);
-        var modelDoValidateStub = sandbox.stub(view.model, 'doValidate');
-        var model = new Backbone.Model({
-            id: 1,
-            kbarticle_id: 2,
-            kbdocument_id: 2
-        });
-        view.editExisting(model);
-
-        expect(view.model.get('kbarticle_id')).toEqual(2);
-        expect(view.model.get('kbdocument_id')).toEqual(2);
-        expect(modelDoValidateStub).toHaveBeenCalled();
-    });
-
-    it('AfterSave should hide duplicates on false.', function() {
-        var hideDupStub = sandbox.stub(view, 'hideDuplicates');
-        sandbox.stub(app.router, 'navigate');
-        sandbox.stub(app.alert, 'show');
-        view.model.id = 1;
-
-        view.afterSave(false);
-        expect(hideDupStub).toHaveBeenCalled();
-
-        hideDupStub.reset();
-        view.afterSave(true);
-        expect(hideDupStub).not.toHaveBeenCalled();
-    });
-
-    it('Render duplicate checklist if a check duplicate button available.', function() {
-        viewMeta = {
-            buttons: [
-                {name: 'check_duplicate'}
-            ]
-        };
-        view = SugarTest.createView('base', moduleName, 'create', viewMeta, context, moduleName);
-        var renderDupeCheckListStub = sandbox.stub(view, 'renderDupeCheckList');
-        view._render();
-        expect(renderDupeCheckListStub).toHaveBeenCalled();
-    });
-
     it('Create article should call an appropriate drawer.', function() {
         var drawerStub = sandbox.stub(app.drawer, 'open');
         var model = new Backbone.Model({
@@ -289,20 +215,6 @@ describe('Plugins.KBContents', function() {
         expect(fakePrefillModel.get('useful')).toBe(0);
         expect(fakePrefillModel.get('notuseful')).toBe(1);
         expect(fakePrefillModel.get('related_languages')).toEqual(['en']);
-    });
-
-    it('Creating related should trigger duplicate check .', function() {
-        var fakePrefillModel = new Backbone.Model();
-        var fakeParentModel = new Backbone.Model({
-            id: 1
-        });
-        var triggerStub = sandbox.stub(fakePrefillModel, 'trigger');
-        sandbox.stub(app.drawer, 'open');
-
-        view._openCreateRelatedDrawer(fakePrefillModel, fakeParentModel);
-
-        expect(triggerStub).toHaveBeenCalled();
-        expect(triggerStub.args[0][0]).toEqual('duplicate:field');
     });
 
     it('Expiration date dependencies. Error when expiration date is lower than publishing.', function() {

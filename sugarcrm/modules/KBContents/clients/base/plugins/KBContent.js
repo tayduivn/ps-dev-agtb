@@ -15,7 +15,6 @@
         /**
          * Is built to share knowledge base features among views.
          *
-         * - Overrides duplicate check with KBDocument specific hierarchy check.
          * - Adds validate tasks to follow dependencies between status, active and expiration dates fields.
          * - Allows to inject KBContentTemplates templates into body fields.
          * - Extends a view with create article and revision functionality.
@@ -23,18 +22,11 @@
         app.plugins.register('KBContent', ['view'], {
 
             events: {
-                'click [name=template]': 'launchTemplateDrawer',
-                'click [name=check_duplicate]': 'forceDuplicateCheck'
+                'click [name=template]': 'launchTemplateDrawer'
             },
 
             CONTENT_LOCALIZATION: 1,
             CONTENT_REVISION: 2,
-
-            /**
-             * Flag indicates that we need to render layout for duplicate check.
-             * @property {Boolean}
-             */
-            forceDuplicate: false,
 
             /**
              * Attach events to create localization and revisions.
@@ -56,112 +48,7 @@
                     } else {
                         this._initValidationHandler(this.model);
                     }
-
-                    if (this.meta && !_.isEmpty(this.meta.buttons)) {
-                        var dupCheckButton = _.chain(this.meta.buttons)
-                            .map(function(button) {
-                                var b = _.clone(button);
-                                if (!_.isEmpty(button.buttons)) {
-                                    delete(b.buttons);
-                                    b = _.extend([], [b], button.buttons);
-                                } else {
-                                    b = [b];
-                                }
-                                return b;
-                            })
-                            .flatten()
-                            .filter(function(button) {
-                                return button.name === 'check_duplicate';
-                            })
-                            .value();
-                        if (dupCheckButton.length > 0) {
-                            this.forceDuplicate = true;
-                        }
-                    }
                 });
-            },
-
-            /**
-             * Override standard duplicate check if need.
-             * @param {Backbone.model} model
-             */
-            editExisting: function(model) {
-                if (!this.forceDuplicate) {
-                    Object.getPrototypeOf(this).editExisting.call(this);
-                    return;
-                }
-                var self = this,
-                    extraAttr = {
-                        'kbarticle_id': model.get('kbarticle_id'),
-                        'kbdocument_id': model.get('kbdocument_id')
-                    },
-                    callback = _.bind(this.afterSave, this);
-                this.context.set('copiedFromModelId', model.id);
-                this.model.set(extraAttr, {silent: true});
-                this.model.doValidate(this.getFields(this.module), function(isValid) {
-                    if (isValid) {
-                        self.createRecordWaterfall(callback);
-                    }
-                });
-            },
-
-            /**
-             * Handle result for duplicate check
-             * @param {Boolean} result
-             */
-            afterSave: function(result) {
-                if (result === false && this.model.id) {
-                    this.hideDuplicates();
-                    app.router.navigate(
-                        app.router.buildRoute('KBContents', this.model.id),
-                        {trigger: true}
-                    );
-                } else {
-                    app.alert.show('dupCheck', {
-                        level: 'error',
-                        messages: app.lang.get('ERR_AJAX_LOAD_FAILURE', self.module),
-                        autoClose: true
-                    });
-                }
-            },
-
-            /**
-             * {@inheritDoc}
-             * Additional render of duplicate layout, if need.
-             * @private
-             */
-            _render: function() {
-                Object.getPrototypeOf(this)._render.call(this);
-                if (this.forceDuplicate) {
-                    this.renderDupeCheckList();
-                }
-            },
-
-            /**
-             * Override for standard method to show duplicate check layout.
-             */
-            forceDuplicateCheck: function() {
-                this.enableDuplicateCheck = true;
-                var success = _.bind(function(collection) {
-                        if (collection.models.length > 0) {
-                            this.handleDuplicateFound(collection);
-                        } else {
-                            app.alert.show('dupCheck', {
-                                level: 'info',
-                                messages: app.lang.get('LBL_NO_DUPLICATES_FOUND', self.module),
-                                autoClose: true
-                            });
-                            this.resetDuplicateState();
-                        }
-                    }, this),
-                    error = _.bind(function(e) {
-                        if (e.status == 412 && !e.request.metadataRetry) {
-                            this.handleMetadataSyncError(e);
-                        } else {
-                            this.alerts.showServerError.call(this);
-                        }
-                    }, this);
-                this.checkForDuplicate(success, error);
             },
 
             /**
