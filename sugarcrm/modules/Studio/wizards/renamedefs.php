@@ -617,7 +617,6 @@ $renamedefs = array(
             array('name' => 'LBL_CONTRACTS', 'type' => 'plural', 'source' => 'Contracts'),
             array('name' => 'LBL_CONTRACTS_SUBPANEL_TITLE', 'type' => 'plural', 'source' => 'Contracts'),
             array('name' => 'LBL_PRODUCTS', 'type' => 'plural', 'source' => 'Products'),
-            array('name' => 'LBL_RLI', 'type' => 'plural', 'source' => 'RevenueLineItems'),
             array('name' => 'LBL_QUOTES_SUBPANEL_TITLE', 'type' => 'plural', 'source' => 'Quotes'),
             array('name' => 'LBL_TIMEPERIODS', 'type' => 'plural', 'source' => 'TimePeriods'),
             array('name' => 'LBL_TIMEPERIOD_ID', 'type' => 'singular', 'source' => 'TimePeriods'),
@@ -632,6 +631,7 @@ $renamedefs = array(
             array('name' => 'LBL_CLOSED_RLIS', 'type' => 'plural', 'source' => 'RevenueLineItems'),
             array('name' => 'NOTICE_NO_DELETE_CLOSED_RLIS', 'type' => 'plural', 'source' => 'Opportunities'),
             array('name' => 'NOTICE_NO_DELETE_CLOSED_RLIS', 'type' => 'plural', 'source' => 'RevenueLineItems'),
+            array('name' => 'LBL_RLI', 'type' => 'plural', 'source' => 'RevenueLineItems'),
             // END SUGARCRM flav=ent ONLY
             array('name' => 'LBL_QUOTE_SUBPANEL_TITLE', 'type' => 'plural', 'source' => 'Quotes'),
             array('name' => 'LBL_OPPORTUNITY_ROLE', 'type' => 'singular', 'source' => 'Opportunities'),
