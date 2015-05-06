@@ -664,6 +664,7 @@ EOF;
         'UpgradeWizard',
         'ConfigureShortcutBar',
         'wizard',
+        'historyContactsEmails',
     );
 
     /**
