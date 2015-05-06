@@ -3823,8 +3823,8 @@ class MetaDataManager
         global $app_list_strings;
 
         if (isset($app_list_strings[$fieldName]) && is_array($app_list_strings[$fieldName])) {
-            // by default, all options are available
-            $defaults = array_fill_keys(array_keys($app_list_strings[$fieldName]), true);
+            // by default, items not in the filter list are hidden unless the filter is empty
+            $defaults = array_fill_keys(array_keys($app_list_strings[$fieldName]), empty($filter));
             // remove non-existing options from the filter
             $filter = array_intersect_key($filter, $defaults);
             // add default options to the filter and preserve original key order

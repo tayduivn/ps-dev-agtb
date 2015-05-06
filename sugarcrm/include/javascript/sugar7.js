@@ -86,6 +86,14 @@
                 }
             },
             {
+                name: 'profile',
+                route: 'profile',
+                callback: function() {
+                    var route = app.bwc.buildRoute('Users', app.user.get('id'));
+                    app.router.navigate(route, {trigger: true, replace: true});
+                }
+            },
+            {
                 name: "bwc",
                 route: "bwc/*url",
                 callback: function(url) {

@@ -34,7 +34,7 @@ class ext_rest_dnb extends ext_rest {
 
     public function test() {
         $api = ExternalAPIFactory::loadAPI('Dnb', true);
-        return $api->checkTokenValidity();
+        return $api->checkTokenValidity(false);
     }
 
     /*

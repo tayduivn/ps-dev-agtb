@@ -46,7 +46,8 @@ LogField.prototype.initObject = function (options) {
         startDate: '3 July 2013',
         duration: null,
         completed: false,
-        deleteBtn: false
+        deleteBtn: false,
+        script: false
     };
     $.extend(true, defaults, options);
     this.setMarginLeft(defaults.marginLeft)
@@ -58,12 +59,16 @@ LogField.prototype.initObject = function (options) {
            .setDuration(defaults.duration)
            .setItems(defaults.items)
            .setCompleted(defaults.completed)
-           .setDeleteBtn(defaults.deleteBtn);
-
+           .setDeleteBtn(defaults.deleteBtn)
+           .setScript(defaults.script);
 };
 
 LogField.prototype.setMarginLeft = function (marginLeft) {
     this.marginLeft = marginLeft;
+    return this;
+};
+LogField.prototype.setScript = function (scr) {
+    this.script = scr;
     return this;
 };
 LogField.prototype.setPicture = function (picture) {
@@ -116,13 +121,21 @@ LogField.prototype.createHTML = function () {
     //detailDiv.style.cssFloat= 'left';
     detailDiv.style.display = 'table-cell';
 
-    logPicture = this.createHTMLElement('img');
-    logPicture.style.width = '32px';
-    logPicture.style.height = '32px';
-    logPicture.style.cssFloat = "left";
-    logPicture.style.marginRight = "10px";
-    logPicture.src = this.picture;
-    detailDiv.appendChild(logPicture);
+    if (this.script){
+        logPicture = this.createHTMLElement('div');
+        logPicture.className = this.picture;
+        logPicture.style.marginRight = "15px";
+        logPicture.innerHTML = 'PA';
+        detailDiv.appendChild(logPicture);
+    } else {
+        logPicture = this.createHTMLElement('img');
+        logPicture.style.width = '32px';
+        logPicture.style.height = '32px';
+        logPicture.style.cssFloat = "left";
+        logPicture.style.marginRight = "10px";
+        logPicture.src = this.picture;
+        detailDiv.appendChild(logPicture);
+    }
 
 
     newsItem = this.createHTMLElement('p');
@@ -144,7 +157,7 @@ LogField.prototype.createHTML = function () {
     this.html.appendChild(detailDiv);
     if (this.duration) {
         durationDiv = this.createHTMLElement('div');
-        durationDiv.style.width = '10%';
+        durationDiv.style.width = '15%';
         durationDiv.style.paddingLeft = '15px';
         durationDiv.style.display = 'table-cell';
         //durationDiv.style.height = '100%';

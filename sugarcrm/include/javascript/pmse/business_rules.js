@@ -38,7 +38,9 @@ function addDecisionTable(data) {
             MIN_ROWS: translate('LBL_PMSE_MESSAGE_LABEL_MIN_ROWS', module),
             MIN_CONDITIONS_COLS: translate('LBL_PMSE_MESSAGE_LABEL_MIN_CONDITIONS_COLS', module),
             MIN_CONCLUSIONS_COLS: translate('LBL_PMSE_MESSAGE_LABEL_MIN_CONCLUSIONS_COLS', module)
-        }
+        },
+        dateFormat: App.date.getUserDateFormat(),
+        timeFormat: App.user.getPreference("timepref")
     });
 
     decision_table = new DecisionTable(data);

@@ -73,6 +73,7 @@ $mod_strings = array (
     'LBL_PMSE_LABEL_CURRENT' => 'Current',
     'LBL_PMSE_LABEL_OVERDUE' => 'Overdue',
     'LBL_PMSE_LABEL_PROCESS' => 'Process',
+    'LBL_PMSE_LABEL_PROCESS_AUTHOR' => 'Process Author',
     'LBL_PMSE_LABEL_UNASSIGNED' => 'Unassigned',
 
     'LBL_RECORD_NAME'  => "Record Name",

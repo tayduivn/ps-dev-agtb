@@ -608,16 +608,36 @@ EOF;
      *
      * @var array
      */
-    protected $whiteListActions
-        = array(
-            'index', 'ListView', 'DetailView', 'EditView', 'oauth', 'authorize', 'Authenticate', 'Login',
-            'SupportPortal',
-            'LogView',
-            "SugarpdfSettings", "saveftsmodules", 'SaveSequence',
-            'PasswordManager', 'LicenseSettings', 'Updater', 'Backups',
-            'Languages', 'Locale', 'Upgrade', 'repair', 'GlobalSearchSettings', 'Diagnostic',
-            'EnableWirelessModules', 'ConfigureTabs', 'UpgradeWizard', 'ConfigureShortcutBar',
-        );
+    protected $whiteListActions = array(
+        'index',
+        'ListView',
+        'DetailView',
+        'EditView',
+        'oauth',
+        'authorize',
+        'Authenticate',
+        'Login',
+        'SupportPortal',
+        'LogView',
+        'SugarpdfSettings',
+        'saveftsmodules',
+        'SaveSequence',
+        'PasswordManager',
+        'LicenseSettings',
+        'Updater',
+        'Backups',
+        'Languages',
+        'Locale',
+        'Upgrade',
+        'repair',
+        'GlobalSearchSettings',
+        'Diagnostic',
+        'EnableWirelessModules',
+        'ConfigureTabs',
+        'UpgradeWizard',
+        'ConfigureShortcutBar',
+        'wizard',
+    );
 
     /**
      * Respond to XSF attempt

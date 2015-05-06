@@ -711,10 +711,13 @@ class ExtAPIDnb extends ExternalAPIBase
      * @return string An authenticated token or null if authenticated token was unattainable
      */
     private function getRecentToken() {
-        $dnbToken = !empty($_SESSION[$this->dnbEnv . 'dnbToken']) ?
-            $_SESSION[$this->dnbEnv . 'dnbToken'] : null;
-        $dnbTokenIssueTime = !empty($_SESSION[$this->dnbEnv . 'dnbTokenIssueTime']) ?
-            $_SESSION[$this->dnbEnv . 'dnbTokenIssueTime'] : null;
+        global $current_user;
+
+        // Get the token information from the EAPM bean
+        $eapm =  $this->getEAPMForUser($current_user);
+        $dnbToken = $eapm->oauth_token;
+        $dnbTokenIssueTime = $eapm->tokenIssueTime;
+
         //check if token has expired
         $dnbToken = $this->checkToken($dnbToken, $dnbTokenIssueTime);
         return $dnbToken;
@@ -722,11 +725,13 @@ class ExtAPIDnb extends ExternalAPIBase
 
     /**
      * Check if a valid token was procurable
+     *
+     * @param boolean $save Flag that tells the connector whether to save the token
      * @return boolean True if token was procurable, false if not
      */
-    public function checkTokenValidity()
+    public function checkTokenValidity($save = true)
     {
-        $dnbToken = $this->getAuthenticationToken();
+        $dnbToken = $this->getAuthenticationToken($save);
         return isset($dnbToken);
     }
 
@@ -839,11 +844,15 @@ class ExtAPIDnb extends ExternalAPIBase
     }
 
     /**
-     * Return new DNB Authentication to access DNB api. Return null if authentication could not be verified
+     * Return new DNB Authentication to access DNB api. Return null if
+     * authentication could not be verified
+     *
+     * @param boolean $save Flag that tells the connector whether to save the token
      * @return string token if valid token found, null otherwise
      */
-    private function getAuthenticationToken()
+    private function getAuthenticationToken($save = true)
     {
+        global $current_user;
         $username = $this->dnbUsername;
         $password = $this->dnbPassword;
         $curl_headers = array(
@@ -870,9 +879,59 @@ class ExtAPIDnb extends ExternalAPIBase
                     return null;
                 }
             }
-            $_SESSION[$this->dnbEnv . 'dnbTokenIssueTime'] = time();
-            $_SESSION[$this->dnbEnv . 'dnbToken'] = $token;
+
+            // Save the token information if we are supposed to
+            if ($save === true) {
+                $eapm = $this->getEAPMForUser($current_user);
+                $eapm->oauth_token = $token;
+                $eapm->api_data = base64_encode(json_encode(
+                    array("tokenIssueTime" => time())
+                ));
+                $eapm->save();
+            }
+
+            // Send it back
             return $token;
+        }
+    }
+
+    /**
+     * Gets the EAPM bean for the user and this connector
+     *
+     * @param User $user A User object
+     * @return EAPM
+     */
+    protected function getEAPMForUser($user)
+    {
+        // In any case we will need the EAPM bean
+        $seed = BeanFactory::getBean("EAPM");
+
+        // Setup our query to get what we need from the EAPM bean
+        $sq = new SugarQuery();
+        $sq->from($seed)
+           ->where()
+           ->equals('assigned_user_id', $user->id)
+           ->equals('application', $this->connector);
+
+        // Run the query and get the first result
+        $eapm = current($seed->fetchFromQuery($sq, array('api_data')));
+        if ($eapm) {
+            if (!empty($eapm->api_data)) {
+                // Get the decoded EAPM data for this connector and load it on
+                // the fetched bean as properties
+                $data = json_decode(base64_decode($eapm->api_data));
+                foreach($data as $key => $val) {
+                    $eapm->$key = $val;
+                }
+            }
+
+            // Send back this bean
+            return $eapm;
+        } else {
+            // No EAPM... load the basics and send it back
+            $seed->assigned_user_id = $user->id;
+            $seed->application = $this->connector;
+            return $seed;
         }
     }
 

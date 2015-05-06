@@ -791,8 +791,6 @@ function buildInstall($path){
         if (file_exists($dir)) {
             $it = new RecursiveDirectoryIterator($dir, FilesystemIterator::SKIP_DOTS);
             $it = new RecursiveIteratorIterator($it);
-            // ignore role based metadata for BR-2707
-            $it = new RegexIterator($it, '/^((?!\/roles\/).)*$/');
             $it = new RegexIterator($it, '/\.php$/');
             return $it;
         }

@@ -627,10 +627,12 @@ class PMSECaseFlowHandler
 
     public function closeFlow($casId, $casIndex)
     {
+        $today = TimeDate::getInstance()->nowDb();
         $flowBean = $this->retrieveBean('pmse_BpmFlow');
         $params = array('cas_id' => $casId, 'cas_index' => $casIndex);
         $flowBean->retrieve_by_string_fields($params);
         $flowBean->cas_flow_status = 'CLOSED';
+        $flowBean->cas_finish_date = $today;
         return $flowBean->save();
     }
 
