@@ -25,7 +25,7 @@
         // Initialize tag collections (search results and selected tags)
         this.tagCollection = [];
         this.selectedTags = this.layout.selectedTags || [];
-        this.collection = this.layout.collection || [];
+        this.collection = this.layout.collection || app.data.createMixedBeanCollection();
 
         /**
          * Stores the index of the currently highlighted list element.
@@ -48,7 +48,7 @@
         this.collection.on('sync', this.quicksearchHandler,  this);
 
         //Listener for receiving focus for up/down arrow navigation:
-        this.on('navigate:focus:receive', function(next) {
+        this.on('navigate:focus:receive', function() {
             this.activeIndex = 0;
             this._highlightActive();
             this.attachKeyEvents();
@@ -168,7 +168,7 @@
     },
 
     moveRight: function() {
-        var maxIndex = this.$('.qs-tag').length || 0;
+        var maxIndex = this.tagCollection.length;
         if (this.activeIndex < --maxIndex) {
             this.activeIndex++;
             this._highlightActive();
