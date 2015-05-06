@@ -180,6 +180,7 @@ class PMSEFieldParser implements PMSEDataParserInterface
             ////new TimeDate();
             // Call the function
             $localDate = $timeDate->to_display_date_time($tokenValue, true, true, $current_user);
+            $localDate = (empty($localDate)) ? $tokenValue : $localDate;
             $criteriaToken->currentValue = $localDate;
         }
         return $criteriaToken;
