@@ -1032,33 +1032,51 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
 	            array("'-'", $this->reporter->db->convert($column, "quarter")));
 	}
 
+    /**
+     * Generates select query for week
+     *
+     * @param array $layout_def Layout def for the field
+     * @return string part of select query for week
+     */
     public function querySelectweek($layout_def)
     {
         $column = $this->_get_column_select($layout_def);
 
         return $this->reporter->db->convert(
-            $this->reporter->db->convert($column, "date_format", array('%Y')),
+            $this->reporter->db->convert($column, 'date_format', array('%Y')),
             'CONCAT',
-            array("'-'", $this->reporter->db->convert($column, "date_format", array('%v')))
-        ) . " " . $this->_get_column_alias($layout_def) . "\n";
+            array("'-'", $this->reporter->db->convert($column, 'date_format', array('%v')))
+        ) . ' ' . $this->_get_column_alias($layout_def) . "\n";
     }
 
-    public function displayListweek(& $layout_def)
+    /**
+     * Format week for display in report
+     *
+     * @param array $layout_def Layout def for the field
+     * @return string Formated string
+     */
+    public function displayListweek($layout_def)
     {
         $match = array();
         if (preg_match('/(\d{4})-(\d+)/', $this->displayListPlain($layout_def), $match)) {
-            return "W" . $match[2] . " " . $match[1];
+            return 'W' . $match[2] . ' ' . $match[1];
         }
         return '';
     }
 
+    /**
+     * Generates group by query for week
+     *
+     * @param array $layout_def Layout def for the field
+     * @return string group by week part of query
+     */
     public function queryGroupByWeek($layout_def)
     {
         $column = $this->_get_column_select($layout_def);
         return $this->reporter->db->convert(
-            $this->reporter->db->convert($column, "date_format", array('%Y')),
+            $this->reporter->db->convert($column, 'date_format', array('%Y')),
             'CONCAT',
-            array("'-'", $this->reporter->db->convert($column, "date_format", array('%v')))
+            array("'-'", $this->reporter->db->convert($column, 'date_format', array('%v')))
         );
     }
 
