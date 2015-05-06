@@ -346,7 +346,7 @@ if(!$current_user->is_admin && !$GLOBALS['current_user']->isAdminForModule('User
         if((isset($_POST['old_password']) || $focus->portal_only) &&
             (isset($_POST['new_password']) && !empty($_POST['new_password'])) &&
             (isset($_POST['password_change']) && $_POST['password_change'] == 'true') ) {
-            if (!$focus->change_password($_POST['old_password'], $_POST['new_password'])) {
+            if (!$focus->change_password($_POST['old_password'], html_entity_decode($_POST['new_password']))) {
                if ((isset($_POST['page']) && $_POST['page'] == 'EditView')) {
                    header("Location: index.php?action=EditView&module=Users&record=".$_POST['record']."&error_password=".urlencode($focus->error_string));
                    exit;
