@@ -30,7 +30,6 @@ class SugarCleanerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public static function cleanHtmlProvider()
     {
-
         return array(
             /* script tags should be removed */
             array(
@@ -56,6 +55,23 @@ class SugarCleanerTest extends Sugar_PHPUnit_Framework_TestCase
             array(
                 array("<b>Hello</b>", false),
                 "<b>Hello</b>"
+            ),
+            /* Try area/map tags and img usemap attribute*/
+            array(
+                array(
+                    '<map name="my_map">
+                        <area target="_blank" href="http://www.example.org/" shape="rect" coords="8, 10, 674, 423" />
+                        <area target="_blank" href="http://stores.ebay.com/MyStore/" shape="rect" coords="11, 464, 157, 746" />
+                        <area target="_blank" href="http://stores.ebay.com/MyOtherStore" shape="rect" coords="175, 459, 328, 750" />
+                        <area target="_blank" href="http://stores.ebay.com/MyThirdStore" shape="rect" coords="351, 466, 499, 748" />
+                        <area target="_blank" href="http://www.example2.org/" shape="rect" coords="521, 463, 675, 745" />
+                        <area href="test@example.org?subject=Test" shape="circle" coords="24, 790, 14" />
+                    </map>
+                    <img border="0" src="http://www.example.org/Newsletter.jpg" width="676" height="838" usemap="#my_map" />
+                    ',
+                    false
+                ),
+                '<map name="my_map"><area target="_blank" href="http://www.example.org/" shape="rect" coords="8, 10, 674, 423" /><area target="_blank" href="http://stores.ebay.com/MyStore/" shape="rect" coords="11, 464, 157, 746" /><area target="_blank" href="http://stores.ebay.com/MyOtherStore" shape="rect" coords="175, 459, 328, 750" /><area target="_blank" href="http://stores.ebay.com/MyThirdStore" shape="rect" coords="351, 466, 499, 748" /><area target="_blank" href="http://www.example2.org/" shape="rect" coords="521, 463, 675, 745" /><area href="test@example.org?subject=Test" shape="circle" coords="24, 790, 14" /></map><img border="0" src="http://www.example.org/Newsletter.jpg" width="676" height="838" usemap="#my_map" alt="Newsletter.jpg" />'
             ),
         );
     }
