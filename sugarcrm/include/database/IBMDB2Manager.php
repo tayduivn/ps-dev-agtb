@@ -781,6 +781,7 @@ public function convert($string, $type, array $additional_parameters = array())
 	{
 		// YYYY-MM-DD HH:MM:SS
 		switch($type) {
+            case 'id':
             case 'char': return rtrim($string, ' ');
 			case 'date': return substr($string, 0, 10);
             case 'time':

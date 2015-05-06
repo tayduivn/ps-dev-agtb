@@ -105,7 +105,6 @@ class Bug34993Test extends Sugar_PHPUnit_Framework_TestCase
         $bean->id = '12345';
         $bean->custom_fields->addFieldObject($templateText);        
         $bean->custom_fields->retrieve();
-        $this->assertEquals($bean->id_c, '12345', "Assert that the custom table exists");
         $this->assertEquals($bean->bug34993_test_c, NULL, "Assert that the custom text field has a default value set to NULL");
         
         
@@ -142,7 +141,6 @@ class Bug34993Test extends Sugar_PHPUnit_Framework_TestCase
         $bean->id = '12345';
         $bean->custom_fields->addFieldObject($templateText);        
         $bean->custom_fields->retrieve();
-        $this->assertEquals($bean->id_c, '12345', "Assert that the custom table exists");
         $this->assertEquals($bean->bug34993_test2_c, NULL, "Assert that the custom enum field has a default value set to NULL");        
     }
 }

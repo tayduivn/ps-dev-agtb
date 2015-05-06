@@ -666,8 +666,8 @@ protected function checkQuery($sql, $object_name = false)
 	public function insertParams($table, $field_defs, $data, $field_map = null, $execute = true, $usePreparedStatements = false)
 	{
         $values = array();
-		foreach ($field_defs as $field => $fieldDef)
-		{
+        foreach ($field_defs as $fieldDef) {
+            $field = $fieldDef['name'];
 			if (isset($fieldDef['source']) && $fieldDef['source'] != 'db')  continue;
 			//custom fields handle their save separately
 			if(!empty($field_map) && !empty($field_map[$field]['custom_type'])) continue;
