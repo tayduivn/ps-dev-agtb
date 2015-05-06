@@ -66,13 +66,15 @@
             }
         }
     },
-    /**
-     * When the setup complete page is shown, we know we can update user object
-     * now that user setup is complete so that routing to setup wizard stops.
-     */
-    _render: function() {
-        this._super('_render');
-        app.user.unset("show_wizard");
-    }
 
+    /**
+     * @inheritDoc
+     *
+     * When the setup complete page is disposed, we can update user object since
+     * the user setup is complete, to prevent routing to the setup wizard.
+     */
+    _dispose: function() {
+        this._super('_dispose');
+        app.user.unset('show_wizard');
+    }
 })
