@@ -327,6 +327,10 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                         .donutLabelsOutside(params.donutLabelsOutside || false)
                         .hole(params.hole || false)
                         .donutRatio(params.donutRatio || 0.5)
+                        .rotateDegrees(0)
+                        .arcDegrees(360)
+                        .maxRadius(125)
+                        .minRadius(125)
                         .direction(params.direction)
                         .strings({
                             legend: {
