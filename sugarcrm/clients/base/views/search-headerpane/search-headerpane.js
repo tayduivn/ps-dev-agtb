@@ -48,6 +48,8 @@
         if (!title) {
             return '';
         }
-        return app.lang.get(title, this.module, {searchTerm: this.searchTerm});
+        return app.lang.get(title, this.module, {
+            searchTerm: new Handlebars.SafeString(this.searchTerm)
+        });
     }
 })
