@@ -188,12 +188,6 @@
                         }
                     }
 
-                    if (params.modules.length === 0) {
-                        var moduleStateKey = app.user.lastState.buildKey(
-                            'quicksearch', 'modulelist', 'quicksearch-modulelist');
-                        params.modules = app.user.lastState.get(moduleStateKey) || [];
-                    }
-
                     var appContext = app.controller.context;
 
                     // Set the new search term and module list in the context, if necessary.

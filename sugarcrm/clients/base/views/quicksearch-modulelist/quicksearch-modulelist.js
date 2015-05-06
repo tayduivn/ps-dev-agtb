@@ -62,10 +62,11 @@
          *
          * @type {Object}
          */
-        this.moduileIcons = {};
+        this.moduleIcons = {};
 
         // When the app is ready, fetch the searchable modules and put them in
-        // the module list dropdown.
+        // the module list dropdown. This cannot be in the initialize because
+        // when initialize is called, the only module available is login.
         app.events.on('app:sync:complete', function() {
             this.populateModules();
             // If there is a module preference stored in local storage,
@@ -83,6 +84,15 @@
             var moduleIconObj = this._buildModuleIconList();
             this.moduleIcons = {icon: moduleIconObj};
             this.render();
+            this.layout.off('route:search');
+            this.layout.on('route:search', this.populateModuleSelectionFromContext, this);
+
+            // We need to call `populateModuleSelectionFromContext` here to
+            // update the module icons if the user navigates directly to the
+            // search page from outside Sugar. In this use case,
+            // 'quicksearch-modulelist.js' is initialized and needs to update
+            // the module icons to be in sync with the ones in the url.
+            this.populateModuleSelectionFromContext();
         }, this);
 
         // On expansion of quicksearch, show the module dropdown & buttons.
@@ -96,6 +106,35 @@
         this.layout.on('navigate:next:component navigate:previous:component navigate:to:component', function() {
             this.$('.module-dropdown').removeClass('open');
         });
+    },
+
+    /**
+     * Populate the module selection from the search context.
+     */
+    populateModuleSelectionFromContext: function() {
+        // Reset all the selections
+        var previousModuleSelection = this.context.get('module_list');
+        this.searchModuleFilter.invoke('set', {selected: false});
+        this.$('[data-action=select-module]').removeClass('selected');
+
+        // Handle the 'all selected' case
+        if (_.isEmpty(previousModuleSelection)) {
+            this.searchModuleFilter.allSelected = true;
+            this.$('[data-action=select-all]').addClass('selected');
+            // A specific set of modules have been selected.
+        } else {
+            this.searchModuleFilter.allSelected = false;
+            this.$('[data-action=select-all]').removeClass('selected');
+            _.each(previousModuleSelection, function(module) {
+                var moduleFilter = this.searchModuleFilter.get(module);
+                if (moduleFilter) {
+                    moduleFilter.set('selected', true);
+                    this.$('[data-action=select-module][data-module=' + module + ']').addClass('selected');
+                }
+            }, this);
+        }
+        this._setSelectedModules();
+        this._updateModuleIcons();
     },
 
     /**
