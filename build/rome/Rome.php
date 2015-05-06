@@ -451,7 +451,7 @@ class Rome
                 $this->startPath = $startPath;
             }
             $fp = fopen($path, 'r');
-            $this->clearOutput();
+
             while ($line = fgets($fp)) {
                 $this->lineCount++;
                 if (substr_count($line, '//') == 0) {
@@ -508,7 +508,6 @@ class Rome
     protected function saveSymlink($path, $link, $skipBuilds = array())
     {
         $path = $this->cleanPath($path);
-        $this->clearOutput();
         $blackListPath = $this->getBlacklistPath($path);
 
         foreach ($this->output as $f => $o) {
@@ -599,7 +598,6 @@ class Rome
     protected function quickCopy($orig_path, $skipBuilds)
     {
         $path = $this->cleanPath($orig_path);
-        $this->clearOutput();
         foreach ($this->active as $f => $a) {
             if (!empty($this->config['blackList'][$f][$path]) || !empty($skipBuilds[$f]) || !empty($this->config['skipBuilds'][$f])) {
                 continue;
@@ -630,6 +628,9 @@ class Rome
                 continue;
             }
             $next = $path . '/' . $e;
+
+            $this->clearOutput();
+
             if (is_dir($next)) {
                 $sugar_path = $this->cleanPath($next);
                 $blackListPath = $this->getBlacklistPath($sugar_path);
