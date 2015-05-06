@@ -138,7 +138,7 @@ class Bug33861Test extends Sugar_PHPUnit_Framework_TestCase
           'ext_rest_zoominfoperson' =>
           array (
             'id' => 'ext_rest_zoominfoperson',
-            'name' => 'Zoominfo&#169; - Person',
+            'name' => 'Zoominfo - Person',
             'enabled' => true,
             'directory' => 'modules/Connectors/connectors/sources/ext/rest/zoominfoperson',
             'modules' =>
@@ -150,7 +150,7 @@ class Bug33861Test extends Sugar_PHPUnit_Framework_TestCase
           'ext_rest_zoominfocompany' =>
           array (
             'id' => 'ext_rest_zoominfocompany',
-            'name' => 'Zoominfo&#169; - Company',
+            'name' => 'Zoominfo - Company',
             'enabled' => true,
             'directory' => 'modules/Connectors/connectors/sources/ext/rest/zoominfocompany',
             'modules' =>
