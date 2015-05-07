@@ -1019,7 +1019,8 @@ class PMSEEngineUtils
     }
 
     public static function getSupportedModules () {
-        return array (
+        include 'PMSEModules.php';
+        $supportedModules = array (
             'Accounts', //Accounts
             'Bugs', //Bugs
             'Calls', //Calls
@@ -1043,5 +1044,17 @@ class PMSEEngineUtils
             'Tasks', //Tasks
             'Users', //Users
         );
+        $studioBrowser = new StudioBrowser();
+        $studioBrowser->loadModules();
+        $moduleList = $studioBrowser->modules;
+        $out = array();
+
+        foreach ($moduleList as $key => $module) {
+            if (in_array($module->module, $pmseModulesList)) {
+                continue;
+            }
+            $out[] = $module->module;
+        }
+        return $out;
     }
 }
