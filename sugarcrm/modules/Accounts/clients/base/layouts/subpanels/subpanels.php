@@ -121,6 +121,7 @@ $viewdefs['Accounts']['base']['layout']['subpanels'] = array (
       'override_subpanel_list_view' => 'subpanel-for-accounts',
       'context' => array (
         'link' => 'quotes',
+        'ignore_role' => 1,
       ),
     ),
     array (

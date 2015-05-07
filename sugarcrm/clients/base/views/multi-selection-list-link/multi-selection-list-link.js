@@ -75,7 +75,6 @@
 
         var context = this.context.get('recContext');
         var view = this.context.get('recView');
-        var collectionOptions = context.get('collectionOptions') || {};
 
         if (context.has('parentModel')) {
             var parentModel = context.get('parentModel');
@@ -91,13 +90,9 @@
             parentModel.setSyncedAttributes(data.record);
         }
 
-        context.get('collection').resetPagination();
         context.resetLoadFlag();
         context.set('skipFetch', false);
-        //Reset limit on context so we don't 'over fetch' (lose pagination)
-        if (collectionOptions.limit) {
-            context.set('limit', collectionOptions.limit);
-        }
+
         context.loadData({
             success: function() {
                 view.layout.trigger('filter:record:linked');

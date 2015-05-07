@@ -64,6 +64,8 @@
         }, this);
 
         this.context.on('facets:reset', this.search, this);
+
+        this.collection.setOption('params', {xmod_aggs: true});
     },
 
     /**
@@ -126,11 +128,8 @@
         this.filteredSearch = false;
 
         var tagFilters = _.pluck(this.context.get('tags'), 'id');
-        this.collection.resetPagination();
 
-        //TODO: collection.fetch shouldn't need a query to be passed. Will
-        // be fixed by SC-3973.
-        this.collection.fetch({query: searchTerm, module_list: moduleList, params: {xmod_aggs: true},
+        this.collection.fetch({query: searchTerm, module_list: moduleList,
             apiOptions:
             {
                 data: {
@@ -155,8 +154,7 @@
         var moduleList = this.context.get('module_list') || [];
         this.filteredSearch = true;
         var tagFilters = _.pluck(this.context.get('tags'), 'id');
-        this.collection.resetPagination();
-        this.collection.fetch({query: searchTerm, module_list: moduleList, params: {xmod_aggs: true},
+        this.collection.fetch({query: searchTerm, module_list: moduleList,
             apiOptions:
             {
                 data: {
@@ -180,8 +178,6 @@
     loadData: function(options, setFields) {
         setFields = false;
         options = options || {};
-        options.params = {};
-        options.params.xmod_aggs = true;
 
         // pull tag ids out of context and pass them into our options to filter
         var tagFilters = _.pluck(this.context.get('tags'), 'id');

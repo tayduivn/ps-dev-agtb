@@ -451,20 +451,11 @@
                     // Close the preview pane to ensure that the preview
                     // collection is in sync with the list collection.
                     app.events.trigger('preview:close');
-
-                    // FIXME (SC-3670): This is introduced as a quick-fix for SC-3647
-                    // This will not be necessary with the PR for SC-3670
-                    if (collection && collection.options && collection.options.apiOptions) {
-                        collection.options.apiOptions = undefined;
-                    }
                 }
             };
 
             ctxCollection.filterDef = filterDef;
             ctxCollection.origFilterDef = origFilterDef;
-            ctxCollection.resetPagination();
-
-            options = _.extend(options, ctx.get('collectionOptions'));
 
             ctx.resetLoadFlag(false);
             if (!_.isEmpty(ctx._recordListFields)) {

@@ -108,12 +108,6 @@
         // If in "search mode" (the search filter is toggled open) set q:term param
         var options = this.context.get('filterOpened') ? this.getSearchOptions() : {};
 
-        // Dashboard layout injects shared context with limit: 5.
-        // Otherwise, we don't set so fetches will use max query in config.
-        if (this.context.get('limit')) {
-            options.limit = this.context.get('limit');
-        }
-        options = _.extend({}, this.context.get('collectionOptions'), options);
         return options;
     },
 

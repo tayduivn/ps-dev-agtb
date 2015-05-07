@@ -58,6 +58,17 @@
             this.context.set('dataView', this.dataView);
         }
 
+        // FIXME in SC-3360 - this is a hacky flag to be able to fetch a collection of
+        // links. We will be able to remove this code once we introduce the CollectionsAPI.
+        var ignoreRole = this.context.get('ignore_role');
+        if (ignoreRole) {
+            var collection = this.collection;
+            var options = collection.getOption() || {};
+            var params = options.params || {};
+            params.ignore_role = ignoreRole;
+            collection.setOption('params', params);
+        }
+
         // binding so subpanels can trigger other subpanels to reload by link name
         // example: ctx.trigger('subpanel:reload', {links: ['opportunities','revenuelineitems']});
         if (this.context.parent) {
