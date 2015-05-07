@@ -335,7 +335,7 @@ Form.prototype.applyData = function (dontLoad) {
                 for (i = 0; i < this.items.length; i += 1) {
                     if (this.items[i].name === propertyName) {
                         try {
-                            this.items[i].setValue(this.data[propertyName]);    
+                            this.items[i].setValue(this.data[propertyName]);
                         } catch(e) {}
                         break;
                     }
@@ -395,7 +395,8 @@ Form.prototype.addItem = function (item) {
             case 'radio':
                 newItem = new RadiobuttonField(item, this);
                 break;
-
+            case 'searchableCombobox':
+                newItem = new SearchableCombobox(item, this);
             }
         }
     }
