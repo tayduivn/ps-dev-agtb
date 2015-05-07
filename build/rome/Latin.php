@@ -29,13 +29,16 @@ class Latin
 
         $translationBranch = "master";
 
-        if (version_compare($this->ver, "7.6.0", ">=")) {
-            $translationBranch = "7_b";     // 7_b is the translation branch for all versions >= 7.6.X
-        } 
-        else if (version_compare($this->ver, "7.7.0", ">=")) { 
+        if (version_compare($this->ver, "7.7", ">=")) {
             $translationBranch = "7_7";     // 7_7 is the branch for 7.7.x train
         }
-        else if (version_compare($this->ver, "7.0.0", ">")) {
+        else if ( version_compare($this->ver, "7.7","<") &&
+            version_compare($this->ver, "7.6", ">=")
+        ) {
+            $translationBranch = "7_b";     // 7_b is the translation branch for all versions >= 7.6.X
+        }
+        else if ( version_compare($this->ver, "7.6", "<") &&
+            version_compare($this->ver, "7.0", ">")) {
             $translationBranch = "7_0";     // 7_0 is the translation branch for all versions > 7.0 and <= 7.5
         }
 
