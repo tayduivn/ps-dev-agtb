@@ -1561,8 +1561,7 @@ class PMSECrmDataWrapper implements PMSEObservable
         //$primal_module = ucfirst(isset($module[0])?$module[0]:'');
         $res['search'] = $filter;
         $res['success'] = true;
-        global $current_language;
-        $module_strings = return_module_language($current_language, 'ModuleBuilder');
+        $module_strings = return_module_language('en_us', 'ModuleBuilder');
 
         $fieldTypes = $module_strings['fieldTypes'];
         //add datetimecombo type field from the vardef overrides to point to Datetime type
@@ -1657,8 +1656,7 @@ class PMSECrmDataWrapper implements PMSEObservable
         //$primal_module = ucfirst(isset($module[0])?$module[0]:'');
         $res['search'] = $filter;
         $res['success'] = true;
-        global $current_language;
-        $module_strings = return_module_language($current_language, 'ModuleBuilder');
+        $module_strings = return_module_language('en_us', 'ModuleBuilder');
 
         $fieldTypes = $module_strings['fieldTypes'];
         //add datetimecombo type field from the vardef overrides to point to Datetime type
