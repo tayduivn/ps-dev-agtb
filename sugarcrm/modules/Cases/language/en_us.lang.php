@@ -72,6 +72,7 @@ $mod_strings = array (
 	'LNK_CASE_REPORTS' => 'View Case Reports',
 	'LBL_SHOW_IN_PORTAL' => 'Show in Portal',
 	'LBL_CREATE_KB_DOCUMENT' => 'Create Article',
+    'LBL_KBCONTENTS_SUBPANEL_TITLE' => 'Knowledge Base',
 
     'LBL_CREATED_USER' => 'Created User',
     'LBL_MODIFIED_USER' => 'Modified User',

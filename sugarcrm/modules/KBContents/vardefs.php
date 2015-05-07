@@ -136,6 +136,13 @@ $dictionary['KBContent'] = array(
             'bean_name' => 'Note',
             'source' => 'non-db',
         ),
+        'cases' => array(
+            'name' => 'cases',
+            'type' => 'link',
+            'relationship' => 'relcases_kbcontents',
+            'source' => 'non-db',
+            'vname' => 'LBL_CASE',
+        ),
         'attachments' => array(
             'name' => 'attachments',
             'vname' => 'LBL_ATTACHMENTS',
