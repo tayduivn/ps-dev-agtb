@@ -23,9 +23,9 @@ $viewdefs['KBContents']['base']['view']['subpanel-for-revisions'] = array(
             ),
             array(
                 'type' => 'rowaction',
-                'event' => 'button:create_revision_button:click',
-                'name' => 'create_revision_button',
-                'label' => 'LBL_CREATE_REVISION_BUTTON_LABEL',
+                'name' => 'edit_button',
+                'label' => 'LBL_EDIT_BUTTON',
+                'event' => 'list:editrow:fire',
                 'acl_action' => 'edit',
             ),
         ),
