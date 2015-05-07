@@ -5406,20 +5406,19 @@ class SugarBean
      * Fill in a link field
      */
 
-    function fill_in_link_field( $linkFieldName , $def)
+    function fill_in_link_field($idName, $relateFieldDef)
     {
-        $idField = $linkFieldName;
-        //If the id_name provided really was an ID, don't try to load it as a link. Use the normal link
-        if (!empty($this->field_defs[$linkFieldName]['type']) && $this->field_defs[$linkFieldName]['type'] == "id" && !empty($def['link']))
-        {
-            $linkFieldName = $def['link'];
-        }
-        if ($this->load_relationship($linkFieldName))
-        {
-            $list=$this->$linkFieldName->get();
-            $this->$idField = '' ; // match up with null value in $this->populateFromRow()
-            if (!empty($list))
-                $this->$idField = $list[0];
+        if (!empty($relateFieldDef['link'])) {
+            $link = $relateFieldDef['link'];
+            if ($this->load_relationship($link)) {
+                $recordIds = $this->$link->get();
+                $recordId = array_shift($recordIds);
+                if ($recordId) {
+                    $this->$idName = $recordId;
+                } else {
+                    $this->$idName = '' ; // match up with null value in $this->populateFromRow()
+                }
+            }
         }
     }
 
@@ -5447,7 +5446,8 @@ class SugarBean
                     $related_module = $field['module'];
                     $id_name = $field['id_name'];
 
-                    if (empty($this->$id_name))
+                    if (empty($this->$id_name) && isset($this->field_defs[$id_name]['type'])
+                        && $this->field_defs[$id_name]['type'] == 'relate')
                     {
                        $this->fill_in_link_field($id_name, $field);
                     }
