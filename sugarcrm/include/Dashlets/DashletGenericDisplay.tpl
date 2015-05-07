@@ -171,3 +171,11 @@
 	</tr>
 	{/foreach}
 </table>
+{literal}
+    <script>
+        $(document).ready(function(){
+            window.parent.SUGAR.App.controller.layout.getComponent('bwc').rewriteLinks();
+        });
+    </script>
+{/literal}
+
