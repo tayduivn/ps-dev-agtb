@@ -301,13 +301,13 @@
                     }
                 }, this);
 
-                var options = _.extend({}, this.context.get('collection').getOption(), {
+                var options = {
                     fields: fields,
                     limit: limit,
                     // use the last filterDef applied to the collection
                     filter: this.context.get('collection').filterDef,
                     context: this.context
-                });
+                };
 
                 this.massCollection.fetch(options);
             },
