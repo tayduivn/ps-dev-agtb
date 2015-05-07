@@ -49,6 +49,7 @@
 
         // Listener for losing focus for up/down arrow navigation:
         this.on('navigate:focus:lost', function() {
+            this.activeIndex = null;
             this.$('.tag-wrapper').removeClass('highlight');
             this.disposeKeydownEvent();
         }, this);
