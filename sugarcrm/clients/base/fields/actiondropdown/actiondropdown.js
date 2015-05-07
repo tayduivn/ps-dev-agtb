@@ -344,12 +344,5 @@
         this.defaultActionBtn = null;
         this.dropdownFields = null;
         this._super('_dispose');
-    },
-
-    /**
-     *  Visibility Check
-     */
-    isVisible: function() {
-        return !this.getFieldElement().is(':hidden');
     }
 })
