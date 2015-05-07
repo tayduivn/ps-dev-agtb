@@ -719,7 +719,7 @@ foreach($sugar_demodata['kbdocuments_seed_data'] as $v){
     $idDocument = $kbdocContent->save();
     if (isset($v['localizations'])) {
         foreach($v['localizations'] as $localization) {
-            $KBLocalization = BeanFactory::retrieveBean('KBContents', $idDocument);
+            $KBLocalization = clone(BeanFactory::retrieveBean('KBContents', $idDocument));
             unset($KBLocalization->id);
             unset($KBLocalization->kbarticle_id);
             $KBLocalization->language = $localization['language'];
@@ -731,7 +731,7 @@ foreach($sugar_demodata['kbdocuments_seed_data'] as $v){
     }
     if (isset($v['revisions'])) {
         foreach($v['revisions'] as $revision) {
-            $KBRevision = BeanFactory::retrieveBean('KBContents', $idDocument);
+            $KBRevision = clone(BeanFactory::retrieveBean('KBContents', $idDocument));
             unset($KBRevision->id);
             unset($KBRevision->revision);
             $KBRevision->name = $revision['name'];
