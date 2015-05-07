@@ -14,7 +14,6 @@ namespace Sugarcrm\Sugarcrm\Elasticsearch\Adapter;
 
 use Sugarcrm\Sugarcrm\SearchEngine\Capability\Aggregation\ResultInterface;
 use Sugarcrm\Sugarcrm\Elasticsearch\Query\Highlighter\HighlighterInterface;
-use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\SearchFields;
 
 /**
  *

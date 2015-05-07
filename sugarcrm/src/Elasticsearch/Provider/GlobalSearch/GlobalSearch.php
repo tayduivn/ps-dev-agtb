@@ -315,7 +315,7 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
      * @param array $modules List of modules
      * @return array
      */
-    protected function getSearchFields(array $modules)
+    public function getSearchFields(array $modules)
     {
         $sf = new SearchFields($this->fieldBoost ? $this->booster : null);
 
@@ -560,7 +560,7 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
     protected function handleSearchTerms($builder)
     {
         if (!empty($this->term)) {
-            $builder->setQuery($this->getQuery($this->term, $this->modules));
+            $builder->setMultiMatchQuery($this->term, $this->modules);
         } else {
 
             // If no query term is passed in we use a MatchAll and try to
@@ -634,30 +634,13 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
             ->setLimit($this->tagLimit)
         ;
 
-        $builder->setQuery($this->getQuery($this->term, $modules));
+        $builder->setMultiMatchQuery($this->term, $modules);
 
         // Set sorting
         if ($this->sort) {
             $builder->setSort($this->sort);
         }
         return $builder->executeSearch();
-    }
-
-
-    /**
-     * Get query object
-     * @param string $term Search term
-     * @param array $modules List of modules
-     * @return \Elastica\Query\MultiMatch
-     */
-    protected function getQuery($term, array $modules)
-    {
-        $query = new \Elastica\Query\MultiMatch();
-        $query->setType(\Elastica\Query\MultiMatch::TYPE_CROSS_FIELDS);
-        $query->setQuery($term);
-        $query->setFields($this->getSearchFields($modules));
-        $query->setTieBreaker(1.0); // TODO make configurable
-        return $query;
     }
 
     /**

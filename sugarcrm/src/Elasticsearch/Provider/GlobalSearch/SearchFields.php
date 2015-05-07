@@ -12,6 +12,8 @@
 
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch;
 
+use Sugarcrm\Sugarcrm\Elasticsearch\Query\MultiMatch\MultiMatchQuery;
+
 /**
  *
  * SearchFields builder
@@ -67,6 +69,10 @@ class SearchFields
      */
     public function addSearchField($module, array $path, array $defs, $weightId)
     {
+        if (MultiMatchQuery::isFieldAccessible($module, $path) === false) {
+            return;
+        }
+
         $searchField = implode(self::FIELD_SEP, $path);
         if ($this->booster) {
             $searchField = $this->booster->getBoostedField($searchField, $defs, $weightId);

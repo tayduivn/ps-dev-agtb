@@ -19,6 +19,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\ResultSet;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Client;
 use Sugarcrm\Sugarcrm\Elasticsearch\Exception\QueryBuilderException;
 use Sugarcrm\Sugarcrm\Elasticsearch\Query\Aggregation\AggregationStack;
+use Sugarcrm\Sugarcrm\Elasticsearch\Query\MultiMatch\MultiMatchQuery;
 
 /**
  *
@@ -142,6 +143,21 @@ class QueryBuilder
     public function setQuery(\Elastica\Query\AbstractQuery $query)
     {
         $this->query = $query;
+        return $this;
+    }
+
+    /**
+     * Set multimatch query
+     * @param string $term Search term
+     * @param array $modules List of modules
+     * @param object $provider the global search provider
+     * @return QueryBuilder
+     */
+    public function setMultiMatchQuery($term, array $modules)
+    {
+        $provider = $this->container->getProvider('GlobalSearch');
+        $mQuery = new MultiMatchQuery();
+        $this->query  = $mQuery->create($term, $modules, $provider);
         return $this;
     }
 
