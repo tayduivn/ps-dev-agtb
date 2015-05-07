@@ -138,6 +138,23 @@ class PMSERelatedModule {
         return $res;
     }
 
+    public function getFieldValue($newBean, $field)
+    {
+        global $timedate, $current_user;
+        $value= '';
+        $def = $newBean->field_defs[$field];
+        if ($def['type'] == 'datetime' || $def['type'] == 'datetimecombo'){
+            date_default_timezone_set('UTC');
+            $datetime = new Datetime($newBean->$field);
+            $value = $timedate->asIso($datetime, $current_user);
+        } else if ($def['type'] == 'bool') {
+            $value = ($value==1) ? true : false;
+        } else {
+            $value = $newBean->$field;
+        }
+        return $value;
+    }
+
     public function addRelatedRecord($moduleBean, $linkField, $fields)
     {
         $fieldName = $linkField;

@@ -250,7 +250,6 @@ class PMSEFieldParser implements PMSEDataParserInterface
      */
     public function parseTokenValue($token)
     {
-        global $timedate, $current_user;
         $this->pmseRelatedModule = new PMSERelatedModule();
         $tokenArray = $this->decomposeToken($token);
         $all = array();
@@ -263,29 +262,18 @@ class PMSEFieldParser implements PMSEDataParserInterface
         }
 
         $value = '';
-        $isAValidBean = true;
         if (!empty($tokenArray)) {
             if (!isset($this->beanList[$tokenArray[1]])) {
                 $bean = $this->pmseRelatedModule->getRelatedModule($bean, $tokenArray[1]);
             }
             $field = $tokenArray[2];
-        }
-        $isAValidBean = (!empty($bean) && is_object($bean));
-        if ($isAValidBean) {
-            $def = $bean->field_defs[$field];
-            if ($def['type'] == 'datetime' || $def['type'] == 'datetimecombo'){
-                date_default_timezone_set('UTC');
-                $datetime = new Datetime($bean->$field);
-                $value = $timedate->asIso($datetime, $current_user);
+            if (!empty($bean) && is_object($bean)) {
+                $value = $this->pmseRelatedModule->getFieldValue($bean, $field);
             } else {
-                $value = $bean->$field;
+                $value = !empty($bean)?array_pop($bean)->$tokenArray[2]:null;
             }
-            if ($def['type'] == 'bool') {
-                $value = ($value==1)? true : false;
-            }
-        } else {
-            $value = !empty($bean)?array_pop($bean)->$tokenArray[2]:null;
         }
+
         return $value;
     }
 

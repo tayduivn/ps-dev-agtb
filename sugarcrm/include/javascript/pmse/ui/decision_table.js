@@ -587,7 +587,7 @@
         this.proxy.setUrl('pmse_Project/CrmData/oneToOneRelated/' + this.base_module);
         //this.proxy.setUrl('pmse_Project/CrmData/allRelated/' + this.base_module);
         //this.proxy.setUrl('pmse_Project/CrmData/fields/' + this.base_module);
-        this.proxy.getData( {base_module: this.base_module}, {
+        this.proxy.getData({base_module: this.base_module, call_type: 'ET'}, {
             success: function(data) {
                 var i, j, fields, combos, module;
                 if(data && data.success) {
@@ -1556,6 +1556,9 @@
             currentGroup = {};
 
             for(i = 0; i < this.fields.length; i += 1) {
+                if (this.variableMode === 'conclusion' && !this.isReturnType && this.fields[i].value === 'email1') {
+                    continue;
+                }
                 if (this.fields[i].moduleText !== currentGroup.label) {
                     if (this.variableMode === 'conclusion' && this.fields[i].moduleValue !== this.parent.base_module) {
                         break;

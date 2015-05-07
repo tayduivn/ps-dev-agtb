@@ -761,15 +761,15 @@ class PMSECrmDataWrapper implements PMSEObservable
                 $outputType = 1;
                 break;
             case 'allRelated':
-                $output = $this->getAllRelated($filter, $moduleApi, 'all', $baseModule);
+                $output = $this->getAllRelated($filter, $moduleApi, 'all', $baseModule, $type);
                 $outputType = 1;
                 break;
             case 'oneToOneRelated':
-                $output = $this->getAllRelated($filter, $moduleApi, 'one-to-one', $baseModule);
+                $output = $this->getAllRelated($filter, $moduleApi, 'one-to-one', $baseModule, $type);
                 $outputType = 1;
                 break;
             case 'oneToManyRelated':
-                $output = $this->getAllRelated($filter, $moduleApi, 'one-to-many', $baseModule);
+                $output = $this->getAllRelated($filter, $moduleApi, 'one-to-many', $baseModule, $type);
                 $outputType = 1;
                 break;
             //case 'Log':
@@ -2241,7 +2241,7 @@ class PMSECrmDataWrapper implements PMSEObservable
      * @param $filter
      * @return array
      */
-    private function getAllRelated($filter, ModuleApi $moduleApi, $relationship = 'all', $baseModule)
+    private function getAllRelated($filter, ModuleApi $moduleApi, $relationship = 'all', $baseModule, $type = '')
     {
         $result = array();
         $result['success'] = true;
@@ -2250,7 +2250,7 @@ class PMSECrmDataWrapper implements PMSEObservable
         if (is_array($res['result']) && !empty($res['result'])) {
             foreach ($res['result'] as $key => $value) {
                 //$aux = $this->addRelatedRecord($value['value']);
-                $aux = $this->retrieveFields($value['value'], $moduleApi, '', $baseModule);
+                $aux = $this->retrieveFields($value['value'], $moduleApi, $type, $baseModule);
                 $value['fields'] = $aux['result'];
                 $arr[] = $value;
             }
