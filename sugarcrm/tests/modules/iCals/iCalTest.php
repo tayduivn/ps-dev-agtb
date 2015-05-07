@@ -23,6 +23,8 @@ class iCalTest extends Sugar_PHPUnit_Framework_TestCase
         $this->timedate = new TimeDate();
 
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        $GLOBALS['current_user']->full_name = "Boro Sitnikovski";
+        $GLOBALS['current_user']->email1 = "bsitnikovski@sugarcrm.com";
 
         $meeting = SugarTestMeetingUtilities::createMeeting();
         $meeting->name = "VeryImportantMeeting";
@@ -75,4 +77,48 @@ class iCalTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertContains("VeryImportantProjectTask", $iCalString, "Cannot find VTODO: VeryImportantProjectTask");
     }
 
+    public function testiCalNewline()
+    {
+        $res = vCal::get_ical_event($this->getDummyBean("http://www.sugarcrm.com/"), $GLOBALS['current_user']);
+
+        $desc = $this->grabiCalField($res, "DESCRIPTION");
+        // Test to see if there are two newlines after url for description
+        $this->assertContains("http://www.sugarcrm.com/\r\n\r\n", $desc);
+    }
+
+    public function testiCalEmptyJoinURL()
+    {
+        $res = vCal::get_ical_event($this->getDummyBean(), $GLOBALS['current_user']);
+
+        $desc = $this->grabiCalField($res, "DESCRIPTION");
+
+        // Test to see if there are no newlines for empty url for description
+        $this->assertNotContains("\\n\\n", $desc);
+    }
+
+    private function grabiCalField($iCal, $field)
+    {
+        $ical_arr = vCal::create_ical_array_from_string($iCal);
+
+        foreach ($ical_arr as $ical_val) {
+            if ($ical_val[0] == $field) {
+                return $ical_val[1];
+            }
+        }
+
+        return "";
+    }
+
+    private function getDummyBean($join_url = "")
+    {
+        $bean = new SugarBean();
+        $bean->id = 123;
+        $bean->date_start = $bean->date_end = $GLOBALS['timedate']->nowDb();
+        $bean->name = "Dummy Bean";
+        $bean->location = "Sugar, Cupertino; Sugar, EMEA";
+        $bean->join_url = $join_url;
+        $bean->description = "Hello, this is a dummy description.\n"
+            . "It contains newlines, backslash \\ semicolon ; and commas";
+        return $bean;
+    }
 }
