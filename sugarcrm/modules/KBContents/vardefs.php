@@ -39,6 +39,7 @@ $dictionary['KBContent'] = array(
             'len' => '2',
             'required' => true,
             'vname' => 'LBL_LANG',
+            'sortable' => false,
             'audited' => false,
             'studio' => false,
         ),
