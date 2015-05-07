@@ -299,9 +299,11 @@
                         && _.indexOf(this.filters, model.get('commit_stage')) === -1 // and the commit_stage is not shown
                         ) {
                         this.filterCollection();
-                        if (!this.disposed) {
-                            this.render();
-                        }
+                        _.defer(_.bind(function() {
+                            if (!this.disposed) {
+                                this.render();
+                            }
+                        }, this));
                     } else {
                         var commitStage = model.get('commit_stage'),
                             includedCommitStages = app.metadata.getModule('Forecasts', 'config').commit_stages_included,
