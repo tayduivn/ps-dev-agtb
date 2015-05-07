@@ -469,6 +469,8 @@ AdamCanvas.prototype.getContextMenu = function () {
     criteriaField = new CriteriaField({
         name: 'pro_terminate_variables',
         label: translate('LBL_PMSE_LABEL_TERMINATE_PROCESS'),
+        dateFormat: App.date.getUserDateFormat(),
+        timeFormat: App.user.getPreference("timepref"),
         required: false,
         fieldWidth: 414,
         fieldHeight: 80,

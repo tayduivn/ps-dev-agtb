@@ -987,4 +987,29 @@ class PMSEEngineUtils
         }
         return false;
     }
+
+    public static function getDateToFE($theDate, $type, $bean = null)
+    {
+        global $timedate;
+        $date = $timedate->fromDbType($theDate, $type);
+
+        if ( $date == null && $bean instanceof SugarBean) {
+            // Could not parse date... try User format
+            $date = $timedate->fromUserType($bean->$fieldName, $type);
+            if ($date == null) {
+                return;
+            }
+        }
+
+        if ( $type == 'date' ) {
+            // It's just a date, not a datetime
+            $data = $timedate->asIsoDate($date);
+        } else if ( $type== 'time' ) {
+            $data = $timedate->asIsoTime($date);
+        } else {
+            $data = $timedate->asIso($date);
+        }
+
+        return $data;
+    }
 }

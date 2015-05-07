@@ -576,7 +576,7 @@ UpdaterField.prototype.openPanelOnItem = function (field) {
                 appendTo: (this.parent && this.parent.parent && this.parent.parent.html) || null,
                 decimalSeparator: this._decimalSeparator,
                 numberGroupingSeparator: this._numberGroupingSeparator,
-                dateFormat: SUGAR.App.date.convertFormat(SUGAR.App.user.getPreference("datepref")),
+                dateFormat: App.date.getUserDateFormat(),
                 timeFormat: SUGAR.App.user.getPreference("timepref"),
                 currencies: project.getMetadata("currencies"),
                 onOpen: function () {

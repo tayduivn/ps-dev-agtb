@@ -118,24 +118,16 @@ class OpportunityViews
         $this->processMobileListView($fieldMap);
 
         $subpanel_modules = array('Opportunities');
-        // look for anything that starts with 'subpanel-for-' and process it
-        $look_for = 'subpanel-for-';
-        foreach (array_keys($views) as $view) {
-            if (strpos($view, $look_for) === 0) {
-                // split on -
-                $tmp = explode('-', $view);
-                // we need to have at least 3 tiems.
-                if (count($tmp) >= 3) {
-                    // item 3 is the module name
-                    $module = $this->findModuleName($tmp[2]);
-                    // success we found a valid module name with the proper case
-                    if ($module) {
-                        // if we have 4 items, use the fourth as the link name, otherwise default to `opportunities`
-                        $link = (isset($tmp[3])) ? $tmp[3] : 'opportunities';
-                        // process that subpanel list view!
-                        $this->processListView($fieldMap, $module, $link);
-                        $subpanel_modules[] = $module;
-                    }
+
+        $links = $this->bean->get_linked_fields();
+
+        foreach($links as $link => $def) {
+            if ($this->bean->load_relationship($link) && $this->bean->$link instanceof Link2) {
+                $linkname = $this->bean->$link->getRelatedModuleLinkName();
+
+                if (!empty($linkname)) {
+                    $this->processListView($fieldMap, $this->bean->$link->getRelatedModuleName(), $linkname);
+                    $subpanel_modules[] = $this->bean->$link->getRelatedModuleName();
                 }
             }
         }
@@ -204,7 +196,6 @@ class OpportunityViews
         /* @var $listDefsParser SidecarListLayoutMetaDataParser */
         $listDefsParser = ParserFactory::getParser(MB_LISTVIEW, $module, null, $subpanel_name, 'base');
         $this->processList($fieldMap, $listDefsParser->_paneldefs, $listDefsParser);
-
     }
 
     /**
@@ -217,7 +208,6 @@ class OpportunityViews
         /* @var $listDefsParser SidecarListLayoutMetaDataParser */
         $listDefsParser = ParserFactory::getParser(MB_WIRELESSLISTVIEW, 'Opportunities', null, null, 'mobile');
         $this->processList($fieldMap, $listDefsParser->_paneldefs, $listDefsParser);
-
     }
 
     /**
@@ -229,6 +219,10 @@ class OpportunityViews
      */
     private function processList(array $fieldMap, $current_fields, ListLayoutMetaDataParser $listParser)
     {
+        if (!($listParser instanceof SidecarListLayoutMetaDataParser)) {
+            return false;
+        }
+
         $handleSave = false;
         $saveFields = array();
         // process the fields
@@ -285,6 +279,7 @@ class OpportunityViews
         if ($handleSave) {
             // make sure the list is reset
             $listParser->resetPanelFields();
+
             foreach ($saveFields as $params) {
                 $listParser->addField($params[0], $params[1]);
             }

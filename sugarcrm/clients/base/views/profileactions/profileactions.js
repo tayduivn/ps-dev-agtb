@@ -129,10 +129,6 @@
     filterMenuProperties:function(singleItem){
         if(singleItem['label'] === 'LBL_PROFILE'){
             singleItem['img_url'] = this.pictureUrl;
-            //Add userId to default route
-            if (singleItem['route'] === '#bwc/index.php?module=Users&action=DetailView&record=') {
-                singleItem['route'] += this.userId;
-            }
         }
         return singleItem;
     },

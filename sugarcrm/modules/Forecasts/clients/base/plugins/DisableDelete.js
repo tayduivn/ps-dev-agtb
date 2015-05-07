@@ -73,11 +73,11 @@
 
                     //if we have a message, disable the button.
                     if (!_.isEmpty(message)) {
-                        button.addClass('disabled');
+                        this.setDisabled(true);
                         button.attr('data-event', '');
                         button.tooltip({title: message});
                     } else {
-                        button.removeClass('disabled');
+                        this.setDisabled(false);
                         button.attr('data-event', this.def.event);
                         button.tooltip('destroy');
                     }

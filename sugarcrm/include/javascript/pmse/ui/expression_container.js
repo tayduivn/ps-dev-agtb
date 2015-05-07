@@ -151,12 +151,13 @@ ExpressionContainer.prototype.updateExpressionView = function () {
 
 ExpressionContainer.prototype.parseValue = function (expression) {
     var val = '';
-    if (expression) {
+    if (expression && expression.length) {
+        table = this.parent.parent.parent
         for (i = 0; i < expression.length; i += 1) {
             if (val !== '') {
                 val += ' ';
             }
-            val += expression[i].expLabel;
+            val += table.globalCBControl.getLabel(expression[i]);
         }
     }
     return val;

@@ -306,6 +306,7 @@ NotePanel.prototype.setDirty = function (value) {
 NotePanel.prototype.attachListeners = function () {
     var i, root = this, proxy, data, self = this;
 
+    if(App){ _App = App; } else { _App = parent.SUGAR.App; }
 
     for (i = 0; i < this.items.length; i += 1) {
         this.items[i].attachListeners();
@@ -348,9 +349,8 @@ NotePanel.prototype.attachListeners = function () {
                         label: root.items[0].value,
                         user: self.app.user.attributes.full_name,
                         picture : pictureUrl,
-                        duration : '5 Second',
-                        //startDate: Date.parse(result.date_entered).toString('MMMM d, yyyy HH:mm'),
-                        startDate: result.date_entered,
+                        duration : '<strong> ' + _App.date(result.date_entered).fromNow() + ' </strong>',
+                        startDate: _App.date(result.date_entered).formatUser(),
                         deleteBtn : true,
                         logId  : result.id
                     };
