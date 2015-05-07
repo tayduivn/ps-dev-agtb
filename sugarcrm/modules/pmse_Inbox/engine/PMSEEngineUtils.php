@@ -1017,4 +1017,31 @@ class PMSEEngineUtils
 
         return $data;
     }
+
+    public static function getSupportedModules () {
+        return array (
+            'Accounts', //Accounts
+            'Bugs', //Bugs
+            'Calls', //Calls
+            'Campaigns', //Campaigns
+            'Cases', //Cases
+            'Contacts', //Contacts
+            'Contracts', //Contracts
+            'Documents', //Documents
+            'Employees', //Employees
+            'KBDocuments', //Knowledge Base
+            'Leads', //Leads
+            'Meetings', //Meetings
+            'Notes', //Notes
+            'Opportunities', //Opportunities
+            'ProductTemplates', //Product Catalog
+            'Products', //Quoted Line Items
+            'Project', //Projects
+            'ProjectTask', //Project Tasks
+            'Prospects', //Targets
+            'Quotes', //Quotes
+            'Tasks', //Tasks
+            'Users', //Users
+        );
+    }
 }
