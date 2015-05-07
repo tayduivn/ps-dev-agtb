@@ -1,5 +1,4 @@
 <?php
- if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -303,6 +302,27 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             $files[] = 'modules/Bugs/clients/base/layouts/sidebar/sidebar.php';
             $files[] = 'modules/Cases/clients/base/layouts/new-sidebar/new-sidebar.php';
             $files[] = 'modules/Cases/clients/base/layouts/sidebar/sidebar.php';
+        }
+
+        if (version_compare($this->from_version, '7.7', '<')) {
+            $files[] = 'include/SugarSearchEngine/Elastic/Facets/FacetAbstract.php';
+            $files[] = 'include/SugarSearchEngine/Elastic/Facets/FacetFactory.php';
+            $files[] = 'include/SugarSearchEngine/Elastic/Facets/FacetFilter.php';
+            $files[] = 'include/SugarSearchEngine/Elastic/Facets/FacetHandler.php';
+            $files[] = 'include/SugarSearchEngine/Elastic/Facets/FacetInterface.php';
+            $files[] = 'include/SugarSearchEngine/Elastic/Facets/FacetMyitems.php';
+            $files[] = 'include/SugarSearchEngine/Elastic/Facets/FacetRange.php';
+            $files[] = 'include/SugarSearchEngine/Elastic/Facets/FacetTerms.php';
+            $files[] = 'include/SugarSearchEngine/Elastic/SugarSearchEngineElasticIndexStrategyBase.php';
+            $files[] = 'include/SugarSearchEngine/Elastic/SugarSearchEngineElasticIndexStrategyFactory.php';
+            $files[] = 'include/SugarSearchEngine/Elastic/SugarSearchEngineElasticIndexStrategyInterface.php';
+            $files[] = 'include/SugarSearchEngine/Elastic/SugarSearchEngineElasticIndexStrategyMulti.php';
+            $files[] = 'include/SugarSearchEngine/Elastic/SugarSearchEngineElasticIndexStrategySingle.php';
+            $files[] = 'include/SugarSearchEngine/Elastic/SugarSearchEngineElasticMapping.php';
+            $files[] = 'include/SugarSearchEngine/SugarSearchEngineFullIndexer.php';
+            $files[] = 'include/SugarSearchEngine/SugarSearchEngineIndexerBase.php';
+            $files[] = 'silentFTSIndex.php';
+            $files[] = 'upgrade/scripts/post/5_FTSHook.php';
         }
 
         $this->fileToDelete($files);
