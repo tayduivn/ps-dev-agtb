@@ -124,6 +124,8 @@ class KBVisibility extends SugarVisibility implements StrategyInterface
         } else {
             $filter->addMust($ownerFilter);
         }
+
+        $filter->addShould($provider->createFilter('KBActiveRevision'));
     }
 
     /**
