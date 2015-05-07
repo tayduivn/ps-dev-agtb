@@ -143,6 +143,7 @@ class OpportunityWithRevenueLineItem extends OpportunitySetup
             array(
                 'sales_stage' => false,
                 'sales_status' => true,
+                'probability' => false,
             )
         );
     }
