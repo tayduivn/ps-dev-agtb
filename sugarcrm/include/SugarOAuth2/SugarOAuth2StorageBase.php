@@ -193,7 +193,8 @@ class SugarOAuth2StorageBase extends SugarOAuth2StoragePlatform {
      */
     public function loadUserFromName($username)
     {
-        if (!empty($GLOBALS['current_user']) && $GLOBALS['current_user']->user_name == $username) {
+        if (!empty($GLOBALS['current_user']) && (empty($username) || $GLOBALS['current_user']->user_name == $username)) {
+            // when coming from SAML, $username is empty, return current user
             return $GLOBALS['current_user'];
         }
         $userBean = BeanFactory::newBean('Users');
