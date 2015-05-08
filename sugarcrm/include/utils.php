@@ -1093,10 +1093,7 @@ function return_app_list_strings_language($language, $useCache = true)
             "custom/include/language/$lang.lang.php"
         );
 
-        // sort files by mtime (see ModuleInstaller::sortExtensionFiles)
-        usort($files, function ($a, $b) {
-            return filemtime($a) - filemtime($b);
-        });
+        $files = sortExtensionFiles($files);
 
         foreach ($files as $file) {
             $app_list_strings = _mergeCustomAppListStrings($file, $app_list_strings);
@@ -6051,4 +6048,41 @@ function getExemptDropdowns()
         array('moduleList', 'moduleListSingular'),
         getTypeDisplayList()
     );
+}
+
+/**
+ * Sorts file paths and returns sorted copy.
+ * Logic here is to take the newest touched file and read it last. This allows
+ * for customizations from any source and the most recent change to win out.
+ * If files has the same modification time original order will be preserved.
+ *
+ * @param array $files File paths
+ * @return array Sorted file paths
+ */
+function sortExtensionFiles(array $files)
+{
+    $index = 0;
+    $sorted = array();
+
+    foreach ($files as $path) {
+        $sorted[$path] = array(
+            'is_override' => substr(basename($path), 0, 9) === '_override',
+            'mtime' => filemtime($path),
+            'index' => $index++,
+        );
+    }
+
+    uasort($sorted, function ($a, $b) {
+        if ($a['is_override'] != $b['is_override']) {
+            return $a['is_override'] - $b['is_override'];
+        }
+
+        if ($a['mtime'] != $b['mtime']) {
+            return $a['mtime'] - $b['mtime'];
+        }
+
+        return $a['index'] - $b['index'];
+    });
+
+    return array_keys($sorted);
 }
