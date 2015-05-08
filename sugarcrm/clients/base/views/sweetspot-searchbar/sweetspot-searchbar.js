@@ -226,6 +226,7 @@
      * @param {Array} Hopefully a list of results.
      */
     sendResults: function(results) {
+        this.layout.trigger('sweetspot:has:results', results);
         this.layout.trigger('sweetspot:results', results);
     },
 
