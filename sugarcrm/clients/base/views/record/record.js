@@ -1430,65 +1430,127 @@
      * Register keyboard shortcuts.
      */
     registerShortcuts: function() {
-        app.shortcuts.register('Record:Edit', ['e','ctrl+alt+i'], function() {
-            var $editButton = this.$('.headerpane [name=edit_button]');
-            if ($editButton.is(':visible') && !$editButton.hasClass('disabled')) {
-                $editButton.click();
+        app.shortcuts.register({
+            id: 'Record:Edit',
+            keys: ['e','ctrl+alt+i'],
+            component: this,
+            description: 'LBL_SHORTCUT_RECORD_EDIT',
+            handler: function() {
+                var $editButton = this.$('.headerpane [name=edit_button]');
+                if ($editButton.is(':visible') && !$editButton.hasClass('disabled')) {
+                    $editButton.click();
+                }
             }
-        }, this);
+        });
 
-        app.shortcuts.register('Record:Delete', ['d','ctrl+alt+d'], function() {
-            this.$('.headerpane [data-toggle=dropdown]:visible').click().blur();
-            this.$('.headerpane [name=delete_button]:visible').click();
-        }, this);
-
-        app.shortcuts.register('Record:Save', ['ctrl+s','ctrl+alt+a'], function() {
-            var $saveButton = this.$('a[name=save_button]');
-            if ($saveButton.is(':visible') && !$saveButton.hasClass('disabled')) {
-                $saveButton.click();
+        app.shortcuts.register({
+            id: 'Record:Delete',
+            keys: ['d','ctrl+alt+d'],
+            component: this,
+            description: 'LBL_SHORTCUT_RECORD_DELETE',
+            handler: function() {
+                this.$('.headerpane [data-toggle=dropdown]:visible').click().blur();
+                this.$('.headerpane [name=delete_button]:visible').click();
             }
-        }, this, true);
+        });
 
-        app.shortcuts.register('Record:Cancel', ['esc','ctrl+alt+l'], function() {
-            var $cancelButton = this.$('a[name=cancel_button]');
-            if ($cancelButton.is(':visible') && !$cancelButton.hasClass('disabled')) {
-                $cancelButton.click();
+        app.shortcuts.register({
+            id: 'Record:Save',
+            keys: ['ctrl+s','ctrl+alt+a'],
+            component: this,
+            description: 'LBL_SHORTCUT_RECORD_SAVE',
+            callOnFocus: true,
+            handler: function() {
+                var $saveButton = this.$('a[name=save_button]');
+                if ($saveButton.is(':visible') && !$saveButton.hasClass('disabled')) {
+                    $saveButton.click();
+                }
             }
-        }, this, true);
+        });
 
-        app.shortcuts.register('Record:Previous', 'h', function() {
-            var $previous = this.$('.btn.previous-row');
-            if ($previous.is(':visible') && !$previous.hasClass('disabled')) {
-                $previous.click();
+        app.shortcuts.register({
+            id: 'Record:Cancel',
+            keys: ['esc','ctrl+alt+l'],
+            component: this,
+            description: 'LBL_SHORTCUT_RECORD_CANCEL',
+            callOnFocus: true,
+            handler: function() {
+                var $cancelButton = this.$('a[name=cancel_button]');
+                if ($cancelButton.is(':visible') && !$cancelButton.hasClass('disabled')) {
+                    $cancelButton.click();
+                }
             }
-        }, this);
+        });
 
-        app.shortcuts.register('Record:Next', 'l', function() {
-            var $next = this.$('.btn.next-row');
-            if ($next.is(':visible') && !$next.hasClass('disabled')) {
-                $next.click();
+        app.shortcuts.register({
+            id: 'Record:Previous',
+            keys: 'h',
+            component: this,
+            description: 'LBL_SHORTCUT_RECORD_PREVIOUS',
+            handler: function() {
+                var $previous = this.$('.btn.previous-row');
+                if ($previous.is(':visible') && !$previous.hasClass('disabled')) {
+                    $previous.click();
+                }
             }
-        }, this);
+        });
 
-        app.shortcuts.register('Record:Favorite', 'f a', function() {
-            this.$('.headerpane .fa-favorite:visible').click();
-        }, this);
-
-        app.shortcuts.register('Record:Follow', 'f o', function() {
-            this.$('.headerpane [name=follow]:visible').click();
-        }, this);
-
-        app.shortcuts.register('Record:Copy', ['shift+c','ctrl+alt+u'], function() {
-            this.$('.headerpane [data-toggle=dropdown]:visible').click().blur();
-            this.$('.headerpane [name=duplicate_button]:visible').click();
-        }, this);
-
-        app.shortcuts.register('Record:Action:More', 'm', function() {
-            var $primaryDropdown = this.$('.headerpane .btn-primary[data-toggle=dropdown]:visible');
-            if (($primaryDropdown.length > 0) && !$primaryDropdown.hasClass('disabled')) {
-                $primaryDropdown.click();
+        app.shortcuts.register({
+            id: 'Record:Next',
+            keys: 'l',
+            component: this,
+            description: 'LBL_SHORTCUT_RECORD_NEXT',
+            handler: function() {
+                var $next = this.$('.btn.next-row');
+                if ($next.is(':visible') && !$next.hasClass('disabled')) {
+                    $next.click();
+                }
             }
-        }, this);
+        });
+
+        app.shortcuts.register({
+            id: 'Record:Favorite',
+            keys: 'f a',
+            component: this,
+            description: 'LBL_SHORTCUT_FAVORITE_RECORD',
+            handler: function() {
+                this.$('.headerpane .fa-favorite:visible').click();
+            }
+        });
+
+        app.shortcuts.register({
+            id: 'Record:Follow',
+            keys: 'f o',
+            component: this,
+            description: 'LBL_SHORTCUT_FOLLOW_RECORD',
+            handler: function() {
+                this.$('.headerpane [name=follow]:visible').click();
+            }
+        });
+
+        app.shortcuts.register({
+            id: 'Record:Copy',
+            keys: ['shift+c','ctrl+alt+u'],
+            component: this,
+            description: 'LBL_SHORTCUT_COPY_RECORD',
+            handler: function() {
+                this.$('.headerpane [data-toggle=dropdown]:visible').click().blur();
+                this.$('.headerpane [name=duplicate_button]:visible').click();
+            }
+        });
+
+        app.shortcuts.register({
+            id: 'Record:Action:More',
+            keys: 'm',
+            component: this,
+            description: 'LBL_SHORTCUT_OPEN_MORE_ACTION',
+            handler: function() {
+                var $primaryDropdown = this.$('.headerpane .btn-primary[data-toggle=dropdown]:visible');
+                if (($primaryDropdown.length > 0) && !$primaryDropdown.hasClass('disabled')) {
+                    $primaryDropdown.click();
+                }
+            }
+        });
     },
 
     /**

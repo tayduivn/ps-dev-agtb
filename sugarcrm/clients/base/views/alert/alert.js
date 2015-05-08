@@ -278,13 +278,25 @@
             'Alert:Cancel'
         ], this);
 
-        app.shortcuts.register('Alert:Confirm', ['enter'], function() {
-            this.$('[data-action=confirm]').click();
-        }, this);
+        app.shortcuts.register({
+            id: 'Alert:Confirm',
+            keys: 'enter',
+            component: this,
+            description: 'LBL_SHORTCUT_ALERT_CONFIRM',
+            handler: function() {
+                this.$('[data-action=confirm]').click();
+            }
+        });
 
-        app.shortcuts.register('Alert:Cancel', ['esc'], function() {
-            this.$('[data-action=cancel]').click();
-        }, this);
+        app.shortcuts.register({
+            id: 'Alert:Cancel',
+            keys: 'esc',
+            component: this,
+            description: 'LBL_SHORTCUT_ALERT_CANCEL',
+            handler: function() {
+                this.$('[data-action=cancel]').click();
+            }
+        });
     },
 
     /**

@@ -39,18 +39,32 @@
         }, this);
 
         //shortcut keys
-        app.shortcuts.register('Dashlet:Config:Cancel', ['esc','ctrl+alt+l'], function() {
-            var $cancelButton = this.$('a[name=cancel_button]');
-            if ($cancelButton.is(':visible') && !$cancelButton.hasClass('disabled')) {
-                $cancelButton.click();
+        app.shortcuts.register({
+            id: 'Dashlet:Config:Cancel',
+            keys: ['esc','ctrl+alt+l'],
+            component: this,
+            description: 'LBL_SHORTCUT_CLOSE_DRAWER',
+            callOnFocus: true,
+            handler: function() {
+                var $cancelButton = this.$('a[name=cancel_button]');
+                if ($cancelButton.is(':visible') && !$cancelButton.hasClass('disabled')) {
+                    $cancelButton.click();
+                }
             }
-        }, this, true);
-        app.shortcuts.register('Dashlet:Config:Save', ['ctrl+s','ctrl+alt+a'], function() {
-            var $saveButton = this.$('a[name=save_button]');
-            if ($saveButton.is(':visible') && !$saveButton.hasClass('disabled')) {
-                $saveButton.click();
+        });
+        app.shortcuts.register({
+            id: 'Dashlet:Config:Save',
+            keys: ['ctrl+s','ctrl+alt+a'],
+            component: this,
+            description: 'LBL_SHORTCUT_RECORD_SAVE',
+            callOnFocus: true,
+            handler: function() {
+                var $saveButton = this.$('a[name=save_button]');
+                if ($saveButton.is(':visible') && !$saveButton.hasClass('disabled')) {
+                    $saveButton.click();
+                }
             }
-        }, this, true);
+        });
     },
 
     /**

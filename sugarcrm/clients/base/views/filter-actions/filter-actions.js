@@ -51,30 +51,44 @@
             this.setFilterName(name);
 
             //shortcut keys
-            app.shortcuts.register(
-                'Filter:Close',
-                ['esc', 'ctrl+alt+l'],
-                function() {
+            app.shortcuts.register({
+                id: 'Filter:Close',
+                keys: ['esc', 'ctrl+alt+l'],
+                component: this,
+                description: 'LBL_SHORTCUT_FILTER_CLOSE',
+                callOnFocus: true,
+                handler: function() {
                     this.$('a.filter-close').click();
-                },
-                this,
-                true
-            );
-            app.shortcuts.register(
-                'Filter:Save',
-                ['ctrl+s', 'ctrl+alt+a'],
-                function() {
+                }
+            });
+            app.shortcuts.register({
+                id: 'Filter:Save',
+                keys: ['ctrl+s', 'ctrl+alt+a'],
+                component: this,
+                description: 'LBL_SHORTCUT_FILTER_SAVE',
+                callOnFocus: true,
+                handler: function() {
                     this.$('a.save_button:not(.disabled)').click();
-                },
-                this,
-                true
-            );
-            app.shortcuts.register('Filter:Delete', 'd', function() {
-                this.$('a.delete_button:not(.hide)').click();
-            }, this);
-            app.shortcuts.register('Filter:Reset', 'r', function() {
-                this.$('a.reset_button').click();
-            }, this);
+                }
+            });
+            app.shortcuts.register({
+                id: 'Filter:Delete',
+                keys: 'd',
+                component: this,
+                description: 'LBL_SHORTCUT_FILTER_DELETE',
+                handler: function() {
+                    this.$('a.delete_button:not(.hide)').click();
+                }
+            });
+            app.shortcuts.register({
+                id: 'Filter:Reset',
+                keys: 'r',
+                component: this,
+                description: 'LBL_SHORTCUT_FILTER_RESET',
+                handler: function() {
+                    this.$('a.reset_button').click();
+                }
+            });
         }, this);
 
         this.listenTo(this.layout, 'filter:toggle:savestate', this.toggleSave);

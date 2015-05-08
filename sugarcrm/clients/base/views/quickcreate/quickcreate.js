@@ -25,9 +25,15 @@
         app.view.View.prototype.initialize.call(this, options);
 
         //shortcut keys
-        app.shortcuts.register(app.shortcuts.GLOBAL + 'Create', 'c', function() {
-            this.$('[data-toggle=dropdown]').click();
-        }, this);
+        app.shortcuts.registerGlobal({
+            id: 'Quickcreate:Toggle',
+            keys: 'c',
+            component: this,
+            description: 'LBL_SHORTCUT_QUICK_CREATE',
+            handler: function() {
+                this.$('[data-toggle=dropdown]').click();
+            }
+        });
     },
 
     /**

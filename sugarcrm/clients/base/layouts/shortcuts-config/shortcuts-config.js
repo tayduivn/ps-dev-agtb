@@ -9,14 +9,17 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * @class View.Layouts.Base.ShortcutsLayout
- * @alias SUGAR.App.view.layouts.BaseShortcutsLayout
+ * @class View.Layouts.Base.ShortcutsConfigLayout
+ * @alias SUGAR.App.view.layouts.BaseShortcutsConfigLayout
  * @extends View.Layout
  */
 ({
     plugins: ['ShortcutSession'],
 
-    shortcuts: ['Headerpane:Cancel'],
+    shortcuts: [
+        'Headerpane:Cancel',
+        'Headerpane:Save'
+    ],
 
     /**
      * @inheritdoc

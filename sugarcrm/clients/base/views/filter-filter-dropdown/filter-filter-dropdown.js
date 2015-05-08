@@ -145,21 +145,34 @@
 
         // the shortcut keys need to be registered anytime this function is
         // called, not just on render
-        app.shortcuts.register(
-            'Filter:Create',
-            ['f c', 'ctrl+alt+8'],
-            function() {
+        app.shortcuts.register({
+            id: 'Filter:Create',
+            keys: ['f c', 'ctrl+alt+8'],
+            component: this,
+            description: 'LBL_SHORTCUT_FILTER_CREATE',
+            handler: function() {
                 // trigger the change event to open the edit filter drawer
                 this.filterNode.select2('val', 'create', true);
-            },
-            this
-        );
-        app.shortcuts.register('Filter:Edit', 'f e', function() {
-            this.$('.choice-filter.choice-filter-clickable').click();
-        }, this);
-        app.shortcuts.register('Filter:Show', 'f m', function() {
-            this.filterNode.select2('open');
-        }, this);
+            }
+        });
+        app.shortcuts.register({
+            id: 'Filter:Edit',
+            keys: 'f e',
+            component: this,
+            description: 'LBL_SHORTCUT_FILTER_EDIT',
+            handler: function() {
+                this.$('.choice-filter.choice-filter-clickable').click();
+            }
+        });
+        app.shortcuts.register({
+            id: 'Filter:Show',
+            keys: 'f m',
+            component: this,
+            description: 'LBL_SHORTCUT_FILTER_SHOW',
+            handler: function() {
+                this.filterNode.select2('open');
+            }
+        });
 
         if (!this.filterDropdownEnabled) {
             this.filterNode.select2("disable");
