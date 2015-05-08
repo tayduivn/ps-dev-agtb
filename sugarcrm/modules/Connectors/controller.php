@@ -332,9 +332,9 @@ class ConnectorsController extends SugarController {
 				           $properties[$matches2[1]] = $val;
 				    	}
 					}
-					$source = SourceFactory::getSource($source_id);
 
-					if(!empty($properties)) {
+					if (!empty($properties)) {
+					    $source = SourceFactory::getSource($source_id);
 					    $source->setProperties($properties);
 					    $source->saveConfig();
 					}
@@ -548,13 +548,7 @@ class ConnectorsController extends SugarController {
 		    } //foreach
 
 		    // save eapm configs
-		    foreach($connectors as $connector_name => $data) {
-		        if(isset($sources[$connector_name]) && !empty($data["eapm"])) {
-		            // if we touched it AND it has EAPM data
-		            $connectors[$connector_name]["eapm"]["enabled"] = !empty($_REQUEST[$connector_name."_external"]);
-		        }
-		    }
-		    ConnectorUtils::saveConnectors($connectors);
+		    $this->handleEAPMSettings($connectors, $sources, $_REQUEST);
 
 		    ConnectorUtils::updateMetaDataFiles();
 
@@ -572,7 +566,44 @@ class ConnectorsController extends SugarController {
 		    // END SUGAR INT
 	}
 
+    public function handleEAPMSettings($connectors, $sources, $request)
+    {
+        foreach($connectors as $connector_name => $data) {
+            // if we touched it AND it has EAPM data
+            if(isset($sources[$connector_name]) && !empty($data["eapm"])) {
+                // Grab the old value if it is set
+                $oldValue = isset($connectors[$connector_name]["eapm"]["enabled"]) ?
+                            $connectors[$connector_name]["eapm"]["enabled"] :
+                            null;
 
+                // Set from the request
+                $connectors[$connector_name]["eapm"]["enabled"] = !empty($request[$connector_name."_external"]);
+
+                // If there is a difference, save the config. This will
+                // trigger a connectors save as well and update all relevent
+                // metadata.
+                if ($connectors[$connector_name]["eapm"]["enabled"] !== $oldValue) {
+                    // Get the source object
+                    $s = SourceFactory::getSource($sources[$connector_name]);
+
+                    // Get the existing config
+                    $sConfig = $s->getConfig();
+                    if (!isset($sConfig['eapm'])) {
+                        $sConfig['eapm'] = array();
+                    }
+
+                    // Merge what we have
+                    $sConfig['eapm'] = array_merge($sConfig['eapm'], $connectors[$connector_name]['eapm']);
+
+                    // Set and save... this will trigger a connector save call
+                    $s->setConfig($sConfig);
+                    $s->saveConfig();
+                }
+            }
+        }
+
+        return $connectors;
+    }
 
 	function action_SaveModifySearch() {
 		$search_sources = !empty($_REQUEST['search_sources']) ? explode(',', $_REQUEST['search_sources']) : array();

@@ -14,22 +14,6 @@ define('CONNECTOR_DISPLAY_CONFIG_FILE', 'custom/modules/Connectors/metadata/disp
 require_once('include/connectors/ConnectorFactory.php');
 
 /**
- * Source sorting by order value
- * @internal
- */
-function sources_sort_function($a, $b) {
-	if(isset($a['order']) && isset($b['order'])) {
-	   if($a['order'] == $b['order']) {
-	   	  return 0;
-	   }
-
-	   return ($a['order'] < $b['order']) ? -1 : 1;
-	}
-
-	return 0;
-}
-
-/**
  * Connector utilities
  * @api
  */
@@ -42,15 +26,23 @@ class ConnectorUtils
     protected static $connectors_cache;
 
     /**
+     * Listing of paths where sources are read from/written to.
+     *
+     * @var array
+     */
+    protected static $sourcePaths = array(
+        'base' => 'modules/Connectors/connectors/sources',
+        'cust' => 'custom/modules/Connectors/connectors/sources',
+        'conn' => 'custom/modules/Connectors/metadata/connectors.php',
+    );
+
+    /**
      * Get connector data by ID
      * @param string $id
      * @param bool $refresh
      * @return null|array Connector data
      */
-    public static function getConnector(
-        $id,
-        $refresh = false
-        )
+    public static function getConnector($id, $refresh = false)
     {
         $s = self::getConnectors($refresh);
         return !empty($s[$id]) ? $s[$id] : null;
@@ -80,9 +72,7 @@ class ConnectorUtils
      * @param boolean $refresh boolean value to manually refresh the search definitions
      * @return mixed $searchdefs Array of the search definitions
      */
-    public static function getSearchDefs(
-        $refresh = false
-        )
+    public static function getSearchDefs($refresh = false)
     {
         if($refresh || !file_exists('custom/modules/Connectors/metadata/searchdefs.php')) {
 
@@ -111,9 +101,7 @@ class ConnectorUtils
      * @param mixed $filter_sources Array optional Array value of sources to only use
      * @return mixed $mergedefs Array of the merge definitions
      */
-    public static function getViewDefs(
-        $filter_sources = array()
-        )
+    public static function getViewDefs($filter_sources = array())
     {
         //Go through all connectors and get their mapping keys and merge them across each module
         $connectors = self::getConnectors();
@@ -210,16 +198,24 @@ class ConnectorUtils
         return $viewdefs;
     }
 
+    public static function saveConnector($id, $data)
+    {
+        $connectors = self::getConnectors(true, false);
+        $connectors[$id] = $data;
+    }
 
     /**
      * getConnectors
      * Returns an Array of the connectors that have been loaded into the system
      * along with attributes pertaining to each connector.
      *
-     * @param boolean $refresh boolean flag indicating whether or not to force rewriting the file; defaults to false
-     * @returns mixed $connectors Array of the connector entries found
+     * @param boolean $refresh boolean flag indicating whether or not to force 
+     *                         rewriting the file; defaults to false
+     * @param boolean $save Flag indicating whether this process should save the
+     *                      connector array
+     * @returns array $connectors Array of the connector entries found
      */
-    public static function getConnectors($refresh = false)
+    public static function getConnectors($refresh = false, $save = true)
     {
         if (inDeveloperMode()) {
             $refresh = true;
@@ -228,37 +224,36 @@ class ConnectorUtils
         if(!empty(self::$connectors_cache) && !$refresh) {
             return self::$connectors_cache;
         }
-        //define paths
-        $src1 = 'modules/Connectors/connectors/sources';
-        $src2 = 'custom/modules/Connectors/connectors/sources';
-        $src3 = 'custom/modules/Connectors/metadata';
-        $src4 = 'custom/modules/Connectors/metadata/connectors.php';
+
         $connectors = array();
 
-        if($refresh || !SugarAutoLoader::existing($src4)) {
+        if ($refresh || !SugarAutoLoader::existing(self::$sourcePaths['conn'])) {
+            $sources = array_merge(
+                self::getSources(self::$sourcePaths['base']), 
+                self::getSources(self::$sourcePaths['cust'], true)
+            );
 
-          $sources = array_merge(self::getSources($src1), self::getSources($src2));
-          if(!file_exists($src3)) {
-             mkdir_recursive($src3);
-          }
-          if(file_exists($src4)) {
-              require($src4);
+            SugarAutoLoader::ensureDir(dirname(self::$sourcePaths['conn']));
+            if (file_exists(self::$sourcePaths['conn'])) {
+                require self::$sourcePaths['conn'];
 
-            //define connectors if it doesn't exist or is not an array
-            if (!isset($connectors) || !is_array($connectors)){
-                $err_str = string_format($GLOBALS['app_strings']['ERR_CONNECTOR_NOT_ARRAY'],array($src4));
-                $GLOBALS['log']->error($err_str);
+                //define connectors if it doesn't exist or is not an array
+                if (!isset($connectors) || !is_array($connectors)){
+                    $err_str = string_format($GLOBALS['app_strings']['ERR_CONNECTOR_NOT_ARRAY'],array(self::$sourcePaths['conn']));
+                    $GLOBALS['log']->error($err_str);
+                }
+
+                // Sources need to be merged onto connectors since source files
+                // can change
+                $sources = array_merge($connectors, $sources);
             }
 
-            $sources = array_merge($sources, $connectors);
-          }
+            if ($save && !self::saveConnectors($sources, self::$sourcePaths['conn'])) {
+                return array();
+            }
+        }
 
-          if(!self::saveConnectors($sources, $src4)) {
-             return array();
-          }
-        } //if
-
-        require($src4);
+        require self::$sourcePaths['conn'];
         self::$connectors_cache = $connectors;
         return $connectors;
     }
@@ -271,20 +266,20 @@ class ConnectorUtils
      */
     public static function saveConnectors($connectors, $toFile = '')
     {
-        if(empty($toFile)) {
-            $toFile = 'custom/modules/Connectors/metadata/connectors.php';
+        if (empty($toFile)) {
+            $toFile = self::$sourcePaths['conn'];
         }
 
-        if(!is_array($connectors))
-        {
+        if (!is_array($connectors)) {
             $connectors = array();
         }
 
-        if(!write_array_to_file('connectors', $connectors, $toFile)) {
+        if (!write_array_to_file('connectors', $connectors, $toFile)) {
            //Log error and return empty array
            $GLOBALS['log']->fatal("Cannot write sources to file");
            return false;
         }
+
         self::$connectors_cache = $connectors;
         return true;
     }
@@ -295,63 +290,81 @@ class ConnectorUtils
      * @param String $directory The directory to search
      * @return mixed $sources An Array of source entries
      */
-    private static function getSources($directory = 'modules/Connectors/connectors/sources')
+    private static function getSources($directory = '', $noCache = false)
     {
-          if(SugarAutoLoader::fileExists($directory)) {
+        if (empty($directory)) {
+            $directory = self::$sourcePaths['base'];
+        }
 
-              $files = array();
-              $files = findAllFiles($directory, $files, false, 'config\.php');
-              $start = strrpos($directory, '/') == strlen($directory)-1 ? strlen($directory) : strlen($directory) + 1;
-              $sources = array();
-              $sources_ordering = array();
-              foreach($files as $file) {
-                      require($file);
-                      $end = strrpos($file, '/') - $start;
-                      $source = array();
-                      $source['id'] = str_replace('/', '_', substr($file, $start, $end));
-                      $instance = ConnectorFactory::getInstance($source['id']);
-                      if(empty($instance)) {
-                          $GLOBALS['log']->fatal("Failed to load source {$source['id']}");
-                          continue;
-                      }
+        if (SugarAutoLoader::fileExists($directory)) {
+            $files = findAllFiles($directory, array(), false, 'config\.php');
+            $start = strrpos($directory, '/') == strlen($directory)-1 ? strlen($directory) : strlen($directory) + 1;
+            $sources = array();
+            $sources_ordering = array();
+            foreach ($files as $file) {
+                require $file;
+                $end = strrpos($file, '/') - $start;
+                $source = array();
+                $source['id'] = str_replace('/', '_', substr($file, $start, $end));
+                $instance = ConnectorFactory::getInstance($source['id'], $noCache);
+                if (empty($instance)) {
+                    $GLOBALS['log']->fatal("Failed to load source {$source['id']}");
+                    continue;
+                }
 
-                      // Determine if this connector is configured
-                      $source['configured'] = $instance->isConfigured();
+                // Determine if this connector is configured
+                $source['configured'] = $instance->isConfigured();
 
-                      $source['name'] = !empty($config['name']) ? $config['name'] : $source['id'];
-                      $source['enabled'] = true;
-                      $source['directory'] = $directory . '/' . str_replace('_', '/', $source['id']);
-                      $order = isset($config['order']) ? $config['order'] : 99; //default to end using 99 if no order set
+                $source['name'] = !empty($config['name']) ? $config['name'] : $source['id'];
+                $source['enabled'] = true;
+                $source['directory'] = $directory . '/' . str_replace('_', '/', $source['id']);
+                $order = isset($config['order']) ? $config['order'] : 99; //default to end using 99 if no order set
 
-                      $source['eapm'] = empty($config['eapm'])?false:$config['eapm'];
-                      $mapping = $instance->getMapping();
-                      $modules = array();
-                      if(!empty($mapping['beans'])) {
-                         foreach($mapping['beans'] as $module=>$mapping_entry) {
-                             $modules[]=$module;
-                         }
-                      }
-                      $source['modules'] = $modules;
-                      $sources_ordering[$source['id']] = array('order'=>$order, 'source'=>$source);
-              }
+                $source['eapm'] = empty($config['eapm'])?false:$config['eapm'];
+                $mapping = $instance->getMapping();
+                $modules = array();
+                if (!empty($mapping['beans'])) {
+                    foreach($mapping['beans'] as $module=>$mapping_entry) {
+                        $modules[]=$module;
+                    }
+                }
 
-              usort($sources_ordering, 'sources_sort_function');
-              foreach($sources_ordering as $entry) {
-              	 $sources[$entry['source']['id']] = $entry['source'];
-              }
-              return $sources;
+                $source['modules'] = $modules;
+                $sources_ordering[$source['id']] = array('order'=>$order, 'source'=>$source);
+            }
+
+            usort($sources_ordering, array(__CLASS__, 'sortSources'));
+            foreach ($sources_ordering as $entry) {
+                $sources[$entry['source']['id']] = $entry['source'];
+            }
+
+            return $sources;
           }
+
           return array();
     }
 
+    /**
+     * Source sorting by order value
+     * @internal
+     */
+    public function sortSources($a, $b) {
+        if(isset($a['order']) && isset($b['order'])) {
+           if($a['order'] == $b['order']) {
+              return 0;
+           }
+
+           return ($a['order'] < $b['order']) ? -1 : 1;
+        }
+
+        return 0;
+    }
 
     /**
      * getDisplayConfig
      *
      */
-    public static function getDisplayConfig(
-        $refresh = false
-        )
+    public static function getDisplayConfig($refresh = false)
     {
         if(!SugarAutoLoader::fileExists(CONNECTOR_DISPLAY_CONFIG_FILE) || $refresh) {
             $sources = self::getConnectors();
@@ -381,9 +394,7 @@ class ConnectorUtils
      * @param mixed $connectors Array of connectors mapped to the module or empty if none
      * @return array
      */
-    public static function getModuleConnectors(
-        $module
-        )
+    public static function getModuleConnectors($module)
     {
         $modules_sources = self::getDisplayConfig();
         if(!empty($modules_sources) && !empty($modules_sources[$module])){
@@ -403,9 +414,7 @@ class ConnectorUtils
      * @param String $module String name of the module
      * @return boolean $enabled boolean value indicating whether or not the module is enabled to be serviced by the connector module
      */
-    public static function isModuleEnabled(
-        $module
-        )
+    public static function isModuleEnabled($module)
     {
         $modules_sources = self::getDisplayConfig();
         return !empty($modules_sources) && !empty($modules_sources[$module]) ? true : false;
@@ -418,9 +427,7 @@ class ConnectorUtils
      * @param String $source String name of the source
      * @return boolean $enabled boolean value indicating whether or not the source is displayed in at least one module
      */
-    public static function isSourceEnabled(
-        $source
-        )
+    public static function isSourceEnabled($source)
     {
         $modules_sources = self::getDisplayConfig();
         foreach($modules_sources as $module=>$mapping) {
@@ -439,9 +446,7 @@ class ConnectorUtils
      *
      * @param String $module	 - the module in question
      */
-    public static function cleanMetaDataFile(
-        $module
-        )
+    public static function cleanMetaDataFile($module)
     {
         $metadata_file = file_exists("custom/modules/{$module}/metadata/detailviewdefs.php") ? "custom/modules/{$module}/metadata/detailviewdefs.php" : "modules/{$module}/metadata/detailviewdefs.php";
         require($metadata_file);
@@ -622,10 +627,7 @@ class ConnectorUtils
         return true;
     }
 
-    public function removeHoverField(
-        &$viewdefs,
-        $module
-        )
+    public function removeHoverField(&$viewdefs, $module)
     {
         require_once('include/SugarFields/Parsers/MetaParser.php');
         $metaParser = new MetaParser();
@@ -652,12 +654,7 @@ class ConnectorUtils
         return false;
     }
 
-    public function setHoverField(
-        &$viewdefs,
-        $module,
-        $hover_field,
-        $source_id
-        )
+    public function setHoverField(&$viewdefs, $module, $hover_field, $source_id)
     {
        //Check for metadata files that aren't correctly created
        require_once('include/SugarFields/Parsers/MetaParser.php');
@@ -707,11 +704,7 @@ class ConnectorUtils
      * @param String $module the Module to which the hover field should be added to
      * @return boolean True if field was added; false otherwise
      */
-    private function setDefaultHoverField(
-        &$viewdefs,
-        $module,
-        $source_id
-        )
+    private function setDefaultHoverField(&$viewdefs, $module, $source_id)
     {
       foreach($viewdefs[$module]['DetailView']['panels'] as $panel_id=>$panel) {
           foreach($panel as $row_id=>$row) {
@@ -746,10 +739,7 @@ class ConnectorUtils
      * @param mixed $smarty The Smarty object from the calling smarty code
      * @return String $code The HTML code for the hover link
      */
-    public static function getConnectorButtonScript(
-        $displayParams,
-        $smarty
-        )
+    public static function getConnectorButtonScript($displayParams, $smarty)
     {
         $module = $displayParams['module'];
         $modules_sources = self::getDisplayConfig();
@@ -785,10 +775,7 @@ class ConnectorUtils
      * @param String $source_id String value of the connector id to retrive language strings for
      * @param String $language optional String value for the language to use (defaults to $GLOBALS['current_language'])
      */
-    public static function getConnectorStrings(
-        $source_id,
-        $language = ''
-        )
+    public static function getConnectorStrings($source_id, $language = '')
     {
         global $locale;
         $dir = str_replace('_', '/', $source_id);
@@ -824,11 +811,7 @@ class ConnectorUtils
      * @param String $connector_strings array value of the connector_strings
      * @param String $language optional String value for the language to use (defaults to $GLOBALS['current_language'])
     */
-    public static function setConnectorStrings(
-        $source_id,
-        $connector_strings,
-        $language = ''
-        )
+    public static function setConnectorStrings($source_id, $connector_strings, $language = '')
     {
         $lang = empty($language) ? $GLOBALS['current_language'] : $language;
         $lang .= '.lang.php';
@@ -854,9 +837,7 @@ class ConnectorUtils
      * @param String $source String value of the id of the connector to install
      * @return boolean $result boolean value indicating whether or not connector was installed
      */
-    public static function installSource(
-        $source
-        )
+    public static function installSource($source)
     {
         if(empty($source)) {
            return false;
@@ -898,9 +879,7 @@ class ConnectorUtils
      * @param String $source String value of the id of the connector to un-install
      * @return boolean $result boolean value indicating whether or not connector was un-installed
      */
-    public static function uninstallSource(
-        $source
-        )
+    public static function uninstallSource($source)
     {
         if(empty($source)) {
            return false;
@@ -966,9 +945,7 @@ class ConnectorUtils
      * @param String $module String value of module to check
      * @return boolean $enabled boolean value indicating whether or not module has at least one source enabled
      */
-    private static function hasWizardSourceEnabledForModule(
-        $module = ''
-        )
+    private static function hasWizardSourceEnabledForModule($module = '')
     {
         if(file_exists(CONNECTOR_DISPLAY_CONFIG_FILE)) {
            require_once('include/connectors/sources/SourceFactory.php');
