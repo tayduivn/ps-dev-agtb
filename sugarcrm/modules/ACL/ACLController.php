@@ -51,6 +51,9 @@ class ACLController
 		if($category == 'Activities'){
 			return ACLAction::userHasAccess($current_user->id, 'Calls', $action,$type, $is_owner) || ACLAction::userHasAccess($current_user->id, 'Meetings', $action,'module', $is_owner) || ACLAction::userHasAccess($current_user->id, 'Tasks', $action,'module', $is_owner)|| ACLAction::userHasAccess($current_user->id, 'Emails', $action,'module', $is_owner)|| ACLAction::userHasAccess($current_user->id, 'Notes', $action,'module', $is_owner);
 		}
+        if ($category == 'Employees') {
+            return ACLAction::userHasAccess($current_user->id, 'Users', $action, $type, $is_owner);
+        }
 		return ACLAction::userHasAccess($current_user->id, $category, $action,$type, $is_owner);
 	}
 
