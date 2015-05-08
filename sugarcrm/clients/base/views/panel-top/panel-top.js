@@ -82,6 +82,10 @@
     * @param evt The `click` event.
     */
     togglePanel: function(evt) {
+        if (_.isNull(this.$el)) {
+            return;
+        }
+
         var $target = this.$(evt.target),
             isLink = $target.closest('a, button').length;
 
