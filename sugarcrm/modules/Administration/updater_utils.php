@@ -319,7 +319,7 @@ function shouldCheckSugar(){
 function authenticateDownloadKey()
 {
     // Retreive license if required
-    if ((!is_array($GLOBALS['license']->settings['license_validation_key']) ||
+    if ((!is_array($GLOBALS['license']->settings) ||
          empty($GLOBALS['license']->settings['license_validation_key'])) &&
          shouldCheckSugar()) {
         check_now(get_sugarbeat());
