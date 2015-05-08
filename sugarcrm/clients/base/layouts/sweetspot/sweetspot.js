@@ -25,7 +25,7 @@
         this.collection = app.data.createMixedBeanCollection();
 
         app.shortcuts.register(app.shortcuts.GLOBAL + 'Sweetspot', 'shift+space', this.toggle, this, true);
-        app.events.on('app:logout', this.hide, this);
+        app.events.on('app:logout router:reauth:load', this.hide, this);
         app.events.on('app:sync:complete sweetspot:reset', this._setTheme, this);
 
         this.on('sweetspot:config', this.openConfigPanel, this);
@@ -194,7 +194,8 @@
         this.$el.fadeToggle(50, 'linear');
         this.$el.removeClass('has-results');
         this.trigger('hide');
-},
+    },
+
     /**
      * Toggles the Sweet Spot.
      */
