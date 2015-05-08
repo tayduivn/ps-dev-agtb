@@ -632,6 +632,7 @@ $renamedefs = array(
             array('name' => 'NOTICE_NO_DELETE_CLOSED_RLIS', 'type' => 'plural', 'source' => 'Opportunities'),
             array('name' => 'NOTICE_NO_DELETE_CLOSED_RLIS', 'type' => 'plural', 'source' => 'RevenueLineItems'),
             array('name' => 'LBL_RLI', 'type' => 'plural', 'source' => 'RevenueLineItems'),
+            array('name' => 'LBL_INCLUDED_RLIS', 'type' => 'plural', 'source' => 'RevenueLineItems'),
             // END SUGARCRM flav=ent ONLY
             array('name' => 'LBL_QUOTE_SUBPANEL_TITLE', 'type' => 'plural', 'source' => 'Quotes'),
             array('name' => 'LBL_OPPORTUNITY_ROLE', 'type' => 'singular', 'source' => 'Opportunities'),

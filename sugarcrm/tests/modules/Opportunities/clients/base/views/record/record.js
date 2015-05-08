@@ -11,7 +11,11 @@
  */
 
 describe('Opportunities.Base.Views.Record', function() {
-    var app, view, options, sinonSandbox;
+    var app,
+        layout,
+        view,
+        options,
+        sinonSandbox;
 
     afterEach(function() {
         sinonSandbox.restore();
@@ -41,6 +45,7 @@ describe('Opportunities.Base.Views.Record', function() {
         SugarTest.loadComponent('base', 'view', 'record');
         SugarTest.testMetadata.set();
         SugarTest.seedMetadata(true, './fixtures');
+        SugarTest.loadPlugin('CommittedDeleteWarning');
 
 
         var context = app.context.getContext();
@@ -55,8 +60,8 @@ describe('Opportunities.Base.Views.Record', function() {
         });
         context.prepare();
 
-
-        view = SugarTest.createView('base', 'Opportunities', 'record', options.meta, context, true);
+        layout = SugarTest.createLayout('base', 'Opportunities', 'record', {});
+        view = SugarTest.createView('base', 'Opportunities', 'record', options.meta, context, true, layout);
     });
 
     //BEGIN SUGARCRM flav=ent ONLY
