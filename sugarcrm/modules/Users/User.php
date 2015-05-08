@@ -2658,4 +2658,23 @@ EOQ;
         }
     }
 
+    /**
+    * Gets the time zone for the given user.
+    *
+    * @param User $user
+    * @return DateTimeZone the user's timezone
+    */
+    public function getTimezone()
+    {
+        $gmtTZ = new DateTimeZone("UTC");
+        $userTZName = TimeDate::userTimezone($this);
+        if (!empty($userTZName))
+        {
+            $tz = new DateTimeZone($userTZName);
+        } else
+        {
+            $tz = $gmtTZ;
+        }
+        return $tz;
+    }
 }

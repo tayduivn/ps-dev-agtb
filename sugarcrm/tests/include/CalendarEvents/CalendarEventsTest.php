@@ -78,6 +78,68 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
         $this->calendarEventsService->isEventRecurring($account);
     }
 
+    public function testCalendarEvents_NonRecurringMeeting_NoDuration_SetStartAndEndDate_OK()
+    {
+        $format = TimeDate::DB_DATETIME_FORMAT;
+        $timezone = new DateTimeZone('UTC');
+
+        $sugarDateTime = SugarDateTime::createFromFormat($format, '2015-01-01 12:00:00', $timezone);
+
+        $meeting = BeanFactory::newBean('Meetings');
+        $this->calendarEventsService->setStartAndEndDateTime($meeting, $sugarDateTime);
+
+        $datetimeStart = SugarDateTime::createFromFormat($format, $meeting->date_start, $timezone);
+        $datetimeEnd = SugarDateTime::createFromFormat($format, $meeting->date_end, $timezone);
+
+        $this->assertEquals(0, (int) $meeting->duration_hours, "Expected Duration of Zero Hours");
+        $this->assertEquals(0, (int) $meeting->duration_minutes, "Expected Duration of Zero Minutes");
+        $this->assertEquals($datetimeStart->asDb(), $datetimeEnd->asDb(), "Expected End Datetime = Start DateTime");
+    }
+
+    public function testCalendarEvents_NonRecurringMeeting_SetStartAndEndDate_OK()
+    {
+        $format = TimeDate::DB_DATETIME_FORMAT;
+        $timezone = new DateTimeZone('UTC');
+
+        $sugarDateTime = SugarDateTime::createFromFormat($format, '2015-01-01 12:00:00', $timezone);
+
+        $meeting = BeanFactory::newBean('Meetings');
+        $meeting->duration_hours = 1;
+        $meeting->duration_minutes = 30;
+        $this->calendarEventsService->setStartAndEndDateTime($meeting, $sugarDateTime);
+
+        $datetimeStart = SugarDateTime::createFromFormat($format, $meeting->date_start, $timezone);
+        $datetimeEnd = SugarDateTime::createFromFormat($format, $meeting->date_end, $timezone);
+        $meetingInterval = date_diff ($datetimeStart, $datetimeEnd);
+
+        $this->assertEquals(1, $meetingInterval->h, "Incorrect Duration Hours - Non Recurring Meeting");
+        $this->assertEquals(30, $meetingInterval->i, "Incorrect Duration Minutes - Non Recurring Meeting");
+    }
+
+    public function testCalendarEvents_WeeklyRecurringMeeting_SetStartAndEndDate_OK()
+    {
+        $format = TimeDate::DB_DATETIME_FORMAT;
+        $timezone = new DateTimeZone('UTC');
+
+        $sugarDateTime = SugarDateTime::createFromFormat($format, '2015-01-01 12:00:00', $timezone);
+        $dow = intval($sugarDateTime->format("w")) + 1;  // Repeat Single Day Of Week (Using Next Day DOW)
+
+        $meeting = BeanFactory::newBean('Meetings');
+        $meeting->repeat_type = 'Weekly';
+        $meeting->repeat_dow  = "{$dow}";
+
+        $this->calendarEventsService->setStartAndEndDateTime($meeting, $sugarDateTime);
+
+        $datetimeStart = SugarDateTime::createFromFormat($format, $meeting->date_start, $timezone);
+        $interval = date_diff ($sugarDateTime, $datetimeStart);
+
+        $diffDays = ($interval->days);
+        $diffMinutes = ($interval->h * 3600) + ($interval->i * 60) + $interval->s;
+
+        $this->assertEquals( 1 ,$diffDays, "Expected 1 Day Offset from Proposed to Actual Start");
+        $this->assertEquals( 0, $diffMinutes, "Expected No Hour or Minute Time Difference");
+    }
+
     public function testCalendarEvents_SaveRecurringEvents_EventsSaved()
     {
         $args['date_start'] = '2030-08-15 13:00:00';

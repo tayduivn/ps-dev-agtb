@@ -349,6 +349,20 @@ class UserTest extends Sugar_PHPUnit_Framework_TestCase
         unlink('upload/test_user_picture');
     }
 
+    public function testSetUserTimezonePreference_GetUserTimeZone_CorrectTimezoneReturned()
+    {
+        $dateTime = new SugarDateTime('2015-01-01 12:00:00', new DateTimeZone('UTC'));
+        $offsetGMT = $dateTime->getOffset() / 60;
+
+        $user = SugarTestUserUtilities::createAnonymousUser();
+        $user->setPreference("timezone", "America/New_York");
+        $timezone = $user->getTimeZone();
+        $dateTime->setTimeZone($timezone);
+        $offsetNY = $dateTime->getOffset() / 60;
+
+        $this->assertEquals(300, ($offsetGMT - $offsetNY), "Unexpected Timezone returned for User");
+    }
+
     /**
      * @param boolean $isWorkFlowModule The return value of User::isWorkFlowModule
      * @param array $modules Module list returned by getAdminModules
