@@ -26,26 +26,6 @@
         limit: 10,
         visibility: 'user'
     },
-//    /**
-//     * {@inheritDoc}
-//     *
-//     * Store current date state in settings.
-//     */
-//    initDashlet: function() {
-//        this._super('initDashlet');
-//        if (!this.meta.last_state) {
-//            this.meta.last_state = {
-//                id: this.dashModel.get('id') + ':' + this.name,
-//                defaults: {}
-//            };
-//        }
-//        this.settings.on('change:date', function(model, value) {
-//            var specificDateKey = app.user.lastState.key('date', this);
-//            app.user.lastState.set(specificDateKey, value);
-//        }, this);
-//        this.settings.set('date', this.getDate());
-//        this.tbodyTag = 'ul[data-action="pagination-body"]';
-//    },
 
     /**
      * {@inheritDoc}
@@ -59,49 +39,24 @@
         ]);
 
         this._super('initialize', [options]);
-
-
     },
 
     /**
      * {@inheritDoc}
      */
     _initEvents: function() {
-//        this._super('_initEvents');
-        //dashlet-inbox:participate-record:fire
-////        this.on('dashlet-processes:designer:fire', this.designer, this);
-////        this.on('dashlet-processes:delete-record:fire', this.deleteRecord, this);
-////        this.on('dashlet-processes:disable-record:fire', this.disableRecord, this);
-////        this.on('dashlet-processes:enable-record:fire', this.enableRecord, this);
-//        return this;
         this.events = _.extend(this.events, {
             'click [data-action=date-switcher]': 'dateSwitcher',
             'click [data-action=participate-switcher]': 'participateSwitcher'
         });
         this._super('_initEvents');
-//        this.on('planned-activities:close-record:fire', this.heldActivity, this);
-
-//        this.before('render:rows', function(data) {
-//            this.updateInvitation(this.collection, data);
-//            return false;
-//        }, null, this);
 
         return this;
     },
+
     participateSwitcher: function() {
         alert('participate');
     },
-    /**
-     * {@inheritDoc}
-     */
-//    tabSwitcher: function(event) {
-//        var tab = this.tabs[this.settings.get('activeTab')];
-//        if (tab.invitations) {
-//            tab.invitations.dataFetched = false;
-//        }
-//
-//        this._super('tabSwitcher', [event]);
-//    },
 
     /**
      * Event handler for date switcher.
@@ -181,12 +136,12 @@
     _getFilters: function(index) {
 
 //        var today = app.date().format('YYYY-MM-DD'),
-            tab = this.tabs[index],
+          var  tab = this.tabs[index],
             filter = {},
             filters = [],
             defaultFilters = {
-                'true': {$lte: 'true'},
-                'false': {$gt: 'false'}
+                'true': {$equal: 'true'},
+                'false': {$equal: 'false'}
             };
 
         filter[tab.filter_applied_to] = defaultFilters[this.getDate()];
@@ -195,29 +150,6 @@
 
         return filters;
     },
-//    _initTabs: function() {
-//        this.tabs = [];
-//        _.each(this.dashletConfig.tabs, function(tab, index) {
-//            if (tab.active) {
-//                this.settings.set('activeTab', index);
-//            }
-//            var collection = this._createCollection(tab);
-//            if (_.isNull(collection)) {
-//                return;
-//            }
-//            collection.on('add', this.bindCollectionAdd, this);
-//            collection.on('reset', this.bindCollectionReset, this);
-//
-//            this.tabs[index] = tab;
-//            this.tabs[index].collection = collection;
-//            this.tabs[index].relate = _.isObject(collection.link);
-//            alert(collection.link);
-//            //this.tabs[index].record_date = tab.record_date || 'date_entered';
-//            this.tabs[index].include_child_items = tab.include_child_items || true;
-//        }, this);
-//        return this;
-//    },
-    //----------------------------------------FIN
 
     /**
      * Updating in fields delete removed
@@ -267,7 +199,7 @@
         }
 
         var tab = this.tabs[this.settings.get('activeTab')];
-        
+
         if (tab.overdue_badge) {
             this.overdueBadge = tab.overdue_badge;
         }

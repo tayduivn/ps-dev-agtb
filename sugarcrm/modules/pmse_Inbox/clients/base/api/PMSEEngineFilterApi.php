@@ -135,6 +135,8 @@ class PMSEEngineFilterApi extends FilterApi
                                 } else {
                                     $type = ($field == 'act_assignment_method') ? $value : $type;
                                 }
+                            } else {
+                                $inTime = $value;
                             }
                         }
                     }
@@ -178,6 +180,14 @@ class PMSEEngineFilterApi extends FilterApi
             $and3 = $or2->queryAnd();
             $and3->equals('activity_definition.act_assignment_method', 'selfservice');
             $and3->notNull('cas_start_date');
+        }
+
+        if (!empty($inTime) && $inTime === 'true') {
+            $and4 = $where->queryAnd();
+            $and4->gte('cas_due_date', TimeDate::getInstance()->nowDb());
+        } else if (!empty($inTime) && $inTime === 'false') {
+            $and4 = $where->queryAnd();
+            $and4->lte('cas_due_date', TimeDate::getInstance()->nowDb());
         }
     }
 

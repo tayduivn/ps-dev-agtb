@@ -11,18 +11,7 @@
 ({
     extendsFrom: 'RecordlistView',
 
-
     initialize: function (options) {
-        app.view.invokeParent(this, {type: 'view', name: 'recordlist', method: 'initialize', args: [options]});
-        this.collection.on('data:sync:complete', function () {
-            this.init_();
-        }, this);
-    },
-
-    init_: function () {
-        _.each(this.fields, function (field) {
-            if ( (field.name == 'cas_delegate_date') || (field.name == 'cas_due_date') )
-                field.$el[0].textContent = app.date( field.$el[0].textContent + " UTC" ).formatUser();
-        });
+        this._super("initialize", [options]);
     }
 })
