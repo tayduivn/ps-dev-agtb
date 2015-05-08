@@ -941,7 +941,9 @@ class PMSECrmDataWrapper implements PMSEObservable
             $where .= 'OR users.user_name LIKE \'' . $filter . '%\' )';
         }
 
-        $usersData = $this->usersBean->get_full_list('', $where);
+        $order = 'users.first_name, users.last_name';
+
+        $usersData = $this->usersBean->get_full_list($order, $where);
         //$beanFactory = new ADAMBeanFactory();
         //$beanFactory = $this->getADAMBeanFactory();
         foreach ($usersData as $user) {
