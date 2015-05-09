@@ -1017,4 +1017,20 @@ class PMSEEngineUtils
 
         return $data;
     }
+
+    public static function getSupportedModules () {
+        include 'PMSEModules.php';
+        $studioBrowser = new StudioBrowser();
+        $studioBrowser->loadModules();
+        $moduleList = $studioBrowser->modules;
+        $out = array();
+
+        foreach ($moduleList as $key => $module) {
+            if (in_array($module->module, $pmseModulesList)) {
+                continue;
+            }
+            $out[] = $module->module;
+        }
+        return $out;
+    }
 }
