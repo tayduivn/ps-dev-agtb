@@ -1,56 +1,6 @@
 /* GLOBAL SEARCH
   ----------------*/
 
-#searchForm {
-  padding: 8px 6px;
-  position: relative;
-  min-width: 28px;
-
-  label {
-    display: inline-block;
-    input {
-      display: inline-block;
-      &[type=checkbox]{
-        margin: 0 5px 3px 0;
-      }
-    }
-    &.hide {
-      display: none;
-    }
-    &.active {
-      font-weight: 900;
-    }
-  }
-
-  // Needed by firefox because of navbar table-layout
-  .typeahead-wrapper {
-    position: relative;
-  }
-
-  // Typeahead UL
-  .typeahead {
-    .border-radius(@baseBorderRadius);
-    overflow: hidden;
-    right: 0;
-    left: 0;
-    top: 44px;
-    height: auto;
-    width: 350px;
-    max-height: 333px;
-    li {
-      min-width: 120px;
-      padding: 0;
-    }
-    li > a,
-    li.no-results {
-      padding: 8px 10px;
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-    }
-  }
-}
-
 .navbar .search {
   padding: 7px 6px;
   position: relative;
