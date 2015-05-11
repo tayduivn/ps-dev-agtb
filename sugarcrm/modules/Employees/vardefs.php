@@ -32,6 +32,50 @@ $dictionary['Employee']['fields']['last_name']['full_text_search'] = array(
 );
 $dictionary['Employee']['fields']['email']['full_text_search']['boost'] = 1.67;
 
+$dictionary['Employee']['fields']['date_entered']['full_text_search'] = array(
+    'enabled' => true,
+    'searchable' => false,
+    'aggregations' => array(
+        'date_entered' => array(
+            'type' => 'DateRange',
+        ),
+    ),
+);
+
+$dictionary['Employee']['fields']['date_modified']['full_text_search'] = array(
+    'enabled' => true,
+    'searchable' => false,
+    'aggregations' => array(
+        'date_modified' => array(
+            'type' => 'DateRange',
+        ),
+    ),
+);
+
+$dictionary['Employee']['fields']['modified_user_id']['full_text_search'] = array(
+    'enabled' => true,
+    'searchable' => false,
+    'type' => 'id',
+    'aggregations' => array(
+        'modified_user_id' => array(
+            'type' => 'MyItems',
+            'label' => 'LBL_AGG_MODIFIED_BY_ME',
+        ),
+    ),
+);
+
+$dictionary['Employee']['fields']['created_by']['full_text_search'] = array(
+    'enabled' => true,
+    'searchable' => false,
+    'type' => 'id',
+    'aggregations' => array(
+        'created_by' => array(
+            'type' => 'MyItems',
+            'label' => 'LBL_AGG_CREATED_BY_ME',
+        ),
+    ),
+);
+
 //users of employees modules are not allowed to change the employee/user status.
 $dictionary['Employee']['fields']['status']['massupdate']=false;
 $dictionary['Employee']['fields']['is_admin']['massupdate']=false;
