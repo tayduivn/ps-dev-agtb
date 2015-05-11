@@ -18,6 +18,7 @@ var MultipleCollapsiblePanel = function (settings) {
     this._lastSelectedPanel = null;
     this._selectedPanel = null;
     this._fastAccessObject = {};
+    this._originalBodyHeight = null;
     MultipleCollapsiblePanel.prototype.init.call(this, settings);
 };
 
@@ -147,6 +148,7 @@ MultipleCollapsiblePanel.prototype.displayPanel = function (panel) {
 
             bodyHeight = jQuery(this._selectedPanel._htmlBody).outerHeight();
             contentHeaderHeight = jQuery(this._htmlContentHeader).outerHeight();
+            this._originalBodyHeight = this._bodyHeight;
             this.setBodyHeight(bodyHeight + contentHeaderHeight);
 
             w = $(this._htmlBody).innerWidth();
@@ -164,7 +166,7 @@ MultipleCollapsiblePanel.prototype.displayPanel = function (panel) {
 MultipleCollapsiblePanel.prototype.displayMenu = function (noAnimation) {
     var w, selectedPanel;
     if (this._selectedPanel) {
-        this.setBodyHeight(100);
+        this.setBodyHeight(this._originalBodyHeight);
         selectedPanel = this._selectedPanel;
         this._lastSelectedPanel = this._selectedPanel;
         this._selectedPanel = null;

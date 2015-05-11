@@ -637,6 +637,7 @@ EOF;
         'UpgradeWizard',
         'ConfigureShortcutBar',
         'wizard',
+        'historyContactsEmails',
     );
 
     /**
@@ -882,6 +883,29 @@ EOF;
     }
 
     /**
+     * Filter request vars by prefix
+     * 
+     * @param string $prefix Prefix to filter by
+     * @param array $request Request vars
+     * @param bool $add_empty Add empty vars to the result?
+     * @return array
+     */
+    public function filterRequestVars($prefix, $request, $add_empty = true) {
+        $vars = array();
+
+        foreach ($request as $key => $value) {
+            if (strpos($key, $prefix) === 0) {
+                if ($value !== '' || $add_empty) {
+                    $vars[substr($key, strlen($prefix))] = $value;
+                }
+            }
+        }
+
+        return $vars;
+    }
+
+
+    /**
      * Create string to attach to login URL with vars to preserve post-login
      *
      * @return string URL part with login vars
@@ -918,18 +942,10 @@ EOF;
      */
     public function getLoginVars($add_empty = true)
     {
-        $prefix = 'login_';
-        $ret = array();
         $req = $this->getRequestVars();
+        $vars = $this->filterRequestVars('login_', $req, $add_empty);
 
-        foreach (array_keys($req) as $var) {
-            if(strpos($var, $prefix) === 0){
-                if (!empty($req[$var]) || $add_empty) {
-                    $ret[substr($var, strlen($prefix))] = isset($_REQUEST[$var]) ? $req[$var] : '';
-                }
-            }
-        }
-        return $ret;
+        return $vars;
     }
 
     /**
@@ -937,19 +953,11 @@ EOF;
      *
      * @return string the URL to redirect to
      */
-    public function getLoginRedirect()
+    public function getLoginRedirect($add_empty = true)
     {
-        $prefix = 'login_';
-        $vars = array();
         $req = $this->getRequestVars();
+        $vars = $this->filterRequestVars('login_', $req, $add_empty);
 
-        foreach (array_keys($req) as $var) {
-            if(strpos($var, $prefix) === 0){
-                if (!empty($req[$var])) {
-                    $vars[substr($var, strlen($prefix))] = $req[$var];
-                }
-            }
-        }
         if (isset($req['mobile'])) {
             $vars['mobile'] = $req['mobile'];
         }

@@ -946,12 +946,17 @@ class PMSEEngineUtils
         if (isset($def['source']) && $def['source'] == 'non-db') {
             $result = $result && false;
         }
+        if ($params == 'ET') {
+            if (isset($def['name']) && $def['name'] == 'email1') {
+                $result = true;
+            }
+        }
         $result = $result && self::blackListFields($def);
         return $result;
     }
 
     public static function blackListFields($def) {
-        $blackList = array('deleted', 'system_id', 'mkto_sync', 'mkto_id', 'mkto_lead_score', 'parent_type');
+        $blackList = array('deleted', 'system_id', 'mkto_sync', 'mkto_id', 'mkto_lead_score', 'parent_type', 'user_name', 'user_hash');
         if (in_array($def['name'], $blackList)) {
             return false;
         }
@@ -1011,5 +1016,21 @@ class PMSEEngineUtils
         }
 
         return $data;
+    }
+
+    public static function getSupportedModules () {
+        include 'PMSEModules.php';
+        $studioBrowser = new StudioBrowser();
+        $studioBrowser->loadModules();
+        $moduleList = $studioBrowser->modules;
+        $out = array();
+
+        foreach ($moduleList as $key => $module) {
+            if (in_array($module->module, $pmseModulesList)) {
+                continue;
+            }
+            $out[] = $module->module;
+        }
+        return $out;
     }
 }

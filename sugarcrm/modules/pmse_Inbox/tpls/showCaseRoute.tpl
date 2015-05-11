@@ -115,10 +115,10 @@
     {/if}
 
 </script>
+<script type="text/javascript" src="{sugar_getjspath file='cache/include/javascript/pmse.utils.min.js'}"></script>
 <script type="text/javascript" src="{sugar_getjspath file='cache/include/javascript/pmse.libraries.min.js'}"></script>
 <script type="text/javascript" src="{sugar_getjspath file='cache/include/javascript/pmse.jcore.min.js'}"></script>
 <script type="text/javascript" src="{sugar_getjspath file='cache/include/javascript/pmse.ui.min.js'}"></script>
-<script type="text/javascript" src="{sugar_getjspath file='cache/include/javascript/pmse.utils.min.js'}"></script>
 <script type="text/javascript" src="{sugar_getjspath file='modules/pmse_Inbox/js/historyEntries.js'}"></script>
 <script type="text/javascript" src="{sugar_getjspath file='modules/pmse_Inbox/js/formAction.js'}"></script>
 <script type="text/javascript" src="{sugar_getjspath file='modules/pmse_Inbox/js/get_process_image.js'}"></script>

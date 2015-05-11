@@ -241,7 +241,7 @@ var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,task
                 cssClasses: ['btn', 'btn-primary'],
                 handler: function () {
                     if (f.validate()) {
-                        App.alert.show('upload', {level: 'process', title: 'LBL_SAVING', autoClose: false});
+                        _App.alert.show('upload', {level: 'process', title: 'LBL_SAVING', autoClose: false});
                         var cbDate = $("#reassign_user option:selected").html();
                         if (cbDate) {
                             items[6].setValue(cbDate);
@@ -270,7 +270,7 @@ var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,task
                                         }
                                     }
                                 }
-                                App.alert.dismiss('upload');
+                                _App.alert.dismiss('upload');
                             }
                         });
                     }

@@ -221,7 +221,7 @@ ItemContainer.prototype._addInputText = function (reference) {
 		if(reference && reference instanceof SingleItem) {
 			this.html.insertBefore(input, reference.getHTML());
 		} else {
-			this.html.appendChild(input);	
+			this.html.appendChild(input);
 		}
 	}
 	return this;
@@ -255,7 +255,7 @@ ItemContainer.prototype._paintItem = function (item, index) {
 				}
 			} else {
 				if (this._textInputMode === this.textInputMode.NONE) {
-					this.html.appendChild(item.getHTML());	
+					this.html.appendChild(item.getHTML());
 				} else {
 					jQuery(this.html).find('.item-container-input').last().before(item.getHTML());
 				}
@@ -263,7 +263,7 @@ ItemContainer.prototype._paintItem = function (item, index) {
 			if(this._textInputMode === this.textInputMode.ALL) {
 				this._addInputText(index || item);
 			}
-		}	
+		}
 	}
 	return this;
 };
@@ -304,11 +304,11 @@ ItemContainer.prototype.addItem = function(item, index, noFocusNext) {
 	item.setParent(this);
 	item.setOnRemoveHandler(this._onRemoveItemHandler());
 	if (typeof index === 'number' && index >= 0) {
-		this._items.insertAt(item, index);	
+		this._items.insertAt(item, index);
 	} else {
 		this._items.insert(item);
 	}
-	
+
 	if (!this._massiveAction) {
 		this._paintItem(item, index);
 		if(!noFocusNext && jQuery(item.getHTML()).next().get(0) !== jQuery(':focus').get(0)) {
@@ -316,7 +316,7 @@ ItemContainer.prototype.addItem = function(item, index, noFocusNext) {
 		} else {
 			this._selectedIndex += 1;
 			if (this.html) {
-				this.html.scrollTop += this.html.scrollHeight;	
+				this.html.scrollTop += this.html.scrollHeight;
 			}
 		}
 	}
@@ -337,7 +337,7 @@ ItemContainer.prototype.removeItem = function (item) {
 		this._items.remove(item);
 		jQuery(item.getHTML()).prev('.item-container-input').remove().end()
 			.next().focus()
-			.end().remove(); 
+			.end().remove();
 	}
 	return this;
 };
@@ -402,7 +402,7 @@ ItemContainer.prototype._isValidInput = function (input) {
 ItemContainer.prototype.select = function (index) {
 	if(this.html && !this._disabled) {
 		if(typeof index === 'number') {
-			jQuery(this.html).find('.adam.item-container-input').eq(index).focus();	
+			jQuery(this.html).find('.adam.item-container-input').eq(index).focus();
 		} else {
 			jQuery(this.html).find('.adam.item-container-input').last().focus();
 		}
@@ -449,7 +449,7 @@ ItemContainer.prototype._attachListeners = function () {
 			that.select();
 		}).on('focusin', function(e) {
 			//console.log("focusin");
-			clearInterval(that._blurTimer);	
+			clearInterval(that._blurTimer);
 			if(that._blurred && typeof that.onFocus === 'function' && that._blurSemaphore) {
 				that._blurred = false;
 				that.onFocus(that);
@@ -458,7 +458,7 @@ ItemContainer.prototype._attachListeners = function () {
 			//console.log("focusout");
 			//console.log(that._blurSemaphore);
 			if (!that._blurred) {
-				that._blurTimer = setInterval(that._onBlur(), 20);	
+				that._blurTimer = setInterval(that._onBlur(), 20);
 			}
 		}).on('focus', '.adam.item-container-input', function () {
 			that._selectedIndex = $(this.parentNode).find('input').index(this);
@@ -503,7 +503,7 @@ ItemContainer.prototype._attachListeners = function () {
 							}
 						}
 						if(newItem instanceof SingleItem) {
-							that.addItem(newItem, index);	
+							that.addItem(newItem, index);
 						}
 						this.value = "";
 						this.style.width = "1px";
@@ -535,7 +535,7 @@ ItemContainer.prototype._attachListeners = function () {
 					}
 					width = that._getTextWidth(newValue, this) || 1;
 					this.style.width = width + "px";
-			}			
+			}
 		}).on("keyup", '.adam.item-container-input', function (e) {
 			var keyIdentifier;
 			try {
@@ -561,9 +561,9 @@ ItemContainer.prototype._attachListeners = function () {
 				this.value = "";
 				this.style.width = "1px";
 			}
-			/*if(this.value !== value && typeof that.onInputChar === 'function') {
-				that.onInputChar(that, "", this.value);
-			}*/
+			//if(this.value !== value && typeof that.onInputChar === 'function') {
+			//	that.onInputChar(that, "", this.value);
+			//}
 		});
 	}
 	return this;
