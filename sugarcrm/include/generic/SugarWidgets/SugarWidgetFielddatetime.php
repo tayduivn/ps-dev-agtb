@@ -1042,11 +1042,15 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
     {
         $column = $this->_get_column_select($layout_def);
 
+        $dateYear = $this->reporter->db->convert($column, 'date_format', array('%Y'));
+        $dateWeek = $this->reporter->db->convert($column, 'date_format', array('%v'));
+
+        // Returns the result as YYYY-WW
         return $this->reporter->db->convert(
-            $this->reporter->db->convert($column, 'date_format', array('%Y')),
+            $dateYear,
             'CONCAT',
-            array("'-'", $this->reporter->db->convert($column, 'date_format', array('%v')))
-        ) . ' ' . $this->_get_column_alias($layout_def) . "\n";
+            array("'-'", $dateWeek)
+        ) . ' ' . $this->_get_column_alias($layout_def);
     }
 
     /**
@@ -1073,10 +1077,15 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
     public function queryGroupByWeek($layout_def)
     {
         $column = $this->_get_column_select($layout_def);
+
+        $dateYear = $this->reporter->db->convert($column, 'date_format', array('%Y'));
+        $dateWeek = $this->reporter->db->convert($column, 'date_format', array('%v'));
+
+        // Format the value we're grouping on as YYYY-WW
         return $this->reporter->db->convert(
-            $this->reporter->db->convert($column, 'date_format', array('%Y')),
+            $dateYear,
             'CONCAT',
-            array("'-'", $this->reporter->db->convert($column, 'date_format', array('%v')))
+            array("'-'", $dateWeek)
         );
     }
 

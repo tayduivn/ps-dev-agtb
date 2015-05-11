@@ -1174,7 +1174,7 @@ class MssqlManager extends DBManager
         '%Y' => 4,
         '%v' => array(
             'format' => 'isoww',
-            'function' => 'datepart'
+            'function' => 'datepart',
         ),
     );
 
