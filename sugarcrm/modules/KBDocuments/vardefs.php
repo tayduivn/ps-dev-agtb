@@ -397,7 +397,11 @@ $dictionary['KBDocument'] = array(
     'vname' => 'LBL_KBDOC_APPROVER_NAME',
     'type' => 'varchar',
     'reportable'=>false,
-    'source'=>'non-db'
+    'source'=>'non-db',
+    'table' => 'users',
+    'id_name' => 'kbdoc_approver_id',
+    'module' => 'Users',
+    'link' => 'kbdoc_approver_link',
   ),
  'assigned_user_id' => array (
     'name' => 'assigned_user_id',
