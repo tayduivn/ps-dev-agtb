@@ -216,11 +216,13 @@ class OpportunityViews
      * @param array $fieldMap
      * @param $current_fields
      * @param ListLayoutMetaDataParser $listParser
+     * @return bool did the ListLayout get updated?
      */
-    private function processList(array $fieldMap, $current_fields, ListLayoutMetaDataParser $listParser)
+    protected function processList(array $fieldMap, $current_fields, ListLayoutMetaDataParser $listParser)
     {
         if (!($listParser instanceof SidecarListLayoutMetaDataParser)) {
-            return false;
+            // we have a BWC module
+            return $this->processBWCList($fieldMap, $listParser);
         }
 
         $handleSave = false;
@@ -285,5 +287,87 @@ class OpportunityViews
             }
             $listParser->handleSave(false);
         }
+
+        return $handleSave;
+    }
+
+    /**
+     * Process the BWC Subpanels
+     *
+     * @param array $fieldMap The changes being made to the fields
+     * @param ListLayoutMetaDataParser $listParser the List Parser to use
+     * @return bool Did this update the List Layout defs?
+     */
+    protected function processBWCList(array $fieldMap, ListLayoutMetaDataParser $listParser)
+    {
+        // there is a relationship but it doesn't have a opp subpanel so it's empty
+        // it should just bailout from this method
+        if (empty($listParser->_viewdefs)) {
+            return false;
+        }
+
+        // backup what is currently in $_POST
+        $backupPost = $_POST;
+
+        $_POST = array(
+            'view_module' => $listParser->getModuleName(),
+            'group_0' => array()
+        );
+
+        $handleSave = false;
+        // process the fields
+        foreach ($listParser->_viewdefs as $name => $field_def) {
+            $addField = true;
+            if (isset($fieldMap[$name])) {
+                if ($fieldMap[$name] === true) {
+                    // nothing to do, field is present
+                } elseif ($fieldMap[$name] !== false) {
+                    // we have the field, so get it's defs
+                    $defs = $this->bean->getFieldDefinition($fieldMap[$name]);
+                    if ($defs) {
+                        // set the name variable to the new field name.
+                        $name = $fieldMap[$name];
+                    } else {
+                        // we didn't find any defs for the new field, so error on caution and remove the old one
+                        $addField = false;
+                    }
+                    $handleSave = true;
+                } else {
+                    // instead of a name being passed in, false was, so we should remove that field.
+                    $addField = false;
+                    $handleSave = true;
+                }
+
+                unset($fieldMap[$name]);
+            }
+
+            if ($addField) {
+                $_POST['group_0'][] = $name;
+            }
+        }
+
+        // make sure that the field map is empty, if it's not process any remaining fields
+        if (!empty($fieldMap)) {
+            foreach($fieldMap as $field => $trigger) {
+                if($trigger === true) {
+                    $defs = $this->bean->getFieldDefinition($field);
+                    if ($defs) {
+                        $_POST['group_0'][] = $field;
+                        $handleSave = true;
+                    }
+                }
+            }
+        }
+
+        $return = $handleSave;
+        if ($handleSave) {
+            // when we save it, return what we saved
+            $return = $_POST;
+            $listParser->handleSave();
+        }
+        // restore the post variables
+        $_POST = $backupPost;
+
+        return $return;
     }
 }
