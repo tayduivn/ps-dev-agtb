@@ -13,6 +13,10 @@
 require_once 'include/api/RestService.php';
 require_once 'modules/Forecasts/clients/base/api/ForecastsConfigApi.php';
 
+/**
+ * Class ForecastsConfigApiTest
+ * @coversDefaultClass \ForecastsConfigApi
+ */
 class ForecastsConfigApiTest extends Sugar_PHPUnit_Framework_TestCase
 {
     protected $createdBeans = array();
@@ -47,6 +51,7 @@ class ForecastsConfigApiTest extends Sugar_PHPUnit_Framework_TestCase
      * test the create api
      *
      * @group forecasts
+     * @covers ::forecastsConfigSave
      */
     public function testCreateConfig() {
         // Get the real data that is in the system, not the partial data we have saved
@@ -84,6 +89,7 @@ class ForecastsConfigApiTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * test the get config
      * @group forecasts
+     * @covers ::config
      */
     public function testReadConfig() {
         /* @var $admin Administration */
@@ -106,6 +112,7 @@ class ForecastsConfigApiTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * test the update config
      * @group forecasts
+     * @covers ::forecastsConfigSave
      */
     public function testUpdateConfig() {
         $testSetting = 'testValue';
@@ -139,6 +146,9 @@ class ForecastsConfigApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($results['testSetting'], strrev($testSetting));
     }
 
+    /**
+     * @covers ::forecastsConfigSave
+     */
     public function testSetConfigWithEmptyWorksheetColumns()
     {
         $testSetting = 'testValue';
@@ -175,6 +185,7 @@ class ForecastsConfigApiTest extends Sugar_PHPUnit_Framework_TestCase
      *
      * @group forecasts
      * @expectedException SugarApiExceptionNotAuthorized
+     * @covers ::forecastsConfigSave
      */
     public function testCreateBadCredentialsConfig() {
         $GLOBALS['current_user']->is_admin = 0;
@@ -202,6 +213,7 @@ class ForecastsConfigApiTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * test the save config calls TimePeriodSettingsChanged
      * @group forecasts
+     * @covers ::forecastsConfigSave
      */
     public function testSaveConfigTimePeriodSettingsChangedCalled() {
         $testSetting = 'testValue';
@@ -300,6 +312,7 @@ class ForecastsConfigApiTest extends Sugar_PHPUnit_Framework_TestCase
      * @param $changedSettings
      * @param $expectedResult
      * @group forecasts
+     * @covers ::timePeriodSettingsChanged
      */
     public function testTimePeriodSettingsChagned($changedSettings, $expectedResult)
    	{
@@ -318,43 +331,6 @@ class ForecastsConfigApiTest extends Sugar_PHPUnit_Framework_TestCase
         $result = $apiClass->timePeriodSettingsChanged($priorSettings, $currentSettings);
 
         $this->assertEquals($expectedResult, $result, "TimePeriod Setting check failed for given parameters. Prior Settings: " . print_r($priorSettings,1) . " Current Settings: " . print_r($currentSettings, 1) . " result: " . print_r($result,1));
-    }
-
-
-    /**
-     * test the save config calls TimePeriodSettingsChanged
-     * @group forecasts
-     */
-    public function testSaveConfigTimePeriodSettingsChangedNotCalled() {
-        $testSetting = 'testValue';
-        /* @var $admin Administration */
-        $admin = BeanFactory::getBean('Administration');
-        $admin->saveSetting('Forecasts', 'testSetting', $testSetting, 'base');
-
-        $priorSettings = $admin->getConfigForModule('Forecasts', 'base');
-        $currentSettings = $admin->getConfigForModule('Forecasts', 'base');
-
-        $api = new RestService();
-        //Fake the security
-        $api->user = $GLOBALS['current_user'];
-
-        $args = array(
-            "module" => "Forecasts",
-        );
-
-        $args = array_merge($args, $priorSettings);
-
-        $apiClass = $this->getMock('ForecastsConfigApi', array('timePeriodSettingsChanged'));
-
-        if(empty($priorSettings['is_setup'])) {
-            $priorSettings['timeperiod_shown_forward'] = 0;
-            $priorSettings['timeperiod_shown_backward'] = 0;
-        }
-
-        $apiClass->expects($this->never())
-                                ->method('timePeriodSettingsChanged');
-
-        $apiClass->configSave($api, $args);
     }
 
 }
