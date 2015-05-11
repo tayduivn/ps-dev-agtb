@@ -13,6 +13,10 @@
 require_once 'include/api/RestService.php';
 require_once 'clients/base/api/ConfigModuleApi.php';
 
+/**
+ * Class ConfigModuleApiTest
+ * @coversDefaultClass \ConfigModuleApi
+ */
 class ConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
 {
     protected $createdBeans = array();
@@ -39,6 +43,7 @@ class ConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * test the create api
      * @group api
+     * @covers ::configSave
      */
     public function testCreateConfig() {
         // Get the real data that is in the system, not the partial data we have saved
@@ -69,6 +74,7 @@ class ConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * test the get config
      * @group api
+     * @covers ::config
      */
     public function testReadConfig() {
         /* @var $admin Administration */
@@ -91,6 +97,7 @@ class ConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * test the update config
      * @group api
+     * @covers ::configSave
      */
     public function testUpdateConfig() {
         $testSetting = 'My voice is my passport, verify me';
@@ -123,6 +130,7 @@ class ConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
      *
      * @expectedException SugarApiExceptionNotAuthorized
      * @group api
+     * @covers ::configSave
      */
     public function testCreateBadCredentialsConfig() {
         $GLOBALS['current_user']->is_admin = 0;
@@ -147,6 +155,9 @@ class ConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertArrayNotHasKey("testSetting", $results);
     }
 
+    /**
+     * @covers ::configSave
+     */
     public function testResaveConfig()
     {
         $admin = BeanFactory::getBean('Administration');
@@ -160,6 +171,16 @@ class ConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertConfigUpdated($apiClass, $api, $admin, 'bar');
     }
 
+    /**
+     * Reusable assert that will verify that the setting changes in the testResaveConfig
+     *
+     * @see testResaveConfig
+     * @param ConfigModuleApi $apiClass
+     * @param RestService $api
+     * @param Administration $admin
+     * @param mixed $value
+     * @throws SugarApiExceptionNotAuthorized
+     */
     private function assertConfigUpdated(ConfigModuleApi $apiClass, RestService $api, Administration $admin, $value)
     {
         $args = array(
@@ -180,6 +201,7 @@ class ConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
      * @dataProvider dataProviderGetPlatform
      * @param string $platform The value to test
      * @param string $expected What should be returned
+     * @covers ::getPlatform
      */
     public function testGetPlatform($platform, $expected)
     {
