@@ -562,7 +562,9 @@ $dictionary['Quote'] = array(
         ),
         'account_id' => array(
             'name' => 'account_id',
-            'type' => 'id',
+            'type' => 'relate',
+            'link' => 'billing_accounts',
+            'rname' => 'id',
             'group' => 'billing_address',
             'vname' => 'LBL_ACCOUNT_ID',
             'source' => 'non-db',
