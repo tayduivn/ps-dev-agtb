@@ -115,10 +115,10 @@ class AclCache
         $hash = md5(serialize($value));
         if (!isset($this->hashes[$userId][$key]) || $this->hashes[$userId][$key] !== $hash) {
             $this->hashes[$userId][$key] = $hash;
-            $this->cache->set(self::HASH_KEY, $this->hashes);
+            $this->cache->set(self::HASH_KEY, $this->hashes, 0);
         }
 
-        $this->cache->set($hash, $value, session_cache_expire());
+        $this->cache->set($hash, $value, session_cache_expire() * 60);
     }
 
     /**
