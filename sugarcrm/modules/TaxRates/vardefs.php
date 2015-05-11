@@ -13,62 +13,6 @@ $dictionary['TaxRate'] = array(
     'table' => 'taxrates',
     'favorites' => false,
     'fields' => array(
-        'id' => array(
-            'name' => 'id',
-            'vname' => 'LBL_ID',
-            'type' => 'id',
-            'required' => true,
-            'reportable' => false,
-        ),
-        'deleted' => array(
-            'name' => 'deleted',
-            'vname' => 'LBL_DELETED',
-            'type' => 'bool',
-            'reportable' => false,
-            'required' => false,
-        ),
-        'date_entered' => array(
-            'name' => 'date_entered',
-            'vname' => 'LBL_DATE_ENTERED',
-            'type' => 'datetime',
-            'required' => true,
-        ),
-        'date_modified' => array(
-            'name' => 'date_modified',
-            'vname' => 'LBL_DATE_MODIFIED',
-            'type' => 'datetime',
-            'required' => true,
-        ),
-        'modified_user_id' => array(
-            'name' => 'modified_user_id',
-            'rname' => 'user_name',
-            'id_name' => 'modified_user_id',
-            'vname' => 'LBL_MODIFIED_ID',
-            'type' => 'assigned_user_name',
-            'table' => 'users',
-            'isnull' => 'false',
-            'dbType' => 'id',
-            'reportable' => true,
-            'required' => false,
-        ),
-        'created_by' => array(
-            'name' => 'created_by',
-            'rname' => 'user_name',
-            'id_name' => 'modified_user_id',
-            'vname' => 'LBL_CREATED_ID',
-            'type' => 'assigned_user_name',
-            'table' => 'users',
-            'isnull' => 'false',
-            'dbType' => 'id'
-        ),
-        'name' => array(
-            'name' => 'name',
-            'vname' => 'LBL_NAME',
-            'type' => 'varchar',
-            'len' => '50',
-            'required' => true,
-            'importable' => 'required',
-        ),
         'value' => array(
             'name' => 'value',
             'vname' => 'LBL_VALUE',
@@ -105,9 +49,13 @@ $dictionary['TaxRate'] = array(
             'source' => 'non-db'
         )
     ),
-    'acls' => array('SugarACLDeveloperOrAdmin' => array('aclModule' => 'Quotes', 'allowUserRead' => true)),
-    'indices' => array(
-        array('name' => 'taxratespk', 'type' => 'primary', 'fields' => array('id')),
-        array('name' => 'idx_taxrates', 'type' => 'index', 'fields' => array('name', 'deleted')),
+    'acls' => array('SugarACLDeveloperOrAdmin' => array('aclModule' => 'Quotes', 'allowUserRead' => true))
+);
+
+VardefManager::createVardef(
+    'TaxRates',
+    'TaxRate',
+    array(
+        'default'
     )
 );
