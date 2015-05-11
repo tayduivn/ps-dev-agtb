@@ -632,6 +632,7 @@ $mod_strings = array (
     'LBL_SHOWOPTIONS' => 'Show Options',
 
     'LBL_FILTER_USERS_REPORTS' => 'Users\' reports',
+    'LBL_CONTACTS_SYNC' => 'Contacts',
 
 ); // END STRINGS DEFS
 
