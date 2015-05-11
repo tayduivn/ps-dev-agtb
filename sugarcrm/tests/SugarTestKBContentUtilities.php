@@ -59,6 +59,6 @@ class KBContentMock extends KBContent
 {
     public function resetActiveRevision()
     {
-        $this->resetActiveRev();
+        $this->resetActivRev();
     }
 }
