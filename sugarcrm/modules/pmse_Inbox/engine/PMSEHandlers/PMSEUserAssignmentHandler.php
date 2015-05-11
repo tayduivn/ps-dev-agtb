@@ -538,6 +538,9 @@ class PMSEUserAssignmentHandler
             } else {
                 $teamBean = $this->retrieveBean('Teams', $teamId);
                 $membersList = $teamBean->get_team_members(true);
+                usort($membersList, function ($a, $b) {
+                    return strcmp($a->full_name, $b->full_name);
+                });
             }
         }
         if (!empty($membersList)) {
