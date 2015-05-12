@@ -80,7 +80,7 @@ class ParserDropDown extends ModuleBuilderParser
             if (empty($contents)) $contents = "<?php";
 
             // Needed when upgrading from version < 7.6
-            if (empty($params['handleSpecialDropdowns'])) {
+            if (!empty($params['handleSpecialDropdowns'])) {
                 $dropdown = $this->saveExemptDropdowns($dropdown, $dropdown_name, $my_list_strings, $selected_lang);
             }
 
@@ -89,7 +89,7 @@ class ParserDropDown extends ModuleBuilderParser
                 //this is for handling moduleList and such where nothing should be deleted or anything but they can be renamed
                 foreach ($dropdown as $key=>$value) {
                     //only if the value has changed or does not exist do we want to add it this way
-                    if (!isset($my_list_strings[$dropdown_name][$key]) || (strcmp($my_list_strings[$dropdown_name][$key], $value) != 0 && !is_null($value)) ) {
+                    if (!isset($my_list_strings[$dropdown_name][$key]) || strcmp($my_list_strings[$dropdown_name][$key], $value) != 0 ) {
                         //clear out the old value
                         $pattern_match = '/\s*\$app_list_strings\s*\[\s*\''.$dropdown_name.'\'\s*\]\[\s*\''.$key.'\'\s*\]\s*=\s*[\'\"]{1}.*?[\'\"]{1};\s*/ism';
                         $contents = preg_replace($pattern_match, "\n", $contents);
@@ -108,14 +108,24 @@ class ParserDropDown extends ModuleBuilderParser
                 $contents = $this->getNewCustomContents($dropdown_name, $dropdown, $selected_lang);
             }
 
-            save_custom_app_list_strings_contents($contents, $selected_lang);
+            $this->saveContents($contents, $selected_lang);
         }
+        $this->finalize($selected_lang);
+    }
+
+    public function saveContents($contents, $lang)
+    {
+        save_custom_app_list_strings_contents($contents, $lang);
+    }
+
+    public function finalize($lang)
+    {
         sugar_cache_reset();
         sugar_cache_reset_full();
         clearAllJsAndJsLangFilesWithoutOutput();
 
         // Clear out the api metadata languages cache for selected language
-        MetaDataManager::refreshLanguagesCache($selected_lang);
+        MetaDataManager::refreshLanguagesCache($lang);
     }
 
     /**
@@ -223,7 +233,7 @@ class ParserDropDown extends ModuleBuilderParser
      *
      * @see getExemptDropdowns()
      */
-    private function saveExemptDropdowns($dropdown, $dropdownName, $myListStrings, $selectedLang)
+    public function saveExemptDropdowns($dropdown, $dropdownName, $myListStrings, $selectedLang)
     {
         // Handle special dropdown item removal
         if (in_array($dropdownName, getExemptDropdowns())) {
