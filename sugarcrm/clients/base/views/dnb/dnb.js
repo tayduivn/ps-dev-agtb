@@ -1824,7 +1824,7 @@
             self.context.loadData();
             _.each(app.controller.context.children, function(childContext) {
                 if (childContext.get('module') === 'Contacts') {
-                    childContext.reloadData(true);
+                    childContext.reloadData({recursive: false});
                 }
             });
         });

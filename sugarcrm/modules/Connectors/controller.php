@@ -494,7 +494,9 @@ class ConnectorsController extends SugarController {
 					       $GLOBALS['log']->fatal("Cannot write file {$dir}/mapping.php");
 					    }
                         $s = SourceFactory::getSource($id);
-                        $s->saveMappingHook($fakeMapping);
+                        if (isset($s)) {
+                            $s->saveMappingHook($fakeMapping);
+                        }
 		    	    } //if
 		    } //foreach
 

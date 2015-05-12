@@ -845,11 +845,8 @@ AdamEvent.prototype.createConfigureAction = function () {
         callback: null
     });
 
-    if (this.evn_type === 'START' && (this.evn_message === '' || this.evn_message === null)) {
-        changeModule = true;
-    } else {
-        changeModule = false;
-        switch (this.evn_message) {
+    changeModule = false;
+    switch (this.evn_message) {
         case 'Leads':
             initialValue = 'Leads';
             break;
@@ -859,7 +856,6 @@ AdamEvent.prototype.createConfigureAction = function () {
         case 'Documents':
             initialValue = 'Documents';
             break;
-        }
     }
 
     switch (this.evn_type) {
@@ -1073,6 +1069,9 @@ AdamEvent.prototype.createConfigureAction = function () {
                     required: true,
                     //related: 'beans',
                     name: 'evn_module',
+                    value: initialValue,
+                    initialValue: initialValue,
+                    readOnly: true,
                     label: translate('LBL_PMSE_FORM_LABEL_MODULE'),
                     proxy: new SugarProxy({
                         url: 'pmse_Project/CrmData/modules',
@@ -1190,7 +1189,7 @@ AdamEvent.prototype.createConfigureAction = function () {
                             success: function(params) {
                                 if (params && params.result) {
                                     ddlModules.setOptions(params.result);
-                                    ddlModules.setValue(data.evn_module || ((params.result[0] && params.result[0].value) || null));
+                                    ddlModules.setValue(data.evn_module || PROJECT_MODULE);
                                 }
 
                                 ddlEmailTemplate.proxy.uid = ddlModules.value;
@@ -1680,6 +1679,8 @@ AdamEvent.prototype.createConfigureAction = function () {
                 required: true,
                 //related: 'beans',
                 name: 'evn_module',
+                initialValue: initialValue,
+                readOnly: true,
                 label: translate('LBL_PMSE_FORM_LABEL_MODULE'),
                 proxy: new SugarProxy({
                     url: 'pmse_Project/CrmData/modules',
