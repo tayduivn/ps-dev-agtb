@@ -11,13 +11,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
-require_once('tests/rest/RestTestBase.php');
+require_once 'modules/Forecasts/clients/base/api/ForecastsApi.php';
 
 /***
  * Used to test Forecast Module endpoints
+ * @coversDefaultClass ForecastsApi
  */
-class ForecastsRestApiTest extends RestTestBase
+class ForecastsRestApiTest extends Sugar_PHPUnit_Framework_TestCase
 {
     private static $currentUser;
     private static $employee1;
@@ -63,6 +63,15 @@ class ForecastsRestApiTest extends RestTestBase
         parent::tearDown();
     }
 
+    public function setUp()
+    {
+        //Create an anonymous user for login purposes/
+        $this->_user = SugarTestUserUtilities::createAnonymousUser();
+        $GLOBALS['current_user'] = $this->_user;
+        // call a commit for transactional dbs
+        $GLOBALS['db']->commit();
+    }
+
     //Override tearDown so we don't lose current user settings
     public function tearDown()
     {
@@ -70,122 +79,26 @@ class ForecastsRestApiTest extends RestTestBase
     }
 
     /**
-     * This test is to make sure Forecasts/init endpoint returns an showOpps property
-     * @group forecastapi
-     * @group forecasts
-     */
-    public function testCheckForecastSpecificShowOpps()
-    {
-        $this->markTestIncomplete('Move Rest tests to SOAP UI');
-
-        $restReply = $this->_restCall("Forecasts/init");
-        $userData = $restReply['reply']['initData']['userData'];
-        $this->assertArrayHasKey('showOpps', $userData, "Forecasts/init did not return showOpps");
-    }
-
-    /**
-     * This test is to make sure Forecasts/ returns an empty set
-     * @group forecastapi
-     * @group forecasts
-     */
-    public function testCheckFavorites()
-    {
-        $this->markTestIncomplete('Move Rest tests to SOAP UI');
-
-        $restReply = $this->_restCall("Forecasts");
-        $this->assertEquals(count($restReply['reply']['records']),0);
-    }
-
-    /**
-     * This test is to make sure forecast filter requests with tracker return an empty set
-     * @group forecastapi
-     * @group forecasts
-     */
-    public function testCheckTrackFilter()
-    {
-        $this->markTestIncomplete('Move Rest tests to SOAP UI');
-
-        $body = json_encode(array(
-            'filter' => array(
-                '$tracker' => '-7 DAY'
-            )
-        ));
-        $restReply = $this->_restCall("Forecasts/filter", $body, 'POST');
-        $this->assertEquals(count($restReply['reply']['records']),0);
-    }
-
-    /**
-     * This test is to make sure Forecasts/init endpoint returns an first_name property
-     * @group forecastapi
-     * @group forecasts
-     */
-    public function testCheckForecastSpecificFirstName()
-    {
-        $this->markTestIncomplete('Move Rest tests to SOAP UI');
-
-        $restReply = $this->_restCall("Forecasts/init");
-        $userData = $restReply['reply']['initData']['userData'];
-        $this->assertArrayHasKey('first_name', $userData, "Forecasts/init did not return first_name");
-    }
-
-    /**
-     * This test is to make sure Forecasts/init endpoint returns an last_name property
-     * @group forecastapi
-     * @group forecasts
-     */
-    public function testCheckForecastSpecificLastName()
-    {
-        $this->markTestIncomplete('Move Rest tests to SOAP UI');
-
-        $restReply = $this->_restCall("Forecasts/init");
-        $userData = $restReply['reply']['initData']['userData'];
-        $this->assertArrayHasKey('last_name', $userData, "Forecasts/init did not return last_name");
-    }
-
-    /**
      * This test is to see that the data returned for the name field is set correctly when locale name format changes
      *
      * @group testGetLocaleFormattedName
      * @group forecastapi
      * @group forecasts
-     */
-    public function testGetLocaleFormattedNameUserEndpoint()
-    {
-        $this->markTestIncomplete('Move Rest tests to SOAP UI');
-
-        global $locale;
-        $defaultPreference = $this->_user->getPreference('default_locale_name_format');
-        $this->_user->setPreference('default_locale_name_format', 'l, f', 0, 'global');
-        $this->_user->savePreferencesToDB();
-        $this->_user->reloadPreferences();
-        $restReply = $this->_restCall("Forecasts/user/" . self::$currentUser->id);
-        $expectedData = $locale->formatName(self::$currentUser);
-        $this->assertEquals($expectedData, $restReply['reply']['full_name']);
-        $this->_user->setPreference('default_locale_name_format', $defaultPreference, 0, 'global');
-        $this->_user->savePreferencesToDB();
-        $this->_user->reloadPreferences();
-    }
-
-    /**
-     * This test is to see that the data returned for the name field is set correctly when locale name format changes
-     *
-     * @group testGetLocaleFormattedName
-     * @group forecastapi
-     * @group forecasts
+     * @covers ::getReportees
      */
     public function testGetLocaleFormattedNameReporteesEndpoint()
     {
-        $this->markTestIncomplete('Move Rest tests to SOAP UI');
-
         global $locale;
-        $db = DBManagerFactory::getInstance();
         $defaultPreference = $this->_user->getPreference('default_locale_name_format');
         $this->_user->setPreference('default_locale_name_format', 'l, f', 0, 'global');
         $this->_user->savePreferencesToDB();
         $this->_user->reloadPreferences();
-        $restReply = $this->_restCall("Forecasts/reportees/" . self::$currentUser->id);
+
+        $api = new ForecastsApi();
+        $restReply = $api->getReportees(SugarTestRestUtilities::getRestServiceMock(), array('user_id' => self::$currentUser->id));
+
         $expectedData = $locale->formatName(self::$currentUser);
-        $this->assertEquals($expectedData, $restReply['reply']['data']);
+        $this->assertEquals($expectedData, $restReply['data']);
         $this->_user->setPreference('default_locale_name_format', $defaultPreference, 0, 'global');
         $this->_user->savePreferencesToDB();
         $this->_user->reloadPreferences();
@@ -195,19 +108,21 @@ class ForecastsRestApiTest extends RestTestBase
      *
      * @group forecastapi
      * @group forecasts
+     * @covers ::getReportees
      */
     public function testReportees()
     {
-        $this->markTestIncomplete('Move Rest tests to SOAP UI');
 
-        $restReply = $this->_restCall("Forecasts/reportees/" . self::$currentUser->id."?level=-1");
-        $this->assertEquals($restReply['reply']['metadata']['id'], self::$currentUser->id, "currentUser's id was not found in the Expected place in the rest reply" );
+        $api = new ForecastsApi();
+        $restReply = $api->getReportees(SugarTestRestUtilities::getRestServiceMock(), array('user_id' => self::$currentUser->id, 'level' => '4'));
+
+        $this->assertEquals($restReply['metadata']['id'], self::$currentUser->id, "currentUser's id was not found in the Expected place in the rest reply" );
 
         // get the user ids from first, second, and third levels
         $firstLevel = array();
         $secondLevel = array();
         $thirdLevel = array();
-        foreach($restReply['reply']['children'] as $level1Child ) {
+        foreach($restReply['children'] as $level1Child ) {
             array_push($firstLevel, $level1Child['metadata']['id']);
             foreach($level1Child['children'] as $level2Child) {
                 $secondLevel[] = $level2Child['metadata']['id'];
@@ -229,23 +144,21 @@ class ForecastsRestApiTest extends RestTestBase
      *
      * @group forecastapi
      * @group forecasts
+     * @covers ::getReportees
      */
     public function testDeletedReportees()
     {
-        $this->markTestIncomplete('Move Rest tests to SOAP UI');
-
-        $db = DBManagerFactory::getInstance();
-
         // delete one user for this test
         self::$employee2->deleted = 1;
         self::$employee2->save();
         $GLOBALS['db']->commit();
 
-        $restReply = $this->_restCall("Forecasts/reportees/" . self::$currentUser->id);
+        $api = new ForecastsApi();
+        $restReply = $api->getReportees(SugarTestRestUtilities::getRestServiceMock(), array('user_id' => self::$currentUser->id));
 
         $fullNames = array();
 
-        foreach($restReply['reply']['children'] as $children ) {
+        foreach($restReply['children'] as $children ) {
             array_push($fullNames, $children['data']);
         }
 
@@ -255,33 +168,6 @@ class ForecastsRestApiTest extends RestTestBase
         self::$employee2->deleted = 0;
         self::$employee2->save();
         $GLOBALS['db']->commit();
-    }
-
-
-    /**
-     * Test the timeperiods and that we don't return any fiscal year timeperiods
-     *
-     * @group forecastapi
-     * @group forecasts
-     */
-    public function testTimeperiods()
-    {
-        $this->markTestIncomplete('Move Rest tests to SOAP UI');
-
-        $restReply = $this->_restCall("Forecasts/timeperiod/");
-        $db = DBManagerFactory::getInstance();
-        $fiscal_timeperiods = array();
-
-        $result = $db->query('SELECT id, name FROM timeperiods WHERE is_fiscal_year = 1 AND deleted=0');
-        while(($row = $db->fetchByAssoc($result)))
-        {
-            $fiscal_timeperiods[$row['id']]=$row['name'];
-        }
-
-        foreach($fiscal_timeperiods as $id=>$ftp)
-        {
-            $this->assertArrayNotHasKey($id, $restReply['reply'], "filter contains ". $ftp['name'] . " fiscal timeperiod");
-        }
     }
 
 }
