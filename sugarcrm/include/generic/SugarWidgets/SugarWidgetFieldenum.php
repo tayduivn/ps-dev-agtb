@@ -35,8 +35,9 @@ class SugarWidgetFieldEnum extends SugarWidgetReportField
 	}
 
 	public function queryFilteris_not($layout_def) {
-        $input_name0 = $this->getInputValue($layout_def);
-		return $this->_get_column_select($layout_def)." <> ".$this->reporter->db->quoted($input_name0)."\n";
+        $input_name0 = $this->reporter->db->quoted($this->getInputValue($layout_def));
+        $field_name = $this->_get_column_select($layout_def);
+        return "{$field_name} <> {$input_name0} OR ({$field_name} IS NULL AND {$input_name0} IS NOT NULL)";
 	}
 
 	public function queryFilterone_of($layout_def) {
