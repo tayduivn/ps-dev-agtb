@@ -169,8 +169,6 @@ $mod_strings = array(
 
     'LBL_QUOTED' => 'Quoted',
     'LBL_NOT_QUOTED' => 'Not Quoted',
-    'WARNING_DELETED_RECORD_RECOMMIT_1' => 'This record was included in a ',
-    'WARNING_DELETED_RECORD_RECOMMIT_2' => 'It will be removed and you will need to re-commit your ',
     'WARNING_DELETED_RECORD_LIST_RECOMMIT_1' => 'One or more records were included in a ',
     'WARNING_DELETED_RECORD_LIST_RECOMMIT_2' => 'They will be removed and you will need to re-commit your ',
     'WARNING_MERGE_RLIS_WITH_DIFFERENT_OPPORTUNITIES' => 'One or more of the records you\'ve selected can not be merged together as they belong to different Opportunities',

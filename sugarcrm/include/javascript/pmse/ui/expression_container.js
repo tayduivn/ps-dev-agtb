@@ -301,6 +301,15 @@ ExpressionContainer.prototype.handleCriteriaBuilder = function (globalParent, pa
                             moduleValueField: "moduleValue"
                         }
                     });
+                    if (parentVariable.variableMode === 'conclusion' && !parentVariable.isReturnType
+                        && parentVariable.fieldType === 'email') {
+                        config.variables.typeFilter = function (type, data) {
+                            if (parentVariable.fieldType !== type) {
+                                return false;
+                            }
+                            return data.value !== 'email1'
+                        };
+                    }
                     break;
                 case 'Integer':
                 case 'Currency':

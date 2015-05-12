@@ -344,5 +344,5 @@
         this.defaultActionBtn = null;
         this.dropdownFields = null;
         this._super('_dispose');
-    },
+    }
 })

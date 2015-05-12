@@ -5,10 +5,7 @@
         }
     }
     #searchForm {
-        .typeahead {
-            top: 14px;
-            width: auto;
-        }
+        padding: 8px 6px;
         .quicksearch-button-wrapper {
             top: -7px;
             right: 0px;
@@ -18,6 +15,33 @@
                 .btn .fa-search {
                     color: @grayLight;
                 }
+            }
+        }
+        // Needed by firefox because of navbar table-layout
+        .typeahead-wrapper {
+            position: relative;
+        }
+        // Typeahead UL
+        .typeahead {
+            .border-radius(@baseBorderRadius);
+            overflow: hidden;
+            right: 0;
+            left: 0;
+            top: 10px;
+            width: auto;
+            height: auto;
+            max-height: 333px;
+            li > a,
+            li.no-results {
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+            }
+        }
+        [data-action=search] {
+            background: none;
+            .fa-search {
+                color: @grayLight;
             }
         }
     }

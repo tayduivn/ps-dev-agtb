@@ -19,6 +19,14 @@
     /**
      * @inheritdoc
      */
+    initialize: function(options) {
+        this.plugins = _.union(this.plugins || [], ['CommittedDeleteWarning']);
+        this._super("initialize", [options]);
+    },
+
+    /**
+     * @inheritdoc
+     */
     parseFieldMetadata: function(options) {
         options = this._super('parseFieldMetadata', [options]);
 

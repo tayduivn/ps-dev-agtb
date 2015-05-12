@@ -149,6 +149,7 @@ EOQ;
 
     public function testModifyDisplayChanges()
     {
+        $this->markTestSkipped("This test needs to be turned into a unit test");
         $module = 'Accounts';
 
         //Now call the code that will add the mapping fields
@@ -181,7 +182,7 @@ EOQ;
             $this->testRemoveHoverLinksInViewDefs();
         } else {
             // Failed because we couldn't create the custom file.
-            $this->assertTrue(false);
+            $this->assertTrue(false, "No custom file found");
         }
     }
 }

@@ -43,6 +43,7 @@
     * Listen for status change - set color coding appropriately
     */
     bindDataChange: function() {
+        this._super('bindDataChange');
         this.model.on('change:status', this.setColorCoding, this);
     },
 

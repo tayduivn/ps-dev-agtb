@@ -102,7 +102,7 @@ class KBContentsTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertInternalType('object', $joinSugarQuery);
     }
 
-    public function testResetActiveRev()
+    public function testResetActivRev()
     {
         $this->assertEquals($this->bean->active_rev, 1);
 

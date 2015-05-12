@@ -31,9 +31,13 @@ fixtures.metadata.currencies = {
         conversion_rate: "0.9",
         iso4217: "EUR"
     }
-}
+};
+
 describe("RevenueLineItems.Base.View.Record", function() {
-    var app, view, options;
+    var app,
+        layout,
+        view,
+        options;
 
     beforeEach(function() {
         options = {
@@ -52,10 +56,12 @@ describe("RevenueLineItems.Base.View.Record", function() {
 
         app = SugarTest.app;
         SugarTest.seedMetadata(true, './fixtures');
+        SugarTest.loadPlugin('CommittedDeleteWarning');
         app.user.setPreference('decimal_precision', 2);
         SugarTest.loadComponent('base', 'view', 'record');
 
-        view = SugarTest.createView('base', 'RevenueLineItems', 'record', options.meta, null, true);
+        layout = SugarTest.createLayout('base', 'RevenueLineItems', 'record', {});
+        view = SugarTest.createView('base', 'RevenueLineItems', 'record', options.meta, null, true, layout);
     });
 
     describe('_handleDuplicateBefore', function() {

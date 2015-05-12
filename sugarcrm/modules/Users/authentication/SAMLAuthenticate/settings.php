@@ -23,7 +23,7 @@ $settings->spIssuer                         = isset($GLOBALS['sugar_config']['SA
 $settings->requestedNameIdFormat = OneLogin_Saml_Settings::NAMEID_EMAIL_ADDRESS;
 
 // Should new users be provisioned?
-$settings->provisionUsers = true;
+$settings->provisionUsers = isset($GLOBALS['sugar_config']['SAML_provisionUser']) ? $GLOBALS['sugar_config']['SAML_provisionUser'] : true;
 
 // Available settings other than above:
 // id - way of matching users: user_name, id. If not set, matched by email.

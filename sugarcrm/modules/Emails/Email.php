@@ -755,7 +755,7 @@ class Email extends SugarBean {
                                 // only save attachments if we're archiving or drafting
                                 if ((($this->type == 'draft') && !empty($this->id)) || (isset($request['saveToSugar']) && $request['saveToSugar'] == 1)) {
                                     if ($note->parent_id != $this->id) {
-                                        $this->saveTempNoteAttachments($filename, $fileLocation, $mime_type);
+                                        $this->saveTempNoteAttachments($filename, $fileLocation, $mime_type, $noteGUID);
                                     }
                                 } // if
                             } // if
@@ -1087,7 +1087,7 @@ class Email extends SugarBean {
 	 * @param string $fileLocation
 	 * @param string $mimeType
 	 */
-	function saveTempNoteAttachments($filename,$fileLocation, $mimeType)
+	function saveTempNoteAttachments($filename,$fileLocation, $mimeType, $uploadId = null)
 	{
 	    $tmpNote = BeanFactory::getBean('Notes');
 	    $tmpNote->id = create_guid();
@@ -1099,10 +1099,17 @@ class Email extends SugarBean {
 	    $tmpNote->file_mime_type = $mimeType;
 	    $tmpNote->team_id = $this->team_id;
 	    $tmpNote->team_set_id = $this->team_set_id;
-	    $noteFile = "upload://{$tmpNote->id}";
-        if(!file_exists($fileLocation) || (!copy($fileLocation, $noteFile))) {
-    	    $GLOBALS['log']->fatal("EMAIL 2.0: could not copy SugarDocument revision file $fileLocation => $noteFile");
-	    }
+        if (!empty($uploadId)) {
+            // do not duplicate actual file
+            $uploadNote = BeanFactory::getBean('Notes', $uploadId);
+            $tmpNote->upload_id = $uploadNote->getUploadId();
+        }
+        else {
+            $noteFile = "upload://{$tmpNote->id}";
+            if(!file_exists($fileLocation) || (!copy($fileLocation, $noteFile))) {
+                $GLOBALS['log']->fatal("EMAIL 2.0: could not copy SugarDocument revision file $fileLocation => $noteFile");
+            }
+        }
 	    $tmpNote->save();
         return $tmpNote;
 	}
@@ -1329,6 +1336,22 @@ class Email extends SugarBean {
         $this->loadAdditionalEmailData();
 
         return $row;
+    }
+
+    /**
+     * This marks an item as deleted.
+     *
+     * @param $id String id of the record to be marked as deleted.
+     */
+    public function mark_deleted($id)
+    {
+        $q = "UPDATE emails_text SET deleted = 1 WHERE email_id = '{$id}'";
+        $this->db->query($q);
+
+        $q = "UPDATE folders_rel SET deleted = 1 WHERE polymorphic_id = '{$id}' AND polymorphic_module = 'Emails'";
+        $this->db->query($q);
+
+        parent::mark_deleted($id);
     }
 
 	function delete($id='') {
@@ -3062,7 +3085,8 @@ eoq;
 	        // ensure the image is in the cache
             sugar_mkdir(sugar_cached("images/"));
 			$imgfilename = sugar_cached("images/")."$noteId.".strtolower($subtype);
-			$src = "upload://$noteId";
+			$note = BeanFactory::getBean('Notes', $noteId);
+			$src = "upload://".$note->getUploadId();
 			if(!file_exists($imgfilename) && file_exists($src)) {
 				copy($src, $imgfilename);
 			}

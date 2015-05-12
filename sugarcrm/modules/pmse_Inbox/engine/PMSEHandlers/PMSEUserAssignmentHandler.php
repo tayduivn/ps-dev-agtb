@@ -496,12 +496,10 @@ class PMSEUserAssignmentHandler
 
     /**
      * Get the user list of assignable users
-     * @global type $current_user
-     * @param type $caseId
-     * @param type $caseIndex
-     * @param type $fullList
-     * @param type $type
-     * @return type
+     * @param $beanFlow
+     * @param bool $fullList
+     * @param string $type
+     * @return array
      */
     public function getAssignableUserList($beanFlow, $fullList = false, $type = 'ADHOC')
     {
@@ -513,7 +511,7 @@ class PMSEUserAssignmentHandler
             $reassignedUsers = $this->getReassignedUserList($beanFlow->cas_id, $beanFlow->bpmn_id, $beanFlow->bpmn_type,
                 $beanFlow->cas_reassign_level);
         }
-        $activityDefinition = $this->retrieveBean('pmse_BpmActivityDefinition'); //new BpmActivityDefinition();
+        $activityDefinition = $this->retrieveBean('pmse_BpmActivityDefinition');
         $memberList = array();
         if ($beanFlow->bpmn_type == 'bpmnActivity') {
             $activityDefinition->retrieve_by_string_fields(array('id' => $beanFlow->bpmn_id));
@@ -538,15 +536,20 @@ class PMSEUserAssignmentHandler
                     }
                 }
             } else {
-                $member = $this->retrieveBean('TeamMemberships');
-                $membersList = $member->get_full_list("", "team_id='$teamId'");
+                $teamBean = $this->retrieveBean('Teams', $teamId);
+                $membersList = $teamBean->get_team_members(true);
+                usort($membersList, function ($a, $b) {
+                    return strcmp($a->full_name, $b->full_name);
+                });
             }
         }
         if (!empty($membersList)) {
             foreach ($membersList as $member) {
                 if (!in_array($member->user_id, $reassignedUsers)) {
-                    $user = $this->retrieveBean('Users', $member->user_id);
-                    $assignableUsers[] = $user;
+                    $user = $this->retrieveBean('Users', $member->id);
+                    if (!empty($user)) {
+                        $assignableUsers[] = $user;
+                    }
                 }
             }
         }
