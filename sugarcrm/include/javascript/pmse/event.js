@@ -1117,8 +1117,7 @@ AdamEvent.prototype.createConfigureAction = function () {
                         name: 'address_to',
                         required: true,
                         submit: false,
-                        fieldWidth: 250,
-                        fieldHeight: 50,
+                        fieldWidth: 350,
                         change: hiddenFn,
                         suggestionItemName: 'fullName',
                         suggestionItemAddress: 'emailAddress',
@@ -1132,8 +1131,7 @@ AdamEvent.prototype.createConfigureAction = function () {
                         name: 'address_cc',
                         required: false,
                         submit: false,
-                        fieldWidth: 250,
-                        fieldHeight: 50,
+                        fieldWidth: 350,
                         change: hiddenFn,
                         suggestionItemName: 'fullName',
                         suggestionItemAddress: 'emailAddress',
@@ -1147,8 +1145,7 @@ AdamEvent.prototype.createConfigureAction = function () {
                         name: 'address_bcc',
                         required: false,
                         submit: false,
-                        fieldWidth: 250,
-                        fieldHeight: 50,
+                        fieldWidth: 350,
                         change: hiddenFn,
                         suggestionItemName: 'fullName',
                         suggestionItemAddress: 'emailAddress',
@@ -1159,10 +1156,10 @@ AdamEvent.prototype.createConfigureAction = function () {
                     hiddenParams
                 ];
                 wHeight = 380;
-                wWidth = 500;
+                wWidth = 600;
                 callback = {
                     loaded: function (data) {
-                        var params = null, i, emailPickerFields = [], dataSource;
+                        var params = null, i, emailPickerFields = [], dataSource, auxProxy;
                         root.canvas.emptyCurrentSelection();
                         if (data && data.evn_params) {
                             try {
@@ -1188,24 +1185,6 @@ AdamEvent.prototype.createConfigureAction = function () {
                                 }
                             }
                         }
-
-                        /*dataSource = project.getMetadata('targetModuleFieldsDataSource');
-                        dataSource.url = dataSource.url.replace("{MODULE}", PROJECT_MODULE);
-                        dataSource = project.addMetadata("targetModuleFields", {
-                          dataURL: dataSource.url,
-                          dataRoot: dataSource.root,
-                          success: function (data) {
-                            f.items[2].setVariables({
-                              data: data
-                            });
-                            f.items[3].setVariables({
-                              data: data
-                            });
-                            f.items[4].setVariables({
-                              data: data
-                            });
-                          }
-                        });*/
 
                         ddlModules.proxy.getData(null, {
                             success: function(params) {
@@ -1239,7 +1218,7 @@ AdamEvent.prototype.createConfigureAction = function () {
                                 var i;
                                 if(emailPickerFields.length) {
                                     for (i = 0; i < emailPickerFields.length; i += 1) {
-                                        f.items[emailPickerFields[i]].setTeamNameField("text");
+                                        f.items[emailPickerFields[i]].setTeamTextField("text");
                                         f.items[emailPickerFields[i]].setTeams(data);
                                     }
                                 } else {
@@ -1248,13 +1227,64 @@ AdamEvent.prototype.createConfigureAction = function () {
                                         case 'address_to':
                                         case 'address_cc':
                                         case 'address_bcc':
-                                            f.items[i].setTeamNameField("text");
+                                            f.items[i].setTeamTextField("text");
                                             f.items[i].setTeams(data);
                                             break;
                                         }
                                     }
                                 }
 
+                            }
+                        });
+
+                        project.addMetadata("roles", {
+                            dataURL: 'pmse_Project/CrmData/rolesList',
+                            dataRoot: "result",
+                            success: function (data) {
+                                var i;
+                                if (emailPickerFields.length) {
+                                    for (i = 0; i < emailPickerFields.length; i += 1) {
+                                        f.items[emailPickerFields[i]].setRoleTextField("text");
+                                        f.items[emailPickerFields[i]].setRoles(data);
+                                    }
+                                } else {
+                                    for (i = 0; i < f.items.length; i += 1) {
+                                        switch (f.items[i].name) {
+                                        case 'address_to':
+                                        case 'address_cc':
+                                        case 'address_bcc':
+                                            f.items[i].setRoleTextField("text");
+                                            f.items[i].setRoles(data);
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        });
+
+                        auxProxy = new SugarProxy({
+                            url: 'pmse_Project/CrmData/related/' + PROJECT_MODULE
+                        });
+                        auxProxy.getData({cardinality: 'one'}, {
+                            success: function (data) {
+                                var i;
+                                data = data.result;
+                                data.unshift({value: "", text: "Select..."});
+                                if (emailPickerFields.length) {
+                                    for (i = 0; i < emailPickerFields.length; i += 1) {
+                                        f.items[emailPickerFields[i]].setModules(data);
+                                    }
+                                } else {
+                                    for (i = 0; i < f.items.length; i += 1) {
+                                        switch (f.items[i].name) {
+                                        case 'address_to':
+                                        case 'address_cc':
+                                        case 'address_bcc':
+                                            f.items[i].setModules(data);
+                                            break;
+                                        }
+                                    }
+                                }
                             }
                         });
                     },
@@ -1637,13 +1667,10 @@ AdamEvent.prototype.createConfigureAction = function () {
         if (this.evn_marker === 'MESSAGE') {
             ddlEmailTemplate = new ComboboxField({
                 jtype: 'combobox',
-                //required: true,
-                //related: 'templates',
                 name: 'evn_criteria',
                 label: translate('LBL_PMSE_FORM_LABEL_EMAIL_TEMPLATE'),
                 proxy: new SugarProxy({
-                    url: 'pmse_Project/CrmData/emailtemplates/',
-                    //restClient: this.canvas.project.restClient,
+                    url: 'pmse_Project/CrmData/emailtemplates',
                     uid: "",
                     callback: null
                 })
@@ -1655,7 +1682,7 @@ AdamEvent.prototype.createConfigureAction = function () {
                 name: 'evn_module',
                 label: translate('LBL_PMSE_FORM_LABEL_MODULE'),
                 proxy: new SugarProxy({
-                    url: 'pmse_Project/CrmData/modules/',
+                    url: 'pmse_Project/CrmData/modules',
                     //restClient: this.canvas.project.restClient,
                     uid: "",
                     callback: null
@@ -1665,10 +1692,9 @@ AdamEvent.prototype.createConfigureAction = function () {
                     ddlEmailTemplate.proxy.url = 'pmse_Project/CrmData/emailtemplates/' + this.value;
                     ddlEmailTemplate.removeOptions();
                     aTemplate = [{'text': translate('LBL_PMSE_FORM_OPTION_SELECT'), 'value': ''}];
-                    emailTemplates = ddlEmailTemplate.proxy.getData(null,{
-                        success: function(emailTemplates) {
+                    ddlEmailTemplate.proxy.getData(null, {
+                        success: function (emailTemplates) {
                             aTemplate = aTemplate.concat(emailTemplates.result);
-                            //if(emailTemplates && emailTemplates.success) {
                             ddlEmailTemplate.setOptions(aTemplate);
                         }
                     });
@@ -1679,14 +1705,9 @@ AdamEvent.prototype.createConfigureAction = function () {
             hiddenParams = new HiddenField({name: 'evn_params'});
             hiddenFn = function () {
                 var parentForm = this.parent, address = {};
-
-                //address['to'] = parentForm.items[2].getObject();
-                //address['cc'] = parentForm.items[3].getObject();
-                //address['bcc'] = parentForm.items[4].getObject();
                 address.to = parentForm.items[2].getObject();
                 address.cc = parentForm.items[3].getObject();
                 address.bcc = parentForm.items[4].getObject();
-
                 hiddenParams.setValue(JSON.stringify(address));
             };
             items = [
@@ -1698,8 +1719,7 @@ AdamEvent.prototype.createConfigureAction = function () {
                     name: 'address_to',
                     required: true,
                     submit: false,
-                    fieldWidth: 250,
-                    fieldHeight: 50,
+                    fieldWidth: 350,
                     change: hiddenFn,
                     suggestionItemName: 'fullName',
                     suggestionItemAddress: 'emailAddress',
@@ -1707,15 +1727,13 @@ AdamEvent.prototype.createConfigureAction = function () {
                     suggestionDataRoot: "result",
                     teams: project.getMetadata('teams') || []
                 },
-
                 {
                     jtype: 'emailpicker',
                     label: translate('LBL_PMSE_FORM_LABEL_EMAIL_CC'),
                     name: 'address_cc',
                     required: false,
                     submit: false,
-                    fieldWidth: 250,
-                    fieldHeight: 50,
+                    fieldWidth: 350,
                     change: hiddenFn,
                     suggestionItemName: 'fullName',
                     suggestionItemAddress: 'emailAddress',
@@ -1729,8 +1747,7 @@ AdamEvent.prototype.createConfigureAction = function () {
                     name: 'address_bcc',
                     required: false,
                     submit: false,
-                    fieldWidth: 250,
-                    fieldHeight: 50,
+                    fieldWidth: 350,
                     change: hiddenFn,
                     suggestionItemName: 'fullName',
                     suggestionItemAddress: 'emailAddress',
@@ -1741,39 +1758,39 @@ AdamEvent.prototype.createConfigureAction = function () {
                 hiddenParams
             ];
             wHeight = 380;
-            wWidth = 500;
+            wWidth = 600;
             callback = {
                 loaded: function (data) {
-                    var params = null, i;
+                    var params = null, i, emailPickerFields = [], dataSource, auxProxy;
                     root.canvas.emptyCurrentSelection();
                     if (data && data.evn_params) {
                         try {
                             params = JSON.parse(data.evn_params);
-                        } catch (e) {}
+                        } catch (e) {
+                        }
                         if (params) {
                             hiddenParams.setValue(data.evn_params);
                             for (i = 0; i < f.items.length; i += 1) {
                                 switch (f.items[i].name) {
-                                case 'address_to':
-                                    //f.items[i].setValue(params.to.join(', '));
-                                    f.items[i].setValue(params.to);
-                                    break;
-                                case 'address_cc':
-                                    //f.items[i].setValue(params.cc.join(', '));
-                                    f.items[i].setValue(params.cc);
-                                    break;
-                                case 'address_bcc':
-                                    //f.items[i].setValue(params.bcc.join(', '));
-                                    f.items[i].setValue(params.bcc);
-                                    break;
+                                    case 'address_to':
+                                        f.items[i].setValue(params.to);
+                                        emailPickerFields.push(i);
+                                        break;
+                                    case 'address_cc':
+                                        f.items[i].setValue(params.cc);
+                                        emailPickerFields.push(i);
+                                        break;
+                                    case 'address_bcc':
+                                        f.items[i].setValue(params.bcc);
+                                        emailPickerFields.push(i);
+                                        break;
                                 }
                             }
                         }
                     }
 
                     ddlModules.proxy.getData(null, {
-                        success: function(params)
-                        {
+                        success: function (params) {
                             if (params && params.result) {
                                 ddlModules.setOptions(params.result);
                                 ddlModules.setValue(data.evn_module || ((params.result[0] && params.result[0].value) || null));
@@ -1782,7 +1799,7 @@ AdamEvent.prototype.createConfigureAction = function () {
                             ddlEmailTemplate.proxy.uid = ddlModules.value;
                             ddlEmailTemplate.proxy.url = 'pmse_Project/CrmData/emailtemplates/' + ddlModules.value;
                             aTemplate = [{'text': translate('LBL_PMSE_FORM_OPTION_SELECT'), 'value': ''}];
-                            ddlEmailTemplate.proxy.getData( null, {
+                            ddlEmailTemplate.proxy.getData(null, {
                                 success: function(params) {
                                     aTemplate = aTemplate.concat(params.result);
                                     ddlEmailTemplate.setOptions(aTemplate);
@@ -1793,10 +1810,88 @@ AdamEvent.prototype.createConfigureAction = function () {
                                     w.html.style.display = 'inline';
                                 }
                             });
+                        }
+                    });
+
+                    //We load the teams
+                    project.addMetadata("teams", {
+                        dataURL: project.getMetadata("teamsDataSource").url,
+                        dataRoot: project.getMetadata("teamsDataSource").root,
+                        success: function (data) {
+                            var i;
+                            if (emailPickerFields.length) {
+                                for (i = 0; i < emailPickerFields.length; i += 1) {
+                                    f.items[emailPickerFields[i]].setTeamTextField("text");
+                                    f.items[emailPickerFields[i]].setTeams(data);
+                                }
+                            } else {
+                                for (i = 0; i < f.items.length; i += 1) {
+                                    switch (f.items[i].name) {
+                                        case 'address_to':
+                                        case 'address_cc':
+                                        case 'address_bcc':
+                                            f.items[i].setTeamTextField("text");
+                                            f.items[i].setTeams(data);
+                                            break;
+                                    }
+                                }
+                            }
 
                         }
                     });
 
+                    project.addMetadata("roles", {
+                        dataURL: 'pmse_Project/CrmData/rolesList',
+                        dataRoot: "result",
+                        success: function (data) {
+                            var i;
+                            if (emailPickerFields.length) {
+                                for (i = 0; i < emailPickerFields.length; i += 1) {
+                                    f.items[emailPickerFields[i]].setRoleTextField("text");
+                                    f.items[emailPickerFields[i]].setRoles(data);
+                                }
+                            } else {
+                                for (i = 0; i < f.items.length; i += 1) {
+                                    switch (f.items[i].name) {
+                                        case 'address_to':
+                                        case 'address_cc':
+                                        case 'address_bcc':
+                                            f.items[i].setRoleTextField("text");
+                                            f.items[i].setRoles(data);
+                                            break;
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+                    auxProxy = new SugarProxy({
+                        url: 'pmse_Project/CrmData/related/' + PROJECT_MODULE
+                    });
+                    auxProxy.getData({cardinality: 'one'}, {
+                        success: function (data) {
+                            var i;
+                            data = data.result;
+                            data.unshift({value: "", text: "Select..."});
+                            if (emailPickerFields.length) {
+                                for (i = 0; i < emailPickerFields.length; i += 1) {
+                                    f.items[emailPickerFields[i]].setModules(data);
+                                }
+                            } else {
+                                for (i = 0; i < f.items.length; i += 1) {
+                                    switch (f.items[i].name) {
+                                        case 'address_to':
+                                        case 'address_cc':
+                                        case 'address_bcc':
+                                            f.items[i].setModules(data);
+                                            break;
+                                    }
+                                }
+                            }
+                        }
+                    });
+                },
+                submit: function (data) {
 
                 }
             };

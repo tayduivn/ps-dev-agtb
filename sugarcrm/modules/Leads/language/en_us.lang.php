@@ -205,6 +205,7 @@ $mod_strings = array (
     'LBL_CAMPAIGN' => 'Campaign:',
   	'LBL_LIST_ASSIGNED_TO_NAME' => 'Assigned User',
     'LBL_PROSPECT_LIST' => 'Prospect List',
+    'LBL_PROSPECT' => 'Target',
     'LBL_CAMPAIGN_LEAD' => 'Campaigns',
 	'LNK_LEAD_REPORTS' => 'View Lead Reports',
     'LBL_BIRTHDATE' => 'Birthdate:',

@@ -28,7 +28,7 @@ $mod_strings = array (
     'LBL_PMSE_HISTORY_LOG_ROUTED' => "routed",
     'LBL_PMSE_HISTORY_LOG_DONE_UNKNOWN' => "Done an unknown task",
     'LBL_PMSE_HISTORY_LOG_CREATED_CASE' => "has created the Process # %s ",
-    'LBL_PMSE_HISTORY_LOG_DERIVATED_CASE' => "has derivated to the TaskId %s ",
+    'LBL_PMSE_HISTORY_LOG_DERIVATED_CASE' => "has been assigned the TaskId %s ",
     'LBL_PMSE_HISTORY_LOG_CURRENTLY_HAS_CASE' => "currently has the TaskId %s ",
     'LBL_PMSE_HISTORY_LOG_ACTIVITY_NAME' => " named: '%s' ",
     'LBL_PMSE_HISTORY_LOG_ACTION_PERFORMED'  => " The action performed was: <span style=\"font-weight: bold\">[%s]</span>",

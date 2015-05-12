@@ -25,10 +25,22 @@
         this.collection = app.data.createMixedBeanCollection();
 
         app.shortcuts.register(app.shortcuts.GLOBAL + 'Sweetspot', 'shift+space', this.toggle, this, true);
-        app.events.on('app:logout', this.hide, this);
+        app.events.on('app:logout router:reauth:load', this.hide, this);
         app.events.on('app:sync:complete sweetspot:reset', this._setTheme, this);
 
         this.on('sweetspot:config', this.openConfigPanel, this);
+        this.on('sweetspot:calc:resultsHeight', this.calculateResultsHeight, this);
+        this.on('sweetspot:has:results', function(results) {
+            var hasResults = true;
+            if (_.isEmpty(results) ||
+                (!results.actions.length && !results.keywords.length && !results.records.length)
+            ) {
+                hasResults = false;
+            }
+            this.$el.toggleClass('has-results', hasResults);
+        });
+
+        $(window).on('resize.sweetspot-' + this.cid, _.bind(this.calculateResultsHeight, this));
 
         /**
          * Flag to indicate the visible state of the sweet spot.
@@ -162,6 +174,7 @@
         this.$('input').val('');
         this.$el.fadeToggle(50, 'linear', _.bind(this.focusInput, this));
         this.trigger('show');
+        this.calculateResultsHeight();
         this._bindEvents();
     },
 
@@ -179,8 +192,10 @@
         this._isVisible = false;
         this._unbindEvents();
         this.$el.fadeToggle(50, 'linear');
+        this.$el.removeClass('has-results');
         this.trigger('hide');
-},
+    },
+
     /**
      * Toggles the Sweet Spot.
      */
@@ -244,6 +259,27 @@
         openConfig: function() {
             this.openConfigPanel();
         }
+    },
+
+    /**
+     * Calculates the results dropdown height based on the window height and
+     * triggers 'sweetspot:results:adjustMaxHeight' passing the value.
+     */
+    calculateResultsHeight: function() {
+        var distanceToFooter = 80;
+        var resultsMaxHeight = $(window).height() - this.$el.offset().top - $('footer').height() - distanceToFooter;
+        if (resultsMaxHeight > 460) {
+            resultsMaxHeight = 460;
+        }
+        this.trigger('sweetspot:results:adjustMaxHeight', resultsMaxHeight);
+    },
+
+    /**
+     * @inheritDoc
+     */
+    unbind: function() {
+        $(window).off('resize.sweetspot-' + this.cid);
+        this._super('unbind');
     },
 
     /**

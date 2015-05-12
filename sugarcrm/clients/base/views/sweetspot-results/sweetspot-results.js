@@ -135,6 +135,7 @@
             this.activeIndex = newActiveIndex || 0;
             if (this.results.length) {
                 this._highlightActive();
+                this.layout.trigger('sweetspot:calc:resultsHeight');
             }
         }, this);
 
@@ -149,6 +150,19 @@
         this.layout.on('hide', function() {
             $(window).off('keydown.' + this.cid);
         }, this);
+
+        this.layout.on('sweetspot:results:adjustMaxHeight', this.setMaxHeight, this);
+    },
+
+    /**
+     * Sets the max-height of the element.
+     *
+     * @param {number} maxHeight The max-height value.
+     */
+    setMaxHeight: function(maxHeight) {
+        if (this.results.length) {
+            this.$el.css('maxHeight', maxHeight);
+        }
     },
 
     /**
