@@ -919,11 +919,12 @@ class PMSEEngineApi extends SugarApi
         $q->where()
                 ->equals('cas_status', 'IN PROGRESS');
 
+        $enabledQuery = true;
         $q->select($fields);
         if ($args['module_list'] == 'all' && !empty($args['q'])) {
             $q->where()->queryAnd()
                 ->addRaw("pmse_inbox.cas_title LIKE '%" . $args['q'] . "%' OR pmse_inbox.pro_title LIKE '%" . $args['q'] . "%' ");
-        } else {
+        } else if (isset($args['q'])) {
             switch($args['module_list']){
                 case translate('LBL_CAS_ID', 'pmse_Inbox'):
                 $q->where()->queryAnd()
@@ -942,16 +943,21 @@ class PMSEEngineApi extends SugarApi
                         ->addRaw("pmse_inbox.cas_init_user LIKE '%" . $args['q'] . "%'");
                     break;
             }
+        } else {
+            $enabledQuery = false;
         }
 
-        if (isset($args['order_by'])) {
-            $columnToSort = explode(":", $args["order_by"]);
-            if (count($columnToSort) === 2) {
-                $q->orderBy($columnToSort[0], $columnToSort[1]);
+        if ($enabledQuery) {
+            if (isset($args['order_by'])) {
+                $columnToSort = explode(":", $args["order_by"]);
+                if (count($columnToSort) === 2) {
+                    $q->orderBy($columnToSort[0], $columnToSort[1]);
+                }
             }
+            $rows = $q->execute();
+        } else {
+            $rows = array();
         }
-
-        $rows = $q->execute();
 
         $rows_aux = array();
 
