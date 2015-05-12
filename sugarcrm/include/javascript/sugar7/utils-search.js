@@ -206,7 +206,7 @@
                 buildSearchRoute: function(term, options) {
                     options = options || {};
                     // Ensure that the term is defined.
-                    term = term || '';
+                    term = term ? encodeURIComponent(term) : '';
                     var paramString = '';
                     var modules = options.modules;
                     if (modules && modules.length > 0) {
