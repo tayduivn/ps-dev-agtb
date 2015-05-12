@@ -1,4 +1,4 @@
-{{!--
+<?php
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -9,19 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
---}}
-{{#each meta.panels}}
-<table class="table table-striped dataTable">
-    <thead>
-        {{partial 'row-header' ../../this view=../../this}}
-    </thead>
-    <tbody>
-        {{#each ../collection.models}}
-            {{partial 'row' ../../this view=../../this}}
-        {{/each}}
-    </tbody>
-    <tfoot>
-        {{partial 'row-footer' ../../this view=../../this}}
-    </tfoot>
-</table>
-{{/each}}
+$viewdefs['base']['view']['selection-list-link'] = array(
+    'template' => 'flex-list',
+);

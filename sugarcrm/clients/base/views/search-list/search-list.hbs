@@ -17,10 +17,7 @@
                 {{#if collection.models}}
                     {{#each collection.models}}
                         <li class="search-result" data-id="{{attributes.id}}">
-                            {{partial 'row' ../this ../this model=this module=module}}
-                            {{#each ../meta.rowactions.actions}}
-                                {{field ../../this model=../this}}
-                            {{/each}}
+                            {{partial 'row' ../this view=../this model=this module=module}}
                         </li>
                     {{/each}}
                 {{else}}

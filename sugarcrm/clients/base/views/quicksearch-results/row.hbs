@@ -11,19 +11,19 @@
  */
 --}}
 <div class="ellipsis_inline primary" data-placement="bottom" title="" data-original-title="">
-    {{#each primaryFields}}
+    {{#each view.primaryFields}}
         {{#notEq type 'avatar'}}<h3>{{/notEq}}
         {{#if highlighted}}
             {{../value}}
         {{else}}
-            {{field ../../templateComponent model=../../model template='list'}}
+            {{field ../../view.templateComponent model=../../view.model template='list'}}
         {{/if}}
 
         {{#notEq type 'avatar'}}</h3>{{/notEq}}
     {{/each}}
 </div>
 <div class="ellipsis_inline secondary" data-placement="bottom" title="" data-original-title="">
-    {{#each secondaryFields}}
-        <span>{{str label ../module}}:</span> <span>{{value}}</span>{{#unless @last}}, {{/unless}}
+    {{#each view.secondaryFields}}
+        <span>{{str label ../view.module}}:</span> <span>{{value}}</span>{{#unless @last}}, {{/unless}}
     {{/each}}
 </div>

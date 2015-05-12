@@ -7,6 +7,7 @@ describe('Base.View.RecordList', function() {
         SugarTest.loadComponent('base', 'view', 'flex-list');
         SugarTest.loadComponent('base', 'view', 'recordlist');
         SugarTest.loadHandlebarsTemplate('flex-list', 'view', 'base');
+        SugarTest.loadHandlebarsTemplate('recordlist', 'view', 'base', 'row');
         SugarTest.testMetadata.addViewDefinition('list', {
             'favorite': true,
             'selection': {

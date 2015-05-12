@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 $viewdefs['base']['view']['history-summary'] = array(
-    'template' => 'history-summary',
+    'template' => 'flex-list',
     'sticky_resizable_columns' => true,
     'rowactions' => array(
         'actions' => array(

@@ -16,7 +16,7 @@
         <li class="search-result">
             <a href="{{link}}" tabindex="-1">
                 {{#if ../layout.v2}}
-                    {{partial 'row' ../../this ../this model=this module=module}}
+                    {{partial 'row' ../../this ../this view=../../this model=this module=module}}
                 {{else}}
                     <span class="label label-module label-module-mini label-{{module}}"  title="{{getModuleName module plural=true}}">
                         {{moduleIconLabel module}}
