@@ -1338,6 +1338,22 @@ class Email extends SugarBean {
         return $row;
     }
 
+    /**
+     * This marks an item as deleted.
+     *
+     * @param $id String id of the record to be marked as deleted.
+     */
+    public function mark_deleted($id)
+    {
+        $q = "UPDATE emails_text SET deleted = 1 WHERE email_id = '{$id}'";
+        $this->db->query($q);
+
+        $q = "UPDATE folders_rel SET deleted = 1 WHERE polymorphic_id = '{$id}' AND polymorphic_module = 'Emails'";
+        $this->db->query($q);
+
+        parent::mark_deleted($id);
+    }
+
 	function delete($id='') {
 		if(empty($id))
 			$id = $this->id;
