@@ -238,10 +238,16 @@
      * @override
      */
     handleHideDatePicker: function() {
-        var t = this.$(this.secondaryFieldTag).val(),
-            d = this.$(this.fieldTag).val(),
+        var $dateField = this.$(this.fieldTag),
+            $timeField = this.$(this.secondaryFieldTag),
+            d = $dateField.val(),
+            t = $timeField.val(),
             datetime = this.unformat(this.handleDateTimeChanges(d, t));
 
+        if (!datetime) {
+            $dateField.val('');
+            $timeField.val('');
+        }
         this.model.set(this.name, datetime);
     },
 
@@ -271,8 +277,11 @@
                 if (t) {
                     var d = $dateField.val();
                     datetime = this.unformat(this.handleDateTimeChanges(d, t));
+                    if (!datetime) {
+                        $dateField.val('');
+                        $timeField.val('');
+                    }
                 }
-
                 this.model.set(this.name, datetime);
             }, this)
         });
