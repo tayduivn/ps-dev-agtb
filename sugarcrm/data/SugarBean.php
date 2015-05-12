@@ -3215,6 +3215,24 @@ class SugarBean
 
         $query->select($queryFields);
 
+        foreach ($query->join as $join) {
+            if ($join->linkName) {
+                $seed = $query->from;
+                $linkName = $join->linkName;
+                if ($seed->load_relationship($linkName)) {
+                    /** @var Link2 $link */
+                    $link = $seed->$linkName;
+                    if ($link->getType() === REL_TYPE_MANY) {
+                        $relationship = $link->getRelationshipObject();
+                        if (empty($relationship->primaryOnly)) {
+                            $this->fixQuery($query);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
         $this->call_custom_logic('before_fetch_query', array('query' => $query, 'fields' => $fields));
 
         $rows = $query->execute();
@@ -3250,6 +3268,31 @@ class SugarBean
         }
 
         return $beans;
+    }
+
+    /**
+     * Fixes query containing filter by related fields by adding DISTINCT if it's possible
+     *
+     * @param SugarQuery $query
+     */
+    protected function fixQuery(SugarQuery $query)
+    {
+        foreach ($query->select->select as $field) {
+            if ($field->table) {
+                $bean = $query->getTableBean($field->table);
+                if (!$bean) {
+                    $bean = $query->from;
+                }
+                $def = $bean->getFieldDefinition($field->field);
+                $type = $this->db->getFieldType($def);
+                if ($this->db->isTextType($type)) {
+                    $GLOBALS['log']->warn('Unable to fix the query containing text field');
+                    return;
+                }
+            }
+        }
+
+        $query->distinct(true);
     }
 
     /**

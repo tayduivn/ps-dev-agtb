@@ -103,6 +103,7 @@ $vardefs = array(
             'source' => 'non-db',
             'vname' => 'LBL_EMAIL_ADDRESS_PRIMARY',
             'duplicate_merge' => 'disabled',
+            'primary_only' => true,
         ),
         'email_addresses' => array (
             'name' => 'email_addresses',
@@ -151,7 +152,9 @@ $vardefs = array(
             'join_table'=> 'email_addr_bean_rel',
             'join_key_lhs'=>'bean_id',
             'join_key_rhs'=>'email_address_id',
-            'relationship_role_columns'=>array('primary_address' => '1', 'bean_module' => $module),
+            'relationship_role_column' => 'bean_module',
+            'relationship_role_column_value' => $module,
+            'primary_flag_column' => 'primary_address',
         ),
     ),
     'indices' => array(

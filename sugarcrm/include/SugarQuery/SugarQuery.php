@@ -76,12 +76,12 @@ class SugarQuery
     public $from = false;
 
     /**
-     * @var array(SugarQuery_Builder_Where)
+     * @var SugarQuery_Builder_Where[]
      */
     public $where = array();
 
     /**
-     * @var array(SugarQuery_Builder_Join)
+     * @var SugarQuery_Builder_Join[]
      */
     public $join = array();
 
