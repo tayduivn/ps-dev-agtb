@@ -213,7 +213,6 @@ $dictionary['pmse_Business_Rules'] = array(
                 'vname' => 'LBL_RST_MODULE',
                 'type' => 'enum',
                 'massupdate' => true,
-                'default' => 'Leads',
                 'no_default' => false,
                 'comments' => '',
                 'help' => '',
@@ -310,7 +309,14 @@ $dictionary['pmse_Business_Rules'] = array(
     ),
     'optimistic_locking'=>true,
     'unified_search'=>true,
-    'acls' => array('SugarACLDeveloperOrAdmin' => array('aclModule' => 'pmse_Business_Rules', 'allowUserRead' => false)),
+    'acls' => array(
+        'SugarACLDeveloperForTarget' => array(
+            'targetModuleField' => 'rst_module', 'allowUserRead' => false
+        )
+    ),
+    'visibility' => array(
+        'TargetModuleDeveloperVisibility' => array('targetModuleField' => 'rst_module')
+    ),
     'hidden_to_role_assignment' => true,
 );
 
