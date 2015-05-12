@@ -219,7 +219,18 @@ class SugarFieldFile extends SugarFieldBase
                 }
             }
         } elseif (!empty($duplicateModuleId)) {
-            $upload_file->duplicate_file($duplicateModuleId, $bean->id, $bean->$field);
+            if ($bean->object_name == 'Note') {
+                $duplicateBean = BeanFactory::getBean('Notes', $duplicateModuleId);
+                $duplicateModuleId = $duplicateBean->getUploadId();
+            }
+            // don't copy the actual file.
+            // for now, we only handle email notes
+            if (!empty($params['parent_type']) &&  $params['parent_type'] == 'Emails') {
+                $bean->upload_id = $duplicateModuleId;
+            }
+            else {
+                $upload_file->duplicate_file($duplicateModuleId, $bean->id, $bean->$field);
+            }
             $bean->$field = $params[$field];
 
             require_once 'include/utils/file_utils.php';

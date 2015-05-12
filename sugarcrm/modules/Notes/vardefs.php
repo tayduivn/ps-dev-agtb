@@ -66,6 +66,13 @@ $dictionary['Note'] = array(
     'comment' => 'File name associated with the note (attachment)',
     'importable' => false,
   ),
+    'upload_id' => array(
+        'name' => 'upload_id',
+        'type' => 'id',
+        'required' => false,
+        'reportable' => false,
+        'comment' => 'File id under uploads/ dir. Set only for email attachments',
+    ),
   'parent_type'=>
   array(
   	'name'=>'parent_type',

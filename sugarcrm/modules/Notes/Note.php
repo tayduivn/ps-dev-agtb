@@ -278,6 +278,15 @@ class Note extends SugarBean {
 		}
 		return false;
 	}
+
+    /**
+     * Gets the file id under upload/ dir for this note.
+     * @return string
+     */
+    public function getUploadId()
+    {
+        return !empty($this->upload_id) ? $this->upload_id : $this->id;
+    }
 }
 
 ?>
