@@ -1124,6 +1124,8 @@ $mod_strings = array (
     'LBL_SAML_CERT_DESC' => 'Enter X509 Certificate',
     'LBL_SAML_LOGIN_URL' => 'Login URL',
     'LBL_SAML_LOGOUT_URL' => 'SLO URL',
+    'LBL_SAML_SAME_WINDOW' => 'Load login screen in same <br>window to avoid pop-up blocking',
+    'LBL_SAML_SAME_WINDOW_DESC' => 'This option will load SAML login screen in the same window',
     'LBL_GLOBAL_SEARCH_SETTINGS_TITLE' => 'Select the module(s) that users will be able to search against using the Global Search. Perform a full system index after enabling modules for the Global Search. To enable module fields for full text searching, use <a href="index.php?module=ModuleBuilder&action=index&type=studio">Studio</a>.',
     'LBL_UNIFIED_SEARCH_SETTINGS_TITLE' => 'Select the module(s) that users will be able to search against.',
     'LBL_UNIFIED_SEARCH_SETTINGS_LINK_DESC' => 'Click <a href="index.php?module=Administration&action=UnifiedSearchSettings">here</a> to configure the module settings for Unified Search.',
