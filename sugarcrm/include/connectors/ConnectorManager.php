@@ -215,8 +215,7 @@ class ConnectorManager
     public function getEAPMForConnector($connector)
     {
         if (isset($connector['name'])) {
-            //Take the substring up to '&' because the name field always ends in '&#169'
-            return EAPM::getLoginInfo(substr($connector['name'], 0, strpos($connector['name'], '&')));
+            return EAPM::getLoginInfo($connector['name']);
         } else {
             return null;
         }
