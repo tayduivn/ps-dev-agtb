@@ -103,6 +103,43 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($args['repeat_count'], count($eventsCreated) + 1, "Unexpected Number of Recurring Meetings Created");
     }
 
+    public function testCalendarEvents_SaveRecurringEventWithTags_TagsPropagateCorrectly()
+    {
+        $args['date_start'] = '2030-08-15 13:00:00';
+        $args['date_end']   = '2030-08-15 18:15:00';
+        $args['name'] = "Test Meeting";
+        $args['duration_hours'] = '1';
+        $args['duration_minutes'] = '30';
+        $args['repeat_type'] = 'Daily';
+        $args['repeat_interval'] = 1;
+        $args['repeat_count'] = 3;
+        $args['repeat_until'] = null;
+        $args['repeat_dow'] = null;
+
+        $meeting = $this->newMeeting('', $args);
+        $parentTags = $this->addTags($meeting, 3);
+
+        $calEvents = new CalendarEventsTest_CalendarEvents();
+        $calEvents->saveRecurringEvents($meeting);
+
+        $eventsCreated = $calEvents->getEventsCreated();
+        foreach($eventsCreated as $eventCreated) {
+            $this->meetingIds[] = $eventCreated['id'];
+            $meeting = BeanFactory::getBean('Meetings', $eventCreated['id']);
+            $meeting->load_relationship('tag_link');
+            $tags = $meeting->tag_link->get();
+            $tagIds = array();
+            foreach($tags AS $tagId) {
+                $tagIds[$tagId] = true;
+            }
+            foreach($parentTags as $parentTag) {
+                $this->assertTrue(isset($tagIds[$parentTag->id]), "Child Meeting Missing Tag On Parent");
+                unset($tagIds[$parentTag->id]);
+            }
+            $this->assertTrue(empty($tagIds), "Child Meeting Has Unexpected Tag");
+        }
+    }
+
     public function testCalendarEvents_SaveRecurringEvents_CurrentAssignedUserAutoAccepted()
     {
         global $current_user;
@@ -262,6 +299,35 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
             $meeting->save();
         }
         return $meeting;
+    }
+
+    protected function newTags($numTags = 1)
+    {
+        $tags = array();
+        while(count($tags) < $numTags) {
+            $tags[] = SugarTestTagUtilities::createTag();
+        }
+        return $tags;
+    }
+
+    protected function addTags($bean, $numTags = 1)
+    {
+        $tags = $this->newTags($numTags);
+        $bean->load_relationship('tag_link');
+        foreach($tags as $tag) {
+            $bean->tag_link->add($tag);
+        }
+        $tags = $bean->tag_link->getBeans();
+        return $tags;
+    }
+
+    protected function removeTags($bean)
+    {
+        $bean->load_relationship('tag_link');
+        $tags = $bean->tag_link->getBeans();
+        foreach($tags as $tag) {
+            $bean->tag_link->delete($bean->id, $tag);
+        }
     }
 }
 
