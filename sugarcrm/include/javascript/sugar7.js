@@ -178,7 +178,7 @@
                 route: 'search(/)(:searchTermAndParams)',
                 callback: function(searchTermAndParams) {
                     var searchTerm = '';
-                    var params = {modules: []};
+                    var params = {modules: [], tags: []};
                     if (searchTermAndParams) {
                         // For search, we may have query params for the module list
                         var uriSplit = searchTermAndParams.split('?');
@@ -201,18 +201,22 @@
                     // Set the new search term and module list in the context, if necessary.
                     var termHasChanged = appContext.get('searchTerm') !== searchTerm;
                     var modulesHaveChanged = !_.isEqual(appContext.get('module_list'), params.modules);
-                    if (termHasChanged && modulesHaveChanged) {
-                        // If both term and module_list have changed,
-                        // we set the module_list silently so the `change`
-                        // callback is triggered only once (searchTerm
-                        // and module_list share the same change callback
-                        // in the layout).
-                        appContext.set('module_list', params.modules, {silent: true});
+                    var tagsHaveChanged = !_.isEqual(appContext.get('tagParams'), params.tags);
+
+                    if (termHasChanged) {
                         appContext.set('searchTerm', searchTerm);
-                    } else if (modulesHaveChanged) {
+                    }
+                    if (modulesHaveChanged) {
                         appContext.set('module_list', params.modules);
-                    } else if (termHasChanged) {
-                        appContext.set('searchTerm', searchTerm);
+                    }
+                    if (tagsHaveChanged) {
+                        appContext.set('tagParams', params.tags);
+                    }
+
+                    if (tagsHaveChanged) {
+                        appContext.trigger('tagsearch:fire:new')
+                    } else if (termHasChanged || modulesHaveChanged) {
+                        appContext.trigger('search:fire:new');
                     }
 
                     // Trigger an event on the quicksearch in the header. The
@@ -235,7 +239,7 @@
                         layout: 'search',
                         searchTerm: searchTerm,
                         module_list: params.modules,
-                        tags: appContext.get('tags'),
+                        tagParams: params.tags,
                         mixed: true
                     });
                 }

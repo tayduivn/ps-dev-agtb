@@ -84,7 +84,7 @@
             var moduleIconObj = this._buildModuleIconList();
             this.moduleIcons = {icon: moduleIconObj};
             this.render();
-            this.layout.off('route:search');
+            this.layout.off('route:search', this.populateModuleSelectionFromContext);
             this.layout.on('route:search', this.populateModuleSelectionFromContext, this);
 
             // We need to call `populateModuleSelectionFromContext` here to
