@@ -1140,6 +1140,7 @@ class HealthCheckScanner
             $this->updateStatus("hasCustomVardefs", $module);
             foreach ($defs as $deffile) {
                 $this->checkCustomCode($deffile, "dictionary", "modules/$module/vardefs.php");
+                $this->checkForOtherModuleDefinition($deffile, 'dictionary', $objectName);
             }
         }
 
@@ -1429,6 +1430,31 @@ class HealthCheckScanner
             }
         }
         return $codes;
+    }
+
+    /**
+     * Checking if module contains the definition of another module
+     * @param $file - vardefs file path
+     * @param $variable - variable to get from vardefs
+     * @param $object - module object name
+     */
+    protected function checkForOtherModuleDefinition($file, $variable, $object)
+    {
+        $this->log("Checking $file for other module definition");
+        $definition = $this->loadFromFile($file, $variable);
+
+        if (empty($definition)) {
+            return;
+        }
+        $flippedModules = array_merge(array_flip($this->beanList), array_flip($this->objectList));
+        $moduleName = $flippedModules[$object];
+
+        foreach ($definition as $key => $data) {
+            if ($key !== $object) {
+                $foundName = isset($flippedModules[$key]) ? $flippedModules[$key] : $key;
+                $this->updateStatus("foundOtherModuleVardefs", $moduleName, $foundName, $file);
+            }
+        }
     }
 
     /**

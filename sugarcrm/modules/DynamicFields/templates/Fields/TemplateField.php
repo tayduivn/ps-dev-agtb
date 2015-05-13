@@ -98,7 +98,6 @@ class TemplateField{
         'enforced' => 'enforced',
         'dependency' => 'dependency',
         'related_fields' => 'related_fields',
-        'studio' => 'studio'
 	);
     // Bug #48826
     // fields to decode from post request

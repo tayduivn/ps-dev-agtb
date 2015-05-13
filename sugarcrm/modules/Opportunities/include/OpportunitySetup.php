@@ -137,6 +137,15 @@ abstract class OpportunitySetup
             $df = new StandardField($this->bean->module_name);
             $df->setup($this->bean);
             $f->module = $this->bean;
+
+            // StandardField considers only the attributes which can be edited in Studio,
+            // while the "studio" attribute is not one of them. we need to change the vardef map temporarily here,
+            // because changing it permanently will make the "studio" attribute always overridden with empty value,
+            // after the field has been saved in Studio
+            if (!isset($f->vardef_map['studio'])) {
+                $f->vardef_map['studio'] = 'studio';
+            }
+
             $f->save($df);
         }
     }
