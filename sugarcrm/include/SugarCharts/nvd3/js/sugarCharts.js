@@ -45,7 +45,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
         vertical: true,
         wrapTicks: true,
         staggerTicks: true,
-        rotateTicks: 0,
+        rotateTicks: true,
         reduceXTicks: false,
         allowScroll: false,
         overflowHandler: false,
