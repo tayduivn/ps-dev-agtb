@@ -45,11 +45,29 @@ $dictionary['ProspectList'] = array(
             'name'  => 'date_entered',
             'vname' => 'LBL_DATE_ENTERED',
             'type'  => 'datetime',
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => false,
+                'aggregations' => array(
+                    'date_entered' => array(
+                        'type' => 'DateRange',
+                    ),
+                ),
+            ),
         ),
         'date_modified'    => array(
             'name'  => 'date_modified',
             'vname' => 'LBL_DATE_MODIFIED',
             'type'  => 'datetime',
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => false,
+                'aggregations' => array(
+                    'date_modified' => array(
+                        'type' => 'DateRange',
+                    ),
+                ),
+            ),
         ),
         'modified_user_id' => array(
             'name'       => 'modified_user_id',
@@ -61,6 +79,17 @@ $dictionary['ProspectList'] = array(
             'isnull'     => 'false',
             'dbType'     => 'id',
             'reportable' => true,
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => false,
+                'type' => 'id',
+                'aggregations' => array(
+                    'modified_user_id' => array(
+                        'type' => 'MyItems',
+                        'label' => 'LBL_AGG_MODIFIED_BY_ME',
+                    ),
+                ),
+            ),
         ),
         'modified_by_name' => array(
             'name'            => 'modified_by_name',
@@ -83,6 +112,17 @@ $dictionary['ProspectList'] = array(
             'table'   => 'created_by_users',
             'isnull'  => 'false',
             'dbType'  => 'id',
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => false,
+                'type' => 'id',
+                'aggregations' => array(
+                    'created_by' => array(
+                        'type' => 'MyItems',
+                        'label' => 'LBL_AGG_CREATED_BY_ME',
+                    ),
+                ),
+            ),
         ),
         'created_by_name'  => array(
             'name'            => 'created_by_name',

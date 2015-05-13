@@ -31,6 +31,15 @@ $dictionary['Email'] = array(
             'type' => 'datetime',
             'required' => true,
             'comment' => 'Date record created',
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => false,
+                'aggregations' => array(
+                    'date_entered' => array(
+                        'type' => 'DateRange',
+                    ),
+                ),
+            ),
         ),
         'date_modified' => array(
             'name' => 'date_modified',
@@ -38,6 +47,15 @@ $dictionary['Email'] = array(
             'type' => 'datetime',
             'required' => true,
             'comment' => 'Date record last modified',
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => false,
+                'aggregations' => array(
+                    'date_modified' => array(
+                        'type' => 'DateRange',
+                    ),
+                ),
+            ),
         ),
         'assigned_user_id' => array(
             'name' => 'assigned_user_id',
@@ -46,6 +64,16 @@ $dictionary['Email'] = array(
             'isnull' => false,
             'reportable' => false,
             'comment' => 'User ID that last modified record',
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => false,
+                'aggregations' => array(
+                    'assigned_user_id' => array(
+                        'type' => 'MyItems',
+                        'label' => 'LBL_AGG_ASSIGNED_TO_ME',
+                    ),
+                ),
+            ),
         ),
         'assigned_user_name' => array(
             'name' => 'assigned_user_name',
@@ -70,6 +98,17 @@ $dictionary['Email'] = array(
             'reportable' => true,
             'dbType' => 'id',
             'comment' => 'User ID that last modified record',
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => false,
+                'type' => 'id',
+                'aggregations' => array(
+                    'modified_user_id' => array(
+                        'type' => 'MyItems',
+                        'label' => 'LBL_AGG_MODIFIED_BY_ME',
+                    ),
+                ),
+            ),
         ),
         'modified_by_name' => array(
             'name' => 'modified_by_name',
@@ -92,6 +131,17 @@ $dictionary['Email'] = array(
             'len' => '36',
             'reportable' => false,
             'comment' => 'User name who created record',
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => false,
+                'type' => 'id',
+                'aggregations' => array(
+                    'created_by' => array(
+                        'type' => 'MyItems',
+                        'label' => 'LBL_AGG_CREATED_BY_ME',
+                    ),
+                ),
+            ),
         ),
         'created_by_name' => array(
             'name' => 'created_by_name',
