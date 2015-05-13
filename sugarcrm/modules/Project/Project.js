@@ -43,6 +43,7 @@ function prep_delete(the_form)
 	the_form.return_module.value='Project';
 	the_form.return_action.value='ListView';
 	the_form.action.value='Delete';
+	the_form.return_id.value='';
 	the_form.sugar_body_only.value='0';
 }
 
