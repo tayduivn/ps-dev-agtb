@@ -123,7 +123,7 @@ class PMSEBusinessRules extends vCardApi
     public function businessRuleDownload($api, $args)
     {
         $this->checkACL($api, $args);
-        $emailTemplate = new PMSEBusinessRuleExporter();
+        $emailTemplate = $this->getPMSEBusinessRuleExporter();
         $requiredFields = array('record', 'module');
         foreach ($requiredFields as $fieldName) {
             if (!array_key_exists($fieldName, $args)) {
@@ -132,5 +132,13 @@ class PMSEBusinessRules extends vCardApi
         }
 
         return $emailTemplate->exportProject($args['record'], $api);
+    }
+
+    /*
+     * @return PMSEBusinessRuleExporter
+     */
+    public function getPMSEBusinessRuleExporter()
+    {
+        return new PMSEBusinessRuleExporter();
     }
 }
