@@ -16,40 +16,7 @@ $viewdefs['base']['layout']['shortcuts'] = array(
     'name' => 'shortcuts',
     'components' => array(
         array(
-            'view' => array(
-                'name' => 'list-headerpane',
-                'type' => 'list-headerpane',
-                'meta' => array(
-                    'fields' => array(
-                        array(
-                            'name' => 'title',
-                            'type' => 'label',
-                            'default_value' => 'LBL_KEYBOARD_SHORTCUTS_HELP_TITLE',
-                        ),
-                    ),
-                    'buttons' => array(
-                        array(
-                            'name' => 'configure_button',
-                            'type' => 'button',
-                            'label' => ' ',
-                            'icon' => 'fa-cog',
-                            'tooltip' => 'LBL_DASHLET_CONFIGURE',
-                            'events' => array(
-                                'click' => 'button:configure_button:click',
-                            ),
-                        ),
-                        array(
-                            'name' => 'cancel_button',
-                            'type' => 'button',
-                            'primary' => true,
-                            'label' => 'LBL_CLOSE_BUTTON_LABEL',
-                            'events' => array(
-                                'click' => 'button:cancel_button:click',
-                            ),
-                        ),
-                    ),
-                ),
-            ),
+            'view' => 'shortcuts-help-headerpane',
         ),
         array(
             'view' => 'shortcuts-help',

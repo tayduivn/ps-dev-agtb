@@ -24,11 +24,10 @@
     initialize: function(options) {
         this._super('initialize', [options]);
 
-        this.context.on('button:cancel_button:click', function() {
-            app.drawer.close();
+        // refresh shortcuts help page
+        this.context.on('shortcuts:help:render', function() {
+            this.render();
         }, this);
-
-        this.context.on('button:configure_button:click', this.configure, this);
 
         // get templates
         this.shortcutsHelpTableTemplate = app.template.getView(this.name + '.shortcuts-help-table');
@@ -106,23 +105,5 @@
      */
     getKeyString: function(keys) {
         return keys.join(', ');
-    },
-
-    /**
-     * Open the drawer to configure shortcut keys.
-     */
-    configure: function() {
-        var self = this;
-
-        app.drawer.open({
-            layout: 'shortcuts-config',
-            context: {
-                shortcutSession: app.shortcuts.getLastSavedSession()
-            }
-        }, function(shouldRefresh) {
-            if (shouldRefresh) {
-                self.render();
-            }
-        });
     }
 })
