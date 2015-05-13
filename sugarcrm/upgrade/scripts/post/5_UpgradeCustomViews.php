@@ -18,6 +18,31 @@ class SugarUpgradeUpgradeCustomViews extends UpgradeScript
 
     public function run()
     {
+        // somehow we missed quick create configuration on upgrade. here we update it too.
+        if (version_compare($this->from_version, '7.6', '<') && is_file('custom/include/DashletContainer/Containers/DCActions.php')) {
+            require_once 'modules/Administration/views/view.configureshortcutbar.php';
+            $quickCreate = new ViewConfigureshortcutbar();
+            $modules = $quickCreate->getQuickCreateModules();
+            $needToUpdate = true;
+            foreach (array_merge($modules['enabled'], $modules['disabled']) as $module => $definition) {
+                // it means that someone already configured that so we don't need to do anything.
+                if (is_file("custom/modules/$module/clients/base/menus/quickcreate/quickcreate.php")) {
+                    $needToUpdate = false;
+                    break;
+                }
+            }
+
+            if ($needToUpdate) {
+                $DCActions = array();
+                require 'custom/include/DashletContainer/Containers/DCActions.php';
+                $DCActions = array_flip($DCActions);
+                $successful = $quickCreate->saveChangesToQuickCreateMetadata($modules['enabled'], $modules['disabled'], $DCActions);
+                if ($successful) {
+                    MetaDataManager::refreshSectionCache(array(MetaDataManager::MM_MODULES));
+                }
+            }
+        }
+
         // Only run when coming from a version lower than 7.2.
         if (version_compare($this->from_version, '7.2', '<')) {
             $this->fixQuickCreateOrder();
