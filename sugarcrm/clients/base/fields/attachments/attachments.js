@@ -279,7 +279,9 @@
                 files: $fileInput,
                 iframe: true
             },
-            fileId;
+            fileId,
+            myURL,
+            options;
 
         //don't do anything if user cancels out of picking a file
         if (_.isEmpty(this.getFileInputVal())) {
@@ -295,12 +297,19 @@
             showProgress: true
         });
 
-        var myURL = app.api.buildURL('Mail/attachment', null, null, {format:'sugar-html-json'});
+        // pass OAuth token as GET-parameter during file upload.
+        // otherwise, in case if file is too large, the whole request body may
+        // be ignored by interpreter together with the token
+        options = {
+            format: 'sugar-html-json',
+            oauth_token: app.api.getOAuthToken()
+        };
+        myURL = app.api.buildURL('Mail/attachment', null, null, options);
         app.api.call('create', myURL, null,{
                 success: _.bind(function (result) {
                     if (this.disposed === true) return; //if field is already disposed, bail out
                     if (!result.guid) {
-                        this.handleUploadError(fileId);
+                        this.handleUploadError(fileId, result);
                         app.logger.error('Attachment Upload Failed - no guid returned from API');
                         return;
                     }
@@ -318,7 +327,7 @@
 
                 error: _.bind(function(e) {
                     if (this.disposed === true) return; //if field is already disposed, bail out
-                    this.handleUploadError(fileId);
+                    this.handleUploadError(fileId, e);
                     app.logger.error('Attachment Upload Failed: ' + e);
                 }, this)
             },
@@ -355,12 +364,16 @@
     /**
      * When upload fails, display an error alert and remove the placeholder pill
      * @param fileId
+     * @param {Object} [error] The error object containing the message to display.
+     * @param {string} [error.error_message] The error message to display.
      */
-    handleUploadError: function(fileId) {
+    handleUploadError: function(fileId, error) {
+        var message = (error && error.error_message) ? error.error_message : 'LBL_EMAIL_ATTACHMENT_UPLOAD_FAILED';
+
         this.context.trigger('attachments:remove-by-id', fileId);
         app.alert.show('upload_error', {
             level: 'error',
-            messages: 'LBL_EMAIL_ATTACHMENT_UPLOAD_FAILED'
+            messages: message
         });
     },
 

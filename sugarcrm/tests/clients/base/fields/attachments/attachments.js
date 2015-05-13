@@ -171,5 +171,35 @@ describe("Base.Field.Attachments", function() {
             expect(field.$node.select2('data')).toEqual([]);
             expect(alertStub.lastCall.args[0]).toEqual('upload_error');
         });
+
+        it('should pass the oauth token in the query string', function() {
+            var apiGetTokenStub, url;
+
+            apiGetTokenStub = sinon.stub(app.api, 'getOAuthToken').returns('foo')
+            apiCallStub = sinon.stub(app.api, 'call');
+
+            field.uploadFile();
+            url = apiCallStub.lastCall.args[1];
+
+            expect(url).toMatch(/&oauth_token=foo/);
+
+            apiGetTokenStub.restore();
+        });
+
+        it('should use the default error message when alerting an error', function() {
+            apiCallStub = sinon.stub(app.api, 'call', function(method, url, data, callbacks) {
+                callbacks.error({});
+            });
+            field.uploadFile();
+            expect(alertStub.lastCall.args[1].messages).toEqual('LBL_EMAIL_ATTACHMENT_UPLOAD_FAILED');
+        });
+
+        it('should use a specified error message when alerting an error', function() {
+            apiCallStub = sinon.stub(app.api, 'call', function(method, url, data, callbacks) {
+                callbacks.error({error_message: 'custom error message'});
+            });
+            field.uploadFile();
+            expect(alertStub.lastCall.args[1].messages).toEqual('custom error message');
+        });
     });
 });
