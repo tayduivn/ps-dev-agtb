@@ -123,5 +123,11 @@
      */
     setMainButtonsDisabled: function(disabled) {
         this.getField('archive_button').setDisabled(disabled);
-    }
+    },
+
+    /**
+     * No need to warn of configuration status for archive email because no
+     * email is being sent.
+     */
+    notifyConfigurationStatus: $.noop
 })
