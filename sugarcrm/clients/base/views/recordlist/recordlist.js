@@ -79,6 +79,9 @@
             // user clicks show more button, we treat this as a search, otherwise,
             // normal show more for list view.
             this.layout.on('list:filter:toggled', this.filterToggled, this);
+            this.layout.on('list:record:deleted', function() {
+                this.refreshCollection();
+            }, this);
         }
         this.toggledModels = {};
 
