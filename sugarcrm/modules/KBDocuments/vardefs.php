@@ -95,6 +95,7 @@ $dictionary['KBDocument'] = array(
     'name' => 'date_entered',
     'vname' => 'LBL_DATE_ENTERED',
     'type' => 'datetime',
+    'readonly' => true,
   ),
 
   'date_modified' =>
@@ -102,6 +103,7 @@ $dictionary['KBDocument'] = array(
     'name' => 'date_modified',
     'vname' => 'LBL_DATE_MODIFIED',
     'type' => 'datetime',
+    'readonly' => true,
   ),
 
   'deleted' =>
