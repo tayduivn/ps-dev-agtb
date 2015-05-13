@@ -202,7 +202,7 @@ $vardef_meta_array = array(
             //end inclusion
         ),
         'exclusion' => array(
-            'name' => array('direct_reports', 'accept_status'),
+            'name' => array('direct_reports', 'accept_status', 'archived_emails'),
             'workflow' => array(false),
             //end exclusion
         ),
@@ -240,7 +240,7 @@ $vardef_meta_array = array(
             //end inclusion
         ),
         'exclusion' => array(
-            'name' => array('direct_reports', 'accept_status'),
+            'name' => array('direct_reports', 'accept_status', 'archived_emails'),
             'workflow' => array(false),
             //end exclusion
         ),
