@@ -27,6 +27,8 @@ class Dependency
 	protected $id = "";
 	protected $fireOnLoad = false;
     protected $hooks = array();
+    protected $isRelated = false;
+    protected $relatedFields = array();
 
 	function Dependency($id) {
 		$this->id = $id;
@@ -36,6 +38,27 @@ class Dependency
 	function setFireOnLoad($onLoad) {
 		$this->fireOnLoad = $onLoad;
 	}
+
+    /**
+     * Set if this is a related Dependency
+     *
+     * @param boolean $isRelated Is this a related Dependency?
+     */
+    public function setIsRelated($isRelated)
+    {
+        $this->isRelated = $isRelated;
+    }
+
+    /**
+     * Set related trigger fields, if there are field, when the watcher is setup on the front end, it will
+     * trigger on these fields changing, otherwise it will trigger when the collection is changed
+     *
+     * @param array $fields
+     */
+    public function setRelatedFields(array $fields)
+    {
+        $this->relatedFields = $fields;
+    }
 
 	/**
 	 * Sets the trigger expressions of this dependency or creates a new Trigger from the array if
@@ -128,7 +151,9 @@ class Dependency
             "hooks" => !empty($this->hooks) ? $this->hooks : array("all"),
             "trigger" => $this->trigger->getCondition(),
             "triggerFields" => $this->trigger->getFields(),
+            "relatedFields" => $this->relatedFields,
             "onload" => $this->fireOnLoad,
+            "isRelated" => $this->isRelated,
             "actions" => array(),
             "notActions" => array(),
         );

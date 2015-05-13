@@ -18,16 +18,21 @@ class Parser {
     	'pi' 	=> 3.141592653589793,
     	'e'		=> 2.718281828459045,
     );
-	/**
-	 * Evaluates an expression.
-	 *
-	 * @param string	the expression to evaluate
+
+    // the function map
+    public static $function_cache = array();
+
+    /**
+     * Evaluates an expression.
      *
-	 */
+     * @throws Exception
+     * @param string $expr the expression to evaluate
+     * @param object|boolean $context optional
+     * @return AbstractExpression
+     */
 	static function evaluate($expr, $context = false)
 	{
-		// the function map
-		static $FUNCTION_MAP = array();
+
 
 		// trim spaces, left and right, and remove newlines
 		$expr = str_replace("\n", "", trim($expr));
@@ -75,17 +80,19 @@ class Parser {
 		// get the function
 		$func   = substr( $expr , 0 ,  $open_paren_loc);
 
-		// handle if function is not valid
-		if(empty($FUNCTION_MAP)) {
-			if (!file_exists(sugar_cached('Expressions/functionmap.php'))) {
-				$GLOBALS['updateSilent'] = true;
-				include("include/Expressions/updatecache.php");
-			}
-			require_once( sugar_cached('Expressions/functionmap.php'));
-		}
+        // handle if function is not valid
+        if (empty(static::$function_cache)) {
+            if (!file_exists(sugar_cached('Expressions/functionmap.php'))) {
+                $GLOBALS['updateSilent'] = true;
+                include("include/Expressions/updatecache.php");
+            }
+            // $FUNCTION_MAP is pulled in from the file.
+            require_once(sugar_cached('Expressions/functionmap.php'));
+            static::$function_cache = $FUNCTION_MAP;
+        }
 
 
-		if ( !isset($FUNCTION_MAP[$func]) )	{
+		if ( !isset(static::$function_cache[$func]) )	{
             throw new Exception("Attempted to evaluate expression with an invalid function '$func': $expr");
             return;
         }
@@ -190,7 +197,7 @@ class Parser {
         }
 
 		// require and return the appropriate expression object
-		$expObject = new $FUNCTION_MAP[$func]['class']($args);
+		$expObject = new static::$function_cache[$func]['class']($args);
         if ($context) {
             $expObject->context = $context;
         }
@@ -335,5 +342,88 @@ class Parser {
         }
         return $fields;
     }
+
+    /**
+     * Test if a expression is a Related Expression
+     *
+     * This should be updated anytime a new RelatedExpression is added
+     *
+     * @param AbstractExpression $expr The current Expression
+     * @return bool
+     */
+    public static function isRelatedExpression($expr)
+    {
+        return ($expr instanceof RelatedFieldExpression
+            || $expr instanceof MinRelatedExpression
+            || $expr instanceof MaxRelatedExpression
+            || $expr instanceof AverageRelatedExpression
+            || $expr instanceof SumRelatedExpression
+            || $expr instanceof SumConditionalRelatedExpression
+            || $expr instanceof MaxRelatedDateExpression
+            || $expr instanceof CountRelatedExpression
+            || $expr instanceof CountConditionalRelatedExpression
+        );
+    }
+
+    /**
+     * Look for a relationship in an expression,
+     *
+     * @param AbstractExpression $expr
+     * @param string {$linkName}
+     * @return array
+     */
+    public static function getFormulaRelateFields($expr, $linkName = '')
+    {
+        $result = array();
+
+        if (static::isRelatedExpression($expr)) {
+            /** @var AbstractExpression[] $params */
+            $params = $expr->getParameters();
+
+            // if this is not an array, then it's one of the few that have additional fields
+            if (is_array($params)) {
+                // here we don't evaluate the first param since we need the field name
+                // but not it's value
+                if ($params[0] instanceof SugarFieldExpression) {
+                    if ($linkName === '' || $params[0]->varName === $linkName) {
+                        $result[] = $params[1]->evaluate();
+                    }
+                }
+
+                if ($expr instanceof SumConditionalRelatedExpression) {
+                    // with this one, the third param is also needed, since if it changes, it should trigger the
+                    // logic hook to run
+                    if ($linkName === '' || $params[0]->varName === $linkName) {
+                        $result[] = $params[2]->evaluate();
+                    }
+
+                } elseif ($expr instanceof CountConditionalRelatedExpression) {
+                    // with this one, the second param is also needed, since if it changes, it should trigger the
+                    // logic hook to run
+                    if ($linkName === '' || $params[0]->varName === $linkName) {
+                        $result[] = $params[1]->evaluate();
+                    }
+                }
+            }
+            return $result;
+        }
+
+        $params = $expr->getParameters();
+        if (is_array($params)) {
+            /** @var AbstractExpression $param */
+            foreach ($params as $param) {
+                $result = array_merge(
+                    $result,
+                    self::getFormulaRelateFields($param, $linkName)
+                );
+            }
+        } else if ($params instanceof AbstractExpression) {
+             $result = array_merge(
+                 $result,
+                 self::getFormulaRelateFields($params, $linkName)
+             );
+        }
+
+        return array_unique($result);
+    }
 }
-?>

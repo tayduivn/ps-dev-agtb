@@ -7325,10 +7325,11 @@ class SugarBean
             return $result;
         }
         // iterate over related bean fields
+        SugarAutoLoader::load('include/Expressions/Expression/Parser/Parser.php');
         foreach ($dictionary[$relatedBeanName]['fields'] as $def) {
             if (!empty($def['formula'])) {
                 $expr = Parser::evaluate($def['formula'], $this);
-                $fields = $this->get_formula_related_fields($expr, $relatedLinkName);
+                $fields = Parser::getFormulaRelateFields($expr, $relatedLinkName);
                 $result = array_merge($result, $fields);
             }
         }
@@ -7339,52 +7340,16 @@ class SugarBean
     /**
      * Retrieve names of fields of the bean related by the given link included
      * in expression
-     *
+     * @deprecated
+     * @see Praser::getFormulaRelateFields
      * @param AbstractExpression $expr Parsed formula expression or nested expression
      * @param string $linkName Name of the link to filter "related" expressions by
      * @return array
      */
     protected function get_formula_related_fields(AbstractExpression $expr, $linkName)
     {
-        $result = array();
-
-        if ($expr instanceof RelatedFieldExpression
-            || $expr instanceof MinRelatedExpression
-            || $expr instanceof MaxRelatedExpression
-            || $expr instanceof AverageRelatedExpression
-            || $expr instanceof SumRelatedExpression
-            || $expr instanceof CurrencySumRelatedExpression
-        ) {
-            /** @var AbstractExpression[] $params */
-            $params = $expr->getParameters();
-
-            // here we don't evaluate the first param since we need the field name
-            // but not it's value
-            if ($params[0] instanceof SugarFieldExpression
-                && $params[0]->varName == $linkName
-            ) {
-                $result[] = $params[1]->evaluate();
-            }
-            return $result;
-        }
-
-        $params = $expr->getParameters();
-        if (is_array($params)) {
-            /** @var AbstractExpression $param */
-            foreach ($params as $param) {
-                $result = array_merge(
-                    $result,
-                    $this->get_formula_related_fields($param, $linkName)
-                );
-            }
-        } else if ($params instanceof AbstractExpression) {
-             $result = array_merge(
-                 $result,
-                 $this->get_formula_related_fields($params, $linkName)
-             );
-        }
-
-        return array_unique($result);
+        SugarAutoLoader::load('include/Expressions/Expression/Parser/Parser.php');
+        return Parser::getFormulaRelateFields($expr, $linkName);
     }
 
     /**

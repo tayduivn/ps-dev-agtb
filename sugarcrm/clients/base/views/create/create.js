@@ -440,17 +440,26 @@
                 if (child.get('isCreateSubpanel')) {
                     // create the child collection JSON structure to save
                     var childCollection = {
-                        create: []
-                    };
-
+                            create: []
+                        },
+                        linkName = child.get('link');
+                    if (this.model.has(linkName)) {
+                        // the model already has the link name, there must be rollup formulas
+                        // on the create form between the model and the subpanel
+                        childCollection = this.model.get(linkName);
+                        // make sure there is a create key on the childCollection
+                        if (!_.has(childCollection, 'create')) {
+                            childCollection['create'] = [];
+                        }
+                    }
                     // loop through the models in the collection and push each model's JSON
                     // data to the 'create' array
                     _.each(child.get('collection').models, function(model) {
-                        childCollection.create.push(model.toJSON())
-                    }, this)
+                        childCollection.create.push(model.toJSON());
+                    }, this);
 
                     // set the child JSON collection data to the model
-                    this.model.set(child.get('link'), childCollection);
+                    this.model.set(linkName, childCollection);
                 }
             }, this);
         }

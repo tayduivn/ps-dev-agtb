@@ -53,6 +53,12 @@ class DependencyManager
                 $formulaFields[$field] = $triggerFields;
                 $dep = new Dependency($field);
                 $dep->setTrigger(new Trigger('true', $triggerFields));
+                $formula = Parser::evaluate($def['formula']);
+                $isRelated = Parser::isRelatedExpression($formula);
+                if ($isRelated) {
+                    $dep->setIsRelated($isRelated);
+                    $dep->setRelatedFields(Parser::getFormulaRelateFields($formula));
+                }
 
                 $dep->addAction(ActionFactory::getNewAction('SetValue', array('target' => $field, 'value' => $def['formula'])));
 

@@ -81,7 +81,82 @@ class SumConditionalRelatedExpression extends NumericExpression
      */
     public static function getJSEvaluate()
     {
-        return false;
+        return <<<JS
+
+        // this is only supported in Sidecar
+        if (App === undefined) {
+            return SUGAR.expressions.Expression.FALSE;
+        }
+
+        var params = this.params,
+            view = this.context.view,
+            target = this.context.target,
+            relationship = params[0].evaluate(),
+            rel_field = params[1].evaluate(),
+            condition_field = params[2].evaluate(),
+            condition_values = params[3].evaluate();
+
+        var model = this.context.relatedModel || this.context.model,  // the model
+            // has the model been removed from it's collection
+            hasModelBeenRemoved = this.context.isRemoveEvent || false,
+            // is this being fired for the condition field or the rel_field?
+            currentFieldIsConditionField = (this.context.changingField === condition_field),
+            // did the condition field change at some point?
+            conditionChanged = _.has(model.changed, condition_field),
+            // is the condition field valid?
+            conditionValid = _.contains(condition_values, model.get(condition_field));
+        if (conditionValid || conditionChanged) {
+            var isCurrency = (model.fields[rel_field].type === 'currency'),
+                current_value = this.context.getRelatedField(relationship, 'rollupConditionalSum', rel_field) || '0',
+                previous_value = model.previous(rel_field) || '0',
+                new_value = model.get(rel_field) || '0',
+                value_changed = !_.isEqual(new_value, previous_value),
+                rollup_value = undefined;
+
+            if (isCurrency) {
+                previous_value = App.currency.convertWithRate(
+                    previous_value,
+                    model.get('base_rate'),
+                    this.context.model.get('base_rate')
+                );
+                new_value = App.currency.convertWithRate(
+                    new_value,
+                    model.get('base_rate'),
+                    this.context.model.get('base_rate')
+                );
+            }
+            if (conditionValid && !hasModelBeenRemoved) {
+                // if the condition is valid and the condition field changed, check if the previous value
+                // was an invalid condition, if it was, the `new_value` just needs to be added back
+                if (conditionChanged && !_.contains(condition_values, model.previous(condition_field))) {
+                    rollup_value = App.math.add(current_value, new_value, 6, true);
+                } else if (value_changed && !currentFieldIsConditionField) {
+                    // the condition might have changed, but it's still evaluating to true and we are not on the event
+                    // being fired by the condition field. so remove the `previous_value` and add
+                    // the `new_value` from `current_value`
+                    rollup_value = App.math.add(App.math.sub(current_value, previous_value, 6, true), new_value, 6, true);
+                }
+            } else if ((conditionChanged && currentFieldIsConditionField) || hasModelBeenRemoved) {
+                // when just the condition changes and the currentField is the condition field or
+                // the model has been removed, subtract the value.
+                rollup_value = App.math.sub(current_value, previous_value, 6, true);
+            }
+            // rollup_value won't exist if we didnt do any math, so just ignore this
+            if (!_.isUndefined(rollup_value) && _.isFinite(rollup_value)) {
+                // update the model
+                this.context.model.set(target, rollup_value);
+                // update the relationship defs on the model
+                this.context.updateRelatedFieldValue(
+                    relationship,
+                    'rollupConditionalSum',
+                    rel_field,
+                    rollup_value,
+                    this.context.model.isNew()
+                );
+            }
+        }
+JS;
+
     }
 
     /**
