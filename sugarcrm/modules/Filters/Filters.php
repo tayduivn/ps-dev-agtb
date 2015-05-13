@@ -41,16 +41,6 @@ class Filters extends Basic
     public $assigned_user_link;
     public $filter_definition;
 
-
-    public function bean_implements($interface)
-    {
-        switch ($interface) {
-            case 'ACL':
-                return true;
-        }
-        return false;
-    }
-
     public function retrieve($id, $encode = true, $deleted = false)
     {
         // TODO: Remove after ENGRD-8/ENGRD-17.
