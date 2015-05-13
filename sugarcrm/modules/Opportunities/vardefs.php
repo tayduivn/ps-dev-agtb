@@ -321,6 +321,18 @@ $dictionary['Opportunity'] = array(
             'reportable' => false,
             'importable' => false
         ),
+        'included_revenue_line_items' => array(
+            'name' => 'included_revenue_line_items',
+            'vname' => 'LBL_INCLUDED_RLIS',
+            'type' => 'int',
+            'formula' => 'countConditional($revenuelineitems,"commit_stage", forecastIncludedCommitStages())',
+            'calculated' => true,
+            'enforced' => true,
+            'studio' => false,
+            'workflow' => false,
+            'reportable' => false,
+            'importable' => false
+        ),
         //END SUGARCRM flav=ent ONLY
         'accounts' => array(
             'name' => 'accounts',

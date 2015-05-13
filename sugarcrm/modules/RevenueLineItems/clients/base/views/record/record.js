@@ -15,7 +15,7 @@
      * @inheritdoc
      */
     initialize: function(options) {
-        this.plugins = _.union(this.plugins || [], ['HistoricalSummary']);
+        this.plugins = _.union(this.plugins || [], ['HistoricalSummary', 'CommittedDeleteWarning']);
         this._super('initialize', [options]);
         app.utils.hideForecastCommitStageField(this.meta.panels);
     },

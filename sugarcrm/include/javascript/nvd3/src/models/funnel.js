@@ -60,7 +60,7 @@ nv.models.funnel = function() {
             point.value = getY(point);
           }
           // count total of funnel
-          funnelTotal += point.value;
+          funnelTotal += parseFloat(point.value);
           return point;
         });
         return series;

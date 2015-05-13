@@ -761,15 +761,15 @@ class PMSECrmDataWrapper implements PMSEObservable
                 $outputType = 1;
                 break;
             case 'allRelated':
-                $output = $this->getAllRelated($filter, $moduleApi, 'all', $baseModule);
+                $output = $this->getAllRelated($filter, $moduleApi, 'all', $baseModule, $type);
                 $outputType = 1;
                 break;
             case 'oneToOneRelated':
-                $output = $this->getAllRelated($filter, $moduleApi, 'one-to-one', $baseModule);
+                $output = $this->getAllRelated($filter, $moduleApi, 'one-to-one', $baseModule, $type);
                 $outputType = 1;
                 break;
             case 'oneToManyRelated':
-                $output = $this->getAllRelated($filter, $moduleApi, 'one-to-many', $baseModule);
+                $output = $this->getAllRelated($filter, $moduleApi, 'one-to-many', $baseModule, $type);
                 $outputType = 1;
                 break;
             //case 'Log':
@@ -941,7 +941,9 @@ class PMSECrmDataWrapper implements PMSEObservable
             $where .= 'OR users.user_name LIKE \'' . $filter . '%\' )';
         }
 
-        $usersData = $this->usersBean->get_full_list('', $where);
+        $order = 'users.first_name, users.last_name';
+
+        $usersData = $this->usersBean->get_full_list($order, $where);
         //$beanFactory = new ADAMBeanFactory();
         //$beanFactory = $this->getADAMBeanFactory();
         foreach ($usersData as $user) {
@@ -1557,8 +1559,7 @@ class PMSECrmDataWrapper implements PMSEObservable
         //$primal_module = ucfirst(isset($module[0])?$module[0]:'');
         $res['search'] = $filter;
         $res['success'] = true;
-        global $current_language;
-        $module_strings = return_module_language($current_language, 'ModuleBuilder');
+        $module_strings = return_module_language('en_us', 'ModuleBuilder');
 
         $fieldTypes = $module_strings['fieldTypes'];
         //add datetimecombo type field from the vardef overrides to point to Datetime type
@@ -1653,8 +1654,7 @@ class PMSECrmDataWrapper implements PMSEObservable
         //$primal_module = ucfirst(isset($module[0])?$module[0]:'');
         $res['search'] = $filter;
         $res['success'] = true;
-        global $current_language;
-        $module_strings = return_module_language($current_language, 'ModuleBuilder');
+        $module_strings = return_module_language('en_us', 'ModuleBuilder');
 
         $fieldTypes = $module_strings['fieldTypes'];
         //add datetimecombo type field from the vardef overrides to point to Datetime type
@@ -2237,7 +2237,7 @@ class PMSECrmDataWrapper implements PMSEObservable
      * @param $filter
      * @return array
      */
-    private function getAllRelated($filter, ModuleApi $moduleApi, $relationship = 'all', $baseModule)
+    private function getAllRelated($filter, ModuleApi $moduleApi, $relationship = 'all', $baseModule, $type = '')
     {
         $result = array();
         $result['success'] = true;
@@ -2246,7 +2246,7 @@ class PMSECrmDataWrapper implements PMSEObservable
         if (is_array($res['result']) && !empty($res['result'])) {
             foreach ($res['result'] as $key => $value) {
                 //$aux = $this->addRelatedRecord($value['value']);
-                $aux = $this->retrieveFields($value['value'], $moduleApi, '', $baseModule);
+                $aux = $this->retrieveFields($value['value'], $moduleApi, $type, $baseModule);
                 $value['fields'] = $aux['result'];
                 $arr[] = $value;
             }

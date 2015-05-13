@@ -7732,5 +7732,4 @@ class SugarBean
 
         return null;
     }
-
 }

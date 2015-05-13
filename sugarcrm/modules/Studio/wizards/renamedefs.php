@@ -632,6 +632,7 @@ $renamedefs = array(
             array('name' => 'NOTICE_NO_DELETE_CLOSED_RLIS', 'type' => 'plural', 'source' => 'Opportunities'),
             array('name' => 'NOTICE_NO_DELETE_CLOSED_RLIS', 'type' => 'plural', 'source' => 'RevenueLineItems'),
             array('name' => 'LBL_RLI', 'type' => 'plural', 'source' => 'RevenueLineItems'),
+            array('name' => 'LBL_INCLUDED_RLIS', 'type' => 'plural', 'source' => 'RevenueLineItems'),
             // END SUGARCRM flav=ent ONLY
             array('name' => 'LBL_QUOTE_SUBPANEL_TITLE', 'type' => 'plural', 'source' => 'Quotes'),
             array('name' => 'LBL_OPPORTUNITY_ROLE', 'type' => 'singular', 'source' => 'Opportunities'),
@@ -1026,6 +1027,8 @@ $renamedefs = array(
         array('name' => 'LBL_FORECAST_WORKSHEET', 'type' => 'singular', 'source' => 'Forecasts'),
         array('name' => 'LBL_TOUR_FEATURES_670', 'type' => 'plural', 'source' => 'Forecasts'),
         array('name' => 'LBL_DASHLET_FORECASTS_DETAILS', 'type' => 'plural', 'source' => 'Forecasts'),
+        array('name' => 'WARNING_NO_DELETE_CLOSED_SELECTED_STATUS', 'type' => 'singular', 'source' => 'RevenueLineItems'),
+
         // Leads
         array('name' => 'LBL_HELP_PREVIEW', 'type' => 'plural', 'source' => 'Leads'),
 

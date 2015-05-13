@@ -1687,15 +1687,27 @@ class MetaDataManager
                 foreach (array(true, false) as $public) {
                     $mm = MetaDataManager::getManager($platform, $public, true);
                     if (method_exists($mm, $method)) {
-                        //When a change occurs in the base metadata, we need to clear the cache for all contexts
+                        $contexts = static::getMetadataContexts($public, $params);
+
+                        // When a change occurs in the base metadata, we need to clear the cache for all contexts
+                        // except the ones we are going to rebuild in this request
                         if (empty($params)) {
-                            $allContexts = static::getAllMetadataContexts($public);
+                            $allContexts = array_filter(
+                                static::getAllMetadataContexts($public),
+                                function ($context) use ($contexts) {
+                                    foreach ($contexts as $current_context) {
+                                        if ($current_context->getHash() === $context->getHash()) {
+                                            return false;
+                                        }
+                                    }
+                                    return true;
+                                }
+                            );
                             foreach($allContexts as $context) {
                                 $mm->deletePlatformVisibilityCaches($context);
                             }
                         }
 
-                        $contexts = static::getMetadataContexts($public, $params);
                         foreach ($contexts as $context) {
                             $mm->$method($args, $context);
                         }

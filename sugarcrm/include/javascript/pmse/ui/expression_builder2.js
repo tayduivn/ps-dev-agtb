@@ -619,8 +619,9 @@ ExpressionControl.prototype.setVariablePanel = function (settings) {
         if (typeof defaults.typeField !== "string") {
             throw new Error("setVariablePanel(): The \"typeField\" property must be a string.");
         }
-        if (!(defaults.typeFilter === null || typeof defaults.typeFilter === "string" || jQuery.isArray(defaults.typeFilter))) {
-            throw new Error("setVariablePanel(): The \"typeFilter\" property must be a string, array or null.");
+        if (!(defaults.typeFilter === null || typeof defaults.typeFilter === "string"
+            || typeof defaults.typeFilter === 'function' || jQuery.isArray(defaults.typeFilter))) {
+            throw new Error("setVariablePanel(): The \"typeFilter\" property must be a string, function, array or null.");
         }
         if (typeof defaults.moduleTextField !== "string") {
             throw new Error("setVariablePanel(): The \"moduleTextField\" property must be a string.");
@@ -1262,13 +1263,15 @@ ExpressionControl.prototype._onLoadVariableDataSuccess = function () {
                 filterFunction = function (value) {
                     return settings.typeFilter.indexOf(value) >= 0;
                 };
+            } else if (typeof settings.typeFilter === 'function') {
+                filterFunction = settings.typeFilter;
             } else {
                 filterFunction = function () {
                     return true;
                 };
             }
             for (i = 0; i < data.length; i += 1) {
-                if (filterFunction(data[i][settings.typeField])) {
+                if (filterFunction(data[i][settings.typeField], data[i])) {
                     if (!aux[data[i][settings.moduleValueField]]) {
                         aux[data[i][settings.moduleValueField]] = {
                             fields: []

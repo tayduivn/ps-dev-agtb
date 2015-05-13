@@ -180,6 +180,7 @@ class PMSEFieldParser implements PMSEDataParserInterface
             ////new TimeDate();
             // Call the function
             $localDate = $timeDate->to_display_date_time($tokenValue, true, true, $current_user);
+            $localDate = (empty($localDate)) ? $tokenValue : $localDate;
             $criteriaToken->currentValue = $localDate;
         }
         return $criteriaToken;
@@ -256,7 +257,6 @@ class PMSEFieldParser implements PMSEDataParserInterface
      */
     public function parseTokenValue($token)
     {
-        global $timedate, $current_user;
         $this->pmseRelatedModule = new PMSERelatedModule();
         $tokenArray = $this->decomposeToken($token);
         $all = array();
@@ -269,30 +269,18 @@ class PMSEFieldParser implements PMSEDataParserInterface
         }
 
         $value = '';
-        $isAValidBean = true;
         if (!empty($tokenArray)) {
             if (!isset($this->beanList[$tokenArray[1]])) {
                 $bean = $this->pmseRelatedModule->getRelatedModule($bean, $tokenArray[1]);
             }
             $field = $tokenArray[2];
-        }
-        $isAValidBean = (!empty($bean) && is_object($bean));
-        if ($isAValidBean) {
-            $def = $bean->field_defs[$field];
-            if ($def['type'] == 'datetime' || $def['type'] == 'datetimecombo') {
-                date_default_timezone_set('UTC');
-                $datetime = new Datetime($bean->$field);
-                $value = $timedate->asIso($datetime, $current_user);
-            } else if ($def['type'] == 'currency') {
-                $value = serialize(array("amount" => $bean->$field, "currency_id" => $bean->currency_id));
-            } else if ($def['type'] == 'bool') {
-                $value = ($value==1)? true : false;
+            if (!empty($bean) && is_object($bean)) {
+                $value = $this->pmseRelatedModule->getFieldValue($bean, $field);
             } else {
-                $value = $bean->$field;
+                $value = !empty($bean)?array_pop($bean)->$tokenArray[2]:null;
             }
-        } else {
-            $value = !empty($bean)?array_pop($bean)->$tokenArray[2]:null;
         }
+
         return $value;
     }
 

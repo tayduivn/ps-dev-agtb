@@ -15,18 +15,48 @@ require_once 'include/connectors/ConnectorsTestCase.php';
 
 class ConnectorsEnableDisableTest extends Sugar_Connectors_TestCase
 {
+    /**
+     * Listing of files created by this test. These should be trackes and cleaned
+     * up after each test so they do not affect downstream tests.
+     *
+     * @var array
+     */
+    protected $backupFiles = array(
+        'custom/modules/Connectors/connectors/sources/ext/rest/twitter/config.php',
+        'custom/modules/Connectors/connectors/sources/ext/rest/twitter/mapping.php',
+        'custom/modules/Connectors/connectors/sources/ext/eapm/webex/config.php',
+        'custom/modules/Connectors/connectors/sources/ext/eapm/webex/mapping.php',
+        'custom/modules/Connectors/metadata/connectors.php',
+        'custom/modules/Connectors/metadata/display_config.php',
+        'custom/modules/Connectors/metadata/searchdefs.php',
+    );
+
     public function setUp()
     {
-        global $current_user;
-        global $app_list_strings;
-        $app_list_strings = return_app_list_strings_language($GLOBALS['current_language']);
-        $user = new User();
-        $current_user = $user->retrieve('1');
+        SugarTestHelper::setUp('current_user', array(true, 1));
+        SugarTestHelper::setUp('app_list_strings');
+        SugarTestHelper::setUp('files');
+        SugarTestHelper::saveFile($this->backupFiles);
+        $this->removeCustomConnectorFiles();
     }
 
     public function tearDown()
     {
+        // This tears down all of the setup items and restores backed up files
+        SugarTestHelper::tearDown();
+    }
 
+    /**
+     * Removes existing custom connector files so that the test runs as an OOTB
+     * instance.
+     */
+    public function removeCustomConnectorFiles()
+    {
+        foreach ($this->backupFiles as $file) {
+            @SugarAutoLoader::unlink($file);
+        }
+
+        SugarAutoLoader::saveMap();
     }
 
     public function testEnableAll()
@@ -70,35 +100,50 @@ class ConnectorsEnableDisableTest extends Sugar_Connectors_TestCase
         $this->assertTrue(empty($modules_sources['ext_rest_twitter']));
     }
 
-    public function testDisableEnableEAPM()
+    public function testToggleEAPM()
     {
-        require_once 'modules/Connectors/controller.php';
-        require_once 'include/MVC/Controller/SugarController.php';
         $controller = new ConnectorsController();
 
-        $_REQUEST['display_values'] = '';
-        $_REQUEST['display_sources'] = 'ext_rest_twitter,ext_eapm_webex';
-        $_REQUEST['ext_rest_twitter'] = 1;
-        $_REQUEST['action'] = 'SaveModifyDisplay';
-        $_REQUEST['module'] = 'Connectors';
-        $_REQUEST['from_unit_test'] = true;
-        $controller->action_SaveModifyDisplay();
-        ConnectorUtils::getConnectors(true);
-        $this->assertFalse(ConnectorUtils::eapmEnabled('ext_rest_twitter'), "Failed to disable Twitter");
-        $this->assertFalse(ConnectorUtils::eapmEnabled('ext_eapm_webex'), "Failed to disable WebEx");
+        // Needed as arguments for the test
+        $connectors = ConnectorUtils::getConnectors(true);
+        $sources = array(
+            'ext_rest_twitter' => 'ext_rest_twitter',
+            'ext_eapm_webex' => 'ext_eapm_webex',
+        );
 
-        // now reenable them
-        $_REQUEST['display_values'] = '';
-        $_REQUEST['display_sources'] = 'ext_rest_twitter,ext_eapm_webex';
-        $_REQUEST['ext_rest_twitter_external'] = 1;
-        $_REQUEST['ext_eapm_webex_external'] = 1;
-        $_REQUEST['action'] = 'SaveModifyDisplay';
-        $_REQUEST['module'] = 'Connectors';
-        $_REQUEST['from_unit_test'] = true;
+        // Run the method being tested
+        $controller->handleEAPMSettings($connectors, $sources, array());
 
-        $controller->action_SaveModifyDisplay();
-        ConnectorUtils::getConnectors(true);
-        $this->assertTrue(ConnectorUtils::eapmEnabled('ext_rest_twitter'), "Failed to enable Twitter");
-        $this->assertTrue(ConnectorUtils::eapmEnabled('ext_eapm_webex'), "Failed to enable WebEx");
+        // Get our results
+        $results = array(
+            ConnectorUtils::eapmEnabled($sources['ext_rest_twitter']),
+            ConnectorUtils::eapmEnabled($sources['ext_eapm_webex']),
+        );
+
+        // Make round 1 of assertions
+        $this->assertFalse($results[0], "Failed to disable Twitter");
+        $this->assertFalse($results[1], "Failed to disable WebEx");
+
+        // Begin second phase of the test, starting with fresh connector data
+        $connectors = ConnectorUtils::getConnectors(true);
+
+        // Mocks the $_REQUEST array used in the tested method
+        $request = array(
+            'ext_rest_twitter_external' => 1,
+            'ext_eapm_webex_external' => 1,
+        );
+
+        // Run the method being tested
+        $controller->handleEAPMSettings($connectors, $sources, $request);
+
+        // Get the results
+        $results = array(
+            ConnectorUtils::eapmEnabled($sources['ext_rest_twitter']),
+            ConnectorUtils::eapmEnabled($sources['ext_eapm_webex']),
+        );
+
+        // Make assertions
+        $this->assertTrue($results[0], "Failed to enable Twitter");
+        $this->assertTrue($results[1], "Failed to enable WebEx");
     }
 }

@@ -642,8 +642,8 @@
         this.unsetContextAction();
     },
 
-    deleteClicked: function() {
-        this.warnDelete();
+    deleteClicked: function(model) {
+        this.warnDelete(model);
     },
 
     /**
@@ -730,7 +730,7 @@
                 _.each(this.context.children, function(child) {
                     if (!_.isUndefined(child.attributes) && !_.isUndefined(child.attributes.isSubpanel)) {
                         if (child.attributes.isSubpanel && !child.attributes.hidden) {
-                            child.attributes.collection.fetch();
+                            child.reloadData({recursive: false});
                         }
                     }
                 });
@@ -808,7 +808,7 @@
      */
     beforeRouteDelete: function() {
         if (this._modelToDelete) {
-            this.warnDelete();
+            this.warnDelete(this._modelToDelete);
             return false;
         }
         return true;
@@ -835,9 +835,9 @@
     /**
      * Popup dialog message to confirm delete action
      */
-    warnDelete: function() {
+    warnDelete: function(model) {
         var self = this;
-        this._modelToDelete = true;
+        this._modelToDelete = model;
 
         self._targetUrl = Backbone.history.getFragment();
         //Replace the url hash back to the current staying page
@@ -882,9 +882,11 @@
             },
             success: function() {
                 var redirect = self._targetUrl !== self._currentUrl;
+
+                self.context.trigger('record:deleted', self._modelToDelete);
+
                 self._modelToDelete = false;
 
-                self.context.trigger('record:deleted');
                 if (redirect) {
                     self.unbindBeforeRouteDelete();
                     //Replace the url hash back to the current staying page

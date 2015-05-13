@@ -2563,7 +2563,7 @@ $app_strings = array (
 
     'WARNING_NO_DELETE_SELECTED_STAGE' => 'One or more of the selected records has a sales stage of Closed Won or Closed Lost and cannot be deleted.',
     'WARNING_NO_DELETE_SELECTED_STATUS' => 'One or more of the selected records has a status of Closed Won or Closed Lost and cannot be deleted.',
-    'WARNING_NO_DELETE_CLOSED_SELECTED_STATUS' => 'One or more of the selected records has a RLI with status of ' .
+    'WARNING_NO_DELETE_CLOSED_SELECTED_STATUS' => 'One or more of the selected records has a Revenue Line Item with status of ' .
         'Closed Won or Closed Lost and cannot be deleted.',
 
     'LBL_ACCOUNT'=>'Account',

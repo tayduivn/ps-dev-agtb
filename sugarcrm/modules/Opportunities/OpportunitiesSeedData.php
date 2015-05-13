@@ -242,6 +242,7 @@ class OpportunitiesSeedData {
         $opp_units = 0;
         $opp->total_revenue_line_items = $rlis_to_create;
         $opp->closed_revenue_line_items = 0;
+        $opp->included_revenue_line_items = 0;
 
         $closedWon = 0;
         $closedLost = 0;
@@ -327,6 +328,10 @@ class OpportunitiesSeedData {
             $rli->opportunity_id = $opp->id;
             $rli->lead_source = array_rand($app_list_strings['lead_source_dom']);
             $rli->product_type = $opp->opportunity_type;
+            if ($rli->commit_stage === 'include') {
+                $opp->included_revenue_line_items++;
+            }
+
             // if this is an even number, assign a product template
             if ($doPT) {
                 $rli->product_template_id = $pt_id;

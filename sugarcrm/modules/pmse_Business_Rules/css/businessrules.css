@@ -366,8 +366,7 @@ table.decision-table-index span {
 }
 
 .adam.single-item {
-  background: #e5f1fc;
-  color: #4398ec;
+  background: #3d9af5;
   -webkit-border-radius: 0 10px 10px 0;
   -moz-border-radius: 0 10px 10px 0;
   border-radius: 0 10px 10px 0;
@@ -382,8 +381,13 @@ table.decision-table-index span {
   line-height: 12px;
   vertical-align: top;
 }
+
 .adam.single-item a {
   text-decoration: none;
+}
+
+.adam.single-item-content {
+  color: #ffffff;
 }
 
 .adam.single-item-text {
@@ -393,12 +397,12 @@ table.decision-table-index span {
 .adam.single-item-remove {
   margin-left: 2px;
   margin-right: -2px;
-  color: #b7d7f8;
+  color: #cee5fc;
   font-size: 14px;
   line-height: 12px;
 }
 .adam.single-item-remove:hover {
-  color: #4398ec;
+  color: #ffffff;
   cursor: pointer;
 }
 
@@ -421,7 +425,7 @@ table.decision-table-index span {
   -ms-user-select: none;
   -o-user-select: none;
   user-select: none;
-  display: inline-block;
+  display: block;
   overflow: auto;
   padding: 2px;
   position: static;

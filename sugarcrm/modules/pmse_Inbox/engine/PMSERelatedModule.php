@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 require_once 'PMSELogger.php';
+require_once 'PMSEEngineUtils.php';
 
 class PMSERelatedModule {
 
@@ -89,7 +90,10 @@ class PMSERelatedModule {
         foreach($moduleBean->get_linked_fields() as $link => $def) {
             if (!empty($def['type']) && $def['type'] == 'link' && $moduleBean->load_relationship($link)) {
                 $relatedModule = $moduleBean->$link->getRelatedModuleName();
-                if (in_array($relatedModule, array("Emails", "Teams", "Activities", "EmailAddresses", "Shippers"))) {
+                if (!in_array($relatedModule, PMSEEngineUtils::getSupportedModules())) {
+                    continue;
+                }
+                if (in_array($link, array('contact'))) {
                     continue;
                 }
                 $relType = $moduleBean->$link->getType(); //returns 'one' or 'many' for the cardinality of the link
@@ -136,6 +140,23 @@ class PMSERelatedModule {
         $res['result'] = $output;
 
         return $res;
+    }
+
+    public function getFieldValue($newBean, $field)
+    {
+        global $timedate, $current_user;
+        $value= '';
+        $def = $newBean->field_defs[$field];
+        if ($def['type'] == 'datetime' || $def['type'] == 'datetimecombo'){
+            date_default_timezone_set('UTC');
+            $datetime = new Datetime($newBean->$field);
+            $value = $timedate->asIso($datetime, $current_user);
+        } else if ($def['type'] == 'bool') {
+            $value = ($value==1) ? true : false;
+        } else {
+            $value = $newBean->$field;
+        }
+        return $value;
     }
 
     public function addRelatedRecord($moduleBean, $linkField, $fields)

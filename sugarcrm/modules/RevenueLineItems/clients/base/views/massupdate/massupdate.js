@@ -15,46 +15,7 @@
      * {@inheritdoc}
      */
     initialize: function(options) {
-        this.plugins = _.clone(this.plugins) || [];
-        this.plugins.push('DisableMassDelete', 'MassQuote');
+        this.plugins = _.union(this.plugins || [], ['DisableMassDelete', 'MassQuote', 'CommittedDeleteWarning']);
         this._super("initialize", [options]);
-    },
-
-    /**
-     * {@inheritdoc}
-     */
-    delegateListFireEvents: function() {
-        this.layout.on("list:records:deleted", this.deleteCommitWarning, this);
-        this._super("delegateListFireEvents");
-    },
-    
-    /**
-     * Shows a warning message if a RLI that is included in a forecast is deleted.
-     * @return string message
-     */
-    deleteCommitWarning: function(lastSelectedModels) {
-        var message = null;
-        
-        if (!_.isUndefined(_.find(lastSelectedModels, function(model) {
-            if (model.get("commit_stage") == "include") {
-                return true;
-            }
-            return false;
-        }))) {
-            var forecastModuleSingular = app.lang.getModuleName('Forecasts');
-            message = app.lang.get("WARNING_DELETED_RECORD_LIST_RECOMMIT_1", "RevenueLineItems")
-                + '<a href="#Forecasts">' + forecastModuleSingular + '</a>.  '
-                + app.lang.get("WARNING_DELETED_RECORD_LIST_RECOMMIT_2", "RevenueLineItems")
-                + '<a href="#Forecasts">' + forecastModuleSingular + '</a>.';
-            app.alert.show("included_list_delete_warning", {
-                level: "warning",
-                messages: message,
-                onLinkClick: function() {
-                    app.alert.dismissAll();
-                }
-            });
-        }
-        
-        return message;
     }
 })

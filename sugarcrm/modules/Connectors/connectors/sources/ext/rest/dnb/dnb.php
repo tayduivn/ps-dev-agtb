@@ -24,12 +24,21 @@ class ext_rest_dnb extends ext_rest {
     protected $_has_testing_enabled = true;
 
     public function __construct() {
+        // Set this before the constructor so that the values aren't overridden
+        $this->_required_config_fields = array(
+            'dnb_username',
+            'dnb_password',
+            'dnb_env',
+        );
+
+        // Call the constructor now
         parent::__construct();
+
+        // Finish the rest up
         $this->_enable_in_wizard = false;
         $this->_enable_in_hover = true;
         $this->_enable_in_admin_display = false;
         $this->_enable_in_admin_mapping = false;
-        $this->_required_config_fields = array('dnb_username', 'dnb_password');
     }
 
     public function test() {

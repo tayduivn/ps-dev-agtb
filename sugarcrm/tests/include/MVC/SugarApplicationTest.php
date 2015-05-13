@@ -342,6 +342,51 @@ class SugarApplicationTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertContains("index.php?module=Home&action=index", $url);
     }
+
+    /**
+     * @dataProvider providerGetLoginRedirect
+     */
+    public function testGetLoginRedirect($add_empty, $post_data, $result_query)
+    {
+        $appReflection = new ReflectionClass("SugarApplication");
+        $method = $appReflection->getMethod('getLoginRedirect');
+        $method->setAccessible(true);
+
+        $_POST = $post_data;
+        $url = $method->invoke($this->_app, $add_empty);
+
+        $this->assertContains($result_query, $url);
+    }
+
+    function providerGetLoginRedirect() {
+        return array(
+            array(
+                'add_empty' => true,
+                'post_data' => array(
+                    'login_module' => 'foo',
+                    'login_action' => 'bar',
+                ),
+                'result_query' => 'index.php?module=foo&action=bar',
+            ),
+            array(
+                'add_empty' => true,
+                'post_data' => array(
+                    'login_module' => 'foo',
+                    'login_action' => '',
+                ),
+                'result_query' => 'index.php?module=foo&action=',
+            ),
+            array(
+                'add_empty' => false,
+                'post_data' => array(
+                    'login_module' => 'foo',
+                    'login_empty_value' => '',
+                    'login_zero_value' => '0',
+                ),
+                'result_query' => 'index.php?module=foo&zero_value=0',
+            ),
+        );
+    }
 }
 
 class SugarApplicationMock extends SugarApplication

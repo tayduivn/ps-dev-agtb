@@ -114,7 +114,7 @@ class DownloadFile {
      */
     public function getImageInfo($bean, $field) {
         if ($this->validateBeanAndField($bean, $field, 'image')) {
-            $filename = $bean->{$field};
+            $filename = method_exists($bean, 'getUploadId') ? $bean->getUploadId() : $bean->id;
             $filepath = $this->getFilePathFromId($filename);
 
             // Quick existence check to make sure we are actually working
@@ -199,6 +199,9 @@ class DownloadFile {
                                     return false;
                                 }
                             }
+                        }
+                        else if ($bean->object_name == 'Note') {
+                            $fileid = $bean->getUploadId();
                         }
                     } else {
                         $fileid = $bean->id;

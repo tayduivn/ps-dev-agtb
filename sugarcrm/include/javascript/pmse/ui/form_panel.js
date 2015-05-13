@@ -1462,6 +1462,8 @@
 		this._labelField = null;
 		this._valueField = null;
         this._attributes = null;
+		this._optionsFilter = null;
+
 		FormPanelDropdown.prototype.init.call(this, settings);
 	};
 
@@ -1476,7 +1478,8 @@
 			dataURL: null,
 			dataRoot: null,
 			labelField: "label",
-			valueField: "value"
+			valueField: "value",
+			optionsFilter: null
 		};
 
 		jQuery.extend(true, defaults, settings);
@@ -1486,7 +1489,8 @@
 		FormPanelField.prototype.setValue.call(this, defaults.value);
 		this._options = new ArrayList();
 
-		this.setDataURL(defaults.dataURL)
+		this.setOptionsFilter(defaults.optionsFilter)
+			.setDataURL(defaults.dataURL)
 			.setDataRoot(defaults.dataRoot)
 			.setLabelField(defaults.labelField)
 			.setValueField(defaults.valueField);
@@ -1496,6 +1500,15 @@
 		} else {
 			this.setOptions(defaults.options);
 		}
+	};
+
+	FormPanelDropdown.prototype.setOptionsFilter = function (filter) {
+		if (!(filter === null || typeof filter === 'function')) {
+			throw new Error('setOptionsFilter(): The parameter must be a function.');
+		}
+		this._optionsFilter = filter;
+
+		return this;
 	};
 
 	FormPanelDropdown.prototype.setLabelField = function (field) {
@@ -1620,8 +1633,17 @@
 		return optionData[this._labelField];
 	};
 
-	FormPanelDropdown.prototype.getSelectedData = function () {
-		return this.getOptionData(this._value);
+	FormPanelDropdown.prototype.getSelectedData = function (key) {
+		var data = jQuery(this.html).find("option:selected").data("data");
+		if (key !== undefined) {
+			if (typeof key !== 'string') {
+				throw new Error('getSelectedData(): The parameter is optional, however if it is supplied it must be a '
+					+ 'string');
+			}
+			return data[key];
+		} else {
+			return data;
+		}
 	};
 
 	FormPanelDropdown.prototype.getOptionData = function(optionValue) {
@@ -1670,6 +1692,9 @@
 		var newOption;
 		if(typeof option === 'object') {
 			newOption = cloneObject(option);
+			if (typeof this._optionsFilter === 'function' && !this._optionsFilter(option)) {
+				return this;
+			}
 			this._options.insert(newOption);
 			if(this.html && !this._massiveAction) {
 				this._paintOption(newOption);
