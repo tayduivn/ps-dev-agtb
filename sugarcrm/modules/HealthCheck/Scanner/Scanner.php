@@ -680,7 +680,7 @@ class HealthCheckScanner
         foreach ($hook_files as $hookname => $hooks) {
             foreach ($hooks as $hook_data) {
                 $this->log("Checking global hook $hookname:{$hook_data[1]}");
-                $this->checkFileForOutput($hook_data[2]);
+                $this->checkFileForOutput($hook_data[2], $hook_data[3]);
             }
         }
 
@@ -1130,7 +1130,7 @@ class HealthCheckScanner
         // skip check for output for bwc module
         if (!$bwc) {
             foreach ($extfiles as $phpfile) {
-                $this->checkFileForOutput($phpfile, $bwc ? HealthCheckScannerMeta::CUSTOM : HealthCheckScannerMeta::MANUAL);
+                $this->checkFileForOutput($phpfile);
             }
         }
 
@@ -1661,7 +1661,7 @@ class HealthCheckScanner
                 if (empty($hook_data[2])) {
                     $this->updateStatus("badHookFile", $hookname, '');
                 } elseif (!$bwc) {
-                    $this->checkFileForOutput($hook_data[2], $status);
+                    $this->checkFileForOutput($hook_data[2], $hook_data[3]);
                 }
             }
         }
@@ -1824,6 +1824,9 @@ class HealthCheckScanner
         foreach ($hook_array as $hooks) {
             foreach ($hooks as $hook) {
                 $hookFileLocation = (!empty($hook[2])) ? $hook[2] : '';
+                if (!$hookFileLocation) {
+                    $hookFileLocation = $this->getHookFilePath($hook[3]);
+                }
                 if (!file_exists($hookFileLocation)) {
                     // putting it as custom since LogicHook checks file_exists
                     $this->updateStatus("badHookFile", $hookfile, $hookFileLocation);
@@ -1838,8 +1841,12 @@ class HealthCheckScanner
      * Set $status if it happens.
      * @param string $phpfile
      */
-    protected function checkFileForOutput($phpfile)
+    protected function checkFileForOutput($phpfile, $namespace = null)
     {
+        if (!$phpfile && $namespace) {
+            $phpfile = $this->getHookFilePath($namespace);
+        }
+
         if (in_array($phpfile, $this->ignoreMissingCustomFiles)) {
             list($sugar_version, $sugar_flavor) = $this->getVersionAndFlavor();
             if (version_compare($sugar_version, '7.0', '>')) {
@@ -2596,6 +2603,22 @@ ENDP;
         }
         return array($version['version'], $version['build']);
 
+    }
+
+    /**
+     * Get hook file path by class namespace
+     * @param string $namespace Fully class namespace
+     * @return string
+     */
+    protected function getHookFilePath($nameSpace)
+    {
+        try {
+            $reflectionClass = new \ReflectionClass($nameSpace);
+        } catch (\ReflectionException $e) {
+            $this->log("Scanner: Could not use ReflectionClass with {$nameSpace}");
+            return '';
+        }
+        return $reflectionClass->getFileName();
     }
 }
 

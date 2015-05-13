@@ -17,6 +17,9 @@ if (!defined('sugarEntry') || !sugarEntry) {
 class Relationship extends SugarBean
 {
 
+    public $table_name = "relationships";
+    public $object_name = "Relationship";
+
     public function __construct()
     {
         parent::__construct();
