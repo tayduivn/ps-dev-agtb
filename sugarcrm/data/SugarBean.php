@@ -1791,6 +1791,8 @@ class SugarBean
         // use the db independent query generator
         $this->preprocess_fields_on_save();
 
+        //make sure the bean has the latest changes to the email field prior to checking for changes
+        $this->populateFetchedEmail('bean_field');
         $this->dataChanges = $this->db->getDataChanges($this);
 
         //construct the SQL to create the audit record if auditing is enabled.
@@ -3027,6 +3029,7 @@ class SugarBean
 
         //make copy of the fetched row for construction of audit record and for business logic/workflow
         $this->fetched_row=$this->populateFromRow($row, true);
+        $this->populateFetchedEmail();
         // --------------------------------------------------------
         // to here with this call:
         // $this->fetch($id, array(), array('skipSecondaryQuery' => true));
@@ -3219,6 +3222,7 @@ class SugarBean
             }
             //true parameter below tells populate to perform conversions on row data
             $bean->fetched_row = $bean->populateFromRow($row, true);
+            $this->populateFetchedEmail();
             $bean->call_custom_logic("process_record");
             $beans[$bean->id] = $bean;
             $rawRows[$bean->id] = $row;
@@ -5255,6 +5259,7 @@ class SugarBean
             $bean->fill_in_additional_list_fields();
             $bean->call_custom_logic("process_record");
             $bean->fetched_row = $row;
+            $this->populateFetchedEmail();
 
             $list[] = $bean;
         }
@@ -5958,6 +5963,7 @@ class SugarBean
         $this->duplicates_found = true;
         $row = $this->convertRow($row);
         $this->fetched_row = $row;
+        $this->populateFetchedEmail();
         $this->fromArray($row);
 		$this->is_updated_dependent_fields = false;
         $this->fill_in_additional_detail_fields();
@@ -7732,4 +7738,33 @@ class SugarBean
 
         return null;
     }
+
+
+    /**
+     * calls beans SugarEmailAddress object to populate the fetched row with the latest email address information
+     *
+     * @return bool
+     */
+    function populateFetchedEmail($populate = 'fetched_row')
+    {
+        if (!empty($this->emailAddress)) {
+            //populate either the bean email field, bean fetched row, or both.
+            $emailAddr = $this->emailAddress->getAddressesForBean($this, true);
+            switch($populate){
+                case 'bean_field':
+                    $this->email = $emailAddr;
+                    break;
+                case 'both':
+                    $this->fetched_row['email'] = $emailAddr;
+                    $this->email = $emailAddr;
+                    break;
+                case 'fetched_row':
+                default:
+                    $this->fetched_row['email'] = $emailAddr;
+            } //switch
+            return true;
+        }
+        return false;
+    }
+
 }
