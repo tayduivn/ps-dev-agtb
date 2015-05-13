@@ -516,6 +516,7 @@ describe('Base.View.FilterRows', function() {
         });
 
         it('should hide flex-relate operator', function() {
+            sinon.collection.stub(view, 'initValueField');
             model = app.data.createBean('Accounts', {'filter_row_name': 'relatedTo'});
             field = view.createField(model, {
                 name: 'filter_row_name',
