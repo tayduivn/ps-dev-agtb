@@ -10,10 +10,5 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$dictionary['Account'] = array(
-    'fields' => array(
-        'name' => array(
-            'customCode' => 'customCode',
-        ),
-    ),
-);
+$dictionary['Opportunity']['fields']['account_name']['required'] = false;
+unset($dictionary['Opportunity']['fields']['account_name']['importable']);

@@ -12,8 +12,9 @@
 
 $dictionary['Account'] = array(
     'fields' => array(
-        'name' => array(
-            'customCode' => 'customCode',
+        'team_name' => array(
+            'name' => 'team_name',
+            'type' => 'team_name',
         ),
     ),
 );

@@ -10,10 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$dictionary['Account'] = array(
-    'fields' => array(
-        'name' => array(
-            'customCode' => 'customCode',
-        ),
-    ),
-);
+class S_422_1_HealthCheckScannerCasesTestMock extends HealthCheckScannerCasesTestMock
+{
+    public $md5_files = array(
+        './modules/Accounts/Account.php' => 'fakeMD5'
+    );
+}
