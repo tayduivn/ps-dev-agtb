@@ -225,10 +225,10 @@ class ACLAction  extends SugarBean
 
     	if(!isset(self::$acl_map[$user_id][$type])) {
             self::$acl_map[$user_id][$type] = "ACL_{$type}_".md5(serialize($data));
-    		 sugar_cache_put('ACL', self::$acl_map);
+            sugar_cache_put('ACL', self::$acl_map, 0);
     	}
         $key = md5(self::$acl_map[$user_id][$type]);
-    	sugar_cache_put($key, $data, session_cache_expire());
+        sugar_cache_put($key, $data, session_cache_expire() * 60);
     }
 
     /**

@@ -107,7 +107,7 @@ class ExternalCacheAPITest extends Sugar_PHPUnit_Framework_TestCase
     {
         $sc = SugarCache::instance();
         $cacheStub = $this->getMock(get_class($sc), array('_setExternal'));
-        $cacheStub->expects($this->never())
+        $cacheStub->expects($this->once())
                        ->method('_setExternal');
         $cacheStub->set($this->_cacheKey1,$this->_cacheValue1,0);
     }
