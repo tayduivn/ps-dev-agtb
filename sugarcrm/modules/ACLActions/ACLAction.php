@@ -234,7 +234,7 @@ class ACLAction  extends SugarBean
     /**
     * static getUserActions($user_id,$refresh=false, $category='', $action='')
     * returns a list of user actions
-    * @param GUID $user_id
+    * @param string $user_id
     * @param BOOLEAN $refresh
     * @param STRING $category
     * @param STRING $action
@@ -292,33 +292,24 @@ class ACLAction  extends SugarBean
         $result = $db->query($query);
         $selected_actions = array();
         while($row = $db->fetchByAssoc($result, FALSE) ){
-            $acl = BeanFactory::getBean('ACLActions');
-            $isOverride  = false;
-            $acl->populateFromRow($row);
-            if(!empty($row['access_override'])){
-                $acl->aclaccess = $row['access_override'];
-                $isOverride = true;
+            $isOverride = !empty($row['access_override']);
+            if ($isOverride) {
+                $row['aclaccess'] = $row['access_override'];
             }
-            if(!isset($selected_actions[$acl->category])){
-                $selected_actions[$acl->category] = array();
 
-            }
-            if(!isset($selected_actions[$acl->category][$acl->acltype][$acl->name])
-                || ($selected_actions[$acl->category][$acl->acltype][$acl->name]['aclaccess'] > $acl->aclaccess
-                    && $isOverride
-                    )
-                ||
-                    (!empty($selected_actions[$acl->category][$acl->acltype][$acl->name]['isDefault'])
-                    && $isOverride
+            if (!isset($selected_actions[$row['category']][$row['acltype']][$row['name']])
+                || ($isOverride
+                    && ($selected_actions[$row['category']][$row['acltype']][$row['name']]['aclaccess'] > $row['aclaccess']
+                        || $selected_actions[$row['category']][$row['acltype']][$row['name']]['isDefault']
                     )
                 )
-            {
-
-
-                $selected_actions[$acl->category][$acl->acltype][$acl->name] = $acl->toArray();
-                $selected_actions[$acl->category][$acl->acltype][$acl->name]['isDefault'] = !$isOverride;
+            ) {
+                $selected_actions[$row['category']][$row['acltype']][$row['name']] = array(
+                    'id' => $row['id'],
+                    'aclaccess' => $row['aclaccess'],
+                    'isDefault' => !$isOverride,
+                );
             }
-
         }
 
         //only set the session variable if it was a full list;
