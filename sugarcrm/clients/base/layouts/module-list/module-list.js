@@ -264,7 +264,7 @@
             minWidth += firstModule.outerWidth() + 1;
         } else {
             // or the first module
-            minWidth += $moduleChildren.eq(2).outerWidth() + 1;
+            minWidth += $moduleChildren.eq(1).outerWidth() + 1;
         }
 
         // More Modules dropdown
