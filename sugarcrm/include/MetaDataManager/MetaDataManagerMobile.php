@@ -205,4 +205,17 @@ class MetaDataManagerMobile extends MetaDataManager
 
         return $data;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function getLanguageCacheAttributes()
+    {
+        $modules = $this->getModules();
+        sort($modules);
+        return array_merge(parent::getLanguageCacheAttributes(), array(
+            // refresh client side language cache after the list of mobile enabled modules is changed
+            'modules' => $modules,
+        ));
+    }
 }

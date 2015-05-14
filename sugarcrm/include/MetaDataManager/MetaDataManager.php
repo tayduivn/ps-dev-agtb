@@ -2835,13 +2835,25 @@ class MetaDataManager
             // don't force a metadata refresh
             $urlList[$lang] = getVersionedPath(
                 $this->getUrlForCacheFile($file),
-                $GLOBALS['sugar_config']['js_lang_version'],
+                $this->getLanguageCacheAttributes(),
                 true
             );
         }
         $urlList['default'] = $GLOBALS['sugar_config']['default_language'];
 
         return $urlList;
+    }
+
+    /**
+     * Returns additional language cache attributes for the given platform
+     *
+     * @return mixed
+     */
+    protected function getLanguageCacheAttributes()
+    {
+        return array(
+            'version' => $GLOBALS['sugar_config']['js_lang_version'],
+        );
     }
 
     public function getOrderedStringUrls() {
