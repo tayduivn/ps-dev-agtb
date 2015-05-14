@@ -268,4 +268,24 @@ describe("Alert View", function() {
             expect(app.shortcuts.restoreSession.called).toBe(false);
         });
     });
+
+    it('should apply styles when rendering', function() {
+        view.render({
+            closeable: true,
+            level: 'info'
+        });
+
+        expect(view.$el.hasClass('closeable')).toBeTruthy();
+        expect(view.$el.hasClass('alert-info')).toBeTruthy();
+
+        view.$el.removeClass();
+
+        view.render({
+            closeable: false,
+            level: 'error'
+        });
+
+        expect(view.$el.hasClass('closeable')).toBeFalsy();
+        expect(view.$el.hasClass('alert-error')).toBeTruthy();
+    });
 });
