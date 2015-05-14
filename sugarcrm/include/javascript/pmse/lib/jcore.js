@@ -3527,6 +3527,8 @@ var jCore = (function ($, window) {
             };
         $shape.resizable(shapeResizeOptions);
 
+        //initialize resizable on parent
+        $(shape.parent.getHTML()).resizable({disabled: true});
         // update the min height and min width of the parent
         this.updateResizeMinimums(shape.parent);
     };
@@ -4259,7 +4261,7 @@ var jCore = (function ($, window) {
     NoDropBehavior.prototype.attachDropBehavior = function (shape) {
         var $shape = $(shape.getHTML());
         DropBehavior.prototype.attachDropBehavior.call(this, shape);
-        $(shape).droppable('accept', "");
+        $shape.droppable('option', 'accept', "");
     };
 
     /**
