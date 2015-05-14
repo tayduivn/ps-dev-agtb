@@ -12,16 +12,9 @@
 /**
  * @class View.Views.Base.AlertView
  * @alias SUGAR.App.view.views.BaseAlertView
- * @extends View.AlertView
+ * @extends View.View
  */
 ({
-    /**
-     * extendsFrom: This needs to be app.view.AlertView since it's extending
-     * a Sidecar specific view class. This is a special case, as the normal
-     * method is for it to be a string.
-     */
-    extendsFrom: app.view.AlertView,
-
     className: 'alert-wrapper', //override default class
 
     plugins: ['Tooltip'],
@@ -75,12 +68,23 @@
     },
 
     /**
+     * Gets selector for DOM elements that need to be clicked in order to close an alert.
+     * @return {Object} jQuery/Zepto selector of the close button.
+     */
+    getCloseSelector: function() {
+        return this.$('.close');
+    },
+
+    /**
      * {@inheritDoc}
      * Render the custom alert view template.
      *
      * Binds `Esc` and `Return` keys for confirmation alerts.
      */
     render: function(options) {
+
+        options = options || this.options;
+
         if (!this.triggerBefore('render')) {
             return false;
         }
@@ -264,7 +268,7 @@
     close: function() {
         this.unbindCancelAndReturn();
         this.$el.next('br').remove();
-        this._super('close');
+        this.dispose();
     },
 
     /**
