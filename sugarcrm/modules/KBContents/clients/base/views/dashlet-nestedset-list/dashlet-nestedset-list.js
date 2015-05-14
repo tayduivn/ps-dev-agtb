@@ -64,14 +64,17 @@
         var config = app.metadata.getModule(
             this.meta.config_provider,
             'config'
-        );
+            ),
+            currentContext = this.context.parent || this.context,
+            currentModule = currentContext.get('module'),
+            currentAction = currentContext.get('action');
         this.moduleRoot = this.settings.get('data_provider');
         this.categoryRoot = !_.isUndefined(config.category_root) ?
             config.category_root :
             null;
         this.extraModule = this.meta.extra_provider || {};
-        if (this.context.get('module') === this.extraModule.module &&
-            (this.context.get('action') === 'detail' || this.context.get('action') === 'edit')
+        if (currentModule === this.extraModule.module &&
+            (currentAction === 'detail' || currentAction === 'edit')
         ) {
             this.useStates = false;
             this.changedCallback = _.bind(this.modelFieldChanged, this);
@@ -196,14 +199,46 @@
             ) {
             return;
         }
-        var id = this.context.get('model').get(this.extraModule.field),
+        var currentContext = this.context.parent || this.context,
+            currentModel = currentContext.get('model'),
+            id = currentModel.get(this.extraModule.field),
             self = this;
         this.loadAdditionalLeaf(id, function() {
-            _.defer(function() {
-                if (self.disposed) {
-                    return;
+            if (self.disposed) {
+                return;
+            }
+            var nestedBean = self.collection.getChild(id);
+            nestedBean.getPath({
+                success: function(data) {
+                    var path = [];
+                    _.each(data, function(cat) {
+                        if (cat.id == this.categoryRoot) {
+                            return;
+                        }
+                        path.push({
+                            id: cat.id,
+                            name: cat.name
+                        });
+                    }, self);
+                    path.push({
+                        id: nestedBean.id,
+                        name: nestedBean.get('name')
+                    });
+                    async.forEach(
+                        path,
+                        function(item, c) {
+                            self.folderToggled({
+                                id: item.id,
+                                name: item.name,
+                                type: 'folder',
+                                open: true
+                            }, c);
+                        },
+                        function() {
+                            self.selectNode(currentModel.id);
+                        }
+                    );
                 }
-                self.selectNode(self.context.get('model').id)
             });
         });
     },
@@ -335,7 +370,10 @@
             success: function(data) {
                 self.addLeafs(data.models || [], id);
                 if (_.isFunction(callback)) {
-                    callback.call();
+                    _.defer(function(f) {
+                        f.call();
+                    }, callback);
+
                 }
             }
         });
@@ -392,9 +430,10 @@
      * {@inheritDoc}
      */
     _dispose: function() {
-        if (this.useStates === false) {
-            this.context.get('model').off('change:' + this.extraModule.field, this.changedCallback);
-            this.context.get('model').off('data:sync:complete', this.savedCallback);
+        var model;
+        if (this.useStates === false && (model = this.context.get('model'))) {
+            model.off('change:' + this.extraModule.field, this.changedCallback);
+            model.off('data:sync:complete', this.savedCallback);
         }
         this._super('_dispose');
     },
