@@ -182,7 +182,7 @@
                     if (searchTermAndParams) {
                         // For search, we may have query params for the module list
                         var uriSplit = searchTermAndParams.split('?');
-                        searchTerm = uriSplit[0];
+                        searchTerm = decodeURIComponent(uriSplit[0]);
 
                         // We have parameters. Parse them.
                         if (uriSplit.length > 1) {
