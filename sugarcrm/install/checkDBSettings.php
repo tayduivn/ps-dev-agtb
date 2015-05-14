@@ -31,9 +31,6 @@ function checkDBSettings($silent=false) {
     copyInputsIntoSession();
 
     $db = getInstallDbInstance();
-    if (!empty($_SESSION['setup_db_options'])) {
-        $db->setOptions($_SESSION['setup_db_options']);
-    }
 
     installLog("testing with {$db->dbType}:{$db->variant}");
 
@@ -348,14 +345,6 @@ function copyInputsIntoSession(){
             if (isset($_REQUEST['goto']) && $_REQUEST['goto'] == 'SilentInstall' && isset($_SESSION['setup_db_drop_tables'])) {
                 //set up for Oracle Silent Installer
                 $_REQUEST['setup_db_drop_tables'] = $_SESSION['setup_db_drop_tables'] ;
-            }
-
-            if (!isset($_SESSION['setup_db_options'])) {
-                $_SESSION['setup_db_options'] = array();
-            }
-
-            if (isset($_REQUEST['setup_db_ssl_is_enabled'])) {
-                $_SESSION['setup_db_options']['ssl'] = isTruthy($_REQUEST['setup_db_ssl_is_enabled']);
             }
 }
 
