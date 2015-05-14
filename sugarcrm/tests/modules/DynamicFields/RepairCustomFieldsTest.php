@@ -86,7 +86,7 @@ class RepairCustomFieldsTest extends Sugar_PHPUnit_Framework_TestCase
         //Run repair
         $ret = $this->df->repairCustomFields(false);
         $this->assertRegExp("/MISSING IN DATABASE - {$this->field->name} -  ROW/", $ret);
-        $compareFieldDefs = $this->db->getHelper()->get_columns($this->table_name);
+        $compareFieldDefs = $this->db->get_columns($this->table_name);
         $this->assertArrayNotHasKey($this->field->name, $compareFieldDefs);
     }
 
@@ -97,7 +97,7 @@ class RepairCustomFieldsTest extends Sugar_PHPUnit_Framework_TestCase
         //Run repair
         $ret = $this->df->repairCustomFields(true);
         $this->assertRegExp("/MISSING IN DATABASE - {$this->field->name} -  ROW/", $ret);
-        $compareFieldDefs = $this->db->getHelper()->get_columns($this->table_name);
+        $compareFieldDefs = $this->db->get_columns($this->table_name);
         $this->assertArrayHasKey($this->field->name, $compareFieldDefs);
     }
 

@@ -276,48 +276,34 @@ class TemplateField{
 		return $req;
 	}
 
-	/*	function get_db_required($modify=false){
-		$GLOBALS['log']->debug('get_db_required required='.$this->required." and ".(($modify)?"true":"false")." and ".print_r($this->new_field_definition,true));
-		if ($modify) {
-		if (!empty($this->new_field_definition['required'])) {
-		if ($this->required and $this->new_field_definition['required'] != $this->required) {
-		return " null ";
-		}
-		return "";
-		}
-		}
-		if (empty($this->new_field_definition['required']) or $this->new_field_definition['required'] != $this->required ) {
-		if(!empty($this->required) && $this->required){
-		return " NOT NULL";
-		}
-		}
-		return '';
-		}
-		*/
-	/**
-	 * Oracle Support: do not set required constraint if no default value is supplied.
-	 * In this case the default value will be handled by the application/sugarbean.
-	 */
-	function get_db_add_alter_table($table)
-	{
-		return $GLOBALS['db']->getHelper()->addColumnSQL($table, $this->get_field_def(), true);
-	}
+    /**
+     * Oracle Support: do not set required constraint if no default value is supplied.
+     * In this case the default value will be handled by the application/sugarbean.
+     */
+    public function get_db_add_alter_table($table)
+    {
+        $db = DBManagerFactory::getInstance();
+        return $db->addColumnSQL($table, $this->get_field_def(), true);
+    }
 
-	function get_db_delete_alter_table($table)
-	{
-		return $GLOBALS['db']->getHelper()->dropColumnSQL(
-		$table,
-		$this->get_field_def()
-		);
-	}
+    public function get_db_delete_alter_table($table)
+    {
+        $db = DBManagerFactory::getInstance();
+        return $db->dropColumnSQL(
+            $table,
+            $this->get_field_def()
+        );
+    }
 
-	/**
-	 * mysql requires the datatype caluse in the alter statment.it will be no-op anyway.
-	 */
-	function get_db_modify_alter_table($table){
-		return $GLOBALS['db']->alterColumnSQL($table, $this->get_field_def());
-	}
-
+    /**
+     * mysql requires the datatype clause in the alter statement.
+     * It will be no-op anyway.
+     */
+    public function get_db_modify_alter_table($table)
+    {
+        $db = DBManagerFactory::getInstance();
+        return $db->alterColumnSQL($table, $this->get_field_def());
+    }
 
 	/*
 	 * BEAN FUNCTIONS

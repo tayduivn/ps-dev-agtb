@@ -1,4 +1,6 @@
 <?php
+//FILE SUGARCRM flav=ent ONLY
+
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -10,28 +12,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-/*********************************************************************************
-
-* Description: This file handles the Data base functionality for the application using IBM DB2.
-* It acts as the DB abstraction layer for the application. It depends on helper classes
-* which generate the necessary SQL. This sql is then passed to PEAR DB classes.
-* The helper class is chosen in DBManagerFactory, which is driven by 'db_type' in 'dbconfig' under config.php.
-*
-* All the functions in this class will work with any bean which implements the meta interface.
-* The passed bean is passed to helper class which uses these functions to generate correct sql.
-* Please see DBManager file for details
-*
-*
-* Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
-* All Rights Reserved.
-* Contributor(s): ______________________________________..
-********************************************************************************/
-
-//FILE SUGARCRM flav=ent ONLY
 require_once 'include/database/IBMDB2PreparedStatement.php';
 
 /**
- * Note that we are only supporting LUW 9.7 and higher at this moment
+ * This class handles the Data base functionality for the application using
+ * IBM DB2.
+ *
+ * Note: we are only supporting LUW 9.7 and higher at this moment.
  */
 class IBMDB2Manager  extends DBManager
 {
