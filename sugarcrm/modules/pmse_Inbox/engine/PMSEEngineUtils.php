@@ -825,6 +825,26 @@ class PMSEEngineUtils
         return $dateTime;
     }
 
+    public static function getExpectedTimeLabel ($expectedTime) {
+        $value = '';
+        $number = 0;
+        if (!empty($expectedTime) && !empty($expectedTime->time)) {
+            $number = (int) $expectedTime->time;
+            switch($expectedTime->unit) {
+                case 'day':
+                    $value = ($number === 1) ? translate('LBL_DURATION_DAY') : translate('LBL_DURATION_DAYS') ;
+                    break;
+                case 'hour':
+                    $value = ($number === 1) ? translate('LBL_DURATION_HOUR') : translate('LBL_DURATION_HOURS') ;
+                    break;
+                case 'minute':
+                    $value = ($number === 1) ? translate('LBL_DURATION_MINUTE') : translate('LBL_DURATION_MINUTES') ;
+                    break;
+            }
+            $value = $number . ' ' . $value;
+        }
+        return $value;
+    }
     /**
      * @param $id
      * @return bool

@@ -34,10 +34,10 @@ $viewdefs[$module_name]['base']['view']['reassignCases-list'] = array(
                 ),
                 array(
                     'name' => 'cas_delegate_date',
-                    'label' => 'LBL_PMSE_LABEL_ACTIVITY_DELEGATE_DATE',
+                    'label' => 'LBL_PMSE_LABEL_ACTIVITY_START_DATE',
                     'default' => true,
                     'enabled' => true,
-                    'link' => false,
+                    'type' => 'datetimecombo',
                 ),
                 array(
                     'name' => 'cas_expected_time',
@@ -51,7 +51,7 @@ $viewdefs[$module_name]['base']['view']['reassignCases-list'] = array(
                     'label' => 'LBL_PMSE_LABEL_DUE_DATE',
                     'default' => true,
                     'enabled' => true,
-                    'link' => false,
+                    'type' => 'datetimecombo-colorcoded',
                 ),
                 array(
                     'name' => 'assigned_user',
