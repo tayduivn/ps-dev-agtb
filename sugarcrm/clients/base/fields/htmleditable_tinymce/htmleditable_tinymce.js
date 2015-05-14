@@ -123,35 +123,29 @@
     getTinyMCEConfig: function(){
         return {
             // Location of TinyMCE script
-            script_url: 'include/javascript/tiny_mce/tiny_mce.js',
+            script_url: 'include/javascript/tinymce4/tinymce.min.js',
 
             // General options
-            theme: "advanced",
-            skin: "sugar7",
-            plugins: "style,table,advhr,advimage,advlink,iespell,inlinepopups,media,searchreplace,print,contextmenu,paste,noneditable,visualchars,nonbreaking,xhtmlxtras",
-            entity_encoding: "raw",
+            theme: 'modern',
+            skin: 'sugar',
+            plugins: 'code,textcolor',
             browser_spellcheck: true,
 
-            // Theme options
-            theme_advanced_buttons1: "code,|,bold,italic,underline,|,justifyleft,justifycenter,justifyright,justifyfull,fontsizeselect,|,insertlayer,moveforward,movebackward,absolute,|,styleprops,|,cite,abbr,acronym,del,ins,attribs,|,iespell,media,advhr,|,print,|",
-            theme_advanced_buttons2: "cut,copy,paste,|,search,replace,|,bullist,numlist,|,outdent,indent,blockquote,|,undo,redo,|,link,unlink,anchor,image,|,forecolor,backcolor,tablecontrols,|,",
-            theme_advanced_toolbar_location: "top",
-            theme_advanced_toolbar_align: "left",
-            theme_advanced_statusbar_location: "none",
-            theme_advanced_resizing: true,
-            schema: "html5",
+            // User Interface options
+            width: '100%',
+            height: '100%',
+            menubar: false,
+            statusbar: false,
+            resize: false,
+            toolbar: 'code | bold italic underline strikethrough | bullist numlist | ' +
+                     'alignleft aligncenter alignright alignjustify | forecolor backcolor | fontsizeselect',
 
-            // Drop lists for link/image/media/template dialogs
-            template_external_list_url: "lists/template_list.js",
-            media_external_list_url: "lists/media_list.js",
+            // Output options
+            entity_encoding: 'raw',
 
-            //plugin theme settings
-            theme_advanced_path: false,
-            theme_advanced_source_editor_width: 500,
-            theme_advanced_source_editor_height: 400,
-            inlinepopups_skin: "sugar7modal",
+            // URL options
             relative_urls: false,
-            remove_script_host: false
+            convert_urls: false
         };
     },
 
@@ -171,33 +165,34 @@
                     __superSetup__.call(this, editor);
                 }
                 self._htmleditor = editor;
-                self._htmleditor.onInit.add(function(ed) {
+                self._htmleditor.on('init', function(event) {
                     self.setEditorContent(self.getFormattedValue());
-                    $(ed.getWin()).blur(function(e){ // Editor window lost focus, update model immediately
+                    $(event.target.getWin()).blur(function(e){ // Editor window lost focus, update model immediately
                         self._saveEditor();
                     });
                 });
-                self._htmleditor.onDeactivate.add(function(ed){
+                self._htmleditor.on('deactivate', function(ed){
                     self._saveEditor();
                 });
-                self._htmleditor.onSetContent.add(function(ed) {
-                    if (self._saveOnSetContent) {
-                        self._saveEditor(true);
-                    }
-                    self._saveOnSetContent = true; // flip it back so that we're sure we save the next time
-                });
-                self._htmleditor.onChange.add(function(ed, l) {
+                self._htmleditor.on('change', function(ed, l) {
                     // Changes have been made, mark widget as dirty so we don't lose them
                     self._isDirty = true;
                 });
+                self.addCustomButtons(editor);
             };
             config.oninit = function(inst) {
                 self.context.trigger('tinymce:oninit', inst);
             };
 
-            $('.htmleditable').tinymce(config);
+            this._getHtmlEditableField().tinymce(config);
         }
     },
+
+    /**
+     * Add custom buttons.
+     * @param {Object} editor TinyMCE editor
+     */
+    addCustomButtons: function(editor) {},
 
     /**
      * Destroy TinyMCE Editor instance

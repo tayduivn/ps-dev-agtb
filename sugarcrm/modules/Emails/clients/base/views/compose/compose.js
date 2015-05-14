@@ -860,7 +860,7 @@
     resizeEditor: function(drawerHeight) {
         var $editor, headerHeight, recordHeight, showHideHeight, diffHeight, editorHeight, newEditorHeight;
 
-        $editor = this.$('.mceLayout .mceIframeContainer iframe');
+        $editor = this.$('.mce-stack-layout .mce-stack-layout-item iframe');
         //if editor not already rendered, cannot resize
         if ($editor.length === 0) {
             return;
