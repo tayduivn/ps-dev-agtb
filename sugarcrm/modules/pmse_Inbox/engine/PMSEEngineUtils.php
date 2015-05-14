@@ -1049,17 +1049,29 @@ class PMSEEngineUtils
         return $data;
     }
 
-    public static function getSupportedModules () {
+    public static function getStudioModules($type = '') {
         include 'PMSEModules.php';
         $studioBrowser = new StudioBrowser();
-        $studioBrowser->loadModules();
+        if ($type == 'related') {
+            $studioBrowser->loadRelatableModules();
+        } else {
+            $studioBrowser->loadModules();
+        }
         $moduleList = $studioBrowser->modules;
-        $out = array();
 
         foreach ($moduleList as $key => $module) {
             if (in_array($module->module, $pmseModulesList)) {
-                continue;
+                unset($moduleList[$key]);
             }
+        }
+
+        return $moduleList;
+    }
+
+    public static function getSupportedModules ($type = '') {
+        $out = array();
+        $moduleList = self::getStudioModules($type);
+        foreach ($moduleList as $key => $module) {
             $out[] = $module->module;
         }
         return $out;
