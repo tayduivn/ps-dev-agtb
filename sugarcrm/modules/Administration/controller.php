@@ -14,6 +14,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
 
 require_once 'include/MetaDataManager/MetaDataManager.php';
+require_once 'modules/Administration/FullTextSearchSettingsAdmin.php';
 
 class AdministrationController extends SugarController
 {
@@ -196,11 +197,22 @@ class AdministrationController extends SugarController
     }
 
     /**
+     * Get the list of modules from the request parameters.
+     * @param $modules string the
+     * @return array
+     */
+    public function getModuleList($modules)
+    {
+        $list = array();
+        if (isset($modules)) {
+            return explode(',', $modules);
+        }
+        return $list;
+    }
+    /**
      * action_saveglobalsearchsettings
      *
      * This method handles saving the selected modules to display in the Global Search Settings.
-     * It instantiates an instance of UnifiedSearchAdvanced and then calls the saveGlobalSearchSettings
-     * method.
      *
      */
     public function action_saveglobalsearchsettings()
@@ -218,8 +230,13 @@ class AdministrationController extends SugarController
         // Save configuration
         $this->saveFtsConfig($type, $config, $valid);
 
+        // Update the module vardefs to enable/disable fts
+        $enabledModules = $this->getModuleList($_REQUEST['enabled_modules']);
+        $disabledModules = $this->getModuleList($_REQUEST['disabled_modules']);
+        $ftsAdmin = new FullTextSearchSettingsAdmin();
+        $ftsAdmin->saveFTSModuleListSettings($enabledModules, $disabledModules);
+
         // Refresh the server info & module list sections of the metadata
-        // TODO: We need to update the module vardefs to enable/disable fts
         MetaDataManager::refreshSectionCache(array(MetaDataManager::MM_SERVERINFO, MetaDataManager::MM_MODULES));
 
         if (!$valid) {
@@ -228,6 +245,33 @@ class AdministrationController extends SugarController
             echo "true";
         }
     }
+
+    /**
+     * action_saveunifiedsearchsettings
+     *
+     * This method handles saving the selected modules to display in the Unified Search Settings.
+     * It instantiates an instance of UnifiedSearchAdvanced and then calls the saveGlobalSearchSettings
+     * method.
+     *
+     */
+    public function action_saveunifiedsearchsettings()
+    {
+        global $current_user, $app_strings;
+
+        if (!is_admin($current_user)) {
+            sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']);
+        }
+
+        try {
+            require_once('modules/Home/UnifiedSearchAdvanced.php');
+            $unifiedSearchAdvanced = new UnifiedSearchAdvanced();
+            $unifiedSearchAdvanced->saveGlobalSearchSettings();
+            echo "true";
+        } catch (Exception $ex) {
+            echo "false";
+        }
+    }
+
 
 /*
     public function action_UpdateAjaxUI()
