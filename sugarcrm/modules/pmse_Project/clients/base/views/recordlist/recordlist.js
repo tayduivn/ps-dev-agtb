@@ -22,6 +22,7 @@
             "list:enabledRow:fire": "enabledProcess",
             "list:disabledRow:fire": "disabledProcess"
         });
+
         app.view.invokeParent(this, {type: 'view', name: 'recordlist', method: 'initialize', args:[options]});
     },
 
