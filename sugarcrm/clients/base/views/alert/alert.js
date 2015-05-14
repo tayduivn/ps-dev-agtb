@@ -93,6 +93,26 @@
         }
 
         var template = this.getAlertTemplate(options.level, options.messages, options.title, this.templateOptions);
+
+        if (_.isUndefined(options.closeable)) {
+            // Success, error, warning alerts can be closed by users
+            options.closeable = options.level != 'info';
+        }
+
+        if (options.closeable) {
+            // Attach 'click' handler if the alert can be closed
+            var button = this.getCloseSelector();
+            button.off('click');
+            button.on('click', _.bind(function() {
+                this.dismiss(key);
+            }, this));
+            if (app.accessibility) {
+                app.accessibility.run(button, 'click');
+            }
+            this.$('alert').addClass('closeable');
+        }
+        this.$('alert').addClass('alert-' + options.level);
+
         this.$el.html(template);
 
         if (options.level === 'confirmation') {
