@@ -659,6 +659,7 @@ class IBMDB2Manager  extends DBManager
         '%Y-%m-%d' => 'YYYY-MM-DD',
         '%Y-%m' => 'YYYY-MM',
         '%Y' => 'YYYY',
+        '%v' => 'IW',
     );
 
 
