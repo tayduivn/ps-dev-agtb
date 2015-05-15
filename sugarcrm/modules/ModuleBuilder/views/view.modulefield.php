@@ -11,7 +11,7 @@
  */
 
 use \Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
-use \Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\GlobalSearchInterface;
+use \Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\GlobalSearchCapable;
 
 require_once 'modules/ModuleBuilder/MB/AjaxCompose.php';
 require_once 'modules/DynamicFields/FieldViewer.php';
@@ -271,7 +271,7 @@ class ViewModulefield extends SugarView
 
         // Full Text Search settings
         $engine = SearchEngine::getInstance()->getEngine();
-        if ($engine instanceof GlobalSearchInterface && in_array($vardef['type'], $engine->getSupportedTypes())) {
+        if ($engine instanceof GlobalSearchCapable && in_array($vardef['type'], $engine->getSupportedTypes())) {
 
             // default fts parameters
             $ftsFieldConfig = '0';
