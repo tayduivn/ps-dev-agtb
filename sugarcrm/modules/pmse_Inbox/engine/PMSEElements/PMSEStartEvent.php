@@ -26,17 +26,12 @@ class PMSEStartEvent extends PMSEEvent
      */
     public function run($flowData, $bean = null, $externalAction = '', $arguments = array())
     {
-//        $evaluation = $this->evaluateExpression($flowData, $bean);
         $relatedBean = $this->retrieveRelatedBean($flowData, $bean);
-//        if ($evaluation) {
         if (!empty($relatedBean)) {
             $flowData = $this->createNewCase($relatedBean, $flowData);
         } else {
             $flowData = $this->createNewCase($bean, $flowData);
         }
-//        } else {
-        //$this->bpmLog('DEBUG', "start: {$bean->id} doesn't satisfied condition in process $pro_id");
-//        }
         return parent::run($flowData, $bean, $externalAction, $arguments);
     }
 
@@ -153,17 +148,13 @@ class PMSEStartEvent extends PMSEEvent
         $case->cas_update_date = $today;
         $case->cas_finish_date = '';
         $case->cas_pin = $cas_pin;
+        $case->cas_module = $moduleName;
 
-        $saved = false;
-        //$case->new_with_id = true;
         $case->save();
 
         if (!$case->in_save) {
-            $saved = true;
-            //$cas_id = $case->db->database->insert_id;
             if (empty($case->cas_id)) {
                 $cas_id = $cas_id_aux;
-                //$this->bpmLog('ERROR', "Error to generated autonumeric case - aux: [$cas_id] - id: [$case->cas_id]");
             } else {
                 $cas_id = $case->cas_id;
             }
@@ -172,8 +163,6 @@ class PMSEStartEvent extends PMSEEvent
                 $case->new_with_id = false;
                 $case->save();
             }
-            //$this->bpmLog('INFO', "[$cas_id][1] new case for {$bean->module_name}:$objectId in process '$pro_title'");
-            //todo: throw in case something goes wrong.
         }
 
         $flowData = array();
@@ -201,8 +190,6 @@ class PMSEStartEvent extends PMSEEvent
         $flowData['cas_finished'] = 0;
         $flowData['cas_delayed'] = 0;
 
-        // call to the new engine classes
-        //$this->newFollowFlow($flowData, true, $bean);
         return $flowData;
     }
 }

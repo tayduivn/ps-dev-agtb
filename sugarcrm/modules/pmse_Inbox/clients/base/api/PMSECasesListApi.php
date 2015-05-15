@@ -118,16 +118,6 @@ class PMSECasesListApi extends FilterApi
     public function selectCasesList($api, $args)
     {
         $this->checkACL($api, $args);
-        $flowQuery = new SugarQuery();
-        $bean = BeanFactory::getBean('pmse_BpmFlow');
-        $flowQuery->from($bean, array('alias' => 'f'));
-        $flowQuery->select->fieldRaw('count(f.cas_flow_status)', 'flow_count');
-        $flowQuery->where()
-            ->equals('f.cas_flow_status', 'ERROR');
-        $flowQuery->where()->queryAnd()
-            ->addRaw("f.cas_id=a.cas_id");
-
-
         $q = new SugarQuery();
         $inboxBean = BeanFactory::getBean('pmse_Inbox');
         if ($args['order_by'] == 'cas_due_date:asc') {
@@ -137,12 +127,34 @@ class PMSECasesListApi extends FilterApi
         $fields = array(
             'a.*'
         );
-        $q->select($fields);
         $q->from($inboxBean, array('alias' => 'a'));
-        $q->joinRaw('INNER JOIN users u ON a.created_by=u.id INNER JOIN pmse_bpmn_process pr ON a.pro_id=pr.id INNER JOIN pmse_project prj ON pr.prj_id=prj.id');
-        $q->select->fieldRaw('u.last_name', 'assigned_user_name');
-        $q->select->fieldRaw('pr.prj_id', 'prj_id');
-        $q->select->fieldRaw('prj.assigned_user_id', 'prj_created_by');
+
+        //INNER USER TABLE
+        $q->joinTable('users', array('alias' => 'u', 'joinType' => 'INNER', 'linkingTable' => true))
+            ->on()
+            ->equalsField('u.id', 'a.created_by')
+            ->equals('u.deleted', 0);
+        $fields[] = array("u.last_name", 'assigned_user_name');
+
+        //INNER PROCESS TABLE
+        $q->joinTable('pmse_bpmn_process', array('alias' => 'pr', 'joinType' => 'INNER', 'linkingTable' => true))
+            ->on()
+            ->equalsField('pr.id', 'a.pro_id')
+            ->equals('pr.deleted', 0);
+        $fields[] = array("pr.prj_id", 'prj_id');
+
+        //INNER PROJECT TABLE
+        $q->joinTable('pmse_project', array('alias' => 'prj', 'joinType' => 'INNER', 'linkingTable' => true))
+            ->on()
+            ->equalsField('prj.id', 'pr.prj_id')
+            ->equals('prj.deleted', 0);
+        $fields[] = array("prj.assigned_user_id", 'prj_created_by');
+        $fields[] = array("prj.prj_module", 'prj_module');
+
+        $q->select($fields);
+
+        $q->where()
+            ->in('prj.prj_module', PMSEEngineUtils::getSupportedModules());
 
         if (!empty($args['q'])) {
             $q->where()->queryAnd()

@@ -937,7 +937,9 @@ class PMSEEngineApi extends SugarApi
 
     public function getUnattendedCases($api, $args)
     {
+        global $db;
         $this->checkACL($api, $args);
+
         $queryOptions = array('add_deleted' => true);
 
         $arrayUnattendedCases = $this->getUnattendedCasesByFlow();
@@ -967,11 +969,11 @@ class PMSEEngineApi extends SugarApi
         if ($args['module_list'] == 'all' && !empty($args['q'])) {
             $q->where()->queryAnd()
                 ->addRaw("pmse_inbox.cas_title LIKE '%" . $args['q'] . "%' OR pmse_inbox.pro_title LIKE '%" . $args['q'] . "%' ");
-        } else if (isset($args['q'])) {
+        } else if (!empty($args['q'])){
             switch($args['module_list']){
                 case translate('LBL_CAS_ID', 'pmse_Inbox'):
                 $q->where()->queryAnd()
-                    ->addRaw("pmse_inbox.cas_title LIKE '%" . $args['q'] . "%'");
+                    ->addRaw("pmse_inbox.cas_id = " . $db->quoted($args['q']));
                     break;
                 case translate('LBL_PROCESS_DEFINITION_NAME', 'pmse_Inbox'):
                 $q->where()->queryAnd()
@@ -986,21 +988,14 @@ class PMSEEngineApi extends SugarApi
                         ->addRaw("pmse_inbox.cas_init_user LIKE '%" . $args['q'] . "%'");
                     break;
             }
-        } else {
-            $enabledQuery = false;
         }
 
-        if ($enabledQuery) {
-            if (isset($args['order_by'])) {
-                $columnToSort = explode(":", $args["order_by"]);
-                if (count($columnToSort) === 2) {
-                    $q->orderBy($columnToSort[0], $columnToSort[1]);
-                }
-            }
-            $rows = $q->execute();
-        } else {
-            $rows = array();
+        if (isset($args['order_by'])) {
+            $columnToSort = explode(":", $args["order_by"]);
+            $q->orderBy($columnToSort[0], empty($columnToSort[1]) ? "asc" : $columnToSort[1]);
         }
+
+        $rows = $q->execute();
 
         $rows_aux = array();
 
@@ -1011,7 +1006,7 @@ class PMSEEngineApi extends SugarApi
         }
 
         foreach ($rows as $key => $row) {
-            $arrayId=array_search($row['cas_id'], $result);
+            $arrayId = array_search($row['cas_id'], $result);
             if ($arrayId !== false ) {
                 $usersBean = BeanFactory::getBean('Users', $row['cas_init_user']);
                 $row['cas_init_user'] = $usersBean->full_name;
@@ -1036,7 +1031,7 @@ class PMSEEngineApi extends SugarApi
     {
         $queryOptions = array('add_deleted' => true);
 
-        //GET CASES ID WHIT INACTIVE USERS
+        //GET CASES ID WITH INACTIVE USERS
         $beanFlow = BeanFactory::getBean('pmse_BpmFlow');
         $q = new SugarQuery();
         $q->from($beanFlow, $queryOptions);
@@ -1048,6 +1043,9 @@ class PMSEEngineApi extends SugarApi
                 ->on()
                 ->equalsField('users.id', 'cas_user_id')
                 ->equals('users.deleted', 0);
+
+        $q->where()
+                ->in('cas_sugar_module', PMSEEngineUtils::getSupportedModules());
 
         $q->where()
                 ->queryOr()
@@ -1104,7 +1102,7 @@ class PMSEEngineApi extends SugarApi
         $returnArray['case']['inboxId'] = $args['id'];
         return $returnArray;
     }
-    
+
     public function overrideButtons($flow, $listButtons)
     {
         if($flow->cas_adhoc_type == 'ONE_WAY') {
