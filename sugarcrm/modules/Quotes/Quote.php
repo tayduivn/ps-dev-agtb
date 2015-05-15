@@ -324,7 +324,7 @@ class Quote extends SugarBean
 
     public function set_taxrate_info()
     {
-        $query = "SELECT tr.id, tr.name, tr.value from $this->taxrate_table  tr, $this->table_name  q where tr.id = q.taxrate_id and q.id = '$this->id' and tr.deleted=0 and q.deleted=0";
+        $query = "SELECT tr.id, tr.name, tr.value from $this->taxrate_table  tr, $this->table_name  q where tr.id = q.taxrate_id and q.id = '$this->id' and tr.deleted=0 and q.deleted=0 and tr.status = 'Active'";
         $result = $this->db->query($query, true, "Error filling in additional detail fields: ");
 
         // Get the id and the name.
