@@ -119,6 +119,19 @@ class MysqlManager extends DBManager
 
 	);
 
+    /**
+     * Integer fields' min and max values
+     * @var array
+     */
+    protected $type_range = array(
+        'int'      => array('min_value'=>-2147483648, 'max_value'=>2147483647),
+        'uint'     => array('min_value'=>0, 'max_value'=>4294967295),
+        'ulong'    => array('min_value'=>0, 'max_value'=>18446744073709551615),
+        'long'     => array('min_value'=>-9223372036854775808, 'max_value'=>9223372036854775807),
+        'short'    => array('min_value'=>-32768, 'max_value'=>32767),
+        'tinyint'  => array('min_value'=>-128, 'max_value'=>127),
+    );
+
 	protected $capabilities = array(
 		"affected_rows" => true,
 		"select_rows" => true,
@@ -191,7 +204,7 @@ class MysqlManager extends DBManager
 	{
 	    return mysql_num_rows($result);
 	}
-
+	
 	/**
 	 * Disconnects from the database
 	 *

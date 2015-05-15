@@ -617,6 +617,19 @@ class SugarFieldBase {
     }
 
     /**
+     * Validates submitted data
+     * @param SugarBean $bean
+     * @param array $params
+     * @param string $field
+     * @param array $properties
+     * @return boolean
+     */
+    public function apiValidate(SugarBean $bean, array $params, $field, $properties) 
+    {
+        return true;
+    }
+
+    /**
      * This should be called when the bean is mass updated from the API. Most fields can just use default, which calls the field's individual ->apiSave() function instead
      *
      * @param SugarBean $bean - the bean performing the mass update

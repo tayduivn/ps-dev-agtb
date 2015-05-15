@@ -102,6 +102,20 @@ class OracleManager extends DBManager
         'file'     => 'varchar2(255)',
         'decimal_tpl' => 'number(%d, %d)',
             );
+
+    /**
+     * Integer fields' min and max values
+     * @var array
+     */
+    protected $type_range = array(
+        'int'      => array('min_value'=>-99999999999999999999999999999999999999, 'max_value'=>99999999999999999999999999999999999999),
+        'uint'     => array('min_value'=>-999999999999999, 'max_value'=>999999999999999), // number(15)
+        'ulong'    => array('min_value'=>-99999999999999999999999999999999999999, 'max_value'=>99999999999999999999999999999999999999),
+        'long'     => array('min_value'=>-99999999999999999999999999999999999999, 'max_value'=>99999999999999999999999999999999999999),
+        'short'    => array('min_value'=>-999, 'max_value'=>999),// number(3)
+        'tinyint'  => array('min_value'=>-999, 'max_value'=>999), // number(3)
+    );
+
 	/**
      * List of known sequences
      * @var array

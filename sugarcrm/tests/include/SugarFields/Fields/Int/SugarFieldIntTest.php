@@ -13,7 +13,6 @@ require_once('include/SugarFields/SugarFieldHandler.php');
 
 class SugarFieldIntTest extends Sugar_PHPUnit_Framework_TestCase
 {
-
     /**
      *
      * @access public
@@ -149,4 +148,48 @@ class SugarFieldIntTest extends Sugar_PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * @dataProvider apiValidateProvider
+     * @param $value
+     * @param $expectedValue
+     */
+    public function testApiValidate($bean, $name, $value, $vardef, $valid)
+    {
+        $field = SugarFieldHandler::getSugarField('int');
+        $this->assertEquals($valid, $field->apiValidate($bean, array($name=>$value), $name, $vardef));
+    }
+    
+    /**
+     * testApiValidate data provider
+     * @access public
+     */
+    public function apiValidateProvider()
+    {
+        $bean = new SugarBean();
+        $vardef = array('name'=>'test','type'=>'int');
+        $data = array(
+            'mysql' => array(
+                array($bean, 'test', 0, $vardef, true),
+                array($bean, 'test', -12345678901, $vardef, false),
+                array($bean, 'test', 12345678901, $vardef, false),
+            ),
+            'oci8' => array(
+                array($bean, 'test', 0, $vardef, true),
+                array($bean, 'test', -12345678901, $vardef, true),
+                array($bean, 'test', 12345678901, $vardef, true),
+            ),
+            'ibm_db2' => array(
+                array($bean, 'test', 0, $vardef, true),
+                array($bean, 'test', -12345678901, $vardef, false),
+                array($bean, 'test', 12345678901, $vardef, false),
+            ),
+            'SQL Server' => array(
+                array($bean, 'test', 0, $vardef, true),
+                array($bean, 'test', -12345678901, $vardef, false),
+                array($bean, 'test', 12345678901, $vardef, false),
+            ),
+        );
+
+        return isset($data[$bean->db->dbType]) ? $data[$bean->db->dbType] : array(); 
+    }
 }

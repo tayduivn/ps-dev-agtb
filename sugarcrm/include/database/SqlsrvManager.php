@@ -118,6 +118,19 @@ class SqlsrvManager extends MssqlManager
 	        'decimal_tpl' => 'decimal(%d, %d)',
     );
 
+    /**
+     * Integer fields' min and max values
+     * @var array
+     */
+    protected $type_range = array(
+        'int'      => array('min_value'=>-2147483648, 'max_value'=>2147483647),
+        'uint'     => array('min_value'=>-2147483648, 'max_value'=>2147483647), // int
+        'ulong'    => array('min_value'=>-2147483648, 'max_value'=>2147483647), // int
+        'long'     => array('min_value'=>-9223372036854775808, 'max_value'=>9223372036854775807),//bigint
+        'short'    => array('min_value'=>-32768, 'max_value'=>32767),
+        'tinyint'  => array('min_value'=>0, 'max_value'=>255),
+    );
+
 	/**
      * @see DBManager::connect()
      */
