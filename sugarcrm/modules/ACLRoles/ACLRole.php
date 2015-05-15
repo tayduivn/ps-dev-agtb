@@ -49,6 +49,20 @@ class ACLRole extends SugarBean{
         return "$this->name";
     }
 
+    public function clearCaches() {
+        //BEGIN SUGARCRM flav=ent ONLY
+        //Need to invalidate the caches for rolesets when roles change (availible modules may change)
+        if ($this->load_relationship('acl_role_sets')) {
+            $rolesets = $this->acl_role_sets->getBeans();
+            $mm = MetaDataManager::getManager();
+            foreach($rolesets as $roleset) {
+                $context = new MetaDataContextRoleSet($roleset);
+                $mm->invalidateCache($mm->getPlatformsWithCaches(), $context);
+            }
+        }
+        //END SUGARCRM flav=ent ONLY
+        sugar_cache_clear('ACL');
+    }
 
 /**
  * function setAction($role_id, $action_id, $access)

@@ -60,11 +60,10 @@ if(!empty($_REQUEST['name'])){
     	
     }
     //Need to nuke the ACl cache when ACL roles change.
-    sugar_cache_clear('ACL');
+    $role->clearCaches();
 
     echo "result = {role_id:'$role->id', module:'$flc_module'}";
     sugar_cleanup(true);
 }
 
 header("Location: index.php?module=ACLRoles&action=DetailView&record=". $role->id);
-?>
