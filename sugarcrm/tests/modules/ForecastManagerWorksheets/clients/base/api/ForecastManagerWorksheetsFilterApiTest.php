@@ -5,8 +5,9 @@ require_once 'modules/ForecastManagerWorksheets/clients/base/api/ForecastManager
 /**
  * RS-144
  * Prepare ForecastManagerWorksheetsFilter Api
+ * @coversDefaultClass ForecastManagerWorksheetsFilterApi
  */
-class RS144Test extends Sugar_PHPUnit_Framework_TestCase
+class ForecastManagerWorksheetsFilterApiTest extends Sugar_PHPUnit_Framework_TestCase
 {
     /** @var RestService */
     protected $service = null;
@@ -52,6 +53,7 @@ class RS144Test extends Sugar_PHPUnit_Framework_TestCase
      * @param mixed $expectedUserId
      * @param mixed $expectedTimePeriodId
      * @param mixed $expectedType
+     * @covers ::forecastManagerWorksheetsGet
      */
     public function testForecastManagerWorksheetsGet($args, $expectedUserId, $expectedTimePeriodId, $expectedType)
     {
@@ -92,6 +94,7 @@ class RS144Test extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * Test asserts that chart data has right structure if we pass user & time period
+     * @covers ::forecastManagerWorksheetsChartGet
      */
     public function testForecastManagerWorksheetsChartGet()
     {
@@ -115,6 +118,7 @@ class RS144Test extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * Test asserts that chart data has right structure if we don't pass user & time period
+     * @covers ::forecastManagerWorksheetsChartGet
      */
     public function testForecastManagerWorksheetsChartGetNoData()
     {
@@ -131,6 +135,7 @@ class RS144Test extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * Test asserts that we have target_quota if we need that
+     * @covers ::forecastManagerWorksheetsChartGet
      */
     public function testForecastManagerWorksheetsChartGetTargetQuota()
     {
@@ -150,6 +155,7 @@ class RS144Test extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * We should get current_user if there are no parameters
+     * @covers ::getDirectHierarchyUsers
      */
     public function testGetDirectHierarchyUsers()
     {
@@ -171,6 +177,7 @@ class RS144Test extends Sugar_PHPUnit_Framework_TestCase
      * We should get exception if current_user isn't manager
      *
      * @expectedException SugarApiExceptionNotAuthorized
+     * @covers ::getDirectHierarchyUsers
      */
     public function testGetDirectHierarchyUsersNotAuthorized()
     {
@@ -183,6 +190,7 @@ class RS144Test extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * We should get custom user if current_user is manager and request him
+     * @covers ::getDirectHierarchyUsers
      */
     public function testGetDirectHierarchyUsersCustomUser()
     {
@@ -207,6 +215,7 @@ class RS144Test extends Sugar_PHPUnit_Framework_TestCase
      * We should get exception if custom user doesn't present in system
      *
      * @expectedException SugarApiExceptionInvalidParameter
+     * @covers ::getDirectHierarchyUsers
      */
     public function testGetDirectHierarchyUsersCustomUserInvalidParameter()
     {
@@ -229,6 +238,7 @@ class RS144Test extends Sugar_PHPUnit_Framework_TestCase
      * @param mixed $expectedAssignedUser
      * @param mixed $expectedTimePeriod
      * @param mixed $expectedType
+     * @covers ::filterList
      */
     public function testFilterList($args, $expectedAssignedUser, $expectedTimePeriod, $expectedType)
     {
@@ -291,6 +301,7 @@ class RS144Test extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * Test asserts that we have correct filter if there are no parameters
+     * @covers::createFilter
      */
     public function testCreateFilter()
     {
@@ -319,6 +330,7 @@ class RS144Test extends Sugar_PHPUnit_Framework_TestCase
      * We should get exception if current_user isn't manager
      *
      * @expectedException SugarApiExceptionNotAuthorized
+     * @covers ::createFilter
      */
     public function testCreateFilterNotAuthorized()
     {
@@ -332,6 +344,7 @@ class RS144Test extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * We should get customer user if current_user is manager
+     * @covers ::createFilter
      */
     public function testCreateFilterCustomUser()
     {
@@ -357,6 +370,7 @@ class RS144Test extends Sugar_PHPUnit_Framework_TestCase
      * We should get exception if custom user isn't present in system
      *
      * @expectedException SugarApiExceptionInvalidParameter
+     * @covers ::createFilter
      */
     public function testCreateFilterCustomUserInvalidParameter()
     {
@@ -372,6 +386,7 @@ class RS144Test extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * We should get correct time period if it's passed
+     * @covers ::createFilter
      */
     public function testCreateFilterTimePeriod()
     {
@@ -396,6 +411,7 @@ class RS144Test extends Sugar_PHPUnit_Framework_TestCase
      * We should get exception if time period isn't present in system
      *
      * @expectedException SugarApiExceptionInvalidParameter
+     * @covers ::createFilter
      */
     public function testCreateFilterTimePeriodInvalidParameter()
     {
