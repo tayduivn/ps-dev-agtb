@@ -944,29 +944,37 @@ class PMSEEngineUtils
         }
     }
 
-    public static function isValidField($def, $params = '')
+    public static function isValidField($def, $type = '')
     {
         $result = self::isValidStudioField($def);
-        if ($params == 'AC') {
+        if (isset($def['source']) && $def['source'] == 'non-db') {
+            $result = false;
+        }
+        if (isset($def['type']) && $def['type'] == 'image'){
+            $result = false;
+        }
+        if ($type == 'AC') {
             if (isset($def['name']) && $def['name'] == 'assigned_user_id') {
                 $result = true;
             }
             if (isset($def['formula'])) {
-                $result = $result && false;
+                $result = false;
             }
         }
-        if ($params == 'RR' || $params == 'AC') {
+        if ($type == 'RR' || $type == 'AC') {
             if (isset($def['readonly']) && $def['readonly']) {
-                $result = $result && false;
+                $result = false;
             }
         }
-        if (isset($def['type']) && $def['type'] == 'image'){
-            $result = $result && false;
+        if ($type == 'ET') {
+            if (isset($def['name']) && $def['name'] == 'email1') {
+                $result = true;
+            }
         }
-        if (isset($def['source']) && $def['source'] == 'non-db') {
-            $result = $result && false;
-        }
-        if ($params == 'ET') {
+        if ($type == 'BR') {
+            if (isset($def['name']) && $def['name'] == 'assigned_user_id') {
+                $result = true;
+            }
             if (isset($def['name']) && $def['name'] == 'email1') {
                 $result = true;
             }
