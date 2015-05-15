@@ -116,6 +116,25 @@ describe("Base.Field.Attachments", function() {
             expect(apiCallStub.lastCall.args[0]).toEqual('delete');
             expect(apiCallStub.lastCall.args[1]).toMatch(/.*\/Mail\/attachment\/42/);
         });
+
+        it('should cancel the request', function() {
+            var stub = sinon.stub(app.api, 'abortRequest');
+
+            field.requests['upload1'] = 13;
+            field.notifyAttachmentRemoved({id: 'upload1', type: 'upload'});
+
+            expect(stub).toHaveBeenCalled();
+            stub.restore();
+        });
+
+        it('should not cancel the request', function() {
+            var stub = sinon.stub(app.api, 'abortRequest');
+
+            field.notifyAttachmentRemoved({id: 'upload1', type: 'upload'});
+
+            expect(stub).not.toHaveBeenCalled();
+            stub.restore();
+        });
     });
 
     describe("Uploading Attachments", function() {
@@ -200,6 +219,28 @@ describe("Base.Field.Attachments", function() {
             });
             field.uploadFile();
             expect(alertStub.lastCall.args[1].messages).toEqual('custom error message');
+        });
+
+        it('should not display an error message if the request was aborted', function() {
+            var stub = sinon.stub(field, 'handleUploadError');
+
+            apiCallStub = sinon.stub(app.api, 'call', function(method, url, data, callbacks) {
+                callbacks.error({errorThrown: 'abort'});
+            });
+            field.uploadFile();
+            expect(stub).not.toHaveBeenCalled();
+            stub.restore();
+        });
+
+        it('should clear the file field when the upload request completes', function() {
+            var stub = sinon.stub(field, 'clearFileInputVal');
+
+            apiCallStub = sinon.stub(app.api, 'call', function(method, url, data, callbacks) {
+                callbacks.complete();
+            });
+            field.uploadFile();
+            expect(stub).toHaveBeenCalled();
+            stub.restore();
         });
     });
 });

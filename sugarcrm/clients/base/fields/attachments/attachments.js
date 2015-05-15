@@ -40,6 +40,10 @@
         this.context.set('attachment_field_' + this.fileInputName, this.cid);
 
         this.clearUserAttachmentCache();
+
+        // keep track of active file upload requests so that they can be
+        // aborted when the user cancels an in-progress upload
+        this.requests = {};
     },
 
     /**
@@ -178,9 +182,15 @@
      * Fire event when attachment is removed
      * (useful for attachment types that require cleanup)
      *
+     * Aborts the associated request if it is still active.
+     *
      * @param attachment
      */
     notifyAttachmentRemoved: function(attachment) {
+        if (this.requests[attachment.id]) {
+            app.api.abortRequest(this.requests[attachment.id]);
+        }
+
         this.context.trigger('attachment:' + attachment.type + ':remove', attachment);
     },
 
@@ -305,7 +315,7 @@
             oauth_token: app.api.getOAuthToken()
         };
         myURL = app.api.buildURL('Mail/attachment', null, null, options);
-        app.api.call('create', myURL, null,{
+        var request = app.api.call('create', myURL, null, {
                 success: _.bind(function (result) {
                     if (this.disposed === true) return; //if field is already disposed, bail out
                     if (!result.guid) {
@@ -320,19 +330,41 @@
                     result.type = 'upload';
                     result.replaceId = fileId;
                     this.context.trigger('attachment:add', result);
-
-                    //clear out the file input so we can detect the next change, even if it is the same file
-                    this.clearFileInputVal($fileInput);
                 }, this),
 
                 error: _.bind(function(e) {
-                    if (this.disposed === true) return; //if field is already disposed, bail out
+                    //if field is already disposed, bail out
+                    if (this.disposed === true) {
+                        return;
+                    }
+
+                    // When a user cancels a file upload, the associated request
+                    // is aborted. The error handler is called when a request is
+                    // aborted. No error message needs to be shown in this case.
+                    if (e && e.errorThrown === 'abort') {
+                        return;
+                    }
+
                     this.handleUploadError(fileId, e);
                     app.logger.error('Attachment Upload Failed: ' + e);
+                }, this),
+
+                complete: _.bind(function() {
+                    // the request is done so there is nothing to cancel
+                    // no need to keep track of finished requests
+                    delete this.requests[fileId];
+
+                    //clear out the file input so we can detect the next change, even if it is the same file
+                    this.clearFileInputVal($fileInput);
                 }, this)
             },
             ajaxParams
         );
+
+        // keep track of the request so that it can be aborted when the user cancels the file upload
+        if (request) {
+            this.requests[fileId] = request.uid;
+        }
     },
 
     /**
