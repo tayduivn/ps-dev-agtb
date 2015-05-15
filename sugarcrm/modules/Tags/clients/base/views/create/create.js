@@ -25,7 +25,9 @@
      */
     initialize: function(options) {
         this._super("initialize", [options]);
-        this.context.on('button:' + this.saveAndCreateAnotherButtonName + ':click', this.saveAndCreateAnother, this);
+
+        // Uncomment this line to add back Save and Create Another functionality
+        //this.context.on('button:' + this.saveAndCreateAnotherButtonName + ':click', this.saveAndCreateAnother, this);
     },
 
     /**
