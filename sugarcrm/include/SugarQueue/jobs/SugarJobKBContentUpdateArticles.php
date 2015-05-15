@@ -57,16 +57,18 @@ class SugarJobKBContentUpdateArticles implements RunnableSchedulerJob
         foreach ($this->getApprovedArticles() as $article) {
             $bean = BeanFactory::getBean('KBContents', $article['id']);
 
-            if ($bean->active_date) {
-                if ($bean->exp_date && strtotime($bean->exp_date) <= strtotime($this->td->nowDate())) {
-                    $bean->exp_date = $this->td->nowDate();
-                    $bean->status = KBContent::ST_EXPIRED;
+            if ($bean->exp_date && strtotime($bean->exp_date) <= strtotime($this->td->nowDate())) {
+                $bean->exp_date = $this->td->nowDate();
+                $bean->status = KBContent::ST_EXPIRED;
+            } else {
+                if ($bean->is_external) {
+                    $bean->status = KBContent::ST_PUBLISHED_EX;
                 } else {
-                    $bean->status = KBContent::ST_PUBLISHED;
+                    $bean->status = KBContent::ST_PUBLISHED_IN;
                 }
-                $bean->active_date = $this->td->nowDate();
-                $bean->save();
             }
+            $bean->active_date = $this->td->nowDate();
+            $bean->save();
         }
         return $this->job->succeedJob();
     }
