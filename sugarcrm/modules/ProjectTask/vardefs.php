@@ -32,6 +32,16 @@ $dictionary['ProjectTask'] = array('audited'=>true,
 			'type' => 'datetime',
 		    'enable_range_search' => true,
 		    'options' => 'date_range_search_dom',
+            'readonly' => true,
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => false,
+                'aggregations' => array(
+                    'date_entered' => array(
+                        'type' => 'DateRange',
+                    ),
+                ),
+            ),
 		),
 		'date_modified' => array(
 			'name' => 'date_modified',
@@ -39,6 +49,16 @@ $dictionary['ProjectTask'] = array('audited'=>true,
 			'type' => 'datetime',
 		    'enable_range_search' => true,
 		    'options' => 'date_range_search_dom',
+            'readonly' => true,
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => false,
+                'aggregations' => array(
+                    'date_modified' => array(
+                        'type' => 'DateRange',
+                    ),
+                ),
+            ),
 		),
         'project_id' => array(
             'name' => 'project_id',
@@ -202,6 +222,16 @@ $dictionary['ProjectTask'] = array('audited'=>true,
 			'isnull' => false,
 			'reportable'=>false,
 			'audited'=>true,
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => false,
+                'aggregations' => array(
+                    'assigned_user_id' => array(
+                        'type' => 'MyItems',
+                        'label' => 'LBL_AGG_ASSIGNED_TO_ME',
+                    ),
+                ),
+            ),
 		),
 		'modified_user_id' => array(
 			'name' => 'modified_user_id',
@@ -213,6 +243,17 @@ $dictionary['ProjectTask'] = array('audited'=>true,
 			'isnull' => 'false',
 			'dbType' => 'id',
 			'reportable'=>true,
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => false,
+                'type' => 'id',
+                'aggregations' => array(
+                    'modified_user_id' => array(
+                        'type' => 'MyItems',
+                        'label' => 'LBL_AGG_MODIFIED_BY_ME',
+                    ),
+                ),
+            ),
 		),
 		'modified_by_name' =>
 	  array (
@@ -244,6 +285,17 @@ $dictionary['ProjectTask'] = array('audited'=>true,
 			'isnull' => 'false',
 			'dbType' => 'id',
 			'reportable'=>true,
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => false,
+                'type' => 'id',
+                'aggregations' => array(
+                    'created_by' => array(
+                        'type' => 'MyItems',
+                        'label' => 'LBL_AGG_CREATED_BY_ME',
+                    ),
+                ),
+            ),
 		),
 		'created_by_name' =>
 	  array (

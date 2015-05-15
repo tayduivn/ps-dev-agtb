@@ -924,12 +924,16 @@ class SugarBean
      */
     public function getTableName()
     {
-        if(isset($this->table_name))
-        {
+        if (!empty($this->table_name)) {
             return $this->table_name;
         }
         global $dictionary;
-        return $dictionary[$this->getObjectName()]['table'];
+        if (isset($dictionary[$this->getObjectName()]['table'])) {
+            return $dictionary[$this->getObjectName()]['table'];
+        } else {
+            $GLOBALS['log']->warn('Notifications: table does not exist for ' . $this->getObjectName());
+            return '';
+        }
     }
 
     /**

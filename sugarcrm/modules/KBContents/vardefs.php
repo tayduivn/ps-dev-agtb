@@ -39,8 +39,13 @@ $dictionary['KBContent'] = array(
             'len' => '2',
             'required' => true,
             'vname' => 'LBL_LANG',
+            'sortable' => false,
             'audited' => false,
             'studio' => false,
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => false,
+            ),
         ),
         'active_date' => array(
             'name' => 'active_date',
@@ -78,7 +83,7 @@ $dictionary['KBContent'] = array(
             'studio' => true,
             'full_text_search' => array(
                 'enabled' => true,
-                'searchable' => true,
+                'searchable' => false,
             ),
         ),
         'viewcount' => array(
@@ -91,6 +96,7 @@ $dictionary['KBContent'] = array(
             'duplicate_on_record_copy' => 'no',
             'studio' => true,
             'readonly' => true,
+            'duplicate_merge' => 'disabled',
         ),
         'revision' => array(
             'name' => 'revision',
@@ -99,6 +105,7 @@ $dictionary['KBContent'] = array(
             'default' => '0',
             'duplicate_on_record_copy' => 'no',
             'studio' => true,
+            'duplicate_merge' => 'disabled',
         ),
         'useful' => array(
             'name' => 'useful',
@@ -198,7 +205,7 @@ $dictionary['KBContent'] = array(
             'readonly' => true,
             'full_text_search' => array(
                 'enabled' => true,
-                'searchable' => true,
+                'searchable' => false,
                 'type' => 'int',
             ),
         ),

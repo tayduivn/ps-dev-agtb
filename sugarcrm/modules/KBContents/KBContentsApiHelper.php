@@ -10,6 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use \Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
+use \Sugarcrm\Sugarcrm\SearchEngine\MetaDataHelper;
+use \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\SearchFields;
+use \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\MultiFieldHandler;
+
 require_once 'data/SugarBeanApiHelper.php';
 
 class KBContentsApiHelper extends SugarBeanApiHelper {
@@ -94,6 +99,30 @@ class KBContentsApiHelper extends SugarBeanApiHelper {
                     }
                 }
             }
+        }
+        return $result;
+    }
+
+    /**
+     * Get Elastic Search representation of fields.
+     * @param array $fields Of field names.
+     * @return array ['FieldName' => ['ElasticName', ...], ...]
+     */
+    public function getElasticSearchFields(array $fields)
+    {
+        $result = array();
+        $engineContainer = SearchEngine::getInstance()->getEngine()->getContainer();
+        $metaDataHelper = new MetaDataHelper($engineContainer->logger);
+        $ftsFields = $metaDataHelper->getFtsFields('KBContents');
+
+        $fieldHandler = new MultiFieldHandler();
+        foreach ($fields as $fieldName) {
+            if (!isset($ftsFields[$fieldName])) {
+                continue;
+            }
+            $sf = new SearchFields();
+            $fieldHandler->buildSearchFields($sf, 'KBContents', $fieldName, $ftsFields[$fieldName]);
+            $result[$fieldName] = $sf->getSearchFields();
         }
         return $result;
     }

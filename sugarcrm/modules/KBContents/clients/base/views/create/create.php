@@ -47,11 +47,6 @@ $viewdefs['KBContents']['base']['view']['create'] = array(
                         'click' => 'button:save_button:click',
                     ),
                 ),
-                array(
-                    'type' => 'rowaction',
-                    'name' => 'check_duplicate',
-                    'label' => 'LBL_DUP_MERGE',
-                ),
             ),
         ),
         array(

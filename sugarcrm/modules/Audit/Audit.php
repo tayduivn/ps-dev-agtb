@@ -130,7 +130,6 @@ class Audit extends SugarBean
         $return = array();
 
         while ($row = $db->fetchByAssoc($results)) {
-
             if (!ACLField::hasAccess(
                 $row['field_name'],
                 $bean->module_dir,
@@ -139,6 +138,10 @@ class Audit extends SugarBean
             )) {
                 continue;
             }
+
+            //convert date
+            $dateCreated = $timedate->fromDbType($db->fromConvert($row['date_created'], 'datetime'), "datetime");
+            $row['date_created'] = $timedate->asIso($dateCreated);
 
             //If the team_set_id field has a log entry, we retrieve the list of teams to display
             if ($row['field_name'] == 'team_set_id') {
@@ -157,10 +160,7 @@ class Audit extends SugarBean
                     }
                 }
             }
-
-            // convert the date
-            $dateCreated = $timedate->fromDbType($db->fromConvert($row['date_created'], 'datetime'), "datetime");
-            $row['date_created'] = $timedate->asIso($dateCreated);
+            
             $row = $this->formatRowForApi($row);
 
             $fieldName = $row['field_name'];

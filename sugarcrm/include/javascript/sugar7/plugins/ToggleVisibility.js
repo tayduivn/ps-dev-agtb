@@ -120,7 +120,7 @@
                 if (_.isFunction(proto.visibilitySwitcher)) {
                     proto.visibilitySwitcher.call(this, event);
                 }
-                this.layout.loadData();
+                this.loadData();
             },
 
             /**

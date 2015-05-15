@@ -74,7 +74,7 @@ $viewdefs['Project']['DetailView'] = array(
                             'accessKey' => '{$APP.LBL_DELETE_BUTTON_KEY}',
                             'id'    => 'delete_button',
                             'class' => 'button',
-                            'onclick' =>
+                            'onclick' => 'prep_delete(this.form);' . 
                                 '{if $IS_TEMPLATE}'.
                                     'this.form.return_module.value=\'Project\'; this.form.return_action.value=\'ProjectTemplatesListView\'; this.form.action.value=\'Delete\'; if (confirm(\'{$APP.NTC_DELETE_CONFIRMATION}\')) {ldelim} return true; {rdelim} else {ldelim} return false; {rdelim}'.
                                 '{else}'.

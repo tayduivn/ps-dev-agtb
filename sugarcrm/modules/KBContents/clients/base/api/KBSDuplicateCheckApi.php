@@ -10,6 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use \Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
+use \Sugarcrm\Sugarcrm\Elasticsearch\Query\QueryBuilder;
+
 /**
  * Class KBSDuplicateCheckApi
  * Check duplicates for KBContents.
@@ -54,21 +57,23 @@ class KBSDuplicateCheckApi extends SugarListApi
             );
         }
 
-        $searchEngine = SugarSearchEngineFactory::getInstance();
-
-        // Construct it manually.
-        $searchObj = new \Elastica\Search($searchEngine->getClient());
-        $searchObj->addType($args['module']);
-        $searchObj->addIndex($searchEngine->getReadIndexName(array($args['module'])));
+        $engineContainer = SearchEngine::getInstance()->getEngine()->getContainer();
+        $builder = new QueryBuilder($engineContainer);
+        $builder
+            ->setUser($GLOBALS['current_user'])
+            ->setModules(array($args['module']))
+            ->setOffset($options['offset'])
+            ->setLimit($options['limit']);
+        $ftsFields = ApiHelper::getHelper($api, $bean)->getElasticSearchFields(array('name', 'kbdocument_body'));
 
         $mltName = new \Elastica\Query\MoreLikeThis();
-        $mltName->setFields(array('name'));
+        $mltName->setFields($ftsFields['name']);
         $mltName->setLikeText($bean->name);
         $mltName->setMinTermFrequency(1);
         $mltName->setMinDocFrequency(1);
 
         $mltBody = new \Elastica\Query\MoreLikeThis();
-        $mltBody->setFields(array('kbdocument_body'));
+        $mltBody->setFields($ftsFields['kbdocument_body']);
         $mltBody->setLikeText($bean->kbdocument_body);
         $mltBody->setMinTermFrequency(1);
         $mltBody->setMinDocFrequency(1);
@@ -78,6 +83,10 @@ class KBSDuplicateCheckApi extends SugarListApi
         $boolQuery->addShould($mltBody);
 
         $mainFilter = new \Elastica\Filter\Bool();
+
+        $currentIdFilter = new \Elastica\Filter\Term();
+        $currentIdFilter->setTerm('_id', $bean->id);
+        $mainFilter->addMustNot($currentIdFilter);
 
         $activeRevFilter = new \Elastica\Filter\Term();
         $activeRevFilter->setTerm('active_rev', 1);
@@ -91,17 +100,12 @@ class KBSDuplicateCheckApi extends SugarListApi
         foreach ($bean->getPublishedStatuses() as $status) {
             $statusFilterOr->addFilter(new \Elastica\Filter\Term(array('status' => $status)));
         }
-
         $mainFilter->addMust($statusFilterOr);
 
+        $builder->setQuery($boolQuery);
+        $builder->addFilter($mainFilter);
 
-        $query = new \Elastica\Query($boolQuery);
-        $query->setFilter($mainFilter);
-        $query->setParam('from', $options['offset']);
-        $query->setSize($options['limit']);
-
-        $resultSet = $searchObj->search($query);
-
+        $resultSet = $builder->executeSearch();
         $returnedRecords = array();
 
         foreach ($resultSet as $result) {

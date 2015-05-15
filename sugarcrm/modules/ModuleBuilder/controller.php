@@ -525,11 +525,6 @@ class ModuleBuilderController extends SugarController
 
         $module = $_REQUEST ['view_module'];
 
-        // Need to map Employees -> Users
-        if ($module == 'Employees') {
-            $module = 'Users';
-        }
-
         $df = new StandardField ($module);
         $mod = BeanFactory::getBean($module);
         $obj = BeanFactory::getObjectName($module);

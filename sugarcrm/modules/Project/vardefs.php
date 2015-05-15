@@ -36,6 +36,16 @@ $dictionary['Project'] = array(
 			'comment' => 'Date record created',
 		    'enable_range_search' => true,
 		    'options' => 'date_range_search_dom',
+            'readonly' => true,
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => false,
+                'aggregations' => array(
+                    'date_entered' => array(
+                        'type' => 'DateRange',
+                    ),
+                ),
+            ),
 		),
 		'date_modified' => array(
 			'name' => 'date_modified',
@@ -44,6 +54,16 @@ $dictionary['Project'] = array(
 			'comment' => 'Date record last modified',
 		    'enable_range_search' => true,
 		    'options' => 'date_range_search_dom',
+            'readonly' => true,
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => false,
+                'aggregations' => array(
+                    'date_modified' => array(
+                        'type' => 'DateRange',
+                    ),
+                ),
+            ),
 		),
 		'assigned_user_id' => array(
 			'name' => 'assigned_user_id',
@@ -52,7 +72,17 @@ $dictionary['Project'] = array(
 			'required' => false,
 			'isnull' => false,
 			'reportable'=>false,
-			'comment' => 'User assigned to this record'
+            'comment' => 'User assigned to this record',
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => false,
+                'aggregations' => array(
+                    'assigned_user_id' => array(
+                        'type' => 'MyItems',
+                        'label' => 'LBL_AGG_ASSIGNED_TO_ME',
+                    ),
+                ),
+            ),
 		),
 		'modified_user_id' => array(
 			'name' => 'modified_user_id',
@@ -64,7 +94,18 @@ $dictionary['Project'] = array(
 			'isnull' => 'false',
 			'dbType' => 'id',
 			'reportable'=>true,
-			'comment' => 'User who last modified record'
+            'comment' => 'User who last modified record',
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => false,
+                'type' => 'id',
+                'aggregations' => array(
+                    'modified_user_id' => array(
+                        'type' => 'MyItems',
+                        'label' => 'LBL_AGG_MODIFIED_BY_ME',
+                    ),
+                ),
+            ),
 		),
 		'modified_by_name' =>
 	  array (
@@ -90,6 +131,17 @@ $dictionary['Project'] = array(
 			'isnull' => 'false',
 			'dbType' => 'id',
 			'comment' => 'User who created record',
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => false,
+                'type' => 'id',
+                'aggregations' => array(
+                    'created_by' => array(
+                        'type' => 'MyItems',
+                        'label' => 'LBL_AGG_CREATED_BY_ME',
+                    ),
+                ),
+            ),
 		),
 		'created_by_name' =>
 	  array (
