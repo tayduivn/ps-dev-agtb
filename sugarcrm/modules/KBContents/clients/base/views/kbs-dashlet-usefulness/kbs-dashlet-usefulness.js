@@ -36,67 +36,75 @@
      * {@inheritDocs}
      */
     loadData: function(options) {
-        options = options || {};
-        var dt = this.layout.getComponent('dashlet-toolbar');
-        if (dt) {
-            // manually set the icon class to spiny
-            this.$('[data-action=loading]')
-                .removeClass(dt.cssIconDefault)
-                .addClass(dt.cssIconRefresh);
-        }
+        var currModel = app.controller.context.get('model'),
+            model = currModel.clone(),
+            opts = options || {},
+            self = this;
 
-        var useful = app.controller.context.get('model').get('useful') || '0';
-        var notuseful = app.controller.context.get('model').get('notuseful') || '0';
-
-        useful = parseInt(useful, 10);
-        notuseful = parseInt(notuseful, 10);
-
-        // correcting values for pie chart,
-        // because pie chart not support all zero values.
-        if (0 === useful && 0 === notuseful) {
-            useful = 1;
-            notuseful = 1;
-        }
-        var chartData = {
-            properties: [
-                {
-                    labels: 'value',
-                    print: '',
-                    subtitle: '',
-                    thousands: '',
-                    title: '',
-                    type: 'pie chart'
+        model.fetch({
+            success: function(model) {
+                var dt = self.layout.getComponent('dashlet-toolbar'),
+                    useful = model.get('useful') || '0',
+                    notuseful = model.get('notuseful') || '0';
+                if (dt) {
+                    // manually set the icon class to spiny
+                    self.$('[data-action=loading]')
+                        .removeClass(dt.cssIconDefault)
+                        .addClass(dt.cssIconRefresh);
                 }
-            ],
-            values: [
-                {
-                    label: [app.lang.get('LBL_USEFUL', 'KBContents')],
-                    values: [useful],
-                    classes: 'nv-fill-green'
-                },
-                {
-                    label: [app.lang.get('LBL_NOT_USEFUL', 'KBContents')],
-                    values: [notuseful],
-                    classes: 'nv-fill-red'
+
+                useful = parseInt(useful, 10);
+                notuseful = parseInt(notuseful, 10);
+
+                // correcting values for pie chart,
+                // because pie chart not support all zero values.
+                if (0 === useful && 0 === notuseful) {
+                    useful = 1;
+                    notuseful = 1;
                 }
-            ]
+                var chartData = {
+                        properties: [
+                            {
+                                labels: 'value',
+                                print: '',
+                                subtitle: '',
+                                thousands: '',
+                                title: '',
+                                type: 'pie chart'
+                            }
+                        ],
+                        values: [
+                            {
+                                label: [app.lang.get('LBL_USEFUL', 'KBContents')],
+                                values: [useful],
+                                classes: 'nv-fill-green'
+                            },
+                            {
+                                label: [app.lang.get('LBL_NOT_USEFUL', 'KBContents')],
+                                values: [notuseful],
+                                classes: 'nv-fill-red'
+                            }
+                        ]
+                    },
+                    chartParams = {
+                        donut: true,
+                        donutRatio: 0.45,
+                        hole: parseInt(useful * 100 / (notuseful + useful)) + ' %',
+                        donutLabelsOutside: true,
+                        colorData: 'data',
+                        chart_type: 'pie chart',
+                        show_legend: false
+                    };
+                _.defer(_.bind(function() {
+                    self.chartData.set({rawChartData: chartData, rawChartParams: chartParams});
+                }, this));
             },
-            chartParams = {
-                donut: true,
-                donutRatio: 0.45,
-                hole: parseInt(useful*100/(notuseful + useful)) +  '%',
-                donutLabelsOutside: true,
-                colorData: 'data',
-                chart_type: 'pie chart',
-                show_legend: false
-        };
-
-        _.defer(_.bind(function() {
-            this.chartData.set({rawChartData: chartData, rawChartParams: chartParams});
-        }, this));
-        if (options && _.isFunction(options.complete)) {
-            options.complete();
-        }
+            complete: function() {
+                if (opts && _.isFunction(opts.complete)) {
+                    opts.complete();
+                }
+            }
+        });
     },
 
     /**
