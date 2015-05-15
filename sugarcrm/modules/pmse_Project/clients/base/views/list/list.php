@@ -44,12 +44,6 @@ $viewdefs[$module_name]['base']['view']['list'] = array(
                     'css_class' => 'full-width',
                 ),
                 array(
-                    'name' => 'team_name',
-                    'label' => 'LBL_TEAM',
-                    'default' => false,
-                    'enabled' => true,
-                ),
-                array(
                     'name' => 'assigned_user_name',
                     'label' => 'LBL_ASSIGNED_TO_NAME',
                     'default' => true,

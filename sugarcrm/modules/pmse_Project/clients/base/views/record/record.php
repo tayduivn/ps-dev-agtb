@@ -152,20 +152,13 @@ array (
             'placeholders' => true,
             'newTab' => false,
             'panelDefault' => 'expanded',
-            'fields' => 
-            array (
-              0 => 
-              array (
+            'fields' => array(
+              array(
                 'name' => 'prj_module',
                 'studio' => 'visible',
                 'label' => 'LBL_PRJ_MODULE',
               ),
-              1 => 
-              array (
-                'span' => 6,
-              ),
-              2 => 'assigned_user_name',
-              3 => 'team_name',
+              'assigned_user_name',
             ),
           ),
           2 => 
