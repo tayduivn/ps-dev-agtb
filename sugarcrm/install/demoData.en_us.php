@@ -2489,7 +2489,8 @@ $sugar_demodata['kbdocuments_statuses'] = array(
     'draft',
     'in-review',
     'approved',
-    'published',
+    'published-in',
+    'published-ex',
 );
 
 $sugar_demodata['kbdocuments_languages'] = array(

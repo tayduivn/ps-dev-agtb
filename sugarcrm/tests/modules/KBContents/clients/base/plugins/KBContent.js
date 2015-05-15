@@ -221,7 +221,7 @@ describe('Plugins.KBContents', function() {
         var fakeModel = app.data.createBean(moduleName);
         fakeModel.set('exp_date', '2010-10-10');
         fakeModel.set('active_date', '');
-        fakeModel.set('status', 'published');
+        fakeModel.set('status', 'published-in');
         var errors = {};
         sandbox.stub(fakeModel, 'getSyncedAttributes');
         sandbox.stub(fakeModel, 'changedAttributes', function() {
@@ -272,7 +272,7 @@ describe('Plugins.KBContents', function() {
         view._validationComplete(fakeModel, true);
         expect(fakeModel.get('exp_date')).toEqual(expectedDate);
 
-        fakeModel.set('status', 'published');
+        fakeModel.set('status', 'published-in');
         view._validationComplete(fakeModel, true);
         expect(fakeModel.get('active_date')).toEqual(expectedDate);
     });

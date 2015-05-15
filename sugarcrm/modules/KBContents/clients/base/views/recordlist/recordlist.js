@@ -34,5 +34,28 @@
         if (!app.acl.hasAccessToModel('edit', this.model)) {
             this.context.set('requiredFilter', 'records-noedit');
         }
+    },
+
+    /**
+     * {@inheritDoc}
+     *
+     * Disable diplay status fild on list view if user has no edit access.
+     */
+    parseFieldMetadata: function(options) {
+        options = this._super('parseFieldMetadata', [options]);
+
+        if (app.acl.hasAccess('edit', options.module)) {
+            return options;
+        }
+
+        _.each(options.meta.panels, function(panel, panelIdx) {
+            _.each(panel.fields, function(field, fieldIdx) {
+                if (field.name === 'status') {
+                    delete panel.fields[fieldIdx];
+                }
+            }, this);
+        }, this);
+
+        return options;
     }
 })
