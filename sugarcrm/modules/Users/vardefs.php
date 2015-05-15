@@ -266,16 +266,36 @@ $dictionary['User'] = array(
         ) ,
         'created_by_name' => array(
             'name' => 'created_by_name',
-	        'vname' => 'LBL_CREATED_BY_NAME', //bug 48978
-            'type' => 'varchar',
+            'vname' => 'LBL_CREATED_BY_NAME', //bug 48978
+            'type' => 'relate',
+            'reportable' => false,
+            'link' => 'created_by_link',
+            'rname' => 'full_name',
             'source' => 'non-db',
-            'importable' => 'false',
+            'table' => 'users',
+            'id_name' => 'created_by',
+            'module' => 'Users',
+            'duplicate_merge' => 'disabled',
+            'importable' => false,
+            'massupdate' => false,
+            'duplicate_on_record_copy' => 'no',
             'studio' => array(
                 'related' => false,
                 'formula' => false,
                 'rollup' => false,
             ),
             'readonly' => true,
+            'sort_on' => array('last_name'),
+        ) ,
+        'created_by_link' => array(
+            'name' => 'created_by_link',
+            'type' => 'link',
+            'relationship' => 'users_created_by',
+            'vname' => 'LBL_CREATED_USER',
+            'link_type' => 'one',
+            'module' => 'Users',
+            'bean_name' => 'User',
+            'source' => 'non-db',
         ) ,
         'title' => array(
             'name' => 'title',
@@ -1072,6 +1092,15 @@ $dictionary['User'] = array(
             'rhs_module'=> 'Users',
             'rhs_table'=> 'users',
             'rhs_key' => 'acl_role_set_id',
+            'relationship_type' => 'one-to-many'
+        ),
+        'users_created_by' => array(
+            'lhs_module' => 'Users',
+            'lhs_table' => 'users',
+            'lhs_key' => 'created_by',
+            'rhs_module' => 'Users',
+            'rhs_table' => 'users',
+            'rhs_key' => 'id',
             'relationship_type' => 'one-to-many'
         ),
     ),
