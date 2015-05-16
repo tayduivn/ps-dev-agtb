@@ -11,9 +11,9 @@
  */
 
 use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
+use Sugarcrm\Sugarcrm\SearchEngine\AdminSettings;
 
 require_once 'modules/Administration/Administration.php';
-require_once 'modules/Administration/FullTextSearchSettingsAdmin.php';
 
 /**
  *
@@ -58,7 +58,7 @@ class AdministrationViewGlobalsearchsettings extends SugarView
         $sugar_smarty->assign('moduleTitle', $this->getModuleTitle(false));
 
         // Enabled/disabled modules list
-        $ftsAdmin = new FullTextSearchSettingsAdmin();
+        $ftsAdmin = new AdminSettings();
         $modules = $ftsAdmin->getModuleList();
         $sugar_smarty->assign('enabled_modules', json_encode($modules['enabled_modules']));
         $sugar_smarty->assign('disabled_modules', json_encode($modules['disabled_modules']));

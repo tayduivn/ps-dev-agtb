@@ -10,7 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
+namespace Sugarcrm\Sugarcrm\SearchEngine;
+
 use Sugarcrm\Sugarcrm\SearchEngine\Engine\Elastic;
 
 /**
@@ -18,7 +19,7 @@ use Sugarcrm\Sugarcrm\SearchEngine\Engine\Elastic;
  * This module gets and saves data for the FTS settings admin page.
  *
  */
-class FullTextSearchSettingsAdmin
+class AdminSettings
 {
     /**
      * The name of the ext file
@@ -27,34 +28,92 @@ class FullTextSearchSettingsAdmin
     const EXT_FILE_NAME = 'full_text_search_admin.php';
 
     /**
-     * Search the list of enabled and disabled modules
+     * The list of extra eligible modules, besides the modules listed in the studio page
+     * @var array
+     */
+    protected static $modulesToAdd = array(
+        'Emails',
+        'Manufacturers',
+        'ProductCategories',
+        'ProspectLists',
+        'Tags',
+    );
+
+    /**
+     * The list of in-eligible modules to be removed from the modules listed in the studio page
+     * @var array
+     */
+    protected static $ModulesToRemove = array(
+        'Users',
+    );
+
+    /**
+     * Get the list of enabled and disabled modules
      * @return array
      */
     public function getModuleList()
     {
-        $engine = $this->getSearchEngine();
-
         $list = array();
-        if (!$engine->isAvailable(true)) {
+
+        $engine = $this->getSearchEngine();
+        if (empty($engine)) {
             return $list;
         }
 
+        //Get the full list
+        $modules = $this->getFullModuleList();
+
         //Get the enabled list from MetaDataHelper
         $enabled = $engine->getMetaDataHelper()->getAllEnabledModules();
+        $enabled = array_intersect($enabled, $modules);
         sort($enabled);
-        $list['enabled_modules'] = $enabled;
+        $list['enabled_modules'] = $this->getModuleLabel($enabled);
 
-        //Get the full list
-        $mdm = \MetaDataManager::getManager();
-        //$modules = array_keys($mdm->getModuleList());
-        $modules = $mdm->getTabList();
-
-        //Subtract the enabled list for the disabled
+        //Disabled = Full list - enabled
         $disabled = array_diff($modules, $enabled);
         sort($disabled);
-        $list['disabled_modules'] = $disabled;
+        $list['disabled_modules'] = $this->getModuleLabel($disabled);
 
         return $list;
+    }
+
+    /**
+     * Get the label for each module in the module list
+     * @param array $modules the list of modules
+     * @return array
+     */
+    protected function getModuleLabel(array $modules)
+    {
+        global $app_list_strings;
+
+        $list = array();
+        foreach ($modules as $module) {
+            $label = isset($app_list_strings['moduleList'][$module]) ?
+                      $app_list_strings['moduleList'][$module] : $module;
+
+            $list[] = array("module" => $module, 'label' => $label);
+        }
+        return $list;
+    }
+
+    /**
+     * Compose the full list of FTS modules, which is composed of
+     * 1) the list of modules listed on Admin -> Studio page;
+     * 2) plus the list of modules defined in self::$modulesToAdd
+     * 3) minus the list of modules defined in self::$ModulesToRemove
+     * @return array
+     */
+    protected function getFullModuleList()
+    {
+        //include all the modules listed in the studio page
+        $browser = new \StudioBrowser();
+        $browser->loadModules();
+
+        $modules = array_keys($browser->modules);
+        $modules = array_merge($modules, self::$modulesToAdd);
+        $modules = array_diff($modules, self::$ModulesToRemove);
+
+        return $modules;
     }
 
      /**
@@ -79,7 +138,7 @@ class FullTextSearchSettingsAdmin
 
         $modules = array_merge($enabledModules, $disabledModules);
         include_once 'modules/Administration/QuickRepairAndRebuild.php';
-        $repair = new RepairAndClear();
+        $repair = new \RepairAndClear();
         $repair->repairAndClearAll(array('rebuildExtensions'), $modules, true, false);
     }
 
@@ -108,19 +167,15 @@ class FullTextSearchSettingsAdmin
         }
 
         //compose the content to write
-        $moduleName = BeanFactory::getObjectName($module);
+        $moduleName = \BeanFactory::getObjectName($module);
         $out =  "<?php\n // created: " . date('Y-m-d H:i:s') . "\n";
         $out .= override_value_to_string_recursive(array($moduleName, "full_text_search"), "dictionary", $isEnabled);
         $out .= "\n";
 
         //write to the file
-        $file = "custom/Extension/modules/" . $module . "/Ext/Vardefs/" . self::EXT_FILE_NAME;
-        if ($fh = @sugar_fopen($file, 'w')) {
-            fputs($fh, $out);
-            fclose($fh);
-            return true;
-        } else {
-            return false;
-        }
+        $dir = "custom/Extension/modules/" . $module . "/Ext/Vardefs";
+        mkdir_recursive($dir);
+        $file = $dir . "/" . self::EXT_FILE_NAME;
+        sugar_file_put_contents_atomic($file, $out);
     }
 }

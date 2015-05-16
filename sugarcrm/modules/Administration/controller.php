@@ -12,9 +12,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
+use Sugarcrm\Sugarcrm\SearchEngine\AdminSettings;
 
 require_once 'include/MetaDataManager/MetaDataManager.php';
-require_once 'modules/Administration/FullTextSearchSettingsAdmin.php';
 
 class AdministrationController extends SugarController
 {
@@ -233,7 +233,7 @@ class AdministrationController extends SugarController
         // Update the module vardefs to enable/disable fts
         $enabledModules = $this->getModuleList($_REQUEST['enabled_modules']);
         $disabledModules = $this->getModuleList($_REQUEST['disabled_modules']);
-        $ftsAdmin = new FullTextSearchSettingsAdmin();
+        $ftsAdmin = new AdminSettings();
         $ftsAdmin->saveFTSModuleListSettings($enabledModules, $disabledModules);
 
         // Refresh the server info & module list sections of the metadata
