@@ -11,7 +11,9 @@
  */
 --}}
 {{#if collection.dataFetched}}
-{{#if countLabel}}
-<span class="count">({{countLabel}})</span>
-{{/if}}
+    {{#if countLabel}}
+        <span class="count">({{countLabel}})</span>
+    {{/if}}
+{{else}}
+    <span class="count"></span>
 {{/if}}
