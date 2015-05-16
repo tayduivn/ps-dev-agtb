@@ -1023,7 +1023,10 @@ class PMSEEngineUtils
 
     public static function getDateToFE($theDate, $type, $bean = null)
     {
-        global $timedate;
+        global $timedate, $db;
+
+        $theDate = $db->fromConvert($theDate, $type);
+
         $date = $timedate->fromDbType($theDate, $type);
 
         if ( $date == null && $bean instanceof SugarBean) {
