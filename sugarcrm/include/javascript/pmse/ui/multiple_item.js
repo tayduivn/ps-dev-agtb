@@ -179,9 +179,11 @@ MultipleItemField.prototype._createPanel = function () {
 
 MultipleItemField.prototype.scrollTo = function () {
     var fieldsDiv = this.html.parentNode,
-    	scrollForControlObject = getRelativePosition(this.controlObject.html, fieldsDiv).top + $(this.controlObject.html).outerHeight() + fieldsDiv.scrollTop,
+    	relativeTopPosition = getRelativePosition(this.controlObject.html, fieldsDiv).top,
+    	scrollForControlObject = relativeTopPosition < 0 ? relativeTopPosition :
+    		relativeTopPosition + $(this.controlObject.html).outerHeight() + fieldsDiv.scrollTop,
     	that = this;
-    if (fieldsDiv.scrollTop + $(fieldsDiv).outerHeight() < scrollForControlObject) {
+    if (fieldsDiv.scrollTop + $(fieldsDiv).outerHeight() < scrollForControlObject || relativeTopPosition < 0) {
         jQuery(this.html.parentNode).animate({
         	scrollTop: scrollForControlObject
         }, function() {
@@ -203,6 +205,7 @@ MultipleItemField.prototype._attachListeners = function () {
 		});
 
 		$(this.parent && this.parent.body).on('scroll', function () {
+			$(that.controlObject.html).find(':focus').blur();
 			that.closePanel();
 		});
 	}

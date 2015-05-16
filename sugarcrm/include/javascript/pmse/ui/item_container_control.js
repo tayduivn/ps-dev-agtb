@@ -524,6 +524,7 @@ ItemContainer.prototype._attachListeners = function () {
 						} else {
 							//firefox
 							keyIdentifier = String.fromCharCode(e.which);
+							keyIdentifier += keyIdentifier ? " " : "";
 						}
 					} catch(e) {
 						keyIdentifier = "";
