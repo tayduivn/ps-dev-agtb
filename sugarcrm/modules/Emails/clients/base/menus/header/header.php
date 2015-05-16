@@ -27,7 +27,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'icon' => 'fa-plus',
     ),
     array(
-        'route'=>'#EmailTemplates',
+        'route'=>'#bwc/index.php?module=EmailTemplates&action=index',
         'label' =>'LNK_EMAIL_TEMPLATE_LIST',
         'acl_action'=>'list',
         'acl_module'=>'EmailTemplates',
