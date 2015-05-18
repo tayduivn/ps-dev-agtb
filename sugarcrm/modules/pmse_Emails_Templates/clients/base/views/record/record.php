@@ -152,21 +152,14 @@ $viewdefs[$module_name] =
                                                 'placeholders' => true,
                                                 'newTab' => false,
                                                 'panelDefault' => 'expanded',
-                                                'fields' =>
-                                                    array (
-                                                        0 =>
-                                                            array (
-                                                                'name' => 'base_module',
-                                                                'studio' => 'visible',
-                                                                'label' => 'LBL_BASE_MODULE',
-                                                            ),
-                                                        1 =>
-                                                            array (
-                                                                'span' => 6,
-                                                            ),
-                                                        2 => 'assigned_user_name',
-                                                        3 => 'team_name',
+                                                'fields' => array(
+                                                    array(
+                                                        'name' => 'base_module',
+                                                        'studio' => 'visible',
+                                                        'label' => 'LBL_BASE_MODULE',
                                                     ),
+                                                    'assigned_user_name',
+                                                ),
                                             ),
                                         2 =>
                                             array (
