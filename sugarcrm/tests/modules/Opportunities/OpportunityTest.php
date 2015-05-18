@@ -10,6 +10,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+/**
+ * Class OpportunityTest
+ * @coversDefaultClass Opportunity
+ */
 class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
 {
 
@@ -54,6 +58,7 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @dataProvider dataProviderCaseFieldEqualsAmountWhenCaseFieldEmpty
      * @group opportunities
+     * @covers ::save
      */
     public function testCaseFieldEqualsAmountWhenCaseFieldEmpty($case)
     {
@@ -72,6 +77,7 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @dataProvider dataProviderCaseFieldEqualsAmountWhenCaseFieldEmpty
      * @group opportunities
+     * @covers ::save
      */
     public function testCaseFieldEqualsZeroWhenCaseFieldSetToZero($case)
     {
@@ -87,89 +93,12 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
         $opportunity->save();
         $this->assertEquals(0, $opportunity->$case);
     }
-    //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
-    /**
-     * This test checks to see if we correctly set the timeperiod_id value of an Opportunity record
-     * @group forecasts
-     * @group opportunities
-     */
-    public function testOpportunitySaveSelectProperTimePeriod()
-    {
-        global $timedate;
-        $timedate->getNow();
-
-        $tp = TimePeriod::retrieveFromDate('2009-02-15');
-
-        if (empty($tp)) {
-            $tp = SugarTestTimePeriodUtilities::createTimePeriod('2009-01-01', '2009-03-31');
-        }
-
-        $opp = SugarTestOpportunityUtilities::createOpportunity();
-        $opp->date_closed = "2009-02-15";
-        $opp->save();
-
-        //check that the timeperiod covers the date closed timestamp
-        $this->assertLessThan($opp->date_closed_timestamp, $tp->start_date_timestamp);
-        $this->assertGreaterThanOrEqual($opp->date_closed_timestamp, $tp->end_date_timestamp);
-    }
-
-    /**
-     * This test checks to see if we the opportunity is still included on the time period on the first day of the span
-     * @group forecasts
-     * @group opportunities
-     */
-    public function testOpportunitySaveFirstDayOfTimePeriod()
-    {
-        global $timedate;
-        $timedate->getNow();
-
-        $tp = TimePeriod::retrieveFromDate('2009-02-15');
-
-        if (empty($tp)) {
-            $tp = SugarTestTimePeriodUtilities::createTimePeriod('2009-01-01', '2009-03-31');
-        }
-
-        $opp = SugarTestOpportunityUtilities::createOpportunity();
-        $opp->date_closed = "2009-01-02";
-        $opp->save();
-
-        //check that the timeperiod covers the date closed timestamp
-        $this->assertLessThan($opp->date_closed_timestamp, $tp->start_date_timestamp);
-        $this->assertGreaterThanOrEqual($opp->date_closed_timestamp, $tp->end_date_timestamp);
-    }
-
-    /**
-     * This test checks to ensure that opportunities created with a date_closed value have a date_closed_timestamp
-     * value that correctly falls within range of the timeperiod for that period.
-     * @group forecasts
-     * @group opportunities
-     */
-    public function testOpportunitySaveLastDayOfTimePeriod()
-    {
-        global $timedate;
-        $timedate->getNow();
-
-        $tp = TimePeriod::retrieveFromDate('2009-02-15');
-
-        if (empty($tp)) {
-            $tp = SugarTestTimePeriodUtilities::createTimePeriod('2009-01-01', '2009-03-31');
-        }
-
-        $opp = SugarTestOpportunityUtilities::createOpportunity();
-        $opp->date_closed = "2009-03-31";
-        $opp->save();
-
-        //check that the timeperiod covers the date closed timestamp
-        $this->assertLessThan($opp->date_closed_timestamp, $tp->start_date_timestamp);
-        $this->assertGreaterThanOrEqual($opp->date_closed_timestamp, $tp->end_date_timestamp);
-    }
-
-    //END SUGARCRM flav=pro && flav!=ent ONLY
 
     /**
      * Test that the base_rate field is populated with rate of currency_id
      * @group forecasts
      * @group opportunities
+     * @covers ::save
      */
     public function testCurrencyRate()
     {
@@ -193,6 +122,7 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
      * Test that base currency exchange rates from EUR are working properly.
      * @group forecasts
      * @group opportunities
+     * @covers ::save
      */
     public function testBaseCurrencyAmounts()
     {
@@ -214,82 +144,11 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
-    /*
-     * This method tests that a product record is created for new opportunity and that the necessary opportunity
-     * field values are mapped to the product record
-     * @group forecasts
-     * @group opportunities
-     */
-    public function testProductEntryWasCreated()
-    {
-        $this->markTestIncomplete('Needs to be fixed by FRM team.');
-        $opp = SugarTestOpportunityUtilities::createOpportunity();
-        $opportunity = BeanFactory::getBean('Products');
-        $opportunity->retrieve_by_string_fields(array('opportunity_id' => $opp->id));
-
-        SugarTestProductUtilities::setCreatedProduct(array($opportunity->id));
-
-        $expected = array($opp->name, $opp->amount, $opp->best_case, $opp->worst_case);
-        $actual = array($opportunity->name, $opportunity->likely_case, $opportunity->best_case, $opportunity->worst_case);
-
-        $this->assertEquals($expected, $actual);
-    }
-
 
     /**
-     * This method tests that subsequent changes to an opportunity will also update the associated product's data
-     * @group forecasts
-     * @group opportunities
-     * @bug 56433
-     */
-    public function testOpportunityChangesUpdateRelatedProduct()
-    {
-        $opp = SugarTestOpportunityUtilities::createOpportunity();
-        $opportunity = BeanFactory::getBean('Products');
-        $opportunity->retrieve_by_string_fields(array('opportunity_id' => $opp->id));
-
-        SugarTestProductUtilities::setCreatedProduct(array($opportunity->id));
-
-        //Now we change the opportunity's values again
-        $currency = SugarTestCurrencyUtilities::getCurrencyByISO('MOD');
-        $opp->currency_id = $currency->id;
-        $opp->save();
-
-        $opportunity->retrieve_by_string_fields(array('opportunity_id' => $opp->id));
-        $this->assertEquals(
-            $opp->currency_id,
-            $opportunity->currency_id,
-            'The opportunity and product currency_id values differ'
-        );
-    }
-
-    /**
-     * This method tests that best/worst cases will be set to opp amount when sales stage is changed to Closed Won
-     * @group forecasts
-     * @group opportunities
-     */
-    public function testCaseFieldsEqualsAmountWhenSalesStageEqualsClosedWon()
-    {
-        $this->markTestIncomplete('SFA - This test is broken on Stack94 ENT');
-        $opp = SugarTestOpportunityUtilities::createOpportunity();
-        $opp->best_case = $opp->amount * 2;
-        $opp->worst_case = $opp->amount / 2;
-        $opp->save();
-
-        $this->assertNotEquals($opp->best_case, $opp->amount);
-        $this->assertNotEquals($opp->worst_case, $opp->amount);
-        $opp->sales_stage = Opportunity::STAGE_CLOSED_WON;
-        $opp->save();
-
-        $this->assertEquals($opp->best_case, $opp->amount);
-        $this->assertEquals($opp->worst_case, $opp->amount);
-    }
-    //END SUGARCRM flav=pro ONLY
-    
-    //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
-    /**
      * @group opportunities
      * @group forecasts
+     * @covers ::mark_deleted
      */
     public function testMarkDeleteDeletesForecastWorksheet()
     {
@@ -313,43 +172,28 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
         $worksheet = SugarTestWorksheetUtilities::loadWorksheetForBean($opp, false, true);
         $this->assertEquals(1, $worksheet->deleted);
     }
-
-    public function testMarkDeleteDeletesRelatedProducts()
-    {
-        SugarTestTimePeriodUtilities::createTimePeriod('2013-01-01', '2013-03-31');
-
-        $opp = SugarTestOpportunityUtilities::createOpportunity();
-        $opp->date_closed = '2013-01-01';
-        $opp->save();
-
-        $products = $opp->get_linked_beans('products', 'Products');
-
-        $opp->mark_deleted($opp->id);
-        $this->assertEquals(1, $opp->deleted);
-
-        foreach($products as $product) {
-            $p = BeanFactory::getBean($product->module_name);
-            $p->retrieve($product->id, true, false);
-
-            $this->assertEquals(1, $p->deleted);
-        }
-    }
+    //END SUGARCRM flav=pro && flav!=ent ONLY
 
     /**
      * @group opportunities
+     * @covers ::getClosedStages
      */
     public function testGetClosedStages()
     {
-        $opp = SugarTestOpportunityUtilities::createOpportunity();
+        $opp = $this->getMockBuilder('Opportunity')
+            ->setMethods(array('save'))
+            ->disableOriginalConstructor()
+            ->getMock();
         $closedStages = $opp->getClosedStages();
         $this->assertTrue(is_array($closedStages));
     }
 
-    //END SUGARCRM flav=pro && flav!=ent ONLY
-
     /**
      * @dataProvider dataProviderMapProbabilityFromSalesStage
      * @group opportunities
+     * @covers ::mapProbabilityFromSalesStage
+     * @param string $sales_stage
+     * @param string $probability
      */
     public function testMapProbabilityFromSalesStage($sales_stage, $probability)
     {
@@ -360,29 +204,6 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestReflection::callProtectedMethod($oppMock, 'mapProbabilityFromSalesStage');
 
         $this->assertEquals($probability, $oppMock->probability);
-    }
-
-    /**
-     * Test that related RLI's Account is always updated when we change it in Opportunity.
-     * @group opportunities
-     */
-    public function testRelatedRLIUpdatesAccountChange()
-    {
-        $opportunity = SugarTestOpportunityUtilities::createOpportunity();
-        $account_1 = SugarTestAccountUtilities::createAccount();
-        $opportunity->account_id = $account_1->id;
-        $rli = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
-        $opportunity->revenuelineitems->add($rli);
-
-        $opportunity->save();
-        $this->assertEquals($account_1->id, $rli->account_id, '1st save');
-
-        //let's change Opportunity's Account and see what happens with RLI's related Account
-        $opportunity->retrieve($opportunity->id);
-        $account_2 = SugarTestAccountUtilities::createAccount();
-        $opportunity->account_id = $account_2->id;
-        $opportunity->save();
-        $this->assertEquals($account_2->id, $rli->account_id, '2nd save');
     }
 
     public static function dataProviderMapProbabilityFromSalesStage()
@@ -400,9 +221,234 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
             array('Closed Lost', '0')
         );
     }
-}
 
-class MockOpportunityBean extends Opportunity
-{
-    
+    /**
+     * @covers ::isCurrencyIdChanged
+     * @dataProvider dataProviderIsCurrencyIdChanged
+     * @param string $currency_id
+     * @param string $fetched_row_id
+     * @param bool $expected
+     */
+    public function testIsCurrencyIdChanged($currency_id, $fetched_row_id, $expected)
+    {
+        $opp = $this->getMockBuilder('Opportunity')
+            ->setMethods(array('save'))
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $opp->currency_id = $currency_id;
+        if (!is_null($fetched_row_id)) {
+            $opp->fetched_row = array('currency_id' => $fetched_row_id);
+        }
+
+        $actual = SugarTestReflection::callProtectedMethod($opp, 'isCurrencyIdChanged');
+
+        $this->assertSame($expected, $actual);
+    }
+
+    public static function dataProviderIsCurrencyIdChanged()
+    {
+        return array(
+            array(
+                'test_currency_id',
+                'test_currency_id',
+                false
+            ),
+            array(
+                'test_currency_id',
+                'test-currency-id',
+                true
+            ),
+            array(
+                null,
+                'test-currency-id',
+                true
+            ),
+            array(
+                'test_currency_id',
+                null,
+                true
+            ),
+        );
+    }
+
+    /**
+     * @covers ::updateCurrencyBaseRate
+     * @dataProvider dataProviderUpdateCurrencyBaseRate
+     * @param string $sales_stage
+     * @param array $closed_stages
+     * @param bool $expected
+     */
+    public function testUpdateCurrencyBaseRate($sales_stage, $closed_stages, $expected)
+    {
+        $opp = $this->getMockBuilder('Opportunity')
+            ->setMethods(array('save', 'getClosedStages'))
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $opp->sales_stage = $sales_stage;
+
+        $opp->expects($this->once())
+            ->method('getClosedStages')
+            ->willReturn($closed_stages);
+
+        $actual = $opp->updateCurrencyBaseRate();
+        $this->assertSame($expected, $actual);
+    }
+
+    public static function dataProviderUpdateCurrencyBaseRate()
+    {
+        return array(
+            array(
+                'test_not_in_array',
+                array(
+                    'test_1',
+                    'test_2',
+                    'test_3',
+                    'test_4'
+                ),
+                true
+            ),
+            array(
+                'test_in_array',
+                array(
+                    'test_1',
+                    'test_2',
+                    'test_3',
+                    'test_4',
+                    'test_in_array'
+                ),
+                false
+            )
+        );
+    }
+
+    /**
+     * @covers ::save_relationship_changes
+     */
+    public function testSaveRelationshipChanges()
+    {
+        $opp = $this->getMockBuilder('Opportunity')
+            ->setMethods(
+                array(
+                    'set_opportunity_contact_relationship',
+                    'set_relationship_info',
+                    'handle_preset_relationships',
+                    'handle_remaining_relate_fields',
+                    'update_parent_relationships',
+                    'handle_request_relate',
+                    'load_relationship'
+                )
+            )
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $opp->id = 'test_opp_id';
+        $opp->account_id = 'test_account_id1';
+        $opp->rel_fields_before_value['account_id'] = 'test_account_id2';
+
+        $linkAccounts = $this->getMockBuilder('Link2')
+            ->disableOriginalConstructor()
+            ->setMethods(array('delete'))
+            ->getMock();
+
+        $linkAccounts->expects($this->once())
+            ->method('delete')
+            ->with($opp->id, 'test_account_id2');
+
+        $opp->accounts = $linkAccounts;
+
+        $linkProducts = $this->getMockBuilder('Link2')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getBeans'))
+            ->getMock();
+
+        $mockProduct = $this->getMockBuilder('Product')
+            ->setMethods(array('save'))
+            ->getMock();
+
+        $mockProduct->expects($this->once())
+            ->method('save');
+
+        $linkProducts->expects($this->once())
+            ->method('getBeans')
+            ->willReturn(array($mockProduct));
+
+        $opp->products = $linkProducts;
+
+        $linkRLIs = $this->getMockBuilder('Link2')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getBeans'))
+            ->getMock();
+
+        $mockRLI = $this->getMockBuilder('RevenueLineItem')
+            ->setMethods(array('save'))
+            ->getMock();
+
+        $mockRLI->expects($this->once())
+            ->method('save');
+
+        $linkRLIs->expects($this->once())
+            ->method('getBeans')
+            ->willReturn(array($mockRLI));
+
+        $opp->revenuelineitems = $linkRLIs;
+
+        $opp->expects($this->exactly(3))
+            ->method('load_relationship')
+            ->willReturnOnConsecutiveCalls($linkAccounts, $linkProducts, $linkRLIs);
+
+
+        $opp->save_relationship_changes(true);
+
+        $this->assertEquals('test_account_id1', $mockProduct->account_id);
+        $this->assertEquals('test_account_id1', $mockRLI->account_id);
+
+    }
+
+    /**
+     * @covers ::build_generic_where_clause
+     */
+    public function testBuildGenericWhereClause()
+    {
+        $opp = $this->getMockBuilder('Opportunity')
+            ->setMethods(array('save'))
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $actual = $opp->build_generic_where_clause('test');
+
+        $this->assertEquals("opportunities.name like 'test%' or accounts.name like 'test%'", $actual);
+    }
+
+    /**
+     * @covers ::set_opportunity_contact_relationship
+     */
+    public function testSetOpportunityContactRelationship()
+    {
+        $opp = $this->getMockBuilder('Opportunity')
+            ->setMethods(array('load_relationship'))
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $opp->contacts = $this->getMockBuilder('Link2')
+            ->disableOriginalConstructor()
+            ->setMethods(array('add'))
+            ->getMock();
+
+        $opp->contacts->expects($this->once())
+            ->method('add')
+            ->with('test_contact_id', array('contact_role' => 'default'));
+
+        $opp->expects($this->once())
+            ->method('load_relationship');
+
+        $GLOBALS['app_list_strings'] = array(
+            'opportunity_relationship_type_default_key' => 'default'
+        );
+
+        $opp->set_opportunity_contact_relationship('test_contact_id');
+
+    }
+
 }
