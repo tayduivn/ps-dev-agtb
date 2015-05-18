@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$dictionary['Accounts'] = array(
+$dictionary['Account'] = array(
     'fields' => array(
         'name' => array(
             'customCode' => 'customCode',

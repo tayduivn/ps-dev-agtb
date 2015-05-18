@@ -75,7 +75,7 @@
         var getModuleLinks = function() {
             var actions = [];
             var moduleList = app.metadata.getModuleNames({filter: 'display_tab'});
-            if (app.metadata.getModule('Administration')) {
+            if (app.user.get('type') === 'admin' && app.metadata.getModule('Administration')) {
                 moduleList.push('Administration');
                 moduleList = _.uniq(moduleList);
             }

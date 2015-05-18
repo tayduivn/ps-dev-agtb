@@ -13,6 +13,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 require_once 'modules/pmse_Inbox/engine/PMSEFieldsUtils.php';
+require_once 'modules/pmse_Inbox/engine/PMSEEngineUtils.php';
 require_once 'include/SugarQuery/SugarQuery.php';
 
 class PMSECaseFlowHandler
@@ -545,6 +546,20 @@ class PMSECaseFlowHandler
         $today = TimeDate::getInstance()->nowDb();
         $_date = TimeDate::getInstance()->getNow()->add(new DateInterval('P1D'));
         $dueDate = $_date->asDb();
+
+        if ($flowData['bpmn_type'] === 'bpmnActivity') {
+            $beanActivityDefinition = BeanFactory::getBean('pmse_BpmActivityDefinition', $flowData['bpmn_id']);
+            $casData = new stdClass();
+            $casData->cas_task_start_date = null;
+            $casData->cas_delegate_date = $today;
+            $expectedTime = (!empty($beanActivityDefinition->act_expected_time)) ? json_decode(base64_decode($beanActivityDefinition->act_expected_time)) : '';
+            $_dueDate = (!empty($expectedTime) && !empty($expectedTime->time)) ? PMSEEngineUtils::processExpectedTime($expectedTime, $casData) : '';
+            if (!empty($_dueDate)) {
+                $dueDate = $_dueDate->format('Y-m-d H:i:s');
+            } else {
+                $dueDate = '';
+            }
+        }
 
         $preparedFlow = array();
         $preparedFlow['id'] = isset($flowData['id']) ? $flowData['id'] : '';

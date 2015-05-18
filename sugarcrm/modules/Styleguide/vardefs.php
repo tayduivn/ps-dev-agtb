@@ -144,7 +144,6 @@ $dictionary['Styleguide'] = array(
             'name' => 'birthdate',
             'vname' => 'LBL_BIRTHDATE',
             'type' => 'date',
-            'dbType' => 'datetime',
             'comment' => 'The birthdate of the contact',
             'help' => 'The birthdate of the contact. Also, more information can be provided.',
         ),

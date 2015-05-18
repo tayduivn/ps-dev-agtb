@@ -1559,6 +1559,32 @@ class MetaDataManager
     }
 
     /**
+     * Invalidate the cache for a given context/platform without rebuilding. Useful when multiple caches change and we
+     * don't have the resources to rebuild them all within this call.
+     *
+     * TODO: Its usage should be replaced by a queue mechanism to rebuild the caches outside of the request scope.
+     *
+     * @param array                          $platforms
+     * @param MetaDataContextInterface       $contexts
+     */
+    public function invalidateCache($platforms = array(), MetaDataContextInterface $context = null)
+    {
+        if (!$context) {
+            $context = $this->getDefaultContext();
+        }
+        if (empty($platforms)) {
+            $platforms = $this->getPlatformsWithCaches();
+        }
+        $deleted = $this->deletePlatformVisibilityCaches($context);
+        if ($deleted) {
+            foreach ($platforms as $platform) {
+                MetaDataFiles::clearModuleClientCache(array(), '', array($platform));
+            }
+        }
+
+    }
+
+    /**
      * Rewrites caches for all metadata manager platforms and visibility
      *
      * @param array $platforms
