@@ -38,17 +38,21 @@
     /**
      * Initialize alert view.
      *
-     * Supported options are:
-     *  - options.level: Type of alert
-     *  - options.onConfirm: Handler of action Confirm for confirmation alerts
-     *  - options.onCancel: Handler of action Cancel for confirmation alerts
-     *  - options.onLinkClicked: Handler for click actions on a link inside the
-     *    alert
-     *  - options.onClose: Handler for the close event on the (x)
-     *  - options.templateOptions: Augment template context with custom object
+     * @param {Object} options Options to be passed to the alert view.
+     * @param {boolean} options.closeable: boolean flag indicating if the alert
+     *   can be closed by the user. Note that non-"info" alerts are closeable by
+     *   default if this setting is not specified.
+     * @param {Function} options.onConfirm: Handler of action Confirm for
+     *   confirmation alerts.
+     * @param {Function} options.onCancel: Handler of action Cancel for
+     *   confirmation alerts.
+     * @param {Function} options.onLinkClicked: Handler for click actions on a
+     *   link inside the alert.
+     * @param {Function} options.onClose: Handler for the close event on the (x).
+     * @param {Object} options.templateOptions: Augment template context with
+     *   custom object.
      *
      * @override
-     * @param {Object} options
      */
     initialize: function(options) {
         app.plugins.attach(this, 'view');
@@ -76,14 +80,13 @@
     },
 
     /**
-     * {@inheritDoc}
-     * Render the custom alert view template.
+     * Renders the custom alert view template. Binds `Esc` and `Return` keys for
+     * confirmation alerts.
      *
-     * Binds `Esc` and `Return` keys for confirmation alerts.
+     * @override
      */
-    render: function(options) {
-
-        options = options || this.options;
+    render: function() {
+       var options = this.options;
 
         if (!this.triggerBefore('render')) {
             return false;
@@ -92,26 +95,7 @@
             return this;
         }
 
-        var template = this.getAlertTemplate(options.level, options.messages, options.title, this.templateOptions);
-
-        if (_.isUndefined(options.closeable)) {
-            // Success, error, warning alerts can be closed by users
-            options.closeable = options.level != 'info';
-        }
-
-        if (options.closeable) {
-            // Attach 'click' handler if the alert can be closed
-            var button = this.getCloseSelector();
-            button.off('click');
-            button.on('click', _.bind(function() {
-                this.dismiss(key);
-            }, this));
-            if (app.accessibility) {
-                app.accessibility.run(button, 'click');
-            }
-            this.$('alert').addClass('closeable');
-        }
-        this.$('alert').addClass('alert-' + options.level);
+        var template = this._getAlertTemplate(options, this.templateOptions);
 
         this.$el.html(template);
 
@@ -174,19 +158,20 @@
         app.alert.dismiss(this.key);
     },
     /**
-     * Get the HTML string for alert given alert level
-     * @param {String} level
-     * @param {String/Array} messages
-     * @param {String} title(optional)
-     * @param {Object} templateOptions(optional) additional custom options
-     *                 passed to template function
-     * @return {String}
+     * Gets the HTML string for alert given options.
+     *
+     * @param {Object} The options object passed to the alert object when it was
+     * created. See {@link #initialize} documentation to know the available
+     * options.
+     *
+     * @return {string} The generated template.
+     * @private
      */
-    getAlertTemplate: function(level, messages, title, templateOptions) {
-        var template,
-            alertClasses = this.getAlertClasses(level);
-
-        title = title ? title : this.getDefaultTitle(level);
+    _getAlertTemplate: function(options, templateOptions) {
+        var template;
+        var level = options.level;
+        var alertClasses = this.getAlertClasses(level);
+        var title = options.title || this.getDefaultTitle(level);
 
         switch (level) {
             case this.LEVEL.PROCESS:
@@ -209,7 +194,8 @@
         var seed = _.extend({}, {
             alertClass: alertClasses,
             title: this.getTranslatedLabels(title),
-            messages: this.getTranslatedLabels(messages),
+            messages: this.getTranslatedLabels(options.messages),
+            closeable: _.isUndefined(options.closeable) || options.closeable,
             alert: this
         }, templateOptions);
         return template(seed);
