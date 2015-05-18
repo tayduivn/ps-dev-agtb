@@ -121,7 +121,7 @@ class ForecastsApi extends ModuleApi
 
         // INVESTIGATE: these need to be more dynamic and deal with potential customizations based on how filters are built in admin and/or studio
         /* @var $admin Administration */
-        $admin = BeanFactory::getBean("Administration");
+        $admin = $this->getBean('Administration');
         $forecastsSettings = $admin->getConfigForModule("Forecasts", "base");
         // we need to make sure all the default setting are there, if they are not
         // it should set them to the default value + clear the metadata and kick out a 412 error to force
@@ -168,7 +168,7 @@ class ForecastsApi extends ModuleApi
         global $locale;
         $uid = $args['user_id'];
         /* @var $user User */
-        $user = BeanFactory::getBean('Users', $uid);
+        $user = $this->getBean('Users', $uid);
         $data = array();
         $data['id'] = $user->id;
         $data['user_name'] = $user->user_name;
@@ -193,6 +193,18 @@ class ForecastsApi extends ModuleApi
      */
     public function timeperiod($api, $args)
     {
+        $obj = $this->getTimeperiodFilterClass($args);
+        return $obj->process();
+    }
+
+    /**
+     * Utility method to get the timeperiod filter class
+     *
+     * @param $args array The arguments array passed in from the API
+     * @return SugarForecasting_AbstractForecast
+     */
+    protected function getTimeperiodFilterClass($args)
+    {
         // base file and class name
         $file = 'include/SugarForecasting/Filter/TimePeriodFilter.php';
         $klass = 'SugarForecasting_Filter_TimePeriodFilter';
@@ -201,10 +213,7 @@ class ForecastsApi extends ModuleApi
         SugarAutoLoader::requireWithCustom($file);
         $klass = SugarAutoLoader::customClass($klass);
         // create the class
-
-        /* @var $obj SugarForecasting_AbstractForecast */
-        $obj = new $klass($args);
-        return $obj->process();
+        return new $klass($args);
     }
 
     /**
@@ -369,7 +378,7 @@ class ForecastsApi extends ModuleApi
         }
 
         /* @var $quotaBean Quota */
-        $quotaBean = BeanFactory::getBean('Quotas');
+        $quotaBean = $this->getBean('Quotas');
 
         $isRollup = ($args['quota_type'] == 'rollup');
 
@@ -380,5 +389,17 @@ class ForecastsApi extends ModuleApi
         $data['is_top_level_manager'] = User::isTopLevelManager($args['user_id']);
 
         return $data;
+    }
+
+    /**
+     * Utility method to make unit testing easier
+     *
+     * @param string $module The module to load
+     * @param string $id The record id to load
+     * @return SugarBean
+     */
+    protected function getBean($module, $id = null)
+    {
+        return BeanFactory::getBean($module, $id);
     }
 }
