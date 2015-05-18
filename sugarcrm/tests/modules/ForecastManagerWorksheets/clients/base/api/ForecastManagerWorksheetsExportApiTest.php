@@ -5,8 +5,9 @@ require_once 'modules/ForecastManagerWorksheets/clients/base/api/ForecastManager
 /**
  * RS-126
  * Prepare ForecastManagerWorksheetsExport Api
+ * @coversDefaultClass ForecastManagerWorksheetsExportApi
  */
-class RS126Test extends Sugar_PHPUnit_Framework_TestCase
+class ForecastManagerWorksheetsExportApiTest extends Sugar_PHPUnit_Framework_TestCase
 {
     /** @var RestService */
     protected $service = null;
@@ -29,11 +30,18 @@ class RS126Test extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * Test behavior of export method
+     * @covers ::export
      */
     public function testExport()
     {
         $api = $this->getMock('ForecastManagerWorksheetsExportApi', array('doExport'));
-        $api->expects($this->once())->method('doExport')->with($this->equalTo($this->service), $this->logicalNot($this->isEmpty()), $this->logicalNot($this->isEmpty()));
+        $api->expects($this->once())
+            ->method('doExport')
+            ->with(
+                $this->equalTo($this->service),
+                $this->logicalNot($this->isEmpty()),
+                $this->logicalNot($this->isEmpty())
+            );
         $api->export($this->service, array());
     }
 }
