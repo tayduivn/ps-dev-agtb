@@ -19,7 +19,7 @@ require_once('include/api/RestService.php');
  * Used to test Forecast Module endpoints from ForecastModuleApi.php
  *
  */
-class ForecastWorksheetsApiTest extends Sugar_PHPUnit_Framework_TestCase
+class ForecastWorksheetsFilterApiTest extends Sugar_PHPUnit_Framework_TestCase
 {
     /** @var array
      */
