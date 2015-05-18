@@ -34,7 +34,7 @@ class DrPhilTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::tearDown();
     }
 
-    protected function getValidModules()
+    protected static function getValidModules()
     {
         static $validModules;
 
@@ -67,7 +67,7 @@ class DrPhilTest extends Sugar_PHPUnit_Framework_TestCase
         return $validModules;
     }
 
-    protected function getSeedBean( $moduleName )
+    protected static function getSeedBean($moduleName)
     {
         static $seedBeans = array();
 
@@ -85,7 +85,7 @@ class DrPhilTest extends Sugar_PHPUnit_Framework_TestCase
         if (!isset($validModulesDataSet)) {
             $validModulesDataSet = array();
 
-            $validModules = $this->getValidModules();
+            $validModules = self::getValidModules();
             foreach ( $validModules as $module ) {
                 $validModulesDataSet[] = array($module);
             }
@@ -169,7 +169,7 @@ class DrPhilTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function provideLinkFields()
     {
-        $moduleList = $this->getValidModules();
+        $moduleList = self::getValidModules();
 
         $linkFields = array();
 
@@ -257,5 +257,82 @@ class DrPhilTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $diff = array_diff(array_keys($GLOBALS['app_list_strings']['moduleList']), array_keys($GLOBALS['app_list_strings']['moduleListSingular']));
         $this->assertEquals(array(), $diff, "Key lists do not match");
+    }
+
+    /**
+     * @dataProvider relateFieldProvider
+     */
+    public function testRelateFieldDoesNotProduceDuplicates($module, $field)
+    {
+        $bean = self::getSeedBean($module);
+        $query = new SugarQuery();
+        $query->from($bean);
+        $query->select($field);
+        $duplicates = SugarTestReflection::callProtectedMethod($bean, 'queryProducesDuplicates', array($query));
+        $this->assertFalse($duplicates, 'Fetching related field should not produce duplicates');
+    }
+
+    public static function relateFieldProvider()
+    {
+        $exclude = array(
+            'Calls' => array(
+                'contact_name',
+                'contact_id',
+            ),
+            'Contacts' => array(
+                'opportunity_role_fields',
+                'c_accept_status_fields',
+                'm_accept_status_fields',
+            ),
+            'Contracts' => array(
+                'parent_name',
+            ),
+            'DataSets' => array(
+                'child_name',
+            ),
+            'Documents' => array(
+                'related_doc_name',
+                'related_doc_rev_number',
+            ),
+            'Employees' => array(
+                'c_accept_status_fields',
+                'm_accept_status_fields',
+            ),
+            'Groups' => array(
+                'c_accept_status_fields',
+                'm_accept_status_fields',
+            ),
+            'Leads' => array(
+                'c_accept_status_fields',
+                'm_accept_status_fields',
+            ),
+            'Meetings' => array(
+                'contact_name',
+                'contact_id',
+            ),
+            'Quotes' => array(
+                'opportunity_name',
+            ),
+            'Users' => array(
+                'c_accept_status_fields',
+                'm_accept_status_fields',
+            ),
+        );
+
+        $data = array();
+        foreach (self::getValidModules() as $module) {
+            $bean = self::getSeedBean($module);
+            if ($bean && isset($bean->field_defs)) {
+                foreach ($bean->field_defs as $field => $vardef) {
+                    if (isset($vardef['type']) && $vardef['type'] == 'relate'
+                        && !(isset($exclude[$module]) && in_array($field, $exclude[$module]))
+                    ) {
+                        $data[] = array($module, $field);
+                    }
+                }
+            }
+        }
+
+        return $data;
     }
 }

@@ -1057,12 +1057,12 @@ $dictionary['Product'] = array(
             'relationship_role_column_value' => 'Products'
         ),
         'product_manufacturers' => array(
-            'rhs_module' => 'Manufacturers',
-            'rhs_table' => 'manufacturers',
-            'rhs_key' => 'id',
-            'lhs_module' => 'Products',
-            'lhs_table' => 'products',
-            'lhs_key' => 'manufacturer_id',
+            'lhs_module' => 'Manufacturers',
+            'lhs_table' => 'manufacturers',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Products',
+            'rhs_table' => 'products',
+            'rhs_key' => 'manufacturer_id',
             'relationship_type' => 'one-to-many'
         ),
     ),

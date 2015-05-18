@@ -3215,22 +3215,8 @@ class SugarBean
 
         $query->select($queryFields);
 
-        foreach ($query->join as $join) {
-            if ($join->linkName) {
-                $seed = $query->from;
-                $linkName = $join->linkName;
-                if ($seed->load_relationship($linkName)) {
-                    /** @var Link2 $link */
-                    $link = $seed->$linkName;
-                    if ($link->getType() === REL_TYPE_MANY) {
-                        $relationship = $link->getRelationshipObject();
-                        if (empty($relationship->primaryOnly)) {
-                            $this->fixQuery($query);
-                            break;
-                        }
-                    }
-                }
-            }
+        if ($this->queryProducesDuplicates($query)) {
+            $this->fixQuery($query);
         }
 
         $this->call_custom_logic('before_fetch_query', array('query' => $query, 'fields' => $fields));
@@ -3268,6 +3254,28 @@ class SugarBean
         }
 
         return $beans;
+    }
+
+    protected function queryProducesDuplicates(SugarQuery $query)
+    {
+        foreach ($query->join as $join) {
+            if ($join->linkName) {
+                $seed = $query->from;
+                $linkName = $join->linkName;
+                if ($seed->load_relationship($linkName)) {
+                    /** @var Link2 $link */
+                    $link = $seed->$linkName;
+                    if ($link->getType() === REL_TYPE_MANY) {
+                        $relationship = $link->getRelationshipObject();
+                        if (empty($relationship->primaryOnly)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 
     /**

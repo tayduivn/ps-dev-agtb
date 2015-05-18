@@ -303,12 +303,12 @@ $dictionary['Contract'] = array(
     ),
     'relationships' => array(
         'contracts_contract_types' => array(
-            'lhs_module' => 'Contracts',
-            'lhs_table' => 'contracts',
-            'lhs_key' => 'type',
-            'rhs_module' => 'ContractTypes',
-            'rhs_table' => 'contract_types',
-            'rhs_key' => 'id',
+            'lhs_module' => 'ContractTypes',
+            'lhs_table' => 'contract_types',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Contracts',
+            'rhs_table' => 'contracts',
+            'rhs_key' => 'type',
             'relationship_type' => 'one-to-many',
         ),
         'contract_notes' => array(
