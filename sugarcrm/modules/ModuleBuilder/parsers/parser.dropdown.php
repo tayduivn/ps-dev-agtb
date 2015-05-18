@@ -79,8 +79,8 @@ class ParserDropDown extends ModuleBuilderParser
             $contents = str_replace("?>", '', $contents);
             if (empty($contents)) $contents = "<?php";
 
-            // Needed when upgrading from version < 7.6
-            if (!empty($params['handleSpecialDropdowns'])) {
+            // Skip saveExemptDropdowns on upgrades
+            if (empty($params['skipSaveExemptDropdowns'])) {
                 $dropdown = $this->saveExemptDropdowns($dropdown, $dropdown_name, $my_list_strings, $selected_lang);
             }
 
