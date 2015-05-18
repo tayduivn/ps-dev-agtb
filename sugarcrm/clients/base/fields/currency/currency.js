@@ -118,6 +118,34 @@
         return this;
     },
 
+    handleValidationError: function(errors) {
+        this._super('handleValidationError', [errors]);
+        _.defer(function (field) {
+            field.clearErrorDecoration();
+            field.decorateError(errors);
+
+        }, this);
+    },
+
+    clearErrorDecoration: function () {
+        var self = this,
+            ftag = this.fieldTag || '',
+            $ftag = this.$(ftag);
+        // Remove previous exclamation then add back.
+        this.$('.add-on').remove();
+
+        //Not all inputs are necessarily wrapped so check each individually
+        $ftag.each(function(index, el) {
+            var isWrapped = self.$(el).parent().hasClass('input-append');
+            if (isWrapped) {
+                self.$(el).unwrap();
+            }
+        });
+        this.$el.removeClass(ftag);
+        this.$el.removeClass("error");
+        this.$el.closest('.record-cell').removeClass("error");
+    },
+
     /**
      * When currency changes, we need to make appropriate silent changes to the base rate.
      */
