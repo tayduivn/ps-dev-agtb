@@ -78,7 +78,8 @@
         this.tooltipTemplate = app.template.getField('timeperiod', 'tooltip', this.module);
 
         // if forecast is not setup, then we need to use the generic options
-        if (app.metadata.getModule('Forecasts', 'config').is_setup === 0) {
+        var config = app.metadata.getModule('Forecasts', 'config');
+        if (!config || config.is_setup === 0) {
             this.def.options = 'generic_timeperiod_options';
         }
     },

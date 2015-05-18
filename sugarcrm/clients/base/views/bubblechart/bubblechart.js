@@ -41,7 +41,8 @@
         this.isManager = app.user.get('is_manager');
         this._initPlugins();
 
-        this.forecastBy = app.metadata.getModule('Forecasts', 'config').forecast_by || 'Opportunities';
+        var config = app.metadata.getModule('Forecasts', 'config');
+        this.forecastBy = config && config.forecast_by || 'Opportunities';
 
         // set the title label in meta the same way the dashlet title is set on render
         options.meta.label = app.lang.get(options.meta.label, this.forecastBy);
