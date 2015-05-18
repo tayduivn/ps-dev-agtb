@@ -12,10 +12,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-
-$module_name = 'pmse_Project';
-$viewdefs[$module_name]['base']['view']['list'] = array(
+$viewdefs['pmse_Project']['base']['view']['list'] = array(
     'panels' => array(
         array(
             'label' => 'LBL_PANEL_1',
@@ -55,6 +52,13 @@ $viewdefs[$module_name]['base']['view']['list'] = array(
                     'enabled' => true,
                     'default' => true,
                     'name' => 'date_modified',
+                    'readonly' => true,
+                ),
+                array(
+                    'label' => 'LBL_DATE_ENTERED',
+                    'enabled' => true,
+                    'default' => true,
+                    'name' => 'date_entered',
                     'readonly' => true,
                 ),
             ),
