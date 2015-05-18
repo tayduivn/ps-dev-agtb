@@ -13,14 +13,27 @@
     extendsFrom: 'Htmleditable_tinymceField',
 
     /**
+     * Flag indicates, should we disable field.
+     * @property {boolean}
+     */
+    shouldDisable: null,
+
+    /**
      * {@inheritDoc}
      * Additional override fieldSelector property from field's meta.
      */
     initialize: function(opts) {
         this._super('initialize', [opts]);
+        this.shouldDisable = false;
         if (!_.isUndefined(this.def.fieldSelector)) {
             this.fieldSelector = '[data-htmleditable=' + this.def.fieldSelector + ']';
         }
+        this.before('render', function() {
+            if (this.shouldDisable != this.isDisabled()) {
+                this.setDisabled(this.shouldDisable);
+                return false;
+            }
+        }, this);
     },
 
     /**
@@ -83,5 +96,18 @@
         return _.filter(texts, function(value) {
             return (value.length > 0);
         }).join(' ');
+    },
+
+    /**
+     * @inheritdoc
+     * Should check, if field should be disabled while mode change.
+     */
+    setMode: function(mode) {
+        this.shouldDisable = (mode === 'edit' &&
+            (this.view.tplName === 'list' ||
+            (this.view.tplName == '' && this.tplName == 'subpanel-list')
+            )
+        );
+        this._super('setMode', [mode]);
     }
 })
