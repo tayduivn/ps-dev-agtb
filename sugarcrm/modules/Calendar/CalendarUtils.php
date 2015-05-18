@@ -346,8 +346,12 @@ class CalendarUtils
 		$qu_leads = array();
 		$arr = array();
 		$i = 0;
-		
+
         Activity::disable();
+
+        $calendarEvents = new CalendarEvents();
+        $bean->load_relationship('tag_link');
+        $parentTagBeans = $bean->tag_link->getBeans();
 
 		$clone = clone $bean;
 
@@ -369,6 +373,8 @@ class CalendarUtils
 			$clone->save(false);
 
 			if($clone->id){
+                $clone->load_relationship('tag_link');
+                $calendarEvents->reconcileTags($parentTagBeans, $clone);
 				foreach($users_rel_arr as $user_id){
                     $qu_users[] = array(
                         'id' => create_guid(),
