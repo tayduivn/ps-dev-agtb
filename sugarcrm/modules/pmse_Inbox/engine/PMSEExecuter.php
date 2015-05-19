@@ -460,7 +460,9 @@ class PMSEExecuter
         } catch (PMSEElementException $e) {
             $this->logger->warning($e->getMessage());
             $element = $e->getElement();
-            $executionData = $element->prepareResponse($e->getFlowData(), 'ERROR', 'CREATE');
+            $flow = $e->getFlowData();
+            $state = (empty($flow['id'])) ? 'CREATE' : 'UPDATE';
+            $executionData = $element->prepareResponse($flow, 'ERROR', $state);
             // If the status is put into error then the Inbox record should be updated as well
             $this->caseFlowHandler->changeCaseStatus($executionData['flow_data']['cas_id'], 'ERROR');
             $routeData = $this->flowRouter->routeFlow($executionData, $flowData, $createThread);
