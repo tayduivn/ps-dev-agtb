@@ -57,6 +57,7 @@ nv.models.paretoChart = function() {
             .nice(true),
         lines2 = nv.models.line()
             .useVoronoi(false)
+            .color('data')
             .nice(true),
         xAxis = nv.models.axis()
             .orient('bottom')
@@ -96,33 +97,8 @@ nv.models.paretoChart = function() {
         tooltip = nv.tooltip.show([left, top], content, 's', null, offsetElement);
     };
 
-    var barClick = function(data, e, container) {
-        var d = e.series,
-            selectedSeries = e.seriesIndex;
-
-        d.disabled = !d.disabled;
-
-        if (!chart.stacked()) {
-            data.filter(function(d) {
-                return d.series === selectedSeries && d.type === 'line';
-            }).map(function(d) {
-                    d.disabled = !d.disabled;
-                    return d;
-                });
-        }
-
-        // if there are no enabled data series, enable them all
-        if (!data.filter(function(d) {
-            return !d.disabled && d.type === 'bar';
-        }).length) {
-            data.map(function(d) {
-                d.disabled = false;
-                container.selectAll('.nv-series').classed('disabled', false);
-                return d;
-            });
-        }
-
-        container.call(chart);
+    var barClick = function(data, eo, chart, container) {
+        return;
     };
 
     var getAbsoluteXY = function(element) {
@@ -334,10 +310,10 @@ nv.models.paretoChart = function() {
                     .height(availableHeight - innerMargin.top);
                 barLegendWrap
                     .datum(
-                    data.filter(function(d) {
-                        return d.type === 'bar';
-                    })
-                )
+                        data.filter(function(d) {
+                            return d.type === 'bar';
+                        })
+                    )
                     .call(barLegend);
 
                 maxBarLegendWidth = barLegend.calculateWidth();
@@ -350,10 +326,10 @@ nv.models.paretoChart = function() {
                     .height(availableHeight - innerMargin.top);
                 lineLegendWrap
                     .datum(
-                    data.filter(function(d) {
-                        return d.type === 'line';
-                    }).concat(lineLegendData)
-                )
+                        data.filter(function(d) {
+                            return d.type === 'line';
+                        }).concat(lineLegendData)
+                    )
                     .call(lineLegend);
 
                 maxLineLegendWidth = lineLegend.calculateWidth();
@@ -616,7 +592,7 @@ nv.models.paretoChart = function() {
             quotaWrap.selectAll('line.nv-quotaLineBackground')
                 .on('mouseover', function(d) {
                     var e = {
-                        pos: [d3.event.pageX, d3.event.pageY],
+                        pos: [d3.event.offsetX, d3.event.offsetY],
                         val: d.val,
                         key: d.key
                     };
@@ -627,7 +603,7 @@ nv.models.paretoChart = function() {
                 })
                 .on('mousemove', function() {
                     dispatch.tooltipMove({
-                        pos: [d3.event.pageX, d3.event.pageY]
+                        pos: [d3.event.offsetX, d3.event.offsetY]
                     });
                 });
 
@@ -661,9 +637,15 @@ nv.models.paretoChart = function() {
                 container.call(chart);
             });
 
-            dispatch.on('tooltipShow', function(e) {
+            dispatch.on('tooltipShow', function(eo) {
                 if (tooltips) {
-                    showTooltip(e, that.parentNode, dataGroup);
+                    showTooltip(eo, that.parentNode, dataGroup);
+                }
+            });
+
+            dispatch.on('tooltipMove', function(eo) {
+                if (tooltip) {
+                    nv.tooltip.position(that.parentNode, tooltip, eo.pos, 's');
                 }
             });
 
@@ -673,23 +655,18 @@ nv.models.paretoChart = function() {
                 }
             });
 
-            dispatch.on('tooltipMove', function(e) {
-                if (tooltip) {
-                    nv.tooltip.position(tooltip, e.pos, 's');
-                }
-            });
-
-            dispatch.on('chartClick', function(e) {
+            dispatch.on('chartClick', function(eo) {
                 if (barLegend.enabled()) {
-                    barLegend.dispatch.closeMenu(e);
+                    barLegend.dispatch.closeMenu(eo);
                 }
                 if (lineLegend.enabled()) {
-                    lineLegend.dispatch.closeMenu(e);
+                    lineLegend.dispatch.closeMenu(eo);
                 }
             });
 
-            multibar.dispatch.on('elementClick', function(e) {
-                barClick(data, e, container);
+            multibar.dispatch.on('elementClick', function(eo) {
+                dispatch.chartClick(eo);
+                barClick(data, eo, chart, container);
             });
 
         });
@@ -701,28 +678,28 @@ nv.models.paretoChart = function() {
     // Event Handling/Dispatching (out of chart's scope)
     //------------------------------------------------------------
 
-    lines2.dispatch.on('elementMouseover.tooltip', function(e) {
-        dispatch.tooltipShow(e);
+    lines2.dispatch.on('elementMouseover.tooltip', function(eo) {
+        dispatch.tooltipShow(eo);
     });
 
-    lines2.dispatch.on('elementMouseout.tooltip', function(e) {
-        dispatch.tooltipHide(e);
+    lines2.dispatch.on('elementMousemove', function(eo) {
+        dispatch.tooltipMove(eo);
     });
 
-    lines2.dispatch.on('elementMousemove', function(e) {
-        dispatch.tooltipMove(e);
+    lines2.dispatch.on('elementMouseout.tooltip', function() {
+        dispatch.tooltipHide();
     });
 
-    multibar.dispatch.on('elementMouseover.tooltip', function(e) {
-        dispatch.tooltipShow(e);
+    multibar.dispatch.on('elementMouseover.tooltip', function(eo) {
+        dispatch.tooltipShow(eo);
     });
 
-    multibar.dispatch.on('elementMouseout.tooltip', function(e) {
-        dispatch.tooltipHide(e);
+    multibar.dispatch.on('elementMousemove', function(eo) {
+        dispatch.tooltipMove(eo);
     });
 
-    multibar.dispatch.on('elementMousemove', function(e) {
-        dispatch.tooltipMove(e);
+    multibar.dispatch.on('elementMouseout.tooltip', function() {
+        dispatch.tooltipHide();
     });
 
 
@@ -759,7 +736,7 @@ nv.models.paretoChart = function() {
                 c2: '#62B464',
                 l: 1
             };
-            return d.color || d3.interpolateHsl(d3.rgb(p.c1), d3.rgb(p.c2))(i / 1);
+            return d.color || d3.interpolateHsl(d3.rgb(p.c1), d3.rgb(p.c2))(d.series / 1);
         };
         var lineClasses = function(d, i) {
             return 'nv-group nv-series-' + d.series;

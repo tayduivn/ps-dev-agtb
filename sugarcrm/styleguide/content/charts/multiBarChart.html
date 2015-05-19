@@ -159,8 +159,8 @@
                    '<p>Percentage: <b>' + x + '%</b></p>' +
                    '<p>Amount: <b>$' + parseInt(y) + 'K</b></p>';
           })
-          .seriesClick(function(data, e) {
-            chart.dataSeriesActivate(e);
+          .seriesClick(function(data, eo, chart) {
+            chart.dataSeriesActivate(eo);
           })
           .overflowHandler(function(data) {
             var b = $('body');

@@ -98,9 +98,7 @@
           .useVoronoi(false)
           //.clipEdge(true)
           .tooltipContent(function(key, x, y, e, graph) {
-            return '<p>Category: <b>' + key + '</b></p>' +
-                   '<p>Amount: <b>$' + parseInt(y) + 'M</b></p>' +
-                   '<p>Date: <b>' + x + '</b></p>';
+            return '<p>Category: <b>' + key + '</b></p>';
           });
 
     chart.yAxis

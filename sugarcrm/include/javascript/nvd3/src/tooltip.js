@@ -8,12 +8,11 @@
 
   var nvtooltip = window.nv.tooltip = {};
 
-  nvtooltip.show = function(pos, content, gravity, dist, parentContainer, classes) {
+  nvtooltip.show = function(pos, content, gravity, dist, container, classes) {
 
-    var container = document.createElement('div'),
+    var tooltip = document.createElement('div'),
         inner = document.createElement('div'),
-        arrow = document.createElement('div'),
-        body = document.getElementsByTagName('body')[0];
+        arrow = document.createElement('div');
 
     gravity = gravity || 's';
     dist = dist || 10;
@@ -21,19 +20,19 @@
     inner.className = 'tooltip-inner';
     arrow.className = 'tooltip-arrow';
     inner.innerHTML = content;
-    container.style.left = 0;
-    container.style.top = -1000;
-    container.style.opacity = 0;
-    container.className = 'tooltip xy-tooltip in';
+    tooltip.style.left = 0;
+    tooltip.style.top = -1000;
+    tooltip.style.opacity = 0;
+    tooltip.className = 'tooltip xy-tooltip in';
 
-    container.appendChild(inner);
-    container.appendChild(arrow);
-    body.appendChild(container);
+    tooltip.appendChild(inner);
+    tooltip.appendChild(arrow);
+    container.appendChild(tooltip);
 
-    nvtooltip.position(container, pos, gravity, dist);
-    container.style.opacity = 1;
+    nvtooltip.position(container, tooltip, pos, gravity, dist);
+    tooltip.style.opacity = 1;
 
-    return container;
+    return tooltip;
   };
 
   nvtooltip.cleanup = function() {
@@ -41,16 +40,17 @@
       // (so others cleanups won't find it)
       var tooltips = document.getElementsByClassName('tooltip'),
           purging = [],
-          i = 0;
+          i = tooltips.length;
 
-      while (i < tooltips.length) {
+      while (i > 0) {
+          i -= 1;
+
           if (tooltips[i].className.indexOf('xy-tooltip') !== -1) {
               purging.push(tooltips[i]);
               tooltips[i].style.transitionDelay = '0 !important';
               tooltips[i].style.opacity = 0;
               tooltips[i].className = 'nvtooltip-pending-removal out';
           }
-          i += 1;
       }
 
       setTimeout(function() {
@@ -62,37 +62,46 @@
       }, 500);
   };
 
-  nvtooltip.position = function(container, pos, gravity, dist) {
-    var body = document.getElementsByTagName('body')[0];
+  nvtooltip.position = function(container, tooltip, pos, gravity, dist) {
     gravity = gravity || 's';
     dist = dist || 10;
-
-    var height = parseInt(container.offsetHeight, 10),
-        width = parseInt(container.offsetWidth, 10),
-        windowWidth = nv.utils.windowSize().width,
-        windowHeight = nv.utils.windowSize().height,
-        scrollTop = body.scrollTop,
-        scrollLeft = body.scrollLeft,
-        class_name = container.className.replace(/ top| right| bottom| left/g, ''),
+    var tooltipWidth = parseInt(tooltip.offsetWidth, 10),
+        tooltipHeight = parseInt(tooltip.offsetHeight, 10),
+        containerWidth = container.clientWidth,
+        containerHeight = container.clientHeight,
+        scrollTop = container.scrollTop,
+        scrollLeft = container.scrollLeft,
+        class_name = tooltip.className.replace(/ top| right| bottom| left/g, ''),
         left, top;
 
     function alignCenter() {
-      var left = pos[0] - (width / 2);
-      if (left < scrollLeft) left = scrollLeft + 5;
-      if (left + width > windowWidth) left = windowWidth - width - 5;
+      var left = pos[0] - (tooltipWidth / 2);
+      if (left < scrollLeft) left = scrollLeft;
+      if (left + tooltipWidth > containerWidth) left = containerWidth - tooltipWidth;
       return left;
     }
     function alignMiddle() {
-      var top = pos[1] - (height / 2);
-      if (top < scrollTop) top = scrollTop + 5;
-      if (top + height > scrollTop + windowHeight) top = scrollTop - height - 5;
+      var top = pos[1] - (tooltipHeight / 2);
+      if (top < scrollTop) top = scrollTop;
+      if (top + tooltipHeight > scrollTop + containerHeight) top = scrollTop - tooltipHeight;
       return top;
+    }
+    function arrowLeft(left) {
+      var marginLeft = pos[0] - (tooltipWidth / 2) - left - 5,
+          arrow = tooltip.getElementsByClassName('tooltip-arrow')[0];
+      arrow.style.marginLeft = marginLeft + 'px';
+    }
+    function arrowTop(top) {
+      var marginTop = pos[1] - (tooltipHeight / 2) - top - 5,
+          arrow = tooltip.getElementsByClassName('tooltip-arrow')[0];
+      arrow.style.marginTop = marginTop + 'px';
     }
 
     switch (gravity) {
       case 'e':
         top = alignMiddle();
-        left = pos[0] - width - dist;
+        left = pos[0] - tooltipWidth - dist;
+        arrowTop(top);
         if (left < scrollLeft) {
           left = pos[0] + dist;
           class_name += ' right';
@@ -103,8 +112,9 @@
       case 'w':
         top = alignMiddle();
         left = pos[0] + dist;
-        if (left + width > windowWidth) {
-          left = pos[0] - width - dist;
+        arrowTop(top);
+        if (left + tooltipWidth > containerWidth) {
+          left = pos[0] - tooltipWidth - dist;
           class_name += ' left';
         } else {
           class_name += ' right';
@@ -113,8 +123,9 @@
       case 'n':
         left = alignCenter();
         top = pos[1] + dist;
-        if (top + height > scrollTop + windowHeight) {
-          top = pos[1] - height - dist;
+        arrowLeft(left);
+        if (top + tooltipHeight > scrollTop + containerHeight) {
+          top = pos[1] - tooltipHeight - dist;
           class_name += ' top';
         } else {
           class_name += ' bottom';
@@ -122,7 +133,8 @@
         break;
       case 's':
         left = alignCenter();
-        top = pos[1] - height - dist;
+        top = pos[1] - tooltipHeight - dist;
+        arrowLeft(left);
         if (scrollTop > top) {
           top = pos[1] + 10;
           class_name += ' bottom';
@@ -132,10 +144,10 @@
         break;
     }
 
-    container.style.left = left + 'px';
-    container.style.top = top + 'px';
+    tooltip.style.left = left + 'px';
+    tooltip.style.top = top + 'px';
 
-    container.className = class_name;
+    tooltip.className = class_name;
   };
 
 })();

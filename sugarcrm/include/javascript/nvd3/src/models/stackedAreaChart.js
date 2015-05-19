@@ -14,8 +14,7 @@ nv.models.stackedAreaChart = function() {
       tooltip = null,
       tooltips = true,
       tooltipContent = function (key, x, y, e, graph) {
-        return '<h3>' + key + '</h3>' +
-               '<p>' +  y + ' on ' + x + '</p>';
+        return '<h3>' + key + '</h3>';
       },
       x,
       y,
@@ -58,9 +57,7 @@ nv.models.stackedAreaChart = function() {
   var showTooltip = function (e, offsetElement) {
     var left = e.pos[0],
         top = e.pos[1],
-        x = xAxis.tickFormat()(stacked.x()(e.point, e.pointIndex)),
-        y = yAxis.tickFormat()(stacked.y()(e.point, e.pointIndex)),
-        content = tooltipContent(e.series.key, x, y, e, chart);
+        content = tooltipContent(e.series, e, chart);
 
     tooltip = nv.tooltip.show([left, top], content, null, null, offsetElement);
   };
@@ -406,28 +403,28 @@ nv.models.stackedAreaChart = function() {
         container.transition().duration(chart.delay()).call(chart);
       });
 
-      dispatch.on('tooltipShow', function (e) {
+      dispatch.on('tooltipShow', function(eo) {
         if (tooltips) {
-          showTooltip(e, that.parentNode);
+          showTooltip(eo, that.parentNode);
         }
       });
 
-      dispatch.on('tooltipHide', function () {
+      dispatch.on('tooltipMove', function(eo) {
+        if (tooltip) {
+          nv.tooltip.position(that.parentNode, tooltip, eo.pos, 's');
+        }
+      });
+
+      dispatch.on('tooltipHide', function() {
         if (tooltips) {
           nv.tooltip.cleanup();
         }
       });
 
-      dispatch.on('tooltipMove', function (e) {
-        if (tooltip) {
-          nv.tooltip.position(tooltip, e.pos, 's');
-        }
-      });
-
       // Update chart from a state object passed to event handler
-      dispatch.on('changeState', function (e) {
+      dispatch.on('changeState', function(e) {
         if (typeof e.disabled !== 'undefined') {
-          data.forEach(function (series,i) {
+          data.forEach(function(series, i) {
             series.disabled = e.disabled[i];
           });
           state.disabled = e.disabled;
@@ -441,12 +438,12 @@ nv.models.stackedAreaChart = function() {
         container.transition().duration(chart.delay()).call(chart);
       });
 
-      dispatch.on('chartClick', function (e) {
+      dispatch.on('chartClick', function(eo) {
         if (controls.enabled()) {
-          controls.dispatch.closeMenu(e);
+          controls.dispatch.closeMenu(eo);
         }
         if (legend.enabled()) {
-          legend.dispatch.closeMenu(e);
+          legend.dispatch.closeMenu(eo);
         }
       });
 
@@ -459,23 +456,23 @@ nv.models.stackedAreaChart = function() {
   // Event Handling/Dispatching (out of chart's scope)
   //------------------------------------------------------------
 
-  stacked.dispatch.on('areaMouseover.tooltip', function (e) {
-    //dispatch.tooltipShow(e);
+  stacked.dispatch.on('areaMouseover.tooltip', function(eo) {
+    dispatch.tooltipShow(eo);
   });
 
-  stacked.dispatch.on('areaMouseout.tooltip', function (e) {
-    //dispatch.tooltipHide(e);
+  stacked.dispatch.on('areaMousemove.tooltip', function(eo) {
+    dispatch.tooltipMove(eo);
   });
 
-  stacked.dispatch.on('areaMousemove.tooltip', function (e) {
-    //dispatch.tooltipMove(e);
+  stacked.dispatch.on('areaMouseout.tooltip', function() {
+    dispatch.tooltipHide();
   });
 
-  stacked.dispatch.on('tooltipShow', function (e) {
+  stacked.dispatch.on('tooltipShow', function(e) {
     dispatch.tooltipShow(e);
   });
 
-  stacked.dispatch.on('tooltipHide', function (e) {
+  stacked.dispatch.on('tooltipHide', function(e) {
     dispatch.tooltipHide(e);
   });
 

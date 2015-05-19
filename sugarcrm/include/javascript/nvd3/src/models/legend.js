@@ -235,10 +235,10 @@ nv.models.legend = function() {
 
         series.select('text').each(function(d, i) {
           var textWidth = d3.select(this).node().getBBox().width;
-          keyWidths.push(Math.max(Math.floor(textWidth) + padding, 50));
+          keyWidths.push(Math.max(Math.floor(textWidth) + gutter, 50));
         });
 
-        legend.width(d3.sum(keyWidths) - gutter);
+        legend.width(d3.sum(keyWidths) + keyWidths.length * padding - gutter);
 
         return legend.width();
       };
@@ -253,6 +253,10 @@ nv.models.legend = function() {
 
         if (keyWidths.length === 0) {
           this.calculateWidth();
+        }
+
+        function keyWidth(i) {
+          return keyWidths[i] + gutter + (inline ? diameter + textGap : 0);
         }
 
         var keys = keyWidths.length,
@@ -281,8 +285,8 @@ nv.models.legend = function() {
             columnWidths = [];
 
             for (i = 0; i < keys; i += 1) {
-              if (keyWidths[i] > (columnWidths[i % cols] || 0)) {
-                columnWidths[i % cols] = keyWidths[i];
+              if (keyWidth(i) > (columnWidths[i % cols] || 0)) {
+                columnWidths[i % cols] = keyWidth(i);
               }
             }
 
@@ -324,18 +328,18 @@ nv.models.legend = function() {
             xpos = maxWidth;
 
             for (i = 0; i < keys; i += 1) {
-              if (xpos - keyWidths[i] + gutter < 0) {
-                maxRowWidth = Math.max(maxRowWidth, keyWidths[i] - gutter);
+              if (xpos - keyWidth(i) + gutter < 0) {
+                maxRowWidth = Math.max(maxRowWidth, keyWidth(i) - gutter);
                 xpos = maxWidth;
                 if (i) {
                   rows += 1;
                 }
               }
-              if (xpos - keyWidths[i] + gutter > maxRowWidth) {
-                maxRowWidth = xpos - keyWidths[i] + gutter;
+              if (xpos - keyWidth(i) + gutter > maxRowWidth) {
+                maxRowWidth = xpos - keyWidth(i) + gutter;
               }
               keyPositions[i] = {x: xpos, y: (rows - 1) * (lineSpacing + diameter)};
-              xpos -= keyWidths[i];
+              xpos -= keyWidth(i);
             }
 
           } else {
@@ -343,15 +347,15 @@ nv.models.legend = function() {
             xpos = 0;
 
             for (i = 0; i < keys; i += 1) {
-              if (i && xpos + keyWidths[i] - gutter > maxWidth) {
+              if (i && xpos + keyWidth(i) - gutter > maxWidth) {
                 xpos = 0;
                 rows += 1;
               }
-              if (xpos + keyWidths[i] - gutter > maxRowWidth) {
-                maxRowWidth = xpos + keyWidths[i] - gutter;
+              if (xpos + keyWidth(i) - gutter > maxRowWidth) {
+                maxRowWidth = xpos + keyWidth(i) - gutter;
               }
               keyPositions[i] = {x: xpos, y: (rows - 1) * (lineSpacing + diameter)};
-              xpos += keyWidths[i];
+              xpos += keyWidth(i);
             }
 
           }
@@ -424,6 +428,7 @@ nv.models.legend = function() {
             .attr('height', radius * 2 + lineSpacing);
           series.selectAll('text')
             .attr('text-anchor', position)
+            .attr('dy', inline ? '.36em' : '.71em')
             .attr('transform', function(d, i) {
               var xpos = inline ? (radius + textGap) * (rtl ? -1 : 1) : 0,
                   ypos = inline ? 0 : radius + 3;
@@ -436,10 +441,10 @@ nv.models.legend = function() {
             });
           series.selectAll('line')
             .attr('x1', function(d, i) {
-              return d.type === 'dash' ? radius * 8 : radius * 6;
+              return d.type === 'dash' ? radius * 8 : radius * 4;
             })
             .attr('transform', function(d, i) {
-              var xpos = radius * (d.type === 'dash' ? -4 : -3);
+              var xpos = radius * (d.type === 'dash' ? -4 : -2);
               return 'translate(' + xpos + ',0)';
             })
             .style('stroke-dasharray', function(d, i) {
@@ -452,7 +457,7 @@ nv.models.legend = function() {
           useScroll = true;
 
           legend
-            .width(menuMargin.left + d3.max(keyWidths) - gutter + menuMargin.right)
+            .width(menuMargin.left + d3.max(keyWidths) - gutter + diameter + textGap + menuMargin.right)
             .height(margin.top + diameter + margin.top); //don't use bottom here because we want vertical centering
 
           legendHeight = menuMargin.top + diameter * keys + spacing * (keys - 1) + menuMargin.bottom;
@@ -515,6 +520,7 @@ nv.models.legend = function() {
           series
             .selectAll('text')
               .attr('text-anchor', 'start')
+              .attr('dy', '.36em')
               .attr('transform', function(d, i) {
                 var xpos = (radius + textGap) * (rtl ? -1 : 1);
                 return 'translate(' + xpos + ',0)';

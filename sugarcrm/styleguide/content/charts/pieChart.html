@@ -117,8 +117,8 @@
                    '<p>Amount: <b>$' + parseInt(y) + 'K</b></p>' +
                    '<p>Percent: <b>' + x + '%</b></p>';
           })
-          .seriesClick(function(data, e) {
-            chart.dataSeriesActivate(e);
+          .seriesClick(function(data, eo) {
+            chart.dataSeriesActivate(eo);
           });
 
     d3.select('#chart1')

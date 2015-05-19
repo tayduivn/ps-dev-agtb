@@ -215,9 +215,21 @@ nv.models.treemapChart = function() {
         container.transition().duration(300).call(chart);
       });
 
-      dispatch.on('tooltipShow', function(e) {
+      dispatch.on('tooltipShow', function(eo) {
         if (tooltips) {
-          showTooltip(e, that.parentNode);
+          showTooltip(eo, that.parentNode);
+        }
+      });
+
+      dispatch.on('tooltipMove', function(eo) {
+        if (tooltip) {
+          nv.tooltip.position(that.parentNode, tooltip, eo.pos);
+        }
+      });
+
+      dispatch.on('tooltipHide', function() {
+        if (tooltips) {
+          nv.tooltip.cleanup();
         }
       });
 
@@ -246,30 +258,18 @@ nv.models.treemapChart = function() {
   // Event Handling/Dispatching (out of chart's scope)
   //------------------------------------------------------------
 
-  treemap.dispatch.on('elementMouseover', function(e) {
-    e.pos = [e.pos[0] + margin.left, e.pos[1] + margin.top];
-    dispatch.tooltipShow(e);
+  treemap.dispatch.on('elementMouseover', function(eo) {
+    eo.pos = [eo.pos[0] + margin.left, eo.pos[1] + margin.top];
+    dispatch.tooltipShow(eo);
   });
 
-  treemap.dispatch.on('elementMouseout', function(e) {
-    dispatch.tooltipHide(e);
-  });
-  dispatch.on('tooltipHide', function() {
-    if (tooltips) {
-      nv.tooltip.cleanup();
-    }
+  treemap.dispatch.on('elementMousemove', function(eo) {
+    dispatch.tooltipMove(eo);
   });
 
-  treemap.dispatch.on('elementMousemove', function(e) {
-    dispatch.tooltipMove(e);
+  treemap.dispatch.on('elementMouseout', function() {
+    dispatch.tooltipHide();
   });
-  dispatch.on('tooltipMove', function(e) {
-    if (tooltip) {
-      nv.tooltip.position(tooltip, e.pos);
-    }
-  });
-  //============================================================
-
 
   //============================================================
   // Expose Public Variables

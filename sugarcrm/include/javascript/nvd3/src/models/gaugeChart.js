@@ -196,9 +196,15 @@ nv.models.gaugeChart = function() {
       // Event Handling/Dispatching (in chart's scope)
       //------------------------------------------------------------
 
-      dispatch.on('tooltipShow', function(e) {
+      dispatch.on('tooltipShow', function(eo) {
         if (tooltips) {
-          showTooltip(e);
+          showTooltip(eo, that.parentNode);
+        }
+      });
+
+      dispatch.on('tooltipMove', function(eo) {
+        if (tooltip) {
+          nv.tooltip.position(that.parentNode, tooltip, eo.pos);
         }
       });
 
@@ -208,9 +214,9 @@ nv.models.gaugeChart = function() {
         }
       });
 
-      dispatch.on('tooltipMove', function(e) {
-        if (tooltip) {
-          nv.tooltip.position(tooltip, e.pos);
+      dispatch.on('chartClick', function(eo) {
+        if (legend.enabled()) {
+          legend.dispatch.closeMenu(eo);
         }
       });
 
@@ -223,23 +229,16 @@ nv.models.gaugeChart = function() {
   // Event Handling/Dispatching (out of chart's scope)
   //------------------------------------------------------------
 
-  dispatch.on('chartClick', function(e) {
+  gauge.dispatch.on('elementMouseover.tooltip', function(eo) {
+    dispatch.tooltipShow(eo);
+  });
+
+  gauge.dispatch.on('elementMousemove.tooltip', function(eo) {
+    dispatch.tooltipMove(eo);
+  });
+
+  gauge.dispatch.on('elementMouseout.tooltip', function() {
     dispatch.tooltipHide();
-    if (legend.enabled()) {
-      legend.dispatch.closeMenu(e);
-    }
-  });
-
-  gauge.dispatch.on('elementMouseover.tooltip', function(e) {
-    dispatch.tooltipShow(e);
-  });
-
-  gauge.dispatch.on('elementMouseout.tooltip', function(e) {
-    dispatch.tooltipHide(e);
-  });
-
-  gauge.dispatch.on('elementMousemove.tooltip', function(e) {
-    dispatch.tooltipMove(e);
   });
 
   //============================================================
