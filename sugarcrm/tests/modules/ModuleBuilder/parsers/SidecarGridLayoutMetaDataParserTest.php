@@ -244,6 +244,104 @@ class SidecarGridLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCa
         $this->assertEquals($expected, $output);
     }
 
+    public function testConvertToCanonicalForm_RestoreDefaults()
+    {
+        $panels = array(
+            'panel_body' => array(
+                array(
+                    'duration',
+                    'repeat_type',
+                ),
+            ),
+        );
+
+        $fielddefs = array(
+            'duration' => array(
+                'name' => 'duration',
+                'span' => 9,
+            ),
+            'repeat_type' => array(
+                'name' => 'repeat_type',
+                'span' => 3,
+            ),
+        );
+
+        $originalViewDef = array(
+            'panels' => array(
+                array(
+                    'name' => 'panel_body',
+                    'fields' => array(
+                        'duration' => array(
+                            'name' => 'duration',
+                            'span' => 9,
+                        ),
+                        'repeat_type' => array(
+                            'name' => 'repeat_type',
+                            'span' => 3,
+                        ),
+                    ),
+                ),
+            ),
+        );
+
+        $this->_parser->testInstallOriginalViewdefs($originalViewDef);
+
+        $previousViewDef = array(
+            'panels' => array(
+                array(
+                    'name' => 'panel_body',
+                    'fields' => array(
+                        array(
+                            'name' => 'repeat_type',
+                            'span' => 12,
+                        ),
+                    ),
+                ),
+            ),
+        );
+
+        $implementation = $this->_parser->getImplementation();
+        $ref = new ReflectionClass($implementation);
+        $prop = $ref->getProperty('_viewdefs');
+        $prop->setAccessible(true);
+        $prop->setValue($implementation, $previousViewDef);
+
+        $baseViewFields = array(
+            'duration' => array(
+                'name' => 'duration',
+                'span' => 9,
+            ),
+            'repeat_type' => array(
+                'name' => 'repeat_type',
+                'span' => 3,
+            ),
+        );
+
+        $this->_parser->testInstallBaseViewFields($baseViewFields);
+
+        $expected = array(
+            array(
+                'name' => 'PANEL_BODY',
+                'label' => 'PANEL_BODY',
+                'columns' => 2,
+                'labelsOnTop' => 1,
+                'placeholders' => 1,
+                'fields' => array(
+                    array(
+                        'name' => 'duration',
+                        'span' => 9,
+                    ),
+                    array(
+                        'name' => 'repeat_type',
+                        'span' => 3,
+                    ),
+                ),
+            ),
+        );
+
+        $actual = $this->_parser->testConvertToCanonicalForm($panels, $fielddefs);
+        $this->assertEquals($expected, $actual);
+    }
 
     /**
      * @dataProvider canonicalAndInternalForms
@@ -253,7 +351,7 @@ class SidecarGridLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCa
     public function testConvertToCanonicalForm($expected, $input)
     {
         // need this to prime our viewdefs
-        $this->_parser->testInstallPreviousViewdefs(array(
+        $this->_parser->testInstallOriginalViewdefs(array(
             'panels' => $expected
         ));
         $output = $this->_parser->testConvertToCanonicalForm($input);
@@ -326,7 +424,7 @@ class SidecarGridLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCa
 
     /**
      * Test handling of span adjustments and mutation of the baseSpans array
-     * 
+     *
      * @param int $fieldCount The count of fields in a row
      * @param array $lastField The last field that was touched
      * @param array $baseSpans Array of fields that had spans orignally applied
@@ -371,7 +469,7 @@ class SidecarGridLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCa
                 'expectResult' => array('span' => 6),
                 'expectBaseSpans' => array(
                     'test' => array(
-                        'span' => 6, 
+                        'span' => 6,
                         'adjustment' => 6,
                     ),
                 ),
@@ -467,8 +565,19 @@ class SidecarGridLayoutMetaDataParserTestDerivative extends SidecarGridLayoutMet
         $this->implementation = $implementation;
     }
 
-    public function testInstallPreviousViewdefs($viewdefs) {
+    public function getImplementation()
+    {
+        return $this->implementation;
+    }
+
+    public function testInstallOriginalViewdefs($viewdefs)
+    {
         $this->_originalViewDef = $this->getFieldsFromLayout($viewdefs);
+    }
+
+    public function testInstallBaseViewFields($fields = array())
+    {
+        $this->baseViewFields = $fields;
     }
 
     public function testConvertFromCanonicalForm($panels , $fielddefs) {
