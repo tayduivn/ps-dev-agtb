@@ -17,6 +17,10 @@ $viewdefs['base']['view']['dnb-bal-header'] = array(
             "type"      => "button",
             "label"     => "LBL_RESET",
             "css_class" => "btn-invisible btn-link",
-        )
+        ),
+        array(
+            'name' => 'sidebar_toggle',
+            'type' => 'sidebartoggle',
+        ),
     )
 );

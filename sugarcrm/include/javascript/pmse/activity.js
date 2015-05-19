@@ -2142,10 +2142,12 @@ AdamActivity.prototype.actionFactory = function (type) {
                             combo_users.setOptions(aUsers);
                             if (data) {
                                 combo_users.setValue(data.act_assign_user || aUsers[0].value);
-                                if (data.act_update_record_owner && data.act_update_record_owner == 1){
-                                    updateRecordOwner.setValue(true);
-                                    $(updateRecordOwner.html).children('input').prop('checked', true);
+                                nValue = false;
+                                if (data.act_update_record_owner && data.act_update_record_owner == 1) {
+                                    nValue = true;
                                 }
+                                updateRecordOwner.setValue(nValue);
+                                $(updateRecordOwner.html).children('input').prop('checked', nValue);
                             }
                             App.alert.dismiss('upload');
                             w.html.style.display = 'inline';
@@ -2218,10 +2220,12 @@ AdamActivity.prototype.actionFactory = function (type) {
                             combo_teams.setOptions(teams.result);
                             if (data) {
                                 combo_teams.setValue(data.act_assign_team || teams.result[0].value);
+                                nValue = false;
                                 if (data.act_update_record_owner && data.act_update_record_owner == 1){
-                                    updateRecordOwner.setValue(true);
-                                    $(updateRecordOwner.html).children('input').prop('checked', true);
+                                    nValue = true;
                                 }
+                                updateRecordOwner.setValue(nValue);
+                                $(updateRecordOwner.html).children('input').prop('checked', nValue);
                             }
                             App.alert.dismiss('upload');
                             w.html.style.display = 'inline';

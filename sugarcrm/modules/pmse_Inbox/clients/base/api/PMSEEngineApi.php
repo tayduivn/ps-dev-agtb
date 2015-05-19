@@ -787,6 +787,7 @@ class PMSEEngineApi extends SugarApi
         $fields = array(
             'cas_id',
             'cas_index',
+            'cas_task_start_date',
             'cas_delegate_date',
             'cas_flow_status',
             'cas_user_id',
@@ -802,7 +803,7 @@ class PMSEEngineApi extends SugarApi
                     ->equals('cas_id', $args['record']);
         }
 
-        //INNER JOIN BPMN ACTIVITY DEFINITION
+        //INNER JOIN BPMN ACTIVITY
         $q->joinTable('pmse_bpmn_activity', array('alias' => 'activity', 'joinType' => 'INNER', 'linkingTable' => true))
                 ->on()
                 ->equalsField('activity.id', 'bpmn_id')
@@ -816,6 +817,7 @@ class PMSEEngineApi extends SugarApi
             ->equalsField('activity_definition.id', 'activity.id')
             ->equals('activity_definition.deleted', 0);
         $fields[] = array("activity_definition.act_assignment_method", 'act_assignment_method');
+        $fields[] = array("activity_definition.act_expected_time", 'act_expected_time');
 
         $q->select($fields);
 
@@ -824,13 +826,20 @@ class PMSEEngineApi extends SugarApi
         $rows = $q->execute();
         $rows_aux = array();
         foreach ($rows as $key => $row) {
-            $userList = $this->getUsersForReassign(array(
-                "user_id" => $row["cas_user_id"],
-                "act_assignment_method" => $row["act_assignment_method"]
-            ));
+            //Expected time section
+            $casData = new stdClass();
+            $casData->cas_task_start_date = $row['cas_task_start_date'];
+            $casData->cas_delegate_date = $row['cas_delegate_date'];
+            $expectedTime = (!empty($row['act_expected_time'])) ? json_decode(base64_decode($row['act_expected_time'])) : '';
+            $dueDate = (!empty($expectedTime) && !empty($expectedTime->time)) ? PMSEEngineUtils::processExpectedTime($expectedTime, $casData) : '';
+            $expectedTime = PMSEEngineUtils::getExpectedTimeLabel($expectedTime);
+            $rows[$key]['cas_expected_time'] = $expectedTime;
+            $delegateDate = $rows[$key]['cas_delegate_date'];
+            $rows[$key]['cas_delegate_date'] = !empty($delegateDate) ? PMSEEngineUtils::getDateToFE($delegateDate, 'datetime') : '';
+            $rows[$key]['cas_due_date'] = !empty($dueDate) ? PMSEEngineUtils::getDateToFE($dueDate->format('Y-m-d H:i:s'), 'datetime') : '';
+            //User section
             $user = BeanFactory::getBean("Users", $row["cas_user_id"]);
             $rows[$key]['assigned_user'] = $user->full_name;
-//            $rows[$key]['cas_reassign_user_combo_box'] = $userList;
             if (isset($args['unattended']) && !empty($args['unattended'])) {
                 if (!($user->status != 'Active' || $user->employee_status != 'Active')) {
                     unset($rows[$key]);
@@ -919,11 +928,12 @@ class PMSEEngineApi extends SugarApi
         $q->where()
                 ->equals('cas_status', 'IN PROGRESS');
 
+        $enabledQuery = true;
         $q->select($fields);
         if ($args['module_list'] == 'all' && !empty($args['q'])) {
             $q->where()->queryAnd()
                 ->addRaw("pmse_inbox.cas_title LIKE '%" . $args['q'] . "%' OR pmse_inbox.pro_title LIKE '%" . $args['q'] . "%' ");
-        } else {
+        } else if (isset($args['q'])) {
             switch($args['module_list']){
                 case translate('LBL_CAS_ID', 'pmse_Inbox'):
                 $q->where()->queryAnd()
@@ -942,16 +952,21 @@ class PMSEEngineApi extends SugarApi
                         ->addRaw("pmse_inbox.cas_init_user LIKE '%" . $args['q'] . "%'");
                     break;
             }
+        } else {
+            $enabledQuery = false;
         }
 
-        if (isset($args['order_by'])) {
-            $columnToSort = explode(":", $args["order_by"]);
-            if (count($columnToSort) === 2) {
-                $q->orderBy($columnToSort[0], $columnToSort[1]);
+        if ($enabledQuery) {
+            if (isset($args['order_by'])) {
+                $columnToSort = explode(":", $args["order_by"]);
+                if (count($columnToSort) === 2) {
+                    $q->orderBy($columnToSort[0], $columnToSort[1]);
+                }
             }
+            $rows = $q->execute();
+        } else {
+            $rows = array();
         }
-
-        $rows = $q->execute();
 
         $rows_aux = array();
 

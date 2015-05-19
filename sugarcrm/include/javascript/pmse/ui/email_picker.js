@@ -283,9 +283,9 @@ EmailPickerField.prototype._onLoadSuggestions = function () {
 			"%NUMBER%": listPanel.getItems().length,
 			"%TEXT%": that._lastQuery.query
 		};
-		//listPanel.setTitle(listPanel.getItems().length + " suggestion(s) for \"" + that._lastQuery.query + "\"");
+
 		listPanel.setTitle(translate("LBL_PMSE_EMAILPICKER_RESULTS_TITLE").replace(/%\w+%/g, function(wildcard) {
-		   return replacementText[wildcard] || wildcard;
+		   return replacementText[wildcard] !== undefined ? replacementText[wildcard] : wildcard;
 		}));
 	};
 };
@@ -553,6 +553,14 @@ EmailPickerField.prototype._loadSuggestions = function (c) {
 			that._suggestPanel.load();
 		}
 	};
+};
+
+EmailPickerField.prototype.openPanel = function () {
+	if (!this.isPanelOpen()) {
+		this._hideSuggestionPanel();
+		MultipleItemField.prototype.openPanel.call(this);
+	}
+	return this;
 };
 
 EmailPickerField.prototype._onInputChar = function () {

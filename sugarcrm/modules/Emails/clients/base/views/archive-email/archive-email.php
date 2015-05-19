@@ -93,8 +93,9 @@ $viewdefs['Emails']['base']['view']['archive-email'] = array(
                     'name' => 'actionbar',
                     'type' => 'compose-actionbar',
                     'span' => 12,
+                    'inline' => true,
                     'dismiss_label' => true,
-                    'buttonSections' => array(
+                    'fields' => array(
                         array(
                             'name' => 'attachments_dropdown',
                             'css_class' => 'btn-group',
@@ -115,8 +116,10 @@ $viewdefs['Emails']['base']['view']['archive-email'] = array(
                         ),
                         array(
                             'name' => 'other_actions',
-                            'css_class' => 'pull-right',
-                            'buttons' => array(
+                            'type' => 'fieldset',
+                            'inline' => true,
+                            'css_class' => 'actions pull-right',
+                            'fields' => array(
                                 array(
                                     'name' => 'signature_button',
                                     'type' => 'button',

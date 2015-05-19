@@ -825,6 +825,26 @@ class PMSEEngineUtils
         return $dateTime;
     }
 
+    public static function getExpectedTimeLabel ($expectedTime) {
+        $value = '';
+        $number = 0;
+        if (!empty($expectedTime) && !empty($expectedTime->time)) {
+            $number = (int) $expectedTime->time;
+            switch($expectedTime->unit) {
+                case 'day':
+                    $value = ($number === 1) ? translate('LBL_DURATION_DAY') : translate('LBL_DURATION_DAYS') ;
+                    break;
+                case 'hour':
+                    $value = ($number === 1) ? translate('LBL_DURATION_HOUR') : translate('LBL_DURATION_HOURS') ;
+                    break;
+                case 'minute':
+                    $value = ($number === 1) ? translate('LBL_DURATION_MINUTE') : translate('LBL_DURATION_MINUTES') ;
+                    break;
+            }
+            $value = $number . ' ' . $value;
+        }
+        return $value;
+    }
     /**
      * @param $id
      * @return bool
@@ -924,29 +944,37 @@ class PMSEEngineUtils
         }
     }
 
-    public static function isValidField($def, $params = '')
+    public static function isValidField($def, $type = '')
     {
         $result = self::isValidStudioField($def);
-        if ($params == 'AC') {
+        if (isset($def['source']) && $def['source'] == 'non-db') {
+            $result = false;
+        }
+        if (isset($def['type']) && $def['type'] == 'image'){
+            $result = false;
+        }
+        if ($type == 'AC') {
             if (isset($def['name']) && $def['name'] == 'assigned_user_id') {
                 $result = true;
             }
             if (isset($def['formula'])) {
-                $result = $result && false;
+                $result = false;
             }
         }
-        if ($params == 'RR' || $params == 'AC') {
+        if ($type == 'RR' || $type == 'AC') {
             if (isset($def['readonly']) && $def['readonly']) {
-                $result = $result && false;
+                $result = false;
             }
         }
-        if (isset($def['type']) && $def['type'] == 'image'){
-            $result = $result && false;
+        if ($type == 'ET') {
+            if (isset($def['name']) && $def['name'] == 'email1') {
+                $result = true;
+            }
         }
-        if (isset($def['source']) && $def['source'] == 'non-db') {
-            $result = $result && false;
-        }
-        if ($params == 'ET') {
+        if ($type == 'BR') {
+            if (isset($def['name']) && $def['name'] == 'assigned_user_id') {
+                $result = true;
+            }
             if (isset($def['name']) && $def['name'] == 'email1') {
                 $result = true;
             }
@@ -995,7 +1023,10 @@ class PMSEEngineUtils
 
     public static function getDateToFE($theDate, $type, $bean = null)
     {
-        global $timedate;
+        global $timedate, $db;
+
+        $theDate = $db->fromConvert($theDate, $type);
+
         $date = $timedate->fromDbType($theDate, $type);
 
         if ( $date == null && $bean instanceof SugarBean) {

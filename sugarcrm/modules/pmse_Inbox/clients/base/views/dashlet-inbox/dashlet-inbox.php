@@ -57,12 +57,6 @@ $viewdefs[$module_name]['base']['view']['dashlet-inbox'] = array(
                         'action' => 'refreshClicked',
                         'label' => 'LBL_DASHLET_REFRESH_LABEL',
                     ),
-//                    array(
-//                        'type' => 'dashletaction',
-//                        'action' => 'toggleClicked',
-//                        'label' => 'LBL_DASHLET_MINIMIZE',
-//                        'event' => 'minimize',
-//                    ),
                     array(
                         'type' => 'dashletaction',
                         'action' => 'removeClicked',
@@ -80,12 +74,6 @@ $viewdefs[$module_name]['base']['view']['dashlet-inbox'] = array(
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
-//                array(
-//                    'name' => 'date',
-//                    'label' => 'LBL_DASHLET_CONFIGURE_FILTERS',
-//                    'type' => 'enum',
-//                    'options' => 'planned_activities_filter_options',
-//                ),
                 array(
                     'name' => 'visibility',
                     'label' => 'LBL_DASHLET_CONFIGURE_MY_ITEMS_ONLY',
@@ -112,18 +100,19 @@ $viewdefs[$module_name]['base']['view']['dashlet-inbox'] = array(
             'link' => 'pmse_Inbox',
             'module' => 'pmse_Inbox',
             'order_by' => 'date_entered:asc',
-            'record_date' => 'date_entered',
+            'record_date' => 'cas_due_date',
             'include_child_items' => true,
+            'overdue_badge' => array(
+                'name' => 'cas_due_date',
+                'type' => 'overdue-badge',
+                'css_class' => 'pull-right',
+            ),
         ),
         array(
             'filter_applied_to' => 'in_time',
             'filters' => array(
-                //'custom_source' => 'PMSE',
-                //'assignment_method' => array('$equals' => 'selfservice'),
                 'act_assignment_method' => array('$equals' => array('selfservice', 'BALANCED')),
-                //'assigned_user_id' => array('$not_in' => array('1')),
             ),
-            //'fields' => array('cas_id','cas_enrique'),
             'label' => 'LBL_PMSE_SELF_SERVICE_PROCESSES',
             'link' => 'pmse_Inbox',
             'module' => 'pmse_Inbox',
