@@ -55,105 +55,96 @@ class PMSEEngineApi extends SugarApi
                 'pathVars' => array('module', ''),
                 'jsonParams' => array('filter'),
                 'method' => 'engineRoute',
-                'shortHelp' => 'An API to route a case of Process Author',
-                'keepSession' => true
+                'keepSession' => true,
+//                'shortHelp' => 'Evaluates the response of the user form Show Process [Approve, Reject, Route]',
             ),
             'engineClaim' => array(
                 'reqType' => 'PUT',
                 'path' => array('pmse_Inbox', 'engine_claim'),
                 'pathVars' => array('module', ''),
                 'method' => 'engineClaim',
-                'shortHelp' => 'An API to claim a case of Process Author',
-                'keepSession' => true
+                'keepSession' => true,
+//                'shortHelp' => 'Claims the processes to the current user',
             ),
             'historyLogList' => array(
                 'reqType' => 'GET',
                 'path' => array('pmse_Inbox','historyLog','?'),
                 'pathVars' => array('module','','filter'),
                 'method' => 'retrieveHistoryLog',
-                'shortHelp' => 'retrieve history log',
-                'keepSession' => true
-                //'longHelp' => 'include/api/help/module_recordlist_delete.html',
+                'keepSession' => true,
+//                'shortHelp' => 'Returns the history log for a process',
             ),
             'noteList' => array(
                 'reqType' => 'GET',
                 'path' => array('pmse_Inbox','note_list','?'),
                 'pathVars' => array('module','','cas_id'),
                 'method' => 'getNotes',
-                'shortHelp' => 'retrieve history log',
-                'keepSession' => true
+                'keepSession' => true,
+//                'shortHelp' => 'Returns the notes list for a process',
             ),
             'savenoteList' => array(
                 'reqType' => 'POST',
                 'path' => array('pmse_Inbox','save_notes'),
                 'pathVars' => array('module',''),
                 'method' => 'saveNotes',
-                'shortHelp' => 'retrieve history log',
-                'keepSession' => true
+                'keepSession' => true,
+//                'shortHelp' => 'Creates a new note for a process',
             ),
             'deletenoteList' => array(
                 'reqType' => 'DELETE',
                 'path' => array('pmse_Inbox', 'delete_notes', '?'),
                 'pathVars' => array('module', '', 'id'),
                 'method' => 'deleteNotes',
-                'shortHelp' => 'retrieve history log',
-                'keepSession' => true
+                'keepSession' => true,
+//                'shortHelp' => 'Deletes a note for a process',
             ),
             'saveReassignRecord' => array(
                 'reqType' => 'PUT',
                 'path' => array('pmse_Inbox', 'ReassignForm'),
                 'pathVars' => array('module', ''),
                 'method' => 'reassignRecord',
-                'shortHelp' => 'An API to claim a case of Process Author',
-                'keepSession' => true
+                'keepSession' => true,
+//                'shortHelp' => 'Update the user assigned to the record associated to the process',
             ),
             'saveAdhocReassign' => array(
                 'reqType' => 'PUT',
                 'path' => array('pmse_Inbox', 'AdhocReassign'),
                 'pathVars' => array('module', ''),
                 'method' => 'adhocReassign',
-                'shortHelp' => 'An API to claim a case of Process Author',
-                'keepSession' => true
+                'keepSession' => true,
+//                'shortHelp' => 'Update the process user associated to the process',
             ),
             'getReassignRecord' => array(
                 'reqType' => 'GET',
                 'path' => array('pmse_Inbox', 'ReassignForm', '?', '?'),
                 'pathVars' => array('module', '', 'data', 'flowId'),
                 'method' => 'getReassign',
-                'shortHelp' => 'An API to claim a case of Process Author',
-                'keepSession' => true
+                'keepSession' => true,
+//                'shortHelp' => 'Retrieve information for Assign to new user window',
             ),
             'getAdhocReassign' => array(
                 'reqType' => 'GET',
                 'path' => array('pmse_Inbox', 'AdhocReassign', '?', '?'),
                 'pathVars' => array('module', '', 'data', 'flowId'),
                 'method' => 'getAdhoc',
-                'shortHelp' => 'An API to claim a case of Process Author',
-                'keepSession' => true
+                'keepSession' => true,
+//                'shortHelp' => 'Retrieve information for Change Process User window',
             ),
             'getChangeCaseUser' => array(
                 'reqType' => 'GET',
                 'path' => array('pmse_Inbox', 'changeCaseUser', '?'),
                 'pathVars' => array('module', '', 'cas_id'),
                 'method' => 'changeCaseUser',
-                'shortHelp' => 'An API to claim a case of Process Author',
-                'keepSession' => true
+                'keepSession' => true,
+//                'shortHelp' => 'Retrieve information for Change Process User window',
             ),
             'getUserListByTeam' => array(
                 'reqType' => 'GET',
                 'path' => array('pmse_Inbox', 'userListByTeam', '?'),
                 'pathVars' => array('module', '', 'id'),
                 'method' => 'userListByTeam',
-                'shortHelp' => 'An API to claim a case of Process Author',
-                'keepSession' => true
-            ),
-            'updateChangeCaseFlow' => array(
-                'reqType' => 'PUT',
-                'path' => array('pmse_Inbox', 'updateChangeCaseFlow'),
-                'pathVars' => array('module', ''),
-                'method' => 'updateChangeCaseFlow',
-                'shortHelp' => 'An API to claim a case of Process Author',
-                'keepSession' => true
+                'keepSession' => true,
+//                'shortHelp' => 'Retrieve users associated to a Team',
             ),
             'reactivateFlows' => array(
                 'reqType' => 'PUT',
@@ -161,8 +152,9 @@ class PMSEEngineApi extends SugarApi
                 'pathVars' => array('module', ''),
                 'jsonParams' => array('filter'),
                 'method' => 'reactivateFlows',
-                'shortHelp' => 'The API method used to reactivate erring cases',
-                'keepSession' => true
+                'keepSession' => true,
+                'acl' => 'adminOrDev',
+//                'shortHelp' => 'Call methods to re-execute processes',
             ),
             'reassignFlows' => array(
                 'reqType' => 'PUT',
@@ -170,8 +162,9 @@ class PMSEEngineApi extends SugarApi
                 'pathVars' => array('module', ''),
                 'jsonParams' => array('filter'),
                 'method' => 'reassignFlows',
-                'shortHelp' => 'The API method is used to reassign a flow to a new user.',
-                'keepSession' => true
+                'keepSession' => true,
+                'acl' => 'adminOrDev',
+//                'shortHelp' => 'Call methods to reassign processes',
             ),
             'getReassignFlows' => array(
                 'reqType' => 'GET',
@@ -179,17 +172,17 @@ class PMSEEngineApi extends SugarApi
                 'pathVars' => array('module', '', 'record'),
                 'jsonParams' => array('filter'),
                 'method' => 'getReassignFlows',
-                'shortHelp' => 'The API method is used to reassign a flow to a new user.',
-                'keepSession' => true
+                'keepSession' => true,
+                'acl' => 'adminOrDev',
+//                'shortHelp' => 'Retrieve information to reassign processes',
             ),
             'getModuleCase' => array(
                 'reqType' => 'GET',
                 'path' => array('pmse_Inbox', 'case', '?', '?'),
                 'pathVars' => array('module', 'case', 'id', 'idflow'),
                 'method' => 'selectCase',
-                'shortHelp' => 'This method updates a record of the specified type',
-                'longHelp' => 'include/api/help/module_record_put_help.html',
-                'keepSession' => true
+                'keepSession' => true,
+//                'shortHelp' => 'Retrieve information of the process record',
             ),
             'cancelCases' => array(
                 'reqType' => 'PUT',
@@ -197,38 +190,62 @@ class PMSEEngineApi extends SugarApi
                 'pathVars' => array('module', ''),
                 'jsonParams' => array('filter'),
                 'method' => 'cancelCase',
-                'shortHelp' => 'The API method used to cancel active cases',
-                'keepSession' => true
+                'keepSession' => true,
+                'acl' => 'adminOrDev',
+//                'shortHelp' => 'Call methods to cancel a process',
             ),
             'getUnattendedCases' => array(
                 'reqType' => 'GET',
                 'path' => array('pmse_Inbox', 'unattendedCases'),
                 'pathVars' => array('module', ''),
                 'method' => 'getUnattendedCases',
-                'shortHelp' => 'The API method is used to reassign a flow to a new user.',
-                'keepSession' => true
+                'keepSession' => true,
+                'acl' => 'adminOrDev',
+//                'shortHelp' => 'Retrieves the processes to show on Unattended Process view',
             ),
             'getSettingsEngine' => array(
                 'reqType' => 'GET',
                 'path' => array('pmse_Inbox', 'settings'),
                 'pathVars' => array('module', ''),
                 'method' => 'getSettingsEngine',
-                'shortHelp' => 'The API method is used to reassign a flow to a new user.',
-                'keepSession' => true
+                'keepSession' => true,
+                'acl' => 'adminOrDev',
+//                'shortHelp' => 'Retrieve settings for the PA engine',
             ),
             'putSettingsEngine' => array(
                 'reqType' => 'PUT',
                 'path' => array('pmse_Inbox', 'settings'),
                 'pathVars' => array('module', ''),
                 'method' => 'putSettingsEngine',
-                'shortHelp' => 'The API method is used to reassign a flow to a new user.',
-                'keepSession' => true
+                'keepSession' => true,
+                'acl' => 'adminOrDev',
+//                'shortHelp' => 'Update settings for the PA engine',
             ),
         );
     }
 
+    /**
+     * This method check if the user have admin or developer access to this API
+     * @param $api
+     * @param $args
+     * @throws SugarApiExceptionNotAuthorized
+     */
+    private function checkACL($api, $args) {
+        global $current_user;
+        $route = $api->getRequest()->getRoute();
+        $user = $current_user;
+        if (isset($route['acl']) && $route['acl'] == 'adminOrDev') {
+            if (!($user->isAdmin() || $user->isDeveloperForAnyModule())) {
+                throw new SugarApiExceptionNotAuthorized('No access to view/edit records for module: ' . $args['module']);
+            }
+        }
+    }
+
     public function getNotes($api, $args)
     {
+        $this->checkACL($api, $args);
+
+
         $notesBean = BeanFactory::getBean('pmse_BpmNotes');
         $queryOptions = array('add_deleted' => true);
         $fields = array(
@@ -246,6 +263,7 @@ class PMSEEngineApi extends SugarApi
             'not_content',
             'not_recipients',
         );
+
 
         $q = new SugarQuery();
         $q->from($notesBean, $queryOptions);
@@ -280,6 +298,7 @@ class PMSEEngineApi extends SugarApi
 
     public function saveNotes($api, $args)
     {
+        $this->checkACL($api, $args);
         global $current_user;
         //Create Notes
         $data = $args['data'];
@@ -299,6 +318,7 @@ class PMSEEngineApi extends SugarApi
 
     public function deleteNotes($api, $args)
     {
+        $this->checkACL($api, $args);
         $notesBean = BeanFactory::getBean('pmse_BpmNotes', $args['id']);
         $notesBean->mark_deleted($notesBean->id);
         return array('id' => $args['id']);
@@ -306,6 +326,7 @@ class PMSEEngineApi extends SugarApi
 
     public function retrieveHistoryLog($api, $args)
     {
+        $this->checkACL($api, $args);
         $historyLog = new PMSEHistoryLogWrapper();
         $res = $historyLog->_get($args);
         return array('success' => true, 'result' => $res->result);
@@ -321,6 +342,7 @@ class PMSEEngineApi extends SugarApi
 
     public function engineClaim($api, $args)
     {
+        $this->checkACL($api, $args);
         global $db;
         $cas_id = $args['cas_id'];
         $cas_index = $args['cas_index'];
@@ -367,6 +389,7 @@ class PMSEEngineApi extends SugarApi
 
     public function reassignRecord($api, $args)
     {
+        $this->checkACL($api, $args);
         $case = $args['data'];
 
         $cas_id = $case['cas_id'];
@@ -384,6 +407,7 @@ class PMSEEngineApi extends SugarApi
 
     public function adhocReassign($api, $args)
     {
+        $this->checkACL($api, $args);
         $case = $args['data'];
         $result = array('success' => true);
         $bean = BeanFactory::retrieveBean($case['moduleName'], $case['beanId']);
@@ -394,6 +418,7 @@ class PMSEEngineApi extends SugarApi
 
     public function getReassign($api, $args)
     {
+        $this->checkACL($api, $args);
         $flowBeanObject = BeanFactory::getBean('pmse_BpmFlow', $args['flowId']);
         $args['cas_id'] = $flowBeanObject->cas_id;
         $args['cas_index'] = $flowBeanObject->cas_index;
@@ -478,6 +503,7 @@ class PMSEEngineApi extends SugarApi
      */
     public function getAdhoc($api, $args)
     {
+        $this->checkACL($api, $args);
         $flowBeanObject = BeanFactory::getBean('pmse_BpmFlow', $args['flowId']);
         $args['cas_id'] = $flowBeanObject->cas_id;
         $args['cas_index'] = $flowBeanObject->cas_index;
@@ -558,6 +584,7 @@ class PMSEEngineApi extends SugarApi
      */
     public function changeCaseUser($api, $args)
     {
+        $this->checkACL($api, $args);
         $time_data = $GLOBALS['timedate'];
         global $current_user;
         global $db;
@@ -596,6 +623,7 @@ class PMSEEngineApi extends SugarApi
      */
     public function userListByTeam($api, $args)
     {
+        $this->checkACL($api, $args);
         global $db;
         $res = array(); //new stdClass();
         $res['success'] = true;
@@ -625,6 +653,7 @@ class PMSEEngineApi extends SugarApi
      */
     public function updateChangeCaseFlow($api, $args)
     {
+        $this->checkACL($api, $args);
         global $db;
         $res = array(); //new stdClass();
         $res['success'] = true;
@@ -700,6 +729,7 @@ class PMSEEngineApi extends SugarApi
      */
     public function reactivateFlows($api, $args)
     {
+        $this->checkACL($api, $args);
         $result = array('success' => true);
         foreach ($args['cas_id'] as $value) {
             $val['cas_id'] = $value;
@@ -738,6 +768,7 @@ class PMSEEngineApi extends SugarApi
      */
     public function cancelCase($api, $args)
     {
+        $this->checkACL($api, $args);
         $result = array('success' => true);
         try {
             foreach ($args['cas_id'] as $id) {
@@ -760,6 +791,7 @@ class PMSEEngineApi extends SugarApi
 
     public function reassignFlows($api, $args)
     {
+        $this->checkACL($api, $args);
         $result = array('success' => true);
         try {
             foreach ($args['flow_data'] as $flow) {
@@ -773,6 +805,7 @@ class PMSEEngineApi extends SugarApi
 
     public function getReassignFlows($api, $args)
     {
+        $this->checkACL($api, $args);
         $result = array('success' => true);
         //$result['args'] = $args;
         $bpmFlow = BeanFactory::retrieveBean('pmse_BpmFlow');
@@ -904,6 +937,7 @@ class PMSEEngineApi extends SugarApi
 
     public function getUnattendedCases($api, $args)
     {
+        $this->checkACL($api, $args);
         $queryOptions = array('add_deleted' => true);
 
         $arrayUnattendedCases = $this->getUnattendedCasesByFlow();
@@ -1000,7 +1034,6 @@ class PMSEEngineApi extends SugarApi
 
     private function getUnattendedCasesByFlow()
     {
-
         $queryOptions = array('add_deleted' => true);
 
         //GET CASES ID WHIT INACTIVE USERS
@@ -1032,6 +1065,7 @@ class PMSEEngineApi extends SugarApi
 
     public function selectCase($api, $args)
     {
+        $this->checkACL($api, $args);
         $returnArray = array();
         $bpmFlow = BeanFactory::retrieveBean('pmse_BpmFlow', $args['idflow']);
         $returnArray['case']['flow'] = $bpmFlow->fetched_row;
@@ -1232,6 +1266,7 @@ class PMSEEngineApi extends SugarApi
 
     public function getSettingsEngine($api, $args)
     {
+        $this->checkACL($api, $args);
         global $sugar_config;
         $settings = array();
 
@@ -1253,6 +1288,7 @@ class PMSEEngineApi extends SugarApi
 
     public function putSettingsEngine($api, $args)
     {
+        $this->checkACL($api, $args);
         if (!empty($args['data'])) {
             $cfg = new Configurator();
             $cfg->config['pmse_settings_default'] = $args['data'];

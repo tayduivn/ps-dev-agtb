@@ -26,14 +26,13 @@ class PMSEEngineFilterApi extends FilterApi
                 'pathVars' => array('module', ''),
                 'method' => 'filterList',
                 'jsonParams' => array('filter'),
-                'shortHelp' => 'Lists filtered records.',
-                'longHelp' => 'include/api/help/module_filter_get_help.html',
                 'exceptions' => array(
                     // Thrown in filterList
                     'SugarApiExceptionInvalidParameter',
                     // Thrown in filterListSetup and parseArguments
                     'SugarApiExceptionNotAuthorized',
                 ),
+//                'shortHelp' => 'Returns a list of Processes by user',
             ),
             'filterModuleAll' => array(
                 'reqType' => 'GET',
@@ -41,14 +40,13 @@ class PMSEEngineFilterApi extends FilterApi
                 'pathVars' => array('module'),
                 'method' => 'filterList',
                 'jsonParams' => array('filter'),
-                'shortHelp' => 'List of all records in this module',
-                'longHelp' => 'include/api/help/module_filter_get_help.html',
                 'exceptions' => array(
                     // Thrown in filterList
                     'SugarApiExceptionInvalidParameter',
                     // Thrown in filterListSetup and parseArguments
                     'SugarApiExceptionNotAuthorized',
                 ),
+//                'shortHelp' => 'Returns a list of Processes by user using filters',
             ),
             'filterModuleAllCount' => array(
                 'reqType' => 'GET',
@@ -56,20 +54,17 @@ class PMSEEngineFilterApi extends FilterApi
                 'pathVars' => array('module', ''),
                 'jsonParams' => array('filter'),
                 'method' => 'filterListCount',
-                'shortHelp' => 'List of all records in this module',
-                'longHelp' => 'include/api/help/module_filter_get_help.html',
                 'exceptions' => array(
                     // Thrown in filterListSetup
                     'SugarApiExceptionNotAuthorized',
                 ),
+//                'shortHelp' => 'List of all records in this module',
             ),
             'filterModuleById' => array(
                 'reqType' => 'GET',
                 'path' => array('pmse_Inbox', 'filter', '?'),
                 'pathVars' => array('module', '', 'record'),
                 'method' => 'filterById',
-                'shortHelp' => 'Filter records for a module by a predefined filter id.',
-                'longHelp' => 'include/api/help/module_filter_record_get_help.html',
                 'exceptions' => array(
                     // Thrown in filterById
                     'SugarApiExceptionNotFound',
@@ -78,6 +73,7 @@ class PMSEEngineFilterApi extends FilterApi
                     // Thrown in filterListSetup and parseArguments
                     'SugarApiExceptionNotAuthorized',
                 ),
+//                'shortHelp' => 'Filter records for a module by a predefined filter id.',
             ),
         );
     }

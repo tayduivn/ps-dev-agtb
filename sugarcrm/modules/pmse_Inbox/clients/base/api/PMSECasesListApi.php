@@ -41,8 +41,8 @@ class PMSECasesListApi extends FilterApi
                 'pathVars' => array('module', 'casesList'),
                 'method' => 'selectCasesList',
                 'jsonParams' => array('filter'),
-                'shortHelp' => 'This method updates a record of the specified type',
-                'longHelp' => 'include/api/help/module_record_put_help.html',
+                'acl' => 'adminOrDev',
+//                'shortHelp' => 'Returns a list with the processes for Process Management',
             ),
             'getLoadLogs' => array(
                 'reqType' => 'GET',
@@ -50,8 +50,8 @@ class PMSECasesListApi extends FilterApi
                 'pathVars' => array('module', 'getLog'),
                 'method' => 'selectLogLoad',
                 'jsonParams' => array(),
-                'shortHelp' => 'This method updates a record of the specified type',
-                'longHelp' => 'include/api/help/module_record_put_help.html',
+                'acl' => 'adminOrDev',
+//                'shortHelp' => 'Return the text of the PMSE.log file',
             ),
             'clearLogs' => array(
                 'reqType' => 'PUT',
@@ -59,7 +59,8 @@ class PMSECasesListApi extends FilterApi
                 'pathVars' => array('module', 'clearLog', 'typelog'),
                 'method' => 'clearLog',
                 'jsonParams' => array(),
-                'shortHelp' => 'This method clears a log of the specified type',
+                'acl' => 'adminOrDev',
+//                'shortHelp' => 'Clear the PMSE.log file log',
             ),
             'getConfigLogs' => array(
                 'reqType' => 'GET',
@@ -67,41 +68,56 @@ class PMSECasesListApi extends FilterApi
                 'pathVars' => array('module', 'logGetConfig'),
                 'method' => 'configLogLoad',
                 'jsonParams' => array(),
-                'shortHelp' => 'This method updates a record of the specified type',
-                'longHelp' => 'include/api/help/module_record_put_help.html',
+                'acl' => 'adminOrDev',
+//                'shortHelp' => 'Retrieve PA configuration values',
             ),
             'setConfigLogs' => array(
                 'reqType' => 'PUT',
                 'path' => array('pmse_Inbox', 'logSetConfig'),
                 'pathVars' => array('module', ''),
                 'method' => 'configLogPut',
-//                'jsonParams' => array(),
-                'shortHelp' => 'This method updates a record of the specified type',
-                'longHelp' => 'include/api/help/module_record_put_help.html',
+                'acl' => 'adminOrDev',
+//                'shortHelp' => 'Update PA configuration values',
             ),
             'getProcessUsers' => array(
                 'reqType' => 'GET',
                 'path' => array('pmse_Inbox', 'processUsersChart', '?'),
                 'pathVars' => array('module', '', 'filter'),
                 'method' => 'returnProcessUsersChart',
-//                'jsonParams' => array(),
-                'shortHelp' => 'This method updates a record of the specified type',
-                'longHelp' => 'include/api/help/module_record_put_help.html',
+                'acl' => 'adminOrDev',
+//                'shortHelp' => 'Returns a list of users to be used on reassign section',
             ),
             'getProcessStatus' => array(
                 'reqType' => 'GET',
                 'path' => array('pmse_Inbox', 'processStatusChart', '?'),
                 'pathVars' => array('module', '', 'filter'),
                 'method' => 'returnProcessStatusChart',
-//                'jsonParams' => array(),
-                'shortHelp' => 'This method updates a record of the specified type',
-                'longHelp' => 'include/api/help/module_record_put_help.html',
+                'acl' => 'adminOrDev',
+//                'shortHelp' => 'Returns the process definition status',
             ),
         );
     }
 
+    /**
+     * This method check if the user have admin or developer access to this API
+     * @param $api
+     * @param $args
+     * @throws SugarApiExceptionNotAuthorized
+     */
+    private function checkACL($api, $args) {
+        global $current_user;
+        $route = $api->getRequest()->getRoute();
+        $user = $current_user;
+        if (isset($route['acl']) && $route['acl'] == 'adminOrDev') {
+            if (!($user->isAdmin() || $user->isDeveloperForAnyModule())) {
+                throw new SugarApiExceptionNotAuthorized('No access to view/edit records for module: ' . $args['module']);
+            }
+        }
+    }
+
     public function selectCasesList($api, $args)
     {
+        $this->checkACL($api, $args);
         $flowQuery = new SugarQuery();
         $bean = BeanFactory::getBean('pmse_BpmFlow');
         $flowQuery->from($bean, array('alias' => 'f'));
@@ -258,6 +274,7 @@ class PMSECasesListApi extends FilterApi
 
     public function selectLogLoad($api, $args)
     {
+        $this->checkACL($api, $args);
         $logger = PMSELogger::getInstance();
         $pmse = PMSE::getInstance();
         $log = $pmse->getLogFile($logger->getLogFileNameWithPath());
@@ -265,6 +282,7 @@ class PMSECasesListApi extends FilterApi
         }
     public function clearLog($api, $args)
     {
+        $this->checkACL($api, $args);
         $logger = PMSELogger::getInstance();
         $pmse = PMSE::getInstance();
         global $current_user;
@@ -278,6 +296,7 @@ class PMSECasesListApi extends FilterApi
 
     public function configLogLoad($api, $args)
     {
+        $this->checkACL($api, $args);
         $q = new SugarQuery();
         $configLogBean = BeanFactory::getBean('pmse_BpmConfig');
         $fields = array(
@@ -308,7 +327,7 @@ class PMSECasesListApi extends FilterApi
      */
     public function configLogPut($api, $args)
     {
-
+        $this->checkACL($api, $args);
         $data = $args['cfg_value'];
         $bean = BeanFactory::getBean('pmse_BpmConfig')
             ->retrieve_by_string_fields(array('cfg_status' => 'ACTIVE', 'name' => 'logger_level'));
@@ -320,12 +339,14 @@ class PMSECasesListApi extends FilterApi
 
     public function returnProcessUsersChart($api, $args)
     {
+        $this->checkACL($api, $args);
         $filter = $args['filter'];
         return $this->createProcessUsersChartData($filter);
     }
 
     public function returnProcessStatusChart($api, $args)
     {
+        $this->checkACL($api, $args);
         $filter = $args['filter'];
         return $this->createProcessStatusChartData($filter);
     }
