@@ -54,14 +54,21 @@
         this._save();
     },
 
+    /**
+     * Called when the model is successfully saved
+     *
+     * @param {Data.Bean} model The updated model
+     * @private
+     */
+    _onSaveSuccess: function(model) {
+        this.changed = false;
+        this.view.toggleRow(model.id, false);
+    },
+
     _save: function() {
         var self = this,
-            successCallback = function(model) {
-                self.changed = false;
-                self.view.toggleRow(model.id, false);
-            },
             options = {
-                success: successCallback,
+                success: _.bind(this._onSaveSuccess, this),
                 error: function(model, error) {
                     if (error.status === 409) {
                         app.utils.resolve409Conflict(error, self.model, function(model, isDatabaseData) {

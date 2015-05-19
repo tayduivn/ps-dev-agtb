@@ -41,4 +41,18 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'icon' => 'fa-bars',
     ),
     //END SUGARCRM flav=int ONLY
+    array(
+        'route'=>'#UserSignatures/create',
+        'label' =>'LNK_NEW_EMAIL_SIGNATURE',
+        'acl_action'=>'create',
+        'acl_module'=>'UserSignatures',
+        'icon' => 'fa-plus',
+    ),
+    array(
+        'route'=>'#UserSignatures',
+        'label' =>'LNK_EMAIL_SIGNATURE_LIST',
+        'acl_action'=>'list',
+        'acl_module'=>'UserSignatures',
+        'icon' => 'fa-bars',
+    ),
 );

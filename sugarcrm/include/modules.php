@@ -520,6 +520,7 @@ $GLOBALS['moduleTabMap'] = array(
     'TeamNotices' => 'Teams',
     'Activities' => 'Home',
     'WorkFlowAlertShells' => 'WorkFlow',
+    'UserSignatures' => 'Emails',
  );
 $beanList['EAPM'] = 'EAPM';
 $beanFiles['EAPM'] = 'modules/EAPM/EAPM.php';
@@ -662,7 +663,6 @@ $bwcModules = array(
     'TrackerPerfs',
     'TrackerQueries',
     'UserPreferences',
-    'UserSignatures',
     'Users',
     'vCals',
     'vCards',

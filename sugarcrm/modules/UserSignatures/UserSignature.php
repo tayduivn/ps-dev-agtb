@@ -69,6 +69,36 @@ class UserSignature extends Basic
         if ($this->created_by !== $this->user_id) {
             $this->created_by = $this->user_id;
         }
-        return parent::save($check_notify);
+        $result = parent::save($check_notify);
+
+        $this->syncSignatureDefault();
+
+        return $result;
+    }
+
+    /**
+     * Update the user preference based on the is_default flag.
+     *
+     * If this signature is default, but is not in the user preference, set it.
+     * If this signature is not the default, but is in the user preference,
+     * unset it.
+     */
+    protected function syncSignatureDefault()
+    {
+        global $current_user;
+
+        $defaultSignature = $current_user->getPreference('signature_default');
+        $newDefault = null;
+
+        if ($defaultSignature !== $this->id && $this->is_default === true) {
+            $newDefault = $this->id;
+        } else if ($defaultSignature === $this->id && $this->is_default === false) {
+            $newDefault = '';
+        }
+
+        if (!is_null($newDefault)) {
+            $current_user->setPreference('signature_default', $newDefault);
+            $current_user->save();
+        }
     }
 }

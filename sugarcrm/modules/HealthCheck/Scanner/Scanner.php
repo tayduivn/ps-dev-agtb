@@ -4325,7 +4325,6 @@ ENDP;
         'TrackerPerfs',
         'TrackerQueries',
         'UserPreferences',
-        'UserSignatures',
         'Users',
         'vCals',
         'vCards',
@@ -4349,7 +4348,7 @@ ENDP;
         'RevenueLineItems' => 'Revenue Line Items',
         'Styleguide' => 'Styleguide',
         'Subscriptions' => 'Subscriptions',
-        'UserSignatures' => 'User Signatures',
+        'UserSignatures' => 'Email Signatures',
         'WebLogicHooks' => 'Web Logic Hooks',
         'Words' => 'Words',
     );

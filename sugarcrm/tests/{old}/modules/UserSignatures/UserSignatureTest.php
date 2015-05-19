@@ -64,5 +64,40 @@ class UserSignatureTest extends Sugar_PHPUnit_Framework_TestCase
         static::$createdSignatures[] = $signature->save();
         $this->assertEquals($expected, $signature->created_by, 'Should match user_id');
     }
-}
 
+    public function testSyncSignatureDefault_NewDefault_UpdatesUserPref()
+    {
+        global $current_user;
+        $id = create_guid();
+        $current_user->setPreference('signature_default', 'not_my_id');
+        $signature = BeanFactory::newBean('UserSignatures');
+        $signature->id = $id;
+        $signature->is_default = true;
+        SugarTestReflection::callProtectedMethod($signature, 'syncSignatureDefault');
+        $this->assertEquals($id, $current_user->getPreference('signature_default'));
+    }
+
+    public function testSyncSignatureDefault_RemoveDefault_UpdatesUserPref()
+    {
+        global $current_user;
+        $id = create_guid();
+        $current_user->setPreference('signature_default', $id);
+        $signature = BeanFactory::newBean('UserSignatures');
+        $signature->id = $id;
+        $signature->is_default = false;
+        SugarTestReflection::callProtectedMethod($signature, 'syncSignatureDefault');
+        $this->assertEquals('', $current_user->getPreference('signature_default'));
+    }
+
+    public function testSyncSignatureDefault_NotDefault_LeaveUserPrefAlone()
+    {
+        global $current_user;
+        $id = create_guid();
+        $current_user->setPreference('signature_default', 'not_my_id');
+        $signature = BeanFactory::newBean('UserSignatures');
+        $signature->id = $id;
+        $signature->is_default = false;
+        SugarTestReflection::callProtectedMethod($signature, 'syncSignatureDefault');
+        $this->assertEquals('not_my_id', $current_user->getPreference('signature_default'));
+    }
+}
