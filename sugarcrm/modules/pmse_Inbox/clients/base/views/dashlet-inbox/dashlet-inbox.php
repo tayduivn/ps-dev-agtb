@@ -101,6 +101,12 @@ $viewdefs[$module_name]['base']['view']['dashlet-inbox'] = array(
                 'type' => 'overdue-badge',
                 'css_class' => 'pull-right',
             ),
+            'fields' => array(
+                'name',
+                'assigned_user_name',
+                'assigned_user_id',
+                'date_entered',
+            ),
         ),
         array(
             'filter_applied_to' => 'in_time',
@@ -114,6 +120,12 @@ $viewdefs[$module_name]['base']['view']['dashlet-inbox'] = array(
             'order_by' => 'date_entered:asc',
             'record_date' => 'date_entered',
             'include_child_items' => true,
+            'fields' => array(
+                'name',
+                'assigned_user_name',
+                'assigned_user_id',
+                'date_entered',
+            ),
         ),
     ),
 );

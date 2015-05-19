@@ -131,6 +131,12 @@ $viewdefs['base']['view']['inactive-tasks'] = array(
                     'acl_action' => 'edit',
                 ),
             ),
+            'fields' => array(
+                'name',
+                'assigned_user_name',
+                'assigned_user_id',
+                'date_modified',
+            ),
         ),
         array(
             'filters' => array(
@@ -151,6 +157,12 @@ $viewdefs['base']['view']['inactive-tasks'] = array(
                     'tooltip' => 'LBL_UNLINK_BUTTON',
                     'acl_action' => 'edit',
                 ),
+            ),
+            'fields' => array(
+                'name',
+                'assigned_user_name',
+                'assigned_user_id',
+                'date_modified',
             ),
         ),
     ),

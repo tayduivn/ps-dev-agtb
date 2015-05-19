@@ -313,7 +313,7 @@
         }
 
         this.settings.set('date', date);
-        this.layout.loadData();
+        this.loadData();
     },
 
     /**

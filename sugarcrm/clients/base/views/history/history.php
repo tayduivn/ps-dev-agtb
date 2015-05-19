@@ -148,6 +148,12 @@ $viewdefs['base']['view']['history'] = array(
                 ),
             ),
             'include_child_items' => true,
+            'fields' => array(
+                'name',
+                'assigned_user_name',
+                'assigned_user_id',
+                'date_start',
+            ),
         ),
         array(
             'filter_applied_to' => 'date_entered',
@@ -172,6 +178,12 @@ $viewdefs['base']['view']['history'] = array(
                     'acl_action' => 'edit',
                 ),
             ),
+            'fields' => array(
+                'name',
+                'assigned_user_name',
+                'assigned_user_id',
+                'date_entered',
+            ),
         ),
         array(
             'filter_applied_to' => 'date_start',
@@ -194,6 +206,12 @@ $viewdefs['base']['view']['history'] = array(
                 ),
             ),
             'include_child_items' => true,
+            'fields' => array(
+                'name',
+                'assigned_user_id',
+                'assigned_user_name',
+                'date_start',
+            ),
         ),
     ),
     'visibility_labels' => array(
