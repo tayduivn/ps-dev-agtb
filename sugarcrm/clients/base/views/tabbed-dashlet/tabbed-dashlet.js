@@ -339,7 +339,8 @@
                 params: {
                     order_by: tab.order_by || null,
                     include_child_items: tab.include_child_items || null
-                }
+                },
+                fields: tab.fields || null
             };
 
         if (tab.module != 'Meetings' && tab.module != 'Calls') {
