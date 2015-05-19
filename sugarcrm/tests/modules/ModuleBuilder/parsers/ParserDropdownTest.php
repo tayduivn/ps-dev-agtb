@@ -27,7 +27,9 @@ class ParserDropdownTest extends Sugar_PHPUnit_Framework_TestCase
     public function tearDown()
     {
         // Delete from loader map
-        SugarAutoLoader::unlink($this->customFile, true);
+        if (file_exists($this->customFile)) {
+            SugarAutoLoader::unlink($this->customFile, true);
+        }
 
         // Clear cache so it can be reloaded later
         $cache_key = 'app_list_strings.' . $GLOBALS['current_language'];
@@ -37,6 +39,23 @@ class ParserDropdownTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
 
         SugarTestHelper::tearDown();
+    }
+
+    /**
+     *
+     */
+    public function testSavingEmptyLabels()
+    {
+        $_REQUEST['view_package'] = 'studio';
+        $params = array(
+            'dropdown_name' => 'moduleList',
+            'list_value' => '',
+            'skipSaveExemptDropdowns' => true,
+        );
+
+        $parser = $this->getMock('ParserDropDown', array('saveExemptDropdowns', 'synchDropDown', 'saveContents', 'finalize'));
+        $parser->expects($this->never())->method('saveExemptDropdowns');
+        $parser->saveDropDown($params);
     }
 
     /**
@@ -63,12 +82,8 @@ class ParserDropdownTest extends Sugar_PHPUnit_Framework_TestCase
         SugarAutoLoader::ensureDir($dirName);
         SugarAutoLoader::put($this->customFile, $customFileContents);
 
-        $className = 'ParserDropDown';
-        $class = new ReflectionClass($className);
-        $method = $class->getMethod('saveExemptDropdowns');
-        $method->setAccessible(true);
-        $output = $method->invoke(
-            new $className,
+        $parser = new ParserDropDown();
+        $output = $parser->saveExemptDropdowns(
             $dropdownValues,
             $dropdownName,
             $appListStrings,
