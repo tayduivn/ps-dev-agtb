@@ -110,6 +110,8 @@ class PMSEProjectImportExportApi extends vCardApi
                     } else  {
                         throw new SugarApiExceptionRequestMethodFailure('ERROR_UPLOAD_FAILED');
                     }
+                } catch (SugarApiExceptionNotAuthorized $e) {
+                    throw new SugarApiExceptionNotAuthorized('ERROR_UPLOAD_ACCESS_PD');
                 } catch (Exception $e) {
                     throw new SugarApiExceptionRequestMethodFailure('ERROR_UPLOAD_FAILED');
                 }

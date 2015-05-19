@@ -33,6 +33,7 @@ class PMSEBusinessRuleImporter extends PMSEImporter
         $this->id = 'rst_id';
         $this->suffix = 'rst_';
         $this->extension = 'pbr';
+        $this->module = 'rst_module';
     }
 
     /**
