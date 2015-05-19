@@ -1019,14 +1019,7 @@ class PMSECrmDataWrapper implements PMSEObservable
      */
     public function retrieveModules($filter = '')
     {
-        $studioBrowser = $this->getStudioBrowser();
-        $studioBrowser->loadModules();
-        $moduleList = $studioBrowser->modules;
-        foreach ($moduleList as $key => $module) {
-            if ($module->module == 'pmse_Project' || $module->module == 'pmse_Inbox') {
-                unset($moduleList[$key]);
-            }
-        }
+        $moduleList = PMSEEngineUtils::getStudioModules();
         $output = array();
         foreach ($moduleList as $module) {
             if (!empty($module->name) && (empty($filter) || stripos($module->name, $filter) !== false)) {
