@@ -75,7 +75,7 @@ class PMSERelatedModule {
 
     public function getRelatedBeans($filter, $relationship = 'all')
     {
-        global $beanList;
+        global $beanList, $app_list_strings;
         if (isset($beanList[$filter])) {
             $newModuleFilter = $filter;
         } else {
@@ -132,6 +132,7 @@ class PMSERelatedModule {
                 break;
         }
 
+
         // Needed to multisort on the label
         foreach ($output as $k => $o) {
             $labels[$k] = $o['text'];
@@ -140,7 +141,14 @@ class PMSERelatedModule {
         // Sort on the label
         array_multisort($labels, SORT_ASC, $output);
 
-        $filterArray = array('value' => $filter, 'text' => '<' . $filter . '>', 'module' => $filter);
+        // Send text with pluralized module name
+        $filterText = isset($app_list_strings['moduleList'][$filter]) ? $app_list_strings['moduleList'][$filter] : $filter;
+        $filterArray = array(
+            'value' => $filter,
+            'text' => '<' . $filterText . '>',
+            'module' => $filter
+        );
+
         array_unshift($output, $filterArray);
 
         $res['search'] = $filter;
