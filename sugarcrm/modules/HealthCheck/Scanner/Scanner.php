@@ -2223,6 +2223,7 @@ ENDP;
         'Quotas' => array('assigned_user_id'),
         'ProductTemplates' => array('assigned_user_link'),
         'Meetings' => array('contact_id'),
+        'KBDocuments' => array('keywords'),
     );
 
     /**

@@ -254,7 +254,6 @@ $dictionary['pmse_Project'] = array(
     'vname' => 'LBL_PRJ_MODULE',
     'type' => 'enum',
     'massupdate' => true,
-    'default' => 'Leads',
     'no_default' => false,
     'comments' => '',
     'help' => '',
@@ -282,7 +281,14 @@ $dictionary['pmse_Project'] = array(
 ),
     'optimistic_locking' => true,
     'unified_search' => true,
-    'acls' => array('SugarACLDeveloperOrAdmin' => array('aclModule' => 'pmse_Project', 'allowUserRead' => false)),
+    'acls' => array(
+        'SugarACLDeveloperForTarget' => array(
+            'targetModuleField' => 'prj_module', 'allowUserRead' => false
+        )
+    ),
+    'visibility' => array(
+        'TargetModuleDeveloperVisibility' => array('targetModuleField' => 'prj_module')
+    ),
     'hidden_to_role_assignment' => true,
     // @TODO Fix the Default and Basic SugarObject templates so that Basic
     // implements Default. This would allow the application of various

@@ -147,7 +147,11 @@ class MysqlManagerTest extends Sugar_PHPUnit_Framework_TestCase
                 array(
                     array('1.23','round',array(6)),
                     "round(1.23, 6)"
-                )
+                ),
+                array(
+                    array('date_created', 'date_format', array('%v')),
+                    "DATE_FORMAT(date_created,'%v')"
+                ),
         );
         return $returnArray;
     }

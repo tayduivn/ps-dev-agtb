@@ -221,7 +221,7 @@ describe('Plugins.KBContents', function() {
         var fakeModel = app.data.createBean(moduleName);
         fakeModel.set('exp_date', '2010-10-10');
         fakeModel.set('active_date', '');
-        fakeModel.set('status', 'published-in');
+        fakeModel.set('status', 'published');
         var errors = {};
         sandbox.stub(fakeModel, 'getSyncedAttributes');
         sandbox.stub(fakeModel, 'changedAttributes', function() {
@@ -234,25 +234,6 @@ describe('Plugins.KBContents', function() {
         // Publish article with exp date. Should set the active_date automatically.
         view._doValidateExpDateField(fakeModel, [], errors, sandbox.stub());
         expect(errors['active_date']).not.toBe(undefined);
-    });
-
-    it('Active date dependencies. Approved status requires publishing date.', function() {
-        var errors = {};
-        var fakeModel = app.data.createBean(moduleName);
-        fakeModel.set('active_date', '');
-        fakeModel.set('status', 'approved');
-        // Check if the field on view.
-        var getFieldStub = sandbox.stub(view, 'getField', function(name) {
-            return {name: name};
-        });
-        view._doValidateActiveDateField(fakeModel, [], errors, sandbox.stub());
-        expect(errors['active_date']).not.toBe(undefined);
-        getFieldStub.restore();
-
-        // The field isn't on view.
-        sandbox.stub(view, 'getField');
-        view._doValidateActiveDateField(fakeModel, [], errors, sandbox.stub());
-        expect(errors['status']).not.toBe(undefined);
     });
 
     it('Change publishing and expiration dates to current on manual change after validation.', function() {
@@ -272,7 +253,7 @@ describe('Plugins.KBContents', function() {
         view._validationComplete(fakeModel, true);
         expect(fakeModel.get('exp_date')).toEqual(expectedDate);
 
-        fakeModel.set('status', 'published-in');
+        fakeModel.set('status', 'published');
         view._validationComplete(fakeModel, true);
         expect(fakeModel.get('active_date')).toEqual(expectedDate);
     });

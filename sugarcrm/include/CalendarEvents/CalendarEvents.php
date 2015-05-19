@@ -133,6 +133,8 @@ class CalendarEvents
     public function applyChangesToRecurringEvents(SugarBean $parentBean)
     {
         $moduleName = $parentBean->module_name;
+        $parentBean->load_relationship('tag_link');
+        $parentTagBeans = $parentBean->tag_link->getBeans();
         $success = false;
 
          try {
@@ -162,6 +164,10 @@ class CalendarEvents
                     $clone->repeat_parent_id = $parentBean->id;
                     $clone->update_vcal = false;
                     $clone->save(false);
+
+                    $childBean->load_relationship('tag_link');
+                    $childTagBeans = $childBean->tag_link->getBeans();
+                    $this->reconcileTags($parentTagBeans, $childBean, $childTagBeans);
                 }
                 if ($rowCount < $limit) {
                     break;
@@ -227,6 +233,26 @@ class CalendarEvents
         vCal::setCacheUpdateEnabled($cacheEnabled);
 
         return $this->saveRecurring($parentBean, $repeatDateTimeArray);
+    }
+
+    /**
+     * Reconcile Tags on Child Bean to Match Parent
+     * @param array Tag Beans on the Parent Calendar Event
+     * @param SugarBean Child Calendar Event Bean
+     * @param array Tag Beans currently existing on Child (optional - defaults to empty array)
+     */
+    public function reconcileTags(array $parentTagBeans, SugarBean $childBean, $childTagBeans = array())
+    {
+        $sf = new SugarFieldTag('tag');
+        $parentTags = $sf->getOriginalTags($parentTagBeans);
+        $childTags = $sf->getOriginalTags($childTagBeans);
+        list($addTags, $removeTags) = $sf->getChangedValues($childTags, $parentTags);
+
+        // Handle removal of tags
+        $sf->removeTagsFromBean($childBean, $childTagBeans, 'tag_link', $removeTags);
+
+        // Handle addition of new tags
+        $sf->addTagsToBean($childBean, $parentTagBeans, 'tag_link', $addTags);
     }
 
     /**

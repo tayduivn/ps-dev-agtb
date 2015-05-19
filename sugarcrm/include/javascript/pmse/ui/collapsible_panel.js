@@ -197,7 +197,7 @@ CollapsiblePanel.prototype.isCollapsed = function () {
 CollapsiblePanel.prototype.collapse = function (noAnimation) {
 	this._collapsed = true;
 	if(this._htmlBody) {
-		jQuery(this._htmlCollapsibleIcon).removeClass('icon-double-angle-down').addClass('icon-double-angle-right');
+		jQuery(this._htmlCollapsibleIcon).removeClass('fa-caret-down').addClass('fa-caret-right');
 		if(isInDOM(this.html)) {
 			if (!this._enabledAnimations || noAnimation) {
 				jQuery(this._htmlBody).stop(true, true).hide();
@@ -217,16 +217,16 @@ CollapsiblePanel.prototype.collapse = function (noAnimation) {
 CollapsiblePanel.prototype.expand = function (noAnimation) {
 	this._collapsed = false;
 	if(this._htmlBody) {
-		jQuery(this._htmlCollapsibleIcon).removeClass('icon-double-angle-right').addClass('icon-double-angle-down');
+		jQuery(this._htmlCollapsibleIcon).removeClass('fa-caret-right').addClass('fa-caret-down');
 		if (!this._enabledAnimations || noAnimation) {
 			jQuery(this._htmlBody).stop(true, true).show();
 		} else {
-			jQuery(this._htmlBody).stop(true, true).slideDown();	
+			jQuery(this._htmlBody).stop(true, true).slideDown();
 		}
 		if (this._initialized && typeof this.onExpand === 'function') {
 			this.onExpand(this);
 		}
-	}	
+	}
 	return this;
 };
 
@@ -291,7 +291,7 @@ CollapsiblePanel.prototype.removeItem = function (item) {
 		this._items.remove(itemToRemove);
 		this._unpaintItem(itemToRemove);
 	}
-	return 
+	return this;
 };
 
 CollapsiblePanel.prototype.clearItems = function () {
@@ -312,7 +312,7 @@ CollapsiblePanel.prototype._paintItem = function (item, index) {
 		if (itemAtIndex) {
 			this._htmlBody.insertBefore(item.getHTML(), itemAtIndex.getHTML());
 		} else {
-			this._htmlBody.appendChild(item.getHTML());	
+			this._htmlBody.appendChild(item.getHTML());
 		}
 	}
 	return this;
@@ -332,7 +332,7 @@ CollapsiblePanel.prototype._paintItems = function () {
 
 CollapsiblePanel.prototype.addItem = function (item, index) {
 	if (typeof index === 'number') {
-		this._items.insertAt(item, index);	
+		this._items.insertAt(item, index);
 	} else if (index === null || index === undefined) {
 		this._items.insert(item);
 	} else {
@@ -346,7 +346,7 @@ CollapsiblePanel.prototype.addItem = function (item, index) {
 
 CollapsiblePanel.prototype.getItem = function (field) {
 	if (typeof field === 'string') {
-		return this._items.find("id", field);	
+		return this._items.find("id", field);
 	} else if (typeof field === 'number') {
 		return this._items.get(field);
 	} else if (typeof field instanceof FormPanelItem && this._items.indexOf(field) >= 0) {
@@ -404,7 +404,7 @@ CollapsiblePanel.prototype.createHTML = function () {
 		htmlTitleContainer.className = "adam collapsible-panel-title";
 		htmlTitle = this.createHTMLElement('span');
 		collapsibleIcon = this.createHTMLElement('i');
-		collapsibleIcon.className = 'adam collapsible-panel-icon icon-double-angle-right';
+		collapsibleIcon.className = 'adam collapsible-panel-icon fa';
 
 		htmlTitleContainer.appendChild(collapsibleIcon);
 		htmlTitleContainer.appendChild(htmlTitle);
@@ -442,6 +442,6 @@ CollapsiblePanel.prototype.createHTML = function () {
 	        height: "auto"
 	    });
 	}
-	
+
 	return this.html;
 };

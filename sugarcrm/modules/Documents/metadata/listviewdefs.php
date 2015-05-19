@@ -72,9 +72,10 @@ $listViewDefs['Documents'] = array(
             'label' => 'LBL_LIST_LAST_REV_DATE',
             'default' => true,
             'sortable' => false,
+    'module' => 'DocumentRevisions',
             'related_fields' =>
                 array (
-                    0 => 'document_revision_id',
+      0 => 'latest_revision_id',
                 ),
         ),
     'EXP_DATE' =>

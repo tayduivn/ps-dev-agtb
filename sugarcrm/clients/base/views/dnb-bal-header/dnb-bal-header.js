@@ -20,7 +20,6 @@
     initialize: function(options) {
         this._super('initialize', [options]);
         this.title = this.meta.title;
-        this.render();
     },
 
     /**

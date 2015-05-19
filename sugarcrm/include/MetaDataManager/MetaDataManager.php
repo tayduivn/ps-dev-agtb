@@ -1559,6 +1559,32 @@ class MetaDataManager
     }
 
     /**
+     * Invalidate the cache for a given context/platform without rebuilding. Useful when multiple caches change and we
+     * don't have the resources to rebuild them all within this call.
+     *
+     * TODO: Its usage should be replaced by a queue mechanism to rebuild the caches outside of the request scope.
+     *
+     * @param array                          $platforms
+     * @param MetaDataContextInterface       $contexts
+     */
+    public function invalidateCache($platforms = array(), MetaDataContextInterface $context = null)
+    {
+        if (!$context) {
+            $context = $this->getDefaultContext();
+        }
+        if (empty($platforms)) {
+            $platforms = $this->getPlatformsWithCaches();
+        }
+        $deleted = $this->deletePlatformVisibilityCaches($context);
+        if ($deleted) {
+            foreach ($platforms as $platform) {
+                MetaDataFiles::clearModuleClientCache(array(), '', array($platform));
+            }
+        }
+
+    }
+
+    /**
      * Rewrites caches for all metadata manager platforms and visibility
      *
      * @param array $platforms
@@ -2836,13 +2862,25 @@ class MetaDataManager
             // don't force a metadata refresh
             $urlList[$lang] = getVersionedPath(
                 $this->getUrlForCacheFile($file),
-                $GLOBALS['sugar_config']['js_lang_version'],
+                $this->getLanguageCacheAttributes(),
                 true
             );
         }
         $urlList['default'] = $GLOBALS['sugar_config']['default_language'];
 
         return $urlList;
+    }
+
+    /**
+     * Returns additional language cache attributes for the given platform
+     *
+     * @return mixed
+     */
+    protected function getLanguageCacheAttributes()
+    {
+        return array(
+            'version' => $GLOBALS['sugar_config']['js_lang_version'],
+        );
     }
 
     public function getOrderedStringUrls() {

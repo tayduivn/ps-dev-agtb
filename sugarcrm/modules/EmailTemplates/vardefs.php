@@ -50,13 +50,68 @@ $dictionary['EmailTemplate'] = array(
 			'dbType' => 'id',
 			'comment' => 'User who last modified record'
 		),
-		'created_by' => array(
+        'modified_by_name' => array(
+            'name' => 'modified_by_name',
+            'vname' => 'LBL_MODIFIED',
+            'type' => 'relate',
+            'reportable' => false,
+            'source' => 'non-db',
+            'rname' => 'full_name',
+            'table' => 'users',
+            'id_name' => 'modified_user_id',
+            'module' => 'Users',
+            'link' => 'modified_user_link',
+            'duplicate_merge' => 'disabled',
+            'massupdate' => false,
+            'duplicate_on_record_copy' => 'no',
+            'readonly' => true,
+            'sort_on' => array('last_name'),
+        ),
+        'modified_user_link' => array(
+            'name' => 'modified_user_link',
+            'type' => 'link',
+            'relationship' => 'emailtemplates_modified_user',
+            'vname' => 'LBL_MODIFIED_USER',
+            'link_type' => 'one',
+            'module' => 'Users',
+            'bean_name' => 'User',
+            'source' => 'non-db',
+        ),
+        'created_by' => array(
 			'name' => 'created_by',
 			'vname' => 'LBL_CREATED_BY',
 			'type' => 'id',
 			'len'=> '36',
 			'comment' => 'User who created record'
 		),
+        'created_by_name' => array(
+            'name' => 'created_by_name',
+            'vname' => 'LBL_CREATED',
+            'type' => 'relate',
+            'reportable' => false,
+            'link' => 'created_by_link',
+            'rname' => 'full_name',
+            'source' => 'non-db',
+            'table' => 'users',
+            'id_name' => 'created_by',
+            'module' => 'Users',
+            'duplicate_merge' => 'disabled',
+            'importable' => false,
+            'massupdate' => false,
+            'duplicate_on_record_copy' => 'no',
+            'readonly' => true,
+            'sort_on' => array('last_name'),
+        ),
+        'created_by_link' => array(
+            'name' => 'created_by_link',
+            'type' => 'link',
+            'relationship' => 'emailtemplates_created_by',
+            'vname' => 'LBL_CREATED_USER',
+            'link_type' => 'one',
+            'module' => 'Users',
+            'bean_name' => 'User',
+            'source' => 'non-db',
+        ),
 		'published' => array(
 			'name' => 'published',
 			'vname' => 'LBL_PUBLISHED',
@@ -200,12 +255,35 @@ $dictionary['EmailTemplate'] = array(
         array('name' => 'idx_emailtemplate_date_modified', 'type' => 'index', 'fields' => array('date_modified')),
         array('name' => 'idx_emailtemplate_date_entered', 'type' => 'index', 'fields' => array('date_entered')),
 	),
-	'relationships' => array(
-	'emailtemplates_assigned_user' =>
-       array('lhs_module'=> 'Users', 'lhs_table'=> 'users', 'lhs_key' => 'id',
-       'rhs_module'=> 'EmailTemplates' , 'rhs_table'=> 'email_templates', 'rhs_key' => 'assigned_user_id',
-       'relationship_type'=>'one-to-many')
-	),
+    'relationships' => array(
+        'emailtemplates_assigned_user' => array(
+            'lhs_module'=> 'Users',
+            'lhs_table'=> 'users',
+            'lhs_key' => 'id',
+            'rhs_module'=> 'EmailTemplates',
+            'rhs_table'=> 'email_templates',
+            'rhs_key' => 'assigned_user_id',
+            'relationship_type'=>'one-to-many'
+        ),
+        'emailtemplates_modified_user' => array(
+            'lhs_module' => 'Users',
+            'lhs_table' => 'users',
+            'lhs_key' => 'id',
+            'rhs_module' => 'EmailTemplates',
+            'rhs_table' => 'email_templates',
+            'rhs_key' => 'modified_user_id',
+            'relationship_type' => 'one-to-many'
+        ),
+        'emailtemplates_created_by' => array(
+            'lhs_module' => 'Users',
+            'lhs_table' => 'users',
+            'lhs_key' => 'id',
+            'rhs_module' => 'EmailTemplates',
+            'rhs_table' => 'email_templates',
+            'rhs_key' => 'created_by',
+            'relationship_type' => 'one-to-many'
+        ),
+    ),
 );
 
 VardefManager::createVardef('EmailTemplates','EmailTemplate', array(

@@ -207,7 +207,15 @@ $dictionary['Case'] = array('table' => 'cases','audited'=>true, 'activity_enable
 	    'source'=>'non-db',
 	    'vname'=>'LBL_PROJECTS',
 	),
-
+    'kbcontents' => array(
+        'name' => 'kbcontents',
+        'type' => 'link',
+        'vname' => 'LBL_KBCONTENTS_SUBPANEL_TITLE',
+        'relationship' => 'relcases_kbcontents',
+        'source' => 'non-db',
+        'link_type'=>'many',
+        'side'=>'right',
+    ),
   ), 'indices' => array (
        /*
        array('name' =>'case_number' , 'type'=>'index' , 'fields'=>array('case_number')),

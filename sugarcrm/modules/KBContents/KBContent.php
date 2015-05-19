@@ -18,8 +18,7 @@ class KBContent extends SugarBean {
     const ST_DRAFT = 'draft';
     const ST_IN_REVIEW = 'in-review';
     const ST_APPROVED = 'approved';
-    const ST_PUBLISHED_IN = 'published-in';
-    const ST_PUBLISHED_EX = 'published-ex';
+    const ST_PUBLISHED = 'published';
     const ST_EXPIRED = 'expired';
 
     public $table_name = "kbcontents";
@@ -284,7 +283,7 @@ class KBContent extends SugarBean {
 
     public static function getPublishedStatuses()
     {
-        return array(static::ST_PUBLISHED_IN, static::ST_PUBLISHED_EX);
+        return array(static::ST_PUBLISHED);
     }
 
     /**

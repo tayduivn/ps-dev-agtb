@@ -994,6 +994,8 @@ class ModuleBuilderController extends SugarController
             $class_name = $GLOBALS['beanList'][$_REQUEST['view_module']];
             $repair->module_list = array($class_name);
             $repair->clearTpls();
+            // Clear the module metadata but nothing else
+            $repair->repairMetadataAPICache(false);
         }
     }
 

@@ -2448,24 +2448,16 @@ function getVersionedPath($path, $additional_attrs='', $time_modified=false)
         $GLOBALS['js_version_key'] = get_js_version_key();
     }
 
-    if (inDeveloperMode() || $time_modified) {
-        if (file_exists($path)) {
-            $timestamp = filemtime($path);
-        } else {
-            // if the file doesn't exists, it means it was deleted during cache rebuild
-            // and will be regenerated in future.
-            // we need to invalidate client side cache in order to make the client request the resource from server
-            $timestamp = create_guid();
-        }
-        $dev = md5($timestamp);
-    } else {
-        $dev = '';
+    if (!is_scalar($additional_attrs)) {
+        $additional_attrs = serialize($additional_attrs);
     }
-    if (is_array($additional_attrs)) {
-        $additional_attrs = join("|",$additional_attrs);
+
+    if ((inDeveloperMode() || $time_modified) && file_exists($path)) {
+        $additional_attrs .= filemtime($path);
     }
+
     // cutting 2 last chars here because since md5 is 32 chars, it's always ==
-    $str = substr(base64_encode(md5("{$GLOBALS['js_version_key']}|{$GLOBALS['sugar_config']['js_custom_version']}|$dev|$additional_attrs", true)), 0, -2);
+    $str = substr(base64_encode(md5("{$GLOBALS['js_version_key']}|{$GLOBALS['sugar_config']['js_custom_version']}|$additional_attrs", true)), 0, -2);
     // remove / - it confuses some parsers
     $str = strtr($str, '/+', '-_');
     if(empty($path)) return $str;

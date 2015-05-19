@@ -293,6 +293,11 @@ class PdfManagerHelper
                 continue;
             }
 
+            // Description field is not used in KBContents module.
+            if ($moduleName == 'KBContents' && $def['name'] == 'description') {
+                continue;
+            }
+
             //Check the studio property of the field def.
             if (isset($def['studio']) && (self::isFalse($def['studio']) || (is_array($def['studio']) && (
                 (isset($def['studio']['formula']) && self::isFalse($def['studio']['formula'])) ||

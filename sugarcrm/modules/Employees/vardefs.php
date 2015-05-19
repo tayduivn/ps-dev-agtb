@@ -90,4 +90,9 @@ $dictionary['Employee']['fields']['email_addresses_primary']['required']=false;
 // bugs 47553 & 49716
 $dictionary['Employee']['fields']['status']['studio']=false;
 $dictionary['Employee']['fields']['status']['required']=false;
+
+$dictionary['Employee']['fields']['created_by_link']['relationship'] = 'employees_created_by';
+
+$dictionary['Employee']['relationships']['employees_created_by'] = $dictionary['User']['relationships']['users_created_by'];
+$dictionary['Employee']['relationships']['employees_created_by']['lhs_module'] = 'Employees';
 ?>

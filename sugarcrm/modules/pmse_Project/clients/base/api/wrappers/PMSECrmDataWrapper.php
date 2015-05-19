@@ -1572,7 +1572,7 @@ class PMSECrmDataWrapper implements PMSEObservable
         foreach ($fieldsData as $field) {
             //$retrieveId = isset($additionalArgs['retrieveId']) && !empty($additionalArgs['retrieveId']) && $field['name'] == 'id' ? $additionalArgs['retrieveId'] : false;
             if (isset($field['vname']) && (PMSEEngineUtils::isValidField($field, $type))) {
-                if ($type == 'AC' && $field['name'] == 'assigned_user_id') {
+                if (($type == 'AC' || $type == 'BR') && $field['name'] == 'assigned_user_id') {
                     $field['method'] = 'assignedUsers';
                     $field['type'] = 'enum';
                     $field['vname'] = 'LBL_ASSIGNED_TO';
@@ -1590,7 +1590,7 @@ class PMSECrmDataWrapper implements PMSEObservable
                 $tmpField['optionItem'] = 'none';
                 if ($field['type'] == 'enum' || $field['type'] == 'radioenum') {
                     if (!isset($field['options']) || !isset($app_list_strings[$field['options']])) {
-                        if ($type == 'AC' && $field['name'] == 'assigned_user_id') {
+                        if (($type == 'AC' || $type == 'BR') && $field['name'] == 'assigned_user_id') {
                             $tmpField['optionItem'] = $this->gatewayModulesMethod($field['method']);
                         } else {
                             $tmpField['optionItem'] = $moduleApi->getEnumValues(
