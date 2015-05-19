@@ -237,6 +237,12 @@ class ParserDropDown extends ModuleBuilderParser
     {
         // Handle special dropdown item removal
         if (in_array($dropdownName, getExemptDropdowns())) {
+            foreach ($myListStrings[$dropdownName] as $key => $value) {
+                // If the value is present in the old app_list_strings but not in the new, null it
+                if (!empty($key) && !isset($dropdown[$key])) {
+                    $dropdown[$key] = null;
+                }
+            }
             // We need to copy the NULLs if they are not set in the new dropdown
             // because return_app_list_strings_language() removes them from the array
             $customLanguage = "custom/include/language/$selectedLang.lang.php";
