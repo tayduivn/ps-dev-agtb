@@ -192,12 +192,13 @@ class ForecastWorksheet extends SugarBean
             array(
                 'parent_type' => 'Opportunities',
                 'parent_id' => $opp->id,
-                'draft' => ($isCommit === false) ? 1 : 0,
-                'deleted' => 0,
+                'draft' => ($isCommit === false) ? 1 : 0
             ),
             true,
             false
         );
+
+        $this->deleted = $opp->deleted;
 
         // load the account
         if (empty($opp->account_name) && !empty($opp->account_id)) {
@@ -284,12 +285,13 @@ class ForecastWorksheet extends SugarBean
             array(
                 'parent_type' => 'RevenueLineItems',
                 'parent_id' => $rli->id,
-                'draft' => ($isCommit === false) ? 1 : 0,
-                'deleted' => 0,
+                'draft' => ($isCommit === false) ? 1 : 0
             ),
             true,
             false
         );
+
+        $this->deleted = $rli->deleted;
 
         // load the account
         if (empty($rli->account_name) && !empty($rli->account_id)) {

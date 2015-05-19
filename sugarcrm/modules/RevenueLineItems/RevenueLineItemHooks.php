@@ -23,7 +23,7 @@ class RevenueLineItemHooks
     public static function afterRelationshipDelete($bean, $event, $args)
     {
         if ($event == 'after_relationship_delete') {
-            if ($args['link'] == 'account_link') {
+            if ($args['link'] == 'account_link' && $bean->deleted == 0) {
                 $bean->save();
                 return true;
             }
