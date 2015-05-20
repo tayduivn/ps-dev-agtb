@@ -323,6 +323,30 @@ $dictionary['pmse_Inbox'] = array(
         'merge_filter' => 'selected',
         'duplicate_on_record_copy' => 'always',
     ),
+            'cas_module' =>
+                array (
+                    'required' => true,
+                    'name' => 'cas_module',
+                    'vname' => 'LBL_RST_MODULE',
+                    'type' => 'varchar',
+                    'massupdate' => true,
+                    'no_default' => false,
+                    'comments' => '',
+                    'help' => '',
+                    'importable' => 'true',
+                    'duplicate_merge' => 'disabled',
+                    'duplicate_merge_dom_value' => '0',
+                    'audited' => false,
+                    'reportable' => true,
+                    'unified_search' => false,
+                    'merge_filter' => 'disabled',
+                    'calculated' => false,
+                    'len' => 100,
+                    'size' => '20',
+                    'options' => '',
+                    'studio' => 'visible',
+                    'dependency' => false,
+                ),
     ),
 	'relationships'=>array (
 ),
@@ -335,7 +359,15 @@ $dictionary['pmse_Inbox'] = array(
 ),
     'optimistic_locking' => true,
     'unified_search' => true,
-    'acls' => array('SugarACLDeveloperOrAdmin' => array('aclModule' => 'pmse_Inbox', 'allowUserRead' => true)),
+    //'acls' => array('SugarACLDeveloperOrAdmin' => array('aclModule' => 'pmse_Inbox', 'allowUserRead' => true)),
+    'acls' => array(
+        'SugarACLDeveloperForTarget' => array(
+            'targetModuleField' => 'cas_module', 'allowUserRead' => false
+        )
+    ),
+    'visibility' => array(
+        'TargetModuleDeveloperVisibility' => array('targetModuleField' => 'cas_module')
+    ),
     'hidden_to_role_assignment' => true,
     // @TODO Fix the Default and Basic SugarObject templates so that Basic
     // implements Default. This would allow the application of various

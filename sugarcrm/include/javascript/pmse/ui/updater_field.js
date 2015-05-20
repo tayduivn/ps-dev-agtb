@@ -561,11 +561,11 @@ UpdaterField.prototype.openPanelOnItem = function (field) {
         if (fieldType === 'TextField' || fieldType === 'TextArea' || fieldType === 'Name') {
             if (list.getFilterMode() === 'inclusive') {
                 list.setFilterMode('exclusive')
-                    .setDataItems(this._variables, "fieldType", ["Checkbox", "DropDown"]);
+                    .setDataItems(this._variables, "type", ["Checkbox", "DropDown"]);
             }
         } else if (!(currentFilters.length === 1 && currentFilters.indexOf(field._fieldType) > 0)) {
             list.setFilterMode('inclusive')
-                .setDataItems(this._variables, "fieldType", field._fieldType);
+                .setDataItems(this._variables, "type", field._fieldType);
         }
         this.currentField = field;
     } else {
@@ -589,8 +589,7 @@ UpdaterField.prototype.openPanelOnItem = function (field) {
         }
         //Check if the panel is already configured for the current field's type
         //in order to do it, we verify if the current field class is the same that the previous field's.
-        if (!this.currentField || ((this.currentField.constructor !== field.constructor) ||
-            (field instanceof NumberUpdaterItem && (field.isCurrency() !== this.currentField.isCurrency())))) {
+        if (!this.currentField || this.currentField !== field) {
             if (field instanceof DateUpdaterItem) {
                 if (fieldType === 'Date') {
                     constantPanelCfg = {
@@ -633,7 +632,7 @@ UpdaterField.prototype.openPanelOnItem = function (field) {
                 }],
                 dataFormat: "hierarchical",
                 typeField: "type",
-                typeFilter: field._fieldType,
+                typeFilter: field instanceof DateUpdaterItem ? ["Date", "Datetime"] : field._fieldType,
                 textField: "text",
                 valueField: "value",
                 dataChildRoot: "items",

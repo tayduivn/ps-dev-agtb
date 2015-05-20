@@ -57,6 +57,12 @@ class PMSEImporter
     protected $extension;
 
     /**
+     * @var $module
+     * @access private
+     */
+    protected $module;
+
+    /**
      * Get class Bean.
      * @codeCoverageIgnore
      * @return object
@@ -121,7 +127,10 @@ class PMSEImporter
 
     /**
      * Method to upload a file and read content for import in database
+     * @param $file
      * @return bool
+     * @throws SugarApiExceptionNotAuthorized
+     * @throws SugarApiExceptionRequestMethodFailure
      * @codeCoverageIgnore
      */
     public function importProject($file)
@@ -131,7 +140,11 @@ class PMSEImporter
         if (unserialize($_data)) {
             $project = unserialize($_data);
             if ($project['project']) {
-                $result = $this->saveProjectData($project['project']);
+                if (in_array($project['project'][$this->module], PMSEEngineUtils::getSupportedModules())) {
+                    $result = $this->saveProjectData($project['project']);
+                } else {
+                    throw new SugarApiExceptionNotAuthorized('EXCEPTION_NOT_AUTHORIZED');
+                }
             } else {
                 throw new SugarApiExceptionRequestMethodFailure('ERROR_UPLOAD_FAILED');
             }

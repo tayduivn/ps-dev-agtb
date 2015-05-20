@@ -31,10 +31,8 @@
     },
 
     importProject: function() {
-//        console.log('importProject');
         var self = this,
             projectFile = $('[name=project_import]');
-//            console.log(projectFile );
         if (_.isEmpty(projectFile.val())) {
             app.alert.show('error_validation_process', {
                 level:'error',
@@ -56,7 +54,8 @@
                     error: function (error) {
                         app.alert.show('process-import-saved', {
                             level: 'error',
-                            messages: app.lang.get('LBL_PMSE_IMPORT_PROCESS_DEFINITION_FAILURE', self.module, {module: self.module})
+                            messages: error.error_message,
+                            autoClose: true
                         });
                     }
                 },

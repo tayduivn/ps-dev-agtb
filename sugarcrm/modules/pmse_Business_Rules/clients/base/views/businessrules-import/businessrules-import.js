@@ -72,7 +72,8 @@
                     error: function (error) {
                         app.alert.show('process-import-saved', {
                             level: 'error',
-                            messages: app.lang.get('LBL_PMSE_IMPORT_BUSINESS_RULES_FAILURE', self.module, {module: self.module})
+                            messages: error.error_message,
+                            autoClose: true
                         });
                     }
                 },

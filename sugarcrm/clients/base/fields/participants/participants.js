@@ -458,6 +458,11 @@
             return;
         }
 
+        // To optimize, we set the busyStartDate as the beginning of the timeline.
+        if (busyStartDate.isBefore(startAndEndDates.timelineStart)) {
+            busyStartDate = app.date(startAndEndDates.timelineStart);
+        }
+
         while (busyStartDate.isBefore(busyEndDate) && busyStartDate.isBefore(startAndEndDates.timelineEnd)) {
             diffInHours = busyStartDate.diff(startAndEndDates.timelineStart, 'hours', true);
 
