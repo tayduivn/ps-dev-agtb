@@ -193,7 +193,10 @@
 
                 // need to tell Handlebars not to escape the string when it renders it, since there might be
                 // html in the string, args returned for testing purposes
-                return {'text': new Handlebars.SafeString(text)};
+                return {
+                    'text': new Handlebars.SafeString(text),
+                    'text2': app.date(newestModel.get('date_modified')).formatUser(false, app.user)
+                };
             },
 
             /**
