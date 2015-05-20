@@ -488,16 +488,16 @@ class SidecarGridLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCa
                     ),
                 ),
             ),
-            // Test unsetting of the lastField from baseSpans
+            // Test no changing of the lastField from baseSpans
             array(
                 'fieldCount' => 2,
                 'lastField' => array('name' => 'test'),
-                'baseSpans' => array('test' => 6, 'test1' => 12),
+                'baseSpans' => array('test' => 9),
                 'singleSpanUnit' => 6,
-                'expectResult' => array('span' => 12),
+                'expectResult' => array('span' => 3),
                 'expectBaseSpans' => array(
-                    'test1' => array(
-                        'span' => 12,
+                    'test' => array(
+                        'span' => 9,
                         'adjustment' => 0,
                     ),
                 ),
