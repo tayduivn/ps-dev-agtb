@@ -32,6 +32,12 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
      */
     protected $convertedTagsCategories = array();
 
+    /**
+     * Converted tags to tag.
+     * @var array
+     */
+    protected $convertedTagsTag = array();
+
     public function run()
     {
         if (!version_compare($this->from_version, '7.7.0', '<=')) {
@@ -44,6 +50,7 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
         //Setup category root
         $KBContent = BeanFactory::getBean('KBContents');
         $KBContent->setupCategoryRoot();
+        $this->convertTags();
 
         while ($documents = $this->getOldDocuments()) {
             foreach ($documents as $row) {
@@ -68,11 +75,16 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
                     $data['status'] = ($statusKey !== false) ? $statusKey : KBContent::DEFAULT_STATUS;
                 }
 
-
                 $KBContent->populateFromRow($data);
                 $KBContent->set_created_by = false;
                 $KBContent->update_modified_by = false;
                 $KBContent->save();
+
+                $KBContent->load_relationship('tag_link');
+                foreach ($this->getOldDocTagIDs($row['id']) as $tag) {
+                    $tagBean = $this->convertTagToTag(array('id' => $tag));
+                    $KBContent->tag_link->add($tagBean);
+                }
 
                 foreach ($KBContent->kbarticles_kbcontents->getBeans() as $bean) {
                     $bean->assigned_user_id = $data['assigned_user_id'];
@@ -93,13 +105,13 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
                 }
             }
         }
-        $this->convertTags();
         $this->checkMenu();
 
         $tables = array(
             'prepKBDoc',
             'prepKBAtt',
             'prepKBTag',
+            'prepKBDocTag',
         );
 
         foreach ($tables as $table) {
@@ -110,13 +122,69 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
     }
 
     /**
+     * Get IDs of tags for old document by old ID.
+     * @param $id
+     * @return array
+     */
+    protected function getOldDocTagIDs($id)
+    {
+        $data = array();
+        $query = "SELECT
+            kbtag_id
+            FROM prepKBDocTag
+            WHERE kbdocument_id = {$this->db->quoted($id)}";
+        $result = $this->db->query($query);
+        while ($row = $this->db->fetchByAssoc($result)) {
+            array_push($data, $row['kbtag_id']);
+        }
+        return $data;
+    }
+
+    /**
      * Convert all old tags to new categories.
      */
     protected function convertTags()
     {
         foreach ($this->getOldTags() as $tag) {
             $this->convertTagsToCategoriesRecursive($tag);
+            $this->convertTagToTag($tag);
         }
+    }
+
+    /**
+     * Convert old tag to new one.
+     * @param $tag
+     * @return null|SugarBean
+     */
+    protected function convertTagToTag($tag)
+    {
+        if (isset($this->convertedTagsTag[$tag['id']])) {
+            return $this->convertedTagsTag[$tag['id']];
+        }
+        $tagBean = BeanFactory::getBean('Tags');
+        $tagName = trim($tag['tag_name']);
+
+        // See if this tag exists already. If it does send back the bean for it
+        $q = new SugarQuery();
+        // Get the tag from the lowercase version of the name, selecting all
+        // fields so that we can load the bean from these fields if found
+        $q->select(array('id', 'name', 'name_lower'));
+        $q->from($tagBean)
+            ->where()
+            ->equals('name_lower', strtolower($tagName));
+        $result = $q->execute();
+
+        // If there is a result for this tag name, send back the bean for it
+        if (!empty($result[0]['id'])) {
+            $tagBean->fromArray($result[0]);
+        } else {
+            $tagBean->fromArray(array('name' => $tagName));
+            $tagBean->verifiedUnique = true;
+            $tagBean->save();
+        }
+
+        $this->convertedTagsTag[$tag['id']] = $tagBean;
+        return $tagBean;
     }
 
     /**
