@@ -45,7 +45,9 @@
 
     //Return the user to the login page when the sync fails
     app.events.on('app:sync:error', function(error) {
-        backToLogin(true);
+        if (error.status !== 0) {
+            backToLogin(true);
+        }
         // Sync can fail for many reasons such as server error, bad cache, auth, etc.
         // Server message to provides details.
         alertUser('sync_failure' , 'ERR_SYNC_FAILED', (error && error.message) || 'LBL_INVALID_412_RESPONSE');
@@ -56,7 +58,7 @@
         app.alert.dismissAll();
         alertUser('public_sync_failure', 'Unable to load the application.');
     });
-    
+
     /**
      * This is caused by attempt to login with invalid creds. 
      */
@@ -98,13 +100,6 @@
     };
 
     /**
-     * 400 Invalid request handler to be used for all non-OAuth 400 errors.
-     */
-    app.error.handleUnspecified400Error = function(error) {
-        showErrorPage('400');
-    };
-
-    /**    
      * 0 Timeout error handler. If server doesn't respond within timeout.
      */
     app.error.handleTimeoutError = function(error) {
