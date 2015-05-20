@@ -16,14 +16,20 @@ require_once 'include/SearchForm/SearchForm2.php';
 
 /**
  * @group Bug45966
+ * @coversDefaultClass SearchForm
  */
 class Bug45966 extends Sugar_PHPUnit_Framework_TestCase {
 
     var $module = 'Notes';
     var $action = 'index';
     var $seed;
+    /**
+     * @var SearchForm
+     */
     var $form;
     var $array;
+
+    protected $timezone = 'America/Denver';
 
     public function setUp() {
 
@@ -54,7 +60,7 @@ class Bug45966 extends Sugar_PHPUnit_Framework_TestCase {
         );
         $GLOBALS['current_user']->setPreference('datef', 'm/d/Y');
         $GLOBALS['current_user']->setPreference('timef', 'H:i:s');
-        $GLOBALS['current_user']->setPreference('timezone', 'America/Denver');
+        $GLOBALS['current_user']->setPreference('timezone', $this->timezone);
         $GLOBALS['timedate']->allow_cache = false;
         sugar_cache_clear($GLOBALS['timedate']->get_date_time_format_cache_key(null));
     }
@@ -121,60 +127,67 @@ class Bug45966 extends Sugar_PHPUnit_Framework_TestCase {
         $this->assertResultQuery($expected, 'less_than', $testDate);
     }
 
-    public function testSearchLastSevenDaysAdjustsForTimeZone() {
+    /**
+     * @dataProvider dataProviderSearchAdjustsForTimeZone
+     *
+     * @covers ::generateSearchWhere
+     * @param $testDate
+     * @param $adjust
+     */
+    public function testSearchAdjustsForTimeZone($testDate, $adjust)
+    {
         global $timedate, $current_user;
 
-        $testDate = 'last_7_days';
+        $timedate->allow_cache = true;
+        // set the static time/date since we always want to use a specific time
+        $timedate->setNow(new SugarDateTime('2010-01-19 08:00:00', new DateTimeZone($this->timezone)));
 
-        $adjToday = $timedate->getDayStartEndGMT($timedate->getNow(true), $current_user);
-        $adjStartDate = $timedate->getDayStartEndGMT($timedate->getNow(true)->get("-6 days"), $current_user);
+        $today = $timedate->getNow(true);
+        $endDate = $timedate->getNow(true);
 
-        $expected = $this->getExpectedPart('>=', $adjStartDate['start'], 'datetime') .
-            " AND " . $this->getExpectedPart('<=', $adjToday['end'], 'datetime');
+        if(strpos($adjust, '-') === 0) {
+            $today = $today->get($adjust);
+        } else {
+            $endDate = $endDate->get($adjust);
+        }
 
-        $this->assertResultQuery($expected, $testDate, "[{$testDate}]");
-    }
+        $adjToday = $timedate->getDayStartEndGMT($today, $current_user);
+        $adjEndDate = $timedate->getDayStartEndGMT($endDate, $current_user);
 
-    public function testSearchNextSevenDaysAdjustsForTimeZone() {
-        global $timedate, $current_user;
+        $testToday = new DateTime($adjToday['start']);
+        $testEnd = new DateTime($adjEndDate['end']);
+        $expectedDiff = $testToday->diff($testEnd)->format('%a days');
 
-        $testDate = 'next_7_days';
+        $this->assertSame(substr($adjust, 1), $expectedDiff, 'Expected Difference Is Not Correct');
 
-        $adjToday = $timedate->getDayStartEndGMT($timedate->getNow(true), $current_user);
-        $adjEndDate = $timedate->getDayStartEndGMT($timedate->getNow(true)->get("+6 days"), $current_user);
 
         $expected = $this->getExpectedPart('>=', $adjToday['start'], 'datetime') .
             " AND " . $this->getExpectedPart('<=', $adjEndDate['end'], 'datetime');
 
         $this->assertResultQuery($expected, $testDate, "[{$testDate}]");
+        $timedate->allow_cache = false;
     }
 
-    public function testSearchLastThirtyDaysAdjustsForTimeZone() {
-        global $timedate, $current_user;
-
-        $testDate = 'last_30_days';
-
-        $adjToday = $timedate->getDayStartEndGMT($timedate->getNow(true), $current_user);
-        $adjStartDate = $timedate->getDayStartEndGMT($timedate->getNow(true)->get("-29 days"), $current_user);
-
-        $expected = $this->getExpectedPart('>=', $adjStartDate['start'], 'datetime') .
-            " AND " . $this->getExpectedPart('<=', $adjToday['end'], 'datetime');
-
-        $this->assertResultQuery($expected, $testDate, "[{$testDate}]");
-    }
-
-    public function testSearchNextThirtyDaysAdjustsForTimeZone() {
-        global $timedate, $current_user;
-
-        $testDate = 'next_30_days';
-
-        $adjToday = $timedate->getDayStartEndGMT($timedate->getNow(true), $current_user);
-        $adjEndDate = $timedate->getDayStartEndGMT($timedate->getNow(true)->get("+29 days"), $current_user);
-
-        $expected = $this->getExpectedPart('>=', $adjToday['start'], 'datetime') .
-            " AND " . $this->getExpectedPart('<=', $adjEndDate['end'], 'datetime');
-
-        $this->assertResultQuery($expected, $testDate, "[{$testDate}]");
+    public static function dataProviderSearchAdjustsForTimeZone()
+    {
+        return array(
+            array(
+                'last_7_days',
+                '-6 days'
+            ),
+            array(
+                'next_7_days',
+                '+6 days'
+            ),
+            array(
+                'last_30_days',
+                '-29 days'
+            ),
+            array(
+                'next_30_days',
+                '+29 days'
+            ),
+        );
     }
 
     public function testSearchLastMonthAdjustsForTimeZone() {
