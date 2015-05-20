@@ -528,7 +528,7 @@
              */
             checkForecastConfig: function() {
                 var forecastConfigOK = true,
-                    cfg = app.metadata.getModule('Forecasts', 'config'),
+                    cfg = app.metadata.getModule('Forecasts', 'config') || {},
                     salesWonVals = cfg.sales_stage_won,
                     salesLostVals = cfg.sales_stage_lost,
                     salesWonLostVals = cfg.sales_stage_won.concat(cfg.sales_stage_lost),

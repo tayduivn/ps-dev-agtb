@@ -37,8 +37,9 @@
              * @return {String} message
              */
             _warnDelete: function() {
-                var sales_stage_won = app.metadata.getModule('Forecasts', 'config').sales_stage_won,
-                    sales_stage_lost = app.metadata.getModule('Forecasts', 'config').sales_stage_lost,
+                var config = app.metadata.getModule('Forecasts', 'config') || {},
+                    sales_stage_won = config.sales_stage_won || ['Closed Won'],
+                    sales_stage_lost = config.sales_stage_lost || ['Closed Lost'],
                     closed_RLI_count = 0,
                     label_key = '_STAGE',
                     message = null,
