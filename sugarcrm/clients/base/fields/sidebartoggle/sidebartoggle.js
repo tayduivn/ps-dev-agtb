@@ -58,7 +58,13 @@
         }
 
         //shortcut keys
-        app.shortcuts.register('Sidebar:Toggle', 't', this.toggle, this);
+        app.shortcuts.register({
+            id: 'Sidebar:Toggle',
+            keys: 't',
+            component: this,
+            description: 'LBL_SHORTCUT_SIDEBAR_TOGGLE',
+            handler: this.toggle
+        });
     },
 
     /**

@@ -14,6 +14,13 @@
  * @extends View.Layout
  */
 ({
+    plugins: ['ShortcutSession'],
+
+    shortcuts: [
+        'SweetSpot:Config:Save',
+        'SweetSpot:Config:Cancel'
+    ],
+
     /**
      * @inheritDoc
      */

@@ -431,28 +431,58 @@
      * Register shortcut keys.
      */
     registerShortcuts: function() {
-        app.shortcuts.register('List:Select:Down', 'j', function() {
-            this.selectRow(true);
-        }, this);
-
-        app.shortcuts.register('List:Select:Up', 'k', function() {
-            this.selectRow(false);
-        }, this);
-
-        app.shortcuts.register('List:Scroll:Left', 'h', function() {
-            this.scrollHorizontally(false);
-        }, this);
-
-        app.shortcuts.register('List:Scroll:Right', 'l', function() {
-            this.scrollHorizontally(true);
-        }, this);
-
-        app.shortcuts.register('List:Select:Open', 'o', function() {
-            if (this.$('.selected [data-type=name] a:visible').length > 0) {
-                this.$('.selected [data-type=name] a:visible').get(0).click();
-            } else if (this.$('.selected [data-type=fullname] a:visible').length > 0) {
-                this.$('.selected [data-type=fullname] a:visible').get(0).click();
+        app.shortcuts.register({
+            id: 'List:Select:Down',
+            keys: 'j',
+            component: this,
+            description: 'LBL_SHORTCUT_NAVIGATE_DOWN',
+            handler: function() {
+                this.selectRow(true);
             }
-        }, this);
+        });
+
+        app.shortcuts.register({
+            id: 'List:Select:Up',
+            keys: 'k',
+            component: this,
+            description: 'LBL_SHORTCUT_NAVIGATE_UP',
+            handler: function() {
+                this.selectRow(false);
+            }
+        });
+
+        app.shortcuts.register({
+            id: 'List:Scroll:Left',
+            keys: 'h',
+            component: this,
+            description: 'LBL_SHORTCUT_SCROLL_LEFT',
+            handler: function() {
+                this.scrollHorizontally(false);
+            }
+        });
+
+        app.shortcuts.register({
+            id: 'List:Scroll:Right',
+            keys: 'l',
+            component: this,
+            description: 'LBL_SHORTCUT_SCROLL_RIGHT',
+            handler: function() {
+                this.scrollHorizontally(true);
+            }
+        });
+
+        app.shortcuts.register({
+            id: 'List:Select:Open',
+            keys: 'o',
+            component: this,
+            description: 'LBL_SHORTCUT_OPEN',
+            handler: function() {
+                if (this.$('.selected [data-type=name] a:visible').length > 0) {
+                    this.$('.selected [data-type=name] a:visible').get(0).click();
+                } else if (this.$('.selected [data-type=fullname] a:visible').length > 0) {
+                    this.$('.selected [data-type=fullname] a:visible').get(0).click();
+                }
+            }
+        });
     }
 })

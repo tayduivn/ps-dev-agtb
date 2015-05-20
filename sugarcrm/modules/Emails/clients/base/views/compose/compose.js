@@ -843,12 +843,18 @@
      * Register keyboard shortcuts.
      */
     registerShortcuts: function() {
-        app.shortcuts.register('Compose:Action:More', 'm', function() {
-            var $primaryDropdown = this.$('.btn-primary[data-toggle=dropdown]');
-            if ($primaryDropdown.is(':visible') && !$primaryDropdown.hasClass('disabled')) {
-                $primaryDropdown.click();
+        app.shortcuts.register({
+            id: 'Compose:Action:More',
+            keys: 'm',
+            component: this,
+            description: 'LBL_SHORTCUT_OPEN_MORE_ACTION',
+            handler: function() {
+                var $primaryDropdown = this.$('.btn-primary[data-toggle=dropdown]');
+                if ($primaryDropdown.is(':visible') && !$primaryDropdown.hasClass('disabled')) {
+                    $primaryDropdown.click();
+                }
             }
-        }, this);
+        });
         this._super('registerShortcuts');
     },
 

@@ -38,9 +38,16 @@
                 this.on('init', function() {
                     this.view.on('dragDropSelect2:selected', _.bind(this._handleItemSelected, this));
 
-                    app.shortcuts.register('DragdropSelect2:SelectAll', 'ctrl+a', function(event) {
-                        this.context.trigger('dragdropselect2:select:all', event);
-                    }, this, true);
+                    app.shortcuts.register({
+                        id: 'DragdropSelect2:SelectAll',
+                        keys: 'ctrl+a',
+                        component: this,
+                        description: 'LBL_SHORTCUT_DRAGDROPSELECT2_SELECTALL',
+                        callOnFocus: true,
+                        handler: function() {
+                            this.context.trigger('dragdropselect2:select:all', event);
+                        }
+                    });
 
                     this.context.on('dragdropselect2:select:all', function(event) {
                         if ($.contains(this.el, event.target) || !_.isEmpty(this.$lastSelectedItem)) {

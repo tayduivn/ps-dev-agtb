@@ -1,5 +1,5 @@
 describe("Base.Field.QuickCreate", function() {
-    var app, field, drawerBefore, event, alertShowStub, alertConfirm, mockDrawerCount, collection, spyOnLoad;
+    var app, field, drawerBefore, event, alertShowStub, alertConfirm, mockDrawerCount, collection, spyOnLoad, registerGlobalStub;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -11,6 +11,8 @@ describe("Base.Field.QuickCreate", function() {
         alertShowStub = sinon.stub(app.alert, 'show', function(name, options) {
             if (alertConfirm) options.onConfirm();
         });
+
+        registerGlobalStub = sinon.stub(app.shortcuts, 'registerGlobal');
 
         drawerBefore = app.drawer;
         app.drawer = {
@@ -34,6 +36,7 @@ describe("Base.Field.QuickCreate", function() {
     afterEach(function() {
         alertShowStub.restore();
         spyOnLoad.restore();
+        registerGlobalStub.restore();
         app.drawer = drawerBefore;
         app.cache.cutAll();
         app.view.reset();

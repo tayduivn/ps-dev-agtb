@@ -1,4 +1,5 @@
-{{!--
+<?php
+
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -9,5 +10,8 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
---}}
-<div class="main-pane" data-action="render"></div>
+
+$viewdefs['base']['view']['shortcuts-config'] = array(
+    'type' => 'shortcuts-config',
+    'name' => 'shortcuts-config',
+);

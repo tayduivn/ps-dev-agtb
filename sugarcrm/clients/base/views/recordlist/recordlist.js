@@ -619,65 +619,115 @@
 
         this._super('registerShortcuts');
 
-        app.shortcuts.register('List:Inline:Edit', 'e', function() {
-            var self = this;
-            if (this.$('.selected [name=inline-cancel]:visible').length === 0) {
-                this.$('.selected [data-toggle=dropdown]:visible').click();
-                this.$('.selected [name=edit_button]:visible').click();
-                _.defer(function() {
-                    self.$('.selected input:first').focus();
-                });
+        app.shortcuts.register({
+            id: 'List:Inline:Edit',
+            keys: 'e',
+            component: this,
+            description: 'LBL_SHORTCUT_EDIT_SELECTED',
+            handler: function() {
+                var self = this;
+                if (this.$('.selected [name=inline-cancel]:visible').length === 0) {
+                    this.$('.selected [data-toggle=dropdown]:visible').click();
+                    this.$('.selected [name=edit_button]:visible').click();
+                    _.defer(function() {
+                        self.$('.selected input:first').focus();
+                    });
+                }
             }
-        }, this);
+        });
 
-        app.shortcuts.register('List:Delete', 'd', function() {
-            if (this.$('.selected [name=inline-cancel]:visible').length === 0) {
+        app.shortcuts.register({
+            id: 'List:Delete',
+            keys: 'd',
+            component: this,
+            description: 'LBL_SHORTCUT_RECORD_DELETE',
+            handler: function() {
+                if (this.$('.selected [name=inline-cancel]:visible').length === 0) {
+                    this.$('.selected [data-toggle=dropdown]:visible').click().blur();
+                    this.$('.selected [name=delete_button]:visible').click();
+                }
+            }
+        });
+
+        app.shortcuts.register({
+            id: 'List:Inline:Cancel',
+            keys: ['esc','ctrl+alt+l'],
+            component: this,
+            description: 'LBL_SHORTCUT_CANCEL_INLINE_EDIT',
+            callOnFocus: true,
+            handler: function() {
+                var $cancelButton = this.$('.selected [name=inline-cancel]'),
+                    $focusedInlineEditRow = $(event.target).closest('.tr-inline-edit');
+
+                if ($cancelButton.length > 0) {
+                    clickButton($cancelButton);
+                } else if ($focusedInlineEditRow.length > 0) {
+                    clickButton($focusedInlineEditRow.find('[name=inline-cancel]'));
+                }
+            }
+        });
+
+        app.shortcuts.register({
+            id: 'List:Inline:Save',
+            keys: ['ctrl+s','ctrl+alt+a'],
+            component: this,
+            description: 'LBL_SHORTCUT_RECORD_SAVE',
+            callOnFocus: true,
+            handler: function() {
+                var $saveButton = this.$('.selected [name=inline-save]'),
+                    $focusedInlineEditRow = $(event.target).closest('.tr-inline-edit');
+
+                if ($saveButton.length > 0) {
+                    clickButton($saveButton);
+                } else if ($focusedInlineEditRow.length > 0) {
+                    clickButton($focusedInlineEditRow.find('[name=inline-save]'));
+                }
+            }
+        });
+
+        app.shortcuts.register({
+            id: 'List:Favorite',
+            keys: 'f a',
+            component: this,
+            description: 'LBL_SHORTCUT_FAVORITE_RECORD',
+            handler: function() {
+                this.$('.selected .fa-favorite:visible').click();
+            }
+        });
+
+        app.shortcuts.register({
+            id: 'List:Follow',
+            keys: 'f o',
+            component: this,
+            description: 'LBL_SHORTCUT_FOLLOW_RECORD',
+            handler: function() {
                 this.$('.selected [data-toggle=dropdown]:visible').click().blur();
-                this.$('.selected [name=delete_button]:visible').click();
+                this.$('.selected [name=follow_button]:visible').click();
             }
-        }, this);
+        });
 
-        app.shortcuts.register('List:Inline:Cancel', ['esc','ctrl+alt+l'], function(event) {
-            var $cancelButton = this.$('.selected [name=inline-cancel]'),
-                $focusedInlineEditRow = $(event.target).closest('.tr-inline-edit');
-
-            if ($cancelButton.length > 0) {
-                clickButton($cancelButton);
-            } else if ($focusedInlineEditRow.length > 0) {
-                clickButton($focusedInlineEditRow.find('[name=inline-cancel]'));
+        app.shortcuts.register({
+            id: 'List:Preview',
+            keys: 'p',
+            component: this,
+            description: 'LBL_SHORTCUT_PREVIEW_SELECTED',
+            handler: function() {
+                clickButton(this.$('.selected [data-event="list:preview:fire"]:visible'));
             }
-        }, this, true);
+        });
 
-        app.shortcuts.register('List:Inline:Save', ['ctrl+s','ctrl+alt+a'], function(event) {
-            var $saveButton = this.$('.selected [name=inline-save]'),
-                $focusedInlineEditRow = $(event.target).closest('.tr-inline-edit');
-
-            if ($saveButton.length > 0) {
-                clickButton($saveButton);
-            } else if ($focusedInlineEditRow.length > 0) {
-                clickButton($focusedInlineEditRow.find('[name=inline-save]'));
+        app.shortcuts.register({
+            id: 'List:Select',
+            keys: 'x',
+            component: this,
+            description: 'LBL_SHORTCUT_MARK_SELECTED',
+            handler: function() {
+                var $checkbox = this.$('.selected input[type=checkbox]:first');
+                if ($checkbox.is(':visible') && !$checkbox.hasClass('disabled')) {
+                    $checkbox.get(0).click();
+                }
             }
-        }, this, true);
-
-        app.shortcuts.register('List:Favorite', 'f a', function() {
-            this.$('.selected .fa-favorite:visible').click();
-        }, this);
-
-        app.shortcuts.register('List:Follow', 'f o', function() {
-            this.$('.selected [data-toggle=dropdown]:visible').click().blur();
-            this.$('.selected [name=follow_button]:visible').click();
-        }, this);
-
-        app.shortcuts.register('List:Preview', 'p', function() {
-            clickButton(this.$('.selected [data-event="list:preview:fire"]:visible'));
-        }, this);
-
-        app.shortcuts.register('List:Select', 'x', function() {
-            var $checkbox = this.$('.selected input[type=checkbox]:first');
-            if ($checkbox.is(':visible') && !$checkbox.hasClass('disabled')) {
-                $checkbox.get(0).click();
-            }
-        }, this);
+        });
     },
 
     /**

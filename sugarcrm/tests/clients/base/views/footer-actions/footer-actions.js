@@ -5,6 +5,7 @@ describe('Base.View.FooterActions', function () {
 
     beforeEach(function () {
         sandbox = sinon.sandbox.create();
+        sandbox.stub(app.shortcuts, 'registerGlobal');
         // doWhen needs to be stubed out so it doesn't continue to run
         // and possibly fail
         sandbox.stub(app.utils, 'doWhen');

@@ -27,12 +27,19 @@
         this._super('initialize', [options]);
 
         //shortcut keys
-        app.shortcuts.register('Dashlet:Select:Cancel', ['esc','ctrl+alt+l'], function() {
-            var $cancelButton = this.$('a[name=cancel_button]');
-            if ($cancelButton.is(':visible') && !$cancelButton.hasClass('disabled')) {
-                $cancelButton.click();
+        app.shortcuts.register({
+            id: 'Dashlet:Select:Cancel',
+            keys: ['esc','ctrl+alt+l'],
+            component: this,
+            description: 'LBL_SHORTCUT_CLOSE_DRAWER',
+            callOnFocus: true,
+            handler: function() {
+                var $cancelButton = this.$('a[name=cancel_button]');
+                if ($cancelButton.is(':visible') && !$cancelButton.hasClass('disabled')) {
+                    $cancelButton.click();
+                }
             }
-        }, this, true);
+        });
     },
 
     /**

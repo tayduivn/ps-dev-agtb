@@ -59,17 +59,29 @@
         this.def.disable_select_all_alert = !!this.def.disable_select_all_alert;
 
         if (this.options.viewName === 'list-header') {
-            app.shortcuts.register('SelectAll:Checkbox', 'ctrl+a', function() {
-                if (!this.isDisabled()) {
-                    this.$('[data-check=all]:visible').click();
+            app.shortcuts.register({
+                id: 'SelectAll:Checkbox',
+                keys: 'ctrl+a',
+                component: this,
+                description: 'LBL_SHORTCUT_SELECT_ALL',
+                handler: function() {
+                    if (!this.isDisabled()) {
+                        this.$('[data-check=all]:visible').click();
+                    }
                 }
-            }, this);
-            app.shortcuts.register('SelectAll:Dropdown', 'm', function() {
-                var $dropdown = this.$(this.actionDropDownTag);
-                if ($dropdown.is(':visible') && !$dropdown.hasClass('disabled')) {
-                    $dropdown.click();
+            });
+            app.shortcuts.register({
+                id: 'SelectAll:Dropdown',
+                keys: 'm',
+                component: this,
+                description: 'LBL_SHORTCUT_OPEN_MASS_ACTION',
+                handler: function() {
+                    var $dropdown = this.$(this.actionDropDownTag);
+                    if ($dropdown.is(':visible') && !$dropdown.hasClass('disabled')) {
+                        $dropdown.click();
+                    }
                 }
-            }, this);
+            });
         }
     },
 

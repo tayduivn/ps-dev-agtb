@@ -42,22 +42,36 @@
         }, this);
 
         //shortcut keys
-        app.shortcuts.register('Headerpane:Cancel', ['esc', 'ctrl+alt+l'], function() {
-            var $cancelButton = this.$('a[name=cancel_button]'),
-                $closeButton = this.$('a[name=close]');
+        app.shortcuts.register({
+            id: 'Headerpane:Cancel',
+            keys: ['esc','ctrl+alt+l'],
+            component: this,
+            description: 'LBL_SHORTCUT_CLOSE_DRAWER',
+            callOnFocus: true,
+            handler: function() {
+                var $cancelButton = this.$('a[name=cancel_button]'),
+                    $closeButton = this.$('a[name=close]');
 
-            if ($cancelButton.is(':visible') && !$cancelButton.hasClass('disabled')) {
-                $cancelButton.click();
-            } else if ($closeButton.is(':visible') && !$closeButton.hasClass('disabled')) {
-                $closeButton.click();
+                if ($cancelButton.is(':visible') && !$cancelButton.hasClass('disabled')) {
+                    $cancelButton.click();
+                } else if ($closeButton.is(':visible') && !$closeButton.hasClass('disabled')) {
+                    $closeButton.click();
+                }
             }
-        }, this, true);
-        app.shortcuts.register('Headerpane:Save', ['ctrl+s', 'ctrl+alt+a'], function() {
-            var $saveButton = this.$('a[name=save_button]');
-            if ($saveButton.is(':visible') && !$saveButton.hasClass('disabled')) {
-                $saveButton.click();
+        });
+        app.shortcuts.register({
+            id: 'Headerpane:Save',
+            keys: ['ctrl+s','ctrl+alt+a'],
+            component: this,
+            description: 'LBL_SHORTCUT_RECORD_SAVE',
+            callOnFocus: true,
+            handler: function() {
+                var $saveButton = this.$('a[name=save_button]');
+                if ($saveButton.is(':visible') && !$saveButton.hasClass('disabled')) {
+                    $saveButton.click();
+                }
             }
-        }, this, true);
+        });
         $(window).on('resize.headerpane.' + this.cid, _.bind(this.adjustHeaderpane, this));
         this.layout.on('headerpane:adjust_fields', this.adjustTitle, this);
     },
