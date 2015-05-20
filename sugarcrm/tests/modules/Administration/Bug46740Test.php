@@ -102,7 +102,7 @@ FILE;
     public function testCustomModuleLocalizationIsUsed()
     {
         global $sugar_flavor, $server_unique_key, $current_language;
-        $app_list_strings = return_app_list_strings_language($this->language);
+        $app_list_strings = return_app_list_strings_language($this->language, false);
 
         $admin_group_header = array();
         require 'modules/Administration/metadata/adminpaneldefs.php';

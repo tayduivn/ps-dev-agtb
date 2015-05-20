@@ -154,15 +154,18 @@ class UserPreference extends SugarBean
      */
     public function setPreference($name, $value, $category = 'global')
     {
-        if (empty($this->_userFocus->user_name)) {
+        if (empty($this->_userFocus->id)) {
             return;
         }
 
         $cachedPrefs = $this->getFromCache($category);
 
-        if (!isset($cachedPrefs)) {
+        if (!is_array($cachedPrefs)) {
             $this->loadPreferences($category);
             $cachedPrefs = $this->getFromCache($category);
+        }
+        if (!is_array($cachedPrefs)) {
+            $cachedPrefs = array();
         }
 
         // preferences changed or a new preference, save it to DB
@@ -214,17 +217,18 @@ class UserPreference extends SugarBean
     {
         $user = $this->_userFocus;
 
-        if ($user->object_name != 'User' || empty($user->id) || empty($user->user_name)) {
+        if ($user->object_name != 'User' || empty($user->id)) {
             return false;
         }
-        $GLOBALS['log']->debug('Loading Preferences DB ' . $user->user_name);
+        $GLOBALS['log']->debug('Loading Preferences DB ' . $user->id);
 
         if (!isset($user->user_preferences) || !is_array($user->user_preferences)) {
             $user->user_preferences = array();
         }
-        $result = $GLOBALS['db']->query(
+        $db = DBManagerFactory::getInstance();
+        $result = $db->query(
             "SELECT contents FROM user_preferences WHERE assigned_user_id='$user->id' "
-            . "AND category = '" . $category . "' AND deleted = 0",
+            . "AND category = " . $db->quoted($category) . " AND deleted = 0",
             false,
             'Failed to load user preferences'
         );
@@ -243,19 +247,26 @@ class UserPreference extends SugarBean
 
     protected function storeToCache($value, $category = null)
     {
-        $cacheKey = $this->_userFocus->user_name . '_PREFERENCES';
+        $cacheKey = $this->_userFocus->id . '_PREFERENCES';
         if (!empty($category)) {
-            $stored = $this->getFromCache() ?: array();
-            $stored[$category] = $value;
+            $stored = $this->getFromCache();
+            if (!is_array($stored)) {
+                $stored = array();
+            }
+            if (is_null($value)) {
+                unset($stored[$category]);
+            } else {
+                $stored[$category] = $value;
+            }
             $value = $stored;
         }
-        $ttl = SugarConfig::getInstance()->get('oauth2.max_session_lifetime') ?: ini_get('session.gc_maxlifetime');
+        $ttl = SugarConfig::getInstance()->get('oauth2.max_session_lifetime', ini_get('session.gc_maxlifetime'));
         $this->cache->set($cacheKey, $value, $ttl);
     }
 
     protected function getFromCache($category = null)
     {
-        $cacheKey = $this->_userFocus->user_name . '_PREFERENCES';
+        $cacheKey = $this->_userFocus->id . '_PREFERENCES';
         //SugarCache has a mem layer that ensures we only actually load from external cache once per request,
         //even if grabbing multiple categories.
         $prefs = $this->cache->$cacheKey;
@@ -348,9 +359,9 @@ class UserPreference extends SugarBean
 
         $cached = $this->getFromCache();
 
-        $GLOBALS['log']->debug('Saving Preferences to DB ' . $user->user_name);
+        $GLOBALS['log']->debug('Saving Preferences to DB ' . $user->id);
         if (isset($cached)) {
-            $GLOBALS['log']->debug("Saving Preferences to DB: {$user->user_name}");
+            $GLOBALS['log']->debug("Saving Preferences to DB: {$user->id}");
             // only save the categories that have been modified or all?
             if (!$all && isset($GLOBALS['savePreferencesToDBCats']) && is_array($GLOBALS['savePreferencesToDBCats'])) {
                 $catsToSave = array();
@@ -387,7 +398,7 @@ class UserPreference extends SugarBean
     {
         $user = $this->_userFocus;
 
-        $GLOBALS['log']->debug('Reseting Preferences for user ' . $user->user_name);
+        $GLOBALS['log']->debug('Reseting Preferences for user ' . $user->id);
 
         $remove_tabs = $this->getPreference('remove_tabs');
         $favorite_reports = $this->getPreference('favorites', 'Reports');
@@ -447,7 +458,7 @@ class UserPreference extends SugarBean
             return;
         }
 
-        $result = $db->query("SELECT id, user_preferences, user_name FROM users");
+        $result = $db->query("SELECT id, user_preferences FROM users");
         while ($row = $db->fetchByAssoc($result)) {
             $prefs = array();
             $newprefs = array();

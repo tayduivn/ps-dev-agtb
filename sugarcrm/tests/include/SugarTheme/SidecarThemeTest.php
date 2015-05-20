@@ -20,6 +20,7 @@ class SidecarThemeTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
+        SugarCache::instance()->flush();
         // Clear out the test folders
         $customDir = 'custom/themes/clients/' . $this->platformTest;
         if (is_dir($customDir)) {

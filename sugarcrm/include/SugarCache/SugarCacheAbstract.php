@@ -90,11 +90,8 @@ abstract class SugarCacheAbstract
      */
     public function __get($key)
     {
-        if ( SugarCache::$isCacheReset )
-            return null;
-
         $this->_cacheRequests++;
-        if ( !$this->useLocalStore || !isset($this->_localStore[$key]) ) {
+        if ( !SugarCache::$isCacheReset && (!$this->useLocalStore || !isset($this->_localStore[$key]))) {
             $this->_localStore[$key] = $this->_getExternal($this->_keyPrefix.$key);
             if ( isset($this->_localStore[$key]) ) {
                 $this->_cacheExternalHits++;

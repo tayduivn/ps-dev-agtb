@@ -118,7 +118,7 @@ class Bug46763Test extends Sugar_PHPUnit_Framework_TestCase
 
         // initialize needed local variables
         global $mod_strings, $app_strings, $sugar_config;
-        $app_list_strings = return_app_list_strings_language($this->language);
+        $app_list_strings = return_app_list_strings_language($this->language, false);
         $xtpl = null;
 
         ob_start();
