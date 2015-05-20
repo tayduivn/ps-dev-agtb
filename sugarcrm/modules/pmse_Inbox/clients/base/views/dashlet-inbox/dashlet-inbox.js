@@ -68,7 +68,6 @@
         if (date === this.getDate()) {
             return;
         }
-        //alert('switcher '+date);date devuelve true o false del botton
         this.settings.set('date', date);
         this.layout.loadData();
     },
@@ -120,22 +119,13 @@
             method: '_initTabs',
             platform: 'base'
         });
-        //filters
-//        _.each(this.tabs, function(tab) {
-//            if (!tab.invitation_actions) {
-//                return;
-//            }
-//            tab.invitations = this._createInvitationsCollection(tab);
-//        }, this);
-//
-//        return this;
   },
     /**
      * {@inheritDoc}
      */
     _getFilters: function(index) {
 
-//        var today = app.date().format('YYYY-MM-DD'),
+
           var  tab = this.tabs[index],
             filter = {},
             filters = [],
