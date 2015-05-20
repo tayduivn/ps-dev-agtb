@@ -23,14 +23,16 @@ describe("DragdropAttachments Plugin", function() {
                 }
             },
             {
-                message: "Should not add parent if parentId not specified",
+                message: "Should add parent if parentType specified",
                 note: new Backbone.Model(),
                 attributes: {
                     model: {
                         module: 'Accounts'
                     }
                 },
-                expectedAttributes: {}
+                expectedAttributes: {
+                    parent_type: 'Accounts'
+                }
             },
             {
                 message: "Should not add parent if parentType not specified",
