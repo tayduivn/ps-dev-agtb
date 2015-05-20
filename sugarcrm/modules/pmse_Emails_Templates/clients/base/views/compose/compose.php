@@ -55,20 +55,16 @@ $viewdefs['pmse_Emails_Templates']['base']['view']['compose'] = array(
                     'type'           => 'readonly',
                     'label'          => 'LBL_BASE_MODULE',
                     'span'           => 12,
-                    'cell_css_class' => 'controls-one btn-fit',
-
                 ),
                 array(
                     'name'            => 'name',
                     'label'           => 'LBL_NAME',
                     'span'            => 12,
-                    'label_css_class' => 'controls-one btn-fit',
                 ),
                 array(
                     'name'            => 'description',
                     'label'           => 'LBL_DESCRIPTION',
                     'span'            => 12,
-                    'label_css_class' => 'controls-one btn-fit',
                 ),
                 array(
                     'name'            => 'subject',
@@ -77,6 +73,7 @@ $viewdefs['pmse_Emails_Templates']['base']['view']['compose'] = array(
                     'span'            => 12,
                     'cell_css_class'  => 'btn-fit',
                     'required'        => true,
+                    'label_css_class' => 'end-fieldgroup',
                 ),
                 array(
                     'name'          => 'body_html',
