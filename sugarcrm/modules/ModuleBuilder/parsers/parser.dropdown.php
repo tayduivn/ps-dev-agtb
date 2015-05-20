@@ -80,7 +80,7 @@ class ParserDropDown extends ModuleBuilderParser
             if (empty($contents)) $contents = "<?php";
 
             // Needed when upgrading from version < 7.6
-            if (empty($params['handleSpecialDropdowns'])) {
+            if (!empty($params['handleSpecialDropdowns'])) {
                 $dropdown = $this->saveExemptDropdowns($dropdown, $dropdown_name, $my_list_strings, $selected_lang);
             }
 
@@ -108,14 +108,24 @@ class ParserDropDown extends ModuleBuilderParser
                 $contents = $this->getNewCustomContents($dropdown_name, $dropdown, $selected_lang);
             }
 
-            save_custom_app_list_strings_contents($contents, $selected_lang);
+            $this->saveContents($contents, $selected_lang);
         }
+        $this->finalize($selected_lang);
+    }
+
+    public function saveContents($contents, $lang)
+    {
+        save_custom_app_list_strings_contents($contents, $lang);
+    }
+
+    public function finalize($lang)
+    {
         sugar_cache_reset();
         sugar_cache_reset_full();
         clearAllJsAndJsLangFilesWithoutOutput();
 
         // Clear out the api metadata languages cache for selected language
-        MetaDataManager::refreshLanguagesCache($selected_lang);
+        MetaDataManager::refreshLanguagesCache($lang);
     }
 
     /**
@@ -223,16 +233,10 @@ class ParserDropDown extends ModuleBuilderParser
      *
      * @see getExemptDropdowns()
      */
-    private function saveExemptDropdowns($dropdown, $dropdownName, $myListStrings, $selectedLang)
+    public function saveExemptDropdowns($dropdown, $dropdownName, $myListStrings, $selectedLang)
     {
         // Handle special dropdown item removal
         if (in_array($dropdownName, getExemptDropdowns())) {
-            foreach ($myListStrings[$dropdownName] as $key => $value) {
-                // If the value is present in the old app_list_strings but not in the new, null it
-                if (!empty($key) && !isset($dropdown[$key])) {
-                    $dropdown[$key] = null;
-                }
-            }
             // We need to copy the NULLs if they are not set in the new dropdown
             // because return_app_list_strings_language() removes them from the array
             $customLanguage = "custom/include/language/$selectedLang.lang.php";

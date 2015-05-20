@@ -116,28 +116,9 @@ describe('KBContents.Base.Views.RecordList', function() {
             contextSetStub = sandbox.stub(view.context, 'set');
         });
 
-        it('should check acl edit and do not filter data when allowed', function() {
-            hasAccessToModelStub = sandbox.stub(app.acl, 'hasAccess', function() {
-                return true;
-            });
+        it('should check if data is not filtered', function() {
             var result = view.parseFieldMetadata(data);
-
-            expect(superStub).toHaveBeenCalled();
-            expect(hasAccessToModelStub).toHaveBeenCalled();
             expect(result.meta.panels[0].fields).toContain({
-                name: 'status'
-            });
-        });
-
-        it('should check acl edit and remove secure fields when not allowed', function() {
-            hasAccessToModelStub = sandbox.stub(app.acl, 'hasAccess', function() {
-                return false;
-            });
-            var result = view.parseFieldMetadata(data);
-
-            expect(superStub).toHaveBeenCalled();
-            expect(hasAccessToModelStub).toHaveBeenCalled();
-            expect(result.meta.panels[0].fields).not.toContain({
                 name: 'status'
             });
         });
@@ -162,7 +143,7 @@ describe('KBContents.Base.Views.RecordList', function() {
             expect(validateSpy.args[0][2].exp_date.expDateLow).toBeTruthy();
         });
 
-        it('Approved requires publishing date and the field on view.', function() {
+        it('Approved without publishing date generates confirmation alert.', function() {
             var validateSpy = sandbox.spy(function(mod, field, errors) {
             });
             sandbox.stub(view, 'getField', function(name) {
@@ -170,30 +151,33 @@ describe('KBContents.Base.Views.RecordList', function() {
                     return {name: 'active_date'};
                 }
             });
+            var alertShowStub = sandbox.stub(app.alert, 'show');
 
             view.model.set('status', 'approved');
             view.model.set('active_date', null);
 
             view._doValidateActiveDateField(view.model, [], [], validateSpy);
 
-            expect(validateSpy.args[0][2].active_date.activeDateApproveRequired).toBeTruthy();
+            expect(alertShowStub).toHaveBeenCalled();
+            expect(alertShowStub.lastCall.args[0]).toEqual('save_without_publish_date_confirmation');
         });
 
-        it('Approved requires publishing date and the view not on view.', function() {
-            var validateSpy = sandbox.spy(function(mod, view, errors) {
+        it('Approved with publishing date less or equal current date generates an error.', function() {
+            var validateSpy = sandbox.spy(function(mod, field, errors) {
             });
             sandbox.stub(view, 'getField', function(name) {
                 if (name == 'active_date') {
-                    return undefined;
+                    return {name: 'active_date'};
                 }
             });
             view.model.set('status', 'approved');
-            view.model.set('active_date', null);
-
+            view.model.set('active_date', '2011-10-10');
             view._doValidateActiveDateField(view.model, [], [], validateSpy);
+            expect(validateSpy.args[0][2].active_date.activeDateLow).toBeTruthy();
 
-            // The validation decorator should be on the status view.
-            expect(validateSpy.args[0][2].status.activeDateApproveRequired).toBeTruthy();
+            view.model.set('active_date', Date.now() - 1);
+            view._doValidateActiveDateField(view.model, [], [], validateSpy);
+            expect(validateSpy.args[0][2].active_date.activeDateLow).toBeTruthy();
         });
 
         it('Expiration changes own date to current.', function() {
@@ -210,24 +194,10 @@ describe('KBContents.Base.Views.RecordList', function() {
             sandbox.stub(view.model, 'changedAttributes', function() {
                 return {status: 'approved'};
             });
-            view.model.set('status', 'published-in');
+            view.model.set('status', 'published');
             view._validationComplete(view.model, true);
 
             expect(view.model.get('active_date')).toEqual(app.date().formatServer(true));
         });
-
-
-        it('Switching from publishing to publishing should not change own date.', function() {
-            sandbox.stub(view.model, 'changedAttributes', function() {
-                return {status: 'published-in'};
-            });
-            var expectedDate = '2000-10-10';
-            view.model.set('active_date', '2000-10-10');
-            view.model.set('status', 'published-ex');
-            view._validationComplete(view.model, true);
-
-            expect(view.model.get('active_date')).toEqual(expectedDate);
-        });
-
     });
 });

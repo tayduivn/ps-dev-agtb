@@ -130,7 +130,6 @@ Touched:
 - include/SugarSmarty/modifier.default_date_value.php
 - include/SugarEmailAddress/SugarEmailAddress.php
 - include/database/DBManager.php
-- include/database/DBHelper.php
 - include/javascript/jsAlerts.php
 - include/CurrencyService/CurrencyService.php
 - include/MVC/View/SugarView.php

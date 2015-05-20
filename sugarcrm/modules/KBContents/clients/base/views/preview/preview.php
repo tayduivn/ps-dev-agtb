@@ -57,7 +57,6 @@ $viewdefs['KBContents']['base']['view']['preview'] = array(
             'label' => 'LBL_SHOW_MORE',
             'hide' => true,
             'fields' => array(
-                'usefulness_user_vote',
                 'revision',
                 'viewcount',
                 'created_by_name',

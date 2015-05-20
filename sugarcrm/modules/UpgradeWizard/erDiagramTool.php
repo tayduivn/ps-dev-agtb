@@ -266,8 +266,7 @@ function createSchema($execute=false,$return=false,&$response){
             if($dictionary[$focus->object_name]['table'] == 'does_not_exist') {
 	                continue; // support new vardef definitions
 	         }
-			$curr_sql = $db->getHelper()
-		                ->createTableSQLParams($tablename, $fielddefs, $indices);
+            $curr_sql = $db->createTableSQLParams($tablename, $fielddefs, $indices);
             $curr_sql_f = '';
 
 		    if(isset($FK_ARRAY[$tablename]) && $FK_ARRAY[$tablename] != null){
@@ -302,9 +301,8 @@ function createSchema($execute=false,$return=false,&$response){
 	                continue; // support new vardef definitions
 	            }
 			if($tablename != null && !empty($tablename) && !in_array($tablename, $processed_tables)) {
-				$curr_sql = $db->getHelper()
-			                ->createTableSQLParams($tablename, $fielddefs, $indices);
-	            $curr_sql_f = '';
+                $curr_sql = $db->createTableSQLParams($tablename, $fielddefs, $indices);
+                $curr_sql_f = '';
 
 			    if(isset($FK_ARRAY[$tablename]) && $FK_ARRAY[$tablename] != null){
 	                //print_r(",".$FK_ARRAY[$tablename].") CHARACTER SET").'</br>';
@@ -618,66 +616,8 @@ foreach($commentsAll as $k=>$v){
 createSchema(true,false,$response);
 
 
-//////////////////////////////////////////////
-//////////////////////////////////////////////
-/*
-function createTable(SugarBean $bean,$execute=false)
-{
-	$sql = $this->getHelper()->createTableSQL($bean);
-	$this->tableName = $bean->getTableName();
-	$msg = "Error creating table: ".$this->tableName. ":";
-	$this->query($sql,true,$msg);
-}
-
-/**
- * Implements creation of a db table
- *
- * @param string $tablename
- * @param array  $fieldDefs
- * @param array  $indices
- * @param string $engine    MySQL engine to use
- */
- /*
-function createTableParams($tablename,$fieldDefs,$indices,$engine = null,$execute=false)
-{
-	if (!empty($fieldDefs)) {
-	    $sql = $this->getHelper()
-	                ->createTableSQLParams($tablename, $fieldDefs, $indices,$engine);
-	    $this->tableName = $tablename;
-	    if ($sql) {
-	        $msg = "Error creating table: ".$this->tableName. ":";
-	        $this->query($sql,true,$msg);
-	    }
-	}
-}
-*/
-/*
-$newUWMsg =<<<eoq
-<div id='er_schema' name='er_schema' style='display:none'>
-<table cellpadding="3" cellspacing="0" border="0">
-	<tr>
-		<th colspan="2" align="center">
-			<h1><span class='error'><b>************************************************************************</b></span></h1>
-			<span class='error'><b>DDL files for ER Diagram Schema and FK schema have been generated</b></span>
-
-			<h1><span class='error'><b><a href=cache/erschema/schema.sql>Download Complete ER Diagram Schema DDL File</a></b></span></h1>
-			</br>
-			<h1><span class='error'><b><a href=cache/erschema/fkschema.sql>Download Foreign Keys Schema DDL File</a></b></span></h1>
-			<h1><span class='error'><b>************************************************************************</b></span></h1>
-			<h1><span class='error'><b><a href=cache/erschema/comments.sql>Download Schema Comments DDL File</a></b></span></h1>
-			<h1><span class='error'><b>************************************************************************</b></span></h1>
-		</th>
-	</tr>
-</table>
-</div>
-eoq;
-*/
-//echo $newUWMsg;
-//$response  ='success';
 if (!empty($response)) {
 	echo $response;
 }
 sugar_cleanup();
 exit();
-
-?>

@@ -581,6 +581,16 @@
             payload = {},
             types = _.keys(this.filterOperatorMap[fieldType]);
 
+        // For parent field with the operator '$equals', the operator field is
+        // hidden and we need to display the value field directly. So here we
+        // need to assign 'previousOperator' and 'data.operator variables' to let
+        // the value field initialize.
+        //FIXME: We shouldn't have a condition on the parent field. TY-352 will
+        // fix it.
+        if (fieldType === 'parent' && _.isEqual(types, ['$equals'])) {
+            previousOperator = data.operator = types[0];
+        }
+
         fieldType === 'parent' ?
             $fieldWrapper.addClass('hide').empty() :
             $fieldWrapper.removeClass('hide').empty();

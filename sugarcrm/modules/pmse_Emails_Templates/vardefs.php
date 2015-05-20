@@ -180,7 +180,6 @@ $dictionary['pmse_Emails_Templates'] = array(
     'vname' => 'LBL_BASE_MODULE',
     'type' => 'enum',
     'massupdate' => true,
-    'default' => 'Leads',
     'no_default' => false,
     'comments' => '',
     'help' => '',
@@ -255,9 +254,12 @@ $dictionary['pmse_Emails_Templates'] = array(
     'optimistic_locking' => true,
     'unified_search' => true,
     'acls' => array(
-        'SugarACLDeveloperOrAdmin' => array(
-            'aclModule' => 'pmse_Emails_Templates', 'allowUserRead' => false
+        'SugarACLDeveloperForTarget' => array(
+            'targetModuleField' => 'base_module', 'allowUserRead' => false
         )
+    ),
+    'visibility' => array(
+        'TargetModuleDeveloperVisibility' => array('targetModuleField' => 'base_module')
     ),
     'hidden_to_role_assignment' => true,
     // @TODO Fix the Default and Basic SugarObject templates so that Basic

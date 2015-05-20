@@ -29,8 +29,7 @@
         'draft': 'label-pending',
         'in-review': 'label-warning',
         'approved': 'label-info',
-        'published-in': 'label-published',
-        'published-ex': 'label-success',
+        'published': 'label-published',
         'expired': 'label'
     },
 
@@ -65,16 +64,5 @@
                 self.$(self.fieldTag).select2('open');
             });
         }
-    },
-
-    /**
-     * {@inheritDoc}
-     */
-    _checkAccessToAction: function(action) {
-        var access = this._super('_checkAccessToAction');
-        if (access) {
-            access = app.acl.hasAccessToModel('edit', this.model, this.name);
-        }
-        return access;
     }
 })

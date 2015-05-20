@@ -67,7 +67,8 @@ $mod_strings = array (
     'LBL_PMSE_FORM_TOOLTIP_SELECT_USER' => 'Select the user to assign the process',
 
     'LBL_PMSE_LABEL_CURRENT_ACTIVITY' => 'Current Activity',
-    'LBL_PMSE_LABEL_ACTIVITY_DELEGATE_DATE' => 'Activity Delegate Data',
+    'LBL_PMSE_LABEL_ACTIVITY_DELEGATE_DATE' => 'Activity Delegate Date',
+    'LBL_PMSE_LABEL_ACTIVITY_START_DATE' => 'Start Date',
     'LBL_PMSE_LABEL_EXPECTED_TIME' => 'Expected Time',
     'LBL_PMSE_LABEL_DUE_DATE' => 'Due Date',
     'LBL_PMSE_LABEL_CURRENT' => 'Current',

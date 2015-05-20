@@ -356,21 +356,44 @@
                     publishingDate = model.get(fieldName),
                     pubDateObject = new Date(publishingDate);
 
-                if (!publishingDate && status == 'approved') {
-                    // If the field is hidden.
-                    if (!this.getField(fieldName)) {
-                        fieldName = 'status';
+                if (status == 'approved') {
+                    if (publishingDate && pubDateObject && pubDateObject.getTime() < Date.now()) {
+                        errors[fieldName] = errors[fieldName] || {};
+                        errors[fieldName].activeDateLow = true;
+                        callback(null, fields, errors);
+                    } else if (!publishingDate) {
+                        app.alert.show('save_without_publish_date_confirmation', {
+                            level: 'confirmation',
+                            messages: app.lang.get('LBL_SPECIFY_PUBLISH_DATE', 'KBContents'),
+                            confirm: {
+                                label: app.lang.get('LBL_YES')
+                            },
+                            cancel: {
+                                label: app.lang.get('LBL_NO')
+                            },
+                            onConfirm: function() {
+                                callback(null, fields, errors);
+                            },
+                            onCancel: _.bind(function() {
+                                var field = this.getField(fieldName),
+                                    fieldElement = field.getFieldElement();
+
+                                this.handleFieldError(field, true);
+                                if (fieldElement.find('input[data-type=date]').length === 0) {
+                                    fieldElement.closest('[data-name=' + fieldName + ']')
+                                        .find('.record-edit-link-wrapper')
+                                        .click();
+                                }
+                                fieldElement.find('input[data-type=date]').focus();
+                                this.toggleButtons(true);
+                            }, this)
+                        });
+                    } else {
+                        callback(null, fields, errors);
                     }
-                    errors[fieldName] = errors[fieldName] || {};
-                    errors[fieldName].activeDateApproveRequired = true;
+                } else {
+                    callback(null, fields, errors);
                 }
-
-                if (status == 'approved' && publishingDate && pubDateObject && pubDateObject.getTime() < Date.now()) {
-                    errors[fieldName] = errors[fieldName] || {};
-                    errors[fieldName].activeDateLow = true;
-                }
-
-                callback(null, fields, errors);
             },
 
             /**
@@ -402,7 +425,7 @@
              * @return {Boolean}
              */
             _isPublishingStatus: function(status) {
-                return ['published-in', 'published-ex'].indexOf(status) !== -1;
+                return ['published'].indexOf(status) !== -1;
             },
 
             /**

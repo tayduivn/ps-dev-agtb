@@ -11,60 +11,57 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-/*********************************************************************************
-
-* Description: This file handles the Data base functionality for the application.
-* It acts as the DB abstraction layer for the application. It depends on helper classes
-* which generate the necessary SQL. This sql is then passed to PEAR DB classes.
-* The helper class is chosen in DBManagerFactory, which is driven by 'db_type' in 'dbconfig' under config.php.
-*
-* All the functions in this class will work with any bean which implements the meta interface.
-* The passed bean is passed to helper class which uses these functions to generate correct sql.
-*
-* The meta interface has the following functions:
-* getTableName()	        	Returns table name of the object.
-* getFieldDefinitions()	    	Returns a collection of field definitions in order.
-* getFieldDefintion(name)		Return field definition for the field.
-* getFieldValue(name)	    	Returns the value of the field identified by name.
-*                           	If the field is not set, the function will return boolean FALSE.
-* getPrimaryFieldDefinition()	Returns the field definition for primary key
-*
-* The field definition is an array with the following keys:
-*
-* name 		This represents name of the field. This is a required field.
-* type 		This represents type of the field. This is a required field and valid values are:
-*           �   int
-*           �   long
-*           �   varchar
-*           �   text
-*           �   date
-*           �   datetime
-*           �   double
-*           �   float
-*           �   uint
-*           �   ulong
-*           �   time
-*           �   short
-*           �   enum
-* length    This is used only when the type is varchar and denotes the length of the string.
-*           The max value is 255.
-* enumvals  This is a list of valid values for an enum separated by "|".
-*           It is used only if the type is �enum�;
-* required  This field dictates whether it is a required value.
-*           The default value is �FALSE�.
-* isPrimary This field identifies the primary key of the table.
-*           If none of the fields have this flag set to �TRUE�,
-*           the first field definition is assume to be the primary key.
-*           Default value for this field is �FALSE�.
-* default   This field sets the default value for the field definition.
-*
-*
-* Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
-* All Rights Reserved.
-********************************************************************************/
-
 /**
- * Base database driver implementation
+ * Base database driver implementation.
+ *
+ * This class handles the Data base functionality for the application.
+ * It acts as the DB abstraction layer for the application. It depends on
+ * helper classes which generate the necessary SQL.
+ * The helper class is chosen in DBManagerFactory, which is driven by `db_type`
+ * in `dbconfig` under `config.php`.
+ *
+ * All the functions in this class will work with any bean which implements the
+ * meta interface.
+ * The passed bean is passed to helper class which uses these functions to
+ * generate correct sql.
+ *
+ * FIXME move this to an interface instead of having this documented here
+ * The meta interface has the following functions:
+ * getTableName()                Returns table name of the object.
+ * getFieldDefinitions()         Returns a collection of field definitions in order.
+ * getFieldDefinition(name)      Return field definition for the field.
+ * getFieldValue(name)           Returns the value of the field identified by name.
+ *                               If the field is not set, the function will return boolean FALSE.
+ * getPrimaryFieldDefinition()   Returns the field definition for primary key
+ *
+ * The field definition is an array with the following keys:
+ *
+ * name      This represents name of the field. This is a required field.
+ * type      This represents type of the field. This is a required field and valid values are:
+ *   - int
+ *   - long
+ *   - varchar
+ *   - text
+ *   - date
+ *   - datetime
+ *   - double
+ *   - float
+ *   - uint
+ *   - ulong
+ *   - time
+ *   - short
+ *   - enum
+ * length    This is used only when the type is varchar and denotes the length of the string.
+ *           The max value is 255.
+ * enumvals  This is a list of valid values for an enum separated by "|".
+ *           It is used only if the type is `enum`;
+ * required  This field dictates whether it is a required value.
+ *           The default value is `FALSE`.
+ * isPrimary This field identifies the primary key of the table.
+ *           If none of the fields have this flag set to `TRUE`,
+ *           the first field definition is assume to be the primary key.
+ *           Default value for this field is `FALSE`.
+ * default   This field sets the default value for the field definition.
  * @api
  */
 abstract class DBManager
@@ -314,17 +311,6 @@ abstract class DBManager
 	{
 		$this->checkConnection();
 		return $this->database;
-	}
-
-	/**
-	 * Returns this instance's DBHelper
-	 * Actually now returns $this
-	 * @deprecated
-	 * @return DBManager
-	 */
-	public function getHelper()
-	{
-		return $this;
 	}
 
 	/**
