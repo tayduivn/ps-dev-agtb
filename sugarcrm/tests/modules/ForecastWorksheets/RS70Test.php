@@ -287,8 +287,13 @@ class RS70Test extends Sugar_PHPUnit_Framework_TestCase
         $rli->save();
         // END SUGARCRM flav=ent ONLY
 
-        $bean = $this->getMock('ForecastWorksheet', array('createUpdateForecastWorksheetJob'));
+        $bean = $this->getMock('ForecastWorksheet', array('createUpdateForecastWorksheetJob',
+                                                          'removeReassignedItems'));
+
         $bean->expects($this->any())->method('createUpdateForecastWorksheetJob');
+
+        $bean->expects($this->once())
+             ->method('removeReassignedItems');
 
         $actual = SugarTestReflection::callProtectedMethod($bean, 'commitWorksheet', array(
                 $GLOBALS['current_user']->id,
