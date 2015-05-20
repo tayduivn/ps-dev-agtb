@@ -24,7 +24,14 @@
         // should use that context instead of layout.collection.
         this.collection = app.data.createMixedBeanCollection();
 
-        app.shortcuts.register(app.shortcuts.GLOBAL + 'Sweetspot', 'shift+space', this.toggle, this, true);
+        app.shortcuts.registerGlobal({
+            id: 'Sweetspot:Toggle',
+            keys: 'shift+space',
+            component: this,
+            description: 'LBL_SHORTCUT_SWEETSPOT',
+            callOnFocus: true,
+            handler: this.toggle
+        });
         app.events.on('app:logout router:reauth:load', this.hide, this);
         app.events.on('app:sync:complete sweetspot:reset', this._setTheme, this);
 

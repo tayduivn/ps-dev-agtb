@@ -20,7 +20,7 @@ describe("Quick Create Dropdown", function() {
         SugarTest.loadComponent('base', 'view', viewName);
         SugarTest.testMetadata.set();
 
-        sinon.collection.stub(app.shortcuts, 'register');
+        sinon.collection.stub(app.shortcuts, 'registerGlobal');
 
         view = SugarTest.createView("base",null, viewName, null, null);
 

@@ -917,18 +917,44 @@
      * Register shortcuts for mass update inline drawer.
      */
     registerShortcuts: function() {
-        app.shortcuts.register('MassUpdate:Add', '+', function() {
-            this.$('[data-action=add]').last().click();
-        }, this);
-        app.shortcuts.register('MassUpdate:Remove', '-', function() {
-            this.$('[data-action=remove]').last().click();
-        },this);
-        app.shortcuts.register('MassUpdate:Cancel', ['esc', 'ctrl+alt+l'], function() {
-            this.$('a.cancel_button').click();
-        }, this, true);
-        app.shortcuts.register('MassUpdate:Update', ['ctrl+s', 'ctrl+alt+a'], function() {
-            this.$('[name=update_button]:not(.disabled)').click();
-        }, this, true);
+        app.shortcuts.register({
+            id: 'MassUpdate:Add',
+            keys: '+',
+            component: this,
+            description: 'LBL_SHORTCUT_MASS_UPDATE_ADD',
+            handler: function() {
+                this.$('[data-action=add]').last().click();
+            }
+        });
+        app.shortcuts.register({
+            id: 'MassUpdate:Remove',
+            keys: '-',
+            component: this,
+            description: 'LBL_SHORTCUT_MASS_UPDATE_REMOVE',
+            handler: function() {
+                this.$('[data-action=remove]').last().click();
+            }
+        });
+        app.shortcuts.register({
+            id: 'MassUpdate:Cancel',
+            keys: ['esc', 'ctrl+alt+l'],
+            component: this,
+            description: 'LBL_SHORTCUT_MASS_UPDATE_CANCEL',
+            callOnFocus: true,
+            handler: function() {
+                this.$('a.cancel_button').click();
+            }
+        });
+        app.shortcuts.register({
+            id: 'MassUpdate:Update',
+            keys: ['ctrl+s', 'ctrl+alt+a'],
+            component: this,
+            description: 'LBL_SHORTCUT_MASS_UPDATE_SAVE',
+            callOnFocus: true,
+            handler: function() {
+                this.$('[name=update_button]:not(.disabled)').click();
+            }
+        });
     },
     /**
      * Clear shortcuts and restore previous shortcut session.

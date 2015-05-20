@@ -135,12 +135,24 @@
         this.saveFilterEditState();
 
         //shortcut keys
-        app.shortcuts.register('Filter:Add', '+', function() {
-            this.$('[data-action=add]').last().click();
-        },this);
-        app.shortcuts.register('Filter:Remove', '-', function() {
-            this.$('[data-action=remove]').last().click();
-        },this);
+        app.shortcuts.register({
+            id: 'Filter:Add',
+            keys: '+',
+            component: this,
+            description: 'LBL_SHORTCUT_FILTER_ADD',
+            handler: function() {
+                this.$('[data-action=add]').last().click();
+            }
+        });
+        app.shortcuts.register({
+            id: 'Filter:Remove',
+            keys: '-',
+            component: this,
+            description: 'LBL_SHORTCUT_FILTER_REMOVE',
+            handler: function() {
+                this.$('[data-action=remove]').last().click();
+            }
+        });
     }, 100, true),
 
     /**

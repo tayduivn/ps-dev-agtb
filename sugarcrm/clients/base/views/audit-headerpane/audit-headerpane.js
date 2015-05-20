@@ -28,12 +28,19 @@
         this.model = this.context.parent && this.context.parent.get('model') || this.model;
 
         //shortcut keys
-        app.shortcuts.register('AuditHeaderPanel:Close', ['esc','ctrl+alt+l'], function() {
-            var $closeButton = this.$('a[name=close_button]');
-            if ($closeButton.is(':visible') && !$closeButton.hasClass('disabled')) {
-                $closeButton.click();
+        app.shortcuts.register({
+            id: 'AuditHeaderPanel:Close',
+            keys: ['esc','ctrl+alt+l'],
+            component: this,
+            description: 'LBL_SHORTCUT_CLOSE_DRAWER',
+            callOnFocus: true,
+            handler: function() {
+                var $closeButton = this.$('a[name=close_button]');
+                if ($closeButton.is(':visible') && !$closeButton.hasClass('disabled')) {
+                    $closeButton.click();
+                }
             }
-        }, this, true);
+        });
     },
 
     /**

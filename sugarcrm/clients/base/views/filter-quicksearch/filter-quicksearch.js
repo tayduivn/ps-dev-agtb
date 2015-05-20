@@ -38,11 +38,17 @@
         this.listenTo(this.layout, 'filter:change:module', this.updatePlaceholder);
 
         //shortcut keys
-        app.shortcuts.register('Filter:Search', ['f i','ctrl+alt+9'], function() {
-            if (this.$el.is(':visible')) {
-                this.$el.focus();
+        app.shortcuts.register({
+            id: 'Filter:Search',
+            keys: ['f i','ctrl+alt+9'],
+            component: this,
+            description: 'LBL_SHORTCUT_FILTER_SEARCH',
+            handler: function() {
+                if (this.$el.is(':visible')) {
+                    this.$el.focus();
+                }
             }
-        }, this);
+        });
     },
 
     /**

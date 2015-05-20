@@ -32,11 +32,17 @@
         this._super('initialize', [options]);
 
         //shortcut keys
-        app.shortcuts.register('List:Headerpane:Create', 'a', function() {
-            var $createButton = this.$('a[name=create_button]');
-            if ($createButton.is(':visible') && !$createButton.hasClass('disabled')) {
-                $createButton.get(0).click();
+        app.shortcuts.register({
+            id: 'List:Headerpane:Create',
+            keys: 'a',
+            component: this,
+            description: 'LBL_SHORTCUT_CREATE_RECORD',
+            handler: function() {
+                var $createButton = this.$('a[name=create_button]');
+                if ($createButton.is(':visible') && !$createButton.hasClass('disabled')) {
+                    $createButton.get(0).click();
+                }
             }
-        }, this);
+        });
     }
 })

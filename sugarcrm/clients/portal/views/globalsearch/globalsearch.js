@@ -66,9 +66,15 @@
         app.events.on('app:sync:complete', this.populateModules, this);
 
         //shortcut keys
-        app.shortcuts.register(app.shortcuts.GLOBAL + 'Search', ['s', 'ctrl+alt+0'], function() {
-            this.$('input.search-query').focus();
-        }, this);
+        app.shortcuts.register({
+            id: 'Search:Focus',
+            keys: ['s', 'ctrl+alt+0'],
+            component: this,
+            description: 'LBL_SHORTCUT_SEARCH',
+            handler: function() {
+                this.$('input.search-query').focus();
+            }
+        });
     },
     /**
      * Handle module 'select/unselect' event.
