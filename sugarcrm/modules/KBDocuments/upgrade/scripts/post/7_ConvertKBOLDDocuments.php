@@ -47,6 +47,12 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
         // Relationships for KBContents are not loaded yet.
         SugarRelationshipFactory::rebuildCache();
 
+        // Need to setup custom tables.
+        $rac = new RepairAndClear();
+        $rac->execute = true;
+        $rac->show_output = false;
+        $rac->repairDatabase();
+
         //Setup category root
         $KBContent = BeanFactory::getBean('KBContents');
         $KBContent->setupCategoryRoot();
@@ -95,6 +101,14 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
                     $bean->save();
                 }
 
+                if (!empty($data['parent_type']) && $data['parent_type'] == 'Cases') {
+                    $case = BeanFactory::getBean('Cases', $data['parent_id']);
+                    if (!empty($case) && !empty($case->id)) {
+                        $KBContent->load_relationship('relcases_kbcontents');
+                        $KBContent->relcases_kbcontents->add($case);
+                    }
+                }
+
                 $KBContent->load_relationship('attachments');
 
                 // Converts attached files to Notes.
@@ -111,6 +125,7 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
             'prepKBDoc',
             'prepKBAtt',
             'prepKBTag',
+            'prepKBCustom',
             'prepKBDocTag',
         );
 
@@ -213,8 +228,18 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
     protected function getOldDocuments()
     {
         static $count = 0;
+        static $custom = null;
+        if ($custom === null) {
+            $custom = $this->db->tableExists('prepKBCustom');
+        }
         $data = array();
-        $query = "SELECT * from prepKBDoc ORDER BY date_entered";
+        $query = "SELECT prepKBDoc.*";
+        if ($custom) {
+            $query .= ", prepKBCustom.* from prepKBDoc LEFT JOIN prepKBCustom on prepKBCustom.id_c = prepKBDoc.id";
+        } else {
+            $query .= " from prepKBDoc";
+        }
+        $query .= " ORDER BY prepKBDoc.date_entered";
         $query = $this->db->limitQuery($query, $count * 100, 100, false, '', false);
         $result = $this->db->query($query);
         while ($row = $this->db->fetchByAssoc($result)) {
