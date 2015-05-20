@@ -312,13 +312,36 @@ class MailApiTest extends Sugar_PHPUnit_Framework_TestCase
             ->method("email2saveAttachment")
             ->will($this->returnValue($mockResult));
 
-        $this->mailApi->expects($this->once())
-            ->method("getEmailBean")
-            ->will($this->returnValue($emailMock));
+        $api = $this->getMockBuilder('MailApi')
+            ->disableOriginalConstructor()
+            ->setMethods(array('checkPostRequestBody', 'getEmailBean'))
+            ->getMock();
+        $api->expects($this->once())->method('checkPostRequestBody')->willReturn(true);
+        $api->expects($this->once())->method('getEmailBean')->willReturn($emailMock);
 
-        $result = $this->mailApi->saveAttachment($this->api, array());
+        $result = $api->saveAttachment($this->api, array());
 
         $this->assertEquals($mockResult, $result, "Should return the response from email2saveAttachment");
+    }
+
+    /**
+     * @group mailattachment
+     * @expectedException SugarApiExceptionRequestTooLarge
+     */
+    public function testSaveAttachment_AttachmentIsTooLarge_ThrowsException()
+    {
+        $_files = $_FILES;
+        $_FILES = array();
+
+        $api = $this->getMockBuilder('MailApi')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getContentLength', 'getPostMaxSize'))
+            ->getMock();
+        $api->expects($this->once())->method('getContentLength')->willReturn(500);
+        $api->expects($this->once())->method('getPostMaxSize')->willReturn(100);
+        $api->saveAttachment($this->api, array());
+
+        $_FILES = $_files;
     }
 
     /**

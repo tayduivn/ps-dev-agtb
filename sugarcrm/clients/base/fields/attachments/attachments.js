@@ -40,6 +40,10 @@
         this.context.set('attachment_field_' + this.fileInputName, this.cid);
 
         this.clearUserAttachmentCache();
+
+        // keep track of active file upload requests so that they can be
+        // aborted when the user cancels an in-progress upload
+        this.requests = {};
     },
 
     /**
@@ -178,9 +182,15 @@
      * Fire event when attachment is removed
      * (useful for attachment types that require cleanup)
      *
+     * Aborts the associated request if it is still active.
+     *
      * @param attachment
      */
     notifyAttachmentRemoved: function(attachment) {
+        if (this.requests[attachment.id]) {
+            app.api.abortRequest(this.requests[attachment.id]);
+        }
+
         this.context.trigger('attachment:' + attachment.type + ':remove', attachment);
     },
 
@@ -279,7 +289,9 @@
                 files: $fileInput,
                 iframe: true
             },
-            fileId;
+            fileId,
+            myURL,
+            options;
 
         //don't do anything if user cancels out of picking a file
         if (_.isEmpty(this.getFileInputVal())) {
@@ -295,12 +307,19 @@
             showProgress: true
         });
 
-        var myURL = app.api.buildURL('Mail/attachment', null, null, {format:'sugar-html-json'});
-        app.api.call('create', myURL, null,{
+        // pass OAuth token as GET-parameter during file upload.
+        // otherwise, in case if file is too large, the whole request body may
+        // be ignored by interpreter together with the token
+        options = {
+            format: 'sugar-html-json',
+            oauth_token: app.api.getOAuthToken()
+        };
+        myURL = app.api.buildURL('Mail/attachment', null, null, options);
+        var request = app.api.call('create', myURL, null, {
                 success: _.bind(function (result) {
                     if (this.disposed === true) return; //if field is already disposed, bail out
                     if (!result.guid) {
-                        this.handleUploadError(fileId);
+                        this.handleUploadError(fileId, result);
                         app.logger.error('Attachment Upload Failed - no guid returned from API');
                         return;
                     }
@@ -311,19 +330,41 @@
                     result.type = 'upload';
                     result.replaceId = fileId;
                     this.context.trigger('attachment:add', result);
-
-                    //clear out the file input so we can detect the next change, even if it is the same file
-                    this.clearFileInputVal($fileInput);
                 }, this),
 
                 error: _.bind(function(e) {
-                    if (this.disposed === true) return; //if field is already disposed, bail out
-                    this.handleUploadError(fileId);
+                    //if field is already disposed, bail out
+                    if (this.disposed === true) {
+                        return;
+                    }
+
+                    // When a user cancels a file upload, the associated request
+                    // is aborted. The error handler is called when a request is
+                    // aborted. No error message needs to be shown in this case.
+                    if (e && e.errorThrown === 'abort') {
+                        return;
+                    }
+
+                    this.handleUploadError(fileId, e);
                     app.logger.error('Attachment Upload Failed: ' + e);
+                }, this),
+
+                complete: _.bind(function() {
+                    // the request is done so there is nothing to cancel
+                    // no need to keep track of finished requests
+                    delete this.requests[fileId];
+
+                    //clear out the file input so we can detect the next change, even if it is the same file
+                    this.clearFileInputVal($fileInput);
                 }, this)
             },
             ajaxParams
         );
+
+        // keep track of the request so that it can be aborted when the user cancels the file upload
+        if (request) {
+            this.requests[fileId] = request.uid;
+        }
     },
 
     /**
@@ -355,12 +396,16 @@
     /**
      * When upload fails, display an error alert and remove the placeholder pill
      * @param fileId
+     * @param {Object} [error] The error object containing the message to display.
+     * @param {string} [error.error_message] The error message to display.
      */
-    handleUploadError: function(fileId) {
+    handleUploadError: function(fileId, error) {
+        var message = (error && error.error_message) ? error.error_message : 'LBL_EMAIL_ATTACHMENT_UPLOAD_FAILED';
+
         this.context.trigger('attachments:remove-by-id', fileId);
         app.alert.show('upload_error', {
             level: 'error',
-            messages: 'LBL_EMAIL_ATTACHMENT_UPLOAD_FAILED'
+            messages: message
         });
     },
 
