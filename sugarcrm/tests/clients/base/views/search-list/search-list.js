@@ -51,7 +51,7 @@ describe('View.Views.Base.SearchListView', function() {
                         highlighted: true
                     }
                 ],
-                modelValue: 'exampleValue',
+                modelFields: {name: 'ExampleName', description: 'ExampleDescription'},
                 expectedPrimaryFields: [
                     {
                         name: 'name',
@@ -81,7 +81,7 @@ describe('View.Views.Base.SearchListView', function() {
                         value: 'James Dean'
                     }
                 ],
-                modelValue: 'exampleValue',
+                modelFields: {name: 'ExampleName', description: 'ExampleDescription'},
                 expectedPrimaryFields: [
                     {
                         name: 'name',
@@ -100,8 +100,41 @@ describe('View.Views.Base.SearchListView', function() {
                 ]
             },
             {
+                highlights: [
+                    {
+                        name: 'case_number',
+                        value: 12
+                    },
+                    {
+                        name: 'name',
+                        value: 'James Dean'
+                    }
+                ],
+                modelFields: {'case_number' : 12, name: 'ExampleName', description: 'ExampleDescription'},
+                expectedPrimaryFields: [
+                    {
+                        name: 'name',
+                        primary: true,
+                        ellipsis: false,
+                        value: 'James Dean'
+                    }
+                ],
+                expectedSecondaryFields: [
+                    {
+                        name: 'description',
+                        secondary: true,
+                        ellipsis: false,
+                        link: false
+                    },
+                    {
+                        name: 'case_number',
+                        value: 12
+                    }
+                ]
+            },
+            {
                 highlights: [],
-                modelValue: 'exampleValue',
+                modelFields: {name: 'ExampleName', description: 'ExampleDescription'},
                 expectedPrimaryFields: [
                     {
                         name: 'name',
@@ -120,7 +153,7 @@ describe('View.Views.Base.SearchListView', function() {
             },
             {
                 highlights: [],
-                modelValue: null,
+                modelFields: null,
                 expectedPrimaryFields: [
                 ],
                 expectedSecondaryFields: [
@@ -130,8 +163,7 @@ describe('View.Views.Base.SearchListView', function() {
             it('should create "primaryFields" and "secondaryFields" property on the model',
                 function() {
                     model.set('_highlights', val.highlights);
-                    model.set('name', val.modelValue);
-                    model.set('description', val.modelValue);
+                    model.set(val.modelFields);
                     model.fields = {};
                     view.parseModels([model]);
                     expect(model.primaryFields).toEqual(val.expectedPrimaryFields);
