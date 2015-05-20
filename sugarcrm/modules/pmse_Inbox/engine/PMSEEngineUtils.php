@@ -23,6 +23,18 @@ class PMSEEngineUtils
     public static $uploadObject;
 
     /**
+     * PA target blacklisted modules
+     * @var array
+     */
+    public static $targetBlacklistedModules = array('Users', 'Employees');
+
+    /**
+     * PA related blacklisted modules
+     * @var array
+     */
+    public static $relatedBlacklistedModules = array();
+
+    /**
      * Method get key fields
      * @param type $pattern
      * @param type $array
@@ -1059,8 +1071,11 @@ class PMSEEngineUtils
         }
         $moduleList = $studioBrowser->modules;
 
+        $blacklisted = $type === '' ? self::$targetBlacklistedModules : self::$relatedBlacklistedModules;
+        $removed = array_merge($pmseModulesList, $blacklisted);
+
         foreach ($moduleList as $key => $module) {
-            if (in_array($module->module, $pmseModulesList)) {
+            if (in_array($module->module, $removed)) {
                 unset($moduleList[$key]);
             }
         }
