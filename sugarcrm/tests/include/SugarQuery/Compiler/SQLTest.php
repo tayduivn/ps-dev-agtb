@@ -140,6 +140,82 @@ class SugarQuery_Compiler_SQLTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * Testing correct casting usage if field type is text
+     *
+     * @dataProvider compileConditionOnTextFieldProvider
+     * @param array $conditions
+     * @param bool|string[] $expectation true/false means expectation of casted field, array means exact match for both base and casted field
+     */
+    public function testCompileConditionOnTextField(array $conditions, $expectation)
+    {
+        $castedField = create_guid();
+        $baseField = create_guid();
+
+        /** @var SugarQuery_Builder_Field_Condition|PHPUnit_Framework_MockObject_MockObject $field */
+        $field = $this->getMock('SugarQuery_Builder_Field_Condition', array(), array(), '', false);
+        $field->def = array(
+            'name' => $baseField,
+            'type' => create_guid(),
+        );
+
+        /** @var SugarQuery_Builder_Condition|PHPUnit_Framework_MockObject_MockObject $condition */
+        $condition = $this->getMock('SugarQuery_Builder_Condition', array(), array(), '', false);
+        $condition->field = $field;
+        foreach ($conditions as $k => $v) {
+            $condition->$k = $v;
+        }
+
+        /** @var DBManager|PHPUnit_Framework_MockObject_MockObject $db */
+        $db = $db = $this->getMockBuilder('DBManager')
+            ->disableOriginalConstructor()
+            ->setMethods(array('isTextType', 'convert'))
+            ->getMockForAbstractClass()
+        ;
+        $db->expects($this->once())->method('isTextType')->with($this->equalTo($field->def['type']))->willReturn(true);
+        $db->expects($this->once())->method('convert')->with($this->equalTo($baseField), $this->equalTo('text2char'))->willReturn($castedField);
+
+        /** @var SugarQuery_Compiler_SQL|PHPUnit_Framework_MockObject_MockObject $compiler */
+        $compiler = $this->getMock('SugarQuery_Compiler_SQL', array('compileField', 'prepareValue', 'getFieldCondition'), array($db));
+        $compiler->expects($this->at(0))->method('compileField')->with($this->equalTo($field))->willReturn($baseField);
+
+        $actual = $compiler->compileCondition($condition);
+        if (is_array($expectation)) {
+            $this->assertContains($baseField . ' ' . $expectation[0], $actual);
+            $this->assertContains($castedField . ' ' . $expectation[1], $actual);
+        } elseif ($expectation == false) {
+            $this->assertContains($baseField, $actual);
+            $this->assertNotContains($castedField, $actual);
+        } else {
+            $this->assertNotContains($baseField, $actual);
+            $this->assertContains($castedField, $actual);
+        }
+    }
+
+    /**
+     * Data provider for testCompileConditionOnTextField test
+     *
+     * @see testCompileConditionOnTextField
+     * @return array
+     */
+    public static function compileConditionOnTextFieldProvider()
+    {
+        return array(
+            'isNullReturnsBaseField' => array(array('isNull' => true), false),
+            'notNullReturnsBaseField' => array(array('notNull' => true), false),
+            'operatorInReturnsCastedField' => array(array('operator' => 'IN'), true),
+            'operatorNotInReturnsBothField' => array(array('operator' => 'NOT IN'), array('IS NULL', 'NOT IN')),
+            'operatorBetweenReturnsBaseFields' => array(array('operator' => 'BETWEEN', 'values' => array('min' => 0, 'max' => 1)), false),
+            'operatorStartsReturnsBaseField' => array(array('operator' => 'STARTS', 'values' => 'some'), false),
+            'operatorContainsReturnsBaseField' => array(array('operator' => 'CONTAINS', 'values' => array(1, 2, 3)), false),
+            'operatorDoesNotContainReturnsBaseField' => array(array('operator' => 'DOES NOT CONTAIN', 'values' => array(1, 2, 3)), false),
+            'operatorEndsReturnsBaseField' => array(array('operator' => 'ENDS', 'values' => 'some'), false),
+            'operatorEqualFieldReturnsCastedField' => array(array('operator' => 'EQUALFIELD', 'values' => 'some'), true),
+            'operatorNotEqualFieldReturnsCastedField' => array(array('operator' => 'NOTEQUALFIELD', 'values' => 'some'), true),
+            'anyOtherOperatorReturnsCastedField' => array(array('operator' => '=', 'values' => 'some'), true),
+        );
+    }
+
+    /**
      * Test addition of order stability column
      *
      * @param array $args Arguments for SugarQuery_Compiler_SQL::applyOrderByStability
