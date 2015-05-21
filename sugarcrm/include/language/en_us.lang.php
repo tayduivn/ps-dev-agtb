@@ -1630,7 +1630,6 @@ $app_list_strings = array (
 
     'fts_field_config' => array(
         '0' => 'Disabled',
-        '1' => 'Store only',
         '2' => 'Searchable',
     ),
 

@@ -278,12 +278,10 @@ class ViewModulefield extends SugarView
             $ftsBoost = '1';
 
             // determine fts configuration
-            if (!empty($vardef['full_text_search'])) {
-                if (!empty($vardef['full_text_search']['searchable'])) {
+            if (!empty($vardef['full_text_search']) &&
+                !empty($vardef['full_text_search']['searchable']) &&
+                $vardef['full_text_search']['searchable'] == true) {
                     $ftsFieldConfig = '2';
-                } elseif (!empty($vardef['full_text_search']['enabled'])) {
-                    $ftsFieldConfig = '1';
-                }
             }
 
             // determine boost value
