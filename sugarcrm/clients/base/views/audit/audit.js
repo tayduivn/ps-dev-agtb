@@ -104,6 +104,13 @@
             var after = _.findWhere(model.fields, {name: 'after'});
             _.extend(after, fields[model.get('field_name')], {name: 'after'});
 
+            // FIXME: Temporary fix due to time constraints, proper fix will be addressed in TY-359
+            // We can check just `before` since `before` and `after` refer to same field
+            if (_.contains(['multienum', 'enum'], before['type']) && before['function']) {
+                before['type'] = 'base';
+                after['type'] = 'base';
+            }
+
             // FIXME: This method should not be used as a public method (though
             // it's being used everywhere in the app) this should be reviewed
             // when SC-3607 gets in

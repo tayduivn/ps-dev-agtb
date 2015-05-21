@@ -1314,7 +1314,9 @@ ExpressionControl.prototype._createVariablePanel = function () {
         this._variablePanel.clearItems();
         if (settings.dataURL) {
             this._proxy.url = settings.dataURL;
-            this._proxy.getData(null, {
+            this._proxy.getData({
+                base_module: PROJECT_MODULE
+            }, {
                 success: this._onLoadVariableDataSuccess(),
                 error : this._onLoadVariableDataError()
             });

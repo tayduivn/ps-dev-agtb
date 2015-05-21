@@ -389,7 +389,7 @@ ENDQ;
             while ($team = $this->db->fetchByAssoc($dbResult)) {
                 $teamsIds[] = $this->db->quoted($team['team_id']);
             }
-            return ' AND emails.team_set_id IN (' . implode(',', array_unique($teamsIds)) . ') ';
+            return ' AND emails.team_id IN (' . implode(',', array_unique($teamsIds)) . ') ';
 		}
 	}
 

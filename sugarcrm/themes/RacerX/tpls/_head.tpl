@@ -49,7 +49,7 @@ if ( YAHOO.env.ua )
                     app.additionalComponents.sweetspot.hide()
                     return false;
                 });
-                Mousetrap.bind('shift+space', function(e) {
+                Mousetrap.bind('mod+shift+space', function(e) {
                     app.additionalComponents.sweetspot.show()
                     return false;
                 });

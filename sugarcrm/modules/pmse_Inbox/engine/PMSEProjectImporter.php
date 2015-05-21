@@ -64,6 +64,7 @@ class PMSEProjectImporter extends PMSEImporter
         $this->name = 'name';
         $this->id = 'prj_id';
         $this->extension = 'bpm';
+        $this->module = 'prj_module';
     }
 
     /**

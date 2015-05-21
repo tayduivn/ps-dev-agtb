@@ -74,21 +74,21 @@ function zip_dir( $zip_dir, $zip_archive )
     // we need this for shadow path resolution to work
     $zip->open(UploadFile::realpath($zip_archive), ZIPARCHIVE::CREATE|ZIPARCHIVE::OVERWRITE); // we need realpath here for PHP streams support
     $path = UploadFile::realpath($zip_dir);
-    $chop = strlen($path)+1;
-    $dir = new RecursiveDirectoryIterator($path);
-    $it = new RecursiveIteratorIterator($dir, RecursiveIteratorIterator::SELF_FIRST);
-    foreach ($it as $k => $fileinfo) {
-        // Bug # 45143
-        // ensure that . and .. are not zipped up, otherwise, the
-        // CENT OS and others will fail when deploying module
-        $fileName = $fileinfo->getFilename();
-        if ($fileName == "." || $fileName == "..")
-            continue;
-        $localname = str_replace("\\", "/",substr($fileinfo->getPathname(), $chop)); // ensure file
-        if($fileinfo->isDir()) {
-            $zip->addEmptyDir($localname."/");
+
+    /** @var RecursiveIteratorIterator|RecursiveDirectoryIterator $it */
+    $it = new RecursiveIteratorIterator(
+        new RecursiveDirectoryIterator(
+            $path,
+            FilesystemIterator::SKIP_DOTS | FilesystemIterator::UNIX_PATHS
+        ),
+        RecursiveIteratorIterator::SELF_FIRST
+    );
+    foreach ($it as $fileinfo) {
+        $subPathName = $it->getSubPathname();
+        if ($fileinfo->isDir()) {
+            $zip->addEmptyDir($subPathName);
         } else {
-            $zip->addFile($fileinfo->getPathname(), $localname);
+            $zip->addFile($fileinfo->getPathname(), $subPathName);
         }
     }
 }

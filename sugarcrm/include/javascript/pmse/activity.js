@@ -2391,6 +2391,7 @@ AdamActivity.prototype.actionFactory = function (type) {
                     combo_modules.proxy.getData({cardinality: 'one-to-many'}, {
                        success: function(modules) {
                            if (modules && modules.success) {
+                                modules.result = modules.result.splice(1);
                                combo_modules.setOptions(modules.result);
                                initialModule = data.act_field_module || modules.result[0].value;
                                updater_field.proxy.uid = PROJECT_MODULE;
