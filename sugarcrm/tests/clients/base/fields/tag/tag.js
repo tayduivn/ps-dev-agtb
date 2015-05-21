@@ -90,6 +90,7 @@ describe("tag field", function() {
     });
 
     it('adds tag name and id to context on click', function(){
+        var routeSpy = sinon.collection.spy(app.router, 'navigate');
         field = SugarTest.createField('base', fieldName, 'tag', 'list');
         var sampleTag = [{name: 'tag1', id: '1234'}];
         field.model.set(fieldName, sampleTag);
@@ -97,7 +98,9 @@ describe("tag field", function() {
 
         field.$('.ellipsis-inline').click();
 
-        expect(app.controller.context.get('tags')).toEqual(sampleTag);
+        var expectedRoute = 'search/?tags=' + (_.pluck(sampleTag, 'name')).join(',');
+        expect(routeSpy).toHaveBeenCalledOnce();
+        expect(routeSpy).toHaveBeenCalledWith(expectedRoute);
     });
 
     describe('storeValues', function() {

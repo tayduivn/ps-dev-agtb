@@ -207,10 +207,19 @@
                     options = options || {};
                     // Ensure that the term is defined.
                     term = term ? encodeURIComponent(term) : '';
-                    var paramString = '';
+                    var paramString = '?';
+                    var firstParamDefined = false;
                     var modules = options.modules;
                     if (modules && modules.length > 0) {
-                        paramString = '?modules=' + modules.join(',');
+                        paramString = paramString + 'modules=' + modules.join(',');
+                        firstParamDefined = true;
+                    }
+                    var tags = options.tags;
+                    if (tags && tags.length > 0) {
+                        if (firstParamDefined) {
+                            paramString = paramString + '&'
+                        }
+                        paramString = paramString + 'tags=' + tags.join(',');
                     }
                     return app.router.buildRoute('search', term + paramString);
                 }

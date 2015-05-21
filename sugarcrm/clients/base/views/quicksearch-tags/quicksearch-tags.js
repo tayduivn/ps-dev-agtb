@@ -43,8 +43,6 @@
             this.close();
         }, this);
 
-        this.layout.on('navigate:to:searchpage', this.searchPageHandler, this);
-
         this.collection.on('sync', this.quicksearchHandler,  this);
 
         //Listener for receiving focus for up/down arrow navigation:
@@ -60,16 +58,6 @@
             this.$('.active').removeClass('active');
             this.disposeKeyEvents();
         }, this);
-    },
-
-    /**
-     * Handles the layout event indicating navigation to the search page
-     */
-    searchPageHandler: function() {
-        if (_.isArray(this.selectedTags)) {
-            this.context.set('tags',
-                app.utils.deepCopy(this.selectedTags));
-        }
     },
 
     /**
