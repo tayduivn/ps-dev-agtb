@@ -26,24 +26,21 @@ class PMSEProjectCRUDApi extends ModuleApi
                 'path' => array('pmse_Project'),
                 'pathVars' => array('module'),
                 'method' => 'createRecord',
-                'shortHelp' => 'This method creates a new record of the specified type',
-                'longHelp' => 'include/api/help/module_post_help.html',
+//                'shortHelp' => 'This method create a new Process Definition record',
             ),
             'update' => array(
                 'reqType' => 'PUT',
                 'path' => array('pmse_Project','?'),
                 'pathVars' => array('module','record'),
                 'method' => 'updateRecord',
-                'shortHelp' => 'This method updates a record of the specified type',
-                'longHelp' => 'include/api/help/module_record_put_help.html',
+//                'shortHelp' => 'This method updates a Process Definition record',
             ),
             'delete' => array(
                 'reqType' => 'DELETE',
                 'path' => array('pmse_Project','?'),
                 'pathVars' => array('module','record'),
                 'method' => 'deleteRecord',
-                'shortHelp' => 'This method deletes a record of the specified type',
-                'longHelp' => 'include/api/help/module_record_delete_help.html',
+//                'shortHelp' => 'This method deletes a Process Definition record',
             ),
         );
     }

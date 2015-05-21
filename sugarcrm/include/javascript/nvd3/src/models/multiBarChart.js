@@ -71,7 +71,7 @@ nv.models.multiBarChart = function() {
     tooltip = nv.tooltip.show([left, top], content, gravity, null, offsetElement);
   };
 
-  var seriesClick = function(data, e) {
+  var seriesClick = function(data, e, chart) {
     return;
   };
 
@@ -119,8 +119,8 @@ nv.models.multiBarChart = function() {
         container.transition().call(chart);
       };
 
-      chart.dataSeriesActivate = function(e) {
-        var series = e.series;
+      chart.dataSeriesActivate = function(eo) {
+        var series = eo.series;
 
         series.active = (!series.active || series.active === 'inactive') ? 'active' : 'inactive';
         series.values.map(function(d) {
@@ -564,6 +564,9 @@ nv.models.multiBarChart = function() {
       if (scrollEnabled) {
         var diff = (vertical ? innerWidth : innerHeight) - minDimension,
             panMultibar = function() {
+              if (d3.event && d3.event.type === 'click') {
+                return;
+              }
               dispatch.tooltipHide(d3.event);
               scrollOffset = scroll.pan(diff);
               xAxisWrap.select('.nv-axislabel')
@@ -649,9 +652,15 @@ nv.models.multiBarChart = function() {
         container.transition().call(chart);
       });
 
-      dispatch.on('tooltipShow', function(e) {
+      dispatch.on('tooltipShow', function(eo) {
         if (tooltips) {
-          showTooltip(e, that.parentNode, groupTotals);
+          showTooltip(eo, that.parentNode, groupTotals);
+        }
+      });
+
+      dispatch.on('tooltipMove', function(eo) {
+        if (tooltip) {
+          nv.tooltip.position(that.parentNode, tooltip, eo.pos, vertical ? 's' : 'w');
         }
       });
 
@@ -661,40 +670,35 @@ nv.models.multiBarChart = function() {
         }
       });
 
-      dispatch.on('tooltipMove', function(e) {
-        if (tooltip) {
-          nv.tooltip.position(tooltip, e.pos, vertical ? 's' : 'w');
-        }
-      });
-
       // Update chart from a state object passed to event handler
       dispatch.on('changeState', function(e) {
-        if (typeof e.disabled !== 'undefined') {
+        if (typeof eo.disabled !== 'undefined') {
           data.forEach(function(series, i) {
-            series.disabled = e.disabled[i];
+            series.disabled = eo.disabled[i];
           });
-          state.disabled = e.disabled;
+          state.disabled = eo.disabled;
         }
 
-        if (typeof e.stacked !== 'undefined') {
-          multibar.stacked(e.stacked);
-          state.stacked = e.stacked;
+        if (typeof eo.stacked !== 'undefined') {
+          multibar.stacked(eo.stacked);
+          state.stacked = eo.stacked;
         }
 
         container.transition().call(chart);
       });
 
-      dispatch.on('chartClick', function(e) {
+      dispatch.on('chartClick', function(eo) {
         if (controls.enabled()) {
-          controls.dispatch.closeMenu(e);
+          controls.dispatch.closeMenu(eo);
         }
         if (legend.enabled()) {
-          legend.dispatch.closeMenu(e);
+          legend.dispatch.closeMenu(eo);
         }
       });
 
-      multibar.dispatch.on('elementClick', function(e) {
-        seriesClick(data, e);
+      multibar.dispatch.on('elementClick', function(eo) {
+        dispatch.chartClick(eo);
+        seriesClick(data, eo, chart);
       });
 
     });
@@ -706,16 +710,16 @@ nv.models.multiBarChart = function() {
   // Event Handling/Dispatching (out of chart's scope)
   //------------------------------------------------------------
 
-  multibar.dispatch.on('elementMouseover.tooltip', function(e) {
-    dispatch.tooltipShow(e);
+  multibar.dispatch.on('elementMouseover.tooltip', function(eo) {
+    dispatch.tooltipShow(eo);
   });
 
-  multibar.dispatch.on('elementMouseout.tooltip', function(e) {
-    dispatch.tooltipHide(e);
+  multibar.dispatch.on('elementMousemove.tooltip', function(eo) {
+    dispatch.tooltipMove(eo);
   });
 
-  multibar.dispatch.on('elementMousemove.tooltip', function(e) {
-    dispatch.tooltipMove(e);
+  multibar.dispatch.on('elementMouseout.tooltip', function() {
+    dispatch.tooltipHide();
   });
 
   //============================================================

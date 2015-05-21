@@ -253,7 +253,8 @@
         this._currentQueryTerm = term;
         if (this.layout.v2) {
             route = app.utils.GlobalSearch.buildSearchRoute(term, {
-               modules: this.collection.selectedModules
+                modules: this.collection.selectedModules,
+                tags: _.pluck(this.selectedTags, 'name')
             });
         } else {
             var moduleString = this.collection.selectedModules.join(',');
@@ -262,8 +263,6 @@
                 '&m=' + moduleString;
         }
         this.collection.abortFetchRequest();
-
-        this.layout.trigger('navigate:to:searchpage');
         app.router.navigate(route, {trigger: true});
     },
     /**

@@ -12,10 +12,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-if (!defined('sugarEntry') || !sugarEntry) {
-    die('Not A Valid Entry Point');
-}
-
 require_once 'data/BeanFactory.php';
 require_once 'clients/base/api/vCardApi.php';
 require_once 'modules/pmse_Inbox/engine/PMSEProjectImporter.php';
@@ -36,8 +32,8 @@ class PMSEProjectImportExportApi extends vCardApi
                 'pathVars' => array('module', '', ''),
                 'method' => 'projectImport',
                 'rawPostContents' => true,
-                'shortHelp' => 'Imports a project record from a bpm file',
-                'longHelp' => 'modules/ProcessMaker/api/help/file_project_import_post_help.html',
+                'acl' => 'create',
+//                'shortHelp' => 'Imports a Process Definition from a .bpm file',
             ),
             'projectDownload' => array(
                 'reqType' => 'GET',
@@ -46,14 +42,35 @@ class PMSEProjectImportExportApi extends vCardApi
                 'method' => 'projectDownload',
                 'rawReply' => true,
                 'allowDownloadCookie' => true,
-                'shortHelp' => 'An API to download a contact as a vCard.',
-                'longHelp' => 'modules/ProcessMaker/api/help/module_projectdownload_get_help.html',
+                'acl' => 'view',
+//                'shortHelp' => 'Exports a .bpm file with a Process Definition',
             ),
         );
     }
 
+    /**
+     * This method check acl access in custom APIs
+     * @param $api
+     * @param $args
+     * @throws SugarApiExceptionNotAuthorized
+     */
+    private function checkACL($api, $args)
+    {
+        $route = $api->getRequest()->getRoute();
+        if (isset($route['acl'])) {
+            $acl = $route['acl'];
+
+            $seed = BeanFactory::newBean($args['module']);
+
+            if (!$seed->ACLAccess($acl)) {
+                throw new SugarApiExceptionNotAuthorized('No access to view/edit records for module: ' . $args['module']);
+            }
+        }
+    }
+
     public function projectDownload($api, $args)
     {
+        $this->checkACL($api, $args);
         $projectBean = new PMSEProjectExporter();
         $requiredFields = array('record', 'module');
         foreach ($requiredFields as $fieldName) {
@@ -67,6 +84,7 @@ class PMSEProjectImportExportApi extends vCardApi
 
     public function projectImport($api, $args)
     {
+        $this->checkACL($api, $args);
         $this->requireArgs($args, array('module'));
 
         $bean = BeanFactory::getBean($args['module']);
@@ -92,6 +110,8 @@ class PMSEProjectImportExportApi extends vCardApi
                     } else  {
                         throw new SugarApiExceptionRequestMethodFailure('ERROR_UPLOAD_FAILED');
                     }
+                } catch (SugarApiExceptionNotAuthorized $e) {
+                    throw new SugarApiExceptionNotAuthorized('ERROR_UPLOAD_ACCESS_PD');
                 } catch (Exception $e) {
                     throw new SugarApiExceptionRequestMethodFailure('ERROR_UPLOAD_FAILED');
                 }

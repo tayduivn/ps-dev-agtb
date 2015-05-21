@@ -208,64 +208,43 @@ nv.models.funnel = function() {
           .attr('class', 'nv-bar')
           .attr('points', function(d) {
             return pointsTrapezoid(d.y, d.y0, 0, calculatedWidth);
+          })
+          .on('mouseover', function(d, i) {
+            d3.select(this).classed('hover', true);
+            var eo = buildEventObject(d3.event, d, i);
+            dispatch.elementMouseover(eo);
+          })
+          .on('mousemove', function(d, i) {
+            var eo = buildEventObject(d3.event, d, i);
+            dispatch.elementMousemove(eo);
+          })
+          .on('mouseout', function(d, i) {
+            d3.select(this).classed('hover', false);
+            dispatch.elementMouseout();
+          })
+          .on('click', function(d, i) {
+            d3.event.stopPropagation();
+            var eo = buildEventObject(d3.event, d, i);
+            dispatch.elementClick(eo);
+          })
+          .on('dblclick', function(d, i) {
+            d3.event.stopPropagation();
+            var eo = buildEventObject(d3.event, d, i);
+            dispatch.elementDblClick(eo);
           });
 
-      funs
-        .on('mouseover', function(d, i) {
-          d3.select(this).classed('hover', true);
-          dispatch.elementMouseover({
+      function buildEventObject(e, d, i) {
+        return {
             value: getV(d, i),
             point: d,
+            id: id,
             series: data[d.series],
-            pos: [d3.event.pageX, d3.event.pageY],
+            pos: [e.offsetX, e.offsetY],
             pointIndex: i,
             seriesIndex: d.series,
-            e: d3.event
-          });
-        })
-        .on('mouseout', function(d, i) {
-          d3.select(this).classed('hover', false);
-          dispatch.elementMouseout({
-            value: getV(d, i),
-            point: d,
-            series: data[d.series],
-            pointIndex: i,
-            seriesIndex: d.series,
-            e: d3.event
-          });
-        })
-        .on('mousemove', function(d, i) {
-          dispatch.elementMousemove({
-            point: d,
-            pointIndex: i,
-            pos: [d3.event.pageX, d3.event.pageY],
-            id: id
-          });
-        })
-        .on('click', function(d, i) {
-          dispatch.elementClick({
-            value: getV(d, i),
-            point: d,
-            series: data[d.series],
-            pos: [d3.event.pageX, d3.event.pageY],
-            pointIndex: i,
-            seriesIndex: d.series,
-            e: d3.event
-          });
-          d3.event.stopPropagation();
-        })
-        .on('dblclick', function(d, i) {
-          dispatch.elementDblClick({
-            value: getV(d, i),
-            point: d,
-            series: data[d.series],
-            pos: [d3.event.pageX, d3.event.pageY],
-            pointIndex: i,
-            seriesIndex: d.series,
-            e: d3.event
-          });
-          d3.event.stopPropagation();
-        });
+            e: e
+          };
+      }
 
       //------------------------------------------------------------
       // Append containers for labels

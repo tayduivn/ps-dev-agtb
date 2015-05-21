@@ -95,15 +95,22 @@
         return _.map(value, function (item) {
             var forceDownload = !item.isImage,
                 mimeType = item.isImage ? 'image' : 'application/octet-stream',
+                fileName = item.name.substring(0, item.name.lastIndexOf(".")),
+                fileExt = item.name.substring(item.name.lastIndexOf(".") + 1).toLowerCase(),
                 urlOpts = {
                     module: this.def.module,
                     id: item.id,
                     field: this.def.modulefield
                 };
+
+            fileExt = !_.isEmpty(fileExt) ? '.' + fileExt : fileExt;
+
             return _.extend(
                 {},
                 {
                     mimeType: mimeType,
+                    fileName: fileName,
+                    fileExt: fileExt,
                     url: app.api.buildFileURL(
                         urlOpts,
                         {
@@ -136,7 +143,7 @@
             this.$node.select2({
                 allowClear: true,
                 multiple: true,
-                containerCssClass: 'select2-choices-pills-close span12 with-padding',
+                containerCssClass: 'select2-choices-pills-close span12 with-padding kb-attachmentlist-details-view',
                 tags: [],
                 formatSelection: _.bind(this.formatSelection, this),
                 width: 'off',
@@ -144,7 +151,7 @@
                     return m;
                 }
             });
-            $(this.$node.data('select2').containerSelector).attr('data-attachable', true);
+            $(this.$node.data('select2').container).attr('data-attachable', true);
             this.refreshFromModel();
         }
     },

@@ -275,67 +275,47 @@ nv.models.multiBar = function() {
         .attr(dimX, 0)
         .attr(dimY, 0); //x.rangeBand() / (stacked ? 1 : data.length)
 
+      function buildEventObject(e, d, i, j) {
+        return {
+            value: getY(d, i),
+            point: d,
+            series: data[j],
+            pointIndex: i,
+            seriesIndex: j,
+            pos: [e.offsetX, e.offsetY],
+            id: id,
+            e: e
+          };
+      }
+
       bars
         .on('mouseover', function(d, i, j) { //TODO: figure out why j works above, but not here
           d3.select(this).classed('hover', true);
-          dispatch.elementMouseover({
-            value: getY(d, i),
-            point: d,
-            series: data[j],
-            pos: [d3.event.pageX, d3.event.pageY],
-            pointIndex: i,
-            seriesIndex: j,
-            e: d3.event
-          });
+          var eo = buildEventObject(d3.event, d, i, j);
+          dispatch.elementMouseover(eo);
+        })
+        .on('mousemove', function(d, i, j) {
+          var eo = buildEventObject(d3.event, d, i, j);
+          dispatch.elementMousemove(eo);
         })
         .on('mouseout', function(d, i, j) {
           d3.select(this).classed('hover', false);
-          dispatch.elementMouseout({
-            value: getY(d, i),
-            point: d,
-            series: data[j],
-            pointIndex: i,
-            seriesIndex: j,
-            e: d3.event
-          });
-        })
-        .on('mousemove', function(d, i, j) {
-          dispatch.elementMousemove({
-            point: d,
-            pointIndex: i,
-            pos: [d3.event.pageX, d3.event.pageY],
-            id: id
-          });
+          dispatch.elementMouseout();
         })
         .on('click', function(d, i, j) {
-          dispatch.elementClick({
-            value: getY(d, i),
-            point: d,
-            series: data[j],
-            pos: [
-              x(getX(d, i)) + (x.rangeBand() * (stacked ? data.length / 2 : j + 0.5) / data.length),
-              y(getY(d, i) + (stacked ? d.y0 : 0))
-            ],  // TODO: Figure out why the value appears to be shifted
-            pointIndex: i,
-            seriesIndex: j,
-            e: d3.event
-          });
           d3.event.stopPropagation();
+          var eo = buildEventObject(d3.event, d, i, j);
+          dispatch.elementClick(eo);
         })
         .on('dblclick', function(d, i, j) {
-          dispatch.elementDblClick({
-            value: getY(d, i),
-            point: d,
-            series: data[j],
-            pos: [
-              x(getX(d, i)) + (x.rangeBand() * (stacked ? data.length / 2 : j + 0.5) / data.length),
-              y(getY(d, i) + (stacked ? d.y0 : 0))
-            ],  // TODO: Figure out why the value appears to be shifted
-            pointIndex: i,
-            seriesIndex: j,
-            e: d3.event
-          });
           d3.event.stopPropagation();
+          // I have no clue why this was here
+          // pos = [
+          //     x(getX(d, i)) + (x.rangeBand() * (stacked ? data.length / 2 : j + 0.5) / data.length),
+          //     y(getY(d, i) + (stacked ? d.y0 : 0))
+          //   ];
+          var eo = buildEventObject(d3.event, d, i, j);
+          dispatch.elementDblClick(eo);
         });
 
 

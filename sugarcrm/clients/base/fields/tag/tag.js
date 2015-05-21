@@ -363,11 +363,10 @@
      */
     linkToSearch: function(e) {
         var tagName = e.currentTarget.dataset['tag'];
-        var tagId = e.currentTarget.dataset['tagId'];
-        var route = app.router.buildRoute('search');
+        var route = app.utils.GlobalSearch.buildSearchRoute('', {
+            tags: [tagName]
+        });
 
-        // add the tag name and tag id to the context so they can be used while searching
-        app.controller.context.set('tags',[{name: tagName, id: tagId}]);
         app.router.navigate(route, {trigger: true});
     }
 

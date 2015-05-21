@@ -226,7 +226,7 @@ class KBContent extends SugarBean {
             $this->active_rev = (int) empty($this->kbarticle_id);
         }
 
-        $this->checkActivRev();
+        $this->checkActiveRev();
 
         return parent::save($check_notify);
     }
@@ -252,7 +252,7 @@ class KBContent extends SugarBean {
             if ($result) {
                 $bean = BeanFactory::getBean('KBContents', $result[0]['id']);
                 if ($bean->id) {
-                    $this->resetActivRev();
+                    $this->resetActiveRev();
 
                     $bean->active_rev = 1;
                     $bean->save();
@@ -292,14 +292,14 @@ class KBContent extends SugarBean {
      * Marks all previous published revisions as expired.
      * @param SugarBean $bean
      */
-    protected function checkActivRev($bean = null)
+    protected function checkActiveRev($bean = null)
     {
         $bean = ($bean === null) ? $this : $bean;
         if (empty($bean->kbarticle_id)) {
             $bean->active_rev = 1;
         } else {
             if ($bean->isPublished()) {
-                $bean->resetActivRev();
+                $bean->resetActiveRev();
                 $bean->active_rev = 1;
                 $bean->expirePublished();
                 if (empty($bean->active_date)) {
@@ -310,7 +310,7 @@ class KBContent extends SugarBean {
                 if ($activeRevisionStatus &&
                     !in_array($activeRevisionStatus['status'], static::getPublishedStatuses())
                 ) {
-                    $bean->resetActivRev();
+                    $bean->resetActiveRev();
                     $bean->active_rev = 1;
                     if (empty($bean->active_date)) {
                         $bean->active_date = $bean->db->convert($GLOBALS['timedate']->nowDbDate(), 'datetime');
@@ -353,16 +353,23 @@ class KBContent extends SugarBean {
      * Reset active revision status for all revisions in article.
      * @param SugarBean $bean
      */
-    protected function resetActivRev($bean = null)
+    protected function resetActiveRev($bean = null)
     {
+        $query = new SugarQuery();
         $bean = ($bean === null) ? $this : $bean;
-        $query = "UPDATE {$bean->table_name}
-                    SET active_rev = 0
-                    WHERE
-                      kbdocument_id = {$bean->db->quoted($bean->kbdocument_id)} AND
-                      kbarticle_id = {$bean->db->quoted($bean->kbarticle_id)}
-                ";
-        $bean->db->query($query);
+        $query->from($bean);
+        $query->select(array('id'));
+        $query->where()
+            ->equals('kbdocument_id', $bean->kbdocument_id)
+            ->equals('kbarticle_id', $bean->kbarticle_id)
+            ->notEquals('id', $bean->id);
+
+        $result = $query->execute();
+        foreach ($result as $row) {
+            $oldRevBean = BeanFactory::getBean($bean->module_name, $row['id']);
+            $oldRevBean->active_rev = 0;
+            $oldRevBean->save();
+        }
     }
 
     /**
@@ -374,20 +381,23 @@ class KBContent extends SugarBean {
         $bean = ($bean === null) ? $this : $bean;
         $expDate = $this->db->convert("'".$GLOBALS['timedate']->nowDb()."'", 'datetime');
         $statuses = static::getPublishedStatuses();
-        $db = DBManagerFactory::getInstance();
-        foreach ($statuses as $key => $status) {
-            $statuses[$key] = $db->quoted($status);
+
+        $query = new SugarQuery();
+        $query->from($bean);
+        $query->select(array('id'));
+        $query->where()
+            ->equals('kbdocument_id', $bean->kbdocument_id)
+            ->equals('kbarticle_id', $bean->kbarticle_id)
+            ->notEquals('id', $bean->id)
+            ->in('status', $statuses);
+
+        $result = $query->execute();
+        foreach ($result as $row) {
+            $oldStatusBean = BeanFactory::getBean($bean->module_name, $row['id']);
+            $oldStatusBean->exp_date = $expDate;
+            $oldStatusBean->status = static::ST_EXPIRED;
+            $oldStatusBean->save();
         }
-        $statuses = implode(",", $statuses);
-        $query = "UPDATE {$bean->table_name}
-                    SET exp_date = {$expDate}, status = {$db->quoted(static::ST_EXPIRED)}
-                    WHERE
-                      kbdocument_id = {$db->quoted($bean->kbdocument_id)} AND
-                      kbarticle_id = {$db->quoted($bean->kbarticle_id)} AND
-                      id != {$db->quoted($bean->id)} AND
-                      status IN ({$statuses})
-                ";
-        $bean->db->query($query);
     }
 
     /**

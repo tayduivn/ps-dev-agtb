@@ -31,5 +31,6 @@ class PMSEEmailTemplateImporter extends PMSEImporter
         $this->name = 'name';
         $this->id = 'id';
         $this->extension = 'pet';
+        $this->module = 'base_module';
     }
 }

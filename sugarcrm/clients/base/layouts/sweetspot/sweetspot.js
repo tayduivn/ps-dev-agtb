@@ -26,7 +26,7 @@
 
         app.shortcuts.registerGlobal({
             id: 'Sweetspot:Toggle',
-            keys: 'shift+space',
+            keys: 'mod+shift+space',
             component: this,
             description: 'LBL_SHORTCUT_SWEETSPOT',
             callOnFocus: true,

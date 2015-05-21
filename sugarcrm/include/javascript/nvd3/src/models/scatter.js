@@ -187,6 +187,18 @@ nv.models.scatter = function() {
           })
         );
 
+        function buildEventObject(e, d, i, j) {
+          return {
+              series: data[j],
+              point: data[j].values[i],
+              pointIndex: i,
+              seriesIndex: j,
+              pos: [e.offsetX, e.offsetY],
+              id: id,
+              e: e
+            };
+        }
+
         //inject series and point index for reference into voronoi
         if (useVoronoi === true) {
           if (clipVoronoi) {
@@ -220,10 +232,10 @@ nv.models.scatter = function() {
           }
 
           var bounds = d3.geom.polygon([
-              [-10,-10],
-              [-10,height + 10],
-              [width + 10,height + 10],
-              [width + 10,-10]
+              [-10, -10],
+              [-10, height + 10],
+              [width + 10, height + 10],
+              [width + 10, -10]
           ]);
 
           var voronoi = d3.geom.voronoi(vertices).map(function(d, i) {
@@ -231,125 +243,54 @@ nv.models.scatter = function() {
                 'data': bounds.clip(d),
                 'series': vertices[i][2],
                 'point': vertices[i][3]
-              }
+              };
             }).filter(function(d) { return d.series !== null; });
 
           var pointPaths = wrap.select('.nv-point-paths').selectAll('path')
               .data(voronoi);
           pointPaths.enter().append('path')
-              .attr('class', function(d,i) { return 'nv-path-'+i; });
+              .attr('class', function(d, i) { return 'nv-path-' + i; });
           pointPaths.exit().remove();
           pointPaths
               .attr('d', function(d) { return 'M' + d.data.join('L') + 'Z'; });
 
+
           pointPaths
               .on('click', function(d) {
                 if (needsUpdate) return 0;
-                var series = data[d.series],
-                    point  = series.values[d.point];
-                dispatch.elementClick({
-                  point: point,
-                  series: series,
-                  pos: [x(getX(point, d.point)) + margin.left, y(getY(point, d.point)) + margin.top],
-                  seriesIndex: d.series,
-                  pointIndex: d.point
-                });
+                dispatch.elementClick(buildEventObject(d3.event, d, d.point, d.series));
               })
               .on('mouseover', function(d) {
                 if (needsUpdate) return 0;
-                var series = data[d.series],
-                    point  = series.values[d.point];
-                dispatch.elementMouseover({
-                  point: point,
-                  series: series,
-                  pos: [d3.event.pageX, d3.event.pageY],
-                  seriesIndex: d.series,
-                  pointIndex: d.point
-                });
+                dispatch.elementMouseover(buildEventObject(d3.event, d, d.point, d.series));
               })
               .on('mouseout', function(d, i) {
                 if (needsUpdate) return 0;
-                var series = data[d.series],
-                    point  = series.values[d.point];
-                dispatch.elementMouseout({
-                  point: point,
-                  series: series,
-                  seriesIndex: d.series,
-                  pointIndex: d.point
-                });
+                dispatch.elementMouseout(buildEventObject(d3.event, d, d.point, d.series));
               })
-              .on('mousemove', function(d,i){
-                var series = data[d.series],
-                    point  = series.values[d.point];
-                dispatch.elementMousemove({
-                  point: point,
-                  pointIndex: d.point,
-                  pos: [d3.event.pageX, d3.event.pageY],
-                  id: id
-                });
+              .on('mousemove', function(d, i) {
+                dispatch.elementMousemove(buildEventObject(d3.event, d, d.point, d.series));
               });
         } else {
-          /*
-          // bring data in form needed for click handlers
-          var dataWithPoints = vertices.map(function(d, i) {
-              return {
-                'data': d,
-                'series': vertices[i][2],
-                'point': vertices[i][3]
-              }
-            });
-           */
-
           // add event handlers to points instead voronoi paths
           wrap.select('.nv-groups').selectAll('.nv-group')
             .selectAll('.nv-point')
               //.data(dataWithPoints)
               .style('pointer-events', 'auto') // recativate events, disabled by css
-              .on('click', function(d,i) {
-                //nv.log('test', d, i);
+              .on('click', function(d, i) {
                 if (needsUpdate || !data[d.series]) return 0; //check if this is a dummy point
-                var series = data[d.series],
-                    point  = series.values[i];
-                dispatch.elementClick({
-                  point: point,
-                  series: series,
-                  pos: [x(getX(point, i)) + margin.left, y(getY(point, i)) + margin.top],
-                  seriesIndex: d.series,
-                  pointIndex: i
-                });
+                dispatch.elementClick(buildEventObject(d3.event, d, i, d.series));
               })
-              .on('mouseover', function(d,i) {
+              .on('mouseover', function(d, i) {
                 if (needsUpdate || !data[d.series]) return 0; //check if this is a dummy point
-                var series = data[d.series],
-                    point  = series.values[i];
-                dispatch.elementMouseover({
-                  point: point,
-                  series: series,
-                  pos: [d3.event.pageX, d3.event.pageY],
-                  seriesIndex: d.series,
-                  pointIndex: i
-                });
+                dispatch.elementMouseover(buildEventObject(d3.event, d, i, d.series));
               })
-              .on('mouseout', function(d,i) {
+              .on('mouseout', function(d, i) {
                 if (needsUpdate || !data[d.series]) return 0; //check if this is a dummy point
-                var series = data[d.series],
-                    point  = series.values[i];
-                dispatch.elementMouseout({
-                  point: point,
-                  series: series,
-                  seriesIndex: d.series,
-                  pointIndex: i
-                });
+                dispatch.elementMouseout(buildEventObject(d3.event, d, i, d.series));
               })
-              .on('mousemove', function(d,i){
-                var series = data[d.series],
-                    point  = series.values[i];
-                dispatch.elementMousemove({
-                  point: point,
-                  pointIndex: i,
-                  pos: [d3.event.pageX, d3.event.pageY],
-                  id: id
-                });
+              .on('mousemove', function(d, i) {
+                dispatch.elementMousemove(buildEventObject(d3.event, d, i, d.series));
               });
         }
 

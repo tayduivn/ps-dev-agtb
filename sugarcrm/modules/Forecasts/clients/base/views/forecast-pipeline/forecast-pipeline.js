@@ -82,7 +82,7 @@
             .colorData('class', {step: 2})
             .fmtValueLabel(function(d) {
                 var y = d.label || d;
-                return app.currency.formatAmountLocale(y, app.currency.getBaseCurrencyId()).replace(/\,00$|\.00$/,'');
+                return app.currency.formatAmountLocale(y, app.currency.getBaseCurrencyId()).replace(/\,00$|\.00$/, '');
             })
             .strings({
                 legend: {

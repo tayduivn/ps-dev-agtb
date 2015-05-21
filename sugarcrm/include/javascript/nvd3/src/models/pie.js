@@ -19,6 +19,7 @@ nv.models.pie = function() {
       donutLabelsOutside = true,
       labelThreshold = 0.01, //if slice percentage is under this, don't show label
       donut = false,
+      hole = false,
       labelSunbeamLayout = false,
       leaderLength = 20,
       textOffset = 5,
@@ -97,57 +98,41 @@ nv.models.pie = function() {
 
       slices.exit().remove();
 
+      function buildEventObject(e, d, i) {
+        return {
+            label: getX(d.data),
+            value: getY(d.data),
+            point: d.data,
+            pointIndex: i,
+            pos: [e.offsetX, e.offsetY],
+            id: id,
+            e: e
+          };
+      }
+
       var ae = slices.enter().append('g')
             .on('mouseover', function(d, i) {
               d3.select(this).classed('hover', true);
-              dispatch.elementMouseover({
-                label: getX(d.data),
-                value: getY(d.data),
-                point: d.data,
-                pointIndex: i,
-                pos: [d3.event.pageX, d3.event.pageY],
-                id: id
-              });
+              var eo = buildEventObject(d3.event, d, i);
+              dispatch.elementMouseover(eo);
+            })
+            .on('mousemove', function(d, i) {
+              var eo = buildEventObject(d3.event, d, i);
+              dispatch.elementMousemove(eo);
             })
             .on('mouseout', function(d, i) {
               d3.select(this).classed('hover', false);
-              dispatch.elementMouseout({
-                label: getX(d.data),
-                value: getY(d.data),
-                point: d.data,
-                index: i,
-                id: id
-              });
-            })
-            .on('mousemove', function(d, i) {
-              dispatch.elementMousemove({
-                point: d,
-                pointIndex: i,
-                pos: [d3.event.pageX, d3.event.pageY],
-                id: id
-              });
+              dispatch.elementMouseout();
             })
             .on('click', function(d, i) {
-              dispatch.elementClick({
-                label: getX(d.data),
-                value: getY(d.data),
-                point: d.data,
-                index: i,
-                pos: d3.event,
-                id: id
-              });
               d3.event.stopPropagation();
+              var eo = buildEventObject(d3.event, d, i);
+              dispatch.elementClick(eo);
             })
             .on('dblclick', function(d, i) {
-              dispatch.elementDblClick({
-                label: getX(d.data),
-                value: getY(d.data),
-                point: d.data,
-                index: i,
-                pos: d3.event,
-                id: id
-              });
               d3.event.stopPropagation();
+              var eo = buildEventObject(d3.event, d, i);
+              dispatch.elementDblClick(eo);
             });
 
           ae.append('path')

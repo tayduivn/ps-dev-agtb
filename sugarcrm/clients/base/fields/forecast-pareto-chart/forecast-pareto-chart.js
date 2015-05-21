@@ -260,6 +260,37 @@
             .quotaTickFormat(function(d) {
                 return app.currency.getCurrencySymbol(app.currency.getBaseCurrencyId()) + d3.format(',.3s')(d);
             })
+            //TODO: only do barClick if dashlet in Forecasts intelligence pane
+            .barClick(function(data, eo, chart, container) {
+                var d = eo.series,
+                    selectedSeries = eo.seriesIndex;
+
+                d.disabled = !d.disabled;
+
+                chart.dispatch.tooltipHide();
+
+                if (!chart.stacked()) {
+                    data.filter(function(d) {
+                        return d.series === selectedSeries && d.type === 'line';
+                    }).map(function(d) {
+                        d.disabled = !d.disabled;
+                        return d;
+                    });
+                }
+
+                // if there are no enabled data series, enable them all
+                if (!data.filter(function(d) {
+                    return !d.disabled && d.type === 'bar';
+                }).length) {
+                    data.map(function(d) {
+                        d.disabled = false;
+                        container.selectAll('.nv-series').classed('disabled', false);
+                        return d;
+                    });
+                }
+
+                container.call(chart);
+            })
             .id(this.chartId)
             .strings({
                 legend: {

@@ -41,8 +41,7 @@ class PMSEImageGeneratorApi extends FileTempApi
                 'method' => 'getFile',
                 'rawReply' => true,
                 'allowDownloadCookie' => true,
-                'shortHelp' => 'Gets the contents of a single file related to a field for a module record.',
-                'longHelp' => 'include/api/help/module_record_file_field_get_help.html',
+//                'shortHelp' => 'Returns the process status image file',
             ),
             'getTempImage' => array(
                 'reqType' => 'GET',
@@ -51,8 +50,7 @@ class PMSEImageGeneratorApi extends FileTempApi
                 'method' => 'getTempImage',
                 'rawReply' => true,
                 'allowDownloadCookie' => true,
-                'shortHelp' => 'Reads a temporary image and deletes it.',
-                'longHelp' => 'include/api/help/module_temp_file_field_temp_id_get_help.html',
+//                'shortHelp' => 'Returns the process status image file from tmp folder',
             ),
         );
     }

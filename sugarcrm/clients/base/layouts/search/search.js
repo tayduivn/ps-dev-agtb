@@ -38,11 +38,10 @@
          */
         this.selectedFacets = {};
 
-
-        this.context.on('change:searchTerm change:module_list change:tags', function() {
+        this.context.on('search:fire:new', function() {
             this.search();
         }, this);
-        
+
         this.context.on('facet:apply', this.filter, this);
 
         this.collection.on('sync', function(collection) {

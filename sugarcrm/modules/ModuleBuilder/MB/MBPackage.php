@@ -296,14 +296,10 @@ function buildInstall($path){
         }else if(file_exists('LICENSE')){
             copy('LICENSE', $this->getBuildDir() . '/LICENSE');
         }
-        $package_dir = $this->getPackageDir();
         $date = date('Y_m_d_His');
         $zipDir = $this->getZipDir();
         if(!file_exists($zipDir))mkdir_recursive($zipDir);
-        $cwd = getcwd();
-        chdir($this->getBuildDir());
-        zip_dir('.',$cwd . '/'. $zipDir. '/'. $this->name. $date. '.zip');
-        chdir($cwd);
+        zip_dir($this->getBuildDir(), $zipDir . '/' . $this->name . $date . '.zip');
         if($export){
             header('Location:' . $zipDir. '/'. $this->name. $date. '.zip');
         }

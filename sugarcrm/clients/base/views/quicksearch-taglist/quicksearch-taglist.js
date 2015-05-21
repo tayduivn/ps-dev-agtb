@@ -27,7 +27,7 @@
     initialize: function(options) {
         this._super('initialize', [options]);
 
-        this.tags = this.layout.selectedTags || [];
+        this.selectedTags = this.layout.selectedTags || [];
 
         this.activeIndex = null;
 
@@ -41,7 +41,7 @@
             if (next) {
                 this.activeIndex = 0;
             } else {
-                this.activeIndex = this.tags.length - 1;
+                this.activeIndex = this.selectedTags.length - 1;
             }
             this._highlightActive();
             this.attachKeydownEvent();
@@ -53,17 +53,69 @@
             this.$('.tag-wrapper').removeClass('highlight');
             this.disposeKeydownEvent();
         }, this);
+
+        app.events.on('app:sync:complete', function() {
+            this.layout.off('route:search', this.populateTagsFromContext);
+            this.layout.on('route:search', this.populateTagsFromContext, this);
+        }, this);
+
+        this.context.on('tagsearch:fire:new', this.populateTagsFromContext, this);
+    },
+
+    /**
+     * Populate the taglist with the tags specified in the context. Call a search if param is true
+     */
+    populateTagsFromContext: function() {
+        var tagNames = this.context.get('tagParams');
+        // If no tagNames, just move onto the regular search
+        if (!tagNames || !tagNames.length) {
+            this.selectedTags.splice(0, this.selectedTags.length);
+            this.render();
+            this.context.set('tags', []);
+            this.context.trigger('search:fire:new');
+            return;
+        }
+        var tags = app.data.createBeanCollection('Tags');
+        var self = this;
+        var tagNamesLowerCase = _.map(tagNames, function(tagName) {
+            return tagName.toLowerCase();
+        });
+
+        tags.filterDef = {
+            'filter': [{
+                'name_lower': { '$in': tagNamesLowerCase }
+            }]
+        };
+
+        tags.fetch({
+            // Arbitrary large number, in case user wants to search by more than 20 tags.
+            limit: 100,
+            success: function(collection) {
+                //Remove internal tag list and then re add the ones that should be there
+                self.selectedTags.splice(0, self.selectedTags.length);
+                _.each(collection.models, function(tag) {
+                    self.selectedTags.push({id: tag.get('id'), name: tag.get('name')});
+                });
+                self.render();
+
+                //Push completed tag objects to context
+                self.context.set('tags', self.selectedTags);
+                self.context.trigger('search:fire:new');
+            },
+            error: function(e) {
+                app.alert.show('collections_error', {
+                    level: 'error',
+                    messages: 'LBL_TAG_FETCH_ERROR'
+                });
+            }
+        });
     },
 
     /**
      * Returns true if there are tags to focus. Otherwise, false.
      */
     isFocusable: function() {
-        if (this.tags && this.tags.length) {
-            return true;
-        } else {
-            return false;
-        }
+        return this.selectedTags && this.selectedTags.length;
     },
 
     /**
@@ -111,7 +163,7 @@
     handleBackspace: function() {
         this.removeTag(false);
 
-        if (this.tags.length) {
+        if (this.selectedTags.length) {
             // If there is a tag to the left of the removed tag, highlight it
             // If tagIndex is 0, highlight whatever is left at index 0.
             if (this.activeIndex > 0) {
@@ -131,10 +183,10 @@
     addTag: function(tag) {
         if (tag && tag.name) {
             // If tag already exists do nothing
-            if (!_.find(this.tags, function(tagToCheck) {
+            if (!_.find(this.selectedTags, function(tagToCheck) {
                 return tagToCheck.name === tag.name;
             })) {
-                this.tags.push(tag);
+                this.selectedTags.push(tag);
                 this.render();
                 this.layout.trigger('quicksearch:fire:search', true);
             }
@@ -143,19 +195,20 @@
 
     /**
      * Remove a specific tag
-     * @param {jQuery} $tag - jQuery representation of tag pill. Optional (if it doesn't exist, default to activeIndex)
+     * @param {jQuery || boolean} $tagParam - jQuery representation of tag pill. Optional
+     * (if it doesn't exist, default to activeIndex)
      */
-    removeTag: function($tag) {
+    removeTag: function($tagParam) {
         // Only continue if we have either a $tag param or an activeIndex
-        if (!$tag && _.isNull(this.activeIndex)) {
+        if (!$tagParam && _.isNull(this.activeIndex)) {
             return;
         }
 
-        var $tag = $tag || this.$('.tag-wrapper:eq(' + this.activeIndex + ')');
+        var $tag = $tagParam || this.$('.tag-wrapper:eq(' + this.activeIndex + ')');
 
         // Remove the selected tag from the internal tag list
-        var index = _.indexOf(_.pluck(this.tags, 'name'), $tag.attr('tag-name'));
-        this.tags.splice(index, 1);
+        var index = _.indexOf(_.pluck(this.selectedTags, 'name'), $tag.attr('tag-name'));
+        this.selectedTags.splice(index, 1);
 
         // Remove the selected tag from the DOM
         $tag.remove();
@@ -183,7 +236,7 @@
      */
     removeAllTags: function() {
         // Remove all tags from the tags array (and the layout tag array since other views share that)
-        this.tags.splice(0, this.tags.length);
+        this.selectedTags.splice(0, this.selectedTags.length);
         this.activeIndex = null;
         this.$('.tag-wrapper').remove();
     },
@@ -202,7 +255,7 @@
         $tag.addClass('highlight');
 
         // Set activeIndex
-        this.activeIndex = _.indexOf(_.pluck(this.tags, 'name'), $tag.attr('tag-name'));
+        this.activeIndex = _.indexOf(_.pluck(this.selectedTags, 'name'), $tag.attr('tag-name'));
     },
 
     /**
@@ -225,7 +278,7 @@
      */
     moveRight: function() {
         // check to make sure we will be in bounds.
-        if (this.activeIndex < this.tags.length - 1) {
+        if (this.activeIndex < this.selectedTags.length - 1) {
             // We're in bounds, just go to the next element in this view.
             this.activeIndex++;
             this._highlightActive();
