@@ -1,10 +1,10 @@
 describe('View.Fields.Base.BadgeSelectField', function() {
-    var app, field, items, module;
+    var app, field, items;
 
-    module = 'Calls';
     items = {
-        Inbound: 'Inbound',
-        Outbound: 'Outbound'
+        success: 'Success',
+        important: 'Important',
+        foo: 'Foo Moo'
     };
 
     beforeEach(function() {
@@ -29,29 +29,48 @@ describe('View.Fields.Base.BadgeSelectField', function() {
         Handlebars.templates = {};
     });
 
-    describe('when the status field is in detail mode', function() {
-        beforeEach(function() {
-            field = SugarTest.createField('base', 'direction', 'badge-select', 'detail', undefined, module);
-            field.items = items;
-        });
-
-        using('detail modes', ['detail', 'list'], function(mode) {
-            it('should be a boostrap label', function() {
-                field.action = mode;
-                field.model.set(field.name, _.keys(field.items)[0]);
-                field.render();
-                expect(field.$('.label').length).toBe(1);
-            });
-        });
-    });
-
     describe('when the status field is in edit mode', function() {
         it('should be an enum', function() {
-            field = SugarTest.createField('base', 'direction', 'badge-select', 'edit', undefined, module);
+            field = SugarTest.createField('base', 'direction', 'badge-select', 'edit');
             field.items = items;
             field.action = 'edit';
             field.render();
             expect(field.$('input.select2').length).toBe(1);
         });
     });
+
+    describe('when the status field is in detail mode', function() {
+        var checkClasses = function(plain, success, important) {
+            expect(field.$('.label').length).toBe(plain);
+            expect(field.$('.label-success').length).toBe(success);
+            expect(field.$('.label-important').length).toBe(important);
+        };
+
+        beforeEach(function() {
+            field = SugarTest.createField('base', 'status', 'badge-select', 'detail');
+            field.items = items;
+        });
+
+        using('detail modes', ['detail', 'list'], function(mode) {
+            it('should be a bootstrap label', function() {
+                field.action = mode;
+                field.model.set('status', 'foo');
+                field.render();
+                checkClasses(1, 0, 0);
+            });
+        });
+
+        it('should be a success bootstrap label when the status is success', function() {
+            field.model.set('status', 'success');
+            field.render();
+            checkClasses(1, 1, 0);
+        });
+
+        it('should be an important bootstrap label when the status is important', function() {
+            field.model.set('status', 'important');
+            field.render();
+            checkClasses(1, 0, 1);
+        });
+    });
+
 });
