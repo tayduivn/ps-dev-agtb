@@ -32,7 +32,8 @@
              * @return string message that was set
              */
             removeDelete: function() {
-                var sales_stage_won = null,
+                var config = app.metadata.getModule('Forecasts', 'config') || {},
+                    sales_stage_won = null,
                     sales_stage_lost = null,
                     label_key = '_STAGE',
                     closed_RLI_count = 0,
@@ -41,8 +42,8 @@
                     button = null;
 
                 if (_.contains(["list:deleterow:fire", "button:delete_button:click"], this.def.event)) {
-                    sales_stage_won = app.metadata.getModule('Forecasts', 'config').sales_stage_won;
-                    sales_stage_lost = app.metadata.getModule('Forecasts', 'config').sales_stage_lost;
+                    sales_stage_won = config.sales_stage_won || ['Closed Won'];
+                    sales_stage_lost = config.sales_stage_lost || ['Closed Lost'];
                     //BEGIN SUGARCRM flav=ent ONLY
                     if (app.metadata.getModule('Opportunities', 'config').opps_view_by === 'RevenueLineItems') {
                         //ENT allows sales_status, so we need to check to see if this module has it and use it
