@@ -144,7 +144,7 @@
                     return m;
                 }
             });
-            $(this.$node.data('select2').containerSelector).attr('data-attachable', true);
+            $(this.$node.data('select2').container).attr('data-attachable', true);
             this.refreshFromModel();
         }
     },
