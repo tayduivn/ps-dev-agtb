@@ -26,6 +26,9 @@
         'click [data-toggle=dropdown]': 'moduleDropdownClick'
     },
 
+    // List of modules that should not be included in the module list
+    blacklistModules: ['Tags'],
+
     /**
      * @inheritDoc
      */
@@ -289,7 +292,8 @@
         var modules = app.metadata.getModules() || {};
         _.each(modules, function(meta, module) {
             // Check that the module is searchable and accessible.
-            if (meta.globalSearchEnabled && app.acl.hasAccess.call(app.acl, 'view', module)) {
+            if (meta.globalSearchEnabled && app.acl.hasAccess.call(app.acl, 'view', module)
+                    && !_.contains(this.blacklistModules, module)) {
                 var moduleModel = new Backbone.Model({id: module, selected: false});
                 this.searchModuleFilter.add(moduleModel);
             }
