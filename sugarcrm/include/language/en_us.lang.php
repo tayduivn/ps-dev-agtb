@@ -4884,7 +4884,7 @@ $app_strings = array (
     'LBL_ALERT_TITLE_ERROR' => 'Error:',
     'LBL_ALERT_TITLE_LOADING' => 'Loading',
     'LBL_ALERT_BROWSER_NOT_SUPPORTED' => 'Your browser version is no longer supported or you are using an unsupported browser.',
-    'LBL_ALERT_BROWSER_SUPPORT' => 'The following browser versions are recommended: <ul><li>Internet Explorer 9</li><li>Firefox 35</li><li>Safari 7.1</li><li>Chrome 41</li></ul>',
+    'LBL_ALERT_BROWSER_SUPPORT' => 'The following browser versions are recommended: <ul><li>Internet Explorer 11</li><li>Firefox 38</li><li>Safari 7.1</li><li>Chrome 42</li></ul>',
 
     //opportunity chart
     'TPL_OVERWRITE_POPULATED_DATA_CONFIRM' => 'The selected record will overwrite the following values: {{values}}. Cancel to keep existing values. Confirm to overwrite with new values.',
