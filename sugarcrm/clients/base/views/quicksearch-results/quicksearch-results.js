@@ -14,10 +14,6 @@
  * @extends View.View
  */
 ({
-    events: {
-        'click .view-all-results': 'viewAllResultsClicked'
-    },
-
     /**
      * @inheritDoc
      */
@@ -39,6 +35,8 @@
         // FIXME Sidecar should be modified to allow multiple top level contexts. When this happens, quick search
         // should use that context instead of layout.collection.
         this.collection = this.layout.collection || app.data.createMixedBeanCollection();
+
+        this.selectedTags = this.layout.selectedTags || [];
 
         /**
          * Stores the index of the currently highlighted list element.
@@ -135,7 +133,8 @@
 
             // build the link for View all results
             this.searchLink = app.utils.GlobalSearch.buildSearchRoute(collection.query, {
-                modules: this.collection.selectedModules
+                modules: this.collection.selectedModules,
+                tags: _.pluck(this.selectedTags, 'name')
             });
             this.activeIndex = null;
             this.render();
@@ -276,14 +275,6 @@
                 this.close();
                 this.trigger('navigate:focus:lost');
         }
-    },
-
-    /**
-     * click event handler for the view all results link
-     * @param e
-     */
-    viewAllResultsClicked: function(e) {
-        this.layout.trigger('navigate:to:searchpage');
     },
 
     /**

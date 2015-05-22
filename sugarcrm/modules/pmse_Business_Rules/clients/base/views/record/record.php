@@ -170,7 +170,6 @@ array (
                 'label' => 'LBL_RST_TYPE',
               ),
               2 => 'assigned_user_name',
-              3 => 'team_name',
             ),
           ),
           2 => 

@@ -30,9 +30,10 @@
       <div>
         <span>Data File</span><br>
         <select id="chartData">
-          <option value="pareto_data_salesrep_probability" data-manager="true">Sales Rep Worksheet by Probability</option>
-          <option value="pareto_data_salesrep" data-manager="false">Sales Rep Worksheet</option>
-          <option value="pareto_data_manager" data-manager="true" selected="selected">Manager Worksheet</option>
+          <option value="pareto_data_salesrep_probability" data-stacked="false">Sales Rep Worksheet by Probability</option>
+          <option value="pareto_data_salesrep_stage" data-stacked="true">Sales Rep Worksheet by Sales Stage</option>
+          <option value="pareto_data_salesrep" data-stacked="true">Sales Rep Worksheet</option>
+          <option value="pareto_data_manager" data-stacked="false" selected="selected">Manager Worksheet</option>
         </select>
       </div>
       <div>
@@ -98,7 +99,7 @@
     }
 
     jsonFile = selectedFile.val();
-    stacked = !selectedFile.find('option:selected').first().data('manager');
+    stacked = selectedFile.find('option:selected').first().data('stacked');
     color = selectedColor.filter(':checked').val() || 'default';
     showValues = selectedShowValues.val() || 0;
     direction = selectedDirection.filter(':checked').val() || 'ltr';
@@ -111,7 +112,7 @@
           .showLegend(true)
           .showControls(false)
           .tooltips(true)
-          .stacked(true)
+          .stacked(stacked)
           .direction(direction)
           .clipEdge(false)
           .showValues(showValues === '1' ? true : showValues === '0' ? false : showValues)
@@ -131,6 +132,36 @@
           })
           .tooltipQuota(function(key, x, y, e, graph) {
             return '<p>' + e.key + ': <b>$' + y + '</b></p>';
+          })
+          .barClick(function(data, eo, chart, container) {
+              var d = eo.series,
+                  selectedSeries = eo.seriesIndex;
+
+              chart.dispatch.tooltipHide();
+
+              d.disabled = !d.disabled;
+
+              if (!chart.stacked()) {
+                  data.filter(function(d) {
+                      return d.series === selectedSeries && d.type === 'line';
+                  }).map(function(d) {
+                      d.disabled = !d.disabled;
+                      return d;
+                  });
+              }
+
+              // if there are no enabled data series, enable them all
+              if (!data.filter(function(d) {
+                  return !d.disabled && d.type === 'bar';
+              }).length) {
+                  data.map(function(d) {
+                      d.disabled = false;
+                      container.selectAll('.nv-series').classed('disabled', false);
+                      return d;
+                  });
+              }
+
+              container.call(chart);
           });
 
     d3.select('#chart1')
@@ -161,7 +192,7 @@
 
     selectedFile.on('change', function(d) {
       jsonFile = selectedFile.val();
-      stacked = !selectedFile.find('option:selected').first().data('manager');
+      stacked = selectedFile.find('option:selected').first().data('stacked');
       loadData(jsonFile);
     });
     selectedColor.on('click', function(d) {

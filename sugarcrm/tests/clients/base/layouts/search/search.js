@@ -46,11 +46,5 @@ describe('View.Layouts.Base.SearchLayout', function() {
             layout.filter();
             expect(layout.collection.options.apiOptions.data.tag_filters).toEqual([sampleTag.id]);
         });
-
-        it('updates the collection when tags change', function() {
-            var newTag = {name: 'tag2', id: '12345'};
-            layout.context.set('tags', [newTag]);
-            expect(layout.collection.options.apiOptions.data.tag_filters).toEqual([newTag.id]);
-        });
     });
 });

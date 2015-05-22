@@ -159,7 +159,14 @@ class PrepareKBDocument
                 'tag_name' => 'tag_name',
                 'parent_tag_id' => 'parent_tag_id'
             )
-        )
+        ),
+        'prepKBDocTag' => array(
+            'kbdocuments_kbtags' => array(
+                'kbdocument_id' => 'kbdocument_id',
+                'kbtag_id' => 'kbtag_id',
+            )
+        ),
+
     );
 
     /**
@@ -349,6 +356,19 @@ class PrepareKBDocument
                         id,
                         tag_name,
                         parent_tag_id
+                    )
+                    {$select}";
+                break;
+            case 'prepKBDocTag':
+                $select = "SELECT
+                    kbdocument_id,
+                    kbtag_id
+                FROM kbdocuments_kbtags
+                WHERE kbdocuments_kbtags.deleted = 0";
+                $query =
+                    "INSERT INTO {$table} (
+                        kbdocument_id,
+                        kbtag_id
                     )
                     {$select}";
                 break;

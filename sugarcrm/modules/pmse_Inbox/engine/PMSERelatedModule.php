@@ -90,7 +90,7 @@ class PMSERelatedModule {
         foreach($moduleBean->get_linked_fields() as $link => $def) {
             if (!empty($def['type']) && $def['type'] == 'link' && $moduleBean->load_relationship($link)) {
                 $relatedModule = $moduleBean->$link->getRelatedModuleName();
-                if (!in_array($relatedModule, PMSEEngineUtils::getSupportedModules())) {
+                if (!in_array($relatedModule, PMSEEngineUtils::getSupportedModules('related'))) {
                     continue;
                 }
                 if (in_array($link, array('contact'))) {
@@ -171,10 +171,6 @@ class PMSERelatedModule {
         $rModule = $moduleBean->$fieldName->getRelatedModuleName();
 
         $relatedModuleBean = $this->newBean($rModule);
-
-        if (!$relatedModuleBean->ACLAccess('save')) {
-            throw new Exception('Not authorize to create a related bean');
-        }
 
         foreach ($fields as $key => $value) {
             if (isset($relatedModuleBean->field_defs[$key])) {

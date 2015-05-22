@@ -344,12 +344,11 @@ d3.svg.axisStatic = function() {
 
   var nvtooltip = window.nv.tooltip = {};
 
-  nvtooltip.show = function(pos, content, gravity, dist, parentContainer, classes) {
+  nvtooltip.show = function(pos, content, gravity, dist, container, classes) {
 
-    var container = document.createElement('div'),
+    var tooltip = document.createElement('div'),
         inner = document.createElement('div'),
-        arrow = document.createElement('div'),
-        body = document.getElementsByTagName('body')[0];
+        arrow = document.createElement('div');
 
     gravity = gravity || 's';
     dist = dist || 10;
@@ -357,19 +356,19 @@ d3.svg.axisStatic = function() {
     inner.className = 'tooltip-inner';
     arrow.className = 'tooltip-arrow';
     inner.innerHTML = content;
-    container.style.left = 0;
-    container.style.top = -1000;
-    container.style.opacity = 0;
-    container.className = 'tooltip xy-tooltip in';
+    tooltip.style.left = 0;
+    tooltip.style.top = -1000;
+    tooltip.style.opacity = 0;
+    tooltip.className = 'tooltip xy-tooltip in';
 
-    container.appendChild(inner);
-    container.appendChild(arrow);
-    body.appendChild(container);
+    tooltip.appendChild(inner);
+    tooltip.appendChild(arrow);
+    container.appendChild(tooltip);
 
-    nvtooltip.position(container, pos, gravity, dist);
-    container.style.opacity = 1;
+    nvtooltip.position(container, tooltip, pos, gravity, dist);
+    tooltip.style.opacity = 1;
 
-    return container;
+    return tooltip;
   };
 
   nvtooltip.cleanup = function() {
@@ -377,16 +376,17 @@ d3.svg.axisStatic = function() {
       // (so others cleanups won't find it)
       var tooltips = document.getElementsByClassName('tooltip'),
           purging = [],
-          i = 0;
+          i = tooltips.length;
 
-      while (i < tooltips.length) {
+      while (i > 0) {
+          i -= 1;
+
           if (tooltips[i].className.indexOf('xy-tooltip') !== -1) {
               purging.push(tooltips[i]);
               tooltips[i].style.transitionDelay = '0 !important';
               tooltips[i].style.opacity = 0;
               tooltips[i].className = 'nvtooltip-pending-removal out';
           }
-          i += 1;
       }
 
       setTimeout(function() {
@@ -398,37 +398,46 @@ d3.svg.axisStatic = function() {
       }, 500);
   };
 
-  nvtooltip.position = function(container, pos, gravity, dist) {
-    var body = document.getElementsByTagName('body')[0];
+  nvtooltip.position = function(container, tooltip, pos, gravity, dist) {
     gravity = gravity || 's';
     dist = dist || 10;
-
-    var height = parseInt(container.offsetHeight, 10),
-        width = parseInt(container.offsetWidth, 10),
-        windowWidth = nv.utils.windowSize().width,
-        windowHeight = nv.utils.windowSize().height,
-        scrollTop = body.scrollTop,
-        scrollLeft = body.scrollLeft,
-        class_name = container.className.replace(/ top| right| bottom| left/g, ''),
+    var tooltipWidth = parseInt(tooltip.offsetWidth, 10),
+        tooltipHeight = parseInt(tooltip.offsetHeight, 10),
+        containerWidth = container.clientWidth,
+        containerHeight = container.clientHeight,
+        scrollTop = container.scrollTop,
+        scrollLeft = container.scrollLeft,
+        class_name = tooltip.className.replace(/ top| right| bottom| left/g, ''),
         left, top;
 
     function alignCenter() {
-      var left = pos[0] - (width / 2);
-      if (left < scrollLeft) left = scrollLeft + 5;
-      if (left + width > windowWidth) left = windowWidth - width - 5;
+      var left = pos[0] - (tooltipWidth / 2);
+      if (left < scrollLeft) left = scrollLeft;
+      if (left + tooltipWidth > containerWidth) left = containerWidth - tooltipWidth;
       return left;
     }
     function alignMiddle() {
-      var top = pos[1] - (height / 2);
-      if (top < scrollTop) top = scrollTop + 5;
-      if (top + height > scrollTop + windowHeight) top = scrollTop - height - 5;
+      var top = pos[1] - (tooltipHeight / 2);
+      if (top < scrollTop) top = scrollTop;
+      if (top + tooltipHeight > scrollTop + containerHeight) top = scrollTop - tooltipHeight;
       return top;
+    }
+    function arrowLeft(left) {
+      var marginLeft = pos[0] - (tooltipWidth / 2) - left - 5,
+          arrow = tooltip.getElementsByClassName('tooltip-arrow')[0];
+      arrow.style.marginLeft = marginLeft + 'px';
+    }
+    function arrowTop(top) {
+      var marginTop = pos[1] - (tooltipHeight / 2) - top - 5,
+          arrow = tooltip.getElementsByClassName('tooltip-arrow')[0];
+      arrow.style.marginTop = marginTop + 'px';
     }
 
     switch (gravity) {
       case 'e':
         top = alignMiddle();
-        left = pos[0] - width - dist;
+        left = pos[0] - tooltipWidth - dist;
+        arrowTop(top);
         if (left < scrollLeft) {
           left = pos[0] + dist;
           class_name += ' right';
@@ -439,8 +448,9 @@ d3.svg.axisStatic = function() {
       case 'w':
         top = alignMiddle();
         left = pos[0] + dist;
-        if (left + width > windowWidth) {
-          left = pos[0] - width - dist;
+        arrowTop(top);
+        if (left + tooltipWidth > containerWidth) {
+          left = pos[0] - tooltipWidth - dist;
           class_name += ' left';
         } else {
           class_name += ' right';
@@ -449,8 +459,9 @@ d3.svg.axisStatic = function() {
       case 'n':
         left = alignCenter();
         top = pos[1] + dist;
-        if (top + height > scrollTop + windowHeight) {
-          top = pos[1] - height - dist;
+        arrowLeft(left);
+        if (top + tooltipHeight > scrollTop + containerHeight) {
+          top = pos[1] - tooltipHeight - dist;
           class_name += ' top';
         } else {
           class_name += ' bottom';
@@ -458,7 +469,8 @@ d3.svg.axisStatic = function() {
         break;
       case 's':
         left = alignCenter();
-        top = pos[1] - height - dist;
+        top = pos[1] - tooltipHeight - dist;
+        arrowLeft(left);
         if (scrollTop > top) {
           top = pos[1] + 10;
           class_name += ' bottom';
@@ -468,10 +480,10 @@ d3.svg.axisStatic = function() {
         break;
     }
 
-    container.style.left = left + 'px';
-    container.style.top = top + 'px';
+    tooltip.style.left = left + 'px';
+    tooltip.style.top = top + 'px';
 
-    container.className = class_name;
+    tooltip.className = class_name;
   };
 
 })();
@@ -1823,10 +1835,10 @@ nv.models.legend = function() {
 
         series.select('text').each(function(d, i) {
           var textWidth = d3.select(this).node().getBBox().width;
-          keyWidths.push(Math.max(Math.floor(textWidth) + padding, 50));
+          keyWidths.push(Math.max(Math.floor(textWidth) + gutter, 50));
         });
 
-        legend.width(d3.sum(keyWidths) - gutter);
+        legend.width(d3.sum(keyWidths) + keyWidths.length * padding - gutter);
 
         return legend.width();
       };
@@ -1841,6 +1853,10 @@ nv.models.legend = function() {
 
         if (keyWidths.length === 0) {
           this.calculateWidth();
+        }
+
+        function keyWidth(i) {
+          return keyWidths[i] + gutter + (inline ? diameter + textGap : 0);
         }
 
         var keys = keyWidths.length,
@@ -1869,8 +1885,8 @@ nv.models.legend = function() {
             columnWidths = [];
 
             for (i = 0; i < keys; i += 1) {
-              if (keyWidths[i] > (columnWidths[i % cols] || 0)) {
-                columnWidths[i % cols] = keyWidths[i];
+              if (keyWidth(i) > (columnWidths[i % cols] || 0)) {
+                columnWidths[i % cols] = keyWidth(i);
               }
             }
 
@@ -1912,18 +1928,18 @@ nv.models.legend = function() {
             xpos = maxWidth;
 
             for (i = 0; i < keys; i += 1) {
-              if (xpos - keyWidths[i] + gutter < 0) {
-                maxRowWidth = Math.max(maxRowWidth, keyWidths[i] - gutter);
+              if (xpos - keyWidth(i) + gutter < 0) {
+                maxRowWidth = Math.max(maxRowWidth, keyWidth(i) - gutter);
                 xpos = maxWidth;
                 if (i) {
                   rows += 1;
                 }
               }
-              if (xpos - keyWidths[i] + gutter > maxRowWidth) {
-                maxRowWidth = xpos - keyWidths[i] + gutter;
+              if (xpos - keyWidth(i) + gutter > maxRowWidth) {
+                maxRowWidth = xpos - keyWidth(i) + gutter;
               }
               keyPositions[i] = {x: xpos, y: (rows - 1) * (lineSpacing + diameter)};
-              xpos -= keyWidths[i];
+              xpos -= keyWidth(i);
             }
 
           } else {
@@ -1931,15 +1947,15 @@ nv.models.legend = function() {
             xpos = 0;
 
             for (i = 0; i < keys; i += 1) {
-              if (i && xpos + keyWidths[i] - gutter > maxWidth) {
+              if (i && xpos + keyWidth(i) - gutter > maxWidth) {
                 xpos = 0;
                 rows += 1;
               }
-              if (xpos + keyWidths[i] - gutter > maxRowWidth) {
-                maxRowWidth = xpos + keyWidths[i] - gutter;
+              if (xpos + keyWidth(i) - gutter > maxRowWidth) {
+                maxRowWidth = xpos + keyWidth(i) - gutter;
               }
               keyPositions[i] = {x: xpos, y: (rows - 1) * (lineSpacing + diameter)};
-              xpos += keyWidths[i];
+              xpos += keyWidth(i);
             }
 
           }
@@ -2012,6 +2028,7 @@ nv.models.legend = function() {
             .attr('height', radius * 2 + lineSpacing);
           series.selectAll('text')
             .attr('text-anchor', position)
+            .attr('dy', inline ? '.36em' : '.71em')
             .attr('transform', function(d, i) {
               var xpos = inline ? (radius + textGap) * (rtl ? -1 : 1) : 0,
                   ypos = inline ? 0 : radius + 3;
@@ -2024,10 +2041,10 @@ nv.models.legend = function() {
             });
           series.selectAll('line')
             .attr('x1', function(d, i) {
-              return d.type === 'dash' ? radius * 8 : radius * 6;
+              return d.type === 'dash' ? radius * 8 : radius * 4;
             })
             .attr('transform', function(d, i) {
-              var xpos = radius * (d.type === 'dash' ? -4 : -3);
+              var xpos = radius * (d.type === 'dash' ? -4 : -2);
               return 'translate(' + xpos + ',0)';
             })
             .style('stroke-dasharray', function(d, i) {
@@ -2040,7 +2057,7 @@ nv.models.legend = function() {
           useScroll = true;
 
           legend
-            .width(menuMargin.left + d3.max(keyWidths) - gutter + menuMargin.right)
+            .width(menuMargin.left + d3.max(keyWidths) - gutter + diameter + textGap + menuMargin.right)
             .height(margin.top + diameter + margin.top); //don't use bottom here because we want vertical centering
 
           legendHeight = menuMargin.top + diameter * keys + spacing * (keys - 1) + menuMargin.bottom;
@@ -2103,6 +2120,7 @@ nv.models.legend = function() {
           series
             .selectAll('text')
               .attr('text-anchor', 'start')
+              .attr('dy', '.36em')
               .attr('transform', function(d, i) {
                 var xpos = (radius + textGap) * (rtl ? -1 : 1);
                 return 'translate(' + xpos + ',0)';
@@ -2949,6 +2967,18 @@ nv.models.scatter = function() {
           })
         );
 
+        function buildEventObject(e, d, i, j) {
+          return {
+              series: data[j],
+              point: data[j].values[i],
+              pointIndex: i,
+              seriesIndex: j,
+              pos: [e.offsetX, e.offsetY],
+              id: id,
+              e: e
+            };
+        }
+
         //inject series and point index for reference into voronoi
         if (useVoronoi === true) {
           if (clipVoronoi) {
@@ -2982,10 +3012,10 @@ nv.models.scatter = function() {
           }
 
           var bounds = d3.geom.polygon([
-              [-10,-10],
-              [-10,height + 10],
-              [width + 10,height + 10],
-              [width + 10,-10]
+              [-10, -10],
+              [-10, height + 10],
+              [width + 10, height + 10],
+              [width + 10, -10]
           ]);
 
           var voronoi = d3.geom.voronoi(vertices).map(function(d, i) {
@@ -2993,125 +3023,54 @@ nv.models.scatter = function() {
                 'data': bounds.clip(d),
                 'series': vertices[i][2],
                 'point': vertices[i][3]
-              }
+              };
             }).filter(function(d) { return d.series !== null; });
 
           var pointPaths = wrap.select('.nv-point-paths').selectAll('path')
               .data(voronoi);
           pointPaths.enter().append('path')
-              .attr('class', function(d,i) { return 'nv-path-'+i; });
+              .attr('class', function(d, i) { return 'nv-path-' + i; });
           pointPaths.exit().remove();
           pointPaths
               .attr('d', function(d) { return 'M' + d.data.join('L') + 'Z'; });
 
+
           pointPaths
               .on('click', function(d) {
                 if (needsUpdate) return 0;
-                var series = data[d.series],
-                    point  = series.values[d.point];
-                dispatch.elementClick({
-                  point: point,
-                  series: series,
-                  pos: [x(getX(point, d.point)) + margin.left, y(getY(point, d.point)) + margin.top],
-                  seriesIndex: d.series,
-                  pointIndex: d.point
-                });
+                dispatch.elementClick(buildEventObject(d3.event, d, d.point, d.series));
               })
               .on('mouseover', function(d) {
                 if (needsUpdate) return 0;
-                var series = data[d.series],
-                    point  = series.values[d.point];
-                dispatch.elementMouseover({
-                  point: point,
-                  series: series,
-                  pos: [d3.event.pageX, d3.event.pageY],
-                  seriesIndex: d.series,
-                  pointIndex: d.point
-                });
+                dispatch.elementMouseover(buildEventObject(d3.event, d, d.point, d.series));
               })
               .on('mouseout', function(d, i) {
                 if (needsUpdate) return 0;
-                var series = data[d.series],
-                    point  = series.values[d.point];
-                dispatch.elementMouseout({
-                  point: point,
-                  series: series,
-                  seriesIndex: d.series,
-                  pointIndex: d.point
-                });
+                dispatch.elementMouseout(buildEventObject(d3.event, d, d.point, d.series));
               })
-              .on('mousemove', function(d,i){
-                var series = data[d.series],
-                    point  = series.values[d.point];
-                dispatch.elementMousemove({
-                  point: point,
-                  pointIndex: d.point,
-                  pos: [d3.event.pageX, d3.event.pageY],
-                  id: id
-                });
+              .on('mousemove', function(d, i) {
+                dispatch.elementMousemove(buildEventObject(d3.event, d, d.point, d.series));
               });
         } else {
-          /*
-          // bring data in form needed for click handlers
-          var dataWithPoints = vertices.map(function(d, i) {
-              return {
-                'data': d,
-                'series': vertices[i][2],
-                'point': vertices[i][3]
-              }
-            });
-           */
-
           // add event handlers to points instead voronoi paths
           wrap.select('.nv-groups').selectAll('.nv-group')
             .selectAll('.nv-point')
               //.data(dataWithPoints)
               .style('pointer-events', 'auto') // recativate events, disabled by css
-              .on('click', function(d,i) {
-                //nv.log('test', d, i);
+              .on('click', function(d, i) {
                 if (needsUpdate || !data[d.series]) return 0; //check if this is a dummy point
-                var series = data[d.series],
-                    point  = series.values[i];
-                dispatch.elementClick({
-                  point: point,
-                  series: series,
-                  pos: [x(getX(point, i)) + margin.left, y(getY(point, i)) + margin.top],
-                  seriesIndex: d.series,
-                  pointIndex: i
-                });
+                dispatch.elementClick(buildEventObject(d3.event, d, i, d.series));
               })
-              .on('mouseover', function(d,i) {
+              .on('mouseover', function(d, i) {
                 if (needsUpdate || !data[d.series]) return 0; //check if this is a dummy point
-                var series = data[d.series],
-                    point  = series.values[i];
-                dispatch.elementMouseover({
-                  point: point,
-                  series: series,
-                  pos: [d3.event.pageX, d3.event.pageY],
-                  seriesIndex: d.series,
-                  pointIndex: i
-                });
+                dispatch.elementMouseover(buildEventObject(d3.event, d, i, d.series));
               })
-              .on('mouseout', function(d,i) {
+              .on('mouseout', function(d, i) {
                 if (needsUpdate || !data[d.series]) return 0; //check if this is a dummy point
-                var series = data[d.series],
-                    point  = series.values[i];
-                dispatch.elementMouseout({
-                  point: point,
-                  series: series,
-                  seriesIndex: d.series,
-                  pointIndex: i
-                });
+                dispatch.elementMouseout(buildEventObject(d3.event, d, i, d.series));
               })
-              .on('mousemove', function(d,i){
-                var series = data[d.series],
-                    point  = series.values[i];
-                dispatch.elementMousemove({
-                  point: point,
-                  pointIndex: i,
-                  pos: [d3.event.pageX, d3.event.pageY],
-                  id: id
-                });
+              .on('mousemove', function(d, i) {
+                dispatch.elementMousemove(buildEventObject(d3.event, d, i, d.series));
               });
         }
 
@@ -3916,7 +3875,7 @@ nv.models.bubbleChart = function () {
 
       dispatch.on('tooltipMove', function (e) {
         if (tooltip) {
-          nv.tooltip.position(tooltip, e.pos);
+          nv.tooltip.position(that.parentNode, tooltip, e.pos);
         }
       });
 
@@ -3933,12 +3892,16 @@ nv.models.bubbleChart = function () {
       });
 
       dispatch.on('chartClick', function (e) {
+        dispatch.tooltipHide();
         if (legend.enabled()) {
           legend.dispatch.closeMenu(e);
         }
       });
 
-      //============================================================
+      scatter.dispatch.on('elementClick', function (e) {
+        dispatch.chartClick(e);
+        bubbleClick(e);
+      });
 
       chart.render();
     });
@@ -3962,10 +3925,6 @@ nv.models.bubbleChart = function () {
     dispatch.tooltipMove(e);
   });
 
-  scatter.dispatch.on('elementClick', function (e) {
-    bubbleClick(e);
-    nv.tooltip.cleanup();
-  });
 
   //============================================================
   // Expose Public Variables
@@ -4380,64 +4339,43 @@ nv.models.funnel = function() {
           .attr('class', 'nv-bar')
           .attr('points', function(d) {
             return pointsTrapezoid(d.y, d.y0, 0, calculatedWidth);
+          })
+          .on('mouseover', function(d, i) {
+            d3.select(this).classed('hover', true);
+            var eo = buildEventObject(d3.event, d, i);
+            dispatch.elementMouseover(eo);
+          })
+          .on('mousemove', function(d, i) {
+            var eo = buildEventObject(d3.event, d, i);
+            dispatch.elementMousemove(eo);
+          })
+          .on('mouseout', function(d, i) {
+            d3.select(this).classed('hover', false);
+            dispatch.elementMouseout();
+          })
+          .on('click', function(d, i) {
+            d3.event.stopPropagation();
+            var eo = buildEventObject(d3.event, d, i);
+            dispatch.elementClick(eo);
+          })
+          .on('dblclick', function(d, i) {
+            d3.event.stopPropagation();
+            var eo = buildEventObject(d3.event, d, i);
+            dispatch.elementDblClick(eo);
           });
 
-      funs
-        .on('mouseover', function(d, i) {
-          d3.select(this).classed('hover', true);
-          dispatch.elementMouseover({
+      function buildEventObject(e, d, i) {
+        return {
             value: getV(d, i),
             point: d,
+            id: id,
             series: data[d.series],
-            pos: [d3.event.pageX, d3.event.pageY],
+            pos: [e.offsetX, e.offsetY],
             pointIndex: i,
             seriesIndex: d.series,
-            e: d3.event
-          });
-        })
-        .on('mouseout', function(d, i) {
-          d3.select(this).classed('hover', false);
-          dispatch.elementMouseout({
-            value: getV(d, i),
-            point: d,
-            series: data[d.series],
-            pointIndex: i,
-            seriesIndex: d.series,
-            e: d3.event
-          });
-        })
-        .on('mousemove', function(d, i) {
-          dispatch.elementMousemove({
-            point: d,
-            pointIndex: i,
-            pos: [d3.event.pageX, d3.event.pageY],
-            id: id
-          });
-        })
-        .on('click', function(d, i) {
-          dispatch.elementClick({
-            value: getV(d, i),
-            point: d,
-            series: data[d.series],
-            pos: [d3.event.pageX, d3.event.pageY],
-            pointIndex: i,
-            seriesIndex: d.series,
-            e: d3.event
-          });
-          d3.event.stopPropagation();
-        })
-        .on('dblclick', function(d, i) {
-          dispatch.elementDblClick({
-            value: getV(d, i),
-            point: d,
-            series: data[d.series],
-            pos: [d3.event.pageX, d3.event.pageY],
-            pointIndex: i,
-            seriesIndex: d.series,
-            e: d3.event
-          });
-          d3.event.stopPropagation();
-        });
+            e: e
+          };
+      }
 
       //------------------------------------------------------------
       // Append containers for labels
@@ -5057,7 +4995,7 @@ nv.models.funnelChart = function() {
     tooltip = nv.tooltip.show([left, top], content, e.value < 0 ? 'n' : 's', null, offsetElement);
   };
 
-  var seriesClick = function(data, e) {
+  var seriesClick = function(data, e, chart) {
     return;
   };
 
@@ -5082,8 +5020,8 @@ nv.models.funnelChart = function() {
         container.transition().duration(durationMs).call(chart);
       };
 
-      chart.dataSeriesActivate = function(e) {
-        var series = e.series;
+      chart.dataSeriesActivate = function(eo) {
+        var series = eo.series;
 
         series.active = (!series.active || series.active === 'inactive') ? 'active' : 'inactive';
         series.values[0].active = series.active;
@@ -5330,9 +5268,15 @@ nv.models.funnelChart = function() {
         container.transition().duration(durationMs).call(chart);
       });
 
-      dispatch.on('tooltipShow', function(e) {
+      dispatch.on('tooltipShow', function(eo) {
         if (tooltips) {
-          showTooltip(e, that.parentNode, properties);
+          showTooltip(eo, that.parentNode, properties);
+        }
+      });
+
+      dispatch.on('tooltipMove', function(eo) {
+        if (tooltip) {
+          nv.tooltip.position(that.parentNode, tooltip, eo.pos);
         }
       });
 
@@ -5342,32 +5286,27 @@ nv.models.funnelChart = function() {
         }
       });
 
-      dispatch.on('tooltipMove', function(e) {
-        if (tooltip) {
-          nv.tooltip.position(tooltip, e.pos);
-        }
-      });
-
       // Update chart from a state object passed to event handler
-      dispatch.on('changeState', function(e) {
-        if (typeof e.disabled !== 'undefined') {
+      dispatch.on('changeState', function(eo) {
+        if (typeof eo.disabled !== 'undefined') {
           funnelData.forEach(function(series, i) {
-            series.disabled = e.disabled[i];
+            series.disabled = eo.disabled[i];
           });
-          state.disabled = e.disabled;
+          state.disabled = eo.disabled;
         }
 
         container.transition().duration(durationMs).call(chart);
       });
 
-      dispatch.on('chartClick', function(e) {
+      dispatch.on('chartClick', function(eo) {
         if (legend.enabled()) {
-          legend.dispatch.closeMenu(e);
+          legend.dispatch.closeMenu(eo);
         }
       });
 
-      funnel.dispatch.on('elementClick', function(e) {
-        seriesClick(data, e);
+      funnel.dispatch.on('elementClick', function(eo) {
+        dispatch.chartClick(eo);
+        seriesClick(data, eo, chart);
       });
 
     });
@@ -5379,16 +5318,16 @@ nv.models.funnelChart = function() {
   // Event Handling/Dispatching (out of chart's scope)
   //------------------------------------------------------------
 
-  funnel.dispatch.on('elementMouseover.tooltip', function(e) {
-    dispatch.tooltipShow(e);
+  funnel.dispatch.on('elementMouseover.tooltip', function(eo) {
+    dispatch.tooltipShow(eo);
   });
 
-  funnel.dispatch.on('elementMouseout.tooltip', function(e) {
-    dispatch.tooltipHide(e);
+  funnel.dispatch.on('elementMousemove.tooltip', function(eo) {
+    dispatch.tooltipMove(eo);
   });
 
-  funnel.dispatch.on('elementMousemove.tooltip', function(e) {
-    dispatch.tooltipMove(e);
+  funnel.dispatch.on('elementMouseout.tooltip', function() {
+    dispatch.tooltipHide();
   });
 
 
@@ -5711,7 +5650,7 @@ nv.models.gauge = function() {
               dispatch.elementMouseover({
                   point: d,
                   pointIndex: i,
-                  pos: [d3.event.pageX, d3.event.pageY],
+                  pos: [d3.event.offsetX, d3.event.offsetY],
                   id: id
               });
             })
@@ -5727,7 +5666,7 @@ nv.models.gauge = function() {
               dispatch.elementMousemove({
                 point: d,
                 pointIndex: i,
-                pos: [d3.event.pageX, d3.event.pageY],
+                pos: [d3.event.offsetX, d3.event.offsetY],
                 id: id
               });
             })
@@ -6236,9 +6175,15 @@ nv.models.gaugeChart = function() {
       // Event Handling/Dispatching (in chart's scope)
       //------------------------------------------------------------
 
-      dispatch.on('tooltipShow', function(e) {
+      dispatch.on('tooltipShow', function(eo) {
         if (tooltips) {
-          showTooltip(e);
+          showTooltip(eo, that.parentNode);
+        }
+      });
+
+      dispatch.on('tooltipMove', function(eo) {
+        if (tooltip) {
+          nv.tooltip.position(that.parentNode, tooltip, eo.pos);
         }
       });
 
@@ -6248,9 +6193,9 @@ nv.models.gaugeChart = function() {
         }
       });
 
-      dispatch.on('tooltipMove', function(e) {
-        if (tooltip) {
-          nv.tooltip.position(tooltip, e.pos);
+      dispatch.on('chartClick', function(eo) {
+        if (legend.enabled()) {
+          legend.dispatch.closeMenu(eo);
         }
       });
 
@@ -6263,23 +6208,16 @@ nv.models.gaugeChart = function() {
   // Event Handling/Dispatching (out of chart's scope)
   //------------------------------------------------------------
 
-  dispatch.on('chartClick', function(e) {
+  gauge.dispatch.on('elementMouseover.tooltip', function(eo) {
+    dispatch.tooltipShow(eo);
+  });
+
+  gauge.dispatch.on('elementMousemove.tooltip', function(eo) {
+    dispatch.tooltipMove(eo);
+  });
+
+  gauge.dispatch.on('elementMouseout.tooltip', function() {
     dispatch.tooltipHide();
-    if (legend.enabled()) {
-      legend.dispatch.closeMenu(e);
-    }
-  });
-
-  gauge.dispatch.on('elementMouseover.tooltip', function(e) {
-    dispatch.tooltipShow(e);
-  });
-
-  gauge.dispatch.on('elementMouseout.tooltip', function(e) {
-    dispatch.tooltipHide(e);
-  });
-
-  gauge.dispatch.on('elementMousemove.tooltip', function(e) {
-    dispatch.tooltipMove(e);
   });
 
   //============================================================
@@ -7162,21 +7100,21 @@ nv.models.lineChart = function() {
         container.transition().duration(chart.delay()).call(chart);
       });
 
-      dispatch.on('tooltipShow', function(e) {
+      dispatch.on('tooltipShow', function(eo) {
         if (tooltips) {
-          showTooltip(e, that.parentNode);
+          showTooltip(eo, that.parentNode);
+        }
+      });
+
+      dispatch.on('tooltipMove', function(eo) {
+        if (tooltip) {
+          nv.tooltip.position(that.parentNode, tooltip, eo.pos, 's');
         }
       });
 
       dispatch.on('tooltipHide', function() {
         if (tooltips) {
           nv.tooltip.cleanup();
-        }
-      });
-
-      dispatch.on('tooltipMove', function(e) {
-        if (tooltip) {
-          nv.tooltip.position(tooltip, e.pos, 's');
         }
       });
 
@@ -7202,12 +7140,12 @@ nv.models.lineChart = function() {
         container.transition().duration(chart.delay()).call(chart);
       });
 
-      dispatch.on('chartClick', function(e) {
+      dispatch.on('chartClick', function(eo) {
         if (controls.enabled()) {
-          controls.dispatch.closeMenu(e);
+          controls.dispatch.closeMenu(eo);
         }
         if (legend.enabled()) {
-          legend.dispatch.closeMenu(e);
+          legend.dispatch.closeMenu(eo);
         }
       });
 
@@ -7220,16 +7158,16 @@ nv.models.lineChart = function() {
   // Event Handling/Dispatching (out of chart's scope)
   //------------------------------------------------------------
 
-  lines.dispatch.on('elementMouseover.tooltip', function(e) {
-    dispatch.tooltipShow(e);
+  lines.dispatch.on('elementMouseover.tooltip', function(eo) {
+    dispatch.tooltipShow(eo);
   });
 
-  lines.dispatch.on('elementMouseout.tooltip', function(e) {
-    dispatch.tooltipHide(e);
+  lines.dispatch.on('elementMousemove.tooltip', function(eo) {
+    dispatch.tooltipMove(eo);
   });
 
-  lines.dispatch.on('elementMousemove.tooltip', function(e) {
-    dispatch.tooltipMove(e);
+  lines.dispatch.on('elementMouseout.tooltip', function() {
+    dispatch.tooltipHide();
   });
 
   //============================================================
@@ -8254,67 +8192,47 @@ nv.models.multiBar = function() {
         .attr(dimX, 0)
         .attr(dimY, 0); //x.rangeBand() / (stacked ? 1 : data.length)
 
+      function buildEventObject(e, d, i, j) {
+        return {
+            value: getY(d, i),
+            point: d,
+            series: data[j],
+            pointIndex: i,
+            seriesIndex: j,
+            pos: [e.offsetX, e.offsetY],
+            id: id,
+            e: e
+          };
+      }
+
       bars
         .on('mouseover', function(d, i, j) { //TODO: figure out why j works above, but not here
           d3.select(this).classed('hover', true);
-          dispatch.elementMouseover({
-            value: getY(d, i),
-            point: d,
-            series: data[j],
-            pos: [d3.event.pageX, d3.event.pageY],
-            pointIndex: i,
-            seriesIndex: j,
-            e: d3.event
-          });
+          var eo = buildEventObject(d3.event, d, i, j);
+          dispatch.elementMouseover(eo);
+        })
+        .on('mousemove', function(d, i, j) {
+          var eo = buildEventObject(d3.event, d, i, j);
+          dispatch.elementMousemove(eo);
         })
         .on('mouseout', function(d, i, j) {
           d3.select(this).classed('hover', false);
-          dispatch.elementMouseout({
-            value: getY(d, i),
-            point: d,
-            series: data[j],
-            pointIndex: i,
-            seriesIndex: j,
-            e: d3.event
-          });
-        })
-        .on('mousemove', function(d, i, j) {
-          dispatch.elementMousemove({
-            point: d,
-            pointIndex: i,
-            pos: [d3.event.pageX, d3.event.pageY],
-            id: id
-          });
+          dispatch.elementMouseout();
         })
         .on('click', function(d, i, j) {
-          dispatch.elementClick({
-            value: getY(d, i),
-            point: d,
-            series: data[j],
-            pos: [
-              x(getX(d, i)) + (x.rangeBand() * (stacked ? data.length / 2 : j + 0.5) / data.length),
-              y(getY(d, i) + (stacked ? d.y0 : 0))
-            ],  // TODO: Figure out why the value appears to be shifted
-            pointIndex: i,
-            seriesIndex: j,
-            e: d3.event
-          });
           d3.event.stopPropagation();
+          var eo = buildEventObject(d3.event, d, i, j);
+          dispatch.elementClick(eo);
         })
         .on('dblclick', function(d, i, j) {
-          dispatch.elementDblClick({
-            value: getY(d, i),
-            point: d,
-            series: data[j],
-            pos: [
-              x(getX(d, i)) + (x.rangeBand() * (stacked ? data.length / 2 : j + 0.5) / data.length),
-              y(getY(d, i) + (stacked ? d.y0 : 0))
-            ],  // TODO: Figure out why the value appears to be shifted
-            pointIndex: i,
-            seriesIndex: j,
-            e: d3.event
-          });
           d3.event.stopPropagation();
+          // I have no clue why this was here
+          // pos = [
+          //     x(getX(d, i)) + (x.rangeBand() * (stacked ? data.length / 2 : j + 0.5) / data.length),
+          //     y(getY(d, i) + (stacked ? d.y0 : 0))
+          //   ];
+          var eo = buildEventObject(d3.event, d, i, j);
+          dispatch.elementDblClick(eo);
         });
 
 
@@ -8861,7 +8779,7 @@ nv.models.multiBarChart = function() {
     tooltip = nv.tooltip.show([left, top], content, gravity, null, offsetElement);
   };
 
-  var seriesClick = function(data, e) {
+  var seriesClick = function(data, e, chart) {
     return;
   };
 
@@ -8909,8 +8827,8 @@ nv.models.multiBarChart = function() {
         container.transition().call(chart);
       };
 
-      chart.dataSeriesActivate = function(e) {
-        var series = e.series;
+      chart.dataSeriesActivate = function(eo) {
+        var series = eo.series;
 
         series.active = (!series.active || series.active === 'inactive') ? 'active' : 'inactive';
         series.values.map(function(d) {
@@ -9354,6 +9272,9 @@ nv.models.multiBarChart = function() {
       if (scrollEnabled) {
         var diff = (vertical ? innerWidth : innerHeight) - minDimension,
             panMultibar = function() {
+              if (d3.event && d3.event.type === 'click') {
+                return;
+              }
               dispatch.tooltipHide(d3.event);
               scrollOffset = scroll.pan(diff);
               xAxisWrap.select('.nv-axislabel')
@@ -9439,9 +9360,15 @@ nv.models.multiBarChart = function() {
         container.transition().call(chart);
       });
 
-      dispatch.on('tooltipShow', function(e) {
+      dispatch.on('tooltipShow', function(eo) {
         if (tooltips) {
-          showTooltip(e, that.parentNode, groupTotals);
+          showTooltip(eo, that.parentNode, groupTotals);
+        }
+      });
+
+      dispatch.on('tooltipMove', function(eo) {
+        if (tooltip) {
+          nv.tooltip.position(that.parentNode, tooltip, eo.pos, vertical ? 's' : 'w');
         }
       });
 
@@ -9451,40 +9378,35 @@ nv.models.multiBarChart = function() {
         }
       });
 
-      dispatch.on('tooltipMove', function(e) {
-        if (tooltip) {
-          nv.tooltip.position(tooltip, e.pos, vertical ? 's' : 'w');
-        }
-      });
-
       // Update chart from a state object passed to event handler
       dispatch.on('changeState', function(e) {
-        if (typeof e.disabled !== 'undefined') {
+        if (typeof eo.disabled !== 'undefined') {
           data.forEach(function(series, i) {
-            series.disabled = e.disabled[i];
+            series.disabled = eo.disabled[i];
           });
-          state.disabled = e.disabled;
+          state.disabled = eo.disabled;
         }
 
-        if (typeof e.stacked !== 'undefined') {
-          multibar.stacked(e.stacked);
-          state.stacked = e.stacked;
+        if (typeof eo.stacked !== 'undefined') {
+          multibar.stacked(eo.stacked);
+          state.stacked = eo.stacked;
         }
 
         container.transition().call(chart);
       });
 
-      dispatch.on('chartClick', function(e) {
+      dispatch.on('chartClick', function(eo) {
         if (controls.enabled()) {
-          controls.dispatch.closeMenu(e);
+          controls.dispatch.closeMenu(eo);
         }
         if (legend.enabled()) {
-          legend.dispatch.closeMenu(e);
+          legend.dispatch.closeMenu(eo);
         }
       });
 
-      multibar.dispatch.on('elementClick', function(e) {
-        seriesClick(data, e);
+      multibar.dispatch.on('elementClick', function(eo) {
+        dispatch.chartClick(eo);
+        seriesClick(data, eo, chart);
       });
 
     });
@@ -9496,16 +9418,16 @@ nv.models.multiBarChart = function() {
   // Event Handling/Dispatching (out of chart's scope)
   //------------------------------------------------------------
 
-  multibar.dispatch.on('elementMouseover.tooltip', function(e) {
-    dispatch.tooltipShow(e);
+  multibar.dispatch.on('elementMouseover.tooltip', function(eo) {
+    dispatch.tooltipShow(eo);
   });
 
-  multibar.dispatch.on('elementMouseout.tooltip', function(e) {
-    dispatch.tooltipHide(e);
+  multibar.dispatch.on('elementMousemove.tooltip', function(eo) {
+    dispatch.tooltipMove(eo);
   });
 
-  multibar.dispatch.on('elementMousemove.tooltip', function(e) {
-    dispatch.tooltipMove(e);
+  multibar.dispatch.on('elementMouseout.tooltip', function() {
+    dispatch.tooltipHide();
   });
 
   //============================================================
@@ -9788,6 +9710,7 @@ nv.models.paretoChart = function() {
             .nice(true),
         lines2 = nv.models.line()
             .useVoronoi(false)
+            .color('data')
             .nice(true),
         xAxis = nv.models.axis()
             .orient('bottom')
@@ -9827,33 +9750,8 @@ nv.models.paretoChart = function() {
         tooltip = nv.tooltip.show([left, top], content, 's', null, offsetElement);
     };
 
-    var barClick = function(data, e, container) {
-        var d = e.series,
-            selectedSeries = e.seriesIndex;
-
-        d.disabled = !d.disabled;
-
-        if (!chart.stacked()) {
-            data.filter(function(d) {
-                return d.series === selectedSeries && d.type === 'line';
-            }).map(function(d) {
-                    d.disabled = !d.disabled;
-                    return d;
-                });
-        }
-
-        // if there are no enabled data series, enable them all
-        if (!data.filter(function(d) {
-            return !d.disabled && d.type === 'bar';
-        }).length) {
-            data.map(function(d) {
-                d.disabled = false;
-                container.selectAll('.nv-series').classed('disabled', false);
-                return d;
-            });
-        }
-
-        container.call(chart);
+    var barClick = function(data, eo, chart, container) {
+        return;
     };
 
     var getAbsoluteXY = function(element) {
@@ -10065,10 +9963,10 @@ nv.models.paretoChart = function() {
                     .height(availableHeight - innerMargin.top);
                 barLegendWrap
                     .datum(
-                    data.filter(function(d) {
-                        return d.type === 'bar';
-                    })
-                )
+                        data.filter(function(d) {
+                            return d.type === 'bar';
+                        })
+                    )
                     .call(barLegend);
 
                 maxBarLegendWidth = barLegend.calculateWidth();
@@ -10081,10 +9979,10 @@ nv.models.paretoChart = function() {
                     .height(availableHeight - innerMargin.top);
                 lineLegendWrap
                     .datum(
-                    data.filter(function(d) {
-                        return d.type === 'line';
-                    }).concat(lineLegendData)
-                )
+                        data.filter(function(d) {
+                            return d.type === 'line';
+                        }).concat(lineLegendData)
+                    )
                     .call(lineLegend);
 
                 maxLineLegendWidth = lineLegend.calculateWidth();
@@ -10347,7 +10245,7 @@ nv.models.paretoChart = function() {
             quotaWrap.selectAll('line.nv-quotaLineBackground')
                 .on('mouseover', function(d) {
                     var e = {
-                        pos: [d3.event.pageX, d3.event.pageY],
+                        pos: [d3.event.offsetX, d3.event.offsetY],
                         val: d.val,
                         key: d.key
                     };
@@ -10358,7 +10256,7 @@ nv.models.paretoChart = function() {
                 })
                 .on('mousemove', function() {
                     dispatch.tooltipMove({
-                        pos: [d3.event.pageX, d3.event.pageY]
+                        pos: [d3.event.offsetX, d3.event.offsetY]
                     });
                 });
 
@@ -10392,9 +10290,15 @@ nv.models.paretoChart = function() {
                 container.call(chart);
             });
 
-            dispatch.on('tooltipShow', function(e) {
+            dispatch.on('tooltipShow', function(eo) {
                 if (tooltips) {
-                    showTooltip(e, that.parentNode, dataGroup);
+                    showTooltip(eo, that.parentNode, dataGroup);
+                }
+            });
+
+            dispatch.on('tooltipMove', function(eo) {
+                if (tooltip) {
+                    nv.tooltip.position(that.parentNode, tooltip, eo.pos, 's');
                 }
             });
 
@@ -10404,23 +10308,18 @@ nv.models.paretoChart = function() {
                 }
             });
 
-            dispatch.on('tooltipMove', function(e) {
-                if (tooltip) {
-                    nv.tooltip.position(tooltip, e.pos, 's');
-                }
-            });
-
-            dispatch.on('chartClick', function(e) {
+            dispatch.on('chartClick', function(eo) {
                 if (barLegend.enabled()) {
-                    barLegend.dispatch.closeMenu(e);
+                    barLegend.dispatch.closeMenu(eo);
                 }
                 if (lineLegend.enabled()) {
-                    lineLegend.dispatch.closeMenu(e);
+                    lineLegend.dispatch.closeMenu(eo);
                 }
             });
 
-            multibar.dispatch.on('elementClick', function(e) {
-                barClick(data, e, container);
+            multibar.dispatch.on('elementClick', function(eo) {
+                dispatch.chartClick(eo);
+                barClick(data, eo, chart, container);
             });
 
         });
@@ -10432,28 +10331,28 @@ nv.models.paretoChart = function() {
     // Event Handling/Dispatching (out of chart's scope)
     //------------------------------------------------------------
 
-    lines2.dispatch.on('elementMouseover.tooltip', function(e) {
-        dispatch.tooltipShow(e);
+    lines2.dispatch.on('elementMouseover.tooltip', function(eo) {
+        dispatch.tooltipShow(eo);
     });
 
-    lines2.dispatch.on('elementMouseout.tooltip', function(e) {
-        dispatch.tooltipHide(e);
+    lines2.dispatch.on('elementMousemove', function(eo) {
+        dispatch.tooltipMove(eo);
     });
 
-    lines2.dispatch.on('elementMousemove', function(e) {
-        dispatch.tooltipMove(e);
+    lines2.dispatch.on('elementMouseout.tooltip', function() {
+        dispatch.tooltipHide();
     });
 
-    multibar.dispatch.on('elementMouseover.tooltip', function(e) {
-        dispatch.tooltipShow(e);
+    multibar.dispatch.on('elementMouseover.tooltip', function(eo) {
+        dispatch.tooltipShow(eo);
     });
 
-    multibar.dispatch.on('elementMouseout.tooltip', function(e) {
-        dispatch.tooltipHide(e);
+    multibar.dispatch.on('elementMousemove', function(eo) {
+        dispatch.tooltipMove(eo);
     });
 
-    multibar.dispatch.on('elementMousemove', function(e) {
-        dispatch.tooltipMove(e);
+    multibar.dispatch.on('elementMouseout.tooltip', function() {
+        dispatch.tooltipHide();
     });
 
 
@@ -10490,7 +10389,7 @@ nv.models.paretoChart = function() {
                 c2: '#62B464',
                 l: 1
             };
-            return d.color || d3.interpolateHsl(d3.rgb(p.c1), d3.rgb(p.c2))(i / 1);
+            return d.color || d3.interpolateHsl(d3.rgb(p.c1), d3.rgb(p.c2))(d.series / 1);
         };
         var lineClasses = function(d, i) {
             return 'nv-group nv-series-' + d.series;
@@ -10748,6 +10647,7 @@ nv.models.pie = function() {
       donutLabelsOutside = true,
       labelThreshold = 0.01, //if slice percentage is under this, don't show label
       donut = false,
+      hole = false,
       labelSunbeamLayout = false,
       leaderLength = 20,
       textOffset = 5,
@@ -10826,57 +10726,41 @@ nv.models.pie = function() {
 
       slices.exit().remove();
 
+      function buildEventObject(e, d, i) {
+        return {
+            label: getX(d.data),
+            value: getY(d.data),
+            point: d.data,
+            pointIndex: i,
+            pos: [e.offsetX, e.offsetY],
+            id: id,
+            e: e
+          };
+      }
+
       var ae = slices.enter().append('g')
             .on('mouseover', function(d, i) {
               d3.select(this).classed('hover', true);
-              dispatch.elementMouseover({
-                label: getX(d.data),
-                value: getY(d.data),
-                point: d.data,
-                pointIndex: i,
-                pos: [d3.event.pageX, d3.event.pageY],
-                id: id
-              });
+              var eo = buildEventObject(d3.event, d, i);
+              dispatch.elementMouseover(eo);
+            })
+            .on('mousemove', function(d, i) {
+              var eo = buildEventObject(d3.event, d, i);
+              dispatch.elementMousemove(eo);
             })
             .on('mouseout', function(d, i) {
               d3.select(this).classed('hover', false);
-              dispatch.elementMouseout({
-                label: getX(d.data),
-                value: getY(d.data),
-                point: d.data,
-                index: i,
-                id: id
-              });
-            })
-            .on('mousemove', function(d, i) {
-              dispatch.elementMousemove({
-                point: d,
-                pointIndex: i,
-                pos: [d3.event.pageX, d3.event.pageY],
-                id: id
-              });
+              dispatch.elementMouseout();
             })
             .on('click', function(d, i) {
-              dispatch.elementClick({
-                label: getX(d.data),
-                value: getY(d.data),
-                point: d.data,
-                index: i,
-                pos: d3.event,
-                id: id
-              });
               d3.event.stopPropagation();
+              var eo = buildEventObject(d3.event, d, i);
+              dispatch.elementClick(eo);
             })
             .on('dblclick', function(d, i) {
-              dispatch.elementDblClick({
-                label: getX(d.data),
-                value: getY(d.data),
-                point: d.data,
-                index: i,
-                pos: d3.event,
-                id: id
-              });
               d3.event.stopPropagation();
+              var eo = buildEventObject(d3.event, d, i);
+              dispatch.elementDblClick(eo);
             });
 
           ae.append('path')
@@ -11382,7 +11266,6 @@ nv.models.pieChart = function() {
       showTitle = false,
       showLegend = true,
       direction = 'ltr',
-      hole = false,
       tooltip = null,
       durationMs = 0,
       tooltips = true,
@@ -11416,7 +11299,7 @@ nv.models.pieChart = function() {
     tooltip = nv.tooltip.show([left, top], content, null, null, offsetElement);
   };
 
-  var seriesClick = function(data, e) {
+  var seriesClick = function(data, e, chart) {
     return;
   };
 
@@ -11441,8 +11324,8 @@ nv.models.pieChart = function() {
         container.transition().duration(durationMs).call(chart);
       };
 
-      chart.dataSeriesActivate = function(e) {
-        var series = e.point;
+      chart.dataSeriesActivate = function(eo) {
+        var series = eo.point;
 
         series.active = (!series.active || series.active === 'inactive') ? 'active' : 'inactive';
 
@@ -11646,9 +11529,15 @@ nv.models.pieChart = function() {
         container.transition().duration(durationMs).call(chart);
       });
 
-      dispatch.on('tooltipShow', function(e) {
+      dispatch.on('tooltipShow', function(eo) {
         if (tooltips) {
-          showTooltip(e, that.parentNode, total);
+          showTooltip(eo, that.parentNode, total);
+        }
+      });
+
+      dispatch.on('tooltipMove', function(eo) {
+        if (tooltip) {
+          nv.tooltip.position(that.parentNode, tooltip, eo.pos);
         }
       });
 
@@ -11658,32 +11547,27 @@ nv.models.pieChart = function() {
         }
       });
 
-      dispatch.on('tooltipMove', function(e) {
-        if (tooltip) {
-          nv.tooltip.position(tooltip, e.pos);
-        }
-      });
-
       // Update chart from a state object passed to event handler
-      dispatch.on('changeState', function(e) {
-        if (typeof e.disabled !== 'undefined') {
+      dispatch.on('changeState', function(eo) {
+        if (typeof eo.disabled !== 'undefined') {
           pieData.forEach(function(series, i) {
-            series.disabled = e.disabled[i];
+            series.disabled = eo.disabled[i];
           });
-          state.disabled = e.disabled;
+          state.disabled = eo.disabled;
         }
 
         container.transition().duration(durationMs).call(chart);
       });
 
-      dispatch.on('chartClick', function(e) {
+      dispatch.on('chartClick', function(eo) {
         if (legend.enabled()) {
-          legend.dispatch.closeMenu(e);
+          legend.dispatch.closeMenu(eo);
         }
       });
 
-      pie.dispatch.on('elementClick', function(e) {
-        seriesClick(data, e);
+      pie.dispatch.on('elementClick', function(eo) {
+        dispatch.chartClick(eo);
+        seriesClick(data, eo, chart);
       });
 
     });
@@ -11695,16 +11579,16 @@ nv.models.pieChart = function() {
   // Event Handling/Dispatching (out of chart's scope)
   //------------------------------------------------------------
 
-  pie.dispatch.on('elementMouseover.tooltip', function(e) {
-    dispatch.tooltipShow(e);
+  pie.dispatch.on('elementMouseover.tooltip', function(eo) {
+    dispatch.tooltipShow(eo);
   });
 
-  pie.dispatch.on('elementMouseout.tooltip', function(e) {
-    dispatch.tooltipHide(e);
+  pie.dispatch.on('elementMousemove.tooltip', function(eo) {
+    dispatch.tooltipMove(eo);
   });
 
-  pie.dispatch.on('elementMousemove.tooltip', function(e) {
-    dispatch.tooltipMove(e);
+  pie.dispatch.on('elementMouseout.tooltip', function() {
+    dispatch.tooltipHide();
   });
 
   //============================================================
@@ -12511,7 +12395,7 @@ nv.models.stackedArea = function () {
             dispatch.areaMouseover({
               point: d,
               series: d.key,
-              pos: [d3.event.pageX, d3.event.pageY],
+              pos: [d3.event.offsetX, d3.event.offsetY],
               seriesIndex: i
             });
             g.select('.nv-chart-' + chart.id() + ' .nv-area-' + i).classed('hover', true);
@@ -12521,7 +12405,7 @@ nv.models.stackedArea = function () {
             dispatch.areaMouseout({
               point: d,
               series: d.key,
-              pos: [d3.event.pageX, d3.event.pageY],
+              pos: [d3.event.offsetX, d3.event.offsetY],
               seriesIndex: i
             });
             g.select('.nv-chart-' + chart.id() + ' .nv-area-' + i).classed('hover', false);
@@ -12530,7 +12414,7 @@ nv.models.stackedArea = function () {
             dispatch.areaMousemove({
               point: d,
               pointIndex: i,
-              pos: [d3.event.pageX, d3.event.pageY],
+              pos: [d3.event.offsetX, d3.event.offsetY],
               seriesIndex: i
             });
           })
@@ -12539,7 +12423,7 @@ nv.models.stackedArea = function () {
             dispatch.areaClick({
               point: d,
               series: d.key,
-              pos: [d3.event.pageX, d3.event.pageY],
+              pos: [d3.event.offsetX, d3.event.offsetY],
               seriesIndex: i
             });
           });
@@ -12566,6 +12450,9 @@ nv.models.stackedArea = function () {
       scatter.dispatch.on('elementMouseout.area', function (e) {
         g.select('.nv-chart-' + chart.id() + ' .nv-area-' + e.seriesIndex).classed('hover', false);
       });
+      scatter.dispatch.on('elementClick.area', function (e) {
+        dispatch.areaClick(e);
+      });
 
       //============================================================
 
@@ -12579,9 +12466,6 @@ nv.models.stackedArea = function () {
   // Event Handling/Dispatching (out of chart's scope)
   //------------------------------------------------------------
 
-  scatter.dispatch.on('elementClick.area', function (e) {
-    dispatch.areaClick(e);
-  });
   scatter.dispatch.on('elementMouseover.tooltip', function (e) {
     e.pos = [e.pos[0] + margin.left, e.pos[1] + margin.top];
     dispatch.tooltipShow(e);
@@ -12626,24 +12510,6 @@ nv.models.stackedArea = function () {
     return chart;
   };
 
-  chart.x = function (_) {
-    if (!arguments.length) { return getX; }
-    getX = d3.functor(_);
-    return chart;
-  };
-
-  chart.y = function (_) {
-    if (!arguments.length) { return getY; }
-    getY = d3.functor(_);
-    return chart;
-  };
-
-  chart.delay = function (_) {
-    if (!arguments.length) { return delay; }
-    delay = _;
-    return chart;
-  };
-
   chart.margin = function (_) {
     if (!arguments.length) { return margin; }
     margin.top    = typeof _.top    != 'undefined' ? _.top    : margin.top;
@@ -12662,6 +12528,26 @@ nv.models.stackedArea = function () {
   chart.height = function (_) {
     if (!arguments.length) { return height; }
     height = _;
+    return chart;
+  };
+
+  chart.x = function (_) {
+    if (!arguments.length) { return getX; }
+    getX = _;
+    scatter.x(_);
+    return chart;
+  };
+
+  chart.y = function (_) {
+    if (!arguments.length) { return getY; }
+    getY = _;
+    scatter.y(_);
+    return chart;
+  };
+
+  chart.delay = function (_) {
+    if (!arguments.length) { return delay; }
+    delay = _;
     return chart;
   };
 
@@ -12736,8 +12622,7 @@ nv.models.stackedAreaChart = function() {
       tooltip = null,
       tooltips = true,
       tooltipContent = function (key, x, y, e, graph) {
-        return '<h3>' + key + '</h3>' +
-               '<p>' +  y + ' on ' + x + '</p>';
+        return '<h3>' + key + '</h3>';
       },
       x,
       y,
@@ -12780,9 +12665,7 @@ nv.models.stackedAreaChart = function() {
   var showTooltip = function (e, offsetElement) {
     var left = e.pos[0],
         top = e.pos[1],
-        x = xAxis.tickFormat()(stacked.x()(e.point, e.pointIndex)),
-        y = yAxis.tickFormat()(stacked.y()(e.point, e.pointIndex)),
-        content = tooltipContent(e.series.key, x, y, e, chart);
+        content = tooltipContent(e.series, e, chart);
 
     tooltip = nv.tooltip.show([left, top], content, null, null, offsetElement);
   };
@@ -13128,28 +13011,28 @@ nv.models.stackedAreaChart = function() {
         container.transition().duration(chart.delay()).call(chart);
       });
 
-      dispatch.on('tooltipShow', function (e) {
+      dispatch.on('tooltipShow', function(eo) {
         if (tooltips) {
-          showTooltip(e, that.parentNode);
+          showTooltip(eo, that.parentNode);
         }
       });
 
-      dispatch.on('tooltipHide', function () {
+      dispatch.on('tooltipMove', function(eo) {
+        if (tooltip) {
+          nv.tooltip.position(that.parentNode, tooltip, eo.pos, 's');
+        }
+      });
+
+      dispatch.on('tooltipHide', function() {
         if (tooltips) {
           nv.tooltip.cleanup();
         }
       });
 
-      dispatch.on('tooltipMove', function (e) {
-        if (tooltip) {
-          nv.tooltip.position(tooltip, e.pos, 's');
-        }
-      });
-
       // Update chart from a state object passed to event handler
-      dispatch.on('changeState', function (e) {
+      dispatch.on('changeState', function(e) {
         if (typeof e.disabled !== 'undefined') {
-          data.forEach(function (series,i) {
+          data.forEach(function(series, i) {
             series.disabled = e.disabled[i];
           });
           state.disabled = e.disabled;
@@ -13163,12 +13046,12 @@ nv.models.stackedAreaChart = function() {
         container.transition().duration(chart.delay()).call(chart);
       });
 
-      dispatch.on('chartClick', function (e) {
+      dispatch.on('chartClick', function(eo) {
         if (controls.enabled()) {
-          controls.dispatch.closeMenu(e);
+          controls.dispatch.closeMenu(eo);
         }
         if (legend.enabled()) {
-          legend.dispatch.closeMenu(e);
+          legend.dispatch.closeMenu(eo);
         }
       });
 
@@ -13181,23 +13064,23 @@ nv.models.stackedAreaChart = function() {
   // Event Handling/Dispatching (out of chart's scope)
   //------------------------------------------------------------
 
-  stacked.dispatch.on('areaMouseover.tooltip', function (e) {
-    //dispatch.tooltipShow(e);
+  stacked.dispatch.on('areaMouseover.tooltip', function(eo) {
+    dispatch.tooltipShow(eo);
   });
 
-  stacked.dispatch.on('areaMouseout.tooltip', function (e) {
-    //dispatch.tooltipHide(e);
+  stacked.dispatch.on('areaMousemove.tooltip', function(eo) {
+    dispatch.tooltipMove(eo);
   });
 
-  stacked.dispatch.on('areaMousemove.tooltip', function (e) {
-    //dispatch.tooltipMove(e);
+  stacked.dispatch.on('areaMouseout.tooltip', function() {
+    dispatch.tooltipHide();
   });
 
-  stacked.dispatch.on('tooltipShow', function (e) {
+  stacked.dispatch.on('tooltipShow', function(e) {
     dispatch.tooltipShow(e);
   });
 
-  stacked.dispatch.on('tooltipHide', function (e) {
+  stacked.dispatch.on('tooltipHide', function(e) {
     dispatch.tooltipHide(e);
   });
 
@@ -13542,7 +13425,7 @@ nv.models.treemap = function() {
             dispatch.elementMouseover({
               point: d,
               pointIndex: i,
-              pos: [d3.event.pageX, d3.event.pageY],
+              pos: [d3.event.offsetX, d3.event.offsetY],
               id: id
             });
           })
@@ -13554,7 +13437,7 @@ nv.models.treemap = function() {
             dispatch.elementMousemove({
               point: d,
               pointIndex: i,
-              pos: [d3.event.pageX, d3.event.pageY],
+              pos: [d3.event.offsetX, d3.event.offsetY],
               id: id
             });
           });
@@ -13576,7 +13459,7 @@ nv.models.treemap = function() {
                 value: getSize(d),
                 point: d,
                 pointIndex: i,
-                pos: [d3.event.pageX, d3.event.pageY],
+                pos: [d3.event.offsetX, d3.event.offsetY],
                 id: id
             });
           })
@@ -14018,9 +13901,21 @@ nv.models.treemapChart = function() {
         container.transition().duration(300).call(chart);
       });
 
-      dispatch.on('tooltipShow', function(e) {
+      dispatch.on('tooltipShow', function(eo) {
         if (tooltips) {
-          showTooltip(e, that.parentNode);
+          showTooltip(eo, that.parentNode);
+        }
+      });
+
+      dispatch.on('tooltipMove', function(eo) {
+        if (tooltip) {
+          nv.tooltip.position(that.parentNode, tooltip, eo.pos);
+        }
+      });
+
+      dispatch.on('tooltipHide', function() {
+        if (tooltips) {
+          nv.tooltip.cleanup();
         }
       });
 
@@ -14049,30 +13944,18 @@ nv.models.treemapChart = function() {
   // Event Handling/Dispatching (out of chart's scope)
   //------------------------------------------------------------
 
-  treemap.dispatch.on('elementMouseover', function(e) {
-    e.pos = [e.pos[0] + margin.left, e.pos[1] + margin.top];
-    dispatch.tooltipShow(e);
+  treemap.dispatch.on('elementMouseover', function(eo) {
+    eo.pos = [eo.pos[0] + margin.left, eo.pos[1] + margin.top];
+    dispatch.tooltipShow(eo);
   });
 
-  treemap.dispatch.on('elementMouseout', function(e) {
-    dispatch.tooltipHide(e);
-  });
-  dispatch.on('tooltipHide', function() {
-    if (tooltips) {
-      nv.tooltip.cleanup();
-    }
+  treemap.dispatch.on('elementMousemove', function(eo) {
+    dispatch.tooltipMove(eo);
   });
 
-  treemap.dispatch.on('elementMousemove', function(e) {
-    dispatch.tooltipMove(e);
+  treemap.dispatch.on('elementMouseout', function() {
+    dispatch.tooltipHide();
   });
-  dispatch.on('tooltipMove', function(e) {
-    if (tooltip) {
-      nv.tooltip.position(tooltip, e.pos);
-    }
-  });
-  //============================================================
-
 
   //============================================================
   // Expose Public Variables

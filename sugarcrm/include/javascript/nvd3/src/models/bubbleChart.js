@@ -474,7 +474,7 @@ nv.models.bubbleChart = function () {
 
       dispatch.on('tooltipMove', function (e) {
         if (tooltip) {
-          nv.tooltip.position(tooltip, e.pos);
+          nv.tooltip.position(that.parentNode, tooltip, e.pos);
         }
       });
 
@@ -491,12 +491,16 @@ nv.models.bubbleChart = function () {
       });
 
       dispatch.on('chartClick', function (e) {
+        dispatch.tooltipHide();
         if (legend.enabled()) {
           legend.dispatch.closeMenu(e);
         }
       });
 
-      //============================================================
+      scatter.dispatch.on('elementClick', function (e) {
+        dispatch.chartClick(e);
+        bubbleClick(e);
+      });
 
       chart.render();
     });
@@ -520,10 +524,6 @@ nv.models.bubbleChart = function () {
     dispatch.tooltipMove(e);
   });
 
-  scatter.dispatch.on('elementClick', function (e) {
-    bubbleClick(e);
-    nv.tooltip.cleanup();
-  });
 
   //============================================================
   // Expose Public Variables

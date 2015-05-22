@@ -39,21 +39,28 @@ class RevenueLineItemHooksTest extends Sugar_PHPUnit_Framework_TestCase
      * @covers RevenueLineItemHooks::afterRelationshipDelete
      * @dataProvider dataAfterRelationshipDelete
      */
-    public function testAfterRelationshipDelete($event, $link, $result)
+    public function testAfterRelationshipDelete($event, $link, $result, $deleted, $count)
     {
+        $this->rli->deleted = $deleted;
         $hook = new RevenueLineItemHooks();
+
+        $this->rli->expects($this->exactly($count))
+                  ->method('save');
+
         $ret = $hook->afterRelationshipDelete($this->rli, $event, $link);
+
         $this->assertEquals($result, $ret);
-        
     }
 
     public function dataAfterRelationshipDelete()
     {
         return array(
-            array('after_relationship_delete', array('link' => 'account_link'), true),
-            array('after_relationship_delete', array('link' => 'foo'), false),
-            array('foo', array('link' => 'account_link'), false),
-            array('foo', array('link' => 'foo'), false ),
+            array('after_relationship_delete', array('link' => 'account_link'), true, 0, 1),
+            array('after_relationship_delete', array('link' => 'foo'), false, 0, 0),
+            array('after_relationship_delete', array('link' => 'account_link'), false, 1, 0),
+            array('after_relationship_delete', array('link' => 'foo'), false, 1, 0),
+            array('foo', array('link' => 'account_link'), false, 0, 0),
+            array('foo', array('link' => 'foo'), false, 0, 0 ),
         );
     }
 }

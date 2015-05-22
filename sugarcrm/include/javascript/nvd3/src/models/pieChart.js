@@ -10,7 +10,6 @@ nv.models.pieChart = function() {
       showTitle = false,
       showLegend = true,
       direction = 'ltr',
-      hole = false,
       tooltip = null,
       durationMs = 0,
       tooltips = true,
@@ -44,7 +43,7 @@ nv.models.pieChart = function() {
     tooltip = nv.tooltip.show([left, top], content, null, null, offsetElement);
   };
 
-  var seriesClick = function(data, e) {
+  var seriesClick = function(data, e, chart) {
     return;
   };
 
@@ -69,8 +68,8 @@ nv.models.pieChart = function() {
         container.transition().duration(durationMs).call(chart);
       };
 
-      chart.dataSeriesActivate = function(e) {
-        var series = e.point;
+      chart.dataSeriesActivate = function(eo) {
+        var series = eo.point;
 
         series.active = (!series.active || series.active === 'inactive') ? 'active' : 'inactive';
 
@@ -274,9 +273,15 @@ nv.models.pieChart = function() {
         container.transition().duration(durationMs).call(chart);
       });
 
-      dispatch.on('tooltipShow', function(e) {
+      dispatch.on('tooltipShow', function(eo) {
         if (tooltips) {
-          showTooltip(e, that.parentNode, total);
+          showTooltip(eo, that.parentNode, total);
+        }
+      });
+
+      dispatch.on('tooltipMove', function(eo) {
+        if (tooltip) {
+          nv.tooltip.position(that.parentNode, tooltip, eo.pos);
         }
       });
 
@@ -286,32 +291,27 @@ nv.models.pieChart = function() {
         }
       });
 
-      dispatch.on('tooltipMove', function(e) {
-        if (tooltip) {
-          nv.tooltip.position(tooltip, e.pos);
-        }
-      });
-
       // Update chart from a state object passed to event handler
-      dispatch.on('changeState', function(e) {
-        if (typeof e.disabled !== 'undefined') {
+      dispatch.on('changeState', function(eo) {
+        if (typeof eo.disabled !== 'undefined') {
           pieData.forEach(function(series, i) {
-            series.disabled = e.disabled[i];
+            series.disabled = eo.disabled[i];
           });
-          state.disabled = e.disabled;
+          state.disabled = eo.disabled;
         }
 
         container.transition().duration(durationMs).call(chart);
       });
 
-      dispatch.on('chartClick', function(e) {
+      dispatch.on('chartClick', function(eo) {
         if (legend.enabled()) {
-          legend.dispatch.closeMenu(e);
+          legend.dispatch.closeMenu(eo);
         }
       });
 
-      pie.dispatch.on('elementClick', function(e) {
-        seriesClick(data, e);
+      pie.dispatch.on('elementClick', function(eo) {
+        dispatch.chartClick(eo);
+        seriesClick(data, eo, chart);
       });
 
     });
@@ -323,16 +323,16 @@ nv.models.pieChart = function() {
   // Event Handling/Dispatching (out of chart's scope)
   //------------------------------------------------------------
 
-  pie.dispatch.on('elementMouseover.tooltip', function(e) {
-    dispatch.tooltipShow(e);
+  pie.dispatch.on('elementMouseover.tooltip', function(eo) {
+    dispatch.tooltipShow(eo);
   });
 
-  pie.dispatch.on('elementMouseout.tooltip', function(e) {
-    dispatch.tooltipHide(e);
+  pie.dispatch.on('elementMousemove.tooltip', function(eo) {
+    dispatch.tooltipMove(eo);
   });
 
-  pie.dispatch.on('elementMousemove.tooltip', function(e) {
-    dispatch.tooltipMove(e);
+  pie.dispatch.on('elementMouseout.tooltip', function() {
+    dispatch.tooltipHide();
   });
 
   //============================================================

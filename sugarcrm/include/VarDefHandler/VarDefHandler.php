@@ -91,10 +91,11 @@ class VarDefHandler {
                  	    $GLOBALS['log']->fatal("Failed to load relationship {$value_array['name']}");
                  	    continue;
                  	}
-                    if(!empty($app_list_strings['moduleList'][$this->module_object->$value_array['name']->getRelatedModuleName()])){
-                    	$label_name = $app_list_strings['moduleList'][$this->module_object->$value_array['name']->getRelatedModuleName()];
+                    $relModName = $this->module_object->$value_array['name']->getRelatedModuleName();
+                    if(!empty($app_list_strings['moduleList'][$relModName])){
+                    	$label_name = $app_list_strings['moduleList'][$relModName];
                     }else{
-                    	$label_name = $this->module_object->$value_array['name']->getRelatedModuleName();
+                    	$label_name = $relModName;
                     }
                 }
 				else if(!empty($value_array['vname'])){
@@ -127,11 +128,13 @@ class VarDefHandler {
 
 				$value = trim($label_name, ':');
 				if($remove_dups){
-					if(!in_array($value, $this->options_array))
+					if(!in_array($value, $this->options_array)) {
 						$this->options_array[$index] = $value;
+					}
 				}
-				else
+				else {
 					$this->options_array[$index] = $value;
+				}
 
 			//end if field is included
 			}

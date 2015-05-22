@@ -20,7 +20,7 @@ describe('View.Views.Base.QuicksearchTaglistView', function() {
 
         tag1 = {id: 1, name: 'tag1'};
         tag2 = {id: 2, name: 'tag2'};
-        view.tags = [tag1, tag2];
+        view.selectedTags = [tag1, tag2];
     });
 
     afterEach(function() {
@@ -60,7 +60,7 @@ describe('View.Views.Base.QuicksearchTaglistView', function() {
         });
 
         it('should not be focusable', function() {
-            view.tags = [];
+            view.selectedTags = [];
             var isFocusable = view.isFocusable();
             expect(isFocusable).not.toBeTruthy();
         });
@@ -107,19 +107,19 @@ describe('View.Views.Base.QuicksearchTaglistView', function() {
     describe('handleBackspace', function() {
         beforeEach(function() {
             removeStub = sinon.collection.stub(view, 'removeTag', function() {
-                view.tags.splice(view.activeIndex, 1);
+                view.selectedTags.splice(view.activeIndex, 1);
             });
         });
 
         it('should remove the tag at activeIndex', function() {
             view.activeIndex = 0;
             view.handleBackspace();
-            expect(view.tags.length).toEqual(1);
-            expect(view.tags[0].name).toEqual(tag2.name);
+            expect(view.selectedTags.length).toEqual(1);
+            expect(view.selectedTags[0].name).toEqual(tag2.name);
         });
 
         it('should move to the next element if no tags remain', function() {
-            view.tags = [tag1];
+            view.selectedTags = [tag1];
             view.activeIndex = 0;
             view.handleBackspace();
             expect(view.activeIndex).toBeNull();
@@ -159,8 +159,8 @@ describe('View.Views.Base.QuicksearchTaglistView', function() {
         it('should remove tag specified by jquery.attr if parameter is false', function() {
             view.activeIndex = 1;
             view.removeTag(false);
-            expect(view.tags.length).toEqual(1);
-            expect(view.tags[0].name).toEqual(tag1.name);
+            expect(view.selectedTags.length).toEqual(1);
+            expect(view.selectedTags[0].name).toEqual(tag1.name);
         });
 
         it('should remove tag specified by jquery object parameter', function() {
@@ -173,8 +173,8 @@ describe('View.Views.Base.QuicksearchTaglistView', function() {
             };
             view.activeIndex = null;
             view.removeTag(jQueryTag);
-            expect(view.tags.length).toEqual(1);
-            expect(view.tags[0].name).toEqual(tag2.name);
+            expect(view.selectedTags.length).toEqual(1);
+            expect(view.selectedTags[0].name).toEqual(tag2.name);
         });
     });
 
@@ -207,7 +207,7 @@ describe('View.Views.Base.QuicksearchTaglistView', function() {
     describe('removeAllTags', function() {
         it('should remove all tags', function() {
             view.removeAllTags();
-            expect(view.tags.length).toEqual(0);
+            expect(view.selectedTags.length).toEqual(0);
             expect(view.activeIndex).toBeNull();
         });
     });
