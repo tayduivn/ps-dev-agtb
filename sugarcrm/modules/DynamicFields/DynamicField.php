@@ -23,6 +23,11 @@ class DynamicField {
     const TYPE_SIGNED = 'signed';
     const TYPE_UNSIGNED = 'unsigned';
 
+    /**
+     * @var SugarBean
+     */
+    public $bean;
+
     public static $fieldTypeRangeValue = array(
         'int32' => array(
             self::TYPE_SIGNED  => array(
@@ -983,17 +988,9 @@ class DynamicField {
         $result = $db->query($query);
         $row = $db->fetchByAssoc($result);
 
-        if($row)
-        {
-            foreach($row as $name=>$value)
-            {
-                // originally in pre-r30895 we checked if this field was in avail_fields i.e., in fields_meta_data and not deleted
-                // with the removal of avail_fields post-r30895 we have simplified this - we now retrieve every custom field even if previously deleted
-                // this is considered harmless as the value although set in the bean will not otherwise be used (nothing else works off the list of fields in the bean)
-                $this->bean->$name = $value;
-            }
+        if ($row) {
+            $this->bean->populateFromRow($row, true);
         }
-
     }
 
    function populateXTPL($xtpl, $view) {

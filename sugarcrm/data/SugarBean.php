@@ -2948,6 +2948,10 @@ class SugarBean
     {
         global $locale;
 
+        // in case if a CHAR ID was fetched from database manually, we need to convert it here in order
+        // to make sure it doesn't contain trailing spaces
+        $id = $this->db->fromConvert($id, 'id');
+
         $custom_logic_arguments['id'] = $id;
         $this->call_custom_logic('before_retrieve', $custom_logic_arguments);
 

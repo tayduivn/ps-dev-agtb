@@ -17,13 +17,14 @@ require_once('modules/WorkFlow/WorkFlowSchedule.php');
  */
 class TimeElapsedSaveOnceTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    private $beanId = 'TimeElapsedSaveOnceTest_BeanId';
+    private $beanId;
 
     public function setUp()
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('current_user');
+        $this->beanId = create_guid();
     }
 
     public function tearDown()
