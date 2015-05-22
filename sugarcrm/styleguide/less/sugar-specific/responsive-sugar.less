@@ -408,15 +408,30 @@
     }
   }
 
+  .side > .preview-pane {
+    display: block;
+  }
+
   .preview-pane.active {
     left:0;
-    -webkit-animation:preview-in .3s;
+    -webkit-animation: preview-in .3s;
+  }
+
+  .preview-pane {
+    -webkit-animation: preview-out .3s;
+    display: block;
   }
 
   @-webkit-keyframes preview-in {
-    0% {left:100%;}
-    100% {left:0px;}
+    0% {left: 100%;}
+    100% {left: 0;}
   }
+
+  @-webkit-keyframes preview-out {
+    0% {left: 0%;}
+    100% {left: 100%;}
+  }
+
   .card2 {
     margin: 10px 0;
   }
