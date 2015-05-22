@@ -26,6 +26,11 @@
             messages: app.lang.get(msg)
         });
     }
+
+    // Displays an error alert if the app fails during its initialization.
+    app.events.on('app:sync:public:error', function(error) {
+        alertUser('public_sync_failure', 'Unable to load the application.');
+    });
     
     /**
      * This is caused by attempt to login with invalid creds. 
