@@ -34,7 +34,6 @@
     initialize: function(opts) {
         app.view.View.prototype.initialize.call(this, opts);
         this.listenTo(this.layout, 'filter:clear:quicksearch', this.clearInput);
-        this.listenTo(this.layout, 'filter:quicksearch:apply', this.applyQuickSearch);
         this.listenTo(this.layout, 'filter:change:module', this.updatePlaceholder);
 
         //shortcut keys
@@ -60,7 +59,7 @@
      * @param {Event} [event] A keyup event.
      */
     throttledSearch: _.debounce(function(event) {
-            this.applyQuickSearch();
+        this.applyQuickSearch();
     }, 400),
 
     /**
@@ -124,15 +123,20 @@
         if (_.isFunction(input.placeholder)) {
             input.placeholder();
         }
-        this.applyQuickSearch();
+        this.applyQuickSearch(true);
     },
 
     /**
-     * Invokes the `filter:apply` event with the current value on the quicksearch field.
+     * Invokes the `filter:apply` event with the current value on the
+     * quicksearch field.
+     *
+     * @param {boolean} [force] `true` to always trigger the `filter:apply`
+     *   event, `false` otherwise. Defaults to `false`.
      */
-    applyQuickSearch: function() {
+    applyQuickSearch: function(force) {
+        force = !_.isUndefined(force) ? force : false;
         var newSearch = this.$el.val();
-        if (this.currentSearch !== newSearch) {
+        if (force || this.currentSearch !== newSearch) {
             this.currentSearch = newSearch;
             this.layout.trigger('filter:apply', newSearch);
         }
