@@ -23,7 +23,14 @@ describe("Forecasts.Layout.Records", function() {
             app.events.trigger('app:init');
         });
 
+        // FIXME SC-4484 should remove getCloseSelector and review this
+        SugarTest.loadComponent('base', 'view', 'alert');
+        SugarTest.loadHandlebarsTemplate('alert', 'view', 'base', 'error');
+
         SugarTest.testMetadata.set();
+
+        app.alert.init();
+
 
         app.user.setPreference('datepref', 'm/d/Y');
 
@@ -118,6 +125,7 @@ describe("Forecasts.Layout.Records", function() {
 
             expect(layout.codeBlockForecasts).toHaveBeenCalled();
 
+            app.alert.dismissAll();
             app.lang.get.restore();
         });
     });
