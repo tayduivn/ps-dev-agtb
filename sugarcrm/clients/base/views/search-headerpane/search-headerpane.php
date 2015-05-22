@@ -11,13 +11,8 @@
  */
 
 $viewdefs['base']['view']['search-headerpane'] = array(
-    'template' => 'headerpane',
+    'template' => 'search-headerpane',
     'fields' => array(
-        array(
-            'name' => 'title',
-            'type' => 'label',
-            'default_value' => 'TPL_SEARCH_RESULTS_FOR',
-        ),
         array(
             'name' => 'collection-count',
             'type' => 'collection-count',
