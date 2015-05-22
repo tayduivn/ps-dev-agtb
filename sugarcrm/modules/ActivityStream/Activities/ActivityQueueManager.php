@@ -20,7 +20,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
  */
 class ActivityQueueManager
 {
-    public static $linkBlacklist = array('user_sync', 'activities', 'contacts_sync', 'kbusefulness');
+    public static $linkBlacklist = array('user_sync', 'activities', 'contacts_sync', 'kbusefulness', 'usefulness');
     public static $linkModuleBlacklist = array('ActivityStream/Activities', 'ACLRoles', 'Teams',
         'KBArticles', 'KBDocuments'
     );
