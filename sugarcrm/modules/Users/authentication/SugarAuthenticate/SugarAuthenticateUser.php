@@ -54,41 +54,66 @@ class SugarAuthenticateUser{
 	    return !empty($row);
 	}
 
-	/**
-	 * this is called when a user logs in
-	 *
-	 * @param STRING $name
-	 * @param STRING $password
-	 * @param STRING $fallback - is this authentication a fallback from a failed authentication
-	 * @return boolean
-	 */
-	function loadUserOnLogin($name, $password, $fallback = false, $PARAMS = array()) {
-		global $login_error;
+    /**
+     * this is called when a user logs in
+     *
+     * @param STRING $name
+     * @param STRING $password
+     * @param STRING $fallback - is this authentication a fallback from a failed authentication
+     *
+     * @return boolean
+     */
+    function loadUserOnLogin($name, $password, $fallback = false, $PARAMS = array())
+    {
+        $passwordEncrypted = false;
+        if (empty($name) && empty($password)) {
+            $user_id = $this->checkForSeamlessLogin();
+        } else {
+            $GLOBALS['log']->debug("Starting user load for " . $name);
+            if (empty($name) || empty($password)) {
+                return false;
+            }
+            $input_hash = $password;
+            if (!empty($PARAMS) && isset($PARAMS['passwordEncrypted']) && $PARAMS['passwordEncrypted']) {
+                $passwordEncrypted = true;
+            }// if
+            if (!$passwordEncrypted) {
+                $input_hash = SugarAuthenticate::encodePassword($password);
+            } // if
+            $user_id = $this->authenticateUser($name, $input_hash, $fallback);
+            if (empty($user_id)) {
+                $GLOBALS['log']->fatal('SECURITY: User authentication for ' . $name . ' failed');
 
-		$GLOBALS['log']->debug("Starting user load for ". $name);
-		if(empty($name) || empty($password)) return false;
-		$input_hash = $password;
-		$passwordEncrypted = false;
-		if (!empty($PARAMS) && isset($PARAMS['passwordEncrypted']) && $PARAMS['passwordEncrypted']) {
-			$passwordEncrypted = true;
-		}// if
-		if (!$passwordEncrypted) {
-			$input_hash = SugarAuthenticate::encodePassword($password);
-		} // if
-		$user_id = $this->authenticateUser($name, $input_hash, $fallback);
-		if(empty($user_id)) {
-			$GLOBALS['log']->fatal('SECURITY: User authentication for '.$name.' failed');
-			return false;
-		}
-		$this->loadUserOnSession($user_id);
+                return false;
+            }
+        }
 
+        $this->loadUserOnSession($user_id);
+        
         // Only call rehash when we have a clear text password
         if (!$passwordEncrypted && !empty($GLOBALS['current_user']->id)) {
             $GLOBALS['current_user']->rehashPassword($password);
         }
 
-		return true;
-	}
+        return true;
+    }
+
+    protected function checkForSeamlessLogin() {
+        //allow a user to pick up a session from another application.
+        //We still need to ensure IP validation
+        if (!empty($_REQUEST['MSID'])) {
+            session_id($_REQUEST['MSID']);
+            session_start();
+            if (isset($_SESSION['user_id']) && isset($_SESSION['seamless_login'])) {
+                unset ($_SESSION['seamless_login']);
+                return $_SESSION['user_id'];
+            } else {
+                session_write_close();
+                $_SESSION = array();
+            }
+
+        }
+    }
 	/**
 	 * Loads the current user bassed on the given user_id
 	 *

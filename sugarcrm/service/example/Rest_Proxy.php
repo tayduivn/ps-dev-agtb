@@ -10,9 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+include "../../config.php";
+
 ob_start();
 $fp =  fopen('proxy.log', 'a');
-define('PROXY_SERVER',  'http://localhost/service/v2/rest.php');
+define('PROXY_SERVER',  $sugar_config['site_url'] . "service/v4_1/rest.php");
 $headers = (function_exists('getallheaders'))?getallheaders(): array();
 $_headers  = array();
 foreach($headers as $k=>$v){

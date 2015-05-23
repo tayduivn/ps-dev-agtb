@@ -240,6 +240,8 @@ function seamless_login($session){
 			return 0;
 		}
 
+        $_SESSION['seamless_login'] = true;
+
 		return 1;
 }
 

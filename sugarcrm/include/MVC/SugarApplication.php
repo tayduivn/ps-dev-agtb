@@ -719,19 +719,26 @@ EOF;
     function startSession()
     {
         $sessionIdCookie = isset($_COOKIE['PHPSESSID']) ? $_COOKIE['PHPSESSID'] : null;
-        if (!empty($_REQUEST['MSID'])) {
-            session_id($_REQUEST['MSID']);
-            session_start();
-            if (isset($_SESSION['user_id']) && isset($_SESSION['seamless_login'])) {
-                unset ($_SESSION['seamless_login']);
-            } else {
-                if (isset($_COOKIE['PHPSESSID'])) {
-                    self::setCookie('PHPSESSID', '', time() - 42000, '/');
+        if (!empty($_REQUEST['MSID']) && $this->controller->action !== 'authenticate' && $this->controller->module !== 'Users' ) {
+            //This is not longer a valid path for MSID. We can only accept it through view.authenticate.php
+            $url = 'index.php?module=Users&action=Authenticate&MSID=' . $_REQUEST['MSID'] . $loginVars;
+            $req = array_diff_key($this->getRequestVars(), array("MSID" => 1));
+            if (!empty($req['module'])) {
+                if (isModuleBWC($req['module'])) {
+                    $url .= '#bwc/index.php?' . http_build_query($req);
+                } else {
+                    // otherwise compose basic Sidecar route
+                    $url .= '#' . rawurlencode($req['module']);
+                    if (isset($req['record'])) {
+                        $url .= '/' . rawurlencode($req['record']);
+                    }
                 }
-                sugar_cleanup(false);
-                session_destroy();
-                exit('Not a valid entry method');
             }
+            session_write_close();
+            header('HTTP/1.1 301 Moved Permanently');
+            header("Location: $url");
+
+            exit();
         } else {
             if (can_start_session()) {
                 session_start();
@@ -910,11 +917,12 @@ EOF;
      *
      * @return string URL part with login vars
      */
-    public function createLoginVars()
+    public function createLoginVars($ignoreVars = array())
     {
         $ret = array();
         $req = $this->getRequestVars();
-        foreach (array_keys($req) as $var) {
+        $keys = array_diff(array_keys($req), $ignoreVars);
+        foreach ($keys as $var) {
             if(!empty($this->controller->$var)){
                 $ret["login_" . $var] = $this->controller->$var;
                 continue;
@@ -953,10 +961,10 @@ EOF;
      *
      * @return string the URL to redirect to
      */
-    public function getLoginRedirect($add_empty = true)
+    public function getLoginRedirect($add_empty = true, $filter_vars = array())
     {
         $req = $this->getRequestVars();
-        $vars = $this->filterRequestVars('login_', $req, $add_empty);
+        $vars = array_diff_key($this->filterRequestVars('login_', $req, $add_empty), $filter_vars);
 
         if (isset($req['mobile'])) {
             $vars['mobile'] = $req['mobile'];
