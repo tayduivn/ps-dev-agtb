@@ -400,15 +400,6 @@ $dictionary['pmse_Inbox'] = array(
 ),
     'optimistic_locking' => true,
     'unified_search' => true,
-    //'acls' => array('SugarACLDeveloperOrAdmin' => array('aclModule' => 'pmse_Inbox', 'allowUserRead' => true)),
-    'acls' => array(
-        'SugarACLDeveloperForTarget' => array(
-            'targetModuleField' => 'cas_module', 'allowUserRead' => false
-        )
-    ),
-    'visibility' => array(
-        'TargetModuleDeveloperVisibility' => array('targetModuleField' => 'cas_module')
-    ),
     'hidden_to_role_assignment' => true,
 );
 if (!class_exists('VardefManager')){
