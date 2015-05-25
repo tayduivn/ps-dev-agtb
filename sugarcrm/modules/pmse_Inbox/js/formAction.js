@@ -100,7 +100,8 @@ var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,task
         module_Name,
         bean_Id,
         full_Name,
-        valAux;
+        valAux,
+        reassignForm;
 
     module_Name = new HiddenField({
         name: 'moduleName',
@@ -178,6 +179,11 @@ var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,task
         value: ''
     });
 
+    reassignForm = new HiddenField({
+        name: 'reassign_form',
+        value: true
+    });
+
     if (wtype === 'reassign') {
         url = 'pmse_Inbox/AdhocReassign';
         wtitle = translate('LBL_PMSE_TITLE_AD_HOC', 'pmse_Inbox');
@@ -195,7 +201,8 @@ var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,task
             user_Name,
             module_Name,
             bean_Id,
-            full_Name
+            full_Name,
+            reassignForm
         ];
         combo_users.setName('adhoc_user');
     } else {
