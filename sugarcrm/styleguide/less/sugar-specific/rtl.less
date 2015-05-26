@@ -953,7 +953,6 @@ html.rtl {
             left: 0;
             right: auto;
         }
-
         .filter-body > .row-fluid {
             padding-right: 0;
             padding-left: 64px;
@@ -966,13 +965,19 @@ html.rtl {
                 margin-right: 2.127659574%;
             }
         }
-        .filter-header > .row-fluid {
-            .span6:not(.controls) {
-                margin-left: 0;
-                margin-right: 2.127659574%;
-                .btn-primary {
-                    margin-right: 0;
+        .filter-header {
+            > .row-fluid {
+                .span6:not(.controls) {
+                    margin-left: 0;
+                    margin-right: 2.127659574%;
+                    .btn-primary {
+                        margin-right: 0;
+                    }
                 }
+            }
+            .controls {
+                padding-right: 10px;
+                padding-left: initial;
             }
         }
         .massupdate {
@@ -997,6 +1002,9 @@ html.rtl {
                     }
                 }
             }
+        }
+        .filter-body > .row-fluid .filter-value.controls {
+            margin-right: 0;
         }
     }
 
