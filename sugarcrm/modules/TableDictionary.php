@@ -109,6 +109,9 @@ include("metadata/metadata_cacheMetaData.php");
 include("metadata/tag_bean_relMetaData.php");
 include("metadata/kbusefulnessMetaData.php");
 
+// SugarCacheDb
+include "metadata/key_value_cacheMetaData.php";
+
 $defs = SugarAutoLoader::loadExtension('tabledictionary');
 if($defs) {
     require $defs;
