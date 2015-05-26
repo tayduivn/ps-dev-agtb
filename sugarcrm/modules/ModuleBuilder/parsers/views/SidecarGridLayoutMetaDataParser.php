@@ -619,7 +619,7 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
     }
 
     /**
-     * Gets the last field with a proper span attribute affixed
+     * Gets current field's span based on the last field and adjust last field's base span if necessary
      * 
      * @param array $lastField The last field that was touched
      * @param int $singleSpanUnit The number of spaces occupied by a single span
@@ -640,8 +640,7 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
 
                 if ($this->maxSpan > $fullBaseSpan) {
                     $span = $this->maxSpan - $fullBaseSpan;
-                }
-                else {
+                } else {
                     $span = $singleSpanUnit;
 
                     // Adjust the base spans so they are kept in sync
