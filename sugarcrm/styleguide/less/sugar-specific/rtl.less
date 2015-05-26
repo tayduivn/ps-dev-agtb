@@ -121,7 +121,8 @@ html.rtl {
     }
 
     .control-group label {
-        padding: 0 0 0 1em;
+        padding-left: 1em;
+        padding-right: 0;
     }
 
     .merge-interface input[type=radio] {
@@ -1256,14 +1257,11 @@ html.rtl {
         }
     }
 
-  .selection-context .selected-records-container {
-    padding-right: 0;
-    padding-left: 63px;
-  }
+    .selection-context .selected-records-container {
+        padding-right: 0;
+        padding-left: 63px;
+    }
 
-    /**
-     * Sweet Spot
-     */
     #sweetspot {
         .sweetspot-searchbar {
             input[type=text] {
@@ -1306,9 +1304,6 @@ html.rtl {
         }
     }
 
-    /**
-     * Sweet Spot Config panel
-     */
     .sweetspot-config {
         .row-fluid [class*="span"] {
             float: none;
@@ -1331,53 +1326,108 @@ html.rtl {
       text-align: right;
     }
 
-  .nv-chart-org .nv-foreign-object img.rep-avatar {
-    float: right;
-    margin-left: 4px;
-    margin-right: 0;
-  }
-  .jstree ins {
-    margin-left: 5px;
-    margin-right: 0 !important;
-  }
-  @media (max-width: 480px) {
-    .preview-pane {
-      width: 100% !important;
-      margin-right: 0 !important;
+    .nv-chart-org .nv-foreign-object img.rep-avatar {
+        float: right;
+        margin-left: 4px;
+        margin-right: 0;
     }
-  }
-  @media (max-width: 768px) {
-    .preview-pane {
-      right: 100%;
-      left: initial;
-      margin-right: 25%;
-      margin-left: 0;
-      .box-shadow(~"3px 0 4px rgba(0,0,0,0.1)");
+    .jstree ins {
+        margin-left: 5px;
+        margin-right: 0 !important;
     }
 
-    .preview-pane.active {
-      right: 0;
-      -webkit-animation: preview-in-rtl .3s;
+    @media (max-width: 480px) {
+        .preview-pane {
+          width: 100% !important;
+          margin-right: 0 !important;
+        }
+    }
+    @media (max-width: 768px) {
+        .preview-pane {
+          right: 100%;
+          left: initial;
+          margin-right: 25%;
+          margin-left: 0;
+          .box-shadow(~"3px 0 4px rgba(0,0,0,0.1)");
+        }
+
+        .preview-pane.active {
+          right: 0;
+          -webkit-animation: preview-in-rtl .3s;
+        }
+
+        .preview-pane {
+          -webkit-animation: preview-out-rtl .3s;
+          display: block;
+        }
+
+        @-webkit-keyframes preview-in-rtl {
+          0% {right: 100%;}
+          100% {right: 0;}
+        }
+
+        @-webkit-keyframes preview-out-rtl {
+          0% {right: 0;}
+          100% {right: 100%;}
+        }
+
+        /* RTL special override */
+        #content > div {
+          overflow-x: hidden;
+        }
     }
 
-    .preview-pane {
-      -webkit-animation: preview-out-rtl .3s;
-      display: block;
-    }
+    .form-horizontal {
+        .card2 {
+            .control-label-background {
+                .tright {
+                    text-align: left !important;
+                }
+            }
+            [data-type=compose-actionbar] {
 
-    @-webkit-keyframes preview-in-rtl {
-      0% {right: 100%;}
-      100% {right: 0;}
-    }
 
-    @-webkit-keyframes preview-out-rtl {
-      0% {right: 0;}
-      100% {right: 100%;}
-    }
+                .fieldset-inline.edit {
+                    .fieldset-field {
+                        padding-left: initial;
+                        &:first-child {
+                            padding-left: 8px;
+                        }
+                    }
+                    :first-child {
+                        .actions.edit {
+                            label {
+                                padding-right: 6px;
+                                padding-left: 6px;
+                            }
+                        }
+                    }
+                }
 
-    /* RTL special override */
-    #content > div {
-      overflow-x: hidden;
+                .detail > .btn > .fa {
+                    margin-left: 6px;
+                    margin-right: initial;
+                }
+            }
+            [data-name=to_addresses][data-type=recipients] {
+                padding-right: 0;
+                padding-left: 103px;
+                [data-fieldname=to_addresses] {
+                    a[data-name=to_addresses] {
+                        right: initial;
+                        left: -36px;
+                    }
+                }
+                .compose-sender-options {
+                    left: 0;
+                    right: initial;
+                }
+            }
+            [data-name=parent_name] {
+                .select2-container.select2-parent.select2.inherit-width {
+                    width: 99.99% !important;
+                }
+            }
+        }
     }
-  }
 }
