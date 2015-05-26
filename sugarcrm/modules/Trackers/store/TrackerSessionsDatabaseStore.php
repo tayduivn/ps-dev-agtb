@@ -43,6 +43,10 @@ class TrackerSessionsDatabaseStore implements Store
                       VALUES (" . implode(",", $values) . ')';
             $db->query($query);
         } else {
+            // Update only on session close
+            if (empty($values['date_end'])) {
+                return;
+            }
             $query = "UPDATE $monitor->table_name SET";
 
             $set = array();
