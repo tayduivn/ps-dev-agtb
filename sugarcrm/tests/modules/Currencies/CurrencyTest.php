@@ -20,16 +20,17 @@ class CurrencyTest extends Sugar_PHPUnit_Framework_TestCase
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('current_user');
 
         self::$currency = SugarTestCurrencyUtilities::createCurrency('Yen', '¥', 'YEN', 78.87);
     }
 
     protected function setUp()
     {
-        /** @var User $current_user */
-        $current_user = SugarTestHelper::setUp('current_user');
-        $current_user->setPreference('number_grouping_seperator', ',', 0, 'global');
-        $current_user->setPreference('decimal_seperator', '.', 0, 'global');
+        global $current_user;
+
+        $current_user->setPreference('num_grp_sep', ',', 0, 'global');
+        $current_user->setPreference('dec_sep', '.', 0, 'global');
         $current_user->save();
 
         //Force reset on dec_sep and num_grp_sep because the dec_sep and num_grp_sep values are stored as static variables
