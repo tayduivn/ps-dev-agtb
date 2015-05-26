@@ -852,26 +852,26 @@ html.rtl {
         }
     }
 
-    .preview-pane .preview-headerbar {
-        left: 0;
-        right: auto;
-        border-right: @borderWidget;
-        border-left: 0;
-    }
-
-    .preview-pane .preview-headerbar h1 {
-        float: right;
-        margin-right: 20px;
-        margin-left: 0;
-    }
-
-    .preview-data .row-fluid {
-        .span5 {
-            text-align: left;
+    .preview-pane {
+        .preview-headerbar {
+            left: 0;
+            right: auto;
+            border-right: @borderWidget;
+            border-left: 0;
+            h1 {
+                float: right;
+                margin-right: 20px;
+                margin-left: 0;
+            }
         }
-        .span7 {
-            [dir=ltr] {
-                text-align: right;
+        .preview-data .row-fluid {
+            .span5 {
+                text-align: left;
+            }
+            .span7 {
+                [dir=ltr] {
+                    text-align: right;
+                }
             }
         }
     }
@@ -889,7 +889,6 @@ html.rtl {
         .border-top-left-radius(0);
         .border-bottom-left-radius(0);
     }
-
 
     .actions .dropdown-menu {
         right: auto;
