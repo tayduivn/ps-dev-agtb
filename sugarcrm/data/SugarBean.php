@@ -7159,7 +7159,6 @@ class SugarBean
  */
     function encrpyt_before_save($value)
     {
-        require_once("include/utils/encryption_utils.php");
         return blowfishEncode($this->getEncryptKey(), $value);
     }
 
@@ -7171,7 +7170,6 @@ class SugarBean
     public function decrypt_after_retrieve($value)
     {
         if(empty($value)) return $value; // no need to decrypt empty
-        require_once("include/utils/encryption_utils.php");
         return blowfishDecode($this->getEncryptKey(), $value);
     }
 

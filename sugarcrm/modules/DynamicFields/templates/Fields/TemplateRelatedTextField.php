@@ -10,9 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/DynamicFields/templates/Fields/TemplateField.php');
-require_once 'modules/ModuleBuilder/MB/ModuleBuilder.php';
-
 class TemplateRelatedTextField extends TemplateText{
     var $type = 'relate';
 

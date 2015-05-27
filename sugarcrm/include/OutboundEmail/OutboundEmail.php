@@ -388,7 +388,6 @@ class OutboundEmail {
 	 * @return object $this
 	 */
 	function retrieve($id) {
-		require_once('include/utils/encryption_utils.php');
 		$q = "SELECT * FROM outbound_email WHERE id = '{$id}'";
 		$r = $this->db->query($q);
 		$a = $this->db->fetchByAssoc($r);
@@ -453,7 +452,6 @@ class OutboundEmail {
 	 * saves an instance
 	 */
 	function save() {
-		require_once('include/utils/encryption_utils.php');
 	    if( empty($this->id) ) {
 	        $this->id = create_guid();
 			$this->new_with_id = true;
@@ -537,7 +535,6 @@ class OutboundEmail {
 	 */
 	function updateUserSystemOverrideAccounts()
 	{
-		require_once('include/utils/encryption_utils.php');
 	    $updateFields = array('mail_smtptype','mail_sendtype','mail_smtpserver', 'mail_smtpport','mail_smtpauth_req','mail_smtpssl');
 
         $values = $this->getValues($updateFields);

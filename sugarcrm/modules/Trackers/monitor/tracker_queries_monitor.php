@@ -10,9 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
-require_once('modules/Trackers/monitor/Monitor.php');
-
 class tracker_queries_monitor extends Monitor implements Trackable {
 
     var $cached_data = array();

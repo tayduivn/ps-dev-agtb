@@ -19,11 +19,6 @@
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
-require_once 'include/utils/security_utils.php';
-require_once 'include/utils/array_utils.php';
-
-
-
 function make_sugar_config(&$sugar_config)
 {
     /* used to convert non-array config.php file to array format */
@@ -3296,12 +3291,6 @@ function sugar_cleanup($exit = false)
     }
     chdir($root_path);
 
-    // if cleanup runs before autoloader was loaded then init autoloader.
-    if(!class_exists('SugarAutoLoader')) {
-        require_once('include/utils/autoloader.php');
-        SugarAutoLoader::init();
-    }
-
     global $sugar_config;
     LogicHook::initialize();
     $GLOBALS['logic_hook']->call_custom_logic('', 'server_round_trip');
@@ -3311,9 +3300,6 @@ function sugar_cleanup($exit = false)
         if ($exit) exit; else return;
     }
 
-    if (!class_exists('Tracker', true)) {
-        require_once 'modules/Trackers/Tracker.php';
-    }
     Tracker::logPage();
     // Now write the cached tracker_queries
     if (class_exists("TrackerManager")) {
@@ -3363,7 +3349,6 @@ function sugar_cleanup($exit = false)
  */
 function check_logic_hook_file($module_name, $event, $action_array)
 {
-    require_once 'include/utils/logic_utils.php';
     $add_logic = false;
 
     if (file_exists("custom/modules/$module_name/logic_hooks.php")) {
@@ -3411,7 +3396,6 @@ function check_logic_hook_file($module_name, $event, $action_array)
 
 function remove_logic_hook($module_name, $event, $action_array)
 {
-    require_once 'include/utils/logic_utils.php';
     $add_logic = false;
 
     if (file_exists("custom/modules/".$module_name."/logic_hooks.php")) {
@@ -4036,8 +4020,6 @@ function getJSONobj()
 
     return $json;
 }
-
-require_once 'include/utils/db_utils.php';
 
 /**
  * Set default php.ini settings for entry points
@@ -4806,7 +4788,6 @@ function load_link_class($properties)
 {
     $class = 'Link2';
     if (!empty($properties['link_class']) && !empty($properties['link_file'])) {
-        require_once($properties['link_file']);
         $class = $properties['link_class'];
     }
 
@@ -5007,16 +4988,7 @@ function getVariableFromQueryString($variable, $string)
  */
 function should_hide_iframes()
 {
-   //Remove the MySites module
-   if (file_exists('modules/iFrames/iFrame.php')) {
-        if (!class_exists("iFrame")) {
-                require_once 'modules/iFrames/iFrame.php';
-        }
-
-        return false;
-   }
-
-   return true;
+    return !class_exists("iFrame");
 }
 
 /**

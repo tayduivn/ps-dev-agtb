@@ -667,7 +667,6 @@ class FileApi extends SugarApi {
      */
     protected function getDownloadFileApi(ServiceBase $api)
     {
-        require_once 'include/download_file.php';
         return new DownloadFileApi($api);
     }
 }

@@ -12,7 +12,6 @@
 /*********************************************************************************
 * $Id: updater_utils.php 54741 2010-02-23 19:49:41Z rob $
 ********************************************************************************/
-require_once 'include/utils/encryption_utils.php';
 
 /**
  * Proxy to SugarSystemInfo::getInstance()->getInfo()
@@ -61,7 +60,6 @@ function check_now($send_usage_info=true, $get_request_data=false, $response_dat
 	if(!$response_data){
 
         $systemInfo = SugarSystemInfo::getInstance();
-        SugarAutoLoader::requireWithCustom('include/SugarHeartbeat/SugarHeartbeatClient.php', true);
         $sclientClass = SugarAutoLoader::customClass('SugarHeartbeatClient');
         $sclient = new $sclientClass();
 
@@ -325,7 +323,7 @@ function authenticateDownloadKey()
 		shouldCheckSugar()) {
 		check_now(get_sugarbeat());
 	}
-	
+
     // Validation key is required
     if (!is_array($licenseSettings) ||
         empty($licenseSettings['license_validation_key'])) {
@@ -845,7 +843,7 @@ function isAboutToExpire($expire_date, $days_before_warning = 7){
 }
 
 function hasExceededOfflineClientLicenses($num_oc_lic){
-	if (file_exists('modules/Administration/System.php')) {
+    if (class_exists('System')) {
 	    $system = new System();
 	    $where = "systems.system_id != 1 AND systems.deleted = 0";
 	    $GLOBALS['log']->debug("CHECKING SYSTEMS TABLE");

@@ -41,7 +41,6 @@ class SugarCache
  	    foreach ( $locations as $location ) {
             $cacheClass = basename($location, ".php");
             if($cacheClass == 'SugarCache') continue;
- 	        require_once $location;
             if ( class_exists($cacheClass) && is_subclass_of($cacheClass,'SugarCacheAbstract') ) {
                 $GLOBALS['log']->debug("Found cache backend $cacheClass");
                 $cacheInstance = new $cacheClass();

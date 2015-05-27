@@ -9,7 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('modules/DynamicFields/templates/Fields/TemplateField.php');
+
 class TemplateBoolean extends TemplateField{
     var $default_value = '0';
     var $default = '0';

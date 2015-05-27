@@ -14,9 +14,6 @@
 // The contents of this file (particularly the logpage() method) is required in combination with mvc_utils.php - do not remove without good reason
 //END SUGARCRM flav=int ONLY
 
-if(!class_exists('Tracker')){
-
-
 class Tracker extends SugarBean
 {
     var $module_dir = 'Trackers';
@@ -53,9 +50,6 @@ class Tracker extends SugarBean
      */
     function get_recently_viewed($user_id, $modules = '')
     {
-        $path = 'modules/Trackers/BreadCrumbStack.php';
-        if(defined('TEMPLATE_URL'))$path = SugarTemplateUtilities::getFilePath($path);
-        require_once($path);
         if(empty($_SESSION['breadCrumbs'])) {
             $breadCrumb = new BreadCrumbStack($user_id, $modules);
             $_SESSION['breadCrumbs'] = $breadCrumb;
@@ -86,9 +80,6 @@ class Tracker extends SugarBean
     {
         $query = "UPDATE $this->table_name SET visible = 0 WHERE item_id = '$item_id' AND visible = 1";
         $this->db->query($query, true);
-        $path = 'modules/Trackers/BreadCrumbStack.php';
-        if(defined('TEMPLATE_URL'))$path = SugarTemplateUtilities::getFilePath($path);
-        require_once($path);
         if(!empty($_SESSION['breadCrumbs'])){
             $breadCrumbs = $_SESSION['breadCrumbs'];
             $breadCrumbs->popItem($item_id);
@@ -142,5 +133,4 @@ class Tracker extends SugarBean
     {
         return 'Trackers';
     }
-}
 }

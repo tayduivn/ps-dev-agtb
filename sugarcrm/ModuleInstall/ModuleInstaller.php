@@ -25,7 +25,6 @@
 
 
 require_once 'include/utils/progress_bar_utils.php';
-require_once 'ModuleInstall/ModuleScanner.php';
 
 use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;

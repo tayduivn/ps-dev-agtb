@@ -14,8 +14,6 @@ use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
 
-require_once('modules/ModuleBuilder/MB/MBModule.php');
-
 class MBPackage{
     var $name;
     var $is_uninstallable = true;

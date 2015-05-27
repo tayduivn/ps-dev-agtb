@@ -84,7 +84,6 @@ function enum_get_lists()
     if (!empty($_REQUEST['view_package'])) {
         $view_package = $_REQUEST['view_package'];
         if ($view_package != 'studio') {
-            require_once 'modules/ModuleBuilder/MB/ModuleBuilder.php';
             $mb = new ModuleBuilder();
             $module = $mb->getPackageModule($view_package, $_REQUEST['view_module']);
             $lang = $GLOBALS['current_language'];

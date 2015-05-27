@@ -15,7 +15,7 @@
  * All Rights Reserved.
  * Contributor(s): ______________________________________..
  ********************************************************************************/
-require_once('modules/DynamicFields/templates/Fields/TemplateField.php');
+
 class TemplateEncrypt extends TemplateField{
 
 	var $type='encrypt';

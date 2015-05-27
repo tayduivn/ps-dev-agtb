@@ -112,6 +112,21 @@ if (!empty($sugar_config['xhprof_config']))
 }
 
 require_once('include/utils.php');
+require_once 'include/dir_inc.php';
+
+require_once 'include/utils/array_utils.php';
+require_once 'include/utils/file_utils.php';
+require_once 'include/utils/security_utils.php';
+require_once 'include/utils/logic_utils.php';
+require_once 'include/utils/sugar_file_utils.php';
+require_once 'include/utils/mvc_utils.php';
+require_once 'include/utils/db_utils.php';
+require_once 'include/utils/encryption_utils.php';
+
+require_once 'include/SugarCache/SugarCache.php';
+require_once 'include/utils/autoloader.php';
+SugarAutoLoader::init();
+
 register_shutdown_function('sugar_cleanup');
 
 
@@ -119,12 +134,6 @@ register_shutdown_function('sugar_cleanup');
 setPhpIniSettings();
 
 require_once('sugar_version.php'); // provides $sugar_version, $sugar_db_version, $sugar_flavor
-
-require_once('include/utils/sugar_file_utils.php');
-require_once('include/utils/autoloader.php');
-
-// Initialize autoloader
-SugarAutoLoader::init();
 
 // Initialize InputValdation service as soon as possible. Up to this point
 // it is expected that no code has altered any input superglobals.
@@ -136,22 +145,10 @@ foreach (SugarAutoLoader::existing('include/custom_utils.php', 'custom/include/c
     require_once $file;
 }
 
-require_once('include/dir_inc.php');
-
 require_once('include/modules.php'); // provides $moduleList, $beanList, $beanFiles, $modInvisList, $adminOnlyList, $modInvisListActivities
-
-require_once('include/utils/mvc_utils.php');
-require_once('include/SugarObjects/LanguageManager.php');
-
-require_once('include/utils/file_utils.php');
-require_once('modules/Trackers/Tracker.php');
 require_once('modules/Administration/updater_utils.php');
-require_once('include/SugarCache/SugarCache.php');
-require_once('modules/Currencies/Currency.php');
 
 UploadStream::register();
-//
-//SugarApplication::startSession();
 
 ///////////////////////////////////////////////////////////////////////////////
 ////    Handle loading and instantiation of various Sugar* class
@@ -204,5 +201,3 @@ LogicHook::initialize()->call_custom_logic('', 'after_entry_point');
 
 ////	END SETTING DEFAULT VAR VALUES
 ///////////////////////////////////////////////////////////////////////////////
-
-?>

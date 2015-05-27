@@ -254,7 +254,6 @@ function bpminbox_check_special_fields($field_name, $source_object, $use_past_ar
         // We have to load the user here since fetched_row only has the ID, not the name
         return bpminbox_get_username_by_id($source_object->fetched_row['assigned_user_id']);
     } elseif ($field_name == 'team_name') {
-        require_once 'modules/Teams/TeamSetManager.php';
         if ($use_past_array == false) {
             if (empty($source_object->team_set_id)) {
                 if (!empty($source_object->teams)) {

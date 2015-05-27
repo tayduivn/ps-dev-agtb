@@ -91,7 +91,6 @@ class FileTempApi extends FileApi {
                 'content-type' => $filedata['mime'],
                 'path' => $filepath,
             );
-            require_once "include/download_file.php";
             $dl = new DownloadFileApi($api);
             $dl->outputFile(false, $info);
 

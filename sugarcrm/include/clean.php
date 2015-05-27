@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'vendor/HTMLPurifier/HTMLPurifier.standalone.php';
-
 /**
  * cid: scheme implementation
  */

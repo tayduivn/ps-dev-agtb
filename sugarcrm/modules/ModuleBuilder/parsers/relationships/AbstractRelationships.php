@@ -12,15 +12,6 @@
 
 use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
 
-// Used in findRelatableModules
-
-// Used in addFromPost 
-
-// Used in parseDeployedModuleName
-require_once 'modules/ModuleBuilder/MB/ModuleBuilder.php';
-
-// Metadata API cache clearing
-
 /*
  * Abstract class for managing a set of Relationships
  * The Relationships we're managing consist of metadata about relationships, rather than relationship implementations used by the application

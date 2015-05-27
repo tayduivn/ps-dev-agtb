@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/connectors/utils/ConnectorUtils.php');
 /**
  * Provides a factory to list, discover and create external API calls
  *

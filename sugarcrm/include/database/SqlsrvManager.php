@@ -58,7 +58,6 @@
 * default	This field sets the default value for the field definition.
 */
 
-include_once('include/database/MssqlManager.php');
 
 /**
  * SQL Server (sqlsrv) manager
@@ -349,7 +348,7 @@ class SqlsrvManager extends MssqlManager
         if (empty($tablename)) {
             $this->log->error(__METHOD__ . ' called with an empty tablename argument');
             return array();
-        }        
+        }
 
         //find all unique indexes and primary keys.
         $result = $this->query("sp_columns_90 $tablename");

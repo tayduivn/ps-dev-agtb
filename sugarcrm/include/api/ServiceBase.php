@@ -20,8 +20,6 @@ abstract class ServiceBase {
     abstract protected function handleException(Exception $exception);
 
     protected function loadServiceDictionary($dictionaryName) {
-        require_once("include/api/{$dictionaryName}.php");
-
         $dict = new $dictionaryName();
 
         // Load the dictionary, because if the dictionary isn't there it will generate it.

@@ -50,7 +50,8 @@ class SugarLogicFunctionsApi extends SugarApi
         $jsCacheFile = $useDebug ?
             sugar_cached("Expressions/functions_cache_debug.js") :
             sugar_cached('Expressions/functions_cache.js');
-        if (SugarAutoLoader::fileExists($phpCacheFile) || !SugarAutoLoader::fileExists($jsCacheFile)) {
+        // @jvink - check with @dwheeler
+        if (!SugarAutoLoader::fileExists($phpCacheFile) || !SugarAutoLoader::fileExists($jsCacheFile)) {
             $GLOBALS['updateSilent'] = true;
             include("include/Expressions/updatecache.php");
         }

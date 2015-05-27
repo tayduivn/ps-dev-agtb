@@ -416,7 +416,6 @@ class ModuleApi extends SugarApi {
                 // FIXME Image verification and mime type updating
                 // should not be duplicated from SugarFieldFile.
                 // SC-3338 is tracking this.
-                require_once 'include/utils/file_utils.php';
                 $filename = $bean->id;
                 $mimeType = get_file_mime_type($filepath, 'application/octet-stream');
                 $sf = $sfh->getSugarField($def['type']);

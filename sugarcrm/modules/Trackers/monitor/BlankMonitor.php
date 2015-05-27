@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/Trackers/monitor/Monitor.php');
-
 class BlankMonitor extends Monitor implements Trackable {
 
     /**

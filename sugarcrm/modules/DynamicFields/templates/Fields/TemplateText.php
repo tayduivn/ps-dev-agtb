@@ -9,7 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('modules/DynamicFields/templates/Fields/TemplateField.php');
+
 class TemplateText extends TemplateField{
 	var $type='varchar';
     var $supports_unified_search = true;

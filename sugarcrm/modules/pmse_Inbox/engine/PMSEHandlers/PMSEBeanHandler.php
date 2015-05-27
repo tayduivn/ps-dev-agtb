@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/pmse_Inbox/engine/PMSEFieldsUtils.php';
-
 use Sugarcrm\Sugarcrm\ProcessManager;
 
 class PMSEBeanHandler

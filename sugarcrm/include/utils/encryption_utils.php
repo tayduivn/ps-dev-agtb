@@ -75,4 +75,3 @@ function blowfishDecode($key, $encoded){
 	return trim($bf->decrypt($data));
 }
 
-?>

@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('modules/Trackers/monitor/Monitor.php');
 
 define('TEAM_SET_CACHE_KEY', 'TeamSetsCache');
 define('TEAM_SET_MD5_CACHE_KEY', 'TeamSetsMD5Cache');

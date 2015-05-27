@@ -10,38 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/ModuleBuilder/MB/ModuleBuilder.php';
-require_once 'modules/ModuleBuilder/parsers/constants.php';
-
-// Used in several actions
-SugarAutoLoader::requireWithCustom('ModuleInstall/ModuleInstaller.php');
-require_once 'modules/DynamicFields/FieldCases.php';
-
-// Used in action_ViewTree
-
-// Used in action_DeployPackage
-require_once 'ModuleInstall/PackageManager/PackageManager.php';
-
-// Used in action_SaveSugarField
-
-// Used in relationship actions
-
-// Used in action_SaveDropDown
-// BEGIN SUGARCRM flav=ent ONLY
-// END SUGARCRM flav=ent ONLY
-
-// Used in action_searchViewSave
-// Bug56789 - Without a client, the wrong viewdef file was getting picked up
-
-// Used in action_get_app_list_strings
-
-//BEGIN SUGARCRM flav=ent ONLY
-// Used in action_portalconfigsave
-//END SUGARCRM flav=ent ONLY
-
-// Used in metadata API cache clear
-include_once 'modules/Administration/QuickRepairAndRebuild.php';
-
 use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
 
 class ModuleBuilderController extends SugarController
@@ -569,6 +537,7 @@ class ModuleBuilderController extends SugarController
         $GLOBALS ['mod_strings']['LBL_ALL_MODULES'] = 'all_modules';
         $_REQUEST['execute_sql'] = true;
 
+        SugarAutoLoader::requireWithCustom('ModuleInstall/ModuleInstaller.php');
         $moduleInstallerClass = SugarAutoLoader::customClass('ModuleInstaller');
         $mi = new $moduleInstallerClass();
         $mi->silent = true;

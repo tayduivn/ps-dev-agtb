@@ -17,7 +17,6 @@ $startTime = microtime(true);
 require_once('include/entryPoint.php');
 ob_start();
 
-SugarAutoLoader::requireWithCustom('include/MVC/SugarApplication.php');
 $appClass = SugarAutoLoader::customClass('SugarApplication');
 $app = new $appClass();
 /*

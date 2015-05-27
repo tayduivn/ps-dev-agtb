@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
 if ( !empty($_GET['expression']) ) {
 	$expr = $_GET['expression'];
 	try {

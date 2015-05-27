@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/utils/sugar_file_utils.php');
-
 /**
  * Convert all \ to / in path, remove multiple '/'s and '/./'
  * @param string $path
