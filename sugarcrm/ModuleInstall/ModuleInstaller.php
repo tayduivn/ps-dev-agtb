@@ -2846,6 +2846,7 @@ class ModuleInstaller{
      */
     public static function getBaseConfig()
     {
+        $config = SugarConfig::getInstance();
         $sidecarConfig = array(
             'appId' => 'SugarCRM',
             'env' => 'prod',
@@ -2876,6 +2877,7 @@ class ModuleInstaller{
             'loadCss' => false,
             'themeName' => 'default',
             'clientID' => 'sugar',
+            'collapseSubpanels' => $config->get('collapse_subpanels', false),
             'serverTimeout' => self::getBaseTimeoutValue(),
             'metadataTypes' => array(
                 "currencies",
@@ -2899,7 +2901,6 @@ class ModuleInstaller{
             ),
         );
 
-        $config = SugarConfig::getInstance();
         $jsConfig = $config->get('additional_js_config', array());
         $sidecarConfig = array_merge($sidecarConfig, $jsConfig);
 
