@@ -48,16 +48,30 @@ class AdminSettings
     );
 
     /**
-     * Get the list of enabled and disabled modules
+     * Get the list of enabled and disabled modules for display in Admin page
      * @return array
      */
     public function getModuleList()
+    {
+        list($enabled, $disabled) = $this->getModules();
+
+        $list = array();
+        $list['enabled_modules'] = $this->getModuleLabel($enabled);
+        $list['disabled_modules'] = $this->getModuleLabel($disabled);
+        return $list;
+    }
+
+    /**
+     * Get the list of enabled and disabled modules
+     * @return array
+     */
+    public function getModules()
     {
         $list = array();
 
         $engine = $this->getSearchEngine();
         if (empty($engine)) {
-            return $list;
+            return array($list, $list);
         }
 
         //Get the full list
@@ -67,14 +81,11 @@ class AdminSettings
         $enabled = $engine->getMetaDataHelper()->getAllEnabledModules();
         $enabled = array_intersect($enabled, $modules);
         sort($enabled);
-        $list['enabled_modules'] = $this->getModuleLabel($enabled);
 
         //Disabled = Full list - enabled
         $disabled = array_diff($modules, $enabled);
         sort($disabled);
-        $list['disabled_modules'] = $this->getModuleLabel($disabled);
-
-        return $list;
+        return array($enabled, $disabled);
     }
 
     /**
@@ -103,7 +114,7 @@ class AdminSettings
      * 3) minus the list of modules defined in self::$ModulesToRemove
      * @return array
      */
-    protected function getFullModuleList()
+    public function getFullModuleList()
     {
         //include all the modules listed in the studio page
         $browser = new \StudioBrowser();
