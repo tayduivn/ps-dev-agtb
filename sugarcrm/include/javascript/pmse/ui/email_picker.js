@@ -139,6 +139,7 @@ EmailPickerField.prototype.setModules = function (items) {
 	if(!jQuery.isArray(items)) {
 		throw new Error("setModules(): The parameter must be an array.");
 	}
+    items = _.filter(items, function(item){ if (item.module!=="Users") return item; });
 	this._modules = items;
 	if(this._userModules) {
 		this._userModules.setOptions(items);

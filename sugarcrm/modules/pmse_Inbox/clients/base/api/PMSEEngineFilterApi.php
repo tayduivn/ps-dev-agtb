@@ -17,6 +17,35 @@ require_once 'modules/pmse_Inbox/engine/PMSEEngineUtils.php';
 
 class PMSEEngineFilterApi extends FilterApi
 {
+    /**
+     * Visibility Applied flag
+     * @var bool
+     */
+    public static $isVisibilityApplied = false;
+
+    /**
+     * Predefined scalar filters
+     * @var array
+     */
+    protected static $customFilters = array('visibility', 'in_time', 'assignment_method');
+
+    /**
+     * FilterApi filters blocked by PA PMSEEngineFilterApi
+     * @var array
+     */
+    protected static $blockedFilters = array('$favorite', '$tracker');
+
+    /**
+     * List of supported operators
+     * @var array
+     */
+    protected static $supportedOperators = array(
+        '$equals',
+        '$not_equals',
+        '$in',
+        '$not_in'
+    );
+
     public function registerApiRest()
     {
         return array(
@@ -38,7 +67,7 @@ class PMSEEngineFilterApi extends FilterApi
                 'reqType' => 'GET',
                 'path' => array('pmse_Inbox'),
                 'pathVars' => array('module'),
-                'method' => 'filterList',
+                'method' => 'filterListAllPA',
                 'jsonParams' => array('filter'),
                 'exceptions' => array(
                     // Thrown in filterList
@@ -78,18 +107,27 @@ class PMSEEngineFilterApi extends FilterApi
         );
     }
 
-    function __construct()
+    /**
+     * @param ServiceBase $api
+     * @param array $args
+     * @param string $acl
+     * @return array
+     * @throws SugarApiExceptionInvalidParameter
+     */
+    public function filterListAllPA(ServiceBase $api, array $args, $acl = 'list')
     {
-        parent::__construct();
+        // This send by default 'regular_user' to the custom filter 'visibility'
+        $args['filter'][] = array('visibility' => 'regular_user');
+        return parent::filterList($api, $args, $acl);
     }
 
+    /**
+     * Overwrite filterList setup to using PA tables
+     * {@inheritdoc }
+     */
     public function filterListSetup(ServiceBase $api, array $args, $acl = 'list')
     {
         $seed = BeanFactory::newBean('pmse_BpmFlow');
-
-        if (!$seed->ACLAccess($acl)) {
-            throw new SugarApiExceptionNotAuthorized('No access to view records for module: ' . $args['module']);
-        }
 
         $options = $this->parseArguments($api, $args, $seed);
 
@@ -100,115 +138,221 @@ class PMSEEngineFilterApi extends FilterApi
             $args['fields'] = $options['select'];
         }
 
-        $q = $this->getQueryObjectAux($seed, $options);
+        // Create SugarQuery object including PA tables
+        $q = self::getQueryObjectPA($seed, $options);
 
         if (!isset($args['filter']) || !is_array($args['filter'])) {
             $args['filter'] = array();
         }
 
-        $this->addFiltersAux($args['filter'], $q->where(), $q);
+        // Applying filters using PA logic
+        $this->addFiltersPA($args['filter'], $q->where(), $q);
 
-        if (!empty($args['favorites'])) {
-            self::$isFavorite = true;
-            self::addFavoriteFilter($q, $q->where(), '_this', 'INNER');
-        }
         return array($args, $q, $options, $seed);
     }
 
-    public function addFiltersAux($filters, $where, $q)
+    /**
+     * Check if the filter is supported by PA Process Filter API
+     * @param $filter
+     * @param SugarQuery $q
+     * @return bool
+     */
+    public static function isSupportedPAFilter($filter, SugarQuery $q) {
+        $fields = array_keys($q->select()->select);
+        $filters = array_merge(self::$customFilters, self::$blockedFilters, $fields);
+        return in_array($filter, $filters);
+    }
+
+    /**
+     * @param $filter
+     * @param $expression
+     * @param SugarQuery_Builder_Where $where
+     */
+    public static function processFilterPA($filter, $expression, SugarQuery_Builder_Where $where)
     {
-        self::addFilters(array(), $where, $q);
-        $type = '';
-        $isEmpty = empty($filters);
-        if (!$isEmpty) {
-            foreach ($filters as $filter) {
-                foreach ($filter as $field => $values) {
-                    if (is_array($values)) {
-                        foreach ($values as $condition => $value) {
-                            if ($field != 'in_time') {
-                                if (is_array($value)) {
-                                    $type = $this->applyArrayFilter($where, $condition, $field, $value);
-                                } else {
-                                    $type = ($field == 'act_assignment_method') ? $value : $type;
-                                }
-                            } else {
-                                $inTime = $value;
-                            }
-                        }
-                    }
+        switch ($filter) {
+            case 'visibility':
+                self::addVisibilityFilter($expression, $where);
+                break;
+            case 'in_time':
+                self::addInTimeFilter($expression, $where);
+                break;
+            case 'assignment_method':
+                self::addAssignmentMethodFilter($expression, $where);
+                break;
+            default:
+                if (in_array($filter, self::$blockedFilters)) {
+                    self::addInvalidFilter($where);
+                } else {
+                    self::addFieldFilter($filter, $expression, $where);
                 }
+        }
+    }
+
+    /**
+     * Applies filters to the current query using PA logic
+     * @param $filters
+     * @param SugarQuery_Builder_Where $where
+     * @param SugarQuery $q
+     * @throws SugarApiExceptionInvalidParameter
+     */
+    public function addFiltersPA($filters, SugarQuery_Builder_Where $where, SugarQuery $q)
+    {
+        foreach ($filters as $filterDef) {
+            foreach ($filterDef as $filter => $expression) {
+                if (!self::isSupportedPAFilter($filter, $q)) {
+                    throw new SugarApiExceptionInvalidParameter('ERROR_PA_FILTER_UNSUPPORTED_FILTER');
+                }
+                self::processFilterPA($filter, $expression, $where, $q);
             }
         }
 
+        // Apply visibility check by default unless it was defined previously
+        if (!self::$isVisibilityApplied) {
+            self::addVisibilityFilter('', $where);
+        }
+    }
+
+    /**
+     * Apply visibility filters
+     * @param $access
+     * @param SugarQuery_Builder_Where $where
+     */
+    public static function addVisibilityFilter($access, SugarQuery_Builder_Where $where)
+    {
+        if ($access == 'regular_user') {
+            global $current_user;
+            $where->queryAnd()->equals('cas_user_id', $current_user->id);
+        } else {
+            $where->queryAnd()->in('cas_sugar_module', PMSEEngineUtils::getSupportedModules());
+        }
+        self::$isVisibilityApplied = true;
+    }
+
+    /**
+     * Applies the in_time filter used by Process Dashlets to determinate due dates
+     * @param $expression
+     * @param SugarQuery_Builder_Where $where
+     */
+    public static function addInTimeFilter($expression, SugarQuery_Builder_Where $where) {
+        $exp = self::getRawExpression($expression);
+        if ($exp=== 'true') {
+            $where->queryOr()
+                ->gte('cas_due_date', TimeDate::getInstance()->nowDb())
+                ->isNull('cas_due_date');
+        } else if ($exp === 'false') {
+            $where->queryOr()
+                ->lte('cas_due_date', TimeDate::getInstance()->nowDb())
+                ->isNull('cas_due_date');
+        }
+    }
+
+    /**
+     * Sets filter for 'act_assignment_method' field
+     * @param $expression
+     * @param SugarQuery_Builder_Where $where
+     */
+    public static function addAssignmentMethodFilter($expression, SugarQuery_Builder_Where $where)
+    {
         global $current_user;
 
-        if (strtolower($type) == 'selfservice' || strtolower($type) == 'balanced') {
+        $method = self::getRawExpression($expression);
+        if ($method == 'static') {
+            $where->queryAnd()
+                ->equals('cas_user_id', $current_user->id)
+                ->queryOr()
+                ->equals('activity_definition.act_assignment_method', 'static')
+                ->equals('activity_definition.act_assignment_method', 'balanced')
+                ->queryAnd()
+                ->equals('activity_definition.act_assignment_method', 'selfservice')
+                ->notNull('cas_start_date');
+        } else if ($method == 'selfservice') {
             $teams = array_keys($current_user->get_my_teams());
-            $and = $where->queryAnd();
-            $and->in('cas_user_id', $teams);
-            $and->isNull('cas_start_date');
-            $and->equals('activity_definition.act_assignment_method', 'selfservice');
-        }
-
-        if (strtolower($type) == 'static') {
-            $and = $where->queryAnd();
-            $and->equals('cas_user_id', $current_user->id);
-            $or = $and->queryOr();
-            $or->equals('activity_definition.act_assignment_method', 'static');
-            $or->equals('activity_definition.act_assignment_method', 'balanced');
-            $and2 = $or->queryAnd();
-            $and2->equals('activity_definition.act_assignment_method', 'selfservice');
-            $and2->notNull('cas_start_date');
-        }
-
-        if ($isEmpty) {
-            $teams = array_keys($current_user->get_my_teams());
-            $or = $where->queryOr();
-            $and = $or->queryAnd();
-            $and->in('cas_user_id', $teams);
-            $and->isNull('cas_start_date');
-            $and->equals('activity_definition.act_assignment_method', 'selfservice');
-            $and2 = $or->queryAnd();
-            $and2->equals('cas_user_id', $current_user->id);
-            $or2 = $and2->queryOr();
-            $or2->equals('activity_definition.act_assignment_method', 'static');
-            $or2->equals('activity_definition.act_assignment_method', 'balanced');
-            $and3 = $or2->queryAnd();
-            $and3->equals('activity_definition.act_assignment_method', 'selfservice');
-            $and3->notNull('cas_start_date');
-        }
-
-        if (!empty($inTime) && $inTime === 'true') {
-            $and4 = $where->queryAnd();
-            $and4->gte('cas_due_date', TimeDate::getInstance()->nowDb());
-        } else if (!empty($inTime) && $inTime === 'false') {
-            $and4 = $where->queryAnd();
-            $and4->lte('cas_due_date', TimeDate::getInstance()->nowDb());
+            $where->queryAnd()
+                ->in('cas_user_id', $teams)
+                ->isNull('cas_start_date')
+                ->equals('activity_definition.act_assignment_method', 'selfservice');
         }
     }
 
-
-
-    public function applyArrayFilter($where, $condition, $field, $value)
+    /**
+     * Process Filter for regular fields
+     *
+     * Notice: PA Processes module have not associated one only record as other modules in SugarCRM, current FilterApi is designed
+     * to handle operations over those records. This method is trying to create a little copy to haandle queries through API for PA
+     * but still needs a lot of work.
+     * @param $field
+     * @param $expression
+     * @param SugarQuery_Builder_Where $where
+     */
+    public static function addFieldFilter($field, $expression, SugarQuery_Builder_Where $where)
     {
-        $type = '';
-        foreach ($value as $val) {
-            $type = ($field=='act_assignment_method')? $val : $type;
+        list($operator, $value) = self::getExpression($expression);
+        switch($operator) {
+            case '$equals':
+                $where->equals($field, $value);
+                break;
+            case '$not_equals':
+                $where->notEquals($field, $value);
+                break;
+            case '$in':
+                $where->in($field, $value);
+                break;
+            case '$not_in':
+                $where->notIn($field, $value);
+                break;
         }
-        return $type;
     }
 
-    public function applyUserFilter($q, $condition, $field, $value)
+    /**
+     * This method is forcing to return an empty query all the time
+     * @param SugarQuery_Builder_Where $where
+     */
+    public static function addInvalidFilter(SugarQuery_Builder_Where $where)
     {
-        if ($condition == '$equals' && $field == 'user_disabled' && $value==1) {
-            $q->joinTable('users', array('alias' => 'users', 'joinType' => 'INNER', 'linkingTable' => true))
-                ->on()
-                ->equalsField('users.id', 'assigned_user_id')
-                ->notEquals('users.employee_status', 'Active');
+        $where->queryAnd()->isNull('id');
+    }
+
+    /**
+     * Return an array with the supported operator and a value to compare
+     * @param $expression
+     * @return array
+     * @throws SugarApiExceptionInvalidParameter
+     */
+    public static function getExpression($expression)
+    {
+        if (is_array($expression)) {
+            $keys = array_keys($expression);
+            $operator = $keys[0];
+            if (in_array($operator, self::$supportedOperators)) {
+                return array($operator, $expression[$operator]);
+            } else {
+                throw new SugarApiExceptionInvalidParameter('ERROR_PA_FILTER_UNSUPPORTED_OPERATOR');
+            }
+
+        } else {
+            throw new SugarApiExceptionInvalidParameter('ERROR_PA_FILTER_INVALID_OPERATOR');
         }
     }
 
-    private function getQueryObjectAux(SugarBean $seed, array $options)
+    /**
+     * Get raw value from a FilterApi expression
+     * @param $expression
+     * @return mixed
+     */
+    public static function getRawExpression($expression)
+    {
+        return is_array($expression) ? array_shift($expression) : $expression;
+    }
+
+    /**
+     * Creates a SugarQuery instance according PA relationships
+     * @param SugarBean $seed
+     * @param array $options
+     * @return SugarQuery
+     * @throws SugarQueryException
+     */
+    protected static function getQueryObjectPA(SugarBean $seed, array $options)
     {
         if (empty($options['select'])) {
             $options['select'] = self::$mandatory_fields;

@@ -30,14 +30,7 @@ $viewdefs[$module_name]['base']['view']['dashlet-inbox'] = array(
             ),
             'filter' => array(
                 'module' => array(
-                    //'Accounts',
-                    //'Bugs',
-                    //'Cases',
-                    //'Contacts',
                     'Home',
-                    //'Leads',
-                    //'Opportunities',
-                    //'Prospects',
                 ),
                 'view' => 'record',
             ),
@@ -94,7 +87,8 @@ $viewdefs[$module_name]['base']['view']['dashlet-inbox'] = array(
             'active' => true,
             'filter_applied_to' => 'in_time',
             'filters' => array(
-                'act_assignment_method' => array('$equals' => 'static'),
+                'assignment_method' => 'static',
+                'visibility' => 'regular_user',
             ),
             'label' => 'LBL_PMSE_MY_PROCESSES',
             'link' => 'pmse_Inbox',
@@ -111,7 +105,8 @@ $viewdefs[$module_name]['base']['view']['dashlet-inbox'] = array(
         array(
             'filter_applied_to' => 'in_time',
             'filters' => array(
-                'act_assignment_method' => array('$equals' => array('selfservice', 'BALANCED')),
+                'assignment_method' => 'selfservice',
+                'visibility' => 'regular_user',
             ),
             'label' => 'LBL_PMSE_SELF_SERVICE_PROCESSES',
             'link' => 'pmse_Inbox',

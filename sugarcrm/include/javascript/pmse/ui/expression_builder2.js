@@ -1931,7 +1931,7 @@ ExpressionControl.prototype._createBasicConstantPanel = function () {
             var form = clickedButton.getForm(),
                 typeField = form.getItem("type");
 
-            typeField.setValue(clickedButton.getLabel().substr(4));
+            typeField.setValue(clickedButton.getName().substr(4));
             form.submit();
         };
         this._constantPanels.basic = new FormPanel({
