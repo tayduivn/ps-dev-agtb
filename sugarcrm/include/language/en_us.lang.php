@@ -5031,6 +5031,9 @@ Sincerely, SugarCRM',
     'LBL_PANEL_DEFAULT' => 'Default',
     'ERR_BAD_RESPONSE_FROM_SERVER' => 'Bad response from the server',
 
+    //Sidecar expression context
+    'ERR_ASSIGNTO_ACTION' => 'Error occurred during AssignTo action.',
+
     //These are for the timeperiod name formats
     'LBL_ANNUAL_TIMEPERIOD_FORMAT' => 'Year {0}',
     'LBL_QUARTER_TIMEPERIOD_FORMAT' => '{1} Q{0}',
