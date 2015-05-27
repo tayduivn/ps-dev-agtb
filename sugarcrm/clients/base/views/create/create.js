@@ -174,6 +174,23 @@
     },
 
     /**
+     * Extends in order to set the {@link #action} to `create` while the fields
+     * are rendering.
+     *
+     * This is a temporary fix that will be reviewed in 7.8. The action should
+     * be `create` at all times but doing the proper fix may have bad impacts on
+     * ACLs/non editable fields. Follow up in SC-4511.
+     *
+     * @inheritDoc
+     */
+    _renderFields: function() {
+        var current = this.action;
+        this.action = 'create';
+        this._super('_renderFields');
+        this.action = current;
+    },
+
+    /**
      * @inheritDoc
      */
     /**
