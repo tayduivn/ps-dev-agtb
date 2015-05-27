@@ -83,7 +83,8 @@ class MultiFieldHandler extends AbstractHandler implements
             'gs_text_wildcard',
         ),
         'htmleditable_tinymce' => array(
-            'gs_string_html',
+            'gs_string',
+            'gs_text_wildcard',
         ),
         'enum' => array(
             'not_analyzed',
