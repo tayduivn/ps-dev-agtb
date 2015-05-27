@@ -140,7 +140,7 @@ function renderProject (prjCode) {
     }
     $(window).resize(function () {
         if ($('#container').length) {
-            $('#container').height($(window).height() - $('#container').offset().top - $('#footer').height() - 46);
+            $('#container').height($(window).height() - $('#content').offset().top - $('#footer').height() - 46);
         }
 
     });
