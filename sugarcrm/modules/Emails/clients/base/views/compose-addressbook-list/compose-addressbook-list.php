@@ -44,14 +44,13 @@ $viewdefs['Emails']['base']['view']['compose-addressbook-list'] = array(
         ),
     ),
     'rowactions' => array(
-        'css_class' => 'pull-right',
-        'actions'   => array(
+        'actions' => array(
             array(
-                'type'       => 'rowaction',
-                'css_class'  => 'btn',
-                'tooltip'    => 'LBL_PREVIEW',
-                'event'      => 'list:preview:fire',
-                'icon'       => 'fa-eye',
+                'type' => 'preview-button',
+                'css_class' => 'btn',
+                'tooltip' => 'LBL_PREVIEW',
+                'event' => 'list:preview:fire',
+                'icon' => 'fa-eye',
                 'acl_action' => 'view',
             ),
         ),
