@@ -687,17 +687,17 @@ nv.models.multiBarChart = function() {
         container.transition().call(chart);
       });
 
-      dispatch.on('chartClick', function(eo) {
+      dispatch.on('chartClick', function() {
         if (controls.enabled()) {
-          controls.dispatch.closeMenu(eo);
+          controls.dispatch.closeMenu();
         }
         if (legend.enabled()) {
-          legend.dispatch.closeMenu(eo);
+          legend.dispatch.closeMenu();
         }
       });
 
       multibar.dispatch.on('elementClick', function(eo) {
-        dispatch.chartClick(eo);
+        dispatch.chartClick();
         seriesClick(data, eo, chart);
       });
 

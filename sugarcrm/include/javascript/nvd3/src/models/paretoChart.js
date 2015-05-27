@@ -591,12 +591,14 @@ nv.models.paretoChart = function() {
 
             quotaWrap.selectAll('line.nv-quotaLineBackground')
                 .on('mouseover', function(d) {
-                    var e = {
-                        pos: [d3.event.offsetX, d3.event.offsetY],
-                        val: d.val,
-                        key: d.key
-                    };
-                    showQuotaTooltip(e, that.parentNode);
+                    if (tooltips) {
+                        var eo = {
+                            pos: [d3.event.offsetX, d3.event.offsetY],
+                            val: d.val,
+                            key: d.key
+                        };
+                        showQuotaTooltip(eo, that.parentNode);
+                    }
                 })
                 .on('mouseout', function() {
                     dispatch.tooltipHide();
@@ -655,17 +657,17 @@ nv.models.paretoChart = function() {
                 }
             });
 
-            dispatch.on('chartClick', function(eo) {
+            dispatch.on('chartClick', function() {
                 if (barLegend.enabled()) {
-                    barLegend.dispatch.closeMenu(eo);
+                    barLegend.dispatch.closeMenu();
                 }
                 if (lineLegend.enabled()) {
-                    lineLegend.dispatch.closeMenu(eo);
+                    lineLegend.dispatch.closeMenu();
                 }
             });
 
             multibar.dispatch.on('elementClick', function(eo) {
-                dispatch.chartClick(eo);
+                dispatch.chartClick();
                 barClick(data, eo, chart, container);
             });
 

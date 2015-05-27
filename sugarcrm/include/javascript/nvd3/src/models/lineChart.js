@@ -455,12 +455,12 @@ nv.models.lineChart = function() {
         container.transition().duration(chart.delay()).call(chart);
       });
 
-      dispatch.on('chartClick', function(eo) {
+      dispatch.on('chartClick', function() {
         if (controls.enabled()) {
-          controls.dispatch.closeMenu(eo);
+          controls.dispatch.closeMenu();
         }
         if (legend.enabled()) {
-          legend.dispatch.closeMenu(eo);
+          legend.dispatch.closeMenu();
         }
       });
 

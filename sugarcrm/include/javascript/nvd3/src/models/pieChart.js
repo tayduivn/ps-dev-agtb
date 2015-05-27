@@ -303,14 +303,14 @@ nv.models.pieChart = function() {
         container.transition().duration(durationMs).call(chart);
       });
 
-      dispatch.on('chartClick', function(eo) {
+      dispatch.on('chartClick', function() {
         if (legend.enabled()) {
-          legend.dispatch.closeMenu(eo);
+          legend.dispatch.closeMenu();
         }
       });
 
       pie.dispatch.on('elementClick', function(eo) {
-        dispatch.chartClick(eo);
+        dispatch.chartClick();
         seriesClick(data, eo, chart);
       });
 
