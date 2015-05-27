@@ -142,7 +142,7 @@ class SidecarGridLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCa
                             'span' => 3,
                         ),
                     ),
-                )
+                ),
             ),
             array(
                 'panel_body' => array(
@@ -203,7 +203,7 @@ class SidecarGridLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCa
                         array(
                             'name' => 'email',
                         ),
-                    )
+                    ),
                 ),
             ),
             array(
