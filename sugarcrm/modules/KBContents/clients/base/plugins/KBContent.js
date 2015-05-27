@@ -191,18 +191,17 @@
                         createAction: this.context.createAction
                     }
                 };
+
                 if (this.context.loadDrawer == true) {
                     app.drawer.load(layoutDef);
                 } else {
                     app.drawer.open(layoutDef, function(context, newModel) {
-                            if (newModel && newModel.id) {
-                                app.router.navigate(
-                                    app.router.buildRoute('KBContents', newModel.id),
-                                    {trigger: true}
-                                );
-                            }
-                            context.createAction = null;
-                            context.loadDrawer = null;
+                        // Just parent - header's create, parent.parent - subpanel's create.
+                        var recordViewContext = context.parent.parent || context.parent;
+                        parentModel.fetch();
+                        recordViewContext.trigger('subpanel:reload', {links: ['revisions', 'localizations']});
+                        context.createAction = null;
+                        context.loadDrawer = null;
                     });
                 }
 
