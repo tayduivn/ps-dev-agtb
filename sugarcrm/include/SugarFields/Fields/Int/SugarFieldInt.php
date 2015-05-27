@@ -119,7 +119,7 @@ class SugarFieldInt extends SugarFieldBase
         }
 
         // check range
-        $fieldRange = $GLOBALS['db']->getFieldRange($vardef);
+        $fieldRange = $this->getFieldRange($vardef);
 
         if (!empty($fieldRange) && ($value > $fieldRange['max_value'] || $value < $fieldRange['min_value'])) {
             return false;
@@ -139,12 +139,28 @@ class SugarFieldInt extends SugarFieldBase
     public function apiValidate(SugarBean $bean, array $params, $field, $properties)
     {
         // check range
-        $fieldRange = $bean->db->getFieldRange($properties);
+        $fieldRange = $this->getFieldRange($properties);
 
         if (!empty($fieldRange) && isset($params[$field])) {
             return $params[$field] <= $fieldRange['max_value'] && $params[$field] >= $fieldRange['min_value'];
         }
 
         return parent::apiValidate($bean, $params, $field, $properties);
+    }
+
+    /**
+     * Gets field range based on both db and php limits.
+     * @param array $vardef
+     * @return array | boolean
+     */
+    protected function getFieldRange($vardef)
+    {
+        $fieldRange = $GLOBALS['db']->getFieldRange($vardef);
+
+        if (!empty($fieldRange)) {
+            return array('min_value' => max(-PHP_INT_MAX,  $fieldRange['min_value']), 'max_value' => min(PHP_INT_MAX, $fieldRange['max_value']));
+        }
+
+        return false;
     }
 }
