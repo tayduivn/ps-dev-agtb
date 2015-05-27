@@ -137,11 +137,13 @@
         padding-right: 5px;
       }
 
-      .dashlet-content + .block-footer {
-        text-align: left;
-        font-weight: normal;
-        border-top: @borderWidget;
-        .border-radius(0 0 @baseBorderRadius @baseBorderRadius);
+      .dashlet-content + div {
+        .block-footer {
+          text-align: left;
+          font-weight: normal;
+          border-top: @borderWidget;
+          .border-radius(0 0 @baseBorderRadius @baseBorderRadius);
+        }
       }
 
       .block-footer {
