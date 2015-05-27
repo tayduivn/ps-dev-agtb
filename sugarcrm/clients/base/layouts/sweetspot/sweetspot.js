@@ -30,17 +30,6 @@
 
         this.on('sweetspot:config', this.openConfigPanel, this);
         this.on('sweetspot:calc:resultsHeight', this.calculateResultsHeight, this);
-        this.on('sweetspot:has:results', function(results) {
-            var hasResults = true;
-            if (_.isEmpty(results) ||
-                (!results.actions.length && !results.keywords.length && !results.records.length)
-            ) {
-                hasResults = false;
-            }
-            this.$el.toggleClass('has-results', hasResults);
-        });
-
-        $(window).on('resize.sweetspot-' + this.cid, _.bind(this.calculateResultsHeight, this));
 
         /**
          * Flag to indicate the visible state of the sweet spot.
@@ -85,6 +74,7 @@
     _bindEvents: function() {
         this.bindEsc();
         this.bindOutsideClick();
+        this.bindResize();
     },
 
     /**
@@ -95,6 +85,7 @@
     _unbindEvents: function() {
         this.unbindEsc();
         this.unbindOutsideClick();
+        this.unbindResize();
     },
 
     /**
@@ -131,6 +122,20 @@
      */
     unbindEsc: function() {
         $(document).off('keydown.' + this.cid);
+    },
+
+    /**
+     * Binds the `resize` event.
+     */
+    bindResize: function() {
+        $(window).on('resize.sweetspot-' + this.cid, _.bind(this.calculateResultsHeight, this));
+    },
+
+    /**
+     * Unbinds the `resize` event.
+     */
+    unbindResize: function() {
+        $(window).off('resize.sweetspot-' + this.cid);
     },
 
     /**
@@ -271,15 +276,8 @@
         if (resultsMaxHeight > 460) {
             resultsMaxHeight = 460;
         }
-        this.trigger('sweetspot:results:adjustMaxHeight', resultsMaxHeight);
-    },
 
-    /**
-     * @inheritDoc
-     */
-    unbind: function() {
-        $(window).off('resize.sweetspot-' + this.cid);
-        this._super('unbind');
+        this.trigger('sweetspot:results:adjustMaxHeight', resultsMaxHeight);
     },
 
     /**
