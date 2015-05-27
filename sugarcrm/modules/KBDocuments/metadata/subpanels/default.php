@@ -33,6 +33,8 @@ $subpanel_layout = array(
         'kbdoc_approver_name' => array(
             'name'    => 'kbdoc_approver_name',
             'width'   => '20%',
+            'target_record_key' => 'kbdoc_approver_id',
+            'target_module' => 'Users',
             'vname'   => 'LBL_LIST_APPROVED_BY',
             'default' => true,
         ),
