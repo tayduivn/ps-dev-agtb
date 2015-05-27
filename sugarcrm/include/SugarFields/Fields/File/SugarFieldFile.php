@@ -209,7 +209,6 @@ class SugarFieldFile extends SugarFieldBase
                 ) {
                 $bean->$field = $params[$prefix . $field . '_remoteName'];
 
-                require_once 'include/utils/file_utils.php';
                 $extension = get_file_extension($bean->$field);
                 if (!empty($extension)) {
                     $bean->file_ext = $extension;
@@ -231,7 +230,6 @@ class SugarFieldFile extends SugarFieldBase
             }
             $bean->$field = $params[$field];
 
-            require_once 'include/utils/file_utils.php';
             $extension = get_file_extension($bean->$field);
             if (!empty($extension)) {
                 $bean->file_ext = $extension;

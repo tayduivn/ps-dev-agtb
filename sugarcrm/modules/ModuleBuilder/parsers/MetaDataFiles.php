@@ -559,7 +559,7 @@ class MetaDataFiles
      */
     public static function getSugarObjectFileDir($module, $client = '', $component = self::COMPONENTVIEW, $seed = null)
     {
-        $sm = StudioModuleFactory::getStudioModule($module, $seed);
+        $sm = new StudioModule($module);
 
         $dirname = 'include/SugarObjects/templates/' . $sm->getType();
         if (!empty($client)) {
