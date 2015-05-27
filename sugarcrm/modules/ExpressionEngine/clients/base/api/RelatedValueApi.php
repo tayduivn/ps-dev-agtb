@@ -222,6 +222,64 @@ class RelatedValueApi extends SugarApi
                         $ret[$link][$type][$rField] = $sum;
                     }
                     break;
+                case 'maxRelatedDate':
+                    $ret[$link][$type][$rField] = "";
+                    if ($focus->load_relationship($link)) {
+                        $td = TimeDate::getInstance();
+                        $isTimestamp = true;
+                        $maxDate = 0;
+                        $relBeans = $focus->$link->getBeans(array("enforce_teams" => true));
+                        $valueMap = array();
+                        foreach ($relBeans as $bean) {
+                            if (ACLField::hasAccess($rField, $bean->module_dir, $GLOBALS['current_user']->id, true)
+                            ) {
+                                // we have to use the fetched_row as it's still in db format
+                                // where as the $bean->$relfield is formatted into the users format.
+                                if (isset($bean->fetched_row[$rField])) {
+                                    $value = $bean->fetched_row[$rField];
+                                } elseif (isset($bean->$rField)) {
+                                    if (is_int($bean->$rField)) {
+                                        // if we have a timestamp field, just set the value
+                                        $value = $bean->relfield;
+                                    } else {
+                                        // more than likely this is a date field, so try and un-format based on the users preferences
+                                        // we pass false to asDbDate as we want the value that would be stored in the DB
+                                        $value = $td->fromString($bean->$rField)->asDbDate(false);
+                                    }
+                                } else {
+                                    continue;
+                                }
+
+                                $valueMap[$bean->id] = $value;
+
+                                //if it isn't a timestamp, mark the flag as such and convert it for comparison
+                                if (!is_int($value)) {
+                                    $isTimestamp = false;
+                                    $value = strtotime($value);
+                                }
+
+                                //compare
+                                if ($maxDate < $value) {
+                                    $maxDate = $value;
+                                }
+                            }
+                        }
+
+                        //if nothing was done, return an empty string
+                        if ($maxDate == 0 && $isTimestamp) {
+                            $maxDate = "";
+                        } else if ($isTimestamp === false) {
+                            $date = new DateTime();
+                            $date->setTimestamp($maxDate);
+
+                            $maxDate = $date->format("Y-m-d");
+                        }
+
+
+                        $ret[$link][$type][$rField] = $maxDate;
+                        $ret[$link][$type][$rField . '_values'] = $valueMap;
+                    }
+                    break;
             }
         }
 
