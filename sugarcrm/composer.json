@@ -20,6 +20,10 @@
     },
     "minimum-stability": "stable",
     "autoload": {
+        "psr-0": {
+            "HTMLPurifier_": "vendor/HTMLPurifier/standalone",
+            "Zend_": "vendor"
+        },
         "psr-4": {
             "Sugarcrm\\Sugarcrm\\": [
                 "src/",
@@ -31,7 +35,44 @@
             ],
             "Sugarcrm\\Sugarcrm\\inc\\": "include/",
             "Sugarcrm\\Sugarcrm\\custom\\inc\\": "custom/include/"
-        }
+        },
+        "classmap": [
+            "api/",
+            "clients/",
+            "custom/",
+            "data/",
+            "include/",
+            "jssource/",
+            "modules/",
+            "ModuleInstall/",
+            "service/",
+            "soap/",
+            "themes/",
+            "upgrade/",
+            "vendor/lessphp",
+            "vendor/HTMLPurifier/HTMLPurifier.standalone.php",
+            "vendor/Pear",
+            "vendor/nusoap",
+            "vendor/Smarty",
+            "vendor/XTemplate",
+            "vendor/oauth2-php"
+        ],
+        "exclude-from-classmap": [
+            "/include/SearchForm/SearchForm.php",
+            "/include/SearchForm/SearchForm2.php",
+            "/include/EditView/EditView.php",
+            "/include/EditView/EditView2.php",
+            "/modules/*/Popup_picker.php",
+            "/modules/*/SubPanelViewTeams.php",
+            "/modules/*/views/view.index.php",
+            "/vendor/nusoap/class.*.php",
+            "/upgrade/scripts/**",
+            "**/upgrade/scripts/**",
+            "**/test/**",
+            "**/tests/**",
+            "**/Test/**",
+            "**/Tests/**"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
