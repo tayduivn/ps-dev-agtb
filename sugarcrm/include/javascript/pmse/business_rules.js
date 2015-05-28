@@ -101,7 +101,7 @@ function saveBR(route) {
                     App.alert.dismiss('upload');
                     App.alert.show('br-saving-success', {
                         level: 'success',
-                        messages: brName + ' was saved correctly',
+                        messages: Handlebars.Utils.escapeExpression(brName) + ' was saved correctly',
                         autoClose: true
                     });
                 }

@@ -145,6 +145,7 @@ AdamProject.prototype.setUid = function (value) {
  */
 AdamProject.prototype.setName = function (value) {
     var $title, $title_box;
+    value = Handlebars.Utils.escapeExpression(value);
     this.name = value;
     $title = $('#ProjectTitle');
     $title_box = $('#txt-title');
