@@ -182,13 +182,13 @@ class RenameModules
         MetaDataManager::enableCacheRefreshQueue();
 
         //Change module, appStrings, subpanels, and related links.
-        $this->changeAppStringEntries()
-             ->changeAllModuleModStrings()
-             ->renameAllRelatedLinks()
-             ->renameAllSubpanels()
-             ->renameAllDashlets()
-             ->changeStringsInRelatedModules()
-             ->changeGlobalAppStrings();
+        $this->changeAppStringEntries();
+        $this->changeAllModuleModStrings();
+        $this->renameAllRelatedLinks();
+        $this->renameAllSubpanels();
+        $this->renameAllDashlets();
+        $this->changeStringsInRelatedModules();
+        $this->changeGlobalAppStrings();
 
         // Run the metadata cache refresh queue so changes take effect
         MetaDataManager::runCacheRefreshQueue();
@@ -230,10 +230,7 @@ class RenameModules
 
     /**
      * Changes module names in related module strings
-     *
-     * @return RenameModules
      */
-
     public function changeStringsInRelatedModules()
     {
         $this->setRenameDefs();
@@ -242,14 +239,10 @@ class RenameModules
                 $this->renameCertainModuleModStrings($module, $defs);
             }
         }
-
-        return $this;
     }
 
     /**
      * Changes module name in global app and app list strings
-     *
-     * @return RenameModules
      */
     protected function changeGlobalAppStrings()
     {
@@ -301,7 +294,6 @@ class RenameModules
 
         // Save the new strings now
         $this->saveCustomLanguageStrings($new);
-        return $this;
     }
 
     /**
@@ -355,9 +347,6 @@ class RenameModules
 
     /**
      * Rename all subpanels within the application.
-     *
-     *
-     * @return RenameModules
      */
     private function renameAllSubpanels()
     {
@@ -370,9 +359,6 @@ class RenameModules
                 $GLOBALS['log']->error("Class $beanName does not exist, unable to rename.");
             }
         }
-
-        return $this;
-
     }
 
     /**
@@ -532,14 +518,10 @@ class RenameModules
                 }
             }
         }
-
-        return $return;
     }
 
     /**
      * Rename all related linked within the application
-     *
-     * @return RenameModules
      */
     private function renameAllRelatedLinks()
     {
@@ -548,8 +530,6 @@ class RenameModules
         foreach($beanList as $moduleName => $beanName) {
             $this->renameModuleRelatedLinks($moduleName, $beanName);
         }
-
-        return $this;
     }
 
     /**
@@ -622,8 +602,6 @@ class RenameModules
 
     /**
      * Rename all module strings within the application for dashlets.
-     *
-     * @return RenameModules
      */
     private function renameAllDashlets()
     {
@@ -639,8 +617,6 @@ class RenameModules
         foreach ($this->changedModules as $moduleName => $replacementLabels) {
             $this->changeModuleDashletStrings($moduleName, $replacementLabels, $dashletsFiles);
         }
-
-        return $this;
     }
 
     /*
@@ -677,16 +653,12 @@ class RenameModules
 
     /**
      * Rename all module strings within the application.
-     *
-     * @return RenameModules
      */
     private function changeAllModuleModStrings()
     {
         foreach ($this->changedModules as $moduleName => $replacementLabels) {
             $this->changeModuleModStrings($moduleName, $replacementLabels);
         }
-
-        return $this;
     }
 
     /**
@@ -694,7 +666,6 @@ class RenameModules
       *
       * @param  string $targetModule The name of the module that owns the labels to be changed.
       * @param  array $labelKeysToReplace The labels to be changed.
-      * @return RenameModules
       */
      private function renameCertainModuleModStrings($targetModule, $labelKeysToReplace)
      {
@@ -702,8 +673,6 @@ class RenameModules
          foreach ($this->changedModules as $moduleName => $replacementLabels) {
              $this->changeCertainModuleModStrings($moduleName, $replacementLabels, $targetModule, $labelKeysToReplace);
          }
-
-         return $this;
      }
 
     /**
@@ -888,8 +857,6 @@ class RenameModules
 
     /**
      * Save changes to the module names to the app string entries for both the moduleList and moduleListSingular entries.
-     *
-     * @return RenameModules
      */
     private function changeAppStringEntries()
     {
@@ -942,7 +909,6 @@ class RenameModules
                 DropDownHelper::saveDropDown($this->createModuleListPackage($newParams, $singularNames));
             }
         }
-        return $this;
     }
 
     /**
