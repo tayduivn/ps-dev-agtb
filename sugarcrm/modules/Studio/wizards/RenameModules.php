@@ -836,15 +836,7 @@ class RenameModules
             // include links in their strings.
             $oldStringValue = str_replace("#{$search}/", "____TEMP_ROUTER_HOLDER____", $oldStringValue);
 
-            // Bug 47957
-            // If nothing was replaced - try to replace original string
-            $replaceCount = 0;
-            $result = str_replace($search, $replace, $oldStringValue, $replaceCount);
-            if (!$replaceCount){
-                $replaceKey = 'key_' . $replacementMetaData['type'];
-                $search = $replacementLabels[$replaceKey];
-                $result = str_replace($search, $replace, $oldStringValue, $replaceCount);
-            }
+            $result = str_replace($search, $replace, $oldStringValue);
 
             // Add the route back in if it was found
             $result = str_replace("____TEMP_ROUTER_HOLDER____", "#{$search}/", $result);
