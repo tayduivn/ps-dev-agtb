@@ -70,7 +70,7 @@
         }
         //alert('switcher '+date);date devuelve true o false del botton
         this.settings.set('date', date);
-        this.layout.loadData();
+        this.loadData();
     },
 
     /**
