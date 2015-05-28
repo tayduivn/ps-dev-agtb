@@ -10,20 +10,42 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-<tr name="{{module}}_{{model.id}}" class="single">
-    {{#each view.leftColumns}}
-        <td>
-            {{field ../view model=../model template=../viewName}}
-        </td>
-    {{/each}}
-    {{#each view._fields.visible}}
-        <td{{#if align}} class="{{align}}"{{/if}} data-type="{{type}}">
-            {{field ../view model=../model template=../viewName}}
-        </td>
-    {{/each}}
-    {{#each view.rightColumns}}
-        <td>
-            {{field ../view model=../model template=../viewName}}
-        </td>
-    {{/each}}
-</tr>
+{{#if rowModel}}
+    {{#with rowModel}}
+        <tr name="{{module}}_{{attributes.id}}" class="single">
+            {{#each ../leftColumns}}
+                <td>
+                    {{field ../../this model=../this template=../../viewName}}
+                </td>
+            {{/each}}
+            {{#each ../_fields.visible}}
+                <td{{#if align}} class="{{align}}"{{/if}} data-type="{{type}}">
+                    {{field ../../this model=../this template=../../viewName}}
+                </td>
+            {{/each}}
+            {{#each ../rightColumns}}
+                <td>
+                    {{field ../../this model=../this template=../../viewName}}
+                </td>
+            {{/each}}
+        </tr>
+    {{/with}}
+{{else}}
+    <tr name="{{module}}_{{model.id}}" class="single">
+        {{#each view.leftColumns}}
+            <td>
+                {{field ../view model=../model template=../viewName}}
+            </td>
+        {{/each}}
+        {{#each view._fields.visible}}
+            <td{{#if align}} class="{{align}}"{{/if}} data-type="{{type}}">
+                {{field ../view model=../model template=../viewName}}
+            </td>
+        {{/each}}
+        {{#each view.rightColumns}}
+            <td>
+                {{field ../view model=../model template=../viewName}}
+            </td>
+        {{/each}}
+    </tr>
+{{/if}}
