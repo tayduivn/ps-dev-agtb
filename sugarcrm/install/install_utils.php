@@ -1124,6 +1124,13 @@ function handleWebConfig()
     $xmldoc->startDocument('1.0','UTF-8');
     $xmldoc->startElement('configuration');
         $xmldoc->startElement('system.webServer');
+            $xmldoc->startElement('security');
+                $xmldoc->startElement('requestFiltering');
+                    $xmldoc->startElement('requestLimits');
+                        $xmldoc->writeAttribute('maxAllowedContentLength', 104857600);
+                    $xmldoc->endElement();
+                $xmldoc->endElement();
+            $xmldoc->endElement();
             $xmldoc->startElement('rewrite');
                 $xmldoc->startElement('rules');
                 for ($i = 0; $i < count($redirect_config_array); $i++) {
