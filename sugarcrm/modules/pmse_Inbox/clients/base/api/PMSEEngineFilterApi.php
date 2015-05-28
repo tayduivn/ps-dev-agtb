@@ -43,7 +43,8 @@ class PMSEEngineFilterApi extends FilterApi
         '$equals',
         '$not_equals',
         '$in',
-        '$not_in'
+        '$not_in',
+        '$dateRange'
     );
 
     public function registerApiRest()
@@ -308,6 +309,9 @@ class PMSEEngineFilterApi extends FilterApi
                 break;
             case '$not_in':
                 $where->notIn($field, $value);
+                break;
+            case '$dateRange':
+                $where->dateRange($field, $value);
                 break;
         }
     }
