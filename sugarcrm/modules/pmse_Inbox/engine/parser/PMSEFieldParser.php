@@ -169,19 +169,12 @@ class PMSEFieldParser implements PMSEDataParserInterface
         $tokenValue = $this->parseTokenValue($assembledTokenString);
         $criteriaToken->expToken = $assembledTokenString;
         $criteriaToken->currentValue = $tokenValue;
+
         if ($this->evaluatedBean->field_name_map[$criteriaToken->expField]['type']=='date') {
             $criteriaToken->expSubtype = 'date';
         } elseif ($this->evaluatedBean->field_name_map[$criteriaToken->expField]['type']=='datetime'
                 || $this->evaluatedBean->field_name_map[$criteriaToken->expField]['type']=='datetimecombo') {
             $criteriaToken->expSubtype = 'date';
-            global $current_user;
-            // Instantiate the TimeDate Class
-            $timeDate = $this->getTimeDate();
-            ////new TimeDate();
-            // Call the function
-            $localDate = $timeDate->to_display_date_time($tokenValue, true, true, $current_user);
-            $localDate = (empty($localDate)) ? $tokenValue : $localDate;
-            $criteriaToken->currentValue = $localDate;
         }
         return $criteriaToken;
     }
@@ -233,6 +226,7 @@ class PMSEFieldParser implements PMSEDataParserInterface
         $tokenValue = $this->parseTokenValue($assembledTokenString);
         $criteriaToken->expToken = $assembledTokenString;
         $criteriaToken->currentValue = $tokenValue;
+
         if ($this->evaluatedBean->field_name_map[$criteriaToken->expValue]['type']=='date') {
             $criteriaToken->expSubtype = 'date';
         } elseif ($this->evaluatedBean->field_name_map[$criteriaToken->expValue]['type']=='datetime'

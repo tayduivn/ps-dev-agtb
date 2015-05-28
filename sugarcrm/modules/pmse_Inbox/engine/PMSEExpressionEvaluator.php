@@ -147,93 +147,6 @@ class PMSEExpressionEvaluator
         return $this->evaluateExpression($resultGroup);
     }
 
-
-    /**
-     * Check to see if there groups and get their positions
-     * @param array $array Array in which groups will verify if there
-     * @param array $this->arrayGroups the number of groups is stored in this attribute
-     * @deprecated since version pmse2
-     */
-//    public function verifyGroups($array)
-//    {
-//        $arrayGroups = array(array("(", ")"), array("[", "]"), array("{", "}"));
-//        $arrayGroupsExist = array();
-//        foreach ($arrayGroups as $group) {
-//            $arrGroup = array();
-//            foreach ($group as $sig) {
-//                $arrSubGroup = array();
-//                $i = 0;
-//                while ($i < count($array)) {
-//                    if ("$array[$i]" == $sig) {
-//                        $arrSubGroup[] = $i;
-//                    }
-//                    $i++;
-//                }
-//                if (!empty($arrSubGroup))
-//                    $arrGroup[$sig] = $arrSubGroup;
-//            }
-//            if (!empty($arrGroup))
-//                $arrayGroupsExist[] = $arrGroup;
-//        }
-//        $this->arrayGroups = $arrayGroupsExist;
-//    }
-
-    /**
-     * We check parity groups if there is a (,), [,], {,} that is not closed
-     * @return Boolean if there is the same amount associators that open and close one we return false
-     */
-//    public function verifyEqualsGroups()
-//    {
-//        $arrayGroups = $this->arrayGroups;
-//        $value = true;
-//        foreach ($arrayGroups as $group) {
-//            $count = 0;
-//            foreach ($group as $arr) {
-//                $count = count($arr) - $count;
-//            }
-//            if ($count != 0)
-//                $value = false;
-//        }
-//        return $value;
-//    }
-
-    /**
-     * Evaluation without existecia partnerships
-     * @param array $array Array which evaluates only operators having
-     * @return int return values ​​of zero or one depending on the evaluation
-     * @deprecated since version pmse2
-     */
-//    public function executeOperation($array)
-//    {
-//        foreach ($this->operationList as $funOpe => $operators) {
-//            foreach ($operators as $sig) {
-//                $j = 0;
-//                if(count($array) <= 1){
-//                    break;
-//                }
-//                while ((count($array) - 1) >= $j) {
-//                    $ele = isset($array[$j]) ? $array[$j] : '';
-//                    if ("$ele" == $sig && "$ele" != 'NOT') {
-//                        $array[$j - 1] = $this->routeFunctionOperator($funOpe,
-//                        $array[$j - 1], $array[$j], $array[$j + 1]);
-//                        unset($array[$j + 1]);
-//                        unset($array[$j]);
-//                        $j = 0;
-//                        $array = array_values($array);
-//                    } elseif ("$ele" == $sig && "$ele" == 'NOT') {
-//                        $array[$j] = $this->routeFunctionOperator($funOpe, $array[$j + 1], $array[$j]);
-//                        unset($array[$j + 1]);
-//                        $j = 0;
-//                        $array = array_values($array);
-//                    } else {
-//                        $j++;
-//                    }
-//                }
-//            }
-//        }
-//        return array_shift($array);
-//    }
-
     /**
      * Method to address the function to conduct the operation
      * @param string $operation Name of the method to redirect
@@ -404,40 +317,6 @@ class PMSEExpressionEvaluator
         }
     }
 
-
-    /**
-     * Method that evaluates the arithmetic part
-     * @param int $value1 value
-     * @param string $operator arithmetic operator
-     * @param int $value2 value
-     * @return int returned the result to be evaluated
-     * @deprecated since version pmse2
-     */
-//    public function executeAritmeticOperation($value1, $operator, $value2)
-//    {
-//        switch ($operator) {
-//            case '+':
-//                $ret = $value1 + $value2;
-//                break;
-//            case '-':
-//                $ret = $value1 - $value2;
-//                break;
-//            case '/':
-//                if ($value2 > 0)
-//                    $ret = $value1 / $value2;
-//                else
-//                    $ret = 0;
-//                break;
-//            case 'x':
-//                $ret = $value1 * $value2;
-//                break;
-//            default:
-//                $ret = 0;
-//                break;
-//        }
-//        return $ret;
-//    }
-
     /**
      * Method that evaluates the relational part
      * @param string $value1 value
@@ -518,10 +397,6 @@ class PMSEExpressionEvaluator
                     $ret = 0;
                 }
                 break;
-//            case 'within'://revisar
-//                break;
-//            case 'not_within'://revisar
-//                break;
         }
         return (bool)$ret;
     }
@@ -572,6 +447,7 @@ class PMSEExpressionEvaluator
      */
     public function typeData($value, $typeDate)
     {
+        global $timedate;
         switch (strtolower($typeDate)) {
             case 'address'://varchar
             case 'relate'://varchar
@@ -596,7 +472,14 @@ class PMSEExpressionEvaluator
             case 'date'://date
             case 'datetime'://datetime
             case 'datetimecombo'://datetime
-                $newValue = strtotime($value);
+                // Here we are assuming $value always will be
+                // a DateTime or String instances
+                if ($value instanceof DateTime) {
+                    $newValue = $value;
+                } else {
+                    $newDate = $timedate->fromIso($value);
+                    $newValue = $timedate->tzGMT($newDate);
+                }
                 break;
             case 'enum'://int
             case 'int':
