@@ -4515,7 +4515,7 @@ Sincerely, SugarCRM',
     'LBL_TOUR_TOUR' => 'Access Tour at any time',
 
 
-
+    'LBL_FUTURE' => 'Future',
     'LBL_REQUIRED_FIELD' => 'Required',
     // for nomad mobile
     'LBL_OPTIONAL' => 'Optional',
@@ -4701,6 +4701,19 @@ Sincerely, SugarCRM',
     'LNK_PRIVACY_POLICY' => 'Privacy Policy',
     'LBL_EXTERNAL_LOGIN_BUTTON_TITLE' => 'Single Sign-On',
     'LBL_RECENTS' => 'Recents',
+    'LBL_SHOWING_CACHED_DATA' => 'Unable to reach the server. Showing latest available data ({{lastFetched}})',
+    'LBL_CLOSE_AND_SAVE_BUTTON' => 'Close {{moduleSingular}} and save',
+    'LBL_MOBILE_SPECIFIC_DASHBOARD' => 'Specific Dashboard',
+    'LBL_MOBILE_SPECIFIC_MODULE' => 'Specific Module',
+    'LBL_MOBILE_DEFAULT_VIEW' => 'Start Screen',
+    'LBL_MOBILE_DEFAULT_MODULE' => 'Selected Module',
+    'LBL_MOBILE_DEFAULT_DASHBOARD' => 'Selected Dashboard',
+    'LBL_MOBILE_DEFAULT_DASHLET' => 'Selected Dashlet',
+    'LBL_ALL_DASHLETS' => 'All Dashlets',
+    'LBL_MOBILE_GLOBAL_SEARCH' => 'Global Search',
+    'LBL_MOBILE_ACTIVITYSTREAM_POST_PLACEHOLDER' => 'Type @ to mention a user. Type # to reference a record.',
+    'LBL_MOBILE_NEW_COMMENT' => 'New comment',
+    'LBL_RECENTLY_VIEWED' => 'Recently Viewed',
 
     'ERR_SYNC_FAILED' => 'Unable to sync with server.',
     'ERR_MOBILE_SSO_NOT_CONFIGURED' => 'SSO login is unavailable. Ensure the instance is on Sugar 7.5 or greater and configured for SSO.',
@@ -4751,6 +4764,7 @@ Sincerely, SugarCRM',
     'ERR_OFFLINE_SYNC_ERROR' => 'Synchronization error',
     'ERR_OFFLINE_SYNC_CONFLICT' => 'Synchronization conflict',
     'ERR_OFFLINE_SERVERTIME_UNAVAILABLE' => 'Failed to get server time',
+    'ERR_OFFLINE_NO_CONNECTION_ENABLE_ERROR' => 'Failed to enable offline mode. Unable to reach the server.',
 
     // Nomad Tutorial
     'LBL_MOBILE_TUTORIAL_HOME_INTRO' => 'Welcome to {{{brandName}}}.<br/><br/> Allow us to highlight some new features...',
