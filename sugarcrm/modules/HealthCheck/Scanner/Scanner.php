@@ -2224,6 +2224,8 @@ ENDP;
         'ProductTemplates' => array('assigned_user_link'),
         'Meetings' => array('contact_id'),
         'KBDocuments' => array('keywords'),
+        'KBContents' => array('created_by_link', 'modified_user_link'),
+        'KBDocumentRevisions' => array('document_revisions'),
     );
 
     /**
