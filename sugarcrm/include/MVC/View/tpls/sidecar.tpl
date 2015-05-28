@@ -89,7 +89,7 @@
                         app.once("app:view:change", function(){
                             app.progress.done();
                         });
-                        $('#alerts').empty();
+                        app.alert.dismissAll();
                         app.start();
                     }
                 });

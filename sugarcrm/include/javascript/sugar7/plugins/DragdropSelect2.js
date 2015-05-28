@@ -208,7 +208,7 @@
                 }
 
                 //clear out previous droppable before setting up new one
-                if (this.$select2Container) {
+                if (this.$select2Container && !_.isUndefined(this.$select2Container.droppable('instance'))) {
                     this.$select2Container.droppable('destroy');
                 }
 

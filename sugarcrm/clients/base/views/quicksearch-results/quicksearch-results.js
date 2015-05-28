@@ -14,6 +14,10 @@
  * @extends View.View
  */
 ({
+    events: {
+        'click .view-all-results': 'viewAllResultsClicked'
+    },
+
     /**
      * @inheritDoc
      */
@@ -275,6 +279,14 @@
                 this.close();
                 this.trigger('navigate:focus:lost');
         }
+    },
+
+    /**
+     * click event handler for the view all results link
+     * @param e
+     */
+    viewAllResultsClicked: function(e) {
+        this.close();
     },
 
     /**

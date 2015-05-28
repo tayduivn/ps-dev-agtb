@@ -25,7 +25,7 @@ class PackageManagerDisplay{
      * @param String form1 - the form to display for manual downloading
      * @param String hidden_fields - the hidden fields related to downloading a package
      * @param String form_action - the form_action to be used when downloading from the server
-     * @param String types - the types of objects we will request from the server
+     * @param array types - the types of objects we will request from the server
      * @param String active_form - the form to display first
      * @return String - a string of html which will be used to display the forms
      */
@@ -89,7 +89,7 @@ class PackageManagerDisplay{
      * @param String form1 - the form to display for manual downloading
      * @param String hidden_fields - the hidden fields related to downloading a package
      * @param String form_action - the form_action to be used when downloading from the server
-     * @param String types - the types of objects we will request from the server
+     * @param array types - the types of objects we will request from the server
      * @param String active_form - the form to display first
      * @return String - a string of html which will be used to display the forms
      */

@@ -47,8 +47,8 @@ class Bug33918Test extends Sugar_PHPUnit_Framework_TestCase
     
     function testGetExistingCampaignLogEntry()
     {
-        $targetTrackerKey = uniqid();
-        $campaignLogID = uniqid();
+        $targetTrackerKey = create_guid();
+        $campaignLogID = create_guid();
         
         $tst = new CampaignLog();
         $tst->activity_type  = 'targeted';
@@ -73,12 +73,12 @@ class Bug33918Test extends Sugar_PHPUnit_Framework_TestCase
     function testCreateBouncedCampaignLogEntry()
     {
         $row = array(
-            'campaign_id' => 'UNIT TEST 1',
-            'target_tracker_key' => 'UNIT TEST 2',
-            'target_id' => 'UNIT TEST 3',
+            'campaign_id' => create_guid(),
+            'target_tracker_key' => create_guid(),
+            'target_id' => create_guid(),
             'target_type' => 'Lead',
-            'list_id' => 'UNIT TEST 4',
-            'marketing_id' => 'UNIT TEST 5',
+            'list_id' => create_guid(),
+            'marketing_id' => create_guid(),
             
         );
         $email = new stdClass();

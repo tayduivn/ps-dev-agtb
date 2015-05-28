@@ -49,7 +49,7 @@ describe("Alert View", function() {
         });
     });
 
-    describe('getAlertTemplate()', function() {
+    describe('_getAlertTemplate()', function() {
         it("Should return the correct class when success level is given", function() {
             sinonSandbox.stub(app.metadata, 'getStrings', function() {
                 return {
@@ -67,7 +67,8 @@ describe("Alert View", function() {
             dataProvider[view.LEVEL.CONFIRMATION] = 'alert-warning';
 
             _.each(dataProvider, function(className, level) {
-                var result = view.getAlertTemplate(level, 'BAR', 'FOO');
+                var options = {level: level, messages: 'BAR', title: 'FOO'};
+                var result = view._getAlertTemplate(options);
                 expect($('<div></div>').append(result).find('.alert').hasClass(className)).toBe(true);
             });
         });
@@ -79,15 +80,15 @@ describe("Alert View", function() {
                 }
             });
 
-            var result = view.getAlertTemplate(view.LEVEL.SUCCESS, 'BAR');
+            var result = view._getAlertTemplate({level: view.LEVEL.SUCCESS, messages: 'BAR'});
             expect(result.indexOf('foo bar')).not.toBe(-1);
         });
 
         it('should clear double ellipsis on processing labels', function() {
             var result;
-            result = view.getAlertTemplate(view.LEVEL.PROCESS, null, 'Loading...');
+            result = view._getAlertTemplate({level: view.LEVEL.PROCESS, title: 'Loading...'});
             expect($(result).text()).toBe('Loading...');
-            result = view.getAlertTemplate(view.LEVEL.PROCESS, null, 'Deleting...');
+            result = view._getAlertTemplate({level: view.LEVEL.PROCESS, title: 'Deleting...'});
             expect($(result).text()).toBe('Deleting...');
         });
     });
@@ -232,40 +233,52 @@ describe("Alert View", function() {
         });
 
         it('Should create a new shortcut session and register new keys for confirmation alerts', function() {
-            view.render({
-                level: 'confirmation'
-            });
+            view.options = {level: 'confirmation'};
+            view.render();
 
             expect(app.shortcuts.createSession.calledOnce).toBe(true);
             expect(app.shortcuts.register.called).toBe(true);
         });
 
         it('Should not create a new shortcut session for other alerts', function() {
-            view.render({
-                level: 'warning'
-            });
+            view.options = {level: 'warning'};
+
+            view.render();
 
             expect(app.shortcuts.createSession.called).toBe(false);
         });
 
         it('Should restore previous shortcut session when confirmation alert is closed', function() {
+            view.options = {level: 'confirmation'};
             view.level = 'confirmation';
-            view.render({
-                level: 'confirmation'
-            });
+
+            view.render();
             view.close();
 
             expect(app.shortcuts.restoreSession.calledOnce).toBe(true);
         });
 
         it('Should not restore previous shortcut session when other alerts are closed', function() {
-            view.level = 'warning';
-            view.render({
-                level: 'warning'
-            });
+            view.options = {level: 'warning'};
+            view.render();
             view.close();
 
             expect(app.shortcuts.restoreSession.called).toBe(false);
         });
+    });
+
+    it('should apply styles when rendering', function() {
+        view.options = {closeable: true, level: 'info'};
+        view.render();
+
+        expect(view.$('.alert').hasClass('alert-info')).toBeTruthy();
+        expect(view.$('.alert').hasClass('closeable')).toBeTruthy();
+
+        view.options = {closeable: false, level: 'error'};
+
+        view.render();
+
+        expect(view.$('.alert').hasClass('closeable')).toBeFalsy();
+        expect(view.$('.alert').hasClass('alert-danger')).toBeTruthy();
     });
 });

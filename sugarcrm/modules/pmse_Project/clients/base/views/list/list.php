@@ -29,6 +29,7 @@ $viewdefs['pmse_Project']['base']['view']['list'] = array(
                     'label' => 'LBL_PRJ_MODULE',
                     'default' => true,
                     'enabled' => true,
+                    'readonly' => true,
                 ),
                 array(
                     'name' => 'prj_status',

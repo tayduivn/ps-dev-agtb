@@ -274,6 +274,9 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             $files[] = 'clients/base/views/interactionschart';
             $files[] = 'include/javascript/sugar7/plugins/Timeago.js';
             $files[] = 'sidecar/lib/sugar/sugar.timeago.js';
+            $files[] = 'sidecar/lib/jquery-ui/css/smoothness/images/calendar.gif';
+            $files[] = 'sidecar/lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css';
+            $files[] = 'sidecar/lib/jquery-ui/js/jquery-ui-1.8.18.custom.min.js';
             $files[] = 'modules/Accounts/clients/base/layouts/create-actions';
             $files[] = 'modules/Accounts/clients/base/views/create-actions';
             $files[] = 'modules/Calls/clients/base/views/create-actions';

@@ -25,13 +25,16 @@
 
 #nprogress {
   position: fixed;
-  top: 38px;
+  top: 35px;
   height: 0;
   width: 100%;
   z-index: 1040;
   &> div {
     text-align: center;
     display: inline-block;
+  }
+  .loading.gate {
+    width: inherit;
   }
 }
 

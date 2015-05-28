@@ -59,8 +59,6 @@
             title: app.lang.get('LBL_CONVERT_TO_QUOTE_INFO', this.module) + ':',
             messages: [app.lang.get('LBL_CONVERT_TO_QUOTE_INFO_MESSAGE', this.module)]
         });
-        // remove the close since we don't want this to be closable
-        alert.getCloseSelector().remove();
 
         var url = app.api.buildURL(this.model.module, 'quote', { id: this.model.id }),
             callbacks = {

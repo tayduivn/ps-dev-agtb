@@ -1231,15 +1231,27 @@ ENDQ;
 	 * @return bool True on success
 	 */
 	function retrieve($id) {
+        global $dictionary;
+        require_once 'modules/TableDictionary.php';
+
 		$q = "SELECT * FROM folders WHERE id = '{$id}' AND deleted = 0";
 		$r = $this->db->query($q);
 		$a = $this->db->fetchByAssoc($r);
 
 		if(!empty($a)) {
+            if (isset($a['dynamic_query'])) {
+                $a['dynamic_query'] = from_html($a['dynamic_query']);
+            }
+
+            $fields = array();
+            foreach ($dictionary['folders']['fields'] as $field) {
+                $fields[$field['name']] = $field['type'];
+            }
+
 			foreach($a as $k => $v) {
-				if($k == 'dynamic_query') {
-					$v = from_html($v);
-				}
+                if (isset($fields[$k])) {
+                    $v = $this->db->fromConvert($v, $fields[$k]);
+                }
 				$this->$k = $v;
 			}
 			return true;

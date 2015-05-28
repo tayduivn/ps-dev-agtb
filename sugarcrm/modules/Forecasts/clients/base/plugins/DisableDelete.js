@@ -38,8 +38,9 @@
              * @return {string} message that was set
              */
             removeDelete: function() {
-                var sales_stage_won = app.metadata.getModule('Forecasts', 'config').sales_stage_won,
-                    sales_stage_lost = app.metadata.getModule('Forecasts', 'config').sales_stage_lost,
+                var config = app.metadata.getModule('Forecasts', 'config') || {},
+                    sales_stage_won = config.sales_stage_won || ['Closed Won'],
+                    sales_stage_lost = config.sales_stage_lost || ['Closed Lost'],
                     label_key = '_STAGE',
                     closed_RLI_count = 0,
                     message = null,
@@ -47,8 +48,7 @@
                     button = this.getFieldElement(),
                     field = this._getFieldName();
 
-                if (button.length) {
-
+                if (button.length && _.contains(["list:deleterow:fire", "button:delete_button:click"], this.def.event)) {
                     //BEGIN SUGARCRM flav=ent ONLY
                     if (app.metadata.getModule('Opportunities', 'config').opps_view_by === 'RevenueLineItems') {
                         //grab the closed RLI count (when on opps)
