@@ -132,6 +132,8 @@ require_once('modules/TimePeriods/TimePeriodsSeedData.php');
 
 $timedate = TimeDate::getInstance();
 $timeperiods = TimePeriodsSeedData::populateSeedData();
+
+echo '.';
 //END SUGARCRM flav=pro ONLY
 
 
@@ -295,6 +297,10 @@ for($i = 0; $i < $number_companies; $i++) {
     //Set the user to accept the call
     $seed_user->id = $call->assigned_user_id;
     $call->set_accept_status($seed_user,'accept');
+
+    if ($i % 10 === 0) {
+        echo '.';
+    }
 }
 
 unset($accounts_companies_list);
@@ -458,6 +464,10 @@ for($i=0; $i<1000; $i++)
 	$email->contacts->add($contact);
 	$email->load_relationship('accounts');
 	$email->accounts->add($contacts_account);
+
+    if ($i % 10 === 0) {
+        echo '.';
+    }
 }
 
 for($i=0; $i<$number_leads; $i++)
@@ -558,6 +568,10 @@ for($i=0; $i<$number_leads; $i++)
 	$lead->primary_address_postalcode = mt_rand(10000,99999);
 	$lead->primary_address_country = $sugar_demodata['primary_address_country'];
 	$lead->save();
+
+    if ($i % 10 === 0) {
+        echo '.';
+    }
 }
 
 
@@ -570,6 +584,9 @@ foreach($sugar_demodata['manufacturer_seed_data_names'] as $v){
 	$manufacturer->save();
 	$manufacturer_id_arr[] = $manufacturer->id;
 }
+
+echo '.';
+
 $list_order = 1;
 foreach($sugar_demodata['shipper_seed_data_names'] as $v){
 	$shipper = new Shipper;
@@ -581,6 +598,8 @@ foreach($sugar_demodata['shipper_seed_data_names'] as $v){
 	$ship_id_arr[] = $shipper->id;
 }
 
+echo '.';
+
 foreach($sugar_demodata['productcategory_seed_data_names'] as $v){
 	$category = new ProductCategory;
 	$category->name = $v;
@@ -590,6 +609,9 @@ foreach($sugar_demodata['productcategory_seed_data_names'] as $v){
 	$category->save();
 	$productcategory_id_arr[] = $category->id;
 }
+
+echo '.';
+
 $list_order = 1;
 foreach($sugar_demodata['producttype_seed_data_names'] as $v){
 	$type = new ProductType;
@@ -599,6 +621,10 @@ foreach($sugar_demodata['producttype_seed_data_names'] as $v){
 	$producttype_id_arr[] = $type->id;
 	$list_order++;
 }
+
+echo '.';
+
+
 foreach($sugar_demodata['taxrate_seed_data'] as $v){
 	$taxrate = new TaxRate;
 	$taxrate->name = $v['name'];
@@ -610,7 +636,7 @@ foreach($sugar_demodata['taxrate_seed_data'] as $v){
 	$taxrate_id_arr[] = $taxrate->id;
 };
 
-
+echo '.';
 
 
 foreach($sugar_demodata['currency_seed_data'] as $v){
@@ -664,6 +690,9 @@ foreach($sugar_demodata['producttemplate_seed_data'] as $v){
 	$template->qty_in_stock = $v['qty_in_stock'];
 	$template->save();
 }
+
+echo '.';
+
 include_once('modules/TeamNotices/DefaultNotices.php');
 ///
 /// SEED DATA FOR CONTRACTS
@@ -687,6 +716,8 @@ foreach($sugar_demodata['contract_seed_data'] as $v){
 	$contract->save();
 }
 
+echo '.';
+
 ///
 /// SEED DATA FOR KNOWLEDGE BASE
 ///
@@ -697,6 +728,8 @@ foreach($sugar_demodata['kbdocument_seed_data_kbtags'] as $v){
     $id = $kbtag->save();
     $kbtags_hash[$id] = $v;
 }
+
+echo '.';
 
 foreach($sugar_demodata['kbdocument_seed_data'] as $v){
 	$kbdoc = new KBDocument();
@@ -744,6 +777,8 @@ foreach($sugar_demodata['kbdocument_seed_data'] as $v){
 	}
 }
 
+echo '.';
+
 //END SUGARCRM flav=pro ONLY
 
 ///
@@ -764,6 +799,8 @@ if(!empty($sugar_demodata['emailtemplates_seed_data'])) {
 	    $id =$EmailTemp->save();
 	}
 }
+
+echo '.';
 
 //BEGIN SUGARCRM flav=ent ONLY
 //enable portal
@@ -794,8 +831,12 @@ $GLOBALS['mod_strings']  = $installerStrings;
         $contact->set_relationship('opportunities_contacts', array('contact_id'=>$contact->id ,'opportunity_id'=> $opportunity_ids[$opportunity_key], 'contact_role'=>$app_list_strings['opportunity_relationship_type_default_key']), false);
     }
 
+    echo '.';
+
     require_once('modules/Forecasts/ForecastsSeedData.php');
     ForecastsSeedData::populateSeedData($timeperiods);
+
+    echo '.';
 
     //BEGIN SUGARCRM flav=ent ONLY
     include('install/seed_data/entreport_SeedData.php');
