@@ -38,15 +38,33 @@ class CountRelatedExpression extends NumericExpression
      */
     public static function getJSEvaluate()
     {
-        return <<<EOQ
-		    var linkField = this.getParameters().evaluate();
+        return <<<JS
 
-			if (typeof(linkField) == "string" && linkField != "") {
+        var linkField = this.getParameters().evaluate();
+        // if App is undefined, then we should still use what was there since it works in BWC mode.
+        if (App === undefined) {
+
+			if (typeof(linkField) == 'string' && linkField != '') {
                 return this.context.getRelatedField(linkField, 'count');
 			}
 
-			return "";
-EOQ;
+			return '';
+        }
+
+        // just the the length of the collection for the given linkField
+        var target = this.context.target,
+            current_value = this.context.model.getRelatedCollection(linkField).length;
+
+        this.context.model.set(target, current_value);
+        // update the relationship defs on the model
+        this.context.updateRelatedFieldValue(
+            linkField,
+            'count',
+            '',
+            current_value,
+            this.context.model.isNew()
+        );
+JS;
     }
 
     /**
