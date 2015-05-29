@@ -25,9 +25,45 @@ class SocketClientTest extends Sugar_PHPUnit_Framework_TestCase
     public function recipientsProvider()
     {
         return array(
-            'user' => array(\Sugarcrm\Sugarcrm\Socket\Client::RECIPIENT_USER_ID, 123),
-            'team' => array(\Sugarcrm\Sugarcrm\Socket\Client::RECIPIENT_TEAM_ID, 456),
-            'group' => array(\Sugarcrm\Sugarcrm\Socket\Client::RECIPIENT_USER_TYPE, 'admin')
+            'user' => array(
+                array(
+                    'url' => 'http://come.sugar.url.com/some/path',
+                    'type' => \Sugarcrm\Sugarcrm\Socket\Client::RECIPIENT_USER_ID,
+                    'id' => 123)
+            ),
+            'team' => array(
+                array(
+                    'url' => 'http://come.sugar.url.com/some/path',
+                    'type' => \Sugarcrm\Sugarcrm\Socket\Client::RECIPIENT_TEAM_ID,
+                    'id' => 456)
+            ),
+            'group' => array(
+                array(
+                    'url' => 'http://come.sugar.url.com/some/path',
+                    'type' => \Sugarcrm\Sugarcrm\Socket\Client::RECIPIENT_USER_TYPE,
+                    'id' => 'admin')
+            ),
+            'channel_user' => array(
+                array(
+                    'url' => 'http://come.sugar.url.com/some/path',
+                    'channel' => 'channel-home',
+                    'type' => \Sugarcrm\Sugarcrm\Socket\Client::RECIPIENT_USER_ID,
+                    'id' => 123)
+            ),
+            'channel_team' => array(
+                array(
+                    'url' => 'http://come.sugar.url.com/some/path',
+                    'channel' => 'channel-home',
+                    'type' => \Sugarcrm\Sugarcrm\Socket\Client::RECIPIENT_TEAM_ID,
+                    'id' => 456)
+            ),
+            'channel_group' => array(
+                array(
+                    'url' => 'http://come.sugar.url.com/some/path',
+                    'channel' => 'channel-home',
+                    'type' => \Sugarcrm\Sugarcrm\Socket\Client::RECIPIENT_USER_TYPE,
+                    'id' => 'admin')
+            ),
         );
     }
 
@@ -382,29 +418,40 @@ class SocketClientTest extends Sugar_PHPUnit_Framework_TestCase
      * Tests correct recipient transfer to httpHelper
      *
      * @dataProvider recipientsProvider
-     * @param string $type
-     * @param string|int $id
+     * @param array $expectedTo
      */
-    public function testRecipient($type, $id)
+    public function testRecipient($expectedTo)
     {
         $message = 'test-message';
 
         $httpHelper = $this->getMock('\Sugarcrm\Sugarcrm\Socket\HttpHelper');
         $client = $this->getMock('\Sugarcrm\Sugarcrm\Socket\Client', array('getHttpHelper', 'getSugarConfig', 'retrieveToken'));
 
-        $client->recipient($type, $id);
+        $client->recipient($expectedTo['type'], $expectedTo['id']);
+        if (isset($expectedTo['channel']) && $expectedTo['channel']){
+            $client->channel($expectedTo['channel']);
+        }
 
-        $config = $this->getMock('SugarConfig');
+        $config = $this->getMockBuilder('SugarConfig')
+            ->getMock('SugarConfig', array('get'));
+
+        $config->expects($this->any())
+            ->method('get')
+            ->will($this->returnCallback(function ($arg) use ($expectedTo) {
+                $map = array('site_url'     => $expectedTo['url'],
+                    'websockets.server.url' => 'http://someValue',
+                );
+                return $map[$arg];
+            }));
 
         $client->expects($this->any())->method('getHttpHelper')->willReturn($httpHelper);
         $client->expects($this->any())->method('getSugarConfig')->willReturn($config);
 
-        $actualData = '';
         $httpHelper->expects($this->once())->method('getRemoteData')->with(
             $this->anything(),
-            $this->callback(function ($val) use ($actualData, $type, $id) {
+            $this->callback(function ($val) use ($expectedTo) {
                 $actualData = json_decode($val, true);
-                return $actualData['data']['to'] == $type . ':' . $id;
+                return 0 == count(array_diff($expectedTo, $actualData['to']));
             }));
 
         $client->send($message);
@@ -430,7 +477,9 @@ class SocketClientTest extends Sugar_PHPUnit_Framework_TestCase
             $this->anything(),
             $this->callback(function ($val) use ($actualData) {
                 $actualData = json_decode($val, true);
-                return $actualData['data']['to'] == 'all';
+                return $actualData['to']['type'] == \Sugarcrm\Sugarcrm\Socket\Client::RECIPIENT_ALL
+                && is_null($actualData['to']['id'])
+                && is_null($actualData['to']['channel']);
             }));
 
         $client->send($message);
@@ -573,7 +622,7 @@ class SocketClientTest extends Sugar_PHPUnit_Framework_TestCase
             $this->anything(),
             $this->callback(function ($val) use ($url) {
                 $actualData = json_decode($val, true);
-                return $actualData['url'] == $url;
+                return $actualData['to']['url'] == $url;
             }));
 
         $client->send('test');
