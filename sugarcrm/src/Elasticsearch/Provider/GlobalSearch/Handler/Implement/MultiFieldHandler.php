@@ -298,11 +298,11 @@ class MultiFieldHandler extends AbstractHandler implements
                 array('min_gram' => 3, 'max_gram' => 15)
             )
 
-            // char filter keeping only numeric values and spaces
+            // char filter keeping only numeric values
             ->addCharFilter(
                 'gs_char_num_pattern',
                 'pattern_replace',
-                array('pattern' => '[^\\d\\s]+', 'replacement' => '')
+                array('pattern' => '[^\\d]+', 'replacement' => '')
             )
 
             // base analyzer using standard tokenizer
