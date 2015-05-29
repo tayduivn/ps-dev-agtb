@@ -943,6 +943,10 @@ protected function checkQuery($sql, $object_name = false)
 				/* required + is_null=false => not null */
 			return false;
 		}
+        if ((isset($vardef['type']) && $vardef['type'] == 'bool')
+            || (isset($vardef['dbType']) && $vardef['dbType'] == 'bool')) {
+            return false;
+        }
 		if(empty($vardef['auto_increment']) && (empty($vardef['type']) || $vardef['type'] != 'id' || (isset($vardef['required']) && empty($vardef['required'])))
 					&& (empty($vardef['dbType']) || $vardef['dbType'] != 'id' || (isset($vardef['required']) && empty($vardef['required'])))
 					&& (empty($vardef['name']) || ($vardef['name'] != 'id' && $vardef['name'] != 'deleted'))
@@ -2672,6 +2676,9 @@ protected function checkQuery($sql, $object_name = false)
 		if (!empty($fieldDef['required']) || ($fieldDef['name'] == 'id' && !isset($fieldDef['required'])) ) {
 			$fieldDef['required'] = 'true';
 		}
+        if ($fieldDef['type'] === 'bool') {
+            $fieldDef['required'] = 'true';
+        }
 	}
 
 	/**
@@ -2977,8 +2984,11 @@ protected function checkQuery($sql, $object_name = false)
             // nothing to do
         } elseif ($this->getFieldType($fieldDef) == 'bool') {
             if (isset($fieldDef['default'])) {
-                $default = " DEFAULT " . (int)isTruthy($fieldDef['default']);
+                $value = (int) isTruthy($fieldDef['default']);
+            } else {
+                $value = 0;
             }
+            $default = " DEFAULT " . $value;
         } elseif (isset($fieldDef['default'])) {
             $default = " DEFAULT " . $this->massageValue($fieldDef['default'], $fieldDef);
         }
