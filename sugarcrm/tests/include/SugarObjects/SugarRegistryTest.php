@@ -14,24 +14,7 @@ require_once 'include/SugarObjects/SugarRegistry.php';
 
 class SugarRegistryTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    private $_old_reporting = null;
-    private $_old_globals = null;
-
-    public function setUp() 
-    {
-        $this->_old_reporting = error_reporting(E_ALL);
-        $this->_old_globals = $GLOBALS;
-        unset($GLOBALS);
-    }
-
-    public function tearDown() 
-    {
-        error_reporting($this->_old_reporting);
-        $GLOBALS = $this->_old_globals;
-        unset($this->_old_globals);
-    }
-
-    public function testGetInstanceReturnsAnInstanceOfSugarRegistry() 
+    public function testGetInstanceReturnsAnInstanceOfSugarRegistry()
     {
         $this->assertTrue(SugarRegistry::getInstance() instanceOf SugarRegistry,'Returned object is not a SugarRegistry instance');
     }
