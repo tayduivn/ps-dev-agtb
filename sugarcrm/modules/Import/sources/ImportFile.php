@@ -227,6 +227,7 @@ class ImportFile extends ImportDataSource
             // Convert all line endings to the same style as PHP_EOL
             // Use preg_replace instead of str_replace as str_replace may cause extra lines on Windows
             $this->_currentRow[$key] = preg_replace("[\r\n|\n|\r]", PHP_EOL, $this->_currentRow[$key]);
+            $this->_currentRow[$key] = securexss($this->_currentRow[$key]);
         }
         
         $this->_rowsCount++;
