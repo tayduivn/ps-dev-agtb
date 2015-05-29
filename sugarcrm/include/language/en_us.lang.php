@@ -4176,6 +4176,7 @@ Sincerely, SugarCRM',
     'LBL_MASSUPDATE_DATE' => 'Select Date',
 
     'LBL_VALIDATE_RANGE' => 'is not within the valid range',
+    'LBL_VALIDATE_URL' => 'is not a valid URL',
 
     //jchi #  20776
     'LBL_DROPDOWN_LIST_ALL' => 'All',
