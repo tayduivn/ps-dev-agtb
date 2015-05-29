@@ -367,6 +367,12 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
             }
         }
 
+        foreach ($previousViewDef as $previousKey => $previousFieldDef ) {
+            if (is_array($previousFieldDef)) {
+                unset($previousViewDef[$previousKey]['span']);
+            }
+        }
+
         $baseSpans = array();
         foreach ($this->baseViewFields as $baseKey => $baseFieldDef) {
             if (is_array($baseFieldDef) && isset($baseFieldDef['span'])) {
@@ -461,13 +467,13 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
                         // If the field defs is empty it needs to be an array
                         $newField = $this->getNewRowItem($source, (empty($fielddefs[$fieldName]) ? array() : $fielddefs[$fieldName]));
                         // Adjust span for end column
-                        if ($panelColumns - $offset === 1 && is_array($newField)) {
-                            $lastFieldSpan = $this->getLastFieldSpan($lastField, $singleSpanUnit, $fieldCount);
-                            if (isset($lastFieldSpan['span'])) {
-                                $newField['span'] = $lastFieldSpan['span'];
-                            }
-                            else if (isset($newField['span'])) {
-                                unset($newField['span']);
+                        if ($lastField != null) {
+                            $newFieldSpan = $this->getLastFieldSpan($lastField, $singleSpanUnit, $fieldCount);
+                            if (isset($newFieldSpan['span'])) {
+                                if (!is_array($newField)) {
+                                    $newField = array('name'=>$newField);
+                                }
+                                $newField['span'] = $newFieldSpan['span'];
                             }
                         }
                         $lastField = $newField;
@@ -613,7 +619,7 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
     }
 
     /**
-     * Gets the last field with a proper span attribute affixed
+     * Gets current field's span based on the last field and adjust last field's base span if necessary
      * 
      * @param array $lastField The last field that was touched
      * @param int $singleSpanUnit The number of spaces occupied by a single span
@@ -631,10 +637,15 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
                 // minus the last field span plus a single unit
                 // span
                 $fullBaseSpan = $this->baseSpans[$lastField['name']]['span'] + $this->baseSpans[$lastField['name']]['adjustment'];
-                $span = $this->maxSpan - $fullBaseSpan + $singleSpanUnit;
 
-                // Adjust the base spans so they are kept in sync
-                $this->adjustBaseSpan($lastField['name'], $singleSpanUnit);
+                if ($this->maxSpan > $fullBaseSpan) {
+                    $span = $this->maxSpan - $fullBaseSpan;
+                } else {
+                    $span = $singleSpanUnit;
+
+                    // Adjust the base spans so they are kept in sync
+                    $this->adjustBaseSpan($lastField['name'], $singleSpanUnit);
+                }
 
                 // Build the return array
                 $lastField = array('span' => $span);

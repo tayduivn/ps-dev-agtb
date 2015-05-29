@@ -115,7 +115,130 @@ class SidecarGridLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCa
 
         // this is php shorthand for returning an array( array($a[0],$b[0]), ...)
         return array_map(null,$canonicals,$internals);
+    }
 
+    /**
+     * data provider for testing converting to canonical form
+     */
+    public function convertToCanonicalForms()
+    {
+        $tests = $this->canonicalAndInternalForms();
+        // PAT-1934: restore defaults
+        $tests[] = array(
+            array(
+                array(
+                    'name' => 'PANEL_BODY',
+                    'label' => 'PANEL_BODY',
+                    'columns' => 2,
+                    'labelsOnTop' => 1,
+                    'placeholders' => 1,
+                    'fields' => array(
+                        array(
+                            'name' => 'duration',
+                            'span' => 9,
+                        ),
+                        array(
+                            'name' => 'repeat_type',
+                            'span' => 3,
+                        ),
+                    ),
+                ),
+            ),
+            array(
+                'panel_body' => array(
+                    array(
+                        'duration',
+                        'repeat_type',
+                    ),
+                ),
+            ),
+            array(
+                'duration' => array(
+                    'name' => 'duration',
+                    'span' => 9,
+                ),
+                'repeat_type' => array(
+                    'name' => 'repeat_type',
+                    'span' => 3,
+                ),
+            ),
+            array(
+                'panels' => array(
+                    array(
+                        'name' => 'panel_body',
+                        'fields' => array(
+                            array(
+                                'name' => 'repeat_type',
+                                'span' => 12,
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+            array(
+                'duration' => array(
+                    'name' => 'duration',
+                    'span' => 9,
+                ),
+                'repeat_type' => array(
+                    'name' => 'repeat_type',
+                    'span' => 3,
+                ),
+            ),
+        );
+
+        // PAT-1837, 1611: re-calculate spans from previous view defs
+        $tests[] = array(
+            array(
+                array(
+                    'name' => 'PANEL_BODY',
+                    'label' => 'PANEL_BODY',
+                    'columns' => 2,
+                    'labelsOnTop' => 1,
+                    'placeholders' => 1,
+                    'fields' => array(
+                        array(
+                            'name' => 'account_name',
+                        ),
+                        array(
+                            'name' => 'email',
+                        ),
+                    ),
+                ),
+            ),
+            array(
+                'panel_body' => array(
+                    array(
+                        'account_name',
+                        'email',
+                    ),
+                ),
+            ),
+            array(
+                'account_name',
+                'email',
+            ),
+            // previous view defs
+            array(
+                'panels' => array(
+                    array(
+                        'name' => 'panel_body',
+                        'fields' => array(
+                            array(
+                                'name' => 'account_name',
+                                'span' => 12,
+                            ),
+                            array(
+                                'name' => 'email',
+                                'span' => 12,
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+        );
+
+        return $tests;
     }
 
     /**
@@ -244,19 +367,34 @@ class SidecarGridLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCa
         $this->assertEquals($expected, $output);
     }
 
-
     /**
-     * @dataProvider canonicalAndInternalForms
+     * @dataProvider convertToCanonicalForms
      * @param $expected
-     * @param $input
+     * @param $panels
+     * @param $fieldDef
+     * @param $previousViewDef
+     * @param $baseViewDef
      */
-    public function testConvertToCanonicalForm($expected, $input)
+    public function testConvertToCanonicalForm($expected, $panels, $fieldDef = null, $previousViewDef = null, $baseViewDef = null)
     {
         // need this to prime our viewdefs
-        $this->_parser->testInstallPreviousViewdefs(array(
+        $this->_parser->testInstallOriginalViewdefs(array(
             'panels' => $expected
         ));
-        $output = $this->_parser->testConvertToCanonicalForm($input);
+
+        if ($previousViewDef) {
+            $implementation = $this->_parser->getImplementation();
+            $ref = new ReflectionClass($implementation);
+            $prop = $ref->getProperty('_viewdefs');
+            $prop->setAccessible(true);
+            $prop->setValue($implementation, $previousViewDef);
+        }
+
+        if ($baseViewDef) {
+            $this->_parser->testInstallBaseViewFields($baseViewDef);
+        }
+
+        $output = $this->_parser->testConvertToCanonicalForm($panels, $fieldDef);
 
         $this->assertEquals($expected, $output);
 
@@ -326,7 +464,7 @@ class SidecarGridLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCa
 
     /**
      * Test handling of span adjustments and mutation of the baseSpans array
-     * 
+     *
      * @param int $fieldCount The count of fields in a row
      * @param array $lastField The last field that was touched
      * @param array $baseSpans Array of fields that had spans orignally applied
@@ -371,7 +509,7 @@ class SidecarGridLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCa
                 'expectResult' => array('span' => 6),
                 'expectBaseSpans' => array(
                     'test' => array(
-                        'span' => 6, 
+                        'span' => 6,
                         'adjustment' => 6,
                     ),
                 ),
@@ -390,16 +528,16 @@ class SidecarGridLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCa
                     ),
                 ),
             ),
-            // Test unsetting of the lastField from baseSpans
+            // Test no changing of the lastField from baseSpans
             array(
                 'fieldCount' => 2,
                 'lastField' => array('name' => 'test'),
-                'baseSpans' => array('test' => 6, 'test1' => 12),
+                'baseSpans' => array('test' => 9),
                 'singleSpanUnit' => 6,
-                'expectResult' => array('span' => 12),
+                'expectResult' => array('span' => 3),
                 'expectBaseSpans' => array(
-                    'test1' => array(
-                        'span' => 12,
+                    'test' => array(
+                        'span' => 9,
                         'adjustment' => 0,
                     ),
                 ),
@@ -467,8 +605,19 @@ class SidecarGridLayoutMetaDataParserTestDerivative extends SidecarGridLayoutMet
         $this->implementation = $implementation;
     }
 
-    public function testInstallPreviousViewdefs($viewdefs) {
+    public function getImplementation()
+    {
+        return $this->implementation;
+    }
+
+    public function testInstallOriginalViewdefs($viewdefs)
+    {
         $this->_originalViewDef = $this->getFieldsFromLayout($viewdefs);
+    }
+
+    public function testInstallBaseViewFields($fields = array())
+    {
+        $this->baseViewFields = $fields;
     }
 
     public function testConvertFromCanonicalForm($panels , $fielddefs) {
