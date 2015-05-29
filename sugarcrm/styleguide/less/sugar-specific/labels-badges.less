@@ -11,6 +11,7 @@
   border: 1px solid @gray;
   color: @white;
   font-weight: 600;
+  text-align: center;
   .border-radius(@borderRadiusSmall);
   .box-sizing(border-box);
 }
@@ -23,6 +24,12 @@ a > .label,
   color: @white;
   text-decoration: none;
   cursor: pointer;
+}
+
+.full-width {
+  > .label {
+    display: block;
+  }
 }
 
 .disabled .label-Users,
@@ -41,7 +48,6 @@ a > .label,
     color: @white;
     font-weight: 600;
     width: 100%;
-    text-align: center;
   }
 }
 [data-type="follow"],
@@ -52,7 +58,6 @@ a > .label,
     color: @grayDark;
     font-weight: 500;
     width: 100%;
-    text-align: center;
   }
 }
 
@@ -131,7 +136,7 @@ a > .label,
 
 .label {
   &-important {background-color: @errorBackground; border: 1px solid @errorBackground;}
-  &-warning {background-color: @warningBackground; color: @warningText; border: 1px solid @warningBackground;}
+  &-warning {background-color: @warningBackground; color: @warningText; border: 1px solid @warningBorder;}
   &-pending {background-color: transparent; color: @gray; border: 1px solid @gray;}
   &-success {background-color: @successBackground; border: 1px solid @successBackground;}
   &-info {background-color: @infoBackground; border: 1px solid @infoBackground;}
