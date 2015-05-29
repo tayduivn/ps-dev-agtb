@@ -1577,13 +1577,15 @@ class PMSECrmDataWrapper implements PMSEObservable
                 $tmpField = array();
                 $tmpField['value'] = $field['name'];
                 $tmpField['text'] = str_replace(':', '', translate($field['vname'], $newModuleFilter));
-                $tmpField['type'] = isset($fieldTypes[$field['type']]) ? $fieldTypes[$field['type']] : ucfirst(
-                    $field['type']
-                );
-                $tmpField['type'] = (isset($tmpField['relationship']) && stristr(
-                        $tmpField['relationship'],
-                        'email'
-                    )) || stristr($tmpField['value'], 'email') ? 'email' : $tmpField['type'];
+                
+                // Handle field typing, starting with the vardef type for this field
+                $tmpField['type'] = $field['type'];
+
+                // If there is a known type for this type, use THAT
+                if (isset($fieldTypes[$field['type']])) {
+                    $tmpField['type'] = $fieldTypes[$field['type']];
+                }
+
                 $tmpField['optionItem'] = 'none';
                 if ($field['type'] == 'enum' || $field['type'] == 'radioenum') {
                     if (!isset($field['options']) || !isset($app_list_strings[$field['options']])) {
