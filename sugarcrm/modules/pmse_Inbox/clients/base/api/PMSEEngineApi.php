@@ -1081,7 +1081,15 @@ class PMSEEngineApi extends SugarApi
         } else {
             $listButtons = array('link_cancel', 'route', 'edit');
         }
-        $listButtons = $this->overrideButtons($bpmFlow, $listButtons);
+
+        if (!empty($bpmFlow->cas_adhoc_actions)) {
+            $listButtons = unserialize($bpmFlow->cas_adhoc_actions);
+        }
+        $continue = array_search('continue', $listButtons);
+        if ($continue !== false) {
+            unset($listButtons[$continue]);
+            $returnArray['case']['taskContinue'] = true;
+        }
         $returnArray['case']['reclaim'] = $reclaimCaseByUser;
         $returnArray['case']['buttons'] = $this->getButtons($listButtons, $activity);
         $returnArray['case']['readonly'] = json_decode(base64_decode($activity->act_readonly_fields));
