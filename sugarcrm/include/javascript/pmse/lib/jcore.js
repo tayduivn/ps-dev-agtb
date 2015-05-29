@@ -17262,16 +17262,7 @@ var jCore = (function ($, window) {
         if(this.canvas) this.canvas.innerHTML = "";
     };
 
-
-
-
-
-
-    /**
-     * KEYBOARD EVENTS
-     */
-    $(document).keydown(function (e) {
-        //        console.log(e.which);
+    function onCanvasKeyDown(e) {
         if (activeCanvas) {
             switch (e.which) {
                 case 16: // SHIFT KEY
@@ -17350,11 +17341,13 @@ var jCore = (function ($, window) {
                     break;
             }
         }
-    }).keypress(function (e) {
+    }
 
-    }).keyup(function (e) {
+    function onCanvasKeyUp(e) {
         var current;
-        e.preventDefault();
+        if (activeCanvas) {
+            e.preventDefault();
+        }
         switch (e.which) {
             case 8:  //BACKSPACE
                 if (isCtrl || (activeCanvas && activeCanvas.currentSelection.getSize())) {
@@ -17394,8 +17387,12 @@ var jCore = (function ($, window) {
                 }
                 break;
         }
-    });
-
+    }
+    /**
+     * KEYBOARD EVENTS
+     */
+    $(document).on('keydown', onCanvasKeyDown)
+        .on('keyup', onCanvasKeyUp);
 
     return {
         ArrayList: ArrayList,
@@ -17487,6 +17484,10 @@ var jCore = (function ($, window) {
          */
         getVersion: function () {
             return version;
+        },
+        dispose: function () {
+            $(document).off('keydown', onCanvasKeyDown)
+                .off('keyup', onCanvasKeyUp);
         }
     };
 

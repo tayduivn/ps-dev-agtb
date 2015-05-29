@@ -1817,3 +1817,8 @@ AdamProject.prototype.setMetadata = function (metadata) {
 AdamProject.prototype.getMetadata = function (metadataName) {
     return (this._metadata[metadataName] && this._metadata[metadataName].data) || null;
 };
+
+AdamProject.prototype.dispose = function () {
+    // TODO: dispose the project completely
+    jCore.dispose();
+}
