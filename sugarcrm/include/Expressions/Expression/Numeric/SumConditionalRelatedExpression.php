@@ -108,10 +108,21 @@ class SumConditionalRelatedExpression extends NumericExpression
         if (conditionValid || conditionChanged) {
             var isCurrency = (model.fields[rel_field].type === 'currency'),
                 current_value = this.context.getRelatedField(relationship, 'rollupConditionalSum', rel_field) || '0',
-                previous_value = model.previous(rel_field) || '0',
+                context_previous_values = this.context.previous_values || {},
+                previous_value = context_previous_values[rel_field] || model.previous(rel_field) || '0',
                 new_value = model.get(rel_field) || '0',
                 value_changed = !_.isEqual(new_value, previous_value),
                 rollup_value = undefined;
+
+            // if the new_value is not a number, set it to '0'
+            if (!_.isFinite(new_value)) {
+                new_value = '0';
+            }
+
+            // if the previous_value is not a number set it to '0'
+            if (!_.isFinite(previous_value)) {
+                previous_value = '0';
+            }
 
             if (isCurrency) {
                 previous_value = App.currency.convertWithRate(
@@ -125,6 +136,19 @@ class SumConditionalRelatedExpression extends NumericExpression
                     this.context.model.get('base_rate')
                 );
             }
+
+            // they are the same value, no math to do, so exit out
+            if (previous_value === new_value) {
+                return;
+            }
+
+            // store the new_value on the context for the rel_field
+            // this allows multiple different formulas to change the rel_field while
+            // maintaining the correct previous_value since it's not updated on the models previous_attributes
+            // every time the model.set() is called before the initial set() completes
+            this.context.previous_values = this.context.previous_values || {};
+            this.context.previous_values[rel_field] = new_value;
+
             if (conditionValid && !hasModelBeenRemoved) {
                 // if the condition is valid and the condition field changed, check if the previous value
                 // was an invalid condition, if it was, the `new_value` just needs to be added back
