@@ -57,13 +57,20 @@
         var acls = app.user.getAcls().Forecasts,
             hasAccess = (!_.has(acls, 'access') || acls.access == 'yes');
         if(hasAccess) {
-            // Check to make sure users have proper values in their sales_stage_won/_lost cfg values
-            if(app.utils.checkForecastConfig()) {
-                // correct config exists, continue with syncInitData
-                this.syncInitData();
+            // check the module we are forecasting by for access
+            var forecastByAcl = app.user.getAcls()[app.metadata.getModule('Forecasts', 'config').forecast_by];
+            if (_.has(forecastByAcl, 'access') && forecastByAcl.access === 'no') {
+                // the user doesn't have access to what is being forecast by
+                this.codeBlockForecasts('LBL_FORECASTS_ACLS_NO_ACCESS_TITLE', 'LBL_FORECASTS_RECORDS_ACLS_NO_ACCESS_MSG');
             } else {
-                // codeblock this sucka
-                this.codeBlockForecasts('LBL_FORECASTS_MISSING_STAGE_TITLE', 'LBL_FORECASTS_MISSING_SALES_STAGE_VALUES');
+                // Check to make sure users have proper values in their sales_stage_won/_lost cfg values
+                if (app.utils.checkForecastConfig()) {
+                    // correct config exists, continue with syncInitData
+                    this.syncInitData();
+                } else {
+                    // codeblock this sucka
+                    this.codeBlockForecasts('LBL_FORECASTS_MISSING_STAGE_TITLE', 'LBL_FORECASTS_MISSING_SALES_STAGE_VALUES');
+                }
             }
         } else {
             this.codeBlockForecasts('LBL_FORECASTS_ACLS_NO_ACCESS_TITLE', 'LBL_FORECASTS_ACLS_NO_ACCESS_MSG');
