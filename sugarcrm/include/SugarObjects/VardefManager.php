@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+SugarAutoLoader::requireWithCustom('include/MetaDataManager/MetaDataCache.php');
+
 /**
  * Vardefs management
  * @api
@@ -18,6 +20,8 @@ class VardefManager{
     static $custom_disabled_modules = array();
     static $linkFields;
     public static $inReload = array();
+    protected static $cache;
+    protected static $sugarConfig;
 
     /**
      * List of templates to ignore for BWC modules when adding templates. This
@@ -255,15 +259,24 @@ class VardefManager{
      * @param string $module the name of the module
      * @param string $object the name of the object
      */
-    static function saveCache($module,$object, $additonal_objects= array()){
-        if (empty($GLOBALS['dictionary'][$object]))
+    static function saveCache($module, $object)
+    {
+        if (empty($GLOBALS['dictionary'][$object])) {
             $object = BeanFactory::getObjectName($module);
-
-        $file = self::getCacheFileName($module, $object);
+        }
 
         $GLOBALS['dictionary'][$object]['fields'] = self::cleanVardefs($GLOBALS['dictionary'][$object]['fields']);
-        $out="<?php \n \$GLOBALS[\"dictionary\"][\"". $object . "\"]=" . var_export($GLOBALS['dictionary'][$object], true) .";";
-        sugar_file_put_contents_atomic($file, $out);
+
+        $sc = self::$sugarConfig ?: self::$sugarConfig = SugarConfig::getInstance();
+        if ($sc->get('noFilesystemMetadataCache', false)) {
+            $cache = self::$cache ?: self::$cache = new MetaDataCache(DBManagerFactory::getInstance());
+            $cache->set(static::getCacheKey($module, $object), $GLOBALS['dictionary'][$object]);
+        } else {
+            $file = self::getCacheFileName($module, $object);
+
+            $out="<?php \n \$GLOBALS[\"dictionary\"][\"". $object . "\"]=" . var_export($GLOBALS['dictionary'][$object], true) .";";
+            sugar_file_put_contents_atomic($file, $out);
+        }
 
     }
 
@@ -274,17 +287,25 @@ class VardefManager{
      *                      clear vardef cache for all modules.
      * @param string object_name the name of the object we are clearing this is for sugar_cache
      */
-    static function clearVardef($module_dir = '', $object_name = ''){
+    static function clearVardef($module_dir = '', $object_name = '')
+    {
         //if we have a module name specified then just remove that vardef file
         //otherwise go through each module and remove the vardefs.php
         if(!empty($module_dir) && !empty($object_name)){
-            VardefManager::_clearCache($module_dir, $object_name);
         }else{
-            global $beanList;
-            foreach($beanList as $module_dir => $object_name){
-                VardefManager::_clearCache($module_dir, $object_name);
+            $sc = self::$sugarConfig ?: self::$sugarConfig = SugarConfig::getInstance();
+            if ($sc->get('noFilesystemMetadataCache', false)) {
+                $cache = self::$cache ?: self::$cache = new MetaDataCache(DBManagerFactory::getInstance());
+                $cache->clearKeysLike('vardefs::');
+            } else {
+                global $beanList;
+                foreach($beanList as $module_dir => $object_name){
+                    VardefManager::_clearCache($module_dir, $object_name);
+                }
             }
+
         }
+        VardefManager::_clearCache($module_dir, $object_name);
     }
 
     /**
@@ -292,7 +313,8 @@ class VardefManager{
      * @param string module_dir the module_dir to clear
      * @param string object_name the name of the object we are clearing this is for sugar_cache
      */
-    static function _clearCache($module_dir = '', $object_name = ''){
+    protected static function _clearCache($module_dir = '', $object_name = '')
+    {
         if(!empty($module_dir) && !empty($object_name)){
 
             //Some modules like cases have a bean name that doesn't match the object name
@@ -301,10 +323,15 @@ class VardefManager{
                 $object_name = $newName != false ? $newName : $object_name;
             }
 
-            $file = self::getCacheFileName($module_dir, $object_name);
-
-            if(file_exists($file)){
-                unlink($file);
+            $sc = self::$sugarConfig ?: self::$sugarConfig = SugarConfig::getInstance();
+            if ($sc->get('noFilesystemMetadataCache', false)) {
+                $cache = self::$cache ?: self::$cache = new MetaDataCache(DBManagerFactory::getInstance());
+                $cache->set(static::getCacheKey($module_dir, $object_name), null);
+            } else {
+                $file = self::getCacheFileName($module_dir, $object_name);
+                if (file_exists($file)) {
+                    unlink($file);
+                }
             }
         }
     }
@@ -332,58 +359,61 @@ class VardefManager{
         } else {
             self::$inReload[$guard_name] = 1;
         }
-        $vardef_paths = array(
-                    'modules/'.$module.'/vardefs.php',
-                    SugarAutoLoader::loadExtension("vardefs", $module),
-                    'custom/Extension/modules/'.$module.'/Ext/Vardefs/vardefs.php'
-                 );
+        //Do not force reloading from vardefs if we are only updating calc_fields
+        if (empty($dictionary[$object]) || empty($params['related_calc_fields_only'])) {
+            $vardef_paths = array(
+                        'modules/'.$module.'/vardefs.php',
+                        SugarAutoLoader::loadExtension("vardefs", $module),
+                        'custom/Extension/modules/'.$module.'/Ext/Vardefs/vardefs.php'
+                     );
 
-        // Add in additional search paths if they were provided.
-        if(!empty($additional_search_paths) && is_array($additional_search_paths))
-        {
-            $vardef_paths = array_merge($vardef_paths, $additional_search_paths);
-        }
-        $found = false;
-        //search a predefined set of locations for the vardef files
-        foreach(SugarAutoLoader::existing($vardef_paths) as $path){
-            require($path);
-            $found = true;
-        }
-        if(!empty($params['bean'])) {
-            $bean = $params['bean'];
-        } else {
-            if(!empty($dictionary[$object])) {
-                //BEGIN SUGARCRM flav=pro ONLY
-                // to avoid extra refresh - we'll fill it in later
-                if(!isset($GLOBALS['dictionary'][$object]['related_calc_fields'])) {
-                    $GLOBALS['dictionary'][$object]['related_calc_fields'] = array();
-                }
-                //END SUGARCRM flav=pro ONLY
-            }
-            // we will instantiate here even though dictionary may not be there,
-            // since in case somebody calls us with wrong module name we need bean
-            // to get $module_dir. This may cause a loop but since the second call will
-            // have the right module name the loop should be short.
-            $bean = BeanFactory::newBean($module);
-        }
-        //Some modules have multiple beans, we need to see if this object has a module_dir that is different from its module_name
-        if(!$found){
-            if ($bean instanceof SugarBean) // weed out non-bean modules
+            // Add in additional search paths if they were provided.
+            if(!empty($additional_search_paths) && is_array($additional_search_paths))
             {
-                $object_name = BeanFactory::getObjectName($bean->module_dir);
-                if ($bean->module_dir != $bean->module_name && !empty($object_name))
+                $vardef_paths = array_merge($vardef_paths, $additional_search_paths);
+            }
+            $found = false;
+            //search a predefined set of locations for the vardef files
+            foreach(SugarAutoLoader::existing($vardef_paths) as $path){
+                require($path);
+                $found = true;
+            }
+            if(!empty($params['bean'])) {
+                $bean = $params['bean'];
+            } else {
+                if(!empty($dictionary[$object])) {
+                    //BEGIN SUGARCRM flav=pro ONLY
+                    // to avoid extra refresh - we'll fill it in later
+                    if(!isset($GLOBALS['dictionary'][$object]['related_calc_fields'])) {
+                        $GLOBALS['dictionary'][$object]['related_calc_fields'] = array();
+                    }
+                    //END SUGARCRM flav=pro ONLY
+                }
+                // we will instantiate here even though dictionary may not be there,
+                // since in case somebody calls us with wrong module name we need bean
+                // to get $module_dir. This may cause a loop but since the second call will
+                // have the right module name the loop should be short.
+                $bean = BeanFactory::newBean($module);
+            }
+            //Some modules have multiple beans, we need to see if this object has a module_dir that is different from its module_name
+            if(!$found){
+                if ($bean instanceof SugarBean) // weed out non-bean modules
                 {
-                    unset($params["bean"]); // don't pass this bean down - it may be wrong bean for that module
-                    self::refreshVardefs($bean->module_dir, $object_name, $additional_search_paths, $cacheCustom, $params);
+                    $object_name = BeanFactory::getObjectName($bean->module_dir);
+                    if ($bean->module_dir != $bean->module_name && !empty($object_name))
+                    {
+                        unset($params["bean"]); // don't pass this bean down - it may be wrong bean for that module
+                        self::refreshVardefs($bean->module_dir, $object_name, $additional_search_paths, $cacheCustom, $params);
+                    }
                 }
             }
-        }
 
-        //Some modules like cases have a bean name that doesn't match the object name
-        if(empty($dictionary[$object])) {
-             $newName = BeanFactory::getObjectName($module);
-             if(!empty($newName)) {
-                $object = $newName;
+            //Some modules like cases have a bean name that doesn't match the object name
+            if(empty($dictionary[$object])) {
+                 $newName = BeanFactory::getObjectName($module);
+                 if(!empty($newName)) {
+                    $object = $newName;
+                }
             }
         }
 
@@ -707,6 +737,7 @@ class VardefManager{
             !empty($GLOBALS['dictionary'][$object]) &&
             !isset($GLOBALS['dictionary'][$object]['related_calc_fields'])) {
             $refresh = true;
+            $params['related_calc_fields_only'] = true;
         }
         //END SUGARCRM flav=pro ONLY
 
@@ -715,27 +746,31 @@ class VardefManager{
         if (empty($GLOBALS['dictionary'][$object]) || $refresh || !isset($GLOBALS['dictionary'][$object]['fields'])) {
             //if the consumer has demanded a refresh or the cache/modules... file
             //does not exist, then we should do out and try to reload things
-
-			$cachedfile = self::getCacheFileName($module, $object);
-			if($refresh || !file_exists($cachedfile)){
-				VardefManager::refreshVardefs($module, $object, null, true, $params);
-			}
-
-            //at this point we should have the cache/modules/... file
-            //which was created from the refreshVardefs so let's try to load it.
-            if(file_exists($cachedfile))
-            {
-                @include($cachedfile);
-                // now that we have loaded the data from disk, load it in the global dictionary
-                if(!empty($GLOBALS['dictionary'][$object])) {
+            if (!$refresh) {
+                self::loadFromCache($module, $object);
+            }
+            if (empty($GLOBALS['dictionary'][$object]) || $refresh || !isset($GLOBALS['dictionary'][$object]['fields'])) {
+                VardefManager::refreshVardefs($module, $object, null, true, $params);
+                if (!empty($GLOBALS['dictionary'][$object])) {
                     $GLOBALS['dictionary'][$object] = self::applyGlobalAccountRequirements($GLOBALS['dictionary'][$object]);
                 }
             }
-            ////BEGIN SUGARCRM flav=int ONLY
-            else{
-                display_notice('<B> MISSING FIELD_DEFS ' . 'modules/'. strtoupper($module) . '/vardefs.php for ' . $object . '</b><BR>');
+        }
+    }
+
+
+    protected static function loadFromCache($module, $object) {
+        $sc = self::$sugarConfig ?: self::$sugarConfig = SugarConfig::getInstance();
+        if ($sc->get('noFilesystemMetadataCache', false)) {
+            $cache = self::$cache ?: self::$cache = new MetaDataCache(DBManagerFactory::getInstance());
+            $GLOBALS['dictionary'][$object] = $cache->get(static::getCacheKey($module, $object));
+        } else {
+            $cachedfile = self::getCacheFileName($module, $object);
+            if(file_exists($cachedfile)){
+                if(file_exists($cachedfile)) {
+                    @include($cachedfile);
+                }
             }
-            //END SUGARCRM flav=int ONLY
         }
     }
 
@@ -753,6 +788,11 @@ class VardefManager{
         } else {
             return create_cache_directory('modules/' . $module . '/' . $object . 'vardefs.php');
         }
+    }
+
+
+    protected static function getCacheKey($module, $object) {
+        return "vardefs::{$module}_{$object}";
     }
 
 }
