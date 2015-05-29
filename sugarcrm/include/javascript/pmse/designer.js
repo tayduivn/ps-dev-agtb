@@ -1304,9 +1304,9 @@ function renderProject (prjCode) {
         $('#ProjectTitle').css('display', 'block');
         $('#txt-title').css('display', 'none');
         if ($('#ProjectTitle').html() != $('#txt-title').val()){
-            $('#ProjectTitle').html($('#txt-title').val());
+            $('#ProjectTitle').html(Handlebars.Utils.escapeExpression($('#txt-title').val()));
             url = App.api.buildURL('pmse_Project', null, {id: project.uid});
-            attributes = {name: $('#txt-title').val()};
+            attributes = {name: Handlebars.Utils.escapeExpression($('#txt-title').val())};
             App.alert.show('saving', {level: 'process', title: 'LBL_SAVING', autoclose: false});
             App.api.call('update', url, attributes, {
                 success: function (data) {
