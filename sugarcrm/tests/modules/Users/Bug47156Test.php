@@ -19,58 +19,23 @@ require_once('modules/Users/User.php');
  */
 class Bug47156Test extends Sugar_PHPUnit_Framework_TestCase
 {
-    private $user1;
-    private $user2;
-
-    private function createUser($id = '', $status = '')
+    protected function tearDown()
     {
-        $time = mt_rand();
-        $userId = 'SugarUser';
-        $user = new User();
-        $user->user_name = $userId . $time;
-        $user->user_hash = md5($userId.$time);
-        $user->first_name = $userId;
-        $user->last_name = $time;
-        if (!empty($status))
-        {
-            $user->status=$status;
-        }
-        else
-        {
-            $user->status='Active';
-        }
-        
-        $user->default_team = '1'; //Set Default Team to Global
-        if(!empty($id))
-        {
-            $user->new_with_id = true;
-            $user->id = $id;
-        }
-
-        $user->save();
-        $user->fill_in_additional_detail_fields();
-        
-        return $user;
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        parent::tearDown();
     }
-    
+
     /**
      * @group 47156
      */
     public function testCorrectUserListOutput()
     {
-        $this->user1 = $this->createUser(11, 'Active');
-        $this->user2 = $this->createUser(12, 'Inactive');
-        
+        $activeUser = SugarTestUserUtilities::createAnonymousUser(true, 0, array('status' => 'Active'));
+        $inactiveUser = SugarTestUserUtilities::createAnonymousUser(true, 0, array('status' => 'Inactive'));
+
         $allUsers = User::getAllUsers(); 
-        
-        $this->assertArrayHasKey($this->user1->id, $allUsers);
-        $this->assertArrayHasKey($this->user2->id, $allUsers);
-        
-        $dbManager = $GLOBALS['db'];
-        $dbManager->query('DELETE FROM users WHERE id IN (' . $dbManager->quoted($this->user1->id) . ', ' . $dbManager->quoted($this->user2->id) . ')');
-        $dbManager->query('DELETE FROM user_preferences WHERE assigned_user_id IN (' . $dbManager->quoted($this->user1->id) . ', ' . $dbManager->quoted($this->user2->id) . ')');
-        $dbManager->query('DELETE FROM teams WHERE associated_user_id IN (' . $dbManager->quoted($this->user1->id) . ', ' . $dbManager->quoted($this->user2->id) . ')');
-        $dbManager->query('DELETE FROM team_memberships WHERE user_id IN (' . $dbManager->quoted($this->user1->id) . ', ' . $dbManager->quoted($this->user2->id) . ')');
+
+        $this->assertArrayHasKey($activeUser->id, $allUsers);
+        $this->assertArrayHasKey($inactiveUser->id, $allUsers);
     }
 }
-?>

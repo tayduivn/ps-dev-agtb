@@ -35,6 +35,7 @@ $viewdefs['pmse_Business_Rules']['base']['view']['list'] = array(
                     'label' => 'LBL_RST_MODULE',
                     'enabled' => true,
                     'default' => true,
+                    'readonly' => true,
                 ),
                 array(
                     'name' => 'assigned_user_name',

@@ -83,7 +83,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $beanIds = array();
         for ( $i = 0; $i < $num; $i++ ) {
             $bean = new Contact();
-            $bean->id = "$i-test" . mt_rand();
+            $bean->id = create_guid();
             $bean->last_name = "foobar";
             $this->_db->insert($bean);
             $beanIds[] = $bean->id;
@@ -140,7 +140,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $bean = new Contact();
         $bean->last_name = 'foobar' . mt_rand();
-        $bean->id   = 'test' . mt_rand();
+        $bean->id = create_guid();
         $this->_db->insert($bean);
 
         $result = $this->_db->query("select id, last_name from contacts where id = '{$bean->id}'");
@@ -155,7 +155,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $bean = new Contact();
         $bean->last_name = 'foobar' . mt_rand();
-        $bean->id   = 'test' . mt_rand();
+        $bean->id = create_guid();
         $this->_db->insert($bean);
         $id = $bean->id;
 
@@ -175,7 +175,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $bean = new Contact();
         $bean->last_name = 'foobar' . mt_rand();
-        $bean->id   = 'test' . mt_rand();
+        $bean->id = create_guid();
         $this->_db->insert($bean);
         $id = $bean->id;
 
@@ -193,7 +193,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $bean = new Contact();
         $bean->last_name = 'foobar' . mt_rand();
-        $bean->id   = 'test' . mt_rand();
+        $bean->id = create_guid();
         $this->_db->insert($bean);
         $id = $bean->id;
 
@@ -2313,21 +2313,32 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
 
-    private function addChildren($tableName, $parent, $number, $level, $stoplevel)
+    private function addChildren($tableName, $parent_id, $parent_name, $number, $level, $stoplevel)
     {
         if($level >= $stoplevel) return;
         for($sibling = 0; $sibling < $number; $sibling++)
         {
-            $id = (!empty($parent)) ? "{$parent}_{$sibling}" : "$sibling";
-            $this->_db->query("INSERT INTO $tableName (id, parent_id, db_level) VALUES ('$id', '$parent', $level)");
-            $this->addChildren($tableName, $id, $number, $level+1, $stoplevel);
+            $id = create_guid();
+            $name = "{$parent_name}_{$sibling}";
+            $this->addRecord($tableName, $id, $parent_id, $name, $level);
+            $this->addChildren($tableName, $id, $name, $number, $level + 1, $stoplevel);
         }
     }
 
-    private function setupRecursiveStructure()
+    private function addRecord($tableName, $id, $parent_id, $name, $level)
     {
+        $this->_db->query(sprintf(
+            'INSERT INTO %s (id, parent_id, name, db_level) VALUES (%s, %s, %s, %s)',
+            $tableName,
+            $this->_db->quoted($id),
+            ($parent_id !== null ? $this->_db->quoted($parent_id) : 'NULL'),
+            $this->_db->quoted($name),
+            $this->_db->quoted($level)
+        ));
+    }
 
-        $tableName = 'testRecursive_'; // . mt_rand();
+    private function setupRecursiveStructure($tableName)
+    {
         $params =  array(
             'id' => array (
                 'name' => 'id',
@@ -2336,8 +2347,12 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                 ),
             'parent_id' => array (
                 'name' => 'parent_id',
+                'type' => 'id',
+                ),
+            'name' => array (
+                'name' => 'name',
                 'type' => 'varchar',
-                'len' => '36',
+                'len' => '20',
                 ),
            'db_level' => array (  // For verification purpose
                 'name' => 'db_level',
@@ -2356,17 +2371,14 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                 'fields' => array('parent_id'),
                 ),
         );
-        if($this->_db->tableExists($tableName)) {
-            return $tableName;
-            $this->_db->dropTableName($tableName);
-        }
-        $this->_db->createTableParams($tableName, $params, $indexes);
 
+        $this->createTableParams($tableName, $params, $indexes);
 
         // Load data
-        $this->_db->query("INSERT INTO $tableName (id, db_level) VALUES ('1', 0)");
-        $this->addChildren($tableName, '1', 2, 1, 10);
-        return $tableName;
+        $id = create_guid();
+        $name = '1';
+        $this->addRecord($tableName, $id, NULL, $name, 0);
+        $this->addChildren($tableName, $id, $name, 2, 1, 10);
     }
 
     public function providerRecursiveQuery()
@@ -2389,56 +2401,79 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @dataProvider providerRecursiveQuery
      * @group hierarchy
-     * @param $startId
+     * @param $startName
      * @param $startDbLevel
      * @param $nrchildren
      */
-    public function testRecursiveQuery($startId, $startDbLevel, $nrchildren)
+    public function testRecursiveQuery($startName, $startDbLevel, $nrchildren)
     {
         if ( !$this->_db->supports('recursive_query') )
         {
             $this->markTestSkipped('DBManager does not support recursive query');
         }
 
-        $idCurrent = $startId;
-        $levels = $startDbLevel;
         $this->_db->preInstall();
 
         // setup test table and fill it with data if it doesn't already exist
-        $table = 'testRecursive_';
-        if(!$this->_db->tableExists($table)) {
-            $table = $this->setupRecursiveStructure();
+        $table = 'test_recursive';
+        if (!$this->_db->tableExists($table)) {
+            $this->setupRecursiveStructure($table);
         }
 
+        $startId = $currentId = $this->_db->getOne('SELECT id FROM ' . $table . ' WHERE name = '
+            . $this->_db->quoted($startName));
+        $levels = $startDbLevel;
+
         // Testing lineage
-        $lineageSQL = $this->_db->getRecursiveSelectSQL($table, 'id', 'parent_id', 'id, parent_id, db_level', true, "id ='$idCurrent'");
+        $lineageSQL = $this->_db->getRecursiveSelectSQL(
+            $table,
+            'id',
+            'parent_id',
+            'id, parent_id, name, db_level',
+            true,
+            'id = ' . $this->_db->quoted($startId)
+        );
 
         $result = $this->_db->query($lineageSQL);
 
+        $currentName = null;
         while($row = $this->_db->fetchByAssoc($result))
         {
-
-            $this->assertEquals($idCurrent, $row['id'], "Incorrect id found");
-            if(!empty($row['parent_id'])) $idCurrent = $row['parent_id'];
+            $currentName = $row['name'];
+            $this->assertEquals($currentId, $row['id'], "Incorrect ID found");
+            if (!empty($row['parent_id'])) {
+                $currentId = $row['parent_id'];
+            }
             $this->assertEquals($levels--, $row['db_level'], "Incorrect level found");
         }
-        $this->assertEquals('1', $idCurrent, "Incorrect top node id");
+        $this->assertEquals('1', $currentName, "Incorrect top node name");
         $this->assertEquals(0, $levels+1, "Incorrect end level"); //Compensate for extra -1 after last node level assert
 
         // Testing children
-        $idCurrent = $startId;
         $childcount = 0;
-        $childrenSQL = $this->_db->getRecursiveSelectSQL($table,'id','parent_id', 'id, parent_id, db_level',false, "id ='$idCurrent'");
+        $childrenSQL = $this->_db->getRecursiveSelectSQL(
+            $table,
+            'id',
+            'parent_id',
+            // select ID even if we don't need it because the MSSQL implementation will use if (or parent ID)
+            // internally depending on the value of $lineage (probably should be fixed)
+            'id, parent_id, name',
+            false,
+            'id = ' . $this->_db->quoted($startId)
+        );
 
         $result = $this->_db->query($childrenSQL);
 
         while(($row = $this->_db->fetchByAssoc($result)) != null)
         {
-            $this->assertEquals(0, strpos($row['id'], $idCurrent), "Row id doesn't start with starting id as expected");
+            $this->assertStringStartsWith(
+                $startName,
+                $row['name'],
+                'Row id doesn\'t start with starting name as expected'
+            );
             $childcount++;
         }
         $this->assertEquals($nrchildren, $childcount, "Number of found descendants does not match expectations");
-
     }
 
     // Inserts a 2D array of data into the specified table
@@ -3210,7 +3245,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         // insert test
         $bean = new Contact();
         $bean->last_name = 'foobar' . mt_rand();
-        $bean->id   = 'test' . mt_rand();
+        $bean->id = create_guid();
         $bean->description = 'description' . mt_rand();
         $bean->new_with_id = true;
         $this->_db->insert($bean);
@@ -3319,7 +3354,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function setupPreparedStatementsDataTypesData()
     {
-        return array(array( 'id'                  => 1,
+        return array(array( 'id'                  => create_guid(),
                         'int_param'           => 1,
                         'double_param'        => 1,
                         'float_param'         => 1.1,
@@ -3352,7 +3387,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                         'encrypt_param'       => 'encrypt',
                         'file_param'          => 'file',
                           ),
-                     array( 'id'                  => 2,
+                     array( 'id'                  => create_guid(),
                             'int_param'           => 2,
                             'double_param'        => 2,
                             'float_param'         => 2.2,
@@ -3385,7 +3420,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                             'encrypt_param'       => 'encrypt',
                             'file_param'          => 'file',
                           ),
-                     array( 'id'                  => 3,
+                     array( 'id'                  => create_guid(),
                             'int_param'           => 3,
                             'double_param'        => 3,
                         ),
@@ -3410,7 +3445,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         foreach($dataArray as $data) {  // insert a single row of data and check it column by column
             $this->_db->insertParams($tableName, $params, $data, null, true, true);
             $id = $data['id'];
-            $result = $this->_db->query("SELECT * FROM $tableName WHERE ID = $id");
+            $result = $this->_db->query("SELECT * FROM $tableName WHERE id = " . $this->_db->quoted($id));
             while(($row = $this->_db->fetchByAssoc($result)) != null) {
                     foreach ($data as $colKey => $col ) {
                         $found = $this->_db->fromConvert($row[$colKey], $params[$colKey]['type']);
@@ -3427,56 +3462,34 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         }
     }
 
-
-    /**
-     * @group preparedStatements
-     */
-    public function providerPreparedStatementsSqlSelect()
-    {
-        return array( array(
-                             array( 'id' => 1,),
-                             array( 'id' => 1,)
-                           ),
-                      array(
-                             array( 'id' => 2,),
-                             array( 'id' => 2,)
-                           ),
-
-                    );
-
-    }
-
-
     /**
      * @group preparedStatements
      */
     public function testPreparedStatementsSqlSelect()
     {
-        $this->setupPreparedStatementsDataTypesStructure();
         // create data table
         $dataStructure = $this->setupPreparedStatementsDataTypesStructure();
         $params = $dataStructure['params'];
         $tableName = $dataStructure['tableName'];
 
         // load and test each data record
-        foreach($this->setupPreparedStatementsDataTypesData() as $data) {  // insert a single row of data and check it column by column
-            $res = $this->_db->insertParams($tableName, $params, $data, null, true, true);
+        $data = $this->setupPreparedStatementsDataTypesData();
+        foreach ($data as $row) {  // insert a single row of data and check it column by column
+            $res = $this->_db->insertParams($tableName, $params, $row, null, true, true);
             $this->assertNotEmpty($res, "Failed to insert");
         }
-        $ps = $this->_db->prepareStatement("SELECT id FROM $tableName WHERE ID = ?int");
+
+        $ps = $this->_db->prepareStatement("SELECT id FROM $tableName WHERE id = ?id");
         $this->assertNotEmpty($ps, "Failed to prepare statement");
 
-        foreach($this->providerPreparedStatementsSqlSelect() as $data) {
-            list($executeData, $resultsData) = $data;
-            $result = $ps->executePreparedStatement($executeData);
-            $row = $this->_db->fetchByAssoc($result);
-            foreach ($resultsData as $key => $expected ) {
-                $this->assertEquals($expected, $row[$key], "Incorrect data returned");
-            }
+        foreach ($data as $row) {
+            $result = $ps->executePreparedStatement(array($row['id']));
+            $fetched = $this->_db->fetchByAssoc($result);
+            $this->assertInternalType('array', $fetched);
+            $this->assertEquals($row['id'], $fetched['id'], "Incorrect data returned");
         }
 
         $ps->preparedStatementClose();
-
     }
 
     public function testDecodeHTML()

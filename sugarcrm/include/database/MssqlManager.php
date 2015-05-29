@@ -1035,9 +1035,7 @@ class MssqlManager extends DBManager
         if (empty($row)) {
             return false;
         }
-        foreach($row as $key => $column) {
-            $row[$key] = is_string($column) ? trim($column) : $column;
-        }
+
         return $row;
 	}
 
@@ -1255,6 +1253,7 @@ class MssqlManager extends DBManager
     public function fromConvert($string, $type)
     {
         switch($type) {
+            case 'char': return rtrim($string, ' ');
             case 'datetimecombo':
             case 'datetime': return substr($string, 0,19);
             case 'date': return substr($string, 0, 10);

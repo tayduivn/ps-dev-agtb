@@ -69,18 +69,20 @@
         this.selectedUserId = app.user.get('id');
         this._super('initialize', [options]);
 
-        this.salesStageWon = app.metadata.getModule("Forecasts", "config").sales_stage_won;
-        var forecastRanges = app.metadata.getModule('Forecasts', 'config').forecast_ranges;
+        var config = app.metadata.getModule('Forecasts', 'config') || {};
+
+        this.salesStageWon = config.sales_stage_won || ['Closed Won'];
+        var forecastRanges = config.forecast_ranges || [];
 
         this.modelTP = new Backbone.Model();
 
         if (forecastRanges == 'show_custom_buckets') {
-            var ranges = app.metadata.getModule('Forecasts', 'config')[forecastRanges + '_ranges'];
+            var ranges = config[forecastRanges + '_ranges'] || [];
             _.each(ranges, function(value, key) {
                 if (!_.isUndefined(value.in_included_total) && value.in_included_total) {
                     this.commitStagesInIncludedTotal.push(key);
                 }
-            })
+            });
         } else {
             this.commitStagesInIncludedTotal.push('include');
         }

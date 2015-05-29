@@ -67,7 +67,7 @@ class DownloadFile {
      */
     public function outputFile($forceDownload, array $info) {
         header("Pragma: public");
-        header("Cache-Control: maxage=1, post-check=0, pre-check=0");
+        header("Cache-Control: max-age=1, post-check=0, pre-check=0");
 
         if (!$forceDownload) {
             header("Content-Type: {$info['content-type']}");

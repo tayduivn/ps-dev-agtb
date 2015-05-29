@@ -519,6 +519,12 @@ class Email extends SugarBean {
             }
         }
 
+        // Register the Email so it can be used in relationship logic hooks even before it is saved. As recommended by
+        // BeanFactory::registerBean, this is done once the object has an ID. It just so happens that the ID could have
+        // been set up to 3 times prior to this point. So this is done as late as possible -- after the last potential
+        // opportunity to set the ID and before the first opportunity to use the object in a logic hook.
+        BeanFactory::registerBean($this);
+
         if(isset($_REQUEST['parent_type']) && empty($_REQUEST['parent_type']) &&
 			isset($_REQUEST['parent_id']) && empty($_REQUEST['parent_id']) ) {
 				$this->parent_id = "";

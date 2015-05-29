@@ -740,8 +740,8 @@ class ViewConvertLead extends SugarView
 		$newActivity->new_with_id = true;
 
         //set the parent id and type if it was passed in, otherwise use blank to wipe it out
-        $parentID = '';
-        $parentType = '';
+        $parentID = null;
+        $parentType = null;
         if(!empty($parentArr)){
             if(!empty($parentArr['id'])){
                 $parentID = $parentArr['id'];

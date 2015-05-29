@@ -49,8 +49,8 @@ class isForecastClosedWonExpression extends BooleanExpression
 		        return SUGAR.expressions.Expression.FALSE;
 			}
 
-			var config = App.metadata.getModule('Forecasts', 'config'),
-			    status = config.sales_stage_won;
+			var config = App.metadata.getModule('Forecasts', 'config') || {},
+			    status = config.sales_stage_won || ['Closed Won'];
 
             if (status.indexOf(value) === -1) {
                 return SUGAR.expressions.Expression.FALSE

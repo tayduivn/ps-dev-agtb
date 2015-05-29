@@ -73,7 +73,6 @@ class Bug40311Test extends Sugar_PHPUnit_Framework_TestCase
         $bean->table_name = $this->_tablename;
         $bean->id = '12345';
         $bean->custom_fields->retrieve();
-        $this->assertEquals($bean->id_c, '12345');
         $this->assertEquals($bean->foo_c, NULL);
     }
 }

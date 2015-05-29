@@ -29,6 +29,7 @@ $viewdefs['pmse_Emails_Templates']['base']['view']['list'] = array(
                     'label' => 'LBL_BASE_MODULE',
                     'enabled' => true,
                     'default' => true,
+                    'readonly' => true,
                 ),
                 array(
                     'name' => 'assigned_user_name',

@@ -137,9 +137,6 @@ class QueueManager
         }
 
         $scheduler->save();
-
-        // Cleanup jobs from previous implementation (TODO: remove in favor of upgrade script)
-        $this->cleanupOldIndexJobs();
     }
 
     /**
@@ -175,26 +172,6 @@ class QueueManager
         } else {
             $this->getLogger()->info("Elastic consumer for $module already present");
         }
-    }
-
-    /**
-     * Cleanup any scheduled jobs left behind from deprecated SugarSearchEngine
-     * code base. We probably should keep this for some time to make sure no
-     * old Elasticsearch jobs are going to mess with the new indexer approach.
-     *
-     * TODO: use upgrade script instead once SugarSearchEngine is obsolete
-     */
-    public function cleanupOldIndexJobs()
-    {
-        $sql = sprintf(
-            'UPDATE %s SET status = %s, resolution = %s, message = %s WHERE target = %s',
-            self::JOB_QUEUE,
-            $this->db->quoted(\SchedulersJob::JOB_STATUS_DONE),
-            $this->db->quoted(\SchedulersJob::JOB_FAILURE),
-            $this->db->quoted('Invalidated by new Elasticsearch QueueManager'),
-            $this->db->quoted('class::SugarSearchEngineFullIndexer')
-        );
-        $this->db->query($sql);
     }
 
     /**

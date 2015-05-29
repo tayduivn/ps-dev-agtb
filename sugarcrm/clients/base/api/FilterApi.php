@@ -56,7 +56,7 @@ class FilterApi extends SugarApi
                 'path' => array('<module>', 'count'),
                 'pathVars' => array('module', ''),
                 'jsonParams' => array('filter'),
-                'method' => 'filterListCount',
+                'method' => 'getFilterListCount',
                 'shortHelp' => 'List of all records in this module',
                 'longHelp' => 'include/api/help/module_filter_get_help.html',
                 'exceptions' => array(
@@ -361,7 +361,7 @@ class FilterApi extends SugarApi
      */
     public function filterListCount(ServiceBase $api, array $args)
     {
-        $GLOBALS['log']->fatal('This endpoint has been deprecated as of 7.7.0. ' .
+        $GLOBALS['log']->fatal('POST <module>/filter/count has been deprecated as of 7.7.0. ' .
             'Please use the equivalent GET endpoint instead.');
 
         return $this->getFilterListCount($api, $args);

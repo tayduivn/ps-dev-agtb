@@ -325,9 +325,10 @@ class ListViewData {
         {
    			if($count < $limit)
             {
+                $row = $seed->convertRow($row);
    				$id_list .= ',\''.$row[$id_field].'\'';
    				$idIndex[$row[$id_field]][] = count($rows);
-   				$rows[] = $seed->convertRow($row);
+                $rows[] = $row;
    			}
    			$count++;
    		}

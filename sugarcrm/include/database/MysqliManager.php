@@ -591,7 +591,7 @@ class MysqliManager extends MysqlManager
         // Now build the sql to return that allows the caller to execute sql in a way to simulate the CTE of the other dbs,
         // i.e. return sql that is a combination of the callers sql and a join against the temp hierarchy table
         $sql = "SELECT $fields FROM _hierarchy_return_set hrs INNER JOIN $tablename t ON hrs._id = t." ."$key";
-        $sql = "$sql ORDER BY hrs._id DESC";  // try and mimic other DB return orders for consistancy. breaks unit test otherwise
+        $sql = "$sql ORDER BY hrs._level";  // try and mimic other DB return orders for consistency. breaks unit test otherwise
         return $sql;
     }
 }

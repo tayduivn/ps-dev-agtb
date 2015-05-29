@@ -103,6 +103,10 @@ html.rtl {
         left: 10px;
     }
 
+    .alert span .btn-link.btn-inline {
+        margin: 0;
+    }
+
     .alert.alert-success,
     .alert.alert-danger,
     .alert.alert-error,
@@ -902,10 +906,9 @@ html.rtl {
         .border-bottom-left-radius(0);
     }
 
-
     .actions .dropdown-menu {
         right: auto;
-        left: 0;
+        left: initial;
     }
 
     .dropdown-menu {
@@ -979,6 +982,13 @@ html.rtl {
             > .span3 {
                 margin-right: 2.127659574%;
                 margin-left: 0;
+                > label {
+                    padding-right: 12px;
+                    input {
+                        left: initial;
+                        right: -4px;
+                    }
+                }
             }
             .controls {
                 &.btn-fit {

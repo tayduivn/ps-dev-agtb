@@ -130,7 +130,7 @@ class One2MBeanRelationship extends One2MRelationship
             return false;
         }
 
-        $rhs->$rhsID = '';
+        $rhs->$rhsID = null;
 
         if (empty($_SESSION['disable_workflow']) || $_SESSION['disable_workflow'] != "Yes") {
             $this->callBeforeDelete($lhs, $rhs, $this->getLHSLink());

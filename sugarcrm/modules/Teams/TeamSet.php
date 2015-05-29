@@ -86,9 +86,7 @@ class TeamSet extends SugarBean{
 
         while($row = $this->db->fetchByAssoc($result)){
             $team = BeanFactory::getBean('Teams');
-            $team->id = $row['id'];
-            $team->name = $row['name'];
-            $team->name_2 = $row['name_2'];
+            $team->populateFromRow($row, true);
             $teams[$team->id] = $team;
         }
         return $teams;
