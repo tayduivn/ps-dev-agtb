@@ -14,7 +14,10 @@
     <ul class="unstyled listed kbcontents" data-action="pagination-body">
         {{#each collection.models}}
             <li>
-                <h4><a href="#{{buildRoute model=this action="detail"}}">{{getFieldValue this "name"}}</a></h4>
+                <h4>
+                    <a href="#{{buildRoute model=this action="detail"}}">{{getFieldValue this "name"}}</a>
+                    <span class="pull-right label">{{getFieldValue this "language"}}</span>
+                </h4>
                 <div class="details">
                     {{str "LBL_CREATED" this.module}} {{getFieldValue this "created_by_name"}} {{relativeTime attributes.date_entered class='date'}}
                 </div>

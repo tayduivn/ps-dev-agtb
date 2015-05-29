@@ -131,7 +131,8 @@
                 'name',
                 'date_entered',
                 'created_by',
-                'created_by_name'
+                'created_by_name',
+                'language'
             ],
             filter: {
                 'kbdocument_id' : {
