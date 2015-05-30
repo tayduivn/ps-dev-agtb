@@ -5500,7 +5500,10 @@ class SugarBean
                     $id_name = $field['id_name'];
 
                     if (empty($this->$id_name) && isset($this->field_defs[$id_name]['type'])
-                        && $this->field_defs[$id_name]['type'] == 'relate')
+                        && ($this->field_defs[$id_name]['type'] == 'relate' ||
+                        ($this->field_defs[$id_name]['type'] == 'id'
+                        && isset($this->field_defs[$id_name]['source'])
+                        && $this->field_defs[$id_name]['source'] == 'non-db')))
                     {
                        $this->fill_in_link_field($id_name, $field);
                     }
