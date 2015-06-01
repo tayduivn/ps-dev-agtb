@@ -143,7 +143,7 @@
 
         this.duplicateView = app.view.createLayout({
             context: context,
-            name: this.TOGGLE_DUPECHECK,
+            type: this.TOGGLE_DUPECHECK,
             layout: this,
             module: context.get('module')
         });

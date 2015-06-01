@@ -11,15 +11,17 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 $viewdefs['Opportunities']['base']['layout']['create'] = array(
-    'type' => 'create',
-    'name' => 'base',
-    'span' => 12,
     'components' => array(
         array(
             'layout' => array(
+                'type' => 'default',
+                'name' => 'sidebar',
                 'components' => array(
                     array(
                         'layout' => array(
+                            'type' => 'base',
+                            'name' => 'main-pane',
+                            'targetEl' => '.main-pane',
                             'components' => array(
                                 array(
                                     'view' => 'create',
@@ -28,35 +30,20 @@ $viewdefs['Opportunities']['base']['layout']['create'] = array(
                                     'layout' => 'subpanels-create',
                                 ),
                             ),
-                            'type' => 'simple',
-                            'name' => 'main-pane',
-                            'span' => 8,
                         ),
                     ),
                     array(
                         'layout' => array(
-                            'components' => array(),
-                            'type' => 'simple',
-                            'name' => 'dashboard-pane',
-                            'span' => 4,
-                        ),
-                    ),
-                    array(
-                        'layout' => array(
+                            'type' => 'base',
+                            'targetEl' => '.preview-pane',
                             'components' => array(
                                 array(
                                     'layout' => 'preview',
                                 ),
                             ),
-                            'type' => 'simple',
-                            'name' => 'preview-pane',
-                            'span' => 8,
                         ),
                     ),
                 ),
-                'type' => 'default',
-                'name' => 'sidebar',
-                'span' => 12,
                 'last_state' => array(
                     'id' => 'create-default',
                 ),

@@ -19,7 +19,7 @@ $viewdefs['base']['layout']['asdashlet-filter'] = array(
                 'meta' => array(
                     'availableToggles' => array(
                         array(
-                            'name' => 'activitystream',
+                            'type' => 'activitystream',
                             'icon' => 'fa-clock-o',
                             'label' => 'LBL_ACTIVITY_STREAM',
                         ),
@@ -27,6 +27,7 @@ $viewdefs['base']['layout']['asdashlet-filter'] = array(
                     'components' => array(
                         array(
                             'layout' => array(
+                                'type' =>'filter',
                                 'meta' => array(
                                     'components' => array(
                                         array(
@@ -38,8 +39,6 @@ $viewdefs['base']['layout']['asdashlet-filter'] = array(
                                     ),
                                     'layoutType' => 'records',
                                 ),
-                                'span' => 12,
-                                'type' =>'filter',
                             ),
                             'targetEl' => '.filter',
                             'position' => 'prepend'
@@ -60,6 +59,4 @@ $viewdefs['base']['layout']['asdashlet-filter'] = array(
             ),
         ),
     ),
-    'name' => 'asdashlet-filter',
-    'span' => 12,
 );

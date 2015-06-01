@@ -1,4 +1,3 @@
-<?php
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -9,9 +8,11 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-
-$viewdefs['ProductTemplates']['base']['layout']['subpanels'] = array (
-  'components' => array(),
-  'type' => 'subpanels',
-  'span' => 12,
-);
+/**
+ * @class View.Layouts.Administration.RecordsLayout
+ * @alias SUGAR.App.view.layouts.AdministrationRecordsLayout
+ * @extends View.BwcLayout
+ */
+({
+    extendsFrom: 'BwcLayout'
+})

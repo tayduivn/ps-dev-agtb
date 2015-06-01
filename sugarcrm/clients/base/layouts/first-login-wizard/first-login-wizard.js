@@ -1,5 +1,3 @@
-<?php
-
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -10,7 +8,11 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-
-$viewdefs['base']['layout']['module-list'] = array(
-    'components' => array()
-);
+/**
+ * @class View.Layouts.Base.FirstLoginWizardLayout
+ * @alias SUGAR.App.view.layouts.BaseFirstLoginWizardLayout
+ * @extends View.WizardLayout
+ */
+({
+    extendsFrom: 'WizardLayout'
+})

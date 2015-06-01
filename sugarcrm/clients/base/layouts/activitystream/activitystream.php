@@ -12,8 +12,7 @@
  */
 
 $viewdefs['base']['layout']['activitystream'] = array(
-    'components' =>
-    array(
+    'components' => array(
         array(
             'view' => 'activitystream-omnibar',
         ),
@@ -21,5 +20,4 @@ $viewdefs['base']['layout']['activitystream'] = array(
             'view' => 'activitystream-bottom',
         ),
     ),
-    'type' => 'activitystream',
 );

@@ -1,5 +1,4 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
@@ -12,18 +11,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
 $viewdefs['pmse_Emails_Templates']['base']['layout']['compose-varbook-list'] = array(
-    "type" => "list",
-    'components' =>
+    'components' => array(
         array(
-            array(
-                'view' => 'compose-varbook-list',
-            ),
-            array(
-                'view' => 'compose-varbook-list-bottom',
-            ),
+            'view' => 'compose-varbook-list',
         ),
-    'type' => 'compose-varbook-list',
-    'span' => 12,
+        array(
+            'view' => 'compose-varbook-list-bottom',
+        ),
+    ),
 );

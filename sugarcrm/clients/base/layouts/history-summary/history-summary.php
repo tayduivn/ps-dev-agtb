@@ -13,9 +13,14 @@ $viewdefs['base']['layout']['history-summary'] = array(
     'components' => array(
         array(
             'layout' => array(
+                'type' => 'default',
+                'name' => 'sidebar',
                 'components' => array(
                     array(
                         'layout' => array(
+                            'type' => 'base',
+                            'name' => 'main-pane',
+                            'targetEl' => '.main-pane',
                             'components' => array(
                                 array(
                                     'view' => 'history-summary-headerpane',
@@ -27,39 +32,21 @@ $viewdefs['base']['layout']['history-summary'] = array(
                                     'view' => 'history-summary-list-bottom',
                                 ),
                             ),
-                            'type' => 'simple',
-                            'name' => 'main-pane',
-                            'span' => 8,
                         ),
                     ),
                     array(
                         'layout' => array(
-                                'components' => array(),
-                                'type' => 'simple',
-                                'name' => 'dashboard-pane',
-                                'span' => 4,
-                            ),
-                    ),
-                    array(
-                        'layout' => array(
+                            'type' => 'base',
+                            'targetEl' => '.preview-pane',
                             'components' => array(
                                 array(
                                     'layout' => 'history-summary-preview',
                                 ),
                             ),
-                            'type' => 'simple',
-                            'name' => 'preview-pane',
-                            'span' => 8,
                         ),
                     ),
                 ),
-                'type' => 'default',
-                'name' => 'sidebar',
-                'span' => 12,
             ),
         ),
     ),
-    'type' => 'simple',
-    'name' => 'base',
-    'span' => 12,
 );

@@ -15,27 +15,23 @@ $viewdefs['Emails']['base']['layout']['archive-email'] = array(
     'components' => array(
         array(
             'layout' => array(
+                'type' => 'default',
+                'name' => 'sidebar',
                 'components' => array(
                     array(
                         'layout' => array(
+                            'type' => 'base',
+                            'name' => 'main-pane',
+                            'targetEl' => '.main-pane',
                             'components' => array(
                                 array(
                                     'view' => 'archive-email',
                                 ),
                             ),
-                            'type' => 'simple',
-                            'name' => 'main-pane',
-                            'span' => 8,
                         ),
                     ),
                 ),
-                'type' => 'default',
-                'name' => 'sidebar',
-                'span' => 12,
             ),
         ),
     ),
-    'type' => 'simple',
-    'name' => 'base',
-    'span' => 12,
 );

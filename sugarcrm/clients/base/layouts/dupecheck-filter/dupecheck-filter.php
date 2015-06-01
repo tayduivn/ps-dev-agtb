@@ -10,8 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 $viewdefs['base']['layout']['dupecheck-filter'] = array(
-    'components' =>
-    array(
+    'components' => array(
         array(
             'view' => 'dupecheck-filter-dropdown',
         ),
@@ -19,8 +18,6 @@ $viewdefs['base']['layout']['dupecheck-filter'] = array(
             'view' => 'filter-quicksearch',
         ),
     ),
-    'type' => 'dupecheck-filter',
-    'span' => 12,
     'last_state' => array(
         'id' => 'dupecheck-filter',
     ),

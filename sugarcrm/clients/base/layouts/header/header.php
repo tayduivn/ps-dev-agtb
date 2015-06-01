@@ -12,8 +12,7 @@
  */
 
 $viewdefs['base']['layout']['header'] = array(
-    'components' =>
-    array(
+    'components' => array(
         array(
             'layout' => 'module-list',
         ),

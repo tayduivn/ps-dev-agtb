@@ -12,8 +12,7 @@
  */
 
 $viewdefs['ForecastWorksheets']['base']['layout']['list'] = array(
-    'components' =>
-    array(
+    'components' => array(
         array(
             'view' => 'filter',
         ),
@@ -22,8 +21,4 @@ $viewdefs['ForecastWorksheets']['base']['layout']['list'] = array(
             'primary' => true,
         ),
     ),
-    'type' => 'simple',
-    'name' => 'list',
-    'span' => 12,
 );
-

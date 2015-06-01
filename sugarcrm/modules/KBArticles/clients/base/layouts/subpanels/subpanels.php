@@ -19,6 +19,4 @@ $viewdefs['KBArticles']['base']['layout']['subpanels'] = array (
           ),
       ),
   ),
-  'type' => 'subpanels',
-  'span' => 12,
 );

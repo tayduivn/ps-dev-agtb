@@ -104,10 +104,9 @@
             moduleMeta.moduleNumber = moduleNumber++;
             var view = app.view.createLayout({
                 context: this.context,
-                name: 'convert-panel',
+                type: 'convert-panel',
                 layout: this,
                 meta: moduleMeta,
-                type: 'convert-panel',
                 platform: this.options.platform
             });
             view.initComponents();

@@ -11,8 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 $viewdefs['Opportunities']['base']['layout']['subpanels-create'] = array(
-    'type' => 'subpanels-create',
-    'span' => 12,
     'components' => array(
         array(
             'layout' => 'subpanel-create',

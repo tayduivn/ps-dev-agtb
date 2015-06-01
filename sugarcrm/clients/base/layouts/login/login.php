@@ -12,9 +12,7 @@
  */
 
 $viewdefs['base']['layout']['login'] = array(
-    'type' => 'simple',
-    'components' =>
-    array(
+    'components' => array(
         array(
             'view' => 'login',
         ),

@@ -12,8 +12,7 @@
  */
 
 $viewdefs['base']['layout']['list'] = array(
-    'components' =>
-    array(
+    'components' => array(
         array(
             'view' => 'massupdate',
         ),
@@ -28,6 +27,4 @@ $viewdefs['base']['layout']['list'] = array(
             'view' => 'list-bottom',
         ),
     ),
-    'name' => 'list',
-    'span' => 12,
 );

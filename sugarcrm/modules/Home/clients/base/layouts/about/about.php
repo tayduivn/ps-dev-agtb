@@ -12,13 +12,11 @@
  */
 
 $viewdefs['Home']['base']['layout']['about'] = array(
-    'type' => 'simple',
-    'name' => 'about',
     'css_class' => 'row-fluid',
     'components' => array(
         array(
             'layout' => array(
-                'type' => 'simple',
+                'type' => 'base',
                 'css_class' => 'main-pane span12',
                 'components' => array(
                     array(
@@ -30,7 +28,7 @@ $viewdefs['Home']['base']['layout']['about'] = array(
                             'components' => array(
                                 array(
                                     'layout' => array(
-                                        'type' => 'simple',
+                                        'type' => 'base',
                                         'span' => 12,
                                         'components' => array(
                                             array(
@@ -48,7 +46,7 @@ $viewdefs['Home']['base']['layout']['about'] = array(
                             'components' => array(
                                 array(
                                     'layout' => array(
-                                        'type' => 'simple',
+                                        'type' => 'base',
                                         'span' => 6,
                                         'components' => array(
                                             array(
@@ -59,7 +57,7 @@ $viewdefs['Home']['base']['layout']['about'] = array(
                                 ),
                                 array(
                                     'layout' => array(
-                                        'type' => 'simple',
+                                        'type' => 'base',
                                         'span' => 6,
                                         'components' => array(
                                             array(

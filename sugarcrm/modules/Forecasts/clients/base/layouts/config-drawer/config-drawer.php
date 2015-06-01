@@ -10,13 +10,17 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 $viewdefs['Forecasts']['base']['layout']['config-drawer'] = array(
-    'type' => 'config-drawer',
     'components' => array(
         array(
             'layout' => array(
+                'type' => 'default',
+                'name' => 'sidebar',
                 'components' => array(
                     array(
                         'layout' => array(
+                            'type' => 'base',
+                            'name' => 'main-pane',
+                            'targetEl' => '.main-pane',
                             'components' => array(
                                 array(
                                     'view' => 'config-header-buttons',
@@ -25,46 +29,21 @@ $viewdefs['Forecasts']['base']['layout']['config-drawer'] = array(
                                     'layout' => 'config-drawer-content',
                                 ),
                             ),
-                            'type' => 'simple',
-                            'name' => 'main-pane',
-                            'span' => 8,
                         ),
                     ),
                     array(
                         'layout' => array(
+                            'type' => 'base',
+                            'targetEl' => '.side-pane',
                             'components' => array(
                                 array(
                                     'view' => 'config-drawer-howto',
                                 ),
                             ),
-                            'type' => 'simple',
-                            'name' => 'side-pane',
-                            'span' => 4,
-                        ),
-                    ),
-                    array(
-                        'layout' => array(
-                            'components' => array(),
-                            'type' => 'simple',
-                            'name' => 'dashboard-pane',
-                            'span' => 4,
-                        ),
-                    ),
-                    array(
-                        'layout' => array(
-                            'components' => array(),
-                            'type' => 'simple',
-                            'name' => 'preview-pane',
-                            'span' => 8,
                         ),
                     ),
                 ),
-                'type' => 'default',
-                'name' => 'sidebar',
-                'span' => 12,
             ),
         ),
     ),
-    'name' => 'base',
-    'span' => 12,
 );

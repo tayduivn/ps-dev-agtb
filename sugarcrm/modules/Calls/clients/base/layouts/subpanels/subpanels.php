@@ -19,6 +19,4 @@ $viewdefs['Calls']['base']['layout']['subpanels'] = array(
             ),
         ),
     ),
-    'type' => 'subpanels',
-    'span' => 12,
 );

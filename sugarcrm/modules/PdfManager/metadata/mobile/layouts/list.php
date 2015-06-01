@@ -1,5 +1,5 @@
 <?php
- if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -12,10 +12,7 @@
  */
 
 $viewdefs['PdfManager']['mobile']['layout']['list'] = array(
-    'type' => 'list',
-    'components' =>
-    array(
-        0 =>
+    'components' => array(
         array(
             'view' => 'list',
         )
