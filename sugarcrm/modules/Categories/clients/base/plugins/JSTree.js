@@ -749,12 +749,17 @@
              * @param {String} type
              */
             insertNode: function(data, parent_id, type) {
-                var selectedNode = this.jsTree.find('[data-id=' + parent_id + ']');
+                var selectedNode = this.jsTree.find('[data-id=' + parent_id + ']'),
+                    isViewable = data.isViewable || false;
                 this.jsTree.jstree('create', selectedNode, 'last', {data: data.name, id: data.id}, function(obj) {
                     obj.data('id', data.id)
                         .data('type', type || 'folder')
                         .attr('data-id', data.id)
+                        .attr('data-disabled', !isViewable)
                         .find('ins:first').addClass('leaf');
+                    if (!isViewable) {
+                        obj.addClass('disabled');
+                    }
                 }, true, true);
             },
 

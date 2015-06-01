@@ -151,8 +151,10 @@
                 if (_.isEmpty(this.extraModule.module)) {
                     break;
                 }
-                var route = app.router.buildRoute(this.extraModule.module, data.id);
-                app.router.navigate(route, {trigger: true});
+                if (!this.$el.find('[data-id=' + data.id +']').data('disabled')) {
+                    var route = app.router.buildRoute(this.extraModule.module, data.id);
+                    app.router.navigate(route, {trigger: true});
+                }
                 break;
             case 'folder':
                 if (this.$el.find('[data-id=' + data.id +']').hasClass('jstree-closed')) {
@@ -285,8 +287,10 @@
             if (_.isEmpty(this.extraModule.module)) {
                 return;
             }
-            var route = app.router.buildRoute(this.extraModule.module, data.id);
-            app.router.navigate(route, {trigger: true});
+            if (!this.$el.find('[data-id=' + data.id +']').data('disabled')) {
+                var route = app.router.buildRoute(this.extraModule.module, data.id);
+                app.router.navigate(route, {trigger: true});
+            }
             return;
         }
         this.loadAdditionalLeaf(data.id);
@@ -410,7 +414,8 @@
             _.each(models, function(value) {
                 var insData = {
                     id: value.id,
-                    name: value.get('name')
+                    name: value.get('name'),
+                    isViewable: app.acl.hasAccessToModel('view', value)
                 };
                 this.insertNode(insData, id, 'document');
             }, this);

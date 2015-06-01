@@ -14,15 +14,21 @@
     <ul class="unstyled listed kbcontents" data-action="pagination-body">
         {{#each collection.models}}
             <li>
-                <h4><a href="#{{buildRoute model=this action="detail"}}">{{getFieldValue this "name"}}</a></h4>
-                <div class="details">
-                    {{#if attributes.created_by}}
-                        <a href="#{{buildRoute module="Employees" id=attributes.created_by action="detail"}}">{{getFieldValue this "created_by_name"}}</a>&#44;
-                    {{else}}
-                        {{str "LBL_UNASSIGNED" this.module}}&#44;
-                    {{/if}}
-                    {{relativeTime attributes.date_entered class='date'}}
-                </div>
+                {{#each this.fields}}
+                    {{#eq name "name"}}
+                        <h4>{{field ../../../this model=../../this}}</h4>
+                    {{/eq}}
+                    {{#eq name "created_by_name"}}
+                        <div class="details">
+                            {{#if ../../this.attributes.created_by}}
+                                {{field ../../../../this model=../../../this}}
+                            {{else}}
+                                {{str "LBL_UNASSIGNED" ../../../this.module}}&#44;
+                            {{/if}}
+                            {{relativeTime ../../this.attributes.date_entered class='date'}}
+                        </div>
+                    {{/eq}}
+                {{/each}}
             </li>
         {{/each}}
     </ul>
