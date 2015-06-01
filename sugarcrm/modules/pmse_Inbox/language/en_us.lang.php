@@ -64,7 +64,8 @@ $mod_strings = array (
     'LBL_PMSE_BUTTON_CLEAR' => 'Clear',
     'LBL_PMSE_WARNING_CLEAR' => 'Are you sure you want to clear log data? This cannot be undone.',
 
-    'LBL_PMSE_FORM_TOOLTIP_SELECT_USER' => 'Select the user to assign the process',
+    'LBL_PMSE_FORM_TOOLTIP_SELECT_USER' => 'Assigns this process to the user.',
+    'LBL_PMSE_FORM_TOOLTIP_CHANGE_USER' => 'Updates "Assigned To" field on the record to this user.',
 
     'LBL_PMSE_LABEL_CURRENT_ACTIVITY' => 'Current Activity',
     'LBL_PMSE_LABEL_ACTIVITY_DELEGATE_DATE' => 'Activity Delegate Date',

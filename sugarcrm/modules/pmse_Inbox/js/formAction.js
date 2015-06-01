@@ -150,12 +150,11 @@ var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,task
         name: 'adhoc_user',
         submit: true,
         //change: hiddenUpdateFn,
-        proxy:null,
+        proxy: null,
         required: true,
         helpTooltip: {
             message: translate('LBL_PMSE_FORM_TOOLTIP_SELECT_USER', 'pmse_Inbox')
         }
-
     });
     combo_type = new ComboboxField({
         name: 'adhoc_type',
@@ -206,6 +205,20 @@ var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,task
         ];
         combo_users.setName('adhoc_user');
     } else {
+        // If wtype is set to user selection, change the tooltip msg
+        combo_users = new ComboboxField({
+            jtype: 'combobox',
+            label: translate('LBL_PMSE_FORM_LABEL_USER', 'pmse_Inbox'),
+            name: 'adhoc_user',
+            submit: true,
+            //change: hiddenUpdateFn,
+            proxy: null,
+            required: true,
+            helpTooltip: {
+                message: translate('LBL_PMSE_FORM_TOOLTIP_CHANGE_USER', 'pmse_Inbox')
+            }
+        });
+
         url = 'pmse_Inbox/ReassignForm';
         wtitle = translate('LBL_PMSE_TITLE_REASSIGN', 'pmse_Inbox');
         wWidth = 500;
