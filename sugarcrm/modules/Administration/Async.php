@@ -89,7 +89,7 @@ switch($_REQUEST['adminAction']) {
 				if(!empty($id)) {
 				    $bean = BeanFactory::getBean($target, $id);
 					$bean->new_with_id = false;
-					$bean->save(); // cleanBean() is called on save()
+					$bean->saveWithoutChildLogic(); // call parent::save() directly, which includes cleanBean().
 					$count++;
 				}
 			}
