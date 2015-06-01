@@ -55,6 +55,28 @@
             },
 
             /**
+             * Used to check if an element has been initialized to be droppable.
+             *
+             * @private
+             * @param {jQuery} $element The jQuery element to check.
+             * @return {Boolean} Whether the element is droppable or not.
+             */
+            _isDroppableElement: function($element) {
+                return $element.length > 0 && !_.isUndefined($element.droppable('instance'));
+            },
+
+            /**
+             * Used to check if an element has been initialized to be draggable.
+             *
+             * @private
+             * @param {jQuery} $element The jQuery element to check.
+             * @return {Boolean} Whether the element is draggable or not.
+             */
+            _isDraggableElement: function($element) {
+                return $element.length > 0 && !_.isUndefined($element.draggable('instance'));
+            },
+
+            /**
              * Add selectable, draggable, and droppable functionality to a
              * select2 component
              *
@@ -150,7 +172,7 @@
                     selectedClassSelector = '.' + self.selectedClass;
 
                 //clear out any previous draggable before setting up new ones
-                if (this.$draggableItems && !_.isUndefined(this.$draggableItems.draggable('instance'))) {
+                if (this.$draggableItems && this._isDraggableElement(this.$draggableItems)) {
                     this.$draggableItems.draggable('destroy');
                 }
 
@@ -201,7 +223,7 @@
                 }
 
                 //clear out previous droppable before setting up new one
-                if (this.$select2Container && !_.isUndefined(this.$select2Container.droppable('instance'))) {
+                if (this.$select2Container && this._isDroppableElement(this.$select2Container)) {
                     this.$select2Container.droppable('destroy');
                 }
 
@@ -298,10 +320,10 @@
                 if (this.$clearOnContainerClick) {
                     this.$clearOnContainerClick.off(this.clickEventName);
                 }
-                if (this.$draggableItems) {
+                if (this.$draggableItems && this._isDraggableElement(this.$draggableItems)) {
                     this.$draggableItems.draggable('destroy');
                 }
-                if (this.$select2Container) {
+                if (this.$select2Container && this._isDroppableElement(this.$select2Container)) {
                     this.$select2Container.droppable('destroy');
                 }
             }
