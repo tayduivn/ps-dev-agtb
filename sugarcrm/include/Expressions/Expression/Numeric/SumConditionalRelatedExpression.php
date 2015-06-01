@@ -109,7 +109,7 @@ class SumConditionalRelatedExpression extends NumericExpression
             var isCurrency = (model.fields[rel_field].type === 'currency'),
                 current_value = this.context.getRelatedField(relationship, 'rollupConditionalSum', rel_field) || '0',
                 context_previous_values = this.context.previous_values || {},
-                previous_value = context_previous_values[rel_field] || model.previous(rel_field) || '0',
+                previous_value = context_previous_values[rel_field + '--' + model.get('id')] || model.previous(rel_field) || '0',
                 new_value = model.get(rel_field) || '0',
                 value_changed = !_.isEqual(new_value, previous_value),
                 rollup_value = undefined;
@@ -147,7 +147,7 @@ class SumConditionalRelatedExpression extends NumericExpression
             // maintaining the correct previous_value since it's not updated on the models previous_attributes
             // every time the model.set() is called before the initial set() completes
             this.context.previous_values = this.context.previous_values || {};
-            this.context.previous_values[rel_field] = new_value;
+            this.context.previous_values[rel_field + '--' + model.get('id')] = new_value;
 
             if (conditionValid && !hasModelBeenRemoved) {
                 // if the condition is valid and the condition field changed, check if the previous value
