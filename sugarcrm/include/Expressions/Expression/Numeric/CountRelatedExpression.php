@@ -44,11 +44,11 @@ class CountRelatedExpression extends NumericExpression
         // if App is undefined, then we should still use what was there since it works in BWC mode.
         if (App === undefined) {
 
-			if (typeof(linkField) == 'string' && linkField != '') {
+            if (typeof(linkField) == 'string' && linkField != '') {
                 return this.context.getRelatedField(linkField, 'count');
-			}
+            }
 
-			return '';
+            return '';
         }
 
         // just the the length of the collection for the given linkField
