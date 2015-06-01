@@ -86,7 +86,6 @@ class PMSERelatedModule {
         $output = array();
         $moduleBean = $this->getBean($newModuleFilter);
 
-
         foreach($moduleBean->get_linked_fields() as $link => $def) {
             if (!empty($def['type']) && $def['type'] == 'link' && $moduleBean->load_relationship($link)) {
                 $relatedModule = $moduleBean->$link->getRelatedModuleName();
@@ -102,9 +101,12 @@ class PMSERelatedModule {
                 if ($moduleLabel == "LBL_MODULE_NAME") {
                     $moduleLabel = translate($relatedModule);
                 }
+                
+                // Parentheses value
+                $pval = "$moduleLabel (" . trim($label, ':') . ": $link)";
                 $ret = array(
                     'value' => $link,
-                    'text' => "$moduleLabel ($label)",
+                    'text' => $pval,
                     'module' => $moduleLabel
                 );
                 if ($relType == 'one') {
@@ -116,7 +118,6 @@ class PMSERelatedModule {
         }
 
         switch ($relationship) {
-
             case 'one-to-one':
             case 'one':
                 $output = $output_11;
@@ -131,6 +132,13 @@ class PMSERelatedModule {
                 break;
         }
 
+        // Needed to multisort on the label
+        foreach ($output as $k => $o) {
+            $labels[$k] = $o['text'];
+        }
+
+        // Sort on the label
+        array_multisort($labels, SORT_ASC, $output);
 
         $filterArray = array('value' => $filter, 'text' => '<' . $filter . '>', 'module' => $filter);
         array_unshift($output, $filterArray);
