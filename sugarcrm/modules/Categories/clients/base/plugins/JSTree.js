@@ -201,7 +201,7 @@
                         }
                         el.data = el.name;
                         el.metadata = {id: el.id};
-                        el.attr = {'data-id': el.id, 'data-level': el.level, 'id': el.id};
+                        el.attr = {'data-id': el.id, 'data-level': el.lvl, 'id': el.id};
                     },
                     jsTreeOptions = {
                         settings: this.jsTreeSettings,
@@ -337,6 +337,7 @@
              * Load context menu.
              * @param {Object} settings
              * @param {Boolean} settings.showMenu Show menu ot not.
+             * @param {Boolean} settings.acl Simplified module acl.
              * @return {Object}
              * @private
              */
@@ -347,7 +348,7 @@
                         edit: {
                             separator_before: false,
                             separator_after: true,
-                            _disabled: false,
+                            _disabled: !settings.acl.edit || false,
                             label: app.lang.get('LBL_CONTEXTMENU_EDIT', self.module),
                             action: function(obj) {
                                 this.rename(obj);
@@ -356,53 +357,57 @@
                         moveup: {
                             separator_before: false,
                             separator_after: true,
-                            _disabled: false,
+                            _disabled: !settings.acl.edit || false,
                             label: app.lang.get('LBL_CONTEXTMENU_MOVEUP', self.module),
                             action: function(obj) {
-                                var currentNode = this._get_node(obj),
-                                    prevNode = this._get_prev(obj, true);
-                                if (currentNode && prevNode) {
-                                    self.moveNode(
-                                        currentNode.data('id'),
-                                        prevNode.data('id'),
-                                        'before',
-                                        function() {
-                                            $(currentNode).after($(prevNode));
-                                        });
+                                if (settings.acl.edit === true) {
+                                    var currentNode = this._get_node(obj),
+                                        prevNode = this._get_prev(obj, true);
+                                    if (currentNode && prevNode) {
+                                        self.moveNode(
+                                            currentNode.data('id'),
+                                            prevNode.data('id'),
+                                            'before',
+                                            function() {
+                                                $(currentNode).after($(prevNode));
+                                            });
+                                    }
                                 }
                             }
                         },
                         movedown: {
                             separator_before: false,
                             separator_after: true,
-                            _disabled: false,
+                            _disabled: !settings.acl.edit || false,
                             label: app.lang.get('LBL_CONTEXTMENU_MOVEDOWN', self.module),
                             action: function(obj) {
-                                var currentNode = this._get_node(obj),
-                                    nextNode = this._get_next(obj, true);
-                                if (currentNode && nextNode) {
-                                    self.moveNode(
-                                        currentNode.data('id'),
-                                        nextNode.data('id'),
-                                        'after',
-                                        function() {
-                                            $(nextNode).after($(currentNode));
-                                        });
+                                if (settings.acl.edit === true) {
+                                    var currentNode = this._get_node(obj),
+                                        nextNode = this._get_next(obj, true);
+                                    if (currentNode && nextNode) {
+                                        self.moveNode(
+                                            currentNode.data('id'),
+                                            nextNode.data('id'),
+                                            'after',
+                                            function() {
+                                                $(nextNode).after($(currentNode));
+                                            });
+                                    }
                                 }
                             }
                         },
                         moveto: {
                             separator_before: false,
                             separator_after: true,
-                            _disabled: false,
+                            _disabled: !settings.acl.edit || false,
                             label: app.lang.get('LBL_CONTEXTMENU_MOVETO', self.module),
                             action: false,
-                            submenu: this._buildRootsSubmenu()
+                            submenu: this._buildRootsSubmenu(settings)
                         },
                         delete: {
                             separator_before: false,
                             separator_after: true,
-                            _disabled: false,
+                            _disabled: !settings.acl.delete || false,
                             label: app.lang.get('LBL_CONTEXTMENU_DELETE', self.module),
                             action: function(obj) {
                                 var bean = self.collection.getChild(obj.data('id'));
@@ -494,10 +499,11 @@
 
             /**
              * Build submenu from root items.
+             * @param {Object} settings
              * @return {Object}
              * @private
              */
-            _buildRootsSubmenu: function() {
+            _buildRootsSubmenu: function(settings) {
                 var self = this,
                     subMenu = {};
                 _.each(this.collection.models, function(entry, index) {
@@ -508,17 +514,19 @@
                         separator_after: false,
                         label: entry.escape('name'),
                         action: function(obj) {
-                            self.moveNode(obj.data('id'), entry.id, 'last', function(data, response) {
-                                self.jsTree.jstree(
-                                    'move_node',
-                                    self.jsTree.jstree('get_instance')
-                                        .get_container_ul()
-                                        .find('li[data-id=' + obj.data('id') + ']'),
-                                    self.jsTree.jstree('get_instance')
-                                        .get_container_ul()
-                                        .find('li[data-id=' + entry.id + ']')
-                                );
-                            });
+                            if (settings.acl.edit === true){
+                                self.moveNode(obj.data('id'), entry.id, 'last', function(data, response) {
+                                    self.jsTree.jstree(
+                                        'move_node',
+                                        self.jsTree.jstree('get_instance')
+                                            .get_container_ul()
+                                            .find('li[data-id=' + obj.data('id') + ']'),
+                                        self.jsTree.jstree('get_instance')
+                                            .get_container_ul()
+                                            .find('li[data-id=' + entry.id + ']')
+                                    );
+                                });
+                            }
                         }
                     };
                 });
@@ -650,7 +658,7 @@
                     firstNodeId = $(container).find('li[data-level=' + level + ']').first().data('id'),
                     lastNodeId = $(container).find('li[data-level=' + level + ']').last().data('id');
 
-                if (!_.isUndefined(data.inst.get_settings().contextmenu.items)) {
+                if (!_.isUndefined(data.inst.get_settings().contextmenu.items) && this.jsTreeSettings.acl.edit) {
                     data.inst._set_settings({
                         contextmenu: {
                             items: {
@@ -749,12 +757,16 @@
              * @param {String} type
              */
             insertNode: function(data, parent_id, type) {
-                var selectedNode = this.jsTree.find('[data-id=' + parent_id + ']');
+                var selectedNode = this.jsTree.find('[data-id=' + parent_id + ']'),
+                    isViewable = data.isViewable || false;
                 this.jsTree.jstree('create', selectedNode, 'last', {data: data.name, id: data.id}, function(obj) {
                     obj.data('id', data.id)
                         .data('type', type || 'folder')
                         .attr('data-id', data.id)
                         .find('ins:first').addClass('leaf');
+                    if (!isViewable) {
+                        obj.addClass('disabled');
+                    }
                 }, true, true);
             },
 
@@ -898,7 +910,16 @@
                 // Set items to null due to avoid merge from $.extend
                 $.jstree._focused()._set_settings({contextmenu: {items: {moveto: {submenu: null}}}});
                 // Set items to updated list
-                $.jstree._focused()._set_settings({contextmenu: {items: {moveto: {submenu: this._buildRootsSubmenu()}}}});
+                $.jstree._focused()._set_settings(
+                    {
+                        contextmenu: {
+                            items: {
+                                moveto: {
+                                    submenu: this._buildRootsSubmenu(this.jsTreeSettings)
+                                }
+                            }
+                        }
+                    });
             }
         });
     });

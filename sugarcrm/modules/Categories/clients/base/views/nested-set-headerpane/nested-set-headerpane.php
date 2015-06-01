@@ -30,6 +30,8 @@ $viewdefs['Categories']['base']['view']['nested-set-headerpane'] = array(
                 'click' => 'click:add_node_button',
             ),
             'css_class' => 'btn-primary',
+            'acl_module' => 'KBContents',
+            'acl_action' => 'create'
         ),
         array(
             'name' => 'sidebar_toggle',

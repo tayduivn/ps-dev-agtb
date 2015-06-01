@@ -776,14 +776,15 @@
 					 * custom code needed to draw operational buttons
 					 */
 					if (p.settings.showMenu === true) {
-						var optmp = '<div class="btn-group btn-group-justified pull-right">' +
+						var link = p.settings.acl.edit ?
 							'<a class="btn jstree-addnode" href="javascript:void(0);" title="" data-original-title="Add" data-action="jstree-addnode">' +
 							'	<span class="fa fa-plus"></span>' +
-							'</a>' +
-							'<a class="btn jstree-contextmenu" href="javascript:void(0);" title="" data-original-title="Actions" data-action="jstree-contextmenu">' +
-							'	<span class="fa fa-caret-down"></span>' +
-							'</a>' +
-							'</div>';
+							'</a>' : '',
+							optmp = '<div class="btn-group btn-group-justified pull-right">' + link +
+								'<a class="btn jstree-contextmenu" href="javascript:void(0);" title="" data-original-title="Actions" data-action="jstree-contextmenu">' +
+								'	<span class="fa fa-caret-down"></span>' +
+								'</a>' +
+								'</div>';
 						d.append(optmp);
 					}
 				});
@@ -1863,14 +1864,15 @@
 						 * custom code needed to draw operational buttons
 						 */
 						if (p.settings.showMenu === true) {
-							var optmp = '<div class="btn-group btn-group-justified pull-right">' +
-							'<a class="btn jstree-addnode" href="javascript:void(0);" title="" data-original-title="Add" data-action="jstree-addnode">' +
-							'	<span class="fa fa-plus"></span>' +
+							var link = p.settings.acl.edit ?
+								'<a class="btn jstree-addnode" href="javascript:void(0);" title="" data-original-title="Add" data-action="jstree-addnode">' +
+								'	<span class="fa fa-plus"></span>' +
+								'</a>' : '',
+								optmp = '<div class="btn-group btn-group-justified pull-right">' + link +
+							'<a class="btn jstree-contextmenu" href="javascript:void(0);" title="" data-original-title="Actions" data-action="jstree-contextmenu">' +
+							'	<span class="fa fa-caret-down"></span>' +
 							'</a>' +
-						    '<a class="btn jstree-contextmenu" href="javascript:void(0);" title="" data-original-title="Actions" data-action="jstree-contextmenu">' +
-						    '	<span class="fa fa-caret-down"></span>' +
-						    '</a>' +
-						    '</div>';
+							'</div>';
 							d.append(optmp);
 						}
 					});

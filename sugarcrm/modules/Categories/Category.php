@@ -444,4 +444,16 @@ class Category extends SugarBean implements NestedBeanInterface
         parent::mark_deleted($id);
         $this->shiftLeftRight($this->rgt + 1, ($this->lft - $this->rgt) - 1);
     }
+
+    /**
+     * {@inheritdoc}
+     **/
+    public function bean_implements($interface)
+    {
+        switch ($interface) {
+            case 'ACL':
+                return true;
+        }
+        return false;
+    }
 }
