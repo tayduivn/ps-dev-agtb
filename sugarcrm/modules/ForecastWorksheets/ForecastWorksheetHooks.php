@@ -90,11 +90,6 @@ class ForecastWorksheetHooks extends AbstractForecastHooks
      */
     public static function managerNotifyCommitStage($bean, $event, $args)
     {
-
-        /**
-         * Always Return false for now as notifications are not setup.
-         */
-        return false;
         /**
          * Only run this logic hook when the following conditions are met
          *  - Bean is not a Draft Record
@@ -122,7 +117,10 @@ class ForecastWorksheetHooks extends AbstractForecastHooks
                     $notifyBean->assigned_user_id = $user->reports_to_id;
                     $notifyBean->type = 'information';
                     $notifyBean->created_by = $user->id;
-                    $notifyBean->name = string_format(
+                    $notifyBean->parent_type = $bean->parent_type;
+                    $notifyBean->parent_id = $bean->parent_id;
+                    $notifyBean->name = string_format($worksheet_strings['LBL_MANAGER_NOTIFY_NAME'], array($mod_strings['LBL_MODULE_NAME_SINGULAR']));
+                    $notifyBean->description = string_format(
                         $worksheet_strings['LBL_MANAGER_NOTIFY'],
                         array(
                             $mod_strings['LBL_MODULE_NAME_SINGULAR'],
