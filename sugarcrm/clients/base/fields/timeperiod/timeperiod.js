@@ -167,6 +167,17 @@
     },
 
     /**
+     * Since this is specific to fetching the timeperiods and it's a dynamic endpoint
+     * override the module for when it has to load the enum options
+     *
+     * @override
+     * @return {string}
+     */
+    getLoadEnumOptionsModule: function() {
+        return 'Forecasts';
+    },
+
+    /**
      * {@inheritDoc}
      */
     getSelect2Options: function(optionsKeys) {

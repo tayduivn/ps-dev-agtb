@@ -4074,6 +4074,13 @@ Sincerely, SugarCRM',
     'ERR_BLANK_PAGE_NAME' => 'Please enter a page name.',
     /* End MySugar Framework strings */
 
+    /* Sales Pipeline Dashlet */
+    'LBL_DASHLET_MY_PIPELINE' => 'My Pipeline',
+    'LBL_DASHLET_MY_TEAMS_PIPELINE' => "My Team's Pipeline",
+    'LBL_DASHLET_SALES_PIPELINE_CHART_NAME' => 'Sales Pipeline Chart',
+    'LBL_DASHLET_SALES_PIPELINE_CHART_DESC' => 'Displays current pipeline chart.',
+    /* End Sales Pipeline Dashlet */
+
     'LBL_NO_IMAGE' => 'No Image',
 
     'LBL_MODULE' => 'Module',
