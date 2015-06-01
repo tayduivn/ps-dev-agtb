@@ -936,6 +936,30 @@ EOQ;
         $_SESSION['hasExpiredPassword'] = '0';
 	}
 
+    /**
+     * Attempt to rehash the current user_hash value
+     * @param string $password Clear text password
+     */
+    public function rehashPassword($password)
+    {
+        if (empty($this->id) || empty($this->user_hash) || empty($password)) {
+            return;
+        }
+
+        $hashBackend = Hash::getInstance();
+
+        if ($hashBackend->needsRehash($this->user_hash)) {
+            $update = sprintf(
+                'UPDATE %s SET user_hash = %s WHERE id = %s',
+                $this->table_name,
+                $this->db->quoted($hashBackend->hash($password)),
+                $this->db->quoted($this->id)
+            );
+            $this->db->query($update);
+            $GLOBALS['log']->info("Rehashed password hash for user id '{$this->id}'");
+        }
+    }
+
 	/**
 	 * Verify that the current password is correct and write the new password to the DB.
 	 *
