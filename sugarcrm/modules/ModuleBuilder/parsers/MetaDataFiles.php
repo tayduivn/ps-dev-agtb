@@ -765,6 +765,17 @@ class MetaDataFiles
                         foreach ($cacheFiles as $cacheFile) {
                             SugarAutoLoader::unlink($cacheFile);
                         }
+                        // Build up to the role dir level
+                        $roleDirs = glob($platformDir . '*/');
+                        foreach ($roleDirs as $roleDir) {
+
+                            $cacheFiles = glob($roleDir . $type . '.php');
+
+                            // Handle nuking the files
+                            foreach ($cacheFiles as $cacheFile) {
+                                SugarAutoLoader::unlink($cacheFile);
+                            }
+                        }
                     }
                 }
             }
