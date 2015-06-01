@@ -374,17 +374,32 @@
                                 callback(null, fields, errors);
                             },
                             onCancel: _.bind(function() {
-                                var field = this.getField(fieldName),
-                                    fieldElement = field.getFieldElement();
+                                var field = this.getField(fieldName, model);
+                                if (!_.isEmpty(field)) {
+                                    var fieldElement = field.getFieldElement();
 
-                                this.handleFieldError(field, true);
-                                if (fieldElement.find('input[data-type=date]').length === 0) {
-                                    fieldElement.closest('[data-name=' + fieldName + ']')
-                                        .find('.record-edit-link-wrapper')
-                                        .click();
+                                    if (_.isFunction(this.handleFieldError)) {
+                                        this.handleFieldError(field, true);
+                                    }
+
+                                    if (fieldElement.find('input[data-type=date]').length === 0) {
+                                        fieldElement.closest('[data-name=' + fieldName + ']')
+                                            .find('.record-edit-link-wrapper')
+                                            .click();
+                                    }
+                                    fieldElement.find('input[data-type=date]').focus();
                                 }
-                                fieldElement.find('input[data-type=date]').focus();
-                                this.toggleButtons(true);
+
+                                // enable buttons in recordview
+                                if (_.isFunction(this.toggleButtons)) {
+                                    this.toggleButtons(true);
+                                }
+
+                                // enable save button in recorlist view
+                                var inlineSaveButton = this.getField('inline-save', model);
+                                if (!_.isEmpty(inlineSaveButton)) {
+                                    inlineSaveButton.setDisabled(false);
+                                }
                             }, this)
                         });
                     } else {
