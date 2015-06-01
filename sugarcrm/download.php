@@ -165,7 +165,7 @@ else {
 		}
 
 		header("Pragma: public");
-		header("Cache-Control: maxage=1, post-check=0, pre-check=0");
+		header("Cache-Control: max-age=1, post-check=0, pre-check=0");
 		if(isset($_REQUEST['isTempFile']) && ($_REQUEST['type']=="SugarFieldImage")) {
 			$mime = getimagesize($download_location);
 		   	if(!empty($mime)) {

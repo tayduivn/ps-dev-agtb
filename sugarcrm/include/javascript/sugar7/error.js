@@ -48,7 +48,13 @@
         backToLogin(true);
         // Sync can fail for many reasons such as server error, bad cache, auth, etc.
         // Server message to provides details.
-        alertUser("sync_failure" , "ERR_SYNC_FAILED", (error && error.message) || "LBL_INVALID_412_RESPONSE");
+        alertUser('sync_failure' , 'ERR_SYNC_FAILED', (error && error.message) || 'LBL_INVALID_412_RESPONSE');
+    });
+
+    // Displays an error alert if the app fails during its initialization.
+    app.events.on('app:sync:public:error', function(error) {
+        app.alert.dismissAll();
+        alertUser('public_sync_failure', 'Unable to load the application.');
     });
     
     /**
@@ -258,4 +264,3 @@
     };
 
 })(SUGAR.App);
-

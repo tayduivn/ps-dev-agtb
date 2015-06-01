@@ -26,19 +26,14 @@
         this._super('initialize', [options]);
 
         this.context.on('change:searchTerm change:tagParams', function(model, value) {
-            if (_.isString(value) && value) {
-                this.searchTerm = value;
-            } else {
-                var tagParams = this.context.get('tagParams') || [];
-                this.searchTerm = tagParams.join(', ');
-            }
+            var tagParams = this.context.get('tagParams') || [];
+            this.searchTerm = {term: this.context.get('searchTerm'), tags: tagParams.join(', ')};
             this.render();
         }, this);
 
-        // use the searchTerm for the title of search, unless we are doing a tag related search
-        // then we use the tag name
+        // Let this.searchTerm hold searchTerm and tag data for headerpane title
         var tagParams = this.context.get('tagParams') || [];
-        this.searchTerm = this.context.get('searchTerm') || tagParams.join(', ');
+        this.searchTerm = {term: this.context.get('searchTerm'), tags: tagParams.join(', ')};
     },
 
     /**

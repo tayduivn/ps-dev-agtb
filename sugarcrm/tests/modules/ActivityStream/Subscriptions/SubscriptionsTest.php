@@ -124,7 +124,7 @@ class SubscriptionsTest extends Sugar_PHPUnit_Framework_TestCase
         // triggers the OOB subscription logic. For that reason, we create our
         // own record and give it an ID.
         $record = new Account();
-        $record->id = "SubscriptionsTest".mt_rand();
+        $record->id = create_guid();
         return $record;
     }
 }

@@ -370,7 +370,8 @@
         app.alert.show('merge_confirmation', {
             level: 'confirmation',
             messages: app.lang.get('LBL_MERGE_DUPLICATES_CONFIRM') + ' ' +
-                alternativeModelNames.join(', ') + '. ' +
+                // FIXME needs to be removed on SC-4494.
+                Handlebars.Utils.escapeExpression(alternativeModelNames.join(', ')) + '. ' +
                 app.lang.get('LBL_MERGE_DUPLICATES_PROCEED'),
             onConfirm: _.bind(this._savePrimary, this)
         });

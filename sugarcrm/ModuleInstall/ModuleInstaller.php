@@ -2055,35 +2055,7 @@ class ModuleInstaller{
      */
     protected function sortExtensionFiles(array $files)
     {
-        // prepare helper data structure with all necessary attributes for proper sorting
-        $sorted = array();
-        foreach ($files as $path) {
-            $sorted[$path] = array(
-                'path' => $path,
-                'is_override' => substr(basename($path), 0, 9) === '_override',
-                'mtime' => filemtime($path),
-            );
-        }
-
-        // Sort the files array then read them for their contents
-        uasort($sorted, function ($a, $b) {
-            // put override files after regular ones
-            if ($a['is_override'] != $b['is_override']) {
-                return $a['is_override'] - $b['is_override'];
-            }
-
-            // Logic here it to take the newest touched file and
-            // read it last. This allows for customizations from
-            // any source and the most recent change to win out.
-            if ($a['mtime'] != $b['mtime']) {
-                return $a['mtime'] - $b['mtime'];
-            }
-
-            // eventually sort files by file name in order to have consistent order
-            return strcmp($a['path'], $b['path']);
-        });
-
-        return array_keys($sorted);
+        return sortExtensionFiles($files);
     }
 
     /**

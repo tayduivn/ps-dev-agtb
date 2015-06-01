@@ -193,7 +193,10 @@
 
                 // need to tell Handlebars not to escape the string when it renders it, since there might be
                 // html in the string, args returned for testing purposes
-                return {'text': new Handlebars.SafeString(text)};
+                return {
+                    'text': new Handlebars.SafeString(text),
+                    'text2': app.date(newestModel.get('date_modified')).formatUser(false, app.user)
+                };
             },
 
             /**
@@ -586,7 +589,7 @@
              */
             checkForecastConfig: function() {
                 var forecastConfigOK = true,
-                    cfg = app.metadata.getModule('Forecasts', 'config'),
+                    cfg = app.metadata.getModule('Forecasts', 'config') || {},
                     salesWonVals = cfg.sales_stage_won,
                     salesLostVals = cfg.sales_stage_lost,
                     salesWonLostVals = cfg.sales_stage_won.concat(cfg.sales_stage_lost),

@@ -31,7 +31,6 @@ class Monitor implements Trackable {
 	var $date_start;
 	var $date_end;
 	var $active;
-	var $round_trips;
 	var $seconds;
 	var $session_id;
 

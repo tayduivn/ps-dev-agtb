@@ -44,13 +44,13 @@ class isForecastClosedLostExpression extends BooleanExpression
 			var value = this.getParameters().evaluate();
 
 			// this doesn't support BWC modules, so it should return false if it doesn't have app.
-			// we can't use undersore as it's not in BWC mode here
+			// we can't use underscore as it's not in BWC mode here
 			if (App === undefined) {
 		        return SUGAR.expressions.Expression.FALSE;
 			}
 
-			var config = App.metadata.getModule('Forecasts', 'config'),
-			    status = config.sales_stage_lost;
+			var config = App.metadata.getModule('Forecasts', 'config') || {},
+			    status = config.sales_stage_lost || ['Closed Lost'];
 
             if (status.indexOf(value) === -1) {
                 return SUGAR.expressions.Expression.FALSE

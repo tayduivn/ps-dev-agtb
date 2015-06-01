@@ -37,6 +37,7 @@ class ReadOnlyAction extends AbstractAction
     {
         return "
         SUGAR.forms.ReadOnlyAction = function(target, expr) {
+            this.afterRender = true;
             if (_.isObject(target)){
                 expr = target.value;
                 target = target.target

@@ -2948,6 +2948,10 @@ class SugarBean
     {
         global $locale;
 
+        // in case if a CHAR ID was fetched from database manually, we need to convert it here in order
+        // to make sure it doesn't contain trailing spaces
+        $id = $this->db->fromConvert($id, 'id');
+
         $custom_logic_arguments['id'] = $id;
         $this->call_custom_logic('before_retrieve', $custom_logic_arguments);
 
@@ -4257,7 +4261,14 @@ class SugarBean
             //Custom relate field or relate fields built in module builder which have no link field associated.
             if ($data['type'] == 'relate' && (isset($data['custom_module']) || isset($data['ext2']))) {
                 $joinTableAlias = 'jt' . $jtcount;
-                $relateJoinInfo = $this->custom_fields->getRelateJoin($data, $joinTableAlias, false);
+                $withIdName = false;
+                if (!empty($data['id_name'])) {
+                    $tableName = isset($data['custom_module']) ? "{$this->table_name}_cstm" : $this->table_name;
+                    if (strpos($ret_array['select'], "{$tableName}.{$data['id_name']}") === false) {
+                        $withIdName = true;
+                    }
+                }
+                $relateJoinInfo = $this->custom_fields->getRelateJoin($data, $joinTableAlias, $withIdName);
                 $ret_array['select'] .= $relateJoinInfo['select'];
                 $ret_array['from'] .= $relateJoinInfo['from'];
                 //Replace any references to the relationship in the where clause with the new alias

@@ -11,41 +11,34 @@
  */
 require_once('modules/Currencies/Currency.php');
 
-class CurrencyTest extends Sugar_PHPUnit_Framework_TestCase {
+class CurrencyTest extends Sugar_PHPUnit_Framework_TestCase
+{
+    /** @var Currency */
+    private static $currency;
 
-    var $previousCurrentUser;
-    var $currencyYen;
-    var $currencyId = 'abc123'; // test currency_id
-
-    /**
-     * pre test setup
-     */
-    public function setUp() 
+    public static function setUpBeforeClass()
     {
-        global $current_user;
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        $current_user = SugarTestUserUtilities::createAnonymousUser();
-        $this->currencyYen = SugarTestCurrencyUtilities::createCurrency('Yen', '¥', 'YEN', 78.87, $this->currencyId);
-        $current_user->setPreference('number_grouping_seperator', ',', 0, 'global');
-        $current_user->setPreference('decimal_seperator', '.', 0, 'global');
+        SugarTestHelper::setUp('current_user');
+
+        self::$currency = SugarTestCurrencyUtilities::createCurrency('Yen', '¥', 'YEN', 78.87);
+    }
+
+    protected function setUp()
+    {
+        global $current_user;
+
+        $current_user->setPreference('num_grp_sep', ',', 0, 'global');
+        $current_user->setPreference('dec_sep', '.', 0, 'global');
         $current_user->save();
 
-        
         //Force reset on dec_sep and num_grp_sep because the dec_sep and num_grp_sep values are stored as static variables
         get_number_seperators(true);
     }
 
-    /**
-     * post test teardown
-     */
-    public function tearDown() 
+    public static function tearDownAfterClass() 
     {
-        unset($GLOBALS['current_user']);
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        global $current_user;
-        $current_user = $this->previousCurrentUser;
-        $this->currencyYen = null;
         SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
         SugarTestHelper::tearDown();
         get_number_seperators(true);
@@ -70,7 +63,7 @@ class CurrencyTest extends Sugar_PHPUnit_Framework_TestCase {
      */
     public function testConvertToDollar()
     {
-        $this->assertEquals(1.267909,$this->currencyYen->convertToDollar(100.00));
+        $this->assertEquals(1.267909, self::$currency->convertToDollar(100.00));
     }
 
     /**
@@ -80,7 +73,7 @@ class CurrencyTest extends Sugar_PHPUnit_Framework_TestCase {
      */
     public function testConvertFromDollar()
     {
-        $this->assertEquals(7887,$this->currencyYen->convertFromDollar(100.00));
+        $this->assertEquals(7887, self::$currency->convertFromDollar(100.00));
     }
 
     /**
@@ -90,8 +83,10 @@ class CurrencyTest extends Sugar_PHPUnit_Framework_TestCase {
      */
     public function testGetBaseCurrencyName()
     {
-        $this->assertEquals($GLOBALS['sugar_config']['default_currency_name'],
-                            $this->currencyYen->getDefaultCurrencyName());
+        $this->assertEquals(
+            $GLOBALS['sugar_config']['default_currency_name'],
+            self::$currency->getDefaultCurrencyName()
+        );
     }
 
     /**
@@ -101,8 +96,10 @@ class CurrencyTest extends Sugar_PHPUnit_Framework_TestCase {
      */
     public function testGetBaseCurrencySymbol()
     {
-        $this->assertEquals($GLOBALS['sugar_config']['default_currency_symbol'],
-                            $this->currencyYen->getDefaultCurrencySymbol());
+        $this->assertEquals(
+            $GLOBALS['sugar_config']['default_currency_symbol'],
+            self::$currency->getDefaultCurrencySymbol()
+        );
     }
 
     /**
@@ -112,85 +109,54 @@ class CurrencyTest extends Sugar_PHPUnit_Framework_TestCase {
      */
     public function testGetBaseCurrencyISO()
     {
-        $this->assertEquals('USD',$this->currencyYen->getDefaultISO4217());
+        $this->assertEquals('USD', self::$currency->getDefaultISO4217());
     }
 
     /**
-     * test retrieval of currency by symbol
+     * test retrieval of default currency by symbol
      *
-     * @dataProvider retrieveIdBySymbolProvider
-     * @param string $expectedId
-     * @param string $symbol
      * @group currency
      */
-    public function testRetrieveIdBySymbol($expectedId,$symbol)
+    public function testRetrieveBaseCurrencyIdBySymbol()
     {
-        $this->assertEquals($expectedId,$this->currencyYen->retrieveIDBySymbol($symbol));
+        $symbol = $GLOBALS['sugar_config']['default_currency_symbol'];
+        $this->assertEquals('-99', self::$currency->retrieveIDBySymbol($symbol));
+    }
+
+    public function testRetrieveCustomCurrencyIdBySymbol()
+    {
+        $this->assertEquals(self::$currency->id, self::$currency->retrieveIDBySymbol('¥'));
     }
 
     /**
-     * testRetrieveIdBySymbol data provider
+     * test retrieval of default currency by ISO
      *
      * @group currency
      */
-    public function retrieveIdBySymbolProvider()
+    public function testRetrieveBaseCurrencyIdByIso()
     {
-        return array(
-            array($this->currencyId,'¥'),
-            array('-99',$GLOBALS['sugar_config']['default_currency_symbol']),
-        );
+        $this->assertEquals('-99', self::$currency->retrieveIDByISO('USD'));
+    }
+
+    public function testRetrieveCustomCurrencyIdByIso()
+    {
+        $this->assertEquals(self::$currency->id, self::$currency->retrieveIDByISO('YEN'));
     }
 
     /**
-     * test retrieval of currency by ISO
+     * test retrieval of default currency by name
      *
-     * @dataProvider retrieveIdByIsoProvider
-     * @param string $expectedId
-     * @param string $ISO
      * @group currency
      */
-    public function testRetrieveIdByIso($expectedId,$ISO)
+    public function testRetrieveBaseCurrencyIdByName()
     {
-        $this->assertEquals($expectedId,$this->currencyYen->retrieveIDByISO($ISO));
+        $name = $GLOBALS['sugar_config']['default_currency_name'];
+        $this->assertEquals('-99', self::$currency->retrieveIDByName($name));
     }
 
-    /**
-     * testRetrieveIdBySymbol data provider
-     *
-     * @group currency
-     */
-    public function retrieveIdByIsoProvider()
+    public function testRetrieveCustomCurrencyIdByName()
     {
-        return array(
-            array($this->currencyId,'YEN'),
-            array('-99','USD'),
-        );
-    }
-
-    /**
-     * test retrieval of currency by symbol
-     *
-     * @dataProvider retrieveIdByNameProvider
-     * @param string $expectedId
-     * @param string $name
-     * @group currency
-     */
-    public function testRetrieveIdByName($expectedId,$name)
-    {
-        $this->assertEquals($expectedId,$this->currencyYen->retrieveIDByName($name));
-    }
-
-    /**
-     * testRetrieveIdBySymbol data provider
-     *
-     * @group currency
-     */
-    public function retrieveIdByNameProvider()
-    {
-        return array(
-            array($this->currencyId,'Yen'),
-            array('-99',$GLOBALS['sugar_config']['default_currency_name']),
-        );
+        $this->assertEquals(self::$currency->id, self::$currency->retrieveIDByName('Yen'));
     }
 
     /**
@@ -264,5 +230,3 @@ class CurrencyTest extends Sugar_PHPUnit_Framework_TestCase {
     }    
     
 } 
-
-?>
