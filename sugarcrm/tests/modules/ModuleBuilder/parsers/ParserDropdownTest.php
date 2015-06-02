@@ -20,24 +20,24 @@ class ParserDropdownTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('app_list_strings');
+        SugarTestHelper::setUp('moduleList');
 
         $this->customFile =  'custom/include/language/' . $GLOBALS['current_language'] . '.lang.php';
+        if (file_exists($this->customFile)) {
+            $this->fileBackup = file_get_contents($this->customFile);
+        }
     }
 
     public function tearDown()
     {
-        // Delete from loader map
-        if (file_exists($this->customFile)) {
-            SugarAutoLoader::unlink($this->customFile, true);
+        if (isset($this->fileBackup)) {
+            file_put_contents($this->customFile, $this->fileBackup);
         }
 
         // Clear cache so it can be reloaded later
         $cache_key = 'app_list_strings.' . $GLOBALS['current_language'];
         sugar_cache_clear($cache_key);
-
-        // Reload app_list_strings
-        $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
-
         SugarTestHelper::tearDown();
     }
 
