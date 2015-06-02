@@ -63,15 +63,25 @@ class ACLRole extends SugarBean{
     }
 
 /**
- * function setAction($role_id, $action_id, $access)
- *
  * Sets the relationship between a role and an action and sets the access level of that relationship
  *
- * @param GUID $role_id - the role id
- * @param GUID $action_id - the ACL Action id
+ * @param string $role_id - the role id
+ * @param string $action_id - the ACL Action id
  * @param int $access - the access level ACL_ALLOW_ALL ACL_ALLOW_NONE ACL_ALLOW_OWNER...
  */
-function setAction($role_id, $action_id, $access){
+public function setAction($role_id, $action_id, $access)
+{
+    $action = BeanFactory::retrieveBean('ACLActions', $action_id);
+    if (!$action) {
+        return;
+    }
+
+    if ($action->acltype == 'module'
+        && $action->category == 'Users'
+        && $action->name != 'admin') {
+        return;
+    }
+
     $relationship_data = array('role_id'=>$role_id, 'action_id'=>$action_id,);
     $additional_data = array('access_override'=>$access);
     $this->set_relationship('acl_roles_actions',$relationship_data,true, true,$additional_data);
