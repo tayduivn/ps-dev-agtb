@@ -329,8 +329,11 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                         .donutRatio(params.donutRatio || 0.5)
                         .rotateDegrees(0)
                         .arcDegrees(360)
-                        .maxRadius(125)
-                        .minRadius(125)
+                        .fixedRadius(function(chart) {
+                            var n = d3.select('#d3_' + chartId).node(),
+                                r = Math.min(n.clientWidth * 0.25, n.clientHeight * 0.4);
+                            return Math.max(r, 75);
+                        })
                         .direction(params.direction)
                         .strings({
                             legend: {

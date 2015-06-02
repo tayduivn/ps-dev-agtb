@@ -162,6 +162,11 @@
           .hole(showHole ? 10 : false)
           .maxRadius(250)
           .minRadius(100)
+          .fixedRadius(function(container, chart) {
+            var n = d3.select('#chart1').node(),
+                r = Math.min(n.clientWidth * 0.25, n.clientHeight * 0.4);
+            return Math.max(r, 75);
+          })
           .rotateDegrees(rotate)
           .arcDegrees(arc)
           .showLabels(true)

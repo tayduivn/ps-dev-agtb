@@ -46,6 +46,7 @@ nv.models.pie = function() {
       donutRatio = 0.447,
       minRadius = 75,
       maxRadius = 250,
+      fixedRadius = function(chart) { return null; },
       durationMs = 0,
       direction = 'ltr',
       color = function(d, i) { return nv.utils.defaultColor()(d, d.series); },
@@ -205,6 +206,11 @@ nv.models.pie = function() {
       //first adjust the leaderLength to be proportional to radius
       if (doLabels) {
         leaderLength = Math.max(Math.min(Math.min(calcMaxRadius()) / 12, 20), 10);
+      }
+
+      if (fixedRadius(chart)) {
+        minRadius = fixedRadius(chart);
+        maxRadius = fixedRadius(chart);
       }
 
       var labelRadius = Math.min(Math.max(calcMaxRadius(), minRadius), maxRadius),
@@ -758,6 +764,14 @@ nv.models.pie = function() {
       return maxRadius;
     }
     maxRadius = _;
+    return chart;
+  };
+
+  chart.fixedRadius = function(_) {
+    if (!arguments.length) {
+      return fixedRadius;
+    }
+    fixedRadius = d3.functor(_);
     return chart;
   };
 
