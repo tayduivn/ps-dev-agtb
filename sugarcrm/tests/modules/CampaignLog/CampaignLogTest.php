@@ -61,6 +61,9 @@ class CampaignLogTest extends Sugar_PHPUnit_Framework_TestCase
 			if ($type == 'Account'){
 				$bean->name = 'CampLog Unit Test Account';
 			}else{
+                if ($type == 'User') {
+                    $bean->user_name = 'SugarUser' . mt_rand();
+                }
 				$bean->first_name = 'CampaignLog';
 				$bean->last_name = 'Test '.$type;
 			}

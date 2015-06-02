@@ -186,7 +186,11 @@ class Team extends SugarBean
 			$team->add_user_to_team($user->id);
 		}
 
-		$su = BeanFactory::getBean('Users', $user->id);
+        $su = BeanFactory::retrieveBean('Users', $user->id);
+        if (!$su) {
+            return;
+        }
+
 		$team->retrieve($this->global_team);
 		$su->default_team = $team->id;
 		$su->team_id = $team->id;

@@ -30,10 +30,11 @@ class SimpleQueryTest extends Sugar_PHPUnit_Framework_TestCase
     protected $accounts = array();
     protected $notes = array();
     protected $kbDocuments = array();
-    protected $users = array();
 
     public static function setupBeforeClass()
     {
+        parent::setupBeforeClass();
+
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('beanList');
@@ -42,7 +43,8 @@ class SimpleQueryTest extends Sugar_PHPUnit_Framework_TestCase
 
     public static function tearDownAfterClass()
     {
-        SugarTestHelper::tearDown();
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        parent::tearDownAfterClass();
     }
 
     public function setUp()
@@ -90,16 +92,6 @@ class SimpleQueryTest extends Sugar_PHPUnit_Framework_TestCase
             }
             $this->db->query(
                 "DELETE FROM kbdocuments WHERE id IN (" . implode(",", $kbDocumentsList) . ")"
-            );
-        }
-
-        if (!empty($this->users)) {
-            $usersList = array();
-            foreach ($this->users as $user) {
-                $usersList[] = $this->db->quoted($user->id);
-            }
-            $this->db->query(
-                "DELETE FROM users WHERE id IN (" . implode(",", $usersList) . ")"
             );
         }
     }
@@ -505,10 +497,7 @@ class SimpleQueryTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testOrderBySortOn()
     {
-        /** @var User $user */
-        $user = BeanFactory::getBean('Users');
-        $user->save();
-        $this->users[] = $user;
+        $user = SugarTestUserUtilities::createAnonymousUser();
 
         $sq = new SugarQuery();
         $sq->from($user);
