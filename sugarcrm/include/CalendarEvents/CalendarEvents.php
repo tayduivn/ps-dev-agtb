@@ -65,7 +65,15 @@ class CalendarEvents
             throw new SugarException('LBL_CALENDAR_EVENT_RECURRENCE_MODULE_NOT_SUPPORTED', array($bean->module_name));
         }
 
-        return (!empty($bean->repeat_type) && !empty($bean->date_start));
+        $isRecurring = !empty($bean->repeat_type) && !empty($bean->date_start);
+
+        if ($isRecurring) {
+            $GLOBALS['log']->debug(sprintf('%s/%s is recurring', $bean->module_name, $bean->id));
+        } else {
+            $GLOBALS['log']->debug(sprintf('%s/%s is not recurring', $bean->module_name, $bean->id));
+        }
+
+        return $isRecurring;
     }
 
     /**
@@ -431,6 +439,15 @@ class CalendarEvents
         $options = array()
     ) {
         $changeWasMade = false;
+
+        $GLOBALS['log']->debug(sprintf(
+            'Set %s/%s accept status to %s for %s/%s',
+            $invitee->module_name,
+            $invitee->id,
+            $status,
+            $event->module_name,
+            $event->id
+        ));
         $event->update_vcal = false;
         $event->set_accept_status($invitee, $status);
 
@@ -444,6 +461,14 @@ class CalendarEvents
                 $child = BeanFactory::retrieveBean($event->module_name, $row['id'], $options);
 
                 if ($child) {
+                    $GLOBALS['log']->debug(sprintf(
+                        'Set %s/%s accept status to %s for %s/%s',
+                        $invitee->module_name,
+                        $invitee->id,
+                        $status,
+                        $child->module_name,
+                        $child->id
+                    ));
                     $child->update_vcal = false;
                     $child->set_accept_status($invitee, $status);
                     $changeWasMade = true;
@@ -453,6 +478,7 @@ class CalendarEvents
             };
 
             $query = $this->getChildrenQuery($event);
+            $GLOBALS['log']->debug('Only update occurrences that have not been held or canceled');
             $query->where()
                 ->notEquals('status', 'Held')
                 ->notEquals('status', 'Not Held');
@@ -460,6 +486,7 @@ class CalendarEvents
         }
 
         if ($changeWasMade && $invitee instanceof User) {
+            $GLOBALS['log']->debug(sprintf('Update vCal cache for %s/%s', $invitee->module_name, $invitee->id));
             vCal::cache_sugar_vcal($invitee);
         }
     }
@@ -473,6 +500,11 @@ class CalendarEvents
      */
     protected function getChildrenQuery(SugarBean $parent)
     {
+        $GLOBALS['log']->debug(sprintf(
+            'Building a query to retrieve the IDs for %s records where the repeat_parent_id is %s',
+            $parent->module_name,
+            $parent->id
+        ));
         $query = new SugarQuery();
         $query->select(array('id'));
         $query->from($parent);
@@ -497,11 +529,19 @@ class CalendarEvents
         $offset = 0;
 
         do {
+            $GLOBALS['log']->debug(sprintf('Retrieving the next %d records beginning at %d', $limit, $offset));
             $query->limit($limit)->offset($offset);
             $rows = $query->execute();
             $rowCount = count($rows);
+            $GLOBALS['log']->debug(sprintf('Repeating the action on %d events', $rowCount));
             array_walk($rows, $callback);
             $offset += $rowCount;
         } while ($rowCount === $limit);
+
+        $GLOBALS['log']->debug(sprintf(
+            'Finished repeating because the row count %d does not equal the limit %d',
+            $rowCount,
+            $limit
+        ));
     }
 }
