@@ -107,7 +107,8 @@ class PMSERelatedModule {
                 $ret = array(
                     'value' => $link,
                     'text' => $pval,
-                    'module' => $moduleLabel
+                    'module' => $moduleLabel,
+                    'relationship' => $def['relationship'],
                 );
                 if ($relType == 'one') {
                     $output_11[] = $ret;
@@ -140,7 +141,7 @@ class PMSERelatedModule {
         // Sort on the label
         array_multisort($labels, SORT_ASC, $output);
 
-        $filterArray = array('value' => $filter, 'text' => '<' . $filter . '>', 'module' => $filter);
+        $filterArray = array('value' => $filter, 'text' => '<' . $filter . '>', 'module' => $filter, 'relationship' => $filter);
         array_unshift($output, $filterArray);
 
         $res['search'] = $filter;
