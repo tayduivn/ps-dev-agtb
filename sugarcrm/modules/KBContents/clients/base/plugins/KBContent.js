@@ -69,20 +69,29 @@
 
             /**
              * Handler to create a new article.
-             * @param {Data.Model} model A record view model caused creation.
+             * @param {Data.Bean} model A record view model caused creation.
              */
             createArticle: function(model) {
-                var prefill = app.data.createBean('KBContents'),
-                    bodyTmpl = app.template.getField('htmleditable_tinymce', 'create-article', 'KBContents');
-                prefill.set('name', model.get('name'));
-                prefill.set('kbdocument_body', bodyTmpl({model: model}));
+                var link = 'kbcontents',
+                    module = 'KBContents',
+                    bodyTmpl = app.template.getField('htmleditable_tinymce', 'create-article', module),
+                    attrs = {name: model.get('name'), kbdocument_body: bodyTmpl({model: model})},
+                    prefill = app.data.createRelatedBean(model, null, link, attrs),
+                    relatedFields = app.data.getRelateFields(model.module, link);
 
+                if (!_.isEmpty(relatedFields)) {
+                    _.each(relatedFields, function(field) {
+                        var parentValue = model.get(field.rname);
+                        prefill.set(field.name, parentValue);
+                        prefill.set(field.id_name, model.get('id'));
+                    }, this);
+                }
                 app.drawer.open({
                     layout: 'create-actions',
                     context: {
                         create: true,
                         model: prefill,
-                        module: 'KBContents'
+                        module: module
                     }},
                     function(context, newModel) {}
                 );

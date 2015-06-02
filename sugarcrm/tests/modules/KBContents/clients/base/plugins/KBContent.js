@@ -1,4 +1,4 @@
-describe('Plugins.KBContents', function() {
+ddescribe('Plugins.KBContents', function() {
     var moduleName = 'KBContents',
         app, view, viewMeta, sandbox, context, copiedUser;
 
@@ -78,6 +78,9 @@ describe('Plugins.KBContents', function() {
             return function() {
                 return 'fakeTemplate';
             };
+        });
+        sandbox.stub(app.data, 'getRelateFields', function() {
+            return [];
         });
         view.createArticle(model);
         expect(drawerStub).toHaveBeenCalled();
@@ -180,6 +183,8 @@ describe('Plugins.KBContents', function() {
         sandbox.stub(view, 'getAvailableLangsForLocalization', function() {
             return ['en', 'fr'];
         });
+
+        sandbox.stub(app.alert, 'show', function() {});
 
         view._onCreateLocalization(fakeModel);
         expect(createRelatedDrawerStub).not.toHaveBeenCalled();
