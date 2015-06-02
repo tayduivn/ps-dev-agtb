@@ -391,6 +391,7 @@ if(!$current_user->is_admin && !$GLOBALS['current_user']->isAdminForModule('User
         if (isset($_REQUEST['server_url']) && !empty($_REQUEST['server_url'])) {
 
             $ie = BeanFactory::getBean('InboundEmail');
+            $ie->disable_row_level_security = true;
             if (false === $ie->savePersonalEmailAccount($return_id, $focus->user_name)) {
                 header("Location: index.php?action=Error&module=Users&error_string=&ie_error=true&id=".$return_id);
                 die(); // die here, else the header redirect below takes over.
@@ -399,6 +400,7 @@ if(!$current_user->is_admin && !$GLOBALS['current_user']->isAdminForModule('User
             // user is deleting their I-E
 
             $ie = BeanFactory::getBean('InboundEmail');
+            $ie->disable_row_level_security = true;
             $ie->deletePersonalEmailAccount($_REQUEST['ie_id'], $focus->user_name);
         }
         ////	END INBOUND EMAIL SAVES

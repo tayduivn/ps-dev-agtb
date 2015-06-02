@@ -15,6 +15,10 @@ global $mod_strings;
 global $app_list_strings;
 global $current_user;
 
+if (!$current_user->isAdminForModule("InboundEmail")) {
+    sugar_die(translate('ERR_NOT_ADMIN'));
+}
+
 $focus = BeanFactory::getBean('InboundEmail');
 $focus->checkImap();
 

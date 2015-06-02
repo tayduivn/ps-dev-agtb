@@ -468,8 +468,13 @@ function validate_user($user_name, $password){
 					}elseif(strcmp($type, 'enum') == 0 && !empty($var['options'])){
 						//$val = $app_list_strings[$var['options']][$val];
 					}
+                    if ($type == 'encrypt' && !empty($var['write_only'])) {
+                        $val = !empty($val);
+                    }
 
 					$list[$var['name']] = $this->get_name_value($var['name'], $val);
+
+
 				} // if
 			} // foreach
 		} // if
