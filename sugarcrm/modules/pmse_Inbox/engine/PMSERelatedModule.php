@@ -144,15 +144,14 @@ class PMSERelatedModule {
 
     public function getFieldValue($newBean, $field)
     {
-        global $timedate, $current_user;
+        global $timedate;
         $value= '';
         $def = $newBean->field_defs[$field];
         if ($def['type'] == 'datetime' || $def['type'] == 'datetimecombo'){
-            date_default_timezone_set('UTC');
-            $datetime = new Datetime($newBean->$field);
-            $value = $timedate->asIso($datetime, $current_user);
+            $theDate = (!empty($newBean->fetched_row[$field])) ? $newBean->fetched_row[$field] : $newBean->$field;
+            $value = $timedate->fromDb($theDate);
         } else if ($def['type'] == 'bool') {
-            $value = ($value==1) ? true : false;
+            $value = ($newBean->$field == 1) ? true : false;
         } else {
             $value = $newBean->$field;
         }

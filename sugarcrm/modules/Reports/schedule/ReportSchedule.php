@@ -211,17 +211,15 @@ SELECT
 FROM
     $this->table_name rs
     INNER JOIN (
-        SELECT
-            {$this->db->convert('jq.job_group', 'substr', array(8))} report_id,
-            jq.execute_time
+        SELECT jq.job_group report_id, jq.execute_time
         FROM job_queue jq
         INNER JOIN (
             SELECT
                 max(execute_time) mt,
                 job_group
             FROM job_queue
+            WHERE target = 'class::SugarJobSendScheduledReport'
             GROUP BY job_group
-            HAVING job_group LIKE 'Report %'
         ) last
         ON last.mt = jq.execute_time AND last.job_group = jq.job_group
         WHERE resolution = '{$failure}'

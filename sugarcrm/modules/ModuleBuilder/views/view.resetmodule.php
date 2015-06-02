@@ -82,6 +82,16 @@ class ViewResetmodule extends SugarView
 		if (!empty($_REQUEST['extensions']))
             $out .= $this->removeCustomExtensions();
 
+        if($this->module === 'Opportunities') {
+            $opp_settings = Opportunity::getSettings();
+            if ($opp_settings['opps_view_by'] == 'RevenueLineItems') {
+                require_once 'modules/Opportunities/include/OpportunityWithRevenueLineItem.php';
+                $opp_setup = new OpportunityWithRevenueLineItem();
+                $opp_setup->doMetadataConvert();
+                $out .= 'Enabling Opportunities with RevenueLineItems<br />';
+            }
+        }
+
 
         $out .= "Complete!";
 

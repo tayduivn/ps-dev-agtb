@@ -15,6 +15,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('modules/pmse_Inbox/engine/PMSEFieldsUtils.php');
 require_once('modules/pmse_Inbox/engine/PMSELogger.php');
 require_once('modules/pmse_Inbox/engine/PMSEEvaluator.php');
+require_once('modules/pmse_Inbox/engine/PMSERelatedModule.php');
 
 class PMSEBeanHandler
 {
@@ -30,6 +31,8 @@ class PMSEBeanHandler
      */
     protected $evaluator;
 
+    protected $pmseRelatedModule;
+
     /**
      * @codeCoverageIgnore
      */
@@ -37,6 +40,7 @@ class PMSEBeanHandler
     {
         $this->logger = PMSELogger::getInstance();
         $this->evaluator = new PMSEEvaluator();
+        $this->pmseRelatedModule = new PMSERelatedModule();
     }
 
     /**
@@ -178,8 +182,45 @@ class PMSEBeanHandler
     {
         //Parse template and return a string mergin bean fields and the template
         $component_array = $this->parseString($template, $bean->module_dir);
-        $parsed_template = $this->mergeTemplate($bean, $template, $component_array, $evaluate);
+        $parsed_template = $this->mergingTemplate($bean, $template, $component_array, $evaluate);
         return trim($parsed_template);
+    }
+
+    public function mergingTemplate ($bean, $template, $component_array, $evaluate)
+    {
+        global $beanList;
+        $replace_array = array();
+        $replace_type_array = array();
+
+        foreach ($component_array as $module_name => $module_array) {
+            foreach ($module_array as $field => $field_array) {
+                if (!isset($beanList[$field_array['filter']])) {
+                    $newBean = $this->pmseRelatedModule->getRelatedModule($bean, $field_array['filter']);
+                } else {
+                    $newBean = $bean;
+                }
+                $field = $field_array['name'];
+                if ($newBean instanceof SugarBean) {
+                    $def = $newBean->field_defs[$field];
+                    if ($def['type'] == 'datetime' || $def['type'] == 'datetimecombo') {
+                        $value = (!empty($newBean->fetched_row[$field])) ? $newBean->fetched_row[$field] : $newBean->$field;
+                    } else if ($def['type'] == 'bool') {
+                        $value = ($newBean->$field==1) ? true : false;
+                    } else {
+                        $value = $newBean->$field;
+                    }
+                } else {
+                     $value = !empty($newBean)?array_pop($newBean)->$field_array['name']:null;
+                }
+                $replace_array[$field_array['original']]  = bpminbox_get_display_text($newBean, $field, $value);
+            }
+        }
+
+        foreach ($replace_array as $name => $replacement_value) {
+            $replacement_value = nl2br($replacement_value);
+            $template = str_replace($name, $replacement_value, $template);
+        }
+        return $template;
     }
 
     /**
@@ -313,28 +354,30 @@ class PMSEBeanHandler
         $dataEval = array();
         foreach ($expression as $value) {
             if ($value->expType != 'VARIABLE') {
-                switch (strtoupper($value->expSubtype)) {
-                    case 'INT':
-                        $dataEval[] = (int)$value->expValue;
-                        break;
-                    case 'FLOAT':
-                        $dataEval[] = (float)$value->expValue;
-                        break;
-                    case 'DOUBLE':
-                        $dataEval[] = (double)$value->expValue;
-                        break;
-                    case 'NUMBER':
-                        $dataEval[] = (float)$value->expValue;
-                        break;
-                    case 'CURRENCY':
-                        $dataEval[] = serialize($value);
-                        break;
-                    case 'BOOL':
-                        $dataEval[] = $value->expValue == 'TRUE' ? true : false;
-                        break;
-                    default:
-                        $dataEval[] = $value->expValue;
-                        break;
+                if (isset($value->expSubtype)) {
+                    switch (strtoupper($value->expSubtype)) {
+                        case 'INT':
+                            $dataEval[] = (int)$value->expValue;
+                            break;
+                        case 'FLOAT':
+                            $dataEval[] = (float)$value->expValue;
+                            break;
+                        case 'DOUBLE':
+                            $dataEval[] = (double)$value->expValue;
+                            break;
+                        case 'NUMBER':
+                            $dataEval[] = (float)$value->expValue;
+                            break;
+                        case 'CURRENCY':
+                            $dataEval[] = serialize($value);
+                            break;
+                        case 'BOOL':
+                            $dataEval[] = $value->expValue == 'TRUE' ? true : false;
+                            break;
+                        default:
+                            $dataEval[] = $value->expValue;
+                            break;
+                    }
                 }
             } else {
                 $fields = $value->expValue;
@@ -395,7 +438,8 @@ class PMSEBeanHandler
                     $component_array[$base_module][$meta_name]['original'] = $matched_component;
                 } else {
                     //0 - base_module 1 - field
-                    $meta_name = $split_array[1] . "_" . 'future';
+                    $meta_name = $split_array[0] . '_' . $split_array[1] . "_" . 'future';
+                    $component_array[$base_module][$meta_name]['filter'] = $split_array[0];
                     $component_array[$base_module][$meta_name]['name'] = $split_array[1];
                     $component_array[$base_module][$meta_name]['value_type'] = 'future';
                     $component_array[$base_module][$meta_name]['original'] = $matched_component;
