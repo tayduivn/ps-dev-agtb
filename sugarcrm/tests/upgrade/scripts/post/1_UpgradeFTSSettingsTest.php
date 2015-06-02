@@ -13,7 +13,7 @@
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 require_once 'modules/UpgradeWizard/UpgradeDriver.php';
-require_once 'upgrade/scripts/post/9_UpdateFTSSettings.php';
+require_once 'upgrade/scripts/post/1_UpdateFTSSettings.php';
 
 /**
  * Tests for FTS settings upgrade.
@@ -214,7 +214,156 @@ class UpgradeFTSSettingsTest extends PHPUnit_Framework_TestCase
         );
     }
 
-    public function getClassMock(array $methods)
+    /**
+     * @covers ::getSugarFieldName
+     * @dataProvider providerTestGetSugarFieldName
+     */
+    public function testGetSugarFieldName($file, $expected)
+    {
+        $stub = $this->getClassMock();
+
+        $result = TestReflection::callProtectedMethod($stub, 'getSugarFieldName', array($file));
+        $this->assertEquals($expected, $result);
+    }
+
+    public function providerTestGetSugarFieldName()
+    {
+        return array(
+            //custom field
+            array(
+                'custom/Extension/modules/Accounts/Ext/Vardefs/sugarfield_aaa1_c.php',
+                'aaa1_c',
+            ),
+            //regualr modules
+            array(
+                'custom/Extension/modules/Accounts/Ext/Vardefs/sugarfield_facebook.php',
+                'facebook',
+            ),
+            //no match
+            array(
+                'custom/Extension/modules/Accounts/Ext/Vardefs/sugarfieldfacebook.php',
+                '',
+            ),
+            //no match
+            array(
+                'custom/Extension/modules/Accounts/Ext/Vardefs/full_text_search_admin.php',
+                '',
+            ),
+            //missing file
+            array(
+                '',
+                '',
+            ),
+        );
+    }
+
+    /**
+     * @covers ::mergeFtsDefs
+     * @dataProvider providerTestMergeFtsDefs
+     */
+    public function testMergeFtsDefs($oldDef, $newDef, $expected)
+    {
+        $stub = $this->getClassMock();
+
+        $result = TestReflection::callProtectedMethod($stub, 'mergeFtsDefs', array($oldDef, $newDef));
+        $this->assertEquals($expected, $result);
+    }
+
+    public function providerTestMergeFtsDefs()
+    {
+        return array(
+            //empty def
+            array(
+                array(),
+                array(),
+                array(),
+            ),
+            //not supported type
+            array(
+                array('type' => 'float'),
+                array(),
+                array(),
+            ),
+            //supported type & FTS enabled
+            array(
+                array(
+                    'type' => 'varchar',
+                    'full_text_search' => array(
+                        'boost' => 2,
+                        'enabled' => true,
+                    ),
+                ),
+                array(),
+                array(
+                    'boost' => 1,
+                    'enabled' => true,
+                    'searchable' => true,
+                ),
+            ),
+            //supported type & FTS disabled
+            array(
+                array(
+                    'type' => 'varchar',
+                    'full_text_search' => array(
+                        'boost' => 2,
+                        'enabled' => false,
+                    ),
+                ),
+                array(),
+                array(
+                    'boost' => 1,
+                    'enabled' => true,
+                    'searchable' => false,
+                ),
+            ),
+            //supported type & FTS enabled & new boost value
+            array(
+                array(
+                    'type' => 'varchar',
+                    'full_text_search' => array(
+                        'boost' => 2,
+                        'enabled' => false,
+                    ),
+                ),
+                array(
+                    'full_text_search' => array(
+                        'boost' => 1.6,
+                        'enabled' => true,
+                    ),
+                ),
+                array(
+                    'boost' => 1.6,
+                    'enabled' => true,
+                    'searchable' => false,
+                ),
+            ),
+            //supported type & FTS enabled & boost value in both defs
+            array(
+                array(
+                    'type' => 'name',
+                    'full_text_search' => array(
+                        'boost' => 3,
+                        'enabled' => true,
+                    ),
+                ),
+                array(
+                    'type' => 'name',
+                    'full_text_search' => array(
+                        'boost' => 1.55,
+                        'enabled' => true,
+                        'searchable' => true,
+                    ),
+                ),
+                array(
+                    'boost' => 1.55,
+                    'enabled' => true,
+                    'searchable' => true,
+                ),
+            ),
+        );
+    }
+
+    public function getClassMock($methods = null)
     {
         return  $stub = $this->getMockBuilder('SugarUpgradeUpdateFTSSettings')
             ->disableOriginalConstructor()
