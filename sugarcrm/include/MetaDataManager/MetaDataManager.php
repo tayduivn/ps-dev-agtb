@@ -3741,6 +3741,8 @@ class MetaDataManager
                 // make sure first file wins and its metadata doesn't get overridden
                 if (!isset($filters[$fieldName])) {
                     $filters[$fieldName] = $this->fixDropdownFilter($filter, $fieldName);
+                    //To preserve order in JSON, we need to return the filters as tuples.
+                    $filters[$fieldName] = array_map(null, array_keys($filters[$fieldName]), $filters[$fieldName]);
                 }
             }
         }

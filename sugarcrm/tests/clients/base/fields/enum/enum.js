@@ -256,6 +256,7 @@ describe("enum field", function() {
             field.items = {};
             field.items['90'] = 90;
             field.items['100'] = 100;
+            field.items['1'] = 'One';
             field.items[''] = '';
             field.items['Defect'] = 'DefectValue';
             field.items['Feature'] = 'FeatureValue';
@@ -271,13 +272,12 @@ describe("enum field", function() {
         using('undefined `app_list_keys` or same order',
             [
                 [{}],
-                [[90, 100, '', 'Defect', 'Feature']]
+                [[90, 100, '1', '', 'Defect', 'Feature']]
             ],
             function(values) {
 
                 it('should not sort the results', function() {
                     _order = false;
-                    field.items = values;
                     results = field._sortResults(results);
                     _expectOrder(results, values);
                     expect(_sortBySpy).not.toHaveBeenCalled();
@@ -290,14 +290,13 @@ describe("enum field", function() {
 
         using('different order',
             [
-                [['', 'Feature', 90, 'Defect', 100]],
-                [['', 'Defect', 100, 'Feature', 90]]
+                [['', 'Feature', 90, '1', 'Defect', 100]],
+                [['', 'Defect', 100, '1', 'Feature', 90]]
             ],
             function(values) {
 
                 it('should sort the results', function() {
                     _order = values;
-                    field.items = _order;
 
                     results = field._sortResults(results);
                     _expectOrder(results, _order);
