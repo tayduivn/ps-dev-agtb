@@ -35,6 +35,15 @@ class ForecastManagerWorksheetHooksTest extends Sugar_PHPUnit_Framework_TestCase
 
     public static function dataProviderSetManagerSavedFlag()
     {
+        /**
+         * known draft_save_types:
+         *  assign_quota - assigning quota to a manager sheet,
+         *  draft - saving a manager draft so only applies with draft = 1,
+         *  commit - commit a manager sheet,
+         *  <blank> - everything else?
+         *
+         *  worksheet - unknown, original test value
+         */
         return array(
             array(
                 array(
@@ -44,7 +53,7 @@ class ForecastManagerWorksheetHooksTest extends Sugar_PHPUnit_Framework_TestCase
                     'draft_save_type' => 'worksheet',
                     'manager_saved' => false
                 ),
-                true
+                false // was originally true but should be false if it functions as <blank>
             ),
             array(
                 array(
@@ -95,6 +104,86 @@ class ForecastManagerWorksheetHooksTest extends Sugar_PHPUnit_Framework_TestCase
                     'manager_saved' => false
                 ),
                 false
+            ),
+            array(
+                array(
+                    'assigned_user_id' => 'test_user',
+                    'modified_user_id' => 'test_user',
+                    'draft' => 1,
+                    'draft_save_type' => 'draft',
+                    'manager_saved' => false
+                ),
+                true
+            ),
+            array(
+                array(
+                    'assigned_user_id' => 'test_user',
+                    'modified_user_id' => 'test_user',
+                    'draft' => 1,
+                    'draft_save_type' => 'draft',
+                    'manager_saved' => true
+                ),
+                true
+            ),
+            array(
+                array(
+                    'assigned_user_id' => 'test_user',
+                    'modified_user_id' => 'test_user',
+                    'draft' => 1,
+                    'draft_save_type' => 'commit',
+                    'manager_saved' => false
+                ),
+                true
+            ),
+            array(
+                array(
+                    'assigned_user_id' => 'test_user',
+                    'modified_user_id' => 'test_user',
+                    'draft' => 0,
+                    'draft_save_type' => 'commit',
+                    'manager_saved' => false
+                ),
+                false
+            ),
+            array(
+                array(
+                    'assigned_user_id' => 'test_user',
+                    'modified_user_id' => 'test_user',
+                    'draft' => 1,
+                    'draft_save_type' => 'commit',
+                    'manager_saved' => true
+                ),
+                true
+            ),
+            array(
+                array(
+                    'assigned_user_id' => 'test_user',
+                    'modified_user_id' => 'test_user',
+                    'draft' => 1,
+                    'draft_save_type' => null,
+                    'manager_saved' => false
+                ),
+                false
+            ),
+            array(
+                array(
+                    'assigned_user_id' => 'test_user',
+                    'modified_user_id' => 'test_user',
+                    'draft' => 0,
+                    'draft_save_type' => null,
+                    'manager_saved' => false
+                ),
+                false
+            ),
+            array(
+                array(
+                    'assigned_user_id' => 'test_user',
+                    'modified_user_id' => 'test_user',
+                    'draft' => 1,
+                    'draft_save_type' => null,
+                    'manager_saved' => true
+                ),
+                true
             )
         );
     }
