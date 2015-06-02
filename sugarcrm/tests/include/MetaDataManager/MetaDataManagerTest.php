@@ -690,6 +690,7 @@ PLATFORMS;
             ),
         );
     }
+// BEGIN SUGARCRM flav=ent ONLY
 
     /**
      * @dataProvider getEditableDropdownFilterProvider
@@ -768,6 +769,8 @@ PLATFORMS;
             ),
         );
     }
+
+// END SUGARCRM flav=ent ONLY
 }
 
 class MetadataManagerMock extends MetadataManager
