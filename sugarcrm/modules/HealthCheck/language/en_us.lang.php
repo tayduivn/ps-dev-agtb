@@ -106,6 +106,7 @@ $mod_strings = array(
     'LBL_SCAN_901_LOG' => 'Instance already upgraded to Sugar 7',
     'LBL_SCAN_902_LOG' => 'Can\'t upgrade version %s on non-Mysql database',
     'LBL_SCAN_903_LOG' => 'Unsupported Upgrader version. Please install the appropriate SugarUpgradeWizardPrereq package',
+    'LBL_SCAN_904_LOG' => 'Found NULL values in moduleList strings. File: %s, Modules: %s',
     'LBL_SCAN_999_LOG' => 'Unknown failure, please consult support',
 
     'LBL_SCAN_101_TITLE' => '%s has studio history',
@@ -190,6 +191,7 @@ $mod_strings = array(
     'LBL_SCAN_901_TITLE' => 'Instance already upgraded to Sugar 7',
     'LBL_SCAN_902_TITLE' => 'Can\'t upgrade version %s on non-Mysql database',
     'LBL_SCAN_903_TITLE' => 'Unsupported Upgrader version',
+    'LBL_SCAN_904_TITLE' => 'Found NULL values in moduleList strings',
     'LBL_SCAN_999_TITLE' => 'Unknown failure, please consult support',
 
     'LBL_SCAN_101_DESCR' => 'Studio customizations were detected on your instance.  We do not anticipate any problems with these customization and your customizations can be upgraded to Sugar7.',
@@ -274,5 +276,6 @@ $mod_strings = array(
     'LBL_SCAN_901_DESCR' => 'Instance already upgraded to Sugar 7',
     'LBL_SCAN_902_DESCR' => 'Can\'t upgrade version %s on non-Mysql database',
     'LBL_SCAN_903_DESCR' => 'Unsupported Upgrader version. Please install the appropriate SugarUpgradeWizardPrereq package',
+    'LBL_SCAN_904_DESCR' => 'File: %s, Modules: %s',
     'LBL_SCAN_999_DESCR' => 'Unknown failure, please consult support',
 );
