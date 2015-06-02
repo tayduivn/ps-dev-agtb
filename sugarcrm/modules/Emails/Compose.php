@@ -153,6 +153,7 @@ function generateComposeDataPackage($data,$forFullCompose = TRUE, $bean = null)
 
 		$ret = array();
 		$ie = BeanFactory::getBean('InboundEmail');
+        $ie->disable_row_level_security = true;
 		$ie->email = BeanFactory::getBean('Emails');
 		$ie->email->email2init();
 		$replyType = $data['reply'];

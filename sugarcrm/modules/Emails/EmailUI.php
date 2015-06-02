@@ -89,6 +89,7 @@ class EmailUI {
 
 		$this->preflightUserCache();
 		$ie = BeanFactory::getBean('InboundEmail');
+        $ie->disable_row_level_security = true;
 
 		// focus listView
 		$list = array(
@@ -456,6 +457,7 @@ eoq;
         $this->smarty->assign('app_strings', $app_strings);
 		$this->smarty->assign('mod_strings', $email_mod_strings);
         $ie1 = BeanFactory::getBean('InboundEmail');
+        $ie1->disable_row_level_security = true;
         //BEGIN SUGARCRM flav=pro ONLY
 		$ie1->team_id = empty($current_user->default_team) ? $current_user->team_id : $current_user->default_team;
 		$ie1->team_set_id = $current_user->team_set_id;
@@ -515,6 +517,7 @@ eoq;
 		$return = array();
 
 		$ie1 = BeanFactory::getBean('InboundEmail');
+        $ie1->disable_row_level_security = true;
 		$ie1->team_set_id = '';
 		$teamSetField = new EmailSugarFieldTeamsetCollection($ie1, $ie1->field_defs, '', 'Distribute');
 		$code2 = $teamSetField->get_code(TRUE);
@@ -1116,6 +1119,7 @@ eoq;
 
 		$nodes = array();
 		$ie = BeanFactory::getBean('InboundEmail');
+        $ie->disable_row_level_security = true;
 		$refreshOffset = $this->cacheTimeouts['folders']; // 5 mins.  this will be set via user prefs
 
 		$rootNode = new ExtNode($app_strings['LBL_EMAIL_HOME_FOLDER'], $app_strings['LBL_EMAIL_HOME_FOLDER']);
@@ -1839,6 +1843,7 @@ EOQ;
 			if(empty($ie)) {
 
 				$ie = BeanFactory::getBean('InboundEmail');
+                $ie->disable_row_level_security = true;
 			}
 			$ie->retrieve($ieId);
 			$ie->mailbox = $folder;
@@ -1892,6 +1897,7 @@ function doAssignment($distributeMethod, $ieid, $folder, $uids, $users) {
 		$emailIds = array();
 		$uids = explode($app_strings['LBL_EMAIL_DELIMITER'], $uids);
 		$ie = BeanFactory::getBean('InboundEmail', $ieid);
+        $ie->disable_row_level_security = true;
 		$messageIndex = 1;
 		// dealing with an inbound email data so we need to import an email and then
 		foreach($uids as $uid) {
@@ -2220,6 +2226,7 @@ eoq;
 
 
 		$ie = BeanFactory::getBean('InboundEmail', $ieId);
+        $ie->disable_row_level_security = true;
 		$list = $ie->displayFolderContents($mbox, $forceRefresh);
 
 		return $list;

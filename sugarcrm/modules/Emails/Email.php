@@ -829,7 +829,7 @@ class Email extends SugarBean {
 
         if (isset($_REQUEST['composeType']) && ($_REQUEST['composeType'] == 'reply' || $_REQUEST['composeType'] == 'replyCase')) {
 			if (isset($_REQUEST['ieId']) && isset($_REQUEST['mbox'])) {
-				$emailFromIe = BeanFactory::getBean('InboundEmail', $_REQUEST['ieId']);
+				$emailFromIe = BeanFactory::getBean('InboundEmail', $_REQUEST['ieId'], array('disable_row_level_security' => true));
 				$emailFromIe->mailbox = $_REQUEST['mbox'];
 				if (isset($emailFromIe->id) && $emailFromIe->is_personal) {
 					if ($emailFromIe->isPop3Protocol()) {
