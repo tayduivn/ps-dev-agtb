@@ -132,44 +132,45 @@ class CalendarEvents
      */
     public function applyChangesToRecurringEvents(SugarBean $parentBean)
     {
-        $moduleName = $parentBean->module_name;
         $parentBean->load_relationship('tag_link');
         $parentTagBeans = $parentBean->tag_link->getBeans();
         $success = false;
 
         try {
             Activity::disable();
+            $self = $this;
             $clone = clone $parentBean;
-            $limit = 200;
-            $offset = 0;
 
-            while (true) {
-                $q = $this->getChildrenQuery($parentBean)
-                    ->limit($limit)
-                    ->offset($offset);
-                $rows = $q->execute();
-                $rowCount = count($rows);
-                foreach ($rows as $row) {
-                    $childBean = BeanFactory::getBean($moduleName, $row['id']);
-                    if (empty($childBean) || $childBean->id !== $row['id']) {
-                        throw new SugarException('Unable to Load Child Occurrence: ' . $moduleName);
-                    }
-                    $clone->id = $childBean->id;
-                    $clone->date_start = $childBean->date_start;
-                    $clone->recurring_source = $childBean->recurring_source;
-                    $clone->repeat_parent_id = $parentBean->id;
-                    $clone->update_vcal = false;
-                    $clone->save(false);
+            /**
+             * Save a child record representing an occurrence in the series.
+             *
+             * @param array $row The child record to replace. Only the ID is used.
+             * @throws SugarException
+             */
+            $callback = function (array $row) use ($self, $clone, $parentBean, $parentTagBeans) {
+                $childBean = BeanFactory::getBean($parentBean->module_name, $row['id']);
 
-                    $childBean->load_relationship('tag_link');
-                    $childTagBeans = $childBean->tag_link->getBeans();
-                    $this->reconcileTags($parentTagBeans, $childBean, $childTagBeans);
+                if (empty($childBean) || $childBean->id !== $row['id']) {
+                    throw new SugarException(
+                        "Unable to Load Child Occurrence: {$parentBean->module_name}/{$row['id']}"
+                    );
                 }
-                if ($rowCount < $limit) {
-                    break;
-                }
-                $offset += $rowCount;
-            }
+
+                $clone->id = $childBean->id;
+                $clone->date_start = $childBean->date_start;
+                $clone->recurring_source = $childBean->recurring_source;
+                $clone->repeat_parent_id = $parentBean->id;
+                $clone->update_vcal = false;
+                $clone->save(false);
+
+                $childBean->load_relationship('tag_link');
+                $childTagBeans = $childBean->tag_link->getBeans();
+                $self->reconcileTags($parentTagBeans, $childBean, $childTagBeans);
+            };
+
+            $query = $this->getChildrenQuery($parentBean);
+            $this->repeatAction($query, $callback);
+
             $success = true;
             Activity::enable();
             vCal::cache_sugar_vcal($GLOBALS['current_user']);
@@ -429,41 +430,36 @@ class CalendarEvents
         $status = 'accept',
         $options = array()
     ) {
+        $changeWasMade = false;
         $event->update_vcal = false;
         $event->set_accept_status($invitee, $status);
 
         if ($this->isEventRecurring($event)) {
-            $limit = 200;
-            $offset = 0;
+            /**
+             * Updates the invitee's accept status for one occurrence in the series.
+             *
+             * @param array $row The child record to update. Only the ID is used.
+             */
+            $callback = function(array $row) use ($event, $invitee, $status, $options, &$changeWasMade) {
+                $child = BeanFactory::retrieveBean($event->module_name, $row['id'], $options);
 
-            do {
-                $q = $this->getChildrenQuery($event)
-                    ->limit($limit)
-                    ->offset($offset);
-                $q->where()
-                    ->notEquals('status', 'Held')
-                    ->notEquals('status', 'Not Held');
-                $rows = $q->execute();
-                $rowCount = count($rows);
-
-                foreach ($rows as $row) {
-                    $child = BeanFactory::retrieveBean($event->module_name, $row['id'], $options);
-
-                    if ($child) {
-                        $child->update_vcal = false;
-                        $child->set_accept_status($invitee, $status);
-                    } else {
-                        $GLOBALS['log']->error(
-                            "Could not set acceptance status for {$event->module_name}/{$row['id']}"
-                        );
-                    }
+                if ($child) {
+                    $child->update_vcal = false;
+                    $child->set_accept_status($invitee, $status);
+                    $changeWasMade = true;
+                } else {
+                    $GLOBALS['log']->error("Could not set acceptance status for {$event->module_name}/{$row['id']}");
                 }
+            };
 
-                $offset += $rowCount;
-            } while ($rowCount === $limit);
+            $query = $this->getChildrenQuery($event);
+            $query->where()
+                ->notEquals('status', 'Held')
+                ->notEquals('status', 'Not Held');
+            $this->repeatAction($query, $callback);
         }
 
-        if ($invitee instanceof User) {
+        if ($changeWasMade && $invitee instanceof User) {
             vCal::cache_sugar_vcal($invitee);
         }
     }
@@ -477,10 +473,35 @@ class CalendarEvents
      */
     protected function getChildrenQuery(SugarBean $parent)
     {
-        $q = new SugarQuery();
-        $q->select(array('id'));
-        $q->from($parent);
-        $q->where()->equals('repeat_parent_id', $parent->id);
-        return $q;
+        $query = new SugarQuery();
+        $query->select(array('id'));
+        $query->from($parent);
+        $query->where()->equals('repeat_parent_id', $parent->id);
+        return $query;
+    }
+
+    /**
+     * Repeat the same action for each record returned by a query. This is useful for repeating an action for each child
+     * record in a series.
+     *
+     * Retrieves, from the database, a max of 200 records at a time upon which to perform the action. This is done to
+     * reduce the memory footprint in the event that too many records would be loaded into memory.
+     *
+     * @param SugarQuery $query The SugarQuery object to use to retrieve the records.
+     * @param Closure $callback The function to call for each child record. The database row -- as an array -- is
+     * passed to the callback.
+     */
+    protected function repeatAction(SugarQuery $query, Closure $callback)
+    {
+        $limit = 200;
+        $offset = 0;
+
+        do {
+            $query->limit($limit)->offset($offset);
+            $rows = $query->execute();
+            $rowCount = count($rows);
+            array_walk($rows, $callback);
+            $offset += $rowCount;
+        } while ($rowCount === $limit);
     }
 }
