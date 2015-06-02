@@ -137,20 +137,16 @@ class CalendarEvents
         $parentTagBeans = $parentBean->tag_link->getBeans();
         $success = false;
 
-         try {
+        try {
             Activity::disable();
             $clone = clone $parentBean;
-
             $limit = 200;
             $offset = 0;
-            $q = new SugarQuery();
-            $q->select(array('id'));
-            $q->from($parentBean);
-            $q->where()->equals('repeat_parent_id', $parentBean->id);
-            $q->limit($limit);
 
             while (true) {
-                $q->offset($offset);
+                $q = $this->getChildrenQuery($parentBean)
+                    ->limit($limit)
+                    ->offset($offset);
                 $rows = $q->execute();
                 $rowCount = count($rows);
                 foreach ($rows as $row) {
@@ -415,5 +411,76 @@ class CalendarEvents
             $dtm->modify("+{$bean->duration_minutes} mins");
         }
         $bean->date_end = $dtm->asDb();
+    }
+
+    /**
+     * Update an invitee's accept status for a particular event. Update all future events in the series if the event is
+     * recurring.
+     *
+     * @param SugarBean $event
+     * @param SugarBean $invitee
+     * @param string $status
+     * @param array $options See {@link BeanFactory::retrieveBean}.
+     * @throws SugarException
+     */
+    public function updateAcceptStatusForInvitee(
+        SugarBean $event,
+        SugarBean $invitee,
+        $status = 'accept',
+        $options = array()
+    ) {
+        $event->update_vcal = false;
+        $event->set_accept_status($invitee, $status);
+
+        if ($this->isEventRecurring($event)) {
+            $limit = 200;
+            $offset = 0;
+
+            do {
+                $q = $this->getChildrenQuery($event)
+                    ->limit($limit)
+                    ->offset($offset);
+                $q->where()
+                    ->notEquals('status', 'Held')
+                    ->notEquals('status', 'Not Held');
+                $rows = $q->execute();
+                $rowCount = count($rows);
+
+                foreach ($rows as $row) {
+                    $child = BeanFactory::retrieveBean($event->module_name, $row['id'], $options);
+
+                    if ($child) {
+                        $child->update_vcal = false;
+                        $child->set_accept_status($invitee, $status);
+                    } else {
+                        $GLOBALS['log']->error(
+                            "Could not set acceptance status for {$event->module_name}/{$row['id']}"
+                        );
+                    }
+                }
+
+                $offset += $rowCount;
+            } while ($rowCount === $limit);
+        }
+
+        if ($invitee instanceof User) {
+            vCal::cache_sugar_vcal($invitee);
+        }
+    }
+
+    /**
+     * Returns a SugarQuery object that can be used to fetch all of the child events in a recurring series.
+     *
+     * @param SugarBean $parent
+     * @return SugarQuery Modify the object to restrict the result set based on additional conditions.
+     * @throws SugarQueryException
+     */
+    protected function getChildrenQuery(SugarBean $parent)
+    {
+        $q = new SugarQuery();
+        $q->select(array('id'));
+        $q->from($parent);
+        $q->where()->equals('repeat_parent_id', $parent->id);
+        return $q;
     }
 }

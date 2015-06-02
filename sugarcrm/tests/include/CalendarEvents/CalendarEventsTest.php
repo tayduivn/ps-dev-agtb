@@ -343,6 +343,100 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
         );
     }
 
+    public function testUpdateAcceptStatusForInvitee_EventIsNotRecurring()
+    {
+        BeanFactory::setBeanClass('Meetings', 'MockMeeting');
+
+        $meeting = $this->getMockBuilder('Meeting')
+            ->disableOriginalConstructor()
+            ->setMockClassName('MockMeeting')
+            ->setMethods(array('set_accept_status'))
+            ->getMock();
+        $meeting->id = create_guid();
+        $meeting->module_name = 'Meetings';
+        $meeting->expects($this->once())->method('set_accept_status');
+        BeanFactory::registerBean($meeting);
+
+        $events = $this->getMockBuilder('CalendarEvents')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getChildrenQuery', 'isEventRecurring'))
+            ->getMock();
+        $events->expects($this->once())->method('isEventRecurring')->willReturn(false);
+        $events->expects($this->never())->method('getChildrenQuery');
+
+        $invitee = BeanFactory::getBean('Contacts', create_guid());
+        $events->updateAcceptStatusForInvitee($meeting, $invitee, 'tentative');
+
+        BeanFactory::unregisterBean($meeting);
+        BeanFactory::setBeanClass('Meetings');
+    }
+
+    public function testUpdateAcceptStatusForInvitee_EventIsRecurring()
+    {
+        BeanFactory::setBeanClass('Meetings', 'MockMeeting');
+
+        $meeting1 = $this->getMockBuilder('Meeting')
+            ->disableOriginalConstructor()
+            ->setMockClassName('MockMeeting')
+            ->setMethods(array('set_accept_status'))
+            ->getMock();
+        $meeting1->id = create_guid();
+        $meeting1->module_name = 'Meetings';
+        $meeting1->expects($this->once())->method('set_accept_status');
+        BeanFactory::registerBean($meeting1);
+
+        $meeting2 = $this->getMockBuilder('Meeting')
+            ->disableOriginalConstructor()
+            ->setMockClassName('MockMeeting')
+            ->setMethods(array('set_accept_status'))
+            ->getMock();
+        $meeting2->id = create_guid();
+        $meeting2->module_name = 'Meetings';
+        $meeting2->expects($this->once())->method('set_accept_status');
+        BeanFactory::registerBean($meeting2);
+
+        $meeting3 = $this->getMockBuilder('Meeting')
+            ->disableOriginalConstructor()
+            ->setMockClassName('MockMeeting')
+            ->setMethods(array('set_accept_status'))
+            ->getMock();
+        $meeting3->id = create_guid();
+        $meeting3->module_name = 'Meetings';
+        $meeting3->expects($this->once())->method('set_accept_status');
+        BeanFactory::registerBean($meeting3);
+
+        $meetings = array(
+            array('id' => $meeting2->id),
+            array('id' => $meeting3->id),
+        );
+
+        $q = $this->getMockBuilder('SugarQuery')
+            ->disableOriginalConstructor()
+            ->setMethods(array('execute'))
+            ->getMock();
+        $q->expects($this->once())->method('execute')->willReturn($meetings);
+
+        $events = $this->getMockBuilder('CalendarEvents')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getChildrenQuery', 'isEventRecurring'))
+            ->getMock();
+        $events->expects($this->once())->method('isEventRecurring')->willReturn(true);
+        $events->expects($this->once())->method('getChildrenQuery')->willReturn($q);
+
+        $invitee = BeanFactory::getBean('Contacts', create_guid());
+        $events->updateAcceptStatusForInvitee(
+            $meeting1,
+            $invitee,
+            'tentative',
+            array('disable_row_level_security' => true)
+        );
+
+        BeanFactory::unregisterBean($meeting1);
+        BeanFactory::unregisterBean($meeting2);
+        BeanFactory::unregisterBean($meeting3);
+        BeanFactory::setBeanClass('Meetings');
+    }
+
     /**
      * Instantiate a new Meeting and prepopulate values from args
      * Add Meeting to meetingIds array to ensure its deletion on teardown
