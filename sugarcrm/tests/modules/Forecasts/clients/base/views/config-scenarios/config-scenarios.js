@@ -83,46 +83,44 @@ describe('Forecasts.View.ConfigScenarios', function() {
     });
 
     describe('initialize()', function() {
-        it('should set the defaultOption to be Likely', function() {
+        it('should set the first to be Likely', function() {
             view.initialize(options);
-            expect(view.defaultOption[0].id).toEqual('show_worksheet_likely');
+            expect(view.scenarioOptions[0].id).toEqual('show_worksheet_likely');
         });
 
-        it('should set the defaultOption Likely to be locked', function() {
+        it('should set the scenarioOptions Likely to be locked', function() {
             view.initialize(options);
-            expect(view.defaultOption[0].locked).toBeTruthy();
+            expect(view.scenarioOptions[0].locked).toBeTruthy();
         });
 
-        it('should set the scenarioOptions to Best and Worst', function() {
+        it('should set the scenarioOptions to Likely, Best and Worst', function() {
             view.initialize(options);
             var len = view.scenarioOptions.length;
-            expect(view.scenarioOptions.length).toBe(2);
-            if (len === 2) {
-                expect(view.scenarioOptions[0].id).toBe('show_worksheet_best');
-                expect(view.scenarioOptions[1].id).toBe('show_worksheet_worst');
-            }
+            expect(view.scenarioOptions.length).toBe(3);
+            expect(view.scenarioOptions[0].id).toBe('show_worksheet_likely');
+            expect(view.scenarioOptions[1].id).toBe('show_worksheet_best');
+            expect(view.scenarioOptions[2].id).toBe('show_worksheet_worst');
         });
 
-        it('should set the selectedOptions to Best based on config', function() {
+        it('should set the selectedOptions to Likely, Best based on config', function() {
             view.initialize(options);
             var len = view.selectedOptions.length;
-            expect(view.selectedOptions.length).toBe(1);
-            if (len === 1) {
-                expect(view.selectedOptions[0].id).toBe('show_worksheet_best');
-            }
+            expect(view.selectedOptions.length).toBe(2);
+            expect(view.scenarioOptions[0].id).toBe('show_worksheet_likely');
+            expect(view.selectedOptions[1].id).toBe('show_worksheet_best');
         });
 
-        it('should set the selectedOptions to Best and Worst based on config', function() {
+        it('should set the selectedOptions to Likely, Best and Worst based on config', function() {
             options.context.get('model').set({
                 show_worksheet_worst: true
             });
             view.initialize(options);
             var len = view.selectedOptions.length;
-            expect(view.selectedOptions.length).toBe(2);
-            if (len === 1) {
-                expect(view.selectedOptions[0].id).toBe('show_worksheet_best');
-                expect(view.selectedOptions[1].id).toBe('show_worksheet_worst');
-            }
+            expect(view.selectedOptions.length).toBe(3);
+            expect(view.scenarioOptions[0].id).toBe('show_worksheet_likely');
+            expect(view.selectedOptions[1].id).toBe('show_worksheet_best');
+            expect(view.selectedOptions[2].id).toBe('show_worksheet_worst');
+
         });
     });
 
