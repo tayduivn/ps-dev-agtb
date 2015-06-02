@@ -85,6 +85,7 @@
         );
         return date || this.settings.get('date') || this._defaultSettings.date;
     },
+
     /**
      * {@inheritDoc}
      *
@@ -102,7 +103,6 @@
         this._super('loadData', [options]);
     },
 
-
     /**
      * {@inheritDoc}
      *
@@ -119,13 +119,12 @@
             method: '_initTabs',
             platform: 'base'
         });
-  },
+    },
+
     /**
      * {@inheritDoc}
      */
     _getFilters: function(index) {
-
-
           var  tab = this.tabs[index],
             filter = {},
             filters = [],
@@ -156,6 +155,7 @@
             this.context.trigger("tabbed-dashlet:refresh", model.module);
         }, this);
     },
+
     /**
      * Method view alert in process with text modify
      * show and hide alert
@@ -208,7 +208,16 @@
                 model.set('show_case_url', ShowCaseUrl);
             }
             model.set('picture_url', pictureUrl);
+            model.set('is_assigned', this.isAssigned(model));
         }, this);
         this._super('_renderHtml');
+    },
+
+    isAssigned: function(model) {
+        if(model.get('cas_status') == 'static' || model.get('cas_status') == 'balanced'){
+            return true;
+        } else {
+            return (model.get('cas_started') > 0);
+        }
     }
 })
