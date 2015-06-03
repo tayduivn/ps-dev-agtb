@@ -866,7 +866,7 @@ html.rtl {
         .dashlet .listed li img {
             margin: 0 0 0 12px;
         }
-        .dashlet .listed li .details {
+        .dashlet .listed:not(.kbcontents) li .details {
             padding-right: 44px;
             padding-left: 0;
         }
@@ -1136,6 +1136,9 @@ html.rtl {
     .dashlet {
         h4 {
             padding: 7px 10px 8px 80px;
+        }
+        .kbcontents h4 {
+            padding: 0;
         }
     }
 
