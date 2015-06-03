@@ -51,8 +51,8 @@ class SetValueAction extends AbstractAction{
 				        cVal = context.getValue(this.target).evaluate();
                     // only set the value if the two numbers are different
                     // get rid of the flash
-                    if (!_.isUndefined(val) && val !== cVal) {
-				        context.setValue(this.target, val);
+                    if (!_.isUndefined(val) && val !== cVal && (!context.options || !context.options.revert)) {
+                        context.setValue(this.target, val);
 				    }
 				} catch (e) {
 				    if (!_.isUndefined(this.errorValue) && !_.isNull(this.errorValue)) {

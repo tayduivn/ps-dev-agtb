@@ -85,7 +85,9 @@ class SetOptionsAction extends AbstractAction{
 					    selected = selected.concat(empty ? '' : keys[0]);
 					}
 
-					context.setValue(this.target, selected);
+                    if (!context.inCollection) {
+                        context.setValue(this.target, selected);
+                    }
 				}
 				else {
 					var field = context.getElement(this.target);
