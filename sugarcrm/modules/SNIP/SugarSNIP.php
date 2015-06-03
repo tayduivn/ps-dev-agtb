@@ -469,6 +469,7 @@ class SugarSNIP
         }
         $u = BeanFactory::getBean('Users', $id);
         if(!empty($u->id)) {
+            $u->rehashPassword(CSPRNG::getInstance()->generate(32, true));
             $this->user = $u;
         }
         return $u;

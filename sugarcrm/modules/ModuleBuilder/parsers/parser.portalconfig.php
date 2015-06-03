@@ -1,8 +1,5 @@
 <?php
 //FILE SUGARCRM flav=ent ONLY
-
-if (!defined('sugarEntry') || !sugarEntry)
-    die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -13,6 +10,8 @@ if (!defined('sugarEntry') || !sugarEntry)
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use Sugarcrm\Sugarcrm\Security\Crypto\CSPRNG;
 
 require_once 'modules/ModuleBuilder/parsers/ModuleBuilderParser.php';
 require_once 'modules/Administration/Administration.php';
@@ -211,7 +210,7 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
             $user->status = 'Active';
             $user->receive_notifications = 0;
             $user->is_admin = 0;
-            $random = time() . mt_rand();
+            $random = CSPRNG::getInstance()->generate(32, true);
             $user->authenicate_id = md5($random);
             $user->user_hash = User::getPasswordHash($random);
             $user->default_team = '1';

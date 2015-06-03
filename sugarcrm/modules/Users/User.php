@@ -949,14 +949,18 @@ EOQ;
         $hashBackend = Hash::getInstance();
 
         if ($hashBackend->needsRehash($this->user_hash)) {
-            $update = sprintf(
-                'UPDATE %s SET user_hash = %s WHERE id = %s',
-                $this->table_name,
-                $this->db->quoted($hashBackend->hash($password)),
-                $this->db->quoted($this->id)
-            );
-            $this->db->query($update);
-            $GLOBALS['log']->info("Rehashed password hash for user id '{$this->id}'");
+            if ($newHash = $hashBackend->hash($password)) {
+                $update = sprintf(
+                    'UPDATE %s SET user_hash = %s WHERE id = %s',
+                    $this->table_name,
+                    $this->db->quoted($newHash),
+                    $this->db->quoted($this->id)
+                );
+                $this->db->query($update);
+                $GLOBALS['log']->info("Rehashed password for user id '{$this->id}'");
+            } else {
+                $GLOBALS['log']->warn("Error trying to rehash password for user id '{$this->id}'");
+            }
         }
     }
 
