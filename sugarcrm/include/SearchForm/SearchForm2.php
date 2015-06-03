@@ -331,17 +331,19 @@ require_once('include/EditView/EditView2.php');
 	function _build_field_defs(){
 		$this->formData = array();
 		$this->fieldDefs = array();
-		foreach($this->searchdefs['layout'][$this->displayView] as $data){
-			if(is_array($data)){
-				//Fields may be listed but disabled so that when they are enabled, they have the correct custom display data.
-				if (isset($data['enabled']) && $data['enabled'] == false)
-					continue;
-				$data['name'] = $data['name'].'_'.$this->parsedView;
-				$this->formData[] = array('field' => $data);
-				$this->fieldDefs[$data['name']]= $data;
-			} else {
-				$this->formData[] = array('field' => array('name'=>$data.'_'.$this->parsedView));
-			}
+		if (!empty($this->searchdefs['layout'][$this->displayView])) {
+		    foreach ($this->searchdefs['layout'][$this->displayView] as $data) {
+		        if (is_array($data)) {
+		            //Fields may be listed but disabled so that when they are enabled, they have the correct custom display data.
+		            if (isset($data['enabled']) && $data['enabled'] == false)
+		                continue;
+		            $data['name'] = $data['name'] . '_' . $this->parsedView;
+		            $this->formData[] = array('field' => $data);
+		            $this->fieldDefs[$data['name']] = $data;
+		        } else {
+		            $this->formData[] = array('field' => array('name' => $data . '_' . $this->parsedView));
+		        }
+		    }
 		}
 
 		if($this->seed){
