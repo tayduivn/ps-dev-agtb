@@ -2620,7 +2620,6 @@ class Email extends SugarBean {
                                     AND er_to.address_type='to' AND ea_to.email_address LIKE '%" . $to_addrs . "%'";
         }
 
-		$this->add_team_security_where_clause($query['joins']);
         $query['where'] = " WHERE (emails.type= 'inbound' OR emails.type='archived' OR emails.type='out') AND emails.deleted = 0 ";
 		if( !empty($additionalWhereClause) )
     	    $query['where'] .= "AND $additionalWhereClause";
@@ -2632,6 +2631,8 @@ class Email extends SugarBean {
             $query['where'] .= " AND EXISTS ( SELECT id FROM notes n WHERE n.parent_id = emails.id AND n.deleted = 0 AND n.filename is not null )";
         else if( !empty($_REQUEST['attachmentsSearch']) &&  $_REQUEST['attachmentsSearch'] == 2 )
              $query['where'] .= " AND NOT EXISTS ( SELECT id FROM notes n WHERE n.parent_id = emails.id AND n.deleted = 0 AND n.filename is not null )";
+
+        $this->addVisibilityWhere($query['where'], array('where_condition' => true));
 
         $fullQuery = "SELECT " . $query['select'] . " " . $query['joins'] . " " . $query['where'];
 
