@@ -120,7 +120,7 @@ class NativeTest extends \PHPUnit_Framework_TestCase
                 'password1',
                 '$2y$10$123456789012345678901u9vgQM//r9FWIoM3yVqcwebIuEgRkstq',
             ),
-            // regular password with cost 20
+            // regular password with cost 5
             array(
                 'PASSWORD_BCRYPT',
                 array('salt' => '1234567890123456789012', 'cost' => 5),

@@ -13,6 +13,7 @@
 namespace Sugarcrm\SugarcrmTestsUnit\Security\Password;
 
 use Sugarcrm\Sugarcrm\Security\Password\Hash;
+use Sugarcrm\Sugarcrm\Security\Password\Backend\Native;
 
 /**
  *
@@ -75,5 +76,98 @@ class HashTest extends \PHPUnit_Framework_TestCase
                 null,
             ),
         );
+    }
+
+    /**
+     * Test old hash validation which might be in use on older systems
+     * leveraging the native backend.
+     *
+     * @coversNothing
+     * @dataProvider providerTestOldHashes
+     */
+    public function testOldHashes($algo, $password, $hash, $expected)
+    {
+        if (!$this->isPlatformSupportedAlgo($algo)) {
+            $this->markTestSkipped("Current platform does not support hashing algorithm $algo");
+        }
+
+        $sut = new Hash(new Native());
+        $this->assertEquals($expected, $sut->verify($password, $hash));
+    }
+
+    public function providerTestOldHashes()
+    {
+        return array(
+            // plain md5 - valid
+            array(
+                'md5',
+                'my passw0rd',
+                '0db22d09a263d458c79581aefcbdb300',
+                true,
+            ),
+            // plain md5 - invalid
+            array(
+                'md5',
+                'my passw1rd',
+                '0db22d09a263d458c79581aefcbdb300',
+                false,
+            ),
+            // CRYPT_MD5 hash - valid
+            array(
+                'CRYPT_MD5',
+                'my passw0rd',
+                '$1$F0l3iEs7$sT3th960AcuSzp9kiSmxh/',
+                true,
+            ),
+            // CRYPT_MD5 hash - invalid
+            array(
+                'CRYPT_MD5',
+                'my passw1rd',
+                '$1$F0l3iEs7$sT3th960AcuSzp9kiSmxh/',
+                false,
+            ),
+            // CRYPT_EXT_DES hash - valid
+            array(
+                'CRYPT_EXT_DES',
+                'my passw0rd',
+                '_.012saltIO.319ikKPU',
+                true,
+            ),
+            // CRYPT_EXT_DES hash - invalid
+            array(
+                'CRYPT_EXT_DES',
+                'my passw1rd',
+                '_.012saltIO.319ikKPU',
+                false,
+            ),
+            // CRYPT_BLOWFISH hash, old type - valid
+            array(
+                'CRYPT_BLOWFISH',
+                'my passw0rd',
+                '$2a$07$usesomesillystringforeETvnK0/TgBVIVHViQjGDve4qlnRzeWS',
+                true,
+            ),
+            // CRYPT_BLOWFISH hash, old type - invalid
+            array(
+                'CRYPT_BLOWFISH',
+                'my passw1rd',
+                '$2a$07$usesomesillystringforeETvnK0/TgBVIVHViQjGDve4qlnRzeWS',
+                false,
+            ),
+        );
+    }
+
+    /**
+     * Verify if given hashing algorithm is supported
+     * @param string $algo
+     * @return boolean
+     */
+    protected function isPlatformSupportedAlgo($algo)
+    {
+        if ($algo === 'md5') {
+            return true;
+        }
+
+        return defined($algo) && constant($algo);
     }
 }
