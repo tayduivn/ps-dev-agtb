@@ -18,35 +18,37 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Document;
 
 /**
  * Class KBVisibility
- * Addidional visibility check for KB.
+ * Additional visibility check for KB.
  */
 class KBVisibility extends SugarVisibility implements StrategyInterface
 {
     /**
      * {@inheritDoc}
-     * Need to check where it's used.
+     * Used in \SugarBean::create_new_list_query
      */
     public function addVisibilityWhere(&$query)
     {
+        $addon = $this->getWhereVisibilityRaw();
+        if (!empty($addon)) {
+            if (!empty($query)) {
+                $query .= " AND $addon";
+            } else {
+                $query = $addon;
+            }
+        }
         return $query;
     }
 
     /**
-     * {@inheritDoc}
+     * Create additional query for `where` part, if needed.
+     * @return string Additional query or empty string.
      */
-    public function addVisibilityWhereQuery(SugarQuery $query)
+    protected function getWhereVisibilityRaw()
     {
         $db = DBManagerFactory::getInstance();
         if (!method_exists($this->bean, 'getPublishedStatuses') || !$this->shouldCheckVisibility()) {
-            return $query;
+            return '';
         } else {
-            /**
-             * It's better to use
-             *             $query->orWhere()
-             *   ->equals('created_by', $currentUser->id)
-             *   ->in('status', $statuses);
-             * but it doesn't work.
-             */
             $statuses = $this->bean->getPublishedStatuses();
             foreach ($statuses as $_ => $status) {
                 $statuses[$_] = $db->quoted($status);
@@ -55,11 +57,20 @@ class KBVisibility extends SugarVisibility implements StrategyInterface
             $ow = new OwnerVisibility($this->bean, $this->params);
             $addon = '';
             $ow->addVisibilityWhere($addon);
-
-            $addon = "({$addon} OR {$this->bean->table_name}.status IN ($statuses))";
-            $query->whereRaw($addon);
-            return $query;
+            return "({$addon} OR {$this->bean->table_name}.status IN ($statuses))";
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function addVisibilityWhereQuery(SugarQuery $query)
+    {
+        $addon = $this->getWhereVisibilityRaw();
+        if (!empty($addon)) {
+            $query->whereRaw($addon);
+        }
+        return $query;
     }
 
     /**
