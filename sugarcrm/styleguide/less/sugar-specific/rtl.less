@@ -448,13 +448,26 @@ html.rtl {
 
     }
 
-    .module-list .megamenu > .dropdown .btn-group.home {
-        padding: 5px 16px 5px 10px;
+    .module-list {
+        .megamenu {
+            > .dropdown .btn-group {
+                &.home {
+                    padding: 5px 16px 5px 10px;
+                }
+                &:not(.home) {
+                    padding: 8px 8px 8px 4px;
+                    .dropdown-toggle {
+                        margin-right: 1px;
+                        margin-left: initial;
+                    }
+                }
+            }
+        }
     }
+
     .dropdown-menu .label-module-mini {
         margin: -2px 0 0 10px;
     }
-
 
     .activitystream-layout .omnibar .inputactions {
         left: 0;
