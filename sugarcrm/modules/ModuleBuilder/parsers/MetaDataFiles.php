@@ -793,14 +793,19 @@ class MetaDataFiles
         if (empty($module)) {
             return null;
         }
+        $sc = SugarConfig::getInstance();
+        //No need to write the module cache for a specific context, we can't load from it anyway.
+        $noCache = !empty($context);
+        // BEGIN SUGARCRM flav=ent ONLY
+        $noCache = $noCache || $sc->get('roleBasedViews', false);
+        // END SUGARCRM flav=ent ONLY
         $clientCache = array();
-        $cacheFile = sugar_cached('modules/'.$module.'/clients/'.$platforms[0].'/'.$type.'.php');
-        if (!file_exists($cacheFile)
-// BEGIN SUGARCRM flav=ent ONLY
-            || !empty($GLOBALS['sugar_config']['roleBasedViews'])
-// END SUGARCRM flav=ent ONLY
-        ) {
-            self::buildModuleClientCache($platforms, $type, $module, $context);
+        $cacheFile = sugar_cached('modules/' . $module . '/clients/' . $platforms[0] . '/' . $type . '.php');
+        if ($noCache || !file_exists($cacheFile)) {
+            $result = self::buildModuleClientCache($platforms, $type, $module, $context, $noCache);
+            if ($noCache) {
+                return $result;
+            }
         }
         $clientCache[$module][$platforms[0]][$type] = array();
         require $cacheFile;
@@ -821,7 +826,8 @@ class MetaDataFiles
         $platforms,
         $type,
         $modules = array(),
-        MetaDataContextInterface $context = null
+        MetaDataContextInterface $context = null,
+        $noCache = false
     ) {
         if ( is_string($modules) ) {
             // They just want one module
@@ -859,13 +865,15 @@ class MetaDataFiles
                 }
             }
 
+            if ($noCache) {
+                return $moduleResults;
+            } else {
+                $basePath = sugar_cached('modules/'.$module.'/clients/'.$platforms[0]);
+               sugar_mkdir($basePath,null,true);
 
-
-            $basePath = sugar_cached('modules/'.$module.'/clients/'.$platforms[0]);
-            sugar_mkdir($basePath,null,true);
-
-            $output = "<?php\n\$clientCache['".$module."']['".$platforms[0]."']['".$type."'] = ".var_export($moduleResults,true).";\n\n";
-            sugar_file_put_contents_atomic($basePath.'/'.$type.'.php', $output);
+               $output = "<?php\n\$clientCache['".$module."']['".$platforms[0]."']['".$type."'] = ".var_export($moduleResults,true).";\n\n";
+               sugar_file_put_contents_atomic($basePath.'/'.$type.'.php', $output);
+            }
         }
     }
 

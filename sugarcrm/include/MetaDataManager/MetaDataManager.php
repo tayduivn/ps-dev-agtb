@@ -1582,7 +1582,7 @@ class MetaDataManager
 
         // The basics are, for each platform, rewrite the cache for public and private
         if (empty($platforms)) {
-            $platforms = static::getPlatformList();
+            $platforms = static::getPlatformsWithCaches();
         }
 
         // Make sure the LanguageManager created modules cache is clear
@@ -1595,7 +1595,11 @@ class MetaDataManager
                     $mm = static::getManager($platform, $public, true);
                     $contexts = static::getAllMetadataContexts($public);
                     foreach ($contexts as $context) {
-                        $mm->rebuildCache($force, $context);
+                        if ($context instanceof MetaDataContextDefault) {
+                            $mm->rebuildCache(true);
+                        } else {
+                            $mm->invalidateCache($platforms, $context);
+                        }
                     }
                 }
             }
