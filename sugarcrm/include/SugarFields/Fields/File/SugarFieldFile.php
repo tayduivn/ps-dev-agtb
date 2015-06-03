@@ -291,4 +291,37 @@ class SugarFieldFile extends SugarFieldBase
             $data['file_mime_type'] = empty($bean->file_mime_type) ? '' : $bean->file_mime_type;
         }
     }
+
+    /** {@inheritDoc} */
+    public function apiSave(SugarBean $bean, array $params, $field, $properties)
+    {
+        parent::apiSave($bean, $params, $field, $properties);
+        // handle copy
+        // $params[$field . '_duplicateBeanId'] contains id of bean from which we should copy file
+        if (!empty($params[$field . '_duplicateBeanId'])) {
+            require_once 'include/upload_file.php';
+            $upload_file = new UploadFile($field . '_file');
+            $duplicateModuleId = $params[$field . '_duplicateBeanId'];
+            if ($bean->object_name == 'Note') {
+                $duplicateBean = BeanFactory::getBean('Notes', $duplicateModuleId);
+                $uploadId = $duplicateBean->getUploadId();
+                // don't copy the actual file for email notes
+                if (!empty($params['parent_type']) &&  $params['parent_type'] == 'Emails') {
+                    $bean->upload_id = $uploadId;
+                }
+                else {
+                    $upload_file->duplicate_file($uploadId, $bean->id, $bean->$field);
+                }
+            }
+            else {
+                $upload_file->duplicate_file($duplicateModuleId, $bean->id, $bean->$field);
+            }
+            require_once 'include/utils/file_utils.php';
+            $extension = get_file_extension($bean->$field);
+            if (!empty($extension)) {
+                $bean->file_ext = $extension;
+                $bean->file_mime_type = get_mime_content_type_from_filename($bean->$field);
+            }
+        }
+    }
 }
