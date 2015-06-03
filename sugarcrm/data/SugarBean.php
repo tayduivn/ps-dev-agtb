@@ -601,8 +601,6 @@ class SugarBean
         }
     }
 
-
-
     /**
      * Get default visibility settings
      * @return array
@@ -1856,15 +1854,6 @@ class SugarBean
 
         $this->in_save = false;
         return $this->id;
-    }
-
-    /**
-     * bypassing child logic, call this (parent) save directly
-     * @return ID, bean->$id
-     */
-    function saveWithoutChildLogic()
-    {
-        return self::save();
     }
 
     /**
