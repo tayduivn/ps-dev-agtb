@@ -48,6 +48,7 @@ class ext_rest_twitter extends ext_rest {
             $config = array(
                 'callbackUrl' => 'http://www.sugarcrm.com',
                 'siteUrl' => $api->getOauthRequestURL(),
+                'requestTokenUrl' => $api->getOauthRequestURL(),
                 'consumerKey' => $properties['oauth_consumer_key'],
                 'consumerSecret' => $properties['oauth_consumer_secret']
             );
