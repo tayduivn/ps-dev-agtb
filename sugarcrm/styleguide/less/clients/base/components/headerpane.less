@@ -219,11 +219,19 @@
 
   span[data-type="follow"],
   span[data-type="badge"],
-  span[data-type="event-status"],
   span[data-type="badge-select"],
+  span[data-type="event-status"],
   span[data-type="status"] {
-    padding: 18px 16px 0 0;
-    line-height: 20px;
+    padding: 19px 16px 0 0;
+    line-height: @fontSizeMini;
+    &:not(.edit) .label {
+      font-weight: 500;
+      font-size: @fontSizeMini;
+      line-height: @fontSizeMini;
+      min-width: 50px;
+      padding: 3px 6px 5px;
+      margin-top: 0px;
+    }
   }
   span[data-type="badge-select"],
   span[data-type="event-status"],
@@ -237,9 +245,6 @@
       background-color: transparent;
       padding-left: 0;
       .box-shadow(none);
-    }
-    .index .label {
-      font-weight: normal;
     }
   }
   h1 > .record-cell.edit {
