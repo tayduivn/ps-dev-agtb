@@ -80,9 +80,7 @@ $sugar_smarty->assign('TDWIDTH', $tdwidth);
 $sugar_smarty->assign('ACTION_NAMES', $names);
 
 $actions = null;
-if (isset($_REQUEST['category_name']) &&
-    isset($categories[$_REQUEST['category_name']]) &&
-    isset($categories[$_REQUEST['category_name']]['module']))
+if (isset($categories[$_REQUEST['category_name']]['module']))
 {
     $actions = $categories[$_REQUEST['category_name']]['module'];
 }
