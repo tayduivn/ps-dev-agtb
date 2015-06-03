@@ -702,6 +702,87 @@ PLATFORMS;
             ),
         );
     }
+// BEGIN SUGARCRM flav=ent ONLY
+
+    /**
+     * @dataProvider getEditableDropdownFilterProvider
+     */
+    public function testGetEditableDropdownFilter($filter, $defaults, $expected) {
+        global $app_list_strings;
+
+
+        $app_list_strings['md_fix_filter_test'] = $defaults;
+
+        $mock = $this->getMock("MetadataManager", array('getRawFilter'));
+        $mock->expects($this->any())->method('getRawFilter')->willReturn($filter);
+        $actual = $mock->getEditableDropdownFilter('md_fix_filter_test', 'foo');
+
+        $this->assertEquals($expected, $actual);
+        //Also assert that the JSON version will encode correctly. php equivalent is not enough
+        $this->assertEquals(json_encode($expected), json_encode($actual));
+
+        unset($app_list_strings['md_fix_filter_test']);
+
+    }
+
+    public static function getEditableDropdownFilterProvider()
+    {
+        return array(
+            //Arrays with numeric keys
+            array(
+                array(),
+                array(
+                    '01' => 'one',
+                    '02' => 'two',
+                    '10' => 'ten',
+                ),
+                array(
+                    '01' => true,
+                    '02' => true,
+                    '10' => true,
+                )
+            ),
+            //Non-empty filter should not contain new values by default
+            //nor entries that were in the filter but not the default
+            array(
+                array(
+                    'a' => false,
+                    'b' => true,
+                    'c' => true,
+                ),
+                array(
+                    'a' => 'A',
+                    'c' => 'C',
+                    'd' => 'D',
+                ),
+                array(
+                    'a' => false,
+                    'c' => true,
+                    'd' => false,
+                )
+            ),
+            //Order should be preserved from the filter
+            array(
+                array(
+                    'b' => true,
+                    'a' => true,
+                    'c' => false,
+                ),
+                array(
+                    'a' => 'A',
+                    'b' => 'B',
+                    'c' => 'C',
+                ),
+                array(
+                    'b' => true,
+                    'a' => true,
+                    'c' => false,
+                )
+            ),
+        );
+    }
+
+// END SUGARCRM flav=ent ONLY
 }
 
 class MetadataManagerMock extends MetadataManager

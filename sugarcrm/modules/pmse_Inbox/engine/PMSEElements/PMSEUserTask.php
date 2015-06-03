@@ -65,11 +65,17 @@ class PMSEUserTask extends PMSEActivity
     public function run($flowData, $bean = null, $externalAction = '', $arguments = array())
     {
 //        $redirectAction = empty($externalAction)? 'ASSIGN': $this->processUserAction($flowData);
-        $redirectAction = $this->processAction($flowData, $externalAction);
+        $redirectAction = $this->processAction($flowData, $externalAction, $arguments);
         $saveBeanData = !empty($arguments) ? true : false;
         switch ($redirectAction) {
             case 'ASSIGN':
                 $userId = $this->userAssignmentHandler->taskAssignment($flowData);
+                $activityDefinitionBean = $this->retrieveBean('pmse_BpmActivityDefinition', $flowData['bpmn_id']);
+                if ($activityDefinitionBean->act_response_buttons == 'ROUTE') {
+                    $flowData['cas_adhoc_actions'] = serialize(array('link_cancel', 'route', 'edit', 'continue'));
+                } else {
+                    $flowData['cas_adhoc_actions'] = serialize(array('link_cancel', 'approve', 'reject', 'edit'));
+                }
                 $flowData['cas_flow_status'] = 'FORM';
                 $flowAction = 'CREATE';
                 $routeAction = 'WAIT';
@@ -83,7 +89,8 @@ class PMSEUserTask extends PMSEActivity
                 $flowData['taskName'] = isset($arguments['taskName']) ? $arguments['taskName'] : '';
                 $flowData['evn_type'] = 'REASSIGN';
                 $flowData['idInbox'] = isset($arguments['flow_id']) ? $arguments['flow_id'] : '';
-                $this->userAssignmentHandler->adhocReassign($flowData, $arguments['adhoc_user']);
+                $isFormRequest= isset($arguments['reassign_form']) ? true : false;
+                $this->userAssignmentHandler->adhocReassign($flowData, $arguments['adhoc_user'], false, $isFormRequest);
                 $userId = $flowData['cas_user_id'];
                 $flowData['cas_flow_status'] = 'FORM';
                 $flowAction = 'CLOSE';
@@ -125,7 +132,7 @@ class PMSEUserTask extends PMSEActivity
         return $result;
     }
 
-    public function processAction($flowData, $externalAction)
+    public function processAction($flowData, $externalAction, $arguments= array())
     {
         switch ($externalAction) {
             case '':
@@ -134,11 +141,15 @@ class PMSEUserTask extends PMSEActivity
             case 'REASSIGN':
                 $action = 'REASSIGN';
                 break;
+            case 'ROUTE':
+                if (!empty($arguments['taskContinue']) && $arguments['taskContinue']) {
+                    $action = 'ROUTE';
+                } else {
+                    $action = $this->processUserAction($flowData);
+                }
+                break;
             case 'APPROVE':
             case 'REJECT':
-            case 'ROUTE':
-                $action = $this->processUserAction($flowData);
-                break;
             default:
                 $action = 'ROUTE';
                 break;

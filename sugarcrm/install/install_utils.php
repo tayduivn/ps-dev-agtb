@@ -1126,6 +1126,13 @@ function handleWebConfig()
     echo "<p>Rebuilding configuration element</p>\n";
         $xmldoc->startElement('system.webServer');
         echo "<p>Rebuilding system.webServer element</p>\n";
+            $xmldoc->startElement('security');
+                $xmldoc->startElement('requestFiltering');
+                    $xmldoc->startElement('requestLimits');
+                        $xmldoc->writeAttribute('maxAllowedContentLength', 104857600);
+                    $xmldoc->endElement();
+                $xmldoc->endElement();
+            $xmldoc->endElement();
             $xmldoc->startElement('rewrite');
             echo "<p>Rebuilding rewrite element</p>\n";
                 $xmldoc->startElement('rules');

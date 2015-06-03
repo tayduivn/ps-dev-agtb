@@ -51,7 +51,7 @@ foreach ($reportsToEmail as $scheduleInfo) {
     $job->assigned_user_id = $scheduleInfo['user_id'];
     $job->target = 'class::SugarJobSendScheduledReport';
     $job->data = $scheduleInfo['id'];
-    $job->job_group = 'Report ' . $scheduleInfo['report_id'];
+    $job->job_group = $scheduleInfo['report_id'];
     $queue->submitJob($job);
 }
 

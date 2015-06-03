@@ -40,52 +40,13 @@
      * @private
      */
     _render: function() {
-        this._super("_render");
-        var massCollection              = this.context.get('mass_collection'),
-            selectedRecipientsFieldName = 'compose_addressbook_selected_recipients';
-        if (massCollection) {
-            // get rid of any old event listeners on the mass collection
-            massCollection.off(null, null, this);
-            // add a new recipient to the selected recipients field as recipients are added to the mass collection
-            massCollection.on('add', function(model) {
-                var existingRecipients = this.model.get(selectedRecipientsFieldName);
-                if (model.id && existingRecipients instanceof Backbone.Collection) {
-                    existingRecipients.add(model);
-                }
-            }, this);
-            // remove a recipient from the selected recipients field as recipients are removed from the mass collection
-            massCollection.on('remove', function(model) {
-                var existingRecipients = this.model.get(selectedRecipientsFieldName);
-                if (model.id && existingRecipients instanceof Backbone.Collection) {
-                    existingRecipients.remove(model);
-                }
-            }, this);
-            // remove from the selected recipients field all recipients found in the current collection
-            massCollection.on('reset', function(newCollection, prevCollection) {
-                var existingRecipients = this.model.get(selectedRecipientsFieldName);
-                if (existingRecipients instanceof Backbone.Collection) {
-                    if (newCollection.length > 0) {
-                        //select all should be cumulative
-                        newCollection.add(prevCollection.previousModels);
-                    } else {
-                        //remove all should only remove models that are visible in the list
-                        newCollection.add(_.difference(prevCollection.previousModels, this.collection.models));
-                    }
-                    existingRecipients.reset(newCollection.models);
-                }
-            }, this);
-            // find any currently selected recipients and add them to mass_collection so the checkboxes on the
-            // corresponding rows are pre-selected
-            var existingRecipients = this.model.get(selectedRecipientsFieldName);
-            if (existingRecipients instanceof Backbone.Collection && existingRecipients.length > 0) {
-                // only bother with adding, to mass_collection, recipients that are visible in the list view
-                var recipientsToPreselect = existingRecipients.filter(_.bind(function(recipient) {
-                    return (this.collection.where({id: recipient.get('id')}).length > 0);
-                }, this));
-                if (recipientsToPreselect.length > 0) {
-                    massCollection.add(recipientsToPreselect);
-                }
-            }
+        if (app.acl.hasAccessToAny('developer')) {
+            this._super('_render');
+        }
+        else {
+            app.controller.loadView({
+                layout: 'access-denied'
+            });
         }
     },
     /**
