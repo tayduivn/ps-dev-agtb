@@ -135,17 +135,13 @@ html.rtl {
     }
 
     h4.merge-interface-header {
-      text-indent: 14px;
+      padding-right: 20px;
     }
 
     h4.merge-interface-header button {
-        left: -20px;
+        left: -7px;
         position: relative;
         text-align: right;
-    }
-
-    h4.merge-interface-header button.on {
-        .border-radius(0 4px 4px 0);
     }
 
     div.show-hide-toggle {
@@ -514,6 +510,14 @@ html.rtl {
         }
     }
 
+    .drawer {
+        .dashablelist-filter {
+            > div >.search-filter::before {
+                right: 20px;
+            }
+        }
+    }
+
     .select2-drop.select2-drop-multi.search-filter-dropdown {
         right: 9px;
         left: auto !important;
@@ -862,7 +866,7 @@ html.rtl {
         .dashlet .listed li img {
             margin: 0 0 0 12px;
         }
-        .dashlet .listed li .details {
+        .dashlet .listed:not(.kbcontents) li .details {
             padding-right: 44px;
             padding-left: 0;
         }
@@ -1132,6 +1136,9 @@ html.rtl {
     .dashlet {
         h4 {
             padding: 7px 10px 8px 80px;
+        }
+        .kbcontents h4 {
+            padding: 0;
         }
     }
 

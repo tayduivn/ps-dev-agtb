@@ -514,6 +514,7 @@ AdamCanvas.prototype.getContextMenu = function () {
         label: translate('LBL_PMSE_FORM_LABEL_MODULE'),
         name: 'comboModules',
         submit: false,
+        readOnly: true,
         change: function () {
             return fieldsItems(this.value);
         },

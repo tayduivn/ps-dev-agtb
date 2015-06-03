@@ -192,7 +192,7 @@ class PMSEUserAssignmentHandler
      * @param type $isRoundTripReassign
      * @return boolean
      */
-    public function adhocReassign($caseData, $userId, $isRoundTripReassign = false)
+    public function adhocReassign($caseData, $userId, $isRoundTripReassign = false, $isFormRequest = false)
     {
         $today = TimeDate::getInstance()->nowDb();
         $caseBean = $this->retrieveBean('pmse_BpmFlow'); //new BpmFlow();
@@ -203,9 +203,7 @@ class PMSEUserAssignmentHandler
                 'cas_id' => $caseData['cas_id'],
                 'cas_index' => $caseData['cas_index']
             ));
-//        $where = 'cas_id=' . $caseData['cas_id'] . ' AND cas_index=' . $caseData['cas_index'];
-//        $flowList = $this->wrapper->getSelectRows($caseBean, '', $where);
-//        $flowRow = $flowList['rowList'][0];
+
         $selectFields = array("max(cas_index) as max_index");
         $maxIndexFlow = $this->wrapper->getSelectRows($caseBean, '', 'cas_id=' . $caseData['cas_id'], 0, -1, -1,
             $selectFields, array());
@@ -223,6 +221,15 @@ class PMSEUserAssignmentHandler
         $newFlowRow->cas_adhoc_type = isset($caseData['cas_adhoc_type']) ? $caseData['cas_adhoc_type'] : $flowRow->cas_adhoc_type;
         $newFlowRow->cas_task_start_date = !isset($flowRow->cas_task_start_date) ? $flowRow->cas_delegate_date : $flowRow->cas_task_start_date;
         $newFlowRow->cas_delegate_date = $today;
+        if ($newFlowRow->cas_adhoc_type == 'ONE_WAY') {
+            $newFlowRow->cas_adhoc_actions = $flowRow->cas_adhoc_actions;
+        } else {
+            if ($isFormRequest) {
+                $newFlowRow->cas_adhoc_actions = serialize(array('link_cancel', 'route', 'edit'));
+            } else {
+                $newFlowRow->cas_adhoc_actions = $caseData['cas_adhoc_actions'];
+            }
+        }
 
         if ($newFlowRow->cas_adhoc_type != $flowRow->cas_adhoc_type) {
             $newFlowRow->cas_adhoc_parent_id = $flowRow->id;
@@ -278,6 +285,7 @@ class PMSEUserAssignmentHandler
         $newFlowRow->cas_previous = $caseData['cas_index'];
         $newFlowRow->cas_adhoc_type = $caseData['cas_adhoc_type'];
         $newFlowRow->cas_adhoc_parent_id = $caseData['cas_adhoc_parent_id'];
+        $newFlowRow->cas_adhoc_actions = $caseData['cas_adhoc_actions'];
         $newFlowRow->cas_task_start_date = isset($flowRow->cas_task_start_date) ? $flowRow->cas_delegate_date : $flowRow->cas_task_start_date;
         $newFlowRow->cas_reassign_level = $caseData['cas_reassign_level'];
 
@@ -314,6 +322,7 @@ class PMSEUserAssignmentHandler
         $previousFlowRecord = $previousFlow->get_full_list('', $where);
         //$previousFlowRecord = $this->wrapper->getSelectRows($previousFlow, '', $where);
         $previousFlowRecord = $previousFlowRecord[0];
+        $caseData['cas_adhoc_actions'] = $previousFlowRecord->cas_adhoc_actions;
         $this->adhocReassign($caseData, $previousFlowRecord->cas_user_id, true);
     }
 
@@ -351,6 +360,7 @@ class PMSEUserAssignmentHandler
         $originalFlow = $this->retrieveBean('pmse_BpmFlow', $firstDerivatedFlow->cas_adhoc_parent_id); //new BpmFlow();
         $caseData['cas_adhoc_type'] = $originalFlow->cas_adhoc_type;
         $caseData['cas_adhoc_parent_id'] = $originalFlow->cas_adhoc_parent_id;
+        $caseData['cas_adhoc_actions'] = $originalFlow->cas_adhoc_actions;
         $caseData['cas_reassign_level'] = $originalFlow->cas_reassign_level;
         $this->originReassign($caseData, $originalFlow->cas_user_id);
     }

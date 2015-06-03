@@ -69,8 +69,8 @@
         this.layout.on('dashlet:collapse', this.loadImportEnrich, this);
         app.events.register('dnbcompinfo:duns_selected', this);
         app.events.register('dnbcompinfo:industry_code', this);
-        this.statesList = app.lang.get('dnb_states_iso', 'Connectors');
-        this.countryList = app.lang.get('dnb_countries_iso', 'Connectors');
+        this.statesList = app.lang.getAppListKeys('dnb_states_iso');
+        this.countryList = app.lang.getAppListKeys('dnb_countries_iso');
         //initializing the data dictionary for cleanse match
         this.cleanseMatchDD = this.searchDD;
         this.cleanseMatchDD.confidenceCode = { 'json_path' : 'MatchQualityInformation.ConfidenceCodeValue' };

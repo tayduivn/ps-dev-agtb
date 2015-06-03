@@ -188,6 +188,12 @@ $viewdefs[$module_name]['base']['view']['dashlet-processes'] = array(
                     'acl_action' => 'edit',
                 ),
             ),
+            'fields' => array(
+                'name',
+                'assigned_user_name',
+                'assigned_user_id',
+                'date_entered',
+            ),
         ),
         array(
             'filters' => array(
@@ -244,6 +250,12 @@ $viewdefs[$module_name]['base']['view']['dashlet-processes'] = array(
                     'tooltip' => 'LBL_DESCRIPTION',
                     'acl_action' => 'edit',
                 ),
+            ),
+            'fields' => array(
+                'name',
+                'assigned_user_name',
+                'assigned_user_id',
+                'date_entered',
             ),
         ),
     ),

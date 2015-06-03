@@ -224,7 +224,7 @@ $out .=<<<EOQ
                 <td></td>
                 <td><b>{$mod_strings['LBL_SITECFG_ADMIN_Name']}</b></td>
                 <td>
-                    Admin
+                    {$_SESSION['setup_site_admin_user_name']}
                 </td>
             </tr>
             <tr>

@@ -3879,7 +3879,7 @@ class MetaDataManager
             // remove non-existing options from the filter
             $filter = array_intersect_key($filter, $defaults);
             // add default options to the filter and preserve original key order
-            $filter = array_merge($filter, array_diff_key($defaults, $filter));
+            $filter = array_replace($filter, array_diff_key($defaults, $filter));
         }
 
         return $filter;
