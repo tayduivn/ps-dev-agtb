@@ -15,6 +15,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once("include/SugarRouting/SugarRouting.php");
 
 $ie = BeanFactory::getBean('InboundEmail');
+$ie->disable_row_level_security = true;
 $json = getJSONobj();
 $rules = new SugarRouting($ie, $current_user);
 

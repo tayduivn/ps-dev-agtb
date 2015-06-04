@@ -34,11 +34,12 @@
      * Special handling of the templates, if we are displaying it as a percent, then use the _super call,
      * otherwise get the templates from the currency field.
      */
-    _loadTemplate: function () {
+    _loadTemplate: function() {
         if (this.model.get('discount_select') == true) {
             this._super('_loadTemplate');
         } else {
-            this.template = app.template.getField('currency', this.action || this.view.action, this.module);
+            this.template = app.template.getField('currency', this.action || this.view.action, this.module) ||
+                app.template.empty;
             this.tplName = this.action || this.view.action;
         }
     },

@@ -32,6 +32,7 @@ class Bug33905Test extends Sugar_PHPUnit_Framework_TestCase
         $this->_user->default_team=$this->_team->id;
         $this->_team->add_user_to_team($this->_user->id);
 		$this->_user->save();
+        $current_user = $this->_user;
 		$ieID = $this->_createInboundAccount();
 		$ie = new InboundEmail();
 		$this->_ie = $ie->retrieve($ieID);
@@ -82,7 +83,10 @@ class Bug33905Test extends Sugar_PHPUnit_Framework_TestCase
     
 	function testCreateSubscriptions(){
 	    
-        $current_user = $this->_user;
+        global $current_user;
+
+        $this->assertInstanceOf("InboundEmail", $this->_ie);
+
 	    $this->_ie->createUserSubscriptionsForGroupAccount();
 
 	    $subs = unserialize(base64_decode($current_user->getPreference('showFolders', 'Emails')));

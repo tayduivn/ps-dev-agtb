@@ -2390,7 +2390,7 @@ AdamActivity.prototype.actionFactory = function (type) {
                     root.canvas.emptyCurrentSelection();
                     combo_modules.proxy.getData({cardinality: 'one-to-many'}, {
                        success: function(modules) {
-                           if (modules && modules.success) {
+                           if (modules && modules.success && modules.result && modules.result.length > 1) {
                                 modules.result = modules.result.splice(1);
                                combo_modules.setOptions(modules.result);
                                initialModule = data.act_field_module || modules.result[0].value;
@@ -2410,6 +2410,15 @@ AdamActivity.prototype.actionFactory = function (type) {
                                        App.alert.dismiss('upload');
                                        w.html.style.display = 'inline';
                                    }
+                               });
+                           }
+                           else {
+                               App.alert.dismiss('upload');
+                               w.hide();
+                               App.alert.show('upload', {
+                                   level: 'warning',
+                                   messages: SUGAR.App.lang.get('LBL_PMSE_CANNOT_CONFIGURE_ADD_RELATED_RECORD', 'pmse_Project'),
+                                   autoClose: true
                                });
                            }
                        }

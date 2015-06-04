@@ -26,6 +26,7 @@ $r = $ie->db->query("SELECT id FROM inbound_email WHERE deleted=0 AND status='Ac
 
 while($a = $ie->db->fetchByAssoc($r)) {
 	$ieX = BeanFactory::getBean('InboundEmail', $a['id']);
+    $ieX->disable_row_level_security = true;
 	$ieX->connectMailserver();
 	//$newMsgs = $ieX->getNewMessageIds();
 	$newMsgs = array();

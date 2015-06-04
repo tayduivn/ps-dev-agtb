@@ -245,6 +245,7 @@ class User extends Person {
 	public function hasPersonalEmail()
 	{
 	    $focus = BeanFactory::getBean('InboundEmail');
+        $focus->disable_row_level_security = true;
 	    $focus->retrieve_by_string_fields(array('group_id' => $this->id));
 
 	    return !empty($focus->id);

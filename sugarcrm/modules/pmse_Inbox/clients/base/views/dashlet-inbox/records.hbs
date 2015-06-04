@@ -41,14 +41,13 @@
                         {{/with}}
                     {{/if}}
                     <div class="details" style="margin-left: 0;padding-left: 0px;">
-                        {{#eq '1' attributes.cas_started}}
+                        {{#if attributes.is_assigned}}
                             <a href="#{{buildRoute module="Employees" id=attributes.cas_user_id action="detail"}}">
                                 {{getFieldValue this "cas_user_id_full_name"}}
                             </a>
-                        {{/eq}}
-                        {{#eq '0' attributes.cas_started}}
+                        {{else}}
                             {{str "LBL_UNASSIGNED" this.module}}
-                        {{/eq}}
+                        {{/if}}
                         <!--&#44;&nbsp; attributes.record_date //task_name -->
                         <!--<date class="date">{{timeago attributes.overdue "TPL_TABBED_DASHLET_TIME_RELATIVE"}}</date>
                         <date class="date">{{timeago attributes.date_due "TPL_TABBED_DASHLET_TIME_RELATIVE"}}</date>-->
