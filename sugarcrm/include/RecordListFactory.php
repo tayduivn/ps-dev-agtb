@@ -55,6 +55,8 @@ class RecordListFactory
     public static function saveRecordList($recordList, $module, $id = null, $user = null)
     {
         global $dictionary;
+        include_once 'metadata/recordListMetaData.php';
+
         $db = DBManagerFactory::getInstance();
 
         if ($user == null) {
