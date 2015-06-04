@@ -28,6 +28,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\Emai
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\CrossModuleAggHandler;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\TagsHandler;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\FavoritesHandler;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\HtmlHandler;
 
 /**
  *
@@ -115,6 +116,7 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
         $this->addHandler(new CrossModuleAggHandler());
         $this->addHandler(new TagsHandler());
         $this->addHandler(new FavoritesHandler());
+        $this->addHandler(new HtmlHandler());
     }
 
     /**

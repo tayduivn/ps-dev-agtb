@@ -646,11 +646,18 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                         'index' => 'not_analyzed',
                         'include_in_all' => false,
                         'fields' => array(
-                            'gs_string_html' => array(
+                            'gs_string' =>  array(
                                 'type' => 'string',
                                 'index' => 'analyzed',
-                                'index_analyzer' => 'gs_analyzer_string_html',
-                                'search_analyzer' => 'gs_analyzer_string_html',
+                                'index_analyzer' => 'gs_analyzer_string',
+                                'search_analyzer' => 'gs_analyzer_string',
+                                'store' => true,
+                            ),
+                            'gs_text_wildcard' => array(
+                                'type' => 'string',
+                                'index' => 'analyzed',
+                                'index_analyzer' => 'gs_analyzer_text_ngram',
+                                'search_analyzer' => 'gs_analyzer_string',
                                 'store' => true,
                             ),
                         ),
