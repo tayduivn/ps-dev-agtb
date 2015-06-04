@@ -11,7 +11,6 @@
  */
 
 $viewdefs['Forecasts']['base']['view']['info'] = array(
-    'type' => 'info',
     'timeperiod' => array(
         array(
             'name' => 'selectedTimePeriod',

@@ -1,4 +1,3 @@
-<?php
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -9,6 +8,11 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-$viewdefs['base']['view']['panel-top-create'] = array(
-    'buttons' => array(),
-);
+/**
+ * @class View.Views.Base.HelpDashboardHeaderpaneView
+ * @alias SUGAR.App.view.views.BaseHelpDashboardHeaderpaneView
+ * @extends View.Views.Base.DashboardHeaderpaneView
+ */
+({
+    extendsFrom: 'DashboardHeaderpaneView'
+})

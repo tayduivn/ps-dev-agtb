@@ -1,5 +1,3 @@
-<?php
-
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -10,8 +8,11 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-
-$viewdefs['base']['view']['shortcuts-config'] = array(
-    'type' => 'shortcuts-config',
-    'name' => 'shortcuts-config',
-);
+/**
+ * @class View.Views.Accounts.PanelTopForProspectlistsView
+ * @alias SUGAR.App.view.views.AccountsPanelTopForProspectlistsView
+ * @extends View.Views.Base.PanelTopView
+ */
+({
+    extendsFrom: 'PanelTopView'
+})

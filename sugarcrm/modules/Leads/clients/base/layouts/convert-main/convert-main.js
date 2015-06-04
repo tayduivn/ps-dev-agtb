@@ -83,7 +83,6 @@
         view = app.view.createView({
             context: this.context,
             layout: this,
-            name: 'convert-options',
             type: 'convert-options',
             platform: this.options.platform
         });

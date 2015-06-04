@@ -197,7 +197,7 @@
         if (!this._feedbackView || this._feedbackView.disposed) {
             this._feedbackView = app.view.createView({
                 module: 'Feedbacks',
-                name: 'feedback',
+                type: 'feedback',
                 button: this.$('[data-action="feedback"]')
             });
 
