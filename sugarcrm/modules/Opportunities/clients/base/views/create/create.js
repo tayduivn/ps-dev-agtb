@@ -37,6 +37,16 @@
      */
     alert: undefined,
 
+    /**
+     * What are we viewing by
+     */
+    viewBy: 'Opportunities',
+
+    /**
+     * Does the current user has access to RLI's?
+     */
+    hasRliAccess: true,
+
     //END SUGARCRM flav=ent ONLY
 
     /**
@@ -45,6 +55,8 @@
     initialize: function(options) {
         //BEGIN SUGARCRM flav=ent ONLY
         this.plugins = _.union(this.plugins, ['LinkedModel']);
+        this.viewBy = app.metadata.getModule('Opportunities', 'config').opps_view_by;
+        this.hasRliAccess = app.acl.hasAccess('edit', 'RevenueLineItems');
         //END SUGARCRM flav=ent ONLY
         this._super('initialize', [options]);
         app.utils.hideForecastCommitStageField(this.meta.panels);
@@ -53,10 +65,45 @@
     //BEGIN SUGARCRM flav=ent ONLY
 
     /**
+     * Custom logic to make sure that none of the rli records have changed
+     *
+     * @override
+     * @return {boolean}
+     */
+    hasUnsavedChanges: function() {
+        var ret = this._super('hasUnsavedChanges');
+        if (this.viewBy === 'RevenueLineItems' && this.hasRliAccess && ret === false) {
+            // now lets check for RLI's
+            var rli_context = this.context.getChildContext({link: 'revenuelineitems'});
+            rli_context.prepare();
+
+            // if there is more than one record in the related context collection, then return true
+            if (rli_context.get('collection').length > 1) {
+                ret = true;
+            } else {
+                // if there is only one model, we need to verify that the model is not dirty.
+                // check the non default attributes to make sure they are not empty.
+                var model = rli_context.get('collection').at(0),
+                    attr_keys = _.difference(_.keys(model.attributes), ['id']),
+                    // if the value is not empty and it doesn't equal the default value
+                    // we have a dirty model
+                    unsavedRliChanges = _.find(attr_keys, function(attr) {
+                        var val = model.get(attr);
+                        return (!_.isEmpty(val) && (model._defaults[attr] !== val));
+                    });
+
+                ret = (!_.isUndefined(unsavedRliChanges));
+            }
+        }
+
+        return ret;
+    },
+
+    /**
      * @override
      */
     getCustomSaveOptions: function(options) {
-        if (app.metadata.getModule('Opportunities', 'config').opps_view_by === 'RevenueLineItems') {
+        if (this.viewBy === 'RevenueLineItems') {
             this.createdModel = this.model;
             // since we are in a drawer
             this.listContext = this.context.parent || this.context;
@@ -84,7 +131,7 @@
     _checkForRevenueLineItems: function(model, options) {
         // lets make sure we have edit/create access to RLI's
         // if we do, lets make sure that the values where added
-        if (app.acl.hasAccess('edit', 'RevenueLineItems')) {
+        if (this.hasRliAccess) {
             // check to see if we added RLIs during create
             var addedRLIs = model.get('revenuelineitems') || false;
             addedRLIs = (addedRLIs && addedRLIs.create && addedRLIs.create.length);

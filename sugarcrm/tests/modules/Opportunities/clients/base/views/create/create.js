@@ -41,6 +41,120 @@ describe('Opportunities.Base.Views.Create', function() {
     });
 
     //BEGIN SUGARCRM flav=ent ONLY
+
+    describe('hasUnsavedChanges', function() {
+        beforeEach(function() {
+            sinon.sandbox.stub(view, '_super', function() {
+                return false;
+            });
+        });
+
+        it('will return false from _super call', function() {
+            view.viewBy = 'Opportunities';
+            expect(view.hasUnsavedChanges()).toBeFalsy();
+        });
+
+        describe('when not using rlis', function() {
+            beforeEach(function() {
+                view.viewBy = 'Opportunities';
+                sinon.sandbox.stub(view.context, 'getChildContext');
+            });
+
+            it('should not call getChildContext', function() {
+                view.hasUnsavedChanges();
+                expect(view.context.getChildContext).not.toHaveBeenCalled();
+            });
+        });
+
+        describe('when using rlis', function() {
+            beforeEach(function() {
+                view.viewBy = 'RevenueLineItems';
+            });
+
+            it('will not call getChildContext when hasRLIAccess is false', function() {
+                sinon.sandbox.stub(view.context, 'getChildContext');
+                view.hasRliAccess = false;
+                view.hasUnsavedChanges();
+                expect(view.context.getChildContext).not.toHaveBeenCalled();
+            });
+
+            describe('and has access will call getChildContext', function() {
+                it('and return true with a collection length > 1', function() {
+                    sinon.sandbox.stub(view.context, 'getChildContext', function() {
+                        return {
+                            prepare: function() {},
+                            get: function() {
+                                return {
+                                    length: 2
+                                };
+                            }
+                        };
+                    });
+                    expect(view.hasUnsavedChanges()).toBeTruthy();
+                });
+
+                it('and return false with no model changes', function() {
+                    sinon.sandbox.stub(view.context, 'getChildContext', function() {
+                        return {
+                            prepare: function() {},
+                            get: function() {
+                                return {
+                                    at: function() {
+                                        return new app.Bean();
+                                    },
+                                    length: 1
+                                };
+                            }
+                        };
+                    });
+                    expect(view.hasUnsavedChanges()).toBeFalsy();
+                });
+
+                it('and return false with no default data changes', function() {
+                    var model = new app.Bean();
+                    model.setDefault('name', 'test');
+
+                    sinon.sandbox.stub(view.context, 'getChildContext', function() {
+                        return {
+                            prepare: function() {},
+                            get: function() {
+                                return {
+                                    at: function() {
+                                        return model;
+                                    },
+                                    length: 1
+                                };
+                            }
+                        };
+                    });
+                    expect(view.hasUnsavedChanges()).toBeFalsy();
+                });
+
+                it('and return true with bean changes', function() {
+
+                    var model = new app.Bean();
+                    model.setDefault('name', 'test');
+                    model.set('name', 'changed');
+
+                    sinon.sandbox.stub(view.context, 'getChildContext', function() {
+                        return {
+                            prepare: function() {},
+                            get: function() {
+                                return {
+                                    at: function() {
+                                        return model;
+                                    },
+                                    length: 1
+                                };
+                            }
+                        };
+                    });
+                    expect(view.hasUnsavedChanges()).toBeTruthy();
+                });
+            });
+        });
+    });
+
     describe('getCustomSaveOptions', function() {
         var opts;
 
@@ -76,25 +190,17 @@ describe('Opportunities.Base.Views.Create', function() {
         });
 
         it('will not call showRLIWarningMessage due to not having access', function() {
-            sinon.sandbox.stub(app.acl, 'hasAccess', function() {
-                return false;
-            });
+            view.hasRliAccess = false;
             view._checkForRevenueLineItems(model, options);
             expect(view.showRLIWarningMessage).not.toHaveBeenCalled();
         });
         it('will not call showRLIWarningMessage due having added RLIs', function() {
-            sinon.sandbox.stub(app.acl, 'hasAccess', function() {
-                return true;
-            });
             model.set('revenuelineitems', {create: ['one']});
             view._checkForRevenueLineItems(model, options);
 
             expect(view.showRLIWarningMessage).not.toHaveBeenCalled();
         });
         it('will call showRLIWarningMessage', function() {
-            sinon.sandbox.stub(app.acl, 'hasAccess', function() {
-                return true;
-            });
             model.set('revenuelineitems', {});
             view._checkForRevenueLineItems(model, options);
             expect(view.showRLIWarningMessage).toHaveBeenCalled();
