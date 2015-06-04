@@ -149,6 +149,52 @@ describe('Base.Fields.Currency', function() {
         });
     });
 
+    describe('setMode', function() {
+        var field, sandbox = sinon.sandbox.create();
+        beforeEach(function() {
+            field = SugarTest.createField(
+                'base',
+                'amount',
+                'currency',
+                'edit',
+                {
+                    related_fields: ['currency_id', 'base_rate'],
+                    currency_field: 'currency_id',
+                    base_rate_field: 'base_rate'
+                },
+                moduleName,
+                model
+            );
+            field._loadTemplate();
+            sandbox.stub(field, '_super');
+            sandbox.stub(field, 'getCurrencyField', function() {
+                return {
+                    setMode: function() {
+                    },
+                    setElement: function() {
+                    }
+                };
+            });
+        });
+
+        afterEach(function() {
+            field = null;
+            sandbox.restore();
+        });
+
+        it('calls getCurrencyField when field.action is edit', function() {
+            field.action = 'edit';
+            field.setMode('edit');
+            expect(field.getCurrencyField).toHaveBeenCalled();
+        });
+
+        it('doesnt calls getCurrencyField when field.action not edit', function() {
+            field.action = 'disabled';
+            field.setMode('edit');
+            expect(field.getCurrencyField).not.toHaveBeenCalled();
+        });
+    });
+
     describe('EditView', function() {
         var field;
 

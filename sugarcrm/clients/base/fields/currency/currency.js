@@ -417,7 +417,9 @@
      */
     setMode: function(name) {
         this._super('setMode', [name]);
-        this.getCurrencyField().setMode(name);
+        if (this.action === 'edit') {
+            this.getCurrencyField().setMode(name);
+        }
     },
 
     /**

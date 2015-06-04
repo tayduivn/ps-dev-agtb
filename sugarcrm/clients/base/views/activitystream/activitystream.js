@@ -427,6 +427,10 @@
      * Resize the iframe that embeds video
      */
     resizeVideo: function() {
+        // if this is disposed, then just bail as the code below with throw errors
+        if (this.disposed === true) {
+            return;
+        }
         var data = this.model.get('data'),
             $embed = this.$('.embed'),
             $iframes = $embed.find('iframe'),
