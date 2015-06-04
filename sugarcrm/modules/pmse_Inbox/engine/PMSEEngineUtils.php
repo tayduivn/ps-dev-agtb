@@ -962,7 +962,7 @@ class PMSEEngineUtils
         if (isset($def['source']) && $def['source'] == 'non-db') {
             $result = false;
         }
-        if (isset($def['type']) && $def['type'] == 'image'){
+        if (isset($def['type']) && ($def['type'] == 'image' || $def['type'] == 'password')) {
             $result = false;
         }
         if ($type == 'AC') {

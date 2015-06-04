@@ -110,7 +110,7 @@ class SugarUpgradeMergeDropdownsTest extends UpgradeTestCase
                     'skip_sync' => true,
                     'view_package' => 'studio',
                     'use_push' => false,
-                    'handleSpecialDropdowns' => true,
+                    'skipSaveExemptDropdowns' => true,
                 ),
             ),
             // Change value to the one from $new
@@ -137,7 +137,7 @@ class SugarUpgradeMergeDropdownsTest extends UpgradeTestCase
                     'skip_sync' => true,
                     'view_package' => 'studio',
                     'use_push' => false,
-                    'handleSpecialDropdowns' => true,
+                    'skipSaveExemptDropdowns' => true,
                 ),
             ),
             // Change value to the one from $custom
@@ -166,7 +166,7 @@ class SugarUpgradeMergeDropdownsTest extends UpgradeTestCase
                     'skip_sync' => true,
                     'view_package' => 'studio',
                     'use_push' => false,
-                    'handleSpecialDropdowns' => true,
+                    'skipSaveExemptDropdowns' => true,
                 ),
             ),
         );
@@ -222,7 +222,7 @@ class SugarUpgradeMergeDropdownsTest extends UpgradeTestCase
                         'skip_sync' => true,
                         'view_package' => 'studio',
                         'use_push' => false,
-                        'handleSpecialDropdowns' => true,
+                        'skipSaveExemptDropdowns' => true,
                     ),
                 ),
                 array(
@@ -233,7 +233,7 @@ class SugarUpgradeMergeDropdownsTest extends UpgradeTestCase
                         'skip_sync' => true,
                         'view_package' => 'studio',
                         'use_push' => false,
-                        'handleSpecialDropdowns' => true,
+                        'skipSaveExemptDropdowns' => true,
                     ),
                 )
             );

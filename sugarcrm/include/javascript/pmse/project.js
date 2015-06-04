@@ -145,6 +145,7 @@ AdamProject.prototype.setUid = function (value) {
  */
 AdamProject.prototype.setName = function (value) {
     var $title, $title_box;
+    value = Handlebars.Utils.escapeExpression(value);
     this.name = value;
     $title = $('#ProjectTitle');
     $title_box = $('#txt-title');
@@ -1816,3 +1817,8 @@ AdamProject.prototype.setMetadata = function (metadata) {
 AdamProject.prototype.getMetadata = function (metadataName) {
     return (this._metadata[metadataName] && this._metadata[metadataName].data) || null;
 };
+
+AdamProject.prototype.dispose = function () {
+    // TODO: dispose the project completely
+    jCore.dispose();
+}

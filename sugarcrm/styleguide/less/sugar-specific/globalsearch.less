@@ -21,31 +21,39 @@
       font-weight: 900;
     }
   }
-
-  .quicksearch-tags {
-    &.hide {
-      display: none;
-    }
-    font-size: 0;
+  .quicksearch-tags-wrapper {
     position: relative;
-    height: 26px;
-    border: 1px solid @grayLighter;
-    box-shadow: 0 2px 1px rgba(0,0,0,0.1);
-    background: #fff;
-    .qs-tag-icon > .fa{
-      color: @grayDark;
-    }
-    .qs-tags-row {
-      font-size: 12px;
-      display: inline-block;
-      border-right: 2px solid @grayLighter;
-      position: relative;
-      padding: 5px 10px 0px 10px;
-      &.active {
-        background: @dropdownLinkBackgroundHover;
+    right: 0;
+    left: 0;
+    .quicksearch-tags {
+      &.hide {
+        display: none;
       }
-      a {
-        color: #555;
+      font-size: 0;
+      top: 0;
+      right: 0;
+      left: 0;
+      height: 26px;
+      border: 1px solid @grayLighter;
+      box-shadow: 0 2px 1px rgba(0,0,0,0.1);
+      background: #fff;
+      .qs-tag-icon > .fa{
+        color: @grayDark;
+      }
+      .qs-tags-row {
+        font-size: 12px;
+        display: inline-block;
+        border-right: 2px solid @grayLighter;
+        position: relative;
+        padding: 5px 10px 4px 10px;
+        &.active {
+          background: @dropdownLinkBackgroundHover;
+        }
+        a {
+          color: #555;
+          padding: 0;
+          border-top: 0px;
+        }
       }
     }
   }
@@ -53,9 +61,47 @@
   .tag-wrapper {
     position: relative;
     display: inline;
-
+    margin: 2px 4px 2px 4px;
+    font-size: 12px;
+    font-weight: bold;
+    border: none;
+    .box-shadow(none);
+    line-height: 12px;
+    .border-radius(11px);
+    background: @gray;
+    color: @white;
+    padding: 2px 4px 2px 6px;
+    white-space: nowrap;
     &.highlight {
-      background: yellow;
+      background: @black;
+    }
+    div.tag-name {
+      display: inline;
+      font-size: 11px;
+      line-height: 13px;
+    }
+    a.tag-remove {
+      font-family: FontAwesome;
+      font-size: 12px;
+      font-weight: normal;
+      text-decoration: none;
+      color: fade(@white, 70%);
+      background: none;
+      line-height: 12px;
+      position: static;
+      display: inline;
+      left: 3px;
+      width: 12px;
+      height: 13px;
+      right: 3px;
+      top: 4px;
+    }
+    a,
+    a.tag-remove:hover {
+      color: @white;
+    }
+    a.tag-remove::before {
+      content: "\f057";
     }
   }
 
@@ -76,6 +122,9 @@
     overflow: hidden;
     height: auto;
     max-height: 333px;
+    &.tagsShown {
+      top: 30px;
+    }
     li {
       min-width: 120px;
       padding: 0;

@@ -169,6 +169,12 @@ $viewdefs['base']['view']['planned-activities'] = array(
                 'type' => 'overdue-badge',
                 'css_class' => 'pull-right',
             ),
+            'fields' => array(
+                'name',
+                'assigned_user_name',
+                'assigned_user_id',
+                'date_start',
+            ),
         ),
         array(
             'filter_applied_to' => 'date_start',
@@ -207,6 +213,12 @@ $viewdefs['base']['view']['planned-activities'] = array(
             'overdue_badge' => array(
                 'name' => 'date_start',
                 'type' => 'overdue-badge',
+            ),
+            'fields' => array(
+                'name',
+                'assigned_user_name',
+                'assigned_user_id',
+                'date_start',
             ),
         ),
     ),

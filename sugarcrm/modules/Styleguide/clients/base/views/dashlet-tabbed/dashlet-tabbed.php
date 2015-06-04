@@ -135,6 +135,12 @@ $viewdefs['Styleguide']['base']['view']['dashlet-tabbed'] = array(
                 'name' => 'date_due',
                 'type' => 'overdue-badge',
             ),
+            'fields' => array(
+                'name',
+                'assigned_user_name',
+                'assigned_user_id',
+                'date_due',
+            ),
         ),
         array(
             'filters' => array(
@@ -166,6 +172,12 @@ $viewdefs['Styleguide']['base']['view']['dashlet-tabbed'] = array(
                     'acl_action' => 'edit',
                 ),
             ),
+            'fields' => array(
+                'name',
+                'assigned_user_name',
+                'assigned_user_id',
+                'date_due',
+            ),
         ),
         array(
             'filters' => array(
@@ -195,6 +207,12 @@ $viewdefs['Styleguide']['base']['view']['dashlet-tabbed'] = array(
                     'tooltip' => 'LBL_UNLINK_BUTTON',
                     'acl_action' => 'edit',
                 ),
+            ),
+            'fields' => array(
+                'name',
+                'assigned_user_name',
+                'assigned_user_id',
+                'date_entered',
             ),
         ),
     ),
