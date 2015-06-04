@@ -92,7 +92,7 @@ class PMSERelatedModule {
                 if (!in_array($relatedModule, PMSEEngineUtils::getSupportedModules('related'))) {
                     continue;
                 }
-                if (in_array($link, array('contact'))) {
+                if (in_array($link, PMSEEngineUtils::$relatedBlacklistedLinks)) {
                     continue;
                 }
                 $relType = $moduleBean->$link->getType(); //returns 'one' or 'many' for the cardinality of the link
