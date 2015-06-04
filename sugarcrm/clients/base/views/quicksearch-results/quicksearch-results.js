@@ -145,8 +145,10 @@
             this.open();
 
             // If the tags view is shown, move this one down
-            var showTags = collection.tags && collection.tags.length;
-            this.$('.typeahead').toggleClass('tagsShown', !!showTags);
+            var shownTags = _.pluck(collection.tags, 'name');
+            var selectedTags = _.pluck(this.selectedTags, 'name');
+            shownTags = _.difference(shownTags, selectedTags);
+            this.$('.typeahead').toggleClass('tagsShown', shownTags.length > 0);
         }, this);
     },
 
