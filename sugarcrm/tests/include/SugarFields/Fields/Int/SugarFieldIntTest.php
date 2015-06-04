@@ -10,10 +10,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 require_once('include/SugarFields/SugarFieldHandler.php');
+require_once('include/database/MysqlManager.php');
+require_once('include/database/OracleManager.php');
+require_once('include/database/IBMDB2Manager.php');
+require_once('include/database/SqlsrvManager.php');
 
 class SugarFieldIntTest extends Sugar_PHPUnit_Framework_TestCase
 {
-
     /**
      *
      * @access public
@@ -149,4 +152,73 @@ class SugarFieldIntTest extends Sugar_PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * @dataProvider apiValidateProvider
+     * @param $db
+     * @param $bean
+     * @param $name
+     * @param $value
+     * @param $vardef
+     * @param $valid
+     */
+    public function testApiValidate($db, $bean, $name, $value, $vardef, $valid)
+    {
+        $field = new SugarFieldIntMock($db);
+        $this->assertEquals($valid, $field->apiValidate($bean, array($name=>$value), $name, $vardef));
+    }
+    
+    /**
+     * testApiValidate data provider
+     * @access public
+     */
+    public function apiValidateProvider()
+    {
+        $bean = new SugarBean();
+        $vardef = array('name'=>'test','type'=>'int');
+        $mysql = new MysqlManager();
+        $db2 = new IBMDB2Manager();
+        $oracle = new OracleManager();
+        $sqlsrv = new SqlsrvManager();
+
+        return array(
+            array($mysql, $bean, 'test', 0, $vardef, true),
+            array($mysql, $bean, 'test', -12345678901, $vardef, false),
+            array($mysql, $bean, 'test', 12345678901, $vardef, false),
+
+            array($oracle, $bean, 'test', 0, $vardef, true),
+            array($oracle, $bean, 'test', -12345678901, $vardef, true),
+            array($oracle, $bean, 'test', 12345678901, $vardef, true),
+
+            array($db2, $bean, 'test', 0, $vardef, true),
+            array($db2, $bean, 'test', -12345678901, $vardef, false),
+            array($db2, $bean, 'test', 12345678901, $vardef, false),
+
+            array($sqlsrv, $bean, 'test', 0, $vardef, true),
+            array($sqlsrv, $bean, 'test', -12345678901, $vardef, false),
+            array($sqlsrv, $bean, 'test', 12345678901, $vardef, false),
+        );
+    }
+}
+
+require_once('include/SugarFields/Fields/Int/SugarFieldInt.php');
+
+class SugarFieldIntMock extends SugarFieldInt
+{
+    protected $db;
+
+    public function __construct($db) 
+    {
+        $this->db = $db;
+    }
+
+    public function getFieldRange($vardef) 
+    {
+        $fieldRange = $this->db->getFieldRange($vardef);
+
+        if (!empty($fieldRange)) {
+            return array('min_value' => max(-PHP_INT_MAX,  $fieldRange['min_value']), 'max_value' => min(PHP_INT_MAX, $fieldRange['max_value']));
+        }
+
+        return false;
+    }
 }
