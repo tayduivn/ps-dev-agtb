@@ -254,11 +254,11 @@
                     userName = parentModel.get('assigned_user_name');
 
                 if (userId) {
-                    bean.set('assigned_user_id', userId);
+                    bean.setDefault('assigned_user_id', userId);
                 }
 
                 if (userName) {
-                    bean.set('assigned_user_name', userName);
+                    bean.setDefault('assigned_user_name', userName);
                 }
             }
 
