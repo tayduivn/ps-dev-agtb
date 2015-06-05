@@ -678,29 +678,45 @@ class StudioModule
         //END SUGARCRM flav=ent ONLY
 
         $GLOBALS['log']->debug(print_r($sources, true));
+
+        require_once 'modules/ModuleBuilder/MB/MBHelper.php';
+        $roles = MBHelper::getRoles();
         foreach ($sources as $name => $defs) {
-            // If this module type doesn't support a given metadata type, we will
-            // get an exception from getParser()
-            try {
-                $parser = ParserFactory::getParser($defs['type'], $this->module);
-                if ($parser && method_exists($parser, 'removeField') && $parser->removeField($fieldName)) {
-                    // don't populate from $_REQUEST, just save as is...
-                    $parser->handleSave(false);
-                }
-            } catch (Exception $e) {}
+            $this->removeFieldFromLayout($this->module, $defs['type'], null, $fieldName);
+            foreach ($roles as $role) {
+                $this->removeFieldFromLayout($this->module, $defs['type'], null, $fieldName, array(
+                    'role' => $role->id,
+                ));
+            }
         }
 
         //Remove the fields in subpanel
         $data = $this->getParentModulesOfSubpanel($this->module);
         foreach ($data as $parentModule) {
-            // If this module type doesn't support a given metadata type, we will
-            // get an exception from getParser()
-            try {
-                $parser = ParserFactory::getParser(MB_LISTVIEW, $parentModule, null, $this->module);
-                if ($parser->removeField($fieldName)) {
-                    $parser->handleSave(false);
-                }
-            } catch (Exception $e) {}
+            $this->removeFieldFromLayout($parentModule, MB_LISTVIEW, $this->module, $fieldName);
+        }
+    }
+
+    /**
+     * Removes a field from layout
+     *
+     * @param string $module Module name
+     * @param string $layout Layout type
+     * @param string $subpanelName Subpanel name
+     * @param string $fieldName Field name
+     * @param array $params Layout parameters
+     */
+    protected function removeFieldFromLayout($module, $layout, $subpanelName, $fieldName, array $params = array())
+    {
+        // If this module type doesn't support a given metadata type, we will
+        // get an exception from getParser()
+        try {
+            $parser = ParserFactory::getParser($layout, $module, null, $subpanelName, null, $params);
+            if ($parser && method_exists($parser, 'removeField') && $parser->removeField($fieldName)) {
+                // don't populate from $_REQUEST, just save as is...
+                $parser->handleSave(false);
+            }
+        } catch (Exception $e) {
         }
     }
 
