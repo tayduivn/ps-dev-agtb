@@ -145,7 +145,7 @@ $fieldBlacklist = array(
 
 foreach ($lead->field_defs as $field_def) {
     $email_fields = false;
-    if ($field_def['name']== 'email1' || $field_def['name']== 'email2') {
+    if ($field_def['name']== 'email' || $field_def['name']== 'email2') {
         $email_fields = true;
     }
 
