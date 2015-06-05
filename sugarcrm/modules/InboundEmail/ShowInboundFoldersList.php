@@ -84,6 +84,7 @@ if (!empty($searchField)) {
 
 $ie = BeanFactory::getBean('InboundEmail');
 if(!empty($_REQUEST['ie_id'])) {
+    $ie->disable_row_level_security = true;
     $ie->retrieve($_REQUEST['ie_id']);
 }
 $ie->email_user     = $_REQUEST['email_user'];

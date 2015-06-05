@@ -15,6 +15,7 @@ require_once('include/SugarFolders/SugarFolders.php');
 global $current_user;
 
 $focus = BeanFactory::getBean('InboundEmail');
+$focus->disable_row_level_security = true;
 if(!empty($_REQUEST['record'])) {
     $focus->retrieve($_REQUEST['record']);
 } elseif(!empty($_REQUEST['origin_id'])) {

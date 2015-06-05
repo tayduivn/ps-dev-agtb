@@ -21,6 +21,11 @@ global $app_strings;
 global $sugar_config;
 global $timedate;
 global $theme;
+global $current_user;
+
+if (!$current_user->isAdminForModule("InboundEmail")) {
+    sugar_die(translate('ERR_NOT_ADMIN'));
+}
 
 /* start standard DetailView layout process */
 $GLOBALS['log']->info("InboundEmails DetailView");

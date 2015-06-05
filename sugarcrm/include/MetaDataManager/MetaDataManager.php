@@ -1604,7 +1604,7 @@ class MetaDataManager
 
         // The basics are, for each platform, rewrite the cache for public and private
         if (empty($platforms)) {
-            $platforms = static::getPlatformList();
+            $platforms = static::getPlatformsWithCaches();
         }
 
         // Make sure the LanguageManager created modules cache is clear
@@ -1617,7 +1617,11 @@ class MetaDataManager
                     $mm = static::getManager($platform, $public, true);
                     $contexts = static::getAllMetadataContexts($public);
                     foreach ($contexts as $context) {
-                        $mm->rebuildCache($force, $context);
+                        if ($context instanceof MetaDataContextDefault) {
+                            $mm->rebuildCache(true);
+                        } else {
+                            $mm->invalidateCache($platforms, $context);
+                        }
                     }
                 }
             }
@@ -3818,6 +3822,8 @@ class MetaDataManager
                 // make sure first file wins and its metadata doesn't get overridden
                 if (!isset($filters[$fieldName])) {
                     $filters[$fieldName] = $this->fixDropdownFilter($filter, $fieldName);
+                    //To preserve order in JSON, we need to return the filters as tuples.
+                    $filters[$fieldName] = array_map(null, array_keys($filters[$fieldName]), $filters[$fieldName]);
                 }
             }
         }

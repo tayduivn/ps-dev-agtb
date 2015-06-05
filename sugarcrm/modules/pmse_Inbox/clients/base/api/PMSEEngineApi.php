@@ -1081,7 +1081,7 @@ class PMSEEngineApi extends SugarApi
             $listButtons = array('link_cancel', 'route', 'edit');
         }
 
-        if (!empty($bpmFlow->cas_adhoc_actions)) {
+        if (!$reclaimCaseByUser && !empty($bpmFlow->cas_adhoc_actions)) {
             $listButtons = unserialize($bpmFlow->cas_adhoc_actions);
         }
         $continue = array_search('continue', $listButtons);

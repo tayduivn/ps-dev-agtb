@@ -27,6 +27,7 @@ $r = $ie->db->query('SELECT id,name FROM inbound_email WHERE deleted=0 AND statu
 
 while($a = $ie->db->fetchByAssoc($r)) {
 	$ieX = BeanFactory::getBean('InboundEmail', $a['id']);
+    $ieX->disable_row_level_security = true;
 	$ieX->connectMailserver();
 
 	echo "<b>Polling [ {$a['name']} ]</b><br>";
