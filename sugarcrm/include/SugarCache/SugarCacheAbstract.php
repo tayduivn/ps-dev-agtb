@@ -85,10 +85,21 @@ abstract class SugarCacheAbstract
     /**
      * PHP's magic __get() method, used here for getting the current value from the cache.
      *
-     * @param  string $key
+     * @param string $key
      * @return mixed
      */
     public function __get($key)
+    {
+        return $this->get($key);
+    }
+
+    /**
+     * Get a value for a key from the cache. Returns NULL in case if the entry is not found
+     *
+     * @param string $key
+     * @return mixed
+     */
+    public function get($key)
     {
         $this->_cacheRequests++;
         if ( !SugarCache::$isCacheReset && (!$this->useLocalStore || !isset($this->_localStore[$key]))) {
