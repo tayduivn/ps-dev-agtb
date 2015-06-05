@@ -257,6 +257,7 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             $files[] = 'modules/Opportunities/clients/base/api/OpportunitiesPipelineChartApi.php';
             $files[] = 'modules/ForecastManagerWorksheets/clients/base/fields/rowactions';
             $files[] = 'modules/Tasks/clients/base/fields/closebutton';
+            $files[] = 'include/SugarFields/Fields/Username';
         }
 
         //CRYS-806 Remove Healthcheck
