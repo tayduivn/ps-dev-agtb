@@ -571,9 +571,6 @@ html.rtl {
 
     .flex-list-view {
         &.right-actions {
-            .dataTable td:last-child .actions .dropdown-menu {
-                left: 0;
-            }
             &.scroll-width {
                 .dataTable {
                     th:last-child {
@@ -926,9 +923,12 @@ html.rtl {
 
     .actions .dropdown-menu {
         right: auto;
-        left: initial;
+        left: 0;
     }
-
+    .actions.actionmenu .dropdown-menu {
+        right: 0;
+        left: auto;
+    }
     .dropdown-menu {
         right: 0;
         left: auto;
@@ -939,6 +939,8 @@ html.rtl {
     }
 
     .morecol .dropdown-menu {
+        right: initial;
+        left: 20px;
         button {
             text-align: right;
             padding-right: 30px;
