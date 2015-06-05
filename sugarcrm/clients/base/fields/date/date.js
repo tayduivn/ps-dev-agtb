@@ -228,6 +228,10 @@
      * care of unformatting the value.
      */
     bindDomChange: function() {
+        if (this._inDetailMode()) {
+            return;
+        }
+
         var $field = this.$(this.fieldTag);
 
         $field.on('focus', _.bind(this.handleFocus, this));
@@ -241,10 +245,24 @@
     },
 
     /**
+     * Determine if the field is currently in a read-only (detail) mode.
+     *
+     * @return {boolean}
+     * @protected
+     */
+    _inDetailMode: function() {
+        return this.action !== 'edit' && this.action !== 'massupdate';
+    },
+
+    /**
      * @inheritDoc
      */
     unbindDom: function() {
         this._super('unbindDom');
+
+        if (this._inDetailMode()) {
+            return;
+        }
 
         $('.main-pane, .flex-list-view-content').off('scroll.' + this.cid);
 
