@@ -127,7 +127,6 @@ $viewdefs['KBContents']['base']['view']['record'] = array(
                     'size' => 'large',
                     'dismiss_label' => true,
                     'readonly' => true,
-                    'span' => 8,
                 ),
                 array(
                     'name' => 'name',
@@ -153,12 +152,14 @@ $viewdefs['KBContents']['base']['view']['record'] = array(
                 'status' => array(
                     'name' => 'status',
                     'type' => 'status',
-                    'span' => 2,
+                    'enum_width' => 'auto',
+                    'dropdown_width' => 'auto',
+                    'dropdown_class' => 'select2-menu-only',
+                    'container_class' => 'select2-menu-only',
                     'related_fields' => array(
                         'active_date',
                         'exp_date',
                     ),
-                    'enum_width' => '200px',
                 ),
             ),
         ),
