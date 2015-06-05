@@ -111,11 +111,8 @@ class SugarUpgradeMergeDropdowns extends UpgradeScript
                     'skip_sync' => true,
                     'view_package' => 'studio',
                     'use_push' => in_array($name, $helper->getDropdownsToPush()),
+                    'skipSaveExemptDropdowns' => true,
                 );
-
-                if (version_compare($this->from_version, '7.6', "<")) {
-                    $params['handleSpecialDropdowns'] = true;
-                }
 
                 $parser->saveDropDown($params);
                 $this->log("{$name} has been merged for {$language}");

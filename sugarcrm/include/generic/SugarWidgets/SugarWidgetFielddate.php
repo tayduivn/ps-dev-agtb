@@ -66,7 +66,7 @@ class SugarWidgetFieldDate extends SugarWidgetFieldDateTime
     protected function now()
     {
         global $timedate;
-        return $timedate->tzGMT($timedate->getNow(), $this->getAssignedUser());
+        return $timedate->getNow(true);
     }
 
     /**

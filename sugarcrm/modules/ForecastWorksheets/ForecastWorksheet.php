@@ -444,6 +444,8 @@ class ForecastWorksheet extends SugarBean
 
         $beans = $sq->execute();
 
+        $this->removeReassignedItems($user_id, $timeperiod, $chunk_size);
+
         if (empty($beans)) {
             return false;
         }
@@ -510,6 +512,138 @@ class ForecastWorksheet extends SugarBean
         require_once('include/SugarQueue/SugarJobQueue.php');
         $jq = new SugarJobQueue();
         $jq->submitJob($job);
+    }
+
+    /**
+     * Removes leftover committed items after something is reassigned.  When the user commits again,
+     * things that were reassigned are removed.
+     *
+     * @param string $user_id
+     * @param String $timeperiod
+     * @param int $chunk_size
+     * @return bool success
+     */
+    public function removeReassignedItems($user_id, $timeperiod, $chunk_size = 50)
+    {
+        $settings = $this->getForecastSettings();
+        $returnVal = true;
+
+        if ($settings['is_setup'] == false) {
+            $GLOBALS['log']->fatal("Forecast Module is not setup. " . __CLASS__ . " should not be running");
+            $returnVal = false;
+        }
+
+        $tp = $this->getBean('TimePeriods', $timeperiod);
+
+        if ($returnVal && empty($tp->id)) {
+            $GLOBALS['log']->fatal("Unable to load TimePeriod for id: " . $timeperiod);
+            $returnVal = false;
+        }
+
+        if ($returnVal) {
+            $sq = $this->getSugarQuery();
+            $sq->select(array('id'));
+            $sq->from($this, array('alias'=>'fw','team_security'=>false))
+                ->joinRaw('inner join forecast_worksheets fw2 ' .
+                          'on fw2.parent_id = fw.parent_id ' .
+                            'and fw2.assigned_user_id <> fw.assigned_user_id');
+            $sq->where()
+                ->equals("draft", 0)
+                ->queryAnd()
+                ->equals("assigned_user_id", $user_id);
+
+            $beans = $sq->execute();
+
+            if (empty($beans)) {
+                $returnVal = false;
+            } else {
+                $bean_chunks = array_chunk($beans, $chunk_size);
+
+                //process the first chunk
+                $this->processRemoveChunk($bean_chunks[0]);
+
+                // process any remaining in the background
+                for ($x = 1; $x < count($bean_chunks); $x++) {
+                    $this->createRemoveReassignedJob($bean_chunks[$x], $user_id);
+                }
+
+            }
+        }
+
+        return $returnVal;
+    }
+
+    /**
+     * Processes the first set of beans to remove
+     *
+     * @param array $beans Forecastworksheet beans
+     */
+    public function processRemoveChunk($beans)
+    {
+        foreach ($beans as $bean) {
+            $this->mark_deleted($bean["id"]);
+        }
+    }
+
+    /**
+     * Creates the job to remove reassigned items
+     *
+     * @param array $data Array of bean IDs
+     * @param string $user_id
+     */
+    public function createRemoveReassignedJob($data, $user_id)
+    {
+        $job = $this->getBean('SchedulersJobs', null);
+        $job->name = 'Remove Reassigned Items';
+        $job->target = 'class::SugarJobRemoveReassignedItems';
+        $job->data = json_encode($data);
+        $job->retry_count = 0;
+        $job->assigned_user_id = $user_id;
+
+        require_once('include/SugarQueue/SugarJobQueue.php');
+        $jq = $this->getJobQueue();
+        $jq->submitJob($job);
+    }
+
+    /**
+     * Utility function to get Forecast Settings (to aid in test writing)
+     *
+     * @param bool $reload
+     * @return array
+     */
+    public function getForecastSettings($reload = false)
+    {
+        return Forecast::getSettings($reload);
+    }
+
+    /**
+     * Utility function to get beans (to aid in test writing)
+     *
+     * @param string $beanName
+     * @param string $id
+     * @return null|SugarBean
+     */
+    public function getBean($beanName, $id)
+    {
+        return BeanFactory::getBean($beanName, $id);
+    }
+
+    /**
+     * Utility function to get the job queue (to aid in test writing)
+     * @return SugarJobQueue
+     */
+    public function getJobQueue()
+    {
+        return new SugarJobQueue();
+    }
+
+    /**
+     * Utility function to get a new SugarQuery instance (to aid in test writing)
+     * @return SugarQuery
+     */
+    public function getSugarQuery()
+    {
+        return new SugarQuery();
     }
 
     public static function reassignForecast($fromUserId, $toUserId)

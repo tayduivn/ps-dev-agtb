@@ -10,12 +10,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-
-<div class="quicksearch-tags hide">
-    <span class="qs-tags-row qs-tag-icon"><i class="fa fa-tag"></i></span>
-    {{#if tagCollection}}
-        {{#each tagCollection}}
-            <span class="qs-tags-row qs-tag"><a href="javascript:void(0);">{{this.name}}</a></span>
-        {{/each}}
-    {{/if}}
+<div class="quicksearch-tags-wrapper">
+	<div class="quicksearch-tags dropdown-menu hide">
+	    <span class="qs-tags-row qs-tag-icon"><i class="fa fa-tag"></i></span>
+	    {{#if tagCollection}}
+	        {{#each tagCollection}}
+	            <span class="qs-tags-row qs-tag"><a href="javascript:void(0);">{{this.name}}</a></span>
+	        {{/each}}
+	    {{/if}}
+	</div>
 </div>

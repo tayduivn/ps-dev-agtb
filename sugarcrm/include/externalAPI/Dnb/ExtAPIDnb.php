@@ -715,7 +715,7 @@ class ExtAPIDnb extends ExternalAPIBase
 
         // Get the token information from the EAPM bean
         $eapm =  $this->getEAPMForUser($current_user);
-        $dnbToken = $eapm->oauth_token;
+        $dnbToken = $eapm->tokenValue;
         $dnbTokenIssueTime = $eapm->tokenIssueTime;
 
         //check if token has expired
@@ -883,9 +883,11 @@ class ExtAPIDnb extends ExternalAPIBase
             // Save the token information if we are supposed to
             if ($save === true) {
                 $eapm = $this->getEAPMForUser($current_user);
-                $eapm->oauth_token = $token;
                 $eapm->api_data = base64_encode(json_encode(
-                    array("tokenIssueTime" => time())
+                    array(
+                        "tokenIssueTime" => time(),
+                        "tokenValue" => $token,
+                    )
                 ));
                 $eapm->save();
             }

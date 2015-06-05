@@ -281,7 +281,7 @@ class ImportMap extends SugarBean
         $result = $this->db->query($query,true," Error: ");
         $obj_arr = array();
 
-        while ($row = $this->db->fetchByAssoc($result,FALSE) ) {
+        while ($row = $this->db->fetchByAssoc($result,true) ) {
             $focus = BeanFactory::getBean('Import_1');
 
             foreach($this->column_fields as $field) {

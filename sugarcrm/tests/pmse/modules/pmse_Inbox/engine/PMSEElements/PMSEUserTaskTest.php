@@ -42,7 +42,7 @@ class PMSEUserTaskTest extends PHPUnit_Framework_TestCase
     public function testRunAssignment()
     {
         $this->userTask = $this->getMockBuilder('PMSEUserTask')
-            ->setMethods(array('prepareResponse'))
+            ->setMethods(array('prepareResponse', 'retrieveBean'))
             ->disableOriginalConstructor()
             ->getMock();
         
@@ -50,13 +50,17 @@ class PMSEUserTaskTest extends PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->setMethods(array('taskAssignment'))
             ->getMock();
-        
+
+        $activityDefinition = new stdClass();
+        $activityDefinition->act_response_buttons = 'ROUTE';
+
         $bean = new stdClass();
         $externalAction = '';
         $flowData = array(
             'cas_user_id' => 1,
             'cas_index' => 1,
-            'id' => 5
+            'id' => 5,
+            'bpmn_id' => 'c5189a2e-1cff-e214-3e86-55664fcc93e6',
         );
         
         $expectedFlowData = array(
@@ -65,6 +69,8 @@ class PMSEUserTaskTest extends PHPUnit_Framework_TestCase
             'id' => 5,
             'cas_flow_status' => 'FORM',
             'assigned_user_id' => 2,
+            'cas_adhoc_actions' => serialize(array('link_cancel', 'route', 'edit', 'continue')),
+            'bpmn_id' => 'c5189a2e-1cff-e214-3e86-55664fcc93e6',
         );
         
         $expectedResult = array(
@@ -74,7 +80,7 @@ class PMSEUserTaskTest extends PHPUnit_Framework_TestCase
                 'cas_user_id' => 2,                
                 'cas_index' => 1,
                 'id' => 5,
-                'cas_flow_status' => 'FORM'
+                'cas_flow_status' => 'FORM',
             ),
             'flow_id' => $flowData['id']
         );
@@ -88,7 +94,11 @@ class PMSEUserTaskTest extends PHPUnit_Framework_TestCase
             ->method('taskAssignment')
             ->with($flowData)
             ->will($this->returnValue(2));
-        
+
+        $this->userTask->expects($this->atLeastOnce())
+            ->method('retrieveBean')
+            ->will($this->returnValue($activityDefinition));
+
         $this->userTask->setUserAssignmentHandler($userAssignment);
         
         $result = $this->userTask->run($flowData, $bean, $externalAction);

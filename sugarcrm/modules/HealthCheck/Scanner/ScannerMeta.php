@@ -440,6 +440,12 @@ class HealthCheckScannerMeta
             'bucket' => self::MANUAL,
         ),
 
+        904 => array (
+            'report' => 'moduleListNullValues',
+            'bucket' => self::MANUAL,
+            'kb'     => 'http://support.sugarcrm.com/04_Knowledge_Base/02Administration/100Install/Troubleshooting_Health_Check_Output/Health_Check_Error_Found_NULL_Values_in_moduleList_Strings/',
+        ),
+
         // Catch all meta
         999 => array(
             'report' => 'unknownFailure',

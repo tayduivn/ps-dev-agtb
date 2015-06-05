@@ -14,9 +14,16 @@
         "list:reassign:fire": "reassignCase"
     },
 
+    _render: function() {
+        if (app.acl.hasAccessToAny('developer')) {
+            this._super('_render');
+        } else {
+            app.controller.loadView({
+                layout: 'access-denied'
+            });
+        }
+    },
     reassignCase: function (model) {
-        //console.log('Unattended Cases: ', model);
-        //open drawer
         var self=this;
         app.drawer.open({
             layout: 'reassignCases',

@@ -150,7 +150,9 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
         //TODO: Remove after we resolve issues with test associated to this
         $GLOBALS['log']->info('Updating portal config');
         foreach ($portalConfig as $fieldKey => $fieldValue) {
-
+            if (is_string($fieldValue)) {
+                $fieldValue = SugarCleaner::stripTags($fieldValue);
+            }
             // TODO: category should be `support`, platform should be `portal`
             $admin = $this->getAdministrationBean();
             if (!$admin->saveSetting('portal', $fieldKey, json_encode($fieldValue), 'support')) {

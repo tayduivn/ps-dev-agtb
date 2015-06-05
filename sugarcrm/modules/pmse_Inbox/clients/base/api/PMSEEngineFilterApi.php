@@ -43,7 +43,8 @@ class PMSEEngineFilterApi extends FilterApi
         '$equals',
         '$not_equals',
         '$in',
-        '$not_in'
+        '$not_in',
+        '$dateRange'
     );
 
     public function registerApiRest()
@@ -208,9 +209,7 @@ class PMSEEngineFilterApi extends FilterApi
         }
 
         // Apply visibility check by default unless it was defined previously
-        if (!self::$isVisibilityApplied) {
-            self::addVisibilityFilter('', $where);
-        }
+        self::addVisibilityFilter('', $where);
     }
 
     /**
@@ -220,11 +219,13 @@ class PMSEEngineFilterApi extends FilterApi
      */
     public static function addVisibilityFilter($access, SugarQuery_Builder_Where $where)
     {
-        if ($access == 'regular_user') {
-            global $current_user;
-            $where->queryAnd()->equals('cas_user_id', $current_user->id);
-        } else {
-            $where->queryAnd()->in('cas_sugar_module', PMSEEngineUtils::getSupportedModules());
+        if (!self::$isVisibilityApplied) {
+            if ($access == 'regular_user') {
+                global $current_user;
+                $where->queryAnd()->equals('cas_user_id', $current_user->id);
+            } else {
+                $where->queryAnd()->in('cas_sugar_module', PMSEEngineUtils::getSupportedModules());
+            }
         }
         self::$isVisibilityApplied = true;
     }
@@ -255,6 +256,14 @@ class PMSEEngineFilterApi extends FilterApi
     public static function addAssignmentMethodFilter($expression, SugarQuery_Builder_Where $where)
     {
         global $current_user;
+
+        // This kind of filter have conflicts with 'visibility' filter, so
+        // we need to handle its occurrences
+        if (self::$isVisibilityApplied) {
+            self::removeVisibilityFilter($where);
+        } else {
+            self::$isVisibilityApplied = true;
+        }
 
         $method = self::getRawExpression($expression);
         if ($method == 'static') {
@@ -301,6 +310,9 @@ class PMSEEngineFilterApi extends FilterApi
             case '$not_in':
                 $where->notIn($field, $value);
                 break;
+            case '$dateRange':
+                $where->dateRange($field, $value);
+                break;
         }
     }
 
@@ -311,6 +323,21 @@ class PMSEEngineFilterApi extends FilterApi
     public static function addInvalidFilter(SugarQuery_Builder_Where $where)
     {
         $where->queryAnd()->isNull('id');
+    }
+
+    /**
+     * Remove visibility filter from SugarQuery object
+     * @param SugarQuery_Builder_Where $where
+     */
+    public static function removeVisibilityFilter(SugarQuery_Builder_Where $where)
+    {
+        $conditions = $where->conditions;
+        foreach($conditions as $key => $condition) {
+            $field = $condition->field;
+            if ($field->field == 'cas_user_id') {
+                unset($where->conditions[$key]);
+            }
+        }
     }
 
     /**

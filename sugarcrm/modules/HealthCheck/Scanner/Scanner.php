@@ -715,7 +715,44 @@ class HealthCheckScanner
 
             foreach ($GLOBALS['sugar_config']['languages'] as $key => $lang) {
                 return_application_language($key);
+
+                $files = array(
+                    'custom/application/Ext/Language/' . $key . '.lang.ext.php',
+                    'custom/include/language/' . $key . '.lang.php',
+                );
+
+                foreach ($files as $file) {
+                    $this->checkSingleLanguageFile($file);
+                }
             }
+        }
+    }
+
+    /**
+     * Method checks language file for errors
+     * @param string $file File to check
+     */
+    protected function checkSingleLanguageFile($file)
+    {
+        if (!file_exists($file)) {
+            return;
+        }
+
+        $l = new FileLoaderWrapper();
+        $strings = $l->loadFile($file, 'app_list_strings');
+
+        if (!isset($strings['moduleList'])) {
+            return;
+        }
+
+        //Checks moduleList NULL values
+        $nullValues = array_keys($strings['moduleList'], null);
+        if ($nullValues) {
+            $this->updateStatus(
+                "moduleListNullValues",
+                $file,
+                implode(', ', $nullValues)
+            );
         }
     }
 
@@ -2224,6 +2261,8 @@ ENDP;
         'ProductTemplates' => array('assigned_user_link'),
         'Meetings' => array('contact_id'),
         'KBDocuments' => array('keywords'),
+        'KBContents' => array('created_by_link', 'modified_user_link'),
+        'KBDocumentRevisions' => array('document_revisions'),
     );
 
     /**

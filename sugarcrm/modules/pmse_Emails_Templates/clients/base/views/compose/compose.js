@@ -42,7 +42,7 @@
         this._super("_render");
         if (this.createMode) {
             if (this.getField('name')) {
-                this.setTitle(app.lang.get('LBL_PMSE_EMAIL_TEMPLATES_DASHLET', this.module) + ' | ' + this.getField('name').value);
+                this.setTitle(app.lang.get('LBL_PMSE_EMAIL_TEMPLATES_DASHLET', this.module) + ' | ' + Handlebars.Utils.escapeExpression(this.getField('name').value));
             }
         }
     },

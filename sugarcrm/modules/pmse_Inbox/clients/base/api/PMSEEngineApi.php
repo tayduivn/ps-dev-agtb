@@ -1035,7 +1035,7 @@ class PMSEEngineApi extends SugarApi
         $beanFlow = BeanFactory::getBean('pmse_BpmFlow');
         $q = new SugarQuery();
         $q->from($beanFlow, $queryOptions);
-        $q->distinct(false);
+        $q->distinct(true);
         $fields = array('cas_id','cas_sugar_module','cas_sugar_object_id');
 
         //INNER JOIN USERS TABLE
@@ -1045,14 +1045,13 @@ class PMSEEngineApi extends SugarApi
                 ->equals('users.deleted', 0);
 
         $q->where()
+                ->equals('cas_flow_status', 'FORM')
                 ->in('cas_sugar_module', PMSEEngineUtils::getSupportedModules());
 
         $q->where()
                 ->queryOr()
                 ->notequals('users.status', 'Active')
                 ->notequals('users.employee_status', 'Active');
-
-        $q->groupBy('cas_id');
 
         $q->select($fields);
 
@@ -1081,7 +1080,15 @@ class PMSEEngineApi extends SugarApi
         } else {
             $listButtons = array('link_cancel', 'route', 'edit');
         }
-        $listButtons = $this->overrideButtons($bpmFlow, $listButtons);
+
+        if (!empty($bpmFlow->cas_adhoc_actions)) {
+            $listButtons = unserialize($bpmFlow->cas_adhoc_actions);
+        }
+        $continue = array_search('continue', $listButtons);
+        if ($continue !== false) {
+            unset($listButtons[$continue]);
+            $returnArray['case']['taskContinue'] = true;
+        }
         $returnArray['case']['reclaim'] = $reclaimCaseByUser;
         $returnArray['case']['buttons'] = $this->getButtons($listButtons, $activity);
         $returnArray['case']['readonly'] = json_decode(base64_decode($activity->act_readonly_fields));

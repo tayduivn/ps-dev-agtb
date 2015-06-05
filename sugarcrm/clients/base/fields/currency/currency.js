@@ -147,10 +147,33 @@
     },
 
     /**
+     * @override
+     *
+     * If the incoming value is the same as the value on the model
+     * then just set the currency value so it's formatted correctly
+     * otherwise, set the new value on the model
+     */
+    bindDomChange: function() {
+        if (!(this.model instanceof Backbone.Model)) {
+            return;
+        }
+
+        var self = this;
+        var el = this.$el.find(this.fieldTag);
+        el.on('change', function() {
+            var val = self.unformat(el.val());
+            if (_.isEqual(val, self.model.get(self.name))) {
+                self.setCurrencyValue(val);
+            } else {
+                self.model.set(self.name, el.val());
+            }
+        });
+    },
+
+    /**
      * When currency changes, we need to make appropriate silent changes to the base rate.
      */
     bindDataChange: function() {
-
         // we do not call the parent which re-renders,
         // but instead update the value on the field directly
         this.model.on('change:' + this.name, this._valueChangeHandler, this);

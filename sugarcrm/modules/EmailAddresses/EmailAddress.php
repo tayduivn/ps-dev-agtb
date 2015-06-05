@@ -37,7 +37,7 @@ class EmailAddress extends SugarEmailAddress
     {
         // Need to correct this to handle the Employee/User split
         $module = $this->getCorrectedModule($module);
-        $query = "update email_addr_bean_rel eabr set deleted = 1 WHERE eabr.bean_id = '".$this->db->quote($id)."' AND eabr.bean_module = '".$this->db->quote($module)."'";
+        $query = "update email_addr_bean_rel set deleted = 1 WHERE bean_id = '".$this->db->quote($id)."' AND bean_module = '".$this->db->quote($module)."'";
         $this->db->query($query);
     }
 }

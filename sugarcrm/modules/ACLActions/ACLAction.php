@@ -210,8 +210,8 @@ class ACLAction  extends SugarBean
     	}
 
     	if(isset(self::$acl_map[$user_id][$type])) {
-            $key = md5(self::$acl_map[$user_id][$type]);
-    		return sugar_cache_retrieve($key);
+            $key = self::$acl_map[$user_id][$type];
+            return sugar_cache_retrieve($key);
     	}
         return array();
     }
@@ -220,14 +220,15 @@ class ACLAction  extends SugarBean
     {
     	$sessid = session_id();
     	if(empty($sessid)) {
-    		return false;
+            return;
     	}
 
-    	if(!isset(self::$acl_map[$user_id][$type])) {
-            self::$acl_map[$user_id][$type] = "ACL_{$type}_".md5(serialize($data));
-            sugar_cache_put('ACL', self::$acl_map, 0);
+        $key = md5(serialize($data));
+        if (!isset(self::$acl_map[$user_id][$type]) || self::$acl_map[$user_id][$type] !== $key) {
+            self::$acl_map[$user_id][$type] = $key;
+    		 sugar_cache_put('ACL', self::$acl_map, 0);
     	}
-        $key = md5(self::$acl_map[$user_id][$type]);
+
         sugar_cache_put($key, $data, session_cache_expire() * 60);
     }
 

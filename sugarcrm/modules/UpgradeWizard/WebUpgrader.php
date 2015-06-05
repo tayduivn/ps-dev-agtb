@@ -43,6 +43,71 @@ class WebUpgrader extends UpgradeDriver
      */
     const VERSION_FILE = 'version.json';
 
+    /**
+     * IIS configuration file name
+     */
+    const IIS_CONFIG = 'web.config';
+
+    /**
+     * maxAllowedContentLength value for IIS. 100M
+     */
+    const IIS_CONTENT_LENGTH = 104857600;
+
+    /**
+     * Updating IIS config if maxAllowedContentLength < 100M or not set
+     */
+    protected function updateMaxAllowedContentLength()
+    {
+        if (!file_exists(self::IIS_CONFIG)) {
+            return;
+        }
+
+        $saveConfig = false;
+
+        $config = new DOMDocument('1.0', 'UTF-8');
+        $config->formatOutput = true;
+        $config->load(self::IIS_CONFIG);
+
+        $xpath = new DOMXPath($config);
+        $path = 'configuration/system.webServer/security/requestFiltering/requestLimits';
+        $lengthAttribute = $xpath->query('//' . $path . '/@maxAllowedContentLength');
+
+        if ($lengthAttribute->length) {
+
+            $currentLength = $lengthAttribute->item(0)->value;
+            if ($currentLength < self::IIS_CONTENT_LENGTH) {
+                $lengthAttribute->item(0)->value = self::IIS_CONTENT_LENGTH;
+                $saveConfig = true;
+            }
+        } else {
+
+            $elements = explode('/', $path);
+            $currentPath = '/';
+            $currentNode = null;
+            foreach ($elements as $nodeName) {
+
+                $currentPath .= '/' . $nodeName;
+                if (!$xpath->query($currentPath)->length) {
+                    $newChild = $config->createElement($nodeName, null);
+                    $currentNode = $currentNode->appendChild($newChild);
+                } else {
+                    $currentNode = $xpath->query($currentPath)->item(0);
+                }
+            }
+
+            if ($currentNode) {
+                $lengthAttribute = $config->createAttribute('maxAllowedContentLength');
+                $lengthAttribute->value = self::IIS_CONTENT_LENGTH;
+                $currentNode->appendChild($lengthAttribute);
+                $saveConfig = true;
+            }
+        }
+
+        if ($saveConfig) {
+            $config->save(self::IIS_CONFIG);
+        }
+    }
+
     public function runStage($stage)
     {
         return $this->run($stage);
@@ -164,6 +229,9 @@ class WebUpgrader extends UpgradeDriver
                 copy("modules/UpgradeWizard/$ufile", "{$upg_dir}{$ufile}");
             }
         }
+
+        $this->updateMaxAllowedContentLength();
+
         return $this->state['webToken'];
     }
 

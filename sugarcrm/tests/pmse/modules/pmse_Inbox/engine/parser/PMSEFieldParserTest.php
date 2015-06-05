@@ -533,16 +533,6 @@ class PMSEFieldParserTest extends PHPUnit_Framework_TestCase
               }]');
         $this->dataParser->setEvaluatedBean($beanObject);
         
-        $this->mockTimeDate = $this->getMockBuilder('TimeDate')
-            ->disableOriginalConstructor()
-            ->setMethods(array('to_display_date_time'))
-            ->getMock();
-
-        $this->mockTimeDate->expects($this->exactly(1))
-                ->method('to_display_date_time')
-//                ->with($this->isType('string'))
-                ->will($this->returnValue('10/10/2013'));
-        $this->dataParser->setTimeDate($this->mockTimeDate);
         $processedCondition = $this->dataParser->parseCriteria($preCondition[0]);
         $postCondition = array(
             0 =>

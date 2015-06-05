@@ -372,6 +372,32 @@ $dictionary['pmse_BpmFlow'] = array(
     'len' => '40',
     'size' => '40',
   ),
+'cas_adhoc_actions' =>
+  array (
+    'required' => true,
+    'name' => 'cas_adhoc_actions',
+    'vname' => 'PMSE adhoc actions',
+    'type' => 'varchar',
+    'massupdate' => false,
+    'default' => '',
+    'no_default' => false,
+    'comments' => '',
+    'help' => '',
+    'importable' => 'true',
+    'duplicate_merge' => 'disabled',
+    'duplicate_merge_dom_value' => '0',
+    'audited' => false,
+    'reportable' => true,
+    'unified_search' => false,
+    'merge_filter' => 'disabled',
+    'full_text_search' =>
+    array (
+      'boost' => '0',
+    ),
+    'calculated' => false,
+    'len' => '255',
+    'size' => '255',
+  ),
 'cas_task_start_date' =>
   array (
     'required' => false,

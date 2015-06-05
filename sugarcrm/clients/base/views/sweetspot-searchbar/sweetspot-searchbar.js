@@ -274,7 +274,7 @@
                     }
                     var formattedRecord = {
                         id: record.id,
-                        name: record.name,
+                        name: record.name || app.utils.formatNameModel(record._module, record),
                         module: record._module,
                         label: app.lang.getModuleIconLabel(record._module),
                         route: '#' + app.router.buildRoute(record._module, record.id),

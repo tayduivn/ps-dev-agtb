@@ -143,6 +143,10 @@
             this.activeIndex = null;
             this.render();
             this.open();
+
+            // If the tags view is shown, move this one down
+            var showTags = collection.tags && collection.tags.length;
+            this.$('.typeahead').toggleClass('tagsShown', !!showTags);
         }, this);
     },
 

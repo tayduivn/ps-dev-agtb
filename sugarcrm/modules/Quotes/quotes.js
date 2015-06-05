@@ -990,12 +990,14 @@ function QuotesEditManager() {
         cell1.width = 200;
         cell1.noWrap = true;
         var itemName = 'name_' + this.count;
+        var fieldLength = app.metadata.getModule('Products', 'fields').name.len;
         var textEl = this.createElement('input', {
             'type': 'text',
             'size': 30,
             'name': 'product_name[' + this.count + ']',
             'id': itemName,
-            'value': product_name
+            'value': product_name,
+            'maxlength': fieldLength
         }, ['sqsEnabled', 'sqsNoAutofill']);
         textEl.count = this.count;
         textEl.alt = function() {

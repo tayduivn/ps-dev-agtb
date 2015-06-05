@@ -47,6 +47,7 @@
                 messages: app.lang.get('LBL_WARN_UNSAVED_CHANGES', this.module),
                 onConfirm: function () {
                     var targetUrl = Backbone.history.getFragment();
+                    project.dispose();
                     app.router.navigate(targetUrl , {trigger: true, replace: true });
                     window.location.reload()
                 },
@@ -54,6 +55,7 @@
             });
             return false;
         }
+        project.dispose();
         return true;
     }
 })

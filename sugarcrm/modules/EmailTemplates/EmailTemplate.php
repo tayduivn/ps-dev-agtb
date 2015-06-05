@@ -78,6 +78,7 @@ class EmailTemplate extends SugarBean {
 		'created_by_name',
 		'accept_status_id',
 		'accept_status_name',
+        'acl_role_set_id',
 	);
 
     protected $storedVariables = array();

@@ -71,7 +71,195 @@ if (isset($_REQUEST['default_language'])) {
 
 $langHeader = get_language_header();
 
-// CONFIGURATION SETTINGS
+$out =<<<EOQ
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html {$langHeader}>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <meta http-equiv="Content-Script-Type" content="text/javascript">
+   <meta http-equiv="Content-Style-Type" content="text/css">
+   <title>{$mod_strings['LBL_WIZARD_TITLE']} {$mod_strings['LBL_CONFIRM_TITLE']}</title>
+   <link REL="SHORTCUT ICON" HREF="$icon">
+   <link rel="stylesheet" href="$css" type="text/css" />
+</head>
+<body onload="javascript:document.getElementById('button_next2').focus();">
+<form action="install.php" method="post" name="setConfig" id="form">
+<input type="hidden" name="current_step" value="{$next_step}">
+<table cellspacing="0" cellpadding="0" border="0" align="center" class="shell">
+      <tr><td colspan="2" id="help"><a href="{$help_url}" target='_blank'>{$mod_strings['LBL_HELP']} </a></td></tr>
+    <tr>
+      <th width="500">
+		<p>
+		<img src="{$sugar_md}" alt="SugarCRM" border="0">
+		</p>
+		{$mod_strings['LBL_CONFIRM_TITLE']}</th>
+        <th width="200" style="text-align: right;"><a href="http://www.sugarcrm.com" target="_blank"><IMG src="$loginImage" alt="SugarCRM" border="0"></a>
+        </th>
+    </tr>
+    <tr>
+        <td colspan="2">
+
+        <table width="100%" cellpadding="0" cellpadding="0" border="0" class="StyleDottedHr">
+            <tr><th colspan="3" align="left">{$mod_strings['LBL_DBCONF_TITLE']}</th></tr>
+            <tr><td></td><td><b>{$mod_strings['LBL_CONFIRM_DB_TYPE']}</b></td><td>{$_SESSION['setup_db_type']}</td></tr>
+            <tr><td></td><td><b>{$mod_strings['LBL_DBCONF_HOST_NAME']}</b></td><td>{$_SESSION['setup_db_host_name']}</td></tr>
+            <tr>
+                <td></td>
+                <td><b>{$mod_strings['LBL_DBCONF_DB_NAME']}</b></td>
+                <td>
+					{$_SESSION['setup_db_database_name']} {$dbCreate}
+                </td>
+            </tr>
+EOQ;
+
+$out .=<<<EOQ
+            <tr>
+                <td></td>
+                <td><b>{$mod_strings['LBL_DBCONF_DB_ADMIN_USER']}</b></td>
+                <td>{$_SESSION['setup_db_admin_user_name']}</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><b>{$mod_strings['LBL_DBCONF_DEMO_DATA']}</b></td>
+                <td>{$demoData}</td>
+            </tr>
+EOQ;
+if($yesNoDropCreate){
+
+$out .=<<<EOQ
+            <tr>
+                <td></td>
+                <td><b>{$mod_strings['LBL_DBCONF_DB_DROP']}</b></td>
+                <td>{$yesNoDropCreate}</td>
+            </tr>
+EOQ;
+
+}
+
+if ($db->supports('fulltext')) {
+    if($db->full_text_indexing_installed()){
+        $FTSData = $mod_strings['LBL_FTS_INSTALLED'];
+    }else{
+        $FTSData = "<span class='stop'><b>{$mod_strings['LBL_FTS_INSTALLED_ERR1']}</b>  <br>{$mod_strings['LBL_FTS_INSTALLED_ERR2']}</span>";
+    }
+$out .=<<<EOQ
+            <tr>
+                <td></td>
+                <td><b>{$mod_strings['LBL_FTS']} </b></td>
+                <td>{$FTSData}</td>
+            </tr>
+EOQ;
+}
+
+if(isset($_SESSION['install_type'])  && !empty($_SESSION['install_type'])  && $_SESSION['install_type']=='custom'){
+$out .=<<<EOQ
+
+	   <tr><td colspan="3" align="left"></td></tr>
+            <tr>
+            	<th colspan="3" align="left">{$mod_strings['LBL_SITECFG_TITLE']}</th>
+            </tr>
+            <tr>
+                <td></td>
+                <td><b>{$mod_strings['LBL_SITECFG_URL']}</b></td>
+                <td>{$_SESSION['setup_site_url']}</td>
+            </tr>
+            <tr>
+	   <tr><td colspan="3" align="left"></td></tr>
+            	<th colspan="3" align="left">{$mod_strings['LBL_SITECFG_SUGAR_UPDATES']}</th>
+            </tr>
+            <tr>
+                <td></td>
+                <td><b>{$mod_strings['LBL_SITECFG_SUGAR_UP']}</b></td>
+                <td>{$yesNoSugarUpdates}</td>
+            </tr>
+            <tr>
+	   <tr><td colspan="3" align="left"></td></tr>
+            	<th colspan="3" align="left">{$mod_strings['LBL_SITECFG_SITE_SECURITY']}</th>
+            </tr>
+            <tr>
+                <td></td>
+                <td><b>{$mod_strings['LBL_SITECFG_CUSTOM_SESSION']}?</b></td>
+                <td>{$yesNoCustomSession}</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><b>{$mod_strings['LBL_SITECFG_CUSTOM_LOG']}?</b></td>
+                <td>{$yesNoCustomLog}</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><b>{$mod_strings['LBL_SITECFG_CUSTOM_ID']}?</b></td>
+                <td>{$yesNoCustomId}</td>
+            </tr>
+EOQ;
+}
+
+$out .=<<<EOQ
+
+	   <tr><td colspan="3" align="left"></td></tr>
+          <tr><th colspan="3" align="left">{$mod_strings['LBL_SYSTEM_CREDS']}</th></tr>
+            <tr>
+                <td></td>
+                <td><b>{$mod_strings['LBL_DBCONF_DB_USER']}</b></td>
+                <td>
+                    {$_SESSION['setup_db_sugarsales_user']}
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><b>{$mod_strings['LBL_DBCONF_DB_PASSWORD']}</b></td>
+                <td>
+                    <span id='hide_db_admin_pass'>{$mod_strings['LBL_HIDDEN']}</span>
+                    <span style='display:none' id='show_db_admin_pass'>{$_SESSION['setup_db_sugarsales_password']}</span>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><b>{$mod_strings['LBL_SITECFG_ADMIN_Name']}</b></td>
+                <td>
+                    {$_SESSION['setup_site_admin_user_name']}
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><b>{$mod_strings['LBL_SITECFG_ADMIN_PASS']}</b></td>
+                <td>
+                    <span id='hide_site_admin_pass'>{$mod_strings['LBL_HIDDEN']}</span>
+                    <span style='display:none' id='show_site_admin_pass'>{$_SESSION['setup_site_admin_password']}</span>
+                </td>
+            </tr>
+
+EOQ;
+
+
+
+
+
+
+$envString = '
+	   <tr><td colspan="3" align="left"></td></tr><tr><th colspan="3" align="left">'.$mod_strings['LBL_SYSTEM_ENV'].'</th></tr>';
+
+    // PHP VERSION
+        $envString .='
+          <tr>
+             <td></td>
+            <td><b>'.$mod_strings['LBL_CHECKSYS_PHPVER'].'</b></td>
+            <td >'.constant('PHP_VERSION').'</td>
+          </tr>';
+
+
+//Begin List of already known good variables.  These were checked during the initial sys check
+// XML Parsing
+        $envString .='
+      <tr>
+        <td></td>
+        <td><strong>'.$mod_strings['LBL_CHECKSYS_XML'].'</strong></td>
+        <td  >'.$mod_strings['LBL_CHECKSYS_OK'].'</td>
+      </tr>';
+
+
+
+// mbstrings
 
 // mbstring.func_overload
 $mbStatus = $mod_strings['LBL_CHECKSYS_OK'];

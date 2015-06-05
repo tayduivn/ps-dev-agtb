@@ -211,6 +211,9 @@
             value.moduleName = this.case.flow.cas_sugar_module;
             value.beanId = this.case.flow.cas_sugar_object_id;
             value.taskName = this.case.title.activity;
+            if (this.case.taskContinue){
+                value.taskContinue = true;
+            }
             var self = this;
             var pmseInboxUrl = app.api.buildURL('pmse_Inbox/engine_route','',{},{});
             app.api.call('update', pmseInboxUrl, value,{

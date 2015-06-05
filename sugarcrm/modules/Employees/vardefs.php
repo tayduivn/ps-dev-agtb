@@ -84,7 +84,7 @@ $dictionary['Employee']['fields']['UserType']['massupdate']=false;
 $dictionary['Employee']['fields']['messenger_type']['massupdate']=false;
 $dictionary['Employee']['fields']['email_link_type']['massupdate']=false;
 //end bug 48033
-$dictionary['Employee']['fields']['email']['required']=false;
+$dictionary['Employee']['fields']['email']['required']=true;
 $dictionary['Employee']['fields']['email_addresses']['required']=false;
 $dictionary['Employee']['fields']['email_addresses_primary']['required']=false;
 // bugs 47553 & 49716

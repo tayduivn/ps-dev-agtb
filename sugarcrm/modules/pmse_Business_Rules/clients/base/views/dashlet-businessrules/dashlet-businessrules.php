@@ -160,6 +160,12 @@ $viewdefs[$module_name]['base']['view']['dashlet-businessrules'] = array(
                     'acl_action' => 'edit',
                 ),
             ),
+            'fields' => array(
+                'name',
+                'assigned_user_name',
+                'assigned_user_id',
+                'date_entered',
+            ),
         ),
     ),
 );

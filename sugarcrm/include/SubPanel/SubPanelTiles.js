@@ -104,6 +104,28 @@ function subp_archive_email() {
     return false;
 }
 
+/**
+ * Builds a link for relationship deleting and navigates to this link
+ * @param  {String} module Module name
+ * @param  {String} action Action name
+ * @param  {Object} params Params to be included in a url
+ */
+function relationship_remove(module, action, params) {
+    var id = get_record_id();
+    var params = _.extend(params, {
+        record: id,
+        return_id: id
+    });
+
+    var route = app.bwc.buildRoute(module, id || null, action, params);
+
+    if (!_.isUndefined(params.return_url)) {
+        route += params.return_url;
+    }
+
+    app.router.navigate("#" + route, {trigger: true});
+}
+
 /*this function will take in three parameters, m,i,a and recreate navigation
 * m = module
 * i = record id
