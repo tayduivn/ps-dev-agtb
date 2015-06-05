@@ -157,10 +157,13 @@ svg .title {
   line {
     fill: none;
   }
+  text {
+    cursor: pointer;
+  }
 }
 
 .nv-legend .disabled circle {
-  fill-opacity: 0;
+  fill: #fff;
 }
 
 .nv-legend-background {
@@ -177,6 +180,14 @@ svg .title {
     text-decoration: underline;
   }
 }
+
+.nv-lineLegend .nv-series {
+  cursor: default;
+  text {
+    cursor: default;
+  }
+}
+
 /**********
 *  Axes
 */
@@ -576,10 +587,6 @@ text.nv-pie-hole-label {
   }
 
 }
-.nv-lineLegend .nv-series {
-  cursor: default;
-}
-
 
 /**********
 * Treemap

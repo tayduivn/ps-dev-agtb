@@ -813,33 +813,22 @@ nv.utils.dropShadow = function (id, defs, options) {
 
 nv.utils.stringSetLengths = function (_data, _container, _format) {
   var lengths = [],
-      tempContainer = _container.append('g').attr('class', 'tmp-text-strings'),
-      textStrings = tempContainer.selectAll('text')
-        .data(_data).enter()
-          .append('text')
-          .text(_format);
-  textStrings
-    .each(function(d, i) {
-      lengths.push(this.getBBox().width);
+      txt = _container.select('.tmp-text-strings').select('text');
+  if (txt.empty()) {
+    txt = _container.append('g').attr('class', 'tmp-text-strings').append('text');
+  }
+  txt.style('display', 'inline');
+  _data.forEach(function(d, i) {
+      txt.text(d, _format);
+      lengths.push(txt.node().getBBox().width);
     });
-  tempContainer.data([]);
-  tempContainer.remove();
+  txt.text('').style('display', 'none');
   return lengths;
 };
 
 nv.utils.maxStringSetLength = function (_data, _container, _format) {
-  var maxLength = 0;
-  _container.append('g').attr('class', 'tmp-text-strings');
-  var calcContainers = _container.select('.tmp-text-strings').selectAll('text')
-      .data(_data).enter()
-        .append('text')
-        .text(_format);
-  calcContainers
-    .each(function (d,i) {
-      maxLength = Math.max(this.getBBox().width, maxLength);
-    });
-  _container.select('.tmp-text-strings').remove();
-  return maxLength;
+  var lengths = nv.utils.stringSetLengths(_data, _container, _format);
+  return d3.max(lengths);
 };
 
 nv.utils.stringEllipsify = function(_string, _container, _length) {
@@ -850,6 +839,7 @@ nv.utils.stringEllipsify = function(_string, _container, _length) {
   if (txt.empty()) {
     txt = _container.append('g').attr('class', 'tmp-text-strings').append('text');
   }
+  txt.style('display', 'inline');
   txt.text('...');
   ell = txt.node().getBBox().width;
   txt.text(str);
@@ -860,8 +850,7 @@ nv.utils.stringEllipsify = function(_string, _container, _length) {
     txt.text(str);
     len = txt.node().getBBox().width + ell;
   }
-  txt.text('');
-  //_container.selectAll('.tmp-text-strings').remove();
+  txt.text('').style('display', 'none');
   return str + (strLen > _length ? '...' : '');
 };
 
@@ -1663,16 +1652,25 @@ nv.models.legend = function() {
           dropdownHeight = 0,
           type = '',
           inline = position === 'start' ? true : false,
-          rtl = direction === 'rtl' ? true : false;
+          rtl = direction === 'rtl' ? true : false,
+          lineSpacing = spacing * (inline ? 1 : 0.6),
+          padding = gutter + (inline ? diameter + textGap : 0);
 
       if (!data || !data.length || !data.filter(function(d) { return !d.values || d.values.length; }).length) {
         return legend;
       }
 
+      // enforce existence of series for static legend keys
+      var iSeries = data.filter(function(d) { return d.hasOwnProperty('series'); }).length;
+      data.filter(function(d) { return !d.hasOwnProperty('series'); }).map(function(d, i) {
+        d.series = iSeries;
+        iSeries += 1;
+      });
+
       enabled = true;
 
       type = !data[0].type || data[0].type === 'bar' ? 'bar' : 'line';
-      align = rtl ? align === 'left' ? 'right' : 'left' : align;
+      align = rtl && align !== 'center' ? align === 'left' ? 'right' : 'left' : align;
 
       //------------------------------------------------------------
       // Setup containers and skeleton of legend
@@ -1688,8 +1686,7 @@ nv.models.legend = function() {
       var clip = wrap.select('#nv-edge-clip-' + id + ' rect');
 
       wrapEnter
-        .append('rect')
-          .attr('class', 'nv-legend-background');
+        .append('rect').attr('class', 'nv-legend-background');
       var back = wrap.select('.nv-legend-background');
       var backFilter = nv.utils.dropShadow('legend_back_' + id, defs, {blur: 2});
 
@@ -1733,6 +1730,8 @@ nv.models.legend = function() {
         .attr('dx', 0)
         .style('opacity', 0)
         .on('click', function(d, i) {
+          d3.event.preventDefault();
+          d3.event.stopPropagation();
           dispatch.toggleMenu(d, i);
         });
 
@@ -1744,86 +1743,70 @@ nv.models.legend = function() {
           dispatch.legendMouseout(d, i);
         })
         .on('click', function(d, i) {
-          dispatch.legendClick(d, i);
-          d3.event.stopPropagation();
           d3.event.preventDefault();
+          d3.event.stopPropagation();
+          dispatch.legendClick(d, i);
         });
 
-      if (type === 'bar') {
+      seriesEnter.append('rect')
+        .attr('x', (diameter + textGap) / -2)
+        .attr('y', (diameter + lineSpacing) / -2)
+        .attr('width', diameter + textGap)
+        .attr('height', diameter + lineSpacing)
+        .style('fill', '#FFE')
+        .style('opacity', 0.1);
 
-        seriesEnter.append('rect')
-          .attr('x', -radius - 2)
-          .attr('y', -radius - 2)
-          .attr('width', radius * 2 + 4)
-          .attr('height', radius * 2 + 4)
-          .style('fill', '#FFE')
-          .style('opacity', 0.1);
+      if (type === 'bar') {
 
         seriesEnter.append('circle')
           .attr('r', radius)
           .style('stroke-width', 2);
 
-        series.selectAll('circle')
-          .attr('class', function(d, i) {
-            return classes(d, d.hasOwnProperty('series') ? d.series : i);
-          })
-          .attr('fill', function(d, i) {
-            return color(d, d.hasOwnProperty('series') ? d.series : i);
-          })
-          .attr('stroke', function(d, i) {
-            return color(d, d.hasOwnProperty('series') ? d.series : i);
-          });
-
         seriesEnter.append('text')
           .attr('dy', inline ? '.36em' : '.71em');
-        series.select('text')
-          .text(getKey);
 
       } else {
 
         seriesEnter.append('circle')
-          .attr('r', function(d, i) {
-            return d.type === 'dash' ? 0 : radius;
-          })
+          .attr('stroke', '#fff')
           .style('stroke-width', 2);
         seriesEnter.append('line')
           .attr('x0', 0)
           .attr('y0', 0)
           .attr('y1', 0)
           .style('stroke-width', '4px');
+
         seriesEnter.append('circle')
-          .attr('r', function(d, i) {
-            return d.type === 'dash' ? 0 : radius;
-          })
+          .attr('stroke', '#fff')
           .style('stroke-width', 2);
 
         series.select('line')
           .attr('class', function(d, i) {
-            return classes(d, d.hasOwnProperty('series') ? d.series : i);
+            return classes(d, i);
           })
           .attr('stroke', function(d, i) {
-            return color(d, d.hasOwnProperty('series') ? d.series : i);
-          });
-
-        series.selectAll('circle')
-          .attr('class', function(d, i) {
-            return classes(d, d.hasOwnProperty('series') ? d.series : i);
-          })
-          .attr('fill', function(d, i) {
-            return color(d, d.hasOwnProperty('series') ? d.series : i);
-          })
-          .attr('stroke', function(d, i) {
-            return color(d, d.hasOwnProperty('series') ? d.series : i);
+            return color(d, i);
           });
 
         seriesEnter.append('text')
           .attr('dy', inline ? '.36em' : '.71em')
           .attr('dx', 0);
-        series.select('text')
-          .text(getKey)
-          .attr('text-anchor', position);
 
       }
+
+      series.selectAll('circle')
+        .attr('class', function(d, i) {
+          return classes(d, i);
+        })
+        .attr('fill', function(d, i) {
+          return color(d, i);
+        })
+        .attr('stroke', function(d, i) {
+          return color(d, i);
+        });
+
+      series.select('text')
+        .text(getKey);
 
       series.classed('disabled', function(d) {
         return d.disabled;
@@ -1836,15 +1819,13 @@ nv.models.legend = function() {
 
       // store legend label widths
       legend.calculateWidth = function() {
-
-        var padding = gutter + (inline ? diameter + textGap : 0);
         keyWidths = [];
 
         g.style('display', 'inline');
 
         series.select('text').each(function(d, i) {
           var textWidth = d3.select(this).node().getBBox().width;
-          keyWidths.push(Math.max(Math.floor(textWidth) + gutter, 50));
+          keyWidths.push(Math.max(Math.floor(textWidth), (type === 'line' ? 50 : 20)));
         });
 
         legend.width(d3.sum(keyWidths) + keyWidths.length * padding - gutter);
@@ -1865,7 +1846,13 @@ nv.models.legend = function() {
         }
 
         function keyWidth(i) {
-          return keyWidths[i] + gutter + (inline ? diameter + textGap : 0);
+          return keyWidths[i] + padding;
+        }
+        function keyWidthNoGutter(i) {
+          return keyWidths[i] + padding - gutter;
+        }
+        function sign(bool) {
+          return bool ? 1 : -1;
         }
 
         var keys = keyWidths.length,
@@ -1876,7 +1863,6 @@ nv.models.legend = function() {
             maxWidth = containerWidth - margin.left - margin.right,
             maxRowWidth = 0,
             minRowWidth = 0,
-            lineSpacing = spacing * (inline ? 1 : 0.6),
             textHeight = this.getLineHeight(),
             lineHeight = diameter + (inline ? 0 : textHeight) + lineSpacing,
             menuMargin = {top: 7, right: 7, bottom: 7, left: 7}, // account for stroke width
@@ -1916,13 +1902,13 @@ nv.models.legend = function() {
               if (mod === 0) {
                 xpos = rtl ? maxRowWidth : 0;
               } else {
-                xpos += columnWidths[mod - 1] * (rtl ? -1 : 1);
+                xpos += columnWidths[mod - 1] * sign(!rtl);
               }
             } else {
               if (mod === 0) {
-                xpos = (rtl ? maxRowWidth : 0) + (columnWidths[mod] - gutter) / 2 * (rtl ? -1 : 1);
+                xpos = (rtl ? maxRowWidth : 0) + (columnWidths[mod] - gutter) / 2 * sign(!rtl);
               } else {
-                xpos += (columnWidths[mod - 1] + columnWidths[mod]) / 2 * (rtl ? -1 : 1);
+                xpos += (columnWidths[mod - 1] + columnWidths[mod]) / 2 * sign(!rtl);
               }
             }
 
@@ -1937,15 +1923,15 @@ nv.models.legend = function() {
             xpos = maxWidth;
 
             for (i = 0; i < keys; i += 1) {
-              if (xpos - keyWidth(i) + gutter < 0) {
-                maxRowWidth = Math.max(maxRowWidth, keyWidth(i) - gutter);
+              if (xpos - keyWidthNoGutter(i) < 0) {
+                maxRowWidth = Math.max(maxRowWidth, keyWidthNoGutter(i));
                 xpos = maxWidth;
                 if (i) {
                   rows += 1;
                 }
               }
-              if (xpos - keyWidth(i) + gutter > maxRowWidth) {
-                maxRowWidth = xpos - keyWidth(i) + gutter;
+              if (xpos - keyWidthNoGutter(i) > maxRowWidth) {
+                maxRowWidth = xpos - keyWidthNoGutter(i);
               }
               keyPositions[i] = {x: xpos, y: (rows - 1) * (lineSpacing + diameter)};
               xpos -= keyWidth(i);
@@ -1956,12 +1942,12 @@ nv.models.legend = function() {
             xpos = 0;
 
             for (i = 0; i < keys; i += 1) {
-              if (i && xpos + keyWidth(i) - gutter > maxWidth) {
+              if (i && xpos + keyWidthNoGutter(i) > maxWidth) {
                 xpos = 0;
                 rows += 1;
               }
-              if (xpos + keyWidth(i) - gutter > maxRowWidth) {
-                maxRowWidth = xpos + keyWidth(i) - gutter;
+              if (xpos + keyWidthNoGutter(i) > maxRowWidth) {
+                maxRowWidth = xpos + keyWidthNoGutter(i);
               }
               keyPositions[i] = {x: xpos, y: (rows - 1) * (lineSpacing + diameter)};
               xpos += keyWidth(i);
@@ -2011,7 +1997,7 @@ nv.models.legend = function() {
           mask
             .attr('clip-path', 'none')
             .attr('transform', function(d, i) {
-              var xpos = shift + margin.left + (inline ? radius * (rtl ? -1 : 1) : 0),
+              var xpos = shift + margin.left + (inline ? radius * sign(!rtl) : 0),
                   ypos = margin.top + menuMargin.top;
               return 'translate(' + xpos + ',' + ypos + ')';
             });
@@ -2021,43 +2007,56 @@ nv.models.legend = function() {
             .style('display', 'inline');
 
           series
-            .attr('transform', function(d, i) {
-              var pos = keyPositions[i];
+            .attr('transform', function(d) {
+              var pos = keyPositions[d.series];
               return 'translate(' + pos.x + ',' + pos.y + ')';
             });
 
-          series.selectAll('rect')
-            .attr('x', -radius - gutter / 2)
-            .attr('y', -radius - lineSpacing / 2)
-            .attr('width', function(d, i) {
-              // var index = d.series % columnWidths.length;
-              // return columnWidths[index];
-              return keyWidths[d.series];
+          series.select('rect')
+            .attr('x', function(d) {
+              var xpos = 0;
+              if (inline) {
+                xpos = (diameter + gutter) / 2 * sign(rtl);
+                xpos -= rtl ? keyWidth(d.series) : 0;
+              } else {
+                xpos = keyWidth(d.series) / -2;
+              }
+              return xpos;
             })
-            .attr('height', radius * 2 + lineSpacing);
-          series.selectAll('text')
-            .attr('text-anchor', position)
-            .attr('dy', inline ? '.36em' : '.71em')
-            .attr('transform', function(d, i) {
-              var xpos = inline ? (radius + textGap) * (rtl ? -1 : 1) : 0,
-                  ypos = inline ? 0 : radius + 3;
-              return 'translate(' + xpos + ',' + ypos + ')';
-            });
+            .attr('width', function(d) {
+              return keyWidth(d.series);
+            })
+            .attr('height', lineHeight);
+
           series.selectAll('circle')
+            .attr('r', function(d) {
+              return d.type === 'dash' ? 0 : radius;
+            })
             .attr('transform', function(d, i) {
-              var xpos = inline || type === 'bar' ? 0 : radius * 3 * (i ? 1 : -1);
+              var xpos = inline || type === 'bar' ? 0 : radius * 3 * sign(i);
               return 'translate(' + xpos + ',0)';
             });
-          series.selectAll('line')
-            .attr('x1', function(d, i) {
+
+          series.select('line')
+            .attr('x1', function(d) {
               return d.type === 'dash' ? radius * 8 : radius * 4;
             })
-            .attr('transform', function(d, i) {
+            .attr('transform', function(d) {
               var xpos = radius * (d.type === 'dash' ? -4 : -2);
               return 'translate(' + xpos + ',0)';
             })
-            .style('stroke-dasharray', function(d, i) {
-              return d.type === 'dash' ? '8, 8' : '0,0';
+            .style('stroke-dasharray', function(d) {
+              return d.type === 'dash' ? '8, 8' : 'none';
+            })
+            .style('stroke-dashoffset', -4);
+
+          series.select('text')
+            .attr('dy', inline ? '.36em' : '.71em')
+            .attr('text-anchor', position)
+            .attr('transform', function(d) {
+              var xpos = inline ? (radius + textGap) * sign(!rtl) : 0,
+                  ypos = inline ? 0 : (diameter + lineSpacing) / 2;
+              return 'translate(' + xpos + ',' + ypos + ')';
             });
 
         } else {
@@ -2066,7 +2065,7 @@ nv.models.legend = function() {
           useScroll = true;
 
           legend
-            .width(menuMargin.left + d3.max(keyWidths) - gutter + diameter + textGap + menuMargin.right)
+            .width(menuMargin.left + d3.max(keyWidths) + diameter + textGap + menuMargin.right)
             .height(margin.top + diameter + margin.top); //don't use bottom here because we want vertical centering
 
           legendHeight = menuMargin.top + diameter * keys + spacing * (keys - 1) + menuMargin.bottom;
@@ -2109,7 +2108,7 @@ nv.models.legend = function() {
             .style('opacity', legendOpen)
             .style('display', legendOpen ? 'inline' : 'none')
             .attr('transform', function(d, i) {
-              var xpos = rtl ? d3.max(keyWidths) - gutter - diameter : 0;
+              var xpos = rtl ? d3.max(keyWidths) + radius : 0;
               return 'translate(' + xpos + ',0)';
             });
 
@@ -2118,42 +2117,106 @@ nv.models.legend = function() {
               var ypos = i * (diameter + spacing);
               return 'translate(0,' + ypos + ')';
             });
-          series
-            .selectAll('circle')
-              .attr('transform', '');
-          series
-            .selectAll('line')
-              .attr('x1', 16)
-              .attr('transform', 'translate(-8,0)') //TODO: why is this hard coded?
-              .style('stroke-dasharray', 'inherit');
-          series
-            .selectAll('text')
-              .attr('text-anchor', 'start')
-              .attr('dy', '.36em')
-              .attr('transform', function(d, i) {
-                var xpos = (radius + textGap) * (rtl ? -1 : 1);
-                return 'translate(' + xpos + ',0)';
+
+          series.select('rect')
+            .attr('x', function(d) {
+              var w = (diameter + gutter) / 2 * sign(rtl);
+              w -= rtl ? keyWidth(d.series) : 0;
+              return w;
+            })
+            .attr('width', function(d) {
+              return keyWidth(d.series);
+            })
+            .attr('height', diameter + lineSpacing);
+
+          series.selectAll('circle')
+            .attr('r', function(d) {
+              return d.type === 'dash' ? 0 : d.type === 'line' ? radius - 2 : radius;
+            })
+            .attr('transform', '');
+
+          series.select('line')
+            .attr('x1', 16)
+            .attr('transform', 'translate(-8,0)')
+            .style('stroke-dasharray', function(d) {
+              return d.type === 'dash' ? '6, 4, 6' : 'none';
+            })
+            .style('stroke-dashoffset', 0);
+
+          series.select('text')
+            .attr('text-anchor', 'start')
+            .attr('dy', '.36em')
+            .attr('transform', function(d) {
+              var xpos = (radius + textGap) * sign(!rtl);
+              return 'translate(' + xpos + ',0)';
             });
 
         }
+
         //------------------------------------------------------------
         // Enable scrolling
         if (scrollEnabled) {
           var diff = dropdownHeight - legendHeight;
 
           var assignScrollEvents = function(enable) {
-            var pan = enable ? panLegend : null;
-            var zoom = d3.behavior.zoom()
-                  .on('zoom', pan);
-            var drag = d3.behavior.drag()
-                  .origin(function(d) { return d; })
-                  .on('drag', pan);
+            if (enable) {
 
-            back.call(zoom);
-            g.call(zoom);
+              var zoom = d3.behavior.zoom()
+                    .on('zoom', panLegend);
+              var drag = d3.behavior.drag()
+                    .origin(function(d) { return d; })
+                    .on('drag', panLegend);
 
-            back.call(drag);
-            g.call(drag);
+              back.call(zoom);
+              g.call(zoom);
+
+              back.call(drag);
+              g.call(drag);
+
+            } else {
+
+              back
+                  .on("mousedown.zoom", null)
+                  .on("mousewheel.zoom", null)
+                  .on("mousemove.zoom", null)
+                  .on("DOMMouseScroll.zoom", null)
+                  .on("dblclick.zoom", null)
+                  .on("touchstart.zoom", null)
+                  .on("touchmove.zoom", null)
+                  .on("touchend.zoom", null)
+                  .on("wheel.zoom", null);
+              g
+                  .on("mousedown.zoom", null)
+                  .on("mousewheel.zoom", null)
+                  .on("mousemove.zoom", null)
+                  .on("DOMMouseScroll.zoom", null)
+                  .on("dblclick.zoom", null)
+                  .on("touchstart.zoom", null)
+                  .on("touchmove.zoom", null)
+                  .on("touchend.zoom", null)
+                  .on("wheel.zoom", null);
+
+              back
+                  .on("mousedown.drag", null)
+                  .on("mousewheel.drag", null)
+                  .on("mousemove.drag", null)
+                  .on("DOMMouseScroll.drag", null)
+                  .on("dblclick.drag", null)
+                  .on("touchstart.drag", null)
+                  .on("touchmove.drag", null)
+                  .on("touchend.drag", null)
+                  .on("wheel.drag", null);
+              g
+                  .on("mousedown.drag", null)
+                  .on("mousewheel.drag", null)
+                  .on("mousemove.drag", null)
+                  .on("DOMMouseScroll.drag", null)
+                  .on("dblclick.drag", null)
+                  .on("touchstart.drag", null)
+                  .on("touchmove.drag", null)
+                  .on("touchend.drag", null)
+                  .on("wheel.drag", null);
+            }
           };
 
           var panLegend = function() {
@@ -2166,7 +2229,7 @@ nv.models.legend = function() {
             // don't fire on events other than zoom and drag
             // we need click for handling legend toggle
             if (d3.event) {
-              if (d3.event.type === 'zoom') {
+              if (d3.event.type === 'zoom' && d3.event.sourceEvent) {
                 x = d3.event.sourceEvent.deltaX || 0;
                 y = d3.event.sourceEvent.deltaY || 0;
                 distance = (Math.abs(x) > Math.abs(y) ? x : y) * -1;
@@ -2181,8 +2244,8 @@ nv.models.legend = function() {
             }
 
             // reset value defined in panMultibar();
-            scrollOffset = Math.min(Math.max(scrollOffset + distance, diff), -1);
-            translate = 'translate(0,' + scrollOffset + ')';
+            scrollOffset = Math.min(Math.max(scrollOffset + distance, diff), 0);
+            translate = 'translate(' + (rtl ? d3.max(keyWidths) + radius : 0) + ',' + scrollOffset + ')';
 
             if (scrollOffset + distance > 0 || scrollOffset + distance < diff) {
               overflowHandler(overflowDistance);
@@ -2452,7 +2515,7 @@ nv.models.scroll = function() {
         // don't fire on events other than zoom and drag
         // we need click for handling legend toggle
         if (d3.event) {
-          if (d3.event.type === 'zoom') {
+          if (d3.event.type === 'zoom' && d3.event.sourceEvent) {
             x = d3.event.sourceEvent.deltaX || 0;
             y = d3.event.sourceEvent.deltaY || 0;
             distance = (Math.abs(x) > Math.abs(y) ? x : y) * -1;
@@ -2485,22 +2548,68 @@ nv.models.scroll = function() {
       };
 
       scroll.assignEvents = function(enable) {
-        var pan = enable ? panHandler : null;
-        var zoom = d3.behavior.zoom()
-              .on('zoom', pan);
-        var drag = d3.behavior.drag()
-              .origin(function(d) { return d; })
-              .on('drag', pan);
+        if (enable) {
 
-        scrollWrap
-          .call(zoom);
-        scrollTarget
-          .call(zoom);
+          var zoom = d3.behavior.zoom()
+                .on('zoom', panHandler);
+          var drag = d3.behavior.drag()
+                .origin(function(d) { return d; })
+                .on('drag', panHandler);
 
-        scrollWrap
-          .call(drag);
-        scrollTarget
-          .call(drag);
+          scrollWrap
+            .call(zoom);
+          scrollTarget
+            .call(zoom);
+
+          scrollWrap
+            .call(drag);
+          scrollTarget
+            .call(drag);
+
+        } else {
+
+          scrollWrap
+              .on("mousedown.zoom", null)
+              .on("mousewheel.zoom", null)
+              .on("mousemove.zoom", null)
+              .on("DOMMouseScroll.zoom", null)
+              .on("dblclick.zoom", null)
+              .on("touchstart.zoom", null)
+              .on("touchmove.zoom", null)
+              .on("touchend.zoom", null)
+              .on("wheel.zoom", null);
+          scrollTarget
+              .on("mousedown.zoom", null)
+              .on("mousewheel.zoom", null)
+              .on("mousemove.zoom", null)
+              .on("DOMMouseScroll.zoom", null)
+              .on("dblclick.zoom", null)
+              .on("touchstart.zoom", null)
+              .on("touchmove.zoom", null)
+              .on("touchend.zoom", null)
+              .on("wheel.zoom", null);
+
+          scrollWrap
+              .on("mousedown.drag", null)
+              .on("mousewheel.drag", null)
+              .on("mousemove.drag", null)
+              .on("DOMMouseScroll.drag", null)
+              .on("dblclick.drag", null)
+              .on("touchstart.drag", null)
+              .on("touchmove.drag", null)
+              .on("touchend.drag", null)
+              .on("wheel.drag", null);
+          scrollTarget
+              .on("mousedown.drag", null)
+              .on("mousewheel.drag", null)
+              .on("mousemove.drag", null)
+              .on("DOMMouseScroll.drag", null)
+              .on("dblclick.drag", null)
+              .on("touchstart.drag", null)
+              .on("touchmove.drag", null)
+              .on("touchend.drag", null)
+              .on("wheel.drag", null);
+        }
       };
 
       scroll.resize = function(enable) {
@@ -3856,19 +3965,20 @@ nv.models.bubbleChart = function () {
       legend.dispatch.on('legendClick', function (d, i) {
         d.disabled = !d.disabled;
 
-        if (!data.filter(function (d) {
+        if (!filteredData.filter(function (d) {
           return !d.disabled;
         }).length) {
-          data.map(function (d) {
+          filteredData.map(function (d) {
             d.disabled = false;
-            g.selectAll('.nv-series').classed('disabled', false);
+            container.selectAll('.nv-series').classed('disabled', false);
             return d;
           });
         }
 
-        state.disabled = data.map(function (d) {
+        state.disabled = filteredData.map(function (d) {
           return !!d.disabled;
         });
+
         dispatch.stateChange(state);
 
         container.transition().call(chart.render);
@@ -5327,15 +5437,15 @@ nv.models.funnelChart = function() {
       legend.dispatch.on('legendClick', function(d, i) {
         d.disabled = !d.disabled;
 
-        if (!funnelData.filter(function(d) { return !d.disabled; }).length) {
-          funnelData.map(function(d) {
+        if (!data.filter(function(d) { return !d.disabled; }).length) {
+          data.map(function(d) {
             d.disabled = false;
             wrap.selectAll('.nv-series').classed('disabled', false);
             return d;
           });
         }
 
-        state.disabled = funnelData.map(function(d) { return !!d.disabled; });
+        state.disabled = data.map(function(d) { return !!d.disabled; });
         dispatch.stateChange(state);
 
         container.transition().duration(durationMs).call(chart);
@@ -9933,9 +10043,24 @@ nv.models.paretoChart = function() {
             dataLines = dataLines.length ? dataLines : [{values: []}];
 
             // line legend data
-            var lineLegendData = [{'key': quotaLabel, 'type': 'dash', 'color': '#444', 'values': {'series': 0, 'x': 0, 'y': 0}}];
+            var lineLegendData = data.filter(function(d) {
+                    return d.type === 'line';
+                });
+            lineLegendData.push({
+                'key': quotaLabel,
+                'type': 'dash',
+                'color': '#444',
+                'series': lineLegendData.length,
+                'values': {'series': lineLegendData.length, 'x': 0, 'y': 0}
+            });
             if (targetQuotaValue > 0) {
-                lineLegendData.push({'key': targetQuotaLabel, 'type': 'dash', 'color': '#777', 'values': {'series': 0, 'x': 0, 'y': 0}});
+                lineLegendData.push({
+                    'key': targetQuotaLabel,
+                    'type': 'dash',
+                    'color': '#777',
+                    'series': lineLegendData.length + 1,
+                    'values': {'series': lineLegendData.length + 1, 'x': 0, 'y': 0}
+                });
             }
 
             var seriesX = data.filter(function(d) {
@@ -10055,11 +10180,7 @@ nv.models.paretoChart = function() {
                     .align('right')
                     .height(availableHeight - innerMargin.top);
                 lineLegendWrap
-                    .datum(
-                        data.filter(function(d) {
-                            return d.type === 'line';
-                        }).concat(lineLegendData)
-                    )
+                    .datum(lineLegendData)
                     .call(lineLegend);
 
                 maxLineLegendWidth = lineLegend.calculateWidth();
@@ -10344,13 +10465,14 @@ nv.models.paretoChart = function() {
             //------------------------------------------------------------
 
             barLegend.dispatch.on('legendClick', function(d, i) {
-                var selectedSeries = d.series;
+                var selectedSeries = d.key;
+
                 //swap bar disabled
                 d.disabled = !d.disabled;
                 //swap line disabled for same series
                 if (!chart.stacked()) {
                     data.filter(function(d) {
-                        return d.series === selectedSeries && d.type === 'line';
+                        return d.key === selectedSeries && d.type === 'line';
                     }).map(function(d) {
                             d.disabled = !d.disabled;
                             return d;
@@ -10468,7 +10590,7 @@ nv.models.paretoChart = function() {
                 c2: '#62B464',
                 l: 1
             };
-            return d.color || d3.interpolateHsl(d3.rgb(p.c1), d3.rgb(p.c2))(d.series / 1);
+            return d.color || d3.interpolateHsl(d3.rgb(p.c1), d3.rgb(p.c2))(d.series / 2);
         };
         var lineClasses = function(d, i) {
             return 'nv-group nv-series-' + d.series;

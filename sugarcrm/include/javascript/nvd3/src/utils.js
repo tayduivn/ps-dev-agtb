@@ -324,33 +324,22 @@ nv.utils.dropShadow = function (id, defs, options) {
 
 nv.utils.stringSetLengths = function (_data, _container, _format) {
   var lengths = [],
-      tempContainer = _container.append('g').attr('class', 'tmp-text-strings'),
-      textStrings = tempContainer.selectAll('text')
-        .data(_data).enter()
-          .append('text')
-          .text(_format);
-  textStrings
-    .each(function(d, i) {
-      lengths.push(this.getBBox().width);
+      txt = _container.select('.tmp-text-strings').select('text');
+  if (txt.empty()) {
+    txt = _container.append('g').attr('class', 'tmp-text-strings').append('text');
+  }
+  txt.style('display', 'inline');
+  _data.forEach(function(d, i) {
+      txt.text(d, _format);
+      lengths.push(txt.node().getBBox().width);
     });
-  tempContainer.data([]);
-  tempContainer.remove();
+  txt.text('').style('display', 'none');
   return lengths;
 };
 
 nv.utils.maxStringSetLength = function (_data, _container, _format) {
-  var maxLength = 0;
-  _container.append('g').attr('class', 'tmp-text-strings');
-  var calcContainers = _container.select('.tmp-text-strings').selectAll('text')
-      .data(_data).enter()
-        .append('text')
-        .text(_format);
-  calcContainers
-    .each(function (d,i) {
-      maxLength = Math.max(this.getBBox().width, maxLength);
-    });
-  _container.select('.tmp-text-strings').remove();
-  return maxLength;
+  var lengths = nv.utils.stringSetLengths(_data, _container, _format);
+  return d3.max(lengths);
 };
 
 nv.utils.stringEllipsify = function(_string, _container, _length) {
@@ -361,6 +350,7 @@ nv.utils.stringEllipsify = function(_string, _container, _length) {
   if (txt.empty()) {
     txt = _container.append('g').attr('class', 'tmp-text-strings').append('text');
   }
+  txt.style('display', 'inline');
   txt.text('...');
   ell = txt.node().getBBox().width;
   txt.text(str);
@@ -371,8 +361,7 @@ nv.utils.stringEllipsify = function(_string, _container, _length) {
     txt.text(str);
     len = txt.node().getBBox().width + ell;
   }
-  txt.text('');
-  //_container.selectAll('.tmp-text-strings').remove();
+  txt.text('').style('display', 'none');
   return str + (strLen > _length ? '...' : '');
 };
 

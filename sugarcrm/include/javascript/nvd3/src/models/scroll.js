@@ -56,7 +56,7 @@ nv.models.scroll = function() {
         // don't fire on events other than zoom and drag
         // we need click for handling legend toggle
         if (d3.event) {
-          if (d3.event.type === 'zoom') {
+          if (d3.event.type === 'zoom' && d3.event.sourceEvent) {
             x = d3.event.sourceEvent.deltaX || 0;
             y = d3.event.sourceEvent.deltaY || 0;
             distance = (Math.abs(x) > Math.abs(y) ? x : y) * -1;
@@ -89,22 +89,68 @@ nv.models.scroll = function() {
       };
 
       scroll.assignEvents = function(enable) {
-        var pan = enable ? panHandler : null;
-        var zoom = d3.behavior.zoom()
-              .on('zoom', pan);
-        var drag = d3.behavior.drag()
-              .origin(function(d) { return d; })
-              .on('drag', pan);
+        if (enable) {
 
-        scrollWrap
-          .call(zoom);
-        scrollTarget
-          .call(zoom);
+          var zoom = d3.behavior.zoom()
+                .on('zoom', panHandler);
+          var drag = d3.behavior.drag()
+                .origin(function(d) { return d; })
+                .on('drag', panHandler);
 
-        scrollWrap
-          .call(drag);
-        scrollTarget
-          .call(drag);
+          scrollWrap
+            .call(zoom);
+          scrollTarget
+            .call(zoom);
+
+          scrollWrap
+            .call(drag);
+          scrollTarget
+            .call(drag);
+
+        } else {
+
+          scrollWrap
+              .on("mousedown.zoom", null)
+              .on("mousewheel.zoom", null)
+              .on("mousemove.zoom", null)
+              .on("DOMMouseScroll.zoom", null)
+              .on("dblclick.zoom", null)
+              .on("touchstart.zoom", null)
+              .on("touchmove.zoom", null)
+              .on("touchend.zoom", null)
+              .on("wheel.zoom", null);
+          scrollTarget
+              .on("mousedown.zoom", null)
+              .on("mousewheel.zoom", null)
+              .on("mousemove.zoom", null)
+              .on("DOMMouseScroll.zoom", null)
+              .on("dblclick.zoom", null)
+              .on("touchstart.zoom", null)
+              .on("touchmove.zoom", null)
+              .on("touchend.zoom", null)
+              .on("wheel.zoom", null);
+
+          scrollWrap
+              .on("mousedown.drag", null)
+              .on("mousewheel.drag", null)
+              .on("mousemove.drag", null)
+              .on("DOMMouseScroll.drag", null)
+              .on("dblclick.drag", null)
+              .on("touchstart.drag", null)
+              .on("touchmove.drag", null)
+              .on("touchend.drag", null)
+              .on("wheel.drag", null);
+          scrollTarget
+              .on("mousedown.drag", null)
+              .on("mousewheel.drag", null)
+              .on("mousemove.drag", null)
+              .on("DOMMouseScroll.drag", null)
+              .on("dblclick.drag", null)
+              .on("touchstart.drag", null)
+              .on("touchmove.drag", null)
+              .on("touchend.drag", null)
+              .on("wheel.drag", null);
+        }
       };
 
       scroll.resize = function(enable) {

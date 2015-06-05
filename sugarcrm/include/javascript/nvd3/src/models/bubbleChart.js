@@ -442,19 +442,20 @@ nv.models.bubbleChart = function () {
       legend.dispatch.on('legendClick', function (d, i) {
         d.disabled = !d.disabled;
 
-        if (!data.filter(function (d) {
+        if (!filteredData.filter(function (d) {
           return !d.disabled;
         }).length) {
-          data.map(function (d) {
+          filteredData.map(function (d) {
             d.disabled = false;
-            g.selectAll('.nv-series').classed('disabled', false);
+            container.selectAll('.nv-series').classed('disabled', false);
             return d;
           });
         }
 
-        state.disabled = data.map(function (d) {
+        state.disabled = filteredData.map(function (d) {
           return !!d.disabled;
         });
+
         dispatch.stateChange(state);
 
         container.transition().call(chart.render);

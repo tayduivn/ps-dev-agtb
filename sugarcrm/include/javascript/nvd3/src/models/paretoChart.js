@@ -203,9 +203,24 @@ nv.models.paretoChart = function() {
             dataLines = dataLines.length ? dataLines : [{values: []}];
 
             // line legend data
-            var lineLegendData = [{'key': quotaLabel, 'type': 'dash', 'color': '#444', 'values': {'series': 0, 'x': 0, 'y': 0}}];
+            var lineLegendData = data.filter(function(d) {
+                    return d.type === 'line';
+                });
+            lineLegendData.push({
+                'key': quotaLabel,
+                'type': 'dash',
+                'color': '#444',
+                'series': lineLegendData.length,
+                'values': {'series': lineLegendData.length, 'x': 0, 'y': 0}
+            });
             if (targetQuotaValue > 0) {
-                lineLegendData.push({'key': targetQuotaLabel, 'type': 'dash', 'color': '#777', 'values': {'series': 0, 'x': 0, 'y': 0}});
+                lineLegendData.push({
+                    'key': targetQuotaLabel,
+                    'type': 'dash',
+                    'color': '#777',
+                    'series': lineLegendData.length + 1,
+                    'values': {'series': lineLegendData.length + 1, 'x': 0, 'y': 0}
+                });
             }
 
             var seriesX = data.filter(function(d) {
@@ -325,11 +340,7 @@ nv.models.paretoChart = function() {
                     .align('right')
                     .height(availableHeight - innerMargin.top);
                 lineLegendWrap
-                    .datum(
-                        data.filter(function(d) {
-                            return d.type === 'line';
-                        }).concat(lineLegendData)
-                    )
+                    .datum(lineLegendData)
                     .call(lineLegend);
 
                 maxLineLegendWidth = lineLegend.calculateWidth();
@@ -614,13 +625,14 @@ nv.models.paretoChart = function() {
             //------------------------------------------------------------
 
             barLegend.dispatch.on('legendClick', function(d, i) {
-                var selectedSeries = d.series;
+                var selectedSeries = d.key;
+
                 //swap bar disabled
                 d.disabled = !d.disabled;
                 //swap line disabled for same series
                 if (!chart.stacked()) {
                     data.filter(function(d) {
-                        return d.series === selectedSeries && d.type === 'line';
+                        return d.key === selectedSeries && d.type === 'line';
                     }).map(function(d) {
                             d.disabled = !d.disabled;
                             return d;
@@ -738,7 +750,7 @@ nv.models.paretoChart = function() {
                 c2: '#62B464',
                 l: 1
             };
-            return d.color || d3.interpolateHsl(d3.rgb(p.c1), d3.rgb(p.c2))(d.series / 1);
+            return d.color || d3.interpolateHsl(d3.rgb(p.c1), d3.rgb(p.c2))(d.series / 2);
         };
         var lineClasses = function(d, i) {
             return 'nv-group nv-series-' + d.series;
