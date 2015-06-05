@@ -118,7 +118,8 @@
                 return;
             }
             var fieldValue = model.get(field.name);
-            if (_.isEmpty(fieldValue) && fieldValue !== 0) {
+            // _.isEmpty() returns true for any number, so checking for _.isNumber() as well
+            if (_.isEmpty(fieldValue) && !_.isNumber(fieldValue)) {
                 delete viewDefs[field.name];
             }
         });
