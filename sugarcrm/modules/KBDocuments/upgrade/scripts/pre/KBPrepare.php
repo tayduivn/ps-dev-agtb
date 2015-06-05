@@ -28,11 +28,6 @@ class SugarUpgradeKBPrepare extends UpgradeScript
             );
             if ($script->run()) {
                 $this->fileToDelete($script->getFilesToDelete());
-                //Should remove KB from BWC modules to prevent layouts convert,
-                $this->upgrader->state['bwc_modules'] = array_diff(
-                    $this->upgrader->state['bwc_modules'],
-                    array('KBContents', 'KBDocuments')
-                );
                 return true;
             }
             return false;
@@ -141,6 +136,8 @@ class PrepareKBDocument
                 'team_id' => 'team_id',
                 'team_set_id' => 'team_set_id',
                 'kbscase_id' => 'case_id',
+                'parent_type' => 'parent_type',
+                'parent_id' => 'parent_id',
             ),
         ),
         'prepKBAtt' => array(
@@ -187,6 +184,8 @@ class PrepareKBDocument
             $tmpFiles[$key] = $key;
         }
         $files = array_diff($oldFiles, $tmpFiles);
+        $files[$this->path . '/KBDocumentKBTags'] = $this->path . '/KBDocumentKBTags';
+        $files[$this->path . '/KBDocumentRevisions'] = $this->path . '/KBDocumentRevisions';
         $this->fileToDelete = $files;
         if (!$this->prepareTables()) {
             return $this->error("Can't create temporary tables for KB conversion");
@@ -228,6 +227,18 @@ class PrepareKBDocument
     public function prepareTables()
     {
         $result = true;
+        //Prepare custom table.
+        $customTable = 'kbdocuments_cstm';
+        if ($this->db->tableExists($customTable)) {
+            $this->tempTables['prepKBCustom'] = array(
+                $customTable => array(),
+            );
+            $cols = $this->db->get_columns($customTable);
+            foreach (array_keys($cols) as $key) {
+                $this->tempTables['prepKBCustom'][$customTable][$key] = $key;
+            }
+        }
+
         foreach ($this->tempTables as $table => $map) {
             if ($this->db->tableExists($table)) {
                 $this->db->dropTableName($table);
@@ -371,6 +382,11 @@ class PrepareKBDocument
                         kbtag_id
                     )
                     {$select}";
+                break;
+            case 'prepKBCustom':
+                $columns = implode(',', array_keys($this->tempTables['prepKBCustom']['kbdocuments_cstm']));
+                $select = "SELECT $columns FROM kbdocuments_cstm";
+                $query = "INSERT INTO {$table} ({$columns}) {$select}";
                 break;
         }
         if (empty($query)) {
