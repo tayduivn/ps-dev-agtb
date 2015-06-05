@@ -76,6 +76,10 @@ $dictionary['Category'] = array(
     'ignore_templates' => array(
         'taggable',
     ),
+    'acls' => array(
+        'SugarACLStatic' => true,
+        'SugarACLCategories' => true,
+    ),
 );
 
 VardefManager::createVardef(

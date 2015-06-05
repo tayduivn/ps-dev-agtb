@@ -136,7 +136,7 @@ describe('Plugins.JSTree', function() {
 
     it('Delete should show alert.', function() {
         field.collection = new app.NestedSetCollection(treeData);
-        var menuObj = field._loadContextMenu({showMenu: true});
+        var menuObj = field._loadContextMenu({showMenu: true, acl: {}});
         var alertStub = sinonSandbox.stub(app.alert, 'show');
 
         menuObj.delete.action({
