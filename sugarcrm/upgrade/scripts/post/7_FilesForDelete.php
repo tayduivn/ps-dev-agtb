@@ -328,6 +328,10 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             $files[] = 'upgrade/scripts/post/5_FTSHook.php';
         }
 
+        if (version_compare($this->from_version, '7.8', '<')) {
+            $files[] = 'modules/Forecasts/clients/base/view/forecast-pipeline/forecast-pipeline.hbs';
+        }
+
         $this->fileToDelete($files);
     }
 

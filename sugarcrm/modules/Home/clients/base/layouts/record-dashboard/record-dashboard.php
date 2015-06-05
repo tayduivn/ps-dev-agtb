@@ -70,13 +70,9 @@ $viewdefs['Home']['base']['layout']['record-dashboard'] = array(
                         array(
                             'view' =>
                             array(
-                                'type' => 'forecast-pipeline',
+                                'type' => 'sales-pipeline',
                                 'label' => 'LBL_DASHLET_PIPLINE_NAME',
                                 'visibility' => 'user',
-                            ),
-                            'context' =>
-                            array(
-                                'module' => 'Forecasts',
                             ),
                             'width' => 12,
                         ),

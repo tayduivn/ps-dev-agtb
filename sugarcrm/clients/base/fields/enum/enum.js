@@ -291,7 +291,8 @@
      */
     loadEnumOptions: function(fetch, callback) {
         var self = this;
-        var _itemsKey = 'cache:' + this.module + ':' + this.name + ':items';
+        var _module = this.getLoadEnumOptionsModule();
+        var _itemsKey = 'cache:' + _module + ':' + this.name + ':items';
 
         this.items = this.def.options || this.context.get(_itemsKey);
 
@@ -299,7 +300,7 @@
 
         if (fetch || !this.items) {
             this.isFetchingOptions = true;
-            var _key = 'request:' + this.module + ':' + this.name;
+            var _key = 'request:' + _module + ':' + this.name;
             //if previous request is existed, ignore the duplicate request
             if (this.context.get(_key)) {
                 var request = this.context.get(_key);
@@ -310,7 +311,7 @@
                     }
                 }, this));
             } else {
-                var request = app.api.enumOptions(self.module, self.name, {
+                var request = app.api.enumOptions(_module, self.name, {
                     success: function(o) {
                         if(self.disposed) { return; }
                         if (self.items !== o) {
@@ -327,6 +328,15 @@
         } else if (_.isString(this.items)) {
             this.items = app.lang.getAppListStrings(this.items);
         }
+    },
+
+    /**
+     * Allow overriding of what module is used for loading the enum options
+     *
+     * @return {string}
+     */
+    getLoadEnumOptionsModule: function() {
+        return this.module;
     },
 
     /**

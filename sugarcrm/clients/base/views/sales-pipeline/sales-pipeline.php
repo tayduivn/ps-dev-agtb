@@ -10,7 +10,27 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$viewdefs['Forecasts']['base']['view']['forecast-pipeline'] = array(
+$viewdefs['base']['view']['sales-pipeline'] = array(
+    'dashlets' => array(
+        array(
+            'label' => 'LBL_DASHLET_SALES_PIPELINE_CHART_NAME',
+            'description' => 'LBL_DASHLET_SALES_PIPELINE_CHART_DESC',
+            'config' => array(
+            ),
+            'filter' => array(
+                'module' => array(
+                    'Home',
+                    'Accounts',
+                    'Opportunities',
+                    'RevenueLineItems'
+                ),
+                'view' => array(
+                    'record',
+                    'records'
+                )
+            )
+        ),
+    ),
     'panels' => array(
         array(
             'name' => 'panel_body',
