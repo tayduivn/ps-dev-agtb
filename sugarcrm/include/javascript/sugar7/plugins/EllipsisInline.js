@@ -47,10 +47,14 @@
              * Create tooltips for all elements that have `ellipsis_inline` class.
              */
             initializeEllipsisTooltips: function() {
+                var self = this;
                 if (this._$ellipsisTooltips) {
                     app.utils.tooltip.destroy(this._$ellipsisTooltips);
                 }
-                this._$ellipsisTooltips = _.defer(app.utils.tooltip.initialize, this.$('.ellipsis_inline'), {
+
+                _.defer(function(options) {
+                    self._$ellipsisTooltips = app.utils.tooltip.initialize(options);
+                }, this.$('.ellipsis_inline'), {
                     trigger: 'manual'
                 }, this.dir);
             },
