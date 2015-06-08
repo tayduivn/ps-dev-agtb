@@ -413,15 +413,7 @@ class RenameModules
                         continue;
                     }
                     $oldStringValue = $mod_strings[$replaceKey];
-                    //At this point we don't know if we should replace the string with the plural or singular version of the new
-                    //strings so we'll try both but with the plural version first since it should be longer than the singular.
-                    // The saved old strings are html decoded, so we need to decode the new string first before str_replace.
-                    $replacedString = str_replace($renameFields['prev_plural'], html_entity_decode_utf8($renameFields['plural'], ENT_QUOTES), $oldStringValue);
-                    if ($replacedString === $oldStringValue) {
-                        // continue to replace singular only if nothing been replaced yet
-                        $replacedString = str_replace($renameFields['prev_singular'], html_entity_decode_utf8($renameFields['singular'], ENT_QUOTES), $replacedString);
-                    }
-                    $replacementStrings[$replaceKey] = $replacedString;
+                    $replacementStrings[$replaceKey] = $this->renameModuleRelatedStrings($oldStringValue, $renameFields);
                 }
             }
         }
@@ -553,6 +545,46 @@ class RenameModules
     }
 
     /**
+     * Rename module-related strings such as links and dashlet strings.
+     *
+     * @param string $oldString The original language string.
+     * @param array $renameFields Array of strings containing new singular/plural
+     *  labels (from rename modules form) and previous singular/plural fields.
+     * @param boolean $pluralFirst Set to true to replace plural first, otherwise, singular first.
+     * @return string The language string with the new singular/plural replacements.
+     */
+    public function renameModuleRelatedStrings($oldString, $renameFields, $pluralFirst = true)
+    {
+        // Ignore empty fields. If we get to the body of this condition there is a problem...
+        if ($renameFields['prev_singular'] === '' || $renameFields['prev_plural'] === '') {
+            return $oldString;
+        }
+
+        // This pattern searches for whole words to replace in the old string. Also,
+        // make sure characters like $, ^, /, etc. are escaped before being embedded into the pattern.
+        // Note: 'u' modifier is for UTF-8 support.
+        $replacePatterns = array(
+            'singular' => '/(?<=\W|^)(' . preg_quote($renameFields['prev_singular'], '/') . ')(?=\W|$)/u',
+            'plural' => '/(?<=\W|^)(' . preg_quote($renameFields['prev_plural'], '/') . ')(?=\W|$)/u'
+        );
+        $replacedString = null;
+        // Replace by plural or singular first depending on $pluralFirst.
+        $field = $pluralFirst ? 'plural' : 'singular';
+        if ($renameFields[$field] !== '') {
+            $replacedString = preg_replace($replacePatterns[$field], $renameFields[$field], $oldString);
+        }
+
+        // Swap fields and do the second replacement.
+        $field = $pluralFirst ? 'singular' : 'plural';
+        if (!is_null($replacedString) && $renameFields[$field] !== '') {
+            $replacedString = preg_replace($replacePatterns[$field], $renameFields[$field], $replacedString);
+        }
+
+        // If any expression fails, revert to old language string.
+        return (!is_null($replacedString) ? $replacedString : $oldString);
+    }
+
+    /**
      * Rename the related links within a module.
      *
      * @param  string $moduleName The module to be renamed
@@ -584,16 +616,9 @@ class RenameModules
 
                     $replaceKey = $linkEntry['vname'];
                     $oldStringValue = $mod_strings[$replaceKey];
-                   // Use the plural value of the two only if it's longer and the old language string contains it,
-                   // singular otherwise
-                    if (strlen($renameFields['prev_plural']) > strlen($renameFields['prev_singular']) && strpos($oldStringValue, $renameFields['prev_plural']) !== false) {
-                        $key = 'plural';
-                    } else {
-                       $key = 'singular';
-
-                    }
-                    $replacedString = str_replace(html_entity_decode_utf8($renameFields['prev_' . $key], ENT_QUOTES), $renameFields[$key], $oldStringValue);
-                    $replacementStrings[$replaceKey] = $replacedString;
+                    // If the plural string is longer than singular fall-back to singular replacements first.
+                    $pluralFirst = strlen($renameFields['prev_plural']) > strlen($renameFields['prev_singular']);
+                    $replacementStrings[$replaceKey] = $this->renameModuleRelatedStrings($oldStringValue, $renameFields, $pluralFirst);
                 }
             }
         }
@@ -659,11 +684,7 @@ class RenameModules
                 $currentModuleStrings = return_module_language($this->selectedLanguage, $moduleName);
                 $modStringKey = array_search($dashletTitle,$currentModuleStrings);
                 if ($modStringKey !== FALSE) {
-                    $replacedString = str_replace(html_entity_decode_utf8($replacementLabels['prev_plural'], ENT_QUOTES), $replacementLabels['plural'], $dashletTitle);
-                    if ($replacedString == $dashletTitle) {
-                        $replacedString = str_replace(html_entity_decode_utf8($replacementLabels['prev_singular'], ENT_QUOTES), $replacementLabels['singular'], $replacedString);
-                    }
-                    $replacementStrings[$modStringKey] = $replacedString;
+                    $replacementStrings[$modStringKey] = $this->renameModuleRelatedStrings($dashletTitle, $replacementLabels);
                 }
             }
         }
