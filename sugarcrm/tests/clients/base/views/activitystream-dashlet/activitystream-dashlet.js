@@ -35,7 +35,7 @@ describe('Activity Stream Dashlet View', function() {
         var meta = {};
 
         var layout = app.view.createLayout({
-            name: 'dashlet',
+            type: 'dashlet',
             context: context
         });
 
@@ -77,11 +77,11 @@ describe('Activity Stream Dashlet View', function() {
         it('should cache rendered activities', function() {
             view.model.set(model);
             var testView = view.renderPost(view.model);
-            expect(testView.name).toEqual('activitystream');
+            expect(testView.type).toEqual('activitystream');
 
-            view.renderedActivities['asdf'].name = 'asdf';
+            view.renderedActivities[model.id].type = 'foo';
             testView = view.renderPost(view.model);
-            expect(testView.name).toEqual('asdf');
+            expect(testView.type).toEqual('foo');
         });
     });
 

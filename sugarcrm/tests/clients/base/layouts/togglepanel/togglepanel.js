@@ -73,17 +73,17 @@ describe("Base.Layout.Togglepanel", function () {
             var meta = {
                 'availableToggles': [
                     {
-                        'name': 'test1',
+                        'type': 'test1',
                         'label': 'test1',
                         'icon': 'icon1'
                     },
                     {
-                        'name': 'test2',
+                        'type': 'test2',
                         'label': 'test2',
                         'icon': 'icon2'
                     },
                     {
-                        'name': 'test3',
+                        'type': 'test3',
                         'label': 'test3',
                         'icon': 'icon3',
                         'disabled': true
@@ -98,7 +98,7 @@ describe("Base.Layout.Togglepanel", function () {
                     },
                     'c3': {
                         'layout': {
-                            'name': 'test3'
+                            'type': 'test3'
                         }
                     }
                 }
@@ -128,12 +128,12 @@ describe("Base.Layout.Togglepanel", function () {
         });
         it('should place toggle components and add them to the togglable component lists', function () {
             var mockComponent = new Backbone.View();
-            mockComponent.name = 'test1';
+            mockComponent.name = mockComponent.type = 'test1';
             mockComponent.dispose = function () {
             };
             layout.options.meta.availableToggles = [
                 {
-                    'name': 'test1',
+                    'type': 'test1',
                     'label': 'test1',
                     'icon': 'icon1'
                 }
@@ -141,7 +141,7 @@ describe("Base.Layout.Togglepanel", function () {
             layout._placeComponent(mockComponent);
 
             expect(layout.toggleComponents).toEqual([mockComponent]);
-            expect(layout.componentsList[mockComponent.name]).toEqual(mockComponent);
+            expect(layout.componentsList[mockComponent.type]).toEqual(mockComponent);
         });
     });
 });

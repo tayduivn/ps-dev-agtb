@@ -146,7 +146,7 @@
         }
 
         var view = app.view.createView({
-            name : viewName,
+            type : viewName,
             context : context,
             module : module,
             meta : meta,
@@ -210,7 +210,7 @@
         }
 
         var layout = app.view.createLayout(_.extend({
-            name: layoutName,
+            type: layoutName,
             context: context,
             module: module,
             meta: meta,

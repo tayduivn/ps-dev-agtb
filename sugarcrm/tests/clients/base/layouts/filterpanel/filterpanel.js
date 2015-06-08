@@ -152,8 +152,8 @@ describe("Base.Layout.Filterpanel", function(){
     describe('disableActivityStreamToggle', function(){
         it('should set activity stream toggle to inactive when activity stream not enabled', function(){
             var meta = {'availableToggles': [
-                {'name': 'list', 'icon': 'fa fa-table', 'label': 'LBL_LISTVIEW'},
-                {'name': 'activitystream', 'icon': 'fa fa-clock-o', 'label': 'LBL_ACTIVITY_STREAM'}
+                {'type': 'list', 'icon': 'fa fa-table', 'label': 'LBL_LISTVIEW'},
+                {'type': 'activitystream', 'icon': 'fa fa-clock-o', 'label': 'LBL_ACTIVITY_STREAM'}
             ], 'components': [
                 {'layout': 'filter', 'targetEl': '.filter', 'position': 'prepend'},
                 {'view': 'filter-actions', 'targetEl': '.filter-options'},
@@ -166,8 +166,8 @@ describe("Base.Layout.Filterpanel", function(){
             layout = SugarTest.createLayout('base', 'Accounts', 'filterpanel', meta);
 
             var activityStreamToggle = _.find(layout.meta.availableToggles, function(toggle) {
-                return toggle.name === 'activitystream';
-            })
+                return toggle.type === 'activitystream';
+            });
 
             expect(activityStreamToggle.disabled).toEqual(true);
             expect(activityStreamToggle.label).toEqual('LBL_ACTIVITY_STREAM_DISABLED');
