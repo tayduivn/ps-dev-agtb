@@ -267,6 +267,10 @@ class AdministrationController extends SugarController
             require_once('modules/Home/UnifiedSearchAdvanced.php');
             $unifiedSearchAdvanced = new UnifiedSearchAdvanced();
             $unifiedSearchAdvanced->saveGlobalSearchSettings();
+
+            // Refresh the server info & module list sections of the metadata
+            MetaDataManager::refreshSectionCache(array(MetaDataManager::MM_SERVERINFO, MetaDataManager::MM_MODULES));
+
             echo "true";
         } catch (Exception $ex) {
             echo "false";
