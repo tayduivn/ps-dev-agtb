@@ -87,6 +87,21 @@ class ParserTest extends \PHPUnit_Framework_TestCase
                 ),
                 array()
             ),
+            array(
+                'countConditional($revenuelineitems,"sales_stage",createList("Closed Won","Closed Lost"))',
+                '',
+                array(
+                    'countConditional' => array(
+                        'class' => 'CountConditionalRelatedExpression',
+                        'src' => 'include/Expressions/Expression/Numeric/CountConditionalRelatedExpression.php',
+                    ),
+                    'createList' => array(
+                        'class' => 'DefineEnumExpression',
+                        'src' => 'include/Expressions/Expression/Enum/DefineEnumExpression.php'
+                    )
+                ),
+                array('sales_stage')
+            ),
             // will return all rollup fields since we don't have a linkname specified
             array(
                 'rollupSum($revenuelineitems, "likely_case")',

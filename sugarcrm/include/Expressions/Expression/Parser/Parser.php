@@ -397,12 +397,6 @@ class Parser {
                         $result[] = $params[2]->evaluate();
                     }
 
-                } elseif ($expr instanceof CountConditionalRelatedExpression) {
-                    // with this one, the second param is also needed, since if it changes, it should trigger the
-                    // logic hook to run
-                    if ($linkName === '' || $params[0]->varName === $linkName) {
-                        $result[] = $params[1]->evaluate();
-                    }
                 }
             }
             return $result;
