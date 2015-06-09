@@ -11,15 +11,14 @@
  */
 --}}
 <div>
-{{#if model.isNotEmpty}}
-    {{#if enableHeaderPane}}
-        {{partial 'headerpane' ../../this ../../this}}
+    {{#if model.isNotEmpty}}
+        {{#if enableHeaderPane}}
+            {{partial 'headerpane' ../../this view=../../this}}
+        {{/if}}
+        {{#if meta.useTabsAndPanels}}
+            {{partial 'tabspanels' ../../this view=../../this}}
+        {{else}}
+            {{partial 'businesscard' ../../this view=../../this}}
+        {{/if}}
     {{/if}}
-
-    {{#if meta.useTabsAndPanels}}
-        {{partial 'tabspanels' ../../this ../../this}}
-    {{else}}
-        {{partial 'businesscard' ../../this ../../this}}
-    {{/if}}
-{{/if}}
 </div>
