@@ -717,19 +717,22 @@ html.rtl {
                 }
             }
         }
+        &.right-actions .dataTable td .actions .dropdown-menu {
+            text-align: right;
+        }
     }
 
     .dataTable {
         th {
             border-left: @tableBorder;
             border-right: 0;
-            .dropdown-menu {
-                text-align: right;
-            }
         }
         td,
         th {
             text-align: right;
+            .dropdown-menu {
+                text-align: right;
+            }
         }
         th:last-child {
             border-left: none;
