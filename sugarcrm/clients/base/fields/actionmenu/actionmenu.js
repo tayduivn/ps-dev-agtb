@@ -61,7 +61,7 @@
         if (this.options.viewName === 'list-header') {
             app.shortcuts.register({
                 id: 'SelectAll:Checkbox',
-                keys: 'ctrl+a',
+                keys: 'mod+a',
                 component: this,
                 description: 'LBL_SHORTCUT_SELECT_ALL',
                 handler: function() {

@@ -147,7 +147,7 @@
         // called, not just on render
         app.shortcuts.register({
             id: 'Filter:Create',
-            keys: ['f c', 'ctrl+alt+8'],
+            keys: ['f c', 'mod+alt+8'],
             component: this,
             description: 'LBL_SHORTCUT_FILTER_CREATE',
             handler: function() {

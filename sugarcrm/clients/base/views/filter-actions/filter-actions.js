@@ -53,7 +53,7 @@
             //shortcut keys
             app.shortcuts.register({
                 id: 'Filter:Close',
-                keys: ['esc', 'ctrl+alt+l'],
+                keys: ['esc', 'mod+alt+l'],
                 component: this,
                 description: 'LBL_SHORTCUT_FILTER_CLOSE',
                 callOnFocus: true,
@@ -63,7 +63,7 @@
             });
             app.shortcuts.register({
                 id: 'Filter:Save',
-                keys: ['ctrl+s', 'ctrl+alt+a'],
+                keys: ['mod+s', 'mod+alt+a'],
                 component: this,
                 description: 'LBL_SHORTCUT_FILTER_SAVE',
                 callOnFocus: true,

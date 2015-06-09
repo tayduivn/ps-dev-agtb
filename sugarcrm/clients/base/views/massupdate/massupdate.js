@@ -937,7 +937,7 @@
         });
         app.shortcuts.register({
             id: 'MassUpdate:Cancel',
-            keys: ['esc', 'ctrl+alt+l'],
+            keys: ['esc', 'mod+alt+l'],
             component: this,
             description: 'LBL_SHORTCUT_MASS_UPDATE_CANCEL',
             callOnFocus: true,
@@ -947,7 +947,7 @@
         });
         app.shortcuts.register({
             id: 'MassUpdate:Update',
-            keys: ['ctrl+s', 'ctrl+alt+a'],
+            keys: ['mod+s', 'mod+alt+a'],
             component: this,
             description: 'LBL_SHORTCUT_MASS_UPDATE_SAVE',
             callOnFocus: true,

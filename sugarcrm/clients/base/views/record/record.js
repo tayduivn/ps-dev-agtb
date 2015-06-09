@@ -1432,7 +1432,7 @@
     registerShortcuts: function() {
         app.shortcuts.register({
             id: 'Record:Edit',
-            keys: ['e','ctrl+alt+i'],
+            keys: ['e','mod+alt+i'],
             component: this,
             description: 'LBL_SHORTCUT_RECORD_EDIT',
             handler: function() {
@@ -1445,7 +1445,7 @@
 
         app.shortcuts.register({
             id: 'Record:Delete',
-            keys: ['d','ctrl+alt+d'],
+            keys: ['d','mod+alt+d'],
             component: this,
             description: 'LBL_SHORTCUT_RECORD_DELETE',
             handler: function() {
@@ -1456,7 +1456,7 @@
 
         app.shortcuts.register({
             id: 'Record:Save',
-            keys: ['ctrl+s','ctrl+alt+a'],
+            keys: ['mod+s','mod+alt+a'],
             component: this,
             description: 'LBL_SHORTCUT_RECORD_SAVE',
             callOnFocus: true,
@@ -1470,7 +1470,7 @@
 
         app.shortcuts.register({
             id: 'Record:Cancel',
-            keys: ['esc','ctrl+alt+l'],
+            keys: ['esc','mod+alt+l'],
             component: this,
             description: 'LBL_SHORTCUT_RECORD_CANCEL',
             callOnFocus: true,
@@ -1530,7 +1530,7 @@
 
         app.shortcuts.register({
             id: 'Record:Copy',
-            keys: ['shift+c','ctrl+alt+u'],
+            keys: ['shift+c','mod+alt+u'],
             component: this,
             description: 'LBL_SHORTCUT_COPY_RECORD',
             handler: function() {
