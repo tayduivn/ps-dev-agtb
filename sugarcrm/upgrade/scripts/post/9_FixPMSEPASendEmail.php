@@ -104,44 +104,43 @@ class SugarUpgradeFixPMSEPASendEmail extends UpgradeScript
     public function run()
     {
         // The only supported upgrade for this is 7.6.0.0RC4 to 7.6.0.0
-        if (version_compare($this->from_version, '7.6.0.0RC4', '!=') && version_compare($this->to_version, '7.6.0.0', '!=')) {
-            return;
-        }
+        if (version_compare($this->from_version, '7.6.0.0RC4', '==') && version_compare($this->to_version, '7.6.0.0', '==')) {
 
-        $result = $GLOBALS['db']->query('SELECT p.pro_module as module, e1.id as event_id, e2.evn_params as params FROM '
-            .'pmse_bpmn_event e1 inner join pmse_bpm_event_definition e2 '
-            .'ON e1.id = e2.id left join pmse_bpm_process_definition p on e1.prj_id = p.prj_id '
-            ."WHERE (e2.evn_type = 'INTERMEDIATE' OR e2.evn_type = 'END') "
-            ."AND e1.evn_marker = 'MESSAGE' AND e1.evn_behavior = 'THROW'");
+            $result = $GLOBALS['db']->query('SELECT p.pro_module as module, e1.id as event_id, e2.evn_params as params FROM '
+                .'pmse_bpmn_event e1 inner join pmse_bpm_event_definition e2 '
+                .'ON e1.id = e2.id left join pmse_bpm_process_definition p on e1.prj_id = p.prj_id '
+                ."WHERE (e2.evn_type = 'INTERMEDIATE' OR e2.evn_type = 'END') "
+                ."AND e1.evn_marker = 'MESSAGE' AND e1.evn_behavior = 'THROW'");
 
-        while ($row = $GLOBALS['db']->fetchByAssoc($result)) {
-            $oldJSON = json_decode(html_entity_decode($row['params']), true);
-            if ($oldJSON !== null) {
-                $newJSON = array(
-                    "to" => array(),
-                    "cc" => array(),
-                    "bcc" => array()
-                );
-                $indexHelper = array("to", "cc", "bcc");
+            while ($row = $GLOBALS['db']->fetchByAssoc($result)) {
+                $oldJSON = json_decode(html_entity_decode($row['params']), true);
+                if ($oldJSON !== null) {
+                    $newJSON = array(
+                        "to" => array(),
+                        "cc" => array(),
+                        "bcc" => array()
+                    );
+                    $indexHelper = array("to", "cc", "bcc");
 
-                foreach($indexHelper as $index) {
-                    foreach($oldJSON[$index] as $value) {
-                        $parsed = $this->parseToNewFormat($value, $row["module"]);
-                        if(empty($parsed)) {
-                            continue;
+                    foreach ($indexHelper as $index) {
+                        foreach ($oldJSON[$index] as $value) {
+                            $parsed = $this->parseToNewFormat($value, $row["module"]);
+                            if (empty($parsed)) {
+                                continue;
+                            }
+                            array_push($newJSON[$index], $parsed);
                         }
-                        array_push($newJSON[$index], $parsed);
                     }
+
+                    $newJSON = json_encode(array(
+                        "to" => $newJSON["to"],
+                        "cc" => $newJSON["cc"],
+                        "bcc" => $newJSON["bcc"]
+                    ));
+
+                    $event_id = $row["event_id"];
+                    $GLOBALS['db']->query("UPDATE pmse_bpm_event_definition SET evn_params = '$newJSON' WHERE id = '$event_id'");
                 }
-
-                $newJSON = json_encode(array(
-                    "to" => $newJSON["to"],
-                    "cc" => $newJSON["cc"],
-                    "bcc" => $newJSON["bcc"]
-                ));
-
-                $event_id = $row["event_id"];
-                $GLOBALS['db']->query("UPDATE pmse_bpm_event_definition SET evn_params = '$newJSON' WHERE id = '$event_id'");
             }
         }
     }

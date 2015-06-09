@@ -2418,7 +2418,7 @@ AdamActivity.prototype.actionFactory = function (type) {
                                App.alert.show('upload', {
                                    level: 'warning',
                                    messages: SUGAR.App.lang.get('LBL_PMSE_CANNOT_CONFIGURE_ADD_RELATED_RECORD', 'pmse_Project'),
-                                   autoClose: true
+                                   autoClose: false
                                });
                            }
                        }
