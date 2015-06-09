@@ -150,6 +150,16 @@
                 }, this));
             }, this));
         }, this));
+
+        // Listener for display of tags ribbon menu
+        this.on('quicksearch:tag:open', function() {
+            this.$el.addClass('quicksearch-tags-open');
+        }, this);
+
+        // Listener for hiding of tags ribbon menu
+        this.on('quicksearch:tag:close', function() {
+            this.$el.removeClass('quicksearch-tags-open');
+        }, this);
     },
 
     /**

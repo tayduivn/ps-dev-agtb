@@ -14,7 +14,7 @@
  * @extends View.View
  */
 ({
-    className: 'table-cell',
+    className: 'table-cell quicksearch-selected-tags',
 
     events: {
         'click .tag-remove': 'removeTagClicked',
