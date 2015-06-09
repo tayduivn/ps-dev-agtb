@@ -760,7 +760,6 @@ html.rtl {
         right: 0;
     }
 
-
     .sidebar-content {
         right: auto;
         left: 0;
@@ -781,17 +780,13 @@ html.rtl {
                     }
                 }
             }
-            .dashlets > li:last-child {
-                padding-left: 0;
-            }
             .cols .dashlets {
                 margin-right: 1.5%;
+                > li:last-child {
+                    padding-right: 5px;
+                }
             }
         }
-    }
-
-    .side .dashlets > li:last-child {
-        padding-left: 0;
     }
 
     .dashboard .dashlets .dashlet-row .rows.well > .btn {
@@ -832,13 +827,6 @@ html.rtl {
         float: left;
         margin-left: 0;
     }
-    .side .dashlets > li:last-child {
-        padding-left: 0;
-    }
-
-    .side .dashlets > li:last-child {
-        padding-left: 0;
-    }
 
     .btn-slider .noUiSliderEnds {
         margin: 0 0 0 30px;
@@ -872,26 +860,26 @@ html.rtl {
         }
     }
 
-    .preview-pane .preview-headerbar {
-        left: 0;
-        right: auto;
-        border-right: @borderWidget;
-        border-left: 0;
-    }
-
-    .preview-pane .preview-headerbar h1 {
-        float: right;
-        margin-right: 20px;
-        margin-left: 0;
-    }
-
-    .preview-data .row-fluid {
-        .span5 {
-            text-align: left;
+    .preview-pane {
+        .preview-headerbar {
+            left: 0;
+            right: auto;
+            border-right: @borderWidget;
+            border-left: 0;
+            h1 {
+                float: right;
+                margin-right: 20px;
+                margin-left: 0;
+            }
         }
-        .span7 {
-            [dir=ltr] {
-                text-align: right;
+        .preview-data .row-fluid {
+            .span5 {
+                text-align: left;
+            }
+            .span7 {
+                [dir=ltr] {
+                    text-align: right;
+                }
             }
         }
     }
