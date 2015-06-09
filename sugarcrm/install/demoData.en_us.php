@@ -909,7 +909,6 @@ $sugar_demodata['last_name_array'] = array(
     'Rakestraw',
     'Ralphs',
     'Rance',
-    'Rape',
     'Rayes',
     'Redden',
     'Reiber',

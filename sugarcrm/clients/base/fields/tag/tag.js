@@ -40,6 +40,10 @@
         if (!this.model.has(this.name)) {
             this.model.setDefault(this.name, []);
         }
+
+        // Set append as default when mass updating tags
+        this.appendTagValue = true;
+        this.model.set('tag_type', this.appendTagValue ? '1' : '0');
     },
 
     /**

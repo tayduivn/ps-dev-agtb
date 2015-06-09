@@ -10,6 +10,12 @@
  */
 (function(app) {
     app.events.on("app:init", function() {
+
+        var tooltipTemplate = Handlebars.compile('<div class="tooltip">' +
+            '<div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>');
+
+        var $tooltipTemplate = $(tooltipTemplate());
+
         app.utils = _.extend(app.utils, {
             tooltip: {
                 /**
@@ -18,23 +24,16 @@
                  * @param {object} (optional) options - see bootstrap-tooltip docs
                  * @returns {jQuery}
                  */
-                initialize: function($elements, options) {
+                initialize: function($elements, options, direction) {
                     options = options || {};
-                    var self = this;
-                    $elements.each(function() {
-                        var data, $element;
-                        if (!self.has(this)) {
-                            $element = $(this);
-                            data = $element.data();
 
-                            //Override the tooltip template to have a `dir`
-                            //attribute if it is present in the element.
-                            var dir = $element.attr('dir'),
-                                tooltipTemplate = Handlebars.compile('<div class="tooltip"' +
-                                    '{{#if dir}} dir="{{dir}}"{{/if}}' +
-                                    '><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>');
-                            options.template = tooltipTemplate({dir: dir});
-
+                    _.each($elements, function(element) {
+                        var $element = $(element);
+                        if (!$element.data('bs.tooltip')) {
+                            var data = $element.data();
+                            if (direction) {
+                                options.template = $tooltipTemplate.attr('dir', direction);
+                            }
                             $element.tooltip(_.extend({
                                 container: 'body',
                                 trigger: 'hover' //show tooltip on hover only (not on focus)

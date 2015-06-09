@@ -368,7 +368,12 @@ class Localization {
 
         if($isMb)
         {
-            return mb_convert_encoding($string, $toCharset, $fromCharset);
+            global $sugar_config;
+            if (!empty($sugar_config['export_excel_compatible'])) {
+                return chr(255) . chr(254) . mb_convert_encoding($string, 'UTF-16LE', $fromCharset);
+            } else {
+                return mb_convert_encoding($string, $toCharset, $fromCharset);
+            }
         }
         elseif($isIconv)
         {

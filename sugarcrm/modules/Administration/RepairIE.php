@@ -27,7 +27,7 @@ $q = "SELECT id, name, email_password FROM inbound_email WHERE deleted=0 AND sta
 $r = $db->query($q);
 
 while($a = $db->fetchByAssoc($r)) {
-	$ieX = BeanFactory::getBean('InboundEmail', $a['id']);
+	$ieX = BeanFactory::getBean('InboundEmail', $a['id'], array('disable_row_level_security' => true));
 	if(!$ieX->repairAccount()) {
 		// none of the iterations worked.  flag for display
 		$badAccts[$a['id']] = $a['name'];

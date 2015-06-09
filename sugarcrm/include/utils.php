@@ -264,6 +264,7 @@ function get_sugar_config_defaults()
     'oauth_token_expiry' => 0,
     'admin_export_only' => false,
     'export_delimiter' => ',',
+    'export_excel_compatible' => false,
     'cache_dir' => 'cache/',
     'calculate_response_time' => true,
     'create_default_user' => false,

@@ -50,6 +50,13 @@ describe('KBContents.Base.Views.KBSDashletUsefulness', function() {
             null,
             context.parent
         );
+        sandbox.stub(model, 'fetch', function(options) {
+            options.success(model);
+            options.complete();
+        });
+        sandbox.stub(model, 'clone', function() {
+            return model;
+        });
         appControllerContextGetStub = sandbox.stub(
             app.controller.context,
             'get',

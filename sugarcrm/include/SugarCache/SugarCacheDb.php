@@ -75,6 +75,10 @@ class SugarCacheDb extends SugarCacheAbstract
             return false;
         }
 
+        if (!$this->db->tableExists('key_value_cache')) {
+            return false;
+        }
+
         // limit usage to mysql based databases only
         if (!$this->db instanceof MysqlManager) {
             return false;

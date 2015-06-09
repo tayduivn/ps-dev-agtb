@@ -17,6 +17,7 @@ if(isset($_REQUEST['type']) && $_REQUEST['type'] == 'personal') {
 	if($current_user->hasPersonalEmail()) {
 		
 		$ie = BeanFactory::getBean('InboundEmail');
+        $ie->disable_row_level_security = true;
 		$beans = $ie->retrieveByGroupId($current_user->id);
 		if(!empty($beans)) {
 			foreach($beans as $bean) {
@@ -47,11 +48,13 @@ if(isset($_REQUEST['type']) && $_REQUEST['type'] == 'personal') {
 	header('Location: index.php?module=Emails&action=ListView&type=inbound&assigned_user_id='.$current_user->id);
 } elseif(isset($_REQUEST['type']) && $_REQUEST['type'] == 'group') {
 	$ie = BeanFactory::getBean('InboundEmail');
+    $ie->disable_row_level_security = true;
 	// this query only polls Group Inboxes
 	$r = $ie->db->query('SELECT inbound_email.id FROM inbound_email JOIN users ON inbound_email.group_id = users.id WHERE inbound_email.deleted=0 AND inbound_email.status = \'Active\' AND mailbox_type != \'bounce\' AND users.deleted = 0 AND users.is_group = 1');
 
 	while($a = $ie->db->fetchByAssoc($r)) {
-		$ieX = BeanFactory::getBean('InboundEmail', $a['id']);
+		$ieX = BeanFactory::getBean('InboundEmail', $a['id'], array('disable_row_level_security' => true));
+        $ieX->disable_row_level_security = true;
 		$ieX->connectMailserver();
 		//$newMsgs = $ieX->getNewMessageIds();
 		$newMsgs = array();

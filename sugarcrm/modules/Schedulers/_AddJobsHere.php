@@ -82,7 +82,7 @@ function pollMonitoredInboxes() {
 
 	while($a = $ie->db->fetchByAssoc($r)) {
 		$GLOBALS['log']->debug('In while loop of Inbound Emails');
-		$ieX = BeanFactory::getBean('InboundEmail', $a['id']);
+		$ieX = BeanFactory::getBean('InboundEmail', $a['id'], array('disable_row_level_security' => true));
         $GLOBALS['current_user']->team_id = $ieX->team_id;
         $GLOBALS['current_user']->team_set_id = $ieX->team_set_id;
 		$mailboxes = $ieX->mailboxarray;
@@ -406,7 +406,7 @@ function pollMonitoredInboxesForBouncedCampaignEmails() {
 	$r = $ie->db->query('SELECT id FROM inbound_email WHERE deleted=0 AND status=\'Active\' AND mailbox_type=\'bounce\'');
 
 	while($a = $ie->db->fetchByAssoc($r)) {
-		$ieX = BeanFactory::getBean('InboundEmail', $a['id']);
+		$ieX = BeanFactory::getBean('InboundEmail', $a['id'], array('disable_row_level_security' => true));
 		$ieX->connectMailserver();
         $GLOBALS['log']->info("Bounced campaign scheduler connected to mail server id: {$a['id']} ");
 		$newMsgs = array();
