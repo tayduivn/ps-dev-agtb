@@ -58,11 +58,6 @@
             this.trigger('navigate:to:component', 'quicksearch-bar');
         }, this);
 
-        // Exit the search bar
-        app.shortcuts.register(app.shortcuts.GLOBAL + 'SearchBlur', ['esc', 'ctrl+alt+l'], function() {
-            this.trigger('quicksearch:close');
-        }, this, true);
-
         // When a component is trying to navigate from its last element to the next component,
         // Check to make sure there is a next navigable component. If it exists, set it to the component to focus
         this.before('navigate:next:component', function() {
