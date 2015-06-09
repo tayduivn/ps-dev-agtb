@@ -11,7 +11,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 $viewdefs['base']['view']['dupecheck-list'] = array(
-    'template' => 'list',
+    'template' => 'flex-list',
     'rowactions' => array(
         'actions' => array(
             array(
