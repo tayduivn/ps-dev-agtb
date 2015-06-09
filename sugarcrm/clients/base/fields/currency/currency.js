@@ -165,7 +165,7 @@
             if (_.isEqual(val, self.model.get(self.name))) {
                 self.setCurrencyValue(val);
             } else {
-                self.model.set(self.name, el.val());
+                self.model.set(self.name, val);
             }
         });
     },
