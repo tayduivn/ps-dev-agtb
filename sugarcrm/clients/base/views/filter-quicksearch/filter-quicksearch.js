@@ -94,7 +94,8 @@
         var label;
         this.toggleInput();
         if (!this.$el.hasClass('hide') && linkModule !== 'all_modules') {
-            var fields = this.getModuleQuickSearchFields(linkModuleName),
+            var filtersBeanPrototype = app.data.getBeanClass('Filters').prototype,
+                fields = filtersBeanPrototype.getModuleQuickSearchMeta(linkModuleName).fieldNames,
                 fieldLabels = this.getFieldLabels(linkModuleName, fields);
             label = app.lang.get('LBL_SEARCH_BY') + ' ' + fieldLabels.join(', ') + '...';
         } else {

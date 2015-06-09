@@ -1,12 +1,15 @@
 describe("Filter Quick Search View", function () {
 
-    var view, app, parentLayout;
+    var view, app, parentLayout, filtersBeanPrototype;
 
     beforeEach(function () {
         parentLayout = new Backbone.View();
+        SugarTest.app.data.declareModels();
+        SugarTest.declareData('base', 'Filters');
         view = SugarTest.createView("base", "Accounts", "filter-quicksearch", {}, false, false, parentLayout);
         view.layout = parentLayout;
         app = SUGAR.App;
+        filtersBeanPrototype = app.data.getBeanClass('Filters').prototype;
     });
 
     afterEach(function () {
@@ -52,8 +55,10 @@ describe("Filter Quick Search View", function () {
                     }
                 }};
             }),
-            getModuleQuickSearchFieldsStub = sinon.stub(view, 'getModuleQuickSearchFields', function() {
-                return ['first_name', 'last_name'];
+            getModuleQuickSearchMetaStub = sinon.stub(filtersBeanPrototype, 'getModuleQuickSearchMeta', function() {
+                return {
+                    fieldNames: ['first_name', 'last_name']
+                };
             });
 
         parentLayout.trigger('filter:change:module', 'Contacts', 'contacts');
@@ -61,6 +66,6 @@ describe("Filter Quick Search View", function () {
         expect(view.$el.attr('placeholder')).toEqual('LBL_SEARCH_BY lbl_first_name, lbl_last_name...');
         updatePlaceholderSpy.restore();
         metadataStub.restore();
-        getModuleQuickSearchFieldsStub.restore();
+        getModuleQuickSearchMetaStub.restore();
     });
 });
