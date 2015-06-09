@@ -3936,6 +3936,15 @@ class MetaDataManager
     }
 
     /**
+     * Returns the current state of the metadata cache
+     * @return bool
+     */
+    public static function cacheEnabled()
+    {
+        return self::$isCacheEnabled;
+    }
+
+    /**
      * Returns all possible metadata context combinations from the given set of metadata parameters
      *
      * @param boolean $public Is metadata public
