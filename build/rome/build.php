@@ -151,6 +151,11 @@ if (!empty($config['base_dir'])) {
     $rome->throwException("No Base Directory To Build From", true);
 }
 
+if(!empty($config['retainCommentSpacing']))
+{
+    $rome->setRetainCommentSpacing($config['retainCommentSpacing']);
+}
+
 $total = microtime(true) - $time;
 echo "\n\n" . 'TOTAL TIME: ' . $total . "\n";
 

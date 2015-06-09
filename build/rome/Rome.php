@@ -166,6 +166,11 @@ class Rome
         }
     }
 
+    public function setRetainCommentSpacing($val)
+    {
+        $this->retainCommentSpacing = $val;
+    }
+
     /**
      *  dynamic generate sugarcrm version
      *
