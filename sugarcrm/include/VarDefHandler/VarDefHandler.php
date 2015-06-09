@@ -26,6 +26,27 @@ class VarDefHandler {
 	var $options_array = array();
 	var $module_object;
 	var $start_none_lbl = null;
+    public $all_meta_array = array();
+
+    /**
+     * Method parts used in compare_value
+     * @var array
+     */
+    protected $compareMethods = array(
+        'inc_override' => 'IncOverride',
+        'ex_override' => 'ExOverride',
+        'inclusion' => 'Inclusion',
+        'exclusion' => 'Exclusion',
+    );
+
+    /**
+     * Array of arrays to check against when comparing
+     * @var array
+     */
+    protected $checkArrays = array(
+        'target_meta_array',
+        'all_meta_array',
+    );
 
 
     function VarDefHandler($module, $meta_array_name=null)
@@ -39,6 +60,9 @@ class VarDefHandler {
 			get_plugin("workflow", "vardef_handler_hook", $this);
 			//END WFLOW PLUGINS
 			$this->target_meta_array = $vardef_meta_array[$meta_array_name];
+            if (isset($vardef_meta_array['all'])) {
+                $this->all_meta_array = $vardef_meta_array['all'];
+            }
 		}
 
 	//end function setup
@@ -151,68 +175,134 @@ class VarDefHandler {
 	}
 
 
-	function compare_type($value_array){
-
+	function compare_type($value_array) {
 		//Filter nothing?
 		if(!is_array($this->target_meta_array)){
 			return true;
 		}
 
-		////////Use the $target_meta_array;
-		if(isset($this->target_meta_array['inc_override'])){
-			foreach($this->target_meta_array['inc_override'] as $attribute => $value){
+        // Loop over our collection of handle methods for each index in the 
+        // vardef_meta_array as well as for the all_meta_array. Expectation is
+        // a boolean result, so if the result of any method is a true null then
+        // keep on going.
+        foreach ($this->compareMethods as $key => $method) {
+            $call = 'handle' . $method;
+            $result = $this->$call($value_array, $key);
+            if ($result !== null) {
+                return $result;
+            }
+        }
 
-					foreach($value as $actual_value){
-						if(isset($value_array[$attribute]) && $value_array[$attribute] == $actual_value) return true;
-					}
-					if(isset($value_array[$attribute]) && $value_array[$attribute] == $value) return true;
-
-			}
-		}
-		if(isset($this->target_meta_array['ex_override'])){
-			foreach($this->target_meta_array['ex_override'] as $attribute => $value){
-
-
-					foreach($value as $actual_value){
-					if(isset($value_array[$attribute]) && $value_array[$attribute] == $actual_value) return false;
-
-						if(isset($value_array[$attribute]) && $value_array[$attribute] == $value) return false;
-					}
-
-			//end foreach inclusion array
-			}
-		}
-
-		if(isset($this->target_meta_array['inclusion'])){
-			foreach($this->target_meta_array['inclusion'] as $attribute => $value){
-
-				if($attribute=="type"){
-					foreach($value as $actual_value){
-					if(isset($value_array[$attribute]) && $value_array[$attribute] != $actual_value) return false;
-					}
-				} else {
-					if(isset($value_array[$attribute]) && $value_array[$attribute] != $value) return false;
-				}
-			//end foreach inclusion array
-			}
-		}
-
-		if(isset($this->target_meta_array['exclusion'])){
-			foreach($this->target_meta_array['exclusion'] as $attribute => $value){
-
-				foreach($value as $actual_value){
-					if(isset($value_array[$attribute]) && $value_array[$attribute] == $actual_value) return false;
-				}
-
-			//end foreach inclusion array
-			}
-		}
-
-
-		return true;
-
-	//end function compare_type
+        return true;
 	}
 
-//end class VarDefHandler
+    /**
+     * Handles checking of the inc_override values for this meta array name
+     *
+     * @param array $array The value array
+     * @param string $index The index of the meta array to check
+     * @return boolean
+     */
+    public function handleIncOverride($array, $index)
+    {
+        foreach ($this->checkArrays as $arrays) {
+            if (isset($this->{$arrays}[$index])) {
+                foreach ($this->{$arrays}[$index] as $attribute => $value) {
+                    foreach ($value as $actual_value) {
+                        if (isset($array[$attribute]) && $array[$attribute] == $actual_value) {
+                            return true;
+                        }
+                    }
+
+                    if (isset($array[$attribute]) && $array[$attribute] == $value) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Handle checking of the ex_override values for this meta array name
+     *
+     * @param array $array The value array
+     * @param string $index The index of the meta array to check
+     * @return boolean
+     */
+    public function handleExOverride($array, $index)
+    {
+        foreach ($this->checkArrays as $arrays) {
+            if (isset($this->{$arrays}[$index])) {
+                foreach ($this->{$arrays}[$index] as $attribute => $value) {
+                    foreach ($value as $actual_value) {
+                        if (isset($array[$attribute]) && $array[$attribute] == $actual_value) {
+                            return false;
+                        }
+
+                        if (isset($array[$attribute]) && $array[$attribute] == $value) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Handles the inclusion values for this meta array name
+     *
+     * @param array $array The value array
+     * @param string $index The index of the meta array to check
+     * @return boolean
+     */
+    public function handleInclusion($array, $index)
+    {
+        foreach ($this->checkArrays as $arrays) {
+            if (isset($this->{$arrays}[$index])){
+                foreach($this->{$arrays}[$index] as $attribute => $value) {
+                    if ($attribute == "type") {
+                        foreach ($value as $actual_value) {
+                            if (isset($array[$attribute]) && $array[$attribute] != $actual_value) {
+                                return false;
+                            }
+                        }
+                    } else {
+                        if (isset($array[$attribute]) && $array[$attribute] != $value) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Handles the exclusion values for this meta array name
+     *
+     * @param array $array The value array
+     * @param string $index The index of the meta array to check
+     * @return boolean
+     */
+    public function handleExclusion($array, $index)
+    {
+        foreach ($this->checkArrays as $arrays) {
+            if (isset($this->{$arrays}[$index])) {
+                foreach ($this->{$arrays}[$index] as $attribute => $value) {
+                    foreach ($value as $actual_value) {
+                        if (isset($array[$attribute]) && $array[$attribute] == $actual_value) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
 }
