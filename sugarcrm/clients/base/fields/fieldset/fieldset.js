@@ -150,12 +150,22 @@
 
         this._super('_render');
 
+        this._renderFields(fields);
+
+        return this;
+    },
+
+    /**
+     * Renders the children fields in their respective placeholders.
+     *
+     * @param {Array} fields The children fields.
+     * @protected
+     */
+    _renderFields: function(fields) {
         _.each(fields, function(field) {
             field.setElement(this.$('span[sfuuid="' + field.sfId + '"]'));
             field.render();
         }, this);
-
-        return this;
     },
 
     /**
