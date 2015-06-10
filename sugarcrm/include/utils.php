@@ -4811,14 +4811,13 @@ function get_alt_hot_key()
     return $isMac ? 'Ctrl+' : 'Alt+';
 }
 
+/**
+ * @deprecated Please see SessionStorage::canStartSession
+ * @return bool
+ */
 function can_start_session()
 {
-    if (!empty($_GET['PHPSESSID'])) {
-       return true;
-    }
-    $session_id = session_id();
-
-    return empty($session_id) ? true : false;
+    return \Sugarcrm\Sugarcrm\Util\Session\SessionStorage::getInstance()->sessionHasId();
 }
 
 function load_link_class($properties)
