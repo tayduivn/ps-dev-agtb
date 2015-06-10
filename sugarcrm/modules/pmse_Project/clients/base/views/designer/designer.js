@@ -57,5 +57,10 @@
         }
         project.dispose();
         return true;
+    },
+
+    _dispose: function () {
+        app.routing.offBefore('route', this.beforeRouteChange);
+        this._super("_dispose", arguments);
     }
 })

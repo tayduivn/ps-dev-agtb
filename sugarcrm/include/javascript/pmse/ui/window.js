@@ -347,9 +347,13 @@ Window.prototype.show = function () {
     if (!this.loaded) {
         this.load();
     }
+
     if (this.modal) {
-        this.modalObject.show();
+        this.modalObject.show(this);
+    } else {
+        document.body.appendChild(this.html);
     }
+
     if (this.selectedTab) {
         this.selectedTab.select();
         panel = this.selectedTab.getContent();
@@ -357,7 +361,6 @@ Window.prototype.show = function () {
         this.body.appendChild(panel.getHTML());
         panel.load();
     }
-    document.body.appendChild(this.html);
 
     //here do visible the window
     this.setVisible(true);
@@ -395,8 +398,9 @@ Window.prototype.close = function () {
 Window.prototype.hide = function (destroy) {
     if (this.modal) {
         this.modalObject.hide();
+    } else {
+        document.body.removeChild(this.html);
     }
-    document.body.removeChild(this.html);
     this.setVisible(false);
     if (destroy || this.destroyOnHide) {
         this.close();
@@ -411,7 +415,8 @@ Window.prototype.attachListeners = function () {
     $(this.html).draggable({
         cursor: "move",
         scroll: false,
-        containment: "document"
+        containment: "document",
+        handle: '.adam-window-header'
     }).on('keydown keyup keypress', function(e) {
         e.stopPropagation();
     });
