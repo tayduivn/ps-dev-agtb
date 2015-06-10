@@ -123,7 +123,7 @@ class RelatedValueApi extends SugarApi
                         $relBeans = $focus->$link->getBeans(array("enforce_teams" => true));
                         $sum = 0;
                         $count = 0;
-                        $min = false;
+                        $min = '';
                         $max = false;
                         $values = array();
                         if (!empty($relBeans)) {
@@ -182,6 +182,7 @@ class RelatedValueApi extends SugarApi
                         }
                         if ($type == "rollupMin") {
                             $ret[$link][$type][$rField] = $min;
+                            $ret[$link][$type][$rField . '_values'] = $values;
                         }
                         if ($type == "rollupMax") {
                             $ret[$link][$type][$rField] = $max;
