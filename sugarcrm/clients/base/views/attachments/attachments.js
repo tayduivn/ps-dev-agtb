@@ -162,7 +162,7 @@
             self = this;
 
         app.drawer.open({
-            layout: 'selection-list-link',
+            layout: 'selection-list',
             context: {
                 module: linkModule
             }
