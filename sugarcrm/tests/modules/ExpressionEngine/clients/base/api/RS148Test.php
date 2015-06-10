@@ -133,18 +133,19 @@ class RS148Test extends Sugar_PHPUnit_Framework_TestCase
                 ),
                 false,
             ),
-            'rollupCurrencySum' => array(
+            'rollupSum' => array(
                 array(
                     'contacts' => array(
                         'link' => 'contacts',
-                        'type' => 'rollupCurrencySum',
+                        'type' => 'rollupSum',
                         'relate' => 'first_name',
                     )
                 ),
                 array(
                     'contacts' => array(
-                        'rollupCurrencySum' => array(
-                            'first_name' => 0
+                        'rollupSum' => array(
+                            'first_name' => 0,
+                            'first_name_values' => array()
                         )
                     )
                 ),

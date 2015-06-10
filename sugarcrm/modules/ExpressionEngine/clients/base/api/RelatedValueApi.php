@@ -71,6 +71,10 @@ class RelatedValueApi extends SugarApi
                 $rField = $rfDef['relate'];
             }
 
+            if ($type == 'rollupCurrencySum') {
+                $type = 'rollupSum';
+            }
+
             switch ($type) {
                 //The Related function is used for pulling a sing field from a related record
                 case "related":
@@ -176,6 +180,7 @@ class RelatedValueApi extends SugarApi
                         }
                         if ($type == "rollupSum") {
                             $ret[$link][$type][$rField] = $sum;
+                            $ret[$link][$type][$rField . '_values'] = $values;
                         }
                         if ($type == "rollupAve") {
                             $ret[$link][$type][$rField] = $count == 0 ? 0 : $sum / $count;
@@ -229,25 +234,6 @@ class RelatedValueApi extends SugarApi
                                         SugarCurrency::convertWithRate($bean->$rField, $bean->base_rate, $toRate)
                                     )->result();
                                 }
-                            }
-                        }
-                        $ret[$link][$type][$rField] = $sum;
-                    }
-                    break;
-                case "rollupCurrencySum":
-                    $ret[$link][$type][$rField] = 0;
-                    if ($focus->load_relationship($link)) {
-                        $toRate = isset($focus->base_rate) ? $focus->base_rate : null;
-                        $relBeans = $focus->$link->getBeans(array("enforce_teams" => true));
-                        $sum = '0';
-                        foreach ($relBeans as $bean) {
-                            if (!empty($bean->$rField) && is_numeric($bean->$rField) &&
-                                //ensure the user can access the fields we are using.
-                                ACLField::hasAccess($rField, $bean->module_dir, $GLOBALS['current_user']->id, true)
-                            ) {
-                                $sum = SugarMath::init($sum)->add(
-                                    SugarCurrency::convertWithRate($bean->$rField, $bean->base_rate, $toRate)
-                                )->result();
                             }
                         }
                         $ret[$link][$type][$rField] = $sum;
