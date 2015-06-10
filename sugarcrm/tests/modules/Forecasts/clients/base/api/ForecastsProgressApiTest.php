@@ -12,6 +12,11 @@
 
 require_once("modules/Forecasts/clients/base/api/ForecastsProgressApi.php");
 
+/**
+ * Class ForecastsProgressApiTest
+ *
+ * @coversDefaultClass ForecastsProgressApi
+ */
 class ForecastsProgressApiTest extends Sugar_PHPUnit_Framework_TestCase
 {
     /**
@@ -63,6 +68,7 @@ class ForecastsProgressApiTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * Test method progressRep
+     * @covers ::progressRep
      */
     public function testProgressRep()
     {
@@ -106,6 +112,7 @@ class ForecastsProgressApiTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * Test method progressManager
+     * @covers ::progressManager
      */
     public function testProgressManager()
     {
