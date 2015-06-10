@@ -48,6 +48,10 @@ class SugarUpgradeRemoveData extends UpgradeScript
                     $this->db->dropTableName($table);
                 }
             }
+            // Need to delete cache of unified search modules.
+            if (file_exists('custom/modules/unified_search_modules_display.php')) {
+                SugarAutoLoader::unlink('custom/modules/unified_search_modules_display.php');
+            }
         }
     }
 }
