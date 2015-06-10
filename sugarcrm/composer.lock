@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "1da9dc00c1cb8ba587b13a2a118914bd",
+    "hash": "152543997bbeaa321deeb7315fcbeb0f",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -169,12 +169,60 @@
             "time": "2015-03-18 18:23:50"
         },
         {
+            "name": "ircmaxell/password-compat",
+            "version": "v1.0.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ircmaxell/password_compat.git",
+                "reference": "5c5cde8822a69545767f7c7f3058cb15ff84614c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ircmaxell/password_compat/zipball/5c5cde8822a69545767f7c7f3058cb15ff84614c",
+                "reference": "5c5cde8822a69545767f7c7f3058cb15ff84614c",
+                "shasum": ""
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.*"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "lib/password.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Anthony Ferrara",
+                    "email": "ircmaxell@php.net",
+                    "homepage": "http://blog.ircmaxell.com"
+                }
+            ],
+            "description": "A compatibility library for the proposed simplified password hashing algorithm: https://wiki.php.net/rfc/password_hash",
+            "homepage": "https://github.com/ircmaxell/password_compat",
+            "keywords": [
+                "hashing",
+                "password"
+            ],
+            "time": "2014-11-20 16:49:30"
+        },
+        {
             "name": "onelogin/php-saml",
             "version": "2.1.0.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/sugarcrm/php-saml",
+                "url": "https://github.com/sugarcrm/php-saml.git",
                 "reference": "a8ba9dbb92c6dac3f50dac268764b5d2a56e706e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/sugarcrm/php-saml/zipball/a8ba9dbb92c6dac3f50dac268764b5d2a56e706e",
+                "reference": "a8ba9dbb92c6dac3f50dac268764b5d2a56e706e",
+                "shasum": ""
             },
             "require": {
                 "php": ">=5.3.2"
@@ -1495,6 +1543,7 @@
         "composer/composer": 15
     },
     "prefer-stable": false,
+    "prefer-lowest": false,
     "platform": {
         "php": ">=5.3.0"
     },
