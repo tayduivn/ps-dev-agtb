@@ -35,7 +35,27 @@ class ImportDuplicateCheckTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
     }
-    
+
+    public function testUsersImportDuplicateCheckOnUsername()
+    {
+        $original = BeanFactory::getBean('Users');
+        $original->user_name = 'ut_user_name_ '.date("YmdHis");
+        $original->save(false);
+
+        $duplicatedFocus = BeanFactory::getBean('Users');
+        $duplicatedFocus->user_name = $original->user_name;
+
+        //Ensure we can't import users with existing user_names
+        $idc = new ImportDuplicateCheck($duplicatedFocus);
+        $this->assertTrue($idc->isADuplicateRecord(array('idx_user_name')));
+
+        //Ensure we can still import users with valid user names
+        $notDuplicatedFocus = BeanFactory::getBean('Users');
+        $notDuplicatedFocus->user_name = 'new_user_name_ '.mt_rand();
+        $idcNonDupe     = new ImportDuplicateCheck($notDuplicatedFocus);
+        $this->assertFalse($idcNonDupe->isADuplicateRecord(array('idx_user_name')));
+    }
+
     public function testGetDuplicateCheckIndexesWithEmail()
     {
         $focus = BeanFactory::getBean('Contacts');
