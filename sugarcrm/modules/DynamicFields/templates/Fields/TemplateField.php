@@ -538,20 +538,15 @@ class TemplateField{
             // configure correct enabled/searchable flags
             switch ($this->full_text_search['enabled']) {
                 case '2':
-                    $ftsEnabled = true;
-                    $ftsSearchable = true;
-                    break;
-                case '1':
-                    $ftsEnabled = true;
-                    $ftsSearchable = false;
+                    $this->full_text_search['enabled'] = true;
+                    $this->full_text_search['searchable'] = true;
                     break;
                 default:
-                    $ftsEnabled = false;
-                    $ftsSearchable = false;
+                    // only set value for searchable, no set for enabled! see BR-2852
+                    $this->full_text_search['searchable'] = false;
             }
 
-            $this->full_text_search['enabled'] = $ftsEnabled;
-            $this->full_text_search['searchable'] = $ftsSearchable;
+
         }
     }
 
