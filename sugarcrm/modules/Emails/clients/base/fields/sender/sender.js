@@ -90,8 +90,6 @@
                 self.model.set(self.name, e.val, {silent: true});
             }
         });
-
-        this.$(".select2-container").addClass("tleft");
     },
 
     /**
