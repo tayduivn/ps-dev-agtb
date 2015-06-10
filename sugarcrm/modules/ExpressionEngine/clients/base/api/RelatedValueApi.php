@@ -71,7 +71,10 @@ class RelatedValueApi extends SugarApi
                 $rField = $rfDef['relate'];
             }
 
-            if ($type == 'rollupCurrencySum') {
+            // Switch the type to the correct name
+            if ($type == 'rollupAvg') {
+                $type = 'rollupAve';
+            } else if ($type == 'rollupCurrencySum') {
                 $type = 'rollupSum';
             }
 
@@ -183,7 +186,8 @@ class RelatedValueApi extends SugarApi
                             $ret[$link][$type][$rField . '_values'] = $values;
                         }
                         if ($type == "rollupAve") {
-                            $ret[$link][$type][$rField] = $count == 0 ? 0 : $sum / $count;
+                            $ret[$link][$type][$rField] = $count == 0 ? 0 : SugarMath::init($sum)->div($count)->result();
+                            $ret[$link][$type][$rField . '_values'] = $values;
                         }
                         if ($type == "rollupMin") {
                             $ret[$link][$type][$rField] = $min;
