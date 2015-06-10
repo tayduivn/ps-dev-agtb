@@ -53,7 +53,7 @@ class KBContentsUsefulnessApiTest extends Sugar_PHPUnit_Framework_TestCase
     public function tearDown()
     {
         DBManagerFactory::getInstance()
-            ->query('DELETE FROM kbcontents WHERE id \'' . $this->kbcontent->id . '\'');
+            ->query('DELETE FROM kbcontents WHERE id = \'' . $this->kbcontent->id . '\'');
 
         $this->service = null;
         $this->api = null;
