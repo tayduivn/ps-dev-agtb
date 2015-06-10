@@ -3891,16 +3891,16 @@ nv.models.bubbleChart = function () {
         container.transition().call(chart);
       });
 
-      dispatch.on('chartClick', function (e) {
+      dispatch.on('chartClick', function() {
         dispatch.tooltipHide();
         if (legend.enabled()) {
-          legend.dispatch.closeMenu(e);
+          legend.dispatch.closeMenu();
         }
       });
 
-      scatter.dispatch.on('elementClick', function (e) {
-        dispatch.chartClick(e);
-        bubbleClick(e);
+      scatter.dispatch.on('elementClick', function(eo) {
+        dispatch.chartClick();
+        bubbleClick(eo);
       });
 
       chart.render();
@@ -5298,14 +5298,14 @@ nv.models.funnelChart = function() {
         container.transition().duration(durationMs).call(chart);
       });
 
-      dispatch.on('chartClick', function(eo) {
+      dispatch.on('chartClick', function() {
         if (legend.enabled()) {
-          legend.dispatch.closeMenu(eo);
+          legend.dispatch.closeMenu();
         }
       });
 
       funnel.dispatch.on('elementClick', function(eo) {
-        dispatch.chartClick(eo);
+        dispatch.chartClick();
         seriesClick(data, eo, chart);
       });
 
@@ -6193,9 +6193,9 @@ nv.models.gaugeChart = function() {
         }
       });
 
-      dispatch.on('chartClick', function(eo) {
+      dispatch.on('chartClick', function() {
         if (legend.enabled()) {
-          legend.dispatch.closeMenu(eo);
+          legend.dispatch.closeMenu();
         }
       });
 
@@ -7140,12 +7140,12 @@ nv.models.lineChart = function() {
         container.transition().duration(chart.delay()).call(chart);
       });
 
-      dispatch.on('chartClick', function(eo) {
+      dispatch.on('chartClick', function() {
         if (controls.enabled()) {
-          controls.dispatch.closeMenu(eo);
+          controls.dispatch.closeMenu();
         }
         if (legend.enabled()) {
-          legend.dispatch.closeMenu(eo);
+          legend.dispatch.closeMenu();
         }
       });
 
@@ -9395,17 +9395,17 @@ nv.models.multiBarChart = function() {
         container.transition().call(chart);
       });
 
-      dispatch.on('chartClick', function(eo) {
+      dispatch.on('chartClick', function() {
         if (controls.enabled()) {
-          controls.dispatch.closeMenu(eo);
+          controls.dispatch.closeMenu();
         }
         if (legend.enabled()) {
-          legend.dispatch.closeMenu(eo);
+          legend.dispatch.closeMenu();
         }
       });
 
       multibar.dispatch.on('elementClick', function(eo) {
-        dispatch.chartClick(eo);
+        dispatch.chartClick();
         seriesClick(data, eo, chart);
       });
 
@@ -10244,12 +10244,14 @@ nv.models.paretoChart = function() {
 
             quotaWrap.selectAll('line.nv-quotaLineBackground')
                 .on('mouseover', function(d) {
-                    var e = {
-                        pos: [d3.event.offsetX, d3.event.offsetY],
-                        val: d.val,
-                        key: d.key
-                    };
-                    showQuotaTooltip(e, that.parentNode);
+                    if (tooltips) {
+                        var eo = {
+                            pos: [d3.event.offsetX, d3.event.offsetY],
+                            val: d.val,
+                            key: d.key
+                        };
+                        showQuotaTooltip(eo, that.parentNode);
+                    }
                 })
                 .on('mouseout', function() {
                     dispatch.tooltipHide();
@@ -10308,17 +10310,17 @@ nv.models.paretoChart = function() {
                 }
             });
 
-            dispatch.on('chartClick', function(eo) {
+            dispatch.on('chartClick', function() {
                 if (barLegend.enabled()) {
-                    barLegend.dispatch.closeMenu(eo);
+                    barLegend.dispatch.closeMenu();
                 }
                 if (lineLegend.enabled()) {
-                    lineLegend.dispatch.closeMenu(eo);
+                    lineLegend.dispatch.closeMenu();
                 }
             });
 
             multibar.dispatch.on('elementClick', function(eo) {
-                dispatch.chartClick(eo);
+                dispatch.chartClick();
                 barClick(data, eo, chart, container);
             });
 
@@ -11559,14 +11561,14 @@ nv.models.pieChart = function() {
         container.transition().duration(durationMs).call(chart);
       });
 
-      dispatch.on('chartClick', function(eo) {
+      dispatch.on('chartClick', function() {
         if (legend.enabled()) {
-          legend.dispatch.closeMenu(eo);
+          legend.dispatch.closeMenu();
         }
       });
 
       pie.dispatch.on('elementClick', function(eo) {
-        dispatch.chartClick(eo);
+        dispatch.chartClick();
         seriesClick(data, eo, chart);
       });
 
@@ -13046,12 +13048,12 @@ nv.models.stackedAreaChart = function() {
         container.transition().duration(chart.delay()).call(chart);
       });
 
-      dispatch.on('chartClick', function(eo) {
+      dispatch.on('chartClick', function() {
         if (controls.enabled()) {
-          controls.dispatch.closeMenu(eo);
+          controls.dispatch.closeMenu();
         }
         if (legend.enabled()) {
-          legend.dispatch.closeMenu(eo);
+          legend.dispatch.closeMenu();
         }
       });
 
