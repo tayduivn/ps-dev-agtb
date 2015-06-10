@@ -397,7 +397,7 @@ nv.models.funnelChart = function() {
   chart.legend = legend;
 
   d3.rebind(chart, funnel, 'id', 'x', 'y', 'xDomain', 'yDomain', 'forceX', 'forceY', 'color', 'fill', 'classes', 'gradient');
-  d3.rebind(chart, funnel, 'fmtValueLabel', 'clipEdge', 'delay');
+  d3.rebind(chart, funnel, 'fmtValueLabel', 'clipEdge', 'delay', 'wrapLabels', 'minLabelWidth');
 
   chart.colorData = function(_) {
     var type = arguments[0],
