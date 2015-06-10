@@ -94,4 +94,5 @@ $mod_strings = array (
     'LBL_DELETE_CONFIRMATION_LANGUAGE' => 'All documents with this language will be deleted! Are you sure you want to delete this language?',
     'LBL_ASSIGNED_TO_ID' => 'Author ID',
     'LBL_ASSIGNED_TO' => 'Author',
+    'LBL_CREATE_CATEGORY_PLACEHOLDER' => 'Press Enter to create or Esc to cancel',
 );
