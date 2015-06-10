@@ -430,11 +430,6 @@ class HealthCheckScannerMeta
             'bucket' => self::UPGRADED,
         ),
 
-        902 => array(
-            'report' => 'unsupportedDatabase',
-            'bucket' => self::UNSUPPORTED_DB,
-        ),
-
         903 => array (
             'report' => 'unsupportedUpgrader',
             'bucket' => self::MANUAL,

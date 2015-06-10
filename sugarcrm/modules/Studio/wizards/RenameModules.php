@@ -182,13 +182,13 @@ class RenameModules
         MetaDataManager::enableCacheRefreshQueue();
 
         //Change module, appStrings, subpanels, and related links.
-        $this->changeAppStringEntries()
-             ->changeAllModuleModStrings()
-             ->renameAllRelatedLinks()
-             ->renameAllSubpanels()
-             ->renameAllDashlets()
-             ->changeStringsInRelatedModules()
-             ->changeGlobalAppStrings();
+        $this->changeAppStringEntries();
+        $this->changeAllModuleModStrings();
+        $this->renameAllRelatedLinks();
+        $this->renameAllSubpanels();
+        $this->renameAllDashlets();
+        $this->changeStringsInRelatedModules();
+        $this->changeGlobalAppStrings();
 
         // Run the metadata cache refresh queue so changes take effect
         MetaDataManager::runCacheRefreshQueue();
@@ -230,10 +230,7 @@ class RenameModules
 
     /**
      * Changes module names in related module strings
-     *
-     * @return RenameModules
      */
-
     public function changeStringsInRelatedModules()
     {
         $this->setRenameDefs();
@@ -242,14 +239,10 @@ class RenameModules
                 $this->renameCertainModuleModStrings($module, $defs);
             }
         }
-
-        return $this;
     }
 
     /**
      * Changes module name in global app and app list strings
-     *
-     * @return RenameModules
      */
     protected function changeGlobalAppStrings()
     {
@@ -301,7 +294,6 @@ class RenameModules
 
         // Save the new strings now
         $this->saveCustomLanguageStrings($new);
-        return $this;
     }
 
     /**
@@ -355,9 +347,6 @@ class RenameModules
 
     /**
      * Rename all subpanels within the application.
-     *
-     *
-     * @return RenameModules
      */
     private function renameAllSubpanels()
     {
@@ -370,9 +359,6 @@ class RenameModules
                 $GLOBALS['log']->error("Class $beanName does not exist, unable to rename.");
             }
         }
-
-        return $this;
-
     }
 
     /**
@@ -532,14 +518,10 @@ class RenameModules
                 }
             }
         }
-
-        return $return;
     }
 
     /**
      * Rename all related linked within the application
-     *
-     * @return RenameModules
      */
     private function renameAllRelatedLinks()
     {
@@ -548,8 +530,6 @@ class RenameModules
         foreach($beanList as $moduleName => $beanName) {
             $this->renameModuleRelatedLinks($moduleName, $beanName);
         }
-
-        return $this;
     }
 
     /**
@@ -622,8 +602,6 @@ class RenameModules
 
     /**
      * Rename all module strings within the application for dashlets.
-     *
-     * @return RenameModules
      */
     private function renameAllDashlets()
     {
@@ -639,8 +617,6 @@ class RenameModules
         foreach ($this->changedModules as $moduleName => $replacementLabels) {
             $this->changeModuleDashletStrings($moduleName, $replacementLabels, $dashletsFiles);
         }
-
-        return $this;
     }
 
     /*
@@ -677,16 +653,12 @@ class RenameModules
 
     /**
      * Rename all module strings within the application.
-     *
-     * @return RenameModules
      */
     private function changeAllModuleModStrings()
     {
         foreach ($this->changedModules as $moduleName => $replacementLabels) {
             $this->changeModuleModStrings($moduleName, $replacementLabels);
         }
-
-        return $this;
     }
 
     /**
@@ -694,7 +666,6 @@ class RenameModules
       *
       * @param  string $targetModule The name of the module that owns the labels to be changed.
       * @param  array $labelKeysToReplace The labels to be changed.
-      * @return RenameModules
       */
      private function renameCertainModuleModStrings($targetModule, $labelKeysToReplace)
      {
@@ -702,8 +673,6 @@ class RenameModules
          foreach ($this->changedModules as $moduleName => $replacementLabels) {
              $this->changeCertainModuleModStrings($moduleName, $replacementLabels, $targetModule, $labelKeysToReplace);
          }
-
-         return $this;
      }
 
     /**
@@ -867,15 +836,7 @@ class RenameModules
             // include links in their strings.
             $oldStringValue = str_replace("#{$search}/", "____TEMP_ROUTER_HOLDER____", $oldStringValue);
 
-            // Bug 47957
-            // If nothing was replaced - try to replace original string
-            $replaceCount = 0;
-            $result = str_replace($search, $replace, $oldStringValue, $replaceCount);
-            if (!$replaceCount){
-                $replaceKey = 'key_' . $replacementMetaData['type'];
-                $search = $replacementLabels[$replaceKey];
-                $result = str_replace($search, $replace, $oldStringValue, $replaceCount);
-            }
+            $result = str_replace($search, $replace, $oldStringValue);
 
             // Add the route back in if it was found
             $result = str_replace("____TEMP_ROUTER_HOLDER____", "#{$search}/", $result);
@@ -888,8 +849,6 @@ class RenameModules
 
     /**
      * Save changes to the module names to the app string entries for both the moduleList and moduleListSingular entries.
-     *
-     * @return RenameModules
      */
     private function changeAppStringEntries()
     {
@@ -898,11 +857,15 @@ class RenameModules
         DropDownHelper::saveDropDown($_REQUEST);
 
         //Save changes to the moduleListSingular app string entry
-        $newParams = array();
-        $newParams['dropdown_name'] = 'moduleListSingular';
-        $newParams['dropdown_lang'] = isset($_REQUEST['dropdown_lang']) ? $_REQUEST['dropdown_lang'] : '';
-        $newParams['use_push'] = true;
-        DropDownHelper::saveDropDown($this->createModuleListSingularPackage($newParams, $this->getAllModulesFromRequest()));
+        $newParams = array(
+            'use_push' => true,
+            'dropdown_lang' => isset($_REQUEST['dropdown_lang']) ? $_REQUEST['dropdown_lang'] : null,
+        );
+
+        $singularNames = array_map(function ($data) {
+            return $data['singular'];
+        }, $this->getAllModulesFromRequest());
+        $this->updateModuleList('moduleListSingular', $singularNames, $newParams['dropdown_lang']);
 
         //Save changes to the "*type_display*" app_list_strings entry.
         global $app_list_strings;
@@ -914,7 +877,9 @@ class RenameModules
             foreach ($typeDisplayList as $typeDisplay) {
                 if (isset($app_list_strings[$typeDisplay]) && isset($app_list_strings[$typeDisplay][$moduleName])) {
                     $newParams['dropdown_name'] = $typeDisplay;
-                    DropDownHelper::saveDropDown($this->createModuleListSingularPackage($newParams, array($moduleName => $this->changedModules[$moduleName])));
+                    DropDownHelper::saveDropDown($this->createModuleListPackage($newParams, array(
+                        $moduleName => $this->changedModules[$moduleName]['singular'],
+                    )));
                  }
             }
             //save changes to moduleIconList
@@ -930,36 +895,52 @@ class RenameModules
 
                 //save modified moduleIconList array
                 $newIconList[$moduleName] = $this->changedModules[$moduleName];
-                DropDownHelper::saveDropDown($this->createModuleListSingularPackage($newParams, $newIconList));
+                $singularNames = array_map(function ($data) {
+                    return $data['singular'];
+                }, $newIconList);
+                DropDownHelper::saveDropDown($this->createModuleListPackage($newParams, $singularNames));
             }
         }
-        return $this;
+    }
+
+    /**
+     * Update list of modules with the given labels
+     *
+     * @param string $name List name
+     * @param array $labels Module labels
+     * @param string $language Language ley
+     */
+    public function updateModuleList($name, array $labels, $language)
+    {
+        $params = array(
+            'dropdown_name' => $name,
+            'dropdown_lang' => $language,
+            'use_push' => true,
+        );
+        $params = $this->createModuleListPackage($params, $labels);
+        DropDownHelper::saveDropDown($params);
     }
 
     /**
      * Create an array entry that can be passed to the DropDownHelper:saveDropDown function so we can re-utilize
      * the save logic.
      *
-     * @param  array $params
-     * @param  array $changedModules
-     * @return
+     * @param array $params
+     * @param array $data
+     * @return array
      */
-    private function createModuleListSingularPackage($params, $changedModules)
+    private function createModuleListPackage(array $params, array $data)
     {
         $count = 0;
-        foreach ($changedModules as $moduleName => $package) {
-            $singularString = $package['singular'];
-
+        foreach ($data as $key => $value) {
             $params['slot_' . $count] = $count;
-            $params['key_' . $count] = $moduleName;
-            $params['value_' . $count] = $singularString;
+            $params['key_' . $count] = $key;
+            $params['value_' . $count] = $value;
             $params['delete_' . $count] = '';
-
             $count++;
         }
 
         return $params;
-
     }
 
     /**

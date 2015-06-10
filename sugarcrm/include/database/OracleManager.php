@@ -950,6 +950,25 @@ class OracleManager extends DBManager
 	    return $res;
 	}
 
+    /**
+     * Condition for number type in oracle if it don't have precision and scale
+     *
+     * Oracle does not allow to shrink column sizes or decrease precision
+     * if Precision and Scale of original col = 0 because number stored in database as it is
+     *
+     * @inheritdoc
+     */
+    public function compareVarDefs($fielddef1, $fielddef2, $ignoreName = false)
+    {
+        if (isset($fielddef1['type']) && isset($fielddef1['len']) && $fielddef1['type'] == 'number') {
+            list($dblen, $dbprec) = $this->parseLenPrecision($fielddef1);
+            if ($dblen == 38 && empty($dbprec) && $this->isNumericType($this->getFieldType($fielddef2))) {
+                return true;
+            }
+        }
+        return parent::compareVarDefs($fielddef1, $fielddef2, $ignoreName);
+    }
+
 	/**
 	 * Generate modify statement for one column
 	 * @param string $tablename

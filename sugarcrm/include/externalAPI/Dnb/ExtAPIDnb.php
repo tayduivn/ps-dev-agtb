@@ -732,7 +732,7 @@ class ExtAPIDnb extends ExternalAPIBase
     public function checkTokenValidity($save = true)
     {
         $dnbToken = $this->getAuthenticationToken($save);
-        return isset($dnbToken);
+        return !empty($dnbToken);
     }
 
     /**

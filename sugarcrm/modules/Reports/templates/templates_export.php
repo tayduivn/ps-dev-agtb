@@ -48,7 +48,7 @@ $content = '';
 
                 $content .= $line;
         }
-global $locale;
+global $locale, $sugar_config;
 
 $transContent = $GLOBALS['locale']->translateCharset($content, 'UTF-8', $GLOBALS['locale']->getExportCharset());
 
@@ -61,8 +61,10 @@ header( "Expires: Mon, 26 Jul 1997 05:00:00 GMT" );
 header( "Last-Modified: " . TimeDate::httpTime() );
 header( "Cache-Control: post-check=0, pre-check=0", false );
 header("Content-Length: ".mb_strlen($transContent, '8bit'));
-
-    $BOM = "\xEF\xBB\xBF";
-    print $BOM . $transContent;
-
+    if (!empty($sugar_config['export_excel_compatible'])) {
+        print $transContent;
+    } else {
+        $BOM = "\xEF\xBB\xBF";
+        print $BOM . $transContent;
+    }
 }

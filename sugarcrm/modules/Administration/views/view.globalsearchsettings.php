@@ -11,9 +11,9 @@
  */
 
 use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
+use Sugarcrm\Sugarcrm\SearchEngine\AdminSettings;
 
 require_once 'modules/Administration/Administration.php';
-require_once 'modules/Home/UnifiedSearchAdvanced.php';
 
 /**
  *
@@ -58,10 +58,10 @@ class AdministrationViewGlobalsearchsettings extends SugarView
         $sugar_smarty->assign('moduleTitle', $this->getModuleTitle(false));
 
         // Enabled/disabled modules list
-        $usa = new UnifiedSearchAdvanced();
-        $modules = $usa->retrieveEnabledAndDisabledModules();
-        $sugar_smarty->assign('enabled_modules', json_encode($modules['enabled']));
-        $sugar_smarty->assign('disabled_modules', json_encode($modules['disabled']));
+        $ftsAdmin = new AdminSettings();
+        $modules = $ftsAdmin->getModuleList();
+        $sugar_smarty->assign('enabled_modules', json_encode($modules['enabled_modules']));
+        $sugar_smarty->assign('disabled_modules', json_encode($modules['disabled_modules']));
 
         // List of available engines
         // TODO: make engines dynamic again

@@ -182,7 +182,7 @@ class IndexManager
         $this->buildAnalysis($analysisBuilder, $providerCollection);
 
         // build mapping
-        $mappingCollection = $this->buildMapping($providerCollection);
+        $mappingCollection = $this->buildMapping($providerCollection, $modules);
 
         // build index list
         $indexCollection = $this->getIndexCollection($mappingCollection);
@@ -212,11 +212,15 @@ class IndexManager
     /**
      * Build mapping for available providers
      * @param ProviderCollection $providerCollection
+     * @param array $modules the list of enabled modules
      * @return MappingCollection
      */
-    protected function buildMapping(ProviderCollection $providerCollection)
+    protected function buildMapping(ProviderCollection $providerCollection, array $modules = array())
     {
-        return $this->container->mappingManager->buildMapping($providerCollection, $this->getAllEnabledModules());
+        if (empty($modules)) {
+            $modules = $this->getAllEnabledModules();
+        }
+        return $this->container->mappingManager->buildMapping($providerCollection, $modules);
     }
 
     /**

@@ -674,6 +674,7 @@ class EmailMan extends SugarBean{
 
 				}
 				$this->current_mailbox = BeanFactory::getBean('InboundEmail');
+                $this->current_mailbox->disable_row_level_security = true;
 			}
 			if (empty($this->current_mailbox->id) or $this->current_mailbox->id !== $this->current_emailmarketing->inbound_email_id) {
 				$this->current_mailbox->retrieve($this->current_emailmarketing->inbound_email_id);

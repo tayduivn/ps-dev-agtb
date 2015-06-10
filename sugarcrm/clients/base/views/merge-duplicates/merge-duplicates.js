@@ -1037,7 +1037,6 @@
     triggerCopy: function(evt) {
         var currentTarget = this.$(evt.currentTarget),
             recordId = currentTarget.data('record-id'),
-            recordItemId = currentTarget.data('record-item-id'),
             fieldName = currentTarget.data('field-name'),
             fieldDefs = app.metadata.getModule(this.module).fields,
             model;
@@ -1061,7 +1060,11 @@
             return;
         }
 
-        var data = _.extend({}, currentTarget.data(), {
+        var data = currentTarget.data();
+        // Unlike data(), attr() doesn't perform type conversions if possible.
+        // This is good because recordItemId can sometimes be numeric but must be type of string always.
+        data.recordItemId = currentTarget.attr('data-record-item-id');
+        data = _.extend({}, data, {
             checked: currentTarget.prop('type') === 'checkbox' ?
                 currentTarget.prop('checked') : true
         });

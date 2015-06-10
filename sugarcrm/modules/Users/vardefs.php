@@ -960,6 +960,13 @@ $dictionary['User'] = array(
             )
         ) ,
         array(
+            'name' => 'uq_user_name',
+            'type' => 'unique',
+            'fields' => array(
+                'user_name',
+            ),
+        ),
+        array(
             'name' => 'idx_user_name',
             'type' => 'index',
             'fields' => array(
@@ -989,6 +996,7 @@ $dictionary['User'] = array(
         array('name' => 'idx_user_title', 'type' => 'index', 'fields' => array('title')),
         array('name' => 'idx_user_department', 'type' => 'index', 'fields' => array('department')),
     ) ,
+    'required_import_indexes' => array('uq_user_name::user_name'),
 	'relationships' => array (
   		'user_direct_reports' => array('lhs_module'=> 'Users', 'lhs_table'=> 'users', 'lhs_key' => 'id', 'rhs_module'=> 'Users', 'rhs_table'=> 'users', 'rhs_key' => 'reports_to_id', 'relationship_type'=>'one-to-many'),
   		'users_users_signatures' =>

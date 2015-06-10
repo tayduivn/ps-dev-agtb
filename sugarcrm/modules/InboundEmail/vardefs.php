@@ -133,6 +133,7 @@ $dictionary['InboundEmail'] = array('table' => 'inbound_email', 'comment' => 'In
 			'len' => '100',
 			'required' => true,
 			'reportable' => false,
+            'write_only' => true,
 			'comment' => 'Password of user identified by email_user'
 		),
 		'port' => array (

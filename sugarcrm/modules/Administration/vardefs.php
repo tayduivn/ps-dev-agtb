@@ -10,8 +10,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-$dictionary['Administration'] = array('table' => 'config', 'comment' => 'System table containing system-wide definitions'
-                               ,'fields' => array (
+$dictionary['Administration'] = array(
+    'table' => 'config',
+    'comment' => 'System table containing system-wide definitions',
+    'hidden_to_role_assignment' => true,
+    'fields' => array (
   'category' =>
   array (
     'name' => 'category',

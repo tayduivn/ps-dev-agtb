@@ -159,6 +159,8 @@ $dictionary['SchedulersJob'] = array(
             'name' => 'job_group',
             'vname' => 'LBL_JOB_GROUP',
             'type' => 'id',
+            'dbType' => 'varchar',
+            'len' => 255,
             'required' => false,
             'reportable' => true,
         ),

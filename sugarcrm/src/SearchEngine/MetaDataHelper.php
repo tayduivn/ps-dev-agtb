@@ -255,6 +255,27 @@ class MetaDataHelper
         return $this->setCache($cacheKey, $incFields);
     }
 
+    /**
+     * Get HTML fields for module.
+     * @param string $module
+     * @return array
+     */
+    public function getFtsHtmlFields($module)
+    {
+        $cacheKey = 'html_' . $module;
+        if ($htmlFields = $this->getCache($cacheKey)) {
+            return $htmlFields;
+        }
+
+        $htmlFields = array();
+        foreach ($this->getFtsFields($module) as $field => $defs) {
+            if (!empty($defs['type']) && $defs['type'] === 'htmleditable_tinymce') {
+                $htmlFields[] = $defs['name'];
+            }
+        }
+        return $this->setCache($cacheKey, $htmlFields);
+    }
+
 
     /**
      * Get cached content
