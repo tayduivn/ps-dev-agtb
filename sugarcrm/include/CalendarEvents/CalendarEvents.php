@@ -440,16 +440,32 @@ class CalendarEvents
     ) {
         $changeWasMade = false;
 
-        $GLOBALS['log']->debug(sprintf(
-            'Set %s/%s accept status to %s for %s/%s',
-            $invitee->module_name,
-            $invitee->id,
-            $status,
-            $event->module_name,
-            $event->id
-        ));
-        $event->update_vcal = false;
-        $event->set_accept_status($invitee, $status);
+        if (in_array($event->status, array('Held', 'Not Held'))) {
+            $GLOBALS['log']->debug(
+                sprintf(
+                    'Do not update the %s/%s accept status for the parent event %s/%s when the event status is %s',
+                    $invitee->module_name,
+                    $invitee->id,
+                    $event->module_name,
+                    $event->id,
+                    $event->status
+                )
+            );
+        } else {
+            $GLOBALS['log']->debug(
+                sprintf(
+                    'Set %s/%s accept status to %s for %s/%s',
+                    $invitee->module_name,
+                    $invitee->id,
+                    $status,
+                    $event->module_name,
+                    $event->id
+                )
+            );
+            $event->update_vcal = false;
+            $event->set_accept_status($invitee, $status);
+            $changeWasMade = true;
+        }
 
         if ($this->isEventRecurring($event)) {
             /**

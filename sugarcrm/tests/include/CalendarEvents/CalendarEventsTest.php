@@ -487,6 +487,75 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
         vCal::setCacheUpdateEnabled($beforeCacheUpdateStatus);
     }
 
+    public function updateAcceptStatusForInviteePrimaryEventStatusProvider()
+    {
+        return array(
+            array('Held'),
+            array('Not Held'),
+        );
+    }
+
+    /**
+     * The primary event is not updated because it is either held or canceled. Any child events may still be updated.
+     *
+     * @dataProvider updateAcceptStatusForInviteePrimaryEventStatusProvider
+     * @param $status
+     */
+    public function testUpdateAcceptStatusForInvitee_EventIsNotScheduled($status)
+    {
+        BeanFactory::setBeanClass('Meetings', 'MockMeeting');
+
+        $meeting1 = $this->getMockBuilder('Meeting')
+            ->disableOriginalConstructor()
+            ->setMockClassName('MockMeeting')
+            ->setMethods(array('set_accept_status'))
+            ->getMock();
+        $meeting1->id = create_guid();
+        $meeting1->module_name = 'Meetings';
+        $meeting1->status = $status;
+        $meeting1->expects($this->never())->method('set_accept_status');
+        BeanFactory::registerBean($meeting1);
+
+        $meeting2 = $this->getMockBuilder('Meeting')
+            ->disableOriginalConstructor()
+            ->setMockClassName('MockMeeting')
+            ->setMethods(array('set_accept_status'))
+            ->getMock();
+        $meeting2->id = create_guid();
+        $meeting2->module_name = 'Meetings';
+        $meeting2->expects($this->once())->method('set_accept_status');
+        BeanFactory::registerBean($meeting2);
+
+        $meetings = array(
+            array('id' => $meeting2->id),
+        );
+
+        $q = $this->getMockBuilder('SugarQuery')
+            ->disableOriginalConstructor()
+            ->setMethods(array('execute'))
+            ->getMock();
+        $q->expects($this->once())->method('execute')->willReturn($meetings);
+
+        $events = $this->getMockBuilder('CalendarEvents')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getChildrenQuery', 'isEventRecurring'))
+            ->getMock();
+        $events->expects($this->once())->method('isEventRecurring')->willReturn(true);
+        $events->expects($this->once())->method('getChildrenQuery')->willReturn($q);
+
+        $invitee = BeanFactory::getBean('Contacts', create_guid());
+        $events->updateAcceptStatusForInvitee(
+            $meeting1,
+            $invitee,
+            'tentative',
+            array('disable_row_level_security' => true)
+        );
+
+        BeanFactory::unregisterBean($meeting1);
+        BeanFactory::unregisterBean($meeting2);
+        BeanFactory::setBeanClass('Meetings');
+    }
+
     public function testUpdateAcceptStatusForInvitee_EventIsNotRecurring()
     {
         BeanFactory::setBeanClass('Meetings', 'MockMeeting');
