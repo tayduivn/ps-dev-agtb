@@ -167,13 +167,15 @@ class pmse_InboxViewShowCase extends SugarView
                 'id' => 'ApproveBtn',
                 'name' => 'Type',
                 'value' => 'Approve',
-                'type' => 'submit'
+                'type' => 'button',
+                'onclick' => "if (app.btSubmitClicked != true) return (check_form('EditView') && confirmAction(this)); else return true;"
             ),
             'reject' => array(
                 'id' => 'RejectBtn',
                 'name' => 'Type',
                 'value' => 'Reject',
-                'type' => 'submit'
+                'type' => 'button',
+                'onclick' => "if (app.btSubmitClicked != true) return (check_form('EditView') && confirmAction(this)); else return true;"
             ),
             'reassign' => array(
                 'id' => 'ReassignBtn',
@@ -193,7 +195,8 @@ class pmse_InboxViewShowCase extends SugarView
                 'id' => 'RouteBtn',
                 'name' => 'Type',
                 'value' => 'Route Task',
-                'type' => 'submit'
+                'type' => 'button',
+                'onclick' => "if (app.btSubmitClicked != true) return (check_form('EditView') && confirmAction(this)); else return true;"
             ),
             'cancel' => array(
                 'name' => 'Cancel',
