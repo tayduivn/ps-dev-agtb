@@ -871,7 +871,6 @@ describe("Drawer Layout", function() {
         });
 
         it('should resize', function() {
-            sinonSandbox.stub(drawer, '_isInTransition').returns(false);
             sinonSandbox.stub(drawer, 'isOpening').returns(false);
             sinonSandbox.stub(drawer, 'isClosing').returns(false);
 
@@ -880,17 +879,9 @@ describe("Drawer Layout", function() {
             expect(drawer._expandDrawer).toHaveBeenCalled();
         });
 
-        it('should not resize when in transition', function() {
-            sinonSandbox.stub(drawer, '_isInTransition').returns(true);
-
-            drawer._resizeDrawer();
-
-            expect(drawer._expandDrawer).not.toHaveBeenCalled();
-        });
-
         it('should not resize when opening', function() {
-            sinonSandbox.stub(drawer, '_isInTransition').returns(false);
             sinonSandbox.stub(drawer, 'isOpening').returns(true);
+            sinonSandbox.stub(drawer, 'isClosing').returns(false);
 
             drawer._resizeDrawer();
 
@@ -898,7 +889,6 @@ describe("Drawer Layout", function() {
         });
 
         it('should not resize when closing', function() {
-            sinonSandbox.stub(drawer, '_isInTransition').returns(false);
             sinonSandbox.stub(drawer, 'isOpening').returns(false);
             sinonSandbox.stub(drawer, 'isClosing').returns(true);
 

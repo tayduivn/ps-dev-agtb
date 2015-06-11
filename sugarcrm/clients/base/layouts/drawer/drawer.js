@@ -800,8 +800,8 @@
      */
     _resizeDrawer: _.throttle(function() {
         var drawers = this._getDrawers(false);
-        // Do not resize the drawer when the drawer is in the middle of a transition.
-        if (drawers.$top && !this._isInTransition(drawers.$top) && !this.isOpening() && !this.isClosing()) {
+        // Do not resize the drawer when the drawer is opening or closing.
+        if (drawers.$top && !this.isOpening() && !this.isClosing()) {
             this._expandDrawer(drawers.$top, drawers.$bottom);
         }
     }, 300),
