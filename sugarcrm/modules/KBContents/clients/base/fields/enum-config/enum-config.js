@@ -74,8 +74,8 @@
             // call with {silent: true} on, so it won't re-render the field, since we haven't rendered the field yet
             this.model.set(this.name, def, {silent: true});
             //Forecasting uses backbone model (not bean) for custom enums so we have to check here
-            if (_.isFunction(this.model.setDefaultAttribute)) {
-                this.model.setDefaultAttribute(this.name, def);
+            if (_.isFunction(this.model.setDefault)) {
+                this.model.setDefault(this.name, def);
             }
         }
     },
