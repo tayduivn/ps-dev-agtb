@@ -378,5 +378,42 @@ class CalendarEvents
         }
     }
 
+    /**
+     * Set Start Datetime and End Datetime for a Meeting or Call
+     *
+     * @param SugarBean $bean - Schedulable Event - i.e Meeting, Call
+     * @param SugarDateTime $userDateTime in Database Format (UTC)
+     */
+    public function setStartAndEndDateTime(SugarBean $bean, SugarDateTime $dateStart)
+    {
+        global $current_user;
 
+        $dtm = clone $dateStart;
+        $bean->duration_hours = empty($bean->duration_hours) ? 0 : intval($bean->duration_hours);
+        $bean->duration_minutes =  empty($bean->duration_minutes) ? 0 : intval($bean->duration_minutes);
+
+        if ($bean->repeat_type === 'Weekly' && !empty($bean->repeat_dow)) {
+            // This calculation Must occur in the User's TimeZone
+            $timezone = $current_user->getTimeZone();
+            $dtm->setTimeZone($timezone);
+
+            // Start Date must be one of the weekdays specified
+            $dow = $dtm->format('w');
+            $j = 6;
+            while ($j > 0 && strpos($bean->repeat_dow, $dow) === false) {
+                $dtm->modify('+1 Days');
+                $dow = $dtm->format('w');
+                $j--;
+            }
+        }
+
+        $bean->date_start = $dtm->asDb();
+        if ($bean->duration_hours > 0) {
+            $dtm->modify("+{$bean->duration_hours} hours");
+        }
+        if ($bean->duration_minutes > 0) {
+            $dtm->modify("+{$bean->duration_minutes} mins");
+        }
+        $bean->date_end = $dtm->asDb();
+    }
 }
