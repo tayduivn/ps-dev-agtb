@@ -501,7 +501,7 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
      * @dataProvider updateAcceptStatusForInviteePrimaryEventStatusProvider
      * @param $status
      */
-    public function testUpdateAcceptStatusForInvitee_EventIsNotScheduled($status)
+    public function testUpdateAcceptStatusForInvitee_EventIsNotScheduled_OnlyChildEventsAreUpdated($status)
     {
         BeanFactory::setBeanClass('Meetings', 'MockMeeting');
 
@@ -544,19 +544,21 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
         $events->expects($this->once())->method('getChildrenQuery')->willReturn($q);
 
         $invitee = BeanFactory::getBean('Contacts', create_guid());
-        $events->updateAcceptStatusForInvitee(
+        $updated = $events->updateAcceptStatusForInvitee(
             $meeting1,
             $invitee,
             'tentative',
             array('disable_row_level_security' => true)
         );
 
+        $this->assertTrue($updated);
+
         BeanFactory::unregisterBean($meeting1);
         BeanFactory::unregisterBean($meeting2);
         BeanFactory::setBeanClass('Meetings');
     }
 
-    public function testUpdateAcceptStatusForInvitee_EventIsNotRecurring()
+    public function testUpdateAcceptStatusForInvitee_EventIsNotRecurring_OnlyParentEventIsUpdated()
     {
         BeanFactory::setBeanClass('Meetings', 'MockMeeting');
 
@@ -578,13 +580,15 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
         $events->expects($this->never())->method('getChildrenQuery');
 
         $invitee = BeanFactory::getBean('Contacts', create_guid());
-        $events->updateAcceptStatusForInvitee($meeting, $invitee, 'tentative');
+        $updated = $events->updateAcceptStatusForInvitee($meeting, $invitee, 'tentative');
+
+        $this->assertTrue($updated);
 
         BeanFactory::unregisterBean($meeting);
         BeanFactory::setBeanClass('Meetings');
     }
 
-    public function testUpdateAcceptStatusForInvitee_EventIsRecurring()
+    public function testUpdateAcceptStatusForInvitee_EventIsRecurring_ParentAndChildrenAreUpdated()
     {
         BeanFactory::setBeanClass('Meetings', 'MockMeeting');
 
@@ -637,16 +641,60 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
         $events->expects($this->once())->method('getChildrenQuery')->willReturn($q);
 
         $invitee = BeanFactory::getBean('Contacts', create_guid());
-        $events->updateAcceptStatusForInvitee(
+        $updated = $events->updateAcceptStatusForInvitee(
             $meeting1,
             $invitee,
             'tentative',
             array('disable_row_level_security' => true)
         );
 
+        $this->assertTrue($updated);
+
         BeanFactory::unregisterBean($meeting1);
         BeanFactory::unregisterBean($meeting2);
         BeanFactory::unregisterBean($meeting3);
+        BeanFactory::setBeanClass('Meetings');
+    }
+
+    public function testUpdateAcceptStatusForInvitee_EntireSeriesHasBeenHeld_NoEventsAreUpdated()
+    {
+        BeanFactory::setBeanClass('Meetings', 'MockMeeting');
+
+        $meeting1 = $this->getMockBuilder('Meeting')
+            ->disableOriginalConstructor()
+            ->setMockClassName('MockMeeting')
+            ->setMethods(array('set_accept_status'))
+            ->getMock();
+        $meeting1->id = create_guid();
+        $meeting1->module_name = 'Meetings';
+        $meeting1->status = 'Held';
+        $meeting1->expects($this->never())->method('set_accept_status');
+        BeanFactory::registerBean($meeting1);
+
+        $q = $this->getMockBuilder('SugarQuery')
+            ->disableOriginalConstructor()
+            ->setMethods(array('execute'))
+            ->getMock();
+        $q->expects($this->once())->method('execute')->willReturn(array());
+
+        $events = $this->getMockBuilder('CalendarEvents')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getChildrenQuery', 'isEventRecurring'))
+            ->getMock();
+        $events->expects($this->once())->method('isEventRecurring')->willReturn(true);
+        $events->expects($this->once())->method('getChildrenQuery')->willReturn($q);
+
+        $invitee = BeanFactory::getBean('Contacts', create_guid());
+        $updated = $events->updateAcceptStatusForInvitee(
+            $meeting1,
+            $invitee,
+            'tentative',
+            array('disable_row_level_security' => true)
+        );
+
+        $this->assertFalse($updated);
+
+        BeanFactory::unregisterBean($meeting1);
         BeanFactory::setBeanClass('Meetings');
     }
 

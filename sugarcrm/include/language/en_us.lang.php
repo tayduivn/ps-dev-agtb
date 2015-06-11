@@ -9197,6 +9197,7 @@ $app_strings = array (
     'LBL_SQS_INDICATOR' => '',
     'LBL_STATE' => 'State:',
     'LBL_STATUS_UPDATED'=>'Your Status for this event has been updated!',
+    'LBL_STATUS_NOT_UPDATED' => 'Your Status for this event has not been updated.',
     'LBL_STATUS'=>'Status:',
     'LBL_STREET'=>'Street',
     'LBL_SUBJECT' => 'Subject',

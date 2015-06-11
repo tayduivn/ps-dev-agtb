@@ -426,10 +426,13 @@ class CalendarEvents
      * Update an invitee's accept status for a particular event. Update all future events in the series if the event is
      * recurring.
      *
+     * Future events are those that have a status that is neither "Held" nor "Not Held".
+     *
      * @param SugarBean $event
      * @param SugarBean $invitee
      * @param string $status
      * @param array $options See {@link BeanFactory::retrieveBean}.
+     * @return bool True if at least one accept status was updated.
      * @throws SugarException
      */
     public function updateAcceptStatusForInvitee(
@@ -505,6 +508,8 @@ class CalendarEvents
             $GLOBALS['log']->debug(sprintf('Update vCal cache for %s/%s', $invitee->module_name, $invitee->id));
             vCal::cache_sugar_vcal($invitee);
         }
+
+        return $changeWasMade;
     }
 
     /**

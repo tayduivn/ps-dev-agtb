@@ -53,7 +53,7 @@ if(empty($focus)) {
 	die("The focus id doesn't exist");
 }
 
-$service->updateAcceptStatusForInvitee(
+$updated = $service->updateAcceptStatusForInvitee(
     $focus,
     $current_entity,
     $_REQUEST['accept_status'],
@@ -61,7 +61,12 @@ $service->updateAcceptStatusForInvitee(
 );
 $url  = $sugar_config['site_url'] . '#' . buildSidecarRoute($currentModule, $focus->id);
 
-print $app_strings['LBL_STATUS_UPDATED']."<BR><BR>";
+if ($updated) {
+    print "{$app_strings['LBL_STATUS_UPDATED']}<br /><br />";
+} else {
+    print "{$app_strings['LBL_STATUS_NOT_UPDATED']}<br /><br />";
+}
+
 print $app_strings['LBL_STATUS']. " ". $app_list_strings['dom_meeting_accept_status'][$_REQUEST['accept_status']];
 print "<BR><BR>";
 
