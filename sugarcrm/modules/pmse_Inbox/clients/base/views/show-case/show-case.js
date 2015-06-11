@@ -21,13 +21,14 @@
             pmseInboxUrl = app.api.buildURL(this.options.module + '/case/' + this.inboxId + sep + this.flowId ,'',{},{});
 
         app.api.call('READ', pmseInboxUrl, {},{
-            success: function(data)
-            {
+            success: function(data) {
                 self.initCaseView(data)
+            },
+            error: function (error) {
+                app.error.handleNotFoundError();
             }
         });
     },
-
     initCaseView: function(data){
         if(data.case.flow.cas_flow_status==='FORM'){
             this.params = {
