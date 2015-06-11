@@ -32,6 +32,7 @@ class KBContent extends SugarBean {
     public $is_external;
     public $active_date;
     public $exp_date;
+    public $kbsapprover_id;
 
     /**
      * {@inheritDoc}
@@ -436,5 +437,59 @@ class KBContent extends SugarBean {
                 $this->usefulness_user_vote = $row['vote'];
             }
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    function get_notification_recipients()
+    {
+        $notify_user = BeanFactory::getBean('Users');
+        if ($this->status == self::ST_IN_REVIEW) {
+            $notify_user->retrieve($this->kbsapprover_id);
+        } else {
+            $notify_user->retrieve($this->assigned_user_id);
+        }
+        $this->new_assigned_user_name = $notify_user->full_name;
+
+        LoggerManager::getLogger()->info("Notifications: recipient is {$this->new_assigned_user_name}");
+
+        return array($notify_user);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function set_notification_body($xtpl, $bean)
+    {
+        global $app_list_strings, $current_user, $locale;
+        $user = BeanFactory::getBean('Users', $bean->created_by);
+        $status = isset($bean->status) ? $app_list_strings['kbdocument_status_dom'][$bean->status] : '';
+        $timedate = TimeDate::getInstance();
+        $dateCreated = $bean->date_entered ?
+            $timedate->to_display_date_time($bean->date_entered) :
+            $timedate->to_display_date_time($bean->fetched_row['date_entered']);
+        $messageLbl = '';
+        $preMessage = '';
+
+        if ($bean->status == self::ST_IN_REVIEW) {
+            $preMessage = "$current_user->name ";
+            $messageLbl = 'LBL_KB_PUBLISHED_REQUEST';
+
+        } elseif (in_array($bean->status, KBContent::getPublishedStatuses())) {
+            $messageLbl = 'LBL_KB_NOTIFICATION';
+
+        } elseif ($bean->status == self::ST_DRAFT) {
+            $messageLbl = 'LBL_KB_STATUS_BACK_TO_DRAFT';
+        }
+
+        $xtpl->assign('KBDOCUMENT_NAME', $bean->name);
+        $xtpl->assign('KBDOCUMENT_STATUS', $status);
+        $xtpl->assign('KBDOCUMENT_DATE_CREATED', $dateCreated);
+        $xtpl->assign('KBDOCUMENT_CREATED_BY', $locale->formatName($user));
+        $xtpl->assign('KBDOCUMENT_DESCRIPTION', $bean->description);
+        $xtpl->assign('NOTIFICATION_MESSAGE', $preMessage . translate($messageLbl, $this->module_dir));
+
+        return $xtpl;
     }
 }

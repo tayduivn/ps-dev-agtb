@@ -90,4 +90,7 @@ $mod_strings = array (
     'LBL_ASSIGNED_TO_ID' => 'Author ID',
     'LBL_ASSIGNED_TO' => 'Author',
     'LBL_CREATE_CATEGORY_PLACEHOLDER' => 'Press Enter to create or Esc to cancel',
+    'LBL_KB_NOTIFICATION' => 'Document has been published.',
+    'LBL_KB_PUBLISHED_REQUEST' => 'has assigned a Document to you for approval and publishing.',
+    'LBL_KB_STATUS_BACK_TO_DRAFT' => 'Document status has been changed back to draft.',
 );
