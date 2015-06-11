@@ -1,9 +1,12 @@
 describe("Taggable Plugin", function() {
-    var plugin;
+    var plugin, filtersBeanPrototype;
 
     beforeEach(function() {
         SugarTest.loadPlugin('Taggable');
         plugin = SugarTest.app.plugins._get('Taggable', 'view');
+        SugarTest.app.data.declareModels();
+        SugarTest.declareData('base', 'Filters');
+        filtersBeanPrototype = SugarTest.app.data.getBeanClass('Filters').prototype;
     });
 
     describe("unformatTags", function() {
@@ -134,12 +137,12 @@ describe("Taggable Plugin", function() {
             beanStub.expects('createBeanCollection')
                 .once().withExactArgs('Users')
                 .returns({fetch: spy});
-            plugin.getFilterDef = sinon.mock().returns([]);
+            filtersBeanPrototype.buildSearchTermFilter = sinon.mock().returns([]);
 
             plugin._searchForTags('@foo');
 
             expect(spy.calledOnce).toBe(true);
-            plugin.getFilterDef.verify();
+            filtersBeanPrototype.buildSearchTermFilter.verify();
         });
 
         it("Should search for all modules except users when # is specified", function() {
@@ -159,13 +162,13 @@ describe("Taggable Plugin", function() {
 
         it("Should only search once when searching the same terms twice", function() {
             var spy = sinon.spy();
-            plugin.getFilterDef = sinon.mock().returns([]);
+            filtersBeanPrototype.buildSearchTermFilter = sinon.mock().returns([]);
             beanStub.expects('createBeanCollection').once().returns({fetch: spy});
             plugin._searchForTags('@foo');
             plugin._searchForTags('@foo');
 
             expect(spy.calledOnce).toBe(true);
-            plugin.getFilterDef.verify();
+            filtersBeanPrototype.buildSearchTermFilter.verify();
         });
 
         it("Should not search but instead reset taggable when the previous search returned no results and is searching for tags that starts with the same text", function() {
