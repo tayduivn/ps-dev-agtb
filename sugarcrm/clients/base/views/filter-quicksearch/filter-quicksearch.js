@@ -23,8 +23,6 @@
         'paste': 'throttledSearch'
     },
 
-    plugins: ['QuickSearchFilter'],
-
     className: 'table-cell full-width',
 
     /**

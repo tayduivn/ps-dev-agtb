@@ -20,8 +20,6 @@
 ({
     className: 'filter-view search',
 
-    plugins: ['QuickSearchFilter'],
-
     events: {
         'click .add-on.fa-times': function() { this.trigger('filter:clear:quicksearch'); }
     },

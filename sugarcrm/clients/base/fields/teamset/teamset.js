@@ -23,7 +23,7 @@
         'click .btn[name=primary]': 'setPrimaryItem',
         'change input.select2': 'inputChanged'
     },
-    plugins: ['QuickSearchFilter', 'EllipsisInline', 'Tooltip', 'FieldDuplicate'],
+    plugins: ['EllipsisInline', 'Tooltip', 'FieldDuplicate'],
 
     /**
      * HTML tag of the append team checkbox.

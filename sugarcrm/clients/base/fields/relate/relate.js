@@ -69,7 +69,7 @@
  */
 ({
     fieldTag: 'input.select2',
-    plugins: ['QuickSearchFilter', 'EllipsisInline'],
+    plugins: ['EllipsisInline'],
 
     /**
      * Initializes field and binds all function calls to this
