@@ -201,7 +201,7 @@
 
     /**
      * Retrieves the number of drawers in the stack
-     * @returns {Number}
+     * @return {Number}
      */
     count: function() {
         return this._components.length;
@@ -218,7 +218,7 @@
 
     /**
      * Get currently active drawer layout.
-     * @returns {View.Layout}
+     * @return {View.Layout}
      */
     getActiveDrawerLayout: function() {
         if (this.count() === 0) {
@@ -762,7 +762,7 @@
 
     /**
      * Get the current height of the active drawer
-     * @returns {Number}
+     * @return {Number}
      */
     getHeight: function(){
         if (_.isEmpty(this._components)) {
@@ -810,7 +810,7 @@
      * Enter the drawer into one of the allowed states.
      *
      * @param {string} state
-     * @returns {string} If the returned state is the same as the previous
+     * @return {string} If the returned state is the same as the previous
      * state, then the parameter was not a valid state.
      * @private
      */
@@ -827,7 +827,7 @@
      * state.
      *
      * @param state
-     * @returns {boolean}
+     * @return {boolean}
      */
     isInState: function(state) {
         return state === this.state;
@@ -839,7 +839,7 @@
      * The drawer will be in the IDLE state unless a drawer is currently
      * opening or closing.
      *
-     * @returns {boolean}
+     * @return {boolean}
      */
     isIdle: function() {
         return this.isInState(this.STATES.IDLE);
@@ -851,7 +851,7 @@
      * The drawer will be in the OPENING state while a drawer is opening. Once
      * the open animation has completed, the drawer state is returned to IDLE.
      *
-     * @returns {boolean}
+     * @return {boolean}
      */
     isOpening: function() {
         return this.isInState(this.STATES.OPENING);
@@ -863,7 +863,7 @@
      * The drawer will be in the CLOSING state while a drawer is closing. Once
      * the close animation has completed, the drawer state is returned to IDLE.
      *
-     * @returns {boolean}
+     * @return {boolean}
      */
     isClosing: function() {
         return this.isInState(this.STATES.CLOSING);
