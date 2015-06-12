@@ -49,10 +49,13 @@
         /**
          * The default number of maximum results to display.
          *
+         * You can override this value by providing a `limit` property in the
+         * metadata.
+         *
          * @type {number}
          * @property
          */
-        this.limit = 3;
+        this.limit = 5;
         if (this.meta && this.meta.limit) {
             this.limit = this.meta.limit;
         }
