@@ -820,12 +820,17 @@
                 var value = this.model.get(field.name);
                 // check if value represents emptiness
                 if ((!_.isBoolean(value) && !value) || (_.isArray(value) && value.length === 0)) {
-                    emptyValues.push(app.lang.get(field.label, this.model.module));
-                    //don't set model if field is a relate collection
-                    if (!field.relate_collection) {
-                        this.model.set(field.name, '', {silent: true});
-                        if (field.id_name) {
-                            this.model.set(field.id_name, '', {silent: true});
+                    // If value is empty, but it's being appended, don't add it to empty values
+                    // use == because the value may be a string
+                    var appendCheck = this.model.get(field.name + '_type');
+                    if (!appendCheck || appendCheck == 0) {
+                        emptyValues.push(app.lang.get(field.label, this.model.module));
+                        //don't set model if field is a relate collection
+                        if (!field.relate_collection) {
+                            this.model.set(field.name, '', {silent: true});
+                            if (field.id_name) {
+                                this.model.set(field.id_name, '', {silent: true});
+                            }
                         }
                     }
                 }
