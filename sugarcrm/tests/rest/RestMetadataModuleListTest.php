@@ -370,6 +370,6 @@ class RestMetadataModuleListTest extends RestTestBase {
         $this->assertEquals(true, $restReply['reply']['modules']['Cases']['fields']['status']['sortable'], "Cases 'status' field should be sortable");
         $this->assertEquals(true, $restReply['reply']['modules']['Cases']['fields']['priority']['sortable'], "Cases 'priority' field should be sortable");
         $this->assertEquals(true, $restReply['reply']['modules']['Cases']['fields']['type']['sortable'], "Cases 'type' field should be sortable");
-
+    }
     //END SUGARCRM flav=ent ONLY
 }

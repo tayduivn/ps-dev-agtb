@@ -65,8 +65,15 @@
      * @param collection
      */
     quicksearchHandler: function(collection) {
+        var selectedTags = this.selectedTags;
+
         if (collection && collection.tags) {
-            this.tagCollection = collection.tags;
+            // Filter out tags that already exist in selectedTags
+            this.tagCollection = _.filter(collection.tags, function(tag) {
+                return _.isUndefined(_.find(selectedTags, function(selectedTag) {
+                    return selectedTag.name === tag.name;
+                }));
+            });
             this.render();
             if (this.tagCollection.length) {
                 this.open();
@@ -100,6 +107,8 @@
             var selectedTag = _.find(this.tagCollection, function(tag) {
                 return tag.name === e.target.text;
             });
+
+            this.layout.trigger('quicksearch:bar:clear:term');
             this.layout.trigger('quicksearch:tag:add', selectedTag);
 
             // Focus back to quicksearch-bar after tag selection. Defer it to prevent enter key-up

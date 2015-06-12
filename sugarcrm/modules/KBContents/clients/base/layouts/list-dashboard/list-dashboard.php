@@ -40,6 +40,18 @@ $viewdefs['KBContents']['base']['layout']['list-dashboard'] = array(
                             'width' => 12,
                         ),
                     ),
+                    array(
+                        array(
+                            'view' => array(
+                                'type' => 'kbs-dashlet-most-useful',
+                                'label' => 'LBL_DASHLET_MOST_USEFUL_NAME',
+                            ),
+                            'context' => array(
+                                'module' => 'KBContents',
+                            ),
+                            'width' => 12,
+                        ),
+                    ),
                 ),
                 'width' => 12,
             ),

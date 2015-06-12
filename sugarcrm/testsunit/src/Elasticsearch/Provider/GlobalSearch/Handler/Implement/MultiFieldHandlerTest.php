@@ -212,7 +212,7 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                 ),
                 'char_filter' => array(
                     'gs_char_num_pattern' => array(
-                        'pattern' => '[^\\d\\s]+',
+                        'pattern' => '[^\\d]+',
                         'replacement' => '',
                         'type' => 'pattern_replace',
                     ),

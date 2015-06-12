@@ -10,6 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Security\Crypto\CSPRNG;
+use Sugarcrm\Sugarcrm\Security\Password\Hash;
+
 require_once 'include/SugarOAuth2/SugarOAuth2StoragePlatform.php';
 
 class SugarOAuth2StoragePortal extends SugarOAuth2StoragePlatform {
@@ -185,9 +188,30 @@ class SugarOAuth2StoragePortal extends SugarOAuth2StoragePlatform {
         }
         if (!empty($portalApiUser->id)) {
             $this->portalApiUser = $portalApiUser;
+            $this->rehashPortalApiUser();
             return $this->portalApiUser;
         } else {
             return null;
+        }
+    }
+
+    /**
+     * The password of the portal user is random and is not used to login
+     * directly. Nevertheless we want to keep the password hash in compliance
+     * with the current hash settings.
+     * @param User $user The portal user object
+     */
+    protected function rehashPortalApiUser()
+    {
+        // Don't do anything in case portal user object not set yet
+        if (empty($this->portalApiUser)) {
+            return;
+        }
+
+        // This check already happens in User::rehashPassword but we want
+        // to do it earlier to avoid calling CSPRNG every time.
+        if (Hash::getInstance()->needsRehash($this->portalApiUser->user_hash)) {
+            $this->portalApiUser->rehashPassword(CSPRNG::getInstance()->generate(32, true));
         }
     }
 
@@ -257,6 +281,8 @@ class SugarOAuth2StoragePortal extends SugarOAuth2StoragePlatform {
             if (empty($this->userBean)) {
                 $this->userBean = $portalApiUser;
             }
+
+            $contact->rehashPortalPassword($password);
 
             return array('user_id'=>$contact->id);
         } else {

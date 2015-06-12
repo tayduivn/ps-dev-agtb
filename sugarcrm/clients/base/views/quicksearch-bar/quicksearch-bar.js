@@ -123,6 +123,8 @@
 
         this.layout.on('quicksearch:bar:clear', this.clearSearch, this);
 
+        this.layout.on('quicksearch:bar:clear:term', this.clearSearchTerm, this);
+
         this.layout.on('quicksearch:bar:search', this.goToSearchPage, this);
 
         this.layout.on('route:search', this.populateSearchTerm, this);
@@ -411,6 +413,13 @@
         if (this.context.get('search')) {
             this.toggleSearchIcon(true);
         }
+    },
+
+    clearSearchTerm: function() {
+        this.$('.search-query').val('');
+        this._searchTerm = '';
+        this._oldSearchTerm = '';
+        this._currentQueryTerm = '';
     },
 
     /**

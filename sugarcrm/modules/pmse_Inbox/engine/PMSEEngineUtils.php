@@ -1003,7 +1003,7 @@ class PMSEEngineUtils
     }
 
     public static function blackListFields($def) {
-        $blackList = array('deleted', 'system_id', 'mkto_sync', 'mkto_id', 'mkto_lead_score', 'parent_type', 'user_name', 'user_hash');
+        $blackList = array('deleted', 'system_id', 'mkto_sync', 'mkto_id', 'mkto_lead_score', 'parent_type', 'user_name', 'user_hash', 'portal_app', 'portal_active', 'portal_name');
         if (in_array($def['name'], $blackList)) {
             return false;
         }
