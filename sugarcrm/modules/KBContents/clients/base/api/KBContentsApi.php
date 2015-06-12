@@ -12,6 +12,7 @@
 
 use \Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
 use \Sugarcrm\Sugarcrm\Elasticsearch\Query\QueryBuilder;
+use \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\MultiFieldHandler;
 
 require_once 'include/api/SugarListApi.php';
 require_once 'data/BeanFactory.php';

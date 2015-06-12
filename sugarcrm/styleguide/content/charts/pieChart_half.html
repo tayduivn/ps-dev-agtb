@@ -117,30 +117,26 @@
           // .y(function(d) { return d.value })
           .showLabels(showValues)
           .direction(direction)
-          .showTitle(true)
-          .showLegend(true)
+          .showTitle(false)
+          .showLegend(false)
           .donut(true)
-          .startAngle(function(d) { return (d.startAngle - Math.PI) / 2; })
-          .endAngle(function(d) { return (d.endAngle - Math.PI) / 2; })
           .pieLabelsOutside(true)
+          .hole(10)
           .donutRatio(0.618)
-          .hole(function(d, node) {
-            var text = d3.select(node),
-                wrap = d3.select(node.parentNode),
-                total = d3.sum(d.map(function(d, i) {
-                    return d.value;
-                  }));
-            text
-              .attr('dy', '-.35em')
-              .classed('nv-pie-hole-value', true);
-            wrap.append('text')
-              .text('Total Records')
-              .attr('text-anchor', 'middle')
-              .attr('class', 'nv-pie-hole-label')
-              .attr('dy', '.35em')
-              .style('fill', '#333')
-              .style('font-size', '14px');
-            return total;
+          .minRadius(100)
+          .maxRadius(400)
+          .rotateDegrees(90)
+          .arcDegrees(180)
+          .holeFormat(function(wrap, data) {
+              var wrapEnter = wrap.selectAll('text').data([null]).enter().append('g')
+                    .attr('transform', 'translate(0,-1)');
+              wrapEnter.append('text')
+                  .text(function(d) { return chart.hole(); })
+                  .attr('class', 'nv-pie-hole-value');
+              wrapEnter.append('text')
+                  .text('Total')
+                  .attr('class', 'nv-pie-hole-label')
+                  .attr('dy', '1em');
           })
           .tooltipContent(function(key, x, y, e, graph) {
             return '<p>Stage: <b>' + key + '</b></p>' +

@@ -236,7 +236,8 @@ $dictionary['Opportunity'] = array(
             'studio' => false,
             'reportable' => false,
             'massupdate' => false,
-            'importable' => false
+            'importable' => false,
+            'default' => 'New'
         ),
         'probability' => array(
             'name' => 'probability',
