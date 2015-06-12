@@ -11,6 +11,6 @@
  */
 
 $viewdefs['base']['view']['dupecheck-list-edit'] = array(
-    'template' => 'list',
+    'template' => 'flex-list',
     'selection' => array(),
 );
