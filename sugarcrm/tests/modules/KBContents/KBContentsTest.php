@@ -102,15 +102,52 @@ class KBContentsTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertInternalType('object', $joinSugarQuery);
     }
 
-    public function testResetActiveRev()
+    /**
+     * New non-published revision should be active.
+     */
+    public function testActiveRevision()
     {
-        $this->assertEquals($this->bean->active_rev, 1);
+        $revisionData = array(
+            'kbarticle_id' => $this->bean->kbarticle_id,
+            'kbdocument_id' => $this->bean->kbdocument_id,
+        );
 
-        $this->bean->resetActiveRevision();
-        $contents = BeanFactory::getBean('KBContents');
-        $contents->fetch($this->bean->id);
+        $revision1 = SugarTestKBContentUtilities::createBean($revisionData);
+        $this->assertEquals($this->bean->active_rev, 0);
+        $this->assertEquals($revision1->active_rev, 1);
 
-        $this->assertEquals($contents->active_rev, 0);
+        $revision2 = SugarTestKBContentUtilities::createBean($revisionData);
+        $this->assertEquals($this->bean->active_rev, 0);
+        $this->assertEquals($revision1->active_rev, 0);
+        $this->assertEquals($revision2->active_rev, 1);
     }
 
+    /**
+     * Published revision becomes active.
+     */
+    public function testPublishedRevisionIsActive()
+    {
+        $publishStatuses = $this->bean->getPublishedStatuses();
+        $revisionData = array(
+            'kbarticle_id' => $this->bean->kbarticle_id,
+            'kbdocument_id' => $this->bean->kbdocument_id,
+        );
+
+        $this->bean->active_rev = 1;
+        $this->bean->status = $publishStatuses[0];
+        $this->bean->save();
+
+        $draftRevision = SugarTestKBContentUtilities::createBean($revisionData);
+        $this->assertEquals($this->bean->active_rev, 1);
+        $this->assertEquals($draftRevision->active_rev, 0);
+
+        $publishedRevision = SugarTestKBContentUtilities::createBean(
+            $revisionData + array(
+                'status' => $publishStatuses[0],
+            )
+        );
+        $this->assertEquals($this->bean->active_rev, 0);
+        $this->assertEquals($draftRevision->active_rev, 0);
+        $this->assertEquals($publishedRevision->active_rev, 1);
+    }
 }
