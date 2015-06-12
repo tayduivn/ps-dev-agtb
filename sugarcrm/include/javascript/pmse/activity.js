@@ -1821,10 +1821,15 @@ AdamActivity.prototype.createConfigurateAction = function () {
         text: actionName,
         cssStyle : actionCSS,
         handler: function () {
-            root.canvas.project.save();
-            w.show();
-            w.html.style.display = 'none';
-            App.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
+            root.canvas.showModal();
+            App.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoClose: false});
+            root.canvas.project.save({
+                success: function () {
+                    root.canvas.hideModal();
+                    w.show();
+                    w.html.style.display = 'none';
+                }
+            });
         },
         disabled: disabled
     });
