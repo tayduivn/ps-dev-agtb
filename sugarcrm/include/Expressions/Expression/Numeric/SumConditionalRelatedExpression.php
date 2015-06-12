@@ -137,9 +137,13 @@ class SumConditionalRelatedExpression extends NumericExpression
                 );
             }
 
-            // they are the same value, no math to do, so exit out
-            if (previous_value === new_value) {
-                return;
+            // they are the same value and the model has not been removed,
+            if (previous_value === new_value && !hasModelBeenRemoved) {
+                // if the condition didn't change or it's not the current field
+                if (!(conditionChanged && currentFieldIsConditionField)) {
+                    // no math is needed
+                    return;
+                }
             }
 
             // store the new_value on the context for the rel_field
