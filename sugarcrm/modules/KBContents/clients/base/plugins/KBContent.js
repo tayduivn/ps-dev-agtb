@@ -367,7 +367,8 @@
                     expDate = model.get(fieldName),
                     publishingDate = model.get('active_date'),
                     status = model.get('status'),
-                    changed = model.changedAttributes(model.getSyncedAttributes());
+                    changed = model.changedAttributes(model.getSyncedAttributes()),
+                    errorKeys = [];
 
                 if (
                     this._isPublishingStatus(status) &&
@@ -383,6 +384,11 @@
                     }
                     errors[fieldName] = errors[fieldName] || {};
                     errors[fieldName].expDateLow = true;
+                    errorKeys.push('expDateLow');
+                }
+
+                if (this.context.get('layout') !== 'record' && !_.isUndefined(errors[fieldName])) {
+                    this._alertError(errorKeys);
                 }
 
                 callback(null, fields, errors);
@@ -401,12 +407,17 @@
                 var fieldName = 'active_date',
                     status = model.get('status'),
                     publishingDate = model.get(fieldName),
-                    pubDateObject = new Date(publishingDate);
+                    pubDateObject = new Date(publishingDate),
+                    errorKeys = [];
 
                 if (status == 'approved') {
                     if (publishingDate && pubDateObject && pubDateObject.getTime() < Date.now()) {
                         errors[fieldName] = errors[fieldName] || {};
                         errors[fieldName].activeDateLow = true;
+                        errorKeys.push('activeDateLow');
+                        if (this.context.get('layout') !== 'record' && !_.isUndefined(errors[fieldName])) {
+                            this._alertError(errorKeys);
+                        }
                         callback(null, fields, errors);
                     } else if (!publishingDate) {
                         app.alert.show('save_without_publish_date_confirmation', {
@@ -477,6 +488,28 @@
                     ) {
                         model.set('active_date', app.date().formatServer(true));
                     }
+                }
+            },
+
+            /**
+             * Alert error message.
+             *
+             * @param keys
+             * @private
+             */
+            _alertError: function(keys) {
+                var messages = [];
+
+                _.each(keys, function(key) {
+                    messages.push(app.lang.get(app.error.errorName2Keys[key], 'KBContents'));
+                });
+
+                if (messages.length > 0) {
+                    app.alert.show('validation-error', {
+                        level: 'error',
+                        messages: messages,
+                        autoClose: true
+                    });
                 }
             },
 
