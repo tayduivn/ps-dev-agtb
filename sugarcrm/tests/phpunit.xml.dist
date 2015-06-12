@@ -73,7 +73,6 @@
             <directory>./modules/UserPreferences/</directory>
             <directory>./modules/Users/</directory>
             <directory>./modules/WebLogicHook/</directory>
-            <directory>./modules/KBContents/</directory>
             <!-- global failures, tests are excluded -->
             <exclude>./tests/metadata/Bug33522Test.php</exclude>
             <exclude>./tests/metadata/MetaDataLocationChangeTest.php</exclude>
