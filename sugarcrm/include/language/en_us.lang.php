@@ -11476,7 +11476,7 @@ To create a new record using the values you have entered, click "Ignore Duplicat
 
     // shortcut keys help
     'LBL_SHORTCUT_KEYS_HELP_ABOUT' => 'SugarCRM enables power users to quickly perform certain tasks with keyboard shortcuts to increase productivity. The tables on the right describe available shortcuts along with the keys and the actions they perform.',
-    'LBL_SHORTCUT_KEYS_CONFIG_HELP' => "<h1>Supported keys</h1><ul><li>all alphanumeric characters and symbols</li><li>shift, ctrl, alt, command</li><li>enter, esc, space, tab, pageup, pagedown, end, home, ins, del, backspace</li></ul><h1>Supported features</h1><ul><li>Key combination: ctrl+m</li><li>Multiple keys: m,ctrl+m</li><li>Key sequence: m a</li></ul>",
+    'LBL_SHORTCUT_KEYS_CONFIG_HELP' => "<h1>Supported keys</h1><ul><li>all alphanumeric characters and symbols</li><li>shift, ctrl, alt, command, mod (ctrl in Windows/Linux and command in Macs)</li><li>enter, esc, space, tab, pageup, pagedown, end, home, ins, del, backspace</li></ul><h1>Supported features</h1><ul><li>Key combination: ctrl+m</li><li>Multiple keys: m,ctrl+m</li><li>Key sequence: m a</li></ul>",
     'LBL_GLOBAL_SHORTCUTS' => 'Global Shortcuts',
     'LBL_CONTEXTUAL_SHORTCUTS' => 'Contextual Shortcuts',
     'LBL_SHORTCUT_KEY_KEY' => 'Key',

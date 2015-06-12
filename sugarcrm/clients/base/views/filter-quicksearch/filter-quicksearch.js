@@ -37,7 +37,7 @@
         //shortcut keys
         app.shortcuts.register({
             id: 'Filter:Search',
-            keys: ['f i','ctrl+alt+9'],
+            keys: ['f i','mod+alt+9'],
             component: this,
             description: 'LBL_SHORTCUT_FILTER_SEARCH',
             handler: function() {

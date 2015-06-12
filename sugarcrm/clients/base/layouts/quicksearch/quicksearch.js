@@ -56,7 +56,7 @@
         // Focus the search bar
         app.shortcuts.registerGlobal({
             id: 'Search:Focus',
-            keys: ['s', 'ctrl+alt+0'],
+            keys: ['s', 'mod+alt+0'],
             component: this,
             description: 'LBL_SHORTCUT_SEARCH',
             handler: function() {

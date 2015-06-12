@@ -30,7 +30,7 @@
         //shortcut keys
         app.shortcuts.register({
             id: 'AuditHeaderPanel:Close',
-            keys: ['esc','ctrl+alt+l'],
+            keys: ['esc','mod+alt+l'],
             component: this,
             description: 'LBL_SHORTCUT_CLOSE_DRAWER',
             callOnFocus: true,

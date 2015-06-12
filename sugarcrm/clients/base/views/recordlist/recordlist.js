@@ -651,7 +651,7 @@
 
         app.shortcuts.register({
             id: 'List:Inline:Cancel',
-            keys: ['esc','ctrl+alt+l'],
+            keys: ['esc','mod+alt+l'],
             component: this,
             description: 'LBL_SHORTCUT_CANCEL_INLINE_EDIT',
             callOnFocus: true,
@@ -669,7 +669,7 @@
 
         app.shortcuts.register({
             id: 'List:Inline:Save',
-            keys: ['ctrl+s','ctrl+alt+a'],
+            keys: ['mod+s','mod+alt+a'],
             component: this,
             description: 'LBL_SHORTCUT_RECORD_SAVE',
             callOnFocus: true,
