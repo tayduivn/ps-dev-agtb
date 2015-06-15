@@ -43,7 +43,7 @@
 
         // Set append as default when mass updating tags
         this.appendTagValue = true;
-        this.model.set('tag_type', this.appendTagValue ? '1' : '0');
+        this.model.setDefault('tag_type', this.appendTagValue ? '1' : '0');
     },
 
     /**
