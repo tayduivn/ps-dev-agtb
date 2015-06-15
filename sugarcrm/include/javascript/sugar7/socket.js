@@ -9,56 +9,287 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 (function(app) {
-    app.augment("socket", _.extend({}, Backbone.Events), false);
+    /**
+     * Channel class
+     * Extends Backbone.Events, parent class can be accessible by this._super.
+     * Allows us to join and leave required channel (read rooms) on socket server side.
+     *
+     * @param {string} name Name of the channel.
+     * @param {io} socket Web socket client library of current Socket object.
+     * @constructor
+     */
+    var Channel = function(name, socket) {
+        this.systemEvents = _.extend({}, Backbone.Events);
+        this._super = Backbone.Events;
+        this._name = name;
+        this._socket = socket;
+    };
+    _.extend(Channel.prototype, Backbone.Events, {
 
-    app.events.on('app:init', function() {
+        /**
+         * Returns name of the channel.
+         *
+         * @returns {string} Name of the channel.
+         */
+        name: function() {
+            return this._name;
+        },
 
-        if (_.isUndefined(app.config.websockets) ||
-            _.isUndefined(app.config.websockets.client) ||
-            _.isUndefined(app.config.websockets.client.url)) {
-            return;
-        }
+        /**
+         * Method allows us to subscribe to events of the channel.
+         *
+         * @returns {Channel} Current object (this) to allow chains.
+         */
+        on: function() {
+            if (this.isEmpty()) {
+                this._join();
+            }
+            return this._super.on.apply(this, arguments);
+        },
 
-        if (app.config.websockets.client.balancer) {
-            $.get(app.config.websockets.client.url).done(function(data) {
-                if (!_.isUndefined(data) && !_.isUndefined(data.location)) {
-                    loadSocket(data.location);
-                }
-            });
-        } else {
-            loadSocket(app.config.websockets.client.url);
+        /**
+         * Method allows us to unsubscribe from events of the channel.
+         *
+         * @returns {Channel} Current object (this) to allow chains.
+         */
+        off: function() {
+            var result = this._super.off.apply(this, arguments);
+            if (this.isEmpty()) {
+                this._leave();
+            }
+            return result;
+        },
+
+        /**
+         * Method is called when we subscribe to an event of the channel first time.
+         * It sends message to socket server to join required rooms.
+         * Also it triggers own 'join' system event.
+         *
+         * @private
+         */
+        _join: function() {
+            this._socket.emit('join', this.name());
+            this.systemEvents.trigger('join', this.name());
+        },
+
+        /**
+         * Method is called when last subscriber left the channel.
+         * It sends message to socket server to leave required rooms.
+         * Also it triggers own 'leave' system event.
+         *
+         * @private
+         */
+        _leave: function() {
+            this._socket.emit('leave', this.name());
+            this.systemEvents.trigger('leave', this.name());
+        },
+
+        /**
+         * Returns true if we have subscribers and false is the channel is empty.
+         *
+         * @returns {bool} Returns true if we have subscribers and false is the channel is empty.
+         */
+        isEmpty: function() {
+            return _.isEmpty(_.filter(_.values(this._events), _.size));
         }
     });
 
-    function loadSocket(url) {
-        var scriptUrl = url + (url.substr(-1) == '/' ? '' : '/') + 'socket.io/socket.io.js';
-        $.getScript(scriptUrl, function () {
-            initSocket(url);
-        });
-    }
+    /**
+     * Socket class
+     * Extends Backbone.Events, parent class can be accessible by this._super.
+     * Allows us to subscribe on global events and unsubscribe from them.
+     * To join and leave specified channels.
+     *
+     * @param {SUGAR.App} app Instance of current application.
+     * @constructor
+     */
+    var Socket = function(app) {
+        this._super = Backbone.Events;
+        this._url = '';
+        this._socket = null;
+        this._channels = {};
+        this._app = app;
+        this._app.events.on('app:init', this._initConfig, this);
+    };
+    _.extend(Socket.prototype, Backbone.Events, {
 
-    function initSocket(url) {
-        var socket = io(url, {
-            autoConnect: false
-        });
+        /**
+         * Entry point for Socket object.
+         * That should be executed when application has been initialized and app.config is present.
+         * it detects this._url and forward logic to this._initClientLibrary.
+         *
+         * @private
+         */
+        _initConfig: function() {
+            if (_.isUndefined(this._app.config.websockets) ||
+                _.isUndefined(this._app.config.websockets.client) ||
+                _.isUndefined(this._app.config.websockets.client.url)) {
+                return;
+            }
 
-        var connect = function() {
-            socket.emit('OAuthToken', {
-                'siteUrl': app.config.siteUrl,
-                'serverUrl': app.config.serverUrl,
-                'token': app.api.getOAuthToken()
+            if (this._app.config.websockets.client.balancer) {
+                this._Factory$().get(this._app.config.websockets.client.url).done(_.bind(function(data) {
+                    if (!_.isUndefined(data) && !_.isUndefined(data.location)) {
+                        this._url = data.location;
+                        this._initClientLibrary();
+                    }
+                }, this));
+            } else {
+                this._url = this._app.config.websockets.client.url;
+                this._initClientLibrary();
+            }
+        },
+
+        /**
+         * When this._url was detected we need to load client js library to work with socket.io.
+         * When the library has been loaded we forward logic to this._initSocket.
+         *
+         * @private
+         */
+        _initClientLibrary: function() {
+            var scriptUrl = this._url + (this._url.substr(-1) == '/' ? '' : '/') + 'socket.io/socket.io.js';
+            this._Factory$().getScript(scriptUrl, _.bind(function () {
+                this._initSocket();
+            }, this));
+        },
+
+        /**
+         * Initializes socket.io client library, binds required events and open connection to socket server.
+         *
+         * @private
+         */
+        _initSocket: function() {
+            this._socket = this._FactoryIO(this._url, {
+                autoConnect: false
             });
-        };
+            this._bind();
+            this._socket.open();
+        },
 
-        socket.on('connect', connect);
-        app.events.on('app:login:success', connect);
-        app.events.on('app:logout', connect);
+        /**
+         * Subscribes on required events for correct authorization of client and message handling.
+         *
+         * @private
+         */
+        _bind: function() {
+            this._app.events.on('app:login:success', this.authorize, this);
+            this._app.events.on('app:logout', this.authorize, this);
+            this._socket.on('connect', _.bind(this.authorize, this));
+            this._socket.on('message', _.bind(this._message, this));
+        },
 
-        socket.on('message', _.bind(function(data) {
-            app.socket.trigger(data.message, data.args);
-        }, this));
+        /**
+         * Triggers event which depends on received data.
+         * If data.channel is present then we trigger event in the channel.
+         * If no then we trigger event on current object.
+         *
+         * @param {Object} data Parameters for triggering of event.
+         * @param {string} data.message Name of the event which will be triggered.
+         * @param {*} data.args Arguments for the event handler.
+         * @param {string|null} data.channel Name of the channel, if it's present then the event will be triggered under specified channel.
+         * @private
+         */
+        _message: function(data) {
+            var context = null;
+            if (data.channel) {
+                if (!_.isUndefined(this._channels[data.channel])) {
+                    context = this._channels[data.channel];
+                }
+            } else {
+                context = this;
+            }
+            if (context) {
+                context.trigger(data.message, data.args);
+            }
+        },
 
-        socket.open();
+        /**
+         * Sends all required information to socket server to authorize current client.
+         */
+        authorize: function() {
+            this._socket.emit('OAuthToken', {
+                'siteUrl': this._app.config.siteUrl,
+                'serverUrl': this._app.config.serverUrl,
+                'token': this._app.api.getOAuthToken(),
+                'channels': this._currentChannels()
+            });
+        },
 
-    }
+        /**
+         * Returns list of names of current channels in the socket.
+         *
+         * @returns {Array} Returns list of names of current channels in the socket.
+         * @private
+         */
+        _currentChannels: function() {
+            var result = [];
+            _.each(this._channels, function(channel, name) {
+                if (!channel.isEmpty()) {
+                    result.push(name);
+                }f
+            });
+            return result;
+        },
+
+        /**
+         * Creates new channel object if that's needed and returns it.
+         *
+         * @param {string} name Name of the required channel.
+         * @returns {Channel} Object of Channel class for specified name.
+         */
+        channel: function(name) {
+            if(_.isUndefined(this._channels[name])) {
+                this._channels[name] = this._FactoryChannel(name);
+                this._channels[name].systemEvents.on('leave', this._destroyChannel, this);
+            }
+            return this._channels[name];
+        },
+
+        /**
+         * Deletes specified channel from the socket.
+         *
+         * @param {string} name Name of the required channel.
+         * @private
+         */
+        _destroyChannel: function(name) {
+            if (!_.isUndefined(this._channels[name])) {
+                delete this._channels[name];
+            }
+        },
+
+        /**
+         * Factory method which returns new object of channel class.
+         *
+         * @param {string} name Name of new channel, will be passed to constructor of Channel class.
+         * @returns {Channel} New object of Channel class.
+         * @private
+         */
+        _FactoryChannel: function(name) {
+            return new Channel(name, this._socket);
+        },
+
+        /**
+         * Factory method which returns new object of socket server client library.
+         *
+         * @param {string} url URL to socket server.
+         * @param {Object} options Key-Value list of options for socket server client library.
+         * @returns {io} New object of server client library.
+         * @private
+         */
+        _FactoryIO: function(url, options) {
+            return io(url, options);
+        },
+
+        /**
+         * Factory method which returns jQuery object to do some smart things.
+         *
+         * @returns {jQuery} Current instance of jQuery.
+         * @private
+         */
+        _Factory$: function() {
+            return $;
+        }
+    });
+
+    app.augment("socket", new Socket(app), false);
 })(SUGAR.App);

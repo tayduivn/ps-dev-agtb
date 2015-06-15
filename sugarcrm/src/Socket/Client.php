@@ -25,6 +25,11 @@ namespace Sugarcrm\Sugarcrm\Socket;
  * // with data
  * Client::getInstance()->send('progress', array('processId' => 123, 'progress' => 80));
  *
+ * // to all users in specified channel
+ * Client::getInstance()->channel('channelName')->send('test');
+ * // to specified group in specified channel
+ * Client::getInstance()->channel('channelName')->recipient(Client::RECIPIENT_USER_TYPE, 'admin')->send('test');
+ *
  * // to specified group
  * Client::getInstance()->recipient(Client::RECIPIENT_USER_ID, $userId)->send('test');
  * Client::getInstance()->recipient(Client::RECIPIENT_TEAM_ID, $teamId)->send('test');
@@ -36,6 +41,7 @@ class Client
     /**
      * Constants for types of recipients
      */
+    const RECIPIENT_ALL = 'all';
     const RECIPIENT_USER_ID = 'userId';
     const RECIPIENT_TEAM_ID = 'teamId';
     const RECIPIENT_USER_TYPE = 'userType';
@@ -44,20 +50,37 @@ class Client
      * Name of recipient for message, by default message will be send to all sockets
      * To specify recipient use recipient() method with type of recipient
      *
-     * @var string
+     * @var array
      */
-    protected $to = 'all';
+    protected $to = array(
+        'type' => self::RECIPIENT_ALL,
+        'id' =>  null,
+        'channel' => null
+    );
 
     /**
      * The method should be used if we need to send message to specified user, team, or type of user
      *
-     * @param Client::RECIPIENT_USER_ID|Client::RECIPIENT_TEAM_ID|Client::RECIPIENT_USER_TYPE $type
+     * @param Client::RECIPIENT_ALL|Client::RECIPIENT_USER_ID|Client::RECIPIENT_TEAM_ID|Client::RECIPIENT_USER_TYPE $type
      * @param string $id
      * @return Client|CustomClient
+     * @throws SugarApiExceptionInvalidParameter
      */
-    public function recipient($type, $id)
+    public function recipient($type, $id = null)
     {
-        $this->to = $type . ':' . $id;
+        $this->to['type'] = $type;
+        $this->to['id'] = $id;
+
+        return $this;
+    }
+
+    /**
+     * @param string $channel
+     * @return $this
+     */
+    public function channel($channel)
+    {
+        $this->to['channel'] = $channel;
         return $this;
     }
 
@@ -125,10 +148,9 @@ class Client
 
         $params = json_encode(
             array(
-                'url' => $this->getSugarConfig()->get('site_url'),
+                'to' => $this->to + array('url' => $this->getSugarConfig()->get('site_url')),
                 'token' => $token,
                 'data' => array(
-                    'to' => $this->to,
                     'message' => $message,
                     'args' => $data
                 )
