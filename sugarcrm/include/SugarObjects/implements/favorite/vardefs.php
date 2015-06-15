@@ -37,6 +37,7 @@ $vardefs = array(
             'source' => 'non-db',
             'vname' => 'LBL_FAVORITE',
             'reportable' => false,
+            'workflow' => false,
             'full_text_search' => array(
                 'type' => 'favorites',
                 'enabled' => true,
