@@ -286,6 +286,13 @@ $dictionary['Task'] = array(
             'vname' => 'LBL_CALLS',
             'reportable' => false,
         ),
+        'project' => array(
+            'name' => 'project',
+            'type' => 'link',
+            'relationship' => 'projects_tasks',
+            'source' => 'non-db',
+            'vname' => 'LBL_PROJECTS',
+        ),
     ),
     'relationships' => array(
         'tasks_notes' => array(
