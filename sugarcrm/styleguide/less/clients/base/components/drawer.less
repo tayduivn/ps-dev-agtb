@@ -83,18 +83,39 @@ body.noscroll {
     }
 }
 
-.touch .drawer.active {
-    &.transition .main-pane {
-        padding-top: 0 !important
+@media only screen and (orientation:landscape) {
+    .touch {
+        .drawer {
+            &.active {
+                .main-pane > div {
+                    display: inline;
+                    .flex-list-view-content {
+                        display: inline;
+                    }
+                    .list-view {
+                        height: 100%;
+                    }
+                }
+            }
+        }
     }
 }
 
-.touch .drawer.inactive {
-    .main-pane {
-        padding-top: 0 !important;
-    }
-    .dashboard {
-        padding-top: 0 !important;
+.touch {
+    .drawer {
+        &.active {
+            &.transition .main-pane {
+                padding-top: 0 !important
+            }
+        }
+        &.inactive {
+            .main-pane {
+                padding-top: 0 !important;
+            }
+            .dashboard {
+                padding-top: 0 !important;
+            }
+        }
     }
 }
 
@@ -118,8 +139,6 @@ body.noscroll {
     padding-left: 5px;
   }
 }
-
-
 
 @media (max-width: 768px) {
     .transition {
