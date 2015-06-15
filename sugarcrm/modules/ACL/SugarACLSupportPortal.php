@@ -177,6 +177,7 @@ class SugarACLSupportPortal extends SugarACLStatic
         }
 
         if( !isset($accessGranted) ) {
+            $module = ($module == 'Categories') ? 'KBContents' : $module;
             $accessGranted = parent::fieldACL($module, $action, $context);
         }
 
@@ -194,6 +195,7 @@ class SugarACLSupportPortal extends SugarACLStatic
         $accessGranted = $this->portalAccess($module, $action, $context);
 
         if( !isset($accessGranted) ) {
+            $module = ($module == 'Categories') ? 'KBContents' : $module;
             $accessGranted = parent::beanACL($module, $action, $context);
         }
 
