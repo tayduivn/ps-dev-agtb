@@ -136,7 +136,8 @@
                 data: {
                     tag_filters: tagFilters
                 },
-                fetchWithPost: true
+                fetchWithPost: true,
+                useNewApi: true
             }
         });
     },
@@ -163,7 +164,8 @@
                     agg_filters: this.selectedFacets,
                     tag_filters: tagFilters
                 },
-                fetchWithPost: true
+                fetchWithPost: true,
+                useNewApi: true
             }
         });
     },
@@ -189,6 +191,7 @@
             options.apiOptions = options.apiOptions || {};
             options.apiOptions.data = {tag_filters: tagFilters};
             options.apiOptions.fetchWithPost = true;
+            options.apiOptions.useNewApi = true;
         }
 
         this._super('loadData', [options, setFields]);
