@@ -72,5 +72,6 @@ $viewdefs['base']['layout']['shortcuts'] = array(
         'Alert:Confirm' => 'LBL_SHORTCUT_ALERT_CONFIRM',
         'Alert:Cancel' => 'LBL_SHORTCUT_ALERT_CANCEL',
         'DragdropSelect2:SelectAll' => 'LBL_SHORTCUT_DRAGDROPSELECT2_SELECTALL',
+        'SweetSpot:Toggle:Off' => 'LBL_SHORTCUT_SWEETSPOT_HIDE',
     ),
 );

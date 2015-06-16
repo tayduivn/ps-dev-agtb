@@ -11520,6 +11520,7 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_SHORTCUT_ALERT_CANCEL' => 'Cancel',
     'LBL_SHORTCUT_DRAGDROPSELECT2_SELECTALL' => 'Select all items in a multi-select field',
     'LBL_SHORTCUT_SWEETSPOT' => 'Toggle the Sweet Spot bar',
+    'LBL_SHORTCUT_SWEETSPOT_HIDE' => 'Hide the Sweet Spot bar',
 
     // config drawer
     'LBL_CONFIG_TITLE_MODULE_SETTINGS' => '{{module}} Settings',
