@@ -638,6 +638,7 @@ $app_list_strings = array (
     'ProjectTask' => 'Project Task',
 
     'Tasks' => 'Task',
+      'KBContents' => 'Knowledge Base',
   ),
 
   'record_type_display_notes' =>
