@@ -39,17 +39,6 @@ class Currency extends SugarBean
 
     var $disable_num_format = true;
 
-    /**
-     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
-     *
-     * @see __construct
-     * @deprecated
-     */
-    public function Currency()
-    {
-        self::__construct();
-    }
-
 
     /**
      * class constructor

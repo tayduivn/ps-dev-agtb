@@ -55,16 +55,6 @@ class pmse_Project_sugar extends Basic
     var $prj_status;
     var $prj_module;
 
-    /**
-     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
-     *
-     * @see __construct
-     * @depreciated
-     */
-    function pmse_Project_sugar()
-    {
-        self::__construct();
-    }
 
     public function __construct()
     {

@@ -120,7 +120,7 @@ class Project extends SugarBean {
 	 */
 	function Project()
 	{
-		parent::SugarBean();
+		parent::__construct();
 
 		//BEGIN SUGARCRM flav=pro ONLY 
 		global $current_user;

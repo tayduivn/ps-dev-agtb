@@ -45,18 +45,6 @@ class vCal extends SugarBean {
     const TAB = "\t";
     const CHARSPERLINE = 75;
 
-    /**
-     * This is a deprecated method, please start using __construct() as this
-     * method will be removed in a future version.
-     *
-     * @deprecated since 7.0.0. Use __construct() instead.
-     */
-    public function vCal()
-    {
-        $GLOBALS['log']->deprecated('Calls to vCal::vCal() are deprecated.');
-        self::__construct();
-    }
-
 	public function __construct()
 	{
 

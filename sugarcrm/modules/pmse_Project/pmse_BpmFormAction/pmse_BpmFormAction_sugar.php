@@ -23,22 +23,22 @@ class pmse_BpmFormAction_sugar extends Basic {
 	var $object_name = 'pmse_BpmFormAction';
 	var $table_name = 'pmse_bpm_form_action';
 	var $importable = false;
-        var $id;
-		var $name;
-		var $date_entered;
-		var $date_modified;
-		var $modified_user_id;
-		var $modified_by_name;
-		var $created_by;
-		var $created_by_name;
-		var $description;
-		var $deleted;
-		var $created_by_link;
-		var $modified_user_link;
-		var $activities;
-		var $assigned_user_id;
-		var $assigned_user_name;
-		var $assigned_user_link;
+    var $id;
+    var $name;
+    var $date_entered;
+    var $date_modified;
+    var $modified_user_id;
+    var $modified_by_name;
+    var $created_by;
+    var $created_by_name;
+    var $description;
+    var $deleted;
+    var $created_by_link;
+    var $modified_user_link;
+    var $activities;
+    var $assigned_user_id;
+    var $assigned_user_name;
+    var $assigned_user_link;
     var $cas_id;
     var $act_id;
     var $pro_id;
@@ -53,15 +53,6 @@ class pmse_BpmFormAction_sugar extends Basic {
     var $frm_date;
     var $frm_comment;
 
-	/**
-	 * This is a depreciated method, please start using __construct() as this method will be removed in a future version
-     *
-     * @see __construct
-     * @depreciated
-	 */
-	function pmse_BpmFormAction_sugar(){
-		self::__construct();
-	}
 
 	public function __construct(){
 		parent::__construct();

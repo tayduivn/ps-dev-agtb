@@ -60,19 +60,6 @@ class Note extends SugarBean
         'last_name'
     );
 
-    /**
-     * This is deprecated since 7.7.0 and will be removed in 7.9.0.
-     * Please use __construct() instead.
-     * @deprecated 7.7.0
-     * @see __construct
-     */
-    public function Note()
-    {
-        self::__construct();
-        $GLOBALS['log']->deprecated('Note::Note() is deprecated since 7.7.0. and will be removed in 7.9.0. ' .
-            'Please use Note::__construct() instead.');
-    }
-
     public function __construct()
     {
         parent::__construct();

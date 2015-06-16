@@ -447,18 +447,6 @@ class SugarBean
     );
 
     /**
-     * This method has been moved into the __construct() method to follow php standards
-     *
-     * Please start using __construct() as this method will be removed in a future version
-     *
-     * @see __construct()
-     * @deprecated
-     */
-    protected function SugarBean()
-    {
-        self::__construct();
-    }
-
     // FIXME: this will be removed, needed for ensuring BeanFactory is always used
     protected function checkBacktrace()
     {
