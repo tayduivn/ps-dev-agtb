@@ -19,7 +19,7 @@
                     <h1>
                         {{#if case.title.time.expected_time}}<!--expected-->
                             {{#if case.title.time.expected_time_warning}}<!--expectedWarning-->
-                                <div style="position: absolute; left:20px; padding-top: 6px;"><h1>[&nbsp;{{case.flow.cas_id}}&nbsp;]&nbsp;&nbsp;<date>{{case.title.process}}<!--pTitle--></date>&nbsp;&nbsp;|&nbsp;&nbsp;<date>{{case.title.activity}}<!--actName--></date>&nbsp;&nbsp;[&nbsp;<date style="color: rgb(230,23,23);">Overdue</date>&nbsp;<date style="color: rgba(160,161,163,0.98);">{{case.title.time.expected_time}}<!--expected--></date>&nbsp;]</h1></div>
+                                <div style="position: absolute; left:20px; padding-top: 6px;"><h1>[&nbsp;{{case.flow.cas_id}}&nbsp;]&nbsp;&nbsp;<date>{{case.title.process}}<!--pTitle--></date>&nbsp;&nbsp;|&nbsp;&nbsp;<date>{{case.title.activity}}<!--actName--></date>&nbsp;&nbsp;[&nbsp;<date style="color: rgb(230,23,23);">Overdue</date>&nbsp;<date style="color: rgba(230,23,23,0.98);">{{case.title.time.expected_time}}<!--expected--></date>&nbsp;]</h1></div>
                             {{else}}
                                 <div style="position: absolute; left:20px; padding-top: 6px;"><h1>[&nbsp;{{case.flow.cas_id}}&nbsp;]&nbsp;&nbsp;<date>{{case.title.process}}<!--pTitle--></date>&nbsp;&nbsp;|&nbsp;&nbsp;<date>{{case.title.activity}}<!--actName--></date>&nbsp;&nbsp;[&nbsp;Due Date&nbsp;<date style="color: rgba(160,161,163,0.98);">{{case.title.time.expected_time}}<!--expected--></date>&nbsp;]</h1></div>
                             {{/if}}
