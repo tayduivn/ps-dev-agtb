@@ -78,7 +78,7 @@
                 prefill.set('kbdocument_body', bodyTmpl({model: model}));
 
                 app.drawer.open({
-                    layout: 'create-actions',
+                    layout: 'create',
                     context: {
                         create: true,
                         model: prefill,
@@ -210,7 +210,7 @@
              */
             _openCreateRelatedDrawer: function(prefill, parentModel) {
                 var layoutDef = {
-                    layout: 'create-actions',
+                    layout: 'create',
                     context: {
                         create: true,
                         model: prefill,
