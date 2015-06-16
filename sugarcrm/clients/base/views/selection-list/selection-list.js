@@ -94,7 +94,7 @@
      * Sets up events.
      */
     initializeEvents: function() {
-        this.context.on('change:selection_model', this._selectAndClose, this);
+        this.context.on('change:selection_model selection-list:select', this._selectAndClose, this);
     },
 
     /**

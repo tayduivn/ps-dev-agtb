@@ -43,22 +43,13 @@ class KBContentsApi extends SugarListApi
      */
     public function relatedDocuments($api, $args)
     {
-        global $current_user;
-
         $targetBean = BeanFactory::getBean($args['module'], $args['record']);
         if (!$targetBean->ACLAccess('view')) {
             return;
         }
         $options = $this->parseArguments($api, $args);
 
-        $engineContainer = SearchEngine::getInstance()->getEngine()->getContainer();
-        $builder = new QueryBuilder($engineContainer);
-        $builder
-            ->setUser($current_user)
-            ->setModules(array($args['module']))
-            ->setOffset($options['offset'])
-            ->setLimit($options['limit']);
-
+        $builder = $this->getElasticQueryBuilder($args, $options);
         $ftsFields = ApiHelper::getHelper($api, $targetBean)->getElasticSearchFields(array('name', 'kbdocument_body'));
 
         // TODO: Current sugar search interface doesn't allow using any query except "query string".
@@ -121,5 +112,26 @@ class KBContentsApi extends SugarListApi
         }
 
         return array('next_offset' => $nextOffset, 'records' => $returnedRecords);
+    }
+
+    /**
+     * Get configured Elastic search builder.
+     * @param $args array The arguments array passed in from the API.
+     * @param $options array An array with the options limit, offset, fields and order_by set
+     * @return QueryBuilder
+     */
+    protected function getElasticQueryBuilder(array $args, array $options)
+    {
+        global $current_user;
+
+        $engineContainer = SearchEngine::getInstance()->getEngine()->getContainer();
+        $builder = new QueryBuilder($engineContainer);
+        $builder
+            ->setUser($current_user)
+            ->setModules(array($args['module']))
+            ->setOffset($options['offset'])
+            ->setLimit($options['limit']);
+
+        return $builder;
     }
 }

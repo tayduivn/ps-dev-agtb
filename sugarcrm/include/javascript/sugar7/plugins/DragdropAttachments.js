@@ -240,6 +240,8 @@
                                 });
                             }
                         ], function(err, activity) {
+                            var options;
+
                             app.alert.dismiss('uploading_attachments');
                             component.trigger('attachments:end');
                             if (err) {
@@ -248,7 +250,8 @@
                                     messages: app.lang.get('LBL_EMAIL_ATTACHMENT_UPLOAD_FAILED')
                                 });
                             } else {
-                                self.context.reloadData({recursive: false});
+                                options = _.extend({recursive: false}, self.context.get('collectionOptions') || {});
+                                self.context.reloadData(options);
                                 self.clearAttachments.call(self);
                             }
                         });

@@ -30,11 +30,6 @@
     tooltipTemplate: '',
 
     /**
-     * Collection for fetching all the Timeperiods
-     */
-    tpCollection: undefined,
-
-    /**
      * Mapping of ID's with the start ane end dates formatted for use when the tooltip is displayed
      */
     tpTooltipMap: {},
@@ -74,7 +69,11 @@
             collectionParams.params.use_generic_timeperiods = true;
         }
 
-        // get timeperiods list
+        /**
+         * Collection for fetching all the Timeperiods.
+         *
+         * @property {Data.BeanCollection}
+         */
         this.tpCollection = app.data.createBeanCollection('TimePeriods');
         this.tpCollection.once('reset', this.formatTooltips, this);
         this.tpCollection.on('sync', this.render, this);
@@ -119,7 +118,7 @@
           }
         }, this);
         // since we don't need it any more, destroy it
-        this.tpCollection = undefined;
+        this._destroyTplCollection();
 
         if(this.updateDefaultTooltip) {
             this.updateDefaultTooltip = false;
@@ -213,5 +212,25 @@
             value: object.text,
             tooltipDir: this.tooltipDir
         });
+    },
+
+    /**
+     * Disposes the {@link #tplCollection} properly.
+     *
+     * @private
+     */
+    _destroyTplCollection: function() {
+        if (this.tpCollection) {
+            this.tpCollection.off(null, null, this);
+            this.tplCollection = null;
+        }
+    },
+
+    /**
+     * @inheritDoc
+     */
+    _dispose: function() {
+        this._destroyTplCollection();
+        this._super('_dispose');
     }
 })

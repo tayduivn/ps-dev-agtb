@@ -105,9 +105,9 @@ if (isset($_POST['campaign_id']) && !empty($_POST['campaign_id'])) {
 
 		        //link campaignlog and lead
 
-		        if (isset($_POST['email1']) && $_POST['email1'] != null)
+		        if (isset($_POST['email']) && $_POST['email'] != null)
                 {
-                    $lead->email1 = $_POST['email1'];
+                    $lead->email1 = $_POST['email'];
 		        } 
                 //in case there are old forms used webtolead_email1
                 elseif (isset($_POST['webtolead_email1']) && $_POST['webtolead_email1'] != null)
