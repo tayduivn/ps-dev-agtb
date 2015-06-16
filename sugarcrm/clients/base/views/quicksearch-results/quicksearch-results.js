@@ -149,6 +149,7 @@
             var selectedTags = _.pluck(this.selectedTags, 'name');
             shownTags = _.difference(shownTags, selectedTags);
             this.$('.typeahead').toggleClass('tagsShown', shownTags.length > 0);
+            this.layout.trigger('quicksearch:tag:' + shownTags.length > 0 ? 'open' : 'close');
         }, this);
     },
 

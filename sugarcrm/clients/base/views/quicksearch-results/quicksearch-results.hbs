@@ -18,7 +18,7 @@
                 {{#if ../layout.v2}}
                     {{partial 'row' ../../this ../this model=this module=module}}
                 {{else}}
-                    <span class="label label-module label-module-mini label-{{module}}"  title="{{getModuleName module plural=true}}">
+                    <span class="label label-module label-module-mini label-{{module}}" title="{{getModuleName module plural=true}}">
                         {{moduleIconLabel module}}
                     </span>{{name}}{{#if field_name}}, {{field_name}}: {{field_value}}{{/if}}
                 {{/if}}
@@ -26,7 +26,7 @@
         </li>
     {{/each}}
     {{#notEq collection.next_offset "-1"}}
-        <li class="view-all-results">
+        <li class="view-all-results ellipsis_inline" data-placement="bottom" title="" data-original-title="">
             {{#if ../layout.v2}}
             <a href="#{{searchLink}}" tabindex="-1">{{str "LNK_SEARCH_FTS_VIEW_ALL"}}</a>
             {{else}}
@@ -35,14 +35,12 @@
         </li>
     {{/notEq}}
 {{else}}
-    {{#if collection.dataFetched}}
-        <li class="no-results">
-            {{str 'LNK_SEARCH_NO_RESULTS'}}
+        <li class="no-results ellipsis_inline" data-placement="bottom" title="" data-original-title="">
+            {{#if collection.dataFetched}}
+                {{str 'LNK_SEARCH_NO_RESULTS'}}
+            {{else}}
+                {{loading 'LBL_SEARCH_UNDERWAY'}}
+            {{/if}}
         </li>
-    {{else}}
-        <li class="no-results">
-            {{loading 'LBL_SEARCH_UNDERWAY'}}
-        </li>
-    {{/if}}
 {{/if}}
 </ul></div>

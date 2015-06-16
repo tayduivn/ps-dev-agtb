@@ -80,6 +80,8 @@
             } else {
                 this.close();
             }
+        } else {
+            this.close();
         }
     },
 
@@ -132,6 +134,7 @@
      * Show the tag ribbon
      */
     open: function() {
+        this.layout.trigger('quicksearch:tag:open');
         this.$('.quicksearch-tags').show();
     },
 
@@ -139,6 +142,7 @@
      * Hide the tag ribbon
      */
     close: function() {
+        this.layout.trigger('quicksearch:tag:close');
         this.$('.quicksearch-tags').hide();
     },
 
