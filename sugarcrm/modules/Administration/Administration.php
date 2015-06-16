@@ -53,16 +53,6 @@ class Administration extends SugarBean {
     public $disable_row_level_security = true;
     public static $passwordPlaceholder = "::PASSWORD::";
 
-    /**
-     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
-     *
-     * @see __construct
-     * @deprecated
-     */
-    public function Administration()
-    {
-        self::__construct();
-    }
 
     public function __construct() {
         parent::__construct();

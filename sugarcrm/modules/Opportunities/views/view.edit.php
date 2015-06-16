@@ -31,13 +31,6 @@ class OpportunitiesViewEdit extends ViewEdit
         $this->useForSubpanel = true;
     }
 
-    /**
-     * @deprecated
-     */
-    public function OpportunitiesViewEdit()
-    {
-        self::__construct();
-    }
 
     public function display()
     {

@@ -61,16 +61,6 @@ class Queue extends SugarBean {
 										'queue_id' => 'queues_workflow');
 	var $required_fields		= array('name');
 
-    /**
-     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
-     *
-     * @see __construct
-     * @deprecated
-     */
-    public function Queue()
-    {
-        self::__construct();
-    }
 
 	/**
 	 * Sole constructor

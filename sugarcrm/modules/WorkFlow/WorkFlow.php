@@ -112,17 +112,6 @@ class WorkFlow extends SugarBean
     // Flag whether
     var $check_controller = true;
 
-    /**
-     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
-     *
-     * @see __construct
-     * @deprecated
-     */
-    public function Workflow()
-    {
-        self::__construct();
-    }
-
 	public function __construct() {
 		parent::__construct();
 
