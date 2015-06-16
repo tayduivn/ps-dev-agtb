@@ -11,27 +11,27 @@
  */
 --}}
 <div class="record">
-    {{#each meta.panels}}
+    {{#each view.meta.panels}}
         {{#unless header}}
             {{#if ../labelsOnTop}}
                 {{#each grid}}
-                    <div class="row-fluid {{../name}}{{#if ../hide}}{{#if ../../../../../hidePanel}} hide{{/if}}{{/if}}">
+                    <div class="row-fluid {{../name}}{{#if ../hide}}{{#if ../../../../../view.hidePanel}} hide{{/if}}{{/if}}">
                         {{#each this}}
                             <div class="span{{span}} record-cell{{#if cell_css_class}} {{cell_css_class}}{{/if}}" data-type="{{type}}" data-name="{{name}}">
                                 {{#if ../../labels}}
                                     {{#unless dismiss_label}}
                                         <div class="record-label" data-name="{{name}}">
-                                            {{#if label}}{{str label ../../../../../../../../module}}{{/if}}
+                                            {{#if label}}{{str label ../../../../../../../../view.module}}{{/if}}
                                         </div>
                                     {{/unless}}
                                 {{/if}}
                                 {{#if name}}
                                     <span class="normal{{#if css}} {{css}}{{/if}} index{{index}}" data-fieldname="{{name}}" data-index="{{index}}">
-                                        {{field ../../../../../../this model=../../../../../../model template=../../../../../../action}}
+                                        {{field ../../../../../../view model=../../../../../../view.model template=../../../../../../view.action}}
                                     </span>
                                 {{/if}}
-                                {{#unless ../../../../../createMode}}
-                                    {{#notHas name ../../../../../../noEditFields}}
+                                {{#unless ../../../../../view.createMode}}
+                                    {{#notHas name ../../../../../../view.noEditFields}}
                                         <span class="record-edit-link-wrapper" data-name="{{name}}">
                                                 <a class="record-edit-link btn btn-invisible" data-type="{{type}}" data-name="{{name}}"><i class="fa fa-pencil"></i></a>
                                             </span>
@@ -45,13 +45,13 @@
                 <div class="form-horizontal">
                     <fieldset class="card2">
                         {{#each grid}}
-                            <div class="row-fluid control-group {{../name}}{{#if ../hide}}{{#if ../../../../../hidePanel}} hide{{/if}}{{/if}}">
+                            <div class="row-fluid control-group {{../name}}{{#if ../hide}}{{#if ../../../../../view.hidePanel}} hide{{/if}}{{/if}}">
                                 {{#each this}}
                                     {{#if ../../labels}}
                                         {{#unless dismiss_label}}
                                             <div class="control-label span{{labelSpan}} {{label_css_class}}">
                                                 <div class="control-label-background span{{labelSpan}}">
-                                                    <label class="tright record-label" data-name="{{name}}">{{str label ../../../../../../../module}}</label>
+                                                    <label class="tright record-label" data-name="{{name}}">{{str label ../../../../../../../view.module}}</label>
                                                 </div>
                                             </div>
                                         {{/unless}}
@@ -60,11 +60,11 @@
                                          data-type="{{type}}" data-name="{{name}}">
                                         {{#if name}}
                                             <span class="normal{{#if css}} {{css}}{{/if}} index{{index}}" data-fieldname="{{name}}" data-index="{{index}}">
-                                                {{field ../../../../../../this model=../../../../../../model template=../../../../../../action}}
+                                                {{field ../../../../../../view model=../../../../../../view.model template=../../../../../../view.action}}
                                             </span>
                                         {{/if}}
-                                        {{#unless ../../../../../createMode}}
-                                            {{#notHas name ../../../../../../noEditFields}}
+                                        {{#unless ../../../../../view.createMode}}
+                                            {{#notHas name ../../../../../../view.noEditFields}}
                                                 <span class="record-edit-link-wrapper" data-name="{{name}}">
                                                         <a class="record-edit-link btn btn-invisible" data-type="{{type}}" data-name="{{name}}"><i class="fa fa-pencil"></i></a>
                                                     </span>
@@ -80,12 +80,12 @@
         {{/unless}}
     {{/each}}
 </div>
-<div class="row-fluid{{#unless hiddenPanelExists}} hide{{/unless}} show-hide-toggle">
+<div class="row-fluid{{#unless view.hiddenPanelExists}} hide{{/unless}} show-hide-toggle">
     <div class="record-cell">
-        <button class="btn-link btn-invisible more{{#if hideMoreButton}} hide{{/if}}"
+        <button class="btn-link btn-invisible more{{#if view.hideMoreButton}} hide{{/if}}"
                 data-moreless="more"
                 data-target=".panel_hidden">{{str "LBL_SHOW_MORE"}}...</button>
-        <button class="btn-link btn-invisible less{{#if hideLessButton}} hide{{/if}}"
+        <button class="btn-link btn-invisible less{{#if view.hideLessButton}} hide{{/if}}"
                 data-moreless="less"
                 data-target=".panel_hidden">{{str "LBL_SHOW_LESS"}}</button>
     </div>
