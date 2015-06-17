@@ -424,6 +424,13 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
     'source'=>'non-db',
         'vname'=>'LBL_LEADS',
   ),
+  'project'=> array (
+    'name' => 'project',
+    'type' => 'link',
+    'relationship' => 'projects_meetings',
+    'source' => 'non-db',
+    'vname' => 'LBL_PROJECTS'
+  ),
   'opportunity' =>
   array (
   	'name' => 'opportunity',

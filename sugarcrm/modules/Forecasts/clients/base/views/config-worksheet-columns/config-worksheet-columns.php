@@ -22,7 +22,7 @@ $viewdefs['Forecasts']['base']['view']['config-worksheet-columns'] = array(
                 // custom ordering is not allowed
                 array(
                     'name' => 'commit_stage',
-                    'label' => 'LBL_FORECASTS_CONFIG_TITLE_RANGES',
+                    'label' => 'LBL_FORECAST',
                     'locked' => true,
                     'order' => 0
                 ),

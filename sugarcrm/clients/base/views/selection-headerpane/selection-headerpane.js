@@ -89,7 +89,7 @@
             }
         }, _.bind(function(context, model) {
             if (model) {
-                this.context.trigger('selection-list:select', model);
+                this.context.trigger('selection-list:select', context, model);
             }
         }, this));
     },

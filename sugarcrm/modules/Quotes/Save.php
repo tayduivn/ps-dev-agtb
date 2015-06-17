@@ -130,7 +130,7 @@ $pb = BeanFactory::getBean('ProductBundles');
 $deletedGroups = array();
 if (isset($_POST['delete_table'])) {
     foreach ($_POST['delete_table'] as $todelete) {
-        if ($todelete != 1) {
+        if ($todelete !== '1') {
             $pb->mark_deleted($todelete);
             $deletedGroups[$todelete] = $todelete;
         }
