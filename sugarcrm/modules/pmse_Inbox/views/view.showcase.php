@@ -203,7 +203,7 @@ class pmse_InboxViewShowCase extends SugarView
 
         global $current_user;
         //extract cas_id and cas_index
-        $beanFlow = BeanFactory::getBean('pmse_BpmFlow', $id_flow);
+        $beanFlow = BeanFactory::retrieveBean('pmse_BpmFlow', $id_flow, array('encode' => false));
         $cas_id = $beanFlow->cas_id;
         $cas_index = $beanFlow->cas_index;
 
@@ -279,6 +279,10 @@ class pmse_InboxViewShowCase extends SugarView
                     $this->defs['BPM']['buttons']['route'] = (strtoupper($this->activityRow['act_response_buttons']) == 'ROUTE') ? true : false;
                 } else {
                     $this->defs['BPM']['buttons']['route'] = true;
+                }
+
+                if (!$reclaimCaseByUser && !empty($beanFlow->cas_adhoc_actions)) {
+                    $this->defs['BPM']['buttons'] = unserialize($beanFlow->cas_adhoc_actions);
                 }
 
                 //ASSIGN SECTION
