@@ -1065,6 +1065,9 @@ class PMSEEngineApi extends SugarApi
         $this->checkACL($api, $args);
         $returnArray = array();
         $bpmFlow = BeanFactory::retrieveBean('pmse_BpmFlow', $args['idflow']);
+        if ($api->user->id != $bpmFlow->cas_user_id) {
+            throw new SugarApiExceptionNotAuthorized('EXCEPTION_NOT_AUTHORIZED',null,null,403);
+        }
         $returnArray['case']['flow'] = $bpmFlow->fetched_row;
 
         $activity = BeanFactory::getBean('pmse_BpmActivityDefinition')->retrieve_by_string_fields(array('id' => $bpmFlow->bpmn_id));
