@@ -799,17 +799,26 @@
         return _.pick(this.model.attributes, attributes);
     },
 
+    /**
+     * Get fields to validate.
+     * @return {Object}
+     * @private
+     */
+    _getFieldsToValidate: function() {
+        var fields = _.initial(this.fieldValues).concat(this.defaultOption);
+        return _.filter(fields, function(f) {
+            return f.name;
+        })
+    },
+
     checkValidationError: function() {
         var self = this,
             emptyValues = [],
             errors = {},
             validator = {},
-            fields = _.initial(this.fieldValues).concat(this.defaultOption),
             i = 0;
 
-        var fieldsToValidate = _.filter(fields, function(f) {
-            return f.name;
-        });
+        var fieldsToValidate = this._getFieldsToValidate();
 
         if (_.size(fieldsToValidate)) {
             _.each(fieldsToValidate, function(field) {
@@ -855,17 +864,20 @@
     handleValidationError: function(errors) {
         var self = this;
         _.each(errors, function (fieldErrors, fieldName) {
-            var fieldEl = self.getField(fieldName).$el,
-                errorEl = fieldEl.find(".help-block");
-            fieldEl.addClass("error");
-            if(errorEl.length == 0) {
-                errorEl = $("<span>").addClass("help-block");
-                errorEl.appendTo(fieldEl);
+            var field = self.getField(fieldName);
+            if (!_.isUndefined(field)) {
+                var fieldEl = field.$el,
+                    errorEl = fieldEl.find('.help-block');
+                fieldEl.addClass('error');
+                if(errorEl.length == 0) {
+                    errorEl = $('<span>').addClass('help-block');
+                    errorEl.appendTo(fieldEl);
+                }
+                errorEl.show().html('');
+                _.each(fieldErrors, function (errorContext, errorName) {
+                    errorEl.append(app.error.getErrorString(errorName, errorContext));
+                });
             }
-            errorEl.show().html("");
-            _.each(fieldErrors, function (errorContext, errorName) {
-                errorEl.append(app.error.getErrorString(errorName, errorContext));
-            });
         });
     },
     show: function() {
