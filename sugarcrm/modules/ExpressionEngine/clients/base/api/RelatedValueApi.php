@@ -125,6 +125,7 @@ class RelatedValueApi extends SugarApi
                         $count = 0;
                         $min = false;
                         $max = false;
+                        $values = array();
                         if (!empty($relBeans)) {
                             //Check if the related record vardef has banned this field from formulas
                             $relBean = reset($relBeans);
@@ -134,19 +135,43 @@ class RelatedValueApi extends SugarApi
                                 break;
                             }
                         }
+
+                        $isCurrency = null;
+
                         foreach ($relBeans as $bean) {
                             if (isset($bean->$rField) && is_numeric($bean->$rField) &&
                                 //ensure the user can access the fields we are using.
                                 ACLField::hasAccess($rField, $bean->module_dir, $GLOBALS['current_user']->id, true)
                             ) {
+                                if(is_null($isCurrency)) {
+                                    $def = $bean->getFieldDefinition($bean->$rField);
+                                    // start by just using the type in the def
+                                    $type = $def['type'];
+                                    // but if custom_type is set, use it, when it's not set and dbType is, use dbType
+                                    if (isset($def['custom_type']) && !empty($def['custom_type'])) {
+                                        $type = $def['custom_type'];
+                                    } elseif (isset($def['dbType']) && !empty($def['dbType'])) {
+                                        $type = $def['dbType'];
+                                    }
+                                    // always lower case the type just to make sure.
+                                    $isCurrency = (strtolower($type) === 'currency');
+                                }
+
                                 $count++;
-                                $sum = SugarMath::init($sum)->add($bean->$rField)->result();
-                                if ($min === false || $bean->$rField < $min) {
-                                    $min = floatval($bean->$rField);
+
+                                $value = $bean->$rField;
+                                if ($isCurrency) {
+                                    $value = SugarCurrency::convertAmountToBase($value, $bean->base_rate);
                                 }
-                                if ($max === false || $bean->$rField > $max) {
-                                    $max = floatval($bean->$rField);
+
+                                $sum = SugarMath::init($sum)->add($value)->result();
+                                if ($min === false || floatval($value) < floatval($min)) {
+                                    $min = $value;
                                 }
+                                if ($max === false || floatval($value) > floatval($max)) {
+                                    $max = $value;
+                                }
+                                $values[$bean->id] = $value;
                             }
                         }
                         if ($type == "rollupSum") {
@@ -160,6 +185,7 @@ class RelatedValueApi extends SugarApi
                         }
                         if ($type == "rollupMax") {
                             $ret[$link][$type][$rField] = $max;
+                            $ret[$link][$type][$rField . '_values'] = $values;
                         }
                     } else {
                         $ret[$link][$type][$rField] = 0;
