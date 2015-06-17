@@ -689,7 +689,7 @@ class JsChart extends SugarChart {
 		$pattern = array();
 		$content = file_get_contents($xmlFile);
 		$content = $GLOBALS['locale']->translateCharset($content,'UTF-16LE', 'UTF-8');
-		$pattern[] = '/\<link\>([a-zA-Z0-9#?&%.;\[\]\/=+_-\s]+)\<\/link\>/';
+            $pattern[] = '/\<link\>([a-zA-Z0-9#?&%.;\[\]\/=+_\-\s]+)\<\/link\>/';
 
 		return preg_replace_callback($pattern, function($m) {
 			return '<link>'.urlencode($m[1]).'</link>';
