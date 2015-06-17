@@ -205,6 +205,7 @@ var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,task
             reassignForm
         ];
         combo_users.setName('adhoc_user');
+        textArea.setName('not_content');
     } else {
         url = 'pmse_Inbox/ReassignForm';
         wtitle = translate('LBL_PMSE_TITLE_REASSIGN', 'pmse_Inbox');

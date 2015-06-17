@@ -413,6 +413,9 @@ class PMSEEngineApi extends SugarApi
         $bean = BeanFactory::retrieveBean($case['moduleName'], $case['beanId']);
         // The handler will call to the preprocessor in this step
         $this->retrieveRequestHandler('direct')->executeRequest($case, false, $bean, 'REASSIGN');
+        if(!empty($args['data']['not_content'])){
+            $this->saveNotes($api,$args);
+        }
         return $result;
     }
 
