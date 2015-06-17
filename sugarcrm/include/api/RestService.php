@@ -807,12 +807,20 @@ class RestService extends ServiceBase
         } else {
             $postContents = $this->request->getPostContents();
             if ( !empty($postContents) ) {
-                // This looks like the post contents are JSON
-                // Note: If we want to support rest based XML, we will need to change this
-                $postVars = @json_decode($postContents,true,32);
-                if (json_last_error() !== 0) {
-                    // Bad JSON data, throw an exception instead of trying to process it
-                    throw new SugarApiExceptionInvalidParameter();
+                // BR-2916 Bulk API doesn't support requests containing body
+                // handling content body which has already been json decoded
+                if (is_array($postContents)) {
+                    $postVars = $postContents;
+                }
+                else {
+                    // This looks like the post contents are JSON
+                    // Note: If we want to support rest based XML, we will need to change this
+
+                    $postVars = @json_decode($postContents, true, 32);
+                    if (json_last_error() !== 0) {
+                        // Bad JSON data, throw an exception instead of trying to process it
+                        throw new SugarApiExceptionInvalidParameter();
+                    }
                 }
             }
         }
