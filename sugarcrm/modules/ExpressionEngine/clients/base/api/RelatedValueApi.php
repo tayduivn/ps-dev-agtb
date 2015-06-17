@@ -192,17 +192,22 @@ class RelatedValueApi extends SugarApi
                     }
                     break;
                 case "countConditional":
-                    $ret[$link][$type] = '0';
-
+                    $sum = 0;
                     if ($focus->load_relationship($link)) {
                         $condition_values = Parser::evaluate($rfDef['condition_expr'])->evaluate();
                         $relBeans = $focus->$link->getBeans(array("enforce_teams" => true));
-                        $sum = 0;
+
                         foreach ($relBeans as $bean) {
                             if (in_array($bean->$rfDef['condition_field'], $condition_values)) {
                                 $sum++;
                             }
                         }
+                    }
+                    // for countConditional, we use the target field, since there can have more than one
+                    // on the same record.
+                    if (isset($rfDef['target'])) {
+                        $ret[$link][$type][$rfDef['target']] = $sum;
+                    } else {
                         $ret[$link][$type] = $sum;
                     }
                     break;

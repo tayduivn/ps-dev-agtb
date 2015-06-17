@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/Expressions/Expression/Numeric/SumRelatedExpression.php';
+require_once 'include/Expressions/Expression/Numeric/NumericExpression.php';
 
 /**
  * <b>countConditional(Relate <i>link</i>, Field <i>string</i>, Values <i>list</i>)</b><br>
@@ -18,7 +18,7 @@ require_once 'include/Expressions/Expression/Numeric/SumRelatedExpression.php';
  * ex: <i>count($contacts, 'first_name', array('Joe'))</i> in Accounts would return the <br/>
  * number of contacts related to this account with the first name of 'Joe'
  */
-class CountConditionalRelatedExpression extends SumRelatedExpression
+class CountConditionalRelatedExpression extends NumericExpression
 {
     /**
      * Returns the entire enumeration bare.
@@ -56,7 +56,77 @@ class CountConditionalRelatedExpression extends SumRelatedExpression
      */
     public static function getJSEvaluate()
     {
-        return false;
+        return <<<JS
+
+        // this is only supported in Sidecar
+        if (App === undefined) {
+            return SUGAR.expressions.Expression.FALSE;
+        }
+
+        var params = this.params,
+            view = this.context.view,
+            target = this.context.target,
+            relationship = params[0].evaluate(),
+            condition_field = params[1].evaluate(),
+            condition_values = params[2].evaluate();
+
+        var model = this.context.relatedModel || this.context.model,  // the model
+            // has the model been removed from it's collection
+            hasModelBeenRemoved = this.context.isRemoveEvent || false,
+            // is this being fired for the condition field or the rel_field?
+            currentFieldIsConditionField = (this.context.changingField === condition_field),
+            // did the condition field change at some point?
+            conditionChanged = _.has(model.changed, condition_field),
+            // is the condition field valid?
+            conditionValid = _.contains(condition_values, model.get(condition_field));
+
+        // if we have a model with out an id, ignore it
+        if (!model.has('id')) {
+            return;
+        }
+        if (conditionValid || conditionChanged) {
+            var current_value = this.context.getRelatedField(relationship, 'countConditional', target) || '0',
+                context_previous_values = this.context.previous_values || {},
+                previous_value = context_previous_values[target + '--' + model.get('id')] || '',
+                new_value = model.get(condition_field);
+                rollup_value = undefined;
+
+            // store the new_value on the context for the rel_field
+            // this allows multiple different formulas to change the rel_field while
+            // maintaining the correct previous_value since it's not updated on the models previous_attributes
+            // every time the model.set() is called before the initial set() completes
+            this.context.previous_values = this.context.previous_values || {};
+            this.context.previous_values[target + '--' + model.get('id')] = new_value;
+
+            if (new_value == previous_value && !hasModelBeenRemoved) {
+                return;
+            }
+
+            if (conditionValid && !hasModelBeenRemoved) {
+                // if the condition is valid and the condition field changed, check if the previous value
+                // was an invalid condition, if it was, the `new_value` just needs to be added back
+                if (!_.contains(condition_values, previous_value)) {
+                    rollup_value = App.math.add(current_value, 1, 0, true);
+                }
+            } else if ((!conditionValid && !hasModelBeenRemoved) || (hasModelBeenRemoved && conditionValid)) {
+                rollup_value = App.math.sub(current_value, 1, 0, true);
+            }
+
+            // rollup_value won't exist if we didn't do any math, so just ignore this
+            if (!_.isUndefined(rollup_value) && _.isFinite(rollup_value)) {
+                // update the model
+                this.context.model.set(target, rollup_value);
+                // update the relationship defs on the model
+                this.context.updateRelatedFieldValue(
+                    relationship,
+                    'countConditional',
+                    target,
+                    rollup_value,
+                    this.context.model.isNew()
+                );
+            }
+        }
+JS;
     }
 
     /**
