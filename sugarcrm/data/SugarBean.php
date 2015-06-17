@@ -2149,13 +2149,13 @@ class SugarBean
             $templateName = $this->getTemplateNameForNotificationEmail();
             $xtpl         = $this->createNotificationEmailTemplate($templateName, $notify_user);
             $subject      = $xtpl->text($templateName . "_Subject");
-            $body         = trim($xtpl->text($templateName));
+            $textBody     = trim($xtpl->text($templateName));
 
             //BEGIN SUGARCRM flav=notifications ONLY
             //Save the notification
             $notification = BeanFactory::getBean('Notifications');
             $notification->name = $subject;
-            $notification->description = $body;
+            $notification->description = $textBody;
             $notification->assigned_user_id = $notify_user->id;
             $notification->save(false);
             //END SUGARCRM flav=notifications ONLY
@@ -2192,15 +2192,8 @@ class SugarBean
                 // set the subject of the email
                 $mailer->setSubject($subject);
 
-                // set the body of the email...
-                $textOnly = EmailFormatter::isTextOnly($body);
-                if ($textOnly) {
-                    $mailer->setTextBody($body);
-                } else {
-                    $textBody = strip_tags(br2nl($body)); // need to create the plain-text part
-                    $mailer->setTextBody($textBody);
-                    $mailer->setHtmlBody($body);
-                }
+                // set the body of the email... looks to be plain-text only
+                $mailer->setTextBody($textBody);
 
                 // add the recipient
                 $recipientEmailAddress = $notify_user->emailAddress->getPrimaryAddress($notify_user);
