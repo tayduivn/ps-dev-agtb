@@ -101,7 +101,6 @@ class CurrentUserApi extends SugarApi
                 'method' => 'userPreferencesSave',
                 'shortHelp' => "Mass Save Updated Preferences For a User",
                 'longHelp' => 'include/api/help/me_preferences_put_help.html',
-                'keepSession' => true,
             ),
 
             'userPreference' =>  array(
@@ -120,7 +119,6 @@ class CurrentUserApi extends SugarApi
                 'method' => 'userPreferenceSave',
                 'shortHelp' => "Create a preference for the current user",
                 'longHelp' => 'include/api/help/me_preference_preference_name_post_help.html',
-                'keepSession' => true,
             ),
             'userPreferenceUpdate' =>  array(
                 'reqType' => 'PUT',
@@ -129,7 +127,6 @@ class CurrentUserApi extends SugarApi
                 'method' => 'userPreferenceSave',
                 'shortHelp' => "Update a specific preference for the current user",
                 'longHelp' => 'include/api/help/me_preference_preference_name_put_help.html',
-                'keepSession' => true,
             ),
             'userPreferenceDelete' =>  array(
                 'reqType' => 'DELETE',
@@ -138,7 +135,6 @@ class CurrentUserApi extends SugarApi
                 'method' => 'userPreferenceDelete',
                 'shortHelp' => "Delete a specific preference for the current user",
                 'longHelp' => 'include/api/help/me_preference_preference_name_delete_help.html',
-                'keepSession' => true,
             ),
             'getMyFollowedRecords' => array(
                 'reqType' => 'GET',
@@ -906,19 +902,7 @@ class CurrentUserApi extends SugarApi
      */
     public function forceUserPreferenceReload($current_user)
     {
-        // If there is a unique_key in the session, save it and change it so that
-        // loadPreferences() on the user will be forced to collect a fresh set
-        // of preferences.
-        $uniqueKey = null;
-        if (isset($_SESSION['unique_key'])) {
-            $uniqueKey = $_SESSION['unique_key'];
-            $_SESSION['unique_key'] = 't_' . time();
-        }
-        
-        $current_user->loadPreferences();
-        
-        // Set this back to what it was
-        $_SESSION['unique_key'] = $uniqueKey;
+        $current_user->reloadPreferences();
     }
 
     /**
