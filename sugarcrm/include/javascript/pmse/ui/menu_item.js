@@ -67,6 +67,10 @@ MenuItem.prototype.createHTML = function () {
         this.itemAnchor.className = 'adam-item-arrow';
     }
 
+    if (this.toolTip) {
+        this.itemAnchor.title = this.toolTip;
+    }
+
     labelSpan = this.createHTMLElement('span');
     labelSpan.innerHTML = this.label;
     labelSpan.className = "adam-label";

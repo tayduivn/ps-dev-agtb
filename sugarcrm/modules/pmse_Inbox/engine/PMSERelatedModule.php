@@ -135,6 +135,7 @@ class PMSERelatedModule {
 
 
         // Needed to multisort on the label
+        $labels = array();
         foreach ($output as $k => $o) {
             $labels[$k] = $o['text'];
         }

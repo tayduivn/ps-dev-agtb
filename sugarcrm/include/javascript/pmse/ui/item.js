@@ -114,6 +114,7 @@ Item.prototype.loadAction = function (action, parent) {
     this.action = action;
     this.setLabel(this.action.text);
     this.setIcon(this.action.cssStyle);
+    this.setToolTip(this.action.toolTip);
     this.setDisabled(this.action.disabled);
     this.setParentMenu(parent);
     this.setFocused(false);

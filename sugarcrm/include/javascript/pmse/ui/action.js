@@ -46,6 +46,11 @@ var Action = function (options) {
      */
     this.cssStyle = null;
     /**
+     * Define a tooltip for action
+     * @type {null}
+     */
+    this.toolTip = null;
+    /**
      * Defines the object associated to this action
      * @type {Object}
      */
@@ -82,6 +87,7 @@ Action.prototype.initObject = function (options) {
     $.extend(true, defaults, options);
     this.setText(defaults.text)
         .setCssClass(defaults.cssStyle)
+        .setToolTip(defaults.toolTip)
         .setDisabled(defaults.disabled)
         .setHidden(defaults.hidden)
         .setHandler(defaults.handler)
@@ -119,6 +125,16 @@ Action.prototype.setCssClass = function (css) {
     this.cssStyle = css;
     return this;
 };
+
+/**
+ * Sets the tooltip
+ * @param tooltip
+ * @returns {Action}
+ */
+Action.prototype.setToolTip = function (tooltip) {
+    this.toolTip = tooltip;
+    return this;
+}
 
 /**
  * Sets the enabled property

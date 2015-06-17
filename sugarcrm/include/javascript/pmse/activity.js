@@ -1037,6 +1037,7 @@ AdamActivity.prototype.getContextMenu = function () {
     addRelatedRecordAction = new Action({
         text: translate('LBL_PMSE_CONTEXT_MENU_ADD_RELATED_RECORD'),
         cssStyle: 'adam-menu-script-add_related_record',
+        toolTip: _.isEmpty(this.canvas.project.script_tasks.add_related_record) ? translate('LBL_PMSE_CANNOT_CONFIGURE_ADD_RELATED_RECORD') : null,
         handler: function () {
             self.updateScriptType('ADD_RELATED_RECORD');
         },
