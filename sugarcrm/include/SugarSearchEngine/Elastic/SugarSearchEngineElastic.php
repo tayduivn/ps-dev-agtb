@@ -229,7 +229,11 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
                 // so let's use only strings so it won't be indexed as other types
                 // 2. for some reason, bean fields are encoded, decode them first
                 // We are handling date range search for Meetings which is type datetimecombo
-                if (!isset($fieldDef['type']) || $fieldDef['type'] != 'datetimecombo') {
+                if (isset($fieldDef['type']) &&
+                    (($fieldDef['type'] == 'int' && !is_int($bean->$fieldName)) ||
+                    (($fieldDef['type'] == 'float' || $fieldDef['type'] == 'decimal') && !is_numeric($bean->$fieldName)))) {
+                    continue;
+                } else if (!isset($fieldDef['type']) || $fieldDef['type'] != 'datetimecombo') {
                     //$keyValues[$fieldName] = strval(html_entity_decode($bean->$fieldName,ENT_QUOTES));
                     // NOTE Bug 53394 resulted in the decoding scheme above. This needs to be reevaluated in the context of using the right analyzers.
                     $keyValues[$fieldName] = $bean->$fieldName;
