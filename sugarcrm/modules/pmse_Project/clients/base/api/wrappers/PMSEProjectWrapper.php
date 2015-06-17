@@ -792,6 +792,9 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
                 }
             }
         }
+
+        // Update the Process Definition table (pmse_project) so that the modified time gets updated automatically
+        $this->project->save();
     }
 
     public function getEntityData($key)
