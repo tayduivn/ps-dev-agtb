@@ -129,6 +129,7 @@ class MysqlManager extends DBManager
 	    "create_db" => true,
 	    "disable_keys" => true,
 	    "fix:report_as_condition" => true,
+        "short_group_by" => true, //set to true if not all the select fields are needed in the group by (currently mysql only)
 	);
 
 	/**
