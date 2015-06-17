@@ -11,7 +11,8 @@
 
 describe("ForecastWorksheets.View.RecordList", function() {
 
-    var app, view, layout, moduleName = 'ForecastWorksheets';
+    var app, view, layout, moduleName = 'ForecastWorksheets',
+        ctePlugin;
 
     beforeEach(function() {
         app = SUGAR.App;
@@ -26,7 +27,7 @@ describe("ForecastWorksheets.View.RecordList", function() {
             eval(d);
             app.events.trigger('app:init');
         });
-        
+
         SugarTest.loadPlugin('ClickToEdit');
         SugarTest.loadPlugin('DirtyCollection');
 
@@ -573,8 +574,9 @@ describe("ForecastWorksheets.View.RecordList", function() {
             expect(fieldStub).toHaveBeenCalledWith(true);
         });
     });
-    
+
     describe("when Tab is pressed", function() {
+        var cteStub;
         beforeEach(function() {
             e = {
                 which: 9,
@@ -588,19 +590,27 @@ describe("ForecastWorksheets.View.RecordList", function() {
                 $("<div>"),
                 $("<div>")
             ];
+            ctePlugin = app.plugins._get('ClickToEdit', 'field');
+            sinon.collection.stub(ctePlugin, 'validateField', function() {
+                return true;
+            });
         });
-        
+
+        afterEach(function() {
+            sinon.collection.restore();
+        });
+
         describe("when shift is not pressed", function() {
             beforeEach(function() {
                 view.handleKeyDown(e);
             });
-            
+
             it("should increment the currentIndex", function() {
                 expect(view.currentIndex).toBe(1);
-                
+
             });
         });
-        
+
         describe("when shift is pressed", function() {
             beforeEach(function() {
                 e.shiftKey = true;
@@ -611,11 +621,11 @@ describe("ForecastWorksheets.View.RecordList", function() {
             });
         });
     });
-    
+
     describe("when resetCTEFields is called", function() {
         var sandbox = sinon.sandbox.create();
         beforeEach(function() {
-            
+
             view.currentIndex = 1;
             view.currentCTEList = [
                 $("<div>"),
@@ -632,11 +642,11 @@ describe("ForecastWorksheets.View.RecordList", function() {
             });
             view.resetCTEList();
         });
-        
+
         afterEach(function() {
             sandbox.restore();
         });
-        
+
         it("should set currentIndex to 0", function() {
             expect(view.currentIndex).toEqual(0);
         });
