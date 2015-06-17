@@ -90,7 +90,7 @@ $ git clone git@github.com:USERNAME/Mango.git
 
 ```bash
 $ cd Mango
-$ git remote add upstream git://github.com/sugarcrm/Mango.git
+$ git remote add upstream git@github.com:sugarcrm/Mango.git
 ```
 
 * Grab the sidecar and styleguide submodules.
