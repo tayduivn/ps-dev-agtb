@@ -119,7 +119,14 @@
     createShortcuts: function() {
         app.shortcuts.saveSession();
         app.shortcuts.createSession(['SweetSpot:Toggle:Off'], this);
-        app.shortcuts.register('SweetSpot:Toggle:Off', 'esc', this.hide, this, true);
+        app.shortcuts.registerGlobal({
+            id: 'Sweetspot:Toggle:Off',
+            keys: 'esc',
+            component: this,
+            description: 'LBL_SHORTCUT_SWEETSPOT_HIDE',
+            callOnFocus: true,
+            handler: this.hide
+        });
     },
 
     /**
