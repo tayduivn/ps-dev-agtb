@@ -174,7 +174,7 @@ class pmse_InboxViewShowCase extends SugarView
                 'name' => 'Cancel',
                 'value' => 'Cancel',
                 'type' => 'button',
-                'onclick' => 'history.back(1);'
+                'onclick' => 'parent.App.router.navigate(\'#Home\', {trigger: true})'
             )
         );
         $customButtons = array();
