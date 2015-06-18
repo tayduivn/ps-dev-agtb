@@ -380,18 +380,18 @@
             limit: limit,
             params: {
                 tags: true
+            },
+            apiOptions: {
+                useNewApi: true
             }
         };
 
         if (this.selectedTags.length > 0) {
-            _.extend(options, options, {
-                apiOptions: {
+            _.extend(options.apiOptions, {
                     data: {
                         tag_filters: _.pluck(this.selectedTags, 'id')
                     },
-                    fetchWithPost: true,
-                    useNewApi: true
-                }
+                    fetchWithPost: true
             });
         }
 
