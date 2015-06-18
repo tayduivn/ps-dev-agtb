@@ -264,6 +264,8 @@ class RestResponse extends Zend_Http_Response
             $this->code = 304;
             $this->type = self::RAW;
             $this->shouldSendBody = false;
+            // disable gzip so that apache won't add compression header to response body
+            @ini_set('zlib.output_compression', 'Off');
             return true;
         }
 
