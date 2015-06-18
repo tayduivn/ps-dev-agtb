@@ -21,7 +21,6 @@ require_once("include/Expressions/Expression/AbstractExpression.php");
 abstract class AbstractAction {
     protected $targetField = array();
     protected $params = array();
-    protected $errorValue = null;
 
     /**
      * array Array of actions for which the Expression Action is not allowed

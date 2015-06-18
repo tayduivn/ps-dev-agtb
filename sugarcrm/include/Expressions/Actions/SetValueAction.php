@@ -14,6 +14,7 @@ require_once("include/Expressions/Expression/Date/DateExpression.php");
 
 class SetValueAction extends AbstractAction{
 	protected $expression =  "";
+    protected $errorValue = null;
 
 	function SetValueAction($params) {
         $this->targetField = $params['target'];
