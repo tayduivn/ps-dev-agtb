@@ -629,7 +629,8 @@ UpdaterField.prototype.openPanelOnItem = function (field) {
             });
         }
         this.currentField = field;
-        this._datePanel.setValue(field.getValue());
+        //We can't send an empty string since JSON can't parse it
+        this._datePanel.setValue(field.getValue() || []);
         if (this._variablesList && this._variablesList.isOpen()) {
             this._variablesList.close();
         }
