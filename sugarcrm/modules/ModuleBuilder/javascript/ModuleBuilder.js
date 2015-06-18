@@ -363,7 +363,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
                         }
 // END SUGARCRM flav=ent ONLY
                     });
-				});
+				}, false);
 			},
 // BEGIN SUGARCRM flav=ent ONLY
             resetToDefault: function(module, layout) {
@@ -1307,7 +1307,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
 				}
 			}
 		},
-		asyncRequest : function(params, callback) {
+		asyncRequest : function (params, callback, showLoading) {
 			// Used to normalize request arguments needed for the async request
 			// as well as for setting into the requestElements object
 			var url,
@@ -1328,7 +1328,11 @@ if (typeof(ModuleBuilder) == 'undefined') {
 			
 			// Make sure the session cookie is always fresh if that is possible
 			ModuleBuilder.ensureSessionCookie();
-			ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_LOADING_PAGE'));
+
+            if (typeof(showLoading) == 'undefined' || showLoading == true) {
+                ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_LOADING_PAGE'));
+            }
+
 			Connect.asyncRequest(
 			    ModuleBuilder.requestElements.method, 
 			    ModuleBuilder.requestElements.url, 
