@@ -205,6 +205,7 @@
                         app.lastNamePdDel = '';
                     }
                 } else {
+                    self._modelToDelete = null;
                     app.alert.show('message-id', {
                         level: 'warning',
                         title: app.lang.get('LBL_WARNING'),
