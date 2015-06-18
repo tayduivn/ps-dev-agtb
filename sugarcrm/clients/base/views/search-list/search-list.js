@@ -178,7 +178,8 @@
             options = {
                 apiOptions: {
                     data: {},
-                    fetchWithPost: true
+                    fetchWithPost: true,
+                    useNewApi: true
                 }
             };
         }

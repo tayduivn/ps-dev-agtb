@@ -34,7 +34,7 @@ describe('View.Layouts.Base.SearchLayout', function() {
             var options = {};
             var setFields = false;
             layout.loadData(options, setFields);
-            expect(options.apiOptions).toEqual({data:{tag_filters: [sampleTag.id]}, fetchWithPost: true});
+            expect(options.apiOptions).toEqual({data:{tag_filters: [sampleTag.id]}, fetchWithPost: true, useNewApi : true});
         });
 
         it('adds tag_filters to search collection', function() {
