@@ -1,4 +1,4 @@
-ddescribe('Plugins.KBContents', function() {
+describe('Plugins.KBContents', function() {
     var moduleName = 'KBContents',
         app, view, viewMeta, sandbox, context, copiedUser;
 
