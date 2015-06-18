@@ -29,6 +29,9 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\Cros
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\TagsHandler;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\FavoritesHandler;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\HtmlHandler;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\OwnerIdHandler;
+use Sugarcrm\Sugarcrm\Elasticsearch\Query\MultiMatchQuery;
+use Sugarcrm\Sugarcrm\Elasticsearch\Query\MatchAllQuery;
 
 /**
  *
@@ -117,6 +120,7 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
         $this->addHandler(new TagsHandler());
         $this->addHandler(new FavoritesHandler());
         $this->addHandler(new HtmlHandler());
+        $this->addHandler(new OwnerIdHandler());
     }
 
     /**
@@ -559,20 +563,6 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
         return $this;
     }
 
-    protected function handleSearchTerms($builder)
-    {
-        if (!empty($this->term)) {
-            $builder->setMultiMatchQuery($this->term, $this->modules);
-        } else {
-
-            // If no query term is passed in we use a MatchAll and try to
-            // order by date_modified
-            $builder->setQuery($this->getMatchAllQuery());
-            $this->sort = array('date_modified' => 'desc');
-            $this->useHighlighter = false;
-        }
-    }
-
     protected function handleSearchAggregations($builder)
     {
         if ($this->queryCrossModuleAggs || $this->queryModuleAggs) {
@@ -591,15 +581,25 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
             $this->modules = $this->getUserModules();
         }
 
+        if (!empty($this->term)) {
+            // create a multi-match query with terms
+            $query = $this->createMultiMatchQuery();
+        } else {
+            // If no query term is passed in we use a MatchAll and try to
+            // order by date_modified
+            $query = new MatchAllQuery();
+            $this->sort = array('date_modified' => 'desc');
+            $this->useHighlighter = false;
+        }
+
         $builder = new QueryBuilder($this->container);
         $builder
             ->setUser($this->user)
             ->setModules($this->modules)
             ->setLimit($this->limit)
             ->setOffset($this->offset)
+            ->setQuery($query)
         ;
-
-        $this->handleSearchTerms($builder);
 
         // Set highlighter
         if ($this->useHighlighter) {
@@ -629,14 +629,15 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
         //create a module list including the tag module only
         $modules = array($this->tagModule);
 
+        $multiMatch = $this->createMultiMatchQuery();
+
         $builder = new QueryBuilder($this->container);
         $builder
             ->setUser($this->user)
             ->setModules($modules)
             ->setLimit($this->tagLimit)
+            ->setQuery($multiMatch)
         ;
-
-        $builder->setMultiMatchQuery($this->term, $modules);
 
         // Set sorting
         if ($this->sort) {
@@ -645,13 +646,13 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
         return $builder->executeSearch();
     }
 
-    /**
-     * Get match all query
-     * @return \Elastica\Query\MatchAll
-     */
-    protected function getMatchAllQuery()
+    protected function createMultiMatchQuery()
     {
-        return new \Elastica\Query\MatchAll();
+        $multiMatch = new MultiMatchQuery();
+        $multiMatch->setTerms($this->term);
+        $multiMatch->setSearchFields($this->getSearchFields($this->modules));
+        $multiMatch->setUser($this->user);
+        return $multiMatch;
     }
 
     //// Aggregations
