@@ -226,6 +226,10 @@ class Link2 {
      */
     public function getType()
     {
+        if (isset($this->def['link_type'])) {
+            return $this->def['link_type'];
+        }
+
         return $this->relationship->getType($this->getSide());
     }
 

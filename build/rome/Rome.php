@@ -166,6 +166,11 @@ class Rome
         }
     }
 
+    public function setRetainCommentSpacing($val)
+    {
+        $this->retainCommentSpacing = $val;
+    }
+
     /**
      *  dynamic generate sugarcrm version
      *
@@ -457,21 +462,19 @@ class Rome
             $out = '';
             $this->clearOutput();
             while ($line = fgets($fp)) {
-
                 $this->lineCount++;
                 //not a comment keep moving along
 
                 if (substr_count($line, '//') == 0) {
                     $this->addToOutput($line);
                 } else {
-
                     $result = $this->parseComment($line);
                     if (!empty($result)) {
-
                         $this->changeActive($result);
-                        // print_r($this->active);
+                        if ($this->retainCommentSpacing) {
+                            $this->addToOutput("\n");
+                        }
                     } else {
-
                         //just a normal comment let's add it back
                         $this->addToOutput($line);
                     }

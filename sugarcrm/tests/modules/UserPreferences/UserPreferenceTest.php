@@ -44,12 +44,16 @@ class UserPreferenceTest extends Sugar_PHPUnit_Framework_TestCase
         $_SESSION = array();
     }
 
-    public function testSettingAUserPreferenceInSession()
+    public function testSettingAUserPreferenceInCache()
     {
         self::$user->setPreference('test_pref', 'dog');
 
+        $cache = SugarCache::instance();
+        $key = self::$user->id . '_PREFERENCES';
+        $cachedvalue = $cache->$key;
+
         $this->assertEquals('dog', self::$user->getPreference('test_pref'));
-        $this->assertEquals('dog', $_SESSION[self::$user->user_name . '_PREFERENCES']['global']['test_pref']);
+        $this->assertEquals('dog', $cachedvalue['global']['test_pref']);
     }
 
     public function testGetUserDateTimePreferences()

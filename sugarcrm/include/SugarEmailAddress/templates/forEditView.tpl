@@ -36,7 +36,8 @@ var emailAddressWidgetLoaded = false;
 					    <input type=hidden id="{$module}_email_widget_id" name="{$module}_email_widget_id" value="">
 						<input type=hidden id='emailAddressWidget' name='emailAddressWidget' value='1'>
                         {capture assign="other_attributes"}id="{$module}{$index}_email_widget_add" onclick="javascript:SUGAR.EmailAddressWidget.instances.{$module}{$index}.addEmailAddress('{$module}emailAddressesTable{$index}','','');"{/capture}
-                        <button type="button" {$other_attributes}>{sugar_getimage name="id-ff-add" alt="$app_strings.LBL_ID_FF_ADD" ext=".png"}</button>
+                        {capture assign=alt_addButton}{sugar_translate label='LBL_ID_FF_ADD'}{/capture}
+                        <button type="button" {$other_attributes}>{sugar_getimage name="id-ff-add" alt="$alt_addButton" ext=".png"}</button>
 					</td>
 					<td scope="row" NOWRAP>
 					    &nbsp;

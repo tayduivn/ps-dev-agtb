@@ -115,7 +115,7 @@ class UpgradeRenameModuleTest extends UpgradeTestCase
         $this->handleChangedModuleList($changedModuleList);
 
         include($this->globalFilename);
-        $mod_strings = return_module_language('en_us', 'Contacts');
+        $mod_strings = return_module_language('en_us', 'Contacts', true);
         $this->assertEquals($app_list_strings['moduleListSingular']['Contacts'], 'New Contact');
         $this->assertEquals($app_list_strings['moduleList']['Contacts'], 'New Contacts');
         $this->assertEquals($mod_strings['LBL_NEW_FORM_TITLE'], 'New New Contact');

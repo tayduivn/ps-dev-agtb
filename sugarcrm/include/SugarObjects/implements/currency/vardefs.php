@@ -70,12 +70,12 @@ $vardefs = array(
     ),
     'relationships' => array(
         strtolower($module) . '_currencies' => array(
-            'lhs_module' => $module,
-            'lhs_table' => strtolower($table_name),
-            'lhs_key' => 'currency_id',
-            'rhs_module' => 'Currencies',
-            'rhs_table' => 'currencies',
-            'rhs_key' => 'id',
+            'lhs_module' => 'Currencies',
+            'lhs_table' => 'currencies',
+            'lhs_key' => 'id',
+            'rhs_module' => $module,
+            'rhs_table' => strtolower($table_name),
+            'rhs_key' => 'currency_id',
             'relationship_type' => 'one-to-many'
         )
     )

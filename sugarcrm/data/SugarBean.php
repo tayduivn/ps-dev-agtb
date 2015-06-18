@@ -2149,13 +2149,13 @@ class SugarBean
             $templateName = $this->getTemplateNameForNotificationEmail();
             $xtpl         = $this->createNotificationEmailTemplate($templateName, $notify_user);
             $subject      = $xtpl->text($templateName . "_Subject");
-            $body         = trim($xtpl->text($templateName));
+            $textBody     = trim($xtpl->text($templateName));
 
             //BEGIN SUGARCRM flav=notifications ONLY
             //Save the notification
             $notification = BeanFactory::getBean('Notifications');
             $notification->name = $subject;
-            $notification->description = $body;
+            $notification->description = $textBody;
             $notification->assigned_user_id = $notify_user->id;
             $notification->save(false);
             //END SUGARCRM flav=notifications ONLY
@@ -2192,15 +2192,8 @@ class SugarBean
                 // set the subject of the email
                 $mailer->setSubject($subject);
 
-                // set the body of the email...
-                $textOnly = EmailFormatter::isTextOnly($body);
-                if ($textOnly) {
-                    $mailer->setTextBody($body);
-                } else {
-                    $textBody = strip_tags(br2nl($body)); // need to create the plain-text part
-                    $mailer->setTextBody($textBody);
-                    $mailer->setHtmlBody($body);
-                }
+                // set the body of the email... looks to be plain-text only
+                $mailer->setTextBody($textBody);
 
                 // add the recipient
                 $recipientEmailAddress = $notify_user->emailAddress->getPrimaryAddress($notify_user);
@@ -3218,6 +3211,10 @@ class SugarBean
 
         $query->select($queryFields);
 
+        if ($this->queryProducesDuplicates($query)) {
+            $this->fixQuery($query);
+        }
+
         $this->call_custom_logic('before_fetch_query', array('query' => $query, 'fields' => $fields));
 
         $rows = $query->execute();
@@ -3254,6 +3251,53 @@ class SugarBean
         }
 
         return $beans;
+    }
+
+    protected function queryProducesDuplicates(SugarQuery $query)
+    {
+        foreach ($query->join as $join) {
+            if ($join->linkName) {
+                $seed = $query->from;
+                $linkName = $join->linkName;
+                if ($seed->load_relationship($linkName)) {
+                    /** @var Link2 $link */
+                    $link = $seed->$linkName;
+                    if ($link->getType() === REL_TYPE_MANY) {
+                        $relationship = $link->getRelationshipObject();
+                        if (empty($relationship->primaryOnly)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Fixes query containing filter by related fields by adding DISTINCT if it's possible
+     *
+     * @param SugarQuery $query
+     */
+    protected function fixQuery(SugarQuery $query)
+    {
+        foreach ($query->select->select as $field) {
+            if ($field->table) {
+                $bean = $query->getTableBean($field->table);
+                if (!$bean) {
+                    $bean = $query->from;
+                }
+                $def = $bean->getFieldDefinition($field->field);
+                $type = $this->db->getFieldType($def);
+                if ($this->db->isTextType($type)) {
+                    $GLOBALS['log']->warn('Unable to fix the query containing text field');
+                    return;
+                }
+            }
+        }
+
+        $query->distinct(true);
     }
 
     /**
