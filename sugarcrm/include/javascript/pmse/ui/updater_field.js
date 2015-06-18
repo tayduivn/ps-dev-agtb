@@ -530,6 +530,7 @@ UpdaterField.prototype.openPanelOnItem = function (field) {
             this._variablesList = new FieldPanel({
                 className: "updateritem-panel",
                 //height: "auto",
+                appendTo: (this.parent && this.parent.parent && this.parent.parent.html) || null,
                 items: [
                     {
                         type: "list",

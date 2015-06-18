@@ -240,15 +240,18 @@ MessagePanel.prototype.show = function (params) {
     if (!this.loaded) {
         this.load(params);
     }
+
+    this.setHeight($(this.body).innerHeight());
+
     if (this.modal) {
-        this.modalObject.show();
+        this.modalObject.show(this);
         if (this.modalObject.html) {
             this.modalObject.html.style.zIndex = '1034';
         }
+    } else {
+        document.body.appendChild(this.html);
     }
 
-    this.setHeight($(this.body).innerHeight());
-    document.body.appendChild(this.html);
     this.setVisible(true);
     this.fixPositions();
 };
@@ -364,8 +367,9 @@ MessagePanel.prototype.getMessageType = function (type) {
 MessagePanel.prototype.hide = function (destroy) {
     if (this.modal) {
         this.modalObject.hide();
+    } else {
+        document.body.removeChild(this.html);
     }
-    document.body.removeChild(this.html);
     this.setVisible(false);
     if (destroy || this.destroyOnHide) {
         this.close();

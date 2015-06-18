@@ -176,20 +176,25 @@ FieldPanel.prototype.setOnItemValueActionHandler = function (handler) {
 	return this;
 };
 
+FieldPanel.prototype._getUsableAppendTo = function () {
+	var appendTo = this._appendTo;
+	if (typeof appendTo === 'function') {
+		return appendTo.call(this);
+	} else if (!isHTMLElement(appendTo)) {
+		return appendTo.html;
+	}
+	return appendTo;
+};
+
 FieldPanel.prototype._append = function () {
-	var position, appendTo = this._appendTo, owner = this._owner, offsetHeight = 1, zIndex = 0, siblings, aux;
+	var position, appendTo, owner = this._owner, offsetHeight = 1, zIndex = 0, siblings, aux;
 	if (owner) {
 		if (!isHTMLElement(owner)) {
 			owner = owner.html;
 		}
 		offsetHeight = owner.offsetHeight;
 	}
-	if (typeof appendTo === 'function') {
-		appendTo = appendTo.call(this);
-	}
-	if (!isHTMLElement(appendTo)) {
-		appendTo = appendTo.html;
-	}
+	appendTo = this._getUsableAppendTo();
 	siblings = appendTo.children;
 	for (i = 0; i < siblings.length; i += 1) {
 		aux = jQuery(siblings[i]).zIndex();
@@ -312,7 +317,7 @@ FieldPanel.prototype.showItem = function (itemIndex) {
 FieldPanel.prototype.attachListeners = function () {
 	var that = this;
 	if (this.html && !this._attachedListeners) {
-		jQuery(document).on("click", function (e) {
+		jQuery('.adam-modal').add(document).on("click", function (e) {
 			var $selector = $(that.html);
 			if (that._owner) {
 				$selector = isHTMLElement(that._owner) ? $selector.add(that._owner) : $selector.add(that._owner.html);

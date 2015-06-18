@@ -13,6 +13,7 @@
     initialize: function(options) {
         this.inboxId = options.context.attributes.modelId;
         this.flowId = options.context.attributes.action;
+        app.routing.before('route', this.beforeRouteChange, this);
     },
 
     loadData: function () {
@@ -47,5 +48,10 @@
             });
             app.router.goBack();
         }
+    },
+
+    beforeRouteChange: function () {
+        app.routing.offBefore('route', this.beforeRouteChange);
+        $('.adam-modal').remove();
     }
 })

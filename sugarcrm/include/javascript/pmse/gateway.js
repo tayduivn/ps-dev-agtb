@@ -615,6 +615,7 @@ AdamGateway.prototype.createConfigureAction = function () {
                 //make criteria fields sortable
                 $(f.body).sortable({
                     connectWith: ".adam-field",
+                    handle: '.adam-form-label',
                     stop: function (event, ui) {
 
                         root.reorderItem(f, ui.item.attr('id'));

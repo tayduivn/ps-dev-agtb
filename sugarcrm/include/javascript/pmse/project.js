@@ -1820,5 +1820,6 @@ AdamProject.prototype.getMetadata = function (metadataName) {
 
 AdamProject.prototype.dispose = function () {
     // TODO: dispose the project completely
+    jQuery('body > .adam-modal').remove();
     jCore.dispose();
 }
