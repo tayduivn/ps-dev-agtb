@@ -60,7 +60,7 @@
             'keydown': '_setScrollPosition'
         });
 
-        this.on('render', this._setRowFields, this);
+        this.on('render render:rows', this._setRowFields, this);
 
         //fire resize scroll-width on column add/remove
         this.on('list:toggle:column', this.resize, this);
