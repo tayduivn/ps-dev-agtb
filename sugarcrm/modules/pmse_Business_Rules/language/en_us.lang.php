@@ -17,7 +17,7 @@ $mod_strings = array (
 
   'LBL_MODULE_NAME' => 'Process Business Rules',
   'LBL_MODULE_TITLE' => 'Process Business Rules',
-  'LBL_MODULE_NAME_SINGULAR' => 'Process Business Rules',
+  'LBL_MODULE_NAME_SINGULAR' => 'Process Business Rule',
 
   'LBL_RST_UID' => 'Business Rule ID',
   'LBL_RST_TYPE' => 'Business Rule Type',
@@ -31,6 +31,8 @@ $mod_strings = array (
   'LBL_RST_UPDATE_DATE' => 'Business Rule Update Date',
 
     'LNK_LIST' => 'View Process Business Rules',
+    'LNK_NEW_PMSE_BUSINESS_RULES' => 'Create Process Business Rule',
+    'LNK_IMPORT_PMSE_BUSINESS_RULES' => 'Import Process Business Rules',
 
     'LBL_PMSE_TITLE_BUSINESS_RULES_BUILDER' => 'Business Rules Builder',
 

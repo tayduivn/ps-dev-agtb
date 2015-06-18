@@ -22,6 +22,8 @@ $mod_strings = array (
     'LBL_MODULE_NAME_SINGULAR' => 'Process Email Template',
 
     'LNK_LIST' => 'View Process Email Templates',
+    'LNK_NEW_PMSE_EMAILS_TEMPLATES' => 'Create Process Email Template',
+    'LNK_IMPORT_PMSE_EMAILS_TEMPLATES' => 'Import Process Email Templates',
 
     'LBL_PMSE_SHOW_MORE_VARIABLES' => 'Show More Variables ...',
 
