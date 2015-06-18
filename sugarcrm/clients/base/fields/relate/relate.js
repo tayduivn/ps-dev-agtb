@@ -128,11 +128,6 @@
             }
         }, this);
 
-        this.model.on('change', function() {
-            this.getFilterOptions(true);
-        }, this);
-
-        this._createFiltersCollection();
         this._createSearchCollection();
     },
 
@@ -143,7 +138,7 @@
      *
      * @protected
      */
-    _createFiltersCollection: function() {
+    _createFiltersCollection: function(options) {
         var searchModule = this.getSearchModule();
 
         if (!app.acl.hasAccess('list', searchModule)) {
@@ -155,7 +150,7 @@
             this.filters = app.data.createBeanCollection('Filters');
             this.filters.setModuleName(searchModule);
             this.filters.setFilterOptions(this.getFilterOptions());
-            this.filters.load();
+            this.filters.load(options);
         }
     },
     /**
@@ -237,40 +232,69 @@
      * Renders relate field
      */
     _render: function() {
-        var self = this;
         var searchModule = this.getSearchModule();
-        var loadingLabel = app.lang.get('LBL_LOADING', this.module);
 
         //Do not render if the related module is invalid
         if (searchModule && !_.contains(app.metadata.getModuleNames(), searchModule)) {
             return this;
         }
 
-        var result = this._super('_render');
+        this._super('_render');
 
         //FIXME remove check for tplName SC-2608
-        if (this.tplName === 'edit' || this.tplName === 'massupdate') {
+        switch(this.tplName) {
+            case 'edit':
+            case 'massupdate':
+                this._createFiltersCollection({
+                    success: _.bind(function() {
+                        this._renderEditableDropdown();
+                    }, this)
+                });
+                break;
+            case 'disabled':
+                this._renderDisabledDropdown();
+                break;
+        }
+        return this;
+    },
 
-            var inList = this.view.name === 'recordlist';
-            this.$(this.fieldTag).select2({
-                width: inList ? 'off' : '100%',
-                dropdownCssClass: _.bind(this._buildCssClasses, this),
-                multiple: !!this.def.isMultiSelect,
-                containerCssClass: _.bind(this._buildCssClasses, this),
-                separator: this._separator,
-                initSelection: _.bind(this._onInitSelect, this),
-                formatInputTooShort: function() {
-                    return '';
-                },
-                formatSelection: _.bind(this._onFormatSelection, this),
-                formatSearching: loadingLabel,
-                placeholder: this.getPlaceHolder(),
-                allowClear: self._allow_single_deselect,
-                minimumInputLength: self._minChars,
-                maximumSelectionSize: 20,
-                query: _.bind(this.search, this)
-            }).on('select2-open', _.bind(this._onSelect2Open, this))
-              .on('searchmore', function() {
+    /**
+     * Renders the editable dropdown using the `select2` plugin.
+     *
+     * Since a filter may have to be applied on the field, we need to fetch
+     * the list of filters for the current module before rendering the dropdown
+     * (and enabling the searchahead feature that requires the filter
+     * definition).
+     *
+     * @private
+     */
+    _renderEditableDropdown: function() {
+        var self = this;
+        var $dropdown = this.$(this.fieldTag);
+
+        var loadingLabel = app.lang.get('LBL_LOADING', this.module);
+        this._createFiltersCollection();
+
+        var inList = this.view.name === 'recordlist';
+        $dropdown.select2({
+            width: inList ? 'off' : '100%',
+            dropdownCssClass: _.bind(this._buildCssClasses, this),
+            multiple: !!this.def.isMultiSelect,
+            containerCssClass: _.bind(this._buildCssClasses, this),
+            separator: this._separator,
+            initSelection: _.bind(this._onInitSelect, this),
+            formatInputTooShort: function() {
+                return '';
+            },
+            formatSelection: _.bind(this._onFormatSelection, this),
+            formatSearching: loadingLabel,
+            placeholder: this.getPlaceHolder(),
+            allowClear: self._allow_single_deselect,
+            minimumInputLength: self._minChars,
+            maximumSelectionSize: 20,
+            query: _.bind(this.search, this)
+        }).on('select2-open', _.bind(this._onSelect2Open, this))
+            .on('searchmore', function() {
                 $(this).select2('close');
                 self.openSelectDrawer();
             }).on('change', function(e) {
@@ -316,7 +340,7 @@
                     var model = collection.get(id);
                     attributes.id = model.id;
                     attributes.value = model.get('name');
-                    _.each(model.attributes, function (value, field) {
+                    _.each(model.attributes, function(value, field) {
                         if (app.acl.hasAccessToModel('view', model, field)) {
                             attributes[field] = attributes[field] || model.get(field);
                         }
@@ -333,33 +357,41 @@
 
                 self.setValue(attributes);
             });
-            var plugin = this.$(this.fieldTag).data('select2');
-            if (plugin && plugin.focusser) {
-                plugin.focusser.on('select2-focus', _.bind(_.debounce(this.handleFocus, 0), this));
-            }
-        } else if (this.tplName === 'disabled') {
-            this.$(this.fieldTag).select2({
-                width: '100%',
-                initSelection: function(el, callback) {
-                    var $el = $(el),
-                        id = $el.val(),
-                        text = $el.data('rname');
-                    callback({id: id, text: text});
-                },
-                formatInputTooShort: function() {
-                    return '';
-                },
-                formatSearching: function() {
-                    return app.lang.get('LBL_LOADING', self.module);
-                },
-                placeholder: this.getPlaceHolder(),
-                allowClear: self._allow_single_deselect,
-                minimumInputLength: self._minChars,
-                query: _.bind(this.search, this)
-            });
-            this.$(this.fieldTag).select2('disable');
+        var plugin = $dropdown.data('select2');
+        if (plugin && plugin.focusser) {
+            plugin.focusser.on('select2-focus', _.bind(_.debounce(this.handleFocus, 0), this));
         }
-        return result;
+    },
+
+    /**
+     * Renders the dropdown in disabled mode.
+     *
+     * @private
+     */
+    _renderDisabledDropdown: function() {
+        var loadingLabel = app.lang.get('LBL_LOADING', this.module);
+        var $dropdown = this.$(this.fieldTag);
+
+        $dropdown.select2({
+            width: '100%',
+            initSelection: function(el, callback) {
+                var $el = $(el),
+                    id = $el.val(),
+                    text = $el.data('rname');
+                callback({id: id, text: text});
+            },
+            formatInputTooShort: function() {
+                return '';
+            },
+            formatSearching: function() {
+                return loadingLabel;
+            },
+            placeholder: this.getPlaceHolder(),
+            allowClear: self._allow_single_deselect,
+            minimumInputLength: self._minChars,
+            query: _.bind(this.search, this)
+        });
+        $dropdown.select2('disable');
     },
 
     /**
@@ -867,11 +899,16 @@
      */
     bindDataChange: function() {
         if (this.model) {
+            this.model.on('change', function() {
+                this.getFilterOptions(true);
+            }, this);
+
             this.model.on('change:' + this.name, function() {
-                if (!_.isEmpty(this.$(this.fieldTag).data('select2'))) {
+                var $dropdown = this.$(this.fieldTag);
+                if (!_.isEmpty($dropdown.data('select2'))) {
                     // Just setting the value on select2 doesn't cause the label to show up
                     // so we need to render the field next after setting this value
-                    this.$(this.fieldTag).select2('val', this.model.get(this.def.idName));
+                    $dropdown.select2('val', this.model.get(this.def.idName));
                 }
                 // double-check field isn't disposed before trying to render
                 if (!this.disposed) {
