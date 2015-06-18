@@ -44,6 +44,10 @@
         this._super('initialize', [options]);
         this.context.set('skipFetch', true);
 
+        this.model.on('validation:start', function() {
+            app.alert.dismiss('send_feedback');
+        });
+
         this.model.on('error:validation', function() {
             app.alert.show('send_feedback', {
                 level: 'error',
@@ -194,26 +198,43 @@
                 'entry.1926759955': this.model.get('feedback_sugar_version'),
                 'entry.398692075': this.model.get('company')
             },
-            dataType: 'script',
+            dataType: 'xml',
             crossDomain: true,
             cache: false,
             context: this,
             timeout: 10000,
-            success: function() {
-                app.alert.show('send_feedback', {
-                    level: 'success',
-                    messages: app.lang.get('LBL_FEEDBACK_SENT', this.module),
-                    autoClose: true
-                });
-                this.model.clear();
-                this.toggle(false);
-            },
-            error: function(){
+            success: this._handleSuccess,
+            error: function(xhr) {
+                if (xhr.status === 0) {
+                    // the status might be 0 which is still a success from a
+                    // cross domain request using xml as dataType
+                    this._handleSuccess();
+                    return;
+                }
+
                 app.alert.show('send_feedback', {
                     level: 'error',
                     messages: app.lang.get('LBL_FEEDBACK_NOT_SENT', this.module)
                 });
             }
         });
+    },
+
+    /**
+     * Handles the success of Feedback submission.
+     *
+     * Show the success message on top (alert), clears the model and hides the
+     * view. This will allow the user to be ready for yet another feedback.
+     *
+     * @private
+     */
+    _handleSuccess: function() {
+        app.alert.show('send_feedback', {
+            level: 'success',
+            messages: app.lang.get('LBL_FEEDBACK_SENT', this.module),
+            autoClose: true
+        });
+        this.model.clear();
+        this.toggle(false);
     }
 })
