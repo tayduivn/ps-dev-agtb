@@ -21,8 +21,9 @@ class SessionStorage extends TrackableArray implements SessionStorageInterface
     protected static $instance;
 
     /**
-     * {@inheritdoc} Checks for custom SessionStorage classes or alternate SessionStorage classes set in config.
-     */
+      * {@inheritdoc} Checks for custom SessionStorage classes or alternate SessionStorage classes set in config.
+      * @return SessionStorageInterface
+      */
     public static function getInstance() {
         $className = \SugarConfig::getInstance()->get(
             'SessionStorageClass',
@@ -45,7 +46,7 @@ class SessionStorage extends TrackableArray implements SessionStorageInterface
         $this->populateFromArray($_SESSION);
         $_SESSION = $this;
 
-        if ($lock) {
+        if (!$lock) {
             $this->unlock();
         }
 
@@ -55,6 +56,7 @@ class SessionStorage extends TrackableArray implements SessionStorageInterface
      * {@inheritdoc} destroy the current php session.
      */
     public function destroy() {
+        $this->enableTracking(false);
         foreach($this as $key => $val) {
             $this->offsetUnset($key);
         }
@@ -109,8 +111,6 @@ class SessionStorage extends TrackableArray implements SessionStorageInterface
 
         return empty($session_id) ? true : false;
     }
-
-
 
     protected static function registerShutdownFunction($previousUserId)
     {
