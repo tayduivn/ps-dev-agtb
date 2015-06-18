@@ -1069,7 +1069,7 @@ class PMSEEngineUtils
     }
 
     public static function getStudioModules($type = '') {
-        include 'PMSEModules.php';
+        include 'modules/pmse_Inbox/engine/PMSEModules.php';
         $studioBrowser = new StudioBrowser();
         if ($type == 'related') {
             $studioBrowser->loadRelatableModules();

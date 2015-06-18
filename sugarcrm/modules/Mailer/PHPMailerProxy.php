@@ -23,7 +23,7 @@ require_once "vendor/PHPMailer/class.phpmailer.php";
 
 /* Internal Module Imports */
 
-require_once "SMTPProxy.php";
+require_once "modules/Mailer/SMTPProxy.php";
 
 class PHPMailerProxy extends PHPMailer
 {

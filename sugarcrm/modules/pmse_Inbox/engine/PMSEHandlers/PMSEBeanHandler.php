@@ -12,10 +12,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/pmse_Inbox/engine/PMSEFieldsUtils.php');
-require_once('modules/pmse_Inbox/engine/PMSELogger.php');
-require_once('modules/pmse_Inbox/engine/PMSEEvaluator.php');
-require_once('modules/pmse_Inbox/engine/PMSERelatedModule.php');
+require_once 'modules/pmse_Inbox/engine/PMSEFieldsUtils.php';
+require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
+require_once 'modules/pmse_Inbox/engine/PMSEEvaluator.php';
+require_once 'modules/pmse_Inbox/engine/PMSERelatedModule.php';
 
 class PMSEBeanHandler
 {

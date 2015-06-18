@@ -12,8 +12,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'psr/Log/AbstractLogger.php';
-require_once 'PMSELoggerWriter.php';
+require_once 'modules/pmse_Inbox/engine/psr/Log/AbstractLogger.php';
+require_once 'modules/pmse_Inbox/engine/PMSELoggerWriter.php';
 
 class PMSELogger extends AbstractLogger
 {

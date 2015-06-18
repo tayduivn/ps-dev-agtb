@@ -12,7 +12,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'AbstractLogger.php';
+require_once 'modules/pmse_Inbox/engine/psr/Log/AbstractLogger.php';
 
 /**
  * This Logger can be used to avoid conditional log calls

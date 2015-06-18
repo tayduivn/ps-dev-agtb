@@ -17,9 +17,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * the expression to be entered in json
  *
  */
-require_once 'PMSEExpressionEvaluator.php';
-require_once 'PMSECriteriaEvaluator.php';
-require_once 'parser/PMSEDataParserGateway.php';
+require_once 'modules/pmse_Inbox/engine/PMSEExpressionEvaluator.php';
+require_once 'modules/pmse_Inbox/engine/PMSECriteriaEvaluator.php';
+require_once 'modules/pmse_Inbox/engine/parser/PMSEDataParserGateway.php';
 
 class PMSEEvaluator
 {

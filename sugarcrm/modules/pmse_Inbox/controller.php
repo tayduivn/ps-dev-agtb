@@ -44,7 +44,7 @@ class pmse_InboxController extends SugarController
      */
     public function action_routeCase()
     {
-        require_once('modules/pmse_Inbox/clients/base/api/PMSEEngineApi.php');
+        require_once 'modules/pmse_Inbox/clients/base/api/PMSEEngineApi.php';
         $data = $_REQUEST;
         $data['frm_action'] = $data['Type'];
         $data['taskName'] = '';
@@ -55,7 +55,7 @@ class pmse_InboxController extends SugarController
     
     public function action_showPNG()
     {
-        require_once('modules/pmse_Inbox/clients/base/api/PMSEImageGeneratorApi.php');
+        require_once 'modules/pmse_Inbox/clients/base/api/PMSEImageGeneratorApi.php';
         header('Content-Type: image/png');
         $img = new PMSEImageGeneratorApi();
         $img->getProcessImage(null, array('record' => $_REQUEST['case']));

@@ -9,8 +9,8 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'PMSELogger.php';
-require_once 'PMSEEngineUtils.php';
+require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
+require_once 'modules/pmse_Inbox/engine/PMSEEngineUtils.php';
 
 class PMSERelatedModule {
 

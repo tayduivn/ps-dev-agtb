@@ -11,10 +11,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/EditView/EditView2.php');
-require_once('modules/pmse_Project/clients/base/api/wrappers/PMSEWrapper.php');
-require_once('modules/pmse_Inbox/engine/wrappers/PMSECaseWrapper.php');
-require_once('modules/pmse_Inbox/engine/PMSE.php');
+require_once 'include/EditView/EditView2.php';
+require_once 'modules/pmse_Project/clients/base/api/wrappers/PMSEWrapper.php';
+require_once 'modules/pmse_Inbox/engine/wrappers/PMSECaseWrapper.php';
+require_once 'modules/pmse_Inbox/engine/PMSE.php';
 
 class pmse_InboxViewShowCase extends SugarView
 {
@@ -687,7 +687,7 @@ class pmse_InboxViewShowCase extends SugarView
                 SugarAutoLoader::loadExtension("layoutdefs", $this->module))
         ) {
             $GLOBALS['focus'] = $this->bean;
-            require_once('include/SubPanel/SubPanelTiles.php');
+            require_once 'include/SubPanel/SubPanelTiles.php';
             $subpanel = new SubPanelTiles($this->bean, $this->module);
             echo $subpanel->display();
         }

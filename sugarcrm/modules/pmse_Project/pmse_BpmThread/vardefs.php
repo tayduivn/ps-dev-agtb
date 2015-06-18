@@ -231,6 +231,6 @@ $dictionary['pmse_BpmThread'] = array(
 		'unified_search'=>true,
 	);
 if (!class_exists('VardefManager')){
-        require_once('include/SugarObjects/VardefManager.php');
+        require_once 'include/SugarObjects/VardefManager.php';
 }
 VardefManager::createVardef('pmse_BpmThread','pmse_BpmThread', array('basic','assignable'));

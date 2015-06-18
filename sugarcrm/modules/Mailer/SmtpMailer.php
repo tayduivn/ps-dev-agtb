@@ -19,12 +19,12 @@ if (!defined('sugarEntry') || !sugarEntry) {
 /**
  * Needs a proxy to the PHPMailer library.
  */
-require_once "PHPMailerProxy.php";
+require_once "modules/Mailer/PHPMailerProxy.php";
 
 /**
  * Requires BaseMailer in order to extend it.
  */
-require_once "BaseMailer.php";
+require_once "modules/Mailer/BaseMailer.php";
 
 /* External Imports */
 
