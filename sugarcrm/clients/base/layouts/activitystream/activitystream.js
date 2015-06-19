@@ -26,6 +26,7 @@
         this.exposeDataTransfer();
 
         this.context.on("activitystream:post:prepend", this.prependPost, this);
+        this.context.on('activitystream:paginate', this.paginate, this);
 
         // Remove active state from all preview buttons
         app.events.on('preview:close', function() {
@@ -167,7 +168,7 @@
 
         if(component.name === "activitystream") {
             this.$el.find(".activitystream-list").append(component.el);
-        } else if (_.contains(['activitystream-bottom', 'list-bottom'], component.name)) {
+        } else if (component.name === 'activitystream-bottom') {
             this.$el.append(component.el);
             component.render();
         } else {
@@ -207,5 +208,14 @@
         });
         this._components = nonActivities;
         this.renderedActivities = {};
+    },
+
+    /**
+     * Get the next set of activity stream posts.
+     */
+    paginate: function() {
+        this.collection.paginate({
+            add: true
+        });
     }
 })
