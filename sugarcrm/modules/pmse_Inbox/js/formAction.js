@@ -204,6 +204,7 @@ var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,task
             reassignForm
         ];
         combo_users.setName('adhoc_user');
+        textArea.setName('not_content');
     } else {
         // If wtype is set to user selection, change the tooltip msg
         combo_users = new ComboboxField({
