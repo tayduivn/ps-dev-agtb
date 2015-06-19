@@ -463,13 +463,26 @@ html.rtl {
 
     }
 
-    .module-list .megamenu > .dropdown .btn-group.home {
-        padding: 5px 16px 5px 10px;
+    .module-list {
+        .megamenu {
+            > .dropdown .btn-group {
+                &.home {
+                    padding: 5px 16px 5px 10px;
+                }
+                &:not(.home) {
+                    padding: 8px 8px 8px 4px;
+                    .dropdown-toggle {
+                        margin-right: 1px;
+                        margin-left: initial;
+                    }
+                }
+            }
+        }
     }
+
     .dropdown-menu .label-module-mini {
         margin: -2px 0 0 10px;
     }
-
 
     .activitystream-layout .omnibar .inputactions {
         left: 6px;
@@ -530,6 +543,12 @@ html.rtl {
             > div >.search-filter::before {
                 right: 20px;
             }
+        }
+        .dashablelist-filter {
+          > label {
+            left: initial;
+            right: 20px;
+          }
         }
     }
 
@@ -1385,21 +1404,15 @@ html.rtl {
         .preview-pane.active {
           right: 0;
           -webkit-animation: preview-in-rtl .3s;
+          animation-name: preview-in-rtl;
+          animation-duration: .3s;
         }
 
         .preview-pane {
           -webkit-animation: preview-out-rtl .3s;
+          animation-name: preview-out-rtl;
+          animation-duration: .3s;
           display: block;
-        }
-
-        @-webkit-keyframes preview-in-rtl {
-          0% {right: 100%;}
-          100% {right: 0;}
-        }
-
-        @-webkit-keyframes preview-out-rtl {
-          0% {right: 0;}
-          100% {right: 100%;}
         }
 
         /* RTL special override */

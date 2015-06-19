@@ -58,6 +58,8 @@ class SugarCache
     /**
      * Returns the instance of the SugarCacheAbstract object, cooresponding to the external
      * cache being used.
+     *
+     * @return SugarCacheAbstract
      */
     public static function instance()
     {

@@ -61,6 +61,13 @@ class KBContentsFilterApi extends FilterApi
 
         $q->where()->equals('active_rev', '1');
 
+        if (!empty($args['mostUseful'])) {
+            $q->select()->fieldRaw('(kbcontents.useful - kbcontents.notuseful)', 'mu');
+            $orderBy = new SugarQuery_Builder_Orderby($q, 'DESC');
+            $orderBy->addRaw('mu');
+            array_unshift($q->order_by, $orderBy);
+        }
+
         return array($args, $q, $options, $seed);
     }
 }

@@ -79,6 +79,9 @@ describe('Plugins.KBContents', function() {
                 return 'fakeTemplate';
             };
         });
+        sandbox.stub(app.data, 'getRelateFields', function() {
+            return [];
+        });
         view.createArticle(model);
         expect(drawerStub).toHaveBeenCalled();
         expect(drawerStub.args[0][0].context.model.get('name')).toEqual('fakeName');
@@ -180,6 +183,8 @@ describe('Plugins.KBContents', function() {
         sandbox.stub(view, 'getAvailableLangsForLocalization', function() {
             return ['en', 'fr'];
         });
+
+        sandbox.stub(app.alert, 'show', function() {});
 
         view._onCreateLocalization(fakeModel);
         expect(createRelatedDrawerStub).not.toHaveBeenCalled();

@@ -504,12 +504,13 @@
 }
 
 .drawer .dashablelist-filter {
-  > div >.search-filter::before {
-    content: "Default Data Filter";
+  > label {
     position: relative;
     left: 20px;
     font-size: 11px;
     color: @grayLight;
+    cursor: text;
+    margin-bottom: 0;
   }
   .search-filter {
     .control-group {

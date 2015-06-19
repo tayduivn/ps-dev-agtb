@@ -415,21 +415,15 @@
   .preview-pane.active {
     left:0;
     -webkit-animation: preview-in .3s;
+    animation-name: preview-in;
+    animation-duration: .3s;
   }
 
   .preview-pane {
     -webkit-animation: preview-out .3s;
+    animation-name: preview-out;
+    animation-duration: .3s;
     display: block;
-  }
-
-  @-webkit-keyframes preview-in {
-    0% {left: 100%;}
-    100% {left: 0;}
-  }
-
-  @-webkit-keyframes preview-out {
-    0% {left: 0%;}
-    100% {left: 100%;}
   }
 
   .card2 {

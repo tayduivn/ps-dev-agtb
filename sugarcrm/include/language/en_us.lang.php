@@ -638,6 +638,7 @@ $app_list_strings = array (
     'ProjectTask' => 'Project Task',
 
     'Tasks' => 'Task',
+      'KBContents' => 'Knowledge Base',
   ),
 
   'record_type_display_notes' =>
@@ -8819,6 +8820,7 @@ $app_strings = array (
     'LBL_EDIT_AS_NEW_BUTTON_TITLE' => 'Edit As New',
     'LBL_FAVORITES' => 'Favorites',
     'LBL_FILTER' => 'Filter',
+    'LBL_DEFAULT_DATA_FILTER' => 'Default Data Filter',
     'LBL_FILTER_MENU_BY' => 'Filter Menu By',
     'LBL_FILTER_SELECT_FIELD' => 'Select field...',
     'LBL_FILTER_SELECT_OPERATOR' => 'Select operator...',
@@ -11530,6 +11532,7 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_SHORTCUT_ALERT_CANCEL' => 'Cancel',
     'LBL_SHORTCUT_DRAGDROPSELECT2_SELECTALL' => 'Select all items in a multi-select field',
     'LBL_SHORTCUT_SWEETSPOT' => 'Toggle the Sweet Spot bar',
+    'LBL_SHORTCUT_SWEETSPOT_HIDE' => 'Hide the Sweet Spot bar',
     'LBL_SHORTCUT_SAVE_CONFIG' => 'Save configuration',
     'LBL_SHORTCUT_RESTORE' => 'Restore default',
     'LBL_SHORTCUT_CONFIG_ERROR' => 'An error occurred while saving custom shortcut keys on the server. Please try again.',

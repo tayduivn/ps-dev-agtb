@@ -183,7 +183,6 @@ class Sugar_PHPUnit_Framework_TestCase extends PHPUnit_Framework_TestCase
         if (isset($GLOBALS['log'])) {
             $GLOBALS['log']->info("START TEST: {$this->getName(false)}");
         }
-        SugarCache::instance()->flush();
     }
 
     protected function assertPostConditions()
@@ -402,6 +401,8 @@ class SugarTestHelper
         if (self::$isInited == true) {
             return true;
         }
+
+        SugarCache::instance()->flush();
 
         // initialization & backup of sugar_config
         self::$initVars['GLOBALS']['sugar_config'] = null;
