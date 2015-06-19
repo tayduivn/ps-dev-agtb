@@ -301,4 +301,49 @@ class OracleManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $db->expects($this->atLeastOnce())->method('isTextType')->with($this->equalTo($vardef['dbType']))->will($this->returnValue(true));
         SugarTestReflection::callProtectedMethod($db, 'isNullable', array($vardef));
     }
+
+    public function providerCompareVardefs()
+    {
+        return array(
+            array(
+                array(
+                    'name' => 'foo',
+                    'type' => 'number',
+                    'len' => '38',
+                ),
+                array(
+                    'name' => 'foo',
+                    'type' => 'int',
+                    'len' => '38,2',
+                ),
+                true
+            ),
+            array(
+                array(
+                    'name' => 'foo',
+                    'type' => 'number',
+                    'len' => '30',
+                ),
+                array(
+                    'name' => 'foo',
+                    'type' => 'int',
+                    'len' => '31',
+                ),
+                false
+            ),
+        );
+    }
+
+    /**
+     * Test for number fields compare in oracle
+     * @param array $fieldDef1 Field from database
+     * @param array $fieldDef2 Field from vardefs
+     * @param bool $expectedResult If fields the same or not
+     *
+     * @dataProvider providerCompareVarDefs
+     */
+    public function testCompareVarDefs($fieldDef1, $fieldDef2, $expectedResult)
+    {
+        $this->assertEquals($expectedResult, $this->_db->compareVarDefs($fieldDef1, $fieldDef2));
+    }
 }

@@ -69,8 +69,8 @@ $dictionary['Bug'] = array(
 	   'wireless_advanced_search' => false,
        //BEGIN SUGARCRM flav=ent ONLY
        // Bug 54507 - Add portal to exclude from layout list
-       'portalrecordview' => 'visible',
-       'portallistview' => 'visible',
+       'portalrecordview' => false,
+       'portallistview' => false,
        'portalsearchview' => false,
        //END SUGARCRM flav=ent ONLY
 	   ),
@@ -131,8 +131,8 @@ $dictionary['Bug'] = array(
        'wireless_advanced_search' => false,
        //BEGIN SUGARCRM flav=ent ONLY
        // Bug 54507 - Add portal to exclude from layout list
-       'portalrecordview' => 'visible',
-       'portallistview' => 'visible',
+       'portalrecordview' => false,
+       'portallistview' => false,
        'portalsearchview' => false,
        //END SUGARCRM flav=ent ONLY
        ),

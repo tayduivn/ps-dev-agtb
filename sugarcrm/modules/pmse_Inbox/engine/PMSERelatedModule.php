@@ -75,7 +75,7 @@ class PMSERelatedModule {
 
     public function getRelatedBeans($filter, $relationship = 'all')
     {
-        global $beanList;
+        global $beanList, $app_list_strings;
         if (isset($beanList[$filter])) {
             $newModuleFilter = $filter;
         } else {
@@ -86,14 +86,13 @@ class PMSERelatedModule {
         $output = array();
         $moduleBean = $this->getBean($newModuleFilter);
 
-
         foreach($moduleBean->get_linked_fields() as $link => $def) {
             if (!empty($def['type']) && $def['type'] == 'link' && $moduleBean->load_relationship($link)) {
                 $relatedModule = $moduleBean->$link->getRelatedModuleName();
                 if (!in_array($relatedModule, PMSEEngineUtils::getSupportedModules('related'))) {
                     continue;
                 }
-                if (in_array($link, array('contact'))) {
+                if (in_array($link, PMSEEngineUtils::$relatedBlacklistedLinks)) {
                     continue;
                 }
                 $relType = $moduleBean->$link->getType(); //returns 'one' or 'many' for the cardinality of the link
@@ -102,10 +101,14 @@ class PMSERelatedModule {
                 if ($moduleLabel == "LBL_MODULE_NAME") {
                     $moduleLabel = translate($relatedModule);
                 }
+                
+                // Parentheses value
+                $pval = "$moduleLabel (" . trim($label, ':') . ": $link)";
                 $ret = array(
                     'value' => $link,
-                    'text' => "$moduleLabel ($label)",
-                    'module' => $moduleLabel
+                    'text' => $pval,
+                    'module' => $moduleLabel,
+                    'relationship' => $def['relationship'],
                 );
                 if ($relType == 'one') {
                     $output_11[] = $ret;
@@ -116,7 +119,6 @@ class PMSERelatedModule {
         }
 
         switch ($relationship) {
-
             case 'one-to-one':
             case 'one':
                 $output = $output_11;
@@ -132,7 +134,23 @@ class PMSERelatedModule {
         }
 
 
-        $filterArray = array('value' => $filter, 'text' => '<' . $filter . '>', 'module' => $filter);
+        // Needed to multisort on the label
+        foreach ($output as $k => $o) {
+            $labels[$k] = $o['text'];
+        }
+
+        // Sort on the label
+        array_multisort($labels, SORT_ASC, $output);
+
+        // Send text with pluralized module name
+        $filterText = isset($app_list_strings['moduleList'][$filter]) ? $app_list_strings['moduleList'][$filter] : $filter;
+        $filterArray = array(
+            'value' => $filter,
+            'text' => '<' . $filterText . '>',
+            'module' => $filter, 
+            'relationship' => $filter
+        );
+        
         array_unshift($output, $filterArray);
 
         $res['search'] = $filter;

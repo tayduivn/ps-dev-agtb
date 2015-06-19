@@ -10,3 +10,9 @@
  */
 
 ALTER TABLE config add platform varchar2(32) NULL;
+ALTER TABLE meetings ADD (duration_minutes_chr varchar2(4));
+UPDATE meetings SET duration_minutes_chr = to_char(duration_minutes);
+UPDATE meetings SET duration_minutes = NULL;
+ALTER TABLE meetings MODIFY duration_minutes varchar2(4);
+UPDATE meetings SET duration_minutes = duration_minutes_chr;
+ALTER TABLE meetings DROP COLUMN duration_minutes_chr;

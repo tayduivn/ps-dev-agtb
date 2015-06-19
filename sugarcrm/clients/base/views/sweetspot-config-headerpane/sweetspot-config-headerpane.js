@@ -62,7 +62,7 @@
     registerShortcuts: function() {
         app.shortcuts.register({
             id: 'SweetSpot:Config:Save',
-            keys: ['ctrl+s','ctrl+alt+a'],
+            keys: ['mod+s','mod+alt+a'],
             component: this,
             description: 'LBL_SHORTCUT_SAVE_CONFIG',
             callOnFocus: true,
@@ -76,7 +76,7 @@
 
         app.shortcuts.register({
             id: 'SweetSpot:Config:Cancel',
-            keys: ['esc','ctrl+alt+l'],
+            keys: ['esc','mod+alt+l'],
             component: this,
             description: 'LBL_SHORTCUT_CLOSE_DRAWER',
             callOnFocus: true,

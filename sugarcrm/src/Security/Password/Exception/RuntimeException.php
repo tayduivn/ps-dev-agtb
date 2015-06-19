@@ -1,4 +1,4 @@
-{{!
+<?php
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -9,5 +9,12 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-}}
-<span class="label ellipsis_inline {{statusClass}}" >{{statusLabel}}</span>
+
+namespace Sugarcrm\Sugarcrm\Security\Password\Exception;
+
+/**
+ * RuntimeException
+ */
+class RuntimeException extends \RuntimeException implements ExceptionInterface
+{
+}

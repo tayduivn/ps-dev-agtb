@@ -1038,10 +1038,12 @@ function handleHtaccess()
 
 /**
  * (re)write the web.config file to prevent browser access to the log file
+ *
+ * @param bool $iisCheck If upgrade running from CLI IIS_UrlRewriteModule not set. So for CliUpgrader can skip it
  */
-function handleWebConfig()
+function handleWebConfig($iisCheck = true)
 {
-    if ( !isset($_SERVER['IIS_UrlRewriteModule']) ) {
+    if (!isset($_SERVER['IIS_UrlRewriteModule']) && $iisCheck) {
         return;
     }
 

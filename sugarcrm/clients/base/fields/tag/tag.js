@@ -40,23 +40,33 @@
         if (!this.model.has(this.name)) {
             this.model.setDefault(this.name, []);
         }
+
+        // Set append as default when mass updating tags
+        this.appendTagValue = true;
+        this.model.set('tag_type', this.appendTagValue ? '1' : '0');
     },
 
     /**
      * {@inheritDoc}
      */
     _render: function() {
-        // Set up tagList variable for use in the list view
-        this.value = this.getFormattedValue();
-        if (this.value) {
-            this.tagList = _.pluck(this.value, 'name').join(', ');
-        }
+        this.setTagList();
 
         this._super('_render');
 
         this.initializeSelect2();
         this.$select2.on('change', _.bind(this.storeValues, this));
         this.$select2.on('select2-selecting', this.handleNewSelection);
+    },
+
+    /**
+     * Set up tagList variable for use in the list view
+     */
+    setTagList: function() {
+        this.value = this.getFormattedValue();
+        if (this.value) {
+            this.tagList = _.pluck(this.value, 'name').join(', ');
+        }
     },
 
     /**
@@ -205,18 +215,7 @@
             }
         });
 
-        var records = _.map(this.value, function(record) {
-            // If a special character is the first character of a tag, it breaks select2 and jquery and everything
-            // So escape that character if it's the first char
-            if (escapeChars.indexOf(record.name.charAt(0)) >= 0) {
-                return '\\\\' + record.name;
-            }
-            return record.name;
-        });
-
-        if (records.length) {
-            this.$select2.select2('val', records);
-        }
+        this.setSelect2Records();
 
         // Workaround to make select2 treat enter the same as it would a comma (INT-668)
         this.$('.select2-search-field > input.select2-input').on('keyup', function(e) {
@@ -316,16 +315,36 @@
     },
 
     /**
+     * Sanitize the tags and set the select2
+     */
+    setSelect2Records: function() {
+        var escapeChars = '!\"#$%&\'()*+,./:;<=>?@[\\]^`{|}~';
+        var records = _.map(this.value, function(record) {
+            // If a special character is the first character of a tag, it breaks select2 and jquery and everything
+            // So escape that character if it's the first char
+            if (escapeChars.indexOf(record.name.charAt(0)) >= 0) {
+                return '\\\\' + record.name;
+            }
+            return record.name;
+        });
+
+        if (records.length) {
+            this.$select2.select2('val', records);
+        }
+    },
+
+    /**
      * Avoid rendering process on Select2 change in order to keep focus
      * @override
      */
     bindDataChange: function() {
         if (this.model) {
             this.model.on('change:' + this.name, function() {
-                // only re-render the field if we are on merge-duplicates view
+                // only set the field if we are on merge-duplicates view
                 // it allows tags to copy over when choosing primaryRecord's tags
                 if (this.context.get('selectedDuplicates')) {
-                    this.render();
+                    this.setTagList();
+                    this.setSelect2Records();
                 }
             }, this);
         }

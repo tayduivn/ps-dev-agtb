@@ -126,4 +126,37 @@ class KBContentsApiHelper extends SugarBeanApiHelper {
         }
         return $result;
     }
+
+    /**
+     * Send notifications for in review, published and for getting back to draft articles.
+     * {@inheritdoc}
+     */
+    public function checkNotify($bean)
+    {
+        $prevStatus = null;
+        $changedData = $bean->db->getDataChanges($bean);
+        if (isset($changedData['status'])) {
+            $prevStatus = $changedData['status']['before'];
+        }
+        // New. In-review or published.
+        if ($bean->new_with_id &&
+            (
+                $bean->status == KBContent::ST_IN_REVIEW ||
+                in_array($bean->status, KBContent::getPublishedStatuses())
+            )
+        ) {
+            return true;
+        }
+        // Update. To in-review or published. From in-review to draft.
+        if ($prevStatus &&
+            (
+                $bean->status == KBContent::ST_IN_REVIEW ||
+                in_array($bean->status, KBContent::getPublishedStatuses()) ||
+                ($bean->status == KBContent::ST_DRAFT && $prevStatus == KBContent::ST_IN_REVIEW)
+            )
+        ) {
+            return true;
+        }
+        return false;
+    }
 }

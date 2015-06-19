@@ -1,4 +1,4 @@
-{{!
+<?php
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -9,6 +9,12 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-}}
-<input type="hidden" class="select2" name="{{name}}">
-{{#unless hideHelp}}{{#if def.help}}<p class="help-block">{{str def.help module}}</p>{{/if}}{{/unless}}
+
+namespace Sugarcrm\Sugarcrm\Security\Password\Exception;
+
+/**
+ * Interface ExceptionInterface
+ */
+interface ExceptionInterface
+{
+}

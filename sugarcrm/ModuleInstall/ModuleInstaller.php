@@ -98,6 +98,8 @@ class ModuleInstaller{
             }
         }
 
+        MetaDataManager::disableCache();
+
         // workaround for bug 45812 - refresh vardefs cache before unpacking to avoid partial vardefs in cache
         global $beanList;
         foreach ($this->modules as $module_name) {
@@ -211,7 +213,6 @@ class ModuleInstaller{
             require_once('modules/Administration/QuickRepairAndRebuild.php');
             $rac = new RepairAndClear();
             $rac->repairAndClearAll($selectedActions, $this->installed_modules,true, false);
-            $this->rebuild_relationships();
             $this->updateSystemTabs('Add',$this->tab_modules);
             //Clear out all the langauge cache files.
             clearAllJsAndJsLangFilesWithoutOutput();
@@ -235,8 +236,11 @@ class ModuleInstaller{
             // Destroy all metadata caches and rebuild the base metadata. This
             // will cause a small amount of lag on subsequent requests for other
             // clients.
+            MetaDataManager::enableCache();
             MetaDataManager::clearAPICache(true, true);
-            MetaDataManager::setupMetadata();
+            //TODO: we need to setup the metadata for the platforms via a job queue.
+            //Doing this inline is prohibitively expensive
+            //MetaDataManager::setupMetadata();
 
             require_once 'include/api/ServiceDictionaryRest.php';
             $dict = new ServiceDictionaryRest();

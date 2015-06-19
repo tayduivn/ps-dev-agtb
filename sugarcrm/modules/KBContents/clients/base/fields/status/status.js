@@ -16,53 +16,26 @@
      * Extends from EnumField widget adding style property according to specific
      * status.
      */
-    extendsFrom: 'EnumField',
+    extendsFrom: 'BadgeSelectField',
 
     /**
-     * An object where its keys map to specific status and color to matching
-     * CSS classes.
-     *
-     * @property {Object}
-     * @protected
+     * @inheritdoc
      */
-    _statusClass: {
-        'draft': 'label-pending',
-        'in-review': 'label-warning',
-        'approved': 'label-info',
-        'published': 'label-published',
-        'expired': 'label'
-    },
+    initialize: function(options) {
+        this._super('initialize', [options]);
 
-    /**
-     * {@inheritDoc}
-     *
-     * Defines `statusColor` property based on field value. If current status
-     * does not match a known value its value is used as label and default
-     * style is used as well.
-     */
-    _render: function() {
-        if (!this.model.has(this.name)) {
-            this.model.set(this.name, 'draft', {silent: true});
-        }
+        /**
+         * An object where its keys map to specific status and color to matching
+         * CSS classes.
+         */
+        this.statusClasses = {
+            'draft': 'label-pending',
+            'in-review': 'label-warning',
+            'approved': 'label-info',
+            'published': 'label-success',
+            'expired': 'label'
+        };
 
-        var status = this.model.get(this.name),
-            options = app.lang.getAppListStrings(this.def.options);
-
-        this.statusClass = this._statusClass[status];
-        this.statusLabel = options[status] || status;
-
-        this._super('_render');
-    },
-
-    /**
-     * {@inheritDoc}
-     */
-    focus: function() {
-        var self = this;
-        if (this.action !== 'disabled' && !this.def.isMultiSelect) {
-            _.defer(function() {
-                self.$(self.fieldTag).select2('open');
-            });
-        }
+        this.type = 'badge-select';
     }
 })

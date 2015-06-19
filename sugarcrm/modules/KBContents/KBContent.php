@@ -32,6 +32,7 @@ class KBContent extends SugarBean {
     public $is_external;
     public $active_date;
     public $exp_date;
+    public $kbsapprover_id;
 
     /**
      * {@inheritDoc}
@@ -240,8 +241,11 @@ class KBContent extends SugarBean {
             $query = new SugarQuery();
             $query->from(BeanFactory::getBean('KBContents'));
             $query->select(array('id'));
-            $query->where()
-                ->notEquals('id', $this->id)
+            $whereAnd = $query->where();
+            if ($this->id) {
+                $whereAnd->notEquals('id', $this->id);
+            }
+            $whereAnd
                 ->equals('kbdocument_id', $this->kbdocument_id)
                 ->equals('kbarticle_id', $this->kbarticle_id);
             $query->orderBy('date_entered', 'DESC');
@@ -290,31 +294,29 @@ class KBContent extends SugarBean {
      * Check is current document active revision or not.
      * Marks all previous revisions as non-active.
      * Marks all previous published revisions as expired.
-     * @param SugarBean $bean
      */
-    protected function checkActiveRev($bean = null)
+    protected function checkActiveRev()
     {
-        $bean = ($bean === null) ? $this : $bean;
-        if (empty($bean->kbarticle_id)) {
-            $bean->active_rev = 1;
+        if (empty($this->kbarticle_id)) {
+            $this->active_rev = 1;
+            return;
+        }
+        if ($this->isPublished()) {
+            $this->resetActiveRev();
+            $this->active_rev = 1;
+            $this->expirePublished();
+            if (empty($this->active_date)) {
+                $this->active_date = $this->db->convert($GLOBALS['timedate']->nowDbDate(), 'datetime');
+            }
         } else {
-            if ($bean->isPublished()) {
-                $bean->resetActiveRev();
-                $bean->active_rev = 1;
-                $bean->expirePublished();
-                if (empty($bean->active_date)) {
-                    $bean->active_date = $bean->db->convert($GLOBALS['timedate']->nowDbDate(), 'datetime');
-                }
-            } else {
-                $activeRevisionStatus = $this->getActiveRevisionStatus($bean);
-                if ($activeRevisionStatus &&
-                    !in_array($activeRevisionStatus['status'], static::getPublishedStatuses())
-                ) {
-                    $bean->resetActiveRev();
-                    $bean->active_rev = 1;
-                    if (empty($bean->active_date)) {
-                        $bean->active_date = $bean->db->convert($GLOBALS['timedate']->nowDbDate(), 'datetime');
-                    }
+            $activeRevisionStatus = $this->getActiveRevisionStatus();
+            if ($activeRevisionStatus &&
+                !in_array($activeRevisionStatus['status'], static::getPublishedStatuses())
+            ) {
+                $this->resetActiveRev();
+                $this->active_rev = 1;
+                if (empty($this->active_date)) {
+                    $this->active_date = $this->db->convert($GLOBALS['timedate']->nowDbDate(), 'datetime');
                 }
             }
         }
@@ -322,21 +324,22 @@ class KBContent extends SugarBean {
 
     /**
      * Get status for document with active revision.
-     * @param KBContent $bean
      * @return bool
-     * @throws SugarQueryException
      */
-    protected function getActiveRevisionStatus(KBContent $bean)
+    protected function getActiveRevisionStatus()
     {
-        if ($bean->kbdocument_id && $bean->kbarticle_id) {
+        if ($this->kbdocument_id && $this->kbarticle_id) {
             $query = new SugarQuery();
             $query->from(BeanFactory::getBean('KBContents'));
             $query->select(array('id', 'status'));
-            $query->where()
-                ->notEquals('id', $bean->id)
+            $whereAnd = $query->where();
+            if ($this->id) {
+                $whereAnd->notEquals('id', $this->id);
+            }
+            $whereAnd
                 ->equals('active_rev', 1)
-                ->equals('kbdocument_id', $bean->kbdocument_id)
-                ->equals('kbarticle_id', $bean->kbarticle_id);
+                ->equals('kbdocument_id', $this->kbdocument_id)
+                ->equals('kbarticle_id', $this->kbarticle_id);
             $query->orderBy('revision', 'DESC');
             $query->limit(1);
 
@@ -350,23 +353,25 @@ class KBContent extends SugarBean {
     }
 
     /**
-     * Reset active revision status for all revisions in article.
-     * @param SugarBean $bean
+     * Reset active revision status for all revisions in article except this.
      */
-    protected function resetActiveRev($bean = null)
+    protected function resetActiveRev()
     {
         $query = new SugarQuery();
-        $bean = ($bean === null) ? $this : $bean;
-        $query->from($bean);
+        $query->from($this);
         $query->select(array('id'));
-        $query->where()
-            ->equals('kbdocument_id', $bean->kbdocument_id)
-            ->equals('kbarticle_id', $bean->kbarticle_id)
-            ->notEquals('id', $bean->id);
+        $whereAnd = $query->where();
+        if ($this->id) {
+            $whereAnd->notEquals('id', $this->id);
+        }
+        $whereAnd
+            ->equals('kbdocument_id', $this->kbdocument_id)
+            ->equals('kbarticle_id', $this->kbarticle_id)
+            ->equals('active_rev', 1);
 
         $result = $query->execute();
         foreach ($result as $row) {
-            $oldRevBean = BeanFactory::getBean($bean->module_name, $row['id']);
+            $oldRevBean = BeanFactory::getBean($this->module_name, $row['id']);
             $oldRevBean->active_rev = 0;
             $oldRevBean->save();
         }
@@ -374,26 +379,27 @@ class KBContent extends SugarBean {
 
     /**
      * Expire all published articles.
-     * @param SugarBean $bean
      */
-    protected function expirePublished($bean = null)
+    protected function expirePublished()
     {
-        $bean = ($bean === null) ? $this : $bean;
         $expDate = $this->db->convert("'".$GLOBALS['timedate']->nowDb()."'", 'datetime');
         $statuses = static::getPublishedStatuses();
 
         $query = new SugarQuery();
-        $query->from($bean);
+        $query->from($this);
         $query->select(array('id'));
-        $query->where()
-            ->equals('kbdocument_id', $bean->kbdocument_id)
-            ->equals('kbarticle_id', $bean->kbarticle_id)
-            ->notEquals('id', $bean->id)
+        $whereAnd = $query->where();
+        if ($this->id) {
+            $whereAnd->notEquals('id', $this->id);
+        }
+        $whereAnd
+            ->equals('kbdocument_id', $this->kbdocument_id)
+            ->equals('kbarticle_id', $this->kbarticle_id)
             ->in('status', $statuses);
 
         $result = $query->execute();
         foreach ($result as $row) {
-            $oldStatusBean = BeanFactory::getBean($bean->module_name, $row['id']);
+            $oldStatusBean = BeanFactory::getBean($this->module_name, $row['id']);
             $oldStatusBean->exp_date = $expDate;
             $oldStatusBean->status = static::ST_EXPIRED;
             $oldStatusBean->save();
@@ -436,5 +442,59 @@ class KBContent extends SugarBean {
                 $this->usefulness_user_vote = $row['vote'];
             }
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    function get_notification_recipients()
+    {
+        $notify_user = BeanFactory::getBean('Users');
+        if ($this->status == self::ST_IN_REVIEW) {
+            $notify_user->retrieve($this->kbsapprover_id);
+        } else {
+            $notify_user->retrieve($this->assigned_user_id);
+        }
+        $this->new_assigned_user_name = $notify_user->full_name;
+
+        LoggerManager::getLogger()->info("Notifications: recipient is {$this->new_assigned_user_name}");
+
+        return array($notify_user);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function set_notification_body($xtpl, $bean)
+    {
+        global $app_list_strings, $current_user, $locale;
+        $user = BeanFactory::getBean('Users', $bean->created_by);
+        $status = isset($bean->status) ? $app_list_strings['kbdocument_status_dom'][$bean->status] : '';
+        $timedate = TimeDate::getInstance();
+        $dateCreated = $bean->date_entered ?
+            $timedate->to_display_date_time($bean->date_entered) :
+            $timedate->to_display_date_time($bean->fetched_row['date_entered']);
+        $messageLbl = '';
+        $preMessage = '';
+
+        if ($bean->status == self::ST_IN_REVIEW) {
+            $preMessage = "$current_user->name ";
+            $messageLbl = 'LBL_KB_PUBLISHED_REQUEST';
+
+        } elseif (in_array($bean->status, KBContent::getPublishedStatuses())) {
+            $messageLbl = 'LBL_KB_NOTIFICATION';
+
+        } elseif ($bean->status == self::ST_DRAFT) {
+            $messageLbl = 'LBL_KB_STATUS_BACK_TO_DRAFT';
+        }
+
+        $xtpl->assign('KBDOCUMENT_NAME', $bean->name);
+        $xtpl->assign('KBDOCUMENT_STATUS', $status);
+        $xtpl->assign('KBDOCUMENT_DATE_CREATED', $dateCreated);
+        $xtpl->assign('KBDOCUMENT_CREATED_BY', $locale->formatName($user));
+        $xtpl->assign('KBDOCUMENT_DESCRIPTION', $bean->description);
+        $xtpl->assign('NOTIFICATION_MESSAGE', $preMessage . translate($messageLbl, $this->module_dir));
+
+        return $xtpl;
     }
 }

@@ -240,6 +240,8 @@
                                 });
                             }
                         ], function(err, activity) {
+                            var options;
+
                             app.alert.dismiss('uploading_attachments');
                             component.trigger('attachments:end');
                             if (err) {
@@ -248,7 +250,8 @@
                                     messages: app.lang.get('LBL_EMAIL_ATTACHMENT_UPLOAD_FAILED')
                                 });
                             } else {
-                                self.context.reloadData({recursive: false});
+                                options = _.extend({recursive: false}, self.context.get('collectionOptions') || {});
+                                self.context.reloadData(options);
                                 self.clearAttachments.call(self);
                             }
                         });
@@ -260,13 +263,11 @@
              * Map parentId and parentType into note attributes
              * Do nothing if parentId or parentType are empty
              *
-             * @param {string} parentId id of the parent (null if no parent)
-             * @param {string} parentType module of the parent record
              * @private
              */
             _mapNoteParentAttributes: function() {
-                var parentId = this.context.parent.get('model').id,
-                    parentType = this.context.parent.get('model').module;
+                var parentId = this.context.parent.get('model').id;
+                var parentType = this.context.parent.get('model').module;
 
                 if (parentType && parentId) {
                     switch (parentType) {
@@ -286,7 +287,7 @@
                                 'parent_type': parentType
                             };
                     }
-                } else if (parentType && parentType === 'Activities') {
+                } else if (parentType) {
                     return {
                         'parent_type': parentType
                     };

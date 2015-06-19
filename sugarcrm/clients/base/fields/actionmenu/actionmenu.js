@@ -61,7 +61,7 @@
         if (this.options.viewName === 'list-header') {
             app.shortcuts.register({
                 id: 'SelectAll:Checkbox',
-                keys: 'ctrl+a',
+                keys: 'mod+a',
                 component: this,
                 description: 'LBL_SHORTCUT_SELECT_ALL',
                 handler: function() {
@@ -293,6 +293,15 @@
             this.setDropdownDisabled(this.massCollection.length === 0);
         }
     },
+
+    /**
+     * Since we don't have a default action button we don't need
+     * to render anything here. See {@link View.Fields.Base.ActiondropdownField#_renderFields}.
+     *
+     * @override
+     * @protected
+     */
+    _renderFields: $.noop,
 
     /**
      * Update the dropdown usability while the total count is estimating.

@@ -32,6 +32,15 @@
         app.drawer = this;
         this.onCloseCallback = [];
 
+        // define the states the drawer can be in
+        this.STATES = {
+            IDLE: 'idle',
+            OPENING: 'opening',
+            CLOSING: 'closing'
+        };
+        // start in the IDLE state; the drawer will be IDLE most of the time
+        this._enterState(this.STATES.IDLE);
+
         //clear out drawers before routing to another page
         this.name = 'drawer';
         app.routing.before('route', this.reset, this);
@@ -69,6 +78,8 @@
             return;
         }
 
+        this._enterState(this.STATES.OPENING);
+
         //store the callback function to be called later
         if (_.isUndefined(onClose)) {
             this.onCloseCallback.push(function(){});
@@ -85,16 +96,9 @@
         this._scrollToTop();
 
         //open the drawer
-        this._animateOpenDrawer(function() {
-            // Forecasts config route uses the drawer but if user
-            // does not have access, initialize is never called so the
-            // context on the layout never gets set. Adding check to make
-            // sure there actually is a context to use on the layout
-            if (layout.context) {
-                //called after animation finished
-                app.trigger("app:view:change", layout.options.name, layout.context.attributes);
-            }
-        });
+        this._animateOpenDrawer(_.bind(function() {
+            this._afterOpenActions();
+        }, this));
 
         //load and render new layout in drawer
         layout.loadData();
@@ -119,6 +123,8 @@
                 return;
             }
 
+            this._enterState(this.STATES.CLOSING);
+
             //close the drawer
             this._animateCloseDrawer(function() {
                 self._afterCloseActions(args);
@@ -139,6 +145,8 @@
             if (!app.triggerBefore('app:view:change')) {
                 return;
             }
+
+            this._enterState(this.STATES.CLOSING);
 
             //move the bottom drawer to the top and the next drawer to be viewed on the bottom.
             drawers.$bottom.css('top','');
@@ -168,6 +176,8 @@
             return;
         }
 
+        this._enterState(this.STATES.OPENING);
+
         this._initializeComponentsFromDefinition(layoutDef);
 
         drawers = this._getDrawers(true);
@@ -185,11 +195,13 @@
         layout = _.last(this._components);
         layout.loadData();
         layout.render();
+
+        this._enterState(this.STATES.IDLE);
     },
 
     /**
      * Retrieves the number of drawers in the stack
-     * @returns {Number}
+     * @return {Number}
      */
     count: function() {
         return this._components.length;
@@ -206,7 +218,7 @@
 
     /**
      * Get currently active drawer layout.
-     * @returns {View.Layout}
+     * @return {View.Layout}
      */
     getActiveDrawerLayout: function() {
         if (this.count() === 0) {
@@ -228,6 +240,8 @@
 
         var $main = app.$contentEl.children().first();
 
+        this._enterState(this.STATES.CLOSING);
+
         _.each(this._components, function(component) {
             component.dispose();
         }, this);
@@ -245,6 +259,8 @@
 
         $('body').removeClass('noscroll');
         app.$contentEl.removeClass('noscroll');
+
+        this._enterState(this.STATES.IDLE);
     },
 
     /**
@@ -281,6 +297,7 @@
      */
     _animateOpenDrawer: function(callback) {
         if (this._components.length === 0) {
+            this._enterState(this.STATES.IDLE);
             return;
         }
 
@@ -354,6 +371,7 @@
      */
     _animateCloseDrawer: function(callback) {
         if (this._components.length === 0) {
+            this._enterState(this.STATES.IDLE);
             return;
         }
 
@@ -541,6 +559,25 @@
     },
 
     /**
+     * Trigger view change event and return to idle state.
+     *
+     * @private
+     */
+    _afterOpenActions: function() {
+        var layout = _.last(this._components);
+
+        // Forecasts config route uses the drawer but if user
+        // does not have access, initialize is never called so the
+        // context on the layout never gets set. Adding check to make
+        // sure there actually is a context to use on the layout
+        if (layout.context) {
+            app.trigger('app:view:change', layout.options.name, layout.context.attributes);
+        }
+
+        this._enterState(this.STATES.IDLE);
+    },
+
+    /**
      * Trigger view change event and restore shortcuts session.
      * @param {array} callbackArgs Arguments that will be passed to the callback
      * @private
@@ -556,6 +593,8 @@
         } else { //we've returned to base layout
             app.trigger("app:view:change", app.controller.context.get("layout"), app.controller.context.attributes);
         }
+
+        this._enterState(this.STATES.IDLE);
 
         app.shortcuts.restoreSession();
 
@@ -723,7 +762,7 @@
 
     /**
      * Get the current height of the active drawer
-     * @returns {Number}
+     * @return {Number}
      */
     getHeight: function(){
         if (_.isEmpty(this._components)) {
@@ -761,9 +800,72 @@
      */
     _resizeDrawer: _.throttle(function() {
         var drawers = this._getDrawers(false);
-        // Do not resize the drawer when the drawer is in the middle of a transition.
-        if (drawers.$top && !this._isInTransition(drawers.$top)) {
+        // Do not resize the drawer when the drawer is opening or closing.
+        if (drawers.$top && !this.isOpening() && !this.isClosing()) {
             this._expandDrawer(drawers.$top, drawers.$bottom);
         }
-    }, 300)
+    }, 300),
+
+    /**
+     * Enter the drawer into one of the allowed states.
+     *
+     * @param {string} state
+     * @return {string} If the returned state is the same as the previous
+     * state, then the parameter was not a valid state.
+     * @private
+     */
+    _enterState: function(state) {
+        if (_.contains(this.STATES, state)) {
+            this.state = state;
+        }
+
+        return this.state;
+    },
+
+    /**
+     * Confirms or denies that the current state of the drawer is the expected
+     * state.
+     *
+     * @param state
+     * @return {boolean}
+     */
+    isInState: function(state) {
+        return state === this.state;
+    },
+
+    /**
+     * Is the drawer currently in the idle state?
+     *
+     * The drawer will be in the IDLE state unless a drawer is currently
+     * opening or closing.
+     *
+     * @return {boolean}
+     */
+    isIdle: function() {
+        return this.isInState(this.STATES.IDLE);
+    },
+
+    /**
+     * Is the drawer currently opening?
+     *
+     * The drawer will be in the OPENING state while a drawer is opening. Once
+     * the open animation has completed, the drawer state is returned to IDLE.
+     *
+     * @return {boolean}
+     */
+    isOpening: function() {
+        return this.isInState(this.STATES.OPENING);
+    },
+
+    /**
+     * Is the drawer currently closing?
+     *
+     * The drawer will be in the CLOSING state while a drawer is closing. Once
+     * the close animation has completed, the drawer state is returned to IDLE.
+     *
+     * @return {boolean}
+     */
+    isClosing: function() {
+        return this.isInState(this.STATES.CLOSING);
+    }
 })

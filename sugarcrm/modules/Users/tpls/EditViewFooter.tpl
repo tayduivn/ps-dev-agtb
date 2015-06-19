@@ -328,7 +328,8 @@
                             <td ><slot>
                                 <input tabindex='14' name='num_grp_sep' id='default_number_grouping_seperator'
                                     type='text' maxlength='1' size='1' value='{$NUM_GRP_SEP}'
-                                    onkeydown='setSigDigits();' onkeyup='setSigDigits();'>
+                                    onkeydown='this.value=this.value.replace(/[\w]+/g, "");setSigDigits();'
+                                    onkeyup='this.value=this.value.replace(/[\w]+/g, "");setSigDigits();'>
                             </slot></td></tr>
                         {capture name=SMARTY_LOCALE_NAME_FORMAT_DESC}&nbsp;{$MOD.LBL_LOCALE_NAME_FORMAT_DESC}{/capture}
                         <tr>
@@ -338,7 +339,8 @@
                             <td ><slot>
                                 <input tabindex='14' name='dec_sep' id='default_decimal_seperator'
                                     type='text' maxlength='1' size='1' value='{$DEC_SEP}'
-                                    onkeydown='setSigDigits();' onkeyup='setSigDigits();'>
+                                    onkeydown='this.value=this.value.replace(/[\w]+/g, "");setSigDigits();'
+                                    onkeyup='this.value=this.value.replace(/[\w]+/g, "");setSigDigits();'>
                             </slot></td>
                         </tr>
                     </table>

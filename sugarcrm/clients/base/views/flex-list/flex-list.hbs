@@ -14,11 +14,11 @@
 <div class="flex-list-view-content">
     <table class="table table-striped dataTable{{#has "ReorderableColumns" ../plugins}} reorderable-columns{{/has}}{{#if ../isSearchAndSelectAction}} search-and-select{{/if}}">
     <thead>
-        {{partial 'row-header' ../this view=../this}}
+        {{partial 'row-header' ../this view=../this fields=fields}}
     </thead>
     <tbody>
         {{#each ../collection.models}}
-            {{partial 'row' ../../this view=../../this model=this module=this.module}}
+            {{partial 'row' ../../this view=../../this model=this module=this.module fields=../fields}}
         {{/each}}
     </tbody>
     <tfoot>

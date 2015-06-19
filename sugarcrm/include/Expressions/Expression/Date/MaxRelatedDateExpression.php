@@ -10,37 +10,39 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 require_once('include/Expressions/Expression/Date/DateExpression.php');
+
 /**
  * <b>maxRelatedDate(Relate <i>link</i>, String <i>field</i>)</b><br>
  * Returns the highest value of <i>field</i> in records related by <i>link</i><br/>
  * ex: <i>maxRelatedDate($products, "date_closed_timestamp")</i> in Opportunities would return the <br/>
  * latest date_closed_timestamp of all related Revenue Line Items.
  */
-
 class MaxRelatedDateExpression extends DateExpression
 {
-    
+
     /**
      * Returns the opreation name that this Expression should be
      * called by.
      */
-    public static function getOperationName() {
+    public static function getOperationName()
+    {
         return array("maxRelatedDate");
     }
-    
-    public function evaluate() {
+
+    public function evaluate()
+    {
         $params = $this->getParameters();
         //This should be of relate type, which means an array of SugarBean objects
         $linkField = $params[0]->evaluate();
         $relfield = $params[1]->evaluate();
         $ret = 0;
         $isTimestamp = true;
-        
+
         //if the field or relationship isn't defined, bail
         if (!is_array($linkField) || empty($linkField)) {
-           return $ret; 
-        }           
-                        
+            return '';
+        }
+
         foreach ($linkField as $bean) {
             // we have to use the fetched_row as it's still in db format
             // where as the $bean->$relfield is formatted into the users format.
@@ -71,31 +73,90 @@ class MaxRelatedDateExpression extends DateExpression
                 $ret = $value;
             }
         }
-        
+
         //if nothing was done, return an empty string
-        if ($ret == 0 && $isTimestamp) {            
-            return "";   
+        if ($ret == 0 && $isTimestamp) {
+            return '';
         }
-        
+
         //return the timestamp if the field started off that way
         if ($isTimestamp) {
             return $ret;
-        } 
-        
+        }
+
         //convert the timestamp to a date and return
         $date = new DateTime();
         $date->setTimestamp($ret);
-   
+
         return $date->format("Y-m-d");
     }
-    
+
     //todo: javascript version here
     /**
      * Returns the JS Equivalent of the evaluate function.
      */
-    public static function getJSEvaluate() 
+    public static function getJSEvaluate()
     {
-        return "";
+        return <<<JS
+        // this is only supported in Sidecar
+        if (App === undefined) {
+            return SUGAR.expressions.Expression.FALSE;
+        }
+
+        var params = this.params,
+            view = this.context.view,
+            target = this.context.target,
+            relationship = params[0].evaluate(),
+            rel_field = params[1].evaluate();
+
+        var model = this.context.relatedModel || this.context.model,  // the model
+            // has the model been removed from it's collection
+            sortByDateDesc = function (lhs, rhs) { return lhs < rhs ? 1 : lhs > rhs ? -1 : 0; },
+            hasModelBeenRemoved = this.context.isRemoveEvent || false,
+            current_value = this.context.getRelatedField(relationship, 'maxRelatedDate', rel_field) || '',
+            all_values = this.context.getRelatedField(relationship, 'maxRelatedDate', rel_field + '_values') || {},
+            new_value = model.get(rel_field) || '',
+            dates = [],
+            rollup_value = '';
+
+        if (_.isEqual(new_value, '')) {
+            return current_value;
+        }
+
+        if (hasModelBeenRemoved) {
+            delete all_values[model.get('id')];
+        } else {
+            all_values[model.get('id')] = new_value;
+        }
+
+        _.each(all_values, function(_date) {
+            dates.push(new App.date(_date));
+        });
+
+        // now the furthest out is on top
+        rollup_value = dates.sort(sortByDateDesc)[0].format('YYYY-MM-DD');
+
+        if (!_.isEqual(rollup_value, current_value)) {
+            this.context.model.set(target, rollup_value);
+            this.context.updateRelatedFieldValue(
+                relationship,
+                'maxRelatedDate',
+                rel_field,
+                rollup_value,
+                this.context.model.isNew()
+            );
+        }
+
+        // always update the values array
+        this.context.updateRelatedFieldValue(
+            relationship,
+            'maxRelatedDate',
+            rel_field + '_values',
+            all_values,
+            this.context.model.isNew()
+        );
+JS;
+
     }
 
     /**
@@ -103,6 +164,6 @@ class MaxRelatedDateExpression extends DateExpression
      */
     public static function getParameterTypes()
     {
-    	return array(AbstractExpression::$RELATE_TYPE, AbstractExpression::$STRING_TYPE);
+        return array(AbstractExpression::$RELATE_TYPE, AbstractExpression::$STRING_TYPE);
     }
 }

@@ -1611,7 +1611,7 @@ class MetaDataManager
 
         // The basics are, for each platform, rewrite the cache for public and private
         if (empty($platforms)) {
-            $platforms = static::getPlatformList();
+            $platforms = static::getPlatformsWithCaches();
         }
 
         // Make sure the LanguageManager created modules cache is clear
@@ -1624,7 +1624,11 @@ class MetaDataManager
                     $mm = static::getManager($platform, $public, true);
                     $contexts = static::getAllMetadataContexts($public);
                     foreach ($contexts as $context) {
-                        $mm->rebuildCache($force, $context);
+                        if ($context instanceof MetaDataContextDefault) {
+                            $mm->rebuildCache(true);
+                        } else {
+                            $mm->invalidateCache($platforms, $context);
+                        }
                     }
                 }
             }
@@ -2239,6 +2243,7 @@ class MetaDataManager
 
         // Get our metadata
         $data = $this->getMetadataCache(false, $context);
+        $oldHash = !empty($data['_hash']) ? $data['_hash'] : null;
 
         //If we failed to load the metadata from cache, load it now the hard way.
         if (empty($data) || !$this->verifyJSSource($data)) {
@@ -2251,7 +2256,7 @@ class MetaDataManager
 
         // Cache the data so long as the current cache is different from the data
         // hash
-        if ($data['_hash'] != $this->getMetadataHash()) {
+        if ($data['_hash'] != $oldHash) {
             $this->putMetadataCache($data, $context);
         }
 
@@ -3826,6 +3831,8 @@ class MetaDataManager
                 // make sure first file wins and its metadata doesn't get overridden
                 if (!isset($filters[$fieldName])) {
                     $filters[$fieldName] = $this->fixDropdownFilter($filter, $fieldName);
+                    //To preserve order in JSON, we need to return the filters as tuples.
+                    $filters[$fieldName] = array_map(null, array_keys($filters[$fieldName]), $filters[$fieldName]);
                 }
             }
         }
@@ -3935,6 +3942,15 @@ class MetaDataManager
     public static function disableCache()
     {
         self::$isCacheEnabled = false;
+    }
+
+    /**
+     * Returns the current state of the metadata cache
+     * @return bool
+     */
+    public static function cacheEnabled()
+    {
+        return self::$isCacheEnabled;
     }
 
     /**

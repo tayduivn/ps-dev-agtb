@@ -13,7 +13,7 @@
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr>
     <td colspan="100">
-        <h2> {$moduleTitle}</h2>
+        <h2>{$MOD.LBL_FTS_SETTINGS}</h2>
     </td>
 </tr>
 <tr>
@@ -97,6 +97,11 @@
 	</table>
 </form>
 
+<tr>
+    <td colspan="100">{$MOD.LBL_UNIFIED_SEARCH_SETTINGS_LINK_DESC}</td>
+</tr>
+</table>
+
 <div id='selectFTSModules' class="yui-hidden">
     <div style="background-color: white; padding: 20px; overflow:scroll; height:400px;">
         <div id='selectFTSModulesTable' ></div>
@@ -142,28 +147,28 @@
 	SUGAR.globalSearchEnabledTable.render();
 	SUGAR.globalSearchDisabledTable.render();
 
-    SUGAR.getEnabledModules = function()
-    {
-        var enabledTable = SUGAR.globalSearchEnabledTable;
-        var modules = "";
-        for(var i=0; i < enabledTable.getRecordSet().getLength(); i++)
+        SUGAR.getModulesFromTable = function(table)
         {
-            var data = enabledTable.getRecord(i).getData();
-            if (data.module && data.module != '')
-                modules += "," + data.module;
+            var modules = "";
+            for(var i=0; i < table.getRecordSet().getLength(); i++)
+            {
+                var data = table.getRecord(i).getData();
+                if (data.module && data.module != '')
+                    modules += "," + data.module;
+            }
+            modules = modules == "" ? modules : modules.substr(1);
+            return modules;
         }
-        return modules;
-    }
-    SUGAR.getEnabledModulesForFTSSched = function()
-    {
-        var enabledTable = SUGAR.FTS.selectedDataTable;
-        var modules = [];
-        var selectedIDs = enabledTable.getSelectedRows();
-        for(var i=0; i < selectedIDs.length; i++)
+        SUGAR.getEnabledModulesForFTSSched = function()
         {
-            var data = enabledTable.getRecord(selectedIDs[i]).getData();
-            modules.push(data.module);
-        }
+            var enabledTable = SUGAR.FTS.selectedDataTable;
+            var modules = [];
+            var selectedIDs = enabledTable.getSelectedRows();
+            for(var i=0; i < selectedIDs.length; i++)
+            {
+                var data = enabledTable.getRecord(selectedIDs[i]).getData();
+                modules.push(data.module);
+            }
 
         return modules;
     }
@@ -195,9 +200,8 @@
             if(!check_form('GlobalSearchSettings'))
                 return;
         }
-		var enabledTable = SUGAR.globalSearchEnabledTable;
-		var modules = SUGAR.getEnabledModules();
-		modules = modules == "" ? modules : modules.substr(1);
+        var enabled = SUGAR.getModulesFromTable(SUGAR.globalSearchEnabledTable);
+        var disabled = SUGAR.getModulesFromTable(SUGAR.globalSearchDisabledTable);
 
 		ajaxStatus.showStatus(SUGAR.language.get('Administration', 'LBL_SAVING'));
 		Connect.asyncRequest(
@@ -210,7 +214,8 @@
                 host: host,
                 port: port,
                 type: type,
-				enabled_modules: modules
+                enabled_modules: enabled,
+                disabled_modules: disabled
 			}) + "to_pdf=1"
         );
 

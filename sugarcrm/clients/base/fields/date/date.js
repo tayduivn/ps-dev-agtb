@@ -238,16 +238,32 @@
      * care of unformatting the value.
      */
     bindDomChange: function() {
-        var $field = this.$(this.fieldTag);
+        if (this._inDetailMode()) {
+            return;
+        }
+        
+        if (this.action === 'edit') {
+            var $field = this.$(this.fieldTag);
 
-        $field.on('focus', _.bind(this.handleFocus, this));
+            $field.on('focus', _.bind(this.handleFocus, this));
 
-        $('.main-pane, .flex-list-view-content').on('scroll.' + this.cid, _.bind(function() {
-            // make sure the dom element exists before trying to place the datepicker
-            if (this._getAppendToTarget()) {
-                $field.datepicker('place');
-            }
-        }, this));
+            $('.main-pane, .flex-list-view-content').on('scroll.' + this.cid, _.bind(function() {
+                // make sure the dom element exists before trying to place the datepicker
+                if (this._getAppendToTarget()) {
+                    $field.datepicker('place');
+                }
+            }, this));
+        }
+    },
+
+    /**
+     * Determine if the field is currently in a read-only (detail) mode.
+     *
+     * @return {boolean}
+     * @protected
+     */
+    _inDetailMode: function() {
+        return this.action !== 'edit' && this.action !== 'massupdate';
     },
 
     /**
@@ -256,13 +272,19 @@
     unbindDom: function() {
         this._super('unbindDom');
 
-        $('.main-pane, .flex-list-view-content').off('scroll.' + this.cid);
+        if (this._inDetailMode()) {
+            return;
+        }
 
-        var $field = this.$(this.fieldTag),
-            datePicker = $field.data('datepicker');
-        if (datePicker && !datePicker.hidden) {
-            // todo: when SC-2395 gets implemented change this to 'remove' not 'hide'
-            $field.datepicker('hide');
+        if (this.action === 'edit') {
+            $('.main-pane, .flex-list-view-content').off('scroll.' + this.cid);
+
+            var $field = this.$(this.fieldTag),
+                datePicker = $field.data('datepicker');
+            if (datePicker && !datePicker.hidden) {
+                // todo: when SC-2395 gets implemented change this to 'remove' not 'hide'
+                $field.datepicker('hide');
+            }
         }
     },
 

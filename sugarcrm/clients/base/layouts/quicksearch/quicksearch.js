@@ -56,7 +56,7 @@
         // Focus the search bar
         app.shortcuts.registerGlobal({
             id: 'Search:Focus',
-            keys: ['s', 'ctrl+alt+0'],
+            keys: ['s', 'mod+alt+0'],
             component: this,
             description: 'LBL_SHORTCUT_SEARCH',
             handler: function() {
@@ -152,6 +152,16 @@
                 }, this));
             }, this));
         }, this));
+
+        // Listener for display of tags ribbon menu
+        this.on('quicksearch:tag:open', function() {
+            this.$el.addClass('quicksearch-tags-open');
+        }, this);
+
+        // Listener for hiding of tags ribbon menu
+        this.on('quicksearch:tag:close', function() {
+            this.$el.removeClass('quicksearch-tags-open');
+        }, this);
     },
 
     /**

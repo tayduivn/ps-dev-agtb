@@ -10,10 +10,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-<tr name="{{module}}_{{attributes.id}}" class="single">
-    {{#each ../fields}}
+<tr name="{{module}}_{{model.id}}" class="single">
+    {{#each fields}}
         <td{{#if align}} class="{{align}}"{{/if}}>
-            {{field ../../../this model=../this template=../../../viewName}}
+            {{field ../view model=../view.model template=../view.viewName}}
         </td>
     {{/each}}
 </tr>

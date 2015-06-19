@@ -291,7 +291,8 @@
      */
     loadEnumOptions: function(fetch, callback) {
         var self = this;
-        var _itemsKey = 'cache:' + this.module + ':' + this.name + ':items';
+        var _module = this.getLoadEnumOptionsModule();
+        var _itemsKey = 'cache:' + _module + ':' + this.name + ':items';
 
         this.items = this.def.options || this.context.get(_itemsKey);
 
@@ -299,7 +300,7 @@
 
         if (fetch || !this.items) {
             this.isFetchingOptions = true;
-            var _key = 'request:' + this.module + ':' + this.name;
+            var _key = 'request:' + _module + ':' + this.name;
             //if previous request is existed, ignore the duplicate request
             if (this.context.get(_key)) {
                 var request = this.context.get(_key);
@@ -310,7 +311,7 @@
                     }
                 }, this));
             } else {
-                var request = app.api.enumOptions(self.module, self.name, {
+                var request = app.api.enumOptions(_module, self.name, {
                     success: function(o) {
                         if(self.disposed) { return; }
                         if (self.items !== o) {
@@ -327,6 +328,15 @@
         } else if (_.isString(this.items)) {
             this.items = app.lang.getAppListStrings(this.items);
         }
+    },
+
+    /**
+     * Allow overriding of what module is used for loading the enum options
+     *
+     * @return {string}
+     */
+    getLoadEnumOptionsModule: function() {
+        return this.module;
     },
 
     /**
@@ -456,11 +466,17 @@
         }
 
         //Now remove the disabled options
-        _.each(filter, function(visible, key) {
+        if (!this._keysOrder) {
+            this._keysOrder = {};
+        }
+        _.each(filter, function(val, index) {
+            var key = val[0],
+                visible = val[1];
             if ((visible || key in currentIndex) && !_.isUndefined(options[key]) && options[key] !== false) {
+                this._keysOrder[key] = index;
                 newOptions[key] = options[key];
             }
-        });
+        }, this);
 
         return newOptions;
     },
@@ -514,7 +530,7 @@
      * @private
      */
     _sortResults: function(results, container, query) {
-        var keys, sortedResults;
+        var sortedResults;
 
         if (this.def.sort_alpha) {
             sortedResults = _.sortBy(results, function(item) {
@@ -523,17 +539,8 @@
             return sortedResults;
         }
 
-        if (!this._keysOrder) {
-            this._keysOrder = {};
-            keys = _.map(this.items, function(key) {
-                return key.toString();
-            });
-            if (!_.isEqual(keys, _.keys(this.items))) {
-                _.each(keys, function(key, index) {
-                    return this._keysOrder[key] = index;
-                }, this);
-            }
-        }
+        this._setupKeysOrder();
+
         if (_.isEmpty(this._keysOrder)) {
             return results;
         }
@@ -549,6 +556,25 @@
         return sortedResults;
     },
 
+    _setupKeysOrder: function() {
+        var keys, orderedKeys, filteredOrderedKeys,
+            toString = function(k) {
+                return k.toString();
+            };
+
+        if (!this._keysOrder) {
+            this._keysOrder = {};
+            orderedKeys = _.map(app.lang.getAppListKeys(this.def.options), toString);
+            keys = _.map(_.keys(this.items), toString);
+            filteredOrderedKeys = _.intersection(orderedKeys, keys);
+            if (!_.isEqual(filteredOrderedKeys, _.keys(this.items))) {
+                _.each(filteredOrderedKeys, function(key, index) {
+                    return this._keysOrder[key] = index;
+                }, this);
+            }
+        }
+    },
+
     /**
      * Helper function for retrieving the default value for the selection
      * @param {Array} optionsKeys Set of option keys that will be loaded into Select2 widget
@@ -559,6 +585,11 @@
         if (this.def && !_.isEmpty(this.def.default)) {
             return this.def.default;
         } else {
+            this._setupKeysOrder();
+            //Check if we have a keys order, and that the sets of keys match
+            if (!_.isEmpty(this._keysOrder) && _.isEmpty(_.difference(_.keys(this._keysOrder), optionsKeys))) {
+                return _.first(_.invert(this._keysOrder))
+            }
             return _.first(optionsKeys);
         }
     },

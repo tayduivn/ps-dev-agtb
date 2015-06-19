@@ -80,7 +80,9 @@
             this.collection.sync,
             _.bind(function(sync, method, model, options) {
                 options = options || {};
-                var viewModelId = this.model.get('id');
+                var viewModelId = this.model.get('id')
+                    || this.context.get('model').get('id')
+                    || this.context.parent.get('model').get('id');
                 options.endpoint = function(method, model, options, callbacks) {
                     var url = app.api.buildURL(
                         model.module,

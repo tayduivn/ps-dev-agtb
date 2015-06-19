@@ -238,7 +238,7 @@ class PipelineChartApi extends SugarApi
     protected function getTimeperiod($tp_id = '')
     {
         $forecast_settings = $this->getForecastSettings();
-        if ($forecast_settings['is_setup'] == 1) {
+        if (SugarACL::checkAccess('Forecasts', 'access') && $forecast_settings['is_setup'] == 1) {
             // we have no timeperiod defined, so lets just pull the current one
             if (empty($tp_id)) {
                 $tp_id = TimePeriod::getCurrentId();

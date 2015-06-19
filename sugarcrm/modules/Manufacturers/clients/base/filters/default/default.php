@@ -1,4 +1,4 @@
-{{!
+<?php
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -9,5 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-}}
-<span class="label ellipsis_inline kbsstatus {{statusClass}}" >{{statusLabel}}</span>
+$viewdefs['Manufacturers']['base']['filter']['default'] = array(
+    'default_filter' => 'all_records',
+);

@@ -214,9 +214,9 @@ nv.models.gaugeChart = function() {
         }
       });
 
-      dispatch.on('chartClick', function(eo) {
+      dispatch.on('chartClick', function() {
         if (legend.enabled()) {
-          legend.dispatch.closeMenu(eo);
+          legend.dispatch.closeMenu();
         }
       });
 

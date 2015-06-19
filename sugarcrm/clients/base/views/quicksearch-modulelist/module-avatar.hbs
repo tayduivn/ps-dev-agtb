@@ -15,9 +15,9 @@
         <span class="label label-module label-module-sm label-{{module}}" title="{{getModuleName module plural=true}}">{{moduleIconLabel module}}</span>
     {{else}}
         {{#if multiple}}
-            <span class="label label-module-sm multiple-modules" aria-label="{{str 'LBL_GLOBAL_SEARCH_MODULE_FILTER'}}" title="{{str 'LBL_MULTIPLE_MODULES'}}"><span class="non-module-label">{{str 'LBL_MULTIPLE_MODULES'}}</span></span>
+            <span class="label non-module-label" aria-label="{{str 'LBL_GLOBAL_SEARCH_MODULE_FILTER'}}" title="{{str 'LBL_MULTIPLE_MODULES'}}">{{str 'LBL_MULTIPLE_MODULES'}}</span>
         {{else}}
-            <span class="label label-module-sm all-modules" aria-label="{{str 'LBL_GLOBAL_SEARCH_MODULE_FILTER'}}" title="{{str 'LBL_MODULE_ALL'}}"><span class="non-module-label">{{str 'LBL_MODULE_ALL'}}</span></span>
+            <span class="label non-module-label" aria-label="{{str 'LBL_GLOBAL_SEARCH_MODULE_FILTER'}}" title="{{str 'LBL_MODULE_ALL'}}">{{str 'LBL_MODULE_ALL'}}</span>
         {{/if}}
     {{/if}}
 {{/each}}

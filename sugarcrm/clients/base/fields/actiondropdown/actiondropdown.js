@@ -280,6 +280,21 @@
     },
 
     /**
+     * Renders the default action button only.
+     * The fields in the dropdown will be rendered on click on the dropdown
+     * button with {@link #renderDropdown}.
+     *
+     * @override
+     * @protected
+     */
+    _renderFields: function() {
+        if (!_.isEmpty(this.defaultActionBtn)) {
+            this.defaultActionBtn.setElement(this.$('span[sfuuid="' + this.defaultActionBtn.sfId + '"]'));
+            this.defaultActionBtn.render();
+        }
+    },
+
+    /**
      * Formats the default action button if it exists.
      * Sets the mode of the button to `small` if it is in a subpanel.
      *

@@ -28,7 +28,7 @@
 
     tagName: "li",
     className: "activitystream-posts-comments-container",
-    plugins: ['RelativeTime', 'FileDragoff', 'QuickSearchFilter', 'Taggable', 'Tooltip'],
+    plugins: ['RelativeTime', 'FileDragoff', 'Taggable', 'Tooltip'],
     cacheNamePrefix: "user:avatars:",
     cacheNameExpire: ":expiry",
     expiryTime: 36000000,   //1 hour in milliseconds
@@ -427,6 +427,10 @@
      * Resize the iframe that embeds video
      */
     resizeVideo: function() {
+        // if this is disposed, then just bail as the code below with throw errors
+        if (this.disposed === true) {
+            return;
+        }
         var data = this.model.get('data'),
             $embed = this.$('.embed'),
             $iframes = $embed.find('iframe'),

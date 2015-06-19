@@ -1630,7 +1630,6 @@ $app_list_strings = array (
 
     'fts_field_config' => array(
         '0' => 'Disabled',
-        '1' => 'Store only',
         '2' => 'Searchable',
     ),
 
@@ -9197,6 +9196,7 @@ $app_strings = array (
     'LBL_SQS_INDICATOR' => '',
     'LBL_STATE' => 'State:',
     'LBL_STATUS_UPDATED'=>'Your Status for this event has been updated!',
+    'LBL_STATUS_NOT_UPDATED' => 'Your Status for this event has not been updated.',
     'LBL_STATUS'=>'Status:',
     'LBL_STREET'=>'Street',
     'LBL_SUBJECT' => 'Subject',
@@ -10226,6 +10226,13 @@ Sincerely, SugarCRM',
     'ERR_BLANK_PAGE_NAME' => 'Please enter a page name.',
     /* End MySugar Framework strings */
 
+    /* Sales Pipeline Dashlet */
+    'LBL_DASHLET_MY_PIPELINE' => 'My Pipeline',
+    'LBL_DASHLET_MY_TEAMS_PIPELINE' => "My Team's Pipeline",
+    'LBL_DASHLET_SALES_PIPELINE_CHART_NAME' => 'Sales Pipeline Chart',
+    'LBL_DASHLET_SALES_PIPELINE_CHART_DESC' => 'Displays current pipeline chart.',
+    /* End Sales Pipeline Dashlet */
+
     'LBL_NO_IMAGE' => 'No Image',
 
     'LBL_MODULE' => 'Module',
@@ -11198,6 +11205,9 @@ Sincerely, SugarCRM',
     'LBL_PANEL_DEFAULT' => 'Default',
     'ERR_BAD_RESPONSE_FROM_SERVER' => 'Bad response from the server',
 
+    //Sidecar expression context
+    'ERR_ASSIGNTO_ACTION' => 'Error occurred during AssignTo action.',
+
     //These are for the timeperiod name formats
     'LBL_ANNUAL_TIMEPERIOD_FORMAT' => 'Year {0}',
     'LBL_QUARTER_TIMEPERIOD_FORMAT' => '{1} Q{0}',
@@ -11467,7 +11477,7 @@ To create a new record using the values you have entered, click "Ignore Duplicat
 
     // shortcut keys help
     'LBL_SHORTCUT_KEYS_HELP_ABOUT' => 'SugarCRM enables power users to quickly perform certain tasks with keyboard shortcuts to increase productivity. The tables on the right describe available shortcuts along with the keys and the actions they perform.',
-    'LBL_SHORTCUT_KEYS_CONFIG_HELP' => "<h1>Supported keys</h1><ul><li>all alphanumeric characters and symbols</li><li>shift, ctrl, alt, command</li><li>enter, esc, space, tab, pageup, pagedown, end, home, ins, del, backspace</li></ul><h1>Supported features</h1><ul><li>Key combination: ctrl+m</li><li>Multiple keys: m,ctrl+m</li><li>Key sequence: m a</li></ul>",
+    'LBL_SHORTCUT_KEYS_CONFIG_HELP' => "<h1>Supported keys</h1><ul><li>all alphanumeric characters and symbols</li><li>shift, ctrl, alt, command, mod (ctrl in Windows/Linux and command in Macs)</li><li>enter, esc, space, tab, pageup, pagedown, end, home, ins, del, backspace</li></ul><h1>Supported features</h1><ul><li>Key combination: ctrl+m</li><li>Multiple keys: m,ctrl+m</li><li>Key sequence: m a</li></ul>",
     'LBL_GLOBAL_SHORTCUTS' => 'Global Shortcuts',
     'LBL_CONTEXTUAL_SHORTCUTS' => 'Contextual Shortcuts',
     'LBL_SHORTCUT_KEY_KEY' => 'Key',

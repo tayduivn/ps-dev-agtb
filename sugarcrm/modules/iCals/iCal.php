@@ -359,26 +359,6 @@ class iCal extends vCal {
     }
 
     /**
-    * Gets the time zone for the given user.
-    *
-    * @param User $current_user the user
-    * @return DateTimeZone the user's timezone
-    */
-    protected function getUserTimezone($current_user)
-    {
-        $gmtTZ = new DateTimeZone("UTC");
-        $userTZName = TimeDate::userTimezone($current_user);
-        if (!empty($userTZName))
-        {
-            $tz = new DateTimeZone($userTZName);
-        } else
-        {
-            $tz = $gmtTZ;
-        }
-        return $tz;
-    }
-
-    /**
     * Gets the daylight savings range for the given user.
     *
     * @param User $current_user the user
@@ -387,7 +367,7 @@ class iCal extends vCal {
     */
     protected function getDSTRange($current_user, $year)
     {
-        $tz = $this->getUserTimezone($current_user);
+        $tz = $current_user->getTimezone();
         $idx = 0;
         $result = array();
 
@@ -443,7 +423,6 @@ class iCal extends vCal {
         $timezoneName = $current_user->getPreference('timezone');
 
         $gmtTZ = new DateTimeZone("UTC");
-        $tz = $this->getUserTimezone($current_user);
         $dstRange = $this->getDSTRange($current_user, date('Y'));
 
         $dstOffset = 0;

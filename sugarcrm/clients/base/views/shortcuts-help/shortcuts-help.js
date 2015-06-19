@@ -17,6 +17,9 @@
  */
 ({
     shortcutsHelpTableTemplate: '',
+    modRegExp: new RegExp('mod'),
+    macRegExp: new RegExp('Mac|iPod|iPhone|iPad'),
+    hasCommandKey: false,
 
     /**
      * @inheritdoc
@@ -31,6 +34,9 @@
 
         // get templates
         this.shortcutsHelpTableTemplate = app.template.getView(this.name + '.shortcuts-help-table');
+
+        // test to see if user uses MacOS.
+        this.hasCommandKey = this.macRegExp.test(this.getCurrentPlatform());
     },
 
     /**
@@ -101,9 +107,21 @@
     /**
      * Build text for keys needed to perform shortcut action.
      * @param {Array} keys
-     * @returns {String}
+     * @return {string}
      */
     getKeyString: function(keys) {
-        return keys.join(', ');
+        var formattedKeys = _.map(keys, function(key) {
+            return key.replace(this.modRegExp, this.hasCommandKey ? 'command' : 'ctrl');
+        }, this);
+
+        return formattedKeys.join(', ');
+    },
+
+    /**
+     * Get the user's current platform.
+     * @return {string}
+     */
+    getCurrentPlatform: function() {
+        return navigator.platform;
     }
 })

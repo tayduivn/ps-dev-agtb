@@ -1,5 +1,4 @@
 <?php
-
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -11,6 +10,24 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$viewdefs['base']['view']['quicksearch-bar'] = array(
-    'limit' => 3
-);
+/**
+ * Class SugarACLKB
+ * Additional ACL for KB.
+ */
+class SugarACLCategories extends SugarACLKB
+{
+
+    /**
+     * {@inheritDoc}
+     *
+     * Need to override default ACL in future.
+     */
+    public function checkAccess($module, $view, $context)
+    {
+        $current_user = $this->getCurrentUser($context);
+        if ( !$current_user ) {
+            return false;
+        }
+        return true;
+    }
+}

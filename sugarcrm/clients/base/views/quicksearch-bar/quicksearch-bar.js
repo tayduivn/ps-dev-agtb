@@ -49,10 +49,13 @@
         /**
          * The default number of maximum results to display.
          *
+         * You can override this value by providing a `limit` property in the
+         * metadata.
+         *
          * @type {number}
          * @property
          */
-        this.limit = 3;
+        this.limit = 5;
         if (this.meta && this.meta.limit) {
             this.limit = this.meta.limit;
         }
@@ -122,6 +125,8 @@
         }, this);
 
         this.layout.on('quicksearch:bar:clear', this.clearSearch, this);
+
+        this.layout.on('quicksearch:bar:clear:term', this.clearSearchTerm, this);
 
         this.layout.on('quicksearch:bar:search', this.goToSearchPage, this);
 
@@ -411,6 +416,13 @@
         if (this.context.get('search')) {
             this.toggleSearchIcon(true);
         }
+    },
+
+    clearSearchTerm: function() {
+        this.$('.search-query').val('');
+        this._searchTerm = '';
+        this._oldSearchTerm = '';
+        this._currentQueryTerm = '';
     },
 
     /**

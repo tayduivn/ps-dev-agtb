@@ -264,11 +264,17 @@
             filters.setModuleName(this.settings.get('module'));
             filters.load({
                 success: _.bind(function() {
+                    if (this.disposed) {
+                        return;
+                    }
                     var filter = filters.collection.get(filterId);
                     var filterDef = filter && filter.get('filter_definition');
                     this._displayDashlet(filterDef);
                 }, this),
                 error: _.bind(function(err) {
+                    if (this.disposed) {
+                        return;
+                    }
                     this._displayDashlet();
                 }, this)
             });

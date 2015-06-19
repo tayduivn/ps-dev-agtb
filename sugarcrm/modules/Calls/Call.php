@@ -128,9 +128,9 @@ class Call extends SugarBean {
 	}
 
     // save date_end by calculating user input
-    // this is for calendar
-	function save($check_notify = FALSE) {
-		global $timedate,$current_user;
+    function save($check_notify = false)
+    {
+        global $timedate, $current_user;
 
         if (isset($this->date_start)) {
             $td = $timedate->fromDb($this->date_start);
@@ -139,13 +139,8 @@ class Call extends SugarBean {
                 $td = $timedate->fromDb($this->date_start);
             }
             if ($td) {
-                if (isset($this->duration_hours) && $this->duration_hours != '') {
-                    $td->modify("+{$this->duration_hours} hours");
-                }
-                if (isset($this->duration_minutes) && $this->duration_minutes != '') {
-                    $td->modify("+{$this->duration_minutes} mins");
-                }
-                $this->date_end = $td->asDb();
+                $calEvent = new CalendarEvents();
+                $calEvent->setStartAndEndDateTime($this, $td);
             }
         }
 

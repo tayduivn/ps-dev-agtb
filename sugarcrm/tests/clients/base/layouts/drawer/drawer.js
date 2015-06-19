@@ -82,6 +82,10 @@ describe("Drawer Layout", function() {
             expect(drawer._components.length).toBe(0);
             expect(drawer.onCloseCallback.length).toBe(0);
         });
+
+        it('should start in the idle state', function() {
+            expect(drawer.isIdle()).toBe(true);
+        });
     });
 
     describe('Open', function() {
@@ -150,6 +154,27 @@ describe("Drawer Layout", function() {
             });
 
             expect(drawer.scrollTopPositions.length).toBe(2);
+        });
+
+        it('should go into the opening state and then back to the idle state', function() {
+            sinonSandbox.stub(drawer, '_animateOpenDrawer', function(cb) {
+                expect(drawer.isOpening()).toBe(true);
+                cb();
+            });
+            sinonSandbox.spy(drawer, '_enterState');
+
+            drawer.open({
+                layout: {
+                    name: 'foo',
+                    components: [{view: 'record'}]
+                },
+                context: {create: true}
+            });
+
+            expect(drawer._enterState.calledTwice).toBe(true);
+            expect(drawer._enterState.getCall(0).args[0]).toEqual('opening');
+            expect(drawer._enterState.getCall(1).args[0]).toEqual('idle');
+            expect(drawer.isIdle()).toBe(true);
         });
     });
 
@@ -278,6 +303,31 @@ describe("Drawer Layout", function() {
 
             expect(drawer.scrollTopPositions.length).toBe(0);
         });
+
+        it('should go into the closing state and then back to the idle state', function() {
+            sinonSandbox.stub(drawer, '_animateOpenDrawer');
+
+            drawer.open({
+                layout: {
+                    name: 'foo',
+                    components: [{view: 'record'}]
+                },
+                context: {create: true}
+            });
+
+            sinonSandbox.stub(drawer, '_animateCloseDrawer', function(cb) {
+                expect(drawer.isClosing()).toBe(true);
+                cb();
+            });
+            sinonSandbox.spy(drawer, '_enterState');
+
+            drawer.close();
+
+            expect(drawer._enterState.calledTwice).toBe(true);
+            expect(drawer._enterState.getCall(0).args[0]).toEqual('closing');
+            expect(drawer._enterState.getCall(1).args[0]).toEqual('idle');
+            expect(drawer.isIdle()).toBe(true);
+        });
     });
 
     describe('Close immediately', function() {
@@ -363,6 +413,33 @@ describe("Drawer Layout", function() {
 
             expect(drawer.scrollTopPositions.length).toBe(0);
         });
+
+        it('should go into the closing state and then back to the idle state', function() {
+            sinonSandbox.stub(drawer, '_animateOpenDrawer');
+
+            drawer.open({
+                layout: {
+                    name: 'foo',
+                    components: [{view: 'record'}]
+                },
+                context: {create: true}
+            });
+
+            sinonSandbox.stub(drawer, '_animateCloseDrawer', function(cb) {
+                expect(drawer.isClosing()).toBe(true);
+                cb();
+            });
+            sinonSandbox.stub(drawer, '_removeTabAndBackdrop');
+            sinonSandbox.stub(drawer, '_cleanUpAfterClose');
+            sinonSandbox.spy(drawer, '_enterState');
+
+            drawer.closeImmediately();
+
+            expect(drawer._enterState.calledTwice).toBe(true);
+            expect(drawer._enterState.getCall(0).args[0]).toEqual('closing');
+            expect(drawer._enterState.getCall(1).args[0]).toEqual('idle');
+            expect(drawer.isIdle()).toBe(true);
+        });
     });
 
     describe('Load', function() {
@@ -393,6 +470,35 @@ describe("Drawer Layout", function() {
             expect(components.length).toBe(1);
             expect(components[components.length-1].name).toBe('bar');
         });
+
+        it('should go into the opening state and then back to the idle state', function() {
+            sinonSandbox.stub(drawer, '_animateOpenDrawer');
+
+            drawer.open({
+                layout: {
+                    name: 'foo',
+                    components: [{view: 'record'}]
+                },
+                context: {create: true}
+            });
+
+            sinonSandbox.stub(drawer, '_createTabAndBackdrop');
+            sinonSandbox.stub(drawer, '_removeTabAndBackdrop');
+            sinonSandbox.spy(drawer, '_enterState');
+
+            drawer.load({
+                layout: {
+                    name: 'bar',
+                    components: [{view: 'record'}]
+                },
+                context: {create: true}
+            });
+
+            expect(drawer._enterState.calledTwice).toBe(true);
+            expect(drawer._enterState.getCall(0).args[0]).toEqual('opening');
+            expect(drawer._enterState.getCall(1).args[0]).toEqual('idle');
+            expect(drawer.isIdle()).toBe(true);
+        });
     });
 
     describe('Reset', function() {
@@ -421,7 +527,35 @@ describe("Drawer Layout", function() {
             var triggerBeforeStub = sinonSandbox.stub(drawer, 'triggerBefore');
             drawer.reset(false);
             expect(triggerBeforeStub).not.toHaveBeenCalled();
-        })
+        });
+
+        it('should go into the closing state and then back to the idle state', function() {
+            sinonSandbox.stub(drawer, '_animateOpenDrawer');
+
+            drawer.open({
+                layout: {
+                    name: 'foo',
+                    components: [{view: 'record'}]
+                },
+                context: {create: true}
+            });
+
+            sinonSandbox.stub(drawer, '_removeTabAndBackdrop');
+            sinonSandbox.spy(drawer, '_enterState');
+
+            drawer.reset({
+                layout: {
+                    name: 'bar',
+                    components: [{view: 'record'}]
+                },
+                context: {create: true}
+            });
+
+            expect(drawer._enterState.calledTwice).toBe(true);
+            expect(drawer._enterState.getCall(0).args[0]).toEqual('closing');
+            expect(drawer._enterState.getCall(1).args[0]).toEqual('idle');
+            expect(drawer.isIdle()).toBe(true);
+        });
     });
 
     describe('_getDrawers(true)', function() {
@@ -727,6 +861,40 @@ describe("Drawer Layout", function() {
             expect(result.name).toBe('controllerLayout');
 
             app.controller = oldController;
+        });
+    });
+
+    describe('resize drawer', function() {
+        beforeEach(function() {
+            sinonSandbox.stub(drawer, '_getDrawers').returns({'$top': 'foo'});
+            sinonSandbox.stub(drawer, '_expandDrawer');
+        });
+
+        it('should resize', function() {
+            sinonSandbox.stub(drawer, 'isOpening').returns(false);
+            sinonSandbox.stub(drawer, 'isClosing').returns(false);
+
+            drawer._resizeDrawer();
+
+            expect(drawer._expandDrawer).toHaveBeenCalled();
+        });
+
+        it('should not resize when opening', function() {
+            sinonSandbox.stub(drawer, 'isOpening').returns(true);
+            sinonSandbox.stub(drawer, 'isClosing').returns(false);
+
+            drawer._resizeDrawer();
+
+            expect(drawer._expandDrawer).not.toHaveBeenCalled();
+        });
+
+        it('should not resize when closing', function() {
+            sinonSandbox.stub(drawer, 'isOpening').returns(false);
+            sinonSandbox.stub(drawer, 'isClosing').returns(true);
+
+            drawer._resizeDrawer();
+
+            expect(drawer._expandDrawer).not.toHaveBeenCalled();
         });
     });
 });

@@ -20,8 +20,6 @@
 ({
     className: 'filter-view search',
 
-    plugins: ['QuickSearchFilter'],
-
     events: {
         'click .add-on.fa-times': function() { this.trigger('filter:clear:quicksearch'); }
     },
@@ -529,7 +527,8 @@
         var selectedFilter = app.utils.deepCopy(oSelectedFilter),
             isSelectedFilter = _.size(selectedFilter) > 0,
             module = context.get('module'),
-            searchFilter = this.getFilterDef(module, searchTerm),
+            filtersBeanPrototype = app.data.getBeanClass('Filters').prototype,
+            searchFilter = filtersBeanPrototype.buildSearchTermFilter(module, searchTerm),
             isSearchFilter = _.size(searchFilter) > 0;
 
         selectedFilter = _.isArray(selectedFilter) ? selectedFilter : [selectedFilter];

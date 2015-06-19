@@ -112,9 +112,15 @@
         if (this.fieldHasErrorState) {
             this.getField('save_draft_button').setDisabled(true);
             this.getField('commit_button').setDisabled(true);
+            $("a[name='commit_button']").tooltip();
         } else {
             this.getField('save_draft_button').setDisabled(this.saveBtnDisabled);
             this.getField('commit_button').setDisabled(this.commitBtnDisabled);
+            if (!this.commitBtnDisabled) {
+                $("a[name='commit_button']").tooltip('destroy');
+            } else {
+                $("a[name='commit_button']").tooltip();
+            }
         }
     },
 

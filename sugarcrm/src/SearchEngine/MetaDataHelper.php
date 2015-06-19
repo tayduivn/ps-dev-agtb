@@ -54,6 +54,14 @@ class MetaDataHelper
      */
     protected $crossModuleAggDefs = array();
 
+
+    /**
+     * Force an in memory cache of enabled module to be used when
+     * both SugarCache and MetadataCache are disabled
+     * @var array
+     */
+    protected $enabledModules = array();
+
     /**
      * @param \MetaDataManager $mdm
      */
@@ -109,13 +117,17 @@ class MetaDataHelper
         }
 
         $list = array();
-        $modules = $this->mdm->getModuleList();
-        foreach ($modules as $module) {
-            $vardefs = $this->getModuleVardefs($module);
-            if (!empty($vardefs['full_text_search'])) {
-                $list[] = $module;
+        if ($this->mdm->cacheEnabled() || empty($this->enabledModules)) {
+            $modules = $this->mdm->getModuleList();
+            foreach ($modules as $module) {
+                $vardefs = $this->getModuleVardefs($module);
+                if (!empty($vardefs['full_text_search'])) {
+                    $list[] = $module;
+                }
             }
         }
+        $this->enabledModules = $list;
+
         return $this->setCache($cacheKey, $list);
     }
 
@@ -253,6 +265,27 @@ class MetaDataHelper
             }
         }
         return $this->setCache($cacheKey, $incFields);
+    }
+
+    /**
+     * Get HTML fields for module.
+     * @param string $module
+     * @return array
+     */
+    public function getFtsHtmlFields($module)
+    {
+        $cacheKey = 'html_' . $module;
+        if ($htmlFields = $this->getCache($cacheKey)) {
+            return $htmlFields;
+        }
+
+        $htmlFields = array();
+        foreach ($this->getFtsFields($module) as $field => $defs) {
+            if (!empty($defs['type']) && $defs['type'] === 'htmleditable_tinymce') {
+                $htmlFields[] = $defs['name'];
+            }
+        }
+        return $this->setCache($cacheKey, $htmlFields);
     }
 
 

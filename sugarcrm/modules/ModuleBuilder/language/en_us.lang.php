@@ -765,7 +765,7 @@ $mod_strings = array(
 
 //POPUP HELP
 'LBL_POPHELP_FIELD_DATA_TYPE'=>'Select the appropriate data type based on the type of data that will be entered into the field.',
-'LBL_POPHELP_FTS_FIELD_CONFIG' => 'Configure the field to be full text searchable <br />When selecting <i>store only</i> the field value will be stored in the full text search engine being able to return its value in the results. Stored fields are not searchable. The value of a searchable field will always be returned in the results.',
+'LBL_POPHELP_FTS_FIELD_CONFIG' => 'Configure the field to be full text searchable.',
 'LBL_POPHELP_FTS_FIELD_BOOST' => 'Boosting is the process of enhancing the relevancy of a record\\\'s fields.<br />Fields with a higher boost level will be given greater weight when the search is performed. When a search is performed, matching records containing fields with a greater weight will be appear higher in the search results.<br />The default value is 1.0 which stands for a neutral boost. To apply a positive boost any float value higher than 1 is accepted. For a negative boost use values lower than 1. For example a value of 1.35 will positively boost a field by 135%. Using a value of 0.60 will apply a negative boost.<br />Note that in previous versions it was required to perform a full text search reindex. This is no longer required.',
 'LBL_POPHELP_IMPORTABLE'=>'<b>Yes</b>: The field will be included in an import operation.<br><b>No</b>: The field will not be included in an import.<br><b>Required</b>: A value for the field must be provided in any import.',
 'LBL_POPHELP_IMAGE_WIDTH'=>'Enter a number for Width, as measured in pixels.<br> The uploaded image will be scaled to this Width.',

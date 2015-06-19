@@ -39,7 +39,7 @@ class SugarUpgradeUpgradeAccess extends UpgradeScript
 
     protected function handleWebConfig()
     {
-        handleWebConfig();
+        handleWebConfig(substr(php_sapi_name(), 0, 3) !== 'cli');
     }
 
     protected function handleHtaccess()

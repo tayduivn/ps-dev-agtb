@@ -65,12 +65,9 @@ class RS278Test extends Sugar_PHPUnit_Framework_TestCase
                         'rows' => array(
                             array(
                                 array(
-                                    'context' => array(
-                                        'module' => 'Forecasts',
-                                    ),
                                     'view' => array(
                                         'label' => 'LBL_DASHLET_PIPLINE_NAME',
-                                        'type' => 'forecast-pipeline',
+                                        'type' => 'sales-pipeline',
                                         'visibility' => 'user',
                                     ),
                                 ),

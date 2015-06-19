@@ -23,8 +23,6 @@
         'paste': 'throttledSearch'
     },
 
-    plugins: ['QuickSearchFilter'],
-
     className: 'table-cell full-width',
 
     /**
@@ -39,7 +37,7 @@
         //shortcut keys
         app.shortcuts.register({
             id: 'Filter:Search',
-            keys: ['f i','ctrl+alt+9'],
+            keys: ['f i','mod+alt+9'],
             component: this,
             description: 'LBL_SHORTCUT_FILTER_SEARCH',
             handler: function() {
@@ -99,7 +97,8 @@
         var label;
         this.toggleInput();
         if (!this.$el.hasClass('hide') && linkModule !== 'all_modules') {
-            var fields = this.getModuleQuickSearchFields(linkModuleName),
+            var filtersBeanPrototype = app.data.getBeanClass('Filters').prototype,
+                fields = filtersBeanPrototype.getModuleQuickSearchMeta(linkModuleName).fieldNames,
                 fieldLabels = this.getFieldLabels(linkModuleName, fields);
             label = app.lang.get('LBL_SEARCH_BY') + ' ' + fieldLabels.join(', ') + '...';
         } else {

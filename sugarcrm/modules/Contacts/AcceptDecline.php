@@ -44,6 +44,7 @@ else if ( ! empty($_REQUEST['lead_id'])) {
     $current_entity = $result;
 }
 
+$service = new CalendarEvents();
 $focus = BeanFactory::retrieveBean(clean_string($_REQUEST['module']), $_REQUEST['record'], array('disable_row_level_security' => true));
 
 if(empty($focus)) {
@@ -52,10 +53,20 @@ if(empty($focus)) {
 	die("The focus id doesn't exist");
 }
 
-$focus->set_accept_status($current_entity,$_REQUEST['accept_status']);
+$updated = $service->updateAcceptStatusForInvitee(
+    $focus,
+    $current_entity,
+    $_REQUEST['accept_status'],
+    array('disable_row_level_security' => true)
+);
 $url  = $sugar_config['site_url'] . '#' . buildSidecarRoute($currentModule, $focus->id);
 
-print $app_strings['LBL_STATUS_UPDATED']."<BR><BR>";
+if ($updated) {
+    print "{$app_strings['LBL_STATUS_UPDATED']}<br /><br />";
+} else {
+    print "{$app_strings['LBL_STATUS_NOT_UPDATED']}<br /><br />";
+}
+
 print $app_strings['LBL_STATUS']. " ". $app_list_strings['dom_meeting_accept_status'][$_REQUEST['accept_status']];
 print "<BR><BR>";
 

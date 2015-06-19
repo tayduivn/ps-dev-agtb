@@ -165,7 +165,7 @@
             if (_.isEqual(val, self.model.get(self.name))) {
                 self.setCurrencyValue(val);
             } else {
-                self.model.set(self.name, el.val());
+                self.model.set(self.name, val);
             }
         });
     },
@@ -425,7 +425,9 @@
      */
     setMode: function(name) {
         this._super('setMode', [name]);
-        this.getCurrencyField().setMode(name);
+        if (this.action === 'edit') {
+            this.getCurrencyField().setMode(name);
+        }
     },
 
     /**

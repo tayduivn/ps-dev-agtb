@@ -547,16 +547,6 @@ class HealthCheckScanner
     }
 
     /**
-     * Check valid DB driver for upgrade
-     * @param string $sugar_version Current sugar version
-     * @return bool
-     */
-    public function isDBValid($sugar_version)
-    {
-        return !(version_compare($sugar_version, 7, '<') && !($this->db instanceof MysqlManager));
-    }
-
-    /**
      *
      * Main
      * @return void|multitype:
@@ -598,11 +588,6 @@ class HealthCheckScanner
                 $this->log("Instance already upgraded to " . $manifestVersion);
                 return $this->logMeta;
             }
-        }
-
-        if (!$this->isDBValid($sugar_version)) {
-            $this->updateStatus("unsupportedDatabase", $sugar_version);
-            return $this->logMeta;
         }
 
         if ($GLOBALS['sugar_config']['site_url']) {

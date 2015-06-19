@@ -168,6 +168,10 @@ class RestService extends ServiceBase
             // Get it back in case hook changed it
             $route = $this->request->getRoute();
 
+            if (empty($route['keepSession'])) {
+                $this->releaseSession();
+            }
+
             // Get the request args early for use in current user api
             $argArray = $this->getRequestArgs($route);
             if ( !$isLoggedIn && !empty($route['allowDownloadCookie'])) {
@@ -203,22 +207,18 @@ class RestService extends ServiceBase
                     // resync so that the new metadata gets picked up if it is
                     // out of date
                     if (!$this->isMetadataCurrent()) {
-                        // Mismatch in hashes... Return error so the cleint will
+                        // Mismatch in hashes... Return error so the client will
                         // resync its metadata and try again.
                         throw new SugarApiExceptionInvalidHash();
                     }
                 }
             }
 
-
             if ($isLoggedIn) {
                 // This is needed to load in the app_strings and the app_list_strings and the such
                 $this->loadUserEnvironment();
             } else {
                 $this->loadGuestEnvironment();
-            }
-            if(empty($route['keepSession'])) {
-                $this->releaseSession();
             }
 
             $headers = array();

@@ -101,7 +101,6 @@ class InboundEmail extends SugarBean {
 	// object attributes
 	var $compoundMessageId; // concatenation of messageID and deliveredToEmail
 	var $serverConnectString;
-	var $disable_row_level_security	= true;
 	var $InboundEmailCachePath;
 	var $InboundEmailCacheFile			= 'InboundEmail.cache.php';
 	var $object_name					= 'InboundEmail';

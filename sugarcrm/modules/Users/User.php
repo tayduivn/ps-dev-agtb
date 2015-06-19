@@ -1,5 +1,4 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -10,7 +9,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('include/SugarObjects/templates/person/Person.php');
+
+use \Sugarcrm\Sugarcrm\Security\Password\Hash;
+
+require_once 'include/SugarObjects/templates/person/Person.php';
 
 /**
  * User is used to store customer information.
@@ -245,6 +247,7 @@ class User extends Person {
 	public function hasPersonalEmail()
 	{
 	    $focus = BeanFactory::getBean('InboundEmail');
+        $focus->disable_row_level_security = true;
 	    $focus->retrieve_by_string_fields(array('group_id' => $this->id));
 
 	    return !empty($focus->id);
@@ -719,22 +722,6 @@ class User extends Person {
 	}
 
 	/**
-	 * @deprecated
-	* @param string $user_name - Must be non null and at least 2 characters
-	* @param string $user_password - Must be non null and at least 1 character.
-	* @desc Take an unencrypted username and password and return the encrypted password
-	* @return string encrypted password for storage in DB and comparison against DB password.
-	*/
-	function encrypt_password($user_password)
-	{
-		// encrypt the password.
-		$salt = substr($this->user_name, 0, 2);
-		$encrypted_password = crypt($user_password, $salt);
-
-		return $encrypted_password;
-	}
-
-	/**
 	 * Authenicates the user; returns true if successful
 	 *
 	 * @param string $password MD5-encoded password
@@ -875,50 +862,37 @@ EOQ;
 		return $this;
 	}
 
-	/**
-	 * Generate a new hash from plaintext password
-	 * @param string $password
-	 */
-	public static function getPasswordHash($password)
-	{
-	    if(!defined('CRYPT_MD5') || !constant('CRYPT_MD5')) {
-	        // does not support MD5 crypt - leave as is
-	        if(defined('CRYPT_EXT_DES') && constant('CRYPT_EXT_DES')) {
-	            return crypt(strtolower(md5($password)),
-	            	"_.012".substr(str_shuffle('./ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'), -4));
-	        }
-	        // plain crypt cuts password to 8 chars, which is not enough
-	        // fall back to old md5
-	        return strtolower(md5($password));
-	    }
-	    return crypt(strtolower(md5($password)));
-	}
+    /**
+     * Generate a new hash from plaintext password
+     * @param string $password
+     * @return string
+     */
+    public static function getPasswordHash($password)
+    {
+        return Hash::getInstance()->hash($password);
+    }
 
-	/**
-	 * Check that password matches existing hash
-	 * @param string $password Plaintext password
-	 * @param string $user_hash DB hash
-	 */
-	public static function checkPassword($password, $user_hash)
-	{
-	    return self::checkPasswordMD5(md5($password), $user_hash);
-	}
+    /**
+     * Check that password matches existing hash
+     * @param string $password Plaintext password
+     * @param string $user_hash DB hash
+     * @return boolean
+     */
+    public static function checkPassword($password, $user_hash)
+    {
+        return Hash::getInstance()->verify($password, $user_hash);
+    }
 
-	/**
-	 * Check that md5-encoded password matches existing hash
-	 * @param string $password MD5-encoded password
-	 * @param string $user_hash DB hash
-	 * @return bool Match or not?
-	 */
-	public static function checkPasswordMD5($password_md5, $user_hash)
-	{
-	    if(empty($user_hash)) return false;
-	    if($user_hash[0] != '$' && strlen($user_hash) == 32) {
-	        // Old way - just md5 password
-	        return strtolower($password_md5) === $user_hash;
-	    }
-	    return crypt(strtolower($password_md5), $user_hash) === $user_hash;
-	}
+    /**
+     * Check that md5-encoded password matches existing hash
+     * @param string $password MD5-encoded password
+     * @param string $user_hash DB hash
+     * @return boolean
+     */
+    public static function checkPasswordMD5($password, $user_hash)
+    {
+        return Hash::getInstance()->verifyMd5($password, $user_hash);
+    }
 
 	/**
 	 * Find user with matching password
@@ -962,6 +936,34 @@ EOQ;
 		$this->db->query($query, true, "Error setting new password for $this->user_name: ");
         $_SESSION['hasExpiredPassword'] = '0';
 	}
+
+    /**
+     * Attempt to rehash the current user_hash value
+     * @param string $password Clear text password
+     */
+    public function rehashPassword($password)
+    {
+        if (empty($this->id) || empty($this->user_hash) || empty($password)) {
+            return;
+        }
+
+        $hashBackend = Hash::getInstance();
+
+        if ($hashBackend->needsRehash($this->user_hash)) {
+            if ($newHash = $hashBackend->hash($password)) {
+                $update = sprintf(
+                    'UPDATE %s SET user_hash = %s WHERE id = %s',
+                    $this->table_name,
+                    $this->db->quoted($newHash),
+                    $this->db->quoted($this->id)
+                );
+                $this->db->query($update);
+                $GLOBALS['log']->info("Rehashed password for user id '{$this->id}'");
+            } else {
+                $GLOBALS['log']->warn("Error trying to rehash password for user id '{$this->id}'");
+            }
+        }
+    }
 
 	/**
 	 * Verify that the current password is correct and write the new password to the DB.
@@ -2657,4 +2659,23 @@ EOQ;
         }
     }
 
+    /**
+    * Gets the time zone for the given user.
+    *
+    * @param User $user
+    * @return DateTimeZone the user's timezone
+    */
+    public function getTimezone()
+    {
+        $gmtTZ = new DateTimeZone("UTC");
+        $userTZName = TimeDate::userTimezone($this);
+        if (!empty($userTZName))
+        {
+            $tz = new DateTimeZone($userTZName);
+        } else
+        {
+            $tz = $gmtTZ;
+        }
+        return $tz;
+    }
 }

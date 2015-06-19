@@ -490,16 +490,16 @@ nv.models.bubbleChart = function () {
         container.transition().call(chart);
       });
 
-      dispatch.on('chartClick', function (e) {
+      dispatch.on('chartClick', function() {
         dispatch.tooltipHide();
         if (legend.enabled()) {
-          legend.dispatch.closeMenu(e);
+          legend.dispatch.closeMenu();
         }
       });
 
-      scatter.dispatch.on('elementClick', function (e) {
-        dispatch.chartClick(e);
-        bubbleClick(e);
+      scatter.dispatch.on('elementClick', function(eo) {
+        dispatch.chartClick();
+        bubbleClick(eo);
       });
 
       chart.render();

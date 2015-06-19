@@ -81,6 +81,12 @@ class SugarAuthenticateUser{
 			return false;
 		}
 		$this->loadUserOnSession($user_id);
+
+        // Only call rehash when we have a clear text password
+        if (!$passwordEncrypted && !empty($GLOBALS['current_user']->id)) {
+            $GLOBALS['current_user']->rehashPassword($password);
+        }
+
 		return true;
 	}
 	/**

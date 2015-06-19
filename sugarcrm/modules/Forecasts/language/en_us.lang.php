@@ -284,6 +284,8 @@ $mod_strings = array (
     'LBL_FORECASTS_ACLS_NO_ACCESS_TITLE' => 'Forecasts Access Error:',
     'LBL_FORECASTS_ACLS_NO_ACCESS_MSG' => 'You do not have access to the Forecasts module. Please contact your Administrator.',
 
+    'LBL_FORECASTS_RECORDS_ACLS_NO_ACCESS_MSG' => 'You do not have access to the Forecasts module\'s records. Please contact your Administrator.',
+
     // Panel and BreadCrumb Labels
     'LBL_FORECASTS_CONFIG_BREADCRUMB_WORKSHEET_LAYOUT' => 'Worksheet Layout',
     'LBL_FORECASTS_CONFIG_BREADCRUMB_RANGES' => 'Ranges',
