@@ -15,7 +15,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /**
  * THIS CLASS IS FOR DEVELOPERS TO MAKE CUSTOMIZATIONS IN
  */
-require_once('modules/pmse_Project/pmse_BpmActivityStep/pmse_BpmActivityStep_sugar.php');
+
+require_once 'modules/pmse_Project/pmse_BpmActivityStep/pmse_BpmActivityStep_sugar.php';
+
 class pmse_BpmActivityStep extends pmse_BpmActivityStep_sugar {
 
 	/**

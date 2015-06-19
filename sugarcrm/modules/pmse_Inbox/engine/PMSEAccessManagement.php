@@ -13,7 +13,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 session_start();
-require_once 'PMSELicenseManager.php';
+require_once 'modules/pmse_Inbox/engine/PMSELicenseManager.php';
 class PMSEAccessManagement {
     protected  $licM;
     protected  $objM=array();

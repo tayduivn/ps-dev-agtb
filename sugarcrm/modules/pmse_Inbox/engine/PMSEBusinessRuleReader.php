@@ -19,8 +19,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  */
 
-require_once 'PMSEBusinessRuleConversor.php';
-require_once 'PMSEEvaluator.php';
+require_once 'modules/pmse_Inbox/engine/PMSEBusinessRuleConversor.php';
+require_once 'modules/pmse_Inbox/engine/PMSEEvaluator.php';
 
 class PMSEBusinessRuleReader
 {

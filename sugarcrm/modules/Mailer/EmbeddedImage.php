@@ -12,7 +12,7 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once "Attachment.php"; // requires Attachment in order to extend it
+require_once "modules/Mailer/Attachment.php"; // requires Attachment in order to extend it
 
 /**
  * This class encapsulates properties and behavior of an embedded image, which is a type of attachment, so that a common

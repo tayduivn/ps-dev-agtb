@@ -155,6 +155,6 @@ $dictionary['pmse_BpmnExtension'] = array(
 		'unified_search'=>true,
 	);
 if (!class_exists('VardefManager')){
-        require_once('include/SugarObjects/VardefManager.php');
+        require_once 'include/SugarObjects/VardefManager.php';
 }
 VardefManager::createVardef('pmse_BpmnExtension','pmse_BpmnExtension', array('basic','assignable'));

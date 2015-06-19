@@ -403,6 +403,6 @@ $dictionary['pmse_Inbox'] = array(
     'hidden_to_role_assignment' => true,
 );
 if (!class_exists('VardefManager')){
-        require_once('include/SugarObjects/VardefManager.php');
+        require_once 'include/SugarObjects/VardefManager.php';
 }
 VardefManager::createVardef('pmse_Inbox','pmse_Inbox', array('basic','team_security','assignable'));

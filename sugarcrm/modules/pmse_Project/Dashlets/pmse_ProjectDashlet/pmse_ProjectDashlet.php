@@ -15,8 +15,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 
-require_once('include/Dashlets/DashletGeneric.php');
-require_once('modules/pmse_Project/pmse_Project.php');
+require_once 'include/Dashlets/DashletGeneric.php';
+require_once 'modules/pmse_Project/pmse_Project.php';
 
 class pmse_ProjectDashlet extends DashletGeneric { 
     function pmse_ProjectDashlet($id, $def = null) {

@@ -285,6 +285,6 @@ $dictionary['pmse_BpmNotes'] = array(
 		'unified_search'=>true,
 	);
 if (!class_exists('VardefManager')){
-        require_once('include/SugarObjects/VardefManager.php');
+        require_once 'include/SugarObjects/VardefManager.php';
 }
 VardefManager::createVardef('pmse_BpmNotes','pmse_BpmNotes', array('basic','assignable'));
