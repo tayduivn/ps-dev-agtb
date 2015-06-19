@@ -41,12 +41,19 @@ class RestResponse extends Zend_Http_Response
     protected $filename;
 
     /**
+     * Flag for sending body or not
+     * @var bool
+     */
+    protected $shouldSendBody;
+
+    /**
      * Create HTTP response
      * @param array $server _SERVER array from the request
      */
     public function __construct($server)
     {
         $this->code = 200;
+        $this->shouldSendBody = true;
         if(!empty($server['SERVER_PROTOCOL'])) {
             list($http, $version) = explode('/', $server['SERVER_PROTOCOL']);
             $this->version = $version;
@@ -256,6 +263,9 @@ class RestResponse extends Zend_Http_Response
             $this->body = '';
             $this->code = 304;
             $this->type = self::RAW;
+            $this->shouldSendBody = false;
+            // disable gzip so that apache won't add compression header to response body
+            @ini_set('zlib.output_compression', 'Off');
             return true;
         }
 
@@ -324,7 +334,9 @@ class RestResponse extends Zend_Http_Response
         }
         $response = $this->processContent();
         $this->sendHeaders();
-        echo $response;
+        if ($this->shouldSendBody) {
+            echo $response;
+        }
     }
 
     /**
