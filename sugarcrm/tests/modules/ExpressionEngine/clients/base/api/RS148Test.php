@@ -127,7 +127,8 @@ class RS148Test extends Sugar_PHPUnit_Framework_TestCase
                 array(
                     'contacts' => array(
                         'rollupMin' => array(
-                            'first_name' => ''
+                            'first_name' => '',
+                            'first_name_values' => array()
                         )
                     )
                 ),
