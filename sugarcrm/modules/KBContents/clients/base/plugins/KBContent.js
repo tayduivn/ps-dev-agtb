@@ -234,9 +234,11 @@
                 } else {
                     app.drawer.open(layoutDef, function(context, newModel) {
                         // Just parent - header's create, parent.parent - subpanel's create.
-                        var recordViewContext = context.parent.parent || context.parent;
-                        parentModel.fetch();
-                        recordViewContext.trigger('subpanel:reload', {links: ['revisions', 'localizations']});
+                        var viewContext = context.parent.parent || context.parent;
+                        viewContext.resetLoadFlag();
+                        viewContext.set('skipFetch', false);
+                        viewContext.loadData();
+                        viewContext.trigger('subpanel:reload', {links: ['revisions', 'localizations']});
                         context.createAction = null;
                         context.loadDrawer = null;
                     });
