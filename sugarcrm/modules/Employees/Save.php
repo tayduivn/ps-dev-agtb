@@ -53,7 +53,6 @@ $focus->save();
 // Set default team for Employee as 'Global'
 if ($new === true) {
     $team = BeanFactory::getBean('Teams');
-    $team->private_teams = false;
     $team->new_user_created($focus);
 }
 
