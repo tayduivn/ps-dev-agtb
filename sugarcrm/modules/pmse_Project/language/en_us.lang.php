@@ -20,6 +20,8 @@ $mod_strings = array (
   'LBL_MODULE_NAME_SINGULAR' => 'Process Definition',
 
   'LNK_LIST' => 'View Process Definitions',
+  'LNK_NEW_PMSE_PROJECT' => 'Create Process Definition',
+  'LNK_IMPORT_PMSE_PROJECT' => 'Import Process Definitions',
 
   'LBL_PRJ_STATUS' => 'Status',
   'LBL_PRJ_MODULE' => 'Target Module',

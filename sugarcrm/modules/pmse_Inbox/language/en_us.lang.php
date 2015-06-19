@@ -16,8 +16,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $mod_strings = array (
     'LBL_MODULE_NAME' => 'Processes',
     'LBL_MODULE_TITLE' => 'Processes',
-    'LBL_MODULE_NAME_SINGULAR' => 'Processes',
+    'LBL_MODULE_NAME_SINGULAR' => 'Process',
     'LNK_LIST' => 'View Processes',
+    'LNK_PMSE_INBOX_PROCESS_MANAGEMENT' => 'Process Management',
+    'LNK_PMSE_INBOX_UNATTENDED_PROCESSES' => 'Unattended Processes',
 
     'LBL_CAS_ID' => 'Process Number',
     'LBL_PMSE_HISTORY_LOG_NOTFOUND_USER' => "Unknown (according UserId:'%s')",
