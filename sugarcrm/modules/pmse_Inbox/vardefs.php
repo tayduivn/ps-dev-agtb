@@ -388,9 +388,19 @@ $dictionary['pmse_Inbox'] = array(
                     'studio' => 'visible',
                     'dependency' => false,
                 ),
+            //We need this field to set "Process Name" on quicksearch filter
+            'act_name' => array(
+                'name' => 'act_name',
+                'vname' => 'LBL_PROCESS_NAME',
+                'type' => 'varchar',
+                'source' => 'non-db',
+                'studio' => false,
+                'reportable' => false,
+                'massupdate' => false,
+            ),
     ),
-	'relationships'=>array (
-),
+	'relationships' => array(
+    ),
     'indices' => array(
     array(
       'name'   => 'idx_pmse_inbox_case_id',
