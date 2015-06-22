@@ -151,7 +151,11 @@ class ForecastWorksheet extends SugarBean
         } else {
             $bean->amount = $this->likely_case;
         }
-        $bean->date_closed = $this->date_closed;
+
+        if (!empty($this->date_closed)) {
+            $bean->date_closed = $this->date_closed;
+        }
+
         $bean->sales_stage = $this->sales_stage;
         $bean->commit_stage = $this->commit_stage;
         if ($this->ACLFieldAccess('best_case', 'write')) {
