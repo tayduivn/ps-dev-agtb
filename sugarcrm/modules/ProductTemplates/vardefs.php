@@ -19,7 +19,6 @@ $dictionary['ProductTemplate'] = array(
             'name' => 'type_id',
             'type' => 'id',
             'required' => false,
-            'function' => array('name'=>'getProductTypes', 'returns'=>'html'),
             'reportable' => false,
             'vname' => 'LBL_TYPE_ID',
             'importable' => 'true',
@@ -28,7 +27,6 @@ $dictionary['ProductTemplate'] = array(
         'manufacturer_id' => array(
             'name' => 'manufacturer_id',
             'type' => 'id',
-            'function' => array('name'=>'getManufacturers', 'returns'=>'html'),
             'required'=>false,
             'reportable'=>false,
             'vname' =>'LBL_LIST_MANUFACTURER_ID',

@@ -35,9 +35,30 @@ class MinRelatedExpression extends NumericExpression
 
         $ret = false;
 
+        if (!isset($this->context)) {
+            //If we don't have a context provided, we have to guess. This can be a large performance hit.
+            $this->setContext();
+        }
+        $toRate = isset($this->context->base_rate) ? $this->context->base_rate : null;
+        $checkedTypeForCurrency = false;
+        $relFieldIsCurrency = false;
+
         foreach ($linkField as $bean) {
-            if (isset($bean->$relfield) && $ret === false || $ret > $bean->$relfield) {
-                $ret = $bean->$relfield;
+            // only check the target field once to see if it's a currency field.
+            if ($checkedTypeForCurrency === false) {
+                $checkedTypeForCurrency = true;
+                $relFieldIsCurrency = $this->isCurrencyField($bean, $relfield);
+            }
+            if (!empty($bean->$relfield)) {
+                $value = $bean->$relfield;
+                // if we have a currency field, it needs to convert the value into the rate of the row it's
+                // being returned to.
+                if ($relFieldIsCurrency) {
+                    $value = SugarCurrency::convertWithRate($value, $bean->base_rate, $toRate);
+                }
+                if ($ret === false || $ret > $value) {
+                    $ret = $value;
+                }
             }
         }
 
@@ -49,22 +70,70 @@ class MinRelatedExpression extends NumericExpression
      */
     public static function getJSEvaluate()
     {
-        return <<<EOQ
-		    var params = this.getParameters();
-			var linkField = params[0].evaluate();
-			var relField = params[1].evaluate();
+        return <<<JS
+        // this is only supported in Sidecar
+        if (App === undefined) {
+            return SUGAR.expressions.Expression.FALSE;
+        }
+        var params = this.params,
+            view = this.context.view,
+            target = this.context.target,
+            relationship = params[0].evaluate(),
+            rel_field = params[1].evaluate();
+        var model = this.context.relatedModel || this.context.model,  // the model
+            // has the model been removed from it's collection
+            isCurrency = (model.fields[rel_field].type === 'currency'),
+            sortByDesc = function (lhs, rhs) { return parseFloat(lhs) > parseFloat(rhs) ? 1 : parseFloat(lhs) < parseFloat(rhs) ? -1 : 0; },
+            hasModelBeenRemoved = this.context.isRemoveEvent || false,
+            current_value = this.context.getRelatedField(relationship, 'rollupMin', rel_field) || '',
+            all_values = this.context.getRelatedField(relationship, 'rollupMin', rel_field + '_values') || {},
+            new_value = model.get(rel_field) || '',
+            rollup_value = '';
 
-			if (typeof(linkField) == "string" && linkField != "") {
-                return this.context.getRelatedField(linkField, 'rollupMin', relField);
-			} else if (typeof(rel) == "object") {
-			    //Assume we have a Link object that we can delve into.
-			    //This is mostly used for n level dives through relationships.
-			    //This should probably be avoided on edit views due to performance issues.
+        if (isCurrency) {
+            new_value = App.currency.convertToBase(
+                new_value,
+                model.get('currency_id')
+            );
+        }
 
-			}
+        if (hasModelBeenRemoved || !_.isFinite(new_value)) {
+            delete all_values[model.get('id')];
+        } else {
+            all_values[model.get('id')] = new_value;
+        }
 
-			return "";
-EOQ;
+        if (_.size(all_values) > 0) {
+            // get all the values and sort them so the highest is on top
+            rollup_value = _.values(all_values).sort(sortByDesc)[0];
+
+            if (isCurrency) {
+                rollup_value = App.currency.convertFromBase(
+                    rollup_value,
+                    this.context.model.get('currency_id')
+                );
+            }
+        }
+
+        if (!_.isEqual(rollup_value, current_value)) {
+            this.context.model.set(target, rollup_value);
+            this.context.updateRelatedFieldValue(
+                relationship,
+                'rollupMin',
+                rel_field,
+                rollup_value,
+                this.context.model.isNew()
+            );
+        }
+        // always update the values array
+        this.context.updateRelatedFieldValue(
+            relationship,
+            'rollupMin',
+            rel_field + '_values',
+            all_values,
+            this.context.model.isNew()
+        );
+JS;
     }
 
     /**

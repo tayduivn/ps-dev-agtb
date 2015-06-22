@@ -78,22 +78,71 @@ class SumRelatedExpression extends NumericExpression
      */
     public static function getJSEvaluate()
     {
-        return <<<EOQ
-		    var params = this.getParameters();
-			var linkField = params[0].evaluate();
-			var relField = params[1].evaluate();
+        return <<<JS
+        // this is only supported in Sidecar
+        if (App === undefined) {
+            return SUGAR.expressions.Expression.FALSE;
+        }
+        var params = this.params,
+            view = this.context.view,
+            target = this.context.target,
+            relationship = params[0].evaluate(),
+            rel_field = params[1].evaluate();
+        var model = this.context.relatedModel || this.context.model,  // the model
+            // has the model been removed from it's collection
+            isCurrency = (model.fields[rel_field].type === 'currency'),
+            precision = model.fields[rel_field].precision || 6,
+            hasModelBeenRemoved = this.context.isRemoveEvent || false,
+            current_value = this.context.getRelatedField(relationship, 'rollupSum', rel_field) || '',
+            all_values = this.context.getRelatedField(relationship, 'rollupSum', rel_field + '_values') || {},
+            new_value = model.get(rel_field) || '',
+            rollup_value = '';
 
-			if (typeof(linkField) == "string" && linkField != "") {
-                return this.context.getRelatedField(linkField, 'rollupSum', relField);
-			} else if (typeof(rel) == "object") {
-			    //Assume we have a Link object that we can delve into.
-			    //This is mostly used for n level dives through relationships.
-			    //This should probably be avoided on edit views due to performance issues.
+        if (isCurrency) {
+            new_value = App.currency.convertToBase(
+                new_value,
+                model.get('currency_id')
+            );
+        }
 
-			}
+        if (hasModelBeenRemoved || !_.isFinite(new_value)) {
+            delete all_values[model.get('id')];
+        } else {
+            all_values[model.get('id')] = new_value;
+        }
 
-			return "";
-EOQ;
+        if (_.size(all_values) > 0) {
+            rollup_value = _.reduce(all_values, function(memo, number) {
+                return App.math.add(memo, number, precision, true);
+            }, '0');
+
+            if (isCurrency) {
+                rollup_value = App.currency.convertFromBase(
+                    rollup_value,
+                    this.context.model.get('currency_id')
+                );
+            }
+        }
+
+        if (!_.isEqual(rollup_value, current_value)) {
+            this.context.model.set(target, rollup_value);
+            this.context.updateRelatedFieldValue(
+                relationship,
+                'rollupSum',
+                rel_field,
+                rollup_value,
+                this.context.model.isNew()
+            );
+        }
+        // always update the values array
+        this.context.updateRelatedFieldValue(
+            relationship,
+            'rollupSum',
+            rel_field + '_values',
+            all_values,
+            this.context.model.isNew()
+        );
+JS;
     }
 
     /**

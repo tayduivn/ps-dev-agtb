@@ -88,11 +88,12 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testValidDatetimeSameFormat()
     {
-        $_SESSION[$GLOBALS['current_user']->user_name.'_PREFERENCES']['global']['timezone'] = 'America/New_York';
+        $userTZ = 'America/New_York';
+        $userMock = $this->setupUserMockWithTZ($userTZ);
 
         $this->_ifs->dateformat = $GLOBALS['timedate']->get_date_format();
         $this->_ifs->timeformat = $GLOBALS['timedate']->get_time_format();
-        $this->_ifs->timezone = 'America/New_York';
+        $this->_ifs->timezone = $userTZ;
         $vardef = array('name' => 'some_date');
         $date = date($this->_ifs->dateformat . ' ' .$this->_ifs->timeformat);
 
@@ -101,7 +102,7 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
             strtotime(
                 $GLOBALS['timedate']->handle_offset(
                     $date, $GLOBALS['timedate']->get_date_time_format(), false,
-                    $GLOBALS['current_user'], 'America/New_York')
+                    $userMock, $userTZ)
                 )
             );
 
@@ -110,13 +111,12 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
                 $date,
                 $vardef),
             $comparedate);
-
-        unset($_SESSION[$GLOBALS['current_user']->user_name.'_PREFERENCES']['global']['timezone']);
     }
 
     public function testValidDatetimeDifferentFormat()
     {
-        $_SESSION[$GLOBALS['current_user']->user_name.'_PREFERENCES']['global']['timezone'] = 'America/New_York';
+        $userTZ = 'America/New_York';
+        $userMock = $this->setupUserMockWithTZ($userTZ);
 
         $this->_ifs->dateformat   = 'm/d/Y';
         if ( $this->_ifs->dateformat == $GLOBALS['timedate']->get_date_format() )
@@ -124,7 +124,7 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_ifs->timeformat   = 'h:ia';
         if ( $this->_ifs->timeformat == $GLOBALS['timedate']->get_time_format() )
             $this->_ifs->timeformat = 'h.ia';
-        $this->_ifs->timezone = 'America/New_York';
+        $this->_ifs->timezone = $userTZ;
         $vardef = array('name' => 'some_date');
         $date = date($this->_ifs->dateformat . ' ' . $this->_ifs->timeformat);
 
@@ -133,7 +133,7 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
             strtotime(
                 $GLOBALS['timedate']->handle_offset(
                     $date, $GLOBALS['timedate']->get_date_time_format(), false,
-                    $GLOBALS['current_user'], 'America/New_York')
+                    $userMock, $userTZ)
                 ));
 
         $this->assertEquals(
@@ -142,12 +142,12 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
                 $vardef),
             $comparedate);
 
-        unset($_SESSION[$GLOBALS['current_user']->user_name.'_PREFERENCES']['global']['timezone']);
     }
 
     public function testValidDatetimeDifferentTimezones()
     {
-        $_SESSION[$GLOBALS['current_user']->user_name.'_PREFERENCES']['global']['timezone'] = 'America/New_York';
+        $userTZ = 'America/New_York';
+        $userMock = $this->setupUserMockWithTZ($userTZ);
 
         $this->_ifs->dateformat = $GLOBALS['timedate']->get_date_format();
         $this->_ifs->timeformat = $GLOBALS['timedate']->get_time_format();
@@ -160,26 +160,27 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
             strtotime('+2 hours',strtotime(
                 $GLOBALS['timedate']->handle_offset(
                     $date, $GLOBALS['timedate']->get_date_time_format(), false,
-                    $GLOBALS['current_user'], 'America/New_York')
+                    $userMock, $userTZ)
                 )));
 
         $this->assertEquals(
             $this->_ifs->datetime(
                 $date,
-                $vardef),
-            $comparedate);
-
-        unset($_SESSION[$GLOBALS['current_user']->user_name.'_PREFERENCES']['global']['timezone']);
+                $vardef
+            ),
+            $comparedate
+        );
     }
 
     public function testValidDatetimeDateEntered()
     {
-        $_SESSION[$GLOBALS['current_user']->id.'_PREFERENCES']['global']['timezone'] = 'Atlantic/Cape_Verde';
+        $userTZ = 'Atlantic/Cape_Verde';
+        $userMock = $this->setupUserMockWithTZ($userTZ);
 
         $this->_ifs->dateformat = $GLOBALS['timedate']->get_date_format();
         $this->_ifs->timeformat = $GLOBALS['timedate']->get_time_format();
         $format = $GLOBALS['timedate']->get_date_time_format();
-        $this->_ifs->timezone = 'Atlantic/Cape_Verde';
+        $this->_ifs->timezone = $userTZ;
         $vardef = array('name' => 'date_entered');
         $date = date($format);
         $comparedate = date(
@@ -189,32 +190,29 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(
             $this->_ifs->datetime(
                 $date,
-                $vardef),
-            $comparedate);
-
-        unset($_SESSION[$GLOBALS['current_user']->user_name.'_PREFERENCES']['global']['timezone']);
+                $vardef
+            ),
+            $comparedate
+        );
     }
 
     public function testValidDatetimeDateOnly()
     {
-        $_SESSION[$GLOBALS['current_user']->user_name.'_PREFERENCES']['global']['timezone'] = 'America/New_York';
+        $userTZ = 'America/New_York';
+        $userMock = $this->setupUserMockWithTZ($userTZ);
 
         $this->_ifs->dateformat = $GLOBALS['timedate']->get_date_format();
         $this->_ifs->timeformat = $GLOBALS['timedate']->get_time_format();
         $format = $GLOBALS['timedate']->get_date_format();
-        $this->_ifs->timezone = 'America/New_York';
+        $this->_ifs->timezone = $userTZ;
         $vardef = array('name' => 'date_entered');
         $date = date($format);
-        $comparedate = date(
-            $GLOBALS['timedate']->get_db_date_time_format(),
-            strtotime($date));
 
         $this->assertTrue(
             (bool) $this->_ifs->datetime(
                 $date,
                 $vardef));
 
-        unset($_SESSION[$GLOBALS['current_user']->user_name.'_PREFERENCES']['global']['timezone']);
     }
 
     public function testInvalidDatetime()
@@ -1055,10 +1053,11 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testValidTimeSameFormat()
     {
-        $_SESSION[$GLOBALS['current_user']->user_name.'_PREFERENCES']['global']['timezone'] = 'America/New_York';
+        $userTZ = 'America/New_York';
+        $userMock = $this->setupUserMockWithTZ($userTZ);
 
         $this->_ifs->timeformat = $GLOBALS['timedate']->get_time_format();
-        $this->_ifs->timezone = 'America/New_York';
+        $this->_ifs->timezone = $userTZ;
         $vardef = array('name' => 'some_date');
         $date = date($this->_ifs->timeformat);
         $focus = new stdClass;
@@ -1070,17 +1069,17 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
                 $focus),
             $date);
 
-        unset($_SESSION[$GLOBALS['current_user']->user_name.'_PREFERENCES']['global']['timezone']);
     }
 
     public function testValidTimeDifferentFormat()
     {
-        $_SESSION[$GLOBALS['current_user']->user_name.'_PREFERENCES']['global']['timezone'] = 'America/New_York';
+        $userTZ = 'America/New_York';
+        $userMock = $this->setupUserMockWithTZ($userTZ);
 
         $this->_ifs->timeformat = 'h:ia';
         if ( $this->_ifs->timeformat == $GLOBALS['timedate']->get_time_format() )
             $this->_ifs->timeformat = 'h.ia';
-        $this->_ifs->timezone = 'America/New_York';
+        $this->_ifs->timezone = $userTZ;
         $vardef = array('name' => 'some_date');
 
         $date = date($this->_ifs->timeformat);
@@ -1093,15 +1092,17 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
             $this->_ifs->time(
                 $date,
                 $vardef,
-                $focus),
-            $comparedate);
+                $focus
+            ),
+            $comparedate
+        );
 
-        unset($_SESSION[$GLOBALS['current_user']->user_name.'_PREFERENCES']['global']['timezone']);
     }
 
     public function testValidTimeDifferentTimezones()
     {
-        $_SESSION[$GLOBALS['current_user']->user_name.'_PREFERENCES']['global']['timezone'] = 'America/New_York';
+        $userTZ = 'America/New_York';
+        $userMock = $this->setupUserMockWithTZ($userTZ);
 
         $this->_ifs->timeformat = $GLOBALS['timedate']->get_time_format();
         $this->_ifs->timezone = 'America/Denver';
@@ -1116,10 +1117,11 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
             $this->_ifs->time(
                 $date,
                 $vardef,
-                $focus),
-            $comparedate);
+                $focus
+            ),
+            $comparedate
+        );
 
-        unset($_SESSION[$GLOBALS['current_user']->user_name.'_PREFERENCES']['global']['timezone']);
     }
 
     public function testInvalidTime()
@@ -1146,6 +1148,22 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
                 '11:60',
                 array('name' => 'some_date'),
                 $focus));
+    }
+
+    protected function setupUserMockWithTZ($tz) {
+        $userMock = $this->getMock("User", array('getPreference'));
+        $userMock->expects($this->atLeastOnce())
+            ->method('getPreference')
+            ->will($this->returnValueMap(array(
+                array('timezone', $tz),
+                array('timezone', 'global', $tz),
+                array('datef', 'Y-m-d'),
+                array('timef', 'H:i'),
+                array('fdow', ''),
+            )));
+
+        $GLOBALS['current_user'] = $userMock;
+        return $userMock;
     }
 }
 

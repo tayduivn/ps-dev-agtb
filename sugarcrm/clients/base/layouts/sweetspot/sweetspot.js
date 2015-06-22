@@ -79,7 +79,7 @@
      * @protected
      */
     _bindEvents: function() {
-        this.bindEsc();
+        this.createShortcuts();
         this.bindOutsideClick();
         this.bindResize();
     },
@@ -90,7 +90,7 @@
      * @protected
      */
     _unbindEvents: function() {
-        this.unbindEsc();
+        this.removeShortcuts();
         this.unbindOutsideClick();
         this.unbindResize();
     },
@@ -114,21 +114,26 @@
     },
 
     /**
-     * Binds the `esc` keydown event.
+     * Create new shortcut session and add shortcut to hide SweetSpot
      */
-    bindEsc: function() {
-        $(document).on('keydown.' + this.cid, _.bind(function(evt) {
-            if (evt.keyCode == 27) {
-                this.hide();
-            }
-        }, this));
+    createShortcuts: function() {
+        app.shortcuts.saveSession();
+        app.shortcuts.createSession(['SweetSpot:Toggle:Off'], this);
+        app.shortcuts.registerGlobal({
+            id: 'Sweetspot:Toggle:Off',
+            keys: 'esc',
+            component: this,
+            description: 'LBL_SHORTCUT_SWEETSPOT_HIDE',
+            callOnFocus: true,
+            handler: this.hide
+        });
     },
 
     /**
-     * Unbinds the `esc` keydown event.
+     * Remove shortcuts for SweetSpot and restore previous session.
      */
-    unbindEsc: function() {
-        $(document).off('keydown.' + this.cid);
+    removeShortcuts: function() {
+        app.shortcuts.restoreSession();
     },
 
     /**
