@@ -1563,6 +1563,20 @@ class MetaDataManager
     }
 
     /**
+     * Invalidates a cache for the user context. Used by the User object when
+     * changing preferences since some of those preferences and settings need to
+     * be reflected in the metadata for the user context.
+     *
+     * @param User $user User bean
+     */
+    public function invalidateUserCache(User $user)
+    {
+        $context = new MetaDataContextUser($user);
+        $platforms = $this->getPlatformsWithCaches();
+        $this->invalidateCache($platforms, $context);
+    }
+
+    /**
      * Rewrites caches for all metadata manager platforms and visibility
      *
      * @param array $platforms
@@ -2583,11 +2597,14 @@ class MetaDataManager
 
     /**
      * Gets the cleaned up list of modules for this client
+     *
+     * @param boolean $filtered Flag that tells this method whether to filter the
+     *                          module list or not
      * @return array
      */
-    public function getModuleList()
+    public function getModuleList($filtered = true)
     {
-        $moduleList = $this->getModules();
+        $moduleList = $this->getModules($filtered);
         $oldModuleList = $moduleList;
         $moduleList = array();
         foreach ( $oldModuleList as $module ) {
@@ -2696,9 +2713,11 @@ class MetaDataManager
     /**
      * Gets the list of modules for this client
      *
+     * @param boolean $filtered Flag that tells this method whether to filter the
+     *                          module list or not
      * @return array
      */
-    protected function getModules()
+    protected function getModules($filtered = true)
     {
         // Loading a standard module list. If the module list isn't set into the
         // globals, load them up. This happens on installation.
@@ -2709,16 +2728,32 @@ class MetaDataManager
             $list = $GLOBALS['app_list_strings']['moduleList'];
         }
 
-// BEGIN SUGARCRM flav=ent ONLY
-        $user = $this->getCurrentUser();
-        if (!empty($user->id) && !empty($GLOBALS['sugar_config']['roleBasedViews']) && !$this->public) {
-            $list = SugarACL::filterModuleList($list);
+        // Handle filtration if we are supposed to
+        if ($filtered) {
+            $list = $this->getFilteredModuleList($list);
         }
-// END SUGARCRM flav=ent ONLY
 
         // TODO - need to make this more extensible through configuration
         $list['Audit'] = true;
         return array_keys($list);
+    }
+
+    /**
+     * Gets a module list that is filtered by ACLs
+     *
+     * @param array $list List of modules for the application
+     * @return array
+     */
+    public function getFilteredModuleList($list)
+    {
+        // BEGIN SUGARCRM flav=ent ONLY
+        $user = $this->getCurrentUser();
+        if (!empty($user->id) && !empty($GLOBALS['sugar_config']['roleBasedViews']) && !$this->public) {
+            $list = SugarACL::filterModuleList($list);
+        }
+        // END SUGARCRM flav=ent ONLY
+
+        return $list;
     }
 
     /**
@@ -2873,7 +2908,11 @@ class MetaDataManager
     protected function getLanguageFileProperties($lang, $ordered = false)
     {
         $hash = $this->getCachedLanguageHash($lang, $ordered);
-        $resp = $this->buildLanguageFile($lang, $this->getModuleList(), $ordered);
+
+        // Do not filter the module list for language file generation
+        $modules = $this->getModuleList(false);
+
+        $resp = $this->buildLanguageFile($lang, $modules, $ordered);
         if (empty($hash) || $hash != $resp['hash']) {
             $this->putCachedLanguageHash($lang, $resp['hash'], $ordered);
         }
@@ -3228,6 +3267,7 @@ class MetaDataManager
         // Delete language caches and remove from the hash cache
         foreach (array(true, false) as $ordered) {
             $pattern = $this->getLangUrl('(.*)', $ordered);
+            // $k is the file path, $v is the hash for it
             foreach ($hashes as $k => $v) {
                 if (preg_match("#^{$pattern}$#", $k, $m)) {
                     // Add the deleted language to the stack
