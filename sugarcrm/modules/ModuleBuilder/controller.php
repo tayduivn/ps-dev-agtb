@@ -62,6 +62,8 @@ require_once 'modules/ModuleBuilder/parsers/parser.portalconfig.php';
 require_once 'include/MetaDataManager/MetaDataManager.php';
 include_once 'modules/Administration/QuickRepairAndRebuild.php';
 
+use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
+
 class ModuleBuilderController extends SugarController
 {
 
@@ -308,6 +310,22 @@ class ModuleBuilderController extends SugarController
             //recreate acl cache
             $actions = ACLAction::getUserActions($current_user->id, true);
             //bug 44269 - end
+
+            //add the mapping to Elastic for the modules in this package
+            //Note that this works for newly created custom modules only.
+            //The existing modules will need deletion of mappings and data first,
+            //before rebuilding of the mappings.
+            if (isset($zip)) {
+                $modules = array();
+                foreach ($zip->modules as $module) {
+                    $modules[] = $module->key_name;
+                }
+
+                $engine = SearchEngine::getInstance()->getEngine();
+                if (isset($engine)) {
+                    $engine->addMappings($modules);
+                }
+            }
         }
 
         echo 'complete';
