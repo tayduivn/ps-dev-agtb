@@ -472,6 +472,9 @@
         var action = (this.def.link && this.def.route)? this.def.route.action :"view";
         if(app.acl.hasAccess(action, oldModule)) {
             this.href = '#' + app.router.buildRoute(module, id);
+        } else {
+            // if no access to module, remove the href
+            this.href = undefined;
         }
     },
     //Derived controllers can override these if related module and id in another place
