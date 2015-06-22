@@ -59,6 +59,9 @@ $viewdefs["base"]["view"]["dashboard-headerpane"] = array(
         array(
             "name"      => "save_button",
             "type"      => "button",
+            'events' => array(
+                'click' => 'button:save_button:click',
+            ),
             "label"     => "LBL_SAVE_BUTTON_LABEL",
             "css_class" => "btn-primary",
             "showOn" => "edit",
@@ -74,6 +77,9 @@ $viewdefs["base"]["view"]["dashboard-headerpane"] = array(
         array(
             "name"      => "create_button",
             "type"      => "button",
+            'events' => array(
+                'click' => 'button:save_button:click',
+            ),
             "label"     => "LBL_SAVE_BUTTON_LABEL",
             "css_class" => "btn-primary",
             "showOn" => "create",
