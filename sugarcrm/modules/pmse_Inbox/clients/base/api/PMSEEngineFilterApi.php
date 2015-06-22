@@ -317,7 +317,7 @@ class PMSEEngineFilterApi extends FilterApi
             case '$starts':
                 //Dirty hack to allow quicksearch filtering by activity name (process name)
                 if ($field === 'act_name') {
-                    $sql = 'activity.name LIKE "' . $value . '%"';
+                    $sql = "activity.name LIKE '" . $value . "%'";
                     $where->queryOr()->addRaw($sql);
                 } else {
                     $where->starts($field, $value);
