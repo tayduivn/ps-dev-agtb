@@ -1,4 +1,6 @@
 <?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -9,23 +11,19 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-$viewdefs['base']['layout']['subpanel-with-massupdate']  = array (
-    'components' => array (
-        array (
-            'view' => 'panel-top',
-        ),
-        array (
-            'view' => 'massupdate',
-        ),
-        array (
-            'view' => 'subpanel-list-with-massupdate',
-        ),
-        array (
-            'view' => 'list-bottom',
+
+$viewdefs['base']['view']['panel-top'] = array(
+    'buttons' => array(
+        array(
+            'type' => 'actiondropdown',
+            'name' => 'panel_dropdown',
+            'css_class' => 'pull-right',
         ),
     ),
-    'span' => 12,
-    'last_state' => array(
-        'id' => 'subpanel'
+    'fields' => array(
+        array(
+            'name' => 'collection-count',
+            'type' => 'collection-count',
+        ),
     ),
 );
