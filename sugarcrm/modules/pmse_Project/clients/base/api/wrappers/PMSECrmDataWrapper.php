@@ -1569,10 +1569,8 @@ class PMSECrmDataWrapper implements PMSEObservable
         foreach ($fieldsData as $field) {
             //$retrieveId = isset($additionalArgs['retrieveId']) && !empty($additionalArgs['retrieveId']) && $field['name'] == 'id' ? $additionalArgs['retrieveId'] : false;
             if (isset($field['vname']) && (PMSEEngineUtils::isValidField($field, $type))) {
-                if (($type == 'AC' || $type == 'BR') && $field['name'] == 'assigned_user_id') {
-                    $field['method'] = 'assignedUsers';
-                    $field['type'] = 'enum';
-                    $field['vname'] = 'LBL_ASSIGNED_TO';
+                if (PMSEEngineUtils::specialFields($field, $type)){
+                    $field = array_merge($field, $this->replaceItemsValues($field));
                 }
                 $tmpField = array();
                 $tmpField['value'] = $field['name'];
@@ -1589,8 +1587,8 @@ class PMSECrmDataWrapper implements PMSEObservable
                 $tmpField['optionItem'] = 'none';
                 if ($field['type'] == 'enum' || $field['type'] == 'radioenum') {
                     if (!isset($field['options']) || !isset($app_list_strings[$field['options']])) {
-                        if (($type == 'AC' || $type == 'BR') && $field['name'] == 'assigned_user_id') {
-                            $tmpField['optionItem'] = $this->gatewayModulesMethod($field['method']);
+                        if (PMSEEngineUtils::specialFields($field, $type)) {
+                            $tmpField['optionItem'] = $this->gatewayModulesMethod($field);
                         } else {
                             $tmpField['optionItem'] = $moduleApi->getEnumValues(
                                 array(),
@@ -2146,20 +2144,48 @@ class PMSECrmDataWrapper implements PMSEObservable
     /**
      * @codeCoverageIgnore
      */
-    private function gatewayModulesMethod($method)
+    private function gatewayModulesMethod($def)
     {
         $values = '';
-        switch ($method) {
-            case 'assignedUsers':
-//                $values = $this->assignedUsers();
+        switch ($def['name']) {
+            case 'assigned_user_id':
                 $users = $this->retrieveUsers();
                 $values = $users;
+                break;
+            case 'created_by':
+            case 'modified_user_id':
+                $users = $this->retrieveUsers();
+                foreach ($users as $rows) {
+                    $newUsers[$rows['value']] = $rows['text'];
+                }
+                $values = $newUsers;
                 break;
             default:
                 $values = null;
                 break;
         }
         return $values;
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    private function replaceItemsValues($def)
+    {
+        $field = array();
+        switch ($def['name']) {
+            case 'assigned_user_id':
+                $field['type'] = 'enum';
+                $field['vname'] = 'LBL_ASSIGNED_TO';
+                break;
+            case 'created_by':
+            case 'modified_user_id':
+                $field['type'] = 'enum';
+                break;
+            default:
+                $result = $field;
+        }
+        return $field;
     }
 
     /**
