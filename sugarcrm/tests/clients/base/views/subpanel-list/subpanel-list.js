@@ -64,9 +64,7 @@ describe("Subpanel List View", function() {
         });
         it('set the fetch limit on the context to app.config.maxSubpanelResult', function() {
             view = SugarTest.createView("base", 'Cases', 'subpanel-list', null, null, null, layout);
-            var opts = view.context.get("collectionOptions");
-            expect(opts).toBeDefined();
-            expect(opts.limit).toEqual(app.config.maxSubpanelResult);
+            expect(view.context.get('limit')).toEqual(app.config.maxSubpanelResult);
         });
     });
 
