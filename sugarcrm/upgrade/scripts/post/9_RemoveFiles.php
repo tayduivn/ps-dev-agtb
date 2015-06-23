@@ -38,11 +38,12 @@ class SugarUpgradeRemoveFiles extends UpgradeScript
             $this->backupFile($file);
             $this->log("Removing $file");
 
-            if(is_dir($file)) {
+            if (is_dir($file)) {
                 $this->removeDir($file);
             } else {
                 $this->unlink($file);
             }
+            $this->cleanFileCache();
         }
     }
 }

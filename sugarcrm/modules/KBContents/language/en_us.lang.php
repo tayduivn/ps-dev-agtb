@@ -75,7 +75,6 @@ $mod_strings = array (
     'LBL_CANNOT_CREATE_LOCALIZATION' =>
         'Unable to create a new localization as a localization version exists for all available languages.',
     'LBL_SPECIFY_PUBLISH_DATE' => 'Schedule this article to be published by specifying the Publish Date. Do you wish to continue without entering a Publish Date?',
-    'LBL_KBSTATUS_PENDING_APPROVAL' => 'Pending My Approval',
     'LBL_PANEL_INMORELESS' => 'Usefulness',
     'LBL_MORE_OTHER_LANGUAGES' => 'More Other Languages...',
     'EXCEPTION_VOTE_USEFULNESS_NOT_AUTHORIZED' => 'You are not authorized to vote useful/not useful {moduleName}. Contact your administrator if you need access.',
@@ -93,4 +92,6 @@ $mod_strings = array (
     'LBL_KB_NOTIFICATION' => 'Document has been published.',
     'LBL_KB_PUBLISHED_REQUEST' => 'has assigned a Document to you for approval and publishing.',
     'LBL_KB_STATUS_BACK_TO_DRAFT' => 'Document status has been changed back to draft.',
+    'LBL_OPERATOR_CONTAINING_THESE_WORDS' => 'containing these words',
+    'LBL_OPERATOR_EXCLUDING_THESE_WORDS' => 'excluding these words',
 );

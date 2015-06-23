@@ -655,6 +655,7 @@ class ModuleBuilderController extends SugarController
         if (empty($_REQUEST ['view_package'])) {
             $relationships->build();
             LanguageManager::clearLanguageCache($_REQUEST ['view_module']);
+            LanguageManager::invalidateJsLanguageCache();
         }
         $GLOBALS['log']->debug("\n\nEND BUILD");
         $this->view = 'relationships';

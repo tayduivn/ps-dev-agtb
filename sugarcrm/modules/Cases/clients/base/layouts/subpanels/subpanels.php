@@ -80,6 +80,7 @@ $viewdefs['Cases']['base']['layout']['subpanels'] = array (
       array(
           'layout' => 'subpanel',
           'label' => 'LBL_KBCONTENTS_SUBPANEL_TITLE',
+          'override_paneltop_view' => 'panel-top-for-cases',
           'context' => array(
               'link' => 'kbcontents',
           ),

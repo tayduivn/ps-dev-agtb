@@ -120,7 +120,7 @@
     bindDataChange: function() {
         this.collection.on('add', function(activity) {
             if (!this.disposed) {
-                this.renderPost(activity);
+                this.renderPost(activity, true);
             }
         }, this);
     }

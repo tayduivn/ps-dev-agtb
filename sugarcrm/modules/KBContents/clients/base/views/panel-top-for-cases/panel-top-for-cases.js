@@ -8,28 +8,21 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
 /**
- * @class View.Fields.Base.Cases.CreateArticleActionField
- * @alias SUGAR.App.view.fields.BaseCasesCreateArticleActionField
- * @extends View.Fields.Base.RowactionField
+ * @class View.Views.Base.KBContentsPanelTopForCases
+ * @alias SUGAR.App.view.views.BaseKBContentsPanelTopForCases
+ * @extends View.Views.Base.PanelTopView
  */
+
 ({
-    extendsFrom: 'RowactionField',
+    extendsFrom: 'PanelTopView',
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     initialize: function(options) {
+        this.plugins = _.union(this.plugins || [], ['KBContent']);
         this._super('initialize', [options]);
-        this.def.route = 'bwc/index.php?module=KBDocuments&action=EditView&case_id=' + this.model.id;
-    },
-
-    /**
-     * @inheritDoc
-     */
-    _loadTemplate: function() {
-        this.type = 'rowaction';
-        this._super('_loadTemplate');
-        this.type = this.def.type;
     }
 })

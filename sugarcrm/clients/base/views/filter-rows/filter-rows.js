@@ -599,7 +599,7 @@
         _.each(types, function(operand) {
             payload[operand] = app.lang.get(
                 this.filterOperatorMap[fieldType][operand],
-                [this.layout.moduleName, 'Filters']
+                [this.moduleName, 'Filters']
             );
         }, this);
 
