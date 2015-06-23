@@ -52,11 +52,9 @@
                     app.utils.tooltip.destroy(this._$ellipsisTooltips);
                 }
 
-                _.defer(function(options) {
-                    self._$ellipsisTooltips = app.utils.tooltip.initialize(options);
-                }, this.$('.ellipsis_inline'), {
-                    trigger: 'manual'
-                }, this.dir);
+                _.defer(function($element, options, direction) {
+                    self._$ellipsisTooltips = app.utils.tooltip.initialize($element, options, direction);
+                }, this.$('.ellipsis_inline'), {trigger: 'manual'}, this.dir);
             },
 
             /**
