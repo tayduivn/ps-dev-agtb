@@ -11,7 +11,7 @@
 /**
  * @class View.Layouts.Base.DashletPreviewLayout
  * @alias SUGAR.App.view.layouts.BaseDashletPreviewLayout
- * @extends View.PreviewLayout
+ * @extends View.Layouts.Base.PreviewLayout
  */
 ({
     extendsFrom: 'PreviewLayout'

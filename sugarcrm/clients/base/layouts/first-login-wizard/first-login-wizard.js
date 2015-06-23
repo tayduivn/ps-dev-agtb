@@ -11,7 +11,7 @@
 /**
  * @class View.Layouts.Base.FirstLoginWizardLayout
  * @alias SUGAR.App.view.layouts.BaseFirstLoginWizardLayout
- * @extends View.WizardLayout
+ * @extends View.Layouts.Base.WizardLayout
  */
 ({
     extendsFrom: 'WizardLayout'

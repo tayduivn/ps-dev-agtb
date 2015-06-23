@@ -81,8 +81,8 @@
         options.meta = _.extend(
             {},
             options.meta,
-            app.metadata.getView(null, options.name),
-            app.metadata.getView(options.module, options.name)
+            app.metadata.getView(null, options.type),
+            app.metadata.getView(options.module, options.type)
         );
 
         this._super('initialize', [options]);
