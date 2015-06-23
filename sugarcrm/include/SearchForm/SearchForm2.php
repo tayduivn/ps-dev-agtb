@@ -1039,7 +1039,7 @@ require_once('include/EditView/EditView2.php');
                                  } else {
                                      //Bug#37087: Re-write our sub-query to it is executed first and contents stored in a derived table to avoid mysql executing the query
                                      //outside in. Additional details: http://bugs.mysql.com/bug.php?id=9021
-                                     $where .= "{$db_field} $in (select $selectCol from (".$this->getLikeSubquery($parms['subquery'] , $field_value).") {$field}_derived)";
+                                     $where .= "{$db_field} $in (select * from (".$this->getLikeSubquery($parms['subquery'] , $field_value).") {$field}_derived)";
                                  }
 
                                  break;
