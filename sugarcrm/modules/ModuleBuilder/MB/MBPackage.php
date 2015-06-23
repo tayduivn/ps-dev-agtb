@@ -1194,7 +1194,7 @@ function buildInstall($path){
         
         $result = array();
         $relation = null;
-        $module = new StudioModule($moduleName);
+        $module = StudioModuleFactory::getStudioModule($moduleName);
 
         /* @var $rel DeployedRelationships */
         $rel = $module->getRelationships();
