@@ -1136,7 +1136,21 @@ abstract class UpgradeDriver
      */
     protected function getUser()
     {
+        //Set globals installing to true to prevent bean_implements check for some modules
+        if (isset($GLOBALS['installing'])) {
+            $installing = $GLOBALS['installing'];
+        }
+
+        $GLOBALS['installing'] = true;
+
         $user = BeanFactory::getBean('Users');
+
+        if (isset($installing)) {
+            $GLOBALS['installing'] = $installing;
+        } else {
+            unset($GLOBALS['installing']);
+        }
+
         $user_id = $this->db->getOne(
             "select id from users where deleted=0 AND user_name = " . $this->db->quoted($this->context['admin']),
             false
