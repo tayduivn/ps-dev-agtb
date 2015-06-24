@@ -323,6 +323,6 @@ $dictionary['pmse_BpmFormAction'] = array(
 		'unified_search'=>true,
 	);
 if (!class_exists('VardefManager')){
-        require_once('include/SugarObjects/VardefManager.php');
+        require_once 'include/SugarObjects/VardefManager.php';
 }
 VardefManager::createVardef('pmse_BpmFormAction','pmse_BpmFormAction', array('basic','assignable'));

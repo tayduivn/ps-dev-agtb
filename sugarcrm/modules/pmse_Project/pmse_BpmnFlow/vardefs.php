@@ -453,6 +453,6 @@ $dictionary['pmse_BpmnFlow'] = array(
 		'unified_search'=>true,
 	);
 if (!class_exists('VardefManager')){
-        require_once('include/SugarObjects/VardefManager.php');
+        require_once 'include/SugarObjects/VardefManager.php';
 }
 VardefManager::createVardef('pmse_BpmnFlow','pmse_BpmnFlow', array('basic','assignable'));

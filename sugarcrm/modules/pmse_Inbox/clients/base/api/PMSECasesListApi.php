@@ -238,6 +238,7 @@ class PMSECasesListApi extends FilterApi
             if (empty($processUsersNames)) {
                 $userNames = '';
             } else {
+                $processUsersNames = array_unique($processUsersNames);
                 $userNames = implode(', ',$processUsersNames);
             }
             $list[$key]['cas_user_id_full_name'] = $userNames;

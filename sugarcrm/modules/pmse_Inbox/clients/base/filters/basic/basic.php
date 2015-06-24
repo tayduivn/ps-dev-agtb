@@ -18,7 +18,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 $viewdefs['pmse_Inbox']['base']['filter']['basic'] = array(
     'create'               => true,
-    'quicksearch_field'    => array('name'),
+    'quicksearch_field'    => array('act_name'),
     'quicksearch_priority' => 1,
     'filters'              => array(
         array(

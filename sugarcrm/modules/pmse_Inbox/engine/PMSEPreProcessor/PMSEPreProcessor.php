@@ -16,8 +16,8 @@ require_once 'modules/pmse_Inbox/engine/PMSEExecuter.php';
 require_once 'modules/pmse_Inbox/engine/PMSEHandlers/PMSECaseFlowHandler.php';
 require_once 'modules/pmse_Inbox/engine/PMSEEvaluator.php';
 require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
-require_once 'PMSEValidator.php';
-require_once 'PMSERequest.php';
+require_once 'modules/pmse_Inbox/engine/PMSEPreProcessor/PMSEValidator.php';
+require_once 'modules/pmse_Inbox/engine/PMSEPreProcessor/PMSERequest.php';
 
 class PMSEPreProcessor
 {

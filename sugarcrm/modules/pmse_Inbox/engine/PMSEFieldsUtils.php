@@ -113,7 +113,7 @@ function bpminbox_get_display_text($temp_module, $field, $field_value, $adv_type
         $field_value = (bool)$field_value;
     }
 
-    require_once('include/SugarFields/SugarFieldHandler.php');
+    require_once 'include/SugarFields/SugarFieldHandler.php';
     $sugarField = SugarFieldHandler::getSugarField($target_type);
     //$GLOBALS['log']->debug("Field: $field is of type $target_type, before: $field_value");
     $field_value = $sugarField->getEmailTemplateValue($field_value, $temp_module->field_defs[$field], $context);
@@ -235,7 +235,7 @@ function bpminbox_check_special_fields($field_name, $source_object, $use_past_ar
         // We have to load the user here since fetched_row only has the ID, not the name
         return bpminbox_get_username_by_id($source_object->fetched_row['assigned_user_id']);
     } elseif ($field_name == 'team_name') {
-        require_once('modules/Teams/TeamSetManager.php');
+        require_once 'modules/Teams/TeamSetManager.php';
         if ($use_past_array == false) {
             if (empty($source_object->team_set_id)) {
                 if (!empty($source_object->teams)) {
@@ -284,7 +284,7 @@ function get_bean_field_type($field_name_mapped, $bean_source_object)
 
 function bpminbox_execute_special_logic($field_name, &$source_object)
 {
-    require_once('PMSE.php');
+    require_once 'modules/pmse_Inbox/engine/PMSE.php';
     $pmse = PMSE::getInstance();
     if ($pmse->fileExists('modules/' . $source_object->module_dir . '/SaveOverload.php')) {
         require_once('modules/' . $source_object->module_dir . '/SaveOverload.php');

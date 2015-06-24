@@ -19,11 +19,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * @codeCoverageIgnore
  */
-require_once 'PMSEDataParserInterface.php';
-require_once 'PMSEFieldParser.php';
-require_once 'PMSEBusinessRuleParser.php';
-require_once 'PMSEFormResponseParser.php';
-require_once 'PMSEUserRoleParser.php';
+require_once 'modules/pmse_Inbox/engine/parser/PMSEDataParserInterface.php';
+require_once 'modules/pmse_Inbox/engine/parser/PMSEFieldParser.php';
+require_once 'modules/pmse_Inbox/engine/parser/PMSEBusinessRuleParser.php';
+require_once 'modules/pmse_Inbox/engine/parser/PMSEFormResponseParser.php';
+require_once 'modules/pmse_Inbox/engine/parser/PMSEUserRoleParser.php';
 
 class PMSEDataParserGateway implements PMSEDataParserInterface
 {

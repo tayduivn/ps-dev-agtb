@@ -44,7 +44,8 @@ class PMSEEngineFilterApi extends FilterApi
         '$not_equals',
         '$in',
         '$not_in',
-        '$dateRange'
+        '$dateRange',
+        '$starts',
     );
 
     public function registerApiRest()
@@ -312,6 +313,15 @@ class PMSEEngineFilterApi extends FilterApi
                 break;
             case '$dateRange':
                 $where->dateRange($field, $value);
+                break;
+            case '$starts':
+                //Dirty hack to allow quicksearch filtering by activity name (process name)
+                if ($field === 'act_name') {
+                    $sql = "activity.name LIKE '" . $value . "%'";
+                    $where->queryOr()->addRaw($sql);
+                } else {
+                    $where->starts($field, $value);
+                }
                 break;
         }
     }
