@@ -23,6 +23,8 @@ describe('View.Views.Base.QuicksearchBarView', function() {
 
         layout = SugarTest.app.view.createLayout({});
         view = SugarTest.createView('base', null, viewName, null, null, null, layout);
+        // Required to define `this.$input` value.
+        view._renderHtml();
     });
 
     afterEach(function() {
