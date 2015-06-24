@@ -1012,7 +1012,7 @@ ExpressionControl.prototype._onPanelValueGeneration = function () {
                             valueType = (aux[1] === 'equals' ? "has role" : "has not role") + " " + label;
                             break;
                         case 'USER_IDENTITY':
-                            valueType = (aux[1] === 'equals' ? "==" : "!=") + " " + label;
+                            valueType = (aux[1] === 'equals' ? "is user" : "is not user") + " " + label;
                             break;
                     }
                     label = subpanel.getItem("user").getSelectedText() + " " + valueType;
