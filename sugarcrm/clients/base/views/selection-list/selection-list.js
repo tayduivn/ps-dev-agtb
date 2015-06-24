@@ -56,6 +56,9 @@
         this.setSelectionMeta(options);
         this._super('initialize', [options]);
 
+        // set list back to flex-list
+        this.tplName = 'flex-list';
+
         this.events = _.extend({}, this.events, {
             'click .search-and-select .single': 'triggerCheck'
         });
