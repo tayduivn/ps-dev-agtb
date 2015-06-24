@@ -766,7 +766,7 @@ class RenameModules
         $GLOBALS['log']->info("Beginning to change module labels for: $moduleName");
         $currentModuleStrings = return_module_language($this->selectedLanguage, $moduleName);
         $labelKeysToReplace = array(
-            array('name' => 'LNK_NEW_RECORD', 'type' => 'plural'), //Module built modules, Create <moduleName>
+            array('name' => 'LNK_NEW_RECORD', 'type' => 'singular'), //Module built modules, Create <moduleName>
             array('name' => 'LNK_LIST', 'type' => 'plural'), //Module built modules, View <moduleName>
             array('name' => 'LNK_NEW_###MODULE_SINGULAR###', 'type' => 'singular'),
             array('name' => 'LNK_CREATE', 'type' => 'singular'),
