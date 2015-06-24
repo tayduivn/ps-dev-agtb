@@ -50,7 +50,6 @@
             var domParentTypeVal = this.$(this.typeFieldTag).val();
             if(this.model.get(this.def.type_name) !== domParentTypeVal) {
                 this.model.setDefault(this.def.type_name, domParentTypeVal);
-                this._createFiltersCollection();
                 this._createSearchCollection();
             }
 
@@ -131,7 +130,6 @@
             // receive a true Backbone.Model or Data.Bean
                 module = model.module || model._module;
 
-            this._createFiltersCollection();
 
             if (app.acl.hasAccessToModel(this.action, this.model, this.name)) {
                 if (module) {
