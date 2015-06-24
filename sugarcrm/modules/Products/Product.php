@@ -1,7 +1,4 @@
 <?php
-if (!defined('sugarEntry') || !sugarEntry) {
-    die('Not A Valid Entry Point');
-}
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -168,8 +165,6 @@ class Product extends SugarBean
 
         $currency = BeanFactory::getBean('Currencies');
         $this->default_currency_symbol = $currency->getDefaultCurrencySymbol();
-
-
     }
 
 
@@ -179,19 +174,25 @@ class Product extends SugarBean
     }
 
 
+    /**
+     * @deprecated
+     */
     public function fill_in_additional_list_fields()
     {
+        $GLOBALS['log']->deprecated('Product::fill_in_additional_list_fields() has been deprecated in 7.8');
         $this->fill_in_additional_detail_fields();
     }
 
     /**
+     * @deprecated
+     *
      * get_list_view_data
      * Returns a list view of the associated Products.  This view is used in the Subpanel
      * listings.
-     *
      */
     public function get_list_view_data()
     {
+        $GLOBALS['log']->deprecated('Product::get_list_view_data() has been deprecated in 7.8');
         global $current_language, $app_strings, $app_list_strings, $current_user, $timedate, $locale;
         $product_mod_strings = return_module_language($current_language,"Products");
         require('modules/Products/config.php');
@@ -246,11 +247,16 @@ class Product extends SugarBean
     }
 
     /**
-    builds a generic search based on the query string using or
-    do not include any $this-> because this is called on without having the class instantiated
+     * @deprecated
+     *
+     * This is only used by BWC Modules, not sidecar modules
+     *
+     * builds a generic search based on the query string using or
+     * do not include any $this-> because this is called on without having the class instantiated
      */
     public function build_generic_where_clause($the_query_string)
     {
+        $GLOBALS['log']->deprecated('Product::build_generic_where_clause() has been deprecated in 7.8');
         $where_clauses = array();
         $the_query_string = $GLOBALS['db']->quote($the_query_string);
         array_push($where_clauses, "name like '$the_query_string%'");
@@ -309,19 +315,21 @@ class Product extends SugarBean
 
         $this->calculateDiscountPrice();
 
-        $this->convertDateClosedToTimestamp();
-        $this->mapFieldsFromOpportunity();
-
         $id = parent::save($check_notify);
 
         return $id;
 	}
 
-    /*
+    /**
+     * @deprecated
+     *
+     * product_type is no longer on Products, it was part of the RLI module
+     *
      * map fields if opportunity id is set
      */
     protected function mapFieldsFromOpportunity()
     {
+        $GLOBALS['log']->deprecated('Product::mapFieldsFromOpportunity() has been deprecated in 7.8');
         if(!empty($this->opportunity_id) && empty($this->product_type)) {
             $opp = BeanFactory::getBean('Opportunities', $this->opportunity_id);
             $this->product_type = $opp->opportunity_type;
@@ -330,9 +338,14 @@ class Product extends SugarBean
 
     /**
      * Handle Converting DateClosed to a Timestamp
+     *
+     * This was replace by SugarLogic in the vardefs
+     *
+     * @deprecated
      */
     protected function convertDateClosedToTimestamp()
     {
+        $GLOBALS['log']->deprecated('Product::convertDateClosedToTimestamp() has been deprecated in 7.8');
         $timedate = TimeDate::getInstance();
         if ($timedate->check_matching_format($this->date_closed, TimeDate::DB_DATE_FORMAT)) {
             $date_close_db = $this->date_closed;
@@ -356,9 +369,10 @@ class Product extends SugarBean
     {
         $opp = BeanFactory::getBean('Opportunities', $opportunityId);
         if ($opp->load_relationship('accounts')) {
-            $accounts = $opp->accounts->query(array('where' => 'accounts.deleted=0'));
-            foreach ($accounts['rows'] as $accountId => $value) {
-                $this->account_id = $accountId;
+            $accounts = $opp->accounts->get();
+            if (!empty($accounts)) {
+                // get the first row
+                $this->account_id = array_shift($accounts);
                 return true;
             }
         }
@@ -374,8 +388,16 @@ class Product extends SugarBean
         return false;
     }
 
+    /**
+     * @deprecated
+     *
+     * This is only used for BWC modules, so need to keep it around
+     *
+     * @return array
+     */
     public function listviewACLHelper()
     {
+        $GLOBALS['log']->deprecated('Product::listviewACLHelper() has been deprecated in 7.8');
         $array_assign = parent::listviewACLHelper();
 
         $is_owner = false;
@@ -473,12 +495,12 @@ class Product extends SugarBean
     {
         if (!isset($this->product_template_id)) {
             // No template to choose from
-            return;
+            return false;
         }
         if (isset($this->fetched_row['product_template_id'])
             && $this->product_template_id == $this->fetched_row['product_template_id']) {
             // Templates are the same, don't do anything
-            return;
+            return false;
         }
 
         $template = BeanFactory::getBean('ProductTemplates', $this->product_template_id);
@@ -499,6 +521,8 @@ class Product extends SugarBean
                 $this->$template_field = $template->$template_field;
             }
         }
+
+        return true;
     }
 
     /**
@@ -510,20 +534,37 @@ class Product extends SugarBean
             || !empty($this->cost_price)
             || !empty($this->list_price)
             || !empty($this->discount_price)
-            || !empty($this->pricing_factor)
-            || !empty($this->discount_amount)
-            || !empty($this->discount_select)) {
-            require_once('modules/ProductTemplates/Formulas.php');
-            refresh_price_formulas();
-            global $price_formulas;
-            if (isset($price_formulas[$this->pricing_formula])) {
-                include_once ($price_formulas[$this->pricing_formula]);
-                $formula = new $this->pricing_formula;
+            || !empty($this->pricing_factor)) {
+
+            $formula = $this->getPriceFormula($this->pricing_formula);
+
+            if ($formula) {
                 $this->discount_price = $formula->calculate_price($this->cost_price,$this->list_price,$this->discount_price,$this->pricing_factor);
             }
         }
-        
+    }
 
+    /**
+     * Utiltity method to get the Pricing Formual Class
+     *
+     * @param string $formula
+     * @param bool|false $refresh
+     * @return bool|Object
+     */
+    protected function getPriceFormula($formula, $refresh = false)
+    {
+        if (!isset($GLOBALS['price_formulas']) || $refresh) {
+             SugarAutoLoader::load('modules/ProductTemplates/Formulas.php');
+            refresh_price_formulas();
+        }
+
+
+        if (!isset($GLOBALS['price_formulas'][$formula])) {
+            return false;
+        }
+
+        SugarAutoLoader::load($GLOBALS['price_formulas'][$formula]);
+        return new $formula;
     }
 
     /**

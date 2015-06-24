@@ -653,7 +653,10 @@ $dictionary['Product'] = array(
             'vname' => 'LBL_DATE_CLOSED_TIMESTAMP',
             'type' => 'int',
             'reportable' => false,
-            'studio' => false
+            'studio' => false,
+            'enforced' => true,
+            'calculated' => true,
+            'formula' => 'timestamp($date_closed)',
         ),
         'next_step' => array(
             'name' => 'next_step',
