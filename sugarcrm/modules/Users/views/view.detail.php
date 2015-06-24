@@ -27,6 +27,12 @@ class UsersViewDetail extends ViewDetail {
             return;
         }
 
+        if (!$current_user->isAdminForModule('Users') && !$current_user->isDeveloperForModule('Users') &&
+        $this->bean->id != $current_user->id) {
+            ACLController::displayNoAccess(true);
+            sugar_cleanup(true);
+        }
+
         parent::preDisplay();
 
         $viewHelper = new UserViewHelper($this->ss, $this->bean, 'DetailView');
