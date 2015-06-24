@@ -15,4 +15,8 @@ $viewdefs['KBContents']['base']['filter']['operators'] = array(
         '$in' => 'LBL_OPERATOR_IS',
         '$not_in' => 'LBL_OPERATOR_IS_NOT',
     ),
+    'htmleditable_tinymce' => array(
+        '$contains' => 'LBL_OPERATOR_CONTAINING_THESE_WORDS',
+        '$not_contains' => 'LBL_OPERATOR_EXCLUDING_THESE_WORDS',
+    ),
 );

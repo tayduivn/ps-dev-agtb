@@ -285,9 +285,8 @@
      * Fetch the next pagination records.
      */
     showMoreRecords: function() {
-        //Show alerts for this request
-        // Override default collection options if they exist
-        this.getNextPagination(this.context.get('collectionOptions'));
+        // Show alerts for this request
+        this.getNextPagination();
     },
 
     /**

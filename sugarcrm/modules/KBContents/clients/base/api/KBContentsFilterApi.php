@@ -13,6 +13,9 @@
 
 require_once 'clients/base/api/FilterApi.php';
 
+use \Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
+use \Sugarcrm\Sugarcrm\Elasticsearch\Query\QueryBuilder;
+
 class KBContentsFilterApi extends FilterApi
 {
     public function registerApiRest()
@@ -53,7 +56,7 @@ class KBContentsFilterApi extends FilterApi
 
     /**
      * {@inheritDoc}
-     * Add filter to return only active revisions for filetrApi.
+     * Add filter to return only active revisions for filterApi.
      */
     public function filterListSetup(ServiceBase $api, array $args, $acl = 'list')
     {
@@ -69,5 +72,124 @@ class KBContentsFilterApi extends FilterApi
         }
 
         return array($args, $q, $options, $seed);
+    }
+
+    /**
+     * {@inheritDoc}
+     * If we want to filter by KB Article Body let's do it via ElasticSearch.
+     */
+    public function filterList(ServiceBase $api, array $args, $acl = 'list')
+    {
+        // If we have 'Body containing/excluding these words' filter, separate it from the rest filters, so that
+        // it is searched via Elastic and the rest is searched via standard engine.
+        $bodySearchFilter = array();
+        $modifiedMainFilter = array();
+
+        if (isset($args['filter'])) {
+            foreach ($args['filter'] as $filter) {
+                if (array_key_exists('kbdocument_body', $filter)) {
+                    $bodySearchFilter[] = $filter['kbdocument_body'];
+                } else {
+                    $modifiedMainFilter[] = $filter;
+                }
+            }
+            $args['filter'] = $modifiedMainFilter;
+        }
+
+        // We've got 3 cases:
+        // 1. Composite filter with KBBody - retrieve all records found via Elastic & augment filter with their ids;
+        // 2. Filter with only KBBody - use only Elastic search with built-in pagination;
+        // 3. Filter without KBBody - just use standard Sugar filtering mechanism.
+        if ($bodySearchFilter && count($modifiedMainFilter) === 0) {
+            return $this->filterByContainingExcludingWords($api, $args, $bodySearchFilter, false);
+        } elseif ($bodySearchFilter) {
+            $ids = $this->filterByContainingExcludingWords($api, $args, $bodySearchFilter, true);
+            $args['filter'][] = array('id' => array('$in' => $ids));
+        }
+        return parent::filterList($api, $args, $acl);
+    }
+
+    /**
+     * Search for 'containing/excluding these words' filter via Elastic.
+     * @param ServiceBase $api
+     * @param array $args
+     * @param array $filterArgs filter args that contain only 'containing/excluding these words' filter
+     * @param bool $idsOnly return only ids for further filtering or resulting records
+     * @return array
+     */
+    protected function filterByContainingExcludingWords($api, $args, $filterArgs, $idsOnly)
+    {
+        $options = $this->parseArguments($api, $args);
+
+        $operators = array();
+        foreach ($filterArgs as $filterDef) {
+            $key = key($filterDef);
+            $values = preg_split('/[\s[:punct:]]+/', $filterDef[$key]);
+            $operators[$key] = !isset($operators[$key]) ? array() : $operators[$key];
+            $operators[$key] = $operators[$key] + $values;
+        }
+
+        $engineContainer = SearchEngine::getInstance()->getEngine()->getContainer();
+        $builder = new QueryBuilder($engineContainer);
+        $builder
+            ->setUser(self::$current_user)
+            ->setModules(array($args['module']));
+
+        if (!$idsOnly) {
+            $builder->setLimit($options['limit'])->setOffset($options['offset']);
+        }
+
+        // Get special field's name used for search.
+        $bean = BeanFactory::newBean($args['module']);
+        $ftsFields = ApiHelper::getHelper($api, $bean)->getElasticSearchFields(array('kbdocument_body'));
+
+        // Containing/excluding words main query.
+        $boolQuery = new \Elastica\Query\Bool();
+        foreach ($ftsFields['kbdocument_body'] as $searchFieldName) {
+            if (isset($operators['$contains'])) {
+                $matchContaining = new Elastica\Query\Match();
+                $matchContaining->setField($searchFieldName, implode(' ', $operators['$contains']));
+                $boolQuery->addMust($matchContaining);
+            }
+            if (isset($operators['$not_contains'])) {
+                $matchExcluding = new Elastica\Query\Match();
+                $matchExcluding->setField($searchFieldName, implode(' ', $operators['$not_contains']));
+                $boolQuery->addMustNot($matchExcluding);
+            }
+        }
+
+        // Active revision filter.
+        $activeRevFilter = new \Elastica\Filter\Term();
+        $activeRevFilter->setTerm('active_rev', 1);
+
+        // Execute the search.
+        $builder->setQuery($boolQuery);
+        $builder->addFilter($activeRevFilter);
+        $resultSet = $builder->executeSearch();
+
+        // Return all ids for further filtering ... or records with pagination.
+        $data = array();
+        if ($idsOnly) {
+            foreach ($resultSet as $result) {
+                $data[] = $result->getId();
+            }
+            return $data;
+        } else {
+            foreach ($resultSet as $result) {
+                $record = BeanFactory::retrieveBean($result->getType(), $result->getId());
+                if (!$record) {
+                    continue;
+                }
+                $formattedRecord = $this->formatBean($api, $args, $record);
+                $formattedRecord['_module'] = $result->getType();
+                $data[] = $formattedRecord;
+            }
+            if ($resultSet->getTotalHits() > ($options['limit'] + $options['offset'])) {
+                $nextOffset = $options['offset'] + $options['limit'];
+            } else {
+                $nextOffset = -1;
+            }
+            return array('next_offset' => $nextOffset, 'records' => $data);
+        }
     }
 }

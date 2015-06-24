@@ -14,10 +14,12 @@ require_once("include/Expressions/Expression/Date/DateExpression.php");
 
 class SetValueAction extends AbstractAction{
 	protected $expression =  "";
+    protected $errorValue = null;
 
 	function SetValueAction($params) {
-		$this->targetField = $params['target'];
-		$this->expression = str_replace("\n", "",$params['value']);
+        $this->targetField = $params['target'];
+        $this->expression = str_replace("\n", "",$params['value']);
+        $this->errorValue = array_key_exists('errorValue', $params)? $params['errorValue'] : null;
 	}
 
 	/**
@@ -31,6 +33,7 @@ class SetValueAction extends AbstractAction{
 			if (_.isObject(target)){
 			    this.expr = target.value;
 			    this.target = target.target;
+			    this.errorValue = !_.isUndefined(target.errorValue) ? target.errorValue : null;
 			} else {
                 this.expr = valExpr;
                 this.target = target;
@@ -39,8 +42,9 @@ class SetValueAction extends AbstractAction{
 		SUGAR.util.extend(SUGAR.forms.SetValueAction, SUGAR.forms.AbstractAction, {
 			exec : function(context)
 			{
-				if (typeof(context) == 'undefined')
+				if (typeof(context) == 'undefined') {
 				    context = this.context;
+                }
 
 				try {
 				    // set the target for rollup expressions
@@ -54,7 +58,9 @@ class SetValueAction extends AbstractAction{
 				        context.setValue(this.target, val);
 				    }
 				} catch (e) {
-	                context.setValue(this.target, '');
+				    if (!_.isUndefined(this.errorValue) && !_.isNull(this.errorValue)) {
+				        context.setValue(this.target, this.errorValue);
+				    }
 			    }
 	       }
 		});";
@@ -131,6 +137,7 @@ class SetValueAction extends AbstractAction{
 	        "params" => array(
                 "target" => $this->targetField,
 	            "value" => $this->expression,
+                "errorValue" => $this->errorValue
             )
 	    );
 	}

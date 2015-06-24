@@ -389,7 +389,8 @@
                     data: {
                         tag_filters: _.pluck(this.selectedTags, 'id')
                     },
-                    fetchWithPost: true
+                    fetchWithPost: true,
+                    useNewApi: true
                 }
             });
         }

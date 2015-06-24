@@ -1,5 +1,4 @@
 <?php
-
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -11,15 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$viewdefs['base']['layout']['activitystream'] = array(
-    'components' =>
-    array(
-        array(
-            'view' => 'activitystream-omnibar',
-        ),
-        array(
-            'view' => 'activitystream-bottom',
-        ),
-    ),
-    'type' => 'activitystream',
-);
+/**
+ * Interface CategoriesExceptionInterface
+ */
+interface CategoriesExceptionInterface
+{
+}

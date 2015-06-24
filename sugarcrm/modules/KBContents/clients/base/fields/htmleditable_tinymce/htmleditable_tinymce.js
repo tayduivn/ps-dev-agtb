@@ -23,6 +23,9 @@
      * Additional override fieldSelector property from field's meta.
      */
     initialize: function(opts) {
+        if (opts.view.action === 'filter-rows') {
+            opts.viewName = 'filter-rows-edit';
+        }
         this._super('initialize', [opts]);
         this.shouldDisable = false;
         if (!_.isUndefined(this.def.fieldSelector)) {
