@@ -11552,6 +11552,9 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_START_AND_END_DATE_TO' => 'to',
     'LBL_START_AND_END_DATE_DETAIL_VIEW' => 'Start & End Date',
 
+    // notifications
+    'TPL_NOTIFICATION_TITLE' => '{{moduleName}} starts at {{startTime}}',
+
     'LBL_CALENDAR_START_DATE' => "Start Date",
     'LBL_CALENDAR_END_DATE' => "End Date",
     'LBL_CALENDAR_DURATION' => "Duration",

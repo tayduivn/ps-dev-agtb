@@ -384,20 +384,16 @@
      */
     _showReminderAlert: function(model) {
         var url = app.router.buildRoute(model.module, model.id),
-            dateFormat = app.user.getPreference('datepref') + ' ' + app.user.getPreference('timepref'),
-            dateValue = app.date.format(new Date(model.get('date_start')), dateFormat),
-            template = app.template.getView('notifications.notifications-alert'),
-            message = template({
-                title: new Handlebars.SafeString(app.lang.get('LBL_REMINDER_TITLE', model.module)),
-                module: model.module,
-                name: new Handlebars.SafeString(model.get('name')),
-                location: new Handlebars.SafeString(model.get('location')),
-                description: model.get('description'),
-                dateStart: dateValue,
-                parentName: new Handlebars.SafeString(model.get('parent_name'))
-            });
-        _.defer(function() {
-            if (confirm(message)) {
+            startTime = app.date(model.get('date_start')).format(app.date.getUserTimeFormat()),
+            data = {
+                moduleName: app.lang.getModuleName(model.module),
+                startTime: startTime
+            },
+            title = app.lang.get('TPL_NOTIFICATION_TITLE', model.module, data);
+
+        app.browserNotification.show(title, {
+            body: new Handlebars.SafeString(model.get('name')),
+            onclick: function() {
                 app.router.navigate(url, {trigger: true});
             }
         });

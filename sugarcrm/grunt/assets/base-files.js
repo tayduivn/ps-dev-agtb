@@ -37,6 +37,7 @@
     'include/javascript/sugar7/utils-search.js',
     'include/javascript/sugar7/error.js',
     'include/javascript/sugar7.js',
+    'include/javascript/sugar7/browser-notification.js',
 
     // TODO: decide if we're going to only serve or if we should have
     // them all by default
