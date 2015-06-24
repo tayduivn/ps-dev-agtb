@@ -86,6 +86,9 @@ class TemplateHandler {
         $this->ss->assign('module', $module);
         $this->ss->assign('built_in_buttons', array('CANCEL', 'DELETE', 'DUPLICATE', 'EDIT', 'SHARE', 'FIND_DUPLICATES', 'SAVE', 'CONNECTOR'));
         $contents = $this->ss->fetch($tpl);
+        if ($view == "PMSEDetailView"){
+            $view = 'EditView';
+        }
         //Insert validation and quicksearch stuff here
         if($view == 'EditView' || strpos($view,'QuickCreate') || $ajaxSave || $view == "ConvertLead") {
 
