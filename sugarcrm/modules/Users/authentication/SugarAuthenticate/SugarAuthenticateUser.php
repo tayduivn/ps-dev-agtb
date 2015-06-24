@@ -66,8 +66,8 @@ class SugarAuthenticateUser{
     function loadUserOnLogin($name, $password, $fallback = false, $PARAMS = array())
     {
         $passwordEncrypted = false;
-        if (empty($name) && empty($password)) {
-            $user_id = $this->checkForSeamlessLogin();
+        if (empty($name) && empty($password) && !empty($_REQUEST['MSID'])) {
+            $user_id = $this->checkForSeamlessLogin($_REQUEST['MSID']);
         } else {
             $GLOBALS['log']->debug("Starting user load for " . $name);
             if (empty($name) || empty($password)) {
@@ -98,22 +98,46 @@ class SugarAuthenticateUser{
         return true;
     }
 
-    protected function checkForSeamlessLogin() {
+    /**
+     * @param string $sessionId
+     * @return bool
+     */
+    protected function checkForSeamlessLogin($sessionId)
+    {
         //allow a user to pick up a session from another application.
-        //We still need to ensure IP validation
-        if (!empty($_REQUEST['MSID'])) {
-            session_id($_REQUEST['MSID']);
-            session_start();
-            if (isset($_SESSION['user_id']) && isset($_SESSION['seamless_login'])) {
-                unset ($_SESSION['seamless_login']);
-                return $_SESSION['user_id'];
-            } else {
-                session_write_close();
-                $_SESSION = array();
+        session_id($sessionId);
+        session_start();
+        if (isset($_SESSION['user_id']) && isset($_SESSION['seamless_login'])) {
+            unset($_SESSION['seamless_login']);
+            $sessionIp = null;
+            if (isset($_SESSION['seamless_login_ip'])) {
+                $sessionIp = $_SESSION['seamless_login_ip'];
+                unset($_SESSION['seamless_login_ip']);
+            } elseif (isset($_SESSION['ipaddress'])) {
+                $sessionIp = $_SESSION['ipaddress'];
             }
 
+            if ($sessionIp) {
+                $clientIp = query_client_ip();
+                if (!validate_ip($clientIp, $sessionIp)) {
+                    $GLOBALS['log']->fatal(sprintf(
+                        'Seamless login IP address mismatch: SESSION IP: %s, CLIENT IP: %s',
+                        $_SESSION['seamless_login_ip'],
+                        $clientIp
+                    ));
+                    session_write_close();
+                                    $_SESSION = array();
+                    return false;
+                }
+            }
+            return $_SESSION['user_id'];
         }
+        session_write_close();
+                        $_SESSION = array();
+
+        return false;
     }
+
 	/**
 	 * Loads the current user bassed on the given user_id
 	 *

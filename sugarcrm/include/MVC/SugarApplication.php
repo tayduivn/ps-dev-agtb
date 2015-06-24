@@ -48,7 +48,29 @@ class SugarApplication
 
         // make sidecar view load faster
         // TODO the rest of the code will be removed as soon as we migrate all modules to sidecar
-        if ($this->controller->action === 'sidecar' ||
+        if (!empty($_REQUEST['MSID'])
+            && ($this->controller->action !== 'Authenticate' || $this->controller->module !== 'Users')
+        ) {
+            //This is not longer a valid path for MSID. We can only accept it through view.authenticate.php
+            $url = 'index.php?module=Users&action=Authenticate&MSID=' . urlencode($_REQUEST['MSID']);
+            $req = array_diff_key($this->getRequestVars(), array("MSID" => 1));
+            if (!empty($req['module'])) {
+                if (isModuleBWC($req['module'])) {
+                    $url .= '#bwc/index.php?' . http_build_query($req);
+                } else {
+                    // otherwise compose basic Sidecar route
+                    $url .= '#' . rawurlencode($req['module']);
+                    if (isset($req['record'])) {
+                        $url .= '/' . rawurlencode($req['record']);
+                    }
+                }
+            }
+            session_write_close();
+            header('HTTP/1.1 301 Moved Permanently');
+            header("Location: $url");
+
+            exit();
+        } elseif ($this->controller->action === 'sidecar' ||
             (
                 $this->controller->action === 'index' && $this->controller->module === 'Home' &&
                 (empty($_REQUEST['entryPoint']) || (isset($_REQUEST['action']) && $_REQUEST['action'] === 'DynamicAction'))
@@ -719,30 +741,8 @@ EOF;
     function startSession()
     {
         $sessionIdCookie = isset($_COOKIE['PHPSESSID']) ? $_COOKIE['PHPSESSID'] : null;
-        if (!empty($_REQUEST['MSID']) && $this->controller->action !== 'authenticate' && $this->controller->module !== 'Users' ) {
-            //This is not longer a valid path for MSID. We can only accept it through view.authenticate.php
-            $url = 'index.php?module=Users&action=Authenticate&MSID=' . $_REQUEST['MSID'] . $loginVars;
-            $req = array_diff_key($this->getRequestVars(), array("MSID" => 1));
-            if (!empty($req['module'])) {
-                if (isModuleBWC($req['module'])) {
-                    $url .= '#bwc/index.php?' . http_build_query($req);
-                } else {
-                    // otherwise compose basic Sidecar route
-                    $url .= '#' . rawurlencode($req['module']);
-                    if (isset($req['record'])) {
-                        $url .= '/' . rawurlencode($req['record']);
-                    }
-                }
-            }
-            session_write_close();
-            header('HTTP/1.1 301 Moved Permanently');
-            header("Location: $url");
-
-            exit();
-        } else {
-            if (can_start_session()) {
-                session_start();
-            }
+        if (can_start_session()) {
+            session_start();
         }
 
         if (isset($_REQUEST['login_module']) && isset($_REQUEST['login_action'])
@@ -917,12 +917,11 @@ EOF;
      *
      * @return string URL part with login vars
      */
-    public function createLoginVars($ignoreVars = array())
+    public function createLoginVars()
     {
         $ret = array();
         $req = $this->getRequestVars();
-        $keys = array_diff(array_keys($req), $ignoreVars);
-        foreach ($keys as $var) {
+        foreach (array_keys($req) as $var) {
             if(!empty($this->controller->$var)){
                 $ret["login_" . $var] = $this->controller->$var;
                 continue;
@@ -961,10 +960,10 @@ EOF;
      *
      * @return string the URL to redirect to
      */
-    public function getLoginRedirect($add_empty = true, $filter_vars = array())
+    public function getLoginRedirect($add_empty = true)
     {
         $req = $this->getRequestVars();
-        $vars = array_diff_key($this->filterRequestVars('login_', $req, $add_empty), $filter_vars);
+        $vars = $this->filterRequestVars('login_', $req, $add_empty);
 
         if (isset($req['mobile'])) {
             $vars['mobile'] = $req['mobile'];

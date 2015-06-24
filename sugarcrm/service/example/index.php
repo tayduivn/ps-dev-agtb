@@ -54,7 +54,7 @@
 
 var SugarRest = function(){}
 SugarRest.proxy_url  = 'Rest_Proxy.php';
-SugarRest.server_url = '<?php echo $sugar_config['site_url'] ?>';
+SugarRest.server_url = '<?php echo rtrim($sugar_config['site_url'], '/'); ?>';
 SugarRest.leadFields = [ 'id','do_not_call', 'first_name', 'last_name', 'status', 'phone_work', 'lead_source', 'salutation', 'primary_address_country', 'primary_address_city','primary_address_state', 'primary_address_postalcode', 'department', 'title', 'account_name'];
 SugarRest.moduleFields = {};
 SugarRest.logResponse = function(o){

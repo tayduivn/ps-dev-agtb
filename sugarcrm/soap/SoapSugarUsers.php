@@ -232,15 +232,20 @@ $server->register(
  * Perform a seamless login.  This is used internally during the sync process.
  *
  * @param String $session -- Session ID returned by a previous call to login.
+ * @param String $ip IP address of the client which is expected to login
  * @return true -- if the session was authenticated
  * @return false -- if the session could not be authenticated
  */
-function seamless_login($session){
+function seamless_login($session, $ip = null)
+{
 		if(!validate_authenticated($session)){
 			return 0;
 		}
 
         $_SESSION['seamless_login'] = true;
+        if ($ip) {
+            $_SESSION['seamless_login_ip'] = $ip;
+        }
 
 		return 1;
 }
