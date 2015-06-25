@@ -776,21 +776,6 @@ class SugarFieldTeamset extends SugarFieldBase {
         }
 
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getEmailTemplateValue($inputField, $vardef, $context)
-    {
-        if ($vardef['name'] !== $this->field_name) {
-            $seed = BeanFactory::getBean('Teams', $inputField);
-            if (!empty($seed->id)) {
-                $inputField = $seed->name . ' ' . $seed->name_2;
-            }
-        }
-        return parent::getEmailTemplateValue($inputField, $vardef, $context);
-    }
-
 }
 
 

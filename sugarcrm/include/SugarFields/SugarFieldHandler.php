@@ -43,9 +43,6 @@ class SugarFieldHandler
                case 'varchar':
                     $field = 'base';
                     break;
-                case 'team_list':
-                    $field = 'teamset';
-                    break;
             }
 
         return ucfirst($field);
