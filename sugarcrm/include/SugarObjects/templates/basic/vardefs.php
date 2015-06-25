@@ -229,7 +229,7 @@ $vardefs = array(
     ),
     'indices' => array(
         'id' => array(
-            'name' => 'idx_' . preg_replace('/[^a-z_\-]/i', '', strtolower($module)) . '_pk',
+            'name' => 'idx_' . preg_replace('/[^a-z0-9_\-]/i', '', strtolower($module)) . '_pk',
             'type' => 'primary',
             'fields' => array('id')
         ),
