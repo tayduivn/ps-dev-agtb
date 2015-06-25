@@ -145,6 +145,9 @@ abstract class OpportunitySetup
             if (!isset($f->vardef_map['studio'])) {
                 $f->vardef_map['studio'] = 'studio';
             }
+            if (!isset($f->vardef_map['convertToBase'])) {
+                $f->vardef_map['convertToBase'] = 'convertToBase';
+            }
 
             $f->save($df);
         }
