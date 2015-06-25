@@ -198,7 +198,7 @@
      */
     toggleSearchIcon: function(searchButtonIcon) {
         if (this.context.get('search')) {
-            searchButtonIcon = !this.$input.val();
+            searchButtonIcon = !this.$input.val() && this.selectedTags.length === 0;
         }
         this.layout.trigger('quicksearch:button:toggle', searchButtonIcon);
     },
@@ -288,7 +288,7 @@
     searchBarClickHandler: function() {
         this.requestFocus();
         _.defer(_.bind(this.layout.expand, this.layout));
-        this.toggleSearchIcon(this.$input.val() === '');
+        this.toggleSearchIcon(this.$input.val() === '' && this.selectedTags.length === 0);
     },
 
     /**
