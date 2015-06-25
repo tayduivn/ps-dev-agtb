@@ -32,6 +32,12 @@ describe('Portal.Field.Html', function() {
             var formattedValue = field.format(externalLink);
             expect(formattedValue).toEqual(externalLink);
         });
+
+        it('Should not prepend the HTTPS site url to the external images.', function() {
+            var secureExternalLink = '<img src="https://example.com/external/filename.jpg">';
+            var formattedValue = field.format(secureExternalLink);
+            expect(formattedValue).toEqual(secureExternalLink);
+        });
     });
 
 });
