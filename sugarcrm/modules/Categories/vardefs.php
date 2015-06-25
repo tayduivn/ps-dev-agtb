@@ -87,7 +87,9 @@ $dictionary['Category'] = array(
     ),
     'acls' => array(
         'SugarACLStatic' => true,
-        'SugarACLCategories' => true,
+        'SugarACLCategories' => array(
+            'aclModule' => 'KBContents',
+        ),
     ),
 );
 

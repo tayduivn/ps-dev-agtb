@@ -1867,7 +1867,8 @@
 						 * custom code needed to draw operational buttons
 						 */
 						if (p.settings.showMenu === true) {
-							var link = p.settings.acl.edit ?
+							var hasAccess = (typeof(js._acl) !== 'undefined' && js._acl.edit !== 'no') && p.settings.acl.edit && true;
+							var link = hasAccess ?
 								'<a class="btn jstree-addnode" href="javascript:void(0);" title="" data-original-title="Add" data-action="jstree-addnode">' +
 								'	<span class="fa fa-plus"></span>' +
 								'</a>' : '',
