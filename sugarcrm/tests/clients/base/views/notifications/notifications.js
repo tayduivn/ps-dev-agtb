@@ -22,15 +22,13 @@ describe('Notifications', function() {
         it('should bootstrap', function() {
             var _initOptions = sinon.collection.stub(view, '_initOptions', $.noop()),
                 _initCollection = sinon.collection.stub(view, '_initCollection', $.noop()),
-                _initReminders = sinon.collection.stub(view, '_initReminders', $.noop()),
-                startPulling = sinon.collection.stub(view, 'startPulling', $.noop());
+                _initReminders = sinon.collection.stub(view, '_initReminders', $.noop());
 
             view._bootstrap();
 
             expect(_initOptions).toHaveBeenCalledOnce();
             expect(_initCollection).toHaveBeenCalledOnce();
             expect(_initReminders).toHaveBeenCalledOnce();
-            expect(startPulling).toHaveBeenCalledOnce();
         });
 
         it('should initialize options with default values', function() {
@@ -195,13 +193,11 @@ describe('Notifications', function() {
 
         it('should set timeout twice once on multiple start pulling calls', function() {
             var pull = sinon.collection.stub(view, 'pull', $.noop()),
-                _pullReminders = sinon.collection.stub(view, '_pullReminders', $.noop()),
                 setTimeout = sinon.collection.stub(window, 'setTimeout', $.noop());
 
             view.startPulling().startPulling();
 
             expect(pull).toHaveBeenCalledOnce();
-            expect(_pullReminders).toHaveBeenCalledOnce();
             expect(setTimeout).toHaveBeenCalledTwice();
         });
 
