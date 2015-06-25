@@ -97,6 +97,14 @@ ExpressionControl.prototype.OPERATORS  = {
         {
             text: "/",
             value: "division"
+        },
+        {
+            text: "(",
+            value: "openparen"
+        },
+        {
+            text: ")",
+            value: "closeparen"
         }
     ],
     "logic": [
@@ -1052,7 +1060,7 @@ ExpressionControl.prototype._onPanelValueGeneration = function () {
                             valueType = (aux[1] === 'equals' ? "has role" : "has not role") + " " + label;
                             break;
                         case 'USER_IDENTITY':
-                            valueType = (aux[1] === 'equals' ? "==" : "!=") + " " + label;
+                            valueType = (aux[1] === 'equals' ? "is user" : "is not user") + " " + label;
                             break;
                     }
                     label = subpanel.getItem("user").getSelectedText() + " " + valueType;
@@ -1334,6 +1342,7 @@ ExpressionControl.prototype._createModulePanel = function () {
         this._evaluationPanels.module = new FormPanel({
             id: "form-module-field-evaluation",
             title: translate("LBL_PMSE_EXPCONTROL_MODULE_FIELD_EVALUATION_TITLE"),
+            foregroundAppendTo: this._panel._getUsableAppendTo(),
             items: [
                 {
                     type: "dropdown",
@@ -1492,6 +1501,7 @@ ExpressionControl.prototype._createFormResponsePanel = function () {
         this._evaluationPanels.formResponse = new FormPanel({
             id: "form-response-evaluation",
             title: translate("LBL_PMSE_EXPCONTROL_FORM_RESPONSE_EVALUATION_TITLE"),
+            foregroundAppendTo: this._panel._getUsableAppendTo(),
             items: [
                 {
                     type: "dropdown",
@@ -1548,6 +1558,7 @@ ExpressionControl.prototype._createBusinessRulePanel = function () {
             id: "form-business-rule-evaluation",
             type: "form",
             title: translate("LBL_PMSE_EXPCONTROL_BUSINESS_RULES_EVALUATION_TITLE"),
+            foregroundAppendTo: this._panel._getUsableAppendTo(),
             items: [
                 {
                     type: "dropdown",
@@ -1594,6 +1605,7 @@ ExpressionControl.prototype._createUserPanel = function () {
             id: "form-user-evaluation",
             type: "form",
             title: translate("LBL_PMSE_EXPCONTROL_USER_EVALUATION_TITLE"),
+            foregroundAppendTo: this._panel._getUsableAppendTo(),
             items: [
                 {
                     type: "dropdown",
@@ -1753,6 +1765,7 @@ ExpressionControl.prototype._createDateConstantPanel = function() {
         this._constantPanels.date = new FormPanel({
             id: "form-constant-date",
             title: translate("LBL_PMSE_EXPCONTROL_CONSTANTS_FIXED_DATE"),
+            foregroundAppendTo: this._panel._getUsableAppendTo(),
             items: [
                 {
                     type: "date",
@@ -1784,6 +1797,7 @@ ExpressionControl.prototype._createDateTimeConstantPanel = function() {
         this._constantPanels.datetime = new FormPanel({
             id: "form-constant-datetime",
             title: translate("LBL_PMSE_EXPCONTROL_CONSTANTS_FIXED_DATETIME"),
+            foregroundAppendTo: this._panel._getUsableAppendTo(),
             items: [
                 {
                     type: "datetime",
@@ -1815,6 +1829,7 @@ ExpressionControl.prototype._createTimespanPanel = function() {
         this._constantPanels.timespan = new FormPanel({
             id: "form-constant-timespan",
             title: translate("LBL_PMSE_EXPCONTROL_CONSTANTS_TIMESPAN_TITLE"),
+            foregroundAppendTo: this._panel._getUsableAppendTo(),
             items: [
                 {
                     type: "integer",
@@ -1937,6 +1952,7 @@ ExpressionControl.prototype._createBasicConstantPanel = function () {
         this._constantPanels.basic = new FormPanel({
             id: "form-constant-basic",
             title: translate("LBL_PMSE_EXPCONTROL_CONSTANTS_BASIC"),
+            foregroundAppendTo: this._panel._getUsableAppendTo(),
             submitVisible: false,
             items: [
                 {

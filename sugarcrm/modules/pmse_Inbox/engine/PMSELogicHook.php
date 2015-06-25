@@ -10,7 +10,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('PMSEHandlers/PMSEHookHandler.php');
+require_once 'modules/pmse_Inbox/engine/PMSEHandlers/PMSEHookHandler.php';
 
 class PMSELogicHook
 {
@@ -60,7 +60,7 @@ class PMSELogicHook
 
     private function isExpectedModule($bean)
     {
-        include('PMSEModules.php');
+        include 'modules/pmse_Inbox/engine/PMSEModules.php';
         $pmseModulesList = (isset($pmseModulesList)) ? $pmseModulesList : array();
         //returns immediately if the bean is a common module
         $result = true;

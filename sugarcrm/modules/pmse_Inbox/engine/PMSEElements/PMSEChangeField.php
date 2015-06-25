@@ -12,7 +12,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'PMSEScriptTask.php';
+require_once 'modules/pmse_Inbox/engine/PMSEElements/PMSEScriptTask.php';
 require_once 'modules/pmse_Inbox/engine/PMSERelatedModule.php';
 
 class PMSEChangeField extends PMSEScriptTask

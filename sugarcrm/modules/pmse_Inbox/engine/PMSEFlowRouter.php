@@ -18,8 +18,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * execution result of those classes.
  *
  */
-require_once 'PMSEHandlers/PMSECaseFlowHandler.php';
-require_once 'PMSEHandlers/PMSEJobQueueHandler.php';
+require_once 'modules/pmse_Inbox/engine/PMSEHandlers/PMSECaseFlowHandler.php';
+require_once 'modules/pmse_Inbox/engine/PMSEHandlers/PMSEJobQueueHandler.php';
 
 class PMSEFlowRouter
 {

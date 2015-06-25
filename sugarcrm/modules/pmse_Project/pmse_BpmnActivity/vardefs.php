@@ -719,6 +719,6 @@ $dictionary['pmse_BpmnActivity'] = array(
 		'unified_search'=>true,
 	);
 if (!class_exists('VardefManager')){
-        require_once('include/SugarObjects/VardefManager.php');
+        require_once 'include/SugarObjects/VardefManager.php';
 }
 VardefManager::createVardef('pmse_BpmnActivity','pmse_BpmnActivity', array('basic','assignable'));

@@ -13,7 +13,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 require_once 'include/SugarQuery/SugarQuery.php';
-require_once 'PMSE.php';
+require_once 'modules/pmse_Inbox/engine/PMSE.php';
 
 class PMSEImageGenerator
 {

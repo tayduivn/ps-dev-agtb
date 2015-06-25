@@ -361,6 +361,10 @@ class RelateRecordApi extends SugarApi
                 $relatedData = $this->getRelatedFields($api, $args, $primaryBean, $linkName, $relatedBean);
                 // This function add() is actually 'addOrUpdate'. Here we use it for update only.
                 $primaryBean->$linkName->add(array($relatedBean),$relatedData);
+
+                // BR-2937 The edit view cache issue for relate documents of a module
+                // nomad still needs this related array
+                $relatedArray = $this->formatBean($api, $args, $relatedBean);
             }
             // If the relationship has been removed, we don't need to update the relationship fields
             else {

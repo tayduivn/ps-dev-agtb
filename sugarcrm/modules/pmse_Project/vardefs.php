@@ -304,6 +304,6 @@ $dictionary['pmse_Project'] = array(
     ),
 );
 if (!class_exists('VardefManager')){
-        require_once('include/SugarObjects/VardefManager.php');
+        require_once 'include/SugarObjects/VardefManager.php';
 }
 VardefManager::createVardef('pmse_Project','pmse_Project', array('basic','team_security','assignable'));

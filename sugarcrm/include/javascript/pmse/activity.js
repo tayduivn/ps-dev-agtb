@@ -268,6 +268,30 @@ AdamActivity.prototype.getActivityType = function () {
 };
 
 /**
+ * Return the activity task type property
+ * @returns {String}
+ */
+AdamActivity.prototype.getActivityTaskType = function () {
+    return this.act_task_type;
+};
+
+/**
+ * Returns the activity script property
+ * @returns {null}
+ */
+AdamActivity.prototype.getActivityScript = function () {
+    return this.act_script;
+};
+
+/**
+ * Returns the activity script type property
+ * @returns {null}
+ */
+AdamActivity.prototype.getActivityScriptType = function () {
+    return this.act_script_type;
+};
+
+/**
  * Returns the is for compensation property
  * @return {Boolean}
  */
@@ -1177,6 +1201,7 @@ AdamActivity.prototype.updateScriptType = function (newType) {
     updateCommand.execute();
 
     this.canvas.commandStack.add(updateCommand);
+    this.canvas.bpmnValidation();
     return this;
 };
 
