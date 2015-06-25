@@ -13,6 +13,7 @@
     initialize: function(options) {
         this.inboxId = options.context.attributes.modelId;
         this.flowId = options.context.attributes.action;
+        app.routing.before('route', this.beforeRouteChange, this);
     },
 
     loadData: function () {
@@ -21,13 +22,14 @@
             pmseInboxUrl = app.api.buildURL(this.options.module + '/case/' + this.inboxId + sep + this.flowId ,'',{},{});
 
         app.api.call('READ', pmseInboxUrl, {},{
-            success: function(data)
-            {
+            success: function(data) {
                 self.initCaseView(data)
+            },
+            error: function (error) {
+                app.error.handleNotFoundError();
             }
         });
     },
-
     initCaseView: function(data){
         if(data.case.flow.cas_flow_status==='FORM'){
             this.params = {
@@ -46,5 +48,10 @@
             });
             app.router.goBack();
         }
+    },
+
+    beforeRouteChange: function () {
+        app.routing.offBefore('route', this.beforeRouteChange);
+        $('.adam-modal').remove();
     }
 })

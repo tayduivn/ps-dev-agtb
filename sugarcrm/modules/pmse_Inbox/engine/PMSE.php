@@ -82,7 +82,7 @@ class PMSE
 
         //if ($flavor === false) {
         if (!((int)$version[0] == 6 && (int)$version[1] >= 7)) {
-            require_once("include/utils.php");
+            require_once "include/utils.php";
             //if the $check_path exists in custom, $path will be returned as "custom/{$check_path}", otherwise $check_path will be returned
             $path = get_custom_file_if_exists($file);
             if ($file != $path) {
@@ -105,7 +105,7 @@ class PMSE
     {
         //$this->bpmLog('INFO', " getting log from " . $file);
         //return file_get_contents($file);
-        require_once('include/upload_file.php');
+        require_once 'include/upload_file.php';
 
         $_file = new UploadFile();
 

@@ -11,10 +11,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/EditView/EditView2.php');
-require_once('modules/pmse_Project/clients/base/api/wrappers/PMSEWrapper.php');
-require_once('modules/pmse_Inbox/engine/wrappers/PMSECaseWrapper.php');
-require_once('modules/pmse_Inbox/engine/PMSE.php');
+require_once 'include/EditView/EditView2.php';
+require_once 'modules/pmse_Project/clients/base/api/wrappers/PMSEWrapper.php';
+require_once 'modules/pmse_Inbox/engine/wrappers/PMSECaseWrapper.php';
+require_once 'modules/pmse_Inbox/engine/PMSE.php';
 
 class pmse_InboxViewShowCase extends SugarView
 {
@@ -39,6 +39,16 @@ class pmse_InboxViewShowCase extends SugarView
     public $pmse;
     private $wrapper;
 
+    /*
+     * For each list of beans that a relationship returns, add an entry in the form of
+     * [Relationship Name] => [Smarty Template var name]
+     */
+    protected $relationshipChart = array(
+        'Quotes' => array(
+            'product_bundles' => 'ordered_bundle_list',
+        ),
+    );
+
     public function pmse_InboxViewShowCase()
     {
         $this->pmse = PMSE::getInstance();
@@ -58,7 +68,6 @@ class pmse_InboxViewShowCase extends SugarView
     public function displayDataForm($module = '', $id = '', $viewMode = 'bpm', $readonly = false)
     {
         if (!empty($module) && !empty($id)) {
-
             $this->bean = BeanFactory::getBean($module, $id);
             $altViewMode = array();
             if (is_array($viewMode)) {
@@ -71,7 +80,7 @@ class pmse_InboxViewShowCase extends SugarView
 
             $this->module = $module;
 
-            $metadataFile = $this->getMetaDataFile();
+            $metadataFile = $this->getMetaDataFile($readonly ? 'detail' : 'edit');
 
             $viewdefs = '';
 
@@ -82,13 +91,16 @@ class pmse_InboxViewShowCase extends SugarView
             if (empty($altViewMode)) {
                 $mfile = get_custom_file_if_exists($metadataFile);
                 if (isset($mfile)) {
-                    require_once $metadataFile;
+                    require $metadataFile;
                 }
             } else {
                 $dynaformBean = BeanFactory::getBean('pmse_BpmDynaForm');//new BpmDynaForm();
                 $dynaformBean->retrieve_by_string_fields(array('dyn_uid' => $altViewMode['dyn_uid']));
                 $this->dyn_uid = $altViewMode['dyn_uid'];
                 $viewdefs = unserialize(base64_decode($dynaformBean->dyn_view_defs));//unserialize(base64_decode('YToxOntzOjc6IkJwbVZpZXciO2E6Mjp7czoxMjoidGVtcGxhdGVNZXRhIjthOjU6e3M6NDoiZm9ybSI7YToyOntzOjY6ImhpZGRlbiI7YTo0OntpOjA7czoxNDg6IjxpbnB1dCB0eXBlPSJoaWRkZW4iIG5hbWU9InByb3NwZWN0X2lkIiB2YWx1ZT0ie2lmIGlzc2V0KCRzbWFydHkucmVxdWVzdC5wcm9zcGVjdF9pZCl9eyRzbWFydHkucmVxdWVzdC5wcm9zcGVjdF9pZH17ZWxzZX17JGJlYW4tPnByb3NwZWN0X2lkfXsvaWZ9Ij4iO2k6MTtzOjE0NDoiPGlucHV0IHR5cGU9ImhpZGRlbiIgbmFtZT0iYWNjb3VudF9pZCIgdmFsdWU9IntpZiBpc3NldCgkc21hcnR5LnJlcXVlc3QuYWNjb3VudF9pZCl9eyRzbWFydHkucmVxdWVzdC5hY2NvdW50X2lkfXtlbHNlfXskYmVhbi0+YWNjb3VudF9pZH17L2lmfSI+IjtpOjI7czoxNDQ6IjxpbnB1dCB0eXBlPSJoaWRkZW4iIG5hbWU9ImNvbnRhY3RfaWQiIHZhbHVlPSJ7aWYgaXNzZXQoJHNtYXJ0eS5yZXF1ZXN0LmNvbnRhY3RfaWQpfXskc21hcnR5LnJlcXVlc3QuY29udGFjdF9pZH17ZWxzZX17JGJlYW4tPmNvbnRhY3RfaWR9ey9pZn0iPiI7aTozO3M6MTYwOiI8aW5wdXQgdHlwZT0iaGlkZGVuIiBuYW1lPSJvcHBvcnR1bml0eV9pZCIgdmFsdWU9IntpZiBpc3NldCgkc21hcnR5LnJlcXVlc3Qub3Bwb3J0dW5pdHlfaWQpfXskc21hcnR5LnJlcXVlc3Qub3Bwb3J0dW5pdHlfaWR9e2Vsc2V9eyRiZWFuLT5vcHBvcnR1bml0eV9pZH17L2lmfSI+Ijt9czo3OiJidXR0b25zIjthOjI6e2k6MDtzOjQ6IlNBVkUiO2k6MTtzOjY6IkNBTkNFTCI7fX1zOjEwOiJtYXhDb2x1bW5zIjtzOjE6IjIiO3M6NzoidXNlVGFicyI7YjoxO3M6Njoid2lkdGhzIjthOjI6e2k6MDthOjI6e3M6NToibGFiZWwiO3M6MjoiMTAiO3M6NToiZmllbGQiO3M6MjoiMzAiO31pOjE7YToyOntzOjU6ImxhYmVsIjtzOjI6IjEwIjtzOjU6ImZpZWxkIjtzOjI6IjMwIjt9fXM6MTA6ImphdmFzY3JpcHQiO3M6ODU1OiI8c2NyaXB0IHR5cGU9InRleHQvamF2YXNjcmlwdCIgbGFuZ3VhZ2U9IkphdmFzY3JpcHQiPmZ1bmN0aW9uIGNvcHlBZGRyZXNzUmlnaHQoZm9ybSkgIHtsZGVsaW19IGZvcm0uYWx0X2FkZHJlc3Nfc3RyZWV0LnZhbHVlID0gZm9ybS5wcmltYXJ5X2FkZHJlc3Nfc3RyZWV0LnZhbHVlO2Zvcm0uYWx0X2FkZHJlc3NfY2l0eS52YWx1ZSA9IGZvcm0ucHJpbWFyeV9hZGRyZXNzX2NpdHkudmFsdWU7Zm9ybS5hbHRfYWRkcmVzc19zdGF0ZS52YWx1ZSA9IGZvcm0ucHJpbWFyeV9hZGRyZXNzX3N0YXRlLnZhbHVlO2Zvcm0uYWx0X2FkZHJlc3NfcG9zdGFsY29kZS52YWx1ZSA9IGZvcm0ucHJpbWFyeV9hZGRyZXNzX3Bvc3RhbGNvZGUudmFsdWU7Zm9ybS5hbHRfYWRkcmVzc19jb3VudHJ5LnZhbHVlID0gZm9ybS5wcmltYXJ5X2FkZHJlc3NfY291bnRyeS52YWx1ZTtyZXR1cm4gdHJ1ZTsge3JkZWxpbX0gZnVuY3Rpb24gY29weUFkZHJlc3NMZWZ0KGZvcm0pICB7bGRlbGltfSBmb3JtLnByaW1hcnlfYWRkcmVzc19zdHJlZXQudmFsdWUgPWZvcm0uYWx0X2FkZHJlc3Nfc3RyZWV0LnZhbHVlO2Zvcm0ucHJpbWFyeV9hZGRyZXNzX2NpdHkudmFsdWUgPSBmb3JtLmFsdF9hZGRyZXNzX2NpdHkudmFsdWU7Zm9ybS5wcmltYXJ5X2FkZHJlc3Nfc3RhdGUudmFsdWUgPSBmb3JtLmFsdF9hZGRyZXNzX3N0YXRlLnZhbHVlO2Zvcm0ucHJpbWFyeV9hZGRyZXNzX3Bvc3RhbGNvZGUudmFsdWUgPWZvcm0uYWx0X2FkZHJlc3NfcG9zdGFsY29kZS52YWx1ZTtmb3JtLnByaW1hcnlfYWRkcmVzc19jb3VudHJ5LnZhbHVlID0gZm9ybS5hbHRfYWRkcmVzc19jb3VudHJ5LnZhbHVlO3JldHVybiB0cnVlOyB7cmRlbGltfSA8L3NjcmlwdD4iO31zOjY6InBhbmVscyI7YTozOntzOjIzOiJMQkxfQ09OVEFDVF9JTkZPUk1BVElPTiI7YTo4OntpOjA7YToxOntpOjA7YToyOntzOjQ6Im5hbWUiO3M6MTA6ImZpcnN0X25hbWUiO3M6MTA6ImN1c3RvbUNvZGUiO3M6MjM3OiJ7aHRtbF9vcHRpb25zIG5hbWU9InNhbHV0YXRpb24iIGlkPSJzYWx1dGF0aW9uIiBvcHRpb25zPSRmaWVsZHMuc2FsdXRhdGlvbi5vcHRpb25zIHNlbGVjdGVkPSRmaWVsZHMuc2FsdXRhdGlvbi52YWx1ZX0mbmJzcDs8aW5wdXQgbmFtZT0iZmlyc3RfbmFtZSIgIGlkPSJmaXJzdF9uYW1lIiBzaXplPSIyNSIgbWF4bGVuZ3RoPSIyNSIgdHlwZT0idGV4dCIgdmFsdWU9InskZmllbGRzLmZpcnN0X25hbWUudmFsdWV9Ij4iO319aToxO2E6Mjp7aTowO3M6OToibGFzdF9uYW1lIjtpOjE7czoxMDoicGhvbmVfd29yayI7fWk6MjthOjI6e2k6MDtzOjU6InRpdGxlIjtpOjE7czoxMjoicGhvbmVfbW9iaWxlIjt9aTozO2E6Mjp7aTowO3M6MTA6ImRlcGFydG1lbnQiO2k6MTtzOjk6InBob25lX2ZheCI7fWk6NDthOjI6e2k6MDthOjQ6e3M6NDoibmFtZSI7czoxMjoiYWNjb3VudF9uYW1lIjtzOjQ6InR5cGUiO3M6NzoidmFyY2hhciI7czoxODoidmFsaWRhdGVEZXBlbmRlbmN5IjtiOjA7czoxMDoiY3VzdG9tQ29kZSI7czoxODU6IjxpbnB1dCBuYW1lPSJhY2NvdW50X25hbWUiIGlkPSJFZGl0Vmlld19hY2NvdW50X25hbWUiIHtpZiAoJGZpZWxkcy5jb252ZXJ0ZWQudmFsdWUgPT0gMSl9ZGlzYWJsZWQ9InRydWUiey9pZn0gc2l6ZT0iMzAiIG1heGxlbmd0aD0iMjU1IiB0eXBlPSJ0ZXh0IiB2YWx1ZT0ieyRmaWVsZHMuYWNjb3VudF9uYW1lLnZhbHVlfSI+Ijt9aToxO3M6Nzoid2Vic2l0ZSI7fWk6NTthOjI6e2k6MDthOjQ6e3M6NDoibmFtZSI7czoyMjoicHJpbWFyeV9hZGRyZXNzX3N0cmVldCI7czo5OiJoaWRlTGFiZWwiO2I6MTtzOjQ6InR5cGUiO3M6NzoiYWRkcmVzcyI7czoxMzoiZGlzcGxheVBhcmFtcyI7YTo0OntzOjM6ImtleSI7czo3OiJwcmltYXJ5IjtzOjQ6InJvd3MiO2k6MjtzOjQ6ImNvbHMiO2k6MzA7czo5OiJtYXhsZW5ndGgiO2k6MTUwO319aToxO2E6NDp7czo0OiJuYW1lIjtzOjE4OiJhbHRfYWRkcmVzc19zdHJlZXQiO3M6OToiaGlkZUxhYmVsIjtiOjE7czo0OiJ0eXBlIjtzOjc6ImFkZHJlc3MiO3M6MTM6ImRpc3BsYXlQYXJhbXMiO2E6NTp7czozOiJrZXkiO3M6MzoiYWx0IjtzOjQ6ImNvcHkiO3M6NzoicHJpbWFyeSI7czo0OiJyb3dzIjtpOjI7czo0OiJjb2xzIjtpOjMwO3M6OToibWF4bGVuZ3RoIjtpOjE1MDt9fX1pOjY7YToxOntpOjA7czo2OiJlbWFpbDEiO31pOjc7YToxOntpOjA7czoxMToiZGVzY3JpcHRpb24iO319czoxODoiTEJMX1BBTkVMX0FEVkFOQ0VEIjthOjQ6e2k6MDthOjI6e2k6MDtzOjY6InN0YXR1cyI7aToxO3M6MTE6ImxlYWRfc291cmNlIjt9aToxO2E6Mjp7aTowO2E6MTp7czo0OiJuYW1lIjtzOjE4OiJzdGF0dXNfZGVzY3JpcHRpb24iO31pOjE7YToxOntzOjQ6Im5hbWUiO3M6MjM6ImxlYWRfc291cmNlX2Rlc2NyaXB0aW9uIjt9fWk6MjthOjI6e2k6MDtzOjE4OiJvcHBvcnR1bml0eV9hbW91bnQiO2k6MTtzOjEwOiJyZWZlcmVkX2J5Ijt9aTozO2E6Mjp7aTowO3M6MTM6ImNhbXBhaWduX25hbWUiO2k6MTtzOjExOiJkb19ub3RfY2FsbCI7fX1zOjIwOiJMQkxfUEFORUxfQVNTSUdOTUVOVCI7YToxOntpOjA7YToyOntpOjA7YToyOntzOjQ6Im5hbWUiO3M6MTg6ImFzc2lnbmVkX3VzZXJfbmFtZSI7czo1OiJsYWJlbCI7czoxNToiTEJMX0FTU0lHTkVEX1RPIjt9aToxO2E6Mjp7czo0OiJuYW1lIjtzOjk6InRlYW1fbmFtZSI7czoxMzoiZGlzcGxheVBhcmFtcyI7YToxOntzOjc6ImRpc3BsYXkiO2I6MTt9fX19fX19'));
+                if ($readonly) {
+                    $this->setHeaderFootersReadOnly(&$viewdefs);
+                }
                 $tmpArray = array();
                 $tmpArray[$this->bean->module_name] = $viewdefs;
                 $viewdefs = $tmpArray;
@@ -162,7 +174,7 @@ class pmse_InboxViewShowCase extends SugarView
                 'name' => 'Cancel',
                 'value' => 'Cancel',
                 'type' => 'button',
-                'onclick' => 'history.back(1);'
+                'onclick' => 'parent.App.router.navigate(\'#Home\', {trigger: true})'
             )
         );
         $customButtons = array();
@@ -203,7 +215,7 @@ class pmse_InboxViewShowCase extends SugarView
 
         global $current_user;
         //extract cas_id and cas_index
-        $beanFlow = BeanFactory::getBean('pmse_BpmFlow', $id_flow);
+        $beanFlow = BeanFactory::retrieveBean('pmse_BpmFlow', $id_flow, array('encode' => false));
         $cas_id = $beanFlow->cas_id;
         $cas_index = $beanFlow->cas_index;
 
@@ -279,6 +291,10 @@ class pmse_InboxViewShowCase extends SugarView
                     $this->defs['BPM']['buttons']['route'] = (strtoupper($this->activityRow['act_response_buttons']) == 'ROUTE') ? true : false;
                 } else {
                     $this->defs['BPM']['buttons']['route'] = true;
+                }
+
+                if (!$reclaimCaseByUser && !empty($beanFlow->cas_adhoc_actions)) {
+                    $this->defs['BPM']['buttons'] = unserialize($beanFlow->cas_adhoc_actions);
                 }
 
                 //ASSIGN SECTION
@@ -418,6 +434,14 @@ class pmse_InboxViewShowCase extends SugarView
             isset($this->defs['templateMeta']['tabDefs']) ? $this->defs['templateMeta']['tabDefs'] : false);
         $this->th->ss->assign('VERSION_MARK', getVersionedPath(''));
 
+        if (isset($this->relationshipChart[$moduleName])) {
+            foreach($this->relationshipChart[$moduleName] as $relName => $ssName) {
+                $this->bean->load_relationship($relName);
+                $tempBeanList = $this->bean->$relName->getBeans();
+                $this->th->ss->assign($ssName, $tempBeanList);
+            }
+        }
+
         global $js_custom_version;
         global $sugar_version;
 
@@ -545,6 +569,36 @@ class pmse_InboxViewShowCase extends SugarView
         $newTplFile = $this->th->cacheDir . $this->th->templateDir . $this->bean->module_name . '/' . $nameTemplateTmp . '.tpl';
         $str .= $this->th->ss->fetch($newTplFile);
         return $str;
+    }
+
+    /**
+     * Look for edit footers and headers and replace them with the detail version, if it exists. If not, do nothing
+     *
+     * @param $viewdefs
+     */
+    public function setHeaderFootersReadOnly(&$viewdefs)
+    {
+        $tpls = array(
+            'footerTpl',
+            'headerTpl',
+        );
+
+        foreach($tpls as $tpl) {
+            if (isset($viewdefs['BpmView']['templateMeta']['form'][$tpl])) {
+                $original = $viewdefs['BpmView']['templateMeta']['form'][$tpl];
+                $new = '';
+
+                if (strpos($original, 'EditViewFooter.tpl') !== false) {
+                    $new = str_replace('EditViewFooter.tpl', 'DetailViewFooter.tpl', $original);
+                } else if (strpos($original, 'EditViewHeader.tpl') !== false) {
+                    $new = str_replace('EditViewHeader.tpl', 'DetailViewHeader.tpl', $original);
+                }
+
+                if (file_exists($new)) {
+                    $viewdefs['BpmView']['templateMeta']['form'][$tpl] = $new;
+                }
+            }
+        }
     }
 
     public function showTitle($showTitle = false)
@@ -687,7 +741,7 @@ class pmse_InboxViewShowCase extends SugarView
                 SugarAutoLoader::loadExtension("layoutdefs", $this->module))
         ) {
             $GLOBALS['focus'] = $this->bean;
-            require_once('include/SubPanel/SubPanelTiles.php');
+            require_once 'include/SubPanel/SubPanelTiles.php';
             $subpanel = new SubPanelTiles($this->bean, $this->module);
             echo $subpanel->display();
         }

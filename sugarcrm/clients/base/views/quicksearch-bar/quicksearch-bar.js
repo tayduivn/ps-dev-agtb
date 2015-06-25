@@ -101,7 +101,7 @@
         // Listener for receiving focus for up/down arrow navigation:
         this.on('navigate:focus:receive', function() {
             // if the input doesn't have focus, give it focus.
-            var inputBox = this.$('input[data-action=search_bar]')[0];
+            var inputBox = this.$input[0];
             if (inputBox !== $(document.activeElement)[0]) {
                 inputBox.focus();
             } else {
@@ -121,7 +121,7 @@
             this._currentQueryTerm = '';
             this._oldSearchTerm = '';
             this.collection.abortFetchRequest();
-            this.$('input[data-action=search_bar]').blur();
+            this.$input.blur();
         }, this);
 
         this.layout.on('quicksearch:bar:clear', this.clearSearch, this);
@@ -142,11 +142,21 @@
     },
 
     /**
+     * Renders a view onto the page.
+     *
+     * @protected
+     */
+    _renderHtml: function() {
+        this._super('_renderHtml');
+        this.$input = this.$('input[data-action=search_bar]');
+    },
+
+    /**
      * Checks to see if we're in the search context. If we are, populate the search
      * bar with the search term.
      */
     populateSearchTerm: function() {
-        var inputBar = this.$('input[data-action=search_bar]');
+        var inputBar = this.$input;
         var searchTerm = this.context.get('searchTerm');
         if (inputBar.val() !== searchTerm) {
             inputBar.val(searchTerm);
@@ -164,7 +174,7 @@
      * Function to attach the keydown and keyup events.
      */
     attachKeyEvents: function() {
-        var searchBarEl = this.$('input[data-action=search_bar]');
+        var searchBarEl = this.$input;
         // for arrow key navigation
         searchBarEl.on('keydown', _.bind(this.keydownHandler, this));
 
@@ -176,7 +186,7 @@
      * Function to dispose the keydown and keyup events.
      */
     disposeKeyEvents: function() {
-        this.$('input[data-action=search_bar]').off('keydown keyup');
+        this.$input.off('keydown keyup');
     },
 
     /**
@@ -188,7 +198,7 @@
      */
     toggleSearchIcon: function(searchButtonIcon) {
         if (this.context.get('search')) {
-            searchButtonIcon = !this.$('input[data-action=search_bar]').val();
+            searchButtonIcon = !this.$input.val();
         }
         this.layout.trigger('quicksearch:button:toggle', searchButtonIcon);
     },
@@ -213,7 +223,7 @@
             case 37: // left arrow
             case 8:  //backspace
                 // If there's text in the input bar, don't add any special handling
-                var term = this.$('input[data-action=search_bar]').val();
+                var term = this.$input.val();
                 if (term === '') {
                     this.moveBackward();
                     // Prevent double event calling when element to the left attaches its keydown handler
@@ -252,7 +262,7 @@
      */
     goToSearchPage: function() {
         // navigate to the search results page
-        var term = this.$('input[data-action=search_bar]').val();
+        var term = this.$input.val();
         var route = '';
         this._searchTerm === this._currentQueryTerm;
         this._currentQueryTerm = term;
@@ -278,7 +288,7 @@
     searchBarClickHandler: function() {
         this.requestFocus();
         _.defer(_.bind(this.layout.expand, this.layout));
-        this.toggleSearchIcon(false);
+        this.toggleSearchIcon(this.$input.val() === '');
     },
 
     /**
@@ -332,7 +342,7 @@
      * @private
      */
     _validateAndSearch: function() {
-        var term = this.$('input[data-action=search_bar]').val();
+        var term = this.$input.val();
         this._searchTerm = term;
 
         // if the term is too short, don't search
@@ -380,18 +390,18 @@
             limit: limit,
             params: {
                 tags: true
+            },
+            apiOptions: {
+                useNewApi: true
             }
         };
 
         if (this.selectedTags.length > 0) {
-            _.extend(options, options, {
-                apiOptions: {
+            _.extend(options.apiOptions, {
                     data: {
                         tag_filters: _.pluck(this.selectedTags, 'id')
                     },
-                    fetchWithPost: true,
-                    useNewApi: true
-                }
+                    fetchWithPost: true
             });
         }
 
@@ -407,7 +417,7 @@
      * Clears out search upon user following search result link in menu
      */
     clearSearch: function() {
-        this.$('.search-query').val('');
+        this.$input.val('');
         this._searchTerm = '';
         this._oldSearchTerm = '';
         this._currentQueryTerm = '';
@@ -420,7 +430,7 @@
     },
 
     clearSearchTerm: function() {
-        this.$('.search-query').val('');
+        this.$input.val('');
         this._searchTerm = '';
         this._oldSearchTerm = '';
         this._currentQueryTerm = '';

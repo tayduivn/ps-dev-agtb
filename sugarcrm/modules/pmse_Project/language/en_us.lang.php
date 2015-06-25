@@ -20,6 +20,8 @@ $mod_strings = array (
   'LBL_MODULE_NAME_SINGULAR' => 'Process Definition',
 
   'LNK_LIST' => 'View Process Definitions',
+  'LNK_NEW_PMSE_PROJECT' => 'Create Process Definition',
+  'LNK_IMPORT_PMSE_PROJECT' => 'Import Process Definitions',
 
   'LBL_PRJ_STATUS' => 'Status',
   'LBL_PRJ_MODULE' => 'Target Module',
@@ -142,7 +144,7 @@ $mod_strings = array (
     'LBL_PMSE_CONTEXT_MENU_FORMS' => 'Forms...',
     'LBL_PMSE_CONTEXT_MENU_USERS' => 'Users...',
     'LBL_PMSE_CONTEXT_MENU_ACTION_TYPE' => 'Action Type',
-    'LBL_PMSE_CONTEXT_MENU_UNASSIGNED' => 'Unassigned',
+    'LBL_PMSE_CONTEXT_MENU_UNASSIGNED' => '[Unassigned]',
     'LBL_PMSE_CONTEXT_MENU_BUSINESS_RULE' => 'Business Rule',
     'LBL_PMSE_CONTEXT_MENU_ASSIGN_USER' => 'Assign User',
     'LBL_PMSE_CONTEXT_MENU_ASSIGN_TEAM' => 'Round Robin',
@@ -336,6 +338,7 @@ $mod_strings = array (
     'LBL_PMSE_MESSAGE_ERROR_BOUNDARY_EVENT_OUTGOING' => 'Boundary Event must have one outgoing sequence flow',
     'LBL_PMSE_MESSAGE_ERROR_ACTIVITY_INCOMING' => 'Activity must have an incoming sequence flow',
     'LBL_PMSE_MESSAGE_ERROR_ACTIVITY_OUTGOING' => 'Activity must have an outgoing sequence flow',
+    'LBL_PMSE_MESSAGE_ERROR_ACTIVITY_SCRIPT_TASK' => 'Script task must have a valid type different of [Unassigned]',
     'LBL_PMSE_MESSAGE_ERROR_GATEWAY_DIVERGING_INCOMING' => 'Gateway might have one or more incoming Sequence flow',
     'LBL_PMSE_MESSAGE_ERROR_GATEWAY_DIVERGING_OUTGOING' => 'Gateway must have two or more outgoing Sequence flow',
     'LBL_PMSE_MESSAGE_ERROR_GATEWAY_CONVERGING_INCOMING' => 'Gateway must have two or more incoming sequence flows',

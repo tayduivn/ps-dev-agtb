@@ -12,7 +12,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/pmse_Inbox/engine/PMSE.php');
+require_once 'modules/pmse_Inbox/engine/PMSE.php';
 
 /**
  * Helps to encode and encrypt elements that corresponding to the license management module

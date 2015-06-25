@@ -12,8 +12,8 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once "MailerException.php"; // requires MailerException in order to throw exceptions of that type
-require_once "EmailIdentity.php";   // requires EmailIdentity for From, Reply-To, and Sender
+require_once "modules/Mailer/MailerException.php"; // requires MailerException in order to throw exceptions of that type
+require_once "modules/Mailer/EmailIdentity.php";   // requires EmailIdentity for From, Reply-To, and Sender
 
 /**
  * This class encapsulates properties and behavior of email headers so that business logic relating to headers can exist

@@ -17,6 +17,7 @@
 		this._dependencyMap = null;
 		this._submitVisible = null;
 		this.onSubmit =  null;
+		this._foregroundAppendTo = null;
 		FormPanel.prototype.init.call(this, settings);
 	};
 
@@ -29,7 +30,8 @@
 			submitCaption: translate("LBL_PMSE_FORMPANEL_SUBMIT"),
 			items: [],
 			submitVisible: true,
-			onSubmit: null
+			onSubmit: null,
+			foregroundAppendTo: null
 		};
 
 		jQuery.extend(true, defaults, settings);
@@ -37,9 +39,16 @@
 		this._dependencyMap = {};
 		this._submitVisible = !!defaults.submitVisible;
 
-		this.setItems(defaults.items)
+		this.setForegroundAppendTo(defaults.foregroundAppendTo)
+			.setItems(defaults.items)
 			.setSubmitCaption(defaults.submitCaption)
 			.setOnSubmitHandler(defaults.onSubmit);
+	};
+
+	FormPanel.prototype.setForegroundAppendTo = function (appendTo) {
+		this._foregroundAppendTo = appendTo;
+
+		return this;
 	};
 
 	FormPanel.prototype.setOnSubmitHandler = function (handler) {
@@ -57,10 +66,18 @@
 		return this;
 	};
 
+	FormPanel.prototype._getAppendToFunction = function () {
+		var that = this;
+		return function () {
+			return that._foregroundAppendTo || document.body;
+		};
+	};
+
 	FormPanel.prototype._createField = function (settings) {
 		var defaults = {
 			type: 'text',
-			precision: 2
+			precision: 2,
+			appendTo: this._getAppendToFunction()
 		}, field;
 
 		jQuery.extend(true, defaults, settings);
@@ -1173,6 +1190,7 @@
 		this._dom = {};
 		this._dateObject = null;
 		this._dateFormat = null;
+		this._appendTo = null;
 		FormPanelDate.prototype.init.call(this, settings);
 	};
 
@@ -1191,12 +1209,36 @@
 
 	FormPanelDate.prototype.init = function (settings) {
 		var defaults = {
-			dateFormat: "YYYY-MM-DD"
+			dateFormat: "YYYY-MM-DD",
+			appendTo: document.body
 		};
 
 		jQuery.extend(true, defaults, settings);
 
-		this.setDateFormat(defaults.dateFormat);
+		this.setAppendTo(defaults.appendTo)
+			.setDateFormat(defaults.dateFormat);
+	};
+
+	FormPanelDate.prototype.setAppendTo = function (appendTo) {
+		if (!(appendTo instanceof Element || isHTMLElement(appendTo) || typeof appendTo === 'function')) {
+			throw new Error("setAppendTo(): The parameter must be a HTMLElement, a function or an instance of Element");
+		}
+		this._appendTo = appendTo;
+		if (this._dateFormat) {
+			this.setDateFormat(this._dateFormat);
+		}
+		return this;
+	};
+
+	FormPanelDate.prototype._getAppendToHTML = function () {
+		var appendTo = this._appendTo;
+		if (appendTo instanceof Element) {
+			return appendTo.getHTML();
+		} else if (typeof appendTo === 'function') {
+			return appendTo(this);
+		} else {
+			return appendTo;
+		}
 	};
 
 	FormPanelDate.prototype.open = function () {
@@ -1248,7 +1290,8 @@
 		this._dateFormat = dateFormat;
 		if (this._htmlControl[0]) {
 			$(this._htmlControl[0]).datepicker({
-				format: this._dateFormat.toLowerCase()
+				format: this._dateFormat.toLowerCase(),
+				appendTo: this._getAppendToHTML()
 			});
 		}
 		return this;
@@ -1541,7 +1584,7 @@
 			option = this.createHTMLElement('option');
 			option.value = "";
 			option.label = option.textContent = 'loading...';
-			option.className = 'adam form-apnel-dropdown-loading';
+			option.className = 'adam form-panel-dropdown-loading';
 			option.selected = true;
 			this.disable();
 			this._htmlControl[0].appendChild(option);
@@ -1550,7 +1593,7 @@
 	};
 
 	FormPanelDropdown.prototype._removeLoadingMessage = function () {
-		jQuery(this._htmlControl[0]).find('adam form-apnel-dropdown-loading').remove();
+		jQuery(this._htmlControl[0]).find('.adam.form-panel-dropdown-loading').remove();
 		this.enable();
 		return this;
 	};

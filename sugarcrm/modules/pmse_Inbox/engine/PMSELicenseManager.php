@@ -12,10 +12,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('Crypt.php');
-require_once('modules/pmse_Inbox/engine/PMSEEngineUtils.php');
-require_once('modules/pmse_Inbox/engine/PMSEHandlers/PMSECaseFlowHandler.php');
-require_once('modules/pmse_Inbox/engine/PMSEFlowRouter.php');
+require_once 'modules/pmse_Inbox/engine/Crypt.php';
+require_once 'modules/pmse_Inbox/engine/PMSEEngineUtils.php';
+require_once 'modules/pmse_Inbox/engine/PMSEHandlers/PMSECaseFlowHandler.php';
+require_once 'modules/pmse_Inbox/engine/PMSEFlowRouter.php';
 
 /**
  * The License Manager class, validates licenses, establish connections to the license server,

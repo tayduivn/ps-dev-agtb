@@ -13,13 +13,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
-require_once 'PMSEValidationLevel.php';
-require_once 'PMSETerminateValidator.php';
-require_once 'PMSEConcurrencyValidator.php';
-require_once 'PMSERecordValidator.php';
-require_once 'PMSEElementValidator.php';
-require_once 'PMSEExpressionValidator.php';
-require_once 'PMSERequest.php';
+require_once 'modules/pmse_Inbox/engine/PMSEPreProcessor/PMSEValidationLevel.php';
+require_once 'modules/pmse_Inbox/engine/PMSEPreProcessor/PMSETerminateValidator.php';
+require_once 'modules/pmse_Inbox/engine/PMSEPreProcessor/PMSEConcurrencyValidator.php';
+require_once 'modules/pmse_Inbox/engine/PMSEPreProcessor/PMSERecordValidator.php';
+require_once 'modules/pmse_Inbox/engine/PMSEPreProcessor/PMSEElementValidator.php';
+require_once 'modules/pmse_Inbox/engine/PMSEPreProcessor/PMSEExpressionValidator.php';
+require_once 'modules/pmse_Inbox/engine/PMSEPreProcessor/PMSERequest.php';
 
 class PMSEValidator
 {

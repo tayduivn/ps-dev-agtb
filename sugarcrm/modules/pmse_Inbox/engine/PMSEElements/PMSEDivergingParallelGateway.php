@@ -13,7 +13,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 
-require_once 'PMSEDivergingGateway.php';
+require_once 'modules/pmse_Inbox/engine/PMSEElements/PMSEDivergingGateway.php';
 
 class PMSEDivergingParallelGateway extends PMSEDivergingGateway
 {

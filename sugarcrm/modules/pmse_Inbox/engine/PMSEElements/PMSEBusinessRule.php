@@ -13,7 +13,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 require_once 'modules/pmse_Inbox/engine/PMSEBusinessRuleReader.php';
-require_once 'PMSEScriptTask.php';
+require_once 'modules/pmse_Inbox/engine/PMSEElements/PMSEScriptTask.php';
 
 class PMSEBusinessRule extends PMSEScriptTask
 {

@@ -73,6 +73,6 @@ $dictionary['pmse_BpmCaseData'] = array(
 		'unified_search'=>true,
 	);
 if (!class_exists('VardefManager')){
-        require_once('include/SugarObjects/VardefManager.php');
+        require_once 'include/SugarObjects/VardefManager.php';
 }
 VardefManager::createVardef('pmse_BpmCaseData','pmse_BpmCaseData', array('basic','assignable'));
