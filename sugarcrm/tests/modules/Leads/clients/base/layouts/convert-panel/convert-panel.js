@@ -261,6 +261,21 @@ describe('Leads.Base.Layout.ConvertPanel', function() {
         expect(contextTriggerStub.secondCall.args).toEqual(['lead:convert:2:open']);
     });
 
+    it('should re-run validation when model changes after marking panel complete', function() {
+        var createModel = layout.createView.model,
+            runValidationStub = sandbox.stub(layout, 'runCreateValidation');;
+
+        createModel.set({full_name: 'Foo Bar'});
+        layout.$(layout.accordionHeading).addClass('enabled');
+        layout.openPanel();
+        layout.currentState.complete = false;
+        layout.markPanelComplete(createModel);
+
+        expect(runValidationStub.callCount).toEqual(0);
+        createModel.set('full_name', 'Foo Bar 2');
+        expect(runValidationStub.callCount).toEqual(1);
+    });
+
     it('should not attempt to close panel and open next panel when marking complete and already closed', function() {
         var closePanelSpy,
             requestNextPanelOpenSpy = sandbox.spy(layout, 'requestNextPanelOpen');
