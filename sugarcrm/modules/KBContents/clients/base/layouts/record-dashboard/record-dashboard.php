@@ -31,7 +31,8 @@ $viewdefs['KBContents']['base']['layout']['record-dashboard'] = array(
                                         'width' => 12,
                                     ),
                                 ),
-                                array(
+                                // TODO: Must be uncommented when RS-838 is done
+                                /*array(
                                     array(
                                         'view' =>
                                             array(
@@ -51,7 +52,7 @@ $viewdefs['KBContents']['base']['layout']['record-dashboard'] = array(
                                             ),
                                         'width' => 12,
                                     ),
-                                ),
+                                ),*/
                                 array(
                                     array(
                                         'view' =>
