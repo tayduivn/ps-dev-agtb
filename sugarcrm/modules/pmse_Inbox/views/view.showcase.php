@@ -153,8 +153,18 @@ class pmse_InboxViewShowCase extends SugarView
                 'type' => 'button',
                 'onclick' => 'javascript:claim_case(\'' . $casId . '\', \'' . $casIndex . '\', \'' . $title . '\', \'' . $idInbox . '\');'
             ),
-            'approve' => array('id' => 'ApproveBtn', 'name' => 'Type', 'value' => 'Approve', 'type' => 'submit'),
-            'reject' => array('id' => 'RejectBtn', 'name' => 'Type', 'value' => 'Reject', 'type' => 'submit'),
+            'approve' => array(
+                'id' => 'ApproveBtn',
+                'name' => 'Type',
+                'value' => 'Approve',
+                'type' => 'submit'
+            ),
+            'reject' => array(
+                'id' => 'RejectBtn',
+                'name' => 'Type',
+                'value' => 'Reject',
+                'type' => 'submit'
+            ),
             'reassign' => array(
                 'id' => 'ReassignBtn',
                 'name' => 'Type',
@@ -169,7 +179,12 @@ class pmse_InboxViewShowCase extends SugarView
                 'type' => 'button',
                 'onclick' => 'adhocForm(\'' . $casId . '\', \'' . $casIndex . '\');'
             ),
-            'route' => array('id' => 'RouteBtn', 'name' => 'Type', 'value' => 'Route Task', 'type' => 'submit'),
+            'route' => array(
+                'id' => 'RouteBtn',
+                'name' => 'Type',
+                'value' => 'Route Task',
+                'type' => 'submit'
+            ),
             'cancel' => array(
                 'name' => 'Cancel',
                 'value' => 'Cancel',
@@ -289,15 +304,12 @@ FLIST;
                 $reclaimCaseByUser = false;
                 if (isset($caseData['cas_adhoc_type']) && ($caseData['cas_adhoc_type'] === '') && ($caseData['cas_start_date'] == '') && ($this->activityRow['act_assignment_method'] == 'selfservice')) {
                     $reclaimCaseByUser = true;
-//                    $displayMode = 'detail';
-
                 }
-                //
+
                 $beanTemplate = $this->displayDataForm($caseData['cas_sugar_module'], $caseData['cas_sugar_object_id'],
                     $displayMode, $reclaimCaseByUser);
                 if (isset($caseData['cas_adhoc_type']) && ($caseData['cas_adhoc_type'] === '') && ($caseData['cas_start_date'] == '') && ($this->activityRow['act_assignment_method'] == 'selfservice')) {
                     $displayMode = 'detail';
-
                 }
                 //BUTTON SECTIONS
                 $defaultButtons = $this->getButtonArray(array('approve' => true, 'reject' => true));
@@ -309,9 +321,20 @@ FLIST;
                 } else {
                     $this->defs['BPM']['buttons']['route'] = true;
                 }
-
+                $customButtons = array();
+                $taskContinue = false;
                 if (!$reclaimCaseByUser && !empty($beanFlow->cas_adhoc_actions)) {
-                    $this->defs['BPM']['buttons'] = unserialize($beanFlow->cas_adhoc_actions);
+                    $buttons = unserialize($beanFlow->cas_adhoc_actions);
+                    unset($buttons['link_cancel']);
+                    unset($buttons['edit']);
+                    $continue = array_search('continue', $buttons);
+                    if ($continue !== false) {
+                        unset($buttons[$continue]);
+                        $taskContinue = true;
+                    }
+                    foreach($buttons as $key => $value) {
+                        $this->defs['BPM']['buttons'][$value] = $customButtons[$value] = true;
+                    }
                 }
 
                 //ASSIGN SECTION
@@ -328,6 +351,7 @@ FLIST;
                 $smarty->assign('expected_time', $expected_time);
                 $smarty->assign('reclaimCaseByUser', $reclaimCaseByUser);
                 $smarty->assign('totalNotes', $totalNotes);
+                $smarty->assign('task_continue', $taskContinue);
                 $smarty->assign('SUGAR_URL', $sugar_config['site_url']);
                 $smarty->assign('SUGAR_AJAX_URL',
                     $sugar_config['site_url'] . "/index.php?module=pmse_Inbox&action=ajaxapi");
@@ -342,7 +366,7 @@ FLIST;
                     $smarty->assign('validations', array());
                 }
                 $idInbox = isset($caseData['idInbox']) ? $caseData['idInbox'] : null;
-                $customButtons = $this->getButtonArray($this->defs['BPM']['buttons'], $cas_id, $cas_index,
+                $customButtons = $this->getButtonArray($customButtons, $cas_id, $cas_index,
                     $this->focus->team_id, $caseData['cas_title'], $idInbox);
                 if (count($customButtons) > 1) {
                     $smarty->assign('customButtons', $customButtons);
