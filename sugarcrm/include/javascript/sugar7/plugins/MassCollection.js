@@ -339,7 +339,17 @@
                     params.filter = filterDef;
                 }
 
-                var url = app.api.buildURL(this.module, null, null, params);
+                var url = '';
+
+                if (this.collection.link) {
+                    this.context.set('id', this.context.get('parentModel').id);
+                    url = app.api.buildURL(this.context.get('parentModule'),
+                                          null,
+                                          this.context.toJSON(),
+                                          null);
+                } else {
+                    url = app.api.buildURL(this.module, null, null, params);
+                }
 
                 app.alert.show('totalrecord', {
                     level: 'process',
