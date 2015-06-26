@@ -26,19 +26,38 @@ class PMSEEngineUtils
      * PA target blacklisted modules
      * @var array
      */
-    public static $targetBlacklistedModules = array('Users', 'Employees');
+    public static $targetBlacklistedModules = array(
+        'Users',
+        'Employees',
+    );
 
     /**
-     * PA related blacklisted modules and blacklisted links
+     * PA related blacklisted modules
      * @var array
      */
     public static $relatedBlacklistedModules = array();
 
+    /**
+     * PA related blacklisted links
+     * @var array
+     */
     public static $relatedBlacklistedLinks = array(
         'contact',
         'following_link',
         'favorite_link',
         'user_sync',
+    );
+
+    /**
+     * PA special fields
+     * @var array
+     */
+    public static $specialFields = array(
+        'All' => array('created_by', 'modified_user_id'),
+        'BR' => array('assigned_user_id', 'email1'),
+        'ET' => array('email1'),
+        'AC' => array('assigned_user_id'),
+        'RR' => array(),
     );
 
     /**
@@ -973,9 +992,6 @@ class PMSEEngineUtils
             $result = false;
         }
         if ($type == 'AC') {
-            if (isset($def['name']) && $def['name'] == 'assigned_user_id') {
-                $result = true;
-            }
             if (isset($def['formula'])) {
                 $result = false;
             }
@@ -985,29 +1001,26 @@ class PMSEEngineUtils
                 $result = false;
             }
         }
-        if ($type == 'ET') {
-            if (isset($def['name']) && $def['name'] == 'email1') {
-                $result = true;
-            }
-        }
-        if ($type == 'BR') {
-            if (isset($def['name']) && $def['name'] == 'assigned_user_id') {
-                $result = true;
-            }
-            if (isset($def['name']) && $def['name'] == 'email1') {
-                $result = true;
-            }
-        }
+        $result = (self::specialFields($def, $type)) ? true : $result;
         $result = $result && self::blackListFields($def);
         return $result;
     }
 
-    public static function blackListFields($def) {
+    public static function blackListFields($def)
+    {
         $blackList = array('deleted', 'system_id', 'mkto_sync', 'mkto_id', 'mkto_lead_score', 'parent_type', 'user_name', 'user_hash', 'portal_app', 'portal_active', 'portal_name');
         if (in_array($def['name'], $blackList)) {
             return false;
         }
         return true;
+    }
+
+    public static function specialFields($def, $type= 'All')
+    {
+        if (empty($type)) {
+            $type = 'All';
+        }
+        return isset($def['name'], self::$specialFields[$type]) && in_array($def['name'], self::$specialFields[$type]);
     }
 
     /**
@@ -1069,7 +1082,7 @@ class PMSEEngineUtils
     }
 
     public static function getStudioModules($type = '') {
-        include 'PMSEModules.php';
+        include 'modules/pmse_Inbox/engine/PMSEModules.php';
         $studioBrowser = new StudioBrowser();
         if ($type == 'related') {
             $studioBrowser->loadRelatableModules();

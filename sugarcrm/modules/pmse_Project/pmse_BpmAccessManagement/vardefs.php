@@ -179,6 +179,6 @@ $dictionary['pmse_BpmAccessManagement'] = array(
 		'unified_search'=>true,
 	);
 if (!class_exists('VardefManager')){
-        require_once('include/SugarObjects/VardefManager.php');
+        require_once 'include/SugarObjects/VardefManager.php';
 }
 VardefManager::createVardef('pmse_BpmAccessManagement','pmse_BpmAccessManagement', array('basic','assignable'));

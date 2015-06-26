@@ -139,6 +139,6 @@ $dictionary['pmse_BpmnLane'] = array(
 		'unified_search'=>true,
 	);
 if (!class_exists('VardefManager')){
-        require_once('include/SugarObjects/VardefManager.php');
+        require_once 'include/SugarObjects/VardefManager.php';
 }
 VardefManager::createVardef('pmse_BpmnLane','pmse_BpmnLane', array('basic','assignable'));

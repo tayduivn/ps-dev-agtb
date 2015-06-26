@@ -1265,11 +1265,12 @@ EOHTML;
      *
      * @return string File location of the metadata file.
      */
-    public function getMetaDataFile()
+    public function getMetaDataFile($type = null)
     {
-        $metadataFile = null;
-        $foundViewDefs = false;
-        $viewDef = strtolower($this->type) . 'viewdefs';
+        if ($type === null) {
+            $type = $this->type;
+        }
+        $viewDef = strtolower($type) . 'viewdefs';
         return SugarAutoLoader::loadWithMetafiles($this->module, $viewDef);
     }
 

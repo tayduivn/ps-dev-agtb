@@ -13,7 +13,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 require_once 'modules/pmse_Inbox/engine/PMSEHandlers/PMSECaseFlowHandler.php';
-require_once 'PMSEEvent.php';
+require_once 'modules/pmse_Inbox/engine/PMSEElements/PMSEEvent.php';
 
 class PMSEEndEvent extends PMSEEvent
 {

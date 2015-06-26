@@ -12,7 +12,7 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once "EmbeddedImage.php";                         // needed for converting inline images to embedded images
+require_once "modules/Mailer/EmbeddedImage.php";                         // needed for converting inline images to embedded images
 require_once "modules/Administration/Administration.php"; // needed for getting the disclosure settings
 
 /**

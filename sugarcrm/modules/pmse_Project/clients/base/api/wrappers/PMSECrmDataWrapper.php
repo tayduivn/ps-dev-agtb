@@ -12,8 +12,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'PMSEDynaForm.php';
-require_once 'PMSEObservers/PMSEObservable.php';
+require_once 'modules/pmse_Project/clients/base/api/wrappers/PMSEDynaForm.php';
+require_once 'modules/pmse_Project/clients/base/api/wrappers/PMSEObservers/PMSEObservable.php';
 require_once 'modules/pmse_Inbox/engine/PMSEEngineUtils.php';
 require_once 'modules/pmse_Inbox/engine/PMSERelatedModule.php';
 
@@ -177,7 +177,7 @@ class PMSECrmDataWrapper implements PMSEObservable
          * @name $db
          */
         global $db;
-        require_once('modules/ACLRoles/ACLRole.php');
+        require_once 'modules/ACLRoles/ACLRole.php';
         $this->aclRoleObject = new ACLRole();
 
         $this->defaultDynaform = new PMSEDynaForm();
@@ -1565,26 +1565,26 @@ class PMSECrmDataWrapper implements PMSEObservable
         foreach ($fieldsData as $field) {
             //$retrieveId = isset($additionalArgs['retrieveId']) && !empty($additionalArgs['retrieveId']) && $field['name'] == 'id' ? $additionalArgs['retrieveId'] : false;
             if (isset($field['vname']) && (PMSEEngineUtils::isValidField($field, $type))) {
-                if (($type == 'AC' || $type == 'BR') && $field['name'] == 'assigned_user_id') {
-                    $field['method'] = 'assignedUsers';
-                    $field['type'] = 'enum';
-                    $field['vname'] = 'LBL_ASSIGNED_TO';
+                if (PMSEEngineUtils::specialFields($field, $type)){
+                    $field = array_merge($field, $this->replaceItemsValues($field));
                 }
                 $tmpField = array();
                 $tmpField['value'] = $field['name'];
                 $tmpField['text'] = str_replace(':', '', translate($field['vname'], $newModuleFilter));
-                $tmpField['type'] = isset($fieldTypes[$field['type']]) ? $fieldTypes[$field['type']] : ucfirst(
-                    $field['type']
-                );
-                $tmpField['type'] = (isset($tmpField['relationship']) && stristr(
-                        $tmpField['relationship'],
-                        'email'
-                    )) || stristr($tmpField['value'], 'email') ? 'email' : $tmpField['type'];
+                
+                // Handle field typing, starting with the vardef type for this field
+                $tmpField['type'] = $field['type'];
+
+                // If there is a known type for this type, use THAT
+                if (isset($fieldTypes[$field['type']])) {
+                    $tmpField['type'] = $fieldTypes[$field['type']];
+                }
+
                 $tmpField['optionItem'] = 'none';
                 if ($field['type'] == 'enum' || $field['type'] == 'radioenum') {
                     if (!isset($field['options']) || !isset($app_list_strings[$field['options']])) {
-                        if (($type == 'AC' || $type == 'BR') && $field['name'] == 'assigned_user_id') {
-                            $tmpField['optionItem'] = $this->gatewayModulesMethod($field['method']);
+                        if (PMSEEngineUtils::specialFields($field, $type)) {
+                            $tmpField['optionItem'] = $this->gatewayModulesMethod($field);
                         } else {
                             $tmpField['optionItem'] = $moduleApi->getEnumValues(
                                 array(),
@@ -2140,20 +2140,48 @@ class PMSECrmDataWrapper implements PMSEObservable
     /**
      * @codeCoverageIgnore
      */
-    private function gatewayModulesMethod($method)
+    private function gatewayModulesMethod($def)
     {
         $values = '';
-        switch ($method) {
-            case 'assignedUsers':
-//                $values = $this->assignedUsers();
+        switch ($def['name']) {
+            case 'assigned_user_id':
                 $users = $this->retrieveUsers();
                 $values = $users;
+                break;
+            case 'created_by':
+            case 'modified_user_id':
+                $users = $this->retrieveUsers();
+                foreach ($users as $rows) {
+                    $newUsers[$rows['value']] = $rows['text'];
+                }
+                $values = $newUsers;
                 break;
             default:
                 $values = null;
                 break;
         }
         return $values;
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    private function replaceItemsValues($def)
+    {
+        $field = array();
+        switch ($def['name']) {
+            case 'assigned_user_id':
+                $field['type'] = 'enum';
+                $field['vname'] = 'LBL_ASSIGNED_TO';
+                break;
+            case 'created_by':
+            case 'modified_user_id':
+                $field['type'] = 'enum';
+                break;
+            default:
+                $result = $field;
+        }
+        return $field;
     }
 
     /**

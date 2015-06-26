@@ -12,7 +12,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'PMSEEvent.php';
+require_once 'modules/pmse_Inbox/engine/PMSEElements/PMSEEvent.php';
 
 class PMSEStartEvent extends PMSEEvent
 {
@@ -112,11 +112,12 @@ class PMSEStartEvent extends PMSEEvent
             }
         }
 
-        $trimmedName = isset($bean->name) ? trim($bean->name) : '';
-        $trimmedUserName = isset($bean->user_name) ? trim($bean->user_name) : '';
-        if (!empty($trimmedName)) {
+        if (isset($bean->name) && (trim($bean->name) != '')) {
             $cas_title = $bean->name;
-        } elseif (!empty($trimmedUserName)) {
+        } elseif (isset($bean->document_name) && (trim($bean->document_name) != '') && (get_class($bean) == 'Document')) {
+            // For Documents, document_name field acts as the name field
+            $cas_title = $bean->document_name;
+        } elseif (isset($bean->user_name) && (trim($bean->user_name) != '')) {
             $cas_title = $bean->user_name;
         } else {
             $cas_title = "Case without name";
