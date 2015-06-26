@@ -115,6 +115,12 @@
                 this.context.on('mass_collection:clear', this.clearMassCollection, this);
                 this.context.on('toggleSelectAllAlert', this.toggleSelectAllAlert, this);
 
+                // Resets the mass collection on collection reset for non
+                // independent mass collection.
+                this.collection.on('reset', function() {
+                    this.massCollection.trigger('mass_collection:remove:all');
+                }, this);
+
                 this.collection.on('add', function() {
                     if (!this.disposed && !this._isAllChecked()) {
                         this.massCollection.trigger('not:all:checked');
@@ -212,7 +218,9 @@
              */
             toggleSelectAllAlert: function() {
                 var alert;
-
+                if (!this.collection.length) {
+                    return;
+                }
                 var selectedRecordsInPage = _.intersection(this.massCollection.models, this.collection.models);
                 if (selectedRecordsInPage.length === this.collection.length) {
                     if (this.collection.next_offset > 0) {
@@ -306,9 +314,10 @@
                     limit: limit,
                     // use the last filterDef applied to the collection
                     filter: this.context.get('collection').filterDef,
-                    context: this.context
+                    showAlerts: true
                 };
 
+                this.massCollection.trigger('massupdate:estimate');
                 this.massCollection.fetch(options);
             },
 
