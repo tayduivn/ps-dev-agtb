@@ -1691,9 +1691,9 @@
 
 	FormPanelDropdown.prototype.getOptionData = function(optionValue) {
 		if (this.html) {
-			return jQuery(this.html).find("option[value=\"" + optionValue + "\"]").data("data");
+			return jQuery(this.html).find("option[value=\"" + optionValue + "\"]").data("data") || [];
 		}
-		return this._options.find(this._valueField, optionValue);
+		return this._options.find(this._valueField, optionValue) || [];
 	};
 
 	FormPanelDropdown.prototype.setValue = function (value) {
