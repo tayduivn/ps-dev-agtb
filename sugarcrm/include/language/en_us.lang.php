@@ -8671,7 +8671,7 @@ $app_strings = array (
     'EXCEPTION_MAINTENANCE'             => 'SugarCRM is in maintenance mode. Only admins can login. Please contact your administrator for details.',
     'EXCEPTION_SERVICE_UNAVAILABLE'     => 'The server cannot process your request because it is busy or unavailable at this time.',
     'EXCEPTION_SEARCH_UNAVAILABLE'      => 'Search engine is temporarily unavailable.',
-    'EXCEPTION_SEARCH_RUNTIME'          => 'A search engine runtime error occurred: {0}',
+    'EXCEPTION_SEARCH_RUNTIME'          => 'A search engine runtime error occurred. Please contact your System Administrator.',
 
     // Default SugarApiException descriptions, used in the exceptions help endpoint
     'EXCEPTION_UNKNOWN_EXCEPTION_DESC'     => 'A condition was encountered because of a general failure or error. The reasons for this exception range but generally fall outside the scope of a more specific API exception.',
