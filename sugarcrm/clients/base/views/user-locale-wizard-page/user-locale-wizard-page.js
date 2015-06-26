@@ -52,6 +52,7 @@
     },
     _prepareFields: function(callback) {
         var self = this;
+        // Fixme this doesn't belong in user. See TY-526.
         app.user.loadLocale(function(localeOptions) {
             // Populate each field def of type enum with returned locale options and use user's pref as displayed
             _.each(self.meta.panels[0].fields, function(fieldDef) {
