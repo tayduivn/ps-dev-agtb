@@ -684,8 +684,8 @@ function swapChart(chartId, jsonFilename, css, chartConfig) {
                     case 'pieChart':
                         data = json.values.map(function(d, i) {
                             var data = {
-                                'key': d.label[0] !== '' ? d.label[0] : strUndefined,
-                                'value': parseFloat(d.values[0])
+                                'key': [].concat(d.label)[0] !== '' ? [].concat(d.label)[0] : strUndefined,
+                                'value': parseFloat(d.values.reduce(function(a, b) { return a + b; }, 0))
                             };
                             if (d.color !== undefined) {
                                 data.color = d.color;
@@ -700,12 +700,12 @@ function swapChart(chartId, jsonFilename, css, chartConfig) {
                     case 'funnelChart':
                         data = json.values.reverse().map(function(d, i) {
                             return {
-                                'key': d.label[0] !== '' ? d.label[0] : strUndefined,
+                                'key': [].concat(d.label)[0] !== '' ? [].concat(d.label)[0] : strUndefined,
                                 'values': [{
                                   'series': i,
                                   'label': d.valuelabels[0] ? d.valuelabels[0] : d.values[0],
                                   'x': 0,
-                                  'y': parseFloat(d.values[0]) || 0,
+                                  'y': parseFloat(d.values.reduce(function(a, b) { return a + b; }, 0)) || 0,
                                   'y0': 0
                                 }]
                             };
