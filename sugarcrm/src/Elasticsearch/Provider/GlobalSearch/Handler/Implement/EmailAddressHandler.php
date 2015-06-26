@@ -47,12 +47,14 @@ class EmailAddressHandler extends AbstractHandler implements
             'index' => 'analyzed',
             'index_analyzer' => 'gs_analyzer_email',
             'search_analyzer' => 'gs_analyzer_email',
+            'store' => true,
         ),
         'gs_email_wildcard' => array(
             'type' => 'string',
             'index' => 'analyzed',
             'index_analyzer' => 'gs_analyzer_email_ngram',
             'search_analyzer' => 'gs_analyzer_email',
+            'store' => true,
         ),
     );
 
