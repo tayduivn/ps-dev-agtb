@@ -51,8 +51,13 @@
                         {{else}}
                             {{str "LBL_UNASSIGNED" this.module}}
                         {{/if}}
-                        &nbsp; created on
-                        <date class="date">{{timeago attributes.record_date "TPL_TABBED_DASHLET_TIME_RELATIVE"}}</date>
+                        {{#if useRelativeTime}}
+                            &nbsp;created
+                            <date class="date">{{relativeTime attributes.record_date}}</date>
+                        {{else}}
+                            &nbsp;created on
+                            <date class="date">{{formatDate attributes.record_date}}</date>
+                        {{/if}}
                     </div>
                 </li>
             {{/each}}
