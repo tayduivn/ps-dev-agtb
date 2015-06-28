@@ -72,7 +72,7 @@ class StudioModule
      * 
      * @param string $module The name of the module to base this object on
      */
-    public function __construct($module)
+    public function __construct($module, $seed = null)
     {
         $moduleList = $GLOBALS['app_list_strings']['moduleList'];
         if (empty($moduleList) && !is_array($moduleList)) {
@@ -82,7 +82,11 @@ class StudioModule
         $moduleNames = array_change_key_case($moduleList);
         $this->name = isset($moduleNames[strtolower($module)]) ? $moduleNames[strtolower($module)] : strtolower($module);
         $this->module = $module;
-        $this->seed = BeanFactory::getBean($this->module);
+        if (!$seed) {
+            $this->seed = BeanFactory::getBean($this->module);
+        } else {
+            $this->seed = $seed;
+        }
         if ($this->seed) {
             $this->fields = $this->seed->field_defs;
         }
@@ -190,7 +194,12 @@ class StudioModule
         }
 
         // If a custom module, then its type is determined by the parent SugarObject that it extends
-        $seed = BeanFactory::getBean($this->module);
+        if (!$this->seed)
+        {
+            $seed = BeanFactory::getBean($this->module);
+        } else {
+            $seed = $this->seed;
+        }
         if (empty($seed)) {
             //If there is no bean at all for this module, use the basic template for base files
             return "basic";

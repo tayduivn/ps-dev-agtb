@@ -2575,9 +2575,8 @@ class MetaDataManager
      */
     public function populateModules($data, MetaDataContextInterface $context = null)
     {
-        $this->data['full_module_list'] = $this->getModuleList();
-        $data['full_module_list'] = $this->data['full_module_list'];
-        $data['modules'] = $this->getModulesData($context);
+        $this->data['full_module_list'] = $data['full_module_list'] = $this->getModuleList();
+        $this->data['modules'] = $data['modules'] = $this->getModulesData($context);
         $data['modules_info'] = $this->getModulesInfo();
         return $data;
     }
