@@ -98,6 +98,91 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
     private $observers;
 
     /**
+     * Required fields for activity elements in diagrams
+     * @var array
+     */
+    private $activityRequiredFields = array(
+        "id",
+        "act_uid",
+        "act_type",
+        "act_task_type",
+        "act_ordering",
+        "bou_x",
+        "bou_y",
+        "bou_container",
+        "bou_height",
+        "bou_width"
+    );
+
+    /**
+     * Required fields for artifact elements in diagrams
+     * @var array
+     */
+    private $artifactsRequiredFields = array(
+        "id",
+        "bou_x",
+        "bou_y",
+        "bou_container",
+        "bou_height",
+        "bou_width",
+        "art_uid",
+        "art_type"
+    );
+
+    /**
+     * Required fields for events elements in diagrams
+     * @var array
+     */
+    private $eventsRequiredFields = array(
+        "id",
+        "bou_x",
+        "bou_y",
+        "bou_container",
+        "bou_height",
+        "bou_width",
+        "evn_uid",
+        "evn_type",
+        "evn_marker",
+        "evn_behavior",
+        "evn_wait_for_completion"
+    );
+
+    /**
+     * Required fields for flows elements in diagrams
+     * @var array
+     */
+    private $flowRequiredFields = array(
+        "flo_element_dest",
+        "flo_element_dest_type",
+        "flo_element_origin",
+        "flo_element_origin_type",
+        "flo_type",
+        "flo_uid",
+        "flo_x1",
+        "flo_y1",
+        "flo_x2",
+        "flo_y2",
+        "id",
+        "prj_id"
+    );
+
+    /**
+     * Required fields for gateway elements in diagrams
+     * @var array
+     */
+    private $gatewayRequiredFields = array(
+        "id",
+        "bou_x",
+        "bou_y",
+        "bou_container",
+        "bou_height",
+        "bou_width",
+        "gat_uid",
+        "gat_type",
+        "gat_direction",
+    );
+
+    /**
      * Class constructor
      * @codeCoverageIgnore
      */
@@ -125,7 +210,7 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
         $this->getEventDefinitionBean();
         $this->getBoundBean();
     }
-    
+
     /**
      *
      * @return type
@@ -515,6 +600,13 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
         $retrievedData = array();
         $conditions = array("prj_id" => $prjID);
 
+        //init Invalid Elements
+        $invalidActivities = array();
+        $invalidArtifacts = array();
+        $invalidGateways = array();
+        $invalidEvents = array();
+        $invalidFlows = array();
+
         if (!is_null($this->diagram->retrieve_by_string_fields($conditions))) {
             // list of activities based in the project id
             $selected = array(
@@ -541,11 +633,21 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
 
                     $row['act_name'] = $row['name'];
                     $row = $this->sanitizeFields($row);
-                    $activityData[] = $row;
+                    $field = $this->isValidDiagramElement($row, $this->activityRequiredFields);
+                    if ($field === true) {
+                        $activityData[] = $row;
+                    } else {
+                        $row['invalidFields'] = $field;
+                        $invalidActivities[] = $row;
+                    }
                 }
                 //exit();
             }
             $this->diagram->fetched_row['activities'] = $activityData;
+            if (!empty($invalidActivity)) {
+                $this->diagram->fetched_row['invalidElements']['invalidActivities'] = $invalidActivities;
+            }
+
             // list of events based in the project id
             $selected = array(
                 'pmse_bpmn_event.*',
@@ -576,10 +678,20 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
                     }
                     $row['evn_name'] = $row['name'];
                     $row = $this->sanitizeFields($row);
-                    $eventData[] = $row;
+                    $field = $this->isValidDiagramElement($row, $this->eventsRequiredFields);
+                    if ($field === true) {
+                        $eventData[] = $row;
+                    } else {
+                        $row['invalidFields'] = $field;
+                        $invalidEvents[] = $row;
+                    }
                 }
             }
             $this->diagram->fetched_row['events'] = $eventData;
+            if (!empty($invalidEvents)) {
+                $this->diagram->fetched_row['invalidElements']['invalidEvents'] = $invalidEvents;
+            }
+
             // list of gateways based in the project id
             $selected = array(
                 'pmse_bpmn_gateway.*',
@@ -603,10 +715,20 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
                     }
                     $row['gat_name'] = $row['name'];
                     $row = $this->sanitizeFields($row);
-                    $gatewayData[] = $row;
+                    $field = $this->isValidDiagramElement($row, $this->gatewayRequiredFields);
+                    if ($field === true) {
+                        $gatewayData[] = $row;
+                    } else {
+                        $row['invalidFields'] = $field;
+                        $invalidGateways[] = $row;
+                    }
                 }
             }
             $this->diagram->fetched_row['gateways'] = $gatewayData;
+            if (!empty($invalidGateways)) {
+                $this->diagram->fetched_row['invalidElements']['invalidGateways'] = $invalidGateways;
+            }
+
             // list of artifacts based in the project id
             $selected = array(
                 'pmse_bpmn_artifact.*',
@@ -626,10 +748,20 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
                     $row['bou_element'] = $row['bou_uid'];
                     $row['art_name'] = $row['name'];
                     $row = $this->sanitizeFields($row);
-                    $artifactData[] = $row;
+                    $field = $this->isValidDiagramElement($row, $this->artifactsRequiredFields);
+                    if ($field === true) {
+                        $artifactData[] = $row;
+                    } else {
+                        $row['invalidFields'] = $field;
+                        $invalidArtifacts[] = $row;
+                    }
                 }
             }
             $this->diagram->fetched_row['artifacts'] = $artifactData;
+            if (!empty($invalidArtifacts)) {
+                $this->diagram->fetched_row['invalidElements']['invalidArtifacts'] = $invalidArtifacts;
+            }
+
             // list of flows based in the project id
             $data = $this->getSelectRows($this->flowBean, "", "pmse_bpmn_flow.prj_id='" . $prjID . "'", 0, -1, -1,
                 array());
@@ -644,10 +776,20 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
                     $row['flo_element_dest'] = $this->getElementUid($row['flo_element_dest'], $destE['bean'],
                         $destE['uid']);
                     $row['flo_state'] = json_decode($row['flo_state']);
-                    $flowData[] = $row;
+                    $field = $this->isValidDiagramElement($row, $this->flowRequiredFields);
+                    if ($field === true) {
+                        $flowData[] = $row;
+                    } else {
+                        $row['invalidFields'] = $field;
+                        $invalidFlows[] = $row;
+                    }
                 }
             }
             $this->diagram->fetched_row['flows'] = $flowData;
+            if (!empty($invalidFlows)) {
+                $this->diagram->fetched_row['invalidElements']['invalidFlows'] = $invalidFlows;
+            }
+
             // list of pools based in the project id
 //            $data = $this->lanesetBean->getSelectRows("", "pmse_bpmn_laneset.prj_id=" . $prjID . " AND bpmn_bound.bou_element_type='bpmnLaneset'", 0, -1, -1, array(), array(array('INNER', 'bpmn_bound', 'bpmn_laneset.lns_id=bpmn_bound.bou_element')));
 //            if (!empty($data)) {
@@ -690,6 +832,27 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
             $diagramData = array('aa' => 1, 'bb' => 2);
         }
         return $diagramData;
+    }
+
+    /**
+     *
+     * @param pmse_BpmnFlow $row
+     * @param array $requiredFields
+     * @return bool or array
+     */
+    public function isValidDiagramElement($row, $requiredFields)
+    {
+        $errorFields = array();
+        foreach ($requiredFields as $field) {
+            if (empty($row[$field]) || !$row[$field]) {
+                $errorFields[] = $field;
+            }
+        }
+        if (empty($errorFields)) {
+            return true;
+        }
+
+        return $errorFields;
     }
 
     public function updateDiagram($diagramArray, $keysArray)
@@ -1058,7 +1221,7 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
                         $relDepWrapper = new PMSERelatedDependencyWrapper();
                         $relDepWrapper->removeRelatedDependencies($tmpDefinition->fetched_row);
                         $relDepWrapper->removeActiveTimerEvents($tmpDefinition->fetched_row);
-                    }                    
+                    }
                 }
 
                 if ($this->delete($bean) && $entityData['bean'] != 'BpmnFlow') {
