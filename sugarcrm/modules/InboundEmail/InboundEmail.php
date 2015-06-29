@@ -5899,9 +5899,11 @@ eoq;
 			}
 		} else {
 			if( $this->email->status != 'sent' ){
-				// mark SugarEmail read
-				$q = "UPDATE emails SET status = 'read' WHERE id = '{$uid}'";
-				$r = $this->db->query($q);
+                $email = BeanFactory::getBean('Emails', $uid);
+                if (!empty($email->id)) {
+                    $email->status = 'read';
+                    $email->save();
+                }
 			}
 		}
 
