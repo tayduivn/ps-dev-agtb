@@ -60,8 +60,10 @@ class DependencyManager
                     $dep->setRelatedFields(Parser::getFormulaRelateFields($formula));
                 }
 
-                $dep->addAction(ActionFactory::getNewAction('SetValue', array('target' => $field, 'value' => $def['formula'])));
-
+                $errorValue = array_key_exists('errorValue', $def) ? $def['errorValue'] : null;
+                $dep->addAction(ActionFactory::getNewAction('SetValue', array('target' => $field,
+                                                                              'value' => $def['formula'],
+                                                                              'errorValue' => $errorValue)));
                 if (isset($def['enforced']) && $def['enforced'] &&
                     //Check for the string "false"
                     (!is_string($def['enforced']) || strtolower($def['enforced']) !== "false")

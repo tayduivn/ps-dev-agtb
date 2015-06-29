@@ -17,7 +17,7 @@ $moduleName = 'pmse_Business_Rules';
 $viewdefs[$moduleName]['base']['menu']['header'] = array(
     array(
         'route' => "#$moduleName/create",
-        'label' => 'LNK_PMSE_BUSINESS_RULES_NEW_RECORD',
+        'label' => 'LNK_NEW_PMSE_BUSINESS_RULES',
         'acl_action' => 'create',
         'acl_module' => $moduleName,
         'icon' => 'fa-plus',
@@ -31,7 +31,7 @@ $viewdefs[$moduleName]['base']['menu']['header'] = array(
     ),
     array(
         'route'=>'#'.$moduleName.'/layout/businessrules-import',
-        'label' =>'LNK_PMSE_BUSINESS_RULES_IMPORT_RECORD',
+        'label' =>'LNK_IMPORT_PMSE_BUSINESS_RULES',
         'acl_action'=>'upload',
         'acl_module'=>$moduleName,
         'icon' => 'fa-arrow-circle-o-up',

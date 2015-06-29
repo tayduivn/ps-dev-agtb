@@ -18,12 +18,8 @@ $viewdefs['base']['layout']['activitystream'] = array(
             'view' => 'activitystream-omnibar',
         ),
         array(
-            'view' => 'list-bottom',
-        ),
-        array(
             'view' => 'activitystream-bottom',
         ),
     ),
     'type' => 'activitystream',
-    'span' => 12,
 );

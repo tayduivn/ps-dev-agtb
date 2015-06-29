@@ -18,7 +18,7 @@ $moduleName = 'pmse_Project';
 $viewdefs[$moduleName]['base']['menu']['header'] = array(
     array(
         'route' => "#$moduleName/create",
-        'label' => 'LNK_PMSE_PROCESS_DEFINITIONS_NEW_RECORD',
+        'label' => 'LNK_NEW_PMSE_PROJECT',
         'acl_action' => 'create',
         'acl_module' => $moduleName,
         'icon' => 'fa-plus',
@@ -32,7 +32,7 @@ $viewdefs[$moduleName]['base']['menu']['header'] = array(
     ),
     array(
         'route'=>'#'.$moduleName.'/layout/project-import',
-        'label' =>'LNK_PMSE_PROCESS_DEFINITIONS_IMPORT_RECORD',
+        'label' =>'LNK_IMPORT_PMSE_PROJECT',
         'acl_action'=>'import',
         'acl_module'=>$moduleName,
         'icon' => 'fa-arrow-circle-o-up',

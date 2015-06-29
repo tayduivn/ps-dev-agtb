@@ -160,10 +160,8 @@
                 //Don't show alerts for this request, background update
                 showAlerts: false
             };
-            collection.resetPagination();
             context.resetLoadFlag(false);
             context.set('skipFetch', false);
-            options = _.extend(options, context.get('collectionOptions'));
             context.loadData(options);
         }
     }

@@ -10,7 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'SMTPProxy.php';
+/* Internal Module Imports */
+
+require_once "modules/Mailer/SMTPProxy.php";
 
 class PHPMailerProxy extends PHPMailer
 {

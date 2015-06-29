@@ -763,6 +763,8 @@ class RenameModules
             array('name' => 'LBL_SAVE_###MODULE_SINGULAR###', 'type' => 'singular'),
             array('name' => 'LBL_LIST_FORM_TITLE', 'type' => 'singular'), //Popup title
             array('name' => 'LBL_SEARCH_FORM_TITLE', 'type' => 'singular'), //Popup title
+            array('name' => 'LNK_###MODULE_SINGULAR###_PROCESS_MANAGEMENT', 'type' => 'singular'), //PA title
+            array('name' => 'LNK_###MODULE_SINGULAR###_UNATTENDED_PROCESSES', 'type' => 'plural'), //PA title
         );
 
         $replacedLabels = array();

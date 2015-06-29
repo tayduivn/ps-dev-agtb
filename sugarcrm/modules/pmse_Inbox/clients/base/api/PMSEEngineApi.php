@@ -413,6 +413,9 @@ class PMSEEngineApi extends SugarApi
         $bean = BeanFactory::retrieveBean($case['moduleName'], $case['beanId']);
         // The handler will call to the preprocessor in this step
         $this->retrieveRequestHandler('direct')->executeRequest($case, false, $bean, 'REASSIGN');
+        if(!empty($args['data']['not_content'])){
+            $this->saveNotes($api,$args);
+        }
         return $result;
     }
 
@@ -1008,8 +1011,8 @@ class PMSEEngineApi extends SugarApi
         foreach ($rows as $key => $row) {
             $arrayId = array_search($row['cas_id'], $result);
             if ($arrayId !== false ) {
-                $usersBean = BeanFactory::getBean('Users', $row['cas_init_user']);
-                $row['cas_init_user'] = $usersBean->full_name;
+                $usersBean = BeanFactory::getBean('Users', $arrayUnattendedCases[$arrayId]['cas_user_id']);
+                $row['cas_user_full_name'] = $usersBean->full_name;
                 $processBean = BeanFactory::getBean('pmse_BpmnProcess', $row['pro_id']);
                 $row['prj_id']=$processBean->prj_id;
                 $prjUsersBean = BeanFactory::getBean('Users', $processBean->created_by);
@@ -1036,7 +1039,7 @@ class PMSEEngineApi extends SugarApi
         $q = new SugarQuery();
         $q->from($beanFlow, $queryOptions);
         $q->distinct(true);
-        $fields = array('cas_id','cas_sugar_module','cas_sugar_object_id');
+        $fields = array('cas_id','cas_sugar_module','cas_sugar_object_id','cas_user_id');
 
         //INNER JOIN USERS TABLE
         $q->joinTable('users', array('alias' => 'users', 'joinType' => 'INNER', 'linkingTable' => true))
@@ -1065,6 +1068,9 @@ class PMSEEngineApi extends SugarApi
         $this->checkACL($api, $args);
         $returnArray = array();
         $bpmFlow = BeanFactory::retrieveBean('pmse_BpmFlow', $args['idflow']);
+        if ($api->user->id != $bpmFlow->cas_user_id) {
+            throw new SugarApiExceptionNotAuthorized('EXCEPTION_NOT_AUTHORIZED',null,null,403);
+        }
         $returnArray['case']['flow'] = $bpmFlow->fetched_row;
 
         $activity = BeanFactory::getBean('pmse_BpmActivityDefinition')->retrieve_by_string_fields(array('id' => $bpmFlow->bpmn_id));

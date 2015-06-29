@@ -30,3 +30,6 @@ sugarcrm/node_modules
 sugarcrm/vendor/
 sugarcrm/testsunit/phpunit.xml
 sugarcrm/tests/phpunit.xml
+sugarcrm/styleguide/assets/css/sugar.css
+sugarcrm/styleguide/assets/css/bootstrap.css
+

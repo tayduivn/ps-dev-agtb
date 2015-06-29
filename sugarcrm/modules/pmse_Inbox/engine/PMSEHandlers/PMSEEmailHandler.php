@@ -14,7 +14,7 @@ if (!defined('sugarEntry') || !sugarEntry)
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'PMSEBeanHandler.php';
+require_once 'modules/pmse_Inbox/engine/PMSEHandlers/PMSEBeanHandler.php';
 require_once 'include/workflow/alert_utils.php';
 require_once 'modules/pmse_Inbox/engine/PMSERelatedModule.php';
 

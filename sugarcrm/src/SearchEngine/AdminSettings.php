@@ -141,16 +141,19 @@ class AdminSettings
      * Save the modules to the extension files.
      * @param array $enabledModules the list of enabled modules
      * @param array $disabledModules the list of disabled modules
+     * @param boolean $toRebuild a flag to rebuild the cache or not
      */
-    public function saveFTSModuleListSettings($enabledModules, $disabledModules)
+    public function saveFTSModuleListSettings($enabledModules, $disabledModules, $toRebuild = true)
     {
         $this->writeFTSSettingsToModules($enabledModules, true);
         $this->writeFTSSettingsToModules($disabledModules, false);
 
-        $modules = array_merge($enabledModules, $disabledModules);
-        include_once 'modules/Administration/QuickRepairAndRebuild.php';
-        $repair = new \RepairAndClear();
-        $repair->repairAndClearAll(array('rebuildExtensions'), $modules, true, false);
+        if ($toRebuild === true) {
+            $modules = array_merge($enabledModules, $disabledModules);
+            include_once 'modules/Administration/QuickRepairAndRebuild.php';
+            $repair = new \RepairAndClear();
+            $repair->repairAndClearAll(array('rebuildExtensions'), $modules, true, false);
+        }
     }
 
     /**

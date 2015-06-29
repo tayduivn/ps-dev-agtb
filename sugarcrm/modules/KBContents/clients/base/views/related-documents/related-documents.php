@@ -23,7 +23,8 @@ $viewdefs['KBContents']['base']['view']['related-documents'] = array(
             ),
             'filter' => array(
                 'module' => array(
-                    'KBContents',
+                    //TODO: Must be uncommented when RS-838 is done
+                    //'KBContents',
                 ),
                 'view' => 'record',
             ),

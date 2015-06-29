@@ -36,13 +36,8 @@ class KBVisibility extends SugarVisibility implements StrategyInterface
      */
     public function addVisibilityWhereQuery(SugarQuery $query)
     {
-        $currentUser = $GLOBALS['current_user'];
-        $module = $this->bean->module_name;
         $db = DBManagerFactory::getInstance();
-        if (!method_exists($this->bean, 'getPublishedStatuses') ||
-            $currentUser->isAdminForModule($module) ||
-            $currentUser->isDeveloperForModule($module)
-        ) {
+        if (!method_exists($this->bean, 'getPublishedStatuses') || !$this->shouldCheckVisibility()) {
             return $query;
         } else {
             /**
@@ -104,8 +99,7 @@ class KBVisibility extends SugarVisibility implements StrategyInterface
      */
     public function elasticAddFilters(\User $user, \Elastica\Filter\Bool $filter, Visibility $provider)
     {
-        $module = $this->bean->module_name;
-        if ($user->isAdminForModule($module) || $user->isDeveloperForModule($module)) {
+        if (!$this->shouldCheckVisibility()) {
             return;
         }
 
@@ -138,5 +132,16 @@ class KBVisibility extends SugarVisibility implements StrategyInterface
             return array();
         }
         return $this->bean->getPublishedStatuses();
+    }
+
+    /**
+     * Check whether we need to check visibility
+     * @return bool Return true if need to check, false otherwise.
+     */
+    protected function shouldCheckVisibility()
+    {
+        $currentUser = $GLOBALS['current_user'];
+        $portalUserId = BeanFactory::getBean('Users')->retrieve_user_id('SugarCustomerSupportPortalUser');
+        return $currentUser->id == $portalUserId;
     }
 }

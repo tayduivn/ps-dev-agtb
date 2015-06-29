@@ -58,7 +58,7 @@ class ForecastManagerWorksheetsFilterApiTest extends Sugar_PHPUnit_Framework_Tes
     public function testForecastManagerWorksheetsGet($args, $expectedUserId, $expectedTimePeriodId, $expectedType)
     {
         $api = $this->getMock('ForecastManagerWorksheetsFilterApi', array('createFilter', 'filterList'));
-        $api->expects($this->once())->method('createFilter')->with($this->equalTo($this->service), $this->equalTo($expectedUserId), $this->equalTo($expectedTimePeriodId), $this->equalTo($expectedType));
+        $api->expects($this->once())->method('createFilter')->with($this->equalTo($this->service), $this->equalTo($expectedUserId), $this->equalTo($expectedTimePeriodId));
         $api->forecastManagerWorksheetsGet($this->service, $args);
     }
 
@@ -83,7 +83,6 @@ class ForecastManagerWorksheetsFilterApiTest extends Sugar_PHPUnit_Framework_Tes
                     'module' => 'ForecastManagerWorksheets',
                     'user_id' => 1,
                     'timeperiod_id' => 2,
-                    'type' => 3,
                 ),
                 1,
                 2,
@@ -246,8 +245,7 @@ class ForecastManagerWorksheetsFilterApiTest extends Sugar_PHPUnit_Framework_Tes
         $api->expects($this->once())->method('createFilter')->with(
             $this->equalTo($this->service),
             $this->equalTo($expectedAssignedUser),
-            $this->equalTo($expectedTimePeriod),
-            $this->equalTo($expectedType)
+            $this->equalTo($expectedTimePeriod)
         );
         $api->filterList($this->service, $args);
     }
@@ -286,9 +284,6 @@ class ForecastManagerWorksheetsFilterApiTest extends Sugar_PHPUnit_Framework_Tes
                         ),
                         array(
                             'timeperiod_id' => 2,
-                        ),
-                        array(
-                            'type' => 3,
                         ),
                     ),
                 ),

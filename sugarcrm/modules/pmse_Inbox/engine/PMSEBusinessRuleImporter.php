@@ -12,8 +12,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('PMSEImporter.php');
-require_once('PMSEEngineUtils.php');
+require_once 'modules/pmse_Inbox/engine/PMSEImporter.php';
+require_once 'modules/pmse_Inbox/engine/PMSEEngineUtils.php';
 
 /**
  * Imports a record of encrypted file.

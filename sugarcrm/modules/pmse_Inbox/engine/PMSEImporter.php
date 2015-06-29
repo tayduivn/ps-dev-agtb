@@ -12,7 +12,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/pmse_Inbox/engine/PMSEEngineUtils.php');
+require_once 'modules/pmse_Inbox/engine/PMSEEngineUtils.php';
 
 /**
  * Class ADAMImporterImport a record from a file encryption
@@ -162,7 +162,7 @@ class PMSEImporter
     public function getDataFile($file)
     {
         //return file_get_contents($file);
-        require_once('include/upload_file.php');
+        require_once 'include/upload_file.php';
 
         $_file = new UploadFile();
 

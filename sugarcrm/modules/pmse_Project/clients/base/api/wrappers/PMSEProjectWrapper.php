@@ -12,8 +12,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'PMSEWrapper.php';
-require_once 'PMSEObservers/PMSEObservable.php';
+require_once 'modules/pmse_Project/clients/base/api/wrappers/PMSEWrapper.php';
+require_once 'modules/pmse_Project/clients/base/api/wrappers/PMSEObservers/PMSEObservable.php';
 require_once 'modules/pmse_Project/clients/base/api/wrappers/PMSERelatedDependencyWrapper.php';
 
 class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
@@ -792,6 +792,9 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
                 }
             }
         }
+
+        // Update the Process Definition table (pmse_project) so that the modified time gets updated automatically
+        $this->project->save();
     }
 
     public function getEntityData($key)

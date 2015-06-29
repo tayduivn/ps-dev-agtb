@@ -40,6 +40,7 @@
                     this.context.on('button:create_localization_button:click', this.createLocalization, this);
                     this.context.on('button:create_revision_button:click', this.createRevision, this);
                     this.context.on('button:create_article_button:click', this.createArticle, this);
+                    this.context.on('button:create_article_button_subpanel:click', this.createArticleSubpanel, this);
 
                     if (this.action == 'list') {
                         this.context.on('list:editrow:fire', _.bind(function(model, view) {
@@ -95,6 +96,14 @@
                     }},
                     function(context, newModel) {}
                 );
+            },
+
+            /**
+             * Handler to create a new article from subpanel.
+             */
+            createArticleSubpanel: function() {
+                var model = this.context.parent.get('model');
+                this.createArticle(model);
             },
 
             /**
@@ -234,9 +243,11 @@
                 } else {
                     app.drawer.open(layoutDef, function(context, newModel) {
                         // Just parent - header's create, parent.parent - subpanel's create.
-                        var recordViewContext = context.parent.parent || context.parent;
-                        parentModel.fetch();
-                        recordViewContext.trigger('subpanel:reload', {links: ['revisions', 'localizations']});
+                        var viewContext = context.parent.parent || context.parent;
+                        viewContext.resetLoadFlag();
+                        viewContext.set('skipFetch', false);
+                        viewContext.loadData();
+                        viewContext.trigger('subpanel:reload', {links: ['revisions', 'localizations']});
                         context.createAction = null;
                         context.loadDrawer = null;
                     });

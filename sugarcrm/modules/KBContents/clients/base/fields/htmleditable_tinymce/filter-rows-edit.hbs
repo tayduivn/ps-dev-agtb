@@ -10,10 +10,4 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-{{#if collection.dataFetched}}
-    {{#unless collection.length}}
-        <div class="block-footer">
-            {{str "LBL_NO_DATA_AVAILABLE"}}
-        </div>
-    {{/unless}}
-{{/if}}
+<input type="text" name="{{name}}" value="{{value}}" class="inherit-width">

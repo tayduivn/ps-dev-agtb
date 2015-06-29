@@ -82,7 +82,7 @@ $viewdefs[$module_name]['base']['view']['unattendedCases-list'] = array(
                     'link' => false,
                 ),
                 array(
-                    'name' => 'cas_init_user',
+                    'name' => 'cas_user_full_name',
                     'label' => 'LBL_ACTIVITY_OWNER',
                     'default' => true,
                     'enabled' => true,

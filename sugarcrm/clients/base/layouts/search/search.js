@@ -64,6 +64,8 @@
         }, this);
 
         this.context.on('facets:reset', this.search, this);
+
+        this.collection.setOption('params', {xmod_aggs: true});
     },
 
     /**
@@ -126,17 +128,15 @@
         this.filteredSearch = false;
 
         var tagFilters = _.pluck(this.context.get('tags'), 'id');
-        this.collection.resetPagination();
 
-        //TODO: collection.fetch shouldn't need a query to be passed. Will
-        // be fixed by SC-3973.
-        this.collection.fetch({query: searchTerm, module_list: moduleList, params: {xmod_aggs: true},
+        this.collection.fetch({query: searchTerm, module_list: moduleList,
             apiOptions:
             {
                 data: {
                     tag_filters: tagFilters
                 },
-                fetchWithPost: true
+                fetchWithPost: true,
+                useNewApi: true
             }
         });
     },
@@ -155,15 +155,15 @@
         var moduleList = this.context.get('module_list') || [];
         this.filteredSearch = true;
         var tagFilters = _.pluck(this.context.get('tags'), 'id');
-        this.collection.resetPagination();
-        this.collection.fetch({query: searchTerm, module_list: moduleList, params: {xmod_aggs: true},
+        this.collection.fetch({query: searchTerm, module_list: moduleList,
             apiOptions:
             {
                 data: {
                     agg_filters: this.selectedFacets,
                     tag_filters: tagFilters
                 },
-                fetchWithPost: true
+                fetchWithPost: true,
+                useNewApi: true
             }
         });
     },
@@ -180,8 +180,6 @@
     loadData: function(options, setFields) {
         setFields = false;
         options = options || {};
-        options.params = {};
-        options.params.xmod_aggs = true;
 
         // pull tag ids out of context and pass them into our options to filter
         var tagFilters = _.pluck(this.context.get('tags'), 'id');
@@ -189,6 +187,7 @@
             options.apiOptions = options.apiOptions || {};
             options.apiOptions.data = {tag_filters: tagFilters};
             options.apiOptions.fetchWithPost = true;
+            options.apiOptions.useNewApi = true;
         }
 
         this._super('loadData', [options, setFields]);

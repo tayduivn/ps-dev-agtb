@@ -57,6 +57,11 @@
      */
     _renderField: function(field) {
             this._super("_renderField", [field]);
+    },
+
+    _dispose: function() {
+        jQuery('.adam-modal').remove();
+        this._super("_dispose", arguments);
     }
 
 })

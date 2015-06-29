@@ -13,6 +13,8 @@
 require_once 'include/SearchForm/SugarSpot.php';
 require_once 'include/api/SugarListApi.php';
 
+use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
+
 /**
  *
  * UnifiedSearchApi for /search entry point
@@ -260,6 +262,9 @@ class UnifiedSearchApi extends SugarListApi {
             4 - not order by
         */
 
+        $engine = SearchEngine::getInstance()->getEngine();
+        $metaDataHelper = $engine->getMetaDataHelper();
+
         /*
          * If a module isn't FTS switch to spot search.  Global Search should be done with either the enabled modules
          * Using the new ServerInfo endpoint OR passing in a blank module list.
@@ -268,8 +273,9 @@ class UnifiedSearchApi extends SugarListApi {
         {
             foreach($options['moduleList'] AS $module)
             {
-                if(!SugarSearchEngineMetadataHelper::isModuleFtsEnabled($module))
-                {
+                //A module enabled in unified search but disabled in the new FTS (Elastic) search should also
+                //use the local database search, i.e., return 'SugarSearchEngine' here.
+                if (!$metaDataHelper->isModuleEnabled($module)) {
                     return 'SugarSearchEngine';
                 }
             }
