@@ -135,9 +135,6 @@ Modal.prototype.attachListeners = function () {
             .mouseout(function (e) {
                 e.stopPropagation();
             })
-            .mouseup(function (e) {
-                e.stopPropagation();
-            })
             .mousedown(function (e) {
                 e.stopPropagation();
             });

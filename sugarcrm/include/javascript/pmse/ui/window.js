@@ -288,9 +288,8 @@ Window.prototype.createHTML = function () {
     this.style.addClasses(['adam-window']);
     this.style.addProperties({
         'z-index': 1033,
-        'left': '50%',
-        'top': '50%',
-        'margin': marginProps
+        'left': (window.innerWidth - this.width) / 2,
+        'top': (window.innerHeight - this.height) / 2
     });
 
     this.height -= 16;
@@ -415,7 +414,7 @@ Window.prototype.attachListeners = function () {
     $(this.html).draggable({
         cursor: "move",
         scroll: false,
-        containment: "document",
+        containment: "parent",
         handle: '.adam-window-header'
     }).on('keydown keyup keypress', function(e) {
         e.stopPropagation();
