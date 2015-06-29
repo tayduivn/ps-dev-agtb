@@ -95,6 +95,7 @@ describe('Base.Field.ActionMenu', function() {
 
     describe('Adding a model to the mass collection', function() {
         beforeEach(function() {
+            field.isCheckAllCheckbox = true;
             sinon.collection.spy(field.context, 'trigger');
             sinon.collection.spy(field, '_onMassCollectionAddAll');
         });
@@ -119,6 +120,7 @@ describe('Base.Field.ActionMenu', function() {
 
     describe('Removing a model from the mass collection', function() {
         beforeEach(function() {
+            field.isCheckAllCheckbox = true;
             sinon.collection.spy(field.context, 'trigger');
             field.collection.add({id: 1});
             sinon.collection.spy(field, '_onMassCollectionRemoveResetAll');
