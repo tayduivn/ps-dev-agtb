@@ -377,7 +377,7 @@
      * @param {Function} callback Async.js waterfall callback.
      */
     _doValidateImageField: function(fields, errors, callback) {
-        if (this.def.required && !this.model.get(this.name + '_guid')) {
+        if (this.def.required && !this.model.get(this.name + '_guid') && !this.model.get(this.name)) {
             errors[this.name] = errors[this.name] || {};
             errors[this.name].required = true;
         }
