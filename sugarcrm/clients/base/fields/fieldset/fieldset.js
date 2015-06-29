@@ -150,12 +150,34 @@
 
         this._super('_render');
 
-        _.each(fields, function(field) {
-            field.setElement(this.$('span[sfuuid="' + field.sfId + '"]'));
-            field.render();
-        }, this);
+        this._renderFields(fields);
 
         return this;
+    },
+
+    /**
+     * Renders the children fields in their respective placeholders.
+     *
+     * @param {Array} fields The children fields.
+     * @protected
+     */
+    _renderFields: function(fields) {
+        // In terms of performance it is better to search the DOM once for
+        // all the fieldset fields, than to search the DOM for each field.
+        // That's why we cache the DOM elements in the `fieldElems` hash and pass
+        // them to {@link Backbone.View#setElement}.
+        var fieldElems = {};
+
+        this.$('span[sfuuid]').each(function() {
+            var $this = $(this);
+            var sfId = $this.attr('sfuuid');
+            fieldElems[sfId] = $this;
+        });
+
+        _.each(fields, function(field) {
+            field.setElement(fieldElems[field.sfId]);
+            field.render();
+        }, this);
     },
 
     /**

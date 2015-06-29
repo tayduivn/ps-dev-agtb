@@ -471,6 +471,15 @@
     },
 
     /**
+     * Since we don't have a default action button we don't need
+     * to render anything here. See {@link View.Fields.Base.ActiondropdownField#_renderFields}.
+     *
+     * @override
+     * @private
+     */
+    _renderFields: $.noop,
+
+    /**
      * Update the dropdown usability while the total count is estimating.
      */
     onTotalEstimate: function() {

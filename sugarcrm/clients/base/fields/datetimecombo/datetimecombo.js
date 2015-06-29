@@ -260,6 +260,10 @@
     bindDomChange: function() {
         this._super('bindDomChange');
 
+        if (this._inDetailMode()) {
+            return;
+        }
+
         var $dateField = this.$(this.fieldTag),
             $timeField = this.$(this.secondaryFieldTag);
 
@@ -295,6 +299,10 @@
     unbindDom: function() {
         this._super('unbindDom');
 
+        if (this._inDetailMode()) {
+            return;
+        }
+
         this.$(this.secondaryFieldTag).off();
     },
 
@@ -313,7 +321,7 @@
                 return;
             }
             
-            if (this.action !== 'edit' && this.action !== 'massupdate') {
+            if (this._inDetailMode()) {
                 this.render();
                 return;
             }
@@ -425,7 +433,7 @@
     _render: function() {
         this._super('_render');
 
-        if (this.action !== 'edit' && this.action !== 'massupdate') {
+        if (this._inDetailMode()) {
             return;
         }
 

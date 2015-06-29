@@ -526,10 +526,11 @@ describe('Base.Field.Relate', function() {
 
         beforeEach(function() {
             sinon.collection.stub(app.metadata, 'getModule').returns({fields: {}});
-            field = SugarTest.createField('base', 'account_name', 'relate');
+            field = SugarTest.createField('base', 'account_name', 'relate', 'edit');
 
             sinon.collection.stub(field, 'getSearchModule').returns('Contacts');
             field.initialize(field.options);
+            field.render();
 
             sinon.collection.stub(app.data.getBeanClass('Filters').prototype, 'buildSearchTermFilter',
                 function(module, term) {

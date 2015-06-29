@@ -90,12 +90,6 @@
                     this.getSearchModule() + '::' + source);
             }
         }, this);
-
-        this.model.on('change', function() {
-            this.getFilterOptions(true);
-        }, this);
-
-        this._createFiltersCollection();
     },
 
     /**
@@ -103,13 +97,13 @@
      *
      * @protected
      */
-    _createFiltersCollection: function() {
+    _createFiltersCollection: function(options) {
         var searchModule = this.getSearchModule();
         if (app.metadata.getModule('Filters') && searchModule) {
             this.filters = app.data.createBeanCollection('Filters');
             this.filters.setModuleName(searchModule);
             this.filters.setFilterOptions(this.getFilterOptions());
-            this.filters.load();
+            this.filters.load(options);
         }
     },
 
@@ -121,8 +115,9 @@
      * @param {Function} callback Callback function for keydown.
      */
     bindKeyDown: function(callback) {
-        this.$(this.fieldTag).on('keydown.record', {field: this}, callback);
-        var plugin = this.$(this.fieldTag).data('select2');
+        var $dropdown = this.$(this.fieldTag);
+        $dropdown.on('keydown.record', {field: this}, callback);
+        var plugin = $dropdown.data('select2');
         if (plugin) {
             plugin.focusser.on('keydown.record', {field: this}, callback);
             plugin.search.on('keydown.record', {field: this}, callback);
@@ -136,8 +131,9 @@
      * @param {Function} callback Callback function for keydown.
      */
     unbindKeyDown: function(callback) {
-        this.$(this.fieldTag).off('keydown.record', callback);
-        var plugin = this.$(this.fieldTag).data('select2');
+        var $dropdown = this.$(this.fieldTag);
+        $dropdown.off('keydown.record', callback);
+        var plugin = $dropdown.data('select2');
         if (plugin) {
             plugin.search.off('keydown.record', callback);
         }
@@ -154,120 +150,157 @@
     /**
      * Renders relate field
      */
-    _render: function () {
-        var self = this,
-            searchModule = this.getSearchModule();
+    _render: function() {
+        var searchModule = this.getSearchModule();
 
         //Do not render if the related module is invalid
         if (searchModule && !_.contains(app.metadata.getModuleNames(), searchModule)) {
             return this;
         }
 
-        var result = this._super('_render');
+        this._super('_render');
 
         //FIXME remove check for tplName SC-2608
-        if (this.tplName === 'edit' || this.tplName === 'massupdate') {
-
-            var inList = (this.view.name === 'recordlist'),
-                cssClasses = (inList ? 'select2-narrow' : '') + (this.type === 'parent' ? ' select2-parent' : ''),
-                relatedModuleField = this.getRelatedModuleField();
-
-            this.$(this.fieldTag).select2({
-                width: inList?'off':'100%',
-                dropdownCssClass: cssClasses,
-                containerCssClass: cssClasses,
-                initSelection: function (el, callback) {
-                    var $el = $(el),
-                        id = $el.data('id'),
-                        text = $el.val();
-                    callback({id: id, text: text});
-                },
-                formatInputTooShort: function () {
-                    return '';
-                },
-                formatSearching: function () {
-                    return app.lang.get("LBL_LOADING", self.module);
-                },
-                placeholder: this.getPlaceHolder(),
-                allowClear: self.allow_single_deselect,
-                minimumInputLength: self.minChars,
-                query: _.bind(this.search, this)
-            }).on("select2-open",function () {
-                    var plugin = $(this).data('select2');
-                    if (!plugin.searchmore) {
-                        var $content = $('<li class="select2-result">').append(
-                                $('<div/>').addClass('select2-result-label')
-                                    .html(app.lang.get('LBL_SEARCH_FOR_MORE', self.module))
-                            ).mousedown(function () {
-                                plugin.opts.element.trigger($.Event("searchmore"));
-                                plugin.close();
-                            });
-                        plugin.searchmore = $('<ul class="select2-results">').append($content);
-                        plugin.dropdown.append(plugin.searchmore);
-                    }
-                }).on('searchmore', function() {
-                    $(this).select2('close');
-                    self.openSelectDrawer();
-                }).on("change", function (e) {
-                    var id = e.val,
-                        plugin = $(this).data('select2'),
-                        value = (id) ? plugin.selection.find("span").text() : $(this).data('id'),
-                        collection = plugin.context,
-                        attributes = {};
-                    if (_.isUndefined(id)) {
-                        return;
-                    }
-                    //Update the source element or else reverting back to the original value will not trigger a change event.
-                    plugin.opts.element.data("id", id);
-                    if (collection && !_.isEmpty(id)) {
-                        // if we have search results use that to set new values
-                        var model = collection.get(id);
-                        attributes.id = model.id;
-                        attributes.value = model.get('name');
-                        _.each(model.attributes, function (value, field) {
-                            if (app.acl.hasAccessToModel('view', model, field)) {
-                                attributes[field] = attributes[field] || model.get(field);
-                            }
-                        });
-                    } else if (e.currentTarget.value && value) {
-                        // if we have previous values keep them
-                        attributes.id = value;
-                        attributes.value = e.currentTarget.value;
-                    } else {
-                        // default to empty
-                        attributes.id = '';
-                        attributes.value = '';
-                    }
-
-                    self.setValue(attributes);
+        switch(this.tplName) {
+            case 'edit':
+            case 'massupdate':
+                this._createFiltersCollection({
+                    success: _.bind(function() {
+                        this._renderEditableDropdown();
+                    }, this)
                 });
-            var plugin = this.$(this.fieldTag).data('select2');
-            if (plugin && plugin.focusser) {
-                plugin.focusser.on('select2-focus', _.bind(_.debounce(this.handleFocus, 0), this));
-            }
-        } else if (this.tplName === 'disabled') {
-            this.$(this.fieldTag).select2({
-                width: '100%',
-                initSelection: function (el, callback) {
-                    var $el = $(el),
-                        id = $el.data('id'),
-                        text = $el.val();
-                    callback({id: id, text: text});
-                },
-                formatInputTooShort: function () {
-                    return '';
-                },
-                formatSearching: function () {
-                    return app.lang.get("LBL_LOADING", self.module);
-                },
-                placeholder: this.getPlaceHolder(),
-                allowClear: self.allow_single_deselect,
-                minimumInputLength: self.minChars,
-                query: _.bind(this.search, this)
-            });
-            this.$(this.fieldTag).select2('disable');
+                break;
+            case 'disabled':
+                this._renderDisabledDropdown();
+                break;
         }
-        return result;
+        return this;
+    },
+
+    /**
+     * Renders the editable dropdown using the `select2` plugin.
+     *
+     * Since a filter may have to be applied on the field, we need to fetch
+     * the list of filters for the current module before rendering the dropdown
+     * (and enabling the searchahead feature that requires the filter
+     * definition).
+     *
+     * @private
+     */
+    _renderEditableDropdown: function() {
+        var self = this;
+        var $dropdown = this.$(this.fieldTag);
+
+        this._createFiltersCollection();
+
+        var inList = (this.view.name === 'recordlist'),
+            cssClasses = (inList ? 'select2-narrow' : '') + (this.type === 'parent' ? ' select2-parent' : ''),
+            relatedModuleField = this.getRelatedModuleField();
+
+        $dropdown.select2({
+            width: inList?'off':'100%',
+            dropdownCssClass: cssClasses,
+            containerCssClass: cssClasses,
+            initSelection: function (el, callback) {
+                var $el = $(el),
+                    id = $el.data('id'),
+                    text = $el.val();
+                callback({id: id, text: text});
+            },
+            formatInputTooShort: function () {
+                return '';
+            },
+            formatSearching: function () {
+                return app.lang.get("LBL_LOADING", self.module);
+            },
+            placeholder: this.getPlaceHolder(),
+            allowClear: self.allow_single_deselect,
+            minimumInputLength: self.minChars,
+            query: _.bind(this.search, this)
+        }).on("select2-open",function () {
+            var plugin = $(this).data('select2');
+            if (!plugin.searchmore) {
+                var $content = $('<li class="select2-result">').append(
+                        $('<div/>').addClass('select2-result-label')
+                            .html(app.lang.get('LBL_SEARCH_FOR_MORE', self.module))
+                    ).mousedown(function () {
+                        plugin.opts.element.trigger($.Event("searchmore"));
+                        plugin.close();
+                    });
+                plugin.searchmore = $('<ul class="select2-results">').append($content);
+                plugin.dropdown.append(plugin.searchmore);
+            }
+        }).on('searchmore', function() {
+            $(this).select2('close');
+            self.openSelectDrawer();
+        }).on("change", function (e) {
+            var id = e.val,
+                plugin = $(this).data('select2'),
+                value = (id) ? plugin.selection.find("span").text() : $(this).data('id'),
+                collection = plugin.context,
+                attributes = {};
+            if (_.isUndefined(id)) {
+                return;
+            }
+            //Update the source element or else reverting back to the original value will not trigger a change event.
+            plugin.opts.element.data("id", id);
+            if (collection && !_.isEmpty(id)) {
+                // if we have search results use that to set new values
+                var model = collection.get(id);
+                attributes.id = model.id;
+                attributes.value = model.get('name');
+                _.each(model.attributes, function (value, field) {
+                    if (app.acl.hasAccessToModel('view', model, field)) {
+                        attributes[field] = attributes[field] || model.get(field);
+                    }
+                });
+            } else if (e.currentTarget.value && value) {
+                // if we have previous values keep them
+                attributes.id = value;
+                attributes.value = e.currentTarget.value;
+            } else {
+                // default to empty
+                attributes.id = '';
+                attributes.value = '';
+            }
+
+            self.setValue(attributes);
+        });
+        var plugin = $dropdown.data('select2');
+        if (plugin && plugin.focusser) {
+            plugin.focusser.on('select2-focus', _.bind(_.debounce(this.handleFocus, 0), this));
+        }
+    },
+
+    /**
+     * Renders the dropdown in disabled mode.
+     *
+     * @private
+     */
+    _renderDisabledDropdown: function() {
+        var loadingLabel = app.lang.get('LBL_LOADING', this.module);
+        var $dropdown = this.$(this.fieldTag);
+
+        $dropdown.select2({
+            width: '100%',
+            initSelection: function (el, callback) {
+                var $el = $(el),
+                    id = $el.data('id'),
+                    text = $el.val();
+                callback({id: id, text: text});
+            },
+            formatInputTooShort: function () {
+                return '';
+            },
+            formatSearching: function () {
+                return loadingLabel;
+            },
+            placeholder: this.getPlaceHolder(),
+            allowClear: self.allow_single_deselect,
+            minimumInputLength: self.minChars,
+            query: _.bind(this.search, this)
+        });
+        $dropdown.select2('disable');
     },
 
     /**
@@ -293,7 +326,9 @@
             this.href = '#' + app.router.buildRoute(module, id);
         }
     },
-    //Derived controllers can override these if related module and id in another place
+
+    // Derived controllers can override these if related module and id in another
+    // place.
     _buildRoute: function () {
         this.buildRoute(this.getSearchModule(), this._getRelateId());
     },
@@ -658,11 +693,16 @@
      */
     bindDataChange: function() {
         if (this.model) {
+            this.model.on('change', function() {
+                this.getFilterOptions(true);
+            }, this);
+
             this.model.on('change:' + this.name, function() {
-                if (!_.isEmpty(this.$(this.fieldTag).data('select2'))) {
+                var $dropdown = this.$(this.fieldTag);
+                if (!_.isEmpty($dropdown.data('select2'))) {
                     // Just setting the value on select2 doesn't cause the label to show up
                     // so we need to render the field next after setting this value
-                    this.$(this.fieldTag).select2('val', this.model.get(this.name));
+                    $dropdown.select2('val', this.model.get(this.name));
                 }
                 // double-check field isn't disposed before trying to render
                 if (!this.disposed) {
