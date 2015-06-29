@@ -12,6 +12,8 @@
 
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch;
 
+use Sugarcrm\Sugarcrm\Elasticsearch\Query\QueryBuilder;
+
 /**
  *
  * This class is used to apply the different boost values on the fields
@@ -20,8 +22,6 @@ namespace Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch;
  */
 class Booster
 {
-    const BOOST_SEP = '^';
-
     /**
      * Default boost value if non defined
      * @var float
@@ -58,7 +58,7 @@ class Booster
      */
     public function getBoostedField($field, array $defs, $weightId)
     {
-        return $field . self::BOOST_SEP . $this->getBoostValue($defs, $weightId);
+        return $field . QueryBuilder::BOOST_SEP . $this->getBoostValue($defs, $weightId);
     }
 
     /**
