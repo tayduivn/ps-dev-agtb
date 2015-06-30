@@ -936,9 +936,9 @@ class PMSECrmDataWrapper implements PMSEObservable
         $where .= ' AND users.employee_status = \'Active\' ';
 
         if (!empty($filter)) {
-            $where = ' AND (users.first_name LIKE \'' . $filter . '%\' ';
-            $where .= 'OR users.last_name LIKE \'' . $filter . '%\' ';
-            $where .= 'OR users.user_name LIKE \'' . $filter . '%\' )';
+            $where .= ' AND (users.first_name LIKE \'%' . $filter . '%\' ';
+            $where .= 'OR users.last_name LIKE \'%' . $filter . '%\' ';
+            $where .= 'OR users.user_name LIKE \'%' . $filter . '%\' )';
         }
 
         $order = 'users.first_name, users.last_name';
@@ -2175,12 +2175,12 @@ class PMSECrmDataWrapper implements PMSEObservable
         $field = array();
         switch ($def['name']) {
             case 'assigned_user_id':
-                $field['type'] = 'enum';
+                $field['type'] = 'user';
                 $field['vname'] = 'LBL_ASSIGNED_TO';
                 break;
             case 'created_by':
             case 'modified_user_id':
-                $field['type'] = 'enum';
+                $field['type'] = 'user';
                 break;
             default:
                 $result = $field;

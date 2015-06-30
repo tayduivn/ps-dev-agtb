@@ -88,14 +88,18 @@ CriteriaField.prototype.init = function(settings) {
 
 CriteriaField.prototype.disable = function () {
 	this._disabled = true;
-	this.controlObject.disable();
+	if (this.controlObject) {
+		this.controlObject.disable();
+	}
 	jQuery(this.labelObject).addClass('adam-form-label-disabled');
 	return this;
 };
 
 CriteriaField.prototype.enable = function () {
 	this._disabled = false;
-	this.controlObject.enable();
+	if (this.controlObject) {
+		this.controlObject.enable();
+	}
 	jQuery(this.labelObject).removeClass('adam-form-label-disabled');
 	return this;
 };
