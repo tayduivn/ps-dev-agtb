@@ -70,7 +70,6 @@
         'click [data-action=full-screen]': 'fullScreen',
         'click [data-action=create-new]': 'switchCreate',
         'keydown [data-role=add-item]': 'handleKeyDown',
-        'blur [data-role=add-item]': 'handleBlur',
         'click [data-action=show-list]': 'showList',
         'click [data-action=clear-field]': 'clearField'
     },
@@ -257,17 +256,6 @@
                         break;
                 }
                 break;
-        }
-    },
-
-    /**
-     * Handle blur event on create New Category field.
-     * @param evt {Event} Triggered input field blur event.
-     */
-    handleBlur: function(evt) {
-        var role = $(evt.currentTarget).data('role');
-        if (role === 'add-item') {
-            this.addNew(evt);
         }
     },
 
