@@ -13,6 +13,7 @@
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch;
 
 use Sugarcrm\Sugarcrm\Elasticsearch\Query\Highlighter\AbstractHighlighter;
+use Sugarcrm\Sugarcrm\Elasticsearch\Query\QueryBuilder;
 
 /**
  *
@@ -47,7 +48,7 @@ class Highlighter extends AbstractHighlighter
     {
         // Strip of the module name and keep the main field only. If no match
         // is found we continue with the field value as is.
-        if (preg_match('/^.*' . SearchFields::PREFIX_SEP . '([^.]*).*$/', $field, $matches)) {
+        if (preg_match('/^.*' . QueryBuilder::PREFIX_SEP . '([^.]*).*$/', $field, $matches)) {
             $field = $matches[1];
         }
         return parent::normalizeFieldName($field);

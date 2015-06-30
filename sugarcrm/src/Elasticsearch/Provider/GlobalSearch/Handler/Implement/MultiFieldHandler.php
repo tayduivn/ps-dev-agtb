@@ -22,6 +22,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\AbstractHandle
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\AnalysisHandlerInterface;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\MappingHandlerInterface;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\SearchFieldsHandlerInterface;
+use Sugarcrm\Sugarcrm\Elasticsearch\Query\QueryBuilder;
 
 /**
  *
@@ -401,7 +402,7 @@ class MultiFieldHandler extends AbstractHandler implements
              * logic during indexing.
              */
             if ($this->isFieldSearchable($defs)) {
-                $realField = $mapping->getModule() . SearchFields::PREFIX_SEP . $field;
+                $realField = $mapping->getModule() . QueryBuilder::PREFIX_SEP . $field;
                 $mapping->addNotAnalyzedField($field, array($realField));
             } else {
                 $realField = $field;
@@ -427,7 +428,7 @@ class MultiFieldHandler extends AbstractHandler implements
         }
 
         // Use prefixed field name
-        $field = $module . SearchFields::PREFIX_SEP . $field;
+        $field = $module . QueryBuilder::PREFIX_SEP . $field;
 
         // Add fields which are based on strings
         foreach ($this->getStringFieldsForType($defs['type']) as $searchField) {
@@ -460,7 +461,7 @@ class MultiFieldHandler extends AbstractHandler implements
      */
     protected function addHighlighterField($module, $field, array $settings = array())
     {
-        //$highlightField = $module . SearchFields::PREFIX_SEP . $field;
+        //$highlightField = $module . QueryBuilder::PREFIX_SEP . $field;
         $this->provider->addHighlighterFields(array($field => $settings));
     }
 

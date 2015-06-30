@@ -12,7 +12,7 @@
 
 use \Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
 use \Sugarcrm\Sugarcrm\Elasticsearch\Query\QueryBuilder;
-use \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\MultiFieldHandler;
+use \Sugarcrm\Sugarcrm\Elasticsearch\Query\KBQuery;
 
 require_once 'include/api/SugarListApi.php';
 require_once 'data/BeanFactory.php';
@@ -52,44 +52,15 @@ class KBContentsApi extends SugarListApi
         $builder = $this->getElasticQueryBuilder($args, $options);
         $ftsFields = ApiHelper::getHelper($api, $targetBean)->getElasticSearchFields(array('name', 'kbdocument_body'));
 
-        // TODO: Current sugar search interface doesn't allow using any query except "query string".
-        // Construct it manually.
-        $mltName = new \Elastica\Query\MoreLikeThis();
-        $mltName->setFields($ftsFields['name']);
-        $mltName->setLikeText($targetBean->name);
-        // TODO: Configure after demo.
-        $mltName->setMinTermFrequency(1);
-        $mltName->setMinDocFrequency(1);
+        //set the query using more_like_this query
+        $query = new KBQuery();
+        $query->setBean($targetBean);
+        $query->setFields($ftsFields);
+        $builder->setQuery($query);
 
-        $mltBody = new \Elastica\Query\MoreLikeThis();
-        $mltBody->setFields($ftsFields['kbdocument_body']);
-        $mltBody->setLikeText($targetBean->kbdocument_body);
-        // TODO: Configure after demo.
-        $mltBody->setMinTermFrequency(1);
-        $mltBody->setMinDocFrequency(1);
-
-        $boolQuery = new \Elastica\Query\Bool();
-        $boolQuery->addShould($mltName); // And, addMust() for OR.
-        $boolQuery->addShould($mltBody);
-
-        // Exclude the target record.
-        $mainFilter = new \Elastica\Filter\Bool();
-        $currentIdFilter = new \Elastica\Filter\Term();
-        $currentIdFilter->setTerm('_id', $targetBean->id);
-        $mainFilter->addMustNot($currentIdFilter);
-
-        $activeRevFilter = new \Elastica\Filter\Term();
-        $activeRevFilter->setTerm('active_rev', 1);
-        $mainFilter->addMust($activeRevFilter);
-
-        $statusFilterOr = new \Elastica\Filter\BoolOr();
-        foreach ($targetBean->getPublishedStatuses() as $status) {
-            $statusFilterOr->addFilter(new \Elastica\Filter\Term(array('status' => $status)));
-        }
-        $mainFilter->addMust($statusFilterOr);
-
-        $builder->setQuery($boolQuery);
-        $builder->addFilter($mainFilter);
+        //set the filter
+        $filter = $query->createFilter(false);
+        $builder->addFilter($filter);
 
         $resultSet = $builder->executeSearch();
 

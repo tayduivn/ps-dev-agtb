@@ -11170,12 +11170,14 @@ Sincerely, SugarCRM',
 
     'ERR_HTTP_404_TYPE' => '404',
     'ERR_HTTP_404_TITLE' => 'Data not available',
-    'ERR_HTTP_404_TEXT' => 'Page does not exist or you do not have permission to access this page.',
+    'ERR_HTTP_404_TEXT_LINE1' => 'Page does not exist or you do not have permission to access this page.',
+    'ERR_HTTP_404_TEXT_LINE2' => 'Please try again. If the error persists, please contact your Sugar Administrator.',
     'ERR_HTTP_404_ACTION' => 'Go back to previous page.',
 
     'ERR_HTTP_500_TYPE' => '500',
     'ERR_HTTP_500_TITLE' => 'HTTP: 500 Internal Server Error',
-    'ERR_HTTP_500_TEXT' => 'There was an error on the server.',
+    'ERR_HTTP_500_TEXT_LINE1' => 'The server encountered an error and could not complete your request.',
+    'ERR_HTTP_500_TEXT_LINE2' => 'Please try again. If the error persists, please contact your Sugar Administrator.',
     'ERR_HTTP_500_ACTION' => 'Please contact technical support.',
 
     'ERR_RENDER_FAILED_TITLE' => 'View Render Failed',
