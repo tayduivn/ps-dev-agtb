@@ -1714,7 +1714,7 @@ class SugarBean
             if (!empty($current_user))
             {
                 $this->modified_user_id = $current_user->id;
-                $this->modified_by_name = $current_user->user_name;
+                $this->modified_by_name = $current_user->full_name;
             }
         }
         if ($this->deleted != 1)
