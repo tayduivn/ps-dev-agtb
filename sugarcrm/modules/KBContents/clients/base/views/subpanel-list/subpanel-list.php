@@ -68,6 +68,10 @@ $viewdefs['KBContents']['base']['view']['subpanel-list'] = array(
                     'enabled' => true,
                     'default' => true,
                     'type' => 'status',
+                    'related_fields' => array(
+                        'active_date',
+                        'exp_date',
+                    ),
                 ),
             ),
         ),
