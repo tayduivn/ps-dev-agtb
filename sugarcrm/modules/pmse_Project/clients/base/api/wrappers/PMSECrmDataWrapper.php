@@ -1561,6 +1561,7 @@ class PMSECrmDataWrapper implements PMSEObservable
         $fieldTypes = $module_strings['fieldTypes'];
         //add datetimecombo type field from the vardef overrides to point to Datetime type
         $fieldTypes['datetime'] = $fieldTypes['datetimecombo'];
+        $fieldTypes['name'] = "Name";
 
         global $app_list_strings;
         $output = array();
