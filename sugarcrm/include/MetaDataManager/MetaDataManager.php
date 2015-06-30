@@ -259,6 +259,7 @@ class MetaDataManager
     protected static $configProperties = array(
         'list_max_entries_per_page' => true,
         'list_max_entries_per_subpanel' => true,
+        'collapse_subpanels' => true,
         'max_record_fetch_size' => true,
         'max_record_link_fetch_size' => true,
         'upload_maxsize' => true,

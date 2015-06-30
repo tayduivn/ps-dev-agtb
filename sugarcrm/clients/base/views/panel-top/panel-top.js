@@ -94,17 +94,7 @@
         }
 
         if (!this.layout.disposed) {
-            var isHidden = this.layout.$('.subpanel').hasClass('closed');
-            this.layout.trigger('panel:toggle', isHidden);
-        }
-    },
-
-    /**
-     * @override
-     */
-    bindDataChange: function() {
-        if (this.collection) {
-            this.listenTo(this.collection, 'reset', this.render);
+            this.layout.toggle();
         }
     }
 })

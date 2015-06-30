@@ -20,7 +20,7 @@ describe('Base.Field.CollectionCount', function() {
         sinon.collection.restore();
     });
 
-    describe('render', function() {
+    describe('updateCount', function() {
 
         beforeEach(function() {
             sinon.collection.stub(app.lang, 'get', function(key) {
@@ -44,15 +44,36 @@ describe('Base.Field.CollectionCount', function() {
                 length: 20,
                 next_offset: 20,
                 expected: 'TPL_LIST_HEADER_COUNT_TOTAL'
+            },
+            // If options are passed to updateCount, they will take precedence
+            // over the collection's properties.
+            {
+                length: 20,
+                next_offset: -1,
+                expected: 'TPL_LIST_HEADER_COUNT_TOTAL',
+                options: {
+                    length: 50,
+                    hasMore: true
+                }
+            },
+            {
+                length: 20,
+                next_offset: 20,
+                expected: 'TPL_LIST_HEADER_COUNT',
+                options: {
+                    length: 50,
+                    hasMore: false
+                }
             }
-        ], function(option) {
+        ], function(provider) {
             it('should display a proper count representation', function() {
-                field.collection.length = option.length;
-                field.collection.next_offset = option.next_offset;
+                provider = provider || {};
+                field.collection.length = provider.length;
+                field.collection.next_offset = provider.next_offset;
                 field.collection.dataFetched = true;
 
-                field.render();
-                expect(field.countLabel.toString()).toBe(option.expected);
+                field.updateCount(provider.options);
+                expect(field.countLabel.toString()).toBe(provider.expected);
             });
         });
 
@@ -61,7 +82,7 @@ describe('Base.Field.CollectionCount', function() {
             field.collection.total = 500;
             field.collection.dataFetched = true;
 
-            field.render();
+            field.updateCount();
             expect(field.countLabel.toString()).toBe('TPL_LIST_HEADER_COUNT_TOTAL');
         });
     });
@@ -78,7 +99,7 @@ describe('Base.Field.CollectionCount', function() {
 
     describe('reset', function() {
         it('should keep the counts in sync with the collection', function() {
-            sinon.collection.spy(field, 'render');
+            sinon.collection.spy(field, 'updateCount');
 
             field.collection.length = 20;
             field.collection.total = 500;
@@ -86,7 +107,7 @@ describe('Base.Field.CollectionCount', function() {
 
             field.collection.trigger('reset');
 
-            expect(field.render.calledOnce).toBe(true);
+            expect(field.updateCount.calledOnce).toBe(true);
             expect(field.countLabel.toString()).toBe('TPL_LIST_HEADER_COUNT_TOTAL');
 
             field.collection.length = 20;
@@ -95,8 +116,46 @@ describe('Base.Field.CollectionCount', function() {
 
             field.collection.trigger('reset');
 
-            expect(field.render.calledTwice).toBe(true);
+            expect(field.updateCount.calledTwice).toBe(true);
             expect(field.countLabel.toString()).toBe('TPL_LIST_HEADER_COUNT');
+        });
+    });
+
+    describe('refresh:count', function() {
+        using('different collection properties and options', [
+            {
+                length: 20,
+                next_offset: -1,
+                expected: 'TPL_LIST_HEADER_COUNT_TOTAL',
+                hasAmount: true,
+                options: {
+                    length: 50,
+                    hasMore: true
+                }
+            },
+            {
+                length: 20,
+                next_offset: 20,
+                expected: 'TPL_LIST_HEADER_COUNT',
+                hasAmount: true,
+                options: {
+                    length: 50,
+                    hasMore: false
+                }
+            }
+        ], function(provider) {
+            it('should update the count field with passed-in options, not collection properties', function() {
+                sinon.collection.spy(field, 'updateCount');
+
+                field.collection.length = provider.length;
+                field.collection.next_offset = provider.next_offset;
+                field.collection.dataFetched = true;
+
+                field.context.trigger('refresh:count', provider.hasAmount, provider.options);
+
+                expect(field.updateCount.called).toBe(true);
+                expect(field.countLabel.toString()).toBe(provider.expected);
+            });
         });
     });
 });
