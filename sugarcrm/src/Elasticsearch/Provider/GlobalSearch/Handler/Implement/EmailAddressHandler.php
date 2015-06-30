@@ -121,7 +121,7 @@ class EmailAddressHandler extends AbstractHandler implements
             )
             ->addCustomAnalyzer(
                 'gs_analyzer_email_ngram',
-                'whitespace', // not using standard here to avoid splitting on punctuation
+                'standard',
                 array('lowercase', 'gs_filter_ngram_1_15')
             )
         ;

@@ -121,7 +121,7 @@ class EmailAddressHandlerTest extends \PHPUnit_Framework_TestCase
                         'type' => 'custom',
                     ),
                     'gs_analyzer_email_ngram' => array(
-                        'tokenizer' => 'whitespace',
+                        'tokenizer' => 'standard',
                         'filter' => array(
                             'lowercase',
                             'gs_filter_ngram_1_15',
