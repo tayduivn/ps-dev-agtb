@@ -984,6 +984,11 @@ class PMSEEngineUtils
 
     public static function isValidField($def, $type = '')
     {
+        // If a field is explicitly allowed it should automatically be valid
+        if (!empty($def['processes'])) {
+            return true;
+        }
+
         $result = self::isValidStudioField($def);
         if (isset($def['source']) && $def['source'] == 'non-db') {
             $result = false;
