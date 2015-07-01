@@ -276,7 +276,15 @@
             if(this.checkReadonly(field)){
                 field.def.readonly = true;
             }
-
+            if (field.fields && _.isArray(field.fields)) {
+                var that = this;
+                _.each(field.fields, function(field) {
+                    if(that.checkReadonly(field)){
+                        field.action = "disabled";
+                        return;
+                    }
+                });
+            }
             var readonlyField = field.def.readonly ||
                 _.indexOf(this.noEditFields, field.def.name) >= 0 ||
                 field.parent || (field.name && this.buttons[field.name]);
