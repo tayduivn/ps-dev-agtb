@@ -158,8 +158,12 @@ class CurrentUserApi extends SugarApi
     {
         $current_user = $this->getUserBean();
 
+        // FIXME temporary fix for SC-4596
+        $mM = MetaDataManager::getManager(array($api->platform));
+        $mHash = $mM->getMetadataHash();
+
         $hash = $current_user->getUserMDHash();
-        if ($hash && $api->generateETagHeader($hash)) {
+        if ($mHash && $hash && $api->generateETagHeader($hash)) {
             return;
         }
 
