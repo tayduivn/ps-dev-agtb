@@ -249,7 +249,8 @@ class pmse_InboxViewShowCase extends SugarView
 
         $caseBean = BeanFactory::newBean('pmse_Inbox');
         $joinTables = array(
-            array('LEFT', 'pmse_bpm_flow', 'pmse_inbox.cas_id = pmse_bpm_flow.cas_id')
+            array('LEFT', 'pmse_bpm_flow', 'pmse_inbox.cas_id = pmse_bpm_flow.cas_id'),
+            array('INNER', 'pmse_bpmn_process', 'pmse_inbox.pro_id = pmse_bpmn_process.id'),
         );
         $records = $this->wrapper->getSelectRows($caseBean, 'cas_id desc',
             "pmse_bpm_flow.cas_id = $cas_id and cas_index = $cas_index ", 0, -1, -1, array('*'), $joinTables);
