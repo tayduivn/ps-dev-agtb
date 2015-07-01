@@ -463,8 +463,9 @@
 
                 // FIXME: this check for datetime should be made generic (when
                 // SC-2568 gets in) based on use of normal addon
-                var isDateField = $ftag.parent().hasClass('date');
-                if (isDateField) {
+                var isDateField = $ftag.parent().hasClass('date'),
+                    isCurrencyField = $ftag.parent().hasClass('currency');
+                if (isDateField || isCurrencyField) {
                     $ftag.parent().removeClass('error');
                 } else if (isWrapped) {
                     $ftag.unwrap();

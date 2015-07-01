@@ -100,7 +100,7 @@ class pmse_InboxViewShowCase extends SugarView
                 $this->dyn_uid = $altViewMode['dyn_uid'];
                 $viewdefs = unserialize(base64_decode($dynaformBean->dyn_view_defs));
                 if ($readonly) {
-                    $this->setHeaderFootersReadOnly(&$viewdefs);
+                    $this->setHeaderFootersReadOnly($viewdefs);
                 }
                 if($isBpm){
                     $viewdefs['EditView'] = $viewdefs['BpmView'];
@@ -163,8 +163,18 @@ class pmse_InboxViewShowCase extends SugarView
                 'type' => 'button',
                 'onclick' => 'javascript:claim_case(\'' . $casId . '\', \'' . $casIndex . '\', \'' . $title . '\', \'' . $idInbox . '\');'
             ),
-            'approve' => array('id' => 'ApproveBtn', 'name' => 'Type', 'value' => 'Approve', 'type' => 'submit'),
-            'reject' => array('id' => 'RejectBtn', 'name' => 'Type', 'value' => 'Reject', 'type' => 'submit'),
+            'approve' => array(
+                'id' => 'ApproveBtn',
+                'name' => 'Type',
+                'value' => 'Approve',
+                'type' => 'submit'
+            ),
+            'reject' => array(
+                'id' => 'RejectBtn',
+                'name' => 'Type',
+                'value' => 'Reject',
+                'type' => 'submit'
+            ),
             'reassign' => array(
                 'id' => 'ReassignBtn',
                 'name' => 'Type',
@@ -179,7 +189,12 @@ class pmse_InboxViewShowCase extends SugarView
                 'type' => 'button',
                 'onclick' => 'adhocForm(\'' . $casId . '\', \'' . $casIndex . '\');'
             ),
-            'route' => array('id' => 'RouteBtn', 'name' => 'Type', 'value' => 'Route Task', 'type' => 'submit'),
+            'route' => array(
+                'id' => 'RouteBtn',
+                'name' => 'Type',
+                'value' => 'Route Task',
+                'type' => 'submit'
+            ),
             'cancel' => array(
                 'name' => 'Cancel',
                 'value' => 'Cancel',
@@ -252,14 +267,31 @@ class pmse_InboxViewShowCase extends SugarView
 
                 //FORM TEMPLATE SECTION
                 global $db;
-                $sql = "SELECT *  FROM pmse_bpmn_activity
-                        INNER JOIN pmse_bpm_activity_definition ON pmse_bpm_activity_definition.id = pmse_bpmn_activity.id
-                        WHERE pmse_bpmn_activity.id='" . $caseData['bpmn_id'] . "'";
+$select = <<<FLIST
+                pmse_bpmn_activity.id, pmse_bpmn_activity.name actiname,  pmse_bpmn_activity.date_entered,
+                pmse_bpm_activity_definition.name,
+                pmse_bpmn_activity.date_modified, pmse_bpmn_activity.modified_user_id, pmse_bpmn_activity.created_by,
+                pmse_bpmn_activity.description, pmse_bpmn_activity.deleted, pmse_bpmn_activity.assigned_user_id, act_uid prj_id,
+                pmse_bpm_activity_definition.pro_id, pmse_bpm_activity_definition.act_type, act_is_for_compensation, act_start_quantity,
+                act_completion_quantity, act_task_type, act_implementation, act_instantiate, act_script_type, act_script,
+                act_loop_type, act_test_before, act_loop_maximum, act_loop_condition, act_loop_cardinality, act_loop_behavior,
+                act_is_adhoc, act_is_collapsed, act_completion_condition, act_ordering, act_cancel_remaining_instances, act_protocol,
+                act_method, act_is_global, act_referer, act_default_flow, act_master_diagram, act_duration, act_duration_unit,
+                act_send_notification, act_assignment_method, act_assign_team, act_assign_user, act_value_based_assignment, act_reassign,
+                act_reassign_team, act_adhoc, act_adhoc_behavior,act_adhoc_team, act_response_buttons,act_last_user_assigned,
+                act_field_module,act_fields,act_readonly_fields,act_expected_time,act_required_fields, act_related_modules,
+                act_service_url,act_service_params,act_service_method,act_update_record_owner,execution_mode
+FLIST;
+                $sql = "SELECT $select
+                    FROM pmse_bpmn_activity
+                    INNER JOIN pmse_bpm_activity_definition
+                        ON pmse_bpm_activity_definition.id = pmse_bpmn_activity.id
+                    WHERE pmse_bpmn_activity.id = '{$caseData['bpmn_id']}'";
                 $resultActi = $db->Query($sql);
 
 
                 $this->activityRow = $db->fetchByAssoc($resultActi);
-                $activityName = $this->activityRow['name'];
+                $activityName = $this->activityRow['actiname'];
                 $taskName = $this->activityRow['name'];
                 $smarty->assign('nameTask', $taskName);
                 $smarty->assign('flowId', $id_flow);
@@ -282,15 +314,12 @@ class pmse_InboxViewShowCase extends SugarView
                 $reclaimCaseByUser = false;
                 if (isset($caseData['cas_adhoc_type']) && ($caseData['cas_adhoc_type'] === '') && ($caseData['cas_start_date'] == '') && ($this->activityRow['act_assignment_method'] == 'selfservice')) {
                     $reclaimCaseByUser = true;
-//                    $displayMode = 'detail';
-
                 }
-                //
+
                 $beanTemplate = $this->displayDataForm($caseData['cas_sugar_module'], $caseData['cas_sugar_object_id'],
                     $displayMode, $reclaimCaseByUser);
                 if (isset($caseData['cas_adhoc_type']) && ($caseData['cas_adhoc_type'] === '') && ($caseData['cas_start_date'] == '') && ($this->activityRow['act_assignment_method'] == 'selfservice')) {
                     $displayMode = 'detail';
-
                 }
                 //BUTTON SECTIONS
                 $defaultButtons = $this->getButtonArray(array('approve' => true, 'reject' => true));
@@ -302,9 +331,20 @@ class pmse_InboxViewShowCase extends SugarView
                 } else {
                     $this->defs['BPM']['buttons']['route'] = true;
                 }
-
+                $customButtons = array();
+                $taskContinue = false;
                 if (!$reclaimCaseByUser && !empty($beanFlow->cas_adhoc_actions)) {
-                    $this->defs['BPM']['buttons'] = unserialize($beanFlow->cas_adhoc_actions);
+                    $buttons = unserialize($beanFlow->cas_adhoc_actions);
+                    unset($buttons['link_cancel']);
+                    unset($buttons['edit']);
+                    $continue = array_search('continue', $buttons);
+                    if ($continue !== false) {
+                        unset($buttons[$continue]);
+                        $taskContinue = true;
+                    }
+                    foreach($buttons as $key => $value) {
+                        $this->defs['BPM']['buttons'][$value] = $customButtons[$value] = true;
+                    }
                 }
 
                 //ASSIGN SECTION
@@ -321,6 +361,7 @@ class pmse_InboxViewShowCase extends SugarView
                 $smarty->assign('expected_time', $expected_time);
                 $smarty->assign('reclaimCaseByUser', $reclaimCaseByUser);
                 $smarty->assign('totalNotes', $totalNotes);
+                $smarty->assign('task_continue', $taskContinue);
                 $smarty->assign('SUGAR_URL', $sugar_config['site_url']);
                 $smarty->assign('SUGAR_AJAX_URL',
                     $sugar_config['site_url'] . "/index.php?module=pmse_Inbox&action=ajaxapi");
@@ -335,7 +376,7 @@ class pmse_InboxViewShowCase extends SugarView
                     $smarty->assign('validations', array());
                 }
                 $idInbox = isset($caseData['idInbox']) ? $caseData['idInbox'] : null;
-                $customButtons = $this->getButtonArray($this->defs['BPM']['buttons'], $cas_id, $cas_index,
+                $customButtons = $this->getButtonArray($customButtons, $cas_id, $cas_index,
                     $this->focus->team_id, $caseData['cas_title'], $idInbox);
                 if (count($customButtons) > 1) {
                     $smarty->assign('customButtons', $customButtons);

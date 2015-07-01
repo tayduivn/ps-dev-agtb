@@ -176,8 +176,9 @@
      * @param {Function} callback Callback function for keydown.
      */
     bindKeyDown: function(callback) {
-        this.$(this.fieldTag).on('keydown.record', {field: this}, callback);
-        var plugin = this.$(this.fieldTag).data('select2');
+        var $dropdown = this.$(this.fieldTag);
+        $dropdown.on('keydown.record', {field: this}, callback);
+        var plugin = $dropdown.data('select2');
         if (plugin) {
             plugin.focusser.on('keydown.record', {field: this}, callback);
             plugin.search.on('keydown.record', {field: this}, callback);
@@ -191,8 +192,9 @@
      * @param {Function} callback Callback function for keydown.
      */
     unbindKeyDown: function(callback) {
-        this.$(this.fieldTag).off('keydown.record', callback);
-        var plugin = this.$(this.fieldTag).data('select2');
+        var $dropdown = this.$(this.fieldTag);
+        $dropdown.off('keydown.record', callback);
+        var plugin = $dropdown.data('select2');
         if (plugin) {
             plugin.search.off('keydown.record', callback);
         }
@@ -477,7 +479,9 @@
             this.href = undefined;
         }
     },
-    //Derived controllers can override these if related module and id in another place
+
+    // Derived controllers can override these if related module and id in another
+    // place.
     _buildRoute: function () {
         this.buildRoute(this.getSearchModule(), this._getRelateId());
     },

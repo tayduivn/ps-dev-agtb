@@ -1715,7 +1715,7 @@
             oldField = self.module + self.parent.moduleFieldSeparator  + self.field;
             newField = this.value;
 
-            if (self.hasValues()) {
+            if (self.hasValues(true)) {
                 App.alert.show('select-change-confirm', {
                     level: 'confirmation',
                     messages: 'Values associated to this variable will be removed. Do you want to continue?',
@@ -1734,6 +1734,7 @@
                 });
             } else {
                 self.setField(this.value || null);
+                self.clearAllValues();
 
                 if (typeof self.onChange === 'function') {
                     self.onChange.call(self, self.field, oldField);
@@ -1756,17 +1757,30 @@
         return this;
     };
 
-    DecisionTableVariable.prototype.hasValues = function () {
-        return (this.getFilledValuesNum() !== 0);
+    DecisionTableVariable.prototype.hasValues = function (partiallyFilled) {
+        return (this.getFilledValuesNum(partiallyFilled) !== 0);
     };
 
-    DecisionTableVariable.prototype.getFilledValuesNum = function() {
+    DecisionTableVariable.prototype.getFilledValuesNum = function(partiallyFilled) {
         var i,
-            n = 0;
-
-        for(i = 0; i < this.values.length; i+=1) {
-            if(this.values[i].filledValue()) {
-                n +=1;
+            n = 0,
+            current;
+        if (partiallyFilled) {
+            for(i = 0; i < this.values.length; i+=1) {
+                current = this.values[i];
+                if (current.isPartiallyFilled) {
+                    if(current.isPartiallyFilled()) {
+                        n +=1;
+                    }
+                } else if (current.filledValue()) {
+                    n +=1;
+                }
+            }
+        } else {
+            for(i = 0; i < this.values.length; i+=1) {
+                if(this.values[i].filledValue()) {
+                    n +=1;
+                }
             }
         }
         return n;
@@ -2115,9 +2129,15 @@
     };
 
     DecisionTableValueEvaluation.prototype.setOperator = function(operator) {
+        var $span;
         this.operator = operator;
         if (this.html && this.html[0]) {
-            jQuery(this.html[0]).find('span').empty().append(operator);
+            $span = jQuery(this.html[0]).find('span').empty();
+            if (operator) {
+                $span.append(operator);
+            } else {
+                $span.html("&nbsp;");
+            }
         }
         return this;
     };
@@ -2219,6 +2239,10 @@
 
     DecisionTableValueEvaluation.prototype.filledValue = function() {
         return !!this.operator && DecisionTableValue.prototype.filledValue.call(this);
+    };
+
+    DecisionTableValueEvaluation.prototype.isPartiallyFilled = function() {
+        return !!this.operator || DecisionTableValue.prototype.filledValue.call(this);
     };
 
     DecisionTableValueEvaluation.prototype.isValid = function() {
