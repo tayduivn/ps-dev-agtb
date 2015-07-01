@@ -72,12 +72,8 @@
     /**
      * Send the email immediately or warn if user did not provide subject or body
      */
-    save: function() {
-        this.model.doValidate(this.getFields(this.module), _.bind(function(isValid) {
-            if (isValid) {
-                this.validationCompleteApprove(this.model,false);
-            }
-        }, this));
+    save: function () {
+        this.model.doValidate(this.getFields(this.module), _.bind(this.validationComplete, this));
     },
     validationCompleteApprove: function (model,exit) {
         var url, attributes, bodyHtml, subject, route = this.context.get("module");
