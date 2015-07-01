@@ -1220,7 +1220,7 @@ class SugarBean
      */
     function createRelationshipMeta($key,$db,$tablename,$dictionary,$module_dir,$iscustom=false)
     {
-        $GLOBALS['log']->fatal("Deprecated function createRelationshipMeta called");
+        $GLOBALS['log']->deprecated("Deprecated function createRelationshipMeta called");
     }
 
     /**
