@@ -954,7 +954,7 @@ class SugarBean
         }
 
         $fields = array_filter($this->field_defs, function($def) use ($property, $filter) {
-            return in_array($def[$property], $filter);
+            return (isset($def[$property]) && in_array($def[$property], $filter));
         });
         return $fields;
     }
@@ -2434,16 +2434,25 @@ class SugarBean
         {
             if ($def ['type'] == 'relate' && isset ($def ['id_name']) && isset ($def ['link'])) {
                 $linkField = $def ['link'];
-                if (isset ($def['save']))
+                if (isset($def['save']))
                 {
-                    if (in_array($def['id_name'], $exclude) || in_array($def['id_name'], $this->relationship_fields))
+                    if (in_array($def['id_name'], $exclude) || in_array($def['id_name'], $this->relationship_fields)) {
                         continue; // continue to honor the exclude array and exclude any relationships that will be handled by the relationship_fields mechanism
+                    }
+
+                    if (isset($this->rel_fields_before_value[$def['id_name']]) &&
+                        $this->rel_fields_before_value[$def['id_name']] === $this->$def['id_name']) {
+                        // the values didn't change, so ignore it.
+                        continue;
+                    }
 
                     if (isset($this->field_defs[$linkField])) {
                         if ($this->load_relationship($linkField)) {
                             $idName = $def['id_name'];
+                            // we need to store the new value, since if the delete() runs, the value will equal NULL
+                            $newValue = $this->$idName;
 
-                            if (!empty($this->rel_fields_before_value[$idName]) && empty($this->$idName)) {
+                            if (!empty($this->rel_fields_before_value[$idName])) {
                                 //if before value is not empty then attempt to delete relationship
                                 $GLOBALS['log']->debug("save_relationship_changes(): From field_defs - attempting to remove the relationship record: {$def [ 'link' ]} = {$this->rel_fields_before_value[$def [ 'id_name' ]]}");
                                 $success = $this->$def ['link']->delete($this->id, $this->rel_fields_before_value[$def ['id_name']]);
@@ -2456,10 +2465,10 @@ class SugarBean
                                 $GLOBALS['log']->debug("save_relationship_changes(): From field_defs - attempting to remove the relationship record returned " . var_export($success, true));
                             }
 
-                            if (!empty($this->$idName) && is_string($this->$idName)) {
+                            if (!empty($newValue) && is_string($newValue)) {
                                 $GLOBALS['log']->debug("save_relationship_changes(): From field_defs - attempting to add a relationship record - {$def [ 'link' ]} = {$this->$def [ 'id_name' ]}");
 
-                                $success = $this->$linkField->add($this->$idName);
+                                $success = $this->$linkField->add($newValue);
 
                                 // just need to make sure it's true and not an array as it's possible to return an array
                                 if($success == true) {
@@ -3066,7 +3075,7 @@ class SugarBean
         //clear relationship.
         foreach ( $this->field_defs as $key => $def )
         {
-            if ($def [ 'type' ] == 'relate' && isset ( $def [ 'id_name'] ) && isset ( $def [ 'link'] ) && isset ( $def[ 'save' ])) {
+            if ($def [ 'type' ] == 'relate' && isset ( $def [ 'id_name'] ) && isset ( $def [ 'link'] ) && isset($def['save'])) {
                 if (isset($this->$key)) {
                     $this->rel_fields_before_value[$key]=$this->$key;
                     if (isset($this->$def [ 'id_name']))

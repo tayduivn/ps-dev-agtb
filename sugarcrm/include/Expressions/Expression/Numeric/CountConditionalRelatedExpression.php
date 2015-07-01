@@ -91,6 +91,12 @@ class CountConditionalRelatedExpression extends NumericExpression
                 new_value = model.get(condition_field);
                 rollup_value = undefined;
 
+            // when the model is not new, and the previous_value is empty, lets try and fetch it from the
+            // relatedModel just to make sure, as it might have a previous value
+            if (!this.context.model.isNew() && _.isEmpty(previous_value)) {
+                previous_value = model.previous(condition_field);
+            }
+
             // store the new_value on the context for the rel_field
             // this allows multiple different formulas to change the rel_field while
             // maintaining the correct previous_value since it's not updated on the models previous_attributes
