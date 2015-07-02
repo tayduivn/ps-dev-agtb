@@ -33,6 +33,7 @@ function clearAll() {
 <tr>
 <td>
 <form action="index.php" method="post" name="popup_query_form" id="popup_query_form">
+{sugar_csrf_form_token}
 <table width="100%" cellpadding="0" cellspacing="0" border="0">
 <tr><td>
 {$searchForm}
@@ -72,6 +73,7 @@ function clearAll() {
 {{/if}}
 <div id='addform' style='display:none;position:relative;z-index:2;left:0px;top:0px;'>
 <form name="form_QuickCreate_{$module}" id="form_QuickCreate_{$module}" {*onsubmit="return check_form('form_popupQuickCreate{$module}');"*} method="post" action="index.php">
+{sugar_csrf_form_token}
 {$ADDFORMHEADER}
 <table cellpadding="0" cellspacing="0" border="0" width="100%" class="edit view">
 <tr>
@@ -89,6 +91,7 @@ function clearAll() {
 {{/if}}
 {{if $prerow}}
 	<form action="index.php" method="post" name="MassUpdate" id="MassUpdate">
+{sugar_csrf_form_token}
 	{$MODE}
 <input type="hidden" name="mu" value="false" />
 <input type='hidden' name='massupdate' value='true' />

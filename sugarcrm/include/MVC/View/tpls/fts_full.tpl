@@ -40,6 +40,7 @@ width:70%;
 
     <div id='inlineGlobalSearch' style="display:none;">
         <form method="POST" onsubmit="SUGAR.FTS.saveModuleFilterSettings();" >
+{sugar_csrf_form_token}
             <input type="hidden" name="module" value="Users">
             <input type="hidden" name="action" value="saveftsmodules">
             <input type="hidden" name="disabled_modules" value="" id="disabled_modules">
