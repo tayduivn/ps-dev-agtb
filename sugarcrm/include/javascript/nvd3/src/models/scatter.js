@@ -188,12 +188,16 @@ nv.models.scatter = function() {
         );
 
         function buildEventObject(e, d, i, j) {
+          var pos = [
+            e.offsetX == undefined ? e.layerX : e.offsetX,
+            e.offsetY == undefined ? e.layerY : e.offsetY
+          ];
           return {
               series: data[j],
               point: data[j].values[i],
               pointIndex: i,
               seriesIndex: j,
-              pos: [e.offsetX, e.offsetY],
+              pos: pos,
               id: id,
               e: e
             };
