@@ -107,8 +107,8 @@
         // Whenever anything happens within the quicksearch layout navigation,
         // close the module list dropdown.
         this.layout.on('navigate:next:component navigate:previous:component navigate:to:component', function() {
-            this.$('.module-dropdown').removeClass('open');
-        });
+            this.$el.removeClass('open');
+        }, this);
     },
 
     /**
