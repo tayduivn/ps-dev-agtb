@@ -635,6 +635,8 @@ ENDW;
 
 		$found = array();
 		while($a = $this->db->fetchByAssoc($r, false)) {
+            $a['created_by'] = $this->db->fromConvert($a['created_by'], 'id');
+
 			if ((($a['folder_type'] == $myEmailTypeString) ||
 				($a['folder_type'] == $myDraftsTypeString) ||
 				($a['folder_type'] == $mySentEmailTypeString)) &&
