@@ -17,7 +17,6 @@ use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManager;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Security\Csrf\TokenStorage\NativeSessionTokenStorage;
 
 /**
  *
@@ -128,7 +127,7 @@ class CsrfAuthenticator
             $tokenGenerator->setSize($config->get('csrf.token_size', 32));
 
             // setup token storage using sessions
-            $tokenStorage = new NativeSessionTokenStorage('csrf_tokens');
+            $tokenStorage = new CsrfTokenStorage();
 
             $manager = new CsrfTokenManager($tokenGenerator, $tokenStorage);
             $logger = new LoggerTransition(\LoggerManager::getLogger());
