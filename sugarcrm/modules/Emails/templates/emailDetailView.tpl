@@ -20,6 +20,7 @@
 {$JS_VARS}
 </script>
 <form action="index.php" method="POST" name="DetailView" id="emailDetailView">
+{sugar_csrf_form_token}
     <input type="hidden" name="inbound_email_id" value="{$ID}">
     <input type="hidden" name="type" value="out">
     <input type="hidden" name="email_name" value="{$EMAIL_NAME}">

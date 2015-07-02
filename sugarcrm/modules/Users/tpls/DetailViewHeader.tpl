@@ -58,6 +58,7 @@ $(document).ready(function(){
 <td width="20%">
 
 <form action="index.php" method="post" name="DetailView" id="form">
+{sugar_csrf_form_token}
     <input type="hidden" name="module" value="Users">
     <input type="hidden" name="record" value="{$ID}">
     <input type="hidden" name="isDuplicate" value=false>

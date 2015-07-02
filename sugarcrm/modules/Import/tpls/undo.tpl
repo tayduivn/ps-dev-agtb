@@ -18,6 +18,7 @@
 {/if}
 <br />
 <form enctype="multipart/form-data" name="importundo" method="POST" action="index.php" id="importundo">
+{sugar_csrf_form_token}
 <input type="hidden" name="module" value="Import">
 <input type="hidden" name="action" value="Step1">
 <input type="hidden" name="import_module" value="{$IMPORT_MODULE}">

@@ -11,6 +11,7 @@
  */
 *}
 <form name="Distribute" id="Distribute">
+{sugar_csrf_form_token}
 <input type="hidden" name="emailUIAction" value="doAssignmentAssign">
 
 <input type="hidden" name="distribute_method" value="direct">

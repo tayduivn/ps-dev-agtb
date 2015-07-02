@@ -14,6 +14,7 @@
 <script type="text/javascript" src="{sugar_getjspath file='cache/include/javascript/sugar_grp_yui_widgets.js'}"></script>
 
 <form name="ConfigureTabs" method="POST"  method="POST" action="index.php">
+{sugar_csrf_form_token}
 <input type="hidden" name="module" value="Administration">
 <input type="hidden" name="action" value="SaveTabs">
 <input type="hidden" id="enabled_tabs" name="enabled_tabs" value="">

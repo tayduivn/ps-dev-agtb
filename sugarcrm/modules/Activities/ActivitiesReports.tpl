@@ -20,6 +20,7 @@
 	<tr>
 		<td style="padding-bottom: 2px;" colspan=6>
 			<form name="EditView" id="EditView" method="post" action="index.php">
+{sugar_csrf_form_token}
 				<input type="hidden" name="module" value="Activities" />
 				<input type="hidden" name="run_report" id="run_report" value="0" />
 				<input type="hidden" name="export_report" id="export_report" value="0" />

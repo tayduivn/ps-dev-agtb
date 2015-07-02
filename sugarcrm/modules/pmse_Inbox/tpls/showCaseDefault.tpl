@@ -23,6 +23,7 @@
 <br>
 
 <form action="index.php?module=ProcessMaker&action=projectsavestartevent" method="POST">
+{sugar_csrf_form_token}
     <input type="hidden" name="prj_id" id="prj_id" value="{$prj_id}"/>
     <input type="hidden" name="pro_id" id="pro_id" value="{$pro_id}"/>
 

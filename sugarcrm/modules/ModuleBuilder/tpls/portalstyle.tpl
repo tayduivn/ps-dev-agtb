@@ -11,6 +11,7 @@
  */
 *}
 <form name='StudioWizard' id='StudioWizard' enctype='multipart/form-data' method='post' action='index.php?module=ModuleBuilder&action=portalstylesave&to_pdf=1' onsubmit="document.getElementById('uploadLabel').innerHTML=''; document.getElementById('StudioWizard').target = 'upload_target';">
+{sugar_csrf_form_token}
 <table>
 	<tr>
 		<td><input type ='file' name='filename'></td>

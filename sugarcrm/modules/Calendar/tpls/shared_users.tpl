@@ -76,6 +76,7 @@
 
 <div id="shared_cal_edit" style="display: none; width: 400px;">
 <form name="shared_cal" action="index.php" method="post">
+{sugar_csrf_form_token}
 <div class="hd">{$MOD.LBL_EDIT_USERLIST}</div>
 <div class="bd">	
 	<input type="hidden" name="module" value="Calendar">

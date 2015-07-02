@@ -13,6 +13,7 @@
 
 
 <form name="bugsQuickCreate" id="bugsQuickCreate" method="POST" action="index.php">
+{sugar_csrf_form_token}
 <input type="hidden" name="module" value="Bugs">
 <input type="hidden" name="email_id" value="{$REQUEST.email_id}">
 <input type="hidden" name="account_id" value="{$REQUEST.account_id}">			

@@ -11,6 +11,7 @@
  */
 *}
 <form name="OAuthAuthorize" method="POST" action="index.php" >
+{sugar_csrf_form_token}
 <input type='hidden' name='action' value='authorize'/>
 <input type='hidden' name='module' value='OAuthTokens'/>
 <input type='hidden' name='sid' value='{$sid}'/>

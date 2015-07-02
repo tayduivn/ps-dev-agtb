@@ -12,6 +12,7 @@
 *}
 <link rel="stylesheet" type="text/css" href="{sugar_getjspath file='modules/ModuleBuilder/tpls/MB.css'}" />
 <form name='CreateModule'>
+{sugar_csrf_form_token}
 <input type='hidden' name='module' value='ModuleBuilder'>
 <input type='hidden' name='action' value='SaveModule'>
 <input type='hidden' name='package' value='{$package->name}'>

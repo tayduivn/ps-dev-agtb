@@ -13,6 +13,7 @@
 
 
 <form name="opportunitiesQuickCreate" id="opportunitiesQuickCreate" method="POST" action="index.php">
+{sugar_csrf_form_token}
 <input type="hidden" name="module" value="Opportunities">
 <input type="hidden" name="record" value="">
 <input type="hidden" name="contact_id" value="{$REQUEST.contact_id}">

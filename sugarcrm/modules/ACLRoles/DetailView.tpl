@@ -13,6 +13,7 @@
 
 
 <form action="index.php" method="post" name="DetailView" id="form">
+{sugar_csrf_form_token}
 
 			<input type="hidden" name="module" value="ACLRoles">
 			<input type="hidden" name="user_id" value="">

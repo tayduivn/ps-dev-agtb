@@ -12,6 +12,7 @@
 *}
 <div id="outboundServers">
 	<form id="outboundEmailForm">
+{sugar_csrf_form_token}
 		<input type="hidden" id="mail_id" name="mail_id">
 		<input type="hidden" id="type" name="type" value="user">
 		<input type="hidden" id="mail_sendtype" name="mail_sendtype" value="SMTP">
