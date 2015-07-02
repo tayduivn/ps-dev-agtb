@@ -1,4 +1,3 @@
-{{!--
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -9,9 +8,20 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
---}}
-<img src="{{img}}" class="rep-avatar" width="32" height="32">
-<div class="rep-name">
-    <a href="{{url}}">{{full_name}}</a>
-</div>
-<div class="rep-title">{{title}}</div>
+/**
+ * @class View.Layouts.Base.SubpanelReadonlyLayout
+ * @alias SUGAR.App.view.layouts.BaseSubpanelReadonlyLayout
+ * @extends View.Layouts.Base.SubpanelLayout
+ */
+({
+    extendsFrom: 'SubpanelLayout',
+
+    /**
+     * What is our current dataview
+     */
+    dataView: 'subpanel-list',
+
+    initialize: function(options) {
+        this._super('initialize', [options]);
+    }
+})

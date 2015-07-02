@@ -49,6 +49,8 @@ class SugarFoldersTest extends Sugar_PHPUnit_Framework_TestCase
             $GLOBALS['db']->query("DELETE FROM emails WHERE id='$emailID'");
 
         unset($this->folder);
+
+        SugarTestHelper::tearDown();
     }
 
     /**
@@ -302,6 +304,39 @@ class SugarFoldersTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $result, "Should filter ID from SET clause");
     }
 
+    //BEGIN SUGARCRM flav=ent ONLY
+    /**
+     * "a" is used for the admin user's ID because "1" has special meaning to other tests downstream. Using "1" for the
+     * ID impacts the application state that is expected for those tests and causes them to fail. It is not important to
+     * test for "1" because the root cause of the issue being tested is that the `created_by` and `id` fields contain
+     * values that are shorter than 36 characters. In production, this scenario only presents itself when the user is
+     * the admin.
+     *
+     * @group db2
+     */
+    public function testRetrieveFoldersForProcessing_UsingDB2_CurrentUserIsAdmin()
+    {
+        $folder = array(
+            'id' => create_guid(),
+            'folder_type' => 'inbound',
+            'created_by' => 'a                                  ',
+        );
+
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser(false, true, array('id' => 'a'));
+
+        SugarAutoLoader::load('include/database/IBMDB2Manager.php');
+        $db = $this->getMockBuilder('IBMDB2Manager')->setMethods(array('query', 'fetchByAssoc'))->getMock();
+        $db->expects($this->exactly(2))->method('fetchByAssoc')->willReturnOnConsecutiveCalls($folder, null);
+        $this->db = SugarTestHelper::setUp('mock_db', $db);
+
+        $sf = new SugarFolder();
+        $folders = $sf->retrieveFoldersForProcessing($GLOBALS['current_user']);
+
+        $this->assertEquals($folder['id'], $folders[0]['id']);
+        // the caller should not have to deal with untrimmed values
+        $this->assertEquals('a', $folders[0]['created_by'], 'Should have trimmed the created_by field');
+    }
+    //END SUGARCRM flav=ent ONLY
 
     function _createEmailObject($additionalParams = array() )
     {

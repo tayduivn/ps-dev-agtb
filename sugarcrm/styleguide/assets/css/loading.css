@@ -76,6 +76,10 @@ body {
     animation-delay: .3s;
 }
 
+.nprogress-busy #content {
+  background: none;
+}
+
 @-moz-keyframes move{0%{opacity:1;}100%{opacity:0.1;}}
 @-webkit-keyframes move{0%{opacity:1;}100%{opacity:0.1;}}
 @keyframes move{0%{opacity:1;}100%{opacity:0.1;}}

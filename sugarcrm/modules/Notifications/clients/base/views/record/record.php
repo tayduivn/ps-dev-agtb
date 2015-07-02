@@ -52,7 +52,6 @@ $viewdefs['Notifications']['base']['view']['record'] = array(
                 ),
                 array(
                     'name' => 'name',
-                    'link' => false,
                 ),
                 array(
                     'name' => 'is_read',

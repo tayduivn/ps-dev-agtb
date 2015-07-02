@@ -236,12 +236,16 @@ nv.models.funnel = function() {
           });
 
       function buildEventObject(e, d, i) {
+        var pos = [
+          e.offsetX == undefined ? e.layerX : e.offsetX,
+          e.offsetY == undefined ? e.layerY : e.offsetY
+        ];
         return {
             value: getV(d, i),
             point: d,
             id: id,
             series: data[d.series],
-            pos: [e.offsetX, e.offsetY],
+            pos: pos,
             pointIndex: i,
             seriesIndex: d.series,
             e: e

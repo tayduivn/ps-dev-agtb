@@ -356,12 +356,21 @@ table.decision-table-index span {
   margin: 0px;
 }
 
+.expression-container.list-mode {
+  padding: 0;
+  width: 10.8em;
+}
+
 .expression-container-cell {
   height: 1.5em;
   display: block;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.expression-container-input {
+  width: 100%;
 }
 
 .adam.single-item {
@@ -595,6 +604,10 @@ table.decision-table-index span {
   box-sizing: border-box;
 }
 
+.adam.form-panel-field {
+  margin-bottom: 0.5em;
+}
+
 .adam.form-panel-button {
   text-align: center;
 }
@@ -608,7 +621,7 @@ table.decision-table-index span {
   font-size: 12px;
   line-height: 18px;
   height: 24px;
-  margin-bottom: 0.75em;
+  margin-bottom: 0;
 }
 .adam.form-panel-field-control .formpanel-radio {
   margin-right: 5px;

@@ -24,7 +24,6 @@ $dictionary['pmse_Emails_Templates'] = array(
     'name' => 'name',
     'vname' => 'LBL_NAME',
     'type' => 'name',
-    'link' => true,
     'dbType' => 'varchar',
     'len' => '255',
     'unified_search' => false,

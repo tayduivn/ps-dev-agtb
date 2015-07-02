@@ -93,6 +93,20 @@ describe('Opportunities.Base.Views.Create', function() {
                     expect(view.hasUnsavedChanges()).toBeTruthy();
                 });
 
+                it('and return false with a collection length = 0', function() {
+                    sinon.sandbox.stub(view.context, 'getChildContext', function() {
+                        return {
+                            prepare: function() {},
+                            get: function() {
+                                return {
+                                    length: 0
+                                };
+                            }
+                        };
+                    });
+                    expect(view.hasUnsavedChanges()).toBeFalsy();
+                });
+
                 it('and return false with no model changes', function() {
                     sinon.sandbox.stub(view.context, 'getChildContext', function() {
                         return {

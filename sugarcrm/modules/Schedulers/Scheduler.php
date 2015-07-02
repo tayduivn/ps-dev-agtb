@@ -784,237 +784,254 @@ class Scheduler extends SugarBean {
 	 * Archives schedulers of the same functionality, then instantiates new
 	 * ones.
 	 */
-	function rebuildDefaultSchedulers() {
-		$mod_strings = return_module_language($GLOBALS['current_language'], 'Schedulers');
-		// truncate scheduler-related tables
-		$this->db->query('DELETE FROM schedulers');
+    function rebuildDefaultSchedulers()
+    {
+        // truncate scheduler-related tables
+        $this->db->query('DELETE FROM schedulers');
 
-		$sched1 = BeanFactory::getBean('Schedulers');
-		$sched1->name				= $mod_strings['LBL_OOTB_WORKFLOW'];
-		$sched1->job				= 'function::processWorkflow';
-		$sched1->date_time_start	= create_date(2005,1,1) . ' ' . create_time(0,0,1);
-		$sched1->date_time_end		= create_date(2020,12,31) . ' ' . create_time(23,59,59);
-		$sched1->job_interval		= '*::*::*::*::*';
-		$sched1->status				= 'Active';
-		$sched1->created_by			= '1';
-		$sched1->modified_user_id	= '1';
-		$sched1->catch_up			= '0';
-		$sched1->save();
-		$sched2 = BeanFactory::getBean('Schedulers');
-		$sched2->name				= $mod_strings['LBL_OOTB_REPORTS'];
-		$sched2->job				= 'function::processQueue';
-		$sched2->date_time_start	= create_date(2005,1,1) . ' ' . create_time(0,0,1);
-		$sched2->date_time_end		= create_date(2020,12,31) . ' ' . create_time(23,59,59);
-		$sched2->job_interval		= '0::6::*::*::*';
-		$sched2->status				= 'Inactive';
-		$sched2->created_by			= '1';
-		$sched2->modified_user_id	= '1';
-		$sched2->catch_up			= '1';
-		$sched2->save();
+        $schedulers = $this->getDefaultSystemSchedulers();
 
-        $sched3 = BeanFactory::getBean('Schedulers');
-        $sched3->name               = $mod_strings['LBL_OOTB_TRACKER'];
-        $sched3->job                = 'function::trimTracker';
-        $sched3->date_time_start    = create_date(2005,1,1) . ' ' . create_time(0,0,1);
-        $sched3->date_time_end      = create_date(2020,12,31) . ' ' . create_time(23,59,59);
-        $sched3->job_interval       = '0::2::1::*::*';
-        $sched3->status             = 'Active';
-        $sched3->created_by         = '1';
-        $sched3->modified_user_id   = '1';
-        $sched3->catch_up           = '1';
-        $sched3->save();
-		$sched4 = BeanFactory::getBean('Schedulers');
-		$sched4->name				= $mod_strings['LBL_OOTB_IE'];
-		$sched4->job				= 'function::pollMonitoredInboxes';
-		$sched4->date_time_start	= create_date(2005,1,1) . ' ' . create_time(0,0,1);
-		$sched4->date_time_end		= create_date(2020,12,31) . ' ' . create_time(23,59,59);
-		$sched4->job_interval		= '*::*::*::*::*';
-		$sched4->status				= 'Active';
-		$sched4->created_by			= '1';
-		$sched4->modified_user_id	= '1';
-		$sched4->catch_up			= '0';
-		$sched4->save();
+        foreach ($schedulers as $scheduler) {
+            $scheduler->save();
+        }
+    }
 
-		$sched5 = BeanFactory::getBean('Schedulers');
-		$sched5->name				= $mod_strings['LBL_OOTB_BOUNCE'];
-		$sched5->job				= 'function::pollMonitoredInboxesForBouncedCampaignEmails';
-		$sched5->date_time_start	= create_date(2005,1,1) . ' ' . create_time(0,0,1);
-		$sched5->date_time_end		= create_date(2020,12,31) . ' ' . create_time(23,59,59);
-		$sched5->job_interval		= '0::2-6::*::*::*';
-		$sched5->status				= 'Active';
-		$sched5->created_by			= '1';
-		$sched5->modified_user_id	= '1';
-		$sched5->catch_up			= '1';
-		$sched5->save();
+    /**
+     * Return OOTB Schedulers.
+     * @return array
+     */
+    public function getDefaultSystemSchedulers()
+    {
+        $schedulers = array();
+        $mod_strings = return_module_language($GLOBALS['current_language'], 'Schedulers');
 
-		$sched6 = BeanFactory::getBean('Schedulers');
-		$sched6->name				= $mod_strings['LBL_OOTB_CAMPAIGN'];
-		$sched6->job				= 'function::runMassEmailCampaign';
-		$sched6->date_time_start	= create_date(2005,1,1) . ' ' . create_time(0,0,1);
-		$sched6->date_time_end		= create_date(2020,12,31) . ' ' . create_time(23,59,59);
-		$sched6->job_interval		= '0::2-6::*::*::*';
-		$sched6->status				= 'Active';
-		$sched6->created_by			= '1';
-		$sched6->modified_user_id	= '1';
-		$sched6->catch_up			= '1';
-		$sched6->save();
+        /** @var Scheduler $scheduler */
+        $scheduler = BeanFactory::getBean('Schedulers');
+        $scheduler->name = $mod_strings['LBL_OOTB_WORKFLOW'];
+        $scheduler->job = 'function::processWorkflow';
+        $scheduler->date_time_start = create_date(2005, 1, 1) . ' ' . create_time(0, 0, 1);
+        $scheduler->date_time_end = create_date(2020, 12, 31) . ' ' . create_time(23, 59, 59);
+        $scheduler->job_interval = '*::*::*::*::*';
+        $scheduler->status = 'Active';
+        $scheduler->created_by = '1';
+        $scheduler->modified_user_id = '1';
+        $scheduler->catch_up = '0';
+        $schedulers[$scheduler->job] = $scheduler;
 
+        $scheduler = BeanFactory::getBean('Schedulers');
+        $scheduler->name = $mod_strings['LBL_OOTB_REPORTS'];
+        $scheduler->job = 'function::processQueue';
+        $scheduler->date_time_start = create_date(2005, 1, 1) . ' ' . create_time(0, 0, 1);
+        $scheduler->date_time_end = create_date(2020, 12, 31) . ' ' . create_time(23, 59, 59);
+        $scheduler->job_interval = '0::6::*::*::*';
+        $scheduler->status = 'Inactive';
+        $scheduler->created_by = '1';
+        $scheduler->modified_user_id = '1';
+        $scheduler->catch_up = '1';
+        $schedulers[$scheduler->job] = $scheduler;
 
-        $sched7 = BeanFactory::getBean('Schedulers');
-        $sched7->name               = $mod_strings['LBL_OOTB_PRUNE'];
-        $sched7->job                = 'function::pruneDatabase';
-        $sched7->date_time_start    = create_date(2005,1,1) . ' ' . create_time(0,0,1);
-        $sched7->date_time_end      = create_date(2020,12,31) . ' ' . create_time(23,59,59);
-        $sched7->job_interval       = '0::4::1::*::*';
-        $sched7->status             = 'Inactive';
-        $sched7->created_by         = '1';
-        $sched7->modified_user_id   = '1';
-        $sched7->catch_up           = '0';
-        $sched7->save();
+        $scheduler = BeanFactory::getBean('Schedulers');
+        $scheduler->name = $mod_strings['LBL_OOTB_TRACKER'];
+        $scheduler->job = 'function::trimTracker';
+        $scheduler->date_time_start = create_date(2005, 1, 1) . ' ' . create_time(0, 0, 1);
+        $scheduler->date_time_end = create_date(2020, 12, 31) . ' ' . create_time(23, 59, 59);
+        $scheduler->job_interval = '0::2::1::*::*';
+        $scheduler->status = 'Active';
+        $scheduler->created_by = '1';
+        $scheduler->modified_user_id = '1';
+        $scheduler->catch_up = '1';
+        $schedulers[$scheduler->job] = $scheduler;
 
+        $scheduler = BeanFactory::getBean('Schedulers');
+        $scheduler->name = $mod_strings['LBL_OOTB_IE'];
+        $scheduler->job = 'function::pollMonitoredInboxes';
+        $scheduler->date_time_start = create_date(2005, 1, 1) . ' ' . create_time(0, 0, 1);
+        $scheduler->date_time_end = create_date(2020, 12, 31) . ' ' . create_time(23, 59, 59);
+        $scheduler->job_interval = '*::*::*::*::*';
+        $scheduler->status = 'Active';
+        $scheduler->created_by = '1';
+        $scheduler->modified_user_id = '1';
+        $scheduler->catch_up = '0';
+        $schedulers[$scheduler->job] = $scheduler;
 
-        $sched9 = BeanFactory::getBean('Schedulers');
-        $sched9->name               = $mod_strings['LBL_UPDATE_TRACKER_SESSIONS'];
-        $sched9->job                = 'function::updateTrackerSessions';
-        $sched9->date_time_start    = create_date(2005,1,1) . ' ' . create_time(0,0,1);
-        $sched9->date_time_end      = create_date(2020,12,31) . ' ' . create_time(23,59,59);
-        $sched9->job_interval       = '*::*::*::*::*';
-        $sched9->status             = 'Active';
-        $sched9->created_by         = '1';
-        $sched9->modified_user_id   = '1';
-        $sched9->catch_up           = '1';
-        $sched9->save();
+        $scheduler = BeanFactory::getBean('Schedulers');
+        $scheduler->name = $mod_strings['LBL_OOTB_BOUNCE'];
+        $scheduler->job = 'function::pollMonitoredInboxesForBouncedCampaignEmails';
+        $scheduler->date_time_start = create_date(2005, 1, 1) . ' ' . create_time(0, 0, 1);
+        $scheduler->date_time_end = create_date(2020, 12, 31) . ' ' . create_time(23, 59, 59);
+        $scheduler->job_interval = '0::2-6::*::*::*';
+        $scheduler->status = 'Active';
+        $scheduler->created_by = '1';
+        $scheduler->modified_user_id = '1';
+        $scheduler->catch_up = '1';
+        $schedulers[$scheduler->job] = $scheduler;
 
+        $scheduler = BeanFactory::getBean('Schedulers');
+        $scheduler->name = $mod_strings['LBL_OOTB_CAMPAIGN'];
+        $scheduler->job = 'function::runMassEmailCampaign';
+        $scheduler->date_time_start = create_date(2005, 1, 1) . ' ' . create_time(0, 0, 1);
+        $scheduler->date_time_end = create_date(2020, 12, 31) . ' ' . create_time(23, 59, 59);
+        $scheduler->job_interval = '0::2-6::*::*::*';
+        $scheduler->status = 'Active';
+        $scheduler->created_by = '1';
+        $scheduler->modified_user_id = '1';
+        $scheduler->catch_up = '1';
+        $schedulers[$scheduler->job] = $scheduler;
 
-        $sched12 = BeanFactory::getBean('Schedulers');
-        $sched12->name               = $mod_strings['LBL_OOTB_SEND_EMAIL_REMINDERS'];
-        $sched12->job                = 'function::sendEmailReminders';
-        $sched12->date_time_start    = create_date(2008,1,1) . ' ' . create_time(0,0,1);
-        $sched12->date_time_end      = create_date(2020,12,31) . ' ' . create_time(23,59,59);
-        $sched12->job_interval       = '*::*::*::*::*';
-        $sched12->status             = 'Active';
-        $sched12->created_by         = '1';
-        $sched12->modified_user_id   = '1';
-        $sched12->catch_up           = '0';
-        $sched12->save();
+        $scheduler = BeanFactory::getBean('Schedulers');
+        $scheduler->name = $mod_strings['LBL_OOTB_PRUNE'];
+        $scheduler->job = 'function::pruneDatabase';
+        $scheduler->date_time_start = create_date(2005, 1, 1) . ' ' . create_time(0, 0, 1);
+        $scheduler->date_time_end = create_date(2020, 12, 31) . ' ' . create_time(23, 59, 59);
+        $scheduler->job_interval = '0::4::1::*::*';
+        $scheduler->status = 'Inactive';
+        $scheduler->created_by = '1';
+        $scheduler->modified_user_id = '1';
+        $scheduler->catch_up = '0';
+        $schedulers[$scheduler->job] = $scheduler;
 
-        $sched13 = BeanFactory::getBean('Schedulers');
-        $sched13->name               = $mod_strings['LBL_OOTB_CLEANUP_QUEUE'];
-        $sched13->job                = 'function::cleanJobQueue';
-        $sched13->date_time_start    = create_date(2012,1,1) . ' ' . create_time(0,0,1);
-        $sched13->date_time_end      = create_date(2030,12,31) . ' ' . create_time(23,59,59);
-        $sched13->job_interval       = '0::5::*::*::*';
-        $sched13->status             = 'Active';
-        $sched13->created_by         = '1';
-        $sched13->modified_user_id   = '1';
-        $sched13->catch_up           = '0';
-        $sched13->save();
+        $scheduler = BeanFactory::getBean('Schedulers');
+        $scheduler->name = $mod_strings['LBL_UPDATE_TRACKER_SESSIONS'];
+        $scheduler->job = 'function::updateTrackerSessions';
+        $scheduler->date_time_start = create_date(2005, 1, 1) . ' ' . create_time(0, 0, 1);
+        $scheduler->date_time_end = create_date(2020, 12, 31) . ' ' . create_time(23, 59, 59);
+        $scheduler->job_interval = '*::*::*::*::*';
+        $scheduler->status = 'Active';
+        $scheduler->created_by = '1';
+        $scheduler->modified_user_id = '1';
+        $scheduler->catch_up = '1';
+        $schedulers[$scheduler->job] = $scheduler;
 
-        $sched14 = new Scheduler();
-        $sched14->name               = $mod_strings['LBL_OOTB_CREATE_NEXT_TIMEPERIOD'];
-        $sched14->job                = 'class::SugarJobCreateNextTimePeriod';
-        $sched14->date_time_start    = create_date(2012,1,1) . ' ' . create_time(0,0,1);
-        $sched14->date_time_end      = create_date(2030,12,31) . ' ' . create_time(23,59,59);
-        $sched14->job_interval       = '0::23::*::*::*';
-        $sched14->status             = 'Active';
-        $sched14->created_by         = '1';
-        $sched14->modified_user_id   = '1';
-        $sched14->catch_up           = '0';
-        $sched14->save();
+        $scheduler = BeanFactory::getBean('Schedulers');
+        $scheduler->name = $mod_strings['LBL_OOTB_SEND_EMAIL_REMINDERS'];
+        $scheduler->job = 'function::sendEmailReminders';
+        $scheduler->date_time_start = create_date(2008, 1, 1) . ' ' . create_time(0, 0, 1);
+        $scheduler->date_time_end = create_date(2020, 12, 31) . ' ' . create_time(23, 59, 59);
+        $scheduler->job_interval = '*::*::*::*::*';
+        $scheduler->status = 'Active';
+        $scheduler->created_by = '1';
+        $scheduler->modified_user_id = '1';
+        $scheduler->catch_up = '0';
+        $schedulers[$scheduler->job] = $scheduler;
 
-        $sched15 = BeanFactory::getBean('Schedulers');
-        $sched15->name               = $mod_strings['LBL_OOTB_PRUNE_RECORDLISTS'];
-        $sched15->job                = 'function::cleanOldRecordLists';
-        $sched15->date_time_start    = create_date(2005,1,1) . ' ' . create_time(0,0,1);
-        $sched15->date_time_end      = create_date(2020,12,31) . ' ' . create_time(23,59,59);
-        $sched15->job_interval       = '*::*::*::*::*';
-        $sched15->status             = 'Active';
-        $sched15->created_by         = '1';
-        $sched15->modified_user_id   = '1';
-        $sched15->catch_up           = '1';
-        $sched15->save();
+        $scheduler = BeanFactory::getBean('Schedulers');
+        $scheduler->name = $mod_strings['LBL_OOTB_CLEANUP_QUEUE'];
+        $scheduler->job = 'function::cleanJobQueue';
+        $scheduler->date_time_start = create_date(2012, 1, 1) . ' ' . create_time(0, 0, 1);
+        $scheduler->date_time_end = create_date(2030, 12, 31) . ' ' . create_time(23, 59, 59);
+        $scheduler->job_interval = '0::5::*::*::*';
+        $scheduler->status = 'Active';
+        $scheduler->created_by = '1';
+        $scheduler->modified_user_id = '1';
+        $scheduler->catch_up = '0';
+        $schedulers[$scheduler->job] = $scheduler;
+
+        $scheduler = new Scheduler();
+        $scheduler->name = $mod_strings['LBL_OOTB_CREATE_NEXT_TIMEPERIOD'];
+        $scheduler->job = 'class::SugarJobCreateNextTimePeriod';
+        $scheduler->date_time_start = create_date(2012, 1, 1) . ' ' . create_time(0, 0, 1);
+        $scheduler->date_time_end = create_date(2030, 12, 31) . ' ' . create_time(23, 59, 59);
+        $scheduler->job_interval = '0::23::*::*::*';
+        $scheduler->status = 'Active';
+        $scheduler->created_by = '1';
+        $scheduler->modified_user_id = '1';
+        $scheduler->catch_up = '0';
+        $schedulers[$scheduler->job] = $scheduler;
+
+        $scheduler = BeanFactory::getBean('Schedulers');
+        $scheduler->name = $mod_strings['LBL_OOTB_PRUNE_RECORDLISTS'];
+        $scheduler->job = 'function::cleanOldRecordLists';
+        $scheduler->date_time_start = create_date(2005, 1, 1) . ' ' . create_time(0, 0, 1);
+        $scheduler->date_time_end = create_date(2020, 12, 31) . ' ' . create_time(23, 59, 59);
+        $scheduler->job_interval = '*::*::*::*::*';
+        $scheduler->status = 'Active';
+        $scheduler->created_by = '1';
+        $scheduler->modified_user_id = '1';
+        $scheduler->catch_up = '1';
+        $schedulers[$scheduler->job] = $scheduler;
 
         // Sugar heartbeat
-        $sched16 = BeanFactory::getBean('Schedulers');
-        $sched16->name               = $mod_strings['LBL_OOTB_HEARTBEAT'];
-        $sched16->job                = 'class::SugarJobHeartbeat';
-        $sched16->date_time_start    = create_date(2005, 1, 1) . ' ' . create_time(0, 0, 1);
-        $sched16->date_time_end      = create_date(2030, 12, 31) . ' ' . create_time(23, 59, 59);
-        $sched16->job_interval       = '0::4::*::*::*';
-        $sched16->status             = 'Active';
-        $sched16->created_by         = '1';
-        $sched16->modified_user_id   = '1';
-        $sched16->catch_up           = '0';
-        $sched16->save();
+        $scheduler = BeanFactory::getBean('Schedulers');
+        $scheduler->name = $mod_strings['LBL_OOTB_HEARTBEAT'];
+        $scheduler->job = 'class::SugarJobHeartbeat';
+        $scheduler->date_time_start = create_date(2005, 1, 1) . ' ' . create_time(0, 0, 1);
+        $scheduler->date_time_end = create_date(2030, 12, 31) . ' ' . create_time(23, 59, 59);
+        $scheduler->job_interval = '0::4::*::*::*';
+        $scheduler->status = 'Active';
+        $scheduler->created_by = '1';
+        $scheduler->modified_user_id = '1';
+        $scheduler->catch_up = '0';
+        $schedulers[$scheduler->job] = $scheduler;
 
         // Remove temporary uploaded files
-        $sched17 = BeanFactory::getBean('Schedulers');
-        $sched17->name               = $mod_strings['LBL_OOTB_REMOVE_TMP_FILES'];
-        $sched17->job                = 'class::SugarJobRemoveTmpFiles';
-        $sched17->date_time_start    = create_date(2005, 1, 1) . ' ' . create_time(0, 0, 1);
-        $sched17->date_time_end      = create_date(2030, 12, 31) . ' ' . create_time(23, 59, 59);
-        $sched17->job_interval       = '0::4::*::*::*';
-        $sched17->status             = 'Active';
-        $sched17->created_by         = '1';
-        $sched17->modified_user_id   = '1';
-        $sched17->catch_up           = '1';
-        $sched17->save();
+        $scheduler = BeanFactory::getBean('Schedulers');
+        $scheduler->name = $mod_strings['LBL_OOTB_REMOVE_TMP_FILES'];
+        $scheduler->job = 'class::SugarJobRemoveTmpFiles';
+        $scheduler->date_time_start = create_date(2005, 1, 1) . ' ' . create_time(0, 0, 1);
+        $scheduler->date_time_end = create_date(2030, 12, 31) . ' ' . create_time(23, 59, 59);
+        $scheduler->job_interval = '0::4::*::*::*';
+        $scheduler->status = 'Active';
+        $scheduler->created_by = '1';
+        $scheduler->modified_user_id = '1';
+        $scheduler->catch_up = '1';
+        $schedulers[$scheduler->job] = $scheduler;
 
         // Remove diagnostic tool files
-        $sched18 = BeanFactory::getBean('Schedulers');
-        $sched18->name               = $mod_strings['LBL_OOTB_REMOVE_DIAGNOSTIC_FILES'];
-        $sched18->job                = 'class::SugarJobRemoveDiagnosticFiles';
-        $sched18->date_time_start    = create_date(2005, 1, 1) . ' ' . create_time(0, 0, 1);
-        $sched18->date_time_end      = create_date(2030, 12, 31) . ' ' . create_time(23, 59, 59);
-        $sched18->job_interval       = '0::4::*::*::0';
-        $sched18->status             = 'Active';
-        $sched18->created_by         = '1';
-        $sched18->modified_user_id   = '1';
-        $sched18->catch_up           = '1';
-        $sched18->save();
+        $scheduler = BeanFactory::getBean('Schedulers');
+        $scheduler->name = $mod_strings['LBL_OOTB_REMOVE_DIAGNOSTIC_FILES'];
+        $scheduler->job = 'class::SugarJobRemoveDiagnosticFiles';
+        $scheduler->date_time_start = create_date(2005, 1, 1) . ' ' . create_time(0, 0, 1);
+        $scheduler->date_time_end = create_date(2030, 12, 31) . ' ' . create_time(23, 59, 59);
+        $scheduler->job_interval = '0::4::*::*::0';
+        $scheduler->status = 'Active';
+        $scheduler->created_by = '1';
+        $scheduler->modified_user_id = '1';
+        $scheduler->catch_up = '1';
+        $schedulers[$scheduler->job] = $scheduler;
 
         // Remove temporary PDF files
-        $sched19 = BeanFactory::getBean('Schedulers');
-        $sched19->name               = $mod_strings['LBL_OOTB_REMOVE_PDF_FILES'];
-        $sched19->job                = 'class::SugarJobRemovePdfFiles';
-        $sched19->date_time_start    = create_date(2005, 1, 1) . ' ' . create_time(0, 0, 1);
-        $sched19->date_time_end      = create_date(2030, 12, 31) . ' ' . create_time(23, 59, 59);
-        $sched19->job_interval       = '0::4::*::*::*';
-        $sched19->status             = 'Active';
-        $sched19->created_by         = '1';
-        $sched19->modified_user_id   = '1';
-        $sched19->catch_up           = '1';
-        $sched19->save();
+        $scheduler = BeanFactory::getBean('Schedulers');
+        $scheduler->name = $mod_strings['LBL_OOTB_REMOVE_PDF_FILES'];
+        $scheduler->job = 'class::SugarJobRemovePdfFiles';
+        $scheduler->date_time_start = create_date(2005, 1, 1) . ' ' . create_time(0, 0, 1);
+        $scheduler->date_time_end = create_date(2030, 12, 31) . ' ' . create_time(23, 59, 59);
+        $scheduler->job_interval = '0::4::*::*::*';
+        $scheduler->status = 'Active';
+        $scheduler->created_by = '1';
+        $scheduler->modified_user_id = '1';
+        $scheduler->catch_up = '1';
+        $schedulers[$scheduler->job] = $scheduler;
 
         //BEGIN SUGARCRM flav=ent ONLY
         // Process Author OOTB Job
-        $sched20 = BeanFactory::getBean('Schedulers');
-        $sched20->name               = $mod_strings['LBL_OOTB_PROCESS_AUTHOR_JOB'];
-        $sched20->job                = 'function::PMSEEngineCron';
-        $sched20->date_time_start    = create_date(2015, 1, 1) . ' ' . create_time(0, 0, 1);
-        $sched20->date_time_end      = create_date(2040, 12, 31) . ' ' . create_time(23, 59, 59);
-        $sched20->job_interval       = '*::*::*::*::*';;
-        $sched20->status             = 'Active';
-        $sched20->created_by         = '1';
-        $sched20->modified_user_id   = '1';
-        $sched20->catch_up           = '1';
-        $sched20->save();
+        $scheduler = BeanFactory::getBean('Schedulers');
+        $scheduler->name = $mod_strings['LBL_OOTB_PROCESS_AUTHOR_JOB'];
+        $scheduler->job = 'function::PMSEEngineCron';
+        $scheduler->date_time_start = create_date(2015, 1, 1) . ' ' . create_time(0, 0, 1);
+        $scheduler->date_time_end = create_date(2040, 12, 31) . ' ' . create_time(23, 59, 59);
+        $scheduler->job_interval = '*::*::*::*::*';;
+        $scheduler->status = 'Active';
+        $scheduler->created_by = '1';
+        $scheduler->modified_user_id = '1';
+        $scheduler->catch_up = '1';
+        $schedulers[$scheduler->job] = $scheduler;
         //END SUGARCRM flav=ent ONLY
 
         // Update expired KB Articles
-        $sched21 = BeanFactory::getBean('Schedulers');
-        $sched21->name               = $mod_strings['LBL_OOTB_KBSCONTENT_EXPIRE'];
-        $sched21->job                = 'class::SugarJobKBContentUpdateArticles';
-        $sched21->date_time_start    = create_date(2005, 1, 1) . ' ' . create_time(0, 0, 1);
-        $sched21->date_time_end      = create_date(2030, 12, 31) . ' ' . create_time(23, 59, 59);
-        $sched21->job_interval       = '0::5::*::*::*';
-        $sched21->status             = 'Active';
-        $sched21->created_by         = '1';
-        $sched21->modified_user_id   = '1';
-        $sched21->catch_up           = '1';
-        $sched21->save();
+        $scheduler = BeanFactory::getBean('Schedulers');
+        $scheduler->name               = $mod_strings['LBL_OOTB_KBSCONTENT_EXPIRE'];
+        $scheduler->job                = 'class::SugarJobKBContentUpdateArticles';
+        $scheduler->date_time_start    = create_date(2005, 1, 1) . ' ' . create_time(0, 0, 1);
+        $scheduler->date_time_end      = create_date(2030, 12, 31) . ' ' . create_time(23, 59, 59);
+        $scheduler->job_interval       = '0::5::*::*::*';
+        $scheduler->status             = 'Active';
+        $scheduler->created_by         = '1';
+        $scheduler->modified_user_id   = '1';
+        $scheduler->catch_up           = '1';
+        $schedulers[$scheduler->job] = $scheduler;
 
-	}
+        return $schedulers;
+    }
 
 	////	END SCHEDULER HELPER FUNCTIONS
 	///////////////////////////////////////////////////////////////////////////

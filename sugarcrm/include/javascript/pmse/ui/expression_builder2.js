@@ -77,7 +77,8 @@ ExpressionControl.prototype._typeToControl = {
     //"relate": "related",
     "textarea": "text",//"textarea",
     "url": "text",
-    "textfield": "text"
+    "textfield": "text",
+    "user": "friendlydropdown"
 };
 
 ExpressionControl.prototype.OPERATORS  = {
@@ -1022,6 +1023,8 @@ ExpressionControl.prototype._onPanelValueGeneration = function () {
                     valueField = subpanel.getItem("value");
                     if (aux[1] === "Date" || aux[1] === 'Datetime') {
                         label += '%VALUE%';
+                    } else if (aux[1] === 'user') {
+                        label += valueField.getSelectedText();
                     } else {
                         label += (valueType === "string" ? "\"" + value + "\"" : data.value);
                     }
@@ -1423,6 +1426,13 @@ ExpressionControl.prototype._createModulePanel = function () {
                                     });
                                 });
                                 newFieldSettings.options = items;
+                            } else if (type === 'friendlydropdown') {
+                                newFieldSettings.options = [
+                                    {'label': translate('LBL_PMSE_FORM_OPTION_CURRENT_USER'), 'value': 'currentuser'},
+                                    {'label': translate('LBL_PMSE_FORM_OPTION_RECORD_OWNER'), 'value': 'owner'},
+                                    {'label': translate('LBL_PMSE_FORM_OPTION_SUPERVISOR'), 'value': 'supervisor'}
+                                ];
+                                newFieldSettings.searchURL = 'pmse_Project/CrmData/users?filter={TERM}';
                             }
                             operatorField = form.getItem("operator");
 
@@ -1657,13 +1667,15 @@ ExpressionControl.prototype._createUserPanel = function () {
                         }
                     ]
                 }, {
-                    type: "dropdown",
+                    type: "friendlydropdown",
                     name: "value",
                     label: translate("LBL_PMSE_EXPCONTROL_USER_EVALUATION_VALUE"),
                     width: "35%",
                     required: true,
                     dependencyHandler: function(dependantField, field, value) {
                         var condition = value.split("|")[0];
+                        dependantField.setSearchURL(null)
+                            .setDataURL(null);
                         switch (condition) {
                             case 'USER_ADMIN':
                                 dependantField.clearOptions().disable();
@@ -1673,14 +1685,13 @@ ExpressionControl.prototype._createUserPanel = function () {
                                     .setDataRoot(settings.userRolesDataRoot)
                                     .setLabelField(settings.userRolesLabelField)
                                     .setValueField(settings.userRolesValueField)
-                                    .load();
+                                    .load()
+                                    .enable();
                                 break;
                             case 'USER_IDENTITY':
-                                dependantField.setDataURL(settings.usersDataURL)
-                                    .setDataRoot(settings.usersDataRoot)
-                                    .setLabelField(settings.usersLabelField)
-                                    .setValueField(settings.usersValueField)
-                                    .load();
+                                dependantField.clearOptions()
+                                    .setSearchURL('pmse_Project/CrmData/users?filter={TERM}')
+                                    .enable();
                         }
                     }
                 }

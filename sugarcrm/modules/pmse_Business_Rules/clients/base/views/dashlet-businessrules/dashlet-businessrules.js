@@ -25,6 +25,8 @@
         visibility: 'user'
     },
 
+    thresholdRelativeTime: 2, //Show relative time for 2 days and then date time after
+
     /**
      * {@inheritDoc}
      */
@@ -324,6 +326,17 @@
     },
 
     /**
+     * Sets property useRelativeTime to show date created as a relative time or as date time.
+     *
+     * @private
+     */
+    _setRelativeTimeAvailable: function(date) {
+        var diffInDays = app.date().diff(date, 'days', true);
+        var useRelativeTime = (diffInDays <= this.thresholdRelativeTime);
+        return useRelativeTime;
+    },
+
+    /**
      * {@inheritDoc}
      *
      * New model related properties are injected into each model:
@@ -350,6 +363,7 @@
                 field: 'picture'
             });
             model.set('picture_url', pictureUrl);
+            model.useRelativeTime = this._setRelativeTimeAvailable(model.attributes.date_entered);
         }, this);
 
         this._super('_renderHtml');

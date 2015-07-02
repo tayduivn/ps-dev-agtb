@@ -124,9 +124,24 @@ class PMSECasesListApi extends FilterApi
             $args['order_by'] = 'cas_create_date:asc';
         }
         $options = self::parseArguments($api, $args, $inboxBean);
-        $fields = array(
-            'a.*'
+
+        // Replacement for using .* to get all columns
+        // Fields from inbox that are needed
+        // Removed the pro_title column because it contains old data and is never updated
+        $inboxFields = array(
+            'id', 'name', 'date_entered', 'date_modified',
+            'modified_user_id', 'created_by', 'description', 'deleted',
+            'cas_id', 'cas_parent', 'cas_status', 'pro_id',
+            'cas_title', 'cas_custom_status', 'cas_init_user', 'cas_create_date',
+            'cas_update_date', 'cas_finish_date', 'cas_pin cas_pin', 'cas_assigned_status',
+            'cas_module', 'team_id', 'team_set_id', 'assigned_user_id',
         );
+
+        // Now put them into a format that SugarQuery likes
+        foreach ($inboxFields as $field) {
+            $fields[] = array("a.$field", $field);
+        }
+
         $q->from($inboxBean, array('alias' => 'a'));
 
         //INNER USER TABLE
@@ -150,6 +165,15 @@ class PMSECasesListApi extends FilterApi
             ->equals('prj.deleted', 0);
         $fields[] = array("prj.assigned_user_id", 'prj_created_by');
         $fields[] = array("prj.prj_module", 'prj_module');
+
+        $q->joinTable('pmse_bpmn_process', array('alias' => 'process', 'joinType' => 'INNER', 'linkingTable' => true))
+            ->on()
+            ->equalsField('process.id', 'a.pro_id')
+            ->equals('process.deleted', 0);
+
+        // get pro_title (process name) from pmse_bpmn_process table
+        // because that is updated when process definition is edited
+        $fields[] = array('process.name', 'pro_title');
 
         $q->select($fields);
 

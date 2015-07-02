@@ -17,7 +17,6 @@
 .dashboard {
   width: 100%;
   border-right: none;
-  background: url(@textureSecondary);
   position: absolute;
   top: 61px;
   bottom: 0;
@@ -137,11 +136,13 @@
         padding-right: 5px;
       }
 
-      .dashlet-content + .block-footer {
-        text-align: left;
-        font-weight: normal;
-        border-top: @borderWidget;
-        .border-radius(0 0 @baseBorderRadius @baseBorderRadius);
+      .dashlet-content + div {
+        .block-footer {
+          text-align: left;
+          font-weight: normal;
+          border-top: @borderWidget;
+          .border-radius(0 0 @baseBorderRadius @baseBorderRadius);
+        }
       }
 
       .block-footer {
@@ -197,7 +198,7 @@
     .headerpane {
       .calcWidth(~"34.042553198% + 1px");
       border-left: @borderWidget;
-      background: url(@textureSecondary);
+      background: transparent;
       right: auto;
       padding: 0 5px;
       margin-left: -1px;
