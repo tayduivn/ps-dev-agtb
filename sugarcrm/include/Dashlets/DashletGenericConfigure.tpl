@@ -14,6 +14,7 @@
 
 <div>
 <form action='index.php' id='configure_{$id}' method='post' onSubmit='SUGAR.mySugar.setChooser(); return SUGAR.dashlets.postForm("configure_{$id}", SUGAR.mySugar.uncoverPage);'>
+{sugar_csrf_form_token}
 <input type='hidden' name='id' value='{$id}'>
 <input type='hidden' name='module' value='Home'>
 <input type='hidden' name='action' value='ConfigureDashlet'>
