@@ -14,6 +14,7 @@
 <!-- BEGIN: main -->
 <div name='mainbody' id='mainbody' style='display:inline'>
 <form name="LicenseSettings" method="POST" action="index.php" onSubmit="return check_form('LicenseSettings');">
+    {sugar_csrf_form_token}
     <input type="hidden" name="module" value="Administration">
     <input type="hidden" name="action">
     <input type="hidden" name="return_module" value="Administration">

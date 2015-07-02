@@ -12,6 +12,7 @@
 *}
 
 <form name="Diagnostic" method="POST" action="index.php">
+{sugar_csrf_form_token}
 <input type="hidden" name="module" value="Administration">
 <input type="hidden" name="action" value="DiagnosticRun">
  
