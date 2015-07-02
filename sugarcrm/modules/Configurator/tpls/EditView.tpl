@@ -23,6 +23,7 @@
 </style>
 {/literal}
 <form name="ConfigureSettings" enctype='multipart/form-data' method="POST" action="index.php" onSubmit="return (add_checks(document.ConfigureSettings) && check_form('ConfigureSettings'));">
+{sugar_csrf_form_token}
 <input type='hidden' name='action' value='SaveConfig'/>
 <input type='hidden' name='module' value='Configurator'/>
 <span class='error'>{$error.main}</span>

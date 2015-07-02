@@ -71,6 +71,7 @@ YAHOO.util.Event.onDOMReady(SourceTabs.init);
 </script>
 {/literal}
 <form name="ModifySearch" method="POST">
+{sugar_csrf_form_token}
 <input type="hidden" name="modify" value="true">
 <input type="hidden" name="module" value="Connectors">
 <input type="hidden" name="action" value="SaveModifySearch">
