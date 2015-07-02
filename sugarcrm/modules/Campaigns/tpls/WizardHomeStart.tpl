@@ -13,6 +13,7 @@
 
 <div id='wiz_stage'>
 <form  id="wizform" name="wizform" method="POST" action="index.php">
+{sugar_csrf_form_token}
 	<input type="hidden" name="module" value="Campaigns">
 	<input type="hidden" id='action' name="action" value='WizardNewsletter'>
 	<input type="hidden" id="return_module" name="return_module" value="Campaigns">

@@ -13,6 +13,7 @@
 
 
 <form name="holidaysQuickCreate" id="holidaysQuickCreate" method="POST" action="index.php">
+{sugar_csrf_form_token}
 <input type="hidden" name="module" value="Holidays">
 <input type="hidden" name="return_action" value="{$REQUEST.return_action}">
 <input type="hidden" name="return_module" value="{$REQUEST.return_module}">

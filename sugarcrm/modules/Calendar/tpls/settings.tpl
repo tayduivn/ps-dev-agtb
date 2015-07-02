@@ -32,6 +32,7 @@ $(function() {
 	<div class="hd">{$MOD.LBL_SETTINGS_TITLE}</div>
 	<div class="bd">
 	<form name="settings" id="form_settings" method="POST" action="index.php?module=Calendar&action=SaveSettings">
+{sugar_csrf_form_token}
 		<input type="hidden" name="view" value="{$view}">
 		<input type="hidden" name="day" value="{$day}">
 		<input type="hidden" name="month" value="{$month}">

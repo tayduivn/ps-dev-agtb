@@ -14,6 +14,7 @@
 <h3>{$MOD.LBL_REPAIR_DATABASE_DIFFERENCES}</h3>
 <p>{$MOD.LBL_REPAIR_DATABASE_TEXT}</p>
 <form name="RepairDatabaseForm" method="post">
+{sugar_csrf_form_token}
 <input type="hidden" name="module" value="Administration"/>
 <input type="hidden" name="action" value="repairDatabase"/>
 <input type="hidden" name="raction" value="execute"/>

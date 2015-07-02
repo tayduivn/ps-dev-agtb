@@ -25,6 +25,7 @@ textarea { width: 20em }
 {/literal}
 <script type="text/javascript" src="{sugar_getjspath file='cache/include/javascript/sugar_grp_yui_widgets.js'}"></script>
 <form enctype="multipart/form-data" real_id="importstepdup" id="importstepdup" name="importstepdup" method="POST" action="index.php">
+{sugar_csrf_form_token}
 
 {foreach from=$smarty.request key=k item=v}
     {if $k neq 'current_step'}

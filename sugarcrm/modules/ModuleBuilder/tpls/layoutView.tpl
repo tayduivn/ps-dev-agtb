@@ -241,6 +241,7 @@
 </div>
 
 <form name='prepareForSave' id='prepareForSave' action='index.php'>
+{sugar_csrf_form_token}
 <input type='hidden' name='module' value='ModuleBuilder'>
 <input type='hidden' name='view_module' value='{$view_module}'>
 <input type='hidden' name='view' value='{$view}'>

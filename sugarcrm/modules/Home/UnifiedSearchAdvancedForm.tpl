@@ -15,6 +15,7 @@
 <link rel="stylesheet" type="text/css" href="{sugar_getjspath file='modules/Connectors/tpls/tabs.css'}"/>
 
 <form name='UnifiedSearchAdvancedMain' action='index.php' onsubmit="SUGAR.saveGlobalSearchSettings();" method='POST' class="search_form">
+{sugar_csrf_form_token}
 <input type='hidden' name='module' value='Home'>
 <input type='hidden' name='query_string' value='test'>
 <input type='hidden' name='advanced' value='true'>

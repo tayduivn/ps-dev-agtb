@@ -17,6 +17,7 @@
     <div class="clear"></div>
 </div>
 <form action="{$form.action}" id="{$form.id}" method="POST" {if isset($form.enctype) && $form.enctype ne ''} enctype="{$form.enctype}"{/if}>
+{sugar_csrf_form_token}
     {foreach from=$form.hidden item=hidden}
         <input type="hidden" value="{$hidden.value}" name="{$hidden.name}" id="{$hidden.id}">
     {/foreach}

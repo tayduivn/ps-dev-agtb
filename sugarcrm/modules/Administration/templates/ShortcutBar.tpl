@@ -21,6 +21,7 @@
     <tr><td colspan='100'>
         {if empty($msg)}
             <form name="ConfigureShortcutBar" method="POST" action="index.php">
+{sugar_csrf_form_token}
                 <input type="hidden" name="module" value="Administration">
                 <input type="hidden" name="action" value="ConfigureShortcutBar">
                 <input type="hidden" id="enabled_modules" name="enabled_modules" value="">

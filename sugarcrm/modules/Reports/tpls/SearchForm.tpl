@@ -11,6 +11,7 @@
  */
 *}
 <form name='search_form'>
+{sugar_csrf_form_token}
 <input type='hidden' name='module' value='Reports'/>
 <input type='hidden' name='action' value='index'/>
 <input type='hidden' name='query' value='true'/>

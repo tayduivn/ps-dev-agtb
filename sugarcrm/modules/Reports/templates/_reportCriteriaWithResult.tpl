@@ -26,6 +26,7 @@
 
 
 <form action="index.php?action=ReportCriteriaResults&module=Reports&page=report&id={$report_id}" method="post" name="EditView" id="EditView" onSubmit="return fill_form();">
+{sugar_csrf_form_token}
 <input type="hidden" name='report_offset' value ="{$report_offset}">
 <input type="hidden" name='sort_by' value ="{$sort_by}">
 <input type="hidden" name='sort_dir' value ="{$sort_dir}">

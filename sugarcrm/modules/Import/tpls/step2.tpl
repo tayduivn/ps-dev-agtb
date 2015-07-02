@@ -26,6 +26,7 @@
 <div class="hr"></div>
 
 <form enctype="multipart/form-data" name="importstep2" method="POST" action="index.php" id="importstep2">
+{sugar_csrf_form_token}
 <input type="hidden" name="module" value="Import">
 <input type="hidden" name="custom_delimiter" value="{$CUSTOM_DELIMITER}">
 <input type="hidden" name="custom_enclosure" value="{$CUSTOM_ENCLOSURE}">

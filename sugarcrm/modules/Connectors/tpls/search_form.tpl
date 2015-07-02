@@ -19,6 +19,7 @@
 </tr>
 </table>
 <form name='SearchForm' method='POST' id='SearchForm'>
+{sugar_csrf_form_token}
     {sugar_csrf_form_token}
  	<input type='hidden' name='source_id' id='source_id' value='{$source_id}' />
  	<input type='hidden' name='merge_module' value='{$module}' />

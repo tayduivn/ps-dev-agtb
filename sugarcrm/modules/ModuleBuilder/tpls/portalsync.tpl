@@ -12,6 +12,7 @@
 *}
 
 <form id='StudioWizard' name='StudioWizard'>
+{sugar_csrf_form_token}
 <input type='hidden' name='module' value='ModuleBuilder'>
 <input type='hidden' name='action' value='portalsyncsync'>
 <table class='tabform' width='100%' cellpadding=4>
