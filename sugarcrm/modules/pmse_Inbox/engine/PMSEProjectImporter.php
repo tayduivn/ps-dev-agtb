@@ -183,6 +183,8 @@ class PMSEProjectImporter extends PMSEImporter
             }
         }
         $projectObject->prj_uid = PMSEEngineUtils::generateUniqueID();
+        // by default imported projects should be disabled
+        $projectObject->prj_status = 'INACTIVE';
         $keysArray['prj_id'] = $projectObject->save();
 
         $diagramBean = BeanFactory::newBean('pmse_BpmnDiagram');
@@ -215,6 +217,8 @@ class PMSEProjectImporter extends PMSEImporter
         }
         $processDefinitionBean->id = $keysArray['pro_id'];
         $processDefinitionBean->new_with_id = true;
+        // by default an imported project should be disabled
+        $processDefinitionBean->pro_status = 'INACTIVE';
         $processDefinitionBean->save();
 
         $this->saveProjectActivitiesData($projectData['diagram'][0]['activities'], $keysArray);
