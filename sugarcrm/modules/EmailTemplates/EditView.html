@@ -24,6 +24,7 @@
 </script>
 
 <form name="EditView" id="EditView" method="POST" action="index.php" enctype="multipart/form-data">
+{sugar_csrf_form_token}
 	<input type="hidden" name="module" value="EmailTemplates">
 	<input type="hidden" name="record" value="{ID}">
 	<input type="hidden" name="action">
@@ -192,6 +193,7 @@
 </form>
 <!-- BEGIN: NoInbound3 -->
 <form id="upload_form" name="upload_form" method="POST" action='AttachDocuments.php' enctype="multipart/form-data">
+{sugar_csrf_form_token}
 	<div id="upload_div">
 		<input type="file" id="my_file" name="file_1" size="40" />
 		<input type="hidden" id="documentName" name="uploaddoc" onchange="docUpload(); form_reset_doc();" size="1" />
