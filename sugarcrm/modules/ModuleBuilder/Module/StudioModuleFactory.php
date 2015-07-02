@@ -15,7 +15,7 @@ class StudioModuleFactory
 {
 	protected static $loadedMods = array();
 
-    public static function getStudioModule($module)
+    public static function getStudioModule($module, $seed = null)
 	{
 		if (!empty(self::$loadedMods[$module]))
             return self::$loadedMods[$module];
@@ -34,7 +34,7 @@ class StudioModuleFactory
 		}
 		else 
 		{
-			$sm = new StudioModule($module);
+			$sm = new StudioModule($module, $seed);
 		}
         self::$loadedMods[$module] = $sm;
         return $sm;

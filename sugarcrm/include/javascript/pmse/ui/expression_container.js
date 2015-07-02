@@ -18,6 +18,8 @@ var ExpressionContainer = function (options, parent) {
     this.parent = null;
     this.onChange = null;
     this.onBeforeOpenPanel = null;
+    this._select2Input = null;
+    this._searchFunction = null;
     ExpressionContainer.prototype.init.call(this, options, parent);
 };
 
@@ -49,6 +51,39 @@ ExpressionContainer.prototype.init = function (options, parent) {
         .setParent(parent)
         .setOnBeforeOpenPanel(defaults.onBeforeOpenPanel)
         .setOnChangeHandler(defaults.onChange);
+
+    this._searchFunction = _.debounce(function(queryObject) {
+        var proxy = new SugarProxy(),
+            termRegExp = /\{TERM\}/g,
+            result = {
+                more: false
+            }, term = jQuery.trim(queryObject.term),
+            finalData = [],
+            searchURL = 'pmse_Project/CrmData/users?filter={TERM}';
+
+        proxy.url = searchURL.replace(termRegExp, queryObject.term);
+
+        proxy.getData(null, {
+            success: function (data) {
+                if (!data.success) {
+                    throw new Error("ExpressionContainer's search function: Error.");
+                }
+                data = data.result;
+                data.forEach(function (item) {
+                    finalData.push({
+                        value: item.value,
+                        text: item.text
+                    });
+                });
+
+                result.results = finalData;
+                queryObject.callback(result);
+            },
+            error: function () {
+                console.log("failure", arguments);
+            }
+        });
+    }, 1500);
 };
 
 ExpressionContainer.prototype.setOnBeforeOpenPanel = function (handler) {
@@ -116,7 +151,8 @@ ExpressionContainer.prototype.isValid = function () {
 
 ExpressionContainer.prototype.createHTML = function () {
     var dvContainer,
-        span;
+        span,
+        input;
 
     if(this.html) {
         return this.html;
@@ -127,8 +163,12 @@ ExpressionContainer.prototype.createHTML = function () {
     dvContainer.className = 'expression-container-cell';
     $(dvContainer).attr('data-placement', 'bottom');
     dvContainer.setAttributeNode(document.createAttribute('title'));
+    input = this.createHTMLElement("input");
+    input.className = 'expression-container-input';
+    this._select2Input = input;
 
     span.appendChild(dvContainer);
+    span.className = 'expression-container';
     this.html = span;
     this.dvContainer = dvContainer;
 
@@ -142,9 +182,16 @@ ExpressionContainer.prototype.updateExpressionView = function () {
     var value = this.parseValue(this.expression),
         $container;
 
-    $container = $(this.dvContainer);
-    $container.text(value);
-    $container.attr('data-original-title', value);
+    if (this.html) {
+        $container = $(this.dvContainer);
+        $container.text(value);
+        $container.attr('data-original-title', value);
+
+        if (!value) {
+            $(this._select2Input).select2("destroy").remove();
+            $(this.html).removeClass("list-mode").append(this.dvContainer);
+        }
+    }
 
     return this;
 };
@@ -199,10 +246,16 @@ ExpressionContainer.prototype.handleClick = function (element) {
     parentVariable = this.parent.parent;
 
     if (parentVariable.fieldType || parentVariable.isReturnType) {
-        if (parentVariable.fieldType === 'DropDown' || parentVariable.fieldType === 'Checkbox') {
-            this.handleDropDownBuilder(globalParent, parentVariable, element);
-        } else {
-            this.handleCriteriaBuilder(globalParent, parentVariable, element);
+        switch (parentVariable.fieldType) {
+            case "DropDown":
+            case "Checkbox":
+                this.handleDropDownBuilder(globalParent, parentVariable, element);
+                break;
+            case "user":
+                this.handleUserList(globalParent, parentVariable, element);
+                break;
+            default:
+                this.handleCriteriaBuilder(globalParent, parentVariable, element);
         }
     } else {
         App.alert.show('expression-variable-click', {
@@ -380,9 +433,60 @@ ExpressionContainer.prototype.handleCriteriaBuilder = function (globalParent, pa
     }
 };
 
-ExpressionContainer.prototype.handleDropDownBuilder = function (globalParent, parentVariable, element) {
+ExpressionContainer.prototype.handleUserList = function (globalParent, parentVariable, element) {
     var self = this,
-        value;
+        $input = $(this._select2Input), $html = $(this.html);
+
+    $(this.dvContainer).remove();
+    $input.select2("destroy");
+    $html.addClass("list-mode").append(this._select2Input);
+
+    $input.on("change", function (e) {
+        var prevValue = JSON.stringify(self.expression),
+            data = e.added,
+            value = [{
+                expType: 'CONSTANT',
+                expSubType: 'string',
+                expLabel: data.text,
+                expValue: data.value
+            }];
+
+        self.setExpressionValue(value);
+
+        if (typeof self.onChange === 'function') {
+            self.onChange(JSON.stringify(self.expression), prevValue);
+        }
+
+    }).on("select2-open", function() {
+        if (typeof self.onBeforeOpenPanel === 'function') {
+            self.onBeforeOpenPanel(self);
+        }
+    }).select2({
+        id: function (e) {
+            return e == undefined ? null : e.value;
+        },
+        query: function (queryObject) {
+            var result = {
+                more: true,
+                results: []
+            };
+            if (jQuery.trim(queryObject.term)) {
+                self._searchFunction(queryObject);
+            } else {
+                queryObject.callback(result);
+            }
+        }
+    }).select2("data", {
+        value: (this.expression && this.expression[0] && this.expression[0].expValue) || "",
+        text: (this.expression && this.expression[0] && this.expression[0].expLabel) || ""
+    }).select2("open");
+
+    return this;
+};
+
+ExpressionContainer.prototype.handleDropDownBuilder = function (globalParent, parentVariable, element) {
+    var self = this, value;
+
     if (globalParent.globalDDSelector.isOpen()) {
         globalParent.globalDDSelector.close();
         //this.setIsDDOpen(false);
@@ -409,7 +513,7 @@ ExpressionContainer.prototype.handleDropDownBuilder = function (globalParent, pa
             //self.setIsDDOpen(false);
         });
         globalParent.globalDDSelector.setValues(parentVariable.combos[parentVariable.module + globalParent.moduleFieldSeparator
-            + parentVariable.field]);
+        + parentVariable.field]);
         globalParent.globalDDSelector.setValue(this.expression);
         if (typeof this.onBeforeOpenPanel === 'function') {
             this.onBeforeOpenPanel(this);

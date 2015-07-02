@@ -32,6 +32,7 @@
     <input type="hidden" name="cas_current_user_id" id="cas_current_user_id" value="{$cas_current_user_id}"/>
     <input type="hidden" name="act_adhoc_behavior" id="act_adhoc_behavior" value="{$act_adhoc_behavior}"/>
     <input type="hidden" name="act_adhoc_assignment" id="act_adhoc_assignment" value="{$act_adhoc_assignment}"/>
+    <input type="hidden" name="taskContinue" id="taskContinue" value="{$task_continue}"/>
     <table cellpadding='0' cellspacing='1' width='100%' class="edit view panelContainer">
         <tr class="pagination"  role=”presentation”>
             <td align='right' colspan="2">

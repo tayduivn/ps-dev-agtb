@@ -97,6 +97,9 @@
 			case 'dropdown':
 				field = new FormPanelDropdown(defaults);
 				break;
+			case 'friendlydropdown':
+				field = new FormPanelFriendlyDropdown(defaults);
+				break;
 			case 'date':
 				field = new FormPanelDate(defaults);
 				break;
@@ -1568,7 +1571,7 @@
 
 	FormPanelDropdown.prototype.setValueField = function (field) {
 		if (!(typeof field === 'string' || typeof field === "function")) {
-			throw new Error('setValueField(): The parameter must be a string.');
+			throw new Error('setValueField(): The parameter must be a string or a function.');
 		}
 		this._valueField = field;
 		return this;
@@ -1651,7 +1654,7 @@
 			return !!this._options.find(this._valueField, value);
 		} else {
 			for (i = 0; i < options[i]; i += 1) {
-				if (value === this._valueField(options[i])) {
+				if (value === this._valueField(this, options[i])) {
 					return true;
 				}
 			}
@@ -1930,5 +1933,284 @@
 			FormPanelField.prototype._createControl.call(this);
 		}
 
+		return this;
+	};
+//FormPanelq
+	var FormPanelFriendlyDropdown = function (settings) {
+		FormPanelDropdown.call(this, settings);
+		this._placeholder = null;
+		this._searchURL = null;
+		this._searchValue = null;
+		this._searchLabel = null;
+		this._searchFunction = null;
+		this._searchDelay = null;
+		FormPanelFriendlyDropdown.prototype.init.call(this, settings);
+	};
+
+	FormPanelFriendlyDropdown.prototype = new FormPanelDropdown();
+	FormPanelFriendlyDropdown.prototype.constructor = FormPanelFriendlyDropdown;
+	FormPanelFriendlyDropdown.prototype.type = "FormPanelFriendlyDropdown";
+
+	FormPanelFriendlyDropdown.prototype.init = function (settings) {
+		var defaults = {
+			placeholder: "",
+			searchURL: null,
+			searchLabel: "text",
+			searchValue: "value",
+			searchDelay: 1500
+		};
+
+		$.extend(true, defaults, settings);
+
+		this.setPlaceholder(defaults.placeholder)
+			.setSearchDelay(defaults.searchDelay)
+			.setSearchValue(defaults.searchValue)
+			.setSearchLabel(defaults.searchLabel)
+			.setSearchURL(defaults.searchURL);
+	};
+
+	FormPanelFriendlyDropdown.prototype.setSearchDelay = function (delay) {
+		if (typeof delay !== 'number') {
+			throw new Error("setSearchDelay(): The parameter must be a number.");
+		}
+
+		this._searchDelay = delay;
+
+		return this;
+	};
+
+	FormPanelFriendlyDropdown.prototype.setSearchValue = function(value) {
+        if (!(typeof value === 'string' || typeof value === 'function' || value === null)) {
+            throw new Error("setSearchValue(): The parameter must be a string or a function or null.");
+        }
+        this._searchValue = value;
+        return this;
+};
+
+	FormPanelFriendlyDropdown.prototype.setSearchLabel = function(label) {
+		if (!(typeof label === 'string' || typeof label === 'function' || label === null)) {
+			throw new Error("setSearchLabel(): The parameter must be a string or a function or null.")
+		}
+		this._searchLabel = label;
+		return this;
+	};
+
+	FormPanelFriendlyDropdown.prototype.setSearchURL = function(url) {
+		var delayToUse, that = this;
+
+		if (!(typeof url === 'string' || url === null)) {
+			throw new Error("setSearchURL(): The parameter must be a string or null.");
+		}
+		if (url !== null && (!this._searchLabel || !this._searchValue)) {
+			throw new Error("setSearchURL(): You can't set the Suggestions URL if the Suggestions Label or "
+			+ "Suggestions Value are set to null.");
+		}
+		this._searchURL = url;
+
+		delayToUse = url ? this._searchDelay : 0;
+
+		this._searchFunction = _.debounce(function(queryObject) {
+			var proxy = new SugarProxy(),
+				termRegExp = /\{TERM\}/g,
+				result = {
+					more: false
+				}, term = jQuery.trim(queryObject.term),
+				finalData = [],
+				getText = function(obj, criteria) {
+					if (typeof criteria === 'function') {
+						return criteria(obj);
+					} else {
+						return obj[criteria];
+					}
+				}, options = that._options.asArray();
+
+			options.forEach(function(item, index, arr) {
+				if (!term || queryObject.matcher(term, item[that._labelField])) {
+					finalData.push({
+						id: item[that._valueField],
+						text: item[that._labelField]
+					});
+				}
+			});
+
+			if (term && that._searchURL) {
+				proxy.url = this._searchURL.replace(termRegExp, queryObject.term);
+
+				proxy.getData(null, {
+					success: function (data) {
+						if (!data.success) {
+							throw new Error("SearchableCombobox's search function: Error.");
+						}
+						data = data.result;
+						data.forEach(function (item) {
+							finalData.push({
+								id: getText(item, that._searchValue),
+								text: getText(item, that._searchLabel)
+							});
+						});
+
+						result.results = finalData;
+						queryObject.callback(result);
+					},
+					error: function () {
+						console.log("failure", arguments);
+					}
+				});
+			} else {
+				result.results = finalData;
+				queryObject.callback(result);
+			}
+		}, delayToUse);
+
+		return this;
+	};
+
+	FormPanelFriendlyDropdown.prototype._showLoadingMessage = function () {
+		var html;
+		if (this._htmlControl[0]) {
+			this._htmlControl[0].select2("disable");
+			html = this._htmlControl[0].data("select2").container[0];
+			$(html).find('.select2-chosen').text("loading...");
+		}
+		return this;
+	};
+
+	FormPanelFriendlyDropdown.prototype._removeLoadingMessage = function () {
+		if (this._htmlControl[0]) {
+			html = this._htmlControl[0].data("select2").container[0];
+			$(html).find('.select2-chosen').text("");
+			if (!this._disabled) {
+				this._htmlControl[0].select2("enable");
+			}
+		}
+		return this;
+	};
+
+	FormPanelFriendlyDropdown.prototype._paintOptions = function () {};
+	FormPanelFriendlyDropdown.prototype._paintOption = function () {};
+	FormPanelFriendlyDropdown.prototype.clearOptions = function () {
+		this._options.clear();
+		if (this._htmlControl[0]) {
+			this._htmlControl[0].select2("val", "", false);
+		}
+		return this;
+	};
+
+	FormPanelFriendlyDropdown.prototype.getSelectedText = function () {
+		var selectedData = $(this._htmlControl[0]).select2("data");
+		if (selectedData !== null) {
+			return selectedData.text;
+		}
+		return "";
+	};
+
+	FormPanelFriendlyDropdown.prototype.getSelectedData = function () {
+		var currentValue = this._value, i, options = this._options.asArray();
+
+		for (i = 0; i < options.length; i += 1) {
+			if ((typeof this._valueField === 'function' ? this._valueField(this, options[i]) :
+				options[i][this._valueField]) === currentValue) {
+				return cloneObject(options[i]);
+			}
+		}
+
+		return null;
+	};
+
+	FormPanelFriendlyDropdown.prototype.setValue = function (value) {
+		if (this._htmlControl[0]) {
+			this._htmlControl[0].select2("val", value, false);
+			this._value = this._htmlControl[0].select2("val");
+		} else {
+			this._value = value;
+		}
+		return this;
+	};
+
+	FormPanelFriendlyDropdown.prototype.setPlaceholder = function (placeholder) {
+		if (typeof placeholder !== 'string') {
+			throw new Error("setPlaceholder(): The parameter must be a string.");
+		}
+		this._placeholder = placeholder;
+		if (this._htmlControl[0]) {
+			this._htmlControl[0].select2("placeholder", placeholder);
+		}
+		return this;
+	};
+
+	FormPanelFriendlyDropdown.prototype._queryFunction = function () {
+		var that = this;
+		return function (queryObject) {
+			var finalData = [], $button, $dropdown, $result;
+			if (queryObject.term) {
+				that._searchFunction(queryObject);
+			} else {
+				if ($(that._htmlControl[0]).select2("dropdown").find('.select2-result-selectable').length == 0) {
+					//TODO: there is a code fragment similar, maybe they should be moved to a new function
+					that._options.asArray().forEach(function(item, index, arr) {
+						finalData.push({
+							id: item[that._valueField],
+							text: item[that._labelField]
+						});
+					});
+				}
+
+				queryObject.callback({
+					more: false,
+					results: finalData
+				});
+			}
+		};
+
+	};
+
+	FormPanelFriendlyDropdown.prototype._initSelection = function () {
+		var that = this;
+		return function () {
+
+		};
+	};
+
+	FormPanelFriendlyDropdown.prototype.enable = function () {
+		if (this._htmlControl[0]) {
+			this._htmlControl[0].select2("enable");
+		}
+		FormPanelItem.prototype.enable.call(this);
+		return this;
+	};
+
+	FormPanelFriendlyDropdown.prototype.disable = function () {
+		if (this._htmlControl[0]) {
+			this._htmlControl[0].select2("disable");
+		}
+		FormPanelItem.prototype.disable.call(this);
+		return this;
+	};
+
+	FormPanelFriendlyDropdown.prototype._getValueFromControl = function () {
+		if (this._htmlControl[0]) {
+			return this._htmlControl[0].select2("val");
+		}
+		return "";
+	};
+
+	FormPanelFriendlyDropdown.prototype._createControl = function () {
+		var input, control;
+		if (!this._htmlControl[0]) {
+			input = this.createHTMLElement('input');
+			input.name = this._name;
+			this._htmlControl[0] = $(input);
+			this._htmlControl[0].select2({
+				placeholder: this._placeholder,
+				query: this._queryFunction(),
+				initSelection: this._initSelection(),
+				width: "100%"
+			});
+			this._setValueToControl(this._value);
+			control = this._htmlControl[0].data("select2").container[0];
+			control.className += ' inherit-width adam form-panel-field-control';
+			this._htmlControlContainer.appendChild(control);
+			this._htmlControlContainer.appendChild(this._htmlControl[0].get(0));
+		}
 		return this;
 	};

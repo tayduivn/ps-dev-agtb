@@ -334,6 +334,11 @@ if(!$current_user->is_admin && !$GLOBALS['current_user']->isAdminForModule('User
             $focus->update_date_modified = true;
         }
 
+        // Since metadata caches contain data specific to roles and users, we need
+        // to nuke the caches when a user changes since it is possible for one
+        // user to change another user
+        MetaDataManager::getManager()->invalidateUserCache($focus);
+
         $GLOBALS['sugar_config']['disable_team_access_check'] = true;
         $focus->save();
         $GLOBALS['sugar_config']['disable_team_access_check'] = false;
