@@ -32,6 +32,7 @@ sugarcrm/vendor/composer/
 sugarcrm/vendor/ruflin/
 sugarcrm/vendor/bin/
 sugarcrm/vendor/phpunit/
+sugarcrm/vendor/google/
 sugarcrm/vendor/sebastian/
 sugarcrm/vendor/symfony/
 sugarcrm/vendor/ocramius/

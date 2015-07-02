@@ -12,86 +12,90 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/connectors/sources/default/source.php');
+require_once 'include/connectors/sources/default/source.php';
 
-class ext_eapm_google extends source {
-	protected $_enable_in_wizard = false;
-	protected $_enable_in_hover = false;
-	protected $_has_testing_enabled = false;
-    protected $_gdClient = null;
+/**
+ * Class ext_eapm_google
+ */
+class ext_eapm_google extends source
+{
+    protected $_enable_in_wizard = false;
+    protected $_enable_in_hover = false;
+    protected $_has_testing_enabled = false;
 
-    private function loadGdClient()
+    const CONTACTS_FEED = 'https://www.google.com/m8/feeds/contacts/default/full';
+    const GDATA_VERSION = '3.0';
+
+    /** {@inheritdoc} */
+    public function getItem($args = array(), $module = null)
     {
-        if($this->_gdClient == null)
-        {
-            $this->_eapm->getClient("contacts");
-            $this->_gdClient = $this->_eapm->gdClient;
-            $maxResults = $GLOBALS['sugar_config']['list_max_entries_per_page'];
-            $this->_gdClient->setMaxResults($maxResults);
-        }
     }
 
-	public function getItem($args=array(), $module=null)
+    /** {@inheritdoc} */
+    public function getList($args = array(), $module = null)
     {
-        if( !isset($args['id']) )
-            throw new Exception("Unable to return google contact entry with missing id.");
-        
-        $this->loadGdClient();
+        /** @var Google_Client $client */
+        $client = $this->_eapm->getClient();
 
-        $entry = FALSE;
-        try
-        {
-            $entry = $this->_gdClient->getContactEntry( $args['id'] );
-        }
-        catch(Zend_Gdata_App_HttpException $e)
-        {
-            $GLOBALS['log']->fatal("Received exception while trying to retrieve google contact item:" .  $e->getResponse());
-        }
-        catch(Exception $e)
-        {
-            $GLOBALS['log']->fatal("Unable to retrieve single item " . var_export($e, TRUE));
+        try {
+            $http_request = $this->create_http_request($args);
+            $request = $client->getAuth()->authenticatedRequest($http_request);
+        } catch (Google_Auth_Exception $e) {
+            $GLOBALS['log']->fatal('Unable to retrieve item list for google contact connector: ' . $e->getMessage());
+            return false;
         }
 
-        return $entry;
+        if ($request->getResponseHttpCode() != 200) {
+            return false;
+        }
 
+        $feed = new Zend_Gdata_Contacts_ListFeed();
+        list($major, $minor) = explode('.', self::GDATA_VERSION);
+        $feed->setMajorProtocolVersion($major);
+        $feed->setMinorProtocolVersion($minor);
+        $xml = $request->getResponseBody();
+
+        try {
+            $feed->transferFromXML($xml);
+        } catch (Zend_Gdata_App_Exception $e) {
+            $GLOBALS['log']->fatal('Unable to retrieve item list for google contact connector: ' . $e->getMessage());
+        }
+
+        $rows = array();
+        foreach ($feed->entries as $entry) {
+            $rows[] = $entry->toArray();
+        }
+
+        return array(
+            'totalResults' => $feed->getTotalResults()->getText(),
+            'records' => $rows,
+        );
     }
-	public function getList($args=array(), $module=null)
+
+    /**
+     * @param array $args
+     * @return Google_Http_Request
+     */
+    private function create_http_request(array $args)
     {
-        $feed = FALSE;
-        $this->loadGdClient();
+        $params = array();
 
-        if( !empty($args['maxResults']) )
-        {
-            $this->_gdClient->setMaxResults($args['maxResults']);
+        if (isset($args['maxResults'])) {
+            $params['max-results'] = $args['maxResults'];
         }
 
-        if( !empty($args['startIndex']) )
-        {
-            $this->_gdClient->setStartIndex($args['startIndex']);
+        if (!empty($args['startIndex'])) {
+            $params['start-index'] = $args['startIndex'];
+        } else {
+            $params['start-index'] = 1;
         }
 
-        $results = array('totalResults' => 0, 'records' => array());
-        try
-        {
-            $feed = $this->_gdClient->getContactListFeed($args);
-            $results['totalResults'] = $feed->totalResults->getText();
-
-            $rows = array();
-            foreach ($feed->entries as $entry)
-            {
-                $rows[] = $entry->toArray();
-            }
-            $results['records'] = $rows;
-        }
-        catch(Zend_Gdata_App_HttpException $e)
-        {
-            $GLOBALS['log']->fatal("Received exception while trying to retrieve google contact list:" .  $e->getResponse());
-        }
-        catch(Exception $e)
-        {
-            $GLOBALS['log']->fatal("Unable to retrieve item list for google contact connector.");
-        }
-
-        return $results;
+        return new Google_Http_Request(
+            self::CONTACTS_FEED . '?' . http_build_query($params),
+            'GET',
+            array(
+                'GData-Version' => self::GDATA_VERSION,
+            )
+        );
     }
 }
