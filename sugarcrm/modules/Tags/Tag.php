@@ -125,7 +125,7 @@ class Tag extends Basic
     public function getRelatedModuleRecords($focus, $ids)
     {
         // No ids means nothing to do
-        if (empty($ids)) {
+        if (empty($ids) || ($focus == null)) {
             return array();
         }
 
