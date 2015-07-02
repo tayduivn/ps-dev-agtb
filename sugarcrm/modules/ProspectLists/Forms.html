@@ -13,6 +13,7 @@
 <!-- $Id: Forms.html 4491 2005-04-20 05:06:33Z bob $ -->
 <!-- BEGIN: main -->
 <form action="index.php" method="post" name="quick_save" id="quick_save" onSubmit="return check_form('quick_save');">
+{sugar_csrf_form_token}
 <input type="hidden" name="module" value="ProspectLists" />
 <input type="hidden" name="action" value="Save" />
 <input type="hidden" name="return_action" value="DetailView" />
