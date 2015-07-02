@@ -1054,10 +1054,10 @@ AdamActivity.prototype.getContextMenu = function () {
 
     if (this.act_task_type === 'USERTASK') {
         configureAction = this.createConfigurateAction();
+        assignUsersAction = this.createAssignUsersAction();
     } else {
         configureAction = this.actionFactory(this.act_script_type);
     }
-    assignUsersAction = this.createAssignUsersAction();
 
     if (elements.length > 1) {
         handle  = function (id) {
@@ -1905,10 +1905,10 @@ AdamActivity.prototype.createAssignUsersAction = function () {
 
     hiddenFn = function () {
         if (combo_method.value === 'static') {
-            combo_users.setReadOnly(false);
+            combo_users.enable();
             combo_teams.setReadOnly(true);
         } else {
-            combo_users.setReadOnly(true);
+            combo_users.disable().setValue("");
             combo_teams.setReadOnly(false);
         }
     };
@@ -1934,17 +1934,18 @@ AdamActivity.prototype.createAssignUsersAction = function () {
         name: 'act_assign_user'
     });
 
-    combo_users = new ComboboxField({
-        jtype: 'combobox',
+    combo_users = new SearchableCombobox({
         label: translate('LBL_PA_FORM_LABEL_ASSIGN_TO_USER'),
         name: 'combo_users',
         submit: false,
         change: hiddenUpdateFn,
-        proxy: new SugarProxy({
-            url: 'pmse_Project/CrmData/users',
-            uid: null,
-            callback: null
-        })
+        disabled: true,
+        searchURL: 'pmse_Project/CrmData/users?filter={TERM}',
+        options: [
+            {'text': translate('LBL_PMSE_FORM_OPTION_CURRENT_USER'), 'value': 'currentuser'},
+            {'text': translate('LBL_PMSE_FORM_OPTION_RECORD_OWNER'), 'value': 'owner'},
+            {'text': translate('LBL_PMSE_FORM_OPTION_SUPERVISOR'), 'value': 'supervisor'}
+        ]
     });
 
     combo_teams = new ComboboxField({
@@ -1989,7 +1990,8 @@ AdamActivity.prototype.createAssignUsersAction = function () {
                         {'text': translate('LBL_PMSE_FORM_OPTION_CURRENT_USER'), 'value': 'currentuser'},
                         {'text': translate('LBL_PMSE_FORM_OPTION_RECORD_OWNER'), 'value': 'owner'},
                         {'text': translate('LBL_PMSE_FORM_OPTION_SUPERVISOR'), 'value': 'supervisor'}
-                    ];
+                    ], usersProxy = new SugarProxy();
+
                     root.canvas.emptyCurrentSelection();
                     combo_teams.proxy.getData(null,{
                         success: function(teams) {
@@ -1997,34 +1999,52 @@ AdamActivity.prototype.createAssignUsersAction = function () {
                             assignTeamField.setValue(data.act_assign_team || teams.result[0].value);
                         }
                     });
-                    combo_users.proxy.getData(null, {
+
+                    usersProxy.url = 'pmse_Project/CrmData/users';
+                    usersProxy.getData(null, {
                         success: function(users) {
-                            aUsers = aUsers.concat(users.result);
-                            combo_users.setOptions(aUsers);
+                            var i, theMatch;
+                            users = users.result || [];
+
+                            for (i = 0; i < users.length; i++) {
+                                if (users[i].value === data.act_assign_user) {
+                                    theMatch = {
+                                        text: users[i].text,
+                                        value: users[i].value
+                                    };
+                                }
+                            }
+
+                            if (!theMatch) {
+                                theMatch = {
+                                    text: data.act_assign_user,
+                                    value: data.act_assign_user
+                                };
+                            }
+                            combo_users.setValue(theMatch);
                             App.alert.dismiss('upload');
                             w.html.style.display = 'inline';
-                            assignUserField.setValue(data.act_assign_user || aUsers[0].value);
                         }
                     });
+
+                    assignUserField.setValue(data.act_assign_user);
+
                     if (data) {
                         combo_method.setValue(data.act_assignment_method);
 
                         if (data.act_assignment_method === 'static') {
                             combo_users.setValue(data.act_assign_user);
-                            combo_users.setReadOnly(false);
-                            combo_teams.setReadOnly(true);
+                            combo_users.enable();
+                            combo_teams.setReadOnly(false);
                         } else {
                             combo_teams.setValue(data.act_assign_team);
-                            combo_users.setReadOnly(true);
-                            combo_teams.setReadOnly(false);
+                            combo_users.disable();
+                            combo_teams.setReadOnly(true);
                         }
                     }
                     f.proxy = null;
-
                 }
             });
-
-
         }
     };
 
@@ -2125,17 +2145,11 @@ AdamActivity.prototype.actionFactory = function (type) {
             actionCSS = 'adam-menu-icon-configure';
             break;
         case 'ASSIGN_USER':
-            combo_users = new ComboboxField({
-                jtype: 'combobox',
+            combo_users = new SearchableCombobox({
                 label: translate('LBL_PA_FORM_LABEL_ASSIGN_TO_USER'),
                 name: 'act_assign_user',
                 submit: true,
-                //change: hiddenUpdateFn,
-                proxy: new SugarProxy({
-                    url: 'pmse_Project/CrmData/users',
-                    uid: null,
-                    callback: null
-                }),
+                searchURL: 'pmse_Project/CrmData/users?filter={TERM}',
                 required: true
             });
             //here add checkbox
@@ -2164,27 +2178,52 @@ AdamActivity.prototype.actionFactory = function (type) {
             actionCSS = 'adam-menu-icon-configure';
             callback = {
                 'loaded': function (data) {
-                    var users, aUsers = [{'text': 'Select...', 'value': ''}];
-                    root.canvas.emptyCurrentSelection();
-                    users = combo_users.proxy.getData(null, {
-                        success: function(users) {
-                            aUsers = aUsers.concat(users.result);
-                            combo_users.setOptions(aUsers);
-                            if (data) {
-                                combo_users.setValue(data.act_assign_user || aUsers[0].value);
-                                nValue = false;
-                                if (data.act_update_record_owner && data.act_update_record_owner == 1) {
-                                    nValue = true;
+                    var users,
+                        nValue = false,
+                        usersProxy = new SugarProxy(),
+                        aUsers = [{'text': 'Select...', 'value': ''}];
+
+                    usersProxy.url = 'pmse_Project/CrmData/users';
+
+                    if (data && data.act_assign_user) {
+                        usersProxy.getData(null, {
+                            success: function (users) {
+                                var theMatch, i;
+
+                                users = users.result || [];
+
+                                for (i = 0; i < users.length; i += 1) {
+                                    if (users[i].value === data.act_assign_user) {
+                                        theMatch = {
+                                            text: users[i].text,
+                                            value: users[i].value
+                                        };
+                                        break;
+                                    }
                                 }
-                                updateRecordOwner.setValue(nValue);
-                                $(updateRecordOwner.html).children('input').prop('checked', nValue);
+
+                                if (!theMatch) {
+                                    theMatch = {
+                                        text: data.act_assign_user,
+                                        value: data.act_assign_user
+                                    };
+                                }
+
+                                combo_users.setValue(theMatch);
+                                App.alert.dismiss('upload');
+                                w.html.style.display = 'inline';
                             }
-                            App.alert.dismiss('upload');
-                            w.html.style.display = 'inline';
-                        }
+                        });
+                    } else {
+                        App.alert.dismiss('upload');
+                        w.html.style.display = 'inline';
+                    }
 
-                    });
-
+                    if (data && data.act_update_record_owner && data.act_update_record_owner == 1) {
+                        nValue = true;
+                    }
+                    updateRecordOwner.setValue(nValue);
+                    $(updateRecordOwner.html).children('input').prop('checked', nValue);
                 }
             };
             windowTitle = translate('LBL_PMSE_FORM_TITLE_ASSIGN_USER') + ': ' + this.getName();
@@ -2485,9 +2524,8 @@ AdamActivity.prototype.actionFactory = function (type) {
             windowTitle = translate('LBL_PMSE_FORM_TITLE_BUSINESS_RULE') + ': ' + this.getName();
             callback = {
                 'loaded': function (data) {
-                    var rules, aRules = [{'text': translate('LBL_PMSE_FORM_OPTION_SELECT'), 'value': '', 'selected': true}];
+                    var aRules = [{'text': translate('LBL_PMSE_FORM_OPTION_SELECT'), 'value': '', 'selected': true}];
                     root.canvas.emptyCurrentSelection();
-                    //rules = combo_business.proxy.getData();
                     combo_business.proxy.getData(null,{
                         success: function(rules) {
                             if (rules && rules.success) {

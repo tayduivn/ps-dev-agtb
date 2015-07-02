@@ -18,7 +18,7 @@ $viewdefs['base']['layout']['subpanel-with-massupdate']  = array (
             'view' => 'massupdate',
         ),
         array (
-            'view' => 'subpanel-list',
+            'view' => 'subpanel-list-with-massupdate',
         ),
         array (
             'view' => 'list-bottom',

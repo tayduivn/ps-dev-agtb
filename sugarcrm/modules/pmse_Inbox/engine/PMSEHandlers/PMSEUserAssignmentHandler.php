@@ -236,7 +236,7 @@ class PMSEUserAssignmentHandler
         } else {
             $newFlowRow->cas_adhoc_parent_id = $flowRow->cas_adhoc_parent_id;
         }
-        
+
         if ($isRoundTripReassign) {
             $newFlowRow->cas_reassign_level--;
         } else {
@@ -383,7 +383,7 @@ class PMSEUserAssignmentHandler
         }
         return $result;
     }
-    
+
     /**
      * Check if the reassignment task is one way
      * @param type $caseData
@@ -485,9 +485,9 @@ class PMSEUserAssignmentHandler
      * @return type
      * @codeCoverageIgnore
      */
-    public function getReassignableUserList($beanFlow, $fullList = false)
+    public function getReassignableUserList($beanFlow, $fullList = false, $filter = null)
     {
-        return $this->getAssignableUserList($beanFlow, $fullList, 'REASSIGN');
+        return $this->getAssignableUserList($beanFlow, $fullList, 'REASSIGN', $filter);
     }
 
     /**
@@ -499,9 +499,9 @@ class PMSEUserAssignmentHandler
      * @return type
      * @codeCoverageIgnore
      */
-    public function getAdhocAssignableUserList($beanFlow, $fullList = false)
+    public function getAdhocAssignableUserList($beanFlow, $fullList = false, $filter = null)
     {
-        return $this->getAssignableUserList($beanFlow, $fullList, 'ADHOC');
+        return $this->getAssignableUserList($beanFlow, $fullList, 'ADHOC', $filter);
     }
 
     /**
@@ -511,7 +511,7 @@ class PMSEUserAssignmentHandler
      * @param string $type
      * @return array
      */
-    public function getAssignableUserList($beanFlow, $fullList = false, $type = 'ADHOC')
+    public function getAssignableUserList($beanFlow, $fullList = false, $type = 'ADHOC', $filter = null)
     {
         $membersList = array();
         $membersIds = array();
@@ -547,7 +547,7 @@ class PMSEUserAssignmentHandler
                 }
             } else {
                 $teamBean = $this->retrieveBean('Teams', $teamId);
-                $membersList = $teamBean->get_team_members(true);
+                $membersList = $teamBean->get_team_members(true, $filter);
                 usort($membersList, function ($a, $b) {
                     return strcmp($a->full_name, $b->full_name);
                 });

@@ -12,7 +12,7 @@
 
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch;
 
-use Sugarcrm\Sugarcrm\Elasticsearch\Query\MultiMatch\MultiMatchQuery;
+use Sugarcrm\Sugarcrm\Elasticsearch\Query\QueryBuilder;
 
 /**
  *
@@ -21,16 +21,6 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Query\MultiMatch\MultiMatchQuery;
  */
 class SearchFields
 {
-    /**
-     * Field separator
-     */
-    const FIELD_SEP = '.';
-
-    /**
-     * Module name prefix separator
-     */
-    const PREFIX_SEP = '__';
-
     /**
      * @var Booster
      */
@@ -66,17 +56,15 @@ class SearchFields
      * @param array $path Field path
      * @param array $defs Field definitions
      * @param string $weightId Identifier to apply weighted boost
+     * @return string
      */
     public function addSearchField($module, array $path, array $defs, $weightId)
     {
-        if (MultiMatchQuery::isFieldAccessible($module, $path) === false) {
-            return;
-        }
-
-        $searchField = implode(self::FIELD_SEP, $path);
+        $searchField = implode(QueryBuilder::FIELD_SEP, $path);
         if ($this->booster) {
             $searchField = $this->booster->getBoostedField($searchField, $defs, $weightId);
         }
         $this->searchFields[] = $searchField;
+        return $searchField;
     }
 }

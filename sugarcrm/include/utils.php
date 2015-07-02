@@ -166,6 +166,7 @@ function make_sugar_config(&$sugar_config)
     'import_max_execution_time' => empty($import_max_execution_time) ? 3600 : $import_max_execution_time,
     'lock_homepage' => false,
     'lock_subpanels' => false,
+    'collapse_subpanels' => false,
     'max_dashlets_homepage' => 15,
     'dashlet_display_row_options' => array('1','3','5','10'),
     'default_max_tabs' => empty($max_tabs) ? '7' : $max_tabs,
@@ -378,6 +379,7 @@ function get_sugar_config_defaults()
     'default_decimal_seperator' => '.',
     'lock_homepage' => false,
     'lock_subpanels' => false,
+    'collapse_subpanels' => false,
     'max_dashlets_homepage' => '15',
     'default_max_tabs' => '7',
     'dashlet_display_row_options' => array('1','3','5','10'),
@@ -3136,7 +3138,7 @@ function check_php_version($sys_php_version = '')
     // versions below $min_considered_php_version considered invalid by default,
     // versions equal to or above this ver will be considered depending
     // on the rules that follow
-    $min_considered_php_version = '5.3.0';
+    $min_considered_php_version = '5.3.25';
     //always use .unsupported to make sure that the dev/beta/rc releases are excluded as well
 
     $version_threshold  = '5.6.unsupported';

@@ -25,17 +25,15 @@ $dictionary['SchedulersJob'] = array(
             'required' => true,
             'reportable' => false,
         ),
-        'name' =>
-            array(
-                'name' => 'name',
-                'vname' => 'LBL_NAME',
-                'type' => 'name',
-                'link' => true, // bug 39288
-                'dbType' => 'varchar',
-                'len' => 255,
-                'required' => true,
-            ),
-        'deleted' => array(
+       'name' => array(
+            'name' => 'name',
+            'vname' => 'LBL_NAME',
+            'type' => 'name',
+            'dbType' => 'varchar',
+            'len' => 255,
+            'required' => true,
+        ),
+        'deleted' => array (
             'name' => 'deleted',
             'vname' => 'LBL_DELETED',
             'type' => 'bool',

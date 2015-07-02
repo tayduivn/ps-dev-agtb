@@ -46,7 +46,6 @@ class SugarUpgradeRevenueLineItemSyncToForecastWorksheet extends UpgradeScript
             'assigned_user_id',
             'created_by',
             'date_entered',
-            'deleted',
             'team_id',
             'team_set_id',
             'opportunity_id',
@@ -128,5 +127,13 @@ class SugarUpgradeRevenueLineItemSyncToForecastWorksheet extends UpgradeScript
         $r = $this->db->query($sql);
 
         $this->log('SQL Ran, Updated ' . $this->db->getAffectedRowCount($r) . ' Rows');
+
+        $sql_delete = "update forecast_worksheets SET deleted = 1 WHERE exists
+                (SELECT * from revenue_line_items r WHERE r.deleted = 1 and
+                    r.id = forecast_worksheets.parent_id and forecast_worksheets.parent_type = 'RevenueLineItems')";
+        $this->db->query($sql_delete);
+
+
+
     }
 }

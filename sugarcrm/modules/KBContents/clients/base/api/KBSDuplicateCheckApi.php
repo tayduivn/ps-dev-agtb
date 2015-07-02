@@ -12,6 +12,7 @@
 
 use \Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
 use \Sugarcrm\Sugarcrm\Elasticsearch\Query\QueryBuilder;
+use \Sugarcrm\Sugarcrm\Elasticsearch\Query\KBQuery;
 
 /**
  * Class KBSDuplicateCheckApi
@@ -66,44 +67,15 @@ class KBSDuplicateCheckApi extends SugarListApi
             ->setLimit($options['limit']);
         $ftsFields = ApiHelper::getHelper($api, $bean)->getElasticSearchFields(array('name', 'kbdocument_body'));
 
-        $mltName = new \Elastica\Query\MoreLikeThis();
-        $mltName->setFields($ftsFields['name']);
-        $mltName->setLikeText($bean->name);
-        $mltName->setMinTermFrequency(1);
-        $mltName->setMinDocFrequency(1);
+        //set the query using more_like_this query
+        $query = new KBQuery();
+        $query->setBean($bean);
+        $query->setFields($ftsFields);
+        $builder->setQuery($query);
 
-        $mltBody = new \Elastica\Query\MoreLikeThis();
-        $mltBody->setFields($ftsFields['kbdocument_body']);
-        $mltBody->setLikeText($bean->kbdocument_body);
-        $mltBody->setMinTermFrequency(1);
-        $mltBody->setMinDocFrequency(1);
-
-        $boolQuery = new \Elastica\Query\Bool();
-        $boolQuery->addShould($mltName);
-        $boolQuery->addShould($mltBody);
-
-        $mainFilter = new \Elastica\Filter\Bool();
-
-        $currentIdFilter = new \Elastica\Filter\Term();
-        $currentIdFilter->setTerm('_id', $bean->id);
-        $mainFilter->addMustNot($currentIdFilter);
-
-        $activeRevFilter = new \Elastica\Filter\Term();
-        $activeRevFilter->setTerm('active_rev', 1);
-        $mainFilter->addMust($activeRevFilter);
-
-        $langFilter = new \Elastica\Filter\Term();
-        $langFilter->setTerm('language', $bean->language);
-        $mainFilter->addMust($langFilter);
-
-        $statusFilterOr = new \Elastica\Filter\BoolOr();
-        foreach ($bean->getPublishedStatuses() as $status) {
-            $statusFilterOr->addFilter(new \Elastica\Filter\Term(array('status' => $status)));
-        }
-        $mainFilter->addMust($statusFilterOr);
-
-        $builder->setQuery($boolQuery);
-        $builder->addFilter($mainFilter);
+        //set the filter
+        $filter = $query->createFilter(true);
+        $builder->addFilter($filter);
 
         $resultSet = $builder->executeSearch();
         $returnedRecords = array();

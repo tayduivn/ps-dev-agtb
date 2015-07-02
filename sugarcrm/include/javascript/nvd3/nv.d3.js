@@ -2969,12 +2969,16 @@ nv.models.scatter = function() {
         );
 
         function buildEventObject(e, d, i, j) {
+          var pos = [
+            e.offsetX == undefined ? e.layerX : e.offsetX,
+            e.offsetY == undefined ? e.layerY : e.offsetY
+          ];
           return {
               series: data[j],
               point: data[j].values[i],
               pointIndex: i,
               seriesIndex: j,
-              pos: [e.offsetX, e.offsetY],
+              pos: pos,
               id: id,
               e: e
             };
@@ -4368,12 +4372,16 @@ nv.models.funnel = function() {
           });
 
       function buildEventObject(e, d, i) {
+        var pos = [
+          e.offsetX == undefined ? e.layerX : e.offsetX,
+          e.offsetY == undefined ? e.layerY : e.offsetY
+        ];
         return {
             value: getV(d, i),
             point: d,
             id: id,
             series: data[d.series],
-            pos: [e.offsetX, e.offsetY],
+            pos: pos,
             pointIndex: i,
             seriesIndex: d.series,
             e: e
@@ -8250,13 +8258,17 @@ nv.models.multiBar = function() {
         .attr(dimY, 0); //x.rangeBand() / (stacked ? 1 : data.length)
 
       function buildEventObject(e, d, i, j) {
+        var pos = [
+          e.offsetX == undefined ? e.layerX : e.offsetX,
+          e.offsetY == undefined ? e.layerY : e.offsetY
+        ];
         return {
             value: getY(d, i),
             point: d,
             series: data[j],
             pointIndex: i,
             seriesIndex: j,
-            pos: [e.offsetX, e.offsetY],
+            pos: pos,
             id: id,
             e: e
           };
@@ -11058,12 +11070,16 @@ nv.models.pie = function() {
       //------------------------------------------------------------
 
       function buildEventObject(e, d, i) {
+        var pos = [
+          e.offsetX == undefined ? e.layerX : e.offsetX,
+          e.offsetY == undefined ? e.layerY : e.offsetY
+        ];
         return {
             label: getX(d.data),
             value: getY(d.data),
             point: d.data,
             pointIndex: i,
-            pos: [e.offsetX, e.offsetY],
+            pos: pos,
             id: id,
             e: e
           };
@@ -14329,7 +14345,7 @@ nv.models.tree = function() {
   //------------------------------------------------------------
 
   // specific to org chart
-  var r = 5.5,
+  var r = 6,
     padding = {'top': 10, 'right': 10, 'bottom': 10, 'left': 10}, // this is the distance from the edges of the svg to the chart,
     duration = 300,
     zoomExtents = {'min': 0.25, 'max': 2},
@@ -14337,6 +14353,8 @@ nv.models.tree = function() {
     nodeImgPath = '../img/',
     nodeRenderer = function(d) { return '<div class="nv-tree-node"></div>'; },
     zoomCallback = function(d) { return; },
+    nodeCallback = function(d) { return; },
+    nodeClick = function(d) { return; },
     horizontal = false;
 
   var id = Math.floor(Math.random() * 10000), //Create semi-unique ID in case user doesn't select one,
@@ -14394,6 +14412,7 @@ nv.models.tree = function() {
             'width': parseInt(svg.style('width'), 10) - padding.left - padding.right,
             'height': parseInt(svg.style('height'), 10) - padding.top - padding.bottom
           };
+      var container = d3.select(svg.node().parentNode);
 
       var wrap = svg.selectAll('.nv-wrap').data([1]);
       var wrapEnter = wrap.enter().append('g')
@@ -14402,7 +14421,8 @@ nv.models.tree = function() {
       wrap.call(zoom);
 
       wrapEnter.append('defs');
-      var defsEnter = wrap.select('defs');
+      var defs = wrap.select('defs');
+      var nodeShadow = nv.utils.dropShadow('node_back_' + id, defs, {blur: 2});
 
       wrapEnter.append('svg:rect')
             .attr('class', 'nv-chartBackground')
@@ -14513,6 +14533,7 @@ nv.models.tree = function() {
       };
 
       chart.zoomLevel = function(level) {
+
         var scale = Math.min(Math.max(level, zoomExtents.min), zoomExtents.max),
 
             prevScale = zoom.scale(),
@@ -14614,16 +14635,40 @@ nv.models.tree = function() {
                 }
               });
 
+        var nodeOffsetX = (horizontal ? r - nodeSize.width : nodeSize.width / -2) + 'px',
+            nodeOffsetY = (horizontal ? (r - nodeSize.height) / 2 : r * 2 - nodeSize.height) + 'px';
+
+        nodeEnter.each(function(d) {
+          if (defs.select('#myshape-' + getId(d)).empty()) {
+            var nodeObject = defs.append('svg').attr('class', 'nv-foreign-object')
+                  .attr('id', 'myshape-' + getId(d))
+                  .attr('version', '1.1')
+                  .attr('xmlns', 'http://www.w3.org/2000/svg')
+                  .attr('xmlns:xmlns:xlink', 'http://www.w3.org/1999/xlink')
+                  .attr('x', nodeOffsetX)
+                  .attr('y', nodeOffsetY)
+                  .attr('width', nodeSize.width + 'px')
+                  .attr('height', nodeSize.height + 'px')
+                  .attr('viewBox', '0 0 ' + nodeSize.width + ' ' + nodeSize.height)
+                  .attr('xml:space', 'preserve');
+
+            var nodeContent = nodeObject.append('g').attr('class', 'nv-tree-node-content')
+                  .attr('transform', 'translate(' + r + ',' + r + ')');
+
+            nodeRenderer(nodeContent, d, nodeSize.width - r * 2, nodeSize.height - r * 3);
+
+            nodeContent.on('click', nodeClick);
+
+            nodeCallback(nodeObject);
+          }
+        });
+
         // node content
-        nodeEnter.append('foreignObject').attr('class', 'nv-foreign-object')
-            .attr('width', 1)
-            .attr('height', 1)
-            .attr('x', -1)
-            .attr('y', -1)
-            .attr('externalResourcesRequired', true)
-          .append('xhtml:body')
-            .style('font', '14px "Helvetica Neue"')
-            .html(nodeRenderer);
+        nodeEnter.append('use')
+            .attr('xlink:href', function(d) {
+              return '#myshape-' + getId(d);
+            })
+            .attr('filter', nodeShadow);
 
         // node circle
         var xcCircle = nodeEnter.append('svg:g').attr('class', 'nv-expcoll')
@@ -14656,11 +14701,12 @@ nv.models.tree = function() {
               .style('stroke', function(d) {
                 return (d._children && d._children.length) ? '#fff' : '#bbb';
               });
-            nodeUpdate.selectAll('.nv-foreign-object')
-              .attr('width', nodeSize.width)
-              .attr('height', nodeSize.height)
-              .attr('x', (horizontal ? -nodeSize.width + r : -nodeSize.width / 2))
-              .attr('y', (horizontal ? -nodeSize.height / 2 + r : -nodeSize.height + r * 2));
+
+            nodeUpdate.each(function(d) {
+              container.select('#myshape-' + getId(d))
+                .attr('x', nodeOffsetX)
+                .attr('y', nodeOffsetY);
+            });
 
         // Transition exiting nodes to the parent's new position.
         var nodeExit = node.exit().transition()
@@ -14853,6 +14899,18 @@ nv.models.tree = function() {
   chart.nodeRenderer = function(_) {
     if (!arguments.length) return nodeRenderer;
     nodeRenderer = _;
+    return chart;
+  };
+
+  chart.nodeCallback = function(_) {
+    if (!arguments.length) return nodeCallback;
+    nodeCallback = _;
+    return chart;
+  };
+
+  chart.nodeClick = function(_) {
+    if (!arguments.length) return nodeClick;
+    nodeClick = _;
     return chart;
   };
 

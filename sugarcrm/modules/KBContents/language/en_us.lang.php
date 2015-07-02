@@ -94,4 +94,7 @@ $mod_strings = array (
     'LBL_KB_STATUS_BACK_TO_DRAFT' => 'Document status has been changed back to draft.',
     'LBL_OPERATOR_CONTAINING_THESE_WORDS' => 'containing these words',
     'LBL_OPERATOR_EXCLUDING_THESE_WORDS' => 'excluding these words',
+    'ERROR_EXP_DATE_LOW' => 'The expiration date can not be before date of publishing.',
+    'ERROR_ACTIVE_DATE_APPROVE_REQUIRED' => 'The Approved status requires publishing date.',
+    'ERROR_ACTIVE_DATE_LOW' => 'The publish date should be more than current date.',
 );

@@ -298,6 +298,7 @@ class CalendarUtils
 
 	/**
 	 * Save repeat activities
+     * Invites are sent once for a Recurring Series (only when the Parent was saved)
 	 * @param SugarBean $bean
 	 * @param array $timeArray array of datetimes
 	 * @return array
@@ -370,6 +371,7 @@ class CalendarUtils
 			$clone->recurring_source = "Sugar";
 			$clone->repeat_parent_id = $id;
 			$clone->update_vcal = false;
+            $clone->send_invites = false;
 			$clone->save(false);
 
 			if($clone->id){

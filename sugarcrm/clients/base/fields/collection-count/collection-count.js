@@ -36,7 +36,7 @@
         this.collection.fetchTotal({
             success: _.bind(function() {
                 if (!this.disposed) {
-                    this.render();
+                    this.updateCount();
                 }
             }, this),
             complete: function() {
@@ -46,11 +46,18 @@
     },
 
     /**
-     * @inheritDoc
+     * Updates {@link #countLabel the count label} and renders this field.
+     *
+     * @param {number} [options] Optional hash of values to use for the `length`
+     *   and `hasMore` properties. Use this if you want to customize what this
+     *   field should display.
+     * @param {number} [options.length] The length of values.
+     * @param {boolean} [options.hasMore] `true` if there are more values to be
+     *   fetched or paginated, `false` if we've fetched everything.
      */
-    _render: function() {
-        this.countLabel = this._getCountLabel();
-        this._super('_render');
+    updateCount: function(options) {
+        this._setCountLabel(options);
+        this.render();
     },
 
     /**
@@ -76,24 +83,41 @@
      *     (20 of <a data-action="count">21+</a>)
      *
      * @protected
+     * @param {number} [options] Optional hash of values to use for the `length`
+     *   and `hasMore` properties. Use this if you want to customize what this
+     *   field should display.
+     * @param {number} [options.length] The length of values. Defaults to
+     *   `this.collection.length`.
+     * @param {boolean} [options.hasMore] `true` if there are more values to be
+     *   fetched or paginated, `false` if we've fetched everything. Defaults to
+     *   `false`.
      * @return {string|Handlebars.SafeString} The label to use for the list view
      *   count.
      */
-    _getCountLabel: function() {
-        if (!this.collection.length) {
-            return '';
+    _setCountLabel: function(options) {
+        // Default properties.
+        options = options || {};
+        var length = this.collection.length;
+        var fullyFetched = this.collection.next_offset <= 0;
+
+        // Override default properties with passed-in values.
+        length = !_.isUndefined(options.length) ? options.length : length;
+        fullyFetched = !_.isUndefined(options.hasMore) ? !options.hasMore : fullyFetched;
+
+        if (!length) {
+            return this.countLabel = '';
         }
 
-        var tplKey = 'TPL_LIST_HEADER_COUNT_TOTAL',
-            context = {num: this.collection.length};
+        var tplKey = 'TPL_LIST_HEADER_COUNT_TOTAL';
+        var context = {num: length};
 
-        if (this.collection.next_offset <= 0) {
+        if (fullyFetched) {
             tplKey = 'TPL_LIST_HEADER_COUNT';
         } else if (!_.isNull(this.collection.total)) {
             context.total = this.collection.total;
         } else {
             var tooltipLabel = app.lang.get('TPL_LIST_HEADER_COUNT_TOOLTIP', this.module);
-            // FIXME: When BR-1981 is ready, we will no longer have the need for
+            // FIXME: When SC-3681 is ready, we will no longer have the need for
             // this link, since the total will be displayed by default.
             context.total = new Handlebars.SafeString(
                 '<a data-action="count" rel="tooltip" data-placement="right" title="' + tooltipLabel +'">' +
@@ -103,8 +127,8 @@
             );
         }
 
-        // FIXME: When BR-1981 is ready, remove the SafeString call.
-        return new Handlebars.SafeString(app.lang.get(tplKey, this.module, context));
+        // FIXME: When SC-3681 is ready, remove the SafeString call.
+        return this.countLabel = new Handlebars.SafeString(app.lang.get(tplKey, this.module, context));
     },
 
     /**
@@ -123,12 +147,17 @@
 
         this.listenTo(this.collection, 'reset', function() {
             if (!this.disposed) {
-                this.render();
+                this.updateCount();
             }
         });
         this.listenTo(this.context, 'paginate', function() {
             if (!this.disposed) {
                 this.fetchCount();
+            }
+        });
+        this.listenTo(this.context, 'refresh:count', function(hasAmount, properties) {
+            if (!this.disposed) {
+                this.updateCount(properties);
             }
         });
     }

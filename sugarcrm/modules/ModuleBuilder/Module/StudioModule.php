@@ -71,7 +71,7 @@ class StudioModule
      * 
      * @param string $module The name of the module to base this object on
      */
-    public function __construct($module)
+    public function __construct($module, $seed = null)
     {
         $moduleList = $GLOBALS['app_list_strings']['moduleList'];
         if (empty($moduleList) && !is_array($moduleList)) {
@@ -81,7 +81,11 @@ class StudioModule
         $moduleNames = array_change_key_case($moduleList);
         $this->name = isset($moduleNames[strtolower($module)]) ? $moduleNames[strtolower($module)] : strtolower($module);
         $this->module = $module;
-        $this->seed = BeanFactory::getBean($this->module);
+        if (!$seed) {
+            $this->seed = BeanFactory::getBean($this->module);
+        } else {
+            $this->seed = $seed;
+        }
         if ($this->seed) {
             $this->fields = $this->seed->field_defs;
         }
@@ -189,7 +193,12 @@ class StudioModule
         }
 
         // If a custom module, then its type is determined by the parent SugarObject that it extends
-        $seed = BeanFactory::getBean($this->module);
+        if (!$this->seed)
+        {
+            $seed = BeanFactory::getBean($this->module);
+        } else {
+            $seed = $this->seed;
+        }
         if (empty($seed)) {
             //If there is no bean at all for this module, use the basic template for base files
             return "basic";
@@ -668,29 +677,45 @@ class StudioModule
         //END SUGARCRM flav=ent ONLY
 
         $GLOBALS['log']->debug(print_r($sources, true));
+
+        require_once 'modules/ModuleBuilder/MB/MBHelper.php';
+        $roles = MBHelper::getRoles();
         foreach ($sources as $name => $defs) {
-            // If this module type doesn't support a given metadata type, we will
-            // get an exception from getParser()
-            try {
-                $parser = ParserFactory::getParser($defs['type'], $this->module);
-                if ($parser && method_exists($parser, 'removeField') && $parser->removeField($fieldName)) {
-                    // don't populate from $_REQUEST, just save as is...
-                    $parser->handleSave(false);
-                }
-            } catch (Exception $e) {}
+            $this->removeFieldFromLayout($this->module, $defs['type'], null, $fieldName);
+            foreach ($roles as $role) {
+                $this->removeFieldFromLayout($this->module, $defs['type'], null, $fieldName, array(
+                    'role' => $role->id,
+                ));
+            }
         }
 
         //Remove the fields in subpanel
         $data = $this->getParentModulesOfSubpanel($this->module);
         foreach ($data as $parentModule) {
-            // If this module type doesn't support a given metadata type, we will
-            // get an exception from getParser()
-            try {
-                $parser = ParserFactory::getParser(MB_LISTVIEW, $parentModule, null, $this->module);
-                if ($parser->removeField($fieldName)) {
-                    $parser->handleSave(false);
-                }
-            } catch (Exception $e) {}
+            $this->removeFieldFromLayout($parentModule, MB_LISTVIEW, $this->module, $fieldName);
+        }
+    }
+
+    /**
+     * Removes a field from layout
+     *
+     * @param string $module Module name
+     * @param string $layout Layout type
+     * @param string $subpanelName Subpanel name
+     * @param string $fieldName Field name
+     * @param array $params Layout parameters
+     */
+    protected function removeFieldFromLayout($module, $layout, $subpanelName, $fieldName, array $params = array())
+    {
+        // If this module type doesn't support a given metadata type, we will
+        // get an exception from getParser()
+        try {
+            $parser = ParserFactory::getParser($layout, $module, null, $subpanelName, null, $params);
+            if ($parser && method_exists($parser, 'removeField') && $parser->removeField($fieldName)) {
+                // don't populate from $_REQUEST, just save as is...
+                $parser->handleSave(false);
+            }
+        } catch (Exception $e) {
         }
     }
 

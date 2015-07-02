@@ -912,6 +912,10 @@ a.adam-tooltip-error-off {
   box-sizing: border-box;
 }
 
+.adam.form-panel-field {
+  margin-bottom: 0.5em;
+}
+
 .adam.form-panel-button {
   text-align: center;
 }
@@ -925,7 +929,7 @@ a.adam-tooltip-error-off {
   font-size: 12px;
   line-height: 18px;
   height: 24px;
-  margin-bottom: 0.75em;
+  margin-bottom: 0;
 }
 .adam.form-panel-field-control .formpanel-radio {
   margin-right: 5px;

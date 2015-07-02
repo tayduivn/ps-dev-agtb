@@ -46,8 +46,7 @@ DropdownSelector.prototype.init = function (options) {
         .setValues(defaults.values)
         .setValue(defaults.value)
         .setIsOpen(defaults.open)
-        .setAppendTo(defaults.appendTo)
-        ;
+        .setAppendTo(defaults.appendTo);
 };
 
 DropdownSelector.prototype.setOwner = function (value) {
@@ -175,7 +174,7 @@ DropdownSelector.prototype.createHTML = function () {
 };
 
 DropdownSelector.prototype.createElements = function () {
-    var key;
+    var key, text;
 
     this.listHtml.clearItems();
     this.listHtml.addItem(new CloseListItem({
@@ -190,9 +189,10 @@ DropdownSelector.prototype.createElements = function () {
         }
     } else {
         for (key in this.values) {
+            text = this.values[key];
             this.listHtml.addDataItem({
                 value: key,
-                text: this.values[key]
+                text: text.toString ? text.toString() : text
             });
         }
     }

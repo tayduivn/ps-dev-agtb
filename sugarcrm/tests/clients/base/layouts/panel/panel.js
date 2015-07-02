@@ -9,99 +9,100 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-describe("Base.Layout.Panel", function () {
+describe('Base.Layout.Panel', function() {
+    var app, layout;
+    var module = 'Cases';
 
-    var app, layout, togglePanelStub;
-
-    beforeEach(function () {
+    beforeEach(function() {
         app = SugarTest.app;
-        layout = SugarTest.createLayout('base', "Cases", "panel", null, null);
-        togglePanelStub = sinon.stub(layout, 'togglePanel');
+        layout = SugarTest.createLayout('base', module, 'panel', null, null);
     });
 
-    afterEach(function () {
+    afterEach(function() {
+        sinon.collection.restore();
         app.cache.cutAll();
         app.view.reset();
         Handlebars.templates = {};
-        togglePanelStub.restore();
         layout.dispose();
         layout.context = null;
         layout = null;
     });
 
-    describe("Toggle Show/Hide", function() {
-        it("should retrieve last state when collection reset", function() {
-            var lastStateGetStub = sinon.stub(app.user.lastState, 'get');
-            layout.collection.reset([]);
-            expect(lastStateGetStub).toHaveBeenCalled();
-            lastStateGetStub.restore();
-        });
-        it("should toggle panel when collection reset", function() {
-            layout.collection.reset([]);
-            expect(togglePanelStub).toHaveBeenCalled();
-            expect(togglePanelStub.lastCall.args[0]).toBe(false);
-            expect(togglePanelStub.lastCall.args[1]).toBe(false);
+    describe('initialize', function() {
+        using('different configurations', [
+            {
+                collapsedSubpanels: true,
+                lastState: 'show',
+                expected: true
+            },
+            {
+                collapsedSubpanels: true,
+                lastState: 'hide',
+                expected: true
+            },
+            {
+                collapsedSubpanels: false,
+                lastState: 'show',
+                expected: false
+            },
+            {
+                collapsedSubpanels: false,
+                lastState: 'hide',
+                expected: true
+            },
+            {
+                collapsedSubpanels: undefined,
+                lastState: undefined,
+                expected: true
+            }
+        ], function(options) {
+            it('should set the collapsed state on the context', function() {
+                sinon.collection.stub(app.user.lastState, 'get').returns(options.lastState);
+                app.config.collapseSubpanels = options.collapsedSubpanels;
 
-            layout.collection.reset([{id: 'test'}]);
-            expect(togglePanelStub).toHaveBeenCalled();
-            expect(togglePanelStub.lastCall.args[0]).toBe(true);
-            expect(togglePanelStub.lastCall.args[1]).toBe(false);
-        });
-        it("should toggle panel depending on last state", function() {
-            var state = 'hide';
-            var lastStateGetStub = sinon.stub(app.user.lastState, 'get', function() {
-                return state;
+                var testLayout = SugarTest.createLayout('base', module, 'panel', {});
+                expect(testLayout.context.get('collapsed')).toEqual(options.expected);
+
+                testLayout.dispose();
             });
-            layout.collection.reset([{id: 'test'}]);
-            expect(lastStateGetStub).toHaveBeenCalled();
-            expect(togglePanelStub).toHaveBeenCalled();
-            expect(togglePanelStub.lastCall.args[0]).toBe(false);
-            expect(togglePanelStub.lastCall.args[1]).toBe(false);
-
-            state = 'show';
-
-            layout.collection.reset([]);
-            expect(lastStateGetStub).toHaveBeenCalled();
-            expect(togglePanelStub).toHaveBeenCalled();
-            expect(togglePanelStub.lastCall.args[0]).toBe(true);
-            expect(togglePanelStub.lastCall.args[1]).toBe(false);
-
-            lastStateGetStub.restore();
-        });
-        it("should set last state when toggling panel", function() {
-            togglePanelStub.restore();
-            var lastStateSetStub = sinon.stub(app.user.lastState, 'set');
-
-            layout.togglePanel(false, false);
-            expect(lastStateSetStub).not.toHaveBeenCalled();
-
-            layout.togglePanel(true, false);
-            expect(lastStateSetStub).not.toHaveBeenCalled();
-
-            layout.togglePanel(true);
-            expect(lastStateSetStub).toHaveBeenCalled();
-            expect(lastStateSetStub.lastCall.args[1]).toBe('show');
-
-            layout.togglePanel(false);
-            expect(lastStateSetStub).toHaveBeenCalled();
-            expect(lastStateSetStub.lastCall.args[1]).toBe('hide');
-
-            lastStateSetStub.restore();
         });
     });
 
-    describe('_hideComponent', function() {
-        it('should always call show on a create subpanel', function() {
-            var component = {
-                    show: function() {},
-                    hide: function() {}
-                },
-                showSpy = sinon.spy(component, 'show');
-            layout.context.set('isCreateSubpanel', true);
+    describe('toggle', function() {
+        beforeEach(function() {
+            sinon.collection.stub(layout.context, 'loadData');
+            sinon.collection.stub(app.user.lastState, 'set');
+            sinon.collection.spy(layout.context, 'set');
+        });
 
-            layout._hideComponent(component, false);
-            expect(showSpy).toHaveBeenCalled();
-            showSpy.restore();
+        using('different values', [
+            {
+                isCreate: true,
+                show: true,
+                setCalled: false
+            },
+            {
+                isCreate: true,
+                show: false,
+                setCalled: false
+            },
+            {
+                isCreate: false,
+                show: true,
+                setCalled: true
+            },
+            {
+                isCreate: false,
+                show: false,
+                setCalled: true
+            }
+        ], function(options) {
+            it('should never toggle a create subpanel', function() {
+                layout.context.set('isCreateSubpanel', options.isCreate);
+                layout.toggle(options.show);
+
+                expect(layout.context.set.calledWith('collapsed', !options.show)).toEqual(options.setCalled);
+            });
         });
     });
 });

@@ -78,5 +78,21 @@
                 }
             }, this);
         }
+    },
+
+    /**
+     * @inheritDoc
+     */
+    show: function() {
+        this.context.set('hidden', false);
+        this._super('show');
+    },
+
+    /**
+     * @inheritDoc
+     */
+    hide: function() {
+        this.context.set('hidden', true);
+        this._super('hide');
     }
 })

@@ -512,6 +512,7 @@ class ModuleBuilderController extends SugarController
             $module->save();
         }
         $this->view = 'modulefields';
+        LanguageManager::invalidateJsLanguageCache();
     }
 
     public function action_saveSugarField()

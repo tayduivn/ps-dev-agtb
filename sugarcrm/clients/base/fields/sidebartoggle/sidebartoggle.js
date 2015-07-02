@@ -46,6 +46,23 @@
     _state: 'open',
 
     /**
+    * @inheritdoc
+    */
+    _render: function() {
+        this._super('_render');
+
+        /**
+        * Stores tooltips placement value according to the direction of
+        * language being used.
+        *
+        * @property {string}
+        */
+        this.dataPlacement = app.lang.direction === 'rtl' ? 'right' : 'left';
+
+        return this;
+    },
+
+    /**
      * @inheritDoc
      */
     initialize: function(options) {

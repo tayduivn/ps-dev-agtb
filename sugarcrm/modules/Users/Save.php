@@ -334,6 +334,11 @@ if(!$current_user->is_admin && !$GLOBALS['current_user']->isAdminForModule('User
             $focus->update_date_modified = true;
         }
 
+        // Since metadata caches contain data specific to roles and users, we need
+        // to nuke the caches when a user changes since it is possible for one
+        // user to change another user
+        MetaDataManager::getManager()->invalidateUserCache($focus);
+
         $GLOBALS['sugar_config']['disable_team_access_check'] = true;
         $focus->save();
         $GLOBALS['sugar_config']['disable_team_access_check'] = false;
@@ -447,12 +452,12 @@ $GLOBALS['log']->debug("Saved record with id of ".$return_id);
 $redirect = "index.php?action={$return_action}&module={$return_module}&record={$return_id}";
 $redirect .= isset($_REQUEST['type']) ? "&type={$_REQUEST['type']}" : ''; // cn: bug 6897 - detect redirect to Email compose
 $redirect .= isset($_REQUEST['return_id']) ? "&return_id={$_REQUEST['return_id']}" : '';
-$redirect .= ($new_pwd!='') ? "&pwd_set=".$new_pwd : '';
 // Set the refresh metadata flag for changes that require it. This includes when
 // metadata needs to be refreshed because of a user pref change, but only if its
 // for the current user changing their own profile
 $sameUser = !empty($focus->id) && $focus->id == $GLOBALS['current_user']->id;
 $redirect .= $sameUser && $refreshMetadata ? '&refreshMetadata=1' : '';
+$_SESSION['new_pwd'] = $new_pwd;
 if (!headers_sent()) {
     header("Location: {$redirect}");
 }

@@ -588,8 +588,8 @@
                             this._jstreeShowContextmenu(event, data);
                             break;
                         case 'jstree-addnode':
-                            if (this.jsTreeCallbacks.onAdd &&
-                                !this.jsTreeCallbacks.onAdd.apply(this, [event, data])) {
+                            if ($(data.args[0]).hasClass('disabled') || (this.jsTreeCallbacks.onAdd &&
+                                !this.jsTreeCallbacks.onAdd.apply(this, [event, data]))) {
                                 return false;
                             }
                             this._onAdd(event, data);
@@ -627,6 +627,7 @@
                         success: function(item) {
                             newNode.attr('data-id', item.id);
                             newNode.attr('data-level', item.level);
+                            self._toggleAddNodeButton(newNode, false);
                             self._toggleVisibility(false);
                         },
                         error: function() {
@@ -686,7 +687,8 @@
              * @private
              */
             _onAdd: function(event, data) {
-                this.jsTree.jstree('create', data.inst._get_node());
+                var createdNode = this.jsTree.jstree('create', data.inst._get_node());
+                this._toggleAddNodeButton(createdNode, true);
             },
 
             /**
@@ -921,6 +923,21 @@
                             }
                         }
                     });
+            },
+
+            /**
+             * Disable/enable 'Add Node' button for a given node.
+             * @param {Object} node JSTree node object.
+             * @param {Boolean} disable
+             * @private
+             */
+            _toggleAddNodeButton: function(node, disable) {
+                var addButton = $(node).find('[data-action="jstree-addnode"]');
+                if (disable) {
+                    addButton.addClass('disabled');
+                } else {
+                    addButton.removeClass('disabled');
+                }
             }
         });
     });
