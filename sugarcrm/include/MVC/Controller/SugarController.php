@@ -1,5 +1,4 @@
 <?php
-
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -11,7 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/MVC/View/SugarView.php');
+use Sugarcrm\Sugarcrm\Security\Csrf\CsrfAuthenticator;
+
+require_once 'include/MVC/View/SugarView.php';
 
 /**
  * Main SugarCRM controller
@@ -136,12 +137,42 @@ class SugarController
 										'listview'=>'ListView'
 									  );
 
-	/**
-	 * Constructor. This ie meant tot load up the module, action, record as well
-	 * as the mapping arrays.
-	 */
-	public function SugarController(){
-	}
+    /**
+     * Constructor. This is meant to load up the module, action, record as well
+     * as the mapping arrays.
+     * @deprecated
+     */
+    protected function SugarController()
+    {
+        self::__construct();
+    }
+
+    /**
+     * Ctor
+     */
+    public function __construct()
+    {
+    }
+
+    /**
+     * Perform CSRF form validation. Extension classes can override this logic
+     * if any excotic logic is required. The default implementation uses the
+     * same CSRF form token which is tied to the user's session.
+     *
+     * This logic is being called from SugarApplication for all non-GET reqs.
+     *
+     * @param array $fields Key/value field pairs
+     * @return boolean
+     */
+    public function isCsrfValid(array $fields)
+    {
+        $csrf = CsrfAuthenticator::getInstance();
+        $valid = $csrf->isFormTokenValid($fields);
+        if (!$valid) {
+            $GLOBALS['log']->fatal("CSRF: auth failure for {$this->module} -> {$this->action}");
+        }
+        return $valid;
+    }
 
 	/**
 	 * Called from SugarApplication and is meant to perform the setup operations
