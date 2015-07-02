@@ -735,7 +735,7 @@ EOF;
                 $sess->destroy();
                 exit('Not a valid entry method');
             }
-            $sess->unlock();
+            $sess->releaseSession();
         } else {
             if ($sess->sessionHasId()) {
                 $sess->start();

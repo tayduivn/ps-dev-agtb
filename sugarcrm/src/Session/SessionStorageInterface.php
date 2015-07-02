@@ -59,10 +59,4 @@ Interface SessionStorageInterface extends \ArrayAccess, \Serializable {
      */
     public function unlock();
 
-    /**
-     * Checks if a session has an id yet
-     * @return boolean
-     */
-    public function sessionHasId();
-
 }
