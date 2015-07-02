@@ -12,8 +12,6 @@
 require_once('include/MVC/Controller/ControllerFactory.php');
 require_once('include/MVC/View/ViewFactory.php');
 
-
-use Sugarcrm\Sugarcrm\Session\SessionStorage;
 /**
  * SugarCRM application
  *
@@ -718,13 +716,12 @@ EOF;
         return true;
     }
 
-    public function startSession()
+    function startSession()
     {
-        $sess = SessionStorage::getInstance();
         $sessionIdCookie = isset($_COOKIE['PHPSESSID']) ? $_COOKIE['PHPSESSID'] : null;
         if (!empty($_REQUEST['MSID'])) {
-            $sess->setId($_REQUEST['MSID']);
-            $sess->start(true);
+            session_id($_REQUEST['MSID']);
+            session_start();
             if (isset($_SESSION['user_id']) && isset($_SESSION['seamless_login'])) {
                 unset ($_SESSION['seamless_login']);
             } else {
@@ -732,13 +729,12 @@ EOF;
                     self::setCookie('PHPSESSID', '', time() - 42000, '/');
                 }
                 sugar_cleanup(false);
-                $sess->destroy();
+                session_destroy();
                 exit('Not a valid entry method');
             }
-            $sess->releaseSession();
         } else {
-            if ($sess->sessionHasId()) {
-                $sess->start();
+            if (can_start_session()) {
+                session_start();
             }
         }
 
