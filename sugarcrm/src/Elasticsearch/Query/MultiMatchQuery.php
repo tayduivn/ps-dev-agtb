@@ -12,6 +12,8 @@
 
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Query;
 
+use Sugarcrm\Sugarcrm\Elasticsearch\Query\Highlighter\HighlighterInterface;
+
 /**
  *
  * MultiMatch query builder
@@ -50,6 +52,13 @@ class MultiMatchQuery implements QueryInterface
     protected $searchFields;
 
     /**
+     * the search highlight
+     * @var HighlighterInterface
+     */
+    protected $highlighter;
+
+
+    /**
      * Set the search terms.
      * @param string $terms the search terms
      */
@@ -74,6 +83,15 @@ class MultiMatchQuery implements QueryInterface
     public function setUser(\User $user)
     {
         $this->userId = $user->id;
+    }
+
+    /**
+     * Set the highlighter interface in order to normalize the field name
+     * @param HighlighterInterface $highlighter
+     */
+    public function setHighlighter(HighlighterInterface $highlighter)
+    {
+        $this->highlighter = $highlighter;
     }
 
     /**
@@ -165,15 +183,10 @@ class MultiMatchQuery implements QueryInterface
     {
         $fields = array();
         foreach ($this->searchFields as $field) {
-            $values = explode(QueryBuilder::BOOST_SEP, $field);
-            if (count($values) === 2) {
-                $values = explode(QueryBuilder::FIELD_SEP, $values[0]);
-                if (count($values) === 2) {
-                    $isAccess = $this->isFieldAccessible($values);
-                    if ($isAccess === true) {
-                        $fields[] = $field;
-                    }
-                }
+            list($moduleName, $fieldName) = $this->processFieldName($field);
+            $isAccess = $this->isFieldAccessible($moduleName, $fieldName);
+            if ($isAccess === true) {
+                $fields[] = $field;
             }
         }
         return $fields;
@@ -181,35 +194,91 @@ class MultiMatchQuery implements QueryInterface
 
     /**
      * Check if a field is accessible.
-     * @param array $path Field path
+     * @param string $module the module name
+     * @param string $field the field name
      * @return bool
      */
-    public function isFieldAccessible(array $path)
+    public function isFieldAccessible($module, $field)
     {
-        //Check ACL access
-        if (is_array($path) && !empty($path)) {
-            $names = explode(QueryBuilder::PREFIX_SEP, $path[0]);
-            if (count($names) === 2) {
-                $module = $names[0];
-                $field = $names[1];
-                $accessLevel = $this->getAccessLevel($module, $field);
-                $isOwnerRead = $this->isFieldReadOwner($module, $field);
+        $accessLevel = $this->getAccessLevel($module, $field);
+        $isOwnerRead = $this->isFieldReadOwner($module, $field);
 
-                if ($this->isReadOwnerQuery === true) {
-                    // return the owner read fields for the read owner sub-query
-                    if ($isOwnerRead === true) {
-                        return true;
-                    }
-                } else {
-                    // return the read accessible fields for the read accessible sub-query
-                    // the "owner read" field has the access level of ACL_NO_ACCESS and hence no checking needed
-                    if ($accessLevel !== \SugarACL::ACL_NO_ACCESS) {
-                        return true;
-                    }
-                }
+        if ($this->isReadOwnerQuery === true) {
+            // return the owner read fields for the read owner sub-query
+            if ($isOwnerRead === true) {
+                return true;
+            }
+        } else {
+            // return the read accessible fields for the read accessible sub-query
+            // the "owner read" field has the access level of ACL_NO_ACCESS and hence no checking needed
+            if ($accessLevel !== \SugarACL::ACL_NO_ACCESS) {
+                return true;
             }
         }
         return false;
+    }
+
+
+    /**
+     * Get the module name and the field name.
+     *
+     * Notes on input fields' formats:
+     * 1) Normal case:
+     * Example: Contacts__first_name.gs_string_wildcard^0.9
+     *
+     * 2) Exception case I: Email field
+     * Contacts__email_search.primary.gs_email^1.95
+     * Contacts__email_search.primary.gs_email_wildcard^0.88
+     * Contacts__email_search.secondary.gs_email^1.46
+     * Contacts__email_search.secondary.gs_email_wildcard^0.49
+     *
+     * 3) Exception case II: Field without boost value
+     * Contacts__last_name.gs_string_wildcard
+     *
+     * @param string $field the combined search field name
+     * @return array
+     */
+    protected function processFieldName($field)
+    {
+        $moduleName = "";
+        $fieldName = $field;
+
+        $value = explode(QueryBuilder::FIELD_SEP, $field);
+        //QueryBuilder::FIELD_SEP is found
+        if (is_array($value)) {
+            $value = $value[0];
+        }
+
+        $names = explode(QueryBuilder::PREFIX_SEP, $value);
+        //QueryBuilder::PREFIX_SEP is found
+        if (is_array($names) && count($names)>1) {
+            $moduleName = $names[0];
+            $fieldName = $this->normalizeFieldName($value);
+        }
+
+        return array($moduleName, $fieldName);
+    }
+
+    /**
+     * Normalize the field name.
+     *
+     * 1) Normal case:
+     * Input: Contacts__first_name
+     * Output: first_name
+     *
+     * 2) Email case:
+     * Input: Contacts__email_search
+     * Output: email
+     *
+     * @param string $fieldName the field name
+     * @return string
+     */
+    protected function normalizeFieldName($fieldName)
+    {
+        if (!empty($this->highlighter)) {
+            return $this->highlighter->normalizeFieldName($fieldName);
+        }
+        return $fieldName;
     }
 
     /**

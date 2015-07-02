@@ -652,6 +652,7 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
         $multiMatch->setTerms($this->term);
         $multiMatch->setSearchFields($this->getSearchFields($this->modules));
         $multiMatch->setUser($this->user);
+        $multiMatch->setHighlighter($this->highlighter);
         return $multiMatch;
     }
 
