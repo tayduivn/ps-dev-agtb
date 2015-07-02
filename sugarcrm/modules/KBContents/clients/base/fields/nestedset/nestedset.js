@@ -397,7 +397,7 @@
      */
     addNew: function(evt) {
         var name = $(evt.target).val().trim();
-        this.addNode(name, 'last', true);
+        this.addNode(name, 'last', true, false, true);
         this.switchCreate();
     },
 
@@ -439,7 +439,7 @@
      * @param data {Object} Data from selected node.
      */
     selectedNode: function(data) {
-        if (_.isEmpty(data)) {
+        if (_.isEmpty(data) || _.isEmpty(data.id) || _.isEmpty(data.name)) {
             return;
         }
         var id = data.id,
