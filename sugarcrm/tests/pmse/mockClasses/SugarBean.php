@@ -36,6 +36,13 @@ class SugarBean
         }
         return $this;
     }
+
+    public function retrieve($array) {
+        foreach ($array as $key => $field) {
+            $this->$key = $field;
+        }
+        return $this;
+    }
     
     public function save()
     {

@@ -1072,7 +1072,7 @@ class PMSEEngineApi extends SugarApi
         $bpmFlow = BeanFactory::retrieveBean('pmse_BpmFlow', $args['idflow']);
         $returnArray['case']['flow'] = $bpmFlow->fetched_row;
 
-        $activity = BeanFactory::getBean('pmse_BpmActivityDefinition')->retrieve_by_string_fields(array('id' => $bpmFlow->bpmn_id));
+        $activity = BeanFactory::getBean('pmse_BpmActivityDefinition', $bpmFlow->bpmn_id);
         $teamSets = TeamSet::getTeamSetIdsForUser($api->user->id);
         if ($api->user->id != $bpmFlow->cas_user_id) {
             if (($activity->act_assignment_method == 'selfservice' && !in_array($bpmFlow->cas_user_id, $teamSets))
