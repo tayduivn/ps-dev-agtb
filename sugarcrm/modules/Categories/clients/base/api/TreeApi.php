@@ -461,7 +461,7 @@ class TreeApi extends FilterApi
     {
         $this->requireArgs($args, array('module', 'record'));
         $record = $this->retrieveBean($args['module'], $args['record']);
-        return $this->formatTree($api, $args, $record->getСhildren(1));
+        return $this->formatTree($api, $args, $record->getChildren(1));
     }
 
     /**
