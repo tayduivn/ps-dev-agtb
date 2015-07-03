@@ -47,8 +47,7 @@ class SugarJobUpdateForecastWorksheets implements RunnableSchedulerJob
     {
 
         /* @var $admin Administration */
-        $admin = BeanFactory::getBean('Administration');
-        $settings = $admin->getConfigForModule('Forecasts');
+        $settings = Forecast::getSettings();
 
         if ($settings['is_setup'] == false) {
             $GLOBALS['log']->fatal("Forecast Module is not setup. " . __CLASS__ . " should not be running");
@@ -57,9 +56,10 @@ class SugarJobUpdateForecastWorksheets implements RunnableSchedulerJob
 
         $args = json_decode(html_entity_decode($data), true);
         $this->job->runnable_ran = true;
+        $worksheet = BeanFactory::getBean('ForecastWorksheets');
 
         // use the processWorksheetDataChunk to run the code.
-        ForecastWorksheet::processWorksheetDataChunk($args['forecast_by'], $args['data']);
+        $worksheet->processWorksheetDataChunk($args['forecast_by'], $args['data']);
 
         $this->job->succeedJob();
         return true;

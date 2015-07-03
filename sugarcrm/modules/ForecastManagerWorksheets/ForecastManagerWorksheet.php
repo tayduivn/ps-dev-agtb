@@ -56,7 +56,7 @@ class ForecastManagerWorksheet extends SugarBean
         global $current_user;
 
         // make sure that the User passed in is actually a manager
-        if (!User::isManager($manager->id)) {
+        if (!$this->isUserManager($manager->id)) {
             return false;
         }
 
@@ -147,7 +147,7 @@ class ForecastManagerWorksheet extends SugarBean
      */
     protected function getQuota($user_id, $timeperiod_id, $quota_type) {
         /* @var $quota Quota */
-        $quota = BeanFactory::getBean('Quotas');
+        $quota = $this->getBean('Quotas');
         $quota->retrieve_by_string_fields(
             array(
                 'timeperiod_id' => $timeperiod_id,
@@ -171,8 +171,6 @@ class ForecastManagerWorksheet extends SugarBean
      */
     public function reporteeForecastRollUp(User $reportee, $data)
     {
-        /* @var $quotaSeed Quota */
-        $quotaSeed = BeanFactory::getBean('Quotas');
 
         if (!isset($data['timeperiod_id']) || !is_guid($data['timeperiod_id'])) {
             $data['timeperiod_id'] = TimePeriod::getCurrentId();
@@ -187,7 +185,7 @@ class ForecastManagerWorksheet extends SugarBean
         if (isset($data['forecast_type'])) {
             // check forecast type to see if the assigned_user_id should be equal to the $reportee as it's their own
             // rep worksheet
-            if ($data['forecast_type'] == "Direct" && User::isManager($reportee->id)) {
+            if ($data['forecast_type'] == "Direct" && $this->isUserManager($reportee->id)) {
                 // this is the manager committing their own data, the $reports_to should be them
                 // and not their actual manager
                 $reports_to = $reportee->id;
@@ -252,7 +250,7 @@ class ForecastManagerWorksheet extends SugarBean
                 $quotaSeed = BeanFactory::getBean('Quotas');
 
                 // check if we need to get the roll up amount
-                $getRollupQuota = (User::isManager($reportee->id)
+                $getRollupQuota = ($this->isUserManager($reportee->id)
                     && isset($data['forecast_type'])
                     && $data['forecast_type'] == 'Rollup');
 
@@ -290,7 +288,7 @@ class ForecastManagerWorksheet extends SugarBean
     protected function rollupDraftToCommittedWorksheet(ForecastManagerWorksheet $worksheet, $copyMap = array())
     {
         /* @var $committed_worksheet ForecastManagerWorksheet */
-        $committed_worksheet = BeanFactory::getBean($this->module_name);
+        $committed_worksheet = $this->getBean($this->module_name);
         $committed_worksheet->retrieve_by_string_fields(
             array(
                 'user_id' => $worksheet->user_id, // user id comes from the user model
@@ -360,12 +358,12 @@ class ForecastManagerWorksheet extends SugarBean
      */
     public function assignQuota($user_id, $timeperiod_id)
     {
-        if (User::isManager($user_id) === false) {
+        if ($this->isUserManager($user_id) === false) {
             return false;
         }
 
         // get everyone but the current user
-        $sq = new SugarQuery();
+        $sq = $this->getSugarQuery();
         $sq->select(array('id', 'quota', 'user_id'));
         $sq->from($this);
         $sq->where()
@@ -375,7 +373,7 @@ class ForecastManagerWorksheet extends SugarBean
             ->equals('draft', 1);
 
         // now just get the current user
-        $sq2 = new SugarQuery();
+        $sq2 = $this->getSugarQuery();
         $sq2->select(array('id', 'quota', 'user_id'));
         $sq2->from($this);
         $sq2->where()
@@ -385,7 +383,7 @@ class ForecastManagerWorksheet extends SugarBean
             ->equals('draft', 1);
 
         // create the union query now
-        $sqU = new SugarQuery();
+        $sqU =$this->getSugarQuery();
         $sqU->union($sq)->addQuery($sq2);
 
         // run the query
@@ -401,7 +399,7 @@ class ForecastManagerWorksheet extends SugarBean
             $this->_assignQuota($worksheet['quota'], $type, $worksheet['user_id'], $timeperiod_id, $disableAS);
 
             /* @var $worksheet_obj ForecastManagerWorksheet */
-            $worksheet_obj = BeanFactory::getBean($this->module_name, $worksheet['id']);
+            $worksheet_obj = $this->getBean($this->module_name, $worksheet['id']);
             $this->rollupDraftToCommittedWorksheet($worksheet_obj, array('quota'));
         }
 
@@ -420,7 +418,7 @@ class ForecastManagerWorksheet extends SugarBean
     protected function _assignQuota($quota, $type, $user_id, $timeperiod_id, $disableActivityStream = false)
     {
         if ($disableActivityStream) {
-            Activity::disable();
+            $this->toggleActivityStream(false);
             $current_quota = $this->getQuota($user_id, $timeperiod_id, $type);
         }
 
@@ -436,7 +434,7 @@ class ForecastManagerWorksheet extends SugarBean
         $new_quota = $this->recalcQuotas($user_id, $timeperiod_id, true);
 
         if ($disableActivityStream) {
-            Activity::enable();
+            $this->toggleActivityStream(true);
 
             if ($new_quota !== $current_quota->amount) {
                 $args = array(
@@ -452,13 +450,11 @@ class ForecastManagerWorksheet extends SugarBean
                 );
 
                 // Manually Create the Activity Stream Entry!
-                SugarAutoLoader::load('modules/ActivityStream/Activities/ActivityQueueManager.php');
-                $aqm = new ActivityQueueManager();
+                $aqm = $this->getActivityQueueManager();
                 $aqm->eventDispatcher($quota, 'after_save', $args);
             }
         }
     }
-
 
     /**
      * If the user is the top level manager, set their rollup quota value correctly
@@ -469,9 +465,9 @@ class ForecastManagerWorksheet extends SugarBean
      */
     protected function fixTopLevelManagerQuotaRollup($user_id, $timeperiod_id)
     {
-        if (User::isTopLevelManager($user_id)) {
+        if ($this->isTopLevelManager($user_id)) {
 
-            $sq = new SugarQuery();
+            $sq = $this->getSugarQuery();
             $sq->select(array())
                 ->fieldRaw('sum(quota * base_rate)', 'quota');
             $sq->from($this);
@@ -492,20 +488,36 @@ class ForecastManagerWorksheet extends SugarBean
     }
 
     /**
+     * Does the user_id belong to a top level manager
+     *
+     * @param string $user_id
+     * @return bool
+     */
+    protected function isTopLevelManager($user_id)
+    {
+        return User::isTopLevelManager($user_id);
+    }
+
+    /**
      * Save Worksheet
+     *
+     * @deprecated
+     *
+     * This is no longer used in 7.8, so it can safely be deprecated
      *
      * @param bool $check_notify
      */
     public function saveWorksheet($check_notify = false)
     {
-        $this->is_manager = User::isManager($this->user_id);
+        $GLOBALS['log']->deprecated('Opportunity::saveWorksheet() has been deprecated in 7.8');
+        $this->is_manager = $this->isUserManager($this->user_id);
 
         // save to the manager worksheet table (new table)
         // get the user object
         /* @var $userObj User */
-        $userObj = BeanFactory::getBean('Users', $this->user_id);
+        $userObj = $this->getBean('Users', $this->user_id);
         /* @var $mgr_worksheet ForecastManagerWorksheet */
-        $mgr_worksheet = BeanFactory::getBean('ForecastManagerWorksheets');
+        $mgr_worksheet = $this->getBean('ForecastManagerWorksheets');
         $mgr_worksheet->reporteeForecastRollUp($userObj, $this->args);
 
 
@@ -528,6 +540,9 @@ class ForecastManagerWorksheet extends SugarBean
         return parent::save($check_notify);
     }
 
+    /**
+     * @throws SugarQueryException
+     */
     public function fill_in_additional_detail_fields()
     {
         parent::fill_in_additional_detail_fields();
@@ -601,7 +616,7 @@ class ForecastManagerWorksheet extends SugarBean
      */
     public function setWorksheetArgs($args)
     {
-        // save the args publiciable
+        // save the args
         $this->args = $args;
 
         // loop though the args and assign them to the corresponding key on the object
@@ -659,7 +674,7 @@ class ForecastManagerWorksheet extends SugarBean
             "and q1.timeperiod_id = q2.timeperiod_id " .
             "and q2.quota_type = 'Direct' " .
             "where q1.user_id = " . $this->db->quoted($userId) . " " .
-            "and q1.timeperiod_id = " . $this->db->quoted($timeperiodId) . "" .
+            "and q1.timeperiod_id = " . $this->db->quoted($timeperiodId) . " " .
             "and q1.quota_type = 'Rollup' " .
             "union all " .
             "SELECT q2.amount, q1.id FROM quotas q1 " .
@@ -668,15 +683,15 @@ class ForecastManagerWorksheet extends SugarBean
             "and q1.timeperiod_id = q2.timeperiod_id " .
             "and q2.quota_type = 'Rollup' " .
             "where q1.user_id = " . $this->db->quoted($userId) . " " .
-            "and q1.timeperiod_id = " . $this->db->quoted($timeperiodId) . "" .
+            "and q1.timeperiod_id = " . $this->db->quoted($timeperiodId) . " " .
             "and q1.quota_type = 'Direct'";
 
         $quota = array();
 
         $result = $this->db->query($sql);
         while ($row = $this->db->fetchByAssoc($result)) {
-            $quota["amount"] = $row["amount"];
-            $quota["id"] = $row["id"];
+            $quota['amount'] = $row['amount'];
+            $quota['id'] = $row['id'];
         }
 
         return $quota;
@@ -728,12 +743,12 @@ class ForecastManagerWorksheet extends SugarBean
     protected function updateManagerWorksheetQuota($manager_id, $timeperiod, $quota, $isDraft = true)
     {
         // safe guard to make sure user is actually a manager
-        if (!User::isManager($manager_id)) {
+        if (!$this->isUserManager($manager_id)) {
             return false;
         }
 
         /* @var $worksheet ForecastManagerWorksheet */
-        $worksheet = BeanFactory::getBean('ForecastManagerWorksheets');
+        $worksheet = $this->getBean('ForecastManagerWorksheets');
 
         $return = $worksheet->retrieve_by_string_fields(
             array(
@@ -746,7 +761,7 @@ class ForecastManagerWorksheet extends SugarBean
         );
 
         if (is_null($return) && $isDraft === true) {
-            $user = BeanFactory::getBean('Users', $manager_id);
+            $user = $this->getBean('Users', $manager_id);
             // no draft record found, create it based on the above params
             $worksheet->user_id = $manager_id;
             $worksheet->assigned_user_id = $manager_id;
@@ -780,9 +795,11 @@ class ForecastManagerWorksheet extends SugarBean
         if ($quota != $worksheet->quota) {
             $worksheet->quota = $quota;
             $worksheet->save();
+
+            return true;
         }
 
-        return true;
+        return false;
     }
 
     /**
@@ -826,7 +843,7 @@ class ForecastManagerWorksheet extends SugarBean
 
         // if a user is not a manager, then just take the value that the manager assigned to them as the rollup and use
         // it for their direct amount
-        if (User::isManager($userId) === false) {
+        if ($this->isUserManager($userId) === false) {
             $newTotal = $managerAmount;
         }
 
@@ -854,31 +871,30 @@ class ForecastManagerWorksheet extends SugarBean
     public function worksheetTotals($userId, $timeperiodId, $useDraftRecords = false)
     {
         /* @var $tp TimePeriod */
-        $tp = BeanFactory::getBean('TimePeriods', $timeperiodId);
+        $tp = $this->getBean('TimePeriods', $timeperiodId);
         if (empty($tp->id)) {
             // timeperiod not found
             return false;
         }
 
         $return = array(
-            "quota" => '0',
-            "best_case" => '0',
-            "best_adjusted" => '0',
-            "likely_case" => '0',
-            "likely_adjusted" => '0',
-            "worst_case" => '0',
-            "worst_adjusted" => '0',
-            "included_opp_count" => 0,
-            "pipeline_opp_count" => 0,
-            "pipeline_amount" => '0',
-            "closed_amount" => '0'
+            'quota' => '0',
+            'best_case' => '0',
+            'best_adjusted' => '0',
+            'likely_case' => '0',
+            'likely_adjusted' => '0',
+            'worst_case' => '0',
+            'worst_adjusted' => '0',
+            'included_opp_count' => 0,
+            'pipeline_opp_count' => 0,
+            'pipeline_amount' => '0',
+            'closed_amount' => '0'
         );
 
         global $current_user;
 
-        require_once('include/SugarQuery/SugarQuery.php');
-        $sq = new SugarQuery();
-        $bean_obj = BeanFactory::getBean($this->module_name);
+        $sq = $this->getSugarQuery();
+        $bean_obj = $this->getBean($this->module_name);
         $sq->select(array($bean_obj->getTableName().'.*'));
         $sq->from($bean_obj)->where()
             ->equals('timeperiod_id', $tp->id)
@@ -920,5 +936,63 @@ class ForecastManagerWorksheet extends SugarBean
         }
 
         return $return;
+    }
+
+    /**
+     * Utility method to check if a user is a manager
+     *
+     * @param string $user_id
+     * @return bool
+     */
+    protected function isUserManager($user_id)
+    {
+        return User::isManager($user_id);
+    }
+
+    /**
+     * Utility Method to get a bean
+     *
+     * @param string $module The module we want the bean for
+     * @param null $id The id, if one is needed
+     * @return null|SugarBean
+     */
+    protected function getBean($module, $id = null)
+    {
+        return BeanFactory::getBean($module, $id);
+    }
+
+    /**
+     * Return a new SugarQuery object
+     *
+     * @return SugarQuery
+     */
+    protected function getSugarQuery()
+    {
+        return new SugarQuery();
+    }
+
+    /**
+     * Utility Method to get the Activity Queue Manager
+     *
+     * @return ActivityQueueManager
+     */
+    protected function getActivityQueueManager()
+    {
+        SugarAutoLoader::load('modules/ActivityStream/Activities/ActivityQueueManager.php');
+        return new ActivityQueueManager();
+    }
+
+    /**
+     * Utility method to handle enabling and disabling of the Activity Stream
+     *
+     * @param bool|true $enable
+     */
+    protected function toggleActivityStream($enable = true)
+    {
+        if ($enable === true) {
+            Activity::enable();
+        } else {
+            Activity::disable();
+        }
     }
 }

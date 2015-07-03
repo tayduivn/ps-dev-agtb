@@ -10,8 +10,26 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+/**
+ * Class ProductTest
+ * @coversDefaultClass Product
+ */
 class ProductTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    public static function setUpBeforeClass()
+    {
+        SugarTestHelper::setUp('beanList');
+    }
+
+    public function tearDown()
+    {}
+
+    public static function tearDownAfterClass()
+    {
+        SugarTestHelper::tearDown();
+    }
+
+
     /**
      * @param String $amount
      * @param String $quantity
@@ -20,6 +38,7 @@ class ProductTest extends Sugar_PHPUnit_Framework_TestCase
      * @param String $likely_expected
      * @throws SugarMath_Exception
      * @dataProvider productDataProvider
+     * @covers ::convertToRevenueLineItem
      */
     public function testConvertProductToRLI($amount, $quantity, $discount, $discount_select, $likely_expected)
     {
@@ -89,6 +108,7 @@ class ProductTest extends Sugar_PHPUnit_Framework_TestCase
      * @dataProvider dataProviderUpdateCurrencyBaseRate
      * @param string $stage
      * @param boolean $expected
+     * @covers ::updateCurrencyBaseRate
      */
     public function testUpdateCurrencyBaseRate($stage, $expected)
     {
@@ -159,6 +179,9 @@ class ProductTest extends Sugar_PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * @covers ::updateCurrencyBaseRate
+     */
     public function testUpdateCurrencyBaseRateWithNotQuoteReturnTrue()
     {
         $product = $this->getMock('Product', array('save', 'load_relationship'));
@@ -183,4 +206,187 @@ class ProductTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertTrue($product->updateCurrencyBaseRate());
     }
+
+    /**
+     * @covers ::get_summary_text
+     */
+    public function testGetSummaryText()
+    {
+        $product = $this->getMock('Product', array('save', 'load_relationship'));
+        $product->name = 'test';
+
+        $this->assertEquals('test', $product->get_summary_text());
+    }
+
+    public static function dataProviderSetAccountIdForOpportunity()
+    {
+        return array(
+            array(
+                array(
+                    'test_account_id'
+                ),
+                true
+            ),
+            array(
+                array(),
+                false
+            )
+        );
+    }
+
+    /**
+     * @dataProvider dataProviderSetAccountIdForOpportunity
+     * @covers ::setAccountIdForOpportunity
+     */
+    public function testSetAccountIdForOpportunity($accounts, $expected)
+    {
+        $product = $this->getMock('Product', array('save', 'load_relationship'));
+
+        $opp = $this->getMockBuilder('Opportunity')
+            ->setMethods(array('save', 'load_relationship'))
+            ->getMock();
+
+        $opp->id = 'test_opp_id';
+
+        $opp->expects($this->once())
+            ->method('load_relationship')
+            ->with('accounts')
+            ->willReturn(true);
+
+        $link2 = $this->getMockBuilder('Link2')
+            ->setMethods(array('get'))
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $link2->expects($this->once())
+            ->method('get')
+            ->willReturn($accounts);
+
+
+        $opp->accounts = $link2;
+
+        BeanFactory::registerBean($opp);
+
+        $actual = SugarTestReflection::callProtectedMethod($product, 'setAccountIdForOpportunity', array($opp->id));
+
+        $this->assertEquals($expected, $actual);
+
+        BeanFactory::unregisterBean($opp, $opp->id);
+    }
+
+    public static function dataProviderPopulateFromTemplateWillReturnFalse()
+    {
+        return array(
+            array(null),
+            array('one_id')
+        );
+    }
+
+    /**
+     * @dataProvider dataProviderPopulateFromTemplateWillReturnFalse
+     * @param string $template_id
+     * @covers ::populateFromTemplate
+     */
+    public function testPopulateFromTemplateWillReturnFalse($template_id)
+    {
+        $product = $this->getMock('Product', array('save'));
+
+        $product->product_template_id = $template_id;
+        $product->fetched_row = array(
+            'product_template_id' => $template_id
+        );
+
+        $actual = SugarTestReflection::callProtectedMethod($product, 'populateFromTemplate');
+
+        $this->assertFalse($actual);
+    }
+
+    /**
+     * @covers ::calculateDiscountPrice
+     */
+    public function testCalculateDiscountPriceDoesNotRunIfFieldEmpty()
+    {
+        $fields = array(
+            'pricing_formula',
+            'cost_price',
+            'list_price',
+            'discount_price',
+            'pricing_factor'
+        );
+
+        $product = $this->getMock('Product', array('save', 'getPriceFormula'));
+
+        $product->expects($this->never())
+            ->method('getPriceFormula');
+
+        foreach($fields as $field) {
+            $product->$field = null;
+        }
+
+        SugarTestReflection::callProtectedMethod($product, 'calculateDiscountPrice');
+    }
+
+    /**
+     * @covers ::calculateDiscountPrice
+     */
+    public function testCalculateDiscountPrice()
+    {
+        $product = $this->getMock('Product', array('save', 'getPriceFormula'));
+        $product->pricing_formula = 'PercentageDiscount';
+        $product->cost_price = '100.000000';
+        $product->list_price = '150.000000';
+        $product->discount_price = '25.000000';
+        $product->pricing_factor = '12.00';
+
+
+        SugarAutoLoader::load('modules/ProductTemplates/formulas/price_list_discount.php');
+
+        $formula = $this->getMockBuilder('PercentageDiscount')
+            ->setMethods(array('calculate_price'))
+            ->getMock();
+
+        $formula->expects($this->once())
+            ->method('calculate_price')
+            ->with(
+                $product->cost_price,
+                $product->list_price,
+                $product->discount_price,
+                $product->pricing_factor
+            );
+
+        $product->expects($this->once())
+            ->method('getPriceFormula')
+            ->willReturn($formula);
+
+        SugarTestReflection::callProtectedMethod($product, 'calculateDiscountPrice');
+    }
+
+    public function dataProviderGetPriceFormula()
+    {
+        return array(
+            array('Fixed'),
+            array('ProfitMargin'),
+            array('PercentageMarkup'),
+            array('PercentageDiscount'),
+            array('IsList')
+        );
+    }
+
+    /**
+     * @dataProvider dataProviderGetPriceFormula
+     * @covers ::getPriceFormula
+     * @param string $formula
+     */
+    public function testGetPriceFormula($formula)
+    {
+        $product = $this->getMock('Product', array('save'));
+
+        $actual = SugarTestReflection::callProtectedMethod($product, 'getPriceFormula', array($formula));
+
+        $this->assertInstanceOf($formula, $actual);
+
+        unset($GLOBALS['price_formulas']);
+    }
+
+
 }

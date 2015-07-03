@@ -9,26 +9,68 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once("include/Expressions/Actions/AbstractAction.php");
-require_once("include/Expressions/Expression/Date/DateExpression.php");
+require_once 'include/Expressions/Actions/AbstractAction.php';
+require_once 'include/Expressions/Expression/Date/DateExpression.php';
 
-class SetValueAction extends AbstractAction{
-	protected $expression =  "";
+/**
+ * Class SetValueAction
+ *
+ * SugarLogic Action to set a value to a field
+ */
+class SetValueAction extends AbstractAction
+{
+    /**
+     * Store the expression
+     *
+     * @var mixed|string
+     */
+    protected $expression = '';
+
+    /**
+     * The field we are targeting
+     *
+     * @var string
+     */
+    protected $targetField = '';
+
+    /**
+     * What should be put on the model when an error happens?
+     *
+     * @var null|string
+     */
     protected $errorValue = null;
 
-	function SetValueAction($params) {
+    /**
+     * Constructor
+     *
+     * @param array $params
+     */
+    public function __construct($params)
+    {
         $this->targetField = $params['target'];
-        $this->expression = str_replace("\n", "",$params['value']);
-        $this->errorValue = array_key_exists('errorValue', $params)? $params['errorValue'] : null;
-	}
+        $this->expression = str_replace('\n', '', $params['value']);
+        $this->errorValue = array_key_exists('errorValue', $params) ? $params['errorValue'] : null;
+    }
 
-	/**
-	 * Returns the javascript class equavalent to this php class
-	 *
-	 * @return string javascript.
-	 */
-	static function getJavascriptClass() {
-		return  "
+    /**
+     * This is deprecated in 7.8 and will be removed in a future version.  Please use __construct
+     *
+     * @deprecated
+     * @param array $params
+     */
+    public function SetValueAction($params)
+    {
+        self::__construct($params);
+    }
+
+    /**
+     * Returns the javascript class equivalent to this php class
+     *
+     * @return string javascript.
+     */
+    public static function getJavascriptClass()
+    {
+        return <<<JS
 		SUGAR.forms.SetValueAction = function(target, valExpr) {
 			if (_.isObject(target)){
 			    this.expr = target.value;
@@ -63,86 +105,100 @@ class SetValueAction extends AbstractAction{
 				    }
 			    }
 	       }
-		});";
-	}
+		});
+JS;
+    }
 
 
-	/**
-	 * Returns the javascript code to generate this actions equivalent.
-	 *
-	 * @return string javascript.
-	 */
-	function getJavascriptFire() {
-		return  "new SUGAR.forms.SetValueAction('{$this->targetField}','" . addslashes($this->expression) . "')";
-	}
+    /**
+     * Returns the javascript code to generate this actions equivalent.
+     *
+     * This is used for BWC modules only
+     *
+     * @return string javascript.
+     */
+    public function getJavascriptFire()
+    {
+        return 'new SUGAR.forms.SetValueAction("{$this->targetField}","' . addslashes($this->expression) . '")';
+    }
 
-	/**
-	 * Applies the Action to the target.
-	 *
-	 * @param SugarBean $target
-	 */
-	function fire(&$target) {
+    /**
+     * Applies the Action to the target.
+     *
+     * @param SugarBean $target
+     */
+    public function fire(&$target)
+    {
         set_error_handler('handleExpressionError', E_ERROR);
         try {
             $result = Parser::evaluate($this->expression, $target)->evaluate();
-        } catch(Exception $e){
-            $GLOBALS['log']->fatal("Exception evaluating expression in SetValueAction, {$this->expression} : {$e->getMessage()}\n{$e->getTraceAsString()}");
-            $result = "";
+        } catch (Exception $e) {
+            $GLOBALS['log']->fatal(
+                'Exception evaluating expression in SetValueAction, {$this->expression} : {$e->getMessage()}\n{$e->getTraceAsString()}'
+            );
+            $result = '';
         }
         restore_error_handler();
         $field = $this->targetField;
         $def = array();
-        if (!empty($target->field_defs[$field]))
-            $def  = $target->field_defs[$field];
-        if ($result instanceof DateTime)
-        {
+        if (!empty($target->field_defs[$field])) {
+            $def = $target->field_defs[$field];
+        }
+        if ($result instanceof DateTime) {
             global $timedate;
-            if (isset($def['type']) && ($def['type'] == "datetime" || $def['type'] == "datetimecombo"))
-            {
+            if (isset($def['type']) && ($def['type'] == 'datetime' || $def['type'] == 'datetimecombo')) {
                 $result = DateExpression::roundTime($result);
                 $target->$field = $timedate->asDb($result);
-            }
-            else if (isset($def['type']) && $def['type'] == "date")
-            {
-                $result = DateExpression::roundTime($result);
-                $target->$field = $timedate->asDbDate($result);
             } else {
-                //If the target field isn't a date, convert it to a user formated string
-                if (isset($result->isDate) && $result->isDate)
-                    $target->$field = $timedate->asUserDate($result);
-                else
-                    $target->$field = $timedate->asUser($result);
+                if (isset($def['type']) && $def['type'] == 'date') {
+                    $result = DateExpression::roundTime($result);
+                    $target->$field = $timedate->asDbDate($result);
+                } else {
+                    //If the target field isn't a date, convert it to a user formated string
+                    if (isset($result->isDate) && $result->isDate) {
+                        $target->$field = $timedate->asUserDate($result);
+                    } else {
+                        $target->$field = $timedate->asUser($result);
+                    }
+                }
+            }
+        } else {
+            if (isset($def['type']) && $def['type'] == 'bool') {
+                $target->$field = $result === true || $result === AbstractExpression::$TRUE;
+            } else {
+                if (is_array($result) && $def['type'] != 'multienum') {
+                    $target->$field = implode(', ', $result);
+                } else {
+                    $target->$field = $result;
+                }
             }
         }
-        else if (isset($def['type']) && $def['type'] == "bool")
-        {
-            $target->$field = $result === true || $result === AbstractExpression::$TRUE;
-        }
-        else if (is_array($result) && $def['type'] != 'multienum') {
-            $target->$field = implode(', ',$result);
-        }
-        else
-        {
-            $target->$field = $result;
-        }
-	}
+    }
 
-	/**
-	 * Returns the definition of this action in array format.
-	 *
-	 */
-	function getDefinition() {
-		return array(
-			"action" => $this->getActionName(),
-	        "params" => array(
-                "target" => $this->targetField,
-	            "value" => $this->expression,
-                "errorValue" => $this->errorValue
+    /**
+     * Returns the definition of this action in array format.
+     *
+     * @return array
+     */
+    public function getDefinition()
+    {
+        return array(
+            'action' => $this->getActionName(),
+            'params' => array(
+                'target' => $this->targetField,
+                'value' => $this->expression,
+                'errorValue' => $this->errorValue
             )
-	    );
-	}
+        );
+    }
 
-	static function getActionName() {
-		return "SetValue";
-	}
+    /**
+     * The Action Name
+     *
+     * @return string
+     */
+    public static function getActionName()
+    {
+        return 'SetValue';
+    }
 }
