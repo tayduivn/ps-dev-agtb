@@ -2177,7 +2177,7 @@ AdamActivity.prototype.actionFactory = function (type) {
                         nValue = false,
                         usersProxy = new SugarProxy(),
                         aUsers = [{'text': 'Select...', 'value': ''}];
-
+                    root.canvas.emptyCurrentSelection();
                     usersProxy.url = 'pmse_Project/CrmData/users';
 
                     if (data && data.act_assign_user) {
