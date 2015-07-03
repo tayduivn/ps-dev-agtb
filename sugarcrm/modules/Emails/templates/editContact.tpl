@@ -12,6 +12,7 @@
 *}
 <div class="ydlg-bd">
 	<form name="editContactForm" id="editContactForm">
+{sugar_csrf_form_token}
 		<input type="hidden" id="contact_id" name="contact_id" value="{$contact.id}">
 	<table>
 		<tr>

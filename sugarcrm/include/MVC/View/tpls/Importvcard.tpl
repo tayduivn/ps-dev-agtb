@@ -28,6 +28,7 @@ function validate_vcard()
 </script>
 {/literal}
 <form name="EditView" method="POST" ENCTYPE="multipart/form-data" action="index.php">
+{sugar_csrf_form_token}
 <input type="hidden" name="max_file_size" value="30000">
 <input type='hidden' name='action' value='ImportVCardSave'>
 <input type='hidden' name='module' value='{$MODULE}'>

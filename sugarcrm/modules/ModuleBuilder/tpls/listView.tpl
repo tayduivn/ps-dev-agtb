@@ -11,6 +11,7 @@
  */
 *}
 <form name='edittabs' id='edittabs' method='POST' action='index.php'>
+{sugar_csrf_form_token}
 {literal}
 <script>
 studiotabs.reset();

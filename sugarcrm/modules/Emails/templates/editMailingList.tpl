@@ -12,6 +12,7 @@
 *}
 <div class="ydlg-bd">
 	<form name="editMailingListForm" id="editMailingListForm">
+{sugar_csrf_form_token}
 		<input type="hidden" id="mailing_list_id" name="mailing_list_id" value="{$mailing_list_id}">
 	<table>
 		<tr>

@@ -36,6 +36,7 @@
 </script>
 <div class="email">
 <form id="emailUIForm" name="emailUIForm">
+{sugar_csrf_form_token}
     <input type="hidden" id="module" name="module" value="Emails">
     <input type="hidden" id="action" name="action" value="EmailUIAjax">
     <input type="hidden" id="to_pdf" name="to_pdf" value="true">

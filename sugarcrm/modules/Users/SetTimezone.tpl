@@ -17,6 +17,7 @@
 <div class="ml"></div>
 <div class="bd-center">
 <form name="EditView" method="POST" action="index.php?module=Users&action=SaveTimezone&SaveTimezone=True">
+{sugar_csrf_form_token}
 	<input type="hidden" value="{$USER_ID}" name="record">
 	<input type="hidden" name="module" value="Users">
 	<input type="hidden" name="action" value="SaveTimezone">

@@ -13,7 +13,8 @@
 
 <!-- BEGIN: main -->
 <form name="updates" method="POST" action="index.php" >
-	<input type="hidden" name="module" value="Administration">
+	{sugar_csrf_form_token}
+    <input type="hidden" name="module" value="Administration">
 	<input type="hidden" name="action" value="Updater">
 	<input type="hidden" name="useraction">	
 	<input type="hidden" name="return_module" value="{RETURN_MODULE}">

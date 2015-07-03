@@ -13,6 +13,7 @@
 <!-- BEGIN: main -->
 <span>
 			<form enctype="multipart/form-data" id="SubsForm" name="SubsForm" method="POST" action="index.php">
+{sugar_csrf_form_token}
 			<input type="hidden" name="module" value="Campaigns">
 			<input type="hidden" name="action" value="Subscriptions">
 			<input type="hidden" name="return_module" value="{RETURN_MODULE}">

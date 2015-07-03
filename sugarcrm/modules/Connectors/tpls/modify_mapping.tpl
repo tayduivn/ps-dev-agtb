@@ -71,6 +71,7 @@ YAHOO.util.Event.onDOMReady(SourceTabs.init);
 </script>
 {/literal}
 <form name="ModifyMapping" method="POST" onsubmit="return calculateValues();">
+{sugar_csrf_form_token}
 <input type="hidden" name="modify" value="true">
 <input type="hidden" name="module" value="Connectors">
 <input type="hidden" name="action" value="SaveModifyMapping">

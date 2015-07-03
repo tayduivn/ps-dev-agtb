@@ -16,6 +16,7 @@
 {JS_VARS}
 </script>
 <form action="index.php" method="POST" name="DetailView" id="form">
+{sugar_csrf_form_token}
 	<input type="hidden" name="module" value="Emails">
 	<input type="hidden" name="record" value="{ID}">
 	<input type="hidden" name="isDuplicate" value=false>

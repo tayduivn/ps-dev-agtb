@@ -63,6 +63,7 @@ function toggle_rel2(){
 <table width="100%" cellpadding="0" cellspacing="0" border="0">
 <tr>
 			<form name="EditView" method="POST" action="index.php">
+{sugar_csrf_form_token}
 			<input type="hidden" name="module" value="WorkFlowAlerts">
 			<input type="hidden" id='record' name="user_type" value="{USER_TYPE}">
 			<input type="hidden" name="action" value="Selector">

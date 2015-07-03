@@ -12,6 +12,7 @@
 *}
 
 <form name='relform' onsubmit='return false;'>
+{sugar_csrf_form_token}
 <input type='hidden' name='to_pdf' value='1'>
 <input type='hidden' name='module' value='ModuleBuilder'>
 <input type='hidden' name='action' value='SaveRelationship'>

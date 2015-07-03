@@ -55,6 +55,7 @@
             <tr>
                 <td colspan='2'>
                     <form method='post' action='index.php' name='dropdownsform'>
+{sugar_csrf_form_token}
                         <input type='hidden' name='action' value='wizard'>
                         <input type='hidden' name='wizard' value='RenameModules'>
                         <input type='hidden' name='option' value='EditDropdown'>
@@ -72,6 +73,7 @@
 <tr>
     <td>
 <form method='post' action='index.php' name='editdropdown'>
+{sugar_csrf_form_token}
 <input type='hidden' name='action' value='wizard'>
 <input type='hidden' name='wizard' value='RenameModules'>
 <input type='hidden' name='option' value='SaveDropDown'>

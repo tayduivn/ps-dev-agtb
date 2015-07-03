@@ -13,6 +13,7 @@
 
 <div style='width: 500px'>
 <form name='configure_{$id}' action="index.php" method="post" onSubmit='return SUGAR.dashlets.postForm("configure_{$id}", SUGAR.mySugar.uncoverPage);'>
+{sugar_csrf_form_token}
 <input type='hidden' name='id' value='{$id}'>
 <input type='hidden' name='module' value='Home'>
 <input type='hidden' name='action' value='ConfigureDashlet'>

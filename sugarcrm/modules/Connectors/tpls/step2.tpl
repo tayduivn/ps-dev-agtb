@@ -11,6 +11,7 @@
  */
 *}
 <form name="EditView" method="POST" action="index.php">
+    {sugar_csrf_form_token}
 	<input type="hidden" name="module" value="Connectors">
 	<input type="hidden" name="record" value="{$record->id}">
 	<input type="hidden" name="merge_module" value="{$merge_module}">

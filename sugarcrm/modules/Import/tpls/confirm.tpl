@@ -16,6 +16,7 @@
 <div class="hr"></div>
 
 <form enctype="multipart/form-data" real_id="importconfirm" id="importconfirm" name="importconfirm" method="POST" action="index.php">
+{sugar_csrf_form_token}
 <input type="hidden" name="module" value="Import">
 <input type="hidden" name="type" value="{$TYPE}">
 <input type="hidden" name="source" id="source" value="{$SOURCE}">

@@ -345,7 +345,8 @@ class MetaDataHelperTest extends \PHPUnit_Framework_TestCase
 
 
     /**
-     * @covers ::getCache, ::setCache
+     * @covers ::getCache
+     * @covers ::setCache
      * @dataProvider providerTestInMemoryCache
      */
     public function testInMemoryCache($key, $value, $isCacheDisabled, $isRealCacheDisabled, $expected)

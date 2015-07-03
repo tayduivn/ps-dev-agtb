@@ -13,6 +13,7 @@
 <br/>
 <strong>{$mod_strings.LBL_SEARCH_IMPORTED_EMAIL}</strong>
 <form name="advancedSearchForm" id="advancedSearchForm">
+{sugar_csrf_form_token}
 <table cellpadding="4" cellspacing="0" border="0" id='advancedSearchTable'>
 	<tr><td>&nbsp;</td></tr>
 	<tr>

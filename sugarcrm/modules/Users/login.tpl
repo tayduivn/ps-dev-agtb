@@ -31,6 +31,7 @@ var LBL_HIDEOPTIONS = '{sugar_translate module="Users" label="LBL_HIDEOPTIONS"}'
 					<td align="center">
 						<div class="login">
 							<form action="index.php" method="post" name="DetailView" id="form" onsubmit="return document.getElementById('cant_login').value == ''">
+{sugar_csrf_form_token}
 								<table cellpadding="0" cellspacing="2" border="0" align="center" width="100%">
 						    	<td scope="row" colspan="2">
 						    	    <span class="error" id="browser_warning" style="display:none">
@@ -102,6 +103,7 @@ var LBL_HIDEOPTIONS = '{sugar_translate module="Users" label="LBL_HIDEOPTIONS"}'
 			<div class="password">
 			
 			<form action="index.php" method="post" name="fp_form" id="fp_form" >
+{sugar_csrf_form_token}
 								<table cellpadding="0" cellspacing="2" border="0" align="center" width="100%">
 									<tr>
 										<td colspan="2" class="login_more">

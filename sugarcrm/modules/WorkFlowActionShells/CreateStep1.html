@@ -179,6 +179,7 @@ function confirm_safety(){
 <tr><td>
 <table width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
 			<form name="EditView" id="EditView" method="POST" action="index.php">
+{sugar_csrf_form_token}
 			<input type="hidden" name="module" value="WorkFlowActionShells">
 			<input type="hidden" id='record' name="record" value="{ID}">
 			<input type="hidden" id='parent_id' name="parent_id" value="{ID}">

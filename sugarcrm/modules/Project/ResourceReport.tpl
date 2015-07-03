@@ -16,6 +16,7 @@
 	<tr>
 		<td style="padding-bottom: 2px;" colspan=6>
 			<form name="ResourceView" id="ResourceView" method="post" action="index.php">
+{sugar_csrf_form_token}
 				<input type="hidden" name="module" value="Project" />
 				<input type="hidden" name="sugar_body_only" id="sugar_body_only" value="1">
 				<input type="hidden" name="record" id="record" value="{$ID}">

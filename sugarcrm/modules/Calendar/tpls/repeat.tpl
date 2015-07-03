@@ -18,6 +18,7 @@
 
 <div id="cal-repeat-block" style="dispaly: none;">
 <form name="CalendarRepeatForm" id="CalendarRepeatForm" onsubmit="return false;">
+{sugar_csrf_form_token}
 
 <input type="hidden" name="repeat_parent_id">
 <table class="edit view" width="100%" border="0" cellpadding="0" cellspacing="0">
