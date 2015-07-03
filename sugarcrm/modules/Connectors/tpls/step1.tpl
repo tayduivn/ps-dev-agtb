@@ -261,6 +261,7 @@ YAHOO.util.Event.onDOMReady(SourceTabs.init);
 {include file="modules/Connectors/tpls/search_form.tpl"}
 </div>
 <form name="ConnectorStep1" method="POST">
+{sugar_csrf_form_token}
 <input type="hidden" name="action" value="Step2">
 <input type="hidden" name="module" value="Connectors">
 <input type="hidden" name="record" value="{$RECORD}">

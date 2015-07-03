@@ -25,6 +25,7 @@
 {MESSAGE}
 
 <form action="index.php" method="post" name="EditView" id="EditView" enctype="multipart/form-data">
+{sugar_csrf_form_token}
 	<input type="hidden" name="module" value="Emails" />
 	<input type="hidden" name="action" value="Save" />
 	<input type="hidden" name="contact_id" value="{CONTACT_ID}" />

@@ -13,6 +13,7 @@
 
 
 <form name="contractsQuickCreate" id="contractsQuickCreate" method="POST" action="index.php">
+{sugar_csrf_form_token}
 
 <input type="hidden" name="parent_account_id" value="{$REQUEST.account_id}">
 <input type="hidden" name="parent_account_name" value="{$REQUEST.account_name}">

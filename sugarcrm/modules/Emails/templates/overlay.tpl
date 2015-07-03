@@ -21,6 +21,7 @@
 		<div id="addFileDialogContent" class="ylayout-inactive-content">
 			<!--  -->
 			<form id="uploadAttachment" name="uploadAttachment" method='POST' action="index.php" enctype='multipart/form-data'>
+{sugar_csrf_form_token}
 				<input type="hidden" name="to_pdf" value="true">
 				<input type="hidden" name="module" value="Emails">
 				<input type="hidden" name="action" value="EmailUIAjax">

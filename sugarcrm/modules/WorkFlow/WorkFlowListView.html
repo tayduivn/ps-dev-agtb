@@ -31,6 +31,7 @@
     	<td nowrap valign=TOP><slot>{EMAIL_TEMPLATE.DATE_MODIFIED}</slot></td>
         <td valign=TOP class="{ROW_COLOR}S1" bgcolor="{BG_COLOR}" nowrap><slot>
             <form id="{EMAIL_TEMPLATE.ID}" method="post" action="{URL_PREFIX}index.php?&module=EmailTemplates&action=Delete&record={EMAIL_TEMPLATE.ID}{RETURN_URL}">
+{sugar_csrf_form_token}
                 <a class="listViewTdToolsS1" href="javascript:void(0);" onclick="if (confirm('{NTC_REMOVE_ALERT}')) document.getElementById('{EMAIL_TEMPLATE.ID}').submit();">{DELETE_INLINE_PNG}&nbsp;{APP.LNK_REMOVE}</a>
             </form>
         </slot></td>

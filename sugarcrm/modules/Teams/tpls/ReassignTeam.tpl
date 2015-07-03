@@ -20,6 +20,7 @@
 <br>
 <br>
 <form name="reassign_team" id="reassign_team">
+{sugar_csrf_form_token}
 <input type="hidden" name="module" id="module" value="Teams">
 <input type="hidden" name="action" id="action" value="ReassignTeams">
 <input type="hidden" name="teams" id="teams" value="{$TEAMS}">

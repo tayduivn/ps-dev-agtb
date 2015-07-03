@@ -18,6 +18,7 @@
 <tr>
 <td>
 <form action="index.php" method="post" name="DetailView" id="form">
+{sugar_csrf_form_token}
 			<input type="hidden" name="module" value="CampaignLog">
 			<input type="hidden" name="subpanel_parent_module" value="Campaigns">			
 			<input type="hidden" name="record" value="{$ID}">

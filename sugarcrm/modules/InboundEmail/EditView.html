@@ -18,6 +18,7 @@
 <script type='text/javascript' src='cache/include/javascript/sugar_grp_overlib.js?v={VERSION_MARK}'></script>
 
 <form action="index.php" method="post" name="EditView" id="EditView">
+    {sugar_csrf_form_token}
 	<input type="hidden" name="module" value="{MODULE}">
 	<input type="hidden" name="record" value="{ID}">
 	<input type="hidden" name="origin_id" value="{ORIGIN_ID}">

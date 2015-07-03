@@ -32,6 +32,7 @@ function change_state(radiobutton) {
 {/literal}
 {$ROLLOVER}
 <form name="ConfigureSettings" id="EditView" method="POST" action="index.php">
+    {sugar_csrf_form_token}
 	<input type="hidden" name="module" value="EmailMan">
 	<input type="hidden" name="action">
 	<input type="hidden" name="return_module" value="{$RETURN_MODULE}">

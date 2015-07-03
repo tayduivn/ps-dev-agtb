@@ -116,6 +116,7 @@ function confirm_safety(){
 
 
 <form name="EditView" method="POST" action="index.php">
+{sugar_csrf_form_token}
     <input type="hidden" name="module" value="WorkFlowActionShells">
     <input type="hidden" id="record" name="record" value="{ID}">
     <input type="hidden" id="parent_id" name="parent_id" value="{WORKFLOW_ID}">

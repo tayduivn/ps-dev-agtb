@@ -11,6 +11,7 @@
  */
 *}
 <form id="searchForm" method="get" action="#">
+{sugar_csrf_form_token}
     <table id="searchTable" border="0" cellpadding="0" cellspacing="0" width="670">
 		<tr id="peopleTableSearchRow">
 			<td scope="row" nowrap="NOWRAP">

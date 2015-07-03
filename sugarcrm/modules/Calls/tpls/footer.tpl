@@ -92,6 +92,7 @@ YAHOO.util.Event.onContentReady("{/literal}{{$form_name}}{literal}",function() {
 </script>
 </form>
 <form >
+{sugar_csrf_form_token}
 	<div class="buttons">
 		{{if !empty($form) && !empty($form.buttons_footer)}}
 		   {{foreach from=$form.buttons_footer key=val item=button}}

@@ -42,6 +42,7 @@ function parent_typechangeQS() {
 </script>
 {/literal}
 <form name="{$formName}" id="{$formName}">
+{sugar_csrf_form_token}
 <div id="importDiv" class='edit view'>
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tbody><tr>

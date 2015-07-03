@@ -13,6 +13,7 @@
 
 {$JAVASCRIPT}
 <form class="search_form" id="search_form">
+{sugar_csrf_form_token}
 <div class="edit view search basic">
 <table cellpadding="0" cellspacing="0" border="0" width="100%">
 <tr>

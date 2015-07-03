@@ -12,6 +12,7 @@
 -->
 <!-- BEGIN: main -->
 <form name="search" id="search">
+{sugar_csrf_form_token}
 	<input type="hidden" name="action" value="{SEARCH_ACTION}">
 	<input type="hidden" name="query" value="true"/>
 	<input type="hidden" name="module" value="Emails" />
@@ -47,6 +48,7 @@
 
 <!-- BEGIN: adv -->
 <form name="search" id="search">
+{sugar_csrf_form_token}
 	<input type="hidden" name="action" value="{SEARCH_ACTION}">
 	<input type="hidden" name="query" value="true">
 	<input type="hidden" name="module" value="Emails">

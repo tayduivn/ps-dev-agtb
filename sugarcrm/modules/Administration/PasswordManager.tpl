@@ -11,6 +11,7 @@
  */
 *}
 <form name="ConfigurePasswordSettings" method="POST" action="index.php">
+{sugar_csrf_form_token}
 <input type='hidden' name='action' value='PasswordManager'/>
 <input type='hidden' name='module' value='Administration'/>
 <input type='hidden' name='saveConfig' value='1'/>

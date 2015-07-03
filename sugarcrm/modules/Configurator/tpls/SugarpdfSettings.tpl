@@ -14,6 +14,7 @@
 <script type='text/javascript'>var fileFields = new Array();</script>
 <BR>
 <form name="ConfigureSugarpdfSettings" enctype='multipart/form-data' method="POST" action="index.php?action=SugarpdfSettings&module=Configurator" onSubmit="if(checkFileType(null,1))return (check_form('ConfigureSugarpdfSettings'));else return false;">
+{sugar_csrf_form_token}
 <span class='error'>{$error}</span>
 <table width="100%" cellpadding="0" cellspacing="0" border="0">
     <tr>

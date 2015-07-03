@@ -72,6 +72,7 @@ form
 {/literal}
 
 <form action="{$SITE_URL}" method="post" name="ChangePasswordForm" id="ChangePasswordForm" onsubmit="return document.getElementById('cant_login').value == ''">
+{sugar_csrf_form_token}
 <table cellpadding="0" align="center" width="100%" cellspacing="0" border="0">
 <tr>
 <td>

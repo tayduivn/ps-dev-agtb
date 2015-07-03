@@ -38,6 +38,8 @@
 <form id="ConfigureSettings" name="ConfigureSettings" enctype='multipart/form-data' method="POST"
 	action="index.php?module=Administration&action=Locale&process=true">
 
+{sugar_csrf_form_token}
+
 <span class='error'>{$error.main}</span>
 
 <table width="100%" cellpadding="0" cellspacing="0" border="0" class="actionsContainer">

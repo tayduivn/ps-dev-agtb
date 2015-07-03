@@ -16,6 +16,7 @@
     <link rel="stylesheet" type="text/css"
           href="{sugar_getjspath file='modules/ModuleBuilder/tpls/MBModule/dropdown.css'}"></link>
     <form name='dropdown_form' onsubmit="return false">
+{sugar_csrf_form_token}
         <input type='hidden' name='module' value='ModuleBuilder'>
         <input type='hidden' name='action' value='{$action}'>
         <input type='hidden' name='to_pdf' value='true'>
