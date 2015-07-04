@@ -113,11 +113,19 @@
              */
             createRelatedContent: function(parentModel, type) {
                 var self = this,
-                    prefill = app.data.createBean('KBContents');
+                    prefill = app.data.createBean('KBContents', {id: parentModel.get('id')});
 
-                parentModel.fetch({
+                prefill.fetch({
                     success: function() {
-                        self._copyRelatedContent(prefill, parentModel);
+                        var removeList = ['id', 'is_external'];
+
+                        _.each(removeList, function(field) {
+                            prefill.unset(field);
+                        });
+
+                        prefill.set('status', 'draft');
+                        prefill.set('assigned_user_id', app.user.get('id'));
+                        prefill.set('assigned_user_name', app.user.get('full_name'));
 
                         if (type === self.CONTENT_LOCALIZATION) {
                             self._onCreateLocalization(prefill, parentModel);
@@ -132,38 +140,6 @@
                         });
                     }
                 });
-            },
-
-            /**
-             * Uses standard Model's copy mechanism and adds/removes additional fields, specific to related content.
-             * The purpose is to use vardefs' 'duplicate_on_record_copy' only for general copying.
-             * @param {Data.Model} prefill New created model.
-             * @param {Data.Model} parentModel Parent model.
-             * @private
-             */
-            _copyRelatedContent: function(prefill, parentModel) {
-                var removeList = ['id', 'is_external'],
-                    addList = [
-                        'active_date', 'exp_date', 'attachment_list', 'usefulness_user_vote',
-                        'kbsapprover_id', 'kbsapprover_name', 'approved',
-                        'kbscase_id', 'kbscase_name',
-                        'localizations', 'revisions', 'related_languages',
-                        'kbdocument_id', 'kbdocument_name', 'kbdocuments_kbcontents',
-                        'kbarticle_id', 'kbarticle_name', 'kbarticles_kbcontents'
-                    ];
-
-                prefill.copy(parentModel);
-
-                _.each(removeList, function(field) {
-                    prefill.unset(field);
-                });
-                _.each(addList, function(field) {
-                    prefill.set(field, parentModel.get(field));
-                });
-
-                prefill.set('status', 'draft');
-                prefill.set('assigned_user_id', app.user.get('id'));
-                prefill.set('assigned_user_name', app.user.get('full_name'));
             },
 
             /**
