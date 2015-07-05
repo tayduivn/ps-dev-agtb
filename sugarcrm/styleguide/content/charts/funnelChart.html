@@ -31,11 +31,12 @@
         <div class="option-row">
           <span>Data File</span><br>
           <select id="chartData">
-            <option value="funnel_data">Opportunity Total by Sales Stage</option>
+            <option value="funnel_data" selected="selected">Opportunity Total by Sales Stage</option>
             <option value="funnel_data_opps">Opportunity Data</option>
-            <option value="funnel_data_long" selected="selected">Long Label Lengths</option>
+            <option value="funnel_data_long">Long Label Lengths</option>
             <option value="funnel_data_uniform">Uniform Data and Labels</option>
             <option value="funnel_data_single">One Long Single Label</option>
+            <option value="sugar_data_grouped">Test Grouped Data</option>
           </select>
         </div>
         <div class="option-row">
@@ -66,8 +67,9 @@
   </div>
 
 <script src="../../../include/javascript/jquery/jquery-min.js"></script>
+<script src="js/translate-data.js"></script>
 
-<script src="../../../include/javascript/nvd3/lib/d3.js" charset="utf-8"></script>
+<script src="../../../include/javascript/nvd3/lib/d3.min.js" charset="utf-8"></script>
 <script src="../../../include/javascript/nvd3/nv.d3.js"></script>
 <script src="../../../include/javascript/nvd3/src/models/axis.js"></script>
 <script src="../../../include/javascript/nvd3/src/models/legend.js"></script>
@@ -130,9 +132,9 @@
 
     function loadData(file) {
       d3.json('data/' + file + '.json', function(data) {
-        chartData = data;
+        chartData = data.data ? data : translateDataToD3(data, 'funnelChart');
 
-        colorLength = data.data.length;
+        colorLength = chartData.data.length;
 
         chart
           .colorData(color, {c1: '#e8e2ca', c2: '#3e6c0a', l: colorLength});

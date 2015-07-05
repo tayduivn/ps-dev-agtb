@@ -865,6 +865,15 @@ nv.utils.stringEllipsify = function(_string, _container, _length) {
   return str + (strLen > _length ? '...' : '');
 };
 
+nv.utils.getTextBBox = function(text, float) {
+  var bbox = text.node().getBBox();
+  if (!float) {
+    bbox.width = parseInt(bbox.width, 10);
+    bbox.height = parseInt(bbox.height, 10);
+  }
+  return bbox;
+};
+
 nv.utils.getTextContrast = function(c, i, callback) {
   var back = c,
       backLab = d3.lab(back),
@@ -887,20 +896,19 @@ nv.utils.isRTLChar = function(c) {
 };
 
 nv.utils.polarToCartesian = function(centerX, centerY, radius, angleInDegrees) {
-  var angleInRadians = angleInDegrees * Math.PI / 180.0;
+  var angleInRadians = nv.utils.angleToRadians(angleInDegrees);
   var x = centerX + radius * Math.cos(angleInRadians);
   var y = centerY + radius * Math.sin(angleInRadians);
   return [x, y];
 };
 
-nv.utils.getTextBBox = function(text, float) {
-  var bbox = text.node().getBBox();
-  if (!float) {
-    bbox.width = parseInt(bbox.width, 10);
-    bbox.height = parseInt(bbox.height, 10);
-  }
-  return bbox;
-};
+nv.utils.angleToRadians = function(angleInDegrees) {
+  return angleInDegrees * Math.PI / 180.0;
+}
+
+nv.utils.angleToDegrees = function(angleInRadians) {
+  return angleInRadians * 180.0 / Math.PI;
+}
 nv.models.axis = function() {
 
   //============================================================
@@ -10737,10 +10745,10 @@ nv.models.pie = function() {
       rotateDegrees = 0,
       startAngle = function(d) {
         // DNR (Math): simplify d.startAngle - ((rotateDegrees * Math.PI / 180) * (360 / arcDegrees)) * (arcDegrees / 360);
-        return d.startAngle * arcDegrees / 360 - rotateDegrees * Math.PI / 180;
+        return d.startAngle * arcDegrees / 360 + nv.utils.angleToRadians(rotateDegrees);
       },
       endAngle = function(d) {
-        return d.endAngle * arcDegrees / 360 - rotateDegrees * Math.PI / 180;
+        return d.endAngle * arcDegrees / 360 + nv.utils.angleToRadians(rotateDegrees);
       },
       donutRatio = 0.447,
       minRadius = 75,
@@ -11000,7 +11008,7 @@ nv.models.pie = function() {
             }
             var anchor = alignedRight(d, labelArc) === 1 ? 'start' : 'end';
             if (direction === 'rtl') {
-              anchor === 'start' ? 'end' : 'start';
+              anchor = anchor === 'start' ? 'end' : 'start';
             }
             return anchor;
           });
@@ -11089,40 +11097,66 @@ nv.models.pie = function() {
       function calcScalars(slices, maxWidth, maxHeight) {
         var widths = [],
             heights = [],
-            Pi = Math.PI;
+            Pi = Math.PI,
+            twoPi = 2 * Math.PI,
+            north = 0,
+            east = Math.PI / 2,
+            south = Math.PI,
+            west = 3 * Math.PI / 2,
+            norm = 0;
+
+        function normalize(a) {
+          return (a + norm) % twoPi;
+        }
 
         slices.each(function(d, i) {
-          var aStart = (startAngle(d) + 2 * Pi) % (2 * Pi),
-              aEnd = (endAngle(d) + 2 * Pi) % (2 * Pi),
+          var aStart = (startAngle(d) + twoPi) % twoPi,
+              aEnd = (endAngle(d) + twoPi) % twoPi;
 
-              wStart = Math.round(Math.sin(aStart) * 10000) / 10000,
+          var wStart = Math.round(Math.sin(aStart) * 10000) / 10000,
               wEnd = Math.round(Math.sin(aEnd) * 10000) / 10000,
               hStart = Math.round(Math.cos(aStart) * 10000) / 10000,
               hEnd = Math.round(Math.cos(aEnd) * 10000) / 10000;
 
+          // if angles go around the horn, normalize
+          norm = aEnd < aStart ? twoPi - aStart : 0;
+
+          if (aEnd === aStart) {
+            aStart = 0;
+            aEnd = twoPi;
+          } else {
+            aStart = normalize(aStart);
+            aEnd = normalize(aEnd);
+          }
+
+          north = normalize(north);
+          east = normalize(east);
+          south = normalize(south);
+          west = normalize(west);
+
           // North
-          if (startAngle(d) <= 0 && endAngle(d) >= 0) {
+          if (aStart % twoPi === 0 || aEnd % twoPi === 0) {
             heights.push(maxHeight);
             if (donut) {
               heights.push(maxHeight * donutRatio);
             }
           }
           // East
-          if (aStart <= Pi / 2 && (aEnd >= Pi / 2 || aEnd === 0)) {
+          if (aStart <= east && aEnd >= east) {
             widths.push(maxWidth);
             if (donut) {
               widths.push(maxWidth * donutRatio);
             }
           }
           // South
-          if (aStart <= Pi && (aEnd >= Pi || aEnd === 0)) {
+          if (aStart <= south && aEnd >= south) {
             heights.push(-maxHeight);
             if (donut) {
               heights.push(-maxHeight * donutRatio);
             }
           }
           // West
-          if (aStart <= 3 * Pi / 2 && (aEnd >= 3 * Pi / 2 || aEnd === 0)) {
+          if (aStart <= west && aEnd >= west) {
             widths.push(-maxWidth);
             if (donut) {
               widths.push(-maxWidth * donutRatio);
