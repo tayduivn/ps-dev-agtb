@@ -451,6 +451,7 @@ class AbstractRelationship
                 break;
             default:
                 $module = $sourceModule;
+                $vardef['rname'] = 'name';
                 break;
         }
 
