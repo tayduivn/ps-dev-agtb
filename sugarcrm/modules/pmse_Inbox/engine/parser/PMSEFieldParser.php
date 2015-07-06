@@ -36,6 +36,16 @@ class PMSEFieldParser implements PMSEDataParserInterface
     private $pmseRelatedModule;
 
     /**
+     * List of token parse methods
+     * @var array
+     */
+    public $tokenMethods = array(
+        'current_user' => 'parseCurrentUser',
+        'supervisor' => 'parseSupervisor',
+        'owner' => 'parseOwner',
+    );
+
+    /**
      * gets the bean list
      * @return array
      * @codeCoverageIgnore
@@ -169,6 +179,7 @@ class PMSEFieldParser implements PMSEDataParserInterface
         $tokenValue = $this->parseTokenValue($assembledTokenString);
         $criteriaToken->expToken = $assembledTokenString;
         $criteriaToken->currentValue = $tokenValue;
+        $criteriaToken->expValue = $this->setExpValueFromCriteria($criteriaToken);
 
         if ($this->evaluatedBean->field_name_map[$criteriaToken->expField]['type']=='date') {
             $criteriaToken->expSubtype = 'date';
@@ -293,4 +304,38 @@ class PMSEFieldParser implements PMSEDataParserInterface
         }
         return $response;
     }
+
+    /**
+     * Parses the token value for a User field element
+     * @param string $token field contains a parser
+     * @return string field value
+     */
+    public function setExpValueFromCriteria($token)
+    {
+        if (!empty($token->expValue) && method_exists($this, $this->tokenMethods[$token->expValue])) {
+            $method = $this->tokenMethods[$token->expValue];
+            return $this::$method($token);
+        }
+
+        return $token->expValue;
+    }
+
+    public function parseCurrentUser($token)
+    {
+        return !empty($this->currentUser->id) ?
+            $this->currentUser->id : $token->expValue;
+    }
+
+    public function parseOwner($token)
+    {
+        return !empty($this->evaluatedBean->assigned_user_id) ?
+            $this->evaluatedBean->assigned_user_id : $token->expValue;
+    }
+
+    public function parseSupervisor($token)
+    {
+        return !empty($this->currentUser->reports_to_id) ?
+            $this->currentUser->reports_to_id : $token->expValue;
+    }
+
 }
