@@ -312,16 +312,18 @@ FLIST;
                     $displayMode = 'detail';
                 }
                 //BUTTON SECTIONS
+                $customButtons = array();
                 $defaultButtons = $this->getButtonArray(array('approve' => true, 'reject' => true));
                 if ($reclaimCaseByUser) {
                     $this->defs['BPM']['buttons']['claim'] = true;
+                    $customButtons = array('claim' => true);
                 } elseif (isset($caseData['cas_adhoc_type']) && ($caseData['cas_adhoc_type'] === '')) {
                     $this->defs['BPM']['buttons']['approve'] = (strtoupper($this->activityRow['act_response_buttons']) == 'APPROVE') ? true : false;
                     $this->defs['BPM']['buttons']['route'] = (strtoupper($this->activityRow['act_response_buttons']) == 'ROUTE') ? true : false;
                 } else {
                     $this->defs['BPM']['buttons']['route'] = true;
                 }
-                $customButtons = array();
+
                 $taskContinue = false;
                 if (!$reclaimCaseByUser && !empty($beanFlow->cas_adhoc_actions)) {
                     $buttons = unserialize($beanFlow->cas_adhoc_actions);
