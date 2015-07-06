@@ -67,21 +67,26 @@ class Bug43466 extends Sugar_PHPUnit_Framework_TestCase
 				array (
 					'name' => 'duration_hours',
 					'vname' => 'LBL_DURATION_HOURS',
-					'type' => 'int',
+					'type' => 'enum',
+					'dbType' => 'int',
+					'options' => 'duration_hours_intervals',
 					'len' => '2',
 					'comment' => 'Call duration, hours portion',
 					'required' => true,
+					'default' => 0,
 				),
 			'duration_minutes' =>
 				array (
 					'name' => 'duration_minutes',
 					'vname' => 'LBL_DURATION_MINUTES',
-					'type' => 'int',
-					'function' => array('name'=>'getDurationMinutesOptions', 'returns'=>'html', 'include'=>'modules/Calls/CallHelper.php'),
+					'type' => 'enum',
+					'dbType' => 'int',
+					'options' => 'duration_intervals',
 					'len' => '2',
 					'group'=>'duration_hours',
 					'importable' => 'required',
-					'comment' => 'Call duration, minutes portion'
+					'comment' => 'Call duration, minutes portion',
+					'required' => true,
 				),
 
 			'date_start' =>
