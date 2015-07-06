@@ -131,6 +131,7 @@ describe('Base.View.RecordList', function() {
                     description: 'third description'
                 }
             ]);
+            view.collection.dataFetched = true;
             view.render();
         });
 

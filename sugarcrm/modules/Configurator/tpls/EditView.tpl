@@ -120,6 +120,18 @@
         </td>
     </tr>
     <tr>
+        <td scope="row">{$MOD.COLLAPSE_SUBPANELS}: &nbsp;{sugar_help text=$MOD.LBL_COLLAPSE_SUBPANELS_DESC}</td>
+        <td>
+            {if !empty($config.collapse_subpanels)}
+                {assign var='collapse_subpanels_checked' value='CHECKED'}
+            {else}
+                {assign var='collapse_subpanels_checked' value=''}
+            {/if}
+            <input type='hidden' name='collapse_subpanels' value='false'>
+            <input type='checkbox' name='collapse_subpanels' value='true' {$collapse_subpanels_checked}>
+        </td>
+    </tr>
+    <tr>
         <td  scope="row" nowrap>{$MOD.LBL_ENABLE_ACTION_MENU}: &nbsp;{sugar_help text=$MOD.LBL_ENABLE_ACTION_MENU_DESC}</td>
     {if isset($config.enable_action_menu) && $config.enable_action_menu != "true" }
         {assign var='enable_action_menu' value=''}
