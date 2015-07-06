@@ -59,11 +59,16 @@
     initialize: function(options) {
         this._super('initialize', [options]);
         this._initSettings();
-        this._bindEvents();
 
-        if (app.config.collapseSubpanels) {
-            this.showSubpanel(false);
+        if (this.layout) {
+            this.listenTo(this.layout, 'subpanel:change', this.showSubpanel);
+            this.listenTo(this.layout, 'filter:change', function(linkModuleName, linkName) {
+                // Broadcast on subpanels layout so subpanel-lists update.
+                this.trigger('filter:change', linkModuleName, linkName);
+            });
         }
+
+        this.on('subpanels:reordered', this._saveNewOrder, this);
     },
 
     /**
@@ -78,23 +83,6 @@
             this.meta && this.meta.settings || {}
         );
         return this;
-    },
-
-    /**
-     * Binds events that this layout uses.
-     *
-     * @protected
-     */
-    _bindEvents: function() {
-        if (this.layout) {
-            this.listenTo(this.layout, 'subpanel:change', this.showSubpanel);
-            this.listenTo(this.layout, 'filter:change', function(linkModuleName, linkName) {
-                // Broadcast on subpanels layout so subpanel-lists update.
-                this.trigger('filter:change', linkModuleName, linkName);
-            });
-        }
-
-        this.on('subpanels:reordered', this._saveNewOrder, this);
     },
 
     /**
@@ -314,9 +302,11 @@
         }
         _.each(this._components, function(component) {
             var link = component.context.get('link');
-            if (!linkName || linkName === link) {
+            if(!linkName || linkName === link) {
+                component.context.set("hidden", false);
                 component.show();
             } else {
+                component.context.set("hidden", true);
                 component.hide();
             }
         });

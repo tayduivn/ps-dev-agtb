@@ -51,7 +51,9 @@
         //Override the recordlist row template
         this.rowTemplate = app.template.getView('recordlist.row');
 
+        this.layout.on("hide", this.toggleList, this);
         // Listens to parent of subpanel layout (subpanels)
+        this.listenTo(this.layout.layout, 'filter:change', this.renderOnFilterChanged);
         this.listenTo(this.layout, 'filter:record:linked', this.renderOnFilterChanged);
 
         //event register for preventing actions
@@ -113,6 +115,14 @@
                 self.render();
             }
         });
+    },
+
+    /**
+     * Toggles the list visibility
+     * @param {Boolean} show TRUE to show, FALSE to hide.
+     */
+    toggleList: function(show) {
+        this.$el[show ? 'show' : 'hide']();
     },
 
     /**

@@ -13,6 +13,12 @@
 $viewdefs['RevenueLineItems']['base']['view']['panel-top'] = array(
     'buttons' => array(
         array(
+            'type' => 'button',
+            'css_class' => 'btn-invisible',
+            'icon' => 'fa-chevron-up',
+            'tooltip' => 'LBL_TOGGLE_VISIBILITY',
+        ),
+        array(
             'type' => 'actiondropdown',
             'name' => 'panel_dropdown',
             'buttons' => array(

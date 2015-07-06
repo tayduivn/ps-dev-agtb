@@ -1,4 +1,4 @@
-describe('Base.View.PanelTop', function() {
+describe("PanelTop View", function() {
     var app, view, context, sinonSandbox;
 
     beforeEach(function() {
@@ -22,6 +22,34 @@ describe('Base.View.PanelTop', function() {
         view = null;
     });
 
+    describe('Toggle panel', function() {
+        var isADropdownElement, notADropdownElement, myTarget, parentsStub, _toggleSubpanelStub;
+
+        beforeEach(function() {
+            notADropdownElement = [];
+            isADropdownElement = ['has', 'span', 'actions'],
+            myTarget = {a:'b'};
+            parentsStub = sinonSandbox.stub();
+            _toggleSubpanelStub = sinonSandbox.stub(view, '_toggleSubpanel');
+        });
+        afterEach(function() {
+            notADropdownElement = null,
+            myTarget = null;
+        });
+
+        it('should toggle panel if clicking anywhere on panel top', function() {
+            parentsStub.withArgs('span.actions').returns(notADropdownElement);
+            sinonSandbox.stub(jQuery.prototype, "parents", parentsStub);
+            view.togglePanel({target: myTarget});
+            expect(_toggleSubpanelStub).toHaveBeenCalled();
+        });
+        it('should NOT toggle panel if clicking on dropdown actions', function() {
+            parentsStub.withArgs('span.actions').returns(isADropdownElement);
+            sinonSandbox.stub(jQuery.prototype, "parents", parentsStub);
+            view.togglePanel({target: myTarget});
+            expect(_toggleSubpanelStub).not.toHaveBeenCalled();
+        });
+    });
     describe('Create Link model', function() {
         var parentModel, createBeanStub, relateFieldStub;
 
@@ -61,7 +89,7 @@ describe('Base.View.PanelTop', function() {
             expect(newModel.get('account_name')).toBe(parentModel.get('account_name'));
             expect(newModel.get('user_name')).toBe(parentModel.get('assigned_user_name'));
         });
-        it('should store the relate fields in default to keep the values when creating a new linked model', function() {
+        it('should store the relate fields in default to keep the values for [Save and create new]', function() {
             var newModel = view.createLinkModel(parentModel, 'blah');
             expect(newModel.relatedAttributes['product_template_id']).toBe(parentModel.get('id'));
             expect(newModel.relatedAttributes['product_template_name']).toBe(parentModel.get('name'));

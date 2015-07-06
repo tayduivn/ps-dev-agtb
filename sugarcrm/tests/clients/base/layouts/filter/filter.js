@@ -140,112 +140,40 @@ describe('Base.Layout.Filter', function() {
                         expect(layout.context.get('currentFilterId')).toEqual('new_filter');
                     }
                 );
-
-                describe('bulk API', function() {
-                    var getRelevantCtxListStub, loadOptions, ctxCollection, fakeContext, hasAtLeastStub, triggerBulkStub;
-
-                    beforeEach(function() {
-                        loadOptions = false;
-                        ctxCollection = function() {
-                            var collection = app.data.createBeanCollection(moduleName);
-                            collection.resetPagination = function() {};
-                            hasAtLeastStub = sinon.collection.stub(collection, 'hasAtLeast');
-                            return collection;
-                        };
-                        fakeContext = function(attrs) {
-                            attrs = _.extend({collection: ctxCollection()}, attrs);
-                            var ctx = app.context.getContext(attrs);
-                            ctx.resetPagination = function() {};
-                            sinon.collection.stub(ctx, 'loadData', function(opts) {
-                                loadOptions = opts;
-                            });
-                            return ctx;
-                        };
-                        sinon.collection.stub(app.metadata, 'getModule').returns({});
-                        getRelevantCtxListStub = sinon.collection.stub(layout, 'getRelevantContextList');
-                        triggerBulkStub = sinon.collection.stub(app.api, 'triggerBulkCall');
-                    });
-
-                    using('different context lists', [
-                        {
-                            ctxList: [
-                                {collapsed: false}
-                            ],
-                            fetchBulkCalled: false,
-                            countBulkCalled: false,
-                            expectCount: false
+                it('should use the bulk API when more than one context is loaded', function() {
+                    var callCount = 0,
+                        loadOptions = false,
+                        fakeContext = {
+                            get: function() { return { resetPagination: function() { }}; },
+                            set: function() { },
+                            resetLoadFlag: function() { },
+                            resetPagination: function() { },
+                            loadData: function(options) {
+                                loadOptions = options;
+                            }
                         },
-                        {
-                            ctxList: [
-                                {collapsed: false},
-                                {collapsed: false}
-                            ],
-                            fetchBulkCalled: true,
-                            countBulkCalled: false,
-                            expectCount: false
-                        },
-                        {
-                            ctxList: [
-                                {collapsed: false},
-                                {collapsed: true}
-                            ],
-                            fetchBulkCalled: true,
-                            countBulkCalled: false,
-                            expectCount: true
-                        },
-                        {
-                            ctxList: [
-                                {collapsed: false},
-                                {collapsed: true},
-                                {collapsed: true}
-                            ],
-                            fetchBulkCalled: true,
-                            countBulkCalled: true,
-                            expectCount: true
-                        },
-                        {
-                            ctxList: [
-                                {collapsed: true}
-                            ],
-                            fetchBulkCalled: false,
-                            countBulkCalled: false,
-                            expectCount: true
-                        },
-                        {
-                            ctxList: [
-                                {collapsed: true},
-                                {collapsed: true}
-                            ],
-                            fetchBulkCalled: true,
-                            countBulkCalled: true,
-                            expectCount: true
-                        }
-                    ], function(options) {
-                        it('should use the bulk API to fetch the count of collapsed subpanels', function() {
-                            options.ctxList = _.map(options.ctxList, function(attrs) {
-                                return fakeContext(attrs);
-                            });
-                            getRelevantCtxListStub.returns(options.ctxList);
-
-                            layout.applyFilter();
-
-                            expect(hasAtLeastStub.called).toEqual(options.expectCount);
+                        contextStub = sinon.collection.stub(layout, 'getRelevantContextList', function() {
+                            var ret = [];
+                            if (callCount == 0) {
+                                ret = [fakeContext];
+                            } else if (callCount == 1) {
+                                ret = [fakeContext, fakeContext];
+                            }
+                            callCount++;
+                            return ret;
                         });
 
-                        it('should use the bulk API when more than one context is loaded', function() {
-                            options.ctxList = _.map(options.ctxList, function(attrs) {
-                                return fakeContext(attrs);
-                            });
-                            getRelevantCtxListStub.returns(options.ctxList);
+                    layout.applyFilter();
+                    expect(contextStub).toHaveBeenCalled();
+                    expect(loadOptions).toBeTruthy();
+                    expect(loadOptions.apiOptions.bulk).toBeFalsy();
 
-                            layout.applyFilter();
+                    layout.applyFilter();
+                    expect(callCount).toEqual(2);
+                    expect(loadOptions).toBeTruthy();
+                    expect(loadOptions.apiOptions.bulk).toBeTruthy();
 
-                            var hasBulkId = loadOptions.apiOptions.bulk !== false;
-
-                            expect(getRelevantCtxListStub).toHaveBeenCalled();
-                            expect(hasBulkId).toEqual(options.fetchBulkCalled);
-                        });
-                    });
+                    contextStub.restore();
                 });
             });
             describe('refreshDropdown', function() {

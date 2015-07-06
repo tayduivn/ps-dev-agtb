@@ -10,16 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-{{#if collection.dataFetched}}
-    {{#notEq collection.next_offset "-1"}}
-        <div class="block-footer">
-            <button data-action="show-more" class="btn btn-link btn-invisible more padded">{{showMoreLabel}}</button>
-        </div>
-    {{/notEq}}
+{{#if dataFetched}}
+    <button data-action="show-more" class="btn btn-link btn-invisible more">{{showMoreLabel}}</button>
 {{else}}
-    <div class="block-footer">
+    {{#if showLoadMsg}}
         <div class="loading">
             {{str "LBL_ALERT_TITLE_LOADING"}}<i class="l1 fa fa-circle"></i><i class="l2 fa fa-circle"></i><i class="l3 fa fa-circle"></i>
         </div>
-    </div>
+    {{/if}}
 {{/if}}
