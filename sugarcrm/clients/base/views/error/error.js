@@ -78,6 +78,20 @@
                     linkText: app.lang.get('ERR_HTTP_500_ACTION')
                 };
                 break;
+            case '502':
+                attributes = {
+                    title: 'ERR_HTTP_502_TITLE',
+                    type: 'ERR_HTTP_502_TYPE',
+                    messages: ['ERR_HTTP_502_TEXT_LINE1', 'ERR_HTTP_502_TEXT_LINE2']
+                };
+                break;
+            case '503':
+                attributes = {
+                    title: 'ERR_HTTP_503_TITLE',
+                    type: 'ERR_HTTP_503_TYPE',
+                    messages: ['ERR_HTTP_503_TEXT_LINE1', 'ERR_HTTP_503_TEXT_LINE2']
+                };
+                break;
             default:
                 var error = this.context.get('error') || {};
                 var title = null;

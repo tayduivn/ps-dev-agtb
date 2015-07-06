@@ -11204,6 +11204,18 @@ Sincerely, SugarCRM',
     'ERR_HTTP_500_TEXT_LINE2' => 'Please try again. If the error persists, please contact your Sugar Administrator.',
     'ERR_HTTP_500_ACTION' => 'Please contact technical support.',
 
+    'ERR_HTTP_502_TYPE' => '502',
+    'ERR_HTTP_502_TITLE' => 'HTTP: 502 Internal Server Error',
+    'ERR_HTTP_502_TEXT_LINE1' => 'The server encountered a temporary error and could not complete your request.',
+    'ERR_HTTP_502_TEXT_LINE2' => 'Please try again. If the error persists, please contact your Sugar Administrator.',
+    'ERR_HTTP_502_ACTION' => 'Please contact technical support.',
+
+    'ERR_HTTP_503_TYPE' => '503',
+    'ERR_HTTP_503_TITLE' => 'HTTP: 503 Internal Server Error',
+    'ERR_HTTP_503_TEXT_LINE1' => 'The server is unavailable to complete your request.',
+    'ERR_HTTP_503_TEXT_LINE2' => 'Please try again later. If the error persists, please contact your Sugar Administrator.',
+    'ERR_HTTP_503_ACTION' => 'Please contact technical support.',
+
     'ERR_RENDER_FAILED_TITLE' => 'View Render Failed',
     'ERR_RENDER_FAILED_MSG' => 'Failed to render a view',
     'ERR_RENDER_FIELD_FAILED_TITLE' => 'Field Render Failed',

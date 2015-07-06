@@ -239,7 +239,7 @@
     };
        
     /**
-     * 500 Internal server error handler. 
+     * 500, 502, 503 Internal server error handler.
      */
     app.error.handleServerError = function(error) {
         if(error.payload.url) {
