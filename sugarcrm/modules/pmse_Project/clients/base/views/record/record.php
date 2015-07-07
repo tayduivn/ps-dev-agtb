@@ -162,6 +162,10 @@ array (
                 'label' => 'LBL_PRJ_MODULE',
               ),
               'assigned_user_name',
+              array(
+                'name' => 'prj_status',
+                'span' => 6,
+              ),
             ),
           ),
           2 => 

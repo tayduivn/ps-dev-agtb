@@ -56,6 +56,7 @@ SUGAR.util.doWhen(function(){
 {{/if}}
 
 <form action="index.php" method="post" name="DetailView" id="formDetailView">
+{sugar_csrf_form_token}
     <input type="hidden" name="module" value="{$module}">
     <input type="hidden" name="record" value="{$fields.id.value}">
     <input type="hidden" name="return_action">

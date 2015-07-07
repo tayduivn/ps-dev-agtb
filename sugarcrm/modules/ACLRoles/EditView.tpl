@@ -21,6 +21,7 @@ function set_focus(){
 </script>
 
 <form method='POST' name='EditView' action='index.php'>
+{sugar_csrf_form_token}
 <TABLE width='100%' border='0' cellpadding=0 cellspacing = 0 class="actionsContainer">
 <tbody>
 <tr>

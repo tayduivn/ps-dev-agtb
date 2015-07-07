@@ -376,6 +376,15 @@ nv.utils.stringEllipsify = function(_string, _container, _length) {
   return str + (strLen > _length ? '...' : '');
 };
 
+nv.utils.getTextBBox = function(text, float) {
+  var bbox = text.node().getBBox();
+  if (!float) {
+    bbox.width = parseInt(bbox.width, 10);
+    bbox.height = parseInt(bbox.height, 10);
+  }
+  return bbox;
+};
+
 nv.utils.getTextContrast = function(c, i, callback) {
   var back = c,
       backLab = d3.lab(back),
@@ -398,17 +407,16 @@ nv.utils.isRTLChar = function(c) {
 };
 
 nv.utils.polarToCartesian = function(centerX, centerY, radius, angleInDegrees) {
-  var angleInRadians = angleInDegrees * Math.PI / 180.0;
+  var angleInRadians = nv.utils.angleToRadians(angleInDegrees);
   var x = centerX + radius * Math.cos(angleInRadians);
   var y = centerY + radius * Math.sin(angleInRadians);
   return [x, y];
 };
 
-nv.utils.getTextBBox = function(text, float) {
-  var bbox = text.node().getBBox();
-  if (!float) {
-    bbox.width = parseInt(bbox.width, 10);
-    bbox.height = parseInt(bbox.height, 10);
-  }
-  return bbox;
-};
+nv.utils.angleToRadians = function(angleInDegrees) {
+  return angleInDegrees * Math.PI / 180.0;
+}
+
+nv.utils.angleToDegrees = function(angleInRadians) {
+  return angleInRadians * 180.0 / Math.PI;
+}

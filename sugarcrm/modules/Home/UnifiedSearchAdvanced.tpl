@@ -12,6 +12,7 @@
 *}
 
 <form name='UnifiedSearchAdvanced' method='get'>
+{sugar_csrf_form_token}
 <input type='hidden' name='module' value='Home'>
 <input type='hidden' name='query_string' value=''>
 <input type='hidden' name='advanced' value='true'>

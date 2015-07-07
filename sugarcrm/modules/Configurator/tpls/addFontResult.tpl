@@ -15,6 +15,7 @@
 {$MODULE_TITLE}
 </p>
 <form name="addFontResult" method="POST" action="index.php" id="addFontResult">
+{sugar_csrf_form_token}
 <input type="hidden" name="module" value="Configurator">
 <input type="hidden" name="action" value="FontManager">
 <table width="100%" cellpadding="0" cellspacing="0" border="0">

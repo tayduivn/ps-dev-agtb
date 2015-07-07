@@ -20,6 +20,7 @@
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr>
 <form class="edit view">
+{sugar_csrf_form_token}
 <td scope="row" nowrap="nowrap"><slot>{MOD.LBL_FIRST_NAME}</slot></td>
 <td ><slot><input type="text" size="10" tabindex='1' name="first_name"  value="{LAST_SEARCH.FIRST_NAME}" /></slot></td>
 <td scope="row" valign="top" nowrap="nowrap"><slot>{MOD.LBL_USER_NAME}</slot></td>

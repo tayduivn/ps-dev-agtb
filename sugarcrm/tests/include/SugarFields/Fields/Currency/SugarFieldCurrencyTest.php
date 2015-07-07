@@ -193,11 +193,11 @@ class SugarFieldCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
         $obj->currency_id = '-99';
 
         $vardef = $obj->field_defs['amount'];
+        $vardef['convertToBase'] = true;
         $field = SugarFieldHandler::getSugarField('currency');
 
         // expect value in base currency
         $expectedValue = SugarCurrency::formatAmountUserLocale($obj->amount, -99);
-
         $value = $field->exportSanitize($obj->amount, $vardef, $obj);
         $this->assertEquals($expectedValue, $value);
 

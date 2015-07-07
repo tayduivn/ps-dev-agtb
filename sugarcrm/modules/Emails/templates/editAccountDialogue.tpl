@@ -11,6 +11,7 @@
  */
 *}
 <form id="ieAccount" name="ieAccount">
+{sugar_csrf_form_token}
 				<input type="hidden" id="ie_id" name="ie_id">
 				<input type="hidden" id="ie_status" name="ie_status" value="Active">
 				<input type="hidden" id="ie_team" name="ie_team" value="{$ie_team}">

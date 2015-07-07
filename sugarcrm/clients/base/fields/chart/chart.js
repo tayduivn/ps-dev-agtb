@@ -141,6 +141,7 @@
                 };
                 break;
 
+            case 'funnel chart':
             case 'funnel chart 3D':
                 chartConfig = {
                     funnelType: 'basic',

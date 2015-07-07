@@ -107,8 +107,8 @@
         // Whenever anything happens within the quicksearch layout navigation,
         // close the module list dropdown.
         this.layout.on('navigate:next:component navigate:previous:component navigate:to:component', function() {
-            this.$('.module-dropdown').removeClass('open');
-        });
+            this.$el.removeClass('open');
+        }, this);
     },
 
     /**
@@ -289,6 +289,8 @@
         if (this.disposed) {
             return;
         }
+        // Reset the collection of module filters so we don't add duplicate elements to the original collection.
+        this.searchModuleFilter.reset();
         var modules = app.metadata.getModules() || {};
         _.each(modules, function(meta, module) {
             // Check that the module is searchable and accessible.

@@ -563,10 +563,11 @@
          * Removes the `_action` attribute from a model when cloning it.
          *
          * @param {Data.Bean} model
-         * @return {Object}
+         * @return {Data.Bean}
          */
         function cloneModel(model) {
-            return _.chain(model.attributes).clone().omit('_action').value();
+            var attributes = _.chain(model.attributes).clone().omit('_action').value();
+            return app.data.createBean(model.module, attributes);
         }
 
         /**
