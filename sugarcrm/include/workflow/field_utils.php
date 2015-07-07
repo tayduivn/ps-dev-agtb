@@ -349,7 +349,7 @@ include_once('include/workflow/expression_utils.php');
 				//check for multi_select and that this is the same dropdown as previous;
 
 				//Set the value select
-				$user_array = get_user_array(TRUE, "Active", "", true, null, ' AND is_group=0 ');
+				$user_array = get_user_array(true, 'Active', '', true, null, ' AND is_group = 0 OR is_group IS NULL ');
 
 				//$column_select = get_select_options_with_id($app_list_strings[$target_field_array['options']], $selected_value);
 				$column_select = get_select_options_with_id($user_array, $selected_value);
