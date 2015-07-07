@@ -105,8 +105,13 @@ describe("Record View", function () {
             ]
         }, moduleName);
         SugarTest.testMetadata.set();
-        SugarTest.app.data.declareModels();
+
         app = SugarTest.app;
+        app.data.declareModels();
+        SugarTest.loadPlugin('VirtualCollection');
+        app.data.declareModelClass(moduleName, app.metadata.getModule(moduleName), app.config.platform, {
+            plugins: ['VirtualCollection']
+        });
         sinonSandbox = sinon.sandbox.create();
 
         view = SugarTest.createView("base", moduleName, "record", null, null);
@@ -138,6 +143,7 @@ describe("Record View", function () {
         buildGridsFromPanelsMetadataStub.restore();
         SugarTest.testMetadata.dispose();
         SugarTest.app.view.reset();
+        app.data.reset();
         view.dispose();
         view = null;
     });
@@ -720,12 +726,12 @@ describe("Record View", function () {
         var collection, sandbox;
 
         beforeEach(function() {
-            collection = new Backbone.Collection([
-                new Backbone.Model({id: 1, name: 'aaa', status: 'aaa'}),
-                new Backbone.Model({id: 2, name: 'bbb', status: 'bbb'}),
-                new Backbone.Model({id: 3, name: 'ccc', status: 'aaa'}),
+            collection = app.data.createBeanCollection(view.model.module, [
+                app.data.createBean(view.model.module, {id: 1, name: 'aaa', status: 'aaa'}),
+                app.data.createBean(view.model.module, {id: 2, name: 'bbb', status: 'bbb'}),
+                app.data.createBean(view.model.module, {id: 3, name: 'ccc', status: 'aaa'})
             ]);
-            collection.fieldName = 'foo';
+            collection.fieldName = 'name';
             collection.fetchAll = function(options) {
                 options.success(this, options);
             };
@@ -734,7 +740,6 @@ describe("Record View", function () {
             view.model.trigger = $.noop;
 
             sandbox = sinon.sandbox.create();
-            sandbox.stub(app.drawer, 'open');
             sandbox.stub(view, 'getField').returns({
                 def: {
                     fields: ['name', 'status']
@@ -755,19 +760,14 @@ describe("Record View", function () {
         });
 
         it('should copy nested collections', function() {
-            var target;
-
-            target = new app.data.createBean(view.model.module, {});
+            var target = new app.data.createBean(view.model.module, {});
             target.set(collection.fieldName, new Backbone.Collection());
-            sandbox.stub(target, 'copy');
-            sandbox.stub(target, 'trigger');
-            sandbox.stub(app.data, 'createBean').returns(target);
 
             view.model.getCollectionFieldNames = function() {
                 return [collection.fieldName];
             };
 
-            view.duplicateClicked();
+            view._copyNestedCollections(view.model, target);
 
             expect(target.get(collection.fieldName).length).toBe(collection.length);
         });
