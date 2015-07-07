@@ -353,6 +353,10 @@
                         }
                     }
                 }, this));
+
+                this.layout.on('hide', function() {
+                    this.hasCheckedForDraftRecords = false;
+                }, this);
             }
         }
 
