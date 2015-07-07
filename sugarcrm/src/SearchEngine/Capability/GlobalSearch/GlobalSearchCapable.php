@@ -104,8 +104,8 @@ interface GlobalSearchCapable extends EngineInterface
     public function sort(array $fields);
 
     /**
-     * Return a list of supported sugar types for this provider
+     * Return a list of supported sugar types for the studio
      * @return array
      */
-    public function getSupportedTypes();
+    public function getStudioSupportedTypes();
 }

@@ -249,9 +249,9 @@ class Elastic implements
     /**
      * {@inheritDoc}
      */
-    public function getSupportedTypes()
+    public function getStudioSupportedTypes()
     {
-        return $this->gsProvider()->getSupportedTypes();
+        return $this->gsProvider()->getStudioSupportedTypes();
     }
 
     //// AGGREGATION CAPABILITY ////

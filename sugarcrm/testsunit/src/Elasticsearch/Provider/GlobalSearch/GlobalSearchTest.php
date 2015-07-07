@@ -33,29 +33,23 @@ class GlobalSearchTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers ::getSupportedTypes
+     * @covers ::getStudioSupportedTypes
      */
-    public function testGetSupportedTypes()
+    public function testGetStudioSupportedTypes()
     {
         $supported = array(
             'varchar',
             'name',
             'text',
-            'datetime',
-            'datetimecombo',
-            'date',
             'int',
             'phone',
             'url',
-            'id',
-            'exact',
             'longtext',
             'htmleditable_tinymce',
-            'enum',
             'email',
         );
         $sut = new GlobalSearch();
-        $this->assertEquals($supported, $sut->getSupportedTypes());
+        $this->assertEquals($supported, $sut->getStudioSupportedTypes());
     }
 
     /**
