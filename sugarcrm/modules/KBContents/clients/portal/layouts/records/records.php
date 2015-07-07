@@ -1,5 +1,4 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -11,66 +10,60 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$viewdefs['KBContents']['portal']['layout']['records'] = array (
-  'components' => array (
-    array (
-      'layout' => array (
-        'components' => array (
-          array (
-            'layout' => array (
-              'components' => array (
-                array (
-                  'layout' => 'list',
+$viewdefs['KBContents']['portal']['layout']['records'] = array(
+    'components' => array(
+        array(
+            'layout' => array(
+                'type' => 'default',
+                'name' => 'sidebar',
+                'components' => array(
+                    array(
+                        'layout' => array(
+                            'type' => 'base',
+                            'name' => 'main-pane',
+                            'targetEl' => '.main-pane',
+                            'components' => array(
+                                array(
+                                    'layout' => 'list',
+                                ),
+                            ),
+                        ),
+                    ),
+                    array(
+                        'layout' => array(
+                            'type' => 'base',
+                            'targetEl' => '.side-pane',
+                            'components' => array(
+                                array(
+                                    'layout' => 'list-sidebar',
+                                ),
+                            ),
+                        ),
+                    ),
+                    array(
+                        'layout' => array(
+                            'type' => 'base',
+                            'targetEl' => '.dashboard-pane',
+                            'components' => array(
+                                array(
+                                    'layout' => 'list-dashboard',
+                                ),
+                            ),
+                        ),
+                    ),
+                    array(
+                        'layout' => array(
+                            'type' => 'base',
+                            'targetEl' => '.preview-pane',
+                            'components' => array(
+                                array(
+                                    'layout' => 'preview',
+                                ),
+                            ),
+                        ),
+                    ),
                 ),
-              ),
-              'type' => 'simple',
-              'name' => 'main-pane',
-              'span' => 8,
             ),
-          ),
-          array (
-            'layout' => array (
-              'components' => array (
-                array (
-                  'layout' => 'list-sidebar',
-                ),
-              ),
-              'type' => 'simple',
-              'name' => 'side-pane',
-              'span' => 4,
-            ),
-          ),
-          array (
-            'layout' => array (
-              'components' => array (
-                  array(
-                      'layout' => 'list-dashboard',
-                  ),
-              ),
-              'name' => 'dashboard-pane',
-              'span' => 4,
-            ),
-          ),
-          array (
-            'layout' => array (
-              'components' => array (
-                array (
-                  'layout' => 'preview',
-                ),
-              ),
-              'type' => 'simple',
-              'name' => 'preview-pane',
-              'span' => 8,
-            ),
-          ),
         ),
-        'type' => 'default',
-        'name' => 'sidebar',
-        'span' => 12,
-      ),
     ),
-  ),
-  'type' => 'records',
-  'name' => 'base',
-  'span' => 12,
 );

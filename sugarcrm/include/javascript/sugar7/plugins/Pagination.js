@@ -81,7 +81,7 @@
                 }
                 pageComponent = app.view.createView({
                     context: this.context,
-                    name: 'list-bottom',
+                    type: 'list-bottom',
                     meta: {
                         template: 'list-bottom.dashlet-bottom'
                     },

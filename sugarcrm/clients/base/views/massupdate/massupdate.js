@@ -311,7 +311,7 @@
         if (!progressView) {
             progressView = app.view.createView({
                 context: this.context,
-                name: this.massUpdateViewName,
+                type: this.massUpdateViewName,
                 layout: this.layout
             });
             this.layout._components.push(progressView);

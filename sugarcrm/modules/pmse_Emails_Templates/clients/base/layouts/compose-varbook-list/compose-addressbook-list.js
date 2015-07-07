@@ -1,4 +1,3 @@
-<?php
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -9,5 +8,11 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-
-$viewdefs['Categories']['base']['view']['tree'] = array();
+/**
+ * @class View.Layouts.pmse_Emails_Templates.ComposeAddressbookListLayout
+ * @alias SUGAR.App.view.layouts.pmse_Emails_TemplatesComposeAddressbookListLayout
+ * @extends View.ListLayout
+ */
+({
+    extendsFrom: 'ListLayout'
+})

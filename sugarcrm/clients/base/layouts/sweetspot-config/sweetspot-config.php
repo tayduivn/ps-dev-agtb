@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 $viewdefs['base']['layout']['sweetspot-config'] = array(
-    'type' => 'sweetspot-config',
-    'name' => 'sweetspot-config',
     'css_class' => 'sweetspot-config',
     'components' => array(
         array(

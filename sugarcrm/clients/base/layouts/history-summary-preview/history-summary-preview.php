@@ -10,8 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 $viewdefs['base']['layout']['history-summary-preview'] = array(
-    'components' =>
-    array(
+    'components' => array(
         array(
             'view' => 'history-summary-preview-header',
         ),
@@ -20,13 +19,10 @@ $viewdefs['base']['layout']['history-summary-preview'] = array(
         ),
         array(
             'layout' => 'preview-activitystream',
-            'context' =>
-            array(
+            'context' => array(
                 'module' => 'Activities',
                 'forceNew' => true,
             ),
         ),
     ),
-    'type' => 'preview',
-    'span' => 12,
 );

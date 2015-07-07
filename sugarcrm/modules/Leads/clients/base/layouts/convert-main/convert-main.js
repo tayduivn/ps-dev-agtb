@@ -83,7 +83,6 @@
         view = app.view.createView({
             context: this.context,
             layout: this,
-            name: 'convert-options',
             type: 'convert-options',
             platform: this.options.platform
         });
@@ -104,10 +103,9 @@
             moduleMeta.moduleNumber = moduleNumber++;
             var view = app.view.createLayout({
                 context: this.context,
-                name: 'convert-panel',
+                type: 'convert-panel',
                 layout: this,
                 meta: moduleMeta,
-                type: 'convert-panel',
                 platform: this.options.platform
             });
             view.initComponents();

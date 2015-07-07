@@ -1,5 +1,4 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
@@ -14,20 +13,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 $module_name = 'pmse_Inbox';
 $viewdefs[$module_name]['base']['layout']['unattendedCases-list'] = array(
-    'components' =>
+    'components' => array(
         array(
-            /*array(
-                'view' => 'massupdate',
-            ),
-            array(
-                'view' => 'massaddtolist',
-            ),*/
-            array(
-                'view' => 'unattendedCases-list',
-                'primary' => true,
-            ),
+            'view' => 'unattendedCases-list',
+            'primary' => true,
         ),
-    'type' => 'simple',
-    'name' => 'unattendedCases-list',
-    'span' => 12,
+    ),
 );

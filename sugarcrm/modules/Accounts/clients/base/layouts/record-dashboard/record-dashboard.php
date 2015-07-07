@@ -12,17 +12,13 @@
  */
 
 $viewdefs['Accounts']['base']['layout']['record-dashboard'] = array(
-    'metadata' =>
-    array(
-        'components' =>
-        array(
+    'metadata' => array(
+        'components' => array(
             array(
-                'rows' =>
-                array(
+                'rows' => array(
                     array(
                         array(
-                            'view' =>
-                            array(
+                            'view' => array(
                                 'type' => 'opportunity-metrics',
                                 'label' => 'LBL_DASHLET_OPPORTUNITY_NAME',
                             ),
@@ -31,8 +27,7 @@ $viewdefs['Accounts']['base']['layout']['record-dashboard'] = array(
                     ),
                     array(
                         array(
-                            'view' =>
-                            array(
+                            'view' => array(
                                 'type' => 'casessummary',
                                 'label' => 'LBL_DASHLET_CASES_SUMMARY_NAME',
                             ),
@@ -41,8 +36,7 @@ $viewdefs['Accounts']['base']['layout']['record-dashboard'] = array(
                     ),
                     array(
                         array(
-                            'view' =>
-                            array(
+                            'view' => array(
                                 'type' => 'news',
                                 'label' => 'LBL_DASHLET_NEWS_FEED_NAME',
                             ),

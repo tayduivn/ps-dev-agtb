@@ -11,8 +11,7 @@
  */
 
 $viewdefs['base']['layout']['create-dupecheck'] = array(
-    'components' =>
-    array(
+    'components' =>  array(
         array(
             'view' => 'dupecheck-header',
         ),
@@ -22,6 +21,4 @@ $viewdefs['base']['layout']['create-dupecheck'] = array(
             'primary' => true,
         ),
     ),
-    'type' => 'dupecheck',
-    'span' => 12,
 );

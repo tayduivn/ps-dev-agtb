@@ -12,9 +12,7 @@
  */
 
 $viewdefs['base']['layout']['footer'] = array(
-    'components' =>
-    array(
-        'type' => 'simple',
+    'components' =>array(
         array(
             'view' => 'mobile-action',
         ),

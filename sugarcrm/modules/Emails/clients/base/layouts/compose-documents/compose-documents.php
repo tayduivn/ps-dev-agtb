@@ -12,17 +12,13 @@
  */
 
 $viewdefs['Emails']['base']['layout']['compose-documents'] = array(
-    'components' =>
-    array(
+    'components' => array(
         array(
             'layout' => 'selection-list',
-            'context' =>
-            array(
+            'context' => array(
                 'module' => 'Documents',
             ),
         ),
     ),
-    'type' => 'simple',
-    'span' => 12,
 );
 

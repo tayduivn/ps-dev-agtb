@@ -1,5 +1,3 @@
-<?php
- if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -10,8 +8,11 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-$viewdefs['Bugs']['base']['layout']['tabbed-layout'] = array (
-  'components' => array (),
-  'type' => 'simple',
-  'span' => 12,
-);
+/**
+ * @class View.Views.Prospects.PanelTopForProspectlistsView
+ * @alias SUGAR.App.view.views.ProspectsPanelTopForProspectlistsView
+ * @extends View.Views.Base.PanelTopView
+ */
+({
+    extendsFrom: 'PanelTopView'
+})

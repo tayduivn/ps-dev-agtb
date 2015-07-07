@@ -14,20 +14,24 @@ $viewdefs['base']['layout']['multi-selection-list'] = array(
     'components' => array(
         array(
             'layout' => array(
+                'type' => 'default',
+                'name' => 'sidebar',
                 'components' => array(
                     array(
                         'layout' => array(
+                            'type' => 'base',
+                            'name' => 'main-pane',
+                            'targetEl' => '.main-pane',
                             'components' => array(
                                 array(
                                     'view' => 'selection-headerpane',
                                 ),
                                 array(
-                                  'view' => 'selection-list-context',
+                                    'view' => 'selection-list-context',
                                 ),
                                 array(
                                     'layout' => array(
                                         'type' => 'filterpanel',
-                                        'span' => 12,
                                         'availableToggles' => array(),
                                         'filter_options' => array(
                                             'stickiness' => false,
@@ -35,6 +39,7 @@ $viewdefs['base']['layout']['multi-selection-list'] = array(
                                         'components' => array(
                                             array(
                                                 'layout' => array(
+                                                    'type' =>'filter',
                                                     'meta' => array(
                                                         'components' => array(
                                                             array(
@@ -49,8 +54,6 @@ $viewdefs['base']['layout']['multi-selection-list'] = array(
                                                         ),
                                                         'layoutType' => 'records',
                                                     ),
-                                                    'span' => 12,
-                                                    'type' =>'filter',
                                                 ),
                                                 'targetEl' => '.filter',
                                                 'position' => 'prepend',
@@ -73,39 +76,21 @@ $viewdefs['base']['layout']['multi-selection-list'] = array(
                                     ),
                                 ),
                             ),
-                            'type' => 'simple',
-                            'name' => 'main-pane',
-                            'span' => 8,
                         ),
                     ),
                     array(
                         'layout' => array(
-                            'components' => array(),
-                            'type' => 'simple',
-                            'name' => 'dashboard-pane',
-                            'span' => 4,
-                        ),
-                    ),
-                    array(
-                        'layout' => array(
+                            'type' => 'base',
+                            'targetEl' => '.preview-pane',
                             'components' => array(
                                 array(
                                     'layout' => 'preview',
                                 ),
                             ),
-                            'type' => 'simple',
-                            'name' => 'preview-pane',
-                            'span' => 8,
                         ),
                     ),
                 ),
-                'type' => 'default',
-                'name' => 'sidebar',
-                'span' => 12,
             ),
         ),
     ),
-    'type' => 'multi-selection-list',
-    'name' => 'base',
-    'span' => 12,
 );

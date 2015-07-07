@@ -1,5 +1,3 @@
-<?php
-
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -10,8 +8,11 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-
-$viewdefs['base']['view']['shortcuts-config'] = array(
-    'type' => 'shortcuts-config',
-    'name' => 'shortcuts-config',
-);
+/**
+ * @class View.Layouts.Base.DashletPreviewLayout
+ * @alias SUGAR.App.view.layouts.BaseDashletPreviewLayout
+ * @extends View.Layouts.Base.PreviewLayout
+ */
+({
+    extendsFrom: 'PreviewLayout'
+})

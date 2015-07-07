@@ -117,7 +117,7 @@
     addHeaderComponent: function() {
         var header = app.view.createView({
             context: this.context,
-            name: 'convert-panel-header',
+            type: 'convert-panel-header',
             layout: this,
             meta: this.meta
         });
@@ -143,7 +143,7 @@
 
         this.duplicateView = app.view.createLayout({
             context: context,
-            name: this.TOGGLE_DUPECHECK,
+            type: this.TOGGLE_DUPECHECK,
             layout: this,
             module: context.get('module')
         });
@@ -165,7 +165,7 @@
 
         this.createView = app.view.createView({
             context: context,
-            name: this.TOGGLE_CREATE,
+            type: this.TOGGLE_CREATE,
             module: context.module,
             layout: this
         });

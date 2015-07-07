@@ -191,7 +191,7 @@
 
         var def = {
             view: {
-                name: 'module-menu',
+                type: 'module-menu',
                 sticky: sticky,
                 short: false
             }
@@ -205,7 +205,7 @@
 
         def = {
             view: {
-                name: 'module-menu',
+                type: 'module-menu',
                 short: true
             }
         };

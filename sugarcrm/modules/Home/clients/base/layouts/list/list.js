@@ -1,4 +1,3 @@
-<?php
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -9,4 +8,11 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-$viewdefs['base']['view']['config-drawer-howto'] = array();
+/**
+ * @class View.Layouts.Home.ListLayout
+ * @alias SUGAR.App.view.layouts.HomeListLayout
+ * @extends View.DashboardLayout
+ */
+({
+    extendsFrom: 'DashboardLayout'
+})

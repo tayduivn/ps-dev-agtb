@@ -363,7 +363,7 @@
 
         app.drawer.open({
             layout: {
-                name: 'dashletconfiguration',
+                type: 'dashletconfiguration',
                 components: [meta]
             },
             context: {

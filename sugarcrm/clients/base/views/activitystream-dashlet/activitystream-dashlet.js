@@ -53,7 +53,7 @@
 
         this.omnibarView = app.view.createView({
             context: this.context,
-            name: 'activitystream-omnibar',
+            type: 'activitystream-omnibar',
             module: this.module,
             layout: this
         });
@@ -279,7 +279,7 @@
         } else {
             view = app.view.createView({
                 context: this.context,
-                name: 'activitystream',
+                type: 'activitystream',
                 module: this.module,
                 layout: this,
                 model: model,

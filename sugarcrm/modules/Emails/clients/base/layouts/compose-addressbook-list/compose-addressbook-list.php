@@ -12,8 +12,6 @@
  */
 
 $viewdefs['Emails']['base']['layout']['compose-addressbook-list'] = array(
-    'type' => 'compose-addressbook-list',
-    'span' => 12,
     'components' => array(
         array(
             'view' => 'compose-addressbook-list',

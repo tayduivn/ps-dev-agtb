@@ -12,8 +12,7 @@
  */
 
 $viewdefs['base']['layout']['filter'] = array(
-    'components' =>
-    array(
+    'components' => array(
         array(
             'view' => 'filter-module-dropdown',
         ),
@@ -24,8 +23,6 @@ $viewdefs['base']['layout']['filter'] = array(
             'view' => 'filter-quicksearch',
         ),
     ),
-    'type' => 'filter',
-    'span' => 12,
     'last_state' => array(
         'id' => 'filter',
     ),

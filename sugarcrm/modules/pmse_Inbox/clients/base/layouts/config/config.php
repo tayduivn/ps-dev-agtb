@@ -1,5 +1,4 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
@@ -17,9 +16,14 @@ $viewdefs[$module_name]['base']['layout']['config'] = array(
     'components' => array(
         array(
             'layout' => array(
+                'type' => 'default',
+                'name' => 'sidebar',
                 'components' => array(
                     array(
                         'layout' => array(
+                            'type' => 'base',
+                            'name' => 'main-pane',
+                            'targetEl' => '.main-pane',
                             'components' => array(
                                 array(
                                     'view' => 'config-headerpane',
@@ -28,38 +32,10 @@ $viewdefs[$module_name]['base']['layout']['config'] = array(
                                     'view' => 'config'
                                 ),
                             ),
-                            'type' => 'simple',
-                            'name' => 'main-pane',
-                            'span' => 8,
-                        ),
-                    ),
-                    array(
-                        'layout' =>
-                            array(
-                                'components' =>
-                                    array(),
-                                'type' => 'simple',
-                                'name' => 'dashboard-pane',
-                                'span' => 4,
-                            ),
-                    ),
-                    array(
-                        'layout' => array(
-                            'components' =>
-                            array(),
-                            'type' => 'simple',
-                            'name' => 'preview-pane',
-                            'span' => 8,
                         ),
                     ),
                 ),
-                'type' => 'default',
-                'name' => 'sidebar',
-                'span' => 12,
             ),
         ),
     ),
-    'type' => 'settings',
-    'name' => 'base',
-    'span' => 12,
 );

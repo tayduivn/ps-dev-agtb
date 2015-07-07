@@ -1,4 +1,3 @@
-<?php
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -9,5 +8,11 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-
-$viewdefs['RevenueLineItems']['base']['view']['recordlist'] = array();
+/**
+ * @class View.Layouts.ACLRoles.RecordsLayout
+ * @alias SUGAR.App.view.layouts.ACLRolesRecordsLayout
+ * @extends View.BwcLayout
+ */
+({
+    extendsFrom: 'BwcLayout'
+})

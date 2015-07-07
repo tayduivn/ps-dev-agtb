@@ -12,55 +12,26 @@
  */
 
 $viewdefs['base']['layout']['dashletconfiguration'] = array(
-    'components' =>
-    array(
+    'components' => array(
         array(
-            'layout' =>
-            array(
-                'components' =>
-                array(
+            'layout' => array(
+                'type' => 'default',
+                'name' => 'sidebar',
+                'components' => array(
                     array(
-                        'layout' =>
-                        array(
-                            'components' =>
-                            array(
+                        'layout' => array(
+                            'type' => 'base',
+                            'name' => 'main-pane',
+                            'targetEl' => '.main-pane',
+                            'components' => array(
                                 array(
                                     'view' => 'dashletconfiguration-headerpane',
                                 ),
                             ),
-                            'type' => 'simple',
-                            'name' => 'main-pane',
-                            'span' => 8,
-                        ),
-                    ),
-                    array(
-                        'layout' =>
-                        array(
-                            'components' =>
-                            array(),
-                            'type' => 'simple',
-                            'name' => 'dashboard-pane',
-                            'span' => 4,
-                        ),
-                    ),
-                    array(
-                        'layout' =>
-                        array(
-                            'components' =>
-                            array(),
-                            'type' => 'simple',
-                            'name' => 'preview-pane',
-                            'span' => 8,
                         ),
                     ),
                 ),
-                'type' => 'default',
-                'name' => 'sidebar',
-                'span' => 12,
             ),
         ),
     ),
-    'type' => 'dashletconfiguration',
-    'name' => 'base',
-    'span' => 12,
 );

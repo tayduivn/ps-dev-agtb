@@ -1,4 +1,3 @@
-<?php
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -9,6 +8,11 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-$viewdefs['base']['view']['panel-top-create'] = array(
-    'buttons' => array(),
-);
+/**
+ * @class View.Layouts.Campaigns.RecordsLayout
+ * @alias SUGAR.App.view.layouts.CampaignsRecordsLayout
+ * @extends View.BwcLayout
+ */
+({
+    extendsFrom: 'BwcLayout'
+})

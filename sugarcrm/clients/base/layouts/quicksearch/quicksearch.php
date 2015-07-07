@@ -12,8 +12,7 @@
  */
 
 $viewdefs['base']['layout']['quicksearch'] = array(
-    'components' =>
-    array(
+    'components' => array(
         array(
             'view' => 'quicksearch-modulelist',
         ),

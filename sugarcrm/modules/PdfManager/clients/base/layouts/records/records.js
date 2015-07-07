@@ -1,4 +1,3 @@
-<?php
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -9,4 +8,11 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-$viewdefs['base']['layout']['subpanels-create'] = array ();
+/**
+ * @class View.Layouts.PdfManager.RecordsLayout
+ * @alias SUGAR.App.view.layouts.PdfManagerRecordsLayout
+ * @extends View.BwcLayout
+ */
+({
+    extendsFrom: 'BwcLayout'
+})
