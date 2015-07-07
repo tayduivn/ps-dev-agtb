@@ -300,13 +300,26 @@ class PMSEFieldParser implements PMSEDataParserInterface
     }
 
     /**
+     * Checks to see if there is a parser method for this token
+     *
+     * @param object $token Criteria token object
+     * @return boolean True if there is a method for this token criteria
+     */
+    public function hasParseMethod($token)
+    {
+        return !empty($token->expValue)
+               && isset($this->tokenMethods[$token->expValue])
+               && method_exists($this, $this->tokenMethods[$token->expValue]);
+    }
+
+    /**
      * Parses the token value for a User field element
-     * @param string $token field contains a parser
+     * @param object $token field contains a parser
      * @return string field value
      */
     public function setExpValueFromCriteria($token)
     {
-        if (!empty($token->expValue) && method_exists($this, $this->tokenMethods[$token->expValue])) {
+        if ($this->hasParseMethod($token)) {
             $method = $this->tokenMethods[$token->expValue];
             return $this::$method($token);
         }
@@ -314,18 +327,36 @@ class PMSEFieldParser implements PMSEDataParserInterface
         return $token->expValue;
     }
 
+    /**
+     * Gets current user id or criteria token expected value
+     *
+     * @param object $token field contains a parser
+     * @return string field value
+     */
     public function parseCurrentUser($token)
     {
         return !empty($this->currentUser->id) ?
             $this->currentUser->id : $token->expValue;
     }
 
+    /**
+     * Gets assigned user id or criteria token expected value
+     *
+     * @param object $token field contains a parser
+     * @return string field value
+     */
     public function parseOwner($token)
     {
         return !empty($this->evaluatedBean->assigned_user_id) ?
             $this->evaluatedBean->assigned_user_id : $token->expValue;
     }
 
+    /**
+     * Gets reports to id or criteria token expected value
+     *
+     * @param object $token field contains a parser
+     * @return string field value
+     */
     public function parseSupervisor($token)
     {
         return !empty($this->currentUser->reports_to_id) ?
