@@ -238,6 +238,8 @@ class ModuleInstaller{
             // clients.
             MetaDataManager::enableCache();
             MetaDataManager::clearAPICache(true, true);
+            LanguageManager::invalidateJsLanguageCache();
+
             //TODO: we need to setup the metadata for the platforms via a job queue.
             //Doing this inline is prohibitively expensive
             //MetaDataManager::setupMetadata();
