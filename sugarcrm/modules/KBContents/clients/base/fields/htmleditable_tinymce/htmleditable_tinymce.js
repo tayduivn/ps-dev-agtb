@@ -112,5 +112,18 @@
             )
         );
         this._super('setMode', [mode]);
+    },
+
+    /**
+     * {@inheritdoc}
+     */
+    destroyTinyMCEEditor: function() {
+        // Clean up existing TinyMCE editor
+        if (!_.isNull(this._htmleditor)) {
+            this._saveEditor(this.options.viewName === 'edit');
+            this._htmleditor.remove();
+            this._htmleditor.destroy();
+            this._htmleditor = null;
+        }
     }
 })
