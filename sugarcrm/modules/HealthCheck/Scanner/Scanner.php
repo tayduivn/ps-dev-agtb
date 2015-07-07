@@ -2581,12 +2581,7 @@ ENDP;
      */
     public function getPackageManifest()
     {
-        if (!empty($this->upgrader->context['extract_dir'])) {
-            $fileReader = new FileLoaderWrapper();
-            $manifest = $fileReader->loadFile($this->upgrader->context['extract_dir'] . '/manifest.php', 'manifest');
-            return !empty($manifest) ? $manifest : array();
-        }
-        return array();
+        return $this->upgrader->getManifest();
     }
 
     /**

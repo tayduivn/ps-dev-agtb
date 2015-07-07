@@ -17,7 +17,7 @@ function packUpgradeWizardCli($phar, $params, $files = array())
 {
 
     $defaults = array(
-        'version' => '7.5.0.0',
+        'version' => '7.6.0.0',
         'build' => '998',
     );
 

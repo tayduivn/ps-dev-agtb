@@ -404,7 +404,8 @@ eoq2;
     public function start()
     {
         global $argv;
-        $upgrader = new self();
+        $class = get_class($this);
+        $upgrader = new $class();
         $upgrader->parseArgs($argv);
         $upgrader->verifyArguments($argv);
         $upgrader->init();
