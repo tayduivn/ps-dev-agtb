@@ -1569,6 +1569,9 @@
                 }
                 option = this.createHTMLElement('option');
                 label = SUGAR.App.lang.get(this.fields[i].label, this.base_module);
+                if (typeof label === 'object'){
+                    label = this.fields[i].label;
+                }
                 option.label = label;
                 option.value = this.fields[i].moduleValue + this.parent.moduleFieldSeparator + this.fields[i].value;
                 option.appendChild(document.createTextNode(label));
