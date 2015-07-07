@@ -130,6 +130,12 @@ abstract class OpportunitySetup
                 continue;
             }
 
+            // the TemplateCurrency has a default of 0, but out OOB files, they are required
+            // to not have a default value of 0, so it's set to null here
+            if ($field_defs['type'] === 'currency' && !isset($field_defs['default'])) {
+                $diff['default'] = null;
+            }
+
             // populate the row from the vardefs that were loaded and the new_defs
             $f->populateFromRow(array_merge($field_defs, $diff));
 
