@@ -45,7 +45,6 @@
      * @inheritdoc
      */
     initialize: function(options) {
-        this.values.clear({silent: true});
         // after we init, find and bind to the Worksheets Contexts
         this.once('init', this.findWorksheetContexts, this);
         this.once('render', function() {
