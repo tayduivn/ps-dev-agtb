@@ -120,36 +120,33 @@ class ActivitiesApi extends FilterApi
 
     protected function formatResult(ServiceBase $api, array $args, SugarQuery $query, SugarBean $bean = null)
     {
+        global $locale;
+
         $response = array();
-        $response['records'] = $query->execute('array', false);
+        $data = $query->execute('array', false);
+
+        $seed = BeanFactory::newBean('Activities');
+
         // We add one to it when setting it, so we subtract one now for the true
         // limit.
         $limit = $query->limit - 1;
-        $count = count($response['records']);
+        $count = count($data);
         if ($count > $limit) {
             $nextOffset = $query->offset + $limit;
-            array_pop($response['records']);
+            array_pop($data);
         } else {
             $nextOffset = -1;
         }
-        $timedate = TimeDate::getInstance();
 
-        $db = DBManagerFactory::getInstance();
-        // Emulate going through SugarBean, without the extra DB hits.
-        foreach ($response['records'] as &$record) {
-            $record['comment_count'] = (int)$record['comment_count'];
-            $record['data'] = json_decode($record['data'], true);
-            $record['last_comment'] = json_decode($record['last_comment'], true);
-            $date_modified = $timedate->fromDbType($db->fromConvert($record['date_modified'], 'datetime'), 'datetime');
-            $record['date_modified'] = $timedate->asIso($date_modified);
-            $date_entered = $timedate->fromDbType($db->fromConvert($record['date_entered'], 'datetime'), 'datetime');
-            $record['date_entered'] = $timedate->asIso($date_entered);
+        foreach ($data as $row) {
+            $seed->populateFromRow($row);
+            $record = $this->formatBean($api, array(), $seed);
 
             if ($record['activity_type'] == 'update') {
                 if (is_null($bean) || empty($bean->id)) {
-                    $record['fields'] = json_decode($record['fields'], true);
-                    $changedData      = array();
-                    if (!empty($record['fields'])) {
+                    $fields = json_decode($row['fields'], true);
+                    $changedData = array();
+                    if (!empty($fields)) {
                         $aclBean = null;
                         if (!is_null($bean)) {
                             $aclBean = $bean;
@@ -162,11 +159,10 @@ class ActivitiesApi extends FilterApi
                             $aclBean->ACLFilterFieldList($record['data']['changes'], $context);
                         }
                         foreach ($record['data']['changes'] as &$change) {
-                            if (in_array($change['field_name'], $record['fields'])) {
+                            if (in_array($change['field_name'], $fields)) {
                                 $changedData[$change['field_name']] = $record['data']['changes'][$change['field_name']];
                             }
                         }
-                        unset($record['fields']);
                     }
                     $record['data']['changes'] = $changedData;
                 } else {
@@ -175,11 +171,6 @@ class ActivitiesApi extends FilterApi
                 }
             }
 
-            // Do module flipping if necessary.
-            $displayFields = $this->getDisplayModule($record, $bean);
-            $record['display_parent_type'] = $displayFields['module'];
-            $record['display_parent_id'] = $displayFields['id'];
-
             //check if parent record preview should be enabled
             if (!empty($record['parent_type']) && !empty($record['parent_id'])) {
                 $previewCheckResult = $this->checkParentPreviewEnabled($api->user, $record['display_parent_type'], $record['display_parent_id']);
@@ -187,16 +178,13 @@ class ActivitiesApi extends FilterApi
                 $record['preview_disabled_reason'] = $previewCheckResult['preview_disabled_reason'];
             }
 
-            // Format the name of the user.
-            $name = array($record['first_name'], $record['last_name']);
-            if ($api->user->showLastNameFirst()) {
-                $name = array_reverse($name);
-            }
-            $record['created_by_name'] = implode(' ', $name);
+            $record['created_by_name'] = $locale->formatName('Users', $row);
 
             if (!isset($record['created_by_name']) && isset($record['data']['created_by_name'])) {
                 $record['created_by_name'] = $record['data']['created_by_name'];
             }
+
+            $response['records'][] = $record;
         }
         $response['next_offset'] = $nextOffset;
         $response['args'] = $args;
@@ -219,31 +207,6 @@ class ActivitiesApi extends FilterApi
         }
         self::$previewCheckResults[$previewCheckKey] = $previewCheckResult;
         return $previewCheckResult;
-    }
-
-    /**
-     * For non-homepage requests and link/unlink activities, flip the parent
-     * record that's displayed so that the event is noticeable.
-     * @param  array     $record The individual activity, as an array.
-     * @param  SugarBean $bean   The request's context's bean.
-     * @return array     Associative array with two keys, 'module' and 'id'.
-     */
-    protected function getDisplayModule(array $record, SugarBean $bean = null)
-    {
-        $array = array(
-            'module' => isset($record['parent_type']) ? $record['parent_type'] : '',
-            'id' => isset($record['parent_id']) ? $record['parent_id'] : '',
-        );
-
-        if (!is_null($bean) && ($record['activity_type'] === 'link' || $record['activity_type'] === 'unlink')) {
-            // Verify that the context matches record's parent module.
-            if ($bean->module_name === $record['parent_type']) {
-                $array['module'] = $record['data']['subject']['module'];
-                $array['id'] = $record['data']['subject']['id'];
-            }
-        }
-
-        return $array;
     }
 
     protected function getEmptyBean($module)
