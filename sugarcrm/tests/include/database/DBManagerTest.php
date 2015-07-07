@@ -1488,6 +1488,23 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_removeRecords($beanIds);
     }
 
+    public function testLimitQueryOrderedByAlias()
+    {
+        $sql = <<<SQL
+SELECT
+    id,
+    name name_alias 
+FROM
+    accounts
+WHERE
+    deleted = 0
+ORDER BY
+    name_alias ASC
+SQL;
+        $result = $this->_db->limitQuery($sql, 0, 1);
+        $this->assertNotEmpty($result, $this->_db->lastDbError());
+    }
+
     public function testGetOne()
     {
         $beanIds = $this->_createRecords(1);
