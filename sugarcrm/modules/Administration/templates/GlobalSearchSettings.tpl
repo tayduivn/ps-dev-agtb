@@ -219,6 +219,18 @@
         }
         urlParams[csrfTokenField] = csrfToken;
 
+        var urlParams = {
+            module: "Administration",
+            action: "saveglobalsearchsettings",
+            {* //BEGIN SUGARCRM flav=pro ONLY *}
+            host: host,
+            port: port,
+            type: type,
+            {* //END SUGARCRM flav=pro ONLY *}
+            enabled_modules: enabled,
+        }
+        urlParams[csrfTokenField] = csrfToken;
+
 		ajaxStatus.showStatus(SUGAR.language.get('Administration', 'LBL_SAVING'));
 		Connect.asyncRequest(
             Connect.method,

@@ -16,7 +16,8 @@
     },
 
     closeDesigner: function() {
-        app.router.navigate('pmse_Project', {trigger: true});
+        var route = app.router.buildRoute(this.module, this.prj_uid);
+        app.router.navigate(route, {trigger: true});
     },
 
     loadData: function (options) {
