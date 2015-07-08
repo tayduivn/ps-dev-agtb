@@ -143,12 +143,6 @@ MultipleCollapsiblePanel.prototype.displayPanel = function (panel) {
                 this._selectedPanel.getHTML();
                 this._clearContent();
                 this._htmlContentTitle.textContent = this._selectedPanel.getTitle();
-
-                // MACAROON-723: Not having a maximum height was making some list options
-                // unselectable on smaller screens, so set max height
-                var maxHeight = jQuery(this._htmlBody).outerHeight() - jQuery(this._htmlContentHeader).outerHeight();
-                this._selectedPanel._htmlBody.style.maxHeight = maxHeight + 'px';
-
                 this._htmlContent.appendChild(this._selectedPanel._htmlBody);
             }
 
