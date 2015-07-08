@@ -100,6 +100,8 @@
 
                 //Push completed tag objects to context
                 self.context.set('tags', self.selectedTags);
+                self.layout.trigger('quicksearch:button:toggle', false);
+
                 self.context.trigger('search:fire:new');
             },
             error: function(e) {

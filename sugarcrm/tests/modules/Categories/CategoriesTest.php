@@ -213,12 +213,12 @@ class CategoriesTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test retrieve a valid children data using Category::getСhildren method.
+     * Test retrieve a valid children data using Category::getChildren method.
      */
-    public function testGetСhildren()
+    public function testGetChildren()
     {
-        $this->assertInternalType('array', self::$root->getСhildren());
-        $this->assertInternalType('array', self::$root->getСhildren(1));
+        $this->assertInternalType('array', self::$root->getChildren());
+        $this->assertInternalType('array', self::$root->getChildren(1));
     }
 
     /**

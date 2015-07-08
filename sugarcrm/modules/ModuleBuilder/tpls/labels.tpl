@@ -11,6 +11,7 @@
  */
 *}
 <form name = 'editlabels' id = 'editlabels' onsubmit='return false;'>
+{sugar_csrf_form_token}
 <input type='hidden' name='module' value='ModuleBuilder'>
 <input type='hidden' name='action' value='saveLabels'>
 <input type='hidden' name='view_module' value='{$view_module}'>

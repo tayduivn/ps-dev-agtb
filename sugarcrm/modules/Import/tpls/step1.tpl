@@ -31,6 +31,7 @@
 {$INSTRUCTION}
 
 <form enctype="multipart/form-data" name="importstep1" method="post" action="index.php" id="importstep1">
+{sugar_csrf_form_token}
 <input type="hidden" name="module" value="Import">
 <input type="hidden" name="action" value="Step2">
 <input type="hidden" name="current_step" value="1">

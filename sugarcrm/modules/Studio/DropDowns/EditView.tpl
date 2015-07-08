@@ -54,6 +54,7 @@
 <tr><td colspan='2'>
 {if empty($newDropDown)}
 <form method='post' action='index.php' name='dropdownsform'>
+{sugar_csrf_form_token}
 <input type='hidden' name='action' value='wizard'>
 <input type='hidden' name='wizard' value='EditDropDownWizard'>
 <input type='hidden' name='option' value='EditDropdown'>
@@ -68,6 +69,7 @@
 </td></tr><tr><td>
 {if !empty($dropdown) || !empty($newDropDown)}
 <form method='post' action='index.php' name='editdropdown'>
+{sugar_csrf_form_token}
 <input type='hidden' name='action' value='wizard'>
 <input type='hidden' name='wizard' value='EditDropDownWizard'>
 <input type='hidden' name='option' value='SaveDropDown'>

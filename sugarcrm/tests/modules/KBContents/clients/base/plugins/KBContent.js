@@ -89,16 +89,11 @@ describe('Plugins.KBContents', function() {
     });
 
     it('Created localizations and revisions should have draft status.', function() {
+        var fakeModel = app.data.createBean(moduleName);
+        fakeModel.set('status', 'published');
+
         sandbox.stub(app.data, 'createBean', function() {
-            var prefillModel = new Backbone.Model();
-            prefillModel.copy = function() {
-            };
-            return prefillModel;
-        });
-        var fakeModel = new Backbone.Model({
-            module: moduleName,
-            name: 'fakeName',
-            status: ''
+            return fakeModel;
         });
         sandbox.stub(fakeModel, 'fetch', function(options) {
             options.success();
@@ -117,14 +112,11 @@ describe('Plugins.KBContents', function() {
     });
 
     it('Created localizations and revisions should change authorship to a current user.', function() {
+        var fakeModel = app.data.createBean(moduleName);
+        fakeModel.set('status', 'published');
+
         sandbox.stub(app.data, 'createBean', function() {
-            var prefillModel = new Backbone.Model();
-            prefillModel.copy = function() {};
-            return prefillModel;
-        });
-        var fakeModel = new Backbone.Model({
-            module: moduleName,
-            name: 'fakeName'
+            return fakeModel;
         });
         sandbox.stub(fakeModel, 'fetch', function(options) {
             options.success();

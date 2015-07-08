@@ -39,6 +39,7 @@
 {SET_RETURN_JS}
 
 			<form name="EditView" method="POST" action="index.php">
+{sugar_csrf_form_token}
 			<input type="hidden" name="module" value="DataSets">
 			<input type="hidden" name="layout_id" value="{LAYOUT_ID}">
 			<input type="hidden" name="action">

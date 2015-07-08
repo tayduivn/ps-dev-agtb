@@ -86,7 +86,7 @@
         selectedModules = this.$select2.select2('data');
         if (!_.contains(selectedModules, moduleToAdd)) {
             selectedModules.push(moduleToAdd);
-            this.$select2.select2('data', selectedModules);
+            this.$select2.select2('data', selectedModules, true);
         }
     },
 

@@ -12,6 +12,7 @@
 *}
 
 <form name="exportcustom" id="exportcustom">
+{sugar_csrf_form_token}
 <input type='hidden' name='module' value='ModuleBuilder'>
 <input type='hidden' name='action' value='ExportCustom'>
 <div align="left">

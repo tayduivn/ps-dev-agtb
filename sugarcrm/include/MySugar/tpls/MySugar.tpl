@@ -247,6 +247,7 @@ app.user.lastState.set('Home:last-visit:Home.', '#bwc/index.php?module=Home&acti
 		<div class="hd">{$lblAddPage}</div>
 		<div class="bd">
 			<form method="POST" action="index.php?module=Home&action=DynamicAction&DynamicAction=addTab&to_pdf=1">
+{sugar_csrf_form_token}
 				<label>{$lblPageName}: </label><input type="textbox" name="pageName" /><br /><br />
 				<label>{$lblNumberOfColumns}:</label>
 				<table align="center" cellpadding="8">

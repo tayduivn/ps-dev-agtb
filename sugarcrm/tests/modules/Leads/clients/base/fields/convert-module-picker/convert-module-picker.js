@@ -83,8 +83,10 @@ describe('Leads.Fields.ConvertModulePicker', function() {
     it('should auto-add module when module is completed and not previously removed', function() {
         field.render();
         expect(_.contains(field.$select2.select2('val'), 'Baz')).toBe(false);
+        expect(_.contains(field.model.get('convert-module-picker'), 'Baz')).toBe(false);
         field.context.trigger('lead:convert-panel:complete', 'Baz');
         expect(_.contains(field.$select2.select2('val'), 'Baz')).toBe(true);
+        expect(_.contains(field.model.get('convert-module-picker'), 'Baz')).toBe(true);
     });
 
     it('should not auto-add module when module is completed, but previously removed', function() {

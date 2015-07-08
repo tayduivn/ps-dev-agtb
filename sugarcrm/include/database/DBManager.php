@@ -3487,6 +3487,22 @@ protected function checkQuery($sql, $object_name = false)
                     }
                 }
 
+                // if we have a type of currency, we need to convert the value into the base for the system.
+                if (!empty($field_type) && $field_type === 'currency') {
+                    if (empty($before_value)) {
+                        //further processing expects a string, so change empty array into blank string
+                        $before_value = '';
+                    } else {
+                        $before_value = SugarCurrency::convertAmountToBase($before_value, $bean->currency_id);
+                    }
+                    if (empty($after_value)) {
+                        //further processing expects a string, so change empty array into blank string
+                        $after_value = '';
+                    } else {
+                        $after_value = SugarCurrency::convertAmountToBase($after_value, $bean->currency_id);
+                    }
+                }
+
                 //if the type and values match, do nothing.
                 if (!($this->_emptyValue($before_value,$field_type) && $this->_emptyValue($after_value,$field_type))) {
                     $change = false;

@@ -17,6 +17,7 @@
 
 {ERROR_STRING}
 <form action="index.php" method="post" name="EditView" id="form">
+{sugar_csrf_form_token}
 	<input type="hidden" name="module" value="Queues">
 	<input type="hidden" name="record" value="{ID}">
 	<input type="hidden" name="isDuplicate" value=false>

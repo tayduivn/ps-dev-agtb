@@ -73,6 +73,9 @@ class TemplateCurrency extends TemplateRange
     public function get_field_def()
     {
         $def = parent::get_field_def();
+        if (isset($this->convertToBase) && $this->convertToBase === true) {
+            $def['convertToBase'] = true;
+        }
         $def['precision'] = (!empty($this->precision)) ? $this->precision : 6;
         $def['related_fields'] = array('currency_id', 'base_rate');
         return $def;

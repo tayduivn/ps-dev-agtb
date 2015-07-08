@@ -18,6 +18,7 @@
     {/literal}
 </script>
 <form action="index.php" method="POST" name="EditView" id="EditView" >
+{sugar_csrf_form_token}
 <table width="100%" cellpadding="0" cellspacing="0" border="0" class="actionsContainer">
 <tr>
 <td class="buttons">

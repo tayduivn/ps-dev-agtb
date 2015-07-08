@@ -36,15 +36,20 @@ class ext_rest_twitter extends ext_rest {
      * It is up to subclasses to implement a test and set _has_testing_enabled to true so that
      * a test button is rendered in the administration interface
      *
+     * @param $propParam optional param that'll override internal properties if set
      * @return result boolean result of the test function
      */
-    public function test() {
+    public function test($propParam = null) {
         require_once 'vendor/Zend/Oauth/Consumer.php';
 
         $api = ExternalAPIFactory::loadAPI('Twitter', true);
 
         if ($api) {
-            $properties = $this->getProperties();
+            if (isset($propParam)) {
+                $properties = $propParam;
+            } else {
+                $properties = $this->getProperties();
+            }
             $config = array(
                 'callbackUrl' => 'http://www.sugarcrm.com',
                 'siteUrl' => $api->getOauthRequestURL(),

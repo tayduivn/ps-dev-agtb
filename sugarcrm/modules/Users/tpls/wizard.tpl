@@ -34,6 +34,7 @@ function disableReturnSubmission(e) {
         <table style="width:auto;height:600px;" align="center"><tr><td align="center">
 
 <form id="UserWizard" name="UserWizard" enctype='multipart/form-data' method="POST" action="index.php" onkeypress="return disableReturnSubmission(event);">
+{sugar_csrf_form_token}
 <input type='hidden' name='action' value='SaveUserWizard'/>
 <input type='hidden' name='module' value='Users'/>
 <span class='error'>{$error.main}</span>

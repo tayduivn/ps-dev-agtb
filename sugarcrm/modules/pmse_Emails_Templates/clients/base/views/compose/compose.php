@@ -25,16 +25,21 @@ $viewdefs['pmse_Emails_Templates']['base']['view']['compose'] = array(
             'css_class' => 'btn-invisible btn-link',
         ),
         array(
-            'type'      => 'button',
-            'name'      => 'save_button',
-            'label'     => 'LBL_SAVE_BUTTON_LABEL',
-            'css_class' => 'btn-primary',
-        ),
-        array(
-            'type'      => 'button',
-            'name'      => 'save_buttonExit',
-            'label'     => 'LBL_PMSE_SAVE_EXIT_BUTTON_LABEL',
-            'css_class' => 'btn-primary',
+            'type'    => 'actiondropdown',
+            'name'    => 'main_dropdown',
+            'primary' => true,
+            'buttons' => array(
+                array(
+                    'type'   => 'rowaction',
+                    'name'   => 'save_button',
+                    'label'  => 'LBL_SAVE_BUTTON_LABEL',
+                ),
+                array(
+                    'type'  => 'rowaction',
+                    'name'  => 'save_buttonExit',
+                    'label' => 'LBL_PMSE_SAVE_EXIT_BUTTON_LABEL',
+                ),
+            ),
         ),
         array(
             'name' => 'sidebar_toggle',

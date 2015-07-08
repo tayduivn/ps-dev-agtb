@@ -20,6 +20,7 @@
 	<table width="100%" border="0" cellspacing="0" cellpadding="0">
 	 <tr>
       <form action="index.php" method="post" name="popup_query_form" id="popup_query_form">
+{sugar_csrf_form_token}
 		<td align="right"><input type="hidden" name="action" value="PopupProspects"/>
 			<input type="hidden" name="query" value="true"/>
 			<input type="hidden" name="record" value="{RECORD_VALUE}"/>

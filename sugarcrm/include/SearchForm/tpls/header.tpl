@@ -35,6 +35,7 @@ function submitOnEnter(e)
 </script>
 {/literal}
 <form name='search_form' id='search_form' class='search_form' method='post' action='index.php?module={$module}&action={$action}' onkeydown='submitOnEnter(event);'>
+{sugar_csrf_form_token}
 <input type='hidden' name='searchFormTab' value='{$displayView}'/>
 <input type='hidden' name='module' value='{$module}'/>
 <input type='hidden' name='action' value='{$action}'/> 

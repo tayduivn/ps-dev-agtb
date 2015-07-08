@@ -18,6 +18,7 @@
 </style>
 {/literal}
 <form id='visibility_editor' name='visibility_editor'  onsubmit='return false;'>
+{sugar_csrf_form_token}
 </form>
 <script type="text/javascript">
 var visgrid =  {$visibility_grid};

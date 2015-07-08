@@ -15,6 +15,7 @@
 
 <table cellspacing="0" cellpadding="0" border="0" class="edit view" width="100%">
 <form id="BindView" name="BindView" method="POST" action="index.php">
+{sugar_csrf_form_token}
 			<input type="hidden" name="module" value="CustomQueries">
 			<input type="hidden" name="record" value="{ID}">
 			<input type="hidden" name="action" value="ProcessBind">

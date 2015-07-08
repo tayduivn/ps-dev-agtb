@@ -132,6 +132,7 @@ function toggleGettingStartedButton(){ldelim}
           </div>
           <hr style="border-color: rgb(238, 238, 238); background-color: rgb(238, 238, 238); width: 100%;">
           <form>
+              {sugar_csrf_form_token}
               <input type="checkbox" class="checkbox" name="insideview_accept_box" id="insideview_accept_box" style="display: none;" onclick="toggleGettingStartedButton();">
               <div style="float:left;padding:0 0 10px 0">
                     <div style="font-size: 11px; float:left;margin: 5px 15px 0px 150px;">

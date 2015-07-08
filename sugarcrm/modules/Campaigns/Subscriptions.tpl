@@ -20,8 +20,10 @@
 </td></tr><tr><td><br></td></tr><tr><td colspan='100'>
 
 <form name="ConfigureSubs" method="POST"  method="POST" action="index.php">
+{sugar_csrf_form_token}
 
     <form enctype="multipart/form-data" id="SubsForm" name="SubsForm" method="POST" action="index.php">
+{sugar_csrf_form_token}
     <input type="hidden" name="module" value="Campaigns">
     <input type="hidden" name="action" value="Subscriptions">
     <input type="hidden" name="enabled_subs" value="">

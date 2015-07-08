@@ -119,6 +119,7 @@ function build_display_text(field_num, type){
 <table width="100%" cellpadding="0" cellspacing="0" border="0">
 			<tr>
 			<form name="EditView" method="POST" action="index.php">
+{sugar_csrf_form_token}
 			<input id="{PREFIX}set_type" type="hidden" name="field_{PREFIX}set_type" value="{SET_TYPE}">
 			<input id="{PREFIX}adv_type" type="hidden" name="field_{PREFIX}adv_type" value="{ADV_TYPE}">			
 			<input id="{PREFIX}field_type" type="hidden" name="field_{PREFIX}field_type" value="{FIELD_TYPE}">			

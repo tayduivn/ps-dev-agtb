@@ -23,6 +23,7 @@
 {$MODULE_TITLE}
 </p>
 <form enctype="multipart/form-data" name="fontmanager" method="POST" action="index.php" id="fontmanager">
+{sugar_csrf_form_token}
 <input type="hidden" name="module" value="Configurator">
 <input type="hidden" name="action" value="FontManager">
 <input type="hidden" name="action_type" value="">

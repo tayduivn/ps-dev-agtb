@@ -14,6 +14,7 @@
 <!-- BEGIN: main -->
 <div name='mainbody' id='mainbody' style='display:inline'>
 <form name="LicenseSettings" method="POST" action="index.php" onSubmit="return check_form('LicenseSettings');">
+    {sugar_csrf_form_token}
     <input type="hidden" name="module" value="Administration">
     <input type="hidden" name="action">
     <input type="hidden" name="return_module" value="Administration">
@@ -159,6 +160,7 @@
 <tr><td  scope="row"><br>	{MOD.LBL_MANUAL_VALIDATION4}</td></tr>
 <tr><td>	
 	<form name='importValidationKey' METHOD='POST' ENCTYPE="multipart/form-data" action='index.php'>
+{sugar_csrf_form_token}
 	<input type='hidden' name='action' value= 'LicenseSettings'>
 	<input type='hidden' name='module' value= 'Administration'>
 	

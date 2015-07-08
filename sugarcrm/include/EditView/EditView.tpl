@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 *}
+
 {{include file=$headerTpl}}
 {sugar_include include=$includes}
 
