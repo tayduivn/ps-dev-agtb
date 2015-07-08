@@ -510,8 +510,7 @@ function get_trigger_contents(){
 		$trigger_count = 0;
 		$trigger_time_count = 0;
 
-		$eval_dump = "";
-
+		$eval_dump = "use Sugarcrm\\Sugarcrm\\Util\\Arrays\\ArrayFunctions\\ArrayFunctions;\n\n";
 
 		/*Special note about this query.
 
@@ -680,7 +679,7 @@ $alert_file_contents = "";
                 $eval_dump .= "\t \$workflow_id = '" . $row['id'] . "'; \n\n";
 
 				$eval_dump .= 'if(!empty($_SESSION["workflow_cron"]) && $_SESSION["workflow_cron"]=="Yes" &&
-				!empty($_SESSION["workflow_id_cron"]) && in_array($workflow_id, $_SESSION["workflow_id_cron"])){
+				!empty($_SESSION["workflow_id_cron"]) && in_array_access($workflow_id, $_SESSION["workflow_id_cron"])){
 				';
 			//end if type is time
 			}
@@ -1042,10 +1041,11 @@ function get_alert_contents_for_file($workflow_id, $trigger_count, $alert_array_
     $alert_count = 0;
 
     $alert_string = "";
-	$eval_dump = '$_SESSION[\'WORKFLOW_ALERTS\'] = isset($_SESSION[\'WORKFLOW_ALERTS\']) && is_array($_SESSION[\'WORKFLOW_ALERTS\']) ? $_SESSION[\'WORKFLOW_ALERTS\'] : array();'."\n";
+    $eval_dump = "use  Sugarcrm\\Sugarcrm\\Util\\Arrays\\ArrayFunctions\\ArrayFunctions;\n\n";
+	$eval_dump .= '$_SESSION[\'WORKFLOW_ALERTS\'] = isset($_SESSION[\'WORKFLOW_ALERTS\']) && ArrayFunctions::is_array_access($_SESSION[\'WORKFLOW_ALERTS\']) ? $_SESSION[\'WORKFLOW_ALERTS\'] : array();'."\n";
 	$eval_dump .= "\t\t".'$_SESSION[\'WORKFLOW_ALERTS\'][\''.$alert_array_name.'\'] = isset($_SESSION[\'WORKFLOW_ALERTS\'][\''.$alert_array_name.'\']) '
-	            . '&& is_array($_SESSION[\'WORKFLOW_ALERTS\'][\''.$alert_array_name.'\']) ? $_SESSION[\'WORKFLOW_ALERTS\'][\''.$alert_array_name.'\'] : array();'."\n";
-	$eval_dump .= "\t\t".'$_SESSION[\'WORKFLOW_ALERTS\'][\''.$alert_array_name.'\'] = array_merge($_SESSION[\'WORKFLOW_ALERTS\'][\''.$alert_array_name.'\'],array (';
+	            . '&& ArrayFunctions::is_array_access($_SESSION[\'WORKFLOW_ALERTS\'][\''.$alert_array_name.'\']) ? $_SESSION[\'WORKFLOW_ALERTS\'][\''.$alert_array_name.'\'] : array();'."\n";
+	$eval_dump .= "\t\t".'$_SESSION[\'WORKFLOW_ALERTS\'][\''.$alert_array_name.'\'] = ArrayFunctions::array_access_merge($_SESSION[\'WORKFLOW_ALERTS\'][\''.$alert_array_name.'\'],array (';
         $query = "  SELECT $this->rel_alertshells_table.parent_id parent_id,
                             $this->rel_alertshells_table.id id,
                     $this->rel_alertshells_table.alert_text alert_text,

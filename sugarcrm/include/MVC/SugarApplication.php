@@ -13,6 +13,9 @@
 require_once 'include/MVC/Controller/ControllerFactory.php';
 require_once 'include/MVC/View/ViewFactory.php';
 
+use Sugarcrm\Sugarcrm\Session\SessionStorage;
+use  Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions;
+
 /**
  * SugarCRM application
  *
@@ -84,7 +87,7 @@ class SugarApplication
                     }
                 }
             }
-            session_write_close();
+            SessionStorage::getInstance()->unlock();
             header('HTTP/1.1 301 Moved Permanently');
             header("Location: $url");
 
@@ -835,15 +838,16 @@ EOF;
 
     function startSession()
     {
+        $sess = SessionStorage::getInstance();
         $sessionIdCookie = isset($_COOKIE['PHPSESSID']) ? $_COOKIE['PHPSESSID'] : null;
         if (can_start_session()) {
-            session_start();
+            $sess->start();
         }
 
         if (isset($_REQUEST['login_module']) && isset($_REQUEST['login_action'])
             && !($_REQUEST['login_module'] == 'Home' && $_REQUEST['login_action'] == 'index')
         ) {
-            if (!is_null($sessionIdCookie) && empty($_SESSION)) {
+            if (!is_null($sessionIdCookie) && empty($sess)) {
                 self::setCookie('loginErrorMessage', 'LBL_SESSION_EXPIRED', time() + 30, '/');
             }
         }
@@ -929,7 +933,7 @@ EOF;
 
     public static function appendErrorMessage($error_message)
     {
-        if (empty($_SESSION['user_error_message']) || !is_array($_SESSION['user_error_message'])) {
+        if (empty($_SESSION['user_error_message']) || !ArrayFunctions::is_array_access($_SESSION['user_error_message'])) {
             $_SESSION['user_error_message'] = array();
         }
         $_SESSION['user_error_message'][] = $error_message;
@@ -937,7 +941,7 @@ EOF;
 
     public static function getErrorMessages()
     {
-        if (isset($_SESSION['user_error_message']) && is_array($_SESSION['user_error_message'])) {
+        if (isset($_SESSION['user_error_message']) && ArrayFunctions::is_array_access($_SESSION['user_error_message'])) {
             $msgs = $_SESSION['user_error_message'];
             unset($_SESSION['user_error_message']);
             return $msgs;

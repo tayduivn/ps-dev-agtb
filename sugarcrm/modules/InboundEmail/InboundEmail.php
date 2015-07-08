@@ -1028,7 +1028,6 @@ class InboundEmail extends SugarBean {
 	 * This will fetch only partial emails for POP3 and hence needs to be call again and again based on status it returns
 	 */
 	function pop3_checkPartialEmail($synch = false) {
-		require_once('include/utils/array_utils.php');
 		global $current_user;
 		global $sugar_config;
 

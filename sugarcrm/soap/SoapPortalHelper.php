@@ -10,6 +10,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use  Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions;
+
 $portal_modules = array('Contacts', 'Accounts', 'Notes');
 $portal_modules[] = 'Cases';
 $portal_modules[] = 'Bugs';
@@ -290,7 +293,7 @@ function get_module_in($module_name){
         return '()';
     }
 
-    $module_name_in = array_keys($_SESSION['viewable'][$module_name]);
+    $module_name_in = ArrayFunctions::array_access_keys($_SESSION['viewable'][$module_name]);
     $module_name_list = array();
     foreach ( $module_name_in as $name ) {
         $module_name_list[] = $GLOBALS['db']->quote($name);
@@ -317,7 +320,7 @@ function set_module_in($arrayList, $module_name){
         if(!empty($_SESSION['viewable'][strtolower($module_name).'_in'])){
             if($arrayList['in'] != '()') {
                 $newList = array();
-                if ( is_array($_SESSION['viewable'][strtolower($module_name).'_in']) ) {
+                if ( ArrayFunctions::is_array_access($_SESSION['viewable'][strtolower($module_name).'_in']) ) {
                     foreach($_SESSION['viewable'][strtolower($module_name).'_in'] as $name ) {
                         $newList[] = $GLOBALS['db']->quote($name);
                     }
