@@ -14,12 +14,19 @@
 
 require_once 'modules/KBContents/KBContentsApiHelper.php';
 
-class KBContentsTest extends Sugar_PHPUnit_Framework_TestCase 
+class KBContentsTest extends Sugar_PHPUnit_Framework_TestCase
 {
     /**
      * @var KBContentMock
      */
     protected $bean;
+
+    /**
+     * Category root node
+     *
+     * @var CategoryMock $categoryRoot
+     */
+    protected $categoryRoot;
 
     public function setUp()
     {
@@ -30,15 +37,17 @@ class KBContentsTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('moduleList');
         SugarTestHelper::setUp('current_user', array(true, true));
         $this->bean = SugarTestKBContentUtilities::createBean();
+        $this->categoryRoot = SugarTestCategoryUtilities::createRootBean();
     }
 
     public function tearDown()
     {
+        SugarTestCategoryUtilities::removeAllCreatedBeans();
         SugarTestKBContentUtilities::removeAllCreatedBeans();
         SugarTestHelper::tearDown();
     }
 
-    public function testFormatForApi() 
+    public function testFormatForApi()
     {
         $helper = new KBContentsApiHelper(SugarTestRestUtilities::getRestServiceMock());
         $data = $helper->formatForApi($this->bean);
@@ -174,5 +183,51 @@ class KBContentsTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals($this->bean->active_rev, 1);
         $this->assertEquals($revision->active_rev, 0);
+    }
+
+    public function testUpdateCategoryExternalVisibility()
+    {
+        $subnode = new CategoryMock();
+        $subnode->name = 'SugarCategory' . mt_rand();
+        $this->categoryRoot->addNodeMock($subnode, 2, 1);
+        SugarTestCategoryUtilities::addCreatedBean($subnode->save());
+
+        // Scenario 1: Save not external document, status is default (draft). Expected result: category is not external
+        $this->bean->category_id = $subnode->id;
+        $this->bean->save();
+
+        $categoryBean = BeanFactory::retrieveBean('Categories', $subnode->id, array(
+            'use_cache' => false,
+        ));
+
+        $this->assertEquals(0, $categoryBean->is_external);
+
+        // Scenario 2: Save external document, status is default (draft). Expected result: category is not external
+        $this->bean->is_external = 1;
+        $this->bean->save();
+
+        $categoryBean = BeanFactory::retrieveBean('Categories', $subnode->id, array(
+            'use_cache' => false,
+        ));
+
+        $this->assertEquals(0, $categoryBean->is_external);
+
+        // Scenario 2: Save external document, status is published. Expected result: category is external
+        $this->bean->status = KBContent::ST_PUBLISHED;
+        $this->bean->save();
+
+        $categoryBean = BeanFactory::retrieveBean('Categories', $subnode->id, array(
+            'use_cache' => false,
+        ));
+
+        $this->assertEquals(1, $categoryBean->is_external);
+
+        // Scenario 2: Delete document. Expected result: category is not external
+        $this->bean->mark_deleted($this->bean->id);
+        $categoryBean = BeanFactory::retrieveBean('Categories', $subnode->id, array(
+            'use_cache' => false,
+        ));
+
+        $this->assertEquals(0, $categoryBean->is_external);
     }
 }
