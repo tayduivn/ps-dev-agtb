@@ -376,13 +376,13 @@ nv.utils.stringEllipsify = function(_string, _container, _length) {
   return str + (strLen > _length ? '...' : '');
 };
 
-nv.utils.getTextBBox = function(text, float) {
-  var bbox = text.node().getBBox();
-  if (!float) {
-    bbox.width = parseInt(bbox.width, 10);
-    bbox.height = parseInt(bbox.height, 10);
-  }
-  return bbox;
+nv.utils.getTextBBox = function(text, floats) {
+  var bbox = text.node().getBBox(),
+      size = {
+        width: floats ? bbox.width : parseInt(bbox.width, 10),
+        height: floats ? bbox.height : parseInt(bbox.height, 10)
+      };
+  return size;
 };
 
 nv.utils.getTextContrast = function(c, i, callback) {

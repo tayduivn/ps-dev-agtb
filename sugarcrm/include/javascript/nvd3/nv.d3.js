@@ -865,13 +865,13 @@ nv.utils.stringEllipsify = function(_string, _container, _length) {
   return str + (strLen > _length ? '...' : '');
 };
 
-nv.utils.getTextBBox = function(text, float) {
-  var bbox = text.node().getBBox();
-  if (!float) {
-    bbox.width = parseInt(bbox.width, 10);
-    bbox.height = parseInt(bbox.height, 10);
-  }
-  return bbox;
+nv.utils.getTextBBox = function(text, floats) {
+  var bbox = text.node().getBBox(),
+      size = {
+        width: floats ? bbox.width : parseInt(bbox.width, 10),
+        height: floats ? bbox.height : parseInt(bbox.height, 10)
+      };
+  return size;
 };
 
 nv.utils.getTextContrast = function(c, i, callback) {
@@ -3016,7 +3016,7 @@ nv.models.scatter = function() {
                 .attr('clip-path', 'url(#nv-points-clip-' + id + ')');
           }
 
-          if (vertices.length < 3) {
+          if (vertices.length <= 3) {
             // Issue #283 - Adding 2 dummy points to the voronoi b/c voronoi requires min 3 points to work
             vertices.push([x.range()[0] - 20, y.range()[0] - 20, null, null]);
             vertices.push([x.range()[1] + 20, y.range()[1] + 20, null, null]);
