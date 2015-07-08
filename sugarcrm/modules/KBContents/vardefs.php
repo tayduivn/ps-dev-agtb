@@ -452,7 +452,7 @@ $dictionary['KBContent'] = array(
             'rhs_key' => 'parent_id',
             'relationship_type' => 'one-to-many',
             'relationship_role_column' => 'parent_type',
-            'relationship_role_column_value' => 'KBContentsNotes',
+            'relationship_role_column_value' => 'KBContents',
         ),
         'kbcontent_attachments' => array(
             'lhs_module' => 'KBContents',
