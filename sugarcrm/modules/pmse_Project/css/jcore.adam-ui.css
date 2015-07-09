@@ -146,10 +146,21 @@
 .adam-disabled a {
   color: gray;
 }
-
 .adam-disabled * {
   cursor: default !important;
 }
+
+.adam-selected {
+  cursor: default;
+  background-color: lightgray !important;
+}
+.adam-selected a {
+  color: black !important;
+}
+.adam-selected * {
+  cursor: default !important;
+}
+
 
 .adam-modal {
   background-color: rgba(0, 0, 0, 0.6);

@@ -124,7 +124,7 @@ MenuItem.prototype.attachListeners = function () {
 };
 
 MenuItem.prototype.setActiveItem = function (value) {
-    if (!this.disabled) {
+    if (!this.disabled && !this.unavailable) {
         if (value) {
             if (!this.focused) {
                 this.style.addClasses(['adam-item-active']);
