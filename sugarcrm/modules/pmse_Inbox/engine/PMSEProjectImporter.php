@@ -308,7 +308,7 @@ class PMSEProjectImporter extends PMSEImporter
             $definitionBean->pro_id = $keysArray['pro_id'];
             $definitionBean->dia_id = $keysArray['dia_id'];
             if ($element['act_task_type'] == 'SCRIPTTASK' && $element['act_script_type'] == 'BUSINESS_RULE') {
-                $definitionBean->act_fields = $this->savedElements['BpmRuleSet'][$element['act_fields']];
+                $definitionBean->act_fields = $element['act_fields'];
             }
             $definitionBean->new_with_id = true;
             $defID = $definitionBean->save();
