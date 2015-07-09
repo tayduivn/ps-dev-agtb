@@ -1,5 +1,4 @@
 <?php
-
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -10,6 +9,8 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use Sugarcrm\Sugarcrm\Security\Csrf\CsrfAuthenticator;
 
 /**
  * Base Sugar view
@@ -678,6 +679,9 @@ EOHTML;
             if(!empty($config_js)){
                 echo "<script>\n".implode("\n", $config_js)."</script>\n";
             }
+
+            // CSRF form token
+            echo $this->getCsrfFormTokenJscript();
 
             if ( isset($sugar_config['email_sugarclient_listviewmaxselect']) ) {
                 echo "<script>SUGAR.config.email_sugarclient_listviewmaxselect = {$GLOBALS['sugar_config']['email_sugarclient_listviewmaxselect']};</script>";
@@ -1606,5 +1610,15 @@ EOHTML;
         return false;
     }
 
-
+    /**
+     * Return CSRF form token jscript
+     * @return string
+     */
+    protected function getCsrfFormTokenJscript()
+    {
+        return sprintf(
+            '<script>SUGAR.csrf = {}; SUGAR.csrf.form_token = "%s";</script>',
+            CsrfAuthenticator::getInstance()->getFormToken()
+        );
+    }
 }
