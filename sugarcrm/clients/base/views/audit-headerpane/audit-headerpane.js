@@ -25,8 +25,6 @@
      */
     initialize: function(options) {
         this._super('initialize', [options]);
-        this.model = this.context.parent && this.context.parent.get('model') || this.model;
-
         //shortcut keys
         app.shortcuts.register({
             id: 'AuditHeaderPanel:Close',

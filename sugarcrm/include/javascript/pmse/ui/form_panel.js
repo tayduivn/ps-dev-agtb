@@ -1279,9 +1279,15 @@
 	FormPanelDate.prototype._attachListeners = function() {
 		if (this.html) {
 			jQuery(this._htmlControl[0]).on('changeDate change', this._onChangeHandler())
-				.on("show", function() {
-					$('.datepicker').filter(":visible").css("z-index", 1300);
-				});
+				.on('show', function() {
+					$('.datepicker').filter(':visible').css('z-index', 1300);
+				})
+                .on('hide', function() {
+                    // MACAROON-746: Get rid of z-index here or else when you re-open the menu that opens this one,
+                    // it'll start with z-index 1301
+                    $('.datepicker').css('z-index', '');
+                });
+
 		}
 		return this;
 	};

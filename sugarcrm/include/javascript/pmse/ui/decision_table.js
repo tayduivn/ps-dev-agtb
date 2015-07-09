@@ -1655,8 +1655,7 @@
             closeButton = this.createHTMLElement("button");
             closeButton.appendChild(document.createTextNode(" "));
             closeButton.className = 'decision-table-close-button';
-            //TODO Create this label with the text 'Remove Column'
-            closeButton.title = this.language.LBL_TITLE_CLOSE_BUTTON;
+            closeButton.title = translate('LBL_PMSE_TOOLTIP_REMOVE_COLUMN','pmse_Business_Rules');
             this.closeButton = closeButton;
             html.appendChild(this.closeButton);
         }
@@ -1688,8 +1687,7 @@
         if(this.getFilledValuesNum()) {
             App.alert.show('variable-check', {
                 level: 'confirmation',
-                //TODO Create a label to handle this message
-                messages: "Do you really want to remove this variable?",
+                messages: translate('LBL_PMSE_MESSAGE_LABEL_REMOVE_VARIABLE','pmse_Business_Rules'),
                 onCancel: function() {
                     return;
                 },
@@ -1718,7 +1716,7 @@
             if (self.hasValues(true)) {
                 App.alert.show('select-change-confirm', {
                     level: 'confirmation',
-                    messages: 'Values associated to this variable will be removed. Do you want to continue?',
+                    messages: translate('LBL_PMSE_MESSAGE_LABEL_CHANGE_COLUMN_TYPE','pmse_Business_Rules'),
                     autoClose: false,
                     onConfirm: function () {
                         self.setField(newField || null);

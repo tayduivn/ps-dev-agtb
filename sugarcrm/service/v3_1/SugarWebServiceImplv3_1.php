@@ -204,13 +204,21 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
                     continue;
             }
 
-            if(!is_array($value)){
-                $seed->$name = $value;
-                $return_fields[] = $name;
-            }else{
-                $seed->$value['name'] = $value['value'];
-                $return_fields[] = $value['name'];
+            if (is_array($value)) {
+                $name = $value['name'];
+                $value = $value['value'];
             }
+
+            if (!self::$helperObject->checkFieldValue($seed, $name, $value)) {
+                $error->set_error('invalid_data_format');
+                self::$helperObject->setFaultObject($error);
+                $GLOBALS['log']->info('End: SugarWebServiceImpl->set_entry');
+                return;
+            }
+
+            $seed->$name = $value;
+            $return_fields[] = $name;
+
         }
         if (!self::$helperObject->checkACLAccess($seed, 'Save', $error, 'no_access') || ($seed->deleted == 1  && !self::$helperObject->checkACLAccess($seed, 'Delete', $error, 'no_access'))) {
             $GLOBALS['log']->info('End: SugarWebServiceImpl->set_entry');

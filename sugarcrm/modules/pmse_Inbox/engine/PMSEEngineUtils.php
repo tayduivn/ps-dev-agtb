@@ -709,12 +709,8 @@ class PMSEEngineUtils
      */
     public static function getElementUid($id, $elementEntity, $uidField)
     {
-        //$beanFactory = new ADAMBeanFactory();
         $elementEntity = ucfirst($elementEntity);
-//        $bean = new $elementEntity();
-        //$bean = $beanFactory->getBean($elementEntity);
-        $bean = BeanFactory::getBean('pmse_' . $elementEntity);
-        $bean->retrieve_by_string_fields(array('id' => $id));
+        $bean = BeanFactory::getBean('pmse_' . $elementEntity, $id);
         return $bean->$uidField;
     }
 
@@ -964,6 +960,7 @@ class PMSEEngineUtils
             'tags',
             'tag',
             'tag_lower',
+            'tag_link',
         );
         //UNSET comun fields
         foreach ($projectData as $key => $value) {
