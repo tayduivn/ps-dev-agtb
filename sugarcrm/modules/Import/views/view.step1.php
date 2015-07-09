@@ -93,6 +93,7 @@ class ImportViewStep1 extends ImportView
         $this->ss->assign("showModuleSelection", $showModuleSelection);
         $this->ss->assign("IMPORTABLE_MODULES_OPTIONS", $importableModulesOptions);
 
+        $this->ss->assign("EXTERNAL_APIS", $this->getExternalApis());
         $this->ss->assign("EXTERNAL_SOURCES", $this->getAllImportableExternalEAPMs());
         $this->ss->assign("EXTERNAL_AUTHENTICATED_SOURCES", json_encode($this->getAuthenticatedImportableExternalEAPMs()) );
         $selectExternal = !empty($_REQUEST['application']) ? $_REQUEST['application'] : '';
@@ -108,6 +109,28 @@ class ImportViewStep1 extends ImportView
         $this->ss->assign("CONTENT",$content);
         $this->ss->display('modules/Import/tpls/wizardWrapper.tpl');
 
+    }
+
+    protected function getExternalApis()
+    {
+        $apis = ExternalAPIFactory::listAPI('Import', true);
+        foreach ($apis as $name => $_) {
+            if ($name == 'Google') {
+                require_once 'include/externalAPI/Google/ExtAPIGoogle.php';
+                $api = new ExtAPIGoogle();
+                $client = $api->getClient();
+                $loginUrl = $client->createAuthUrl();
+            } else {
+                $loginUrl = 'index.php?' . http_build_query(array(
+                    'module' => 'EAPM',
+                    'action' => 'EditView',
+                    'application' => $name,
+                ));
+            }
+            $apis[$name]['loginUrl'] = $loginUrl;
+        }
+
+        return $apis;
     }
 
     private function getImportablePersonModulesJS()
@@ -241,20 +264,38 @@ YAHOO.util.Event.onDOMReady(function(){
         if( !isExtSourceAuthenticated(v) )
         {
             document.getElementById('ext_source_sign_in_bttn').style.display = '';
+            document.getElementById('ext_source_sign_out_bttn').style.display = 'none';
             document.getElementById('gonext').disabled = true;
         }
         else
         {
             document.getElementById('ext_source_sign_in_bttn').style.display = 'none';
+            if (v == "Google") {
+                document.getElementById('ext_source_sign_out_bttn').style.display = '';
+            }
             document.getElementById('gonext').disabled = false;
         }
     }
 
     function openExtAuthWindow()
     {
-        var import_module = document.getElementById('importstep1').import_module.value;
-        var url = "index.php?module=EAPM&return_module=Import&action=EditView&application=" + selectedExternalSource + "&return_action=" + import_module;
-        document.location = url;
+        var api = externalApis[selectedExternalSource];
+        if (!api) {
+            return;
+        }
+
+        if (api.authMethod === "oauth2") {
+            openOauth2Window(api.loginUrl);
+        } else {
+            var import_module = document.getElementById('importstep1').import_module.value;
+            var url = api.loginUrl + "&return_module=Import&return_action=" + import_module;
+            document.location = url;
+        }
+    }
+
+    function openOauth2Window(url)
+    {
+        window.open(url, '_blank', "width=600,height=400,centerscreen=1,resizable=1");
     }
 
     function setImportModule()
@@ -288,6 +329,19 @@ YAHOO.util.Event.onDOMReady(function(){
     }
 
     YAHOO.util.Event.addListener('ext_source_sign_in_bttn', "click", openExtAuthWindow);
+    YAHOO.util.Event.addListener("ext_source_sign_out_bttn", "click", function() {
+        $.post(
+            "index.php?module=Import&action=RevokeAccess&application=" + encodeURIComponent(selectedExternalSource),
+            function(response) {
+                if (response.result) {
+                    auth_sources = response.sources;
+                    isExtSourceValid(selectedExternalSource);
+                } else {
+                    alert("Unable to sign out");
+                }
+            }
+        );
+    });
     YAHOO.util.Event.addListener('admin_import_module', "change", setImportModule);
 
     //BEGIN SUGARCRM flav=pro ONLY
@@ -297,6 +351,21 @@ YAHOO.util.Event.onDOMReady(function(){
         isExtSourceValid(selectedExternalSource);
     });
     //END SUGARCRM flav=pro ONLY
+
+    $(window).on("message", function(e) {
+        var data = $.parseJSON(e.originalEvent.data);
+        if (data.result) {
+            if (!data.hasRefreshToken) {
+                alert("The application is unable to work in offline mode. Please sign out and sign in again.");
+            }
+            $.get("index.php?module=Import&action=AuthenticatedSources", function(sources) {
+                auth_sources = sources;
+                isExtSourceValid(selectedExternalSource);
+            });
+        } else {
+            alert("Unable to connect to the data source");
+        }
+    });
 
     function initExtSourceSelection()
     {

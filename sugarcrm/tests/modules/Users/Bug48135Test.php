@@ -55,7 +55,6 @@ class Bug48135Test extends Sugar_PHPUnit_Framework_TestCase
         $this->eapm->deleted = 0;
         $this->eapm->assigned_user_id = $this->user1->id;
         $this->eapm->password = md5('KL8998ccD');
-        $this->eapm->application = 'Google';
         $this->eapm->save();
     }
 
