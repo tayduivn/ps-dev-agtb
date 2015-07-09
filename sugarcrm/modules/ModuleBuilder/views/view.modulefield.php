@@ -271,7 +271,7 @@ class ViewModulefield extends SugarView
 
         // Full Text Search settings
         $engine = SearchEngine::getInstance()->getEngine();
-        if ($engine instanceof GlobalSearchCapable && in_array($vardef['type'], $engine->getSupportedTypes())) {
+        if ($engine instanceof GlobalSearchCapable && in_array($vardef['type'], $engine->getStudioSupportedTypes())) {
 
             // default fts parameters
             $ftsFieldConfig = '0';
