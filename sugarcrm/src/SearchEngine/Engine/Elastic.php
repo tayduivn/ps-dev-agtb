@@ -108,6 +108,14 @@ class Elastic implements
     /**
      * {@inheritDoc}
      */
+    public function addMappings(array $modules = array())
+    {
+        return $this->container->indexManager->addMappings($modules);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function indexBean(\SugarBean $bean, array $options = array())
     {
         $this->container->indexer->indexBean($bean);
