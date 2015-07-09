@@ -121,7 +121,6 @@
 	var disabled_modules = {$disabled_modules};
 	var lblEnabled = '{sugar_translate label="LBL_ACTIVE_MODULES"}';
 	var lblDisabled = '{sugar_translate label="LBL_DISABLED_MODULES"}';
-    var csrfToken = '{sugar_csrf_form_token raw=true}';
 
 	{literal}
 	SUGAR.globalSearchEnabledTable = new YAHOO.SUGAR.DragDropTable(
@@ -214,20 +213,8 @@
             type: type,
             enabled_modules: enabled,
             disabled_modules: disabled,
-            csrf_token: csrfToken
+            csrf_token: SUGAR.csrf.form_token
         }
-
-        var urlParams = {
-            module: "Administration",
-            action: "saveglobalsearchsettings",
-            {* //BEGIN SUGARCRM flav=pro ONLY *}
-            host: host,
-            port: port,
-            type: type,
-            {* //END SUGARCRM flav=pro ONLY *}
-            enabled_modules: enabled,
-        }
-        urlParams[csrfTokenField] = csrfToken;
 
 		ajaxStatus.showStatus(SUGAR.language.get('Administration', 'LBL_SAVING'));
 		Connect.asyncRequest(
