@@ -1057,7 +1057,7 @@ class PMSECrmDataWrapper implements PMSEObservable
 //        $res->search = $filter;
 //        $res->success = true;
         $output = array();
-        if ($projectBean->retrieve_by_string_fields(array('id' => $filter))) {
+        if ($projectBean->retrieve($filter)) {
 
             $processBean->retrieve_by_string_fields(array('prj_id' => $projectBean->id));
 
@@ -1363,7 +1363,7 @@ class PMSECrmDataWrapper implements PMSEObservable
 
         $updateDefaultForm = false;
 
-        if ($projectBean->retrieve_by_string_fields(array('id' => $args['filter']))) {
+        if ($projectBean->retrieve($args['filter'])) {
             unset($args['prj_uid']);
             $args['prj_id'] = $projectBean->id;
             $processBean->retrieve_by_string_fields(array('prj_id' => $projectBean->id));
@@ -1787,7 +1787,7 @@ class PMSECrmDataWrapper implements PMSEObservable
         $projectBean = $this->getProjectBean();
         $ruleSetBean = $this->getRuleSetBean();
         $output = array();
-        if ($projectBean->retrieve_by_string_fields(array('id' => $filter))) {
+        if ($projectBean->retrieve($filter)) {
             $processDefinitionBean->retrieve_by_string_fields(array('prj_id' => $projectBean->id));
             if (isset($this->beanList[$processDefinitionBean->pro_module])) {
                 $newModuleFilter = $processDefinitionBean->pro_module;
