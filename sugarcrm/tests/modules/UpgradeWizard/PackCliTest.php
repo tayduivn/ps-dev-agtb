@@ -5,6 +5,14 @@ require_once __DIR__ . '/../../../modules/UpgradeWizard/pack_cli.php';
 class PackCliTest extends PHPUnit_Framework_TestCase
 {
 
+    public function setUp()
+    {
+        // if shadow is detected, we need to skip this test as it doesn't play nice with shadow
+        if (extension_loaded('shadow')) {
+            $this->markTestSkipped('Does not work on Shadow');
+        }
+    }
+
     public function packUpgradeWizardCliProvider()
     {
         return array(
