@@ -121,8 +121,6 @@
 	var disabled_modules = {$disabled_modules};
 	var lblEnabled = '{sugar_translate label="LBL_ACTIVE_MODULES"}';
 	var lblDisabled = '{sugar_translate label="LBL_DISABLED_MODULES"}';
-
-    var csrfTokenField = '{sugar_csrf_form_token_field}';
     var csrfToken = '{sugar_csrf_form_token raw=true}';
 
 	{literal}
@@ -215,9 +213,9 @@
             port: port,
             type: type,
             enabled_modules: enabled,
-            disabled_modules: disabled
+            disabled_modules: disabled,
+            csrf_token: csrfToken
         }
-        urlParams[csrfTokenField] = csrfToken;
 
         var urlParams = {
             module: "Administration",
