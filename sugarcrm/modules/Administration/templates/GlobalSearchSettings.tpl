@@ -118,8 +118,6 @@
 	var disabled_modules = {$disabled_modules};
 	var lblEnabled = '{sugar_translate label="LBL_ACTIVE_MODULES"}';
 	var lblDisabled = '{sugar_translate label="LBL_DISABLED_MODULES"}';
-
-    var csrfTokenField = '{sugar_csrf_form_token_field}';
     var csrfToken = '{sugar_csrf_form_token raw=true}';
 
 	{literal}
@@ -217,8 +215,8 @@
             type: type,
             {* //END SUGARCRM flav=pro ONLY *}
             enabled_modules: enabled,
+            csrf_token: csrfToken
         }
-        urlParams[csrfTokenField] = csrfToken;
 
 		ajaxStatus.showStatus(SUGAR.language.get('Administration', 'LBL_SAVING'));
 		Connect.asyncRequest(
