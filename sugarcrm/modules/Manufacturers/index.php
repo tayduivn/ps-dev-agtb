@@ -15,6 +15,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Description:
  ********************************************************************************/
 
+require_once 'include/SugarSmarty/plugins/function.sugar_action_menu.php';
+require_once 'include/SugarSmarty/plugins/function.sugar_csrf_form_token.php';
+
 $header_text = '';
 global $mod_strings;
 global $app_list_strings;
@@ -54,9 +57,10 @@ if(isset($_REQUEST['edit']) && $_REQUEST['edit']=='true') {
 $GLOBALS['log']->info("Manufacturer list view");
 global $theme;
 
-
+$ListView = new ListView();
 
 $button  = "<form border='0' action='index.php' method='post' name='form'>\n";
+$button .= smarty_function_sugar_csrf_form_token(array(), $ListView);
 $button .= "<input type='hidden' name='module' value='Manufacturers'>\n";
 $button .= "<input type='hidden' name='action' value='EditView'>\n";
 $button .= "<input type='hidden' name='edit' value='true'>\n";
@@ -65,14 +69,12 @@ $button .= "<input type='hidden' name='return_action' value='".$action."'>\n";
 $button .= "<input title='".$app_strings['LBL_NEW_BUTTON_TITLE']."' accessyKey='".$app_strings['LBL_NEW_BUTTON_KEY']."' class='button primary' type='submit' name='New' value='".$app_strings['LBL_NEW_BUTTON_LABEL']."' id='btn_create'>\n";
 $button .= "</form>\n";
 
-$ListView = new ListView();
 if(is_admin($current_user) && $_REQUEST['module'] != 'DynamicLayout' && !empty($_SESSION['editinplace'])){
 		$header_text = "&nbsp;<a href='index.php?action=index&module=DynamicLayout&from_action=ListView&from_module=".$_REQUEST['module'] ."'>".SugarThemeRegistry::current()->getImage("EditLayout","border='0' alt='Edit Layout' align='bottom'",null,null,'.gif',$mod_strings['LBL_EDITLAYOUT'])."</a>";
 }
 $ListView->initNewXTemplate( 'modules/Manufacturers/ListView.html',$mod_strings);
 $ListView->xTemplateAssign("DELETE_INLINE_PNG",  SugarThemeRegistry::current()->getImage('delete_inline','align="absmiddle" border="0"',null,null,'.gif',$app_strings['LNK_DELETE']));
 
-require_once('include/SugarSmarty/plugins/function.sugar_action_menu.php');
 $action_button = smarty_function_sugar_action_menu(array(
     'id' => 'manufacturer_create_button',
     'buttons' => array($button),
@@ -90,6 +92,7 @@ $ListView->processListView($focus, "main", "MANUFACTURER");
 if ($is_edit) {
 
 		$edit_button ="<form name='EditView' method='POST' action='index.php'>\n";
+        $edit_button .= smarty_function_sugar_csrf_form_token(array(), $ListView);
 		$edit_button .="<input type='hidden' name='module' value='Manufacturers'>\n";
 		$edit_button .="<input type='hidden' name='record' value='$focus->id'>\n";
 		$edit_button .="<input type='hidden' name='action'>\n";
