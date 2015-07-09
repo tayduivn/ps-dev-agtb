@@ -55,4 +55,19 @@
   .email {
     padding: 0;
   }
+  .dashlet {
+    .dashlet-content {
+      :not(.tab-pane) { /* necessary to not affect empty dashlet tab with string "No data available." */
+        > .block-footer {
+          text-align: left;
+          .btn.more {
+            padding: 0;
+          }
+          .loading {
+            margin: 1px 0 0;
+          }
+        }
+      }
+    }
+  }
 }
