@@ -73,8 +73,15 @@
              * @param {Data.Bean} model A record view model caused creation.
              */
             createArticle: function(model) {
-                var link = 'kbcontents',
-                    module = 'KBContents',
+                var module = 'KBContents',
+                    fields = app.metadata.getModule(model.module).fields,
+                    links = _.filter(fields, function(field) {
+                        if (field.type !== 'link' || !field.relationship) {
+                            return false;
+                        }
+                        return app.data.getRelatedModule(model.module, field.name) === module;
+                    }),
+                    link = links.length === 1 ? links[0].name : 'kbcontents',
                     bodyTmpl = app.template.getField('htmleditable_tinymce', 'create-article', module),
                     attrs = {name: model.get('name'), kbdocument_body: bodyTmpl({model: model})},
                     prefill = app.data.createRelatedBean(model, null, link, attrs),
@@ -94,7 +101,12 @@
                         model: prefill,
                         module: module
                     }},
-                    function(context, newModel) {}
+                    function(context, newModel) {
+                        if (newModel !== undefined) {
+                            var viewContext = context.parent.parent || context.parent;
+                            viewContext.trigger('subpanel:reload', {links: _.union(links, [link])});
+                        }
+                    }
                 );
             },
 
