@@ -1,5 +1,4 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -10,7 +9,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('include/EditView/SugarVCR.php');
+
+require_once 'include/EditView/SugarVCR.php';
+require_once 'include/SugarSmarty/plugins/function.sugar_csrf_form_token.php';
+
 /**
  * ListView - list of many objects
  * @api
@@ -1643,6 +1645,7 @@ $close_inline_img = SugarThemeRegistry::current()->getImage('close_inline', 'bor
 
                 if($aItem->ACLAccess('Delete')) {
                     $delete  = "<form border='0' action='index.php' method='post' name='form'>\n";
+                    $delete .= smarty_function_sugar_csrf_form_token(array(), $this);
                     $delete .= "<input type='hidden' name='module' value='" . $aItem->module_dir . "'>\n";
                     $delete .= "<input type='hidden' name='action' value='Delete'>\n";
                     $delete .= "<input type='hidden' name='return_module' value='" . $aItem->module_dir . "'>\n";
