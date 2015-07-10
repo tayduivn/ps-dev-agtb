@@ -41,8 +41,7 @@
                     this.context.on('button:create_revision_button:click', this.createRevision, this);
                     this.context.on('button:create_article_button:click', this.createArticle, this);
                     this.context.on('button:create_article_button_subpanel:click', this.createArticleSubpanel, this);
-
-                    if (this.action == 'list') {
+                    if (this.tplName === 'list' || this.tplName === 'panel-top') {
                         this.context.on('list:editrow:fire', _.bind(function(model, view) {
                             this._initValidationHandler(model);
                         }, this));
