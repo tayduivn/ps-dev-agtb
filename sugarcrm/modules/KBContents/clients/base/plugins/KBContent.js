@@ -350,9 +350,11 @@
              * @param {Function} callback Async.js waterfall callback.
              */
             _doValidateExpDateField: function(model, fields, errors, callback) {
-                var fieldName = 'exp_date',
+                var expFName = 'exp_date',
+                    actFName = 'active_date',
+                    fieldName = expFName,
                     expDate = model.get(fieldName),
-                    publishingDate = model.get('active_date'),
+                    publishingDate = model.get(actFName),
                     status = model.get('status'),
                     changed = model.changedAttributes(model.getSyncedAttributes()),
                     errorKeys = [];
@@ -362,12 +364,12 @@
                     (!changed.status || !this._isPublishingStatus(changed.status))
                 ) {
                     publishingDate = app.date().formatServer(true);
-                    model.set('active_date', publishingDate);
+                    model.set(actFName, publishingDate);
                 }
 
                 if (status !== 'expired' && expDate && publishingDate && app.date(expDate).isBefore(publishingDate)) {
-                    if (!this.getField(fieldName)) {
-                        fieldName = 'active_date';
+                    if (!this.getField(fieldName) && this.getField(actFName)) {
+                        fieldName = actFName;
                     }
                     errors[fieldName] = errors[fieldName] || {};
                     errors[fieldName].expDateLow = true;
