@@ -156,7 +156,10 @@
                     this._setupIsListFormula();
                     break;
                 default:
-                    this.model.set('discount_price', '');
+                    var oldPrice = this.model.get('discount_price');
+                    if (_.isUndefined(oldPrice) || _.isNaN(oldPrice)) {
+                        this.model.set('discount_price', '');
+                    }
                     break;
             }
         }
