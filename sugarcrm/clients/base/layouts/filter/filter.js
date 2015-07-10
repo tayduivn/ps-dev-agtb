@@ -48,7 +48,7 @@
 
         // Can't use getRelevantContextList here, because the context may not
         // have all the children we need.
-        if (this.layoutType === 'records') {
+        if (this.layoutType === 'records' || this.layoutType === 'activities') {
             // filters will handle data fetching so we skip the standard data fetch
             this.context.set('skipFetch', true);
         } else {
