@@ -59,6 +59,10 @@
         this.def.disable_select_all_alert = !!this.def.disable_select_all_alert;
 
         if (this.options.viewName === 'list-header') {
+            this.isCheckAllCheckbox = true;
+        }
+
+        if (this.isCheckAllCheckbox) {
             app.shortcuts.register('SelectAll:Checkbox', 'ctrl+a', function() {
                 if (!this.isDisabled()) {
                     this.$('[data-check=all]:visible').click();
@@ -216,23 +220,14 @@
      * consequently.
      */
     bindDataChange: function() {
-        if (this.model.id) {
-            // Listeners for each record selection.
-            this._bindModelChangeEvents();
-
-            // If the model is in the mass collection, make sure the checkbox
-            // is checked.
-            if (this.massCollection.get(this.model) || this.massCollection.entire) {
-                this.$(this.fieldTag).attr('checked', true);
-                this.selected = true;
-            } else {
-                delete this.selected;
-            }
-        } else {
+        if (this.isCheckAllCheckbox) {
             // Listeners on the checkAll/uncheckAll checkbox.
             this._bindAllModelChangeEvents();
             this.action_enabled = this.massCollection.length > 0;
             this.selected = this.massCollection.entire;
+        } else {
+            // Listeners for each record selection.
+            this._bindModelChangeEvents();
         }
 
         this.massCollection.on('massupdate:estimate', this.onTotalEstimate, this);
@@ -273,10 +268,19 @@
      * @inheritDoc
      */
     _render: function() {
+        if (!this.isCheckAllCheckbox) {
+            // If the model is in the mass collection, make sure the checkbox
+            // is checked.
+            if (this.massCollection.get(this.model) || this.massCollection.entire) {
+                this.selected = true;
+            } else {
+                delete this.selected;
+            }
+        }
+
         this._super('_render');
 
-        if (!this.def.disable_select_all_alert) {
-            this.context.trigger('toggleSelectAllAlert');
+        if (this.isCheckAllCheckbox && !this.def.disable_select_all_alert) {
             this.setButtonsDisabled(this.dropdownFields);
             this.setDropdownDisabled(this.massCollection.length === 0);
         }
