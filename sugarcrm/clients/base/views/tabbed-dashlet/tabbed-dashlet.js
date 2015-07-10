@@ -444,7 +444,8 @@
         var loadDataRequests = [];
         _.each(tabs, function(tab, index) {
             loadDataRequests.push(function(callback){
-                tab.collection.options = self._getCollectionOptions(index);
+                tab.collection.setOption(self._getCollectionOptions(index));
+
                 tab.collection.filterDef = _.union(
                     self._getCollectionFilters(index),
                     self._getFilters(index)
