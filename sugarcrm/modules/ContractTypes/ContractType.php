@@ -79,18 +79,23 @@ class ContractType extends SugarBean {
 		return "$this->name";
 	}
 
-	function get_next_list_order() {
+    /**
+    * Returns next list order
+    * @return int Next list order
+    */
+    public function get_next_list_order()
+    {
+        $retval = 1;
+        $query = "SELECT MAX(list_order) AS max_list_order FROM `$this->table_name` WHERE list_order IS NOT NULL AND deleted=0";
+        $result = $this->db->query($query, false);
+        $row = $this->db->fetchByAssoc($result);
 
-		$retval=1;
-		$query="select max(list_order) as max_list_order from contract_types where list_order is not null";
-		$result = $this->db->query($query, false);
-		$row = $this->db->fetchByAssoc($result);
-		if (!empty($row) && !empty($row['max_list_order'])) {
-			$retval=$row['max_list_order']+1;
-		}
-		return $retval;
-	}
+        if (!empty($row['max_list_order'])) {
+            $retval += intval($row['max_list_order']);
+        }
 
+        return $retval;
+    }
 
 	function get_contractTypes($add_blank=false){
 		$query="select id,name,list_order from contract_types where deleted = 0 order by list_order ";
@@ -104,5 +109,16 @@ class ContractType extends SugarBean {
 		}
 	    return $list;
 	}
+
+    /**
+     * @inheritdoc
+     */
+    public function save($check_notify = false)
+    {
+        if (trim($this->list_order) === '' || is_null($this->list_order)) {
+            $this->list_order = $this->get_next_list_order();
+        }
+        parent::save($check_notify);
+    }
 }
 ?>

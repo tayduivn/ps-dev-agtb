@@ -109,7 +109,9 @@
              * @param {Object} panels
              */
             hideForecastCommitStageField: function(panels) {
-                if (!app.metadata.getModule('Forecasts', 'config').is_setup) {
+                var config = app.metadata.getModule('Forecasts', 'config'),
+                    isSetup = (config && config.is_setup);
+                if (!isSetup) {
                     _.each(panels, function(panel) {
                         // use _.every so we can break out after we found the commit_stage field
                         _.every(panel.fields, function(field, index) {

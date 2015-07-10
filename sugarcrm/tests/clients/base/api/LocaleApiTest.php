@@ -50,7 +50,6 @@ class LocaleApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertNotEmpty($result);
         $this->assertInternalType('array', $result);
-        $this->assertArrayHasKey('_hash', $result);
 
         $fields = array('timepref', 'datepref', 'default_locale_name_format', 'timezone');
 

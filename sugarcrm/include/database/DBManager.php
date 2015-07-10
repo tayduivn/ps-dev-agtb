@@ -174,6 +174,13 @@ abstract class DBManager
 	 */
 	protected $type_map = array();
 
+    /**
+     * Type min:max value
+     * @abstract
+     * @var array
+     */
+    protected $type_range = array();
+
 	/**
 	 * Type classification into:
 	 * - int
@@ -2111,6 +2118,22 @@ protected function checkQuery($sql, $object_name = false)
 
 		return array();
 	}
+
+    /**
+     * Returns the min and max number that the field can store. False if not supported
+     * @param array $fieldDef
+     * @return array | boolean eg array('min_value'=>-2147483648, 'max_value'=>2147483647) for int field
+     */
+    public function getFieldRange($fieldDef)
+    {
+        $type = $this->getFieldType($fieldDef);
+
+        if ($type && isset($this->type_range[$type])) {
+            return $this->type_range[$type];
+        }
+
+        return false;
+    }
 
 	/**
 	 * Returns the index description for a given index in table

@@ -148,9 +148,7 @@ class PMSEEmailsTemplates extends vCardApi
         $nextOffset = -1;
 
         if ($offset !== "end") {
-            //$records = $this->crmDataWrapper->retrieveFields($args["module_list"]);
-            //$records = $this->crmDataWrapper->retrieveFields($args["module_list"], $direction, $limit, $offset);
-            $records = $this->retrieveFields($args["module_list"], $direction, $limit, $offset, $args["base_module"]);
+            $records = $this->retrieveFields($args["module_list"], $direction, $limit, $offset, $args["base_module"], $args["q"]);
             $totalRecords = $records['totalRecords'];
             $trueOffset = $offset + $limit;
 
@@ -164,7 +162,7 @@ class PMSEEmailsTemplates extends vCardApi
             "records" => $records['records'],
         );
 }
-    public function retrieveFields($filter, $orderBy, $limit, $offset, $baseModule)
+    public function retrieveFields($filter, $orderBy, $limit, $offset, $baseModule, $q = null)
     {
         global $beanList;
         $pmseRelatedModule = new PMSERelatedModule();
@@ -185,7 +183,9 @@ class PMSEEmailsTemplates extends vCardApi
                 $tmpField['_module'] = $newModuleFilter;
                 $tmpField['name'] = str_replace(':', '', translate($field['vname'], $newModuleFilter));
                 $tmpField['rhs_module'] = $filter;
-                $output[] = $tmpField;
+                if (empty($q) || stripos($tmpField['name'], $q) !== false) {
+                    $output[] = $tmpField;
+                }
             }
         }
 

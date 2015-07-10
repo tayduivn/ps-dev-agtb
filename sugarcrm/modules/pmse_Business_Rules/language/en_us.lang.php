@@ -61,6 +61,8 @@ $mod_strings = array (
     'LBL_PMSE_MESSAGE_LABEL_MIN_ROWS' => 'The decision table must have at least 1 row',
     'LBL_PMSE_MESSAGE_LABEL_MIN_CONDITIONS_COLS' => 'The decision table must have at least 1 condition column',
     'LBL_PMSE_MESSAGE_LABEL_MIN_CONCLUSIONS_COLS' => 'The decision table must have at least 1 conclusion column',
+    'LBL_PMSE_MESSAGE_LABEL_CHANGE_COLUMN_TYPE' => 'Values associated to this variable will be removed. Do you want to continue?',
+    'LBL_PMSE_MESSAGE_LABEL_REMOVE_VARIABLE' => 'Do you really want to remove this variable?',
 
     'LBL_PMSE_LABEL_CONDITIONS' => 'Conditions',
     'LBL_PMSE_LABEL_RETURN' => 'Return',
@@ -69,6 +71,7 @@ $mod_strings = array (
     'LBL_PMSE_TOOLTIP_ADD_CONDITION' => 'Add condition',
     'LBL_PMSE_TOOLTIP_ADD_CONCLUSION' => 'Add conclusion',
     'LBL_PMSE_TOOLTIP_ADD_ROW' => 'Add row',
+    'LBL_PMSE_TOOLTIP_REMOVE_COLUMN' => 'Remove column',
 
     'LBL_PMSE_DROP_DOWN_CHECKED' => 'Yes',
     'LBL_PMSE_DROP_DOWN_UNCHECKED' => 'No',

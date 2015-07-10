@@ -527,7 +527,7 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
     {
         $this->initWrapper();
         $response = array();
-        if ($this->project->retrieve_by_string_fields(array('id' => $projectId))) {
+        if ($this->project->retrieve($projectId)) {
 
             $processObject = $this->process->retrieve_by_string_fields(array('prj_id' => $projectId));
             $processDefinitionData = array();
@@ -626,7 +626,7 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
             if (!empty($data)) {
                 foreach ($data['rowList'] as $row) {
                     if (isset($row['act_default_flow']) && !empty($row['act_default_flow'])) {
-                        $tmpObject = $this->flowBean->retrieve_by_string_fields(array("id" => $row['act_default_flow']));
+                        $tmpObject = $this->flowBean->retrieve($row['act_default_flow']);
                         $row['act_default_flow'] = !is_null($tmpObject) ? $tmpObject->flo_uid : '';
                     }
                     $row['bou_element'] = $row['bou_uid'];
@@ -710,7 +710,7 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
                 foreach ($data['rowList'] as $row) {
                     $row['bou_element'] = $row['bou_uid'];
                     if (isset($row['gat_default_flow']) && !empty($row['gat_default_flow'])) {
-                        $tmpObject = $this->flowBean->retrieve_by_string_fields(array("id" => $row['gat_default_flow']));
+                        $tmpObject = $this->flowBean->retrieve($row['gat_default_flow']);
                         $row['gat_default_flow'] = isset($tmpObject->flo_uid) ? $tmpObject->flo_uid : '';
                     }
                     $row['gat_name'] = $row['name'];
@@ -883,7 +883,7 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
 
                     if (isset($element['act_default_flow'])) {
                         if ($element['act_default_flow'] != null && !empty($element['act_default_flow'])) {
-                            $tmpObject = $this->flowBean->retrieve_by_string_fields(array("id" => $element['act_default_flow']));
+                            $tmpObject = $this->flowBean->retrieve($element['act_default_flow']);
                             $element['act_default_flow'] = isset($tmpObject->id) ? $tmpObject->id : '';
                         } else {
                             $element['act_default_flow'] = null;
@@ -1210,12 +1210,10 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
                 $primaryField = $this->getPrimaryFieldName($bean);
                 $bean->retrieve_by_string_fields(array($entityData['uid_field'] => $elementArray[$entityData['uid_field']]));
                 if ($entityData['bean'] == 'BpmnActivity') {
-                    $tmpDefinition = $this->getBean('pmse_BpmActivityDefinition');
-                    $tmpDefinition->retrieve_by_string_fields(array('id' => $bean->$primaryField));
+                    $tmpDefinition = $this->getBean('pmse_BpmActivityDefinition', $bean->$primaryField);
                     $this->delete($tmpDefinition);
                 } elseif ($entityData['bean'] == 'BpmnEvent') {
-                    $tmpDefinition = $this->getBean('pmse_BpmEventDefinition');
-                    $tmpDefinition->retrieve_by_string_fields(array('id' => $bean->$primaryField));
+                    $tmpDefinition = $this->getBean('pmse_BpmEventDefinition', $bean->$primaryField);
                     $this->delete($tmpDefinition);
                     if (!empty($tmpDefinition->fetched_row)) {
                         $relDepWrapper = new PMSERelatedDependencyWrapper();

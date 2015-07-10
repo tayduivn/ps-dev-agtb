@@ -425,6 +425,7 @@ $dictionary['KBContent'] = array(
             'relationship' => 'usefulness',
             'studio' => false,
             'massupdate' => false,
+            'reportable' => false,
             'side' => 'right'
         ),
         'usefulness_user_vote' => array(

@@ -39,6 +39,12 @@ elseif (!isset($_POST['record']) && !is_admin($current_user)
      && !$GLOBALS['current_user']->isAdminForModule('Users'))
 sugar_die ("Unauthorized access to user administration.");
 $focus = BeanFactory::getBean('Users', $_POST['record']);
+if (!$focus->id) {
+    // generate ID for the newly created user in order to be able to save preferences
+    // before the bean is saved
+    $focus->id = create_guid();
+    $focus->new_with_id = true;
+}
 
 //update any ETag seeds that are tied to the user object changing
 $focus->incrementETag("mainMenuETag");

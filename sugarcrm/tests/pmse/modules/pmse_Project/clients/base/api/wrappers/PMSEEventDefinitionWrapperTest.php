@@ -30,13 +30,13 @@ class PMSEEventDefinitionWrapperTest extends PHPUnit_Framework_TestCase
         $this->mockElement = $this->getMockBuilder("pmse_BpmnEvent")
                 ->disableAutoload()
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields', 'save'))
+                ->setMethods(array('retrieve_by_string_fields', 'retrieve', 'save'))
                 ->getMock();
         
         $this->mockDefinition = $this->getMockBuilder("pmse_BpmEventDefinition")
                 ->disableAutoload()
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields', 'save'))
+                ->setMethods(array('retrieve_by_string_fields', 'retrieve', 'save'))
                 ->getMock();
         
         $this->mockCrmDataWrapper = $this->getMockBuilder("PMSECrmDataWrapper")
@@ -64,7 +64,7 @@ class PMSEEventDefinitionWrapperTest extends PHPUnit_Framework_TestCase
         );
         
         $this->mockDefinition->expects($this->once())
-                ->method('retrieve_by_string_fields');
+                ->method('retrieve');
         
         $this->mockDefinition->fetched_row = array(
             'id' => 'event01',

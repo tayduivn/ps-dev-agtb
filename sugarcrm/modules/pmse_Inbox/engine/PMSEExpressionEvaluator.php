@@ -601,6 +601,12 @@ class PMSEExpressionEvaluator
                 }
                 break;
             case 'date'://date
+                if ($value instanceof DateTime) {
+                    $newValue = $value;
+                } else {
+                    $newValue = !empty($value) ? $timedate->fromString($value) : false;
+                }
+                break;
             case 'datetime'://datetime
             case 'datetimecombo'://datetime
                 // Here we are assuming $value always will be
