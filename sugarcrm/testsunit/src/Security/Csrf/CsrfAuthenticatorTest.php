@@ -22,15 +22,6 @@ use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 class CsrfAuthenticatorTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @covers ::getFormTokenField
-     */
-    public function testGetFormTokenField()
-    {
-        $sut = $this->getCsrfAuthMock(null);
-        $this->assertEquals('csrf', $sut->getFormTokenField());
-    }
-
-    /**
      * @covers ::getFormToken
      * @covers ::getToken
      */
@@ -109,21 +100,21 @@ class CsrfAuthenticatorTest extends \PHPUnit_Framework_TestCase
             array(
                 true,
                 false,  // no soft fail
-                array('csrf' => '1234567890'),
+                array('csrf_token' => '1234567890'),
                 true,  // token test result
                 true,  // expected
             ),
             array(
                 true,
                 false,  // no soft fail
-                array('csrf' => '1234567890'),
+                array('csrf_token' => '1234567890'),
                 false,  // token test result
                 false,  // expected
             ),
             array(
                 true,
                 true,  // soft fail
-                array('csrf' => '1234567890'),
+                array('csrf_token' => '1234567890'),
                 false,  // token test result
                 true,  // expected
             ),
