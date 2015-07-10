@@ -12,7 +12,13 @@
 
 if(!defined('sugarEntry')) define('sugarEntry', true);
 
-define('SUGAR_BASE_DIR', str_replace('\\', '/', realpath(dirname(__FILE__) . '/..')) . DIRECTORY_SEPARATOR);
+if (basename(getcwd()) == 'tests' || !is_file('include/entryPoint.php')) {
+    $path = str_replace('\\', '/', realpath(dirname(__FILE__) . '/..')) . DIRECTORY_SEPARATOR;
+} else {
+    $path = str_replace('\\', '/', realpath(dirname(__FILE__))) . DIRECTORY_SEPARATOR;
+}
+
+define('SUGAR_BASE_DIR', $path);
 
 set_include_path(
     dirname(__FILE__) . PATH_SEPARATOR .
