@@ -99,7 +99,6 @@
 	var disabled_modules = {$disabled_modules};
 	var lblEnabled = '{sugar_translate label="LBL_ACTIVE_MODULES"}';
 	var lblDisabled = '{sugar_translate label="LBL_DISABLED_MODULES"}';
-    var csrfToken = '{sugar_csrf_form_token raw=true}';
 
 	{literal}
 	SUGAR.mobileEnabledTable = new YAHOO.SUGAR.DragDropTable(
@@ -143,7 +142,7 @@
             action: "updateWirelessEnabledModules",
             enabled_modules: modules,
             offlineEnabled: $('#offline_enabled').is(':checked'),
-            csrf_token: csrfToken
+            csrf_token: SUGAR.csrf.form_token 
         }
 		
 		ajaxStatus.showStatus(SUGAR.language.get('Administration', 'LBL_SAVING'));
