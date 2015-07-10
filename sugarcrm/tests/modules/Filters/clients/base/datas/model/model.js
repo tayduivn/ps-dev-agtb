@@ -246,7 +246,7 @@ describe('Data.Base.FiltersBean', function() {
     describe('buildSearchTermFilter', function() {
         using('different search terms to match a contact "Luis Filipe Madeira Caeiro Figo"', [
             {
-                case: 'First part of first name',
+                'case': 'First part of first name',
                 searchValue: 'Luis',
                 expectedFilter: [{
                     $or: [
@@ -255,37 +255,42 @@ describe('Data.Base.FiltersBean', function() {
                     ]
                 }]
             }, {
-                case: 'First 2 parts of first name',
+                'case': 'First 2 parts of first name',
                 searchValue: 'Luis Filipe',
                 expectedFilter: [{
                     $or: [
-                        {first_name: {$starts: 'Luis'}},
-                        {first_name: {$starts: 'Filipe'}},
-                        {last_name: {$starts: 'Luis'}},
-                        {last_name: {$starts: 'Filipe'}},
+                        {
+                            $and: [
+                                {first_name: {$starts: 'Luis'}},
+                                {last_name: {$starts: 'Filipe'}}
+                            ]
+                        },
                         {first_name: {$starts: 'Luis Filipe'}},
                         {last_name: {$starts: 'Luis Filipe'}}
                     ]
                 }]
             }, {
-                case: 'First name',
+                'case': 'First name',
                 searchValue: 'Luis Filipe Madeira',
                 expectedFilter: [{
                     $or: [
-                        {first_name: {$starts: 'Luis'}},
-                        {first_name: {$starts: 'Filipe Madeira'}},
-                        {last_name: {$starts: 'Luis'}},
-                        {last_name: {$starts: 'Filipe Madeira'}},
-                        {first_name: {$starts: 'Luis Filipe'}},
-                        {first_name: {$starts: 'Madeira'}},
-                        {last_name: {$starts: 'Luis Filipe'}},
-                        {last_name: {$starts: 'Madeira'}},
+                        {
+                            $and: [
+                                {first_name: {$starts: 'Luis'}},
+                                {last_name: {$starts: 'Filipe Madeira'}}
+                            ]
+                        }, {
+                            $and: [
+                                {first_name: {$starts: 'Luis Filipe'}},
+                                {last_name: {$starts: 'Madeira'}}
+                            ]
+                        },
                         {first_name: {$starts: 'Luis Filipe Madeira'}},
                         {last_name: {$starts: 'Luis Filipe Madeira'}}
                     ]
                 }]
             }, {
-                case: 'First part of last name',
+                'case': 'First part of last name',
                 searchValue: 'Caeiro',
                 expectedFilter: [{
                     $or: [
@@ -294,41 +299,22 @@ describe('Data.Base.FiltersBean', function() {
                     ]
                 }]
             }, {
-                case: 'Last name',
+                'case': 'Last name',
                 searchValue: 'Caeiro Figo',
                 expectedFilter: [{
                     $or: [
-                        {first_name: {$starts: 'Caeiro'}},
-                        {first_name: {$starts: 'Figo'}},
-                        {last_name: {$starts: 'Caeiro'}},
-                        {last_name: {$starts: 'Figo'}},
+                        {
+                            $and: [
+                                {first_name: {$starts: 'Caeiro'}},
+                                {last_name: {$starts: 'Figo'}}
+                            ]
+                        },
                         {first_name: {$starts: 'Caeiro Figo'}},
                         {last_name: {$starts: 'Caeiro Figo'}}
                     ]
                 }]
-            }, {
-                case: 'Last name then first name',
-                searchValue: 'Caeiro Figo Luis',
-                expectedFilter: [{
-                    $or: [
-                        {first_name: {$starts: 'Caeiro'}},
-                        {first_name: {$starts: 'Figo Luis'}},
-                        {last_name: {$starts: 'Caeiro'}},
-                        {last_name: {$starts: 'Figo Luis'}},
-                        {first_name: {$starts: 'Caeiro Figo'}},
-                        {first_name: {$starts: 'Luis'}},
-                        {last_name: {$starts: 'Caeiro Figo'}},
-                        {last_name: {$starts: 'Luis'}},
-                        {first_name: {$starts: 'Caeiro Figo Luis'}},
-                        {last_name: {$starts: 'Caeiro Figo Luis'}}
-                    ]
-                }]
             }],
             function(test) {
-                var tokens = test.searchValue.split(' ');
-                // Expected number of filters according to our algorithm
-                var expectedNumFilters = (tokens.length + tokens.length - 1) * 2;
-
                 it('should search by ' + test.case, function() {
                     var filterDef;
 
@@ -337,22 +323,21 @@ describe('Data.Base.FiltersBean', function() {
 
                     filterDef = prototype.buildSearchTermFilter('Contacts', test.searchValue);
 
-                    expect(filterDef[0].$or.length).toEqual(expectedNumFilters);
                     expect(filterDef).toEqual(test.expectedFilter);
                 });
             });
 
         using('different quicksearch_field metadata', [
             {
-                case: 'Undefined',
+                'case': 'Undefined',
                 meta: undefined,
                 expectedFilter: []
             }, {
-                case: '1 Simple Field',
+                'case': '1 Simple Field',
                 meta: ['simpleField1'],
                 expectedFilter: [{'simpleField1': {'$starts': 'Luis Filipe Madeira'}}]
             }, {
-                case: '2 Simple Fields',
+                'case': '2 Simple Fields',
                 meta: ['simpleField1', 'simpleField2'],
                 expectedFilter: [
                     {
@@ -363,28 +348,31 @@ describe('Data.Base.FiltersBean', function() {
                     }
                 ]
             }, {
-                case: '1 Split Term Field',
+                'case': '1 Split Term Field',
                 meta: [['splitField1']],
                 expectedFilter: [{'splitField1': {'$starts': 'Luis Filipe Madeira'}}]
             }, {
-                case: '1 Split Term Field composed of 2 Fields',
+                'case': '1 Split Term Field composed of 2 Fields',
                 meta: [['first_name', 'last_name']],
                 expectedFilter: [{
                     $or: [
-                        {first_name: {$starts: 'Luis'}},
-                        {first_name: {$starts: 'Filipe Madeira'}},
-                        {last_name: {$starts: 'Luis'}},
-                        {last_name: {$starts: 'Filipe Madeira'}},
-                        {first_name: {$starts: 'Luis Filipe'}},
-                        {first_name: {$starts: 'Madeira'}},
-                        {last_name: {$starts: 'Luis Filipe'}},
-                        {last_name: {$starts: 'Madeira'}},
+                        {
+                            $and: [
+                                {first_name: {$starts: 'Luis'}},
+                                {last_name: {$starts: 'Filipe Madeira'}}
+                            ]
+                        }, {
+                            $and: [
+                                {first_name: {$starts: 'Luis Filipe'}},
+                                {last_name: {$starts: 'Madeira'}}
+                            ]
+                        },
                         {first_name: {$starts: 'Luis Filipe Madeira'}},
                         {last_name: {$starts: 'Luis Filipe Madeira'}}
                     ]
                 }]
             }, {
-                case: '1 Simple Field, 1 Split Term Field',
+                'case': '1 Simple Field, 1 Split Term Field',
                 meta: ['simpleField1', ['splitField1']],
                 expectedFilter: [{
                     '$or': [
@@ -393,21 +381,25 @@ describe('Data.Base.FiltersBean', function() {
                     ]
                 }]
             }, {
-                case: '1 Simple Field, 1 Split Term Field composed of 2 Fields',
+                'case': '1 Simple Field, 1 Split Term Field composed of 2 Fields',
                 meta: ['simpleField1', ['first_name', 'last_name']],
                 expectedFilter: [{
                     '$or': [
                         {'simpleField1': {'$starts': 'Luis Filipe Madeira'}},
                         {
                             '$or': [
-                                {first_name: {$starts: 'Luis'}},
-                                {first_name: {$starts: 'Filipe Madeira'}},
-                                {last_name: {$starts: 'Luis'}},
-                                {last_name: {$starts: 'Filipe Madeira'}},
-                                {first_name: {$starts: 'Luis Filipe'}},
-                                {first_name: {$starts: 'Madeira'}},
-                                {last_name: {$starts: 'Luis Filipe'}},
-                                {last_name: {$starts: 'Madeira'}},
+                                {
+                                    $and: [
+                                        {first_name: {$starts: 'Luis'}},
+                                        {last_name: {$starts: 'Filipe Madeira'}}
+                                    ]
+                                },
+                                {
+                                    $and: [
+                                        {first_name: {$starts: 'Luis Filipe'}},
+                                        {last_name: {$starts: 'Madeira'}}
+                                    ]
+                                },
                                 {first_name: {$starts: 'Luis Filipe Madeira'}},
                                 {last_name: {$starts: 'Luis Filipe Madeira'}}
                             ]
@@ -415,24 +407,27 @@ describe('Data.Base.FiltersBean', function() {
                     ]
                 }]
             }, {
-                case: '2 Split Term Fields',
+                'case': '2 Split Term Fields',
                 meta: [['first_name', 'last_name'], ['splitField3', 'splitField4']],
                 expectedFilter: [{
                     $or: [
-                        {first_name: {$starts: 'Luis'}},
-                        {first_name: {$starts: 'Filipe Madeira'}},
-                        {last_name: {$starts: 'Luis'}},
-                        {last_name: {$starts: 'Filipe Madeira'}},
-                        {first_name: {$starts: 'Luis Filipe'}},
-                        {first_name: {$starts: 'Madeira'}},
-                        {last_name: {$starts: 'Luis Filipe'}},
-                        {last_name: {$starts: 'Madeira'}},
+                        {
+                            $and: [
+                                {first_name: {$starts: 'Luis'}},
+                                {last_name: {$starts: 'Filipe Madeira'}}
+                            ]
+                        }, {
+                            $and: [
+                                {first_name: {$starts: 'Luis Filipe'}},
+                                {last_name: {$starts: 'Madeira'}}
+                            ]
+                        },
                         {first_name: {$starts: 'Luis Filipe Madeira'}},
                         {last_name: {$starts: 'Luis Filipe Madeira'}}
                     ]
                 }]
             }, {
-                case: '1 Split Term Field composed of 3 Fields',
+                'case': '1 Split Term Field composed of 3 Fields',
                 meta: [['splitField1', 'splitField2', 'splitField3']],
                 expectedFilter: []
             }
