@@ -36,6 +36,7 @@
         this.globalCBControl = null;
         this.globalDDSelector = null;
         this.moduleFieldSeparator = "|||";
+        this._currencies = [];
         this._dateFormat = null;
         this._timeFormat = null;
         this._isApplyingColumnScrolling = null;
@@ -65,6 +66,7 @@
             onRemoveColumn: null,
             onChange: null,
             showDirtyIndicator: true,
+            currencies: [],
             dateFormat: "YYYY-MM-DD",
             timeFormat: "H:i",
             language: {
@@ -111,6 +113,7 @@
         this.language = defaults.language;
 
         this.setName(defaults.name)
+            .setCurrencies(defaults.currencies)
             .setDateFormat(defaults.dateFormat)
             .setTimeFormat(defaults.timeFormat)
             .setProxy(defaults.proxy/*, defaults.restClient*/)
@@ -139,7 +142,8 @@
             itemContainerHeight: 70,
             dateFormat: this._dateFormat,
             timeFormat: this._timeFormat,
-            appendTo: jQuery("#businessrulecontainer").get(0)
+            appendTo: jQuery("#businessrulecontainer").get(0),
+            currencies: this._currencies
         });
 
         this.globalDDSelector = new DropdownSelector({
@@ -147,6 +151,14 @@
         });
 
         this.getFields();
+    };
+
+    DecisionTable.prototype.setCurrencies = function (currencies) {
+        this._currencies = currencies;
+        if (this.globalCBControl) {
+            this.globalCBControl.setCurrencies(this._currencies);
+        }
+        return this;
     };
 
     DecisionTable.prototype.setDateFormat = function (dateFormat) {
