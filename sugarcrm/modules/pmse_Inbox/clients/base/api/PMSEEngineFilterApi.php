@@ -538,7 +538,6 @@ class PMSEEngineFilterApi extends FilterApi
             $arr_aux['cas_sugar_object_id'] = $bean->fetched_row['cas_sugar_object_id'];
             $arr_aux['prj_id'] = $bean->fetched_row['prj_id'];
             $arr_aux['in_time'] = true;
-            $arr_aux['id'] = $bean->fetched_row['inbox_id'];
 
             $arr_aux['cas_user_id'] = $bean->fetched_row['cas_user_id'];
             $arr_aux['prj_created_by'] = $bean->fetched_row['prj_created_by'];
