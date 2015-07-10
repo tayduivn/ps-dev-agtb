@@ -21,6 +21,7 @@
         this.case = this.options.context.get('case');
         _.bindAll(this);
         options.meta = _.extend({}, app.metadata.getView(this.options.module, 'record'), options.meta);
+        this.options.context.attributes.layout = "record";
         options.meta.hashSync = _.isUndefined(options.meta.hashSync) ? true : options.meta.hashSync;
         options.meta.buttons = this.case.buttons;
         this._super('initialize', [options]);
