@@ -12537,10 +12537,10 @@ $app_list_strings['state_dom'] = array(
     'Twitter'=>'Twitter',
   );
   $app_list_strings['eapm_list_import']= array(
-  	'Google' => 'Google Contacts',
+    'Google' => 'Google Contacts',
   );
-$app_list_strings['eapm_list_documents']= array(
-  	'Google' => 'Google Docs',
+  $app_list_strings['eapm_list_documents']= array(
+    'Google' => 'Google Drive',
   );
 	$app_list_strings['token_status'] = array(
         1 => 'Request',
