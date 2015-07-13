@@ -358,8 +358,10 @@
                     errorKeys = [];
 
                 if (
-                    this._isPublishingStatus(status) &&
-                    (!changed.status || !this._isPublishingStatus(changed.status))
+                    (this._isPublishingStatus(status) &&
+                    (!changed.status || !this._isPublishingStatus(changed.status))) ||
+                    (this._massupdateStatusValidation('published') &&
+                    (!publishingDate || app.date(publishingDate).isBefore(Date.now())))
                 ) {
                     publishingDate = app.date().formatServer(true);
                     model.set('active_date', publishingDate);
@@ -394,11 +396,10 @@
                 var fieldName = 'active_date',
                     status = model.get('status'),
                     publishingDate = model.get(fieldName),
-                    pubDateObject = new Date(publishingDate),
                     errorKeys = [];
 
-                if (status == 'approved') {
-                    if (publishingDate && pubDateObject && pubDateObject.getTime() < Date.now()) {
+                if (status == 'approved' || this._massupdateStatusValidation('approved')) {
+                    if (publishingDate && app.date(publishingDate).isBefore(Date.now())) {
                         errors[fieldName] = errors[fieldName] || {};
                         errors[fieldName].activeDateLow = true;
                         errorKeys.push('activeDateLow');
@@ -406,7 +407,7 @@
                             this._alertError(errorKeys);
                         }
                         callback(null, fields, errors);
-                    } else if (!publishingDate) {
+                    } else if (!publishingDate && !this._massupdateStatusValidation('approved')) {
                         app.alert.show('save_without_publish_date_confirmation', {
                             level: 'confirmation',
                             messages: app.lang.get('LBL_SPECIFY_PUBLISH_DATE', 'KBContents'),
@@ -454,6 +455,16 @@
                 } else {
                     callback(null, fields, errors);
                 }
+            },
+
+            /**
+             * Check if massupdate status called.
+             * @param status
+             * @return {boolean}
+             * @private
+             */
+            _massupdateStatusValidation: function(status) {
+                return (this.action === 'massupdate' && this.model.changedAttributes()['status'] === status);
             },
 
             /**
