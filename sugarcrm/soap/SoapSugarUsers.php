@@ -580,23 +580,7 @@ function set_entry($session,$module_name, $name_value_list){
             }
         }
     }
-    try{
-        $seed->save();
-    } catch (SugarApiExceptionNotAuthorized $ex) {
-        $GLOBALS['log']->info('End: SoapSugarUsers->set_entry');
-        switch($ex->messageLabel) {
-            case 'ERR_USER_NAME_EXISTS':
-                $error_string = 'duplicates';
-                break;
-            case 'ERR_REPORT_LOOP':
-                $error_string = 'user_loop';
-                break;
-            default:
-                $error_string = 'error_user_create_update';
-        }
-        $error->set_error($error_string);
-        return array('id' => -1, 'error' => $error->get_soap_array());
-    }
+	$seed->save();
 	if($seed->deleted == 1){
 			$seed->mark_deleted($seed->id);
 	}
