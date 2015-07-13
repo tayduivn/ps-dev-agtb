@@ -580,7 +580,7 @@ function r_getfile($file) {
         $csrf = CsrfAuthenticator::getInstance();
         return sprintf(
             '<input type="hidden" name="%s" value="%s" />',
-            $csrf->getFormTokenField(),
+            $csrf::FORM_TOKEN_FIELD,
             $csrf->getFormToken()
         );
     }
