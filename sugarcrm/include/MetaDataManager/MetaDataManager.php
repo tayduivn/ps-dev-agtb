@@ -2867,7 +2867,7 @@ class MetaDataManager
             // don't force a metadata refresh
             $urlList[$lang] = getVersionedPath(
                 $this->getUrlForCacheFile($file),
-                $this->getLanguageCacheAttributes(),
+                $this->getMetadataHash(),
                 true
             );
         }
