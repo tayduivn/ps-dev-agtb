@@ -152,11 +152,8 @@ class RS144Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetDirectHierarchyUsers()
     {
-        $fields = array(
-            'reports_to_id' => $GLOBALS['current_user']->id,
-        );
-        $user = SugarTestUserUtilities::createAnonymousUser(true, 0, $fields);
-
+        $GLOBALS['current_user']->reports_to_id = $GLOBALS['current_user']->id;
+        $GLOBALS['current_user']->save();
         $api = new ForecastManagerWorksheetsFilterApi();
         $actual = SugarTestReflection::callProtectedMethod($api, 'getDirectHierarchyUsers', array(
                 $this->service,
@@ -166,7 +163,7 @@ class RS144Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('records', $actual);
         $record = reset($actual['records']);
         $this->assertNotEmpty($record);
-        $this->assertEquals($user->id, $record['id']);
+        $this->assertEquals($GLOBALS['current_user']->id, $record['id']);
     }
 
     /**
@@ -212,10 +209,8 @@ class RS144Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetDirectHierarchyUsersCustomUserInvalidParameter()
     {
-        $fields = array(
-            'reports_to_id' => $GLOBALS['current_user']->id,
-        );
-        $user = SugarTestUserUtilities::createAnonymousUser(true, 0, $fields);
+        $GLOBALS['current_user']->reports_to_id = $GLOBALS['current_user']->id;
+        $GLOBALS['current_user']->save();
         $api = new ForecastManagerWorksheetsFilterApi();
         SugarTestReflection::callProtectedMethod($api, 'getDirectHierarchyUsers', array(
                 $this->service,
@@ -294,10 +289,8 @@ class RS144Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testCreateFilter()
     {
-        $fields = array(
-            'reports_to_id' => $GLOBALS['current_user']->id,
-        );
-        $user = SugarTestUserUtilities::createAnonymousUser(true, 0, $fields);
+        $GLOBALS['current_user']->reports_to_id = $GLOBALS['current_user']->id;
+        $GLOBALS['current_user']->save();
         $api = new ForecastManagerWorksheetsFilterApi();
         $actual = SugarTestReflection::callProtectedMethod($api, 'createFilter', array(
                 $this->service,
@@ -362,10 +355,8 @@ class RS144Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testCreateFilterCustomUserInvalidParameter()
     {
-        $fields = array(
-            'reports_to_id' => $GLOBALS['current_user']->id,
-        );
-        $user = SugarTestUserUtilities::createAnonymousUser(true, 0, $fields);
+        $GLOBALS['current_user']->reports_to_id = $GLOBALS['current_user']->id;
+        $GLOBALS['current_user']->save();
         $api = new ForecastManagerWorksheetsFilterApi();
         SugarTestReflection::callProtectedMethod($api, 'createFilter', array(
                 $this->service,
@@ -379,10 +370,8 @@ class RS144Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testCreateFilterTimePeriod()
     {
-        $fields = array(
-            'reports_to_id' => $GLOBALS['current_user']->id,
-        );
-        $user = SugarTestUserUtilities::createAnonymousUser(true, 0, $fields);
+        $GLOBALS['current_user']->reports_to_id = $GLOBALS['current_user']->id;
+        $GLOBALS['current_user']->save();
         $api = new ForecastManagerWorksheetsFilterApi();
         $actual = SugarTestReflection::callProtectedMethod($api, 'createFilter', array(
                 $this->service,
@@ -405,10 +394,8 @@ class RS144Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testCreateFilterTimePeriodInvalidParameter()
     {
-        $fields = array(
-            'reports_to_id' => $GLOBALS['current_user']->id,
-        );
-        $user = SugarTestUserUtilities::createAnonymousUser(true, 0, $fields);
+        $GLOBALS['current_user']->reports_to_id = $GLOBALS['current_user']->id;
+        $GLOBALS['current_user']->save();
         $api = new ForecastManagerWorksheetsFilterApi();
         SugarTestReflection::callProtectedMethod($api, 'createFilter', array(
                 $this->service,
