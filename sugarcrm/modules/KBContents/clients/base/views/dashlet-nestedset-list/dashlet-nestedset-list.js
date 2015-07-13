@@ -85,6 +85,15 @@
 
             this.currentFieldValue = this.context.get('model').get(this.extraModule.field);
         }
+
+        currentContext.on('subpanel:reload', function(args) {
+            if (!_.isUndefined(args) &&
+                _.isArray(args.links) &&
+                (_.contains(args.links, 'revisions') || _.contains(args.links, 'localizations'))
+            ) {
+                this.layout.reloadDashlet({complete: function() {}, saveLeafs: false});
+            }
+        }, this);
     },
 
     /**
