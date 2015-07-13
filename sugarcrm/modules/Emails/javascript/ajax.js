@@ -360,6 +360,13 @@ var AjaxObject = {
 		//BEGIN SUGARCRM flav=int ONLY
 		//this.trail.push(args);
 		//END SUGARCRM flav=int ONLY
+
+        // add CSRF form token
+        if (args != '') {
+            args += '&';
+        }
+        args += 'csrf_token=' + SUGAR.csrf.form_token;
+
 		this.currentRequestObject = YAHOO.util.Connect.asyncRequest('POST', "./index.php", callback, args);
 		this._reset();
 	},
