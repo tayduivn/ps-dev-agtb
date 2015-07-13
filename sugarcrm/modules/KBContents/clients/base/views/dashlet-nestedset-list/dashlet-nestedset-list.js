@@ -107,6 +107,10 @@
      * {@inheritDoc}
      */
     _render: function() {
+        this._super('_render');
+        if (this.meta.config) {
+            return;
+        }
         var treeOptions = {
             settings: {
                 category_root: this.categoryRoot,
@@ -133,7 +137,6 @@
                 storage: this._getStorage()
             };
         }
-        this._super('_render');
         this._renderTree($('[data-place=dashlet-tree]'), treeOptions, callbacks);
     },
 
