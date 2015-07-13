@@ -154,7 +154,7 @@ $dictionary['RevenueLineItem'] = array(
         ),
         'category_id' => array(
             'name' => 'category_id',
-            'vname' => 'LBL_CATEGORY',
+            'vname' => 'LBL_CATEGORY_ID',
             'type' => 'id',
             'group' => 'category_name',
             'required' => false,
