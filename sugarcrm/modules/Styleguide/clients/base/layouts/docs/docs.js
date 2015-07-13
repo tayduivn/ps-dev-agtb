@@ -81,7 +81,7 @@
         }
 
         // load up the page view into the component array
-        main = this.getComponent('main-pane');
+        main = this.getComponent('sidebar');
         main._addComponentsFromDef([{
             view: 'docs-' + request.file,
             context: {
