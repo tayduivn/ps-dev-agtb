@@ -270,6 +270,14 @@
     },
 
     /**
+     * {@inheritdoc}
+     *
+     * No data changes to bind.
+     */
+    bindDomChange: function () {
+    },
+
+    /**
      * {@inheritDoc}
      *
      * Set right value in DOM for the field.
