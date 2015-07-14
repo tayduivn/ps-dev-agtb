@@ -509,6 +509,28 @@ class Link2 {
     }
 
     /***
+     * populate relationship data to a related Bean
+     * @param $relatedBeanId sugarBean Id
+     * @return SugarBean
+     */
+    public function getBeanById($relatedBeanId){
+
+        $relBeans = $this->getBeans(array(
+                    'where' => array(
+                        'lhs_field' => 'id',
+                        'operator' => '=',
+                        'rhs_value' => $relatedBeanId,
+                            )
+                        )
+                    );
+        if (!empty($relBeans)){
+            return $relBeans[$relatedBeanId];
+        }
+        return null;
+
+    }
+
+    /***
      * If there are any relationship fields, we need to figure out the mapping from the relationship fields to the
      * fields in the module vardefs
      */
