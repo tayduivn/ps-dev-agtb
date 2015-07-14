@@ -51,7 +51,7 @@ if(typeof PackageManager == 'undefined') {
 	        search: function() {
 	        	PackageManager.showWaiting();
 	        	var searchTerm = document.getElementById('search_term').value;
-	        	postData = 'entryPoint=HandleAjaxCall&to_pdf=1&module=Administration&action=HandleAjaxCall&method=performBasicSearch&search_term=' + searchTerm;
+	        	postData = 'entryPoint=HandleAjaxCall&to_pdf=1&module=Administration&action=HandleAjaxCall&method=performBasicSearch&search_term=' + searchTerm + '&csrf_token=' + SUGAR.csrf.form_token;
 				var cObj = YAHOO.util.Connect.asyncRequest('POST','index.php',
 								  {success: PackageManager.completeSearch, failure: PackageManager.completeSearch}, postData);
 	        },
@@ -172,7 +172,7 @@ if(typeof PackageManager == 'undefined') {
 								var release_id = nodes[i].data.id;
 								var package_id = nodes[i].package_id;
 								var category_id = nodes[i].category_id;
-								postData = 'entryPoint=HandleAjaxCall&to_pdf=1&module=Administration&action=HandleAjaxCall&method=download&release_id=' + release_id + '&package_id=' + package_id + '&category_id=' + category_id;
+								postData = 'entryPoint=HandleAjaxCall&to_pdf=1&module=Administration&action=HandleAjaxCall&method=download&release_id=' + release_id + '&package_id=' + package_id + '&category_id=' + category_id + '&csrf_token=' + SUGAR.csrf.form_token;
 								var cObj = YAHOO.util.Connect.asyncRequest('POST','index.php',
 								 	{success: PackageManager.downloadComplete, failure: PackageManager.downloadComplete}, postData);
 							}
@@ -201,7 +201,7 @@ if(typeof PackageManager == 'undefined') {
 
 	        },
 	        getPackagesInStaging : function(){
-	        	postData = 'entryPoint=HandleAjaxCall&to_pdf=1&module=Administration&action=HandleAjaxCall&method=getPackagesInStaging';
+	        	postData = 'entryPoint=HandleAjaxCall&to_pdf=1&module=Administration&action=HandleAjaxCall&method=getPackagesInStaging&csrf_token=' + SUGAR.csrf.form_token;
 							var cObj = YAHOO.util.Connect.asyncRequest('POST','index.php',
 							{success: PackageManager.populateGrid, failure: PackageManager.populateGrid}, postData);
 	        },
@@ -394,7 +394,7 @@ if(typeof PackageManager == 'undefined') {
 		  			failure: function(data) {if (typeof onCompleteCallback == 'function') onCompleteCallback();}
 				}
 
-				postData = 'entryPoint=HandleAjaxCall&to_pdf=1&module=Administration&action=HandleAjaxCall&method=getNodes&category_id=' + id;
+				postData = 'entryPoint=HandleAjaxCall&to_pdf=1&module=Administration&action=HandleAjaxCall&method=getNodes&category_id=' + id + '&csrf_token=' + SUGAR.csrf.form_token;
 				var cObj = YAHOO.util.Connect.asyncRequest('POST','index.php',
 								  callback, postData);
 
@@ -433,7 +433,7 @@ if(typeof PackageManager == 'undefined') {
 		  			failure: function(data) { if (typeof onCompleteCallback == 'function') onCompleteCallback();}
 				}
 
-				postData = 'entryPoint=HandleAjaxCall&to_pdf=1&module=Administration&action=HandleAjaxCall&method=getLicenseText&file='+file;
+				postData = 'entryPoint=HandleAjaxCall&to_pdf=1&module=Administration&action=HandleAjaxCall&method=getLicenseText&file='+ file + '&csrf_token=' + SUGAR.csrf.form_token;
 				var cObj = YAHOO.util.Connect.asyncRequest('POST','index.php',
 								  callback, postData);
             },
@@ -470,7 +470,7 @@ if(typeof PackageManager == 'undefined') {
 		  			failure: function(data) { if (typeof onCompleteCallback == 'function') onCompleteCallback();}
 				}
 
-				postData = 'entryPoint=HandleAjaxCall&to_pdf=1&module=Administration&action=HandleAjaxCall&method=performInstall&file='+file;
+				postData = 'entryPoint=HandleAjaxCall&to_pdf=1&module=Administration&action=HandleAjaxCall&method=performInstall&file=' + file + '&csrf_token=' + SUGAR.csrf.form_token;
 				var cObj = YAHOO.util.Connect.asyncRequest('POST','index.php',
 								  callback, postData);
             },
@@ -527,7 +527,7 @@ if(typeof PackageManager == 'undefined') {
 		  			failure: function(data) { documentationWorkingDiv.style.display = 'none'; PackageManager.hideWaiting();if (typeof onCompleteCallback == 'function') onCompleteCallback();}
 				}
 
-				postData = 'entryPoint=HandleAjaxCall&to_pdf=1&module=Administration&action=HandleAjaxCall&method=getDocumentation&package_id='+package_id+'&release_id='+release_id;
+				postData = 'entryPoint=HandleAjaxCall&to_pdf=1&module=Administration&action=HandleAjaxCall&method=getDocumentation&package_id='+package_id+'&release_id='+release_id+ '&csrf_token=' + SUGAR.csrf.form_token;
 				var cObj = YAHOO.util.Connect.asyncRequest('POST','index.php',
 								  callback, postData);
 	        },
@@ -539,7 +539,7 @@ if(typeof PackageManager == 'undefined') {
 		  			failure: function(data) { if (typeof onCompleteCallback == 'function') onCompleteCallback();}
 				}
 
-				postData = 'entryPoint=HandleAjaxCall&to_pdf=1&module=Administration&action=HandleAjaxCall&method=downloadedDocumentation&document_id='+document_id;
+				postData = 'entryPoint=HandleAjaxCall&to_pdf=1&module=Administration&action=HandleAjaxCall&method=downloadedDocumentation&document_id=' + document_id + '&csrf_token=' + SUGAR.csrf.form_token;
 				var cObj = YAHOO.util.Connect.asyncRequest('POST','index.php',
 								  callback, postData);
             },
@@ -653,7 +653,7 @@ if(typeof PackageManager == 'undefined') {
 		  			failure: function(data) { if (typeof onCompleteCallback == 'function') onCompleteCallback();}
 				}
 				PackageManager.hideWaiting();
-				postData = 'entryPoint=HandleAjaxCall&to_pdf=1&module=Administration&action=HandleAjaxCall&method=checkForUpdates&type=modules';
+				postData = 'entryPoint=HandleAjaxCall&to_pdf=1&module=Administration&action=HandleAjaxCall&method=checkForUpdates&type=modules&csrf_token=' + SUGAR.csrf.form_token;
 				var cObj = YAHOO.util.Connect.asyncRequest('POST','index.php',
 								  callback, postData);
 			},
@@ -702,7 +702,7 @@ if(typeof PackageManager == 'undefined') {
 		  			failure: function(data) {_loadingBar.hide();if (typeof onCompleteCallback == 'function') onCompleteCallback();}
 				}
 
-				postData = 'entryPoint=HandleAjaxCall&to_pdf=1&module=Administration&action=HandleAjaxCall&method=getCategories';
+				postData = 'entryPoint=HandleAjaxCall&to_pdf=1&module=Administration&action=HandleAjaxCall&method=getCategories&csrf_token=' + SUGAR.csrf.form_token;
 				var cObj = YAHOO.util.Connect.asyncRequest('POST','index.php',
 								  callback, postData);
 			},
@@ -733,7 +733,7 @@ if(typeof PackageManager == 'undefined') {
 				}
 				var types = "{/literal}{$GRID_TYPE}{literal}";
 				//postData = 'to_pdf=1&module=Administration&action=HandleAjaxCall&method=getReleases&types='+types;
-				postData = 'entryPoint=HandleAjaxCall&to_pdf=1&module=Administration&action=HandleAjaxCall&method=checkForUpdates&type=modules';
+				postData = 'entryPoint=HandleAjaxCall&to_pdf=1&module=Administration&action=HandleAjaxCall&method=checkForUpdates&type=modules&csrf_token=' + SUGAR.csrf.form_token;
 				var cObj = YAHOO.util.Connect.asyncRequest('POST','index.php',
 								  callback, postData);
 			},
@@ -752,7 +752,7 @@ if(typeof PackageManager == 'undefined') {
 		  			failure: function(data) {if (typeof onCompleteCallback == 'function') onCompleteCallback();}
 				}
 
-				postData = 'entryPoint=HandleAjaxCall&to_pdf=1&module=Administration&action=HandleAjaxCall&method=getPromotion';
+				postData = 'entryPoint=HandleAjaxCall&to_pdf=1&module=Administration&action=HandleAjaxCall&method=getPromotion&csrf_token=' + SUGAR.csrf.form_token;
 				var cObj = YAHOO.util.Connect.asyncRequest('POST','index.php',
 								  callback, postData);
 			},
@@ -780,7 +780,7 @@ if(typeof PackageManager == 'undefined') {
 		  			failure: function(data) {if (typeof onCompleteCallback == 'function') onCompleteCallback();}
 				}
 
-				postData = 'entryPoint=HandleAjaxCall&to_pdf=1&module=Administration&action=HandleAjaxCall&method=remove&file='+file
+				postData = 'entryPoint=HandleAjaxCall&to_pdf=1&module=Administration&action=HandleAjaxCall&method=remove&file=' + file + '&csrf_token=' + SUGAR.csrf.form_token
 				var cObj = YAHOO.util.Connect.asyncRequest('POST','index.php',
 								  callback, postData);
 				}//fi
@@ -839,7 +839,7 @@ if(typeof PackageManager == 'undefined') {
 		  			failure: function(data) { _loadingBar.hide();btn.value = 'Login';btn.disabled = false;if (typeof onCompleteCallback == 'function') onCompleteCallback();}
 				}
 
-				postData = 'entryPoint=HandleAjaxCall&to_pdf=1&module=Administration&action=HandleAjaxCall&method=authenticate&username='+username+'&password='+password + '&servername=' + servername + '&terms_checked=' + cbTerms.value;
+				postData = 'entryPoint=HandleAjaxCall&to_pdf=1&module=Administration&action=HandleAjaxCall&method=authenticate&username='+username+'&password='+password + '&servername=' + servername + '&terms_checked=' + cbTerms.value + '&csrf_token=' + SUGAR.csrf.form_token;
 				var cObj = YAHOO.util.Connect.asyncRequest('POST','index.php',
 								  callback, postData);
 			}
@@ -962,11 +962,13 @@ PackageManagerGrid.prototype.renderModuleButtons = function(file){
     	output += '<input type=submit class=\'button\' name="btn_mode" onclick="this.form.mode.value=\'Install\';this.form.submit();" value="{/literal}{$MOD.LBL_UW_BTN_INSTALL}{literal}" />';
         output += '<input type=hidden name="install_file" value="'+file+'" />';
 		output += '<input type=hidden name="mode"/>';
+        output += '{/literal}{sugar_csrf_form_token}{literal}';
         output += '</form></td><td>&nbsp;</td>';
 
         output += '<td><form action="index.php?module=Administration&view=module&action=UpgradeWizard" method="post">';
         output += '<input type=submit class=\'button\' name="run" value="{/literal}{$MOD.LBL_UW_BTN_DELETE_PACKAGE}{literal}" />';
         output += '<input type=hidden name="install_file" value="'+file+'" />';
+        output += '{/literal}{sugar_csrf_form_token}{literal}';
         output += '</form></td></tr></table>';
         elCell.innerHTML = output;
 }
@@ -980,6 +982,7 @@ PackageManagerGrid.prototype.renderInstallButton = function(elCell, oRecord, col
     	output += '<input type=submit class=\'button\' name="btn_mode" onclick="this.form.mode.value=\'Install\';this.form.submit();" value="{/literal}{$MOD.LBL_UW_BTN_INSTALL}{literal}" />';
         output += '<input type=hidden name="install_file" value="'+file+'" />';
 		output += '<input type=hidden name="mode"/>';
+        output += '{/literal}{sugar_csrf_form_token}{literal}';
         output += '</form></span>';
     }
 	elCell.innerHTML = output;
@@ -995,6 +998,7 @@ PackageManagerGrid.prototype.renderUninstallButton = function(elCell, oRecord, c
     	output += '<input type=submit class=\'button\' name="btn_mode" onclick="this.form.mode.value=\'Uninstall\';this.form.submit();" value="{/literal}{$MOD.LBL_UW_UNINSTALL}{literal}" />';
         output += '<input type=hidden name="install_file" value="'+file+'" />';
 		output += '<input type=hidden name="mode"/>';
+        output += '{/literal}{sugar_csrf_form_token}{literal}';
         output += '</form></span>';
     }
 
@@ -1010,6 +1014,7 @@ PackageManagerGrid.prototype.renderEnableDisableButton = function(elCell, oRecor
 		output += '<input type=submit class=\'button\' name="btn_mode" onclick="this.form.mode.value=\'Disable\';this.form.submit();" value="{/literal}{$MOD.LBL_UW_DISABLE}{literal}" />';
 		 output += '<input type=hidden name="install_file" value="'+file+'" />';
 		output += '<input type=hidden name="mode"/>';
+        output += '{/literal}{sugar_csrf_form_token}{literal}';
     	output += '</form></span>';
 	}else if(state_file.indexOf('UNINSTALLABLE') == 0){
 		var output = '';
@@ -1019,6 +1024,7 @@ PackageManagerGrid.prototype.renderEnableDisableButton = function(elCell, oRecor
     	output += '<input type=submit class=\'button\' name="btn_mode" onclick="this.form.mode.value=\'Enable\';this.form.submit();" value="{/literal}{$MOD.LBL_UW_ENABLE}{literal}" />';
     	output += '<input type=hidden name="install_file" value="'+file+'" />';
 		output += '<input type=hidden name="mode"/>';
+        output += '{/literal}{sugar_csrf_form_token}{literal}';
     	output += '</form></span>';
     }
 
