@@ -1,6 +1,4 @@
 <?php
-
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -12,15 +10,19 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$config = array (
-  'name' => 'Google',
-  'eapm' => array(
-    'enabled' => true,
-    'only' => true,
-  ),
-  'order' => 12,
-  'properties' => array (
-    'oauth2_client_id' => '',
-    'oauth2_client_secret' => '',
-  ),
-);
+class ImportViewAuthenticatedSources extends SugarView
+{
+    /** {@inheritdoc} */
+    public function process()
+    {
+        $sources = $this->getAuthenticatedImportableExternalEAPMs();
+
+        header('Content-Type: application/json');
+        echo json_encode($sources);
+    }
+
+    private function getAuthenticatedImportableExternalEAPMs()
+    {
+        return ExternalAPIFactory::getModuleDropDown('Import', false, false);
+    }
+}
