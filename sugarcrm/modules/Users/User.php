@@ -526,10 +526,6 @@ class User extends Person {
     }
 
 	function save($check_notify = false) {
-        // Check if data supplied is valid to save the record, return if not.
-        if (!$this->verify_data()) {
-            return $this->id;
-        }
 		$isUpdate = !empty($this->id) && !$this->new_with_id;
 
 		// this will cause the logged in admin to have the licensed user count refreshed
@@ -1118,8 +1114,6 @@ EOQ;
 	 * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc..
 	 * All Rights Reserved..
 	 * Contributor(s): ______________________________________..
-     * @throws SugarApiExceptionNotAuthorized - If coming from an API entry point and
-     * creating a duplicate user_name or when a user reports to himself.
 	 */
 	function verify_data($ieVerified=true) {
 		global $mod_strings, $current_user;
@@ -1151,11 +1145,6 @@ EOQ;
 			if ($reports_to_self == 1) {
 				$this->error_string .= $mod_strings['ERR_REPORT_LOOP'];
 				$verified = false;
-                // Due to the amount of legacy code and no clear separation between logic and presentation layers, this
-                // is a temporary fix to make sure that users don't report to themselves under API flows.
-                if (defined('ENTRY_POINT_TYPE') && constant('ENTRY_POINT_TYPE') === 'api') {
-                    throw new SugarApiExceptionNotAuthorized('ERR_REPORT_LOOP', null, $this->module_name);
-                }
 			}
 		}
 
@@ -1165,15 +1154,8 @@ EOQ;
 		$dup_users = $this->db->fetchByAssoc($result);
 
 		if (!empty($dup_users)) {
-            // Due to the amount of legacy code and no clear separation between logic and presentation layers, this is
-            // a temporary fix in order to make sure that duplicate users are not created under API flows.
-            if (defined('ENTRY_POINT_TYPE') && constant('ENTRY_POINT_TYPE') === 'api') {
-                throw new SugarApiExceptionNotAuthorized('ERR_USER_NAME_EXISTS', array($this->user_name), $this->module_name);
-            }
-            $error = string_format(translate('ERR_USER_NAME_EXISTS', $this->module_name), array($this->user_name));
-            $this->error_string .= $error;
-
-            $verified = false;
+			$this->error_string .= $mod_strings['ERR_USER_NAME_EXISTS_1'].$this->user_name.$mod_strings['ERR_USER_NAME_EXISTS_2'];
+			$verified = false;
 		}
 
 		if (is_admin($current_user)) {

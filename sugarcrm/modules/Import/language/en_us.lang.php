@@ -98,7 +98,6 @@ $mod_strings = array (
     'LBL_ERROR' => 'Error:',
     'LBL_IMPORT_ERROR_MAX_REC_LIMIT_REACHED' => 'The import file contains {0} rows. The optimal number of rows is {1}. More rows may slow the import process. Click OK to continue importing. Click Cancel to revise and re-upload the import file.',
     'ERR_IMPORT_SYSTEM_ADMININSTRATOR'  => 'You cannot import a system administrator user',
-    'ERR_REPORT_LOOP' => 'The system detected a reporting loop. A user cannot report to themselves, nor can any of their managers report to them.',
     'ERR_MULTIPLE' => 'Multiple columns have been defined with the same field name.',
     'ERR_MISSING_REQUIRED_FIELDS' => 'Missing required fields:',
     'ERR_MISSING_MAP_NAME' => 'Missing custom mapping name',
