@@ -363,6 +363,10 @@ class Category extends SugarBean implements NestedBeanInterface
             throw new CategoriesRuntimeException('The node cannot be added because it is not new.');
         }
 
+        if (empty($node->name)) {
+            throw new CategoriesRuntimeException('The node cannot be added because name is required.');
+        }
+
         if ($this->deleted == 1) {
             throw new CategoriesRuntimeException('The node cannot be added because category is deleted.');
         }
