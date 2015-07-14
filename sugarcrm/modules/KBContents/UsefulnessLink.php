@@ -22,8 +22,44 @@ class UsefulnessLink extends Link2
      */
     public function vote($vote)
     {
+        $params = array();
         $user = $GLOBALS['current_user'];
-        return $this->add($user, array('vote' => $vote ? 1 : -1, 'ssid' => session_id()));
+        $contact_id = null;
+
+        if (!$this->isValidSugarUser($user) && $contact = $this->getPortalContact()) {
+            $contact_id = $contact->id;
+            $params['where'] = 'contact_id = ' . DBManagerFactory::getInstance()->quoted($contact_id);
+        }
+        /**
+         * Load only required votes
+         */
+        $this->load($params);
+
+        /**
+         * Delete previous votes for a portal contact
+         */
+        if ($contact_id !== null) {
+            if (!empty($this->rows)) {
+                $q = $this->relationship->getQuery($this, array('return_as_array' => true));
+                if (!empty($params['where'])) {
+                    $q['where'] .= ' AND ' . $params['where'];
+                }
+                $q = 'UPDATE ' . $this->relationship->getRelationshipTable() . ' SET deleted = 1 ' . $q['where'];
+                DBManagerFactory::getInstance()->query($q);
+            }
+            $this->relationship->primaryOnly = true;
+        }
+        $result = $this->add(
+            $user,
+            array(
+                'vote' => $vote ? 1 : -1,
+                'ssid' => session_id(),
+                'contact_id' => $contact_id,
+                'zeroflag' => 0
+            )
+        );
+        $this->relationship->primaryOnly = false;
+        return $result;
     }
 
     /**
@@ -35,5 +71,15 @@ class UsefulnessLink extends Link2
     {
         $portalUserId = BeanFactory::getBean('Users')->retrieve_user_id('SugarCustomerSupportPortalUser');
         return $user->id !== $portalUserId;
+    }
+
+    /**
+     * Return contact associated with portal user.
+     * @see CurrentUserPortalApi::getPortalContact
+     * @return null|SugarBean
+     */
+    public function getPortalContact()
+    {
+        return BeanFactory::getBean('Contacts', $_SESSION['contact_id']);
     }
 }
