@@ -57,6 +57,21 @@ class UserViewHelper {
     }
 
     /**
+     * Factory method with custom override capability
+     *
+     * @param Sugar_Smarty $smarty Smarty template object
+     * @param SugarBean $bean Bean context
+     * @param string $viewType View type as in 'EditView', 'DetailView', ...
+     * @return UserViewHelper
+     */
+    public static function create(Sugar_Smarty $smarty, SugarBean $bean, $viewType)
+    {
+        SugarAutoLoader::requireWithCustom('modules/Users/UserViewHelper.php', true);
+        $className = SugarAutoLoader::customClass('UserViewHelper');
+        return new $className($smarty, $bean, $viewType);
+    }
+
+    /**
      * This function populates the smarty class that was passed in through the constructor
      */
     public function setupAdditionalFields() {
