@@ -61,6 +61,12 @@ class PMSEEngineUtils
     );
 
     /**
+     * Process Author does not handle the below field types currently. So skip displaying them.
+     * @var array
+     */
+    public static $blacklistedFieldTypes = array('image','password','file');
+
+    /**
      * Method get key fields
      * @param type $pattern
      * @param type $array
@@ -990,7 +996,8 @@ class PMSEEngineUtils
         if (isset($def['source']) && $def['source'] == 'non-db') {
             $result = false;
         }
-        if (isset($def['type']) && ($def['type'] == 'image' || $def['type'] == 'password')) {
+        // Process Author does not handle some field types like image, password, file, etc currently
+        if (isset($def['type']) && in_array($def['type'], self::$blacklistedFieldTypes)) {
             $result = false;
         }
         if ($type == 'AC') {
