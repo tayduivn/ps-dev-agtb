@@ -168,10 +168,10 @@ nv.models.scroll = function() {
             val = v ? scrollHeight : scrollWidth;
 
         scrollMask
-          .attr('x', v ? 0 : -margin.left)
-          .attr('y', 0)
-          .attr('width', width + (v ? 0 : margin.left))
-          .attr('height', height + (v ? margin.bottom : 0));
+          .attr('x', v ? 2 : -margin.left)
+          .attr('y', v ? 0 : 2)
+          .attr('width', width + (v ? -2 : margin.left))
+          .attr('height', height + (v ? margin.bottom : -2));
 
         scrollTarget
           .attr('x', x)
@@ -186,7 +186,7 @@ nv.models.scroll = function() {
 
         backShadows.select('.nv-back-shadow-more')
           .attr('x', x + (v ? width - 5 : 1))
-          .attr('y', y + (v ? 0 : height - 4))
+          .attr('y', y + (v ? 0 : height - 6))
           .attr(dim, val);
 
         foreShadows.select('.nv-fore-shadow-prev')
@@ -195,7 +195,7 @@ nv.models.scroll = function() {
           .attr(dim, val);
 
         foreShadows.select('.nv-fore-shadow-more')
-          .attr('x', x + (v ? minDimension - 20 : 0))
+          .attr('x', x + (v ? minDimension - 17 : 0))
           .attr('y', y + (v ? 0 : minDimension - 19))
           .attr(dim, val);
       };

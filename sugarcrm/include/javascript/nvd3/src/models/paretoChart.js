@@ -26,10 +26,12 @@ nv.models.paretoChart = function() {
             return '<p>' + e.key + ': <b>' + y + '</b></p>';
         },
         yAxisTickFormat = function(d) {
-            return d3.format(',.2s')(d);
+            var si = d3.formatPrefix(d, 2);
+            return d3.round(si.scale(d), 2) + si.symbol;
         },
         quotaTickFormat = function(d) {
-            return d3.format(',.3s')(d);
+            var si = d3.formatPrefix(d, 2);
+            return d3.round(si.scale(d), 2) + si.symbol;
         },
         x,
         y,
@@ -49,16 +51,16 @@ nv.models.paretoChart = function() {
             .stacked(true)
             .clipEdge(false)
             .withLine(true)
-            .nice(true),
+            .nice(false),
         lines1 = nv.models.line()
             .color(function(d, i) { return '#FFF'; })
             .fill(function(d, i) { return '#FFF'; })
             .useVoronoi(false)
-            .nice(true),
+            .nice(false),
         lines2 = nv.models.line()
             .useVoronoi(false)
             .color('data')
-            .nice(true),
+            .nice(false),
         xAxis = nv.models.axis()
             .orient('bottom')
             .tickSize(0)
@@ -70,7 +72,7 @@ nv.models.paretoChart = function() {
         yAxis = nv.models.axis()
             .orient('left')
             .tickPadding(7)
-            .showMaxMin(false),
+            .showMaxMin(true),
         barLegend = nv.models.legend()
             .align('left')
             .position('middle'),
@@ -129,7 +131,8 @@ nv.models.paretoChart = function() {
                 innerMargin = {top: 0, right: 0, bottom: 0, left: 0},
                 maxBarLegendWidth = 0,
                 maxLineLegendWidth = 0,
-                widthRatio = 0;
+                widthRatio = 0,
+                pointSize = Math.pow(6, 2) * Math.PI; // set default point size to 6
 
             chart.update = function() {
                 container.call(chart);
@@ -167,33 +170,35 @@ nv.models.paretoChart = function() {
 
             var dataBars = data.filter(function(d) {
                     return !d.disabled && (!d.type || d.type === 'bar');
-                }),
-                dataLines = data.filter(function(d) {
+                });
+
+            var dataLines = data.filter(function(d) {
                     return !d.disabled && d.type === 'line';
                 }).map(function(lineData) {
-                        if (!multibar.stacked()) {
-                            lineData.values = lineData.valuesOrig.map(function(v, i) {
-                                return {'series': v.series, 'x': (v.x + v.series * 0.25 - i * 0.25), 'y': v.y};
-                            });
-                        } else {
-                            lineData.values.map(function(v) {
-                                v.y = 0;
-                            });
-                            dataBars
-                                .map(function(v, i) {
-                                    v.values.map(function(v, i) {
-                                        lineData.values[i].y += v.y;
-                                    });
+                    if (!multibar.stacked()) {
+                        lineData.values = lineData.valuesOrig.map(function(v, i) {
+                            return {'series': v.series, 'x': (v.x + v.series * 0.25 - i * 0.25), 'y': v.y};
+                        });
+                    } else {
+                        lineData.values.map(function(v) {
+                            v.y = 0;
+                        });
+                        dataBars
+                            .map(function(v, i) {
+                                v.values.map(function(v, i) {
+                                    lineData.values[i].y += v.y;
                                 });
-                            lineData.values.map(function(v, i) {
-                                if (i > 0) {
-                                    v.y += lineData.values[i - 1].y;
-                                }
                             });
-                        }
-                        return lineData;
-                    }),
-                dataGroup = properties.groupData,
+                        lineData.values.map(function(v, i) {
+                            if (i > 0) {
+                                v.y += lineData.values[i - 1].y;
+                            }
+                        });
+                    }
+                    return lineData;
+                });
+
+            var dataGroup = properties.groupData,
                 quotaValue = properties.quota || 0,
                 quotaLabel = properties.quotaLabel || '',
                 targetQuotaValue = properties.targetQuota || 0,
@@ -218,24 +223,24 @@ nv.models.paretoChart = function() {
                     'key': targetQuotaLabel,
                     'type': 'dash',
                     'color': '#777',
-                    'series': lineLegendData.length + 1,
+                    'series': lineLegendData.length,
                     'values': {'series': lineLegendData.length + 1, 'x': 0, 'y': 0}
                 });
             }
 
             var seriesX = data.filter(function(d) {
-                return !d.disabled;
-            }).map(function(d) {
+                    return !d.disabled;
+                }).map(function(d) {
                     return d.valuesOrig.map(function(d, i) {
                         return getX(d, i);
                     });
                 });
 
             var seriesY = data.map(function(d) {
-                return d.valuesOrig.map(function(d, i) {
-                    return getY(d, i);
+                    return d.valuesOrig.map(function(d, i) {
+                        return getY(d, i);
+                    });
                 });
-            });
 
             //------------------------------------------------------------
             // Setup Scales
@@ -252,7 +257,7 @@ nv.models.paretoChart = function() {
             if (dataGroup.length) {
                 xAxis
                     .tickFormat(function(d, i) {
-                        return dataGroup[i] ? dataGroup[i].l : 'asfd';
+                        return dataGroup[i] ? dataGroup[i].l : 'undefined';
                     });
             }
 
@@ -353,8 +358,6 @@ nv.models.paretoChart = function() {
 
                 lineLegend
                     .arrange(Math.floor(widthRatio * maxLineLegendWidth));
-                //.arrange(Math.floor(availableWidth - barLegend.width()));
-
 
                 barLegendWrap
                     .attr('transform', 'translate(' + (direction === 'rtl' ? availableWidth - barLegend.width() : 0) + ',' + innerMargin.top + ')');
@@ -400,7 +403,9 @@ nv.models.paretoChart = function() {
                 .height(innerHeight)
                 .forceY([0, forceY])
                 .useVoronoi(false)
-                .size(function() { return Math.pow(6, 2) * Math.PI; })
+                .size(pointSize)
+                .sizeRange([pointSize, pointSize])
+                .sizeDomain([pointSize, pointSize])
                 .id('foreground_' + chart.id());
             linesWrap1
                 .datum(dataLines)
@@ -409,18 +414,96 @@ nv.models.paretoChart = function() {
                 .datum(dataLines)
                 .call(lines2);
 
-            // Axis
+            // Axes
             xAxisWrap
                 .call(xAxis);
+            var xAxisMargin = xAxis.margin();
+
             yAxisWrap
                 .style('opacity', dataBars.length ? 1 : 0)
                 .call(yAxis);
+            var yAxisMargin = yAxis.margin();
+
+
+            //------------------------------------------------------------
+            // Quota Line
+
+            quotaWrap.selectAll('line').remove();
+            yAxisWrap.selectAll('text.nv-quotaValue').remove();
+            yAxisWrap.selectAll('text.nv-targetQuotaValue').remove();
+
+            var quotaTextWidth = 0,
+                quotaTextHeight = 14;
+
+            // Target Quota Line
+            if (targetQuotaValue > 0) {
+                quotaWrap.append('line')
+                    .attr('class', 'nv-quotaLineTarget')
+                    .attr('x1', 0)
+                    .attr('y1', 0)
+                    .attr('x2', innerWidth)
+                    .attr('y2', 0)
+                    .attr('transform', 'translate(0,' + y(targetQuotaValue) + ')')
+                    .style('stroke-dasharray', '8, 8');
+
+                quotaWrap.append('line')
+                    .datum({key: targetQuotaLabel, val: targetQuotaValue})
+                    .attr('class', 'nv-quotaLineTarget nv-quotaLineBackground')
+                    .attr('x1', 0)
+                    .attr('y1', 0)
+                    .attr('x2', innerWidth)
+                    .attr('y2', 0)
+                    .attr('transform', 'translate(0,' + y(targetQuotaValue) + ')');
+
+                // Target Quota line label
+                yAxisWrap.append('text')
+                    .text(chart.quotaTickFormat()(targetQuotaValue))
+                    .attr('class', 'nv-targetQuotaValue')
+                    .attr('dy', '.36em')
+                    .attr('dx', '0')
+                    .attr('text-anchor', direction === 'rtl' ? 'start' : 'end')
+                    .attr('transform', 'translate(' + (0 - yAxis.tickPadding()) + ',' + y(targetQuotaValue) + ')');
+
+                quotaTextWidth = Math.round(g.select('text.nv-targetQuotaValue').node().getBoundingClientRect().width + yAxis.tickPadding());
+            }
+
+            if (quotaValue > 0) {
+                quotaWrap.append('line')
+                    .attr('class', 'nv-quotaLine')
+                    .attr('x1', 0)
+                    .attr('y1', 0)
+                    .attr('x2', innerWidth)
+                    .attr('y2', 0)
+                    .attr('transform', 'translate(0,' + y(quotaValue) + ')')
+                    .style('stroke-dasharray', '8, 8');
+
+                quotaWrap.append('line')
+                    .datum({key: quotaLabel, val: quotaValue})
+                    .attr('class', 'nv-quotaLine nv-quotaLineBackground')
+                    .attr('x1', 0)
+                    .attr('y1', 0)
+                    .attr('x2', innerWidth)
+                    .attr('y2', 0)
+                    .attr('transform', 'translate(0,' + y(quotaValue) + ')');
+
+                // Quota line label
+                yAxisWrap.append('text')
+                    .text(chart.quotaTickFormat()(quotaValue))
+                    .attr('class', 'nv-quotaValue')
+                    .attr('dy', '.36em')
+                    .attr('dx', '0')
+                    .attr('text-anchor', direction === 'rtl' ? 'start' : 'end')
+                    .attr('transform', 'translate(' + -yAxis.tickPadding() + ',' + y(quotaValue) + ')');
+
+                quotaTextWidth = Math.max(quotaTextWidth, Math.round(g.select('text.nv-quotaValue').node().getBoundingClientRect().width + yAxis.tickPadding()));
+            }
 
             //------------------------------------------------------------
             // Calculate intial dimensions based on first Axis call
 
-            innerWidth = availableWidth - innerMargin.left - innerMargin.right - yAxis.width();
-            innerHeight = availableHeight - innerMargin.top - innerMargin.bottom - xAxis.height();
+            // Temporarily reset inner dimensions
+            innerWidth = availableWidth - innerMargin.left - Math.max(quotaTextWidth, yAxisMargin.left) - innerMargin.right - yAxisMargin.right;
+            innerHeight = availableHeight - innerMargin.top - yAxisMargin.top - innerMargin.bottom - yAxisMargin.bottom;
 
             //------------------------------------------------------------
             // Recall Main Chart and Axis
@@ -435,12 +518,20 @@ nv.models.paretoChart = function() {
             yAxisWrap
                 .call(yAxis);
 
+            xAxisMargin = xAxis.margin();
+            yAxisMargin = yAxis.margin();
+
             //------------------------------------------------------------
             // Recalculate final dimensions based on new Axis size
 
-            innerMargin[yAxis.orient()] += yAxis.width();
+            // Reset inner margins
+            innerMargin.left += Math.max(quotaTextWidth, xAxisMargin.left, yAxisMargin.left);
+            innerMargin.right += Math.max(xAxisMargin.right, yAxisMargin.right);
+            innerMargin.top += Math.max(xAxisMargin.top, yAxisMargin.top);
+            innerMargin.bottom += Math.max(xAxisMargin.bottom, yAxisMargin.bottom);
+
+            // Reset inner dimensions
             innerWidth = availableWidth - innerMargin.left - innerMargin.right;
-            innerMargin[xAxis.orient()] += xAxis.height();
             innerHeight = availableHeight - innerMargin.top - innerMargin.bottom;
 
             //------------------------------------------------------------
@@ -469,136 +560,71 @@ nv.models.paretoChart = function() {
                 .call(lines2);
 
             quotaWrap
-                .attr('transform', 'translate(' + innerMargin.left + ',' + innerMargin.top + ')');
+                .attr('transform', 'translate(' + innerMargin.left + ',' + innerMargin.top + ')')
+                .selectAll('line')
+                    .attr('x2', innerWidth);
 
             xAxisWrap
                 .attr('transform', 'translate(' + innerMargin.left + ',' + (xAxis.orient() === 'bottom' ? innerHeight + innerMargin.top : innerMargin.top) + ')')
                 .call(xAxis);
 
             yAxis
-                .ticks(innerHeight / 100)
+                .ticks(Math.ceil(innerHeight / 48))
                 .tickSize(-innerWidth, 0);
 
             yAxisWrap
                 .attr('transform', 'translate(' + (yAxis.orient() === 'left' ? innerMargin.left : innerMargin.left + innerWidth) + ',' + innerMargin.top + ')')
                 .call(yAxis);
 
-            //------------------------------------------------------------
-            // Quota Line
-
-            quotaWrap.selectAll('line').remove();
-            yAxisWrap.selectAll('text.nv-quotaValue').remove();
-            yAxisWrap.selectAll('text.nv-targetQuotaValue').remove();
-            var tickTextHeight = 14;
-
-            // Target Quota Line
             if (targetQuotaValue > 0) {
 
-                quotaWrap.append('line')
-                    .attr('class', 'nv-quotaLineTarget')
-                    .attr('x1', 0)
-                    .attr('y1', 0)
+                quotaWrap.select('line.nv-quotaLineTarget')
                     .attr('x2', innerWidth)
-                    .attr('y2', 0)
-                    .attr('transform', 'translate(0,' + y(targetQuotaValue) + ')')
-                    .style('stroke-dasharray', '8, 8');
-
-                quotaWrap.append('line')
-                    .datum({key: targetQuotaLabel, val: targetQuotaValue})
-                    .attr('class', 'nv-quotaLineTarget nv-quotaLineBackground')
-                    .attr('x1', 0)
-                    .attr('y1', 0)
-                    .attr('x2', innerWidth)
-                    .attr('y2', 0)
                     .attr('transform', 'translate(0,' + y(targetQuotaValue) + ')');
+                yAxisWrap.select('text.nv-targetQuotaValue')
+                    .attr('transform', 'translate(' + (0 - yAxis.tickPadding()) + ',' + y(targetQuotaValue) + ')');
 
-                // Target Quota line label
-                yAxisWrap.append('text')
-                    .text(chart.quotaTickFormat()(targetQuotaValue))
-                    .attr('class', 'nv-targetQuotaValue')
-                    .attr('dy', '.36em')
-                    .attr('dx', '0')
-                    .attr('text-anchor', direction === 'rtl' ? 'start' : 'end')
-                    .attr('transform', 'translate(' + -yAxis.tickPadding() + ',' + y(targetQuotaValue) + ')');
+                quotaTextHeight = Math.round(parseInt(g.select('text.nv-targetQuotaValue').node().getBoundingClientRect().height, 10) / 1.15);
 
-                tickTextHeight = Math.round(parseInt(g.select('text.nv-targetQuotaValue').node().getBoundingClientRect().height, 10) / 1.15);
                 //check if tick lines overlap quota values, if so, hide the values that overlap
-                yAxisWrap.selectAll('g.tick')
+                yAxisWrap.selectAll('g.tick, g.nv-axisMaxMin')
                     .each(function(d, i) {
-                        if (y(d) <= y(targetQuotaValue) + tickTextHeight && y(d) >= y(targetQuotaValue) - tickTextHeight) {
-                            d3.select(this).select('text').style('opacity', 0);
-                            d3.select(this).select('line').style('opacity', 0);
+                        if (Math.abs(y(d) - y(targetQuotaValue)) <= quotaTextHeight) {
+                            d3.select(this).style('opacity', 0);
                         }
                     });
-                if (yAxis.showMaxMin) {
-                    yAxisWrap.selectAll('g.nv-axisMaxMin')
-                        .each(function(d, i) {
-                            if (Math.abs(y(d) - y(targetQuotaValue)) <= tickTextHeight) {
-                                d3.select(this).select('text').style('opacity', 0);
-                            }
-                        });
-                }
             }
-
 
             if (quotaValue > 0) {
 
-                quotaWrap.append('line')
-                    .attr('class', 'nv-quotaLine')
-                    .attr('x1', 0)
-                    .attr('y1', 0)
+                quotaWrap.select('line.nv-quotaLine')
                     .attr('x2', innerWidth)
-                    .attr('y2', 0)
-                    .attr('transform', 'translate(0,' + y(quotaValue) + ')')
-                    .style('stroke-dasharray', '8, 8');
-
-                quotaWrap.append('line')
-                    .datum({key: quotaLabel, val: quotaValue})
-                    .attr('class', 'nv-quotaLine nv-quotaLineBackground')
-                    .attr('x1', 0)
-                    .attr('y1', 0)
-                    .attr('x2', innerWidth)
-                    .attr('y2', 0)
                     .attr('transform', 'translate(0,' + y(quotaValue) + ')');
+                yAxisWrap.select('text.nv-quotaValue')
+                    .attr('transform', 'translate(' + (0 - yAxis.tickPadding()) + ',' + y(quotaValue) + ')');
 
-                // Quota line label
-                yAxisWrap.append('text')
-                    .text(chart.quotaTickFormat()(quotaValue))
-                    .attr('class', 'nv-quotaValue')
-                    .attr('dy', '.36em')
-                    .attr('dx', '0')
-                    .attr('text-anchor', direction === 'rtl' ? 'start' : 'end')
-                    .attr('transform', 'translate(' + -yAxis.tickPadding() + ',' + y(quotaValue) + ')');
+                quotaTextHeight = Math.round(parseInt(g.select('text.nv-quotaValue').node().getBoundingClientRect().height, 10) / 1.15);
 
-                tickTextHeight = Math.round(parseInt(g.select('text.nv-quotaValue').node().getBoundingClientRect().height, 10) / 1.15);
                 //check if tick lines overlap quota values, if so, hide the values that overlap
-                yAxisWrap.selectAll('g.tick')
+                yAxisWrap.selectAll('g.tick, g.nv-axisMaxMin')
                     .each(function(d, i) {
-                        if (y(d) <= y(quotaValue) + tickTextHeight && y(d) >= y(quotaValue) - tickTextHeight) {
-                            d3.select(this).select('line').style('opacity', 0);
-                            d3.select(this).select('text').style('opacity', 0);
+                        if (Math.abs(y(d) - y(quotaValue)) <= quotaTextHeight) {
+                            d3.select(this).style('opacity', 0);
                         }
                     });
-
-
-                if (yAxis.showMaxMin) {
-                    yAxisWrap.selectAll('g.nv-axisMaxMin')
-                        .each(function(d, i) {
-                            if (Math.abs(y(d) - y(quotaValue)) <= tickTextHeight) {
-                                d3.select(this).select('text').style('opacity', 0);
-                            }
-                        });
-                }
 
                 // if there is a quota and an adjusted quota
                 // check to see if the adjusted collides
                 if (targetQuotaValue > 0) {
-                    if (Math.abs(y(quotaValue) - y(targetQuotaValue)) <= tickTextHeight) {
+                    if (Math.abs(y(quotaValue) - y(targetQuotaValue)) <= quotaTextHeight) {
                         yAxisWrap.select('.nv-targetQuotaValue').style('opacity', 0);
                     }
                 }
-
             }
+
+            //============================================================
+            // Event Handling/Dispatching (in chart's scope)
+            //------------------------------------------------------------
 
             quotaWrap.selectAll('line.nv-quotaLineBackground')
                 .on('mouseover', function(d) {
@@ -620,20 +646,16 @@ nv.models.paretoChart = function() {
                     });
                 });
 
-            //============================================================
-            // Event Handling/Dispatching (in chart's scope)
-            //------------------------------------------------------------
-
             barLegend.dispatch.on('legendClick', function(d, i) {
-                var selectedSeries = d.key;
+                var selectedSeries = d.series;
 
                 //swap bar disabled
                 d.disabled = !d.disabled;
                 //swap line disabled for same series
                 if (!chart.stacked()) {
                     data.filter(function(d) {
-                        return d.key === selectedSeries && d.type === 'line';
-                    }).map(function(d) {
+                            return d.series === selectedSeries && d.type === 'line';
+                        }).map(function(d) {
                             d.disabled = !d.disabled;
                             return d;
                         });
