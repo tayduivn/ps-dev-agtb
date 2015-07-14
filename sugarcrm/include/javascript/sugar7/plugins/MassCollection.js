@@ -66,14 +66,7 @@
             createMassCollection: function() {
                 this.massCollection = this.context.get('mass_collection');
                 if (!this.massCollection) {
-                    var MassCollection = app.BeanCollection.extend({
-                        reset: function(models, options) {
-                            this.filterDef = null;
-                            this.entire = false;
-                            Backbone.Collection.prototype.reset.call(this, models, options);
-                        }
-                    });
-                    this.massCollection = new MassCollection();
+                    this.massCollection = this.context.get('collection').clone();
                     this.context.set('mass_collection', this.massCollection);
                 }
             },
@@ -125,9 +118,7 @@
                 // Resets the mass collection on collection reset for non
                 // independent mass collection.
                 this.collection.on('reset', function() {
-                    if (!this.independentMassCollection || this.massCollection.entire) {
-                        this.massCollection.reset();
-                    }
+                    this.massCollection.trigger('mass_collection:remove:all');
                 }, this);
 
                 this.collection.on('add', function() {
@@ -194,6 +185,7 @@
              * Clears the mass collection.
              */
             clearMassCollection: function() {
+                this.massCollection.entire = false;
                 this.massCollection.reset();
                 this.massCollection.trigger('not:all:checked');
             },
@@ -267,8 +259,7 @@
                 alert.find('[data-action=clear]').each(function() {
                     var $el = $(this);
                     $el.on('click', function() {
-                        self.massCollection.reset();
-                        self.massCollection.trigger('not:all:checked');
+                        self.context.trigger('mass_collection:clear');
                         $el.off('click');
                     });
                     app.accessibility.run($el, 'click');
@@ -307,16 +298,8 @@
              * Fetch api to retrieve the entire filtered set.
              */
             getTotalRecords: function() {
-                var filterDef = this.massCollection.filterDef || [];
-                if (!_.isArray(filterDef)) {
-                    filterDef = [filterDef];
-                }
-                //if list view is for linking and link fetch size configuration exists, set it,
-                //otherwise default to maxRecordFetchSize
-                var max_num = (this.meta.selection.isLinkAction && app.config.maxRecordLinkFetchSize) ?
-                        app.config.maxRecordLinkFetchSize :
-                        app.config.maxRecordFetchSize;
-                var order = this.context.get('collection').orderBy;
+                var limit = (this.meta.selection.isLinkAction && app.config.maxRecordLinkFetchSize) ||
+                    app.config.maxRecordFetchSize;
                 var fields = ['id'];
 
                 // if any of the buttons require additional fields, add them to the list
@@ -326,79 +309,17 @@
                     }
                 }, this);
 
-                var params = {
-                    fields: fields.join(','),
-                    max_num: max_num
+                var options = {
+                    fields: fields,
+                    limit: limit,
+                    // use the last filterDef applied to the collection
+                    filter: this.context.get('collection').filterDef,
+                    showAlerts: true
                 };
 
-                if (order && order.field) {
-                    params.order_by = order.field + ':' + order.direction;
-                }
-
-                if (!_.isEmpty(filterDef)) {
-                    params.filter = filterDef;
-                }
-
-                var url = '';
-
-                if (this.collection.link) {
-                    this.context.set('id', this.context.get('parentModel').id);
-                    url = app.api.buildURL(this.context.get('parentModule'),
-                                          null,
-                                          this.context.toJSON(),
-                                          null);
-                } else {
-                    url = app.api.buildURL(this.module, null, null, params);
-                }
-
-                app.alert.show('totalrecord', {
-                    level: 'process',
-                    title: app.lang.get('LBL_LOADING'),
-                    autoClose: false
-                });
-
-                this.massCollection.fetched = false;
                 this.massCollection.trigger('massupdate:estimate');
-
-                app.api.call('read', url, null, {
-                    success: _.bind(function(data) {
-                        if (this.disposed) {
-                            return;
-                        }
-                        app.alert.dismiss('totalrecord');
-                        this._processTotalRecords(data.records);
-                        this._alertTotalRecords(data.next_offset);
-                    }, this)
-                });
+                this.massCollection.fetch(options);
             },
-
-            /**
-             * Update total record set from api request.
-             *
-             * @param {Object} collection The list of JSON formatted list of model ids.
-             * @private
-             */
-            _processTotalRecords: function(collection) {
-                this.massCollection.reset(collection);
-                this.massCollection.entire = false;
-                this.massCollection.fetched = true;
-                this.massCollection.trigger('massupdate:estimate');
-            },
-
-            /**
-             * Alert the message for total record set.
-             *
-             * @param {Number} offset Next pagination offset.
-             * @private
-             *
-             * FIXME: This method will be removed by SC-3999 because alerts
-             * displayed within a list view are to be removed.
-             */
-            _alertTotalRecords: function(offset) {
-                var allSelected = this._buildAlertForReset(offset);
-                this.layout.trigger('list:alert:show', allSelected);
-            },
-
 
             /**
              * Initialize templates.

@@ -15,6 +15,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Description:
  ********************************************************************************/
 
+require_once 'include/SugarSmarty/plugins/function.sugar_csrf_form_token.php';
 
 $header_text = '';
 global $mod_strings;
@@ -51,7 +52,10 @@ if(isset($_REQUEST['edit']) && $_REQUEST['edit']=='true') {
 $GLOBALS['log']->info("Release list view");
 global $theme;
 
+$ListView = new ListView();
+
 $button  = "<form border='0' action='index.php' method='post' name='form'>\n";
+$button .= smarty_function_sugar_csrf_form_token(array(), $ListView);
 $button .= "<input type='hidden' name='module' value='Releases'>\n";
 $button .= "<input type='hidden' name='action' value='EditView'>\n";
 $button .= "<input type='hidden' name='edit' value='true'>\n";
@@ -60,7 +64,6 @@ $button .= "<input type='hidden' name='return_action' value='".$action."'>\n";
 $button .= "<input title='".$app_strings['LBL_NEW_BUTTON_TITLE']."' accessyKey='".$app_strings['LBL_NEW_BUTTON_KEY']."' class='button' type='submit' name='New' value='  ".$app_strings['LBL_NEW_BUTTON_LABEL']."  '>\n";
 $button .= "</form>\n";
 
-$ListView = new ListView();
 if((is_admin($current_user)|| is_admin_for_module($GLOBALS['current_user'],'Bugs')) && $_REQUEST['module'] != 'DynamicLayout' && !empty($_SESSION['editinplace'])){	
 		$header_text = "&nbsp;<a href='index.php?action=index&module=DynamicLayout&from_action=ListView&from_module=".$_REQUEST['module'] ."'>".SugarThemeRegistry::current()->getImage("EditLayout","border='0' align='bottom'"
 ,null,null,'.gif',$mod_strings['LBL_EDITLAYOUT'])."</a>";
@@ -79,6 +82,7 @@ $ListView->processListView($focus, "main", "RELEASE");
 if ($is_edit) {
 
 		$edit_button ="<form name='EditView' method='POST' action='index.php'>\n";
+        $edit_button .= smarty_function_sugar_csrf_form_token(array(), $ListView);
 		$edit_button .="<input type='hidden' name='module' value='Releases'>\n";
 		$edit_button .="<input type='hidden' name='record' value='$focus->id'>\n";
 		$edit_button .="<input type='hidden' name='action'>\n";

@@ -36,6 +36,13 @@ $viewdefs['KBContents']['base']['view']['list'] = array(
                     'key' => 'languages',
                 ),
                 array(
+                    'name' => 'revision',
+                    'label' => 'LBL_REVISION',
+                    'enabled' => true,
+                    'default' => false,
+                    'readonly' => true,
+                ),
+                array(
                     'name' => 'status',
                     'label' => 'LBL_STATUS',
                     'enabled' => true,

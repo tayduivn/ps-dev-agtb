@@ -220,5 +220,14 @@ class ImportController extends SugarController
         echo getControl($_REQUEST['import_module'],$_REQUEST['field_name']);
         exit;
     }
+
+    public function action_AuthenticatedSources()
+    {
+        $this->view = 'authenticatedsources';
+    }
+
+    public function action_RevokeAccess()
+    {
+        $this->view = 'revokeaccess';
+    }
 }
-?>

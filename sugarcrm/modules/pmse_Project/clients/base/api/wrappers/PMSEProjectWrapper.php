@@ -15,6 +15,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once 'modules/pmse_Project/clients/base/api/wrappers/PMSEWrapper.php';
 require_once 'modules/pmse_Project/clients/base/api/wrappers/PMSEObservers/PMSEObservable.php';
 require_once 'modules/pmse_Project/clients/base/api/wrappers/PMSERelatedDependencyWrapper.php';
+require_once 'modules/pmse_Inbox/engine/PMSERelatedModule.php';
 
 class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
 {
@@ -547,6 +548,12 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
             $this->project->fetched_row['prj_uid'] = $this->project->id;
             $this->project->fetched_row['prj_name'] = $this->project->fetched_row['name'];
             $this->project->fetched_row['prj_description'] = $this->project->fetched_row['description'];
+
+            //Get related modules for this project
+            $pmseRelatedModule = new PMSERelatedModule();
+            $relatedModues = $pmseRelatedModule->getRelatedBeans($this->project->prj_module, 'one-to-many');
+            unset($relatedModues['result'][0]);
+            $this->project->fetched_row['script_tasks']['add_related_record'] = $relatedModues['result'];
 
             $response['success'] = true;
             $response['project'] = $this->project->fetched_row;

@@ -194,7 +194,8 @@ class CalendarActivity {
 				$act = new CalendarActivity($meeting);
 
 				if(!empty($act)) {
-					$act_list[] = $act;
+                    //use UTC formatted start and end date as key, this makes for easier sorting
+                    $act_list[$act->start_time->format('Ymd\THi00\Z').'/'.$act->end_time->format('Ymd\THi00\Z').'/'.$act->sugar_bean->id] = $act;
 				}
 			}
 		}
@@ -218,7 +219,8 @@ class CalendarActivity {
 
 					$act = new CalendarActivity($call);
 					if(!empty($act)) {
-						$act_list[] = $act;
+                        //use UTC formatted start and end date as key, this makes for easier sorting
+                        $act_list[$act->start_time->format('Ymd\THi00\Z').'/'.$act->end_time->format('Ymd\THi00\Z').'/'.$act->sugar_bean->id] = $act;
 					}
 				}
 			}
@@ -241,12 +243,20 @@ class CalendarActivity {
 				foreach($focus_tasks_list as $task) {
 					$act = new CalendarActivity($task);
 					if(!empty($act)) {
-						$act_list[] = $act;
+                        //use UTC formatted start and end date as key, this makes for easier sorting
+                        $act_list[$act->start_time->format('Ymd\THi00\Z').'/'.$act->end_time->format('Ymd\THi00\Z').'/'.$act->sugar_bean->id] = $act;
 					}
 				}
 			}
 		}
-		return $act_list;
+
+        //recreate list of sorted calendar activities to return
+        ksort($act_list);
+        $act_list = array_values($act_list);
+
+        //return sorted list
+        return $act_list;
+
 	}
 }
 

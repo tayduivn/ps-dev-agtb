@@ -17,7 +17,7 @@
 ({
     events: {
         'click .addNote': 'openNoteModal',
-        'click .activity a': 'loadPreview',
+        'click [data-action=loadPreview]': 'loadPreview',
         'click [name=show_more_button]': 'showMoreRecords'
     },
 

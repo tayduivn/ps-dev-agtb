@@ -90,6 +90,22 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
     protected $supportedTypes = array();
 
     /**
+     * List of supported sugar types for Studio
+     * @var array
+     */
+    protected $studioSupportedTypes = array(
+        'varchar',
+        'name',
+        'text',
+        'int',
+        'phone',
+        'url',
+        'longtext',
+        'htmleditable_tinymce',
+        'email',
+    );
+
+    /**
      * List of types which should be skipped by getBeanIndexFields
      * when being called from QueueManager.
      * TODO: cleanup
@@ -251,17 +267,14 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
     }
 
     /**
-     * Return all supported searchable types
+     * Return a list of sugar types for the studio
      * @return array
      */
-    public function getSupportedTypes()
+    public function getStudioSupportedTypes()
     {
-        $supported = array();
-        foreach ($this->getHandlers('SearchFields') as $handler) {
-            $supported = array_merge($supported, $handler->getSupportedTypes());
-        }
-        return $supported;
+        return $this->studioSupportedTypes;
     }
+
 
     /**
      * Get fts field defs

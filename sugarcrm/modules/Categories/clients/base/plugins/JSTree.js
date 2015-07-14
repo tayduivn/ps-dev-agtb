@@ -627,6 +627,9 @@
                         success: function(item) {
                             newNode.attr('data-id', item.id);
                             newNode.attr('data-level', item.level);
+                            if (newNode.is('[disabled=disabled]')) {
+                                newNode.attr('disabled', false);
+                            }
                             self._toggleAddNodeButton(newNode, false);
                             self._toggleVisibility(false);
                         },
@@ -721,18 +724,20 @@
              * @param {String|Number} position
              * @param {Boolean} editable
              * @param {Boolean} addToRoot
+             * @param {Boolean} isHidden
              */
-            addNode: function(title, position, editable, addToRoot) {
+            addNode: function(title, position, editable, addToRoot, isDisabled) {
                 var self = this,
                     selectedNode = (addToRoot === true) ? [] : this.jsTree.jstree('get_selected'),
                     pos = position || 'last',
-                    isEdit = editable || false;
+                    isEdit = editable || false,
+                    customAttr = (isDisabled === true) ? {disabled: 'disabled'} : {};
 
                 this.jsTree.jstree(
                     'create',
                     selectedNode,
                     pos,
-                    {data: !_.isUndefined(title) ? title : 'New item'},
+                    {data: !_.isUndefined(title) ? title : 'New item', attr: customAttr},
                     function(obj) {
                         if (self.collection.length === 0) {
                             self._toggleVisibility(false);

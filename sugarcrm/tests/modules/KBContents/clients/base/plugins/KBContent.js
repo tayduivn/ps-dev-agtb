@@ -82,6 +82,11 @@ describe('Plugins.KBContents', function() {
         sandbox.stub(app.data, 'getRelateFields', function() {
             return [];
         });
+        sandbox.stub(app.metadata, 'getModule', function() {
+            return {
+                fields: []
+            };
+        });
         view.createArticle(model);
         expect(drawerStub).toHaveBeenCalled();
         expect(drawerStub.args[0][0].context.model.get('name')).toEqual('fakeName');

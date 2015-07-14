@@ -108,6 +108,14 @@ class Elastic implements
     /**
      * {@inheritDoc}
      */
+    public function addMappings(array $modules = array())
+    {
+        return $this->container->indexManager->addMappings($modules);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function indexBean(\SugarBean $bean, array $options = array())
     {
         $this->container->indexer->indexBean($bean);
@@ -249,9 +257,9 @@ class Elastic implements
     /**
      * {@inheritDoc}
      */
-    public function getSupportedTypes()
+    public function getStudioSupportedTypes()
     {
-        return $this->gsProvider()->getSupportedTypes();
+        return $this->gsProvider()->getStudioSupportedTypes();
     }
 
     //// AGGREGATION CAPABILITY ////

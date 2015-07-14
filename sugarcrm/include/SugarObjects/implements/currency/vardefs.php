@@ -42,7 +42,8 @@ $vardefs = array(
             'source' => 'non-db',
             'studio' => false,
             'duplicate_merge' => 'disabled',
-            'function' => 'getCurrencyDropDown',  // This is needed for BWC modules
+            'function' => 'getCurrencies',
+            'function_bean' => 'Currencies',
             'massupdate' => false
         ),
         'currency_symbol' => array(
