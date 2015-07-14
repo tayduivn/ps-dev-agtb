@@ -15,9 +15,12 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 if(!is_admin($GLOBALS['current_user'])){
 	sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']);
 }
-require_once('modules/Administration/UpgradeWizardCommon.php');
-require_once('ModuleInstall/PackageManager/PackageManagerDisplay.php');
-require_once('ModuleInstall/ModuleScanner.php');
+
+require_once 'modules/Administration/UpgradeWizardCommon.php';
+require_once 'ModuleInstall/PackageManager/PackageManagerDisplay.php';
+require_once 'ModuleInstall/ModuleScanner.php';
+require_once 'include/SugarSmarty/plugins/function.sugar_csrf_form_token.php';
+
 global $mod_strings;
 $uh = new UpgradeHistory();
 
@@ -197,10 +200,13 @@ else {
 	print( getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_MODULE_NAME'],$mod_strings['LBL_UPGRADE_WIZARD_TITLE']), false) );
 }
 
+$csrfToken = smarty_function_sugar_csrf_form_token(array(), $smarty);
+
 // upload link
 if(!empty($GLOBALS['sugar_config']['use_common_ml_dir']) && $GLOBALS['sugar_config']['use_common_ml_dir'] && !empty($GLOBALS['sugar_config']['common_ml_dir'])){
 	//rrs
 	$form = '<form name="move_form" action="index.php?module=Administration&view=module&action=UpgradeWizard" method="post"  ><input type=hidden name="run" value="upload" /><input type=hidden name="load_module_from_dir" id="load_module_from_dir" value="'.$GLOBALS['sugar_config']['common_ml_dir'].'" /><input type=hidden name="upgrade_zip_escaped" value="" />';
+    $form .= $csrfToken;
 	$form .= '<br>'.$mod_strings['LBL_MODULE_UPLOAD_DISABLE_HELP_TEXT'].'</br>';
 	$form .='<table width="100%" class="edit view"><tr><th align="left">'.$mod_strings['LBL_ML_NAME'].'</th><th align="left">'.$mod_strings['LBL_ML_ACTION'].'</th></tr>';
 	if ($handle = opendir($GLOBALS['sugar_config']['common_ml_dir'])) {
@@ -217,6 +223,7 @@ if(!empty($GLOBALS['sugar_config']['use_common_ml_dir']) && $GLOBALS['sugar_conf
 }else{
     $form =<<<eoq
 <form name="the_form" enctype="multipart/form-data" action="{$form_action}" method="post"  >
+{$csrfToken}
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="edit view">
 <tr><td>
 <table width="450" border="0" cellspacing="0" cellpadding="0">
