@@ -45,6 +45,8 @@ $mod_strings = array (
 
     'LBL_PMSE_PROCESS_DEFINITIONS_ENABLED' => 'Enabled',
     'LBL_PMSE_PROCESS_DEFINITIONS_DISABLED' => 'Disabled',
+    'LBL_PMSE_PROCESS_DEFINITIONS_EDIT' => 'There are active processes running against this Process Definition. Updating it could impact these processes. Do you still want to edit this Process Definition?',
+    'LBL_PMSE_DISABLE_CONFIRMATION_PD' => 'There are active processes running against this Process Definition. Updating it could impact these processes. Do you still want to disable this Process Definition?',
 
     'LBL_PMSE_PROCESS_DEFINITION_IMPORT_TEXT' => 'Automatically create a new Process Definitions record by importing a *.bpm file from your file system.',
     'LBL_PMSE_PROCESS_DEFINITION_IMPORT_SUCCESS' => 'Process Definitions was successfully imported into the system.',

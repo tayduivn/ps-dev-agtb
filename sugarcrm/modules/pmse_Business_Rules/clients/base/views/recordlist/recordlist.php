@@ -40,7 +40,7 @@ $viewdefs[$module_name ]['base']['view']['recordlist'] = array(
                 'type' => 'rowaction',
                 'name' => 'edit_button',
                 'label' => 'LBL_EDIT_BUTTON',
-                'event' => 'list:editrow:fire',
+                'event' => 'list:edit_businessrules:fire',
                 'acl_action' => 'edit',
             ),
             array(
@@ -53,7 +53,7 @@ $viewdefs[$module_name ]['base']['view']['recordlist'] = array(
             array(
                 'type' => 'rowaction',
                 'name' => 'delete_button',
-                'event' => 'list:deleterow:fire',
+                'event' => 'list:deletebusinessrules:fire',
                 'label' => 'LBL_DELETE_BUTTON',
                 'acl_action' => 'delete',
             ),
