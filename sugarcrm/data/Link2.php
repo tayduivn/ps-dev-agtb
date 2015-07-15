@@ -523,7 +523,8 @@ class Link2 {
                             )
                         )
                     );
-        if (!empty($relBeans)){
+
+        if (isset($relBeans[$relatedBeanId])){
             return $relBeans[$relatedBeanId];
         }
         return null;
