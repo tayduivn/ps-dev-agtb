@@ -96,6 +96,13 @@
     },
 
     /**
+     * We don't need to initialize KB listeners.
+     * @override.
+     * @private
+     */
+    _initKBListeners: function() {},
+    
+    /**
      * @inheritdoc
      */
     cancelClicked: function(evt) {
