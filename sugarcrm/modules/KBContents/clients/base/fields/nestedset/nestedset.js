@@ -310,9 +310,6 @@
             this.$('[data-role="treevalue"]','[name=' + this.def.name + ']').text(name);
             this.$('[name=' + this.def.id_name + ']').val(id);
         }
-        if (this.action !== 'edit') {
-            this.render();
-        }
     },
 
     /**
