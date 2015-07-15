@@ -11,6 +11,7 @@
  */
 *}
 			<form enctype="multipart/form-data" id="FTSFormAdvanced" name="FTSFormAdvanced" method="POST" action="index.php">
+            {sugar_csrf_form_token}
 			<input type="hidden" name="module" id="module" value="KBDocuments">
 			<input type="hidden" name="action" id="action" value="SearchHome">
 			<input type="hidden" name="mode" id="mode" value="advanced">

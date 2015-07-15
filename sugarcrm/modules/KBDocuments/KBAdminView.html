@@ -30,6 +30,7 @@
 <tr>
 	<td>
 			<form name="KBAdminView" id="KBAdminView" method="POST" action="index.php" enctype="multipart/form-data">
+            {sugar_csrf_form_token}
 			<input type="hidden" name="module" value="KBDocuments">
 			<input type="hidden" name="record" value="{ID}">
 			<input type="hidden" name="action">

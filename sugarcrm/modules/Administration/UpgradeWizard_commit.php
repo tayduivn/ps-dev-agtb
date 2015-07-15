@@ -11,9 +11,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-// $Id: UpgradeWizard_commit.php 55931 2010-04-09 18:25:11Z jmertic $
-require_once('modules/Administration/UpgradeWizardCommon.php');
-require_once('modules/Configurator/Configurator.php');
+require_once 'modules/Administration/UpgradeWizardCommon.php';
+require_once 'modules/Configurator/Configurator.php';
+require_once 'include/SugarSmarty/plugins/function.sugar_csrf_form_token.php';
+
 function UWrebuild() {
 	global $log;
 	global $db;
@@ -565,6 +566,7 @@ if ($shouldClearCache) {
 <input type="hidden" name="reloadMetadata" value="true" />
 
 <?php
+echo smarty_function_sugar_csrf_form_token(array(), $smarty);
 echo "<div>";
 print( getUITextForType($install_type) . " ". getUITextForMode($mode) . " ". $mod_strings['LBL_UW_SUCCESSFULLY']);
 echo "<br>";
