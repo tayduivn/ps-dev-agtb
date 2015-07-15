@@ -111,18 +111,17 @@ function saveBR(route) {
 
         App.api.call('update', url, attributes, {
             success: function (data) {
+                App.alert.dismiss('upload');
+                App.alert.show('save-success', {
+                    level: 'success',
+                    messages: App.lang.get('LBL_SAVED'),
+                    autoClose: true
+                });
                 if (route) {
-                    App.alert.dismiss('upload');
                     decision_table.setIsDirty(false, true);
                     App.router.navigate(route, {trigger: true});
                 } else {
                     decision_table.setIsDirty(false);
-                    App.alert.dismiss('upload');
-                    App.alert.show('br-saving-success', {
-                        level: 'success',
-                        messages: Handlebars.Utils.escapeExpression(brName) + ' was saved correctly',
-                        autoClose: true
-                    });
                 }
             },
             error: function (err) {
