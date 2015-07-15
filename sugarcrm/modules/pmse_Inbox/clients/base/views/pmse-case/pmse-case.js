@@ -25,6 +25,7 @@
         options.meta.hashSync = _.isUndefined(options.meta.hashSync) ? true : options.meta.hashSync;
         options.meta.buttons = this.case.buttons;
         this._super('initialize', [options]);
+        this.context.set("layout", "record");
         this.buttons = {};
         this.createMode = this.context.get('create') ? true : false;
         this.action = 'detail';
