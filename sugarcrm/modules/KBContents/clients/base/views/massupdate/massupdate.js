@@ -79,5 +79,15 @@
         }
 
         callback(fields, errors);
+    },
+
+    /**
+     * @inheritdoc
+     */
+    cancelClicked: function(evt) {
+        _.each(this.getMassUpdateModel(this.module).models, function(model) {
+            model.revertAttributes();
+        });
+        this._super('cancelClicked');
     }
 })
