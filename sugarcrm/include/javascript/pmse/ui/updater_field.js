@@ -85,8 +85,6 @@ UpdaterField.prototype.initObject = function (options) {
     this.hasCheckbox = defaults.hasCheckbox;
     this._decimalSeparator = defaults.decimalSeparator;
     this._numberGroupingSeparator = defaults.numberGroupingSeparator;
-    //this.hasCheckbox
-        //.setFieldHeight(defaults.fieldHeight);
 };
 
 /**
@@ -107,12 +105,6 @@ UpdaterField.prototype.setFields = function (items) {
     this.fields = aItems;
     return this;
 };
-
-
-//UpdaterField.prototype.setFieldHeight = function (value) {
-//    this.fieldHeight = value;
-//    return this;
-//};
 
 /**
  * Gets an object with all option fields values (label, name, type and values), to send the server
@@ -207,6 +199,15 @@ UpdaterField.prototype.setOptions = function (settings) {
         case 'Decimal':
         case 'Float':
             newOption =  new NumberUpdaterItem(currentSetting);
+            break;
+        case 'user':
+            currentSetting.searchUrl = 'pmse_Project/CrmData/users?filter={TERM}';
+            currentSetting.defaultSearchOptions = [
+                {text: translate('LBL_PMSE_FORM_OPTION_CURRENT_USER'), value: 'currentuser'},
+                {text: translate('LBL_PMSE_FORM_OPTION_RECORD_OWNER'), value: 'owner'},
+                {text: translate('LBL_PMSE_FORM_OPTION_SUPERVISOR'), value: 'supervisor'}
+            ];
+            newOption =  new SearchUpdaterItem(currentSetting);
             break;
         default:
             newOption =  new TextUpdaterItem(currentSetting);
@@ -339,32 +340,7 @@ UpdaterField.prototype.setValue = function (value) {
                     for (j = 0; j < this.options.length; j += 1) {
                         if (fields[i].field === this.options[j].getName()) {
                             this.options[j].enable();
-                            /*if (this.hasCheckbox) {
-                                this.options[j].checkboxControl.checked = true;
-                            }*/
-                            //this.options[j].control.disabled = false;
-                            this.options[j].setValue(fields[i].value); //this.options[j].value = fields[i].value;
-                            //this.options[j].value = fields[i].value;
-//                            if (this.options[j].fieldType === 'date') {
-//                                $(this.options[j].textControl)
-//                                    .datepicker("option", {disabled: false});
-//                            } else if (this.options[j].fieldType === 'datetime') {
-//                                $(this.options[j].textControl)
-//                                    .datetimepicker("option", {disabled: false});
-//                            }
-                            /*if (this.options[j].type === 'OptionCheckBoxField') {
-                                //this.options[j].control.checked = ((fields[i].value === 'on') ? true : false);
-                                this.options[j].control.checked = fields[i].value;
-                            }*/
-                            /*if (this.options[j].type === 'OptionDateField' || this.options[j].type === 'OptionNumberCriteriaField') {
-                                //for (k = 0; k < fields[i].value)
-                                this.options[j].addCriteriaItems(fields[i].value);
-                                this.options[j].timerCriteria.enable();
-                                this.options[j].disabled = false;
-
-                            }*/
-                            //this.options[j].control.value = fields[i].value;
-                            //
+                            this.options[j].setValue(fields[i].value, fields[i].label);
                             break;
                         }
                     }
@@ -384,7 +360,6 @@ UpdaterField.prototype.isValid = function () {
     var i, valid = true, current, field;
     for (i = 0; i < this.options.length; i += 1) {
         field = this.options[i];
-        //valid = valid && field.isValid();
         if (field.isRequired()) {
             switch (field.type) {
             case 'CheckboxUpdaterItem':
@@ -403,9 +378,6 @@ UpdaterField.prototype.isValid = function () {
 
         }
         //TODO: create validation for expressions built with expressionControl.
-        /*if (field.type === 'DateUpdaterItem' && !field.timerCriteria.isValid()) {
-            valid = false;
-        }*/
         if (field._parent.hasCheckbox && field.isDisabled()) {
             valid = true;
         }
@@ -458,59 +430,6 @@ UpdaterField.prototype._onValueGenerationHandler = function (module) {
         if (!(panel instanceof ExpressionControl)) {
             panel.close();
         }
-    //Previous version
-        /*var input, currentValue, i, newExpression = "{::" + module + "::" + value + "::}", aux, aux2, field = that.currentField;
-        if (this.parent.belongsTo.tagName.toLowerCase() === "input") {
-            input = $(field.control).get(0);
-            currentValue = input.value;
-            i = input.selectionStart;
-        } else if (this.parent.belongsTo.tagName.toLowerCase() === "textarea") {
-            input = $(field.control).get(0);
-            currentValue = input.value;
-            i = input.selectionStart;
-        } else if (this.parent.belongsTo.tagName.toLowerCase() === "div") {
-            input = $('#plain_email_body').get(0);
-            currentValue = input.value;
-            i = input.selectionStart;
-        } else {
-            input = $(this.parent.belongsTo).data("textNode");
-            currentValue = input.nodeValue;
-            i = editorWindow.getSelection().anchorOffset;
-        }
-        //var input = $('#email_subject').get(0), i = input.selectionStart, aux, aux2, newExpression = "{::" + module + "::" + value + "::}";
-        if (i) {
-            if (currentValue.charAt(i - 1) === "{") {
-                aux = currentValue.substr(i - 1);
-                aux2 = replaceExpression(aux, newExpression);
-                aux = aux2 === aux ? aux.replace(/\{/, newExpression) : aux2;
-            } else if (i > 1 && currentValue.charAt(i - 1) === ":" && currentValue.charAt(i - 2) === "{") {
-                aux = currentValue.substr(i - 2);
-                aux2 = replaceExpression(aux, newExpression);
-                aux = aux2 === aux ? aux.replace(/\{\:/, newExpression) : aux2;
-                i -= 1;
-            } else if (i > 2 && currentValue.charAt(i - 1) === ":" && currentValue.charAt(i - 2) === ":" && currentValue.charAt(i - 3) === "{") {
-                aux = currentValue.substr(i - 3);
-                aux2 = replaceExpression(aux, newExpression);
-                aux = aux2 === aux ? aux.replace(/\{\:\:/, newExpression) : aux2;
-                i -= 2;
-            }
-            if (aux2) {
-                value = currentValue.substr(0, i - 1) + aux;
-            } else {
-                value = currentValue.substr(0, i) + newExpression + currentValue.substr(i);
-            }
-        } else {
-            i = 0;
-            value = newExpression + currentValue;
-        }
-        if (this.parent.belongsTo.tagName.toLowerCase() === 'input' || this.parent.belongsTo.tagName.toLowerCase() === 'div' || this.parent.belongsTo.tagName.toLowerCase() === 'textarea') {
-            input.value = value;
-            //input.selectionStart = input.selectionEnd = i + newExpression.length;
-        } else {
-            input.nodeValue = value;
-            //editorWindow.getSelection().anchorOffset = 8;
-        }
-        that.multiplePanel.close();*/
     };
 };
 
@@ -529,7 +448,6 @@ UpdaterField.prototype.openPanelOnItem = function (field) {
         if (!this._variablesList) {
             this._variablesList = new FieldPanel({
                 className: "updateritem-panel",
-                //height: "auto",
                 appendTo: (this.parent && this.parent.parent && this.parent.parent.html) || null,
                 items: [
                     {
@@ -638,31 +556,6 @@ UpdaterField.prototype.openPanelOnItem = function (field) {
         targetPanel = this._datePanel;
     }
 
-    /*if (!this.multiplePanel) {
-        this.multiplePanel = new ExpressionControl({
-            onChange: this._onValueGenerationHandler(PROJECT_MODULE),
-            matchParentWidth: false,
-            expressionVisualizer: false,
-            width: 200
-        });
-
-        if (field.fieldType !== 'date' && field.fieldType !== 'datetime') {
-
-
-            this.multiplePanel.addSubpanel({
-                title: translate('LBL_PMSE_ADAM_UI_TITLE_MODULE_FIELDS', 'pmse_Project', translate('LBL_PMSE_LABEL_TARGETMODULE')),
-                collapsable: true,
-                items: this.panelList,
-                //onOpen: this.getOnOpenHandler(PROJECT_MODULE),
-                onItemSelect: this.getAddVariableHandler(PROJECT_MODULE)
-            }, "list");
-            document.body.appendChild(this.multiplePanel.getHTML());
-        }
-    } else {
-        //this.multiplePanel.close();
-    }*/
-
-
     subjectInput = field._control;
     currentOwner = targetPanel.getOwner();
     if (currentOwner !== subjectInput) {
@@ -676,24 +569,6 @@ UpdaterField.prototype.openPanelOnItem = function (field) {
             targetPanel.open();
         }
     }
-
-    /*this.multiplePanel.open();
-    if (this.multiplePanel.subpanels[0]) {
-        this.multiplePanel.subpanels[0].open();
-    }
-    this.multiplePanel.getHTML().style.zIndex = '1034';
-
-    $('.adam-window-close').on('click', function (e) {
-        if (that.multiplePanel) {
-            that.multiplePanel.close();
-        }
-    });
-    $('.adam-panel-body').scroll(function(){
-        if (that.multiplePanel) {
-            that.multiplePanel.close();
-        }
-    });*/
-
     return this;
 };
 UpdaterField.prototype.setVariables = function (variables) {
@@ -1436,3 +1311,192 @@ UpdaterField.prototype.setVariables = function (variables) {
         }
         return this.html;
     };
+//SearchUpdaterItem
+var SearchUpdaterItem = function (settings) {
+    UpdaterItem.call(this, settings);
+    SearchUpdaterItem.prototype.init.call(this, settings);
+};
+
+SearchUpdaterItem.prototype = new UpdaterItem();
+SearchUpdaterItem.prototype.constructor = SearchUpdaterItem;
+SearchUpdaterItem.prototype.type = 'SearchUpdaterItem';
+
+/**
+ * @inheritDoc
+ */
+SearchUpdaterItem.prototype.init = function(settings) {
+    var defaults = {
+        value: '',
+        searchUrl: null,
+        defaultSearchOptions: [],
+        select2Translations: {
+            id: 'value',
+            text: 'text'
+        }
+    };
+
+    jQuery.extend(true, defaults, settings);
+
+    this._searchUrl = defaults.searchUrl;
+    this._defaultSearchOptions = defaults.defaultSearchOptions;
+    this._select2Translations = defaults.select2Translations;
+    this.setValue(defaults.value);
+};
+
+/**
+ * @inheritDoc
+ * @param {object} value
+ */
+SearchUpdaterItem.prototype.setValue = function(value, label) {
+    if (value && this.select2Control) {
+        if (label) {
+            this.select2Control.select2('data', {value: value, text: label});
+        } else {
+            this.select2Control.select2('val', value);
+        }
+    }
+    this._value = value || '';
+    return this;
+};
+
+/**
+ * @inheritDoc
+ * @returns {object}
+ */
+SearchUpdaterItem.prototype.getData = function () {
+    var data = UpdaterItem.prototype.getData.call(this);
+    data.label = this.getSelectedText();
+    return data;
+};
+
+/**
+ * @inheritDoc
+ */
+SearchUpdaterItem.prototype.clear = function() {
+    UpdaterItem.prototype.clear.call(this);
+    this._value = {};
+    return this;
+};
+
+/**
+ * Return the label associated with the selected select2 choice
+ * @returns {string}
+ */
+SearchUpdaterItem.prototype.getSelectedText = function() {
+    return this.select2Control.select2('data').text || '';
+}
+
+/**
+ * Create a select2, and bind a change event to it
+ * @inheritDoc
+ */
+SearchUpdaterItem.prototype.createHTML = function() {
+    var self = this;
+    if (!this.html) {
+        UpdaterItem.prototype.createHTML.call(this);
+
+        this.select2Control = $(this._control);
+        this.select2Control.select2({
+            query: _.bind(this._queryFunction, this),
+            initSelection: _.bind(this._initSelection, this),
+            width: this.fieldWidth || '220px'
+        });
+        this.select2Control.on('change', function() {
+            var s2obj = self.select2Control.select2('data');
+            self.select2Control.data('text', s2obj.text);
+            self.setValue(s2obj.id);
+        });
+    }
+    return this.html;
+}
+
+/**
+ * @inheritDoc
+ */
+SearchUpdaterItem.prototype._createControl = function() {
+    var control = this.createHTMLElement('input');
+    control.type = 'text';
+    this._control = control;
+
+    return UpdaterItem.prototype._createControl.call(this);
+};
+
+/**
+ * No config button necessary
+ * @return {null}
+ */
+SearchUpdaterItem.prototype._createConfigButton = function() {
+    return null;
+};
+
+/**
+ * select2 internal query function. See select2 documentation for further info
+ * @param options
+ */
+SearchUpdaterItem.prototype._queryFunction = function(options) {
+    var self = this;
+    var finalData = this._filterSelections(options, this._defaultSearchOptions);
+    var callbackOptions = {more: false};
+    var term = $.trim(options.term) || '';
+
+    if (term) {
+        var proxy = new SugarProxy();
+        proxy.url = this._searchUrl.replace(/\{TERM\}/g, term);
+        proxy.getData(null, {
+            success: function(data) {
+                var finalData = [];
+                _.each(data.result, function(result) {
+                    finalData.push({
+                        id: result[self._select2Translations.id],
+                        text: result[self._select2Translations.text]
+                    });
+                });
+                callbackOptions.results = finalData;
+                options.callback(callbackOptions);
+            },
+            error: function() {
+                console.log('failure', arguments);
+            }
+        });
+    } else {
+        callbackOptions.results = finalData;
+        options.callback(callbackOptions);
+    }
+}
+
+/**
+ * Initialization function to be used internally by select2. Check select2's documentation for further info
+ * @param {jQuery} element
+ * @param {function} callback
+ */
+SearchUpdaterItem.prototype._initSelection = function(element, callback) {
+    var id = this.select2Control.select2('val');
+    var text = this.select2Control.data('text') || id;
+    if (id && text) {
+        callback({
+            id: id,
+            text: text
+        });
+    }
+}
+
+/**
+ * Formats search results into a format that select2 can understand
+ * @param {object} searchOptions
+ * @param {array} results
+ * @return {Array}
+ */
+SearchUpdaterItem.prototype._filterSelections = function(searchOptions, results) {
+    var finalData = [];
+    var term = $.trim(searchOptions.term);
+    _.each(results, function(result) {
+        if (!term || searchOptions.matcher(term, result[this._select2Translations.text])) {
+            finalData.push({
+                id: result[this._select2Translations.id],
+                text: result[this._select2Translations.text]
+            });
+        }
+    }, this);
+
+    return finalData;
+}

@@ -1531,7 +1531,7 @@ class PMSECrmDataWrapper implements PMSEObservable
     }
 
     /**
-     * Retrieve list of Fieds
+     * Retrieve list of fields
      * @param string $filter
      * @param array $additionalArgs
      * @return object
