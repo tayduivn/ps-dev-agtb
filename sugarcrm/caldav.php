@@ -17,11 +17,27 @@ define('ENTRY_POINT_TYPE', 'api');
 require_once 'vendor/autoload.php';
 require_once 'include/entryPoint.php';
 
-$authBackend = new Sugarcrm\Sugarcrm\Dav\Base\Auth\SugarAuth();
+$authClass = \SugarAutoLoader::customClass('Sugarcrm\\Sugarcrm\\Dav\\Base\\Auth\\SugarAuth');
+$principalClass = \SugarAutoLoader::customClass('Sugarcrm\\Sugarcrm\\Dav\\Base\\Principal\\SugarPrincipal');
 
-$server = new Sabre\DAV\Server(array());
+$authBackend = new $authClass();
+$principalBackend = new $principalClass();
+
+$tree = array (
+    new Sabre\CalDAV\Principal\Collection($principalBackend),
+);
+
+$server = new Sabre\DAV\Server($tree);
+$server->setBaseUri($server->getBaseUri());
 
 $authPlugin = new Sabre\DAV\Auth\Plugin($authBackend, 'SugarCRM DAV Server');
 $server->addPlugin($authPlugin);
+
+$aclPlugin = new Sabre\DAVACL\Plugin();
+$server->addPlugin($aclPlugin);
+
+//@todo Should be deleted in future. Using for browse server
+$browser = new Sabre\DAV\Browser\Plugin();
+$server->addPlugin($browser);
 
 $server->exec();
