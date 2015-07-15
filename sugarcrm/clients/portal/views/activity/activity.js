@@ -16,8 +16,8 @@
  */
 ({
     events: {
-        'click .addNote': 'openNoteModal',
         'click [data-action=loadPreview]': 'loadPreview',
+        'click [data-action=addNote]': 'openNoteModal',
         'click [name=show_more_button]': 'showMoreRecords'
     },
 
