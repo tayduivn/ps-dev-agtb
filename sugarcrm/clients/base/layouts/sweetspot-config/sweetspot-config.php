@@ -18,10 +18,23 @@ $viewdefs['base']['layout']['sweetspot-config'] = array(
             'view' => 'sweetspot-config-headerpane',
         ),
         array(
-            'layout' => 'sweetspot-config-list',
-        ),
-        array(
-            'view' => 'sweetspot-config-theme',
+            'layout' => array(
+                'type' => 'fluid',
+                'components' => array(
+                    array(
+                        'layout' => array(
+                            'type' => 'sweetspot-config-list',
+                            'span' => 8,
+                        ),
+                    ),
+                    array(
+                        'view' => array(
+                            'type' => 'sweetspot-config-theme',
+                            'span' => 4,
+                        ),
+                    ),
+                ),
+            ),
         ),
     ),
 );
