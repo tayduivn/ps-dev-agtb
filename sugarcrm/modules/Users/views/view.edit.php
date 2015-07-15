@@ -21,7 +21,7 @@ var $useForSubpanel = true;
  	}
 
     function preDisplay() {
-        $this->fieldHelper = new UserViewHelper($this->ss, $this->bean, 'EditView');
+        $this->fieldHelper = UserViewHelper::create($this->ss, $this->bean, 'EditView');
         $this->fieldHelper->setupAdditionalFields();
 
         parent::preDisplay();
@@ -63,7 +63,7 @@ var $useForSubpanel = true;
 
         //make sure we can populate user type dropdown.  This usually gets populated in predisplay unless this is a quickeditform
         if(!isset($this->fieldHelper)){
-            $this->fieldHelper = new UserViewHelper($this->ss, $this->bean, 'EditView');
+            $this->fieldHelper = UserViewHelper::create($this->ss, $this->bean, 'EditView');
             $this->fieldHelper->setupAdditionalFields();
         }
 
