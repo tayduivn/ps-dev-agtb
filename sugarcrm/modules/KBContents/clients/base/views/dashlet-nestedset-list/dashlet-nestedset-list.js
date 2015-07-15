@@ -85,6 +85,15 @@
 
             this.currentFieldValue = this.context.get('model').get(this.extraModule.field);
         }
+
+        currentContext.on('subpanel:reload', function(args) {
+            if (!_.isUndefined(args) &&
+                _.isArray(args.links) &&
+                (_.contains(args.links, 'revisions') || _.contains(args.links, 'localizations'))
+            ) {
+                this.layout.reloadDashlet({complete: function() {}, saveLeafs: false});
+            }
+        }, this);
     },
 
     /**
@@ -98,6 +107,10 @@
      * {@inheritDoc}
      */
     _render: function() {
+        this._super('_render');
+        if (this.meta.config) {
+            return;
+        }
         var treeOptions = {
             settings: {
                 category_root: this.categoryRoot,
@@ -124,7 +137,6 @@
                 storage: this._getStorage()
             };
         }
-        this._super('_render');
         this._renderTree($('[data-place=dashlet-tree]'), treeOptions, callbacks);
     },
 

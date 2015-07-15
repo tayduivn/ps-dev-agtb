@@ -116,6 +116,25 @@ class IndexManager
     }
 
     /**
+     * Create the mappings for given module without re-creating the index.
+     * @param array $modules
+     * @return bool
+     */
+    public function addMappings(array $modules = array())
+    {
+        if (!$this->readyForIndexChanges()) {
+            $this->container->logger->critical('System not ready for full reindex, cancelling');
+            return false;
+        }
+
+        //add the mapping without re-creating the index
+        $this->syncIndices($modules, false);
+
+        return true;
+    }
+
+
+    /**
      * *** Zero downtime reindexing with analyzer/mapping changes ***
      *
      * Smart reindex generates the full mapping and compares the difference
@@ -272,7 +291,9 @@ class IndexManager
     ) {
         foreach ($indexCollection as $index) {
 
-            $this->createIndex($index, $analysisBuilder, $dropExist);
+            if ($dropExist === true) {
+                $this->createIndex($index, $analysisBuilder, $dropExist);
+            }
 
             // Set mapping for all available types on this index
             $types = $index->getTypes();

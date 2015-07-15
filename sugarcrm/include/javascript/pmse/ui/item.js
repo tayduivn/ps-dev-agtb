@@ -45,6 +45,16 @@ var Item = function (options, parent) {
      * @type {String}
      */
     this.toolTip = null;
+    /**
+     * Defines the tooltip value
+     * @type {String}
+     */
+    this.toolTip = null;
+    /**
+     * Define an availability state
+     * @type {null}
+     */
+    this.unavailable = null;
 
     this.disabled = null;
 
@@ -78,6 +88,7 @@ Item.prototype.initObject = function (options, parent) {
         label: null,
         menu: null,
         toolTip: null,
+        unavailable: false,
         parentMenu: parent || null,
         disabled: false,
         focused: false,
@@ -89,6 +100,7 @@ Item.prototype.initObject = function (options, parent) {
         $.extend(true, defaults, options);
         this.setLabel(defaults.label)
             .setToolTip(defaults.toolTip)
+            .setUnavailable(defaults.unavailable)
             .setParentMenu(defaults.parentMenu)
             .setDisabled(defaults.disabled)
             .setIcon(defaults.icon)
@@ -114,6 +126,8 @@ Item.prototype.loadAction = function (action, parent) {
     this.action = action;
     this.setLabel(this.action.text);
     this.setIcon(this.action.cssStyle);
+    this.setToolTip(this.action.toolTip);
+    this.setUnavailable(this.action.unavailable);
     this.setDisabled(this.action.disabled);
     this.setParentMenu(parent);
     this.setFocused(false);
@@ -202,12 +216,24 @@ Item.prototype.setToolTip = function (value) {
     return this;
 };
 
+/**
+ * Sets the tool tip value
+ * @param {String} value
+ * @return {*}
+ */
+Item.prototype.setUnavailable = function (value) {
+    this.unavailable = value;
+    return this;
+};
+
 Item.prototype.createHTML = function () {
     var li;
     li = this.createHTMLElement('li');
     li.className = 'adam-item';
-    if (this.disabled) {
+    if (this.unavailable) {
         li.className = li.className + ' adam-disabled';
+    } else if (this.disabled) {
+        li.className = li.className + ' adam-selected';
     }
     li.id = UITools.getIndex();
     this.html = li;

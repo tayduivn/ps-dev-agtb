@@ -401,11 +401,12 @@
             var first = _.first(tokens, i).join(' ');
             var rest = _.rest(tokens, i).join(' ');
 
-            // Push the 2 unique sets per field
-            _.each(fieldNames, function(name) {
-                filterList.push(this._buildFilterDef(name, operator, first));
-                filterList.push(this._buildFilterDef(name, operator, rest));
-            }, this);
+            // FIXME the order of the filters need to be reviewed (TY-547)
+            var tokenFilter = [
+                this._buildFilterDef(fieldNames[0], operator, first),
+                this._buildFilterDef(fieldNames[1], operator, rest)
+            ];
+            filterList.push(this._joinFilterDefs('$and', tokenFilter));
         }
 
         // Try with full search term in each field

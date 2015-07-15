@@ -55,15 +55,12 @@
         if (showActivities) {
             this.collection.reset();
             this.collection.resetPagination();
-            this.collection.fetch({
-                /*
-                 * Retrieve activities for the model that the user wants to preview
-                 */
-                endpoint: function(method, collection, options, callbacks) {
-                    var url = app.api.buildURL(model.module, null, {id: model.get('id'), link: 'activities'}, options.params);
+            this.collection.setOption('endpoint', function(method, collection, options, callbacks) {
+                var url = app.api.buildURL(model.module, null, {id: model.get('id'), link: 'activities'}, options.params);
 
-                    return app.api.call('read', url, null, callbacks);
-                },
+                return app.api.call('read', url, null, callbacks);
+            });
+            this.collection.fetch({
                 /*
                  * Render activity stream
                  */

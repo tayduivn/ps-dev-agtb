@@ -106,6 +106,8 @@ class PMSEEmailsTemplates extends vCardApi
      */
     public function findVariables($api, $args)
     {
+        // Initialize this var since not all requests send 'q'
+        $q = isset($args["q"]) ? $args["q"] : null;
         $this->checkACL($api, $args);
         $offset = 0;
         $limit = (!empty($args["max_num"])) ? (int)$args["max_num"] : 20;
@@ -148,7 +150,7 @@ class PMSEEmailsTemplates extends vCardApi
         $nextOffset = -1;
 
         if ($offset !== "end") {
-            $records = $this->retrieveFields($args["module_list"], $direction, $limit, $offset, $args["base_module"], $args["q"]);
+            $records = $this->retrieveFields($args["module_list"], $direction, $limit, $offset, $args["base_module"], $q);
             $totalRecords = $records['totalRecords'];
             $trueOffset = $offset + $limit;
 

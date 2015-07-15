@@ -25,9 +25,6 @@
      */
     appendValueTag: 'input[name=append_value]',
 
-    //For multi select, we replace the empty key by a temporary key because Select2 doesn't handle empty values well
-    BLANK_VALUE_ID: '___i_am_empty___',
-
     /**
      * Whether this field is in the midst of fetching options for its dropdown.
      *
@@ -600,14 +597,14 @@
      * @param value Value from select2 widget
      * @return {String|Array} Unformatted value as String or String Array
      */
-    unformat: function(value){
-        if (this.def.isMultiSelect && _.isArray(value) && _.indexOf(value, this.BLANK_VALUE_ID) > -1) {
-            value = _.clone(value);
-
-            // Delete empty values from the options array
-            delete value[this.BLANK_VALUE_ID];
+    unformat: function(value) {
+        if (this.def.isMultiSelect && _.isArray(value)) {
+            var possibleKeys = _.keys(this.items);
+            value = _.intersection(possibleKeys, value);
+            return value;
         }
-        if(this.def.isMultiSelect && _.isNull(value)){
+
+        if (this.def.isMultiSelect && _.isNull(value)) {
             return [];  // Returning value that is null equivalent to server.  Backbone.js won't sync attributes with null values.
         } else {
             return value;

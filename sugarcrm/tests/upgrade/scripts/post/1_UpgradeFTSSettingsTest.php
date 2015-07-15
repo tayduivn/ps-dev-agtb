@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use Sugarcrm\SugarcrmTestsUnit\TestReflection;
-
 require_once 'modules/UpgradeWizard/UpgradeDriver.php';
 require_once 'upgrade/scripts/post/1_UpdateFTSSettings.php';
 
@@ -38,7 +36,7 @@ class UpgradeFTSSettingsTest extends PHPUnit_Framework_TestCase
             ->method('getNewModuleList')
             ->will($this->returnValue($newModuleList));
 
-        $result = TestReflection::callProtectedMethod($stub, 'mergeModuleList', array());
+        $result = SugarTestReflection::callProtectedMethod($stub, 'mergeModuleList', array());
         $this->assertEquals($expected, $result);
     }
 
@@ -115,7 +113,7 @@ class UpgradeFTSSettingsTest extends PHPUnit_Framework_TestCase
             ->method('getUsaModuleList')
             ->will($this->returnValue($usaModuleList));
 
-        $result = TestReflection::callProtectedMethod($stub, 'getOldModuleList', array());
+        $result = SugarTestReflection::callProtectedMethod($stub, 'getOldModuleList', array());
         $this->assertEquals($expected, $result);
     }
 
@@ -180,7 +178,7 @@ class UpgradeFTSSettingsTest extends PHPUnit_Framework_TestCase
             ->method('getFTSModuleList')
             ->will($this->returnValue(array($ftsEnabled, $ftsDisabled)));
 
-        $result = TestReflection::callProtectedMethod($stub, 'getNewModuleList', array());
+        $result = SugarTestReflection::callProtectedMethod($stub, 'getNewModuleList', array());
         $this->assertEquals($expected, $result);
     }
 
@@ -222,7 +220,7 @@ class UpgradeFTSSettingsTest extends PHPUnit_Framework_TestCase
     {
         $stub = $this->getClassMock();
 
-        $result = TestReflection::callProtectedMethod($stub, 'getSugarFieldName', array($file));
+        $result = SugarTestReflection::callProtectedMethod($stub, 'getSugarFieldName', array($file));
         $this->assertEquals($expected, $result);
     }
 
@@ -265,7 +263,7 @@ class UpgradeFTSSettingsTest extends PHPUnit_Framework_TestCase
     {
         $stub = $this->getClassMock();
 
-        $result = TestReflection::callProtectedMethod($stub, 'mergeFtsDefs', array($oldDef, $newDef));
+        $result = SugarTestReflection::callProtectedMethod($stub, 'mergeFtsDefs', array($oldDef, $newDef));
         $this->assertEquals($expected, $result);
     }
 

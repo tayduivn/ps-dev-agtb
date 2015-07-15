@@ -29,7 +29,9 @@ if ( !isset($_SERVER['HTTP_USER_AGENT']) )
     $_SERVER['HTTP_USER_AGENT'] = 'cli';
 
 // move current working directory
-chdir(dirname(__FILE__) . '/..');
+if (basename(getcwd()) == 'tests' || !is_file('include/entryPoint.php')) {
+  chdir(dirname(__FILE__) . '/..');
+}
 
 // this is needed so modules.php properly registers the modules globals, otherwise they
 // end up defined in wrong scope

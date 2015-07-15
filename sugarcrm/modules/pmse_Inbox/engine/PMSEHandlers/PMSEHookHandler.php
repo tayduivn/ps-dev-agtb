@@ -125,10 +125,15 @@ class PMSEHookHandler
                 $redirect = 'none'; //possible values are 'none', 'partial', 'halt'
 
                 foreach ($pro_locked_variables as $field) {
-                    if ((isset($bean->{$field}) || isset($fetched_row[$field])) && $bean->{$field} != $fetched_row[$field]) {
-                        $redirect = 'partial';
-                        $bean->{$field} = $fetched_row[$field];
-                        $this->logger->debug("[$cas_id][$cas_index] locked field '$field' has value '{$bean->{$field}}'");
+                    if (isset($bean->{$field}) || isset($fetched_row[$field])) {
+                        if (!isset($fetched_row[$field])) {
+                            $fetched_row[$field] = '';
+                        }
+                        if ($bean->{$field} != $fetched_row[$field]) {
+                            $redirect = 'partial';
+                            $bean->{$field} = $fetched_row[$field];
+                            $this->logger->debug("[$cas_id][$cas_index] locked field '$field' has value '{$bean->{$field}}'");
+                        }
                     }
                 }
             } //there is a case for this record

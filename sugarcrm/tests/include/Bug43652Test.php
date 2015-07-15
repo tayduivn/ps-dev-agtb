@@ -11,8 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('include/externalAPI/Google/ExtAPIGoogle.php');
-
+require_once 'include/externalAPI/Base/ExternalAPIBase.php';
 
 /**
  * @ticket 43652
@@ -20,12 +19,13 @@ require_once('include/externalAPI/Google/ExtAPIGoogle.php');
 class Bug43652Test extends Sugar_PHPUnit_Framework_TestCase
 {
     private $fileData1;
+
+    /** @var ExternalAPIBase */
     private $extAPI;
 
     public function setUp()
     {
-        //Just need base class but its abstract so we use the google implementation for this test.
-        $this->extAPI = new ExtAPIGoogle();
+        $this->extAPI = $this->getMockForAbstractClass('ExternalAPIBase');
         $this->fileData1 = sugar_cached('unittest');
         file_put_contents($this->fileData1, "Unit test for mime type");
     }

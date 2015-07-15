@@ -10,17 +10,19 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use Sugarcrm\Sugarcrm\Security\Csrf\CsrfAuthenticator;
-
-/**
- * Return the configured CSRF form token field name.
- *
- * @param array $params
- * @param Smarty $smarty
- * @return string
- */
-function smarty_function_sugar_csrf_form_token_field($params, &$smarty)
+class ImportViewAuthenticatedSources extends SugarView
 {
-    return CsrfAuthenticator::getInstance()->getFormTokenField();
-}
+    /** {@inheritdoc} */
+    public function process()
+    {
+        $sources = $this->getAuthenticatedImportableExternalEAPMs();
 
+        header('Content-Type: application/json');
+        echo json_encode($sources);
+    }
+
+    private function getAuthenticatedImportableExternalEAPMs()
+    {
+        return ExternalAPIFactory::getModuleDropDown('Import', false, false);
+    }
+}

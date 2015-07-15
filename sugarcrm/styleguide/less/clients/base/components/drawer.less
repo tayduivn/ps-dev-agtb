@@ -8,7 +8,6 @@
     top: 0;
     height: 100%;
     width: 100%;
-    overflow: hidden;
 
     /* backdrop cover */
     .drawer-backdrop {
@@ -61,6 +60,8 @@ body.noscroll {
 //UIUX-808: remove buttons from headerpane when in drawer
 //UIUX-888: remove fixed position of header bar in drawer
 .drawer.inactive {
+    overflow: hidden;
+
     .main-pane {
         position: relative;
         top: 5px;

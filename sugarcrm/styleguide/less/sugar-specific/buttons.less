@@ -180,3 +180,14 @@
     }
   }
 }
+
+.btn.btn-input-addon {
+  z-index: 2;
+  position: absolute;
+  right: 0;
+}
+input.required + .btn.btn-input-addon {
+  border-bottom: 1px solid @grayLight;
+  border-top: 1px solid @grayLight;
+  border-right: 1px solid @grayLight;
+}

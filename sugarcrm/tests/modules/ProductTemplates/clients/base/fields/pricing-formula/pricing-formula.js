@@ -185,4 +185,58 @@ describe('ProductTemplates.Base.Field.PricingFormula', function() {
             });
         });
     });
+
+    describe('setupPricingFormula', function(){
+        beforeEach(function(){
+            sandbox.stub(field, '_setupProfitMarginFormula', function(){});
+            sandbox.stub(field, '_setupPercentageMarkupFormula', function(){});
+            sandbox.stub(field, '_setupPercentageDiscountFormula', function(){});
+            sandbox.stub(field, '_setupIsListFormula', function(){});
+        });
+
+        it('will call _setupProfitMarginFormula', function(){
+            field.model.set(field.name, 'ProfitMargin');
+            field.setupPricingFormula();
+            expect(field._setupProfitMarginFormula).toHaveBeenCalled();
+        });
+
+        it('will call _setupPercentageMarkupFormula', function(){
+            field.model.set(field.name, 'PercentageMarkup');
+            field.setupPricingFormula();
+            expect(field._setupPercentageMarkupFormula).toHaveBeenCalled();
+        });
+
+        it('will call _setupPercentageDiscountFormula', function(){
+            field.model.set(field.name, 'PercentageDiscount');
+            field.setupPricingFormula();
+            expect(field._setupPercentageDiscountFormula).toHaveBeenCalled();
+        });
+
+        it('will call _setupIsListFormula', function(){
+            field.model.set(field.name, 'IsList');
+            field.setupPricingFormula();
+            expect(field._setupIsListFormula).toHaveBeenCalled();
+        });
+
+        it('will leave discount_price alone', function(){
+            field.model.set('discount_price', 42);
+            field.model.set(field.name, 'Fixed Price');
+            field.setupPricingFormula();
+            expect(field.model.get('discount_price')).toEqual(42);
+        });
+
+        it('will set discount_price to \'\' when it starts as undefined', function(){
+            field.model.set('discount_price', undefined);
+            field.model.set(field.name, 'Fixed Price');
+            field.setupPricingFormula();
+            expect(field.model.get('discount_price')).toEqual('');
+        });
+
+        it('will set discount_price to \'\' when it starts as NaN', function(){
+            field.model.set('discount_price', NaN);
+            field.model.set(field.name, 'Fixed Price');
+            field.setupPricingFormula();
+            expect(field.model.get('discount_price')).toEqual('');
+        });
+    });
 });

@@ -59,8 +59,6 @@ class VardefManager{
     {
         global $dictionary;
 
-        include_once('modules/TableDictionary.php');
-
         if (isset($GLOBALS['dictionary'][$object]['uses'])) {
             // Load in the vardef 'uses' first
             $templates = array_merge($GLOBALS['dictionary'][$object]['uses'], $templates);
@@ -1029,6 +1027,9 @@ class VardefManager{
 
         // Some of the vardefs do not correctly define dictionary as global.  Declare it first.
         global $dictionary;
+
+        include_once('modules/TableDictionary.php');
+
         if (empty($GLOBALS['dictionary'][$object]) || $refresh || !isset($GLOBALS['dictionary'][$object]['fields'])) {
             //if the consumer has demanded a refresh or the cache/modules... file
             //does not exist, then we should do out and try to reload things

@@ -146,6 +146,123 @@ AdamEvent.prototype = new AdamShape();
  */
 AdamEvent.prototype.type = "AdamEvent";
 
+AdamEvent.ACTION_TYPES = {
+    START_LEAD: 0,
+    START_OPPORTUNITY: 1,
+    START_DOCUMENT: 2,
+    START_OTHER: 3,
+    INTERMEDIATE_RECEIVE_MESSAGE: 4,
+    INTERMEDIATE_SEND_MESSAGE: 5,
+    INTERMEDIATE_TIMER: 6,
+    END_EMPTY: 7,
+    END_SEND_MESSAGE: 8,
+    END_TERMINATE: 9,
+    BOUNDARY_RECEIVE_MESSAGE: 10,
+    BOUNDARY_TIMER: 11
+};
+
+AdamEvent.ACTION_TYPE = [
+    {
+        text: 'LBL_PMSE_CONTEXT_MENU_LEADS',
+        cssStyle: 'adam-menu-icon-event-leads',
+        evn_marker: 'MESSAGE',
+        evn_message: 'Leads',
+        evn_behavior: 'CATCH',
+        evn_type: 'START',
+        evn_message: 'Leads',
+        nameIdentifier: 'AdamEventLead'
+    },
+    {
+        text: 'LBL_PMSE_CONTEXT_MENU_OPPORTUNITIES',
+        cssStyle: 'adam-menu-icon-event-opportunities',
+        evn_marker: 'MESSAGE',
+        evn_message: 'Opportunities',
+        evn_behavior: 'CATCH',
+        evn_type:'START',
+        evn_message: 'Opportunities',
+        nameIdentifier: 'AdamEventOpportunity'
+    },
+    {
+        text: 'LBL_PMSE_CONTEXT_MENU_DOCUMENTS',
+        cssStyle: 'adam-menu-icon-event-documents',
+        evn_marker: 'MESSAGE',
+        evn_message: 'Documents',
+        evn_behavior: 'CATCH',
+        evn_type: 'START',
+        evn_message: 'Documents',
+        nameIdentifier: 'AdamEventDocument'
+    },
+    {
+        text: 'LBL_PMSE_CONTEXT_MENU_OTHER_MODULES',
+        cssStyle: '',
+        evn_marker: 'MESSAGE',
+        evn_message: '',
+        evn_behavior: 'CATCH',
+        evn_type: 'START',
+        evn_message: '',
+        nameIdentifier: 'AdamEventOtherModule'
+    },
+    {
+        text: 'LBL_PMSE_CONTEXT_MENU_RECEIVE_MESSAGE',
+        cssStyle: 'adam-menu-icon-event-recive-message',
+        evn_marker: 'MESSAGE',
+        evn_behavior: 'CATCH',
+        evn_type: 'INTERMEDIATE',
+        nameIdentifier: 'AdamEventReceiveMessage'
+    },
+    {
+        text: 'LBL_PMSE_CONTEXT_MENU_SEND_MESSAGE',
+        cssStyle: 'adam-menu-icon-event-send-message',
+        evn_marker: 'MESSAGE',
+        evn_behavior: 'THROW',
+        evn_type: 'INTERMEDIATE',
+        nameIdentifier: 'AdamEventMessage'
+    },
+    {
+        text: 'LBL_PMSE_CONTEXT_MENU_TIMER',
+        cssStyle: 'adam-menu-icon-event-timer',
+        evn_marker: 'TIMER',
+        evn_behavior: 'CATCH',
+        evn_type: 'INTERMEDIATE',
+        nameIdentifier: 'AdamEventTimer'
+    },
+    {
+        text: 'LBL_PMSE_CONTEXT_MENU_DO_NOTHING',
+        cssStyle: '',
+        evn_marker: 'EMPTY',
+        evn_behavior: 'THROW',
+        evn_type: 'END'
+    },
+    {
+        text: 'LBL_PMSE_CONTEXT_MENU_SEND_MESSAGE',
+        cssStyle: 'adam-menu-icon-event-send-message',
+        evn_marker: 'MESSAGE',
+        evn_behavior: 'THROW',
+        evn_type: 'END'
+    },
+    {
+        text: 'LBL_PMSE_CONTEXT_MENU_TERMINATE_PROCESS',
+        cssStyle: 'adam-menu-icon-event-terminate-process',
+        evn_marker: 'TERMINATE',
+        evn_behavior: 'THROW',
+        evn_type: 'END'
+    },
+    {
+        text: 'LBL_PMSE_CONTEXT_MENU_RECEIVE_MESSAGE',
+        cssStyle: 'adam-menu-icon-event-recive-message',
+        evn_marker: 'MESSAGE',
+        evn_behavior: 'CATCH',
+        evn_type: 'BOUNDARY'
+    },
+    {
+        text: 'LBL_PMSE_CONTEXT_MENU_TIMER',
+        cssStyle: 'adam-menu-icon-event-timer',
+        evn_marker: 'TIMER',
+        evn_behavior: 'CATCH',
+        evn_type: 'BOUNDARY'
+    }
+];
+
 /**
  * Initialize the object with default values
  * @param {Object} options
@@ -474,10 +591,70 @@ AdamEvent.prototype.getEventMessage = function () {
     return this.evn_message;
 };
 
+AdamEvent.prototype._isDisabledAction = function (definition) {
+    switch (definition.evn_type) {
+        case 'START':
+            return (this.evn_marker === definition.evn_marker) &&
+                (this.evn_behavior === definition.evn_behavior) &&
+                (this.evn_type === definition.evn_type) &&
+                (definition.evn_message === '' ?
+                    (this.evn_message === definition.evn_message || this.evn_message === null)
+                    : this.evn_message === definition.evn_message);
+        case 'INTERMEDIATE':
+        case 'END':
+        case 'BOUNDARY':
+            return (this.evn_marker === definition.evn_marker) &&
+                (this.evn_behavior === definition.evn_behavior) &&
+                (this.evn_type === definition.evn_type);
+        default:
+            throw new Error("_isDisabledAction(): Invalid definition evn_type.");
+    }
+};
+
+AdamEvent.prototype._getActionHandler = function (definition) {
+    var self = this;
+    return function () {
+        var cfg = {};
+        var name;
+
+        if (definition.nameIdentifier) {
+            cfg.evn_name  = getAutoIncrementName(definition.nameIdentifier, self);
+        }
+
+        switch (definition.evn_type) {
+            case 'START':
+                cfg.message = definition.evn_message;
+            case 'INTERMEDIATE':
+            case 'END':
+            case 'BOUNDARY':
+                cfg.evn_marker = definition.evn_marker;
+                cfg.evn_behavior = definition.evn_behavior;
+                break;
+            default:
+                throw new Error("_getActionHandler(): Invalid definition evn_type.");
+        }
+        self.updateEventMarker(cfg);
+    };
+};
+
+AdamEvent.prototype._createAction = function (type) {
+    var actionDefinition = AdamEvent.ACTION_TYPE[type];
+    var actionCFG = {};
+
+    if (!actionDefinition) {
+        throw new Error("_createAction(): Invalid type.");
+    }
+
+    actionCFG.text = translate(actionDefinition.text);
+    actionCFG.cssStyle = actionDefinition.cssStyle;
+    actionCFG.disabled = this._isDisabledAction(actionDefinition);
+    actionCFG.handler = this._getActionHandler(actionDefinition);
+
+    return new Action(actionCFG);
+};
+
 AdamEvent.prototype.getContextMenu = function () {
-    var deleteAction, leadAction, opportunityAction, documentAction, otherAction,
-        msgCatchAction, msgThrowAction, timerAction, endEmptyAction, endMessageAction, endTerminateAction,
-        boundaryMessageAction, boundaryTimerAction,
+    var deleteAction,
         startAction, intermediateAction, endAction,
         modulesMenu, typeMenu,
         self = this,
@@ -532,179 +709,6 @@ AdamEvent.prototype.getContextMenu = function () {
         }
     });
 
-    leadAction = new Action({
-        text: translate('LBL_PMSE_CONTEXT_MENU_LEADS'),
-        cssStyle : 'adam-menu-icon-event-leads',
-        handler: function () {
-            self.updateEventMarker({
-                evn_marker: 'MESSAGE',
-                evn_message: 'Leads',
-                evn_behavior: 'CATCH'
-            });
-        },
-        disabled: (this.evn_marker === 'MESSAGE') &&
-                  (this.evn_behavior === 'CATCH') &&
-                  (this.evn_type === 'START') &&
-                  (this.evn_message === 'Leads')
-    });
-
-    opportunityAction = new Action({
-        text: translate('LBL_PMSE_CONTEXT_MENU_OPPORTUNITIES'),
-        cssStyle : 'adam-menu-icon-event-opportunities',
-        handler: function () {
-            self.updateEventMarker({
-                evn_marker: 'MESSAGE',
-                evn_message: 'Opportunities',
-                evn_behavior: 'CATCH'
-            });
-        },
-        disabled: (this.evn_marker === 'MESSAGE') &&
-                  (this.evn_behavior === 'CATCH') &&
-                  (this.evn_type === 'START') &&
-                  (this.evn_message === 'Opportunities')
-    });
-
-    documentAction = new Action({
-        text: translate('LBL_PMSE_CONTEXT_MENU_DOCUMENTS'),
-        cssStyle : 'adam-menu-icon-event-documents',
-        handler: function () {
-            self.updateEventMarker({
-                evn_marker: 'MESSAGE',
-                evn_message: 'Documents',
-                evn_behavior: 'CATCH'
-            });
-        },
-        disabled: (this.evn_marker === 'MESSAGE') &&
-                  (this.evn_behavior === 'CATCH') &&
-                  (this.evn_type === 'START') &&
-                  (this.evn_message === 'Documents')
-    });
-
-    otherAction = new Action({
-        text: translate('LBL_PMSE_CONTEXT_MENU_OTHER_MODULES'),
-        handler: function () {
-            self.updateEventMarker({
-                evn_marker: 'MESSAGE',
-                evn_message: '',
-                evn_behavior: 'CATCH'
-            });
-        },
-        disabled: (this.evn_marker === 'MESSAGE') &&
-                  (this.evn_behavior === 'CATCH') &&
-                  (this.evn_type === 'START') &&
-                  (this.evn_message === '' || this.evn_message === null)
-    });
-
-    msgCatchAction = new Action({
-        text: translate('LBL_PMSE_CONTEXT_MENU_RECEIVE_MESSAGE'),
-        cssStyle: 'adam-menu-icon-event-recive-message',
-        handler: function () {
-            self.updateEventMarker({
-                evn_marker: 'MESSAGE',
-                evn_behavior: 'CATCH'
-            });
-        },
-        disabled: (this.evn_marker === 'MESSAGE') &&
-                  (this.evn_behavior === 'CATCH') &&
-                  (this.evn_type === 'INTERMEDIATE')
-    });
-    msgThrowAction = new Action({
-        text: translate('LBL_PMSE_CONTEXT_MENU_SEND_MESSAGE'),
-        cssStyle: 'adam-menu-icon-event-send-message',
-        handler: function () {
-            self.updateEventMarker({
-                evn_marker: 'MESSAGE',
-                evn_behavior: 'THROW'
-            });
-        },
-        disabled: (this.evn_marker === 'MESSAGE') &&
-                  (this.evn_behavior === 'THROW') &&
-                  (this.evn_type === 'INTERMEDIATE')
-    });
-
-    timerAction = new Action({
-        text: translate('LBL_PMSE_CONTEXT_MENU_TIMER'),
-        cssStyle: 'adam-menu-icon-event-timer',
-        handler: function () {
-            self.updateEventMarker({
-                evn_marker: 'TIMER',
-                evn_behavior: 'CATCH'
-            });
-        },
-        disabled: (this.evn_marker === 'TIMER') &&
-                  (this.evn_behavior === 'CATCH') &&
-                  (this.evn_type === 'INTERMEDIATE')
-    });
-
-    endEmptyAction = new Action({
-        text: translate('LBL_PMSE_CONTEXT_MENU_DO_NOTHING'),
-        handler: function () {
-            self.updateEventMarker({
-                evn_marker: 'EMPTY',
-                evn_behavior: 'THROW'
-            });
-        },
-        disabled: (this.evn_marker === 'EMPTY') &&
-                  (this.evn_behavior === 'THROW') &&
-                  (this.evn_type === 'END')
-    });
-
-    endMessageAction = new Action({
-        text: translate('LBL_PMSE_CONTEXT_MENU_SEND_MESSAGE'),
-        cssStyle: 'adam-menu-icon-event-send-message',
-        handler: function () {
-            self.updateEventMarker({
-                evn_marker: 'MESSAGE',
-                evn_behavior: 'THROW'
-            });
-        },
-        disabled: (this.evn_marker === 'MESSAGE') &&
-                  (this.evn_behavior === 'THROW') &&
-                  (this.evn_type === 'END')
-    });
-
-    endTerminateAction = new Action({
-        text: translate('LBL_PMSE_CONTEXT_MENU_TERMINATE_PROCESS'),
-        cssStyle: 'adam-menu-icon-event-terminate-process',
-        handler: function () {
-            self.updateEventMarker({
-                evn_marker: 'TERMINATE',
-                evn_behavior: 'THROW'
-            });
-        },
-        disabled: (this.evn_marker === 'TERMINATE') &&
-                  (this.evn_behavior === 'THROW') &&
-                  (this.evn_type === 'END')
-    });
-
-    boundaryMessageAction = new Action({
-        text: translate('LBL_PMSE_CONTEXT_MENU_RECEIVE_MESSAGE'),
-        cssStyle: 'adam-menu-icon-event-recive-message',
-        handler: function () {
-            self.updateEventMarker({
-                evn_marker: 'MESSAGE',
-                evn_behavior: 'CATCH'
-            });
-        },
-        disabled: (this.evn_marker === 'MESSAGE') &&
-                  (this.evn_behavior === 'CATCH') &&
-                  (this.evn_type === 'BOUNDARY')
-    });
-
-    boundaryTimerAction = new Action({
-        text: translate('LBL_PMSE_CONTEXT_MENU_TIMER'),
-        cssStyle: 'adam-menu-icon-event-timer',
-        handler: function () {
-            self.updateEventMarker({
-                evn_marker: 'TIMER',
-                evn_behavior: 'CATCH'
-            });
-        },
-        disabled: (this.evn_marker === 'TIMER') &&
-                  (this.evn_behavior === 'CATCH') &&
-                  (this.evn_type === 'BOUNDARY')
-    });
-
     modulesMenu = {
         label: '',
         menu: {
@@ -714,36 +718,31 @@ AdamEvent.prototype.getContextMenu = function () {
     switch (this.evn_type) {
     case 'START':
         modulesMenu.label = translate('LBL_PMSE_CONTEXT_MENU_LISTEN');
-        modulesMenu.menu.items.push(leadAction);
-        modulesMenu.menu.items.push(opportunityAction);
-        modulesMenu.menu.items.push(documentAction);
-        modulesMenu.menu.items.push(otherAction);
+        modulesMenu.menu.items.push(this._createAction(AdamEvent.ACTION_TYPES.START_LEAD));
+        modulesMenu.menu.items.push(this._createAction(AdamEvent.ACTION_TYPES.START_OPPORTUNITY));
+        modulesMenu.menu.items.push(this._createAction(AdamEvent.ACTION_TYPES.START_DOCUMENT));
+        modulesMenu.menu.items.push(this._createAction(AdamEvent.ACTION_TYPES.START_OTHER));
         break;
     case 'INTERMEDIATE':
         modulesMenu.label = translate('LBL_PMSE_CONTEXT_MENU_ACTION');
-        modulesMenu.menu.items.push(msgCatchAction);
-        modulesMenu.menu.items.push(msgThrowAction);
-        modulesMenu.menu.items.push(timerAction);
+        modulesMenu.menu.items.push(this._createAction(AdamEvent.ACTION_TYPES.INTERMEDIATE_RECEIVE_MESSAGE));
+        modulesMenu.menu.items.push(this._createAction(AdamEvent.ACTION_TYPES.INTERMEDIATE_SEND_MESSAGE));
+        modulesMenu.menu.items.push(this._createAction(AdamEvent.ACTION_TYPES.INTERMEDIATE_TIMER));
         break;
     case 'END':
         modulesMenu.label = translate('LBL_PMSE_CONTEXT_MENU_RESULT');
-        modulesMenu.menu.items.push(endEmptyAction);
-        modulesMenu.menu.items.push(endMessageAction);
-        modulesMenu.menu.items.push(endTerminateAction);
+        modulesMenu.menu.items.push(this._createAction(AdamEvent.ACTION_TYPES.END_EMPTY));
+        modulesMenu.menu.items.push(this._createAction(AdamEvent.ACTION_TYPES.END_SEND_MESSAGE));
+        modulesMenu.menu.items.push(this._createAction(AdamEvent.ACTION_TYPES.END_TERMINATE));
         break;
     case 'BOUNDARY':
         modulesMenu.label = translate('LBL_PMSE_CONTEXT_MENU_EVENT');
-        modulesMenu.menu.items.push(boundaryMessageAction);
-        modulesMenu.menu.items.push(boundaryTimerAction);
+        modulesMenu.menu.items.push(this._createAction(AdamEvent.ACTION_TYPES.BOUNDARY_RECEIVE_MESSAGE));
+        modulesMenu.menu.items.push(this._createAction(AdamEvent.ACTION_TYPES.BOUNDARY_TIMER));
         break;
     }
     modulesMenu.icon = 'adam-menu-icon-convert';
 
-    // if ((this.evn_marker === 'MESSAGE') &&
-    //               (this.evn_behavior === 'CATCH') &&
-    //               (this.evn_type === 'INTERMEDIATE')){
-    //     configureAction.setDisabled(true);
-    // }
     mitems.push(
         configureAction,
         {

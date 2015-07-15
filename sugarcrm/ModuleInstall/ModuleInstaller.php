@@ -3100,8 +3100,6 @@ class ModuleInstaller{
      */
     protected function updateSystemTabs($action, $installed_modules)
     {
-        global $moduleList;
-
         $controller = new TabController();
         $isSystemTabsInDB = $controller->is_system_tabs_in_db();
         if ($isSystemTabsInDB && !empty($installed_modules)) {
@@ -3124,10 +3122,6 @@ class ModuleInstaller{
                     }
                     $controller->set_system_tabs($currentTabs);
                     break;
-            }
-
-            if (isset($_SESSION['get_workflow_admin_modules_for_user'])) {
-                return $_SESSION['get_workflow_admin_modules_for_user'];
             }
         }
     }
