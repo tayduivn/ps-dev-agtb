@@ -29,7 +29,7 @@
 	{if $hideLevel < 5 && empty($vardef.function)}
 		{html_options name="default[]" id="default[]" selected=$selected_options options=$default_dropdowns multiple=$multi}
 	{else}
-		<input type='hidden' name='default[]' id='default[]' value='$vardef.default'>{$vardef.default}
+		<input type='hidden' name='default[]' id='default[]' value='{$vardef.default}'>{$vardef.default}
 	{/if}
 	</td>
 </tr>

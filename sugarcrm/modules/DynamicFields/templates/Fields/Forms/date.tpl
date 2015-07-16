@@ -17,7 +17,7 @@
 	{if $hideLevel < 5}
 		{html_options id='default' name='default' options=$default_values selected=$vardef.display_default}
 	{else}
-		<input type='hidden' id='default' name='default' value='$vardef.display_default'>{$vardef.display_default}
+		<input type='hidden' id='default' name='default' value='{$vardef.display_default}'>{$vardef.display_default}
 	{/if}
 	</td>
 </tr>
