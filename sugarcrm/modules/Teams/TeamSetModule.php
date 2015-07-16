@@ -17,7 +17,7 @@ require_once('vendor/ytree/Node.php');
 
  * Description:  TODO: To be written.
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.$
+ * All Rights Reserved.
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 /**

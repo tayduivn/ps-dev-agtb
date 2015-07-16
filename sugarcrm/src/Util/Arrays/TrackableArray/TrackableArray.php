@@ -81,7 +81,9 @@ class TrackableArray extends \ArrayObject
                 unset($this->modifiedKeys[$offset]);
             }
         }
-        parent::offsetUnset($offset);
+        if ($this->offsetExists($offset)) {
+            parent::offsetUnset($offset);
+        }
     }
 
     /**
@@ -197,7 +199,7 @@ class TrackableArray extends \ArrayObject
 
     public function __toString()
     {
-        return print_r($this, true);
+        return (string) print_r($this, true);
     }
 
 
