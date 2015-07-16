@@ -56,116 +56,98 @@ class ActivitiesApiTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $records = array(
             array(
-                'display_parent_type' => '',
-                'display_parent_id' => '',
-                'comment_count' => 0,
-                'last_comment'  => json_encode(array()),
-                'date_modified' => "2013-12-25 13:00:00",
-                'date_entered'  => "2013-12-25 13:00:00",
+                'activities__date_modified' => '2015-07-09 15:09:57',
+                'id' => 'ba0105b3-a975-9ea9-f1ed-559e8e1699c9',
+                'date_entered' => '2015-07-09 15:09:57',
+                'date_modified' => '2015-07-09 15:09:57',
+                'modified_user_id' => '1',
+                'created_by' => '1',
+                'deleted' => '0',
+                'parent_id' => '',
+                'parent_type' => '',
                 'activity_type' => 'update',
-                'first_name'    => 'Davey',
-                'last_name'     => 'Crockett',
-                'fields'        => json_encode(array('first_name', 'last_name', 'lead_source', 'city')),
-                'data'          => json_encode(
+                'data' => json_encode(
                     array(
-                        'object'  => array(
-                            'type'   => 'Lead',
+                        'object' => array(
+                            'type' => 'Lead',
                             'module' => 'Leads',
-                            'name'   => 'Davey Crockett',
+                            'name' => 'Davey Crockett',
                         ),
                         'changes' => array(
                             'lead_source' => array(
                                 'field_name' => 'lead_source',
-                                'before'     => 'xxx',
-                                'after'      => 'yyy',
+                                'before' => 'xxx',
+                                'after' => 'yyy',
                             ),
                         ),
                     )
                 ),
+                'comment_count' => '0',
+                'last_comment' => '{"name":"","deleted":false,"data":[]}',
+                'first_name' => 'Davey',
+                'last_name' => 'Crockett',
+                'picture' => '1d74bee8-a666-72ea-ed32-559bd81b44ec',
+                'fields' => json_encode(array('first_name', 'last_name', 'lead_source', 'city')),
             ),
             array(
-                'display_parent_type' => '',
-                'display_parent_id' => '',
-                'comment_count' => 0,
-                'last_comment'  => json_encode(array()),
-                'date_modified' => "2013-12-25 13:00:00",
-                'date_entered'  => "2013-12-25 13:00:00",
+                'activities__date_modified' => '2015-07-09 15:09:55',
+                'id' => '12037c89-f75f-a8fb-1284-559e8e347e76',
+                'date_entered' => '2015-07-09 15:09:55',
+                'date_modified' => '2015-07-09 15:09:55',
+                'modified_user_id' => '1',
+                'created_by' => '1',
+                'deleted' => '0',
+                'parent_id' => '',
+                'parent_type' => '',
                 'activity_type' => 'update',
-                'first_name'    => 'Jim',
-                'last_name'     => 'Bowie',
-                'fields'        => json_encode(array('opt_out')),
-                'data'          => json_encode(
+                'data' => json_encode(
                     array(
-                        'object'  => array(
-                            'type'   => 'Contact',
+                        'object' => array(
+                            'type' => 'Contact',
                             'module' => 'Contacts',
-                            'name'   => 'Jim Bowie',
+                            'name' => 'Jim Bowie',
                         ),
                         'changes' => array(
                             'opt_out' => array(
                                 'field_name' => 'opt_out',
-                                'before'     =>  false,
-                                'after'      =>  true,
+                                'before' => false,
+                                'after' => true,
                             ),
                         ),
                     )
                 ),
+                'comment_count' => '0',
+                'last_comment' => '{"name":"","deleted":false,"data":[]}',
+                'first_name' => 'Jim',
+                'last_name' => 'Bowie',
+                'picture' => '1d74bee8-a666-72ea-ed32-559bd81b44ec',
+                'fields' => json_encode(array('opt_out')),
             ),
         );
         $records[] = array(); // Need One Bogus Record that Formatter will POP
 
-        $expected = array(
-            'records' => array(
-                array(
-                    'display_parent_type' => '',
-                    'display_parent_id' => '',
-                    'comment_count'   => 0,
-                    'last_comment'    => array(),
-                    'date_modified'   => '2013-12-25T13:00:00+00:00',
-                    'date_entered'    => '2013-12-25T13:00:00+00:00',
-                    'activity_type'   => 'update',
-                    'first_name'    => 'Davey',
-                    'last_name'     => 'Crockett',
-                    'data'            => array(
-                        'object'  => array(
-                            'type'   => 'Lead',
-                            'module' => 'Leads',
-                            'name'   => 'Davey Crockett',
-                        ),
-
-                        'changes' => array(              // User Has Access to lead_source field - Change Data Expected
-                            'lead_source' => array(
-                                'field_name' => 'lead_source',
-                                'before'     => 'xxx',
-                                'after'      => 'yyy',
-                            ),
-                        ),
-                    ),
-                    'created_by_name' => 'Davey Crockett',
-                ),
-                array(
-                    'display_parent_type' => '',
-                    'display_parent_id' => '',
-                    'comment_count'   => 0,
-                    'last_comment'    => array(),
-                    'date_modified'   => '2013-12-25T13:00:00+00:00',
-                    'date_entered'    => '2013-12-25T13:00:00+00:00',
-                    'activity_type'   => 'update',
-                    'first_name'      => 'Jim',
-                    'last_name'       => 'Bowie',
-                    'data'            => array(
-                        'object'  => array(
-                            'type'   => 'Contact',
-                            'module' => 'Contacts',
-                            'name'   => 'Jim Bowie',
-                        ),
-                        'changes' => array(),               // User Has No Access to opt_out field - No Change Data Expected
-                    ),
-                    'created_by_name' => 'Jim Bowie',
+        $expectedLeadDataChanges = array(
+            'object' => array(
+                'type' => 'Lead',
+                'module' => 'Leads',
+                'name' => 'Davey Crockett',
+            ),
+            'changes' => array(              // User Has Access to lead_source field - Change Data Expected
+                'lead_source' => array(
+                    'field_name' => 'lead_source',
+                    'before' => 'xxx',
+                    'after' => 'yyy',
                 ),
             ),
-            'next_offset' => -1,
-            'args'        => array(),
+        );
+
+        $expectedContactDataChanges =  array(
+            'object'  => array(
+                'type'   => 'Contact',
+                'module' => 'Contacts',
+                'name'   => 'Jim Bowie',
+            ),
+            'changes' => array(),
         );
 
         $sugarQueryMock = $this->getMock("SugarQuery", array("execute"));
@@ -174,18 +156,19 @@ class ActivitiesApiTest extends Sugar_PHPUnit_Framework_TestCase
             ->will($this->returnValue($records));
 
         // Inject SugarACL checkFieldList()
-        $aclLead                     = new TestSugarACLStatic();
-        $aclLead->return_value       = array('lead_source' => true);  //User Has Field Level Access to Leads::lead_source field
-        $aclContact                  = new TestSugarACLStatic();
-        $aclContact->return_value    = array('opt_out' => false);     //User Does Not Have Field Level Access to Contacts::opt_out field
+        $aclLead = new TestSugarACLStatic();
+        $aclLead->return_value = array('lead_source' => true);  //User Has Field Level Access to Leads::lead_source field
+        $aclContact = new TestSugarACLStatic();
+        $aclContact->return_value = array('opt_out' => false);     //User Does Not Have Field Level Access to Contacts::opt_out field
         SugarACL::resetACLs();
-        SugarACL::$acls['Leads']    = array($aclLead);
+        SugarACL::$acls['Leads'] = array($aclLead);
         SugarACL::$acls['Contacts'] = array($aclContact);
 
         $activitiesApi = new TestActivitiesApi();
-        $actual        = $activitiesApi->exec_formatResult($this->api, array(), $sugarQueryMock, null);
+        $actual = $activitiesApi->exec_formatResult($this->api, array(), $sugarQueryMock, null);
 
-        $this->assertEquals($expected, $actual, "Expected Activities Records with Field Access Applied correctly across Modules");
+        $this->assertEquals($expectedLeadDataChanges, $actual['records'][0]['data'], "Expected Activities Records with Field Access Applied correctly across Modules");
+        $this->assertEquals($expectedContactDataChanges, $actual['records'][1]['data'], "Expected Activities Records with Field Access Applied correctly across Modules");
     }
 
     /**
@@ -193,30 +176,30 @@ class ActivitiesApiTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testListActivities_ListView_UserHasFieldAccess_FieldChangesReturned()
     {
-        $records   = array(
+        $records = array(
             array(
                 'display_parent_type' => '',
                 'display_parent_id' => '',
                 'comment_count' => 0,
-                'last_comment'  => json_encode(array()),
+                'last_comment' => json_encode(array()),
                 'date_modified' => "2013-12-25 13:00:00",
-                'date_entered'  => "2013-12-25 13:00:00",
+                'date_entered' => "2013-12-25 13:00:00",
                 'activity_type' => 'update',
-                'first_name'    => 'John',
-                'last_name'     => 'Doe',
-                'fields'        => json_encode(array('first_name', 'last_name', 'lead_source', 'city')),
-                'data'          => json_encode(
+                'first_name' => 'John',
+                'last_name' => 'Doe',
+                'fields' => json_encode(array('first_name', 'last_name', 'lead_source', 'city')),
+                'data' => json_encode(
                     array(
-                        'object'  => array(
-                            'type'   => 'Lead',
+                        'object' => array(
+                            'type' => 'Lead',
                             'module' => 'Leads',
-                            'name'   => 'John Doe',
+                            'name' => 'John Doe',
                         ),
                         'changes' => array(
                             'lead_source' => array(
                                 'field_name' => 'lead_source',
-                                'before'     => 'xxx',
-                                'after'      => 'yyy',
+                                'before' => 'xxx',
+                                'after' => 'yyy',
                             ),
                         ),
                     )
@@ -225,37 +208,19 @@ class ActivitiesApiTest extends Sugar_PHPUnit_Framework_TestCase
         );
         $records[] = array(); // Need One Bogus Record that Formatter will POP
 
-        $expected = array(
-            'records'     => array(
-                array(
-                    'display_parent_type' => '',
-                    'display_parent_id' => '',
-                    'comment_count'   => 0,
-                    'last_comment'    => array(),
-                    'date_modified'   => '2013-12-25T13:00:00+00:00',
-                    'date_entered'    => '2013-12-25T13:00:00+00:00',
-                    'activity_type'   => 'update',
-                    'first_name'      => 'John',
-                    'last_name'       => 'Doe',
-                    'data'            => array(
-                        'object'  => array(
-                            'type'   => 'Lead',
-                            'module' => 'Leads',
-                            'name'   => 'John Doe',
-                        ),
-                        'changes' => array(
-                            'lead_source' => array(
-                                'field_name' => 'lead_source',
-                                'before'     => 'xxx',
-                                'after'      => 'yyy',
-                            ),
-                        ),
-                    ),
-                    'created_by_name' => 'John Doe',
+        $expectedDataChanges = array(
+            'object' => array(
+                'type' => 'Lead',
+                'module' => 'Leads',
+                'name' => 'John Doe',
+            ),
+            'changes' => array(
+                'lead_source' => array(
+                    'field_name' => 'lead_source',
+                    'before' => 'xxx',
+                    'after' => 'yyy',
                 ),
             ),
-            'next_offset' => -1,
-            'args'        => array(),
         );
 
         $sugarQueryMock = $this->getMock("SugarQuery", array("execute"));
@@ -264,15 +229,15 @@ class ActivitiesApiTest extends Sugar_PHPUnit_Framework_TestCase
             ->will($this->returnValue($records));
 
         // Inject SugarACL checkFieldList()
-        $acl                     = new TestSugarACLStatic();
-        $acl->return_value       = array('lead_source' => true);  // User Has Field Level Access to Leads::lead_source field
+        $acl = new TestSugarACLStatic();
+        $acl->return_value = array('lead_source' => true);  // User Has Field Level Access to Leads::lead_source field
         SugarACL::resetACLs();
         SugarACL::$acls['Leads'] = array($acl);
 
         $activitiesApi = new TestActivitiesApi();
-        $actual        = $activitiesApi->exec_formatResult($this->api, array(), $sugarQueryMock, null);
+        $actual = $activitiesApi->exec_formatResult($this->api, array(), $sugarQueryMock, null);
 
-        $this->assertEquals($expected, $actual, "Expected Activities Records with Changed Fields Listed");
+        $this->assertEquals($expectedDataChanges, $actual['records'][0]['data'], "Expected Activities Records with Changed Fields Listed");
     }
 
     /**
@@ -312,31 +277,13 @@ class ActivitiesApiTest extends Sugar_PHPUnit_Framework_TestCase
         );
         $records[] = array(); // Need One Bogus Record that Formatter will POP
 
-        $expected = array(
-            'records'     => array(
-                array(
-                    'display_parent_type' => '',
-                    'display_parent_id' => '',
-                    'comment_count'   => 0,
-                    'last_comment'    => array(),
-                    'date_modified'   => '2013-12-25T13:00:00+00:00',
-                    'date_entered'    => '2013-12-25T13:00:00+00:00',
-                    'activity_type'   => 'update',
-                    'first_name'      => 'John',
-                    'last_name'       => 'Doe',
-                    'data'            => array(
-                        'object'  => array(
-                            'type'   => 'Lead',
-                            'module' => 'Leads',
-                            'name'   => 'John Doe',
-                        ),
-                        'changes' => array(),
-                    ),
-                    'created_by_name' => 'John Doe',
-                ),
+        $expectedDataChanges = array(
+            'object' => array(
+                'type' => 'Lead',
+                'module' => 'Leads',
+                'name' => 'John Doe',
             ),
-            'next_offset' => -1,
-            'args'        => array(),
+            'changes' => array(),
         );
 
         $sugarQueryMock = $this->getMock("SugarQuery", array("execute"));
@@ -353,7 +300,7 @@ class ActivitiesApiTest extends Sugar_PHPUnit_Framework_TestCase
         $activitiesApi = new TestActivitiesApi();
         $actual        = $activitiesApi->exec_formatResult($this->api, array(), $sugarQueryMock, null);
 
-        $this->assertEquals($expected, $actual, "Expected Activities Records without data for Changed Fields");
+        $this->assertEquals($expectedDataChanges, $actual['records'][0]['data'], "Expected Activities Records without data for Changed Fields");
     }
 
     /**
@@ -403,33 +350,14 @@ class ActivitiesApiTest extends Sugar_PHPUnit_Framework_TestCase
         );
         $records[] = array(); // Need One Bogus Record that Formatter will POP
 
-        $expected = array(
-            'records'     => array(
-                array(
-                    'display_parent_type' => '',
-                    'display_parent_id' => '',
-                    'comment_count'   => 0,
-                    'last_comment'    => array(),
-                    'date_modified'   => '2013-12-25T13:00:00+00:00',
-                    'date_entered'    => '2013-12-25T13:00:00+00:00',
-                    'activity_type'   => 'update',
-                    'first_name'      => 'John',
-                    'last_name'       => 'Doe',
-                    'fields'          => '["first_name","last_name","lead_source"]',
-                    'data'            => array(
-                        'object'  => array(
-                            'type'   => 'Lead',
-                            'module' => 'Leads',
-                            'name'   => 'John Doe',
-                        ),
-                        'changes' => array(),
-                    ),
-                    'created_by_name' => 'John Doe',
-                ),
-            ),
-            'next_offset' => -1,
-            'args'        => array(),
-        );
+        $expectedDataChanges = array(
+        'object'  => array(
+            'type'   => 'Lead',
+            'module' => 'Leads',
+            'name'   => 'John Doe',
+        ),
+        'changes' => array(),
+    );
 
         $sugarQueryMock = $this->getMock("SugarQuery", array("execute"));
         $sugarQueryMock->expects($this->once())
@@ -452,7 +380,7 @@ class ActivitiesApiTest extends Sugar_PHPUnit_Framework_TestCase
         $activitiesApi = new TestActivitiesApi();
         $actual        = $activitiesApi->exec_formatResult($this->api, array(), $sugarQueryMock, $lead);
 
-        $this->assertEquals($expected, $actual, "Expected Activities Records without data for Changed Fields");
+        $this->assertEquals($expectedDataChanges, $actual['records'][0]['data'], "Expected Activities Records without data for Changed Fields");
     }
 
     /**
@@ -460,40 +388,40 @@ class ActivitiesApiTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testListActivities_RecordView_UserHasFieldAccess_FieldChangesReturned()
     {
-        $records   = array(
+        $records = array(
             array(
                 'display_parent_type' => '',
                 'display_parent_id' => '',
                 'comment_count' => 0,
-                'last_comment'  => json_encode(array()),
+                'last_comment' => json_encode(array()),
                 'date_modified' => "2013-12-25 13:00:00",
-                'date_entered'  => "2013-12-25 13:00:00",
+                'date_entered' => "2013-12-25 13:00:00",
                 'activity_type' => 'update',
-                'first_name'    => 'John',
-                'last_name'     => 'Doe',
-                'fields'        => json_encode(array('first_name', 'last_name', 'lead_source')),
-                'data'          => json_encode(
+                'first_name' => 'John',
+                'last_name' => 'Doe',
+                'fields' => json_encode(array('first_name', 'last_name', 'lead_source')),
+                'data' => json_encode(
                     array(
-                        'object'  => array(
-                            'type'   => 'Lead',
+                        'object' => array(
+                            'type' => 'Lead',
                             'module' => 'Leads',
-                            'name'   => 'John Doe',
+                            'name' => 'John Doe',
                         ),
                         'changes' => array(
                             'lead_source' => array(
                                 'field_name' => 'lead_source',
-                                'before'     => 'xxx',
-                                'after'      => 'yyy',
+                                'before' => 'xxx',
+                                'after' => 'yyy',
                             ),
                             'first_name' => array(
                                 'field_name' => 'first_name',
-                                'before'     => 'Johnathan',
-                                'after'      => 'John',
+                                'before' => 'Johnathan',
+                                'after' => 'John',
                             ),
                             'last_name' => array(
                                 'field_name' => 'last_name',
-                                'before'     => 'Dough',
-                                'after'      => 'Doe',
+                                'before' => 'Dough',
+                                'after' => 'Doe',
                             ),
                         ),
                     )
@@ -502,48 +430,29 @@ class ActivitiesApiTest extends Sugar_PHPUnit_Framework_TestCase
         );
         $records[] = array(); // Need One Bogus Record that Formatter will POP
 
-        $expected = array(
-            'records'     => array(
-                array(
-                    'display_parent_type' => '',
-                    'display_parent_id' => '',
-                    'comment_count'   => 0,
-                    'last_comment'    => array(),
-                    'date_modified'   => '2013-12-25T13:00:00+00:00',
-                    'date_entered'    => '2013-12-25T13:00:00+00:00',
-                    'activity_type'   => 'update',
-                    'first_name'      => 'John',
-                    'last_name'       => 'Doe',
-                    'fields'          => '["first_name","last_name","lead_source"]',
-                    'data'            => array(
-                        'object'  => array(
-                            'type'   => 'Lead',
-                            'module' => 'Leads',
-                            'name'   => 'John Doe',
-                        ),
-                        'changes' => array(
-                            'lead_source' => array(
-                                'field_name' => 'lead_source',
-                                'before'     => 'xxx',
-                                'after'      => 'yyy',
-                            ),
-                            'first_name' => array(
-                                'field_name' => 'first_name',
-                                'before'     => 'Johnathan',
-                                'after'      => 'John',
-                            ),
-                            'last_name' => array(
-                                'field_name' => 'last_name',
-                                'before'     => 'Dough',
-                                'after'      => 'Doe',
-                            ),
-                        ),
-                    ),
-                    'created_by_name' => 'John Doe',
+        $expectedDataChanges = array(
+            'object' => array(
+                'type' => 'Lead',
+                'module' => 'Leads',
+                'name' => 'John Doe',
+            ),
+            'changes' => array(
+                'lead_source' => array(
+                    'field_name' => 'lead_source',
+                    'before' => 'xxx',
+                    'after' => 'yyy',
+                ),
+                'first_name' => array(
+                    'field_name' => 'first_name',
+                    'before' => 'Johnathan',
+                    'after' => 'John',
+                ),
+                'last_name' => array(
+                    'field_name' => 'last_name',
+                    'before' => 'Dough',
+                    'after' => 'Doe',
                 ),
             ),
-            'next_offset' => -1,
-            'args'        => array(),
         );
 
         $sugarQueryMock = $this->getMock("SugarQuery", array("execute"));
@@ -554,10 +463,10 @@ class ActivitiesApiTest extends Sugar_PHPUnit_Framework_TestCase
         // Inject SugarACL checkFieldList()
         $acl = new TestSugarACLStatic();
         //User Has Field Level Access to lead_source, first_name and last_name fields
-        $acl->return_value  = array(
-           'lead_source' => true,
-           'first_name'  => true,
-           'last_name'   => true,
+        $acl->return_value = array(
+            'lead_source' => true,
+            'first_name' => true,
+            'last_name' => true,
         );
         SugarACL::resetACLs();
         SugarACL::$acls['Leads'] = array($acl);
@@ -565,9 +474,9 @@ class ActivitiesApiTest extends Sugar_PHPUnit_Framework_TestCase
         $lead = SugarTestLeadUtilities::createLead();
 
         $activitiesApi = new TestActivitiesApi();
-        $actual        = $activitiesApi->exec_formatResult($this->api, array(), $sugarQueryMock, $lead);
+        $actual = $activitiesApi->exec_formatResult($this->api, array(), $sugarQueryMock, $lead);
 
-        $this->assertEquals($expected, $actual, "Expected Activities Records with all data for Changed Fields");
+        $this->assertEquals($expectedDataChanges, $actual['records'][0]['data'], "Expected Activities Records with all data for Changed Fields");
     }
 
     /**
@@ -666,50 +575,6 @@ class ActivitiesApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals($expectedResult, $actualResult, 'Expected result to not be preview enabled with correct reason');
     }
-
-
-    public function dataProviderForGetDisplayModule()
-    {
-        $emptyAccount = BeanFactory::newBean('Accounts');
-        $emptyLead = BeanFactory::newBean('Leads');
-        return array(
-            array('post', null, 'Accounts', '123'),
-            array('post', $emptyAccount, 'Accounts', '123'),
-            array('post', $emptyLead, 'Accounts', '123'),
-            array('link', null, 'Accounts', '123'),
-            array('link', $emptyAccount, 'Leads', '456'),
-            array('link', $emptyLead, 'Accounts', '123'),
-            array('unlink', null, 'Accounts', '123'),
-            array('unlink', $emptyAccount, 'Leads', '456'),
-            array('unlink', $emptyLead, 'Accounts', '123'),
-        );
-    }
-
-    /**
-     * @covers ActivitiesApi::getDisplayModule
-     * @dataProvider dataProviderForGetDisplayModule
-     */
-    public function testGetDisplayModule($activity_type, $contextBean, $expected_module, $expected_id)
-    {
-        $record = array(
-            'parent_type' => 'Accounts',
-            'parent_id' => '123',
-            'activity_type' => $activity_type,
-            'data' => array(
-                'subject' => array(
-                    'module' => 'Leads',
-                    'id' => '456',
-                ),
-            ),
-        );
-
-        $activitiesApi = new ActivitiesApi();
-        $result = SugarTestReflection::callProtectedMethod($activitiesApi, 'getDisplayModule', array($record, $contextBean));
-
-        $this->assertEquals($expected_module, $result['module']);
-        $this->assertEquals($expected_id, $result['id']);
-    }
-
 }
 
 class TestActivitiesApi extends ActivitiesApi
