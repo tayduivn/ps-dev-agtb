@@ -53,7 +53,7 @@ class SetOptionsAction extends AbstractAction{
 
 				var keys = this.evalExpression(this.keyExpr, context),
 					labels = this.evalExpression(this.labelExpr, context),
-					empty = (_.size(keys) === 0 || _.size(keys) === 1) && (keys[0] == undefined || keys[0] === '');
+					empty,
 					selected = '';
 
 				if (context.view)
@@ -63,6 +63,14 @@ class SetOptionsAction extends AbstractAction{
 					if (!field) {
 					    return;
 					}
+
+                    selected = [].concat(field.model.get(this.target));
+                    if (!this.canSetValue(context)) {
+                        keys = keys.concat(selected);
+                    }
+
+                    empty = (_.size(keys) === 0 || _.size(keys) === 1) && (keys[0] == undefined || keys[0] === '');
+
 					if (_.isString(labels))
 						field.items = _.pick(App.lang.getAppListStrings(labels), keys);
 					else
@@ -77,7 +85,7 @@ class SetOptionsAction extends AbstractAction{
 					visAction.exec();
 
 					//Remove from the selected options those options that are no longer available to select
-					selected = _.filter([].concat(field.model.get(this.target)), function(key) {
+					selected = _.filter(selected, function(key) {
 					    return _.contains(keys, key);
 					});
 
@@ -85,7 +93,7 @@ class SetOptionsAction extends AbstractAction{
 					    selected = selected.concat(empty ? '' : keys[0]);
 					}
 
-					context.setValue(this.target, selected);
+                    context.setValue(this.target, selected);
 				}
 				else {
 					var field = context.getElement(this.target);

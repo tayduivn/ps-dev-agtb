@@ -34,6 +34,7 @@
              success: function (data) {
                  app.alert.dismiss('saving');
                  app.drawer.close('saving');
+                 app.router.refresh();
              },
              error: function (err) {
              }

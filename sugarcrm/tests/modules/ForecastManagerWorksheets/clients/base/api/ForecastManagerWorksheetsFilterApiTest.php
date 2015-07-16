@@ -158,8 +158,11 @@ class ForecastManagerWorksheetsFilterApiTest extends Sugar_PHPUnit_Framework_Tes
      */
     public function testGetDirectHierarchyUsers()
     {
-        $GLOBALS['current_user']->reports_to_id = $GLOBALS['current_user']->id;
-        $GLOBALS['current_user']->save();
+        $fields = array(
+            'reports_to_id' => $GLOBALS['current_user']->id,
+        );
+        $user = SugarTestUserUtilities::createAnonymousUser(true, 0, $fields);
+
         $api = new ForecastManagerWorksheetsFilterApi();
         $actual = SugarTestReflection::callProtectedMethod($api, 'getDirectHierarchyUsers', array(
                 $this->service,
@@ -169,7 +172,7 @@ class ForecastManagerWorksheetsFilterApiTest extends Sugar_PHPUnit_Framework_Tes
         $this->assertArrayHasKey('records', $actual);
         $record = reset($actual['records']);
         $this->assertNotEmpty($record);
-        $this->assertEquals($GLOBALS['current_user']->id, $record['id']);
+        $this->assertEquals($user->id, $record['id']);
     }
 
     /**
@@ -218,8 +221,10 @@ class ForecastManagerWorksheetsFilterApiTest extends Sugar_PHPUnit_Framework_Tes
      */
     public function testGetDirectHierarchyUsersCustomUserInvalidParameter()
     {
-        $GLOBALS['current_user']->reports_to_id = $GLOBALS['current_user']->id;
-        $GLOBALS['current_user']->save();
+        $fields = array(
+            'reports_to_id' => $GLOBALS['current_user']->id,
+        );
+        $user = SugarTestUserUtilities::createAnonymousUser(true, 0, $fields);
         $api = new ForecastManagerWorksheetsFilterApi();
         SugarTestReflection::callProtectedMethod($api, 'getDirectHierarchyUsers', array(
                 $this->service,
@@ -300,8 +305,10 @@ class ForecastManagerWorksheetsFilterApiTest extends Sugar_PHPUnit_Framework_Tes
      */
     public function testCreateFilter()
     {
-        $GLOBALS['current_user']->reports_to_id = $GLOBALS['current_user']->id;
-        $GLOBALS['current_user']->save();
+        $fields = array(
+            'reports_to_id' => $GLOBALS['current_user']->id,
+        );
+        $user = SugarTestUserUtilities::createAnonymousUser(true, 0, $fields);
         $api = new ForecastManagerWorksheetsFilterApi();
         $actual = SugarTestReflection::callProtectedMethod($api, 'createFilter', array(
                 $this->service,
@@ -369,8 +376,10 @@ class ForecastManagerWorksheetsFilterApiTest extends Sugar_PHPUnit_Framework_Tes
      */
     public function testCreateFilterCustomUserInvalidParameter()
     {
-        $GLOBALS['current_user']->reports_to_id = $GLOBALS['current_user']->id;
-        $GLOBALS['current_user']->save();
+        $fields = array(
+            'reports_to_id' => $GLOBALS['current_user']->id,
+        );
+        $user = SugarTestUserUtilities::createAnonymousUser(true, 0, $fields);
         $api = new ForecastManagerWorksheetsFilterApi();
         SugarTestReflection::callProtectedMethod($api, 'createFilter', array(
                 $this->service,
@@ -385,8 +394,10 @@ class ForecastManagerWorksheetsFilterApiTest extends Sugar_PHPUnit_Framework_Tes
      */
     public function testCreateFilterTimePeriod()
     {
-        $GLOBALS['current_user']->reports_to_id = $GLOBALS['current_user']->id;
-        $GLOBALS['current_user']->save();
+        $fields = array(
+            'reports_to_id' => $GLOBALS['current_user']->id,
+        );
+        $user = SugarTestUserUtilities::createAnonymousUser(true, 0, $fields);
         $api = new ForecastManagerWorksheetsFilterApi();
         $actual = SugarTestReflection::callProtectedMethod($api, 'createFilter', array(
                 $this->service,
@@ -410,8 +421,10 @@ class ForecastManagerWorksheetsFilterApiTest extends Sugar_PHPUnit_Framework_Tes
      */
     public function testCreateFilterTimePeriodInvalidParameter()
     {
-        $GLOBALS['current_user']->reports_to_id = $GLOBALS['current_user']->id;
-        $GLOBALS['current_user']->save();
+        $fields = array(
+            'reports_to_id' => $GLOBALS['current_user']->id,
+        );
+        $user = SugarTestUserUtilities::createAnonymousUser(true, 0, $fields);
         $api = new ForecastManagerWorksheetsFilterApi();
         SugarTestReflection::callProtectedMethod($api, 'createFilter', array(
                 $this->service,

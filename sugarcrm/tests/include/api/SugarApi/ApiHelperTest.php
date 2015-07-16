@@ -15,6 +15,8 @@ require_once 'include/api/ApiHelper.php';
 
 class ApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    protected $toDelete = array();
+
     public function setUp()
     {
         SugarTestHelper::setUp('current_user');
@@ -24,12 +26,34 @@ class ApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('app_list_strings');
     }
 
+    public static function tearDownAfterClass()
+    {
+        // rebuild the map JIC
+        SugarAutoLoader::buildCache();
+    }
+
     public function tearDown()
     {
         SugarTestHelper::tearDown();
+
+        foreach($this->toDelete as $file) {
+            if(is_dir($file)) {
+                rmdir_recursive($file);
+                SugarAutoLoader::delFromMap($file, false);
+                continue;
+            }
+            @SugarAutoLoader::unlink($file);
+        }
+        $this->toDelete = array();
     }
 
-    public function testFindBaseHelper()
+    protected function put($file, $data)
+    {
+        $this->toDelete[] = $file;
+        SugarAutoLoader::put($file, $data);
+    }
+
+    public function testGetHelper_ReturnsBaseHelper()
     {
         $api = new RestService();
 
@@ -40,7 +64,7 @@ class ApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals('SugarBeanApiHelper',get_class($helper));
     }
 
-    public function testFindModuleHelper()
+    public function testGetHelper_ReturnsModuleHelper()
     {
         $api = new RestService();
 
@@ -49,5 +73,23 @@ class ApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
         $helper = ApiHelper::getHelper($api,$bugsBean);
 
         $this->assertEquals('UsersApiHelper',get_class($helper));
+    }
+
+    public function testGetHelper_ModulePathSubDirectory_ReturnModuleHelper()
+    {
+        $moduleName = 'Contacts';
+        $modulePath = 'Activities/Contacts';
+
+        mkdir_recursive("modules/Activities/Contacts");
+        $this->put('modules/' . $modulePath . '/' . $moduleName . 'ApiHelper.php', "<?php class {$moduleName}ApiHelper {}");
+
+        $api = new RestService();
+
+        $bean = BeanFactory::newBean('Contacts');
+        $bean->module_dir = $modulePath;
+
+        $helper = ApiHelper::getHelper($api,$bean);
+
+        $this->assertEquals('ContactsApiHelper', get_class($helper));
     }
 }

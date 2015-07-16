@@ -527,24 +527,26 @@ class KBContent extends SugarBean {
         $isUpdated = false;
         $documentExternalFlag = false;
         $category = BeanFactory::retrieveBean('Categories', $categoryId);
-        if (!$category->isRoot()) {
-            $documentExternalFlag = $this->_isExternal($category);
-            $isUpdated = $this->_updateCategory($category, $documentExternalFlag);
-        }
-        if ($isUpdated) {
-            $parentExternalFlag = false;
-            foreach ($category->getParents(null, true) as $node) {
-                $seed = BeanFactory::retrieveBean('Categories', $node['id']);
-                if (!$seed->isRoot()) {
-                    if ($documentExternalFlag) {
-                        $this->_updateCategory($seed, $documentExternalFlag);
-                        continue;
+        if ($category instanceof Category) {
+            if (!$category->isRoot()) {
+                $documentExternalFlag = $this->_isExternal($category);
+                $isUpdated = $this->_updateCategory($category, $documentExternalFlag);
+            }
+            if ($isUpdated) {
+                $parentExternalFlag = false;
+                foreach ($category->getParents(null, true) as $node) {
+                    $seed = BeanFactory::retrieveBean('Categories', $node['id']);
+                    if (!$seed->isRoot()) {
+                        if ($documentExternalFlag) {
+                            $this->_updateCategory($seed, $documentExternalFlag);
+                            continue;
+                        }
+                        if ($parentExternalFlag) {
+                            continue;
+                        }
+                        $parentExternalFlag = $this->_isExternal($seed);
+                        $this->_updateCategory($seed, $parentExternalFlag);
                     }
-                    if ($parentExternalFlag) {
-                        continue;
-                    }
-                    $parentExternalFlag = $this->_isExternal($seed);
-                    $this->_updateCategory($seed, $parentExternalFlag);
                 }
             }
         }

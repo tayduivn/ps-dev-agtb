@@ -281,4 +281,62 @@ describe("Forecasts.Layout.Records", function() {
             expect(filters['filter'][0]['timeperiod_id']).toEqual(layout.context.get('selectedTimePeriod'));
         });
     });
+
+    describe('syncInitData', function() {
+
+        beforeEach(function() {
+            apiCallStub.restore();
+            apiCallStub = sinon.stub(app.api, 'call', function() {
+            });
+            sinon.collection.stub(app.utils, 'checkForecastConfig', function() {
+                return true;
+            });
+        });
+
+        afterEach(function() {
+            sinon.collection.restore();
+        });
+
+        it('should pass the no-cache header when forecast is not setup', function() {
+            sinon.collection.stub(app.metadata, 'getModule', function() {
+                return {
+                    forecast_by: 'RevenueLineItems',
+                    sales_stage_won: [],
+                    sales_stage_lost: [],
+                    is_setup: 0
+                };
+            });
+
+            // create a new layout, so we can test the call here
+            SugarTest.createLayout('base', moduleName, 'records', null, null, true);
+
+            expect(apiCallStub).toHaveBeenCalled();
+            expect(apiCallStub.args[0][4]).toEqual({
+                headers: {
+                    'Cache-Control': 'no-cache'
+                }
+            });
+        });
+
+        it('should not pass the no-cache header when forecast is setup', function() {
+            sinon.collection.stub(app.metadata, 'getModule', function() {
+                return {
+                    forecast_by: 'RevenueLineItems',
+                    sales_stage_won: [],
+                    sales_stage_lost: [],
+                    is_setup: 1
+                };
+            });
+
+            // create a new layout, so we can test the call here
+            SugarTest.createLayout('base', moduleName, 'records', null, null, true);
+
+            expect(apiCallStub).toHaveBeenCalled();
+            expect(apiCallStub.args[0][4]).toNotEqual({
+                headers: {
+                    'Cache-Control': 'no-cache'
+                }
+            });
+        });
+    });
 });

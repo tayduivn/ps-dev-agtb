@@ -13,9 +13,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 // $Id: UpgradeWizard_prepare.php 55665 2010-03-29 23:55:22Z dwheeler $
 
-
-require_once('modules/Administration/UpgradeWizardCommon.php');
-
+require_once 'modules/Administration/UpgradeWizardCommon.php';
+require_once 'include/SugarSmarty/plugins/function.sugar_csrf_form_token.php';
 
 unset($_SESSION['rebuild_relationships']);
 unset($_SESSION['rebuild_extensions']);
@@ -38,7 +37,7 @@ $new_lang_desc = "";
 
 $mode           = $_REQUEST['mode'];
 $hidden_fields .= "<input type=hidden name=\"mode\" value=\"$mode\"/>";
-
+$hidden_fields .= smarty_function_sugar_csrf_form_token(array(), $smarty);
 
 $install_type   = getInstallType( $install_file );
 

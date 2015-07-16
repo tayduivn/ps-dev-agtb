@@ -298,6 +298,6 @@ if ($.browser.msie){{/literal}} {ldelim}
   {rdelim});
 {rdelim}
 </script>
-{if isset($footerTpl)}
+{{if isset($footerTpl)}}
 {{include file=$footerTpl}}
-{/if}
+{{/if}}

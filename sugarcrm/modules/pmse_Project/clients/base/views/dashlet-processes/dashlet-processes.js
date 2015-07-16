@@ -59,8 +59,31 @@
      * Fire dessigner
      */
     designer: function(model){
-        var redirect = model.module+"/"+model.id+"/layout/designer";
-        app.router.navigate(redirect , {trigger: true, replace: true });
+        var verifyURL = app.api.buildURL(
+                this.module,
+                'verify',
+                {
+                    id : model.get('id')
+                }
+            ),
+            self = this;
+        app.api.call('read', verifyURL, null, {
+            success: function(data) {
+                if (!data) {
+                    var redirect = model.module+"/"+model.id+"/layout/designer";
+                    app.router.navigate(redirect , {trigger: true, replace: true });
+                } else {
+                    app.alert.show('project-design-confirmation',  {
+                        level: 'confirmation',
+                        messages: App.lang.get('LBL_PMSE_PROCESS_DEFINITIONS_EDIT', model.module),
+                        onConfirm: function () {
+                            app.navigate(this.context, model, 'layout/designer');
+                        },
+                        onCancel: $.noop
+                    });
+                }
+            }
+        });
     },
 
     /**
@@ -265,13 +288,33 @@
      */
     disableRecord: function(model) {
         var self = this;
-        this._modelToDelete = true;
-        var name = model.get('name') || '';
-        app.alert.show(model.get('id') + ':deleted', {
-            level: 'confirmation',
-            messages: app.utils.formatString(app.lang.get('LBL_PRO_DISABLE_CONFIRMATION', model.module),[name.trim()]),
-            onConfirm: function() {
-                self._updateProStatusDisabled(model);
+        var verifyURL = app.api.buildURL(
+            this.module,
+            'verify',
+            {
+                id : model.get('id')
+            }
+        );
+        app.api.call('read', verifyURL, null, {
+            success: function(data) {
+                if (!data) {
+                    app.alert.show('project_disable', {
+                        level: 'confirmation',
+                        messages: app.utils.formatString(app.lang.get('LBL_PRO_DISABLE_CONFIRMATION', model.module),[name.trim()]),
+                        onConfirm: function() {
+                            self._updateProStatusDisabled(model);
+                        }
+                    });
+                } else {
+                    app.alert.show('project-disable-confirmation',  {
+                        level: 'confirmation',
+                        messages: App.lang.get('LBL_PMSE_DISABLE_CONFIRMATION_PD', model.module),
+                        onConfirm: function () {
+                            self._updateProStatusDisabled(model);
+                        },
+                        onCancel: $.noop
+                    });
+                }
             }
         });
     },

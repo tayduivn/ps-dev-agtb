@@ -21,7 +21,7 @@
         {if $item.value=='Claim'}
             <a href="{$item.onclick}" title="{$item.value}"><span class="btn">{$item.value}</span></a>
         {else}
-            <input name="{$item.name}" type="{$item.type}" value={$item.value} onclick="{$item.onclick}">
+            <input id="{$item.id}" name="{$item.name}" type="{$item.type}" value={$item.value} onclick="{$item.onclick}">
         {/if}
     {/foreach}
     <div id="detailpanel_0" class= "edit view edit508">

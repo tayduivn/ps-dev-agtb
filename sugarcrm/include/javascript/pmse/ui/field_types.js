@@ -246,7 +246,7 @@ ComboboxField.prototype.createHTML = function () {
 
     if (this.disabled) {
         this.disable();
-    } else {
+    } else if (!this.readOnly) {
         this.enable();
     }
 

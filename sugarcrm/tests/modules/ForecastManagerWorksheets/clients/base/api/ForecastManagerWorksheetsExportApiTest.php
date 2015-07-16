@@ -17,8 +17,10 @@ class ForecastManagerWorksheetsExportApiTest extends Sugar_PHPUnit_Framework_Tes
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user', array(true, true));
-        $GLOBALS['current_user']->reports_to_id = $GLOBALS['current_user']->id;
-        $GLOBALS['current_user']->save();
+        $fields = array(
+            'reports_to_id' => $GLOBALS['current_user']->id,
+        );
+        $user = SugarTestUserUtilities::createAnonymousUser(true, 0, $fields);
 
         $this->service = SugarTestRestUtilities::getRestServiceMock();
     }

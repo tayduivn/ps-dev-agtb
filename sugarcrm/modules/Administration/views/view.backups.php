@@ -129,7 +129,7 @@ class ViewBackups extends SugarView
             <br>
             <?php echo $mod_strings['LBL_BACKUP_INSTRUCTIONS_2']; ?><br>
             <form name="Backups" action="<?php print( $form_action );?>" method="post" onSubmit="return (check_for_errors());">
-            <input type="hidden" name="<?php echo $csrf->getFormTokenField();?>" value="<?php echo $csrf->getFormToken();?>" />
+            <input type="hidden" name="csrf_token" value="<?php echo $csrf->getFormToken();?>" />
             <table>
             <tr>
                 <td><?php echo $mod_strings['LBL_BACKUP_DIRECTORY']; ?><br><i><?php echo $mod_strings['LBL_BACKUP_DIRECTORY_WRITABLE']; ?></i></td>
