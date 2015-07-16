@@ -18,7 +18,30 @@
     },
 
     openDesigner: function(model) {
-        app.navigate(this.context, model, 'layout/designer');
+        var verifyURL = app.api.buildURL(
+                this.module,
+                'verify',
+                {
+                    id : this.model.get('id')
+                }
+            ),
+            self = this;
+        app.api.call('read', verifyURL, null, {
+            success: function(data) {
+                if (!data) {
+                    app.navigate(this.context, model, 'layout/designer');
+                } else {
+                    app.alert.show('project-export-confirmation',  {
+                        level: 'confirmation',
+                        messages: App.lang.get('LBL_PMSE_PROCESS_DEFINITIONS_EDIT', model.module),
+                        onConfirm: function () {
+                            app.navigate(this.context, model, 'layout/designer');
+                        },
+                        onCancel: $.noop
+                    });
+                }
+            }
+        });
     },
 
     showExportingWarning: function (model) {

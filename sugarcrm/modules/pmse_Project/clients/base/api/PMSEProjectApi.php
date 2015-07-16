@@ -307,15 +307,51 @@ class PMSEProjectApi extends ModuleApi
     public function verifyRunningProcess($api, $args)
     {
         $this->checkACL($api, $args);
-        $result = false;
-        $projectBean = BeanFactory::getBean($args['module'], $args['record'],
-            array('strict_retrieve' => true, 'disable_row_level_security' => true));
-        $processBean = BeanFactory::getBean('pmse_BpmnProcess')->retrieve_by_string_fields(array("prj_id" => $projectBean->id));
-        $casesBean = BeanFactory::getBean('pmse_Inbox')->retrieve_by_string_fields(array("pro_id" => $processBean->id));
-        $values = array('COMPLETED', 'TERMINATED', 'CANCELLED');
-        if ($processBean && $casesBean && !in_array($casesBean->cas_status , $values)) {
-            $result = true;
+        if (!$args['baseModule']) {
+            $projectBean = BeanFactory::getBean($args['module'], $args['record'],
+                array('strict_retrieve' => true, 'disable_row_level_security' => true));
+            $processBean = BeanFactory::getBean('pmse_BpmnProcess')->retrieve_by_string_fields(array("prj_id" => $projectBean->id));
+            $casesBean = BeanFactory::getBean('pmse_Inbox');
+            $sql = new SugarQuery();
+            $sql->select('id');
+            $sql->from($casesBean);
+            $sql->where()
+                ->queryAnd()
+                ->equals('pro_id', $processBean->id)
+                ->notEquals('cas_status', 'COMPLETED')
+                ->notEquals('cas_status', 'TERMINATED')
+                ->notEquals('cas_status', 'CANCELLED');
+            if ($sql->execute()) {
+                return true;
+            }
+        } else {
+            switch ($args['baseModule']) {
+                case 'pmse_Business_Rules':
+                    $bean = BeanFactory::getBean('pmse_BpmActivityDefinition');
+                    $where = 'act_fields';
+                    break;
+                case 'pmse_Emails_Templates':
+                    $bean = BeanFactory::getBean('pmse_BpmEventDefinition');
+                    $where = 'evn_criteria';
+                    break;
+                default:
+                    return false;
+            }
+            $id = $args['record'];
+            $sql = new SugarQuery();
+            $sql->select(array('pro_id'));
+            $sql->from($bean);
+            $sql->where()->equals($where, $id);
+            $processes = $sql->execute();
+            if (!empty($processes)) {
+                foreach ($processes as $process) {
+                    $process_definition = BeanFactory::getBean('pmse_BpmProcessDefinition', $process['pro_id']);
+                    if ($process_definition->pro_status == 'ACTIVE') {
+                        return true;
+                    }
+                }
+            }
         }
-        return $result;
+        return false;
     }
 }
