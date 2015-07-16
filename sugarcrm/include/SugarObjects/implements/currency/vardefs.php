@@ -59,6 +59,8 @@ $vardefs = array(
             'source' => 'non-db',
             'studio' => false,
             'duplicate_merge' => 'disabled',
+            'function' => 'getCurrencySymbols',
+            'function_bean' => 'Currencies',
             'massupdate' => false
         ),
         'currencies' => array(
