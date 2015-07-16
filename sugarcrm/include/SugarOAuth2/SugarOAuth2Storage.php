@@ -457,6 +457,12 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, Suga
         // Disable cookies
         ini_set("session.use_cookies",false);
         session_start();
+        if (!empty($_SESSION['user_id'])) {
+            $GLOBALS['log']->fatal("A new access token was created for another users existing session id. User_id:{$_SESSION['user_id']}, session_id: $oauth_token");
+            session_destroy();
+            throw new SugarApiExceptionInvalidGrant();
+        }
+
         // Clear out the old session data
         $_SESSION = array();
 
