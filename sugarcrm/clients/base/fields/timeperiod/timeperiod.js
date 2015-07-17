@@ -50,13 +50,27 @@
     tooltipDir: 'right',
 
     /**
+     * Tooltip key for determining which language string to use
+     */
+    tooltipKey: 'LBL_DROPDOWN_TOOLTIP',
+
+    /**
      * {@inheritDoc}
      */
     initialize: function(options) {
+        var tooltipCssClasses = '',
+            ttTemplate;
+
         if (app.lang.direction === 'rtl') {
             this.tooltipDir = 'left';
+            tooltipCssClasses = 'force-ltr';
+            this.tooltipKey += '_RTL';
         }
 
+        ttTemplate = app.template.getField('timeperiod', 'tooltip-default');
+        Handlebars.registerPartial("tooltipHtmlTemplate", ttTemplate({
+            cssClasses: tooltipCssClasses
+        }));
 
         var collectionParams = {
             limit: 100,
@@ -210,7 +224,8 @@
         return this.tooltipTemplate({
             tooltip: this.tpTooltipMap[object.id],
             value: object.text,
-            tooltipDir: this.tooltipDir
+            tooltipDir: this.tooltipDir,
+            tooltipKey: this.tooltipKey,
         });
     },
 

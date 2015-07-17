@@ -534,3 +534,15 @@ hr.soften {
     text-align: justify;
   }
 }
+
+// RTL and left-aligned tooltips cause problems re-arranging words
+.force-ltr {
+  direction: ltr;
+}
+.force-rtl {
+  direction: rtl;
+}
+// Bidirectional fix
+.bidi-override {
+  unicode-bidi: bidi-override;
+}

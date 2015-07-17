@@ -52,5 +52,6 @@ $mod_strings = array (
   'LBL_LIST_WARNING' => 'Please note that any changes made in this module might potentially break the functionality of the {0} module. The changes related to {1} should be made through the <a style="text-decoration:none;" href="index.php?module=Forecasts&action=config">{0} Settings</a>.',
   'LBL_LEAF_CYCLE' => 'Lead Cycle',
 
-  'LBL_DROPDOWN_TOOLTIP' => '{{start}} to {{end}}'
+  'LBL_DROPDOWN_TOOLTIP' => '{{start}} to {{end}}',
+  'LBL_DROPDOWN_TOOLTIP_RTL' => '{{end}} to {{start}}'
 );
