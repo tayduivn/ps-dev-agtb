@@ -5986,3 +5986,49 @@ function sortExtensionFiles(array $files)
 
     return array_keys($sorted);
 }
+
+/**
+ * Make sure a user isn't stealing sessions so check the ip to ensure that the ip address hasn't dramatically changed
+ *
+ * @param string $clientIp Client IP address
+ * @param string $sessionIp Session IP address
+ * @return bool
+ */
+function validate_ip($clientIp, $sessionIp)
+{
+    global $sugar_config;
+
+    // check to see if config entry is present
+    if (isset($sugar_config['verify_client_ip']) && !$sugar_config['verify_client_ip']) {
+        return true;
+    }
+    
+    $isValidIP = true;
+
+    $classCheck = 0;
+
+    $session_parts = explode(".", $sessionIp);
+    $client_parts = explode(".", $clientIp);
+    if (count($session_parts) < 4) {
+        $classCheck = 0;
+    } else {
+        // match class C IP addresses
+        for ($i = 0; $i < 3; $i ++) {
+            if ($session_parts[$i] == $client_parts[$i]) {
+                $classCheck = 1;
+                continue;
+            } else {
+                $classCheck = 0;
+                break;
+            }
+        }
+    }
+
+    // we have a different IP address
+    if ($sessionIp != $clientIp && empty($classCheck)) {
+        $isValidIP = false;
+    }
+
+    return $isValidIP;
+
+}

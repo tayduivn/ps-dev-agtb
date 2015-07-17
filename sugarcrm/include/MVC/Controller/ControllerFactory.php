@@ -21,9 +21,10 @@ class ControllerFactory
 	/**
 	 * Obtain an instance of the correct controller.
 	 *
-	 * @return an instance of SugarController
+     * @param string $module Module name
+     * @return SugarController
 	 */
-	function getController($module)
+    public static function getController($module)
 	{
 		if(SugarAutoLoader::requireWithCustom("modules/{$module}/controller.php")) {
 		    $class = SugarAutoLoader::customClass(ucfirst($module).'Controller');

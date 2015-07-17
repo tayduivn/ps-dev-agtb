@@ -67,7 +67,29 @@ class SugarApplication
 
         // make sidecar view load faster
         // TODO the rest of the code will be removed as soon as we migrate all modules to sidecar
-        if ($this->controller->action === 'sidecar' ||
+        if (!empty($_REQUEST['MSID'])
+            && ($this->controller->action !== 'Authenticate' || $this->controller->module !== 'Users')
+        ) {
+            //This is not longer a valid path for MSID. We can only accept it through view.authenticate.php
+            $url = 'index.php?module=Users&action=Authenticate&MSID=' . urlencode($_REQUEST['MSID']);
+            $req = array_diff_key($this->getRequestVars(), array("MSID" => 1));
+            if (!empty($req['module'])) {
+                if (isModuleBWC($req['module'])) {
+                    $url .= '#bwc/index.php?' . http_build_query($req);
+                } else {
+                    // otherwise compose basic Sidecar route
+                    $url .= '#' . rawurlencode($req['module']);
+                    if (isset($req['record'])) {
+                        $url .= '/' . rawurlencode($req['record']);
+                    }
+                }
+            }
+            session_write_close();
+            header('HTTP/1.1 301 Moved Permanently');
+            header("Location: $url");
+
+            exit();
+        } elseif ($this->controller->action === 'sidecar' ||
             (
                 $this->controller->action === 'index' && $this->controller->module === 'Home' &&
                 (empty($_REQUEST['entryPoint']) || (isset($_REQUEST['action']) && $_REQUEST['action'] === 'DynamicAction'))
@@ -817,23 +839,8 @@ EOF;
     function startSession()
     {
         $sessionIdCookie = isset($_COOKIE['PHPSESSID']) ? $_COOKIE['PHPSESSID'] : null;
-        if (!empty($_REQUEST['MSID'])) {
-            session_id($_REQUEST['MSID']);
+        if (can_start_session()) {
             session_start();
-            if (isset($_SESSION['user_id']) && isset($_SESSION['seamless_login'])) {
-                unset ($_SESSION['seamless_login']);
-            } else {
-                if (isset($_COOKIE['PHPSESSID'])) {
-                    self::setCookie('PHPSESSID', '', time() - 42000, '/');
-                }
-                sugar_cleanup(false);
-                session_destroy();
-                exit('Not a valid entry method');
-            }
-        } else {
-            if (can_start_session()) {
-                session_start();
-            }
         }
 
         if (isset($_REQUEST['login_module']) && isset($_REQUEST['login_action'])
