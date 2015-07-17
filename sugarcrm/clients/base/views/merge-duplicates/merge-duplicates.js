@@ -136,7 +136,6 @@
     relatesBlacklist: [
         'assigned_user_link', 'modified_user_link', 'created_by_link',
         'teams', 'team_link', 'team_count_link',
-        'campaigns',
         'archived_emails', 'email_addresses', 'email_addresses_primary',
         'forecastworksheets',
         'currencies'
