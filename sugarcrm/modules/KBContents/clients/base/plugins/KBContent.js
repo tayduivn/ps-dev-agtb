@@ -37,10 +37,7 @@
              */
             onAttach: function(component, plugin) {
                 this.on('init', function() {
-                    this.context.on('button:create_localization_button:click', this.createLocalization, this);
-                    this.context.on('button:create_revision_button:click', this.createRevision, this);
-                    this.context.on('button:create_article_button:click', this.createArticle, this);
-                    this.context.on('button:create_article_button_subpanel:click', this.createArticleSubpanel, this);
+                    this._initKBListeners();
                     if (this.tplName === 'list' || this.tplName === 'panel-top') {
                         this.context.on('list:editrow:fire', _.bind(function(model, view) {
                             this._initValidationHandler(model);
@@ -49,6 +46,21 @@
                         this._initValidationHandler(this.model);
                     }
                 });
+            },
+
+            /**
+             * Initialize KB specific listeners with ability to override.
+             * @private
+             */
+            _initKBListeners: function() {
+                if (_.isFunction(Object.getPrototypeOf(this)._initKBListeners)) {
+                    Object.getPrototypeOf(this)._initKBListeners.call(this);
+                    return;
+                }
+                this.context.on('button:create_localization_button:click', this.createLocalization, this);
+                this.context.on('button:create_revision_button:click', this.createRevision, this);
+                this.context.on('button:create_article_button:click', this.createArticle, this);
+                this.context.on('button:create_article_button_subpanel:click', this.createArticleSubpanel, this);
             },
 
             /**
