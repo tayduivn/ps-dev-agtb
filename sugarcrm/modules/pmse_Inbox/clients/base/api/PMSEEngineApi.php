@@ -1046,8 +1046,7 @@ class PMSEEngineApi extends SugarApi
         //INNER JOIN USERS TABLE
         $q->joinTable('users', array('alias' => 'users', 'joinType' => 'INNER', 'linkingTable' => true))
                 ->on()
-                ->equalsField('users.id', 'cas_user_id')
-                ->equals('users.deleted', 0);
+                ->equalsField('users.id', 'cas_user_id');
 
         $q->where()
                 ->equals('cas_flow_status', 'FORM')
