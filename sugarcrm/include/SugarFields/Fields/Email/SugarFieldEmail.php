@@ -186,6 +186,7 @@ class SugarFieldEmail extends SugarFieldBase
         $has_primary = array();
 
         foreach ($rows as $row) {
+            $row['bean_id'] = $GLOBALS['db']->fromConvert($row['bean_id'], 'id');
             $bean = $beans[$row['bean_id']];
             if (empty($has_primary[$row['bean_id']])) {
                 $row['primary_address'] = true;

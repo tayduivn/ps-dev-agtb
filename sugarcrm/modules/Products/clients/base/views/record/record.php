@@ -13,10 +13,11 @@
 $viewdefs['Products']['base']['view']['record'] = array(
     'buttons' => array(
         array(
-            'type' => 'button',
+            'type' => 'rowaction',
+            'event' => 'button:cancel_button:click',
             'name' => 'cancel_button',
             'label' => 'LBL_CANCEL_BUTTON_LABEL',
-            'css_class' => 'btn-invisible btn-link',
+            'css_class' => 'btn btn-invisible btn-link',
             'showOn' => 'edit',
         ),
         array(

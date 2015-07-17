@@ -394,6 +394,36 @@ function onSubmit(e) {
     return result2;
 };
 
+function confirmAction(obj){
+    sbtn = obj.id;
+    switch (sbtn) {
+        case 'ApproveBtn':
+            msg = app.lang.get('LBL_PA_PROCESS_APPROVE_QUESTION', 'pmse_Inbox');
+            break;
+        case 'RejectBtn':
+            msg = app.lang.get('LBL_PA_PROCESS_REJECT_QUESTION', 'pmse_Inbox');
+            break;
+        default:
+            msg = app.lang.get('LBL_PA_PROCESS_ROUTE_QUESTION', 'pmse_Inbox');
+    }
+    app.alert.show('confirm', {
+        level: 'confirmation',
+        messages: msg,
+        autoClose: false,
+        onConfirm: function(){
+            btn = $('#EditView :input[id="' + sbtn + '"]');
+            btn.prop('type', 'submit');
+            btn.show();
+            app.btSubmitClicked = true;
+            btn.click();
+            app.btSubmitClicked = false;
+        },
+        onCancel: function(){
+            app.btSubmitClicked = false;
+        }
+    });
+};
+
 $(function () {
     $('#showCaseForm').attr("novalidate", "novalidate").on('submit', onSubmit);
 

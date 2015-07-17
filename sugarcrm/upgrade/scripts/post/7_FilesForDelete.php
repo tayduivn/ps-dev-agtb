@@ -182,6 +182,8 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             'modules/UpgradeWizard/version.json',
             // jira:MAR-2706 Move PHPMailer library to composer (new path vendor/phpmailer/phpmailer)
             'vendor/PHPMailer/',
+            // PAT-2081 Move Google API library to composer
+            'include/google-api-php-client',
         );
 
         // must be upgrading from between 710 to 722

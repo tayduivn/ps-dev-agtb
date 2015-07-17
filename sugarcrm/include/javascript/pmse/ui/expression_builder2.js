@@ -1052,21 +1052,41 @@ ExpressionControl.prototype._onPanelValueGeneration = function () {
                     };
                     break;
                 case 'form-user-evaluation':
+                    switch (data.operator) {
+                        case 'USER_ADMIN|equals':
+                            label = 'LBL_PMSE_EXPCONTROL_USER_EVALUATION_IS_ADMIN_FULL';
+                            break;
+                        case 'USER_ROLE|equals':
+                            label = 'LBL_PMSE_EXPCONTROL_USER_EVALUATION_IS_ROLE_FULL';
+                            break;
+                        case 'USER_IDENTITY|equals':
+                            label = 'LBL_PMSE_EXPCONTROL_USER_EVALUATION_IS_USER_FULL';
+                            break;
+                        case 'USER_ADMIN|not_equals':
+                            label = 'LBL_PMSE_EXPCONTROL_USER_EVALUATION_IS_NOT_ADMIN_FULL';
+                            break;
+                        case 'USER_ROLE|not_equals':
+                            label = 'LBL_PMSE_EXPCONTROL_USER_EVALUATION_IS_NOT_ROLE_FULL';
+                            break;
+                        case 'USER_IDENTITY|not_equals':
+                            label = 'LBL_PMSE_EXPCONTROL_USER_EVALUATION_IS_NOT_USER_FULL';
+                            break;
+                        default:
+                            throw new Error("_onPanelValueGenerator(): Invalid response.");
+                    }
+
                     aux = data.operator.split("|");
                     value = data.value || null;
-                    label = subpanel.getItem("value").getSelectedText();
-                    switch (aux[0]) {
-                        case 'USER_ADMIN':
-                            valueType = aux[1] === 'equals' ? "is admin" : "is not admin";
-                            break;
-                        case 'USER_ROLE':
-                            valueType = (aux[1] === 'equals' ? "has role" : "has not role") + " " + label;
-                            break;
-                        case 'USER_IDENTITY':
-                            valueType = (aux[1] === 'equals' ? "is user" : "is not user") + " " + label;
-                            break;
-                    }
-                    label = subpanel.getItem("user").getSelectedText() + " " + valueType;
+
+                    label = translate(label).replace(/%(TARGET|VALUE)%/g, function(x) {
+                        if (x === '%TARGET%') {
+                            return subpanel.getItem("user").getSelectedText();
+                        } else if (x === '%VALUE%') {
+                            return subpanel.getItem("value").getSelectedText();
+                        }
+                        return x;
+                    });
+
                     itemData = {
                         expType: aux[0],
                         expLabel: label,

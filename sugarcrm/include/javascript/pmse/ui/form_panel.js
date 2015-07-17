@@ -2096,6 +2096,7 @@
 	FormPanelFriendlyDropdown.prototype._paintOption = function () {};
 	FormPanelFriendlyDropdown.prototype.clearOptions = function () {
 		this._options.clear();
+		this._value = "";
 		if (this._htmlControl[0]) {
 			this._htmlControl[0].select2("val", "", false);
 		}

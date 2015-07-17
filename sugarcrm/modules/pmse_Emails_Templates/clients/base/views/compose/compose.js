@@ -92,6 +92,11 @@
         App.api.call('update', url, attributes, {
             success: function (data) {
                 App.alert.dismiss('upload');
+                App.alert.show('save-success', {
+                    level: 'success',
+                    messages: App.lang.get('LBL_SAVED'),
+                    autoClose: true
+                });
                 if(exit)
                 {
                     model.revertAttributes();

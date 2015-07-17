@@ -65,6 +65,7 @@ $mod_strings = array(
     'LBL_TYPE' => 'Type:',
     'LBL_PRODUCT_TYPE' => 'Product Type:',
     'LBL_CATEGORY' => 'Product Category:',
+    'LBL_CATEGORY_ID' => 'Product Category ID:',
     'LBL_QUANTITY' => 'Quantity:',
     'LBL_STATUS' => 'Status:',
     'LBL_TAX_CLASS' => 'Tax Class:',
