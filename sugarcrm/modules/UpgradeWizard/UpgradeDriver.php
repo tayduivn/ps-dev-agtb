@@ -1436,7 +1436,7 @@ abstract class UpgradeDriver
      * Get package manifest
      * @return array
      */
-    protected function getManifest()
+    public function getManifest()
     {
         return $this->dataInclude("{$this->context['extract_dir']}/manifest.php", 'manifest');
     }
