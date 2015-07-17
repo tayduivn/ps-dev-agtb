@@ -27,6 +27,8 @@
             fieldsToValidate = this._getFieldsToValidate(),
             emptyValues = [];
 
+        this._restoreInitialState(massUpdateModels);
+
         this._doValidateMassUpdate(massUpdateModels, fieldsToValidate, _.bind(function(fields, errors) {
             if (_.isEmpty(errors)) {
                 this.trigger('massupdate:validation:complete', {
@@ -40,6 +42,18 @@
                 this.handleValidationError(errors);
             }
         }, this));
+    },
+
+    /**
+     * Restore models state.
+     *
+     * @param {Array} models
+     * @private
+     */
+    _restoreInitialState: function(models) {
+        _.each(models, function(model) {
+            model.revertAttributes();
+        });
     },
 
     /**
@@ -85,9 +99,7 @@
      * @inheritdoc
      */
     cancelClicked: function(evt) {
-        _.each(this.getMassUpdateModel(this.module).models, function(model) {
-            model.revertAttributes();
-        });
-        this._super('cancelClicked');
+        this._restoreInitialState(this.getMassUpdateModel(this.module).models);
+        this._super('cancelClicked', [evt]);
     }
 })
