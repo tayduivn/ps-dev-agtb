@@ -139,7 +139,7 @@ eoq2;
         $context['original_source_dir'] = $context['source_dir'];
         $context['backup'] = 0;
 
-        //As of 7.6.0 Health check is now included and packaged in the Shadow Upgrader
+        //As of 7.6.1.0 Health check is now included and packaged in the Shadow Upgrader
         $context['health_check_path'] = __DIR__ . DIRECTORY_SEPARATOR . 'HealthCheck';
 
         return $context;
