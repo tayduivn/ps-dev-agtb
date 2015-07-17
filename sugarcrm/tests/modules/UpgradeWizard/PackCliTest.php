@@ -20,7 +20,7 @@ class PackCliTest extends PHPUnit_Framework_TestCase
             array(
                 array(),
                 array(
-                    'version' => '7.5.0.0',
+                    'version' => '7.6.1.0',
                     'build' => '998'
                 ),
             ),
