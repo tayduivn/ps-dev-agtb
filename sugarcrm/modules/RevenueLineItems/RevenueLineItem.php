@@ -170,6 +170,16 @@ class RevenueLineItem extends SugarBean
     }
 
     /**
+     * Utility method for checking the quantity
+     */
+    protected function checkQuantity()
+    {
+        if ($this->quantity === '' || is_null($this->quantity)) {
+            $this->quantity = 1;
+        }
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function save($check_notify = false)
@@ -181,9 +191,7 @@ class RevenueLineItem extends SugarBean
 
         $this->setBestWorstFromLikely();
 
-        if ($this->quantity === '' || is_null($this->quantity)) {
-            $this->quantity = 1;
-        }
+        $this->checkQuantity();
 
         $this->setDiscountPrice();
 
@@ -203,6 +211,9 @@ class RevenueLineItem extends SugarBean
         return $id;
     }
 
+    /**
+     * Set the discount_price
+     */
     protected function setDiscountPrice()
     {
         if (
@@ -295,9 +306,10 @@ class RevenueLineItem extends SugarBean
     {
         $opp = BeanFactory::getBean('Opportunities', $opportunityId);
         if ($opp->load_relationship('accounts')) {
-            $accounts = $opp->accounts->query(array('where' => 'accounts.deleted=0'));
-            foreach ($accounts['rows'] as $accountId => $value) {
-                $this->account_id = $accountId;
+            $accounts = $opp->accounts->get();
+            if (!empty($accounts)) {
+                // get the first row
+                $this->account_id = array_shift($accounts);
                 return true;
             }
         }
@@ -353,9 +365,11 @@ class RevenueLineItem extends SugarBean
 
     /**
      * {@inheritdoc}
+     * @deprecated
      */
     public function listviewACLHelper()
     {
+        $GLOBALS['log']->deprecated('RevenueLineItem::listviewACLHelper() has been deprecated in 7.8');
         $array_assign = parent::listviewACLHelper();
 
         $is_owner = false;
@@ -444,8 +458,7 @@ class RevenueLineItem extends SugarBean
      */
     public function getClosedStages()
     {
-        $admin = BeanFactory::getBean('Administration');
-        $settings = $admin->getConfigForModule('Forecasts');
+        $settings = Forecast::getSettings();
 
         // get all possible closed stages
         $stages = array_merge(
