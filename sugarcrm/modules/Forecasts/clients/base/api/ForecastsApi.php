@@ -99,8 +99,8 @@ class ForecastsApi extends ModuleApi
      * Returns the initialization data for the module including currently logged-in user data,
      * timeperiods, and admin config settings
      *
-     * @param $api
-     * @param $args
+     * @param RestService $api
+     * @param array $args
      * @return array
      * @throws SugarApiExceptionNotAuthorized
      */
@@ -122,7 +122,7 @@ class ForecastsApi extends ModuleApi
         // INVESTIGATE: these need to be more dynamic and deal with potential customizations based on how filters are built in admin and/or studio
         /* @var $admin Administration */
         $admin = $this->getBean('Administration');
-        $forecastsSettings = Forecast::getSettings(true);
+        $forecastsSettings = $admin->getConfigForModule('Forecasts', 'base', true);
         // we need to make sure all the default setting are there, if they are not
         // it should set them to the default value + clear the metadata and kick out a 412 error to force
         // the metadata to reload

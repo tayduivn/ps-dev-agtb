@@ -225,7 +225,7 @@ FILE;
 
         $admin->expects($this->once())
             ->method('getConfigForModule')
-            ->with('Forecasts', 'base')
+            ->with('Forecasts', 'base', true)
             ->willReturn(
                 array(
                     'is_setup' => 1,
@@ -271,5 +271,7 @@ FILE;
         );
 
         $this->assertSame($expected, $ret);
+
+        Forecast::$settings = array();
     }
 }
