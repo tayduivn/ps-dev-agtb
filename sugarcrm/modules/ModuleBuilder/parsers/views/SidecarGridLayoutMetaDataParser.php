@@ -397,7 +397,7 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
             $fields = array();
             // get number of panel columns
             if (!empty($this->extraPanelMeta[$panelName]['columns'])) {
-                $panelColumns = $this->extraPanelMeta[$panelName]['columns'];
+                $panelColumns = min($this->extraPanelMeta[$panelName]['columns'], $maxColumns);
             } else {
                 $panelColumns = $maxColumns;
             }
@@ -700,7 +700,7 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
 
             // Get panel column value
             if (!empty($panel['columns'])) {
-                $panelColumns = $panel['columns'];
+                $panelColumns = min($panel['columns'], $maxColumns);
             } else {
                 $panelColumns = $maxColumns;
             }
