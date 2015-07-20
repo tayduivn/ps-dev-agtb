@@ -3,6 +3,9 @@ describe('Sugar7.Routes', function() {
 
     beforeEach(function() {
         app = SugarTest.app;
+        app.controller.loadAdditionalComponents(app.config.additionalComponents);
+        //FIXME: SC-4677, load additionalComponents in tests
+        //"Before Route Show Wizard Check" dependency
         loadViewStub = sinon.collection.stub(app.controller, 'loadView');
         buildKeyStub = sinon.collection.stub(app.user.lastState, 'buildKey');
         getStub = sinon.collection.stub(app.user.lastState, 'get');
