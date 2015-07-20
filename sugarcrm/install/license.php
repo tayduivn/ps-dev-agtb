@@ -26,6 +26,7 @@ $checked = (isset($_SESSION['setup_license_accept']) && !empty($_SESSION['setup_
 
 require_once("install/install_utils.php");
 $license_file = getLicenseContents("LICENSE");
+$license_file = formatLicense($license_file);
 $langHeader = get_language_header();
 $versionToken = getVersionedPath(null);
 $out =<<<EOQ
@@ -66,7 +67,7 @@ $out =<<<EOQ
     </tr>
     <tr>
       <td colspan="2">
-        <textarea cols="80" rows="7" readonly>{$license_file}</textarea>
+        <pre class="license">{$license_file}</pre>
       </td>
     </tr>
 
