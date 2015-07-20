@@ -323,6 +323,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
   array (
   	'name' => 'contacts',
     'type' => 'link',
+    'module' => 'Contacts',
     'relationship' => 'calls_contacts',
     'source'=>'non-db',
 		'vname'=>'LBL_CONTACTS',

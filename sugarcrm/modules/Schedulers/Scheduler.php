@@ -11,6 +11,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 require_once 'modules/SchedulersJobs/SchedulersJob.php';
+require_once 'install/install_utils.php';
 
 class Scheduler extends SugarBean {
 	// table columns

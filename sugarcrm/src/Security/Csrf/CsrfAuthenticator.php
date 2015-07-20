@@ -53,10 +53,6 @@ use Psr\Log\LoggerInterface;
  *  $sugar_config['csrf']['token_size']
  *      The size of the tokens being generated, defaults to 32.
  *
- *  $sugar_config['csrf']['form_token_field']
- *      The form field name used to transport the token value,
- *      defaults to 'csrf'.
- *
  */
 class CsrfAuthenticator
 {
@@ -65,6 +61,12 @@ class CsrfAuthenticator
      * @var string
      */
     const FORM_TOKEN_ID = 'session_form';
+
+    /**
+     * Input field name holding the token for forms
+     * @var string
+     */
+    const FORM_TOKEN_FIELD = 'csrf_token';
 
     /**
      * @var CsrfAuthenticator
@@ -88,12 +90,6 @@ class CsrfAuthenticator
     protected $softFailForm = false;
 
     /**
-     * Form field name for token
-     * @var string
-     */
-    protected $formTokenField = 'csrf';
-
-    /**
      * Ctor
      * @param CsrfTokenManagerInterface $manager
      * @param LoggerInterface $logger
@@ -106,7 +102,6 @@ class CsrfAuthenticator
 
         // set config options
         $this->softFailForm = (bool) $config->get('csrf.soft_fail_form', false);
-        $this->formTokenField = (string) $config->get('csrf.form_token_field', $this->formTokenField);
 
         // to be removed after beta
         $this->beta = (bool) $config->get('csrf.opt_in', false);
@@ -160,7 +155,7 @@ class CsrfAuthenticator
         }
 
         // handle missing token
-        if (empty($post[$this->formTokenField])) {
+        if (empty($post[self::FORM_TOKEN_FIELD])) {
             $this->logger->critical("CSRF: attack vector detected, missing form token field");
 
             // return valid on soft failures, log a convenience message
@@ -172,7 +167,7 @@ class CsrfAuthenticator
             return false;
         }
 
-        $token = $post[$this->formTokenField];
+        $token = $post[self::FORM_TOKEN_FIELD];
 
         // handle token mismatch
         if (!$this->isTokenValid(self::FORM_TOKEN_ID, $token)) {
@@ -218,15 +213,6 @@ class CsrfAuthenticator
     protected function isTokenValid($tokenId, $value)
     {
         return $this->manager->isTokenValid(new CsrfToken($tokenId, $value));
-    }
-
-    /**
-     * Get form field token
-     * @return string
-     */
-    public function getFormTokenField()
-    {
-        return $this->formTokenField;
     }
 }
 

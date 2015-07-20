@@ -439,7 +439,7 @@ class MssqlManager extends DBManager
             $GLOBALS['log']->debug(print_r(func_get_args(),true));
             $this->lastsql = $sql;
             $matches = array();
-            preg_match('/^(.*SELECT )(.*?FROM.*WHERE)(.*)$/isU',$sql, $matches);
+            preg_match('/^(.*SELECT\s+)(.*?FROM.*WHERE)(.*)$/isU', $sql, $matches);
             if (!empty($matches[3])) {
                 if ($start == 0) {
                     $match_two = strtolower($matches[2]);
@@ -448,7 +448,7 @@ class MssqlManager extends DBManager
                         preg_match('/^(.*)(ORDER BY)(.*)$/is',$matches[3], $orderByMatch);
                         if (!empty($orderByMatch[3])) {
                             $selectPart = array();
-                            preg_match('/^(.*)(\bFROM .*)$/isU', $matches[2], $selectPart);
+                            preg_match('/^(.*)(\bFROM\s+.*)$/isU', $matches[2], $selectPart);
                             $newSQL = "SELECT TOP $count * FROM
                                 (
                                     " . $matches[1] . $selectPart[1] . ", ROW_NUMBER()
@@ -710,9 +710,9 @@ class MssqlManager extends DBManager
 	private function getAliasFromSQL($sql, $alias)
     {
         $matches = array();
-        preg_match('/^(.*SELECT)(.*?FROM.*WHERE)(.*)$/isU',$sql, $matches);
+        preg_match('/SELECT(.*?)FROM/isU', $sql, $matches);
         //parse all single and double  quotes out of array
-        $sin_array = $this->removePatternFromSQL($matches[2], "'", "'","sin_");
+        $sin_array = $this->removePatternFromSQL($matches[1], "'", "'", "sin_");
         $new_sql = array_pop($sin_array);
         $dub_array = $this->removePatternFromSQL($new_sql, "\"", "\"","dub_");
         $new_sql = array_pop($dub_array);
