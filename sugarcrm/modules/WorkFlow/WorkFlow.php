@@ -510,7 +510,7 @@ function get_trigger_contents(){
 		$trigger_count = 0;
 		$trigger_time_count = 0;
 
-		$eval_dump = "use Sugarcrm\\Sugarcrm\\Util\\Arrays\\ArrayFunctions\\ArrayFunctions;\n\n";
+		$eval_dump = "";
 
 		/*Special note about this query.
 
@@ -1041,7 +1041,6 @@ function get_alert_contents_for_file($workflow_id, $trigger_count, $alert_array_
     $alert_count = 0;
 
     $alert_string = "";
-    $eval_dump = "use  Sugarcrm\\Sugarcrm\\Util\\Arrays\\ArrayFunctions\\ArrayFunctions;\n\n";
 	$eval_dump .= '$_SESSION[\'WORKFLOW_ALERTS\'] = isset($_SESSION[\'WORKFLOW_ALERTS\']) && ArrayFunctions::is_array_access($_SESSION[\'WORKFLOW_ALERTS\']) ? $_SESSION[\'WORKFLOW_ALERTS\'] : array();'."\n";
 	$eval_dump .= "\t\t".'$_SESSION[\'WORKFLOW_ALERTS\'][\''.$alert_array_name.'\'] = isset($_SESSION[\'WORKFLOW_ALERTS\'][\''.$alert_array_name.'\']) '
 	            . '&& ArrayFunctions::is_array_access($_SESSION[\'WORKFLOW_ALERTS\'][\''.$alert_array_name.'\']) ? $_SESSION[\'WORKFLOW_ALERTS\'][\''.$alert_array_name.'\'] : array();'."\n";

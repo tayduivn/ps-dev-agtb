@@ -225,6 +225,7 @@ function write_workflow(& $workflow_object){
 		$fp = sugar_fopen($file, 'wb');
 		fwrite($fp,"<?php\n");
 		fwrite($fp,'
+use Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions;
 include_once("include/workflow/alert_utils.php");
 include_once("include/workflow/action_utils.php");
 include_once("include/workflow/time_utils.php");
