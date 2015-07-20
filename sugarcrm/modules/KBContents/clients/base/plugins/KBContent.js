@@ -443,12 +443,16 @@
                                         this.handleFieldError(field, true);
                                     }
 
-                                    if (fieldElement.find('input[data-type=date]').length === 0) {
+                                    if (fieldElement.find(field.fieldTag).length === 0) {
                                         fieldElement.closest('[data-name=' + fieldName + ']')
                                             .find('.record-edit-link-wrapper')
                                             .click();
                                     }
-                                    fieldElement.find('input[data-type=date]').focus();
+                                    _.defer(function() {
+                                        field.$(field.fieldTag).focus();
+                                        field.focus();
+                                    });
+
                                 }
 
                                 // enable buttons in recordview
