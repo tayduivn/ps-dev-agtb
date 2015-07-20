@@ -364,8 +364,13 @@ ExpressionContainer.prototype.handleCriteriaBuilder = function (globalParent, pa
                         };
                     }
                     break;
-                case 'Integer':
                 case 'Currency':
+                    $.extend(true, config, {
+                        constants: {
+                            currency: true
+                        }
+                    })
+                case 'Integer':
                     $.extend(true, config, {
                         operators: {
                             arithmetic: true,
