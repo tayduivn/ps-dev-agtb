@@ -22,6 +22,7 @@ $viewdefs['Accounts']['base']['view']['subpanel-for-prospectlists'] = array(
           'label' => 'LBL_NAME',
           'enabled' => true,
           'default' => true,
+          'link' => true,
         ),
         array(
           'label' => 'LBL_LIST_PHONE',
